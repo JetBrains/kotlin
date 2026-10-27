@@ -936,6 +936,8 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<ConeKotlinType>("actualType")
             parameter<ConeKotlinType>("expectedType")
             parameter<Boolean>("isMismatchDueToNullability")
+            parameter<FirValueParameterSymbol?>("declaration")
+            parameter<FirExpression>("argument")
         }
         val RETURN_TYPE_MISMATCH by error<KtExpression>(PositioningStrategy.WHOLE_ELEMENT) {
             parameter<ConeKotlinType>("expectedType")

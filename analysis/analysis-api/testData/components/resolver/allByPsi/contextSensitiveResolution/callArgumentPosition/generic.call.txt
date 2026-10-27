@@ -1363,7 +1363,7 @@ KtCallExpression(911,945): 'consumeMyClass(test(NestedObject))'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass.NestedObject', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'NestedObject' of type 'MyClass.NestedObject' does not conform to type 'MyClass'.>
 
 KtNameReferenceExpression(911,925): 'consumeMyClass'
   KaSimpleCallResolutionError:
@@ -1399,7 +1399,7 @@ KtNameReferenceExpression(911,925): 'consumeMyClass'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass.NestedObject', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'NestedObject' of type 'MyClass.NestedObject' does not conform to type 'MyClass'.>
 
 KtValueArgumentList(925,945): '(test(NestedObject))'
   null
@@ -1520,7 +1520,7 @@ KtCallExpression(950,976): 'consumeMyClass(test(prop))'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'prop' of type 'String' does not conform to type 'MyClass'.>
 
 KtNameReferenceExpression(950,964): 'consumeMyClass'
   KaSimpleCallResolutionError:
@@ -1556,7 +1556,7 @@ KtNameReferenceExpression(950,964): 'consumeMyClass'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'prop' of type 'String' does not conform to type 'MyClass'.>
 
 KtValueArgumentList(964,976): '(test(prop))'
   null
@@ -1694,7 +1694,7 @@ KtCallExpression(981,1012): 'consumeMyClass(test(superProp))'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'superProp' of type 'String' does not conform to type 'MyClass'.>
 
 KtNameReferenceExpression(981,995): 'consumeMyClass'
   KaSimpleCallResolutionError:
@@ -1730,7 +1730,7 @@ KtNameReferenceExpression(981,995): 'consumeMyClass'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'superProp' of type 'String' does not conform to type 'MyClass'.>
 
 KtValueArgumentList(995,1012): '(test(superProp))'
   null
@@ -1868,7 +1868,7 @@ KtCallExpression(1017,1047): 'consumeMyClass(test(lazyProp))'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'lazyProp' of type 'String' does not conform to type 'MyClass'.>
 
 KtNameReferenceExpression(1017,1031): 'consumeMyClass'
   KaSimpleCallResolutionError:
@@ -1904,7 +1904,7 @@ KtNameReferenceExpression(1017,1031): 'consumeMyClass'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'lazyProp' of type 'String' does not conform to type 'MyClass'.>
 
 KtValueArgumentList(1031,1047): '(test(lazyProp))'
   null
@@ -2042,7 +2042,7 @@ KtCallExpression(1052,1084): 'consumeMyClass(test(lambdaProp))'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '() -> MyClass.InheritorObject', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'lambdaProp' of type '() -> MyClass.InheritorObject' does not conform to type 'MyClass'.>
 
 KtNameReferenceExpression(1052,1066): 'consumeMyClass'
   KaSimpleCallResolutionError:
@@ -2078,7 +2078,7 @@ KtNameReferenceExpression(1052,1066): 'consumeMyClass'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '() -> MyClass.InheritorObject', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'lambdaProp' of type '() -> MyClass.InheritorObject' does not conform to type 'MyClass'.>
 
 KtValueArgumentList(1066,1084): '(test(lambdaProp))'
   null

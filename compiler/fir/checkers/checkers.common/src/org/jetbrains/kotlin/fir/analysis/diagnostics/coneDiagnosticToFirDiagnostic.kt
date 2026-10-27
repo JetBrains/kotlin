@@ -163,6 +163,7 @@ private fun ConeInapplicableCandidateError.mapInapplicableCandidateError(
                         )
                     },
                     isMismatchDueToNullability = rootCause.isMismatchDueToNullability,
+                    parameter = candidate.argumentMapping.entries.find { it.key.expression.unwrapArgument() == rootCause.argument }?.value?.symbol,
                     candidate = candidate,
                     rootCause.anonymousFunctionIfReturnExpression,
                     argument = rootCause.argument,
@@ -183,6 +184,8 @@ private fun ConeInapplicableCandidateError.mapInapplicableCandidateError(
                         typeContext,
                     ),
                     false,
+                    candidate.argumentMapping.entries.find { it.key.expression.unwrapArgument() == rootCause.lambdaExpression }?.value?.symbol,
+                    rootCause.lambdaExpression,
                     session // not isMismatchDueToNullability
                 )
             }
@@ -850,12 +853,13 @@ private fun argumentTypeMismatch(
     expectedType: ConeKotlinType,
     actualType: ConeKotlinType,
     isMismatchDueToNullability: Boolean,
+    parameter: FirValueParameterSymbol?,
     candidate: AbstractCallCandidate<*>,
     /**
      * See [ArgumentTypeMismatch.anonymousFunctionIfReturnExpression]
      */
-    anonymousFunctionIfReturnExpression: FirAnonymousFunction?,
-    argument: FirElement,
+    anonymousFunctionIfReturnExpression: FirAnonymousFunctionExpression?,
+    argument: FirExpression,
     session: FirSession,
 ): List<KtDiagnostic> {
     val symbol = candidate.symbol as FirCallableSymbol
@@ -871,7 +875,7 @@ private fun argumentTypeMismatch(
     val diagnostic = when {
         anonymousFunctionIfReturnExpression != null ->
             FirErrors.RETURN_TYPE_MISMATCH.createOn(
-                source, expectedType, actualType, anonymousFunctionIfReturnExpression, isMismatchDueToNullability, session
+                source, expectedType, actualType, anonymousFunctionIfReturnExpression.anonymousFunction, isMismatchDueToNullability, session
             )
         expectedType is ConeCapturedType && expectedType.isBasedOnStarOrOut() && receiverType != null ->
             FirErrors.MEMBER_PROJECTED_OUT.createOn(
@@ -902,6 +906,8 @@ private fun argumentTypeMismatch(
                 actualType,
                 expectedType,
                 isMismatchDueToNullability,
+                parameter,
+                argument,
                 session
             )
         }
@@ -910,7 +916,9 @@ private fun argumentTypeMismatch(
             actualType,
             expectedType,
             isMismatchDueToNullability,
-            session
+            parameter,
+            argument,
+            session,
         )
     }
 
@@ -952,10 +960,10 @@ private fun ConstraintSystemError.mapConstraintSystemError(
     val diagnostic = when (this) {
         is NewConstraintError -> {
             val position = position.from
-            val [argument, reportOn] =
+            val [argumentExpression, reportOn] =
                 when (position) {
                     is ConeArgumentConstraintPosition -> position.argument to null
-                    is ConeLambdaArgumentConstraintPosition -> position.lambda to position.anonymousFunctionReturnExpression?.source
+                    is ConeLambdaArgumentConstraintPosition -> position.lambdaExpression to position.anonymousFunctionReturnExpression?.source
                     is ConeReceiverConstraintPosition -> position.argument to (position.argument.source.takeIf { it?.kind == KtRealSourceElementKind }
                         ?: position.source)
                     // ConeExpectedTypeConstraintPosition is processed below,
@@ -968,17 +976,22 @@ private fun ConstraintSystemError.mapConstraintSystemError(
                     // Finally, ConeDeclaredUpperBoundConstraintPosition never occurs here
                     else -> null to null
                 }
+            val argument = when (position) {
+                is ConeLambdaArgumentConstraintPosition -> position.lambda
+                else -> argumentExpression
+            }
 
             val typeMismatchDueToNullability = typeContext.isTypeMismatchDueToNullability(lowerConeType, upperConeType)
-            argument?.let {
+            argumentExpression?.let {
                 return argumentTypeMismatch(
                     source = reportOn ?: it.source ?: source,
                     expectedType = upperConeType.substituteTypeVariableTypes(candidate, typeContext),
                     actualType = lowerConeType.substituteTypeVariableTypes(candidate, typeContext),
                     isMismatchDueToNullability = typeMismatchDueToNullability,
+                    parameter = candidate.argumentMapping.entries.find { it.key.expression.unwrapArgument() == argument }?.value?.symbol,
                     candidate = candidate,
-                    anonymousFunctionIfReturnExpression = (position as? ConeLambdaArgumentConstraintPosition)?.lambda,
-                    argument = it,
+                    anonymousFunctionIfReturnExpression = (position as? ConeLambdaArgumentConstraintPosition)?.lambdaExpression,
+                    argument = argumentExpression,
                     session = session,
                 )
             }

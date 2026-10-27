@@ -13,7 +13,7 @@ annotation class Ann
 fun <@Ann R : @Ann Any> f3(a: Array<@Ann R>): Array<@Ann R?> =  null!!
 
 fun test2(a: @Ann Array<in @Ann Int>) {
-    val r: Array<in Int?> = f3(<!ARGUMENT_TYPE_MISMATCH("Array<CapturedType(in Int)>; Array<Int>")!>a<!>)
+    val r: Array<in Int?> = f3(<!ARGUMENT_TYPE_MISMATCH("Array<CapturedType(in Int)>; Array<Int>;  value parameter 'a' of;  'a'")!>a<!>)
 }
 
 
@@ -23,7 +23,7 @@ var test3: Int = 0
 
 fun f4(fn: (@Ann Int, @Ann Int) -> Unit) {}
 
-val test4 = f4 <!ARGUMENT_TYPE_MISMATCH("(Int) -> Unit; (Int, Int) -> Unit")!>{ single -> }<!>
+val test4 = f4 <!ARGUMENT_TYPE_MISMATCH("(Int) -> Unit; (Int, Int) -> Unit;  value parameter 'fn' of;  '{ single -> }'")!>{ single -> }<!>
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, checkNotNullCall, functionDeclaration, functionalType, inProjection,
 integerLiteral, lambdaLiteral, localProperty, nullableType, propertyDeclaration, setter, typeConstraint, typeParameter */

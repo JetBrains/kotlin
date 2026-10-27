@@ -876,7 +876,7 @@ KtCallExpression(1039,1070): 'receiveLambda<MyClass> { prop }'
     candidateSymbols = [
       /receiveLambda(l: () -> T): kotlin.Unit
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'prop' of type 'String' does not conform to type 'MyClass'.>
 
 KtNameReferenceExpression(1039,1052): 'receiveLambda'
   isImplicitReferenceToCompanion: false
@@ -886,7 +886,7 @@ KtNameReferenceExpression(1039,1052): 'receiveLambda'
     candidateSymbols = [
       /receiveLambda(l: () -> T): kotlin.Unit
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'prop' of type 'String' does not conform to type 'MyClass'.>
 
 KtTypeArgumentList(1052,1061): '<MyClass>'
   null
@@ -941,7 +941,7 @@ KtCallExpression(1075,1111): 'receiveLambda<MyClass> { superProp }'
     candidateSymbols = [
       /receiveLambda(l: () -> T): kotlin.Unit
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'superProp' of type 'String' does not conform to type 'MyClass'.>
 
 KtNameReferenceExpression(1075,1088): 'receiveLambda'
   isImplicitReferenceToCompanion: false
@@ -951,7 +951,7 @@ KtNameReferenceExpression(1075,1088): 'receiveLambda'
     candidateSymbols = [
       /receiveLambda(l: () -> T): kotlin.Unit
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'superProp' of type 'String' does not conform to type 'MyClass'.>
 
 KtTypeArgumentList(1088,1097): '<MyClass>'
   null
@@ -1006,7 +1006,7 @@ KtCallExpression(1116,1152): 'receiveLambda<MyClass> { constProp }'
     candidateSymbols = [
       /receiveLambda(l: () -> T): kotlin.Unit
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'constProp' of type 'String' does not conform to type 'MyClass'.>
 
 KtNameReferenceExpression(1116,1129): 'receiveLambda'
   isImplicitReferenceToCompanion: false
@@ -1016,7 +1016,7 @@ KtNameReferenceExpression(1116,1129): 'receiveLambda'
     candidateSymbols = [
       /receiveLambda(l: () -> T): kotlin.Unit
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'constProp' of type 'String' does not conform to type 'MyClass'.>
 
 KtTypeArgumentList(1129,1138): '<MyClass>'
   null
@@ -1071,7 +1071,7 @@ KtCallExpression(1157,1194): 'receiveLambda<MyClass> { lambdaProp }'
     candidateSymbols = [
       /receiveLambda(l: () -> T): kotlin.Unit
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '() -> MyClass.InheritorObject', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'lambdaProp' of type '() -> MyClass.InheritorObject' does not conform to type 'MyClass'.>
 
 KtNameReferenceExpression(1157,1170): 'receiveLambda'
   isImplicitReferenceToCompanion: false
@@ -1081,7 +1081,7 @@ KtNameReferenceExpression(1157,1170): 'receiveLambda'
     candidateSymbols = [
       /receiveLambda(l: () -> T): kotlin.Unit
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '() -> MyClass.InheritorObject', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'lambdaProp' of type '() -> MyClass.InheritorObject' does not conform to type 'MyClass'.>
 
 KtTypeArgumentList(1170,1179): '<MyClass>'
   null
@@ -1136,7 +1136,7 @@ KtCallExpression(1199,1234): 'receiveLambda<MyClass> { lazyProp }'
     candidateSymbols = [
       /receiveLambda(l: () -> T): kotlin.Unit
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'lazyProp' of type 'String' does not conform to type 'MyClass'.>
 
 KtNameReferenceExpression(1199,1212): 'receiveLambda'
   isImplicitReferenceToCompanion: false
@@ -1146,7 +1146,7 @@ KtNameReferenceExpression(1199,1212): 'receiveLambda'
     candidateSymbols = [
       /receiveLambda(l: () -> T): kotlin.Unit
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'lazyProp' of type 'String' does not conform to type 'MyClass'.>
 
 KtTypeArgumentList(1212,1221): '<MyClass>'
   null
@@ -1201,7 +1201,7 @@ KtCallExpression(1239,1277): 'receiveLambda<MyClass> { NestedObject}'
     candidateSymbols = [
       /receiveLambda(l: () -> T): kotlin.Unit
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass.NestedObject', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'NestedObject' of type 'MyClass.NestedObject' does not conform to type 'MyClass'.>
 
 KtNameReferenceExpression(1239,1252): 'receiveLambda'
   isImplicitReferenceToCompanion: false
@@ -1211,7 +1211,7 @@ KtNameReferenceExpression(1239,1252): 'receiveLambda'
     candidateSymbols = [
       /receiveLambda(l: () -> T): kotlin.Unit
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass.NestedObject', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'NestedObject' of type 'MyClass.NestedObject' does not conform to type 'MyClass'.>
 
 KtTypeArgumentList(1252,1261): '<MyClass>'
   null

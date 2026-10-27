@@ -784,7 +784,7 @@ KtCallExpression(404,427): 'println("Enum version")'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Boolean' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"Enum version"' of type 'String' does not conform to value parameter 'message' of type 'Boolean'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -818,7 +818,7 @@ KtCallExpression(404,427): 'println("Enum version")'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Byte' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"Enum version"' of type 'String' does not conform to value parameter 'message' of type 'Byte'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -852,7 +852,7 @@ KtCallExpression(404,427): 'println("Enum version")'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Char' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"Enum version"' of type 'String' does not conform to value parameter 'message' of type 'Char'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -886,7 +886,7 @@ KtCallExpression(404,427): 'println("Enum version")'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'CharArray' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"Enum version"' of type 'String' does not conform to value parameter 'message' of type 'CharArray'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -920,7 +920,7 @@ KtCallExpression(404,427): 'println("Enum version")'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Double' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"Enum version"' of type 'String' does not conform to value parameter 'message' of type 'Double'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -954,7 +954,7 @@ KtCallExpression(404,427): 'println("Enum version")'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Float' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"Enum version"' of type 'String' does not conform to value parameter 'message' of type 'Float'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -988,7 +988,7 @@ KtCallExpression(404,427): 'println("Enum version")'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Int' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"Enum version"' of type 'String' does not conform to value parameter 'message' of type 'Int'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -1022,7 +1022,7 @@ KtCallExpression(404,427): 'println("Enum version")'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Long' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"Enum version"' of type 'String' does not conform to value parameter 'message' of type 'Long'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -1056,7 +1056,7 @@ KtCallExpression(404,427): 'println("Enum version")'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Short' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"Enum version"' of type 'String' does not conform to value parameter 'message' of type 'Short'.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(404,411): 'println'
@@ -1142,7 +1142,7 @@ KtNameReferenceExpression(404,411): 'println'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Boolean' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"Enum version"' of type 'String' does not conform to value parameter 'message' of type 'Boolean'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -1176,7 +1176,7 @@ KtNameReferenceExpression(404,411): 'println'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Byte' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"Enum version"' of type 'String' does not conform to value parameter 'message' of type 'Byte'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -1210,7 +1210,7 @@ KtNameReferenceExpression(404,411): 'println'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Char' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"Enum version"' of type 'String' does not conform to value parameter 'message' of type 'Char'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -1244,7 +1244,7 @@ KtNameReferenceExpression(404,411): 'println'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'CharArray' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"Enum version"' of type 'String' does not conform to value parameter 'message' of type 'CharArray'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -1278,7 +1278,7 @@ KtNameReferenceExpression(404,411): 'println'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Double' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"Enum version"' of type 'String' does not conform to value parameter 'message' of type 'Double'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -1312,7 +1312,7 @@ KtNameReferenceExpression(404,411): 'println'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Float' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"Enum version"' of type 'String' does not conform to value parameter 'message' of type 'Float'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -1346,7 +1346,7 @@ KtNameReferenceExpression(404,411): 'println'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Int' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"Enum version"' of type 'String' does not conform to value parameter 'message' of type 'Int'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -1380,7 +1380,7 @@ KtNameReferenceExpression(404,411): 'println'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Long' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"Enum version"' of type 'String' does not conform to value parameter 'message' of type 'Long'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -1414,7 +1414,7 @@ KtNameReferenceExpression(404,411): 'println'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Short' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"Enum version"' of type 'String' does not conform to value parameter 'message' of type 'Short'.>
     isInBestCandidates = false
 
 KtValueArgumentList(411,427): '("Enum version")'
@@ -1521,7 +1521,7 @@ KtCallExpression(448,484): 'println("Without arguments version")'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Boolean' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"Without arguments version"' of type 'String' does not conform to value parameter 'message' of type 'Boolean'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -1555,7 +1555,7 @@ KtCallExpression(448,484): 'println("Without arguments version")'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Byte' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"Without arguments version"' of type 'String' does not conform to value parameter 'message' of type 'Byte'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -1589,7 +1589,7 @@ KtCallExpression(448,484): 'println("Without arguments version")'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Char' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"Without arguments version"' of type 'String' does not conform to value parameter 'message' of type 'Char'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -1623,7 +1623,7 @@ KtCallExpression(448,484): 'println("Without arguments version")'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'CharArray' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"Without arguments version"' of type 'String' does not conform to value parameter 'message' of type 'CharArray'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -1657,7 +1657,7 @@ KtCallExpression(448,484): 'println("Without arguments version")'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Double' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"Without arguments version"' of type 'String' does not conform to value parameter 'message' of type 'Double'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -1691,7 +1691,7 @@ KtCallExpression(448,484): 'println("Without arguments version")'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Float' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"Without arguments version"' of type 'String' does not conform to value parameter 'message' of type 'Float'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -1725,7 +1725,7 @@ KtCallExpression(448,484): 'println("Without arguments version")'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Int' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"Without arguments version"' of type 'String' does not conform to value parameter 'message' of type 'Int'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -1759,7 +1759,7 @@ KtCallExpression(448,484): 'println("Without arguments version")'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Long' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"Without arguments version"' of type 'String' does not conform to value parameter 'message' of type 'Long'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -1793,7 +1793,7 @@ KtCallExpression(448,484): 'println("Without arguments version")'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Short' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"Without arguments version"' of type 'String' does not conform to value parameter 'message' of type 'Short'.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(448,455): 'println'
@@ -1879,7 +1879,7 @@ KtNameReferenceExpression(448,455): 'println'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Boolean' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"Without arguments version"' of type 'String' does not conform to value parameter 'message' of type 'Boolean'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -1913,7 +1913,7 @@ KtNameReferenceExpression(448,455): 'println'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Byte' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"Without arguments version"' of type 'String' does not conform to value parameter 'message' of type 'Byte'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -1947,7 +1947,7 @@ KtNameReferenceExpression(448,455): 'println'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Char' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"Without arguments version"' of type 'String' does not conform to value parameter 'message' of type 'Char'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -1981,7 +1981,7 @@ KtNameReferenceExpression(448,455): 'println'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'CharArray' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"Without arguments version"' of type 'String' does not conform to value parameter 'message' of type 'CharArray'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -2015,7 +2015,7 @@ KtNameReferenceExpression(448,455): 'println'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Double' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"Without arguments version"' of type 'String' does not conform to value parameter 'message' of type 'Double'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -2049,7 +2049,7 @@ KtNameReferenceExpression(448,455): 'println'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Float' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"Without arguments version"' of type 'String' does not conform to value parameter 'message' of type 'Float'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -2083,7 +2083,7 @@ KtNameReferenceExpression(448,455): 'println'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Int' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"Without arguments version"' of type 'String' does not conform to value parameter 'message' of type 'Int'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -2117,7 +2117,7 @@ KtNameReferenceExpression(448,455): 'println'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Long' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"Without arguments version"' of type 'String' does not conform to value parameter 'message' of type 'Long'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -2151,7 +2151,7 @@ KtNameReferenceExpression(448,455): 'println'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Short' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"Without arguments version"' of type 'String' does not conform to value parameter 'message' of type 'Short'.>
     isInBestCandidates = false
 
 KtValueArgumentList(455,484): '("Without arguments version")'
@@ -2410,7 +2410,7 @@ KtCallExpression(559,582): 'println("Enum version")'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Boolean' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"Enum version"' of type 'String' does not conform to value parameter 'message' of type 'Boolean'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -2444,7 +2444,7 @@ KtCallExpression(559,582): 'println("Enum version")'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Byte' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"Enum version"' of type 'String' does not conform to value parameter 'message' of type 'Byte'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -2478,7 +2478,7 @@ KtCallExpression(559,582): 'println("Enum version")'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Char' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"Enum version"' of type 'String' does not conform to value parameter 'message' of type 'Char'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -2512,7 +2512,7 @@ KtCallExpression(559,582): 'println("Enum version")'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'CharArray' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"Enum version"' of type 'String' does not conform to value parameter 'message' of type 'CharArray'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -2546,7 +2546,7 @@ KtCallExpression(559,582): 'println("Enum version")'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Double' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"Enum version"' of type 'String' does not conform to value parameter 'message' of type 'Double'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -2580,7 +2580,7 @@ KtCallExpression(559,582): 'println("Enum version")'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Float' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"Enum version"' of type 'String' does not conform to value parameter 'message' of type 'Float'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -2614,7 +2614,7 @@ KtCallExpression(559,582): 'println("Enum version")'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Int' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"Enum version"' of type 'String' does not conform to value parameter 'message' of type 'Int'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -2648,7 +2648,7 @@ KtCallExpression(559,582): 'println("Enum version")'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Long' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"Enum version"' of type 'String' does not conform to value parameter 'message' of type 'Long'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -2682,7 +2682,7 @@ KtCallExpression(559,582): 'println("Enum version")'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Short' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"Enum version"' of type 'String' does not conform to value parameter 'message' of type 'Short'.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(559,566): 'println'
@@ -2768,7 +2768,7 @@ KtNameReferenceExpression(559,566): 'println'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Boolean' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"Enum version"' of type 'String' does not conform to value parameter 'message' of type 'Boolean'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -2802,7 +2802,7 @@ KtNameReferenceExpression(559,566): 'println'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Byte' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"Enum version"' of type 'String' does not conform to value parameter 'message' of type 'Byte'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -2836,7 +2836,7 @@ KtNameReferenceExpression(559,566): 'println'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Char' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"Enum version"' of type 'String' does not conform to value parameter 'message' of type 'Char'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -2870,7 +2870,7 @@ KtNameReferenceExpression(559,566): 'println'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'CharArray' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"Enum version"' of type 'String' does not conform to value parameter 'message' of type 'CharArray'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -2904,7 +2904,7 @@ KtNameReferenceExpression(559,566): 'println'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Double' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"Enum version"' of type 'String' does not conform to value parameter 'message' of type 'Double'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -2938,7 +2938,7 @@ KtNameReferenceExpression(559,566): 'println'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Float' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"Enum version"' of type 'String' does not conform to value parameter 'message' of type 'Float'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -2972,7 +2972,7 @@ KtNameReferenceExpression(559,566): 'println'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Int' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"Enum version"' of type 'String' does not conform to value parameter 'message' of type 'Int'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -3006,7 +3006,7 @@ KtNameReferenceExpression(559,566): 'println'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Long' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"Enum version"' of type 'String' does not conform to value parameter 'message' of type 'Long'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -3040,7 +3040,7 @@ KtNameReferenceExpression(559,566): 'println'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Short' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"Enum version"' of type 'String' does not conform to value parameter 'message' of type 'Short'.>
     isInBestCandidates = false
 
 KtValueArgumentList(566,582): '("Enum version")'
@@ -3174,7 +3174,7 @@ KtCallExpression(630,657): 'println("With 2 arguments")'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Boolean' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"With 2 arguments"' of type 'String' does not conform to value parameter 'message' of type 'Boolean'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -3208,7 +3208,7 @@ KtCallExpression(630,657): 'println("With 2 arguments")'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Byte' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"With 2 arguments"' of type 'String' does not conform to value parameter 'message' of type 'Byte'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -3242,7 +3242,7 @@ KtCallExpression(630,657): 'println("With 2 arguments")'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Char' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"With 2 arguments"' of type 'String' does not conform to value parameter 'message' of type 'Char'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -3276,7 +3276,7 @@ KtCallExpression(630,657): 'println("With 2 arguments")'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'CharArray' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"With 2 arguments"' of type 'String' does not conform to value parameter 'message' of type 'CharArray'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -3310,7 +3310,7 @@ KtCallExpression(630,657): 'println("With 2 arguments")'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Double' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"With 2 arguments"' of type 'String' does not conform to value parameter 'message' of type 'Double'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -3344,7 +3344,7 @@ KtCallExpression(630,657): 'println("With 2 arguments")'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Float' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"With 2 arguments"' of type 'String' does not conform to value parameter 'message' of type 'Float'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -3378,7 +3378,7 @@ KtCallExpression(630,657): 'println("With 2 arguments")'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Int' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"With 2 arguments"' of type 'String' does not conform to value parameter 'message' of type 'Int'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -3412,7 +3412,7 @@ KtCallExpression(630,657): 'println("With 2 arguments")'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Long' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"With 2 arguments"' of type 'String' does not conform to value parameter 'message' of type 'Long'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -3446,7 +3446,7 @@ KtCallExpression(630,657): 'println("With 2 arguments")'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Short' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"With 2 arguments"' of type 'String' does not conform to value parameter 'message' of type 'Short'.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(630,637): 'println'
@@ -3532,7 +3532,7 @@ KtNameReferenceExpression(630,637): 'println'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Boolean' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"With 2 arguments"' of type 'String' does not conform to value parameter 'message' of type 'Boolean'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -3566,7 +3566,7 @@ KtNameReferenceExpression(630,637): 'println'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Byte' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"With 2 arguments"' of type 'String' does not conform to value parameter 'message' of type 'Byte'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -3600,7 +3600,7 @@ KtNameReferenceExpression(630,637): 'println'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Char' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"With 2 arguments"' of type 'String' does not conform to value parameter 'message' of type 'Char'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -3634,7 +3634,7 @@ KtNameReferenceExpression(630,637): 'println'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'CharArray' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"With 2 arguments"' of type 'String' does not conform to value parameter 'message' of type 'CharArray'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -3668,7 +3668,7 @@ KtNameReferenceExpression(630,637): 'println'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Double' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"With 2 arguments"' of type 'String' does not conform to value parameter 'message' of type 'Double'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -3702,7 +3702,7 @@ KtNameReferenceExpression(630,637): 'println'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Float' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"With 2 arguments"' of type 'String' does not conform to value parameter 'message' of type 'Float'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -3736,7 +3736,7 @@ KtNameReferenceExpression(630,637): 'println'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Int' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"With 2 arguments"' of type 'String' does not conform to value parameter 'message' of type 'Int'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -3770,7 +3770,7 @@ KtNameReferenceExpression(630,637): 'println'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Long' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"With 2 arguments"' of type 'String' does not conform to value parameter 'message' of type 'Long'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -3804,7 +3804,7 @@ KtNameReferenceExpression(630,637): 'println'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Short' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"With 2 arguments"' of type 'String' does not conform to value parameter 'message' of type 'Short'.>
     isInBestCandidates = false
 
 KtValueArgumentList(637,657): '("With 2 arguments")'

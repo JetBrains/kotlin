@@ -28,7 +28,7 @@ KtOperationReferenceExpression(160,162): '++'
           typeArgumentsMapping = {}
           valueArgumentMapping = {}
       ]
-      diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+      diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression of type 'Int' does not conform to value parameter 'i' of type 'String'.>
     operationCallAttempt = KaSimpleCallResolutionSuccess:
       call = KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -82,4 +82,4 @@ KtOperationReferenceExpression(160,162): '++'
           typeArgumentsMapping = {}
           valueArgumentMapping = {}
       ]
-      diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'B', but 'String' was expected.>
+      diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression of type 'B' does not conform to value parameter 'value' of type 'String'.>

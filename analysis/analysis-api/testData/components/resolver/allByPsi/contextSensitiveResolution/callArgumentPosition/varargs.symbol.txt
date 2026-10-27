@@ -942,7 +942,7 @@ KtCallExpression(1083,1112): 'receiverVarArg<MyClass>(prop)'
     candidateSymbols = [
       /receiverVarArg(vararg arg: T): kotlin.Array<out T>
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'prop' of type 'String' does not conform to type 'MyClass'.>
 
 KtNameReferenceExpression(1083,1097): 'receiverVarArg'
   isImplicitReferenceToCompanion: false
@@ -952,7 +952,7 @@ KtNameReferenceExpression(1083,1097): 'receiverVarArg'
     candidateSymbols = [
       /receiverVarArg(vararg arg: T): kotlin.Array<out T>
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'prop' of type 'String' does not conform to type 'MyClass'.>
 
 KtTypeArgumentList(1097,1106): '<MyClass>'
   null
@@ -1001,7 +1001,7 @@ KtCallExpression(1117,1151): 'receiverVarArg<MyClass>(constProp)'
     candidateSymbols = [
       /receiverVarArg(vararg arg: T): kotlin.Array<out T>
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'constProp' of type 'String' does not conform to type 'MyClass'.>
 
 KtNameReferenceExpression(1117,1131): 'receiverVarArg'
   isImplicitReferenceToCompanion: false
@@ -1011,7 +1011,7 @@ KtNameReferenceExpression(1117,1131): 'receiverVarArg'
     candidateSymbols = [
       /receiverVarArg(vararg arg: T): kotlin.Array<out T>
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'constProp' of type 'String' does not conform to type 'MyClass'.>
 
 KtTypeArgumentList(1131,1140): '<MyClass>'
   null
@@ -1060,7 +1060,7 @@ KtCallExpression(1156,1189): 'receiverVarArg<MyClass>(lazyProp)'
     candidateSymbols = [
       /receiverVarArg(vararg arg: T): kotlin.Array<out T>
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'lazyProp' of type 'String' does not conform to type 'MyClass'.>
 
 KtNameReferenceExpression(1156,1170): 'receiverVarArg'
   isImplicitReferenceToCompanion: false
@@ -1070,7 +1070,7 @@ KtNameReferenceExpression(1156,1170): 'receiverVarArg'
     candidateSymbols = [
       /receiverVarArg(vararg arg: T): kotlin.Array<out T>
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'lazyProp' of type 'String' does not conform to type 'MyClass'.>
 
 KtTypeArgumentList(1170,1179): '<MyClass>'
   null
@@ -1119,7 +1119,7 @@ KtCallExpression(1194,1229): 'receiverVarArg<MyClass>(lambdaProp)'
     candidateSymbols = [
       /receiverVarArg(vararg arg: T): kotlin.Array<out T>
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '() -> MyClass.InheritorObject', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'lambdaProp' of type '() -> MyClass.InheritorObject' does not conform to type 'MyClass'.>
 
 KtNameReferenceExpression(1194,1208): 'receiverVarArg'
   isImplicitReferenceToCompanion: false
@@ -1129,7 +1129,7 @@ KtNameReferenceExpression(1194,1208): 'receiverVarArg'
     candidateSymbols = [
       /receiverVarArg(vararg arg: T): kotlin.Array<out T>
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '() -> MyClass.InheritorObject', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'lambdaProp' of type '() -> MyClass.InheritorObject' does not conform to type 'MyClass'.>
 
 KtTypeArgumentList(1208,1217): '<MyClass>'
   null
@@ -1178,7 +1178,7 @@ KtCallExpression(1234,1268): 'receiverVarArg<MyClass>(superProp)'
     candidateSymbols = [
       /receiverVarArg(vararg arg: T): kotlin.Array<out T>
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'superProp' of type 'String' does not conform to type 'MyClass'.>
 
 KtNameReferenceExpression(1234,1248): 'receiverVarArg'
   isImplicitReferenceToCompanion: false
@@ -1188,7 +1188,7 @@ KtNameReferenceExpression(1234,1248): 'receiverVarArg'
     candidateSymbols = [
       /receiverVarArg(vararg arg: T): kotlin.Array<out T>
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'superProp' of type 'String' does not conform to type 'MyClass'.>
 
 KtTypeArgumentList(1248,1257): '<MyClass>'
   null

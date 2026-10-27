@@ -56,6 +56,7 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory2
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory3
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory4
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory5
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryForDeprecation0
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryForDeprecation1
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryForDeprecation2
@@ -496,7 +497,7 @@ object FirErrors : KtDiagnosticsContainer() {
 
     // Mismatching types
     val TYPE_MISMATCH: KtDiagnosticFactory3<ConeKotlinType, ConeKotlinType, Boolean> = KtDiagnosticFactory3("TYPE_MISMATCH", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
-    val ARGUMENT_TYPE_MISMATCH: KtDiagnosticFactory3<ConeKotlinType, ConeKotlinType, Boolean> = KtDiagnosticFactory3("ARGUMENT_TYPE_MISMATCH", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
+    val ARGUMENT_TYPE_MISMATCH: KtDiagnosticFactory5<ConeKotlinType, ConeKotlinType, Boolean, FirValueParameterSymbol?, FirExpression> = KtDiagnosticFactory5("ARGUMENT_TYPE_MISMATCH", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
     val RETURN_TYPE_MISMATCH: KtDiagnosticFactory4<ConeKotlinType, ConeKotlinType, FirFunction, Boolean> = KtDiagnosticFactory4("RETURN_TYPE_MISMATCH", ERROR, SourceElementPositioningStrategies.WHOLE_ELEMENT, getRendererFactory())
     val EXPECTED_PARAMETER_TYPE_MISMATCH: KtDiagnosticFactory2<ConeKotlinType, ConeKotlinType> = KtDiagnosticFactory2("EXPECTED_PARAMETER_TYPE_MISMATCH", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
     val INITIALIZER_TYPE_MISMATCH: KtDiagnosticFactory3<ConeKotlinType, ConeKotlinType, Boolean> = KtDiagnosticFactory3("INITIALIZER_TYPE_MISMATCH", ERROR, SourceElementPositioningStrategies.VARIABLE_INITIALIZER, getRendererFactory())

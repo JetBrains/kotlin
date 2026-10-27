@@ -732,7 +732,7 @@ KtCallExpression(1108,1497): 'receive<MyClass>('
     candidateSymbols = [
       /receive(e: T): kotlin.Unit
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'stringProp' of type 'String' does not conform to type 'MyClass'.>
 
 KtNameReferenceExpression(1108,1115): 'receive'
   isImplicitReferenceToCompanion: false
@@ -742,7 +742,7 @@ KtNameReferenceExpression(1108,1115): 'receive'
     candidateSymbols = [
       /receive(e: T): kotlin.Unit
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'stringProp' of type 'String' does not conform to type 'MyClass'.>
 
 KtTypeArgumentList(1115,1124): '<MyClass>'
   null
@@ -985,7 +985,7 @@ KtCallExpression(1503,1887): 'run<MyClass> {'
     candidateSymbols = [
       /run(b: () -> T): T
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'stringProp' of type 'String' does not conform to type 'MyClass'.>
 
 KtNameReferenceExpression(1503,1506): 'run'
   isImplicitReferenceToCompanion: false
@@ -995,7 +995,7 @@ KtNameReferenceExpression(1503,1506): 'run'
     candidateSymbols = [
       /run(b: () -> T): T
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'stringProp' of type 'String' does not conform to type 'MyClass'.>
 
 KtTypeArgumentList(1506,1515): '<MyClass>'
   null

@@ -1,23 +1,23 @@
 /noneApplicableMessageWithShortenedExpression.kt:8:5: error: None of the following candidates is applicable for expression 'foo { "A short lambda" }':
 
 fun foo(a: Int): Unit:
-  Argument type mismatch: actual type is '() -> String', but 'Int' was expected.
+  Expression '{ "A short lambda" }' of type '() -> String' does not conform to value parameter 'a' of type 'Int'.
 
 fun foo(a: String): Unit:
-  Argument type mismatch: actual type is '() -> String', but 'String' was expected.
+  Expression '{ "A short lambda" }' of type '() -> String' does not conform to value parameter 'a' of type 'String'.
 
 /noneApplicableMessageWithShortenedExpression.kt:9:5: error: None of the following candidates is applicable:
 
 fun foo(a: Int): Unit:
-  Argument type mismatch: actual type is '() -> String', but 'Int' was expected.
+  Expression of type '() -> String' does not conform to value parameter 'a' of type 'Int'.
 
 fun foo(a: String): Unit:
-  Argument type mismatch: actual type is '() -> String', but 'String' was expected.
+  Expression of type '() -> String' does not conform to value parameter 'a' of type 'String'.
 
 /noneApplicableMessageWithShortenedExpression.kt:10:5: error: None of the following candidates is applicable for expression 'foo { a: Int -> ... }':
 
 fun foo(a: Int): Unit:
-  Argument type mismatch: actual type is '(Int) -> String', but 'Int' was expected.
+  Expression '{ a: Int -> ... }' of type '(Int) -> String' does not conform to value parameter 'a' of type 'Int'.
 
 fun foo(a: String): Unit:
-  Argument type mismatch: actual type is '(Int) -> String', but 'String' was expected.
+  Expression '{ a: Int -> ... }' of type '(Int) -> String' does not conform to value parameter 'a' of type 'String'.

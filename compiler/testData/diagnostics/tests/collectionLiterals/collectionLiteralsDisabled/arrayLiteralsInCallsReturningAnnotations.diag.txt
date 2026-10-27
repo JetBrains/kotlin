@@ -6,9 +6,9 @@
 
 /arrayLiteralsInCallsReturningAnnotations.kt:25:9: error: The feature "collection literals" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xcollection-literals', but note that no stability guarantees are provided.
 
-/arrayLiteralsInCallsReturningAnnotations.kt:26:9: error: Argument type mismatch: actual type is 'Array<Any>', but 'Array<String>' was expected.
-
 /arrayLiteralsInCallsReturningAnnotations.kt:26:9: error: Array literals outside of annotations are unsupported.
+
+/arrayLiteralsInCallsReturningAnnotations.kt:26:9: error: Expression '[]' of type 'Array<Any>' does not conform to value parameter 'arr' of type 'Array<String>'.
 
 /arrayLiteralsInCallsReturningAnnotations.kt:26:9: error: The feature "collection literals" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xcollection-literals', but note that no stability guarantees are provided.
 
@@ -24,25 +24,25 @@
 
 /arrayLiteralsInCallsReturningAnnotations.kt:32:33: error: The feature "collection literals" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xcollection-literals', but note that no stability guarantees are provided.
 
-/arrayLiteralsInCallsReturningAnnotations.kt:34:12: error: Argument type mismatch: actual type is 'Array<Any>', but 'IntArray' was expected.
-
 /arrayLiteralsInCallsReturningAnnotations.kt:34:12: error: Array literals outside of annotations are unsupported.
+
+/arrayLiteralsInCallsReturningAnnotations.kt:34:12: error: Expression '[]' of type 'Array<Any>' does not conform to value parameter 'arr' of type 'IntArray'.
 
 /arrayLiteralsInCallsReturningAnnotations.kt:34:12: error: The feature "collection literals" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xcollection-literals', but note that no stability guarantees are provided.
 
-/arrayLiteralsInCallsReturningAnnotations.kt:35:12: error: Argument type mismatch: actual type is 'Array<Int>', but 'IntArray' was expected.
-
 /arrayLiteralsInCallsReturningAnnotations.kt:35:12: error: Array literals outside of annotations are unsupported.
+
+/arrayLiteralsInCallsReturningAnnotations.kt:35:12: error: Expression '[42]' of type 'Array<Int>' does not conform to value parameter 'arr' of type 'IntArray'.
 
 /arrayLiteralsInCallsReturningAnnotations.kt:35:12: error: The feature "collection literals" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xcollection-literals', but note that no stability guarantees are provided.
 
-/arrayLiteralsInCallsReturningAnnotations.kt:36:12: error: Argument type mismatch: actual type is 'Array<Int>', but 'IntArray' was expected.
+/arrayLiteralsInCallsReturningAnnotations.kt:36:12: error: Expression 'run { [42] }' of type 'Array<Int>' does not conform to value parameter 'arr' of type 'IntArray'.
 
 /arrayLiteralsInCallsReturningAnnotations.kt:36:18: error: Array literals outside of annotations are unsupported.
 
 /arrayLiteralsInCallsReturningAnnotations.kt:36:18: error: The feature "collection literals" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xcollection-literals', but note that no stability guarantees are provided.
 
-/arrayLiteralsInCallsReturningAnnotations.kt:37:12: error: Argument type mismatch: actual type is 'Array<Int>', but 'IntArray' was expected.
+/arrayLiteralsInCallsReturningAnnotations.kt:37:12: error: Expression 'run { ... }' of type 'Array<Int>' does not conform to value parameter 'arr' of type 'IntArray'.
 
 /arrayLiteralsInCallsReturningAnnotations.kt:38:17: error: Array literals outside of annotations are unsupported.
 
@@ -52,9 +52,9 @@
 
 /arrayLiteralsInCallsReturningAnnotations.kt:42:27: error: The feature "collection literals" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xcollection-literals', but note that no stability guarantees are provided.
 
-/arrayLiteralsInCallsReturningAnnotations.kt:46:14: error: Argument type mismatch: actual type is 'Array<Any>', but 'Array<String>' was expected.
-
 /arrayLiteralsInCallsReturningAnnotations.kt:46:14: error: Array literals outside of annotations are unsupported.
+
+/arrayLiteralsInCallsReturningAnnotations.kt:46:14: error: Expression '[]' of type 'Array<Any>' does not conform to value parameter 'arr' of type 'Array<String>'.
 
 /arrayLiteralsInCallsReturningAnnotations.kt:46:14: error: The feature "collection literals" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xcollection-literals', but note that no stability guarantees are provided.
 

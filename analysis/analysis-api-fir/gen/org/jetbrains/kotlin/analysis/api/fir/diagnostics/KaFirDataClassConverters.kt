@@ -1879,6 +1879,8 @@ private fun KaDiagnosticConverterBuilder.addConversions35() {
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
             firDiagnostic.c,
+            firDiagnostic.d?.let { firSymbolBuilder.buildSymbol(it) },
+            firDiagnostic.e.source!!.psi as KtExpression,
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )

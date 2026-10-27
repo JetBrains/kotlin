@@ -228,28 +228,28 @@ KtAnnotationEntry(159,178): '@Anno(0 + constant)'
     candidateSymbols = [
       <constructor>(str: kotlin.String): util.Anno
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '0 + constant' of type 'Int' does not conform to value parameter 'str' of type 'String'.>
 
 KtConstructorCalleeExpression(160,164): 'Anno'
   KaSimpleSymbolResolutionError:
     candidateSymbols = [
       <constructor>(str: kotlin.String): util.Anno
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '0 + constant' of type 'Int' does not conform to value parameter 'str' of type 'String'.>
 
 KtTypeReference(160,164): 'Anno'
   KaSimpleSymbolResolutionError:
     candidateSymbols = [
       <constructor>(str: kotlin.String): util.Anno
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '0 + constant' of type 'Int' does not conform to value parameter 'str' of type 'String'.>
 
 KtUserType(160,164): 'Anno'
   KaSimpleSymbolResolutionError:
     candidateSymbols = [
       <constructor>(str: kotlin.String): util.Anno
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '0 + constant' of type 'Int' does not conform to value parameter 'str' of type 'String'.>
 
 KtNameReferenceExpression(160,164): 'Anno'
   isImplicitReferenceToCompanion: false
@@ -259,7 +259,7 @@ KtNameReferenceExpression(160,164): 'Anno'
     candidateSymbols = [
       <constructor>(str: kotlin.String): util.Anno
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '0 + constant' of type 'Int' does not conform to value parameter 'str' of type 'String'.>
 
 KtValueArgumentList(164,178): '(0 + constant)'
   null
@@ -329,28 +329,28 @@ KtAnnotationEntry(184,203): '@Anno(1 + constant)'
     candidateSymbols = [
       <constructor>(str: kotlin.String): util.Anno
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '1 + constant' of type 'Int' does not conform to value parameter 'str' of type 'String'.>
 
 KtConstructorCalleeExpression(185,189): 'Anno'
   KaSimpleSymbolResolutionError:
     candidateSymbols = [
       <constructor>(str: kotlin.String): util.Anno
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '1 + constant' of type 'Int' does not conform to value parameter 'str' of type 'String'.>
 
 KtTypeReference(185,189): 'Anno'
   KaSimpleSymbolResolutionError:
     candidateSymbols = [
       <constructor>(str: kotlin.String): util.Anno
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '1 + constant' of type 'Int' does not conform to value parameter 'str' of type 'String'.>
 
 KtUserType(185,189): 'Anno'
   KaSimpleSymbolResolutionError:
     candidateSymbols = [
       <constructor>(str: kotlin.String): util.Anno
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '1 + constant' of type 'Int' does not conform to value parameter 'str' of type 'String'.>
 
 KtNameReferenceExpression(185,189): 'Anno'
   isImplicitReferenceToCompanion: false
@@ -360,7 +360,7 @@ KtNameReferenceExpression(185,189): 'Anno'
     candidateSymbols = [
       <constructor>(str: kotlin.String): util.Anno
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '1 + constant' of type 'Int' does not conform to value parameter 'str' of type 'String'.>
 
 KtValueArgumentList(189,203): '(1 + constant)'
   null
@@ -430,28 +430,28 @@ KtAnnotationEntry(209,228): '@Anno(2 + constant)'
     candidateSymbols = [
       <constructor>(str: kotlin.String): util.Anno
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '2 + constant' of type 'Int' does not conform to value parameter 'str' of type 'String'.>
 
 KtConstructorCalleeExpression(210,214): 'Anno'
   KaSimpleSymbolResolutionError:
     candidateSymbols = [
       <constructor>(str: kotlin.String): util.Anno
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '2 + constant' of type 'Int' does not conform to value parameter 'str' of type 'String'.>
 
 KtTypeReference(210,214): 'Anno'
   KaSimpleSymbolResolutionError:
     candidateSymbols = [
       <constructor>(str: kotlin.String): util.Anno
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '2 + constant' of type 'Int' does not conform to value parameter 'str' of type 'String'.>
 
 KtUserType(210,214): 'Anno'
   KaSimpleSymbolResolutionError:
     candidateSymbols = [
       <constructor>(str: kotlin.String): util.Anno
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '2 + constant' of type 'Int' does not conform to value parameter 'str' of type 'String'.>
 
 KtNameReferenceExpression(210,214): 'Anno'
   isImplicitReferenceToCompanion: false
@@ -461,7 +461,7 @@ KtNameReferenceExpression(210,214): 'Anno'
     candidateSymbols = [
       <constructor>(str: kotlin.String): util.Anno
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '2 + constant' of type 'Int' does not conform to value parameter 'str' of type 'String'.>
 
 KtValueArgumentList(214,228): '(2 + constant)'
   null

@@ -3500,6 +3500,8 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         public val actualType: KaType
         public val expectedType: KaType
         public val isMismatchDueToNullability: Boolean
+        public val declaration: KaSymbol?
+        public val argument: KtExpression
     }
 
     @KaUnstableDiagnosticApi
