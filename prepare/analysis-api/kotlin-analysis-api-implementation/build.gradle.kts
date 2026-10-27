@@ -39,6 +39,7 @@ dependencies {
 
     implementation(libs.kotlinx.serialization.core)
     implementation(libs.antlr.runtime)
+    implementation(project(":kotlin-tooling-core"))
 
     implementation(project(":kotlin-scripting-compiler")) {
         exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib")
@@ -54,7 +55,6 @@ analysisApiArtifact {
             addAll(compilerModules)
             addAll(additionalCompilerProjects)
             addAll(analysisApiModules)
-            add(":kotlin-tooling-core")
 
             removeAll(excludedCompilerProjects)
 
