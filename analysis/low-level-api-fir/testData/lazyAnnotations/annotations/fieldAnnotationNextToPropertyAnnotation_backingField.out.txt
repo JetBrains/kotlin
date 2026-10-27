@@ -1,1 +1,5 @@
-[]
+Field()
+  psi: KtAnnotationEntry
+
+Everything()
+  psi: KtAnnotationEntry
