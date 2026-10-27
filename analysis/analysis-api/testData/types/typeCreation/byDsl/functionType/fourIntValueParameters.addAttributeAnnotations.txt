@@ -4,43 +4,13 @@ KaFunctionType:
   annotations: [
     MyAnno()
       psi: null
-    kotlin/ExtensionFunctionType()
-      psi: null
-    kotlin/UnsafeVariance()
-      psi: null
-    kotlin/UnsafeVariance()
-      psi: null
-    kotlin/internal/NoInfer()
-      psi: null
-    kotlin/internal/Exact()
-      psi: null
-    org/jetbrains/kotlin/plugin/sandbox/Positive()
-      psi: null
   ]
   classId: kotlin/Function4
   contextParameterTypes: []
-  hasReceiver: false
+  hasReceiver: true
   isReflectType: false
   isSuspend: false
   parameterTypes: [
-    KaUsualClassType:
-      abbreviation: null
-      annotations: [
-        kotlin/ParameterName(name = "first")
-          psi: null
-      ]
-      classId: kotlin/Int
-      qualifiers: [
-        KaResolvedClassTypeQualifier:
-          name: Int
-          symbol: KaNamedClassSymbol(kotlin/Int)
-          typeArguments: []
-      ]
-      symbol: KaNamedClassSymbol(kotlin/Int)
-      typeArguments: []
-      isMarkedNullable: false
-      isNullable: false
-      hasFlexibleNullability: false
     KaUsualClassType:
       abbreviation: null
       annotations: [
@@ -97,7 +67,6 @@ KaFunctionType:
       hasFlexibleNullability: false
   ]
   parameters: [
-    KaBaseFunctionValueParameter [name: first, type: kotlin/Int]
     KaBaseFunctionValueParameter [name: second, type: kotlin/Int]
     KaBaseFunctionValueParameter [name: third, type: kotlin/Int]
     KaBaseFunctionValueParameter [name: fourth, type: kotlin/Int]
@@ -196,7 +165,24 @@ KaFunctionType:
           hasFlexibleNullability: false
       ]
   ]
-  receiverType: null
+  receiverType: KaUsualClassType:
+    abbreviation: null
+    annotations: [
+      kotlin/ParameterName(name = "first")
+        psi: null
+    ]
+    classId: kotlin/Int
+    qualifiers: [
+      KaResolvedClassTypeQualifier:
+        name: Int
+        symbol: KaNamedClassSymbol(kotlin/Int)
+        typeArguments: []
+    ]
+    symbol: KaNamedClassSymbol(kotlin/Int)
+    typeArguments: []
+    isMarkedNullable: false
+    isNullable: false
+    hasFlexibleNullability: false
   returnType: KaUsualClassType:
     abbreviation: null
     annotations: []
@@ -307,4 +293,4 @@ KaFunctionType:
   hasFlexibleNullability: false
 
 Rendered type:
-@MyAnno @kotlin.ExtensionFunctionType @kotlin.UnsafeVariance @kotlin.UnsafeVariance @kotlin.internal.NoInfer @kotlin.internal.Exact @org.jetbrains.kotlin.plugin.sandbox.Positive ((first: kotlin.Int, second: kotlin.Int, third: kotlin.Int, fourth: kotlin.Int) -> kotlin.Unit)
+@MyAnno (kotlin.Int.(second: kotlin.Int, third: kotlin.Int, fourth: kotlin.Int) -> kotlin.Unit)

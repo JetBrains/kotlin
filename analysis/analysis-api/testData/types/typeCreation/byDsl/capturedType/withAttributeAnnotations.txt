@@ -4,18 +4,6 @@ KaCapturedType:
   annotations: [
     MyAnno()
       psi: null
-    kotlin/ExtensionFunctionType()
-      psi: null
-    kotlin/UnsafeVariance()
-      psi: null
-    kotlin/UnsafeVariance()
-      psi: null
-    kotlin/internal/NoInfer()
-      psi: null
-    kotlin/internal/Exact()
-      psi: null
-    org/jetbrains/kotlin/plugin/sandbox/Positive()
-      psi: null
   ]
   projection: *
   isMarkedNullable: false

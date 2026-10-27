@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.isAnnotationClass
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.classKind
+import org.jetbrains.kotlin.fir.computeTypeAttributes
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyAnnotationArgumentMapping
@@ -237,7 +238,8 @@ internal class KaFirTypeCreator(
     override fun dynamicType(init: KaDynamicTypeBuilder.() -> Unit): KaDynamicType {
         withValidityAssertion {
             val builder = KaBaseDynamicTypeBuilder(this).apply(init)
-            val coneType = ConeDynamicType.create(rootModuleSession, attributes = constructAnnotationAttributes(builder.annotations))
+            val attributes = constructAnnotationAttributes(builder.annotations, allowExtensionFunctionType = false)
+            val coneType = ConeDynamicType.create(rootModuleSession, attributes = attributes)
             return coneType.asKaType() as KaDynamicType
         }
     }
@@ -264,10 +266,10 @@ internal class KaFirTypeCreator(
             else -> StandardNames.getFunctionClassId(numberOfParameters)
         }
 
-        val firAnnotation = builder.annotations.mapNotNull { constructAnnotation(it) }
+        val firAnnotations = builder.annotations.mapNotNull(::constructAnnotation)
 
         val refinedClassId =
-            analysisSession.firSession.functionTypeService.extractSingleExtensionKindForDeserializedConeType(baseClassId, firAnnotation)
+            analysisSession.firSession.functionTypeService.extractSingleExtensionKindForDeserializedConeType(baseClassId, firAnnotations)
                 ?.let { functionClassKind ->
                     ClassId(functionClassKind.packageFqName, functionClassKind.numberedClassName(numberOfParameters))
                 } ?: baseClassId
@@ -297,43 +299,32 @@ internal class KaFirTypeCreator(
             add(returnType)
         }
 
-        val constructedAttributes = constructAnnotationAttributesList(builder.annotations)
-            .let { attributes ->
-                if (contextParameters.isNotEmpty()) {
-                    attributes + CompilerConeAttributes.ContextFunctionTypeParams(contextParameters.size)
-                } else {
-                    attributes
-                }
-            }
-
         val typeContext = rootModuleSession.typeContext
         val coneType = typeContext.createSimpleType(
             constructor = lookupTag,
             arguments = typeArguments,
             nullable = builder.isMarkedNullable,
             isExtensionFunction = builder.receiverType != null,
-            attributes = constructedAttributes
+            contextParameterCount = contextParameters.size,
+            attributes = firAnnotations.computeTypeAttributes(rootModuleSession, shouldExpandTypeAliases = false).toList()
         ) as ConeClassLikeType
 
         return coneType.asKaType()
     }
 
     private fun ConeKotlinType.withAnnotationAttributes(annotationClassIds: List<ClassId>): ConeKotlinType {
-        return this.withAttributes(constructAnnotationAttributes(annotationClassIds))
+        // Same as in the compiler: `@ExtensionFunctionType` is only meaningful for function types
+        val allowExtensionFunctionType = isSomeFunctionType(rootModuleSession)
+        return this.withAttributes(constructAnnotationAttributes(annotationClassIds, allowExtensionFunctionType))
     }
 
-    private fun constructAnnotationAttributes(annotationClassIds: List<ClassId>): ConeAttributes {
-        return ConeAttributes.create(constructAnnotationAttributesList(annotationClassIds))
-    }
-
-    private fun constructAnnotationAttributesList(annotationClassIds: List<ClassId>): List<ConeAttribute<*>> {
-        if (annotationClassIds.isEmpty()) {
-            return emptyList()
-        }
-
-        val customAttribute = CustomAnnotationTypeAttribute(annotationClassIds.mapNotNull(::constructAnnotation))
-
-        return listOf(customAttribute)
+    private fun constructAnnotationAttributes(annotationClassIds: List<ClassId>, allowExtensionFunctionType: Boolean): ConeAttributes {
+        val annotations = annotationClassIds.mapNotNull(::constructAnnotation)
+        return annotations.computeTypeAttributes(
+            rootModuleSession,
+            allowExtensionFunctionType = allowExtensionFunctionType,
+            shouldExpandTypeAliases = false,
+        )
     }
 
     private fun constructAnnotation(classId: ClassId): FirAnnotation? {
