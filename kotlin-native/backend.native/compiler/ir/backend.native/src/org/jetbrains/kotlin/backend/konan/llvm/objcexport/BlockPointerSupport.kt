@@ -94,7 +94,6 @@ internal fun ObjCExportCodeGeneratorBase.generateBlockToKotlinFunctionConverter(
             irInterface,
             mapOf(invokeMethod to invokeImpl.toConstPointer()),
             objectBodyType,
-            immutable = true
     )
     val functionSig = LlvmFunctionSignature(codegen.kObjHeaderPtrReturnType, listOf(LlvmParamType(llvm.pointerType), LlvmParamType(llvm.pointerType)))
     return functionGenerator(

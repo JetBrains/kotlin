@@ -43,8 +43,6 @@ enum Konan_RuntimeType {
 // Flags per type.
 // Keep in sync with constants in RTTIGenerator.
 enum Konan_TypeFlags {
-  TF_IMMUTABLE = 1 << 0,
-  TF_ACYCLIC   = 1 << 1,
   TF_INTERFACE = 1 << 2,
   TF_OBJC_DYNAMIC = 1 << 3,
   // Created for an Objective-C (meta-)class that is created with `CreateKotlinObjCClass`.
