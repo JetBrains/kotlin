@@ -46,6 +46,7 @@ abstract class FirDeclarationGenerationExtension(session: FirSession) : FirExten
     @ExperimentalTopLevelDeclarationsGenerationApi
     open fun generateTopLevelClassLikeDeclaration(classId: ClassId): FirClassLikeSymbol<*>? = null
 
+    // Can be called on SUPERTYPES stage
     open fun generateNestedClassLikeDeclaration(
         owner: FirClassSymbol<*>,
         name: Name,
