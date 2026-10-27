@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,13 +21,18 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirNameAwareOnlyCallablesScope
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScopeWithLazyNestedScope
 import org.jetbrains.kotlin.fir.scopes.impl.lazyNestedClassifierScope
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseWithCallableMembersInSupertypes
+import org.jetbrains.kotlin.fir.types.classLikeLookupTagIfAny
 import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.fir.types.isAny
 import org.jetbrains.kotlin.fir.types.lookupTagIfAny
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.DFS
+import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 object JavaScopeProvider : FirScopeProvider() {
@@ -222,6 +227,40 @@ object JavaScopeProvider : FirScopeProvider() {
         )
 
         return result
+    }
+
+    private fun FirClass.isThereLoopInSupertypes(session: FirSession): Boolean {
+        val visitedSymbols: MutableSet<FirClassifierSymbol<*>> = SmartSet.create()
+        val inProcess: MutableSet<FirClassifierSymbol<*>> = mutableSetOf()
+
+        var isThereLoop = false
+
+        fun dfs(current: FirClassifierSymbol<*>) {
+            if (current in visitedSymbols) return
+            if (!inProcess.add(current)) {
+                isThereLoop = true
+                return
+            }
+
+            when (current) {
+                is FirClassSymbol<*> -> {
+                    current.resolvedSuperTypes.forEach {
+                        it.classLikeLookupTagIfAny?.toSymbol(session)?.let(::dfs)
+                    }
+                }
+                is FirTypeAliasSymbol -> {
+                    current.resolvedExpandedTypeRef.coneType.classLikeLookupTagIfAny?.toSymbol(session)?.let(::dfs)
+                }
+                else -> {}
+            }
+
+            visitedSymbols.add(current)
+            inProcess.remove(current)
+        }
+
+        dfs(symbol)
+
+        return isThereLoop
     }
 
     override fun getNestedClassifierScope(
