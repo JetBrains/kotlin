@@ -437,7 +437,7 @@ object CompilerModules {
         ":compiler:build-tools:kotlin-build-tools-api-jps",
     )
 
-    val compilerArtifactsForIde = listOfNotNull(
+    val compilerArtifactsForIde = analysisApiArtifacts + listOf(
         ":prepare:ide-plugin-dependencies:allopen-compiler-plugin-for-ide",
         ":prepare:ide-plugin-dependencies:compose-compiler-plugin-for-ide",
         ":prepare:ide-plugin-dependencies:js-plain-objects-compiler-plugin-for-ide",
