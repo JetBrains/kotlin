@@ -18,6 +18,7 @@ dependencies {
     compileOnly(project(":compiler:cli-jvm"))
     compileOnly(project(":compiler:cli-js"))
     compileOnly(project(":compiler:cli-metadata"))
+    compileOnly(project(":native:cli-native"))
     compileOnly(project(":kotlin-build-common"))
     compileOnly(project(":daemon-common"))
     compileOnly(project(":kotlin-daemon-client"))
@@ -29,6 +30,7 @@ dependencies {
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     implementation(project(":kotlin-tooling-core"))
 
+    runtimeOnly(project(":kotlin-native:prepare:kotlin-native-compiler-embeddable"))
     runtimeOnly(project(":kotlin-compiler-embeddable"))
     runtimeOnly(project(":kotlin-compiler-runner"))
 
