@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.utils.withType
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
-import java.util.concurrent.Callable
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin.Companion.kotlinNodeJsRootExtension as wasmKotlinNodeJsRootExtension
 
 internal class SwcConfigurator(private val subTarget: KotlinJsIrSubTarget) :
@@ -125,7 +124,7 @@ internal class SwcConfigurator(private val subTarget: KotlinJsIrSubTarget) :
             task.from.setFrom(
                 swcOrLinkTaskOutputs,
                 binary.linkSyncTaskRegisteredResources,
-                Callable { binary.dtsGenerationTask },
+                binary.typeScriptDeclarations,
             )
         }
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -337,6 +337,7 @@ internal constructor(
                                 dtsTask.flatMap { it.outputDirectory },
                             )
                             dtsTask.configure { it.finalizedBy(tsValidationTask) }
+                            binary.typeScriptDeclarations.from(dtsTask)
                             binary.linkSyncTask.configure { it.from.from(dtsTask) }
                         } else {
                             val tsValidationTask = registerTypeScriptCheckTask(
@@ -347,6 +348,11 @@ internal constructor(
                                 linkTask.compilerOptions.freeCompilerArgs.add(GENERATE_D_TS)
                                 linkTask.finalizedBy(tsValidationTask)
                             }
+                            binary.typeScriptDeclarations.from(
+                                binary.defaultLinkSyncTaskInput.map { dir ->
+                                    dir.asFileTree.matching { it.include("**/*.d.ts", "**/*.d.mts") }
+                                }
+                            )
                         }
                     }
             }
