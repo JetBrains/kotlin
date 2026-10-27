@@ -541,7 +541,6 @@ public:
             auto& heapObject = *descriptor.construct(producer_.Insert(descriptor.size()).Data());
             ObjHeader* object = heapObject.object();
             object->typeInfoOrMeta_ = const_cast<TypeInfo*>(typeInfo);
-            // TODO: Consider supporting TF_IMMUTABLE: mark instance as frozen upon creation.
             return object;
         }
 
@@ -552,7 +551,6 @@ public:
             ArrayHeader* array = heapArray.array();
             array->typeInfoOrMeta_ = const_cast<TypeInfo*>(typeInfo);
             array->count_ = count;
-            // TODO: Consider supporting TF_IMMUTABLE: mark instance as frozen upon creation.
             return array;
         }
 
