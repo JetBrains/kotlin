@@ -11,7 +11,7 @@ abstract class View4
 interface View5
 
 fun <T: View1> findViewById1(): T = null as T
-fun test1(): I = <!RETURN_TYPE_MISMATCH("I; View1"), TYPE_MISMATCH("I; View1")!>findViewById1()<!>
+fun test1(): I = <!RETURN_TYPE_MISMATCH("I; View1;  in function 'test1'"), TYPE_MISMATCH("I; View1")!>findViewById1()<!>
 
 fun <T: View2> findViewById2(): T = null as T
 fun test2(): I = findViewById2()

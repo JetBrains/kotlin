@@ -24,7 +24,7 @@ public class Child extends Owner.OwnerBuilder<String> {}
 // FILE: test/main.kt
 package test
 
-fun asBuilder(child: Child): Owner.OwnerBuilder<String> = <!RETURN_TYPE_MISMATCH("Owner.OwnerBuilder<String>; Child")!>child<!>
-fun buildOwner(child: Child): Owner<String> = <!RETURN_TYPE_MISMATCH("Owner<String>; (Owner<Any!>..Owner<*>)")!>child.build()<!>
+fun asBuilder(child: Child): Owner.OwnerBuilder<String> = <!RETURN_TYPE_MISMATCH("Owner.OwnerBuilder<String>; Child;  in function 'asBuilder'")!>child<!>
+fun buildOwner(child: Child): Owner<String> = <!RETURN_TYPE_MISMATCH("Owner<String>; (Owner<Any!>..Owner<*>);  in function 'buildOwner'")!>child.build()<!>
 
 /* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaType */
