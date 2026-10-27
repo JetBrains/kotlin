@@ -479,6 +479,7 @@ object CompilerModules {
         ":kotlin-scripting-jvm",
         ":kotlin-scripting-compiler",
         ":kotlin-scripting-compiler-impl",
+        ":kotlin-power-assert-compiler-plugin",
         ":plugins:parcelize:parcelize-runtime",
         ":plugins:jvm-abi-gen",
         ":kotlin-stdlib-common",
