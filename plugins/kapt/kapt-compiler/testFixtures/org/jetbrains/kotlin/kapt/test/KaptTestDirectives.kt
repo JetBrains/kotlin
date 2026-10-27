@@ -24,6 +24,7 @@ object KaptTestDirectives : SimpleDirectivesContainer() {
     val NON_EXISTENT_CLASS by directive("Generate stub for class error.NonExistentClass")
     val EXPECTED_ERROR by stringDirective("The following error is expected in this test", multiLine = true)
     val STUB_GENERATION_SCHEME by stringDirective("Sets stub generation scheme: direct or jtree")
+    val MIN_JAVA_VERSION by valueDirective("Skips the test on an older JVM, e.g. one whose javac cannot parse the stubs", parser = String::toIntOrNull)
 
     val IGNORE_COLLECTION_LITERALS_RESOLUTION by directive(
         "Suppresses failures in the runner which enables '${LanguageFeature.CollectionLiteralsBasedAnnotationResolution.name}'"

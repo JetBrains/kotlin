@@ -1,0 +1,106 @@
+package test;
+
+/**
+ * public final data class test/R : java/lang/Record {
+ *
+ *   // signature: <init>()V
+ *   public (* secondary *) constructor()
+ *
+ *   // signature: <init>(Lerror/NonExistentClass;Ljava/util/List;)V
+ *   public constructor(x: error/NonExistentClass, y: kotlin/collections/List<error/NonExistentClass>)
+ *
+ *   // signature: component1()Lerror/NonExistentClass;
+ *   public final (* synthesized *) operator fun component1(): error/NonExistentClass
+ *
+ *   // signature: component2()Ljava/util/List;
+ *   public final (* synthesized *) operator fun component2(): kotlin/collections/List<error/NonExistentClass>
+ *
+ *   // signature: copy(Lerror/NonExistentClass;Ljava/util/List;)Ltest/R;
+ *   public final (* synthesized *) fun copy(x: error/NonExistentClass (* = ... *), y: kotlin/collections/List<error/NonExistentClass> (* = ... *)): test/R
+ *
+ *   // signature: equals(Ljava/lang/Object;)Z
+ *   // must-use return value
+ *   public open (* synthesized *) operator fun equals(other: kotlin/Any?): kotlin/Boolean
+ *
+ *   // signature: hashCode()I
+ *   // must-use return value
+ *   public open (* synthesized *) fun hashCode(): kotlin/Int
+ *
+ *   // signature: toString()Ljava/lang/String;
+ *   // must-use return value
+ *   public open (* synthesized *) fun toString(): kotlin/String
+ *
+ *   // field: x:Lerror/NonExistentClass;
+ *   // getter: x()Lerror/NonExistentClass;
+ *   public final val x: error/NonExistentClass
+ *     public final get
+ *
+ *   // field: y:Ljava/util/List;
+ *   // getter: y()Ljava/util/List;
+ *   public final val y: kotlin/collections/List<error/NonExistentClass>
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+@kotlin.jvm.JvmRecord()
+public final record R(@org.jetbrains.annotations.NotNull()
+Unresolved x, @org.jetbrains.annotations.NotNull()
+java.util.List<Unresolved2> y) {
+
+    public R(@org.jetbrains.annotations.NotNull()
+    Unresolved x, @org.jetbrains.annotations.NotNull()
+    java.util.List<Unresolved2> y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final Unresolved x() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.util.List<Unresolved2> y() {
+        return null;
+    }
+
+    public R() {
+        this((Unresolved)null, (java.util.List<Unresolved2>)null);
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final Unresolved component1() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.util.List<Unresolved2> component2() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final test.R copy(@org.jetbrains.annotations.NotNull()
+    Unresolved x, @org.jetbrains.annotations.NotNull()
+    java.util.List<? extends Unresolved2> y) {
+        return null;
+    }
+
+    @java.lang.Override()
+    public boolean equals(@org.jetbrains.annotations.Nullable()
+    java.lang.Object other) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public int hashCode() {
+        return 0;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.lang.String toString() {
+        return null;
+    }
+}
