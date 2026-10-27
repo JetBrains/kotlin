@@ -21,10 +21,10 @@
 /invokeWrongReceiver.kt:38:23: error: None of the following candidates is applicable for expression 'Function1.a15(1.0)':
 
 companion fun Function1.a15(x: Int): Unit:
-  Argument type mismatch: actual type is 'Double', but 'Int' was expected.
+  Expression '1.0' of type 'Double' does not conform to value parameter 'x' of type 'Int'.
 
 companion fun Function1.a15(x: String): Unit:
-  Argument type mismatch: actual type is 'Double', but 'String' was expected.
+  Expression '1.0' of type 'Double' does not conform to value parameter 'x' of type 'String'.
 
 /invokeWrongReceiver.kt:42:23: error: Overload resolution ambiguity between candidates:
 companion fun Function1.a49(vararg x: Int): Unit

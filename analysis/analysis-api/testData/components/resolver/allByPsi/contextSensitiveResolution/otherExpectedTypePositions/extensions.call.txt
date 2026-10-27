@@ -156,7 +156,7 @@ KtCallExpression(228,244): 'foo(MyClass.bar)'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass2', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'MyClass.bar' of type 'MyClass2' does not conform to value parameter 'a' of type 'MyClass'.>
 
 KtNameReferenceExpression(228,231): 'foo'
   KaSimpleCallResolutionError:
@@ -192,7 +192,7 @@ KtNameReferenceExpression(228,231): 'foo'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass2', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'MyClass.bar' of type 'MyClass2' does not conform to value parameter 'a' of type 'MyClass'.>
 
 KtValueArgumentList(231,244): '(MyClass.bar)'
   null

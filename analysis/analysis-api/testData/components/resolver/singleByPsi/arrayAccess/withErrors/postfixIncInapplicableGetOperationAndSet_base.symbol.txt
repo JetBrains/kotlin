@@ -3,4 +3,4 @@ KtArrayAccessExpression(127,131): 'b[0]'
     candidateSymbols = [
       /B.get(<dispatch receiver>: B, i: kotlin.String): B
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression of type 'Int' does not conform to value parameter 'i' of type 'String'.>

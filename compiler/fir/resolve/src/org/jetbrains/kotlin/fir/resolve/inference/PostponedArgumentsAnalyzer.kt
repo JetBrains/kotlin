@@ -350,7 +350,7 @@ class PostponedArgumentsAnalyzer(
                     // See KT-63602 for details.
                     builder.addSubtypeConstraintIfCompatible(
                         expression.resolvedType, returnTypeRef.coneType,
-                        ConeLambdaArgumentConstraintPositionWithCoercionToUnit(lambda.anonymousFunction, expression)
+                        ConeLambdaArgumentConstraintPositionWithCoercionToUnit(lambda.expression, expression)
                     )
                 }
 
@@ -380,7 +380,7 @@ class PostponedArgumentsAnalyzer(
                     context = resolutionContext,
                     isReceiver = false,
                     isDispatch = false,
-                    anonymousFunctionIfReturnExpression = lambda.anonymousFunction,
+                    anonymousFunctionIfReturnExpression = lambda.expression,
                 )
             }
         }
@@ -406,7 +406,7 @@ class PostponedArgumentsAnalyzer(
         if (with(c) { lambdaReturnType.isError() } || builder.hasContradiction) return
 
         val position = ConeLambdaArgumentConstraintPositionWithCoercionToUnit(
-            lambda.anonymousFunction,
+            lambda.expression,
             anonymousFunctionReturnExpression = null,
         )
         if (!builder.addSubtypeConstraintIfCompatible(
@@ -423,7 +423,7 @@ class PostponedArgumentsAnalyzer(
                     // TODO: Consider replacement with ArgumentTypeMismatch once KT-67961 is fixed
                     // Currently, ArgumentTypeMismatch only allows expressions and we don't have it here
                     UnitReturnTypeLambdaContradictsExpectedType(
-                        lambda.anonymousFunction,
+                        lambda.expression,
                         wholeLambdaExpectedType,
                         lambda.sourceForFunctionExpression,
                     )

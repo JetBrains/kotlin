@@ -589,7 +589,7 @@ KtCallExpression(562,591): 'receive<MyEnum>(stringProp!!)'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyEnum?' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'stringProp' of type 'String' does not conform to type 'MyEnum?'.>
 
 KtNameReferenceExpression(562,569): 'receive'
   KaSimpleCallResolutionError:
@@ -627,7 +627,7 @@ KtNameReferenceExpression(562,569): 'receive'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyEnum?' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'stringProp' of type 'String' does not conform to type 'MyEnum?'.>
 
 KtTypeArgumentList(569,577): '<MyEnum>'
   null

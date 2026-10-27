@@ -135,7 +135,7 @@ KtCallExpression(161,174): 'Nested("str")'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Int' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"str"' of type 'String' does not conform to value parameter 'param' of type 'Int'.>
     isInBestCandidates = false
 
   KaApplicableCallCandidate:
@@ -206,7 +206,7 @@ KtNameReferenceExpression(161,167): 'Nested'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Int' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '"str"' of type 'String' does not conform to value parameter 'param' of type 'Int'.>
     isInBestCandidates = false
 
   KaApplicableCallCandidate:
@@ -331,7 +331,7 @@ KtCallExpression(222,231): 'Nested(1)'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '1' of type 'Int' does not conform to value parameter 's' of type 'String'.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(222,228): 'Nested'
@@ -438,7 +438,7 @@ KtDotQualifiedExpression(235,248): 'Foo.Nested(2)'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '2' of type 'Int' does not conform to value parameter 's' of type 'String'.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(235,238): 'Foo'
@@ -528,7 +528,7 @@ KtCallExpression(239,248): 'Nested(2)'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '2' of type 'Int' does not conform to value parameter 's' of type 'String'.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(239,245): 'Nested'
@@ -635,7 +635,7 @@ KtDotQualifiedExpression(252,277): 'com.example.Foo.Nested(3)'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '3' of type 'Int' does not conform to value parameter 's' of type 'String'.>
     isInBestCandidates = false
 
 KtDotQualifiedExpression(252,267): 'com.example.Foo'
@@ -753,7 +753,7 @@ KtCallExpression(268,277): 'Nested(3)'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '3' of type 'Int' does not conform to value parameter 's' of type 'String'.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(268,274): 'Nested'

@@ -908,7 +908,7 @@ KtCallExpression(655,791): 'mapOf<MyClass, Int>(MyClass.myClassProp to 1,  MyCla
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Pair<String, Int>', but 'Pair<MyClass, Int>' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'MyClass.stringProp to 2' of type 'Pair<String, Int>' does not conform to value parameter 'pairs' of type 'Pair<MyClass, Int>'.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(655,660): 'mapOf'
@@ -1025,7 +1025,7 @@ KtNameReferenceExpression(655,660): 'mapOf'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Pair<String, Int>', but 'Pair<MyClass, Int>' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'MyClass.stringProp to 2' of type 'Pair<String, Int>' does not conform to value parameter 'pairs' of type 'Pair<MyClass, Int>'.>
     isInBestCandidates = true
 
 KtTypeArgumentList(660,674): '<MyClass, Int>'

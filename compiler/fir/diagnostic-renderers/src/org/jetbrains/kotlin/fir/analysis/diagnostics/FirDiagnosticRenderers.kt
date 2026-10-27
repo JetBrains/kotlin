@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.diagnostics
 
+import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -64,6 +65,13 @@ object FirDiagnosticRenderers {
     val SYMBOL = symbolRenderer(
         modifierRenderer = { FirPartialModifierRenderer(DiagnosticStaticPolicy) }
     )
+
+    val OPTIONAL_SYMBOL_NAME_OF = Renderer { symbol: FirBasedSymbol<*>? ->
+        when (symbol) {
+            is FirValueParameterSymbol -> " value parameter '${symbol.name}' of"
+            else -> ""
+        }
+    }
 
     val SYMBOL_WITH_ALL_MODIFIERS = symbolRenderer()
 
@@ -367,6 +375,13 @@ object FirDiagnosticRenderers {
 
     val OPTIONAL_FOR_EXPRESSION = Renderer { s: KtSourceElement? ->
         renderOptionalSource(s)?.let { " for expression $it" } ?: ""
+    }
+
+    val RENDER_OPTIONAL_EXPRESSION = Renderer { e: FirExpression ->
+        e.source?.takeIf { it.kind == KtRealSourceElementKind }
+            ?.let(::renderOptionalSource)
+            ?.let { " $it" }
+            ?: ""
     }
 
     private val INDENT_WHITESPACE = """^\s+""".toRegex()

@@ -238,7 +238,7 @@ KtConstructorDelegationCall(170,179): 'super(ci)'
         callableId = null
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'ci' of type 'Int' does not conform to value parameter 's' of type 'String'.>
     isInBestCandidates = false
 
 KtConstructorDelegationReferenceExpression(170,175): 'super'
@@ -300,7 +300,7 @@ KtConstructorDelegationReferenceExpression(170,175): 'super'
         callableId = null
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'ci' of type 'Int' does not conform to value parameter 's' of type 'String'.>
     isInBestCandidates = false
 
 KtValueArgumentList(175,179): '(ci)'
@@ -370,7 +370,7 @@ KtConstructorDelegationCall(210,219): 'super(cs)'
         callableId = null
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Int' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'cs' of type 'String' does not conform to value parameter 'i' of type 'Int'.>
     isInBestCandidates = false
 
   KaApplicableCallCandidate:
@@ -432,7 +432,7 @@ KtConstructorDelegationReferenceExpression(210,215): 'super'
         callableId = null
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Int' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'cs' of type 'String' does not conform to value parameter 'i' of type 'Int'.>
     isInBestCandidates = false
 
   KaApplicableCallCandidate:
@@ -645,7 +645,7 @@ KtSuperTypeCallEntry(294,307): 'BaseClass(42)'
         callableId = null
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '42' of type 'Int' does not conform to value parameter 's' of type 'String'.>
     isInBestCandidates = false
 
 KtConstructorCalleeExpression(294,303): 'BaseClass'
@@ -707,7 +707,7 @@ KtConstructorCalleeExpression(294,303): 'BaseClass'
         callableId = null
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '42' of type 'Int' does not conform to value parameter 's' of type 'String'.>
     isInBestCandidates = false
 
 KtTypeReference(294,303): 'BaseClass'
@@ -775,7 +775,7 @@ KtNameReferenceExpression(294,303): 'BaseClass'
         callableId = null
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '42' of type 'Int' does not conform to value parameter 's' of type 'String'.>
     isInBestCandidates = false
 
 KtValueArgumentList(303,307): '(42)'

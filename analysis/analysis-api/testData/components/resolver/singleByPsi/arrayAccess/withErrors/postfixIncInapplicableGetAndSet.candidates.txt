@@ -25,7 +25,7 @@ KtOperationReferenceExpression(160,162): '++'
         callableId = /B.get
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression of type 'Int' does not conform to value parameter 'i' of type 'String'.>
     isInBestCandidates = true
 
   KaInapplicableCallCandidate:
@@ -61,7 +61,7 @@ KtOperationReferenceExpression(160,162): '++'
         callableId = /B.set
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'B', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression of type 'B' does not conform to value parameter 'value' of type 'String'.>
     isInBestCandidates = true
 
   KaApplicableCallCandidate:

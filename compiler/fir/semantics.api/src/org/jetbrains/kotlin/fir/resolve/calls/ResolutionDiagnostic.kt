@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
@@ -188,15 +189,17 @@ class ArgumentTypeMismatch(
     val isMismatchDueToNullability: Boolean,
     // We use argument checking mechanism for return statements of lambdas, too.
     // Thus, to report proper RETURN_TYPE_MISMATCH we preserve a reference to the lambda
-    val anonymousFunctionIfReturnExpression: FirAnonymousFunction? = null,
+    val anonymousFunctionIfReturnExpression: FirAnonymousFunctionExpression? = null,
     val systemHadContradiction: Boolean = false,
 ) : ResolutionDiagnostic(if (isMismatchDueToNullability) UNSAFE_CALL else INAPPLICABLE)
 
 class UnitReturnTypeLambdaContradictsExpectedType(
-    val lambda: FirAnonymousFunction,
+    val lambdaExpression: FirAnonymousFunctionExpression,
     val wholeLambdaExpectedType: ConeKotlinType,
     val sourceForFunctionExpression: KtSourceElement?
-) : ResolutionDiagnostic(INAPPLICABLE)
+) : ResolutionDiagnostic(INAPPLICABLE) {
+    val lambda: FirAnonymousFunction get() = lambdaExpression.anonymousFunction
+}
 
 class NullForNotNullType(
     val argument: FirExpression, val expectedType: ConeKotlinType

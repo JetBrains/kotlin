@@ -12,5 +12,5 @@ KtOperationReferenceExpression(170,172): '+='
         candidateSymbols = [
           /B.plus(<dispatch receiver>: B, other: kotlin.String): B
         ]
-        diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+        diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '1' of type 'Int' does not conform to value parameter 'other' of type 'String'.>
     ]

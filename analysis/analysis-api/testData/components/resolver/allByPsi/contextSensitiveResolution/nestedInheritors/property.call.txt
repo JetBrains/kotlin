@@ -215,7 +215,7 @@ KtCallExpression(372,532): 'receiveMyClass('
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass.NestedInheritor' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'stringProp' of type 'String' does not conform to type 'MyClass.NestedInheritor'.>
 
 KtNameReferenceExpression(372,386): 'receiveMyClass'
   KaSimpleCallResolutionError:
@@ -254,7 +254,7 @@ KtNameReferenceExpression(372,386): 'receiveMyClass'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass.NestedInheritor' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'stringProp' of type 'String' does not conform to type 'MyClass.NestedInheritor'.>
 
 KtValueArgumentList(386,532): '('
   null
