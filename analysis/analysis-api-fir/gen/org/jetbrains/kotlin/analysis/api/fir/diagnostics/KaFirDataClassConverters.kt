@@ -7986,6 +7986,7 @@ private fun KaDiagnosticConverterBuilder.addConversions169() {
                                     string
                                 }
             },
+            (firDiagnostic.b as? KtPsiSourceElement)?.psi,
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )

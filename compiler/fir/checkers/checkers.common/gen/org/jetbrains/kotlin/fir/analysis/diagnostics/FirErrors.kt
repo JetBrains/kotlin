@@ -518,7 +518,7 @@ object FirErrors : KtDiagnosticsContainer() {
     val JVM_INLINE_ON_VALUE_OBJECT: KtDiagnosticFactory0 = KtDiagnosticFactory0("JVM_INLINE_ON_VALUE_OBJECT", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
 
     // Applicability
-    val NONE_APPLICABLE: KtDiagnosticFactory1<Collection<Pair<FirBasedSymbol<*>, List<String>>>> = KtDiagnosticFactory1("NONE_APPLICABLE", ERROR, SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED, PsiElement::class, getRendererFactory())
+    val NONE_APPLICABLE: KtDiagnosticFactory2<Collection<Pair<FirBasedSymbol<*>, List<String>>>, KtSourceElement?> = KtDiagnosticFactory2("NONE_APPLICABLE", ERROR, SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED, PsiElement::class, getRendererFactory())
     val INAPPLICABLE_CANDIDATE: KtDiagnosticFactory1<FirBasedSymbol<*>> = KtDiagnosticFactory1("INAPPLICABLE_CANDIDATE", ERROR, SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED, PsiElement::class, getRendererFactory())
     val HAS_NEXT_FUNCTION_NONE_APPLICABLE: KtDiagnosticFactory1<Collection<FirBasedSymbol<*>>> = KtDiagnosticFactory1("HAS_NEXT_FUNCTION_NONE_APPLICABLE", ERROR, SourceElementPositioningStrategies.DEFAULT, KtExpression::class, getRendererFactory())
     val NEXT_NONE_APPLICABLE: KtDiagnosticFactory1<Collection<FirBasedSymbol<*>>> = KtDiagnosticFactory1("NEXT_NONE_APPLICABLE", ERROR, SourceElementPositioningStrategies.DEFAULT, KtExpression::class, getRendererFactory())
