@@ -12,6 +12,8 @@ dependencies {
     compileOnly(project(":compiler:fir:fir-serialization"))
     // TODO(KT-90146): Required to access various utility functions.
     compileOnly(project(":compiler:fir:fir-deserialization"))
+    // TODO(KT-90146): Required to access various utility functions.
+    compileOnly(project(":compiler:fir:checkers:checkers.common"))
 
     compileOnly(project(":compiler:cli-base"))
     compileOnly(project(":native:native.config"))

@@ -13,6 +13,9 @@ dependencies {
     implementation(project(":core:compiler.common.jvm"))
 
     compileOnly(project(":compiler:fir:plugin.api"))
+    // TODO(KT-90146): Required to access various utility functions.
+    compileOnly(project(":compiler:fir:resolve"))
+
     compileOnly(project(":compiler:ir.backend.common"))
 
     compileOnly(intellijCore())
