@@ -13,4 +13,4 @@ KtNameReferenceExpression(122,123): 'x'
       Argument type mismatch: actual type is 'String', but 'Int' was expected.
 
     fun foo(x: Int, z: Int, x: String): Unit:
-      No value passed for parameter 'x'.>
+      No value passed for parameter 'x' of type 'Int'.>

@@ -9,8 +9,8 @@ KtNameReferenceExpression(165,166): 'x'
     diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
 
     constructor(x: String, y: String): Base:
-      No value passed for parameter 'y'.
+      No value passed for parameter 'y' of type 'String'.
 
     constructor(n: Int): Base:
       No parameter with name 'x' found.
-      No value passed for parameter 'n'.>
+      No value passed for parameter 'n' of type 'Int'.>

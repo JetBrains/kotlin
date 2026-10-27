@@ -55,7 +55,7 @@ KtDotQualifiedExpression(106,113): 'f.foo()'
     diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
 
     fun <A> Foo<A>.foo(i: Int): Unit:
-      No value passed for parameter 'i'.
+      No value passed for parameter 'i' of type 'Int'.
 
     fun <B> Foo<B>.foo(s: String): Unit:
-      No value passed for parameter 's'.>
+      No value passed for parameter 's' of type 'String'.>

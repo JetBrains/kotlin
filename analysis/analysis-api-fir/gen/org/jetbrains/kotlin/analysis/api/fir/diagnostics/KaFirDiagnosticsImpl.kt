@@ -2339,6 +2339,7 @@ internal class MemberProjectedOutImpl(
 
 internal class NoValueForParameterImpl(
     override val violatedParameter: Name,
+    override val violatedParameterType: KaType?,
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.NoValueForParameter

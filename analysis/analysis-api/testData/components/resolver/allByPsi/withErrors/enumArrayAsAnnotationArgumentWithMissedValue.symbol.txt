@@ -18,28 +18,28 @@ KtAnnotationEntry(28,56): '@MyJavaAnnotation(test = [])'
     candidateSymbols = [
       <constructor>(value: kotlin.String, test: kotlin.Array<MyJavaEnum>): MyJavaAnnotation
     ]
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value' of type 'String'.>
 
 KtConstructorCalleeExpression(29,45): 'MyJavaAnnotation'
   KaSimpleSymbolResolutionError:
     candidateSymbols = [
       <constructor>(value: kotlin.String, test: kotlin.Array<MyJavaEnum>): MyJavaAnnotation
     ]
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value' of type 'String'.>
 
 KtTypeReference(29,45): 'MyJavaAnnotation'
   KaSimpleSymbolResolutionError:
     candidateSymbols = [
       <constructor>(value: kotlin.String, test: kotlin.Array<MyJavaEnum>): MyJavaAnnotation
     ]
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value' of type 'String'.>
 
 KtUserType(29,45): 'MyJavaAnnotation'
   KaSimpleSymbolResolutionError:
     candidateSymbols = [
       <constructor>(value: kotlin.String, test: kotlin.Array<MyJavaEnum>): MyJavaAnnotation
     ]
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value' of type 'String'.>
 
 KtNameReferenceExpression(29,45): 'MyJavaAnnotation'
   isImplicitReferenceToCompanion: false
@@ -49,7 +49,7 @@ KtNameReferenceExpression(29,45): 'MyJavaAnnotation'
     candidateSymbols = [
       <constructor>(value: kotlin.String, test: kotlin.Array<MyJavaEnum>): MyJavaAnnotation
     ]
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value' of type 'String'.>
 
 KtValueArgumentList(45,56): '(test = [])'
   null

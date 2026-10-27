@@ -3297,6 +3297,7 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
             get() = NoValueForParameter::class
 
         public val violatedParameter: Name
+        public val violatedParameterType: KaType?
     }
 
     @KaUnstableDiagnosticApi

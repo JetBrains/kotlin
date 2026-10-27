@@ -18,7 +18,7 @@
 
 /emptyArguments.kt:25:14: error: Syntax error: Expecting an argument.
 
-/emptyArguments.kt:26:5: error: No value passed for parameter 'z'.
+/emptyArguments.kt:26:5: error: No value passed for parameter 'z' of type 'Int'.
 
 /emptyArguments.kt:26:12: error: Syntax error: Expecting an argument.
 
@@ -96,7 +96,7 @@
 
 /emptyArguments.kt:46:23: error: Syntax error: Expecting an argument.
 
-/emptyArguments.kt:47:5: error: No value passed for parameter 'c'.
+/emptyArguments.kt:47:5: error: No value passed for parameter 'c' of type 'C'.
 
 /emptyArguments.kt:47:17: error: Syntax error: Expecting an argument.
 
@@ -114,13 +114,13 @@
 
 /emptyArguments.kt:53:26: error: Syntax error: Expecting an argument.
 
-/emptyArguments.kt:54:5: error: No value passed for parameter 'a'.
+/emptyArguments.kt:54:5: error: No value passed for parameter 'a' of type 'A'.
 
 /emptyArguments.kt:54:26: error: Syntax error: Expecting an argument.
 
-/emptyArguments.kt:55:5: error: No value passed for parameter 'b'.
+/emptyArguments.kt:55:5: error: No value passed for parameter 'b' of type 'B'.
 
-/emptyArguments.kt:55:5: error: No value passed for parameter 'c'.
+/emptyArguments.kt:55:5: error: No value passed for parameter 'c' of type 'C'.
 
 /emptyArguments.kt:55:17: error: Syntax error: Expecting an argument.
 
@@ -128,7 +128,7 @@
 
 /emptyArguments.kt:55:28: error: Mixing named and positional arguments is not allowed unless the order of the arguments matches the order of the parameters.
 
-/emptyArguments.kt:56:5: error: No value passed for parameter 'c'.
+/emptyArguments.kt:56:5: error: No value passed for parameter 'c' of type 'C'.
 
 /emptyArguments.kt:56:17: error: Syntax error: Expecting an argument.
 
@@ -156,9 +156,9 @@
 
 /emptyArguments.kt:62:19: error: Argument already passed for this parameter.
 
-/emptyArguments.kt:63:5: error: No value passed for parameter 'b'.
+/emptyArguments.kt:63:5: error: No value passed for parameter 'b' of type 'B'.
 
-/emptyArguments.kt:63:5: error: No value passed for parameter 'c'.
+/emptyArguments.kt:63:5: error: No value passed for parameter 'c' of type 'C'.
 
 /emptyArguments.kt:63:17: error: Syntax error: Expecting an argument.
 
@@ -168,7 +168,7 @@
 
 /emptyArguments.kt:63:31: error: Mixing named and positional arguments is not allowed unless the order of the arguments matches the order of the parameters.
 
-/emptyArguments.kt:64:5: error: No value passed for parameter 'c'.
+/emptyArguments.kt:64:5: error: No value passed for parameter 'c' of type 'C'.
 
 /emptyArguments.kt:64:17: error: Syntax error: Expecting an argument.
 

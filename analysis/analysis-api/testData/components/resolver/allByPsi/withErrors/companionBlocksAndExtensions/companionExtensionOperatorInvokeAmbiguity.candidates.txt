@@ -311,7 +311,7 @@ KtCallExpression(285,288): 'C()'
         callableId = test/invoke
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'withParam'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'withParam' of type 'Int'.>
     isInBestCandidates = false
 
   KaApplicableCallCandidate:
@@ -371,7 +371,7 @@ KtCallExpression(285,288): 'C()'
         callableId = null
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 's'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 's' of type 'String'.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(285,286): 'C'
@@ -441,7 +441,7 @@ KtNameReferenceExpression(285,286): 'C'
         callableId = test/invoke
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'withParam'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'withParam' of type 'Int'.>
     isInBestCandidates = false
 
   KaApplicableCallCandidate:
@@ -501,7 +501,7 @@ KtNameReferenceExpression(285,286): 'C'
         callableId = null
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 's'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 's' of type 'String'.>
     isInBestCandidates = false
 
 KtValueArgumentList(286,288): '()'
@@ -574,7 +574,7 @@ KtDotQualifiedExpression(293,303): 'C.invoke()'
         callableId = test/invoke
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'withParam'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'withParam' of type 'Int'.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(293,294): 'C'
@@ -707,7 +707,7 @@ KtCallExpression(295,303): 'invoke()'
         callableId = test/invoke
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'withParam'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'withParam' of type 'Int'.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(295,301): 'invoke'
@@ -777,7 +777,7 @@ KtNameReferenceExpression(295,301): 'invoke'
         callableId = test/invoke
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'withParam'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'withParam' of type 'Int'.>
     isInBestCandidates = false
 
 KtValueArgumentList(301,303): '()'

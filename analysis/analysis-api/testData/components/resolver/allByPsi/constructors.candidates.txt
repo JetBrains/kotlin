@@ -851,7 +851,7 @@ KtConstructorDelegationCall(339,345): 'this()'
         callableId = null
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 's'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 's' of type 'String'.>
     isInBestCandidates = false
 
 KtConstructorDelegationReferenceExpression(339,343): 'this'
@@ -897,7 +897,7 @@ KtConstructorDelegationReferenceExpression(339,343): 'this'
         callableId = null
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 's'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 's' of type 'String'.>
     isInBestCandidates = false
 
 KtValueArgumentList(343,345): '()'

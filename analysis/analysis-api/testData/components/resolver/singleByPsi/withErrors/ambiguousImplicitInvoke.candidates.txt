@@ -25,7 +25,7 @@ KtCallExpression(134,137): 'x()'
         callableId = null
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'a'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'a' of type 'String'.>
     isInBestCandidates = true
 
   KaInapplicableCallCandidate:
@@ -54,7 +54,7 @@ KtCallExpression(134,137): 'x()'
         callableId = null
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'b'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'b' of type 'Boolean'.>
     isInBestCandidates = true
 
   KaInapplicableCallCandidate:
@@ -80,5 +80,5 @@ KtCallExpression(134,137): 'x()'
         callableId = /x
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'c'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'c' of type 'Char'.>
     isInBestCandidates = true
