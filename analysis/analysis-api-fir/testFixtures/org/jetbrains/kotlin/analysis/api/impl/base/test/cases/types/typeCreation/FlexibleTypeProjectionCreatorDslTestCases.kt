@@ -125,4 +125,14 @@ class FlexibleTypeProjectionCreatorDslTestCases(session: KaSession, caretToType:
             lowerBound = type
         }
     }
+
+    fun testWithAttributeAnnotations(): KaType? {
+        val lowerBound = getTypeByCaret("lower")
+        val upperBound = getTypeByCaret("upper")
+        return session.typeCreator.flexibleType {
+            this.lowerBound = lowerBound
+            this.upperBound = upperBound
+            annotations(ATTRIBUTE_ANNOTATION_CLASS_IDS)
+        }
+    }
 }

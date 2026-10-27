@@ -41,4 +41,11 @@ class TypeParameterTypeCreatorDslTestCases(session: KaSession, caretToType: Map<
             annotation(annotationClassId3)
         }
     }
+
+    fun testWithAttributeAnnotations(): KaType {
+        val symbol = getTypeParameterSymbolByCaret("type")
+        return session.typeCreator.typeParameterType(symbol) {
+            annotations(ATTRIBUTE_ANNOTATION_CLASS_IDS)
+        }
+    }
 }

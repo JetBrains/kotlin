@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.services.TestServices
@@ -179,3 +180,22 @@ sealed class DslTypeCreationTestCases(protected val session: KaSession, private 
         return (caretToType[label] as? KaTypeParameterType)?.symbol ?: error("Type under `$label` is not a type parameter type")
     }
 }
+
+/**
+ * Annotations that the compiler maps to dedicated type attributes, together with redundant ones: a custom annotation `MyAnno`,
+ * a duplicate, an annotation requiring arguments, and `@ExtensionFunctionType`, which is only applicable to function types.
+ *
+ * `@Positive` is a type attribute annotation from the FIR test compiler plugin, so the test data should contain
+ * the `WITH_FIR_TEST_COMPILER_PLUGIN` directive and declare `MyAnno`.
+ */
+internal val ATTRIBUTE_ANNOTATION_CLASS_IDS: List<ClassId> = listOf(
+    "MyAnno",
+    "kotlin/ExtensionFunctionType",
+    "kotlin/UnsafeVariance",
+    "kotlin/UnsafeVariance",
+    "kotlin/internal/NoInfer",
+    "kotlin/internal/Exact",
+    "kotlin/jvm/internal/EnhancedNullability",
+    "kotlin/ParameterName",
+    "org/jetbrains/kotlin/plugin/sandbox/Positive",
+).map(ClassId::fromString)
