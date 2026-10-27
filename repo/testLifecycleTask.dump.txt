@@ -829,6 +829,7 @@ Not connected to any 'lifecycleTestTask':
   - :kotlin-gradle-plugin-integration-tests:kgpWasmWasiTests [Gradle]
   - :kotlin-gradle-plugin-integration-tests:test [Gradle]
   - :kotlin-native:prepare:kotlin-native-compiler-embeddable:test [Native]
+  - :kotlin-native:utilities:cli-runner:test [Native]
   - :kotlin-power-assert-runtime:jsBrowserTest [CompilerPlugins]
   - :kotlin-power-assert-runtime:jsNodeTest [CompilerPlugins]
   - :kotlin-power-assert-runtime:wasmJsNodeTest [CompilerPlugins]
