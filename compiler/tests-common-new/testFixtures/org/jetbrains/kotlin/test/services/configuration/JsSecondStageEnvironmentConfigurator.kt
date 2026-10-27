@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.CALL_MAIN
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.DELEGATE_JS_TRANSPILATION
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.DISABLE_ES6_ARROWS
+import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.ENABLE_UNUSED_PROPERTY_DCE
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.ES6_MODE
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.EXPORT_WITH_UNKNOWN_TYPE_INSTEAD_ANY
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.GENERATE_DTS_FROM_IR
@@ -29,7 +30,6 @@ import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.SOURCE_MAP_EMBED_SOURCES
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.TS_COMPILATION_STRATEGY
-import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.ENABLE_UNUSED_PROPERTY_DCE
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.DependencyRelation
 import org.jetbrains.kotlin.test.model.TestModule
@@ -139,6 +139,7 @@ open class JsSecondStageEnvironmentConfigurator(testServices: TestServices) : Js
             configuration.compileSuspendAsJsGenerator = true
             configuration.compileLambdasAsEs6ArrowFunctions = DISABLE_ES6_ARROWS !in module.directives
             configuration.compileLongAsBigint = true
+            configuration.useEs6DefaultArgs = true
         }
     }
 }

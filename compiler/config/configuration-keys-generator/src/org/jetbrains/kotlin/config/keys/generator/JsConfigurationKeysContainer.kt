@@ -116,4 +116,6 @@ object JsConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.js.con
     val EXPORT_UNTYPED_AS_UNKNOWN by key<Boolean>()
 
     val DCE_UNUSED_PROPERTIES by key<Boolean>("Enable DCE for unused properties")
+
+    val USE_ES6_DEFAULT_ARGS by key<Boolean>("Compile functions with default arguments using the ES6 default parameter syntax")
 }
