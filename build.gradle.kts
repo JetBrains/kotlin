@@ -448,6 +448,7 @@ tasks {
         dependsOn(":compiler:ir.serialization.native:test")
         dependsOn(":kotlin-atomicfu-compiler-plugin:nativeTest")
         dependsOn(":plugins:plugin-sandbox:nativeTest")
+        dependsOn(":plugins:compose-compiler-plugin:compiler-hosted:nativeTest")
         dependsOn(":libraries:tools:analysis-api-based-klib-reader:check")
         dependsOn(":native:native.tests:test")
         dependsOn(":native:native.tests:cli-tests:check")
