@@ -57,18 +57,22 @@ abstract class KotlinIrLinker(
     val fileEntryDeserializer = FileEntryDeserializer(irInterner)
 
     protected val fileLocalSymbolProvider = object : FileLocalSymbolProvider {
-        override fun referenceSimpleFunction(file: IrFile, signature: IdSignature.FileLocalSignature): IrSimpleFunctionSymbol {
-            return findModuleDeserializer(file).referenceSimpleFunctionByLocalSignature(file, signature)
-        }
+        override fun referenceSimpleFunction(file: IrFile, signature: IdSignature.FileLocalSignature): IrSimpleFunctionSymbol =
+            referenceCallable(file, signature, BinarySymbolData.SymbolKind.FUNCTION_SYMBOL) as IrSimpleFunctionSymbol
 
-        override fun referenceProperty(file: IrFile, signature: IdSignature.FileLocalSignature): IrPropertySymbol {
-            return findModuleDeserializer(file).referencePropertyByLocalSignature(file, signature)
-        }
+        override fun referenceProperty(file: IrFile, signature: IdSignature.FileLocalSignature): IrPropertySymbol =
+            referenceCallable(file, signature, BinarySymbolData.SymbolKind.PROPERTY_SYMBOL) as IrPropertySymbol
 
-        private fun findModuleDeserializer(irFile: IrFile): IrModuleDeserializer {
-            return firstModuleDeserializerOrNull(irFile.packageFqName) { moduleDeserializer ->
-                moduleDeserializer.fileDeserializers().any { it.file == irFile }
-            } ?: error("No module deserializer found for file: $irFile")
+        private fun referenceCallable(
+            file: IrFile,
+            signature: IdSignature.FileLocalSignature,
+            symbolKind: BinarySymbolData.SymbolKind,
+        ): IrSymbol {
+            val moduleDeserializer = firstNotNullOfModuleDeserializersOrNull(file.packageFqName) { moduleDeserializer ->
+                moduleDeserializer.fileDeserializers().firstOrNull { it.file == file }
+            } ?: error("No file deserializer found for file: $file")
+
+            return moduleDeserializer.symbolDeserializer.deserializeSymbolWithOwnerInCurrentFile(signature, symbolKind)
         }
     }
 
