@@ -96,6 +96,6 @@ private object KtDefaultJsKlibErrorMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(JsKlibErrors.JS_SOURCE_MAP_WARNING, "{0}")
         map.put(JsKlibErrors.JS_LONG_EXPORT_ERROR, "Long cannot be exported without using the bigint type. Add the ''-Xes-long-as-bigint'' compiler argument.")
-        map.put(JsKlibErrors.JS_SUSPEND_LAMBDA_EXPORT_ERROR, "Suspend lambdas cannot be exported without using generators. Add the ''-Xes-generator'' compiler argument.")
+        map.put(JsKlibErrors.JS_SUSPEND_LAMBDA_EXPORT_ERROR, "Suspend lambdas cannot be exported without using generators. Add the ''-Xes-generators'' compiler argument.")
     }
 }
