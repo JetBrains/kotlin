@@ -56,7 +56,9 @@ fun createInteropLibrary(
                 this += (manifest - KLIB_PROPERTY_DEPENDS) // Do not propagate the `depends=` property from *.def files, rely on `dependencies` instead.
             }
             legacyNativeShortNameInManifest(shortName)
-            legacyNativeDependenciesInManifest(dependencies.map { it.uniqueName })
+            if (klibAbiCompatibilityLevel < KlibAbiCompatibilityLevel.LATEST_STABLE) {
+                legacyNativeDependenciesInManifest(dependencies.map { it.uniqueName })
+            }
         }
         includeMetadata(serializedMetadata)
         includeBitcode(target, nativeBitcodeFiles)
