@@ -26,6 +26,15 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
+/**
+ * Tracks fields on the current thread's initializer-evaluation stack. Evaluation can re-enter
+ * through Kotlin `const val`s, but the fields and their resolution contexts are shared across FIR
+ * resolution threads. A shared marker could mistake another thread's in-progress evaluation for a
+ * cycle and return `null`; FIR may then cache that result in the field's `lazyInitializer`.
+ */
+// TODO KT-91443: Guard against concurrent evaluation through the AST and FIR lazy initializer.
+private val fieldsBeingEvaluated = ThreadLocal.withInitial { mutableSetOf<JavaFieldOverAst>() }
+
 abstract class JavaMemberOverAst(
     node: LightNode,
     tree: LightSyntaxTree,
@@ -276,13 +285,21 @@ class JavaFieldOverAst(
     /**
      * Evaluates the field's initializer using the local [ConstantEvaluator], which also resolves
      * qualified references to Kotlin `const val`s through the session-backed cross-language resolver.
+     * Returns `null` if evaluation re-enters this field on the current thread.
      */
     override val initializerValue: Any?
         get() {
             if (!hasConstantNotNullInitializer) return null
             val init = initializerNode ?: return null
-            val evaluator = ConstantEvaluator(containingClass)
-            return coerceConstantToFieldType(evaluator.evaluate(init))
+            val activeFields = fieldsBeingEvaluated.get()
+            if (!activeFields.add(this)) return null
+            return try {
+                val evaluator = ConstantEvaluator(containingClass)
+                coerceConstantToFieldType(evaluator.evaluate(init))
+            } finally {
+                activeFields.remove(this)
+                if (activeFields.isEmpty()) fieldsBeingEvaluated.remove()
+            }
         }
 
     /**
