@@ -59,7 +59,6 @@ org.jetbrains.kotlin.analysis.api.components.KaClassTypeBuilder.argument(KaType,
 org.jetbrains.kotlin.analysis.api.components.KaClassTypeBuilder.argument(KaTypeProjection)
 org.jetbrains.kotlin.analysis.api.components.KaClassTypeBuilder.arguments
 org.jetbrains.kotlin.analysis.api.components.KaClassTypeBuilder.isMarkedNullable
-org.jetbrains.kotlin.analysis.api.components.KaClassTypeBuilder.nullability
 org.jetbrains.kotlin.analysis.api.components.KaCodeCompilationException
 org.jetbrains.kotlin.analysis.api.components.KaCompilationOptions
 org.jetbrains.kotlin.analysis.api.components.KaCompilationOptionsBuilder
@@ -460,7 +459,6 @@ org.jetbrains.kotlin.analysis.api.components.KaTypeInformationProvider.isUShortT
 org.jetbrains.kotlin.analysis.api.components.KaTypeInformationProvider.isUnitType
 org.jetbrains.kotlin.analysis.api.components.KaTypeParameterTypeBuilder
 org.jetbrains.kotlin.analysis.api.components.KaTypeParameterTypeBuilder.isMarkedNullable
-org.jetbrains.kotlin.analysis.api.components.KaTypeParameterTypeBuilder.nullability
 org.jetbrains.kotlin.analysis.api.components.KaTypeProvider
 org.jetbrains.kotlin.analysis.api.components.KaTypeProvider.allSupertypes
 org.jetbrains.kotlin.analysis.api.components.KaTypeProvider.allSupertypes(Boolean)
@@ -488,7 +486,6 @@ org.jetbrains.kotlin.analysis.api.components.KaTypeProvider.type
 org.jetbrains.kotlin.analysis.api.components.KaTypeProvider.upperBoundIfFlexible()
 org.jetbrains.kotlin.analysis.api.components.KaTypeProvider.varargArrayType
 org.jetbrains.kotlin.analysis.api.components.KaTypeProvider.withNullability(Boolean)
-org.jetbrains.kotlin.analysis.api.components.KaTypeProvider.withNullability(KaTypeNullability)
 org.jetbrains.kotlin.analysis.api.components.KaTypeRelationChecker
 org.jetbrains.kotlin.analysis.api.components.KaTypeRelationChecker.isSubtypeOf(ClassId, KaSubtypingErrorTypePolicy)
 org.jetbrains.kotlin.analysis.api.components.KaTypeRelationChecker.isSubtypeOf(KaClassLikeSymbol, KaSubtypingErrorTypePolicy)

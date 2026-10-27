@@ -62,24 +62,6 @@ abstract class KaBaseTypeCreator<T : KaSession> : KaBaseSessionComponent<T>(), K
 sealed class KaBaseClassTypeBuilder : KaClassTypeBuilder {
     private val backingArguments = mutableListOf<KaTypeProjection>()
 
-    @Deprecated(
-        "Use `isMarkedNullable` instead.",
-        replaceWith = ReplaceWith("isMarkedNullable"),
-        level = DeprecationLevel.ERROR
-    )
-    @Suppress("DEPRECATION_ERROR")
-    override var nullability: KaTypeNullability =
-        KaTypeNullability.NON_NULLABLE
-        get() = withValidityAssertion { field }
-        set(value) {
-            withValidityAssertion {
-                field = value
-                if (isMarkedNullable != value.isNullable) {
-                    isMarkedNullable = value.isNullable
-                }
-            }
-        }
-
     override var isMarkedNullable: Boolean = false
         get() = withValidityAssertion { field }
         set(value) {
@@ -147,23 +129,6 @@ internal sealed class KaBaseArrayTypeBuilder : KaArrayTypeBuilder {
 
 @KaImplementationDetail
 sealed class KaBaseTypeParameterTypeBuilder : KaTypeParameterTypeBuilder {
-    @Deprecated(
-        "Use `isMarkedNullable` instead.",
-        replaceWith = ReplaceWith("isMarkedNullable"),
-        level = DeprecationLevel.ERROR
-    )
-    @Suppress("DEPRECATION_ERROR")
-    override var nullability: KaTypeNullability = KaTypeNullability.NULLABLE
-        get() = withValidityAssertion { field }
-        set(value) {
-            withValidityAssertion {
-                field = value
-                if (isMarkedNullable != value.isNullable) {
-                    isMarkedNullable = value.isNullable
-                }
-            }
-        }
-
     override var isMarkedNullable: Boolean = false
         get() = withValidityAssertion { field }
         set(value) {

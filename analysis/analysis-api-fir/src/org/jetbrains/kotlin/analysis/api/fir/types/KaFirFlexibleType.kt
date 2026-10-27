@@ -14,8 +14,6 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.fir.types.ConeFlexibleType
-import org.jetbrains.kotlin.fir.types.hasFlexibleMarkedNullability
-import org.jetbrains.kotlin.fir.types.isMarkedNullable
 import org.jetbrains.kotlin.fir.types.renderForDebugging
 
 internal class KaFirFlexibleType(
@@ -29,21 +27,6 @@ internal class KaFirFlexibleType(
     override val annotations: KaAnnotationList
         get() = withValidityAssertion {
             KaFirAnnotationListForType.create(coneType, builder)
-        }
-
-    @Deprecated(
-        "Use `isMarkedNullable`, `isNullable` or `hasFlexibleNullability` instead. See KDocs for the migration guide",
-        replaceWith = ReplaceWith("this.isMarkedNullable"),
-        level = DeprecationLevel.HIDDEN,
-    )
-    @Suppress("DEPRECATION_ERROR")
-    override val nullability: KaTypeNullability
-        get() = withValidityAssertion {
-            if (coneType.hasFlexibleMarkedNullability) {
-                KaTypeNullability.UNKNOWN
-            } else {
-                if (coneType.lowerBound.isMarkedNullable) KaTypeNullability.NULLABLE else KaTypeNullability.NON_NULLABLE
-            }
         }
 
     override val abbreviation: KaUsualClassType?
