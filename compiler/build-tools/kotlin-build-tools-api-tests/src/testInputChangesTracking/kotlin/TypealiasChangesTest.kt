@@ -57,13 +57,7 @@ class TypealiasChangesTest : BaseCompilationTest() {
 
             mod.compile {
                 when (this@scenario) {
-                    is JvmScenarioDsl -> {
-                        // TODO(KT-89857): the error recovery round runs once and follows a single hop of typealias lookups:
-                        //  it pulls in `serviceAlias.kt` (looks up `ErrorSink`), but not `Service.kt` (looks up `ServiceSink`
-                        //  only), so the retry fails with the same stale-expansion error. Red until the recovery is iterated
-                        //  or computes the transitive closure of typealias users.
-                        assertCompiledSources("Service.kt", "serviceAlias.kt", "alias.kt", "ServiceUsage.kt")
-                    }
+                    is JvmScenarioDsl -> assertCompiledSources("Service.kt", "serviceAlias.kt", "alias.kt", "ServiceUsage.kt")
                     is JsScenarioDsl, is WasmScenarioDsl -> {
                         // TODO(KT-89851): the klib IC cache does not track typealiases, so `Service.kt` does not get into
                         //  the dirty set, and `ServiceUsage.kt` is checked against the stale expansion.

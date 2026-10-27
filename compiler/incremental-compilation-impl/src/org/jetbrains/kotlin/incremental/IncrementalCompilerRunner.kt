@@ -742,12 +742,22 @@ abstract class IncrementalCompilerRunner<
         caches: CacheManager,
         compiledSources: List<File>,
         dirtySources: Set<File>,
-    ): Set<File> =
-        caches.platformCache.typealiasesFqNamesBySources(compiledSources)
-            .flatMap { caches.lookupCache.get(LookupSymbol(it.shortName().asString(), it.parent().asString())) }
-            .map(::File)
-            .filterNot { it in dirtySources }
-            .toSet()
+    ): Set<File> {
+        val sourcesToRetry = mutableSetOf<File>()
+
+        var sourcesToVisit = compiledSources.toSet()
+        while (sourcesToVisit.isNotEmpty()) {
+            sourcesToVisit = caches.platformCache.typealiasesFqNamesBySources(sourcesToVisit)
+                .flatMap { caches.lookupCache.get(LookupSymbol(it.shortName().asString(), it.parent().asString())) }
+                .map(::File)
+                .filterNot { it in dirtySources || it in sourcesToRetry }
+                .toSet()
+
+            sourcesToRetry.addAll(sourcesToVisit)
+        }
+
+        return sourcesToRetry
+    }
 
     protected open fun generateCompilerRefIndexIfNeeded(
         services: Services,
