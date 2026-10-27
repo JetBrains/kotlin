@@ -7,7 +7,7 @@ fun <T, U> foo(x: Foo<T & Any, U>) {}
 
 class Bar<A, B> {
     fun bar(x: Foo<A, B>) {
-        <!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE!>foo<!>(<!ARGUMENT_TYPE_MISMATCH("Foo<A (of class Bar<A, B>), B (of class Bar<A, B>)>; Foo<uninferred T (of fun <T, U> foo) & Any, uninferred U (of fun <T, U> foo)>")!>x<!>)
+        <!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE!>foo<!>(<!ARGUMENT_TYPE_MISMATCH("Foo<A (of class Bar<A, B>), B (of class Bar<A, B>)>; Foo<uninferred T (of fun <T, U> foo) & Any, uninferred U (of fun <T, U> foo)>;  value parameter 'x' of;  'x'")!>x<!>)
     }
 }
 

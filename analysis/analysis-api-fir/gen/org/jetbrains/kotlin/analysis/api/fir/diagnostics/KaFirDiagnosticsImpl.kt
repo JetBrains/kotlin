@@ -2457,6 +2457,8 @@ internal class ArgumentTypeMismatchImpl(
     override val actualType: KaType,
     override val expectedType: KaType,
     override val isMismatchDueToNullability: Boolean,
+    override val declaration: KaSymbol?,
+    override val argument: KtExpression,
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ArgumentTypeMismatch

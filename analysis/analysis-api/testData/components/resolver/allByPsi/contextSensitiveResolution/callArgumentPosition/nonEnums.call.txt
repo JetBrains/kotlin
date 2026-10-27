@@ -668,7 +668,7 @@ KtCallExpression(398,430): 'expectMyClass(FOR_TYPE_MISMATCH)'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'FOR_TYPE_MISMATCH' of type 'String' does not conform to type 'MyClass'.>
 
 KtNameReferenceExpression(398,411): 'expectMyClass'
   KaSimpleCallResolutionError:
@@ -704,7 +704,7 @@ KtNameReferenceExpression(398,411): 'expectMyClass'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'FOR_TYPE_MISMATCH' of type 'String' does not conform to type 'MyClass'.>
 
 KtValueArgumentList(411,430): '(FOR_TYPE_MISMATCH)'
   null
@@ -766,7 +766,7 @@ KtCallExpression(435,471): 'expectMyClass(id(FOR_TYPE_MISMATCH))'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'FOR_TYPE_MISMATCH' of type 'String' does not conform to type 'MyClass'.>
 
 KtNameReferenceExpression(435,448): 'expectMyClass'
   KaSimpleCallResolutionError:
@@ -802,7 +802,7 @@ KtNameReferenceExpression(435,448): 'expectMyClass'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'FOR_TYPE_MISMATCH' of type 'String' does not conform to type 'MyClass'.>
 
 KtValueArgumentList(448,471): '(id(FOR_TYPE_MISMATCH))'
   null
@@ -1166,7 +1166,7 @@ KtCallExpression(528,558): 'expectMyClass(ForTypeMismatch)'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass.ForTypeMismatch', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'ForTypeMismatch' of type 'MyClass.ForTypeMismatch' does not conform to type 'MyClass'.>
 
 KtNameReferenceExpression(528,541): 'expectMyClass'
   KaSimpleCallResolutionError:
@@ -1202,7 +1202,7 @@ KtNameReferenceExpression(528,541): 'expectMyClass'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass.ForTypeMismatch', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'ForTypeMismatch' of type 'MyClass.ForTypeMismatch' does not conform to type 'MyClass'.>
 
 KtValueArgumentList(541,558): '(ForTypeMismatch)'
   null
@@ -1247,7 +1247,7 @@ KtCallExpression(563,597): 'expectMyClass(id(ForTypeMismatch))'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass.ForTypeMismatch', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'ForTypeMismatch' of type 'MyClass.ForTypeMismatch' does not conform to type 'MyClass'.>
 
 KtNameReferenceExpression(563,576): 'expectMyClass'
   KaSimpleCallResolutionError:
@@ -1283,7 +1283,7 @@ KtNameReferenceExpression(563,576): 'expectMyClass'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass.ForTypeMismatch', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'ForTypeMismatch' of type 'MyClass.ForTypeMismatch' does not conform to type 'MyClass'.>
 
 KtValueArgumentList(576,597): '(id(ForTypeMismatch))'
   null

@@ -585,7 +585,7 @@ KtCallExpression(794,1278): 'receive<MyClass>('
     candidateSymbols = [
       /receive(e: T): kotlin.Unit
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass.NestedInheritor' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'stringProp' of type 'String' does not conform to type 'MyClass.NestedInheritor'.>
 
 KtNameReferenceExpression(794,801): 'receive'
   isImplicitReferenceToCompanion: false
@@ -595,7 +595,7 @@ KtNameReferenceExpression(794,801): 'receive'
     candidateSymbols = [
       /receive(e: T): kotlin.Unit
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass.NestedInheritor' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'stringProp' of type 'String' does not conform to type 'MyClass.NestedInheritor'.>
 
 KtTypeArgumentList(801,810): '<MyClass>'
   null

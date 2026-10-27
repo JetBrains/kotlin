@@ -1325,7 +1325,7 @@ KtCallExpression(1047,1070): 'anonymousConsumer(prop)'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'prop' of type 'String' does not conform to type 'MyClass'.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(1047,1064): 'anonymousConsumer'
@@ -1408,7 +1408,7 @@ KtCallExpression(1075,1103): 'anonymousConsumer(constProp)'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'constProp' of type 'String' does not conform to type 'MyClass'.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(1075,1092): 'anonymousConsumer'
@@ -1491,7 +1491,7 @@ KtCallExpression(1108,1135): 'anonymousConsumer(lazyProp)'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'lazyProp' of type 'String' does not conform to type 'MyClass'.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(1108,1125): 'anonymousConsumer'
@@ -1574,7 +1574,7 @@ KtCallExpression(1140,1169): 'anonymousConsumer(lambdaProp)'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '() -> MyClass.InheritorObject', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'lambdaProp' of type '() -> MyClass.InheritorObject' does not conform to type 'MyClass'.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(1140,1157): 'anonymousConsumer'
@@ -1657,7 +1657,7 @@ KtCallExpression(1174,1202): 'anonymousConsumer(superProp)'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'superProp' of type 'String' does not conform to type 'MyClass'.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(1174,1191): 'anonymousConsumer'
@@ -1880,7 +1880,7 @@ KtCallExpression(1273,1302): 'anonymousConsumer(lambdaProp)'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '() -> MyClass.InheritorObject', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'lambdaProp' of type '() -> MyClass.InheritorObject' does not conform to type 'MyClass'.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(1273,1290): 'anonymousConsumer'

@@ -1,1 +1,1 @@
-/emptyLambdaTypeMismatchDiagnostic.kt:4:9: error: Argument type mismatch: actual type is '(Int) -> Unit', but '(Int) -> String' was expected.
+/emptyLambdaTypeMismatchDiagnostic.kt:4:9: error: Expression '{}' of type '(Int) -> Unit' does not conform to type '(Int) -> String'.

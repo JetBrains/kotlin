@@ -467,14 +467,14 @@ R|<local>/fragments|.flatMapTo#(R?C|java/util/TreeSet.TreeSet|(Q|Wrapper|.R?C|/W
 ##### Continue Call Completion:
 
 1. New `TypeVariable(_R)` for lambda return type
-2. `(MergeFragment) -> TypeVariable(_R) <: (MergeFragment) -> kotlin/collections/Iterable<TypeVariable(R)>` _from Argument flatMapTo <implicit>.<anonymous>(f: <implicit>): <implicit> <inline=Unknown>  {↩    f#.tailsAndBody#↩}↩_
+2. `(MergeFragment) -> TypeVariable(_R) <: (MergeFragment) -> kotlin/collections/Iterable<TypeVariable(R)>` _from Argument <L> = flatMapTo <implicit>.<anonymous>(f: <implicit>): <implicit> <inline=Unknown>  {↩    f#.tailsAndBody#↩}↩_
     1. `TypeVariable(_R) <: kotlin/collections/Iterable<TypeVariable(R)>`
 
 #### Candidate 2: `FirNamedFunctionSymbol kotlin/collections/flatMapTo` --- `@SinceKotlin(...) @OverloadResolutionByLambdaReturnType() @JvmName(...) @IgnorableReturnValue() fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapTo(destination: C, transform: (T) -> Sequence<R>): C`
 ##### Continue Call Completion:
 
 1. New `TypeVariable(_R)` for lambda return type
-2. `(MergeFragment) -> TypeVariable(_R) <: (MergeFragment) -> kotlin/sequences/Sequence<TypeVariable(R)>` _from Argument flatMapTo <implicit>.<anonymous>(f: <implicit>): <implicit> <inline=Unknown>  {↩    f#.tailsAndBody#↩}↩_
+2. `(MergeFragment) -> TypeVariable(_R) <: (MergeFragment) -> kotlin/sequences/Sequence<TypeVariable(R)>` _from Argument <L> = flatMapTo <implicit>.<anonymous>(f: <implicit>): <implicit> <inline=Unknown>  {↩    f#.tailsAndBody#↩}↩_
     1. `TypeVariable(_R) <: kotlin/sequences/Sequence<TypeVariable(R)>`
 
 #### Candidate 1: `FirNamedFunctionSymbol kotlin/collections/flatMapTo` --- `@IgnorableReturnValue() fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapTo(destination: C, transform: (T) -> Iterable<R>): C`

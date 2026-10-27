@@ -388,7 +388,7 @@ KtCallExpression(350,356): 'foo(X)'
     candidateSymbols = [
       /foo(a: MyEnum): kotlin.Unit
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyEnum' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'X' of type 'String' does not conform to value parameter 'a' of type 'MyEnum'.>
 
 KtNameReferenceExpression(350,353): 'foo'
   isImplicitReferenceToCompanion: false
@@ -398,7 +398,7 @@ KtNameReferenceExpression(350,353): 'foo'
     candidateSymbols = [
       /foo(a: MyEnum): kotlin.Unit
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyEnum' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'X' of type 'String' does not conform to value parameter 'a' of type 'MyEnum'.>
 
 KtValueArgumentList(353,356): '(X)'
   null

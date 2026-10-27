@@ -1183,7 +1183,7 @@ KtCallExpression(1039,1070): 'receiveLambda<MyClass> { prop }'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'prop' of type 'String' does not conform to type 'MyClass'.>
 
 KtNameReferenceExpression(1039,1052): 'receiveLambda'
   KaSimpleCallResolutionError:
@@ -1221,7 +1221,7 @@ KtNameReferenceExpression(1039,1052): 'receiveLambda'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'prop' of type 'String' does not conform to type 'MyClass'.>
 
 KtTypeArgumentList(1052,1061): '<MyClass>'
   null
@@ -1306,7 +1306,7 @@ KtCallExpression(1075,1111): 'receiveLambda<MyClass> { superProp }'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'superProp' of type 'String' does not conform to type 'MyClass'.>
 
 KtNameReferenceExpression(1075,1088): 'receiveLambda'
   KaSimpleCallResolutionError:
@@ -1344,7 +1344,7 @@ KtNameReferenceExpression(1075,1088): 'receiveLambda'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'superProp' of type 'String' does not conform to type 'MyClass'.>
 
 KtTypeArgumentList(1088,1097): '<MyClass>'
   null
@@ -1429,7 +1429,7 @@ KtCallExpression(1116,1152): 'receiveLambda<MyClass> { constProp }'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'constProp' of type 'String' does not conform to type 'MyClass'.>
 
 KtNameReferenceExpression(1116,1129): 'receiveLambda'
   KaSimpleCallResolutionError:
@@ -1467,7 +1467,7 @@ KtNameReferenceExpression(1116,1129): 'receiveLambda'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'constProp' of type 'String' does not conform to type 'MyClass'.>
 
 KtTypeArgumentList(1129,1138): '<MyClass>'
   null
@@ -1552,7 +1552,7 @@ KtCallExpression(1157,1194): 'receiveLambda<MyClass> { lambdaProp }'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '() -> MyClass.InheritorObject', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'lambdaProp' of type '() -> MyClass.InheritorObject' does not conform to type 'MyClass'.>
 
 KtNameReferenceExpression(1157,1170): 'receiveLambda'
   KaSimpleCallResolutionError:
@@ -1590,7 +1590,7 @@ KtNameReferenceExpression(1157,1170): 'receiveLambda'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '() -> MyClass.InheritorObject', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'lambdaProp' of type '() -> MyClass.InheritorObject' does not conform to type 'MyClass'.>
 
 KtTypeArgumentList(1170,1179): '<MyClass>'
   null
@@ -1675,7 +1675,7 @@ KtCallExpression(1199,1234): 'receiveLambda<MyClass> { lazyProp }'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'lazyProp' of type 'String' does not conform to type 'MyClass'.>
 
 KtNameReferenceExpression(1199,1212): 'receiveLambda'
   KaSimpleCallResolutionError:
@@ -1713,7 +1713,7 @@ KtNameReferenceExpression(1199,1212): 'receiveLambda'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'lazyProp' of type 'String' does not conform to type 'MyClass'.>
 
 KtTypeArgumentList(1212,1221): '<MyClass>'
   null
@@ -1798,7 +1798,7 @@ KtCallExpression(1239,1277): 'receiveLambda<MyClass> { NestedObject}'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass.NestedObject', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'NestedObject' of type 'MyClass.NestedObject' does not conform to type 'MyClass'.>
 
 KtNameReferenceExpression(1239,1252): 'receiveLambda'
   KaSimpleCallResolutionError:
@@ -1836,7 +1836,7 @@ KtNameReferenceExpression(1239,1252): 'receiveLambda'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass.NestedObject', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'NestedObject' of type 'MyClass.NestedObject' does not conform to type 'MyClass'.>
 
 KtTypeArgumentList(1252,1261): '<MyClass>'
   null

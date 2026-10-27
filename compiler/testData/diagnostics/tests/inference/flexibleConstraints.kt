@@ -20,11 +20,11 @@ fun test() {
     // String? <: C! => String? <: C
     JavaClass.consume(s)
     // String? <: T! => String? <: T, T! <: String => T <: String!
-    eatString(<!ARGUMENT_TYPE_MISMATCH("String?; String")!>JavaClass.transform(s)<!>)
+    eatString(<!ARGUMENT_TYPE_MISMATCH("String?; String;  value parameter 's' of;  'JavaClass.transform(s)'")!>JavaClass.transform(s)<!>)
     // String? <: T! => String? <: T
     // We expect typeof(res) = String?, with String! res.toString() resolve will be changed (KT-81988)
     val res = JavaClass.transform(s)
-    eatString(<!ARGUMENT_TYPE_MISMATCH("String?; String")!>res<!>)
+    eatString(<!ARGUMENT_TYPE_MISMATCH("String?; String;  value parameter 's' of;  'res'")!>res<!>)
 }
 
 fun eatString(s: String) {}

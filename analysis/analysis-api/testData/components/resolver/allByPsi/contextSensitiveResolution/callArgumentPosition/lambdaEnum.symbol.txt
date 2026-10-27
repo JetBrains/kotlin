@@ -396,7 +396,7 @@ KtCallExpression(469,499): 'receiveLambda<MyEnum> { prop }'
     candidateSymbols = [
       /receiveLambda(l: () -> T): kotlin.Unit
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyEnum' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'prop' of type 'String' does not conform to type 'MyEnum'.>
 
 KtNameReferenceExpression(469,482): 'receiveLambda'
   isImplicitReferenceToCompanion: false
@@ -406,7 +406,7 @@ KtNameReferenceExpression(469,482): 'receiveLambda'
     candidateSymbols = [
       /receiveLambda(l: () -> T): kotlin.Unit
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyEnum' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'prop' of type 'String' does not conform to type 'MyEnum'.>
 
 KtTypeArgumentList(482,490): '<MyEnum>'
   null

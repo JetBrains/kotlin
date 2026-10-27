@@ -316,7 +316,7 @@ KtSuperTypeCallEntry(372,384): 'Exception(m)'
         callableId = null
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Throwable!' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'm' of type 'String' does not conform to value parameter 'cause' of type 'Throwable!'.>
     isInBestCandidates = false
 
   KaApplicableCallCandidate:
@@ -495,7 +495,7 @@ KtConstructorCalleeExpression(372,381): 'Exception'
         callableId = null
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Throwable!' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'm' of type 'String' does not conform to value parameter 'cause' of type 'Throwable!'.>
     isInBestCandidates = false
 
   KaApplicableCallCandidate:
@@ -680,7 +680,7 @@ KtNameReferenceExpression(372,381): 'Exception'
         callableId = null
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Throwable!' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'm' of type 'String' does not conform to value parameter 'cause' of type 'Throwable!'.>
     isInBestCandidates = false
 
   KaApplicableCallCandidate:
@@ -907,7 +907,7 @@ KtSuperTypeCallEntry(406,418): 'Exception(m)'
         callableId = null
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Throwable!' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'm' of type 'String' does not conform to value parameter 'cause' of type 'Throwable!'.>
     isInBestCandidates = false
 
   KaApplicableCallCandidate:
@@ -1086,7 +1086,7 @@ KtConstructorCalleeExpression(406,415): 'Exception'
         callableId = null
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Throwable!' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'm' of type 'String' does not conform to value parameter 'cause' of type 'Throwable!'.>
     isInBestCandidates = false
 
   KaApplicableCallCandidate:
@@ -1271,7 +1271,7 @@ KtNameReferenceExpression(406,415): 'Exception'
         callableId = null
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Throwable!' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'm' of type 'String' does not conform to value parameter 'cause' of type 'Throwable!'.>
     isInBestCandidates = false
 
   KaApplicableCallCandidate:
@@ -1498,7 +1498,7 @@ KtSuperTypeCallEntry(440,452): 'Exception(m)'
         callableId = null
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Throwable!' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'm' of type 'String' does not conform to value parameter 'cause' of type 'Throwable!'.>
     isInBestCandidates = false
 
   KaApplicableCallCandidate:
@@ -1677,7 +1677,7 @@ KtConstructorCalleeExpression(440,449): 'Exception'
         callableId = null
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Throwable!' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'm' of type 'String' does not conform to value parameter 'cause' of type 'Throwable!'.>
     isInBestCandidates = false
 
   KaApplicableCallCandidate:
@@ -1862,7 +1862,7 @@ KtNameReferenceExpression(440,449): 'Exception'
         callableId = null
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Throwable!' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'm' of type 'String' does not conform to value parameter 'cause' of type 'Throwable!'.>
     isInBestCandidates = false
 
   KaApplicableCallCandidate:
