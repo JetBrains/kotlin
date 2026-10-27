@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.testFederation.HostDependent
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -44,9 +45,20 @@ class UsedLibrariesComputationTest : AbstractNativeSimpleTest() {
             }
         }
 
+        // By default (LATEST_STABLE), depends= is not emitted in manifest
         newSourceModules {
             addRegularModule("test")
         }.compileToKlibsViaCli { _, successKlib ->
+            val manifestProperties = successKlib.resultingArtifact.klibFile.resolve("default").resolve("manifest").toPath().readProperties()
+            assertNull(manifestProperties.getProperty(KLIB_PROPERTY_DEPENDS))
+        }
+
+        // When exporting to an older ABI version (< LATEST_STABLE), depends= is emitted in manifest for backward compatibility
+        val olderAbiArgs = listOf("-Xklib-abi-compatibility-level", "2.4")
+
+        newSourceModules {
+            addRegularModule("test")
+        }.compileToKlibsViaCli(extraCliArgs = olderAbiArgs) { _, successKlib ->
             successKlib.assertDependencyNames(
                 /* implicit unavoidable dependency */ "stdlib",
             )
@@ -54,7 +66,7 @@ class UsedLibrariesComputationTest : AbstractNativeSimpleTest() {
 
         newSourceModules {
             addRegularModule("test")
-        }.compileToKlibsViaCli(extraCliArgs = listOf("-l", additionalUnusedModulePath)) { _, successKlib ->
+        }.compileToKlibsViaCli(extraCliArgs = olderAbiArgs + listOf("-l", additionalUnusedModulePath)) { _, successKlib ->
             successKlib.assertDependencyNames(
                 /* implicit unavoidable dependency */ "stdlib",
                 /* because it was passed explicitly via CLI, even if "test" doesn't use any API from "additional" */ "additional",
@@ -65,7 +77,7 @@ class UsedLibrariesComputationTest : AbstractNativeSimpleTest() {
             addRegularModule("test") {
                 sourceFileAddend("fun callAdditional() = additional.additional(-1)")
             }
-        }.compileToKlibsViaCli(extraCliArgs = listOf("-l", additionalUnusedModulePath)) { _, successKlib ->
+        }.compileToKlibsViaCli(extraCliArgs = olderAbiArgs + listOf("-l", additionalUnusedModulePath)) { _, successKlib ->
             successKlib.assertDependencyNames(
                 /* implicit unavoidable dependency */ "stdlib",
                 /* because it was passed explicitly via CLI and "test" uses some API from "additional" */ "additional",
@@ -76,14 +88,13 @@ class UsedLibrariesComputationTest : AbstractNativeSimpleTest() {
             addRegularModule("test") {
                 sourceFileAddend("@kotlinx.cinterop.ExperimentalForeignApi fun callPosix() = platform.posix.fopen(\"test.txt\", \"r\")")
             }
-        }.compileToKlibsViaCli { _, successKlib ->
+        }.compileToKlibsViaCli(extraCliArgs = olderAbiArgs) { _, successKlib ->
             successKlib.assertDependencyNames(
                 /* implicit unavoidable dependency */ "stdlib",
                 /* because "test" uses some API from posix */ "org.jetbrains.kotlin.native.platform.posix",
             )
         }
     }
-
     @Test
     fun `Used libraries are computed correctly (low-level)`() {
         val usedPackages = setOf(
