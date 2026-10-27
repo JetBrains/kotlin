@@ -26,6 +26,7 @@ import com.microsoft.playwright.BrowserContext
 import com.microsoft.playwright.BrowserType
 import com.microsoft.playwright.Page
 import com.microsoft.playwright.Playwright
+import com.microsoft.playwright.PlaywrightException
 import com.microsoft.playwright.impl.Connection
 import com.microsoft.playwright.impl.driver.Driver
 import org.gradle.api.internal.tasks.testing.TestExecuter
@@ -138,6 +139,10 @@ internal class PlaywrightTestExecutor() : TestExecuter<PwExecutionSpec> {
                                 } catch (t: Throwable) {
                                     val tsEnd = System.currentTimeMillis()
                                     closeSuiteWithFailingTestCause(suiteNode = this, tsEnd, failingTestCause = t)
+                                    if (t is PlaywrightException && t.cause is InterruptedException) {
+                                        log.warn("Execution of Kotlin/JS browser tests was interrupted for runner '${runner.name}'.")
+                                    }
+                                    throw t
                                 }
                             }
                         }

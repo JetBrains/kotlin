@@ -489,4 +489,96 @@ class JsBrowserTestsIT : KGPBaseTest() {
             }
         }
     }
+
+    @GradleTest
+    fun `js browser test execution interruption is logged`(gradleVersion: GradleVersion) {
+        project(
+            "empty",
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
+        ) {
+            plugins {
+                kotlin("multiplatform")
+            }
+
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    js {
+                        browser {
+                            @OptIn(ExperimentalJsTestDsl::class)
+                            with(test) {
+                                chromium()
+                                firefox()
+                            }
+                        }
+                    }
+
+                    sourceSets.commonTest {
+                        dependencies {
+                            implementation(kotlin("test"))
+                            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.11.0")
+                        }
+                    }
+
+                    sourceSets.commonTest.get().compileSource(
+                        """
+                        import kotlinx.coroutines.Dispatchers
+                        import kotlinx.coroutines.delay
+                        import kotlinx.coroutines.test.runTest
+                        import kotlinx.coroutines.withContext
+                        import kotlin.test.*
+                        import kotlin.time.Duration.Companion.seconds
+                        
+                        class JsBrowserInterruptionTest {
+                            @Test fun t1() { println("Test T1") }
+                            
+                            @Test
+                            fun t2() = runTest {
+                                withContext(Dispatchers.Default) {
+                                    delay(10.seconds)
+                                }
+                                println("Test T2")
+                            }
+
+                            @Test fun t3() { println("Test T3") }
+                        }
+                        """.trimIndent()
+                    )
+                }
+
+                project.tasks.withType(KotlinJsTest::class.java).configureEach { task ->
+                    task.doFirst {
+                        val testExecutionThread = Thread.currentThread()
+                        Thread {
+                            Thread.sleep(3000)
+                            testExecutionThread.interrupt()
+                        }.apply {
+                            isDaemon = true
+                            start()
+                        }
+                    }
+                }
+            }
+
+            buildAndFail("jsBrowserTest") {
+                assumeFalse(
+                    output.contains("error while loading shared libraries: libglib-2.0"),
+                    "No libglib-2.0 on the test runner machine"
+                )
+                assertTasksFailed(":jsBrowserTest")
+                assertOutputContains("Execution of Kotlin/JS browser tests was interrupted for runner 'chromium'.")
+                // first test is executed and reported
+                assertOutputContains("chromium.JsBrowserInterruptionTest.t1[js, browser, chromium] STANDARD_OUT")
+
+                // second "slow" test got interrupted i.e. failed
+                assertOutputContains("chromium.JsBrowserInterruptionTest.t2[js, browser, chromium] FAILED")
+
+                // third test never get executed
+                assertOutputDoesNotContain("JsBrowserInterruptionTest.t3")
+
+                // first test never get executed with firefox runner as entire test execution was interrupted
+                assertOutputDoesNotContain("JsBrowserInterruptionTest.t1[js, browser, firefox]")
+            }
+        }
+    }
 }
