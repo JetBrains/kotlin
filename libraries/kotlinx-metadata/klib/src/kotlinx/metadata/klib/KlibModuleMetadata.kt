@@ -165,7 +165,7 @@ class KlibModuleMetadata(
                 }.let(readStrategy::processModuleParts)
             }
             return KlibModuleMetadata(
-                moduleHeader?.moduleName ?: error("Header file was not found"),
+                moduleHeader?.moduleName,
                 moduleFragments,
                 library.metadataVersion,
                 isAllowedToWrite = !lenient,
