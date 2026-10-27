@@ -35,6 +35,12 @@ import org.jetbrains.kotlin.types.SmartcastStability
 
 abstract class AbstractContextCollectorTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
+        // The copy passes analyze the copy in `IGNORE_SELF` mode, so their context contains declarations of the original file in the
+        // state the first two passes leave them in. Sessions are not cached on strong references, so without one to the original FIR
+        // file, a GC between the passes could drop it with its session, and the copy passes would see an unresolved rebuild.
+        val resolutionFacade = mainModule.ktModule.getResolutionFacade(mainFile.project)
+        val originalFirFile = mainFile.getOrBuildFirFile(resolutionFacade)
+
         performTestByMainFile(mainFile, mainModule, testServices, testPrefixes = emptyList(), useBodyElement = false)
         performTestByMainFile(mainFile, mainModule, testServices, testPrefixes = listOf("body"), useBodyElement = true)
 
@@ -42,6 +48,8 @@ abstract class AbstractContextCollectorTest : AbstractAnalysisApiBasedTest() {
 
         performTestByMainFile(fakeFile, mainModule, testServices, testPrefixes = listOf("copy"), useBodyElement = false)
         performTestByMainFile(fakeFile, mainModule, testServices, testPrefixes = listOf("copy", "body.copy"), useBodyElement = true)
+
+        check(mainFile.getOrBuildFirFile(resolutionFacade) === originalFirFile) { "The original FIR file must not be rebuilt" }
     }
 
     private fun createFileCopy(file: KtFile): KtFile {
