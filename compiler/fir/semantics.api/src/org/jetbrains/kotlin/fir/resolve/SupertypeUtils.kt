@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
@@ -32,7 +31,6 @@ import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.popLast
-import kotlin.Pair
 
 abstract class SupertypeSupplier {
     abstract fun forClass(firClass: FirClass, useSiteSession: FirSession): List<ConeClassLikeType>
@@ -139,40 +137,6 @@ fun FirClass.isSubclassOf(
         // Note: We just check lookupTag here, so type substitution isn't needed
         superType.lookupTag == ownerLookupTag
     }
-}
-
-fun FirClass.isThereLoopInSupertypes(session: FirSession): Boolean {
-    val visitedSymbols: MutableSet<FirClassifierSymbol<*>> = SmartSet.create()
-    val inProcess: MutableSet<FirClassifierSymbol<*>> = mutableSetOf()
-
-    var isThereLoop = false
-
-    fun dfs(current: FirClassifierSymbol<*>) {
-        if (current in visitedSymbols) return
-        if (!inProcess.add(current)) {
-            isThereLoop = true
-            return
-        }
-
-        when (current) {
-            is FirClassSymbol<*> -> {
-                current.resolvedSuperTypes.forEach {
-                    it.classLikeLookupTagIfAny?.toSymbol(session)?.let(::dfs)
-                }
-            }
-            is FirTypeAliasSymbol -> {
-                current.resolvedExpandedTypeRef.coneType.classLikeLookupTagIfAny?.toSymbol(session)?.let(::dfs)
-            }
-            else -> {}
-        }
-
-        visitedSymbols.add(current)
-        inProcess.remove(current)
-    }
-
-    dfs(symbol)
-
-    return isThereLoop
 }
 
 fun lookupSuperTypes(
