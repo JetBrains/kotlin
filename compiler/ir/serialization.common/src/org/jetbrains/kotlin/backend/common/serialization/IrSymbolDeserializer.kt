@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.backend.common.serialization
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
-import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrLocalDelegatedPropertySymbolImpl
@@ -86,12 +84,6 @@ class IrSymbolDeserializer(
         val postProcessedSymbol = deserializedSymbolPostProcessor(referencedSymbol, signature, fileSymbol)
         return postProcessedSymbol
     }
-
-    fun referenceSimpleFunctionByLocalSignature(signature: IdSignature): IrSimpleFunctionSymbol =
-        deserializeSymbolWithOwnerMaybeInOtherFile(signature, BinarySymbolData.SymbolKind.FUNCTION_SYMBOL) as IrSimpleFunctionSymbol
-
-    fun referencePropertyByLocalSignature(signature: IdSignature): IrPropertySymbol =
-        deserializeSymbolWithOwnerMaybeInOtherFile(signature, BinarySymbolData.SymbolKind.PROPERTY_SYMBOL) as IrPropertySymbol
 
     fun parseSymbolData(code: Long): BinarySymbolData = BinarySymbolData.decode(code)
 
