@@ -1,0 +1,12 @@
+// Check that cached callers keep working when a Kotlin class adds or removes an override of an Obj-C method.
+// DISABLE_NATIVE: isAppleTarget=false
+MODULES: cinterop, lib, main
+
+STEP 0:
+    libs: cinterop, lib, main
+
+STEP 1:
+    libs: cinterop, lib, main
+
+STEP 2:
+    libs: cinterop, lib, main
