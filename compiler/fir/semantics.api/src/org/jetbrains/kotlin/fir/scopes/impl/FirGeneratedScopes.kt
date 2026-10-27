@@ -25,17 +25,13 @@ import org.jetbrains.kotlin.fir.expressions.FirEmptyArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.buildDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.defaultType
-import org.jetbrains.kotlin.fir.resolve.isClassBasedType
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
 import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -404,11 +400,35 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
                 )
 
                 return generateCompanionObjectForPlugins(classSymbol) {
+                    var superClass: ConeClassLikeType? = null
+                    val addedSuperTypeIds = mutableSetOf<ClassId>()
+
                     for (extension in extensionsNeedingCompanionObject) {
                         val info = extension.getCompanionObjectInfo(classSymbol, generationContext)
-                        info.superTypes.mapTo(superTypeRefs) { it.toFirResolvedTypeRef() }
+
+                        for (it in info.superTypes) {
+                            if (it.isAny) continue
+                            if (!addedSuperTypeIds.add(it.classId)) continue
+
+                            validateCompanionSupertype(it)
+                            superTypeRefs.add(it.toFirResolvedTypeRef())
+
+                            if (it.isClassBasedType(session)) {
+                                if (superClass == null) {
+                                    superClass = it
+                                } else error(
+                                    """
+                                            Multiple superclasses generated for companion object for class ${classSymbol.classId}:
+                                            ${superClass.renderForDebugging()}
+                                            ${it.renderForDebugging()}
+                                    """.trimIndent()
+                                )
+                            }
+                        }
+
                         annotations.addAll(info.annotations)
                     }
+                    if (superClass == null) superTypeRefs.add(0, StandardTypes.Any.toFirResolvedTypeRef())
                 }.symbol
             }
 
@@ -424,6 +444,28 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
             }
             require(generatedClass is FirRegularClassSymbol) { "Only regular class are allowed as nested classes" }
             return generatedClass
+        }
+
+        private fun validateCompanionSupertype(type: ConeClassLikeType) {
+            fun fail(reason: String): Nothing = error(
+                "Invalid supertype ${type.renderForDebugging()} generated for companion object of ${classSymbol.classId}: $reason"
+            )
+
+            if (type.isMarkedNullable) fail("a supertype cannot be nullable")
+
+            val expandedType = type.fullyExpandedType(session)
+            // Unresolved supertypes are reported elsewhere
+            val symbol = expandedType.toSymbol(session) as? FirRegularClassSymbol ?: return
+            when (symbol.classKind) {
+                ClassKind.ENUM_CLASS, ClassKind.ENUM_ENTRY, ClassKind.OBJECT, ClassKind.ANNOTATION_CLASS -> fail("a companion object cannot inherit from ${symbol.classKind}")
+                ClassKind.CLASS, ClassKind.INTERFACE -> {}
+            }
+            if (expandedType.typeArguments.size != symbol.typeParameterSymbols.size) {
+                fail("expected ${symbol.typeParameterSymbols.size} type arguments, but got ${expandedType.typeArguments.size}")
+            }
+            expandedType.typeArguments.forEachIndexed { index, argument ->
+                if (argument !is ConeKotlinType) fail("type argument #$index is a projection, which is not allowed in a supertype")
+            }
         }
 
         private fun generateCompanionObjectForPlugins(
@@ -447,7 +489,6 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
             source = owner.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated.Default)
             name = DEFAULT_NAME_FOR_COMPANION_OBJECT
             symbol = FirRegularClassSymbol(owner.classId.createNestedClassId(DEFAULT_NAME_FOR_COMPANION_OBJECT))
-            superTypeRefs += session.builtinTypes.anyType
             configure()
         }.apply {
             if (owner.isLocal) {
