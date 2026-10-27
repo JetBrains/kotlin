@@ -2187,12 +2187,6 @@ internal class IdentitySensitiveOperationOnWillBecomeValueClassImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.IdentitySensitiveOperationOnWillBecomeValueClass
 
-internal class IdentitySensitiveOperationInsideWillBecomeValueClassImpl(
-    override val type: KaType,
-    firDiagnostic: KtDiagnosticWithSource,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.IdentitySensitiveOperationInsideWillBecomeValueClass
-
 internal class WillBecomeValueClassNotTopLevelImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
