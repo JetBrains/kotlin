@@ -6,9 +6,10 @@
 import kotlin.reflect.KFunction0
 
 // Each case observes KFunction metadata through either a modeled value flow or a conservative
-// escape. Captured values are shared with their nested execution units; vararg elements and
-// indirect invocations remain keep-sinks. Every case below breaks at runtime if its wrapper is
-// unwrapped, so plain box assertions are enough — no generated-code expectations.
+// escape. Captured values are shared with their nested execution units, and array elements flow
+// to the reads of their array (or of every array, for writes outside an initialization); arrays
+// leaving the graph and indirect invocations remain keep-sinks. Every case below breaks at runtime
+// if its wrapper is unwrapped, so plain box assertions are enough — no generated-code expectations.
 
 fun capturedName() {}
 
@@ -17,6 +18,22 @@ fun assignedInLambda() {}
 fun arrayName() {}
 
 fun listName() {}
+
+fun varargName() {}
+
+fun spreadName() {}
+
+fun nestedArrayName() {}
+
+fun writtenName() {}
+
+fun externalArrayName() {}
+
+fun comparedElement() {}
+
+fun firstName(vararg fs: KFunction0<Unit>) = fs[0].name
+
+external fun readFirstName(fs: Array<KFunction0<Unit>>): String
 
 fun invokeArg() {}
 
@@ -74,6 +91,21 @@ fun box(): String {
     if (arr[0].name != "arrayName") return "fail array"
     if (listOf<KFunction0<Unit>>(::listName).single().name != "listName") return "fail list"
 
+    if (firstName(::varargName) != "varargName") return "fail vararg"
+    if (firstName(*arrayOf(::spreadName)) != "spreadName") return "fail spread"
+
+    val nested = arrayOf(arrayOf<KFunction0<Unit>>(::nestedArrayName))
+    if (nested[0][0].name != "nestedArrayName") return "fail nested array"
+
+    val written = arrayOfNulls<KFunction0<Unit>>(1)
+    written[0] = ::writtenName
+    if (written[0]!!.name != "writtenName") return "fail written array"
+
+    if (readFirstName(arrayOf(::externalArrayName)) != "externalArrayName") return "fail external array"
+
+    val compared = arrayOf<() -> Unit>(::comparedElement)
+    if (compared[0] != ::comparedElement) return "fail compared element"
+
     if (invoke(::invokeArg) != "invokeArg") return "fail invoke"
 
     val make = { ::fromLambda }
@@ -94,4 +126,8 @@ fun box(): String {
 // FILE: keepEscape_ext.js
 function readProvidedName(p) {
     return p.provide().callableName;
+}
+
+function readFirstName(fs) {
+    return fs[0].callableName;
 }

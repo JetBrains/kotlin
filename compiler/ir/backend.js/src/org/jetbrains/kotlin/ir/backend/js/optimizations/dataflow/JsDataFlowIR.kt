@@ -189,10 +189,24 @@ object JsDataFlowIR {
         class FieldWrite(val receiver: Node?, val field: Field, val value: Node) : Node
 
         /**
+         * An array allocated with [elements], such as a lowered vararg or `arrayOf` argument.
+         *
+         * Like [NewInstance.constructorArguments], the elements describe the contents the array is
+         * created with; later stores are [ArrayWrite]s.
+         */
+        class AllocArray(val type: Type, val elements: List<Node>) : Node
+
+        /** The element of [array] at [index]. */
+        class ArrayRead(val array: Node, val index: Node, val type: Type) : Node
+
+        /** A write that stores [value] into [array] at [index]. */
+        class ArrayWrite(val array: Node, val index: Node, val value: Node) : Node
+
+        /**
          * An escape sink for value flows the graph cannot model precisely.
          *
-         * Typical inputs include vararg elements, assignments to mutable parameter slots, and
-         * operands of unrecognized IR. Consumers must assume that every node in [values] can be
+         * Typical inputs include assignments to mutable parameter slots and operands of
+         * unrecognized IR. Consumers must assume that every node in [values] can be
          * observed in any way after reaching this sink.
          */
         class OpaqueValue(val values: List<Node>) : Node
@@ -280,6 +294,9 @@ object JsDataFlowIR {
         val classMap = mutableMapOf<IrClass, Type.ClassType>()
         val functionMap = mutableMapOf<IrFunction, FunctionSymbol>()
         val fieldMap = mutableMapOf<IrField, Field>()
+
+        /** The JS `length` property of an array or string, read through a [Node.FieldRead]. */
+        val lengthField = Field(type = Type.Dynamic, name = "length")
 
         private var sealed = false
 

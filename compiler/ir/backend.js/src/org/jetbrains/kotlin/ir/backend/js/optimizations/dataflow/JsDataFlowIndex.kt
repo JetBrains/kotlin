@@ -27,13 +27,16 @@ internal class JsDataFlowIndex {
         /** A parameter-aligned argument of a call-like operation. */
         class Argument(val index: Int) : InputRole
 
-        /** An element of a merge or opaque escape. */
+        /** An element of a merge, an opaque escape, or an array allocation. */
         class Element(val index: Int) : InputRole
 
-        /** The receiver of a field or dynamic operation. */
+        /** The receiver of a field, array, or dynamic operation. */
         object Receiver : InputRole
 
-        /** The value stored by a field write. */
+        /** The index of an array read or write. */
+        object Index : InputRole
+
+        /** The value stored by a field or array write. */
         object AssignedValue : InputRole
 
         /** The value transformed or inspected by a unary operation. */
@@ -64,6 +67,10 @@ internal class JsDataFlowIndex {
     fun isThrown(node: Node): Boolean = node in thrownValues
 
     fun readsOf(field: Field): List<Node.FieldRead> = fieldReads[field].orEmpty()
+
+    /** Every array element read in the indexed execution units. */
+    val arrayReads: List<Node.ArrayRead>
+        field = mutableListOf<Node.ArrayRead>()
 
     fun isAddressTaken(symbol: FunctionSymbol): Boolean = symbol in addressTakenFunctions
 
@@ -96,6 +103,19 @@ internal class JsDataFlowIndex {
             }
             is Node.OpaqueValue -> node.values.forEachIndexed { index, value ->
                 addUse(value = value, consumer = node, role = InputRole.Element(index))
+            }
+            is Node.AllocArray -> node.elements.forEachIndexed { index, element ->
+                addUse(value = element, consumer = node, role = InputRole.Element(index))
+            }
+            is Node.ArrayRead -> {
+                arrayReads += node
+                addUse(value = node.array, consumer = node, role = InputRole.Receiver)
+                addUse(value = node.index, consumer = node, role = InputRole.Index)
+            }
+            is Node.ArrayWrite -> {
+                addUse(value = node.array, consumer = node, role = InputRole.Receiver)
+                addUse(value = node.index, consumer = node, role = InputRole.Index)
+                addUse(value = node.value, consumer = node, role = InputRole.AssignedValue)
             }
             is Node.TypeCheck -> addUse(value = node.argument, consumer = node, role = InputRole.Operand)
             is Node.DynamicAccess -> {

@@ -12,8 +12,8 @@ fun interface I {
 
 class Named(val k: KFunction<*>)
 
-// EXPECT_GENERATED_JS: function=readName$ref;dynamicName$ref;equalsRefs$ref;hashCodeRef$ref;typeofCheck$ref;samEquals$ref;samHashCode$ref;exportedRef$ref;externalJs$ref;mixedNameAndInvoke$ref;castFromAny$ref;virtualOverride$ref;dynamicIndex$ref;dynamicPlus$ref;boxStoredName$ref;anyCastName$ref;dynamicCastName$ref expect=keep.js TARGET_BACKENDS=JS_IR
-// EXPECT_GENERATED_JS: function=readName$ref;dynamicName$ref;equalsRefs$ref;hashCodeRef$ref;typeofCheck$ref;samEquals$ref;samHashCode$ref;exportedRef$ref;externalJs$ref;mixedNameAndInvoke$ref;castFromAny$ref;virtualOverride$ref;dynamicIndex$ref;dynamicPlus$ref;boxStoredName$ref;anyCastName$ref;dynamicCastName$ref expect=keep.es6.js TARGET_BACKENDS=JS_IR_ES6
+// EXPECT_GENERATED_JS: function=readName$ref;dynamicName$ref;equalsRefs$ref;hashCodeRef$ref;typeofCheck$ref;samEquals$ref;samHashCode$ref;exportedRef$ref;externalJs$ref;mixedNameAndInvoke$ref;castFromAny$ref;virtualOverride$ref;dynamicIndex$ref;dynamicPlus$ref;boxStoredName$ref;anyCastName$ref;dynamicCastName$ref;exportedObjectField$ref expect=keep.js TARGET_BACKENDS=JS_IR
+// EXPECT_GENERATED_JS: function=readName$ref;dynamicName$ref;equalsRefs$ref;hashCodeRef$ref;typeofCheck$ref;samEquals$ref;samHashCode$ref;exportedRef$ref;externalJs$ref;mixedNameAndInvoke$ref;castFromAny$ref;virtualOverride$ref;dynamicIndex$ref;dynamicPlus$ref;boxStoredName$ref;anyCastName$ref;dynamicCastName$ref;exportedObjectField$ref expect=keep.es6.js TARGET_BACKENDS=JS_IR_ES6
 
 fun readName() {}
 
@@ -33,6 +33,14 @@ fun exportedRef(x: Int) = x
 
 @JsExport
 fun exported(): KFunction1<Int, Int> = ::exportedRef
+
+fun exportedObjectField(x: Int) = x + 43
+
+// JS can read the property through the exported object.
+@JsExport
+object ExportedRegistry {
+    val f: (Int) -> Int = ::exportedObjectField
+}
 
 external fun takeExt(f: (Int) -> Int): Int
 
@@ -133,6 +141,9 @@ fun box(): String {
     // still keep: property refs go through kpropertyBuilder, not this pass
     if (::k_prop.name != "k_prop") return "fail prop"
     if (::k_prop.get() != 42) return "fail prop get"
+
+    // still keep: a property of an exported object is reachable from JS
+    if (ExportedRegistry.f(10) != 53) return "fail exported object"
 
     return "OK"
 }
