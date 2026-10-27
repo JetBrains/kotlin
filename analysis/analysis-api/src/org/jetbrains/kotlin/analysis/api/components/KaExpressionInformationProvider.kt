@@ -298,7 +298,7 @@ public fun KtWhenExpression.computeMissingCases(): List<KaWhenMissingCase> {
         "this.isUsedAsExpression",
         "org.jetbrains.kotlin.analysis.api.expressions.isUsedAsExpression",
     ),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 @KaContextParameterApi
 context(session: KaSession)

@@ -44,7 +44,7 @@ public interface KaModuleProvider {
      * synthetic module. Inside an analysis session for such a module (which would be the [useSiteModule]), sources that originally
      * belong to a source module should be treated rather as a part of the synthetic one.
      */
-    @Deprecated("Use 'module' instead", ReplaceWith("module(element, useSiteModule)"), level = DeprecationLevel.ERROR)
+    @Deprecated("Use 'module' instead", ReplaceWith("module(element, useSiteModule)"), level = DeprecationLevel.HIDDEN)
     public fun getModule(element: PsiElement, useSiteModule: KaModule?): KaModule
 
     /**
@@ -90,7 +90,7 @@ public interface KaModuleProvider {
                 "element.kaModule(useSiteModule)",
                 imports = ["org.jetbrains.kotlin.analysis.api.projectStructure.kaModule"],
             ),
-            level = DeprecationLevel.ERROR,
+            level = DeprecationLevel.HIDDEN,
         )
         public fun getModule(project: Project, element: PsiElement, useSiteModule: KaModule?): KaModule =
             getInstance(project).module(element, useSiteModule)

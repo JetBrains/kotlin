@@ -252,7 +252,7 @@ public abstract class KaFunctionType : KaClassType(), KaContextReceiversOwner {
     /**
      * The function's arity, i.e. the number of [*parameter types*][parameterTypes].
      */
-    @Deprecated("Use `parameters.size` instead. See KT-80545", ReplaceWith("parameters.size"), level = DeprecationLevel.ERROR)
+    @Deprecated("Use `parameters.size` instead. See KT-80545", ReplaceWith("parameters.size"), level = DeprecationLevel.HIDDEN)
     public abstract val arity: Int
 
     /**
