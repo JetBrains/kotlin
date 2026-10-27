@@ -26,6 +26,8 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
+private val fieldsBeingEvaluated = ThreadLocal.withInitial { mutableSetOf<JavaFieldOverAst>() }
+
 abstract class JavaMemberOverAst(
     node: LightNode,
     tree: LightSyntaxTree,
@@ -281,8 +283,15 @@ class JavaFieldOverAst(
         get() {
             if (!hasConstantNotNullInitializer) return null
             val init = initializerNode ?: return null
-            val evaluator = ConstantEvaluator(containingClass)
-            return coerceConstantToFieldType(evaluator.evaluate(init))
+            val activeFields = fieldsBeingEvaluated.get()
+            if (!activeFields.add(this)) return null
+            return try {
+                val evaluator = ConstantEvaluator(containingClass)
+                coerceConstantToFieldType(evaluator.evaluate(init))
+            } finally {
+                activeFields.remove(this)
+                if (activeFields.isEmpty()) fieldsBeingEvaluated.remove()
+            }
         }
 
     /**
