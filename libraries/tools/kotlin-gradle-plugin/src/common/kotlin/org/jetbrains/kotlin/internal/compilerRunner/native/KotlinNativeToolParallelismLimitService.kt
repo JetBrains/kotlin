@@ -7,10 +7,19 @@ package org.jetbrains.kotlin.internal.compilerRunner.native
 
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
+import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 
 private const val PARALLELISM_LIMIT_SERVICE_NAME = "KotlinNativeToolParallelismLimitService"
+
+/**
+ * A fraction of the Gradle daemon's max heap that [maxParallelUsagesFromAvailableRam] is allowed to assume is
+ * usable for running tool instances, leaving the rest as a buffer for everything else happening in the daemon.
+ */
+private const val AVAILABLE_RAM_USAGE_BUFFER_FACTOR = 0.7
+
+private const val BYTES_IN_MEGABYTE = 1024 * 1024
 
 /**
  * Build service used to cap how many instances of a given task type (e.g. [KotlinNativeLink]) are allowed
@@ -39,9 +48,63 @@ internal fun Project.registerKotlinNativeParallelismLimitService(
     name: String,
     maxParallelUsages: Int,
 ): Provider<out BuildService<*>> =
+    registerKotlinNativeParallelismLimitService(name, maxParallelUsagesCalculatorStrategy = { maxParallelUsages })
+
+/**
+ * Same as the overload accepting `maxParallelUsages` directly, but instead the value is obtained by calling
+ * [maxParallelUsagesCalculatorStrategy] and [maxParallelUsagesCalculatorFallbackStrategies], which allows it
+ * to be calculated lazily, based on a chosen strategy (see [maxParallelUsagesFromGradleProperty] and
+ * [maxParallelUsagesFromAvailableRam]). If neither strategy returns a value, no limit is set on the service.
+ */
+internal fun Project.registerKotlinNativeParallelismLimitService(
+    name: String,
+    maxParallelUsagesCalculatorStrategy: MaxParallelUsagesCalculatorStrategy,
+    vararg maxParallelUsagesCalculatorFallbackStrategies: MaxParallelUsagesCalculatorStrategy,
+): Provider<out BuildService<*>> =
     gradle.sharedServices.registerIfAbsent(
         "$PARALLELISM_LIMIT_SERVICE_NAME$name",
         KotlinNativeToolParallelismLimitService::class.java
     ) { spec ->
-        spec.maxParallelUsages.set(maxParallelUsages)
+        val maxParallelUsages = maxParallelUsagesCalculatorStrategy.calculateMaxParallelUsages()
+            ?: maxParallelUsagesCalculatorFallbackStrategies.firstNotNullOfOrNull { it.calculateMaxParallelUsages() }
+        if (maxParallelUsages != null) {
+            spec.maxParallelUsages.set(maxParallelUsages)
+        }
+    }
+
+/**
+ * A strategy for calculating the value to use as [org.gradle.api.services.BuildServiceSpec.getMaxParallelUsages]
+ * when registering [KotlinNativeToolParallelismLimitService]. Returning `null` means "no limit should be set".
+ *
+ * Use helpers like [maxParallelUsagesFromGradleProperty] or [maxParallelUsagesFromAvailableRam] to obtain an instance,
+ * instead of implementing this interface directly.
+ */
+internal fun interface MaxParallelUsagesCalculatorStrategy {
+    fun calculateMaxParallelUsages(): Int?
+}
+
+/**
+ * A [MaxParallelUsagesCalculatorStrategy] that reads the value from the Gradle property [propertyName], returning
+ * `null` if the property isn't set, or its value isn't a valid integer.
+ */
+internal fun maxParallelUsagesFromGradleProperty(
+    providers: ProviderFactory,
+    propertyName: String,
+): MaxParallelUsagesCalculatorStrategy =
+    MaxParallelUsagesCalculatorStrategy {
+        providers.gradleProperty(propertyName).orNull?.toIntOrNull()
+    }
+
+/**
+ * A [MaxParallelUsagesCalculatorStrategy] that calculates how many parallel tool instances can run without
+ * exhausting the Gradle daemon's available memory, assuming each instance uses approximately
+ * [approximateTaskInstanceRamUsageMb] megabytes, and leaving a buffer so the whole heap isn't used up.
+ */
+internal fun maxParallelUsagesFromAvailableRam(
+    approximateTaskInstanceRamUsageMb: Long,
+): MaxParallelUsagesCalculatorStrategy =
+    MaxParallelUsagesCalculatorStrategy {
+        val daemonMaxMemoryMb = Runtime.getRuntime().maxMemory() / BYTES_IN_MEGABYTE
+        val usableMemoryMb = (daemonMaxMemoryMb * AVAILABLE_RAM_USAGE_BUFFER_FACTOR).toLong()
+        (usableMemoryMb / approximateTaskInstanceRamUsageMb).toInt().coerceAtLeast(1)
     }
