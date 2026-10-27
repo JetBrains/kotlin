@@ -919,7 +919,7 @@ public class KtPsiUtil {
                     expression = "owner.replaceModifierList(modifierList)",
                     imports = "org.jetbrains.kotlin.idea.base.psi.replaceModifierList"
             ),
-            level = DeprecationLevel.ERROR
+            level = DeprecationLevel.HIDDEN
     )
     @Deprecated
     public static KtModifierList replaceModifierList(@NotNull KtModifierListOwner owner, @Nullable KtModifierList modifierList) {

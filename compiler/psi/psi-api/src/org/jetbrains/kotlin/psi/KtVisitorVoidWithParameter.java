@@ -359,7 +359,7 @@ public class KtVisitorVoidWithParameter<P> extends KtVisitor<Void, P> {
      */
     @kotlin.Deprecated(
             message = "This method is obsolete because 'KtSelfType' is obsolete.",
-            level = DeprecationLevel.ERROR
+            level = DeprecationLevel.HIDDEN
     )
     @Deprecated
     public void visitSelfTypeVoid(@NotNull KtSelfType type, P data) {
@@ -934,7 +934,7 @@ public class KtVisitorVoidWithParameter<P> extends KtVisitor<Void, P> {
      */
     @kotlin.Deprecated(
             message = "This method is obsolete because 'KtSelfType' is obsolete.",
-            level = DeprecationLevel.ERROR
+            level = DeprecationLevel.HIDDEN
     )
     @Deprecated
     @Override

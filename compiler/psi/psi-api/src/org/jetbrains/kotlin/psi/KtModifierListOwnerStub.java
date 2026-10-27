@@ -84,7 +84,7 @@ public class KtModifierListOwnerStub<T extends StubElement<?>> extends KtElement
                     expression = "this.addModifierKeyword(modifier)",
                     imports = "org.jetbrains.kotlin.idea.base.psi.addModifierKeyword"
             ),
-            level = DeprecationLevel.ERROR
+            level = DeprecationLevel.HIDDEN
     )
     @Deprecated
     public void addModifier(@NotNull KtModifierKeywordToken modifier) {
@@ -102,7 +102,7 @@ public class KtModifierListOwnerStub<T extends StubElement<?>> extends KtElement
                     expression = "this.removeModifierKeyword(modifier)",
                     imports = "org.jetbrains.kotlin.idea.base.psi.removeModifierKeyword"
             ),
-            level = DeprecationLevel.ERROR
+            level = DeprecationLevel.HIDDEN
     )
     @Deprecated
     public void removeModifier(@NotNull KtModifierKeywordToken modifier) {
@@ -121,7 +121,7 @@ public class KtModifierListOwnerStub<T extends StubElement<?>> extends KtElement
                     expression = "this.addAnnotation(annotationEntry)",
                     imports = "org.jetbrains.kotlin.idea.base.psi.addAnnotation"
             ),
-            level = DeprecationLevel.ERROR
+            level = DeprecationLevel.HIDDEN
     )
     @Deprecated
     public KtAnnotationEntry addAnnotationEntry(@NotNull KtAnnotationEntry annotationEntry) {

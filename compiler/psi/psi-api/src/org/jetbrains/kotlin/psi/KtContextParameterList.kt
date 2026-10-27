@@ -47,7 +47,7 @@ abstract class KtContextParameterList : KtElementImplStub<KotlinPlaceHolderStub<
     @Deprecated(
         message = "Use 'contextParameters' instead",
         replaceWith = ReplaceWith("contextParameters"),
-        level = DeprecationLevel.ERROR,
+        level = DeprecationLevel.HIDDEN,
     )
     fun contextParameters(): List<KtParameter> = contextParameters
 

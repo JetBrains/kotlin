@@ -58,7 +58,7 @@ public class KtTypeParameterList extends KtElementImplStub<KotlinPlaceHolderStub
                     expression = "this.appendTypeParameter(typeParameter)",
                     imports = "org.jetbrains.kotlin.idea.base.psi.appendTypeParameter"
             ),
-            level = DeprecationLevel.ERROR
+            level = DeprecationLevel.HIDDEN
     )
     @Deprecated
     public KtTypeParameter addParameter(@NotNull KtTypeParameter typeParameter) {

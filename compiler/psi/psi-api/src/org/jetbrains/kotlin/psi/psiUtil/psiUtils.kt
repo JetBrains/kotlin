@@ -719,7 +719,7 @@ fun PsiElement.getTextWithLocation(): String = "'${this.text}' at ${PsiDiagnosti
         "file.replaceFileAnnotationList(annotationList)",
         "org.jetbrains.kotlin.idea.base.psi.replaceFileAnnotationList",
     ),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 @OptIn(KtIdeApi::class)
 fun replaceFileAnnotationList(file: KtFile, annotationList: KtFileAnnotationList): KtFileAnnotationList {
@@ -734,7 +734,7 @@ operator fun SearchScope.contains(element: PsiElement): Boolean = PsiSearchScope
 @Deprecated(
     message = "Use only in 'kotlin' repo until the alternative method from 'com.intellij.psi' package becomes available from the IJ platform",
     replaceWith = ReplaceWith("this.createSmartPointer()", "com.intellij.psi.createSmartPointer"),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 fun <E : PsiElement> E.createSmartPointer(): SmartPsiElementPointer<E> =
     SmartPointerManager.getInstance(project).createSmartPsiElementPointer(this)

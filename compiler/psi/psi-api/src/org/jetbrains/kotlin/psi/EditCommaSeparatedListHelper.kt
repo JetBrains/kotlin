@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.psi.psiUtil.siblings
 @Deprecated(
     message = "Moved to the IntelliJ Kotlin plugin",
     replaceWith = ReplaceWith("EditCommaSeparatedListHelper", "org.jetbrains.kotlin.idea.base.psi.EditCommaSeparatedListHelper"),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 object EditCommaSeparatedListHelper {
     @Deprecated(
@@ -34,12 +34,11 @@ object EditCommaSeparatedListHelper {
             "EditCommaSeparatedListHelper.addItem(list, allItems, item, prefix)",
             "org.jetbrains.kotlin.idea.base.psi.EditCommaSeparatedListHelper"
         ),
-        level = DeprecationLevel.ERROR,
+        level = DeprecationLevel.HIDDEN,
     )
-    @Suppress("DEPRECATION_ERROR")
     @JvmOverloads
     fun <TItem : KtElement> addItem(list: KtElement, allItems: List<TItem>, item: TItem, prefix: KtToken = KtTokens.LPAR): TItem {
-        return addItemBefore(list, allItems, item, null, prefix)
+        return addItemBeforeImpl(list, allItems, item, null, prefix)
     }
 
     @Deprecated(
@@ -48,9 +47,8 @@ object EditCommaSeparatedListHelper {
             "EditCommaSeparatedListHelper.addItemAfter(list, allItems, item, anchor, prefix)",
             "org.jetbrains.kotlin.idea.base.psi.EditCommaSeparatedListHelper"
         ),
-        level = DeprecationLevel.ERROR,
+        level = DeprecationLevel.HIDDEN,
     )
-    @Suppress("UNCHECKED_CAST")
     @JvmOverloads
     fun <TItem : KtElement> addItemAfter(
         list: KtElement,
@@ -58,6 +56,15 @@ object EditCommaSeparatedListHelper {
         item: TItem,
         anchor: TItem?,
         prefix: KtToken = KtTokens.LPAR
+    ): TItem = addItemAfterImpl(list, allItems, item, anchor, prefix)
+
+    @Suppress("UNCHECKED_CAST")
+    private fun <TItem : KtElement> addItemAfterImpl(
+        list: KtElement,
+        allItems: List<TItem>,
+        item: TItem,
+        anchor: TItem?,
+        prefix: KtToken,
     ): TItem {
         assert(anchor == null || anchor.parent == list)
         if (allItems.isEmpty()) {
@@ -84,9 +91,8 @@ object EditCommaSeparatedListHelper {
             "EditCommaSeparatedListHelper.addItemBefore(list, allItems, item, anchor, prefix)",
             "org.jetbrains.kotlin.idea.base.psi.EditCommaSeparatedListHelper"
         ),
-        level = DeprecationLevel.ERROR,
+        level = DeprecationLevel.HIDDEN,
     )
-    @Suppress("DEPRECATION_ERROR")
     @JvmOverloads
     fun <TItem : KtElement> addItemBefore(
         list: KtElement,
@@ -94,6 +100,14 @@ object EditCommaSeparatedListHelper {
         item: TItem,
         anchor: TItem?,
         prefix: KtToken = KtTokens.LPAR
+    ): TItem = addItemBeforeImpl(list, allItems, item, anchor, prefix)
+
+    private fun <TItem : KtElement> addItemBeforeImpl(
+        list: KtElement,
+        allItems: List<TItem>,
+        item: TItem,
+        anchor: TItem?,
+        prefix: KtToken,
     ): TItem {
         val anchorAfter: TItem?
         anchorAfter = if (allItems.isEmpty()) {
@@ -108,7 +122,7 @@ object EditCommaSeparatedListHelper {
                 allItems[allItems.size - 1]
             }
         }
-        return addItemAfter(list, allItems, item, anchorAfter, prefix)
+        return addItemAfterImpl(list, allItems, item, anchorAfter, prefix)
     }
 
     @Deprecated(
@@ -117,7 +131,7 @@ object EditCommaSeparatedListHelper {
             "EditCommaSeparatedListHelper.removeItem(item)",
             "org.jetbrains.kotlin.idea.base.psi.EditCommaSeparatedListHelper"
         ),
-        level = DeprecationLevel.ERROR,
+        level = DeprecationLevel.HIDDEN,
     )
     fun <TItem : KtElement> removeItem(item: TItem) {
         var comma = item.siblings(withItself = false).firstOrNull { it !is PsiWhiteSpace && it !is PsiComment }

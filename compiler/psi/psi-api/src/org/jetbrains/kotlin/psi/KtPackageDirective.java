@@ -149,7 +149,7 @@ public class KtPackageDirective extends KtModifierListOwnerStub<KotlinPlaceHolde
                     expression = "this.setPackageFqName(fqName)",
                     imports = "org.jetbrains.kotlin.idea.base.psi.setPackageFqName"
             ),
-            level = DeprecationLevel.ERROR
+            level = DeprecationLevel.HIDDEN
     )
     @Deprecated
     public void setFqName(@NotNull FqName fqName) {
