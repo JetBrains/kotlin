@@ -95,7 +95,7 @@ class Candidate(
     /**
      * Substitutor from declared type parameters to type variables created for that candidate
      */
-    lateinit var substitutor: ConeSubstitutor
+    override lateinit var substitutor: ConeSubstitutor
         private set
     lateinit var freshVariables: List<ConeTypeVariable>
         private set

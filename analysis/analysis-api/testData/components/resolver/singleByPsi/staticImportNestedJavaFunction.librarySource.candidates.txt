@@ -43,5 +43,5 @@ KtCallExpression(95,100): 'foo()'
         callableId = /Dependency.Nested.foo
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'p0'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'p0' of type 'Int'.>
     isInBestCandidates = false

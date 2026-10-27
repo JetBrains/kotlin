@@ -45,5 +45,5 @@ KtNameReferenceExpression(80,87): 'static1'
         callableId = /Foo.static1
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i' of type 'Int'.>
     isInBestCandidates = false

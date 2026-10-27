@@ -27,7 +27,7 @@ KtDotQualifiedExpression(106,113): 'f.foo()'
         A -> (kotlin.String)
       }
       valueArgumentMapping = {}
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i' of type 'Int'.>
     isInBestCandidates = true
 
   KaInapplicableCallCandidate:
@@ -58,5 +58,5 @@ KtDotQualifiedExpression(106,113): 'f.foo()'
         B -> (kotlin.String)
       }
       valueArgumentMapping = {}
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 's'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 's' of type 'String'.>
     isInBestCandidates = true

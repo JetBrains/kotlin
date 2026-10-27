@@ -43,7 +43,7 @@ KtCollectionLiteralExpression(40,42): '[]'
         T -> (kotlin.Boolean)
       }
       valueArgumentMapping = {}
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'element'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'element' of type 'Boolean'.>
     isInBestCandidates = false
 
   KaApplicableCallCandidate:
