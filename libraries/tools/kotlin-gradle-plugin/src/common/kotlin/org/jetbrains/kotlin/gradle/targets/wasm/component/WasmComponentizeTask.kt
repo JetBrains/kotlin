@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.wasm.component
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.artifacts.type.ArtifactTypeDefinition
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileSystemOperations
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.toolchain.wasiadapter.WasiAdapterRequest
 import org.jetbrains.kotlin.gradle.dsl.toolchain.wasmtools.WasmToolsRequest
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
+import org.jetbrains.kotlin.gradle.targets.wasm.component.internal.KOTLIN_WASM_WIT_ARTIFACT_TYPE
 import org.jetbrains.kotlin.gradle.targets.wasm.wasiadapter.toolchain.requestDefaultWasiAdapter
 import org.jetbrains.kotlin.gradle.targets.wasm.wasmtools.toolchain.requestDefaultWasmTools
 import org.jetbrains.kotlin.gradle.tasks.registerTask
@@ -213,7 +215,12 @@ internal constructor() :
             configuration: WasmComponentizeTask.() -> Unit = {},
         ): TaskProvider<WasmComponentizeTask> {
             val project = compilation.target.project
-            val witDirectories = project.configurations.named(compilation.witConfigurationName)
+            val witDirectories = project.configurations.findByName(compilation.runtimeDependencyConfigurationName).incoming
+                .artifactView {
+                    it.attributes {
+                        it.attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, KOTLIN_WASM_WIT_ARTIFACT_TYPE)
+                    }
+                }.files
             return project.registerTask(
                 name,
             ) {

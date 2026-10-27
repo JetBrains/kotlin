@@ -150,6 +150,7 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, ConfigureKotlinPlaywrightTestRunner)
         register(project, PublishSharedPackageJsonSideEffect)
         register(project, WitTransformRegisteringSetupAction)
+        register(project, WitPreparationSetupAction)
     }
 
     KotlinCompilationSideEffect.extensionPoint.apply {
@@ -162,7 +163,6 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, KotlinCreateCompilationArchivesTask)
         register(project, KotlinJvmCompilationWireJavaSourcesSideEffect)
         register(project, WasmBinaryTransformRegisteringSetupAction)
-        register(project, WitPreparationSetupAction)
     }
 
     KotlinTargetArtifact.extensionPoint.apply {
