@@ -17,14 +17,12 @@ import kotlin.OptIn
 import kotlin.String
 import kotlin.Suppress
 import kotlin.collections.List
-import kotlin.collections.Map
 import kotlin.collections.MutableMap
 import kotlin.collections.Set
-import kotlin.collections.buildMap
 import kotlin.collections.emptyList
 import kotlin.collections.emptySet
+import kotlin.collections.listOf
 import kotlin.collections.mutableMapOf
-import kotlin.reflect.KMutableProperty1
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -33,8 +31,6 @@ import org.jetbrains.kotlin.buildtools.`internal`.DeepCopyable
 import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.WasmTarget
 import org.jetbrains.kotlin.buildtools.`internal`.serializability.PathAsStringSerializer
-import org.jetbrains.kotlin.buildtools.`internal`.serializability.getPropertyByName
-import org.jetbrains.kotlin.buildtools.`internal`.serializability.setPropertyByName
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.DelicateBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
@@ -153,47 +149,206 @@ internal class WasmArgumentsImpl() : CommonJsAndWasmArgumentsImpl(), WasmCompile
 
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
-  override operator fun <V> `get`(key: WasmCompilerArguments.WasmCompilerArgument<V>): V = try { WasmArgumentValueAdapter.toApi(getPropertyByName(propertyAccessMap, key.id)) } catch (_: IllegalStateException) {
-      check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-      optionsMap[key.id]                    
-  } as V
+  override operator fun <V> `get`(key: WasmCompilerArguments.WasmCompilerArgument<V>): V = WasmArgumentValueAdapter.toApi(when (key.id) {
+    "X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE" -> irDceDumpReachabilityInfoToFile
+    "X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE" -> irDceDumpDeclarationIrSizesToFile
+    "X_WASM" -> wasm
+    "X_WASM_IC_GENERATE_UNCHANGED_MODULES" -> regenerateUnchangedModules
+    "X_WASM_DEBUG_FRIENDLY" -> forceDebugFriendlyCompilation
+    "X_WASM_DEBUG_INFO" -> wasmDebug
+    "X_WASM_DEBUGGER_CUSTOM_FORMATTERS" -> debuggerCustomFormatters
+    "X_WASM_DISABLE_ARRAY_RANGE_CHECKS_SAFE_ELIMINATION" -> wasmDisableArrayRangeChecksSafeElimination
+    "X_WASM_ENABLE_ARRAY_RANGE_CHECKS" -> wasmEnableArrayRangeChecks
+    "X_WASM_ENABLE_ASSERTS" -> wasmEnableAsserts
+    "X_WASM_ENABLE_TAIL_CALLS" -> wasmEnableTailCalls
+    "X_WASM_GENERATE_CLOSED_WORLD_MULTIMODULE" -> wasmGenerateClosedWorldMultimodule
+    "X_WASM_GENERATE_DWARF" -> generateDwarf
+    "X_WASM_GENERATE_WAT" -> wasmGenerateWat
+    "X_WASM_INCLUDED_MODULE_ONLY" -> wasmIncludedModuleOnly
+    "X_WASM_INTERNAL_LOCAL_VARIABLE_PREFIX" -> wasmInternalLocalVariablePrefix
+    "X_WASM_KCLASS_FQN" -> wasmKClassFqn
+    "X_WASM_NO_JSTAG" -> wasmNoJsTag
+    "X_WASM_SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_SOURCES" -> includeUnavailableSourcesIntoSourceMap
+    "X_WASM_TARGET" -> wasmTarget
+    "X_WASM_USE_NEW_EXCEPTION_PROPOSAL" -> wasmUseNewExceptionProposal
+    "X_WASM_USE_STACK_SWITCHING_PROPOSAL" -> wasmUseStackSwitchingProposal
+    "X_WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS" -> wasmUseTrapsInsteadOfExceptions
+    else -> {
+            check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
+            optionsMap[key.id]
+        }
+  }
+  )
 
   @UseFromImplModuleRestricted
   override operator fun <V> `set`(key: WasmCompilerArguments.WasmCompilerArgument<V>, `value`: V) {
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    try { setPropertyByName(propertyAccessMap, key.id, WasmArgumentValueAdapter.toImpl(value)) } catch (_: IllegalStateException) { optionsMap[key.id] = value }
+    when (key.id) {
+      "X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE" -> irDceDumpReachabilityInfoToFile = WasmArgumentValueAdapter.toImpl(value)
+      "X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE" -> irDceDumpDeclarationIrSizesToFile = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM" -> wasm = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_IC_GENERATE_UNCHANGED_MODULES" -> regenerateUnchangedModules = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_DEBUG_FRIENDLY" -> forceDebugFriendlyCompilation = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_DEBUG_INFO" -> wasmDebug = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_DEBUGGER_CUSTOM_FORMATTERS" -> debuggerCustomFormatters = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_DISABLE_ARRAY_RANGE_CHECKS_SAFE_ELIMINATION" -> wasmDisableArrayRangeChecksSafeElimination = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_ENABLE_ARRAY_RANGE_CHECKS" -> wasmEnableArrayRangeChecks = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_ENABLE_ASSERTS" -> wasmEnableAsserts = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_ENABLE_TAIL_CALLS" -> wasmEnableTailCalls = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_GENERATE_CLOSED_WORLD_MULTIMODULE" -> wasmGenerateClosedWorldMultimodule = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_GENERATE_DWARF" -> generateDwarf = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_GENERATE_WAT" -> wasmGenerateWat = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_INCLUDED_MODULE_ONLY" -> wasmIncludedModuleOnly = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_INTERNAL_LOCAL_VARIABLE_PREFIX" -> wasmInternalLocalVariablePrefix = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_KCLASS_FQN" -> wasmKClassFqn = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_NO_JSTAG" -> wasmNoJsTag = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_SOURCES" -> includeUnavailableSourcesIntoSourceMap = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_TARGET" -> wasmTarget = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_USE_NEW_EXCEPTION_PROPOSAL" -> wasmUseNewExceptionProposal = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_USE_STACK_SWITCHING_PROPOSAL" -> wasmUseStackSwitchingProposal = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS" -> wasmUseTrapsInsteadOfExceptions = WasmArgumentValueAdapter.toImpl(value)
+      else -> {
+              optionsMap[key.id] = WasmArgumentValueAdapter.toImpl(value)
+          }
+    }
   }
 
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
-  override operator fun <V> `get`(key: WasmCompilerKlibArguments.WasmCompilerKlibArgument<V>): V = try { WasmArgumentValueAdapter.toApi(getPropertyByName(propertyAccessMap, key.id)) } catch (_: IllegalStateException) {
-      check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-      optionsMap[key.id]                    
-  } as V
+  override operator fun <V> `get`(key: WasmCompilerKlibArguments.WasmCompilerKlibArgument<V>): V = WasmArgumentValueAdapter.toApi(when (key.id) {
+    "X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE" -> irDceDumpReachabilityInfoToFile
+    "X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE" -> irDceDumpDeclarationIrSizesToFile
+    "X_WASM" -> wasm
+    "X_WASM_IC_GENERATE_UNCHANGED_MODULES" -> regenerateUnchangedModules
+    "X_WASM_DEBUG_FRIENDLY" -> forceDebugFriendlyCompilation
+    "X_WASM_DEBUG_INFO" -> wasmDebug
+    "X_WASM_DEBUGGER_CUSTOM_FORMATTERS" -> debuggerCustomFormatters
+    "X_WASM_DISABLE_ARRAY_RANGE_CHECKS_SAFE_ELIMINATION" -> wasmDisableArrayRangeChecksSafeElimination
+    "X_WASM_ENABLE_ARRAY_RANGE_CHECKS" -> wasmEnableArrayRangeChecks
+    "X_WASM_ENABLE_ASSERTS" -> wasmEnableAsserts
+    "X_WASM_ENABLE_TAIL_CALLS" -> wasmEnableTailCalls
+    "X_WASM_GENERATE_CLOSED_WORLD_MULTIMODULE" -> wasmGenerateClosedWorldMultimodule
+    "X_WASM_GENERATE_DWARF" -> generateDwarf
+    "X_WASM_GENERATE_WAT" -> wasmGenerateWat
+    "X_WASM_INCLUDED_MODULE_ONLY" -> wasmIncludedModuleOnly
+    "X_WASM_INTERNAL_LOCAL_VARIABLE_PREFIX" -> wasmInternalLocalVariablePrefix
+    "X_WASM_KCLASS_FQN" -> wasmKClassFqn
+    "X_WASM_NO_JSTAG" -> wasmNoJsTag
+    "X_WASM_SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_SOURCES" -> includeUnavailableSourcesIntoSourceMap
+    "X_WASM_TARGET" -> wasmTarget
+    "X_WASM_USE_NEW_EXCEPTION_PROPOSAL" -> wasmUseNewExceptionProposal
+    "X_WASM_USE_STACK_SWITCHING_PROPOSAL" -> wasmUseStackSwitchingProposal
+    "X_WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS" -> wasmUseTrapsInsteadOfExceptions
+    else -> {
+            check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
+            optionsMap[key.id]
+        }
+  }
+  )
 
   @UseFromImplModuleRestricted
   override operator fun <V> `set`(key: WasmCompilerKlibArguments.WasmCompilerKlibArgument<V>, `value`: V) {
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    try { setPropertyByName(propertyAccessMap, key.id, WasmArgumentValueAdapter.toImpl(value)) } catch (_: IllegalStateException) { optionsMap[key.id] = value }
+    when (key.id) {
+      "X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE" -> irDceDumpReachabilityInfoToFile = WasmArgumentValueAdapter.toImpl(value)
+      "X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE" -> irDceDumpDeclarationIrSizesToFile = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM" -> wasm = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_IC_GENERATE_UNCHANGED_MODULES" -> regenerateUnchangedModules = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_DEBUG_FRIENDLY" -> forceDebugFriendlyCompilation = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_DEBUG_INFO" -> wasmDebug = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_DEBUGGER_CUSTOM_FORMATTERS" -> debuggerCustomFormatters = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_DISABLE_ARRAY_RANGE_CHECKS_SAFE_ELIMINATION" -> wasmDisableArrayRangeChecksSafeElimination = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_ENABLE_ARRAY_RANGE_CHECKS" -> wasmEnableArrayRangeChecks = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_ENABLE_ASSERTS" -> wasmEnableAsserts = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_ENABLE_TAIL_CALLS" -> wasmEnableTailCalls = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_GENERATE_CLOSED_WORLD_MULTIMODULE" -> wasmGenerateClosedWorldMultimodule = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_GENERATE_DWARF" -> generateDwarf = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_GENERATE_WAT" -> wasmGenerateWat = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_INCLUDED_MODULE_ONLY" -> wasmIncludedModuleOnly = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_INTERNAL_LOCAL_VARIABLE_PREFIX" -> wasmInternalLocalVariablePrefix = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_KCLASS_FQN" -> wasmKClassFqn = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_NO_JSTAG" -> wasmNoJsTag = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_SOURCES" -> includeUnavailableSourcesIntoSourceMap = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_TARGET" -> wasmTarget = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_USE_NEW_EXCEPTION_PROPOSAL" -> wasmUseNewExceptionProposal = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_USE_STACK_SWITCHING_PROPOSAL" -> wasmUseStackSwitchingProposal = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS" -> wasmUseTrapsInsteadOfExceptions = WasmArgumentValueAdapter.toImpl(value)
+      else -> {
+              optionsMap[key.id] = WasmArgumentValueAdapter.toImpl(value)
+          }
+    }
   }
 
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
-  override operator fun <V> `get`(key: WasmCompilerLinkingArguments.WasmCompilerLinkingArgument<V>): V = try { WasmArgumentValueAdapter.toApi(getPropertyByName(propertyAccessMap, key.id)) } catch (_: IllegalStateException) {
-      check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-      optionsMap[key.id]                    
-  } as V
+  override operator fun <V> `get`(key: WasmCompilerLinkingArguments.WasmCompilerLinkingArgument<V>): V = WasmArgumentValueAdapter.toApi(when (key.id) {
+    "X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE" -> irDceDumpReachabilityInfoToFile
+    "X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE" -> irDceDumpDeclarationIrSizesToFile
+    "X_WASM" -> wasm
+    "X_WASM_IC_GENERATE_UNCHANGED_MODULES" -> regenerateUnchangedModules
+    "X_WASM_DEBUG_FRIENDLY" -> forceDebugFriendlyCompilation
+    "X_WASM_DEBUG_INFO" -> wasmDebug
+    "X_WASM_DEBUGGER_CUSTOM_FORMATTERS" -> debuggerCustomFormatters
+    "X_WASM_DISABLE_ARRAY_RANGE_CHECKS_SAFE_ELIMINATION" -> wasmDisableArrayRangeChecksSafeElimination
+    "X_WASM_ENABLE_ARRAY_RANGE_CHECKS" -> wasmEnableArrayRangeChecks
+    "X_WASM_ENABLE_ASSERTS" -> wasmEnableAsserts
+    "X_WASM_ENABLE_TAIL_CALLS" -> wasmEnableTailCalls
+    "X_WASM_GENERATE_CLOSED_WORLD_MULTIMODULE" -> wasmGenerateClosedWorldMultimodule
+    "X_WASM_GENERATE_DWARF" -> generateDwarf
+    "X_WASM_GENERATE_WAT" -> wasmGenerateWat
+    "X_WASM_INCLUDED_MODULE_ONLY" -> wasmIncludedModuleOnly
+    "X_WASM_INTERNAL_LOCAL_VARIABLE_PREFIX" -> wasmInternalLocalVariablePrefix
+    "X_WASM_KCLASS_FQN" -> wasmKClassFqn
+    "X_WASM_NO_JSTAG" -> wasmNoJsTag
+    "X_WASM_SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_SOURCES" -> includeUnavailableSourcesIntoSourceMap
+    "X_WASM_TARGET" -> wasmTarget
+    "X_WASM_USE_NEW_EXCEPTION_PROPOSAL" -> wasmUseNewExceptionProposal
+    "X_WASM_USE_STACK_SWITCHING_PROPOSAL" -> wasmUseStackSwitchingProposal
+    "X_WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS" -> wasmUseTrapsInsteadOfExceptions
+    else -> {
+            check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
+            optionsMap[key.id]
+        }
+  }
+  )
 
   @UseFromImplModuleRestricted
   override operator fun <V> `set`(key: WasmCompilerLinkingArguments.WasmCompilerLinkingArgument<V>, `value`: V) {
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    try { setPropertyByName(propertyAccessMap, key.id, WasmArgumentValueAdapter.toImpl(value)) } catch (_: IllegalStateException) { optionsMap[key.id] = value }
+    when (key.id) {
+      "X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE" -> irDceDumpReachabilityInfoToFile = WasmArgumentValueAdapter.toImpl(value)
+      "X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE" -> irDceDumpDeclarationIrSizesToFile = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM" -> wasm = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_IC_GENERATE_UNCHANGED_MODULES" -> regenerateUnchangedModules = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_DEBUG_FRIENDLY" -> forceDebugFriendlyCompilation = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_DEBUG_INFO" -> wasmDebug = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_DEBUGGER_CUSTOM_FORMATTERS" -> debuggerCustomFormatters = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_DISABLE_ARRAY_RANGE_CHECKS_SAFE_ELIMINATION" -> wasmDisableArrayRangeChecksSafeElimination = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_ENABLE_ARRAY_RANGE_CHECKS" -> wasmEnableArrayRangeChecks = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_ENABLE_ASSERTS" -> wasmEnableAsserts = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_ENABLE_TAIL_CALLS" -> wasmEnableTailCalls = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_GENERATE_CLOSED_WORLD_MULTIMODULE" -> wasmGenerateClosedWorldMultimodule = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_GENERATE_DWARF" -> generateDwarf = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_GENERATE_WAT" -> wasmGenerateWat = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_INCLUDED_MODULE_ONLY" -> wasmIncludedModuleOnly = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_INTERNAL_LOCAL_VARIABLE_PREFIX" -> wasmInternalLocalVariablePrefix = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_KCLASS_FQN" -> wasmKClassFqn = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_NO_JSTAG" -> wasmNoJsTag = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_SOURCES" -> includeUnavailableSourcesIntoSourceMap = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_TARGET" -> wasmTarget = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_USE_NEW_EXCEPTION_PROPOSAL" -> wasmUseNewExceptionProposal = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_USE_STACK_SWITCHING_PROPOSAL" -> wasmUseStackSwitchingProposal = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS" -> wasmUseTrapsInsteadOfExceptions = WasmArgumentValueAdapter.toImpl(value)
+      else -> {
+              optionsMap[key.id] = WasmArgumentValueAdapter.toImpl(value)
+          }
+    }
   }
 
   override fun deepCopy(): WasmArgumentsImpl = WasmArgumentsImpl(argumentValidationErrors = argumentValidationErrors.toSet(), restrictedArgViolations = restrictedArgViolations.toList(), argumentParseDiagnostics = argumentParseDiagnostics.copy()).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }
@@ -332,30 +487,7 @@ internal class WasmArgumentsImpl() : CommonJsAndWasmArgumentsImpl(), WasmCompile
   public fun toCompilationInputs(): List<String> = toCompilerArgumentsAffectingOutcome().compilerToArgumentStrings(allowArgFileInValues = false).sorted()
 
   public companion object {
-    private val propertyAccessMap: Map<String, KMutableProperty1<*, *>> = buildMap {
-      put("X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE", WasmArgumentsImpl::irDceDumpReachabilityInfoToFile)
-      put("X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE", WasmArgumentsImpl::irDceDumpDeclarationIrSizesToFile)
-      put("X_WASM", WasmArgumentsImpl::wasm)
-      put("X_WASM_IC_GENERATE_UNCHANGED_MODULES", WasmArgumentsImpl::regenerateUnchangedModules)
-      put("X_WASM_DEBUG_FRIENDLY", WasmArgumentsImpl::forceDebugFriendlyCompilation)
-      put("X_WASM_DEBUG_INFO", WasmArgumentsImpl::wasmDebug)
-      put("X_WASM_DEBUGGER_CUSTOM_FORMATTERS", WasmArgumentsImpl::debuggerCustomFormatters)
-      put("X_WASM_DISABLE_ARRAY_RANGE_CHECKS_SAFE_ELIMINATION", WasmArgumentsImpl::wasmDisableArrayRangeChecksSafeElimination)
-      put("X_WASM_ENABLE_ARRAY_RANGE_CHECKS", WasmArgumentsImpl::wasmEnableArrayRangeChecks)
-      put("X_WASM_ENABLE_ASSERTS", WasmArgumentsImpl::wasmEnableAsserts)
-      put("X_WASM_ENABLE_TAIL_CALLS", WasmArgumentsImpl::wasmEnableTailCalls)
-      put("X_WASM_GENERATE_CLOSED_WORLD_MULTIMODULE", WasmArgumentsImpl::wasmGenerateClosedWorldMultimodule)
-      put("X_WASM_GENERATE_DWARF", WasmArgumentsImpl::generateDwarf)
-      put("X_WASM_GENERATE_WAT", WasmArgumentsImpl::wasmGenerateWat)
-      put("X_WASM_INCLUDED_MODULE_ONLY", WasmArgumentsImpl::wasmIncludedModuleOnly)
-      put("X_WASM_INTERNAL_LOCAL_VARIABLE_PREFIX", WasmArgumentsImpl::wasmInternalLocalVariablePrefix)
-      put("X_WASM_KCLASS_FQN", WasmArgumentsImpl::wasmKClassFqn)
-      put("X_WASM_NO_JSTAG", WasmArgumentsImpl::wasmNoJsTag)
-      put("X_WASM_SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_SOURCES", WasmArgumentsImpl::includeUnavailableSourcesIntoSourceMap)
-      put("X_WASM_TARGET", WasmArgumentsImpl::wasmTarget)
-      put("X_WASM_USE_NEW_EXCEPTION_PROPOSAL", WasmArgumentsImpl::wasmUseNewExceptionProposal)
-      put("X_WASM_USE_STACK_SWITCHING_PROPOSAL", WasmArgumentsImpl::wasmUseStackSwitchingProposal)
-      put("X_WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS", WasmArgumentsImpl::wasmUseTrapsInsteadOfExceptions)
-    }
+    private val knownOptionIds: List<String> =
+        listOf("X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE","X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE","X_WASM","X_WASM_IC_GENERATE_UNCHANGED_MODULES","X_WASM_DEBUG_FRIENDLY","X_WASM_DEBUG_INFO","X_WASM_DEBUGGER_CUSTOM_FORMATTERS","X_WASM_DISABLE_ARRAY_RANGE_CHECKS_SAFE_ELIMINATION","X_WASM_ENABLE_ARRAY_RANGE_CHECKS","X_WASM_ENABLE_ASSERTS","X_WASM_ENABLE_TAIL_CALLS","X_WASM_GENERATE_CLOSED_WORLD_MULTIMODULE","X_WASM_GENERATE_DWARF","X_WASM_GENERATE_WAT","X_WASM_INCLUDED_MODULE_ONLY","X_WASM_INTERNAL_LOCAL_VARIABLE_PREFIX","X_WASM_KCLASS_FQN","X_WASM_NO_JSTAG","X_WASM_SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_SOURCES","X_WASM_TARGET","X_WASM_USE_NEW_EXCEPTION_PROPOSAL","X_WASM_USE_STACK_SWITCHING_PROPOSAL","X_WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS",)
   }
 }

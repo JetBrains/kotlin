@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.buildtools.`internal`.arguments
 
 import kotlin.Any
 import kotlin.OptIn
+import kotlin.Suppress
 import kotlin.collections.List
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.Jsr305
@@ -41,8 +42,9 @@ import org.jetbrains.kotlin.buildtools.api.arguments.enums.WhenExpressionsMode a
  * A value needs converting whenever the two sides declare its type separately, as they do for the mirrored argument enums.
  */
 internal object JvmCompilerArgumentValueAdapter {
-  public fun toApi(`value`: Any?): Any? = when (value) {
-    is List<*> -> value.map { toApi(it) }
+  @Suppress("UNCHECKED_CAST")
+  public fun <T> toApi(`value`: Any?): T = when (value) {
+    is List<*> -> value.map { toApi<T>(it) }
     is InternalArgumentsEnumsAbiStabilityMode -> value.toApiEnum<ApiArgumentsEnumsAbiStabilityMode>()
     is InternalArgumentsEnumsAssertionsMode -> value.toApiEnum<ApiArgumentsEnumsAssertionsMode>()
     is InternalArgumentsEnumsJdkRelease -> value.toApiEnum<ApiArgumentsEnumsJdkRelease>()
@@ -59,9 +61,11 @@ internal object JvmCompilerArgumentValueAdapter {
     is Jsr305Impl -> value.toApi()
     else -> value
   }
+  as T
 
-  public fun toImpl(`value`: Any?): Any? = when (value) {
-    is List<*> -> value.map { toImpl(it) }
+  @Suppress("UNCHECKED_CAST")
+  public fun <T> toImpl(`value`: Any?): T = when (value) {
+    is List<*> -> value.map { toImpl<T>(it) }
     is ApiArgumentsEnumsAbiStabilityMode -> value.toImplEnum<InternalArgumentsEnumsAbiStabilityMode>()
     is ApiArgumentsEnumsAssertionsMode -> value.toImplEnum<InternalArgumentsEnumsAssertionsMode>()
     is ApiArgumentsEnumsJdkRelease -> value.toImplEnum<InternalArgumentsEnumsJdkRelease>()
@@ -78,4 +82,5 @@ internal object JvmCompilerArgumentValueAdapter {
     is Jsr305 -> value.toImpl()
     else -> value
   }
+  as T
 }

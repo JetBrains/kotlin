@@ -19,17 +19,15 @@ import kotlin.OptIn
 import kotlin.String
 import kotlin.Suppress
 import kotlin.collections.List
-import kotlin.collections.Map
 import kotlin.collections.MutableMap
 import kotlin.collections.Set
-import kotlin.collections.buildMap
 import kotlin.collections.emptyList
 import kotlin.collections.emptySet
 import kotlin.collections.joinToString
+import kotlin.collections.listOf
 import kotlin.collections.map
 import kotlin.collections.mutableMapOf
 import kotlin.collections.toTypedArray
-import kotlin.reflect.KMutableProperty1
 import kotlin.text.split
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -39,8 +37,6 @@ import org.jetbrains.kotlin.buildtools.`internal`.DeepCopyable
 import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.MetadataTargetPlatform
 import org.jetbrains.kotlin.buildtools.`internal`.serializability.PathAsStringSerializer
-import org.jetbrains.kotlin.buildtools.`internal`.serializability.getPropertyByName
-import org.jetbrains.kotlin.buildtools.`internal`.serializability.setPropertyByName
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.DelicateBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
@@ -105,17 +101,40 @@ internal class MetadataArgumentsImpl() : CommonCompilerArgumentsImpl(), Metadata
 
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
-  override operator fun <V> `get`(key: MetadataArguments.MetadataArgument<V>): V = try { MetadataArgumentValueAdapter.toApi(getPropertyByName(propertyAccessMap, key.id)) } catch (_: IllegalStateException) {
-      check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-      optionsMap[key.id]                    
-  } as V
+  override operator fun <V> `get`(key: MetadataArguments.MetadataArgument<V>): V = MetadataArgumentValueAdapter.toApi(when (key.id) {
+    "X_FRIEND_PATHS" -> friendPaths
+    "X_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT" -> klibZipFileAccessorCacheLimit
+    "X_LEGACY_METADATA_JAR_K2" -> legacyMetadataJar
+    "X_REFINES_PATHS" -> refinesPaths
+    "X_TARGET_PLATFORM" -> targetPlatform
+    "CLASSPATH" -> classpath
+    "D" -> destination
+    "MODULE_NAME" -> moduleName
+    else -> {
+            check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
+            optionsMap[key.id]
+        }
+  }
+  )
 
   @UseFromImplModuleRestricted
   override operator fun <V> `set`(key: MetadataArguments.MetadataArgument<V>, `value`: V) {
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    try { setPropertyByName(propertyAccessMap, key.id, MetadataArgumentValueAdapter.toImpl(value)) } catch (_: IllegalStateException) { optionsMap[key.id] = value }
+    when (key.id) {
+      "X_FRIEND_PATHS" -> friendPaths = MetadataArgumentValueAdapter.toImpl(value)
+      "X_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT" -> klibZipFileAccessorCacheLimit = MetadataArgumentValueAdapter.toImpl(value)
+      "X_LEGACY_METADATA_JAR_K2" -> legacyMetadataJar = MetadataArgumentValueAdapter.toImpl(value)
+      "X_REFINES_PATHS" -> refinesPaths = MetadataArgumentValueAdapter.toImpl(value)
+      "X_TARGET_PLATFORM" -> targetPlatform = MetadataArgumentValueAdapter.toImpl(value)
+      "CLASSPATH" -> classpath = MetadataArgumentValueAdapter.toImpl(value)
+      "D" -> destination = MetadataArgumentValueAdapter.toImpl(value)
+      "MODULE_NAME" -> moduleName = MetadataArgumentValueAdapter.toImpl(value)
+      else -> {
+              optionsMap[key.id] = MetadataArgumentValueAdapter.toImpl(value)
+          }
+    }
   }
 
   override fun deepCopy(): MetadataArgumentsImpl = MetadataArgumentsImpl(argumentValidationErrors = argumentValidationErrors.toSet(), restrictedArgViolations = restrictedArgViolations.toList(), argumentParseDiagnostics = argumentParseDiagnostics.copy()).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }
@@ -218,15 +237,7 @@ internal class MetadataArgumentsImpl() : CommonCompilerArgumentsImpl(), Metadata
   public fun toCompilationInputs(): List<String> = toCompilerArgumentsAffectingOutcome().compilerToArgumentStrings(allowArgFileInValues = false).sorted()
 
   public companion object {
-    private val propertyAccessMap: Map<String, KMutableProperty1<*, *>> = buildMap {
-      put("X_FRIEND_PATHS", MetadataArgumentsImpl::friendPaths)
-      put("X_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT", MetadataArgumentsImpl::klibZipFileAccessorCacheLimit)
-      put("X_LEGACY_METADATA_JAR_K2", MetadataArgumentsImpl::legacyMetadataJar)
-      put("X_REFINES_PATHS", MetadataArgumentsImpl::refinesPaths)
-      put("X_TARGET_PLATFORM", MetadataArgumentsImpl::targetPlatform)
-      put("CLASSPATH", MetadataArgumentsImpl::classpath)
-      put("D", MetadataArgumentsImpl::destination)
-      put("MODULE_NAME", MetadataArgumentsImpl::moduleName)
-    }
+    private val knownOptionIds: List<String> =
+        listOf("X_FRIEND_PATHS","X_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT","X_LEGACY_METADATA_JAR_K2","X_REFINES_PATHS","X_TARGET_PLATFORM","CLASSPATH","D","MODULE_NAME",)
   }
 }
