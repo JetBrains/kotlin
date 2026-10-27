@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.wasm.config.wasmEnableTailCalls
 
 /**
  * Rewrites `return <other> op self(...)` into accumulator-passing form so
@@ -48,7 +47,7 @@ internal class WasmAssociativeReductionLowering(
     }
 
     override fun lower(irModule: IrModuleFragment) {
-        if (context.configuration.wasmEnableTailCalls) {
+        if (context.emitTailCalls) {
             super.lower(irModule)
         }
     }

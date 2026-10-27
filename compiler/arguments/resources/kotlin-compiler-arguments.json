@@ -13321,7 +13321,7 @@
                                                 "shortName": null,
                                                 "deprecatedName": null,
                                                 "description": {
-                                                    "current": "Emit WebAssembly tail call instructions (return_call / return_call_indirect).",
+                                                    "current": "Emit WebAssembly tail call instructions (return_call / return_call_ref) for calls in tail position. Frames of tail-calling functions are omitted from stack traces. Ignored with -Xwasm-debug-friendly.",
                                                     "valueInVersions": []
                                                 },
                                                 "delimiter": null,
@@ -13334,8 +13334,14 @@
                                                         "valueInVersions": []
                                                     },
                                                     "defaultValue": {
-                                                        "current": false,
-                                                        "valueInVersions": []
+                                                        "current": true,
+                                                        "valueInVersions": [
+                                                            {
+                                                                "minReleaseVersion": "2.4.20",
+                                                                "maxReleaseVersion": "2.5.0",
+                                                                "value": false
+                                                            }
+                                                        ]
                                                     }
                                                 },
                                                 "valueDescription": {
@@ -13355,8 +13361,14 @@
                                                         "valueInVersions": []
                                                     },
                                                     "defaultValue": {
-                                                        "current": false,
-                                                        "valueInVersions": []
+                                                        "current": true,
+                                                        "valueInVersions": [
+                                                            {
+                                                                "minReleaseVersion": "2.4.20",
+                                                                "maxReleaseVersion": "2.5.0",
+                                                                "value": false
+                                                            }
+                                                        ]
                                                     }
                                                 },
                                                 "deprecatedMessage": null
@@ -15598,7 +15610,7 @@
                                                 "shortName": null,
                                                 "deprecatedName": null,
                                                 "description": {
-                                                    "current": "Emit WebAssembly tail call instructions (return_call / return_call_indirect).",
+                                                    "current": "Emit WebAssembly tail call instructions (return_call / return_call_ref) for calls in tail position. Frames of tail-calling functions are omitted from stack traces. Ignored with -Xwasm-debug-friendly.",
                                                     "valueInVersions": []
                                                 },
                                                 "delimiter": null,
@@ -15611,8 +15623,14 @@
                                                         "valueInVersions": []
                                                     },
                                                     "defaultValue": {
-                                                        "current": false,
-                                                        "valueInVersions": []
+                                                        "current": true,
+                                                        "valueInVersions": [
+                                                            {
+                                                                "minReleaseVersion": "2.4.20",
+                                                                "maxReleaseVersion": "2.5.0",
+                                                                "value": false
+                                                            }
+                                                        ]
                                                     }
                                                 },
                                                 "valueDescription": {
@@ -15632,8 +15650,14 @@
                                                         "valueInVersions": []
                                                     },
                                                     "defaultValue": {
-                                                        "current": false,
-                                                        "valueInVersions": []
+                                                        "current": true,
+                                                        "valueInVersions": [
+                                                            {
+                                                                "minReleaseVersion": "2.4.20",
+                                                                "maxReleaseVersion": "2.5.0",
+                                                                "value": false
+                                                            }
+                                                        ]
                                                     }
                                                 },
                                                 "deprecatedMessage": null
