@@ -237,6 +237,37 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                     "\"module\"",
                 )
             }
+
+            gradleProperties.modify {
+                it.replace(
+                    "kotlin.js.generateRichTypeScriptDeclarations=true",
+                    "kotlin.js.generateRichTypeScriptDeclarations=false",
+                )
+            }
+
+            build("jsNodeDevelopmentRun") {
+                assertOutputContains("Hello, World!")
+                assertTasksUpToDate(":jsNodeDevelopmentGenerateSwcConfig",)
+                assertTasksExecuted(":jsNodeDevelopmentTranspileWithSwc")
+                assertFileContains(
+                    projectPath.resolve(
+                        "build/js/packages/kotlin-js-multiplatform-app-project/kotlin/kotlin-js-multiplatform-app-project.d.ts"
+                    ),
+                    "function best(): number",
+                )
+            }
+
+            build("jsNodeProductionRun") {
+                assertOutputContains("Hello, World!")
+                assertTasksUpToDate(":jsNodeProductionGenerateSwcConfig")
+                assertTasksExecuted(":jsNodeProductionTranspileWithSwc")
+                assertFileContains(
+                    projectPath.resolve(
+                        "build/js/packages/kotlin-js-multiplatform-app-project/kotlin/kotlin-js-multiplatform-app-project.d.ts"
+                    ),
+                    "function best(): number",
+                )
+            }
         }
     }
 

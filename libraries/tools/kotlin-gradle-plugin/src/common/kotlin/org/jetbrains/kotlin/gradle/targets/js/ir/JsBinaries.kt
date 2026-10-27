@@ -1,11 +1,12 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Project
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.file.RegularFile
@@ -76,6 +77,8 @@ sealed class JsIrBinary(
 
     internal val dtsGenerationTask: TaskProvider<KotlinJsDtsGenerationTask>?
         get() = project.locateTask(dtsGenerationTaskName)
+
+    internal val typeScriptDeclarations: ConfigurableFileCollection = project.objects.fileCollection()
 
     @Suppress("PropertyName")
     protected val _linkSyncTask: TaskProvider<DefaultIncrementalSyncTask>? =
