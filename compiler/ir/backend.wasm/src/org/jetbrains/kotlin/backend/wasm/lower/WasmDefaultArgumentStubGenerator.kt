@@ -6,13 +6,12 @@
 package org.jetbrains.kotlin.backend.wasm.lower
 
 import org.jetbrains.kotlin.backend.common.lower.DefaultArgumentStubGenerator
-import org.jetbrains.kotlin.backend.common.lower.MaskedDefaultArgumentFunctionFactory
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 
 internal class WasmDefaultArgumentStubGenerator(
     context: WasmBackendContext,
 ) : DefaultArgumentStubGenerator<WasmBackendContext>(
     context,
-    MaskedDefaultArgumentFunctionFactory(context, copyOriginalFunctionLocation = false),
+    WasmMaskedDefaultArgumentFunctionFactory(context, copyOriginalFunctionLocation = false),
     skipExternalMethods = true
 )

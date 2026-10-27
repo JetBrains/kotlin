@@ -11,7 +11,12 @@ import org.jetbrains.kotlin.backend.common.lower.MaskedDefaultArgumentFunctionFa
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
-import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.backend.wasm.utils.getMostDeepValueClassUnderlyingType
+import org.jetbrains.kotlin.ir.builders.irCall
+import org.jetbrains.kotlin.ir.builders.irGet
+import org.jetbrains.kotlin.ir.builders.irIfThenElse
+import org.jetbrains.kotlin.ir.builders.irInt
+import org.jetbrains.kotlin.ir.builders.irReinterpretCast
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -20,19 +25,40 @@ import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.defaultValueForType
 import org.jetbrains.kotlin.ir.util.getSimpleFunction
 import org.jetbrains.kotlin.util.OperatorNameConventions
+
+class WasmMaskedDefaultArgumentFunctionFactory(
+    private val ctx: WasmBackendContext,
+    copyOriginalFunctionLocation: Boolean = true
+) : MaskedDefaultArgumentFunctionFactory(ctx, copyOriginalFunctionLocation) {
+    override fun IrType.hasNullAsUndefinedValue() =
+        getMostDeepValueClassUnderlyingType(ctx) !in context.irBuiltIns.primitiveIrTypes
+}
 
 @PhasePrerequisites(InnerClassesLowering::class)
 class WasmDefaultParameterInjector(
     context: WasmBackendContext
-) : DefaultParameterInjector<WasmBackendContext>(context, MaskedDefaultArgumentFunctionFactory(context), skipExternalMethods = true) {
+) : DefaultParameterInjector<WasmBackendContext>(context, WasmMaskedDefaultArgumentFunctionFactory(context), skipExternalMethods = true) {
     private val intOrSymbol by lazy { context.irBuiltIns.intClass.getSimpleFunction(OperatorNameConventions.OR.asString())!! }
     private lateinit var container: IrDeclaration
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         this.container = container
         super.lower(irBody, container)
+    }
+
+    override fun nullConst(startOffset: Int, endOffset: Int, type: IrType): IrExpression {
+        val underlyingType = type.getMostDeepValueClassUnderlyingType(context)
+        val underlyingValue = IrConstImpl.defaultValueForType(startOffset, endOffset, underlyingType)
+
+        if (type == underlyingType) return underlyingValue
+
+        return context.createIrBuilder(container.symbol)
+            .irReinterpretCast(underlyingValue, type)
     }
 
     override fun shouldReplaceWithSyntheticFunction(functionAccess: IrFunctionAccessExpression): Boolean =

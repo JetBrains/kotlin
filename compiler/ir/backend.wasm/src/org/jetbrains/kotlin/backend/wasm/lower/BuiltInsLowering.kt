@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.getJsClassForExternalClass
+import org.jetbrains.kotlin.backend.wasm.utils.getMostDeepValueClassUnderlyingType
 import org.jetbrains.kotlin.backend.wasm.utils.getReflectionQualifier
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -88,14 +89,28 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
                 val rhsType = rhs.type
 
                 if (lhsType == rhsType) {
+                    var unpackedValueType = lhsType
+                    var unpackedValueParameterLhs = lhs
+                    var unpackedValueParameterRhs = rhs
+                    if (symbol == irBuiltins.eqeqSymbol) {
+                        unpackedValueType = lhsType.getMostDeepValueClassUnderlyingType(context, stopWhenEqualsIsOverridden = true)
+                        if (unpackedValueType != lhsType) {
+                            unpackedValueParameterLhs = builder.irReinterpretCast(lhs, unpackedValueType)
+                            unpackedValueParameterRhs = builder.irReinterpretCast(rhs, unpackedValueType)
+                        }
+                    }
+
                     val newSymbol =
-                        symbols.equalityFunctions[lhsType]
+                        symbols.equalityFunctions[unpackedValueType]
                             // For eqeqeqSymbol try to use more efficient comparison if type is Double or Float.
                             // But for eqeqSymbol we have to use generic comparison for floating point numbers.
-                            ?: if (call.symbol === irBuiltins.eqeqeqSymbol) symbols.floatEqualityFunctions[lhsType] else null
+                            ?: if (call.symbol === irBuiltins.eqeqeqSymbol) symbols.floatEqualityFunctions[unpackedValueType] else null
 
                     if (newSymbol != null) {
-                        return irCall(call, newSymbol)
+                        return irCall(call, newSymbol).also {
+                            it.arguments[0] = unpackedValueParameterLhs
+                            it.arguments[1] = unpackedValueParameterRhs
+                        }
                     }
                 }
 
