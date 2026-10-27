@@ -372,14 +372,8 @@ private object FreeListAllocator {
         free(MemorySlot(Pointer(allocatedSlot.ptr.address + newSize), originalSize - newSize))
     }
 
-    fun tryGrowInPlace(allocatedSlot: MemorySlot, newSize: UInt): Boolean {
-        val grown = FreeList.tryGrowInPlace(allocatedSlot, newSize)
-            ?: return false
-
-        val _ = grown.growRealMemoryIfNeeded()
-
-        return true
-    }
+    fun tryGrowInPlace(allocatedSlot: MemorySlot, newSize: UInt): Boolean =
+        FreeList.tryGrowInPlace(allocatedSlot, newSize)?.growRealMemoryIfNeeded() != null
 
 }
 
