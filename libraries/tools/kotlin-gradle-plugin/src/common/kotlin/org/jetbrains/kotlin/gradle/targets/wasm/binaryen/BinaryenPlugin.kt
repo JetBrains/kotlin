@@ -9,7 +9,10 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.plugins.ExtensionContainer
-import org.jetbrains.kotlin.gradle.internal.unameExecResult
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticRenderingOptions
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.createAnExceptionForFatalDiagnostic
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.toolingDiagnosticsContext
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.tasks.registerTask
@@ -71,14 +74,14 @@ abstract class BinaryenPlugin internal constructor() : Plugin<Project> {
 
     @Suppress("DEPRECATION_ERROR")
     private fun addPlatform(project: Project, extension: BinaryenExtension) {
-        val uname = project.providers.unameExecResult
-
+        val renderingOptions = project.toolingDiagnosticsContext.renderingOptions
         extension.platform.value(
             project.providers.systemProperty("os.name")
                 .zip(
                     project.providers.systemProperty("os.arch")
                 ) { name, arch ->
-                    BinaryenPlatform.parseBinaryenPlatform(name.toLowerCaseAsciiOnly(), arch, uname)
+                    BinaryenPlatform.parseBinaryenPlatformOrNull(name.toLowerCaseAsciiOnly(), arch)
+                        ?: throwUnsupportedPlatform(name, arch, renderingOptions)
                 }
         ).disallowChanges()
     }
@@ -94,3 +97,13 @@ abstract class BinaryenPlugin internal constructor() : Plugin<Project> {
         }
     }
 }
+
+private fun throwUnsupportedPlatform(
+    osName: String,
+    osArch: String,
+    renderingOptions: ToolingDiagnosticRenderingOptions,
+): Nothing = throw KotlinToolingDiagnostics.BinaryenUnsupportedPlatform(
+    osName,
+    osArch,
+    BinaryenPlatform.SUPPORTED_PLATFORMS,
+).createAnExceptionForFatalDiagnostic(renderingOptions)
