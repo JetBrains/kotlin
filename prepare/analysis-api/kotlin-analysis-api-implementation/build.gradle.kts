@@ -19,6 +19,23 @@ val additionalCompilerProjects = listOf(
 )
 
 val excludedCompilerProjects = listOf(
+    // JS and Wasm backends
+    ":compiler:backend.js",
+    ":compiler:backend.wasm",
+    ":js:js.parser",
+    ":js:js.sourcemap",
+    ":js:js.translator",
+    ":js:typescript-export-model",
+    ":js:typescript-printer",
+    ":wasm:wasm.ir",
+    ":compiler:ir.serialization.js",
+
+    // CLI
+    ":compiler:cli-js",
+    ":compiler:cli-jklib",
+    ":compiler:cli-metadata",
+
+    // Other
     ":compiler:incremental-compilation-impl",
     ":compiler:build-tools:kotlin-build-statistics",
     ":kotlin-compiler-runner-unshaded",
