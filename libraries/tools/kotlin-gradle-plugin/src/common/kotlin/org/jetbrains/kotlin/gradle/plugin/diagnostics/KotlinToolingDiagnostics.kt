@@ -2654,6 +2654,24 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    internal object BinaryenUnsupportedPlatform : ToolingDiagnosticFactory(
+        FATAL,
+        DiagnosticGroup.Kgp.Misconfiguration,
+    ) {
+        operator fun invoke(osName: String, osArch: String, supportedPlatforms: List<String>) = build {
+            title("Unsupported Binaryen Platform")
+                .description {
+                    "Binaryen does not provide a prebuilt binary for the detected platform: OS '$osName', architecture '$osArch'. " +
+                            "Supported platforms are: ${supportedPlatforms.joinToString()}"
+                }
+                .solutions(
+                    "Run the build on a platform supported by Binaryen.",
+                    "Disable Binaryen downloading and configure a locally installed 'wasm-opt' executable."
+                )
+                .documentationLink(URI("https://github.com/WebAssembly/binaryen/releases"))
+        }
+    }
+
     internal object PluginLoadedInMultipleProjectsError : ToolingDiagnosticFactory(
         ERROR,
         DiagnosticGroup.Kgp.Misconfiguration,
