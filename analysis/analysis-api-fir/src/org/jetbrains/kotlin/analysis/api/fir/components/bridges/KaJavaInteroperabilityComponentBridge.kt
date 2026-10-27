@@ -16,10 +16,8 @@ import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionCompo
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsJavaInteroperabilityComponent
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.analysis.api.javaInterop.asKaType as asKaTypeEndpoint
 import org.jetbrains.kotlin.analysis.api.javaInterop.callableSymbol as callableSymbolEndpoint
 import org.jetbrains.kotlin.analysis.api.javaInterop.containingJvmClassName as containingJvmClassNameEndpoint
@@ -73,12 +71,4 @@ internal class KaJavaInteroperabilityComponentBridge(
         preserveAnnotations,
         allowNonJvmPlatforms,
     )
-
-    @Deprecated("Use the 'javaMethodName' endpoint on the property getter instead.")
-    override val KaPropertySymbol.javaGetterName: Name
-        get() = proxy.javaGetterName(this)
-
-    @Deprecated("Use the 'javaMethodName' endpoint on the property setter instead.")
-    override val KaPropertySymbol.javaSetterName: Name?
-        get() = proxy.javaSetterName(this)
 }

@@ -14,10 +14,8 @@ import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
-import org.jetbrains.kotlin.name.Name
 
 @KaSessionComponentImplementationDetail
 @SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
@@ -123,27 +121,6 @@ public interface KaJavaInteroperabilityComponent : KaSessionComponent {
     @KaExperimentalApi
     public val KaCallableSymbol.containingJvmClassName: String?
 
-    /**
-     * The JVM getter method name for the given [KaPropertySymbol].
-     * The behavior is undefined for modules other than JVM and common (with a JVM implementation).
-     */
-    @KaExperimentalApi
-    @Deprecated(
-        message = "Use the 'javaMethodName' endpoint on the property getter instead.",
-        replaceWith = ReplaceWith("this.getter?.javaMethodName", "org.jetbrains.kotlin.analysis.api.javaInterop.javaMethodName"),
-    )
-    public val KaPropertySymbol.javaGetterName: Name
-
-    /**
-     * The JVM setter method name for the given [KaPropertySymbol].
-     * The behavior is undefined for modules other than JVM and common (with a JVM implementation).
-     */
-    @KaExperimentalApi
-    @Deprecated(
-        message = "Use the 'javaMethodName' endpoint on the property setter instead.",
-        replaceWith = ReplaceWith("this.setter?.javaMethodName", "org.jetbrains.kotlin.analysis.api.javaInterop.javaMethodName"),
-    )
-    public val KaPropertySymbol.javaSetterName: Name?
 }
 
 /**
@@ -224,35 +201,3 @@ public val PsiClass.namedClassSymbol: KaNamedClassSymbol?
 context(session: KaSession)
 public val PsiMember.callableSymbol: KaCallableSymbol?
     get() = with(session) { callableSymbol }
-
-/**
- * The JVM getter method name for the given [KaPropertySymbol].
- * The behavior is undefined for modules other than JVM and common (with a JVM implementation).
- */
-@KaExperimentalApi
-@Deprecated(
-    message = "Use the 'javaMethodName' endpoint on the property getter instead.",
-    replaceWith = ReplaceWith("this.getter?.javaMethodName", "org.jetbrains.kotlin.analysis.api.javaInterop.javaMethodName"),
-)
-context(session: KaSession)
-public val KaPropertySymbol.javaGetterName: Name
-    get() = with(session) {
-        @Suppress("DEPRECATION")
-        javaGetterName
-    }
-
-/**
- * The JVM setter method name for the given [KaPropertySymbol].
- * The behavior is undefined for modules other than JVM and common (with a JVM implementation).
- */
-@KaExperimentalApi
-@Deprecated(
-    message = "Use the 'javaMethodName' endpoint on the property setter instead.",
-    replaceWith = ReplaceWith("this.setter?.javaMethodName", "org.jetbrains.kotlin.analysis.api.javaInterop.javaMethodName"),
-)
-context(session: KaSession)
-public val KaPropertySymbol.javaSetterName: Name?
-    get() = with(session) {
-        @Suppress("DEPRECATION")
-        javaSetterName
-    }

@@ -49,21 +49,6 @@ import kotlin.contracts.contract
 public sealed interface KaSimpleOrMultiCall : KaLifetimeOwner
 
 /**
- * The former name of [KaSimpleOrMultiCall].
- *
- * @see KaSimpleOrMultiCall
- */
-@Deprecated(
-    message = "Use 'KaSimpleOrMultiCall' instead",
-    replaceWith = ReplaceWith(
-        expression = "KaSimpleOrMultiCall",
-        imports = ["org.jetbrains.kotlin.analysis.api.resolution.KaSimpleOrMultiCall"],
-    ),
-)
-@KaExperimentalApi
-public typealias KaSingleOrMultiCall = KaSimpleOrMultiCall
-
-/**
  * Represents a successful resolution resulting in a simple call.
  *
  * ### Example
@@ -116,21 +101,6 @@ public interface KaSimpleCall<S : KaCallableSymbol, C : KaCallableSignature<S>> 
      */
     public val typeArgumentsMapping: Map<KaTypeParameterSymbol, KaType>
 }
-
-/**
- * The former name of [KaSimpleCall].
- *
- * @see KaSimpleCall
- */
-@Deprecated(
-    message = "Use 'KaSimpleCall' instead",
-    replaceWith = ReplaceWith(
-        expression = "KaSimpleCall<S, C>",
-        imports = ["org.jetbrains.kotlin.analysis.api.resolution.KaSimpleCall"],
-    ),
-)
-@KaExperimentalApi
-public typealias KaSingleCall<S, C> = KaSimpleCall<S, C>
 
 /**
  * Represents a successful resolution resulting in multiple calls.

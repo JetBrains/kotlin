@@ -129,9 +129,6 @@ org.jetbrains.kotlin.analysis.api.components.KaDiagnosticCheckerFilter.ONLY_EXPE
 org.jetbrains.kotlin.analysis.api.components.KaDiagnosticCheckerFilter.ONLY_EXTENDED_CHECKERS
 org.jetbrains.kotlin.analysis.api.components.KaDiagnosticProvider
 org.jetbrains.kotlin.analysis.api.components.KaDiagnosticProvider.collectDiagnostics(KaDiagnosticCheckerFilter)
-org.jetbrains.kotlin.analysis.api.components.KaDiagnosticProvider.diagnostics(KaDiagnosticCheckerFilter)
-org.jetbrains.kotlin.analysis.api.components.KaDiagnosticProvider.diagnosticsIgnoringSuppression(KaDiagnosticCheckerFilter)
-org.jetbrains.kotlin.analysis.api.components.KaDiagnosticProvider.directDiagnostics(KaDiagnosticCheckerFilter)
 org.jetbrains.kotlin.analysis.api.components.KaEvaluator
 org.jetbrains.kotlin.analysis.api.components.KaEvaluator.evaluate()
 org.jetbrains.kotlin.analysis.api.components.KaEvaluator.evaluateAsAnnotationValue()
@@ -184,8 +181,6 @@ org.jetbrains.kotlin.analysis.api.components.KaJavaInteroperabilityComponent.asP
 org.jetbrains.kotlin.analysis.api.components.KaJavaInteroperabilityComponent.callableSymbol
 org.jetbrains.kotlin.analysis.api.components.KaJavaInteroperabilityComponent.containingJvmClassName
 org.jetbrains.kotlin.analysis.api.components.KaJavaInteroperabilityComponent.isPrimitiveBacked
-org.jetbrains.kotlin.analysis.api.components.KaJavaInteroperabilityComponent.javaGetterName
-org.jetbrains.kotlin.analysis.api.components.KaJavaInteroperabilityComponent.javaSetterName
 org.jetbrains.kotlin.analysis.api.components.KaJavaInteroperabilityComponent.mapToJvmTypeDescriptor()
 org.jetbrains.kotlin.analysis.api.components.KaJavaInteroperabilityComponent.namedClassSymbol
 org.jetbrains.kotlin.analysis.api.components.KaKDocProvider
@@ -546,8 +541,6 @@ org.jetbrains.kotlin.analysis.api.components.buildArrayType(KaType, KaArrayTypeB
 org.jetbrains.kotlin.analysis.api.components.buildClassType(ClassId, KaClassTypeBuilder.() -> Unit)
 org.jetbrains.kotlin.analysis.api.components.buildClassType(KaClassLikeSymbol, KaClassTypeBuilder.() -> Unit)
 org.jetbrains.kotlin.analysis.api.components.buildStarTypeProjection()
-org.jetbrains.kotlin.analysis.api.components.buildSubstitutor(KaSubstitutorBuilder.() -> Unit)
-org.jetbrains.kotlin.analysis.api.components.buildSubstitutor(KaSubstitutorBuilder.() -> Unit)
 org.jetbrains.kotlin.analysis.api.components.buildTypeParameterType(KaTypeParameterSymbol, KaTypeParameterTypeBuilder.() -> Unit)
 org.jetbrains.kotlin.analysis.api.components.buildVarargArrayType(KaType)
 org.jetbrains.kotlin.analysis.api.components.builtinTypes
@@ -569,15 +562,9 @@ org.jetbrains.kotlin.analysis.api.components.containingFile
 org.jetbrains.kotlin.analysis.api.components.containingModule
 org.jetbrains.kotlin.analysis.api.components.containingSymbol
 org.jetbrains.kotlin.analysis.api.components.createExtensionCandidateChecker(KtFile, KtSimpleNameExpression, KtExpression?)
-org.jetbrains.kotlin.analysis.api.components.createSubtypingUnificationSubstitutor(KaType, KaType, KaUnificationSubstitutorPolicy)
-org.jetbrains.kotlin.analysis.api.components.createSubtypingUnificationSubstitutor(List<Pair<KaType, KaType>>, (KaTypeParameterSymbol) -> Boolean)
-org.jetbrains.kotlin.analysis.api.components.createSubtypingUnificationSubstitutor(List<Pair<KaType, KaType>>, KaUnificationSubstitutorPolicy)
 org.jetbrains.kotlin.analysis.api.components.declaredMemberScope
 org.jetbrains.kotlin.analysis.api.components.defaultType
 org.jetbrains.kotlin.analysis.api.components.delegatedMemberScope
-org.jetbrains.kotlin.analysis.api.components.diagnostics(KaDiagnosticCheckerFilter)
-org.jetbrains.kotlin.analysis.api.components.diagnosticsIgnoringSuppression(KaDiagnosticCheckerFilter)
-org.jetbrains.kotlin.analysis.api.components.directDiagnostics(KaDiagnosticCheckerFilter)
 org.jetbrains.kotlin.analysis.api.components.directSupertypes
 org.jetbrains.kotlin.analysis.api.components.directSupertypes(Boolean)
 org.jetbrains.kotlin.analysis.api.components.directlyOverriddenSymbols
@@ -635,8 +622,6 @@ org.jetbrains.kotlin.analysis.api.components.isULongType
 org.jetbrains.kotlin.analysis.api.components.isUShortType
 org.jetbrains.kotlin.analysis.api.components.isUnitType
 org.jetbrains.kotlin.analysis.api.components.isUsedAsExpression
-org.jetbrains.kotlin.analysis.api.components.javaGetterName
-org.jetbrains.kotlin.analysis.api.components.javaSetterName
 org.jetbrains.kotlin.analysis.api.components.lowerBoundIfFlexible()
 org.jetbrains.kotlin.analysis.api.components.memberScope
 org.jetbrains.kotlin.analysis.api.components.namedClassSymbol

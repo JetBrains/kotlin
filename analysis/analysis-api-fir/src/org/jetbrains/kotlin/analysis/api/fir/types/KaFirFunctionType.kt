@@ -81,9 +81,6 @@ internal class KaFirFunctionType(
             contextParameterTypes.map { KaBaseContextReceiver(it, label = null, token) }
         }
 
-    @Deprecated("Use `hasContextParameters` instead.", ReplaceWith("hasContextParameters"))
-    override val hasContextReceivers: Boolean get() = withValidityAssertion { contextParameterTypes.isNotEmpty() }
-
     override val receiverType: KaType?
         get() = withValidityAssertion {
             coneType.receiverType(builder.rootSession)?.buildKtType()

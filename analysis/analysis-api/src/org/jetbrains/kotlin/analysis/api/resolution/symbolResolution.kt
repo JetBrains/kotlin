@@ -95,22 +95,6 @@ public fun KtResolvable.resolveSuccessfulSymbols(): Collection<KaSymbol> {
 }
 
 /**
- * The former name of [resolveSuccessfulSymbols].
- *
- * @see resolveSuccessfulSymbols
- */
-@Deprecated(
-    message = "Use 'resolveSuccessfulSymbols()' instead",
-    replaceWith = ReplaceWith(
-        expression = "resolveSuccessfulSymbols()",
-        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbols"],
-    ),
-)
-@KaExperimentalApi
-context(session: KaSession)
-public fun KtResolvable.resolveSymbols(): Collection<KaSymbol> = resolveSuccessfulSymbols()
-
-/**
  * Resolves a single symbol for the given [KtResolvable].
  *
  * Returns the [KaSymbol] if there is exactly one target; otherwise, `null`
@@ -137,22 +121,6 @@ public fun KtResolvable.resolveSuccessfulSymbol(): KaSymbol? {
     @OptIn(KaImplementationDetail::class)
     return internals.resolver.resolveSuccessfulSymbol(this)
 }
-
-/**
- * The former name of [KtResolvable.resolveSuccessfulSymbol].
- *
- * @see KtResolvable.resolveSuccessfulSymbol
- */
-@Deprecated(
-    message = "Use 'resolveSuccessfulSymbol()' instead",
-    replaceWith = ReplaceWith(
-        expression = "resolveSuccessfulSymbol()",
-        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol"],
-    ),
-)
-@KaExperimentalApi
-context(session: KaSession)
-public fun KtResolvable.resolveSymbol(): KaSymbol? = resolveSuccessfulSymbol()
 
 /**
  * Resolves the constructor symbol of the annotation referenced by the given [KtAnnotationEntry].
@@ -182,22 +150,6 @@ public fun KtAnnotationEntry.resolveSuccessfulSymbol(): KaConstructorSymbol? {
 }
 
 /**
- * The former name of [KtAnnotationEntry.resolveSuccessfulSymbol].
- *
- * @see KtAnnotationEntry.resolveSuccessfulSymbol
- */
-@Deprecated(
-    message = "Use 'resolveSuccessfulSymbol()' instead",
-    replaceWith = ReplaceWith(
-        expression = "resolveSuccessfulSymbol()",
-        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol"],
-    ),
-)
-@KaExperimentalApi
-context(session: KaSession)
-public fun KtAnnotationEntry.resolveSymbol(): KaConstructorSymbol? = resolveSuccessfulSymbol()
-
-/**
  * Resolves the constructor symbol by the given [KtSuperTypeCallEntry].
  *
  * #### Example
@@ -223,22 +175,6 @@ public fun KtSuperTypeCallEntry.resolveSuccessfulSymbol(): KaConstructorSymbol? 
     @OptIn(KaImplementationDetail::class)
     return internals.resolver.resolveSuccessfulSymbol(this)
 }
-
-/**
- * The former name of [KtSuperTypeCallEntry.resolveSuccessfulSymbol].
- *
- * @see KtSuperTypeCallEntry.resolveSuccessfulSymbol
- */
-@Deprecated(
-    message = "Use 'resolveSuccessfulSymbol()' instead",
-    replaceWith = ReplaceWith(
-        expression = "resolveSuccessfulSymbol()",
-        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol"],
-    ),
-)
-@KaExperimentalApi
-context(session: KaSession)
-public fun KtSuperTypeCallEntry.resolveSymbol(): KaConstructorSymbol? = resolveSuccessfulSymbol()
 
 /**
  * Resolves the constructor symbol referenced by the given [KtConstructorDelegationCall].
@@ -274,22 +210,6 @@ public fun KtConstructorDelegationCall.resolveSuccessfulSymbol(): KaConstructorS
 }
 
 /**
- * The former name of [KtConstructorDelegationCall.resolveSuccessfulSymbol].
- *
- * @see KtConstructorDelegationCall.resolveSuccessfulSymbol
- */
-@Deprecated(
-    message = "Use 'resolveSuccessfulSymbol()' instead",
-    replaceWith = ReplaceWith(
-        expression = "resolveSuccessfulSymbol()",
-        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol"],
-    ),
-)
-@KaExperimentalApi
-context(session: KaSession)
-public fun KtConstructorDelegationCall.resolveSymbol(): KaConstructorSymbol? = resolveSuccessfulSymbol()
-
-/**
  * Resolves the constructor symbol referenced by the given [KtConstructorDelegationReferenceExpression].
  *
  * #### Example
@@ -323,22 +243,6 @@ public fun KtConstructorDelegationReferenceExpression.resolveSuccessfulSymbol():
 }
 
 /**
- * The former name of [KtConstructorDelegationReferenceExpression.resolveSuccessfulSymbol].
- *
- * @see KtConstructorDelegationReferenceExpression.resolveSuccessfulSymbol
- */
-@Deprecated(
-    message = "Use 'resolveSuccessfulSymbol()' instead",
-    replaceWith = ReplaceWith(
-        expression = "resolveSuccessfulSymbol()",
-        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol"],
-    ),
-)
-@KaExperimentalApi
-context(session: KaSession)
-public fun KtConstructorDelegationReferenceExpression.resolveSymbol(): KaConstructorSymbol? = resolveSuccessfulSymbol()
-
-/**
  * Resolves the function symbol targeted by the given [KtCallElement].
  *
  * #### Example
@@ -368,22 +272,6 @@ public fun KtCallElement.resolveSuccessfulSymbol(): KaFunctionSymbol? {
 }
 
 /**
- * The former name of [KtCallElement.resolveSuccessfulSymbol].
- *
- * @see KtCallElement.resolveSuccessfulSymbol
- */
-@Deprecated(
-    message = "Use 'resolveSuccessfulSymbol()' instead",
-    replaceWith = ReplaceWith(
-        expression = "resolveSuccessfulSymbol()",
-        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol"],
-    ),
-)
-@KaExperimentalApi
-context(session: KaSession)
-public fun KtCallElement.resolveSymbol(): KaFunctionSymbol? = resolveSuccessfulSymbol()
-
-/**
  * Resolves the callable symbol targeted by the given [KtCallableReferenceExpression].
  *
  * #### Example
@@ -409,22 +297,6 @@ public fun KtCallableReferenceExpression.resolveSuccessfulSymbol(): KaCallableSy
     @OptIn(KaImplementationDetail::class)
     return internals.resolver.resolveSuccessfulSymbol(this)
 }
-
-/**
- * The former name of [KtCallableReferenceExpression.resolveSuccessfulSymbol].
- *
- * @see KtCallableReferenceExpression.resolveSuccessfulSymbol
- */
-@Deprecated(
-    message = "Use 'resolveSuccessfulSymbol()' instead",
-    replaceWith = ReplaceWith(
-        expression = "resolveSuccessfulSymbol()",
-        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol"],
-    ),
-)
-@KaExperimentalApi
-context(session: KaSession)
-public fun KtCallableReferenceExpression.resolveSymbol(): KaCallableSymbol? = resolveSuccessfulSymbol()
 
 /**
  * Resolves the operator function symbol targeted by the given [KtArrayAccessExpression].
@@ -470,22 +342,6 @@ public fun KtArrayAccessExpression.resolveSuccessfulSymbol(): KaNamedFunctionSym
 }
 
 /**
- * The former name of [KtArrayAccessExpression.resolveSuccessfulSymbol].
- *
- * @see KtArrayAccessExpression.resolveSuccessfulSymbol
- */
-@Deprecated(
-    message = "Use 'resolveSuccessfulSymbol()' instead",
-    replaceWith = ReplaceWith(
-        expression = "resolveSuccessfulSymbol()",
-        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol"],
-    ),
-)
-@KaExperimentalApi
-context(session: KaSession)
-public fun KtArrayAccessExpression.resolveSymbol(): KaNamedFunctionSymbol? = resolveSuccessfulSymbol()
-
-/**
  * Resolves the function symbol targeted by the given [KtCollectionLiteralExpression].
  *
  * #### Example
@@ -513,22 +369,6 @@ public fun KtCollectionLiteralExpression.resolveSuccessfulSymbol(): KaNamedFunct
     @OptIn(KaImplementationDetail::class)
     return internals.resolver.resolveSuccessfulSymbol(this)
 }
-
-/**
- * The former name of [KtCollectionLiteralExpression.resolveSuccessfulSymbol].
- *
- * @see KtCollectionLiteralExpression.resolveSuccessfulSymbol
- */
-@Deprecated(
-    message = "Use 'resolveSuccessfulSymbol()' instead",
-    replaceWith = ReplaceWith(
-        expression = "resolveSuccessfulSymbol()",
-        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol"],
-    ),
-)
-@KaExperimentalApi
-context(session: KaSession)
-public fun KtCollectionLiteralExpression.resolveSymbol(): KaNamedFunctionSymbol? = resolveSuccessfulSymbol()
 
 /**
  * Resolves the enum class symbol referenced by the given [KtEnumEntrySuperclassReferenceExpression].
@@ -559,22 +399,6 @@ public fun KtEnumEntrySuperclassReferenceExpression.resolveSuccessfulSymbol(): K
     @OptIn(KaImplementationDetail::class)
     return internals.resolver.resolveSuccessfulSymbol(this)
 }
-
-/**
- * The former name of [KtEnumEntrySuperclassReferenceExpression.resolveSuccessfulSymbol].
- *
- * @see KtEnumEntrySuperclassReferenceExpression.resolveSuccessfulSymbol
- */
-@Deprecated(
-    message = "Use 'resolveSuccessfulSymbol()' instead",
-    replaceWith = ReplaceWith(
-        expression = "resolveSuccessfulSymbol()",
-        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol"],
-    ),
-)
-@KaExperimentalApi
-context(session: KaSession)
-public fun KtEnumEntrySuperclassReferenceExpression.resolveSymbol(): KaNamedClassSymbol? = resolveSuccessfulSymbol()
 
 /**
  * Resolves the declaration symbol targeted by the given [KtLabelReferenceExpression].
@@ -608,22 +432,6 @@ public fun KtLabelReferenceExpression.resolveSuccessfulSymbol(): KaDeclarationSy
     @OptIn(KaImplementationDetail::class)
     return internals.resolver.resolveSuccessfulSymbol(this)
 }
-
-/**
- * The former name of [KtLabelReferenceExpression.resolveSuccessfulSymbol].
- *
- * @see KtLabelReferenceExpression.resolveSuccessfulSymbol
- */
-@Deprecated(
-    message = "Use 'resolveSuccessfulSymbol()' instead",
-    replaceWith = ReplaceWith(
-        expression = "resolveSuccessfulSymbol()",
-        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol"],
-    ),
-)
-@KaExperimentalApi
-context(session: KaSession)
-public fun KtLabelReferenceExpression.resolveSymbol(): KaDeclarationSymbol? = resolveSuccessfulSymbol()
 
 /**
  * Resolves the function symbol targeted by the given [KtReturnExpression].
@@ -661,22 +469,6 @@ public fun KtReturnExpression.resolveSuccessfulSymbol(): KaFunctionSymbol? {
 }
 
 /**
- * The former name of [KtReturnExpression.resolveSuccessfulSymbol].
- *
- * @see KtReturnExpression.resolveSuccessfulSymbol
- */
-@Deprecated(
-    message = "Use 'resolveSuccessfulSymbol()' instead",
-    replaceWith = ReplaceWith(
-        expression = "resolveSuccessfulSymbol()",
-        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol"],
-    ),
-)
-@KaExperimentalApi
-context(session: KaSession)
-public fun KtReturnExpression.resolveSymbol(): KaFunctionSymbol? = resolveSuccessfulSymbol()
-
-/**
  * Resolves the operator function symbol targeted by the given [KtWhenConditionInRange].
  *
  * #### Example
@@ -710,22 +502,6 @@ public fun KtWhenConditionInRange.resolveSuccessfulSymbol(): KaNamedFunctionSymb
 }
 
 /**
- * The former name of [KtWhenConditionInRange.resolveSuccessfulSymbol].
- *
- * @see KtWhenConditionInRange.resolveSuccessfulSymbol
- */
-@Deprecated(
-    message = "Use 'resolveSuccessfulSymbol()' instead",
-    replaceWith = ReplaceWith(
-        expression = "resolveSuccessfulSymbol()",
-        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol"],
-    ),
-)
-@KaExperimentalApi
-context(session: KaSession)
-public fun KtWhenConditionInRange.resolveSymbol(): KaNamedFunctionSymbol? = resolveSuccessfulSymbol()
-
-/**
  * Resolves the callable symbol targeted by the given [KtDestructuringDeclarationEntry].
  *
  * #### Example
@@ -757,22 +533,6 @@ public fun KtDestructuringDeclarationEntry.resolveSuccessfulSymbol(): KaCallable
 }
 
 /**
- * The former name of [KtDestructuringDeclarationEntry.resolveSuccessfulSymbol].
- *
- * @see KtDestructuringDeclarationEntry.resolveSuccessfulSymbol
- */
-@Deprecated(
-    message = "Use 'resolveSuccessfulSymbol()' instead",
-    replaceWith = ReplaceWith(
-        expression = "resolveSuccessfulSymbol()",
-        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol"],
-    ),
-)
-@KaExperimentalApi
-context(session: KaSession)
-public fun KtDestructuringDeclarationEntry.resolveSymbol(): KaCallableSymbol? = resolveSuccessfulSymbol()
-
-/**
  * Resolves the callable symbol targeted by the given [KtQualifiedExpression].
  *
  * #### Example
@@ -796,22 +556,6 @@ public fun KtQualifiedExpression.resolveSuccessfulSymbol(): KaCallableSymbol? {
     @OptIn(KaImplementationDetail::class)
     return internals.resolver.resolveSuccessfulSymbol(this)
 }
-
-/**
- * The former name of [KtQualifiedExpression.resolveSuccessfulSymbol].
- *
- * @see KtQualifiedExpression.resolveSuccessfulSymbol
- */
-@Deprecated(
-    message = "Use 'resolveSuccessfulSymbol()' instead",
-    replaceWith = ReplaceWith(
-        expression = "resolveSuccessfulSymbol()",
-        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol"],
-    ),
-)
-@KaExperimentalApi
-context(session: KaSession)
-public fun KtQualifiedExpression.resolveSymbol(): KaCallableSymbol? = resolveSuccessfulSymbol()
 
 /**
  * Resolves the constructor symbol referenced by the given [KtConstructorCalleeExpression].
@@ -839,22 +583,6 @@ public fun KtConstructorCalleeExpression.resolveSuccessfulSymbol(): KaConstructo
     @OptIn(KaImplementationDetail::class)
     return internals.resolver.resolveSuccessfulSymbol(this)
 }
-
-/**
- * The former name of [KtConstructorCalleeExpression.resolveSuccessfulSymbol].
- *
- * @see KtConstructorCalleeExpression.resolveSuccessfulSymbol
- */
-@Deprecated(
-    message = "Use 'resolveSuccessfulSymbol()' instead",
-    replaceWith = ReplaceWith(
-        expression = "resolveSuccessfulSymbol()",
-        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol"],
-    ),
-)
-@KaExperimentalApi
-context(session: KaSession)
-public fun KtConstructorCalleeExpression.resolveSymbol(): KaConstructorSymbol? = resolveSuccessfulSymbol()
 
 /**
  * Resolves the declaration symbol referenced by the given [KtInstanceExpressionWithLabel].
@@ -899,22 +627,6 @@ public fun KtInstanceExpressionWithLabel.resolveSuccessfulSymbol(): KaDeclaratio
 }
 
 /**
- * The former name of [KtInstanceExpressionWithLabel.resolveSuccessfulSymbol].
- *
- * @see KtInstanceExpressionWithLabel.resolveSuccessfulSymbol
- */
-@Deprecated(
-    message = "Use 'resolveSuccessfulSymbol()' instead",
-    replaceWith = ReplaceWith(
-        expression = "resolveSuccessfulSymbol()",
-        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol"],
-    ),
-)
-@KaExperimentalApi
-context(session: KaSession)
-public fun KtInstanceExpressionWithLabel.resolveSymbol(): KaDeclarationSymbol? = resolveSuccessfulSymbol()
-
-/**
  * Resolves the classifier symbol referenced by the given [KtNullableType].
  *
  * #### Example
@@ -944,22 +656,6 @@ public fun KtNullableType.resolveSuccessfulSymbol(): KaClassifierSymbol? {
 }
 
 /**
- * The former name of [KtNullableType.resolveSuccessfulSymbol].
- *
- * @see KtNullableType.resolveSuccessfulSymbol
- */
-@Deprecated(
-    message = "Use 'resolveSuccessfulSymbol()' instead",
-    replaceWith = ReplaceWith(
-        expression = "resolveSuccessfulSymbol()",
-        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol"],
-    ),
-)
-@KaExperimentalApi
-context(session: KaSession)
-public fun KtNullableType.resolveSymbol(): KaClassifierSymbol? = resolveSuccessfulSymbol()
-
-/**
  * Resolves the synthetic function class symbol referenced by the given [KtFunctionType].
  *
  * #### Example
@@ -986,22 +682,6 @@ public fun KtFunctionType.resolveSuccessfulSymbol(): KaClassSymbol? {
     @OptIn(KaImplementationDetail::class)
     return internals.resolver.resolveSuccessfulSymbol(this)
 }
-
-/**
- * The former name of [KtFunctionType.resolveSuccessfulSymbol].
- *
- * @see KtFunctionType.resolveSuccessfulSymbol
- */
-@Deprecated(
-    message = "Use 'resolveSuccessfulSymbol()' instead",
-    replaceWith = ReplaceWith(
-        expression = "resolveSuccessfulSymbol()",
-        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol"],
-    ),
-)
-@KaExperimentalApi
-context(session: KaSession)
-public fun KtFunctionType.resolveSymbol(): KaClassSymbol? = resolveSuccessfulSymbol()
 
 /**
  * Resolves the classifier symbol referenced by the given [KtTypeReference].
@@ -1040,22 +720,6 @@ public fun KtTypeReference.resolveSuccessfulSymbol(): KaClassifierSymbol? {
 }
 
 /**
- * The former name of [KtTypeReference.resolveSuccessfulSymbol].
- *
- * @see KtTypeReference.resolveSuccessfulSymbol
- */
-@Deprecated(
-    message = "Use 'resolveSuccessfulSymbol()' instead",
-    replaceWith = ReplaceWith(
-        expression = "resolveSuccessfulSymbol()",
-        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol"],
-    ),
-)
-@KaExperimentalApi
-context(session: KaSession)
-public fun KtTypeReference.resolveSymbol(): KaClassifierSymbol? = resolveSuccessfulSymbol()
-
-/**
  * Resolves the classifier symbol referenced by the given [KtClassLiteralExpression] (`Foo::class`).
  *
  * #### Example
@@ -1083,22 +747,6 @@ public fun KtClassLiteralExpression.resolveSuccessfulSymbol(): KaClassifierSymbo
     @OptIn(KaImplementationDetail::class)
     return internals.resolver.resolveSuccessfulSymbol(this)
 }
-
-/**
- * The former name of [KtClassLiteralExpression.resolveSuccessfulSymbol].
- *
- * @see KtClassLiteralExpression.resolveSuccessfulSymbol
- */
-@Deprecated(
-    message = "Use 'resolveSuccessfulSymbol()' instead",
-    replaceWith = ReplaceWith(
-        expression = "resolveSuccessfulSymbol()",
-        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol"],
-    ),
-)
-@KaExperimentalApi
-context(session: KaSession)
-public fun KtClassLiteralExpression.resolveSymbol(): KaClassifierSymbol? = resolveSuccessfulSymbol()
 
 /**
  * Resolves the classifier symbol referenced by the given [KtSuperTypeEntry] (the no-parens form `class Foo : Bar`).
@@ -1129,22 +777,6 @@ public fun KtSuperTypeEntry.resolveSuccessfulSymbol(): KaClassifierSymbol? {
 }
 
 /**
- * The former name of [KtSuperTypeEntry.resolveSuccessfulSymbol].
- *
- * @see KtSuperTypeEntry.resolveSuccessfulSymbol
- */
-@Deprecated(
-    message = "Use 'resolveSuccessfulSymbol()' instead",
-    replaceWith = ReplaceWith(
-        expression = "resolveSuccessfulSymbol()",
-        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol"],
-    ),
-)
-@KaExperimentalApi
-context(session: KaSession)
-public fun KtSuperTypeEntry.resolveSymbol(): KaClassifierSymbol? = resolveSuccessfulSymbol()
-
-/**
  * Resolves the classifier symbol referenced by the given [KtDelegatedSuperTypeEntry] (`class Foo : Bar by baz`).
  *
  * #### Example
@@ -1169,19 +801,3 @@ public fun KtDelegatedSuperTypeEntry.resolveSuccessfulSymbol(): KaClassifierSymb
     @OptIn(KaImplementationDetail::class)
     return internals.resolver.resolveSuccessfulSymbol(this)
 }
-
-/**
- * The former name of [KtDelegatedSuperTypeEntry.resolveSuccessfulSymbol].
- *
- * @see KtDelegatedSuperTypeEntry.resolveSuccessfulSymbol
- */
-@Deprecated(
-    message = "Use 'resolveSuccessfulSymbol()' instead",
-    replaceWith = ReplaceWith(
-        expression = "resolveSuccessfulSymbol()",
-        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol"],
-    ),
-)
-@KaExperimentalApi
-context(session: KaSession)
-public fun KtDelegatedSuperTypeEntry.resolveSymbol(): KaClassifierSymbol? = resolveSuccessfulSymbol()

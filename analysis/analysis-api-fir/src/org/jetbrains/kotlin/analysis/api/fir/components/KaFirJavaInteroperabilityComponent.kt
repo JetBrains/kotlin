@@ -19,10 +19,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.components.bridges.lightClassBridge
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
-import org.jetbrains.kotlin.analysis.api.fir.getJvmNameFromAnnotation
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPsiJavaClassSymbol
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSyntheticJavaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirType
 import org.jetbrains.kotlin.analysis.api.fir.types.PublicTypeApproximator
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
@@ -45,15 +42,12 @@ import org.jetbrains.kotlin.asJava.elements.KtLightParameter
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmTypeMapper
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.java.MutableJavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.javaSymbolProvider
@@ -88,7 +82,6 @@ import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.types.model.RigidTypeMarker
 import org.jetbrains.kotlin.types.updateArgumentModeFromAnnotations
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import org.jetbrains.kotlin.utils.addToStdlib.requireIsInstance
 
 internal class KaFirJavaInteroperabilityComponent(
     override val analysisSessionProvider: () -> KaFirSession,
@@ -421,58 +414,6 @@ internal class KaFirJavaInteroperabilityComponent(
                     ?.asFqNameString()
             }
         }
-    }
-
-    override fun javaGetterName(symbol: KaPropertySymbol): Name = withValidityAssertion {
-        require(symbol is KaFirSymbol<*>)
-        if (symbol is KaFirSyntheticJavaPropertySymbol) {
-            return symbol.javaGetterSymbol.name
-        }
-
-        val firProperty = symbol.firSymbol.fir
-        requireIsInstance<FirProperty>(firProperty)
-
-        return getJvmName(firProperty, isSetter = false)
-    }
-
-    override fun javaSetterName(symbol: KaPropertySymbol): Name? = withValidityAssertion {
-        require(symbol is KaFirSymbol<*>)
-        if (symbol is KaFirSyntheticJavaPropertySymbol) {
-            return symbol.javaSetterSymbol?.name
-        }
-
-        val firProperty = symbol.firSymbol.fir
-        requireIsInstance<FirProperty>(firProperty)
-
-        if (firProperty.isVal) return null
-
-        return getJvmName(firProperty, isSetter = true)
-    }
-
-    private fun getJvmName(property: FirProperty, isSetter: Boolean): Name {
-        if (property.backingField?.symbol?.hasAnnotation(JvmStandardClassIds.Annotations.JvmField, analysisSession.firSession) == true) {
-            return property.name
-        }
-
-        val nameString = getJvmNameAsString(property, isSetter) ?: return SpecialNames.NO_NAME_PROVIDED
-        return Name.identifier(nameString)
-    }
-
-    private fun getJvmNameAsString(property: FirProperty, isSetter: Boolean): String? {
-        val useSiteTarget = if (isSetter) AnnotationUseSiteTarget.PROPERTY_SETTER else AnnotationUseSiteTarget.PROPERTY_GETTER
-        val jvmNameFromProperty = property.getJvmNameFromAnnotation(analysisSession.firSession, useSiteTarget)
-        if (jvmNameFromProperty != null) {
-            return jvmNameFromProperty
-        }
-
-        val accessor = if (isSetter) property.setter else property.getter
-        val jvmNameFromAccessor = accessor?.getJvmNameFromAnnotation(analysisSession.firSession)
-        if (jvmNameFromAccessor != null) {
-            return jvmNameFromAccessor
-        }
-
-        val identifier = property.name.takeUnless { it.isSpecial }?.identifier ?: return null
-        return if (isSetter) JvmAbi.setterName(identifier) else JvmAbi.getterName(identifier)
     }
 
     override fun javaMethodName(function: KaFunctionSymbol): String? = withValidityAssertion {

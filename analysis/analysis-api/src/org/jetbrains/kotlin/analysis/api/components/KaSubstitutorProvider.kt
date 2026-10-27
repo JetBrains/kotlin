@@ -12,9 +12,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.KaType
-import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.InvocationKind
-import kotlin.contracts.contract
 
 @KaExperimentalApi
 @KaSessionComponentImplementationDetail
@@ -23,7 +20,7 @@ public interface KaSubstitutorProvider : KaSessionComponent {
     /**
      * Creates a [KaSubstitutor] based on the given [mappings].
      *
-     * Usually, [buildSubstitutor] should be preferred to build a new substitutor from scratch.
+     * Usually, [buildSubstitutor][org.jetbrains.kotlin.analysis.api.types.buildSubstitutor] should be preferred to build a new substitutor from scratch.
      *
      * @see KaSubstitutor
      */
@@ -283,56 +280,9 @@ public enum class KaUnificationSubstitutorPolicy {
 }
 
 /**
- * Builds a new [KaSubstitutor] from substitutions specified inside [build].
- */
-@Deprecated(
-    message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
-    replaceWith = ReplaceWith(
-        "buildSubstitutor(build)",
-        "org.jetbrains.kotlin.analysis.api.types.buildSubstitutor",
-    ),
-)
-@KaExperimentalApi
-@OptIn(ExperimentalContracts::class, KaImplementationDetail::class)
-@JvmName("buildSubstitutorExtension")
-public inline fun KaSession.buildSubstitutor(
-    build: KaSubstitutorBuilder.() -> Unit,
-): KaSubstitutor {
-    contract {
-        callsInPlace(build, InvocationKind.EXACTLY_ONCE)
-    }
-    return createSubstitutor(KaSubstitutorBuilder(token).apply(build).mappings)
-}
-
-/**
- * Builds a new [KaSubstitutor] from substitutions specified inside [build].
- */
-@Deprecated(
-    message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
-    replaceWith = ReplaceWith(
-        "buildSubstitutor(build)",
-        "org.jetbrains.kotlin.analysis.api.types.buildSubstitutor",
-    ),
-)
-@KaCustomContextParameterBridge
-@KaExperimentalApi
-context(session: KaSession)
-public inline fun buildSubstitutor(
-    build: KaSubstitutorBuilder.() -> Unit,
-): KaSubstitutor {
-    @OptIn(ExperimentalContracts::class)
-    contract {
-        callsInPlace(build, InvocationKind.EXACTLY_ONCE)
-    }
-
-    @Suppress("DEPRECATION")
-    return session.buildSubstitutor(build)
-}
-
-/**
  * **The type has been moved to a new package. Use [org.jetbrains.kotlin.analysis.api.types.KaSubstitutorBuilder] instead.**
  *
- * A DSL builder for [KaSubstitutor]. Instances are created internally by [buildSubstitutor].
+ * A DSL builder for [KaSubstitutor]. Instances are created internally by [buildSubstitutor][org.jetbrains.kotlin.analysis.api.types.buildSubstitutor].
  *
  * @see KaSubstitutor
  */
@@ -367,181 +317,5 @@ public class KaSubstitutorBuilder
      */
     override fun substitutions(substitutions: Map<KaTypeParameterSymbol, KaType>): Unit = withValidityAssertion {
         backingMapping += substitutions
-    }
-}
-
-/**
- * Creates a [KaSubstitutor] which assigns type arguments such that, for each pair in [leftTypesToRightTypes],
- * the substituted left type is a subtype of the substituted right type.
- * Returns `null` if such an assignment is not possible.
- *
- * Note that when one type parameter is shared across several constraint pairs, all these pairs affect the resulting substitution
- * for this parameter.
- *
- * [createSubtypingUnificationSubstitutor] creates a constraint system, adds all the required bounds for 'leftType <: rightType'
- * from each [leftTypesToRightTypes] pair and tries to solve the given constraint system:
- * - If there were no contradictions found in the constraint system, the resulting substitutor is non-null. Otherwise, `null` is returned.
- * - If there are no type parameters involved in the provided types and every left type is a subtype of its right type,
- *   [KaSubstitutor.Empty] is returned.
- * - If [leftTypesToRightTypes] is empty, [KaSubstitutor.Empty] is returned as there can be no contradictions with no constraints.
- *
- * [isFreeTypeParameter] is called on every type parameter involved in the provided types
- * and controls the set of free type parameters registered in the constraint system.
- * Only affects the construction when at least one of the involved types is generic, i.e., depends on a type parameter.
- * The constraint system will only adjust the values of these free type parameters,
- * and the produced substitutor will only contain mappings for these parameters.
- */
-@Deprecated(
-    message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
-    replaceWith = ReplaceWith(
-        "createSubtypingUnificationSubstitutor(leftTypesToRightTypes, isFreeTypeParameter)",
-        "org.jetbrains.kotlin.analysis.api.types.createSubtypingUnificationSubstitutor",
-    ),
-)
-@KaIdeApi
-@OptIn(KaExperimentalApi::class)
-@KaContextParameterApi
-context(session: KaSession)
-public fun createSubtypingUnificationSubstitutor(
-    leftTypesToRightTypes: List<Pair<KaType, KaType>>,
-    isFreeTypeParameter: (KaTypeParameterSymbol) -> Boolean
-): KaSubstitutor? {
-    return with(session) {
-        createSubtypingUnificationSubstitutor(
-            leftTypesToRightTypes = leftTypesToRightTypes,
-            isFreeTypeParameter = isFreeTypeParameter,
-        )
-    }
-}
-
-/**
- * Creates a [KaSubstitutor] which assigns type arguments such that the substituted [leftType] is a subtype of the substituted [rightType].
- * Returns `null` if such an assignment is not possible.
- *
- * [createSubtypingUnificationSubstitutor] creates a constraint system, adds all the required bounds for '[leftType] <: [rightType]' and
- * tries to solve the given constraint system:
- * - If there were no contradictions found in the constraint system, the resulting substitutor is non-null. Otherwise, `null` is returned.
- * - If there are no type parameters involved in the provided types and [leftType] is a subtype of [rightType],
- *   [KaSubstitutor.Empty] is returned.
- *
- * [constructionPolicy] controls the way the unification substitutor is constructed.
- * Only affects the construction when at least one of the involved types is generic, i.e., depends on a type parameter.
- * See [KaUnificationSubstitutorPolicy] for more information and code examples.
- *
- * #### Examples:
- *
- * ```
- * interface MyClass<A>
- *
- * fun <T: X, X: R, R: Number> someFun(leftType: MyClass<Int>, rightType: MyClass<T>) {}
- * ```
- *
- * - `createSubtypingUnificationSubstitutor(MyClass<Int>, MyClass<T>, KaUnificationSubstitutorPolicy.ASSIGN_LEFT)` returns
- *   `null`, as `T` is fixed and not guaranteed to be exactly `Int` to satisfy the constraint.
- * - `createSubtypingUnificationSubstitutor(MyClass<Int>, MyClass<T>, KaUnificationSubstitutorPolicy.ASSIGN_RIGHT)` returns
- *   `KaSubstitutor { T -> kotlin/Int, X -> kotlin/Int, R -> kotlin/Int }`.
- * - `createSubtypingUnificationSubstitutor(MyClass<Int>, MyClass<T>, KaUnificationSubstitutorPolicy.ASSIGN_ALL)` returns the exact same
- *   substitutor `KaSubstitutor { T -> kotlin/Int, X -> kotlin/Int, R -> kotlin/Int }`.
- *
- * ```
- * fun <C: Any, T: Int> foo(leftType: List<C>, rightType: List<T>) {}
- * ```
- *
- * - `createSubtypingUnificationSubstitutor(List<C>, List<T>, KaUnificationSubstitutorPolicy.ASSIGN_LEFT)` returns
- *   `KaSubstitutor { C -> T }`.
- * - `createSubtypingUnificationSubstitutor(List<C>, List<T>, KaUnificationSubstitutorPolicy.ASSIGN_RIGHT)` returns `null`,
- *   as `C` is fixed and there is no assignment for `T` to satisfy the constraint
- *   (e.g., with `C = kotlin/Any`, while `T` is bounded by `kotlin/Int`).
- * - `createSubtypingUnificationSubstitutor(List<C>, List<T>, KaUnificationSubstitutorPolicy.ASSIGN_ALL)` returns
- *   `KaSubstitutor { C -> kotlin/Int, T -> kotlin/Int }`, as with such a substitution,
- *   `List<C>` is a subtype of `List<T>`.
- *
- * @see KaUnificationSubstitutorPolicy.ASSIGN_LEFT
- * @see KaUnificationSubstitutorPolicy.ASSIGN_RIGHT
- * @see KaUnificationSubstitutorPolicy.ASSIGN_ALL
- */
-@Deprecated(
-    message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
-    replaceWith = ReplaceWith(
-        "createSubtypingUnificationSubstitutor(leftType, rightType, constructionPolicy)",
-        "org.jetbrains.kotlin.analysis.api.types.createSubtypingUnificationSubstitutor",
-    ),
-)
-@KaIdeApi
-@OptIn(KaExperimentalApi::class)
-@KaContextParameterApi
-context(session: KaSession)
-public fun createSubtypingUnificationSubstitutor(
-    leftType: KaType,
-    rightType: KaType,
-    constructionPolicy: KaUnificationSubstitutorPolicy
-): KaSubstitutor? {
-    return with(session) {
-        createSubtypingUnificationSubstitutor(
-            leftType = leftType,
-            rightType = rightType,
-            constructionPolicy = constructionPolicy,
-        )
-    }
-}
-
-/**
- * Creates a [KaSubstitutor] which assigns type arguments such that, for each pair in [leftTypesToRightTypes],
- * the substituted left type is a subtype of the substituted right type.
- * Returns `null` if such an assignment is not possible.
- *
- * Note that when one type parameter is shared across several constraint pairs, all these pairs affect the resulting substitution
- * for this parameter.
- *
- * [createSubtypingUnificationSubstitutor] creates a constraint system, adds all the required bounds for 'leftType <: rightType'
- * from each [leftTypesToRightTypes] pair and tries to solve the given constraint system:
- * - If there were no contradictions found in the constraint system, the resulting substitutor is non-null. Otherwise, `null` is returned.
- * - If there are no type parameters involved in the provided types and every left type is a subtype of its right type,
- *   [KaSubstitutor.Empty] is returned.
- * - If [leftTypesToRightTypes] is empty, [KaSubstitutor.Empty] is returned as there can be no contradictions with no constraints.
- *
- * [constructionPolicy] controls the way the unification substitutor is constructed.
- * Only affects the construction when at least one of the involved types is generic, i.e., depends on a type parameter.
- * See [KaUnificationSubstitutorPolicy] for more information and code examples.
- *
- * #### Examples:
- *
- * ```
- * fun <X> rights(right1: List<X>, right2: List<X>) {}
- *
- * fun lefts(left1: List<Int>, left2: List<String>) {}
- * ```
- *
- * - `createSubtypingUnificationSubstitutor(listOf(List<Int> to List<X>, List<String> to List<X>), KaUnificationSubstitutorPolicy.ASSIGN_LEFT)`
- *   returns `null` as the left types contain no type parameters and the concrete left types are not subtypes of their generic right types.
- * - `createSubtypingUnificationSubstitutor(listOf(List<Int> to List<X>, List<String> to List<X>), KaUnificationSubstitutorPolicy.ASSIGN_RIGHT)`
- *   returns `KaSubstitutor { X -> intersection(kotlin/Comparable<*> & java/io/Serializable) }`.
- * - `createSubtypingUnificationSubstitutor(listOf(List<Int> to List<X>, List<String> to List<X>), KaUnificationSubstitutorPolicy.ASSIGN_ALL)`
- *   returns the same substitutor `KaSubstitutor { X -> intersection(kotlin/Comparable<*> & java/io/Serializable) }`.
- *
- * @see KaUnificationSubstitutorPolicy.ASSIGN_LEFT
- * @see KaUnificationSubstitutorPolicy.ASSIGN_RIGHT
- * @see KaUnificationSubstitutorPolicy.ASSIGN_ALL
- */
-@Deprecated(
-    message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
-    replaceWith = ReplaceWith(
-        "createSubtypingUnificationSubstitutor(leftTypesToRightTypes, constructionPolicy)",
-        "org.jetbrains.kotlin.analysis.api.types.createSubtypingUnificationSubstitutor",
-    ),
-)
-@KaIdeApi
-@OptIn(KaExperimentalApi::class)
-@KaContextParameterApi
-context(session: KaSession)
-public fun createSubtypingUnificationSubstitutor(
-    leftTypesToRightTypes: List<Pair<KaType, KaType>>,
-    constructionPolicy: KaUnificationSubstitutorPolicy
-): KaSubstitutor? {
-    return with(session) {
-        createSubtypingUnificationSubstitutor(
-            leftTypesToRightTypes = leftTypesToRightTypes,
-            constructionPolicy = constructionPolicy,
-        )
     }
 }

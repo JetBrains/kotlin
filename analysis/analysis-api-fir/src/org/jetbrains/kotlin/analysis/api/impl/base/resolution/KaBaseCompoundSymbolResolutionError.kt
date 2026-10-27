@@ -21,7 +21,4 @@ class KaBaseCompoundSymbolResolutionError(
 
     override val token: KaLifetimeToken get() = backingAttempts.first().token
     override val simpleAttempts: List<KaSimpleSymbolResolutionAttempt> get() = withValidityAssertion { backingAttempts }
-
-    @Deprecated("Use 'simpleAttempts' instead", ReplaceWith("simpleAttempts"))
-    override val attempts: List<KaSimpleSymbolResolutionAttempt> get() = simpleAttempts
 }

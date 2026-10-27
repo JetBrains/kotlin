@@ -298,13 +298,6 @@ public abstract class KaFunctionType : KaClassType(), KaContextReceiversOwner {
     @KaExperimentalApi
     public abstract override val contextReceivers: List<KaContextReceiver>
 
-    /**
-     * Whether the function type has context receiver parameters.
-     */
-    @Deprecated("Use `hasContextParameters` instead.", ReplaceWith("hasContextParameters"))
-    @KaExperimentalApi
-    public abstract val hasContextReceivers: Boolean
-
     @KaExperimentalApi
     public abstract override fun createPointer(): KaTypePointer<KaFunctionType>
 }

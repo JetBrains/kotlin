@@ -100,22 +100,6 @@ public fun KtResolvableCall.resolveSuccessfulCall(): KaSimpleOrMultiCall? {
 }
 
 /**
- * The former name of [KtResolvableCall.resolveSuccessfulCall].
- *
- * @see KtResolvableCall.resolveSuccessfulCall
- */
-@Deprecated(
-    message = "Use 'resolveSuccessfulCall()' instead",
-    replaceWith = ReplaceWith(
-        expression = "resolveSuccessfulCall()",
-        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulCall"],
-    ),
-)
-@KaExperimentalApi
-context(session: KaSession)
-public fun KtResolvableCall.resolveCall(): KaSimpleOrMultiCall? = resolveSuccessfulCall()
-
-/**
  * Resolves the given [KtAnnotationEntry] to an annotation constructor call.
  *
  * #### Example
@@ -143,22 +127,6 @@ public fun KtAnnotationEntry.resolveSuccessfulCall(): KaAnnotationCall? {
 }
 
 /**
- * The former name of [KtAnnotationEntry.resolveSuccessfulCall].
- *
- * @see KtAnnotationEntry.resolveSuccessfulCall
- */
-@Deprecated(
-    message = "Use 'resolveSuccessfulCall()' instead",
-    replaceWith = ReplaceWith(
-        expression = "resolveSuccessfulCall()",
-        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulCall"],
-    ),
-)
-@KaExperimentalApi
-context(session: KaSession)
-public fun KtAnnotationEntry.resolveCall(): KaAnnotationCall? = resolveSuccessfulCall()
-
-/**
  * Resolves the given [KtSuperTypeCallEntry] to a constructor call of the referenced supertype.
  *
  * #### Example
@@ -184,22 +152,6 @@ public fun KtSuperTypeCallEntry.resolveSuccessfulCall(): KaFunctionCall<KaConstr
     @OptIn(KaImplementationDetail::class)
     return internals.resolver.resolveSuccessfulCall(this)
 }
-
-/**
- * The former name of [KtSuperTypeCallEntry.resolveSuccessfulCall].
- *
- * @see KtSuperTypeCallEntry.resolveSuccessfulCall
- */
-@Deprecated(
-    message = "Use 'resolveSuccessfulCall()' instead",
-    replaceWith = ReplaceWith(
-        expression = "resolveSuccessfulCall()",
-        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulCall"],
-    ),
-)
-@KaExperimentalApi
-context(session: KaSession)
-public fun KtSuperTypeCallEntry.resolveCall(): KaFunctionCall<KaConstructorSymbol>? = resolveSuccessfulCall()
 
 /**
  * Resolves the given [KtConstructorDelegationCall] to a delegated constructor call.
@@ -234,22 +186,6 @@ public fun KtConstructorDelegationCall.resolveSuccessfulCall(): KaDelegatedConst
 }
 
 /**
- * The former name of [KtConstructorDelegationCall.resolveSuccessfulCall].
- *
- * @see KtConstructorDelegationCall.resolveSuccessfulCall
- */
-@Deprecated(
-    message = "Use 'resolveSuccessfulCall()' instead",
-    replaceWith = ReplaceWith(
-        expression = "resolveSuccessfulCall()",
-        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulCall"],
-    ),
-)
-@KaExperimentalApi
-context(session: KaSession)
-public fun KtConstructorDelegationCall.resolveCall(): KaDelegatedConstructorCall? = resolveSuccessfulCall()
-
-/**
  * Resolves the given [KtConstructorDelegationReferenceExpression] to a delegated constructor call.
  *
  * #### Example
@@ -282,22 +218,6 @@ public fun KtConstructorDelegationReferenceExpression.resolveSuccessfulCall(): K
 }
 
 /**
- * The former name of [KtConstructorDelegationReferenceExpression.resolveSuccessfulCall].
- *
- * @see KtConstructorDelegationReferenceExpression.resolveSuccessfulCall
- */
-@Deprecated(
-    message = "Use 'resolveSuccessfulCall()' instead",
-    replaceWith = ReplaceWith(
-        expression = "resolveSuccessfulCall()",
-        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulCall"],
-    ),
-)
-@KaExperimentalApi
-context(session: KaSession)
-public fun KtConstructorDelegationReferenceExpression.resolveCall(): KaDelegatedConstructorCall? = resolveSuccessfulCall()
-
-/**
  * Resolves the given [KtCallElement] to a function call.
  *
  * #### Example
@@ -327,22 +247,6 @@ public fun KtCallElement.resolveSuccessfulCall(): KaFunctionCall<*>? {
 }
 
 /**
- * The former name of [KtCallElement.resolveSuccessfulCall].
- *
- * @see KtCallElement.resolveSuccessfulCall
- */
-@Deprecated(
-    message = "Use 'resolveSuccessfulCall()' instead",
-    replaceWith = ReplaceWith(
-        expression = "resolveSuccessfulCall()",
-        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulCall"],
-    ),
-)
-@KaExperimentalApi
-context(session: KaSession)
-public fun KtCallElement.resolveCall(): KaFunctionCall<*>? = resolveSuccessfulCall()
-
-/**
  * Resolves the given [KtCallableReferenceExpression] to a callable member call.
  *
  * #### Example
@@ -368,22 +272,6 @@ public fun KtCallableReferenceExpression.resolveSuccessfulCall(): KaCallableRefe
     @OptIn(KaImplementationDetail::class)
     return internals.resolver.resolveSuccessfulCall(this)
 }
-
-/**
- * The former name of [KtCallableReferenceExpression.resolveSuccessfulCall].
- *
- * @see KtCallableReferenceExpression.resolveSuccessfulCall
- */
-@Deprecated(
-    message = "Use 'resolveSuccessfulCall()' instead",
-    replaceWith = ReplaceWith(
-        expression = "resolveSuccessfulCall()",
-        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulCall"],
-    ),
-)
-@KaExperimentalApi
-context(session: KaSession)
-public fun KtCallableReferenceExpression.resolveCall(): KaCallableReferenceCall<*, *>? = resolveSuccessfulCall()
 
 /**
  * Resolves the given [KtArrayAccessExpression] to a simple function call representing `get`/`set` operator invocation.
@@ -429,22 +317,6 @@ public fun KtArrayAccessExpression.resolveSuccessfulCall(): KaFunctionCall<KaNam
 }
 
 /**
- * The former name of [KtArrayAccessExpression.resolveSuccessfulCall].
- *
- * @see KtArrayAccessExpression.resolveSuccessfulCall
- */
-@Deprecated(
-    message = "Use 'resolveSuccessfulCall()' instead",
-    replaceWith = ReplaceWith(
-        expression = "resolveSuccessfulCall()",
-        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulCall"],
-    ),
-)
-@KaExperimentalApi
-context(session: KaSession)
-public fun KtArrayAccessExpression.resolveCall(): KaFunctionCall<KaNamedFunctionSymbol>? = resolveSuccessfulCall()
-
-/**
  * Resolves the given [KtCollectionLiteralExpression] to a simple function call representing the corresponding
  * array factory invocation.
  *
@@ -474,22 +346,6 @@ public fun KtCollectionLiteralExpression.resolveSuccessfulCall(): KaFunctionCall
 }
 
 /**
- * The former name of [KtCollectionLiteralExpression.resolveSuccessfulCall].
- *
- * @see KtCollectionLiteralExpression.resolveSuccessfulCall
- */
-@Deprecated(
-    message = "Use 'resolveSuccessfulCall()' instead",
-    replaceWith = ReplaceWith(
-        expression = "resolveSuccessfulCall()",
-        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulCall"],
-    ),
-)
-@KaExperimentalApi
-context(session: KaSession)
-public fun KtCollectionLiteralExpression.resolveCall(): KaFunctionCall<KaNamedFunctionSymbol>? = resolveSuccessfulCall()
-
-/**
  * Resolves the given [KtEnumEntrySuperclassReferenceExpression] to a delegated constructor call.
  *
  * #### Example
@@ -515,22 +371,6 @@ public fun KtEnumEntrySuperclassReferenceExpression.resolveSuccessfulCall(): KaD
     @OptIn(KaImplementationDetail::class)
     return internals.resolver.resolveSuccessfulCall(this)
 }
-
-/**
- * The former name of [KtEnumEntrySuperclassReferenceExpression.resolveSuccessfulCall].
- *
- * @see KtEnumEntrySuperclassReferenceExpression.resolveSuccessfulCall
- */
-@Deprecated(
-    message = "Use 'resolveSuccessfulCall()' instead",
-    replaceWith = ReplaceWith(
-        expression = "resolveSuccessfulCall()",
-        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulCall"],
-    ),
-)
-@KaExperimentalApi
-context(session: KaSession)
-public fun KtEnumEntrySuperclassReferenceExpression.resolveCall(): KaDelegatedConstructorCall? = resolveSuccessfulCall()
 
 /**
  * Resolves the given [KtWhenConditionInRange] to a simple function call representing the corresponding
@@ -567,22 +407,6 @@ public fun KtWhenConditionInRange.resolveSuccessfulCall(): KaFunctionCall<KaName
 }
 
 /**
- * The former name of [KtWhenConditionInRange.resolveSuccessfulCall].
- *
- * @see KtWhenConditionInRange.resolveSuccessfulCall
- */
-@Deprecated(
-    message = "Use 'resolveSuccessfulCall()' instead",
-    replaceWith = ReplaceWith(
-        expression = "resolveSuccessfulCall()",
-        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulCall"],
-    ),
-)
-@KaExperimentalApi
-context(session: KaSession)
-public fun KtWhenConditionInRange.resolveCall(): KaFunctionCall<KaNamedFunctionSymbol>? = resolveSuccessfulCall()
-
-/**
  * Resolves the given [KtDestructuringDeclarationEntry] to a call representing the `componentN` invocation
  * (for positional destructuring) or the property access (for name-based destructuring).
  *
@@ -614,22 +438,6 @@ public fun KtDestructuringDeclarationEntry.resolveSuccessfulCall(): KaSimpleCall
 }
 
 /**
- * The former name of [KtDestructuringDeclarationEntry.resolveSuccessfulCall].
- *
- * @see KtDestructuringDeclarationEntry.resolveSuccessfulCall
- */
-@Deprecated(
-    message = "Use 'resolveSuccessfulCall()' instead",
-    replaceWith = ReplaceWith(
-        expression = "resolveSuccessfulCall()",
-        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulCall"],
-    ),
-)
-@KaExperimentalApi
-context(session: KaSession)
-public fun KtDestructuringDeclarationEntry.resolveCall(): KaSimpleCall<*, *>? = resolveSuccessfulCall()
-
-/**
  * Resolves the given [KtQualifiedExpression] to a call representing the member or extension access.
  *
  * #### Example
@@ -653,22 +461,6 @@ public fun KtQualifiedExpression.resolveSuccessfulCall(): KaSimpleCall<*, *>? {
     @OptIn(KaImplementationDetail::class)
     return internals.resolver.resolveSuccessfulCall(this)
 }
-
-/**
- * The former name of [KtQualifiedExpression.resolveSuccessfulCall].
- *
- * @see KtQualifiedExpression.resolveSuccessfulCall
- */
-@Deprecated(
-    message = "Use 'resolveSuccessfulCall()' instead",
-    replaceWith = ReplaceWith(
-        expression = "resolveSuccessfulCall()",
-        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulCall"],
-    ),
-)
-@KaExperimentalApi
-context(session: KaSession)
-public fun KtQualifiedExpression.resolveCall(): KaSimpleCall<*, *>? = resolveSuccessfulCall()
 
 /**
  * Resolves the given [KtForExpression] to a [KaForLoopCall] representing the desugared `for` loop.
@@ -703,22 +495,6 @@ public fun KtForExpression.resolveSuccessfulCall(): KaForLoopCall? {
 }
 
 /**
- * The former name of [KtForExpression.resolveSuccessfulCall].
- *
- * @see KtForExpression.resolveSuccessfulCall
- */
-@Deprecated(
-    message = "Use 'resolveSuccessfulCall()' instead",
-    replaceWith = ReplaceWith(
-        expression = "resolveSuccessfulCall()",
-        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulCall"],
-    ),
-)
-@KaExperimentalApi
-context(session: KaSession)
-public fun KtForExpression.resolveCall(): KaForLoopCall? = resolveSuccessfulCall()
-
-/**
  * Resolves the given [KtPropertyDelegate] to a [KaDelegatedPropertyCall] representing the desugared delegated property.
  *
  * A delegated property desugars into up to three operator calls:
@@ -750,22 +526,6 @@ public fun KtPropertyDelegate.resolveSuccessfulCall(): KaDelegatedPropertyCall? 
 }
 
 /**
- * The former name of [KtPropertyDelegate.resolveSuccessfulCall].
- *
- * @see KtPropertyDelegate.resolveSuccessfulCall
- */
-@Deprecated(
-    message = "Use 'resolveSuccessfulCall()' instead",
-    replaceWith = ReplaceWith(
-        expression = "resolveSuccessfulCall()",
-        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulCall"],
-    ),
-)
-@KaExperimentalApi
-context(session: KaSession)
-public fun KtPropertyDelegate.resolveCall(): KaDelegatedPropertyCall? = resolveSuccessfulCall()
-
-/**
  * Resolves the given [KtConstructorCalleeExpression] to a constructor call.
  *
  * #### Example
@@ -793,22 +553,6 @@ public fun KtConstructorCalleeExpression.resolveSuccessfulCall(): KaFunctionCall
 }
 
 /**
- * The former name of [KtConstructorCalleeExpression.resolveSuccessfulCall].
- *
- * @see KtConstructorCalleeExpression.resolveSuccessfulCall
- */
-@Deprecated(
-    message = "Use 'resolveSuccessfulCall()' instead",
-    replaceWith = ReplaceWith(
-        expression = "resolveSuccessfulCall()",
-        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulCall"],
-    ),
-)
-@KaExperimentalApi
-context(session: KaSession)
-public fun KtConstructorCalleeExpression.resolveCall(): KaFunctionCall<KaConstructorSymbol>? = resolveSuccessfulCall()
-
-/**
  * Resolves the given [KtNameReferenceExpression] to a call representing the referenced declaration.
  *
  * #### Example
@@ -834,22 +578,6 @@ public fun KtNameReferenceExpression.resolveSuccessfulCall(): KaSimpleCall<*, *>
     @OptIn(KaImplementationDetail::class)
     return internals.resolver.resolveSuccessfulCall(this)
 }
-
-/**
- * The former name of [KtNameReferenceExpression.resolveSuccessfulCall].
- *
- * @see KtNameReferenceExpression.resolveSuccessfulCall
- */
-@Deprecated(
-    message = "Use 'resolveSuccessfulCall()' instead",
-    replaceWith = ReplaceWith(
-        expression = "resolveSuccessfulCall()",
-        imports = ["org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulCall"],
-    ),
-)
-@KaExperimentalApi
-context(session: KaSession)
-public fun KtNameReferenceExpression.resolveCall(): KaSimpleCall<*, *>? = resolveSuccessfulCall()
 
 /**
  * Returns all candidates considered during [overload resolution](https://kotlinlang.org/spec/overload-resolution.html)

@@ -37,21 +37,6 @@ public sealed interface KaSymbolResolutionAttempt : KaLifetimeOwner
 public sealed interface KaSimpleSymbolResolutionAttempt : KaSymbolResolutionAttempt
 
 /**
- * The former name of [KaSimpleSymbolResolutionAttempt].
- *
- * @see KaSimpleSymbolResolutionAttempt
- */
-@Deprecated(
-    message = "Use 'KaSimpleSymbolResolutionAttempt' instead",
-    replaceWith = ReplaceWith(
-        expression = "KaSimpleSymbolResolutionAttempt",
-        imports = ["org.jetbrains.kotlin.analysis.api.resolution.KaSimpleSymbolResolutionAttempt"],
-    ),
-)
-@KaExperimentalApi
-public typealias KaSingleSymbolResolutionAttempt = KaSimpleSymbolResolutionAttempt
-
-/**
  * Represents a successful resolution result.
  *
  * Unlike [KaCall], the symbol API doesn't split the API on single-symbol and compound-symbol resolutions.
@@ -69,21 +54,6 @@ public interface KaSimpleSymbolResolutionSuccess : KaSimpleSymbolResolutionAttem
      */
     public val symbols: List<KaSymbol>
 }
-
-/**
- * The former name of [KaSimpleSymbolResolutionSuccess].
- *
- * @see KaSimpleSymbolResolutionSuccess
- */
-@Deprecated(
-    message = "Use 'KaSimpleSymbolResolutionSuccess' instead",
-    replaceWith = ReplaceWith(
-        expression = "KaSimpleSymbolResolutionSuccess",
-        imports = ["org.jetbrains.kotlin.analysis.api.resolution.KaSimpleSymbolResolutionSuccess"],
-    ),
-)
-@KaExperimentalApi
-public typealias KaSymbolResolutionSuccess = KaSimpleSymbolResolutionSuccess
 
 /**
  * Represents an error that occurred during the resolution of a [KtResolvable]
@@ -134,21 +104,6 @@ public interface KaSimpleSymbolResolutionError : KaSimpleSymbolResolutionAttempt
 }
 
 /**
- * The former name of [KaSimpleSymbolResolutionError].
- *
- * @see KaSimpleSymbolResolutionError
- */
-@Deprecated(
-    message = "Use 'KaSimpleSymbolResolutionError' instead",
-    replaceWith = ReplaceWith(
-        expression = "KaSimpleSymbolResolutionError",
-        imports = ["org.jetbrains.kotlin.analysis.api.resolution.KaSimpleSymbolResolutionError"],
-    ),
-)
-@KaExperimentalApi
-public typealias KaSymbolResolutionError = KaSimpleSymbolResolutionError
-
-/**
  * Represents a failed resolution of a compound (multi) call at the symbol level.
  *
  * This type is produced only when a compound call has a mix of successful and failed sub-calls,
@@ -177,17 +132,6 @@ public interface KaCompoundSymbolResolutionError : KaSymbolResolutionAttempt {
     @KaExperimentalApi
     public val simpleAttempts: List<KaSimpleSymbolResolutionAttempt>
 
-    /**
-     * The former name of [simpleAttempts].
-     *
-     * @see simpleAttempts
-     */
-    @Deprecated(
-        message = "Use 'simpleAttempts' instead",
-        replaceWith = ReplaceWith(expression = "simpleAttempts"),
-    )
-    @KaExperimentalApi
-    public val attempts: List<KaSimpleSymbolResolutionAttempt>
 }
 
 /**
