@@ -272,7 +272,7 @@ private object FreeListAllocator {
                 (it.ptr.address.toLong() - allocatedSlot.ptr.address.toLong()).toInt()
             }
 
-            require(minusInsertionPointMinusOne != 0) { "Double-free or use-after-free: allocated slot can't already be in the free list; allocated slot: $allocatedSlot; " + debugDump() }
+            require(minusInsertionPointMinusOne < 0) { "Double-free or use-after-free: allocated slot can't already be in the free list; allocated slot: $allocatedSlot; " + debugDump() }
 
             // convert back to actual insertion point
             val insertionPointIndex = -(minusInsertionPointMinusOne + 1)
