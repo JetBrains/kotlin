@@ -14,8 +14,9 @@ dependencies {
     api(project(":compiler:build-tools:kotlin-build-tools-api"))
     compileOnly(project(":compiler:build-tools:kotlin-build-tools-api-jps"))
     implementation(kotlinStdlib())
-    implementation(libs.kotlinx.serialization.core)
-    implementation(libs.kotlinx.serialization.protobuf)
+    compileOnly(libs.kotlinx.serialization.protobuf)
+    embedded(libs.kotlinx.serialization.protobuf) { isTransitive = false }
+    embedded(libs.kotlinx.serialization.core) { isTransitive = false }
     compileOnly(libs.guava)
     compileOnly(project(":compiler:cli"))
     compileOnly(project(":compiler:cli-jvm"))
@@ -59,6 +60,7 @@ dependencies {
     testImplementation(project(":daemon-common"))
     testImplementation(project(":kotlin-daemon-client"))
     testImplementation(kotlinTest("junit5"))
+    testImplementation(libs.kotlinx.serialization.protobuf)
 }
 
 publish()
