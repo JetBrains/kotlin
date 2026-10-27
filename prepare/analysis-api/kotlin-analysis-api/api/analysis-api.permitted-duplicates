@@ -7,9 +7,6 @@
 # An index of the IntelliJ fat JARs, so there is one per archive by design.
 __index__
 
-# Copy-pasted into ':compiler:cli'. Should be moved to ':dependencies:intellij-java-psi-api' instead.
-com/intellij/openapi/fileTypes/BinaryFileTypeDecompilers.class
-
 # Bundled both by the IntelliJ 'util' JARs and by the embedded 'org.jetbrains.intellij.deps:log4j'.
 org/apache/log4j/Level.class
 
