@@ -86,6 +86,10 @@ register_jdks_with_gradle() {
   for v in 8 11 17 21 25; do paths="$paths${paths:+,}$JDKS_DIR/temurin-$v"; done
   sed -i '/^org.gradle.java.installations.paths=/d' "$props"
   echo "org.gradle.java.installations.paths=$paths" >> "$props"
+  # Decline the interactive "automatic local.properties setup" consent prompt for Kotlin team
+  # members (repo/gradle-settings-conventions/internal-gradle-setup); it would block the build.
+  sed -i '/^kotlin.build.internal.gradle.setup.consent=/d' "$props"
+  echo "kotlin.build.internal.gradle.setup.consent=false" >> "$props"
 }
 
 configure_gradle_proxy
@@ -98,7 +102,7 @@ chmod +x gradlew
 # In warmup this also fills the Gradle wrapper, dependency and build caches for the snapshot.
 healthcheck() {
   log "healthcheck: ./gradlew dist (cold run takes a while)"
-  ./gradlew dist --console=plain
+  ./gradlew dist --console=plain </dev/null
   log "healthcheck: compiling a smoke program with dist/kotlinc"
   local tmp
   tmp="$(mktemp -d)"
