@@ -4,18 +4,6 @@ KaUsualClassType:
   annotations: [
     MyAnno()
       psi: null
-    kotlin/ExtensionFunctionType()
-      psi: null
-    kotlin/UnsafeVariance()
-      psi: null
-    kotlin/UnsafeVariance()
-      psi: null
-    kotlin/internal/NoInfer()
-      psi: null
-    kotlin/internal/Exact()
-      psi: null
-    org/jetbrains/kotlin/plugin/sandbox/Positive()
-      psi: null
   ]
   classId: kotlin/IntArray
   qualifiers: [
@@ -31,4 +19,4 @@ KaUsualClassType:
   hasFlexibleNullability: false
 
 Rendered type:
-@MyAnno @kotlin.ExtensionFunctionType @kotlin.UnsafeVariance @kotlin.UnsafeVariance @kotlin.internal.NoInfer @kotlin.internal.Exact @org.jetbrains.kotlin.plugin.sandbox.Positive kotlin.IntArray
+@MyAnno kotlin.IntArray

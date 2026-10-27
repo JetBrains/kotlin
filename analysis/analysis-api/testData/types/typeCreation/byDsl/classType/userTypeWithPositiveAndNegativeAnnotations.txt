@@ -1,12 +1,7 @@
 KaType
 KaUsualClassType:
   abbreviation: null
-  annotations: [
-    org/jetbrains/kotlin/plugin/sandbox/Positive()
-      psi: null
-    org/jetbrains/kotlin/plugin/sandbox/Negative()
-      psi: null
-  ]
+  annotations: []
   classId: A
   qualifiers: [
     KaResolvedClassTypeQualifier:
@@ -21,4 +16,4 @@ KaUsualClassType:
   hasFlexibleNullability: false
 
 Rendered type:
-@org.jetbrains.kotlin.plugin.sandbox.Positive @org.jetbrains.kotlin.plugin.sandbox.Negative A
+A
