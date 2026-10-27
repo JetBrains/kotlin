@@ -10,8 +10,17 @@ import org.jetbrains.kotlin.backend.common.lower.InnerClassesLowering
 import org.jetbrains.kotlin.backend.common.lower.MaskedDefaultArgumentFunctionFactory
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
+import org.jetbrains.kotlin.ir.types.IrType
+
+class WasmMaskedDefaultArgumentFunctionFactory(
+    ctx: WasmBackendContext,
+    copyOriginalFunctionLocation: Boolean = true
+) : MaskedDefaultArgumentFunctionFactory(ctx, copyOriginalFunctionLocation) {
+    override fun IrType.hasNullAsUndefinedValue() =
+        this !in context.irBuiltIns.primitiveIrTypes
+}
 
 @PhasePrerequisites(InnerClassesLowering::class)
 class WasmDefaultParameterInjector(
     context: WasmBackendContext
-) : DefaultParameterInjector<WasmBackendContext>(context, MaskedDefaultArgumentFunctionFactory(context), skipExternalMethods = true)
+) : DefaultParameterInjector<WasmBackendContext>(context, WasmMaskedDefaultArgumentFunctionFactory(context), skipExternalMethods = true)
