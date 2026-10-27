@@ -4,7 +4,7 @@
 
 /noContextArgument.kt:21:17: error: No context argument for 't: String' found.
 
-/noContextArgument.kt:22:5: error: Cannot infer type for type parameter 'T'. Specify it explicitly.
+/noContextArgument.kt:22:5: error: Cannot infer type for type parameter 'T' (of 'context() fun <T> generic'). Specify it explicitly.
 
 /noContextArgument.kt:22:5: error: No context argument for 't: T' found.
 

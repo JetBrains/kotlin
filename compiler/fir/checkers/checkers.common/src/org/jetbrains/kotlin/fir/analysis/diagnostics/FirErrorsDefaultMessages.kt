@@ -56,6 +56,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMB
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOL_KIND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOL_WITH_ALL_MODIFIERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOL_WITH_CONTAINING_DECLARATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.TYPE_PARAMETER_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.UNSAFE_CALL_RECEIVER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.UNSAFE_CALL_RECEIVER_WITH_HINT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.UNSAFE_INVOKE_CALL_RECEIVER_WITH_HINT
@@ -3102,7 +3103,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(MULTIPLE_VARARG_PARAMETERS, "Multiple vararg parameters are prohibited.")
         map.put(FORBIDDEN_VARARG_PARAMETER_TYPE, "Prohibited vararg parameter type ''{0}''.", RENDER_TYPE)
         map.put(VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE, "An explicit type is required on a value parameter.")
-        map.put(CANNOT_INFER_PARAMETER_TYPE, "Cannot infer type for type parameter ''{0}''. Specify it explicitly.", DECLARATION_NAME)
+        map.put(CANNOT_INFER_PARAMETER_TYPE, "Cannot infer type for type parameter {0}. Specify it explicitly.", TYPE_PARAMETER_NAME)
         map.put(
             CANNOT_INFER_VALUE_PARAMETER_TYPE,
             "Cannot infer type for value parameter ''{0}''. Specify it explicitly.",

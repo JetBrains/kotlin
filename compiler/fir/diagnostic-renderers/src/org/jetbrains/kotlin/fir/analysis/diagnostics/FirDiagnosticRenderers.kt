@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.diagnostics.rendering.*
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.SessionHolder
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirAdaptiveTypeRenderingKey.renderTypeParameterOrigin
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
@@ -245,6 +246,15 @@ object FirDiagnosticRenderers {
             else -> "Class"
         }
         "$classOrObject '$name'"
+    }
+
+    val TYPE_PARAMETER_NAME = Renderer { symbol: FirTypeParameterSymbol ->
+        buildString {
+            append("'")
+            append(symbol.name.asString())
+            append("'")
+            renderTypeParameterOrigin(symbol)
+        }
     }
 
     val RENDER_ENUM_ENTRY_QUOTED = Renderer { enumEntry: FirEnumEntrySymbol ->

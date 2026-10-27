@@ -1,7 +1,7 @@
-/main.kt:22:13: error: Cannot infer type for type parameter 'A'. Specify it explicitly.
+/main.kt:22:13: error: Cannot infer type for type parameter 'A' (of 'interface Function1<A : B!, B : A!>'). Specify it explicitly.
 
-/main.kt:28:11: error: Cannot infer type for type parameter 'A'. Specify it explicitly.
+/main.kt:28:11: error: Cannot infer type for type parameter 'A' (of 'interface Function1<A : B!, B : A!>'). Specify it explicitly.
 
-/main.kt:34:13: error: Cannot infer type for type parameter 'A'. Specify it explicitly.
+/main.kt:34:13: error: Cannot infer type for type parameter 'A' (of 'interface Function2<A : B!, B : C!, C : A!>'). Specify it explicitly.
 
-/main.kt:34:16: error: Cannot infer type for type parameter 'B'. Specify it explicitly.
+/main.kt:34:16: error: Cannot infer type for type parameter 'B' (of 'interface Function2<A : B!, B : C!, C : A!>'). Specify it explicitly.

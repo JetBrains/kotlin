@@ -34,7 +34,7 @@ fun test() {
 
     val res = when {
         true -> WithPrivateOf()
-        else -> <!CANNOT_INFER_PARAMETER_TYPE("T")!>[]<!>
+        else -> <!CANNOT_INFER_PARAMETER_TYPE("'T' (of 'fun <T> listOf')")!>[]<!>
     }
 }
 
