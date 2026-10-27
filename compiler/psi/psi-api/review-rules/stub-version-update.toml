@@ -7,6 +7,7 @@ watch = [
     "compiler/psi/psi-api/src/org/jetbrains/kotlin/lexer/",
     "compiler/psi/psi-api/src/org/jetbrains/kotlin/psi/stubs",
     "compiler/psi/psi-impl/src/",
+    "compiler/psi/stubs/src/",
 ]
 
 # Most likely require changes in the stub version

@@ -8,6 +8,7 @@ plugins {
 val analysisApiSurfaceDependencies: List<String> = CompilerModules.analysisApiSurfaceDependencies
 val compilerModules: Array<String> = CompilerModules.compilerModules
 val analysisApiSurfaceModules: Array<String> = CompilerModules.analysisApiSurfaceModules
+val analysisApiSyntaxImplementationModules: Array<String> = CompilerModules.analysisApiSyntaxImplementationModules
 val analysisApiPlatformInterfaceModules: Array<String> = CompilerModules.analysisApiPlatformInterfaceModules
 val analysisApiStandaloneModules: Array<String> = CompilerModules.analysisApiStandaloneModules
 val analysisApiModules: Array<String> = CompilerModules.analysisApiModules
@@ -36,6 +37,7 @@ dependencies {
     api(project(":prepare:analysis-api:kotlin-analysis-api-platform-interface"))
 
     implementation(project(":prepare:analysis-api:kotlin-analysis-api-intellij-implementation-components"))
+    implementation(project(":prepare:analysis-api:kotlin-analysis-api-syntax-implementation"))
 
     // Diagnostics are shipped separately, but the FIR implementation instantiates them, so they are required at runtime.
     implementation(project(":prepare:analysis-api:kotlin-analysis-api-fir-diagnostics"))
@@ -59,6 +61,9 @@ analysisApiArtifact {
             // Avoid copying content of 'kotlin-analysis-api-surface'
             removeAll(analysisApiSurfaceDependencies)
             removeAll(analysisApiSurfaceModules)
+
+            // Avoid copying content of 'kotlin-analysis-api-syntax-implementation'
+            removeAll(analysisApiSyntaxImplementationModules)
 
             // Avoid copying content of 'kotlin-analysis-api-platform-interface'
             removeAll(analysisApiPlatformInterfaceModules)

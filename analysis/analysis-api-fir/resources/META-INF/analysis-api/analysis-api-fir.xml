@@ -166,6 +166,11 @@
         serviceImplementation="org.jetbrains.kotlin.analysis.api.fir.rendering.KaInternalsRendererProviderImpl"
     />
 
+    <applicationService
+        serviceInterface="org.jetbrains.kotlin.analysis.api.internals.KaInternalsObsoleteRendererImplementationProvider"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.fir.renderer.KaInternalsObsoleteRendererImplementationProviderImpl"
+    />
+
     <registryKey
         defaultValue="true"
         description="Enable automatic dangling file resolution mode calculation"

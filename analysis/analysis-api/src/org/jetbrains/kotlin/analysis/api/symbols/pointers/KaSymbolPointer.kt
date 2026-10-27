@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
-import org.jetbrains.kotlin.analysis.api.utils.renderAsDataClassToString
+import org.jetbrains.kotlin.analysis.api.utils.renderSymbolPointerToString
 
 /**
  * [KaSymbolPointer] allows to point to a [KaSymbol] and later retrieve it in another [KaSession]. A pointer is necessary because
@@ -35,7 +35,7 @@ public abstract class KaSymbolPointer<out S : KaSymbol> {
 
     override fun toString(): String {
         @OptIn(KaExperimentalApi::class)
-        return renderAsDataClassToString()
+        return renderSymbolPointerToString()
     }
 }
 

@@ -40,6 +40,7 @@ dependencies {
     implementation(libs.opentelemetry.api)
 
     testFixturesImplementation(testFixtures(project(":analysis:low-level-api-fir")))
+    testFixturesImplementation(project(":analysis:analysis-internal-utils"))
     testFixturesApi(project(":analysis:analysis-api-standalone:analysis-api-standalone-fir"))
     testFixturesImplementation(testFixtures(project(":compiler:tests-common")))
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))

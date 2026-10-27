@@ -175,6 +175,7 @@ include(
     ":compiler:serialization",
     ":compiler:psi:psi-api",
     ":compiler:psi:psi-impl",
+    ":compiler:psi:stubs",
     ":compiler:psi:psi-utils",
     ":compiler:psi:psi-frontend-utils",
     ":compiler:psi:parser",
@@ -639,14 +640,18 @@ include(
 include(
     ":prepare:analysis-api:kotlin-analysis-api",
     ":prepare:analysis-api:kotlin-analysis-api-surface",
+    ":prepare:analysis-api:kotlin-analysis-api-syntax-surface",
     ":prepare:analysis-api:kotlin-analysis-api-platform-interface",
     ":prepare:analysis-api:kotlin-analysis-api-implementation",
+    ":prepare:analysis-api:kotlin-analysis-api-syntax-implementation",
     ":prepare:analysis-api:kotlin-analysis-api-fir-diagnostics",
     ":prepare:analysis-api:kotlin-analysis-api-standalone-surface",
     ":prepare:analysis-api:kotlin-analysis-api-standalone-implementation",
     ":prepare:analysis-api:kotlin-analysis-api-intellij-api-surface-components",
     ":prepare:analysis-api:kotlin-analysis-api-intellij-implementation-components",
     ":prepare:analysis-api:kotlin-analysis-api-internal-test-framework",
+    ":prepare:analysis-api:kotlin-analysis-api-smoke-tests",
+    ":prepare:analysis-api:kotlin-analysis-api-syntax-smoke-tests",
 )
 
 include(

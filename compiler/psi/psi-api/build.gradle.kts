@@ -14,7 +14,7 @@ dependencies {
     api(project(":core:names"))
     api(project(":core:language.model"))
     implementation(project(":core:error.handling"))
-    api(project(":core:deserialization.common"))
+    compileOnly(project(":core:deserialization.common"))
 
     compileOnly(project(":kotlin-util-klib"))
     compileOnly(intellijCore())

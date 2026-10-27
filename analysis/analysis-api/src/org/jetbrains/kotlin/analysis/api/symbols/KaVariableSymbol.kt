@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -80,7 +79,7 @@ public abstract class KaBackingFieldSymbol : KaVariableSymbol() {
     abstract override fun createPointer(): KaSymbolPointer<KaBackingFieldSymbol>
 
     //region Implementation details
-    final override val name: Name get() = withValidityAssertion { StandardNames.BACKING_FIELD }
+    final override val name: Name get() = withValidityAssertion { Name.identifier("field") }
 
     final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.PROPERTY }
     final override val callableId: CallableId? get() = withValidityAssertion { null }

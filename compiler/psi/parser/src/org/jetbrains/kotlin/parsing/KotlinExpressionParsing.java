@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.parsing;
 
-import com.google.common.collect.ImmutableMap;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.Language;
 import com.intellij.lang.PsiBuilder;
@@ -22,6 +21,10 @@ import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.parsing.KotlinParsing.NameParsingMode;
 import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.jetbrains.kotlin.KtNodeTypes.*;
 import static org.jetbrains.kotlin.lang.BinaryOperationPrecedence.TOKEN_TO_BINARY_PRECEDENCE_MAP_WITH_SOFT_IDENTIFIERS;
 import static org.jetbrains.kotlin.lexer.KtTokens.*;
@@ -33,7 +36,7 @@ import static org.jetbrains.kotlin.parsing.KotlinWhitespaceAndCommentsBindersKt.
 public class KotlinExpressionParsing extends AbstractKotlinParsing {
     private static final TokenSet WHEN_CONDITION_RECOVERY_SET = TokenSet.create(RBRACE, IN_KEYWORD, NOT_IN, IS_KEYWORD, NOT_IS, ELSE_KEYWORD);
     private static final TokenSet WHEN_CONDITION_RECOVERY_SET_WITH_ARROW = TokenSet.create(RBRACE, IN_KEYWORD, NOT_IN, IS_KEYWORD, NOT_IS, ELSE_KEYWORD, ARROW, DOT);
-    private static final ImmutableMap<String, KtToken> KEYWORD_TEXTS = tokenSetToMap(KEYWORDS);
+    private static final Map<String, KtToken> KEYWORD_TEXTS = tokenSetToMap(KEYWORDS);
 
     private static final TokenSet TOKEN_SET_TO_FOLLOW_AFTER_DESTRUCTURING_DECLARATION_IN_LAMBDA = TokenSet.create(ARROW, COMMA, COLON);
     private static final TokenSet TOKEN_SET_TO_FOLLOW_AFTER_DESTRUCTURING_DECLARATION_IN_LAMBDA_RECOVERY =
@@ -49,12 +52,12 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
     private static final TokenSet IN_KEYWORD_SET = TokenSet.create(IN_KEYWORD);
     private static final TokenSet TRY_CATCH_RECOVERY_TOKEN_SET = TokenSet.create(LBRACE, RBRACE, FINALLY_KEYWORD, CATCH_KEYWORD);
 
-    private static ImmutableMap<String, KtToken> tokenSetToMap(TokenSet tokens) {
-        ImmutableMap.Builder<String, KtToken> builder = ImmutableMap.builder();
+    private static Map<String, KtToken> tokenSetToMap(TokenSet tokens) {
+        Map<String, KtToken> map = new HashMap<>();
         for (IElementType token : tokens.getTypes()) {
-            builder.put(token.toString(), (KtToken) token);
+            map.put(token.toString(), (KtToken) token);
         }
-        return builder.build();
+        return Collections.unmodifiableMap(map);
     }
 
     private static final TokenSet TYPE_ARGUMENT_LIST_STOPPERS = TokenSet.create(

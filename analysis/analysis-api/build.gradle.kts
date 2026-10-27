@@ -14,18 +14,12 @@ kotlin {
 }
 
 dependencies {
-    compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
-
     compileOnly(project(":core:language.model"))
     compileOnly(project(":core:language.targets"))
     compileOnly(project(":core:language.version-settings"))
     compileOnly(project(":compiler:psi:psi-api"))
-    compileOnly(project(":core:compiler.common"))
-    compileOnly(project(":core:compiler.common.jvm"))
-    implementation(kotlinxCollectionsImmutable())
 
     api(intellijCore())
-    implementation(libs.intellij.asm)
 
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
