@@ -60,6 +60,16 @@ class KotlinClassesPatchModuleTest {
     }
 
     @Test
+    fun noProviderInIdeaSync() = runInIdeaSync {
+        val project = buildProjectWithJvm()
+        project.writeModuleInfo("src/main/java", "module com.example.app {}")
+        project.kotlinClassesDir("compileKotlin")
+        project.evaluate()
+
+        assertEquals(emptyList(), project.javaCompile("compileJava").patchModuleProviders())
+    }
+
+    @Test
     fun nothingIsPatchedWithoutKotlinClasses() {
         val project = buildProjectWithJvm()
         project.writeModuleInfo("src/main/java", "module com.example.app {}")
@@ -276,4 +286,15 @@ class KotlinClassesPatchModuleTest {
     private fun Project.kotlinClassesDir(kotlinCompileName: String): String =
         (tasks.getByName(kotlinCompileName) as KotlinCompile).destinationDirectory.get().asFile.apply { mkdirs() }.absolutePath
 
+    // Holds the System properties monitor, so no other test reads 'idea.sync.active' meanwhile
+    private fun runInIdeaSync(block: () -> Unit) = synchronized(System.getProperties()) {
+        val previousValue = System.getProperty("idea.sync.active")
+        try {
+            System.setProperty("idea.sync.active", "true")
+            block()
+        } finally {
+            if (previousValue != null) System.setProperty("idea.sync.active", previousValue)
+            else System.clearProperty("idea.sync.active")
+        }
+    }
 }
