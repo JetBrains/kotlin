@@ -11,7 +11,9 @@ import org.jetbrains.kotlin.backend.common.includeSignatureIndex
 import org.jetbrains.kotlin.backend.common.klibAbiVersionForManifest
 import org.jetbrains.kotlin.backend.common.serialization.addLanguageFeaturesToManifest
 import org.jetbrains.kotlin.backend.konan.driver.NativePhaseContext
+import org.jetbrains.kotlin.config.KlibAbiCompatibilityLevel
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
+import org.jetbrains.kotlin.config.klibAbiCompatibilityLevel
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.konan.config.konanDontCompressKlib
 import org.jetbrains.kotlin.konan.library.writer.includeBitcode
@@ -111,7 +113,9 @@ fun NativePhaseContext.writeKlib(input: KlibWriterInput) {
             platformAndTargets(BuiltInsPlatform.NATIVE, nativeTargetsForManifest)
             customProperties { this += manifestProperties }
             legacyNativeShortNameInManifest(shortLibraryName)
-            legacyNativeDependenciesInManifest(linkDependencies.map { it.uniqueName })
+            if (configuration.klibAbiCompatibilityLevel < KlibAbiCompatibilityLevel.LATEST_STABLE) {
+                legacyNativeDependenciesInManifest(linkDependencies.map { it.uniqueName })
+            }
         }
         includeMetadata(input.serializerOutput.serializedMetadata)
         includeIr(input.serializerOutput.serializedIr)
