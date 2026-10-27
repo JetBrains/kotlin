@@ -16,6 +16,9 @@
 
 package org.jetbrains.kotlin.konan.target
 
+import org.jetbrains.kotlin.konan.properties.hostTargetString
+import java.io.File
+
 class Platform(val configurables: Configurables) : Configurables by configurables {
 
     val clang: ClangArgs.Native by lazy {
@@ -49,7 +52,42 @@ class PlatformManager private constructor(private val serialized: Serialized) :
 
     private val distribution by serialized::distribution
 
-    private val loaders = enabled.map {
+    /**
+     * Targets this host can build caches for but not binaries: on a host other than macOS, the Apple targets
+     * for which the properties name a toolchain for this host (`targetToolchain.<host>-<target>`).
+     * See [AppleConfigurablesImpl] for how their toolchain and SDK are found.
+     *
+     * Building their caches also needs their runtime, which only a distribution built on macOS contains:
+     * see [checkCanProduce].
+     */
+    val cacheOnlyTargets: List<KonanTarget> = if (hostIsMac) emptyList() else appleTargets.filter {
+        distribution.properties.hostTargetString("targetToolchain", it, host) != null
+    }
+
+    /**
+     * Fails with an explanation unless this host can produce [outputKind] for [target]: a library for any target,
+     * a cache for an [enabled] target or one of [cacheOnlyTargets], and anything else for an [enabled] target only.
+     */
+    fun checkCanProduce(outputKind: CompilerOutputKind, target: KonanTarget) {
+        val isAvailable = when (outputKind) {
+            CompilerOutputKind.LIBRARY -> true
+            CompilerOutputKind.STATIC_CACHE, CompilerOutputKind.HEADER_CACHE -> isEnabled(target) || target in cacheOnlyTargets
+            else -> isEnabled(target)
+        }
+        check(isAvailable) { "Target ${target.visibleName} is not available for output kind '$outputKind' on the $hostName host" }
+
+        // A distribution built on a host other than macOS has no runtime for Apple targets.
+        if (target in cacheOnlyTargets) {
+            val runtimeDirectory = distribution.defaultNatives(target)
+            check(File(runtimeDirectory).isDirectory) {
+                "Building caches for '${target.visibleName}' on a $hostName host requires its runtime in '$runtimeDirectory', " +
+                        "which is missing. To provide it, copy 'konan/targets/${target.visibleName}' from a distribution " +
+                        "of the same compiler version built on macOS."
+            }
+        }
+    }
+
+    private val loaders = (enabled + cacheOnlyTargets).map {
         it to loadConfigurables(it, distribution.properties, distribution.dependenciesDir)
     }.toMap()
 

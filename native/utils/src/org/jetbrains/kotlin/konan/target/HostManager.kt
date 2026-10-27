@@ -59,7 +59,7 @@ open class HostManager() {
         ANDROID_ARM64,
     )
 
-    private val appleTargets = setOf(
+    protected val appleTargets = setOf(
         MACOS_ARM64,
         IOS_ARM64,
         IOS_X64,

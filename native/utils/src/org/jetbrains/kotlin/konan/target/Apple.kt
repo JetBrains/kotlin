@@ -31,7 +31,7 @@ class AppleConfigurablesImpl(
 
     private val sdkDependency = this.targetSysRoot!!
     private val toolchainDependency = this.targetToolchain!!
-    private val xcodeAddonDependency = this.additionalToolsDir!!
+    private val xcodeAddonDependency = this.additionalToolsDir // Only macOS hosts have one.
 
     override val absoluteTargetSysRoot: String get() = when (val provider = xcodePartsProvider) {
         is XcodePartsProvider.Local -> {
@@ -40,21 +40,25 @@ class AppleConfigurablesImpl(
             provider.xcode.pathToPlatformSdk(platformName)
         }
         XcodePartsProvider.InternalServer -> absolute(sdkDependency)
+        XcodePartsProvider.Configured -> absoluteConfigured(sdkDependency, "targetSysRoot.${target.name}")
     }
 
     override val absoluteTargetToolchain: String get() = when (val provider = xcodePartsProvider) {
         is XcodePartsProvider.Local -> provider.xcode.toolchain
         XcodePartsProvider.InternalServer -> "${absolute(toolchainDependency)}/usr"
+        XcodePartsProvider.Configured ->
+            "${absoluteConfigured(toolchainDependency, "targetToolchain.${hostTargetSuffix(HostManager.host, target)}")}/usr"
     }
 
     override val absoluteAdditionalToolsDir: String get() = when (val provider = xcodePartsProvider) {
         is XcodePartsProvider.Local -> provider.xcode.additionalTools
-        XcodePartsProvider.InternalServer -> absolute(additionalToolsDir)
+        XcodePartsProvider.InternalServer -> absolute(xcodeAddonDependency)
+        XcodePartsProvider.Configured -> error("Additional Xcode tools are not available for $target on a ${HostManager.hostName} host")
     }
 
     override val dependencies
         get() = super.dependencies +
-                if (InternalServer.isAvailable && !useProvisionedXcode) listOf(
+                if (HostManager.hostIsMac && InternalServer.isAvailable && !useProvisionedXcode) listOfNotNull(
                     sdkDependency,
                     toolchainDependency,
                     xcodeAddonDependency
@@ -67,6 +71,7 @@ class AppleConfigurablesImpl(
 
     private val xcodePartsProvider by lazy {
         when {
+            !HostManager.hostIsMac -> XcodePartsProvider.Configured
             useProvisionedXcode -> XcodePartsProvider.Local(provisionedXcode())
             InternalServer.isAvailable -> XcodePartsProvider.InternalServer
             else -> XcodePartsProvider.Local(currentXcodeCheckingVersion())
@@ -91,6 +96,15 @@ class AppleConfigurablesImpl(
         return Xcode.xcodeOverride ?: InstalledXcode(developerDir = xcodeApp.resolve("Contents/Developer").path)
     }
 
+    // A path from the properties, which on a host without Xcode is either absolute or inside a declared dependency.
+    // The defaults name artifacts of the internal server, which are only declared as dependencies on macOS hosts.
+    private fun absoluteConfigured(path: String, property: String): String {
+        check(File(path).isAbsolute || File(path).toPath().first().toString() in dependencies) {
+            "On a ${HostManager.hostName} host, $property must be an absolute path or inside a declared dependency, but it is '$path'"
+        }
+        return absolute(path)
+    }
+
     private fun currentXcodeCheckingVersion(): Xcode {
         val xcode = Xcode.findCurrent()
         if (properties.getProperty("ignoreXcodeVersionCheck") != "true") {
@@ -110,6 +124,13 @@ class AppleConfigurablesImpl(
     private sealed class XcodePartsProvider {
         class Local(val xcode: Xcode) : XcodePartsProvider()
         object InternalServer : XcodePartsProvider()
+
+        /**
+         * A host other than macOS, which has no Xcode: the toolchain and the SDK are the ones named by
+         * `targetToolchain.<host>-<target>` and `targetSysRoot.<target>`, laid out as in Xcode.
+         * Only caches can be built with them; see [PlatformManager.cacheOnlyTargets].
+         */
+        object Configured : XcodePartsProvider()
     }
 }
 

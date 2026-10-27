@@ -35,6 +35,7 @@ configureKotlinCompileTasksGradleCompatibility()
 tasks {
     withType<Test>().configureEach {
         useJUnitPlatform()
+        addFileProperty(rootProject.isolated.projectDirectory.file("kotlin-native/konan/konan.properties"), "konanProperties")
     }
 }
 
