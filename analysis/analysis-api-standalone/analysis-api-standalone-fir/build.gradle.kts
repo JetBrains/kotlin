@@ -14,6 +14,7 @@ dependencies {
     implementation(project(":compiler:frontend"))
     implementation(project(":compiler:frontend.java"))
     implementation(project(":compiler:psi:parser"))
+    implementation(project(":compiler:psi:psi-stubs"))
     implementation(project(":compiler:resolution"))
     implementation(project(":core:descriptors"))
     implementation(project(":core:descriptors.jvm"))

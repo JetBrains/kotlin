@@ -11,6 +11,8 @@ dependencies {
     implementation(libs.analysis.api.kotlin.reflect)
     implementation(libs.org.jetbrains.annotations)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.opentelemetry.api)
+
     implementation(commonDependency("javax.inject"))
     implementation(commonDependency("org.fusesource.jansi", "jansi"))
     implementation(commonDependency("com.google.code.findbugs", "jsr305"))

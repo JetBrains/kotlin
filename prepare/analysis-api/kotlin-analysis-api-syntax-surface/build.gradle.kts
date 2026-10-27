@@ -1,0 +1,33 @@
+import org.jetbrains.kotlin.build.foreign.registerForeignClassUsageTasks
+
+plugins {
+    id("common-configuration")
+    id("com.autonomousapps.dependency-analysis")
+    `java-library`
+    id("kotlin-git.gradle-build-conventions.foreign-class-usage-checker")
+    id("analysis-api-artifact")
+}
+
+val analysisApiSyntaxSurfaceDependencies: List<String> = CompilerModules.analysisApiSyntaxSurfaceDependencies
+
+dependencies {
+    api(project(":prepare:analysis-api:kotlin-analysis-api-intellij-api-surface-components"))
+    api(libs.org.jetbrains.annotations)
+}
+
+analysisApiArtifact {
+    content {
+        projects(analysisApiSyntaxSurfaceDependencies)
+    }
+
+    validateClasspath(
+        proguardConfiguration = file("analysis-api-syntax-surface.pro"),
+        permittedDuplicatesFile = file("api/analysis-api-syntax-surface.permitted-duplicates"),
+    )
+}
+
+registerForeignClassUsageTasks {
+    classes.from(tasks.jar)
+    classpath.from(configurations.runtimeClasspath)
+    missingClasspathEntriesOutputFile = file("api/analysis-api-syntax-surface.classpath-issues")
+}

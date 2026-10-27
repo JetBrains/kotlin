@@ -7,12 +7,8 @@ plugins {
 val jflexPath = configurations.create("jflexPath")
 
 dependencies {
-    api(project(":compiler:util"))
-    api(project(":compiler:frontend.common"))
-
     compileOnly(intellijCore())
-    compileOnly(libs.guava)
-    compileOnly(libs.intellij.fastutil)
+    compileOnly(libs.org.jetbrains.annotations)
 
     implementation(project(":compiler:psi:psi-api"))
 
