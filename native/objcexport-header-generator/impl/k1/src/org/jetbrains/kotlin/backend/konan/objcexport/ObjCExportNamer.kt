@@ -1077,7 +1077,7 @@ class ObjCExportNamerImpl(
 
     private abstract inner class Mapping<in T : Any, N>(private val kind: ObjCExportNameKind?) {
         private val elementToName = mutableMapOf<T, N>()
-        private val nameToElements = mutableMapOf<N, MutableList<T>>()
+        private val nameToElements = mutableMapOf<N, ObjCExportNameIndex<T>>()
         private val keyToName = HashMap<String, N>()
         private val nameToRecords = HashMap<N, ObjCExportNameIndex<ObjCExportNameRecord>>()
 
@@ -1149,18 +1149,18 @@ class ObjCExportNamerImpl(
 
             if (reserved(name)) return AssignResult.Reserved
 
-            nameToElements[name].orEmpty().firstOrNull { conflict(element, it) }?.let {
-                return AssignResult.Conflict(it)
-            }
-
+            val place = placeFor(element)
             if (mayConflict) {
-                nameToRecords[name]?.candidates(placeFor(element))?.firstOrNull { conflictsWithRecord(element, it) }?.let {
+                nameToElements[name]?.candidates(place)?.firstOrNull { conflict(element, it) }?.let {
+                    return AssignResult.Conflict(it)
+                }
+                nameToRecords[name]?.candidates(place)?.firstOrNull { conflictsWithRecord(element, it) }?.let {
                     return AssignResult.Conflict(it.key)
                 }
             }
 
             if (!local) {
-                nameToElements.getOrPut(name) { mutableListOf() } += element
+                nameToElements.getOrPut(name) { nameIndex() }.add(element, place)
 
                 elementToName[element] = name
 
@@ -1173,7 +1173,7 @@ class ObjCExportNamerImpl(
         fun forceAssign(element: T, name: N) {
             if (name in nameToElements || element in elementToName) error(element)
 
-            nameToElements[name] = mutableListOf(element)
+            nameToElements.getOrPut(name) { nameIndex() }.add(element, placeFor(element))
             elementToName[element] = name
         }
 
@@ -1195,8 +1195,9 @@ class ObjCExportNamerImpl(
 
         private fun isTaken(name: N, record: ObjCExportNameRecord): Boolean {
             if (!mayConflict) return false
-            if (nameToElements[name].orEmpty().any { conflictsWithRecord(it, record) }) return true
-            return nameToRecords[name]?.candidates(record.place)?.any { recordsConflict(it, record) } == true
+            val place = record.place
+            return nameToElements[name]?.candidates(place)?.any { conflictsWithRecord(it, record) } == true ||
+                    nameToRecords[name]?.candidates(place)?.any { recordsConflict(it, record) } == true
         }
     }
 
