@@ -7,13 +7,18 @@ package org.jetbrains.kotlin.io
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.io.StringReader
+import java.io.StringWriter
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.util.Properties
+import java.util.concurrent.Callable
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.Executors
 
 class PropertyFileUtilsTest {
 
@@ -224,6 +229,173 @@ class PropertyFileUtilsTest {
         propsNoDots.setProperty("headers.ios", "stdbool.h")
         assertTrue(propsNoDots.hasDottedKey)
     }
+
+    @Test
+    fun `60 KB depends property remains unmaterialized on unrelated lookups`() {
+        val largeDepends = createLargeDependsValue("dep_module_")
+        assertTrue(largeDepends.length >= 60_000)
+        val manifest = createManifestWithDepends(largeDepends)
+
+        val props = createPropertiesFromBytes(manifest.toByteArray(StandardCharsets.UTF_8)) as ManifestProperties
+        assertTrue(props.hasDeferredDepends)
+
+        assertEquals("org.example.app", props.getProperty("unique_name"))
+        assertEquals("2.5.0", props.getProperty("abi_version", "fallback"))
+        assertEquals("fallback", props.getProperty("non_existent", "fallback"))
+        assertEquals("NATIVE", props["builtins_platform"])
+        assertEquals("default_val", props.getOrDefault("non_existent", "default_val"))
+        assertTrue(props.containsKey("native_targets"))
+        assertFalse(props.containsKey("non_existent"))
+        assertNull(props.getProperty("non_existent"))
+
+        assertTrue(props.hasDeferredDepends)
+    }
+
+    @Test
+    fun `60 KB depends property materializes accurately across all accessors and mutators`() {
+        val largeDepends = createLargeDependsValue("transitive_klib_")
+        val manifest = createManifestWithDepends(largeDepends)
+        val manifestBytes = manifest.toByteArray(StandardCharsets.UTF_8)
+        val expected = createJdkProperties(manifest)
+
+        val viaGetProperty = createPropertiesFromBytes(manifestBytes) as ManifestProperties
+        assertTrue(viaGetProperty.hasDeferredDepends)
+        assertEquals(largeDepends, viaGetProperty.getProperty("depends"))
+        assertFalse(viaGetProperty.hasDeferredDepends)
+
+        val viaGet = createPropertiesFromBytes(manifestBytes) as ManifestProperties
+        assertEquals(largeDepends, viaGet["depends"])
+        assertFalse(viaGet.hasDeferredDepends)
+
+        val viaContainsKey = createPropertiesFromBytes(manifestBytes) as ManifestProperties
+        assertTrue(viaContainsKey.containsKey("depends"))
+        assertFalse(viaContainsKey.hasDeferredDepends)
+
+        val viaStringPropertyNames = createPropertiesFromBytes(manifestBytes) as ManifestProperties
+        assertEquals(expected.stringPropertyNames(), viaStringPropertyNames.stringPropertyNames())
+        assertFalse(viaStringPropertyNames.hasDeferredDepends)
+
+        val viaPropertyNames = createPropertiesFromBytes(manifestBytes) as ManifestProperties
+        val collectedNames = mutableSetOf<String>()
+        val enumeration = viaPropertyNames.propertyNames()
+        while (enumeration.hasMoreElements()) {
+            collectedNames.add(enumeration.nextElement() as String)
+        }
+        assertEquals(expected.stringPropertyNames(), collectedNames)
+        assertFalse(viaPropertyNames.hasDeferredDepends)
+
+        val viaEntries = createPropertiesFromBytes(manifestBytes) as ManifestProperties
+        assertEquals(expected.entries, viaEntries.entries)
+        assertFalse(viaEntries.hasDeferredDepends)
+
+        val viaKeysAndValues = createPropertiesFromBytes(manifestBytes) as ManifestProperties
+        assertEquals(expected.keys, viaKeysAndValues.keys)
+        assertTrue(viaKeysAndValues.values.contains(largeDepends))
+        assertFalse(viaKeysAndValues.hasDeferredDepends)
+
+        val viaSize = createPropertiesFromBytes(manifestBytes) as ManifestProperties
+        assertEquals(expected.size, viaSize.size)
+        assertFalse(viaSize.isEmpty)
+        assertFalse(viaSize.hasDeferredDepends)
+
+        val viaRemove = createPropertiesFromBytes(manifestBytes) as ManifestProperties
+        assertEquals(largeDepends, viaRemove.remove("depends"))
+        assertFalse(viaRemove.hasDeferredDepends)
+        assertNull(viaRemove.getProperty("depends"))
+
+        val viaSetProperty = createPropertiesFromBytes(manifestBytes) as ManifestProperties
+        assertEquals(largeDepends, viaSetProperty.setProperty("depends", "stdlib"))
+        assertFalse(viaSetProperty.hasDeferredDepends)
+        assertEquals("stdlib", viaSetProperty.getProperty("depends"))
+
+        val viaStore = createPropertiesFromBytes(manifestBytes) as ManifestProperties
+        val writer = StringWriter()
+        viaStore.store(writer, null)
+        assertFalse(viaStore.hasDeferredDepends)
+        assertEquals(expected, createJdkProperties(writer.toString()))
+
+        val unmaterializedA = createPropertiesFromBytes(manifestBytes) as ManifestProperties
+        val unmaterializedB = createPropertiesFromBytes(manifestBytes) as ManifestProperties
+        assertEquals(unmaterializedA, unmaterializedB)
+        assertEquals(expected.hashCode(), unmaterializedA.hashCode())
+        assertFalse(unmaterializedA.hasDeferredDepends)
+        assertFalse(unmaterializedB.hasDeferredDepends)
+
+        val unmaterializedForClone = createPropertiesFromBytes(manifestBytes) as ManifestProperties
+        val cloned = unmaterializedForClone.clone() as Properties
+        assertFalse(unmaterializedForClone.hasDeferredDepends)
+        assertEquals(expected, cloned)
+
+        val viaClear = createPropertiesFromBytes(manifestBytes) as ManifestProperties
+        viaClear.clear()
+        assertFalse(viaClear.hasDeferredDepends)
+        assertTrue(viaClear.isEmpty)
+    }
+
+    @Test
+    fun `duplicate depends definitions and concurrent lazy materialization`() {
+        val escapedThenFast = "depends=stdlib foo\\:bar\ndepends=stdlib plain_dep\nunique_name=sample\n"
+        assertEquivalentToJdkProperties(escapedThenFast)
+
+        val fastThenEscaped = "depends=stdlib plain_dep\ndepends=stdlib foo\\:bar\nunique_name=sample\n"
+        assertEquivalentToJdkProperties(fastThenEscaped)
+
+        val largeDepends = createLargeDependsValue("concurrent_dep_")
+        val manifestBytes = createManifestWithDepends(largeDepends).toByteArray(StandardCharsets.UTF_8)
+        val sharedProps = createPropertiesFromBytes(manifestBytes) as ManifestProperties
+        assertTrue(sharedProps.hasDeferredDepends)
+
+        val threadCount = 8
+        val startLatch = CountDownLatch(1)
+        val executor = Executors.newFixedThreadPool(threadCount)
+        try {
+            val futures = buildList {
+                for (workerIdx in 0 until threadCount) {
+                    add(
+                        executor.submit(
+                            Callable {
+                                startLatch.await()
+                                if (workerIdx % 2 == 0) {
+                                    sharedProps.getProperty("depends")
+                                } else {
+                                    sharedProps.stringPropertyNames().contains("depends").toString()
+                                }
+                            }
+                        )
+                    )
+                }
+            }
+            startLatch.countDown()
+            for (workerIdx in 0 until futures.size) {
+                val value = futures[workerIdx].get()
+                if (workerIdx % 2 == 0) {
+                    assertEquals(largeDepends, value)
+                } else {
+                    assertEquals("true", value)
+                }
+            }
+            assertFalse(sharedProps.hasDeferredDepends)
+        } finally {
+            executor.shutdownNow()
+        }
+    }
+
+    private fun createLargeDependsValue(prefix: String): String = buildString(72_000) {
+        append("stdlib")
+        for (idx in 0 until 1800) {
+            append(' ')
+            append(prefix)
+            append("package_segment_number_")
+            append(idx)
+        }
+    }
+
+    private fun createManifestWithDepends(dependsValue: String): String =
+        "abi_version=2.5.0\n" +
+            "builtins_platform=NATIVE\n" +
+            "depends=$dependsValue\n" +
+            "native_targets=ios_arm64 linux_x64\n" +
+            "unique_name=org.example.app\n"
 
     private fun createJdkProperties(content: String): Properties {
         val expected = Properties()

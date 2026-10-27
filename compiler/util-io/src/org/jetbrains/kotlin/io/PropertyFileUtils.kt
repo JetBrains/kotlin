@@ -7,16 +7,24 @@ package org.jetbrains.kotlin.io
 
 import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
 import java.io.InputStream
+import java.io.OutputStream
+import java.io.PrintStream
+import java.io.PrintWriter
 import java.io.Reader
 import java.io.StringWriter
+import java.io.Writer
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Path
+import java.util.Arrays
+import java.util.Enumeration
 import java.util.Properties
+import java.util.function.BiConsumer
 import java.util.function.BiFunction
 import java.util.function.Function
 import kotlin.io.path.bufferedWriter
 
+private const val DEPENDS_KEY: String = "depends"
 private const val BYTE_TAB: Byte = '\t'.code.toByte()
 private const val BYTE_LF: Byte = '\n'.code.toByte()
 private const val BYTE_FF: Byte = '\u000C'.code.toByte()
@@ -28,24 +36,66 @@ private const val BYTE_DOT: Byte = '.'.code.toByte()
 private const val BYTE_COLON: Byte = ':'.code.toByte()
 private const val BYTE_EQUALS: Byte = '='.code.toByte()
 private const val BYTE_BACKSLASH: Byte = '\\'.code.toByte()
+private const val BYTE_LOWER_D: Byte = 'd'.code.toByte()
+private const val BYTE_LOWER_E: Byte = 'e'.code.toByte()
+private const val BYTE_LOWER_N: Byte = 'n'.code.toByte()
+private const val BYTE_LOWER_P: Byte = 'p'.code.toByte()
+private const val BYTE_LOWER_S: Byte = 's'.code.toByte()
 private const val UTF8_BOM_0: Byte = 0xEF.toByte()
 private const val UTF8_BOM_1: Byte = 0xBB.toByte()
 private const val UTF8_BOM_2: Byte = 0xBF.toByte()
 
 /**
  * [Properties] subclass returned by [createPropertiesFromBytes] and [Path.readProperties]
- * that records whether any property key contains `'.'`.
+ * that records whether any property key contains `'.'` and defers `depends=` string decoding
+ * until `"depends"` or a bulk/enumeration/mutation operation is accessed.
  */
 class ManifestProperties(hasDottedKey: Boolean = false) : Properties() {
     var hasDottedKey: Boolean = hasDottedKey
         private set
+
+    @Volatile
+    private var pendingDependsBytes: ByteArray? = null
+
+    @Volatile
+    private var pendingDependsHasNonAscii: Boolean = false
+
+    val hasDeferredDepends: Boolean
+        get() = pendingDependsBytes != null
 
     internal fun markDottedKey() {
         hasDottedKey = true
     }
 
     internal fun putParsed(key: String, value: String) {
+        if (key == DEPENDS_KEY && pendingDependsBytes != null) {
+            synchronized(this) {
+                pendingDependsBytes = null
+                super.put(key, value)
+            }
+            return
+        }
         super.put(key, value)
+    }
+
+    internal fun setPendingDepends(slice: ByteArray, hasNonAscii: Boolean) {
+        synchronized(this) {
+            if (super.containsKey(DEPENDS_KEY)) {
+                super.remove(DEPENDS_KEY)
+            }
+            pendingDependsHasNonAscii = hasNonAscii
+            pendingDependsBytes = slice
+        }
+    }
+
+    private fun materializeDepends() {
+        if (pendingDependsBytes == null) return
+        synchronized(this) {
+            val slice = pendingDependsBytes ?: return
+            val decoded = decodeBytesSlice(slice, 0, slice.size, pendingDependsHasNonAscii)
+            super.put(DEPENDS_KEY, decoded)
+            pendingDependsBytes = null
+        }
     }
 
     private fun checkKeyForDot(key: Any?) {
@@ -65,26 +115,182 @@ class ManifestProperties(hasDottedKey: Boolean = false) : Properties() {
         }
     }
 
+    override fun getProperty(key: String?): String? {
+        if (key == DEPENDS_KEY) {
+            materializeDepends()
+        }
+        return super.getProperty(key)
+    }
+
+    override fun getProperty(key: String?, defaultValue: String?): String? {
+        if (key == DEPENDS_KEY) {
+            materializeDepends()
+        }
+        return super.getProperty(key, defaultValue)
+    }
+
+    @Synchronized
+    override fun get(key: Any?): Any? {
+        if (key == DEPENDS_KEY) {
+            materializeDepends()
+        }
+        return super.get(key)
+    }
+
+    @Synchronized
+    override fun getOrDefault(key: Any?, defaultValue: Any?): Any? {
+        if (key == DEPENDS_KEY) {
+            materializeDepends()
+        }
+        return super.getOrDefault(key, defaultValue)
+    }
+
+    @Synchronized
+    override fun containsKey(key: Any?): Boolean {
+        if (key == DEPENDS_KEY) {
+            materializeDepends()
+        }
+        return super.containsKey(key)
+    }
+
+    override fun stringPropertyNames(): MutableSet<String> {
+        materializeDepends()
+        return super.stringPropertyNames()
+    }
+
+    override fun propertyNames(): Enumeration<*> {
+        materializeDepends()
+        return super.propertyNames()
+    }
+
+    @Synchronized
+    override fun keys(): Enumeration<Any> {
+        materializeDepends()
+        return super.keys()
+    }
+
+    @Synchronized
+    override fun elements(): Enumeration<Any> {
+        materializeDepends()
+        return super.elements()
+    }
+
+    override val keys: MutableSet<Any>
+        get() {
+            materializeDepends()
+            return super.keys
+        }
+
+    override val entries: MutableSet<MutableMap.MutableEntry<Any, Any>>
+        get() {
+            materializeDepends()
+            return super.entries
+        }
+
+    override val values: MutableCollection<Any>
+        get() {
+            materializeDepends()
+            return super.values
+        }
+
+    override val size: Int
+        @Synchronized
+        get() {
+            materializeDepends()
+            return super.size
+        }
+
+    @Synchronized
+    override fun isEmpty(): Boolean {
+        materializeDepends()
+        return super.isEmpty()
+    }
+
+    @Synchronized
+    override fun contains(value: Any?): Boolean {
+        materializeDepends()
+        return super.contains(value)
+    }
+
+    @Synchronized
+    override fun containsValue(value: Any?): Boolean {
+        materializeDepends()
+        return super.containsValue(value)
+    }
+
+    @Synchronized
+    override fun forEach(action: BiConsumer<in Any, in Any>) {
+        materializeDepends()
+        super.forEach(action)
+    }
+
+    @Synchronized
+    override fun replaceAll(function: BiFunction<in Any, in Any, out Any>) {
+        materializeDepends()
+        super.replaceAll(function)
+    }
+
+    override fun store(writer: Writer?, comments: String?) {
+        materializeDepends()
+        super.store(writer, comments)
+    }
+
+    override fun store(out: OutputStream?, comments: String?) {
+        materializeDepends()
+        super.store(out, comments)
+    }
+
+    @Deprecated("Deprecated in java.util.Properties")
+    override fun save(out: OutputStream?, comments: String?) {
+        materializeDepends()
+        @Suppress("DEPRECATION")
+        super.save(out, comments)
+    }
+
+    override fun storeToXML(os: OutputStream?, comment: String?) {
+        materializeDepends()
+        super.storeToXML(os, comment)
+    }
+
+    override fun storeToXML(os: OutputStream?, comment: String?, encoding: String?) {
+        materializeDepends()
+        super.storeToXML(os, comment, encoding)
+    }
+
+    override fun list(out: PrintStream?) {
+        materializeDepends()
+        super.list(out)
+    }
+
+    override fun list(out: PrintWriter?) {
+        materializeDepends()
+        super.list(out)
+    }
+
     @Synchronized
     override fun put(key: Any?, value: Any?): Any? {
+        materializeDepends()
         checkKeyForDot(key)
         return super.put(key, value)
     }
 
     @Synchronized
     override fun setProperty(key: String?, value: String?): Any? {
+        materializeDepends()
         checkKeyForDot(key)
         return super.setProperty(key, value)
     }
 
     @Synchronized
     override fun putIfAbsent(key: Any?, value: Any?): Any? {
+        materializeDepends()
         checkKeyForDot(key)
         return super.putIfAbsent(key, value)
     }
 
     @Synchronized
     override fun putAll(t: Map<out Any?, Any?>) {
+        materializeDepends()
         if (!hasDottedKey) {
             for (key in t.keys) {
                 if (key is String && key.indexOf('.') >= 0) {
@@ -97,7 +303,32 @@ class ManifestProperties(hasDottedKey: Boolean = false) : Properties() {
     }
 
     @Synchronized
+    override fun remove(key: Any?): Any? {
+        materializeDepends()
+        return super.remove(key)
+    }
+
+    @Synchronized
+    override fun remove(key: Any?, value: Any?): Boolean {
+        materializeDepends()
+        return super.remove(key, value)
+    }
+
+    @Synchronized
+    override fun replace(key: Any?, value: Any?): Any? {
+        materializeDepends()
+        return super.replace(key, value)
+    }
+
+    @Synchronized
+    override fun replace(key: Any?, oldValue: Any?, newValue: Any?): Boolean {
+        materializeDepends()
+        return super.replace(key, oldValue, newValue)
+    }
+
+    @Synchronized
     override fun computeIfAbsent(key: Any?, mappingFunction: Function<in Any?, out Any?>): Any? {
+        materializeDepends()
         val result = super.computeIfAbsent(key, mappingFunction)
         if (result != null) {
             checkKeyForDot(key)
@@ -106,7 +337,14 @@ class ManifestProperties(hasDottedKey: Boolean = false) : Properties() {
     }
 
     @Synchronized
+    override fun computeIfPresent(key: Any?, remappingFunction: BiFunction<in Any?, in Any, out Any?>): Any? {
+        materializeDepends()
+        return super.computeIfPresent(key, remappingFunction)
+    }
+
+    @Synchronized
     override fun compute(key: Any?, remappingFunction: BiFunction<in Any?, in Any?, out Any?>): Any? {
+        materializeDepends()
         val result = super.compute(key, remappingFunction)
         if (result != null) {
             checkKeyForDot(key)
@@ -116,6 +354,7 @@ class ManifestProperties(hasDottedKey: Boolean = false) : Properties() {
 
     @Synchronized
     override fun merge(key: Any?, value: Any, remappingFunction: BiFunction<in Any, in Any, out Any?>): Any? {
+        materializeDepends()
         val result = super.merge(key, value, remappingFunction)
         if (result != null) {
             checkKeyForDot(key)
@@ -124,21 +363,58 @@ class ManifestProperties(hasDottedKey: Boolean = false) : Properties() {
     }
 
     @Synchronized
+    override fun clear() {
+        pendingDependsBytes = null
+        super.clear()
+    }
+
+    @Synchronized
     override fun load(reader: Reader?) {
+        materializeDepends()
         super.load(reader)
         scanAllKeysForDot()
     }
 
     @Synchronized
     override fun load(inStream: InputStream?) {
+        materializeDepends()
         super.load(inStream)
         scanAllKeysForDot()
     }
 
     @Synchronized
     override fun loadFromXML(`in`: InputStream?) {
+        materializeDepends()
         super.loadFromXML(`in`)
         scanAllKeysForDot()
+    }
+
+    @Synchronized
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        materializeDepends()
+        if (other is ManifestProperties) {
+            other.materializeDepends()
+        }
+        return super.equals(other)
+    }
+
+    @Synchronized
+    override fun hashCode(): Int {
+        materializeDepends()
+        return super.hashCode()
+    }
+
+    @Synchronized
+    override fun toString(): String {
+        materializeDepends()
+        return super.toString()
+    }
+
+    @Synchronized
+    override fun clone(): Any {
+        materializeDepends()
+        return super.clone()
     }
 }
 
@@ -262,16 +538,31 @@ fun createPropertiesFromBytes(bytes: ByteArray): Properties {
         val valEnd = p
         i = consumeLineBreak(bytes, p)
 
-        val key = decodeBytesSlice(bytes, lineStart, keyEnd - lineStart, keyHasNonAscii)
-        if (keyHasDot) {
-            properties.markDottedKey()
+        val keyLen = keyEnd - lineStart
+        if (isDependsKey(bytes, lineStart, keyLen)) {
+            properties.setPendingDepends(Arrays.copyOfRange(bytes, valStart, valEnd), valHasNonAscii)
+        } else {
+            val key = decodeBytesSlice(bytes, lineStart, keyLen, keyHasNonAscii)
+            if (keyHasDot) {
+                properties.markDottedKey()
+            }
+            val value = decodeBytesSlice(bytes, valStart, valEnd - valStart, valHasNonAscii)
+            properties.putParsed(key, value)
         }
-        val value = decodeBytesSlice(bytes, valStart, valEnd - valStart, valHasNonAscii)
-        properties.putParsed(key, value)
     }
 
     return properties
 }
+
+private fun isDependsKey(bytes: ByteArray, offset: Int, length: Int): Boolean =
+    length == 7 &&
+        bytes[offset] == BYTE_LOWER_D &&
+        bytes[offset + 1] == BYTE_LOWER_E &&
+        bytes[offset + 2] == BYTE_LOWER_P &&
+        bytes[offset + 3] == BYTE_LOWER_E &&
+        bytes[offset + 4] == BYTE_LOWER_N &&
+        bytes[offset + 5] == BYTE_LOWER_D &&
+        bytes[offset + 6] == BYTE_LOWER_S
 
 private fun decodeBytesSlice(bytes: ByteArray, offset: Int, length: Int, hasNonAscii: Boolean): String {
     if (length == 0) return ""
