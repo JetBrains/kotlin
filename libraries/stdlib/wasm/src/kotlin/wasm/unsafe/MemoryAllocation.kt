@@ -362,13 +362,16 @@ private object FreeListAllocator {
         FreeList.free(allocatedSlot)
     }
 
-    fun shrinkInPlace(allocatedSlot: MemorySlot, newSize: UInt) {
+    fun shrinkInPlace(allocatedSlot: MemorySlot, reduceSizeBy: UInt) {
         val originalSize = allocatedSlot.size
-        require(newSize <= originalSize) { "Attempted to shrink an allocation to a larger size" }
 
-        // internally, what needs to be freed is the chunk starting at the point that we don't need anymore, i.e., the allocation start plus the new size. That part is of size (originalSize - newSize)
-        // NOTE: because we're only subtracting aligned sizes, the result will still be aligned
-        free(MemorySlot(Pointer(allocatedSlot.ptr.address + newSize), originalSize - newSize))
+        require(originalSize >= reduceSizeBy) { "Attempted to shrink an allocation to a negative size" }
+
+        val endOfOriginalAllocation = allocatedSlot.ptr.address + originalSize
+        val endOfNewlyShrunkAllocation = endOfOriginalAllocation - reduceSizeBy
+
+        // internally, what needs to be freed is the chunk starting at the point that we don't need anymore, i.e., the end of the shrunk allocation
+        free(MemorySlot(Pointer(endOfNewlyShrunkAllocation), reduceSizeBy))
     }
 
     fun tryGrowInPlace(allocatedSlot: MemorySlot, additionalSize: UInt): Boolean =
@@ -479,7 +482,7 @@ public fun componentModelRealloc(
 
         // case 2: shrinking, i.e., the new size is smaller than the old size: nothing to do except free a portion
         if (newAllocationSize < originalAllocationSize) {
-            allocator.shrinkInPlace(originalAllocatedSlot, newAllocationSize)
+            allocator.shrinkInPlace(originalAllocatedSlot, originalAllocationSize - newAllocationSize)
             return originalPtr
         }
 
