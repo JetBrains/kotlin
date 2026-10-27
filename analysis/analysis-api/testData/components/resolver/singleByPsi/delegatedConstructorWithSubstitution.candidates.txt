@@ -76,5 +76,5 @@ KtConstructorDelegationCall(144,152): 'super(1)'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'str'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'str' of type 'String'.>
     isInBestCandidates = false

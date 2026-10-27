@@ -26,4 +26,4 @@ KtCallExpression(45,50): 'Foo()'
         }
         valueArgumentMapping = {}
     ]
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'x'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'x' of type 'T (of class Foo<T>)'.>

@@ -80,7 +80,7 @@ KtConstructorDelegationCall(43,49): 'this()'
         callableId = null
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i' of type 'Int'.>
     isInBestCandidates = false
 
 KtConstructorDelegationReferenceExpression(43,47): 'this'
@@ -126,7 +126,7 @@ KtConstructorDelegationReferenceExpression(43,47): 'this'
         callableId = null
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i' of type 'Int'.>
     isInBestCandidates = false
 
 KtValueArgumentList(47,49): '()'
@@ -311,7 +311,7 @@ KtCallExpression(131,140): 'MyClass()'
         callableId = null
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i' of type 'Int'.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(131,138): 'MyClass'
@@ -355,7 +355,7 @@ KtNameReferenceExpression(131,138): 'MyClass'
         callableId = null
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i' of type 'Int'.>
     isInBestCandidates = false
 
 KtValueArgumentList(138,140): '()'
@@ -441,7 +441,7 @@ KtCallExpression(145,154): 'MyClass()'
         callableId = null
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i' of type 'Int'.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(145,152): 'MyClass'
@@ -485,7 +485,7 @@ KtNameReferenceExpression(145,152): 'MyClass'
         callableId = null
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i' of type 'Int'.>
     isInBestCandidates = false
 
 KtValueArgumentList(152,154): '()'
@@ -700,7 +700,7 @@ KtCallExpression(177,186): 'MyClass()'
         callableId = null
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i' of type 'Int'.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(177,184): 'MyClass'
@@ -744,7 +744,7 @@ KtNameReferenceExpression(177,184): 'MyClass'
         callableId = null
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i' of type 'Int'.>
     isInBestCandidates = false
 
 KtValueArgumentList(184,186): '()'
@@ -878,7 +878,7 @@ KtCallExpression(214,223): 'MyClass()'
         callableId = null
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i' of type 'Int'.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(214,221): 'MyClass'
@@ -922,7 +922,7 @@ KtNameReferenceExpression(214,221): 'MyClass'
         callableId = null
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i' of type 'Int'.>
     isInBestCandidates = false
 
 KtValueArgumentList(221,223): '()'
@@ -1062,7 +1062,7 @@ KtCallExpression(274,283): 'MyClass()'
         callableId = null
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i' of type 'Int'.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(274,281): 'MyClass'
@@ -1106,7 +1106,7 @@ KtNameReferenceExpression(274,281): 'MyClass'
         callableId = null
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i' of type 'Int'.>
     isInBestCandidates = false
 
 KtValueArgumentList(281,283): '()'

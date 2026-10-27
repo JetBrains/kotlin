@@ -305,6 +305,13 @@ object FirDiagnosticRenderers {
         ctx[FirAdaptiveTypeRenderingKey].getValue(t)
     }
 
+    val OPTIONAL_OF_TYPE = ContextDependentRenderer { t: ConeKotlinType?, ctx ->
+        when (t) {
+            null -> ""
+            else -> " of type '" + RENDER_TYPE.render(t, ctx) + "'"
+        }
+    }
+
     val RENDER_FQ_NAME_WITH_PREFIX = Renderer { symbol: FirBasedSymbol<*> ->
         when (symbol) {
             is FirCallableSymbol<*> -> CALLABLE_FQ_NAME.render(symbol)
