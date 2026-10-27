@@ -15,6 +15,7 @@ dependencies {
     implementation(project(":kotlin-scripting-compiler"))
     // ClassId/FqName/ScriptNames only.
     implementation(project(":core:compiler.common"))
+    runtimeOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)

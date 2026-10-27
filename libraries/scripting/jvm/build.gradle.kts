@@ -15,6 +15,8 @@ dependencies {
     runtimeOnly(project(":kotlin-script-runtime")) // legacy templates support, to be dropped with the artifact deprecation
     api(kotlinStdlib())
     api(project(":kotlin-scripting-common"))
+    // Used if available at runtime, see Jsr223HostConfigurationKeys.hasPublicKotlinVisibility
+    compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
