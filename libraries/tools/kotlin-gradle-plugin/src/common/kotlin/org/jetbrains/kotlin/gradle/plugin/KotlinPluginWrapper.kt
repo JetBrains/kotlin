@@ -86,6 +86,7 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
     override fun apply(project: Project) {
         project.checkCompilerEmbeddableInClasspath()
         project.registerDefaultVariantImplementations()
+        VariantImplementationFactories.bindServiceToTasks(project)
 
         project.runGradleCompatibilityCheck()
         project.runAgpCompatibilityCheckIfAgpIsApplied()
