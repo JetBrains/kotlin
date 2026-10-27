@@ -275,13 +275,21 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
         }
 
         private fun generateConstructors(generationContext: MemberGenerationContext): List<FirConstructorSymbol> {
-            return extensionsByCallableName[SpecialNames.INIT].orEmpty()
+            val generated = extensionsByCallableName[SpecialNames.INIT].orEmpty()
                 .flatMap { it.generateConstructors(generationContext) }
                 .onEach { it.fir.validate() }
-                .ifEmpty {
-                    if (isSharedGeneratedCompanion) listOfNotNull(generateCompanionObjectConstructorForPlugins(classSymbol)?.symbol)
-                    else emptyList()
-                }
+
+            if (isSharedGeneratedCompanion) {
+                if (generated.isNotEmpty()) error(
+                    """
+                    Some plugin(s) generated constructor(s) for companion object for class ${classSymbol.classId}:
+                    ${generated.joinToString("\n") { it.fir.render() }}
+                """.trimIndent()
+                )
+                return listOfNotNull(generateCompanionObjectConstructorForPlugins(classSymbol)?.symbol)
+            }
+
+            return generated
         }
 
         /**
