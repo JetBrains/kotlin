@@ -33,8 +33,8 @@ fun test() {
         x = [1, 2, 3]
     }
 
-    <!CANNOT_INFER_PARAMETER_TYPE("Z")!>buildBox<!> {
-        x = <!CANNOT_INFER_PARAMETER_TYPE("T")!>[]<!>
+    <!CANNOT_INFER_PARAMETER_TYPE("'Z' (of 'fun <Z> buildBox')")!>buildBox<!> {
+        x = <!CANNOT_INFER_PARAMETER_TYPE("'T' (of 'fun <T> listOf')")!>[]<!>
     }
 
     buildBox {
@@ -56,8 +56,8 @@ fun test() {
         x = [1, 2, 3]
     }
 
-    <!CANNOT_INFER_PARAMETER_TYPE("Z")!>buildBox<!> {
-        x = <!CANNOT_INFER_PARAMETER_TYPE("T")!>[x]<!>
+    <!CANNOT_INFER_PARAMETER_TYPE("'Z' (of 'fun <Z> buildBox')")!>buildBox<!> {
+        x = <!CANNOT_INFER_PARAMETER_TYPE("'T' (of 'fun <T> listOf')")!>[x]<!>
     }
 }
 
@@ -77,12 +77,12 @@ fun testWithoutAssignment() {
         x = 42
     }
 
-    <!CANNOT_INFER_PARAMETER_TYPE("Z")!>buildBox<!> {
+    <!CANNOT_INFER_PARAMETER_TYPE("'Z' (of 'fun <Z> buildBox')")!>buildBox<!> {
         [1, 2, 3]
     }
 
-    <!CANNOT_INFER_PARAMETER_TYPE("Z")!>buildBox<!> {
-        <!CANNOT_INFER_PARAMETER_TYPE("T")!>[x]<!>
+    <!CANNOT_INFER_PARAMETER_TYPE("'Z' (of 'fun <Z> buildBox')")!>buildBox<!> {
+        <!CANNOT_INFER_PARAMETER_TYPE("'T' (of 'fun <T> listOf')")!>[x]<!>
     }
 }
 
@@ -111,8 +111,8 @@ fun testWithElvis() {
         x = runIf(true) { [1, 2, 3] } ?: ["1", "2", "3"]
     }
 
-    <!CANNOT_INFER_PARAMETER_TYPE("Z")!>buildBox<!> {
-        x = <!CANNOT_INFER_PARAMETER_TYPE("R")!>runIf<!>(true) { <!CANNOT_INFER_PARAMETER_TYPE("T")!>[]<!> } ?: <!CANNOT_INFER_PARAMETER_TYPE("T")!>[]<!>
+    <!CANNOT_INFER_PARAMETER_TYPE("'Z' (of 'fun <Z> buildBox')")!>buildBox<!> {
+        x = <!CANNOT_INFER_PARAMETER_TYPE("'R' (of 'fun <R> runIf')")!>runIf<!>(true) { <!CANNOT_INFER_PARAMETER_TYPE("'T' (of 'fun <T> listOf')")!>[]<!> } ?: <!CANNOT_INFER_PARAMETER_TYPE("'T' (of 'fun <T> listOf')")!>[]<!>
     }
 }
 
