@@ -71,6 +71,12 @@
     </dependency>
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-tooling-core</artifactId>
+      <version>ArtifactsTest.version</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>kotlin-scripting-compiler</artifactId>
       <version>ArtifactsTest.version</version>
       <scope>runtime</scope>
