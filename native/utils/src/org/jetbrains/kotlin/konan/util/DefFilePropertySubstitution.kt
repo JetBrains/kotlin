@@ -1,9 +1,22 @@
 package org.jetbrains.kotlin.konan.util
 
+import org.jetbrains.kotlin.io.ManifestProperties
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.util.*
 
 fun Properties.substituteFor(target: KonanTarget): Properties {
+    if (this is ManifestProperties && !this.hasDottedKey) return this
+
+    val propertyNames = stringPropertyNames()
+    var hasAnyDottedKey = false
+    for (propertyName in propertyNames) {
+        if (propertyName.indexOf('.') != -1) {
+            hasAnyDottedKey = true
+            break
+        }
+    }
+    if (!hasAnyDottedKey) return this
+
     val tagetSuffix = target.visibleName
     val archSuffix = target.architecture.visibleName
     val familySuffix = target.family.visibleName
@@ -12,7 +25,7 @@ fun Properties.substituteFor(target: KonanTarget): Properties {
 
     val result = Properties()
 
-    for (propertyName in stringPropertyNames()) {
+    for (propertyName in propertyNames) {
         val propertyValue = getProperty(propertyName)
         result[propertyName] = propertyValue
 
