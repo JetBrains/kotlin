@@ -13,6 +13,7 @@ import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase
 import org.jetbrains.kotlin.fir.builder.StubFirScopeProvider
+import org.jetbrains.kotlin.fir.builder.isScript
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.session.FirSessionFactoryHelper
 import org.jetbrains.kotlin.parsing.KotlinLightParser

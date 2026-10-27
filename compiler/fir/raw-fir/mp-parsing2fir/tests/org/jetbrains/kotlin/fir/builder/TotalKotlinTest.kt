@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.builder
 import com.intellij.psi.impl.DebugUtil
 import com.intellij.testFramework.TestDataPath
 import org.jetbrains.kotlin.*
-import org.jetbrains.kotlin.fir.lightTree.isScript
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.session.FirSessionFactoryHelper
 import org.jetbrains.kotlin.parsing.KotlinLightParser

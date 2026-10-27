@@ -60,7 +60,10 @@
 -dontwarn java.lang.invoke.MethodHandle
 -dontwarn kotlin.internal.ThrowNoWhenBranchMatchedExceptionKt # Warning: ...: can't find referenced class kotlin.internal.ThrowNoWhenBranchMatchedExceptionKt
 
-# Multiplatform parsing section
-# Is not supposed to be used in AA scenarios, so not important here
--dontwarn fleet.com.intellij.multiplatform.util.fastutil.ints.**
--dontwarn org.jetbrains.kotlin.kmp.parser.utils.**
+# Light tree and multiplatform parsing
+# Sic! Don't add more entries here. Build a boundary between light tree and Java direct instead.
+-dontwarn org.jetbrains.kotlin.java.direct.JavaDirectJavaInteropKt
+-dontwarn org.jetbrains.kotlin.java.direct.JavaSourceRootEntry
+-dontwarn org.jetbrains.kotlin.java.direct.modules.JavaModuleInfoSourceReaderKt
+-dontwarn org.jetbrains.kotlin.fir.pipeline.LightTreeFirUtils
+-dontwarn org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmK2CompilerImplKt
