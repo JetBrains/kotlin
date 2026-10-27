@@ -173,6 +173,7 @@ public val KtExpression.expressionType: KaType?
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.expressions' endpoint instead.",
     replaceWith = ReplaceWith("this.returnType", "org.jetbrains.kotlin.analysis.api.expressions.returnType"),
+    level = DeprecationLevel.ERROR,
 )
 context(session: KaSession)
 public val KtDeclarationWithReturnType.returnType: KaType
