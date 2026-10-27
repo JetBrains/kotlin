@@ -21,8 +21,22 @@ fun main(args: Array<String>) {
                 model("box", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }
 
+            testClass<AbstractPluginInteractionJsBlackBoxCodegenTest> {
+                model("box", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
+            }
+
             testClass<AbstractPluginInteractionLLDiagnosticsTest> {
                 model("diagnostics", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+            }
+        }
+
+        testGroup("plugins/plugins-interactions-testing/tests-gen", "plugins/plugins-interactions-testing/testData") {
+            testClass<AbstractPluginInteractionLLBlackBoxTest> {
+                model("box", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
+            }
+
+            testClass<AbstractPluginInteractionLLReversedBlackBoxTest> {
+                model("box", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }
         }
     }

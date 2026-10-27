@@ -1,0 +1,3 @@
+java.lang.IllegalStateException: IR annotation has null argument.
+ Annotation: CONSTRUCTOR_CALL 'public constructor <init> (value: kotlin.String) [primary] declared in generatedCompanion.RequiredArgument' type=generatedCompanion.RequiredArgument origin=null
+.

@@ -31,6 +31,12 @@ annotation class NestedClassAndMaterializeMember
 annotation class MyInterfaceSupertype
 annotation class CompanionWithFoo
 
+@Target(AnnotationTarget.CLASS)
+annotation class AddToCompanion(vararg val spec: String)
+
+@Target(AnnotationTarget.CLASS)
+annotation class AlsoAddToCompanion(vararg val spec: String)
+
 annotation class MySerializable
 annotation class CoreSerializer
 

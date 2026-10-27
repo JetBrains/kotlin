@@ -1,7 +1,11 @@
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
+
 plugins {
     id("common-configuration")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
+    id("d8-configuration")
     id("java-test-fixtures")
     id("test-inputs-check")
 }
@@ -9,6 +13,19 @@ plugins {
 val beforePluginClasspath: Configuration = configurations.create("beforePluginClasspath")
 val middlePluginClasspath: Configuration = configurations.create("middlePluginClasspath")
 val afterPluginClasspath: Configuration = configurations.create("afterPluginClasspath")
+
+val serializationCoreJsIrRuntimeForTests: Configuration = configurations.create("serializationCoreJsIrRuntimeForTests") {
+    attributes {
+        attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
+        attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.ir)
+    }
+}
+val serializationJsonJsIrRuntimeForTests: Configuration = configurations.create("serializationJsonJsIrRuntimeForTests") {
+    attributes {
+        attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
+        attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.ir)
+    }
+}
 
 dependencies {
     testFixturesApi(testFixtures(project(":kotlin-allopen-compiler-plugin")))
@@ -33,6 +50,9 @@ dependencies {
     beforePluginClasspath(project(":plugins:test-plugins:before"))
     middlePluginClasspath(project(":plugins:test-plugins:middle"))
     afterPluginClasspath(project(":plugins:test-plugins:after"))
+
+    serializationCoreJsIrRuntimeForTests("org.jetbrains.kotlinx:kotlinx-serialization-core:1.9.0") { isTransitive = false }
+    serializationJsonJsIrRuntimeForTests("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0") { isTransitive = false }
 }
 
 optInToExperimentalCompilerApi()
@@ -63,11 +83,16 @@ projectTests {
         addClasspathProperty(beforePluginClasspath, "plugin.classpath.before")
         addClasspathProperty(middlePluginClasspath, "plugin.classpath.middle")
         addClasspathProperty(afterPluginClasspath, "plugin.classpath.after")
+
+        useJsIrBoxTests(buildDir = layout.buildDirectory)
+        addClasspathProperty(serializationCoreJsIrRuntimeForTests, "serialization.core.path")
+        addClasspathProperty(serializationJsonJsIrRuntimeForTests, "serialization.json.path")
     }
 
     testGenerator("org.jetbrains.kotlin.compiler.plugins.TestGeneratorKt")
 
     testData(isolated, "testData")
+    testData(project(":js:js.translator").isolated, "testData/_commonFiles")
 
     withJvmStdlibAndReflect()
     withPluginSandboxAnnotations()
