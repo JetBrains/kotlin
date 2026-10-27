@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
 import org.jetbrains.kotlin.compilerRunner.KotlinCompilerArgumentsLogLevel
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.targets.native.KonanPropertiesBuildService
-import org.jetbrains.kotlin.gradle.utils.JsonUtils
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeCInteropRunner
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeToolRunner
 import java.io.File
@@ -94,8 +93,6 @@ internal abstract class CInteropWorkAction @Inject constructor(
         }
 
         // Save header hashes for up-to-date checking (only on success)
-        val hashFile = parameters.allHeadersHashesFile.get().asFile
-        hashFile.parentFile.mkdirs()
-        hashFile.writeText(JsonUtils.gson.toJson(parameters.headerHashMap.get()))
+        parameters.allHeadersHashesFile.get().asFile.writeHeaderHashes(parameters.headerHashMap.get())
     }
 }
