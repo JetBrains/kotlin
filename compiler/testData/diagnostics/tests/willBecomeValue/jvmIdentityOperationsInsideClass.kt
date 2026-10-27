@@ -10,14 +10,14 @@ class Key(val x: Int) {
     override fun toString(): String = "Key($x)"
 
     fun lock() {
-        synchronized(<!IDENTITY_SENSITIVE_OPERATION_INSIDE_WILL_BECOME_VALUE_CLASS!>this<!>) { }
+        synchronized(<!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>this<!>) { }
     }
 
     <!SYNCHRONIZED_ON_WILL_BECOME_VALUE_CLASS!>@Synchronized<!>
     fun lock1() {
     }
 
-    fun identity(): Int = System.identityHashCode(<!IDENTITY_SENSITIVE_OPERATION_INSIDE_WILL_BECOME_VALUE_CLASS!>this<!>)
+    fun identity(): Int = System.identityHashCode(<!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>this<!>)
 }
 
 /* GENERATED_FIR_TAGS: andExpression, classDeclaration, equalityExpression, functionDeclaration, isExpression,

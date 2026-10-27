@@ -18,8 +18,8 @@ package kotlin
  *
  * The compiler applies every declaration check of a `value class` to the annotated class,
  * reporting errors just as it would for a real `value class`. Identity-sensitive **usages**,
- * however, are only reported as warnings outside of the annotated class itself,
- * which gives downstream users time to migrate before the class actually becomes a `value class`.
+ * however, are only reported as warnings, which gives users time to migrate before the class
+ * actually becomes a `value class`.
  *
  * A final annotated class also has to override `equals`, `hashCode` and `toString`, because the identity-based
  * implementations inherited from [Any] would silently turn structural once the class becomes a `value class`.
