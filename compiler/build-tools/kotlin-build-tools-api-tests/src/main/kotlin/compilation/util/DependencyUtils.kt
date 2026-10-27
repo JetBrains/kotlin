@@ -51,3 +51,6 @@ fun KotlinToolchains.unwrap(): KotlinToolchains {
     }
     return this
 }
+
+val currentKotlinNativeStdlibKlibLocation
+    get() = Paths.get(System.getProperty("kotlin.build-tools-api.test.nativeStdlibClasspath"))

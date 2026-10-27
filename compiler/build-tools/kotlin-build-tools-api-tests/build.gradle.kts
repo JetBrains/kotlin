@@ -42,6 +42,12 @@ val unpackedResources = configurations.detachedConfiguration(
     }
 }
 
+val nativeStdlibKlib = if (kotlinBuildProperties.isKotlinNativeEnabled.get()) {
+    configurations.detachedConfiguration(
+        dependencies.project(":kotlin-native:runtime", configuration = "nativeStdlib")
+    )
+} else null
+
 class PlatformDefinition(
     val name: String,
     val attributesAction: AttributeContainer.() -> Unit,
@@ -214,7 +220,7 @@ val businessLogicTestSuits = setOf(
     "testBuildSession",
     "testLint",
     "testIcEvents",
-)
+) + listOfNotNull("testNative".takeIf { nativeStdlibKlib != null })
 
 val buildToolsImplConfigurationsCache = mutableMapOf<String, Configuration>()
 fun JvmTestSuite.addSpecificBuildToolsImpl(version: String = "") {
@@ -388,6 +394,16 @@ testing {
                 runtimeOnly(commonDependency("one.util:streamex"))
                 implementation(project(":core:language.targets.jvm"))
                 implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect"))
+            }
+        }
+
+        if (nativeStdlibKlib != null) {
+            named<JvmTestSuite>("testNative") {
+                targets.all {
+                    testTask.configure {
+                        addClasspathProperty(nativeStdlibKlib, "kotlin.build-tools-api.test.nativeStdlibClasspath")
+                    }
+                }
             }
         }
     }
