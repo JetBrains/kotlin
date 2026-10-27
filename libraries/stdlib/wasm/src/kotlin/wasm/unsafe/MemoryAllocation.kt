@@ -279,13 +279,11 @@ private object FreeListAllocator {
             return insertionPointIndex
         }
 
-        fun tryGrowInPlace(allocatedSlot: MemorySlot, newSize: UInt): MemorySlot? {
+        fun tryGrowInPlace(allocatedSlot: MemorySlot, additionalSize: UInt): MemorySlot? {
             assert(!isAlreadyOperating) { "Cannot call tryGrowInPlace from within the allocator" }
             isAlreadyOperating = true
             try {
-                assert(newSize % alignment == 0u) { "Attempted to grow an allocation to a size that is not aligned" }
-
-                val additionalSize = newSize - allocatedSlot.size
+                assert(additionalSize % alignment == 0u) { "Attempted to grow an allocation to a size that is not aligned" }
 
                 val indexOfRight = findInsertionPoint(allocatedSlot)
                 if (indexOfRight == list.size) {
@@ -310,6 +308,7 @@ private object FreeListAllocator {
                 }
 
                 // we return the new version of the allocated slot: it starts at the same point, and has the extended size
+                val newSize = allocatedSlot.size + additionalSize
                 return allocatedSlot.copy(size = newSize)
             } finally {
                 isAlreadyOperating = false
@@ -372,8 +371,8 @@ private object FreeListAllocator {
         free(MemorySlot(Pointer(allocatedSlot.ptr.address + newSize), originalSize - newSize))
     }
 
-    fun tryGrowInPlace(allocatedSlot: MemorySlot, newSize: UInt): Boolean =
-        FreeList.tryGrowInPlace(allocatedSlot, newSize)?.growRealMemoryIfNeeded() != null
+    fun tryGrowInPlace(allocatedSlot: MemorySlot, additionalSize: UInt): Boolean =
+        FreeList.tryGrowInPlace(allocatedSlot, additionalSize)?.growRealMemoryIfNeeded() != null
 
 }
 
@@ -496,7 +495,7 @@ public fun componentModelRealloc(
         assert(originalAllocationSize <= newAllocationSize) { "Shrinking & non-growing cases should already be handled" }
 
         // try to grow the allocation in place
-        if (allocator.tryGrowInPlace(originalAllocatedSlot, newAllocationSize)) {
+        if (allocator.tryGrowInPlace(originalAllocatedSlot, newAllocationSize - originalAllocationSize)) {
             // case 3b: we can grow the allocation in place:
             // - The `try` call above was successful -> the necessary freeing and state management are done.
             // - There's no copying necessary, as the allocation with the old data is still in place.
