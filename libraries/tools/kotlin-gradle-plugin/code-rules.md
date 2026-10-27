@@ -10,3 +10,12 @@ external world not controlled by the user. I.e. dependency resolution or other t
 As it can lead to arbitrary file access. via path traversal techniques.
 
 Kotlin Gradle Plugin has utility function `resolveInside` that should be used instead to ensure safety.
+
+# Plugin conventions are followed
+
+Applies to:
+```
+src/**/*.kt
+```
+
+Changes should follow conventions defined in `@docs/build-tools/gradle/conventions/*.md`.
