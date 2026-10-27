@@ -32,3 +32,5 @@ object Obj {
 
 <!INAPPLICABLE_ADD_PARCELABLE_SUPERTYPE!>@AddParcelableSupertype<!>
 annotation class Annotation
+
+val anonymous = <!INAPPLICABLE_ADD_PARCELABLE_SUPERTYPE!>@AddParcelableSupertype<!> object {}

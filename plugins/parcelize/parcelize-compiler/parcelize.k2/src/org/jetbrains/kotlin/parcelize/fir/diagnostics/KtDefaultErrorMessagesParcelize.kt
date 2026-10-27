@@ -249,7 +249,7 @@ object KtDefaultErrorMessagesParcelize : BaseDiagnosticRendererFactory() {
 
         map.put(
             KtErrorsParcelize.INAPPLICABLE_ADD_PARCELABLE_SUPERTYPE,
-            "'@AddParcelableSupertype' is inapplicable to annotation classes, as they cannot have supertypes."
+            "'@AddParcelableSupertype' is inapplicable to annotation classes and anonymous objects."
         )
     }
 }

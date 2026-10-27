@@ -193,8 +193,12 @@ object FirParcelizeAnnotationChecker : FirAnnotationCallChecker(MppCheckerKind.P
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
-        val annotatedClass = context.annotationContainers.lastOrNull() as? FirRegularClass ?: return
-        if (annotatedClass.classKind == ClassKind.ANNOTATION_CLASS) {
+        val isInapplicable = when (val annotatedClass = context.annotationContainers.lastOrNull()) {
+            is FirRegularClass -> annotatedClass.classKind == ClassKind.ANNOTATION_CLASS
+            is FirAnonymousObject -> true
+            else -> false
+        }
+        if (isInapplicable) {
             reporter.reportOn(annotationCall.source, KtErrorsParcelize.INAPPLICABLE_ADD_PARCELABLE_SUPERTYPE, context)
         }
     }
