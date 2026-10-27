@@ -9,9 +9,9 @@ KtNameReferenceExpression(181,182): 's'
     diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
 
     context(s: String) fun foo(x: Int): Unit:
-      No value passed for parameter 'x'.
+      No value passed for parameter 'x' of type 'Int'.
 
     fun foo(n: Int, m: Int): Unit:
       No parameter with name 's' found.
-      No value passed for parameter 'n'.
-      No value passed for parameter 'm'.>
+      No value passed for parameter 'n' of type 'Int'.
+      No value passed for parameter 'm' of type 'Int'.>

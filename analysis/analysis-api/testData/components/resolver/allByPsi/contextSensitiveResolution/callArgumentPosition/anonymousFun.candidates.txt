@@ -375,7 +375,7 @@ KtCallExpression(473,479): 'TODO()'
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason' of type 'String'.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(473,477): 'TODO'
@@ -419,7 +419,7 @@ KtNameReferenceExpression(473,477): 'TODO'
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason' of type 'String'.>
     isInBestCandidates = false
 
 KtValueArgumentList(477,479): '()'
@@ -669,7 +669,7 @@ KtCallExpression(716,725): 'lazy {""}'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'lock'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'lock' of type 'Any?'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -712,7 +712,7 @@ KtCallExpression(716,725): 'lazy {""}'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'mode'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'mode' of type 'LazyThreadSafetyMode'.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(716,720): 'lazy'
@@ -791,7 +791,7 @@ KtNameReferenceExpression(716,720): 'lazy'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'lock'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'lock' of type 'Any?'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -834,7 +834,7 @@ KtNameReferenceExpression(716,720): 'lazy'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'mode'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'mode' of type 'LazyThreadSafetyMode'.>
     isInBestCandidates = false
 
 KtLambdaArgument(721,725): '{""}'
@@ -939,7 +939,7 @@ KtCallExpression(799,805): 'TODO()'
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason' of type 'String'.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(799,803): 'TODO'
@@ -983,7 +983,7 @@ KtNameReferenceExpression(799,803): 'TODO'
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason' of type 'String'.>
     isInBestCandidates = false
 
 KtValueArgumentList(803,805): '()'

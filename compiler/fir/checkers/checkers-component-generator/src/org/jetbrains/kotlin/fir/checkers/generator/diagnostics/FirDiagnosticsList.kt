@@ -882,6 +882,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
 
         val NO_VALUE_FOR_PARAMETER by error<KtElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
             parameter<Name>("violatedParameter")
+            parameter<ConeKotlinType?>("violatedParameterType")
         }
         val TOO_MANY_ARGUMENTS by error<PsiElement> {
             parameter<FirCallableSymbol<*>>("function")

@@ -5,7 +5,7 @@ const val fromUndeclaredInsideConstOp: Int = <!CONST_VAL_WITH_NON_CONST_INITIALI
 
 const val fromUndeclaredMember: String = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>"abc".<!UNRESOLVED_REFERENCE!>undeclaredMember<!>()<!>
 
-const val plusWithoutParameter: Int = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1.<!NONE_APPLICABLE, NO_VALUE_FOR_PARAMETER!>plus<!>()<!>
+const val plusWithoutParameter: Int = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1.<!NONE_APPLICABLE!>plus<!>()<!>
 
 const val plusOnWrongArgType: Int = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1.<!NONE_APPLICABLE!>plus<!>("str")<!>
 

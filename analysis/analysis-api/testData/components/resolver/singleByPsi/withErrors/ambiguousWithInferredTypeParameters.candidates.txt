@@ -39,7 +39,7 @@ KtCallExpression(128,139): 'function(1)'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'a'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'a' of type 'Char'.>
     isInBestCandidates = true
 
   KaInapplicableCallCandidate:
@@ -82,7 +82,7 @@ KtCallExpression(128,139): 'function(1)'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'b'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'b' of type 'Boolean'.>
     isInBestCandidates = true
 
   KaInapplicableCallCandidate:
@@ -125,5 +125,5 @@ KtCallExpression(128,139): 'function(1)'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'c'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'c' of type 'String'.>
     isInBestCandidates = true
