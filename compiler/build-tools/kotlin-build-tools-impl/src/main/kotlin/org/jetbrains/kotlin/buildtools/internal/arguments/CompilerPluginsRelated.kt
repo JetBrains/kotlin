@@ -74,7 +74,7 @@ internal fun applyCompilerPlugins(
 }
 
 @Serializable
-internal class CompilerPluginOptionImpl(val key: String, val value: String) {
+internal data class CompilerPluginOptionImpl(val key: String, val value: String) {
     internal fun toApi(): CompilerPluginOption = CompilerPluginOption(key, value)
 }
 
@@ -92,7 +92,7 @@ internal fun CompilerPluginPartialOrderRelation.toImpl(): CompilerPluginPartialO
     CompilerPluginPartialOrderRelationImpl.valueOf(name)
 
 @Serializable
-internal class CompilerPluginPartialOrderImpl(
+internal data class CompilerPluginPartialOrderImpl(
     val relation: CompilerPluginPartialOrderRelationImpl,
     val otherPluginId: String,
 ) {
@@ -103,7 +103,7 @@ internal fun CompilerPluginPartialOrder.toImpl(): CompilerPluginPartialOrderImpl
     CompilerPluginPartialOrderImpl(relation.toImpl(), otherPluginId)
 
 @Serializable
-internal class CompilerPluginImpl(
+internal data class CompilerPluginImpl(
     val pluginId: String,
     val classpath: List<Path>,
     val rawArguments: List<CompilerPluginOptionImpl>,
