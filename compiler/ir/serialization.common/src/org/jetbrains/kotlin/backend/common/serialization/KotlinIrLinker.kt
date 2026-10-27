@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.linkage.IrDeserializer
 import org.jetbrains.kotlin.backend.common.linkage.issues.*
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageDiagnostics
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupportForLinker
-import org.jetbrains.kotlin.backend.common.overrides.FileLocalAwareLinker
+import org.jetbrains.kotlin.backend.common.overrides.FileLocalSymbolProvider
 import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvider
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.cli.report
@@ -32,14 +32,13 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 import org.jetbrains.kotlin.utils.putToMultiMap
 
 abstract class KotlinIrLinker(
     val symbolTable: SymbolTable,
     val errorCallback: (String) -> Unit,
     val deserializedSymbolPostProcessor: (IrSymbol, IdSignature, IrFileSymbol) -> IrSymbol = { s, _, _ -> s },
-) : IrDeserializer, FileLocalAwareLinker {
+) : IrDeserializer {
     constructor(
         configuration: CompilerConfiguration,
         symbolTable: SymbolTable,
@@ -56,6 +55,24 @@ abstract class KotlinIrLinker(
 
     val irInterner = IrInterningService()
     val fileEntryDeserializer = FileEntryDeserializer(irInterner)
+
+    protected val fileLocalSymbolProvider = object : FileLocalSymbolProvider {
+        override fun referenceSimpleFunction(file: IrFile, signature: IdSignature.FileLocalSignature): IrSimpleFunctionSymbol {
+            return findModuleDeserializer(file).referenceSimpleFunctionByLocalSignature(file, signature)
+        }
+
+        override fun referenceProperty(file: IrFile, signature: IdSignature.FileLocalSignature): IrPropertySymbol {
+            return findModuleDeserializer(file).referencePropertyByLocalSignature(file, signature)
+        }
+
+        private fun findModuleDeserializer(irFile: IrFile): IrModuleDeserializer {
+            val candidateModules = getModulesDefiningPackage(irFile.packageFqName)
+
+            return candidateModules.firstOrNull { moduleDeserializer ->
+                moduleDeserializer.fileDeserializers().any { it.file == irFile }
+            } ?: error("No module deserializer found for file: $irFile")
+        }
+    }
 
     /**
      * This is the queue of modules containing top-level declarations to be deserialized. This is
@@ -164,13 +181,6 @@ abstract class KotlinIrLinker(
             ).raiseIssue(errorCallback)
     }
 
-    private fun resolveModuleDeserializer(irFile: IrFile): IrModuleDeserializer? {
-        val candidateModules = getModulesDefiningPackage(irFile.packageFqName)
-        return candidateModules.firstOrNull { moduleDeserializer ->
-            moduleDeserializer.fileDeserializers().any { it.file == irFile }
-        }
-    }
-
     private fun resolveModuleDeserializer(idSignature: IdSignature): IrModuleDeserializer? {
         val candidateModules = getModulesDefiningPackage(idSignature.packageFqName())
         return candidateModules.firstOrNull { idSignature in it }
@@ -241,16 +251,6 @@ abstract class KotlinIrLinker(
 
         return symbol.owner as IrDeclaration
     }
-
-    override fun tryReferencingSimpleFunctionByLocalSignature(file: IrFile, idSignature: IdSignature): IrSimpleFunctionSymbol? =
-        runUnless(idSignature.isPubliclyVisible) {
-            resolveModuleDeserializer(file)?.referenceSimpleFunctionByLocalSignature(file, idSignature)
-        }
-
-    override fun tryReferencingPropertyByLocalSignature(file: IrFile, idSignature: IdSignature): IrPropertySymbol? =
-        runUnless(idSignature.isPubliclyVisible) {
-            resolveModuleDeserializer(file)?.referencePropertyByLocalSignature(file, idSignature)
-        }
 
     override fun getSymbolAndPutIntoQueue(signature: IdSignature, kind: IrDeserializer.TopLevelSymbolKind): IrSymbol? {
         val moduleDeserializer = resolveModuleDeserializer(signature) ?: return null
