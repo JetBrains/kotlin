@@ -141,6 +141,7 @@ open class JsSecondStageEnvironmentConfigurator(testServices: TestServices) : Js
             configuration.compileSuspendAsJsGenerator = true
             configuration.compileLambdasAsEs6ArrowFunctions = DISABLE_ES6_ARROWS !in module.directives
             configuration.compileLongAsBigint = true
+            configuration.useEs6DefaultArgs = true
         }
     }
 }
