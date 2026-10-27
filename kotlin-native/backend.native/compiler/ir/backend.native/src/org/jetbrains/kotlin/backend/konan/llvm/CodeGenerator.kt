@@ -314,6 +314,18 @@ internal val IrSimpleFunction.needsVirtualTrampoline: Boolean
 context(config: NativeSecondStageCompilationConfig)
 internal val IrSimpleFunction.needsCacheEntryPointForFinalFakeOverride: Boolean
     get() = config.produce.isCache && isFakeOverride && !isOverridable && isExported
+            /*
+            On the one hand, a cache entry point for a fake override of an Objective-C method is not needed:
+            Kotlin subclasses of Objective-C classes must be final (KT-23529); so, this method couldn't have been
+            overridable in the previous version, and the caller couldn't have been used a virtual trampoline.
+
+            On the other hand, generation of such a cache entry point is tricky as it needs to call an Objective-C method
+            but the generation bypasses the interop lowering that normally handles such calls: it happens much later
+            and in LLVM IR instead of Kotlin IR. Wrong generation of them caused KT-90589.
+
+            So here we mark such methods as not needing a cache entry point:
+            */
+            && !target.isExternalObjCClassMethod()
 
 /*
  * Special trampoline function that performs the vtable/itable lookup and dispatches to the actual virtual
