@@ -5,83 +5,35 @@
 
 package org.jetbrains.kotlin.gradle.targets.wasm.component.internal
 
-import org.gradle.api.artifacts.Configuration
-import org.gradle.api.artifacts.type.ArtifactTypeDefinition
-import org.gradle.api.attributes.Category
-import org.jetbrains.kotlin.gradle.plugin.categoryByName
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
-import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationSideEffect
-import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
-import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
+import org.jetbrains.kotlin.gradle.targets.KotlinTargetSideEffect
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.wasm.component.WIT_DIRECTORY_NAME
-import org.jetbrains.kotlin.gradle.utils.maybeCreateConsumable
-import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
-import org.jetbrains.kotlin.gradle.utils.setInvisibleIfSupported
 
-internal val WitPreparationSetupAction = KotlinCompilationSideEffect { compilation ->
-    if (compilation !is KotlinJsIrCompilation) return@KotlinCompilationSideEffect
+/**
+ * Exposes the `wit` directory of the project as a secondary variant of its runtime elements,
+ * so that consumers can request WIT declarations of a project dependency
+ * by the [KOTLIN_WASM_WIT_ARTIFACT_TYPE] artifact type.
+ *
+ * WIT declarations of published libraries are extracted from their klibs by [WitExtractionTransform],
+ * but klibs of project dependencies do not contain the `wit` directory of the producing project,
+ * so it has to be exposed as a separate artifact.
+ */
+internal val WitPreparationSetupAction = KotlinTargetSideEffect { target ->
+    if (target !is KotlinJsIrTarget || target.wasmTargetType != KotlinWasmTargetType.WASI) return@KotlinTargetSideEffect
 
-    val target = compilation.target
-
-    if (target.wasmTargetType != KotlinWasmTargetType.WASI) return@KotlinCompilationSideEffect
-
-    val runtimeDependencyConfiguration = compilation.configurations.runtimeDependencyConfiguration
-
-    createWitResolvableConfiguration(
-        compilation,
-        runtimeDependencyConfiguration,
-    )
-
-    if (compilation.isMain()) {
-        createWitOutputConsumableConfiguration(
-            compilation,
-            runtimeDependencyConfiguration,
-        )
-    }
-}
-
-private fun createWitResolvableConfiguration(
-    compilation: KotlinJsIrCompilation,
-    runtimeDependencyConfiguration: Configuration?,
-) {
-    val target = compilation.target
     val project = target.project
 
-    val witConfiguration = compilation.project.configurations.maybeCreateResolvable(compilation.witConfigurationName) {
-        description = "Resolves WIT declarations."
-        setInvisibleIfSupported()
-        KotlinUsages.configureProducerRuntimeUsage(this, target)
-        attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
-        attributes.attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, KOTLIN_WASM_WIT_ARTIFACT_TYPE)
-
-        usesPlatformOf(target)
-    }
-
-    witConfiguration.extendsFrom(runtimeDependencyConfiguration)
+    project.configurations.getByName(target.runtimeElementsConfigurationName)
+        .outgoing
+        .variants
+        .maybeCreate(WIT_SECONDARY_VARIANT_NAME)
+        .artifact(project.layout.projectDirectory.dir(WIT_DIRECTORY_NAME)) {
+            it.type = KOTLIN_WASM_WIT_ARTIFACT_TYPE
+        }
 }
 
-private fun createWitOutputConsumableConfiguration(
-    compilation: KotlinJsIrCompilation,
-    runtimeDependencyConfiguration: Configuration?,
-) {
-    val target = compilation.target
-    val project = target.project
-
-    val witOutputConfiguration = project.configurations.maybeCreateConsumable(compilation.witOutputConfigurationName) {
-        description = "Consumable configuration with WIT declarations."
-        setInvisibleIfSupported()
-        KotlinUsages.configureProducerRuntimeUsage(this, target)
-        attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
-        attributes.attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, KOTLIN_WASM_WIT_ARTIFACT_TYPE)
-        usesPlatformOf(target)
-
-        project.artifacts.add(
-            compilation.witOutputConfigurationName,
-            project.layout.projectDirectory.dir(WIT_DIRECTORY_NAME)
-        )
-    }
-
-    witOutputConfiguration.extendsFrom(runtimeDependencyConfiguration)
-}
+/**
+ * Name of the secondary variant with WIT declarations of a project.
+ */
+internal const val WIT_SECONDARY_VARIANT_NAME = "wit"
