@@ -107,7 +107,7 @@ internal fun createAnnotationArgumentFromValue(
     return when (tree.getType(valueNode)) {
         JavaSyntaxElementType.LITERAL_EXPRESSION -> {
             val value = JavaLiteralParser.evaluateLiteral(valueNode, tree)
-            JavaLiteralAnnotationArgumentOverAst(name, value)
+            if (value != null) JavaLiteralAnnotationArgumentOverAst(name, value) else JavaUnknownAnnotationArgumentOverAst(name)
         }
         JavaSyntaxElementType.ARRAY_INITIALIZER_EXPRESSION, JavaSyntaxElementType.ANNOTATION_ARRAY_INITIALIZER -> {
             JavaArrayAnnotationArgumentOverAst(name, valueNode, tree, resolutionContext)
@@ -133,7 +133,7 @@ internal fun createAnnotationArgumentFromValue(
         JavaSyntaxElementType.POLYADIC_EXPRESSION, JavaSyntaxElementType.PARENTH_EXPRESSION,
         JavaSyntaxElementType.TYPE_CAST_EXPRESSION -> {
             val value = ConstantEvaluator(tree, resolutionContext).evaluate(valueNode)
-            JavaLiteralAnnotationArgumentOverAst(name, value)
+            if (value != null) JavaLiteralAnnotationArgumentOverAst(name, value) else JavaUnknownAnnotationArgumentOverAst(name)
         }
         else -> {
             JavaUnknownAnnotationArgumentOverAst(name)
