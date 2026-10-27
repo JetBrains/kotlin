@@ -5,20 +5,21 @@
 
 package org.jetbrains.kotlin.konan.test
 
-import org.jetbrains.kotlin.io.propertyList
 import org.jetbrains.kotlin.io.readProperties
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
-import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact.KLIB
-import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult
+import org.jetbrains.kotlin.konan.test.blackbox.buildDir
 import org.jetbrains.kotlin.konan.test.klib.compileToKlibsViaCli
 import org.jetbrains.kotlin.konan.test.klib.newSourceModules
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.components.KlibMetadataComponent
 import org.jetbrains.kotlin.library.components.metadata
+import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.name.FqName
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import java.io.File
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.Properties
@@ -32,52 +33,93 @@ class UsedLibrariesComputationTest : AbstractNativeSimpleTest() {
         }
         checkNotNull(additionalUnusedModulePath)
 
-        fun TestCompilationResult.Success<out KLIB>.assertDependencyNames(vararg expectedDependencyNamesInManifest: String) {
-            val expectedDependencyNames = expectedDependencyNamesInManifest.toSet()
-            val actualDependencyNames = resultingArtifact.klibFile.resolve("default").resolve("manifest").toPath()
-                .readProperties().propertyList(KLIB_PROPERTY_DEPENDS, escapeInQuotes = true).toSet()
+        fun assertDependencyNames(
+            klibPath: String,
+            dependenciesFilePath: String,
+            expectedDependencyNames: List<String>,
+        ) {
+            val manifestProperties = Paths.get(klibPath, "default", "manifest").readProperties()
+            assertTrue(KLIB_PROPERTY_DEPENDS !in manifestProperties) {
+                "Unexpected '$KLIB_PROPERTY_DEPENDS' property in manifest of $klibPath"
+            }
 
-            assertEquals(expectedDependencyNames, actualDependencyNames) {
-                "Dependency mismatch for module ${resultingArtifact.klibFile}: expected $expectedDependencyNames, got $actualDependencyNames"
+            val dependencyPaths = File(dependenciesFilePath).readLines().filter { it.isNotEmpty() }
+            val loadedLibraries = KlibLoader { libraryPaths(dependencyPaths) }.load().librariesStdlibFirst
+            val actualDependencyNames = mutableSetOf<String>()
+            for (library in loadedLibraries) {
+                actualDependencyNames.add(library.uniqueName)
+            }
+
+            val expectedSet = expectedDependencyNames.toSet()
+            assertEquals(expectedSet, actualDependencyNames) {
+                "Dependency mismatch for module $klibPath: expected $expectedSet, got $actualDependencyNames"
             }
         }
 
+        val depsFile1 = buildDir.resolve("written-dependencies-1.txt").absolutePath
         newSourceModules {
             addRegularModule("test")
-        }.compileToKlibsViaCli { _, successKlib ->
-            successKlib.assertDependencyNames(
-                /* implicit unavoidable dependency */ "stdlib",
+        }.compileToKlibsViaCli(
+            extraCliArgs = listOf("-Xwrite-dependencies-of-produced-klib-to=$depsFile1")
+        ) { _, successKlib ->
+            assertDependencyNames(
+                successKlib.resultingArtifact.klibFile.absolutePath,
+                depsFile1,
+                listOf(
+                    /* implicit unavoidable dependency */ "stdlib",
+                ),
             )
         }
 
+        val depsFile2 = buildDir.resolve("written-dependencies-2.txt").absolutePath
         newSourceModules {
             addRegularModule("test")
-        }.compileToKlibsViaCli(extraCliArgs = listOf("-l", additionalUnusedModulePath)) { _, successKlib ->
-            successKlib.assertDependencyNames(
-                /* implicit unavoidable dependency */ "stdlib",
-                /* because it was passed explicitly via CLI, even if "test" doesn't use any API from "additional" */ "additional",
+        }.compileToKlibsViaCli(
+            extraCliArgs = listOf("-l", additionalUnusedModulePath, "-Xwrite-dependencies-of-produced-klib-to=$depsFile2")
+        ) { _, successKlib ->
+            assertDependencyNames(
+                successKlib.resultingArtifact.klibFile.absolutePath,
+                depsFile2,
+                listOf(
+                    /* implicit unavoidable dependency */ "stdlib",
+                    /* because it was passed explicitly via CLI, even if "test" doesn't use any API from "additional" */ "additional",
+                ),
             )
         }
 
+        val depsFile3 = buildDir.resolve("written-dependencies-3.txt").absolutePath
         newSourceModules {
             addRegularModule("test") {
                 sourceFileAddend("fun callAdditional() = additional.additional(-1)")
             }
-        }.compileToKlibsViaCli(extraCliArgs = listOf("-l", additionalUnusedModulePath)) { _, successKlib ->
-            successKlib.assertDependencyNames(
-                /* implicit unavoidable dependency */ "stdlib",
-                /* because it was passed explicitly via CLI and "test" uses some API from "additional" */ "additional",
+        }.compileToKlibsViaCli(
+            extraCliArgs = listOf("-l", additionalUnusedModulePath, "-Xwrite-dependencies-of-produced-klib-to=$depsFile3")
+        ) { _, successKlib ->
+            assertDependencyNames(
+                successKlib.resultingArtifact.klibFile.absolutePath,
+                depsFile3,
+                listOf(
+                    /* implicit unavoidable dependency */ "stdlib",
+                    /* because it was passed explicitly via CLI and "test" uses some API from "additional" */ "additional",
+                ),
             )
         }
 
+        val depsFile4 = buildDir.resolve("written-dependencies-4.txt").absolutePath
         newSourceModules {
             addRegularModule("test") {
                 sourceFileAddend("@kotlinx.cinterop.ExperimentalForeignApi fun callPosix() = platform.posix.fopen(\"test.txt\", \"r\")")
             }
-        }.compileToKlibsViaCli { _, successKlib ->
-            successKlib.assertDependencyNames(
-                /* implicit unavoidable dependency */ "stdlib",
-                /* because "test" uses some API from posix */ "org.jetbrains.kotlin.native.platform.posix",
+        }.compileToKlibsViaCli(
+            extraCliArgs = listOf("-Xwrite-dependencies-of-produced-klib-to=$depsFile4")
+        ) { _, successKlib ->
+            assertDependencyNames(
+                successKlib.resultingArtifact.klibFile.absolutePath,
+                depsFile4,
+                listOf(
+                    /* implicit unavoidable dependency */ "stdlib",
+                    /* because "test" uses some API from posix */ "org.jetbrains.kotlin.native.platform.posix",
+                ),
             )
         }
     }

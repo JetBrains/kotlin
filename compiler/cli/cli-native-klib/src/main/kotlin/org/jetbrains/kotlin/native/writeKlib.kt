@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.konan.config.konanDontCompressKlib
 import org.jetbrains.kotlin.konan.library.writer.includeBitcode
 import org.jetbrains.kotlin.konan.library.writer.includeNativeIncludedBinaries
-import org.jetbrains.kotlin.konan.library.writer.legacyNativeDependenciesInManifest
 import org.jetbrains.kotlin.konan.library.writer.legacyNativeShortNameInManifest
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_NATIVE_TARGETS
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_HEADER
@@ -26,7 +25,6 @@ import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.loadSizeInfo
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.metadata.addMetadataFlagsToManifest
-import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.library.writer.KlibWriter
 import org.jetbrains.kotlin.library.writer.includeIr
 import org.jetbrains.kotlin.library.writer.includeMetadata
@@ -111,7 +109,6 @@ fun NativePhaseContext.writeKlib(input: KlibWriterInput) {
             platformAndTargets(BuiltInsPlatform.NATIVE, nativeTargetsForManifest)
             customProperties { this += manifestProperties }
             legacyNativeShortNameInManifest(shortLibraryName)
-            legacyNativeDependenciesInManifest(linkDependencies.map { it.uniqueName })
         }
         includeMetadata(input.serializerOutput.serializedMetadata)
         includeIr(input.serializerOutput.serializedIr)
