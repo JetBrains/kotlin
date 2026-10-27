@@ -16,12 +16,6 @@ val analysisApiModules: Array<String> = CompilerModules.analysisApiModules
 
 val additionalCompilerProjects = listOf(
     ":kotlin-annotations-jvm",
-    ":kotlin-script-runtime",
-    ":kotlin-scripting-common",
-    ":kotlin-scripting-dependencies",
-    ":kotlin-scripting-jvm",
-    ":kotlin-scripting-compiler",
-    ":kotlin-scripting-compiler-impl",
 )
 
 val excludedCompilerProjects = listOf(
@@ -45,6 +39,11 @@ dependencies {
 
     implementation(libs.kotlinx.serialization.core)
     implementation(libs.antlr.runtime)
+
+    implementation(project(":kotlin-scripting-compiler")) {
+        exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib")
+        exclude(group = "org.jetbrains.kotlin", module = "kotlin-reflect")
+    }
 
     embedded(protobufFull())
 }

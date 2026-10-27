@@ -42,9 +42,6 @@
 # From LLFirAbstractSessionFactory (KT-85503)
 -dontwarn org.jetbrains.kotlin.assignment.plugin.**
 
-# From ScriptingIrExplainGenerationExtension backend extension (disabled by default)
--dontwarn org.jetbrains.kotlin.powerassert.diagram.**
-
 # From CliCompilerUtils.kt, Javac mode (disabled by default & obsolete)
 -dontwarn org.jetbrains.kotlin.javac.**
 
