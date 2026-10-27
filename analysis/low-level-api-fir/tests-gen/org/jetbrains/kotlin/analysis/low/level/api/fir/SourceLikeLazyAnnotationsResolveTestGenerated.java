@@ -126,6 +126,12 @@ public class SourceLikeLazyAnnotationsResolveTestGenerated extends AbstractSourc
     }
 
     @Test
+    @TestMetadata("fieldAnnotationNextToPropertyAnnotation_backingField.kt")
+    public void testFieldAnnotationNextToPropertyAnnotation_backingField() {
+      run("fieldAnnotationNextToPropertyAnnotation_backingField.kt");
+    }
+
+    @Test
     @TestMetadata("functionWithRegularAndSpecialAnnotations.kt")
     public void testFunctionWithRegularAndSpecialAnnotations() {
       run("functionWithRegularAndSpecialAnnotations.kt");
@@ -631,6 +637,12 @@ public class SourceLikeLazyAnnotationsResolveTestGenerated extends AbstractSourc
     @TestMetadata("falseTarget.kt")
     public void testFalseTarget() {
       run("falseTarget.kt");
+    }
+
+    @Test
+    @TestMetadata("fieldAnnotationNextToPropertyAnnotation_backingField.kt")
+    public void testFieldAnnotationNextToPropertyAnnotation_backingField() {
+      run("fieldAnnotationNextToPropertyAnnotation_backingField.kt");
     }
 
     @Test
