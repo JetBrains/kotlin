@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.internal.compilerRunner.native
 
-import com.google.gson.Gson
 import org.gradle.api.file.FileCollection
 import org.gradle.api.logging.Logging
 import org.gradle.api.provider.ListProperty
@@ -26,9 +25,6 @@ import org.jetbrains.kotlin.gradle.plugin.statistics.BuildFusService
 import org.jetbrains.kotlin.gradle.utils.escapeStringCharacters
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.statistics.FusMetricRetrievalException
-import org.jetbrains.kotlin.util.PhaseType
-import org.jetbrains.kotlin.util.UnitStats
-import org.jetbrains.kotlin.util.forEachPhaseMeasurement
 import java.io.File
 import java.io.IOException
 import java.io.PrintWriter
@@ -48,7 +44,6 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
 
     companion object {
         private val dumpPerfArgument = CommonCompilerArguments::dumpPerf.argumentAnnotation.value
-        private val gson = Gson()
     }
     private val logger = Logging.getLogger(toolSpec.displayName.get())
     private val errorMessageCollector = GradleErrorMessageCollector(logger)
@@ -291,36 +286,9 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
     ) {
         if (!jsonFile.isFile()) return
         try {
-            val unitStats = gson.fromJson(jsonFile.readText(), UnitStats::class.java)
-
-            unitStats.forEachPhaseMeasurement { phaseType, time ->
-                if (time == null) return@forEachPhaseMeasurement
-
-                addTimeMetricNs(phaseType.toGradleBuildTime(), time.nanos)
-            }
-
-            unitStats.dynamicStats?.forEach { (parentPhaseType, name, time) ->
-                addTimeMetricNs(CustomBuildTimeMetric.createIfDoesNotExistAndReturn(name, parentPhaseType.toGradleBuildTime()), time.nanos)
-            }
-
-            unitStats.klibElementStats?.forEach { (path, size) ->
-                addMetric(KlibSizeMetric.createIfDoesNotExistAndReturn(path), size)
-            }
+            addCompilerMetrics(CompilerMetricsJson.parse(jsonFile.readText()))
         } catch (e: Exception) {
             errorMessageCollector.report(FusMetricRetrievalException("Failed to parse metrics from file ${jsonFile.absolutePath}", e), location = null)
         }
     }
-}
-
-private fun PhaseType.toGradleBuildTime() = when (this) {
-    PhaseType.Initialization -> COMPILER_INITIALIZATION
-    PhaseType.Analysis -> CODE_ANALYSIS
-    PhaseType.TranslationToIr -> TRANSLATION_TO_IR
-    PhaseType.IrPreLowering -> IR_PRE_LOWERING
-    PhaseType.IrSerialization -> IR_SERIALIZATION
-    PhaseType.KlibWriting -> KLIB_WRITING
-    PhaseType.KlibMetadataWriting -> KLIB_METADATA_WRITING
-    PhaseType.IrLinking -> IR_LINKING
-    PhaseType.IrLowering -> IR_LOWERING
-    PhaseType.Backend -> BACKEND
 }
