@@ -492,6 +492,7 @@ private fun ConeAmbiguityError.mapConeAmbiguityError(
                 FirErrors.NONE_APPLICABLE.createOn(
                     source,
                     candidatesWithFilteredDiagnostics,
+                    callOrAssignmentSource,
                     session
                 )
             )

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.diagnostics
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -350,6 +351,26 @@ object FirDiagnosticRenderers {
             else -> " of type '" + RENDER_TYPE.render(t, ctx) + "'"
         }
     }
+
+    fun renderOptionalSource(s: KtSourceElement?): String? {
+        val text = s?.text?.toString() ?: return null
+        val lines = text.lines()
+        val summary = when {
+            lines.size == 1 -> text
+            else -> lines.first() + " ... " + lines.last().replace(INDENT_WHITESPACE, "")
+        }
+        return when {
+            summary.length < EXPRESSION_RENDERING_LIMIT -> "'${summary.replace("'", "\\'")}'"
+            else -> null
+        }
+    }
+
+    val OPTIONAL_FOR_EXPRESSION = Renderer { s: KtSourceElement? ->
+        renderOptionalSource(s)?.let { " for expression $it" } ?: ""
+    }
+
+    private val INDENT_WHITESPACE = """^\s+""".toRegex()
+    private const val EXPRESSION_RENDERING_LIMIT = 50
 
     val RENDER_FQ_NAME_WITH_PREFIX = Renderer { symbol: FirBasedSymbol<*> ->
         when (symbol) {

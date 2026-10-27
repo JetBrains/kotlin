@@ -3231,6 +3231,7 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
             get() = NoneApplicable::class
 
         public val candidates: List<Pair<KaSymbol, List<String>>>
+        public val callSite: PsiElement?
     }
 
     @KaUnstableDiagnosticApi

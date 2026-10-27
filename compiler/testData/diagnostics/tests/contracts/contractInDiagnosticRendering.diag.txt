@@ -1,4 +1,4 @@
-/contractInDiagnosticRendering.kt:23:5: error: None of the following candidates is applicable:
+/contractInDiagnosticRendering.kt:23:5: error: None of the following candidates is applicable for expression 'foo(Any()) {}':
 
 fun foo(s: String, f: () -> Unit): Unit:
   Argument type mismatch: actual type is 'Any', but 'String' was expected.

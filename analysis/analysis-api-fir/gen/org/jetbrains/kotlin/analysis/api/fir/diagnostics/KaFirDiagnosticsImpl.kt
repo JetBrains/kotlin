@@ -2294,6 +2294,7 @@ internal class JvmInlineOnValueObjectImpl(
 
 internal class NoneApplicableImpl(
     override val candidates: List<Pair<KaSymbol, List<String>>>,
+    override val callSite: PsiElement?,
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.NoneApplicable

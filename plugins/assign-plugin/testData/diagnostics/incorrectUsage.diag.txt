@@ -1,4 +1,4 @@
-/incorrectUsage.kt:18:10: error: None of the following candidates is applicable:
+/incorrectUsage.kt:18:10: error: None of the following candidates is applicable for expression 'task.input = 42':
 
 fun assign(v: String): Unit:
   Argument type mismatch: actual type is 'Int', but 'String' was expected.
@@ -8,7 +8,7 @@ fun assign(v: StringProperty): Unit:
 
 /incorrectUsage.kt:18:16: error: No applicable 'assign' function found for '=' overload.
 
-/incorrectUsage.kt:24:9: error: None of the following candidates is applicable:
+/incorrectUsage.kt:24:9: error: None of the following candidates is applicable for expression 'input = 42':
 
 fun assign(v: String): Unit:
   Argument type mismatch: actual type is 'Int', but 'String' was expected.
