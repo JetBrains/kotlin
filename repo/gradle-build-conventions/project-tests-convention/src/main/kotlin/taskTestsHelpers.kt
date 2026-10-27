@@ -157,6 +157,15 @@ fun Test.withScriptRuntime() {
     )
 }
 
+fun Test.withScriptingCommon() {
+    addClasspathProperty(
+        configurationElements(
+            "scriptingCommonJarForTests",
+            dependencies = { add(project.dependencies.project(":kotlin-scripting-common")) }
+        ), TestCompilePaths.KOTLIN_SCRIPTING_COMMON_PATH
+    )
+}
+
 fun Test.withTestJar() {
     addClasspathProperty(
         configurationElements(

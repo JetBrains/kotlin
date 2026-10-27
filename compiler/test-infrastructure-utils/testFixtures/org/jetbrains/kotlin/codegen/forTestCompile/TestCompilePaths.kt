@@ -14,6 +14,7 @@ object TestCompilePaths {
     const val KOTLIN_TEST_JAR_PATH: String = "kotlin.test.jar.path"
     const val KOTLIN_REFLECT_JAR_PATH: String = "kotlin.reflect.jar.path"
     const val KOTLIN_SCRIPT_RUNTIME_PATH: String = "kotlin.script.runtime.path"
+    const val KOTLIN_SCRIPTING_COMMON_PATH: String = "kotlin.scripting.common.path"
     const val KOTLIN_COMMON_STDLIB_PATH: String = "kotlin.common.stdlib.path"
     const val KOTLIN_ANNOTATIONS_PATH: String = "kotlin.annotations.path"
     const val KOTLIN_WEB_STDLIB_KLIB_PATH: String = "kotlin.web.stdlib.path"
