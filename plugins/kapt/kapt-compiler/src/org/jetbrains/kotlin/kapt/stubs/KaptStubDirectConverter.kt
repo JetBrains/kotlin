@@ -213,14 +213,17 @@ class KaptStubDirectConverter(
         sortedConvertedFields: List<String>,
         sortedConvertedMethods: List<String>,
         nestedClasses: List<String>,
+        recordComponents: List<String>?,
     ): String {
         val isEnum = clazz.isEnum()
         val isAnnotation = clazz.isAnnotation()
+        val isRecord = recordComponents != null
 
         val text = buildString {
             appendKDocCommentIfNecessary(clazz)
             append(modifiers)
             val classKindText = when {
+                isRecord -> "record"
                 isEnum -> "enum"
                 isAnnotation -> "@interface"
                 clazz.isInterface() -> "interface"
@@ -231,7 +234,10 @@ class KaptStubDirectConverter(
                 // interface cannot have type parameters or extends clause, but they are allowed (not reported)
                 // during the annotations processing
                 appendTypeArguments(genericType.typeParameters)
-                if (clazz.isInterface()) {
+                if (isRecord) {
+                    appendList(recordComponents, "(", ")")
+                    appendListIfNonEmpty(superTypes.interfaces, " implements ", "") { it }
+                } else if (clazz.isInterface()) {
                     require(superTypes.superClass == null) {
                         "Interface ${clazz.name} has an unexpected superclass in Java text generation"
                     }
@@ -260,6 +266,20 @@ class KaptStubDirectConverter(
 
         return text
     }
+
+    override val supportsRecords: Boolean get() = true
+
+    override fun makeRecordComponent(field: FieldNode, modifiers: String, convertedType: String, isVararg: Boolean): String =
+        buildString {
+            append(modifiers)
+            append(if (isVararg) convertedType.removeSuffix("[]") + "..." else convertedType)
+            append(' ')
+            append(field.name)
+        }
+
+    override fun makeFieldAssignmentStatement(fieldName: String, parameterName: String): String = "this.$fieldName = $parameterName;"
+
+    override fun makeCast(type: String, expression: String): String = "($type) $expression"
 
     override fun makeSingleImport(fqName: FqName): String = "import ${fqName.asString()};\n"
 

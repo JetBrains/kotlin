@@ -57,6 +57,8 @@ abstract class AbstractKaptStubConverterTest(
             }
         }
 
+        useMetaTestConfigurators(::KaptMinJavaVersionSkipper)
+
         useConfigurators(
             ::CommonEnvironmentConfigurator,
             ::JvmEnvironmentConfigurator,

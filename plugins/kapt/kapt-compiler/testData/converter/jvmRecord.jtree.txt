@@ -1,0 +1,1391 @@
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+/**
+ * public final annotation class A : kotlin/Annotation {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface A {
+}
+
+////////////////////
+
+
+@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.FIELD})
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.FIELD})
+/**
+ * @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.FIELD])
+ * public final annotation class F : kotlin/Annotation {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface F {
+}
+
+////////////////////
+
+
+/**
+ * public abstract interface I : kotlin/Any {
+ *
+ *   // signature: foo()I
+ *   public abstract fun foo(): kotlin/Int
+ *
+ *   // module name: main
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
+ * }
+ */
+@kotlin.Metadata()
+public abstract interface I {
+
+    public abstract int foo();
+}
+
+////////////////////
+
+
+/**
+ * public final data class Narrow : java/lang/Record {
+ *
+ *   // signature: <init>(BSCLjava/lang/String;)V
+ *   public constructor(b: kotlin/Byte, s: kotlin/Short, c: kotlin/Char, name: kotlin/String)
+ *
+ *   // signature: <init>(Ljava/lang/String;)V
+ *   public (* secondary *) constructor(name: kotlin/String)
+ *
+ *   // signature: component1()B
+ *   public final (* synthesized *) operator fun component1(): kotlin/Byte
+ *
+ *   // signature: component2()S
+ *   public final (* synthesized *) operator fun component2(): kotlin/Short
+ *
+ *   // signature: component3()C
+ *   public final (* synthesized *) operator fun component3(): kotlin/Char
+ *
+ *   // signature: component4()Ljava/lang/String;
+ *   public final (* synthesized *) operator fun component4(): kotlin/String
+ *
+ *   // signature: copy(BSCLjava/lang/String;)LNarrow;
+ *   public final (* synthesized *) fun copy(b: kotlin/Byte (* = ... *), s: kotlin/Short (* = ... *), c: kotlin/Char (* = ... *), name: kotlin/String (* = ... *)): Narrow
+ *
+ *   // signature: equals(Ljava/lang/Object;)Z
+ *   // must-use return value
+ *   public open (* synthesized *) operator fun equals(other: kotlin/Any?): kotlin/Boolean
+ *
+ *   // signature: hashCode()I
+ *   // must-use return value
+ *   public open (* synthesized *) fun hashCode(): kotlin/Int
+ *
+ *   // signature: toString()Ljava/lang/String;
+ *   // must-use return value
+ *   public open (* synthesized *) fun toString(): kotlin/String
+ *
+ *   // field: b:B
+ *   // getter: b()B
+ *   public final val b: kotlin/Byte
+ *     public final get
+ *
+ *   // field: c:C
+ *   // getter: c()C
+ *   public final val c: kotlin/Char
+ *     public final get
+ *
+ *   // field: name:Ljava/lang/String;
+ *   // getter: name()Ljava/lang/String;
+ *   public final val name: kotlin/String
+ *     public final get
+ *
+ *   // field: s:S
+ *   // getter: s()S
+ *   public final val s: kotlin/Short
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+@kotlin.jvm.JvmRecord()
+public final class Narrow extends java.lang.Record {
+    private final byte b = 0;
+    private final short s = 0;
+    private final char c = '\u0000';
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String name = null;
+
+    public Narrow(byte b, short s, char c, @org.jetbrains.annotations.NotNull()
+    java.lang.String name) {
+    }
+
+    public final byte b() {
+        return 0;
+    }
+
+    public final short s() {
+        return 0;
+    }
+
+    public final char c() {
+        return '\u0000';
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String name() {
+        return null;
+    }
+
+    public Narrow(@org.jetbrains.annotations.NotNull()
+    java.lang.String name) {
+    }
+
+    public final byte component1() {
+        return 0;
+    }
+
+    public final short component2() {
+        return 0;
+    }
+
+    public final char component3() {
+        return '\u0000';
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String component4() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final Narrow copy(byte b, short s, char c, @org.jetbrains.annotations.NotNull()
+    java.lang.String name) {
+        return null;
+    }
+
+    @java.lang.Override()
+    public boolean equals(@org.jetbrains.annotations.Nullable()
+    java.lang.Object other) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public int hashCode() {
+        return 0;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.lang.String toString() {
+        return null;
+    }
+}
+
+////////////////////
+
+
+/**
+ * public final class Plain : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // nested class: NestedRecord
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Plain {
+
+    public Plain() {
+        super();
+    }
+
+    /**
+     * public final data class Plain.NestedRecord : java/lang/Record {
+     *
+     *   // signature: <init>(Ljava/lang/String;)V
+     *   public constructor(s: kotlin/String)
+     *
+     *   // signature: component1()Ljava/lang/String;
+     *   public final (* synthesized *) operator fun component1(): kotlin/String
+     *
+     *   // signature: copy(Ljava/lang/String;)LPlain$NestedRecord;
+     *   public final (* synthesized *) fun copy(s: kotlin/String (* = ... *)): Plain.NestedRecord
+     *
+     *   // signature: equals(Ljava/lang/Object;)Z
+     *   // must-use return value
+     *   public open (* synthesized *) operator fun equals(other: kotlin/Any?): kotlin/Boolean
+     *
+     *   // signature: hashCode()I
+     *   // must-use return value
+     *   public open (* synthesized *) fun hashCode(): kotlin/Int
+     *
+     *   // signature: toString()Ljava/lang/String;
+     *   // must-use return value
+     *   public open (* synthesized *) fun toString(): kotlin/String
+     *
+     *   // field: s:Ljava/lang/String;
+     *   // getter: s()Ljava/lang/String;
+     *   public final val s: kotlin/String
+     *     public final get
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    @kotlin.jvm.JvmRecord()
+    public static final class NestedRecord extends java.lang.Record {
+        @org.jetbrains.annotations.NotNull()
+        private final java.lang.String s = null;
+
+        public NestedRecord(@org.jetbrains.annotations.NotNull()
+        java.lang.String s) {
+        }
+
+        @org.jetbrains.annotations.NotNull()
+        public final java.lang.String s() {
+            return null;
+        }
+
+        @org.jetbrains.annotations.NotNull()
+        public final java.lang.String component1() {
+            return null;
+        }
+
+        @org.jetbrains.annotations.NotNull()
+        public final Plain.NestedRecord copy(@org.jetbrains.annotations.NotNull()
+        java.lang.String s) {
+            return null;
+        }
+
+        @java.lang.Override()
+        public boolean equals(@org.jetbrains.annotations.Nullable()
+        java.lang.Object other) {
+            return false;
+        }
+
+        @java.lang.Override()
+        public int hashCode() {
+            return 0;
+        }
+
+        @java.lang.Override()
+        @org.jetbrains.annotations.NotNull()
+        public java.lang.String toString() {
+            return null;
+        }
+    }
+}
+
+////////////////////
+
+
+/**
+ * public final data class PrivateComponent : java/lang/Record {
+ *
+ *   // signature: <init>()V
+ *   public (* secondary *) constructor()
+ *
+ *   // signature: <init>(II)V
+ *   public constructor(x: kotlin/Int, y: kotlin/Int)
+ *
+ *   // signature: component1()I
+ *   private final (* synthesized *) operator fun component1(): kotlin/Int
+ *
+ *   // signature: component2()I
+ *   public final (* synthesized *) operator fun component2(): kotlin/Int
+ *
+ *   // signature: copy(II)LPrivateComponent;
+ *   public final (* synthesized *) fun copy(x: kotlin/Int (* = ... *), y: kotlin/Int (* = ... *)): PrivateComponent
+ *
+ *   // signature: equals(Ljava/lang/Object;)Z
+ *   // must-use return value
+ *   public open (* synthesized *) operator fun equals(other: kotlin/Any?): kotlin/Boolean
+ *
+ *   // signature: hashCode()I
+ *   // must-use return value
+ *   public open (* synthesized *) fun hashCode(): kotlin/Int
+ *
+ *   // signature: toString()Ljava/lang/String;
+ *   // must-use return value
+ *   public open (* synthesized *) fun toString(): kotlin/String
+ *
+ *   // field: x:I
+ *   private final val x: kotlin/Int
+ *     private final get
+ *
+ *   // field: y:I
+ *   // getter: y()I
+ *   public final val y: kotlin/Int
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+@kotlin.jvm.JvmRecord()
+public final class PrivateComponent extends java.lang.Record {
+    private final int x = 0;
+    private final int y = 0;
+
+    public PrivateComponent(int x, int y) {
+    }
+
+    public final int y() {
+        return 0;
+    }
+
+    public PrivateComponent() {
+    }
+
+    private final int component1() {
+        return 0;
+    }
+
+    public final int component2() {
+        return 0;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final PrivateComponent copy(int x, int y) {
+        return null;
+    }
+
+    @java.lang.Override()
+    public boolean equals(@org.jetbrains.annotations.Nullable()
+    java.lang.Object other) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public int hashCode() {
+        return 0;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.lang.String toString() {
+        return null;
+    }
+}
+
+////////////////////
+
+
+/**
+ * public final data class PrivateConstructor : java/lang/Record {
+ *
+ *   // signature: <init>(I)V
+ *   private constructor(i: kotlin/Int)
+ *
+ *   // signature: component1()I
+ *   public final (* synthesized *) operator fun component1(): kotlin/Int
+ *
+ *   // signature: copy(I)LPrivateConstructor;
+ *   public final (* synthesized *) fun copy(i: kotlin/Int (* = ... *)): PrivateConstructor
+ *
+ *   // signature: equals(Ljava/lang/Object;)Z
+ *   // must-use return value
+ *   public open (* synthesized *) operator fun equals(other: kotlin/Any?): kotlin/Boolean
+ *
+ *   // signature: hashCode()I
+ *   // must-use return value
+ *   public open (* synthesized *) fun hashCode(): kotlin/Int
+ *
+ *   // signature: toString()Ljava/lang/String;
+ *   // must-use return value
+ *   public open (* synthesized *) fun toString(): kotlin/String
+ *
+ *   // field: i:I
+ *   // getter: i()I
+ *   public final val i: kotlin/Int
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+@kotlin.jvm.JvmRecord()
+public final class PrivateConstructor extends java.lang.Record {
+    private final int i = 0;
+
+    private PrivateConstructor(int i) {
+    }
+
+    public final int i() {
+        return 0;
+    }
+
+    public final int component1() {
+        return 0;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final PrivateConstructor copy(int i) {
+        return null;
+    }
+
+    @java.lang.Override()
+    public boolean equals(@org.jetbrains.annotations.Nullable()
+    java.lang.Object other) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public int hashCode() {
+        return 0;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.lang.String toString() {
+        return null;
+    }
+}
+
+////////////////////
+
+
+@A()
+/**
+ * @A
+ * public final data class R<T#0 (* T *)> : I, java/lang/Record {
+ *
+ *   // signature: <init>(ILjava/lang/Object;)V
+ *   public constructor(@A x: kotlin/Int, y: T#0)
+ *
+ *   // signature: <init>(Ljava/lang/Object;)V
+ *   public (* secondary *) constructor(y: T#0)
+ *
+ *   // signature: component1()I
+ *   public final (* synthesized *) operator fun component1(): kotlin/Int
+ *
+ *   // signature: component2()Ljava/lang/Object;
+ *   public final (* synthesized *) operator fun component2(): T#0
+ *
+ *   // signature: copy(ILjava/lang/Object;)LR;
+ *   public final (* synthesized *) fun copy(@A x: kotlin/Int (* = ... *), y: T#0 (* = ... *)): R<T#0>
+ *
+ *   // signature: equals(Ljava/lang/Object;)Z
+ *   // must-use return value
+ *   public open (* synthesized *) operator fun equals(other: kotlin/Any?): kotlin/Boolean
+ *
+ *   // signature: foo()I
+ *   public open fun foo(): kotlin/Int
+ *
+ *   // signature: hashCode()I
+ *   // must-use return value
+ *   public open (* synthesized *) fun hashCode(): kotlin/Int
+ *
+ *   // signature: toString()Ljava/lang/String;
+ *   // must-use return value
+ *   public open (* synthesized *) fun toString(): kotlin/String
+ *
+ *   // field: x:I
+ *   // getter: x()I
+ *   // synthetic method for annotations: x$annotations()V
+ *   @A
+ *   public final val x: kotlin/Int
+ *     public final get
+ *
+ *   // field: y:Ljava/lang/Object;
+ *   // getter: y()Ljava/lang/Object;
+ *   public final val y: T#0
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+@kotlin.jvm.JvmRecord()
+public final class R<T extends java.lang.Object> extends java.lang.Record implements I {
+    private final int x = 0;
+    private final T y = null;
+
+    public R(@A()
+    int x, T y) {
+    }
+
+    public final int x() {
+        return 0;
+    }
+
+    public final T y() {
+        return null;
+    }
+
+    public R(T y) {
+    }
+
+    @java.lang.Override()
+    public int foo() {
+        return 0;
+    }
+
+    public final int component1() {
+        return 0;
+    }
+
+    public final T component2() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final R<T> copy(@A()
+    int x, T y) {
+        return null;
+    }
+
+    @java.lang.Override()
+    public boolean equals(@org.jetbrains.annotations.Nullable()
+    java.lang.Object other) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public int hashCode() {
+        return 0;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.lang.String toString() {
+        return null;
+    }
+
+    @A()
+    @java.lang.Deprecated()
+    public static void x$annotations() {
+    }
+}
+
+////////////////////
+
+
+/**
+ * public final data class RecordNamed : java/lang/Record {
+ *
+ *   // signature: <init>(I)V
+ *   public constructor(record: kotlin/Int)
+ *
+ *   // signature: component1()I
+ *   public final (* synthesized *) operator fun component1(): kotlin/Int
+ *
+ *   // signature: copy(I)LRecordNamed;
+ *   public final (* synthesized *) fun copy(record: kotlin/Int (* = ... *)): RecordNamed
+ *
+ *   // signature: equals(Ljava/lang/Object;)Z
+ *   // must-use return value
+ *   public open (* synthesized *) operator fun equals(other: kotlin/Any?): kotlin/Boolean
+ *
+ *   // signature: hashCode()I
+ *   // must-use return value
+ *   public open (* synthesized *) fun hashCode(): kotlin/Int
+ *
+ *   // signature: toString()Ljava/lang/String;
+ *   // must-use return value
+ *   public open (* synthesized *) fun toString(): kotlin/String
+ *
+ *   // field: record:I
+ *   // getter: record()I
+ *   public final val record: kotlin/Int
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+@kotlin.jvm.JvmRecord()
+public final class RecordNamed extends java.lang.Record {
+    private final int record = 0;
+
+    public RecordNamed(int record) {
+    }
+
+    public final int record() {
+        return 0;
+    }
+
+    public final int component1() {
+        return 0;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final RecordNamed copy(int record) {
+        return null;
+    }
+
+    @java.lang.Override()
+    public boolean equals(@org.jetbrains.annotations.Nullable()
+    java.lang.Object other) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public int hashCode() {
+        return 0;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.lang.String toString() {
+        return null;
+    }
+}
+
+////////////////////
+
+
+/**
+ * public final data class SpaceNamed : java/lang/Record {
+ *
+ *   // signature: <init>(I)V
+ *   public constructor(with space: kotlin/Int)
+ *
+ *   // signature: component1()I
+ *   public final (* synthesized *) operator fun component1(): kotlin/Int
+ *
+ *   // signature: copy(I)LSpaceNamed;
+ *   public final (* synthesized *) fun copy(with space: kotlin/Int (* = ... *)): SpaceNamed
+ *
+ *   // signature: equals(Ljava/lang/Object;)Z
+ *   // must-use return value
+ *   public open (* synthesized *) operator fun equals(other: kotlin/Any?): kotlin/Boolean
+ *
+ *   // signature: hashCode()I
+ *   // must-use return value
+ *   public open (* synthesized *) fun hashCode(): kotlin/Int
+ *
+ *   // signature: toString()Ljava/lang/String;
+ *   // must-use return value
+ *   public open (* synthesized *) fun toString(): kotlin/String
+ *
+ *   // field: with space:I
+ *   // getter: with space()I
+ *   public final val with space: kotlin/Int
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+@kotlin.jvm.JvmRecord()
+public final class SpaceNamed extends java.lang.Record {
+
+    public SpaceNamed(int p0_359974038) {
+    }
+
+    public final int component1() {
+        return 0;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final SpaceNamed copy(int p0_359974038) {
+        return null;
+    }
+
+    @java.lang.Override()
+    public boolean equals(@org.jetbrains.annotations.Nullable()
+    java.lang.Object other) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public int hashCode() {
+        return 0;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.lang.String toString() {
+        return null;
+    }
+}
+
+////////////////////
+
+
+/**
+ * public final data class Throwing : java/lang/Record {
+ *
+ *   // signature: <init>()V
+ *   public (* secondary *) constructor()
+ *
+ *   // signature: <init>(I)V
+ *   public constructor(i: kotlin/Int)
+ *
+ *   // signature: component1()I
+ *   public final (* synthesized *) operator fun component1(): kotlin/Int
+ *
+ *   // signature: copy(I)LThrowing;
+ *   public final (* synthesized *) fun copy(i: kotlin/Int (* = ... *)): Throwing
+ *
+ *   // signature: equals(Ljava/lang/Object;)Z
+ *   // must-use return value
+ *   public open (* synthesized *) operator fun equals(other: kotlin/Any?): kotlin/Boolean
+ *
+ *   // signature: hashCode()I
+ *   // must-use return value
+ *   public open (* synthesized *) fun hashCode(): kotlin/Int
+ *
+ *   // signature: i(I)I
+ *   public final fun i(x: kotlin/Int): kotlin/Int
+ *
+ *   // signature: toString()Ljava/lang/String;
+ *   // must-use return value
+ *   public open (* synthesized *) fun toString(): kotlin/String
+ *
+ *   // field: i:I
+ *   // getter: i()I
+ *   public final val i: kotlin/Int
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+@kotlin.jvm.JvmRecord()
+public final class Throwing extends java.lang.Record {
+    private final int i = 0;
+
+    @kotlin.jvm.Throws(exceptionClasses = {java.io.IOException.class})
+    public Throwing(int i) throws java.io.IOException {
+    }
+
+    @kotlin.jvm.Throws(exceptionClasses = {java.io.IOException.class})
+    public final int i() throws java.io.IOException {
+        return 0;
+    }
+
+    @kotlin.jvm.Throws(exceptionClasses = {java.io.IOException.class})
+    public Throwing() throws java.io.IOException {
+    }
+
+    @kotlin.jvm.Throws(exceptionClasses = {java.io.IOException.class})
+    public final int i(int x) throws java.io.IOException {
+        return 0;
+    }
+
+    public final int component1() {
+        return 0;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final Throwing copy(int i) {
+        return null;
+    }
+
+    @java.lang.Override()
+    public boolean equals(@org.jetbrains.annotations.Nullable()
+    java.lang.Object other) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public int hashCode() {
+        return 0;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.lang.String toString() {
+        return null;
+    }
+}
+
+////////////////////
+
+
+/**
+ * public final data class Varargs : java/lang/Record {
+ *
+ *   // signature: <init>(I[Ljava/lang/String;)V
+ *   public constructor(i: kotlin/Int, vararg xs: kotlin/String (* kotlin/Array<out kotlin/String> *))
+ *
+ *   // signature: component1()I
+ *   public final (* synthesized *) operator fun component1(): kotlin/Int
+ *
+ *   // signature: component2()Ljava/lang/String;
+ *   public final (* synthesized *) operator fun component2(): kotlin/String
+ *
+ *   // signature: copy(I[Ljava/lang/String;)LVarargs;
+ *   public final (* synthesized *) fun copy(i: kotlin/Int (* = ... *), vararg xs: kotlin/String (* kotlin/Array<out kotlin/String> *) (* = ... *)): Varargs
+ *
+ *   // signature: equals(Ljava/lang/Object;)Z
+ *   // must-use return value
+ *   public open (* synthesized *) operator fun equals(other: kotlin/Any?): kotlin/Boolean
+ *
+ *   // signature: hashCode()I
+ *   // must-use return value
+ *   public open (* synthesized *) fun hashCode(): kotlin/Int
+ *
+ *   // signature: toString()Ljava/lang/String;
+ *   // must-use return value
+ *   public open (* synthesized *) fun toString(): kotlin/String
+ *
+ *   // field: i:I
+ *   // getter: i()I
+ *   public final val i: kotlin/Int
+ *     public final get
+ *
+ *   // field: xs:[Ljava/lang/String;
+ *   // getter: xs()[Ljava/lang/String;
+ *   public final val xs: kotlin/Array<out kotlin/String>
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+@kotlin.jvm.JvmRecord()
+public final class Varargs extends java.lang.Record {
+    private final int i = 0;
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String[] xs = null;
+
+    public Varargs(int i, @org.jetbrains.annotations.NotNull()
+    java.lang.String... xs) {
+    }
+
+    public final int i() {
+        return 0;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String[] xs() {
+        return null;
+    }
+
+    public final int component1() {
+        return 0;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String component2() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final Varargs copy(int i, @org.jetbrains.annotations.NotNull()
+    java.lang.String... xs) {
+        return null;
+    }
+
+    @java.lang.Override()
+    public boolean equals(@org.jetbrains.annotations.Nullable()
+    java.lang.Object other) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public int hashCode() {
+        return 0;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.lang.String toString() {
+        return null;
+    }
+}
+
+////////////////////
+
+
+/**
+ * public final data class Variance : java/lang/Record {
+ *
+ *   // signature: <init>()V
+ *   public (* secondary *) constructor()
+ *
+ *   // signature: <init>(Ljava/util/List;Ljava/util/List;)V
+ *   public constructor(numbers: kotlin/collections/List<kotlin/Number>, strings: kotlin/collections/List<kotlin/String>)
+ *
+ *   // signature: component1()Ljava/util/List;
+ *   public final (* synthesized *) operator fun component1(): kotlin/collections/List<kotlin/Number>
+ *
+ *   // signature: component2()Ljava/util/List;
+ *   public final (* synthesized *) operator fun component2(): kotlin/collections/List<kotlin/String>
+ *
+ *   // signature: copy(Ljava/util/List;Ljava/util/List;)LVariance;
+ *   public final (* synthesized *) fun copy(numbers: kotlin/collections/List<kotlin/Number> (* = ... *), strings: kotlin/collections/List<kotlin/String> (* = ... *)): Variance
+ *
+ *   // signature: equals(Ljava/lang/Object;)Z
+ *   // must-use return value
+ *   public open (* synthesized *) operator fun equals(other: kotlin/Any?): kotlin/Boolean
+ *
+ *   // signature: hashCode()I
+ *   // must-use return value
+ *   public open (* synthesized *) fun hashCode(): kotlin/Int
+ *
+ *   // signature: toString()Ljava/lang/String;
+ *   // must-use return value
+ *   public open (* synthesized *) fun toString(): kotlin/String
+ *
+ *   // field: numbers:Ljava/util/List;
+ *   // getter: numbers()Ljava/util/List;
+ *   public final val numbers: kotlin/collections/List<kotlin/Number>
+ *     public final get
+ *
+ *   // field: strings:Ljava/util/List;
+ *   // getter: strings()Ljava/util/List;
+ *   public final val strings: kotlin/collections/List<kotlin/String>
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+@kotlin.jvm.JvmRecord()
+public final class Variance extends java.lang.Record {
+    @org.jetbrains.annotations.NotNull()
+    private final java.util.List<java.lang.Number> numbers = null;
+    @org.jetbrains.annotations.NotNull()
+    private final java.util.List<java.lang.String> strings = null;
+
+    public Variance(@org.jetbrains.annotations.NotNull()
+    java.util.List<? extends java.lang.Number> numbers, @org.jetbrains.annotations.NotNull()
+    java.util.List<java.lang.String> strings) {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.util.List<java.lang.Number> numbers() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.util.List<java.lang.String> strings() {
+        return null;
+    }
+
+    public Variance() {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.util.List<java.lang.Number> component1() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.util.List<java.lang.String> component2() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final Variance copy(@org.jetbrains.annotations.NotNull()
+    java.util.List<? extends java.lang.Number> numbers, @org.jetbrains.annotations.NotNull()
+    java.util.List<java.lang.String> strings) {
+        return null;
+    }
+
+    @java.lang.Override()
+    public boolean equals(@org.jetbrains.annotations.Nullable()
+    java.lang.Object other) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public int hashCode() {
+        return 0;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.lang.String toString() {
+        return null;
+    }
+}
+
+////////////////////
+
+
+/**
+ * public final data class Wildcards : java/lang/Record {
+ *
+ *   // signature: <init>()V
+ *   public (* secondary *) constructor()
+ *
+ *   // signature: <init>(Ljava/util/List;Ljava/util/List;Ljava/util/Map;)V
+ *   public constructor(wild: kotlin/collections/List<@kotlin/jvm/JvmWildcard kotlin/Number>, suppressed: @kotlin/jvm/JvmSuppressWildcards kotlin/collections/List<kotlin/Number>, nested: kotlin/collections/Map<kotlin/String, kotlin/collections/List<kotlin/Number>>)
+ *
+ *   // signature: component1()Ljava/util/List;
+ *   public final (* synthesized *) operator fun component1(): kotlin/collections/List<@kotlin/jvm/JvmWildcard kotlin/Number>
+ *
+ *   // signature: component2()Ljava/util/List;
+ *   public final (* synthesized *) operator fun component2(): @kotlin/jvm/JvmSuppressWildcards kotlin/collections/List<kotlin/Number>
+ *
+ *   // signature: component3()Ljava/util/Map;
+ *   public final (* synthesized *) operator fun component3(): kotlin/collections/Map<kotlin/String, kotlin/collections/List<kotlin/Number>>
+ *
+ *   // signature: copy(Ljava/util/List;Ljava/util/List;Ljava/util/Map;)LWildcards;
+ *   public final (* synthesized *) fun copy(wild: kotlin/collections/List<@kotlin/jvm/JvmWildcard kotlin/Number> (* = ... *), suppressed: @kotlin/jvm/JvmSuppressWildcards kotlin/collections/List<kotlin/Number> (* = ... *), nested: kotlin/collections/Map<kotlin/String, kotlin/collections/List<kotlin/Number>> (* = ... *)): Wildcards
+ *
+ *   // signature: equals(Ljava/lang/Object;)Z
+ *   // must-use return value
+ *   public open (* synthesized *) operator fun equals(other: kotlin/Any?): kotlin/Boolean
+ *
+ *   // signature: hashCode()I
+ *   // must-use return value
+ *   public open (* synthesized *) fun hashCode(): kotlin/Int
+ *
+ *   // signature: toString()Ljava/lang/String;
+ *   // must-use return value
+ *   public open (* synthesized *) fun toString(): kotlin/String
+ *
+ *   // field: nested:Ljava/util/Map;
+ *   // getter: nested()Ljava/util/Map;
+ *   public final val nested: kotlin/collections/Map<kotlin/String, kotlin/collections/List<kotlin/Number>>
+ *     public final get
+ *
+ *   // field: suppressed:Ljava/util/List;
+ *   // getter: suppressed()Ljava/util/List;
+ *   public final val suppressed: @kotlin/jvm/JvmSuppressWildcards kotlin/collections/List<kotlin/Number>
+ *     public final get
+ *
+ *   // field: wild:Ljava/util/List;
+ *   // getter: wild()Ljava/util/List;
+ *   public final val wild: kotlin/collections/List<@kotlin/jvm/JvmWildcard kotlin/Number>
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+@kotlin.jvm.JvmRecord()
+public final class Wildcards extends java.lang.Record {
+    @org.jetbrains.annotations.NotNull()
+    private final java.util.List<? extends java.lang.Number> wild = null;
+    @org.jetbrains.annotations.NotNull()
+    private final java.util.List<java.lang.Number> suppressed = null;
+    @org.jetbrains.annotations.NotNull()
+    private final java.util.Map<java.lang.String, java.util.List<java.lang.Number>> nested = null;
+
+    public Wildcards(@org.jetbrains.annotations.NotNull()
+    java.util.List<? extends java.lang.Number> wild, @org.jetbrains.annotations.NotNull()
+    java.util.List<java.lang.Number> suppressed, @org.jetbrains.annotations.NotNull()
+    java.util.Map<java.lang.String, ? extends java.util.List<? extends java.lang.Number>> nested) {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.util.List<? extends java.lang.Number> wild() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.util.List<java.lang.Number> suppressed() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.util.Map<java.lang.String, java.util.List<java.lang.Number>> nested() {
+        return null;
+    }
+
+    public Wildcards() {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.util.List<? extends java.lang.Number> component1() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.util.List<java.lang.Number> component2() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.util.Map<java.lang.String, java.util.List<java.lang.Number>> component3() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final Wildcards copy(@org.jetbrains.annotations.NotNull()
+    java.util.List<? extends java.lang.Number> wild, @org.jetbrains.annotations.NotNull()
+    java.util.List<java.lang.Number> suppressed, @org.jetbrains.annotations.NotNull()
+    java.util.Map<java.lang.String, ? extends java.util.List<? extends java.lang.Number>> nested) {
+        return null;
+    }
+
+    @java.lang.Override()
+    public boolean equals(@org.jetbrains.annotations.Nullable()
+    java.lang.Object other) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public int hashCode() {
+        return 0;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.lang.String toString() {
+        return null;
+    }
+}
+
+////////////////////
+
+
+/**
+ * public final data class WithCompanion : java/lang/Record {
+ *
+ *   // signature: <init>(Ljava/lang/String;Ljava/util/List;[I)V
+ *   public constructor(s: kotlin/String?, list: kotlin/collections/List<kotlin/String>, array: kotlin/IntArray)
+ *
+ *   // signature: component1()Ljava/lang/String;
+ *   public final (* synthesized *) operator fun component1(): kotlin/String?
+ *
+ *   // signature: component2()Ljava/util/List;
+ *   public final (* synthesized *) operator fun component2(): kotlin/collections/List<kotlin/String>
+ *
+ *   // signature: component3()[I
+ *   public final (* synthesized *) operator fun component3(): kotlin/IntArray
+ *
+ *   // signature: copy(Ljava/lang/String;Ljava/util/List;[I)LWithCompanion;
+ *   public final (* synthesized *) fun copy(s: kotlin/String? (* = ... *), list: kotlin/collections/List<kotlin/String> (* = ... *), array: kotlin/IntArray (* = ... *)): WithCompanion
+ *
+ *   // signature: equals(Ljava/lang/Object;)Z
+ *   // must-use return value
+ *   public open (* synthesized *) operator fun equals(other: kotlin/Any?): kotlin/Boolean
+ *
+ *   // signature: hashCode()I
+ *   // must-use return value
+ *   public open (* synthesized *) fun hashCode(): kotlin/Int
+ *
+ *   // signature: toString()Ljava/lang/String;
+ *   // must-use return value
+ *   public open (* synthesized *) fun toString(): kotlin/String
+ *
+ *   // field: array:[I
+ *   // getter: array()[I
+ *   public final val array: kotlin/IntArray
+ *     public final get
+ *
+ *   // field: list:Ljava/util/List;
+ *   // getter: list()Ljava/util/List;
+ *   public final val list: kotlin/collections/List<kotlin/String>
+ *     public final get
+ *
+ *   // field: s:Ljava/lang/String;
+ *   // getter: s()Ljava/lang/String;
+ *   @field:F
+ *   public final val s: kotlin/String?
+ *     public final get
+ *
+ *   // companion object: Companion
+ *
+ *   // nested class: Companion
+ *
+ *   // nested class: Inner
+ *
+ *   // nested class: Nested
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+@kotlin.jvm.JvmRecord()
+public final class WithCompanion extends java.lang.Record {
+    @F()
+    @org.jetbrains.annotations.Nullable()
+    private final java.lang.String s = null;
+    @org.jetbrains.annotations.NotNull()
+    private final java.util.List<java.lang.String> list = null;
+    @org.jetbrains.annotations.NotNull()
+    private final int[] array = null;
+    public static final int C = 1;
+    @org.jetbrains.annotations.NotNull()
+    public static final WithCompanion.Companion Companion = null;
+
+    public WithCompanion(@org.jetbrains.annotations.Nullable()
+    java.lang.String s, @org.jetbrains.annotations.NotNull()
+    java.util.List<java.lang.String> list, @org.jetbrains.annotations.NotNull()
+    int[] array) {
+    }
+
+    @org.jetbrains.annotations.Nullable()
+    public final java.lang.String s() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.util.List<java.lang.String> list() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final int[] array() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.Nullable()
+    public final java.lang.String component1() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.util.List<java.lang.String> component2() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final int[] component3() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final WithCompanion copy(@org.jetbrains.annotations.Nullable()
+    java.lang.String s, @org.jetbrains.annotations.NotNull()
+    java.util.List<java.lang.String> list, @org.jetbrains.annotations.NotNull()
+    int[] array) {
+        return null;
+    }
+
+    @java.lang.Override()
+    public boolean equals(@org.jetbrains.annotations.Nullable()
+    java.lang.Object other) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public int hashCode() {
+        return 0;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.lang.String toString() {
+        return null;
+    }
+
+    /**
+     * public final companion object WithCompanion.Companion : kotlin/Any {
+     *
+     *   // signature: <init>()V
+     *   private constructor()
+     *
+     *   // field: C:I
+     *   public final const val C: kotlin/Int (* = ... *)
+     *     public final get
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public static final class Companion {
+
+        private Companion() {
+            super();
+        }
+    }
+
+    /**
+     * public final inner class WithCompanion.Inner : kotlin/Any {
+     *
+     *   // signature: <init>(LWithCompanion;)V
+     *   public constructor()
+     *
+     *   // signature: s()Ljava/lang/String;
+     *   public final fun s(): kotlin/String?
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public final class Inner {
+
+        public Inner() {
+            super();
+        }
+
+        @org.jetbrains.annotations.Nullable()
+        public final java.lang.String s() {
+            return null;
+        }
+    }
+
+    /**
+     * public final data class WithCompanion.Nested : java/lang/Record {
+     *
+     *   // signature: <init>(J)V
+     *   public constructor(i: kotlin/Long)
+     *
+     *   // signature: component1()J
+     *   public final (* synthesized *) operator fun component1(): kotlin/Long
+     *
+     *   // signature: copy(J)LWithCompanion$Nested;
+     *   public final (* synthesized *) fun copy(i: kotlin/Long (* = ... *)): WithCompanion.Nested
+     *
+     *   // signature: equals(Ljava/lang/Object;)Z
+     *   // must-use return value
+     *   public open (* synthesized *) operator fun equals(other: kotlin/Any?): kotlin/Boolean
+     *
+     *   // signature: hashCode()I
+     *   // must-use return value
+     *   public open (* synthesized *) fun hashCode(): kotlin/Int
+     *
+     *   // signature: toString()Ljava/lang/String;
+     *   // must-use return value
+     *   public open (* synthesized *) fun toString(): kotlin/String
+     *
+     *   // field: i:J
+     *   // getter: i()J
+     *   public final val i: kotlin/Long
+     *     public final get
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    @kotlin.jvm.JvmRecord()
+    public static final class Nested extends java.lang.Record {
+        private final long i = 0L;
+
+        public Nested(long i) {
+        }
+
+        public final long i() {
+            return 0L;
+        }
+
+        public final long component1() {
+            return 0L;
+        }
+
+        @org.jetbrains.annotations.NotNull()
+        public final WithCompanion.Nested copy(long i) {
+            return null;
+        }
+
+        @java.lang.Override()
+        public boolean equals(@org.jetbrains.annotations.Nullable()
+        java.lang.Object other) {
+            return false;
+        }
+
+        @java.lang.Override()
+        public int hashCode() {
+            return 0;
+        }
+
+        @java.lang.Override()
+        @org.jetbrains.annotations.NotNull()
+        public java.lang.String toString() {
+            return null;
+        }
+    }
+}

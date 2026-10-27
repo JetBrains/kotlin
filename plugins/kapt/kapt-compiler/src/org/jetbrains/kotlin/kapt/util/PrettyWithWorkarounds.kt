@@ -8,10 +8,13 @@ package org.jetbrains.kotlin.kapt.util
 import com.sun.tools.javac.code.Flags
 import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.tree.JCTree.JCAnnotation
+import com.sun.tools.javac.tree.JCTree.JCClassDecl
+import com.sun.tools.javac.tree.JCTree.JCTypeParameter
 import com.sun.tools.javac.tree.JCTree.JCVariableDecl
 import com.sun.tools.javac.tree.Pretty
 import com.sun.tools.javac.tree.TreeMaker
 import com.sun.tools.javac.util.Context
+import com.sun.tools.javac.util.List as JavacList
 import org.jetbrains.kotlin.kapt.base.util.isJava11OrLater
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.METADATA_FQ_NAME
 import java.io.StringWriter
@@ -23,10 +26,59 @@ private class PrettyWithWorkarounds(
 ) : Pretty(out, sourceOutput) {
     companion object {
         private const val ENUM = Flags.ENUM.toLong()
+
+        // Flags.RECORD, absent from the JDK 11 API kapt is compiled against
+        private const val RECORD = 1L shl 61
     }
 
+    // Pretty prints a record as a class with its components as fields, so the record header is printed here
+    private var pendingRecord: JCClassDecl? = null
+    private var pendingRecordComponents: List<JCVariableDecl> = emptyList()
+
     override fun print(s: Any) {
-        out.write(s.toString())
+        val record = pendingRecord
+        // JDK 21+ prints "class " and the name separately, JDK 17 in one call
+        val text = s.toString()
+        out.write(if (record != null && (text == "class " || text == "class ${record.name}")) "record" + text.removePrefix("class") else text)
+    }
+
+    override fun visitClassDef(tree: JCClassDecl) {
+        if ((tree.mods.flags and RECORD) == 0L) return super.visitClassDef(tree)
+
+        val defs = tree.defs
+        val [components, members] = defs.partition { it is JCVariableDecl && (it.mods.flags and RECORD) != 0L }
+        pendingRecord = tree
+        @Suppress("UNCHECKED_CAST")
+        pendingRecordComponents = components as List<JCVariableDecl>
+        tree.defs = JavacList.from(members)
+        try {
+            super.visitClassDef(tree)
+        } finally {
+            tree.defs = defs
+            pendingRecord = null
+        }
+    }
+
+    override fun printTypeParameters(trees: JavacList<JCTypeParameter>) {
+        super.printTypeParameters(trees)
+        if (trees !== pendingRecord?.typarams) return
+        pendingRecord = null
+
+        print("(")
+        pendingRecordComponents.forEachIndexed { index, component ->
+            if (index > 0) print(", ")
+            printExpr(TreeMaker.instance(context).Modifiers(0, component.mods.annotations))
+            val type = component.vartype
+            if ((component.mods.flags and Flags.VARARGS) != 0L && type is JCTree.JCArrayTypeTree) {
+                printExpr(type.elemtype)
+                print("...")
+            } else {
+                printExpr(type)
+            }
+            print(" ")
+            print(component.name)
+        }
+        print(")")
     }
 
     override fun visitVarDef(tree: JCVariableDecl) {

@@ -37,6 +37,7 @@ internal fun isDeprecated(access: Long) = (access and LONG_DEPRECATED) != 0L
 internal fun ClassNode.isInterface() = (access and Opcodes.ACC_INTERFACE) != 0
 internal fun ClassNode.isEnum() = (access and Opcodes.ACC_ENUM) != 0
 internal fun ClassNode.isAnnotation() = (access and Opcodes.ACC_ANNOTATION) != 0
+internal fun ClassNode.isRecord() = (access and Opcodes.ACC_RECORD) != 0
 
 internal fun MethodNode.isVarargs() = (access and Opcodes.ACC_VARARGS) != 0
 internal fun MethodNode.isAbstract() = (access and Opcodes.ACC_ABSTRACT) != 0
