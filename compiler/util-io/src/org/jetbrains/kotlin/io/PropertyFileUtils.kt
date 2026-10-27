@@ -7,17 +7,30 @@ package org.jetbrains.kotlin.io
 
 import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
 import java.io.StringWriter
+import java.nio.file.Files
 import java.nio.file.Path
 import java.util.Properties
-import kotlin.io.path.bufferedReader
 import kotlin.io.path.bufferedWriter
 
 /**
  * Reads a properties file by the given [Path].
  */
-fun Path.readProperties(): Properties {
+fun Path.readProperties(): Properties =
+    createPropertiesFromBytes(Files.readAllBytes(this))
+
+/**
+ * Creates [Properties] directly from a UTF-8 [ByteArray] without stream or reader allocations.
+ */
+fun createPropertiesFromBytes(bytes: ByteArray): Properties {
     val properties = Properties()
-    bufferedReader().use { reader -> properties.load(reader) }
+    for (line in String(bytes, Charsets.UTF_8).removePrefix("\uFEFF").lineSequence()) {
+        val trimmed = line.trim()
+        if (trimmed.isEmpty() || trimmed.startsWith('#') || trimmed.startsWith('!')) continue
+        val separatorIndex = trimmed.indexOfAny(charArrayOf('=', ':', ' ', '\t', '\u000C')).takeIf { it >= 0 } ?: trimmed.length
+        val key = trimmed.substring(0, separatorIndex).trim()
+        val value = if (separatorIndex < trimmed.length) trimmed.substring(separatorIndex + 1).trimStart('=', ':', ' ', '\t', '\u000C') else ""
+        properties.setProperty(key, value)
+    }
     return properties
 }
 
