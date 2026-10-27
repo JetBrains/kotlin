@@ -1,5 +1,7 @@
 // KIND: STANDALONE
 // FREE_COMPILER_ARGS: -opt-in=kotlin.native.internal.InternalForKotlinNative
+// The no-op GC never collects anything, so released objects stay reachable through the tracking weak reference.
+// IGNORE_NATIVE: gcType=NOOP
 // MODULE: ObjectLifetime
 // FILE: lifetime.kt
 @file:OptIn(kotlin.experimental.ExperimentalNativeApi::class, kotlin.native.runtime.NativeRuntimeApi::class)
