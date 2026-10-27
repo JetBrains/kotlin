@@ -522,8 +522,12 @@ class FrameworkTest : AbstractNativeSimpleTest() {
 
     @Test
     fun objCExportTestStatic() {
+        // KT-90792: the darwin platform lib cache uses symbols from libresolv but doesn't list it in linkerOpts on some platforms.
+        // The linkage doesn't enable -dead_strip which would've removed those usages => we need to link it explicitly.
+        val workaroundForKT90792 = listOf("-Xlinker", "-lresolv")
+
         objCExportTestImpl("Static", listOf("-Xbinary=objcExportSuspendFunctionLaunchThreadRestriction=main"),
-                           listOf("-D", "DISALLOW_SUSPEND_ANY_THREAD"), true)
+                           listOf("-D", "DISALLOW_SUSPEND_ANY_THREAD") + workaroundForKT90792, true)
     }
 
     @Test
