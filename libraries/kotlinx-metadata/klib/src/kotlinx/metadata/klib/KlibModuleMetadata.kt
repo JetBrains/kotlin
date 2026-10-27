@@ -99,7 +99,7 @@ class KlibModuleMetadata(
      */
     interface MetadataLibraryProvider {
         val moduleHeaderData: ByteArray?
-        val packageNames: Set<String>
+        val packageFqNames: Set<String>
         val metadataVersion: KlibMetadataVersion
         fun packageMetadataParts(fqName: String): Set<String>
         fun packageMetadata(fqName: String, partName: String): ByteArray
@@ -151,7 +151,7 @@ class KlibModuleMetadata(
             checkMetadataVersionForRead(library.metadataVersion, lenient)
 
             val moduleHeader = parseModuleHeader(library.moduleHeaderData)
-            val moduleFragments = library.packageNames.flatMap { packageFqName ->
+            val moduleFragments = library.packageFqNames.flatMap { packageFqName ->
                 library.packageMetadataParts(packageFqName).map { part ->
                     val packageFragment = parsePackageFragment(library.packageMetadata(packageFqName, part))
                     val nameResolver = NameResolverImpl(packageFragment.strings, packageFragment.qualifiedNames)
