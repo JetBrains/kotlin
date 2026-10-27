@@ -24,8 +24,6 @@ object StandardTypes {
     val Double: ConeClassLikeType = StandardClassIds.Double.constructClassLikeType()
 
     val Any: ConeClassLikeType = StandardClassIds.Any.constructClassLikeType()
-    val RichError: ConeClassLikeType = StandardClassIds.RichError.constructClassLikeType()
-    val NullableNonError: ConeClassLikeType = StandardClassIds.NonError.constructClassLikeType(isMarkedNullable = true)
     val NullableAny: ConeClassLikeType = StandardClassIds.Any.constructClassLikeType(isMarkedNullable = true)
     val Nothing: ConeClassLikeType = StandardClassIds.Nothing.constructClassLikeType()
     val NullableNothing: ConeClassLikeType = StandardClassIds.Nothing.constructClassLikeType(isMarkedNullable = true)
@@ -37,6 +35,13 @@ object StandardTypes {
     val UShort: ConeClassLikeType = StandardClassIds.UShort.constructClassLikeType()
     val UInt: ConeClassLikeType = StandardClassIds.UInt.constructClassLikeType()
     val ULong: ConeClassLikeType = StandardClassIds.ULong.constructClassLikeType()
+
+    val RichError: ConeClassLikeType = StandardClassIds.RichError.constructClassLikeType()
+    val NullableRichError: ConeClassLikeType = StandardClassIds.RichError.constructClassLikeType(isMarkedNullable = true)
+
+    fun richError(isMarkedNullable: Boolean): ConeClassLikeType = if (isMarkedNullable) NullableRichError else RichError
+
+    val NullableNonError: ConeClassLikeType = StandardClassIds.NonError.constructClassLikeType(isMarkedNullable = true)
 }
 
 fun ConeClassLikeType.isDouble(): Boolean = lookupTag.classId == StandardClassIds.Double

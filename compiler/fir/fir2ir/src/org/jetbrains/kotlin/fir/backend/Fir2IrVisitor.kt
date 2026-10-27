@@ -1828,8 +1828,7 @@ class Fir2IrVisitor(
             val isNonError = coneType.classId == StandardClassIds.NonError
             val irTypeOperand = if (isNonError) {
                 // We need to invert nullability because `is NonError` <=> `!is RichError?`
-                StandardClassIds.RichError.constructClassLikeType(isMarkedNullable = !coneType.isMarkedNullable)
-                    .toIrType()
+                StandardTypes.richError(isMarkedNullable = !coneType.isMarkedNullable).toIrType()
             } else {
                 coneType.toIrType()
             }
