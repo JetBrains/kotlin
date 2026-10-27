@@ -1,4 +1,4 @@
-/invokeWrongReceiver.kt:9:5: error: Cannot infer type for type parameter 'T'. Specify it explicitly.
+/invokeWrongReceiver.kt:9:5: error: Cannot infer type for type parameter 'T' (of 'fun <T> Function1.invoke'). Specify it explicitly.
 
 /invokeWrongReceiver.kt:9:5: error: Companion extension 'companion fun <T> Function1.invoke(): (T) -> Unit' cannot be called on receiver class 'kotlin.Function0'.
 

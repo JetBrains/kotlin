@@ -6,7 +6,7 @@
 // ISSUE: KT-91409
 
 fun test() {
-    <!CANNOT_INFER_PARAMETER_TYPE("T"), UNRESOLVED_REFERENCE_WRONG_COMPANION_RECEIVER("companion fun <T> Function1.invoke(): (T) -> Unit; kotlin.Function0")!>Function0<!>()
+    <!CANNOT_INFER_PARAMETER_TYPE("'T' (of 'fun <T> Function1.invoke')"), UNRESOLVED_REFERENCE_WRONG_COMPANION_RECEIVER("companion fun <T> Function1.invoke(): (T) -> Unit; kotlin.Function0")!>Function0<!>()
 }
 
 companion operator fun <T> Function1.invoke(): (T) -> Unit = {}

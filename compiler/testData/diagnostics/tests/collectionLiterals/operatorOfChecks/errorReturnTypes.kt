@@ -11,7 +11,7 @@ class ErrorInMain {
 
 class ErrorInMainTypeArgument<T> {
     companion object {
-        operator fun of(vararg vs: Int): ErrorInMainTypeArgument<<!UNRESOLVED_REFERENCE("Unresolved")!>Unresolved<!>> = <!CANNOT_INFER_PARAMETER_TYPE("T")!>ErrorInMainTypeArgument<!>()
+        operator fun of(vararg vs: Int): ErrorInMainTypeArgument<<!UNRESOLVED_REFERENCE("Unresolved")!>Unresolved<!>> = <!CANNOT_INFER_PARAMETER_TYPE("'T' (of 'class ErrorInMainTypeArgument<T>')")!>ErrorInMainTypeArgument<!>()
         operator fun of(): <!INCONSISTENT_RETURN_TYPES_IN_OF_OVERLOADS("ErrorInMainTypeArgument<??? (Unresolved qualified name: Unresolved)>")!>ErrorInMainTypeArgument<Nothing><!> = ErrorInMainTypeArgument()
     }
 }
@@ -26,7 +26,7 @@ class ErrorInOther {
 class ErrorInOtherTypeArgument<T> {
     companion object {
         operator fun of(vararg vs: Int): ErrorInOtherTypeArgument<Nothing> = ErrorInOtherTypeArgument()
-        operator fun of(): <!INCONSISTENT_RETURN_TYPES_IN_OF_OVERLOADS("ErrorInOtherTypeArgument<Nothing>")!>ErrorInOtherTypeArgument<<!UNRESOLVED_REFERENCE("Unresolved")!>Unresolved<!>><!> = <!CANNOT_INFER_PARAMETER_TYPE("T")!>ErrorInOtherTypeArgument<!>()
+        operator fun of(): <!INCONSISTENT_RETURN_TYPES_IN_OF_OVERLOADS("ErrorInOtherTypeArgument<Nothing>")!>ErrorInOtherTypeArgument<<!UNRESOLVED_REFERENCE("Unresolved")!>Unresolved<!>><!> = <!CANNOT_INFER_PARAMETER_TYPE("'T' (of 'class ErrorInOtherTypeArgument<T>')")!>ErrorInOtherTypeArgument<!>()
     }
 }
 
