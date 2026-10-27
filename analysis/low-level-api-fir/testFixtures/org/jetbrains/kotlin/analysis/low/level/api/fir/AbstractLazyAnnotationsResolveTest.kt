@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.analysis.test.framework.targets.getSingleTestTargetS
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.FirBackingField
+import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.renderer.FirErrorExpressionExtendedRenderer
@@ -55,14 +56,18 @@ abstract class AbstractLazyAnnotationsResolveTest : AbstractFirLazyDeclarationRe
 
             analyzeForTest(mainFile) {
                 val symbol = when (psiElement) {
-                    null if firElement is FirBackingField -> {
+                    null if (firElement is FirBackingField || firElement is FirPropertyAccessor) -> {
                         val variableSymbol = when (val psi = firElement.psi) {
                             is KtProperty -> psi.symbol as KaPropertySymbol
                             is KtParameter -> (psi.symbol as KaValueParameterSymbol).primaryConstructorProperty!!
                             else -> error("Unexpected psi element: $psi")
                         }
 
-                        variableSymbol.backingFieldSymbol!!
+                        when (firElement) {
+                            is FirPropertyAccessor if firElement.isGetter -> variableSymbol.getter!!
+                            is FirPropertyAccessor -> variableSymbol.setter!!
+                            else -> variableSymbol.backingFieldSymbol!!
+                        }
                     }
                     is KtFile -> psiElement.symbol
                     is KtDeclaration -> psiElement.symbol

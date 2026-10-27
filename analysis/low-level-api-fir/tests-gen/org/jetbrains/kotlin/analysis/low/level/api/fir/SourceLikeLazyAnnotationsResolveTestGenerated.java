@@ -49,6 +49,18 @@ public class SourceLikeLazyAnnotationsResolveTestGenerated extends AbstractSourc
     }
 
     @Test
+    @TestMetadata("allAnnotationOnParameter_getter.kt")
+    public void testAllAnnotationOnParameter_getter() {
+      run("allAnnotationOnParameter_getter.kt");
+    }
+
+    @Test
+    @TestMetadata("allAnnotationOnSetterParameter.kt")
+    public void testAllAnnotationOnSetterParameter() {
+      run("allAnnotationOnSetterParameter.kt");
+    }
+
+    @Test
     public void testAllFilesPresentInAnnotations() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyAnnotations/annotations"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
     }
@@ -264,6 +276,12 @@ public class SourceLikeLazyAnnotationsResolveTestGenerated extends AbstractSourc
     @TestMetadata("allAnnotationOnParameter.kt")
     public void testAllAnnotationOnParameter() {
       run("allAnnotationOnParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("allAnnotationOnParameter_getter.kt")
+    public void testAllAnnotationOnParameter_getter() {
+      run("allAnnotationOnParameter_getter.kt");
     }
 
     @Test
@@ -500,6 +518,12 @@ public class SourceLikeLazyAnnotationsResolveTestGenerated extends AbstractSourc
     @TestMetadata("allAnnotationOnParameterFalseProperty.kt")
     public void testAllAnnotationOnParameterFalseProperty() {
       run("allAnnotationOnParameterFalseProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("allAnnotationOnParameter_getter.kt")
+    public void testAllAnnotationOnParameter_getter() {
+      run("allAnnotationOnParameter_getter.kt");
     }
 
     @Test
@@ -844,6 +868,12 @@ public class SourceLikeLazyAnnotationsResolveTestGenerated extends AbstractSourc
     @TestMetadata("allAnnotationOnParameterFalseProperty.kt")
     public void testAllAnnotationOnParameterFalseProperty() {
       run("allAnnotationOnParameterFalseProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("allAnnotationOnParameter_getter.kt")
+    public void testAllAnnotationOnParameter_getter() {
+      run("allAnnotationOnParameter_getter.kt");
     }
 
     @Test
