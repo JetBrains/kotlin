@@ -54,7 +54,7 @@ class KonanIrLinker(
     private val globalDeclarationTable = KonanGlobalDeclarationTable(null)
 
     override val fakeOverrideBuilder = IrLinkerFakeOverrideProvider(
-        linker = this,
+        fileLocalSymbolProvider = fileLocalSymbolProvider,
         symbolTable = symbolTable,
         mangler = irMangler,
         friendModules = friendModules,
