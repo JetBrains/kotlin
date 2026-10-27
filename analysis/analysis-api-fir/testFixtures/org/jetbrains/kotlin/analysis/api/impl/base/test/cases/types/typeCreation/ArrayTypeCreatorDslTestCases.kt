@@ -120,4 +120,11 @@ class ArrayTypeCreatorDslTestCases(session: KaSession, caretToType: Map<String, 
             annotations(listOf(annotationClassId1, annotationClassId2, annotationClassId3))
         }
     }
+
+    fun testWithAttributeAnnotations(): KaType {
+        val type = getTypeByCaret("type")
+        return session.typeCreator.arrayType(type) {
+            annotations(ATTRIBUTE_ANNOTATION_CLASS_IDS)
+        }
+    }
 }

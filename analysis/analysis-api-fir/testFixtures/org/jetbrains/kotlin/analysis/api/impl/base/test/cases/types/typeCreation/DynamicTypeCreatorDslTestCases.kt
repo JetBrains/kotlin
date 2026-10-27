@@ -27,4 +27,10 @@ class DynamicTypeCreatorDslTestCases(session: KaSession, caretToType: Map<String
             annotation(annotationClassId3)
         }
     }
+
+    fun testWithAttributeAnnotations(): KaType {
+        return session.typeCreator.dynamicType {
+            annotations(ATTRIBUTE_ANNOTATION_CLASS_IDS)
+        }
+    }
 }

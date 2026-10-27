@@ -158,6 +158,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleTypeCreatorDslTestGenerated ext
     public void testWithAnnotations() {
       run("withAnnotations.kt");
     }
+
+    @Test
+    @TestMetadata("withAttributeAnnotations.kt")
+    public void testWithAttributeAnnotations() {
+      run("withAttributeAnnotations.kt");
+    }
   }
 
   @Nested
@@ -214,6 +220,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleTypeCreatorDslTestGenerated ext
     public void testUserTypeInProjection() {
       run("userTypeInProjection.kt");
     }
+
+    @Test
+    @TestMetadata("withAttributeAnnotations.kt")
+    public void testWithAttributeAnnotations() {
+      run("withAttributeAnnotations.kt");
+    }
   }
 
   @Nested
@@ -233,6 +245,18 @@ public class FirIdeNormalAnalysisSourceLikeModuleTypeCreatorDslTestGenerated ext
     @TestMetadata("boxedArrayWithStringTypeArgument.kt")
     public void testBoxedArrayWithStringTypeArgument() {
       run("boxedArrayWithStringTypeArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("functionClassWithAttributeAnnotations.kt")
+    public void testFunctionClassWithAttributeAnnotations() {
+      run("functionClassWithAttributeAnnotations.kt");
+    }
+
+    @Test
+    @TestMetadata("functionTypeAliasWithAttributeAnnotations.kt")
+    public void testFunctionTypeAliasWithAttributeAnnotations() {
+      run("functionTypeAliasWithAttributeAnnotations.kt");
     }
 
     @Test
@@ -326,6 +350,30 @@ public class FirIdeNormalAnalysisSourceLikeModuleTypeCreatorDslTestGenerated ext
     }
 
     @Test
+    @TestMetadata("userTypeWithAttributeAnnotations.kt")
+    public void testUserTypeWithAttributeAnnotations() {
+      run("userTypeWithAttributeAnnotations.kt");
+    }
+
+    @Test
+    @TestMetadata("userTypeWithNegativeAnnotation.kt")
+    public void testUserTypeWithNegativeAnnotation() {
+      run("userTypeWithNegativeAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("userTypeWithPositiveAndNegativeAnnotations.kt")
+    public void testUserTypeWithPositiveAndNegativeAnnotations() {
+      run("userTypeWithPositiveAndNegativeAnnotations.kt");
+    }
+
+    @Test
+    @TestMetadata("userTypeWithPositiveAnnotation.kt")
+    public void testUserTypeWithPositiveAnnotation() {
+      run("userTypeWithPositiveAnnotation.kt");
+    }
+
+    @Test
     @TestMetadata("withAnnotationRequiringArguments.kt")
     public void testWithAnnotationRequiringArguments() {
       run("withAnnotationRequiringArguments.kt");
@@ -398,6 +446,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleTypeCreatorDslTestGenerated ext
     public void testWithAnnotations() {
       run("withAnnotations.kt");
     }
+
+    @Test
+    @TestMetadata("withAttributeAnnotations.kt")
+    public void testWithAttributeAnnotations() {
+      run("withAttributeAnnotations.kt");
+    }
   }
 
   @Nested
@@ -423,6 +477,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleTypeCreatorDslTestGenerated ext
     @TestMetadata("withAnnotations.kt")
     public void testWithAnnotations() {
       run("withAnnotations.kt");
+    }
+
+    @Test
+    @TestMetadata("withAttributeAnnotations.kt")
+    public void testWithAttributeAnnotations() {
+      run("withAttributeAnnotations.kt");
     }
   }
 
@@ -491,6 +551,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleTypeCreatorDslTestGenerated ext
     @TestMetadata("withAnnotations.kt")
     public void testWithAnnotations() {
       run("withAnnotations.kt");
+    }
+
+    @Test
+    @TestMetadata("withAttributeAnnotations.kt")
+    public void testWithAttributeAnnotations() {
+      run("withAttributeAnnotations.kt");
     }
 
     @Test
@@ -592,6 +658,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleTypeCreatorDslTestGenerated ext
     }
 
     @Test
+    @TestMetadata("withAttributeAnnotations.kt")
+    public void testWithAttributeAnnotations() {
+      run("withAttributeAnnotations.kt");
+    }
+
+    @Test
     @TestMetadata("withContextParameterReceiverAndValueParameter.kt")
     public void testWithContextParameterReceiverAndValueParameter() {
       run("withContextParameterReceiverAndValueParameter.kt");
@@ -607,6 +679,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleTypeCreatorDslTestGenerated ext
     @TestMetadata("withPluginAnnotation.kt")
     public void testWithPluginAnnotation() {
       run("withPluginAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("withReceiverAndAttributeAnnotations.kt")
+    public void testWithReceiverAndAttributeAnnotations() {
+      run("withReceiverAndAttributeAnnotations.kt");
     }
 
     @Test
@@ -733,6 +811,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleTypeCreatorDslTestGenerated ext
     @TestMetadata("withAnnotations.kt")
     public void testWithAnnotations() {
       run("withAnnotations.kt");
+    }
+
+    @Test
+    @TestMetadata("withAttributeAnnotations.kt")
+    public void testWithAttributeAnnotations() {
+      run("withAttributeAnnotations.kt");
     }
 
     @Test

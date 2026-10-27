@@ -134,4 +134,24 @@ class FunctionTypeCreatorDslTestCases(session: KaSession, caretToType: Map<Strin
             annotation(annotationClassId)
         }
     }
+
+    fun testWithAttributeAnnotations(): KaType {
+        val stringType = getTypeByCaret("string")
+        val intType = getTypeByCaret("int")
+        return session.typeCreator.functionType {
+            valueParameter(name = null, stringType)
+            returnType = intType
+            annotations(ATTRIBUTE_ANNOTATION_CLASS_IDS)
+        }
+    }
+
+    fun testWithReceiverAndAttributeAnnotations(): KaType {
+        val stringType = getTypeByCaret("string")
+        val intType = getTypeByCaret("int")
+        return session.typeCreator.functionType {
+            receiverType = stringType
+            returnType = intType
+            annotations(ATTRIBUTE_ANNOTATION_CLASS_IDS)
+        }
+    }
 }

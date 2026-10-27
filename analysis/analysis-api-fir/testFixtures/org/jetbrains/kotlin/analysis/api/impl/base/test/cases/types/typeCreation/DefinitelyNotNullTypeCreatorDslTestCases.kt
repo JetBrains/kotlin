@@ -64,6 +64,13 @@ class DefinitelyNotNullTypeCreatorDslTestCases(session: KaSession, caretToType: 
         }
     }
 
+    fun testWithAttributeAnnotations(): KaType {
+        val type = getTypeByCaret("type") as KaTypeParameterType? ?: error("Type under `type` is not a type parameter")
+        return session.typeCreator.definitelyNotNullType(type) {
+            annotations(ATTRIBUTE_ANNOTATION_CLASS_IDS)
+        }
+    }
+
     fun testCapturedNullableTypeOutProjection(): KaType {
         val type = getTypeByCaret("type")
         with(session.typeCreator) {

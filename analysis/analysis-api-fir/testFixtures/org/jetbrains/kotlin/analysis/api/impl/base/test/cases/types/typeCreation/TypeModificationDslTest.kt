@@ -70,6 +70,14 @@ abstract class AbstractTypeModificationDslTest : AbstractTypeModificationDslTest
     }
 
     @Test
+    @TestMetadata("classType/userType.kt")
+    fun `classType userType +addAttributeAnnotations`() = test<KaUsualClassType> { type ->
+        type.copy {
+            annotations(ATTRIBUTE_ANNOTATION_CLASS_IDS)
+        }
+    }
+
+    @Test
     @TestMetadata("classType/userTypeWithAnnotations.kt")
     fun `classType userTypeWithAnnotations +markNullable`() = test<KaClassType> { type ->
         type.copy {
@@ -239,6 +247,14 @@ abstract class AbstractTypeModificationDslTest : AbstractTypeModificationDslTest
     fun `functionType basicFunWithIntReturnType +changeReturnType`() = test<KaFunctionType> { type ->
         type.copy {
             returnType = typeCreator.classType(StandardClassIds.String)
+        }
+    }
+
+    @Test
+    @TestMetadata("functionType/fourIntValueParameters.kt")
+    fun `functionType fourIntValueParameters +addAttributeAnnotations`() = test<KaFunctionType> { type ->
+        type.copy {
+            annotations(ATTRIBUTE_ANNOTATION_CLASS_IDS)
         }
     }
 

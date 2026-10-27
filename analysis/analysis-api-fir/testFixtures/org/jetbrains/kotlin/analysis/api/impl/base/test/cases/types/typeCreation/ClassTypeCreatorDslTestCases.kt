@@ -117,6 +117,52 @@ class ClassTypeCreatorDslTestCases(session: KaSession, caretToType: Map<String, 
         }
     }
 
+    fun testUserTypeWithAttributeAnnotations(): KaType {
+        val userTypeSymbol = getClassLikeSymbolByCaret("type")
+        return session.typeCreator.classType(userTypeSymbol) {
+            annotations(ATTRIBUTE_ANNOTATION_CLASS_IDS)
+        }
+    }
+
+    fun testFunctionClassWithAttributeAnnotations(): KaType {
+        val stringType = getTypeByCaret("string")
+        val intType = getTypeByCaret("int")
+        return session.typeCreator.classType(StandardClassIds.FunctionN(1)) {
+            invariantTypeArgument(stringType)
+            invariantTypeArgument(intType)
+            annotations(ATTRIBUTE_ANNOTATION_CLASS_IDS)
+        }
+    }
+
+    fun testFunctionTypeAliasWithAttributeAnnotations(): KaType {
+        val alias = getClassLikeSymbolByCaret("alias")
+        return session.typeCreator.classType(alias) {
+            annotations(ATTRIBUTE_ANNOTATION_CLASS_IDS)
+        }
+    }
+
+    fun testUserTypeWithPositiveAnnotation(): KaType {
+        val userTypeSymbol = getClassLikeSymbolByCaret("type")
+        return session.typeCreator.classType(userTypeSymbol) {
+            annotation(ClassId.fromString("org/jetbrains/kotlin/plugin/sandbox/Positive"))
+        }
+    }
+
+    fun testUserTypeWithNegativeAnnotation(): KaType {
+        val userTypeSymbol = getClassLikeSymbolByCaret("type")
+        return session.typeCreator.classType(userTypeSymbol) {
+            annotation(ClassId.fromString("org/jetbrains/kotlin/plugin/sandbox/Negative"))
+        }
+    }
+
+    fun testUserTypeWithPositiveAndNegativeAnnotations(): KaType {
+        val userTypeSymbol = getClassLikeSymbolByCaret("type")
+        return session.typeCreator.classType(userTypeSymbol) {
+            annotation(ClassId.fromString("org/jetbrains/kotlin/plugin/sandbox/Positive"))
+            annotation(ClassId.fromString("org/jetbrains/kotlin/plugin/sandbox/Negative"))
+        }
+    }
+
     fun testGenericTypeAliasWithIntArgument(): KaType {
         val alias = getClassLikeSymbolByCaret("alias")
         val argument = getTypeByCaret("argument")
