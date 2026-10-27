@@ -1,1 +1,1 @@
-public? [ResolvedTo(RAW_FIR)] get(): Int
+@R|Get|[Types]() @R|Everything|[Types]() @R|kotlin/Deprecated|[Types](message = String(Obsolete) [evaluated = String(Obsolete)]) public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int|

@@ -16,6 +16,9 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.classLikeLookupTagIfAny
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolIdEntry
@@ -129,8 +132,18 @@ private fun FirAnnotationContainer.isDefinitelyEmpty(anchorElement: FirBasedSymb
         }
     }
 
+    // Annotations with the `all` use-site target are copied to the getter and the setter parameter during resolution
+    anchorElement is FirPropertyAccessorSymbol -> !anchorElement.propertySymbol.hasAllUseSiteTargetAnnotations()
+    anchorElement is FirValueParameterSymbol -> {
+        val accessorSymbol = anchorElement.containingDeclarationSymbol as? FirPropertyAccessorSymbol
+        accessorSymbol == null || !accessorSymbol.propertySymbol.hasAllUseSiteTargetAnnotations()
+    }
+
     else -> true
 }
+
+private fun FirPropertySymbol.hasAllUseSiteTargetAnnotations(): Boolean =
+    annotations.any { it.useSiteTarget == AnnotationUseSiteTarget.ALL }
 
 
 /**
