@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirSwitchableExtensionDeclarationsSymbolProvider
 import org.jetbrains.kotlin.fir.java.FirCliSession
+import org.jetbrains.kotlin.fir.pipeline.registerSyntaxComponent
 import org.jetbrains.kotlin.fir.resolve.inference.FirInferenceLogger
 import org.jetbrains.kotlin.fir.resolve.providers.DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
