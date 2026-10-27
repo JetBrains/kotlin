@@ -304,6 +304,23 @@ obj
     }
 
     @Test
+    fun testBindMappedBuiltInTypes() {
+        val engine = ScriptEngineManager().getEngineByExtension("kts")!!
+        // Primitive array, whose JVM name `[I` has no package
+        engine.put("ints", intArrayOf(1, 2, 3))
+        // Object array, a generic Kotlin type whose JVM class has no type parameters
+        engine.put("strings", arrayOf("a", "b"))
+        // Kotlin internal class `IntCompanionObject`, mapped to the public `Int.Companion`
+        engine.put("intCompanion", Int.Companion)
+        // Each binding has to be exposed with its Kotlin built-in type (KT-90641).
+        assertEquals(2, engine.eval("1 + 1"))
+        assertEquals(4, engine.eval("ints.size + ints[0]"))
+        assertEquals("a", engine.eval("strings[0]"))
+        assertEquals(2, engine.eval("strings.size"))
+        assertEquals(Int.MAX_VALUE, engine.eval("intCompanion.MAX_VALUE"))
+    }
+
+    @Test
     fun testRebindRemoval() {
         val engine = ScriptEngineManager().getEngineByExtension("kts")!!
         engine.put("z", 33)

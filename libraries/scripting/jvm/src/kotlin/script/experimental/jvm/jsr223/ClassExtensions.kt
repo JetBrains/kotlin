@@ -8,8 +8,15 @@ package kotlin.script.experimental.jvm.jsr223
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 
-internal fun Class<*>.enclosingGenericOwner(): Class<*>? =
+private fun Class<*>.enclosingGenericOwner(): Class<*>? =
     if (isMemberClass && !Modifier.isStatic(modifiers)) enclosingClass else null
+
+/**
+ * Returns true if this is an inner class of a generic class, at any depth: a reference to it needs type arguments on
+ * its outer part, which a dot-separated qualified name cannot carry.
+ */
+internal fun Class<*>.hasGenericOwner(): Boolean =
+    generateSequence(enclosingGenericOwner()) { it.enclosingGenericOwner() }.any { it.typeParameters.isNotEmpty() }
 
 /**
  * Returns false if a snippet can't reference this class: if this class or any class enclosing it is not public (in
@@ -47,9 +54,12 @@ private val moduleIsExportedMethod: Method? by lazy {
 private fun Class<*>.isExportedByItsModule(): Boolean {
     val getModule = classGetModuleMethod ?: return true
     val isExported = moduleIsExportedMethod ?: return true
-    val packageName = name.substringBeforeLast('.', missingDelimiterValue = "")
+    // The name of an array class is a descriptor (e.g. `[I`): its package is the one of its element class
+    val elementClass = generateSequence(this) { it.componentType }.last()
+    if (elementClass.isPrimitive) return true
+    val packageName = elementClass.name.substringBeforeLast('.', missingDelimiterValue = "")
     return try {
-        isExported.invoke(getModule.invoke(this), packageName) as Boolean
+        isExported.invoke(getModule.invoke(elementClass), packageName) as Boolean
     } catch (_: Exception) {
         true
     }

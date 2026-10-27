@@ -148,21 +148,22 @@ private fun renderBindingTypeName(kclass: KClass<*>): String {
  * Renders [jClass] as a type reference with star-projected type arguments, or returns null if a snippet can't reference
  * it: if it's not accessible (see [isAccessibleFromSnippets]), if its name can't be embedded into source, or if it is an
  * inner class of a generic class, since such a reference needs type arguments on its outer part, which a dot-separated
- * qualified name cannot carry.
+ * qualified name cannot carry. Classes mapped to a Kotlin built-in type (e.g. arrays, or the internal
+ * `kotlin.jvm.internal.IntCompanionObject` for `kotlin.Int.Companion`) are rendered as that type, which is always public.
  */
 private fun renderExposableTypeName(jClass: Class<*>): String? {
-    if (!jClass.isAccessibleFromSnippets()) return null
     // Kotlin names of mapped Java classes, e.g. `kotlin.collections.List` for `java.util.List`
     val qualifiedName = jClass.kotlin.qualifiedName
-    if (qualifiedName == null || !isParseableKotlinQualifiedName(qualifiedName)) return null
-    var outer = jClass.enclosingGenericOwner()
-    while (outer != null) {
-        if (outer.typeParameters.isNotEmpty()) return null
-        outer = outer.enclosingGenericOwner()
+    val isMappedToBuiltIn = qualifiedName != jClass.canonicalName
+    // `kotlin.Array` is generic, but the JVM array classes have no type parameters
+    val arity = if (jClass.isArray && !jClass.componentType.isPrimitive) 1 else jClass.typeParameters.size
+    return when {
+        qualifiedName == null || !isParseableKotlinQualifiedName(qualifiedName) -> null
+        !isMappedToBuiltIn && !jClass.isAccessibleFromSnippets() -> null
+        jClass.hasGenericOwner() -> null
+        arity == 0 -> qualifiedName
+        else -> List(arity) { "*" }.joinToString(", ", "$qualifiedName<", ">")
     }
-    val arity = jClass.typeParameters.size
-    return if (arity == 0) qualifiedName
-    else (1..arity).joinToString(", ", "$qualifiedName<", ">") { "*" }
 }
 
 /** Escapes a string for embedding inside a Kotlin regular string literal ("..."). */
