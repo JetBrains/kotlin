@@ -1,0 +1,2 @@
+Greeter.java:16:19:compiler.err.expression.not.allowable.as.annotation.value
+
