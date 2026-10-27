@@ -66,23 +66,23 @@ class BuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Builder>(
     override fun MutableMap<Name, FirNamedFunctionSymbol>.addSpecialBuilderMethods(
         builder: Builder,
         builderSymbol: FirClassSymbol<*>,
-        builderDeclaration: FirDeclaration,
+        ownerDeclaration: FirDeclaration,
         substitutor: ConeSubstitutor,
         existingFunctionNames: Set<Name>,
     ) {
         val visibility = builder.builderFunctionsVisibility(builderSymbol) ?: return
 
         addIfNonClashing(Name.identifier(builder.buildMethodName), existingFunctionNames) { name ->
-            val declaredReturnTypeRef = when (builderDeclaration) {
-                is FirRegularClass -> builderDeclaration.defaultType().toFirResolvedTypeRef()
-                is FirNamedFunction -> builderDeclaration.returnTypeRef
-                is FirConstructor -> builderDeclaration.returnTypeRef
+            val declaredReturnTypeRef = when (ownerDeclaration) {
+                is FirRegularClass -> ownerDeclaration.defaultType().toFirResolvedTypeRef()
+                is FirNamedFunction -> ownerDeclaration.returnTypeRef
+                is FirConstructor -> ownerDeclaration.returnTypeRef
                 else -> buildErrorTypeRef {
-                    source = builderDeclaration.source
+                    source = ownerDeclaration.source
                     diagnostic =
                         ConeUnsupported(
-                            "Unsupported builder declaration ${builderDeclaration::class.simpleName}",
-                            builderDeclaration.source
+                            "Unsupported builder declaration ${ownerDeclaration::class.simpleName}",
+                            ownerDeclaration.source
                         )
                 }
             }
@@ -106,11 +106,13 @@ class BuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Builder>(
                 visibility = visibility,
                 modality = Modality.OPEN,
                 key = BuilderGeneratorKey(
-                    BuilderDeclarationType.Function.Build(builderDeclaration.symbol, lombokService.config.singularUseGuava)
+                    BuilderDeclarationType.Function.Build(ownerDeclaration.symbol, lombokService.config.singularUseGuava)
                 ),
             )
         }
     }
+
+    override fun Builder.getSpecialBuilderMethodNames(): List<Name> = listOf(Name.identifier(buildMethodName))
 
     override fun FirRegularClassBuilder.completeBuilder(
         classSymbol: FirClassSymbol<*>, builderSymbol: FirClassSymbol<*>, builder: Builder,

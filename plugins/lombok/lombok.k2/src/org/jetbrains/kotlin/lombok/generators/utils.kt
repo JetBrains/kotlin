@@ -240,7 +240,7 @@ val FirClassSymbol<*>.supportsGeneratedConstructor: Boolean
  *    annotations only ever generated members that repeat what the object already does (KT-88507).
  *
  * A local class is a plain class: `@EqualsAndHashCode` supports one, and `@Builder` is stopped for it in
- * `extractBuilderWithDeclarations` instead, a local class holding neither the companion object a `builder()`
+ * `extractBuilderDescriptions` instead, a local class holding neither the companion object a `builder()`
  * needs nor the builder class itself (KT-88848).
  */
 val FirClassSymbol<*>.isPlainClass: Boolean
