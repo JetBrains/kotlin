@@ -151,6 +151,11 @@ interface KotlinToolchainManagementDsl {
     /**
      * Configures the WASI adapter toolchain service used by the whole build.
      *
+     * Kotlin compiles Wasm WASI code into a core WebAssembly module that imports the legacy
+     * `wasi_snapshot_preview1` interface, while a WebAssembly component is expected to import the WASI preview2 world.
+     * The WASI adapter is the module, published with Wasmtime releases, that bridges these two worlds: it is passed to
+     * `wasm-tools component new --adapt wasi_snapshot_preview1=<adapter>` when the compiled module is turned into a component.
+     *
      * At most one service may be selected inside the block: call only one of
      * [WasiAdapterToolchainManagementDsl.toolchainService] or [WasiAdapterToolchainManagementDsl.disable].
      * If the block is omitted, WASI adapter toolchain service will be resolved from Gradle properties
@@ -232,6 +237,12 @@ interface KotlinToolchainManagementDsl {
 
     /**
      * Configures the wasm-tools toolchain service used by the whole build.
+     *
+     * Kotlin compiles Wasm code into a core WebAssembly module, which knows nothing about WIT worlds,
+     * while a WebAssembly component is a core module with the WIT declarations embedded into it and wrapped
+     * into the component format. `wasm-tools` is the command-line tool of the Bytecode Alliance that performs
+     * this conversion: `wasm-tools component embed` puts the WIT world into the module and
+     * `wasm-tools component new` turns the result into a component.
      *
      * At most one service may be selected inside the block: call only one of
      * [WasmToolsToolchainManagementDsl.toolchainService] or [WasmToolsToolchainManagementDsl.disable].
