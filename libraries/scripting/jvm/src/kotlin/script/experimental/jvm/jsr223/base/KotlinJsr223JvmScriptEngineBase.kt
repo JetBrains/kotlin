@@ -21,7 +21,9 @@ import kotlin.script.experimental.jvm.KJvmEvaluatedSnippet
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvm.jsr223.getScriptContext
 import kotlin.script.experimental.jvm.jsr223.jsr223
+import kotlin.script.experimental.jvm.jsr223.isSyntheticJsr223SnippetDiagnostic
 import kotlin.script.experimental.jvm.jsr223.jsr223EvaluatedWithCompilationContext
+import kotlin.script.experimental.jvm.jsr223.jsr223UntypedNewBindings
 import kotlin.script.experimental.jvm.util.isIncomplete
 import kotlin.script.experimental.util.LinkedSnippet
 
@@ -184,8 +186,17 @@ abstract class KotlinJsr223JvmScriptEngineBase<State>(
         val snippet = script.toScriptSource("snippet_$snippetNo.repl.$fileExtension")
         val configuration = snippetCompilationConfiguration(baseConfiguration, snippet, snippetNo).with {
             jsr223EvaluatedWithCompilationContext(isEvaluatedWithCompilationContext)
+            jsr223UntypedNewBindings(false)
         }
-        return compiler.compile(snippet, configuration)
+        val result = compiler.compile(snippet, configuration)
+        // A binding value's type can be inaccessible from the snippet in a way that can't be detected beforehand (e.g. it
+        // requires an opt-in). Instead of failing every eval, retry with the bindings exposed with new types typed as `Any?`.
+        if (result is ResultWithDiagnostics.Failure &&
+            result.reports.any { it.severity >= ScriptDiagnostic.Severity.ERROR && it.isSyntheticJsr223SnippetDiagnostic() }
+        ) {
+            return compiler.compile(snippet, configuration.with { jsr223UntypedNewBindings(true) })
+        }
+        return result
     }
 
     private fun evalCompiledSnippet(
