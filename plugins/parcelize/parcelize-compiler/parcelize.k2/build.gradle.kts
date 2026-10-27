@@ -14,6 +14,8 @@ dependencies {
     implementation(project(":compiler:fir:plugin.api"))
     // Required for JVM specific utility functions.
     implementation(project(":compiler:fir:fir-jvm"))
+    // TODO(KT-90146): Required to access various utility functions.
+    implementation(project(":compiler:fir:checkers:checkers.common"))
 }
 
 sourceSets {
