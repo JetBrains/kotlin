@@ -197,9 +197,13 @@ class FlattenStringConcatenationLowering(val context: CommonBackendContext) : Fi
                 )
             }
         }
-        return folded.singleOrNull() as? IrConst
-            ?: IrStringConcatenationImpl(this.startOffset, this.endOffset, this.type, folded)
+        val arguments = folded.filterNot { it.isConstEmptyString }.ifEmpty { folded }
+        return arguments.singleOrNull() as? IrConst
+            ?: IrStringConcatenationImpl(this.startOffset, this.endOffset, this.type, arguments)
     }
+
+    private val IrExpression.isConstEmptyString: Boolean
+        get() = this is IrConst && kind == IrConstKind.String && (value as String).isEmpty()
 
     private fun constToString(const: IrConst): String {
         return normalizeUnsignedValue(const).toString()
