@@ -240,10 +240,15 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker(MppCh
             is ConeDefinitelyNotNullType, is ConeTypeParameterType -> return null
             // These types are approximated away in public signatures
             is ConeCapturedType, is ConeIntersectionType -> return null
+            is ConeUnionType -> return primaryType.findVisibilityExposure(base, ignoreInternalExposure, visitedTypes)
+                ?: richErrorTypes.firstNotNullOfOrNull { it.findVisibilityExposure(base, ignoreInternalExposure, visitedTypes) }
             else -> return null
         }
 
-        val classSymbol = type.fullyExpandedType().lookupTag.toSymbol() ?: return null
+        val expandedType = type.fullyExpandedType()
+        // A type alias may expand to a union type
+        if (expandedType is ConeUnionType) return expandedType.findVisibilityExposure(base, ignoreInternalExposure, visitedTypes)
+        val classSymbol = expandedType.classLikeLookupTagIfAny?.toSymbol() ?: return null
 
         val effectiveVisibility = when (classSymbol) {
             is FirRegularClassSymbol -> classSymbol.effectiveVisibility
@@ -351,4 +356,3 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker(MppCh
         }
     }
 }
-

@@ -55,7 +55,7 @@ sealed class FirJsInheritanceClassChecker(mppKind: MppCheckerKind) : FirClassChe
 
         if (isEffectivelyExternal && declaration.classKind != ClassKind.ANNOTATION_CLASS) {
             for (superType in declaration.superConeTypes) {
-                val fullyExpandedType = superType.fullyExpandedType()
+                val fullyExpandedType = superType.fullyExpandedType() as? ConeClassLikeType ?: continue
                 if (fullyExpandedType.isAnyOrNullableAny || fullyExpandedType.isThrowableOrNullableThrowable || fullyExpandedType.isEnum) continue
                 val fullyExpandedClass = fullyExpandedType.toSymbol() ?: continue
                 if (fullyExpandedClass.isEffectivelyExternal(session) || fullyExpandedClass.isExpect) continue

@@ -1,0 +1,22 @@
+FILE: K.kt
+    public final error class E : R|kotlin/RichError| {
+        public constructor(): R|E| {
+            super<R|kotlin/RichError|>()
+        }
+
+    }
+    public final typealias ListRes<T> = R|union(primary=kotlin/collections/List<T>, errors=E)|
+    public open class K<T> : R|kotlin/Any| {
+        public constructor<T>(): R|K<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun g(x: R|{ListRes<T>=} union(primary=kotlin/collections/List<T>, errors=E)|): R|{ListRes<T>=} union(primary=kotlin/collections/List<T>, errors=E)| {
+            ^g R|<local>/x|
+        }
+
+    }
+FILE: test.kt
+    public final fun test(ls: R|kotlin/collections/List<kotlin/String>|): R|kotlin/Unit| {
+        lval g: R|{ListRes<kotlin/Any!>=} union(primary=ft<Raw type kotlin/collections/List<kotlin/Any?>, kotlin/collections/List<*>>, errors=E)| = Q|J|.R|/J.raw*s|().R|SubstitutionOverride</J.g: R|{ListRes<kotlin/Any!>=} union(primary=ft<Raw type kotlin/collections/List<kotlin/Any?>, kotlin/collections/List<*>>, errors=E)|>|(R|<local>/ls|)
+    }
