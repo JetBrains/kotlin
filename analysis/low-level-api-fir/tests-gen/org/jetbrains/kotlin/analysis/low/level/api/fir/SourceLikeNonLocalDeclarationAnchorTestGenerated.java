@@ -64,6 +64,18 @@ public class SourceLikeNonLocalDeclarationAnchorTestGenerated extends AbstractSo
   }
 
   @Test
+  @TestMetadata("danglingModifierLists.kt")
+  public void testDanglingModifierLists() {
+    run("danglingModifierLists.kt");
+  }
+
+  @Test
+  @TestMetadata("danglingModifierListsScript.kts")
+  public void testDanglingModifierListsScript() {
+    run("danglingModifierListsScript.kts");
+  }
+
+  @Test
   @TestMetadata("destructuringDeclarations.kt")
   public void testDestructuringDeclarations() {
     run("destructuringDeclarations.kt");

@@ -230,6 +230,18 @@ public class FirIdeNormalAnalysisSourceLikeModuleVisibilityCheckerTestGenerated 
   }
 
   @Test
+  @TestMetadata("privateMemberInClassLevelDanglingAnnotation.kt")
+  public void testPrivateMemberInClassLevelDanglingAnnotation() {
+    run("privateMemberInClassLevelDanglingAnnotation.kt");
+  }
+
+  @Test
+  @TestMetadata("privateMemberInFileLevelDanglingAnnotation.kt")
+  public void testPrivateMemberInFileLevelDanglingAnnotation() {
+    run("privateMemberInFileLevelDanglingAnnotation.kt");
+  }
+
+  @Test
   @TestMetadata("privateTopLevelFunctionFromContextModule.kt")
   public void testPrivateTopLevelFunctionFromContextModule() {
     run("privateTopLevelFunctionFromContextModule.kt");
