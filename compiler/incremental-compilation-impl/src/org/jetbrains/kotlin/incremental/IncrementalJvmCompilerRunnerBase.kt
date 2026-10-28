@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
 import org.jetbrains.kotlin.build.report.reportPerformanceData
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
-import org.jetbrains.kotlin.buildtools.api.cri.CriToolchain.Companion.DATA_PATH
 import org.jetbrains.kotlin.buildtools.api.cri.CriToolchain.Companion.FILE_IDS_TO_PATHS_FILENAME
 import org.jetbrains.kotlin.buildtools.api.cri.CriToolchain.Companion.LOOKUPS_FILENAME
 import org.jetbrains.kotlin.buildtools.api.cri.CriToolchain.Companion.SUBTYPES_FILENAME
@@ -59,7 +58,7 @@ abstract class IncrementalJvmCompilerRunnerBase(
     outputDirs: Collection<File>?,
     kotlinSourceFilesExtensions: Set<String>,
     icFeatures: IncrementalCompilationFeatures,
-    private val generateCompilerRefIndex: Boolean = false,
+    private val compilerRefIndexDirectory: File? = null,
     compilationCanceledStatus: CompilationCanceledStatus? = null,
     pluginsLoader: PluginsLoader?,
 ) : IncrementalCompilerRunner<K2JVMCompilerArguments, IncrementalJvmCachesManager>(
@@ -82,7 +81,7 @@ abstract class IncrementalJvmCompilerRunnerBase(
         messageCollector,
     )
 
-    private val subtypeTracker = if (generateCompilerRefIndex) SubtypeTrackerImpl() else null
+    private val subtypeTracker = if (compilerRefIndexDirectory != null) SubtypeTrackerImpl() else null
 
     override fun createCacheManager(icContext: IncrementalCompilationContext, args: K2JVMCompilerArguments) =
         IncrementalJvmCachesManager(
@@ -242,12 +241,12 @@ abstract class IncrementalJvmCompilerRunnerBase(
         compilationMode: CompilationMode,
     ) {
         super.generateCompilerRefIndexIfNeeded(services, sourceFilesPathConverter, compilationMode)
-        if (!generateCompilerRefIndex) return
+        val criDir = compilerRefIndexDirectory ?: return
 
         reporter.info { "Generating Compiler Reference Index..." }
 
         val serializer = CriDataSerializerImpl()
-        val criDir = File(workingDir, DATA_PATH).apply { mkdirs() }
+        criDir.mkdirs()
 
         val lookupsFile = File(criDir, LOOKUPS_FILENAME)
         val fileIdsToPathsFile = File(criDir, FILE_IDS_TO_PATHS_FILENAME)

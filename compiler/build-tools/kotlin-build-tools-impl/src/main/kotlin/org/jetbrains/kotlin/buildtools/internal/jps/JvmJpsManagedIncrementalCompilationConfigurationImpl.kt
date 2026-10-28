@@ -14,9 +14,8 @@ import org.jetbrains.kotlin.buildtools.api.jps.jvm.incremental.trackers.*
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
 import org.jetbrains.kotlin.buildtools.internal.*
-import org.jetbrains.kotlin.buildtools.internal.BaseCompilationOperationImpl.Companion.GENERATE_COMPILER_REF_INDEX
+import org.jetbrains.kotlin.buildtools.internal.BaseCompilationOperationImpl.Companion.COMPILER_REF_INDEX
 import org.jetbrains.kotlin.buildtools.internal.cri.CompilerReferenceIndexCollector
-import org.jetbrains.kotlin.buildtools.internal.jps.JvmJpsManagedIncrementalCompilationConfigurationImpl.Companion.COMPILER_REF_INDEX_DIRECTORY
 import org.jetbrains.kotlin.buildtools.internal.jps.JvmJpsManagedIncrementalCompilationConfigurationImpl.Companion.ENUM_WHEN_TRACKER
 import org.jetbrains.kotlin.buildtools.internal.jps.JvmJpsManagedIncrementalCompilationConfigurationImpl.Companion.FILE_MAPPING_TRACKER
 import org.jetbrains.kotlin.buildtools.internal.jps.JvmJpsManagedIncrementalCompilationConfigurationImpl.Companion.IMPORT_TRACKER
@@ -34,7 +33,6 @@ import org.jetbrains.kotlin.daemon.common.CompilerServicesFacadeBase
 import org.jetbrains.kotlin.incremental.components.*
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
-import java.nio.file.Path
 import org.jetbrains.kotlin.buildtools.internal.BaseCompilationOperationImpl.Companion.LOOKUP_TRACKER as BASE_LOOKUP_TRACKER
 
 /**
@@ -128,7 +126,6 @@ internal fun JvmClientManagedIncrementalCompilationConfiguration.registerPlatfor
     val compilerReferenceIndexCollector = createCompilerReferenceIndexCollector(
         lookupTracker ?: operation[BASE_LOOKUP_TRACKER]?.let(::LookupTrackerAdapter),
         fileMappingTracker,
-        logger,
     )
 
     (compilerReferenceIndexCollector?.lookupTracker ?: lookupTracker)?.let { tracker ->
@@ -153,22 +150,12 @@ internal fun JvmClientManagedIncrementalCompilationConfiguration.registerPlatfor
     }
 }
 
-@OptIn(DelicateBuildToolsApi::class)
 context(operation: JvmCompilationOperationImpl)
-private fun JvmJpsManagedIncrementalCompilationConfigurationImpl.createCompilerReferenceIndexCollector(
+private fun createCompilerReferenceIndexCollector(
     lookupTracker: LookupTracker?,
     fileMappingTracker: ICFileMappingTracker?,
-    logger: KotlinLogger,
 ): CompilerReferenceIndexCollector? {
-    if (!operation[GENERATE_COMPILER_REF_INDEX]) return null
-
-    val directory = this[COMPILER_REF_INDEX_DIRECTORY] ?: run {
-        logger.warn(
-            "The compiler reference index is requested, but " +
-                    "JvmJpsManagedIncrementalCompilationConfiguration.COMPILER_REF_INDEX_DIRECTORY isn't set, so it won't be written."
-        )
-        return null
-    }
+    val directory = operation[COMPILER_REF_INDEX]?.outputDirectory ?: return null
     return CompilerReferenceIndexCollector(
         directory,
         lookupTrackerDelegate = lookupTracker ?: LookupTracker.DO_NOTHING,
@@ -223,7 +210,5 @@ internal class JvmJpsManagedIncrementalCompilationConfigurationImpl private cons
         val IMPORT_TRACKER: Option<CompilerImportTracker?> = Option("IMPORT_TRACKER", null)
 
         val INLINE_CONST_TRACKER: Option<CompilerInlineConstTracker?> = Option("INLINE_CONST_TRACKER", null)
-
-        val COMPILER_REF_INDEX_DIRECTORY: Option<Path?> = Option("COMPILER_REF_INDEX_DIRECTORY", null)
     }
 }

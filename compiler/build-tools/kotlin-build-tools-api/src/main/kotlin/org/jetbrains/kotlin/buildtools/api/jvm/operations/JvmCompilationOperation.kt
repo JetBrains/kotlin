@@ -232,13 +232,7 @@ public interface JvmCompilationOperation : BaseCompilationOperation, Cancellable
          *
          * @since 2.3.20
          */
-        @Deprecated(
-            "Use `BaseCompilationOperation.GENERATE_COMPILER_REF_INDEX` instead",
-            ReplaceWith(
-                "BaseCompilationOperation.GENERATE_COMPILER_REF_INDEX",
-                "org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation"
-            )
-        )
+        @Deprecated("Use `BaseCompilationOperation.COMPILER_REF_INDEX` instead")
         @JvmField
         public val GENERATE_COMPILER_REF_INDEX: Option<Boolean> = Option("GENERATE_COMPILER_REF_INDEX", KotlinReleaseVersion(2, 3, 20))
     }

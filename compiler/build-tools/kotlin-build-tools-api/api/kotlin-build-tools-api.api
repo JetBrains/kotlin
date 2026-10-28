@@ -1,6 +1,7 @@
 public abstract interface class org/jetbrains/kotlin/buildtools/api/BaseCompilationOperation : org/jetbrains/kotlin/buildtools/api/BuildOperation {
 	public static final field COMPILER_ARGUMENTS_LOG_LEVEL Lorg/jetbrains/kotlin/buildtools/api/BaseCompilationOperation$Option;
 	public static final field COMPILER_MESSAGE_RENDERER Lorg/jetbrains/kotlin/buildtools/api/BaseCompilationOperation$Option;
+	public static final field COMPILER_REF_INDEX Lorg/jetbrains/kotlin/buildtools/api/BaseCompilationOperation$Option;
 	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/BaseCompilationOperation$Companion;
 	public static final field GENERATE_COMPILER_REF_INDEX Lorg/jetbrains/kotlin/buildtools/api/BaseCompilationOperation$Option;
 	public static final field LOOKUP_TRACKER Lorg/jetbrains/kotlin/buildtools/api/BaseCompilationOperation$Option;
@@ -9,6 +10,7 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/BaseCompilat
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/BaseCompilationOperation$Builder : org/jetbrains/kotlin/buildtools/api/BuildOperation$Builder {
 	public abstract fun build ()Lorg/jetbrains/kotlin/buildtools/api/BaseCompilationOperation;
+	public fun compilerRefIndexConfigurationBuilder (Ljava/nio/file/Path;)Lorg/jetbrains/kotlin/buildtools/api/cri/CompilerRefIndexConfiguration$Builder;
 	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/BaseCompilationOperation$Option;)Ljava/lang/Object;
 	public abstract fun getCompilerArguments ()Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$Builder;
 	public abstract fun set (Lorg/jetbrains/kotlin/buildtools/api/BaseCompilationOperation$Option;Ljava/lang/Object;)V
@@ -19,6 +21,11 @@ public final class org/jetbrains/kotlin/buildtools/api/BaseCompilationOperation$
 
 public final class org/jetbrains/kotlin/buildtools/api/BaseCompilationOperation$Option : org/jetbrains/kotlin/buildtools/api/internal/BaseOption {
 	public final fun getAvailableSinceVersion ()Lorg/jetbrains/kotlin/buildtools/api/KotlinReleaseVersion;
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/BaseCompilationOperationKt {
+	public static final fun compilerRefIndexConfiguration (Lorg/jetbrains/kotlin/buildtools/api/BaseCompilationOperation$Builder;Ljava/nio/file/Path;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/buildtools/api/cri/CompilerRefIndexConfiguration;
+	public static synthetic fun compilerRefIndexConfiguration$default (Lorg/jetbrains/kotlin/buildtools/api/BaseCompilationOperation$Builder;Ljava/nio/file/Path;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/buildtools/api/cri/CompilerRefIndexConfiguration;
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/BaseIncrementalCompilationConfiguration {
@@ -1515,6 +1522,23 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/WhenExpre
 	public final fun getStringValue ()Ljava/lang/String;
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/WhenExpressionsMode;
 	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/WhenExpressionsMode;
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/cri/CompilerRefIndexConfiguration {
+	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/cri/CompilerRefIndexConfiguration$Option;)Ljava/lang/Object;
+	public abstract fun getOutputDirectory ()Ljava/nio/file/Path;
+	public abstract fun toBuilder ()Lorg/jetbrains/kotlin/buildtools/api/cri/CompilerRefIndexConfiguration$Builder;
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/cri/CompilerRefIndexConfiguration$Builder {
+	public abstract fun build ()Lorg/jetbrains/kotlin/buildtools/api/cri/CompilerRefIndexConfiguration;
+	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/cri/CompilerRefIndexConfiguration$Option;)Ljava/lang/Object;
+	public abstract fun getOutputDirectory ()Ljava/nio/file/Path;
+	public abstract fun set (Lorg/jetbrains/kotlin/buildtools/api/cri/CompilerRefIndexConfiguration$Option;Ljava/lang/Object;)V
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/cri/CompilerRefIndexConfiguration$Option : org/jetbrains/kotlin/buildtools/api/internal/BaseOption {
+	public final fun getAvailableSinceVersion ()Lorg/jetbrains/kotlin/buildtools/api/KotlinReleaseVersion;
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/cri/CriFileIdToPathDataDeserializationOperation : org/jetbrains/kotlin/buildtools/api/BuildOperation {

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.LANGUAGE_VERSION
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.KotlinVersion
+import org.jetbrains.kotlin.buildtools.api.compilerRefIndexConfiguration
 import org.jetbrains.kotlin.buildtools.api.cri.CriToolchain.Companion.FILE_IDS_TO_PATHS_FILENAME
 import org.jetbrains.kotlin.buildtools.api.cri.CriToolchain.Companion.LOOKUPS_FILENAME
 import org.jetbrains.kotlin.buildtools.api.cri.CriToolchain.Companion.SUBTYPES_FILENAME
@@ -18,18 +19,14 @@ import org.jetbrains.kotlin.buildtools.api.cri.CriToolchain.Companion.cri
 import org.jetbrains.kotlin.buildtools.api.jps.InternalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.jps.jvm.JvmJpsManagedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
-import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import java.nio.file.Path
 import java.nio.file.Paths
-import kotlin.io.path.exists
 import kotlin.io.path.readBytes
 
 @DisplayName("The compiler reference index of a JPS-managed compilation")
@@ -101,39 +98,6 @@ class CompilerReferenceIndexJpsTest : BaseJpsTest() {
         }
     }
 
-    @DisplayName("Nothing is written when the index isn't requested")
-    @Test
-    @TestMetadata(FIXTURE)
-    fun nothingIsWrittenWithoutTheFlag() {
-        val toolchain = toolchain
-        jvmProject(toolchain, toolchain.createInProcessExecutionPolicy()) {
-            val module = module(FIXTURE)
-            val criDirectory = module.buildDirectory.resolve("cri")
-            module.compile(compilationConfigAction = {
-                it.withJpsIc { this[JvmJpsManagedIncrementalCompilationConfiguration.COMPILER_REF_INDEX_DIRECTORY] = criDirectory }
-            }) {
-                assertFalse(criDirectory.exists())
-            }
-        }
-    }
-
-    @DisplayName("Without a directory, nothing is written and a warning is logged")
-    @Test
-    @TestMetadata(FIXTURE)
-    fun warningWithoutDirectory() {
-        val toolchain = toolchain
-        jvmProject(toolchain, toolchain.createInProcessExecutionPolicy()) {
-            val module = module(FIXTURE)
-            module.compile(compilationConfigAction = { it.withCompilerReferenceIndex(criDirectory = null) }) {
-                assertLogContainsPatterns(
-                    LogLevel.WARN,
-                    Regex(".*JvmJpsManagedIncrementalCompilationConfiguration\\.COMPILER_REF_INDEX_DIRECTORY isn't set.*"),
-                )
-                assertFalse(module.buildDirectory.resolve("cri").exists())
-            }
-        }
-    }
-
     private companion object {
         const val FIXTURE = "jps-compiler-reference-index"
         const val SECOND_FIXTURE = "basic-multimodule-project/module-1"
@@ -141,14 +105,11 @@ class CompilerReferenceIndexJpsTest : BaseJpsTest() {
 }
 
 private fun JvmCompilationOperation.Builder.withCompilerReferenceIndex(
-    criDirectory: Path?,
+    criDirectory: Path,
     configure: JvmJpsManagedIncrementalCompilationConfiguration.Builder.() -> Unit = {},
 ) {
-    this[BaseCompilationOperation.GENERATE_COMPILER_REF_INDEX] = true
-    withJpsIc {
-        this[JvmJpsManagedIncrementalCompilationConfiguration.COMPILER_REF_INDEX_DIRECTORY] = criDirectory
-        configure()
-    }
+    this[BaseCompilationOperation.COMPILER_REF_INDEX] = compilerRefIndexConfiguration(criDirectory)
+    withJpsIc(configure = configure)
 }
 
 private class CompilerReferenceIndex(

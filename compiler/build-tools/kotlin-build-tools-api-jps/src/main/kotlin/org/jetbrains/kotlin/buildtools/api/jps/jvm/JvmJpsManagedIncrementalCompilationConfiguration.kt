@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.buildtools.api.jps.jvm.incremental.CompilerIncrement
 import org.jetbrains.kotlin.buildtools.api.jps.jvm.incremental.trackers.*
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
-import java.nio.file.Path
 
 /**
  * A configuration for an incremental build whose state is owned by the API consumer.
@@ -136,19 +135,5 @@ public interface JvmJpsManagedIncrementalCompilationConfiguration : JvmIncrement
         @JvmField
         public val INLINE_CONST_TRACKER: Option<CompilerInlineConstTracker?> =
             Option("INLINE_CONST_TRACKER", KotlinReleaseVersion(2, 5, 0))
-
-        /**
-         * A directory the compiler reference index of this compilation is written to.
-         *
-         * Takes effect only when [org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation.GENERATE_COMPILER_REF_INDEX]
-         * is enabled and the compilation runs in-process. Each successful compilation appends its data to the files in
-         * this directory, with the names from [org.jetbrains.kotlin.buildtools.api.cri.CriToolchain]. Source files are
-         * recorded by their absolute paths.
-         *
-         * When the index is requested without a directory, nothing is written and a warning is logged.
-         */
-        @JvmField
-        public val COMPILER_REF_INDEX_DIRECTORY: Option<Path?> =
-            Option("COMPILER_REF_INDEX_DIRECTORY", KotlinReleaseVersion(2, 5, 20))
     }
 }

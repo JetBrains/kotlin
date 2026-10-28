@@ -2,7 +2,6 @@ public abstract interface annotation class org/jetbrains/kotlin/buildtools/api/j
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/jps/jvm/JvmJpsManagedIncrementalCompilationConfiguration : org/jetbrains/kotlin/buildtools/api/jvm/JvmIncrementalCompilationConfiguration {
-	public static final field COMPILER_REF_INDEX_DIRECTORY Lorg/jetbrains/kotlin/buildtools/api/jps/jvm/JvmJpsManagedIncrementalCompilationConfiguration$Option;
 	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/jps/jvm/JvmJpsManagedIncrementalCompilationConfiguration$Companion;
 	public static final field ENUM_WHEN_TRACKER Lorg/jetbrains/kotlin/buildtools/api/jps/jvm/JvmJpsManagedIncrementalCompilationConfiguration$Option;
 	public static final field FILE_MAPPING_TRACKER Lorg/jetbrains/kotlin/buildtools/api/jps/jvm/JvmJpsManagedIncrementalCompilationConfiguration$Option;

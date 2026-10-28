@@ -35,7 +35,6 @@ open class CompilationOptions(
     /** @See [CompilationResultCategory]] */
     val requestedCompilationResults: Array<Int>,
     val kotlinScriptExtensions: Array<String>? = null,
-    val generateCompilerRefIndex: Boolean = false,
 ) : Serializable {
     companion object {
         const val serialVersionUID: Long = 0
@@ -48,8 +47,7 @@ open class CompilationOptions(
                 "reportCategories=${Arrays.toString(reportCategories)}, " +
                 "reportSeverity=$reportSeverity, " +
                 "requestedCompilationResults=${Arrays.toString(requestedCompilationResults)}, " +
-                "kotlinScriptExtensions=${Arrays.toString(kotlinScriptExtensions)}, " +
-                "generateCompilerRefIndex=$generateCompilerRefIndex" +
+                "kotlinScriptExtensions=${Arrays.toString(kotlinScriptExtensions)}" +
                 ")"
     }
 }
@@ -81,7 +79,8 @@ class IncrementalCompilationOptions(
 
     kotlinScriptExtensions: Array<String>? = null,
     val icFeatures: IncrementalCompilationFeatures = IncrementalCompilationFeatures.DEFAULT_CONFIGURATION,
-    generateCompilerRefIndex: Boolean = false,
+    /** The directory the compilation writes the compiler reference index to, or `null` to write none */
+    val compilerRefIndexDirectory: File? = null,
     val configurationInputs: ConfigurationInputs? = null
 ) : CompilationOptions(
     compilerMode,
@@ -90,10 +89,9 @@ class IncrementalCompilationOptions(
     reportSeverity,
     requestedCompilationResults,
     kotlinScriptExtensions,
-    generateCompilerRefIndex,
 ) {
     companion object {
-        const val serialVersionUID: Long = 5
+        const val serialVersionUID: Long = 6
     }
 
     override fun toString(): String {
@@ -104,7 +102,8 @@ class IncrementalCompilationOptions(
                 "workingDir=$workingDir, " +
                 "multiModuleICSettings=$multiModuleICSettings, " +
                 "icFeatures=$icFeatures, " +
-                "outputFiles=$outputFiles" +
+                "outputFiles=$outputFiles, " +
+                "compilerRefIndexDirectory=$compilerRefIndexDirectory" +
                 ")"
     }
 }
