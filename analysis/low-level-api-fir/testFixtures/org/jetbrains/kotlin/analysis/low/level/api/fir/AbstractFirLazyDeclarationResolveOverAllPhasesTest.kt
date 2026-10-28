@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModul
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.test.frontend.fir.checkDistinctSourceElements
+import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.resolvePhase
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseRecursively
@@ -57,7 +58,7 @@ abstract class AbstractFirLazyDeclarationResolveOverAllPhasesTest : AbstractFirL
         val renderer = lazyResolveRenderer(resultBuilder)
         val allKtFiles = testServices.ktTestModuleStructure.allMainKtFiles
 
-        preresolveElements(allKtFiles, testServices)
+        val preresolvedFiles = preresolveElements(allKtFiles, testServices)
 
         withResolutionFacade(ktFile) { resolutionFacade ->
             checkResolutionFacade(resolutionFacade)
@@ -106,6 +107,7 @@ abstract class AbstractFirLazyDeclarationResolveOverAllPhasesTest : AbstractFirL
             }
         }
 
+        checkPreresolvedFilesAreNotRebuilt(preresolvedFiles)
         clearCaches(ktFile.project)
 
         withResolutionFacade(ktFile) { resolutionFacade ->
@@ -126,7 +128,13 @@ abstract class AbstractFirLazyDeclarationResolveOverAllPhasesTest : AbstractFirL
         )
     }
 
-    private fun preresolveElements(allKtFiles: List<KtFile>, testServices: TestServices) {
+    /**
+     * Resolves the declarations at `preresolved` carets and returns the FIR files containing them.
+     *
+     * The pre-resolution uses its own resolution facades, which don't outlive it, and sessions aren't cached strongly. The caller has to
+     * keep the returned files reachable until the main resolution is rendered, or a GC in between could drop the pre-resolved state.
+     */
+    private fun preresolveElements(allKtFiles: List<KtFile>, testServices: TestServices): List<Pair<KtFile, FirFile>> {
         val preresolvedElementCarets = testServices.expressionMarkerProvider.getBottommostElementsOfTypeAtCarets<KtDeclaration>(
             files = allKtFiles,
             qualifier = "preresolved",
@@ -137,7 +145,7 @@ abstract class AbstractFirLazyDeclarationResolveOverAllPhasesTest : AbstractFirL
             error("$PRE_RESOLVED_PHASE is declared, but there are no pre-resolved carets.")
         }
 
-        preresolvedElementCarets.forEach { [declaration, _] ->
+        return preresolvedElementCarets.map { [declaration, _] ->
             val containingFile = declaration.containingKtFile
 
             // We should preresolve the declaration with its own resolution facade instead of the main file's facade, as the preresolved
@@ -145,6 +153,15 @@ abstract class AbstractFirLazyDeclarationResolveOverAllPhasesTest : AbstractFirL
             withResolutionFacade(containingFile) { resolutionFacade ->
                 checkResolutionFacade(resolutionFacade)
                 declaration.resolveToFirSymbol(resolutionFacade, phase ?: FirResolvePhase.BODY_RESOLVE)
+                containingFile to resolutionFacade.getOrBuildFirFile(containingFile)
+            }
+        }
+    }
+
+    private fun checkPreresolvedFilesAreNotRebuilt(preresolvedFiles: List<Pair<KtFile, FirFile>>) {
+        for ([ktFile, firFile] in preresolvedFiles) {
+            withResolutionFacade(ktFile) { resolutionFacade ->
+                check(resolutionFacade.getOrBuildFirFile(ktFile) === firFile) { "The pre-resolved FIR file must not be rebuilt" }
             }
         }
     }
