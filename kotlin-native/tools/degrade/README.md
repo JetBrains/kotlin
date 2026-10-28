@@ -8,7 +8,7 @@ Intended to be helpful in minimizing reproducers or investigating
 Kotlin/Native-related problems.
 
 Confirmed to work with Kotlin versions from 1.8.10 to 2.5.0-Beta2,
-and Gradle versions from 7.3.3 to 9.8.1
+and Gradle versions from 6.8.3 to 9.8.1
 in combinations supported by the Kotlin Gradle plugin.
 
 Probably doesn't work on Windows.

@@ -124,6 +124,7 @@ private class Degrade(val rootProject: Project) {
 
             val transformedArguments = generateSequence(nextLine)
                     .takeWhile { it != "]" }
+                    .toList()
                     .flatMap {
                         val line = it.trimStart()
                         if (line.startsWith("@")) { // argument with filename containing list of arguments
@@ -134,7 +135,6 @@ private class Degrade(val rootProject: Project) {
                         } else
                             listOf(line)
                     }
-                    .toList()
 
             result += KotlinNativeCommand(listOf(toolName) + transformedArguments)
         }
