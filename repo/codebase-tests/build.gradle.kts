@@ -7,6 +7,11 @@ plugins {
 }
 
 dependencies {
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(testFixtures("org.jetbrains.kotlin:repo-test-fixtures"))
+    implementation("org.jetbrains.kotlin:test-federation-convention")
+    runtimeOnly(libs.log4j2.slf4j.impl)
+
     testImplementation(intellijCore())
     testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(kotlin("test-junit5", libs.versions.kotlin.`for`.gradle.plugins.compilation.get()))
@@ -37,7 +42,7 @@ jvmToolchains {
 }
 
 sourceSets {
-    "main" {}
+    "main" { projectDefault() }
     "test" {
         projectDefault()
     }
@@ -112,9 +117,9 @@ tasks.register<JavaExec>("updateTestLifecycleTaskDump") {
 tasks.register<JavaExec>("updateDomainsDump") {
     doNotTrackState("Should always run")
     description = "Updates the 'domains.dump.txt' and 'domains.ignore.dump.txt' files"
-    classpath = files(sourceSets.test.map { it.runtimeClasspath })
+    classpath = files(sourceSets.main.map { it.runtimeClasspath })
     workingDir = rootDir
-    mainClass = $$"org.jetbrains.kotlin.code.DomainsDumpTest$Update"
+    mainClass = "org.jetbrains.kotlin.code.UpdateDomainsDump"
 }
 
 tasks.configureEach {
