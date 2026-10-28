@@ -1,0 +1,11 @@
+KT element: KtTypeReference
+FIR element: null
+FIR source kind: null
+
+FIR element rendered:
+null
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] danglingContextInFunctionTypeWithType.kt
+    public final [ResolvedTo(BODY_RESOLVE)] val p: R|kotlin/String|
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|

@@ -1,0 +1,11 @@
+KT element: KtTypeReference
+FIR element: null
+FIR source kind: null
+
+FIR element rendered:
+null
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] danglingContextInFunctionTypeWithReceiver.kt
+    public final [ResolvedTo(BODY_RESOLVE)] val p: <ERROR TYPE REF: Incomplete code>
+        public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Incomplete code>
