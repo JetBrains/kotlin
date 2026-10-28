@@ -266,7 +266,9 @@ abstract class CompileServiceImplBase(
             )
         )
         try {
-            if (!runFile.createNewFile()) throw Exception("createNewFile returned false")
+            val secret = DaemonConnectionAuth.generateSecret()
+            createRunFileWithSecret(runFile, secret)
+            DaemonConnectionAuth.setOwnSecret(secret)
         } catch (e: Throwable) {
             throw IllegalStateException("Unable to create run file '${runFile.absolutePath}'", e)
         }
