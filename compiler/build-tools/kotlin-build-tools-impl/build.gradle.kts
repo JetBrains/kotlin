@@ -105,3 +105,9 @@ generatedSourcesTask(
         )
     },
 )
+
+testing {
+    this.suites.withType<JvmTestSuite> {
+        useJUnitJupiter(libs.versions.junit5.get())
+    }
+}

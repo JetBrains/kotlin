@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.buildtools.api.internal.wrappers.KotlinWrapperPre2_3
 import org.jetbrains.kotlin.buildtools.api.internal.wrappers.KotlinWrapperPre2_4_0
 import org.jetbrains.kotlin.buildtools.api.internal.wrappers.KotlinWrapperPre2_4_20
 import org.jetbrains.kotlin.buildtools.api.internal.wrappers.KotlinWrapperPre2_5_0
+import org.jetbrains.kotlin.buildtools.api.internal.wrappers.KotlinWrapperPre2_5_20
 import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.wasm.WasmPlatformToolchain
@@ -176,7 +177,9 @@ public interface KotlinToolchains {
             if (kotlinCompilerVersion < KotlinCompilerVersion(2, 5, 0, "snapshot")) {
                 baseImplementation = KotlinWrapperPre2_5_0(baseImplementation)
             }
-
+            if (kotlinCompilerVersion < KotlinCompilerVersion(2, 5, 20, "snapshot")) {
+                baseImplementation = KotlinWrapperPre2_5_20(baseImplementation)
+            }
             baseImplementation
         } catch (_: NoImplementationFoundException) {
             try {

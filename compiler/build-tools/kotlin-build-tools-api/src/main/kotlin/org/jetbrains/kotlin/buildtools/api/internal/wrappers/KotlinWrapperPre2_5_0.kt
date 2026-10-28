@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsKlibCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsLinkingOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
+import org.jetbrains.kotlin.buildtools.api.jvm.KaptConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.metadata.KotlinMetadataKlibCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.metadata.KotlinMetadataPlatformToolchain
@@ -77,6 +78,14 @@ internal class KotlinWrapperPre2_5_0(
         ): JvmCompilationOperation.Builder = JvmCompilationOperationBuilderWrapper(
             base.jvmCompilationOperationBuilder(sources, destinationDirectory),
         )
+
+        override fun kaptCompilerPluginBuilder(
+            kaptClasspath: List<Path>,
+            stubsOutputDir: Path,
+            annotationProcessorsClasspath: List<Path>
+        ): KaptConfiguration.Builder {
+            TODO("Only available starting from Kotlin compiler 2.5.0")
+        }
     }
 
     private inner class JvmCompilationOperationBuilderWrapper(
