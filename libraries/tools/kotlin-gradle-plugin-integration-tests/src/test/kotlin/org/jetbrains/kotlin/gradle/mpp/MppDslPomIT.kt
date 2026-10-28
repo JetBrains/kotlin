@@ -11,7 +11,10 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
+import org.w3c.dom.Element
+import javax.xml.parsers.DocumentBuilderFactory
 import kotlin.io.path.pathString
+import kotlin.test.assertEquals
 
 @MppGradlePluginTests
 class MppDslPomIT : KGPBaseTest() {
@@ -139,9 +142,85 @@ class MppDslPomIT : KGPBaseTest() {
             }
 
             /** up-to-date check is not working because [org.gradle.api.publish.maven.tasks.GenerateMavenPom]
-             *  is annotated with [org.gradle.api.tasks.UntrackedTask] */
+            *  is annotated with [org.gradle.api.tasks.UntrackedTask] before Gradle 9.8.
+            *  Since Gradle 9.8 the task is tracked, but input tracking is disabled when a `withXml` action is registered,
+            *  which is the case for the KMP POM dependencies rewriter. */
             build(":generatePomFileForJvmPublication") {
                 assertTasksExecuted(":generatePomFileForJvmPublication")
+            }
+        }
+    }
+
+    @GradleTest
+    fun `root KMP publication POM is up-to-date and tracks dependency changes`(
+        gradleVersion: GradleVersion
+    ) {
+        fun GradleProjectBuildScriptInjectionContext.configureKmpProject() {
+            applyMavenPublishPlugin()
+            project.group = "sample"
+
+            kotlinMultiplatform.apply {
+                jvm()
+                linuxX64()
+            }
+        }
+
+        project("base-kotlin-multiplatform-library", gradleVersion) {
+            includeOtherProjectAsSubmodule("base-kotlin-multiplatform-library", newSubmoduleName = "libA") {
+                buildScriptInjection {
+                    configureKmpProject()
+                    project.version = project.providers.gradleProperty("libAVersion").orElse("1.0.0").get()
+                }
+            }
+
+            buildScriptInjection {
+                configureKmpProject()
+                project.version = "1.0.0"
+                val externalVersion = project.providers.gradleProperty("externalVersion").orElse("1.0.0").get()
+                kotlinMultiplatform.apply {
+                    sourceSets.commonMain.dependencies {
+                        api(project(":libA"))
+                        api("org.example:external:$externalVersion")
+                    }
+                }
+            }
+
+            val rootPomTask = ":generatePomFileForKotlinMultiplatformPublication"
+            fun assertRootPomDependencies(expectedVersions: Map<String, String>) {
+                val pom = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+                    .parse(projectPath.resolve("build/publications/kotlinMultiplatform/pom-default.xml").toFile())
+                val dependencies = pom.getElementsByTagName("dependency")
+                val actualVersions = (0 until dependencies.length).associate { index ->
+                    val dependency = dependencies.item(index) as Element
+                    fun childText(name: String) = dependency.getElementsByTagName(name).item(0).textContent
+                    childText("artifactId") to childText("version")
+                }
+                // kotlin-stdlib is also present in the POM, it is not relevant for this test
+                assertEquals(expectedVersions, actualVersions.filterKeys { it in expectedVersions.keys })
+            }
+
+            build(rootPomTask) {
+                assertTasksExecuted(rootPomTask)
+                assertRootPomDependencies(mapOf("libA" to "1.0.0", "external" to "1.0.0"))
+            }
+
+            build(rootPomTask) {
+                // Since Gradle 9.8 GenerateMavenPom participates in up-to-date checks
+                if (gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_9_8)) {
+                    assertTasksUpToDate(rootPomTask)
+                } else {
+                    assertTasksExecuted(rootPomTask)
+                }
+            }
+
+            build(rootPomTask, "-PexternalVersion=2.0.0") {
+                assertTasksExecuted(rootPomTask)
+                assertRootPomDependencies(mapOf("libA" to "1.0.0", "external" to "2.0.0"))
+            }
+
+            build(rootPomTask, "-PexternalVersion=2.0.0", "-PlibAVersion=2.0.0") {
+                assertTasksExecuted(rootPomTask)
+                assertRootPomDependencies(mapOf("libA" to "2.0.0", "external" to "2.0.0"))
             }
         }
     }
@@ -221,3 +300,4 @@ class MppDslPomIT : KGPBaseTest() {
         }
     }
 }
+
