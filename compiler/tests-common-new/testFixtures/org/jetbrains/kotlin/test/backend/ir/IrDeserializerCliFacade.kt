@@ -34,6 +34,7 @@ abstract class IrDeserializerCliFacade<Phase, OutputPipelineArtifact>(
         )
         val output = phase.executePhase(input)
             ?: return processErrorFromCliPhase(configuration, testServices)
+        checkNoPartialLinkageErrors(configuration)
         return DeserializedFromKlibBackendInput(output, klib = inputArtifact.outputFile)
     }
 }

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.test.DebugMode
 import org.jetbrains.kotlin.test.backend.ir.DeserializedFromKlibBackendInput
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
+import org.jetbrains.kotlin.test.backend.ir.checkNoPartialLinkageErrors
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.FORCE_DEBUG_FRIENDLY_COMPILATION
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.GENERATE_DWARF
@@ -109,6 +110,7 @@ class WasmLoweringFacade(
 
         val loweredIr = (WasmIrLinkingPipelinePhase then WasmIrLoweringPipelinePhase).executePhaseIsolatedWithActions(cliInputArtifact)
             ?: return processErrorFromCliPhase(configuration, testServices)
+        checkNoPartialLinkageErrors(loweredIr.configuration)
 
         if (configuration.diagnosticsCollector.hasErrors) {
             return processErrorFromCliPhase(inputArtifact.cliArtifact.configuration, testServices)

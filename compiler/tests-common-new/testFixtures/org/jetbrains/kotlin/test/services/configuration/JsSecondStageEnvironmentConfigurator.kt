@@ -117,7 +117,8 @@ open class JsSecondStageEnvironmentConfigurator(testServices: TestServices) : Js
 
         configuration.filePathsPrefixMap = mapOf(File(".").absolutePath.removeSuffix(".") to "")
 
-        // Enforce PL with the ERROR log level to fail any tests where PL detected any incompatibilities.
+        // Enforce PL with the ERROR log level to fail any tests where PL detected any incompatibilities
+        // (see `checkNoPartialLinkageErrors`).
         configuration.setupPartialLinkageConfig(PartialLinkageConfig(PartialLinkageLogLevel.ERROR))
 
         configuration.keep = module.directives[KEEP]

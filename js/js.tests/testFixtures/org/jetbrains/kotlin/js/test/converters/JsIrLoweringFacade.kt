@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.js.test.utils.jsIrIncrementalDataProvider
 import org.jetbrains.kotlin.js.test.utils.wrapWithModuleEmulationMarkers
 import org.jetbrains.kotlin.test.backend.ir.DeserializedFromKlibBackendInput
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
+import org.jetbrains.kotlin.test.backend.ir.checkNoPartialLinkageErrors
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.frontend.fir.processErrorFromCliPhase
 import org.jetbrains.kotlin.test.checkTestInfrastructure
@@ -82,7 +83,7 @@ class JsIrLoweringFacade(
         module: TestModule,
     ): Pair<CompilerResult, Map<String, ByteArray>?> {
         val configuration = inputArtifact.cliArtifact.configuration
-        return CompilerResult(
+        val compilerResult = CompilerResult(
             configuration.artifactConfigurations.map {
                 val jsExecutableProducer = JsExecutableProducer(
                     artifactConfiguration = it,
@@ -91,7 +92,9 @@ class JsIrLoweringFacade(
                 )
                 jsExecutableProducer.buildExecutable(true).compilationOut
             },
-        ) to testServices.jsIrIncrementalDataProvider.getCacheForModule(module)
+        )
+        checkNoPartialLinkageErrors(configuration)
+        return compilerResult to testServices.jsIrIncrementalDataProvider.getCacheForModule(module)
     }
 
     private fun compileNonIncrementally(inputArtifact: DeserializedFromKlibBackendInput<*>): Pair<CompilerResult, Map<String, ByteArray>?>? {
@@ -104,6 +107,7 @@ class JsIrLoweringFacade(
             ?: testInfraError("JsIrLoweringFacade expects WebLoadedIrPipelineArtifact")
         val loweredIr = JsIrLoweringPipelinePhase.executePhase(cliInputArtifact)
             ?: return processErrorFromCliPhase(inputArtifact.cliArtifact.configuration, testServices)
+        checkNoPartialLinkageErrors(loweredIr.configuration)
 
         val output = JsCodegenPipelinePhase.executePhase(loweredIr)
             ?: return processErrorFromCliPhase(loweredIr.configuration, testServices)

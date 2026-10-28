@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.js.config.outputName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.backend.ir.DeserializedFromKlibBackendInput
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
+import org.jetbrains.kotlin.test.backend.ir.checkNoPartialLinkageErrors
 import org.jetbrains.kotlin.test.frontend.fir.processErrorFromCliPhase
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.TestServices
@@ -83,12 +84,13 @@ class WasmLoweringSingleModuleFacade(testServices: TestServices) :
             configuration.outputName = WasmEnvironmentConfigurator.WASM_BASE_FILE_NAME
         }
 
+        val loweredIr = (WasmIrLinkingPipelinePhase then WasmIrLoweringPipelinePhase).executePhaseIsolatedWithActions(cliInputArtifact)
+            ?: return processErrorFromCliPhase(configuration, testServices)
+        checkNoPartialLinkageErrors(loweredIr.configuration)
+
         val compileResult =
-            (WasmIrLinkingPipelinePhase then
-                    WasmIrLoweringPipelinePhase then
-                    WasmSingleModuleBackendIrGenerationPipelinePhase then
-                    WasmOutputGenerationPipelinePhase)
-                .executePhaseIsolatedWithActions(cliInputArtifact)?.result?.single()
+            (WasmSingleModuleBackendIrGenerationPipelinePhase then WasmOutputGenerationPipelinePhase)
+                .executePhaseIsolatedWithActions(loweredIr)?.result?.single()
                 ?: return processErrorFromCliPhase(configuration, testServices)
 
         return WasmCompilationSetsBinaryArtifact(

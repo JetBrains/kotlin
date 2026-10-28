@@ -200,7 +200,8 @@ open class WasmSecondStageEnvironmentConfigurator(
             FORCE_DEBUG_FRIENDLY_COMPILATION in registeredDirectives
         )
 
-        // Enforce PL with the ERROR log level to fail any tests where PL detected any incompatibilities.
+        // Enforce PL with the ERROR log level to fail any tests where PL detected any incompatibilities
+        // (see `checkNoPartialLinkageErrors`).
         configuration.setupPartialLinkageConfig(PartialLinkageConfig(PartialLinkageLogLevel.ERROR))
     }
 }

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.js.config.libraries
 import org.jetbrains.kotlin.js.test.converters.JsUnifiedIrDeserializerAndLoweringFacade
 import org.jetbrains.kotlin.js.test.utils.JsIrIncrementalDataProvider
 import org.jetbrains.kotlin.test.NonGroupingStageOutput
+import org.jetbrains.kotlin.test.backend.ir.PartialLinkageErrorsException
 import org.jetbrains.kotlin.test.checkTestInfrastructure
 import org.jetbrains.kotlin.test.diagnostics.DiagnosticsCollectorStub
 import org.jetbrains.kotlin.test.model.ArtifactKinds
@@ -94,8 +95,9 @@ class JsInProcessSecondStageFacade {
                     JsUnifiedIrDeserializerAndLoweringFacade(services).transform(launcherModule, launcherKlib)
                 }
             } catch (e: Throwable) {
-                // The partial linkage engine reports to the diagnostics collector, which has not been flushed yet.
-                CheckDiagnosticCollector.reportToMessageCollector(configuration)
+                // The compiler reports to the diagnostics collector, which has not been flushed yet. The partial linkage issues
+                // are already listed in the message of `PartialLinkageErrorsException`, so don't report them once again.
+                if (e !is PartialLinkageErrorsException) CheckDiagnosticCollector.reportToMessageCollector(configuration)
                 // Warnings are recorded as well (see `ErrorRecordingMessageCollector`), so the recorded messages are rarely
                 // empty, and they may include warnings unrelated to the failure.
                 if (errorRecorder.messages.isEmpty()) throw e
@@ -133,7 +135,8 @@ class JsInProcessSecondStageFacade {
             val messages = mutableListOf<String>()
 
             override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
-                // The partial linkage engine reports its issues as warnings, and then fails the compilation with an exception.
+                // The partial linkage engine reports its issues as warnings, and then the facade fails the compilation with an
+                // exception (see `checkNoPartialLinkageErrors`).
                 if (severity.isError || severity.isWarning) messages += listOfNotNull(location?.path, message).joinToString(": ")
                 delegate.report(severity, message, location)
             }
