@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
@@ -381,10 +382,12 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
 
     private fun createFunctionType(typeRef: FirFunctionTypeRef): FirTypeResolutionResult {
         val parameters =
-            typeRef.contextParameterTypeRefs.map { it.coneType } +
-                    listOfNotNull(typeRef.receiverTypeRef?.coneType) +
-                    typeRef.parameters.map { it.returnTypeRef.coneType.withParameterNameAnnotation(it) } +
-                    listOf(typeRef.returnTypeRef.coneType)
+            buildList {
+                typeRef.contextParameterTypeRefs.mapTo(this) { it.coneType }
+                addIfNotNull(typeRef.receiverTypeRef?.coneType)
+                typeRef.parameters.mapTo(this) { it.returnTypeRef.coneType.withParameterNameAnnotation(it) }
+                add(typeRef.returnTypeRef.coneType)
+            }
         val functionKinds = session.functionTypeService.extractAllSpecialKindsForFunctionTypeRef(typeRef)
         var diagnostic: ConeDiagnostic? = null
         val kind = when (functionKinds.size) {
