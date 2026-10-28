@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirDefaultStarImportingScope
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.processAllClassifiers
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildUserTypeRef
@@ -173,7 +172,6 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         return resolveLocalClassChain(outermostClassLikeSymbol, 0)
     }
 
-    @OptIn(SymbolInternals::class)
     private fun FirQualifierResolver.resolveEnumEntrySymbol(
         classId: ClassId,
         remainingQualifier: List<FirQualifierPart>,
@@ -236,7 +234,6 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
      *
      * Thus, the visibility error should be handled further by just looking into TypeResolutionResult again
      */
-    @OptIn(SymbolInternals::class)
     private fun resolveUserType(
         typeRef: FirUserTypeRef,
         result: TypeResolutionResult,
