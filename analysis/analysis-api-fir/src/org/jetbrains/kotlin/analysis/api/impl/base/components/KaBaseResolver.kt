@@ -387,18 +387,6 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaIn
     }
 
     @Deprecated(
-        "Use `KtSimpleNameExpression` instead",
-        replaceWith = ReplaceWith(
-            "(element as? KtSimpleNameExpression)?.contextSensitiveResolutionStatus is KaContextSensitiveResolutionStatus.Used",
-            "org.jetbrains.kotlin.analysis.api.resolution.KaContextSensitiveResolutionStatus",
-        )
-    )
-    final override fun usesContextSensitiveResolution(reference: KtReference): Boolean =
-        withPsiValidityAssertion(reference.element) {
-            (reference.element as? KtSimpleNameExpression)?.let { contextSensitiveResolutionStatus(it) } is KaContextSensitiveResolutionStatus.Used
-        }
-
-    @Deprecated(
         message = "Use `KtSimpleNameExpression` instead",
         replaceWith = ReplaceWith("(element as? KtSimpleNameExpression)?.isImplicitReferenceToCompanion() == true"),
     )
