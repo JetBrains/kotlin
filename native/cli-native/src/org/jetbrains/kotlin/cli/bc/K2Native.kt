@@ -287,8 +287,10 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             val spawnedConfiguration = CompilerConfiguration.create()
 
             val spawnedPerfManager = PerformanceManagerImpl.createChildIfNeeded(perfManager, start = true)
+            @OptIn(MessageCollectorAccess::class) // read access
+            val messageCollector = configuration.messageCollector
             @OptIn(MessageCollectorAccess::class) // write access
-            spawnedConfiguration.messageCollector = configuration.messageCollector
+            spawnedConfiguration.messageCollector = messageCollector
             spawnedConfiguration.perfManager = spawnedPerfManager
             spawnedConfiguration.setupCommonArguments(spawnedArguments, this@K2Native::createMetadataVersion)
             spawnedConfiguration.setupFromArguments(spawnedArguments, rootDisposable)
@@ -307,7 +309,13 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             }
             spawnedConfiguration.setupConfiguration()
 
-            if (CheckDiagnosticCollector.checkHasErrorsAndReportToMessageCollector(spawnedConfiguration)) {
+            // The spawned compilations may run in parallel in their own threads (see CacheBuilder),
+            // so the reporting to the message collector, which has no thread-safety contract,
+            // is serialized on the collector instance.
+            val hasErrors = synchronized(messageCollector) {
+                CheckDiagnosticCollector.checkHasErrorsAndReportToMessageCollector(spawnedConfiguration)
+            }
+            if (hasErrors) {
                 // Some errors during KotlinCoreEnvironment setup.
                 throw CompilationErrorException()
             }
@@ -324,8 +332,17 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             } finally {
                 // The spawned compilation has its own diagnostics collector, which nothing else reports.
                 // Do it here, otherwise the diagnostics of e.g. the partial linkage engine would be lost (KT-78253).
-                CheckDiagnosticCollector.reportToMessageCollector(spawnedConfiguration)
-                perfManager?.addOtherUnitStats(spawnedPerfManager?.unitStats)
+                // Serialized on the message collector for the same reason as in the setup above.
+                synchronized(messageCollector) {
+                    CheckDiagnosticCollector.reportToMessageCollector(spawnedConfiguration)
+                }
+                if (perfManager != null) {
+                    // The spawned compilations may run in parallel in their own threads (see the monolithic cache
+                    // builds in `CacheBuilder`).
+                    synchronized(perfManager) {
+                        perfManager.addOtherUnitStats(spawnedPerfManager?.unitStats)
+                    }
+                }
             }
         }
 
