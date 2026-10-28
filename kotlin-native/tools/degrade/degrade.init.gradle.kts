@@ -34,33 +34,27 @@ private class Degrade(val rootProject: Project) {
             setupTaskLogs(allTasks)
         }
 
-        rootProject.gradle.addListener(object : BuildAdapter(), TaskExecutionListener {
-            val allScripts = mutableListOf<String>()
-            val failedScripts = mutableListOf<String>()
-
-            override fun beforeExecute(task: Task) {}
-
-            @Synchronized
-            override fun afterExecute(task: Task, state: TaskState) {
-                val log = taskToLog[task] ?: return
-                val script = generateScriptForTask(task, log) ?: return
-                allScripts += script
-                if (state.failure != null) {
-                    failedScripts += script
-                }
-            }
-
-            @Synchronized
+        rootProject.gradle.addListener(object : BuildAdapter() {
             override fun buildFinished(result: BuildResult) {
-                try {
-                    generateAggregateScript("rerun-all.sh", allScripts)
-                    generateAggregateScript("rerun-failed.sh", failedScripts)
-                } finally {
-                    failedScripts.clear()
-                    allScripts.clear()
-                }
+                generateScripts()
             }
         })
+    }
+
+    private fun generateScripts() {
+        val allScripts = mutableListOf<String>()
+        val failedScripts = mutableListOf<String>()
+
+        taskToLog.forEach { (task, log) ->
+            val script = generateScriptForTask(task, log) ?: return@forEach
+            allScripts += script
+            if (task.state.failure != null) {
+                failedScripts += script
+            }
+        }
+
+        generateAggregateScript("rerun-all.sh", allScripts)
+        generateAggregateScript("rerun-failed.sh", failedScripts)
     }
 
     private fun generateAggregateScript(name: String, scripts: List<String>) = generateScript(name) {
