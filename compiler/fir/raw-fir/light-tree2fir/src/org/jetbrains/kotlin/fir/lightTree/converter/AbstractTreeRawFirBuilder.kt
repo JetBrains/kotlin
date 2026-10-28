@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.fir.lightTree.converter
 
+import org.jetbrains.kotlin.BasicElementTypeId
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.NO_ID
+import org.jetbrains.kotlin.SyntaxId
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.isExpression
@@ -14,9 +17,8 @@ import org.jetbrains.kotlin.fir.builder.Context
 import org.jetbrains.kotlin.fir.declarations.FirReplSnippet
 import org.jetbrains.kotlin.fir.declarations.builder.FirReplSnippetBuilder
 import org.jetbrains.kotlin.fir.expressions.builder.FirBlockBuilder
-import org.jetbrains.kotlin.kmp.lexer.KtTokens
-import org.jetbrains.kotlin.kmp.parser.KtNodeTypes
-import org.jetbrains.kotlin.kmp.utils.SyntaxElementTypesWithIds
+import org.jetbrains.kotlin.KtNodeTypeId
+import org.jetbrains.kotlin.KtTokenId
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
@@ -30,40 +32,40 @@ abstract class AbstractTreeRawFirBuilder<Node : Any, Type : Any>(
 
     abstract fun Node.getParent(): Node?
 
-    private fun Node.getModifierList(): Node? = getChildNodeByTokenId(KtNodeTypes.MODIFIER_LIST_ID)
+    private fun Node.getModifierList(): Node? = getChildNodeByTokenId(KtNodeTypeId.MODIFIER_LIST)
 
-    private fun Node.getVarargKeyword(): Node? = getChildNodeByTokenId(KtTokens.VARARG_MODIFIER_ID)
+    private fun Node.getVarargKeyword(): Node? = getChildNodeByTokenId(KtTokenId.VARARG_MODIFIER)
 
     override val Node.isVararg: Boolean
         get() = getModifierList()?.getVarargKeyword() != null
 
-    override fun Node.isArrayAccessExpression(): Boolean = toTokenId() == KtNodeTypes.ARRAY_ACCESS_EXPRESSION_ID
+    override fun Node.isArrayAccessExpression(): Boolean = toTokenId() == KtNodeTypeId.ARRAY_ACCESS_EXPRESSION
 
-    override fun Node.isSafeAccessExpression(): Boolean = toTokenId() == KtNodeTypes.SAFE_ACCESS_EXPRESSION_ID
+    override fun Node.isSafeAccessExpression(): Boolean = toTokenId() == KtNodeTypeId.SAFE_ACCESS_EXPRESSION
 
     override fun Node.isStringInterpolationPrefixOrQuote(): Boolean = when (toTokenId()) {
-        KtNodeTypes.STRING_INTERPOLATION_PREFIX_ID, KtTokens.OPEN_QUOTE_ID, KtTokens.CLOSING_QUOTE_ID -> true
+        KtNodeTypeId.STRING_INTERPOLATION_PREFIX, KtTokenId.OPEN_QUOTE, KtTokenId.CLOSING_QUOTE -> true
         else -> false
     }
 
     override fun Node.isLiteralStringTemplateEntry(): Boolean =
-        toTokenId() == KtNodeTypes.LITERAL_STRING_TEMPLATE_ENTRY_ID
+        toTokenId() == KtNodeTypeId.LITERAL_STRING_TEMPLATE_ENTRY
 
     override fun Node.isEscapeStringTemplateEntry(): Boolean =
-        toTokenId() == KtNodeTypes.ESCAPE_STRING_TEMPLATE_ENTRY_ID
+        toTokenId() == KtNodeTypeId.ESCAPE_STRING_TEMPLATE_ENTRY
 
     override fun Node.isShortOrLongStringTemplateEntry(): Boolean = when (toTokenId()) {
-        KtNodeTypes.SHORT_STRING_TEMPLATE_ENTRY_ID, KtNodeTypes.LONG_STRING_TEMPLATE_ENTRY_ID -> true
+        KtNodeTypeId.SHORT_STRING_TEMPLATE_ENTRY, KtNodeTypeId.LONG_STRING_TEMPLATE_ENTRY -> true
         else -> false
     }
 
     override fun Type.toConstantValueKind(): ConstantValueKind? {
         return when (typeToTokenId()) {
-            KtNodeTypes.INTEGER_CONSTANT_ID -> ConstantValueKind.Int
-            KtNodeTypes.FLOAT_CONSTANT_ID -> ConstantValueKind.Float
-            KtNodeTypes.BOOLEAN_CONSTANT_ID -> ConstantValueKind.Boolean
-            KtNodeTypes.CHARACTER_CONSTANT_ID -> ConstantValueKind.Char
-            KtNodeTypes.NULL_ID -> ConstantValueKind.Null
+            KtNodeTypeId.INTEGER_CONSTANT -> ConstantValueKind.Int
+            KtNodeTypeId.FLOAT_CONSTANT -> ConstantValueKind.Float
+            KtNodeTypeId.BOOLEAN_CONSTANT -> ConstantValueKind.Boolean
+            KtNodeTypeId.CHARACTER_CONSTANT -> ConstantValueKind.Char
+            KtNodeTypeId.NULL -> ConstantValueKind.Null
             else -> null
         }
     }
@@ -78,9 +80,9 @@ abstract class AbstractTreeRawFirBuilder<Node : Any, Type : Any>(
         while (true) {
             val tokenId = unwrapped?.toTokenId()
             unwrapped = when (tokenId) {
-                KtNodeTypes.PARENTHESIZED_ID -> unwrapped.getExpressionInParentheses()
-                KtNodeTypes.LABELED_EXPRESSION_ID -> unwrapped.getLabeledExpression()
-                KtNodeTypes.ANNOTATED_EXPRESSION_ID -> unwrapped.getAnnotatedExpression()
+                KtNodeTypeId.PARENTHESIZED -> unwrapped.getExpressionInParentheses()
+                KtNodeTypeId.LABELED_EXPRESSION -> unwrapped.getLabeledExpression()
+                KtNodeTypeId.ANNOTATED_EXPRESSION -> unwrapped.getAnnotatedExpression()
                 else -> return unwrapped
             }
         }
@@ -113,11 +115,11 @@ abstract class AbstractTreeRawFirBuilder<Node : Any, Type : Any>(
         return container
     }
 
-    fun Node.toTokenId(): Int = elementType.typeToTokenId()
+    fun Node.toTokenId(): SyntaxId = elementType.typeToTokenId()
 
-    abstract fun Type.typeToTokenId(): Int
+    abstract fun Type.typeToTokenId(): SyntaxId
 
-    fun Node.getOperationTokenId(): Int {
+    fun Node.getOperationTokenId(): SyntaxId {
         return getChildren().first().toTokenId()
     }
 
@@ -125,7 +127,7 @@ abstract class AbstractTreeRawFirBuilder<Node : Any, Type : Any>(
 
     fun Node.getFirstChildExpressionUnwrapped(): Node? {
         val expression = getFirstChildExpression() ?: return null
-        return if (expression.toTokenId() == KtNodeTypes.PARENTHESIZED_ID) {
+        return if (expression.toTokenId() == KtNodeTypeId.PARENTHESIZED) {
             expression.getFirstChildExpressionUnwrapped()
         } else {
             expression
@@ -149,12 +151,12 @@ abstract class AbstractTreeRawFirBuilder<Node : Any, Type : Any>(
     override fun Node.getLabeledExpression(): Node? = getLastChildExpression()
 
     override fun Node.getLabelName(): String? {
-        if (toTokenId() == KtNodeTypes.FUNCTION_ID) {
+        if (toTokenId() == KtNodeTypeId.FUNCTION) {
             return getParent()?.getLabelName()
         }
         this.forEachChildren {
             when (it.toTokenId()) {
-                KtNodeTypes.LABEL_QUALIFIER_ID -> return it.asText.replaceFirst("@", "").let(::unquoteIdentifier)
+                KtNodeTypeId.LABEL_QUALIFIER -> return it.asText.replaceFirst("@", "").let(::unquoteIdentifier)
             }
         }
         return null
@@ -175,11 +177,11 @@ abstract class AbstractTreeRawFirBuilder<Node : Any, Type : Any>(
     override val Node.arrayExpression: Node?
         get() = getFirstChildExpression()
 
-    fun Node.getChildNodeByTokenId(tokenId: Int): Node? {
+    fun Node.getChildNodeByTokenId(tokenId: SyntaxId): Node? {
         return getChildrenAsArray().firstOrNull { it?.toTokenId() == tokenId }
     }
 
-    fun Node?.getChildNodesByTokenId(tokenId: Int): List<Node> {
+    fun Node?.getChildNodesByTokenId(tokenId: SyntaxId): List<Node> {
         return this?.forEachChildrenReturnList { node, container ->
             when (node.toTokenId()) {
                 tokenId -> container += node
@@ -199,9 +201,11 @@ abstract class AbstractTreeRawFirBuilder<Node : Any, Type : Any>(
     }
 
     companion object {
-        val ignoredTokensId: HashSet<Int> = hashSetOf(
-            KtTokens.EOL_COMMENT_ID, KtTokens.BLOCK_COMMENT_ID, KtTokens.DOC_COMMENT_ID, KtTokens.SHEBANG_COMMENT_ID,
-            KtTokens.WHITE_SPACE_ID, KtTokens.SEMICOLON_ID, SyntaxElementTypesWithIds.NO_ID,
+        val ignoredTokensId: HashSet<SyntaxId> = hashSetOf(
+            KtTokenId.EOL_COMMENT, KtTokenId.BLOCK_COMMENT, KtTokenId.DOC_COMMENT, KtTokenId.SHEBANG_COMMENT,
+            BasicElementTypeId.WHITE_SPACE, BasicElementTypeId.BAD_CHARACTER, BasicElementTypeId.ERROR_ELEMENT,
+            KtTokenId.SEMICOLON,
+            NO_ID, // TODO: preserved for safety but should be removed in future because `NO_ID` should never occur during kotlin files parsing
         )
     }
 }

@@ -178,6 +178,7 @@ include(
     ":compiler:psi:psi-utils",
     ":compiler:psi:psi-frontend-utils",
     ":compiler:psi:parser",
+    ":compiler:syntax.common",
     ":compiler:multiplatform-parsing",
     ":compiler:frontend",
     ":compiler:frontend.common",

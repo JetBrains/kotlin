@@ -1102,7 +1102,7 @@ companion object {
           // fall through
           110 -> break
           2 -> {
-            return KtTokens.WHITE_SPACE
+            return BasicElementTypes.WHITE_SPACE
             }
           // fall through
           111 -> break
