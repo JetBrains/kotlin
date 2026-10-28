@@ -62,6 +62,7 @@ import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
 import org.jetbrains.kotlin.cli.jvm.modules.JavaModuleGraph
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
+import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.library.KlibConstants.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
@@ -233,11 +234,13 @@ object StandaloneProjectFactory {
         //
         // Note that the registered `JavaModuleResolver` will still be the `KaBaseJavaModuleResolver` registered by the Analysis API engine,
         // not `CliJavaModuleResolver`.
+        // The file finder factory is registered below, once the index is built; the resolver only looks classes up afterwards.
+        val classpathFinder by lazy { (VirtualFileFinderFactory.getInstance(project) as CliVirtualFileFinderFactory).create(JvmClasspath.ProjectLibraries()) }
         val delegateJavaModuleResolver = CliJavaModuleResolver(
             javaModuleGraph,
             emptyList(),
             javaModuleFinder.systemModules.toList(),
-            project,
+            findSourceOrBinaryClassFile = { classpathFinder.findSourceOrBinaryClassFile(it) },
         )
         project.registerService(
             KotlinJavaModuleAccessibilityChecker::class.java,
