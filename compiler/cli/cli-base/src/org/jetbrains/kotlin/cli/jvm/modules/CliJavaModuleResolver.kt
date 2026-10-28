@@ -23,7 +23,9 @@ import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileHandle
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -40,6 +42,17 @@ class CliJavaModuleResolver(
     init {
         assert(userModules.count(JavaModule::isSourceModule) <= 1) {
             "Modules computed by ClasspathRootsResolver cannot have more than one source module: $userModules"
+        }
+        // `findJavaModule(rootId)` takes the first module owning a root, which is only correct if the modules sharing a root have
+        // the same name: one module which is both a system and a user module.
+        val systemModuleNames = systemModules.flatMap { module -> module.moduleRoots.map { root -> root.id to module.name } }.toMap()
+        for (module in userModules) {
+            for (root in module.moduleRoots) {
+                val systemModuleName = systemModuleNames[root.id] ?: continue
+                check(systemModuleName == module.name) {
+                    "The classpath root ${root.file} belongs to the system module $systemModuleName and the user module ${module.name}"
+                }
+            }
         }
     }
 
@@ -68,12 +81,26 @@ class CliJavaModuleResolver(
     private operator fun JavaModule.contains(file: VirtualFile): Boolean =
         moduleRoots.any { (val root = file, val isBinary) -> isBinary && VfsUtilCore.isAncestor(root, file, false) }
 
+    /** The module owning the binary classpath root [rootId], looked up in the user modules first. */
+    private fun findJavaModule(rootId: JvmClasspathRootId): JavaModule? =
+        userModules.firstOrNull { module -> rootId in module } ?: systemModules.firstOrNull { module -> rootId in module }
+
+    private operator fun JavaModule.contains(rootId: JvmClasspathRootId): Boolean =
+        moduleRoots.any { root -> root.isBinary && root.id == rootId }
+
     override fun checkAccessibility(
         fileFromOurModule: VirtualFile?, referencedFile: VirtualFile, referencedPackage: FqName?
-    ): JavaModuleResolver.AccessError? {
-        val ourModule = fileFromOurModule?.let(this::findJavaModule)
-        val theirModule = this.findJavaModule(referencedFile)
+    ): JavaModuleResolver.AccessError? =
+        checkAccessibility(fileFromOurModule?.let(this::findJavaModule), findJavaModule(referencedFile), referencedPackage)
 
+    override fun checkAccessibility(
+        fileFromOurModule: VirtualFile?, referencedClassFile: BinaryClassFileHandle, referencedPackage: FqName?,
+    ): JavaModuleResolver.AccessError? =
+        checkAccessibility(fileFromOurModule?.let(this::findJavaModule), findJavaModule(referencedClassFile.rootId), referencedPackage)
+
+    private fun checkAccessibility(
+        ourModule: JavaModule?, theirModule: JavaModule?, referencedPackage: FqName?,
+    ): JavaModuleResolver.AccessError? {
         if (ourModule?.name == theirModule?.name) return null
 
         if (theirModule == null) {
