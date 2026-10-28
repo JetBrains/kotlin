@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.IncrementalCompilationComponentsWithCustomScope
 import org.jetbrains.kotlin.cli.jvm.compiler.prepareIncrementalCompilationContextAndLibrariesClasspath
 import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
+import org.jetbrains.kotlin.cli.jvm.index.IndexedClassFile
 import org.jetbrains.kotlin.cli.jvm.index.JavaFileExtensions
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndex
@@ -370,8 +371,16 @@ class IncrementalCompilationCustomScopeTest {
         override val indexedRoots: Sequence<JavaRoot> = emptySequence(),
     ) : JvmDependenciesIndex {
 
-        override fun findClassVirtualFiles(classId: ClassId, acceptedExtensions: JavaFileExtensions): Collection<VirtualFile> =
+        override fun findClassFiles(classId: ClassId, acceptedExtensions: JavaFileExtensions): Collection<IndexedClassFile> =
             classFiles.filter { it.nameWithoutExtension == classId.relativeClassName.asString() }
+                .map { IndexedClassFile(it, rootOf(it)) }
+
+        /** The listed root containing the file, or else the root of its file system, as `JvmDependenciesIndexImpl` would attribute it. */
+        private fun rootOf(file: VirtualFile): JavaRoot {
+            val ancestors = generateSequence(file) { it.parent }
+            return ancestors.firstNotNullOfOrNull { ancestor -> indexedRoots.firstOrNull { it.file == ancestor } }
+                ?: JavaRoot(ancestors.last(), JavaRoot.RootType.BINARY)
+        }
 
         override fun traverseClassVirtualFilesInPackage(
             packageFqName: FqName,

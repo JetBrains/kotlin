@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.load.java.structure.impl.classFiles
 
 import org.jetbrains.kotlin.jvm.environment.JvmClasspath
+import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import java.nio.file.Path
 
 /**
  * The binary classpath of one compilation.
@@ -44,5 +46,24 @@ interface BinaryClassFileIndex {
 interface BinaryClassFileHandle {
     val nameWithoutExtension: String
 
+    /** `class`, `sig`, ... */
+    val extension: String
+
+    /** The classpath root this file was found in, as the index assigned it: not inferred from the file's path. */
+    val rootId: JvmClasspathRootId
+
+    /**
+     * The library [rootId] belongs to, as a local path: the `.jar` file, the directory, the JDK home for a `jrt://`
+     * root, or `<jdk>/lib/ct.sym` for a `ct.sym` root. Selects the library session of a Kotlin class (`LibraryPathFilter`).
+     * `null` for roots which have no local path (e.g. the in-memory output of a build system).
+     */
+    val rootPath: Path?
+
+    /** The path rendered in diagnostics and messages, e.g. `/lib/a.jar!/p/A.class`. */
+    val pathForDiagnostics: String
+
     fun readBytes(): ByteArray
+
+    /** The file named [nameWithExtension] in the same directory and the same root, if it exists. */
+    fun sibling(nameWithExtension: String): BinaryClassFileHandle?
 }

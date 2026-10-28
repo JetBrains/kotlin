@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.standalone.fir.declarations
 
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.cli.jvm.index.IndexedClassFile
 import org.jetbrains.kotlin.cli.jvm.index.JavaFileExtension
 import org.jetbrains.kotlin.cli.jvm.index.JavaFileExtensions
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
@@ -22,7 +23,7 @@ import java.util.EnumSet
  * In contrast to the compiler implementation, this implementation caches the virtual files of each class for each package. While Standalone
  * workloads benefit from this optimization, this is not true for compiler workloads. So the optimization is limited to Standalone.
  *
- * The Standalone JVM dependencies index always returns all possible virtual files from [findClassVirtualFiles], as Standalone does not
+ * The Standalone JVM dependencies index always returns all possible virtual files from [findClassFiles], as Standalone does not
  * necessarily operate under a single-module view. Since class virtual files are cached, the performance impact from finding all files
  * instead of only the first is negligible.
  */
@@ -39,10 +40,10 @@ internal class KotlinStandaloneJvmDependenciesIndex(roots: List<JavaRoot>) : Jvm
      * The name of a class virtual file cannot contain `.` characters because it is not a valid file system character. Because of this,
      * nested classes have `$` characters instead of `.` as a separator in their file name. For example, `A$B.class` for a class `A.B`.
      *
-     * [ClassVirtualFiles] nevertheless stores dot-separated relative class names. This is a good decision for the performance of the happy
+     * [ClassFilesByName] nevertheless stores dot-separated relative class names. This is a good decision for the performance of the happy
      * path, because most relative class name strings already exist in their dot-separated forms. It would be a waste to convert `.` to `$`
      * characters each time class virtual files are requested for a [ClassId]. With dot-separated names, we only have to replace `$` with
-     * `.` at cache insertion time (in [computeClassVirtualFiles]).
+     * `.` at cache insertion time (in [computeClassFilesInPackage]).
      *
      * However, there are edge cases with `$` characters which warrant some consideration.
      *
@@ -72,29 +73,29 @@ internal class KotlinStandaloneJvmDependenciesIndex(roots: List<JavaRoot>) : Jvm
      * almost never need to fall back to the `$` -> `.` replacement. An exception here is the compiler facility: It calls into the backend
      * which has many reasons to load local classes from binaries.
      */
-    private typealias ClassVirtualFiles = Map<String, List<VirtualFile>>
+    private typealias ClassFilesByName = Map<String, List<IndexedClassFile>>
 
     /**
-     * For each package [FqName], caches the [ClassVirtualFiles] for the package.
+     * For each package [FqName], caches the [ClassFilesByName] for the package.
      *
-     * The cache is built on demand for each package. However, each [ClassVirtualFiles] map is built exhaustively from all roots and can be
+     * The cache is built on demand for each package. However, each [ClassFilesByName] map is built exhaustively from all roots and can be
      * used reliably.
      *
      * In the vast majority of use cases, the cache will function as if it were unlimited. The maximum size has been chosen to limit the
      * memory footprint in pathological cases.
      */
-    private val classVirtualFilesByPackage =
+    private val classFilesByPackage =
         Caffeine.newBuilder()
             .maximumSize(CACHE_SIZE)
-            .build<FqName, ClassVirtualFiles>()
+            .build<FqName, ClassFilesByName>()
 
-    override fun findClassVirtualFiles(
+    override fun findClassFiles(
         classId: ClassId,
         acceptedExtensions: JavaFileExtensions,
-    ): Collection<VirtualFile> {
-        val classVirtualFiles = getClassVirtualFiles(classId.packageFqName)
+    ): Collection<IndexedClassFile> {
+        val classFilesByName = getClassFilesInPackage(classId.packageFqName)
 
-        val files = getVirtualFilesForClass(classId, classVirtualFiles)
+        val files = getClassFiles(classId, classFilesByName)
         if (files.isEmpty()) return emptyList()
 
         // We don't need to filter the files if all extensions are requested.
@@ -102,28 +103,28 @@ internal class KotlinStandaloneJvmDependenciesIndex(roots: List<JavaRoot>) : Jvm
             return files
         }
 
-        return files.filter { file ->
-            val extension = file.extension ?: return@filter false
+        return files.filter { classFile ->
+            val extension = classFile.file.extension ?: return@filter false
             extension in acceptedExtensions
         }
     }
 
     /**
-     * See [classVirtualFilesByPackage] for an explanation of the handling of relative class names.
+     * See [classFilesByPackage] for an explanation of the handling of relative class names.
      */
-    private fun getVirtualFilesForClass(classId: ClassId, classVirtualFiles: ClassVirtualFiles): List<VirtualFile> {
+    private fun getClassFiles(classId: ClassId, classFilesByName: ClassFilesByName): List<IndexedClassFile> {
         // Happy path: We can find the dot-separated relative class name in the map of class virtual files.
         val relativeClassName = classId.relativeClassName.asString()
-        classVirtualFiles[relativeClassName]?.let { return it }
+        classFilesByName[relativeClassName]?.let { return it }
 
         if (!relativeClassName.contains('$')) {
             return emptyList()
         }
 
-        // We replace *all* `$` characters with `.` characters even when they are part of the class name. See `ClassVirtualFiles` for a
+        // We replace *all* `$` characters with `.` characters even when they are part of the class name. See `ClassFilesByName` for a
         // deeper explanation.
         val relativeClassNameWithDots = relativeClassName.replace('$', '.')
-        return classVirtualFiles[relativeClassNameWithDots] ?: emptyList()
+        return classFilesByName[relativeClassNameWithDots] ?: emptyList()
     }
 
     override fun traverseClassVirtualFilesInPackage(
@@ -131,30 +132,30 @@ internal class KotlinStandaloneJvmDependenciesIndex(roots: List<JavaRoot>) : Jvm
         acceptedExtensions: JavaFileExtensions,
         continueSearch: (VirtualFile) -> Boolean,
     ) {
-        getClassVirtualFiles(packageFqName).forEach { [_, files] ->
-            files.forEach { file ->
-                val extension = file.extension
+        getClassFilesInPackage(packageFqName).forEach { [_, files] ->
+            files.forEach { classFile ->
+                val extension = classFile.file.extension
                 if (extension != null && extension in acceptedExtensions) {
-                    val shouldContinueSearch = continueSearch(file)
+                    val shouldContinueSearch = continueSearch(classFile.file)
                     if (!shouldContinueSearch) return
                 }
             }
         }
     }
 
-    private fun getClassVirtualFiles(packageFqName: FqName): ClassVirtualFiles {
-        val classVirtualFiles = classVirtualFilesByPackage.get(packageFqName, ::computeClassVirtualFiles)
+    private fun getClassFilesInPackage(packageFqName: FqName): ClassFilesByName {
+        val classFilesByName = classFilesByPackage.get(packageFqName, ::computeClassFilesInPackage)
 
-        requireNotNull(classVirtualFiles) { "The map of class virtual files should always be non-null." }
-        return classVirtualFiles
+        requireNotNull(classFilesByName) { "The map of class files should always be non-null." }
+        return classFilesByName
     }
 
-    private fun computeClassVirtualFiles(packageFqName: FqName): ClassVirtualFiles {
-        val result = HashMap<String, SmartList<VirtualFile>>()
-        traverseVirtualFilesInPackage(packageFqName, ALL_ROOT_TYPES) { virtualFile, _ ->
+    private fun computeClassFilesInPackage(packageFqName: FqName): ClassFilesByName {
+        val result = HashMap<String, SmartList<IndexedClassFile>>()
+        traverseFilesInPackage(packageFqName, ALL_ROOT_TYPES) { virtualFile, root ->
             if (!virtualFile.isDirectory && virtualFile.extension in CACHED_EXTENSIONS) {
                 val relativeClassName = virtualFile.nameWithoutExtension.replace('$', '.')
-                result.getOrPut(relativeClassName, ::SmartList).add(virtualFile)
+                result.getOrPut(relativeClassName, ::SmartList).add(IndexedClassFile(virtualFile, root))
             }
             true // continue
         }

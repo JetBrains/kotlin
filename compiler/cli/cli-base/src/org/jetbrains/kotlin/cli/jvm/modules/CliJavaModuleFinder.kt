@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.resolve.jvm.KotlinCliJavaFileManager
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModule
@@ -144,14 +145,16 @@ class CliJavaModuleFinder(
     }
 
     private fun createModuleFromSignature(moduleInfo: JavaModuleInfo): List<JavaModule.Root> {
-        return listOf(createModuleFromSignature(!isCompilationJDK12OrLater, isCompilationJDK12OrLater, moduleInfo))
+        return listOfNotNull(createModuleFromSignature(!isCompilationJDK12OrLater, isCompilationJDK12OrLater, moduleInfo))
     }
 
     private fun createModuleFromSignature(
         filterPackages: Boolean,
         filterModules: Boolean,
         moduleInfo: JavaModuleInfo
-    ): JavaModule.Root {
+    ): JavaModule.Root? {
+        // The missing `ct.sym` has been reported already.
+        val ctSymFile = ctSymFile ?: return null
         val packageParts =
             if (!filterPackages) emptyMap()
             else hashMapOf<String, Boolean>().also { parts ->
@@ -172,6 +175,9 @@ class CliJavaModuleFinder(
             else
                 listFoldersForRelease
 
+        // Every ct.sym module root reports the same path (`.../ct.sym!//`), so their identity cannot come from the path.
+        val rootId = JvmClasspathRootId("${ctSymFile.path}${URLUtil.JAR_SEPARATOR}$jdkRelease/${moduleInfo.moduleName}")
+
         return JavaModule.Root(
             CtSymDirectoryContainer(
                 ctSymRootFolder ?: ctSymFile,
@@ -182,7 +188,8 @@ class CliJavaModuleFinder(
                 skipPackageCheck = !filterPackages
             ),
             isBinary = true,
-            isBinarySignature = true
+            isBinarySignature = true,
+            id = rootId,
         )
     }
 
@@ -192,7 +199,8 @@ class CliJavaModuleFinder(
         !fileName.contains("-") && fileName.contains(codeFor(release)) // skip `*-modules`
 
 
-    val nonModuleRoot: JavaModule.Root by lazy {
+    /** The root of the JDK classes for `-Xjdk-release` below 9, or `null` if `ct.sym` is missing. */
+    val nonModuleRoot: JavaModule.Root? by lazy {
         createModuleFromSignature(
             filterPackages = false,
             filterModules = false,
