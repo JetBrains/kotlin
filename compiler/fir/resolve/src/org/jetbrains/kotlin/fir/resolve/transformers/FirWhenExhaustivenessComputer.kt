@@ -20,12 +20,14 @@ import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.WhenOnSealedClassExhaustivenessChecker.ConditionChecker.processBranch
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
@@ -35,7 +37,8 @@ object FirWhenExhaustivenessComputer {
         WhenOnBooleanExhaustivenessChecker,
         WhenOnEnumExhaustivenessChecker,
         WhenOnSealedClassExhaustivenessChecker,
-        WhenOnNothingExhaustivenessChecker
+        WhenOnNothingExhaustivenessChecker,
+        WhenOnUnionTypeExhaustivenessChecker,
     )
 
     context(_: SessionHolder)
@@ -113,7 +116,8 @@ object FirWhenExhaustivenessComputer {
             exhaustivenessCheckers.filterTo(this) {
                 it.isApplicable(subjectType)
             }
-            if (isNotEmpty() && subjectType.isMarkedNullable) {
+            // For union types, nullability belongs to the primary component and is checked there.
+            if (isNotEmpty() && subjectType.isMarkedNullable && subjectType !is ConeUnionType) {
                 this.add(WhenOnNullableExhaustivenessChecker)
             }
             if (isEmpty()) {
@@ -139,6 +143,49 @@ object FirWhenExhaustivenessComputer {
     }
 
     /**
+     * Computes the missing cases for a single component of a [ConeUnionType].
+     * An empty result means that the component is exhaustively covered by the branches of [whenExpression].
+     *
+     * Mirrors the semantics of [computeExhaustivenessStatus] for a non-union type: the component is unwrapped
+     * (type parameter bounds, intersection types), and it's considered exhaustive if any of the unwrapped types is.
+     */
+    context(_: SessionHolder)
+    internal fun computeMissingCasesForUnionComponent(
+        component: ConeKotlinType,
+        whenExpression: FirWhenExpression,
+    ): List<WhenMissingCase> {
+        var result: List<WhenMissingCase>? = null
+
+        component.forEachExhaustibleComponent {
+            val missingCases = mutableListOf<WhenMissingCase>()
+            missingCases.collectMissingCases(getCheckers(it), whenExpression, it)
+            if (missingCases.isEmpty()) return emptyList()
+            if (result == null) result = missingCases.replaceUnknownWithIsTypeCheck(it)
+        }
+
+        return result ?: listOf(WhenMissingCase.Unknown)
+    }
+
+    /**
+     * [WhenSelfTypeExhaustivenessChecker] reports [WhenMissingCase.Unknown] because suggesting an `is` check for the whole subject
+     * type is pointless. For a component of a union type, such a suggestion is exactly what the user needs.
+     */
+    context(_: SessionHolder)
+    private fun List<WhenMissingCase>.replaceUnknownWithIsTypeCheck(type: ConeKotlinType): List<WhenMissingCase> {
+        val symbol = type.toRegularClassSymbol() ?: return this
+        return map {
+            when (it) {
+                WhenMissingCase.Unknown -> WhenMissingCase.IsTypeCheckIsMissing(
+                    symbol.classId,
+                    symbol.classKind.isSingleton,
+                    symbol.ownTypeParameterSymbols.size
+                )
+                else -> it
+            }
+        }
+    }
+
+    /**
      * The synthetic call for the whole [whenExpression] might be not completed yet
      */
     context(c: SessionHolder)
@@ -146,7 +193,7 @@ object FirWhenExhaustivenessComputer {
         return processExhaustivenessCheck(whenExpression).also {
             c.session.enumWhenTracker?.reportEnumUsageInWhen(
                 useSiteFile.sourceFile?.path,
-                getSubjectType(whenExpression)?.minimumBoundIfFlexible()
+                getSubjectType(whenExpression)?.minimumBoundIfFlexible()?.let { (it as? ConeUnionType)?.primaryType ?: it }
             )
         }
     }
@@ -206,27 +253,23 @@ object FirWhenExhaustivenessComputer {
 
         var status: ExhaustivenessStatus? = null
 
-        val unwrappedIntersectionTypes = approximatedType.unwrapTypeParameterAndIntersectionTypes()
-
-        for (unwrappedSubjectType in unwrappedIntersectionTypes) {
-            // `kotlin.Boolean` is always exhaustive despite the fact it could be `expect` (relevant for stdlib K2)
-            if (unwrappedSubjectType.toRegularClassSymbol()?.isExpect != true ||
-                unwrappedSubjectType.classId == StandardClassIds.Boolean
-            ) {
-                val localStatus = computeStatusForNonIntersectionType(unwrappedSubjectType, whenExpression)
-                when {
-                    localStatus === ExhaustivenessStatus.ProperlyExhaustive -> {
-                        status = localStatus
-                        break
-                    }
-                    status == null && localStatus != null -> {
-                        status = localStatus
-                    }
-                }
-            }
+        approximatedType.forEachExhaustibleComponent {
+            val localStatus = computeStatusForNonIntersectionType(it, whenExpression)
+            if (localStatus == ExhaustivenessStatus.ProperlyExhaustive) return localStatus
+            if (localStatus != null && status == null) status = localStatus
         }
 
         return status ?: ExhaustivenessStatus.NotExhaustive.noElseBranch(subjectType = approximatedType)
+    }
+
+
+    context(_: SessionHolder)
+    private inline fun ConeKotlinType.forEachExhaustibleComponent(f: (ConeKotlinType) -> Unit) {
+        for (subjectType in unwrapTypeParameterAndIntersectionTypes()) {
+            // `kotlin.Boolean` can be exhaustive despite the fact that it could be `expect` (relevant for stdlib K2)
+            if (subjectType.toRegularClassSymbol()?.isExpect == true && subjectType.classId != StandardClassIds.Boolean) continue
+            f(subjectType)
+        }
     }
 
     context(_: SessionHolder)
@@ -465,7 +508,7 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
         for (notCheckedRegularClasses in notCheckedRegularClasses) {
             destination += WhenMissingCase.IsTypeCheckIsMissing(
                 notCheckedRegularClasses.classId,
-                notCheckedRegularClasses.fir.classKind.isSingleton,
+                notCheckedRegularClasses.classKind.isSingleton,
                 notCheckedRegularClasses.ownTypeParameterSymbols.size
             )
         }
@@ -586,6 +629,48 @@ private object WhenOnNothingExhaustivenessChecker : WhenExhaustivenessChecker() 
         destination: MutableCollection<WhenMissingCase>
     ) {
         // Nothing has no branches. The null case for `Nothing?` is handled by WhenOnNullableExhaustivenessChecker
+    }
+}
+
+/**
+ * A `when` over a union type `T | E1 | E2` is exhaustive iff every component of the union is exhaustively covered.
+ * Each component is checked with the regular checkers, so sealed/enum/boolean/nullable rules compose with unions.
+ */
+private object WhenOnUnionTypeExhaustivenessChecker : WhenExhaustivenessChecker() {
+    context(_: SessionHolder)
+    override fun isApplicable(subjectType: ConeKotlinType): Boolean {
+        return subjectType is ConeUnionType
+    }
+
+    context(c: SessionHolder)
+    override fun computeMissingCases(
+        whenExpression: FirWhenExpression,
+        subjectType: ConeKotlinType,
+        destination: MutableCollection<WhenMissingCase>,
+    ) {
+        val unionType = subjectType as? ConeUnionType ?: return
+
+        val knownNonTypes = when {
+            LanguageFeature.DataFlowBasedExhaustiveness.isEnabled() -> collectKnownNonTypesFromSubjectSmartCast(whenExpression)
+            else -> emptyList()
+        }
+
+        for (component in listOf(unionType.primaryType) + unionType.richErrorTypes) {
+            // The subject is already known to not be of this component's type, e.g., after `if (x is E1) return`.
+            if (knownNonTypes.any { component.isSubtypeOf(it, c.session) }) continue
+            destination += FirWhenExhaustivenessComputer.computeMissingCasesForUnionComponent(component, whenExpression)
+        }
+    }
+
+    private fun collectKnownNonTypesFromSubjectSmartCast(whenExpression: FirWhenExpression): List<ConeKotlinType> {
+        val subject = whenExpression.subjectVariable?.initializer as? FirSmartCastExpression ?: return emptyList()
+        return subject.lowerTypesFromSmartCast.mapNotNull { knownNonType ->
+            when (knownNonType) {
+                is DfaType.Cone -> knownNonType.type
+                is DfaType.Symbol -> (knownNonType.symbol as? FirClassSymbol<*>)?.defaultType()
+                else -> null
+            }
+        }
     }
 }
 
