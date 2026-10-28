@@ -13,8 +13,9 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
  *
  * A symbol ID has two roles:
  *
- * - **Equality:** Symbol IDs have equality semantics, so they can be used as cache keys and as an equality token for their symbols. Two
- *   equal symbol IDs always identify the same declaration.
+ * - **Equality:** Symbol IDs have equality semantics, so they can be used as cache keys which identify a symbol independently of its
+ *   instance. Two equal symbol IDs always identify the same declaration. Symbols and declarations themselves currently have identity
+ *   equality (see [FirBasedSymbol]).
  * - **Reference:** A symbol ID references its [symbol]. Depending on the kind of symbol ID, the reference may be weak, in which case the
  *   symbol ID restores the symbol on demand after it has been discarded. Since symbol IDs may represent resolution results, the
  *   restoration must be exact.
@@ -53,8 +54,8 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
  *
  * - **Equality:** For discardable declarations, symbol ID equality coincides with declaration identity. Without constraint 1, recreating a
  *   parent would create its child again with a new unique symbol ID, while the old symbol ID may still be referenced, for example as a
- *   cache key. The same declaration would then have two unequal symbol IDs and two symbols. Without constraint 2, two unrelated symbols
- *   could be incorrectly equal.
+ *   cache key. The same declaration would then have two unequal symbol IDs and two symbols. Without constraint 2, two unrelated
+ *   declarations could have equal symbol IDs.
  * - **Reference:** A reference to a discardable declaration or one of its children should not keep the discardable declaration alive, and
  *   restoration should be exact. Constraint 1 extends the source-based symbol ID requirement to child declarations, which ensures that
  *   cross-references and cache keys also reference child symbols weakly. Depending on the lifetime strategy, a strong reference to a child
@@ -71,9 +72,9 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
  * ### Choosing between unique and source-based symbol IDs
  *
  * Historically, all FIR symbols were unique, and most *kinds* of symbols still have unique symbol IDs. A symbol with a unique symbol ID has
- * to be stored for the lifetime of its session: if it were discarded and recreated, the new symbol would not be equal to the old one, so
- * existing references and cache keys would become stale. This is the same requirement which applied to all symbols before symbol IDs were
- * introduced, so unique symbols don't need to be treated differently now.
+ * to be stored for the lifetime of its session: if it were discarded and recreated, the new symbol ID would not be equal to the old one,
+ * so existing references and cache keys would become stale. This is the same requirement which applied to all symbols before symbol IDs
+ * were introduced, so unique symbols don't need to be treated differently now.
  *
  * A source-based symbol ID unlocks the *option* to keep a symbol for less than the session lifetime, for example by discarding cached FIR
  * and recreating it later. Making a symbol source-based doesn't break anything by itself, since the session lifetime remains the widest
