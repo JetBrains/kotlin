@@ -1,0 +1,9 @@
+STEP 0:
+    modifications:
+        U : Base.kt -> Base.kt
+
+// Base.kt: field a removed
+STEP 1:
+    modifications:
+        U : Base.1.kt -> Base.kt
+    facts changed: Base.kt

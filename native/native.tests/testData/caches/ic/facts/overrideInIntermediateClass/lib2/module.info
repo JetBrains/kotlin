@@ -1,0 +1,12 @@
+STEP 0:
+    dependencies: lib1
+    modifications:
+        U : B.kt -> B.kt
+        U : Caller.kt -> Caller.kt
+        U : Unrelated.kt -> Unrelated.kt
+
+// B is final: B().foo() is a direct call to the fake override B.foo, whose target is in M or in A
+STEP 1..2:
+    dependencies: lib1
+    facts uses changed facts: B.kt, Caller.kt
+    facts up-to-date: Unrelated.kt

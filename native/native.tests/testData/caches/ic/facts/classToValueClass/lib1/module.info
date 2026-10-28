@@ -1,0 +1,15 @@
+STEP 0:
+    modifications:
+        U : W.kt -> W.kt
+
+// W.kt: class -> value class
+STEP 1:
+    modifications:
+        U : W.1.kt -> W.kt
+    facts changed: W.kt
+
+// W.kt: value class -> class
+STEP 2:
+    modifications:
+        U : W.kt -> W.kt
+    facts changed: W.kt

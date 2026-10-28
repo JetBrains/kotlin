@@ -1,0 +1,1 @@
+fun callF(): Int = f()

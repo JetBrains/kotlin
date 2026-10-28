@@ -1,0 +1,12 @@
+STEP 0:
+    modifications:
+        U : A.kt -> A.kt
+        U : B.kt -> B.kt
+        U : Mid.kt -> Mid.kt
+
+// Mid.kt: superclass A -> B
+STEP 1:
+    modifications:
+        U : Mid.1.kt -> Mid.kt
+    facts changed: Mid.kt
+    facts up-to-date: A.kt, B.kt

@@ -1,0 +1,11 @@
+STEP 0:
+    dependencies: lib1
+    modifications:
+        U : Impl.kt -> Impl.kt
+        U : Caller.kt -> Caller.kt
+
+// The interface call in Caller.kt goes through the trampoline of I.a, the itable of Impl needs the new slot
+STEP 1:
+    dependencies: lib1
+    facts uses changed facts: Impl.kt
+    facts up-to-date: Caller.kt

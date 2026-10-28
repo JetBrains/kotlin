@@ -1,0 +1,18 @@
+STEP 0:
+    modifications:
+        U : A.kt -> A.kt
+        U : M.kt -> M.kt
+
+// M.kt: override of foo() added
+STEP 1:
+    modifications:
+        U : M.1.kt -> M.kt
+    facts changed: M.kt
+    facts up-to-date: A.kt
+
+// M.kt: override of foo() removed
+STEP 2:
+    modifications:
+        U : M.kt -> M.kt
+    facts changed: M.kt
+    facts up-to-date: A.kt

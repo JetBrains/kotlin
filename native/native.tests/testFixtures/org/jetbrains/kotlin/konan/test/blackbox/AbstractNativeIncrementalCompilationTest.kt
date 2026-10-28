@@ -41,6 +41,8 @@ import kotlin.io.path.Path
 @UsePartialLinkage(UsePartialLinkage.Mode.ERROR)
 abstract class AbstractNativeIncrementalCompilationTest : AbstractNativeSimpleTest() {
 
+    protected open val factsCacheEnabled: Boolean get() = false
+
     @BeforeEach
     fun assumeCachesAreEnabled() {
         Assumptions.assumeFalse(testRunSettings.get<CacheMode>() == CacheMode.WithoutCache)
@@ -78,7 +80,8 @@ abstract class AbstractNativeIncrementalCompilationTest : AbstractNativeSimpleTe
             val moduleInfo = moduleDirectory.resolve(MODULE_INFO_FILE)
             val parsedModule = ModuleInfoParser(
                 moduleInfo,
-                expectedStateDirectives = NativeCacheExpectation.byDirective.keys + OutputExpectation.byDirective.keys,
+                expectedStateDirectives = NativeCacheExpectation.byDirective.keys + OutputExpectation.byDirective.keys +
+                        FactsExpectation.byDirective.keys,
             ).parse(moduleName)
 
             val moduleSourceDir = buildDir.resolve(moduleName)
@@ -117,16 +120,76 @@ abstract class AbstractNativeIncrementalCompilationTest : AbstractNativeSimpleTe
 
             val executable = CompiledExecutable(testCase, compilationResult.assertSuccess())
 
-            val buildOutputEntries = if (dumpBuiltCachesToPath.exists())
-                dumpBuiltCachesToPath.useLines { lines -> lines.filter(String::isNotBlank).toSet() }
-            else
-                emptySet()
+            if (factsCacheEnabled) {
+                verifyFactsExpectations(step.id, compilerOutput(step.id, compilationResult))
+            } else {
+                val buildOutputEntries = if (dumpBuiltCachesToPath.exists())
+                    dumpBuiltCachesToPath.useLines { lines -> lines.filter(String::isNotBlank).toSet() }
+                else
+                    emptySet()
 
-            val currentSnapshot = takeCacheSnapshot(step.id)
-            verifyCacheExpectations(step.id, previousSnapshot, currentSnapshot, buildOutputEntries)
-            previousSnapshot = currentSnapshot
+                val currentSnapshot = takeCacheSnapshot(step.id)
+                verifyCacheExpectations(step.id, previousSnapshot, currentSnapshot, buildOutputEntries)
+                previousSnapshot = currentSnapshot
+            }
 
             runExecutableAndVerify(executable.testCase, executable.testExecutable)
+        }
+
+        private fun compilerOutput(
+            stepId: Int,
+            compilationResult: TestCompilationResult<out TestCompilationArtifact.Executable>,
+        ): String = ((compilationResult as? TestCompilationResult.ImmediateResult<*>)
+            ?.loggedData as? LoggedData.CompilationToolCall)?.toolOutput
+            ?: fail("No compiler output captured for the main executable compilation at step $stepId")
+
+        /**
+         * Checks the facts-based IC analysis of each library with facts directives at [stepId]: its dirty files (with their reasons)
+         * must be exactly the ones of the `facts added` / `facts changed` / `facts uses changed facts` directives,
+         * and `facts generation` tells whether the facts of the library must have been generated or skipped.
+         */
+        private fun verifyFactsExpectations(stepId: Int, compilerOutput: String) {
+            val analyses = parseFactsAnalyses(compilerOutput)
+            for ([moduleName, module] in testStructure.modules) {
+                if (moduleName == MAIN_MODULE_NAME) continue
+                val expected = module.getStep(stepId)?.expectedFileStats
+                    ?.filterKeys { it in FactsExpectation.byDirective }
+                    ?.takeIf { it.isNotEmpty() }
+                    ?: continue
+                val location = "$moduleName at step $stepId"
+                val analysis = analyses[moduleName]
+                    ?: fail("No facts-based IC analysis of $location (cached from scratch, or facts not enabled?):\n$compilerOutput")
+
+                val expectedDirty = buildMap {
+                    for ([directive, files] in expected) {
+                        val reason = FactsExpectation.byDirective.getValue(directive).dirtyReason ?: continue
+                        files.forEach { file ->
+                            val previous = put(file, reason)
+                            check(previous == null) { "$moduleName/$file is expected to be dirty twice at step $stepId" }
+                        }
+                    }
+                }
+                val actualDirty = analysis.dirtyFiles.mapKeys { [path, _] ->
+                    File(path).relativeToOrNull(module.sourceDir)?.invariantSeparatorsPath ?: File(path).name
+                }
+                JUnit5Assertions.assertEquals(expectedDirty.toSortedMap(), actualDirty.toSortedMap()) {
+                    "Unexpected dirty files of $location:\n$compilerOutput"
+                }
+
+                expected[FactsExpectation.UP_TO_DATE.directive].orEmpty().forEach { file ->
+                    assertTrue(module.sourceDir.resolve(file).exists()) { "Up-to-date file $moduleName/$file does not exist at step $stepId" }
+                }
+
+                expected[FactsExpectation.GENERATION.directive]?.let { values ->
+                    val generation = values.singleOrNull()
+                    assertTrue(generation == FACTS_GENERATION_SKIPPED || generation == FACTS_GENERATION_DONE) {
+                        "'${FactsExpectation.GENERATION.directive}' expects $FACTS_GENERATION_SKIPPED or $FACTS_GENERATION_DONE for $location"
+                    }
+                    JUnit5Assertions.assertEquals(generation == FACTS_GENERATION_SKIPPED, analysis.generationSkipped) {
+                        "Unexpected facts generation of $location:\n$compilerOutput"
+                    }
+                }
+            }
         }
 
         private fun applyModifications(step: ProjectInfo.ProjectBuildStep) {
@@ -192,7 +255,7 @@ abstract class AbstractNativeIncrementalCompilationTest : AbstractNativeSimpleTe
                         "-Xdump-built-caches-to=${dumpBuiltCachesToPath.absolutePath}",
                         "-Xenable-incremental-compilation",
                         "-verbose",
-                    ) + mainStep.cliArguments
+                    ) + listOfNotNull("-Xfacts-cache-enabled".takeIf { factsCacheEnabled }) + mainStep.cliArguments
                 ),
             )
             val compilationResult = compileToExecutableInOneStage(
@@ -281,9 +344,7 @@ abstract class AbstractNativeIncrementalCompilationTest : AbstractNativeSimpleTe
                 }
             }
 
-            val compilerOutput = ((compilationResult as? TestCompilationResult.ImmediateResult<*>)
-                ?.loggedData as? LoggedData.CompilationToolCall)?.toolOutput
-                ?: fail("No compiler output captured for the main executable compilation at step $stepId")
+            val compilerOutput = compilerOutput(stepId, compilationResult)
 
             val mainModule = testStructure.modules.getValue(MAIN_MODULE_NAME)
             for ([directive, fileNames] in outputExpectations) {
@@ -361,6 +422,26 @@ abstract class AbstractNativeIncrementalCompilationTest : AbstractNativeSimpleTe
                     }
                 }
             }
+        }
+    }
+
+    // ---- facts helpers -------------------------------------------------------------
+
+    /** The facts-based IC analysis of a library: its dirty files (path -> reason), and whether the generation of its facts was skipped. */
+    private class FactsAnalysis(val dirtyFiles: MutableMap<String, String> = mutableMapOf(), var generationSkipped: Boolean = false)
+
+    /** The facts-based IC analyses in the verbose [compilerOutput], by library name. */
+    private fun parseFactsAnalyses(compilerOutput: String): Map<String, FactsAnalysis> = buildMap {
+        var current: FactsAnalysis? = null
+        for (line in compilerOutput.lines()) {
+            val analysisMatch = FACTS_ANALYSIS_REGEX.find(line)
+            if (analysisMatch != null) {
+                current = FactsAnalysis().also { put(File(analysisMatch.groupValues[1]).nameWithoutExtension, it) }
+                continue
+            }
+            val analysis = current ?: continue
+            FACTS_DIRTY_REGEX.find(line)?.let { analysis.dirtyFiles[it.groupValues[2].trim()] = it.groupValues[1] }
+            if (FACTS_GENERATION_SKIPPED_LINE in line) analysis.generationSkipped = true
         }
     }
 
@@ -469,6 +550,13 @@ abstract class AbstractNativeIncrementalCompilationTest : AbstractNativeSimpleTe
 
         private val PACKAGE_DIRECTIVE_REGEX = Regex("""^\s*package\s+([\w.]+)""")
 
+        // The log of the facts-based IC analysis, see `CacheBuilderFactBased`.
+        private val FACTS_ANALYSIS_REGEX = Regex("""FACTS-BASED IC ANALYSIS of (\S+)""")
+        private val FACTS_DIRTY_REGEX = Regex("""\sDIRTY \((.+)\): (.+)$""")
+        private const val FACTS_GENERATION_SKIPPED_LINE = "SKIPPED FACTS GENERATION"
+        private const val FACTS_GENERATION_SKIPPED = "skipped"
+        private const val FACTS_GENERATION_DONE = "generated"
+
         private enum class NativeCacheExpectation(val directive: String) {
             ADDED_CACHE("added cache"),
             MODIFIED_CACHE("modified cache"),
@@ -477,6 +565,22 @@ abstract class AbstractNativeIncrementalCompilationTest : AbstractNativeSimpleTe
 
             companion object {
                 val byDirective: Map<String, NativeCacheExpectation> = entries.associateBy { it.directive }
+            }
+        }
+
+        // Expectations about the facts-based IC analysis of a library, checked only with [factsCacheEnabled].
+        // A library with any of these directives at a step must have been analysed (not cached from scratch), and its dirty files
+        // must be exactly the ones of the directives with a [dirtyReason]. "facts up-to-date" lists files that must not be dirty
+        // (also to check a library with no dirty file), "facts generation" is `skipped` or `generated`.
+        private enum class FactsExpectation(val directive: String, val dirtyReason: String?) {
+            ADDED("facts added", "added"),
+            CHANGED("facts changed", "changed"),
+            USES_CHANGED_FACTS("facts uses changed facts", "uses changed facts"),
+            UP_TO_DATE("facts up-to-date", null),
+            GENERATION("facts generation", null);
+
+            companion object {
+                val byDirective: Map<String, FactsExpectation> = entries.associateBy { it.directive }
             }
         }
 

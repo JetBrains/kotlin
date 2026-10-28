@@ -1,0 +1,16 @@
+STEP 0:
+    modifications:
+        U : Base.kt -> Base.kt
+        U : Node1.kt -> Node1.kt
+        U : Node2.kt -> Node2.kt
+        U : Node3.kt -> Node3.kt
+        U : Caller.kt -> Caller.kt
+        U : Unrelated.kt -> Unrelated.kt
+
+// Base.kt: a new field changes the layout of Base and of all its subclasses
+STEP 1:
+    modifications:
+        U : Base.1.kt -> Base.kt
+    facts changed: Base.kt
+    facts uses changed facts: Node1.kt, Node2.kt, Node3.kt
+    facts up-to-date: Caller.kt, Unrelated.kt

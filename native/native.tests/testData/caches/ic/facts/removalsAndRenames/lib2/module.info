@@ -1,0 +1,30 @@
+STEP 0:
+    dependencies: lib1
+    modifications:
+        U : Caller.kt -> Caller.kt
+        U : Sub.kt -> Sub.kt
+        U : SubCaller.kt -> SubCaller.kt
+
+STEP 1:
+    dependencies: lib1
+    facts up-to-date: Caller.kt, Sub.kt, SubCaller.kt
+
+STEP 2:
+    dependencies: lib1
+    facts uses changed facts: Sub.kt
+    facts up-to-date: Caller.kt, SubCaller.kt
+
+STEP 3:
+    dependencies: lib1
+    facts up-to-date: Caller.kt, Sub.kt, SubCaller.kt
+
+STEP 4:
+    dependencies: lib1
+    modifications:
+        U : Caller.4.kt -> Caller.kt
+    facts changed: Caller.kt
+    facts up-to-date: Sub.kt, SubCaller.kt
+
+STEP 5:
+    dependencies: lib1
+    facts up-to-date: Caller.kt, Sub.kt, SubCaller.kt

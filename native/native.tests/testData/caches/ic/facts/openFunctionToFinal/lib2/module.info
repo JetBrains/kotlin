@@ -1,0 +1,12 @@
+STEP 0:
+    dependencies: lib1
+    modifications:
+        U : Caller.kt -> Caller.kt
+        U : Sub.kt -> Sub.kt
+        U : SubCaller.kt -> SubCaller.kt
+        U : Other.kt -> Other.kt
+
+STEP 1..2:
+    dependencies: lib1
+    facts uses changed facts: Caller.kt, Sub.kt, SubCaller.kt
+    facts up-to-date: Other.kt

@@ -1,0 +1,10 @@
+STEP 0:
+    dependencies: lib1
+    modifications:
+        U : Leaf.kt -> Leaf.kt
+        U : Check.kt -> Check.kt
+
+STEP 1:
+    dependencies: lib1
+    facts uses changed facts: Leaf.kt
+    facts up-to-date: Check.kt

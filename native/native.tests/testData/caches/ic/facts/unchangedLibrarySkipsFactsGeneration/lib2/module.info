@@ -1,0 +1,20 @@
+STEP 0:
+    dependencies: lib1
+    modifications:
+        U : Leaf.kt -> Leaf.kt
+        U : Other.kt -> Other.kt
+
+// Other.kt: body change
+STEP 1:
+    dependencies: lib1
+    modifications:
+        U : Other.1.kt -> Other.kt
+    facts changed: Other.kt
+    facts up-to-date: Leaf.kt
+    facts generation: generated
+
+STEP 2:
+    dependencies: lib1
+    facts uses changed facts: Leaf.kt
+    facts up-to-date: Other.kt
+    facts generation: skipped

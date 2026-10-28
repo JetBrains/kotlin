@@ -1,0 +1,9 @@
+STEP 0:
+    modifications:
+        U : Source.kt -> Source.kt
+
+// The private inline getter of the anonymous object has no signature, so its inlining records no fact use
+STEP 1:
+    modifications:
+        U : Source.1.kt -> Source.kt
+    facts changed: Source.kt
