@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.buildtools.api.RemovedCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.JsCompilerArguments.Companion.X_EXPORT_KDOC
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
+import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain.Companion.js
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsSubstringExactlyTimes
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputs
@@ -151,7 +152,10 @@ class NonIncrementalCompilationSmokeTest : BaseCompilationTest() {
     fun basicJsRichDtsGeneration(strategyConfig: CompilerExecutionStrategyConfiguration) {
         val kotlinToolingVersion = KotlinToolingVersion(strategyConfig.first.getCompilerVersion())
         if (kotlinToolingVersion <= KotlinToolingVersion(2, 5, 0, "Beta1")) {
-            // The rich dts generation is not available in pre 2.5.0-Beta1 versions of Kotlin
+            val exception = assertThrows<UnsupportedOperationException> {
+                strategyConfig.first.js.jsDtsGenerationOperationBuilder(emptyList(), workingDirectory.resolve("dts"))
+            }
+            assertEquals("JsDtsGenerationOperation is available from Kotlin compiler version 2.5.0", exception.message)
             return
         }
 

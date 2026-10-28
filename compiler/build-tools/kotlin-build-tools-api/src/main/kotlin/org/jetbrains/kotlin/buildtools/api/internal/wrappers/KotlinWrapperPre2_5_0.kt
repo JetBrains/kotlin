@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.buildtools.api.internal.wrappers
 import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.arguments.*
 import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain
+import org.jetbrains.kotlin.buildtools.api.js.operations.JsDtsGenerationOperation
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsKlibCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsLinkingOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
@@ -112,6 +113,10 @@ internal class KotlinWrapperPre2_5_0(
 
         override fun jsLinkingOperationBuilder(klib: Path, destination: Path): JsLinkingOperation.Builder =
             JsLinkingOperationBuilderWrapper(base.jsLinkingOperationBuilder(klib, destination))
+
+        override fun jsDtsGenerationOperationBuilder(klibs: List<Path>, outputDirectory: Path): JsDtsGenerationOperation.Builder {
+            throw UnsupportedOperationException("JsDtsGenerationOperation is available from Kotlin compiler version 2.5.0")
+        }
     }
 
     private inner class JsKlibCompilationOperationBuilderWrapper(private val base: JsKlibCompilationOperation.Builder) :
