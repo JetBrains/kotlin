@@ -15,7 +15,9 @@ import kotlin.io.path.invariantSeparatorsPathString
  * compiler's classpath.
  *
  * [id] is the path of the root as a virtual file system spells it: absolute, `/`-separated, without a
- * trailing separator and without the archive separator `!/`.
+ * trailing separator and without the archive separator `!/`. A root which shares its path with other roots
+ * (the JDK `ct.sym` roots of `-Xjdk-release`) gets a synthetic id instead; such a root never appears on a
+ * user's classpath, so it only ever has to be unique.
  */
 @JvmInline
 value class JvmClasspathRootId(val id: String) {
