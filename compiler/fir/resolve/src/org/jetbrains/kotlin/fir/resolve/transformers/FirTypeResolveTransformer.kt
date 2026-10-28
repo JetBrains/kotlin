@@ -100,18 +100,6 @@ open class FirTypeResolveTransformer(
     @set:PrivateForInline
     var staticScopesBefore: PersistentList<FirScope>? = null
 
-    private var currentDeclaration: FirDeclaration? = null
-
-    private inline fun <T> withDeclaration(declaration: FirDeclaration, crossinline action: () -> T): T {
-        val oldDeclaration = currentDeclaration
-        return try {
-            currentDeclaration = declaration
-            action()
-        } finally {
-            currentDeclaration = oldDeclaration
-        }
-    }
-
     private val typeResolverTransformer: FirSpecificTypeResolverTransformer = FirSpecificTypeResolverTransformer(session, expandTypeAliases = true)
 
     @PrivateForInline
@@ -244,50 +232,48 @@ open class FirTypeResolveTransformer(
                 scopes = staticScopes
             }
 
-            withDeclaration(property) {
-                addTypeParametersScope(property)
-                resolveTypeParameterBounds(property)
-                property
-                    .transformReturnTypeRef(this, data)
-                    .transformReceiverParameter(this, data)
-                    .transformContextParameters(this, data)
-                    .transformGetter(this, data)
-                    .transformSetter(this, data)
-                    .transformBackingField(this, data)
-                    .transformAnnotations(this, data)
+            addTypeParametersScope(property)
+            resolveTypeParameterBounds(property)
+            property
+                .transformReturnTypeRef(this, data)
+                .transformReceiverParameter(this, data)
+                .transformContextParameters(this, data)
+                .transformGetter(this, data)
+                .transformSetter(this, data)
+                .transformBackingField(this, data)
+                .transformAnnotations(this, data)
 
-                if (property.isFromVararg == true) {
-                    property.transformTypeToArrayType(session)
-                    property.backingField?.transformTypeToArrayType(session)
+            if (property.isFromVararg == true) {
+                property.transformTypeToArrayType(session)
+                property.backingField?.transformTypeToArrayType(session)
+                setAccessorTypesByPropertyType(property)
+            }
+
+            when {
+                property.returnTypeRef is FirResolvedTypeRef && property.delegate != null -> {
                     setAccessorTypesByPropertyType(property)
                 }
+                property.returnTypeRef !is FirResolvedTypeRef && property.initializer == null &&
+                        property.getter?.returnTypeRef is FirResolvedTypeRef -> {
+                    val returnTypeRef = property.getter!!.returnTypeRef
 
-                when {
-                    property.returnTypeRef is FirResolvedTypeRef && property.delegate != null -> {
-                        setAccessorTypesByPropertyType(property)
-                    }
-                    property.returnTypeRef !is FirResolvedTypeRef && property.initializer == null &&
-                            property.getter?.returnTypeRef is FirResolvedTypeRef -> {
-                        val returnTypeRef = property.getter!!.returnTypeRef
+                    property.replaceReturnTypeRef(returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.PropertyTypeFromGetterReturnType))
+                    property.backingField?.replaceReturnTypeRef(
+                        returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.PropertyTypeFromGetterReturnType)
+                    )
 
-                        property.replaceReturnTypeRef(returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.PropertyTypeFromGetterReturnType))
-                        property.backingField?.replaceReturnTypeRef(
+                    property.setter?.valueParameters?.forEach {
+                        it.replaceReturnTypeRef(
                             returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.PropertyTypeFromGetterReturnType)
                         )
-
-                        property.setter?.valueParameters?.forEach {
-                            it.replaceReturnTypeRef(
-                                returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.PropertyTypeFromGetterReturnType)
-                            )
-                        }
                     }
                 }
-
-                unboundCyclesInTypeParametersSupertypes(property)
-
-                property.moveOrDeleteIrrelevantAnnotations()
-                property
             }
+
+            unboundCyclesInTypeParametersSupertypes(property)
+
+            property.moveOrDeleteIrrelevantAnnotations()
+            property
         }
     }
 
@@ -317,32 +303,30 @@ open class FirTypeResolveTransformer(
                 scopes = staticScopes
             }
 
-            withDeclaration(namedFunction) {
-                addTypeParametersScope(namedFunction)
+            addTypeParametersScope(namedFunction)
 
-                resolveTypeParameterBounds(namedFunction)
+            resolveTypeParameterBounds(namedFunction)
 
-                namedFunction
-                    .transformReturnTypeRef(this, data)
-                    .transformReceiverParameter(this, data)
-                    .transformContextParameters(this, data)
-                    .transformValueParameters(this, data)
-                    .transformBody(this, data)
-                    .transformAnnotations(this, data)
-                    .also {
-                        unboundCyclesInTypeParametersSupertypes(it as FirTypeParametersOwner)
-                    }
-
-                if (namedFunction.source?.kind == KtFakeSourceElementKind.DataClassGeneratedMembers.CopyFunction &&
-                    namedFunction.name == StandardNames.DATA_CLASS_COPY
-                ) {
-                    for (valueParameter in namedFunction.valueParameters) {
-                        valueParameter.moveOrDeleteIrrelevantAnnotations()
-                    }
+            namedFunction
+                .transformReturnTypeRef(this, data)
+                .transformReceiverParameter(this, data)
+                .transformContextParameters(this, data)
+                .transformValueParameters(this, data)
+                .transformBody(this, data)
+                .transformAnnotations(this, data)
+                .also {
+                    unboundCyclesInTypeParametersSupertypes(it as FirTypeParametersOwner)
                 }
 
-                namedFunction
+            if (namedFunction.source?.kind == KtFakeSourceElementKind.DataClassGeneratedMembers.CopyFunction &&
+                namedFunction.name == StandardNames.DATA_CLASS_COPY
+            ) {
+                for (valueParameter in namedFunction.valueParameters) {
+                    valueParameter.moveOrDeleteIrrelevantAnnotations()
+                }
             }
+
+            namedFunction
         }
     }
 
@@ -462,15 +446,13 @@ open class FirTypeResolveTransformer(
         valueParameter: FirValueParameter,
         data: Any?,
     ): FirStatement = whileAnalysing(session, valueParameter) {
-        withDeclaration(valueParameter) {
-            valueParameter.transformReturnTypeRef(this, data)
-            if (LanguageFeature.StrictEquals.isEnabled()) {
-                valueParameter.setEqualityBoundType()
-            }
-            valueParameter.transformAnnotations(this, data)
-            valueParameter.transformVarargTypeToArrayType(session)
-            valueParameter
+        valueParameter.transformReturnTypeRef(this, data)
+        if (LanguageFeature.StrictEquals.isEnabled()) {
+            valueParameter.setEqualityBoundType()
         }
+        valueParameter.transformAnnotations(this, data)
+        valueParameter.transformVarargTypeToArrayType(session)
+        valueParameter
     }
 
     override fun transformBlock(block: FirBlock, data: Any?): FirStatement {
