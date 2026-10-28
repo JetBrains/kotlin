@@ -3,7 +3,7 @@
 
 fun test() {
     class Local {
-        companion {
+        <!ILLEGAL_COMPANION_BLOCK!>companion<!> {
             <!CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT!>const<!> val foo1 = "ABC"
         }
     }
@@ -12,7 +12,7 @@ fun test() {
 class A {
     fun test() {
         class Local {
-            companion {
+            <!ILLEGAL_COMPANION_BLOCK!>companion<!> {
                 <!CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT!>const<!> val foo2 = "ABC"
             }
         }

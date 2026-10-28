@@ -5997,7 +5997,7 @@ internal class PrivateConstInInterfaceImpl(
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.PrivateConstInInterface
 
 internal class IllegalCompanionBlockImpl(
-    override val parent: KaSymbol,
+    override val kind: String,
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.IllegalCompanionBlock
