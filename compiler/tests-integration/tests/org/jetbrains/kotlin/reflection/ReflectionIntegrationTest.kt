@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.reflection
 
-import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.load.kotlin.internalName
@@ -185,10 +184,8 @@ class ReflectionIntegrationTest {
                 val classId = ClassId.fromString(klass.name)
                 val fqName = classId.asSingleFqName()
                 val primitiveArrayType = StandardNames.FqNames.arrayClassFqNameToPrimitiveType[fqName.toUnsafe()]
-                // For arrays and primitive types, there are exceptions both in K1 reflect and new reflect.
-                if (fqName.toUnsafe() != StandardNames.FqNames.array && primitiveArrayType == null &&
-                    PrimitiveType.entries.none { fqName == it.typeFqName }
-                ) {
+                // For arrays, there are exceptions both in K1 reflect and new reflect.
+                if (fqName.toUnsafe() != StandardNames.FqNames.array && primitiveArrayType == null) {
                     fqNames.add(classId.internalName.replace("/", "."))
                 }
             }

@@ -21,6 +21,52 @@ KClass: class kotlin.Boolean.Companion : Any
     public open fun kotlin.Boolean.Companion.hashCode(): kotlin.Int
     public open fun kotlin.Boolean.Companion.toString(): kotlin.String
   declaredMembers:
+KClass: class kotlin.Boolean : Comparable, Serializable, Any
+  constructors:
+    private final fun `<init>`(): kotlin.Boolean
+  members:
+    public final infix fun kotlin.Boolean.and(kotlin.Boolean): kotlin.Boolean
+    public open operator fun kotlin.Boolean.compareTo(kotlin.Boolean): kotlin.Int
+    public open fun kotlin.Boolean.describeConstable(): java.util.Optional<java.lang.constant.DynamicConstantDesc<kotlin.Boolean!>!>!
+    public open operator fun kotlin.Boolean.equals(kotlin.Any?): kotlin.Boolean
+    public open fun kotlin.Boolean.hashCode(): kotlin.Int
+    public final operator fun kotlin.Boolean.not(): kotlin.Boolean
+    public final infix fun kotlin.Boolean.or(kotlin.Boolean): kotlin.Boolean
+    public open fun kotlin.Boolean.toString(): kotlin.String
+    public final infix fun kotlin.Boolean.xor(kotlin.Boolean): kotlin.Boolean
+  declaredMembers:
+    public final infix fun kotlin.Boolean.and(kotlin.Boolean): kotlin.Boolean
+    public open operator fun kotlin.Boolean.compareTo(kotlin.Boolean): kotlin.Int
+    public open fun kotlin.Boolean.describeConstable(): java.util.Optional<java.lang.constant.DynamicConstantDesc<kotlin.Boolean!>!>!
+    public open operator fun kotlin.Boolean.equals(kotlin.Any?): kotlin.Boolean
+    public open fun kotlin.Boolean.hashCode(): kotlin.Int
+    public final operator fun kotlin.Boolean.not(): kotlin.Boolean
+    public final infix fun kotlin.Boolean.or(kotlin.Boolean): kotlin.Boolean
+    public open fun kotlin.Boolean.toString(): kotlin.String
+    public final infix fun kotlin.Boolean.xor(kotlin.Boolean): kotlin.Boolean
+KClass (primitive): class kotlin.Boolean : Comparable, Serializable, Any
+  constructors:
+    private final fun `<init>`(): kotlin.Boolean
+  members:
+    public final infix fun kotlin.Boolean.and(kotlin.Boolean): kotlin.Boolean
+    public open operator fun kotlin.Boolean.compareTo(kotlin.Boolean): kotlin.Int
+    public open fun kotlin.Boolean.describeConstable(): java.util.Optional<java.lang.constant.DynamicConstantDesc<kotlin.Boolean!>!>!
+    public open operator fun kotlin.Boolean.equals(kotlin.Any?): kotlin.Boolean
+    public open fun kotlin.Boolean.hashCode(): kotlin.Int
+    public final operator fun kotlin.Boolean.not(): kotlin.Boolean
+    public final infix fun kotlin.Boolean.or(kotlin.Boolean): kotlin.Boolean
+    public open fun kotlin.Boolean.toString(): kotlin.String
+    public final infix fun kotlin.Boolean.xor(kotlin.Boolean): kotlin.Boolean
+  declaredMembers:
+    public final infix fun kotlin.Boolean.and(kotlin.Boolean): kotlin.Boolean
+    public open operator fun kotlin.Boolean.compareTo(kotlin.Boolean): kotlin.Int
+    public open fun kotlin.Boolean.describeConstable(): java.util.Optional<java.lang.constant.DynamicConstantDesc<kotlin.Boolean!>!>!
+    public open operator fun kotlin.Boolean.equals(kotlin.Any?): kotlin.Boolean
+    public open fun kotlin.Boolean.hashCode(): kotlin.Int
+    public final operator fun kotlin.Boolean.not(): kotlin.Boolean
+    public final infix fun kotlin.Boolean.or(kotlin.Boolean): kotlin.Boolean
+    public open fun kotlin.Boolean.toString(): kotlin.String
+    public final infix fun kotlin.Boolean.xor(kotlin.Boolean): kotlin.Boolean
 KClass: class kotlin.Byte.Companion : Any
   members:
     public open operator fun kotlin.Byte.Companion.equals(kotlin.Any?): kotlin.Boolean
@@ -35,6 +81,250 @@ KClass: class kotlin.Byte.Companion : Any
     public final val kotlin.Byte.Companion.MIN_VALUE: kotlin.Byte
     public final val kotlin.Byte.Companion.SIZE_BITS: kotlin.Int
     public final val kotlin.Byte.Companion.SIZE_BYTES: kotlin.Int
+KClass: class kotlin.Byte : Number, Comparable, Serializable
+  constructors:
+    private final fun `<init>`(): kotlin.Byte
+  members:
+    public open operator fun kotlin.Byte.compareTo(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Byte.compareTo(kotlin.Double): kotlin.Int
+    public final operator fun kotlin.Byte.compareTo(kotlin.Float): kotlin.Int
+    public final operator fun kotlin.Byte.compareTo(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Byte.compareTo(kotlin.Long): kotlin.Int
+    public final operator fun kotlin.Byte.compareTo(kotlin.Short): kotlin.Int
+    public final operator fun kotlin.Byte.dec(): kotlin.Byte
+    public open fun kotlin.Byte.describeConstable(): java.util.Optional<java.lang.constant.DynamicConstantDesc<kotlin.Byte!>!>!
+    public final operator fun kotlin.Byte.div(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Byte.div(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Byte.div(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Byte.div(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Byte.div(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Byte.div(kotlin.Short): kotlin.Int
+    public open operator fun kotlin.Byte.equals(kotlin.Any?): kotlin.Boolean
+    public open fun kotlin.Byte.hashCode(): kotlin.Int
+    public final operator fun kotlin.Byte.inc(): kotlin.Byte
+    public final operator fun kotlin.Byte.minus(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Byte.minus(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Byte.minus(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Byte.minus(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Byte.minus(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Byte.minus(kotlin.Short): kotlin.Int
+    public final operator fun kotlin.Byte.plus(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Byte.plus(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Byte.plus(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Byte.plus(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Byte.plus(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Byte.plus(kotlin.Short): kotlin.Int
+    public final operator fun kotlin.Byte.rangeTo(kotlin.Byte): kotlin.ranges.IntRange
+    public final operator fun kotlin.Byte.rangeTo(kotlin.Int): kotlin.ranges.IntRange
+    public final operator fun kotlin.Byte.rangeTo(kotlin.Long): kotlin.ranges.LongRange
+    public final operator fun kotlin.Byte.rangeTo(kotlin.Short): kotlin.ranges.IntRange
+    public final operator fun kotlin.Byte.rangeUntil(kotlin.Byte): kotlin.ranges.IntRange
+    public final operator fun kotlin.Byte.rangeUntil(kotlin.Int): kotlin.ranges.IntRange
+    public final operator fun kotlin.Byte.rangeUntil(kotlin.Long): kotlin.ranges.LongRange
+    public final operator fun kotlin.Byte.rangeUntil(kotlin.Short): kotlin.ranges.IntRange
+    public final operator fun kotlin.Byte.rem(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Byte.rem(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Byte.rem(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Byte.rem(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Byte.rem(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Byte.rem(kotlin.Short): kotlin.Int
+    public final operator fun kotlin.Byte.times(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Byte.times(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Byte.times(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Byte.times(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Byte.times(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Byte.times(kotlin.Short): kotlin.Int
+    public open fun kotlin.Byte.toByte(): kotlin.Byte
+    public open fun kotlin.Byte.toChar(): kotlin.Char
+    public open fun kotlin.Byte.toDouble(): kotlin.Double
+    public open fun kotlin.Byte.toFloat(): kotlin.Float
+    public open fun kotlin.Byte.toInt(): kotlin.Int
+    public open fun kotlin.Byte.toLong(): kotlin.Long
+    public open fun kotlin.Byte.toShort(): kotlin.Short
+    public open fun kotlin.Byte.toString(): kotlin.String
+    public final operator fun kotlin.Byte.unaryMinus(): kotlin.Int
+    public final operator fun kotlin.Byte.unaryPlus(): kotlin.Int
+  declaredMembers:
+    public open operator fun kotlin.Byte.compareTo(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Byte.compareTo(kotlin.Double): kotlin.Int
+    public final operator fun kotlin.Byte.compareTo(kotlin.Float): kotlin.Int
+    public final operator fun kotlin.Byte.compareTo(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Byte.compareTo(kotlin.Long): kotlin.Int
+    public final operator fun kotlin.Byte.compareTo(kotlin.Short): kotlin.Int
+    public final operator fun kotlin.Byte.dec(): kotlin.Byte
+    public open fun kotlin.Byte.describeConstable(): java.util.Optional<java.lang.constant.DynamicConstantDesc<kotlin.Byte!>!>!
+    public final operator fun kotlin.Byte.div(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Byte.div(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Byte.div(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Byte.div(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Byte.div(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Byte.div(kotlin.Short): kotlin.Int
+    public open operator fun kotlin.Byte.equals(kotlin.Any?): kotlin.Boolean
+    public final operator fun kotlin.Byte.inc(): kotlin.Byte
+    public final operator fun kotlin.Byte.minus(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Byte.minus(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Byte.minus(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Byte.minus(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Byte.minus(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Byte.minus(kotlin.Short): kotlin.Int
+    public final operator fun kotlin.Byte.plus(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Byte.plus(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Byte.plus(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Byte.plus(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Byte.plus(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Byte.plus(kotlin.Short): kotlin.Int
+    public final operator fun kotlin.Byte.rangeTo(kotlin.Byte): kotlin.ranges.IntRange
+    public final operator fun kotlin.Byte.rangeTo(kotlin.Int): kotlin.ranges.IntRange
+    public final operator fun kotlin.Byte.rangeTo(kotlin.Long): kotlin.ranges.LongRange
+    public final operator fun kotlin.Byte.rangeTo(kotlin.Short): kotlin.ranges.IntRange
+    public final operator fun kotlin.Byte.rangeUntil(kotlin.Byte): kotlin.ranges.IntRange
+    public final operator fun kotlin.Byte.rangeUntil(kotlin.Int): kotlin.ranges.IntRange
+    public final operator fun kotlin.Byte.rangeUntil(kotlin.Long): kotlin.ranges.LongRange
+    public final operator fun kotlin.Byte.rangeUntil(kotlin.Short): kotlin.ranges.IntRange
+    public final operator fun kotlin.Byte.rem(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Byte.rem(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Byte.rem(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Byte.rem(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Byte.rem(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Byte.rem(kotlin.Short): kotlin.Int
+    public final operator fun kotlin.Byte.times(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Byte.times(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Byte.times(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Byte.times(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Byte.times(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Byte.times(kotlin.Short): kotlin.Int
+    public open fun kotlin.Byte.toByte(): kotlin.Byte
+    public open fun kotlin.Byte.toChar(): kotlin.Char
+    public open fun kotlin.Byte.toDouble(): kotlin.Double
+    public open fun kotlin.Byte.toFloat(): kotlin.Float
+    public open fun kotlin.Byte.toInt(): kotlin.Int
+    public open fun kotlin.Byte.toLong(): kotlin.Long
+    public open fun kotlin.Byte.toShort(): kotlin.Short
+    public open fun kotlin.Byte.toString(): kotlin.String
+    public final operator fun kotlin.Byte.unaryMinus(): kotlin.Int
+    public final operator fun kotlin.Byte.unaryPlus(): kotlin.Int
+KClass (primitive): class kotlin.Byte : Number, Comparable, Serializable
+  constructors:
+    private final fun `<init>`(): kotlin.Byte
+  members:
+    public open operator fun kotlin.Byte.compareTo(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Byte.compareTo(kotlin.Double): kotlin.Int
+    public final operator fun kotlin.Byte.compareTo(kotlin.Float): kotlin.Int
+    public final operator fun kotlin.Byte.compareTo(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Byte.compareTo(kotlin.Long): kotlin.Int
+    public final operator fun kotlin.Byte.compareTo(kotlin.Short): kotlin.Int
+    public final operator fun kotlin.Byte.dec(): kotlin.Byte
+    public open fun kotlin.Byte.describeConstable(): java.util.Optional<java.lang.constant.DynamicConstantDesc<kotlin.Byte!>!>!
+    public final operator fun kotlin.Byte.div(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Byte.div(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Byte.div(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Byte.div(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Byte.div(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Byte.div(kotlin.Short): kotlin.Int
+    public open operator fun kotlin.Byte.equals(kotlin.Any?): kotlin.Boolean
+    public open fun kotlin.Byte.hashCode(): kotlin.Int
+    public final operator fun kotlin.Byte.inc(): kotlin.Byte
+    public final operator fun kotlin.Byte.minus(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Byte.minus(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Byte.minus(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Byte.minus(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Byte.minus(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Byte.minus(kotlin.Short): kotlin.Int
+    public final operator fun kotlin.Byte.plus(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Byte.plus(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Byte.plus(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Byte.plus(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Byte.plus(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Byte.plus(kotlin.Short): kotlin.Int
+    public final operator fun kotlin.Byte.rangeTo(kotlin.Byte): kotlin.ranges.IntRange
+    public final operator fun kotlin.Byte.rangeTo(kotlin.Int): kotlin.ranges.IntRange
+    public final operator fun kotlin.Byte.rangeTo(kotlin.Long): kotlin.ranges.LongRange
+    public final operator fun kotlin.Byte.rangeTo(kotlin.Short): kotlin.ranges.IntRange
+    public final operator fun kotlin.Byte.rangeUntil(kotlin.Byte): kotlin.ranges.IntRange
+    public final operator fun kotlin.Byte.rangeUntil(kotlin.Int): kotlin.ranges.IntRange
+    public final operator fun kotlin.Byte.rangeUntil(kotlin.Long): kotlin.ranges.LongRange
+    public final operator fun kotlin.Byte.rangeUntil(kotlin.Short): kotlin.ranges.IntRange
+    public final operator fun kotlin.Byte.rem(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Byte.rem(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Byte.rem(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Byte.rem(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Byte.rem(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Byte.rem(kotlin.Short): kotlin.Int
+    public final operator fun kotlin.Byte.times(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Byte.times(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Byte.times(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Byte.times(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Byte.times(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Byte.times(kotlin.Short): kotlin.Int
+    public open fun kotlin.Byte.toByte(): kotlin.Byte
+    public open fun kotlin.Byte.toChar(): kotlin.Char
+    public open fun kotlin.Byte.toDouble(): kotlin.Double
+    public open fun kotlin.Byte.toFloat(): kotlin.Float
+    public open fun kotlin.Byte.toInt(): kotlin.Int
+    public open fun kotlin.Byte.toLong(): kotlin.Long
+    public open fun kotlin.Byte.toShort(): kotlin.Short
+    public open fun kotlin.Byte.toString(): kotlin.String
+    public final operator fun kotlin.Byte.unaryMinus(): kotlin.Int
+    public final operator fun kotlin.Byte.unaryPlus(): kotlin.Int
+  declaredMembers:
+    public open operator fun kotlin.Byte.compareTo(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Byte.compareTo(kotlin.Double): kotlin.Int
+    public final operator fun kotlin.Byte.compareTo(kotlin.Float): kotlin.Int
+    public final operator fun kotlin.Byte.compareTo(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Byte.compareTo(kotlin.Long): kotlin.Int
+    public final operator fun kotlin.Byte.compareTo(kotlin.Short): kotlin.Int
+    public final operator fun kotlin.Byte.dec(): kotlin.Byte
+    public open fun kotlin.Byte.describeConstable(): java.util.Optional<java.lang.constant.DynamicConstantDesc<kotlin.Byte!>!>!
+    public final operator fun kotlin.Byte.div(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Byte.div(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Byte.div(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Byte.div(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Byte.div(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Byte.div(kotlin.Short): kotlin.Int
+    public open operator fun kotlin.Byte.equals(kotlin.Any?): kotlin.Boolean
+    public final operator fun kotlin.Byte.inc(): kotlin.Byte
+    public final operator fun kotlin.Byte.minus(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Byte.minus(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Byte.minus(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Byte.minus(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Byte.minus(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Byte.minus(kotlin.Short): kotlin.Int
+    public final operator fun kotlin.Byte.plus(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Byte.plus(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Byte.plus(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Byte.plus(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Byte.plus(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Byte.plus(kotlin.Short): kotlin.Int
+    public final operator fun kotlin.Byte.rangeTo(kotlin.Byte): kotlin.ranges.IntRange
+    public final operator fun kotlin.Byte.rangeTo(kotlin.Int): kotlin.ranges.IntRange
+    public final operator fun kotlin.Byte.rangeTo(kotlin.Long): kotlin.ranges.LongRange
+    public final operator fun kotlin.Byte.rangeTo(kotlin.Short): kotlin.ranges.IntRange
+    public final operator fun kotlin.Byte.rangeUntil(kotlin.Byte): kotlin.ranges.IntRange
+    public final operator fun kotlin.Byte.rangeUntil(kotlin.Int): kotlin.ranges.IntRange
+    public final operator fun kotlin.Byte.rangeUntil(kotlin.Long): kotlin.ranges.LongRange
+    public final operator fun kotlin.Byte.rangeUntil(kotlin.Short): kotlin.ranges.IntRange
+    public final operator fun kotlin.Byte.rem(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Byte.rem(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Byte.rem(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Byte.rem(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Byte.rem(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Byte.rem(kotlin.Short): kotlin.Int
+    public final operator fun kotlin.Byte.times(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Byte.times(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Byte.times(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Byte.times(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Byte.times(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Byte.times(kotlin.Short): kotlin.Int
+    public open fun kotlin.Byte.toByte(): kotlin.Byte
+    public open fun kotlin.Byte.toChar(): kotlin.Char
+    public open fun kotlin.Byte.toDouble(): kotlin.Double
+    public open fun kotlin.Byte.toFloat(): kotlin.Float
+    public open fun kotlin.Byte.toInt(): kotlin.Int
+    public open fun kotlin.Byte.toLong(): kotlin.Long
+    public open fun kotlin.Byte.toShort(): kotlin.Short
+    public open fun kotlin.Byte.toString(): kotlin.String
+    public final operator fun kotlin.Byte.unaryMinus(): kotlin.Int
+    public final operator fun kotlin.Byte.unaryPlus(): kotlin.Int
 KClass: class kotlin.Char.Companion : Any
   members:
     public open operator fun kotlin.Char.Companion.equals(kotlin.Any?): kotlin.Boolean
@@ -61,6 +351,92 @@ KClass: class kotlin.Char.Companion : Any
     public final val kotlin.Char.Companion.MIN_VALUE: kotlin.Char
     public final val kotlin.Char.Companion.SIZE_BITS: kotlin.Int
     public final val kotlin.Char.Companion.SIZE_BYTES: kotlin.Int
+KClass: class kotlin.Char : Comparable, Serializable, Any
+  constructors:
+    private final fun `<init>`(): kotlin.Char
+  members:
+    public open operator fun kotlin.Char.compareTo(kotlin.Char): kotlin.Int
+    public final operator fun kotlin.Char.dec(): kotlin.Char
+    public open fun kotlin.Char.describeConstable(): java.util.Optional<java.lang.constant.DynamicConstantDesc<kotlin.Char!>!>!
+    public open operator fun kotlin.Char.equals(kotlin.Any?): kotlin.Boolean
+    public open fun kotlin.Char.hashCode(): kotlin.Int
+    public final operator fun kotlin.Char.inc(): kotlin.Char
+    public final operator fun kotlin.Char.minus(kotlin.Char): kotlin.Int
+    public final operator fun kotlin.Char.minus(kotlin.Int): kotlin.Char
+    public final operator fun kotlin.Char.plus(kotlin.Int): kotlin.Char
+    public final operator fun kotlin.Char.rangeTo(kotlin.Char): kotlin.ranges.CharRange
+    public final operator fun kotlin.Char.rangeUntil(kotlin.Char): kotlin.ranges.CharRange
+    public final fun kotlin.Char.toByte(): kotlin.Byte
+    public final fun kotlin.Char.toChar(): kotlin.Char
+    public final fun kotlin.Char.toDouble(): kotlin.Double
+    public final fun kotlin.Char.toFloat(): kotlin.Float
+    public final fun kotlin.Char.toInt(): kotlin.Int
+    public final fun kotlin.Char.toLong(): kotlin.Long
+    public final fun kotlin.Char.toShort(): kotlin.Short
+    public open fun kotlin.Char.toString(): kotlin.String
+  declaredMembers:
+    public open operator fun kotlin.Char.compareTo(kotlin.Char): kotlin.Int
+    public final operator fun kotlin.Char.dec(): kotlin.Char
+    public open fun kotlin.Char.describeConstable(): java.util.Optional<java.lang.constant.DynamicConstantDesc<kotlin.Char!>!>!
+    public open operator fun kotlin.Char.equals(kotlin.Any?): kotlin.Boolean
+    public open fun kotlin.Char.hashCode(): kotlin.Int
+    public final operator fun kotlin.Char.inc(): kotlin.Char
+    public final operator fun kotlin.Char.minus(kotlin.Char): kotlin.Int
+    public final operator fun kotlin.Char.minus(kotlin.Int): kotlin.Char
+    public final operator fun kotlin.Char.plus(kotlin.Int): kotlin.Char
+    public final operator fun kotlin.Char.rangeTo(kotlin.Char): kotlin.ranges.CharRange
+    public final operator fun kotlin.Char.rangeUntil(kotlin.Char): kotlin.ranges.CharRange
+    public final fun kotlin.Char.toByte(): kotlin.Byte
+    public final fun kotlin.Char.toChar(): kotlin.Char
+    public final fun kotlin.Char.toDouble(): kotlin.Double
+    public final fun kotlin.Char.toFloat(): kotlin.Float
+    public final fun kotlin.Char.toInt(): kotlin.Int
+    public final fun kotlin.Char.toLong(): kotlin.Long
+    public final fun kotlin.Char.toShort(): kotlin.Short
+    public open fun kotlin.Char.toString(): kotlin.String
+KClass (primitive): class kotlin.Char : Comparable, Serializable, Any
+  constructors:
+    private final fun `<init>`(): kotlin.Char
+  members:
+    public open operator fun kotlin.Char.compareTo(kotlin.Char): kotlin.Int
+    public final operator fun kotlin.Char.dec(): kotlin.Char
+    public open fun kotlin.Char.describeConstable(): java.util.Optional<java.lang.constant.DynamicConstantDesc<kotlin.Char!>!>!
+    public open operator fun kotlin.Char.equals(kotlin.Any?): kotlin.Boolean
+    public open fun kotlin.Char.hashCode(): kotlin.Int
+    public final operator fun kotlin.Char.inc(): kotlin.Char
+    public final operator fun kotlin.Char.minus(kotlin.Char): kotlin.Int
+    public final operator fun kotlin.Char.minus(kotlin.Int): kotlin.Char
+    public final operator fun kotlin.Char.plus(kotlin.Int): kotlin.Char
+    public final operator fun kotlin.Char.rangeTo(kotlin.Char): kotlin.ranges.CharRange
+    public final operator fun kotlin.Char.rangeUntil(kotlin.Char): kotlin.ranges.CharRange
+    public final fun kotlin.Char.toByte(): kotlin.Byte
+    public final fun kotlin.Char.toChar(): kotlin.Char
+    public final fun kotlin.Char.toDouble(): kotlin.Double
+    public final fun kotlin.Char.toFloat(): kotlin.Float
+    public final fun kotlin.Char.toInt(): kotlin.Int
+    public final fun kotlin.Char.toLong(): kotlin.Long
+    public final fun kotlin.Char.toShort(): kotlin.Short
+    public open fun kotlin.Char.toString(): kotlin.String
+  declaredMembers:
+    public open operator fun kotlin.Char.compareTo(kotlin.Char): kotlin.Int
+    public final operator fun kotlin.Char.dec(): kotlin.Char
+    public open fun kotlin.Char.describeConstable(): java.util.Optional<java.lang.constant.DynamicConstantDesc<kotlin.Char!>!>!
+    public open operator fun kotlin.Char.equals(kotlin.Any?): kotlin.Boolean
+    public open fun kotlin.Char.hashCode(): kotlin.Int
+    public final operator fun kotlin.Char.inc(): kotlin.Char
+    public final operator fun kotlin.Char.minus(kotlin.Char): kotlin.Int
+    public final operator fun kotlin.Char.minus(kotlin.Int): kotlin.Char
+    public final operator fun kotlin.Char.plus(kotlin.Int): kotlin.Char
+    public final operator fun kotlin.Char.rangeTo(kotlin.Char): kotlin.ranges.CharRange
+    public final operator fun kotlin.Char.rangeUntil(kotlin.Char): kotlin.ranges.CharRange
+    public final fun kotlin.Char.toByte(): kotlin.Byte
+    public final fun kotlin.Char.toChar(): kotlin.Char
+    public final fun kotlin.Char.toDouble(): kotlin.Double
+    public final fun kotlin.Char.toFloat(): kotlin.Float
+    public final fun kotlin.Char.toInt(): kotlin.Int
+    public final fun kotlin.Char.toLong(): kotlin.Long
+    public final fun kotlin.Char.toShort(): kotlin.Short
+    public open fun kotlin.Char.toString(): kotlin.String
 KClass: abstract interface kotlin.CharSequence : Any
   members:
     public open fun kotlin.CharSequence.chars(): java.util.stream.IntStream!
@@ -178,6 +554,222 @@ KClass: class kotlin.Double.Companion : Any
     public final val kotlin.Double.Companion.POSITIVE_INFINITY: kotlin.Double
     public final val kotlin.Double.Companion.SIZE_BITS: kotlin.Int
     public final val kotlin.Double.Companion.SIZE_BYTES: kotlin.Int
+KClass: class kotlin.Double : Number, Comparable, Serializable
+  constructors:
+    private final fun `<init>`(): kotlin.Double
+  members:
+    public final operator fun kotlin.Double.compareTo(kotlin.Byte): kotlin.Int
+    public open operator fun kotlin.Double.compareTo(kotlin.Double): kotlin.Int
+    public final operator fun kotlin.Double.compareTo(kotlin.Float): kotlin.Int
+    public final operator fun kotlin.Double.compareTo(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Double.compareTo(kotlin.Long): kotlin.Int
+    public final operator fun kotlin.Double.compareTo(kotlin.Short): kotlin.Int
+    public final operator fun kotlin.Double.dec(): kotlin.Double
+    public open fun kotlin.Double.describeConstable(): java.util.Optional<kotlin.Double!>!
+    public final operator fun kotlin.Double.div(kotlin.Byte): kotlin.Double
+    public final operator fun kotlin.Double.div(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Double.div(kotlin.Float): kotlin.Double
+    public final operator fun kotlin.Double.div(kotlin.Int): kotlin.Double
+    public final operator fun kotlin.Double.div(kotlin.Long): kotlin.Double
+    public final operator fun kotlin.Double.div(kotlin.Short): kotlin.Double
+    public open operator fun kotlin.Double.equals(kotlin.Any?): kotlin.Boolean
+    public open fun kotlin.Double.hashCode(): kotlin.Int
+    public final operator fun kotlin.Double.inc(): kotlin.Double
+    public final operator fun kotlin.Double.minus(kotlin.Byte): kotlin.Double
+    public final operator fun kotlin.Double.minus(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Double.minus(kotlin.Float): kotlin.Double
+    public final operator fun kotlin.Double.minus(kotlin.Int): kotlin.Double
+    public final operator fun kotlin.Double.minus(kotlin.Long): kotlin.Double
+    public final operator fun kotlin.Double.minus(kotlin.Short): kotlin.Double
+    public final operator fun kotlin.Double.plus(kotlin.Byte): kotlin.Double
+    public final operator fun kotlin.Double.plus(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Double.plus(kotlin.Float): kotlin.Double
+    public final operator fun kotlin.Double.plus(kotlin.Int): kotlin.Double
+    public final operator fun kotlin.Double.plus(kotlin.Long): kotlin.Double
+    public final operator fun kotlin.Double.plus(kotlin.Short): kotlin.Double
+    public final operator fun kotlin.Double.rem(kotlin.Byte): kotlin.Double
+    public final operator fun kotlin.Double.rem(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Double.rem(kotlin.Float): kotlin.Double
+    public final operator fun kotlin.Double.rem(kotlin.Int): kotlin.Double
+    public final operator fun kotlin.Double.rem(kotlin.Long): kotlin.Double
+    public final operator fun kotlin.Double.rem(kotlin.Short): kotlin.Double
+    public open fun kotlin.Double.resolveConstantDesc(java.lang.invoke.MethodHandles.Lookup!): kotlin.Double!
+    public final operator fun kotlin.Double.times(kotlin.Byte): kotlin.Double
+    public final operator fun kotlin.Double.times(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Double.times(kotlin.Float): kotlin.Double
+    public final operator fun kotlin.Double.times(kotlin.Int): kotlin.Double
+    public final operator fun kotlin.Double.times(kotlin.Long): kotlin.Double
+    public final operator fun kotlin.Double.times(kotlin.Short): kotlin.Double
+    public open fun kotlin.Double.toByte(): kotlin.Byte
+    public open fun kotlin.Double.toChar(): kotlin.Char
+    public open fun kotlin.Double.toDouble(): kotlin.Double
+    public open fun kotlin.Double.toFloat(): kotlin.Float
+    public open fun kotlin.Double.toInt(): kotlin.Int
+    public open fun kotlin.Double.toLong(): kotlin.Long
+    public open fun kotlin.Double.toShort(): kotlin.Short
+    public open fun kotlin.Double.toString(): kotlin.String
+    public final operator fun kotlin.Double.unaryMinus(): kotlin.Double
+    public final operator fun kotlin.Double.unaryPlus(): kotlin.Double
+  declaredMembers:
+    public final operator fun kotlin.Double.compareTo(kotlin.Byte): kotlin.Int
+    public open operator fun kotlin.Double.compareTo(kotlin.Double): kotlin.Int
+    public final operator fun kotlin.Double.compareTo(kotlin.Float): kotlin.Int
+    public final operator fun kotlin.Double.compareTo(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Double.compareTo(kotlin.Long): kotlin.Int
+    public final operator fun kotlin.Double.compareTo(kotlin.Short): kotlin.Int
+    public final operator fun kotlin.Double.dec(): kotlin.Double
+    public open fun kotlin.Double.describeConstable(): java.util.Optional<kotlin.Double!>!
+    public final operator fun kotlin.Double.div(kotlin.Byte): kotlin.Double
+    public final operator fun kotlin.Double.div(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Double.div(kotlin.Float): kotlin.Double
+    public final operator fun kotlin.Double.div(kotlin.Int): kotlin.Double
+    public final operator fun kotlin.Double.div(kotlin.Long): kotlin.Double
+    public final operator fun kotlin.Double.div(kotlin.Short): kotlin.Double
+    public open operator fun kotlin.Double.equals(kotlin.Any?): kotlin.Boolean
+    public final operator fun kotlin.Double.inc(): kotlin.Double
+    public final operator fun kotlin.Double.minus(kotlin.Byte): kotlin.Double
+    public final operator fun kotlin.Double.minus(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Double.minus(kotlin.Float): kotlin.Double
+    public final operator fun kotlin.Double.minus(kotlin.Int): kotlin.Double
+    public final operator fun kotlin.Double.minus(kotlin.Long): kotlin.Double
+    public final operator fun kotlin.Double.minus(kotlin.Short): kotlin.Double
+    public final operator fun kotlin.Double.plus(kotlin.Byte): kotlin.Double
+    public final operator fun kotlin.Double.plus(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Double.plus(kotlin.Float): kotlin.Double
+    public final operator fun kotlin.Double.plus(kotlin.Int): kotlin.Double
+    public final operator fun kotlin.Double.plus(kotlin.Long): kotlin.Double
+    public final operator fun kotlin.Double.plus(kotlin.Short): kotlin.Double
+    public final operator fun kotlin.Double.rem(kotlin.Byte): kotlin.Double
+    public final operator fun kotlin.Double.rem(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Double.rem(kotlin.Float): kotlin.Double
+    public final operator fun kotlin.Double.rem(kotlin.Int): kotlin.Double
+    public final operator fun kotlin.Double.rem(kotlin.Long): kotlin.Double
+    public final operator fun kotlin.Double.rem(kotlin.Short): kotlin.Double
+    public open fun kotlin.Double.resolveConstantDesc(java.lang.invoke.MethodHandles.Lookup!): kotlin.Double!
+    public final operator fun kotlin.Double.times(kotlin.Byte): kotlin.Double
+    public final operator fun kotlin.Double.times(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Double.times(kotlin.Float): kotlin.Double
+    public final operator fun kotlin.Double.times(kotlin.Int): kotlin.Double
+    public final operator fun kotlin.Double.times(kotlin.Long): kotlin.Double
+    public final operator fun kotlin.Double.times(kotlin.Short): kotlin.Double
+    public open fun kotlin.Double.toByte(): kotlin.Byte
+    public open fun kotlin.Double.toChar(): kotlin.Char
+    public open fun kotlin.Double.toDouble(): kotlin.Double
+    public open fun kotlin.Double.toFloat(): kotlin.Float
+    public open fun kotlin.Double.toInt(): kotlin.Int
+    public open fun kotlin.Double.toLong(): kotlin.Long
+    public open fun kotlin.Double.toShort(): kotlin.Short
+    public open fun kotlin.Double.toString(): kotlin.String
+    public final operator fun kotlin.Double.unaryMinus(): kotlin.Double
+    public final operator fun kotlin.Double.unaryPlus(): kotlin.Double
+KClass (primitive): class kotlin.Double : Number, Comparable, Serializable
+  constructors:
+    private final fun `<init>`(): kotlin.Double
+  members:
+    public final operator fun kotlin.Double.compareTo(kotlin.Byte): kotlin.Int
+    public open operator fun kotlin.Double.compareTo(kotlin.Double): kotlin.Int
+    public final operator fun kotlin.Double.compareTo(kotlin.Float): kotlin.Int
+    public final operator fun kotlin.Double.compareTo(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Double.compareTo(kotlin.Long): kotlin.Int
+    public final operator fun kotlin.Double.compareTo(kotlin.Short): kotlin.Int
+    public final operator fun kotlin.Double.dec(): kotlin.Double
+    public open fun kotlin.Double.describeConstable(): java.util.Optional<kotlin.Double!>!
+    public final operator fun kotlin.Double.div(kotlin.Byte): kotlin.Double
+    public final operator fun kotlin.Double.div(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Double.div(kotlin.Float): kotlin.Double
+    public final operator fun kotlin.Double.div(kotlin.Int): kotlin.Double
+    public final operator fun kotlin.Double.div(kotlin.Long): kotlin.Double
+    public final operator fun kotlin.Double.div(kotlin.Short): kotlin.Double
+    public open operator fun kotlin.Double.equals(kotlin.Any?): kotlin.Boolean
+    public open fun kotlin.Double.hashCode(): kotlin.Int
+    public final operator fun kotlin.Double.inc(): kotlin.Double
+    public final operator fun kotlin.Double.minus(kotlin.Byte): kotlin.Double
+    public final operator fun kotlin.Double.minus(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Double.minus(kotlin.Float): kotlin.Double
+    public final operator fun kotlin.Double.minus(kotlin.Int): kotlin.Double
+    public final operator fun kotlin.Double.minus(kotlin.Long): kotlin.Double
+    public final operator fun kotlin.Double.minus(kotlin.Short): kotlin.Double
+    public final operator fun kotlin.Double.plus(kotlin.Byte): kotlin.Double
+    public final operator fun kotlin.Double.plus(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Double.plus(kotlin.Float): kotlin.Double
+    public final operator fun kotlin.Double.plus(kotlin.Int): kotlin.Double
+    public final operator fun kotlin.Double.plus(kotlin.Long): kotlin.Double
+    public final operator fun kotlin.Double.plus(kotlin.Short): kotlin.Double
+    public final operator fun kotlin.Double.rem(kotlin.Byte): kotlin.Double
+    public final operator fun kotlin.Double.rem(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Double.rem(kotlin.Float): kotlin.Double
+    public final operator fun kotlin.Double.rem(kotlin.Int): kotlin.Double
+    public final operator fun kotlin.Double.rem(kotlin.Long): kotlin.Double
+    public final operator fun kotlin.Double.rem(kotlin.Short): kotlin.Double
+    public open fun kotlin.Double.resolveConstantDesc(java.lang.invoke.MethodHandles.Lookup!): kotlin.Double!
+    public final operator fun kotlin.Double.times(kotlin.Byte): kotlin.Double
+    public final operator fun kotlin.Double.times(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Double.times(kotlin.Float): kotlin.Double
+    public final operator fun kotlin.Double.times(kotlin.Int): kotlin.Double
+    public final operator fun kotlin.Double.times(kotlin.Long): kotlin.Double
+    public final operator fun kotlin.Double.times(kotlin.Short): kotlin.Double
+    public open fun kotlin.Double.toByte(): kotlin.Byte
+    public open fun kotlin.Double.toChar(): kotlin.Char
+    public open fun kotlin.Double.toDouble(): kotlin.Double
+    public open fun kotlin.Double.toFloat(): kotlin.Float
+    public open fun kotlin.Double.toInt(): kotlin.Int
+    public open fun kotlin.Double.toLong(): kotlin.Long
+    public open fun kotlin.Double.toShort(): kotlin.Short
+    public open fun kotlin.Double.toString(): kotlin.String
+    public final operator fun kotlin.Double.unaryMinus(): kotlin.Double
+    public final operator fun kotlin.Double.unaryPlus(): kotlin.Double
+  declaredMembers:
+    public final operator fun kotlin.Double.compareTo(kotlin.Byte): kotlin.Int
+    public open operator fun kotlin.Double.compareTo(kotlin.Double): kotlin.Int
+    public final operator fun kotlin.Double.compareTo(kotlin.Float): kotlin.Int
+    public final operator fun kotlin.Double.compareTo(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Double.compareTo(kotlin.Long): kotlin.Int
+    public final operator fun kotlin.Double.compareTo(kotlin.Short): kotlin.Int
+    public final operator fun kotlin.Double.dec(): kotlin.Double
+    public open fun kotlin.Double.describeConstable(): java.util.Optional<kotlin.Double!>!
+    public final operator fun kotlin.Double.div(kotlin.Byte): kotlin.Double
+    public final operator fun kotlin.Double.div(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Double.div(kotlin.Float): kotlin.Double
+    public final operator fun kotlin.Double.div(kotlin.Int): kotlin.Double
+    public final operator fun kotlin.Double.div(kotlin.Long): kotlin.Double
+    public final operator fun kotlin.Double.div(kotlin.Short): kotlin.Double
+    public open operator fun kotlin.Double.equals(kotlin.Any?): kotlin.Boolean
+    public final operator fun kotlin.Double.inc(): kotlin.Double
+    public final operator fun kotlin.Double.minus(kotlin.Byte): kotlin.Double
+    public final operator fun kotlin.Double.minus(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Double.minus(kotlin.Float): kotlin.Double
+    public final operator fun kotlin.Double.minus(kotlin.Int): kotlin.Double
+    public final operator fun kotlin.Double.minus(kotlin.Long): kotlin.Double
+    public final operator fun kotlin.Double.minus(kotlin.Short): kotlin.Double
+    public final operator fun kotlin.Double.plus(kotlin.Byte): kotlin.Double
+    public final operator fun kotlin.Double.plus(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Double.plus(kotlin.Float): kotlin.Double
+    public final operator fun kotlin.Double.plus(kotlin.Int): kotlin.Double
+    public final operator fun kotlin.Double.plus(kotlin.Long): kotlin.Double
+    public final operator fun kotlin.Double.plus(kotlin.Short): kotlin.Double
+    public final operator fun kotlin.Double.rem(kotlin.Byte): kotlin.Double
+    public final operator fun kotlin.Double.rem(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Double.rem(kotlin.Float): kotlin.Double
+    public final operator fun kotlin.Double.rem(kotlin.Int): kotlin.Double
+    public final operator fun kotlin.Double.rem(kotlin.Long): kotlin.Double
+    public final operator fun kotlin.Double.rem(kotlin.Short): kotlin.Double
+    public open fun kotlin.Double.resolveConstantDesc(java.lang.invoke.MethodHandles.Lookup!): kotlin.Double!
+    public final operator fun kotlin.Double.times(kotlin.Byte): kotlin.Double
+    public final operator fun kotlin.Double.times(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Double.times(kotlin.Float): kotlin.Double
+    public final operator fun kotlin.Double.times(kotlin.Int): kotlin.Double
+    public final operator fun kotlin.Double.times(kotlin.Long): kotlin.Double
+    public final operator fun kotlin.Double.times(kotlin.Short): kotlin.Double
+    public open fun kotlin.Double.toByte(): kotlin.Byte
+    public open fun kotlin.Double.toChar(): kotlin.Char
+    public open fun kotlin.Double.toDouble(): kotlin.Double
+    public open fun kotlin.Double.toFloat(): kotlin.Float
+    public open fun kotlin.Double.toInt(): kotlin.Int
+    public open fun kotlin.Double.toLong(): kotlin.Long
+    public open fun kotlin.Double.toShort(): kotlin.Short
+    public open fun kotlin.Double.toString(): kotlin.String
+    public final operator fun kotlin.Double.unaryMinus(): kotlin.Double
+    public final operator fun kotlin.Double.unaryPlus(): kotlin.Double
 KClass: interface kotlin.DslMarker : Annotation, Any
   constructors:
     public final fun `<init>`(): kotlin.DslMarker
@@ -279,6 +871,222 @@ KClass: class kotlin.Float.Companion : Any
     public final val kotlin.Float.Companion.POSITIVE_INFINITY: kotlin.Float
     public final val kotlin.Float.Companion.SIZE_BITS: kotlin.Int
     public final val kotlin.Float.Companion.SIZE_BYTES: kotlin.Int
+KClass: class kotlin.Float : Number, Comparable, Serializable
+  constructors:
+    private final fun `<init>`(): kotlin.Float
+  members:
+    public final operator fun kotlin.Float.compareTo(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Float.compareTo(kotlin.Double): kotlin.Int
+    public open operator fun kotlin.Float.compareTo(kotlin.Float): kotlin.Int
+    public final operator fun kotlin.Float.compareTo(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Float.compareTo(kotlin.Long): kotlin.Int
+    public final operator fun kotlin.Float.compareTo(kotlin.Short): kotlin.Int
+    public final operator fun kotlin.Float.dec(): kotlin.Float
+    public open fun kotlin.Float.describeConstable(): java.util.Optional<kotlin.Float!>!
+    public final operator fun kotlin.Float.div(kotlin.Byte): kotlin.Float
+    public final operator fun kotlin.Float.div(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Float.div(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Float.div(kotlin.Int): kotlin.Float
+    public final operator fun kotlin.Float.div(kotlin.Long): kotlin.Float
+    public final operator fun kotlin.Float.div(kotlin.Short): kotlin.Float
+    public open operator fun kotlin.Float.equals(kotlin.Any?): kotlin.Boolean
+    public open fun kotlin.Float.hashCode(): kotlin.Int
+    public final operator fun kotlin.Float.inc(): kotlin.Float
+    public final operator fun kotlin.Float.minus(kotlin.Byte): kotlin.Float
+    public final operator fun kotlin.Float.minus(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Float.minus(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Float.minus(kotlin.Int): kotlin.Float
+    public final operator fun kotlin.Float.minus(kotlin.Long): kotlin.Float
+    public final operator fun kotlin.Float.minus(kotlin.Short): kotlin.Float
+    public final operator fun kotlin.Float.plus(kotlin.Byte): kotlin.Float
+    public final operator fun kotlin.Float.plus(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Float.plus(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Float.plus(kotlin.Int): kotlin.Float
+    public final operator fun kotlin.Float.plus(kotlin.Long): kotlin.Float
+    public final operator fun kotlin.Float.plus(kotlin.Short): kotlin.Float
+    public final operator fun kotlin.Float.rem(kotlin.Byte): kotlin.Float
+    public final operator fun kotlin.Float.rem(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Float.rem(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Float.rem(kotlin.Int): kotlin.Float
+    public final operator fun kotlin.Float.rem(kotlin.Long): kotlin.Float
+    public final operator fun kotlin.Float.rem(kotlin.Short): kotlin.Float
+    public open fun kotlin.Float.resolveConstantDesc(java.lang.invoke.MethodHandles.Lookup!): kotlin.Float!
+    public final operator fun kotlin.Float.times(kotlin.Byte): kotlin.Float
+    public final operator fun kotlin.Float.times(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Float.times(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Float.times(kotlin.Int): kotlin.Float
+    public final operator fun kotlin.Float.times(kotlin.Long): kotlin.Float
+    public final operator fun kotlin.Float.times(kotlin.Short): kotlin.Float
+    public open fun kotlin.Float.toByte(): kotlin.Byte
+    public open fun kotlin.Float.toChar(): kotlin.Char
+    public open fun kotlin.Float.toDouble(): kotlin.Double
+    public open fun kotlin.Float.toFloat(): kotlin.Float
+    public open fun kotlin.Float.toInt(): kotlin.Int
+    public open fun kotlin.Float.toLong(): kotlin.Long
+    public open fun kotlin.Float.toShort(): kotlin.Short
+    public open fun kotlin.Float.toString(): kotlin.String
+    public final operator fun kotlin.Float.unaryMinus(): kotlin.Float
+    public final operator fun kotlin.Float.unaryPlus(): kotlin.Float
+  declaredMembers:
+    public final operator fun kotlin.Float.compareTo(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Float.compareTo(kotlin.Double): kotlin.Int
+    public open operator fun kotlin.Float.compareTo(kotlin.Float): kotlin.Int
+    public final operator fun kotlin.Float.compareTo(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Float.compareTo(kotlin.Long): kotlin.Int
+    public final operator fun kotlin.Float.compareTo(kotlin.Short): kotlin.Int
+    public final operator fun kotlin.Float.dec(): kotlin.Float
+    public open fun kotlin.Float.describeConstable(): java.util.Optional<kotlin.Float!>!
+    public final operator fun kotlin.Float.div(kotlin.Byte): kotlin.Float
+    public final operator fun kotlin.Float.div(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Float.div(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Float.div(kotlin.Int): kotlin.Float
+    public final operator fun kotlin.Float.div(kotlin.Long): kotlin.Float
+    public final operator fun kotlin.Float.div(kotlin.Short): kotlin.Float
+    public open operator fun kotlin.Float.equals(kotlin.Any?): kotlin.Boolean
+    public final operator fun kotlin.Float.inc(): kotlin.Float
+    public final operator fun kotlin.Float.minus(kotlin.Byte): kotlin.Float
+    public final operator fun kotlin.Float.minus(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Float.minus(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Float.minus(kotlin.Int): kotlin.Float
+    public final operator fun kotlin.Float.minus(kotlin.Long): kotlin.Float
+    public final operator fun kotlin.Float.minus(kotlin.Short): kotlin.Float
+    public final operator fun kotlin.Float.plus(kotlin.Byte): kotlin.Float
+    public final operator fun kotlin.Float.plus(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Float.plus(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Float.plus(kotlin.Int): kotlin.Float
+    public final operator fun kotlin.Float.plus(kotlin.Long): kotlin.Float
+    public final operator fun kotlin.Float.plus(kotlin.Short): kotlin.Float
+    public final operator fun kotlin.Float.rem(kotlin.Byte): kotlin.Float
+    public final operator fun kotlin.Float.rem(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Float.rem(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Float.rem(kotlin.Int): kotlin.Float
+    public final operator fun kotlin.Float.rem(kotlin.Long): kotlin.Float
+    public final operator fun kotlin.Float.rem(kotlin.Short): kotlin.Float
+    public open fun kotlin.Float.resolveConstantDesc(java.lang.invoke.MethodHandles.Lookup!): kotlin.Float!
+    public final operator fun kotlin.Float.times(kotlin.Byte): kotlin.Float
+    public final operator fun kotlin.Float.times(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Float.times(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Float.times(kotlin.Int): kotlin.Float
+    public final operator fun kotlin.Float.times(kotlin.Long): kotlin.Float
+    public final operator fun kotlin.Float.times(kotlin.Short): kotlin.Float
+    public open fun kotlin.Float.toByte(): kotlin.Byte
+    public open fun kotlin.Float.toChar(): kotlin.Char
+    public open fun kotlin.Float.toDouble(): kotlin.Double
+    public open fun kotlin.Float.toFloat(): kotlin.Float
+    public open fun kotlin.Float.toInt(): kotlin.Int
+    public open fun kotlin.Float.toLong(): kotlin.Long
+    public open fun kotlin.Float.toShort(): kotlin.Short
+    public open fun kotlin.Float.toString(): kotlin.String
+    public final operator fun kotlin.Float.unaryMinus(): kotlin.Float
+    public final operator fun kotlin.Float.unaryPlus(): kotlin.Float
+KClass (primitive): class kotlin.Float : Number, Comparable, Serializable
+  constructors:
+    private final fun `<init>`(): kotlin.Float
+  members:
+    public final operator fun kotlin.Float.compareTo(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Float.compareTo(kotlin.Double): kotlin.Int
+    public open operator fun kotlin.Float.compareTo(kotlin.Float): kotlin.Int
+    public final operator fun kotlin.Float.compareTo(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Float.compareTo(kotlin.Long): kotlin.Int
+    public final operator fun kotlin.Float.compareTo(kotlin.Short): kotlin.Int
+    public final operator fun kotlin.Float.dec(): kotlin.Float
+    public open fun kotlin.Float.describeConstable(): java.util.Optional<kotlin.Float!>!
+    public final operator fun kotlin.Float.div(kotlin.Byte): kotlin.Float
+    public final operator fun kotlin.Float.div(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Float.div(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Float.div(kotlin.Int): kotlin.Float
+    public final operator fun kotlin.Float.div(kotlin.Long): kotlin.Float
+    public final operator fun kotlin.Float.div(kotlin.Short): kotlin.Float
+    public open operator fun kotlin.Float.equals(kotlin.Any?): kotlin.Boolean
+    public open fun kotlin.Float.hashCode(): kotlin.Int
+    public final operator fun kotlin.Float.inc(): kotlin.Float
+    public final operator fun kotlin.Float.minus(kotlin.Byte): kotlin.Float
+    public final operator fun kotlin.Float.minus(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Float.minus(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Float.minus(kotlin.Int): kotlin.Float
+    public final operator fun kotlin.Float.minus(kotlin.Long): kotlin.Float
+    public final operator fun kotlin.Float.minus(kotlin.Short): kotlin.Float
+    public final operator fun kotlin.Float.plus(kotlin.Byte): kotlin.Float
+    public final operator fun kotlin.Float.plus(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Float.plus(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Float.plus(kotlin.Int): kotlin.Float
+    public final operator fun kotlin.Float.plus(kotlin.Long): kotlin.Float
+    public final operator fun kotlin.Float.plus(kotlin.Short): kotlin.Float
+    public final operator fun kotlin.Float.rem(kotlin.Byte): kotlin.Float
+    public final operator fun kotlin.Float.rem(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Float.rem(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Float.rem(kotlin.Int): kotlin.Float
+    public final operator fun kotlin.Float.rem(kotlin.Long): kotlin.Float
+    public final operator fun kotlin.Float.rem(kotlin.Short): kotlin.Float
+    public open fun kotlin.Float.resolveConstantDesc(java.lang.invoke.MethodHandles.Lookup!): kotlin.Float!
+    public final operator fun kotlin.Float.times(kotlin.Byte): kotlin.Float
+    public final operator fun kotlin.Float.times(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Float.times(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Float.times(kotlin.Int): kotlin.Float
+    public final operator fun kotlin.Float.times(kotlin.Long): kotlin.Float
+    public final operator fun kotlin.Float.times(kotlin.Short): kotlin.Float
+    public open fun kotlin.Float.toByte(): kotlin.Byte
+    public open fun kotlin.Float.toChar(): kotlin.Char
+    public open fun kotlin.Float.toDouble(): kotlin.Double
+    public open fun kotlin.Float.toFloat(): kotlin.Float
+    public open fun kotlin.Float.toInt(): kotlin.Int
+    public open fun kotlin.Float.toLong(): kotlin.Long
+    public open fun kotlin.Float.toShort(): kotlin.Short
+    public open fun kotlin.Float.toString(): kotlin.String
+    public final operator fun kotlin.Float.unaryMinus(): kotlin.Float
+    public final operator fun kotlin.Float.unaryPlus(): kotlin.Float
+  declaredMembers:
+    public final operator fun kotlin.Float.compareTo(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Float.compareTo(kotlin.Double): kotlin.Int
+    public open operator fun kotlin.Float.compareTo(kotlin.Float): kotlin.Int
+    public final operator fun kotlin.Float.compareTo(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Float.compareTo(kotlin.Long): kotlin.Int
+    public final operator fun kotlin.Float.compareTo(kotlin.Short): kotlin.Int
+    public final operator fun kotlin.Float.dec(): kotlin.Float
+    public open fun kotlin.Float.describeConstable(): java.util.Optional<kotlin.Float!>!
+    public final operator fun kotlin.Float.div(kotlin.Byte): kotlin.Float
+    public final operator fun kotlin.Float.div(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Float.div(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Float.div(kotlin.Int): kotlin.Float
+    public final operator fun kotlin.Float.div(kotlin.Long): kotlin.Float
+    public final operator fun kotlin.Float.div(kotlin.Short): kotlin.Float
+    public open operator fun kotlin.Float.equals(kotlin.Any?): kotlin.Boolean
+    public final operator fun kotlin.Float.inc(): kotlin.Float
+    public final operator fun kotlin.Float.minus(kotlin.Byte): kotlin.Float
+    public final operator fun kotlin.Float.minus(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Float.minus(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Float.minus(kotlin.Int): kotlin.Float
+    public final operator fun kotlin.Float.minus(kotlin.Long): kotlin.Float
+    public final operator fun kotlin.Float.minus(kotlin.Short): kotlin.Float
+    public final operator fun kotlin.Float.plus(kotlin.Byte): kotlin.Float
+    public final operator fun kotlin.Float.plus(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Float.plus(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Float.plus(kotlin.Int): kotlin.Float
+    public final operator fun kotlin.Float.plus(kotlin.Long): kotlin.Float
+    public final operator fun kotlin.Float.plus(kotlin.Short): kotlin.Float
+    public final operator fun kotlin.Float.rem(kotlin.Byte): kotlin.Float
+    public final operator fun kotlin.Float.rem(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Float.rem(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Float.rem(kotlin.Int): kotlin.Float
+    public final operator fun kotlin.Float.rem(kotlin.Long): kotlin.Float
+    public final operator fun kotlin.Float.rem(kotlin.Short): kotlin.Float
+    public open fun kotlin.Float.resolveConstantDesc(java.lang.invoke.MethodHandles.Lookup!): kotlin.Float!
+    public final operator fun kotlin.Float.times(kotlin.Byte): kotlin.Float
+    public final operator fun kotlin.Float.times(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Float.times(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Float.times(kotlin.Int): kotlin.Float
+    public final operator fun kotlin.Float.times(kotlin.Long): kotlin.Float
+    public final operator fun kotlin.Float.times(kotlin.Short): kotlin.Float
+    public open fun kotlin.Float.toByte(): kotlin.Byte
+    public open fun kotlin.Float.toChar(): kotlin.Char
+    public open fun kotlin.Float.toDouble(): kotlin.Double
+    public open fun kotlin.Float.toFloat(): kotlin.Float
+    public open fun kotlin.Float.toInt(): kotlin.Int
+    public open fun kotlin.Float.toLong(): kotlin.Long
+    public open fun kotlin.Float.toShort(): kotlin.Short
+    public open fun kotlin.Float.toString(): kotlin.String
+    public final operator fun kotlin.Float.unaryMinus(): kotlin.Float
+    public final operator fun kotlin.Float.unaryPlus(): kotlin.Float
 KClass: abstract interface kotlin.Function : Any
   members:
     public open operator fun kotlin.Function<R>.equals(kotlin.Any?): kotlin.Boolean
@@ -307,6 +1115,282 @@ KClass: class kotlin.Int.Companion : Any
     public final val kotlin.Int.Companion.MIN_VALUE: kotlin.Int
     public final val kotlin.Int.Companion.SIZE_BITS: kotlin.Int
     public final val kotlin.Int.Companion.SIZE_BYTES: kotlin.Int
+KClass: class kotlin.Int : Number, Comparable, Serializable
+  constructors:
+    private final fun `<init>`(): kotlin.Int
+  members:
+    public final infix fun kotlin.Int.and(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Int.compareTo(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Int.compareTo(kotlin.Double): kotlin.Int
+    public final operator fun kotlin.Int.compareTo(kotlin.Float): kotlin.Int
+    public open operator fun kotlin.Int.compareTo(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Int.compareTo(kotlin.Long): kotlin.Int
+    public final operator fun kotlin.Int.compareTo(kotlin.Short): kotlin.Int
+    public final operator fun kotlin.Int.dec(): kotlin.Int
+    public open fun kotlin.Int.describeConstable(): java.util.Optional<kotlin.Int!>!
+    public final operator fun kotlin.Int.div(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Int.div(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Int.div(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Int.div(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Int.div(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Int.div(kotlin.Short): kotlin.Int
+    public open operator fun kotlin.Int.equals(kotlin.Any?): kotlin.Boolean
+    public open fun kotlin.Int.hashCode(): kotlin.Int
+    public final operator fun kotlin.Int.inc(): kotlin.Int
+    public final fun kotlin.Int.inv(): kotlin.Int
+    public final operator fun kotlin.Int.minus(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Int.minus(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Int.minus(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Int.minus(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Int.minus(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Int.minus(kotlin.Short): kotlin.Int
+    public final infix fun kotlin.Int.or(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Int.plus(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Int.plus(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Int.plus(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Int.plus(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Int.plus(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Int.plus(kotlin.Short): kotlin.Int
+    public final operator fun kotlin.Int.rangeTo(kotlin.Byte): kotlin.ranges.IntRange
+    public final operator fun kotlin.Int.rangeTo(kotlin.Int): kotlin.ranges.IntRange
+    public final operator fun kotlin.Int.rangeTo(kotlin.Long): kotlin.ranges.LongRange
+    public final operator fun kotlin.Int.rangeTo(kotlin.Short): kotlin.ranges.IntRange
+    public final operator fun kotlin.Int.rangeUntil(kotlin.Byte): kotlin.ranges.IntRange
+    public final operator fun kotlin.Int.rangeUntil(kotlin.Int): kotlin.ranges.IntRange
+    public final operator fun kotlin.Int.rangeUntil(kotlin.Long): kotlin.ranges.LongRange
+    public final operator fun kotlin.Int.rangeUntil(kotlin.Short): kotlin.ranges.IntRange
+    public final operator fun kotlin.Int.rem(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Int.rem(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Int.rem(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Int.rem(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Int.rem(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Int.rem(kotlin.Short): kotlin.Int
+    public open fun kotlin.Int.resolveConstantDesc(java.lang.invoke.MethodHandles.Lookup!): kotlin.Int!
+    public final infix fun kotlin.Int.shl(kotlin.Int): kotlin.Int
+    public final infix fun kotlin.Int.shr(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Int.times(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Int.times(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Int.times(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Int.times(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Int.times(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Int.times(kotlin.Short): kotlin.Int
+    public open fun kotlin.Int.toByte(): kotlin.Byte
+    public open fun kotlin.Int.toChar(): kotlin.Char
+    public open fun kotlin.Int.toDouble(): kotlin.Double
+    public open fun kotlin.Int.toFloat(): kotlin.Float
+    public open fun kotlin.Int.toInt(): kotlin.Int
+    public open fun kotlin.Int.toLong(): kotlin.Long
+    public open fun kotlin.Int.toShort(): kotlin.Short
+    public open fun kotlin.Int.toString(): kotlin.String
+    public final operator fun kotlin.Int.unaryMinus(): kotlin.Int
+    public final operator fun kotlin.Int.unaryPlus(): kotlin.Int
+    public final infix fun kotlin.Int.ushr(kotlin.Int): kotlin.Int
+    public final infix fun kotlin.Int.xor(kotlin.Int): kotlin.Int
+  declaredMembers:
+    public final infix fun kotlin.Int.and(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Int.compareTo(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Int.compareTo(kotlin.Double): kotlin.Int
+    public final operator fun kotlin.Int.compareTo(kotlin.Float): kotlin.Int
+    public open operator fun kotlin.Int.compareTo(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Int.compareTo(kotlin.Long): kotlin.Int
+    public final operator fun kotlin.Int.compareTo(kotlin.Short): kotlin.Int
+    public final operator fun kotlin.Int.dec(): kotlin.Int
+    public open fun kotlin.Int.describeConstable(): java.util.Optional<kotlin.Int!>!
+    public final operator fun kotlin.Int.div(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Int.div(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Int.div(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Int.div(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Int.div(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Int.div(kotlin.Short): kotlin.Int
+    public open operator fun kotlin.Int.equals(kotlin.Any?): kotlin.Boolean
+    public final operator fun kotlin.Int.inc(): kotlin.Int
+    public final fun kotlin.Int.inv(): kotlin.Int
+    public final operator fun kotlin.Int.minus(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Int.minus(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Int.minus(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Int.minus(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Int.minus(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Int.minus(kotlin.Short): kotlin.Int
+    public final infix fun kotlin.Int.or(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Int.plus(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Int.plus(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Int.plus(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Int.plus(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Int.plus(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Int.plus(kotlin.Short): kotlin.Int
+    public final operator fun kotlin.Int.rangeTo(kotlin.Byte): kotlin.ranges.IntRange
+    public final operator fun kotlin.Int.rangeTo(kotlin.Int): kotlin.ranges.IntRange
+    public final operator fun kotlin.Int.rangeTo(kotlin.Long): kotlin.ranges.LongRange
+    public final operator fun kotlin.Int.rangeTo(kotlin.Short): kotlin.ranges.IntRange
+    public final operator fun kotlin.Int.rangeUntil(kotlin.Byte): kotlin.ranges.IntRange
+    public final operator fun kotlin.Int.rangeUntil(kotlin.Int): kotlin.ranges.IntRange
+    public final operator fun kotlin.Int.rangeUntil(kotlin.Long): kotlin.ranges.LongRange
+    public final operator fun kotlin.Int.rangeUntil(kotlin.Short): kotlin.ranges.IntRange
+    public final operator fun kotlin.Int.rem(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Int.rem(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Int.rem(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Int.rem(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Int.rem(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Int.rem(kotlin.Short): kotlin.Int
+    public open fun kotlin.Int.resolveConstantDesc(java.lang.invoke.MethodHandles.Lookup!): kotlin.Int!
+    public final infix fun kotlin.Int.shl(kotlin.Int): kotlin.Int
+    public final infix fun kotlin.Int.shr(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Int.times(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Int.times(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Int.times(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Int.times(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Int.times(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Int.times(kotlin.Short): kotlin.Int
+    public open fun kotlin.Int.toByte(): kotlin.Byte
+    public open fun kotlin.Int.toChar(): kotlin.Char
+    public open fun kotlin.Int.toDouble(): kotlin.Double
+    public open fun kotlin.Int.toFloat(): kotlin.Float
+    public open fun kotlin.Int.toInt(): kotlin.Int
+    public open fun kotlin.Int.toLong(): kotlin.Long
+    public open fun kotlin.Int.toShort(): kotlin.Short
+    public open fun kotlin.Int.toString(): kotlin.String
+    public final operator fun kotlin.Int.unaryMinus(): kotlin.Int
+    public final operator fun kotlin.Int.unaryPlus(): kotlin.Int
+    public final infix fun kotlin.Int.ushr(kotlin.Int): kotlin.Int
+    public final infix fun kotlin.Int.xor(kotlin.Int): kotlin.Int
+KClass (primitive): class kotlin.Int : Number, Comparable, Serializable
+  constructors:
+    private final fun `<init>`(): kotlin.Int
+  members:
+    public final infix fun kotlin.Int.and(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Int.compareTo(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Int.compareTo(kotlin.Double): kotlin.Int
+    public final operator fun kotlin.Int.compareTo(kotlin.Float): kotlin.Int
+    public open operator fun kotlin.Int.compareTo(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Int.compareTo(kotlin.Long): kotlin.Int
+    public final operator fun kotlin.Int.compareTo(kotlin.Short): kotlin.Int
+    public final operator fun kotlin.Int.dec(): kotlin.Int
+    public open fun kotlin.Int.describeConstable(): java.util.Optional<kotlin.Int!>!
+    public final operator fun kotlin.Int.div(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Int.div(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Int.div(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Int.div(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Int.div(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Int.div(kotlin.Short): kotlin.Int
+    public open operator fun kotlin.Int.equals(kotlin.Any?): kotlin.Boolean
+    public open fun kotlin.Int.hashCode(): kotlin.Int
+    public final operator fun kotlin.Int.inc(): kotlin.Int
+    public final fun kotlin.Int.inv(): kotlin.Int
+    public final operator fun kotlin.Int.minus(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Int.minus(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Int.minus(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Int.minus(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Int.minus(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Int.minus(kotlin.Short): kotlin.Int
+    public final infix fun kotlin.Int.or(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Int.plus(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Int.plus(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Int.plus(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Int.plus(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Int.plus(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Int.plus(kotlin.Short): kotlin.Int
+    public final operator fun kotlin.Int.rangeTo(kotlin.Byte): kotlin.ranges.IntRange
+    public final operator fun kotlin.Int.rangeTo(kotlin.Int): kotlin.ranges.IntRange
+    public final operator fun kotlin.Int.rangeTo(kotlin.Long): kotlin.ranges.LongRange
+    public final operator fun kotlin.Int.rangeTo(kotlin.Short): kotlin.ranges.IntRange
+    public final operator fun kotlin.Int.rangeUntil(kotlin.Byte): kotlin.ranges.IntRange
+    public final operator fun kotlin.Int.rangeUntil(kotlin.Int): kotlin.ranges.IntRange
+    public final operator fun kotlin.Int.rangeUntil(kotlin.Long): kotlin.ranges.LongRange
+    public final operator fun kotlin.Int.rangeUntil(kotlin.Short): kotlin.ranges.IntRange
+    public final operator fun kotlin.Int.rem(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Int.rem(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Int.rem(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Int.rem(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Int.rem(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Int.rem(kotlin.Short): kotlin.Int
+    public open fun kotlin.Int.resolveConstantDesc(java.lang.invoke.MethodHandles.Lookup!): kotlin.Int!
+    public final infix fun kotlin.Int.shl(kotlin.Int): kotlin.Int
+    public final infix fun kotlin.Int.shr(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Int.times(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Int.times(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Int.times(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Int.times(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Int.times(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Int.times(kotlin.Short): kotlin.Int
+    public open fun kotlin.Int.toByte(): kotlin.Byte
+    public open fun kotlin.Int.toChar(): kotlin.Char
+    public open fun kotlin.Int.toDouble(): kotlin.Double
+    public open fun kotlin.Int.toFloat(): kotlin.Float
+    public open fun kotlin.Int.toInt(): kotlin.Int
+    public open fun kotlin.Int.toLong(): kotlin.Long
+    public open fun kotlin.Int.toShort(): kotlin.Short
+    public open fun kotlin.Int.toString(): kotlin.String
+    public final operator fun kotlin.Int.unaryMinus(): kotlin.Int
+    public final operator fun kotlin.Int.unaryPlus(): kotlin.Int
+    public final infix fun kotlin.Int.ushr(kotlin.Int): kotlin.Int
+    public final infix fun kotlin.Int.xor(kotlin.Int): kotlin.Int
+  declaredMembers:
+    public final infix fun kotlin.Int.and(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Int.compareTo(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Int.compareTo(kotlin.Double): kotlin.Int
+    public final operator fun kotlin.Int.compareTo(kotlin.Float): kotlin.Int
+    public open operator fun kotlin.Int.compareTo(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Int.compareTo(kotlin.Long): kotlin.Int
+    public final operator fun kotlin.Int.compareTo(kotlin.Short): kotlin.Int
+    public final operator fun kotlin.Int.dec(): kotlin.Int
+    public open fun kotlin.Int.describeConstable(): java.util.Optional<kotlin.Int!>!
+    public final operator fun kotlin.Int.div(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Int.div(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Int.div(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Int.div(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Int.div(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Int.div(kotlin.Short): kotlin.Int
+    public open operator fun kotlin.Int.equals(kotlin.Any?): kotlin.Boolean
+    public final operator fun kotlin.Int.inc(): kotlin.Int
+    public final fun kotlin.Int.inv(): kotlin.Int
+    public final operator fun kotlin.Int.minus(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Int.minus(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Int.minus(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Int.minus(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Int.minus(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Int.minus(kotlin.Short): kotlin.Int
+    public final infix fun kotlin.Int.or(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Int.plus(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Int.plus(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Int.plus(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Int.plus(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Int.plus(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Int.plus(kotlin.Short): kotlin.Int
+    public final operator fun kotlin.Int.rangeTo(kotlin.Byte): kotlin.ranges.IntRange
+    public final operator fun kotlin.Int.rangeTo(kotlin.Int): kotlin.ranges.IntRange
+    public final operator fun kotlin.Int.rangeTo(kotlin.Long): kotlin.ranges.LongRange
+    public final operator fun kotlin.Int.rangeTo(kotlin.Short): kotlin.ranges.IntRange
+    public final operator fun kotlin.Int.rangeUntil(kotlin.Byte): kotlin.ranges.IntRange
+    public final operator fun kotlin.Int.rangeUntil(kotlin.Int): kotlin.ranges.IntRange
+    public final operator fun kotlin.Int.rangeUntil(kotlin.Long): kotlin.ranges.LongRange
+    public final operator fun kotlin.Int.rangeUntil(kotlin.Short): kotlin.ranges.IntRange
+    public final operator fun kotlin.Int.rem(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Int.rem(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Int.rem(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Int.rem(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Int.rem(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Int.rem(kotlin.Short): kotlin.Int
+    public open fun kotlin.Int.resolveConstantDesc(java.lang.invoke.MethodHandles.Lookup!): kotlin.Int!
+    public final infix fun kotlin.Int.shl(kotlin.Int): kotlin.Int
+    public final infix fun kotlin.Int.shr(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Int.times(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Int.times(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Int.times(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Int.times(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Int.times(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Int.times(kotlin.Short): kotlin.Int
+    public open fun kotlin.Int.toByte(): kotlin.Byte
+    public open fun kotlin.Int.toChar(): kotlin.Char
+    public open fun kotlin.Int.toDouble(): kotlin.Double
+    public open fun kotlin.Int.toFloat(): kotlin.Float
+    public open fun kotlin.Int.toInt(): kotlin.Int
+    public open fun kotlin.Int.toLong(): kotlin.Long
+    public open fun kotlin.Int.toShort(): kotlin.Short
+    public open fun kotlin.Int.toString(): kotlin.String
+    public final operator fun kotlin.Int.unaryMinus(): kotlin.Int
+    public final operator fun kotlin.Int.unaryPlus(): kotlin.Int
+    public final infix fun kotlin.Int.ushr(kotlin.Int): kotlin.Int
+    public final infix fun kotlin.Int.xor(kotlin.Int): kotlin.Int
 KClass: class kotlin.Long.Companion : Any
   members:
     public open operator fun kotlin.Long.Companion.equals(kotlin.Any?): kotlin.Boolean
@@ -321,6 +1405,282 @@ KClass: class kotlin.Long.Companion : Any
     public final val kotlin.Long.Companion.MIN_VALUE: kotlin.Long
     public final val kotlin.Long.Companion.SIZE_BITS: kotlin.Int
     public final val kotlin.Long.Companion.SIZE_BYTES: kotlin.Int
+KClass: class kotlin.Long : Number, Comparable, Serializable
+  constructors:
+    private final fun `<init>`(): kotlin.Long
+  members:
+    public final infix fun kotlin.Long.and(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Long.compareTo(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Long.compareTo(kotlin.Double): kotlin.Int
+    public final operator fun kotlin.Long.compareTo(kotlin.Float): kotlin.Int
+    public final operator fun kotlin.Long.compareTo(kotlin.Int): kotlin.Int
+    public open operator fun kotlin.Long.compareTo(kotlin.Long): kotlin.Int
+    public final operator fun kotlin.Long.compareTo(kotlin.Short): kotlin.Int
+    public final operator fun kotlin.Long.dec(): kotlin.Long
+    public open fun kotlin.Long.describeConstable(): java.util.Optional<kotlin.Long!>!
+    public final operator fun kotlin.Long.div(kotlin.Byte): kotlin.Long
+    public final operator fun kotlin.Long.div(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Long.div(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Long.div(kotlin.Int): kotlin.Long
+    public final operator fun kotlin.Long.div(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Long.div(kotlin.Short): kotlin.Long
+    public open operator fun kotlin.Long.equals(kotlin.Any?): kotlin.Boolean
+    public open fun kotlin.Long.hashCode(): kotlin.Int
+    public final operator fun kotlin.Long.inc(): kotlin.Long
+    public final fun kotlin.Long.inv(): kotlin.Long
+    public final operator fun kotlin.Long.minus(kotlin.Byte): kotlin.Long
+    public final operator fun kotlin.Long.minus(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Long.minus(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Long.minus(kotlin.Int): kotlin.Long
+    public final operator fun kotlin.Long.minus(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Long.minus(kotlin.Short): kotlin.Long
+    public final infix fun kotlin.Long.or(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Long.plus(kotlin.Byte): kotlin.Long
+    public final operator fun kotlin.Long.plus(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Long.plus(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Long.plus(kotlin.Int): kotlin.Long
+    public final operator fun kotlin.Long.plus(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Long.plus(kotlin.Short): kotlin.Long
+    public final operator fun kotlin.Long.rangeTo(kotlin.Byte): kotlin.ranges.LongRange
+    public final operator fun kotlin.Long.rangeTo(kotlin.Int): kotlin.ranges.LongRange
+    public final operator fun kotlin.Long.rangeTo(kotlin.Long): kotlin.ranges.LongRange
+    public final operator fun kotlin.Long.rangeTo(kotlin.Short): kotlin.ranges.LongRange
+    public final operator fun kotlin.Long.rangeUntil(kotlin.Byte): kotlin.ranges.LongRange
+    public final operator fun kotlin.Long.rangeUntil(kotlin.Int): kotlin.ranges.LongRange
+    public final operator fun kotlin.Long.rangeUntil(kotlin.Long): kotlin.ranges.LongRange
+    public final operator fun kotlin.Long.rangeUntil(kotlin.Short): kotlin.ranges.LongRange
+    public final operator fun kotlin.Long.rem(kotlin.Byte): kotlin.Long
+    public final operator fun kotlin.Long.rem(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Long.rem(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Long.rem(kotlin.Int): kotlin.Long
+    public final operator fun kotlin.Long.rem(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Long.rem(kotlin.Short): kotlin.Long
+    public open fun kotlin.Long.resolveConstantDesc(java.lang.invoke.MethodHandles.Lookup!): kotlin.Long!
+    public final infix fun kotlin.Long.shl(kotlin.Int): kotlin.Long
+    public final infix fun kotlin.Long.shr(kotlin.Int): kotlin.Long
+    public final operator fun kotlin.Long.times(kotlin.Byte): kotlin.Long
+    public final operator fun kotlin.Long.times(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Long.times(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Long.times(kotlin.Int): kotlin.Long
+    public final operator fun kotlin.Long.times(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Long.times(kotlin.Short): kotlin.Long
+    public open fun kotlin.Long.toByte(): kotlin.Byte
+    public open fun kotlin.Long.toChar(): kotlin.Char
+    public open fun kotlin.Long.toDouble(): kotlin.Double
+    public open fun kotlin.Long.toFloat(): kotlin.Float
+    public open fun kotlin.Long.toInt(): kotlin.Int
+    public open fun kotlin.Long.toLong(): kotlin.Long
+    public open fun kotlin.Long.toShort(): kotlin.Short
+    public open fun kotlin.Long.toString(): kotlin.String
+    public final operator fun kotlin.Long.unaryMinus(): kotlin.Long
+    public final operator fun kotlin.Long.unaryPlus(): kotlin.Long
+    public final infix fun kotlin.Long.ushr(kotlin.Int): kotlin.Long
+    public final infix fun kotlin.Long.xor(kotlin.Long): kotlin.Long
+  declaredMembers:
+    public final infix fun kotlin.Long.and(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Long.compareTo(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Long.compareTo(kotlin.Double): kotlin.Int
+    public final operator fun kotlin.Long.compareTo(kotlin.Float): kotlin.Int
+    public final operator fun kotlin.Long.compareTo(kotlin.Int): kotlin.Int
+    public open operator fun kotlin.Long.compareTo(kotlin.Long): kotlin.Int
+    public final operator fun kotlin.Long.compareTo(kotlin.Short): kotlin.Int
+    public final operator fun kotlin.Long.dec(): kotlin.Long
+    public open fun kotlin.Long.describeConstable(): java.util.Optional<kotlin.Long!>!
+    public final operator fun kotlin.Long.div(kotlin.Byte): kotlin.Long
+    public final operator fun kotlin.Long.div(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Long.div(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Long.div(kotlin.Int): kotlin.Long
+    public final operator fun kotlin.Long.div(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Long.div(kotlin.Short): kotlin.Long
+    public open operator fun kotlin.Long.equals(kotlin.Any?): kotlin.Boolean
+    public final operator fun kotlin.Long.inc(): kotlin.Long
+    public final fun kotlin.Long.inv(): kotlin.Long
+    public final operator fun kotlin.Long.minus(kotlin.Byte): kotlin.Long
+    public final operator fun kotlin.Long.minus(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Long.minus(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Long.minus(kotlin.Int): kotlin.Long
+    public final operator fun kotlin.Long.minus(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Long.minus(kotlin.Short): kotlin.Long
+    public final infix fun kotlin.Long.or(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Long.plus(kotlin.Byte): kotlin.Long
+    public final operator fun kotlin.Long.plus(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Long.plus(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Long.plus(kotlin.Int): kotlin.Long
+    public final operator fun kotlin.Long.plus(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Long.plus(kotlin.Short): kotlin.Long
+    public final operator fun kotlin.Long.rangeTo(kotlin.Byte): kotlin.ranges.LongRange
+    public final operator fun kotlin.Long.rangeTo(kotlin.Int): kotlin.ranges.LongRange
+    public final operator fun kotlin.Long.rangeTo(kotlin.Long): kotlin.ranges.LongRange
+    public final operator fun kotlin.Long.rangeTo(kotlin.Short): kotlin.ranges.LongRange
+    public final operator fun kotlin.Long.rangeUntil(kotlin.Byte): kotlin.ranges.LongRange
+    public final operator fun kotlin.Long.rangeUntil(kotlin.Int): kotlin.ranges.LongRange
+    public final operator fun kotlin.Long.rangeUntil(kotlin.Long): kotlin.ranges.LongRange
+    public final operator fun kotlin.Long.rangeUntil(kotlin.Short): kotlin.ranges.LongRange
+    public final operator fun kotlin.Long.rem(kotlin.Byte): kotlin.Long
+    public final operator fun kotlin.Long.rem(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Long.rem(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Long.rem(kotlin.Int): kotlin.Long
+    public final operator fun kotlin.Long.rem(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Long.rem(kotlin.Short): kotlin.Long
+    public open fun kotlin.Long.resolveConstantDesc(java.lang.invoke.MethodHandles.Lookup!): kotlin.Long!
+    public final infix fun kotlin.Long.shl(kotlin.Int): kotlin.Long
+    public final infix fun kotlin.Long.shr(kotlin.Int): kotlin.Long
+    public final operator fun kotlin.Long.times(kotlin.Byte): kotlin.Long
+    public final operator fun kotlin.Long.times(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Long.times(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Long.times(kotlin.Int): kotlin.Long
+    public final operator fun kotlin.Long.times(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Long.times(kotlin.Short): kotlin.Long
+    public open fun kotlin.Long.toByte(): kotlin.Byte
+    public open fun kotlin.Long.toChar(): kotlin.Char
+    public open fun kotlin.Long.toDouble(): kotlin.Double
+    public open fun kotlin.Long.toFloat(): kotlin.Float
+    public open fun kotlin.Long.toInt(): kotlin.Int
+    public open fun kotlin.Long.toLong(): kotlin.Long
+    public open fun kotlin.Long.toShort(): kotlin.Short
+    public open fun kotlin.Long.toString(): kotlin.String
+    public final operator fun kotlin.Long.unaryMinus(): kotlin.Long
+    public final operator fun kotlin.Long.unaryPlus(): kotlin.Long
+    public final infix fun kotlin.Long.ushr(kotlin.Int): kotlin.Long
+    public final infix fun kotlin.Long.xor(kotlin.Long): kotlin.Long
+KClass (primitive): class kotlin.Long : Number, Comparable, Serializable
+  constructors:
+    private final fun `<init>`(): kotlin.Long
+  members:
+    public final infix fun kotlin.Long.and(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Long.compareTo(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Long.compareTo(kotlin.Double): kotlin.Int
+    public final operator fun kotlin.Long.compareTo(kotlin.Float): kotlin.Int
+    public final operator fun kotlin.Long.compareTo(kotlin.Int): kotlin.Int
+    public open operator fun kotlin.Long.compareTo(kotlin.Long): kotlin.Int
+    public final operator fun kotlin.Long.compareTo(kotlin.Short): kotlin.Int
+    public final operator fun kotlin.Long.dec(): kotlin.Long
+    public open fun kotlin.Long.describeConstable(): java.util.Optional<kotlin.Long!>!
+    public final operator fun kotlin.Long.div(kotlin.Byte): kotlin.Long
+    public final operator fun kotlin.Long.div(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Long.div(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Long.div(kotlin.Int): kotlin.Long
+    public final operator fun kotlin.Long.div(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Long.div(kotlin.Short): kotlin.Long
+    public open operator fun kotlin.Long.equals(kotlin.Any?): kotlin.Boolean
+    public open fun kotlin.Long.hashCode(): kotlin.Int
+    public final operator fun kotlin.Long.inc(): kotlin.Long
+    public final fun kotlin.Long.inv(): kotlin.Long
+    public final operator fun kotlin.Long.minus(kotlin.Byte): kotlin.Long
+    public final operator fun kotlin.Long.minus(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Long.minus(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Long.minus(kotlin.Int): kotlin.Long
+    public final operator fun kotlin.Long.minus(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Long.minus(kotlin.Short): kotlin.Long
+    public final infix fun kotlin.Long.or(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Long.plus(kotlin.Byte): kotlin.Long
+    public final operator fun kotlin.Long.plus(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Long.plus(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Long.plus(kotlin.Int): kotlin.Long
+    public final operator fun kotlin.Long.plus(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Long.plus(kotlin.Short): kotlin.Long
+    public final operator fun kotlin.Long.rangeTo(kotlin.Byte): kotlin.ranges.LongRange
+    public final operator fun kotlin.Long.rangeTo(kotlin.Int): kotlin.ranges.LongRange
+    public final operator fun kotlin.Long.rangeTo(kotlin.Long): kotlin.ranges.LongRange
+    public final operator fun kotlin.Long.rangeTo(kotlin.Short): kotlin.ranges.LongRange
+    public final operator fun kotlin.Long.rangeUntil(kotlin.Byte): kotlin.ranges.LongRange
+    public final operator fun kotlin.Long.rangeUntil(kotlin.Int): kotlin.ranges.LongRange
+    public final operator fun kotlin.Long.rangeUntil(kotlin.Long): kotlin.ranges.LongRange
+    public final operator fun kotlin.Long.rangeUntil(kotlin.Short): kotlin.ranges.LongRange
+    public final operator fun kotlin.Long.rem(kotlin.Byte): kotlin.Long
+    public final operator fun kotlin.Long.rem(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Long.rem(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Long.rem(kotlin.Int): kotlin.Long
+    public final operator fun kotlin.Long.rem(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Long.rem(kotlin.Short): kotlin.Long
+    public open fun kotlin.Long.resolveConstantDesc(java.lang.invoke.MethodHandles.Lookup!): kotlin.Long!
+    public final infix fun kotlin.Long.shl(kotlin.Int): kotlin.Long
+    public final infix fun kotlin.Long.shr(kotlin.Int): kotlin.Long
+    public final operator fun kotlin.Long.times(kotlin.Byte): kotlin.Long
+    public final operator fun kotlin.Long.times(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Long.times(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Long.times(kotlin.Int): kotlin.Long
+    public final operator fun kotlin.Long.times(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Long.times(kotlin.Short): kotlin.Long
+    public open fun kotlin.Long.toByte(): kotlin.Byte
+    public open fun kotlin.Long.toChar(): kotlin.Char
+    public open fun kotlin.Long.toDouble(): kotlin.Double
+    public open fun kotlin.Long.toFloat(): kotlin.Float
+    public open fun kotlin.Long.toInt(): kotlin.Int
+    public open fun kotlin.Long.toLong(): kotlin.Long
+    public open fun kotlin.Long.toShort(): kotlin.Short
+    public open fun kotlin.Long.toString(): kotlin.String
+    public final operator fun kotlin.Long.unaryMinus(): kotlin.Long
+    public final operator fun kotlin.Long.unaryPlus(): kotlin.Long
+    public final infix fun kotlin.Long.ushr(kotlin.Int): kotlin.Long
+    public final infix fun kotlin.Long.xor(kotlin.Long): kotlin.Long
+  declaredMembers:
+    public final infix fun kotlin.Long.and(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Long.compareTo(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Long.compareTo(kotlin.Double): kotlin.Int
+    public final operator fun kotlin.Long.compareTo(kotlin.Float): kotlin.Int
+    public final operator fun kotlin.Long.compareTo(kotlin.Int): kotlin.Int
+    public open operator fun kotlin.Long.compareTo(kotlin.Long): kotlin.Int
+    public final operator fun kotlin.Long.compareTo(kotlin.Short): kotlin.Int
+    public final operator fun kotlin.Long.dec(): kotlin.Long
+    public open fun kotlin.Long.describeConstable(): java.util.Optional<kotlin.Long!>!
+    public final operator fun kotlin.Long.div(kotlin.Byte): kotlin.Long
+    public final operator fun kotlin.Long.div(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Long.div(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Long.div(kotlin.Int): kotlin.Long
+    public final operator fun kotlin.Long.div(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Long.div(kotlin.Short): kotlin.Long
+    public open operator fun kotlin.Long.equals(kotlin.Any?): kotlin.Boolean
+    public final operator fun kotlin.Long.inc(): kotlin.Long
+    public final fun kotlin.Long.inv(): kotlin.Long
+    public final operator fun kotlin.Long.minus(kotlin.Byte): kotlin.Long
+    public final operator fun kotlin.Long.minus(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Long.minus(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Long.minus(kotlin.Int): kotlin.Long
+    public final operator fun kotlin.Long.minus(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Long.minus(kotlin.Short): kotlin.Long
+    public final infix fun kotlin.Long.or(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Long.plus(kotlin.Byte): kotlin.Long
+    public final operator fun kotlin.Long.plus(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Long.plus(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Long.plus(kotlin.Int): kotlin.Long
+    public final operator fun kotlin.Long.plus(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Long.plus(kotlin.Short): kotlin.Long
+    public final operator fun kotlin.Long.rangeTo(kotlin.Byte): kotlin.ranges.LongRange
+    public final operator fun kotlin.Long.rangeTo(kotlin.Int): kotlin.ranges.LongRange
+    public final operator fun kotlin.Long.rangeTo(kotlin.Long): kotlin.ranges.LongRange
+    public final operator fun kotlin.Long.rangeTo(kotlin.Short): kotlin.ranges.LongRange
+    public final operator fun kotlin.Long.rangeUntil(kotlin.Byte): kotlin.ranges.LongRange
+    public final operator fun kotlin.Long.rangeUntil(kotlin.Int): kotlin.ranges.LongRange
+    public final operator fun kotlin.Long.rangeUntil(kotlin.Long): kotlin.ranges.LongRange
+    public final operator fun kotlin.Long.rangeUntil(kotlin.Short): kotlin.ranges.LongRange
+    public final operator fun kotlin.Long.rem(kotlin.Byte): kotlin.Long
+    public final operator fun kotlin.Long.rem(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Long.rem(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Long.rem(kotlin.Int): kotlin.Long
+    public final operator fun kotlin.Long.rem(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Long.rem(kotlin.Short): kotlin.Long
+    public open fun kotlin.Long.resolveConstantDesc(java.lang.invoke.MethodHandles.Lookup!): kotlin.Long!
+    public final infix fun kotlin.Long.shl(kotlin.Int): kotlin.Long
+    public final infix fun kotlin.Long.shr(kotlin.Int): kotlin.Long
+    public final operator fun kotlin.Long.times(kotlin.Byte): kotlin.Long
+    public final operator fun kotlin.Long.times(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Long.times(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Long.times(kotlin.Int): kotlin.Long
+    public final operator fun kotlin.Long.times(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Long.times(kotlin.Short): kotlin.Long
+    public open fun kotlin.Long.toByte(): kotlin.Byte
+    public open fun kotlin.Long.toChar(): kotlin.Char
+    public open fun kotlin.Long.toDouble(): kotlin.Double
+    public open fun kotlin.Long.toFloat(): kotlin.Float
+    public open fun kotlin.Long.toInt(): kotlin.Int
+    public open fun kotlin.Long.toLong(): kotlin.Long
+    public open fun kotlin.Long.toShort(): kotlin.Short
+    public open fun kotlin.Long.toString(): kotlin.String
+    public final operator fun kotlin.Long.unaryMinus(): kotlin.Long
+    public final operator fun kotlin.Long.unaryPlus(): kotlin.Long
+    public final infix fun kotlin.Long.ushr(kotlin.Int): kotlin.Long
+    public final infix fun kotlin.Long.xor(kotlin.Long): kotlin.Long
 KClass: interface kotlin.MustUseReturnValues : Annotation, Any
   constructors:
     public final fun `<init>`(): kotlin.MustUseReturnValues
@@ -462,6 +1822,250 @@ KClass: class kotlin.Short.Companion : Any
     public final val kotlin.Short.Companion.MIN_VALUE: kotlin.Short
     public final val kotlin.Short.Companion.SIZE_BITS: kotlin.Int
     public final val kotlin.Short.Companion.SIZE_BYTES: kotlin.Int
+KClass: class kotlin.Short : Number, Comparable, Serializable
+  constructors:
+    private final fun `<init>`(): kotlin.Short
+  members:
+    public final operator fun kotlin.Short.compareTo(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Short.compareTo(kotlin.Double): kotlin.Int
+    public final operator fun kotlin.Short.compareTo(kotlin.Float): kotlin.Int
+    public final operator fun kotlin.Short.compareTo(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Short.compareTo(kotlin.Long): kotlin.Int
+    public open operator fun kotlin.Short.compareTo(kotlin.Short): kotlin.Int
+    public final operator fun kotlin.Short.dec(): kotlin.Short
+    public open fun kotlin.Short.describeConstable(): java.util.Optional<java.lang.constant.DynamicConstantDesc<kotlin.Short!>!>!
+    public final operator fun kotlin.Short.div(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Short.div(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Short.div(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Short.div(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Short.div(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Short.div(kotlin.Short): kotlin.Int
+    public open operator fun kotlin.Short.equals(kotlin.Any?): kotlin.Boolean
+    public open fun kotlin.Short.hashCode(): kotlin.Int
+    public final operator fun kotlin.Short.inc(): kotlin.Short
+    public final operator fun kotlin.Short.minus(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Short.minus(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Short.minus(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Short.minus(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Short.minus(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Short.minus(kotlin.Short): kotlin.Int
+    public final operator fun kotlin.Short.plus(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Short.plus(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Short.plus(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Short.plus(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Short.plus(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Short.plus(kotlin.Short): kotlin.Int
+    public final operator fun kotlin.Short.rangeTo(kotlin.Byte): kotlin.ranges.IntRange
+    public final operator fun kotlin.Short.rangeTo(kotlin.Int): kotlin.ranges.IntRange
+    public final operator fun kotlin.Short.rangeTo(kotlin.Long): kotlin.ranges.LongRange
+    public final operator fun kotlin.Short.rangeTo(kotlin.Short): kotlin.ranges.IntRange
+    public final operator fun kotlin.Short.rangeUntil(kotlin.Byte): kotlin.ranges.IntRange
+    public final operator fun kotlin.Short.rangeUntil(kotlin.Int): kotlin.ranges.IntRange
+    public final operator fun kotlin.Short.rangeUntil(kotlin.Long): kotlin.ranges.LongRange
+    public final operator fun kotlin.Short.rangeUntil(kotlin.Short): kotlin.ranges.IntRange
+    public final operator fun kotlin.Short.rem(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Short.rem(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Short.rem(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Short.rem(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Short.rem(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Short.rem(kotlin.Short): kotlin.Int
+    public final operator fun kotlin.Short.times(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Short.times(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Short.times(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Short.times(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Short.times(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Short.times(kotlin.Short): kotlin.Int
+    public open fun kotlin.Short.toByte(): kotlin.Byte
+    public open fun kotlin.Short.toChar(): kotlin.Char
+    public open fun kotlin.Short.toDouble(): kotlin.Double
+    public open fun kotlin.Short.toFloat(): kotlin.Float
+    public open fun kotlin.Short.toInt(): kotlin.Int
+    public open fun kotlin.Short.toLong(): kotlin.Long
+    public open fun kotlin.Short.toShort(): kotlin.Short
+    public open fun kotlin.Short.toString(): kotlin.String
+    public final operator fun kotlin.Short.unaryMinus(): kotlin.Int
+    public final operator fun kotlin.Short.unaryPlus(): kotlin.Int
+  declaredMembers:
+    public final operator fun kotlin.Short.compareTo(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Short.compareTo(kotlin.Double): kotlin.Int
+    public final operator fun kotlin.Short.compareTo(kotlin.Float): kotlin.Int
+    public final operator fun kotlin.Short.compareTo(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Short.compareTo(kotlin.Long): kotlin.Int
+    public open operator fun kotlin.Short.compareTo(kotlin.Short): kotlin.Int
+    public final operator fun kotlin.Short.dec(): kotlin.Short
+    public open fun kotlin.Short.describeConstable(): java.util.Optional<java.lang.constant.DynamicConstantDesc<kotlin.Short!>!>!
+    public final operator fun kotlin.Short.div(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Short.div(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Short.div(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Short.div(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Short.div(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Short.div(kotlin.Short): kotlin.Int
+    public open operator fun kotlin.Short.equals(kotlin.Any?): kotlin.Boolean
+    public final operator fun kotlin.Short.inc(): kotlin.Short
+    public final operator fun kotlin.Short.minus(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Short.minus(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Short.minus(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Short.minus(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Short.minus(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Short.minus(kotlin.Short): kotlin.Int
+    public final operator fun kotlin.Short.plus(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Short.plus(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Short.plus(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Short.plus(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Short.plus(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Short.plus(kotlin.Short): kotlin.Int
+    public final operator fun kotlin.Short.rangeTo(kotlin.Byte): kotlin.ranges.IntRange
+    public final operator fun kotlin.Short.rangeTo(kotlin.Int): kotlin.ranges.IntRange
+    public final operator fun kotlin.Short.rangeTo(kotlin.Long): kotlin.ranges.LongRange
+    public final operator fun kotlin.Short.rangeTo(kotlin.Short): kotlin.ranges.IntRange
+    public final operator fun kotlin.Short.rangeUntil(kotlin.Byte): kotlin.ranges.IntRange
+    public final operator fun kotlin.Short.rangeUntil(kotlin.Int): kotlin.ranges.IntRange
+    public final operator fun kotlin.Short.rangeUntil(kotlin.Long): kotlin.ranges.LongRange
+    public final operator fun kotlin.Short.rangeUntil(kotlin.Short): kotlin.ranges.IntRange
+    public final operator fun kotlin.Short.rem(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Short.rem(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Short.rem(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Short.rem(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Short.rem(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Short.rem(kotlin.Short): kotlin.Int
+    public final operator fun kotlin.Short.times(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Short.times(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Short.times(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Short.times(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Short.times(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Short.times(kotlin.Short): kotlin.Int
+    public open fun kotlin.Short.toByte(): kotlin.Byte
+    public open fun kotlin.Short.toChar(): kotlin.Char
+    public open fun kotlin.Short.toDouble(): kotlin.Double
+    public open fun kotlin.Short.toFloat(): kotlin.Float
+    public open fun kotlin.Short.toInt(): kotlin.Int
+    public open fun kotlin.Short.toLong(): kotlin.Long
+    public open fun kotlin.Short.toShort(): kotlin.Short
+    public open fun kotlin.Short.toString(): kotlin.String
+    public final operator fun kotlin.Short.unaryMinus(): kotlin.Int
+    public final operator fun kotlin.Short.unaryPlus(): kotlin.Int
+KClass (primitive): class kotlin.Short : Number, Comparable, Serializable
+  constructors:
+    private final fun `<init>`(): kotlin.Short
+  members:
+    public final operator fun kotlin.Short.compareTo(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Short.compareTo(kotlin.Double): kotlin.Int
+    public final operator fun kotlin.Short.compareTo(kotlin.Float): kotlin.Int
+    public final operator fun kotlin.Short.compareTo(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Short.compareTo(kotlin.Long): kotlin.Int
+    public open operator fun kotlin.Short.compareTo(kotlin.Short): kotlin.Int
+    public final operator fun kotlin.Short.dec(): kotlin.Short
+    public open fun kotlin.Short.describeConstable(): java.util.Optional<java.lang.constant.DynamicConstantDesc<kotlin.Short!>!>!
+    public final operator fun kotlin.Short.div(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Short.div(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Short.div(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Short.div(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Short.div(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Short.div(kotlin.Short): kotlin.Int
+    public open operator fun kotlin.Short.equals(kotlin.Any?): kotlin.Boolean
+    public open fun kotlin.Short.hashCode(): kotlin.Int
+    public final operator fun kotlin.Short.inc(): kotlin.Short
+    public final operator fun kotlin.Short.minus(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Short.minus(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Short.minus(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Short.minus(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Short.minus(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Short.minus(kotlin.Short): kotlin.Int
+    public final operator fun kotlin.Short.plus(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Short.plus(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Short.plus(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Short.plus(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Short.plus(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Short.plus(kotlin.Short): kotlin.Int
+    public final operator fun kotlin.Short.rangeTo(kotlin.Byte): kotlin.ranges.IntRange
+    public final operator fun kotlin.Short.rangeTo(kotlin.Int): kotlin.ranges.IntRange
+    public final operator fun kotlin.Short.rangeTo(kotlin.Long): kotlin.ranges.LongRange
+    public final operator fun kotlin.Short.rangeTo(kotlin.Short): kotlin.ranges.IntRange
+    public final operator fun kotlin.Short.rangeUntil(kotlin.Byte): kotlin.ranges.IntRange
+    public final operator fun kotlin.Short.rangeUntil(kotlin.Int): kotlin.ranges.IntRange
+    public final operator fun kotlin.Short.rangeUntil(kotlin.Long): kotlin.ranges.LongRange
+    public final operator fun kotlin.Short.rangeUntil(kotlin.Short): kotlin.ranges.IntRange
+    public final operator fun kotlin.Short.rem(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Short.rem(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Short.rem(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Short.rem(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Short.rem(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Short.rem(kotlin.Short): kotlin.Int
+    public final operator fun kotlin.Short.times(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Short.times(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Short.times(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Short.times(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Short.times(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Short.times(kotlin.Short): kotlin.Int
+    public open fun kotlin.Short.toByte(): kotlin.Byte
+    public open fun kotlin.Short.toChar(): kotlin.Char
+    public open fun kotlin.Short.toDouble(): kotlin.Double
+    public open fun kotlin.Short.toFloat(): kotlin.Float
+    public open fun kotlin.Short.toInt(): kotlin.Int
+    public open fun kotlin.Short.toLong(): kotlin.Long
+    public open fun kotlin.Short.toShort(): kotlin.Short
+    public open fun kotlin.Short.toString(): kotlin.String
+    public final operator fun kotlin.Short.unaryMinus(): kotlin.Int
+    public final operator fun kotlin.Short.unaryPlus(): kotlin.Int
+  declaredMembers:
+    public final operator fun kotlin.Short.compareTo(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Short.compareTo(kotlin.Double): kotlin.Int
+    public final operator fun kotlin.Short.compareTo(kotlin.Float): kotlin.Int
+    public final operator fun kotlin.Short.compareTo(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Short.compareTo(kotlin.Long): kotlin.Int
+    public open operator fun kotlin.Short.compareTo(kotlin.Short): kotlin.Int
+    public final operator fun kotlin.Short.dec(): kotlin.Short
+    public open fun kotlin.Short.describeConstable(): java.util.Optional<java.lang.constant.DynamicConstantDesc<kotlin.Short!>!>!
+    public final operator fun kotlin.Short.div(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Short.div(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Short.div(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Short.div(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Short.div(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Short.div(kotlin.Short): kotlin.Int
+    public open operator fun kotlin.Short.equals(kotlin.Any?): kotlin.Boolean
+    public final operator fun kotlin.Short.inc(): kotlin.Short
+    public final operator fun kotlin.Short.minus(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Short.minus(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Short.minus(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Short.minus(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Short.minus(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Short.minus(kotlin.Short): kotlin.Int
+    public final operator fun kotlin.Short.plus(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Short.plus(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Short.plus(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Short.plus(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Short.plus(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Short.plus(kotlin.Short): kotlin.Int
+    public final operator fun kotlin.Short.rangeTo(kotlin.Byte): kotlin.ranges.IntRange
+    public final operator fun kotlin.Short.rangeTo(kotlin.Int): kotlin.ranges.IntRange
+    public final operator fun kotlin.Short.rangeTo(kotlin.Long): kotlin.ranges.LongRange
+    public final operator fun kotlin.Short.rangeTo(kotlin.Short): kotlin.ranges.IntRange
+    public final operator fun kotlin.Short.rangeUntil(kotlin.Byte): kotlin.ranges.IntRange
+    public final operator fun kotlin.Short.rangeUntil(kotlin.Int): kotlin.ranges.IntRange
+    public final operator fun kotlin.Short.rangeUntil(kotlin.Long): kotlin.ranges.LongRange
+    public final operator fun kotlin.Short.rangeUntil(kotlin.Short): kotlin.ranges.IntRange
+    public final operator fun kotlin.Short.rem(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Short.rem(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Short.rem(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Short.rem(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Short.rem(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Short.rem(kotlin.Short): kotlin.Int
+    public final operator fun kotlin.Short.times(kotlin.Byte): kotlin.Int
+    public final operator fun kotlin.Short.times(kotlin.Double): kotlin.Double
+    public final operator fun kotlin.Short.times(kotlin.Float): kotlin.Float
+    public final operator fun kotlin.Short.times(kotlin.Int): kotlin.Int
+    public final operator fun kotlin.Short.times(kotlin.Long): kotlin.Long
+    public final operator fun kotlin.Short.times(kotlin.Short): kotlin.Int
+    public open fun kotlin.Short.toByte(): kotlin.Byte
+    public open fun kotlin.Short.toChar(): kotlin.Char
+    public open fun kotlin.Short.toDouble(): kotlin.Double
+    public open fun kotlin.Short.toFloat(): kotlin.Float
+    public open fun kotlin.Short.toInt(): kotlin.Int
+    public open fun kotlin.Short.toLong(): kotlin.Long
+    public open fun kotlin.Short.toShort(): kotlin.Short
+    public open fun kotlin.Short.toString(): kotlin.String
+    public final operator fun kotlin.Short.unaryMinus(): kotlin.Int
+    public final operator fun kotlin.Short.unaryPlus(): kotlin.Int
 KClass: interface kotlin.SinceKotlin : Annotation, Any
   constructors:
     public final fun `<init>`(kotlin.String): kotlin.SinceKotlin
