@@ -5,9 +5,13 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.apple
 
-import com.google.gson.Gson
-import com.google.gson.JsonObject
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.DeserializationStrategy
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable as JsonSerializable
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.contentOrNull
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.file.DirectoryProperty
@@ -19,6 +23,7 @@ import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.internal.json.KgpJson
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupCoroutine
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
@@ -215,8 +220,7 @@ internal abstract class CheckXcodeTargetsConfigurationTask : DefaultTask(), Uses
             return
         }
 
-        val gson = Gson()
-        val xcodeTargets = parseXcodeTargets(pbxprojContent, gson, logger) ?: return
+        val xcodeTargets = parseXcodeTargets(pbxprojContent, logger) ?: return
 
         // We are only interested in Xcode targets that produce a runnable application,
         // as these are the targets that will consume the Kotlin framework.
@@ -252,7 +256,6 @@ internal abstract class CheckXcodeTargetsConfigurationTask : DefaultTask(), Uses
 
     private fun parseXcodeTargets(
         pbxprojContent: String,
-        gson: Gson,
         logger: Logger,
     ): Set<XcodeProjectStructure.XcodeTarget>? {
         try {
@@ -265,15 +268,15 @@ internal abstract class CheckXcodeTargetsConfigurationTask : DefaultTask(), Uses
                     )
                 }.toSet()
             } else {
-                val pbxproj = gson.fromJson(pbxprojContent, XcodeProjectStructure.Pbxproj::class.java)
+                val pbxproj = pbxprojJsonReader.decodeFromString(XcodeProjectStructure.Pbxproj.serializer(), pbxprojContent)
                 val objects = pbxproj.objects
 
                 val rootProjectJson = objects[pbxproj.rootObject] ?: return emptySet()
-                val rootProject = gson.fromJson(rootProjectJson, XcodeProjectStructure.PbxProject::class.java)
-                val projectConfigs = getConfigurationMap(objects, rootProject.buildConfigurationList, gson)
+                val rootProject = rootProjectJson.decode(XcodeProjectStructure.PbxProject.serializer())
+                val projectConfigs = getConfigurationMap(objects, rootProject.buildConfigurationList)
 
                 return rootProject.targets.mapNotNull { targetId ->
-                    parseSingleNativeTarget(targetId, objects, projectConfigs, gson)
+                    parseSingleNativeTarget(targetId, objects, projectConfigs)
                 }.toSet()
             }
         } catch (exception: Exception) {
@@ -289,21 +292,20 @@ internal abstract class CheckXcodeTargetsConfigurationTask : DefaultTask(), Uses
         targetId: String,
         objects: Map<String, JsonObject>,
         projectConfigs: Map<String, String>,
-        gson: Gson,
     ): XcodeProjectStructure.XcodeTarget? {
         val targetJson = objects[targetId] ?: return null
-        if (targetJson.get("isa")?.asString != "PBXNativeTarget") return null
+        if ((targetJson["isa"] as? JsonPrimitive)?.contentOrNull != "PBXNativeTarget") return null
 
-        val nativeTarget = gson.fromJson(targetJson, XcodeProjectStructure.PbxNativeTarget::class.java)
-        val targetConfigs = getConfigurationMap(objects, nativeTarget.buildConfigurationList, gson)
+        val nativeTarget = targetJson.decode(XcodeProjectStructure.PbxNativeTarget.serializer())
+        val targetConfigs = getConfigurationMap(objects, nativeTarget.buildConfigurationList)
 
         val platforms = mutableSetOf<String>()
 
         for ((configName, configId) in targetConfigs) {
-            val targetConfig = gson.fromJson(objects[configId], XcodeProjectStructure.XCBuildConfiguration::class.java)
+            val targetConfig = objects.getValue(configId).decode(XcodeProjectStructure.XCBuildConfiguration.serializer())
             val projectConfigId = projectConfigs[configName]
             val projectConfig =
-                projectConfigId?.let { gson.fromJson(objects[it], XcodeProjectStructure.XCBuildConfiguration::class.java) }
+                projectConfigId?.let { objects[it] }?.decode(XcodeProjectStructure.XCBuildConfiguration.serializer())
 
             val targetSettings = targetConfig.buildSettings
             val projectSettings = projectConfig?.buildSettings ?: XcodeProjectStructure.BuildSettings()
@@ -333,52 +335,63 @@ internal abstract class CheckXcodeTargetsConfigurationTask : DefaultTask(), Uses
     private fun getConfigurationMap(
         objects: Map<String, JsonObject>,
         listId: String,
-        gson: Gson,
     ): Map<String, String> {
         val configListJson = objects[listId] ?: return emptyMap()
-        val configList = gson.fromJson(configListJson, XcodeProjectStructure.XCConfigurationList::class.java)
+        val configList = configListJson.decode(XcodeProjectStructure.XCConfigurationList.serializer())
 
         return configList.buildConfigurations.mapNotNull { id ->
             val configJson = objects[id] ?: return@mapNotNull null
-            val config = gson.fromJson(configJson, XcodeProjectStructure.XCBuildConfiguration::class.java)
+            val config = configJson.decode(XcodeProjectStructure.XCBuildConfiguration.serializer())
             config.name to id
         }.toMap()
     }
 }
 
+/** `plutil` output, read as leniently as before; keys the checker doesn't use are ignored. */
+private val pbxprojJsonReader = Json(KgpJson.default) { isLenient = true }
+
+private fun <T> JsonObject.decode(deserializer: DeserializationStrategy<T>): T =
+    pbxprojJsonReader.decodeFromJsonElement(deserializer, this)
+
 private object XcodeProjectStructure {
+    @JsonSerializable
     data class Pbxproj(
         val objects: Map<String, JsonObject>,
         val rootObject: String,
     )
 
+    @JsonSerializable
     data class PbxProject(
         val buildConfigurationList: String,
         val targets: List<String> = emptyList(),
     )
 
+    @JsonSerializable
     data class PbxNativeTarget(
         val name: String,
-        @SerializedName("productType") val productType: String,
+        val productType: String,
         val buildConfigurationList: String,
     )
 
+    @JsonSerializable
     data class XCConfigurationList(
         val buildConfigurations: List<String>,
     )
 
+    @JsonSerializable
     data class XCBuildConfiguration(
         val name: String,
         val buildSettings: BuildSettings = BuildSettings(),
     )
 
+    @JsonSerializable
     data class BuildSettings(
-        @SerializedName("SDKROOT") val sdkRoot: String? = null,
-        @SerializedName("SUPPORTED_PLATFORMS") val supportedPlatforms: String? = null,
-        @SerializedName("IPHONEOS_DEPLOYMENT_TARGET") val iphoneosDeploymentTarget: String? = null,
-        @SerializedName("MACOSX_DEPLOYMENT_TARGET") val macosxDeploymentTarget: String? = null,
-        @SerializedName("TVOS_DEPLOYMENT_TARGET") val tvosDeploymentTarget: String? = null,
-        @SerializedName("WATCHOS_DEPLOYMENT_TARGET") val watchosDeploymentTarget: String? = null,
+        @SerialName("SDKROOT") val sdkRoot: String? = null,
+        @SerialName("SUPPORTED_PLATFORMS") val supportedPlatforms: String? = null,
+        @SerialName("IPHONEOS_DEPLOYMENT_TARGET") val iphoneosDeploymentTarget: String? = null,
+        @SerialName("MACOSX_DEPLOYMENT_TARGET") val macosxDeploymentTarget: String? = null,
+        @SerialName("TVOS_DEPLOYMENT_TARGET") val tvosDeploymentTarget: String? = null,
+        @SerialName("WATCHOS_DEPLOYMENT_TARGET") val watchosDeploymentTarget: String? = null,
     )
 
     data class XcodeTarget(
