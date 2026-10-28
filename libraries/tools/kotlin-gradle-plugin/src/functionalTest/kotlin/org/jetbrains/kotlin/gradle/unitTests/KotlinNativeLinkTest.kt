@@ -9,10 +9,14 @@ import org.gradle.api.internal.tasks.DefaultTaskContainer
 import org.gradle.api.tasks.TaskInstantiationException
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRedirector
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.kotlinBuildDeps
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_LINK_MAX_WORKERS
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
+import org.jetbrains.kotlin.gradle.util.maxParallelUsagesOf
+import org.jetbrains.kotlin.gradle.util.withGradleProperty
+import org.jetbrains.kotlin.internal.compilerRunner.native.maxParallelUsagesFromAvailableRam
 import org.jetbrains.kotlin.util.assertThrows
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -78,6 +82,41 @@ class KotlinNativeLinkTest {
                 iosSimulatorArm64().binaries.framework { }
             }
         }.evaluate()
+    }
+
+    @Test
+    fun `KotlinNativeLink task configures the parallelism limit service using the KOTLIN_NATIVE_LINK_MAX_WORKERS property, when set`() {
+        withGradleProperty(KOTLIN_NATIVE_LINK_MAX_WORKERS, value = "3") {
+            val project = buildProjectWithMPP {
+                // Force all tasks to instantiate eagerly, so the KotlinNativeLink's init block runs
+                tasks.all { }
+                kotlin {
+                    iosSimulatorArm64().binaries.framework { }
+                }
+            }
+            project.evaluate()
+
+            assertEquals(3, project.maxParallelUsagesOf("KotlinNativeLink"))
+        }
+    }
+
+    @Test
+    fun `KotlinNativeLink task configures the parallelism limit service based on available RAM, when the property is not set`() {
+        withGradleProperty(KOTLIN_NATIVE_LINK_MAX_WORKERS, value = null) {
+            val project = buildProjectWithMPP {
+                // Force all tasks to instantiate eagerly, so the KotlinNativeLink's init block runs
+                tasks.all { }
+                kotlin {
+                    iosSimulatorArm64().binaries.framework { }
+                }
+            }
+            project.evaluate()
+
+            assertEquals(
+                maxParallelUsagesFromAvailableRam(approximateTaskInstanceRamUsageMb = 500).calculateMaxParallelUsages(),
+                project.maxParallelUsagesOf("KotlinNativeLink")
+            )
+        }
     }
 
 }

@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
-import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.util.buildProject
+import org.jetbrains.kotlin.gradle.util.maxParallelUsagesOf
+import org.jetbrains.kotlin.gradle.util.withGradleProperty
 import org.jetbrains.kotlin.internal.compilerRunner.native.maxParallelUsagesFromAvailableRam
 import org.jetbrains.kotlin.internal.compilerRunner.native.maxParallelUsagesFromGradleProperty
 import org.jetbrains.kotlin.internal.compilerRunner.native.registerKotlinNativeParallelismLimitService
@@ -144,18 +145,4 @@ class KotlinNativeToolParallelismLimitServiceTest {
         assertEquals(2, project.maxParallelUsagesOf("FirstTask"))
         assertEquals(6, project.maxParallelUsagesOf("SecondTask"))
     }
-
-    private fun withGradleProperty(propertyName: String, value: String?, test: () -> Unit) {
-        val systemPropertyName = "org.gradle.project.$propertyName"
-        val previousValue = System.getProperty(systemPropertyName)
-        if (value != null) System.setProperty(systemPropertyName, value) else System.clearProperty(systemPropertyName)
-        try {
-            test()
-        } finally {
-            if (previousValue != null) System.setProperty(systemPropertyName, previousValue) else System.clearProperty(systemPropertyName)
-        }
-    }
-
-    private fun Project.maxParallelUsagesOf(serviceName: String): Int? =
-        gradle.sharedServices.registrations.getByName("KotlinNativeToolParallelismLimitService$serviceName").maxParallelUsages.orNull
 }
