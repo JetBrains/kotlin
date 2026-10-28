@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.konan.IntrinsicType
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.NativeLoweringContext
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
+import org.jetbrains.kotlin.backend.konan.facts.Fact
 import org.jetbrains.kotlin.backend.konan.ir.KonanNameConventions
 import org.jetbrains.kotlin.backend.konan.ir.tryGetIntrinsicType
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -75,15 +76,25 @@ internal class NativeEnumWhenLowering(private val generationState: NativeGenerat
         // so that incremental compilation invalidates this caller when the enum's source file changes.
         generationState.dependenciesTracker.add(entry, weak = false)
 
+        val enumClass = entry.parentAsClass
+        if (entry.fileOrNull != null && entry.file != currentFile) {
+            generationState.context.factsTracker.uses(currentFile, Fact.EnumEntries.from(enumClass))
+        }
+
         return super.mapConstEnumEntry(entry)
     }
 }
 
 @PhasePrerequisites(EnumClassLowering::class)
-internal class EnumUsageLowering(val context: NativeLoweringContext) : IrTransformer<IrBuilderWithScope?>(), FileLoweringPass {
+internal class EnumUsageLowering(generationState: NativeGenerationState) : IrTransformer<IrBuilderWithScope?>(), FileLoweringPass {
+    val context: NativeLoweringContext = generationState
     private val enumsSupport = context.enumsSupport
+    private val factsTracker = generationState.context.factsTracker
+
+    private lateinit var irFile: IrFile
 
     override fun lower(irFile: IrFile) {
+        this.irFile = irFile
         visitFile(irFile, data = null)
     }
 
@@ -92,6 +103,10 @@ internal class EnumUsageLowering(val context: NativeLoweringContext) : IrTransfo
     }
 
     override fun visitGetEnumValue(expression: IrGetEnumValue, data: IrBuilderWithScope?): IrExpression {
+        val enumClass = expression.symbol.owner.parentAsClass
+        if (enumClass.fileOrNull != null && enumClass.fileOrNull != irFile) {
+            factsTracker.uses(irFile, Fact.EnumEntries.from(enumClass))
+        }
         val entry = expression.symbol.owner
         return data!!.at(expression).loadEnumEntry(entry.parentAsClass, entry.name)
     }
