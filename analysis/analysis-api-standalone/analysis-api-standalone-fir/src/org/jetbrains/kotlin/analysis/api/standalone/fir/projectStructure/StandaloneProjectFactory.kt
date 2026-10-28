@@ -221,7 +221,7 @@ object StandaloneProjectFactory {
     ) {
         val project = environment.project
         val javaFileManager = project.getService(JavaFileManager::class.java) as KotlinCliJavaFileManagerImpl
-        val javaModuleFinder = CliJavaModuleFinder(jdkHome?.toFile(), createStubConfigurationForReporting(), javaFileManager, project, null)
+        val javaModuleFinder = CliJavaModuleFinder(jdkHome?.toFile(), createStubConfigurationForReporting(), javaFileManager::findClassOnClasspath, null)
         val javaModuleGraph = JavaModuleGraph(javaModuleFinder)
 
         val allSourceFileRoots = sourceFiles.map { JavaRoot(it.virtualFile, JavaRoot.RootType.SOURCE) }
@@ -314,7 +314,7 @@ object StandaloneProjectFactory {
         jdkHome: Path?,
     ): List<Path> {
         val javaFileManager = project.getService(JavaFileManager::class.java) as KotlinCliJavaFileManagerImpl
-        val javaModuleFinder = CliJavaModuleFinder(jdkHome?.toFile(), createStubConfigurationForReporting(), javaFileManager, project, null)
+        val javaModuleFinder = CliJavaModuleFinder(jdkHome?.toFile(), createStubConfigurationForReporting(), javaFileManager::findClassOnClasspath, null)
         val javaModuleGraph = JavaModuleGraph(javaModuleFinder)
 
         val javaRoots = getDefaultJdkModuleRoots(javaModuleFinder, javaModuleGraph)
