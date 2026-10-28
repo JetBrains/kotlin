@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 @KaPlatformInterface
 public interface KotlinProjectStructureProvider {
     /**
-     * @see org.jetbrains.kotlin.analysis.api.projectStructure.KaModuleProvider.getModule
+     * @see org.jetbrains.kotlin.analysis.api.projectStructure.KaModuleProvider.module
      */
     public fun getModule(element: PsiElement, useSiteModule: KaModule?): KaModule
 

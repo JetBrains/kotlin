@@ -157,7 +157,7 @@ public abstract class KaEnumEntrySymbol : KaVariableSymbol() {
     /**
      * The enum entry's initializer, or `null` if the enum entry doesn't have a body.
      */
-    @Deprecated("Use 'initializer' instead. See KT-87199", ReplaceWith("initializer"), level = DeprecationLevel.ERROR)
+    @Deprecated("Use 'initializer' instead. See KT-87199", ReplaceWith("initializer"), level = DeprecationLevel.HIDDEN)
     @Suppress("DEPRECATION_ERROR")
     public abstract val enumEntryInitializer: KaEnumEntryInitializerSymbol?
 
@@ -206,7 +206,7 @@ public abstract class KaEnumEntrySymbol : KaVariableSymbol() {
  * The initializer of `A` declares a member `x: Int`, which is inaccessible outside the initializer. Still, the corresponding
  * [KaEnumEntryInitializerSymbol] can be used to get a declared member scope that contains `x`.
  */
-@Deprecated("Use 'KaAnonymousObjectSymbol' instead. See KT-87199", ReplaceWith("KaAnonymousObjectSymbol"), level = DeprecationLevel.ERROR)
+@Deprecated("Use 'KaAnonymousObjectSymbol' instead. See KT-87199", ReplaceWith("KaAnonymousObjectSymbol"), level = DeprecationLevel.HIDDEN)
 @SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaEnumEntryInitializerSymbol : KaDeclarationContainerSymbol {
     @Suppress("DEPRECATION_ERROR")
@@ -337,7 +337,7 @@ public sealed class KaPropertySymbol : KaVariableSymbol() {
      *
      * @see backingFieldSymbol
      */
-    @Deprecated("Use `isDelegated` instead", replaceWith = ReplaceWith("isDelegated"), level = DeprecationLevel.ERROR)
+    @Deprecated("Use `isDelegated` instead", replaceWith = ReplaceWith("isDelegated"), level = DeprecationLevel.HIDDEN)
     public val isDelegatedProperty: Boolean
         get() = isDelegated
 

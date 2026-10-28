@@ -44,7 +44,7 @@ public interface KaModuleProvider {
      * synthetic module. Inside an analysis session for such a module (which would be the [useSiteModule]), sources that originally
      * belong to a source module should be treated rather as a part of the synthetic one.
      */
-    @Deprecated("Use 'module' instead", ReplaceWith("module(element, useSiteModule)"), level = DeprecationLevel.ERROR)
+    @Deprecated("Use 'module' instead", ReplaceWith("module(element, useSiteModule)"), level = DeprecationLevel.HIDDEN)
     public fun getModule(element: PsiElement, useSiteModule: KaModule?): KaModule
 
     /**
@@ -54,10 +54,10 @@ public interface KaModuleProvider {
      *
      * ### Use-site Modules
      *
-     * The use-site module is the [KaModule] from which [getModule] is called. This concept is the same as the use-site module accepted by
+     * The use-site module is the [KaModule] from which [module] is called. This concept is the same as the use-site module accepted by
      * [analyze][org.jetbrains.kotlin.analysis.api.session.analyze], and closely related to the concept of a use-site element. In essence, when we
      * are performing analysis, most of the time we do so from the point of view of a particular [KaModule] or [PsiElement]. If this module
-     * is already known, it should be passed as the [useSiteModule] to [getModule].
+     * is already known, it should be passed as the [useSiteModule] to [module].
      *
      * Here, the use-site module is a way to disambiguate the [KaModule] of [element]s with whom multiple modules might be associated:
      *
@@ -90,7 +90,7 @@ public interface KaModuleProvider {
                 "element.kaModule(useSiteModule)",
                 imports = ["org.jetbrains.kotlin.analysis.api.projectStructure.kaModule"],
             ),
-            level = DeprecationLevel.ERROR,
+            level = DeprecationLevel.HIDDEN,
         )
         public fun getModule(project: Project, element: PsiElement, useSiteModule: KaModule?): KaModule =
             getInstance(project).module(element, useSiteModule)

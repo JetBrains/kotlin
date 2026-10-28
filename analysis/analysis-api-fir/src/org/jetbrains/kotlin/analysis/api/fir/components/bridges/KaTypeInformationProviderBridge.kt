@@ -38,9 +38,6 @@ import org.jetbrains.kotlin.analysis.api.types.isSuspendFunctionType as isSuspen
  * Routes the legacy [KaTypeInformationProvider] surface through the new public `context(session: KaSession)` type-information endpoints,
  * which in turn reach the [org.jetbrains.kotlin.analysis.api.internals.KaInternalsTypeInformationProvider] proxy.
  *
- * [canBeNull] keeps its original behavior here instead of routing through a new endpoint: it retains its deprecated interface
- * default (`= isNullable`).
- *
  * The moved supporting types ([KaFunctionTypeFamily], [KaBuiltinFunctionTypeFamilies]) are subtype shims of the new
  * `types`-package interfaces, so the endpoint results are narrowed back to the legacy surface with `as`.
  */

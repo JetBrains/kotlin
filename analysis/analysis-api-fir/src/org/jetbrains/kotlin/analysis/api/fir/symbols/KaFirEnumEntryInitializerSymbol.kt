@@ -26,8 +26,8 @@ internal class KaFirEnumEntryInitializerSymbol(
     }
 
     /**
-     * [KaFirEnumEntryInitializerSymbol] is the required return type instead of [KaEnumEntryInitializerSymbol] to fulfill return type
-     * subtyping requirements, as [KaEnumEntryInitializerSymbol] is not a subtype of
+     * [KaFirEnumEntryInitializerSymbol] is the required return type instead of `KaEnumEntryInitializerSymbol` to fulfill return type
+     * subtyping requirements, as `KaEnumEntryInitializerSymbol` is not a subtype of
      * [org.jetbrains.kotlin.analysis.api.symbols.KaAnonymousObjectSymbol]. (It cannot be a subtype in the general Analysis API because enum
      * entry initializers are classes in FE10.)
      */

@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.psi.KtElement
  * ```
  */
 @KaSpi
-@Deprecated("Use `KaAdditionalKDocResolutionProvider` instead", level = DeprecationLevel.ERROR)
+@Deprecated("Use `KaAdditionalKDocResolutionProvider` instead", level = DeprecationLevel.HIDDEN)
 public interface AdditionalKDocResolutionProvider {
     /**
      * Returns additional symbols for the given [contextElement] in KDoc.

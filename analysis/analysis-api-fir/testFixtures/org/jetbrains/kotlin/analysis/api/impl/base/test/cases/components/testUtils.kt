@@ -568,11 +568,6 @@ internal fun assertConsistency(testServices: TestServices, call: KaSimpleOrMulti
         assertions.assertEquals(call.contextArguments, partiallyAppliedSymbol.contextArguments)
     }
 
-    @Suppress("DEPRECATION_ERROR")
-    if (call is KaSimpleFunctionCall) {
-        assertions.assertEquals(call is KaImplicitInvokeCall, call.isImplicitInvoke)
-    }
-
     if (call is KaFunctionCall<*>) {
         val combinedArgumentMapping = call.combinedArgumentMapping.toMutableMap()
         for ([expression, parameterFromSpecificMap] in call.valueArgumentMapping + call.contextArgumentMapping) {

@@ -404,7 +404,7 @@ public fun KtCallableReferenceExpression.resolveCall(): KaCallableReferenceCall<
  * }
  * ```
  *
- * Returns the corresponding [KaSimpleFunctionCall] if resolution succeeds; otherwise, it returns `null`
+ * Returns the corresponding [KaFunctionCall] if resolution succeeds; otherwise, it returns `null`
  * (e.g., when unresolved or ambiguous).
  *
  * This is a specialized counterpart of [KtResolvableCall.resolveSuccessfulCall] focused specifically on array access operations.
@@ -458,7 +458,7 @@ public fun KtArrayAccessExpression.resolveCall(): KaFunctionCall<KaNamedFunction
  * fun use() {}
  * ```
  *
- * Returns the corresponding [KaSimpleFunctionCall] if resolution succeeds; otherwise, it returns `null`
+ * Returns the corresponding [KaFunctionCall] if resolution succeeds; otherwise, it returns `null`
  * (e.g., when unresolved or ambiguous).
  *
  * This is a specialized counterpart of [KtResolvableCall.resolveSuccessfulCall] focused specifically on collection literal expressions
@@ -550,7 +550,7 @@ public fun KtEnumEntrySuperclassReferenceExpression.resolveCall(): KaDelegatedCo
  * }
  * ```
  *
- * Returns the corresponding [KaSimpleFunctionCall] if resolution succeeds; otherwise, it returns `null`
+ * Returns the corresponding [KaFunctionCall] if resolution succeeds; otherwise, it returns `null`
  * (e.g., when unresolved or ambiguous).
  *
  * This is a specialized counterpart of [KtResolvableCall.resolveSuccessfulCall] focused specifically on `in`/`!in`
