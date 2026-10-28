@@ -87,9 +87,16 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
      * needed because [metricsReporterProvider] itself is isolated (deep-copied) by Gradle along with the rest of
      * [KotlinNativeToolWorkParameters], so mutating it inside the worker never reaches the original, live reporter.
      */
-    fun runToolWithWorkers(args: ToolArguments, taskPath: String): WorkQueue =
+    fun runToolWithWorkers(
+        args: ToolArguments,
+        taskPath: String,
+        parallelismProbe: Provider<out KotlinNativeToolParallelismProbe>,
+    ): WorkQueue =
         workerExecutor.noIsolation().apply {
-            submit(KotlinNativeToolWorkAction::class.java) { it.from(this@KotlinNativeToolRunner, args, taskPath) }
+            submit(KotlinNativeToolWorkAction::class.java) { executor ->
+                executor.from(this@KotlinNativeToolRunner, args, taskPath)
+                executor.parallelismProbe.set(parallelismProbe)
+            }
         }
 
     private fun KotlinNativeToolWorkParameters.from(
@@ -297,6 +304,8 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
 
         // Task path to report collected metrics back to via TaskExecutionResults, if any - see runToolWithWorkers.
         val taskPath: Property<String>
+
+        val parallelismProbe: Property<KotlinNativeToolParallelismProbe>
     }
 
     /**
@@ -314,9 +323,12 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
                 parameters.toolSpec.get(),
                 parameters.fusService,
             )
+            val parallelismProbe = parameters.parallelismProbe.orNull
             try {
+                parallelismProbe?.workerStarted()
                 runner.runTool(parameters.toolArguments.get())
             } finally {
+                parallelismProbe?.workerFinished()
                 TaskExecutionResults[parameters.taskPath.get()] = TaskExecutionResult(buildMetrics = metricsReporter.getMetrics())
             }
         }
