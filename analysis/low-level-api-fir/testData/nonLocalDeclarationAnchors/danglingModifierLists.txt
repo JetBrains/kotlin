@@ -1,0 +1,30 @@
+/* anchor (KtClass) --> */annotation class Anno/* anchor (KtPrimaryConstructor) --> */(/* anchor (KtParameter) --> */val value: Int = 0/* <-- */)/* <-- *//* <-- */
+
+/* anchor (KtClass) --> */class Owner {
+    /* anchor (KtNamedFunction) --> */fun member() {}/* <-- */
+
+    @Anno(1 + 2)
+}/* <-- */
+
+/* anchor (KtClass) --> */class Outer {
+    /* anchor (KtClass) --> */class Nested {
+        /* anchor (KtProperty) --> */val property = 0/* <-- */
+
+        @Anno private
+    }/* <-- */
+}/* <-- */
+
+/* anchor (KtClass) --> */class Unclosed {
+    @Anno(
+    fun foo() {}
+}/* <-- */
+
+/* anchor (KtClass) --> */enum class Enum {
+    /* anchor (KtEnumEntry) --> */Entry {
+        @Anno
+    };/* <-- */
+
+    @Anno
+}/* <-- */
+
+@Anno
