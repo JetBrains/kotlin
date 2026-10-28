@@ -295,6 +295,26 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
     }
 
     @Test
+    fun testBinarySignatureReferencesGenericJavaClassFromSource() {
+        val library = copyJarFileWithoutEntry(
+            compileLibrary(
+                "library",
+                compileJava = { _, javaFiles, outputDir ->
+                    compileJavaFiles(javaFiles, listOf("-classpath", outputDir.path, "-d", outputDir.path))
+                },
+            ),
+            "p/Gen.class"
+        )
+        for (javaDirect in listOf(true, false)) {
+            compileKotlin(
+                "source.kt", tmpdir, listOf(library),
+                additionalOptions = listOf(K2JVMCompilerArguments::javaDirect.cliArgument(javaDirect.toString())),
+                additionalSources = listOf("p/Gen.java"),
+            )
+        }
+    }
+
+    @Test
     fun testBinaryAnnotationReferencesNestedJavaAnnotationFromSource() {
         val library = copyJarFileWithoutEntry(
             compileLibrary(
