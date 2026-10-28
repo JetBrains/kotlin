@@ -21,7 +21,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.vfs.*
 import com.intellij.psi.PsiElementFinder
-import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiNameHelper
 import com.intellij.psi.impl.*
 import com.intellij.psi.impl.file.impl.JavaFileManager
@@ -182,7 +181,6 @@ class KotlinCoreEnvironment private constructor(
             jdkHome,
             configuration,
             javaFileManager,
-            project,
             releaseTarget
         )
 
@@ -193,14 +191,13 @@ class KotlinCoreEnvironment private constructor(
         val contentRoots = configuration.getList(CLIConfigurationKeys.CONTENT_ROOTS)
 
         classpathRootsResolver = ClasspathRootsResolver(
-            PsiManager.getInstance(project),
             configuration,
             configuration.getList(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES),
             this::contentRootToVirtualFile,
             javaModuleFinder,
             !configuration.getBoolean(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE),
             outputDirectory?.let(this::findLocalFile),
-            javaFileManager,
+            javaFileManager::findClassOnClasspath,
             releaseTarget,
             hasKotlinSources = contentRoots.any { it is KotlinSourceRoot },
         )

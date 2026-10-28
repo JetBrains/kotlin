@@ -130,6 +130,9 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
 
     fun findClass(classId: ClassId, searchScope: GlobalSearchScope) = findClass(JavaClassFinder.Request(classId), searchScope)
 
+    /** [findClass] over the whole classpath, for classpath setup, which selects nothing by scope. */
+    fun findClassOnClasspath(classId: ClassId): JavaClass? = findClass(JavaClassFinder.Request(classId), allScope)
+
     override fun findClass(request: JavaClassFinder.Request, searchScope: GlobalSearchScope): JavaClass? {
         (val classId, val classFileContentFromRequest = previouslyFoundClassFileContent, val outerClassFromRequest = outerClass) = request
         val classFile = findFileForTopLevelClass(classId, searchScope) ?: return null

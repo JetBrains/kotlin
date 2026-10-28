@@ -273,7 +273,7 @@ class JavaFieldOverAst(
         } else {
             // FIR-backed adapters expose members as symbols, not JavaField wrappers; existence is enough here.
             val session = containingClass.resolutionContext.fileContext.session
-            if (session.getClassDeclaredPropertySymbols(classId, Name.identifier(name)).any()) return true
+            if (session?.getClassDeclaredPropertySymbols(classId, Name.identifier(name))?.any() == true) return true
         }
         for (supertype in javaClass.supertypes) {
             val superClass = supertype.classifier as? JavaClass ?: continue
