@@ -168,6 +168,9 @@ message Type {
 
   repeated Annotation union_type_annotation = 17;
 
+  optional Type union_abbreviated_type = 18;
+  optional int32 union_abbreviated_type_id = 19 [(type_id_in_table) = true];
+
   /*
     suspend
     definitelyNonNull
