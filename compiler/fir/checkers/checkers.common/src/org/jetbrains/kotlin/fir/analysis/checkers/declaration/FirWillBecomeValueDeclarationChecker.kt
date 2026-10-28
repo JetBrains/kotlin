@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.isMethodOfAny
-import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
+import org.jetbrains.kotlin.fir.declarations.utils.expandedClassLikeType
 import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
@@ -90,7 +90,7 @@ object FirWillBecomeValueActualTypeAliasToJavaChecker : FirTypeAliasChecker(MppC
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirTypeAlias) {
         if (!declaration.isActual) return
-        val expandedClass = declaration.expandedConeType?.toRegularClassSymbol(context.session) ?: return
+        val expandedClass = declaration.expandedClassLikeType?.toRegularClassSymbol(context.session) ?: return
         if (expandedClass.origin !is FirDeclarationOrigin.Java || !expandedClass.willBecomeKotlinValueClass(context.session)) return
         checkIdentityBasedMembers(expandedClass, declaration.source)
     }

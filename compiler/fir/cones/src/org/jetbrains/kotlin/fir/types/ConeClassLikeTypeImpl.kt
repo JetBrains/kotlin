@@ -16,5 +16,5 @@ class ConeClassLikeTypeImpl(
     override val typeArguments: Array<out ConeTypeProjection> = if (typeArguments.isEmpty()) EMPTY_ARRAY else typeArguments
 
     // Cached expanded type and the relevant session
-    var cachedExpandedType: WeakPair<*, ConeClassLikeType>? = null
+    var cachedExpandedType: WeakPair<*, ConeSimpleKotlinType>? = null
 }

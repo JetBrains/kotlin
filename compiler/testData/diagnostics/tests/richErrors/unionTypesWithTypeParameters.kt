@@ -3,8 +3,9 @@
 error class Foo
 
 typealias TA = RichError
+typealias TA2 = CharSequence
 
-fun <T, V : NonError, E : RichError, E2 : TA, E3 : E, E4 : V | Foo, E5 : E | Foo, E6 : Nothing | E5, E7 : String | E6> test(
+fun <T, V : NonError, E : RichError, E2 : TA, E3 : E, E4 : V | Foo, E5 : E | Foo, E6 : Nothing | E5, E7 : String | E6, E8 : TA2> test(
     a: T | Foo,
     b: V | Foo,
     c: E | Foo,
@@ -16,6 +17,7 @@ fun <T, V : NonError, E : RichError, E2 : TA, E3 : E, E4 : V | Foo, E5 : E | Foo
     i: String | E3,
     j: E4 | Foo,
     k: E5 | Foo,
+    l: <!NON_ERROR_COMPONENT_WRONG_POSITION_IN_UNION_TYPE!>String | E8<!>,
 ) {}
 
 val <E : RichError> (E | Foo).prop get() = 1

@@ -47,7 +47,11 @@ fun ConeKotlinType.functionTypeKind(session: FirSession, expandTypeAliases: Bool
 fun ConeRigidType.functionTypeKind(session: FirSession, expandTypeAliases: Boolean = true): FunctionTypeKind? {
     if (this !is ConeClassLikeType) return null
 
-    val targetType = if (expandTypeAliases) fullyExpandedType(session) else this
+    val targetType = if (expandTypeAliases) {
+        fullyExpandedType(session) as? ConeClassLikeType ?: return null
+    } else {
+        this
+    }
     return targetType.lookupTag.functionTypeKind(session)
 }
 
