@@ -296,21 +296,38 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
 
     @Test
     fun testBinarySignatureReferencesGenericJavaClassFromSource() {
-        val library = copyJarFileWithoutEntry(
-            compileLibrary(
-                "library",
-                compileJava = { _, javaFiles, outputDir ->
-                    compileJavaFiles(javaFiles, listOf("-classpath", outputDir.path, "-d", outputDir.path))
-                },
-            ),
-            "p/Gen.class"
+        val fullLibrary = compileLibrary(
+            "library",
+            compileJava = { _, javaFiles, outputDir ->
+                compileJavaFiles(javaFiles, listOf("-classpath", outputDir.path, "-d", outputDir.path))
+            },
         )
+        val sourceOnlyLibrary = copyJarFileWithoutEntry(fullLibrary, "p/Gen.class")
         for (javaDirect in listOf(true, false)) {
             compileKotlin(
-                "source.kt", tmpdir, listOf(library),
+                "source.kt", tmpdir, listOf(sourceOnlyLibrary),
                 additionalOptions = listOf(K2JVMCompilerArguments::javaDirect.cliArgument(javaDirect.toString())),
                 additionalSources = listOf("p/Gen.java"),
             )
+
+            val rawSourceOptions = listOf(K2JVMCompilerArguments::javaDirect.cliArgument(javaDirect.toString()))
+            val binaryResult = compileKotlin(
+                fileName = "rawSource.kt",
+                output = tmpdir,
+                classpath = listOf(fullLibrary),
+                additionalOptions = rawSourceOptions,
+                expectedFileName = null,
+            )
+            val sourceResult = compileKotlin(
+                fileName = "rawSource.kt",
+                output = tmpdir,
+                classpath = listOf(sourceOnlyLibrary),
+                additionalOptions = rawSourceOptions,
+                expectedFileName = null,
+                additionalSources = listOf("p/Gen.java"),
+            )
+            assertEquals(ExitCode.COMPILATION_ERROR, binaryResult.second, binaryResult.first)
+            assertEquals(binaryResult, sourceResult)
         }
     }
 
