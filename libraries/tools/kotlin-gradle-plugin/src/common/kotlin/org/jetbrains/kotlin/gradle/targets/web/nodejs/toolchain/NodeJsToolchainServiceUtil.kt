@@ -42,18 +42,25 @@ internal fun <P : NodeJsToolchainService.Parameters, T : NodeJsToolchainService<
 
     @Suppress("UNCHECKED_CAST")
     return when (nodeJsToolchainClass) {
-        DefaultNodeJsToolchainService::class.java -> DefaultNodeJsToolchainServiceImpl.registerIfAbsent(
-            gradle,
-            configureBuildServiceParameters as (DefaultNodeJsToolchainService.Parameters) -> Unit
-        )
-        PreInstalledNodeJsToolchainService::class.java -> PreInstalledNodeJsToolchainServiceImpl.registerIfAbsent(
-            gradle,
-            configureBuildServiceParameters as (PreInstalledNodeJsToolchainService.Parameters) -> Unit
-        )
-        DisabledNodeJsToolchainService::class.java -> DisabledNodeJsToolchainServiceImpl.registerIfAbsent(gradle)
-        else -> gradle.sharedServices.registerIfAbsent(nodeJsServiceName, nodeJsToolchainClass) { spec ->
-            configureBuildServiceParameters(spec.parameters)
-        }
+        DefaultNodeJsToolchainService::class.java ->
+            DefaultNodeJsToolchainServiceImpl.registerIfAbsent(
+                gradle,
+                configureBuildServiceParameters as (DefaultNodeJsToolchainService.Parameters) -> Unit
+            )
+
+        PreInstalledNodeJsToolchainService::class.java ->
+            PreInstalledNodeJsToolchainServiceImpl.registerIfAbsent(
+                gradle,
+                configureBuildServiceParameters as (PreInstalledNodeJsToolchainService.Parameters) -> Unit
+            )
+
+        DisabledNodeJsToolchainService::class.java ->
+            DisabledNodeJsToolchainServiceImpl.registerIfAbsent(gradle)
+
+        else ->
+            gradle.sharedServices.registerIfAbsent(nodeJsServiceName, nodeJsToolchainClass) { spec ->
+                configureBuildServiceParameters(spec.parameters)
+            }
     }
 }
 
@@ -181,10 +188,9 @@ internal fun NodeJsToolchainService<*>.resolveNodeJsExecutable(
 
 internal fun NodeJsToolchainService<*>.isNodeJsToolchainDisabled(): Boolean = this is DisabledNodeJsToolchainServiceImpl
 
-private val DEFAULT_NODE_JS_VERSION = "24.16.0"
 internal fun Project.requestDefaultNodeJs(): Provider<NodeJsRequest> = provider {
     objects.newInstance<NodeJsRequest>().also {
-        it.version.convention(NodeJsVersion(DEFAULT_NODE_JS_VERSION))
+        it.version.convention(kotlinPropertiesProvider.nodejsDefaultVersion)
         it.platform.convention(providers.detectBuildPlatform())
     }
 }

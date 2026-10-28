@@ -6,8 +6,11 @@
 package org.jetbrains.kotlin.gradle.targets.web.nodejs
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.ExperimentalNodeJsToolchainDsl
+import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.NodeJsVersion
 import org.jetbrains.kotlin.gradle.internal.unameExecResult
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsSetupTask
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.parsePlatform
@@ -49,7 +52,6 @@ internal class NodeJsPluginApplier(
         }
     }
 
-    @Suppress("DEPRECATION_ERROR")
     private fun Project.createNodeJsEnvSpec(
         nodeJsEnvSpecKlass: KClass<out BaseNodeJsEnvSpec>,
         nodeJsEnvSpecName: String,
@@ -73,7 +75,10 @@ internal class NodeJsPluginApplier(
             // set instead of convention because it is possible to have null value https://github.com/gradle/gradle/issues/14768
             downloadBaseUrl.set("https://nodejs.org/dist")
             allowInsecureProtocol.convention(false)
-            version.convention("24.16.0")
+            version.convention(
+                @OptIn(ExperimentalNodeJsToolchainDsl::class)
+                project.kotlinPropertiesProvider.nodejsDefaultVersion.map(NodeJsVersion::version)
+            )
             command.convention("node")
 
             addPlatform(this@createNodeJsEnvSpec, this)
