@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.session.builder
 
+import com.intellij.openapi.project.Project
+import com.intellij.psi.JavaPsiFacade
+import com.intellij.psi.PsiPackage
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
@@ -99,6 +102,48 @@ class StandaloneBehaviorTest : AbstractStandaloneTest() {
 
         error("Annotation argument wasn't found")
     }
+
+    @Test
+    fun testJavaFileWithoutPackageDoesNotLeakPackageInfoIntoRootPackage() {
+        checkRootPackageIsNotAnnotated("javaFileWithoutPackage")
+    }
+
+    @Test
+    fun testJavaFileWithMismatchedPackageDoesNotLeakPackageInfoIntoRootPackage() {
+        checkRootPackageIsNotAnnotated("javaFileWithMismatchedPackage")
+    }
+
+    private fun checkRootPackageIsNotAnnotated(testDataDirectory: String) {
+        val sourceRoot = testDataPath(testDataDirectory)
+        lateinit var project: Project
+        buildStandaloneAnalysisAPISession(disposable) {
+            project = this.project
+            buildKtModuleProvider {
+                platform = JvmPlatforms.defaultJvmPlatform
+                addModule(
+                    buildKtSourceModule {
+                        addSourceRoot(sourceRoot)
+                        platform = JvmPlatforms.defaultJvmPlatform
+                        moduleName = "source"
+                    }
+                )
+            }
+        }
+
+        val javaPsiFacade = JavaPsiFacade.getInstance(project)
+
+        val myPkg = javaPsiFacade.findPackage("my.pkg") ?: error("Package 'my.pkg' must be found")
+        assertEquals(listOf("java.lang.Deprecated"), myPkg.annotationQualifiedNames())
+
+        val rootPackage = javaPsiFacade.findPackage("") ?: error("The root package must be found")
+        assertEquals(listOf("java.lang.Deprecated"), rootPackage.annotationQualifiedNames())
+
+        val rootPackageDirectories = rootPackage.directories.map { Paths.get(it.virtualFile.path).toRealPath() }
+        assertEquals(listOf(sourceRoot.resolve("my/pkg").toRealPath(), sourceRoot.toRealPath()), rootPackageDirectories)
+    }
+
+    private fun PsiPackage.annotationQualifiedNames(): List<String?> =
+        annotationList?.annotations.orEmpty().map { it.qualifiedName }
 
     @Test
     fun testNestedTypeAliasIndexing() {
