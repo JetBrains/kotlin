@@ -32,7 +32,6 @@ dependencies {
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     implementation(project(":kotlin-tooling-core"))
 
-    runtimeOnly(project(":kotlin-compiler-embeddable"))
     runtimeOnly(project(":kotlin-compiler-runner"))
 
     compileOnly(project(":js:typescript-export-standalone"))
@@ -55,6 +54,7 @@ dependencies {
         compileOnly(project(":native:cli-native"))
         runtimeOnly(project(":kotlin-native:prepare:kotlin-native-compiler-embeddable"))
     } else {
+        runtimeOnly(project(":kotlin-compiler-embeddable"))
         // when K/N is not available, depend on the required for compilation CLI part from bootstrap K/N distribution
         val bootstrapNativeCompiler = files(registerNativeBootstrapDistribution().map { it.compilerClasspath })
         val archiveOperations = serviceOf<ArchiveOperations>()
