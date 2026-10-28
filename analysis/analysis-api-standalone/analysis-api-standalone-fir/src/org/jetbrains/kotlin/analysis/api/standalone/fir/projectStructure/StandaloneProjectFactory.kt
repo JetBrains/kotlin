@@ -63,6 +63,7 @@ import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
 import org.jetbrains.kotlin.cli.jvm.modules.JavaModuleGraph
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
+import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.library.KlibConstants.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
@@ -227,28 +228,6 @@ object StandaloneProjectFactory {
         val allSourceFileRoots = sourceFiles.map { JavaRoot(it.virtualFile, JavaRoot.RootType.SOURCE) }
         val jdkRoots = getDefaultJdkModuleRoots(javaModuleFinder, javaModuleGraph)
 
-        // To implement the platform components required by the Analysis API for its own implementation of `JavaModuleResolver`, we can use
-        // the compiler's `CliJavaModuleResolver`. This is a bit of an indirection (CLI java module resolver -> platform components ->
-        // Analysis API java module resolver), but it's preferable over exposing `JavaModuleResolver` to all platforms. Furthermore, we can
-        // still benefit from the common Analysis API implementation, for example its caching for Java module annotations.
-        //
-        // Note that the registered `JavaModuleResolver` will still be the `KaFirJavaModuleResolver` registered by the Analysis API engine,
-        // not `CliJavaModuleResolver`.
-        val delegateJavaModuleResolver = CliJavaModuleResolver(
-            javaModuleGraph,
-            emptyList(),
-            javaModuleFinder.systemModules.toList(),
-            project,
-        )
-        project.registerService(
-            KotlinJavaModuleAccessibilityChecker::class.java,
-            KotlinStandaloneJavaModuleAccessibilityChecker(delegateJavaModuleResolver),
-        )
-        project.registerService(
-            KotlinJavaModuleAnnotationsProvider::class.java,
-            KotlinStandaloneJavaModuleAnnotationsProvider(delegateJavaModuleResolver),
-        )
-
         val libraryRoots = getAllBinaryRoots(modules, environment.environment)
 
         val rootsWithSingleJavaFileRoots = buildList {
@@ -305,6 +284,29 @@ object StandaloneProjectFactory {
         val fileFinderFactory = CliVirtualFileFinderFactory(rootsIndex, false, perfManager = null)
         project.registerService(VirtualFileFinderFactory::class.java, fileFinderFactory)
         project.registerService(MetadataFinderFactory::class.java, CliMetadataFinderFactory(fileFinderFactory))
+
+        // To implement the platform components required by the Analysis API for its own implementation of `JavaModuleResolver`, we can use
+        // the compiler's `CliJavaModuleResolver`. This is a bit of an indirection (CLI java module resolver -> platform components ->
+        // Analysis API java module resolver), but it's preferable over exposing `JavaModuleResolver` to all platforms. Furthermore, we can
+        // still benefit from the common Analysis API implementation, for example its caching for Java module annotations.
+        //
+        // Note that the registered `JavaModuleResolver` will still be the `KaFirJavaModuleResolver` registered by the Analysis API engine,
+        // not `CliJavaModuleResolver`.
+        val classpathFinder = fileFinderFactory.create(JvmClasspath.ProjectLibraries())
+        val delegateJavaModuleResolver = CliJavaModuleResolver(
+            javaModuleGraph,
+            emptyList(),
+            javaModuleFinder.systemModules.toList(),
+            findSourceOrBinaryClassFile = classpathFinder::findSourceOrBinaryClassFile,
+        )
+        project.registerService(
+            KotlinJavaModuleAccessibilityChecker::class.java,
+            KotlinStandaloneJavaModuleAccessibilityChecker(delegateJavaModuleResolver),
+        )
+        project.registerService(
+            KotlinJavaModuleAnnotationsProvider::class.java,
+            KotlinStandaloneJavaModuleAnnotationsProvider(delegateJavaModuleResolver),
+        )
     }
 
     fun getDefaultJdkModulePaths(
