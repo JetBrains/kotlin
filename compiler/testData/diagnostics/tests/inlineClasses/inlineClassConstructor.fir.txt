@@ -1,17 +1,17 @@
 FILE: inlineClassConstructor.kt
-    public final value class WithoutConstructor : R|kotlin/Any| {
+    public final inline value class WithoutConstructor : R|kotlin/Any| {
         public constructor(): R|WithoutConstructor| {
             super<R|kotlin/Any|>()
         }
 
     }
-    public final inline class WithoutParameter : R|kotlin/Any| {
+    public final inline value class WithoutParameter : R|kotlin/Any| {
         public constructor(): R|WithoutParameter| {
             super<R|kotlin/Any|>()
         }
 
     }
-    public final inline class WithTwoParameters : R|kotlin/Any| {
+    public final inline value class WithTwoParameters : R|kotlin/Any| {
         public constructor(x: R|kotlin/Int|, y: R|kotlin/String|): R|WithTwoParameters| {
             super<R|kotlin/Any|>()
         }
@@ -23,7 +23,7 @@ FILE: inlineClassConstructor.kt
             public get(): R|kotlin/String|
 
     }
-    public final inline class Ok : R|kotlin/Any| {
+    public final inline value class Ok : R|kotlin/Any| {
         public constructor(x: R|kotlin/Int|): R|Ok| {
             super<R|kotlin/Any|>()
         }
@@ -32,7 +32,7 @@ FILE: inlineClassConstructor.kt
             private get(): R|kotlin/Int|
 
     }
-    public final inline class OpenParameter : R|kotlin/Any| {
+    public final inline value class OpenParameter : R|kotlin/Any| {
         public constructor(x: R|kotlin/Int|): R|OpenParameter| {
             super<R|kotlin/Any|>()
         }
@@ -41,13 +41,13 @@ FILE: inlineClassConstructor.kt
             public get(): R|kotlin/Int|
 
     }
-    public final inline class VarargParameter : R|kotlin/Any| {
+    public final inline value class VarargParameter : R|kotlin/Any| {
         public constructor(vararg x: R|kotlin/IntArray|): R|VarargParameter| {
             super<R|kotlin/Any|>()
         }
 
     }
-    public final inline class VarParameter : R|kotlin/Any| {
+    public final inline value class VarParameter : R|kotlin/Any| {
         public constructor(x: R|kotlin/Int|): R|VarParameter| {
             super<R|kotlin/Any|>()
         }
@@ -57,13 +57,13 @@ FILE: inlineClassConstructor.kt
             public set(value: R|kotlin/Int|): R|kotlin/Unit|
 
     }
-    public final inline class SimpleParameter : R|kotlin/Any| {
+    public final inline value class SimpleParameter : R|kotlin/Any| {
         public constructor(x: R|kotlin/Int|): R|SimpleParameter| {
             super<R|kotlin/Any|>()
         }
 
     }
-    public final inline class UnitParameter : R|kotlin/Any| {
+    public final inline value class UnitParameter : R|kotlin/Any| {
         public constructor(x: R|kotlin/Unit|): R|UnitParameter| {
             super<R|kotlin/Any|>()
         }
@@ -72,7 +72,7 @@ FILE: inlineClassConstructor.kt
             public get(): R|kotlin/Unit|
 
     }
-    public final inline class NothingParameter : R|kotlin/Any| {
+    public final inline value class NothingParameter : R|kotlin/Any| {
         public constructor(x: R|kotlin/Nothing|): R|NothingParameter| {
             super<R|kotlin/Any|>()
         }
@@ -81,7 +81,7 @@ FILE: inlineClassConstructor.kt
             public get(): R|kotlin/Nothing|
 
     }
-    public final inline class TypeParameterType<T> : R|kotlin/Any| {
+    public final inline value class TypeParameterType<T> : R|kotlin/Any| {
         public constructor<T>(x: R|T|): R|TypeParameterType<T>| {
             super<R|kotlin/Any|>()
         }
@@ -90,7 +90,7 @@ FILE: inlineClassConstructor.kt
             public get(): R|T|
 
     }
-    public final inline class ArrayOfTypeParameters<T> : R|kotlin/Any| {
+    public final inline value class ArrayOfTypeParameters<T> : R|kotlin/Any| {
         public constructor<T>(x: R|kotlin/Array<T>|): R|ArrayOfTypeParameters<T>| {
             super<R|kotlin/Any|>()
         }
@@ -99,7 +99,7 @@ FILE: inlineClassConstructor.kt
             public get(): R|kotlin/Array<T>|
 
     }
-    public final inline class ListOfTypeParameters<T> : R|kotlin/Any| {
+    public final inline value class ListOfTypeParameters<T> : R|kotlin/Any| {
         public constructor<T>(x: R|kotlin/collections/List<T>|): R|ListOfTypeParameters<T>| {
             super<R|kotlin/Any|>()
         }
@@ -108,7 +108,7 @@ FILE: inlineClassConstructor.kt
             public get(): R|kotlin/collections/List<T>|
 
     }
-    public final inline class StarProjection<T> : R|kotlin/Any| {
+    public final inline value class StarProjection<T> : R|kotlin/Any| {
         public constructor<T>(x: R|kotlin/Array<*>|): R|StarProjection<T>| {
             super<R|kotlin/Any|>()
         }
@@ -117,7 +117,7 @@ FILE: inlineClassConstructor.kt
             public get(): R|kotlin/Array<*>|
 
     }
-    public final inline class SimpleRecursive : R|kotlin/Any| {
+    public final inline value class SimpleRecursive : R|kotlin/Any| {
         public constructor(x: R|SimpleRecursive|): R|SimpleRecursive| {
             super<R|kotlin/Any|>()
         }
@@ -126,7 +126,7 @@ FILE: inlineClassConstructor.kt
             public get(): R|SimpleRecursive|
 
     }
-    public final inline class DoubleRecursive1 : R|kotlin/Any| {
+    public final inline value class DoubleRecursive1 : R|kotlin/Any| {
         public constructor(x: R|DoubleRecursive2|): R|DoubleRecursive1| {
             super<R|kotlin/Any|>()
         }
@@ -135,7 +135,7 @@ FILE: inlineClassConstructor.kt
             public get(): R|DoubleRecursive2|
 
     }
-    public final inline class DoubleRecursive2 : R|kotlin/Any| {
+    public final inline value class DoubleRecursive2 : R|kotlin/Any| {
         public constructor(x: R|DoubleRecursive1|): R|DoubleRecursive2| {
             super<R|kotlin/Any|>()
         }

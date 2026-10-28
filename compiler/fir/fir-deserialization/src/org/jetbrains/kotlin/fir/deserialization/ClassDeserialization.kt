@@ -19,7 +19,8 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusIm
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusWithLazyEffectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.addDeclarations
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
-import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
+import org.jetbrains.kotlin.fir.declarations.utils.isInline
+import org.jetbrains.kotlin.fir.declarations.utils.isValue
 import org.jetbrains.kotlin.fir.declarations.utils.moduleName
 import org.jetbrains.kotlin.fir.declarations.utils.sourceElement
 import org.jetbrains.kotlin.fir.resolve.providers.getRegularClassSymbolByClassId
@@ -79,9 +80,13 @@ fun deserializeClassToSymbol(
         isCompanion = kind == ProtoBuf.Class.Kind.COMPANION_OBJECT
         isInner = Flags.IS_INNER.get(flags)
         isData = Flags.IS_DATA.get(classProto.flags)
-        // During serialization, we store only IS_VALUE_CLASS without distinguishing if it in fact was inline or value class
-        // During deserialization, we anyway interpret this flag as isValue, because inline classes are deprecated
         isValue = Flags.IS_VALUE_CLASS.get(classProto.flags)
+
+        // TODO: KT-90593. Expect inline value classes without constructors
+        //  (AllowExpectValueClassesWithNoPrimaryConstructor) are loaded as
+        //  full value classes.
+        isInline = isValue && (session.deserializationExtension?.isMaybeFullValueClass(containerSource) == false
+                || classProto.hasInlineClassUnderlyingPropertyName())
         isExternal = Flags.IS_EXTERNAL_CLASS.get(classProto.flags)
         isFun = Flags.IS_FUN_INTERFACE.get(classProto.flags)
         isRichError = Flags.IS_RICH_ERROR.get(classProto.flags)
@@ -250,10 +255,10 @@ fun deserializeClassToSymbol(
             setSealedClassInheritors(inheritors)
         }
 
-        if (isInlineOrValue) {
+        if (isValue) {
             valueClassRepresentation =
                 classProto.loadValueClassRepresentation(
-                    session.deserializationExtension?.isMaybeFullValueClass(containerSource) ?: true,
+                    isInline,
                     context,
                     declarations,
                 )
@@ -357,16 +362,13 @@ private fun ProtoBuf.ClassOrBuilder.propertiesInOrder(
 }
 
 private fun ProtoBuf.Class.loadValueClassRepresentation(
-    tryLoadFullValueClass: Boolean,
+    isInline: Boolean,
     context: FirDeserializationContext,
     declarations: List<FirDeclaration>,
 ): ValueClassRepresentation<ConeRigidType> {
     val primaryConstructor = declarations.filterIsInstance<FirConstructor>().singleOrNull { it.isPrimary }
 
-    // TODO: KT-90593. Expect inline value classes without constructors
-    //  (AllowExpectValueClassesWithNoPrimaryConstructor) are loaded as
-    //  full value classes.
-    if (tryLoadFullValueClass && !hasInlineClassUnderlyingPropertyName()) {
+    if (!isInline) {
         val modality = Flags.MODALITY.get(flags)
         val isAbstractOrSealed = modality == ProtoBuf.Modality.ABSTRACT || modality == ProtoBuf.Modality.SEALED
         val fields = if (isAbstractOrSealed) {

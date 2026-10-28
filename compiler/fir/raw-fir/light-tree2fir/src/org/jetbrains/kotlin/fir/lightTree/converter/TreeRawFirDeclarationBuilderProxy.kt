@@ -626,7 +626,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
                     isCompanion = calculatedModifiers.isCompanion() && classKind == ClassKind.OBJECT
                     isData = calculatedModifiers.isDataClass()
                     isInline = calculatedModifiers.isInlineClass()
-                    isValue = calculatedModifiers.isValueClass()
+                    isValue = calculatedModifiers.isValueClass() || calculatedModifiers.isInlineClass()
                     isFun = calculatedModifiers.isFunctionalInterface()
                     isRichError = calculatedModifiers.isErrorClass()
                     isExternal = calculatedModifiers.hasExternal()

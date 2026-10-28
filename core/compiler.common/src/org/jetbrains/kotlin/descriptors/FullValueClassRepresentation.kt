@@ -19,7 +19,3 @@ class FullValueClassRepresentation<Type : RigidTypeMarker>(
     override fun toString(): String =
         "FullValueClassRepresentation(underlyingPropertyNamesToTypes=$underlyingPropertyNamesToTypes)"
 }
-
-/** Abstract and sealed value classes have no fields. */
-val FullValueClassRepresentation<*>.belongsToAbstractOrSealedValueClass: Boolean
-    get() = underlyingPropertyNamesToTypes == null

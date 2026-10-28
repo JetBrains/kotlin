@@ -17,9 +17,9 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
-import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isSealed
+import org.jetbrains.kotlin.fir.declarations.utils.isValue
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.resolve.getSuperTypes
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
@@ -76,7 +76,7 @@ private class ImplementedAnnotationsInfo(
 )
 
 private fun FirRegularClass.classModifiers(): Set<ClassModifier> = buildSet {
-    if (isInlineOrValue) add(ClassModifier.VALUE)
+    if (isValue) add(ClassModifier.VALUE)
     if (isInner) add(ClassModifier.INNER)
     // Only where these are modifiers the source actually carries. An interface and an annotation class are
     // abstract by their very kind, and the kind - not a modifier - is what has to be spoken about there, which

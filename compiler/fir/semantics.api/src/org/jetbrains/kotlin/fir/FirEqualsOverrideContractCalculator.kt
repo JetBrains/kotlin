@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.declarations.getSealedClassInheritors
 import org.jetbrains.kotlin.fir.declarations.isEquals
 import org.jetbrains.kotlin.fir.declarations.utils.isData
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
-import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
 import org.jetbrains.kotlin.fir.declarations.utils.isSealed
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
@@ -27,6 +26,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.fir.EqualsOverrideContract.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
+import org.jetbrains.kotlin.fir.declarations.utils.isValue
 
 /**
  * The entries are ordered from least trustworthy to most trustworthy.
@@ -169,7 +169,7 @@ class FirEqualsOverrideContractCalculator(
     private val FirNamedFunctionSymbol.isGenerated: Boolean get() = origin.generatedAnyMethod
 
     private val FirClassSymbol<*>.isTrustedDependency: Boolean
-        get() = (isData || isInlineOrValue || classKind.isObject) && moduleData != session.moduleData
+        get() = (isData || isValue || classKind.isObject) && moduleData != session.moduleData
 }
 
 /**

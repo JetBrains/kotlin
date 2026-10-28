@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirFileBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.buildFile
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
-import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
+import org.jetbrains.kotlin.fir.declarations.utils.isValue
 import org.jetbrains.kotlin.fir.resolve.providers.impl.syntheticFunctionInterfacesSymbolProvider
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -181,7 +181,7 @@ fun Fir2IrConversionScope.createTemporaryVariableForSafeCallConstruction(
 fun Fir2IrComponents.computeValueClassRepresentation(klass: FirRegularClass): ValueClassRepresentation<IrSimpleType>? {
     val valueClassRepresentation = klass.valueClassRepresentation
     if (valueClassRepresentation == null) {
-        require(!klass.isInlineOrValue || klass.isExpect) {
+        require(!klass.isValue || klass.isExpect) {
             "Value class has no representation: ${klass.render()}"
         }
         return null
