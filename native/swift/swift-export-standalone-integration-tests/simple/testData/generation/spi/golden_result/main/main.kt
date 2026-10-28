@@ -32,6 +32,28 @@ public fun MyInterface_bazFun__TypesOfArgumentsE__lib_ExperimentalLibClass____re
     return _result
 }
 
+@ImportedBridge("MyInterface_bazProp_get__TypesOfArgumentsE__lib_ExperimentalLibClass____reverse_swift")
+internal external fun MyInterface_bazProp_get__TypesOfArgumentsE__lib_ExperimentalLibClass____reverse_swift(self: kotlin.native.internal.NativePtr, `receiver`: kotlin.native.internal.NativePtr): Boolean
+
+@BindReverseBridgeToMethod(MyInterface::class, "<get-bazProp>")
+public fun MyInterface_bazProp_get__TypesOfArgumentsE__lib_ExperimentalLibClass____reverse(self: MyInterface, `receiver`: ExperimentalLibClass): Boolean {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __receiver = kotlin.native.internal.ref.createRetainedExternalRCRef(`receiver`)
+    val _result = MyInterface_bazProp_get__TypesOfArgumentsE__lib_ExperimentalLibClass____reverse_swift(__self, __receiver)
+    return _result
+}
+
+@ImportedBridge("MyInterface_bazProp_set__TypesOfArgumentsE__lib_ExperimentalLibClass_Swift_Bool____reverse_swift")
+internal external fun MyInterface_bazProp_set__TypesOfArgumentsE__lib_ExperimentalLibClass_Swift_Bool____reverse_swift(self: kotlin.native.internal.NativePtr, `receiver`: kotlin.native.internal.NativePtr, value: Boolean): Boolean
+
+@BindReverseBridgeToMethod(MyInterface::class, "<set-bazProp>")
+public fun MyInterface_bazProp_set__TypesOfArgumentsE__lib_ExperimentalLibClass_Swift_Bool____reverse(self: MyInterface, `receiver`: ExperimentalLibClass, value: Boolean): Unit {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __receiver = kotlin.native.internal.ref.createRetainedExternalRCRef(`receiver`)
+    val _result = MyInterface_bazProp_set__TypesOfArgumentsE__lib_ExperimentalLibClass_Swift_Bool____reverse_swift(__self, __receiver, value)
+    return run<Unit> { _result }
+}
+
 @ImportedBridge("MyInterface_foo_get__reverse_swift")
 internal external fun MyInterface_foo_get__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
 
@@ -51,6 +73,17 @@ public fun MyInterface_foo_set__TypesOfArguments__Swift_String____reverse(self: 
     val __newValue = newValue.objcPtr()
     val _result = MyInterface_foo_set__TypesOfArguments__Swift_String____reverse_swift(__self, __newValue)
     return run<Unit> { _result }
+}
+
+@ImportedBridge("MyInterface_optInExtPropWithDefault_get__TypesOfArgumentsE__Swift_String____reverse_swift")
+internal external fun MyInterface_optInExtPropWithDefault_get__TypesOfArgumentsE__Swift_String____reverse_swift(self: kotlin.native.internal.NativePtr, `receiver`: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(MyInterface::class, "<get-optInExtPropWithDefault>")
+public fun MyInterface_optInExtPropWithDefault_get__TypesOfArgumentsE__Swift_String____reverse(self: MyInterface, `receiver`: kotlin.String): kotlin.String {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __receiver = `receiver`.objcPtr()
+    val _result = MyInterface_optInExtPropWithDefault_get__TypesOfArgumentsE__Swift_String____reverse_swift(__self, __receiver)
+    return interpretObjCPointer<kotlin.String>(_result)
 }
 
 @ImportedBridge("MyInterface_optInFunWithDefault__reverse_swift")
@@ -226,6 +259,24 @@ public fun MyInterface_foo_set__TypesOfArguments__Swift_String__(self: kotlin.na
     val __newValue = interpretObjCPointer<kotlin.String>(newValue)
     __self.foo = __newValue
     return true
+}
+
+@ExportedBridge("MyInterface_optInExtPropWithDefault_get__TypesOfArgumentsE__Swift_String__")
+@OptIn(MyOptInApi::class)
+public fun MyInterface_optInExtPropWithDefault_get__TypesOfArgumentsE__Swift_String__(self: kotlin.native.internal.NativePtr, `receiver`: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as MyInterface
+    val __receiver = interpretObjCPointer<kotlin.String>(`receiver`)
+    val _result = __self.run { __receiver.optInExtPropWithDefault }
+    return _result.objcPtr()
+}
+
+@ExportedBridge("MyInterface_optInExtPropWithDefault_get__TypesOfArgumentsE__Swift_String___direct", nonVirtualTargetMethod = "<get-optInExtPropWithDefault>")
+@OptIn(MyOptInApi::class)
+public fun MyInterface_optInExtPropWithDefault_get__TypesOfArgumentsE__Swift_String___direct(self: kotlin.native.internal.NativePtr, `receiver`: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as MyInterface
+    val __receiver = interpretObjCPointer<kotlin.String>(`receiver`)
+    val _result = __self.run { __receiver.optInExtPropWithDefault }
+    return _result.objcPtr()
 }
 
 @ExportedBridge("MyInterface_optInFun")

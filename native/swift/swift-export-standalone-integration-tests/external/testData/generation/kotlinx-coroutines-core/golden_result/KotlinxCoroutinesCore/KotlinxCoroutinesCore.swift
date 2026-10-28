@@ -232,7 +232,7 @@ public func supervisorJob(
 public func awaitAll(
     deferreds: any ExportedKotlinPackages.kotlinx.coroutines.Deferred...
 ) async throws -> [(any KotlinRuntimeSupport._KotlinBridgeable)?] {
-    try await withKotlinContinuation { continuation, exception, cancellation in
+    return try await withKotlinContinuation { continuation, exception, cancellation in
         let _: Bool = kotlinx_coroutines_awaitAll__TypesOfArguments__Swift_Array_anyU20ExportedKotlinPackages_kotlinx_coroutines_Deferred__Vararg___(deferreds, Unmanaged.passRetained((continuation as (Swift.Array<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
     }
 }
@@ -267,7 +267,7 @@ public func handleCoroutineException(
 public func joinAll(
     jobs: any ExportedKotlinPackages.kotlinx.coroutines.Job...
 ) async throws -> Swift.Void {
-    try await withKotlinContinuation { continuation, exception, cancellation in
+    return try await withKotlinContinuation { continuation, exception, cancellation in
         let _: Bool = kotlinx_coroutines_joinAll__TypesOfArguments__Swift_Array_anyU20ExportedKotlinPackages_kotlinx_coroutines_Job__Vararg___(jobs, Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
     }
 }
@@ -503,14 +503,14 @@ extension ExportedKotlinPackages.kotlinx.coroutines.selects {
     public static func select(
         builder: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder) -> Swift.Void
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_selects_select__TypesOfArguments__U28anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectBuilderU29202D_U20Swift_Void__(Unmanaged.passRetained((builder as (any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public static func selectUnbiased(
         builder: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder) -> Swift.Void
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_selects_selectUnbiased__TypesOfArguments__U28anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectBuilderU29202D_U20Swift_Void__(Unmanaged.passRetained((builder as (any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -518,7 +518,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.selects {
     public static func whileSelect(
         builder: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder) -> Swift.Void
     ) async throws -> Swift.Void {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_selects_whileSelect__TypesOfArguments__U28anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectBuilderU29202D_U20Swift_Void__(Unmanaged.passRetained((builder as (any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -1546,7 +1546,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines {
         }
         @_spi(kotlinx$coroutines$InternalCoroutinesApi)
         public final func join() async throws -> Swift.Void {
-            try await withKotlinContinuation { continuation, exception, cancellation in
+            return try await withKotlinContinuation { continuation, exception, cancellation in
                 let _: Bool = kotlinx_coroutines_JobSupport_join(self.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
             }
         }
@@ -1693,7 +1693,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines {
         }
         @available(*, deprecated, message: "NonCancellable can be used only as an argument for 'withContext', direct usages of its API are prohibited")
         public func join() async throws -> Swift.Void {
-            try await withKotlinContinuation { continuation, exception, cancellation in
+            return try await withKotlinContinuation { continuation, exception, cancellation in
                 let _: Bool = kotlinx_coroutines_NonCancellable_join(self.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
             }
         }
@@ -1817,38 +1817,38 @@ extension ExportedKotlinPackages.kotlinx.coroutines {
     public static func awaitAll(
         deferreds: any ExportedKotlinPackages.kotlinx.coroutines.Deferred...
     ) async throws -> [(any KotlinRuntimeSupport._KotlinBridgeable)?] {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_awaitAll__TypesOfArguments__Swift_Array_anyU20ExportedKotlinPackages_kotlinx_coroutines_Deferred__Vararg___(deferreds, Unmanaged.passRetained((continuation as (Swift.Array<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public static func awaitCancellation() async throws -> Swift.Never {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_awaitCancellation(Unmanaged.passRetained((continuation as (Swift.Never) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public static func coroutineScope(
         block: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_coroutineScope__TypesOfArguments__U28anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScopeU2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(Unmanaged.passRetained((block as (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public static func currentCoroutineContext() async throws -> any ExportedKotlinPackages.kotlin.coroutines.CoroutineContext {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_currentCoroutineContext(Unmanaged.passRetained((continuation as (any ExportedKotlinPackages.kotlin.coroutines.CoroutineContext) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public static func delay(
         timeMillis: Swift.Int64
     ) async throws -> Swift.Void {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_delay__TypesOfArguments__Swift_Int64__(timeMillis, Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public static func delay(
         duration: ExportedKotlinPackages.kotlin.time.Duration
     ) async throws -> Swift.Void {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_delay__TypesOfArguments__ExportedKotlinPackages_kotlin_time_Duration__(duration.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -1862,7 +1862,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines {
     public static func joinAll(
         jobs: any ExportedKotlinPackages.kotlinx.coroutines.Job...
     ) async throws -> Swift.Void {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_joinAll__TypesOfArguments__Swift_Array_anyU20ExportedKotlinPackages_kotlinx_coroutines_Job__Vararg___(jobs, Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -1887,14 +1887,14 @@ extension ExportedKotlinPackages.kotlinx.coroutines {
     public static func supervisorScope(
         block: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_supervisorScope__TypesOfArguments__U28anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScopeU2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(Unmanaged.passRetained((block as (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public static func suspendCancellableCoroutine(
         block: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.CancellableContinuation) -> Swift.Void
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_suspendCancellableCoroutine__TypesOfArguments__U28anyU20ExportedKotlinPackages_kotlinx_coroutines_CancellableContinuationU29202D_U20Swift_Void__(Unmanaged.passRetained((block as (any ExportedKotlinPackages.kotlinx.coroutines.CancellableContinuation) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -1902,7 +1902,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines {
         context: any ExportedKotlinPackages.kotlin.coroutines.CoroutineContext,
         block: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_withContext__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_U28anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScopeU2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(context.__externalRCRef(), Unmanaged.passRetained((block as (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -1910,7 +1910,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines {
         timeMillis: Swift.Int64,
         block: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_withTimeout__TypesOfArguments__Swift_Int64_U28anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScopeU2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(timeMillis, Unmanaged.passRetained((block as (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -1918,7 +1918,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines {
         timeout: ExportedKotlinPackages.kotlin.time.Duration,
         block: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_withTimeout__TypesOfArguments__ExportedKotlinPackages_kotlin_time_Duration_U28anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScopeU2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(timeout.__externalRCRef(), Unmanaged.passRetained((block as (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -1926,7 +1926,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines {
         timeMillis: Swift.Int64,
         block: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_withTimeoutOrNull__TypesOfArguments__Swift_Int64_U28anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScopeU2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(timeMillis, Unmanaged.passRetained((block as (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -1934,12 +1934,12 @@ extension ExportedKotlinPackages.kotlinx.coroutines {
         timeout: ExportedKotlinPackages.kotlin.time.Duration,
         block: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_withTimeoutOrNull__TypesOfArguments__ExportedKotlinPackages_kotlin_time_Duration_U28anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScopeU2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(timeout.__externalRCRef(), Unmanaged.passRetained((block as (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public static func yield() async throws -> Swift.Void {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_yield(Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -1980,7 +1980,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines {
     public static func cancelAndJoin(
         _ receiver: any ExportedKotlinPackages.kotlinx.coroutines.Job
     ) async throws -> Swift.Void {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_cancelAndJoin__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_Job__(receiver.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -2028,7 +2028,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines {
         _ receiver: ExportedKotlinPackages.kotlinx.coroutines.CoroutineDispatcher,
         block: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_invoke__TypesOfArgumentsE__ExportedKotlinPackages_kotlinx_coroutines_CoroutineDispatcher_U28anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScopeU2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.__externalRCRef(), Unmanaged.passRetained((block as (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -2388,7 +2388,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.channels {
         public func send(
             element: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) async throws -> Swift.Void {
-            try await withKotlinContinuation { continuation, exception, cancellation in
+            return try await withKotlinContinuation { continuation, exception, cancellation in
                 let _: Bool = kotlinx_coroutines_channels_ConflatedBroadcastChannel_send__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), element.map { it in it.__externalRCRef() } ?? nil, Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
             }
         }
@@ -2436,7 +2436,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.channels {
         _ receiver: any ExportedKotlinPackages.kotlinx.coroutines.channels.ProducerScope,
         block: @escaping () -> Swift.Void
     ) async throws -> Swift.Void {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_channels_awaitClose__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_channels_ProducerScope_U2829202D_U20Swift_Void__(receiver.__externalRCRef(), Unmanaged.passRetained((block as () -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -2483,7 +2483,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.channels {
         _ receiver: any ExportedKotlinPackages.kotlinx.coroutines.channels.ReceiveChannel,
         action: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) -> Swift.Void
     ) async throws -> Swift.Void {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_channels_consumeEach__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_channels_ReceiveChannel_U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U29202D_U20Swift_Void__(receiver.__externalRCRef(), Unmanaged.passRetained((action as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -2534,7 +2534,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.channels {
     public static func toList(
         _ receiver: any ExportedKotlinPackages.kotlinx.coroutines.channels.ReceiveChannel
     ) async throws -> [(any KotlinRuntimeSupport._KotlinBridgeable)?] {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_channels_toList__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_channels_ReceiveChannel__(receiver.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Array<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -2601,7 +2601,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.sync {
         owner: (any KotlinRuntimeSupport._KotlinBridgeable)?,
         action: @escaping () -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_sync_withLock__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_sync_Mutex_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U2829202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.__externalRCRef(), owner.map { it in it.__externalRCRef() } ?? nil, Unmanaged.passRetained((action as () -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -2609,7 +2609,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.sync {
         _ receiver: any ExportedKotlinPackages.kotlinx.coroutines.sync.Semaphore,
         action: @escaping () -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_sync_withPermit__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_sync_Semaphore_U2829202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.__externalRCRef(), Unmanaged.passRetained((action as () -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -2767,7 +2767,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
         public final func collect(
             collector: any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector
         ) async throws -> Swift.Void {
-            try await withKotlinContinuation { continuation, exception, cancellation in
+            return try await withKotlinContinuation { continuation, exception, cancellation in
                 let _: Bool = kotlinx_coroutines_flow_AbstractFlow_collect__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector__(self.__externalRCRef(), collector.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
             }
         }
@@ -2776,7 +2776,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
             collector: any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector
         ) async throws -> Swift.Void {
             if Self.self == ExportedKotlinPackages.kotlinx.coroutines.flow.AbstractFlow.self {
-                try await withKotlinContinuation { continuation, exception, cancellation in
+                return try await withKotlinContinuation { continuation, exception, cancellation in
                 let _: Bool = kotlinx_coroutines_flow_AbstractFlow_collectSafely__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector__(self.__externalRCRef(), collector.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
             }
             } else {
@@ -3068,7 +3068,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
     public static func collect(
         _ receiver: any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow
     ) async throws -> Swift.Void {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_collect__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_Flow__(receiver.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -3076,7 +3076,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         action: @escaping (Swift.Int32, (any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> Swift.Void
     ) async throws -> Swift.Void {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_collectIndexed__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Int32_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Void__(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((action as (Swift.Int32, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -3084,7 +3084,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         action: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> Swift.Void
     ) async throws -> Swift.Void {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_collectLatest__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Void__(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((action as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -3173,7 +3173,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
     public static func count(
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
     ) async throws -> Swift.Int32 {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_count__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Int32) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -3181,7 +3181,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         predicate: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> Swift.Bool
     ) async throws -> Swift.Int32 {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_count__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Bool__(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((predicate as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Bool) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Int32) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -3189,7 +3189,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
     public static func count(
         _ receiver: any KotlinCoroutineSupport.KotlinTypedSharedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
     ) async throws -> Swift.Int32 {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_count__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedSharedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Int32) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -3274,7 +3274,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
         _ receiver: any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector,
         channel: any ExportedKotlinPackages.kotlinx.coroutines.channels.ReceiveChannel
     ) async throws -> Swift.Void {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_emitAll__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector_anyU20ExportedKotlinPackages_kotlinx_coroutines_channels_ReceiveChannel__(receiver.__externalRCRef(), channel.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -3282,7 +3282,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
         _ receiver: any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector,
         flow: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
     ) async throws -> Swift.Void {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_emitAll__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector_anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(receiver.__externalRCRef(), flow.wrapped.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -3313,7 +3313,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
     public static func first(
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_first__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -3321,14 +3321,14 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         predicate: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> Swift.Bool
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_first__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Bool__(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((predicate as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Bool) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public static func firstOrNull(
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_firstOrNull__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -3336,7 +3336,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         predicate: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> Swift.Bool
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_firstOrNull__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Bool__(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((predicate as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Bool) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -3406,7 +3406,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
         initial: (any KotlinRuntimeSupport._KotlinBridgeable)?,
         operation: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?, (any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_fold__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.wrapped.__externalRCRef(), initial.map { it in it.__externalRCRef() } ?? nil, Unmanaged.passRetained((operation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -3426,14 +3426,14 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
     public static func last(
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_last__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public static func lastOrNull(
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_lastOrNull__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -3579,7 +3579,7 @@ publish().refCount() translates to 'started = SharingStared.WhileSubscribed()' a
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         operation: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?, (any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_reduce__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((operation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -3694,14 +3694,14 @@ replay().refCount() translates to 'started = SharingStared.WhileSubscribed()' ar
     public static func single(
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_single__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public static func singleOrNull(
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_singleOrNull__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -3730,7 +3730,7 @@ replay().refCount() translates to 'started = SharingStared.WhileSubscribed()' ar
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         scope: any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope
     ) async throws -> any KotlinCoroutineSupport.KotlinTypedStateFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_stateIn__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScope__(receiver.wrapped.__externalRCRef(), scope.__externalRCRef(), Unmanaged.passRetained((continuation as (any KotlinCoroutineSupport.KotlinTypedStateFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -3800,7 +3800,7 @@ replay().refCount() translates to 'started = SharingStared.WhileSubscribed()' ar
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         destination: any ExportedKotlinPackages.kotlin.collections.MutableCollection
     ) async throws -> any ExportedKotlinPackages.kotlin.collections.MutableCollection {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_toCollection__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20ExportedKotlinPackages_kotlin_collections_MutableCollection__(receiver.wrapped.__externalRCRef(), destination.__externalRCRef(), Unmanaged.passRetained((continuation as (any ExportedKotlinPackages.kotlin.collections.MutableCollection) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -3808,7 +3808,7 @@ replay().refCount() translates to 'started = SharingStared.WhileSubscribed()' ar
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         destination: any ExportedKotlinPackages.kotlin.collections.MutableList
     ) async throws -> [(any KotlinRuntimeSupport._KotlinBridgeable)?] {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_toList__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20ExportedKotlinPackages_kotlin_collections_MutableList__(receiver.wrapped.__externalRCRef(), destination.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Array<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -3816,7 +3816,7 @@ replay().refCount() translates to 'started = SharingStared.WhileSubscribed()' ar
     public static func toList(
         _ receiver: any KotlinCoroutineSupport.KotlinTypedSharedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
     ) async throws -> [(any KotlinRuntimeSupport._KotlinBridgeable)?] {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_toList__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedSharedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Array<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -3824,7 +3824,7 @@ replay().refCount() translates to 'started = SharingStared.WhileSubscribed()' ar
         _ receiver: any KotlinCoroutineSupport.KotlinTypedSharedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         destination: any ExportedKotlinPackages.kotlin.collections.MutableList
     ) async throws -> Swift.Never {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_toList__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedSharedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20ExportedKotlinPackages_kotlin_collections_MutableList__(receiver.wrapped.__externalRCRef(), destination.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Never) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -3832,7 +3832,7 @@ replay().refCount() translates to 'started = SharingStared.WhileSubscribed()' ar
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         destination: any ExportedKotlinPackages.kotlin.collections.MutableSet
     ) async throws -> Swift.Set<Swift.Optional<Swift.AnyHashable>> {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_toSet__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20ExportedKotlinPackages_kotlin_collections_MutableSet__(receiver.wrapped.__externalRCRef(), destination.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Set<Swift.Optional<Swift.AnyHashable>>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -3840,7 +3840,7 @@ replay().refCount() translates to 'started = SharingStared.WhileSubscribed()' ar
     public static func toSet(
         _ receiver: any KotlinCoroutineSupport.KotlinTypedSharedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
     ) async throws -> Swift.Set<Swift.Optional<Swift.AnyHashable>> {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_toSet__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedSharedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Set<Swift.Optional<Swift.AnyHashable>>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -3848,7 +3848,7 @@ replay().refCount() translates to 'started = SharingStared.WhileSubscribed()' ar
         _ receiver: any KotlinCoroutineSupport.KotlinTypedSharedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         destination: any ExportedKotlinPackages.kotlin.collections.MutableSet
     ) async throws -> Swift.Never {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_toSet__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedSharedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20ExportedKotlinPackages_kotlin_collections_MutableSet__(receiver.wrapped.__externalRCRef(), destination.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Never) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -3950,11 +3950,11 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow.`internal` {
             collector: any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector
         ) async throws -> Swift.Void {
             if Self.self == ExportedKotlinPackages.kotlinx.coroutines.flow.`internal`.ChannelFlow.self {
-                try await withKotlinContinuation { continuation, exception, cancellation in
+                return try await withKotlinContinuation { continuation, exception, cancellation in
                 let _: Bool = kotlinx_coroutines_flow_internal_ChannelFlow_collect__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector__(self.__externalRCRef(), collector.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
             }
             } else {
-                try await withKotlinContinuation { continuation, exception, cancellation in
+                return try await withKotlinContinuation { continuation, exception, cancellation in
                 let _: Bool = kotlinx_coroutines_flow_internal_ChannelFlow_collect__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector___direct(self.__externalRCRef(), collector.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
             }
             }
@@ -4013,7 +4013,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow.`internal` {
         public func emit(
             value: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) async throws -> Swift.Void {
-            try await withKotlinContinuation { continuation, exception, cancellation in
+            return try await withKotlinContinuation { continuation, exception, cancellation in
                 let _: Bool = kotlinx_coroutines_flow_internal_SendingCollector_emit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), value.map { it in it.__externalRCRef() } ?? nil, Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
             }
         }
@@ -4707,7 +4707,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.Deferred where Self : Export
         }
     }
     public func `await`() async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_Deferred_await(self.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -4850,7 +4850,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.Job where Self : ExportedKot
         return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_Job_invokeOnCompletion__TypesOfArguments__U28Swift_Optional_ExportedKotlinPackages_kotlin_Throwable_U29202D_U20Swift_Void__(self.__externalRCRef(), Unmanaged.passRetained((handler as (Swift.Optional<ExportedKotlinPackages.kotlin.Throwable>) -> Swift.Void) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.DisposableHandle.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.DisposableHandle
     }
     public func join() async throws -> Swift.Void {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_Job_join(self.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -4978,7 +4978,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.channels.Channel {
 @_documentation(visibility: internal)
 extension ExportedKotlinPackages.kotlinx.coroutines.channels.ChannelIterator where Self : ExportedKotlinPackages.kotlinx.coroutines.channels.__ChannelIterator {
     public func hasNext() async throws -> Swift.Bool {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_channels_ChannelIterator_hasNext(self.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Bool) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -5049,12 +5049,12 @@ extension ExportedKotlinPackages.kotlinx.coroutines.channels.ReceiveChannel wher
         return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_channels_ReceiveChannel_iterator(self.__externalRCRef()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.channels.ChannelIterator.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.channels.ChannelIterator
     }
     public func receive() async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_channels_ReceiveChannel_receive(self.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public func receiveCatching() async throws -> ExportedKotlinPackages.kotlinx.coroutines.channels.ChannelResult {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_channels_ReceiveChannel_receiveCatching(self.__externalRCRef(), Unmanaged.passRetained((continuation as (ExportedKotlinPackages.kotlinx.coroutines.channels.ChannelResult) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -5127,7 +5127,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.channels.SendChannel where S
     public func send(
         element: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) async throws -> Swift.Void {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_channels_SendChannel_send__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), element.map { it in it.__externalRCRef() } ?? nil, Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -5181,7 +5181,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.sync.Mutex where Self : Expo
     public func lock(
         owner: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) async throws -> Swift.Void {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_sync_Mutex_lock__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), owner.map { it in it.__externalRCRef() } ?? nil, Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -5219,7 +5219,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.sync.Semaphore where Self : 
         }
     }
     public func acquire() async throws -> Swift.Void {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_sync_Semaphore_acquire(self.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -5240,7 +5240,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow.Flow where Self : Expor
     public func collect(
         collector: any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector
     ) async throws -> Swift.Void {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_Flow_collect__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector__(self.__externalRCRef(), collector.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -5258,7 +5258,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector where Sel
     public func emit(
         value: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) async throws -> Swift.Void {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_FlowCollector_emit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), value.map { it in it.__externalRCRef() } ?? nil, Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -5281,7 +5281,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow.MutableSharedFlow where
     public func emit(
         value: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) async throws -> Swift.Void {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_MutableSharedFlow_emit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), value.map { it in it.__externalRCRef() } ?? nil, Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -5342,7 +5342,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow.SharedFlow where Self :
     public func collect(
         collector: any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector
     ) async throws -> Swift.Never {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_SharedFlow_collect__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector__(self.__externalRCRef(), collector.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Never) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -6789,7 +6789,7 @@ package func kotlinx_coroutines_selects_SelectBuilder_invoke__TypesOfArgumentsE_
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder
     let _result: Swift.Void = _self.invoke(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: receiver, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause0.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause0, block: {
     let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: block, options: .asBestFittingWrapper)
-    return { try await withKotlinContinuation { continuation, exception, cancellation in
+    return { return try await withKotlinContinuation { continuation, exception, cancellation in
     let _: Bool = KotlinxCoroutinesCore_internal_functional_type_caller_async_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToBlock.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
 } }
 }())
@@ -6801,7 +6801,7 @@ package func kotlinx_coroutines_selects_SelectBuilder_invoke__TypesOfArgumentsE_
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder
     let _result: Swift.Void = _self.invoke(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: receiver, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause1.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause1, block: {
     let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: block, options: .asBestFittingWrapper)
-    return { _1 in try await withKotlinContinuation { continuation, exception, cancellation in
+    return { _1 in return try await withKotlinContinuation { continuation, exception, cancellation in
     let _: Bool = KotlinxCoroutinesCore_internal_functional_type_caller_async_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(pointerToBlock.__externalRCRef(), _1.map { it in it.__externalRCRef() } ?? nil, Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
 } }
 }())
@@ -6813,7 +6813,7 @@ package func kotlinx_coroutines_selects_SelectBuilder_invoke__TypesOfArgumentsE_
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder
     let _result: Swift.Void = _self.invoke(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: receiver, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause2.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause2, param: { switch param { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }(), block: {
     let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: block, options: .asBestFittingWrapper)
-    return { _1 in try await withKotlinContinuation { continuation, exception, cancellation in
+    return { _1 in return try await withKotlinContinuation { continuation, exception, cancellation in
     let _: Bool = KotlinxCoroutinesCore_internal_functional_type_caller_async_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(pointerToBlock.__externalRCRef(), _1.map { it in it.__externalRCRef() } ?? nil, Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
 } }
 }())
@@ -6825,7 +6825,7 @@ package func kotlinx_coroutines_selects_SelectBuilder_invoke__TypesOfArgumentsE_
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder
     let _result: Swift.Void = _self.invoke(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: receiver, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause2.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause2, block: {
     let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: block, options: .asBestFittingWrapper)
-    return { _1 in try await withKotlinContinuation { continuation, exception, cancellation in
+    return { _1 in return try await withKotlinContinuation { continuation, exception, cancellation in
     let _: Bool = KotlinxCoroutinesCore_internal_functional_type_caller_async_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(pointerToBlock.__externalRCRef(), _1.map { it in it.__externalRCRef() } ?? nil, Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
 } }
 }())
