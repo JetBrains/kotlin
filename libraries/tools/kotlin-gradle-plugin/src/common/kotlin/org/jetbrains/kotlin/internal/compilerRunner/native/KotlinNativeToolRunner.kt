@@ -93,9 +93,16 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
      * [KotlinNativeToolWorkParameters], so mutating it inside the worker never reaches the original, live reporter.
      * Pass `null` when there is no actual task to report back to.
      */
-    fun runToolWithWorkers(args: ToolArguments, taskPath: String? = null): WorkQueue =
+    fun runToolWithWorkers(
+        args: ToolArguments,
+        taskPath: String? = null,
+        parallelismProbe: Provider<out KotlinNativeToolParallelismProbe>,
+    ): WorkQueue =
         workerExecutor.noIsolation().apply {
-            submit(KotlinNativeToolWorkAction::class.java) { it.from(this@KotlinNativeToolRunner, args, taskPath) }
+            submit(KotlinNativeToolWorkAction::class.java) { executor ->
+                executor.from(this@KotlinNativeToolRunner, args, taskPath)
+                executor.parallelismProbe.set(parallelismProbe)
+            }
         }
 
     private fun KotlinNativeToolWorkParameters.from(
@@ -380,6 +387,8 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
 
         // Task path to report collected metrics back to via TaskExecutionResults, if any - see runToolWithWorkers.
         val taskPath: Property<String>
+
+        val parallelismProbe: Property<KotlinNativeToolParallelismProbe>
     }
 
     /**
@@ -397,9 +406,12 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
                 parameters.toToolSpec(objectFactory),
                 parameters.fusService,
             )
+            val parallelismProbe = parameters.parallelismProbe.orNull
             try {
+                parallelismProbe?.workerStarted()
                 runner.runTool(parameters.toToolArguments())
             } finally {
+                parallelismProbe?.workerFinished()
                 parameters.taskPath.orNull?.let { taskPath ->
                     TaskExecutionResults[taskPath] = TaskExecutionResult(buildMetrics = metricsReporter.getMetrics())
                 }

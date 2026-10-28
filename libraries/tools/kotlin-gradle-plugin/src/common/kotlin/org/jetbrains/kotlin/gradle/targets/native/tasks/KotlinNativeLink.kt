@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.gradle.targets.native.toolchain.UsesKotlinNativeBund
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeCompilerRunner
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeToolRunner
+import org.jetbrains.kotlin.internal.compilerRunner.native.UsesKotlinNativeToolParallelismProbe
 import org.jetbrains.kotlin.internal.compilerRunner.native.maxParallelUsagesFromAvailableRam
 import org.jetbrains.kotlin.internal.compilerRunner.native.maxParallelUsagesFromGradleProperty
 import org.jetbrains.kotlin.internal.compilerRunner.native.registerKotlinNativeParallelismLimitService
@@ -79,6 +80,7 @@ constructor(
     UsesClassLoadersCachingBuildService,
     KotlinToolTask<KotlinCommonCompilerToolOptions>,
     UsesKotlinNativeBundleBuildService,
+    UsesKotlinNativeToolParallelismProbe,
     UsesKotlinToolingDiagnostics,
     UsesBuildFusService {
 
@@ -551,6 +553,7 @@ constructor(
                     arguments = buildArguments
                 ),
                 taskPath = path,
+                parallelismProbe = kotlinNativeToolParallelismProbe,
             )
         }
     }
