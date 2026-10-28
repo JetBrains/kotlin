@@ -23,7 +23,9 @@ import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileHandle
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -68,12 +70,26 @@ class CliJavaModuleResolver(
     private operator fun JavaModule.contains(file: VirtualFile): Boolean =
         moduleRoots.any { (val root = file, val isBinary) -> isBinary && VfsUtilCore.isAncestor(root, file, false) }
 
+    /** The module owning the binary classpath root [rootId]; a system module and a user module never share a root. */
+    private fun findJavaModule(rootId: JvmClasspathRootId): JavaModule? =
+        systemModules.firstOrNull { module -> rootId in module } ?: userModules.firstOrNull { module -> rootId in module }
+
+    private operator fun JavaModule.contains(rootId: JvmClasspathRootId): Boolean =
+        moduleRoots.any { root -> root.isBinary && root.id == rootId }
+
     override fun checkAccessibility(
         fileFromOurModule: VirtualFile?, referencedFile: VirtualFile, referencedPackage: FqName?
-    ): JavaModuleResolver.AccessError? {
-        val ourModule = fileFromOurModule?.let(this::findJavaModule)
-        val theirModule = this.findJavaModule(referencedFile)
+    ): JavaModuleResolver.AccessError? =
+        checkAccessibility(fileFromOurModule?.let(this::findJavaModule), findJavaModule(referencedFile), referencedPackage)
 
+    override fun checkAccessibility(
+        fileFromOurModule: VirtualFile?, referencedClassFile: BinaryClassFileHandle, referencedPackage: FqName?,
+    ): JavaModuleResolver.AccessError? =
+        checkAccessibility(fileFromOurModule?.let(this::findJavaModule), findJavaModule(referencedClassFile.rootId), referencedPackage)
+
+    private fun checkAccessibility(
+        ourModule: JavaModule?, theirModule: JavaModule?, referencedPackage: FqName?,
+    ): JavaModuleResolver.AccessError? {
         if (ourModule?.name == theirModule?.name) return null
 
         if (theirModule == null) {

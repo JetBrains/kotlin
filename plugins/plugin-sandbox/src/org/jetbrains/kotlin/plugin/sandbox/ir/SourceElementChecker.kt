@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.plugin.sandbox.ir
 
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.fir.java.BinaryClassSourceElement
 import org.jetbrains.kotlin.fir.java.VirtualFileBasedSourceElement
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.ir.IrElement
@@ -55,6 +56,9 @@ class SourceElementChecker(val context: IrPluginContext) : IrVisitorVoid() {
             }
             is VirtualFileBasedSourceElement -> {
                 sourceElement.virtualFile
+            }
+            is BinaryClassSourceElement -> {
+                sourceElement.classFile
             }
             is DeserializedContainerSource -> {
                 // Klib element is possible here in JS test
