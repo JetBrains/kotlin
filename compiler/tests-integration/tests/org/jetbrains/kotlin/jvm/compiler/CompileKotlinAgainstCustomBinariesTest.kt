@@ -316,7 +316,7 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
                     }
                 }
 
-                override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? {
+                override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor {
                     val arguments = mutableListOf<Pair<String?, Any?>>()
                     binaryAnnotations += desc to arguments
                     return object : AnnotationVisitor(Opcodes.API_VERSION) {
