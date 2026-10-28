@@ -11,7 +11,10 @@ import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.MetadataArguments
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.JsModuleKind
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JvmTarget
+import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain.Companion.js
+import org.jetbrains.kotlin.buildtools.api.js.operations.JsDtsGenerationOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
@@ -21,6 +24,7 @@ import org.jetbrains.kotlin.buildtools.api.metadata.KotlinMetadataPlatformToolch
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaVersionsOnlyCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.assumeJsDtsGenerationIsSupported
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.supportsMetadata
 import org.jetbrains.kotlin.testFederation.MustRunAlways
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
@@ -194,5 +198,47 @@ class BuildersCompatibilitySmokeTest : BaseCompilationTest() {
 
         assertEquals(renderer1, operation1[DiscoverScriptExtensionsOperation.COMPILER_MESSAGE_RENDERER])
         assertEquals(renderer2, operation2[DiscoverScriptExtensionsOperation.COMPILER_MESSAGE_RENDERER])
+    }
+
+    @DisplayName("Modifying JsDtsGenerationOperation builder after build does not affect the built operation")
+    @BtaVersionsOnlyCompilationTest
+    fun testJsDtsGenerationBuilderImmutability(kotlinToolchain: KotlinToolchains) {
+        kotlinToolchain.assumeJsDtsGenerationIsSupported()
+
+        val builder = kotlinToolchain.js.jsDtsGenerationOperationBuilder(listOf(Paths.get("main.klib")), Paths.get("dts")).apply {
+            this[JsDtsGenerationOperation.MODULE_KIND] = JsModuleKind.ES
+            this[JsDtsGenerationOperation.COMPILE_LONG_AS_BIG_INT] = true
+        }
+        val operation1 = builder.build()
+
+        builder[JsDtsGenerationOperation.MODULE_KIND] = JsModuleKind.COMMONJS
+        builder[JsDtsGenerationOperation.COMPILE_LONG_AS_BIG_INT] = false
+        val operation2 = builder.build()
+
+        assertEquals(JsModuleKind.ES, operation1[JsDtsGenerationOperation.MODULE_KIND])
+        assertEquals(true, operation1[JsDtsGenerationOperation.COMPILE_LONG_AS_BIG_INT])
+        assertEquals(JsModuleKind.COMMONJS, operation2[JsDtsGenerationOperation.MODULE_KIND])
+        assertEquals(false, operation2[JsDtsGenerationOperation.COMPILE_LONG_AS_BIG_INT])
+    }
+
+    @DisplayName("JsDtsGenerationOperation: toBuilder round-trip does not affect the original operation")
+    @BtaVersionsOnlyCompilationTest
+    fun testJsDtsGenerationToBuilderOperationImmutability(kotlinToolchain: KotlinToolchains) {
+        kotlinToolchain.assumeJsDtsGenerationIsSupported()
+
+        val original = kotlinToolchain.js.jsDtsGenerationOperationBuilder(listOf(Paths.get("main.klib")), Paths.get("dts")).apply {
+            this[JsDtsGenerationOperation.MODULE_KIND] = JsModuleKind.ES
+            this[JsDtsGenerationOperation.COMPILE_LONG_AS_BIG_INT] = true
+        }.build()
+
+        val newBuilder = original.toBuilder()
+        newBuilder[JsDtsGenerationOperation.MODULE_KIND] = JsModuleKind.COMMONJS
+        newBuilder[JsDtsGenerationOperation.COMPILE_LONG_AS_BIG_INT] = false
+        val modified = newBuilder.build()
+
+        assertEquals(JsModuleKind.ES, original[JsDtsGenerationOperation.MODULE_KIND])
+        assertEquals(true, original[JsDtsGenerationOperation.COMPILE_LONG_AS_BIG_INT])
+        assertEquals(JsModuleKind.COMMONJS, modified[JsDtsGenerationOperation.MODULE_KIND])
+        assertEquals(false, modified[JsDtsGenerationOperation.COMPILE_LONG_AS_BIG_INT])
     }
 }

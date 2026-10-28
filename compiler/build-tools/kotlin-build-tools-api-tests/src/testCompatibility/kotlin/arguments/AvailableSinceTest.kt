@@ -11,10 +11,14 @@ import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation.Companion.CO
 import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation.Companion.GENERATE_COMPILER_REF_INDEX
 import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation.Companion.LOOKUP_TRACKER
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.JsModuleKind
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
+import org.jetbrains.kotlin.buildtools.api.js.JsDtsCompilationStrategy
+import org.jetbrains.kotlin.buildtools.api.js.JsDtsGranularity
 import org.jetbrains.kotlin.buildtools.api.js.JsHistoryBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain.Companion.js
 import org.jetbrains.kotlin.buildtools.api.js.jsKlibCompilationOperation
+import org.jetbrains.kotlin.buildtools.api.js.operations.JsDtsGenerationOperation
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsKlibCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmIncrementalCompilationConfiguration
@@ -349,6 +353,44 @@ class AvailableSinceTest : BaseCompilationTest() {
     }
 
     @Test
+    fun testJsDtsGenerationOperation() {
+        val toolchains = KotlinToolchains.loadImplementation(btaClassloader)
+        assumeTrue(toolchains.hasJsDtsOptionVersionChecking())
+
+        versions.forEach { version ->
+            overrideVersionMethod.invoke(null, version)
+            with(KotlinToolingVersion(version)) {
+                toolchains.js.jsDtsGenerationOperationBuilder(emptyList(), Path("")).apply {
+                    trySet(JsDtsGenerationOperation.MODULE_KIND.availableSinceVersion) {
+                        this[JsDtsGenerationOperation.MODULE_KIND] = JsModuleKind.ES
+                    }
+                    trySet(JsDtsGenerationOperation.GRANULARITY.availableSinceVersion) {
+                        this[JsDtsGenerationOperation.GRANULARITY] = JsDtsGranularity.PER_FILE
+                    }
+                    trySet(JsDtsGenerationOperation.TS_COMPILATION_STRATEGY.availableSinceVersion) {
+                        this[JsDtsGenerationOperation.TS_COMPILATION_STRATEGY] = JsDtsCompilationStrategy.EACH_FILE
+                    }
+                    trySet(JsDtsGenerationOperation.COMPILE_LONG_AS_BIG_INT.availableSinceVersion) {
+                        this[JsDtsGenerationOperation.COMPILE_LONG_AS_BIG_INT] = true
+                    }
+                    trySet(JsDtsGenerationOperation.IMPLEMENT_INTERFACES.availableSinceVersion) {
+                        this[JsDtsGenerationOperation.IMPLEMENT_INTERFACES] = true
+                    }
+                    trySet(JsDtsGenerationOperation.EXPORT_SUSPEND_LAMBDAS.availableSinceVersion) {
+                        this[JsDtsGenerationOperation.EXPORT_SUSPEND_LAMBDAS] = true
+                    }
+                    trySet(JsDtsGenerationOperation.DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY.availableSinceVersion) {
+                        this[JsDtsGenerationOperation.DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY] = true
+                    }
+                    trySet(JsDtsGenerationOperation.EXPORT_UNTYPED_AS_UNKNOWN.availableSinceVersion) {
+                        this[JsDtsGenerationOperation.EXPORT_UNTYPED_AS_UNKNOWN] = true
+                    }
+                }
+            }
+        }
+    }
+
+    @Test
     fun testWithDaemon() {
         val toolchains = KotlinToolchains.loadImplementation(btaClassloader)
         assumeTrue(toolchains.hasOptionVersionChecking())
@@ -577,6 +619,9 @@ class AvailableSinceTest : BaseCompilationTest() {
         KotlinToolingVersion(getCompilerVersion()) >= KotlinToolingVersion(2, 4, 20, "snapshot")
 
     private fun KotlinToolchains.hasWasmOptionVersionChecking(): Boolean =
+        KotlinToolingVersion(getCompilerVersion()) >= KotlinToolingVersion(2, 5, 0, "snapshot")
+
+    private fun KotlinToolchains.hasJsDtsOptionVersionChecking(): Boolean =
         KotlinToolingVersion(getCompilerVersion()) >= KotlinToolingVersion(2, 5, 0, "snapshot")
 
     context(currentVersion: KotlinToolingVersion)
