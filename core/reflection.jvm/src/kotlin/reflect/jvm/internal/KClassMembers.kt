@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.runtime.structure.classId
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.java.SpecialGenericSignatures
 import org.jetbrains.kotlin.load.java.getPropertyNamesCandidatesByAccessorName
 import org.jetbrains.kotlin.load.kotlin.SignatureBuildingComponents
 import org.jetbrains.kotlin.load.kotlin.internalName
@@ -339,6 +340,12 @@ internal fun KClassImpl<*>.getAdditionalFunctions(): List<ReflectKFunction> {
         // Kotlin one. This mirrors the `kotlinVersions` check in `JvmBuiltInsCustomizer.getAdditionalFunctions`.
         if (method.jvmSignature in declaredJvmSignatures) return@mapNotNull null
 
+        // Skip a Java method which is an override of a Kotlin builtin function with a different JVM name, e.g. `java.lang.Byte.byteValue()`
+        // for `kotlin.Number.toByte()`. The compiler never loads such methods as separate functions (see
+        // `LazyJavaClassMemberScope.isVisibleAsFunction`), and the Kotlin function (`toByte`) is already present in the Kotlin class.
+        // It can't be detected via `overridden` below because the Kotlin name differs from the Java one.
+        if (method.doesOverrideRenamedBuiltins(methodOwner)) return@mapNotNull null
+
         when (method.getJdkMethodStatus(methodOwner)) {
             JdkMemberStatus.DROP -> return@mapNotNull null
             // Hidden-for-resolution members are still listed by reflection, except in final classes where the compiler drops them.
@@ -357,23 +364,35 @@ private enum class JdkMemberStatus { HIDDEN, VISIBLE, DEPRECATED_LIST_METHODS, N
 
 // Mirrors `JvmBuiltInsCustomizer.getJdkMethodStatus`: walk the analogue's supertypes (which are themselves Java analogues) and match the
 // method signature against the JDK member lists; the first match wins.
-private fun Method.getJdkMethodStatus(startClass: Class<*>): JdkMemberStatus {
+private fun Method.getJdkMethodStatus(startClass: Class<*>): JdkMemberStatus =
+    findInHierarchy(startClass) { signature ->
+        when (signature) {
+            in JvmBuiltInsSignatures.HIDDEN_METHOD_SIGNATURES -> JdkMemberStatus.HIDDEN
+            in JvmBuiltInsSignatures.VISIBLE_METHOD_SIGNATURES -> JdkMemberStatus.VISIBLE
+            in JvmBuiltInsSignatures.DEPRECATED_LIST_METHODS -> JdkMemberStatus.DEPRECATED_LIST_METHODS
+            in JvmBuiltInsSignatures.DROP_LIST_METHOD_SIGNATURES -> JdkMemberStatus.DROP
+            else -> null
+        }
+    } ?: JdkMemberStatus.NOT_CONSIDERED
+
+// See `LazyJavaClassMemberScope.doesOverrideRenamedBuiltins`.
+private fun Method.doesOverrideRenamedBuiltins(startClass: Class<*>): Boolean =
+    findInHierarchy(startClass) { signature ->
+        signature.takeIf { it in SpecialGenericSignatures.JVM_SIGNATURES_FOR_RENAMED_BUILT_INS }
+    } != null
+
+private inline fun <T : Any> Method.findInHierarchy(startClass: Class<*>, compute: (signature: String) -> T?): T? {
     val jvmDescriptor = jvmSignature
     val visited = HashSet<Class<*>>()
     val queue = ArrayDeque<Class<*>>().apply { add(startClass) }
     while (queue.isNotEmpty()) {
         val clazz = queue.removeFirst()
         if (!visited.add(clazz)) continue
-        when (SignatureBuildingComponents.signature(clazz.classId.internalName, jvmDescriptor)) {
-            in JvmBuiltInsSignatures.HIDDEN_METHOD_SIGNATURES -> return JdkMemberStatus.HIDDEN
-            in JvmBuiltInsSignatures.VISIBLE_METHOD_SIGNATURES -> return JdkMemberStatus.VISIBLE
-            in JvmBuiltInsSignatures.DEPRECATED_LIST_METHODS -> return JdkMemberStatus.DEPRECATED_LIST_METHODS
-            in JvmBuiltInsSignatures.DROP_LIST_METHOD_SIGNATURES -> return JdkMemberStatus.DROP
-        }
+        compute(SignatureBuildingComponents.signature(clazz.classId.internalName, jvmDescriptor))?.let { return it }
         clazz.superclass?.let(queue::add)
         queue.addAll(clazz.interfaces)
     }
-    return JdkMemberStatus.NOT_CONSIDERED
+    return null
 }
 
 private fun KClassImpl<*>.addPropertyOverrideByMethod(

@@ -215,29 +215,47 @@ class RunInAlienClassLoader {
         val out = IndentedStringBuilder()
         for (fqn in fqNames) {
             val jClass = loader.loadClass(fqn)
-            val metadata = jClass.annotations.firstIsInstanceOrNull<Metadata>()
-            if (shouldSkipClass(jClass, metadata)) continue
-            try {
-                when (metadata?.kind) { // See kotlin.Metadata.kind for numbers meanings
-                    null, 1 -> out.dumpKClass(jClass.kotlin) // Kotlin and Java classes
-                    2 -> out.dumpKDeclarationContainer(Reflection.getOrCreateKotlinPackage(jClass)) // Facade file
-                    3 -> {} // Synthetic class
-                    4 -> out.dumpKDeclarationContainer(Reflection.getOrCreateKotlinPackage(jClass)) // Multi-file class facade
-                    5 -> out.dumpKDeclarationContainer(Reflection.getOrCreateKotlinPackage(jClass)) // Multi-file class part
-                    else -> error("Unknown kotlin.Metadata kind ${metadata.kind}")
-                }
-            } catch (e: Throwable) {
-                throw AssertionError("Exception when dumping contents of $jClass", e)
-            }
+            out.dumpClass(jClass)
+            getPrimitiveClassOrNull(jClass)?.let { out.dumpClass(it, " (primitive)") }
         }
         return out.toString()
     }
+
+    private fun IndentedStringBuilder.dumpClass(jClass: Class<*>, qualifier: String = "") {
+        val metadata = jClass.annotations.firstIsInstanceOrNull<Metadata>()
+        if (shouldSkipClass(jClass, metadata)) return
+        try {
+            when (metadata?.kind) { // See kotlin.Metadata.kind for numbers meanings
+                null, 1 -> dumpKClass(jClass.kotlin, qualifier) // Kotlin and Java classes
+                2 -> dumpKDeclarationContainer(Reflection.getOrCreateKotlinPackage(jClass)) // Facade file
+                3 -> {} // Synthetic class
+                4 -> dumpKDeclarationContainer(Reflection.getOrCreateKotlinPackage(jClass)) // Multi-file class facade
+                5 -> dumpKDeclarationContainer(Reflection.getOrCreateKotlinPackage(jClass)) // Multi-file class part
+                else -> error("Unknown kotlin.Metadata kind ${metadata.kind}")
+            }
+        } catch (e: Throwable) {
+            throw AssertionError("Exception when dumping contents of $jClass", e)
+        }
+    }
+
+    private fun getPrimitiveClassOrNull(jClass: Class<*>): Class<*>? =
+        when (jClass.name) {
+            "java.lang.Boolean" -> Boolean::class.java
+            "java.lang.Byte" -> Byte::class.java
+            "java.lang.Character" -> Char::class.java
+            "java.lang.Short" -> Short::class.java
+            "java.lang.Integer" -> Int::class.java
+            "java.lang.Long" -> Long::class.java
+            "java.lang.Float" -> Float::class.java
+            "java.lang.Double" -> Double::class.java
+            else -> null
+        }
 
     private fun shouldSkipClass(klass: Class<*>, metadata: Metadata?): Boolean =
         // Do not render anonymous classes for enum entries because they're currently incorrectly generated as top-level (KT-85319).
         metadata?.kind == 1 && klass.superclass?.isEnum == true
 
-    private fun IndentedStringBuilder.dumpKClass(kClass: KClass<*>) {
+    private fun IndentedStringBuilder.dumpKClass(kClass: KClass<*>, qualifier: String) {
         // Listing some class statuses and superclasses makes it easier to read dumps
         val superclasses = kClass.superclasses.joinToString { it.simpleName.orEmpty() }
         val statuses = listOfNotNull(
@@ -245,7 +263,7 @@ class RunInAlienClassLoader {
             "sealed".takeIf { kClass.isSealed },
             if (kClass.java.isInterface) "interface" else "class",
         ).joinToString(separator = " ")
-        indented("KClass: $statuses ${kClass.qualifiedName ?: kClass.jvmName} : $superclasses") {
+        indented("KClass$qualifier: $statuses ${kClass.qualifiedName ?: kClass.jvmName} : $superclasses") {
             if (kClass.constructors.isNotEmpty()) {
                 indented("constructors:") {
                     dumpKCallables(kClass.constructors)
