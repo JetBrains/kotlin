@@ -147,12 +147,8 @@ abstract class KotlinCompileDaemonBase {
 
                 log.info("starting daemon")
 
-                // TODO: find minimal set of permissions and restore security management
-                // note: may be not needed anymore since (hopefully) server is now loopback-only
-                //            if (System.getSecurityManager() == null)
-                //                System.setSecurityManager (RMISecurityManager())
-                //
-                //            setDaemonPermissions(daemonOptions.port)
+                // The RMI endpoints are loopback-only, and every connection to them is authenticated with the secret
+                // published in the run file, see DaemonConnectionAuth.
 
                 val compilerSelector = object : CompilerSelector {
                     private val jvm by lazy { K2JVMCompiler() }

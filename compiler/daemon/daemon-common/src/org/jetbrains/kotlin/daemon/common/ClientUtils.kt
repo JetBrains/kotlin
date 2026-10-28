@@ -69,8 +69,18 @@ fun walkDaemons(
         .mapNotNull { [file, port] ->
             assert(port!! in COMPILE_DAEMON_PORTS_RANGE_START..<COMPILE_DAEMON_PORTS_RANGE_END)
             val relativeAge = fileToCompareTimestamp.lastModified() - file.lastModified()
-            report(DaemonReportCategory.DEBUG, "found daemon on port $port ($relativeAge ms old), trying to connect")
-            val daemon = tryConnectToDaemon(port, report)
+            val secret = readRunFileSecret(file)
+            val daemon = if (secret == null) {
+                report(
+                    DaemonReportCategory.DEBUG,
+                    "found run file '${file.absolutePath}' ($relativeAge ms old) without a valid authentication secret, not connecting"
+                )
+                null
+            } else {
+                report(DaemonReportCategory.DEBUG, "found daemon on port $port ($relativeAge ms old), trying to connect")
+                DaemonConnectionAuth.registerDaemonSecret(port, secret)
+                tryConnectToDaemon(port, report)
+            }
             // cleaning orphaned file; note: daemon should shut itself down if it detects that the run file is deleted
             if (daemon == null) {
                 if (relativeAge - ORPHANED_RUN_FILE_AGE_THRESHOLD_MS <= 0) {
