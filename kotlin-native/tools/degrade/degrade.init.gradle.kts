@@ -109,9 +109,9 @@ private class Degrade(val rootProject: Project) {
             val toolName = listOf(
                     "Run \"(.*)\" tool in a separate JVM process",
                     "Run in-process tool \"(.*)\""
-            ).map { Regex(it) }.firstNotNullOfOrNull {
-                it.find(line)?.groups?.get(1)?.value
-            } ?: continue
+            ).asSequence().mapNotNull {
+                Regex(it).find(line)?.groups?.get(1)?.value
+            }.firstOrNull() ?: continue
             val secondLine = nextLine() ?: break
 
             if (secondLine != "Main class = $kotlinNativeEntryPointClass"
