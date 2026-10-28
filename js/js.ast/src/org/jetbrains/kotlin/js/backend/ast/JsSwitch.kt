@@ -10,7 +10,10 @@ import org.jetbrains.kotlin.js.util.AstUtil
 /**
  * A JavaScript switch statement.
  */
-class JsSwitch(var expression: JsExpression, cases: List<JsSwitchMember> = emptyList()) : SourceInfoAwareJsNode(), JsStatement {
+class JsSwitch(
+    var expression: JsExpression,
+    cases: List<JsSwitchMember> = emptyList(),
+) : SourceInfoAwareJsNode(), JsStatement, JsLexicalScope {
     val cases: MutableList<JsSwitchMember> = cases.toMutableList()
 
     override fun accept(v: JsVisitor) {

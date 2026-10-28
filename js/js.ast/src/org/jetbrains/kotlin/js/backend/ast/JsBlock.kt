@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.js.util.AstUtil
 /**
  * Represents a JavaScript block statement.
  */
-open class JsBlock private constructor(statements: SmartList<JsStatement>) : SourceInfoAwareJsNode(), JsStatement {
+open class JsBlock private constructor(statements: SmartList<JsStatement>) : SourceInfoAwareJsNode(), JsStatement, JsLexicalScope {
     val statements: MutableList<JsStatement> = statements
 
     constructor(statements: List<JsStatement>) : this(SmartList(statements))
@@ -23,9 +23,6 @@ open class JsBlock private constructor(statements: SmartList<JsStatement>) : Sou
 
     val isEmpty: Boolean
         get() = statements.isEmpty()
-
-    open val isTransparent: Boolean
-        get() = false
 
     override fun accept(v: JsVisitor) {
         v.visitBlock(this)
