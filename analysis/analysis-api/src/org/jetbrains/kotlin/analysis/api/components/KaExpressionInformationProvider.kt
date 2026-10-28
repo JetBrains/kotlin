@@ -22,6 +22,10 @@ public interface KaExpressionInformationProvider : KaSessionComponent {
      *
      * The computed missing cases are not affected by the existence or absence of an `else` branch.
      *
+     * Each missing case can be written as a branch of the [KtWhenExpression]. When a class in a `sealed` hierarchy is not accessible
+     * from the [KtWhenExpression] (e.g., it's a `private` inheritor), its case is replaced with the closest accessible `sealed` supertype
+     * of the class, or with [KaWhenMissingCase.UnknownCase] if there is no such supertype.
+     *
      * #### Example
      *
      * In the following code, `Direction.WEST` and `Direction.EAST` are missing branches:
@@ -226,7 +230,8 @@ public sealed class KaWhenMissingCase {
     ) : KaWhenMissingCase()
 
     /**
-     * Represents a missing case other than those mentioned above.
+     * Represents a missing case other than those mentioned above, e.g., an inheritor of a `sealed` class which is not accessible from
+     * the `when` expression. Such a case can only be covered by an `else` branch.
      */
     @KaIdeApi
     public object UnknownCase : KaWhenMissingCase()
@@ -236,6 +241,10 @@ public sealed class KaWhenMissingCase {
  * Computes the missing cases of the given [KtWhenExpression].
  *
  * The computed missing cases are not affected by the existence or absence of an `else` branch.
+ *
+ * Each missing case can be written as a branch of the [KtWhenExpression]. When a class in a `sealed` hierarchy is not accessible
+ * from the [KtWhenExpression] (e.g., it's a `private` inheritor), its case is replaced with the closest accessible `sealed` supertype
+ * of the class, or with [KaWhenMissingCase.UnknownCase] if there is no such supertype.
  *
  * #### Example
  *

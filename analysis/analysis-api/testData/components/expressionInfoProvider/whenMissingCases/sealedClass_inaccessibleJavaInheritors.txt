@@ -1,6 +1,4 @@
-TypeCase(jlib/PrimitiveClassDescImpl)
-TypeCase(jlib/ReferenceClassDescImpl)
+TypeCase(jlib/ClassDesc)
 TypeCase(jlib/DynamicConstantDesc)
-TypeCase(jlib/AsTypeMethodHandleDesc)
-TypeCase(jlib/DirectMethodHandleDescImpl)
+TypeCase(jlib/DirectMethodHandleDesc)
 TypeCase(jlib/StringDesc)

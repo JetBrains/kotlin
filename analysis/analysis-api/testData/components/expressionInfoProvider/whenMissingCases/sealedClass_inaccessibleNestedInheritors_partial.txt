@@ -1,2 +1,2 @@
-TypeCase(lib/Hidden)
+TypeCase(lib/PartiallyHidden)
 TypeCase(lib/StringDesc)

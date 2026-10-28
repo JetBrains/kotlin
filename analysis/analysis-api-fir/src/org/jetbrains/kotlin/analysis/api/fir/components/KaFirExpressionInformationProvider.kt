@@ -21,9 +21,23 @@ import org.jetbrains.kotlin.analysis.api.resolution.symbols
 import org.jetbrains.kotlin.analysis.api.resolution.tryResolveSymbols
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
+import org.jetbrains.kotlin.analysis.api.symbols.findClass
+import org.jetbrains.kotlin.analysis.api.symbols.isSubClassOf
+import org.jetbrains.kotlin.analysis.api.symbols.symbol
 import org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds
+import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.analysis.api.types.allSupertypes
 import org.jetbrains.kotlin.analysis.api.types.classId
+import org.jetbrains.kotlin.analysis.api.types.defaultType
+import org.jetbrains.kotlin.analysis.api.types.defaultTypeWithStarProjections
+import org.jetbrains.kotlin.analysis.api.types.expandedSymbol
+import org.jetbrains.kotlin.analysis.api.types.isSubtypeOf
+import org.jetbrains.kotlin.analysis.api.types.withNullability
+import org.jetbrains.kotlin.analysis.api.visibility.KaUseSiteVisibilityChecker
+import org.jetbrains.kotlin.analysis.api.visibility.createUseSiteVisibilityChecker
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector
@@ -31,6 +45,7 @@ import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.resolve.transformers.FirWhenExhaustivenessComputer
 import org.jetbrains.kotlin.fir.withSession
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.unwrapParenthesesLabelsAndAnnotations
 import org.jetbrains.kotlin.resolution.KtResolvable
@@ -53,7 +68,10 @@ internal class KaFirExpressionInformationProvider(
             val compilerMissingCases = withSession(analysisSession.resolutionFacade.useSiteFirSession) {
                 FirWhenExhaustivenessComputer.computeAllMissingCases(firWhenExpression)
             }
-            return compilerMissingCases.map { it.toKaWhenMissingCase() }
+            val missingCases = compilerMissingCases.map { it.toKaWhenMissingCase() }
+            return context(analysisSession) {
+                replaceInaccessibleCases(whenExpression, missingCases)
+            }
         }
 
     override fun isUsedAsExpression(expression: KtExpression): Boolean = expression.withPsiValidityAssertion {
@@ -508,6 +526,104 @@ private fun doesNamedFunctionUseBody(namedFunction: KtNamedFunction, body: PsiEl
 
 context(session: KaSession)
 private fun returnsUnit(declaration: KtDeclarationWithReturnType): Boolean = declaration.returnType.classId == KaStandardTypeClassIds.UNIT
+
+/**
+ * Replaces the [missingCases] which cannot be written as branches of [whenExpression] because their classes are inaccessible from it.
+ *
+ * The compiler reports all leaves of a `sealed` hierarchy as missing cases, including inheritors which are inaccessible from the use
+ * site, such as private classes or implementation classes of a library. A missing case of an inaccessible class, or an entry of an
+ * inaccessible enum class, is:
+ *
+ *  - dropped if another missing case covers the class;
+ *  - otherwise, replaced with a type case for the closest accessible `sealed` supertype of the class which is a proper subtype of the
+ *    subject type. The new case is placed after the last missing case which it covers, so that it doesn't shadow more specific cases;
+ *  - otherwise, replaced with a single [KaWhenMissingCase.UnknownCase] at the end of the list.
+ */
+context(session: KaSession)
+private fun replaceInaccessibleCases(
+    whenExpression: KtWhenExpression,
+    missingCases: List<KaWhenMissingCase>,
+): List<KaWhenMissingCase> {
+    val missingClasses = missingCases.map { missingCase -> missingCase.classId?.let { findClass(it) } }
+    if (missingClasses.all { it == null }) return missingCases
+
+    val visibilityChecker = createUseSiteVisibilityChecker(
+        useSiteFile = whenExpression.containingKtFile.symbol,
+        receiverExpression = null,
+        position = whenExpression,
+    )
+    val isAccessible = missingClasses.map { it == null || visibilityChecker.isVisible(it) }
+    if (isAccessible.all { it }) return missingCases
+
+    // Enum entry cases don't cover any other class since enum classes have no subclasses.
+    val coveringClasses = missingClasses.filterIndexed { index, _ ->
+        missingCases[index] is KaWhenMissingCase.TypeCase && isAccessible[index]
+    }.filterNotNull()
+
+    val subjectType = (whenExpression.subjectVariable?.returnType ?: whenExpression.subjectExpression?.expressionType)
+        ?.withNullability(isMarkedNullable = false)
+
+    val replacements = mutableListOf<KaNamedClassSymbol>()
+    var hasUnknownCase = false
+    for ([index, missingClass] in missingClasses.withIndex()) {
+        if (missingClass == null || isAccessible[index]) continue
+        if ((coveringClasses + replacements).any { missingClass.isSubClassOf(it) }) continue
+
+        val replacement = subjectType?.let { findAccessibleSealedSupertype(missingClass, subjectType, visibilityChecker) }
+        if (replacement != null) {
+            replacements += replacement
+        } else {
+            hasUnknownCase = true
+        }
+    }
+
+    val replacementsByPosition = replacements.groupBy { replacement ->
+        missingClasses.indexOfLast { it != null && it.isSubClassOf(replacement) }
+    }
+
+    return buildList {
+        for ([index, missingCase] in missingCases.withIndex()) {
+            if (isAccessible[index]) add(missingCase)
+
+            replacementsByPosition[index]?.forEach { replacement ->
+                val classId = replacement.classId ?: return@forEach
+                add(KaWhenMissingCase.TypeCase(classId, isObject = false, replacement.typeParameters.size))
+            }
+        }
+
+        if (hasUnknownCase && KaWhenMissingCase.UnknownCase !in this) {
+            add(KaWhenMissingCase.UnknownCase)
+        }
+    }
+}
+
+private val KaWhenMissingCase.classId: ClassId?
+    get() = when (this) {
+        is KaWhenMissingCase.TypeCase -> classId
+        is KaWhenMissingCase.EnumEntryCase -> callableId.classId
+        else -> null
+    }
+
+/**
+ * Finds the closest accessible `sealed` supertype of [classSymbol] which is a proper subtype of [subjectType] and belongs to a `sealed`
+ * hierarchy of [subjectType], so that an `is` check for it covers [classSymbol] in a `when` expression on [subjectType].
+ */
+context(session: KaSession)
+private fun findAccessibleSealedSupertype(
+    classSymbol: KaClassSymbol,
+    subjectType: KaType,
+    visibilityChecker: KaUseSiteVisibilityChecker,
+): KaNamedClassSymbol? {
+    val sealedSupertypes = classSymbol.defaultType.allSupertypes
+        .mapNotNull { it.expandedSymbol as? KaNamedClassSymbol }
+        .filter { it.modality == KaSymbolModality.SEALED }
+        .toList()
+
+    val [subjectSupertypes, candidates] = sealedSupertypes.partition { subjectType.isSubtypeOf(it.defaultTypeWithStarProjections) }
+    return candidates.firstOrNull { candidate ->
+        subjectSupertypes.any { candidate.isSubClassOf(it) } && visibilityChecker.isVisible(candidate)
+    }
+}
 
 internal fun WhenMissingCase.toKaWhenMissingCase(): KaWhenMissingCase = when (this) {
     is WhenMissingCase.Unknown -> KaWhenMissingCase.UnknownCase
