@@ -15,6 +15,8 @@ import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
 import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.File
+import java.net.Inet6Address
+import java.net.InetAddress
 import java.net.InetSocketAddress
 import java.nio.file.InvalidPathException
 
@@ -25,6 +27,7 @@ import java.nio.file.InvalidPathException
  * The content directory contains only produced artifacts, so it is served as is.
  * The project root directory is served only to make source maps work in a browser,
  * so only Kotlin sources are exposed from it - any other file there may contain secrets.
+ * Requests are restricted to local host names and IP addresses to prevent DNS rebinding.
  */
 internal abstract class DevServerWorkAction : WorkAction<DevServerWorkAction.DevServerWorkParameters> {
 
@@ -37,8 +40,6 @@ internal abstract class DevServerWorkAction : WorkAction<DevServerWorkAction.Dev
         val continuous: Property<Boolean>
     }
 
-    private val logger = Logging.getLogger(DevServerWorkAction::class.java.name)
-
     override fun execute() {
         val contentDir = parameters.contentDirectory.getFile()
         val rootDir = parameters.rootDirectory.getFile()
@@ -50,21 +51,12 @@ internal abstract class DevServerWorkAction : WorkAction<DevServerWorkAction.Dev
             lockFile.createNewFile()
         }
 
-        val server = HttpServer.create(InetSocketAddress(serverHost, serverPort), 0)
-        server.createContext("/") { exchange ->
-            handleRequest(
-                exchange,
-                contentDir,
-                rootDir,
-            )
-        }
-
-        server.executor = null
-
-        server.start()
-        logger.lifecycle("Development server started at http://$serverHost:$serverPort")
-        logger.lifecycle("Serving files from: $contentDir")
-        logger.lifecycle("Serving Kotlin sources from: $rootDir")
+        val server = startServer(
+            contentDir,
+            rootDir,
+            serverHost,
+            serverPort,
+        )
 
         val shutdownHook = Thread {
             lockFile.delete()
@@ -83,57 +75,156 @@ internal abstract class DevServerWorkAction : WorkAction<DevServerWorkAction.Dev
         }
     }
 
-    private fun handleRequest(
-        exchange: HttpExchange,
-        contentRootDir: File,
-        rootDir: File,
-    ) {
-        val path = exchange.requestURI.path.trimStart('/')
-
-        val file = resolveFile(
-            path,
-            contentRootDir,
-            rootDir,
-        )
-
-        if (file == null || !file.exists() || !file.isFile) {
-            val notFound = "404 Not Found".toByteArray()
-            exchange.responseHeaders.set("Content-Type", "text/plain")
-            exchange.sendResponseHeaders(404, notFound.size.toLong())
-            exchange.responseBody.use { it.write(notFound) }
-            return
-        }
-
-        val contentType = contentTypeFor(file.name)
-        val size = file.length()
-        exchange.responseHeaders.set("Content-Type", contentType)
-        exchange.sendResponseHeaders(200, size)
-        exchange.responseBody.use {
-            file.inputStream().copyTo(it)
-        }
-    }
-
-    private fun contentTypeFor(fileName: String): String = when {
-        fileName.endsWith(".html") -> "text/html"
-        fileName.endsWith(".kt") -> "text/kotlin; charset=utf-8"
-        fileName.endsWith(".js") -> "application/javascript"
-        fileName.endsWith(".mjs") -> "application/javascript"
-        fileName.endsWith(".wasm") -> "application/wasm"
-        fileName.endsWith(".css") -> "text/css"
-        fileName.endsWith(".json") -> "application/json"
-        fileName.endsWith(".png") -> "image/png"
-        fileName.endsWith(".jpg") || fileName.endsWith(".jpeg") -> "image/jpeg"
-        fileName.endsWith(".svg") -> "image/svg+xml"
-        fileName.endsWith(".ico") -> "image/x-icon"
-        fileName.endsWith(".map") -> "application/json"
-        else -> "application/octet-stream"
-    }
-
     internal companion object {
+        private val logger = Logging.getLogger(DevServerWorkAction::class.java.name)
+
         /**
          * The only file extension served from the project root directory.
          */
         private const val KOTLIN_SOURCE_EXTENSION = "kt"
+
+        /**
+         * Starts a development server on [serverHost] and [serverPort],
+         * which serves [contentRootDir] and Kotlin sources of [rootDir].
+         */
+        internal fun startServer(
+            contentRootDir: File,
+            rootDir: File,
+            serverHost: String,
+            serverPort: Int,
+        ): HttpServer {
+            val server = HttpServer.create(InetSocketAddress(serverHost, serverPort), 0)
+            server.createContext("/") { exchange ->
+                handleRequest(
+                    exchange,
+                    contentRootDir,
+                    rootDir,
+                    serverHost,
+                )
+            }
+
+            server.executor = null
+
+            server.start()
+            if (!server.address.address.isLoopbackAddress) {
+                logger.warn(
+                    "Development server is bound to non-loopback address ${server.address.address.hostAddress}. " +
+                            "Project Kotlin sources will be reachable from the network."
+                )
+            }
+            logger.lifecycle("Development server started at http://$serverHost:$serverPort")
+            logger.lifecycle("Serving files from: $contentRootDir")
+            logger.lifecycle("Serving Kotlin sources from: $rootDir")
+
+            return server
+        }
+
+        private fun handleRequest(
+            exchange: HttpExchange,
+            contentRootDir: File,
+            rootDir: File,
+            serverHost: String,
+        ) {
+            val hostHeader = exchange.requestHeaders.getFirst("Host")
+            if (!isHostAllowed(hostHeader, serverHost)) {
+                val rejectedHost = hostHeader ?: "<missing>"
+                logger.info("Rejected development server request with Host header '$rejectedHost'")
+                respond(exchange, 403, "403 Forbidden: Host '$rejectedHost' is not allowed")
+                return
+            }
+
+            val path = exchange.requestURI.path.trimStart('/')
+
+            val file = resolveFile(
+                path,
+                contentRootDir,
+                rootDir,
+            )
+
+            if (file == null || !file.exists() || !file.isFile) {
+                respond(exchange, 404, "404 Not Found")
+                return
+            }
+
+            val contentType = contentTypeFor(file.name)
+            val size = file.length()
+            exchange.responseHeaders.set("Content-Type", contentType)
+            exchange.sendResponseHeaders(200, size)
+            exchange.responseBody.use {
+                file.inputStream().copyTo(it)
+            }
+        }
+
+        private fun respond(exchange: HttpExchange, statusCode: Int, message: String) {
+            val response = message.toByteArray()
+            exchange.responseHeaders.set("Content-Type", "text/plain; charset=utf-8")
+            exchange.sendResponseHeaders(statusCode, response.size.toLong())
+            exchange.responseBody.use { it.write(response) }
+        }
+
+        private fun contentTypeFor(fileName: String): String = when {
+            fileName.endsWith(".html") -> "text/html"
+            fileName.endsWith(".kt") -> "text/kotlin; charset=utf-8"
+            fileName.endsWith(".js") -> "application/javascript"
+            fileName.endsWith(".mjs") -> "application/javascript"
+            fileName.endsWith(".wasm") -> "application/wasm"
+            fileName.endsWith(".css") -> "text/css"
+            fileName.endsWith(".json") -> "application/json"
+            fileName.endsWith(".png") -> "image/png"
+            fileName.endsWith(".jpg") || fileName.endsWith(".jpeg") -> "image/jpeg"
+            fileName.endsWith(".svg") -> "image/svg+xml"
+            fileName.endsWith(".ico") -> "image/x-icon"
+            fileName.endsWith(".map") -> "application/json"
+            else -> "application/octet-stream"
+        }
+
+        /**
+         * Allows hosts that cannot be rebound through DNS, along with the configured server host.
+         */
+        internal fun isHostAllowed(hostHeader: String?, serverHost: String): Boolean {
+            val host = hostHeader?.takeIf { it.isNotBlank() } ?: return false
+            val hostName = if (host.startsWith('[')) {
+                val closingBracket = host.indexOf(']')
+                if (closingBracket == -1) return false
+
+                val suffix = host.substring(closingBracket + 1)
+                if (suffix.isNotEmpty() && (!suffix.startsWith(':') || !suffix.drop(1).all { it in '0'..'9' })) {
+                    return false
+                }
+
+                val address = host.substring(1, closingBracket)
+                if (!isIpv6Literal(address)) return false
+                address
+            } else {
+                if (host.count { it == ':' } > 1) return false
+
+                val colonIndex = host.lastIndexOf(':')
+                if (colonIndex >= 0) {
+                    val port = host.substring(colonIndex + 1)
+                    if (port.isEmpty() || !port.all { it in '0'..'9' }) return false
+                }
+                host.substringBeforeLast(':')
+            }
+
+            if (hostName.isEmpty()) return false
+
+            val normalizedServerHost = serverHost.removeSurrounding("[", "]")
+            return hostName.equals(normalizedServerHost, ignoreCase = true) ||
+                    hostName.equals("localhost", ignoreCase = true) ||
+                    isIpLiteral(hostName)
+        }
+
+        private fun isIpLiteral(host: String): Boolean {
+            if (host.contains(':')) return isIpv6Literal(host)
+
+            val octets = host.split('.')
+            return octets.size == 4 && octets.all { octet ->
+                octet.isNotEmpty() && octet.all { it.isDigit() } && octet.toIntOrNull()?.let { it in 0..255 } == true
+            }
+        }
+
+        private fun isIpv6Literal(host: String): Boolean =
+            host.contains(':') && runCatching { InetAddress.getByName(host) is Inet6Address }.getOrDefault(false)
 
         /**
          * Resolves the file requested by [path] relative to [contentRootDir] first and to [rootDir] afterwards.
