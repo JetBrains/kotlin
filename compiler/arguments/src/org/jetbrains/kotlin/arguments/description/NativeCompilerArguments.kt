@@ -404,6 +404,20 @@ By default caches will be placed into the kotlin-native system cache directory."
     }
 
     compilerArgument {
+        name = "Xdump-facts-to"
+        compilerName = "dumpFactsTo"
+        description =
+            "Debug-only: path to a file where the facts tracked by the compiler's `FactsTracker` are appended.".asReleaseDependent()
+        valueType = StringType.defaultNull
+        valueDescription = "<path>".asReleaseDependent()
+        delimiter = KotlinCompilerArgument.Delimiter.None
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_5_0,
+        )
+    }
+
+    compilerArgument {
         name = "Xcheck-dependencies"
         deprecatedName = "-check_dependencies"
         description = "Check dependencies and download the missing ones.".asReleaseDependent()

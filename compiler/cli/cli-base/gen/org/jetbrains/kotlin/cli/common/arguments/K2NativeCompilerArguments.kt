@@ -187,6 +187,18 @@ The default value is 1.""",
         }
 
     @Argument(
+        value = "-Xdump-facts-to",
+        valueDescription = "<path>",
+        description = "Debug-only: path to a file where the facts tracked by the compiler's `FactsTracker` are appended.",
+        delimiter = Argument.Delimiters.none,
+    )
+    var dumpFactsTo: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
+
+    @Argument(
         value = "-Xdump-tests-to",
         valueDescription = "<path>",
         description = "Path to a file for dumping the list of all available tests.",
