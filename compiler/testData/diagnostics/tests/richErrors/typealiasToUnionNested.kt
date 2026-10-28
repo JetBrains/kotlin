@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: CODEGEN
 // FIR_DUMP
 error class E1
 error class E2

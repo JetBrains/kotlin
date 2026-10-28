@@ -4899,6 +4899,24 @@ public final class ProtoBuf {
     int getUnionTypeAnnotationCount();
 
     /**
+     * <code>optional .org.jetbrains.kotlin.metadata.Type union_abbreviated_type = 18;</code>
+     */
+    boolean hasUnionAbbreviatedType();
+    /**
+     * <code>optional .org.jetbrains.kotlin.metadata.Type union_abbreviated_type = 18;</code>
+     */
+    org.jetbrains.kotlin.metadata.ProtoBuf.Type getUnionAbbreviatedType();
+
+    /**
+     * <code>optional int32 union_abbreviated_type_id = 19;</code>
+     */
+    boolean hasUnionAbbreviatedTypeId();
+    /**
+     * <code>optional int32 union_abbreviated_type_id = 19;</code>
+     */
+    int getUnionAbbreviatedTypeId();
+
+    /**
      * <code>optional int32 flags = 1;</code>
      *
      * <pre>
@@ -4983,7 +5001,7 @@ public final class ProtoBuf {
               break;
             }
             case 8: {
-              bitField0_ |= 0x00001000;
+              bitField0_ |= 0x00004000;
               flags_ = input.readInt32();
               break;
             }
@@ -5116,10 +5134,28 @@ public final class ProtoBuf {
               unionTypeAnnotation_.add(input.readMessage(org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.PARSER, extensionRegistry));
               break;
             }
+            case 146: {
+              org.jetbrains.kotlin.metadata.ProtoBuf.Type.Builder subBuilder = null;
+              if (((bitField0_ & 0x00001000) == 0x00001000)) {
+                subBuilder = unionAbbreviatedType_.toBuilder();
+              }
+              unionAbbreviatedType_ = input.readMessage(org.jetbrains.kotlin.metadata.ProtoBuf.Type.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(unionAbbreviatedType_);
+                unionAbbreviatedType_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00001000;
+              break;
+            }
+            case 152: {
+              bitField0_ |= 0x00002000;
+              unionAbbreviatedTypeId_ = input.readInt32();
+              break;
+            }
             case 802: {
-              if (!((mutable_bitField0_ & 0x00020000) == 0x00020000)) {
+              if (!((mutable_bitField0_ & 0x00080000) == 0x00080000)) {
                 annotation_ = new java.util.ArrayList<org.jetbrains.kotlin.metadata.ProtoBuf.Annotation>();
-                mutable_bitField0_ |= 0x00020000;
+                mutable_bitField0_ |= 0x00080000;
               }
               annotation_.add(input.readMessage(org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.PARSER, extensionRegistry));
               break;
@@ -5144,7 +5180,7 @@ public final class ProtoBuf {
         if (((mutable_bitField0_ & 0x00008000) == 0x00008000)) {
           unionTypeAnnotation_ = java.util.Collections.unmodifiableList(unionTypeAnnotation_);
         }
-        if (((mutable_bitField0_ & 0x00020000) == 0x00020000)) {
+        if (((mutable_bitField0_ & 0x00080000) == 0x00080000)) {
           annotation_ = java.util.Collections.unmodifiableList(annotation_);
         }
         try {
@@ -6204,6 +6240,36 @@ public final class ProtoBuf {
       return unionTypeAnnotation_.get(index);
     }
 
+    public static final int UNION_ABBREVIATED_TYPE_FIELD_NUMBER = 18;
+    private org.jetbrains.kotlin.metadata.ProtoBuf.Type unionAbbreviatedType_;
+    /**
+     * <code>optional .org.jetbrains.kotlin.metadata.Type union_abbreviated_type = 18;</code>
+     */
+    public boolean hasUnionAbbreviatedType() {
+      return ((bitField0_ & 0x00001000) == 0x00001000);
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.metadata.Type union_abbreviated_type = 18;</code>
+     */
+    public org.jetbrains.kotlin.metadata.ProtoBuf.Type getUnionAbbreviatedType() {
+      return unionAbbreviatedType_;
+    }
+
+    public static final int UNION_ABBREVIATED_TYPE_ID_FIELD_NUMBER = 19;
+    private int unionAbbreviatedTypeId_;
+    /**
+     * <code>optional int32 union_abbreviated_type_id = 19;</code>
+     */
+    public boolean hasUnionAbbreviatedTypeId() {
+      return ((bitField0_ & 0x00002000) == 0x00002000);
+    }
+    /**
+     * <code>optional int32 union_abbreviated_type_id = 19;</code>
+     */
+    public int getUnionAbbreviatedTypeId() {
+      return unionAbbreviatedTypeId_;
+    }
+
     public static final int FLAGS_FIELD_NUMBER = 1;
     private int flags_;
     /**
@@ -6215,7 +6281,7 @@ public final class ProtoBuf {
      * </pre>
      */
     public boolean hasFlags() {
-      return ((bitField0_ & 0x00001000) == 0x00001000);
+      return ((bitField0_ & 0x00004000) == 0x00004000);
     }
     /**
      * <code>optional int32 flags = 1;</code>
@@ -6281,6 +6347,8 @@ public final class ProtoBuf {
       richError_ = java.util.Collections.emptyList();
       richErrorId_ = java.util.Collections.emptyList();
       unionTypeAnnotation_ = java.util.Collections.emptyList();
+      unionAbbreviatedType_ = org.jetbrains.kotlin.metadata.ProtoBuf.Type.getDefaultInstance();
+      unionAbbreviatedTypeId_ = 0;
       flags_ = 0;
       annotation_ = java.util.Collections.emptyList();
     }
@@ -6326,6 +6394,12 @@ public final class ProtoBuf {
           return false;
         }
       }
+      if (hasUnionAbbreviatedType()) {
+        if (!getUnionAbbreviatedType().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
       for (int i = 0; i < getAnnotationCount(); i++) {
         if (!getAnnotation(i).isInitialized()) {
           memoizedIsInitialized = 0;
@@ -6346,7 +6420,7 @@ public final class ProtoBuf {
       org.jetbrains.kotlin.protobuf.GeneratedMessageLite
         .ExtendableMessage<org.jetbrains.kotlin.metadata.ProtoBuf.Type>.ExtensionWriter extensionWriter =
           newExtensionWriter();
-      if (((bitField0_ & 0x00001000) == 0x00001000)) {
+      if (((bitField0_ & 0x00004000) == 0x00004000)) {
         output.writeInt32(1, flags_);
       }
       for (int i = 0; i < argument_.size(); i++) {
@@ -6397,6 +6471,12 @@ public final class ProtoBuf {
       for (int i = 0; i < unionTypeAnnotation_.size(); i++) {
         output.writeMessage(17, unionTypeAnnotation_.get(i));
       }
+      if (((bitField0_ & 0x00001000) == 0x00001000)) {
+        output.writeMessage(18, unionAbbreviatedType_);
+      }
+      if (((bitField0_ & 0x00002000) == 0x00002000)) {
+        output.writeInt32(19, unionAbbreviatedTypeId_);
+      }
       for (int i = 0; i < annotation_.size(); i++) {
         output.writeMessage(100, annotation_.get(i));
       }
@@ -6410,7 +6490,7 @@ public final class ProtoBuf {
       if (size != -1) return size;
 
       size = 0;
-      if (((bitField0_ & 0x00001000) == 0x00001000)) {
+      if (((bitField0_ & 0x00004000) == 0x00004000)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeInt32Size(1, flags_);
       }
@@ -6482,6 +6562,14 @@ public final class ProtoBuf {
       for (int i = 0; i < unionTypeAnnotation_.size(); i++) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(17, unionTypeAnnotation_.get(i));
+      }
+      if (((bitField0_ & 0x00001000) == 0x00001000)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(18, unionAbbreviatedType_);
+      }
+      if (((bitField0_ & 0x00002000) == 0x00002000)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeInt32Size(19, unionAbbreviatedTypeId_);
       }
       for (int i = 0; i < annotation_.size(); i++) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
@@ -6613,10 +6701,14 @@ public final class ProtoBuf {
         bitField0_ = (bitField0_ & ~0x00004000);
         unionTypeAnnotation_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00008000);
-        flags_ = 0;
+        unionAbbreviatedType_ = org.jetbrains.kotlin.metadata.ProtoBuf.Type.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00010000);
-        annotation_ = java.util.Collections.emptyList();
+        unionAbbreviatedTypeId_ = 0;
         bitField0_ = (bitField0_ & ~0x00020000);
+        flags_ = 0;
+        bitField0_ = (bitField0_ & ~0x00040000);
+        annotation_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00080000);
         return this;
       }
 
@@ -6711,10 +6803,18 @@ public final class ProtoBuf {
         if (((from_bitField0_ & 0x00010000) == 0x00010000)) {
           to_bitField0_ |= 0x00001000;
         }
+        result.unionAbbreviatedType_ = unionAbbreviatedType_;
+        if (((from_bitField0_ & 0x00020000) == 0x00020000)) {
+          to_bitField0_ |= 0x00002000;
+        }
+        result.unionAbbreviatedTypeId_ = unionAbbreviatedTypeId_;
+        if (((from_bitField0_ & 0x00040000) == 0x00040000)) {
+          to_bitField0_ |= 0x00004000;
+        }
         result.flags_ = flags_;
-        if (((bitField0_ & 0x00020000) == 0x00020000)) {
+        if (((bitField0_ & 0x00080000) == 0x00080000)) {
           annotation_ = java.util.Collections.unmodifiableList(annotation_);
-          bitField0_ = (bitField0_ & ~0x00020000);
+          bitField0_ = (bitField0_ & ~0x00080000);
         }
         result.annotation_ = annotation_;
         result.bitField0_ = to_bitField0_;
@@ -6799,13 +6899,19 @@ public final class ProtoBuf {
           }
           
         }
+        if (other.hasUnionAbbreviatedType()) {
+          mergeUnionAbbreviatedType(other.getUnionAbbreviatedType());
+        }
+        if (other.hasUnionAbbreviatedTypeId()) {
+          setUnionAbbreviatedTypeId(other.getUnionAbbreviatedTypeId());
+        }
         if (other.hasFlags()) {
           setFlags(other.getFlags());
         }
         if (!other.annotation_.isEmpty()) {
           if (annotation_.isEmpty()) {
             annotation_ = other.annotation_;
-            bitField0_ = (bitField0_ & ~0x00020000);
+            bitField0_ = (bitField0_ & ~0x00080000);
           } else {
             ensureAnnotationIsMutable();
             annotation_.addAll(other.annotation_);
@@ -6851,6 +6957,12 @@ public final class ProtoBuf {
         }
         for (int i = 0; i < getUnionTypeAnnotationCount(); i++) {
           if (!getUnionTypeAnnotation(i).isInitialized()) {
+            
+            return false;
+          }
+        }
+        if (hasUnionAbbreviatedType()) {
+          if (!getUnionAbbreviatedType().isInitialized()) {
             
             return false;
           }
@@ -7892,6 +8004,98 @@ public final class ProtoBuf {
         return this;
       }
 
+      private org.jetbrains.kotlin.metadata.ProtoBuf.Type unionAbbreviatedType_ = org.jetbrains.kotlin.metadata.ProtoBuf.Type.getDefaultInstance();
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Type union_abbreviated_type = 18;</code>
+       */
+      public boolean hasUnionAbbreviatedType() {
+        return ((bitField0_ & 0x00010000) == 0x00010000);
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Type union_abbreviated_type = 18;</code>
+       */
+      public org.jetbrains.kotlin.metadata.ProtoBuf.Type getUnionAbbreviatedType() {
+        return unionAbbreviatedType_;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Type union_abbreviated_type = 18;</code>
+       */
+      public Builder setUnionAbbreviatedType(org.jetbrains.kotlin.metadata.ProtoBuf.Type value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        unionAbbreviatedType_ = value;
+
+        bitField0_ |= 0x00010000;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Type union_abbreviated_type = 18;</code>
+       */
+      public Builder setUnionAbbreviatedType(
+          org.jetbrains.kotlin.metadata.ProtoBuf.Type.Builder builderForValue) {
+        unionAbbreviatedType_ = builderForValue.build();
+
+        bitField0_ |= 0x00010000;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Type union_abbreviated_type = 18;</code>
+       */
+      public Builder mergeUnionAbbreviatedType(org.jetbrains.kotlin.metadata.ProtoBuf.Type value) {
+        if (((bitField0_ & 0x00010000) == 0x00010000) &&
+            unionAbbreviatedType_ != org.jetbrains.kotlin.metadata.ProtoBuf.Type.getDefaultInstance()) {
+          unionAbbreviatedType_ =
+            org.jetbrains.kotlin.metadata.ProtoBuf.Type.newBuilder(unionAbbreviatedType_).mergeFrom(value).buildPartial();
+        } else {
+          unionAbbreviatedType_ = value;
+        }
+
+        bitField0_ |= 0x00010000;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Type union_abbreviated_type = 18;</code>
+       */
+      public Builder clearUnionAbbreviatedType() {
+        unionAbbreviatedType_ = org.jetbrains.kotlin.metadata.ProtoBuf.Type.getDefaultInstance();
+
+        bitField0_ = (bitField0_ & ~0x00010000);
+        return this;
+      }
+
+      private int unionAbbreviatedTypeId_ ;
+      /**
+       * <code>optional int32 union_abbreviated_type_id = 19;</code>
+       */
+      public boolean hasUnionAbbreviatedTypeId() {
+        return ((bitField0_ & 0x00020000) == 0x00020000);
+      }
+      /**
+       * <code>optional int32 union_abbreviated_type_id = 19;</code>
+       */
+      public int getUnionAbbreviatedTypeId() {
+        return unionAbbreviatedTypeId_;
+      }
+      /**
+       * <code>optional int32 union_abbreviated_type_id = 19;</code>
+       */
+      public Builder setUnionAbbreviatedTypeId(int value) {
+        bitField0_ |= 0x00020000;
+        unionAbbreviatedTypeId_ = value;
+        
+        return this;
+      }
+      /**
+       * <code>optional int32 union_abbreviated_type_id = 19;</code>
+       */
+      public Builder clearUnionAbbreviatedTypeId() {
+        bitField0_ = (bitField0_ & ~0x00020000);
+        unionAbbreviatedTypeId_ = 0;
+        
+        return this;
+      }
+
       private int flags_ ;
       /**
        * <code>optional int32 flags = 1;</code>
@@ -7902,7 +8106,7 @@ public final class ProtoBuf {
        * </pre>
        */
       public boolean hasFlags() {
-        return ((bitField0_ & 0x00010000) == 0x00010000);
+        return ((bitField0_ & 0x00040000) == 0x00040000);
       }
       /**
        * <code>optional int32 flags = 1;</code>
@@ -7924,7 +8128,7 @@ public final class ProtoBuf {
        * </pre>
        */
       public Builder setFlags(int value) {
-        bitField0_ |= 0x00010000;
+        bitField0_ |= 0x00040000;
         flags_ = value;
         
         return this;
@@ -7938,7 +8142,7 @@ public final class ProtoBuf {
        * </pre>
        */
       public Builder clearFlags() {
-        bitField0_ = (bitField0_ & ~0x00010000);
+        bitField0_ = (bitField0_ & ~0x00040000);
         flags_ = 0;
         
         return this;
@@ -7947,9 +8151,9 @@ public final class ProtoBuf {
       private java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.Annotation> annotation_ =
         java.util.Collections.emptyList();
       private void ensureAnnotationIsMutable() {
-        if (!((bitField0_ & 0x00020000) == 0x00020000)) {
+        if (!((bitField0_ & 0x00080000) == 0x00080000)) {
           annotation_ = new java.util.ArrayList<org.jetbrains.kotlin.metadata.ProtoBuf.Annotation>(annotation_);
-          bitField0_ |= 0x00020000;
+          bitField0_ |= 0x00080000;
          }
       }
 
@@ -8055,7 +8259,7 @@ public final class ProtoBuf {
        */
       public Builder clearAnnotation() {
         annotation_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00020000);
+        bitField0_ = (bitField0_ & ~0x00080000);
 
         return this;
       }
