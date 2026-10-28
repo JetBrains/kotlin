@@ -73,10 +73,6 @@ private fun createLocalDeclarationsLoweringPhase(context: LoweringContext): Loca
     return LocalDeclarationsLowering(context)
 }
 
-private fun createDefaultParameterCleanerPhase(context: CommonBackendContext): DefaultParameterCleaner {
-    return DefaultParameterCleaner(context)
-}
-
 private fun createAutoboxingTransformerPhase(context: JsCommonBackendContext): AutoboxingTransformer {
     return AutoboxingTransformer(context, replaceTypesInsideInlinedFunctionBlock = true)
 }
@@ -186,7 +182,7 @@ val jsLowerings: List<NamedCompilerPhase<JsIrBackendContext, IrModuleFragment, I
     ::JsDefaultArgumentStubGenerator,
     ::JsDefaultParameterPatchOverridenSymbolsLowering,
     ::JsDefaultParameterInjector,
-    ::createDefaultParameterCleanerPhase,
+    ::JsDefaultParameterCleaner,
     ::JsPropertyLazyInitLowering,
     ::RemoveInitializersForLazyProperties,
     ::JsPropertyAccessorInlineLowering,

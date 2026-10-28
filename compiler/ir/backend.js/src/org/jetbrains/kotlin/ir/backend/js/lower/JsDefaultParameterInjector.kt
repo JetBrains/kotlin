@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.backend.js.utils.getVoid
 import org.jetbrains.kotlin.ir.backend.js.utils.jsConstructorReference
 import org.jetbrains.kotlin.ir.builders.IrBlockBuilder
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.defaultArgumentsDispatchFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.util.isTopLevel
 import org.jetbrains.kotlin.ir.util.isVararg
 import org.jetbrains.kotlin.ir.util.nonDispatchArguments
+import org.jetbrains.kotlin.js.config.useEs6DefaultArgs
 
 @PhasePrerequisites(InteropCallableReferenceLowering::class, InnerClassesLowering::class)
 class JsDefaultParameterInjector(context: JsIrBackendContext) :
@@ -37,6 +39,11 @@ class JsDefaultParameterInjector(context: JsIrBackendContext) :
         skipExternalMethods = true,
         forceSetOverrideSymbols = false
     ) {
+    override fun lower(irModule: IrModuleFragment) {
+        if (context.configuration.useEs6DefaultArgs) return
+        super.lower(irModule)
+    }
+
     override fun nullConst(startOffset: Int, endOffset: Int, irParameter: IrValueParameter): IrExpression? =
         if (irParameter.isVararg && !irParameter.hasDefaultValue()) {
             null

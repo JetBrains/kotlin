@@ -13,16 +13,12 @@ import org.jetbrains.kotlin.backend.common.lower.BOUND_VALUE_PARAMETER
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.backend.js.EffectsKind
-import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
-import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
+import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.checkers.JsKlibErrors
-import org.jetbrains.kotlin.ir.backend.js.effects
 import org.jetbrains.kotlin.ir.backend.js.ir.isBridge
 import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.isProxyParameterWithDefaultForExportedSuspendFunction
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.shouldBeCompiledAsGenerator
-import org.jetbrains.kotlin.ir.backend.js.sourceMapsInfo
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -40,6 +36,7 @@ import org.jetbrains.kotlin.js.common.isValidES5Identifier
 import org.jetbrains.kotlin.js.config.SourceMapNamesPolicy
 import org.jetbrains.kotlin.js.config.SourceMapSourceEmbedding
 import org.jetbrains.kotlin.js.config.compileLambdasAsEs6ArrowFunctions
+import org.jetbrains.kotlin.js.config.useEs6DefaultArgs
 import org.jetbrains.kotlin.js.parser.sourcemaps.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.JsStandardClassIds
@@ -246,7 +243,11 @@ fun translateFunction(
 
     declaration.nonDispatchParameters.forEach { param ->
         val name = functionContext.getNameForValueDeclaration(param)
-        function.parameters.add(JsParameter(name).withSource(param, functionContext, useNameOf = param))
+        val defaultValue = param.defaultValue?.expression?.let {
+            (it as? IrBlock)?.singleExpressionOrNull ?: it
+        }
+        val jsDefaultValue = defaultValue?.accept(IrElementToJsExpressionTransformer(), functionContext)
+        function.parameters.add(JsParameter(JsDeclarable.Named(name), jsDefaultValue).withSource(param, functionContext, useNameOf = param))
     }
 
     check(!declaration.isSuspend) { "All Suspend functions should be lowered" }
@@ -518,7 +519,7 @@ internal fun translateNonDispatchCallArguments(
 ): List<TranslatedCallArgument> {
     val function = expression.symbol.owner.realOverrideTarget
     check(!function.isSuspend) { "Suspend functions should be lowered" }
-    val validWithNullArgs = expression.validWithNullArgs()
+    val validWithNullArgs = expression.validWithNullArgs() || context.staticContext.backendContext.configuration.useEs6DefaultArgs
 
     return function.nonDispatchParameters
         .map { parameter ->

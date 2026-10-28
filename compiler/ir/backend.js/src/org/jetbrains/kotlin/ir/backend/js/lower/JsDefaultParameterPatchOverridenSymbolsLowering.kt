@@ -8,8 +8,15 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.lower.DefaultParameterPatchOverridenSymbolsLowering
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.js.config.useEs6DefaultArgs
 
 @PhasePrerequisites(JsDefaultArgumentStubGenerator::class)
 internal class JsDefaultParameterPatchOverridenSymbolsLowering(
     context: JsIrBackendContext
-) : DefaultParameterPatchOverridenSymbolsLowering(context)
+) : DefaultParameterPatchOverridenSymbolsLowering(context) {
+    override fun lower(irModule: IrModuleFragment) {
+        if (context.configuration.useEs6DefaultArgs) return
+        super.lower(irModule)
+    }
+}

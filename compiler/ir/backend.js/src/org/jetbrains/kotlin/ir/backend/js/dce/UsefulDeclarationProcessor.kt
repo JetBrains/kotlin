@@ -14,7 +14,10 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.classifierOrNull
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.constructedClass
+import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
+import org.jetbrains.kotlin.ir.util.isMemberOfOpenClass
+import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.js.config.dceUnusedProperties
 import java.io.File
@@ -259,6 +262,12 @@ abstract class UsefulDeclarationProcessor(
                     is IrSimpleFunction -> processSimpleFunction(declaration)
                     is IrConstructor -> processConstructor(declaration)
                     is IrField -> processField(declaration)
+                }
+
+                if (declaration is IrFunction) {
+                    for (parameter in declaration.parameters) {
+                        parameter.defaultValue?.accept(bodyVisitor, declaration)
+                    }
                 }
 
                 if (declaration.isEffectivelyExternal()) continue

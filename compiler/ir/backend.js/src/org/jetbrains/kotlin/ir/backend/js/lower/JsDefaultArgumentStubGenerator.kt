@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.js.config.useEs6DefaultArgs
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
@@ -45,6 +46,11 @@ class JsDefaultArgumentStubGenerator(context: JsIrBackendContext) :
         skipExternalMethods = true,
         forceSetOverrideSymbols = false
     ) {
+
+    override fun lower(irModule: IrModuleFragment) {
+        if (context.configuration.useEs6DefaultArgs) return
+        super.lower(irModule)
+    }
 
     private fun IrBuilderWithScope.createDefaultResolutionExpression(
         defaultExpression: IrExpression?,
