@@ -14,10 +14,13 @@ import org.jetbrains.kotlin.cli.common.getLibraryFromHome
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
 import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
+import org.jetbrains.kotlin.cli.jvm.modules.JavaModuleInfoSourceReader
+import org.jetbrains.kotlin.cli.jvm.modules.putJavaModuleInfoSourceReader
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.cli.reportInfo
 import org.jetbrains.kotlin.cli.reportLog
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.java.direct.modules.readJavaModuleInfoSource
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
@@ -209,9 +212,15 @@ fun CompilerConfiguration.configureJdkHomeFromSystemProperty() {
 }
 
 fun CompilerConfiguration.configureJavaModulesContentRoots(arguments: K2JVMCompilerArguments) {
+    configureJavaModuleInfoSourceReader()
     for (modularRoot in arguments.javaModulePath?.split(File.pathSeparatorChar).orEmpty()) {
         add(CLIConfigurationKeys.CONTENT_ROOTS, JvmModulePathRoot(File(modularRoot)))
     }
+}
+
+/** Lets the classpath resolution read `module-info.java` files of Java source roots, see [JavaModuleInfoSourceReader]. */
+fun CompilerConfiguration.configureJavaModuleInfoSourceReader() {
+    putJavaModuleInfoSourceReader(JavaModuleInfoSourceReader(::readJavaModuleInfoSource))
 }
 
 fun CompilerConfiguration.configureContentRootsFromClassPath(arguments: K2JVMCompilerArguments) {

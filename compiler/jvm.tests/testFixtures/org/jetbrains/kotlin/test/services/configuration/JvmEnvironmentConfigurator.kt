@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
 import org.jetbrains.kotlin.cli.common.modules.ModuleChunk
 import org.jetbrains.kotlin.cli.jvm.addModularRootIfNotNull
 import org.jetbrains.kotlin.cli.jvm.config.*
+import org.jetbrains.kotlin.cli.jvm.configureJavaModuleInfoSourceReader
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmLoweringsPipelinePhase
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
@@ -223,6 +224,7 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
             registeredDirectives.singleOrZeroValue(FIR_PARSER) == FirParser.Psi
         }
         configuration.put(JVMConfigurationKeys.USE_JAVA_DIRECT, !usePsiJavaFacade)
+        configuration.configureJavaModuleInfoSourceReader()
 
         if (ConfigurationDirectives.WITH_KOTLIN_JVM_ANNOTATIONS in module.directives) {
             configuration.addJvmClasspathRoot(ForTestCompileRuntime.jvmAnnotationsForTests())

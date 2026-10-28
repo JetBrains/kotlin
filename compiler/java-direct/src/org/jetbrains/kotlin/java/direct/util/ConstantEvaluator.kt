@@ -348,7 +348,7 @@ class ConstantEvaluator private constructor(
         return if (resolver != null) {
             resolver.resolve(classQualifier, qualifierClassId, fieldName)?.let(MemberResolutionResult::Constant)
         } else {
-            resolutionContext.fileContext.session.resolveExternalFieldValue(
+            resolutionContext.fileContext.session?.resolveExternalFieldValue(
                 classQualifier,
                 qualifierClassId,
                 fieldName,
@@ -406,8 +406,7 @@ class ConstantEvaluator private constructor(
                     ?: MemberResolutionResult.NonConstantField
             }
         } else {
-            val session = resolutionContext.fileContext.session
-            if (session.hasEnumEntry(classId, memberName)) {
+            if (resolutionContext.fileContext.session?.hasEnumEntry(classId, memberName) == true) {
                 return MemberResolutionResult.EnumEntry(classId, Name.identifier(memberName))
             }
             resolveExternalReference(classId.asSingleFqName().asString(), classId, memberName)?.let { return it }
