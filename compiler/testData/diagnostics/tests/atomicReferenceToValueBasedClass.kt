@@ -12,11 +12,11 @@ class Holder {
 }
 
 fun atomicReference(reference: AtomicReference<Any?>, date: LocalDate) {
-    reference.compareAndSet(date, date)
+    reference.compareAndSet(<!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>date<!>, <!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>date<!>)
 }
 
 fun atomicReferenceOfValueBasedClass(reference: AtomicReference<LocalDate>, date: LocalDate) {
-    reference.compareAndSet(date, date)
+    <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>reference.compareAndSet(<!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>date<!>, <!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>date<!>)<!>
 }
 
 fun fieldUpdater(updater: AtomicReferenceFieldUpdater<Holder, Any?>, date: LocalDate) {

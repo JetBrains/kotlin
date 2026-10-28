@@ -7,10 +7,11 @@ package org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.IdentityKind
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirEqualityOperatorCallChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.isJavaValueBasedClass
+import org.jetbrains.kotlin.fir.analysis.checkers.identityKind
 import org.jetbrains.kotlin.fir.analysis.checkers.isValueClass
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.disableWarningsForValueBasedJavaClasses
@@ -32,7 +33,7 @@ internal object FirJvmIdentityEqualsOnJavaValueBasedClass : FirEqualityOperatorC
         if (arguments.any { it.resolvedType.isValueClass(context.session) }) return
         for (arg in arguments) {
             val type = arg.resolvedType
-            if (type.isJavaValueBasedClass()) {
+            if (type.identityKind() == IdentityKind.VALUE_BASED) {
                 reporter.reportOn(
                     arg.source, FirErrors.IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE, type
                 )

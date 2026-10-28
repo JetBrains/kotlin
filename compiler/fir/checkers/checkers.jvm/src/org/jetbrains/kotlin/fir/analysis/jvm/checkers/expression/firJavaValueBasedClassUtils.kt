@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression
 
 import org.jetbrains.kotlin.fir.SessionHolder
+import org.jetbrains.kotlin.fir.analysis.checkers.IdentityKind
+import org.jetbrains.kotlin.fir.analysis.checkers.identityKind
 import org.jetbrains.kotlin.fir.analysis.checkers.isFlexiblePrimitive
-import org.jetbrains.kotlin.fir.analysis.checkers.isJavaValueBasedClass
-import org.jetbrains.kotlin.fir.analysis.checkers.isValueClassOrPrimitive
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration.isCompiledAsIdentityClass
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.isJvmTargetValhallaCompatible
 import org.jetbrains.kotlin.fir.collectUpperBounds
@@ -22,16 +22,10 @@ import org.jetbrains.kotlin.fir.types.isPrimitiveOrNullablePrimitive
 import org.jetbrains.kotlin.fir.types.typeContext
 
 context(sessionHolder: SessionHolder)
-internal fun ConeKotlinType.isJavaValueBasedClassAndWarningsEnabled(): Boolean {
-    return enableWarningsForValueBasedJavaClasses() && this.isJavaValueBasedClass()
-}
-
-context(sessionHolder: SessionHolder)
-internal fun ConeKotlinType.isValueTypeAndWarningsEnabled(): Boolean {
-    if (enableWarningsForIdentitySensitiveOperationsOnValueClassesAndPrimitives() &&
-        (this.isFlexiblePrimitive() || this.isValueClassOrPrimitive())
-    ) return true
-    return this.isJavaValueBasedClassAndWarningsEnabled()
+internal fun ConeKotlinType.isValueTypeAndWarningsEnabled(): Boolean = when (identityKind()) {
+    IdentityKind.VALUE_TYPE, IdentityKind.FLEXIBLE_PRIMITIVE -> enableWarningsForIdentitySensitiveOperationsOnValueClassesAndPrimitives()
+    IdentityKind.VALUE_BASED -> enableWarningsForValueBasedJavaClasses()
+    null -> false
 }
 
 // Whether instances of this type are value objects at run time (JEP 401): with a Valhalla-compatible JVM target, boxed primitives and

@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
+import org.jetbrains.kotlin.fir.enableWarningsForValueBasedJavaClasses
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
@@ -1107,7 +1108,11 @@ inline fun FirElement.requireFeatureSupport(
 
 context(context: CheckerContext)
 internal val ConeKotlinType.hasStableIdentityForAtomicOperations: Boolean
-    get() = !fullyExpandedType().isBoundedByPrimitiveOrValueClass(context.session)
+    get() = when (fullyExpandedType().identityKind()) {
+        IdentityKind.VALUE_TYPE, IdentityKind.FLEXIBLE_PRIMITIVE -> false
+        IdentityKind.VALUE_BASED -> !enableWarningsForValueBasedJavaClasses()
+        null -> true
+    }
 
 fun ConeKotlinType.isBoundedByPrimitiveOrValueClass(session: FirSession): Boolean =
     collectUpperBounds(session.typeContext).any { it.isPrimitiveOrNullablePrimitive || it.isValueClass(session) }
