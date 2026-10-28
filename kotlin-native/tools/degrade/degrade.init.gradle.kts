@@ -20,12 +20,14 @@ abstract class DegradeService : BuildService<DegradeService.Parameters>, AutoClo
         val scriptDir: DirectoryProperty
     }
 
-    private class TaskLog {
+    private class TaskLog(val konanHome: String) {
         val stdout = StringBuilder()
     }
 
     private fun setupTaskLog(task: Task): TaskLog {
-        val log = TaskLog()
+        val project = task.project
+        val konanHome = project.findProperty("konanHome") ?: project.findProperty("kotlinNativeDist")
+        val log = TaskLog(konanHome.toString())
         task.logging.addStandardOutputListener { log.stdout.append(it) }
         return log
     }
@@ -66,14 +68,12 @@ abstract class DegradeService : BuildService<DegradeService.Parameters>, AutoClo
     }
 
     private fun generateScriptForTask(task: Task, taskLog: TaskLog): String? {
-        val project = task.project
-
         val stdoutLinesIterator = taskLog.stdout.split('\n').iterator()
         val commands = parseKotlinNativeCommands { stdoutLinesIterator.takeIf { it.hasNext() }?.next() }
 
         if (commands.isEmpty()) return null
 
-        val konanHome = project.findProperty("konanHome") ?: project.findProperty("kotlinNativeDist")
+        val konanHome = taskLog.konanHome
 
         val scriptName = task.path.substring(1).replace(':', '_') + ".sh"
 
@@ -84,7 +84,7 @@ abstract class DegradeService : BuildService<DegradeService.Parameters>, AutoClo
                 appendLine(""""${"$"}kotlinNativeDist/bin/run_konan" \""")
                 command.transformedArguments.forEachIndexed { index, argument ->
                     append("    ")
-                    append(argument.replace(konanHome.toString(), "\$kotlinNativeDist"))
+                    append(argument.replace(konanHome, "\$kotlinNativeDist"))
                     if (index != command.transformedArguments.lastIndex) {
                         appendLine(" \\")
                     }
