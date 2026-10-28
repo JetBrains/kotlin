@@ -267,7 +267,9 @@ private class LocalReferenceTargetLookupVisitor(val element: KtNameReferenceExpr
 
     override fun visitProperty(element: KtProperty) {
         inValueContext {
-            foundIfNameMatches(element)
+            if (element.isLocal) {
+                foundIfNameMatches(element)
+            }
             parentOnly {
                 element.contextParameters.processMany(::processParameter)
             }

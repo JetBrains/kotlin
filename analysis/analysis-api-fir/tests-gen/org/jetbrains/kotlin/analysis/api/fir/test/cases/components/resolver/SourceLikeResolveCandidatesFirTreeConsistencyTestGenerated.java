@@ -959,6 +959,18 @@ public class SourceLikeResolveCandidatesFirTreeConsistencyTestGenerated extends 
   }
 
   @Test
+  @TestMetadata("lookupLocallyShouldNotResolveNonLocalProperties.kt")
+  public void testLookupLocallyShouldNotResolveNonLocalProperties() {
+    run("lookupLocallyShouldNotResolveNonLocalProperties.kt");
+  }
+
+  @Test
+  @TestMetadata("lookupLocallyShouldNotResolveNonLocalProperties2.kt")
+  public void testLookupLocallyShouldNotResolveNonLocalProperties2() {
+    run("lookupLocallyShouldNotResolveNonLocalProperties2.kt");
+  }
+
+  @Test
   @TestMetadata("memberFunctionCallWithTypeArgument.kt")
   public void testMemberFunctionCallWithTypeArgument() {
     run("memberFunctionCallWithTypeArgument.kt");
