@@ -1,3 +1,9 @@
 @Target(AnnotationTarget#.TYPE#)
 owner -> FirRegularClassSymbol Anno
 context -> FirRegularClassSymbol Anno
+
+@Anno(<strcat>(String(1), String(2)))
+owner -> FirRegularPropertySymbol /Properties.annotated
+context -> FirRegularPropertySymbol /Properties.annotated
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /Properties.annotated
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /Properties.annotated

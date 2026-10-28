@@ -81,12 +81,42 @@ context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySym
 context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /Forms.suspendBefore
 
 @Anno()
+owner -> FirRegularPropertySymbol /InsideList.inside
+context -> FirRegularPropertySymbol /InsideList.inside
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /InsideList.inside
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /InsideList.inside
+
+@Anno()
+owner -> FirRegularPropertySymbol /InsideList.insideUnresolved
+context -> FirRegularPropertySymbol /InsideList.insideUnresolved
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /InsideList.insideUnresolved
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /InsideList.insideUnresolved
+
+@Anno()
+owner -> FirRegularPropertySymbol /InsideList.bothSides
+context -> FirRegularPropertySymbol /InsideList.bothSides
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /InsideList.bothSides
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /InsideList.bothSides
+
+@Other()
+owner -> FirRegularPropertySymbol /InsideList.bothSides
+context -> FirRegularPropertySymbol /InsideList.bothSides
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /InsideList.bothSides
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /InsideList.bothSides
+
+@Anno(String(x))
 owner -> FirRegularPropertySymbol /InsideList.bothSides
 context -> FirRegularPropertySymbol /InsideList.bothSides
 context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /InsideList.bothSides
 context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /InsideList.bothSides
 
 @Anno()
+owner -> FirRegularPropertySymbol /InsideList.named
+context -> FirRegularPropertySymbol /InsideList.named
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /InsideList.named
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /InsideList.named
+
+@Other()
 owner -> FirRegularPropertySymbol /InsideList.named
 context -> FirRegularPropertySymbol /InsideList.named
 context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /InsideList.named

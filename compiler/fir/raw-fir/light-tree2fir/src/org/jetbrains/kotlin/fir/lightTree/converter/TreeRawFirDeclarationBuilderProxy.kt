@@ -2672,30 +2672,55 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
         val allTypeModifiers = mutableListOf<ModifierList<Node>>()
 
         var firType: FirTypeRef? = null
+        // In incomplete code like `context(A)` or `context(A) B`, no function type follows the context parameter list, so the parser
+        // leaves the list directly under the type reference. Such a type is an error, and the incomplete function type is kept as its
+        // partially resolved type ref: the type element becomes its return type, so its source moves from the type reference to the
+        // type element.
+        var danglingContextParameterList: Node? = null
+        var danglingFunctionTypeReceiver: Node? = null
+        fun Node.typeElementSource(): KtSourceElement = if (danglingContextParameterList != null) toFirSourceElement() else typeRefSource
+
         type.forEachChildren {
             when (it.toTokenId()) {
                 KotlinSyntaxNodeTypeIds.TYPE_REFERENCE -> firType = convertType(it)
                 KotlinSyntaxNodeTypeIds.MODIFIER_LIST -> allTypeModifiers += convertModifierList(it)
-                KotlinSyntaxNodeTypeIds.USER_TYPE -> firType = convertUserType(typeRefSource, it)
-                KotlinSyntaxNodeTypeIds.NULLABLE_TYPE -> firType = convertNullableType(typeRefSource, it, allTypeModifiers)
-                KotlinSyntaxNodeTypeIds.FUNCTION_TYPE -> firType = convertFunctionType(typeRefSource, it, allTypeModifiers)
+                KotlinSyntaxNodeTypeIds.USER_TYPE -> firType = convertUserType(it.typeElementSource(), it)
+                KotlinSyntaxNodeTypeIds.NULLABLE_TYPE -> firType = convertNullableType(it.typeElementSource(), it, allTypeModifiers)
+                KotlinSyntaxNodeTypeIds.FUNCTION_TYPE -> firType = convertFunctionType(it.typeElementSource(), it, allTypeModifiers)
                 KotlinSyntaxNodeTypeIds.DYNAMIC_TYPE -> firType = buildDynamicTypeRef {
-                    source = typeRefSource
+                    source = it.typeElementSource()
                     isMarkedNullable = false
                 }
-                KotlinSyntaxNodeTypeIds.INTERSECTION_TYPE -> firType = convertIntersectionType(typeRefSource, it, false)
-                KotlinSyntaxNodeTypeIds.UNION_TYPE -> firType = convertUnionType(typeRefSource, it, false)
-                KotlinSyntaxNodeTypeIds.CONTEXT_PARAMETER_LIST, BasicSyntaxElementTypeIds.NO_ID -> firType =
-                    buildErrorTypeRef {
+                KotlinSyntaxNodeTypeIds.INTERSECTION_TYPE -> firType = convertIntersectionType(it.typeElementSource(), it, false)
+                KotlinSyntaxNodeTypeIds.UNION_TYPE -> firType = convertUnionType(it.typeElementSource(), it, false)
+                KotlinSyntaxNodeTypeIds.CONTEXT_PARAMETER_LIST -> danglingContextParameterList = it
+                KotlinSyntaxNodeTypeIds.FUNCTION_TYPE_RECEIVER -> danglingFunctionTypeReceiver = it
+                BasicSyntaxElementTypeIds.NO_ID -> if (danglingContextParameterList == null) {
+                    firType = buildErrorTypeRef {
                         source = typeRefSource
                         diagnostic = ConeSyntaxDiagnostic("Unwrapped type is null")
                     }
+                }
             }
         }
 
-        val calculatedFirType = firType ?: buildErrorTypeRef {
-            source = typeRefSource
-            diagnostic = ConeSyntaxDiagnostic("Incomplete code")
+        val calculatedFirType = when (val contextParameterList = danglingContextParameterList) {
+            null -> firType ?: buildErrorTypeRef {
+                source = typeRefSource
+                diagnostic = ConeSyntaxDiagnostic("Incomplete code")
+            }
+            else -> buildErrorTypeRef {
+                source = typeRefSource
+                diagnostic = ConeSyntaxDiagnostic("Incomplete code")
+                partiallyResolvedTypeRef = buildFunctionTypeRef {
+                    source = typeRefSource.fakeElement(KtFakeSourceElementKind.IncompleteFunctionType)
+                    isMarkedNullable = false
+                    isSuspend = allTypeModifiers.any { it.hasSuspend() }
+                    receiverTypeRef = danglingFunctionTypeReceiver?.let(::convertReceiverType)
+                    returnTypeRef = firType ?: buildErrorTypeRef { diagnostic = ConeSyntaxDiagnostic("Incomplete code") }
+                    contextParameterList.convertContextParameterTypesTo(contextParameterTypeRefs)
+                }
+            }
         }
 
         for (modifierList in allTypeModifiers) {
@@ -2919,15 +2944,18 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
             returnTypeRef = returnTypeReference
             this.parameters += parameters
             isSuspend = allTypeModifiers.any { it.hasSuspend() }
+            contextList?.convertContextParameterTypesTo(contextParameterTypeRefs)
+        }
+    }
 
-            contextList?.forEachChildren {
-                when (it.toTokenId()) {
-                    KotlinSyntaxNodeTypeIds.CONTEXT_RECEIVER, KotlinSyntaxNodeTypeIds.VALUE_PARAMETER -> {
-                        val typeReference = it.getChildNodeByTokenId(KotlinSyntaxNodeTypeIds.TYPE_REFERENCE)
+    private fun Node.convertContextParameterTypesTo(destination: MutableList<FirTypeRef>) {
+        forEachChildren {
+            when (it.toTokenId()) {
+                KotlinSyntaxNodeTypeIds.CONTEXT_RECEIVER, KotlinSyntaxNodeTypeIds.VALUE_PARAMETER -> {
+                    val typeReference = it.getChildNodeByTokenId(KotlinSyntaxNodeTypeIds.TYPE_REFERENCE)
 
-                        contextParameterTypeRefs += typeReference?.let(::convertType)
-                            ?: buildErrorTypeRef { diagnostic = ConeSimpleDiagnostic("Type missing") }
-                    }
+                    destination += typeReference?.let(::convertType)
+                        ?: buildErrorTypeRef { diagnostic = ConeSimpleDiagnostic("Type missing") }
                 }
             }
         }
