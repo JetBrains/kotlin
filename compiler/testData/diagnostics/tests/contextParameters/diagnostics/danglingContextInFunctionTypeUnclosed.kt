@@ -9,20 +9,20 @@ class IncompleteFunctionType {
 <!SYNTAX!><!>}
 
 class UnresolvedReceiver {
-    val unresolvedReceiver: context(Unresolved.()<!SYNTAX!><!>
+    val unresolvedReceiver: context(<!UNRESOLVED_REFERENCE!>Unresolved<!>.()<!SYNTAX!><!>
 <!SYNTAX!><!>}
 
 class UnresolvedEntry {
-    val unresolved: context(Unresolved<!SYNTAX!><!>
+    val unresolved: context(<!UNRESOLVED_REFERENCE!>Unresolved<!><!SYNTAX!><!>
 }
 
 class NamedDeprecated {
-    val named: context(a: Int, b: Old<!SYNTAX!><!>
+    val named: context(a: Int, b: <!DEPRECATION!>Old<!><!SYNTAX!><!>
 }
 
-fun valueParameter(p: context(Unresolved<!SYNTAX!><!> {}
+fun valueParameter(p: context(<!UNRESOLVED_REFERENCE!>Unresolved<!><!SYNTAX!><!> {}
 
-fun closedInUnclosedParameterList(p: context(Unresolved)<!SYNTAX!><!> {}
+fun closedInUnclosedParameterList(p: context(<!UNRESOLVED_REFERENCE!>Unresolved<!>)<!SYNTAX!><!> {}
 
 fun after() {}
 

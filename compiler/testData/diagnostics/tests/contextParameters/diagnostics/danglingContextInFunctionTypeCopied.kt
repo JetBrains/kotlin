@@ -1,27 +1,27 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ContextParameters
 
-data class Data(val p: context(Unresolved)<!SYNTAX!><!>)
+data class Data(val p: context(<!UNRESOLVED_REFERENCE!>Unresolved<!>)<!SYNTAX!><!>)
 
 class Setter {
     var p: Int = 0
-        set(value: context(Unresolved)<!SYNTAX!><!>) {}
+        set(value: context(<!UNRESOLVED_REFERENCE!>Unresolved<!>)<!SYNTAX!><!>) {}
 }
 
 interface Base {
-    fun foo(): context(Unresolved)<!SYNTAX!><!>
+    fun foo(): context(<!UNRESOLVED_REFERENCE!>Unresolved<!>)<!SYNTAX!><!>
 }
 
 class Derived : Base {
     override fun <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>foo<!>() = TODO()
 }
 
-typealias Alias = context(Unresolved)<!SYNTAX!><!>
+typealias Alias = context(<!UNRESOLVED_REFERENCE!>Unresolved<!>)<!SYNTAX!><!>
 
 val aliased: Alias = TODO()
 
 fun catchParameter() {
-    try {} catch (e: context(Unresolved)<!SYNTAX!><!>) {}
+    try {} catch (e: context(<!UNRESOLVED_REFERENCE!>Unresolved<!>)<!SYNTAX!><!>) {}
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, data, functionDeclaration, integerLiteral, interfaceDeclaration, localProperty,

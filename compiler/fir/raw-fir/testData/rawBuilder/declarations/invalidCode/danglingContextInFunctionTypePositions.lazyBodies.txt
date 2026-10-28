@@ -16,16 +16,16 @@ FILE: danglingContextInFunctionTypePositions.kt
     }
     public? final? val annotated: @Anno() <ERROR TYPE REF: Incomplete code>
         public? get(): @Anno() <ERROR TYPE REF: Incomplete code>
-    public? final? val annotatedWithType: @Anno() String
-        public? get(): @Anno() String
+    public? final? val annotatedWithType: @Anno() <ERROR TYPE REF: Incomplete code>
+        public? get(): @Anno() <ERROR TYPE REF: Incomplete code>
     public? final? val lambda: <implicit> = LAZY_EXPRESSION
         public? get(): <implicit>
     public? final? val anonymousFunction: <implicit> = LAZY_EXPRESSION
         public? get(): <implicit>
     public? final? fun withVararg(vararg p: R|kotlin/Array<out ERROR CLASS: Incomplete code>|): R|kotlin/Unit| { LAZY_BLOCK }
-    public? final? fun withVarargType(vararg p: String): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? fun withVarargType(vararg p: R|kotlin/Array<out ERROR CLASS: Incomplete code>|): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? fun withAnnotatedVararg(vararg p: R|kotlin/Array<out ERROR CLASS: Incomplete code>|): R|kotlin/Unit| { LAZY_BLOCK }
-    public? final? fun withAnnotatedVarargType(vararg p: @Anno() String): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? fun withAnnotatedVarargType(vararg p: R|kotlin/Array<out ERROR CLASS: Incomplete code>|): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? fun withVarargReceiver(vararg p: R|kotlin/Array<out ERROR CLASS: Incomplete code>|): R|kotlin/Unit| { LAZY_BLOCK }
     public final? data class Data : R|kotlin/Any| {
         public? [ContainingClassKey=Data] constructor([CorrespondingProperty=/Data.p] p: <ERROR TYPE REF: Incomplete code>): R|Data| {
@@ -78,14 +78,14 @@ FILE: danglingContextInFunctionTypePositions.kt
 
     }
     public final? interface TypeAfterList : R|kotlin/Any| {
-        public? final? val type: @Anno() String
-            public? [ContainingClassKey=TypeAfterList] get(): @Anno() String
+        public? final? val type: @Anno() <ERROR TYPE REF: Incomplete code>
+            public? [ContainingClassKey=TypeAfterList] get(): @Anno() <ERROR TYPE REF: Incomplete code>
 
-        public? final? val unresolvedType: @Anno() Unresolved
-            public? [ContainingClassKey=TypeAfterList] get(): @Anno() Unresolved
+        public? final? val unresolvedType: @Anno() <ERROR TYPE REF: Incomplete code>
+            public? [ContainingClassKey=TypeAfterList] get(): @Anno() <ERROR TYPE REF: Incomplete code>
 
-        public? final? val nullableType: @Anno() String?
-            public? [ContainingClassKey=TypeAfterList] get(): @Anno() String?
+        public? final? val nullableType: @Anno() <ERROR TYPE REF: Incomplete code>
+            public? [ContainingClassKey=TypeAfterList] get(): @Anno() <ERROR TYPE REF: Incomplete code>
 
     }
     public final? interface Parenthesized : R|kotlin/Any| {

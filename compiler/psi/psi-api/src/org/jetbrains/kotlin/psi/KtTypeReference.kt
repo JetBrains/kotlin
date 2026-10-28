@@ -51,6 +51,39 @@ class KtTypeReference : KtModifierListOwnerStub<KotlinPlaceHolderStub<KtTypeRefe
     val typeElement: KtTypeElement?
         get() = KtStubbedPsiUtil.getStubOrPsiChild(this, KtTokenSets.TYPE_ELEMENT_TYPES, KtTypeElement.ARRAY_FACTORY)
 
+    /**
+     * The context parameter list of an incomplete function type, or `null` if there is none.
+     *
+     * In valid code, the context parameter list belongs to the [KtFunctionType] (see [KtFunctionType.getContextParameterList]). When no
+     * function type follows the list, the parser leaves the list directly under the type reference, and the [typeElement] (if any) is the
+     * type after the list.
+     *
+     * ### Example:
+     *
+     * ```kotlin
+     * val x: context(Int) String
+     * //     ^__________^
+     * ```
+     */
+    val danglingContextParameterList: KtContextParameterList?
+        get() = getStubOrPsiChild(KtNodeTypes.CONTEXT_PARAMETER_LIST, KtContextParameterList::class.java)
+
+    /**
+     * The receiver of an incomplete function type, or `null` if there is none.
+     *
+     * In valid code, the receiver belongs to the [KtFunctionType] (see [KtFunctionType.getReceiver]). When no parameter list follows the
+     * dot after the receiver type, the parser leaves the receiver directly under the type reference.
+     *
+     * ### Example:
+     *
+     * ```kotlin
+     * val x: context(Int) (String).
+     * //                  ^______^
+     * ```
+     */
+    val danglingFunctionTypeReceiver: KtFunctionTypeReceiver?
+        get() = getStubOrPsiChild(KtNodeTypes.FUNCTION_TYPE_RECEIVER, KtFunctionTypeReceiver::class.java)
+
     override fun getAnnotations(): List<KtAnnotation> {
         return modifierList?.annotations.orEmpty()
     }
