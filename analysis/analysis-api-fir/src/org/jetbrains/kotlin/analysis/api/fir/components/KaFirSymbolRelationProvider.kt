@@ -187,6 +187,12 @@ internal class KaFirSymbolRelationProvider(
         }
 
         if (symbol.isTopLevel) {
+            // PSI fast path without building FIR
+            val containingKtFile = (symbol.realPsi as? KtDeclaration)?.containingKtFile
+            if (containingKtFile != null && !containingKtFile.isScript()) {
+                return false
+            }
+
             val containingFile = (symbol.firSymbol.fir as? FirElementWithResolveState)?.getContainingFile()
 
             @OptIn(DirectDeclarationsAccess::class)
