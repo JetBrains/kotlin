@@ -5,17 +5,13 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassLookupTag
-import org.jetbrains.kotlin.fir.declarations.utils.SuspiciousValueClassCheck
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
-import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
 import org.jetbrains.kotlin.fir.declarations.utils.isValue
 import org.jetbrains.kotlin.fir.declarations.utils.modality
-import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
@@ -23,38 +19,35 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-@OptIn(ValueClassBackendAgnosticApi::class)
 internal fun ConeKotlinType.unsubstitutedUnderlyingTypeForInlineClassInJvm(session: FirSession): ConeKotlinType? {
     val symbol = this.fullyExpandedType(session).toRegularClassSymbol(session) ?: return null
     return symbol.inlineClassRepresentationInJvm()?.underlyingType
 }
 
-@OptIn(SuspiciousValueClassCheck::class)
 fun computeValueClassRepresentation(klass: FirRegularClass, session: FirSession): ValueClassRepresentation<ConeRigidType>? {
-    val areFullValueClassesSupported = session.languageVersionSettings.supportsFeature(LanguageFeature.FullValueClasses)
-    val jvmInlineAnnotationClassId = session.annotationPlatformSupport.jvmInlineAnnotationClassId
-    if (
-        areFullValueClassesSupported &&
-        (jvmInlineAnnotationClassId == null || !klass.hasAnnotation(jvmInlineAnnotationClassId, session)) &&
-        klass.isValue && !klass.isInline
-    ) {
-        val fields = if (klass.modality == Modality.ABSTRACT || klass.modality == Modality.SEALED) {
-            null
-        } else {
+    return when {
+        !klass.isValue -> null
+        klass.isInline -> {
             klass.getValueClassUnderlyingParameters(session)
-                ?.map { it.name to it.symbol.resolvedReturnType.upperBoundIfFlexible() }
-                ?: emptyList()
+                ?.takeIf { it.isNotEmpty() }
+                ?.singleOrNull()
+                ?.let { InlineClassRepresentation(it.name, it.symbol.resolvedReturnType.upperBoundIfFlexible()) }
         }
-        return FullValueClassRepresentation(fields)
+        else -> {
+            val fields = if (klass.modality == Modality.ABSTRACT || klass.modality == Modality.SEALED) {
+                null
+            } else {
+                klass.getValueClassUnderlyingParameters(session)
+                    ?.map { it.name to it.symbol.resolvedReturnType.upperBoundIfFlexible() }
+                    ?: emptyList()
+            }
+            FullValueClassRepresentation(fields)
+        }
     }
-    return klass.getValueClassUnderlyingParameters(session)
-        ?.takeIf { it.isNotEmpty() }
-        ?.singleOrNull()
-        ?.let { InlineClassRepresentation(it.name, it.symbol.resolvedReturnType.upperBoundIfFlexible()) }
 }
 
 private fun FirRegularClass.getValueClassUnderlyingParameters(session: FirSession): List<FirValueParameter>? {
-    if (!isInlineOrValue) return null
+    if (!isValue) return null
     return primaryConstructorIfAny(session)?.fir?.valueParameters
 }
 

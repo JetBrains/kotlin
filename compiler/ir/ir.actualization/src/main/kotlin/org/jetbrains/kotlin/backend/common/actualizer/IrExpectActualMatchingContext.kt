@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.isJavaValueClass
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
@@ -131,7 +130,7 @@ internal abstract class IrExpectActualMatchingContext(
         get() = asIr().isCompanion
     override val RegularClassSymbolMarker.isInner: Boolean
         get() = asIr().isInner
-    override val RegularClassSymbolMarker.isInlineOrValue: Boolean
+    override val RegularClassSymbolMarker.isValue: Boolean
         get() = asIr().let { it.isValue || it.isJavaValueClass }
     override val RegularClassSymbolMarker.isFun: Boolean
         get() = asIr().isFun

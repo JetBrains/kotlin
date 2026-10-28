@@ -63,7 +63,7 @@ FILE: incompatibleModifiers.kt
         protected final fun copy(i: R|kotlin/Int| = this@R|/I|.R|/I.i|): R|I|
 
     }
-    public final data inline class J : R|kotlin/Any| {
+    public final data inline value class J : R|kotlin/Any| {
         public constructor(i: R|kotlin/Int|): R|J| {
             super<R|kotlin/Any|>()
         }

@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameterCopy
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
-import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
+import org.jetbrains.kotlin.fir.declarations.utils.isValue
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.plugin.tryGeneratingNoArgDelegatingConstructorCall
 import org.jetbrains.kotlin.fir.resolve.defaultType
@@ -148,7 +148,7 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
             // Java counterpart to model. Generating anyway produced a constructor whose body only calls the
             // superclass one, and the JVM backend failed on its instance initializer with "Unexpected IR element
             // found during code generation" (KT-88705). Reported as `ANNOTATION_IS_NOT_SUPPORTED_ON_CLASS`.
-            targetClassSymbol.isInlineOrValue -> return
+            targetClassSymbol.isValue -> return
 
             // A Kotlin inner or local class gets nothing: see `supportsGeneratedConstructor` for why the inner one
             // cannot be generated without hitting the KT-88659 crash, and why the local one only ever contradicted

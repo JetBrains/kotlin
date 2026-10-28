@@ -135,7 +135,7 @@ fun FirClassSymbol<*>.isSupertypeOf(other: FirClassSymbol<*>, session: FirSessio
 
 private fun ConeKotlinType.isKotlinValueClass(session: FirSession): Boolean {
     // Value classes have `inline` or `value` modifier in FIR
-    return toRegularClassSymbol(session)?.isInlineOrValue == true
+    return toRegularClassSymbol(session)?.isValue == true
 }
 
 /**
@@ -196,15 +196,14 @@ private fun ConeKotlinType.getValueClassTypeRecursionType(
 
     val asRegularClass = plainRegularClass ?: leastUpperBound(session).toRegularClassSymbol(session) ?: return null
     val primaryConstructor = asRegularClass.primaryConstructorIfAny(session) ?: return null
-    val valueClassRepresentation = asRegularClass.valueClassRepresentation
-    val isOrWillBeFullValueClass = valueClassRepresentation is FullValueClassRepresentation ||
-            valueClassRepresentation == null && asRegularClass.willBecomeKotlinValueClass(session)
+    val isOrWillBeFullValueClass = asRegularClass.isFullValueClass ||
+            !asRegularClass.isValue && asRegularClass.willBecomeKotlinValueClass(session)
     // A nullable full value class is a reference, so recursion through it is allowed (e.g. `value class Nat(val previous: Nat?)`).
     // An inline class is represented by its underlying type, so recursion through it is forbidden even if it is nullable,
     // though there is no need to forbid it for a nullable one either (e.g. `inline value class Nat(val previous: Nat?)`), see KT-86498.
     val isSubjectForCheck = when {
-        valueClassRepresentation is InlineClassRepresentation -> true
-        valueClassRepresentation is FullValueClassRepresentation && valueClassRepresentation.belongsToAbstractOrSealedValueClass -> false
+        asRegularClass.isInlineClass -> true
+        asRegularClass.isFullValueClass && (asRegularClass.isAbstract || asRegularClass.isSealed) -> false
         else -> isOrWillBeFullValueClass && !isNullableType()
     }
     if (!isSubjectForCheck) return null
@@ -212,7 +211,7 @@ private fun ConeKotlinType.getValueClassTypeRecursionType(
     if (!visited.add(this)) return expectedRecursionType
     // A nullable inline class is represented by its underlying type made nullable, e.g. `I?` of `inline value class I(val a: A)` as `A?`,
     // which is not recursive if `A` is a full value class.
-    val isNullableInlineClass = valueClassRepresentation is InlineClassRepresentation && isNullableType()
+    val isNullableInlineClass = asRegularClass.isInlineClass && isNullableType()
     val hasRecursionInParameters = primaryConstructor.valueParameterSymbols.any {
         val type = it.resolvedReturnType
         val representedType = if (isNullableInlineClass) type.withNullability(nullable = true, session.typeContext) else type

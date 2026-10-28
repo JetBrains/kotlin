@@ -147,9 +147,8 @@ internal fun deserializeClassToSymbol(
         isInner = classOrObject.hasModifier(KtTokens.INNER_KEYWORD)
         isCompanion = (classOrObject as? KtObjectDeclaration)?.isCompanion() == true
         isData = classOrObject.hasModifier(KtTokens.DATA_KEYWORD)
-        // `isInline` is skipped, as in `org.jetbrains.kotlin.fir.deserialization.ClassDeserializationKt.deserializeClassToSymbol`:
-        // the compiler's deserialization marks every value class as `value` only.
         isValue = classOrObject.hasModifier(KtTokens.VALUE_KEYWORD)
+        isInline = classOrObject.hasModifier(KtTokens.INLINE_KEYWORD)
         isFun = classOrObject.hasModifier(KtTokens.FUN_KEYWORD)
         isExternal = classOrObject.hasModifier(KtTokens.EXTERNAL_KEYWORD)
     }
@@ -300,7 +299,7 @@ internal fun deserializeClassToSymbol(
             }
         }
 
-        if (isInlineOrValue) {
+        if (isValue) {
             valueClassRepresentation = if (classOrObject is KtObjectDeclaration) {
                 // A value object declares no underlying properties, as it has no primary constructor parameters to declare them as
                 FullValueClassRepresentation(underlyingPropertyNamesToTypes = emptyList())

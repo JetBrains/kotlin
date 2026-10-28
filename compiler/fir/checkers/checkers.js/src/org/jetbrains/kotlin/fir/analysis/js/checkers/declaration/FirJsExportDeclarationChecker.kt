@@ -196,7 +196,7 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
                     ClassKind.ANNOTATION_CLASS if LanguageFeature.JsAllowExportingAnnotationClasses.isDisabled() -> "annotation class"
                     ClassKind.CLASS -> when {
                         LanguageFeature.AllowInterfaceNestedClassesInJsExport.isDisabled() && context.isInsideInterface -> "nested class inside exported interface"
-                        LanguageFeature.JsAllowExportingValueClasses.isDisabled() && declaration.isInlineOrValue -> "value class"
+                        LanguageFeature.JsAllowExportingValueClasses.isDisabled() && declaration.isValue -> "value class"
                         else -> null
                     }
 

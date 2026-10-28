@@ -89,7 +89,7 @@ class FirKotlinScopeProvider(
                 klass !is FirRegularClass || klass.isExpect || klass.origin == FirDeclarationOrigin.Library -> null
                 klass.isData -> FirDeclarationOrigin.Synthetic.DataClassMember
                 klass.isFullValueClass -> FirDeclarationOrigin.Synthetic.FullValueClassMember.takeUnless { klass.isAbstract || klass.isSealed }
-                klass.isInlineOrValue -> FirDeclarationOrigin.Synthetic.InlineClassMember
+                klass.isInlineClass -> FirDeclarationOrigin.Synthetic.InlineClassMember
                 klass.isRichError -> FirDeclarationOrigin.Synthetic.RichErrorClassMember
                 else -> null
             }

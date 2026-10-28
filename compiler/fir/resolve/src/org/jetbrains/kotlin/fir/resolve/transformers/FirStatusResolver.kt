@@ -292,6 +292,14 @@ class FirStatusResolver(
         )
         val effectiveVisibility = parentEffectiveVisibility.lowerBound(selfEffectiveVisibility, session.typeContext)
 
+        if (declaration is FirClass && status.isValue) {
+            val jvmInlineAnnotation = session.annotationPlatformSupport.jvmInlineAnnotationClassId
+            val isAnnotatedWithJvmInline = jvmInlineAnnotation != null && declaration.hasAnnotation(jvmInlineAnnotation, session)
+            if (isAnnotatedWithJvmInline || LanguageFeature.FullValueClasses.isDisabled()) {
+                status.isInline = true
+            }
+        }
+
         if (!isLocal) {
             val annotations = (containingProperty ?: declaration).annotations
             val parentPublishedEffectiveVisibility = when {

@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitAnyTypeRef
 import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.lexer.KtTokens.INLINE_KEYWORD
 import org.jetbrains.kotlin.lexer.KtTokens.VALUE_KEYWORD
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -72,8 +73,8 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirRegularClass) {
-        val isWillBecomeValueClass = !declaration.symbol.isInlineOrValue && declaration.symbol.willBecomeKotlinValueClass(context.session)
-        if (!declaration.symbol.isInlineOrValue && !isWillBecomeValueClass) {
+        val isWillBecomeValueClass = !declaration.symbol.isValue && declaration.symbol.willBecomeKotlinValueClass(context.session)
+        if (!declaration.symbol.isValue && !isWillBecomeValueClass) {
             return
         }
         val supportsFullValueClasses = LanguageFeature.FullValueClasses.isEnabled()
@@ -328,8 +329,9 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                 val jvmInlineAnnotation = context.session.annotationPlatformSupport.jvmInlineAnnotationClassId
                 val hasJvmInlineAnnotation = jvmInlineAnnotation != null && declaration.hasAnnotation(jvmInlineAnnotation, context.session)
                 val valueModifier = declaration.getModifier(VALUE_KEYWORD)
+                val hasInlineModifier = declaration.hasModifier(INLINE_KEYWORD)
                 if (
-                    primaryConstructorParametersByName.size > 1 && !hasJvmInlineAnnotation && valueModifier != null && !declaration.isInline
+                    primaryConstructorParametersByName.size > 1 && !hasJvmInlineAnnotation && valueModifier != null && !hasInlineModifier
                 ) {
                     reporter.reportOn(
                         valueModifier.source, FirErrors.UNSUPPORTED_FEATURE, LanguageFeature.FullValueClasses to context.languageVersionSettings
