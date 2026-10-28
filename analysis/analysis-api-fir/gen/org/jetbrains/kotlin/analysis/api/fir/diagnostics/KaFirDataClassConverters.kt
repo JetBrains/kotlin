@@ -4216,7 +4216,7 @@ private fun KaDiagnosticConverterBuilder.addConversions89() {
     }
     add(FirErrors.ILLEGAL_COMPANION_BLOCK) { firDiagnostic ->
         IllegalCompanionBlockImpl(
-            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firDiagnostic.a,
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )

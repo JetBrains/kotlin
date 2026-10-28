@@ -171,23 +171,24 @@ fun box(): String {
         var memberVar: String = ""
         val delegated by DelegateExposeContainer()
 
-        companion {
-            fun blockFun() {}
-            val blockVal = ""
-            var blockVar = 0
-            val blockDelegated by DelegateExposeContainer()
-        }
+// Companion blocks in local classes are prohibitted (KT-90617)
+//        companion {
+//            fun blockFun() {}
+//            val blockVal = ""
+//            var blockVar = 0
+//            val blockDelegated by DelegateExposeContainer()
+//        }
     }
     assertEquals(LocalClass::class, LocalClass::memberFun.container)
     assertEquals(LocalClass::class, LocalClass::memberVal.container)
     assertEquals(LocalClass::class, LocalClass::memberVar.container)
     assertEquals(LocalClass::class, LocalClass::delegated.container)
     assertEquals(LocalClass::class, LocalClass().delegated)
-    assertEquals(LocalClass::class, LocalClass::blockFun.container)
-    assertEquals(LocalClass::class, LocalClass::blockVal.container)
-    assertEquals(LocalClass::class, LocalClass::blockVar.container)
-    assertEquals(LocalClass::class, LocalClass::blockDelegated.container)
-    assertEquals(LocalClass::class, LocalClass.blockDelegated)
+//    assertEquals(LocalClass::class, LocalClass::blockFun.container)
+//    assertEquals(LocalClass::class, LocalClass::blockVal.container)
+//    assertEquals(LocalClass::class, LocalClass::blockVar.container)
+//    assertEquals(LocalClass::class, LocalClass::blockDelegated.container)
+//    assertEquals(LocalClass::class, LocalClass.blockDelegated)
 
     return "OK"
 }

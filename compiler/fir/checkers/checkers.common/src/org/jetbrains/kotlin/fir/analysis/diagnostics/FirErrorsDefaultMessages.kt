@@ -4201,7 +4201,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             ILLEGAL_COMPANION_BLOCK,
             "Companion block inside {0} is prohibited.",
-            SYMBOL_KIND,
+            STRING,
         )
         map.put(
             COMPANION_BLOCK_NESTED,

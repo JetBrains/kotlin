@@ -35,17 +35,19 @@ object FirCompanionBlockChecker : FirClassChecker(MppCheckerKind.Common) {
             )
         }
 
-        if (declaration.classKind == ClassKind.ENUM_ENTRY) {
+        val errorKind = when {
+            declaration.classKind == ClassKind.ENUM_ENTRY -> "enum entry"
+            declaration is FirAnonymousObject -> "anonymous object"
+            declaration.classKind == ClassKind.OBJECT -> "object"
+            declaration.isLocal -> "local class"
+            else -> null
+        }
+
+        if (errorKind != null) {
             reporter.reportOn(
                 firstCompanionBlock.companionModifierSource(),
                 FirErrors.ILLEGAL_COMPANION_BLOCK,
-                context.containingDeclarations.last(),
-            )
-        } else if (declaration.classKind == ClassKind.OBJECT || declaration is FirAnonymousObject) {
-            reporter.reportOn(
-                firstCompanionBlock.companionModifierSource(),
-                FirErrors.ILLEGAL_COMPANION_BLOCK,
-                declaration.symbol,
+                errorKind,
             )
         }
 

@@ -71,10 +71,10 @@ class Outer15 : Base() { inner class Inner { companion { fun f() = <!UNRESOLVED_
 enum class E { A; inner class I { companion { fun f() = <!UNRESOLVED_REFERENCE!>name<!> } } }   // ERR, crash
 class Outer16 { fun o() = 1; inner class Mid { fun m() = 2; inner class Inner { companion { fun f() = <!UNRESOLVED_REFERENCE!>o<!>() + <!UNRESOLVED_REFERENCE!>m<!>() } } } }   // ERR, crash
 class Outer17 { inner class Mid { inner class Inner { companion { fun f() = <!INNER_CLASS_CONSTRUCTOR_NO_RECEIVER!>Mid<!>() } } } }   // ERR, crash
-class Outer18 { fun o() = 1; fun m() = object { inner class I { companion { fun f() = <!UNRESOLVED_REFERENCE!>o<!>() } } } }   // ERR, crash
+class Outer18 { fun o() = 1; fun m() = object { inner class I { <!ILLEGAL_COMPANION_BLOCK!>companion<!> { fun f() = <!UNRESOLVED_REFERENCE!>o<!>() } } } }   // ERR, crash
 
-class Outer19 { fun o() = 1; fun m() { class L { companion { fun f() = <!UNRESOLVED_REFERENCE!>o<!>() } } } }   // ERR, crash in lowering: No dispatch receiver parameter for FUN f [companion]
-fun g(): Int { val v = 1; class L { companion { fun f() = v } }; return L.f() }    // ERR, same lowering crash, also on JS and Wasm
+class Outer19 { fun o() = 1; fun m() { class L { <!ILLEGAL_COMPANION_BLOCK!>companion<!> { fun f() = <!UNRESOLVED_REFERENCE!>o<!>() } } } }   // ERR, crash in lowering: No dispatch receiver parameter for FUN f [companion]
+fun g(): Int { val v = 1; class L { <!ILLEGAL_COMPANION_BLOCK!>companion<!> { fun f() = v } }; return L.f() }    // ERR, same lowering crash, also on JS and Wasm
 
 // must keep compiling (OK)
 class Outer20<T> { inner class Inner {}; companion { val p: Outer20<String>.Inner? = null; fun f() = Outer20<String>().Inner() } }
