@@ -13,9 +13,13 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.net.InetSocketAddress
-import java.net.Socket
-import java.nio.charset.StandardCharsets
+import java.net.ProxySelector
+import java.net.URI
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpResponse
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNull
 
 /**
@@ -120,11 +124,8 @@ class DevServerWorkActionTest {
                 // another site tries to read the project sources after DNS rebinding
                 "evil.example" to 403,
                 "evil.example:$port" to 403,
-                // a request without a usable Host header is not from a browser the server works with
-                "" to 403,
-                MISSING_HOST_HEADER to 403,
             ).mapValues { (hostHeader, expectedStatus) ->
-                expectedStatus to httpGet(port, "/", hostHeader.takeIf { it != MISSING_HOST_HEADER })
+                expectedStatus to httpGet(port, "/", hostHeader)
             }
         }
 
@@ -134,6 +135,13 @@ class DevServerWorkActionTest {
         )
 
         assertEquals("403 Forbidden: Host 'evil.example' is not allowed", responses.getValue("evil.example").second.body)
+    }
+
+    @Test
+    fun `refuses requests without a usable Host header`() {
+        // such requests can't be sent with HttpClient, which always sets the header to the authority of the request URI
+        assertFalse(DevServerWorkAction.isHostAllowed(null, SERVER_HOST))
+        assertFalse(DevServerWorkAction.isHostAllowed("", SERVER_HOST))
     }
 
     @Test
@@ -179,10 +187,10 @@ class DevServerWorkActionTest {
     }
 
     private fun <T> DevServerProject.withDevServer(
-        host: String = "localhost",
+        host: String = SERVER_HOST,
         action: (port: Int) -> T,
     ): T {
-        val server = DevServerWorkAction.startServer(contentDir, rootDir, host, EPHEMERAL_PORT)
+        val server = DevServerWorkAction.startServer(contentDir, rootDir, host, 0)
         return try {
             action(server.address.port)
         } finally {
@@ -193,59 +201,36 @@ class DevServerWorkActionTest {
     private class DevServerResponse(val status: Int, val contentType: String?, val body: String)
 
     /**
-     * Sends a GET request for [rawPath] over a raw socket,
-     * so the `Host` header can be set explicitly or omitted by passing `null`,
-     * and `..` segments reach the server exactly as written.
+     * Sends a GET request for [rawPath] with [hostHeader] as the `Host` header.
+     *
+     * [HttpClient] forbids setting this header and always derives it from the authority of the request URI,
+     * so the server itself is used as an HTTP proxy:
+     * the request is sent to [port], while its URI only provides [hostHeader] and [rawPath].
+     *
+     * [HttpClient] doesn't normalize the request [URI], so `..` segments reach the server exactly as written.
+     * Don't use [URI.resolve] here, as it normalizes `..` segments.
      */
-    private fun httpGet(port: Int, rawPath: String, hostHeader: String? = "localhost:$port"): DevServerResponse {
-        val request = buildString {
-            append("GET ").append(rawPath).append(" HTTP/1.1\r\n")
-            if (hostHeader != null) append("Host: ").append(hostHeader).append("\r\n")
-            append("Connection: close\r\n\r\n")
-        }.toByteArray(StandardCharsets.US_ASCII)
+    private fun httpGet(port: Int, rawPath: String, hostHeader: String = "$SERVER_HOST:$port"): DevServerResponse {
+        val client = HttpClient.newBuilder()
+            .version(HttpClient.Version.HTTP_1_1)
+            .proxy(ProxySelector.of(InetSocketAddress(SERVER_HOST, port)))
+            .build()
 
-        val response = Socket().use { socket ->
-            socket.connect(InetSocketAddress("localhost", port), SOCKET_TIMEOUT_MILLIS)
-            socket.soTimeout = SOCKET_TIMEOUT_MILLIS
-            socket.getOutputStream().apply {
-                write(request)
-                flush()
-            }
-            socket.getInputStream().readBytes()
-        }
+        val request = HttpRequest.newBuilder(URI("http://$hostHeader$rawPath")).GET().build()
+        val response = client.send(request, HttpResponse.BodyHandlers.ofString())
 
-        val headersEnd = response.indexOfHeadersEnd()
-        val headers = String(response, 0, headersEnd, StandardCharsets.ISO_8859_1).split("\r\n")
         return DevServerResponse(
-            status = headers.first().substringAfter(' ').substringBefore(' ').toInt(),
-            contentType = headers.drop(1)
-                .firstOrNull { it.startsWith("Content-Type:", ignoreCase = true) }
-                ?.substringAfter(':')
-                ?.trim(),
-            body = String(response, headersEnd + 4, response.size - headersEnd - 4, StandardCharsets.UTF_8),
+            status = response.statusCode(),
+            contentType = response.headers().firstValue("Content-Type").orElse(null),
+            body = response.body(),
         )
-    }
-
-    private fun ByteArray.indexOfHeadersEnd(): Int {
-        val headersEnd = "\r\n\r\n".toByteArray(StandardCharsets.US_ASCII)
-        for (index in 0..size - headersEnd.size) {
-            if (headersEnd.indices.all { this[index + it] == headersEnd[it] }) return index
-        }
-        error("Invalid HTTP response: ${String(this, StandardCharsets.ISO_8859_1)}")
     }
 
     private companion object {
         const val INDEX_HTML = "<html><body>Hello, world</body></html>"
         const val MAIN_SOURCE = "fun main() {\n    println(\"Hello, world\")\n}"
 
-        /**
-         * Any free port is bound, which avoids races with other tests.
-         */
-        const val EPHEMERAL_PORT = 0
-
-        const val SOCKET_TIMEOUT_MILLIS = 10_000
-
-        const val MISSING_HOST_HEADER = "<missing>"
+        const val SERVER_HOST = "localhost"
 
         const val NON_LOOPBACK_WARNING = "Development server is bound to non-loopback address"
     }
