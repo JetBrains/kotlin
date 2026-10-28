@@ -250,6 +250,7 @@ class BinaryJavaAnnotation private constructor(
 
     override val classId: ClassId
         get() = (classifierResolutionResult.classifier as? JavaClass)?.classId
+            ?: classifierResolutionResult.classId
             ?: ClassId.topLevel(FqName(classifierResolutionResult.qualifiedName))
 
     override fun resolve() = classifierResolutionResult.classifier as? JavaClass
