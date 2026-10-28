@@ -324,10 +324,15 @@ internal val PsiElement.parentsWithSelfCodeFragmentAware: Sequence<PsiElement>
 internal val PsiElement.parentsCodeFragmentAware: Sequence<PsiElement>
     get() = parentsWithSelfCodeFragmentAware.drop(1)
 
+/**
+ * The file which a dangling file stands in for: the original of a file copy, otherwise the file of the [KtFile.analysisContext],
+ * or `null` if there is neither.
+ */
+internal val PsiFile.danglingFileContextFile: PsiFile?
+    get() = copyOrigin ?: (this as? KtFile)?.analysisContext?.containingFile
+
 internal fun <T : PsiElement> T.unwrapCopy(containingFile: PsiFile = this.containingFile): T? {
-    val originalFile = containingFile.copyOrigin
-        ?: (containingFile as? KtFile)?.analysisContext?.containingFile
-        ?: return null
+    val originalFile = containingFile.danglingFileContextFile ?: return null
 
     return try {
         PsiTreeUtil.findSameElementInCopy(this, originalFile)
