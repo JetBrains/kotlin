@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfigurati
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.konan.operations.NativeKlibCompilationOperation
+import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.currentKotlinNativeStdlibKlibLocation
 import java.nio.file.Path
@@ -59,4 +60,8 @@ fun BaseCompilationTest.nativeProject(
     NativeProject(kotlinToolchain, strategyConfig, workingDirectory).use { project ->
         project.action()
     }
+}
+
+fun BaseCompilationTest.nativeProject(executionStrategy: CompilerExecutionStrategyConfiguration, action: NativeProject.() -> Unit) {
+    nativeProject(executionStrategy.first, executionStrategy.second, action)
 }
