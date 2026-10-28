@@ -42,9 +42,8 @@ import org.jetbrains.kotlin.analysis.api.types.withNullability as withNullabilit
  * Routes the legacy [KaTypeProvider] surface through the new public `context(session: KaSession)` type endpoints, which in turn reach the
  * [org.jetbrains.kotlin.analysis.api.internals.KaInternalsTypeProvider] proxy.
  *
- * The deprecated/hidden members ([withNullability] with [KaTypeNullability][org.jetbrains.kotlin.analysis.api.types.KaTypeNullability],
- * [dispatchReceiverType]) and [collectImplicitReceiverTypes] (KT-75549) are intentionally not migrated to endpoints; they keep their
- * original bodies here.
+ * The deprecated [dispatchReceiverType] and [collectImplicitReceiverTypes] (KT-75549) are intentionally not migrated to endpoints; they
+ * keep their original bodies here.
  */
 internal class KaTypeProviderBridge(
     override val analysisSessionProvider: () -> KaFirSession,
