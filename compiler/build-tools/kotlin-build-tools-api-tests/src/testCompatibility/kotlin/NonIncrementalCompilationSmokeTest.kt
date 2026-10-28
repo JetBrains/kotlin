@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.buildtools.tests
 import org.jetbrains.kotlin.buildtools.api.RemovedCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.JsCompilerArguments.Companion.X_EXPORT_KDOC
+import org.jetbrains.kotlin.buildtools.api.arguments.JsCompilerLinkingArguments.Companion.X_DTS_USE_UNKNOWN_INSTEAD_ANY
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsSubstringExactlyTimes
@@ -169,6 +170,33 @@ class NonIncrementalCompilationSmokeTest : BaseCompilationTest() {
             val dts = appModule.outputDirectory.resolve("out/js-ic-basic-app.d.ts").readText()
             assertTrue("function richDts(value: string): string" in dts)
             assertTrue("* A declaration generated from KLIB metadata." in dts)
+        }
+    }
+
+    @DisplayName("Rich d.ts generation exports Any and dynamic as unknown when EXPORT_UNTYPED_AS_UNKNOWN is set")
+    @BtaV2StrategyAgnosticCompilationTest
+    @TestMetadata("js-ic-basic-app")
+    fun richDtsExportUntypedAsUnknown(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        if (strategyConfig.first.getCompilerVersion() < "2.5.0") {
+            return
+        }
+
+        jsProject(strategyConfig, useRichDtsGenerator = true) {
+            val libModule = module("js-ic-basic-lib")
+            val appModule = module("js-ic-basic-app", listOf(libModule))
+            libModule.compile()
+            appModule.compile()
+            appModule.link(
+                destinationDirectory = appModule.outputDirectory.resolve("out"),
+                compilationConfigAction = {
+                    @OptIn(ExperimentalCompilerArgument::class)
+                    it.compilerArguments[X_DTS_USE_UNKNOWN_INSTEAD_ANY] = true
+                }
+            )
+
+            val dts = appModule.outputDirectory.resolve("out/js-ic-basic-app.d.ts").readText()
+            assertTrue("function takeAny(x: NonNullable<unknown>): NonNullable<unknown>" in dts, dts)
+            assertTrue("function takeDynamic(x: unknown): unknown" in dts, dts)
         }
     }
 }

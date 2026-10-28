@@ -150,7 +150,7 @@ public interface JsDtsGenerationOperation : BuildOperation<CompilationResult> {
 
         /**
          * Whether `unknown` (a built-in TypeScript type) should be used instead of `any`
-         * Must match the JS linking `-Xts-export-untyped-as-unknown`.
+         * Must match the JS linking `-Xdts-use-unknown-instead-any`.
          */
         @JvmField
         public val EXPORT_UNTYPED_AS_UNKNOWN: Option<Boolean> =
