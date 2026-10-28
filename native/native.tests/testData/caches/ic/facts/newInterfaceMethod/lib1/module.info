@@ -1,0 +1,9 @@
+STEP 0:
+    modifications:
+        U : I.kt -> I.kt
+
+// I.kt: new method b() with a default implementation
+STEP 1:
+    modifications:
+        U : I.1.kt -> I.kt
+    facts changed: I.kt

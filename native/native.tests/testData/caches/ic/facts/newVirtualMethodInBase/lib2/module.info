@@ -1,0 +1,11 @@
+STEP 0:
+    dependencies: lib1
+    modifications:
+        U : Derived.kt -> Derived.kt
+        U : Caller.kt -> Caller.kt
+
+// The virtual call in Caller.kt goes through the trampoline of Base.f, the vtable of Derived needs the new slot
+STEP 1:
+    dependencies: lib1
+    facts uses changed facts: Derived.kt
+    facts up-to-date: Caller.kt

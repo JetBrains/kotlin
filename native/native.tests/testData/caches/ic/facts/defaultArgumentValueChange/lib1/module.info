@@ -1,0 +1,18 @@
+STEP 0:
+    modifications:
+        U : F.kt -> F.kt
+        U : P.kt -> P.kt
+
+// F.kt: default value of a function parameter changed
+STEP 1:
+    modifications:
+        U : F.1.kt -> F.kt
+    facts changed: F.kt
+    facts up-to-date: P.kt
+
+// P.kt: default value of a constructor parameter changed
+STEP 2:
+    modifications:
+        U : P.2.kt -> P.kt
+    facts changed: P.kt
+    facts up-to-date: F.kt

@@ -1,0 +1,41 @@
+STEP 0:
+    modifications:
+        U : F.kt -> F.kt
+        U : K.kt -> K.kt
+        U : Extra.kt -> Extra.kt
+
+// F.kt: unused() removed
+STEP 1:
+    modifications:
+        U : F.1.kt -> F.kt
+    facts changed: F.kt
+    facts up-to-date: K.kt, Extra.kt
+
+// K.kt: open method n() removed
+STEP 2:
+    modifications:
+        U : K.2.kt -> K.kt
+    facts changed: K.kt
+    facts up-to-date: F.kt, Extra.kt
+
+// Extra.kt removed
+STEP 3:
+    modifications:
+        D : Extra.kt
+    facts up-to-date: F.kt, K.kt
+    facts generation: generated
+
+// F.kt: used() renamed to usedRenamed()
+STEP 4:
+    modifications:
+        U : F.4.kt -> F.kt
+    facts changed: F.kt
+    facts up-to-date: K.kt
+
+// K.kt renamed to K2.kt
+STEP 5:
+    modifications:
+        U : K.2.kt -> K2.kt
+        D : K.kt
+    facts added: K2.kt
+    facts up-to-date: F.kt

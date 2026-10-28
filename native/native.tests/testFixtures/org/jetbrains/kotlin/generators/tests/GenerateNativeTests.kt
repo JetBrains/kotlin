@@ -58,6 +58,8 @@ fun main(args: Array<String>) {
         }
 
         // Native incremental compilation tests.
+        val nativeIncrementalCompilationTestDirs =
+            listOf("basic", "classKind", "constants", "dependencies", "facts", "generics", "inline", "members", "ungrouped")
         testGroup(testsRoot, "native/native.tests/testData/caches/ic") {
             testClass<AbstractNativeIncrementalCompilationTest>(
                 suiteTestClassName = "NativeIncrementalCompilationTestGenerated",
@@ -66,8 +68,19 @@ fun main(args: Array<String>) {
                     forceDebugMode()
                 )
             ) {
-                val nestedDirs = listOf("basic", "classKind", "constants", "dependencies", "generics", "inline", "members", "ungrouped")
-                nestedDirs.forEach {
+                nativeIncrementalCompilationTestDirs.forEach {
+                    model(it, pattern = "^([^_](.+))$", recursive = false)
+                }
+            }
+            // The same tests with the facts-based per-file caches.
+            testClass<AbstractNativeFactsIncrementalCompilationTest>(
+                suiteTestClassName = "NativeFactsIncrementalCompilationTestGenerated",
+                annotations = listOf(
+                    forceHostTarget(),
+                    forceDebugMode()
+                )
+            ) {
+                nativeIncrementalCompilationTestDirs.forEach {
                     model(it, pattern = "^([^_](.+))$", recursive = false)
                 }
             }

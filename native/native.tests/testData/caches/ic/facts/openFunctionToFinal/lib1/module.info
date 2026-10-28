@@ -1,0 +1,15 @@
+STEP 0:
+    modifications:
+        U : C.kt -> C.kt
+
+// C.kt: open fun f() -> final fun f()
+STEP 1:
+    modifications:
+        U : C.1.kt -> C.kt
+    facts changed: C.kt
+
+// C.kt: final fun f() -> open fun f()
+STEP 2:
+    modifications:
+        U : C.kt -> C.kt
+    facts changed: C.kt

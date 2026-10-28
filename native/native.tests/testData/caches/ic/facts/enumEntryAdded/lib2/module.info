@@ -1,0 +1,12 @@
+STEP 0:
+    dependencies: lib1
+    modifications:
+        U : Blue.kt -> Blue.kt
+        U : Name.kt -> Name.kt
+        U : Ordinal.kt -> Ordinal.kt
+
+// Blue.kt bakes the getterId of BLUE, Name.kt the ordinals; Ordinal.kt reads the ordinal at runtime
+STEP 1..2:
+    dependencies: lib1
+    facts uses changed facts: Blue.kt, Name.kt
+    facts up-to-date: Ordinal.kt

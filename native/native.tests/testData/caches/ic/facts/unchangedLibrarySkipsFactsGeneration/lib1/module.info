@@ -1,0 +1,14 @@
+STEP 0:
+    modifications:
+        U : Base.kt -> Base.kt
+
+STEP 1:
+    facts up-to-date: Base.kt
+    facts generation: skipped
+
+// Base.kt: a new field changes the layout of Base
+STEP 2:
+    modifications:
+        U : Base.2.kt -> Base.kt
+    facts changed: Base.kt
+    facts generation: generated

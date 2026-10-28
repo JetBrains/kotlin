@@ -1,0 +1,15 @@
+STEP 0:
+    modifications:
+        U : Color.kt -> Color.kt
+
+// Color.kt: new last entry AMBER. The ordinals stay the same, the getterIds (name order) all shift
+STEP 1:
+    modifications:
+        U : Color.1.kt -> Color.kt
+    facts changed: Color.kt
+
+// Color.kt: AMBER removed
+STEP 2:
+    modifications:
+        U : Color.kt -> Color.kt
+    facts changed: Color.kt

@@ -1,0 +1,10 @@
+STEP 0:
+    dependencies: lib1
+    modifications:
+        U : CallF.kt -> CallF.kt
+        U : MakeP.kt -> MakeP.kt
+
+STEP 1..2:
+    dependencies: lib1
+    facts up-to-date: CallF.kt, MakeP.kt
+    facts generation: skipped

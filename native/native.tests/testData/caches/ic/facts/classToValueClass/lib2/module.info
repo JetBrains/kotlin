@@ -1,0 +1,10 @@
+STEP 0:
+    dependencies: lib1
+    modifications:
+        U : Make.kt -> Make.kt
+        U : Other.kt -> Other.kt
+
+STEP 1..2:
+    dependencies: lib1
+    facts uses changed facts: Make.kt
+    facts up-to-date: Other.kt

@@ -1,0 +1,5 @@
+// DISABLE_NATIVE: targetFamily=MINGW
+MODULES: lib1, lib2, main
+
+STEP 0..1:
+    libs: lib1, lib2, main

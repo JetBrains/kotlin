@@ -1,0 +1,11 @@
+STEP 0:
+    dependencies: lib1
+    modifications:
+        U : Derived.kt -> Derived.kt
+        U : Reader.kt -> Reader.kt
+
+// Reader.kt reads the fields through the getters
+STEP 1:
+    dependencies: lib1
+    facts uses changed facts: Derived.kt
+    facts up-to-date: Reader.kt

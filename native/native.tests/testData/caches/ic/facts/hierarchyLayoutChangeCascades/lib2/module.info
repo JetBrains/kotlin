@@ -1,0 +1,12 @@
+STEP 0:
+    dependencies: lib1
+    modifications:
+        U : Leaf.kt -> Leaf.kt
+        U : ShortLeaf.kt -> ShortLeaf.kt
+        U : Unrelated2.kt -> Unrelated2.kt
+
+STEP 1:
+    dependencies: lib1
+    facts uses changed facts: Leaf.kt, ShortLeaf.kt
+    facts up-to-date: Unrelated2.kt
+    facts generation: skipped

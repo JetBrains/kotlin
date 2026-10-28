@@ -1,0 +1,1 @@
+fun callUsed(): Int = usedRenamed()
