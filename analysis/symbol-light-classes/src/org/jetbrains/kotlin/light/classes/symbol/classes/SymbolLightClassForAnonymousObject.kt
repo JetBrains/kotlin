@@ -105,6 +105,7 @@ internal class SymbolLightClassForAnonymousObject : SymbolLightClassForClassLike
     override fun classKind(): KaClassKind = KaClassKind.ANONYMOUS_OBJECT
 
     override fun getContainingClass(): PsiClass? = null
+    override fun hasTypeParameters(): Boolean = false
     override fun getTypeParameters(): Array<PsiTypeParameter> = PsiTypeParameter.EMPTY_ARRAY
     override fun getTypeParameterList(): PsiTypeParameterList? = null
     override fun getQualifiedName(): String? = null
