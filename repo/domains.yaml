@@ -1,6 +1,10 @@
 $schema: domains.schema.json
 
 CompilerInfrastructure:
+  team: "Kotlin Frontend"
+  firstResponders:
+    - dmitriy.novozhilov@jetbrains.com
+    - kirill.rakhman@jetbrains.com
   include:
     - "core"
     - "build-common"
@@ -42,6 +46,11 @@ CompilerInfrastructure:
     - CoreLibs
 
 Frontend:
+  team: "Kotlin Frontend"
+  firstResponders:
+    - kirill.rakhman@jetbrains.com
+    - ilya.chernikov@jetbrains.com
+    - mikhail.glukhikh@jetbrains.com
   include:
     - "compiler/fir"
     - "compiler/frontend"
@@ -66,6 +75,11 @@ Frontend:
     - CompilerInfrastructure
 
 CommonBackend:
+  team: "Kotlin Common Backend"
+  firstResponders:
+    - dmitriy.dolovov@jetbrains.com
+    - ivan.kylchik@jetbrains.com
+    - milosz.piekutowski@jetbrains.com
   include:
     - "compiler/ir/ir.actualization"
     - "compiler/ir/ir.inline"
@@ -85,6 +99,11 @@ CommonBackend:
     - Frontend
 
 Jvm:
+  team: "Kotlin JVM"
+  firstResponders:
+    - alexander.udalov@jetbrains.com
+    - ilmir.usmanov@jetbrains.com
+    - maksim.verevkin@jetbrains.com
   include:
     - "compiler/android-tests"
     - "compiler/backend"
@@ -99,6 +118,10 @@ Jvm:
     - CommonBackend
 
 Wasm:
+  team: "Kotlin Wasm"
+  firstResponders:
+    - zalim.bashorov@jetbrains.com
+    - jim.teichgraeber@jetbrains.com
   include:
     - "compiler/ir/backend.wasm"
     - "wasm"
@@ -116,6 +139,10 @@ Wasm:
     - CommonBackend
 
 Js:
+  team: "Kotlin JS"
+  firstResponders:
+    - artem.kobzar@jetbrains.com
+    - sergej.jaskiewicz@jetbrains.com
   include:
     - "js"
     - "compiler/ir/backend.js"
@@ -129,6 +156,11 @@ Js:
     - CommonBackend
 
 Native:
+  team: "Kotlin Native"
+  firstResponders:
+    - svyatoslav.scherbina@jetbrains.com
+    - igor.chevdar@jetbrains.com
+    - alexander.shabalin@jetbrains.com
   include:
     - "compiler/ir/backend.native"
     - "compiler/ir/ir.objcinterop"
@@ -144,6 +176,10 @@ Native:
     - CommonBackend
 
 CoreLibs:
+  team: "Kotlin Libraries"
+  firstResponders:
+    - ilya.gorbunov@jetbrains.com
+    - filipp.zhinkin@jetbrains.com
   include:
     - "libraries/stdlib"
     - "libraries/tools/kotlin-annotations-jvm"
@@ -157,6 +193,10 @@ CoreLibs:
     - "libraries/tools/jdk-api-validator"
 
 AnalysisApi:
+  team: "Kotlin Analysis API"
+  firstResponders:
+    - dmitry.gridin@jetbrains.com
+    - yan.zhulanow@jetbrains.com
   include:
     - "analysis"
     - "compiler/psi"
@@ -171,6 +211,11 @@ AnalysisApi:
     - CoreLibs
 
 BuildToolsApi:
+  team: "Build Tools API"
+  firstResponders:
+    - wojciech.kalicinski@jetbrains.com
+    - alexander.likhachev@jetbrains.com
+    - iveta.kovalenko@jetbrains.com
   include:
     - "build-common"
     - "compiler/build-tools"
@@ -182,6 +227,10 @@ BuildToolsApi:
     - CompilerInfrastructure
 
 SwiftExport:
+  team: "Kotlin Native"
+  firstResponders:
+    - artem.olkov@jetbrains.com
+    - gleb.lukianets@jetbrains.com
   include:
     - "native/swift"
     - "libraries/tools/analysis-api-based-klib-reader"
@@ -190,6 +239,11 @@ SwiftExport:
     - AnalysisApi # todo: Replace this dependency with a reviewed set of @MustRunOnChangesInAnalysisApi tests
 
 CompilerPlugins:
+  team: "Kotlin Frontend"
+  firstResponders:
+    - dmitriy.novozhilov@jetbrains.com
+    - ilya.chernikov@jetbrains.com
+    - brian.norman@jetbrains.com
   include:
     - "compiler/plugin-api"
     - "plugins"
@@ -203,22 +257,38 @@ CompilerPlugins:
     - CoreLibs
 
 DocumentationModel:
+  team: "Dokka"
+  firstResponders:
+    - vadim.mishenev@jetbrains.com
+    - oleg.yukhnevich@jetbrains.com
   include:
     - "libraries/tools/kotlin-documentation-model"
 
 Gradle:
+  team: "Kotlin Build Tools"
+  firstResponders:
+    - yahor.berdnikau@jetbrains.com
+    - anton.lakotka@jetbrains.com
   include:
     - "build-common"
     - "libraries/tools/*gradle*"
     - "compiler/build-tools/kotlin-build-statistics"
 
 Maven:
+  team: "Kotlin Build Tools"
+  firstResponders:
+    - aleksei.cherepanov@jetbrains.com
+    - yahor.berdnikau@jetbrains.com
   include:
     - "libraries/tools/*maven*"
 
 # The IntelliJ domain has no owned files in this repository.
 # It is used to declare which domains will affect IntelliJ and to infer when to run tests against kt-master
 IntelliJ:
+  team: "Kotlin Analysis API"
+  firstResponders:
+    - dmitry.gridin@jetbrains.com
+    - yan.zhulanow@jetbrains.com
   include:
     - "prepare/ide-plugin-dependencies"
   mustRunAllTestsOnChangesIn:
@@ -230,6 +300,11 @@ IntelliJ:
     - CompilerPlugins
 
 BuildInfrastructure:
+  team: "Kotlin Build Infrastructure"
+  firstResponders:
+    - cristian.garcia-marin@jetbrains.com
+    - radoslaw.panuszewski@jetbrains.com
+    - sebastian.sellmair@jetbrains.com
   include:
     - "repo"
     - "gradle"
@@ -241,6 +316,10 @@ BuildInfrastructure:
     - ".idea"
 
 Unknown:
+  team: "Kotlin"
+  firstResponders:
+    - sebastian.sellmair@jetbrains.com
+    - dmitriy.novozhilov@jetbrains.com
   # Files not matching other domains will be sorted into 'Unknown' by default.
   include: [ ]
   mustRunAllTestsOnChangesIn:
