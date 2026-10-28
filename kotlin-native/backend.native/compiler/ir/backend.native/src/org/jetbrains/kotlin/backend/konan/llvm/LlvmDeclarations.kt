@@ -198,6 +198,12 @@ private class DeclarationsGeneratorVisitor(
                 generateSequence(declaration.getSuperClassNotAny()) { it.getSuperClassNotAny() }
                         .filter { it.fileOrNull != null && it.fileOrNull != declaration.fileOrNull && it.symbol.signature != null }
                         .forEach { context.factsTracker.uses(declaration.file, Fact.BaseClassLayout.from(it)) }
+                // The vtable and the itables of this class (in its type info, used by its trampolines) are made of
+                // the slots of all its ancestors, which only define their own contribution.
+                declaration.getAllSuperclasses()
+                        .filter { it.symbol != context.irBuiltIns.anyClass }
+                        .filter { it.fileOrNull != null && it.fileOrNull != declaration.fileOrNull && it.symbol.signature != null }
+                        .forEach { context.factsTracker.uses(declaration.file, Fact.methodTableLayoutOf(it, context.config.bridgesPolicy)) }
             }
         }
         super.visitClass(declaration)

@@ -94,7 +94,7 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
     useContext(backendContext) { backendEngine ->
 
         // Facts are defined by the IR as deserialized from the klibs, so that they can be computed without compiling (see `KlibFactsGenerator`).
-        FactsCollector.collectDefsFrom(irModules, backendContext.factsTracker)
+        FactsCollector.collectDefsFrom(irModules, backendContext.factsTracker, config.bridgesPolicy)
 
         // This phase adds declarations to the shared built-ins, independently of the input module.
         backendEngine.runModuleWisePhase(createModulePhases(::FunctionsWithoutBoundCheckGenerator).first(), listOf(irModules.first()))
