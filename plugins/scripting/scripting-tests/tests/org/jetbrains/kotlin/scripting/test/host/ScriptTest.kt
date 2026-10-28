@@ -107,6 +107,14 @@ class ScriptTest {
     }
 
     @Test
+    fun testSyntaxError() {
+        val messageCollector = MessageCollectorImpl()
+        assertNull(compileScript("syntax_error.kts", messageCollector = messageCollector))
+        val errors = messageCollector.errors.map { it.message }
+        assertTrue(errors.any { "Expecting ')'" in it }, "Expecting a syntax error, got: $errors")
+    }
+
+    @Test
     fun testMetadataFlag() {
         // Test that we're writing the flag to [Metadata.extraInt] that distinguishes scripts from other classes.
 
@@ -127,9 +135,8 @@ class ScriptTest {
     private fun compileScript(
         scriptPath: String,
         saveClassesDir: File? = null,
+        messageCollector: MessageCollector = PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, false),
     ): Class<*>? {
-        val messageCollector = PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, false)
-
         val rootDisposable = Disposer.newDisposable("Disposable for ${ScriptTest::class.simpleName}")
         try {
             val configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.FULL_JDK)

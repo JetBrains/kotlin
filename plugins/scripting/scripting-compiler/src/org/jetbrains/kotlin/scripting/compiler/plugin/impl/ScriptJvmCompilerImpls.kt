@@ -185,11 +185,11 @@ private fun compileImpl(
         )
     val ktFiles = sourceFiles.map { it.getKtFile(definition, project) }
 
-    val syntaxErrors = ktFiles.fold(false) { errorsFound, ktFile ->
-        SyntaxErrorReporter.reportSyntaxErrors(ktFile, compilerConfiguration.diagnosticsCollector).isHasErrors or errorsFound
+    for (ktFile in ktFiles) {
+        SyntaxErrorReporter.reportSyntaxErrors(ktFile, compilerConfiguration.diagnosticsCollector)
     }
 
-    if (syntaxErrors || CheckCompilationErrors.CheckDiagnosticCollector.checkHasErrorsAndReportToMessageCollector(compilerConfiguration)) {
+    if (CheckCompilationErrors.CheckDiagnosticCollector.checkHasErrorsAndReportToMessageCollector(compilerConfiguration)) {
         return failure(messageCollector)
     }
 
