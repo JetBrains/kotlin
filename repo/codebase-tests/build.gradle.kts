@@ -127,12 +127,14 @@ tasks.configureEach {
     if (this !is JavaForkOptions) return@configureEach
 
     /* The dump includes tests from Kotlin/Native, updating it requires those parts of the build to be enabled */
-    val isKotlinNativeEnabled = kotlinBuildProperties.isKotlinNativeEnabled
-    val projectPath = project.path
-    doFirst {
-        if (!isKotlinNativeEnabled.get()) error(
-            "Running '$projectPath' requires Kotlin/Native to be enabled (-Pkotlin.native.enabled=true)"
-        )
+    if (this is Test) {
+        val isKotlinNativeEnabled = kotlinBuildProperties.isKotlinNativeEnabled
+        val projectPath = project.path
+        doFirst {
+            if (!isKotlinNativeEnabled.get()) error(
+                "Running '$projectPath' requires Kotlin/Native to be enabled (-Pkotlin.native.enabled=true)"
+            )
+        }
     }
 
     /* Nested/Deep debugging support */
