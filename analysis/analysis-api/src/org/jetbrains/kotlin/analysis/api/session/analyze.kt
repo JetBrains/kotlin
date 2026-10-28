@@ -31,7 +31,7 @@ import kotlin.contracts.contract
  * Neither the analysis session nor any other [lifetime owners][org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner] may be leaked
  * outside the [analyze] block. Please consult the documentation of [KaSession] for important information about lifetime management.
  *
- * @see org.jetbrains.kotlin.analysis.api.projectStructure.KaModuleProvider.getModule
+ * @see org.jetbrains.kotlin.analysis.api.projectStructure.KaModuleProvider.module
  */
 public inline fun <R> analyze(
     useSiteElement: PsiElement,

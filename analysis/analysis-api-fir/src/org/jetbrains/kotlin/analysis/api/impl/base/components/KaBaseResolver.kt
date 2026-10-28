@@ -455,7 +455,7 @@ internal fun KaCallCandidate.asKaCallCandidateInfo(): KaCallCandidateInfo {
  * implement [KaCall] directly. The exception is [KaCallableReferenceCall], which is part of the
  * new resolution API and intentionally does not extend the deprecated [KaCall] hierarchy. For
  * that case we emulate a legacy [KaCall] by re-encoding the reference as the corresponding
- * [KaSimpleFunctionCall] / [KaSimpleVariableAccessCall] view.
+ * `KaSimpleFunctionCall` / `KaSimpleVariableAccessCall` view.
  */
 private fun KaSimpleOrMultiCall.asKaCall(): KaCall = when (this) {
     is KaBaseCallableReferenceCall<*, *> -> asLegacyKaCall()

@@ -656,7 +656,7 @@ public class KaScopeWithKindImpl(
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.scopes' endpoint instead.",
     replaceWith = ReplaceWith("this.memberScope", "org.jetbrains.kotlin.analysis.api.scopes.memberScope"),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -743,7 +743,7 @@ public val KaDeclarationContainerSymbol.memberScope: KaScope
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.scopes' endpoint instead.",
     replaceWith = ReplaceWith("this.staticMemberScope", "org.jetbrains.kotlin.analysis.api.scopes.staticMemberScope"),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -756,7 +756,7 @@ public val KaDeclarationContainerSymbol.staticMemberScope: KaScope
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.scopes' endpoint instead.",
     replaceWith = ReplaceWith("this.combinedMemberScope", "org.jetbrains.kotlin.analysis.api.scopes.combinedMemberScope"),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -776,7 +776,7 @@ public val KaDeclarationContainerSymbol.combinedMemberScope: KaScope
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.scopes' endpoint instead.",
     replaceWith = ReplaceWith("this.declaredMemberScope", "org.jetbrains.kotlin.analysis.api.scopes.declaredMemberScope"),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -796,7 +796,7 @@ public val KaDeclarationContainerSymbol.declaredMemberScope: KaScope
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.scopes' endpoint instead.",
     replaceWith = ReplaceWith("this.staticDeclaredMemberScope", "org.jetbrains.kotlin.analysis.api.scopes.staticDeclaredMemberScope"),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -811,7 +811,7 @@ public val KaDeclarationContainerSymbol.staticDeclaredMemberScope: KaScope
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.scopes' endpoint instead.",
     replaceWith = ReplaceWith("this.combinedDeclaredMemberScope", "org.jetbrains.kotlin.analysis.api.scopes.combinedDeclaredMemberScope"),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -850,7 +850,7 @@ public val KaDeclarationContainerSymbol.combinedDeclaredMemberScope: KaScope
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.scopes' endpoint instead.",
     replaceWith = ReplaceWith("this.delegatedMemberScope", "org.jetbrains.kotlin.analysis.api.scopes.delegatedMemberScope"),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -863,7 +863,7 @@ public val KaDeclarationContainerSymbol.delegatedMemberScope: KaScope
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.scopes' endpoint instead.",
     replaceWith = ReplaceWith("this.fileScope", "org.jetbrains.kotlin.analysis.api.scopes.fileScope"),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -876,7 +876,7 @@ public val KaFileSymbol.fileScope: KaScope
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.scopes' endpoint instead.",
     replaceWith = ReplaceWith("this.packageScope", "org.jetbrains.kotlin.analysis.api.scopes.packageScope"),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -889,7 +889,7 @@ public val KaPackageSymbol.packageScope: KaScope
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.scopes' endpoint instead.",
     replaceWith = ReplaceWith("this.asCompositeScope()", "org.jetbrains.kotlin.analysis.api.scopes.asCompositeScope"),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 @KaContextParameterApi
 context(session: KaSession)

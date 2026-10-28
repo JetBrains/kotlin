@@ -63,7 +63,7 @@ public interface KaExpressionTypeProvider : KaSessionComponent {
      * Note: this property throws an exception if the declaration _can't_ have a return type
      * (i.e., it is not a [KtDeclarationWithReturnType]).
      */
-    @Deprecated("Use `KtDeclarationWithReturnType.returnType` overload instead", level = DeprecationLevel.ERROR)
+    @Deprecated("Use `KtDeclarationWithReturnType.returnType` overload instead", level = DeprecationLevel.HIDDEN)
     public val KtDeclaration.returnType: KaType
         get() = (this as KtDeclarationWithReturnType).returnType
 
@@ -148,7 +148,7 @@ public interface KaExpressionTypeProvider : KaSessionComponent {
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.expressions' endpoint instead.",
     replaceWith = ReplaceWith("this.expressionType", "org.jetbrains.kotlin.analysis.api.expressions.expressionType"),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -184,12 +184,11 @@ public val KtDeclarationWithReturnType.returnType: KaType
  * Note: this property throws an exception if the declaration _can't_ have a return type
  * (i.e., it is not a [KtDeclarationWithReturnType]).
  */
-@Deprecated("Use `KtDeclarationWithReturnType.returnType` overload instead", level = DeprecationLevel.ERROR)
+@Deprecated("Use `KtDeclarationWithReturnType.returnType` overload instead", level = DeprecationLevel.HIDDEN)
 @KaContextParameterApi
 context(session: KaSession)
 public val KtDeclaration.returnType: KaType
-    @Suppress("DEPRECATION_ERROR")
-    get() = with(session) { returnType }
+    get() = with(session) { (this@returnType as KtDeclarationWithReturnType).returnType }
 
 /**
  * The function type of the given [KtFunction].
@@ -206,7 +205,7 @@ public val KtDeclaration.returnType: KaType
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.expressions' endpoint instead.",
     replaceWith = ReplaceWith("this.functionType", "org.jetbrains.kotlin.analysis.api.expressions.functionType"),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -222,7 +221,7 @@ public val KtFunction.functionType: KaType
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.expressions' endpoint instead.",
     replaceWith = ReplaceWith("this.expectedType", "org.jetbrains.kotlin.analysis.api.expressions.expectedType"),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -258,7 +257,7 @@ public val PsiElement.expectedType: KaType?
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.expressions' endpoint instead.",
     replaceWith = ReplaceWith("this.isDefinitelyNull", "org.jetbrains.kotlin.analysis.api.expressions.isDefinitelyNull"),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -273,7 +272,7 @@ public val KtExpression.isDefinitelyNull: Boolean
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.expressions' endpoint instead.",
     replaceWith = ReplaceWith("this.isDefinitelyNotNull", "org.jetbrains.kotlin.analysis.api.expressions.isDefinitelyNotNull"),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 @KaContextParameterApi
 context(session: KaSession)

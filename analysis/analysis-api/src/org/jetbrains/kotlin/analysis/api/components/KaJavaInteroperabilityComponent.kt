@@ -205,7 +205,7 @@ public fun KaType.asPsiType(
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.javaInterop' endpoint instead.",
     replaceWith = ReplaceWith("this.namedClassSymbol", "org.jetbrains.kotlin.analysis.api.javaInterop.namedClassSymbol"),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -218,7 +218,7 @@ public val PsiClass.namedClassSymbol: KaNamedClassSymbol?
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.javaInterop' endpoint instead.",
     replaceWith = ReplaceWith("this.callableSymbol", "org.jetbrains.kotlin.analysis.api.javaInterop.callableSymbol"),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 @KaContextParameterApi
 context(session: KaSession)
