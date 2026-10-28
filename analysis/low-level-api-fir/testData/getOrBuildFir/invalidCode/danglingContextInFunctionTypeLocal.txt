@@ -1,0 +1,12 @@
+KT element: KtTypeReference
+FIR element: null
+FIR source kind: null
+
+FIR element rendered:
+null
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] danglingContextInFunctionTypeLocal.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+        [ResolvedTo(BODY_RESOLVE)] lval p: <ERROR TYPE REF: Incomplete code> = R|kotlin/TODO|()
+    }

@@ -243,6 +243,30 @@ public class FirIdeNormalAnalysisSourceLikeModuleReferenceShortenerTestGenerated
   }
 
   @Test
+  @TestMetadata("danglingContextInFunctionType.kt")
+  public void testDanglingContextInFunctionType() {
+    run("danglingContextInFunctionType.kt");
+  }
+
+  @Test
+  @TestMetadata("danglingContextInFunctionTypeNamed.kt")
+  public void testDanglingContextInFunctionTypeNamed() {
+    run("danglingContextInFunctionTypeNamed.kt");
+  }
+
+  @Test
+  @TestMetadata("danglingContextInFunctionTypeWithReceiver.kt")
+  public void testDanglingContextInFunctionTypeWithReceiver() {
+    run("danglingContextInFunctionTypeWithReceiver.kt");
+  }
+
+  @Test
+  @TestMetadata("danglingContextInFunctionTypeWithType.kt")
+  public void testDanglingContextInFunctionTypeWithType() {
+    run("danglingContextInFunctionTypeWithType.kt");
+  }
+
+  @Test
   @TestMetadata("enumClassCompanionAlreadyImported.kt")
   public void testEnumClassCompanionAlreadyImported() {
     run("enumClassCompanionAlreadyImported.kt");
