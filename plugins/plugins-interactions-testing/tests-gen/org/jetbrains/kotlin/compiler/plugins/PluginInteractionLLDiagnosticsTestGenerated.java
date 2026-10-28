@@ -28,6 +28,18 @@ public class PluginInteractionLLDiagnosticsTestGenerated extends AbstractPluginI
   }
 
   @Test
+  @TestMetadata("lombokBuilderWithBoundedTypeParameterAndSerialization.kt")
+  public void testLombokBuilderWithBoundedTypeParameterAndSerialization() {
+    run("lombokBuilderWithBoundedTypeParameterAndSerialization.kt");
+  }
+
+  @Test
+  @TestMetadata("lombokExplicitBuilderClassAndSerialization.kt")
+  public void testLombokExplicitBuilderClassAndSerialization() {
+    run("lombokExplicitBuilderClassAndSerialization.kt");
+  }
+
+  @Test
   @TestMetadata("lombokLogAndMetaSerializableCompanion.kt")
   public void testLombokLogAndMetaSerializableCompanion() {
     run("lombokLogAndMetaSerializableCompanion.kt");

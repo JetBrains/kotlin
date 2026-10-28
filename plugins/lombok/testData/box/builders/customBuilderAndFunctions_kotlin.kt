@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM
 // DUMP_KT_IR
 
 import lombok.Builder

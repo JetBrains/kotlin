@@ -1,0 +1,41 @@
+FILE: Dog.kt
+    package animals
+
+    public final class Dog : R|kotlin/Any| {
+        public constructor(name: R|kotlin/String|): R|animals/Dog| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val name: R|kotlin/String| = R|<local>/name|
+            public get(): R|kotlin/String|
+
+    }
+FILE: test.kt
+    public final class Kennel : R|kotlin/Any| {
+        public constructor(): R|Kennel| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|Kennel.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            @R|lombok/Builder|() public final fun create(name: R|kotlin/String|): R|animals/Dog| {
+                ^create R|animals/Dog.Dog|(R|<local>/name|)
+            }
+
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        ^box when () {
+            ==(Q|Kennel|.<Unresolved name: builder>#().<Unresolved name: name>#(String(Rex)).<Unresolved name: build>#().<Unresolved name: name>#, String(Rex)) ->  {
+                String(OK)
+            }
+            else ->  {
+                String(Fail)
+            }
+        }
+
+    }

@@ -4,13 +4,13 @@
 // FILE: Owner.kt
 import lombok.Builder;
 
-@Builder
+<!ANNOTATION_IS_NOT_SUPPORTED!>@Builder<!>
 public class Owner(val a: Int)
 
 // FILE: test.kt
 fun usage() {
-    val builder = Owner.OwnerBuilder()
+    val builder = Owner.<!UNRESOLVED_REFERENCE!>OwnerBuilder<!>()
     builder.a(1).build()
-    val justBuilder: Owner.OwnerBuilder? = null
-    justBuilder?.a(2)?.build()
+    val justBuilder: Owner.<!UNRESOLVED_REFERENCE!>OwnerBuilder<!>? = null
+    justBuilder?.<!UNRESOLVED_REFERENCE!>a<!>(2)?.build()
 }

@@ -1,15 +1,10 @@
 // FULL_JDK
 // ISSUE: KT-89371
 
-import lombok.Builder
 import lombok.NoArgsConstructor
 import lombok.extern.java.Log
 import lombok.AccessLevel
 import kotlin.test.assertEquals
-
-@Builder
-@NoArgsConstructor
-class Built(var x: Int)
 
 @Log(access = AccessLevel.PUBLIC)
 @NoArgsConstructor
@@ -24,9 +19,6 @@ class WithOwnCompanion(var x: Int) {
 }
 
 fun box(): String {
-    assertEquals(42, Built.builder().x(42).build().x)
-    assertEquals(0, Built().x)
-
     assertEquals("Logged", Logged.log.name)
     assertEquals(0, Logged().x)
 

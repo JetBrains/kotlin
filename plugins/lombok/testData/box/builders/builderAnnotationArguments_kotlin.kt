@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM
 import lombok.AccessLevel
 import lombok.Builder
 

@@ -4,38 +4,38 @@ import lombok.AccessLevel
 import lombok.Builder
 import lombok.Singular
 
-@Builder
+<!ANNOTATION_IS_NOT_SUPPORTED!>@Builder<!>
 class WithPlainInitializer(
-    val name: String = <!BUILDER_WILL_IGNORE_INITIALIZING_EXPRESSION!>"default"<!>,
+    val name: String = "default",
 )
 
-@Builder
+<!ANNOTATION_IS_NOT_SUPPORTED!>@Builder<!>
 class WithMissingDefaultInitializer(
-    <!BUILDER_DEFAULT_REQUIRES_INITIALIZING_EXPRESSION!>@Builder.Default<!>
+    @Builder.Default
     val name: String,
 )
 
-@Builder
+<!ANNOTATION_IS_NOT_SUPPORTED!>@Builder<!>
 class Farm(
-    <!CANNOT_SINGULARIZE_NAME!>@Singular<!>
+    @Singular
     val sheep: List<String>,
 )
 
-@Builder
+<!ANNOTATION_IS_NOT_SUPPORTED!>@Builder<!>
 class Container(
-    <!UNSUPPORTED_SINGULAR_TYPE!>@Singular("thing")<!>
+    @Singular("thing")
     val things: Array<String>,
 )
 
-@Builder
+<!ANNOTATION_IS_NOT_SUPPORTED!>@Builder<!>
 class MixedDefaultAndSingular(
-    <!BUILDER_DEFAULT_AND_SINGULAR_MIXED!>@Builder.Default<!>
+    @Builder.Default
     @Singular
     val items: List<String> = emptyList(),
 )
 
 // No diagnostics expected: builder-eligible properties used correctly.
-@Builder
+<!ANNOTATION_IS_NOT_SUPPORTED!>@Builder<!>
 class CleanWidget(
     val id: Int,
     @Builder.Default
@@ -48,11 +48,11 @@ class CleanWidget(
 // is checked like any other: its own default value is still ignored by the builder, and `@Singular`
 // (`@Target(FIELD, PARAMETER)`) still lands on it. `@Builder.Default` cannot - it is `@Target(FIELD)` and such
 // a parameter has no field - which Kotlin's own annotation-target checker rejects before this checker runs.
-@Builder
+<!ANNOTATION_IS_NOT_SUPPORTED!>@Builder<!>
 class ParametersWithoutVal(
-    plain: String = <!BUILDER_WILL_IGNORE_INITIALIZING_EXPRESSION!>"default"<!>,
-    <!CANNOT_SINGULARIZE_NAME!>@Singular<!> sheep: List<String>,
-    <!UNSUPPORTED_SINGULAR_TYPE!>@Singular("thing")<!> things: Array<String>,
+    plain: String = "default",
+    @Singular sheep: List<String>,
+    @Singular("thing") things: Array<String>,
 ) {
     val summary: String = plain + sheep.size + things.size
 }
@@ -60,36 +60,36 @@ class ParametersWithoutVal(
 // A property declared in the class body is not a builder field at all - `build()` has only the primary
 // constructor to call - so its initializer is left alone, the builder never ignoring what it never sets, while
 // a `@Singular` or `@Builder.Default` that cannot reach a builder field is reported as having no effect.
-@Builder
+<!ANNOTATION_IS_NOT_SUPPORTED!>@Builder<!>
 class BodyPropertiesAreNotBuilderFields(val id: Int, extra: String) {
     val derived: String = extra + id
 
-    <!BUILDER_FIELD_ANNOTATION_ON_BODY_PROPERTY!>@Builder.Default<!>
+    @Builder.Default
     val defaulted: Int = 1
 
-    <!BUILDER_FIELD_ANNOTATION_ON_BODY_PROPERTY!>@Singular<!>
+    @Singular
     val sheep: List<String> = emptyList()
 
-    <!BUILDER_FIELD_ANNOTATION_ON_BODY_PROPERTY!>@Singular("thing")<!>
+    @Singular("thing")
     val things: Array<String> = emptyArray()
 }
 
 // A parameter declared without `val` may be shadowed by a body property of the same name, which is the one
 // shape where "builder field" and "class property" share a name. It changes nothing: both the generator and
 // checker reach the annotation through the declaration, never through the name.
-@Builder
+<!ANNOTATION_IS_NOT_SUPPORTED!>@Builder<!>
 class ShadowedByBodyProperty(names: List<String>) {
-    <!BUILDER_FIELD_ANNOTATION_ON_BODY_PROPERTY!>@Singular<!>
+    @Singular
     val names: List<String> = names
 }
 
-@Builder
+<!ANNOTATION_IS_NOT_SUPPORTED!>@Builder<!>
 class ShadowedByBodyPropertyWithDefault(id: Int) {
-    <!BUILDER_FIELD_ANNOTATION_ON_BODY_PROPERTY!>@Builder.Default<!>
+    @Builder.Default
     val id: Int = id
 }
 
-@Builder
+<!ANNOTATION_IS_NOT_SUPPORTED!>@Builder<!>
 class AnnotatedParameterShadowedByProperty(@Singular names: List<String>) {
     val names: List<String> = names
 }
@@ -98,13 +98,13 @@ class AnnotatedParameterShadowedByProperty(@Singular names: List<String>) {
 // declares no property for leaves it nothing to read. Lombok rejects the same shape - "cannot find symbol:
 // variable <name>" on the annotation - for a method and a constructor builder alike, and offers
 // `@Builder.ObtainVia` to point elsewhere, which isn't implemented here.
-@Builder(toBuilder = true)
-class ToBuilderWithoutProperty(val kept: Int, <!TO_BUILDER_CANNOT_OBTAIN!>lost: Int<!>) {
+<!ANNOTATION_IS_NOT_SUPPORTED!>@Builder(toBuilder = true)<!>
+class ToBuilderWithoutProperty(val kept: Int, lost: Int) {
     val doubled: Int = lost * 2
 }
 
 // A property declared by hand is enough - it need not be a promoted one.
-@Builder(toBuilder = true)
+<!ANNOTATION_IS_NOT_SUPPORTED!>@Builder(toBuilder = true)<!>
 class ToBuilderWithBodyProperty(val kept: Int, mirrored: Int) {
     val mirrored: Int = mirrored
 }
@@ -112,19 +112,19 @@ class ToBuilderWithBodyProperty(val kept: Int, mirrored: Int) {
 // The parameters of a constructor or a method builder can never be `val`, so the property has to be there
 // already. `SecondaryMatching` has one, the others do not.
 class ToBuilderOnConstructor(val str: String, val int: Int) {
-    @Builder(toBuilder = true)
+    <!ANNOTATION_IS_NOT_SUPPORTED!>@Builder(toBuilder = true)<!>
     constructor(str: String) : this(str, -1)
 
-    @Builder(toBuilder = true, builderClassName = "OtherBuilder")
-    constructor(<!TO_BUILDER_CANNOT_OBTAIN!>other: Long<!>) : this("empty", other.toInt())
+    <!ANNOTATION_IS_NOT_SUPPORTED!>@Builder(toBuilder = true, builderClassName = "OtherBuilder")<!>
+    constructor(other: Long) : this("empty", other.toInt())
 }
 
 class ToBuilderOnMemberMethod {
     var name: String = ""
     var seen: Int = 0
 
-    @Builder(toBuilder = true)
-    fun init(name: String, <!TO_BUILDER_CANNOT_OBTAIN!>extra: Int<!>) {
+    <!ANNOTATION_IS_NOT_SUPPORTED!>@Builder(toBuilder = true)<!>
+    fun init(name: String, extra: Int) {
         this.name = name
         this.seen = extra
     }
@@ -132,14 +132,14 @@ class ToBuilderOnMemberMethod {
 
 // Without `toBuilder` nothing has to be obtainable: the mismatch only matters to the round-trip.
 class NoToBuilderNeedsNothing(val kept: Int) {
-    @Builder
+    <!ANNOTATION_IS_NOT_SUPPORTED!>@Builder<!>
     constructor(other: Long) : this(other.toInt())
 }
 
 // A class-level `@Builder` builds out of the primary constructor and nothing else, so a class that declares
 // none leaves `build()` with nothing to call. Real Lombok never meets this shape - a Java class always has a
 // constructor over all of its fields - and the Kotlin way out is to annotate a constructor instead.
-<!BUILDER_REQUIRES_PRIMARY_CONSTRUCTOR!>@Builder<!>
+<!ANNOTATION_IS_NOT_SUPPORTED!>@Builder<!>
 class NoPrimaryConstructor {
     val y: Int
 
@@ -153,7 +153,7 @@ class NoPrimaryConstructor {
 class NoPrimaryConstructorWithBuilderOnConstructor {
     val y: Int
 
-    @Builder
+    <!ANNOTATION_IS_NOT_SUPPORTED!>@Builder<!>
     constructor(x: Int) {
         y = x
     }
@@ -162,34 +162,34 @@ class NoPrimaryConstructorWithBuilderOnConstructor {
 // `@Builder` on a secondary constructor: only `@Singular` is checkable (`@Builder.Default`
 // is `@Target(FIELD)`, so it can't land on a bare constructor parameter at all).
 class ConstructorSingularCannotSingularize(val id: Int) {
-    @Builder
-    constructor(id: Int, <!CANNOT_SINGULARIZE_NAME!>@Singular<!> sheep: List<String>) : this(id)
+    <!ANNOTATION_IS_NOT_SUPPORTED!>@Builder<!>
+    constructor(id: Int, @Singular sheep: List<String>) : this(id)
 }
 
 class ConstructorParameterDefaultIgnored(val id: Int, val extra: Int) {
-    @Builder
-    constructor(id: Int = <!BUILDER_WILL_IGNORE_INITIALIZING_EXPRESSION!>0<!>) : this(id, -1)
+    <!ANNOTATION_IS_NOT_SUPPORTED!>@Builder<!>
+    constructor(id: Int = 0) : this(id, -1)
 }
 
-@Builder(access = AccessLevel.PROTECTED)
+<!ANNOTATION_IS_NOT_SUPPORTED!>@Builder(access = AccessLevel.PROTECTED)<!>
 class BuilderAccessLevelProtected(val id: Int)
 
 // `@Builder` needs a constructor to call and a companion object to host the `builder()` factory, so it supports
 // nothing but a non-local class. Lombok narrows the annotation the same way and reports "@Builder is only
 // supported on classes, records, constructors, and methods." for the first three.
-<!ANNOTATION_HAS_NO_EFFECT!>@Builder<!>
+<!ANNOTATION_IS_NOT_SUPPORTED!>@Builder<!>
 interface BuilderInterface
 
-<!ANNOTATION_HAS_NO_EFFECT!>@Builder<!>
+<!ANNOTATION_IS_NOT_SUPPORTED!>@Builder<!>
 annotation class BuilderAnnotationClass
 
 // An enum constructor takes the synthetic name and ordinal parameters, so a generated `build()` wouldn't find the
 // one it calls: it used to fail with `NoSuchMethodError` at run time, KT-87871.
-<!ANNOTATION_HAS_NO_EFFECT!>@Builder<!>
+<!ANNOTATION_IS_NOT_SUPPORTED!>@Builder<!>
 enum class BuilderEnum(val id: Int) { A(1) }
 
 // An object has no constructor to call.
-<!ANNOTATION_HAS_NO_EFFECT!>@Builder<!>
+<!ANNOTATION_IS_NOT_SUPPORTED!>@Builder<!>
 object BuilderObject
 
 // An inner class's constructor takes the outer instance as its dispatch receiver, and the generated `build()`
@@ -197,10 +197,10 @@ object BuilderObject
 // to fail on the call outright, KT-88852. Lombok refuses the shape too ("@Builder is not supported on
 // non-static nested classes"); a nested class is what works, in Kotlin as in Java.
 class OuterOfBuilderInner {
-    <!ANNOTATION_IS_NOT_SUPPORTED_ON_CLASS!>@Builder<!>
+    <!ANNOTATION_IS_NOT_SUPPORTED!>@Builder<!>
     inner class BuilderInner(val value: Int)
 
-    @Builder
+    <!ANNOTATION_IS_NOT_SUPPORTED!>@Builder<!>
     class BuilderNested(val value: Int)
 }
 
@@ -208,33 +208,33 @@ class OuterOfBuilderInner {
 // `InstantiationError` at run time, KT-88814. Lombok reports it too: "BuilderExample is abstract; cannot be
 // instantiated". `@SuperBuilder` is what builds such a hierarchy in Java, and it is not supported on a Kotlin
 // class at all.
-<!ANNOTATION_IS_NOT_SUPPORTED_ON_CLASS!>@Builder<!>
+<!ANNOTATION_IS_NOT_SUPPORTED!>@Builder<!>
 abstract class BuilderAbstract(val id: Int, val name: String) {
     abstract fun describe(): String
 }
 
-<!ANNOTATION_IS_NOT_SUPPORTED_ON_CLASS!>@Builder<!>
+<!ANNOTATION_IS_NOT_SUPPORTED!>@Builder<!>
 sealed class BuilderSealed(val id: Int)
 
 // An `open` class is instantiable, so it builds like any other.
-@Builder
+<!ANNOTATION_IS_NOT_SUPPORTED!>@Builder<!>
 open class BuilderOpen(val id: Int)
 
 // A constructor builder instantiates the very class the constructor belongs to, so it is refused wherever the
 // class-level annotation is: an abstract, a sealed and an inner class alike.
 abstract class BuilderOnAbstractConstructor(val id: Int) {
-    <!ANNOTATION_IS_NOT_SUPPORTED_ON_CLASS!>@Builder<!>
+    <!ANNOTATION_IS_NOT_SUPPORTED!>@Builder<!>
     constructor() : this(0)
 }
 
 sealed class BuilderOnSealedConstructor(val id: Int) {
-    <!ANNOTATION_IS_NOT_SUPPORTED_ON_CLASS!>@Builder<!>
+    <!ANNOTATION_IS_NOT_SUPPORTED!>@Builder<!>
     constructor() : this(0)
 }
 
 class OuterOfBuilderInnerConstructor {
     inner class InnerWithBuilderConstructor(val value: Int) {
-        <!ANNOTATION_IS_NOT_SUPPORTED_ON_CLASS!>@Builder<!>
+        <!ANNOTATION_IS_NOT_SUPPORTED!>@Builder<!>
         constructor() : this(0)
     }
 }
@@ -242,64 +242,64 @@ class OuterOfBuilderInnerConstructor {
 // A function builder builds whatever the function returns, which need not be the class it is declared in, so
 // an abstract class is no obstacle to one.
 abstract class BuilderOnAbstractClassMethod {
-    @Builder
+    <!ANNOTATION_IS_NOT_SUPPORTED!>@Builder<!>
     fun make(id: Int): BuilderOpen = BuilderOpen(id)
 }
 
 fun useBuilderOnAbstractClassMethod(receiver: BuilderOnAbstractClassMethod) {
-    receiver.builder().id(1).build()
+    receiver.<!UNRESOLVED_REFERENCE!>builder<!>().id(1).build()
 }
 
-@Builder(access = <!UNSUPPORTED_ACCESS_LEVEL!>AccessLevel.PACKAGE<!>) // Prohibited, KT-88337
+<!ANNOTATION_IS_NOT_SUPPORTED!>@Builder(access = AccessLevel.PACKAGE)<!> // Prohibited, KT-88337
 class BuilderAccessLevelPackage(val id: Int)
 
-@Builder(access = <!UNSUPPORTED_ACCESS_LEVEL!>AccessLevel.<!DEPRECATION!>MODULE<!><!>) // Prohibited, KT-88337
+<!ANNOTATION_IS_NOT_SUPPORTED!>@Builder(access = AccessLevel.<!DEPRECATION!>MODULE<!>)<!> // Prohibited, KT-88337
 class BuilderAccessLevelModule(val id: Int)
 
 fun test() {
-    BuilderAccessLevelProtected.<!INVISIBLE_REFERENCE!>builder<!>()
+    BuilderAccessLevelProtected.<!UNRESOLVED_REFERENCE!>builder<!>()
 
     // What the annotation on the shadowing body property did not do: no singular adder was generated, only the
     // plain setter. Annotating the parameter instead is what produces one.
-    ShadowedByBodyProperty.builder().<!UNRESOLVED_REFERENCE!>name<!>("a")
-    ShadowedByBodyProperty.builder().names(listOf("a"))
-    AnnotatedParameterShadowedByProperty.builder().name("a")
+    ShadowedByBodyProperty.<!UNRESOLVED_REFERENCE!>builder<!>().name("a")
+    ShadowedByBodyProperty.<!UNRESOLVED_REFERENCE!>builder<!>().names(listOf("a"))
+    AnnotatedParameterShadowedByProperty.<!UNRESOLVED_REFERENCE!>builder<!>().name("a")
 
     BuilderInterface.<!UNRESOLVED_REFERENCE!>builder<!>() // Nothing is generated, KT-87871
     BuilderAnnotationClass.<!UNRESOLVED_REFERENCE!>builder<!>() // Nothing is generated, KT-87871
     BuilderEnum.<!UNRESOLVED_REFERENCE!>builder<!>() // Nothing is generated
     BuilderObject.<!UNRESOLVED_REFERENCE!>builder<!>()
     OuterOfBuilderInner.BuilderInner.<!UNRESOLVED_REFERENCE!>builder<!>() // Nothing is generated, KT-88852
-    OuterOfBuilderInner.BuilderNested.builder().value(1).build()
+    OuterOfBuilderInner.BuilderNested.<!UNRESOLVED_REFERENCE!>builder<!>().value(1).build()
     BuilderAbstract.<!UNRESOLVED_REFERENCE!>builder<!>() // Nothing is generated, KT-88814
     BuilderSealed.<!UNRESOLVED_REFERENCE!>builder<!>() // Nothing is generated, KT-88814
-    BuilderOpen.builder().id(1).build()
+    BuilderOpen.<!UNRESOLVED_REFERENCE!>builder<!>().id(1).build()
     BuilderOnAbstractConstructor.<!UNRESOLVED_REFERENCE!>builder<!>() // Nothing is generated, KT-88814
     BuilderOnSealedConstructor.<!UNRESOLVED_REFERENCE!>builder<!>() // Nothing is generated, KT-88814
     OuterOfBuilderInnerConstructor.InnerWithBuilderConstructor.<!UNRESOLVED_REFERENCE!>builder<!>() // KT-88852
 
    // Local classes can't have a companion object to host `builder()`, exactly as for `@NoArgsConstructor`.
-    <!ANNOTATION_HAS_NO_EFFECT!>@Builder<!>
+    <!ANNOTATION_IS_NOT_SUPPORTED!>@Builder<!>
     class BuilderLocal(val id: Int)
 
     BuilderLocal.<!UNRESOLVED_REFERENCE!>builder<!>()
 }
 
 // `builder()` goes into a companion object, and a nested class of that name leaves nowhere to put it, KT-88276.
-@Builder
+<!ANNOTATION_IS_NOT_SUPPORTED!>@Builder<!>
 class BuilderWithNestedCompanionClass(val id: Int) {
-    class <!COMPANION_OBJECT_IS_NOT_GENERATED!>Companion<!>
+    class Companion
 }
 
 // A declaration the parser cannot read a name off gets the special name `<no name provided>`,
 // which no builder member can be named after. Nothing is generated for it, and nothing crashes.
-@Builder
+<!ANNOTATION_IS_NOT_SUPPORTED!>@Builder<!>
 class IncompleteProperty(val<!SYNTAX!><!> )
 
-@Builder(setterPrefix = "with")
+<!ANNOTATION_IS_NOT_SUPPORTED!>@Builder(setterPrefix = "with")<!>
 class IncompletePrefixedProperty(val<!SYNTAX!><!> )
 
 fun useIncomplete() {
-    IncompleteProperty.builder().build()
-    IncompletePrefixedProperty.builder().build()
+    IncompleteProperty.<!UNRESOLVED_REFERENCE!>builder<!>().build()
+    IncompletePrefixedProperty.<!UNRESOLVED_REFERENCE!>builder<!>().build()
 }

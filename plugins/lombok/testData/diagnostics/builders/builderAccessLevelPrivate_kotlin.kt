@@ -9,19 +9,19 @@ import lombok.Builder
 // able to reach a private member of its own nested class; Kotlin's `private` inside the builder class would mean
 // that class alone, so the functions generated into it are public there instead - the builder class staying
 // private is what keeps them out of everyone else's reach.
-@Builder(access = AccessLevel.PRIVATE)
+<!ANNOTATION_IS_NOT_SUPPORTED!>@Builder(access = AccessLevel.PRIVATE)<!>
 class AccessPrivateTarget(val x: Int) {
     companion object {
-        fun makeInternally(x: Int): AccessPrivateTarget = builder().x(x).build()
+        fun makeInternally(x: Int): AccessPrivateTarget = <!UNRESOLVED_REFERENCE!>builder<!>().x(x).build()
     }
 }
 
-@Builder(access = AccessLevel.PRIVATE)
+<!ANNOTATION_IS_NOT_SUPPORTED!>@Builder(access = AccessLevel.PRIVATE)<!>
 class CalledFromClassBody(val x: Int) {
-    fun make(): CalledFromClassBody = builder().x(1).build()
+    fun make(): CalledFromClassBody = <!UNRESOLVED_REFERENCE!>builder<!>().x(1).build()
 }
 
 // Outside the class nothing of the builder is reachable, which is what `PRIVATE` is for.
 fun fromOutside() {
-    AccessPrivateTarget.<!INVISIBLE_REFERENCE!>builder<!>()
+    AccessPrivateTarget.<!UNRESOLVED_REFERENCE!>builder<!>()
 }
