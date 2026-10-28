@@ -28,7 +28,7 @@ import java.io.File
  * Debugging tests for `FactsTracker` (see `org.jetbrains.kotlin.backend.konan.facts`).
  *
  * Each test compiles the signature examples of the "signature facts" proposal into a klib, builds a per-file cache for it
- * with `-Xdump-facts-to=<file>`, prints everything that was tracked, and checks the provided (`defs`) and used (`uses`) facts.
+ * with `-Xdump-facts-to=<file>` and `-Xverify-klib-facts`, prints everything that was tracked, and checks the provided (`defs`) and used (`uses`) facts.
  *
  * Dump format: CSV with the header `relation,path,kind,symbolKey,hash,representation` (the representation is for debugging only).
  */
@@ -201,6 +201,20 @@ class NativeFactsTrackerTest : AbstractNativeSimpleTest() {
         assertFalse(isDirty("C.kt", before, after), "C.kt must not be dirty")
     }
 
+    // The compiler verifies that the facts computed from the klib alone are the ones it records.
+    @Test
+    fun klibFactsMatchCompiler() {
+        val scenario = "klibFactsMatchCompiler"
+        val compiled = trackFacts(
+            scenario, ORIGINAL + mapOf(
+                "Base.kt" to "open class Base {\n    val x: Int = 1\n    open fun f(): String = \"\"\n}\n",
+                "Derived.kt" to "class Derived : Base() {\n    val y: Long = 2L\n    override fun f(): String = \"d\"\n}\n",
+                "Box.kt" to "class Box<T>(val value: T) {\n    fun get(): List<T?> = listOf(value)\n}\nprivate fun secret(): Box<String> = Box(\"\")\nobject O {\n    var counter: Int = 0\n}\n",
+            )
+        )
+        assertTrue(compiled.allDefs.isNotEmpty())
+    }
+
     private data class FactKey(val kind: String, val symbolKey: String)
 
     private fun Map<FactKey, String>.layouts(): Map<FactKey, String> = filterKeys { it.kind == "BASE_CLASS_LAYOUT" }
@@ -252,6 +266,7 @@ class NativeFactsTrackerTest : AbstractNativeSimpleTest() {
             "-Xcache-directory=${systemCacheDir.absolutePath}",
             "-Xadd-cache=${klibFile.absolutePath}",
             "-Xdump-facts-to=${dumpFile.absolutePath}",
+            "-Xverify-klib-facts",
         )
 
         return parseFacts(scenario, dumpFile)

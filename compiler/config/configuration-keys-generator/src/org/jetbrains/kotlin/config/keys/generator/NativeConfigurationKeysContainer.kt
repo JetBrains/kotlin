@@ -31,6 +31,7 @@ object NativeConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.ko
     val DUMP_FACTS_TO by key<String>("Debug-only: path to a file where the facts tracked by the compiler's `FactsTracker` are appended.")
     val CACHED_LIBRARIES by key<Map<String, String>>("Mapping from library paths to cache paths.")
     val FILES_TO_CACHE by key<List<String>>("Which files should be compiled to cache.")
+    val VERIFY_KLIB_FACTS by key<Boolean>("Verify that facts collected by the compiler match those generated from the klib (only for debugging purposes).")
     val MAKE_PER_FILE_CACHE by key<Boolean>()
     val CACHED_LIBRARY_DEPENDENCIES_FINGERPRINT by key<String>("Combined fingerprint of external cached dependencies of the library being cached.")
     val FRAMEWORK_IMPORT_HEADERS by key<List<String>>()
