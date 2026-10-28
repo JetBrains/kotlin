@@ -22,9 +22,9 @@ import kotlin.wasm.internal.*
 internal fun <T> (suspend () -> T).startCoroutineUninterceptedOrReturnStackSwitchingImpl(
     completion: Continuation<T>
 ): Any? {
-    val wrappedCompletion = CoroutineImplStackSwitching<T, T>(completion)
-    val contref0 = suspendFunction0ToContref(this, wrappedCompletion)
-    return resumeWithImpl(contref0)
+    val coroutine = CoroutineImplStackSwitching<T, T>(completion)
+    val contref0 = suspendFunction0ToContref(this, coroutine)
+    return startWrappedCoroutineStackSwitchingImpl(contref0, coroutine)
 }
 
 // Replaces `startCoroutineUninterceptedOrReturnImpl` when -Xwasm-use-stack-switching-proposal passed
@@ -33,9 +33,9 @@ internal fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedOrReturnStack
     receiver: R,
     completion: Continuation<T>
 ): Any? {
-    val wrappedCompletion = CoroutineImplStackSwitching<T, T>(completion)
-    val contref1 = suspendFunction1ToContref(this, receiver, wrappedCompletion)
-    return resumeWithImpl(contref1)
+    val coroutine = CoroutineImplStackSwitching<T, T>(completion)
+    val contref1 = suspendFunction1ToContref(this, receiver, coroutine)
+    return startWrappedCoroutineStackSwitchingImpl(contref1, coroutine)
 }
 
 // Replaces `startCoroutineUninterceptedOrReturnImpl` when -Xwasm-use-stack-switching-proposal passed
@@ -45,9 +45,9 @@ internal fun <R, P, T> (suspend R.(P) -> T).startCoroutineUninterceptedOrReturnS
     param: P,
     completion: Continuation<T>
 ): Any? {
-    val wrappedCompletion = CoroutineImplStackSwitching<T, T>(completion)
-    val contref2 = suspendFunction2ToContref(this, receiver, param, wrappedCompletion)
-    return resumeWithImpl(contref2)
+    val coroutine = CoroutineImplStackSwitching<T, T>(completion)
+    val contref2 = suspendFunction2ToContref(this, receiver, param, coroutine)
+    return startWrappedCoroutineStackSwitchingImpl(contref2, coroutine)
 }
 
 // Replaces `createCoroutineUninterceptedIntrinsic0` when -Xwasm-use-stack-switching-proposal passed
@@ -82,7 +82,7 @@ private inline fun <T> createCoroutineFromSuspendFunctionStackSwitching(
         }
 
         override fun doResume(): Any? {
-            exception?.let { throw it }
+            result.throwOnFailure()
             return block()
         }
     }
