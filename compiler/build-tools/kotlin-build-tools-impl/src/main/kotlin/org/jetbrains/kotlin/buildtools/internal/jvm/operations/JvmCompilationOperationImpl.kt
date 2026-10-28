@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfig
 import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.ROOT_PROJECT_DIR
 import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.TRACK_CONFIGURATION_INPUTS
 import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM
+import org.jetbrains.kotlin.buildtools.internal.arguments.CommonCompilerArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.CommonCompilerArgumentsImpl.Companion.LANGUAGE_VERSION
 import org.jetbrains.kotlin.buildtools.internal.arguments.CommonCompilerArgumentsImpl.Companion.X_USE_FIR_IC
 import org.jetbrains.kotlin.buildtools.internal.arguments.JvmCompilerArgumentsImpl
@@ -32,12 +33,10 @@ import org.jetbrains.kotlin.buildtools.internal.jps.JvmClientManagedIncrementalC
 import org.jetbrains.kotlin.buildtools.internal.jps.createCompilerServicesFacadeBase
 import org.jetbrains.kotlin.buildtools.internal.jps.getClientManagedIncrementalCompilationOptions
 import org.jetbrains.kotlin.buildtools.internal.jps.registerPlatformServices
-import org.jetbrains.kotlin.buildtools.internal.jvm.HasSnapshotBasedIcOptionsAccessor
-import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationConfigurationImpl
-import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl
+import org.jetbrains.kotlin.buildtools.internal.jvm.*
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl.Companion.PRECISE_JAVA_TRACKING
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl.Companion.USE_FIR_RUNNER
-import org.jetbrains.kotlin.buildtools.internal.jvm.toOptions
+import org.jetbrains.kotlin.buildtools.internal.jvm.KaptConfigurationImpl.Companion.SOURCE_OUTPUT_DIR
 import org.jetbrains.kotlin.buildtools.internal.trackers.getMetricsReporter
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
@@ -163,6 +162,14 @@ internal class JvmCompilationOperationImpl private constructor(
         compilerArguments.toCompilerArguments().also { compilerArguments ->
             compilerArguments.destination = destinationDirectory.absolutePathStringOrThrow()
             compilerArguments.incrementalCompilation = get(INCREMENTAL_COMPILATION) != null
+            addKaptCompilerPluginOptions(
+                (getIcOptionsOrNull(
+                    emptyArray(),
+                    0,
+                    emptyArray(),
+                    K2JVMCompilerArguments()
+                ) as? IncrementalCompilationOptions)?.workingDir?.toPath()
+            )
         }
 
     override fun getIcOptionsOrNull(
@@ -237,7 +244,6 @@ internal class JvmCompilationOperationImpl private constructor(
             )
         )
     }
-
 
     override fun shouldCompileIncrementally(): Boolean {
         return when (val icConfiguration = get(INCREMENTAL_COMPILATION)) {
@@ -335,6 +341,21 @@ internal class JvmCompilationOperationImpl private constructor(
         return compilationResult
     }
 
+    private fun addKaptCompilerPluginOptions(workingDirectory: Path? = null) {
+        get(KAPT_CONFIGURATION)?.let { kaptConfiguration ->
+            val compilerPlugins = compilerArguments[CommonCompilerArgumentsImpl.COMPILER_PLUGINS].toMutableList()
+            val kaptBuilder = kaptConfiguration.deepCopy()
+            workingDirectory?.let { path ->
+                kaptBuilder[KaptConfigurationImpl.INCREMENTAL_DATA_OUTPUT_DIR] = path
+            }
+            if (kaptBuilder[SOURCE_OUTPUT_DIR] == null) {
+                kaptBuilder[SOURCE_OUTPUT_DIR] = destinationDirectory // not used but must be provided
+            }
+            compilerPlugins += kaptBuilder.toCompilerPlugin()
+            compilerArguments[CommonCompilerArgumentsImpl.COMPILER_PLUGINS] = compilerPlugins
+        }
+    }
+
     override fun Services.Builder.registerPlatformServices(logger: KotlinLogger) {
         val icConfiguration = get(INCREMENTAL_COMPILATION)
         if (icConfiguration !is JvmClientManagedIncrementalCompilationConfiguration) return
@@ -429,6 +450,8 @@ internal class JvmCompilationOperationImpl private constructor(
 
 
     companion object {
+        val KAPT_CONFIGURATION: Option<KaptConfigurationImpl?> = Option("KAPT_CONFIGURATION", null)
+
         val INCREMENTAL_COMPILATION: Option<JvmIncrementalCompilationConfiguration?> = Option("INCREMENTAL_COMPILATION", null)
 
         val KOTLINSCRIPT_EXTENSIONS: Option<Array<String>?> = Option("KOTLINSCRIPT_EXTENSIONS", null)
