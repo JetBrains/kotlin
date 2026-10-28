@@ -233,6 +233,7 @@ class WasmSerializer(outputStream: OutputStream) {
             WasmHeapType.Simple.NoExtern -> setTag(HeapTypeTags.NO_EXTERN)
             WasmHeapType.Simple.None -> setTag(HeapTypeTags.NONE)
             WasmHeapType.Simple.NoFunc -> setTag(HeapTypeTags.NO_FUNC)
+            WasmHeapType.Simple.NoCont -> setTag(HeapTypeTags.NO_CONT)
             WasmHeapType.Simple.Struct -> setTag(HeapTypeTags.STRUCT)
             is GcHeapTypeSymbol -> withTag(HeapTypeTags.HEAP_GC_TYPE) { serializeIdSignature(type.type) }
             is VTableHeapTypeSymbol -> withTag(HeapTypeTags.HEAP_VT_TYPE) { serializeIdSignature(type.type) }

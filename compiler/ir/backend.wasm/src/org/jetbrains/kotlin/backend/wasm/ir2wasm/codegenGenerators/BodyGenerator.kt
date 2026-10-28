@@ -1383,8 +1383,7 @@ class BodyGenerator(
             // Used as a placeholder to be stored in WasmContinuationBox.wasmContinuation.
             // Substituted by the actual wasm continuation, when the coroutine suspends.
             wasmSymbols.coroutinesStackSwitchingIntrinsics?.nullContrefIntrinsic -> {
-                val boundContType = Synthetics.GcTypes.boundContType
-                body.buildInstr(WasmOp.REF_NULL, location, boundContType)
+                body.buildRefNull(WasmHeapType.Simple.NoCont, location)
             }
 
             /**

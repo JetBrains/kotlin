@@ -55,6 +55,7 @@ sealed class WasmHeapType {
         object None : Simple("none", -0x0F)
         object NoFunc : Simple("nofunc", -0x0D)
         object NoExtern : Simple("noextern", -0x0E)
+        object NoCont : Simple("nocont", -0x0B)
 
         override fun toString(): String {
             return "Simple:$name(${code.toString(16)})"

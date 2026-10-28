@@ -498,14 +498,14 @@ open class WasmExpressionBuilder(
     }
 
     fun buildResumeThrowRef(
-        contType: WasmHeapType,
+        contType: WasmImmediate.TypeIdx,
         contHandle: WasmImmediate.ContHandle,
         location: SourceLocation
     ) {
         buildInstr(
             WasmOp.RESUME_THROW_REF,
             location,
-            WasmImmediate.HeapType(contType),
+            contType,
             WasmImmediate.ConstI32(1),
             contHandle
         )
