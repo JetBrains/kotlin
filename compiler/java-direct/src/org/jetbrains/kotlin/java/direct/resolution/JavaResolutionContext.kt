@@ -15,12 +15,17 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import java.util.concurrent.ConcurrentHashMap
 
-/** Per-file immutable data shared across all scope variants of a [JavaResolutionContext]. */
+/**
+ * Per-file immutable data shared across all scope variants of a [JavaResolutionContext].
+ *
+ * [session] is `null` for a file read outside any FIR session — `module-info.java` at classpath setup — where
+ * classes exist only as far as [classFinder] knows them.
+ */
 internal class JavaFileContext(
     val packageFqName: FqName,
     val imports: JavaImports,
     val classFinder: LeanJavaClassFinder?,
-    val session: FirSession,
+    val session: FirSession?,
     val moduleImportedPackages: JavaModuleImportedPackages,
 )
 
@@ -56,7 +61,7 @@ class JavaResolutionContext private constructor(
     companion object {
         internal fun create(
             tree: LightSyntaxTree,
-            session: FirSession,
+            session: FirSession?,
             classFinder: LeanJavaClassFinder? = null,
             moduleImportedPackages: JavaModuleImportedPackages = JavaModuleImportedPackages.EMPTY,
         ): JavaResolutionContext {
