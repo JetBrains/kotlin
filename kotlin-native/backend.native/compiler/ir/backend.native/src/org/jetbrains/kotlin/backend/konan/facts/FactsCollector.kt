@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.facts
 
+import org.jetbrains.kotlin.backend.konan.ir.BridgesPolicy
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
@@ -30,13 +31,13 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
  */
 internal object FactsCollector {
 
-    fun collectDefsFrom(irModules: List<IrModuleFragment>, tracker: FactsTracker) {
+    fun collectDefsFrom(irModules: List<IrModuleFragment>, tracker: FactsTracker, bridgesPolicy: BridgesPolicy) {
         irModules.forEach { module ->
-            module.files.forEach { collectDefsFrom(it, tracker) }
+            module.files.forEach { collectDefsFrom(it, tracker, bridgesPolicy) }
         }
     }
 
-    fun collectDefsFrom(irFile: IrFile, tracker: FactsTracker) {
+    fun collectDefsFrom(irFile: IrFile, tracker: FactsTracker, bridgesPolicy: BridgesPolicy) {
         if (!tracker.isEnabled) return
 
         irFile.acceptVoid(object : IrVisitorVoid() {
@@ -48,6 +49,7 @@ internal object FactsCollector {
                 val signature = declaration.symbol.signature ?: declaration.symbol.privateSignature
                 if (!declaration.isExternalObjC && signature != null) {
                     tracker.defines(irFile, Fact.BaseClassLayout.from(declaration))
+                    tracker.defines(irFile, Fact.methodTableLayoutOf(declaration, bridgesPolicy))
                 }
                 super.visitClass(declaration)
             }

@@ -2483,8 +2483,24 @@ internal class CodeGeneratorVisitor(
         if (superClass == null && function.isOverridable)
             return callVirtual(function, args, resultLifetime, resultSlot)
         else {
+            if (function.isFakeOverride) useFakeOverrideTargetFacts(function)
             return callDirect(function, args, resultLifetime, resultSlot)
         }
+    }
+
+    /**
+     * A direct call to the fake override [function] calls the implementation it resolves to, which a new override in its class,
+     * or in any class between it and the implementation, changes: so the call site uses the [Fact.VtableLayout]
+     * (or [Fact.ItableLayout]) of each of these classes, which records their overrides.
+     */
+    private fun useFakeOverrideTargetFacts(function: IrSimpleFunction) {
+        val callSiteFile = (currentCodeContext.functionScope() as? FunctionScope)?.declaration?.fileOrNull ?: return
+        val owner = function.parent as? IrClass ?: return
+        val targetOwner = function.target.parent as? IrClass ?: return
+        (sequenceOf(owner) + owner.getAllSuperclasses())
+                .filter { it != targetOwner && it.isSubclassOf(targetOwner) }
+                .filter { it.fileOrNull != null && it.symbol.signature != null }
+                .forEach { generationState.context.factsTracker.uses(callSiteFile, Fact.methodTableLayoutOf(it, context.config.bridgesPolicy)) }
     }
 
     //-------------------------------------------------------------------------//
