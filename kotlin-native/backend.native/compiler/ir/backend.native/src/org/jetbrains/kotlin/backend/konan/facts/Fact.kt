@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.declarations.path
+import org.jetbrains.kotlin.ir.expressions.IrConst
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrStarProjection
@@ -49,7 +51,8 @@ enum class FactKind(val id: Int) {
     VTABLE_LAYOUT(2),
     ITABLE_LAYOUT(3),
     ENUM_ENTRIES(4),
-    INLINE_BODY(5)
+    INLINE_BODY(5),
+    CONST_INITIALIZER(6)
 }
 
 class FactKey(
@@ -142,6 +145,42 @@ sealed class Fact {
         override fun contentHash(): ULong {
             // For inline functions we should not care about the signature (this is already covered by Fact.Signature).
             return cityHash64((irSymbol.owner as IrFunction).body!!.dump().toByteArray())
+        }
+    }
+
+    /**
+     * The initializer of a `const` property. It is copied into every file reading the property: a call to its
+     * getter is replaced by the initializer itself (see `PropertyAccessorInlineLowering`), so the bitcode of a
+     * reading file has to be regenerated whenever the initializer changes.
+     *
+     * The initializer of a constant is usually an [IrConst]: its kind and value are hashed directly instead of
+     * dumping the IR, which renders the type and thus needs the classifiers to be bound (see [renderForFacts]).
+     */
+    class ConstInitializer(
+            override val irSymbol: IrSymbol,
+            override val irFilePathString: String,
+            private val initializerExpression: IrExpression?,
+    ) : Fact() {
+
+        companion object {
+            fun from(irProperty: IrProperty): ConstInitializer =
+                    ConstInitializer(
+                            irSymbol = irProperty.symbol,
+                            irFilePathString = irProperty.file.path,
+                            initializerExpression = irProperty.backingField?.initializer?.expression,
+                    )
+        }
+
+        override val kind: FactKind = FactKind.CONST_INITIALIZER
+
+        override fun contentHash(): ULong {
+            val initializer = initializerExpression ?: error("Constant property has to have a backing field with initializer")
+            val text = when (initializer) {
+                is IrConst -> "${initializer.kind.asString}\u0000${initializer.value}"
+                // A constant is normally constant-folded by the frontend, so this is just a fallback.
+                else -> initializer.dump()
+            }
+            return cityHash64(text.toByteArray())
         }
     }
 

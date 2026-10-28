@@ -36,6 +36,13 @@ open class PropertyAccessorInlineLowering(
     open fun IrProperty.isSafeToInline(accessContainer: IrDeclaration): Boolean =
         isSafeToInlineInClosedWorld()
 
+    /**
+     * Called right before the initializer of a const [property] is copied into the body of [container], replacing
+     * any reference to the property itself. Backends may override this to record the dependency on the
+     * initializer's future value: after the lowering only the copied expression remains in [container].
+     */
+    protected open fun onConstPropertyInlined(property: IrProperty, backingField: IrField, container: IrDeclaration) {}
+
     // TODO: implement general function inlining optimization and replace it with
     private inner class AccessorInliner(val container: IrDeclaration) : IrElementTransformerVoid() {
 
@@ -77,6 +84,7 @@ open class PropertyAccessorInlineLowering(
             val backingField = property.backingField ?: return expression
 
             if (property.isConst) {
+                onConstPropertyInlined(property, backingField, container)
                 val initializer =
                     (backingField.initializer ?: error("Constant property has to have a backing field with initializer"))
                 val constExpression = initializer.expression.deepCopyWithSymbols()

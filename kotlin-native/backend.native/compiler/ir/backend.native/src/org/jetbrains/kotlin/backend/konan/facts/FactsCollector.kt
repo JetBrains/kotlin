@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.objcinterop.externalObjCClassFqName
 import org.jetbrains.kotlin.ir.util.hasAnnotation
@@ -83,6 +84,15 @@ internal object FactsCollector {
                     }
                 }
                 super.visitSimpleFunction(declaration)
+            }
+
+            override fun visitProperty(declaration: IrProperty) {
+                val signature = declaration.symbol.signature ?: declaration.symbol.privateSignature
+                // The initializer may be missing e.g. for an expect constant, which defines no such fact.
+                if (declaration.isConst && signature != null && declaration.backingField?.initializer?.expression != null) {
+                    tracker.defines(irFile, Fact.ConstInitializer.from(declaration))
+                }
+                super.visitProperty(declaration)
             }
         })
     }
