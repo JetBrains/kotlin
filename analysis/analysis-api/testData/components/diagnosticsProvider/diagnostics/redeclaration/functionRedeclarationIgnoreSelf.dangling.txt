@@ -1,0 +1,14 @@
+Diagnostics from foo1.kt:
+  <NO DIAGNOSTICS>
+
+Diagnostics from foo2.kt:
+  <NO DIAGNOSTICS>
+
+Diagnostics from foo3.kt:
+  <NO DIAGNOSTICS>
+
+Diagnostics from foo4.kt:
+  <NO DIAGNOSTICS>
+
+Diagnostics from foo5.kt:
+  <NO DIAGNOSTICS>
