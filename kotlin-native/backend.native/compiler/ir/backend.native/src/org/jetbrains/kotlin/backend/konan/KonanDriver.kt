@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.reportLoadingProblemsIfAny
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile
 import org.jetbrains.kotlin.backend.konan.driver.NativeCompilerDriver
+import org.jetbrains.kotlin.backend.konan.facts.CacheBuilderFactBased
 import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -140,7 +141,16 @@ class KonanDriver(
             // Reload `CacheSupport` inside `NativeSecondStageCompilationConfig` to reflect the up-to-date state of just built caches.
             // This is important for further correct compilation of the resulting binary.
             config.reloadCacheSupport()
+        }
 
+        // The caches of the user libraries depend on the ones built by [cacheBuilder] above.
+        val factsCacheBuilder = CacheBuilderFactBased(config, compilationSpawner)
+        if (factsCacheBuilder.needToBuild) {
+            factsCacheBuilder.build()
+            config.reloadCacheSupport()
+        }
+
+        if (cacheBuilder.needToBuild() || factsCacheBuilder.needToBuild) {
             // Parallel cache build might have already built our asked-to-build cache. Check for that and return early if true.
             if (!hasCompilerInput && config.librariesToCache.isEmpty())
                 return
@@ -155,7 +165,9 @@ class KonanDriver(
         // Note: A compilation that produces a cache stores the issues in that cache directory instead;
         // they are replayed by the compilations that consume it.
         if (!config.produce.isCache)
-            replayPartialLinkageIssuesFromCaches(config, cacheBuilder::wasRebuiltInThisRun)
+            replayPartialLinkageIssuesFromCaches(config) { library, fileId ->
+                cacheBuilder.wasRebuiltInThisRun(library, fileId) || factsCacheBuilder.wasRebuiltInThisRun(library, fileId)
+            }
 
         NativeCompilerDriver(performanceManager).run(config, environment)
     }

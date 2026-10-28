@@ -255,6 +255,17 @@ This library must be one of the ones passed with '-library'.""",
         }
 
     @Argument(
+        value = "-Xfacts-cache-enabled",
+        description = """Build the incremental caches of user libraries using the facts tracked by the previous compilation (experimental).
+The stdlib and the other libraries are cached as usual. Requires incremental compilation.""",
+    )
+    var factsCacheEnabled: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xfile-to-cache",
         valueDescription = "<path>",
         description = "Path to the file to cache.",
