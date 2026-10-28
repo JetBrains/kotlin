@@ -126,14 +126,14 @@ private class Degrade(val rootProject: Project) {
                     .takeWhile { it != "]" }
                     .toList()
                     .flatMap {
-                        val line = it.trimStart()
-                        if (line.startsWith("@")) { // argument with filename containing list of arguments
-                            File(line.substringAfter("@"))
+                        val argument = it.trimStart()
+                        if (argument.startsWith("@")) { // argument with filename containing list of arguments
+                            File(argument.substringAfter("@"))
                                     .readText()
                                     .split("\n")
                                     .map { it.substringAfter('"').substringBeforeLast('"') }
                         } else
-                            listOf(line)
+                            listOf(argument)
                     }
 
             result += KotlinNativeCommand(listOf(toolName) + transformedArguments)
