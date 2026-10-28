@@ -62,6 +62,7 @@ internal class BtaCompilerRunner<T : BaseCompilationOperation.Builder>(
             @Suppress("DEPRECATION_ERROR")
             compilationOperationBuilder[BuildOperation.Companion.createCustomOption("XX_KGP_METRICS_COLLECTOR")] = true
         }
+        @Suppress("DEPRECATION")
         compilationOperationBuilder[BaseCompilationOperation.GENERATE_COMPILER_REF_INDEX] = generateCompilerRefIndex
     }
 }

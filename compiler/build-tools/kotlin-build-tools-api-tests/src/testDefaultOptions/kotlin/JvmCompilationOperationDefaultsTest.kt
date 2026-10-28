@@ -26,7 +26,9 @@ class JvmCompilationOperationDefaultsTest {
         assertEquals(null, operation[BaseCompilationOperation.LOOKUP_TRACKER])
         assertEquals(null, operation[JvmCompilationOperation.KOTLINSCRIPT_EXTENSIONS])
         assertEquals(CompilerArgumentsLogLevel.DEBUG, operation[BaseCompilationOperation.COMPILER_ARGUMENTS_LOG_LEVEL])
+        @Suppress("DEPRECATION")
         assertEquals(false, operation[BaseCompilationOperation.GENERATE_COMPILER_REF_INDEX])
+        assertEquals(null, operation[BaseCompilationOperation.COMPILER_REF_INDEX])
         // we cannot directly acquire objectInstance as it's coupled with the classloader
         val defaultCompilerMessageRenderer = btaClassloader.loadClass(DefaultCompilerMessageRendererClassName).kotlin.objectInstance
         assertEquals(defaultCompilerMessageRenderer, operation[BaseCompilationOperation.COMPILER_MESSAGE_RENDERER])

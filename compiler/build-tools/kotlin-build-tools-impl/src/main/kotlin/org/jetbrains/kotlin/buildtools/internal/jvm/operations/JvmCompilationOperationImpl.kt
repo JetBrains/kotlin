@@ -284,7 +284,7 @@ internal class JvmCompilationOperationImpl : BaseCompilationOperationImpl<JvmCom
             kotlinScriptExtensions = kotlinScriptExtensions,
             icFeatures = aggregatedIcConfigurationOptions.extractIncrementalCompilationFeatures(),
             useJvmFirRunner = aggregatedIcConfigurationOptions[USE_FIR_RUNNER],
-            generateCompilerRefIndex = generateCompilerRefIndex,
+            compilerRefIndexDirectory = compilerRefIndexDirectory(aggregatedIcConfigurationOptions.workingDirectory)?.toFile(),
             configurationInputs = makeConfigurationInputs(
                 aggregatedIcConfigurationOptions,
                 getEffectivePreciseJavaTrackingState(
@@ -495,7 +495,7 @@ internal class JvmCompilationOperationImpl : BaseCompilationOperationImpl<JvmCom
             kotlinSourceFilesExtensions = kotlinFilenameExtensions,
             icFeatures = icFeatures,
             compilationCanceledStatus = cancellationHandle,
-            generateCompilerRefIndex = generateCompilerRefIndex,
+            compilerRefIndexDirectory = compilerRefIndexDirectory(workingDirectory)?.toFile(),
             lookupTrackerDelegate = getLookupTrackerAdapter(),
             pluginsLoader = executionContext.classloadersCache?.asPluginsLoader()
         )
@@ -516,7 +516,7 @@ internal class JvmCompilationOperationImpl : BaseCompilationOperationImpl<JvmCom
             kotlinSourceFilesExtensions = kotlinFilenameExtensions,
             icFeatures = icFeatures,
             compilationCanceledStatus = cancellationHandle,
-            generateCompilerRefIndex = generateCompilerRefIndex,
+            compilerRefIndexDirectory = compilerRefIndexDirectory(workingDirectory)?.toFile(),
             lookupTrackerDelegate = getLookupTrackerAdapter(),
         )
 }
