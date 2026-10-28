@@ -1,4 +1,4 @@
-/* anchor (KtScript) --> *//* anchor (KtDestructuringDeclaration) --> */val (/* anchor (KtDestructuringDeclarationEntry) --> */a/* <-- */, /* anchor (KtDestructuringDeclarationEntry) --> */b/* <-- */) = 1 to 2/* <-- */
+/* anchor (KtFile) --> *//* anchor (KtScript) --> *//* anchor (KtDestructuringDeclaration) --> */val (/* anchor (KtDestructuringDeclarationEntry) --> */a/* <-- */, /* anchor (KtDestructuringDeclarationEntry) --> */b/* <-- */) = 1 to 2/* <-- */
 
 /* anchor (KtClass) --> */class Foo {
     /* anchor (KtDestructuringDeclaration) --> */val (/* anchor (KtDestructuringDeclarationEntry) --> */c/* <-- */, /* anchor (KtDestructuringDeclarationEntry) --> */d/* <-- */) = 3 to 4/* <-- */
@@ -19,4 +19,4 @@
 /* anchor (KtScriptInitializer) --> */ba { (a, b), c ->
 
 }/* <-- */
-/* <-- */
+/* <-- *//* <-- */

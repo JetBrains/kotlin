@@ -9,12 +9,12 @@ import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.impl.source.tree.LeafPsiElement
-import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
+import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.LLSourceLikeTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
-import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -24,9 +24,9 @@ import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractNonLocalDeclarationAnchorTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val anchors = hashSetOf<KtDeclaration>()
+        val anchors = hashSetOf<KtElement>()
         mainFile.forEachDescendantOfType<PsiElement> {
-            it.getNonLocalContainingOrThisDeclaration()?.let(anchors::add)
+            it.getNonLocalContainingOrThisElement()?.let(anchors::add)
         }
 
         val text = buildString {

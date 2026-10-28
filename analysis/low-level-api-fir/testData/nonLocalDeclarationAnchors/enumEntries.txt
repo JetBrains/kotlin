@@ -1,4 +1,4 @@
-/* anchor (KtClass) --> */enum class Base {
+/* anchor (KtFile) --> *//* anchor (KtClass) --> */enum class Base {
     /* anchor (KtEnumEntry) --> */Entry {
         init {
 
@@ -21,3 +21,4 @@
         }
     }/* <-- */
 }/* <-- */
+/* <-- */

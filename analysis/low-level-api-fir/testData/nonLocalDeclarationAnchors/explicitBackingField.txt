@@ -1,3 +1,5 @@
+/* anchor (KtFile) --> */
+
 /* anchor (KtClass) --> */class A {
     /* anchor (KtProperty) --> */val prop: Any
         /* anchor (KtBackingField) --> */@Ann field: Int = run {
@@ -11,3 +13,4 @@
     /* anchor (KtPropertyAccessor) --> */get() = field/* <-- *//* <-- */
 
 /* anchor (KtClass) --> */annotation class Ann/* <-- */
+/* <-- */

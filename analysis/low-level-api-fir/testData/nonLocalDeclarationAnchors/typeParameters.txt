@@ -1,4 +1,4 @@
-/* anchor (KtClass) --> */class Foo</* anchor (KtTypeParameter) --> */T/* <-- */> {
+/* anchor (KtFile) --> *//* anchor (KtClass) --> */class Foo</* anchor (KtTypeParameter) --> */T/* <-- */> {
     /* anchor (KtNamedFunction) --> */fun </* anchor (KtTypeParameter) --> */F/* <-- */> bar() {
         fun <D> baz() {
 
@@ -15,3 +15,4 @@
 }/* <-- */
 
 /* anchor (KtProperty) --> */val </* anchor (KtTypeParameter) --> */D/* <-- */> D.doo: Int /* anchor (KtPropertyAccessor) --> */get() = 0/* <-- *//* <-- */
+/* <-- */

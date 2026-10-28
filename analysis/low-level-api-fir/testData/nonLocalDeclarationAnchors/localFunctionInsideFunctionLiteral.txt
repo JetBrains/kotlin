@@ -1,4 +1,4 @@
-package one
+/* anchor (KtFile) --> */package one
 
 /* anchor (KtClass) --> */open class ClassWithParameter/* anchor (KtPrimaryConstructor) --> */(/* anchor (KtParameter) --> */i: () -> Unit/* <-- */)/* <-- *//* <-- */
 
@@ -6,3 +6,4 @@ package one
     fun foo(param: String) {
     }
 })/* <-- */
+/* <-- */

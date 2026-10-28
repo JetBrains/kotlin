@@ -1,4 +1,4 @@
-package one
+/* anchor (KtFile) --> */package one
 
 /* anchor (KtClass) --> */class A {
     /* anchor (KtNamedFunction) --> */context(/* anchor (KtParameter) --> */p1: A/* <-- */, /* anchor (KtParameter) --> */_: Short/* <-- */)
@@ -25,3 +25,6 @@ val bar: Boolean /* anchor (KtPropertyAccessor) --> */get() = true/* <-- *//* <-
 
 /* anchor (KtProperty) --> */context(/* anchor (KtParameter) --> */_: String/* <-- */, /* anchor (KtParameter) --> */i: Int/* <-- */)
 val Long.bar: Boolean /* anchor (KtPropertyAccessor) --> */get() = true/* <-- *//* <-- */
+
+
+/* <-- */

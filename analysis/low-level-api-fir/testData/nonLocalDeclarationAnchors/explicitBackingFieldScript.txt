@@ -1,4 +1,4 @@
-/* anchor (KtScript) --> */
+/* anchor (KtFile) --> *//* anchor (KtScript) --> */
 
 /* anchor (KtProperty) --> */val prop: Any
     /* anchor (KtBackingField) --> */field: Int = run {
@@ -13,4 +13,4 @@
 }/* <-- */
 
 /* anchor (KtClass) --> */annotation class Ann/* <-- */
-/* <-- */
+/* <-- *//* <-- */

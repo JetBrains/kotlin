@@ -408,10 +408,20 @@ internal val KtElement.isAutonomousElement: Boolean
         else -> true
     }
 
-// TODO change predicate (KT-76271)
+/**
+ * Returns the first non-local element from [parentsWithSelf] that matches [predicate] if it is a [KtDeclaration],
+ * or `null` otherwise.
+ *
+ * Non-local elements that are not declarations, such as a non-local dangling [KtModifierList] or a [KtFile],
+ * are passed to [predicate] as well. For example, the non-local container of an element inside a class-level dangling
+ * modifier list is the modifier list, not the class, so with the default [predicate] the result is `null` for this element.
+ * A caller that needs the declaration around such elements has to skip them explicitly with `it is KtDeclaration`.
+ *
+ * @see getNonLocalContainingOrThisElement
+ */
 @KaImplementationDetail
-fun PsiElement.getNonLocalContainingOrThisDeclaration(predicate: (KtDeclaration) -> Boolean = { true }): KtDeclaration? {
-    return getNonLocalContainingOrThisElement { it is KtDeclaration && predicate(it) } as? KtDeclaration
+fun PsiElement.getNonLocalContainingOrThisDeclaration(predicate: (KtElement) -> Boolean = { true }): KtDeclaration? {
+    return getNonLocalContainingOrThisElement(predicate) as? KtDeclaration
 }
 
 /**

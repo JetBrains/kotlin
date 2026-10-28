@@ -28,11 +28,12 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
  * An explicit backing field is a lazily resolvable declaration, but its IR field shares the metadata source with the owning
  * property, and the local scope of the field initializer is preserved for the property as well.
  * Hence, the property is returned for elements inside the field.
+ * Dangling modifier lists are skipped as well, so the containing declaration is returned for elements inside them.
  *
  * @see getNonLocalContainingOrThisDeclaration
  */
 internal fun PsiElement.getNonLocalContainingOrThisDeclarationWithIrMetadata(): KtDeclaration? {
-    return getNonLocalContainingOrThisDeclaration { it !is KtBackingField }
+    return getNonLocalContainingOrThisDeclaration { it is KtDeclaration && it !is KtBackingField }
 }
 
 /**
