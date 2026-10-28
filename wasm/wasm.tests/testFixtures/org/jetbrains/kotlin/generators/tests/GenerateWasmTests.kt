@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUni
 import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.KT_WITHOUT_UNDERSCORE_PREFIX
+import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.WITHOUT_UNDERSCORE_PREFIX
 import org.jetbrains.kotlin.incremental.AbstractFirWasmInvalidationMultiModuleTest
 import org.jetbrains.kotlin.incremental.AbstractFirWasmInvalidationSingleModuleTest
 import org.jetbrains.kotlin.incremental.AbstractFirWasmInvalidationStackSwitchingMultiModuleTest
@@ -39,10 +40,10 @@ fun main(args: Array<String>) {
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup(testsRoot, "compiler/testData/klib/partial-linkage") {
             testClass<AbstractWasmPartialLinkageNoICTestCase> {
-                model(pattern = "^([^_](.+))$", recursive = false)
+                model(pattern = WITHOUT_UNDERSCORE_PREFIX, recursive = false)
             }
             testClass<AbstractWasmPartialLinkageWithICTestCase> {
-                model(pattern = "^([^_](.+))$", recursive = false)
+                model(pattern = WITHOUT_UNDERSCORE_PREFIX, recursive = false)
             }
         }
 
@@ -50,21 +51,21 @@ fun main(args: Array<String>) {
             testClass<AbstractFirWasmInvalidationTest> {
                 model(
                     "invalidation/",
-                    pattern = "^([^_](.+))$",
+                    pattern = WITHOUT_UNDERSCORE_PREFIX,
                     recursive = false,
                 )
             }
             testClass<AbstractFirWasmInvalidationMultiModuleTest> {
                 model(
                     "invalidation/",
-                    pattern = "^([^_](.+))$",
+                    pattern = WITHOUT_UNDERSCORE_PREFIX,
                     recursive = false,
                 )
             }
             testClass<AbstractFirWasmInvalidationSingleModuleTest> {
                 model(
                     "invalidation/",
-                    pattern = "^([^_](.+))$",
+                    pattern = WITHOUT_UNDERSCORE_PREFIX,
                     recursive = false,
                 )
             }
@@ -96,21 +97,21 @@ fun main(args: Array<String>) {
             testClass<AbstractFirWasmInvalidationWithPLTest> {
                 model(
                     "invalidationWithPL/",
-                    pattern = "^([^_](.+))$",
+                    pattern = WITHOUT_UNDERSCORE_PREFIX,
                     recursive = false,
                 )
             }
             testClass<AbstractFirWasmInvalidationWithPLMultiModuleTest> {
                 model(
                     "invalidationWithPL/",
-                    pattern = "^([^_](.+))$",
+                    pattern = WITHOUT_UNDERSCORE_PREFIX,
                     recursive = false,
                 )
             }
             testClass<AbstractFirWasmInvalidationWithPLSingleModuleTest> {
                 model(
                     "invalidationWithPL/",
-                    pattern = "^([^_](.+))$",
+                    pattern = WITHOUT_UNDERSCORE_PREFIX,
                     recursive = false,
                 )
             }
