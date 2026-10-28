@@ -140,9 +140,6 @@ internal class KaFirResolver(
             return wholeQualifier is FirResolvedQualifier && wholeQualifier.resolvedToCompanionObject
         }
 
-    override fun usesContextSensitiveResolution(simpleNameExpression: KtSimpleNameExpression): Boolean =
-        contextSensitiveResolutionStatus(simpleNameExpression) is KaContextSensitiveResolutionStatus.Used
-
     override fun contextSensitiveResolutionStatus(simpleNameExpression: KtSimpleNameExpression): KaContextSensitiveResolutionStatus =
         simpleNameExpression.withPsiValidityAssertion {
             val fir = simpleNameExpression.getOrBuildFir(analysisSession.resolutionFacade)
