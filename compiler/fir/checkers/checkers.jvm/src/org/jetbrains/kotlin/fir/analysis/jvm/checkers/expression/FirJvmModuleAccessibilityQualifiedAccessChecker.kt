@@ -26,7 +26,10 @@ import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileHandle
+import org.jetbrains.kotlin.load.kotlin.HandleKotlinClass
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
 import org.jetbrains.kotlin.load.kotlin.VirtualFileKotlinClass
 import org.jetbrains.kotlin.name.FqName
@@ -45,8 +48,8 @@ object FirJvmModuleAccessibilityQualifiedAccessChecker : FirQualifiedAccessExpre
             checkClassAccess(containingClassSymbol, expression)
         } else {
             val containerSource = callableSymbol.containerSource as? JvmPackagePartSource ?: return
-            val virtualFile = (containerSource.knownJvmBinaryClass as? VirtualFileKotlinClass)?.file ?: return
-            checkPackageAccess(virtualFile, containerSource.className.packageFqName, expression)
+            val binaryClass = containerSource.knownJvmBinaryClass ?: return
+            checkPackageAccess(binaryClass, containerSource.className.packageFqName, expression)
         }
     }
 
@@ -61,15 +64,26 @@ object FirJvmModuleAccessibilityQualifiedAccessChecker : FirQualifiedAccessExpre
         val sourceElement = symbol.fir.sourceElement
         val packageFqName = symbol.packageFqName()
         when (sourceElement) {
-            is BinaryClassSourceElement -> checkPackageAccess(packageFqName, element) { ourFile, resolver ->
-                resolver.checkAccessibility(ourFile, sourceElement.classFile, packageFqName)
-            }
+            is BinaryClassSourceElement -> checkPackageAccess(sourceElement.classFile, packageFqName, element)
             is VirtualFileBasedSourceElement -> checkPackageAccess(sourceElement.virtualFile, packageFqName, element)
-            is KotlinJvmBinarySourceElement -> {
-                val virtualFile = (sourceElement.binaryClass as? VirtualFileKotlinClass)?.file ?: return
-                checkPackageAccess(virtualFile, packageFqName, element)
-            }
+            is KotlinJvmBinarySourceElement -> checkPackageAccess(sourceElement.binaryClass, packageFqName, element)
             else -> return
+        }
+    }
+
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkPackageAccess(binaryClass: KotlinJvmBinaryClass, referencedPackageFqName: FqName, element: FirElement) {
+        when (binaryClass) {
+            is HandleKotlinClass -> checkPackageAccess(binaryClass.classFile, referencedPackageFqName, element)
+            // The Analysis API and K1 still read Kotlin classes from virtual files.
+            is VirtualFileKotlinClass -> checkPackageAccess(binaryClass.file, referencedPackageFqName, element)
+        }
+    }
+
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkPackageAccess(classFile: BinaryClassFileHandle, referencedPackageFqName: FqName, element: FirElement) {
+        checkPackageAccess(referencedPackageFqName, element) { ourFile, resolver ->
+            resolver.checkAccessibility(ourFile, classFile, referencedPackageFqName)
         }
     }
 
