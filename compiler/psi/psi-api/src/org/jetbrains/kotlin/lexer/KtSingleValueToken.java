@@ -25,7 +25,7 @@ public class KtSingleValueToken extends KtToken {
 
     @kotlin.Deprecated(
             message = "Use the 'KtSingleValueToken(String, String, int)' constructor instead",
-            level = DeprecationLevel.ERROR
+            level = DeprecationLevel.HIDDEN
     )
     @Deprecated
     public KtSingleValueToken(@NotNull @NonNls String debugName, @NotNull @NonNls String value) {

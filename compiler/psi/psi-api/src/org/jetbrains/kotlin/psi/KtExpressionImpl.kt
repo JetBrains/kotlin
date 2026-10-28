@@ -48,7 +48,7 @@ abstract class KtExpressionImpl : KtElementImpl, KtExpression {
                 "expression.replaceExpression(newElement, reformat, rawReplaceHandler)",
                 "org.jetbrains.kotlin.idea.base.psi.replaceExpression",
             ),
-            level = DeprecationLevel.ERROR,
+            level = DeprecationLevel.HIDDEN,
         )
         @OptIn(KtIdeApi::class)
         fun replaceExpression(

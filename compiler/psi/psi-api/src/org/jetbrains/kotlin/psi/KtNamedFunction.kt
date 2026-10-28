@@ -164,7 +164,7 @@ open class KtNamedFunction : KtTypeParameterListOwnerStub<KotlinFunctionStub>, K
     @Deprecated(
         message = "Use setFunctionTypeReference(typeRef) instead",
         replaceWith = ReplaceWith("this.setFunctionTypeReference(typeRef)", "org.jetbrains.kotlin.idea.base.psi.setFunctionTypeReference"),
-        level = DeprecationLevel.ERROR,
+        level = DeprecationLevel.HIDDEN,
     )
     override fun setTypeReference(typeRef: KtTypeReference?): KtTypeReference? =
         KtPsiMutationService.getInstance().setFunctionTypeReference(this, typeRef)

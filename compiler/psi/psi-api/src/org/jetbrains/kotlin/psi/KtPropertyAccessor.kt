@@ -156,7 +156,7 @@ open class KtPropertyAccessor : KtDeclarationStub<KotlinPropertyAccessorStub>, K
     @Deprecated(
         message = "Use typeReference instead",
         replaceWith = ReplaceWith("typeReference"),
-        level = DeprecationLevel.ERROR,
+        level = DeprecationLevel.HIDDEN,
     )
     open val returnTypeReference: KtTypeReference?
         get() = typeReference
@@ -165,7 +165,7 @@ open class KtPropertyAccessor : KtDeclarationStub<KotlinPropertyAccessorStub>, K
     @Deprecated(
         message = "use `parameterList?.leftParenthesis`",
         replaceWith = ReplaceWith("parameterList?.leftParenthesis"),
-        level = DeprecationLevel.ERROR,
+        level = DeprecationLevel.HIDDEN,
     )
     open val leftParenthesis: PsiElement?
         get() = parameterList?.leftParenthesis
@@ -174,7 +174,7 @@ open class KtPropertyAccessor : KtDeclarationStub<KotlinPropertyAccessorStub>, K
     @Deprecated(
         message = "use `parameterList?.rightParenthesis`",
         replaceWith = ReplaceWith("parameterList?.rightParenthesis"),
-        level = DeprecationLevel.ERROR,
+        level = DeprecationLevel.HIDDEN,
     )
     open val rightParenthesis: PsiElement?
         get() = parameterList?.rightParenthesis

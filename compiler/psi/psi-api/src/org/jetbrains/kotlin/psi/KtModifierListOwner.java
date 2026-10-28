@@ -42,7 +42,7 @@ public interface KtModifierListOwner extends PsiElement, KtAnnotated {
                     expression = "this.addModifierKeyword(modifier)",
                     imports = "org.jetbrains.kotlin.idea.base.psi.addModifierKeyword"
             ),
-            level = DeprecationLevel.ERROR
+            level = DeprecationLevel.HIDDEN
     )
     @Deprecated
     void addModifier(@NotNull KtModifierKeywordToken modifier);
@@ -57,7 +57,7 @@ public interface KtModifierListOwner extends PsiElement, KtAnnotated {
                     expression = "this.removeModifierKeyword(modifier)",
                     imports = "org.jetbrains.kotlin.idea.base.psi.removeModifierKeyword"
             ),
-            level = DeprecationLevel.ERROR
+            level = DeprecationLevel.HIDDEN
     )
     @Deprecated
     void removeModifier(@NotNull KtModifierKeywordToken modifier);
@@ -72,7 +72,7 @@ public interface KtModifierListOwner extends PsiElement, KtAnnotated {
                     expression = "this.addAnnotation(annotationEntry)",
                     imports = "org.jetbrains.kotlin.idea.base.psi.addAnnotation"
             ),
-            level = DeprecationLevel.ERROR
+            level = DeprecationLevel.HIDDEN
     )
     @Deprecated
     @NotNull
