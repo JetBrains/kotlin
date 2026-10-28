@@ -13,24 +13,9 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import java.nio.file.Path
 import kotlin.io.path.Path
-import kotlin.io.path.pathString
-import kotlin.reflect.KMutableProperty1
 
-internal fun <T, K : Any> K.getPropertyByName(
-    propertyAccessors: Map<String, KMutableProperty1<*, out Any?>>,
-    name: String,
-): T {
-    @Suppress("UNCHECKED_CAST")
-    return (propertyAccessors[name] ?: error("Property with name $name not found in $this")).getter.call(this) as T
-}
-
-internal fun <T, K : Any> K.setPropertyByName(
-    propertyAccessors: Map<String, KMutableProperty1<*, out Any?>>,
-    name: String,
-    value: T,
-) {
-    (propertyAccessors[name] ?: error("Property with name $name not found in $this")).setter.call(this, value)
-}
+@Suppress("UNCHECKED_CAST", "NOTHING_TO_INLINE")
+internal inline fun <T> Any?.cast(): T = this as T
 
 internal object PathAsStringSerializer : KSerializer<Path> {
     override val descriptor = PrimitiveSerialDescriptor("Path", PrimitiveKind.STRING)

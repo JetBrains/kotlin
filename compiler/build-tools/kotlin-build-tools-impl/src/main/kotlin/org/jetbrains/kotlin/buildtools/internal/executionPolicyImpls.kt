@@ -12,8 +12,7 @@ import org.jetbrains.kotlin.buildtools.api.DelicateBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.internal.serializability.PathAsStringSerializer
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
-import org.jetbrains.kotlin.buildtools.internal.serializability.getPropertyByName
-import org.jetbrains.kotlin.buildtools.internal.serializability.setPropertyByName
+import org.jetbrains.kotlin.buildtools.internal.serializability.cast
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.compilerRunner.KotlinCompilerRunnerUtils
 import org.jetbrains.kotlin.daemon.client.CompileServiceSession
@@ -30,20 +29,13 @@ internal object InProcessExecutionPolicyImpl : ExecutionPolicy.InProcess
 @Serializable
 @ConsistentCopyVisibility
 internal data class DaemonExecutionPolicyImpl private constructor(
-    @SerialName("JVM_ARGUMENTS") var jvmArguments: List<String>? = null,
-    @SerialName("SHUTDOWN_DELAY_MILLIS")
+    var jvmArguments: List<String>? = null,
     var shutdownDelayMillis: Long? = null,
-
     @EncodeDefault
-    @SerialName("DAEMON_RUN_DIR_PATH")
     var daemonRunDirPath: Path = Path(DaemonOptions().runFilesPath),
-
     @EncodeDefault
-    @SerialName("LOGS_PATH") var logsPath: Path = Path(DEFAULT_LOG_FILE_DIRECTORY),
-    @SerialName("LOGS_FILE_SIZE_LIMIT")
+    var logsPath: Path = Path(DEFAULT_LOG_FILE_DIRECTORY),
     var logsFileSizeLimit: Long? = DEFAULT_LOG_FILE_SIZE_LIMIT,
-
-    @SerialName("LOGS_FILE_COUNT_LIMIT")
     var logsFileCountLimit: Int? = DEFAULT_LOG_FILE_COUNT_LIMIT,
 ) : ExecutionPolicy.WithDaemon, ExecutionPolicy.WithDaemon.Builder,
     DeepCopyable<DaemonExecutionPolicyImpl> {
@@ -53,12 +45,28 @@ internal data class DaemonExecutionPolicyImpl private constructor(
     @Suppress("UNCHECKED_CAST")
     @UseFromImplModuleRestricted
     override fun <V> get(key: ExecutionPolicy.WithDaemon.Option<V>): V =
-        getPropertyByName(propertyAccessMap, key.id)
+        when (key.id) {
+            "JVM_ARGUMENTS" -> jvmArguments
+            "SHUTDOWN_DELAY_MILLIS" -> shutdownDelayMillis
+            "DAEMON_RUN_DIR_PATH" -> daemonRunDirPath
+            "LOGS_PATH" -> logsPath
+            "LOGS_FILE_SIZE_LIMIT" -> logsFileSizeLimit
+            "LOGS_FILE_COUNT_LIMIT" -> logsFileCountLimit
+            else -> error("Property with name ${key.id} not found in $this")
+        } as V
 
     @UseFromImplModuleRestricted
     override fun <V> set(key: ExecutionPolicy.WithDaemon.Option<V>, value: V) {
         checkOptionIsAvailableForVersion(key)
-        setPropertyByName(propertyAccessMap, key.id, value)
+        when (key.id) {
+            "JVM_ARGUMENTS" -> jvmArguments = value.cast()
+            "SHUTDOWN_DELAY_MILLIS" -> shutdownDelayMillis = value.cast()
+            "DAEMON_RUN_DIR_PATH" -> daemonRunDirPath = value.cast()
+            "LOGS_PATH" -> logsPath = value.cast()
+            "LOGS_FILE_SIZE_LIMIT" -> logsFileSizeLimit = value.cast()
+            "LOGS_FILE_COUNT_LIMIT" -> logsFileCountLimit = value.cast()
+            else -> error("Property with name ${key.id} not found in $this")
+        }
     }
 
     override fun build(): ExecutionPolicy.WithDaemon = deepCopy()
@@ -74,17 +82,6 @@ internal data class DaemonExecutionPolicyImpl private constructor(
             logsFileSizeLimit,
             logsFileCountLimit
         )
-    }
-
-    companion object {
-        private val propertyAccessMap = buildMap {
-            put("JVM_ARGUMENTS", DaemonExecutionPolicyImpl::jvmArguments)
-            put("SHUTDOWN_DELAY_MILLIS", DaemonExecutionPolicyImpl::shutdownDelayMillis)
-            put("DAEMON_RUN_DIR_PATH", DaemonExecutionPolicyImpl::daemonRunDirPath)
-            put("LOGS_PATH", DaemonExecutionPolicyImpl::logsPath)
-            put("LOGS_FILE_SIZE_LIMIT", DaemonExecutionPolicyImpl::logsFileSizeLimit)
-            put("LOGS_FILE_COUNT_LIMIT", DaemonExecutionPolicyImpl::logsFileCountLimit)
-        }
     }
 }
 
