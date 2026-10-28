@@ -7,6 +7,10 @@ package org.jetbrains.kotlin.buildtools.api.trackers
 
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 
+/**
+ * Tracker interface to be implemented by any consumer to forward IC events in the form of IcEvent objects
+ * from BTA-impl and the compiler up to their caller.
+ */
 @ExperimentalBuildToolsApi
 public interface IcEventCollector {
     public fun collectEvents(eventsFromBta: List<IcEvent>)
