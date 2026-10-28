@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.buildtools.api.js.JsHistoryBasedIncrementalCompilati
 import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain.Companion.js
 import org.jetbrains.kotlin.buildtools.api.js.jsKlibCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.js.jsLinkingOperation
+import org.jetbrains.kotlin.buildtools.api.js.operations.JsDtsGenerationOperation
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsKlibCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsKlibCompilationOperation.Companion.INCREMENTAL_COMPILATION
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsLinkingOperation
@@ -66,6 +67,13 @@ class JsModule(
     var lastCompileIrOutputName: String = moduleName
         private set
 
+    private val klibLocation: Path
+        get() = if (lastCompileProducedPackedKlib) {
+            outputDirectory.resolve("$lastCompileIrOutputName.klib")
+        } else {
+            outputDirectory
+        }
+
     /**
      * The directory the linking operation writes the `.js` artifact into. It is intentionally separate from
      * [outputDirectory] (which holds the input klib), mirroring the KGP, where the klib and the linked
@@ -74,6 +82,29 @@ class JsModule(
      */
     val linkOutputDirectory: Path
         get() = buildDirectory.resolve("dist")
+
+    fun generateDts(
+        outputDirectory: Path = buildDirectory.resolve("dts"),
+        klibs: List<Path> = dependencyFiles.plusElement(klibLocation),
+        strategyConfig: ExecutionPolicy = defaultStrategyConfig,
+        forceOutput: LogLevel? = null,
+        compilationConfigAction: (JsDtsGenerationOperation.Builder) -> Unit = {},
+        compilationAction: (JsDtsGenerationOperation) -> Unit = {},
+        assertions: context(ModuleContext) CompilationOutcome.() -> Unit = {},
+    ): CompilationResult {
+        val kotlinLogger = TestKotlinLogger()
+        val operation = kotlinToolchain.js.jsDtsGenerationOperationBuilder(klibs, outputDirectory)
+            .apply(compilationConfigAction)
+            .build()
+
+        val result = operation.let {
+            compilationAction(it)
+            buildSession.executeOperation(it, strategyConfig, kotlinLogger)
+        }
+
+        processOutcome(kotlinLogger, result, assertions, forceOutput, LinkOutputContext(this, outputDirectory))
+        return result
+    }
 
     // TODO (KT-89200): move it to the common test infra
     fun link(
@@ -85,15 +116,8 @@ class JsModule(
         assertions: context(ModuleContext) CompilationOutcome.() -> Unit = {},
     ): CompilationResult {
         val kotlinLogger = TestKotlinLogger()
-        // handle both cases of NOPACK set to true and false
-        val klibCompilationOutput = if (lastCompileProducedPackedKlib) {
-            outputDirectory.resolve("$lastCompileIrOutputName.klib")
-        } else {
-            outputDirectory
-        }
-
         val compilationOperation = kotlinToolchain.js.jsLinkingOperation(
-            sources = klibCompilationOutput,
+            sources = klibLocation,
             destinationDirectory = destinationDirectory
         ) {
             // both are set before the caller's action, so that a test is able to override them
@@ -118,7 +142,7 @@ class JsModule(
 
         if (useRichDtsGenerator) {
             val dtsOperation = kotlinToolchain.js.jsDtsGenerationOperationBuilder(
-                dependencyFiles + listOf(klibCompilationOutput),
+                dependencyFiles + listOf(klibLocation),
                 destinationDirectory,
             )
                 .apply { configureFrom(compilationOperation) }
@@ -230,8 +254,8 @@ class JsModule(
 }
 
 /**
- * A [ModuleContext] view over [target] that only overrides [outputDirectory]. It is used to run the linking assertions
- * against [JsModule.linkOutputDirectory] instead of the module's own [JsModule.outputDirectory].
+ * A [ModuleContext] view over [target] that only overrides [outputDirectory]. It is used to run the linking and the d.ts
+ * generation assertions against their destination directory instead of the module's own [JsModule.outputDirectory].
  */
 private class LinkOutputContext(
     target: JsModule,
