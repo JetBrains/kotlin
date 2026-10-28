@@ -38,10 +38,14 @@ val unpackedResources = configurations.detachedConfiguration(
     }
 }
 
-// Inputs of the `testNative` suite. With K/N enabled, the stdlib klib is built from sources, and the K/N compiler is a runtime
-// dependency of kotlin-build-tools-impl. Otherwise both are taken from the bootstrap K/N distribution; the compiler jar is appended
-// after the regular Build Tools API classpath so that the current compiler classes win over the (older) copies in that fat jar.
-val (nativeStdlibKlib: FileCollection, nativeCompilerClasspath: FileCollection?) = if (kotlinBuildProperties.isKotlinNativeEnabled.get()) {
+// Kotlin/Native inputs. With K/N enabled, the stdlib klib is built from sources, and the K/N compiler is a runtime dependency of
+// kotlin-build-tools-impl, so every regular suite can compile Native and the platform-agnostic test argument providers fan out over
+// `[Native]`. Otherwise, only the `testNative` suite compiles Native for smoke testing:
+// both the stdlib and the compiler are taken from the bootstrap K/N distribution; the compiler jar is appended after the regular
+// Build Tools API classpath so that the current compiler classes win over the (older) copies in that fat jar.
+val isKotlinNativeEnabled = kotlinBuildProperties.isKotlinNativeEnabled.get()
+val nativeStdlibClasspathProperty = "kotlin.build-tools-api.test.nativeStdlibClasspath"
+val (nativeStdlibKlib: FileCollection, nativeCompilerClasspath: FileCollection?) = if (isKotlinNativeEnabled) {
     configurations.detachedConfiguration(
         dependencies.project(":kotlin-native:runtime", configuration = "nativeStdlib")
     ) to null
@@ -314,6 +318,9 @@ testing {
                         "build/daemon"
                     )
                     addClasspathProperty(unpackedResources, "kotlin.test.templates.classpath")
+                    if (isRegular && isKotlinNativeEnabled) {
+                        addClasspathProperty(nativeStdlibKlib, nativeStdlibClasspathProperty)
+                    }
                 }
             }
         }
@@ -400,9 +407,11 @@ testing {
         }
 
         named<JvmTestSuite>("testNative") {
-            targets.all {
-                testTask.configure {
-                    addClasspathProperty(nativeStdlibKlib, "kotlin.build-tools-api.test.nativeStdlibClasspath")
+            if (!isKotlinNativeEnabled) {
+                targets.all {
+                    testTask.configure {
+                        addClasspathProperty(nativeStdlibKlib, nativeStdlibClasspathProperty)
+                    }
                 }
             }
         }
