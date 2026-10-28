@@ -9,12 +9,15 @@ import kotlinx.serialization.Transient
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.reportPerformanceData
 import org.jetbrains.kotlin.buildtools.api.*
+import org.jetbrains.kotlin.buildtools.api.cri.CompilerRefIndexConfiguration
+import org.jetbrains.kotlin.buildtools.api.cri.CriToolchain
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation.CompilerArgumentsLogLevel
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
 import org.jetbrains.kotlin.buildtools.api.trackers.IcEvent
 import org.jetbrains.kotlin.buildtools.api.trackers.IcEventCollector
 import org.jetbrains.kotlin.buildtools.internal.arguments.*
 import org.jetbrains.kotlin.buildtools.internal.cri.CompilerReferenceIndexCollector
+import org.jetbrains.kotlin.buildtools.internal.cri.createCompilerRefIndexConfigurationBuilder
 import org.jetbrains.kotlin.buildtools.internal.serializability.CompilerMessageVisitor
 import org.jetbrains.kotlin.buildtools.internal.serializability.IcEventVisitor
 import org.jetbrains.kotlin.buildtools.internal.serializability.LookupMessageVisitor
@@ -55,6 +58,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         compilerArgumentsLogLevel = other.compilerArgumentsLogLevel
         compilerMessageRenderer = other.compilerMessageRenderer
         generateCompilerRefIndex = other.generateCompilerRefIndex
+        compilerRefIndexConfiguration = other.compilerRefIndexConfiguration
         icEventCollector = other.icEventCollector
     }
 
@@ -103,6 +107,9 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
     internal var generateCompilerRefIndex: Boolean = false
 
     @Transient
+    internal var compilerRefIndexConfiguration: CompilerRefIndexConfiguration? = null
+
+    @Transient
     var icEventCollector: IcEventCollector? = null
         set(value) {
             hasIcEventCollector = value != null
@@ -128,6 +135,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         "COMPILER_ARGUMENTS_LOG_LEVEL" -> compilerArgumentsLogLevel
         "COMPILER_MESSAGE_RENDERER" -> compilerMessageRenderer
         "GENERATE_COMPILER_REF_INDEX" -> generateCompilerRefIndex
+        "COMPILER_REF_INDEX" -> compilerRefIndexConfiguration
         "IC_EVENT_COLLECTOR" -> icEventCollector
         else -> throwPropertyNotFound(key.id)
     } as V
@@ -140,10 +148,27 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
             "COMPILER_ARGUMENTS_LOG_LEVEL" -> compilerArgumentsLogLevel = value.cast()
             "COMPILER_MESSAGE_RENDERER" -> compilerMessageRenderer = value.cast()
             "GENERATE_COMPILER_REF_INDEX" -> generateCompilerRefIndex = value.cast()
+            "COMPILER_REF_INDEX" -> compilerRefIndexConfiguration = value.cast()
             "IC_EVENT_COLLECTOR" -> icEventCollector = value.cast()
             else -> throwPropertyNotFound(key.id)
         }
     }
+
+    override fun compilerRefIndexConfigurationBuilder(outputDirectory: Path): CompilerRefIndexConfiguration.Builder =
+        createCompilerRefIndexConfigurationBuilder(outputDirectory)
+
+    /**
+     * Returns the directory an incremental compilation writes the compiler reference index to, or `null` when it isn't requested.
+     *
+     * [BaseCompilationOperation.COMPILER_REF_INDEX] takes precedence over the deprecated
+     * [BaseCompilationOperation.GENERATE_COMPILER_REF_INDEX], which writes to the [CriToolchain.DATA_PATH] directory
+     * under [icWorkingDirectory].
+     * The configured directory is made absolute here because the daemon runs in a directory of its own.
+     */
+    internal fun compilerRefIndexDirectory(icWorkingDirectory: Path): Path? =
+        compilerRefIndexConfiguration?.outputDirectory?.toAbsolutePath()
+            ?: icWorkingDirectory.resolve(CriToolchain.DATA_PATH).takeIf { generateCompilerRefIndex }
+
 
     override fun executeCancellableImpl(
         projectId: ProjectId,
@@ -233,7 +258,6 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
                 reportSeverity = reportSeverity,
                 requestedCompilationResults = requestedCompilationResults,
                 kotlinScriptExtensions = ktsExtensionsAsArray,
-                generateCompilerRefIndex = generateCompilerRefIndex,
             )
     }
 

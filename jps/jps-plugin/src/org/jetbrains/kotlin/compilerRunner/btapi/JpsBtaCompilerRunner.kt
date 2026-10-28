@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.OperationCancelledException
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
+import org.jetbrains.kotlin.buildtools.api.compilerRefIndexConfiguration
 import org.jetbrains.kotlin.buildtools.api.getToolchain
 import org.jetbrains.kotlin.buildtools.api.jps.jvm.JvmJpsManagedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jps.jvm.operations.jpsManagedIcConfigurationBuilder
@@ -107,8 +108,8 @@ internal class JpsBtaCompilerRunner {
 
         builder[JvmCompilationOperation.INCREMENTAL_COMPILATION] = buildIncrementalConfiguration(builder, request, environment)
         builder[BaseCompilationOperation.COMPILER_MESSAGE_RENDERER] = JpsBtaMessageRenderer(environment.messageCollector)
-        if (request.compilerReferenceIndexDirectory != null) {
-            builder[BaseCompilationOperation.GENERATE_COMPILER_REF_INDEX] = true
+        request.compilerReferenceIndexDirectory?.let {
+            builder[BaseCompilationOperation.COMPILER_REF_INDEX] = builder.compilerRefIndexConfiguration(it)
         }
 
         return builder.build()
@@ -221,9 +222,6 @@ internal class JpsBtaCompilerRunner {
         }
         icBuilder[JvmJpsManagedIncrementalCompilationConfiguration.FILE_MAPPING_TRACKER] =
             JpsBtaFileMappingTracker(environment.outputItemsCollector)
-        request.compilerReferenceIndexDirectory?.let {
-            icBuilder[JvmJpsManagedIncrementalCompilationConfiguration.COMPILER_REF_INDEX_DIRECTORY] = it
-        }
 
         return icBuilder.build()
     }
