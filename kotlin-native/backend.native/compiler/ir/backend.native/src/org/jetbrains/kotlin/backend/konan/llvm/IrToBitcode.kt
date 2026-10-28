@@ -1686,6 +1686,13 @@ internal class CodeGeneratorVisitor(
                 alignment = generationState.llvmDeclarations.forField(value.symbol.owner).alignment
             }
             value.symbol.owner.correspondingPropertySymbol?.owner?.isConst == true -> {
+                // The initializer is about to be baked into this file's bitcode, so record the use of its value:
+                // the IR references the field only, and it does not change when the initializer does.
+                val constProperty = value.symbol.owner.correspondingPropertySymbol?.owner!!
+                val callSiteFile = (currentCodeContext.functionScope() as FunctionScope).declaration?.fileOrNull
+                if (callSiteFile != null && constProperty.fileOrNull != null && constProperty.fileOrNull != callSiteFile) {
+                    generationState.context.factsTracker.uses(callSiteFile, Fact.ConstInitializer.from(constProperty))
+                }
                 // TODO: probably can be removed, as they are inlined.
                 return evaluateConst(value.symbol.owner.initializer?.expression as IrConst).llvm
             }

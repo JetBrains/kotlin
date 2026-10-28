@@ -9,7 +9,6 @@ import llvm.LLVMModuleRef
 import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.RedundantCastsRemoverLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.InlineCallCycleCheckerLowering
-import org.jetbrains.kotlin.backend.common.lower.optimizations.PropertyAccessorInlineLowering
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.backend.konan.*
@@ -567,7 +566,7 @@ private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragme
             // Have to run after link dependencies phase, because fields from dependencies can be changed during lowerings.
             // Inline accessors only in optimized builds due to separate compilation and possibility to get broken debug information.
             createFilePhases(
-                    ::PropertyAccessorInlineLowering.takeIf { optimize },
+                    ::KonanPropertyAccessorInlineLowering.takeIf { optimize },
                     ::InlineClassPropertyAccessorsLowering.takeIf { optimize },
             ),
             module,
