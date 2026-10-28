@@ -18,7 +18,9 @@ import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PerformanceManagerContext
 import org.jetbrains.kotlin.backend.konan.driver.utilities.CExportFiles
 import org.jetbrains.kotlin.backend.konan.driver.utilities.createTempFiles
+import org.jetbrains.kotlin.backend.konan.facts.DebugFactsSerializer
 import org.jetbrains.kotlin.backend.konan.facts.FactsCollector
+import org.jetbrains.kotlin.backend.konan.facts.serializeTo
 import org.jetbrains.kotlin.backend.konan.ir.FunctionsWithoutBoundCheckGenerator
 import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStrategy
@@ -279,6 +281,12 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
                 executor.awaitTermination(1, TimeUnit.DAYS)
                 thrownFromThread.get()?.let { throw it }
             }
+        }
+
+        // Uses are recorded during the codegen of all the fragments (possibly in parallel), so dump the facts only after it.
+        config.dumpFactsTo?.let {
+            val factsTracker = backendContext.factsTracker
+            DebugFactsSerializer.serializeTo(Path(it), factsTracker.definedFacts, factsTracker.usedFacts)
         }
 
         if (performanceManager != null) {

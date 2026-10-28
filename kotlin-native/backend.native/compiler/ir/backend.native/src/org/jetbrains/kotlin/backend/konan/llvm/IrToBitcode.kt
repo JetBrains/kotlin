@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterCodegen
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterExportedElements
 import org.jetbrains.kotlin.backend.konan.cgen.CBridgeOrigin
+import org.jetbrains.kotlin.backend.konan.facts.Fact
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.objc.emitBindClassToObjCNameAdaptersFromCaches
 import org.jetbrains.kotlin.backend.konan.llvm.objc.processBindClassToObjCNameAnnotations
@@ -2119,7 +2120,16 @@ internal class CodeGeneratorVisitor(
         generateDebugTrambolineIf("inline", value)
 
         // Even though the function was inlined, the edge [caller -> callee] still needs to be recorded (generally).
-        value.inlinedFunctionSymbol?.let { generationState.dependenciesTracker.add(it.owner) }
+        val callSiteFile = (currentCodeContext.functionScope() as FunctionScope).declaration?.fileOrNull
+
+        value.inlinedFunctionSymbol?.let {
+            generationState.dependenciesTracker.add(it.owner)
+            // Facts are keyed by signature: an inlined function without one (e.g. local) defines no fact, see [FactsCollector].
+            if (callSiteFile != null && it.signature != null && it.owner.fileOrNull != null && it.owner.body != null) {
+                generationState.context.factsTracker.uses(callSiteFile, Fact.InlineBody.from(it.owner))
+            }
+        }
+
         return using(inlinedBlockScope) {
             evaluateContainerExpression(value, resultSlot)
         }
@@ -2163,6 +2173,17 @@ internal class CodeGeneratorVisitor(
         context.log{"evaluateCall                   : ${ir2string(value)}"}
 
         intrinsicGenerator.tryEvaluateSpecialCall(value, resultSlot)?.let { return it }
+
+        val callSiteFile = (currentCodeContext.functionScope() as FunctionScope).declaration?.fileOrNull
+        // Fake overrides define no facts (see [FactsCollector]), so the use is recorded against the real declaration.
+        // The functions that constructors are lowered to have no signature, so the use is recorded against the original constructor.
+        val callee: IrFunction = value.symbol.owner.let {
+            it.originalConstructor ?: it.originalInlineClassConstructor ?: it.resolveFakeOverride() ?: it
+        }
+
+        if (callSiteFile != null && callee.symbol.signature != null && callee.fileOrNull != null) {
+            generationState.context.factsTracker.uses(callSiteFile, Fact.Signature.from(callee))
+        }
 
         val args = evaluateExplicitArgs(value)
 
@@ -2461,8 +2482,9 @@ internal class CodeGeneratorVisitor(
         //context.log{"evaluateSimpleFunctionCall : $tmpVariableName = ${ir2string(value)}"}
         if (superClass == null && function.isOverridable)
             return callVirtual(function, args, resultLifetime, resultSlot)
-        else
+        else {
             return callDirect(function, args, resultLifetime, resultSlot)
+        }
     }
 
     //-------------------------------------------------------------------------//

@@ -10,6 +10,7 @@ import llvm.*
 import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.cgen.isCFunctionOrGlobalAccessor
+import org.jetbrains.kotlin.backend.konan.facts.Fact
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.WritableTypeInfoPointer
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.generateWritableTypeInfoForClass
@@ -90,7 +91,7 @@ internal data class ClassBodyAndAlignmentInfo(
 private fun ContextUtils.createClassBody(name: String, fields: List<ClassLayoutBuilder.FieldInfo>): ClassBodyAndAlignmentInfo {
     val classType = LLVMStructCreateNamed(LLVMGetModuleContext(llvm.module), name)!!
     val packed = context.config.packFields ||
-        fields.any { LLVMABIAlignmentOfType(runtime.targetData, it.type.toLLVMType(llvm)) != it.alignment }
+            fields.any { LLVMABIAlignmentOfType(runtime.targetData, it.type.toLLVMType(llvm)) != it.alignment }
     val alignment = maxOf(runtime.objectAlignment, fields.maxOfOrNull { it.alignment } ?: 0)
     val indices = mutableMapOf<IrFieldSymbol, Int>()
 
@@ -130,8 +131,9 @@ private fun ContextUtils.createClassBody(name: String, fields: List<ClassLayoutB
     return ClassBodyAndAlignmentInfo(classType, alignment, indices)
 }
 
-private class DeclarationsGeneratorVisitor(override val generationState: NativeGenerationState)
-    : IrVisitorVoid(), ContextUtils {
+private class DeclarationsGeneratorVisitor(
+        override val generationState: NativeGenerationState
+) : IrVisitorVoid(), ContextUtils {
 
     val uniques = mutableMapOf<UniqueKind, UniqueLlvmDeclarations>()
 
@@ -188,6 +190,14 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
         if (declaration.requiresRtti()) {
             val classLlvmDeclarations = createClassDeclarations(declaration)
             declaration.metadata = KonanMetadata.Class(declaration, classLlvmDeclarations, context.getLayoutBuilder(declaration))
+
+            // The facts this class defines are collected before lowering, see [FactsCollector].
+            // The layout of a class depends on the layouts of all its superclasses, not only of the direct one.
+            if (declaration.fileOrNull != null && declaration.symbol.signature != null) {
+                generateSequence(declaration.getSuperClassNotAny()) { it.getSuperClassNotAny() }
+                        .filter { it.fileOrNull != null && it.fileOrNull != declaration.fileOrNull && it.symbol.signature != null }
+                        .forEach { context.factsTracker.uses(declaration.file, Fact.BaseClassLayout.from(it)) }
+            }
         }
         super.visitClass(declaration)
     }
@@ -286,15 +296,15 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
     private fun createUniqueDeclarations(
             irClass: IrClass, typeInfoPtr: ConstPointer, bodyType: LLVMTypeRef) {
         when {
-                irClass.isUnit() -> {
-                    uniques[UniqueKind.UNIT] =
-                            UniqueLlvmDeclarations(staticData.createUniqueInstance(UniqueKind.UNIT, bodyType, typeInfoPtr))
-                }
-                irClass.isKotlinArray() -> {
-                    uniques[UniqueKind.EMPTY_ARRAY] =
-                            UniqueLlvmDeclarations(staticData.createUniqueInstance(UniqueKind.EMPTY_ARRAY, bodyType, typeInfoPtr))
-                }
-                else -> TODO("Unsupported unique $irClass")
+            irClass.isUnit() -> {
+                uniques[UniqueKind.UNIT] =
+                        UniqueLlvmDeclarations(staticData.createUniqueInstance(UniqueKind.UNIT, bodyType, typeInfoPtr))
+            }
+            irClass.isKotlinArray() -> {
+                uniques[UniqueKind.EMPTY_ARRAY] =
+                        UniqueLlvmDeclarations(staticData.createUniqueInstance(UniqueKind.EMPTY_ARRAY, bodyType, typeInfoPtr))
+            }
+            else -> TODO("Unsupported unique $irClass")
         }
     }
 
@@ -326,7 +336,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
         // So we are skipping them here too.
     }
 
-    private tailrec fun gcd(a: Long, b: Long) : Long = if (b == 0L) a else gcd(b, a % b)
+    private tailrec fun gcd(a: Long, b: Long): Long = if (b == 0L) a else gcd(b, a % b)
 
     override fun visitField(declaration: IrField) {
         super.visitField(declaration)
