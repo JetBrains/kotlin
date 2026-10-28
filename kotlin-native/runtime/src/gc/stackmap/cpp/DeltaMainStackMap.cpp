@@ -119,7 +119,7 @@ bool DeltaMainStackMap::tryGetRootsInfo(const uint64_t* fp, uintptr_t pc, RootsI
     auto address = static_cast<uintptr_t>(fp[-2]);
     auto begin = reinterpret_cast<uintptr_t>(begin_);
     auto end = reinterpret_cast<uintptr_t>(end_);
-    if (address < begin || address > end - kRecordHeaderSize) return false;
+    if (address < begin || address > end || end - address < kRecordHeaderSize) return false;
 
     ByteReader header(reinterpret_cast<uint8_t*>(address));
     uintptr_t functionStart = address + static_cast<uintptr_t>(header.nextInt(4));
