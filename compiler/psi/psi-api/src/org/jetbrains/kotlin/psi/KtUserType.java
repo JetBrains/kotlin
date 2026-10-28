@@ -128,7 +128,7 @@ public class KtUserType extends KtElementImplStub<KotlinUserTypeStub> implements
                     expression = "this.removeQualifier()",
                     imports = "org.jetbrains.kotlin.idea.base.psi.removeQualifier"
             ),
-            level = DeprecationLevel.ERROR
+            level = DeprecationLevel.HIDDEN
     )
     @Deprecated
     public void deleteQualifier() {

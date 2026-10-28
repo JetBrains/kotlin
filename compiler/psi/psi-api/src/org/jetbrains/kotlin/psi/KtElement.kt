@@ -52,7 +52,7 @@ interface KtElement : NavigatablePsiElement, KtPureElement {
 
     @Deprecated(
         message = "Don't use getReference() on KtElement for the choice is unpredictable",
-        level = DeprecationLevel.ERROR,
+        level = DeprecationLevel.HIDDEN,
     )
     override fun getReference(): PsiReference?
 }

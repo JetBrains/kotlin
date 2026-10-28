@@ -90,7 +90,7 @@ public abstract class KtModifierList extends KtElementImplStub<KotlinModifierLis
                     expression = "contextParameterList",
                     imports = {}
             ),
-            level = DeprecationLevel.ERROR
+            level = DeprecationLevel.HIDDEN
     )
     @Deprecated
     @Nullable
@@ -122,7 +122,7 @@ public abstract class KtModifierList extends KtElementImplStub<KotlinModifierLis
                     expression = "contextParameterLists",
                     imports = {}
             ),
-            level = DeprecationLevel.ERROR
+            level = DeprecationLevel.HIDDEN
     )
     @Deprecated
     @SuppressWarnings("unchecked")

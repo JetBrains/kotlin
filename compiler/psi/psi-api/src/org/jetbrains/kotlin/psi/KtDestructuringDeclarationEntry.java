@@ -85,7 +85,7 @@ public class KtDestructuringDeclarationEntry extends KtNamedDeclarationStub<Kotl
                     expression = "this.setDestructuringDeclarationEntryTypeReference(typeRef)",
                     imports = "org.jetbrains.kotlin.idea.base.psi.setDestructuringDeclarationEntryTypeReference"
             ),
-            level = DeprecationLevel.ERROR
+            level = DeprecationLevel.HIDDEN
     )
     @Deprecated
     public KtTypeReference setTypeReference(@Nullable KtTypeReference typeRef) {

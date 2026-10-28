@@ -69,7 +69,7 @@ class KtSecondaryConstructor : KtConstructor<KtSecondaryConstructor> {
             "this.convertImplicitDelegationCallToExplicit(isThis)",
             "org.jetbrains.kotlin.idea.base.psi.convertImplicitDelegationCallToExplicit",
         ),
-        level = DeprecationLevel.ERROR,
+        level = DeprecationLevel.HIDDEN,
     )
     fun replaceImplicitDelegationCallWithExplicit(isThis: Boolean): KtConstructorDelegationCall =
         KtPsiMutationService.getInstance().convertImplicitDelegationCallToExplicit(this, isThis)

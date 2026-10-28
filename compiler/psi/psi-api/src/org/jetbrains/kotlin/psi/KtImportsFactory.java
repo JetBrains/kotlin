@@ -31,7 +31,7 @@ import java.util.Map;
  */
 @kotlin.Deprecated(
         message = "This class is not used in the kotlin plugin/compiler and will be removed soon",
-        level = DeprecationLevel.ERROR
+        level = DeprecationLevel.HIDDEN
 )
 @Deprecated
 public class KtImportsFactory {
@@ -63,6 +63,19 @@ public class KtImportsFactory {
 
     @NotNull
     public Collection<KtImportDirective> createImportDirectivesNotCached(@NotNull Collection<ImportPath> importPaths) {
-        return new KtPsiFactory(project, false).createImportDirectives(importPaths);
+        StringBuilder fileContent = new StringBuilder();
+        for (ImportPath importPath : importPaths) {
+            if (importPath.getFqName().isRoot()) {
+                throw new IllegalArgumentException("import path must not be empty");
+            }
+
+            fileContent.append("import ").append(importPath.getPathStr());
+            if (importPath.getAlias() != null) {
+                fileContent.append(" as ").append(importPath.getAlias().asString());
+            }
+            fileContent.append('\n');
+        }
+
+        return new KtPsiFactory(project, false).createFile(fileContent.toString()).getImportDirectives();
     }
 }

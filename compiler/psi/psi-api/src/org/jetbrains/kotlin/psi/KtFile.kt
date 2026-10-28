@@ -38,7 +38,7 @@ open class KtFile(viewProvider: FileViewProvider, isCompiled: Boolean) : @Suppre
     @Deprecated(
         message = "getPackageFqName should be used instead",
         replaceWith = ReplaceWith("packageFqName.asString()"),
-        level = DeprecationLevel.ERROR,
+        level = DeprecationLevel.HIDDEN,
     )
     override fun getPackageName(): String {
         return packageFqName.asString()

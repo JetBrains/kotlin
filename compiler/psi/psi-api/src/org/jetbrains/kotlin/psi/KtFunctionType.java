@@ -117,7 +117,7 @@ public class KtFunctionType extends KtElementImplStub<KotlinFunctionTypeStub> im
                     expression = "contextParameterList",
                     imports = {}
             ),
-            level = DeprecationLevel.ERROR
+            level = DeprecationLevel.HIDDEN
     )
     @Deprecated
     @Nullable

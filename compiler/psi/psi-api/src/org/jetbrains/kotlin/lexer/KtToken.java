@@ -29,7 +29,7 @@ public class KtToken extends IElementType {
 
     @kotlin.Deprecated(
             message = "Use the 'KtToken(String, int)' constructor instead",
-            level = DeprecationLevel.ERROR
+            level = DeprecationLevel.HIDDEN
     )
     @Deprecated
     public KtToken(@NotNull @NonNls String debugName) {
