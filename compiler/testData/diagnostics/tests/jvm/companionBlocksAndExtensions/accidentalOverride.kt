@@ -31,10 +31,10 @@ open class A {
 
 class B : A() {
     companion {
-        val prop: Int = 0
-        val prop2: String = ""
+        <!ACCIDENTAL_OVERRIDE!>val prop: Int<!> = 0
+        <!ACCIDENTAL_OVERRIDE!>val prop2: String<!> = ""
 
-        fun memberFoo(x: List<Int>) {}
+        <!ACCIDENTAL_OVERRIDE!>fun memberFoo(x: List<Int>)<!> {}
         <!ACCIDENTAL_OVERRIDE!>fun memberBar(x: List<String>)<!> {}
         @JvmOverloads
         <!ACCIDENTAL_OVERRIDE!>fun memberBaz(x: List<Int>, y: Int = 0) {}<!>
