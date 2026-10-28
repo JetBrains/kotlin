@@ -30,6 +30,10 @@ val excludedCompilerProjects = listOf(
     ":wasm:wasm.ir",
     ":compiler:ir.serialization.js",
 
+    // K1
+    ":core:descriptors.runtime",
+    ":native:frontend.native",
+
     // Light tree and multiplatform parsing
     ":compiler:fir:raw-fir:light-tree2fir",
     ":compiler:fir:raw-fir:mp-parsing2fir",
