@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PerformanceManagerContext
 import org.jetbrains.kotlin.backend.konan.driver.utilities.CExportFiles
 import org.jetbrains.kotlin.backend.konan.driver.utilities.createTempFiles
+import org.jetbrains.kotlin.backend.konan.facts.FactsCollector
 import org.jetbrains.kotlin.backend.konan.ir.FunctionsWithoutBoundCheckGenerator
 import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStrategy
@@ -89,6 +90,10 @@ internal fun <T> PhaseEngine<NativeBackendPhaseContext>.linkKlibs(
 internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendContext: NativeBackendContext, irModules: List<IrModuleFragment>, performanceManager: PerformanceManager?) {
     val config = context.config
     useContext(backendContext) { backendEngine ->
+
+        // Facts are defined by the IR as deserialized from the klibs, so that they can be computed without compiling (see `KlibFactsGenerator`).
+        FactsCollector.collectDefsFrom(irModules, backendContext.factsTracker)
+
         // This phase adds declarations to the shared built-ins, independently of the input module.
         backendEngine.runModuleWisePhase(createModulePhases(::FunctionsWithoutBoundCheckGenerator).first(), listOf(irModules.first()))
 
@@ -283,6 +288,7 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
         }
     }
 }
+
 
 internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBitcodeBackend(
         context: BitcodePostProcessingContext, dependencies: DependenciesTrackingResult,
