@@ -12,8 +12,6 @@ declare namespace JS_TESTS {
     namespace foo {
         interface SomeExternalInterface {
         }
-    }
-    namespace foo {
         function sum(x: number, y: number): Promise<number>;
         function varargInt(x: Int32Array): Promise<number>;
         function varargNullableInt(x: Array<Nullable<number>>): Promise<number>;

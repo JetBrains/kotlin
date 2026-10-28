@@ -83,6 +83,7 @@ public fun runTypeScriptExport(klibs: List<KlibInputModule<TypeScriptModuleConfi
                     dtsFile.writeText(tsDefinitions)
                     dtsFile
                 }
+                JsGenerationGranularity.PER_CLASS -> TODO()
             }
         }
     }
