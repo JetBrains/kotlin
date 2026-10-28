@@ -10,6 +10,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinBrowserBundler
 import org.jetbrains.kotlin.gradle.js.AbstractWebContinuousBuildIT
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinWasmDevServerTaskImpl.Companion.DEFAULT_PORT
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.util.replaceText
@@ -21,15 +22,17 @@ import java.io.PipedInputStream
 import java.io.PipedOutputStream
 import java.net.InetAddress
 import java.net.ServerSocket
+import java.net.URI
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpResponse
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
-import kotlin.io.path.createParentDirectories
-import kotlin.io.path.exists
-import kotlin.io.path.readText
-import kotlin.io.path.writeText
+import kotlin.io.path.*
+import kotlin.test.assertContains
+import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.TimeSource
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinWasmDevServerTaskImpl.Companion.DEFAULT_PORT
 
 @MustRunOnChangesInGradle
 class WasmJsContinuousBuildIT : AbstractWebContinuousBuildIT() {
@@ -262,5 +265,196 @@ class WasmJsContinuousBuildIT : AbstractWebContinuousBuildIT() {
         // So, give some time to allow the Gradle daemon to close successfully, avoiding the error:
         // org.gradle.internal.build.BuildLayoutValidator$BuildLayoutException: Directory '...' does not contain a Gradle build.
         Thread.sleep(5000)
+    }
+
+    @GradleTest
+    // Timeout is much longer than expected test duration because sometimes KGP needs to download JS tools.
+    @Timeout(value = 10, unit = TimeUnit.MINUTES)
+    fun testWasmJsDevServerServesOnlyKotlinSourcesFromProjectRoot(
+        gradleVersion: GradleVersion,
+    ) {
+        project("empty", gradleVersion) {
+            settingsBuildScriptInjection {
+                settings.rootProject.name = PROJECT_NAME
+            }
+
+            plugins {
+                kotlin("multiplatform")
+            }
+
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    @OptIn(ExperimentalWasmDsl::class)
+                    wasmJs {
+                        binaries.executable()
+                        browser(bundler = KotlinBrowserBundler.NONE)
+                    }
+                }
+            }
+
+            val mainSource =
+                """
+                fun main() {
+                    println("Hello, world")
+                }
+                """.trimIndent()
+            val indexHtml = "<html><body>Hello, world</body></html>"
+
+            projectPath.resolve("src/wasmJsMain/kotlin/A.kt")
+                .also { it.createParentDirectories() }
+                .writeText(mainSource)
+
+            projectPath.resolve("src/wasmJsMain/resources/index.html")
+                .also { it.createParentDirectories() }
+                .writeText(indexHtml)
+
+            projectPath.resolve("local.properties").writeText("password=hunter2")
+            projectPath.resolve(".env").writeText("TOKEN=hunter2")
+
+            // a Kotlin source outside of the project root, only the containment check can refuse it
+            projectPath.resolveSibling("outside.kt").writeText("fun outside() {}")
+
+            val contentDirectory = projectPath.resolve("build/wasm/packages/$PROJECT_NAME/kotlin")
+            val contentDirectoryPath = projectPath.relativize(contentDirectory).invariantSeparatorsPathString
+            val contentDirectoryToRoot = "../".repeat(contentDirectory.nameCount - projectPath.nameCount)
+
+            val servedFromProjectRoot = listOf(
+                "/src/wasmJsMain/kotlin/A.kt",
+                "/$contentDirectoryPath/${contentDirectoryToRoot}src/wasmJsMain/kotlin/A.kt",
+            )
+
+            val refusedProjectRootFiles = listOf(
+                "local.properties",
+                ".env",
+                "build.gradle",
+                "src/wasmJsMain/resources/index.html",
+            )
+            refusedProjectRootFiles.forEach { assertFileExists(projectPath.resolve(it)) }
+
+            val refusedPaths = refusedProjectRootFiles.map { "/$it" } + listOf(
+                "/src/wasmJsMain/kotlin",
+                "/../outside.kt",
+                "/%2e%2e/outside.kt",
+                "/$contentDirectoryPath/$contentDirectoryToRoot../outside.kt",
+                "//" + projectPath.resolve("local.properties").invariantSeparatorsPathString.trimStart('/'),
+            )
+
+            val serverPort = findFreePort()
+            val artifactPaths = mutableListOf<String>()
+            val responses = linkedMapOf<String, DevServerResponse>()
+
+            val daemonRelease = PipedOutputStream()
+            val daemonStdin = PipedInputStream(daemonRelease)
+
+            val checker = thread(name = "testWasmJsDevServerServesOnlyKotlinSourcesFromProjectRoot checker", isDaemon = true) {
+                try {
+                    val buildStartMark = TimeSource.Monotonic.markNow()
+                    fun checkBuildDuration() {
+                        check(buildStartMark.elapsedNow() < 10.minutes) {
+                            "build took too long - ${buildStartMark.elapsedNow()}"
+                        }
+                    }
+
+                    println("Waiting for the development server to start...")
+                    while (runCatching { httpGet(serverPort, "/").status }.getOrNull() != 200) {
+                        Thread.sleep(1000)
+                        checkBuildDuration()
+                    }
+                    println("Development server has started.")
+
+                    val contentDirectoryFile = contentDirectory.toFile()
+                    artifactPaths += contentDirectoryFile.walkTopDown()
+                        .filter { it.isFile }
+                        .map { it.relativeTo(contentDirectoryFile).invariantSeparatorsPath }
+                        .sorted()
+                    println("Produced artifacts: $artifactPaths")
+
+                    val requestedPaths = buildList {
+                        add("/")
+                        artifactPaths.forEach { add("/$it") }
+                        addAll(servedFromProjectRoot)
+                        addAll(refusedPaths)
+                    }
+                    for (path in requestedPaths) {
+                        responses[path] = httpGet(serverPort, path)
+                    }
+                    println("All requests have been performed.")
+                } catch (t: Throwable) {
+                    println("Exception in ${Thread.currentThread().name}:\n${t.stackTraceToString()}")
+                    throw t
+                } finally {
+                    println("Releasing daemon stdin stream...")
+                    // close the stream, which will allow Gradle to finish the build
+                    daemonRelease.close()
+                    println("Released daemon stdin stream.")
+                }
+            }
+
+            build(
+                "wasmJsBrowserDevelopmentRun", "--port", serverPort.toString(),
+                buildOptions = defaultBuildOptions.copy(
+                    verboseVfsLogging = true,
+                    continuousBuild = true,
+                ),
+                inputStream = daemonStdin,
+                forwardBuildOutput = true,
+            ) {
+                checker.join()
+
+                val expectedStatuses = buildMap {
+                    // the content directory contains only produced artifacts, so all of them are served
+                    put("/", 200)
+                    artifactPaths.forEach { put("/$it", 200) }
+                    servedFromProjectRoot.forEach { put(it, 200) }
+                    refusedPaths.forEach { put(it, 404) }
+                }
+
+                assertEquals(expectedStatuses, responses.mapValues { (_, response) -> response.status })
+
+                // the produced artifacts are enumerated in runtime, make sure the expectations on them are not vacuous
+                assertContains(artifactPaths, "index.html")
+                assertContains(artifactPaths, "$PROJECT_NAME.wasm")
+
+                assertEquals(indexHtml, responses.getValue("/").body)
+
+                val servedSource = responses.getValue("/src/wasmJsMain/kotlin/A.kt")
+                assertEquals(mainSource, servedSource.body)
+                assertEquals("text/kotlin; charset=utf-8", servedSource.contentType)
+
+                assertOutputContains("Development server started at http://localhost:$serverPort")
+            }
+        }
+
+        // @GradleTest automatically deletes the project directory.
+        // However, sometimes it does this too quickly.
+        // So, give some time to allow the Gradle daemon to close successfully, avoiding the error:
+        // org.gradle.internal.build.BuildLayoutValidator$BuildLayoutException: Directory '...' does not contain a Gradle build.
+        Thread.sleep(5000)
+    }
+
+    private class DevServerResponse(val status: Int, val contentType: String?, val body: String)
+
+    /**
+     * Sends a GET request for [rawPath] as is.
+     * [HttpClient] doesn't normalize the request [URI], so `..` segments reach the server exactly as written.
+     */
+    private fun httpGet(port: Int, rawPath: String): DevServerResponse {
+        val request = HttpRequest.newBuilder(URI("http://localhost:$port$rawPath")).GET().build()
+        val response = httpClient.send(request, HttpResponse.BodyHandlers.ofString())
+        return DevServerResponse(
+            status = response.statusCode(),
+            contentType = response.headers().firstValue("Content-Type").orElse(null),
+            body = response.body(),
+        )
+    }
+
+    private fun findFreePort(): Int = ServerSocket(0).use { it.localPort }
+
+    private companion object {
+        const val PROJECT_NAME = "wasm-browser-simple-project"
+
+        val httpClient: HttpClient = HttpClient.newBuilder()
+            .version(HttpClient.Version.HTTP_1_1)
+            .build()
     }
 }

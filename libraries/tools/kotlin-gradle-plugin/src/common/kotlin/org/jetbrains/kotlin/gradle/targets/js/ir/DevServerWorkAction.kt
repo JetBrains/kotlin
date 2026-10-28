@@ -16,10 +16,15 @@ import org.gradle.workers.WorkParameters
 import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.File
 import java.net.InetSocketAddress
+import java.nio.file.InvalidPathException
 
 /**
  * Represents a work action for starting and managing a development server
  * that serves static content from specified directories.
+ *
+ * The content directory contains only produced artifacts, so it is served as is.
+ * The project root directory is served only to make source maps work in a browser,
+ * so only Kotlin sources are exposed from it - any other file there may contain secrets.
  */
 internal abstract class DevServerWorkAction : WorkAction<DevServerWorkAction.DevServerWorkParameters> {
 
@@ -58,7 +63,8 @@ internal abstract class DevServerWorkAction : WorkAction<DevServerWorkAction.Dev
 
         server.start()
         logger.lifecycle("Development server started at http://$serverHost:$serverPort")
-        logger.lifecycle("Serving files from: $contentDir and $rootDir")
+        logger.lifecycle("Serving files from: $contentDir")
+        logger.lifecycle("Serving Kotlin sources from: $rootDir")
 
         val shutdownHook = Thread {
             lockFile.delete()
@@ -107,29 +113,9 @@ internal abstract class DevServerWorkAction : WorkAction<DevServerWorkAction.Dev
         }
     }
 
-    private fun resolveFile(
-        path: String,
-        contentRootDir: File,
-        rootDir: File,
-    ): File? {
-        if (path.isEmpty()) {
-            return File(contentRootDir, "index.html")
-        }
-
-        (contentRootDir.tryToResolveWith(path)
-            ?: rootDir.tryToResolveWith(path))
-            ?.let { return it }
-
-        return null
-    }
-
-    private fun File.tryToResolveWith(path: String): File? = resolve(path)
-        .takeIf { it.normalize().startsWith(this.normalize()) }
-        ?.takeIf { it.exists() }
-        ?.let { return it }
-
     private fun contentTypeFor(fileName: String): String = when {
         fileName.endsWith(".html") -> "text/html"
+        fileName.endsWith(".kt") -> "text/kotlin; charset=utf-8"
         fileName.endsWith(".js") -> "application/javascript"
         fileName.endsWith(".mjs") -> "application/javascript"
         fileName.endsWith(".wasm") -> "application/wasm"
@@ -141,5 +127,55 @@ internal abstract class DevServerWorkAction : WorkAction<DevServerWorkAction.Dev
         fileName.endsWith(".ico") -> "image/x-icon"
         fileName.endsWith(".map") -> "application/json"
         else -> "application/octet-stream"
+    }
+
+    internal companion object {
+        /**
+         * The only file extension served from the project root directory.
+         */
+        private const val KOTLIN_SOURCE_EXTENSION = "kt"
+
+        /**
+         * Resolves the file requested by [path] relative to [contentRootDir] first and to [rootDir] afterwards.
+         *
+         * Any file from [contentRootDir] can be served, because this directory contains only produced artifacts.
+         *
+         * [rootDir] is the project root directory, it is served only to make source maps work,
+         * so only Kotlin sources are resolved in it.
+         * Serving arbitrary files from there would expose project files with secrets.
+         *
+         * Returns `null` if the requested file must not be served.
+         */
+        internal fun resolveFile(
+            path: String,
+            contentRootDir: File,
+            rootDir: File,
+        ): File? {
+            if (path.isEmpty()) {
+                return File(contentRootDir, "index.html")
+            }
+
+            contentRootDir.tryToResolveWith(path)
+                ?.let { return it }
+
+            return rootDir.tryToResolveWith(path) { it.extension == KOTLIN_SOURCE_EXTENSION }
+        }
+
+        private fun File.tryToResolveWith(
+            path: String,
+            isServable: (File) -> Boolean = { true },
+        ): File? {
+            val resolved = try {
+                toPath().resolve(path).normalize()
+            } catch (_: InvalidPathException) {
+                return null
+            }
+
+            if (!resolved.startsWith(toPath().normalize())) return null
+
+            return resolved.toFile()
+                .takeIf { it.isFile }
+                ?.takeIf(isServable)
+        }
     }
 }
