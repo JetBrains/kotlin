@@ -26,6 +26,12 @@ val pluginSandbox = configurations.detachedConfiguration(
 val scriptingCompilerPlugin = configurations.detachedConfiguration(
     dependencies.project(":kotlin-scripting-compiler-embeddable")
 )
+val kaptCompilerPlugin = configurations.detachedConfiguration(
+    dependencies.project(":kotlin-annotation-processing-embeddable")
+)
+val exampleAnnotationProcessor = configurations.detachedConfiguration(
+    dependencies.project(":examples:annotation-processor-example")
+)
 val unpackedResources = configurations.detachedConfiguration(
     dependencies.project(":compiler:build-tools:kotlin-build-tools-api-tests").apply {
         isTransitive = false
@@ -349,6 +355,8 @@ testing {
                     addClasspathProperty(serializationCompilerPlugin, "SERIALIZATION_COMPILER_PLUGIN")
                     addClasspathProperty(serializationCore, "SERIALIZATION_CORE")
                     addClasspathProperty(pluginSandbox, "PLUGIN_SANDBOX")
+                    addClasspathProperty(kaptCompilerPlugin, "KAPT_COMPILER_PLUGIN")
+                    addClasspathProperty(exampleAnnotationProcessor, "EXAMPLE_ANNOTATION_PROCESSOR")
 
                     // those classes use compileOnly dependency on scripting and should not be considered as containing test classes to avoid runtime failures
                     exclude(
