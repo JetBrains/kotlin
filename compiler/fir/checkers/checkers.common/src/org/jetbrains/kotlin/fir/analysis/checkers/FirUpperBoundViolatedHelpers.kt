@@ -38,7 +38,9 @@ fun checkUpperBoundViolated(
     isIgnoreTypeParameters: Boolean = false,
     isInsideTypeOperatorOrParameterBounds: Boolean = false,
 ) {
-    val type = typeRef?.coneType?.lowerBoundIfFlexible() as? ConeClassLikeType ?: return
+    val coneType = typeRef?.coneType?.lowerBoundIfFlexible() ?: return
+    // For a type alias expanding to a union type, the bounds in the expansion are checked through the abbreviation
+    val type = coneType as? ConeClassLikeType ?: (coneType as? ConeUnionType)?.abbreviatedType as? ConeClassLikeType ?: return
     checkUpperBoundViolated(typeRef, type, isIgnoreTypeParameters, typeRef.source, isInsideTypeOperatorOrParameterBounds)
 }
 
@@ -52,40 +54,45 @@ internal fun checkUpperBoundViolated(
     mustRelaxDueToArgumentInteractionsBug: Boolean = false,
 ) {
     // If we have FirTypeRef information, add KtSourceElement information to each argument of the type and fully expand.
-    val type = if (typeRef != null) {
-        (notExpandedType.abbreviatedTypeOrSelf as? ConeClassLikeType)
-            ?.fullyExpandedTypeWithSource(typeRef, context.session)
-            // Add fallback source information to arguments of the expanded type.
-            ?.withArguments { it.withSource(FirTypeRefSource(null, typeRef.source)) }
-            ?: return
+    val expandedType = if (typeRef != null) {
+        (notExpandedType.abbreviatedTypeOrSelf as? ConeClassLikeType)?.fullyExpandedTypeWithSource(typeRef, context.session) ?: return
     } else {
         notExpandedType.fullyExpandedType()
     }
+    val isTypealiasExpansion = notExpandedType.abbreviatedTypeOrSelf.fullyExpandedType() != notExpandedType.abbreviatedTypeOrSelf
 
-    if (type.typeArguments.isEmpty()) return
+    // A type alias may expand to a union type, in which case the bounds are checked for each component
+    expandedType.forEachUnionComponentOrSelf { component ->
+        val componentType = component.lowerBoundIfFlexible() as? ConeClassLikeType ?: return@forEachUnionComponentOrSelf
+        // Add fallback source information to arguments of the expanded type.
+        val type = when (typeRef) {
+            null -> componentType
+            else -> componentType.withArguments { it.withSource(FirTypeRefSource(null, typeRef.source)) }
+        }
 
-    val prototypeClassSymbol = type.lookupTag.toRegularClassSymbol() ?: return
+        if (type.typeArguments.isEmpty()) return@forEachUnionComponentOrSelf
 
-    val typeParameterSymbols = prototypeClassSymbol.typeParameterSymbols
+        val prototypeClassSymbol = type.lookupTag.toRegularClassSymbol() ?: return@forEachUnionComponentOrSelf
 
-    if (typeParameterSymbols.isEmpty()) {
-        return
+        val typeParameterSymbols = prototypeClassSymbol.typeParameterSymbols
+
+        if (typeParameterSymbols.isEmpty()) return@forEachUnionComponentOrSelf
+
+        val substitution = typeParameterSymbols.zip(type.typeArguments).toMap()
+        val substitutor = FE10LikeConeSubstitutor(substitution, context.session)
+
+        checkUpperBoundViolated(
+            typeParameterSymbols,
+            type.typeArguments.toList(),
+            substitutor,
+            isReportExpansionError = true,
+            isIgnoreTypeParameters,
+            fallbackSource,
+            isInsideTypeOperatorOrParameterBounds,
+            mustRelaxDueToArgumentInteractionsBug = mustRelaxDueToArgumentInteractionsBug,
+            isTypealiasExpansion = isTypealiasExpansion,
+        )
     }
-
-    val substitution = typeParameterSymbols.zip(type.typeArguments).toMap()
-    val substitutor = FE10LikeConeSubstitutor(substitution, context.session)
-
-    return checkUpperBoundViolated(
-        typeParameterSymbols,
-        type.typeArguments.toList(),
-        substitutor,
-        isReportExpansionError = true,
-        isIgnoreTypeParameters,
-        fallbackSource,
-        isInsideTypeOperatorOrParameterBounds,
-        mustRelaxDueToArgumentInteractionsBug = mustRelaxDueToArgumentInteractionsBug,
-        isTypealiasExpansion = notExpandedType.abbreviatedTypeOrSelf.fullyExpandedType() != notExpandedType.abbreviatedTypeOrSelf
-    )
 }
 
 fun List<FirTypeProjection>.toTypeArgumentsWithSourceInfo(): List<ConeTypeProjection> {
@@ -226,8 +233,11 @@ fun checkUpperBoundViolated(
                 }
             }
 
-            if (argumentType is ConeClassLikeType) {
-                checkUpperBoundViolated(argumentTypeRef, argumentType, isIgnoreTypeParameters, fallbackSource)
+            // For a type alias expanding to a union type, the bounds in the expansion are checked through the abbreviation
+            val argumentClassLikeType = argumentType as? ConeClassLikeType
+                ?: (argumentType as? ConeUnionType)?.abbreviatedType as? ConeClassLikeType
+            if (argumentClassLikeType != null) {
+                checkUpperBoundViolated(argumentTypeRef, argumentClassLikeType, isIgnoreTypeParameters, fallbackSource)
             }
         }
     }
@@ -277,7 +287,7 @@ private fun reportUpperBoundViolationWarningIfNecessary(
 fun ConeClassLikeType.fullyExpandedTypeWithSource(
     typeRef: FirTypeRef,
     useSiteSession: FirSession,
-): ConeClassLikeType? {
+): ConeSimpleKotlinType? {
     val typeRefAndSourcesForArguments = extractArgumentsTypeRefAndSource(typeRef) ?: return null
 
     // Add source information to arguments of non-expanded type, which is preserved during expansion.

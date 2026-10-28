@@ -1012,7 +1012,11 @@ fun ConeKotlinType.forEachClassId(f: (ClassId) -> Unit) {
             richErrorTypes.forEach { it.forEachClassId(f) }
         }
         is ConeTypeParameterType -> lookupTag.symbol.resolvedBounds.forEach { it.coneType.forEachClassId(f) }
-        is ConeClassLikeType -> fullyExpandedType().classId.let(f)
+        is ConeClassLikeType -> fullyExpandedType().let { expandedType ->
+            if (expandedType is ConeClassLikeType) f(expandedType.classId)
+            // A type alias may expand to a union type
+            else expandedType.forEachClassId(f)
+        }
         is ConeStubTypeForTypeVariableInSubtyping,
         is ConeTypeVariableType,
         is ConeIntegerLiteralType -> {}

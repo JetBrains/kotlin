@@ -1,0 +1,153 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] typeAliasToUnionForwardReferenceNonError.kt
+    public final? error [ResolvedTo(RAW_FIR)] class E1 : R|kotlin/RichError| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E1] constructor(): R|E1| {
+            LAZY_super<R|kotlin/RichError|>
+        }
+
+    }
+    public final [ResolvedTo(RAW_FIR)] typealias ResolveMe = E1 | TB
+    public final [ResolvedTo(RAW_FIR)] typealias TB = String
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] typeAliasToUnionForwardReferenceNonError.kt
+    public final? error [ResolvedTo(RAW_FIR)] class E1 : R|kotlin/RichError| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E1] constructor(): R|E1| {
+            LAZY_super<R|kotlin/RichError|>
+        }
+
+    }
+    public final [ResolvedTo(RAW_FIR)] typealias ResolveMe = E1 | TB
+    public final [ResolvedTo(RAW_FIR)] typealias TB = String
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] typeAliasToUnionForwardReferenceNonError.kt
+    public final? error [ResolvedTo(RAW_FIR)] class E1 : R|kotlin/RichError| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E1] constructor(): R|E1| {
+            LAZY_super<R|kotlin/RichError|>
+        }
+
+    }
+    public final [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] typealias ResolveMe = E1 | TB
+    public final [ResolvedTo(RAW_FIR)] typealias TB = String
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] typeAliasToUnionForwardReferenceNonError.kt
+    public final? error [ResolvedTo(RAW_FIR)] class E1 : R|kotlin/RichError| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E1] constructor(): R|E1| {
+            LAZY_super<R|kotlin/RichError|>
+        }
+
+    }
+    public final [ResolvedTo(COMPANION_GENERATION)] typealias ResolveMe = E1 | TB
+    public final [ResolvedTo(RAW_FIR)] typealias TB = String
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] typeAliasToUnionForwardReferenceNonError.kt
+    public final? error [ResolvedTo(SUPER_TYPES)] class E1 : R|kotlin/RichError| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E1] constructor(): R|E1| {
+            LAZY_super<R|kotlin/RichError|>
+        }
+
+    }
+    public final [ResolvedTo(SUPER_TYPES)] typealias ResolveMe = <ERROR TYPE REF: Non-error component must appear first>
+    public final [ResolvedTo(SUPER_TYPES)] typealias TB = R|kotlin/String|
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] typeAliasToUnionForwardReferenceNonError.kt
+    public final? error [ResolvedTo(SUPER_TYPES)] class E1 : R|kotlin/RichError| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E1] constructor(): R|E1| {
+            LAZY_super<R|kotlin/RichError|>
+        }
+
+    }
+    public final [ResolvedTo(TYPES)] typealias ResolveMe = <ERROR TYPE REF: Non-error component must appear first>
+    public final [ResolvedTo(SUPER_TYPES)] typealias TB = R|kotlin/String|
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] typeAliasToUnionForwardReferenceNonError.kt
+    public final? error [ResolvedTo(SUPER_TYPES)] class E1 : R|kotlin/RichError| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E1] constructor(): R|E1| {
+            LAZY_super<R|kotlin/RichError|>
+        }
+
+    }
+    public final [ResolvedTo(STATUS)] typealias ResolveMe = <ERROR TYPE REF: Non-error component must appear first>
+    public final [ResolvedTo(SUPER_TYPES)] typealias TB = R|kotlin/String|
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] typeAliasToUnionForwardReferenceNonError.kt
+    public final? error [ResolvedTo(SUPER_TYPES)] class E1 : R|kotlin/RichError| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E1] constructor(): R|E1| {
+            LAZY_super<R|kotlin/RichError|>
+        }
+
+    }
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] typealias ResolveMe = <ERROR TYPE REF: Non-error component must appear first>
+    public final [ResolvedTo(SUPER_TYPES)] typealias TB = R|kotlin/String|
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] typeAliasToUnionForwardReferenceNonError.kt
+    public final? error [ResolvedTo(SUPER_TYPES)] class E1 : R|kotlin/RichError| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E1] constructor(): R|E1| {
+            LAZY_super<R|kotlin/RichError|>
+        }
+
+    }
+    public final [ResolvedTo(CONTRACTS)] typealias ResolveMe = <ERROR TYPE REF: Non-error component must appear first>
+    public final [ResolvedTo(SUPER_TYPES)] typealias TB = R|kotlin/String|
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] typeAliasToUnionForwardReferenceNonError.kt
+    public final? error [ResolvedTo(SUPER_TYPES)] class E1 : R|kotlin/RichError| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E1] constructor(): R|E1| {
+            LAZY_super<R|kotlin/RichError|>
+        }
+
+    }
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] typealias ResolveMe = <ERROR TYPE REF: Non-error component must appear first>
+    public final [ResolvedTo(SUPER_TYPES)] typealias TB = R|kotlin/String|
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] typeAliasToUnionForwardReferenceNonError.kt
+    public final? error [ResolvedTo(SUPER_TYPES)] class E1 : R|kotlin/RichError| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E1] constructor(): R|E1| {
+            LAZY_super<R|kotlin/RichError|>
+        }
+
+    }
+    public final [ResolvedTo(CONSTANT_EVALUATION)] typealias ResolveMe = <ERROR TYPE REF: Non-error component must appear first>
+    public final [ResolvedTo(SUPER_TYPES)] typealias TB = R|kotlin/String|
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] typeAliasToUnionForwardReferenceNonError.kt
+    public final? error [ResolvedTo(SUPER_TYPES)] class E1 : R|kotlin/RichError| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E1] constructor(): R|E1| {
+            LAZY_super<R|kotlin/RichError|>
+        }
+
+    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] typealias ResolveMe = <ERROR TYPE REF: Non-error component must appear first>
+    public final [ResolvedTo(SUPER_TYPES)] typealias TB = R|kotlin/String|
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] typeAliasToUnionForwardReferenceNonError.kt
+    public final? error [ResolvedTo(SUPER_TYPES)] class E1 : R|kotlin/RichError| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E1] constructor(): R|E1| {
+            LAZY_super<R|kotlin/RichError|>
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] typealias ResolveMe = <ERROR TYPE REF: Non-error component must appear first>
+    public final [ResolvedTo(SUPER_TYPES)] typealias TB = R|kotlin/String|
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] typeAliasToUnionForwardReferenceNonError.kt
+    public final error [ResolvedTo(BODY_RESOLVE)] class E1 : R|kotlin/RichError| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=E1] constructor(): R|E1| {
+            super<R|kotlin/RichError|>()
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] typealias ResolveMe = <ERROR TYPE REF: Non-error component must appear first>
+    public final [ResolvedTo(BODY_RESOLVE)] typealias TB = R|kotlin/String|

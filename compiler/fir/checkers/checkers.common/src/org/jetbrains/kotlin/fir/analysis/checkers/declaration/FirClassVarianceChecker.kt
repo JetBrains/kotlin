@@ -158,6 +158,11 @@ object FirClassVarianceChecker : FirClassChecker(MppCheckerKind.Common) {
             }
             is ConeClassLikeType -> {
                 val fullyExpandedType = type.fullyExpandedType()
+                if (fullyExpandedType !is ConeClassLikeType) {
+                    // A type alias may expand to a union type; check its components instead
+                    checkVarianceConflict(fullyExpandedType, variance, typeRef, containingType, source, isInAbbreviation)
+                    return
+                }
                 val classSymbol = fullyExpandedType.lookupTag.toSymbol()
                 if (classSymbol is FirClassSymbol<*>) {
                     val typeRefAndSourcesForArguments = extractArgumentsTypeRefAndSource(typeRef)

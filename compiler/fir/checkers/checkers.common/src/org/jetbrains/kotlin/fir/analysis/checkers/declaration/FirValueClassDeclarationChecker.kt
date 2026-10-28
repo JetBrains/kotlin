@@ -532,7 +532,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
 
         return lookupSuperTypes(this, lookupInterfaces = true, deep = true, session, substituteTypes = false).any { superType ->
             // Note: We check just classId here, so type substitution isn't needed   ^ (we aren't interested in type arguments)
-            superType.fullyExpandedType(session).lookupTag.classId.isCloneableId()
+            superType.fullyExpandedType(session).classId?.isCloneableId() == true
         }
     }
 

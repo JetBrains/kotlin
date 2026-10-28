@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
-import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
+import org.jetbrains.kotlin.fir.declarations.utils.expandedClassLikeType
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
@@ -76,7 +76,7 @@ class FirCallableReferenceLhsResolver(
     private fun FirResolvedQualifier.expandedRegularClassIfAny(): FirRegularClass? {
         var fir = qualifierSymbol?.fir ?: return null
         while (fir is FirTypeAlias) {
-            fir = fir.expandedConeType?.lookupTag?.toSymbol(session)?.fir ?: return null
+            fir = fir.expandedClassLikeType?.lookupTag?.toSymbol(session)?.fir ?: return null
         }
         return fir as? FirRegularClass
     }

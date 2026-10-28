@@ -1,0 +1,93 @@
+FILE: typealiasToUnion.kt
+    public final error class E1 : R|kotlin/RichError| {
+        public constructor(): R|E1| {
+            super<R|kotlin/RichError|>()
+        }
+
+    }
+    public final error class E2 : R|kotlin/RichError| {
+        public constructor(): R|E2| {
+            super<R|kotlin/RichError|>()
+        }
+
+    }
+    public final error class E3 : R|kotlin/RichError| {
+        public constructor(): R|E3| {
+            super<R|kotlin/RichError|>()
+        }
+
+    }
+    public final typealias Errs = R|union(errors=E1 | E2)|
+    public final typealias R = R|union(primary=kotlin/Int, errors=E1)|
+    public final typealias NR = R|union(primary=kotlin/Int?, errors=E1)|
+    public final typealias NE1 = R|union(primary=kotlin/Nothing?, errors=E1)|
+    public final typealias NE1x = R|E1?|
+    public final fun errs(): R|{Errs=} union(errors=E1 | E2)| {
+        ^errs R|/E1.E1|()
+    }
+    public final fun r(): R|{R=} union(primary=kotlin/Int, errors=E1)| {
+        ^r Int(1)
+    }
+    public final fun nr(): R|{NR=} union(primary=kotlin/Int?, errors=E1)| {
+        ^nr Null(null)
+    }
+    public final fun rOrE2(): R|union(primary=kotlin/Int, errors=E1 | E2)| {
+        ^rOrE2 R|/E2.E2|()
+    }
+    public final fun stringOrErrs(): R|union(primary=kotlin/String, errors=E1 | E2)| {
+        ^stringOrErrs R|/E2.E2|()
+    }
+    public final fun nullableR(): R|{R?=} union(primary=kotlin/Int?, errors=E1)| {
+        ^nullableR Null(null)
+    }
+    public final fun nullableErrs(): R|{Errs?=} union(primary=kotlin/Nothing?, errors=E1 | E2)| {
+        ^nullableErrs Null(null)
+    }
+    public final fun nullableErrsOrE3(): R|union(primary=kotlin/Nothing?, errors=E1 | E2 | E3)| {
+        ^nullableErrsOrE3 R|/E3.E3|()
+    }
+    public final fun dedup(): R|union(errors=E1 | E2)| {
+        ^dedup R|/E2.E2|()
+    }
+    public final fun nothingOrErrs(): R|union(errors=E1 | E2)| {
+        ^nothingOrErrs R|/E1.E1|()
+    }
+    public final fun ne1OrN2(): R|union(primary=kotlin/Nothing?, errors=E1 | E2)| {
+        ^ne1OrN2 R|/E1.E1|()
+    }
+    public final fun ne1xOrN2(): <ERROR TYPE REF: Nullable error component> {
+        ^ne1xOrN2 R|/E1.E1|()
+    }
+    public final fun assignability(a: R|{R=} union(primary=kotlin/Int, errors=E1)|, b: R|union(primary=kotlin/Int, errors=E1)|, c: R|union(primary=kotlin/Int, errors=E1 | E2)|, d: R|union(primary=kotlin/Int, errors=E1 | E2)|): R|kotlin/Unit| {
+        lval a1: R|union(primary=kotlin/Int, errors=E1)| = R|<local>/a|
+        lval b1: R|{R=} union(primary=kotlin/Int, errors=E1)| = R|<local>/b|
+        lval c1: R|union(primary=kotlin/Int, errors=E1 | E2)| = R|<local>/c|
+        lval d1: R|union(primary=kotlin/Int, errors=E1 | E2)| = R|<local>/d|
+    }
+    public final fun smartCasts(x: R|{R=} union(primary=kotlin/Int, errors=E1)|, e: R|{Errs=} union(errors=E1 | E2)|, u: R|union(primary=kotlin/Int, errors=E1 | E2)|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/x| is R|kotlin/Int|) ->  {
+                ^smartCasts Unit
+            }
+        }
+
+        when () {
+            (R|<local>/x| is R|E1|) ->  {
+                ^smartCasts Unit
+            }
+        }
+
+        when (lval <when-subject>: R|{Errs=} union(errors=E1 | E2)| = R|<local>/e|) {
+            ($subj$ is R|E1|) ->  {
+            }
+            ($subj$ is R|E2|) ->  {
+            }
+        }
+
+        when () {
+            (R|<local>/u| is R|{Errs=} union(errors=E1 | E2)|) ->  {
+                R|<local>/u|
+            }
+        }
+
+    }

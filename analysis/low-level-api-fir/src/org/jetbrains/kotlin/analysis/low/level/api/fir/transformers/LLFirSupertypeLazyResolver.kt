@@ -96,6 +96,23 @@ private class LLFirSuperTypeTargetResolver(
                 LLFirSupertypeLazyResolver.checkIsResolved(outerClass)
             }
         }
+
+        override fun resolveTypeAliasOnDemand(typeAlias: FirTypeAlias) {
+            // Only the supertypes of [typeAlias] are computed here, without the loop detection and the publication,
+            // because the declaration which requested the expansion is not computed yet, so the loop detection would fail on it.
+            // The type alias is published later by [crawlSupertype] during the resolution of the requesting declaration
+            typeAlias.lazyResolveToPhase(resolverPhase.previous)
+
+            var expandedTypeRef: FirTypeRef? = null
+            withReadLock(typeAlias) {
+                expandedTypeRef = typeAlias.expandedTypeRef
+            }
+
+            // "null" means that some other thread is already resolved [typeAlias] to [resolverPhase]
+            if (expandedTypeRef == null) return
+
+            resolveTypeAliasSupertype(typeAlias, expandedTypeRef, resolveRecursively = false)
+        }
     }
 
     @Deprecated("Should never be called directly, only for override purposes, please use withRegularClass", level = DeprecationLevel.ERROR)
@@ -117,7 +134,9 @@ private class LLFirSuperTypeTargetResolver(
                     }
                 },
                 superTypeUpdater = { superTypeRefs ->
-                    val expandedTypeRefs = superTypeRefs.map { supertypeComputationSession.expandTypealiasInPlace(it, target.llFirSession) }
+                    val expandedTypeRefs = superTypeRefs.map {
+                        supertypeComputationSession.expandTypealiasInPlace(it, target.llFirSession, isClassSupertype = true)
+                    }
                     target.replaceSuperTypeRefs(expandedTypeRefs)
                     resolveTargetSession.platformSupertypeUpdater?.updateSupertypesIfNeeded(target, resolveTargetScopeSession)
                 },
@@ -127,7 +146,11 @@ private class LLFirSuperTypeTargetResolver(
                 superTypeRefsForTransformation = { target.expandedTypeRef },
                 resolver = { supertypeResolver.resolveTypeAliasSupertype(target, it, resolveRecursively = false) },
                 superTypeUpdater = { superTypeRefs ->
-                    val expandedTypeRef = supertypeComputationSession.expandTypealiasInPlace(superTypeRefs.single(), target.llFirSession)
+                    val expandedTypeRef = supertypeComputationSession.expandTypealiasInPlace(
+                        superTypeRefs.single(),
+                        target.llFirSession,
+                        isClassSupertype = false,
+                    )
                     target.replaceExpandedTypeRef(expandedTypeRef)
                 },
             )
@@ -229,6 +252,18 @@ private class LLFirSuperTypeTargetResolver(
             // to declarations via its type arguments which need to be collected and have a containing file.
             // For example, a `Function1` could point to a type alias.
             type.typeArguments.forEach { it.type?.let(::crawlSupertype) }
+        }
+
+        if (type is ConeUnionType) {
+            // A type alias may expand to a union type, whose components may point to further type aliases
+            crawlSupertype(type.primaryType)
+            type.richErrorTypes.forEach(::crawlSupertype)
+        }
+
+        if (type is ConeErrorType) {
+            // An error type may wrap a malformed union type, e.g., with a non-error component in the wrong position,
+            // whose components may point to type aliases which were resolved on demand
+            type.delegatedType?.let(::crawlSupertype)
         }
     }
 
