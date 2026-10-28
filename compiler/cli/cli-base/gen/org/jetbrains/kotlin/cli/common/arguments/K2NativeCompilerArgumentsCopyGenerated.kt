@@ -30,6 +30,7 @@ fun copyK2NativeCompilerArguments(from: K2NativeCompilerArguments, to: K2NativeC
     to.exportKDoc = from.exportKDoc
     to.exportedLibraries = from.exportedLibraries.copyOf()
     to.externalDependencies = from.externalDependencies
+    to.factsCacheEnabled = from.factsCacheEnabled
     to.filesToCache = from.filesToCache.copyOf()
     to.frameworkImportHeaders = from.frameworkImportHeaders.copyOf()
     to.friendModules = from.friendModules

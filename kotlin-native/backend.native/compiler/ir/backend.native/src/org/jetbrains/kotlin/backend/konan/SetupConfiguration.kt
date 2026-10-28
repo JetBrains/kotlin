@@ -146,6 +146,9 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     put(VERIFY_KLIB_FACTS, arguments.verifyKlibFacts)
     put(FILES_TO_CACHE, arguments.filesToCache.toList())
     put(MAKE_PER_FILE_CACHE, arguments.makePerFileCache)
+    if (arguments.factsCacheEnabled && incrementalCacheDir == null)
+        report(KONAN_ARGUMENT_WARNING, "${K2NativeCompilerArguments::factsCacheEnabled.cliArgument} has no effect without incremental compilation")
+    put(FACTS_CACHE_ENABLED, arguments.factsCacheEnabled && incrementalCacheDir != null)
     val nThreadsRaw = parseBackendThreads(arguments.backendThreads)
     val availableProcessors = Runtime.getRuntime().availableProcessors()
     val nThreads = if (nThreadsRaw == 0) availableProcessors else nThreadsRaw
