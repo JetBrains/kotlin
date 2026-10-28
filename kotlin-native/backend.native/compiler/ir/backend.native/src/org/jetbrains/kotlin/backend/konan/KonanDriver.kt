@@ -158,7 +158,7 @@ class KonanDriver(
             if (!config.produce.isCache)
                 replayPartialLinkageIssuesFromCaches(config, cacheBuilder::wasRebuiltInThisRun)
 
-            NativeCompilerDriver(performanceManager).run(config, environment)
+            NativeCompilerDriver(performanceManager, compilerExecutor).run(config, environment)
         }
     }
 

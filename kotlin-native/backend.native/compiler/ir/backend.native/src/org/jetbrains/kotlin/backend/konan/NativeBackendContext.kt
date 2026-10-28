@@ -57,6 +57,7 @@ internal class NativeBackendContext(
         val irLinker: KonanIrLinker,
         override val symbols: BackendNativeSymbols,
         override val symbolTable: ReferenceSymbolTable,
+        val compilerExecutor: CompilerExecutor,
 ) : BasicNativeBackendPhaseContext(config), NativeLoweringContext {
     override val configuration get() = config.configuration
 

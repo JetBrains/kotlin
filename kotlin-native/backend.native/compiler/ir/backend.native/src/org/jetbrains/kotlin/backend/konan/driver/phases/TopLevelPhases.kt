@@ -43,10 +43,6 @@ import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.util.*
 import org.jetbrains.kotlin.utils.atMostOne
-import java.util.concurrent.Callable
-import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
-import java.util.concurrent.atomic.AtomicReference
 import kotlin.io.path.Path
 import kotlin.io.path.createFile
 import kotlin.io.path.name
@@ -69,8 +65,8 @@ internal fun PhaseEngine<NativeBackendPhaseContext>.linkKlibs(frontendOutput: K1
 }
 
 internal fun <T> PhaseEngine<NativeBackendPhaseContext>.linkKlibs(
-    frontendOutput: K1FrontendPhaseOutput,
-    produceAdditionalOutput: (PhaseEngine<out LinkKlibsContext>) -> T
+        frontendOutput: K1FrontendPhaseOutput,
+        produceAdditionalOutput: (PhaseEngine<out LinkKlibsContext>) -> T
 ): Pair<LinkKlibsOutput, T> {
     val config = this.context.config
     val psiToIrContext = LinkKlibsContextImpl(config, frontendOutput.moduleDescriptor, frontendOutput.disposeCallback)
@@ -242,39 +238,22 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
             fragmentsList.runAllLowerings()
         }
 
-        val threadsCount = context.config.threadsCount
-        if (threadsCount == 1) {
-            fragmentsList.zip(generationStates).forEach { [fragment, generationState] ->
+        val compilerExecutor = backendEngine.context.compilerExecutor
+
+        // We'd love to run entire pipeline in parallel, but it's difficult (mainly because of the lowerings,
+        // which need cross-file access all the time and it's not easy to overcome this). So, for now,
+        // we split the pipeline into two parts - everything before lowerings (including them)
+        // which is run sequentially, and everything else which is run in parallel.
+        val tasks = fragmentsList.zip(generationStates).map { [fragment, generationState] ->
+            {
+                // Currently, it's not possible to initialize the correct thread on `PerformanceManager` creation
+                // because new threads are spawned here when `fragment` with its `PerformanceManager` is already initialized.
+                fragment.performanceManager?.initializeCurrentThread()
                 runAfterLowerings(fragment, generationState)
             }
-        } else {
-            if (fragmentsList.size == 1) {
-                runAfterLowerings(fragmentsList.first(), generationStates.first())
-            } else {
-                // We'd love to run entire pipeline in parallel, but it's difficult (mainly because of the lowerings,
-                // which need cross-file access all the time and it's not easy to overcome this). So, for now,
-                // we split the pipeline into two parts - everything before lowerings (including them)
-                // which is run sequentially, and everything else which is run in parallel.
-                val executor = Executors.newFixedThreadPool(threadsCount)
-                val thrownFromThread = AtomicReference<Throwable?>(null)
-                val tasks = fragmentsList.zip(generationStates).map { [fragment, generationState] ->
-                    Callable {
-                        try {
-                            // Currently, it's not possible to initialize the correct thread on `PerformanceManager` creation
-                            // because new threads are spawned here when `fragment` with its `PerformanceManager` is already initialized.
-                            fragment.performanceManager?.initializeCurrentThread()
-                            runAfterLowerings(fragment, generationState)
-                        } catch (t: Throwable) {
-                            thrownFromThread.set(t)
-                        }
-                    }
-                }
-                executor.invokeAll(tasks.toList())
-                executor.shutdown()
-                executor.awaitTermination(1, TimeUnit.DAYS)
-                thrownFromThread.get()?.let { throw it }
-            }
         }
+
+        compilerExecutor.runAll(tasks)
 
         if (performanceManager != null) {
             fragmentsList.forEach {
