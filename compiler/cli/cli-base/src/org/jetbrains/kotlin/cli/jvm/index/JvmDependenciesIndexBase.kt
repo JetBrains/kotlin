@@ -73,10 +73,19 @@ abstract class JvmDependenciesIndexBase(protected val roots: List<JavaRoot>) : J
         acceptedRootTypes: Set<JavaRoot.RootType>,
         continueSearch: (VirtualFile, JavaRoot.RootType) -> Boolean
     ) {
+        traverseFilesInPackage(packageFqName, acceptedRootTypes) { file, root -> continueSearch(file, root.type) }
+    }
+
+    /** [traverseVirtualFilesInPackage] handing out the [JavaRoot] of each file instead of only its type. */
+    protected fun traverseFilesInPackage(
+        packageFqName: FqName,
+        acceptedRootTypes: Set<JavaRoot.RootType>,
+        continueSearch: (VirtualFile, JavaRoot) -> Boolean
+    ) {
         lock.withLock {
             traverseIndex(packageFqName, acceptedRootTypes) { dir, root ->
                 for (child in dir.children) {
-                    val shouldContinueSearch = continueSearch(child, root.type)
+                    val shouldContinueSearch = continueSearch(child, root)
                     if (!shouldContinueSearch) return@traverseIndex false
                 }
                 true
@@ -84,10 +93,10 @@ abstract class JvmDependenciesIndexBase(protected val roots: List<JavaRoot>) : J
         }
     }
 
-    abstract override fun findClassVirtualFiles(
+    abstract override fun findClassFiles(
         classId: ClassId,
         acceptedExtensions: JavaFileExtensions,
-    ): Collection<VirtualFile>
+    ): Collection<IndexedClassFile>
 
     override fun traverseClassVirtualFilesInPackage(
         packageFqName: FqName,
