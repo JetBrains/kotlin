@@ -1,87 +1,50 @@
-// Copyright (c) 2011, the Dart project authors.  Please see the AUTHORS file
-// for details. All rights reserved. Use of this source code is governed by a
-// BSD-style license that can be found in the LICENSE file.
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
 
-package org.jetbrains.kotlin.js.backend.ast;
+package org.jetbrains.kotlin.js.backend.ast
 
-import com.intellij.util.SmartList;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.js.util.AstUtil;
-
-import java.util.List;
+import com.intellij.util.SmartList
+import org.jetbrains.kotlin.js.util.AstUtil
 
 /**
  * Represents a JavaScript block statement.
  */
-public class JsBlock extends SourceInfoAwareJsNode implements JsStatement {
-    @NotNull
-    private final List<JsStatement> statements;
+open class JsBlock private constructor(statements: SmartList<JsStatement>) : SourceInfoAwareJsNode(), JsStatement {
+    val statements: MutableList<JsStatement> = statements
 
-    @Nullable
-    private JsLocationWithSource closingBraceSource;
+    constructor(statements: List<JsStatement>) : this(SmartList(statements))
+    constructor(statement: JsStatement) : this(SmartList(statement))
+    constructor(vararg statements: JsStatement) : this(SmartList(*statements))
+    constructor() : this(SmartList())
 
-    public JsBlock() {
-        this(new SmartList<JsStatement>());
+    var closingBraceSource: JsLocationWithSource? = null
+
+    val isEmpty: Boolean
+        get() = statements.isEmpty()
+
+    open val isTransparent: Boolean
+        get() = false
+
+    override fun accept(v: JsVisitor) {
+        v.visitBlock(this)
     }
 
-    public JsBlock(JsStatement statement) {
-        this(new SmartList<JsStatement>(statement));
+    override fun acceptChildren(visitor: JsVisitor) {
+        visitor.acceptWithInsertRemove(statements)
     }
 
-    public JsBlock(JsStatement... statements) {
-        this(new SmartList<JsStatement>(statements));
-    }
-
-    public JsBlock(@NotNull List<JsStatement> statements) {
-        this.statements = statements;
-    }
-
-    @NotNull
-    public List<JsStatement> getStatements() {
-        return statements;
-    }
-
-    @Nullable
-    public JsLocationWithSource getClosingBraceSource() {
-        return closingBraceSource;
-    }
-
-    public void setClosingBraceSource(@Nullable JsLocationWithSource closingBraceLocation) {
-        this.closingBraceSource = closingBraceLocation;
-    }
-
-    public boolean isEmpty() {
-        return statements.isEmpty();
-    }
-
-    public boolean isTransparent() {
-        return false;
-    }
-
-    @Override
-    public void accept(JsVisitor v) {
-        v.visitBlock(this);
-    }
-
-    @Override
-    public void acceptChildren(JsVisitor visitor) {
-        visitor.acceptWithInsertRemove(statements);
-    }
-
-    @Override
-    public void traverse(JsVisitorWithContext v, JsContext ctx) {
+    override fun traverse(v: JsVisitorWithContext, ctx: JsContext<*>) {
         if (v.visit(this, ctx)) {
-            v.acceptStatementList(statements);
+            v.acceptStatementList(statements)
         }
-        v.endVisit(this, ctx);
+        v.endVisit(this, ctx)
     }
 
-    @NotNull
-    @Override
-    public JsBlock deepCopy() {
-        JsBlock block = AbstractNodeKt.withMetadataFrom(new JsBlock(AstUtil.deepCopy(statements)), this);
-        block.setClosingBraceSource(getClosingBraceSource());
-        return block;
+    override fun deepCopy(): JsBlock {
+        val block = JsBlock(AstUtil.deepCopy(statements)).withMetadataFrom(this)
+        block.closingBraceSource = closingBraceSource
+        return block
     }
 }
