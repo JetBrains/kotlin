@@ -37,6 +37,8 @@ private val compilerPluginJars = mapOf(
     "assignment" to KotlinPaths.Jar.AssignmentPlugin,
 )
 
+fun scriptCompilerPluginDistributionJar(id: String): KotlinPaths.Jar? = compilerPluginJars[id]
+
 internal fun collectScriptCompilerPlugins(
     baseCompilerOptions: List<String>,
     sources: List<SourceCode>,
@@ -110,7 +112,7 @@ internal fun CompilerConfiguration.withScriptCompilerPlugins(
 
     for (plugin in plugins) {
         val distJar = plugin.id?.let { id ->
-            compilerPluginJars[id] ?: return reportError("Unknown compiler plugin id '$id'.")
+            scriptCompilerPluginDistributionJar(id) ?: return reportError("Unknown compiler plugin id '$id'.")
         }
         val classpath = if (distJar != null) {
             val paths = kotlinPaths
