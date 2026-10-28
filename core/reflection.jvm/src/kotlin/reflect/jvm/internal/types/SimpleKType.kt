@@ -25,8 +25,8 @@ internal class SimpleKType(
     computeJavaType: Lazy<Type>? = null,
 ) : AbstractKType(computeJavaType), KTypeBase {
     override fun makeNullableAsSpecified(nullable: Boolean): AbstractKType = SimpleKType(
-        classifier.toWrapperClassIfNeeded(nullable), arguments, nullable, lazyAnnotations, abbreviation, isDefinitelyNotNullType = false,
-        isNothingType, isSuspendFunctionType, mutableCollectionClass,
+        classifier.toWrapperClassIfNeeded(nullable), arguments, nullable, lazyAnnotations, abbreviation,
+        isDefinitelyNotNullType = isDefinitelyNotNullType && !nullable, isNothingType, isSuspendFunctionType, mutableCollectionClass,
     )
 
     private fun KClassifier.toWrapperClassIfNeeded(nullable: Boolean): KClassifier {
