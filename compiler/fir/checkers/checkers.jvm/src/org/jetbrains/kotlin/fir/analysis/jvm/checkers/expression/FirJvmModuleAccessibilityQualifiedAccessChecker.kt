@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.utils.sourceElement
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.toReference
+import org.jetbrains.kotlin.fir.java.BinaryClassSourceElement
 import org.jetbrains.kotlin.fir.java.VirtualFileBasedSourceElement
 import org.jetbrains.kotlin.fir.modules.javaModuleResolverProvider
 import org.jetbrains.kotlin.fir.packageFqName
@@ -25,11 +26,13 @@ import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileHandle
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
 import org.jetbrains.kotlin.load.kotlin.VirtualFileKotlinClass
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
+import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver.AccessError
 
 object FirJvmModuleAccessibilityQualifiedAccessChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -57,13 +60,27 @@ object FirJvmModuleAccessibilityQualifiedAccessChecker : FirQualifiedAccessExpre
 
         @OptIn(SymbolInternals::class)
         val sourceElement = symbol.fir.sourceElement
-        val virtualFile = when (sourceElement) {
-            is VirtualFileBasedSourceElement -> sourceElement.virtualFile
-            is KotlinJvmBinarySourceElement -> (sourceElement.binaryClass as? VirtualFileKotlinClass)?.file ?: return
+        val packageFqName = symbol.packageFqName()
+        when (sourceElement) {
+            is BinaryClassSourceElement -> checkPackageAccess(sourceElement.classFile, packageFqName, element)
+            is VirtualFileBasedSourceElement -> {
+                val classFile = sourceElement.classFile
+                if (classFile != null) checkPackageAccess(classFile, packageFqName, element)
+                else checkPackageAccess(sourceElement.virtualFile, packageFqName, element)
+            }
+            is KotlinJvmBinarySourceElement -> {
+                val virtualFile = (sourceElement.binaryClass as? VirtualFileKotlinClass)?.file ?: return
+                checkPackageAccess(virtualFile, packageFqName, element)
+            }
             else -> return
         }
+    }
 
-        checkPackageAccess(virtualFile, symbol.packageFqName(), element)
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkPackageAccess(classFile: BinaryClassFileHandle, referencedPackageFqName: FqName, element: FirElement) {
+        checkPackageAccess(referencedPackageFqName, element) { ourFile, resolver ->
+            resolver.checkAccessibility(ourFile, classFile, referencedPackageFqName)
+        }
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -72,15 +89,24 @@ object FirJvmModuleAccessibilityQualifiedAccessChecker : FirQualifiedAccessExpre
         referencedPackageFqName: FqName,
         element: FirElement,
     ) {
+        checkPackageAccess(referencedPackageFqName, element) { ourFile, resolver ->
+            resolver.checkAccessibility(ourFile, fileFromPackage, referencedPackageFqName)
+        }
+    }
+
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private inline fun checkPackageAccess(
+        referencedPackageFqName: FqName,
+        element: FirElement,
+        check: (fileFromOurModule: VirtualFile?, JavaModuleResolver) -> AccessError?,
+    ) {
         val fileFromOurModule = (context.containingFileSymbol?.sourceFile as? KtVirtualFileSourceFile)?.virtualFile
 
-        val diagnostic = context.session.javaModuleResolverProvider.javaModuleResolver.checkAccessibility(
-            fileFromOurModule, fileFromPackage, referencedPackageFqName
-        ) ?: return
+        val diagnostic = check(fileFromOurModule, context.session.javaModuleResolverProvider.javaModuleResolver) ?: return
 
         val source = element.toReference(context.session)?.source ?: element.source
         when (diagnostic) {
-            is JavaModuleResolver.AccessError.ModuleDoesNotExportPackage -> {
+            is AccessError.ModuleDoesNotExportPackage -> {
                 reporter.reportOn(
                     source,
                     FirJvmErrors.JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE,
@@ -88,10 +114,10 @@ object FirJvmModuleAccessibilityQualifiedAccessChecker : FirQualifiedAccessExpre
                     referencedPackageFqName.asString()
                 )
             }
-            is JavaModuleResolver.AccessError.ModuleDoesNotReadModule -> {
+            is AccessError.ModuleDoesNotReadModule -> {
                 reporter.reportOn(source, FirJvmErrors.JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE, diagnostic.dependencyModuleName)
             }
-            JavaModuleResolver.AccessError.ModuleDoesNotReadUnnamedModule -> {
+            AccessError.ModuleDoesNotReadUnnamedModule -> {
                 reporter.reportOn(source, FirJvmErrors.JAVA_MODULE_DOES_NOT_READ_UNNAMED_MODULE)
             }
         }

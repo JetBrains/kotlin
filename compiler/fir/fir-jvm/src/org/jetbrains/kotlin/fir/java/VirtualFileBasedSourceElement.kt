@@ -8,7 +8,15 @@ package org.jetbrains.kotlin.fir.java
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.SourceFile
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileHandle
 
-class VirtualFileBasedSourceElement(val virtualFile: VirtualFile) : SourceElement {
+/**
+ * The source element of a Java class read from [virtualFile]. For a class read from a binary class file, [classFile] is the
+ * handle it was read from, which also knows the classpath root the file was found in.
+ */
+class VirtualFileBasedSourceElement @JvmOverloads constructor(
+    val virtualFile: VirtualFile,
+    val classFile: BinaryClassFileHandle? = null,
+) : SourceElement {
     override fun getContainingFile(): SourceFile = SourceFile.NO_SOURCE_FILE
 }
