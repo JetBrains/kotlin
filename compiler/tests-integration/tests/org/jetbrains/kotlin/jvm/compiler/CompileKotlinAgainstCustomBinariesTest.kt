@@ -318,8 +318,8 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
             outerClass = null,
         )
         val annotation = binaryClass.annotations.single()
-        // KT-88892: the recorded nested boundary is ignored until the fix in the next commit.
-        assertEquals("p/Outer/Ann", annotation.classId?.asString())
+        // KT-88892: preserve the nested boundary recorded in the class file.
+        assertEquals("p/Outer.Ann", annotation.classId?.asString())
         assertEquals(42, (annotation.arguments.single() as JavaLiteralAnnotationArgument).value)
     }
 
