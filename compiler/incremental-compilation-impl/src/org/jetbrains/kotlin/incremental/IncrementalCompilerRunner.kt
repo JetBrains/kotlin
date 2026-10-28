@@ -558,11 +558,12 @@ abstract class IncrementalCompilerRunner<
         while (dirtySources.any() || runWithNoDirtyKotlinSources(caches)) {
             val complementaryFiles = caches.platformCache.getComplementaryFilesRecursive(dirtySources)
             dirtySources.addAll(complementaryFiles)
+            val sourceFilesPreviouslyReferencedByPlugins = caches.compilerPluginFilesCache.getSourceFilesReferencedByPlugins()
             reporter.reportMarkDirty(
-                caches.compilerPluginFilesCache.getSourceFilesReferencedByPlugins(),
+                sourceFilesPreviouslyReferencedByPlugins,
                 ScopeExpansionReason.REFERENCED_BY_COMPILER_PLUGIN
             )
-            dirtySources.addAll(caches.compilerPluginFilesCache.getSourceFilesReferencedByPlugins())
+            dirtySources.addAll(sourceFilesPreviouslyReferencedByPlugins)
             val sourceFilesPreviouslyGeneratedByPlugins = caches.compilerPluginFilesCache.getSourceFilesGeneratedByPlugins()
             reporter.reportMarkDirty(
                 sourceFilesPreviouslyGeneratedByPlugins,

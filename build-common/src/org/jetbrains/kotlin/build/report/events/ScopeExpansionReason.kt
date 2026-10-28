@@ -14,7 +14,7 @@ enum class ScopeExpansionReason(val readableString: String) {
     // Initial dirty set: impact of source changes
     JAVA_DECLARATION_USED("Uses a changed Java declaration"),
     ANDROID_LAYOUT_USED("Uses a changed Android layout"),
-    REMOVED_CLASS_USED("Uses a removed class"),
+    REMOVED_CLASS_USED("Uses a removed class or one of its subtypes"),
     REMOVED_CLASS_SUPERTYPE("Extends or implements a removed class"),
     SUPERTYPE_REFERENCING_CHANGED_TYPES("Declares a supertype of a changed class, so may infer types from changed files"),
 

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.incremental.dirtyFiles
 
 import org.jetbrains.kotlin.build.report.ICReporter
+import org.jetbrains.kotlin.build.report.reportMarkDirty
 import org.jetbrains.kotlin.build.report.events.ScopeExpansionReason
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.name.FqName
@@ -28,7 +29,7 @@ class DirtyFilesContainer(
         if (existingKotlinFiles.isNotEmpty()) {
             myDirtyFiles.addAll(existingKotlinFiles)
             if (reason != null) {
-                reporter.reportMarkDirty(existingKotlinFiles, reason.toString())
+                reporter.reportMarkDirty(existingKotlinFiles, reason)
             }
         }
     }

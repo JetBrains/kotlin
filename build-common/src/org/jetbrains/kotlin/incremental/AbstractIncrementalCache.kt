@@ -329,11 +329,14 @@ abstract class AbstractIncrementalCache<ClassName>(
     override fun getComplementaryFilesRecursive(dirtyFiles: Collection<File>): Collection<File> {
         val complementaryFiles = HashSet<File>()
         val filesQueue = ArrayDeque(dirtyFiles)
-        filesQueue.addAll(expectOfLenientStubs.keys)
-        icContext.reporter.reportMarkDirty(
-            expectOfLenientStubs.keys - dirtyFiles.toSet(),
-            ScopeExpansionReason.EXPECT_LENIENT_STUB
-        )
+        val dirtyFileSet = dirtyFiles as? Set<File> ?: dirtyFiles.toHashSet()
+        if (expectOfLenientStubs.keys.isNotEmpty()) {
+            filesQueue.addAll(expectOfLenientStubs.keys)
+            icContext.reporter.reportMarkDirty(
+                expectOfLenientStubs.keys.filterNot { it in dirtyFileSet },
+                ScopeExpansionReason.EXPECT_LENIENT_STUB
+            )
+        }
 
         val processedClasses = HashSet<FqName>()
         val processedFiles = HashSet<File>()
@@ -347,7 +350,7 @@ abstract class AbstractIncrementalCache<ClassName>(
             complementaryFilesMap[file]?.forEach {
                 if (complementaryFiles.add(it) && !processedFiles.contains(it)) {
                     filesQueue.add(it)
-                    icContext.reporter.reportMarkDirty(
+                    if (it !in dirtyFileSet) icContext.reporter.reportMarkDirty(
                         listOf(it),
                         ScopeExpansionReason.hasExpectActualCounterpartIn(file.path)
                     )
@@ -362,11 +365,13 @@ abstract class AbstractIncrementalCache<ClassName>(
                     processedClasses.addAll(it)
                 }
                 val files2add = allSubtypes.mapNotNull { classFqNameToSourceMap[it] }.filter { !processedFiles.contains(it) }
-                filesQueue.addAll(files2add)
-                icContext.reporter.reportMarkDirty(
-                    files2add - dirtyFiles.toSet(),
-                    ScopeExpansionReason.inSealedHierarchyOf(class2recompile.toString())
-                )
+                if (files2add.isNotEmpty()) {
+                    filesQueue.addAll(files2add)
+                    icContext.reporter.reportMarkDirty(
+                        files2add.filterNot { it in dirtyFileSet },
+                        ScopeExpansionReason.inSealedHierarchyOf(class2recompile.toString())
+                    )
+                }
             }
         }
         complementaryFiles.addAll(processedFiles)
