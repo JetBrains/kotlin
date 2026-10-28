@@ -1,71 +1,39 @@
-// Copyright (c) 2011, the Dart project authors.  Please see the AUTHORS file
-// for details. All rights reserved. Use of this source code is governed by a
-// BSD-style license that can be found in the LICENSE file.
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
 
-package org.jetbrains.kotlin.js.backend.ast;
+package org.jetbrains.kotlin.js.backend.ast
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.js.util.AstUtil;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.jetbrains.kotlin.js.util.AstUtil
 
 /**
  * A JavaScript switch statement.
  */
-public class JsSwitch extends SourceInfoAwareJsNode implements JsStatement {
+class JsSwitch(var expression: JsExpression, cases: List<JsSwitchMember> = emptyList()) : SourceInfoAwareJsNode(), JsStatement {
+    val cases: MutableList<JsSwitchMember> = cases.toMutableList()
 
-    private final List<JsSwitchMember> cases;
-    private JsExpression expression;
-
-    public JsSwitch() {
-        super();
-        cases = new ArrayList<JsSwitchMember>();
+    override fun accept(v: JsVisitor) {
+        v.visit(this)
     }
 
-    public JsSwitch(JsExpression expression, List<JsSwitchMember> cases) {
-        this.expression = expression;
-        this.cases = cases;
+    override fun acceptChildren(visitor: JsVisitor) {
+        visitor.accept(expression)
+        visitor.acceptWithInsertRemove(cases)
     }
 
-    public List<JsSwitchMember> getCases() {
-        return cases;
-    }
-
-    public JsExpression getExpression() {
-        return expression;
-    }
-
-    public void setExpression(JsExpression expression) {
-        this.expression = expression;
-    }
-
-    @Override
-    public void accept(JsVisitor v) {
-        v.visit(this);
-    }
-
-    @Override
-    public void acceptChildren(JsVisitor visitor) {
-        visitor.accept(expression);
-        visitor.acceptWithInsertRemove(cases);
-    }
-
-    @Override
-    public void traverse(JsVisitorWithContext v, JsContext ctx) {
+    override fun traverse(v: JsVisitorWithContext, ctx: JsContext<*>) {
         if (v.visit(this, ctx)) {
-            expression = v.accept(expression);
-            v.acceptList(cases);
+            expression = v.accept(expression)
+            v.acceptList(cases)
         }
-        v.endVisit(this, ctx);
+        v.endVisit(this, ctx)
     }
 
-    @NotNull
-    @Override
-    public JsSwitch deepCopy() {
-        JsExpression expressionCopy = AstUtil.deepCopy(expression);
-        List<JsSwitchMember> casesCopy = AstUtil.deepCopy(cases);
+    override fun deepCopy(): JsSwitch {
+        val expressionCopy = AstUtil.deepCopy(expression)!!
+        val casesCopy = AstUtil.deepCopy(cases)
 
-        return AbstractNodeKt.withMetadataFrom(new JsSwitch(expressionCopy, casesCopy), this);
+        return JsSwitch(expressionCopy, casesCopy).withMetadataFrom(this)
     }
 }
