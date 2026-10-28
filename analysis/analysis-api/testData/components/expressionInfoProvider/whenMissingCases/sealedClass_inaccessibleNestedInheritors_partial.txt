@@ -1,0 +1,2 @@
+TypeCase(lib/Hidden)
+TypeCase(lib/StringDesc)

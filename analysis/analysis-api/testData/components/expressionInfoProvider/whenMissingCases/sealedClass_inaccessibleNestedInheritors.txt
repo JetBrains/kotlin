@@ -1,0 +1,8 @@
+TypeCase(lib/PrimitiveClassDesc)
+TypeCase(lib/ReferenceClassDesc)
+TypeCase(lib/DynamicDesc)
+TypeCase(lib/AsTypeMethodHandleDesc)
+TypeCase(lib/DirectMethodHandleDescImpl)
+TypeCase(lib/Hidden)
+TypeCase(lib/Visible)
+TypeCase(lib/StringDesc)

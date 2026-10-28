@@ -1,0 +1,7 @@
+EnumEntryCase(lib/InternalEnum.X)
+EnumEntryCase(lib/InternalEnum.Y)
+TypeCase(object lib/Base.A)
+TypeCase(lib/Base.B)
+TypeCase(object lib/Base.Private)
+TypeCase(lib/Internal)
+TypeCase(lib/Outer.InPrivateOuter)

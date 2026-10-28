@@ -1,0 +1,3 @@
+TypeCase(object /Base.A)
+TypeCase(object /Base.Private)
+TypeCase(/Base.PrivateClass)

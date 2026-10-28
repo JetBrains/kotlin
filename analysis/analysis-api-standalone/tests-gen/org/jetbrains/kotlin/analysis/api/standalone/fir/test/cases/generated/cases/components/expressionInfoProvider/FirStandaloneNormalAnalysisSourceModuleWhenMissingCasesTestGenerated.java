@@ -158,8 +158,38 @@ public class FirStandaloneNormalAnalysisSourceModuleWhenMissingCasesTestGenerate
   }
 
   @Test
+  @TestMetadata("sealedClass_inaccessibleInheritors.kt")
+  public void testSealedClass_inaccessibleInheritors() {
+    run("sealedClass_inaccessibleInheritors.kt");
+  }
+
+  @Test
+  @TestMetadata("sealedClass_inaccessibleJavaInheritors.kt")
+  public void testSealedClass_inaccessibleJavaInheritors() {
+    run("sealedClass_inaccessibleJavaInheritors.kt");
+  }
+
+  @Test
+  @TestMetadata("sealedClass_inaccessibleNestedInheritors.kt")
+  public void testSealedClass_inaccessibleNestedInheritors() {
+    run("sealedClass_inaccessibleNestedInheritors.kt");
+  }
+
+  @Test
+  @TestMetadata("sealedClass_inaccessibleNestedInheritors_partial.kt")
+  public void testSealedClass_inaccessibleNestedInheritors_partial() {
+    run("sealedClass_inaccessibleNestedInheritors_partial.kt");
+  }
+
+  @Test
   @TestMetadata("sealedClass_partial.kt")
   public void testSealedClass_partial() {
     run("sealedClass_partial.kt");
+  }
+
+  @Test
+  @TestMetadata("sealedClass_privateInheritorsVisible.kt")
+  public void testSealedClass_privateInheritorsVisible() {
+    run("sealedClass_privateInheritorsVisible.kt");
   }
 }
