@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
+import org.jetbrains.kotlin.nativeDistribution.registerNativeBootstrapDistribution
 
 plugins {
     id("common-configuration")
@@ -6,6 +7,7 @@ plugins {
     `jvm-test-suite`
     id("test-symlink-transformation")
     id("test-inputs-check")
+    id("native-bootstrap-distribution-provisioner")
 }
 
 val noArgCompilerPlugin = configurations.detachedConfiguration(
@@ -42,11 +44,17 @@ val unpackedResources = configurations.detachedConfiguration(
     }
 }
 
-val nativeStdlibKlib = if (kotlinBuildProperties.isKotlinNativeEnabled.get()) {
+// Inputs of the `testNative` suite. With K/N enabled, the stdlib klib is built from sources, and the K/N compiler is a runtime
+// dependency of kotlin-build-tools-impl. Otherwise both are taken from the bootstrap K/N distribution; the compiler jar is appended
+// after the regular Build Tools API classpath so that the current compiler classes win over the (older) copies in that fat jar.
+val (nativeStdlibKlib: FileCollection, nativeCompilerClasspath: FileCollection?) = if (kotlinBuildProperties.isKotlinNativeEnabled.get()) {
     configurations.detachedConfiguration(
         dependencies.project(":kotlin-native:runtime", configuration = "nativeStdlib")
-    )
-} else null
+    ) to null
+} else {
+    val bootstrapNativeDistribution = registerNativeBootstrapDistribution()
+    files(bootstrapNativeDistribution.map { it.stdlib }) to files(bootstrapNativeDistribution.map { it.compilerClasspath })
+}
 
 class PlatformDefinition(
     val name: String,
@@ -220,10 +228,11 @@ val businessLogicTestSuits = setOf(
     "testBuildSession",
     "testLint",
     "testIcEvents",
-) + listOfNotNull("testNative".takeIf { nativeStdlibKlib != null })
+    "testNative", // smoke tests for Native running even when kotlin.native.enabled == false
+)
 
 val buildToolsImplConfigurationsCache = mutableMapOf<String, Configuration>()
-fun JvmTestSuite.addSpecificBuildToolsImpl(version: String = "") {
+fun JvmTestSuite.addSpecificBuildToolsImpl(version: String = "", extraCompilerClasspath: FileCollection? = null) {
     val compilerClasspath = buildToolsImplConfigurationsCache.computeIfAbsent(version) {
         configurations.detachedConfiguration(
             project.dependencies.project(":compiler:build-tools:kotlin-build-tools-compat"),
@@ -238,7 +247,10 @@ fun JvmTestSuite.addSpecificBuildToolsImpl(version: String = "") {
     targets.all {
         val platformConfigurations = platforms.associateWith { platform -> platform.getOrCreateConfiguration(version) }
         testTask.configure {
-            addClasspathProperty(compilerClasspath, COMPILER_CLASSPATH_PROPERTY)
+            addClasspathProperty(
+                if (extraCompilerClasspath != null) compilerClasspath + extraCompilerClasspath else compilerClasspath,
+                COMPILER_CLASSPATH_PROPERTY
+            )
             platformConfigurations.forEach { (platform, configuration) ->
                 platform.addClasspathProperty(this, configuration)
             }
@@ -284,7 +296,9 @@ testing {
                 implementation(project(":compiler:build-tools:kotlin-build-tools-api"))
                 implementation(project(":compiler:arguments"))
                 if (isRegular) {
-                    addSpecificBuildToolsImpl()
+                    addSpecificBuildToolsImpl(
+                        extraCompilerClasspath = nativeCompilerClasspath.takeIf { this@configureSuit.name == "testNative" }
+                    )
                 }
             }
 
@@ -397,12 +411,10 @@ testing {
             }
         }
 
-        if (nativeStdlibKlib != null) {
-            named<JvmTestSuite>("testNative") {
-                targets.all {
-                    testTask.configure {
-                        addClasspathProperty(nativeStdlibKlib, "kotlin.build-tools-api.test.nativeStdlibClasspath")
-                    }
+        named<JvmTestSuite>("testNative") {
+            targets.all {
+                testTask.configure {
+                    addClasspathProperty(nativeStdlibKlib, "kotlin.build-tools-api.test.nativeStdlibClasspath")
                 }
             }
         }

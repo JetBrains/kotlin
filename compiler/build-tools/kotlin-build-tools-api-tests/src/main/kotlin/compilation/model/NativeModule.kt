@@ -68,6 +68,9 @@ class NativeModule(
                 buildList {
                     add("-nostdlib")
                     add("-no-default-libs")
+                    // When K/N is disabled in this build, the stdlib klib comes from the (older) bootstrap distribution,
+                    // and the compiler would refuse it otherwise: "The Kotlin/Native standard library has an older version".
+                    add("-Xskip-library-special-compatibility-checks")
                     add("-module-name")
                     add(moduleName)
                     for (library in dependencyFiles) {
