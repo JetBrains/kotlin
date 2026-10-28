@@ -6041,13 +6041,13 @@ internal class CompanionExtensionReceiverWithTypeArgumentsImpl(
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.CompanionExtensionReceiverWithTypeArguments
 
 internal class CompanionExtensionReceiverIsObjectImpl(
-    override val type: KaType,
+    override val type: KaClassLikeSymbol,
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.CompanionExtensionReceiverIsObject
 
 internal class CompanionExtensionReceiverIsTypeParameterImpl(
-    override val type: KaType,
+    override val type: KaTypeParameterSymbol,
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.CompanionExtensionReceiverIsTypeParameter

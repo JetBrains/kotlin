@@ -1,5 +1,8 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: -ForbidUselessTypeArgumentsIn26 +CompanionBlocks +CompanionExtensions
+// RENDER_DIAGNOSTICS_FULL_TEXT
+// SUPPRESS_NO_TYPE_ALIAS_EXPANSION_MODE
+// ^difference in declaration rendering of UNRESOLVED_REFERENCE_WRONG_RECEIVER
 class C<T>
 object O
 
@@ -23,7 +26,7 @@ companion inline fun <reified T> <!COMPANION_EXTENSION_RECEIVER_IS_TYPE_PARAMETE
 companion fun <!COMPANION_EXTENSION_RECEIVER_IS_OBJECT!>O<!>.incorrect6() {}
 companion fun <!COMPANION_EXTENSION_NULLABLE_RECEIVER!>C?<!>.incorrect7() {}
 companion fun <!DYNAMIC_RECEIVER_NOT_ALLOWED, UNSUPPORTED!>dynamic<!>.incorrect8() {}
-companion fun <!COMPANION_EXTENSION_RECEIVER_IS_OBJECT("TA4<>{1}")!>TA4<!>.incorrect9() {}
+companion fun <!COMPANION_EXTENSION_RECEIVER_IS_OBJECT("object O : Any")!>TA4<!>.incorrect9() {}
 
 fun test() {
     C.correct1()

@@ -1,0 +1,37 @@
+/bareTypesInCompanionExtensions.kt:20:15: error: Companion extension receiver type 'C<String>' cannot have type arguments.
+
+/bareTypesInCompanionExtensions.kt:21:19: error: Companion extension receiver type 'C<T (of fun <T> C<T>.incorrect2)>' cannot have type arguments.
+
+/bareTypesInCompanionExtensions.kt:22:15: error: Companion extension receiver type 'TA2<String>' cannot have type arguments.
+
+/bareTypesInCompanionExtensions.kt:23:15: error: Companion extension receiver type 'Array<String>' cannot have type arguments.
+
+/bareTypesInCompanionExtensions.kt:24:34: error: Companion extension receiver type resolves to type parameter 'T'. Companion extensions can only be declared on classes and interfaces.
+
+/bareTypesInCompanionExtensions.kt:25:34: error: Companion extension receiver type resolves to type parameter 'T'. Companion extensions can only be declared on classes and interfaces.
+
+/bareTypesInCompanionExtensions.kt:26:15: error: Companion extension receiver type resolves to 'object O : Any'. Companion extensions can only be declared on classes and interfaces.
+
+/bareTypesInCompanionExtensions.kt:27:15: error: Companion extension receiver type cannot be nullable.
+
+/bareTypesInCompanionExtensions.kt:28:15: error: Dynamic receivers are prohibited.
+
+/bareTypesInCompanionExtensions.kt:28:15: error: Dynamic type is only supported in Kotlin JS.
+
+/bareTypesInCompanionExtensions.kt:29:15: error: Companion extension receiver type resolves to 'object O : Any'. Companion extensions can only be declared on classes and interfaces.
+
+/bareTypesInCompanionExtensions.kt:53:6: error: Type arguments are not allowed when static member is accessed.
+
+/bareTypesInCompanionExtensions.kt:54:6: error: Type arguments are not allowed when static member is accessed.
+
+/bareTypesInCompanionExtensions.kt:55:6: error: Type arguments are not allowed when static member is accessed.
+
+/bareTypesInCompanionExtensions.kt:57:8: error: Type arguments are not allowed when static member is accessed.
+
+/bareTypesInCompanionExtensions.kt:58:8: error: Type arguments are not allowed when static member is accessed.
+
+/bareTypesInCompanionExtensions.kt:59:8: error: Type arguments are not allowed when static member is accessed.
+
+/bareTypesInCompanionExtensions.kt:61:10: error: Type arguments are not allowed when static member is accessed.
+
+/bareTypesInCompanionExtensions.kt:61:19: error: Candidate 'companion fun C?.correct4(): Unit' is inapplicable because of a receiver type mismatch. Actual receiver type is 'Unit'.

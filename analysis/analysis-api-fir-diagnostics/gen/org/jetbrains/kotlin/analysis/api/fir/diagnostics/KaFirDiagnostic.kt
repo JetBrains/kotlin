@@ -8560,7 +8560,7 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass: KClass<CompanionExtensionReceiverIsObject>
             get() = CompanionExtensionReceiverIsObject::class
 
-        public val type: KaType
+        public val type: KaClassLikeSymbol
     }
 
     @KaUnstableDiagnosticApi
@@ -8569,7 +8569,7 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass: KClass<CompanionExtensionReceiverIsTypeParameter>
             get() = CompanionExtensionReceiverIsTypeParameter::class
 
-        public val type: KaType
+        public val type: KaTypeParameterSymbol
     }
 
     @KaUnstableDiagnosticApi

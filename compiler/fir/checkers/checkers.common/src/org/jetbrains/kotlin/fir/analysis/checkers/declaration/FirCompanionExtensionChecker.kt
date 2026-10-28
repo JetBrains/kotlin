@@ -72,9 +72,9 @@ object FirCompanionExtensionChecker : FirCallableDeclarationChecker(MppCheckerKi
 
         when (symbol) {
             is FirTypeParameterSymbol ->
-                reporter.reportOn(typeRef.source, FirErrors.COMPANION_EXTENSION_RECEIVER_IS_TYPE_PARAMETER, receiverType)
+                reporter.reportOn(typeRef.source, FirErrors.COMPANION_EXTENSION_RECEIVER_IS_TYPE_PARAMETER, symbol)
             is FirClassLikeSymbol if (symbol.classKind == ClassKind.OBJECT) ->
-                reporter.reportOn(typeRef.source, FirErrors.COMPANION_EXTENSION_RECEIVER_IS_OBJECT, receiverType)
+                reporter.reportOn(typeRef.source, FirErrors.COMPANION_EXTENSION_RECEIVER_IS_OBJECT, symbol)
             else -> {}
         }
     }
