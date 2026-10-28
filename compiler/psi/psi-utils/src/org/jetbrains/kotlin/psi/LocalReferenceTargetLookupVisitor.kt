@@ -89,7 +89,6 @@ private class LocalReferenceTargetLookupVisitor(val element: KtNameReferenceExpr
     private var _found: KtNamedDeclaration? = null
     private val name: Name = element.getReferencedNameAsName()
 
-    private val resolveIgnore: MutableSet<KtElement> = mutableSetOf()
     private var constructorParametersAllowed: Boolean = false
     private var _stopResolution: Boolean = false
     private fun stopResolution() {
@@ -97,12 +96,6 @@ private class LocalReferenceTargetLookupVisitor(val element: KtNameReferenceExpr
     }
 
     private var previousElement: KtElement? = null
-
-    private fun ignore(element: KtElement) {
-        resolveIgnore.add(element)
-    }
-
-    private fun isIgnored(element: KtElement): Boolean = resolveIgnore.contains(element)
 
     private enum class LastDirection {
         BACKWARDS,
@@ -203,6 +196,8 @@ private class LocalReferenceTargetLookupVisitor(val element: KtNameReferenceExpr
     override fun visitProperty(element: KtProperty) {
         super.visitProperty(element)
 
+        var allowResolveToProperty = true
+
         parentOnly {
             if (previousElement == element.delegateExpressionOrInitializer) {
                 // fun f(x: Int) {
@@ -210,7 +205,7 @@ private class LocalReferenceTargetLookupVisitor(val element: KtNameReferenceExpr
                 //              ^ this x cannot refer to the local variable
                 //                initializers / delegates cannot refer to the variable that they are initializing
                 // }
-                ignore(element)
+                allowResolveToProperty = false
 
                 // class A(x: Int) {
                 //     val y: Int = x
@@ -225,13 +220,13 @@ private class LocalReferenceTargetLookupVisitor(val element: KtNameReferenceExpr
                 //                            ^ this x refers to the parameter of f, not the constructor parameter
                 //     }
                 // }
-                ignore(element)
+                allowResolveToProperty = false
                 constructorParametersAllowed = false
             }
         }
 
         inValueContext {
-            if (element.isLocal) {
+            if (element.isLocal && allowResolveToProperty) {
                 foundIfNameMatches(element)
             }
             parentOnly {
@@ -259,9 +254,7 @@ private class LocalReferenceTargetLookupVisitor(val element: KtNameReferenceExpr
                 //            }
                 //
                 // note: only in value context, in a `::class` literal (VALUE_OR_TYPE context), we should resolve to the local `class A`
-                klass.companionObjects.firstOrNull()
-                    ?.takeIf(::isValidCandidate)
-                    ?.let(::found)
+                klass.companionObjects.firstOrNull()?.let(::found)
             }
         }
         inTypeContext {
@@ -356,8 +349,6 @@ private class LocalReferenceTargetLookupVisitor(val element: KtNameReferenceExpr
     }
 
     private fun processParameter(parameter: KtParameter) {
-        if (isIgnored(parameter)) return
-
         when (val des = parameter.destructuringDeclaration) {
             null -> foundIfNameMatches(parameter)
 
@@ -370,10 +361,8 @@ private class LocalReferenceTargetLookupVisitor(val element: KtNameReferenceExpr
         _found = element
     }
 
-    private fun isValidCandidate(element: KtNamedDeclaration): Boolean = !isIgnored(element)
-
     private fun foundIfNameMatches(element: KtNamedDeclaration) {
-        if (element.nameAsSafeName == name && isValidCandidate(element)) {
+        if (element.nameAsSafeName == name) {
             found(element)
         }
     }
