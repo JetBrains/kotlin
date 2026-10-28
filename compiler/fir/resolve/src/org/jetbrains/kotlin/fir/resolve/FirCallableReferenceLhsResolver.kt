@@ -127,6 +127,7 @@ class FirCallableReferenceLhsResolver(
                 context.containingClassDeclarations,
                 context.file,
                 context.topContainerForTypeResolution,
+                lastCompanionBlockOwner = context.lastCompanionBlockOwner,
             )
         )
     }

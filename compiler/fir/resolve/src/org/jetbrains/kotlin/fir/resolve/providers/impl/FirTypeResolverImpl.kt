@@ -238,7 +238,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         typeRef: FirUserTypeRef,
         result: TypeResolutionResult,
         areBareTypesAllowed: Boolean,
-        topContainer: FirDeclaration?,
+        configuration: TypeResolutionConfiguration,
         isOperandOfIsOperator: Boolean
     ): ConeKotlinType {
         val [symbol, substitutor] = when (result) {
@@ -255,7 +255,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
 
             if (symbol is FirClassLikeSymbol<*> && !isPossibleBareType) {
                 initExplicitTypeArguments(symbol, qualifier)?.let { return ConeErrorType(it) }
-                addImplicitTypeArguments(symbol, topContainer, substitutor)
+                addImplicitTypeArguments(symbol, configuration, substitutor)
                     ?.let { return ConeErrorType(it) }
             } else {
                 // In this case, type arguments are not allowed, but we would like to store them in the error type
@@ -333,7 +333,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
 
     private fun MutableList<ConeTypeProjection>.addImplicitTypeArguments(
         symbol: FirClassLikeSymbol<*>,
-        topContainer: FirDeclaration?,
+        configuration: TypeResolutionConfiguration,
         substitutor: ConeSubstitutor?,
     ): ConeDiagnostic? {
         // substitutor is used for checking if all implicit type arguments are defined in outer classes. Consider the following example:
@@ -349,9 +349,19 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         val explicitTypeArgumentsNumber = size
         var diagnostic: ConeDiagnostic? = null
 
+        // Inside a companion block, we don't capture type parameters from outside the companion block.
+        val excludedTypeParameterOwners by lazy(NONE) {
+            configuration.lastCompanionBlockOwner?.typeParameters?.mapTo(mutableSetOf()) { it.symbol.containingDeclarationSymbol }
+                ?: emptySet()
+        }
+
         fun addImplicitTypeArgument(typeParameter: FirTypeParameterRef) {
             if (typeParameter !is FirOuterClassTypeParameterRef
-                || isValidTypeParameterFromOuterDeclaration(typeParameter.symbol, topContainer, session)
+                || isValidTypeParameterFromOuterDeclaration(
+                    typeParameter.symbol,
+                    configuration.topContainer ?: configuration.containingClassDeclarations.lastOrNull(),
+                    session,
+                ) && typeParameter.symbol.containingDeclarationSymbol !in excludedTypeParameterOwners
             ) {
                 val substituted = substitutor?.substituteOrNull(typeParameter.symbol.defaultType)
                 if (substituted != null) {
@@ -527,7 +537,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                 val substitutor = computeSubstitutorForLhs(qualifier, configuration)
                 allTypeArguments.addImplicitTypeArguments(
                     classSymbol,
-                    configuration.topContainer ?: configuration.containingClassDeclarations.lastOrNull(),
+                    configuration,
                     substitutor,
                 )?.let {
                     if (diagnostic == null) diagnostic = it
@@ -600,7 +610,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                     typeRef,
                     result,
                     areBareTypesAllowed,
-                    configuration.topContainer ?: configuration.containingClassDeclarations.lastOrNull(),
+                    configuration,
                     isOperandOfIsOperator,
                 )
                 val potentiallyResolvedCandidate = result.resolvedCandidateOrNull()

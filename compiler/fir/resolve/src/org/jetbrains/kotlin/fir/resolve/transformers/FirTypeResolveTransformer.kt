@@ -62,13 +62,15 @@ fun <F : FirClassLikeDeclaration> F.runTypeResolvePhaseForLocalClass(
     currentScopeList: List<FirScope>,
     useSiteFile: FirFile,
     containingDeclarations: List<FirDeclaration>,
+    lastCompanionBlockOwner: FirClass?,
 ): F {
     val transformer = FirTypeResolveTransformer(
         session,
         scopeSession,
         currentScopeList,
         initialCurrentFile = useSiteFile,
-        classDeclarationsStack = containingDeclarations.filterIsInstanceTo(ArrayDeque())
+        classDeclarationsStack = containingDeclarations.filterIsInstanceTo(ArrayDeque()),
+        lastCompanionBlockOwner = lastCompanionBlockOwner,
     )
 
     return this.transform(transformer, null)
@@ -80,7 +82,8 @@ open class FirTypeResolveTransformer(
     @property:PrivateForInline val scopeSession: ScopeSession,
     initialScopes: List<FirScope> = emptyList(),
     initialCurrentFile: FirFile? = null,
-    @property:PrivateForInline val classDeclarationsStack: ArrayDeque<FirClass> = ArrayDeque()
+    @property:PrivateForInline val classDeclarationsStack: ArrayDeque<FirClass> = ArrayDeque(),
+    private var lastCompanionBlockOwner: FirClass? = null,
 ) : FirAbstractTreeTransformer<Any?>(FirResolvePhase.TYPES) {
     /**
      * All current scopes sorted from outermost to innermost.
@@ -99,6 +102,19 @@ open class FirTypeResolveTransformer(
 
     @set:PrivateForInline
     var staticScopesBefore: PersistentList<FirScope>? = null
+
+    private inline fun <T> withCompanionBlockIf(value: Boolean, crossinline action: () -> T): T {
+        return withScopeCleanup {
+            if (value) scopes = staticScopes
+            val oldLastCompanionBlockOwner = lastCompanionBlockOwner
+            try {
+                if (value) lastCompanionBlockOwner = classDeclarationsStack.last()
+                action()
+            } finally {
+                lastCompanionBlockOwner = oldLastCompanionBlockOwner
+            }
+        }
+    }
 
     private val typeResolverTransformer: FirSpecificTypeResolverTransformer = FirSpecificTypeResolverTransformer(session, expandTypeAliases = true)
 
@@ -227,11 +243,7 @@ open class FirTypeResolveTransformer(
     }
 
     override fun transformProperty(property: FirProperty, data: Any?): FirProperty = whileAnalysing(session, property) {
-        withScopeCleanup {
-            if (property.isStatic) {
-                scopes = staticScopes
-            }
-
+        withCompanionBlockIf(property.isCompanionBlockMember) {
             addTypeParametersScope(property)
             resolveTypeParameterBounds(property)
             property
@@ -298,11 +310,7 @@ open class FirTypeResolveTransformer(
         namedFunction: FirNamedFunction,
         data: Any?,
     ): FirNamedFunction = whileAnalysing(session, namedFunction) {
-        withScopeCleanup {
-            if (namedFunction.isStatic) {
-                scopes = staticScopes
-            }
-
+        withCompanionBlockIf(namedFunction.isCompanionBlockMember) {
             addTypeParametersScope(namedFunction)
 
             resolveTypeParameterBounds(namedFunction)
@@ -428,7 +436,12 @@ open class FirTypeResolveTransformer(
     override fun transformTypeRef(typeRef: FirTypeRef, data: Any?): FirResolvedTypeRef {
         return typeRef.transform(
             typeResolverTransformer,
-            TypeResolutionConfiguration(scopes.asReversed(), classDeclarationsStack, currentFile)
+            TypeResolutionConfiguration(
+                scopes.asReversed(),
+                classDeclarationsStack,
+                currentFile,
+                lastCompanionBlockOwner = lastCompanionBlockOwner
+            )
         )
     }
 
@@ -436,7 +449,12 @@ open class FirTypeResolveTransformer(
         val equalityBoundAnnotation = annotations.getAnnotationByClassId(StandardClassIds.Annotations.EqualityBound, session) ?: return
         val boundArgument = equalityBoundAnnotation.findArgumentByName(StandardClassIds.Annotations.ParameterNames.equalityBound)
         val resolvedType = (boundArgument as? FirGetClassCall)?.argument?.let { getClassLhs ->
-            val configuration = TypeResolutionConfiguration(scopes.asReversed(), classDeclarationsStack, currentFile)
+            val configuration = TypeResolutionConfiguration(
+                scopes.asReversed(),
+                classDeclarationsStack,
+                currentFile,
+                lastCompanionBlockOwner = lastCompanionBlockOwner
+            )
             session.typeResolver.resolveEqualityBoundTypeOrNull(getClassLhs, configuration)
         }
         equalityBoundType = resolvedType ?: ConeErrorType(ConeCannotResolveEqualityBoundType)

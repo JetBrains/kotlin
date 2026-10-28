@@ -108,6 +108,7 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
                     context.containingClassDeclarations,
                     context.file,
                     context.topContainerForTypeResolution,
+                    lastCompanionBlockOwner = context.lastCompanionBlockOwner,
                 )
             )
         }

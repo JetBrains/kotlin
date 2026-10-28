@@ -3,17 +3,17 @@
 class Outer<T> {
     inner class Inner {
         companion {
-            val innerProp: Inner
+            val innerProp: <!OUTER_CLASS_ARGUMENTS_REQUIRED!>Inner<!>
                 get() = <!INNER_CLASS_CONSTRUCTOR_NO_RECEIVER!>Inner<!>()
 
-            fun foo(x: Inner) {
-                val x: Inner = <!INNER_CLASS_CONSTRUCTOR_NO_RECEIVER!>Inner<!>()
+            fun foo(x: <!OUTER_CLASS_ARGUMENTS_REQUIRED!>Inner<!>) {
+                val x: <!OUTER_CLASS_ARGUMENTS_REQUIRED!>Inner<!> = <!INNER_CLASS_CONSTRUCTOR_NO_RECEIVER!>Inner<!>()
             }
         }
     }
 
     companion {
-         val innerProp: Inner
+         val innerProp: <!OUTER_CLASS_ARGUMENTS_REQUIRED!>Inner<!>
              get() = <!INNER_CLASS_CONSTRUCTOR_NO_RECEIVER!>Inner<!>()
     }
 
@@ -27,28 +27,28 @@ class Outer<T> {
     inner class Mid { inner class Deep {} }
 
     companion {
-        val p1: Inner? = null                 // ERR
-        val p2: Inner? get() = null           // ERR
-        lateinit var p3: Inner                // ERR
-        val p4: List<Inner>? = null           // ERR
-        val p5: (Inner) -> Unit = {}          // ERR
-        val p6: Mid.Deep? = null              // ERR
-        fun f1(): Inner? = null               // ERR
-        fun f2(i: Inner) {}                   // ERR
-        fun f3(vararg i: Inner) {}            // ERR
-        fun <S : Inner> f4() {}               // ERR
+        val p1: <!OUTER_CLASS_ARGUMENTS_REQUIRED!>Inner?<!> = null                 // ERR
+        val p2: <!OUTER_CLASS_ARGUMENTS_REQUIRED!>Inner?<!> get() = null           // ERR
+        lateinit var p3: <!OUTER_CLASS_ARGUMENTS_REQUIRED!>Inner<!>                // ERR
+        val p4: List<<!OUTER_CLASS_ARGUMENTS_REQUIRED!>Inner<!>>? = null           // ERR
+        val p5: (<!OUTER_CLASS_ARGUMENTS_REQUIRED!>Inner<!>) -> Unit = <!OUTER_CLASS_ARGUMENTS_REQUIRED!>{}<!>          // ERR
+        val p6: <!OUTER_CLASS_ARGUMENTS_REQUIRED!>Mid.Deep?<!> = null              // ERR
+        fun f1(): <!OUTER_CLASS_ARGUMENTS_REQUIRED!>Inner?<!> = null               // ERR
+        fun f2(i: <!OUTER_CLASS_ARGUMENTS_REQUIRED!>Inner<!>) {}                   // ERR
+        fun f3(vararg i: <!OUTER_CLASS_ARGUMENTS_REQUIRED!>Inner<!>) {}            // ERR
+        fun <S : <!OUTER_CLASS_ARGUMENTS_REQUIRED!>Inner<!>> f4() {}               // ERR
     }
 }
 
 class Outer2<T> {
     inner class Inner { fun foo() {} }
     companion {
-        fun g1() { val x: Inner? = null }               // ERR
-        fun g2() = { i: Inner -> }                      // ERR
-        fun g3() = object { val x: Inner? = null }      // ERR
-        fun g4() { class L { val x: Inner? = null } }   // ERR
-        fun g5() { fun h(): Inner? = null }             // ERR
-        val r = Inner::foo                              // ERR, reported on 2.4.21, missing since 2.5.0-Beta1
+        fun g1() { val x: <!OUTER_CLASS_ARGUMENTS_REQUIRED!>Inner?<!> = null }               // ERR
+        fun g2() = { i: <!OUTER_CLASS_ARGUMENTS_REQUIRED!>Inner<!> -> }                      // ERR
+        fun g3() = object { val x: <!OUTER_CLASS_ARGUMENTS_REQUIRED!>Inner?<!> = null }      // ERR
+        fun g4() { class L { val x: <!OUTER_CLASS_ARGUMENTS_REQUIRED!>Inner?<!> = null } }   // ERR
+        fun g5() { fun h(): <!OUTER_CLASS_ARGUMENTS_REQUIRED!>Inner?<!> = null }             // ERR
+        val r = <!OUTER_CLASS_ARGUMENTS_REQUIRED!>Inner<!>::foo                              // ERR, reported on 2.4.21, missing since 2.5.0-Beta1
     }
 }
 
@@ -85,6 +85,28 @@ class Outer24<T> { class Nested {}; companion { val p: Nested? = null; fun f() =
 class Outer25 { inner class Inner {}; companion { val p: Inner? = null; fun f(o: Outer25) = o.Inner() } }
 class Outer26 { companion { fun s() = "OK" }; inner class Inner { companion { fun f() = s() } } }      // Outer.Inner.f() == "OK"
 
+class Outer27 {
+    companion {
+        fun local() {
+            class Outer<T> {
+                inner class Inner
+                val p: Inner? = null
+            }
+        }
+    }
+}
+
+// nice to have
+open class Outer28<T> {
+    inner class Inner()
+    companion {
+        fun foo() {
+            class U : Outer28<String>() {
+                val p: <!OUTER_CLASS_ARGUMENTS_REQUIRED!>Inner<!> = Inner()
+            }
+        }
+    }
+}
 /* GENERATED_FIR_TAGS: additiveExpression, anonymousObjectExpression, callableReference, classDeclaration,
 classReference, enumDeclaration, enumEntry, funWithExtensionReceiver, functionDeclaration, functionalType, getter, inner,
 integerLiteral, lambdaLiteral, lateinit, localClass, localFunction, localProperty, nestedClass, nullableType,
