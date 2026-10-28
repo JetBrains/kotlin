@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.generators.tests
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
+import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.KT_WITHOUT_UNDERSCORE_PREFIX
 import org.jetbrains.kotlin.incremental.AbstractFirWasmInvalidationMultiModuleTest
 import org.jetbrains.kotlin.incremental.AbstractFirWasmInvalidationSingleModuleTest
 import org.jetbrains.kotlin.incremental.AbstractFirWasmInvalidationStackSwitchingMultiModuleTest
@@ -28,7 +29,6 @@ fun main(args: Array<String>) {
     // Common configuration shared between K1 and K2 tests:
     val jvmOnlyBoxTests = listOf("compileKotlinAgainstKotlin")
 
-    val jsTranslatorTestPattern = "^([^_](.+))\\.kt$"
     val jsTranslatorEsModulesExcludedDirs = listOf(
         // JsExport is not supported for classes
         "jsExport", "native", "export", "escapedIdentifiers",
@@ -136,43 +136,43 @@ fun main(args: Array<String>) {
 
         testGroup(testsRoot, "js/js.translator/testData/box", testRunnerMethodName = "runTest0") {
             testClass<AbstractWasmJsTranslatorTest> {
-                model("main", pattern = jsTranslatorTestPattern)
-                model("native/", pattern = jsTranslatorTestPattern)
-                model("esModules/", pattern = jsTranslatorTestPattern, excludeDirs = jsTranslatorEsModulesExcludedDirs)
-                model("jsQualifier/", pattern = jsTranslatorTestPattern)
-                model("kotlin.test/", pattern = jsTranslatorTestPattern)
+                model("main", pattern = KT_WITHOUT_UNDERSCORE_PREFIX)
+                model("native/", pattern = KT_WITHOUT_UNDERSCORE_PREFIX)
+                model("esModules/", pattern = KT_WITHOUT_UNDERSCORE_PREFIX, excludeDirs = jsTranslatorEsModulesExcludedDirs)
+                model("jsQualifier/", pattern = KT_WITHOUT_UNDERSCORE_PREFIX)
+                model("kotlin.test/", pattern = KT_WITHOUT_UNDERSCORE_PREFIX)
             }
         }
 
         testGroup(testsRoot, "compiler/testData", testRunnerMethodName = "runTest0") {
             testClass<AbstractFirWasmJsCodegenSingleModuleBoxTest> {
-                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests)
+                model("codegen/box", pattern = KT_WITHOUT_UNDERSCORE_PREFIX, excludeDirs = jvmOnlyBoxTests)
             }
 
             testClass<AbstractWasmJsCodegenMultiModuleTest> {
-                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + "size")
+                model("codegen/box", pattern = KT_WITHOUT_UNDERSCORE_PREFIX, excludeDirs = jvmOnlyBoxTests + "size")
             }
 
             testClass<AbstractWasmJsCodegenBoxTest>(annotations = listOf(annotation<WasmJsBoxTest>())) {
-                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests, smokeTest = true)
-                model("codegen/boxInline", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests)
+                model("codegen/box", pattern = KT_WITHOUT_UNDERSCORE_PREFIX, excludeDirs = jvmOnlyBoxTests, smokeTest = true)
+                model("codegen/boxInline", pattern = KT_WITHOUT_UNDERSCORE_PREFIX, excludeDirs = jvmOnlyBoxTests)
             }
 
             testClass<AbstractWasmJsCodegenCoroutinesStackSwitchingTest> {
-                model("codegen/box/coroutines", pattern = jsTranslatorTestPattern)
+                model("codegen/box/coroutines", pattern = KT_WITHOUT_UNDERSCORE_PREFIX)
             }
 
             testClass<AbstractFirWasmJsCodegenCoroutinesStackSwitchingSingleModuleTest> {
-                model("codegen/box/coroutines", pattern = jsTranslatorTestPattern)
+                model("codegen/box/coroutines", pattern = KT_WITHOUT_UNDERSCORE_PREFIX)
             }
 
             testClass<AbstractWasmJsCodegenCoroutinesStackSwitchingMultiModuleTest> {
-                model("codegen/box/coroutines", pattern = jsTranslatorTestPattern)
+                model("codegen/box/coroutines", pattern = KT_WITHOUT_UNDERSCORE_PREFIX)
             }
 
             testClass<AbstractWasmJsCodegenSplittingTest>(annotations = listOf(annotation<WasmJsSplittingTest>())) {
-                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests)
-                model("codegen/boxInline", pattern = jsTranslatorTestPattern)
+                model("codegen/box", pattern = KT_WITHOUT_UNDERSCORE_PREFIX, excludeDirs = jvmOnlyBoxTests)
+                model("codegen/boxInline", pattern = KT_WITHOUT_UNDERSCORE_PREFIX)
             }
 
             testClass<AbstractFirWasmJsCodegenInteropTest> {
@@ -193,7 +193,7 @@ fun main(args: Array<String>) {
 
             testClass<AbstractWasmWasiCodegenBoxTest>(annotations = listOf(annotation<WasmWasiBoxTest>())) {
                 model("codegen/boxWasmWasi")
-                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests)
+                model("codegen/box", pattern = KT_WITHOUT_UNDERSCORE_PREFIX, excludeDirs = jvmOnlyBoxTests)
                 model("codegen/boxInline")
             }
 

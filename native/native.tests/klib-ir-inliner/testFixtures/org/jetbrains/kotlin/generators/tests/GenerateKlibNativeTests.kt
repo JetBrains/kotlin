@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.generators.tests
 
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.model.annotation
+import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.KT_WITHOUT_UNDERSCORE_PREFIX
 import org.jetbrains.kotlin.konan.test.abi.AbstractNativeLibraryAbiReaderTest
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeCodegenBoxTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
@@ -81,7 +82,7 @@ fun main(args: Array<String>) {
                     provider<UseDummyTestCaseGroupProvider>(),
                 )
             ) {
-                model(pattern = "^([^_](.+)).kt$", recursive = true)
+                model(pattern = KT_WITHOUT_UNDERSCORE_PREFIX, recursive = true)
             }
         }
 
@@ -91,7 +92,7 @@ fun main(args: Array<String>) {
                     provider<UseDummyTestCaseGroupProvider>(),
                 )
             ) {
-                model(pattern = "^([^_](.+)).kt$", recursive = true)
+                model(pattern = KT_WITHOUT_UNDERSCORE_PREFIX, recursive = true)
             }
         }
 
@@ -102,7 +103,7 @@ fun main(args: Array<String>) {
                     provider<UseDummyTestCaseGroupProvider>(),
                 )
             ) {
-                model(pattern = "^([^_](.+)).kt$", recursive = true)
+                model(pattern = KT_WITHOUT_UNDERSCORE_PREFIX, recursive = true)
             }
         }
 
