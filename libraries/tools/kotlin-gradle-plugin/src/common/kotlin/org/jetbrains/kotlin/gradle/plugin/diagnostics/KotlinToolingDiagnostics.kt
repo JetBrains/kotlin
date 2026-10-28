@@ -2733,7 +2733,7 @@ internal object KotlinToolingDiagnostics {
     }
 
     internal object RichTypeScriptDeclarationsUnsupportedBuildToolsApiVersion : ToolingDiagnosticFactory(
-        ERROR,
+        FATAL,
         DiagnosticGroup.Kgp.Misconfiguration,
     ) {
         operator fun invoke(buildToolsApiVersion: String, minimalSupportedVersion: String) = build {
