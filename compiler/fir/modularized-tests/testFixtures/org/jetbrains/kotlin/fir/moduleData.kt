@@ -12,7 +12,6 @@ import java.io.File
 import javax.xml.stream.XMLInputFactory
 import javax.xml.stream.XMLStreamConstants
 import javax.xml.stream.XMLStreamReader
-import kotlin.collections.plusAssign
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.full.memberProperties
@@ -32,7 +31,12 @@ data class ModuleData(
     val rawJdkHome: String?,
     val isCommon: Boolean,
 ) {
-    val qualifiedName get() = if (name in qualifier) qualifier else "$name.$qualifier"
+    val qualifiedName
+        get() = when {
+            qualifier.isEmpty() -> name
+            name in qualifier -> qualifier
+            else -> "$name.$qualifier"
+        }
 
     val classpath = rawClasspath.map { it.fixPath(rootPath) }
     val sources = rawSources.map { it.fixPath(rootPath) }
@@ -85,7 +89,7 @@ private fun readModule(xr: XMLStreamReader, config: ModularizedTestConfig): Modu
     // reader is positioned at START_ELEMENT <module>
     val outputDir = xr.getAttributeValue(null, "outputDir") ?: ""
     val moduleName = xr.getAttributeValue(null, "name") ?: ""
-    val moduleNameQualifier = outputDir.substringAfterLast("/")
+    val moduleNameQualifier = outputDir.substringAfterLast("/").takeUnless { it == "." }.orEmpty()
     val timestamp = xr.getAttributeValue(null, "timestamp")?.toLongOrNull() ?: 0L
     val jdkHome = xr.getAttributeValue(null, "jdkHome")
 
