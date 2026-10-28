@@ -69,6 +69,10 @@ object NativeConfigurationKeys {
     @JvmField
     val DUMP_BUILT_CACHES_TO = CompilerConfigurationKey.create<String>("DUMP_BUILT_CACHES_TO")
 
+    // Debug-only: path to a file where the facts tracked by the compiler's `FactsTracker` are appended.
+    @JvmField
+    val DUMP_FACTS_TO = CompilerConfigurationKey.create<String>("DUMP_FACTS_TO")
+
     // Mapping from library paths to cache paths.
     @JvmField
     val CACHED_LIBRARIES = CompilerConfigurationKey.create<Map<String, String>>("CACHED_LIBRARIES")
@@ -330,6 +334,10 @@ var CompilerConfiguration.incrementalCacheDir: String?
 var CompilerConfiguration.dumpBuiltCachesTo: String?
     get() = get(NativeConfigurationKeys.DUMP_BUILT_CACHES_TO)
     set(value) { put(NativeConfigurationKeys.DUMP_BUILT_CACHES_TO, requireNotNull(value) { "nullable values are not allowed" }) }
+
+var CompilerConfiguration.dumpFactsTo: String?
+    get() = get(NativeConfigurationKeys.DUMP_FACTS_TO)
+    set(value) { put(NativeConfigurationKeys.DUMP_FACTS_TO, requireNotNull(value) { "nullable values are not allowed" }) }
 
 var CompilerConfiguration.cachedLibraries: Map<String, String>
     get() = getMap(NativeConfigurationKeys.CACHED_LIBRARIES)
