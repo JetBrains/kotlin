@@ -23,8 +23,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertNull
 
 /**
- * The development server serves two directories:
- * the content directory with the produced artifacts and the project root directory.
+ * The development server serves produced artifacts, npm dependencies, and Kotlin sources from the project root.
  *
  * The project root directory is served only to make source maps work in a browser,
  * so only Kotlin sources must be available from it - any other file there may contain secrets.
@@ -46,6 +45,8 @@ class DevServerWorkActionTest {
                 "/index.html",
                 "/main.wasm",
                 "/src/wasmJsMain/kotlin/A.kt",
+                "/build/wasm/node_modules/foo/dist/foo.mjs",
+                "/build/wasm/node_modules/foo/package.json",
                 "/build/dist/../../src/wasmJsMain/kotlin/A.kt",
             ).associateWith { httpGet(port, it) }
         }
@@ -61,6 +62,11 @@ class DevServerWorkActionTest {
         val servedSource = responses.getValue("/src/wasmJsMain/kotlin/A.kt")
         assertEquals(MAIN_SOURCE, servedSource.body)
         assertEquals("text/kotlin; charset=utf-8", servedSource.contentType)
+
+        val servedNpmModule = responses.getValue("/build/wasm/node_modules/foo/dist/foo.mjs")
+        assertEquals(NPM_MODULE, servedNpmModule.body)
+        assertEquals("application/javascript", servedNpmModule.contentType)
+        assertEquals(NPM_PACKAGE_JSON, responses.getValue("/build/wasm/node_modules/foo/package.json").body)
     }
 
     @Test
@@ -79,6 +85,8 @@ class DevServerWorkActionTest {
                 "/../outside.kt",
                 "/%2e%2e/outside.kt",
                 "/build/dist/../../../outside.kt",
+                "/build/wasmFoo/secret.js",
+                "/build/wasm/node_modules/../../../local.properties",
                 "//" + project.rootDir.resolve("local.properties").invariantSeparatorsPath.trimStart('/'),
             ).associateWith { httpGet(port, it) }
         }
@@ -100,8 +108,7 @@ class DevServerWorkActionTest {
         assertNull(
             DevServerWorkAction.resolveFile(
                 "src/wasmJsMain/kotlin/A\u0000.kt",
-                project.contentDir,
-                project.rootDir,
+                project.servedDirectories(),
             )
         )
     }
@@ -162,7 +169,19 @@ class DevServerWorkActionTest {
         loopbackLogs.assertLogDoesNotContain(NON_LOOPBACK_WARNING)
     }
 
-    private class DevServerProject(val contentDir: File, val rootDir: File)
+    private class DevServerProject(
+        val contentDir: File,
+        val npmRootPackageDir: File,
+        val npmRootPackagePrefix: String,
+        val rootDir: File,
+    ) {
+        fun servedDirectories() = DevServerWorkAction.servedDirectories(
+            contentDir,
+            npmRootPackageDir,
+            npmRootPackagePrefix,
+            rootDir,
+        )
+    }
 
     private fun project(tempDir: File): DevServerProject {
         val rootDir = tempDir.resolve("project")
@@ -171,6 +190,13 @@ class DevServerWorkActionTest {
         contentDir.mkdirs()
         contentDir.resolve("index.html").writeText(INDEX_HTML)
         contentDir.resolve("main.wasm").writeText("wasm binary")
+
+        val npmRootPackageDir = rootDir.resolve("build/wasm")
+        npmRootPackageDir.resolve("node_modules/foo/dist").mkdirs()
+        npmRootPackageDir.resolve("node_modules/foo/dist/foo.mjs").writeText(NPM_MODULE)
+        npmRootPackageDir.resolve("node_modules/foo/package.json").writeText(NPM_PACKAGE_JSON)
+        rootDir.resolve("build/wasmFoo").mkdirs()
+        rootDir.resolve("build/wasmFoo/secret.js").writeText("not mounted")
 
         rootDir.resolve("src/wasmJsMain/kotlin").mkdirs()
         rootDir.resolve("src/wasmJsMain/kotlin/A.kt").writeText(MAIN_SOURCE)
@@ -183,14 +209,21 @@ class DevServerWorkActionTest {
         // a Kotlin source outside of the project root, only the containment check can refuse it
         tempDir.resolve("outside.kt").writeText("fun outside() {}")
 
-        return DevServerProject(contentDir, rootDir)
+        return DevServerProject(contentDir, npmRootPackageDir, "build/wasm", rootDir)
     }
 
     private fun <T> DevServerProject.withDevServer(
         host: String = SERVER_HOST,
         action: (port: Int) -> T,
     ): T {
-        val server = DevServerWorkAction.startServer(contentDir, rootDir, host, 0)
+        val server = DevServerWorkAction.startServer(
+            contentDir,
+            npmRootPackageDir,
+            npmRootPackagePrefix,
+            rootDir,
+            host,
+            0,
+        )
         return try {
             action(server.address.port)
         } finally {
@@ -229,6 +262,8 @@ class DevServerWorkActionTest {
     private companion object {
         const val INDEX_HTML = "<html><body>Hello, world</body></html>"
         const val MAIN_SOURCE = "fun main() {\n    println(\"Hello, world\")\n}"
+        const val NPM_MODULE = "export const value = 42;"
+        const val NPM_PACKAGE_JSON = "{\"type\":\"module\"}"
 
         const val SERVER_HOST = "localhost"
 

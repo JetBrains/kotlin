@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.domainObjectSet
 import org.jetbrains.kotlin.gradle.utils.withType
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
+import java.io.File
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsPlugin.Companion.kotlinNodeJsEnvSpec as wasmKotlinNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin.Companion.kotlinNodeJsRootExtension as wasmKotlinNodeJsRootExtension
 
@@ -106,6 +107,7 @@ internal class NoBundleConfigurator(
     override fun setupRun(compilation: KotlinJsIrCompilation) {
 
         val importMapTaskHolder = compilation.locateOrRegisterImportMapGenerateTask()
+        val rootDirectory = project.rootDir
 
         compilation.binaries
             .withType<Executable>()
@@ -126,6 +128,10 @@ internal class NoBundleConfigurator(
                     task.contentDirectory.fileProvider(
                         linkSyncTask.flatMap { it.destinationDirectory }
                     )
+                    task.npmRootPackageDirectory.set(nodeJsRoot.rootPackageDirectory)
+                    task.npmRootPackagePrefix.set(
+                        nodeJsRoot.rootPackageDirectory.map { urlPrefixOf(it.asFile, rootDirectory) }
+                    )
 
                     runTaskConfigurations.all {
                         it.execute(task)
@@ -139,6 +145,23 @@ internal class NoBundleConfigurator(
                 }
             }
     }
+
+    /**
+     * Returns the URL prefix the development server must serve [directory] at.
+     *
+     * The development import map refers to npm dependencies by their path relative to the Gradle root directory,
+     * see [KotlinImportMapGenerateTask.rootDirectory] in [locateOrRegisterImportMapGenerateTask].
+     * A browser resolves such a path as a URL against the development server,
+     * which drops its leading `..` segments.
+     * They appear when [directory] is outside of the root directory,
+     * for example, when the build directory is moved out of the project.
+     */
+    private fun urlPrefixOf(directory: File, rootDirectory: File): String =
+        directory.relativeTo(rootDirectory)
+            .invariantSeparatorsPath
+            .split('/')
+            .dropWhile { it == ".." }
+            .joinToString("/")
 
     override fun configureBuild(body: Action<KotlinWasmDevServer>) {
         // Dev server doesn't produce build artifacts

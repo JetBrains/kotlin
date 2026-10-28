@@ -22,9 +22,10 @@ import java.nio.file.InvalidPathException
 
 /**
  * Represents a work action for starting and managing a development server
- * that serves static content from specified directories.
+ * that serves static content from explicitly configured directories.
  *
  * The content directory contains only produced artifacts, so it is served as is.
+ * The npm root package directory is mounted under its root-relative URL prefix to serve dependencies.
  * The project root directory is served only to make source maps work in a browser,
  * so only Kotlin sources are exposed from it - any other file there may contain secrets.
  * Requests are restricted to local host names and IP addresses to prevent DNS rebinding.
@@ -33,6 +34,8 @@ internal abstract class DevServerWorkAction : WorkAction<DevServerWorkAction.Dev
 
     internal interface DevServerWorkParameters : WorkParameters {
         val contentDirectory: DirectoryProperty
+        val npmRootPackageDirectory: DirectoryProperty
+        val npmRootPackagePrefix: Property<String>
         val rootDirectory: DirectoryProperty
         val host: Property<String>
         val port: Property<Int>
@@ -42,6 +45,8 @@ internal abstract class DevServerWorkAction : WorkAction<DevServerWorkAction.Dev
 
     override fun execute() {
         val contentDir = parameters.contentDirectory.getFile()
+        val npmRootPackageDir = parameters.npmRootPackageDirectory.getFile()
+        val npmRootPackagePrefix = parameters.npmRootPackagePrefix.get()
         val rootDir = parameters.rootDirectory.getFile()
         val serverHost = parameters.host.get()
         val serverPort = parameters.port.get()
@@ -53,6 +58,8 @@ internal abstract class DevServerWorkAction : WorkAction<DevServerWorkAction.Dev
 
         val server = startServer(
             contentDir,
+            npmRootPackageDir,
+            npmRootPackagePrefix,
             rootDir,
             serverHost,
             serverPort,
@@ -85,10 +92,13 @@ internal abstract class DevServerWorkAction : WorkAction<DevServerWorkAction.Dev
 
         /**
          * Starts a development server on [serverHost] and [serverPort],
-         * which serves [contentRootDir] and Kotlin sources of [rootDir].
+         * which serves [contentRootDir], [npmRootPackageDir] under [npmRootPackagePrefix],
+         * and Kotlin sources of [rootDir].
          */
         internal fun startServer(
             contentRootDir: File,
+            npmRootPackageDir: File,
+            npmRootPackagePrefix: String,
             rootDir: File,
             serverHost: String,
             serverPort: Int,
@@ -97,8 +107,7 @@ internal abstract class DevServerWorkAction : WorkAction<DevServerWorkAction.Dev
             server.createContext("/") { exchange ->
                 handleRequest(
                     exchange,
-                    contentRootDir,
-                    rootDir,
+                    servedDirectories(contentRootDir, npmRootPackageDir, npmRootPackagePrefix, rootDir),
                     serverHost,
                 )
             }
@@ -114,6 +123,7 @@ internal abstract class DevServerWorkAction : WorkAction<DevServerWorkAction.Dev
             }
             logger.lifecycle("Development server started at http://$serverHost:$serverPort")
             logger.lifecycle("Serving files from: $contentRootDir")
+            logger.lifecycle("Serving npm packages from: $npmRootPackageDir at /${npmRootPackagePrefix.trim('/')}")
             logger.lifecycle("Serving Kotlin sources from: $rootDir")
 
             return server
@@ -121,8 +131,7 @@ internal abstract class DevServerWorkAction : WorkAction<DevServerWorkAction.Dev
 
         private fun handleRequest(
             exchange: HttpExchange,
-            contentRootDir: File,
-            rootDir: File,
+            servedDirectories: List<ServedDirectory>,
             serverHost: String,
         ) {
             val hostHeader = exchange.requestHeaders.getFirst("Host")
@@ -137,8 +146,7 @@ internal abstract class DevServerWorkAction : WorkAction<DevServerWorkAction.Dev
 
             val file = resolveFile(
                 path,
-                contentRootDir,
-                rootDir,
+                servedDirectories,
             )
 
             if (file == null || !file.exists() || !file.isFile) {
@@ -227,46 +235,66 @@ internal abstract class DevServerWorkAction : WorkAction<DevServerWorkAction.Dev
             host.contains(':') && runCatching { InetAddress.getByName(host) is Inet6Address }.getOrDefault(false)
 
         /**
-         * Resolves the file requested by [path] relative to [contentRootDir] first and to [rootDir] afterwards.
+         * Resolves [path] against [servedDirectories] in order, returning the first file allowed by a mount.
          *
-         * Any file from [contentRootDir] can be served, because this directory contains only produced artifacts.
-         *
-         * [rootDir] is the project root directory, it is served only to make source maps work,
-         * so only Kotlin sources are resolved in it.
-         * Serving arbitrary files from there would expose project files with secrets.
+         * The mount order ensures that produced artifacts and npm dependencies are served before falling back to
+         * Kotlin sources of the project root. Arbitrary files from the project root are not served because they may
+         * contain secrets.
          *
          * Returns `null` if the requested file must not be served.
          */
         internal fun resolveFile(
             path: String,
-            contentRootDir: File,
-            rootDir: File,
+            servedDirectories: List<ServedDirectory>,
         ): File? {
             if (path.isEmpty()) {
-                return File(contentRootDir, "index.html")
+                return servedDirectories.firstOrNull()?.resolve("index.html")
             }
 
-            contentRootDir.tryToResolveWith(path)
-                ?.let { return it }
-
-            return rootDir.tryToResolveWith(path) { it.extension == KOTLIN_SOURCE_EXTENSION }
+            return servedDirectories.firstNotNullOfOrNull { it.resolve(path) }
         }
 
-        private fun File.tryToResolveWith(
-            path: String,
-            isServable: (File) -> Boolean = { true },
-        ): File? {
-            val resolved = try {
-                toPath().resolve(path).normalize()
-            } catch (_: InvalidPathException) {
-                return null
+        internal fun servedDirectories(
+            contentRootDir: File,
+            npmRootPackageDir: File,
+            npmRootPackagePrefix: String,
+            rootDir: File,
+        ): List<ServedDirectory> = listOf(
+            ServedDirectory(contentRootDir),
+            ServedDirectory(npmRootPackageDir, npmRootPackagePrefix),
+            ServedDirectory(rootDir) { it.extension == KOTLIN_SOURCE_EXTENSION },
+        )
+
+        internal class ServedDirectory(
+            private val directory: File,
+            urlPrefix: String = "",
+            private val isServable: (File) -> Boolean = { true },
+        ) {
+            private val normalizedPrefix = urlPrefix.trim('/')
+
+            fun resolve(requestPath: String): File? {
+                if (normalizedPrefix.split('/').any { it == ".." }) return null
+
+                val relativePath = when {
+                    normalizedPrefix.isEmpty() -> requestPath
+                    requestPath == normalizedPrefix -> ""
+                    requestPath.startsWith("$normalizedPrefix/") -> requestPath.removePrefix("$normalizedPrefix/")
+                    else -> return null
+                }
+
+                val rootPath = directory.toPath().normalize()
+                val resolved = try {
+                    rootPath.resolve(relativePath).normalize()
+                } catch (_: InvalidPathException) {
+                    return null
+                }
+
+                if (!resolved.startsWith(rootPath)) return null
+
+                return resolved.toFile()
+                    .takeIf { it.isFile }
+                    ?.takeIf(isServable)
             }
-
-            if (!resolved.startsWith(toPath().normalize())) return null
-
-            return resolved.toFile()
-                .takeIf { it.isFile }
-                ?.takeIf(isServable)
         }
     }
 }
