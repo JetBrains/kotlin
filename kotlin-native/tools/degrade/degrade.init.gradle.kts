@@ -73,7 +73,7 @@ abstract class DegradeService : BuildService<DegradeService.Parameters>, AutoClo
 
         if (commands.isEmpty()) return null
 
-        val konanHome = project.properties["konanHome"] ?: project.properties["kotlinNativeDist"]
+        val konanHome = project.findProperty("konanHome") ?: project.findProperty("kotlinNativeDist")
 
         val scriptName = task.path.substring(1).replace(':', '_') + ".sh"
 
