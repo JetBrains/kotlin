@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.abbreviatedType
+import org.jetbrains.kotlin.fir.types.forEachUnionComponentOrSelf
 import org.jetbrains.kotlin.fir.types.hasError
 
 object FirMissingDependencyClassInTypeAliasTypeChecker : FirResolvedTypeRefChecker(MppCheckerKind.Common) {
@@ -23,26 +24,29 @@ object FirMissingDependencyClassInTypeAliasTypeChecker : FirResolvedTypeRefCheck
         val fullyExpandedType = typeRef.coneType.fullyExpandedType().takeIf { !it.hasError() } ?: return
         val abbreviatedType = fullyExpandedType.abbreviatedType ?: return // Only type aliases are relevant
 
-        /**
-         * We can't call [org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol]
-         * because sometimes RHS of type alias isn't a class, for instance, a type parameter.
-         * Although in this case the [FirErrors.TYPEALIAS_SHOULD_EXPAND_TO_CLASS] is reported, the above-mentioned function returns `null`.
-         * And if we used the [org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol], we would get a false-positive
-         * [FirErrors.MISSING_DEPENDENCY_CLASS] in addition.
-         */
-        val expandedSymbol = fullyExpandedType.toSymbol()
-        if (expandedSymbol == null) {
+        // A type alias may expand to a union type, which has no symbol of its own, so its components are checked instead
+        fullyExpandedType.forEachUnionComponentOrSelf { expandedType ->
+            /**
+             * We can't call [org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol]
+             * because sometimes RHS of type alias isn't a class, for instance, a type parameter.
+             * Although in this case the [FirErrors.TYPEALIAS_SHOULD_EXPAND_TO_CLASS] is reported, the above-mentioned function returns `null`.
+             * And if we used the [org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol], we would get a false-positive
+             * [FirErrors.MISSING_DEPENDENCY_CLASS] in addition.
+             */
+            val expandedSymbol = expandedType.toSymbol()
+            if (expandedSymbol != null) return@forEachUnionComponentOrSelf
+
             /**
              * Use the error [FirErrors.MISSING_DEPENDENCY_CLASS] without deprecation cycle if the type arguments are not empty.
              * The reason: such a code could cause severe problems like KT-79633 because of specific of type parameters serialization in K2.
              * That's why it's better to prohibit it as soon as possible.
              */
             if (context.languageVersionSettings.supportsFeature(LanguageFeature.ForbidTypeAliasWithMissingDependencyType) ||
-                fullyExpandedType.typeArguments.isNotEmpty()
+                expandedType.typeArguments.isNotEmpty()
             ) {
-                reporter.reportOn(typeRef.source, FirErrors.MISSING_DEPENDENCY_CLASS, fullyExpandedType)
+                reporter.reportOn(typeRef.source, FirErrors.MISSING_DEPENDENCY_CLASS, expandedType)
             } else {
-                reporter.reportOn(typeRef.source, FirErrors.MISSING_DEPENDENCY_CLASS_IN_TYPEALIAS, fullyExpandedType, abbreviatedType)
+                reporter.reportOn(typeRef.source, FirErrors.MISSING_DEPENDENCY_CLASS_IN_TYPEALIAS, expandedType, abbreviatedType)
             }
         }
     }

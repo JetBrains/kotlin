@@ -34,13 +34,13 @@ import org.jetbrains.kotlin.util.PrivateForInline
 
 fun FirAnnotation.toAnnotationClassLikeType(session: FirSession): ConeClassLikeType? =
     // this cast fails when we have generic-typed annotations @T
-    (annotationTypeRef.coneType as? ConeClassLikeType)?.fullyExpandedType(session)
+    (annotationTypeRef.coneType as? ConeClassLikeType)?.fullyExpandedType(session) as? ConeClassLikeType
 
 private fun FirAnnotation.toAnnotationLookupTag(session: FirSession): ConeClassLikeLookupTag? =
     toAnnotationClassLikeType(session)?.lookupTag
 
 private fun FirAnnotation.toAnnotationLookupTagSafe(session: FirSession): ConeClassLikeLookupTag? =
-    annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.fullyExpandedType(session)?.lookupTag
+    annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.fullyExpandedType(session)?.classLikeLookupTagIfAny
 
 fun FirAnnotation.toAnnotationClassId(session: FirSession): ClassId? =
     toAnnotationLookupTag(session)?.classId
@@ -291,7 +291,7 @@ context(sessionHolder: SessionHolder)
 fun ConeKotlinType.isRestrictSuspensionReceiver(): Boolean {
     return when (this) {
         is ConeClassLikeType -> {
-            val regularClassSymbol = fullyExpandedType().lookupTag.toRegularClassSymbol() ?: return false
+            val regularClassSymbol = fullyExpandedType().toRegularClassSymbol() ?: return false
             if (regularClassSymbol.hasAnnotationWithClassId(StandardClassIds.Annotations.RestrictsSuspension, sessionHolder.session)) {
                 return true
             }

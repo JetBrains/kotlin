@@ -71,11 +71,7 @@ object ConeTypeUnifier {
 
         for (richError in flattenedErrorTypes) {
             if (richError is ConeErrorType) return ConeErrorType(richError.diagnostic, delegatedType = unionType)
-            if (richError.isMarkedNullable)
-                return ConeErrorType(
-                    ConeSimpleDiagnostic("Nullable error component", NullableErrorComponentInUnionType),
-                    delegatedType = unionType
-                )
+            if (richError.isMarkedNullable) return ConeErrorType(NullableErrorComponentInUnionTypeDiagnostic, delegatedType = unionType)
         }
 
         return unionType
@@ -85,8 +81,8 @@ object ConeTypeUnifier {
         return if (this is ConeUnionType) {
             if (!primaryType.isNothing) {
                 val diagnostic = when {
-                    primaryType.isNullableNothing -> ConeSimpleDiagnostic("Nullable nested union type", NullableNestedUnionType)
-                    else -> ConeSimpleDiagnostic("Non-error component in nested union type", NonErrorComponentInNestedUnionType)
+                    primaryType.isNullableNothing -> NullableNestedUnionTypeDiagnostic
+                    else -> NonErrorComponentInNestedUnionTypeDiagnostic
                 }
                 return [ConeErrorType(diagnostic, delegatedType = this)]
             }
@@ -95,4 +91,13 @@ object ConeTypeUnifier {
             [this]
         }
     }
+
+    val NullableErrorComponentInUnionTypeDiagnostic: ConeSimpleDiagnostic =
+        ConeSimpleDiagnostic("Nullable error component", NullableErrorComponentInUnionType)
+    val NullableNestedUnionTypeDiagnostic: ConeSimpleDiagnostic =
+        ConeSimpleDiagnostic("Nullable nested union type", NullableNestedUnionType)
+    val NonErrorComponentInNestedUnionTypeDiagnostic: ConeSimpleDiagnostic =
+        ConeSimpleDiagnostic("Non-error component in nested union type", NonErrorComponentInNestedUnionType)
+    val NonErrorComponentWrongPositionInUnionTypeDiagnostic: ConeSimpleDiagnostic =
+        ConeSimpleDiagnostic("Non-error component must appear first", NonErrorComponentWrongPositionInUnionType)
 }
