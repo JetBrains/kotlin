@@ -1,0 +1,10 @@
+Before shortening: context(kotlin.String) kotlin.Int
+with default settings:
+[type] kotlin.Int
+with DO_NOT_SHORTEN:
+with SHORTEN_IF_ALREADY_IMPORTED:
+[type] kotlin.Int
+with SHORTEN_AND_IMPORT:
+[type] kotlin.Int
+with SHORTEN_AND_STAR_IMPORT:
+[type] kotlin.Int

@@ -1,0 +1,188 @@
+FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextInFunctionTypeKt]]
+  facadeFqName: DanglingContextInFunctionTypeKt
+  partSimpleName: "DanglingContextInFunctionTypeKt"
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  CLASS[classId=/Anno, fqName=Anno, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Anno, superNames=[]]
+    MODIFIER_LIST[annotation]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Target]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            DOT_QUALIFIED_EXPRESSION
+              REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
+              REFERENCE_EXPRESSION[referencedName=TYPE]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Anno]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=Anno.position, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=position]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=String]
+  CLASS[classId=/Properties, fqName=Properties, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isTopLevel=true, name=Properties, superNames=[]]
+    CLASS_BODY
+      PROPERTY[fqName=Properties.ctx1, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=ctx1]
+        TYPE_REFERENCE
+          CONTEXT_PARAMETER_LIST
+            CONTEXT_RECEIVER[label=null]
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=Int]
+      PROPERTY[fqName=Properties.ctx2, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=ctx2]
+        TYPE_REFERENCE
+          CONTEXT_PARAMETER_LIST
+            CONTEXT_RECEIVER[label=null]
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=Int]
+      PROPERTY[fqName=Properties.ctx3, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=ctx3]
+        TYPE_REFERENCE
+          CONTEXT_PARAMETER_LIST
+            CONTEXT_RECEIVER[label=null]
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=Int]
+      PROPERTY[fqName=Properties.ctx4, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=ctx4]
+        TYPE_REFERENCE
+          CONTEXT_PARAMETER_LIST
+            CONTEXT_RECEIVER[label=null]
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=Int]
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Int]
+      PROPERTY[fqName=Properties.ctx4Nullable, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=ctx4Nullable]
+        TYPE_REFERENCE
+          CONTEXT_PARAMETER_LIST
+            CONTEXT_RECEIVER[label=null]
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=Int]
+          NULLABLE_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=String]
+      PROPERTY[fqName=Properties.ctx5, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=ctx5]
+        TYPE_REFERENCE
+          CONTEXT_PARAMETER_LIST
+            CONTEXT_RECEIVER[label=null]
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=Int]
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Int]
+      PROPERTY[fqName=Properties.ctx5Parenthesized, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=ctx5Parenthesized]
+        TYPE_REFERENCE
+          CONTEXT_PARAMETER_LIST
+            CONTEXT_RECEIVER[label=null]
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=Int]
+          FUNCTION_TYPE_RECEIVER
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=String]
+      PROPERTY[fqName=Properties.named, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=named]
+        TYPE_REFERENCE
+          CONTEXT_PARAMETER_LIST
+            VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=Int]
+      PROPERTY[fqName=Properties.severalEntries, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=severalEntries]
+        TYPE_REFERENCE
+          CONTEXT_PARAMETER_LIST
+            CONTEXT_RECEIVER[label=null]
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=Int]
+            CONTEXT_RECEIVER[label=null]
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=String]
+      PROPERTY[fqName=Properties.annotated, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=annotated]
+        TYPE_REFERENCE
+          CONTEXT_PARAMETER_LIST
+            CONTEXT_RECEIVER[label=null]
+              TYPE_REFERENCE
+                MODIFIER_LIST[]
+                  ANNOTATION_ENTRY[hasValueArguments=true, shortName=Anno]
+                    CONSTRUCTOR_CALLEE
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=Anno]
+                    VALUE_ARGUMENT_LIST
+                      VALUE_ARGUMENT[isSpread=false]
+                        BINARY_EXPRESSION
+                          STRING_TEMPLATE
+                            LITERAL_STRING_TEMPLATE_ENTRY[text=1]
+                          OPERATION_REFERENCE[operationToken=PLUS, referencedName=+]
+                          STRING_TEMPLATE
+                            LITERAL_STRING_TEMPLATE_ENTRY[text=2]
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=Int]
+      PROPERTY[fqName=Properties.suspendModifier, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=suspendModifier]
+        TYPE_REFERENCE
+          MODIFIER_LIST[suspend]
+          CONTEXT_PARAMETER_LIST
+            CONTEXT_RECEIVER[label=null]
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=Int]
+      PROPERTY[fqName=Properties.typeArgument, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=typeArgument]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=List]
+            TYPE_ARGUMENT_LIST
+              TYPE_PROJECTION[projectionKind=NONE]
+                TYPE_REFERENCE
+                  CONTEXT_PARAMETER_LIST
+                    CONTEXT_RECEIVER[label=null]
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=Int]
+  FUNCTION[fqName=returnType, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=returnType]
+    VALUE_PARAMETER_LIST
+    TYPE_REFERENCE
+      CONTEXT_PARAMETER_LIST
+        CONTEXT_RECEIVER[label=null]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Int]
+    CALL_EXPRESSION
+      REFERENCE_EXPRESSION[referencedName=TODO]
+      VALUE_ARGUMENT_LIST
+  FUNCTION[fqName=valueParameter, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=valueParameter]
+    VALUE_PARAMETER_LIST
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p]
+        TYPE_REFERENCE
+          CONTEXT_PARAMETER_LIST
+            CONTEXT_RECEIVER[label=null]
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=Int]
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=String]
+  FUNCTION[fqName=intersection, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=intersection]
+    TYPE_PARAMETER_LIST
+      TYPE_PARAMETER[fqName=null, name=T]
+    VALUE_PARAMETER_LIST
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p]
+        TYPE_REFERENCE
+          CONTEXT_PARAMETER_LIST
+            CONTEXT_RECEIVER[label=null]
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=Int]
+          INTERSECTION_TYPE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=T]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Any]
+  FUNCTION[fqName=body, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=body]
+    VALUE_PARAMETER_LIST
