@@ -1,0 +1,146 @@
+KtFile: enumEntryNamedLikeModifierWithModifiers.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  CLASS
+    PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
+    PsiWhiteSpace('\n')
+    PsiComment(EOL_COMMENT)('// ISSUE: KT-90707')
+    PsiWhiteSpace('\n')
+    MODIFIER_LIST
+      PsiElement(enum)('enum')
+    PsiWhiteSpace(' ')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('E1')
+    PRIMARY_CONSTRUCTOR
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          PsiElement(IDENTIFIER)('x')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('String')
+        PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      ENUM_ENTRY
+        MODIFIER_LIST
+          ANNOTATION_ENTRY
+            PsiElement(AT)('@')
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Ann')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('inline')
+        INITIALIZER_LIST
+          SUPER_TYPE_CALL_ENTRY
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION
+                    <empty list>
+            VALUE_ARGUMENT_LIST
+              PsiElement(LPAR)('(')
+              VALUE_ARGUMENT
+                STRING_TEMPLATE
+                  PsiElement(OPEN_QUOTE)('"')
+                  PsiElement(CLOSING_QUOTE)('"')
+              PsiElement(RPAR)(')')
+        PsiElement(COMMA)(',')
+      PsiWhiteSpace('\n    ')
+      ENUM_ENTRY
+        MODIFIER_LIST
+          PsiElement(public)('public')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('value')
+        PsiWhiteSpace(' ')
+        CLASS_BODY
+          PsiElement(LBRACE)('{')
+          PsiElement(RBRACE)('}')
+        PsiElement(COMMA)(',')
+      PsiWhiteSpace('\n    ')
+      ENUM_ENTRY
+        MODIFIER_LIST
+          PsiElement(private)('private')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('error')
+        INITIALIZER_LIST
+          SUPER_TYPE_CALL_ENTRY
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION
+                    <empty list>
+            VALUE_ARGUMENT_LIST
+              PsiElement(LPAR)('(')
+              VALUE_ARGUMENT
+                STRING_TEMPLATE
+                  PsiElement(OPEN_QUOTE)('"')
+                  PsiElement(CLOSING_QUOTE)('"')
+              PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        CLASS_BODY
+          PsiElement(LBRACE)('{')
+          PsiElement(RBRACE)('}')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n    ')
+        PsiElement(SEMICOLON)(';')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiComment(EOL_COMMENT)('// `context` followed by `(` is still parsed as a context parameter list, not as an entry name')
+    PsiWhiteSpace('\n')
+    MODIFIER_LIST
+      PsiElement(enum)('enum')
+    PsiWhiteSpace(' ')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('E2')
+    PRIMARY_CONSTRUCTOR
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          PsiElement(IDENTIFIER)('x')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('String')
+        PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiErrorElement:Expecting ';' after the last enum entry or '}' to close enum class body
+        <empty list>
+      PsiWhiteSpace('\n    ')
+      MODIFIER_LIST
+        CONTEXT_PARAMETER_LIST
+          PsiElement(context)('context')
+          PsiElement(LPAR)('(')
+          CONTEXT_RECEIVER
+            TYPE_REFERENCE
+              PsiErrorElement:Type expected
+                PsiElement(OPEN_QUOTE)('"')
+          PsiErrorElement:Expecting comma or ')'
+            <empty list>
+          PsiErrorElement:Expecting ')'
+            PsiElement(CLOSING_QUOTE)('"')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(RPAR)(')')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(COMMA)(',')
+      PsiWhiteSpace('\n    ')
+      PsiElement(SEMICOLON)(';')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

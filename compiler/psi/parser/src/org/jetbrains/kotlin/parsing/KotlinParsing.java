@@ -70,7 +70,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
     private static final TokenSet COMMA_COLON_GT_SET = TokenSet.create(COMMA, COLON, GT);
     private static final TokenSet IDENTIFIER_RBRACKET_LBRACKET_SET = TokenSet.create(IDENTIFIER, RBRACKET, LBRACKET);
     private static final TokenSet LBRACE_RBRACE_SET = TokenSet.create(LBRACE, RBRACE);
-    private static final TokenSet COMMA_SEMICOLON_RBRACE_SET = TokenSet.create(COMMA, SEMICOLON, RBRACE);
+    private static final TokenSet NO_MODIFIERS_BEFORE_FOR_ENUM_ENTRY = TokenSet.create(COMMA, SEMICOLON, RBRACE, LPAR, LBRACE);
     private static final TokenSet VALUE_ARGS_RECOVERY_SET = TokenSet.create(LBRACE, SEMICOLON, RPAR, EOL_OR_SEMICOLON, RBRACE);
     private static final TokenSet PROPERTY_NAME_FOLLOW_SET =
       TokenSet.create(COLON, EQ, LBRACE, RBRACE, SEMICOLON, VAL_KEYWORD, VAR_KEYWORD, FUN_KEYWORD, CLASS_KEYWORD);
@@ -1203,7 +1203,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
     private ParseEnumEntryResult parseEnumEntry() {
         PsiBuilder.Marker entry = mark();
 
-        parseModifierList(COMMA_SEMICOLON_RBRACE_SET);
+        parseModifierList(NO_MODIFIERS_BEFORE_FOR_ENUM_ENTRY);
 
         if (!atSet(SOFT_KEYWORDS_AT_MEMBER_START) && at(IDENTIFIER)) {
             advance(); // IDENTIFIER
