@@ -16,6 +16,7 @@ import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.nodeJsRoot
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.NODE_MODULES
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.PACKAGE_JSON
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules.Companion.JS_SUFFIX
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
@@ -29,6 +30,7 @@ import java.nio.file.LinkOption
 import java.nio.file.Path
 import java.nio.file.attribute.BasicFileAttributes
 import kotlin.io.path.isDirectory
+import kotlin.io.path.isRegularFile
 import kotlin.io.path.isSymbolicLink
 import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.name
@@ -167,13 +169,15 @@ abstract class KotlinImportMapGenerateTask : DefaultTask() {
                     if (entry.name.startsWith("@types")) return@flatMap emptyList()
 
                     entry.listDirectoryEntries()
-                        .filter { it.isDirectory() }
+                        .filter { it.isDirectory() && it.isNpmPackage() }
                         .map { "${entry.name}/${it.name}" }
                 } else {
-                    listOf(entry.name)
+                    if (entry.isNpmPackage()) listOf(entry.name) else emptyList()
                 }
             }
     }
+
+    private fun Path.isNpmPackage(): Boolean = resolve(PACKAGE_JSON).isRegularFile()
 
     /**
      * Checks whether this path is a link that should not be followed: either a symbolic link,
