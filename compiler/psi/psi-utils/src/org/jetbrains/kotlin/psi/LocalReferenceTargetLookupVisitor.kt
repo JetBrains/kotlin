@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.psi
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.annotations.TestOnly
 import com.intellij.psi.util.siblings
 import org.jetbrains.kotlin.name.Name
@@ -72,11 +73,8 @@ private class LocalReferenceTargetLookupVisitor(val element: KtNameReferenceExpr
             }
         }
 
-        var previousElement: KtElement? = null
-
         for ([element, direction] in s) {
             myLastDirection = direction
-            processMove(element, previousElement)
             element.accept(this)
             if (_stopResolution) return null
 
@@ -97,6 +95,8 @@ private class LocalReferenceTargetLookupVisitor(val element: KtNameReferenceExpr
     private fun stopResolution() {
         _stopResolution = true
     }
+
+    private var previousElement: KtElement? = null
 
     private fun ignore(element: KtElement) {
         resolveIgnore.add(element)
@@ -146,115 +146,53 @@ private class LocalReferenceTargetLookupVisitor(val element: KtNameReferenceExpr
             VALUE_OR_TYPE -> isStopElementInValueContext || isStopElementInTypeContext
         }
 
-    /**
-     * Process declarations we should ignore.
-     *
-     * This is necessary because instead of going down the tree until we find the declaration,
-     * we are walking up the tree from the reference [element]. So in cases like `val x = x`,
-     * we cannot use the variable inside its own initializer. In such cases, when we detect that
-     * we are coming from the initializer, we mark the variable as ignored. This prevents us from
-     * resolving the reference to that variable, meaning we have to continue the search, and we'll go
-     * in the previous statements, check if they are local variables, then the parents of that block,
-     * etc.
-     *
-     * @see ignore
-     */
-    private fun processMove(current: KtElement, previousElement: KtElement?) {
+    override fun visitElement(element: PsiElement) {
         if (previousElement is KtClass) constructorParametersAllowed = false
-
-        when (current) {
-            is KtProperty -> {
-                parentOnly {
-                    if (previousElement == current.delegateExpressionOrInitializer) {
-                        // fun f(x: Int) {
-                        //      val x = x
-                        //              ^ this x cannot refer to the local variable
-                        //                initializers / delegates cannot refer to the variable that they are initializing
-                        // }
-                        ignore(current)
-
-                        // class A(x: Int) {
-                        //     val y: Int = x
-                        //                  ^ we should resolve x to the constructor parameter
-                        // }
-                        constructorParametersAllowed = true
-                    } else if (previousElement is KtPropertyAccessor) {
-                        // fun f(x: Int) {
-                        //     class A(x: Int) {
-                        //         val x: Int get() = x
-                        //         val y: Int get() = x
-                        //                            ^ this x refers to the parameter of f, not the constructor parameter
-                        //     }
-                        // }
-                        ignore(current)
-                        constructorParametersAllowed = false
-                    }
-                }
-            }
-
-            is KtDestructuringDeclaration -> {
-                parentOnly {
-                    if (previousElement == current.initializer) {
-                        // fun f(x: Int) {
-                        //      val (x, y) = x to 1
-                        //                   ^ for the same reason as with KtProperties, x in the initializer cannot refer to the entry
-                        // }
-                        ignore(current)
-                        current.entries.forEach(::ignore)
-                    }
-                }
-            }
-
-            is KtForExpression -> {
-                parentOnly {
-                    if (previousElement == current.loopRange) {
-                        // fun f(x: Int) {
-                        //      for (x in 0..x) {}
-                        //                   ^ this x refers to the function parameter rather than the for loop parameter, so we need to ignore
-                        //                     the loop parameter.
-                        // }
-                        val loopParameter = current.loopParameter ?: return
-                        ignoreParameter(loopParameter)
-                    }
-                }
-            }
-
-            is KtSuperTypeCallEntry -> {
-                // class A(i: Int)
-                // class B(i: Int) : A(i)
-                //                     ^ we need to be able to resolve this i to the parameter
-
-                constructorParametersAllowed = true
-            }
-
-            is KtAnonymousInitializer -> {
-                // class A(i: Int) {
-                //     init {
-                //         val x = i
-                //                 ^ we need to be able to resolve this i to the constructor parameter
-                //     }
-                // }
-                constructorParametersAllowed = true
-            }
-        }
     }
 
-    private fun ignoreParameter(param: KtParameter) {
-        ignore(param)
-        param.destructuringDeclaration?.entries?.forEach(::ignore)
+    override fun visitSuperTypeCallEntry(call: KtSuperTypeCallEntry) {
+        super.visitSuperTypeCallEntry(call)
+
+        // class A(i: Int)
+        // class B(i: Int) : A(i)
+        //                     ^ we need to be able to resolve this i to the parameter
+
+        constructorParametersAllowed = true
+    }
+
+    override fun visitAnonymousInitializer(initializer: KtAnonymousInitializer) {
+        super.visitAnonymousInitializer(initializer)
+
+        // class A(i: Int) {
+        //     init {
+        //         val x = i
+        //                 ^ we need to be able to resolve this i to the constructor parameter
+        //     }
+        // }
+        constructorParametersAllowed = true
     }
 
     override fun visitForExpression(element: KtForExpression) {
-        val loopParameter = element.loopParameter ?: return
+        super.visitForExpression(element)
 
         inValueContext {
             parentOnly {
-                processParameter(loopParameter)
+                if (previousElement != element.loopRange) {
+                    // fun f(x: Int) {
+                    //      for (x in 0..x) {}
+                    //                   ^ this x refers to the function parameter rather than the for loop parameter, so we need to ignore
+                    //                     the loop parameter.
+                    // }
+                    val loopParameter = element.loopParameter ?: return
+                    processParameter(loopParameter)
+                }
             }
         }
     }
 
     override fun visitWhenExpression(element: KtWhenExpression) {
+        super.visitWhenExpression(element)
+
         inValueContext {
             parentOnly {
                 element.subjectVariable?.let(::visitProperty)
@@ -263,6 +201,35 @@ private class LocalReferenceTargetLookupVisitor(val element: KtNameReferenceExpr
     }
 
     override fun visitProperty(element: KtProperty) {
+        super.visitProperty(element)
+
+        parentOnly {
+            if (previousElement == element.delegateExpressionOrInitializer) {
+                // fun f(x: Int) {
+                //      val x = x
+                //              ^ this x cannot refer to the local variable
+                //                initializers / delegates cannot refer to the variable that they are initializing
+                // }
+                ignore(element)
+
+                // class A(x: Int) {
+                //     val y: Int = x
+                //                  ^ we should resolve x to the constructor parameter
+                // }
+                constructorParametersAllowed = true
+            } else if (previousElement is KtPropertyAccessor) {
+                // fun f(x: Int) {
+                //     class A(x: Int) {
+                //         val x: Int get() = x
+                //         val y: Int get() = x
+                //                            ^ this x refers to the parameter of f, not the constructor parameter
+                //     }
+                // }
+                ignore(element)
+                constructorParametersAllowed = false
+            }
+        }
+
         inValueContext {
             if (element.isLocal) {
                 foundIfNameMatches(element)
@@ -280,6 +247,8 @@ private class LocalReferenceTargetLookupVisitor(val element: KtNameReferenceExpr
     }
 
     override fun visitClass(klass: KtClass) {
+        super.visitClass(klass)
+
         inValueContext(strict = true) {
             if (name == klass.nameAsSafeName) {
                 //            object A
@@ -318,6 +287,8 @@ private class LocalReferenceTargetLookupVisitor(val element: KtNameReferenceExpr
     }
 
     override fun visitObjectDeclaration(declaration: KtObjectDeclaration) {
+        super.visitObjectDeclaration(declaration)
+
         foundIfNameMatches(declaration)
     }
 
@@ -340,6 +311,8 @@ private class LocalReferenceTargetLookupVisitor(val element: KtNameReferenceExpr
     }
 
     override fun visitPrimaryConstructor(constructor: KtPrimaryConstructor) {
+        super.visitPrimaryConstructor(constructor)
+
         inValueContext {
             constructor.valueParameters.processMany(::processParameter)
             constructor.contextParameters.processMany(::processParameter)
@@ -350,6 +323,8 @@ private class LocalReferenceTargetLookupVisitor(val element: KtNameReferenceExpr
     }
 
     override fun visitSecondaryConstructor(constructor: KtSecondaryConstructor) {
+        super.visitSecondaryConstructor(constructor)
+
         inValueContext {
             constructor.valueParameters.processMany(::processParameter)
             constructor.contextParameters.processMany(::processParameter)
@@ -364,6 +339,8 @@ private class LocalReferenceTargetLookupVisitor(val element: KtNameReferenceExpr
     }
 
     override fun visitLambdaExpression(element: KtLambdaExpression) {
+        super.visitLambdaExpression(element)
+
         inValueContext {
             parentOnly {
                 if (
@@ -401,12 +378,18 @@ private class LocalReferenceTargetLookupVisitor(val element: KtNameReferenceExpr
         }
     }
 
-    override fun visitClassOrObject(element: KtClassOrObject) {
-        foundIfNameMatches(element)
-    }
-
     override fun visitDestructuringDeclaration(decl: KtDestructuringDeclaration) {
-        if (isIgnored(decl)) return
+        super.visitDestructuringDeclaration(decl)
+
+        parentOnly {
+            if (previousElement == decl.initializer) {
+                // fun f(x: Int) {
+                //      val (x, y) = x to 1
+                //                   ^ for the same reason as with KtProperties, x in the initializer cannot refer to the entry
+                // }
+                return
+            }
+        }
 
         inValueContext {
             decl.entries.processMany(::foundIfNameMatches)
@@ -414,12 +397,16 @@ private class LocalReferenceTargetLookupVisitor(val element: KtNameReferenceExpr
     }
 
     override fun visitTypeAlias(decl: KtTypeAlias) {
+        super.visitTypeAlias(decl)
+
         inTypeContext {
             foundIfNameMatches(decl)
         }
     }
 
     override fun visitPropertyAccessor(accessor: KtPropertyAccessor) {
+        super.visitPropertyAccessor(accessor)
+
         inValueContext {
             parentOnly {
                 accessor.valueParameters.processMany(::processParameter)
@@ -428,6 +415,8 @@ private class LocalReferenceTargetLookupVisitor(val element: KtNameReferenceExpr
     }
 
     override fun visitCatchSection(catchClause: KtCatchClause) {
+        super.visitCatchSection(catchClause)
+
         inValueContext {
             parentOnly {
                 catchClause.parameterList?.parameters?.processMany(::processParameter)
