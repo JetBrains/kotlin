@@ -460,7 +460,6 @@ class NativeDownloadAndPlatformLibsIT : KGPBaseTest() {
         }
     }
 
-    @OptIn(EnvironmentalVariablesOverride::class)
     private fun TestProject.buildWithLightDist(
         vararg tasks: String,
         buildOptions: BuildOptions = this.buildOptions,
@@ -469,12 +468,7 @@ class NativeDownloadAndPlatformLibsIT : KGPBaseTest() {
         build(
             *tasks,
             buildOptions = buildOptions.copy(
-                nativeOptions = buildOptions.nativeOptions.copy(distributionType = "light"),
-
-            ),
-            // FIXME: Workaround for KT-90608, remove once https://github.com/JetBrains/kotlin/pull/9247 is merged.
-            environmentVariables = EnvironmentalVariables(
-                buildOptions.konanDataDir?.let { mapOf("KONAN_DATA_DIR" to it.absolutePathString()) }.orEmpty()
+                nativeOptions = buildOptions.nativeOptions.copy(distributionType = "light")
             ),
             assertions = assertions
         )
