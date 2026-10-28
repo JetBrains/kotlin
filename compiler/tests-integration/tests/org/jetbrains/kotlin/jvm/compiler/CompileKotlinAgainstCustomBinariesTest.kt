@@ -299,27 +299,46 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
     /**
      * The same incremental compilation scenario as in [testBinarySignatureReferencesNestedJavaClassFromSource], but with a generic
      * Java class: the class file of `p.Gen` is deleted and its source is passed instead. A parameterized reference has to compile.
+     * A raw reference has to be checked the same way as with the class file present: the raw-to-parameterized assignment in
+     * `rawSource.kt` is rejected in both cases.
      */
     @Test
     fun testBinarySignatureReferencesGenericJavaClassFromSource() {
-        val library = copyJarFileWithoutEntry(
-            compileLibrary(
-                "library",
-                compileJava = { _, javaFiles, outputDir ->
-                    compileJavaFiles(javaFiles, listOf("-classpath", outputDir.path, "-d", outputDir.path))
-                },
-            ),
-            "p/Gen.class"
+        val fullLibrary = compileLibrary(
+            "library",
+            compileJava = { _, javaFiles, outputDir ->
+                compileJavaFiles(javaFiles, listOf("-classpath", outputDir.path, "-d", outputDir.path))
+            },
         )
+        val sourceOnlyLibrary = copyJarFileWithoutEntry(fullLibrary, "p/Gen.class")
         for (javaDirect in listOf(true, false)) {
-            val [_, exitCode] = compileKotlin(
-                "source.kt", tmpdir, listOf(library),
+            val [_, sourceExitCode] = compileKotlin(
+                "source.kt", tmpdir, listOf(sourceOnlyLibrary),
                 additionalOptions = listOf(K2JVMCompilerArguments::javaDirect.cliArgument(javaDirect.toString())),
                 additionalSources = listOf("p/Gen.java"),
                 expectedFileName = null,
             )
-            // KT-87507: Java Direct currently rejects the source generic that PSI accepts.
-            assertEquals(if (javaDirect) ExitCode.COMPILATION_ERROR else ExitCode.OK, exitCode)
+            // KT-87507: the Java Direct rejection is wrong and is fixed by the following commit.
+            assertEquals(if (javaDirect) ExitCode.COMPILATION_ERROR else ExitCode.OK, sourceExitCode)
+
+            val rawSourceOptions = listOf(K2JVMCompilerArguments::javaDirect.cliArgument(javaDirect.toString()))
+            val binaryResult = compileKotlin(
+                fileName = "rawSource.kt",
+                output = tmpdir,
+                classpath = listOf(fullLibrary),
+                additionalOptions = rawSourceOptions,
+                expectedFileName = null,
+            )
+            val sourceResult = compileKotlin(
+                fileName = "rawSource.kt",
+                output = tmpdir,
+                classpath = listOf(sourceOnlyLibrary),
+                additionalOptions = rawSourceOptions,
+                expectedFileName = null,
+                additionalSources = listOf("p/Gen.java"),
+            )
+            assertEquals(ExitCode.COMPILATION_ERROR, binaryResult.second, binaryResult.first)
+            assertEquals(ExitCode.COMPILATION_ERROR, sourceResult.second, sourceResult.first)
         }
     }
 
