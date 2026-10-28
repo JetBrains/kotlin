@@ -5,12 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.serialization
 
-import com.google.gson.GsonBuilder
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib
-import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib.Companion.ATTRIBUTES
-import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib.Companion.FRAGMENTS
-import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib.Companion.FRAGMENT_IDENTIFIER
-import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib.Companion.UMANIFEST_VERSION
 import org.jetbrains.kotlin.gradle.utils.resolveInside
 import org.jetbrains.kotlin.incremental.deleteDirectoryContents
 import java.io.BufferedOutputStream
@@ -27,22 +22,8 @@ internal fun Uklib.serializeToZipArchive(
     // FIXME: Remove rezipping and the temporary directory KT-75395
     temporariesDirectory: File,
 ) {
-    val manifest = GsonBuilder().setPrettyPrinting().create().toJson(
-        mapOf(
-            FRAGMENTS to module.fragments.sortedBy {
-                // Make sure we have some stable order of fragments
-                it.identifier
-            }.map {
-                mapOf(
-                    FRAGMENT_IDENTIFIER to it.identifier,
-                    ATTRIBUTES to it.attributes
-                        // Make sure we have some stable order of attributes
-                        .sorted(),
-                )
-            },
-            UMANIFEST_VERSION to manifestVersion,
-        )
-    )
+    // a published uklib keeps each fragment in the directory named after it, so it lists no files
+    val manifest = UklibManifest.of(module.fragments, manifestVersion, withFiles = false).encodeToString()
     zipUklibContents(
         manifest = manifest,
         fragmentToArtifact = module.fragments.associate {
