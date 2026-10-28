@@ -9,10 +9,12 @@ package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.testfixtures.ProjectBuilder
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_COMMONIZE_CINTEROP_MAX_WORKERS
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.targets.native.internal.cInteropCommonizationEnabled
 import org.jetbrains.kotlin.gradle.targets.native.internal.copyCommonizeCInteropForIdeTask
 import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.internal.compilerRunner.native.maxParallelUsagesFromAvailableRam
 import kotlin.test.*
 
 class CommonizerTaskTests {
@@ -21,6 +23,10 @@ class CommonizerTaskTests {
     private val subproject = ProjectBuilder.builder().withName("subproject").withParent(rootProject).build() as ProjectInternal
 
     private fun configureDefaultTestProjects() {
+        configureDefaultTestProjects(rootProject, subproject)
+    }
+
+    private fun configureDefaultTestProjects(rootProject: ProjectInternal, subproject: ProjectInternal) {
 
         subproject.applyMultiplatformPlugin().apply {
             linuxX64()
@@ -84,6 +90,35 @@ class CommonizerTaskTests {
         val commonizeCInteropTask = subproject.assertContainsTaskWithName(commonizeCInteropTaskName)
         subproject.tasks.getByName("commonize").assertDependsOn(commonizeCInteropTask)
         rootProject.assertContainsNoTaskWithName(commonizeCInteropTaskName)
+    }
+
+    @Test
+    fun `test commonizeCInteropTask configures the parallelism limit service using the KOTLIN_NATIVE_COMMONIZE_CINTEROP_MAX_WORKERS property, when set`() {
+        withGradleProperty(KOTLIN_NATIVE_COMMONIZE_CINTEROP_MAX_WORKERS, value = "3") {
+            // Projects need to be created after the Gradle property is set, since ProjectBuilder-based projects
+            // don't pick up Gradle properties set after their creation.
+            val rootProject = ProjectBuilder.builder().build() as ProjectInternal
+            val subproject = ProjectBuilder.builder().withName("subproject").withParent(rootProject).build() as ProjectInternal
+            configureDefaultTestProjects(rootProject, subproject)
+            subproject.assertContainsTaskWithName("commonizeCInterop")
+
+            assertEquals(3, subproject.maxParallelUsagesOf("CInteropCommonizerTask"))
+        }
+    }
+
+    @Test
+    fun `test commonizeCInteropTask configures the parallelism limit service based on available RAM, when the property is not set`() {
+        withGradleProperty(KOTLIN_NATIVE_COMMONIZE_CINTEROP_MAX_WORKERS, value = null) {
+            val rootProject = ProjectBuilder.builder().build() as ProjectInternal
+            val subproject = ProjectBuilder.builder().withName("subproject").withParent(rootProject).build() as ProjectInternal
+            configureDefaultTestProjects(rootProject, subproject)
+            subproject.assertContainsTaskWithName("commonizeCInterop")
+
+            assertEquals(
+                maxParallelUsagesFromAvailableRam(approximateTaskInstanceRamUsageMb = 500).calculateMaxParallelUsages(),
+                subproject.maxParallelUsagesOf("CInteropCommonizerTask")
+            )
+        }
     }
 
     @Test
