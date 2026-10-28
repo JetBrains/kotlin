@@ -9,13 +9,13 @@ import java.io.DataOutputStream
 import java.net.ServerSocket
 import java.net.Socket
 
-const val ideaDebuggerDispatchPortKey = "idea.debugger.dispatch.port"
+internal const val ideaDebuggerDispatchPortKey = "idea.debugger.dispatch.port"
 
-val ideaDebuggerDispatchPort: Int? by lazy {
+internal val ideaDebuggerDispatchPort: Int? by lazy {
     System.getProperty(ideaDebuggerDispatchPortKey)?.toInt()
 }
 
-fun issueNewDebugSessionJvmArguments(
+internal fun issueNewDebugSessionJvmArguments(
     processName: String, intellijDebugDispatchPort: Int? = ideaDebuggerDispatchPort,
 ): Array<String> {
     intellijDebugDispatchPort?.let { dispatchPort ->

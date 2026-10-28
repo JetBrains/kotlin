@@ -10,6 +10,10 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(testFixtures("org.jetbrains.kotlin:repo-test-fixtures"))
     implementation("org.jetbrains.kotlin:test-federation-convention")
+    implementation(gradleApi())
+    implementation("org.jetbrains.kotlin:buildsrc-compat") {
+        isTransitive = false
+    }
     runtimeOnly(libs.log4j2.slf4j.impl)
 
     testImplementation(intellijCore())
@@ -28,9 +32,6 @@ dependencies {
     testImplementation(testFixtures("org.jetbrains.kotlin:repo-test-fixtures"))
     testImplementation("org.jetbrains.kotlin:test-federation-convention")
     testImplementation(project(":repo:test-runtime"))
-    testImplementation("org.jetbrains.kotlin:buildsrc-compat") {
-        isTransitive = false
-    }
     testImplementation(gradleTestKit())
     testImplementation(libs.intellij.asm)
     testImplementation(libs.icu4j)
@@ -107,11 +108,11 @@ projectTests {
 
 
 tasks.register<JavaExec>("updateTestLifecycleTaskDump") {
-    dependsOn(":compileAll")
+    doNotTrackState("Should always run")
     description = "Updates the 'testLifecycleTask.dump.txt' file"
-    classpath = project.files(sourceSets.test.map { it.runtimeClasspath })
-    mainClass.set($$"org.jetbrains.kotlin.code.TestLifecycleTaskTest$Update")
+    classpath = project.files(sourceSets.main.map { it.runtimeClasspath })
     workingDir = rootDir
+    mainClass = "org.jetbrains.kotlin.code.UpdateTestLifecycleTaskDump"
 }
 
 tasks.register<JavaExec>("updateDomainsDump") {
