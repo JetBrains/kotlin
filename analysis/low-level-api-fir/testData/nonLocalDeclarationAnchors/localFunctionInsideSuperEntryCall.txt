@@ -1,4 +1,4 @@
-package one
+/* anchor (KtFile) --> */package one
 
 /* anchor (KtClass) --> */interface Interface {
     /* anchor (KtNamedFunction) --> */fun foo(/* anchor (KtParameter) --> */param: String/* <-- */)/* <-- */
@@ -10,3 +10,4 @@ package one
     override fun foo(param: String) {
     }
 })/* <-- */
+/* <-- */

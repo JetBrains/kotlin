@@ -1,10 +1,10 @@
-/* anchor (KtScript) --> *//* anchor (KtClass) --> */annotation class Anno/* anchor (KtPrimaryConstructor) --> */(/* anchor (KtParameter) --> */val value: Int = 0/* <-- */)/* <-- *//* <-- */
+/* anchor (KtFile) --> *//* anchor (KtScript) --> *//* anchor (KtClass) --> */annotation class Anno/* anchor (KtPrimaryConstructor) --> */(/* anchor (KtParameter) --> */val value: Int = 0/* <-- */)/* <-- *//* <-- */
 
 /* anchor (KtClass) --> */class Owner {
     /* anchor (KtNamedFunction) --> */fun member() {}/* <-- */
 
-    @Anno(1 + 2)
+    /* anchor (KtDeclarationModifierList) --> */@Anno(1 + 2)/* <-- */
 }/* <-- */
 
 /* anchor (KtScriptInitializer) --> */@Anno/* <-- */
-/* <-- */
+/* <-- *//* <-- */

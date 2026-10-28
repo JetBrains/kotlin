@@ -1,3 +1,4 @@
-/* anchor (KtClass) --> */class A/* <-- */
+/* anchor (KtFile) --> *//* anchor (KtClass) --> */class A/* <-- */
 
 /* anchor (KtTypeAlias) --> */typealias F = A.(A) -> A/* <-- */
+/* <-- */

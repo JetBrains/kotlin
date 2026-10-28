@@ -1,4 +1,4 @@
-/* anchor (KtScript) --> *//* anchor (KtClass) --> */class Builder {
+/* anchor (KtFile) --> *//* anchor (KtScript) --> *//* anchor (KtClass) --> */class Builder {
     /* anchor (KtProperty) --> */var version: String = ""/* <-- */
 
     /* anchor (KtNamedFunction) --> */fun execute() {
@@ -24,4 +24,4 @@
 }/* <-- */
 
 /* anchor (KtScriptInitializer) --> */builder.execute()/* <-- */
-/* <-- */
+/* <-- *//* <-- */

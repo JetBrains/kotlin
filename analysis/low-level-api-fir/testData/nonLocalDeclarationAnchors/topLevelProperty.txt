@@ -1,5 +1,6 @@
-/* anchor (KtProperty) --> */var x: Int = 2
+/* anchor (KtFile) --> *//* anchor (KtProperty) --> */var x: Int = 2
     /* anchor (KtPropertyAccessor) --> */set(/* anchor (KtParameter) --> */resolveMe/* <-- */) = Unit/* <-- */
     /* anchor (KtPropertyAccessor) --> */get() {
 
     }/* <-- *//* <-- */
+/* <-- */

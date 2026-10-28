@@ -1,4 +1,4 @@
-package one
+/* anchor (KtFile) --> */package one
 
 /* anchor (KtClass) --> */class A /* anchor (KtPrimaryConstructor) --> */constructor(/* anchor (KtParameter) --> */a: Int/* <-- */)/* <-- */ {
     /* anchor (KtNamedFunction) --> */fun boo() {
@@ -15,3 +15,4 @@ package one
         }
     }/* <-- */
 }/* <-- */
+/* <-- */

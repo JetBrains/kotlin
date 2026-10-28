@@ -194,8 +194,11 @@ object ContextCollector {
         return null
     }
 
-    private fun isValidTarget(declaration: KtDeclaration): Boolean =
-        declaration.isAutonomousElement
+    /**
+     * Dangling modifier lists are skipped, so the containing declaration is processed for them.
+     */
+    private fun isValidTarget(element: KtElement): Boolean =
+        element is KtDeclaration && element.isAutonomousElement
 
     /**
      * Processes the [FirFile], collecting contexts for elements matching the [filter].
