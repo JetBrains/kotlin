@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithVisibility
+import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrOverridableDeclaration
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.file
+import org.jetbrains.kotlin.ir.util.isEnumClass
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.isOverridable
 import org.jetbrains.kotlin.ir.util.render
@@ -46,6 +48,7 @@ enum class FactKind(val id: Int) {
     BASE_CLASS_LAYOUT(1),
     VTABLE_LAYOUT(2),
     ITABLE_LAYOUT(3),
+    ENUM_ENTRIES(4),
     INLINE_BODY(5)
 }
 
@@ -180,6 +183,27 @@ sealed class Fact {
             }
             return cityHash64(text.toByteArray())
         }
+    }
+
+    internal class EnumEntries private constructor(
+            override val irSymbol: IrSymbol,
+            override val irFilePathString: String,
+            private val entryNames: List<String>
+    ) : Fact() {
+
+        companion object {
+            fun from(irClass: IrClass): EnumEntries {
+                require(irClass.isEnumClass) {
+                    "The given class '${irClass.render()}' is not an enum"
+                }
+                val entryNames = irClass.declarations.filterIsInstance<IrEnumEntry>().map { it.name.asString() }
+                return EnumEntries(irClass.symbol, irClass.file.path, entryNames)
+            }
+        }
+
+        override val kind: FactKind = FactKind.ENUM_ENTRIES
+
+        override fun contentHash(): ULong = cityHash64(entryNames.joinToString("\u0000").toByteArray())
     }
 
     /**

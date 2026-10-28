@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.objcinterop.externalObjCClassFqName
 import org.jetbrains.kotlin.ir.util.hasAnnotation
+import org.jetbrains.kotlin.ir.util.isEnumClass
 import org.jetbrains.kotlin.ir.util.parentDeclarationsWithSelf
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -50,6 +51,9 @@ internal object FactsCollector {
                 if (!declaration.isExternalObjC && signature != null) {
                     tracker.defines(irFile, Fact.BaseClassLayout.from(declaration))
                     tracker.defines(irFile, Fact.methodTableLayoutOf(declaration, bridgesPolicy))
+                }
+                if (declaration.isEnumClass) {
+                    tracker.defines(irFile, Fact.EnumEntries.from(declaration))
                 }
                 super.visitClass(declaration)
             }
