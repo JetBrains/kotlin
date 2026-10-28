@@ -447,10 +447,70 @@ KtDeclarationModifierList(447,463): '@Anno("1" + "2")'
   null
 
 KtAnnotationEntry(447,463): '@Anno("1" + "2")'
-  null
+  KaSimpleCallResolutionSuccess:
+    call = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(position: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "1" + "2" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
 
 KtConstructorCalleeExpression(448,452): 'Anno'
-  null
+  KaSimpleCallResolutionSuccess:
+    call = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(position: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "1" + "2" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
 
 KtTypeReference(448,452): 'Anno'
   null
@@ -459,7 +519,37 @@ KtUserType(448,452): 'Anno'
   null
 
 KtNameReferenceExpression(448,452): 'Anno'
-  null
+  KaSimpleCallResolutionSuccess:
+    call = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(position: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "1" + "2" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(452,463): '("1" + "2")'
   null
@@ -468,7 +558,40 @@ KtValueArgument(453,462): '"1" + "2"'
   null
 
 KtBinaryExpression(453,462): '"1" + "2"'
-  null
+  KaSimpleCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = "1"
+        isSafeNavigation = false
+        type = kotlin.String
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = kotlin/String.plus(<dispatch receiver>: kotlin.String, other: kotlin.Any?): kotlin.String
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/String.plus
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "2" -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtStringTemplateExpression(453,456): '"1"'
   null
@@ -477,7 +600,40 @@ KtLiteralStringTemplateEntry(454,455): '1'
   null
 
 KtOperationReferenceExpression(457,458): '+'
-  null
+  KaSimpleCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = "1"
+        isSafeNavigation = false
+        type = kotlin.String
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = kotlin/String.plus(<dispatch receiver>: kotlin.String, other: kotlin.Any?): kotlin.String
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/String.plus
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "2" -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtStringTemplateExpression(459,462): '"2"'
   null

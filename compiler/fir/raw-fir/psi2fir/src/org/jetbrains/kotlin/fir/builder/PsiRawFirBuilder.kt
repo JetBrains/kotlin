@@ -2787,18 +2787,28 @@ open class PsiRawFirBuilder(
                     else -> this
                 }
 
-            val firTypeBuilder = when (val unwrappedElement = typeElement.unwrapNullable()) {
+            // In incomplete code like `context(A)` or `context(A) B`, no function type follows the context parameter list, so the parser
+            // leaves the list directly under the type reference. Such a type is an error, and the incomplete function type is kept as its
+            // partially resolved type ref: the type element becomes its return type, so its source moves from the type reference to the
+            // type element.
+            val danglingContextParameterList = danglingContextParameterList
+            val typeElementSource = when {
+                danglingContextParameterList != null && typeElement != null -> typeElement.toFirSourceElement()
+                else -> source
+            }
+
+            val typeElementBuilder = when (val unwrappedElement = typeElement.unwrapNullable()) {
                 is KtDynamicType -> FirDynamicTypeRefBuilder().apply {
-                    this.source = source
+                    this.source = typeElementSource
                     isMarkedNullable = isNullable
                 }
                 is KtUserType -> {
                     val referenceExpression = unwrappedElement.referenceExpression
                     if (referenceExpression != null) {
-                        convertKtTypeElement(source, isNullable, unwrappedElement, referenceExpression)
+                        convertKtTypeElement(typeElementSource, isNullable, unwrappedElement, referenceExpression)
                     } else {
                         FirErrorTypeRefBuilder().apply {
-                            this.source = source
+                            this.source = typeElementSource
                             diagnostic = ConeSyntaxDiagnostic("Incomplete user type")
 
                             val qualifier = unwrappedElement.qualifier
@@ -2816,7 +2826,7 @@ open class PsiRawFirBuilder(
                 }
                 is KtFunctionType -> {
                     FirFunctionTypeRefBuilder().apply {
-                        this.source = source
+                        this.source = typeElementSource
                         isMarkedNullable = isNullable
                         isSuspend = allModifierLists.any { it.hasSuspendModifier() }
                         receiverTypeRef = unwrappedElement.receiverTypeReference?.toFirType()
@@ -2834,32 +2844,45 @@ open class PsiRawFirBuilder(
                             }
                         }
 
-                        val contextReceiverList = unwrappedElement.contextParameterList
-                        contextReceiverList?.contextReceivers()?.mapNotNullTo(contextParameterTypeRefs) {
-                            it.typeReference()?.toFirType()
-                        }
-                        contextReceiverList?.contextParameters?.mapNotNullTo(contextParameterTypeRefs) {
-                            it.typeReference?.toFirType()
-                        }
+                        unwrappedElement.contextParameterList?.convertContextParameterTypesTo(contextParameterTypeRefs)
                     }
                 }
                 is KtIntersectionType -> FirIntersectionTypeRefBuilder().apply {
-                    this.source = source
+                    this.source = typeElementSource
                     isMarkedNullable = isNullable
                     leftType = unwrappedElement.getLeftTypeRef().toFirOrErrorType()
                     rightType = unwrappedElement.getRightTypeRef().toFirOrErrorType()
                 }
                 is KtUnionType -> FirUnionTypeRefBuilder().apply {
-                    this.source = source
+                    this.source = typeElementSource
                     isMarkedNullable = isNullable
                     unwrappedElement.types.mapTo(types) { it.toFirOrErrorType() }
                 }
                 null -> FirErrorTypeRefBuilder().apply {
-                    this.source = source
+                    this.source = typeElementSource
                     diagnostic = ConeSyntaxDiagnostic("Incomplete code")
                 }
                 else -> errorWithAttachment("Unexpected type element: ${unwrappedElement::class.simpleName}") {
                     withPsiEntry("unwrappedElement", unwrappedElement)
+                }
+            }
+
+            val firTypeBuilder = when (danglingContextParameterList) {
+                null -> typeElementBuilder
+                else -> FirErrorTypeRefBuilder().apply {
+                    this.source = source
+                    diagnostic = ConeSyntaxDiagnostic("Incomplete code")
+                    partiallyResolvedTypeRef = buildFunctionTypeRef {
+                        this.source = source.fakeElement(KtFakeSourceElementKind.IncompleteFunctionType)
+                        isMarkedNullable = false
+                        isSuspend = allModifierLists.any { it.hasSuspendModifier() }
+                        receiverTypeRef = danglingFunctionTypeReceiver?.typeReference?.toFirType()
+                        returnTypeRef = when (typeElement) {
+                            null -> buildErrorTypeRef { diagnostic = ConeSyntaxDiagnostic("Incomplete code") }
+                            else -> typeElementBuilder.build() as FirTypeRef
+                        }
+                        danglingContextParameterList.convertContextParameterTypesTo(contextParameterTypeRefs)
+                    }
                 }
             }
 
@@ -2870,6 +2893,12 @@ open class PsiRawFirBuilder(
             }
 
             return firTypeBuilder.build() as FirTypeRef
+        }
+
+        @OptIn(KtExperimentalApi::class)
+        private fun KtContextParameterList.convertContextParameterTypesTo(destination: MutableList<FirTypeRef>) {
+            contextReceivers().mapNotNullTo(destination) { it.typeReference()?.toFirType() }
+            contextParameters.mapNotNullTo(destination) { it.typeReference?.toFirType() }
         }
 
         private fun convertKtTypeElement(

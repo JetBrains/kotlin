@@ -18,14 +18,14 @@ FILE: [ResolvedTo(BODY_RESOLVE)] danglingContextInFunctionType.kt
         public abstract [ResolvedTo(BODY_RESOLVE)] val ctx3: <ERROR TYPE REF: Incomplete code>
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Properties] get(): <ERROR TYPE REF: Incomplete code>
 
-        public abstract [ResolvedTo(BODY_RESOLVE)] val ctx4: R|kotlin/Int|
-            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Properties] get(): R|kotlin/Int|
+        public abstract [ResolvedTo(BODY_RESOLVE)] val ctx4: <ERROR TYPE REF: Incomplete code>
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Properties] get(): <ERROR TYPE REF: Incomplete code>
 
-        public abstract [ResolvedTo(BODY_RESOLVE)] val ctx4Nullable: R|kotlin/String?|
-            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Properties] get(): R|kotlin/String?|
+        public abstract [ResolvedTo(BODY_RESOLVE)] val ctx4Nullable: <ERROR TYPE REF: Incomplete code>
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Properties] get(): <ERROR TYPE REF: Incomplete code>
 
-        public abstract [ResolvedTo(BODY_RESOLVE)] val ctx5: <ERROR TYPE REF: Incomplete user type>
-            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Properties] get(): <ERROR TYPE REF: Incomplete user type>
+        public abstract [ResolvedTo(BODY_RESOLVE)] val ctx5: <ERROR TYPE REF: Incomplete code>
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Properties] get(): <ERROR TYPE REF: Incomplete code>
 
         public abstract [ResolvedTo(BODY_RESOLVE)] val ctx5Parenthesized: <ERROR TYPE REF: Incomplete code>
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Properties] get(): <ERROR TYPE REF: Incomplete code>
@@ -49,6 +49,6 @@ FILE: [ResolvedTo(BODY_RESOLVE)] danglingContextInFunctionType.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun returnType(): <ERROR TYPE REF: Incomplete code> {
         ^returnType R|kotlin/TODO|()
     }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun valueParameter([ResolvedTo(ANNOTATION_ARGUMENTS)] p: <ERROR TYPE REF: Incomplete user type>): R|kotlin/Unit| { LAZY_BLOCK }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <[ResolvedTo(ANNOTATION_ARGUMENTS)] T> intersection([ResolvedTo(ANNOTATION_ARGUMENTS)] p: R|T & Any|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun valueParameter([ResolvedTo(ANNOTATION_ARGUMENTS)] p: <ERROR TYPE REF: Incomplete code>): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <[ResolvedTo(ANNOTATION_ARGUMENTS)] T> intersection([ResolvedTo(ANNOTATION_ARGUMENTS)] p: <ERROR TYPE REF: Incomplete code>): R|kotlin/Unit| { LAZY_BLOCK }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun body(): R|kotlin/Unit| { LAZY_BLOCK }

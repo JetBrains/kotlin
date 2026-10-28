@@ -7,5 +7,5 @@ R|kotlin/String|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] danglingContextInFunctionTypeWithTypeElement.kt
-    public? final? [ResolvedTo(TYPES)] val p: R|kotlin/String|
-        public? [ResolvedTo(TYPES)] get(): R|kotlin/String|
+    public? final? [ResolvedTo(TYPES)] val p: <ERROR TYPE REF: Incomplete code>
+        public? [ResolvedTo(TYPES)] get(): <ERROR TYPE REF: Incomplete code>

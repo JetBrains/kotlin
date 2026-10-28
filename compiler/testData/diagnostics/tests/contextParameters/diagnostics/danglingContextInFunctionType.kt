@@ -20,11 +20,11 @@ interface Properties {
     val annotated: context(@Anno("1" + "2") Int)<!SYNTAX!><!>
     val typeArgument: List<context(Int)<!SYNTAX!><!>>
 
-    val unresolved: context(Unresolved)<!SYNTAX!><!>
-    val deprecated: context(Old)<!SYNTAX!><!>
+    val unresolved: context(<!UNRESOLVED_REFERENCE!>Unresolved<!>)<!SYNTAX!><!>
+    val deprecated: context(<!DEPRECATION!>Old<!>)<!SYNTAX!><!>
     val unresolvedReceiver: context(Int) <!UNRESOLVED_REFERENCE!>Unresolved<!>.<!SYNTAX!><!>
     val unresolvedReturn: context(Int) <!UNRESOLVED_REFERENCE!>Unresolved<!><!SYNTAX!><!>
-    val deprecatedReturn: context(Int) Old<!SYNTAX!><!>
+    val deprecatedReturn: context(Int) <!DEPRECATION!>Old<!><!SYNTAX!><!>
 }
 
 fun returnType(): context(Int)<!SYNTAX!><!> = TODO()
