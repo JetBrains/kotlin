@@ -318,8 +318,7 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
                 additionalSources = listOf("p/Gen.java"),
                 expectedFileName = null,
             )
-            // KT-87507: the Java Direct rejection is wrong and is fixed by the following commit.
-            assertEquals(if (javaDirect) ExitCode.COMPILATION_ERROR else ExitCode.OK, sourceExitCode)
+            assertEquals(ExitCode.OK, sourceExitCode)
 
             val rawSourceOptions = listOf(K2JVMCompilerArguments::javaDirect.cliArgument(javaDirect.toString()))
             val binaryResult = compileKotlin(
@@ -338,7 +337,7 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
                 additionalSources = listOf("p/Gen.java"),
             )
             assertEquals(ExitCode.COMPILATION_ERROR, binaryResult.second, binaryResult.first)
-            assertEquals(ExitCode.COMPILATION_ERROR, sourceResult.second, sourceResult.first)
+            assertEquals(binaryResult, sourceResult)
         }
     }
 
