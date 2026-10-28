@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.jvm.compiler
 
-import com.intellij.testFramework.BinaryLightVirtualFile
+import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileHandle
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassSignatureParser
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryJavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.ClassifierResolutionContext
@@ -15,6 +16,7 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import org.junit.jupiter.api.Test
+import java.nio.file.Path
 
 class CustomGeneratedClassesTest {
 
@@ -51,11 +53,20 @@ class CustomGeneratedClassesTest {
 
         // This is the actual test. Without the relevant fix, this call throws "No parameter with index 0-0" error
         BinaryJavaClass(
-            BinaryLightVirtualFile("$classFqn.class", classWriter.toByteArray()),
+            InMemoryClassFile(classFqn.substringAfterLast('/'), classWriter.toByteArray()),
             FqName(classFqn.replace('/', '.')),
             ClassifierResolutionContext { null },
             BinaryClassSignatureParser(),
             outerClass = null
         )
+    }
+
+    private class InMemoryClassFile(override val nameWithoutExtension: String, private val content: ByteArray) : BinaryClassFileHandle {
+        override val extension: String get() = "class"
+        override val rootId: JvmClasspathRootId get() = JvmClasspathRootId("/in-memory")
+        override val rootPath: Path? get() = null
+        override val pathForDiagnostics: String get() = "/in-memory/$nameWithoutExtension.$extension"
+        override fun readBytes(): ByteArray = content
+        override fun sibling(nameWithExtension: String): BinaryClassFileHandle? = null
     }
 }

@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.resolve.jvm.modules
 
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
+import org.jetbrains.kotlin.jvm.environment.asJvmClasspathRootId
 import org.jetbrains.kotlin.name.FqName
 
 interface JavaModule {
@@ -55,7 +57,16 @@ interface JavaModule {
      */
     fun exportsTo(packageFqName: FqName, moduleName: String): Boolean
 
-    data class Root(val file: VirtualFile, val isBinary: Boolean, val isBinarySignature: Boolean = false)
+    /**
+     * @param id The identity of this root in the classpath index: a binary class belongs to this module iff it was found in a root with
+     *  this id. Derived from [file] unless several roots share a path (the `ct.sym` roots of `-Xjdk-release`), see `JavaRoot.id`.
+     */
+    data class Root(
+        val file: VirtualFile,
+        val isBinary: Boolean,
+        val isBinarySignature: Boolean = false,
+        val id: JvmClasspathRootId = file.asJvmClasspathRootId(),
+    )
 
     class Automatic(override val name: String, override val moduleRoots: List<Root>) : JavaModule {
         override val moduleInfoFile: VirtualFile? get() = null

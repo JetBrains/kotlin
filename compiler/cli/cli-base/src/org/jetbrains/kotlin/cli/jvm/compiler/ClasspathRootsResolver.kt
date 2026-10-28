@@ -142,7 +142,8 @@ class ClasspathRootsResolver(
             addModularRoots(modules, result)
         } else {
             //TODO: see also `addJvmSdkRoots` usages, some refactoring is required with moving such logic into one place
-            result += JavaRoot(javaModuleFinder.nonModuleRoot.file, JavaRoot.RootType.BINARY_SIG)
+            val nonModuleRoot = javaModuleFinder.nonModuleRoot
+            result += JavaRoot(nonModuleRoot.file, JavaRoot.RootType.BINARY_SIG, id = nonModuleRoot.id)
         }
 
         return RootsAndModules(result, modules)

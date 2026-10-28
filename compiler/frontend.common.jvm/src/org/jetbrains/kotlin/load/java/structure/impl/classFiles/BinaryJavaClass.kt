@@ -25,7 +25,7 @@ import java.text.CharacterIterator
 import java.text.StringCharacterIterator
 
 class BinaryJavaClass(
-    override val virtualFile: VirtualFile,
+    val classFile: BinaryClassFileHandle,
     override val fqName: FqName,
     internal val context: ClassifierResolutionContext,
     private val signatureParser: BinaryClassSignatureParser,
@@ -33,6 +33,10 @@ class BinaryJavaClass(
     override val outerClass: JavaClass?,
     classContent: ByteArray? = null
 ) : ClassVisitor(ASM_API_VERSION_FOR_CLASS_READING), VirtualFileBoundJavaClass, BinaryJavaModifierListOwner, MutableJavaAnnotationOwner {
+    /** Only the PSI Java view and K1 reach the file of a binary class; `null` when [classFile] is not backed by one. */
+    override val virtualFile: VirtualFile?
+        get() = (classFile as? VirtualFileBackedClassFileHandle)?.virtualFile
+
     override val annotations: MutableCollection<JavaAnnotation> = SmartList()
 
     override lateinit var typeParameters: List<JavaTypeParameter>
@@ -115,13 +119,13 @@ class BinaryJavaClass(
 
     init {
         try {
-            ClassReader(classContent ?: virtualFile.contentsToByteArray()).accept(
+            ClassReader(classContent ?: classFile.readBytes()).accept(
                 this,
                 ClassReader.SKIP_CODE or ClassReader.SKIP_FRAMES
             )
         } catch (e: Throwable) {
             rethrowIntellijPlatformExceptionIfNeeded(e)
-            throw IllegalStateException("Could not read class: $virtualFile", e)
+            throw IllegalStateException("Could not read class: ${classFile.pathForDiagnostics}", e)
         }
     }
 
@@ -256,7 +260,7 @@ class BinaryJavaClass(
     fun findInnerClass(name: Name, classFileContent: ByteArray?): JavaClass? {
         val access = ownInnerClassNameToAccess[name] ?: return null
 
-        return virtualFile.parent.findChild("${virtualFile.nameWithoutExtension}$$name.${virtualFile.extension}")?.let {
+        return classFile.sibling("${classFile.nameWithoutExtension}$$name.${classFile.extension}")?.let {
             BinaryJavaClass(
                 it, fqName.child(name), context.copyForMember(), signatureParser, access, this,
                 classFileContent

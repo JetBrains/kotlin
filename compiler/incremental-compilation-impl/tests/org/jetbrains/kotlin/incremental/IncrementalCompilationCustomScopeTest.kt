@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.IncrementalCompilationComponentsWithCustomScope
 import org.jetbrains.kotlin.cli.jvm.compiler.prepareIncrementalCompilationContextAndLibrariesClasspath
 import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
+import org.jetbrains.kotlin.cli.jvm.index.IndexedClassFile
 import org.jetbrains.kotlin.cli.jvm.index.JavaFileExtensions
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndex
@@ -48,6 +49,7 @@ import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchSco
 import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
 import org.jetbrains.kotlin.jvm.environment.containsFile
+import org.jetbrains.kotlin.jvm.environment.isUnder
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
@@ -310,8 +312,14 @@ class IncrementalCompilationCustomScopeTest {
         override val indexedRoots: Sequence<JavaRoot> = emptySequence(),
     ) : JvmDependenciesIndex {
 
-        override fun findClassVirtualFiles(classId: ClassId, acceptedExtensions: JavaFileExtensions): Collection<VirtualFile> =
+        override fun findClassFiles(classId: ClassId, acceptedExtensions: JavaFileExtensions): Collection<IndexedClassFile> =
             classFiles.filter { it.nameWithoutExtension == classId.relativeClassName.asString() }
+                .map { IndexedClassFile(it, rootOf(it)) }
+
+        /** The listed root containing the file, or else the root of its file system, as `JvmDependenciesIndexImpl` would attribute it. */
+        private fun rootOf(file: VirtualFile): JavaRoot =
+            indexedRoots.firstOrNull { file.isUnder(it.id) }
+                ?: JavaRoot(generateSequence(file) { it.parent }.last(), JavaRoot.RootType.BINARY)
 
         override fun traverseClassVirtualFilesInPackage(
             packageFqName: FqName,
