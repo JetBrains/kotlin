@@ -12,7 +12,6 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileSystem
-import com.intellij.psi.PsiManager
 import com.intellij.util.io.URLUtil
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.KtPsiSourceFile
@@ -618,7 +617,6 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             configuration.jdkHome,
             configuration,
             javaFileManager,
-            project,
             jdkRelease
         )
 
@@ -628,14 +626,13 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         val contentRoots = configuration.contentRoots
 
         val classpathRootsResolver = ClasspathRootsResolver(
-            PsiManager.getInstance(project),
             configuration,
             additionalModules = configuration.additionalJavaModules,
             contentRootToVirtualFile = { contentRootToVirtualFile(it, localFileSystem, projectEnvironment.jarFileSystem, configuration) },
             javaModuleFinder,
             requireStdlibModule = !configuration.allowKotlinPackage,
             outputDirectory?.let { localFileSystem.findFileByPath(it) },
-            javaFileManager,
+            javaFileManager::findClassOnClasspath,
             jdkRelease,
             hasKotlinSources = contentRoots.any { it is KotlinSourceRoot },
         )
