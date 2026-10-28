@@ -10,7 +10,6 @@ package org.jetbrains.kotlin.code
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.intellij.lang.annotations.Language
-import org.jetbrains.kotlin.testFederation.NightlyTest
 import org.jetbrains.kotlin.testFederation.TEST_FEDERATION_AFFECTED_DOMAINS_ENV_KEY
 import org.jetbrains.kotlin.testFederation.TEST_FEDERATION_ENABLED_ENV_KEY
 import org.jetbrains.kotlin.testFederation.TEST_FEDERATION_MODE_ENV_KEY
@@ -30,7 +29,6 @@ import kotlin.test.fail
  * and `tests.shardByMethod` is passed through.
  * The detailed sharding behaviour is tested by the fast tests in `repo/test-runtime/src/test`.
  */
-@NightlyTest
 class TestShardingFunctionalTest {
 
     @Test

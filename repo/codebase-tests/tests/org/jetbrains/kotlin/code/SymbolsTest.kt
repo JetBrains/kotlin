@@ -10,10 +10,12 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.code.tools.FileMatcher
 import org.jetbrains.kotlin.repoTestFixtures.isGitIgnored
 import org.jetbrains.kotlin.repoTestFixtures.isTestFederationIgnored
+import org.jetbrains.kotlin.testFederation.MustRunAlways
 import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.test.fail
 
+@MustRunAlways
 class SymbolsTest {
     private companion object {
         const val MAX_ASCII_CODE_POINT = 0x7F
