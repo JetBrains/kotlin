@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.jvm.compiler
 
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.testFramework.BinaryLightVirtualFile
 import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
@@ -23,8 +24,13 @@ import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.forcesPreReleaseBinariesIfEnabled
 import org.jetbrains.kotlin.incremental.LocalFileKotlinClass
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.load.java.structure.JavaLiteralAnnotationArgument
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassSignatureParser
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryJavaClass
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.ClassifierResolutionContext
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.test.compileJavaFiles
 import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlinProject
@@ -288,6 +294,33 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
                 additionalSources = listOf("p/Outer.java"),
             )
         }
+    }
+
+    @Test
+    fun testBinaryJavaClassAnnotationNestedClassId() {
+        val library = copyJarFileWithoutEntry(
+            compileLibrary(
+                "library",
+                compileJava = { _, javaFiles, outputDir ->
+                    compileJavaFiles(javaFiles, listOf("-classpath", outputDir.path, "-d", outputDir.path))
+                },
+            ),
+            "p/Outer.class", $$"p/Outer$Ann.class"
+        )
+        val refClassBytes = JarFile(library).use { jar ->
+            jar.getInputStream(jar.getEntry("p/Ref.class")).readBytes()
+        }
+        val binaryClass = BinaryJavaClass(
+            BinaryLightVirtualFile("Ref.class", refClassBytes),
+            FqName("p.Ref"),
+            ClassifierResolutionContext { null },
+            BinaryClassSignatureParser(),
+            outerClass = null,
+        )
+        val annotation = binaryClass.annotations.single()
+        // KT-88892: the recorded nested boundary is ignored until the fix in the next commit.
+        assertEquals("p/Outer/Ann", annotation.classId?.asString())
+        assertEquals(42, (annotation.arguments.single() as JavaLiteralAnnotationArgument).value)
     }
 
     @Test
