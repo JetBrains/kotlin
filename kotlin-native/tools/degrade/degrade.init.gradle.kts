@@ -15,10 +15,6 @@ private class Degrade(val rootProject: Project) {
 
     private class TaskLog {
         val stdout = StringBuilder()
-
-        fun clear() {
-            stdout.clear()
-        }
     }
 
     private fun setupTaskLog(task: Task): TaskLog {
@@ -27,16 +23,22 @@ private class Degrade(val rootProject: Project) {
         return log
     }
 
+    private var taskToLog = emptyMap<Task, TaskLog>()
+
+    private fun setupTaskLogs(tasks: List<Task>) {
+        taskToLog = tasks.associateWith { setupTaskLog(it) }
+    }
+
     fun register() {
+        rootProject.gradle.taskGraph.whenReady {
+            setupTaskLogs(allTasks)
+        }
+
         rootProject.gradle.addListener(object : BuildAdapter(), TaskExecutionListener {
-            val taskToLog = mutableMapOf<Task, TaskLog>()
             val allScripts = mutableListOf<String>()
             val failedScripts = mutableListOf<String>()
 
-            @Synchronized
-            override fun beforeExecute(task: Task) {
-                taskToLog.getOrPut(task) { setupTaskLog(task) }.clear()
-            }
+            override fun beforeExecute(task: Task) {}
 
             @Synchronized
             override fun afterExecute(task: Task, state: TaskState) {
