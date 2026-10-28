@@ -610,6 +610,16 @@ This library must be one of the ones passed with '-library'.""",
         }
 
     @Argument(
+        value = "-Xverify-klib-facts",
+        description = "Verify that facts collected by the compiler match those generated from the klib (only for debugging purposes).",
+    )
+    var verifyKlibFacts: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xwrite-dependencies-of-produced-klib-to",
         valueDescription = "<path>",
         description = "Write file containing the paths of dependencies used during klib compilation to the provided path",

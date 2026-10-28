@@ -18,8 +18,11 @@ import org.jetbrains.kotlin.backend.konan.driver.PerformanceManagerContext
 import org.jetbrains.kotlin.backend.konan.driver.utilities.CExportFiles
 import org.jetbrains.kotlin.backend.konan.driver.utilities.createTempFiles
 import org.jetbrains.kotlin.backend.konan.facts.DebugFactsSerializer
+import org.jetbrains.kotlin.backend.konan.facts.FactVerificationResult
 import org.jetbrains.kotlin.backend.konan.facts.FactsCollector
+import org.jetbrains.kotlin.backend.konan.facts.checkKlibFacts
 import org.jetbrains.kotlin.backend.konan.facts.serializeTo
+import org.jetbrains.kotlin.backend.konan.util.reportCompilationErrorAndThrow
 import org.jetbrains.kotlin.backend.konan.ir.FunctionsWithoutBoundCheckGenerator
 import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStrategy
@@ -40,6 +43,7 @@ import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.config.nomain
 import org.jetbrains.kotlin.konan.config.verifyBitcode
+import org.jetbrains.kotlin.konan.config.filesToCache
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.library.isNativeStdlib
@@ -94,6 +98,9 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
 
         // Facts are defined by the IR as deserialized from the klibs, so that they can be computed without compiling (see `KlibFactsGenerator`).
         FactsCollector.collectDefsFrom(irModules, backendContext.factsTracker, config.bridgesPolicy)
+        if (config.verifyKlibFacts) {
+            verifyKlibFacts(config, irModules, backendContext)
+        }
 
         // This phase adds declarations to the shared built-ins, independently of the input module.
         backendEngine.runModuleWisePhase(createModulePhases(::FunctionsWithoutBoundCheckGenerator).first(), listOf(irModules.first()))
@@ -296,6 +303,26 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
     }
 }
 
+private fun verifyKlibFacts(
+        config: NativeSecondStageCompilationConfig,
+        irModules: List<IrModuleFragment>,
+        backendContext: NativeBackendContext
+) {
+    val filesToCache = config.configuration.filesToCache.toSet().takeIf { it.isNotEmpty() }
+    irModules.forEach { irModule ->
+        val kotlinLibrary = irModule.kotlinLibrary ?: return@forEach
+        val verificationResult = checkKlibFacts(
+                kotlinLibrary,
+                backendContext.factsTracker.definedFacts,
+                filesToCache,
+                config.threadsCount,
+                config.bridgesPolicy,
+        )
+        if (verificationResult is FactVerificationResult.Failure) {
+            config.configuration.reportCompilationErrorAndThrow(verificationResult.message)
+        }
+    }
+}
 
 internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBitcodeBackend(
         context: BitcodePostProcessingContext, dependencies: DependenciesTrackingResult,

@@ -81,6 +81,10 @@ object NativeConfigurationKeys {
     @JvmField
     val FILES_TO_CACHE = CompilerConfigurationKey.create<List<String>>("FILES_TO_CACHE")
 
+    // Debug-only: verify that facts collected by the compiler match those generated from the klib.
+    @JvmField
+    val VERIFY_KLIB_FACTS = CompilerConfigurationKey.create<Boolean>("VERIFY_KLIB_FACTS")
+
     @JvmField
     val MAKE_PER_FILE_CACHE = CompilerConfigurationKey.create<Boolean>("MAKE_PER_FILE_CACHE")
 
@@ -346,6 +350,10 @@ var CompilerConfiguration.cachedLibraries: Map<String, String>
 var CompilerConfiguration.filesToCache: List<String>
     get() = getList(NativeConfigurationKeys.FILES_TO_CACHE)
     set(value) { put(NativeConfigurationKeys.FILES_TO_CACHE, value) }
+
+var CompilerConfiguration.verifyKlibFacts: Boolean
+    get() = getBoolean(NativeConfigurationKeys.VERIFY_KLIB_FACTS)
+    set(value) { put(NativeConfigurationKeys.VERIFY_KLIB_FACTS, value) }
 
 var CompilerConfiguration.makePerFileCache: Boolean
     get() = getBoolean(NativeConfigurationKeys.MAKE_PER_FILE_CACHE)

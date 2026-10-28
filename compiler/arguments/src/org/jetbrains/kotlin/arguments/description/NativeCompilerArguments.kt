@@ -404,6 +404,17 @@ By default caches will be placed into the kotlin-native system cache directory."
     }
 
     compilerArgument {
+        name = "Xverify-klib-facts"
+        compilerName = "verifyKlibFacts"
+        description = "Verify that facts collected by the compiler match those generated from the klib (only for debugging purposes).".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_5_0,
+        )
+    }
+
+    compilerArgument {
         name = "Xdump-facts-to"
         compilerName = "dumpFactsTo"
         description =

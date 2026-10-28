@@ -322,6 +322,10 @@ class NativeSecondStageCompilationConfig(
         configuration.dumpFactsTo
     }
 
+    val verifyKlibFacts: Boolean by lazy {
+        configuration.verifyKlibFacts
+    }
+
     val enableSafepointSignposts: Boolean = configuration.get(BinaryOptions.enableSafepointSignposts)?.also {
         if (it && !target.supportsSignposts) {
             configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING, "Signposts are not available on $target. The setting will have no effect.")

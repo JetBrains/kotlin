@@ -67,7 +67,7 @@ internal class NativeBackendContext(
     override val irFactory: IrFactory = IrFactoryImpl
 
     val factsTracker: FactsTracker =
-            if (config.dumpFactsTo != null) FactsTrackerImpl() else NoopFactsTracker
+            if (config.dumpFactsTo != null || config.verifyKlibFacts) FactsTrackerImpl() else NoopFactsTracker
 
     override val optimizeLoopsOverUnsignedArrays = true
 
