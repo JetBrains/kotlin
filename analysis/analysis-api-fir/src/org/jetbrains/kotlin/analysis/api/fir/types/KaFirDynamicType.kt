@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analysis.api.fir.utils.createTypePointer
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KaDynamicType
-import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.analysis.api.types.KaTypePointer
 import org.jetbrains.kotlin.analysis.api.types.KaUsualClassType
 import org.jetbrains.kotlin.fir.types.ConeDynamicType
@@ -28,14 +27,6 @@ internal class KaFirDynamicType(
         get() = withValidityAssertion {
             KaFirAnnotationListForType.create(coneType, builder)
         }
-
-    @Deprecated(
-        "Use `isMarkedNullable`, `isNullable` or `hasFlexibleNullability` instead. See KDocs for the migration guide",
-        replaceWith = ReplaceWith("this.isMarkedNullable"),
-        level = DeprecationLevel.HIDDEN,
-    )
-    @Suppress("DEPRECATION_ERROR")
-    override val nullability: KaTypeNullability get() = withValidityAssertion { KaTypeNullability.UNKNOWN }
 
     override val abbreviation: KaUsualClassType?
         get() = withValidityAssertion { null }

@@ -235,10 +235,8 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaC
 	public abstract fun argument (Lorg/jetbrains/kotlin/analysis/api/types/KaTypeProjection;)V
 	public static synthetic fun argument$default (Lorg/jetbrains/kotlin/analysis/api/components/KaClassTypeBuilder;Lorg/jetbrains/kotlin/analysis/api/types/KaType;Lorg/jetbrains/kotlin/types/Variance;ILjava/lang/Object;)V
 	public abstract fun getArguments ()Ljava/util/List;
-	public abstract synthetic fun getNullability ()Lorg/jetbrains/kotlin/analysis/api/types/KaTypeNullability;
 	public abstract fun isMarkedNullable ()Z
 	public abstract fun setMarkedNullable (Z)V
-	public abstract synthetic fun setNullability (Lorg/jetbrains/kotlin/analysis/api/types/KaTypeNullability;)V
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaDataFlowProvider : org/jetbrains/kotlin/analysis/api/components/KaSessionComponent {
@@ -516,10 +514,8 @@ public final class org/jetbrains/kotlin/analysis/api/components/KaTypeInformatio
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaTypeParameterTypeBuilder : org/jetbrains/kotlin/analysis/api/components/KaTypeBuilder {
-	public abstract synthetic fun getNullability ()Lorg/jetbrains/kotlin/analysis/api/types/KaTypeNullability;
 	public abstract fun isMarkedNullable ()Z
 	public abstract fun setMarkedNullable (Z)V
-	public abstract synthetic fun setNullability (Lorg/jetbrains/kotlin/analysis/api/types/KaTypeNullability;)V
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaTypeProvider : org/jetbrains/kotlin/analysis/api/components/KaSessionComponent {
@@ -539,7 +535,6 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaT
 	public abstract fun hasCommonSubtypeWith (Lorg/jetbrains/kotlin/analysis/api/types/KaType;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public fun lowerBoundIfFlexible (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public fun upperBoundIfFlexible (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
-	public synthetic fun withNullability (Lorg/jetbrains/kotlin/analysis/api/types/KaType;Lorg/jetbrains/kotlin/analysis/api/types/KaTypeNullability;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public abstract fun withNullability (Lorg/jetbrains/kotlin/analysis/api/types/KaType;Z)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 }
 
@@ -1522,11 +1517,6 @@ public abstract class org/jetbrains/kotlin/analysis/api/symbols/pointers/KaSymbo
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class org/jetbrains/kotlin/analysis/api/symbols/pointers/KaSymbolPointerKt {
-	public static final synthetic fun symbolPointer (Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/analysis/api/symbols/pointers/KaSymbolPointer;
-	public static final synthetic fun symbolPointerDelegator (Lorg/jetbrains/kotlin/analysis/api/symbols/pointers/KaSymbolPointer;Lkotlin/jvm/functions/Function2;)Lorg/jetbrains/kotlin/analysis/api/symbols/pointers/KaSymbolPointer;
-}
-
 public final class org/jetbrains/kotlin/analysis/api/symbols/pointers/SymbolPointersKt {
 	public static final fun restoreSymbol (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/symbols/pointers/KaSymbolPointer;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbol;
 }
@@ -1582,7 +1572,6 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/types/KaClassT
 
 public abstract class org/jetbrains/kotlin/analysis/api/types/KaDefinitelyNotNullType : org/jetbrains/kotlin/analysis/api/types/KaType {
 	public fun <init> ()V
-	public final synthetic fun getNullability ()Lorg/jetbrains/kotlin/analysis/api/types/KaTypeNullability;
 	public abstract fun getOriginal ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 }
 
@@ -1664,7 +1653,6 @@ public final class org/jetbrains/kotlin/analysis/api/types/KaSubtypingErrorTypeP
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/types/KaType : org/jetbrains/kotlin/analysis/api/annotations/KaAnnotated, org/jetbrains/kotlin/analysis/api/lifetime/KaLifetimeOwner {
 	public abstract fun getAbbreviation ()Lorg/jetbrains/kotlin/analysis/api/types/KaUsualClassType;
-	public abstract synthetic fun getNullability ()Lorg/jetbrains/kotlin/analysis/api/types/KaTypeNullability;
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/types/KaTypeArgumentWithVariance : org/jetbrains/kotlin/analysis/api/types/KaTypeProjection {
@@ -1686,21 +1674,6 @@ public final class org/jetbrains/kotlin/analysis/api/types/KaTypeMappingMode : j
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/analysis/api/types/KaTypeMappingMode;
 	public static fun values ()[Lorg/jetbrains/kotlin/analysis/api/types/KaTypeMappingMode;
-}
-
-public final class org/jetbrains/kotlin/analysis/api/types/KaTypeNullability : java/lang/Enum {
-	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/types/KaTypeNullability$Companion;
-	public static final field NON_NULLABLE Lorg/jetbrains/kotlin/analysis/api/types/KaTypeNullability;
-	public static final field NULLABLE Lorg/jetbrains/kotlin/analysis/api/types/KaTypeNullability;
-	public static final field UNKNOWN Lorg/jetbrains/kotlin/analysis/api/types/KaTypeNullability;
-	public static fun getEntries ()Lkotlin/enums/EnumEntries;
-	public final fun isNullable ()Z
-	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/analysis/api/types/KaTypeNullability;
-	public static fun values ()[Lorg/jetbrains/kotlin/analysis/api/types/KaTypeNullability;
-}
-
-public final class org/jetbrains/kotlin/analysis/api/types/KaTypeNullability$Companion {
-	public final synthetic fun create (Z)Lorg/jetbrains/kotlin/analysis/api/types/KaTypeNullability;
 }
 
 public abstract class org/jetbrains/kotlin/analysis/api/types/KaTypeParameterType : org/jetbrains/kotlin/analysis/api/types/KaType {
