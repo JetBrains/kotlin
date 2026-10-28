@@ -99,7 +99,7 @@ internal class LLFirLazyDeclarationResolver : FirLazyDeclarationResolver() {
         visited: MutableSet<FirTypeParameterSymbol>,
     ) {
         when (type) {
-            is ConeClassLikeType -> type.fullyExpandedType(useSiteSession).lookupTag.toClassSymbol(useSiteSession)?.fir
+            is ConeClassLikeType -> type.fullyExpandedType(useSiteSession).toClassSymbol(useSiteSession)?.fir
                 ?.lazyResolveToPhaseWithCallableMembersInSupertypes(useSiteSession, toPhase)
             is ConeTypeParameterType ->
                 lazyResolveBoundsToPhaseWithCallableMembersInSupertypes(type.lookupTag.symbol, useSiteSession, toPhase, visited)

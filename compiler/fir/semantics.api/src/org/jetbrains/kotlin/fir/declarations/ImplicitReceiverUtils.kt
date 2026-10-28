@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
 import org.jetbrains.kotlin.fir.scopes.impl.wrapNestedClassifierScopeWithSubstitutionForSuperType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -39,7 +40,7 @@ fun SessionAndScopeSessionHolder.collectTowerDataElementsForClass(owner: FirClas
 
     val superClassesStaticsAndCompanionReceivers = mutableListOf<FirTowerDataElement>()
     for (superType in lookupSuperTypes(owner, lookupInterfaces = false, deep = true, useSiteSession = session, substituteTypes = true)) {
-        val expandedType = superType.fullyExpandedType()
+        val expandedType = superType.fullyExpandedType() as? ConeClassLikeType ?: continue
         val superClass = expandedType.lookupTag.toRegularClassSymbol()?.fir ?: continue
 
         superClass.staticScope(this)

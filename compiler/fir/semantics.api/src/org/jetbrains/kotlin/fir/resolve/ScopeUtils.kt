@@ -161,6 +161,8 @@ private fun ConeClassLikeType.classScope(
     memberOwnerClass: FirClassSymbol<*>?,
 ): FirTypeScope? {
     val fullyExpandedType = fullyExpandedType(useSiteSession)
+    // A type alias may expand to a union type
+    if (fullyExpandedType !is ConeClassLikeType) return fullyExpandedType.scope(useSiteSession, scopeSession, requiredMembersPhase)
     val fir = fullyExpandedType.lookupTag.toClassSymbol(useSiteSession)?.fir ?: return null
     val substitutor = when {
         attributes.contains(CompilerConeAttributes.RawType) -> ConeRawScopeSubstitutor(useSiteSession)

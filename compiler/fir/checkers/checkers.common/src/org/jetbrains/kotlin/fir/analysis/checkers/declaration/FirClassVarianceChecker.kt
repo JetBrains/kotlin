@@ -135,10 +135,9 @@ object FirClassVarianceChecker : FirClassChecker(MppCheckerKind.Common) {
         source: KtSourceElement? = null,
         isInAbbreviation: Boolean = false,
     ) {
-        when (type) {
+        when (val fullyExpandedType = type.fullyExpandedType()) {
             is ConeTypeParameterType -> {
-                val fullyExpandedType = type.fullyExpandedType()
-                val typeParameterSymbol = type.lookupTag.typeParameterSymbol
+                val typeParameterSymbol = fullyExpandedType.lookupTag.typeParameterSymbol
                 val resultSource = source ?: typeRef?.source
                 if (resultSource != null &&
                     !typeParameterSymbol.variance.allowsPosition(variance) &&
@@ -157,7 +156,6 @@ object FirClassVarianceChecker : FirClassChecker(MppCheckerKind.Common) {
                 }
             }
             is ConeClassLikeType -> {
-                val fullyExpandedType = type.fullyExpandedType()
                 val classSymbol = fullyExpandedType.lookupTag.toSymbol()
                 if (classSymbol is FirClassSymbol<*>) {
                     val typeRefAndSourcesForArguments = extractArgumentsTypeRefAndSource(typeRef)
@@ -185,7 +183,7 @@ object FirClassVarianceChecker : FirClassChecker(MppCheckerKind.Common) {
 
                             checkVarianceConflict(
                                 typeArgumentType, newVariance, subTypeRefAndSource?.typeRef, containingType,
-                                subTypeRefAndSource?.typeRef?.source ?: source, type.isTypealiasExpansion
+                                subTypeRefAndSource?.typeRef?.source ?: source, fullyExpandedType.isTypealiasExpansion
                             )
                         }
                     }
@@ -193,22 +191,22 @@ object FirClassVarianceChecker : FirClassChecker(MppCheckerKind.Common) {
             }
             is ConeDefinitelyNotNullType -> {
                 if (LanguageFeature.ReportTypeVarianceConflictsInDnnAndFlexible.isEnabled()) {
-                    checkVarianceConflict(type.original, variance, typeRef, containingType, source, isInAbbreviation)
+                    checkVarianceConflict(fullyExpandedType.original, variance, typeRef, containingType, source, isInAbbreviation)
                 }
             }
             is ConeFlexibleType -> {
                 if (LanguageFeature.ReportTypeVarianceConflictsInDnnAndFlexible.isEnabled()) {
-                    checkVarianceConflict(type.lowerBound, variance, typeRef, containingType, source, isInAbbreviation)
+                    checkVarianceConflict(fullyExpandedType.lowerBound, variance, typeRef, containingType, source, isInAbbreviation)
                 }
             }
             is ConeIntersectionType -> {
-                type.intersectedTypes.forEach {
+                fullyExpandedType.intersectedTypes.forEach {
                     checkVarianceConflict(it, variance, typeRef, containingType, source, isInAbbreviation)
                 }
             }
             is ConeUnionType -> {
-                checkVarianceConflict(type.primaryType, variance, typeRef, containingType, source, isInAbbreviation)
-                type.richErrorTypes.forEach {
+                checkVarianceConflict(fullyExpandedType.primaryType, variance, typeRef, containingType, source, isInAbbreviation)
+                fullyExpandedType.richErrorTypes.forEach {
                     checkVarianceConflict(it, variance, typeRef, containingType, source, isInAbbreviation)
                 }
             }

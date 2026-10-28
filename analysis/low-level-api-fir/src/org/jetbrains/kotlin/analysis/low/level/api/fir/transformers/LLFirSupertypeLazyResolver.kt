@@ -117,7 +117,9 @@ private class LLFirSuperTypeTargetResolver(
                     }
                 },
                 superTypeUpdater = { superTypeRefs ->
-                    val expandedTypeRefs = superTypeRefs.map { supertypeComputationSession.expandTypealiasInPlace(it, target.llFirSession) }
+                    val expandedTypeRefs = superTypeRefs.map {
+                        supertypeComputationSession.expandTypealiasInPlace(it, target.llFirSession, isClassSupertype = true)
+                    }
                     target.replaceSuperTypeRefs(expandedTypeRefs)
                     resolveTargetSession.platformSupertypeUpdater?.updateSupertypesIfNeeded(target, resolveTargetScopeSession)
                 },
@@ -127,7 +129,11 @@ private class LLFirSuperTypeTargetResolver(
                 superTypeRefsForTransformation = { target.expandedTypeRef },
                 resolver = { supertypeResolver.resolveTypeAliasSupertype(target, it, resolveRecursively = false) },
                 superTypeUpdater = { superTypeRefs ->
-                    val expandedTypeRef = supertypeComputationSession.expandTypealiasInPlace(superTypeRefs.single(), target.llFirSession)
+                    val expandedTypeRef = supertypeComputationSession.expandTypealiasInPlace(
+                        superTypeRefs.single(),
+                        target.llFirSession,
+                        isClassSupertype = false,
+                    )
                     target.replaceExpandedTypeRef(expandedTypeRef)
                 },
             )
@@ -182,7 +188,7 @@ private class LLFirSuperTypeTargetResolver(
         }
 
         // 3. Find loops
-        val loopedSuperTypeRefs = supertypeComputationSession.findLoopFor(declaration)
+        val loopedSuperTypeRefs = supertypeComputationSession.findLoopFor(declaration, supertypeResolver)
 
         // 4. Get error type refs or already resolved
         val resultedTypeRefs = loopedSuperTypeRefs ?: resolvedSuperTypeRefs
@@ -229,6 +235,18 @@ private class LLFirSuperTypeTargetResolver(
             // to declarations via its type arguments which need to be collected and have a containing file.
             // For example, a `Function1` could point to a type alias.
             type.typeArguments.forEach { it.type?.let(::crawlSupertype) }
+        }
+
+        if (type is ConeUnionType) {
+            // A type alias may expand to a union type, whose components may point to further type aliases
+            crawlSupertype(type.primaryType)
+            type.richErrorTypes.forEach(::crawlSupertype)
+        }
+
+        if (type is ConeErrorType) {
+            // An error type may wrap a malformed union type, e.g., with a non-error component in the wrong position,
+            // whose components may point to type aliases which were resolved on demand
+            type.delegatedType?.let(::crawlSupertype)
         }
     }
 
@@ -331,7 +349,7 @@ private open class LLFirSupertypeComputationSession(
      * @param declaration declaration to be checked for loops
      * @return list of resolved super type refs if at least one of them is [FirErrorTypeRef] due to cycle hierarchy
      */
-    fun findLoopFor(declaration: FirClassLikeDeclaration): List<FirResolvedTypeRef>? {
+    fun findLoopFor(declaration: FirClassLikeDeclaration, supertypeResolver: FirSupertypeResolverVisitor): List<FirResolvedTypeRef>? {
         breakLoopFor(
             declaration = declaration,
             // Only loops from the declaration site point of view should be processed
@@ -341,6 +359,7 @@ private open class LLFirSupertypeComputationSession(
             pathOrderedSet = pathOrderedSet,
             // LL resolver only works for non-local declarations
             localClassesNavigationInfo = null,
+            supertypeResolver,
         )
 
         visited.clear()
@@ -375,7 +394,7 @@ private open class LLFirSupertypeComputationSession(
      * interface NonLoopedInterface : C
      * ```
      */
-    override fun reportLoopErrorRefs(classLikeDeclaration: FirClassLikeDeclaration, supertypeRefs: List<FirResolvedTypeRef>) {
+    override fun updateSuperType(classLikeDeclaration: FirClassLikeDeclaration, supertypeRefs: List<FirResolvedTypeRef>) {
         updatedTypesForDeclarationsWithLoop.merge(classLikeDeclaration, supertypeRefs) { oldRefs, newRefs ->
             buildList(oldRefs.size) {
                 for ([old, new] in oldRefs.zip(newRefs)) {

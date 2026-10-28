@@ -1,0 +1,237 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] typeAliasToUnionForwardReference.kt
+    public final? error [ResolvedTo(RAW_FIR)] class E1 : R|kotlin/RichError| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E1] constructor(): R|E1| {
+            LAZY_super<R|kotlin/RichError|>
+        }
+
+    }
+    public final? error [ResolvedTo(RAW_FIR)] class E2 : R|kotlin/RichError| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E2] constructor(): R|E2| {
+            LAZY_super<R|kotlin/RichError|>
+        }
+
+    }
+    public final [ResolvedTo(RAW_FIR)] typealias ResolveMe = TA | E2
+    public final [ResolvedTo(RAW_FIR)] typealias TA = E1
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] typeAliasToUnionForwardReference.kt
+    public final? error [ResolvedTo(RAW_FIR)] class E1 : R|kotlin/RichError| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E1] constructor(): R|E1| {
+            LAZY_super<R|kotlin/RichError|>
+        }
+
+    }
+    public final? error [ResolvedTo(RAW_FIR)] class E2 : R|kotlin/RichError| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E2] constructor(): R|E2| {
+            LAZY_super<R|kotlin/RichError|>
+        }
+
+    }
+    public final [ResolvedTo(RAW_FIR)] typealias ResolveMe = TA | E2
+    public final [ResolvedTo(RAW_FIR)] typealias TA = E1
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] typeAliasToUnionForwardReference.kt
+    public final? error [ResolvedTo(RAW_FIR)] class E1 : R|kotlin/RichError| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E1] constructor(): R|E1| {
+            LAZY_super<R|kotlin/RichError|>
+        }
+
+    }
+    public final? error [ResolvedTo(RAW_FIR)] class E2 : R|kotlin/RichError| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E2] constructor(): R|E2| {
+            LAZY_super<R|kotlin/RichError|>
+        }
+
+    }
+    public final [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] typealias ResolveMe = TA | E2
+    public final [ResolvedTo(RAW_FIR)] typealias TA = E1
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] typeAliasToUnionForwardReference.kt
+    public final? error [ResolvedTo(RAW_FIR)] class E1 : R|kotlin/RichError| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E1] constructor(): R|E1| {
+            LAZY_super<R|kotlin/RichError|>
+        }
+
+    }
+    public final? error [ResolvedTo(RAW_FIR)] class E2 : R|kotlin/RichError| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E2] constructor(): R|E2| {
+            LAZY_super<R|kotlin/RichError|>
+        }
+
+    }
+    public final [ResolvedTo(COMPANION_GENERATION)] typealias ResolveMe = TA | E2
+    public final [ResolvedTo(RAW_FIR)] typealias TA = E1
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] typeAliasToUnionForwardReference.kt
+    public final? error [ResolvedTo(SUPER_TYPES)] class E1 : R|kotlin/RichError| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E1] constructor(): R|E1| {
+            LAZY_super<R|kotlin/RichError|>
+        }
+
+    }
+    public final? error [ResolvedTo(SUPER_TYPES)] class E2 : R|kotlin/RichError| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E2] constructor(): R|E2| {
+            LAZY_super<R|kotlin/RichError|>
+        }
+
+    }
+    public final [ResolvedTo(SUPER_TYPES)] typealias ResolveMe = R|union(errors={TA=} E1 | E2)|
+    public final [ResolvedTo(SUPER_TYPES)] typealias TA = R|E1|
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] typeAliasToUnionForwardReference.kt
+    public final? error [ResolvedTo(SUPER_TYPES)] class E1 : R|kotlin/RichError| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E1] constructor(): R|E1| {
+            LAZY_super<R|kotlin/RichError|>
+        }
+
+    }
+    public final? error [ResolvedTo(SUPER_TYPES)] class E2 : R|kotlin/RichError| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E2] constructor(): R|E2| {
+            LAZY_super<R|kotlin/RichError|>
+        }
+
+    }
+    public final [ResolvedTo(TYPES)] typealias ResolveMe = R|union(errors={TA=} E1 | E2)|
+    public final [ResolvedTo(SUPER_TYPES)] typealias TA = R|E1|
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] typeAliasToUnionForwardReference.kt
+    public final? error [ResolvedTo(SUPER_TYPES)] class E1 : R|kotlin/RichError| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E1] constructor(): R|E1| {
+            LAZY_super<R|kotlin/RichError|>
+        }
+
+    }
+    public final? error [ResolvedTo(SUPER_TYPES)] class E2 : R|kotlin/RichError| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E2] constructor(): R|E2| {
+            LAZY_super<R|kotlin/RichError|>
+        }
+
+    }
+    public final [ResolvedTo(STATUS)] typealias ResolveMe = R|union(errors={TA=} E1 | E2)|
+    public final [ResolvedTo(SUPER_TYPES)] typealias TA = R|E1|
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] typeAliasToUnionForwardReference.kt
+    public final? error [ResolvedTo(SUPER_TYPES)] class E1 : R|kotlin/RichError| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E1] constructor(): R|E1| {
+            LAZY_super<R|kotlin/RichError|>
+        }
+
+    }
+    public final? error [ResolvedTo(SUPER_TYPES)] class E2 : R|kotlin/RichError| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E2] constructor(): R|E2| {
+            LAZY_super<R|kotlin/RichError|>
+        }
+
+    }
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] typealias ResolveMe = R|union(errors={TA=} E1 | E2)|
+    public final [ResolvedTo(SUPER_TYPES)] typealias TA = R|E1|
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] typeAliasToUnionForwardReference.kt
+    public final? error [ResolvedTo(SUPER_TYPES)] class E1 : R|kotlin/RichError| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E1] constructor(): R|E1| {
+            LAZY_super<R|kotlin/RichError|>
+        }
+
+    }
+    public final? error [ResolvedTo(SUPER_TYPES)] class E2 : R|kotlin/RichError| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E2] constructor(): R|E2| {
+            LAZY_super<R|kotlin/RichError|>
+        }
+
+    }
+    public final [ResolvedTo(CONTRACTS)] typealias ResolveMe = R|union(errors={TA=} E1 | E2)|
+    public final [ResolvedTo(SUPER_TYPES)] typealias TA = R|E1|
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] typeAliasToUnionForwardReference.kt
+    public final? error [ResolvedTo(SUPER_TYPES)] class E1 : R|kotlin/RichError| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E1] constructor(): R|E1| {
+            LAZY_super<R|kotlin/RichError|>
+        }
+
+    }
+    public final? error [ResolvedTo(SUPER_TYPES)] class E2 : R|kotlin/RichError| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E2] constructor(): R|E2| {
+            LAZY_super<R|kotlin/RichError|>
+        }
+
+    }
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] typealias ResolveMe = R|union(errors={TA=} E1 | E2)|
+    public final [ResolvedTo(SUPER_TYPES)] typealias TA = R|E1|
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] typeAliasToUnionForwardReference.kt
+    public final? error [ResolvedTo(SUPER_TYPES)] class E1 : R|kotlin/RichError| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E1] constructor(): R|E1| {
+            LAZY_super<R|kotlin/RichError|>
+        }
+
+    }
+    public final? error [ResolvedTo(SUPER_TYPES)] class E2 : R|kotlin/RichError| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E2] constructor(): R|E2| {
+            LAZY_super<R|kotlin/RichError|>
+        }
+
+    }
+    public final [ResolvedTo(CONSTANT_EVALUATION)] typealias ResolveMe = R|union(errors={TA=} E1 | E2)|
+    public final [ResolvedTo(SUPER_TYPES)] typealias TA = R|E1|
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] typeAliasToUnionForwardReference.kt
+    public final? error [ResolvedTo(SUPER_TYPES)] class E1 : R|kotlin/RichError| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E1] constructor(): R|E1| {
+            LAZY_super<R|kotlin/RichError|>
+        }
+
+    }
+    public final? error [ResolvedTo(SUPER_TYPES)] class E2 : R|kotlin/RichError| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E2] constructor(): R|E2| {
+            LAZY_super<R|kotlin/RichError|>
+        }
+
+    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] typealias ResolveMe = R|union(errors={TA=} E1 | E2)|
+    public final [ResolvedTo(SUPER_TYPES)] typealias TA = R|E1|
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] typeAliasToUnionForwardReference.kt
+    public final? error [ResolvedTo(SUPER_TYPES)] class E1 : R|kotlin/RichError| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E1] constructor(): R|E1| {
+            LAZY_super<R|kotlin/RichError|>
+        }
+
+    }
+    public final? error [ResolvedTo(SUPER_TYPES)] class E2 : R|kotlin/RichError| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E2] constructor(): R|E2| {
+            LAZY_super<R|kotlin/RichError|>
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] typealias ResolveMe = R|union(errors={TA=} E1 | E2)|
+    public final [ResolvedTo(SUPER_TYPES)] typealias TA = R|E1|
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] typeAliasToUnionForwardReference.kt
+    public final error [ResolvedTo(BODY_RESOLVE)] class E1 : R|kotlin/RichError| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=E1] constructor(): R|E1| {
+            super<R|kotlin/RichError|>()
+        }
+
+    }
+    public final error [ResolvedTo(BODY_RESOLVE)] class E2 : R|kotlin/RichError| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=E2] constructor(): R|E2| {
+            super<R|kotlin/RichError|>()
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] typealias ResolveMe = R|union(errors={TA=} E1 | E2)|
+    public final [ResolvedTo(BODY_RESOLVE)] typealias TA = R|E1|

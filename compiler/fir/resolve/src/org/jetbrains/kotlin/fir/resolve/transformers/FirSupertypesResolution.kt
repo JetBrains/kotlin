@@ -66,7 +66,7 @@ class FirSupertypeResolverTransformer(
         checkSessionConsistency(file)
         return withFileAnalysisExceptionWrapping(file) {
             file.accept(supertypeResolverVisitor, null)
-            supertypeComputationSession.breakLoops(session, supertypeResolverVisitor.localClassesNavigationInfo)
+            supertypeComputationSession.breakLoops(session, supertypeResolverVisitor.localClassesNavigationInfo, supertypeResolverVisitor)
             file.transform(applySupertypesTransformer, null)
         }
     }
@@ -91,7 +91,7 @@ fun <F : FirClassLikeDeclaration> F.runSupertypeResolvePhaseForLocalClass(
     )
 
     this.accept(supertypeResolverVisitor, null)
-    supertypeComputationSession.breakLoops(session, localClassesNavigationInfo)
+    supertypeComputationSession.breakLoops(session, localClassesNavigationInfo, supertypeResolverVisitor)
 
     val applySupertypesTransformer = FirApplySupertypesTransformer(supertypeComputationSession, session, scopeSession)
     return this.transform<F, Nothing?>(applySupertypesTransformer, null)
@@ -137,7 +137,7 @@ private class FirApplySupertypesTransformer(
             firClass.superTypeRefs.any { it !is FirResolvedTypeRef || it is FirImplicitBuiltinTypeRef }
         ) {
             val supertypeRefs = resolvedSupertypeRefs
-                .map { supertypeComputationSession.expandTypealiasInPlace(it, session) }
+                .map { supertypeComputationSession.expandTypealiasInPlace(it, session, isClassSupertype = true) }
             firClass.replaceSuperTypeRefs(supertypeRefs)
         }
 
@@ -156,7 +156,11 @@ private class FirApplySupertypesTransformer(
             return typeAlias
         }
         val resolvedTypeRef = supertypeComputationSession.getResolvedExpandedTypeRef(typeAlias)
-        val resolvedExpandedTypeRef = supertypeComputationSession.expandTypealiasInPlace(resolvedTypeRef, session)
+        val resolvedExpandedTypeRef = supertypeComputationSession.expandTypealiasInPlace(
+            resolvedTypeRef,
+            session,
+            isClassSupertype = false,
+        )
         typeAlias.replaceExpandedTypeRef(resolvedExpandedTypeRef)
         return typeAlias
     }
@@ -370,6 +374,18 @@ open class FirSupertypeResolverVisitor(
         }
 
         supertypeComputationSession.startComputingSupertypes(classLikeDeclaration)
+
+        val resolvedTypesRefs = useSpecificTypeResolverOn(classLikeDeclaration, resolveSuperTypeRefs)
+
+        supertypeComputationSession.storeSupertypes(classLikeDeclaration, resolvedTypesRefs)
+        return resolvedTypesRefs
+    }
+
+    @OptIn(PrivateForInline::class)
+    internal fun <T> useSpecificTypeResolverOn(
+        classLikeDeclaration: FirClassLikeDeclaration,
+        resolveSuperTypeRefs: (FirSpecificTypeResolverTransformer, TypeResolutionConfiguration) -> T,
+    ): T {
         val scopes = prepareScopes(classLikeDeclaration, forStaticNestedClass = false)
 
         val transformer = FirSpecificTypeResolverTransformer(
@@ -380,18 +396,13 @@ open class FirSupertypeResolverVisitor(
         )
 
         val newUseSiteFile =
-            if (classLikeDeclaration.isLocal) @OptIn(PrivateForInline::class) useSiteFile
+            if (classLikeDeclaration.isLocal) useSiteFile
             else session.firProvider.getFirClassifierContainerFileIfAny(classLikeDeclaration.symbol)
 
-        @OptIn(PrivateForInline::class)
-        val resolvedTypesRefs =
-            resolveSuperTypeRefs(
-                transformer,
-                TypeResolutionConfiguration(scopes, classDeclarationsStack, newUseSiteFile),
-            )
-
-        supertypeComputationSession.storeSupertypes(classLikeDeclaration, resolvedTypesRefs)
-        return resolvedTypesRefs
+        return resolveSuperTypeRefs(
+            transformer,
+            TypeResolutionConfiguration(scopes, classDeclarationsStack, newUseSiteFile),
+        )
     }
 
     private fun visitDeclarationContent(declaration: FirDeclaration, data: Any?) {
@@ -579,7 +590,12 @@ open class FirSupertypeResolverVisitor(
 
             if (resolveRecursively) {
                 fun visitNestedTypeAliases(type: ConeTypeProjection) {
-                    val typeToCheck = type.type?.lowerBoundIfFlexible() as? ConeClassLikeType ?: return
+                    val lowerBound = type.type?.lowerBoundIfFlexible() ?: return
+                    if (lowerBound is ConeUnionType) {
+                        lowerBound.forEachUnionComponentOrSelf(::visitNestedTypeAliases)
+                        return
+                    }
+                    val typeToCheck = lowerBound as? ConeClassLikeType ?: return
                     val symbol = typeToCheck.lookupTag.toSymbol(session)
                     if (symbol is FirTypeAliasSymbol) {
                         visitTypeAlias(symbol.fir, null)
@@ -623,14 +639,14 @@ open class SupertypeComputationSession {
             return typeRefsToReturn.mapNotNull { it.coneTypeSafe<ConeClassLikeType>() }
         }
 
-        override fun expansionForTypeAlias(typeAlias: FirTypeAlias, useSiteSession: FirSession): ConeClassLikeType? {
+        override fun expansionForTypeAlias(typeAlias: FirTypeAlias, useSiteSession: FirSession): ConeSimpleKotlinType? {
             if (typeAlias.expandedTypeRef is FirResolvedTypeRef) {
                 return typeAlias.expandedConeType
             }
 
             val typeRefsFromSession = (getSupertypesComputationStatus(typeAlias) as? SupertypeComputationStatus.Computed)?.supertypeRefs
             val typeRefsToReturn = (typeRefsFromSession ?: getResolvedSuperTypeRefsForOutOfSessionDeclaration(typeAlias, useSiteSession))
-            return typeRefsToReturn.firstOrNull()?.coneTypeSafe()
+            return typeRefsToReturn.firstOrNull()?.coneTypeSafe<ConeKotlinType>()?.asTypeAliasExpansionOrNull()
         }
     }
 
@@ -671,7 +687,7 @@ open class SupertypeComputationSession {
     /**
      * @param supertypeRefs a collection where at least one element is [FirErrorTypeRef] for looped references
      */
-    protected open fun reportLoopErrorRefs(classLikeDeclaration: FirClassLikeDeclaration, supertypeRefs: List<FirResolvedTypeRef>) {
+    protected open fun updateSuperType(classLikeDeclaration: FirClassLikeDeclaration, supertypeRefs: List<FirResolvedTypeRef>) {
         supertypeStatusMap[classLikeDeclaration] = SupertypeComputationStatus.Computed(supertypeRefs)
     }
 
@@ -721,6 +737,7 @@ open class SupertypeComputationSession {
         looped: MutableSet<FirClassLikeDeclaration>, // always empty for LL FIR
         pathOrderedSet: LinkedHashSet<FirClassLikeDeclaration>,
         localClassesNavigationInfo: LocalClassesNavigationInfo?,
+        supertypeResolver: FirSupertypeResolverVisitor,
     ) {
         require(pathOrderedSet.isEmpty()) { "Path ordered set should be empty before starting" }
 
@@ -790,7 +807,7 @@ open class SupertypeComputationSession {
             }
 
             val isSubtypingInvolved = wasSubtypingInvolved || isSubtypingCurrentlyInvolved
-            var isErrorInSupertypesFound = false
+            var superTypeNeedsUpdate = false
             val resultSupertypeRefs = mutableListOf<FirResolvedTypeRef>()
             for (supertypeRef in supertypeRefs) {
                 if (isTypeAlias) {
@@ -802,9 +819,14 @@ open class SupertypeComputationSession {
                     }
                 }
 
-                // rhs value is required only for the Analysis API, as in the CLI mode there are no invisible dependencies
-                val supertypeFir = supertypeRef.firClassLike(session) ?: supertypeRef.firClassLike(classLikeDeclaration.moduleData.session)
-                checkIsInLoop(supertypeFir, isSubtypingInvolved, wereTypeArgumentsInvolved)
+                // A type alias may expand to a union type, and each of its components is a separate edge
+                supertypeRef.coneType.forEachUnionComponentOrSelf { supertypeComponent ->
+                    val componentType = supertypeComponent.lowerBoundIfFlexible() as? ConeClassLikeType ?: return@forEachUnionComponentOrSelf
+                    // rhs value is required only for the Analysis API, as in the CLI mode there are no invisible dependencies
+                    val supertypeFir = componentType.lookupTag.toSymbol(session)?.fir
+                        ?: componentType.lookupTag.toSymbol(classLikeDeclaration.moduleData.session)?.fir
+                    checkIsInLoop(supertypeFir, isSubtypingInvolved, wereTypeArgumentsInvolved)
+                }
 
                 // This is an optimization that prevents collecting
                 // loops we don't want to report anyway.
@@ -815,35 +837,47 @@ open class SupertypeComputationSession {
                         if (type in visitedTypes) return
                         visitedTypes += type
                         for (typeArgument in type.typeArguments) {
-                            val typeToCheck = typeArgument.type?.lowerBoundIfFlexible() as? ConeClassLikeType ?: continue
-                            checkIsInLoop(
-                                typeToCheck.lookupTag.toSymbol(session)?.fir,
-                                wasSubtypingInvolved, areTypeArgumentsCurrentlyInvolved,
-                            )
-                            checkTypeArgumentsRecursively(typeToCheck, visitedTypes)
+                            typeArgument.type?.lowerBoundIfFlexible()?.forEachUnionComponentOrSelf {
+                                val typeToCheck = it.lowerBoundIfFlexible() as? ConeClassLikeType ?: return@forEachUnionComponentOrSelf
+                                checkIsInLoop(
+                                    typeToCheck.lookupTag.toSymbol(session)?.fir,
+                                    wasSubtypingInvolved, areTypeArgumentsCurrentlyInvolved,
+                                )
+                                checkTypeArgumentsRecursively(typeToCheck, visitedTypes)
+                            }
                         }
                     }
 
-                    checkTypeArgumentsRecursively(supertypeRef.coneType, mutableSetOf())
+                    supertypeRef.coneType.forEachUnionComponentOrSelf {
+                        checkTypeArgumentsRecursively(it, mutableSetOf())
+                    }
                 }
 
                 resultSupertypeRefs.add(
                     if (classLikeDeclaration in looped && supertypeRef !is FirImplicitBuiltinTypeRef) {
-                        isErrorInSupertypesFound = true
+                        superTypeNeedsUpdate = true
                         createErrorTypeRef(
                             supertypeRef.source,
                             // A loop may have been caused by the outer declaration, not necessarily `supertypeRef`
                             "Loop in supertypes involving ${classLikeDeclaration.symbol.classId}",
                             if (isTypeAlias) DiagnosticKind.RecursiveTypealiasExpansion else DiagnosticKind.LoopInSupertype
                         )
+                    } else if (isTypeAlias && supertypeRef.coneType is ConeUnionType && classLikeDeclaration.expandedTypeRef !is FirResolvedTypeRef) {
+                        // During the first resolution round, referenced type aliases might not have been resolved yet so
+                        // unions like `A | B` were optimistically resolved as `Nothing | A | B`.
+                        // Now, `A` is expandable, and we know if it's actually bounded by `RichError` so we can rerun type resolution.
+                        superTypeNeedsUpdate = true
+                        supertypeResolver.useSpecificTypeResolverOn(classLikeDeclaration) { transformer, configuration ->
+                            transformer.transformTypeRef(classLikeDeclaration.expandedTypeRef, configuration)
+                        }
                     } else {
                         supertypeRef
                     }
                 )
             }
 
-            if (isErrorInSupertypesFound) {
-                reportLoopErrorRefs(classLikeDeclaration, resultSupertypeRefs)
+            if (superTypeNeedsUpdate) {
+                updateSuperType(classLikeDeclaration, resultSupertypeRefs)
             }
 
             pathOrderedSet.remove(classLikeDeclaration)
@@ -853,7 +887,11 @@ open class SupertypeComputationSession {
         require(pathOrderedSet.isEmpty()) { "Path ordered set should be empty after finishing" }
     }
 
-    fun breakLoops(session: FirSession, localClassesNavigationInfo: LocalClassesNavigationInfo?) {
+    fun breakLoops(
+        session: FirSession,
+        localClassesNavigationInfo: LocalClassesNavigationInfo?,
+        supertypeResolverVisitor: FirSupertypeResolverVisitor
+    ) {
         val visitedClassLikeDecls = mutableSetOf<FirClassLikeDeclaration>()
         val loopedClassLikeDecls = mutableSetOf<FirClassLikeDeclaration>()
         val pathOrderedSet = LinkedHashSet<FirClassLikeDeclaration>()
@@ -866,6 +904,7 @@ open class SupertypeComputationSession {
                 looped = loopedClassLikeDecls,
                 pathOrderedSet = pathOrderedSet,
                 localClassesNavigationInfo = localClassesNavigationInfo,
+                supertypeResolver = supertypeResolverVisitor,
             )
         }
 
@@ -888,25 +927,34 @@ open class SupertypeComputationSession {
         return supertypeRefs[0]
     }
 
-    fun expandTypealiasInPlace(typeRef: FirTypeRef, session: FirSession): FirTypeRef {
+    fun expandTypealiasInPlace(typeRef: FirTypeRef, session: FirSession, isClassSupertype: Boolean): FirTypeRef {
         return when (typeRef) {
             is FirImplicitBuiltinTypeRef, is FirErrorTypeRef -> typeRef
-            else -> when (val expanded = typeRef.coneType.fullyExpandedType(session, ::getResolvedExpandedType)) {
-                typeRef.coneType -> typeRef
-                else -> {
-                    if (session.languageVersionSettings.getFlag(AnalysisFlags.expandTypeAliasesInTypeResolution)) {
-                        expanded.let(typeRef::withReplacedConeType)
-                    } else {
-                        typeRef
+            else -> {
+                val expanded = typeRef.coneType.fullyExpandedType(session, ::getResolvedExpandedType)
+                when {
+                    expanded == typeRef.coneType -> typeRef
+                    // An explicitly written union type is reported during type resolution, see `resolveSpecificClassLikeSupertypes`,
+                    // but a type alias to a union type is only discovered after expansion.
+                    isClassSupertype && expanded is ConeUnionType -> buildErrorTypeRef {
+                        source = typeRef.source
+                        diagnostic = ConeUnionTypeInSupertype
                     }
+                    // When expandTypeAliasesInTypeResolution is disabled, we can have a valid union type `String | R` before expansion
+                    // which expands to `String | Int | E1`. In that case, we need to apply the expanded type to not lose the error.
+                    expanded is ConeErrorType && typeRef.coneType !is ConeErrorType ||
+                            session.languageVersionSettings.getFlag(AnalysisFlags.expandTypeAliasesInTypeResolution) -> {
+                        typeRef.withReplacedConeType(expanded)
+                    }
+                    else -> typeRef
                 }
             }
         }
     }
 
-    private fun getResolvedExpandedType(typeAlias: FirTypeAlias): ConeClassLikeType? =
-        (typeAlias.expandedTypeRef.takeIf { it is FirResolvedTypeRef } ?: getResolvedExpandedTypeRef(typeAlias))
-            .coneTypeSafe<ConeClassLikeType>()
+    private fun getResolvedExpandedType(typeAlias: FirTypeAlias): ConeSimpleKotlinType? =
+        (typeAlias.expandedTypeRef.takeIf { it is FirResolvedTypeRef }
+            ?: getResolvedExpandedTypeRef(typeAlias)).coneType.asTypeAliasExpansionOrNull()
 }
 
 sealed class SupertypeComputationStatus {

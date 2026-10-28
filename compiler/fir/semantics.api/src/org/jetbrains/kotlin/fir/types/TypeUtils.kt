@@ -1143,7 +1143,7 @@ inline fun outerType(
     session: FirSession,
     outerClass: (FirClassLikeSymbol<*>) -> FirClassLikeSymbol<*>?,
 ): ConeClassLikeType? {
-    val fullyExpandedType = classLikeType.fullyExpandedType(session)
+    val fullyExpandedType = classLikeType.fullyExpandedType(session) as? ConeClassLikeType ?: return null
 
     val symbol = fullyExpandedType.lookupTag.toSymbol(session) ?: return null
 

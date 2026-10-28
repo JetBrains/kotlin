@@ -86,6 +86,12 @@ object FirClassLiteralChecker : FirGetClassCallChecker(MppCheckerKind.Common) {
             return
         }
 
+        // A type alias may expand to a union type, which is not a class
+        if (argument.canBeDoubleColonLhsAsType && resolvedFullyExpandedType is ConeUnionType) {
+            reporter.reportOn(source, FirErrors.CLASS_LITERAL_LHS_NOT_A_CLASS)
+            return
+        }
+
         if (!argument.canBeDoubleColonLhsAsType &&
             LanguageFeature.ForbidClassLiteralWithPotentiallyNullableReifiedLhs.isDisabled() &&
             resolvedFullyExpandedType.toTypeParameterSymbol()?.isReified == true &&

@@ -85,6 +85,8 @@ class TypeAliasConstructorsSubstitutingScope private constructor(
             scopeSession: ScopeSession,
         ): FirScope {
             val expandedType = typeAliasSymbol.resolvedExpandedTypeRef.coneType.fullyExpandedType(session)
+            // A type alias to a union type has no constructors
+            if (expandedType !is ConeClassLikeType) return FirTypeScope.Empty
             val expandedTypeScope = expandedType.scope(
                 session, scopeSession,
                 CallableCopyTypeCalculator.DoNothing,
