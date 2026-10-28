@@ -6,12 +6,19 @@ class DegradePlugin : Plugin<Project> {
     override fun apply(target: Project) {
         if (target != target.rootProject) return
 
-        Degrade(target).register()
+        val service = target.gradle.sharedServices.registerIfAbsent("degrade", DegradeService::class.java) {
+            parameters.scriptDir.set(target.file("degrade"))
+        }
+        target.gradle.taskGraph.whenReady {
+            service.get().setupTaskLogs(allTasks)
+        }
     }
 }
 
-private class Degrade(val rootProject: Project) {
-    private val scriptDir = rootProject.file("degrade")
+abstract class DegradeService : BuildService<DegradeService.Parameters>, AutoCloseable {
+    interface Parameters : BuildServiceParameters {
+        val scriptDir: DirectoryProperty
+    }
 
     private class TaskLog {
         val stdout = StringBuilder()
@@ -25,20 +32,13 @@ private class Degrade(val rootProject: Project) {
 
     private var taskToLog = emptyMap<Task, TaskLog>()
 
-    private fun setupTaskLogs(tasks: List<Task>) {
+    fun setupTaskLogs(tasks: List<Task>) {
         taskToLog = tasks.associateWith { setupTaskLog(it) }
     }
 
-    fun register() {
-        rootProject.gradle.taskGraph.whenReady {
-            setupTaskLogs(allTasks)
-        }
-
-        rootProject.gradle.addListener(object : BuildAdapter() {
-            override fun buildFinished(result: BuildResult) {
-                generateScripts()
-            }
-        })
+    // Gradle closes the service at the end of the build.
+    override fun close() {
+        generateScripts()
     }
 
     private fun generateScripts() {
@@ -154,6 +154,7 @@ private class Degrade(val rootProject: Project) {
     }
 
     private fun generateScript(name: String, generateBody: Appendable.() -> Unit) {
+        val scriptDir = parameters.scriptDir.get().asFile
         scriptDir.mkdirs()
         val file = File(scriptDir, name)
         file.bufferedWriter().use { writer ->
