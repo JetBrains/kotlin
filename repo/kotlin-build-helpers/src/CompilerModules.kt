@@ -103,6 +103,7 @@ object CompilerModules {
         ":compiler:fir:raw-fir:light-tree2fir",
         ":compiler:fir:raw-fir:mp-parsing2fir",
         ":compiler:multiplatform-parsing",
+        ":compiler:syntax.common",
     )
 
     /**

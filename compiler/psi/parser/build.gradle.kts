@@ -15,6 +15,7 @@ dependencies {
     compileOnly(libs.intellij.fastutil)
 
     implementation(project(":compiler:psi:psi-api"))
+    compileOnly(project(":compiler:syntax.common"))
 
     jflexPath(commonDependency("org.jetbrains.intellij.deps.jflex", "jflex")) {
         // Flex brings many unrelated dependencies, so we are dropping them because only a flex `.jar` file is needed.

@@ -56,6 +56,7 @@ ignored:
  - compiler/ir/serialization.native/ReadMe.md
  - compiler/java-direct/ReadMe.md
  - compiler/preloader/instrumentation/ReadMe.md
+ - compiler/syntax.common/README.md
  - compiler/test-coverage/ReadMe.md
  - compiler/test-infrastructure/ReadMe.md
  - compiler/testData/cli/js/lib/ReadMe.md

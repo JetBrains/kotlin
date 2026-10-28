@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.kmp.parser.utils
 import com.intellij.platform.syntax.SyntaxElementType
 import com.intellij.platform.syntax.SyntaxElementTypeSet
 import com.intellij.platform.syntax.parser.SyntaxTreeBuilder
+import org.jetbrains.kotlin.KtTokenId
 import org.jetbrains.kotlin.kmp.lexer.KtTokens
 import org.jetbrains.kotlin.kmp.utils.Stack
 
@@ -295,23 +296,23 @@ internal abstract class AbstractKotlinParsing(
                 break
             }
             when (this.tokenId) {
-                KtTokens.LPAR_ID -> {
+                KtTokenId.LPAR -> {
                     openParentheses++
                     opens.push(KtTokens.LPAR)
                 }
-                KtTokens.LT_ID -> {
+                KtTokenId.LT -> {
                     openAngleBrackets++
                     opens.push(KtTokens.LT)
                 }
-                KtTokens.LBRACE_ID -> {
+                KtTokenId.LBRACE -> {
                     openBraces++
                     opens.push(KtTokens.LBRACE)
                 }
-                KtTokens.LBRACKET_ID -> {
+                KtTokenId.LBRACKET -> {
                     openBrackets++
                     opens.push(KtTokens.LBRACKET)
                 }
-                KtTokens.RPAR_ID -> {
+                KtTokenId.RPAR -> {
                     openParentheses--
                     if (opens.isEmpty() || opens.pop() !== KtTokens.LPAR) {
                         if (pattern.handleUnmatchedClosing(KtTokens.RPAR)) {
@@ -319,9 +320,9 @@ internal abstract class AbstractKotlinParsing(
                         }
                     }
                 }
-                KtTokens.GT_ID -> openAngleBrackets--
-                KtTokens.RBRACE_ID -> openBraces--
-                KtTokens.RBRACKET_ID -> openBrackets--
+                KtTokenId.GT -> openAngleBrackets--
+                KtTokenId.RBRACE -> openBraces--
+                KtTokenId.RBRACKET -> openBrackets--
             }
 
             advance() // skip token

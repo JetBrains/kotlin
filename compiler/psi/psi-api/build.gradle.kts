@@ -17,6 +17,7 @@ dependencies {
     api(project(":core:deserialization.common"))
 
     compileOnly(project(":kotlin-util-klib"))
+    compileOnly(project(":compiler:syntax.common"))
     compileOnly(intellijCore())
     compileOnly(libs.org.jetbrains.annotations)
 
