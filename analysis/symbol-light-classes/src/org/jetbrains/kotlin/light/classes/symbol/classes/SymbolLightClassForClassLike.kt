@@ -170,8 +170,10 @@ internal abstract class SymbolLightClassForClassLike<SType : KaClassSymbol> prot
      * with the class inside a script.
      * In this case the qualified name has to include the script name.
      */
-    override fun getQualifiedName(): String? {
-        return classOrObjectDeclaration?.fqName?.asString() ?: withClassSymbol { it.classId?.asFqNameString() }
+    override fun getQualifiedName(): String? = _qualifiedName
+
+    private val _qualifiedName: String? by lazyPub {
+        classOrObjectDeclaration?.fqName?.asString() ?: withClassSymbol { it.classId?.asFqNameString() }
     }
 
     override fun getInterfaces(): Array<PsiClass> = PsiClassImplUtil.getInterfaces(this)
