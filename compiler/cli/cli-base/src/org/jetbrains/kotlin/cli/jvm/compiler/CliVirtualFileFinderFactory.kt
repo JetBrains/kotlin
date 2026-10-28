@@ -35,7 +35,7 @@ class CliVirtualFileFinderFactory(
     override fun create(scope: GlobalSearchScope): VirtualFileFinder =
         CliVirtualFileFinder(index, { it in scope }, enableSearchInCtSym, perfManager)
 
-    fun create(classpath: JvmClasspath): VirtualFileFinder =
+    fun create(classpath: JvmClasspath): CliVirtualFileFinder =
         CliVirtualFileFinder(index, classpath, enableSearchInCtSym, perfManager)
 
     override fun create(project: Project, module: ModuleInfo): VirtualFileFinder =

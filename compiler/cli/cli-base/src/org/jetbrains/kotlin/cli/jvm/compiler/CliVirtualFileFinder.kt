@@ -63,15 +63,20 @@ class CliVirtualFileFinder private constructor(
         perfManager: PerformanceManager?,
     ) : this(index, { classpath.containsRoot(it.root.file) }, enableSearchInCtSym, kotlinClassesFromHandles = true, perfManager)
 
+    // The two `VirtualFile` lookups stay for the backend (`inlineCodegenUtils.findVirtualFile`) and IDE/K1 code.
     override fun findVirtualFileWithHeader(classId: ClassId): VirtualFile? =
         findBinaryOrSigClass(classId)?.file
 
     override fun findSourceOrBinaryVirtualFile(classId: ClassId): VirtualFile? =
-        (findBinaryOrSigClass(classId) ?: findClass(classId, JAVA_SOURCE_EXTENSIONS))?.file
+        findSourceOrBinaryClass(classId)?.file
 
     /** The `.class`/`.sig` file declaring [classId], if the classpath has one. */
     fun findBinaryClassFile(classId: ClassId): BinaryClassFileHandle? =
         findBinaryOrSigClass(classId)?.asBinaryClassFileHandle()
+
+    /** [findBinaryClassFile], or else the `.java` file declaring [classId] in a Java source root. */
+    fun findSourceOrBinaryClassFile(classId: ClassId): BinaryClassFileHandle? =
+        findSourceOrBinaryClass(classId)?.asBinaryClassFileHandle()
 
     override fun findKotlinClassOrContent(classId: ClassId, metadataVersion: MetadataVersion): KotlinClassFinder.Result? {
         if (!kotlinClassesFromHandles) return super.findKotlinClassOrContent(classId, metadataVersion)
@@ -95,7 +100,7 @@ class CliVirtualFileFinder private constructor(
     override fun findMetadata(classId: ClassId): InputStream? {
         assert(!classId.isNestedClass) { "Nested classes are not supported here: $classId" }
 
-        return findClass(classId, KOTLIN_METADATA_EXTENSIONS)?.file?.inputStream
+        return findClass(classId, KOTLIN_METADATA_EXTENSIONS)?.asBinaryClassFileHandle()?.readBytes()?.inputStream()
     }
 
     /** Not restricted by [accepts]: this lookup covers all indexed roots. */
@@ -140,6 +145,9 @@ class CliVirtualFileFinder private constructor(
         val extensions = if (enableSearchInCtSym) BINARY_CLASS_AND_SIG_EXTENSIONS else BINARY_CLASS_EXTENSIONS
         return findClass(classId, extensions)
     }
+
+    private fun findSourceOrBinaryClass(classId: ClassId): IndexedClassFile? =
+        findBinaryOrSigClass(classId) ?: findClass(classId, JAVA_SOURCE_EXTENSIONS)
 
     private fun findClass(classId: ClassId, extensions: JavaFileExtensions): IndexedClassFile? =
         index.findClassFiles(classId, extensions).firstOrNull(accepts)
