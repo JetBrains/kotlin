@@ -16,6 +16,7 @@ enum class TestSubset {
     ContractTestsForCoreLibs,
     ContractTestsForAnalysisApi,
     ContractTestsForBuildToolsApi,
+    ContractTestsForBuildToolsLibraries,
     ContractTestsForSwiftExport,
     ContractTestsForCompilerPlugins,
     ContractTestsForDocumentationModel,
@@ -38,6 +39,7 @@ fun contractTestsSubsetOf(domain: Domain): TestSubset = when (domain) {
     Domain.CoreLibs -> TestSubset.ContractTestsForCoreLibs
     Domain.AnalysisApi -> TestSubset.ContractTestsForAnalysisApi
     Domain.BuildToolsApi -> TestSubset.ContractTestsForBuildToolsApi
+    Domain.BuildToolsLibraries -> TestSubset.ContractTestsForBuildToolsLibraries
     Domain.SwiftExport -> TestSubset.ContractTestsForSwiftExport
     Domain.CompilerPlugins -> TestSubset.ContractTestsForCompilerPlugins
     Domain.DocumentationModel -> TestSubset.ContractTestsForDocumentationModel
@@ -61,6 +63,7 @@ fun contractTagOf(subset: TestSubset): String? = when (subset) {
     TestSubset.ContractTestsForCoreLibs -> "contract:CoreLibs"
     TestSubset.ContractTestsForAnalysisApi -> "contract:AnalysisApi"
     TestSubset.ContractTestsForBuildToolsApi -> "contract:BuildToolsApi"
+    TestSubset.ContractTestsForBuildToolsLibraries -> "contract:BuildToolsLibraries"
     TestSubset.ContractTestsForSwiftExport -> "contract:SwiftExport"
     TestSubset.ContractTestsForCompilerPlugins -> "contract:CompilerPlugins"
     TestSubset.ContractTestsForDocumentationModel -> "contract:DocumentationModel"
@@ -83,6 +86,7 @@ fun contractSubsetFromTag(tag: String): TestSubset? =
         "contract:CoreLibs" -> TestSubset.ContractTestsForCoreLibs
         "contract:AnalysisApi" -> TestSubset.ContractTestsForAnalysisApi
         "contract:BuildToolsApi" -> TestSubset.ContractTestsForBuildToolsApi
+        "contract:BuildToolsLibraries" -> TestSubset.ContractTestsForBuildToolsLibraries
         "contract:SwiftExport" -> TestSubset.ContractTestsForSwiftExport
         "contract:CompilerPlugins" -> TestSubset.ContractTestsForCompilerPlugins
         "contract:DocumentationModel" -> TestSubset.ContractTestsForDocumentationModel

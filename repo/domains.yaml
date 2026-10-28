@@ -181,6 +181,13 @@ BuildToolsApi:
   mustRunAllTestsOnChangesIn:
     - CompilerInfrastructure
 
+BuildToolsLibraries:
+  include:
+    - "build-tools/libraries"
+  mustRunAllTestsOnChangesIn:
+    # Libraries may build on the Build Tools API
+    - BuildToolsApi
+
 SwiftExport:
   include:
     - "native/swift"
