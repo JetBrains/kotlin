@@ -136,10 +136,10 @@ class StandaloneBehaviorTest : AbstractStandaloneTest() {
         assertEquals(listOf("java.lang.Deprecated"), myPkg.annotationQualifiedNames())
 
         val rootPackage = javaPsiFacade.findPackage("") ?: error("The root package must be found")
-        assertEquals(listOf("java.lang.Deprecated"), rootPackage.annotationQualifiedNames())
+        assertEquals(emptyList(), rootPackage.annotationQualifiedNames())
 
         val rootPackageDirectories = rootPackage.directories.map { Paths.get(it.virtualFile.path).toRealPath() }
-        assertEquals(listOf(sourceRoot.resolve("my/pkg").toRealPath(), sourceRoot.toRealPath()), rootPackageDirectories)
+        assertEquals(listOf(sourceRoot.toRealPath()), rootPackageDirectories)
     }
 
     private fun PsiPackage.annotationQualifiedNames(): List<String?> =

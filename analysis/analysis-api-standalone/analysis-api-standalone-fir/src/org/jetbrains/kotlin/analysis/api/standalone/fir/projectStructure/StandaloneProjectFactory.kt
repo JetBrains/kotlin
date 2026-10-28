@@ -356,7 +356,11 @@ object StandaloneProjectFactory {
             }
             javaDir?.let { result += it }
         }
-        return result.toList()
+
+        val rootFiles = result.mapTo(HashSet()) { it.virtualFile }
+        return result.filter { root ->
+            generateSequence(root.virtualFile.parent) { it.parent }.none { it in rootFiles }
+        }
     }
 
     fun getAllBinaryRoots(modules: List<KaModule>, environment: CoreApplicationEnvironment): List<JavaRoot> {
