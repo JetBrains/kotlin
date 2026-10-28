@@ -4,7 +4,7 @@
 // FILE: J.java
 
 public interface J {
-    String platform();
+    String strF();
 }
 
 // FILE: K.kt
@@ -12,21 +12,39 @@ public interface J {
 import kotlin.reflect.full.withNullability
 import kotlin.test.assertEquals
 
-fun nonNull(): String = ""
-fun nullable(): String? = ""
+fun str(): String = ""
+fun strN(): String? = ""
+
+class C<T> {
+    fun t(): T = null!!
+    fun tN(): T? = null
+    fun tDNN(): T & Any = null!!
+}
 
 fun box(): String {
-    val nonNull = ::nonNull.returnType
-    val nullable = ::nullable.returnType
-    val platform = J::platform.returnType
+    val str = ::str.returnType
+    val strN = ::strN.returnType
+    val strF = J::strF.returnType
 
-    assertEquals(nonNull, nullable.withNullability(false))
-    assertEquals(nullable, nullable.withNullability(true))
-    assertEquals(nonNull, nonNull.withNullability(false))
-    assertEquals(nullable, nonNull.withNullability(true))
+    assertEquals(str, strN.withNullability(false))
+    assertEquals(strN, strN.withNullability(true))
+    assertEquals(str, str.withNullability(false))
+    assertEquals(strN, str.withNullability(true))
 
-    assertEquals(nonNull, platform.withNullability(false))
-    assertEquals(nullable, platform.withNullability(true))
+    assertEquals(str, strF.withNullability(false))
+    assertEquals(strN, strF.withNullability(true))
+
+    val t = C<*>::t.returnType
+    val tN = C<*>::tN.returnType
+    val tDNN = C<*>::tDNN.returnType
+
+    assertEquals(t, tN.withNullability(false))
+    assertEquals(tN, tN.withNullability(true))
+    assertEquals(t, t.withNullability(false))
+    assertEquals(tN, t.withNullability(true))
+
+    assertEquals(tDNN, tDNN.withNullability(false))
+    assertEquals(tN, tDNN.withNullability(true))
 
     return "OK"
 }
