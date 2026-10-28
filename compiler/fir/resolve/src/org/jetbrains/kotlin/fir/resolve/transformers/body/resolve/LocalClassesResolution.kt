@@ -55,7 +55,8 @@ fun <F : FirClassLikeDeclaration> F.runAllPhasesForLocalClassLikeDeclarations(
         components.scopeSession,
         components.createCurrentScopeList(),
         components.file,
-        components.containingDeclarations
+        components.containingDeclarations,
+        components.context.lastCompanionBlockOwner,
     )
     runStatusResolveForLocalClass(
         components.session,

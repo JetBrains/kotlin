@@ -1537,6 +1537,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                             context.containingClassDeclarations,
                             context.file,
                             context.topContainerForTypeResolution,
+                            lastCompanionBlockOwner = context.lastCompanionBlockOwner,
                         )
                     )
                 }

@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.name.SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
 import org.jetbrains.kotlin.util.ArrayLiteralResolution
 import org.jetbrains.kotlin.util.OnlyForDefaultLanguageFeatureDisabled
 import org.jetbrains.kotlin.util.PrivateForInline
-import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class BodyResolveContext(
@@ -236,12 +235,20 @@ class BodyResolveContext(
         }
     }
 
+    var lastCompanionBlockOwner: FirClass? = null
+
     @PrivateForInline
     inline fun <T> withCompanionBlockIf(condition: Boolean, f: () -> T): T {
-        return withTowerDataContexts(
-            newContexts = runIf(condition) { regularTowerDataContexts.forCompanionBlock() },
-            f
-        )
+        val oldValue = lastCompanionBlockOwner
+        try {
+            if (condition) lastCompanionBlockOwner = containingClassDeclarations.last()
+            return withTowerDataContexts(
+                newContexts = runIf(condition) { regularTowerDataContexts.forCompanionBlock() },
+                f
+            )
+        } finally {
+            lastCompanionBlockOwner = oldValue
+        }
     }
 
     @PrivateForInline
