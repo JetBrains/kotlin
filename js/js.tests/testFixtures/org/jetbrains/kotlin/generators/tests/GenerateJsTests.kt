@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUni
 import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.KT_WITHOUT_UNDERSCORE_PREFIX
+import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.WITHOUT_UNDERSCORE_PREFIX
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.js.test.JsEs6Test
 import org.jetbrains.kotlin.js.test.JsInlineAnonymousFunctionsTest
@@ -32,13 +33,13 @@ fun main(args: Array<String>) {
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup(testsRoot, "compiler/testData/klib/partial-linkage") {
             testClass<AbstractJsPartialLinkageWithICTestCase> {
-                model(pattern = "^([^_](.+))$", recursive = false)
+                model(pattern = WITHOUT_UNDERSCORE_PREFIX, recursive = false)
             }
             testClass<AbstractJsPartialLinkageNoICTestCase> {
-                model(pattern = "^([^_](.+))$", recursive = false)
+                model(pattern = WITHOUT_UNDERSCORE_PREFIX, recursive = false)
             }
             testClass<AbstractJsPartialLinkageNoICES6TestCase>(annotations = listOf(es6())) {
-                model(pattern = "^([^_](.+))$", recursive = false)
+                model(pattern = WITHOUT_UNDERSCORE_PREFIX, recursive = false)
             }
         }
 
@@ -55,27 +56,27 @@ fun main(args: Array<String>) {
 
         testGroup(testsRoot, "js/js.translator/testData/incremental") {
             testClass<AbstractJsInvalidationPerFileTest> {
-                model("invalidation/", pattern = "^([^_](.+))$", recursive = false)
+                model("invalidation/", pattern = WITHOUT_UNDERSCORE_PREFIX, recursive = false)
             }
 
             testClass<AbstractJsInvalidationPerModuleTest> {
-                model("invalidation/", pattern = "^([^_](.+))$", recursive = false)
+                model("invalidation/", pattern = WITHOUT_UNDERSCORE_PREFIX, recursive = false)
             }
 
             testClass<AbstractJsES6InvalidationPerFileTest>(annotations = listOf(es6())) {
-                model("invalidation/", pattern = "^([^_](.+))$", recursive = false)
+                model("invalidation/", pattern = WITHOUT_UNDERSCORE_PREFIX, recursive = false)
             }
 
             testClass<AbstractJsES6InvalidationPerModuleTest>(annotations = listOf(es6())) {
-                model("invalidation/", pattern = "^([^_](.+))$", recursive = false)
+                model("invalidation/", pattern = WITHOUT_UNDERSCORE_PREFIX, recursive = false)
             }
 
             testClass<AbstractJsInvalidationPerFileWithPLTest> {
-                model("invalidationWithPL/", pattern = "^([^_](.+))$", recursive = false)
+                model("invalidationWithPL/", pattern = WITHOUT_UNDERSCORE_PREFIX, recursive = false)
             }
 
             testClass<AbstractJsInvalidationPerModuleWithPLTest> {
-                model("invalidationWithPL/", pattern = "^([^_](.+))$", recursive = false)
+                model("invalidationWithPL/", pattern = WITHOUT_UNDERSCORE_PREFIX, recursive = false)
             }
         }
 

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.generators.dsl.TestGroup
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.model.AnnotationModel
 import org.jetbrains.kotlin.generators.model.annotation
+import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.WITHOUT_UNDERSCORE_PREFIX
 import org.jetbrains.kotlin.konan.test.blackbox.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedHostTarget
@@ -53,7 +54,7 @@ fun main(args: Array<String>) {
             testClass<AbstractNativePartialLinkageTest>(
                 suiteTestClassName = "NativePartialLinkageTestGenerated",
             ) {
-                model(pattern = "^([^_](.+))$", recursive = false)
+                model(pattern = WITHOUT_UNDERSCORE_PREFIX, recursive = false)
             }
         }
 
@@ -68,7 +69,7 @@ fun main(args: Array<String>) {
             ) {
                 val nestedDirs = listOf("basic", "classKind", "constants", "dependencies", "generics", "inline", "members", "ungrouped")
                 nestedDirs.forEach {
-                    model(it, pattern = "^([^_](.+))$", recursive = false)
+                    model(it, pattern = WITHOUT_UNDERSCORE_PREFIX, recursive = false)
                 }
             }
         }
@@ -78,50 +79,50 @@ fun main(args: Array<String>) {
             testClass<AbstractNativeCInteropFModulesTest>(
                 suiteTestClassName = "CInteropFModulesTestGenerated",
             ) {
-                model("simple/simpleDefs", pattern = "^([^_](.+))$", recursive = false)
-                model("framework/frameworkDefs", pattern = "^([^_](.+))$", recursive = false)
-                model("framework.macros/macrosDefs", pattern = "^([^_](.+))$", recursive = false)
-                model("builtins/builtinsDefs", pattern = "^([^_](.+))$", recursive = false)
-                model("cCallMode/cCallMode", pattern = "^([^_](.+))$", recursive = false)
-                model("swiftName/swiftNameDefs", pattern = "^([^_](.+))$", recursive = false)
-                model("swiftNameOverride/swiftNameOverrideDefs", pattern = "^([^_](.+))$", recursive = false)
+                model("simple/simpleDefs", pattern = WITHOUT_UNDERSCORE_PREFIX, recursive = false)
+                model("framework/frameworkDefs", pattern = WITHOUT_UNDERSCORE_PREFIX, recursive = false)
+                model("framework.macros/macrosDefs", pattern = WITHOUT_UNDERSCORE_PREFIX, recursive = false)
+                model("builtins/builtinsDefs", pattern = WITHOUT_UNDERSCORE_PREFIX, recursive = false)
+                model("cCallMode/cCallMode", pattern = WITHOUT_UNDERSCORE_PREFIX, recursive = false)
+                model("swiftName/swiftNameDefs", pattern = WITHOUT_UNDERSCORE_PREFIX, recursive = false)
+                model("swiftNameOverride/swiftNameOverrideDefs", pattern = WITHOUT_UNDERSCORE_PREFIX, recursive = false)
             }
             testClass<AbstractNativeCInteropNoFModulesTest>(
                 suiteTestClassName = "CInteropNoFModulesTestGenerated",
             ) {
-                model("simple/simpleDefs", pattern = "^([^_](.+))$", recursive = false)
-                model("framework/frameworkDefs", pattern = "^([^_](.+))$", recursive = false)
-                model("framework.macros/macrosDefs", pattern = "^([^_](.+))$", recursive = false)
-                model("builtins/builtinsDefs", pattern = "^([^_](.+))$", recursive = false)
-                model("cCallMode/cCallMode", pattern = "^([^_](.+))$", recursive = false)
-                model("swiftName/swiftNameDefs", pattern = "^([^_](.+))$", recursive = false)
-                model("swiftNameOverride/swiftNameOverrideDefs", pattern = "^([^_](.+))$", recursive = false)
+                model("simple/simpleDefs", pattern = WITHOUT_UNDERSCORE_PREFIX, recursive = false)
+                model("framework/frameworkDefs", pattern = WITHOUT_UNDERSCORE_PREFIX, recursive = false)
+                model("framework.macros/macrosDefs", pattern = WITHOUT_UNDERSCORE_PREFIX, recursive = false)
+                model("builtins/builtinsDefs", pattern = WITHOUT_UNDERSCORE_PREFIX, recursive = false)
+                model("cCallMode/cCallMode", pattern = WITHOUT_UNDERSCORE_PREFIX, recursive = false)
+                model("swiftName/swiftNameDefs", pattern = WITHOUT_UNDERSCORE_PREFIX, recursive = false)
+                model("swiftNameOverride/swiftNameOverrideDefs", pattern = WITHOUT_UNDERSCORE_PREFIX, recursive = false)
             }
             testClass<AbstractNativeCInteropHeaderModeTest>(
                 suiteTestClassName = "CInteropHeaderModeTestGenerated",
             ) {
-                model("simple/simpleDefs", pattern = "^([^_](.+))$", recursive = false)
-                model("framework/frameworkDefs", pattern = "^([^_](.+))$", recursive = false)
-                model("framework.macros/macrosDefs", pattern = "^([^_](.+))$", recursive = false)
-                model("builtins/builtinsDefs", pattern = "^([^_](.+))$", recursive = false)
-                model("cCallMode/cCallMode", pattern = "^([^_](.+))$", recursive = false)
-                model("swiftName/swiftNameDefs", pattern = "^([^_](.+))$", recursive = false)
+                model("simple/simpleDefs", pattern = WITHOUT_UNDERSCORE_PREFIX, recursive = false)
+                model("framework/frameworkDefs", pattern = WITHOUT_UNDERSCORE_PREFIX, recursive = false)
+                model("framework.macros/macrosDefs", pattern = WITHOUT_UNDERSCORE_PREFIX, recursive = false)
+                model("builtins/builtinsDefs", pattern = WITHOUT_UNDERSCORE_PREFIX, recursive = false)
+                model("cCallMode/cCallMode", pattern = WITHOUT_UNDERSCORE_PREFIX, recursive = false)
+                model("swiftName/swiftNameDefs", pattern = WITHOUT_UNDERSCORE_PREFIX, recursive = false)
             }
             testClass<AbstractNativeCInteropKT39120Test>(
                 suiteTestClassName = "CInteropKT39120TestGenerated",
             ) {
-                model("KT-39120/defs", pattern = "^([^_](.+))$", recursive = false)
+                model("KT-39120/defs", pattern = WITHOUT_UNDERSCORE_PREFIX, recursive = false)
             }
             testClass<AbstractNativeCInteropIncludeCategoriesTest>(
                 suiteTestClassName = "CInteropIncludeCategoriesTestGenerated",
             ) {
-                model("frameworkIncludeCategories/cases", pattern = "^([^_](.+))$", recursive = false)
+                model("frameworkIncludeCategories/cases", pattern = WITHOUT_UNDERSCORE_PREFIX, recursive = false)
             }
 
             testClass<AbstractNativeCInteropExperimentalTest>(
                 suiteTestClassName = "CInteropExperimentalTestGenerated",
             ) {
-                model("experimental/cases", pattern = "^([^_](.+))$", recursive = false)
+                model("experimental/cases", pattern = WITHOUT_UNDERSCORE_PREFIX, recursive = false)
             }
 
             val macroCollectionVariants = listOf(
@@ -134,7 +135,7 @@ fun main(args: Array<String>) {
                     testKClass = testKClass,
                     suiteTestClassName = "CInteropFModules${variantName}MacroCollectionTestGenerated",
                 ) {
-                    model("framework.macros/macrosDefs", pattern = "^([^_](.+))$", recursive = false)
+                    model("framework.macros/macrosDefs", pattern = WITHOUT_UNDERSCORE_PREFIX, recursive = false)
                 }
             }
         }
@@ -144,7 +145,7 @@ fun main(args: Array<String>) {
             testClass<AbstractNativeObjCExportTest>(
                 suiteTestClassName = "FirObjCExportTestGenerated",
             ) {
-                model(pattern = "^([^_](.+))$", recursive = false, excludeDirs = listOf("HeaderTests"))
+                model(pattern = WITHOUT_UNDERSCORE_PREFIX, recursive = false, excludeDirs = listOf("HeaderTests"))
             }
             testClass<AbstractNativeObjCExportHeaderTest>(
                 suiteTestClassName = "ObjCExportHeaderTestGenerated",
@@ -223,7 +224,7 @@ fun main(args: Array<String>) {
                             cinterfaceMode.value,
                         )
                     ) {
-                        model(cinterfaceMode.key, pattern = "^([^_](.+))$", recursive = false)
+                        model(cinterfaceMode.key, pattern = WITHOUT_UNDERSCORE_PREFIX, recursive = false)
                     }
                 }
                 // IR-based discovery variant, over the same test data
@@ -234,7 +235,7 @@ fun main(args: Array<String>) {
                         cinterfaceMode("V1"),
                     )
                 ) {
-                    model("InterfaceV1", pattern = "^([^_](.+))$", recursive = false)
+                    model("InterfaceV1", pattern = WITHOUT_UNDERSCORE_PREFIX, recursive = false)
                 }
             }
             testClass<AbstractNativeCExportInterfaceV1HeaderTest>(
