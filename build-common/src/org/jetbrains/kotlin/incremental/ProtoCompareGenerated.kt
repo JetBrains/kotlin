@@ -863,6 +863,16 @@ open class ProtoCompareGenerated(
 
         if (!checkEqualsTypeUnionTypeAnnotation(old, new)) return false
 
+        if (old.hasUnionAbbreviatedType() != new.hasUnionAbbreviatedType()) return false
+        if (old.hasUnionAbbreviatedType()) {
+            if (!checkEquals(old.unionAbbreviatedType, new.unionAbbreviatedType)) return false
+        }
+
+        if (old.hasUnionAbbreviatedTypeId() != new.hasUnionAbbreviatedTypeId()) return false
+        if (old.hasUnionAbbreviatedTypeId()) {
+            if (!checkEquals(oldTypeTable.getType(old.unionAbbreviatedTypeId), newTypeTable.getType(new.unionAbbreviatedTypeId))) return false
+        }
+
         if (old.hasFlags() != new.hasFlags()) return false
         if (old.hasFlags()) {
             if (old.flags != new.flags) return false
@@ -2561,6 +2571,14 @@ fun ProtoBuf.Type.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> 
 
     for(i in 0..unionTypeAnnotationCount - 1) {
         hashCode = 31 * hashCode + getUnionTypeAnnotation(i).hashCode(stringIndexes, fqNameIndexes, typeById)
+    }
+
+    if (hasUnionAbbreviatedType()) {
+        hashCode = 31 * hashCode + unionAbbreviatedType.hashCode(stringIndexes, fqNameIndexes, typeById)
+    }
+
+    if (hasUnionAbbreviatedTypeId()) {
+        hashCode = 31 * hashCode + typeById(unionAbbreviatedTypeId).hashCode(stringIndexes, fqNameIndexes, typeById)
     }
 
     if (hasFlags()) {
