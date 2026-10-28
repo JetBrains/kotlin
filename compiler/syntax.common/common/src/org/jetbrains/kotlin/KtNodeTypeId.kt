@@ -1,0 +1,159 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin
+
+object KtNodeTypeId {
+    const val FILE: Int = KtTokenId.ERROR_SAFE_ACCESS + 1
+
+    const val CLASS: Int = FILE + 1
+    const val FUNCTION: Int = CLASS + 1
+    const val PROPERTY: Int = FUNCTION + 1
+    const val DESTRUCTURING_DECLARATION: Int = PROPERTY + 1
+    const val DESTRUCTURING_DECLARATION_ENTRY: Int = DESTRUCTURING_DECLARATION + 1
+
+    const val OBJECT_DECLARATION: Int = DESTRUCTURING_DECLARATION_ENTRY + 1
+    const val TYPEALIAS: Int = OBJECT_DECLARATION + 1
+    const val COMPANION_BLOCK: Int = TYPEALIAS + 1
+
+    const val ENUM_ENTRY: Int = COMPANION_BLOCK + 1
+    const val CLASS_INITIALIZER: Int = ENUM_ENTRY + 1
+    const val SCRIPT_INITIALIZER: Int = CLASS_INITIALIZER + 1
+    const val SECONDARY_CONSTRUCTOR: Int = SCRIPT_INITIALIZER + 1
+    const val PRIMARY_CONSTRUCTOR: Int = SECONDARY_CONSTRUCTOR + 1
+    const val CONTEXT_RECEIVER: Int = PRIMARY_CONSTRUCTOR + 1
+    const val CONTEXT_PARAMETER_LIST: Int = CONTEXT_RECEIVER + 1
+    const val TYPE_PARAMETER_LIST: Int = CONTEXT_PARAMETER_LIST + 1
+    const val TYPE_PARAMETER: Int = TYPE_PARAMETER_LIST + 1
+    const val SUPER_TYPE_LIST: Int = TYPE_PARAMETER + 1
+    const val DELEGATED_SUPER_TYPE_ENTRY: Int = SUPER_TYPE_LIST + 1
+    const val SUPER_TYPE_CALL_ENTRY: Int = DELEGATED_SUPER_TYPE_ENTRY + 1
+    const val SUPER_TYPE_ENTRY: Int = SUPER_TYPE_CALL_ENTRY + 1
+    const val PROPERTY_DELEGATE: Int = SUPER_TYPE_ENTRY + 1
+    const val CONSTRUCTOR_CALLEE: Int = PROPERTY_DELEGATE + 1
+    const val VALUE_PARAMETER_LIST: Int = CONSTRUCTOR_CALLEE + 1
+    const val VALUE_PARAMETER: Int = VALUE_PARAMETER_LIST + 1
+
+    const val CLASS_BODY: Int = VALUE_PARAMETER + 1
+    const val IMPORT_LIST: Int = CLASS_BODY + 1
+    const val FILE_ANNOTATION_LIST: Int = IMPORT_LIST + 1
+    const val IMPORT_DIRECTIVE: Int = FILE_ANNOTATION_LIST + 1
+    const val IMPORT_ALIAS: Int = IMPORT_DIRECTIVE + 1
+    const val MODIFIER_LIST: Int = IMPORT_ALIAS + 1
+    const val ANNOTATION: Int = MODIFIER_LIST + 1
+    const val ANNOTATION_ENTRY: Int = ANNOTATION + 1
+    const val ANNOTATION_TARGET: Int = ANNOTATION_ENTRY + 1
+
+    const val TYPE_ARGUMENT_LIST: Int = ANNOTATION_TARGET + 1
+    const val VALUE_ARGUMENT_LIST: Int = TYPE_ARGUMENT_LIST + 1
+    const val VALUE_ARGUMENT: Int = VALUE_ARGUMENT_LIST + 1
+    const val CONTRACT_EFFECT_LIST: Int = VALUE_ARGUMENT + 1
+    const val CONTRACT_EFFECT: Int = CONTRACT_EFFECT_LIST + 1
+    const val LAMBDA_ARGUMENT: Int = CONTRACT_EFFECT + 1
+    const val VALUE_ARGUMENT_NAME: Int = LAMBDA_ARGUMENT + 1
+    const val TYPE_REFERENCE: Int = VALUE_ARGUMENT_NAME + 1
+
+    const val USER_TYPE: Int = TYPE_REFERENCE + 1
+    const val DYNAMIC_TYPE: Int = USER_TYPE + 1
+    const val FUNCTION_TYPE: Int = DYNAMIC_TYPE + 1
+    const val FUNCTION_TYPE_RECEIVER: Int = FUNCTION_TYPE + 1
+    const val NULLABLE_TYPE: Int = FUNCTION_TYPE_RECEIVER + 1
+    const val INTERSECTION_TYPE: Int = NULLABLE_TYPE + 1
+    const val UNION_TYPE: Int = INTERSECTION_TYPE + 1
+    const val TYPE_PROJECTION: Int = UNION_TYPE + 1
+
+    const val PROPERTY_ACCESSOR: Int = TYPE_PROJECTION + 1
+    const val BACKING_FIELD: Int = PROPERTY_ACCESSOR + 1
+    const val INITIALIZER_LIST: Int = BACKING_FIELD + 1
+    const val TYPE_CONSTRAINT_LIST: Int = INITIALIZER_LIST + 1
+    const val TYPE_CONSTRAINT: Int = TYPE_CONSTRAINT_LIST + 1
+
+    const val CONSTRUCTOR_DELEGATION_CALL: Int = TYPE_CONSTRAINT + 1
+    const val CONSTRUCTOR_DELEGATION_REFERENCE: Int = CONSTRUCTOR_DELEGATION_CALL + 1
+
+    const val NULL: Int = CONSTRUCTOR_DELEGATION_REFERENCE + 1
+    const val BOOLEAN_CONSTANT: Int = NULL + 1
+    const val FLOAT_CONSTANT: Int = BOOLEAN_CONSTANT + 1
+    const val CHARACTER_CONSTANT: Int = FLOAT_CONSTANT + 1
+    const val INTEGER_CONSTANT: Int = CHARACTER_CONSTANT + 1
+
+    const val STRING_TEMPLATE: Int = INTEGER_CONSTANT + 1
+    const val LONG_STRING_TEMPLATE_ENTRY: Int = STRING_TEMPLATE + 1
+    const val SHORT_STRING_TEMPLATE_ENTRY: Int = LONG_STRING_TEMPLATE_ENTRY + 1
+    const val LITERAL_STRING_TEMPLATE_ENTRY: Int = SHORT_STRING_TEMPLATE_ENTRY + 1
+    const val ESCAPE_STRING_TEMPLATE_ENTRY: Int = LITERAL_STRING_TEMPLATE_ENTRY + 1
+    const val STRING_INTERPOLATION_PREFIX: Int = ESCAPE_STRING_TEMPLATE_ENTRY + 1
+
+    const val PARENTHESIZED: Int = STRING_INTERPOLATION_PREFIX + 1
+    const val RETURN: Int = PARENTHESIZED + 1
+    const val THROW: Int = RETURN + 1
+    const val CONTINUE: Int = THROW + 1
+    const val BREAK: Int = CONTINUE + 1
+    const val IF: Int = BREAK + 1
+    const val CONDITION: Int = IF + 1
+    const val THEN: Int = CONDITION + 1
+    const val ELSE: Int = THEN + 1
+    const val TRY: Int = ELSE + 1
+    const val CATCH: Int = TRY + 1
+    const val FINALLY: Int = CATCH + 1
+    const val FOR: Int = FINALLY + 1
+    const val WHILE: Int = FOR + 1
+    const val DO_WHILE: Int = WHILE + 1
+    const val LOOP_RANGE: Int = DO_WHILE + 1
+    const val BODY: Int = LOOP_RANGE + 1
+
+    const val BLOCK: Int = BODY + 1
+
+    const val LAMBDA_EXPRESSION: Int = BLOCK + 1
+
+    const val FUNCTION_LITERAL: Int = LAMBDA_EXPRESSION + 1
+    const val ANNOTATED_EXPRESSION: Int = FUNCTION_LITERAL + 1
+
+    const val REFERENCE_EXPRESSION: Int = ANNOTATED_EXPRESSION + 1
+    const val ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION: Int = REFERENCE_EXPRESSION + 1
+    const val OPERATION_REFERENCE: Int = ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION + 1
+    const val LABEL: Int = OPERATION_REFERENCE + 1
+
+    const val LABEL_QUALIFIER: Int = LABEL + 1
+
+    const val THIS_EXPRESSION: Int = LABEL_QUALIFIER + 1
+    const val SUPER_EXPRESSION: Int = THIS_EXPRESSION + 1
+    const val BINARY_EXPRESSION: Int = SUPER_EXPRESSION + 1
+    const val BINARY_WITH_TYPE: Int = BINARY_EXPRESSION + 1
+    const val IS_EXPRESSION: Int = BINARY_WITH_TYPE + 1
+    const val PREFIX_EXPRESSION: Int = IS_EXPRESSION + 1
+    const val POSTFIX_EXPRESSION: Int = PREFIX_EXPRESSION + 1
+    const val LABELED_EXPRESSION: Int = POSTFIX_EXPRESSION + 1
+    const val CALL_EXPRESSION: Int = LABELED_EXPRESSION + 1
+    const val ARRAY_ACCESS_EXPRESSION: Int = CALL_EXPRESSION + 1
+    const val INDICES: Int = ARRAY_ACCESS_EXPRESSION + 1
+    const val DOT_QUALIFIED_EXPRESSION: Int = INDICES + 1
+    const val CALLABLE_REFERENCE_EXPRESSION: Int = DOT_QUALIFIED_EXPRESSION + 1
+    const val CLASS_LITERAL_EXPRESSION: Int = CALLABLE_REFERENCE_EXPRESSION + 1
+    const val SAFE_ACCESS_EXPRESSION: Int = CLASS_LITERAL_EXPRESSION + 1
+    const val ERROR_SAFE_ACCESS_EXPRESSION: Int = SAFE_ACCESS_EXPRESSION + 1
+
+    const val OBJECT_LITERAL: Int = ERROR_SAFE_ACCESS_EXPRESSION + 1
+
+    const val WHEN: Int = OBJECT_LITERAL + 1
+    const val WHEN_ENTRY: Int = WHEN + 1
+    const val WHEN_ENTRY_GUARD: Int = WHEN_ENTRY + 1
+
+    const val WHEN_CONDITION_IN_RANGE: Int = WHEN_ENTRY_GUARD + 1
+    const val WHEN_CONDITION_IS_PATTERN: Int = WHEN_CONDITION_IN_RANGE + 1
+    const val WHEN_CONDITION_EXPRESSION: Int = WHEN_CONDITION_IS_PATTERN + 1
+
+    const val COLLECTION_LITERAL_EXPRESSION: Int = WHEN_CONDITION_EXPRESSION + 1
+
+    const val PACKAGE_DIRECTIVE: Int = COLLECTION_LITERAL_EXPRESSION + 1
+    const val SCRIPT: Int = PACKAGE_DIRECTIVE + 1
+
+    const val TYPE_CODE_FRAGMENT: Int = SCRIPT + 1
+    const val EXPRESSION_CODE_FRAGMENT: Int = TYPE_CODE_FRAGMENT + 1
+    const val BLOCK_CODE_FRAGMENT: Int = EXPRESSION_CODE_FRAGMENT + 1
+    /**
+     * Remember to update first const in [KDocTokenId] after adding new tokens here ^^^
+     */
+}

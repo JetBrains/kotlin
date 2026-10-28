@@ -29,6 +29,7 @@
 # is not actually needed at runtime.
 -dontwarn org.jetbrains.kotlin.analysis.decompiler.**
 -dontwarn org.jetbrains.kotlin.psi.**
+-dontwarn org.jetbrains.kotlin.kdoc.lexer.**
 -dontwarn org.jetbrains.kotlin.kdoc.psi.**
 -dontwarn org.jetbrains.kotlin.type.MapPsiToAsmDesc
 -dontwarn org.jetbrains.kotlin.lexer.**

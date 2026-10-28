@@ -59,6 +59,7 @@ Frontend:
     - "compiler/resolution.common.js"
     - "compiler/serialization"
     - "compiler/serialization.common"
+    - "compiler/syntax.common"
     - "compiler/tests-java8"
     - "compiler/tests-spec"
   mustRunAllTestsOnChangesIn:
