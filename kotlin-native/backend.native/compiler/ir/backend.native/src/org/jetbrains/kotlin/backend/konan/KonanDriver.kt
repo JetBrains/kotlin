@@ -92,72 +92,74 @@ class KonanDriver(
         }
 
         val config = NativeSecondStageCompilationConfig(project, configuration)
+        CompilerExecutor.from(config.threadsCount).use { compilerExecutor ->
 
-        if (configuration.listTargets) {
-            config.targetManager.list()
+            if (configuration.listTargets) {
+                config.targetManager.list()
+            }
+
+            val hasIncludedLibraries = configuration.konanIncludedLibraries.isNotEmpty()
+            val isProducingExecutableFromLibraries = config.produce == CompilerOutputKind.PROGRAM
+                    && configuration.konanLibraries.isNotEmpty() && !hasIncludedLibraries
+            val hasCompilerInput = configuration.kotlinSourceRoots.isNotEmpty()
+                    || hasIncludedLibraries
+                    || configuration.exportedLibraries.isNotEmpty()
+                    || config.compileFromBitcode?.isNotEmpty() == true
+                    || isProducingExecutableFromLibraries
+
+            // Return early if no input was provided.
+            if (!hasCompilerInput && config.librariesToCache.isEmpty()) return
+
+            if (isProducingExecutableFromLibraries && configuration.generateTestRunner != TestRunnerKind.NONE) {
+                configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING,
+                        "Use `-Xinclude=<path-to-klib>` to pass libraries that contain tests.")
+            }
+
+            // Avoid showing warning twice in 2-phase compilation.
+            if (config.produce != CompilerOutputKind.LIBRARY && config.target in softDeprecatedTargets) {
+                configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING,
+                        "target ${config.target} is deprecated and will be removed soon. See: $DEPRECATION_LINK")
+            }
+
+            ensureModuleName(config)
+
+            val sourcesFiles = environment.getSourceFiles()
+            performanceManager?.apply {
+                targetDescription = config.moduleId
+                this.outputKind = config.produce.name
+                addSourcesStats(sourcesFiles.size, environment.countLinesOfCode(sourcesFiles))
+                // Finishing initialization phase before cache setup. Otherwise, cache building time will be counted as initialization phase.
+                // Since cache builders use PerformanceManager to report precise phases, the only timing we lose is "calculating what to cache".
+                notifyPhaseFinished(PhaseType.Initialization)
+            }
+
+            val cacheBuilder = CacheBuilder(config, compilationSpawner)
+            if (cacheBuilder.needToBuild()) {
+                // Build missing caches.
+                cacheBuilder.build()
+
+                // Reload `CacheSupport` inside `NativeSecondStageCompilationConfig` to reflect the up-to-date state of just built caches.
+                // This is important for further correct compilation of the resulting binary.
+                config.reloadCacheSupport()
+
+                // Parallel cache build might have already built our asked-to-build cache. Check for that and return early if true.
+                if (!hasCompilerInput && config.librariesToCache.isEmpty())
+                    return
+            }
+
+            if (!config.produce.isHeaderCache) {
+                config.cacheSupport.checkConsistency()
+            }
+
+            // The code that is reused from the caches is not inspected by the partial linkage engine in this compilation,
+            // so the issues detected at the moment those caches were built have to be reported once again (KT-78253).
+            // Note: A compilation that produces a cache stores the issues in that cache directory instead;
+            // they are replayed by the compilations that consume it.
+            if (!config.produce.isCache)
+                replayPartialLinkageIssuesFromCaches(config, cacheBuilder::wasRebuiltInThisRun)
+
+            NativeCompilerDriver(performanceManager).run(config, environment)
         }
-
-        val hasIncludedLibraries = configuration.konanIncludedLibraries.isNotEmpty()
-        val isProducingExecutableFromLibraries = config.produce == CompilerOutputKind.PROGRAM
-                && configuration.konanLibraries.isNotEmpty() && !hasIncludedLibraries
-        val hasCompilerInput = configuration.kotlinSourceRoots.isNotEmpty()
-                || hasIncludedLibraries
-                || configuration.exportedLibraries.isNotEmpty()
-                || config.compileFromBitcode?.isNotEmpty() == true
-                || isProducingExecutableFromLibraries
-
-        // Return early if no input was provided.
-        if (!hasCompilerInput && config.librariesToCache.isEmpty()) return
-
-        if (isProducingExecutableFromLibraries && configuration.generateTestRunner != TestRunnerKind.NONE) {
-            configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING,
-                    "Use `-Xinclude=<path-to-klib>` to pass libraries that contain tests.")
-        }
-
-        // Avoid showing warning twice in 2-phase compilation.
-        if (config.produce != CompilerOutputKind.LIBRARY && config.target in softDeprecatedTargets) {
-            configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING,
-                    "target ${config.target} is deprecated and will be removed soon. See: $DEPRECATION_LINK")
-        }
-
-        ensureModuleName(config)
-
-        val sourcesFiles = environment.getSourceFiles()
-        performanceManager?.apply {
-            targetDescription = config.moduleId
-            this.outputKind = config.produce.name
-            addSourcesStats(sourcesFiles.size, environment.countLinesOfCode(sourcesFiles))
-            // Finishing initialization phase before cache setup. Otherwise, cache building time will be counted as initialization phase.
-            // Since cache builders use PerformanceManager to report precise phases, the only timing we lose is "calculating what to cache".
-            notifyPhaseFinished(PhaseType.Initialization)
-        }
-
-        val cacheBuilder = CacheBuilder(config, compilationSpawner)
-        if (cacheBuilder.needToBuild()) {
-            // Build missing caches.
-            cacheBuilder.build()
-
-            // Reload `CacheSupport` inside `NativeSecondStageCompilationConfig` to reflect the up-to-date state of just built caches.
-            // This is important for further correct compilation of the resulting binary.
-            config.reloadCacheSupport()
-
-            // Parallel cache build might have already built our asked-to-build cache. Check for that and return early if true.
-            if (!hasCompilerInput && config.librariesToCache.isEmpty())
-                return
-        }
-
-        if (!config.produce.isHeaderCache) {
-            config.cacheSupport.checkConsistency()
-        }
-
-        // The code that is reused from the caches is not inspected by the partial linkage engine in this compilation,
-        // so the issues detected at the moment those caches were built have to be reported once again (KT-78253).
-        // Note: A compilation that produces a cache stores the issues in that cache directory instead;
-        // they are replayed by the compilations that consume it.
-        if (!config.produce.isCache)
-            replayPartialLinkageIssuesFromCaches(config, cacheBuilder::wasRebuiltInThisRun)
-
-        NativeCompilerDriver(performanceManager).run(config, environment)
     }
 
     private fun ensureModuleName(config: NativeSecondStageCompilationConfig) {
