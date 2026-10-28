@@ -23,12 +23,12 @@ fun <T : <!FINAL_UPPER_BOUND!>Inline<!>> atomicReference(reference: AtomicRefere
 }
 
 fun <T : <!FINAL_UPPER_BOUND!>Inline<!>> fieldUpdater(updater: AtomicReferenceFieldUpdater<Holder, Any?>, t: T) {
-    updater.compareAndSet(Holder(), t, t)
+    updater.compareAndSet(Holder(), <!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>t<!>, <!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>t<!>)
 }
 
 fun <T : <!FINAL_UPPER_BOUND!>Inline<!>> varHandle(t: T) {
     val handle = MethodHandles.lookup().findVarHandle(Holder::class.java, "any", Any::class.java)
-    handle.compareAndSet(Holder(), t, t)
+    handle.compareAndSet(Holder(), <!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>t<!>, <!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>t<!>)
 }
 
 fun <T : Base> willBecomeValue(updater: AtomicReferenceFieldUpdater<Holder, Any?>, t: T) {

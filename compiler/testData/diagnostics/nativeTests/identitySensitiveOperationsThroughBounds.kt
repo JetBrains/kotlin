@@ -17,10 +17,10 @@ class Wrapper(val x: Int) {
 }
 
 fun <T : AbstractValue> throughBounds(t: T) {
-    t.identityHashCode()
-    WeakReference(t)
+    <!IDENTITY_HASH_CODE_ON_VALUE_TYPE!>t.identityHashCode()<!>
+    WeakReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>t<!>)
 }
 
 fun willBecomeValue(wrapper: Wrapper) {
-    WeakReference(wrapper)
+    WeakReference(<!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>wrapper<!>)
 }
