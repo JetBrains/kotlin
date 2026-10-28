@@ -1,0 +1,20 @@
+KT element: KtAnnotationEntry
+FIR element: null
+FIR source kind: null
+
+FIR element rendered:
+null
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] danglingContextInFunctionTypeAnnotation.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] val p: <ERROR TYPE REF: Incomplete code>
+        public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Incomplete code>

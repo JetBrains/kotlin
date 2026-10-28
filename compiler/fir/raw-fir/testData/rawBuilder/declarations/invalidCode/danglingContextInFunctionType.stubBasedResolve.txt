@@ -1,0 +1,54 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] danglingContextInFunctionType.kt
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)]) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Anno.position] position: R|kotlin/String|): R|Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val position: R|kotlin/String| = R|<local>/position|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface Properties : R|kotlin/Any| {
+        public abstract [ResolvedTo(BODY_RESOLVE)] val ctx1: <ERROR TYPE REF: Incomplete code>
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Properties] get(): <ERROR TYPE REF: Incomplete code>
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] val ctx2: <ERROR TYPE REF: Incomplete code>
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Properties] get(): <ERROR TYPE REF: Incomplete code>
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] val ctx3: <ERROR TYPE REF: Incomplete code>
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Properties] get(): <ERROR TYPE REF: Incomplete code>
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] val ctx4: R|kotlin/Int|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Properties] get(): R|kotlin/Int|
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] val ctx4Nullable: R|kotlin/String?|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Properties] get(): R|kotlin/String?|
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] val ctx5: <ERROR TYPE REF: Incomplete user type>
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Properties] get(): <ERROR TYPE REF: Incomplete user type>
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] val ctx5Parenthesized: <ERROR TYPE REF: Incomplete code>
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Properties] get(): <ERROR TYPE REF: Incomplete code>
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] val named: <ERROR TYPE REF: Incomplete code>
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Properties] get(): <ERROR TYPE REF: Incomplete code>
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] val severalEntries: <ERROR TYPE REF: Incomplete code>
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Properties] get(): <ERROR TYPE REF: Incomplete code>
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] val annotated: <ERROR TYPE REF: Incomplete code>
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Properties] get(): <ERROR TYPE REF: Incomplete code>
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] val suspendModifier: <ERROR TYPE REF: Incomplete code>
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Properties] get(): <ERROR TYPE REF: Incomplete code>
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] val typeArgument: R|kotlin/collections/List<ERROR CLASS: Incomplete code>|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Properties] get(): R|kotlin/collections/List<ERROR CLASS: Incomplete code>|
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun returnType(): <ERROR TYPE REF: Incomplete code> {
+        ^returnType R|kotlin/TODO|()
+    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun valueParameter([ResolvedTo(ANNOTATION_ARGUMENTS)] p: <ERROR TYPE REF: Incomplete user type>): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <[ResolvedTo(ANNOTATION_ARGUMENTS)] T> intersection([ResolvedTo(ANNOTATION_ARGUMENTS)] p: R|T & Any|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun body(): R|kotlin/Unit| { LAZY_BLOCK }
