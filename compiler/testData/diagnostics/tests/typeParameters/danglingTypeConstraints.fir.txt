@@ -1,0 +1,130 @@
+FILE: danglingTypeConstraints.kt
+    public abstract fun interface TestInterface : R|kotlin/Any| {
+        public abstract fun test(): R|kotlin/Unit|
+
+    }
+    public final class TestClass : R|TestInterface| {
+        public constructor(): R|TestClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open override fun test(): R|kotlin/Unit| {
+        }
+
+    }
+    public final inline fun <reified A> R|A|.unusedReceiver(): R|kotlin/Unit| {
+        <getClass>(R|A|)
+    }
+    public final fun issueUsage(t: R|TestClass|): R|kotlin/Unit| {
+        R|<local>/t|.R|/unusedReceiver|<R|TestClass|>()
+        R|<local>/t|.R|/unusedReceiver|<R|TestClass|>()
+    }
+    public final fun noTypeParameters(a: <ERROR TYPE REF: Symbol not found for AA>): <ERROR TYPE REF: Symbol not found for AA> {
+        lval b: <ERROR TYPE REF: Symbol not found for AA> = R|<local>/a|
+        ^noTypeParameters R|<local>/b|
+    }
+    public final fun <T> withTypeParameter(a: <ERROR TYPE REF: Symbol not found for AA>, t: R|T|): <ERROR TYPE REF: Symbol not found for AA> {
+        lval b: <ERROR TYPE REF: Symbol not found for AA> = R|<local>/a|
+        ^withTypeParameter R|<local>/b|
+    }
+    public final fun calls(): R|kotlin/Unit| {
+        R|/noTypeParameters<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /noTypeParameters>#|()
+        R|/noTypeParameters|(Int(1))
+        R|/noTypeParameters<Inapplicable(INAPPLICABLE): /noTypeParameters>#|<R|kotlin/Int|>(Int(1))
+        R|/noTypeParameters<Inapplicable(INAPPLICABLE): /noTypeParameters>#|<R|kotlin/Int|, R|kotlin/String|>(Int(1))
+        R|/withTypeParameter|<R|kotlin/String|>(Int(1), String())
+        R|/withTypeParameter|<R|kotlin/String|>(Int(1), String())
+        R|/withTypeParameter<Inapplicable(INAPPLICABLE): /withTypeParameter>#|<R|kotlin/String|, R|kotlin/Int|>(Int(1), String())
+    }
+    public final fun <T> twoConstraints(t: R|T|): R|kotlin/Unit| {
+    }
+    public final fun <T : R|TestInterface|> shadowsClass(t: R|T|): R|kotlin/Unit| {
+        R|<local>/t|.R|/TestInterface.test|()
+    }
+    public final class C : R|kotlin/Any| {
+        public constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class D<T> : R|kotlin/Any| {
+        public constructor<T>(): R|D<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun get(a: <ERROR TYPE REF: Symbol not found for AA>): <ERROR TYPE REF: Symbol not found for AA> {
+            ^get R|<local>/a|
+        }
+
+    }
+    public final fun classUsages(): R|kotlin/Unit| {
+        R|/C.C|()
+        R|/C.C<Inapplicable(INAPPLICABLE): /C.C>#|<R|kotlin/Int|>()
+        R|/D.D|<R|kotlin/Int|>()
+        R|/D.D<Inapplicable(INAPPLICABLE): /D.D>#|<R|kotlin/Int|, R|kotlin/String|>()
+        R|/D.D|<R|kotlin/Int|>().R|SubstitutionOverride</D.get: <ERROR TYPE REF: Symbol not found for AA>>|(Int(1))
+    }
+    public final val <T> R|T|.prop: <ERROR TYPE REF: Symbol not found for AA>
+        public get(): <ERROR TYPE REF: Symbol not found for AA> {
+            ^ Null(null)!!
+        }
+    public final fun propertyUsage(): R|kotlin/Unit| {
+        Int(1).R|/prop|<R|kotlin/Int|>
+        String().R|/prop|<R|kotlin/String|>
+    }
+    public abstract interface Base : R|kotlin/Any| {
+        public abstract fun <T> member(t: R|T|): R|kotlin/Unit|
+
+    }
+    public final class Impl : R|Base| {
+        public constructor(): R|Impl| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open override fun <T> member(t: R|T|): R|kotlin/Unit| {
+        }
+
+    }
+    public final fun <T> conflictingBounds(t: R|T|): R|kotlin/Unit| {
+    }
+    public final fun <T> arrayBound(t: R|T|): R|kotlin/Unit| {
+    }
+    public final fun <T> cyclicBounds(t: R|T|): R|kotlin/Unit| {
+    }
+    public final fun <T> underscore(t: R|T|): R|kotlin/Unit| {
+    }
+    public final fun localFunction(): R|kotlin/Unit| {
+        local final fun <T> local(a: <ERROR TYPE REF: Symbol not found for AA>, t: R|T|): <ERROR TYPE REF: Symbol not found for AA> {
+            ^local R|<local>/a|
+        }
+
+        R|<local>/local|<R|kotlin/String|>(Int(1), String())
+    }
+    public final class EmptyTypeParameters : R|kotlin/Any| {
+        public constructor(): R|EmptyTypeParameters| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class GenericThrowable : R|kotlin/Throwable| {
+        public constructor(): R|GenericThrowable| {
+            super<R|kotlin/Throwable|>()
+        }
+
+    }
+    public final enum class GenericEnum : R|kotlin/Enum<GenericEnum>| {
+        private constructor(): R|GenericEnum| {
+            super<R|kotlin/Enum<GenericEnum>|>()
+        }
+
+        public final static enum entry ENTRY: R|GenericEnum|
+        public final static fun values(): R|kotlin/Array<GenericEnum>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|GenericEnum| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<GenericEnum>|
+            public static get(): R|kotlin/enums/EnumEntries<GenericEnum>|
+
+    }

@@ -1,0 +1,13 @@
+KT element: KtTypeReference
+FIR element: null
+FIR source kind: null
+
+FIR element rendered:
+null
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] danglingTypeConstraintBoundInProperty.kt
+    public final [ResolvedTo(BODY_RESOLVE)] [DanglingTypeConstraintsKey=[DanglingTypeConstraint(name=AA, source=KtRealPsiSourceElement(KtNameReferenceExpression, 74..76))]] val <[ResolvedTo(BODY_RESOLVE)] A> [ResolvedTo(BODY_RESOLVE)] R|A|.foo: R|kotlin/Int|
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
+            ^ Int(0)
+        }

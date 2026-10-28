@@ -264,6 +264,42 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     }
 
     @Test
+    @TestMetadata("annotationOnWhereSubjectClass.kt")
+    public void testAnnotationOnWhereSubjectClass() {
+      run("annotationOnWhereSubjectClass.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationOnWhereSubjectFunction.kt")
+    public void testAnnotationOnWhereSubjectFunction() {
+      run("annotationOnWhereSubjectFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationOnWhereSubjectFunctionArgument.kt")
+    public void testAnnotationOnWhereSubjectFunctionArgument() {
+      run("annotationOnWhereSubjectFunctionArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationOnWhereSubjectFunctionCallee.kt")
+    public void testAnnotationOnWhereSubjectFunctionCallee() {
+      run("annotationOnWhereSubjectFunctionCallee.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationOnWhereSubjectFunctionTypeReference.kt")
+    public void testAnnotationOnWhereSubjectFunctionTypeReference() {
+      run("annotationOnWhereSubjectFunctionTypeReference.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationOnWhereSubjectProperty.kt")
+    public void testAnnotationOnWhereSubjectProperty() {
+      run("annotationOnWhereSubjectProperty.kt");
+    }
+
+    @Test
     @TestMetadata("annotationReferenceOnEnumEntry.kt")
     public void testAnnotationReferenceOnEnumEntry() {
       run("annotationReferenceOnEnumEntry.kt");
@@ -2093,6 +2129,108 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     @TestMetadata("contextParameterOnErrorPrimaryConstructor.kt")
     public void testContextParameterOnErrorPrimaryConstructor() {
       run("contextParameterOnErrorPrimaryConstructor.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingTypeConstraintBound.kt")
+    public void testDanglingTypeConstraintBound() {
+      run("danglingTypeConstraintBound.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingTypeConstraintBoundInAnonymousFunction.kt")
+    public void testDanglingTypeConstraintBoundInAnonymousFunction() {
+      run("danglingTypeConstraintBoundInAnonymousFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingTypeConstraintBoundInClass.kt")
+    public void testDanglingTypeConstraintBoundInClass() {
+      run("danglingTypeConstraintBoundInClass.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingTypeConstraintBoundInLocalFunction.kt")
+    public void testDanglingTypeConstraintBoundInLocalFunction() {
+      run("danglingTypeConstraintBoundInLocalFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingTypeConstraintBoundInProperty.kt")
+    public void testDanglingTypeConstraintBoundInProperty() {
+      run("danglingTypeConstraintBoundInProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingTypeConstraintBoundTypeArgument.kt")
+    public void testDanglingTypeConstraintBoundTypeArgument() {
+      run("danglingTypeConstraintBoundTypeArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingTypeConstraintBoundUnresolved.kt")
+    public void testDanglingTypeConstraintBoundUnresolved() {
+      run("danglingTypeConstraintBoundUnresolved.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingTypeConstraintBoundWithoutTypeParameters.kt")
+    public void testDanglingTypeConstraintBoundWithoutTypeParameters() {
+      run("danglingTypeConstraintBoundWithoutTypeParameters.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingTypeConstraintSubject.kt")
+    public void testDanglingTypeConstraintSubject() {
+      run("danglingTypeConstraintSubject.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingTypeConstraintSubjectAnnotation.kt")
+    public void testDanglingTypeConstraintSubjectAnnotation() {
+      run("danglingTypeConstraintSubjectAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingTypeConstraintSubjectAnnotationArgument.kt")
+    public void testDanglingTypeConstraintSubjectAnnotationArgument() {
+      run("danglingTypeConstraintSubjectAnnotationArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingTypeConstraintSubjectAnnotationCallee.kt")
+    public void testDanglingTypeConstraintSubjectAnnotationCallee() {
+      run("danglingTypeConstraintSubjectAnnotationCallee.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingTypeConstraintSubjectAnnotationInClass.kt")
+    public void testDanglingTypeConstraintSubjectAnnotationInClass() {
+      run("danglingTypeConstraintSubjectAnnotationInClass.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingTypeConstraintSubjectAnnotationInProperty.kt")
+    public void testDanglingTypeConstraintSubjectAnnotationInProperty() {
+      run("danglingTypeConstraintSubjectAnnotationInProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingTypeConstraintSubjectAnnotationTypeReference.kt")
+    public void testDanglingTypeConstraintSubjectAnnotationTypeReference() {
+      run("danglingTypeConstraintSubjectAnnotationTypeReference.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingTypeConstraintSubjectAnnotationWithoutTypeParameters.kt")
+    public void testDanglingTypeConstraintSubjectAnnotationWithoutTypeParameters() {
+      run("danglingTypeConstraintSubjectAnnotationWithoutTypeParameters.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingTypeConstraintUsage.kt")
+    public void testDanglingTypeConstraintUsage() {
+      run("danglingTypeConstraintUsage.kt");
     }
 
     @Test
