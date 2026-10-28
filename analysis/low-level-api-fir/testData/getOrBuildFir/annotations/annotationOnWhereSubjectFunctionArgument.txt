@@ -16,5 +16,5 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnWhereSubjectFunctionArgument.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] fun <@R|Anno|[Types](s = String(str) [evaluated = String(str)]) [ResolvedTo(BODY_RESOLVE)] T, @R|Anno|[Types](s = String(str) [evaluated = String(str)]) [ResolvedTo(BODY_RESOLVE)] U : R|kotlin/Any|> foo([ResolvedTo(BODY_RESOLVE)] t: R|T|, [ResolvedTo(BODY_RESOLVE)] u: R|U|): R|kotlin/Unit| {
+    public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T, @R|Anno|[Types](s = String(str) [evaluated = String(str)]) [ResolvedTo(BODY_RESOLVE)] U : R|kotlin/Any|> foo([ResolvedTo(BODY_RESOLVE)] t: R|T|, [ResolvedTo(BODY_RESOLVE)] u: R|U|): R|kotlin/Unit| {
     }

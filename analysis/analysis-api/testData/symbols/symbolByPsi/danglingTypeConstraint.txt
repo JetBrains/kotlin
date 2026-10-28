@@ -47,9 +47,9 @@ KaNamedFunctionSymbol:
   psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
-  returnType: KaClassErrorType:
+  returnType: KaTypeParameterType:
     annotations: []
-    type: ERROR_TYPE
+    type: AA
   typeParameters: [
     KaTypeParameterSymbol:
       anchorPsi: KtTypeParameter
@@ -65,6 +65,31 @@ KaNamedFunctionSymbol:
       psi: KtTypeParameter
       realPsi: KtTypeParameter
       upperBounds: []
+      variance: INVARIANT
+      visibility: LOCAL
+      getContainingFileSymbol: KaFileSymbol(danglingTypeConstraint.kt)
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecation: null
+      importableFqName: null
+    KaTypeParameterSymbol:
+      anchorPsi: KtNameReferenceExpression
+      annotations: []
+      isActual: false
+      isExpect: false
+      isExternal: false
+      isReified: false
+      location: LOCAL
+      modality: FINAL
+      name: AA
+      origin: SOURCE_MEMBER_GENERATED
+      psi: KtNameReferenceExpression
+      realPsi: null
+      upperBounds: [
+        KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: kotlin/Number
+      ]
       variance: INVARIANT
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(danglingTypeConstraint.kt)
@@ -100,9 +125,9 @@ KaNamedFunctionSymbol:
       psi: KtParameter
       realPsi: KtParameter
       receiverParameter: null
-      returnType: KaClassErrorType:
+      returnType: KaTypeParameterType:
         annotations: []
-        type: ERROR_TYPE
+        type: AA
       typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(danglingTypeConstraint.kt)
@@ -221,6 +246,31 @@ KaNamedClassSymbol:
       psi: KtTypeParameter
       realPsi: KtTypeParameter
       upperBounds: []
+      variance: INVARIANT
+      visibility: LOCAL
+      getContainingFileSymbol: KaFileSymbol(danglingTypeConstraint.kt)
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecation: null
+      importableFqName: null
+    KaTypeParameterSymbol:
+      anchorPsi: KtNameReferenceExpression
+      annotations: []
+      isActual: false
+      isExpect: false
+      isExternal: false
+      isReified: false
+      location: CLASS
+      modality: FINAL
+      name: AA
+      origin: SOURCE_MEMBER_GENERATED
+      psi: KtNameReferenceExpression
+      realPsi: null
+      upperBounds: [
+        KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: kotlin/Any
+      ]
       variance: INVARIANT
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(danglingTypeConstraint.kt)
@@ -392,6 +442,31 @@ KaNamedFunctionSymbol:
       psi: KtTypeParameter
       realPsi: KtTypeParameter
       upperBounds: []
+      variance: INVARIANT
+      visibility: LOCAL
+      getContainingFileSymbol: KaFileSymbol(danglingTypeConstraint.kt)
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecation: null
+      importableFqName: null
+    KaTypeParameterSymbol:
+      anchorPsi: KtNameReferenceExpression
+      annotations: []
+      isActual: false
+      isExpect: false
+      isExternal: false
+      isReified: false
+      location: LOCAL
+      modality: FINAL
+      name: AA
+      origin: SOURCE_MEMBER_GENERATED
+      psi: KtNameReferenceExpression
+      realPsi: null
+      upperBounds: [
+        KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: kotlin/Any
+      ]
       variance: INVARIANT
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(danglingTypeConstraint.kt)

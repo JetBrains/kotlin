@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.utils.isDangling
 import org.jetbrains.kotlin.fir.resolve.symbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
@@ -37,7 +38,8 @@ object FirPropertyTypeParametersChecker : FirPropertyChecker(MppCheckerKind.Comm
         declaration.receiverParameter?.typeRef?.let { collectAllTypes(it.coneType) }
         declaration.contextParameters.forEach { collectAllTypes(it.returnTypeRef.coneType) }
 
-        declaration.typeParameters.filterNot { it.symbol in usedSymbols }.forEach { danglingParam ->
+        // Dangling type parameters are reported as NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER
+        declaration.typeParameters.filterNot { it.symbol in usedSymbols || it.isDangling }.forEach { danglingParam ->
             reporter.reportOn(danglingParam.source, FirErrors.INCORRECT_TYPE_PARAMETER_OF_PROPERTY)
         }
     }

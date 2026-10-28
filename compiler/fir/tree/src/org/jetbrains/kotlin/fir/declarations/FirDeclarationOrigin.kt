@@ -66,6 +66,16 @@ sealed class FirDeclarationOrigin(
         object FakeHiddenInPreparationForNewJdk : Synthetic()
         object ImplicitWhenSubject : Synthetic()
 
+        /**
+         * A type parameter created for a `where` constraint whose subject is not a declared type parameter of the declaration,
+         * as if it were declared. It follows the declared type parameters, its source is a
+         * [KtFakeSourceElementKind.DanglingTypeParameter][org.jetbrains.kotlin.KtFakeSourceElementKind.DanglingTypeParameter] one on
+         * the first constraint subject with its name, and its bounds and annotations come from all constraints with this subject.
+         *
+         * Such type parameters are reported as `NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER`.
+         */
+        object DanglingTypeParameter : Synthetic()
+
         // REPL synthetic constructs.
         object ReplContainerClass : Synthetic()
         object ReplEvalFunction : Synthetic()

@@ -1,13 +1,11 @@
 KT element: KtTypeReference
-FIR element: null
-FIR source kind: null
+FIR element: FirResolvedTypeRefImpl
+FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-null
+R|kotlin/Number|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] danglingTypeConstraintBoundInProperty.kt
-    public final [ResolvedTo(BODY_RESOLVE)] [DanglingTypeConstraintsKey=[DanglingTypeConstraint(name=AA, source=KtRealPsiSourceElement(KtNameReferenceExpression, 74..76))]] val <[ResolvedTo(BODY_RESOLVE)] A> [ResolvedTo(BODY_RESOLVE)] R|A|.foo: R|kotlin/Int|
-        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
-            ^ Int(0)
-        }
+    public? final? [ResolvedTo(TYPES)] val <[ResolvedTo(TYPES)] A, [ResolvedTo(TYPES)] AA : R|kotlin/Number|> [ResolvedTo(TYPES)] R|A|.foo: R|kotlin/Int|
+        public? [ResolvedTo(TYPES)] get(): R|kotlin/Int| { LAZY_BLOCK }

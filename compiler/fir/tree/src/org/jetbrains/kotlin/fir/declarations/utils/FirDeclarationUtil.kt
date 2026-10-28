@@ -98,6 +98,12 @@ fun FirBasedSymbol<*>.asMemberDeclarationResolvedTo(phase: FirResolvePhase): Fir
 
 val FirConstructorSymbol.isErrorPrimaryConstructor: Boolean get() = fir is FirErrorPrimaryConstructor
 
+/**
+ * @see FirDeclarationOrigin.Synthetic.DanglingTypeParameter
+ */
+val FirTypeParameterRef.isDangling: Boolean
+    get() = this is FirTypeParameter && origin == FirDeclarationOrigin.Synthetic.DanglingTypeParameter
+
 fun FirStatement.isDestructuredParameter(): Boolean = this is FirVariable && getDestructuredParameter() != null
 
 fun FirVariable.getDestructuredParameter(): FirValueParameterSymbol? {

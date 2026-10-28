@@ -175,6 +175,12 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     object ConstructorTypeParameter : KtFakeSourceElementKind()
 
     /**
+     * for a type parameter created for a `where` constraint on a name that is not a declared type parameter,
+     * the source refers to the first constraint subject with this name
+     */
+    object DanglingTypeParameter : KtFakeSourceElementKind()
+
+    /**
      * for constructors which do not have delegated constructor call the fake one is generated
      * with a fake sources which refers to the original constructor
      */
