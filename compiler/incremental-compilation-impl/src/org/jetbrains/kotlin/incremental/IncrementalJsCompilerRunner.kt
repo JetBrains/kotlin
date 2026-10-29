@@ -44,7 +44,7 @@ fun makeJsIncrementally(
     reporter: ICReporter = DoNothingICReporter,
     scopeExpansion: CompileScopeExpansionMode = CompileScopeExpansionMode.NEVER,
     modulesApiHistory: ModulesApiHistory = EmptyModulesApiHistory,
-    providedChangedFiles: ChangedFiles? = null
+    providedChangedFiles: ChangedFiles? = null,
 ) {
     val allKotlinFiles = sourceRoots.asSequence().flatMap { it.walk() }
         .filter { it.isFile && it.extension.equals("kt", ignoreCase = true) }.toList()
@@ -129,7 +129,8 @@ class IncrementalJsCompilerRunner(
         if (!buildHistoryFile.isFile) {
             return CompilationMode.Rebuild(BuildAttribute.NO_BUILD_HISTORY)
         }
-        val lastBuildInfo = BuildInfo.read(lastBuildInfoFile, messageCollector) ?: return CompilationMode.Rebuild(BuildAttribute.INVALID_LAST_BUILD_INFO)
+        val lastBuildInfo =
+            BuildInfo.read(lastBuildInfoFile, messageCollector) ?: return CompilationMode.Rebuild(BuildAttribute.INVALID_LAST_BUILD_INFO)
 
         val dirtyFiles = dirtyFilesProvider.getInitializedDirtyFiles(caches, changedFiles)
 
@@ -187,14 +188,20 @@ class IncrementalJsCompilerRunner(
                 register(IncrementalDataProvider::class.java, IncrementalDataProviderFromCache(caches.platformCache))
             }
 
-            register(IncrementalResultsConsumer::class.java, IncrementalResultsConsumerImpl())
+            register(
+                IncrementalResultsConsumer::class.java,
+                getIncrementalResultsConsumer(args)
+            )
         }
+
+    private fun getIncrementalResultsConsumer(args: CommonJsAndWasmCompilerArguments) =
+        if (args.multiPlatform) KmpIncrementalResultsConsumer() else IncrementalResultsConsumerImpl()
 
     override fun updateCaches(
         services: Services,
         caches: IncrementalJsCachesManager,
         generatedFiles: List<GeneratedFile>,
-        changesCollector: ChangesCollector
+        changesCollector: ChangesCollector,
     ) {
         val incrementalResults = services[IncrementalResultsConsumer::class.java] as IncrementalResultsConsumerImpl
 
@@ -211,7 +218,7 @@ class IncrementalJsCompilerRunner(
         services: Services,
         messageCollector: MessageCollector,
         allSources: List<File>,
-        isIncremental: Boolean
+        isIncremental: Boolean,
     ): Pair<ExitCode, Collection<File>> {
         val freeArgsBackup = args.freeArgs
         var compiler: CLICompiler<*>? = null
@@ -236,7 +243,7 @@ class IncrementalJsCompilerRunner(
     override fun additionalDirtyFiles(
         caches: IncrementalJsCachesManager,
         generatedFiles: List<GeneratedFile>,
-        services: Services
+        services: Services,
     ): Iterable<File> {
         val additionalDirtyFiles: Set<File> =
             when (scopeExpansion) {
@@ -251,7 +258,7 @@ class IncrementalJsCompilerRunner(
 
     inner class IncrementalNextRoundCheckerImpl(
         private val caches: IncrementalJsCachesManager,
-        private val sourcesToCompile: Set<File>
+        private val sourcesToCompile: Set<File>,
     ) : IncrementalNextRoundChecker {
         val newDirtySources = HashSet<File>()
 
