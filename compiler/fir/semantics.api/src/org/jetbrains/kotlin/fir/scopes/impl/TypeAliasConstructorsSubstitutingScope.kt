@@ -36,7 +36,11 @@ data class TypeAliasConstructorInfo<T : FirFunction>(
     val originalConstructor: T,
     val typeAliasSymbol: FirTypeAliasSymbol,
     val substitutor: ConeSubstitutor?,
-)
+) {
+    override fun toString(): String {
+        return "TypeAliasConstructorInfo(originalConstructor=${originalConstructor.symbol}, typeAliasSymbol=$typeAliasSymbol, substitutor=$substitutor)"
+    }
+}
 
 var <T : FirFunction> T.typeAliasConstructorInfo: TypeAliasConstructorInfo<T>? by FirDeclarationDataRegistry.data(TypeAliasConstructorInfoKey)
 

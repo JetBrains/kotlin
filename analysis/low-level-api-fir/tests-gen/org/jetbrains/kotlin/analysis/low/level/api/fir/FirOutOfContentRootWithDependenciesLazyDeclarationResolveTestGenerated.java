@@ -1963,6 +1963,44 @@ public class FirOutOfContentRootWithDependenciesLazyDeclarationResolveTestGenera
   }
 
   @Nested
+  @TestMetadata("analysis/low-level-api-fir/testData/lazyResolve/fakeDeclarations")
+  @TestDataPath("$PROJECT_ROOT")
+  public class FakeDeclarations {
+    private void run(String fileName) {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/fakeDeclarations/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInFakeDeclarations() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolve/fakeDeclarations"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("samConstructor.kt")
+    public void testSamConstructor() {
+      run("samConstructor.kt");
+    }
+
+    @Test
+    @TestMetadata("samConstructorViaTypeAlias.kt")
+    public void testSamConstructorViaTypeAlias() {
+      run("samConstructorViaTypeAlias.kt");
+    }
+
+    @Test
+    @TestMetadata("typeAliasedConstructor.kt")
+    public void testTypeAliasedConstructor() {
+      run("typeAliasedConstructor.kt");
+    }
+
+    @Test
+    @TestMetadata("typeAliasedConstructorWithTypeParameters.kt")
+    public void testTypeAliasedConstructorWithTypeParameters() {
+      run("typeAliasedConstructorWithTypeParameters.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/low-level-api-fir/testData/lazyResolve/functions")
   @TestDataPath("$PROJECT_ROOT")
   public class Functions {
