@@ -99,6 +99,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.reportOutputFiles = from.reportOutputFiles
     to.reportPerf = from.reportPerf
     to.returnValueChecker = from.returnValueChecker
+    to.richErrors = from.richErrors
     to.script = from.script
     to.separateKmpCompilationScheme = from.separateKmpCompilationScheme
     to.skipMetadataVersionCheck = from.skipMetadataVersionCheck

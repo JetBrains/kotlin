@@ -398,6 +398,12 @@
             "patch": 0
         },
         {
+            "name": "2.5.20",
+            "major": 2,
+            "minor": 5,
+            "patch": 20
+        },
+        {
             "name": "2.6.0",
             "major": 2,
             "minor": 6,
@@ -6142,6 +6148,51 @@
                                         "value": "disable"
                                     }
                                 ]
+                            }
+                        },
+                        "deprecatedMessage": null
+                    },
+                    {
+                        "name": "Xrich-errors",
+                        "shortName": null,
+                        "deprecatedName": null,
+                        "description": {
+                            "current": "Enable experimental language support for Rich Errors.",
+                            "valueInVersions": []
+                        },
+                        "delimiter": null,
+                        "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
+                        "valueType": {
+                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                            "isNullable": {
+                                "current": false,
+                                "valueInVersions": []
+                            },
+                            "defaultValue": {
+                                "current": false,
+                                "valueInVersions": []
+                            }
+                        },
+                        "valueDescription": {
+                            "current": null,
+                            "valueInVersions": []
+                        },
+                        "releaseVersionsMetadata": {
+                            "introducedVersion": "2.5.20",
+                            "stabilizedVersion": null,
+                            "deprecatedVersion": null,
+                            "removedVersion": null
+                        },
+                        "argumentType": {
+                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                            "isNullable": {
+                                "current": false,
+                                "valueInVersions": []
+                            },
+                            "defaultValue": {
+                                "current": false,
+                                "valueInVersions": []
                             }
                         },
                         "deprecatedMessage": null
