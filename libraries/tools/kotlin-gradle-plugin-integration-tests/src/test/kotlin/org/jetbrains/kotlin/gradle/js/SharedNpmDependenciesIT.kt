@@ -107,10 +107,14 @@ class SharedNpmDependenciesIT : KGPBaseTest() {
 
             build("kotlinSetupSharedNpmProject", "kotlinWasmSetupSharedNpmProject") {
                 assertTasksExecuted(
-                    ":lib-a:kotlinNpmDependenciesReport",
-                    ":lib-b:kotlinNpmDependenciesReport",
-                    ":lib-b:kotlinWasmNpmDependenciesReport",
-                    ":lib-web:kotlinNpmDependenciesReport",
+                    ":lib-a:jsNpmDependenciesReport",
+                    ":lib-a:jsTestNpmDependenciesReport",
+                    ":lib-b:jsNpmDependenciesReport",
+                    ":lib-b:jsTestNpmDependenciesReport",
+                    ":lib-b:wasmJsNpmDependenciesReport",
+                    ":lib-b:wasmJsTestNpmDependenciesReport",
+                    ":lib-web:jsNpmDependenciesReport",
+                    ":lib-web:jsTestNpmDependenciesReport",
                     ":kotlinSetupSharedNpmProject",
                     ":kotlinWasmSetupSharedNpmProject",
                 )
@@ -198,10 +202,14 @@ class SharedNpmDependenciesIT : KGPBaseTest() {
             build("kotlinSetupSharedNpmProject", "kotlinWasmSetupSharedNpmProject") {
                 assertConfigurationCacheReused()
                 assertTasksUpToDate(
-                    ":lib-a:kotlinNpmDependenciesReport",
-                    ":lib-b:kotlinNpmDependenciesReport",
-                    ":lib-b:kotlinWasmNpmDependenciesReport",
-                    ":lib-web:kotlinNpmDependenciesReport",
+                    ":lib-a:jsNpmDependenciesReport",
+                    ":lib-a:jsTestNpmDependenciesReport",
+                    ":lib-b:jsNpmDependenciesReport",
+                    ":lib-b:jsTestNpmDependenciesReport",
+                    ":lib-b:wasmJsNpmDependenciesReport",
+                    ":lib-b:wasmJsTestNpmDependenciesReport",
+                    ":lib-web:jsNpmDependenciesReport",
+                    ":lib-web:jsTestNpmDependenciesReport",
                     ":kotlinSetupSharedNpmProject",
                     ":kotlinWasmSetupSharedNpmProject",
                 )
@@ -253,18 +261,101 @@ class SharedNpmDependenciesIT : KGPBaseTest() {
                 projectPath.resolve("lib-b/build/kotlin-npm/js/shared-package-json/emptyKts-lib-b/package.json").toFile()
                     .let { fromSrcPackageJson(it) ?: error("Cannot parse $it") }
 
-            build(":lib-b:kotlinNpmDependenciesReport") {
-                assertTasksExecuted(":lib-a:kotlinNpmDependenciesReport")
+            build(":lib-b:jsNpmDependenciesReport") {
+                assertTasksExecuted(":lib-a:jsNpmDependenciesReport")
                 assertEquals(null, libBNpmDependenciesReport().dependencies["left-pad"])
             }
 
-            build(":lib-b:kotlinNpmDependenciesReport", "-PaddLeftPad=true") {
-                assertTasksExecuted(":lib-a:kotlinNpmDependenciesReport")
+            build(":lib-b:jsNpmDependenciesReport", "-PaddLeftPad=true") {
+                assertTasksExecuted(":lib-a:jsNpmDependenciesReport")
                 assertEquals("1.3.0", libBNpmDependenciesReport().dependencies["left-pad"])
             }
 
-            build(":lib-b:kotlinNpmDependenciesReport", "-PaddLeftPad=true") {
-                assertTasksUpToDate(":lib-a:kotlinNpmDependenciesReport", ":lib-b:kotlinNpmDependenciesReport")
+            build(":lib-b:jsNpmDependenciesReport", "-PaddLeftPad=true") {
+                assertTasksUpToDate(":lib-a:jsNpmDependenciesReport", ":lib-b:jsNpmDependenciesReport")
+            }
+        }
+    }
+
+    @DisplayName("Test compilation depending on a project that depends on the main compilation has no circular npm dependency report")
+    @GradleTest
+    fun testNoCircularNpmDependenciesReportBetweenTestAndMainCompilations(gradleVersion: GradleVersion) {
+        project("emptyKts", gradleVersion) {
+            plugins {
+                kotlin("multiplatform").apply(false)
+            }
+            buildScriptInjection {
+                project.plugins.apply(KotlinSharedNpmProjectPlugin::class.java)
+                project.dependencies.add("kotlinNpmSharedDependencies", project.dependencies.project(mapOf("path" to ":core")))
+                project.dependencies.add("kotlinNpmSharedDependencies", project.dependencies.project(mapOf("path" to ":test-utils")))
+            }
+
+            includeOtherProjectAsSubmodule("emptyKts", newSubmoduleName = "core") {
+                buildScriptInjection {
+                    project.plugins.apply("org.jetbrains.kotlin.multiplatform")
+                    kotlinMultiplatform.apply {
+                        js { nodejs() }
+                        sourceSets.getByName("jsMain").dependencies {
+                            implementation(npm("is-even", "1.0.0"))
+                        }
+                        sourceSets.getByName("jsTest").dependencies {
+                            implementation(project(":test-utils"))
+                        }
+                    }
+                }
+            }
+
+            includeOtherProjectAsSubmodule("emptyKts", newSubmoduleName = "test-utils") {
+                buildScriptInjection {
+                    project.plugins.apply("org.jetbrains.kotlin.multiplatform")
+                    kotlinMultiplatform.apply {
+                        js { nodejs() }
+                        sourceSets.getByName("jsMain").dependencies {
+                            implementation(project(":core"))
+                            implementation(npm("left-pad", "1.3.0"))
+                        }
+                    }
+                }
+            }
+
+            val coreDependencies = mapOf("is-even" to "1.0.0")
+            val testUtilsDependencies = mapOf("left-pad" to "1.3.0") + coreDependencies
+
+            // core:jsTest needs test-utils main, which needs core main: a separate task, so no cycle.
+            build("kotlinSetupSharedNpmProject") {
+                assertTasksExecuted(
+                    ":core:jsNpmDependenciesReport",
+                    ":core:jsTestNpmDependenciesReport",
+                    ":test-utils:jsNpmDependenciesReport",
+                    ":test-utils:jsTestNpmDependenciesReport",
+                )
+
+                val js = projectPath.resolve("build/js/shared-npm-project")
+                assertRootPackageJson(
+                    js.resolve("package.json"),
+                    workspaces = listOf(
+                        "packages/emptyKts-core",
+                        "packages/emptyKts-core-test",
+                        "packages/emptyKts-test-utils",
+                        "packages/emptyKts-test-utils-test",
+                    ),
+                )
+                assertWorkspacePackageJson(
+                    js.resolve("packages/emptyKts-core/package.json"),
+                    name = "emptyKts-core",
+                    dependencies = coreDependencies,
+                )
+                assertWorkspacePackageJson(
+                    js.resolve("packages/emptyKts-core-test/package.json"),
+                    name = "emptyKts-core-test",
+                    dependencies = testUtilsDependencies,
+                    requiredDevDependencies = mochaTools,
+                )
+                assertWorkspacePackageJson(
+                    js.resolve("packages/emptyKts-test-utils/package.json"),
+                    name = "emptyKts-test-utils",
+                    dependencies = testUtilsDependencies,
+                )
             }
         }
     }

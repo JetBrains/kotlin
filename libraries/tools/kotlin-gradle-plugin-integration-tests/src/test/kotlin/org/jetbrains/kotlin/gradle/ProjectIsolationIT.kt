@@ -7,12 +7,14 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.targets.js.npm.fromSrcPackageJson
 import org.jetbrains.kotlin.gradle.targets.web.npm.KotlinSharedNpmProjectPlugin
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
+import kotlin.test.assertEquals
 
 @MustRunOnChangesInGradle
 class ProjectIsolationIT : KGPBaseTest() {
@@ -154,15 +156,19 @@ class ProjectIsolationIT : KGPBaseTest() {
 
             build("kotlinSetupSharedNpmProject", "kotlinWasmSetupSharedNpmProject") {
                 assertTasksExecuted(
-                    ":lib-a:kotlinNpmDependenciesReport",
-                    ":lib-b:kotlinNpmDependenciesReport",
-                    ":kotlinSetupSharedNpmProject",
-                    ":lib-a:kotlinWasmNpmDependenciesReport",
-                    ":lib-b:kotlinWasmNpmDependenciesReport",
-                    ":kotlinWasmSetupSharedNpmProject",
+                    ":lib-a:jsNpmDependenciesReport",
+                    ":lib-a:jsTestNpmDependenciesReport",
+                    ":lib-b:jsNpmDependenciesReport",
+                    ":lib-b:jsTestNpmDependenciesReport",
+                    ":lib-a:wasmJsNpmDependenciesReport",
+                    ":lib-a:wasmJsTestNpmDependenciesReport",
+                    ":lib-b:wasmJsNpmDependenciesReport",
+                    ":lib-b:wasmJsTestNpmDependenciesReport",
                 )
-                assertFileExists(projectPath.resolve("build/js/shared-npm-project/package.json"))
-                assertFileExists(projectPath.resolve("build/wasm/shared-npm-project/package.json"))
+                for (platform in listOf("js", "wasm")) {
+                    val libB = projectPath.resolve("build/$platform/shared-npm-project/packages/emptyKts-lib-b/package.json").toFile()
+                    assertEquals("1.0.0", fromSrcPackageJson(libB)?.dependencies?.get("is-even"), "is-even from :lib-a in $libB")
+                }
             }
 
             build("kotlinSetupSharedNpmProject", "kotlinWasmSetupSharedNpmProject") {

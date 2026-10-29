@@ -10,6 +10,7 @@ import org.gradle.api.artifacts.Configuration
 import org.jetbrains.kotlin.gradle.npm.DefaultKotlinNpmDependency
 import org.jetbrains.kotlin.gradle.npm.KotlinNpmDependency
 import org.jetbrains.kotlin.gradle.npm.npmDependenciesCollector
+import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.targets.KotlinTargetSideEffect
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
@@ -24,8 +25,7 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
-import org.jetbrains.kotlin.gradle.targets.web.npm.shared.KotlinNpmDependencyReportTask.Companion.npmDependenciesReportTaskName
-import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
+import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.withType
 
 internal val SetupNpmDependencyReportSideEffect = KotlinTargetSideEffect { target ->
@@ -39,43 +39,46 @@ internal val SetupNpmDependencyReportSideEffect = KotlinTargetSideEffect { targe
     )
     val platformDirectoryName = platform.platformDisambiguator ?: JsPlatformDisambiguator.jsPlatform
 
-    val npmDependenciesReportTask = project.locateOrRegisterTask<KotlinNpmDependencyReportTask>(platform.npmDependenciesReportTaskName) { task ->
-        task.description = "Collects the npm dependencies of the '$platformDirectoryName' compilations into one package.json per compilation."
-        task.outputDirectory.set(project.layout.buildDirectory.dir("kotlin-npm/$platformDirectoryName/shared-package-json"))
-    }
-
     val npmRuntimeDependencies = project.maybeCreateNpmRuntimeDependencies(target, platform)
     val npmDependenciesReport = project.maybeCreateNpmDependenciesReport(platform)
 
     target.compilations.all { compilation ->
         val npmRuntimeDependenciesResolver = project.createNpmRuntimeDependenciesResolver(compilation)
-        npmDependenciesReportTask.configure { task ->
-            task.compilations.add(project.compilationNpmDependencies(compilation, npmRuntimeDependenciesResolver, platform))
+        val reportTask = project.registerTask<KotlinNpmDependencyReportTask>(compilation.npmDependenciesReportTaskName) { task ->
+            task.description = "Collects the npm dependencies of $compilation."
+            task.compilation.configure(project, compilation, npmRuntimeDependenciesResolver, platform)
+            task.outputFile.convention(
+                project.layout.buildDirectory.file(
+                    compilation.outputModuleName.map { "kotlin-npm/$platformDirectoryName/shared-package-json/$it/${NpmProject.PACKAGE_JSON}" }
+                )
+            )
         }
 
-        val packageJsonFile = npmDependenciesReportTask.flatMap { task ->
-            task.outputDirectory.file(compilation.outputModuleName.map { "$it/${NpmProject.PACKAGE_JSON}" })
-        }
-        npmDependenciesReport.outgoing.artifact(packageJsonFile)
+        val reportFile = reportTask.flatMap { it.outputFile }
+        npmDependenciesReport.outgoing.artifact(reportFile)
         if (compilation.isMain()) {
-            project.artifacts.add(npmRuntimeDependencies.name, packageJsonFile)
+            project.artifacts.add(npmRuntimeDependencies.name, reportFile)
         }
     }
 }
 
-private fun Project.compilationNpmDependencies(
+private val KotlinJsIrCompilation.npmDependenciesReportTaskName: String
+    get() = disambiguateName("npmDependenciesReport")
+
+private fun CompilationNpmDependencies.configure(
+    project: Project,
     compilation: KotlinJsIrCompilation,
     npmRuntimeDependenciesResolver: Configuration,
     platform: HasPlatformDisambiguator,
-): CompilationNpmDependencies = objects.newInstance(CompilationNpmDependencies::class.java).apply {
+) {
     val npmProject = compilation.npmProject
-    moduleName.set(compilation.outputModuleName)
-    packageVersion.set(version.toString())
-    main.set(npmProject.main)
-    types.set(npmProject.typesFilePath)
-    directDependencies.set(provider { collectDirectDeclaredNpmDependencies(compilation) })
-    toolDependencies.set(provider { collectDevNpmDependencies(compilation) })
-    transitiveArtifacts.from(npmRuntimeDependenciesReports(npmRuntimeDependenciesResolver, platform))
+    moduleName.convention(compilation.outputModuleName)
+    packageVersion.convention(project.provider { project.version.toString() })
+    main.convention(npmProject.main)
+    types.convention(npmProject.typesFilePath)
+    directDependencies.convention(project.provider { collectDirectDeclaredNpmDependencies(compilation) })
+    toolDependencies.convention(project.provider { project.collectDevNpmDependencies(compilation) })
+    transitiveArtifacts.from(project.npmRuntimeDependenciesReports(npmRuntimeDependenciesResolver, platform))
 }
 
 private fun collectDirectDeclaredNpmDependencies(compilation: KotlinJsIrCompilation): Set<DefaultKotlinNpmDependency> =

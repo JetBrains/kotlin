@@ -38,8 +38,8 @@ class SharedNpmSubprojectTest {
 
     private fun Project.npmDependenciesReportTask(name: String) = tasks.getByName(name) as KotlinNpmDependencyReportTask
 
-    private fun Project.npmDependenciesReportCompilation(taskName: String, moduleName: String): CompilationNpmDependencies =
-        npmDependenciesReportTask(taskName).compilations.get().single { it.moduleName.get() == moduleName }
+    private fun Project.npmDependencies(taskName: String): CompilationNpmDependencies =
+        npmDependenciesReportTask(taskName).compilation
 
     private fun Project.npmDependenciesReportsForRootProject(configurationName: String): List<File> =
         configurations.getByName(configurationName).artifacts.files.files.sorted()
@@ -71,12 +71,8 @@ class SharedNpmSubprojectTest {
             project.configurations.names.filter { it.startsWith("kotlinNpmDependenciesReport") }.sorted(),
         )
         assertEquals(
-            listOf("kotlinNpmDependenciesReport", "kotlinWasmNpmDependenciesReport"),
+            listOf("jsNpmDependenciesReport", "jsTestNpmDependenciesReport", "wasmJsNpmDependenciesReport", "wasmJsTestNpmDependenciesReport"),
             project.tasks.names.filter { it.endsWith("NpmDependenciesReport") }.sorted(),
-        )
-        assertEquals(
-            listOf("test", "test-test"),
-            project.npmDependenciesReportTask("kotlinNpmDependenciesReport").compilations.get().map { it.moduleName.get() }.sorted(),
         )
     }
 
@@ -141,8 +137,8 @@ class SharedNpmSubprojectTest {
         val isOdd = DefaultKotlinNpmDependency("is-odd", "2.0.0", KotlinNpmDependency.Scope.DEV)
         val cowsay = DefaultKotlinNpmDependency("cowsay", "9.9.9", KotlinNpmDependency.Scope.PEER)
 
-        assertEquals(setOf(isEven, isOdd), project.npmDependenciesReportCompilation("kotlinNpmDependenciesReport", "test").directDependencies.get())
-        assertEquals(setOf(isEven, isOdd, cowsay), project.npmDependenciesReportCompilation("kotlinNpmDependenciesReport", "test-test").directDependencies.get())
+        assertEquals(setOf(isEven, isOdd), project.npmDependencies("jsNpmDependenciesReport").directDependencies.get())
+        assertEquals(setOf(isEven, isOdd, cowsay), project.npmDependencies("jsTestNpmDependenciesReport").directDependencies.get())
     }
 
     @Test
@@ -155,8 +151,8 @@ class SharedNpmSubprojectTest {
         }
         project.evaluate()
 
-        for (taskName in listOf("kotlinNpmDependenciesReport", "kotlinWasmNpmDependenciesReport")) {
-            val testTools = project.npmDependenciesReportCompilation(taskName, "test-test").toolDependencies.get()
+        for (taskName in listOf("jsTestNpmDependenciesReport", "wasmJsTestNpmDependenciesReport")) {
+            val testTools = project.npmDependencies(taskName).toolDependencies.get()
             assertTrue("karma" in testTools.map { it.name }, "karma expected in $taskName test tools: $testTools")
             assertTrue(testTools.all { it.scope == KotlinNpmDependency.Scope.DEV }, "tool dependencies must be devDependencies: $testTools")
         }
@@ -172,7 +168,7 @@ class SharedNpmSubprojectTest {
         project.evaluate()
         project.version = "1.2.3"
 
-        val main = project.npmDependenciesReportCompilation("kotlinNpmDependenciesReport", "test")
+        val main = project.npmDependencies("jsNpmDependenciesReport")
         assertEquals("kotlin/test.js", main.main.get())
         assertNull(main.types.orNull)
         assertEquals("1.2.3", main.packageVersion.get())
@@ -195,10 +191,9 @@ class SharedNpmSubprojectTest {
         lib.evaluate()
         app.evaluate()
 
-        val appMain = app.jsTarget().compilations.getByName("main")
-        val transitive = app.npmDependenciesReportCompilation("kotlinNpmDependenciesReport", appMain.outputModuleName.get()).transitiveArtifacts
+        val transitive = app.npmDependencies("jsNpmDependenciesReport").transitiveArtifacts
         assertTrue(
-            transitive.buildDependencies.getDependencies(null).any { it.name == "kotlinNpmDependenciesReport" && it.project == lib },
+            transitive.buildDependencies.getDependencies(null).any { it.name == "jsNpmDependenciesReport" && it.project == lib },
             "app's shared package.json must be built after lib's",
         )
     }

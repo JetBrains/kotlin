@@ -9,9 +9,8 @@ package org.jetbrains.kotlin.gradle.targets.web.npm.shared
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
-import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.logging.Logger
-import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.CacheableTask
@@ -19,7 +18,7 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.Optional
-import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
@@ -33,45 +32,40 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJsonDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.SemVer
 import org.jetbrains.kotlin.gradle.targets.js.npm.isCompatibleArchive
 import org.jetbrains.kotlin.gradle.targets.js.npm.packageJson
-import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import java.io.File
 import java.util.zip.ZipFile
 
 /**
- * Writes one `package.json` per compilation of a JS or WasmJS target into [outputDirectory].
+ * Writes the `package.json` of one JS or WasmJS compilation into [outputFile].
  */
 @CacheableTask
 internal abstract class KotlinNpmDependencyReportTask : DefaultTask() {
 
     @get:Nested
-    abstract val compilations: ListProperty<CompilationNpmDependencies>
+    abstract val compilation: CompilationNpmDependencies
 
-    @get:OutputDirectory
-    abstract val outputDirectory: DirectoryProperty
+    @get:OutputFile
+    abstract val outputFile: RegularFileProperty
 
     @TaskAction
     fun generate() {
-        val outputDirectory = outputDirectory.get().asFile
+        val moduleName = compilation.moduleName.get()
+        val direct = compilation.directDependencies.get()
+        val others = compilation.toolDependencies.get() + compilation.transitiveArtifacts.files.flatMap { it.collectNpmDependencies() }
 
-        compilations.get().forEach { compilation ->
-            val moduleName = compilation.moduleName.get()
-            val direct = compilation.directDependencies.get()
-            val others = compilation.toolDependencies.get() + compilation.transitiveArtifacts.files.flatMap { it.collectNpmDependencies() }
-
-            packageJson(
-                name = moduleName,
-                version = compilation.packageVersion.get(),
-                main = compilation.main.get(),
-                types = compilation.types.orNull,
-                npmDependencies = disambiguateDependencies(
-                    direct.map { it.toDeclaration() },
-                    others.map { it.toDeclaration() },
-                    logger,
-                    moduleName,
-                ),
-                packageJsonHandlers = emptyList(),
-            ).saveTo(outputDirectory.resolve(moduleName).resolve(NpmProject.PACKAGE_JSON))
-        }
+        packageJson(
+            name = moduleName,
+            version = compilation.packageVersion.get(),
+            main = compilation.main.get(),
+            types = compilation.types.orNull,
+            npmDependencies = disambiguateDependencies(
+                direct.map { it.toDeclaration() },
+                others.map { it.toDeclaration() },
+                logger,
+                moduleName,
+            ),
+            packageJsonHandlers = emptyList(),
+        ).saveTo(outputFile.get().asFile)
     }
 
     /** Either `package.json`, or a klib with its `package.json` inside. */
@@ -87,13 +81,9 @@ internal abstract class KotlinNpmDependencyReportTask : DefaultTask() {
 
         return KgpJson.default.decodeFromString<PackageJsonDependencies>(packageJsonText).npmDependencies()
     }
-
-    companion object {
-        internal val HasPlatformDisambiguator.npmDependenciesReportTaskName: String
-            get() = extensionName("npmDependenciesReport")
-    }
 }
 
+/** npm dependencies of one JS or WasmJS compilation. */
 internal abstract class CompilationNpmDependencies {
 
     @get:Input
@@ -110,6 +100,7 @@ internal abstract class CompilationNpmDependencies {
     abstract val types: Property<String>
 
     /** Declared by the user with `npm`, `npmDev`, `npmOptional` and `npmPeer`. */
+    // TODO KT-87942 to be removed
     @get:Input
     abstract val directDependencies: SetProperty<DefaultKotlinNpmDependency>
 
