@@ -2,13 +2,15 @@
 
 package org.jetbrains.kotlin.tooling.core
 
+import org.jetbrains.kotlin.testFederation.MustRunAlways
 import kotlin.test.*
 
 class ExtrasTest {
 
+    @MustRunAlways
     @Test
     fun `test - isEmpty`() {
-        assertTrue(mutableExtrasOf().isEmpty())
+        assertFalse(mutableExtrasOf().isEmpty())
         assertTrue(extrasOf().isEmpty())
         assertTrue(emptyExtras().isEmpty())
 
