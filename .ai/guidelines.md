@@ -45,6 +45,7 @@ follow the [Diagnostic Message Style Guide](../docs/diagnostic_message_style_gui
 | Backend: WASM            |                        | compiler/ir/backend.wasm/                                 | [AGENTS.md](../compiler/AGENTS.md)                                               |
 | Build Tools API          |                        | compiler/build-tools/                                     | [AGENTS.md](../compiler/build-tools/AGENTS.md)                                   |
 | Compiler plugins         |                        | plugins/                                                  | —                                                                                |
+| Dependency updates       |                        | gradle/                                                   | [ReadMe.md](../ReadMe.md#updating-a-dependency)                                  |
 | FIR (K2 frontend)        | `Fir*`                 | compiler/fir/                                             | [AGENTS.md](../compiler/AGENTS.md)                                               |
 | FIR Analysis Tests       |                        | compiler/fir/analysis-tests/                              | [AGENTS.md](../compiler/fir/analysis-tests/AGENTS.md)                            |
 | IR                       | `Ir*`                  | compiler/ir/                                              | [AGENTS.md](../compiler/AGENTS.md)                                               |

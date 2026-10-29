@@ -138,6 +138,19 @@ Keep in mind:
   Otherwise, native-only dependencies may not be added to the verification metadata. This is because `local.properties` has higher 
   precedence than the `-Pkotlin.native.enabled=true` specified in the Gradle command.
 
+### Updating a dependency
+
+1. Bump the version in [libs.versions.toml](gradle/libs.versions.toml).
+2. Update `verification-metadata.xml` as described in [Dependency verification](#dependency-verification).
+3. Build and publish all artifacts the same way TeamCity does:
+```bash
+./gradlew clean install publish mvnPublish dist -Pteamcity=true
+```
+4. Check the published Maven and Gradle metadata and the compiler distribution contents with the [artifacts tests](repo/artifacts-tests/README.md):
+```bash
+./gradlew :repo:artifacts-tests:test
+```
+
 ## Using -dev versions
 
 We publish `-dev` versions frequently.
