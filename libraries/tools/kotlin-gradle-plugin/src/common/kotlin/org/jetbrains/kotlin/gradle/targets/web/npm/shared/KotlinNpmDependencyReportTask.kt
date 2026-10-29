@@ -10,7 +10,6 @@ package org.jetbrains.kotlin.gradle.targets.web.npm.shared
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.logging.Logger
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.CacheableTask
@@ -24,11 +23,8 @@ import org.gradle.api.tasks.TaskAction
 import org.jetbrains.kotlin.gradle.internal.json.KgpJson
 import org.jetbrains.kotlin.gradle.npm.DefaultKotlinNpmDependency
 import org.jetbrains.kotlin.gradle.npm.KotlinNpmDependency
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependencyDeclaration
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependencyScopeDeprecated
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJsonDependencies
-import org.jetbrains.kotlin.gradle.targets.js.npm.SemVer
 import org.jetbrains.kotlin.gradle.targets.js.npm.isCompatibleArchive
 import java.io.File
 import java.util.zip.ZipFile
@@ -50,17 +46,11 @@ internal abstract class KotlinNpmDependencyReportTask : DefaultTask() {
 
     @TaskAction
     fun generate() {
-        val moduleName = compilation.moduleName.get()
-        val direct = compilation.directDependencies.get()
-        val others = compilation.toolDependencies.get() + compilation.transitiveArtifacts.files.flatMap { it.collectNpmDependencies() }
+        val dependencies = compilation.directDependencies.get() +
+                compilation.toolDependencies.get() +
+                compilation.transitiveArtifacts.files.flatMap { it.collectNpmDependencies() }
 
-        val declarations = disambiguateDependencies(
-            direct.map { it.toDeclaration() },
-            others.map { it.toDeclaration() },
-            logger,
-            moduleName,
-        )
-        NpmDependencyReport(target.get(), mapOf(moduleName to declarations.toCompilationReport()))
+        NpmDependencyReport(target.get(), mapOf(compilation.moduleName.get() to dependencies.toCompilationReport()))
             .writeTo(outputFile.get().asFile)
     }
 
@@ -123,54 +113,17 @@ private fun inheritedNpmDependencies(
             scope(KotlinNpmDependency.Scope.OPTIONAL, optionalDependencies)
 }
 
-private fun Collection<NpmDependencyDeclaration>.toCompilationReport(): CompilationNpmDependencyReport {
-    fun scope(scope: NpmDependencyScopeDeprecated) =
-        filter { it.scope == scope }.associate { it.name to it.version }.toSortedMap()
+/** Versions of one package are joined into one npm range, so npm validates them: KT-87942. */
+private fun Collection<KotlinNpmDependency>.toCompilationReport(): CompilationNpmDependencyReport {
+    fun scope(scope: KotlinNpmDependency.Scope) = filter { it.scope == scope }
+        .groupBy({ it.name }, { it.version })
+        .mapValues { (_, versions) -> versions.distinct().sorted().joinToString(" ") }
+        .toSortedMap()
 
     return CompilationNpmDependencyReport(
-        dependencies = scope(NpmDependencyScopeDeprecated.NORMAL),
-        devDependencies = scope(NpmDependencyScopeDeprecated.DEV),
-        peerDependencies = scope(NpmDependencyScopeDeprecated.PEER),
-        optionalDependencies = scope(NpmDependencyScopeDeprecated.OPTIONAL),
+        dependencies = scope(KotlinNpmDependency.Scope.NORMAL),
+        devDependencies = scope(KotlinNpmDependency.Scope.DEV),
+        peerDependencies = scope(KotlinNpmDependency.Scope.PEER),
+        optionalDependencies = scope(KotlinNpmDependency.Scope.OPTIONAL),
     )
-}
-
-private fun KotlinNpmDependency.toDeclaration(): NpmDependencyDeclaration =
-    NpmDependencyDeclaration(
-        scope = when (scope) {
-            KotlinNpmDependency.Scope.NORMAL -> NpmDependencyScopeDeprecated.NORMAL
-            KotlinNpmDependency.Scope.DEV -> NpmDependencyScopeDeprecated.DEV
-            KotlinNpmDependency.Scope.OPTIONAL -> NpmDependencyScopeDeprecated.OPTIONAL
-            KotlinNpmDependency.Scope.PEER -> NpmDependencyScopeDeprecated.PEER
-        },
-        name = name,
-        version = version,
-    )
-
-private fun disambiguateDependencies(
-    direct: Collection<NpmDependencyDeclaration>,
-    others: Collection<NpmDependencyDeclaration>,
-    logger: Logger,
-    compilationDisambiguatedName: String,
-): Collection<NpmDependencyDeclaration> {
-    val unique = others.groupBy(NpmDependencyDeclaration::name)
-        .filterKeys { k -> direct.none { it.name == k } }
-        .mapNotNull { (_, dependencies) ->
-            dependencies.maxByOrNull { dep ->
-                SemVer.from(dep.version, true)
-            }?.also { selected ->
-                if (dependencies.size > 1) {
-                    logger.warn(
-                        """
-                        Transitive npm dependency version clash for compilation "$compilationDisambiguatedName"
-                            Candidates:
-                        ${dependencies.joinToString("\n") { "\t\t" + it.name + "@" + it.version }}
-                            Selected:
-                                ${selected.name}@${selected.version}
-                        """.trimIndent()
-                    )
-                }
-            }
-        }
-    return direct + unique
 }
