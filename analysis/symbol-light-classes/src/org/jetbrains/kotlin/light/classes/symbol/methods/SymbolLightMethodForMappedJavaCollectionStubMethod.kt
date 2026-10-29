@@ -106,6 +106,11 @@ internal class SymbolLightMethodForMappedJavaCollectionStubMethod(
      * Computes the type of the stub parameter mirroring [javaParameter], the parameter of [javaMethod] at [index].
      *
      * It is called lazily by [SymbolLightParameterForMappedJavaCollectionStubMethod].
+     *
+     * A boxed primitive is unboxed only where the stub stands for a Kotlin parameter of the element, key or value type,
+     * e.g., `add(int)` and `contains(int)` in `List<Int>`.
+     * JDK default methods are an exception: the mutable Kotlin collection inherits them from Java with their Java types,
+     * so `Map<Int, Int>` gets `replace(Integer, Integer, Integer)`.
      */
     internal fun computeParameterType(javaParameter: PsiParameter, index: Int): PsiType {
         val typeFromJava = javaParameter.type
@@ -113,7 +118,7 @@ internal class SymbolLightMethodForMappedJavaCollectionStubMethod(
         val candidateType = providedType ?: substituteType(typeFromJava)
         val shouldTryToUnbox = providedType != null ||
                 (typeFromJava.isJavaLangObject() && substituteObjectWith == candidateType) ||
-                typeFromJava.isTypeParameter()
+                (typeFromJava.isTypeParameter() && !javaMethod.hasModifierProperty(PsiModifier.DEFAULT))
         return if (shouldTryToUnbox) candidateType.unboxedOrSelf() else candidateType
     }
 

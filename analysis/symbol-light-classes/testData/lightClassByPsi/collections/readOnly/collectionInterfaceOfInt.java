@@ -21,6 +21,9 @@ public abstract class CCollection /* test.CCollection*/ implements test.ICollect
   public boolean removeAll(java.util.Collection<?>);//  removeAll(java.util.Collection<?>)
 
   @java.lang.Override()
+  public boolean removeIf(java.util.function.Predicate<? super @org.jetbrains.annotations.NotNull() java.lang.Integer>);//  removeIf(java.util.function.Predicate<? super @org.jetbrains.annotations.NotNull() java.lang.Integer>)
+
+  @java.lang.Override()
   public boolean retainAll(java.util.Collection<?>);//  retainAll(java.util.Collection<?>)
 
   @java.lang.Override()
@@ -66,6 +69,9 @@ public abstract class CCollection2 /* test.CCollection2*/ implements test.IColle
 
   @java.lang.Override()
   public boolean removeAll(java.util.Collection<?>);//  removeAll(java.util.Collection<?>)
+
+  @java.lang.Override()
+  public boolean removeIf(java.util.function.Predicate<? super @org.jetbrains.annotations.NotNull() java.lang.Integer>);//  removeIf(java.util.function.Predicate<? super @org.jetbrains.annotations.NotNull() java.lang.Integer>)
 
   @java.lang.Override()
   public boolean retainAll(java.util.Collection<?>);//  retainAll(java.util.Collection<?>)
@@ -116,6 +122,9 @@ public class CCollection3 /* test.CCollection3*/ implements test.ICollection {
 
   @java.lang.Override()
   public boolean removeAll(java.util.Collection<?>);//  removeAll(java.util.Collection<?>)
+
+  @java.lang.Override()
+  public boolean removeIf(java.util.function.Predicate<? super @org.jetbrains.annotations.NotNull() java.lang.Integer>);//  removeIf(java.util.function.Predicate<? super @org.jetbrains.annotations.NotNull() java.lang.Integer>)
 
   @java.lang.Override()
   public boolean retainAll(java.util.Collection<?>);//  retainAll(java.util.Collection<?>)

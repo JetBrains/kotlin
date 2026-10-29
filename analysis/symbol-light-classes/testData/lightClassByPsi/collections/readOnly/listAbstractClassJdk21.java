@@ -6,6 +6,12 @@ public abstract class CList /* test.CList*/<Elem>  implements java.util.List<Ele
   public Elem remove(int);//  remove(int)
 
   @java.lang.Override()
+  public Elem removeFirst();//  removeFirst()
+
+  @java.lang.Override()
+  public Elem removeLast();//  removeLast()
+
+  @java.lang.Override()
   public Elem set(int, Elem);//  set(int, Elem)
 
   @java.lang.Override()
@@ -39,7 +45,19 @@ public abstract class CList /* test.CList*/<Elem>  implements java.util.List<Ele
   public void add(int, Elem);//  add(int, Elem)
 
   @java.lang.Override()
+  public void addFirst(Elem);//  addFirst(Elem)
+
+  @java.lang.Override()
+  public void addLast(Elem);//  addLast(Elem)
+
+  @java.lang.Override()
   public void clear();//  clear()
+
+  @java.lang.Override()
+  public void replaceAll(java.util.function.UnaryOperator<Elem>);//  replaceAll(java.util.function.UnaryOperator<Elem>)
+
+  @java.lang.Override()
+  public void sort(java.util.Comparator<? super Elem>);//  sort(java.util.Comparator<? super Elem>)
 
   public  CList();//  .ctor()
 }
@@ -50,6 +68,12 @@ public abstract class SList /* test.SList*/ implements java.util.List<@org.jetbr
 
   @java.lang.Override()
   public @org.jetbrains.annotations.NotNull() java.lang.Integer remove(int);//  remove(int)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.NotNull() java.lang.Integer removeFirst();//  removeFirst()
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.NotNull() java.lang.Integer removeLast();//  removeLast()
 
   @java.lang.Override()
   public @org.jetbrains.annotations.NotNull() java.lang.Integer set(int, int);//  set(int, int)
@@ -103,7 +127,19 @@ public abstract class SList /* test.SList*/ implements java.util.List<@org.jetbr
   public void add(int, int);//  add(int, int)
 
   @java.lang.Override()
+  public void addFirst(@org.jetbrains.annotations.NotNull() java.lang.Integer);//  addFirst(@org.jetbrains.annotations.NotNull() java.lang.Integer)
+
+  @java.lang.Override()
+  public void addLast(@org.jetbrains.annotations.NotNull() java.lang.Integer);//  addLast(@org.jetbrains.annotations.NotNull() java.lang.Integer)
+
+  @java.lang.Override()
   public void clear();//  clear()
+
+  @java.lang.Override()
+  public void replaceAll(java.util.function.UnaryOperator<@org.jetbrains.annotations.NotNull() java.lang.Integer>);//  replaceAll(java.util.function.UnaryOperator<@org.jetbrains.annotations.NotNull() java.lang.Integer>)
+
+  @java.lang.Override()
+  public void sort(java.util.Comparator<? super @org.jetbrains.annotations.NotNull() java.lang.Integer>);//  sort(java.util.Comparator<? super @org.jetbrains.annotations.NotNull() java.lang.Integer>)
 
   public  SList();//  .ctor()
 }

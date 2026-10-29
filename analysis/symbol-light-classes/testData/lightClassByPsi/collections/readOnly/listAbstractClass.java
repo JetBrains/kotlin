@@ -41,6 +41,12 @@ public abstract class CList /* test.CList*/<Elem>  implements java.util.List<Ele
   @java.lang.Override()
   public void clear();//  clear()
 
+  @java.lang.Override()
+  public void replaceAll(java.util.function.UnaryOperator<Elem>);//  replaceAll(java.util.function.UnaryOperator<Elem>)
+
+  @java.lang.Override()
+  public void sort(java.util.Comparator<? super Elem>);//  sort(java.util.Comparator<? super Elem>)
+
   public  CList();//  .ctor()
 }
 
@@ -121,6 +127,12 @@ public abstract class CList2 /* test.CList2*/<Elem>  implements java.util.List<E
   @java.lang.Override()
   public void clear();//  clear()
 
+  @java.lang.Override()
+  public void replaceAll(java.util.function.UnaryOperator<Elem>);//  replaceAll(java.util.function.UnaryOperator<Elem>)
+
+  @java.lang.Override()
+  public void sort(java.util.Comparator<? super Elem>);//  sort(java.util.Comparator<? super Elem>)
+
   public  CList2();//  .ctor()
 }
 
@@ -200,6 +212,12 @@ public class CList3 /* test.CList3*/<Elem>  implements java.util.List<Elem>, kot
 
   @java.lang.Override()
   public void clear();//  clear()
+
+  @java.lang.Override()
+  public void replaceAll(java.util.function.UnaryOperator<Elem>);//  replaceAll(java.util.function.UnaryOperator<Elem>)
+
+  @java.lang.Override()
+  public void sort(java.util.Comparator<? super Elem>);//  sort(java.util.Comparator<? super Elem>)
 
   public  CList3();//  .ctor()
 }
