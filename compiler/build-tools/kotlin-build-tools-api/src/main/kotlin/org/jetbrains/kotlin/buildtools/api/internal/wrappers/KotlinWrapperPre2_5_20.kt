@@ -7,8 +7,18 @@
 package org.jetbrains.kotlin.buildtools.api.internal.wrappers
 
 import org.jetbrains.kotlin.buildtools.api.*
+import org.jetbrains.kotlin.buildtools.api.cri.CompilerRefIndexConfiguration
+import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain
+import org.jetbrains.kotlin.buildtools.api.js.operations.JsKlibCompilationOperation
+import org.jetbrains.kotlin.buildtools.api.js.operations.JsLinkingOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.jvm.KaptConfiguration
+import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
+import org.jetbrains.kotlin.buildtools.api.metadata.KotlinMetadataKlibCompilationOperation
+import org.jetbrains.kotlin.buildtools.api.metadata.KotlinMetadataPlatformToolchain
+import org.jetbrains.kotlin.buildtools.api.wasm.WasmPlatformToolchain
+import org.jetbrains.kotlin.buildtools.api.wasm.operations.WasmKlibCompilationOperation
+import org.jetbrains.kotlin.buildtools.api.wasm.operations.WasmLinkingOperation
 import java.nio.file.Path
 
 /**
@@ -31,6 +41,9 @@ internal class KotlinWrapperPre2_5_20(
     @Suppress("UNCHECKED_CAST")
     override fun <T : KotlinToolchains.Toolchain> getToolchain(type: Class<T>): T = when (type) {
         JvmPlatformToolchain::class.java -> JvmPlatformToolchainWrapper(base.getToolchain(type))
+        JsPlatformToolchain::class.java -> JsPlatformToolchainWrapper(base.getToolchain(type))
+        WasmPlatformToolchain::class.java -> WasmPlatformToolchainWrapper(base.getToolchain(type))
+        KotlinMetadataPlatformToolchain::class.java -> KotlinMetadataPlatformToolchainWrapper(base.getToolchain(type))
         else -> base.getToolchain(type)
     } as T
 
@@ -53,6 +66,13 @@ internal class KotlinWrapperPre2_5_20(
     private abstract class BuildOperationWrapper<R>(val baseOperation: BuildOperation<R>) : BuildOperation<R>
 
     private class JvmPlatformToolchainWrapper(private val base: JvmPlatformToolchain) : JvmPlatformToolchain by base {
+        override fun jvmCompilationOperationBuilder(
+            sources: List<Path>,
+            destinationDirectory: Path,
+        ): JvmCompilationOperation.Builder = JvmCompilationOperationBuilderWrapper(
+            base.jvmCompilationOperationBuilder(sources, destinationDirectory),
+        )
+
         override fun kaptCompilerPluginBuilder(
             kaptClasspath: List<Path>,
             stubsOutputDir: Path,
@@ -61,4 +81,89 @@ internal class KotlinWrapperPre2_5_20(
             error("Only available starting from Kotlin compiler 2.5.20")
         }
     }
+
+    private class JvmCompilationOperationBuilderWrapper(private val base: JvmCompilationOperation.Builder) :
+        JvmCompilationOperation.Builder by base {
+        override fun compilerRefIndexConfigurationBuilder(outputDirectory: Path) = compilerRefIndexConfigurationIsUnsupported()
+        override fun build(): JvmCompilationOperation = JvmCompilationOperationWrapper(base.build())
+    }
+
+    private class JvmCompilationOperationWrapper(private val base: JvmCompilationOperation) :
+        JvmCompilationOperation by base, BuildOperationWrapper<CompilationResult>(base) {
+        override fun toBuilder(): JvmCompilationOperation.Builder = JvmCompilationOperationBuilderWrapper(base.toBuilder())
+    }
+
+    private class JsPlatformToolchainWrapper(private val base: JsPlatformToolchain) : JsPlatformToolchain by base {
+        override fun jsKlibCompilationOperationBuilder(sources: List<Path>, destination: Path): JsKlibCompilationOperation.Builder =
+            JsKlibCompilationOperationBuilderWrapper(base.jsKlibCompilationOperationBuilder(sources, destination))
+
+        override fun jsLinkingOperationBuilder(klib: Path, destination: Path): JsLinkingOperation.Builder =
+            JsLinkingOperationBuilderWrapper(base.jsLinkingOperationBuilder(klib, destination))
+    }
+
+    private class JsKlibCompilationOperationBuilderWrapper(private val base: JsKlibCompilationOperation.Builder) :
+        JsKlibCompilationOperation.Builder by base {
+        override fun compilerRefIndexConfigurationBuilder(outputDirectory: Path) = compilerRefIndexConfigurationIsUnsupported()
+        override fun build(): JsKlibCompilationOperation = JsKlibCompilationOperationWrapper(base.build())
+    }
+
+    private class JsKlibCompilationOperationWrapper(private val base: JsKlibCompilationOperation) :
+        JsKlibCompilationOperation by base, BuildOperationWrapper<CompilationResult>(base) {
+        override fun toBuilder(): JsKlibCompilationOperation.Builder = JsKlibCompilationOperationBuilderWrapper(base.toBuilder())
+    }
+
+    // The built operation stays unwrapped: [org.jetbrains.kotlin.buildtools.api.js.operations.JsDtsGenerationOperation.configureFrom]
+    // checks its implementation class, so a 2.5.0 implementation rejects a wrapped operation
+    private class JsLinkingOperationBuilderWrapper(private val base: JsLinkingOperation.Builder) : JsLinkingOperation.Builder by base {
+        override fun compilerRefIndexConfigurationBuilder(outputDirectory: Path) = compilerRefIndexConfigurationIsUnsupported()
+    }
+
+    private class WasmPlatformToolchainWrapper(private val base: WasmPlatformToolchain) : WasmPlatformToolchain by base {
+        override fun wasmKlibCompilationOperationBuilder(sources: List<Path>, destination: Path): WasmKlibCompilationOperation.Builder =
+            WasmKlibCompilationOperationBuilderWrapper(base.wasmKlibCompilationOperationBuilder(sources, destination))
+
+        override fun wasmLinkingOperationBuilder(klib: Path, destination: Path): WasmLinkingOperation.Builder =
+            WasmLinkingOperationBuilderWrapper(base.wasmLinkingOperationBuilder(klib, destination))
+    }
+
+    private class WasmKlibCompilationOperationBuilderWrapper(private val base: WasmKlibCompilationOperation.Builder) :
+        WasmKlibCompilationOperation.Builder by base {
+        override fun compilerRefIndexConfigurationBuilder(outputDirectory: Path) = compilerRefIndexConfigurationIsUnsupported()
+        override fun build(): WasmKlibCompilationOperation = WasmKlibCompilationOperationWrapper(base.build())
+    }
+
+    private class WasmKlibCompilationOperationWrapper(private val base: WasmKlibCompilationOperation) :
+        WasmKlibCompilationOperation by base, BuildOperationWrapper<CompilationResult>(base) {
+        override fun toBuilder(): WasmKlibCompilationOperation.Builder = WasmKlibCompilationOperationBuilderWrapper(base.toBuilder())
+    }
+
+    // The built operation stays unwrapped, matching the JS linking operation above
+    private class WasmLinkingOperationBuilderWrapper(private val base: WasmLinkingOperation.Builder) :
+        WasmLinkingOperation.Builder by base {
+        override fun compilerRefIndexConfigurationBuilder(outputDirectory: Path) = compilerRefIndexConfigurationIsUnsupported()
+    }
+
+    private class KotlinMetadataPlatformToolchainWrapper(private val base: KotlinMetadataPlatformToolchain) :
+        KotlinMetadataPlatformToolchain by base {
+        override fun metadataKlibCompilationOperationBuilder(
+            sources: List<Path>,
+            destination: Path,
+        ): KotlinMetadataKlibCompilationOperation.Builder =
+            KotlinMetadataCompilationOperationBuilderWrapper(base.metadataKlibCompilationOperationBuilder(sources, destination))
+    }
+
+    private class KotlinMetadataCompilationOperationBuilderWrapper(private val base: KotlinMetadataKlibCompilationOperation.Builder) :
+        KotlinMetadataKlibCompilationOperation.Builder by base {
+        override fun compilerRefIndexConfigurationBuilder(outputDirectory: Path) = compilerRefIndexConfigurationIsUnsupported()
+        override fun build(): KotlinMetadataKlibCompilationOperation = KotlinMetadataCompilationOperationWrapper(base.build())
+    }
+
+    private class KotlinMetadataCompilationOperationWrapper(private val base: KotlinMetadataKlibCompilationOperation) :
+        KotlinMetadataKlibCompilationOperation by base, BuildOperationWrapper<CompilationResult>(base) {
+        override fun toBuilder(): KotlinMetadataKlibCompilationOperation.Builder =
+            KotlinMetadataCompilationOperationBuilderWrapper(base.toBuilder())
+    }
 }
+
+private fun compilerRefIndexConfigurationIsUnsupported(): CompilerRefIndexConfiguration.Builder =
+    error("The compiler reference index configuration is supported from compiler version 2.5.20.")

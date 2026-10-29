@@ -12,10 +12,6 @@ import org.jetbrains.kotlin.buildtools.internal.UseFromImplModuleRestricted
 import org.jetbrains.kotlin.buildtools.internal.checkOptionIsAvailableForVersion
 import java.nio.file.Path
 
-// The API return type keeps the verifier from loading `CompilerRefIndexConfiguration.Builder`, which an older consumer API lacks
-internal fun createCompilerRefIndexConfigurationBuilder(outputDirectory: Path): CompilerRefIndexConfiguration.Builder =
-    CompilerRefIndexConfigurationImpl(outputDirectory)
-
 internal class CompilerRefIndexConfigurationImpl(
     override val outputDirectory: Path,
     private val options: Options = Options(CompilerRefIndexConfiguration::class),

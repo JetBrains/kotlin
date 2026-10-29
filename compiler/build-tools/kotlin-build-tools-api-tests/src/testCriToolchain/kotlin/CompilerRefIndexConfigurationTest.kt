@@ -43,6 +43,24 @@ class CompilerRefIndexConfigurationTest : BaseCompilationTest() {
     }
 
     @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("With both the configuration and the deprecated flag, an incremental compilation writes the index only to the configured directory")
+    @TestMetadata("basic-multimodule-project/module-1")
+    fun configurationTakesPrecedenceOverTheDeprecatedFlag(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmProject(strategyConfig) {
+            val module = module("basic-multimodule-project/module-1")
+            val criDirectory = module.buildDirectory.resolve("configured-cri")
+            module.compileIncrementally(SourcesChanges.Unknown, compilationConfigAction = { builder ->
+                builder[BaseCompilationOperation.COMPILER_REF_INDEX] = builder.compilerRefIndexConfiguration(criDirectory)
+                @Suppress("DEPRECATION")
+                builder[BaseCompilationOperation.GENERATE_COMPILER_REF_INDEX] = true
+            }) {
+                assertTrue(criDirectory.resolve(LOOKUPS_FILENAME).exists())
+                assertFalse(module.icCachesDir.resolve(CriToolchain.DATA_PATH).exists())
+            }
+        }
+    }
+
+    @DefaultStrategyAgnosticCompilationTest
     @DisplayName("With only the deprecated flag, an incremental compilation still writes the index to the IC working directory")
     @TestMetadata("basic-multimodule-project/module-1")
     fun deprecatedFlagWritesToTheIcWorkingDirectory(strategyConfig: CompilerExecutionStrategyConfiguration) {

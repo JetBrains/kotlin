@@ -131,22 +131,23 @@ internal fun JvmClientManagedIncrementalCompilationConfiguration.registerPlatfor
     (compilerReferenceIndexCollector?.lookupTracker ?: lookupTracker)?.let { tracker ->
         serviceBuilder.register(LookupTracker::class.java, tracker)
     }
-    this[IMPORT_TRACKER]?.let { tracker ->
-        serviceBuilder.register(ImportTracker::class.java, ImportTrackerAdapter(tracker))
-    }
     (compilerReferenceIndexCollector?.fileMappingTracker ?: fileMappingTracker)?.let { tracker ->
         serviceBuilder.register(ICFileMappingTracker::class.java, tracker)
+    }
+    // Lets [org.jetbrains.kotlin.buildtools.internal.BaseCompilationOperationImpl] write the index after a successful
+    // compilation; the compiler never reads it
+    compilerReferenceIndexCollector?.let { collector ->
+        serviceBuilder.register(CompilerReferenceIndexCollector::class.java, collector)
+    }
+
+    this[IMPORT_TRACKER]?.let { tracker ->
+        serviceBuilder.register(ImportTracker::class.java, ImportTrackerAdapter(tracker))
     }
     this[ENUM_WHEN_TRACKER]?.let { tracker ->
         serviceBuilder.register(EnumWhenTracker::class.java, EnumWhenTrackerAdapter(tracker))
     }
     this[INLINE_CONST_TRACKER]?.let { tracker ->
         serviceBuilder.register(InlineConstTracker::class.java, InlineConstTrackerAdapter(tracker))
-    }
-    // Lets [org.jetbrains.kotlin.buildtools.internal.BaseCompilationOperationImpl] write the index after a successful
-    // compilation; the compiler never reads it
-    compilerReferenceIndexCollector?.let { collector ->
-        serviceBuilder.register(CompilerReferenceIndexCollector::class.java, collector)
     }
 }
 
