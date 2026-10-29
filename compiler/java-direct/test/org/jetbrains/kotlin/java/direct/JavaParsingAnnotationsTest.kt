@@ -479,7 +479,7 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
         val enumClassId = ClassId.topLevel(FqName("java.lang.annotation.RetentionPolicy"))
         val javaClass = parseFirstClassWithSymbols(
             source,
-            mapOf(enumClassId to libraryClassSymbol(enumClassId, classKind = ClassKind.ENUM_CLASS)),
+            mapOf(enumClassId to libraryClassSymbol(enumClassId, classKind = ClassKind.ENUM_CLASS, enumEntries = listOf("RUNTIME"))),
         )
 
         val retention = javaClass.annotations.first { it.classId?.shortClassName?.asString() == "Retention" }
@@ -502,7 +502,7 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
         val enumClassId = ClassId(FqName("com.example"), Name.identifier("MyEnum"))
         val javaClass = parseFirstClassWithSymbols(
             source,
-            mapOf(enumClassId to libraryClassSymbol(enumClassId, classKind = ClassKind.ENUM_CLASS)),
+            mapOf(enumClassId to libraryClassSymbol(enumClassId, classKind = ClassKind.ENUM_CLASS, enumEntries = listOf("A"))),
         )
 
         val anno = javaClass.annotations.first { it.classId?.shortClassName?.asString() == "AnnoOf" }
@@ -527,7 +527,7 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
         val enumClassId = ClassId.topLevel(FqName("java.lang.annotation.RetentionPolicy"))
         val javaClass = parseFirstClassWithSymbols(
             source,
-            mapOf(enumClassId to libraryClassSymbol(enumClassId, classKind = ClassKind.ENUM_CLASS)),
+            mapOf(enumClassId to libraryClassSymbol(enumClassId, classKind = ClassKind.ENUM_CLASS, enumEntries = listOf("RUNTIME"))),
         )
 
         val retention = javaClass.annotations.first { it.classId?.shortClassName?.asString() == "Retention" }

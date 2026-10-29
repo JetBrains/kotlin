@@ -1,0 +1,8 @@
+@kotlin.Metadata
+public final class p/Delegator {
+    // source: 'main.kt'
+    private synthetic final field $$delegate_0: p.Greeter
+    public method <init>(@org.jetbrains.annotations.NotNull p0: p.Greeter): void
+    public @p.Ann method finalNonConstantField(): java.lang.String
+    public @p.Ann method nonFinalField(): java.lang.String
+}
