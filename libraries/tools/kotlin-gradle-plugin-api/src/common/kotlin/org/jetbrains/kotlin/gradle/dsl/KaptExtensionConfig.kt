@@ -83,6 +83,13 @@ interface KaptExtensionConfig {
     val stubGenerationScheme: Property<KaptStubGenerationScheme>
 
     /**
+     * Skips resolution of function bodies during stub generation, as stubs do not contain them.
+     *
+     * Default: the `kapt.header.mode` Gradle property, `false` if it is not set
+     */
+    val headerMode: Property<Boolean>
+
+    /**
      * Shows annotation processor statistics in the verbose kapt log output.
      *
      * Default: `false`

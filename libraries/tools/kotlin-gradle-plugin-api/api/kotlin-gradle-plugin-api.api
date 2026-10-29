@@ -141,6 +141,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KaptExtensionCon
 	public abstract fun getCorrectErrorTypes ()Z
 	public abstract fun getDetectMemoryLeaks ()Ljava/lang/String;
 	public abstract fun getDumpDefaultParameterValues ()Z
+	public abstract fun getHeaderMode ()Lorg/gradle/api/provider/Property;
 	public abstract fun getIncludeCompileClasspath ()Ljava/lang/Boolean;
 	public abstract fun getJavacOptions ()Ljava/util/Map;
 	public abstract fun getKeepJavacAnnotationProcessors ()Z
