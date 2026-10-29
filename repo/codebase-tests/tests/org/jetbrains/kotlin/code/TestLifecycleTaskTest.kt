@@ -34,16 +34,28 @@ import kotlin.test.Test
 @GradleLock
 class TestLifecycleTaskTest {
 
-    private val qualityGateMasterTasks: Set<String>
+    private val masterTasksExecutedInTeamCity: Set<String>
         get() = (System.getProperty("quality.gate.master.tasks") ?: error("Missing 'quality.gate.master.tasks' property"))
             .split(";").toSet()
 
-    private val qualityGateNightlyTasks: Set<String>
+    private val nightlyTasksExecutedInTeamCity: Set<String>
         get() = (System.getProperty("quality.gate.nightly.tasks") ?: error("Missing 'quality.gate.nightly.tasks' property"))
             .split(";").toSet()
 
+    /**
+     * Several builds can run the same task with different `@Domains`, so a task can appear more than once.
+     */
+    private val domainsDeclaredInTeamCity: List<Pair<String, Set<Domain>>>
+        get() = (System.getProperty("quality.gate.domains.per.task") ?: error("Missing 'quality.gate.domains.per.task' property"))
+            .split(",")
+            .filter { it.isNotBlank() }
+            .map { entry ->
+                val [task, domains] = entry.split("=", limit = 2)
+                task to Domain.fromArgumentStringOrThrow(domains)
+            }
+
     @Test
-    fun `testLifecycleTask dump`() {
+    fun `testLifecycleTask dump is up-to-date`() {
         val actualText = dump.renderedText
 
         if (!expectFile.isRegularFile()) expectFile.createFile()
@@ -68,11 +80,10 @@ class TestLifecycleTaskTest {
 
     /**
      * Identifies if the test is currently running on TeamCity.
-     * Used, as this test will also verify if the TeamCity config (passed in as [qualityGateMasterTasks] and [qualityGateNightlyTasks])
+     * Used, as this test will also verify if the TeamCity config (passed in as [masterTasksExecutedInTeamCity] and [nightlyTasksExecutedInTeamCity])
      * is in sync with the definition within kotlin.git (provided by the dump)
      */
     @EnabledIfSystemProperty(named = "teamcity", matches = "true")
-    @EnabledIfSystemProperty(named = "quality.gate.master.tasks", matches = ".+") // Remove after a 'phase-in' period of this test
     @Test
     fun `quality gates are in sync with TeamCity`() {
         /*
@@ -86,14 +97,14 @@ class TestLifecycleTaskTest {
 
         val testLifecycleTasksIndex = allTestLifecycleTasks.associateBy { it.path }
 
-        val expandedQualityGateMasterTasks = qualityGateMasterTasks.flatMap { task ->
+        val allMasterTasksExecutedInTeamCity = masterTasksExecutedInTeamCity.flatMap { task ->
             buildList {
                 add(task)
                 addAll(testLifecycleTasksIndex[task]?.allDependencies.orEmpty())
             }
         }.toSet()
 
-        val expandedQualityGateNightlyTasks = qualityGateNightlyTasks.flatMap { task ->
+        val allNightlyTasksExecutedInTeamCity = nightlyTasksExecutedInTeamCity.flatMap { task ->
             buildList {
                 add(task)
                 addAll(testLifecycleTasksIndex[task]?.allDependencies.orEmpty())
@@ -110,19 +121,19 @@ class TestLifecycleTaskTest {
             val expectedQualityGate = QualityGate.valueOf(lifecycleTask.qualityGate)
 
             val actualQualityGate = when (lifecycleTask.path) {
-                in expandedQualityGateMasterTasks -> QualityGate.Master
-                in expandedQualityGateNightlyTasks -> QualityGate.Nightly
+                in allMasterTasksExecutedInTeamCity -> QualityGate.Master
+                in allNightlyTasksExecutedInTeamCity -> QualityGate.Nightly
                 else -> run {
                     // If all direct dependencies are covered by the master quality gate,
                     // then it is considered to be covered as well by 'master'
-                    if (lifecycleTask.dependencies.all { dependency ->
-                            dependency in expandedQualityGateMasterTasks
+                    if (lifecycleTask.dependencies.keys.all { dependency ->
+                            dependency in allMasterTasksExecutedInTeamCity
                         }) return@run QualityGate.Master
 
                     // If all direct dependencies are covered by the nightly quality gate,
                     // then it is considered to be covered as well by 'nightly'
-                    if (lifecycleTask.dependencies.all { dependency ->
-                            dependency in expandedQualityGateNightlyTasks
+                    if (lifecycleTask.dependencies.keys.all { dependency ->
+                            dependency in allNightlyTasksExecutedInTeamCity
                         }) return@run QualityGate.Nightly
 
                     QualityGate.None
@@ -155,6 +166,52 @@ class TestLifecycleTaskTest {
                 issues.sorted().forEach { issue ->
                     appendLine(issue.prependIndent("  "))
                 }
+            })
+        }
+    }
+
+    /**
+     * Verifies that the domains declared in the TeamCity configuration (via `@Domains`) cover all domains of the test tasks
+     * that the configuration runs. Declaring more domains than the dump is allowed, missing a domain from the dump is not.
+     *
+     * Tasks that are not part of the test lifecycle model (e.g. `checkBuild`) cannot be verified and are ignored.
+     */
+    @EnabledIfSystemProperty(named = "teamcity", matches = "true")
+    @EnabledIfSystemProperty(named = "quality.gate.domains.per.task", matches = ".+")
+    @Test
+    fun `declared domains cover the domains in the dump`() {
+        val models = dump.buildModel.values.filterNotNull()
+        val testTaskDomains = models.flatMap { it.testTasks }.associate { testTask ->
+            testTask.path to Domain.fromArgumentStringOrThrow(testTask.domains)
+        }
+        val lifecycleTasks = models.flatMap { it.testLifecycleTasks }
+
+        val taskDomains: Map<String, Set<Domain>> = buildMap {
+            putAll(testTaskDomains)
+
+            lifecycleTasks.forEach { lifecycleTask ->
+                put(lifecycleTask.path, lifecycleTask.allDependencies.flatMap { testTaskDomains[it].orEmpty() }.toSet())
+            }
+            lifecycleTasks.flatMap { it.dependencies.entries }.forEach { [path, domains] ->
+                merge(path, Domain.fromArgumentStringOrThrow(domains)) { a, b -> a + b }
+            }
+        }
+
+        val issues = domainsDeclaredInTeamCity.mapNotNull { [task, declaredDomains] ->
+            val actualDomains = declaredDomains
+            val expectedDomains = taskDomains[task] ?: return@mapNotNull null
+            val missing = expectedDomains - actualDomains
+            when {
+                missing.isNotEmpty() -> "Task ${task}: @Domains(${declaredDomains.toArgumentString()}) is missing ${missing.toArgumentString()}"
+                else -> null
+            }
+        }
+
+        if (issues.isNotEmpty()) {
+            fail(buildString {
+                appendLine("@Domains in the TeamCity configuration do not cover the domains from ${expectFile.name}. ${issues.size} issues found.")
+                appendLine("The dump is the source of truth: extend @Domains of the corresponding build with the missing domains.")
+                issues.sorted().forEach { appendLine("  - $it") }
             })
         }
     }
