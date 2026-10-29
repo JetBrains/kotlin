@@ -113,21 +113,19 @@ abstract class MetadataDependencyTransformationTask
         flatMap { resolution ->
             when (resolution) {
                 is MetadataDependencyResolution.ChooseVisibleSourceSets -> resolution.toTransformedLibrariesRecords()
-                is MetadataDependencyResolution.KeepOriginalDependency -> {
-                    when (transformationParameters.kmpResolutionStrategy) {
-                        /**
-                         * We probably actually want:
-                         * is MetadataDependencyResolution.KeepOriginalDependency -> emptyList()
-                         *
-                         * in both cases
-                         *
-                         * This used to resolve pre-HMPP metadata jar, but now it just leaks files to metadata compilation classpath
-                         *
-                         * This is especially problematic for lenient resolution
-                         */
-                        KmpResolutionStrategy.InterlibraryUklibAndPSMResolution_PreferUklibs -> emptyList()
-                        KmpResolutionStrategy.StandardKMPResolution -> resolution.toTransformedLibrariesRecords()
-                    }
+                is MetadataDependencyResolution.KeepOriginalDependency -> when (transformationParameters.kmpResolutionStrategy) {
+                    /**
+                     * We probably actually want:
+                     * is MetadataDependencyResolution.KeepOriginalDependency -> emptyList()
+                     *
+                     * in both cases
+                     *
+                     * This used to resolve pre-HMPP metadata jar, but now it just leaks files to metadata compilation classpath
+                     *
+                     * This is especially problematic for lenient resolution
+                     */
+                    KmpResolutionStrategy.InterlibraryUklibAndPSMResolution_PreferUklibs -> emptyList()
+                    KmpResolutionStrategy.StandardKMPResolution -> resolution.toTransformedLibrariesRecords()
                 }
                 is MetadataDependencyResolution.Exclude -> emptyList()
             }
