@@ -69,6 +69,39 @@ internal class Jsr223InternalTestMultiService : Jsr223TestService, Jsr223OtherTe
     override fun other(): Int = 2
 }
 
+internal interface Jsr223InternalTestInterface : Jsr223TestService
+
+internal class Jsr223InternalTestInterfaceImpl : Jsr223InternalTestInterface {
+    override fun answer(): Int = 3
+}
+
+open class Jsr223TestNestedHolder {
+    private class PrivateService : Jsr223TestService {
+        override fun answer(): Int = 4
+    }
+
+    protected class ProtectedDerived : Jsr223TestBase()
+
+    companion object {
+        fun privateService(): Any = PrivateService()
+        fun protectedDerived(): Any = ProtectedDerived()
+    }
+}
+
+@RequiresOptIn(level = RequiresOptIn.Level.ERROR)
+annotation class Jsr223TestExperimental
+
+@Jsr223TestExperimental
+class Jsr223TestExperimentalValue(val x: Int)
+
+@Deprecated("Test", level = DeprecationLevel.ERROR)
+class Jsr223TestDeprecatedValue(val x: Int)
+
+@Suppress("DEPRECATION_ERROR")
+fun createJsr223TestDeprecatedValue(x: Int): Any = Jsr223TestDeprecatedValue(x)
+
+class `Jsr223Test$DollarValue`(val x: Int)
+
 
 class KotlinJsr223ScriptEngineIT {
 
@@ -345,6 +378,57 @@ obj
         // A binding exposed as `Any?` accepts a value of any type
         engine.eval("multiService = 5")
         assertEquals(5, engine.get("multiService"))
+    }
+
+    @Test
+    fun testBindValuesOfNonPublicKotlinNestedClassesAndInterfaces() {
+        val engine = ScriptEngineManager().getEngineByExtension("kts")!!
+        engine.put("internalIfaceImpl", Jsr223InternalTestInterfaceImpl()) // internal interface skipped -> Jsr223TestService
+        engine.put("privateService", Jsr223TestNestedHolder.privateService()) // -> Jsr223TestService
+        engine.put("protectedDerived", Jsr223TestNestedHolder.protectedDerived()) // -> Jsr223TestBase
+        assertEquals(2, engine.eval("1 + 1"))
+        assertEquals(3, engine.eval("internalIfaceImpl.answer()"))
+        assertEquals(4, engine.eval("privateService.answer()"))
+        assertEquals(10, engine.eval("protectedDerived.base"))
+    }
+
+    @Test
+    fun testBindValueOfClassInKeywordPackage() {
+        val engine = ScriptEngineManager().getEngineByExtension("kts")!!
+        engine.put("keywordPackageValue", kotlin.script.experimental.jsr223.test.`in`.Jsr223KeywordPackageValue(5))
+        assertEquals(2, engine.eval("1 + 1"))
+        assertEquals(5, engine.eval("keywordPackageValue.x"))
+    }
+
+    @Test
+    fun testBindValueOfClassWithDollarInName() {
+        val engine = ScriptEngineManager().getEngineByExtension("kts")!!
+        engine.put("dollarValue", `Jsr223Test$DollarValue`(6))
+        assertEquals(2, engine.eval("1 + 1"))
+        assertEquals(6, engine.eval("dollarValue.x"))
+    }
+
+    @OptIn(Jsr223TestExperimental::class)
+    @Test
+    fun testBindValueOfOptInRequiredClass() {
+        val engine = ScriptEngineManager().getEngineByExtension("kts")!!
+        engine.put("experimentalValue", Jsr223TestExperimentalValue(8))
+        assertEquals(2, engine.eval("1 + 1"))
+    }
+
+    @Test
+    fun testBindValueOfDeprecatedErrorClass() {
+        val engine = ScriptEngineManager().getEngineByExtension("kts")!!
+        engine.put("deprecatedValue", createJsr223TestDeprecatedValue(9))
+        assertEquals(2, engine.eval("1 + 1"))
+    }
+
+    @Test
+    fun testBindValueOfSnippetDeclaredClass() {
+        val engine = ScriptEngineManager().getEngineByExtension("kts")!!
+        engine.eval("class Foo(val x: Int)\nbindings.put(\"foo\", Foo(7))")
+        assertEquals(2, engine.eval("1 + 1"))
+        assertEquals(7, engine.eval("foo.x"))
     }
 
     @Test
