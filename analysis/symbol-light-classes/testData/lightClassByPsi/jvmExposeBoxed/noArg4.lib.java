@@ -27,6 +27,23 @@ public final class IntWrapper /* IntWrapper*/ {
   public static java.lang.String toString-impl(int);//  toString-impl(int)
 }
 
+public final class RegularClassWithDependentDefault /* RegularClassWithDependentDefault*/ {
+  private final int property;
+
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
+  @org.jetbrains.annotations.NotNull()
+  public final IntWrapper getProperty();//  getProperty()
+
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
+  public  RegularClassWithDependentDefault(@org.jetbrains.annotations.NotNull() IntWrapper, boolean, boolean);//  .ctor(IntWrapper, boolean, boolean)
+
+  private  RegularClassWithDependentDefault(int, boolean, boolean);//  .ctor(int, boolean, boolean)
+
+  public  RegularClassWithDependentDefault();//  .ctor()
+
+  public final int getProperty-7j0DjTs();//  getProperty-7j0DjTs()
+}
+
 public final class RegularClassWithValueConstructor /* RegularClassWithValueConstructor*/ {
   private final int property;
 

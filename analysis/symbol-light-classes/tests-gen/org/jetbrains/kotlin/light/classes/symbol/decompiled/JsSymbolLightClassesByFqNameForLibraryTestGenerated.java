@@ -503,6 +503,18 @@ public class JsSymbolLightClassesByFqNameForLibraryTestGenerated extends Abstrac
   }
 
   @Test
+  @TestMetadata("valueClassDelegatedPropertyInObject.kt")
+  public void testValueClassDelegatedPropertyInObject() {
+    run("valueClassDelegatedPropertyInObject.kt");
+  }
+
+  @Test
+  @TestMetadata("valueClassFieldClashWithCompanionObject.kt")
+  public void testValueClassFieldClashWithCompanionObject() {
+    run("valueClassFieldClashWithCompanionObject.kt");
+  }
+
+  @Test
   @TestMetadata("ValueClassInParametersWithJvmName.kt")
   public void testValueClassInParametersWithJvmName() {
     run("ValueClassInParametersWithJvmName.kt");
@@ -668,6 +680,12 @@ public class JsSymbolLightClassesByFqNameForLibraryTestGenerated extends Abstrac
     }
 
     @Test
+    @TestMetadata("CompanionBlockHidingFunctionWithValueClass.kt")
+    public void testCompanionBlockHidingFunctionWithValueClass() {
+      run("CompanionBlockHidingFunctionWithValueClass.kt");
+    }
+
+    @Test
     @TestMetadata("CompanionBlockInInterface.kt")
     public void testCompanionBlockInInterface() {
       run("CompanionBlockInInterface.kt");
@@ -695,6 +713,12 @@ public class JsSymbolLightClassesByFqNameForLibraryTestGenerated extends Abstrac
     @TestMetadata("CompanionBlockInInterfacePrivateJvmDefaultDisable.kt")
     public void testCompanionBlockInInterfacePrivateJvmDefaultDisable() {
       run("CompanionBlockInInterfacePrivateJvmDefaultDisable.kt");
+    }
+
+    @Test
+    @TestMetadata("CompanionBlockInInterfaceProperties.kt")
+    public void testCompanionBlockInInterfaceProperties() {
+      run("CompanionBlockInInterfaceProperties.kt");
     }
 
     @Test
