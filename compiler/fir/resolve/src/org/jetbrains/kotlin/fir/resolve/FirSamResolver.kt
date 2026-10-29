@@ -233,12 +233,14 @@ class FirSamResolver(
                 isCrossinline = false
                 isNoinline = false
                 isVararg = false
-                resolvePhase = FirResolvePhase.BODY_RESOLVE
+                resolvePhase = FirResolvePhase.DECLARATIONS
             }
 
+            // The annotations are shared with the SAM function, which might be not fully resolved yet in Low Level FIR.
+            // So we play safe with the same phase as fake overrides have, see `FirFakeOverrideGenerator.resolvePhaseForCopy`
             annotations += functionSymbol.annotations
 
-            resolvePhase = FirResolvePhase.BODY_RESOLVE
+            resolvePhase = FirResolvePhase.DECLARATIONS
         }.apply {
             containingClassForStaticMemberAttr = outerClassManager?.outerClass(firRegularClass.symbol)?.toLookupTag()
             nonLazyPublishedApiEffectiveVisibility = firRegularClass.nonLazyPublishedApiEffectiveVisibility
