@@ -29,9 +29,9 @@ import kotlin.test.assertTrue
 
 internal fun KotlinJsIrCompilation.npmDependenciesReportFile(): File {
     val platform = if (target.platformType == KotlinPlatformType.wasm) "wasm" else "js"
-    return project.layout.buildDirectory.dir("kotlin-npm/$platform/shared-package-json").get().asFile
+    return project.layout.buildDirectory.dir("kotlin-npm/$platform/npm-dep-reports").get().asFile
         .resolve(outputModuleName.get())
-        .resolve("package.json")
+        .resolve("npm-dep-report.json")
 }
 
 class SharedNpmSubprojectTest {
@@ -41,6 +41,9 @@ class SharedNpmSubprojectTest {
     private fun Project.npmDependencies(taskName: String): CompilationNpmDependencies =
         npmDependenciesReportTask(taskName).compilation
 
+    private fun Project.npmDependenciesReportTaskNames(): List<String> =
+        tasks.withType(KotlinNpmDependencyReportTask::class.java).names.sorted()
+
     private fun Project.npmDependenciesReportsForRootProject(configurationName: String): List<File> =
         configurations.getByName(configurationName).artifacts.files.files.sorted()
 
@@ -49,7 +52,7 @@ class SharedNpmSubprojectTest {
     private fun Project.wasmJsTarget() = multiplatformExtension.wasmJs() as KotlinJsIrTarget
 
     @Test
-    fun `the root project is offered the package json of every compilation`() {
+    fun `the root project is offered the npm dependency report of every compilation`() {
         val project = buildProjectWithMPP {
             kotlin {
                 js { browser() }
@@ -72,14 +75,15 @@ class SharedNpmSubprojectTest {
         )
         assertEquals(
             listOf("jsNpmDependenciesReport", "jsTestNpmDependenciesReport", "wasmJsNpmDependenciesReport", "wasmJsTestNpmDependenciesReport"),
-            project.tasks.names.filter { it.endsWith("NpmDependenciesReport") }.sorted(),
+            project.npmDependenciesReportTaskNames(),
         )
     }
 
     @Test
-    fun `WasmWASI only project registers no shared package json task`() {
+    fun `WasmWASI target registers no npm dependency report task`() {
         val project = buildProjectWithMPP {
             kotlin {
+                js { nodejs() }
                 wasmWasi {
                     wasmtime()
                 }
@@ -87,12 +91,17 @@ class SharedNpmSubprojectTest {
         }
         project.evaluate()
 
-        assertEquals(emptyList(), project.tasks.names.filter { it.endsWith("NpmDependenciesReport") })
-        assertEquals(emptyList(), project.configurations.names.filter { it.contains("NpmDependenciesReport") || it.contains("NpmRuntimeDependencies") })
+        assertEquals(listOf("jsNpmDependenciesReport", "jsTestNpmDependenciesReport"), project.npmDependenciesReportTaskNames())
+        assertEquals(
+            listOf("kotlinNpmDependenciesReportJs"),
+            project.configurations.names.filter { it.startsWith("kotlinNpmDependenciesReport") },
+        )
+        val wasmWasiRuntimeElements = project.configurations.getByName(project.multiplatformExtension.wasmWasi().runtimeElementsConfigurationName)
+        assertNull(wasmWasiRuntimeElements.outgoing.variants.findByName("kotlinNpmRuntimeDependenciesWasmWasi"))
     }
 
     @Test
-    fun `dependent projects are offered the package json of the main compilation only`() {
+    fun `dependent projects are offered the npm dependency report of the main compilation only`() {
         val project = buildProjectWithMPP {
             kotlin {
                 js { nodejs() }
@@ -159,23 +168,21 @@ class SharedNpmSubprojectTest {
     }
 
     @Test
-    fun `package json metadata of the compilation is passed to the task`() {
+    fun `the report target is the platform of the compilation`() {
         val project = buildProjectWithMPP {
             kotlin {
                 js { nodejs() }
+                wasmJs { nodejs() }
             }
         }
         project.evaluate()
-        project.version = "1.2.3"
 
-        val main = project.npmDependencies("jsNpmDependenciesReport")
-        assertEquals("kotlin/test.js", main.main.get())
-        assertNull(main.types.orNull)
-        assertEquals("1.2.3", main.packageVersion.get())
+        assertEquals("js", project.npmDependenciesReportTask("jsNpmDependenciesReport").target.get())
+        assertEquals("wasm", project.npmDependenciesReportTask("wasmJsNpmDependenciesReport").target.get())
     }
 
     @Test
-    fun `the shared package json of a dependency project is an input of the dependent one`() {
+    fun `the npm dependency report of a dependency project is an input of the dependent one`() {
         val root = buildProject(projectBuilder = { withName("root") })
         val lib = buildProjectWithMPP(projectBuilder = { withParent(root).withName("lib") }) {
             kotlin { js { nodejs() } }
@@ -194,7 +201,7 @@ class SharedNpmSubprojectTest {
         val transitive = app.npmDependencies("jsNpmDependenciesReport").transitiveArtifacts
         assertTrue(
             transitive.buildDependencies.getDependencies(null).any { it.name == "jsNpmDependenciesReport" && it.project == lib },
-            "app's shared package.json must be built after lib's",
+            "app's npm dependency report must be built after lib's",
         )
     }
 }

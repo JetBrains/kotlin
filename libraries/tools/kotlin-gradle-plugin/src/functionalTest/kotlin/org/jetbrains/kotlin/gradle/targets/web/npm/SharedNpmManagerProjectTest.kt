@@ -10,9 +10,11 @@ import org.gradle.api.internal.project.ProjectInternal
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
-import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
 import org.jetbrains.kotlin.gradle.targets.js.npm.fromSrcPackageJson
+import org.jetbrains.kotlin.gradle.targets.web.npm.shared.CompilationNpmDependencyReport
 import org.jetbrains.kotlin.gradle.targets.web.npm.shared.KotlinSetupSharedNpmProjectTask
+import org.jetbrains.kotlin.gradle.targets.web.npm.shared.NpmDependencyReport
+import org.jetbrains.kotlin.gradle.targets.web.npm.shared.writeTo
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
@@ -37,7 +39,7 @@ class SharedNpmManagerProjectTest {
         return project
     }
 
-    private fun packageJsonFiles(vararg projects: Project): List<File> = projects
+    private fun reportFiles(vararg projects: Project): List<File> = projects
         .flatMap { it.multiplatformExtension.targets.filterIsInstance<KotlinJsIrTarget>() }
         .flatMap { it.compilations }
         .map { it.npmDependenciesReportFile() }
@@ -52,36 +54,40 @@ class SharedNpmManagerProjectTest {
     }
 
     @Test
-    fun `package json files of all compilations are collected per platform`() {
-        assertEquals(packageJsonFiles(jsBrowser, jsNodejs), resolvedFiles("kotlinNpmDependenciesReportJsResolver"))
-        assertEquals(packageJsonFiles(wasmJsBrowser), resolvedFiles("kotlinNpmDependenciesReportWasmResolver"))
+    fun `npm dependency reports of all compilations are collected per platform`() {
+        assertEquals(reportFiles(jsBrowser, jsNodejs), resolvedFiles("kotlinNpmDependenciesReportJsResolver"))
+        assertEquals(reportFiles(wasmJsBrowser), resolvedFiles("kotlinNpmDependenciesReportWasmResolver"))
     }
 
     @Test
     fun `setup task assembles the root and workspace package json files`() {
-        val inputs = packageJsonFiles(jsBrowser, jsNodejs)
-        inputs.forEachIndexed { index, file -> PackageJson("lib-$index", "1.0.0").saveTo(file) }
+        val inputs = reportFiles(jsBrowser, jsNodejs)
+        inputs.forEachIndexed { index, file ->
+            NpmDependencyReport("js", mapOf("lib-$index" to CompilationNpmDependencyReport(dependencies = mapOf("is-even" to "1.$index.0")))).writeTo(file)
+        }
 
         val outputDirectory = assembleJsSharedNpmProject()
 
         val rootPackageJson = fromSrcPackageJson(outputDirectory.resolve("package.json"))!!
         assertEquals("root-project", rootPackageJson.name)
-        assertEquals("unspecified", rootPackageJson.version)
+        assertEquals("0.0.0-unspecified", rootPackageJson.version)
         assertEquals(true, rootPackageJson.private)
         assertEquals(listOf("packages/lib-0", "packages/lib-1", "packages/lib-2", "packages/lib-3"), rootPackageJson.workspaces?.toList())
-        inputs.forEachIndexed { index, file ->
-            assertEquals(file.readText(), outputDirectory.resolve("packages/lib-$index/package.json").readText())
+        inputs.indices.forEach { index ->
+            val workspace = fromSrcPackageJson(outputDirectory.resolve("packages/lib-$index/package.json"))!!
+            assertEquals("lib-$index", workspace.name)
+            assertEquals("0.0.0-unspecified", workspace.version)
+            assertEquals(mapOf("is-even" to "1.$index.0"), workspace.dependencies.toMap())
         }
     }
 
     @Test
-    fun `invalid package json files are skipped`() {
-        val (valid, unparsable, unnamed) = packageJsonFiles(jsBrowser, jsNodejs)
-        PackageJson("valid", "1.0.0").saveTo(valid)
+    fun `invalid npm dependency reports are skipped`() {
+        val (valid, unparsable, unnamed) = reportFiles(jsBrowser, jsNodejs)
+        NpmDependencyReport("js", mapOf("valid" to CompilationNpmDependencyReport())).writeTo(valid)
         unparsable.parentFile.mkdirs()
         unparsable.writeText("{ not json")
-        unnamed.parentFile.mkdirs()
-        unnamed.writeText("""{ "version": "1.0.0" }""")
+        NpmDependencyReport("js", mapOf("" to CompilationNpmDependencyReport())).writeTo(unnamed)
 
         val outputDirectory = assembleJsSharedNpmProject()
 

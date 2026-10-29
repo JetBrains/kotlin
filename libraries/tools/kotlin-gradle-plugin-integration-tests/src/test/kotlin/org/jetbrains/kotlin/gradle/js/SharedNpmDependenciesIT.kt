@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
 import org.jetbrains.kotlin.gradle.targets.js.npm.fromSrcPackageJson
 import org.jetbrains.kotlin.gradle.targets.web.npm.KotlinSharedNpmProjectPlugin
+import org.jetbrains.kotlin.gradle.targets.web.npm.shared.CompilationNpmDependencyReport
+import org.jetbrains.kotlin.gradle.targets.web.npm.shared.readNpmDependencyReport
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
@@ -142,26 +144,22 @@ class SharedNpmDependenciesIT : KGPBaseTest() {
                 assertWorkspacePackageJson(
                     js.resolve("packages/emptyKts-lib-a/package.json"),
                     name = "emptyKts-lib-a",
-                    main = "kotlin/emptyKts-lib-a.js",
                     dependencies = libADependencies,
                 )
                 assertWorkspacePackageJson(
                     js.resolve("packages/emptyKts-lib-a-test/package.json"),
                     name = "emptyKts-lib-a-test",
-                    main = "kotlin/emptyKts-lib-a-test.js",
                     dependencies = libADependencies,
                     requiredDevDependencies = mochaTools,
                 )
                 assertWorkspacePackageJson(
                     js.resolve("packages/emptyKts-lib-b/package.json"),
                     name = "emptyKts-lib-b",
-                    main = "kotlin/emptyKts-lib-b.js",
                     dependencies = libBJsDependencies,
                 )
                 assertWorkspacePackageJson(
                     js.resolve("packages/emptyKts-lib-b-test/package.json"),
                     name = "emptyKts-lib-b-test",
-                    main = "kotlin/emptyKts-lib-b-test.js",
                     dependencies = libBJsDependencies,
                     requiredDevDependencies = karmaTools,
                 )
@@ -169,13 +167,11 @@ class SharedNpmDependenciesIT : KGPBaseTest() {
                 assertWorkspacePackageJson(
                     js.resolve("packages/emptyKts-lib-web/package.json"),
                     name = "emptyKts-lib-web",
-                    main = "kotlin/emptyKts-lib-web.js",
                     dependencies = libWebDependencies,
                 )
                 assertWorkspacePackageJson(
                     js.resolve("packages/emptyKts-lib-web-test/package.json"),
                     name = "emptyKts-lib-web-test",
-                    main = "kotlin/emptyKts-lib-web-test.js",
                     dependencies = libWebDependencies,
                     requiredDevDependencies = karmaTools,
                 )
@@ -187,13 +183,11 @@ class SharedNpmDependenciesIT : KGPBaseTest() {
                 assertWorkspacePackageJson(
                     wasm.resolve("packages/emptyKts-lib-b/package.json"),
                     name = "emptyKts-lib-b",
-                    main = "kotlin/emptyKts-lib-b.mjs",
                     dependencies = libBWasmDependencies,
                 )
                 assertWorkspacePackageJson(
                     wasm.resolve("packages/emptyKts-lib-b-test/package.json"),
                     name = "emptyKts-lib-b-test",
-                    main = "kotlin/emptyKts-lib-b-test.mjs",
                     dependencies = libBWasmDependencies,
                     requiredDevDependencies = karmaTools,
                 )
@@ -217,7 +211,7 @@ class SharedNpmDependenciesIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("KT-90085 - Shared package json of a dependent project picks up npm changes of its dependency project")
+    @DisplayName("KT-90085 - npm dependency report of a dependent project picks up npm changes of its dependency project")
     @GradleTest
     fun testNpmDependenciesReportPicksUpDependencyNpmChanges(gradleVersion: GradleVersion) {
         project("emptyKts", gradleVersion) {
@@ -257,9 +251,9 @@ class SharedNpmDependenciesIT : KGPBaseTest() {
                 }
             }
 
-            fun TestProject.libBNpmDependenciesReport(): PackageJson =
-                projectPath.resolve("lib-b/build/kotlin-npm/js/shared-package-json/emptyKts-lib-b/package.json").toFile()
-                    .let { fromSrcPackageJson(it) ?: error("Cannot parse $it") }
+            fun TestProject.libBNpmDependenciesReport(): CompilationNpmDependencyReport =
+                projectPath.resolve("lib-b/build/kotlin-npm/js/npm-dep-reports/emptyKts-lib-b/npm-dep-report.json").toFile()
+                    .let { readNpmDependencyReport(it).compilations.getValue("emptyKts-lib-b") }
 
             build(":lib-b:jsNpmDependenciesReport") {
                 assertTasksExecuted(":lib-a:jsNpmDependenciesReport")
@@ -368,7 +362,7 @@ class SharedNpmDependenciesIT : KGPBaseTest() {
     private fun assertRootPackageJson(file: Path, workspaces: List<String>) {
         val packageJson = readPackageJson(file)
         assertEquals("emptyKts", packageJson.name, "name of $file")
-        assertEquals("unspecified", packageJson.version, "version of $file")
+        assertEquals("0.0.0-unspecified", packageJson.version, "version of $file")
         assertEquals(true, packageJson.private, "private of $file")
         assertEquals(workspaces, packageJson.workspaces?.toList(), "workspaces of $file")
     }
@@ -376,14 +370,12 @@ class SharedNpmDependenciesIT : KGPBaseTest() {
     private fun assertWorkspacePackageJson(
         file: Path,
         name: String,
-        main: String,
         dependencies: Map<String, String>,
         requiredDevDependencies: Map<String, String> = emptyMap(),
     ) {
         val packageJson = readPackageJson(file)
         assertEquals(name, packageJson.name, "name of $file")
         assertEquals("0.0.0-unspecified", packageJson.version, "version of $file")
-        assertEquals(main, packageJson.main, "main of $file")
         assertEquals(dependencies.toSortedMap(), packageJson.dependencies.toSortedMap(), "dependencies of $file")
         assertEquals(
             requiredDevDependencies.toSortedMap(),
