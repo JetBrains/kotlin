@@ -4,6 +4,20 @@ class BoundedTypeParameterSingular<T : CharSequence> {
     field = items
     get
 
+  companion object Companion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    @JvmStatic
+    fun <T : CharSequence> builder(): BoundedTypeParameterSingularBuilder<T> {
+      return BoundedTypeParameterSingularBuilder<T>()
+    }
+
+  }
+
   open class BoundedTypeParameterSingularBuilder<T : CharSequence> {
     internal constructor() /* primary */ {
       super/*Any*/()
@@ -61,20 +75,6 @@ class BoundedTypeParameterSingular<T : CharSequence> {
 
   }
 
-  companion object Companion {
-    private constructor() /* primary */ {
-      super/*Any*/()
-      /* <init>() */
-
-    }
-
-    @JvmStatic
-    fun <T : CharSequence> builder(): BoundedTypeParameterSingularBuilder<T> {
-      return BoundedTypeParameterSingularBuilder<T>()
-    }
-
-  }
-
   constructor(@Singular items: List<T>) /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -92,6 +92,20 @@ class GenericSingular<K : Any?, V : Any?> {
   val pairs: Map<K, V>
     field = pairs
     get
+
+  companion object Companion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    @JvmStatic
+    fun <K : Any?, V : Any?> builder(): GenericSingularBuilder<K, V> {
+      return GenericSingularBuilder<K, V>()
+    }
+
+  }
 
   open class GenericSingularBuilder<K : Any?, V : Any?> {
     internal constructor() /* primary */ {
@@ -193,20 +207,6 @@ class GenericSingular<K : Any?, V : Any?> {
 
   }
 
-  companion object Companion {
-    private constructor() /* primary */ {
-      super/*Any*/()
-      /* <init>() */
-
-    }
-
-    @JvmStatic
-    fun <K : Any?, V : Any?> builder(): GenericSingularBuilder<K, V> {
-      return GenericSingularBuilder<K, V>()
-    }
-
-  }
-
   constructor(@Singular items: List<V>, @Singular pairs: Map<K, V>) /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -220,6 +220,20 @@ class IgnoreNullCollections {
   val items: List<Int>
     field = items
     get
+
+  companion object Companion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    @JvmStatic
+    fun builder(): IgnoreNullCollectionsBuilder {
+      return IgnoreNullCollectionsBuilder()
+    }
+
+  }
 
   open class IgnoreNullCollectionsBuilder {
     internal constructor() /* primary */ {
@@ -280,20 +294,6 @@ class IgnoreNullCollections {
 
   }
 
-  companion object Companion {
-    private constructor() /* primary */ {
-      super/*Any*/()
-      /* <init>() */
-
-    }
-
-    @JvmStatic
-    fun builder(): IgnoreNullCollectionsBuilder {
-      return IgnoreNullCollectionsBuilder()
-    }
-
-  }
-
   constructor(@Singular(ignoreNullCollections = true) items: List<Int>) /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -307,6 +307,20 @@ class IgnoreNullCollectionsWithNullableCollections {
   val items: List<Int>?
     field = items
     get
+
+  companion object Companion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    @JvmStatic
+    fun builder(): IgnoreNullCollectionsWithNullableCollectionsBuilder {
+      return IgnoreNullCollectionsWithNullableCollectionsBuilder()
+    }
+
+  }
 
   open class IgnoreNullCollectionsWithNullableCollectionsBuilder {
     internal constructor() /* primary */ {
@@ -367,20 +381,6 @@ class IgnoreNullCollectionsWithNullableCollections {
 
   }
 
-  companion object Companion {
-    private constructor() /* primary */ {
-      super/*Any*/()
-      /* <init>() */
-
-    }
-
-    @JvmStatic
-    fun builder(): IgnoreNullCollectionsWithNullableCollectionsBuilder {
-      return IgnoreNullCollectionsWithNullableCollectionsBuilder()
-    }
-
-  }
-
   constructor(@Singular(ignoreNullCollections = true) items: List<Int>?) /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -394,6 +394,20 @@ class NullableCollection {
   val items: List<Int>?
     field = items
     get
+
+  companion object Companion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    @JvmStatic
+    fun builder(): NullableCollectionBuilder {
+      return NullableCollectionBuilder()
+    }
+
+  }
 
   open class NullableCollectionBuilder {
     internal constructor() /* primary */ {
@@ -452,20 +466,6 @@ class NullableCollection {
 
   }
 
-  companion object Companion {
-    private constructor() /* primary */ {
-      super/*Any*/()
-      /* <init>() */
-
-    }
-
-    @JvmStatic
-    fun builder(): NullableCollectionBuilder {
-      return NullableCollectionBuilder()
-    }
-
-  }
-
   constructor(@Singular items: List<Int>?) /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -479,6 +479,20 @@ class NullableElements {
   val items: List<Int?>
     field = items
     get
+
+  companion object Companion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    @JvmStatic
+    fun builder(): NullableElementsBuilder {
+      return NullableElementsBuilder()
+    }
+
+  }
 
   open class NullableElementsBuilder {
     internal constructor() /* primary */ {
@@ -537,20 +551,6 @@ class NullableElements {
 
   }
 
-  companion object Companion {
-    private constructor() /* primary */ {
-      super/*Any*/()
-      /* <init>() */
-
-    }
-
-    @JvmStatic
-    fun builder(): NullableElementsBuilder {
-      return NullableElementsBuilder()
-    }
-
-  }
-
   constructor(@Singular items: List<Int?>) /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -564,6 +564,20 @@ class NullableTypeParameterSingular<T : Any?> {
   val items: List<T?>
     field = items
     get
+
+  companion object Companion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    @JvmStatic
+    fun <T : Any?> builder(): NullableTypeParameterSingularBuilder<T> {
+      return NullableTypeParameterSingularBuilder<T>()
+    }
+
+  }
 
   open class NullableTypeParameterSingularBuilder<T : Any?> {
     internal constructor() /* primary */ {
@@ -622,20 +636,6 @@ class NullableTypeParameterSingular<T : Any?> {
 
   }
 
-  companion object Companion {
-    private constructor() /* primary */ {
-      super/*Any*/()
-      /* <init>() */
-
-    }
-
-    @JvmStatic
-    fun <T : Any?> builder(): NullableTypeParameterSingularBuilder<T> {
-      return NullableTypeParameterSingularBuilder<T>()
-    }
-
-  }
-
   constructor(@Singular items: List<T?>) /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -653,6 +653,20 @@ class Other {
   val names: Iterable<String>
     field = names
     get
+
+  companion object Companion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    @JvmStatic
+    fun builder(): OtherBuilder {
+      return OtherBuilder()
+    }
+
+  }
 
   open class OtherBuilder {
     internal constructor() /* primary */ {
@@ -755,20 +769,6 @@ class Other {
 
   }
 
-  companion object Companion {
-    private constructor() /* primary */ {
-      super/*Any*/()
-      /* <init>() */
-
-    }
-
-    @JvmStatic
-    fun builder(): OtherBuilder {
-      return OtherBuilder()
-    }
-
-  }
-
   constructor(@Singular(value = "singleSome") some: List<Int>, @Singular names: Iterable<String>) /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -790,6 +790,20 @@ class SingularCollections {
   val pairs: Map<String, Int>
     field = pairs
     get
+
+  companion object Companion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    @JvmStatic
+    fun builder(): SingularCollectionsBuilder {
+      return SingularCollectionsBuilder()
+    }
+
+  }
 
   open class SingularCollectionsBuilder {
     internal constructor() /* primary */ {
@@ -935,20 +949,6 @@ class SingularCollections {
 
   }
 
-  companion object Companion {
-    private constructor() /* primary */ {
-      super/*Any*/()
-      /* <init>() */
-
-    }
-
-    @JvmStatic
-    fun builder(): SingularCollectionsBuilder {
-      return SingularCollectionsBuilder()
-    }
-
-  }
-
   constructor(@Singular items: List<String>, @Singular tags: Set<String>, @Singular pairs: Map<String, Int>) /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -970,6 +970,20 @@ class User {
   val tags: Set<String>
     field = tags
     get
+
+  companion object Companion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    @JvmStatic
+    fun builder(): UserBuilder {
+      return UserBuilder()
+    }
+
+  }
 
   open class UserBuilder {
     internal constructor() /* primary */ {
@@ -1112,20 +1126,6 @@ class User {
     private var tags: MutableSet<String>?
       private get
       private set
-
-  }
-
-  companion object Companion {
-    private constructor() /* primary */ {
-      super/*Any*/()
-      /* <init>() */
-
-    }
-
-    @JvmStatic
-    fun builder(): UserBuilder {
-      return UserBuilder()
-    }
 
   }
 

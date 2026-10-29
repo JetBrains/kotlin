@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildOuterClassTypeParamete
 import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameterCopy
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.*
-import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
 import org.jetbrains.kotlin.fir.extensions.NestedClassGenerationContext
 import org.jetbrains.kotlin.fir.extensions.UnsafePluginApi
@@ -113,7 +112,7 @@ sealed class BuilderDeclarationType {
 class BuilderGeneratorKey(val type: BuilderDeclarationType) : LombokDeclarationKey()
 
 abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession) :
-    FirDeclarationGenerationExtension(session), LombokCompanionObjectContributor {
+    LombokCompanionObjectGenerator(session) {
     companion object {
         private val TO_BUILDER = Name.identifier("toBuilder")
     }
@@ -227,8 +226,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
      * The key of [this] if it is a builder class this generator produced, `null` otherwise.
      *
      * `createEmptyBuilderClass` builds the class alone; the constructor `builder()` and `toBuilder()` call has to
-     * be generated separately, and only for the builder class - the companion object holding those functions is
-     * [LombokCompanionObjectGenerator]'s, constructor included.
+     * be generated separately.
      */
     private val FirClassSymbol<*>.generatedBuilderClassKey: BuilderGeneratorKey?
         get() {

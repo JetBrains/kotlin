@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar.ExtensionSto
 import org.jetbrains.kotlin.compiler.plugin.registerExtension
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
+import org.jetbrains.kotlin.plugin.sandbox.PluginSandboxDirectives.ENABLE_COMPANION_SUPERTYPE_EXTENSION
 import org.jetbrains.kotlin.plugin.sandbox.fir.FirPluginPrototypeExtensionRegistrar
 import org.jetbrains.kotlin.plugin.sandbox.ir.GeneratedDeclarationsIrBodyFiller
 import org.jetbrains.kotlin.test.AbstractLoadedMetadataDumpHandler
@@ -24,6 +25,8 @@ object PluginSandboxDirectives : SimpleDirectivesContainer() {
         If enabled plugin won't be applied to the synthetic modules.
         E.g. for empty module created in [${AbstractLoadedMetadataDumpHandler::class}]
     """.trimIndent())
+
+    val ENABLE_COMPANION_SUPERTYPE_EXTENSION by directive("""If enabled plugin will add companion supertype extension.""")
 
     val WITH_AND_WITHOUT_PLUGIN by directive(""" Runs test with and without plugin """.trimIndent())
     val DISABLE_PLUGIN by directive(""" Turns off plugin completely """.trimIndent())
@@ -40,7 +43,8 @@ class ExtensionRegistrarConfigurator(testServices: TestServices) : EnvironmentCo
                 return
             }
         }
-        FirExtensionRegistrar.registerExtension(FirPluginPrototypeExtensionRegistrar())
+        val shouldAddCompanionSupertypeExtension = ENABLE_COMPANION_SUPERTYPE_EXTENSION in moduleStructure.allDirectives
+        FirExtensionRegistrar.registerExtension(FirPluginPrototypeExtensionRegistrar(shouldAddCompanionSupertypeExtension))
         IrGenerationExtension.registerExtension(GeneratedDeclarationsIrBodyFiller())
     }
 }

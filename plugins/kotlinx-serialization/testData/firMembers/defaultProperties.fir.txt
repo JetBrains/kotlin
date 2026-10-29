@@ -24,15 +24,6 @@ FILE: defaultProperties.kt
 
         public final fun copy(ctor: R|kotlin/Int| = this@R|/SomeClass|.R|/SomeClass.ctor|, ctorDependent: R|kotlin/Int| = this@R|/SomeClass|.R|/SomeClass.ctorDependent|): R|SomeClass|
 
-        public final companion object Companion : R|kotlin/Any| {
-            public final fun serializer(): R|kotlinx/serialization/KSerializer<SomeClass>|
-
-            private constructor(): R|SomeClass.Companion| {
-                super<R|kotlin/Any|>()
-            }
-
-        }
-
         @R|kotlin/Deprecated|(message = String(This synthesized declaration should not be used directly), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|) public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<SomeClass>| {
             public final override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|SomeClass|): R|kotlin/Unit|
 
@@ -44,6 +35,15 @@ FILE: defaultProperties.kt
             public final override fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
 
             private constructor(): R|SomeClass.$serializer| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            public final fun serializer(): R|kotlinx/serialization/KSerializer<SomeClass>|
+
+            private constructor(): R|SomeClass.Companion| {
                 super<R|kotlin/Any|>()
             }
 

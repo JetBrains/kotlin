@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
@@ -29,8 +28,7 @@ object ConstructorGeneratorKey : LombokDeclarationKey()
 val FirDeclarationOrigin.isGeneratedConstructor: Boolean
     get() = this is FirDeclarationOrigin.Plugin && key == ConstructorGeneratorKey
 
-class LombokConstructorsGenerator(session: FirSession) :
-    FirDeclarationGenerationExtension(session), LombokCompanionObjectContributor {
+class LombokConstructorsGenerator(session: FirSession) : LombokCompanionObjectGenerator(session) {
     companion object {
         private val PREDICATE = DeclarationPredicate.create {
             annotated(listOf(LombokNames.NO_ARGS_CONSTRUCTOR))

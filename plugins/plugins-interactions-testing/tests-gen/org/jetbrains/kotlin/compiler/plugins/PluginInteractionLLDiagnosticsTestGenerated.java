@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.compiler.plugins;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -49,5 +50,63 @@ public class PluginInteractionLLDiagnosticsTestGenerated extends AbstractPluginI
   @TestMetadata("lombokLogAndSerializableExplicitCompanion.kt")
   public void testLombokLogAndSerializableExplicitCompanion() {
     run("lombokLogAndSerializableExplicitCompanion.kt");
+  }
+
+  @Nested
+  @TestMetadata("plugins/plugins-interactions-testing/testData/diagnostics/generatedCompanion")
+  @TestDataPath("$PROJECT_ROOT")
+  public class GeneratedCompanion {
+    private void run(String fileName) {
+      runTest("plugins/plugins-interactions-testing/testData/diagnostics/generatedCompanion/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInGeneratedCompanion() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/plugins-interactions-testing/testData/diagnostics/generatedCompanion"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("generatedMemberClashes.kt")
+    public void testGeneratedMemberClashes() {
+      run("generatedMemberClashes.kt");
+    }
+
+    @Test
+    @TestMetadata("mergedGenericSupertypes.kt")
+    public void testMergedGenericSupertypes() {
+      run("mergedGenericSupertypes.kt");
+    }
+
+    @Test
+    @TestMetadata("unresolvedSupertype.kt")
+    public void testUnresolvedSupertype() {
+      run("unresolvedSupertype.kt");
+    }
+  }
+
+  @Nested
+  @TestMetadata("plugins/plugins-interactions-testing/testData/diagnostics/generatedSupertypes")
+  @TestDataPath("$PROJECT_ROOT")
+  public class GeneratedSupertypes {
+    private void run(String fileName) {
+      runTest("plugins/plugins-interactions-testing/testData/diagnostics/generatedSupertypes/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInGeneratedSupertypes() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/plugins-interactions-testing/testData/diagnostics/generatedSupertypes"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("diamondConflict.kt")
+    public void testDiamondConflict() {
+      run("diamondConflict.kt");
+    }
+
+    @Test
+    @TestMetadata("sealedSupertype.kt")
+    public void testSealedSupertype() {
+      run("sealedSupertype.kt");
+    }
   }
 }

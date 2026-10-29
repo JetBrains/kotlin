@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.compiler.plugins;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -91,5 +92,237 @@ public class PluginInteractionFirBlackBoxCodegenTestGenerated extends AbstractPl
   @TestMetadata("powerAssertAndTopLevelGenerator.kt")
   public void testPowerAssertAndTopLevelGenerator() {
     run("powerAssertAndTopLevelGenerator.kt");
+  }
+
+  @Nested
+  @TestMetadata("plugins/plugins-interactions-testing/testData/box/generatedCompanion")
+  @TestDataPath("$PROJECT_ROOT")
+  public class GeneratedCompanion {
+    private void run(String fileName) {
+      runTest("plugins/plugins-interactions-testing/testData/box/generatedCompanion/" + fileName);
+    }
+
+    @Test
+    @TestMetadata("abstractSupertype.kt")
+    public void testAbstractSupertype() {
+      run("abstractSupertype.kt");
+    }
+
+    @Test
+    public void testAllFilesPresentInGeneratedCompanion() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/plugins-interactions-testing/testData/box/generatedCompanion"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+    }
+
+    @Test
+    @TestMetadata("diamondConflict.kt")
+    public void testDiamondConflict() {
+      run("diamondConflict.kt");
+    }
+
+    @Test
+    @TestMetadata("duplicateSuperclass.kt")
+    public void testDuplicateSuperclass() {
+      run("duplicateSuperclass.kt");
+    }
+
+    @Test
+    @TestMetadata("duplicateSupertypes.kt")
+    public void testDuplicateSupertypes() {
+      run("duplicateSupertypes.kt");
+    }
+
+    @Test
+    @TestMetadata("enumSupertype.kt")
+    public void testEnumSupertype() {
+      run("enumSupertype.kt");
+    }
+
+    @Test
+    @TestMetadata("explicitAny.kt")
+    public void testExplicitAny() {
+      run("explicitAny.kt");
+    }
+
+    @Test
+    @TestMetadata("finalSuperclass.kt")
+    public void testFinalSuperclass() {
+      run("finalSuperclass.kt");
+    }
+
+    @Test
+    @TestMetadata("inaccessibleSupertype.kt")
+    public void testInaccessibleSupertype() {
+      run("inaccessibleSupertype.kt");
+    }
+
+    @Test
+    @TestMetadata("lombokMemberClash.kt")
+    public void testLombokMemberClash() {
+      run("lombokMemberClash.kt");
+    }
+
+    @Test
+    @TestMetadata("mergedAnnotations.kt")
+    public void testMergedAnnotations() {
+      run("mergedAnnotations.kt");
+    }
+
+    @Test
+    @TestMetadata("mergedGenericSupertypes.kt")
+    public void testMergedGenericSupertypes() {
+      run("mergedGenericSupertypes.kt");
+    }
+
+    @Test
+    @TestMetadata("missingAnnotationArgument.kt")
+    public void testMissingAnnotationArgument() {
+      run("missingAnnotationArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("multipleGeneratedSuperclasses.kt")
+    public void testMultipleGeneratedSuperclasses() {
+      run("multipleGeneratedSuperclasses.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedOwnerSupertype.kt")
+    public void testNestedOwnerSupertype() {
+      run("nestedOwnerSupertype.kt");
+    }
+
+    @Test
+    @TestMetadata("nullableSupertype.kt")
+    public void testNullableSupertype() {
+      run("nullableSupertype.kt");
+    }
+
+    @Test
+    @TestMetadata("objectSupertype.kt")
+    public void testObjectSupertype() {
+      run("objectSupertype.kt");
+    }
+
+    @Test
+    @TestMetadata("openOwnerSuperclass.kt")
+    public void testOpenOwnerSuperclass() {
+      run("openOwnerSuperclass.kt");
+    }
+
+    @Test
+    @TestMetadata("openSuperclass.kt")
+    public void testOpenSuperclass() {
+      run("openSuperclass.kt");
+    }
+
+    @Test
+    @TestMetadata("ownerTypeParameter.kt")
+    public void testOwnerTypeParameter() {
+      run("ownerTypeParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("rawGenericSupertype.kt")
+    public void testRawGenericSupertype() {
+      run("rawGenericSupertype.kt");
+    }
+
+    @Test
+    @TestMetadata("repeatableAnnotation.kt")
+    public void testRepeatableAnnotation() {
+      run("repeatableAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("sandboxMemberClashJs.kt")
+    public void testSandboxMemberClashJs() {
+      run("sandboxMemberClashJs.kt");
+    }
+
+    @Test
+    @TestMetadata("sandboxMemberClashJvm.kt")
+    public void testSandboxMemberClashJvm() {
+      run("sandboxMemberClashJvm.kt");
+    }
+
+    @Test
+    @TestMetadata("sealedSupertype.kt")
+    public void testSealedSupertype() {
+      run("sealedSupertype.kt");
+    }
+
+    @Test
+    @TestMetadata("serializationMemberClashJs.kt")
+    public void testSerializationMemberClashJs() {
+      run("serializationMemberClashJs.kt");
+    }
+
+    @Test
+    @TestMetadata("serializationMemberClashJvm.kt")
+    public void testSerializationMemberClashJvm() {
+      run("serializationMemberClashJvm.kt");
+    }
+
+    @Test
+    @TestMetadata("starGenericSupertype.kt")
+    public void testStarGenericSupertype() {
+      run("starGenericSupertype.kt");
+    }
+
+    @Test
+    @TestMetadata("superclassDelegation.kt")
+    public void testSuperclassDelegation() {
+      run("superclassDelegation.kt");
+    }
+
+    @Test
+    @TestMetadata("superclassWithRequiredArguments.kt")
+    public void testSuperclassWithRequiredArguments() {
+      run("superclassWithRequiredArguments.kt");
+    }
+
+    @Test
+    @TestMetadata("supertypeOrder.kt")
+    public void testSupertypeOrder() {
+      run("supertypeOrder.kt");
+    }
+
+    @Test
+    @TestMetadata("unresolvedSupertype.kt")
+    public void testUnresolvedSupertype() {
+      run("unresolvedSupertype.kt");
+    }
+
+    @Test
+    @TestMetadata("userDeclaredCompanion.kt")
+    public void testUserDeclaredCompanion() {
+      run("userDeclaredCompanion.kt");
+    }
+
+    @Test
+    @TestMetadata("wrongTargetAnnotation.kt")
+    public void testWrongTargetAnnotation() {
+      run("wrongTargetAnnotation.kt");
+    }
+  }
+
+  @Nested
+  @TestMetadata("plugins/plugins-interactions-testing/testData/box/generatedSupertypes")
+  @TestDataPath("$PROJECT_ROOT")
+  public class GeneratedSupertypes {
+    private void run(String fileName) {
+      runTest("plugins/plugins-interactions-testing/testData/box/generatedSupertypes/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInGeneratedSupertypes() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/plugins-interactions-testing/testData/box/generatedSupertypes"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+    }
+
+    @Test
+    @TestMetadata("interfaceSupertype.kt")
+    public void testInterfaceSupertype() {
+      run("interfaceSupertype.kt");
+    }
   }
 }

@@ -1,0 +1,1 @@
+java.lang.IllegalStateException: Invalid supertype generatedCompanion/Base generated for companion object of generatedCompanion/Owner: a companion object cannot inherit from ENUM_CLASS

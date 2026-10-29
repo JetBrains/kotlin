@@ -5,8 +5,12 @@
 package org.jetbrains.kotlin.compiler.plugins
 
 import org.jetbrains.kotlin.allopen.AllOpenEnvironmentConfigurator
+import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.AbstractLLBlackBoxTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.AbstractLLDiagnosticsTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.AbstractLLReversedBlackBoxTest
+import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
 import org.jetbrains.kotlin.assignment.plugin.AssignmentPluginEnvironmentConfigurator
+import org.jetbrains.kotlin.js.test.runners.AbstractJsTest
 import org.jetbrains.kotlin.lombok.LombokEnvironmentConfigurator
 import org.jetbrains.kotlin.lombok.LombokRuntimeClassPathProvider
 import org.jetbrains.kotlin.noarg.NoArgEnvironmentConfigurator
@@ -17,7 +21,9 @@ import org.jetbrains.kotlin.parcelize.test.services.ParcelizeUtilSourcesProvider
 import org.jetbrains.kotlin.plugin.sandbox.ExtensionRegistrarConfigurator
 import org.jetbrains.kotlin.plugin.sandbox.PluginAnnotationsProvider
 import org.jetbrains.kotlin.plugin.sandbox.PluginRuntimeAnnotationsProvider
+import org.jetbrains.kotlin.plugin.sandbox.PluginSandboxDirectives.ENABLE_COMPANION_SUPERTYPE_EXTENSION
 import org.jetbrains.kotlin.powerassert.PowerAssertEnvironmentConfigurator
+import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.runners.codegen.AbstractFirLightTreeBlackBoxCodegenTest
@@ -32,7 +38,19 @@ import org.jetbrains.kotlinx.serialization.enableSerializationRuntimeProviders
 open class AbstractPluginInteractionFirBlackBoxCodegenTest : AbstractFirLightTreeBlackBoxCodegenTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
-        builder.enablePlugins()
+        builder.enablePlugins(targetBackend)
+    }
+}
+
+/** Runs the same `box` test data as [AbstractPluginInteractionFirBlackBoxCodegenTest] on the JS backend. */
+open class AbstractPluginInteractionJsBlackBoxCodegenTest : AbstractJsTest(
+    pathToTestDir = "plugins/plugins-interactions-testing/testData/box",
+    testGroupOutputDirPrefix = "pluginInteractionsBox/",
+    parser = FirParser.LightTree,
+) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.enablePlugins(targetBackend)
     }
 }
 
@@ -45,12 +63,39 @@ abstract class AbstractPluginInteractionLLDiagnosticsTest : AbstractLLDiagnostic
     }
 }
 
+// ---------------------------- LL FIR (IDE) black box ----------------------------
+
+/** Runs the same `box` test data as [AbstractPluginInteractionFirBlackBoxCodegenTest] through the LL FIR frontend only. */
+abstract class AbstractPluginInteractionLLBlackBoxTest : AbstractLLBlackBoxTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.enablePlugins(tolerateMissingExpectedException = true)
+        builder.ignoreLombokConfigFile()
+    }
+}
+
+/** A reversed counterpart of [AbstractPluginInteractionLLBlackBoxTest]. */
+abstract class AbstractPluginInteractionLLReversedBlackBoxTest : AbstractLLReversedBlackBoxTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.enablePlugins(tolerateMissingExpectedException = true)
+        builder.ignoreLombokConfigFile()
+    }
+}
+
 // ---------------------------- configuration ----------------------------
 
 /**
  * Note that enabling `ENABLE_PARCELIZE` also requires enabling `REQUIRES_SEPARATE_PROCESS`
+ *
+ * [targetBackend] is a parameter, because the test runner sets the target backend of the configuration only after `configure`.
+ *
+ * Set [tolerateMissingExpectedException] to true for an analysis-only run, which never reaches the backend.
  */
-fun TestConfigurationBuilder.enablePlugins() {
+fun TestConfigurationBuilder.enablePlugins(
+    targetBackend: TargetBackend = TargetBackend.JVM,
+    tolerateMissingExpectedException: Boolean = false,
+) {
     useConfigurators(
         ::AllOpenEnvironmentConfigurator,
         ::AssignmentPluginEnvironmentConfigurator,
@@ -63,7 +108,7 @@ fun TestConfigurationBuilder.enablePlugins() {
         ::ExtensionRegistrarConfigurator, ::PluginAnnotationsProvider,
     )
 
-    enableSerializationRuntimeProviders(defaultsProviderBuilder.targetBackend ?: TargetBackend.JVM)
+    enableSerializationRuntimeProviders(targetBackend)
     useCustomRuntimeClasspathProviders(
         ::LombokRuntimeClassPathProvider,
         ::ParcelizeRuntimeClasspathProvider,
@@ -75,4 +120,18 @@ fun TestConfigurationBuilder.enablePlugins() {
     )
 
     useAdditionalServices(service<JvmBoxMainClassProvider>(::ParcelizeMainClassProvider))
+
+    useFailureSuppressors(::ExpectedExceptionSuppressor.bind(tolerateMissingExpectedException))
+
+    forTestsMatching("*/generatedSupertypes/*") {
+        defaultDirectives { +ENABLE_COMPANION_SUPERTYPE_EXTENSION }
+    }
+}
+
+/**
+ * The Lombok configurator writes a `lombok.config` into the module.
+ * The Analysis API builds PSI for every module file, so it must be told that this file is a resource and not an unrecognized source.
+ */
+private fun TestConfigurationBuilder.ignoreLombokConfigFile() {
+    defaultDirectives { +AnalysisApiTestDirectives.IGNORE_UNKNOWN_FILES }
 }

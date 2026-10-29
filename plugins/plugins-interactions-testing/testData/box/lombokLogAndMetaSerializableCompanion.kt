@@ -1,3 +1,4 @@
+// TARGET_BACKEND: JVM
 // ENABLE_LOMBOK
 // ENABLE_SERIALIZATION
 // WITH_STDLIB
@@ -18,11 +19,11 @@ annotation class MySerializable
 @Log
 @MySerializable
 class Sample(val name: String) {
-    //fun info() = log.info(name)
+    fun info() = log.info(name)
 }
 
 fun box(): String {
-    //Sample("x").info()
+    Sample("x").info()
     val json = Json.encodeToString(Sample.serializer(), Sample("x"))
     return if (json == """{"name":"x"}""") "OK" else json
 }

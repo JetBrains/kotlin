@@ -17,6 +17,20 @@ class Mixed {
     field = <this>.<get-a>().times(other = 2)
     get
 
+  companion object Companion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    @JvmStatic
+    fun builder(): MixedBuilder {
+      return MixedBuilder()
+    }
+
+  }
+
   open class MixedBuilder {
     internal constructor() /* primary */ {
       super/*Any*/()
@@ -60,20 +74,6 @@ class Mixed {
 
   }
 
-  companion object Companion {
-    private constructor() /* primary */ {
-      super/*Any*/()
-      /* <init>() */
-
-    }
-
-    @JvmStatic
-    fun builder(): MixedBuilder {
-      return MixedBuilder()
-    }
-
-  }
-
   constructor(a: Int, b: String, c: Long) /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -96,6 +96,20 @@ class RoundTrip {
   val mirrored: Int
     field = mirrored
     get
+
+  companion object Companion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    @JvmStatic
+    fun builder(): RoundTripBuilder {
+      return RoundTripBuilder()
+    }
+
+  }
 
   open class RoundTripBuilder {
     internal constructor() /* primary */ {
@@ -130,20 +144,6 @@ class RoundTrip {
 
   }
 
-  companion object Companion {
-    private constructor() /* primary */ {
-      super/*Any*/()
-      /* <init>() */
-
-    }
-
-    @JvmStatic
-    fun builder(): RoundTripBuilder {
-      return RoundTripBuilder()
-    }
-
-  }
-
   constructor(kept: Int, mirrored: Int) /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -164,6 +164,20 @@ class SingularWithoutVal {
   val description: String
     field = id + ": " + joinToString<String>(/* <this> = tags */)
     get
+
+  companion object Companion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    @JvmStatic
+    fun builder(): SingularWithoutValBuilder {
+      return SingularWithoutValBuilder()
+    }
+
+  }
 
   open class SingularWithoutValBuilder {
     internal constructor() /* primary */ {
@@ -229,20 +243,6 @@ class SingularWithoutVal {
     private var tags: MutableList<String>?
       private get
       private set
-
-  }
-
-  companion object Companion {
-    private constructor() /* primary */ {
-      super/*Any*/()
-      /* <init>() */
-
-    }
-
-    @JvmStatic
-    fun builder(): SingularWithoutValBuilder {
-      return SingularWithoutValBuilder()
-    }
 
   }
 

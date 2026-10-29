@@ -5,24 +5,38 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirSessionComponent
-import org.jetbrains.kotlin.fir.caches.*
-import org.jetbrains.kotlin.fir.containingClassForLocalAttr
-import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.caches.FirCache
+import org.jetbrains.kotlin.fir.caches.FirCachesFactory
+import org.jetbrains.kotlin.fir.caches.FirLazyValueWithContext
+import org.jetbrains.kotlin.fir.caches.firCachesFactory
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.builder.FirRegularClassBuilder
+import org.jetbrains.kotlin.fir.declarations.builder.buildPrimaryConstructor
+import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
-import org.jetbrains.kotlin.fir.declarations.validate
+import org.jetbrains.kotlin.fir.expressions.FirEmptyArgumentList
+import org.jetbrains.kotlin.fir.expressions.builder.buildDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.extensions.*
-import org.jetbrains.kotlin.fir.ownerGenerator
-import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
+import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
+import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
 import org.jetbrains.kotlin.utils.addToStdlib.flatGroupBy
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -184,20 +198,31 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
         generationContext: NestedClassGenerationContext,
     ): ClassifierStorage? {
         val extensionsByClassifierName = groupExtensionsByName(classSymbol) { getNestedClassifiersNames(it, generationContext) }
-        if (extensionsByClassifierName.isEmpty()) return null
-        return classifierStorageByClass.getValue(classSymbol, extensionsByClassifierName)
+        val extensionsNeedingCompanionObject =
+            getExtensionsForClass(classSymbol).filter { it.needsCompanionObject(classSymbol, generationContext) }
+        if (extensionsByClassifierName.isEmpty() && extensionsNeedingCompanionObject.isEmpty()) return null
+        return classifierStorageByClass.getValue(
+            classSymbol,
+            ClassifierStorage.Context(extensionsByClassifierName, extensionsNeedingCompanionObject)
+        )
     }
 
     private typealias ExtensionsByName = Map<Name, List<FirDeclarationGenerationExtension>>
 
     private val callableStorageByClass: FirCache<FirClassSymbol<*>, CallableStorage, ExtensionsByName> =
         cachesFactory.createCache { classSymbol, extensionsMap ->
-            CallableStorage(cachesFactory, classSymbol, extensionsMap)
+            CallableStorage(cachesFactory, session, classSymbol, extensionsMap)
         }
 
-    private val classifierStorageByClass: FirCache<FirClassSymbol<*>, ClassifierStorage, ExtensionsByName> =
-        cachesFactory.createCache { classSymbol, extensionsMap ->
-            ClassifierStorage(cachesFactory, classSymbol, extensionsMap)
+    private val classifierStorageByClass: FirCache<FirClassSymbol<*>, ClassifierStorage, ClassifierStorage.Context> =
+        cachesFactory.createCache { classSymbol, context ->
+            ClassifierStorage(
+                cachesFactory,
+                session,
+                classSymbol,
+                context.extensionsByClassifierName,
+                context.extensionsNeedingCompanionObject
+            )
         }
 
     /**
@@ -211,6 +236,7 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
      */
     internal class CallableStorage(
         cachesFactory: FirCachesFactory,
+        private val session: FirSession,
         val classSymbol: FirClassSymbol<*>,
         private val extensionsByCallableName: Map<Name, List<FirDeclarationGenerationExtension>>
     ) {
@@ -224,7 +250,9 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
             cachesFactory.createLazyValueWithContext { context -> generateConstructors(context) }
 
         val allCallableNames: Set<Name>
-            get() = extensionsByCallableName.keys
+            get() = if (isSharedGeneratedCompanion) extensionsByCallableName.keys + SpecialNames.INIT else extensionsByCallableName.keys
+
+        private val isSharedGeneratedCompanion = classSymbol.origin == GeneratedCompanionKey.origin
 
         private fun generateMemberFunctions(name: Name, generationContext: MemberGenerationContext): List<FirNamedFunctionSymbol> {
             if (name == SpecialNames.INIT) return emptyList()
@@ -247,9 +275,72 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
         }
 
         private fun generateConstructors(generationContext: MemberGenerationContext): List<FirConstructorSymbol> {
-            return extensionsByCallableName[SpecialNames.INIT].orEmpty()
+            val generated = extensionsByCallableName[SpecialNames.INIT].orEmpty()
                 .flatMap { it.generateConstructors(generationContext) }
                 .onEach { it.fir.validate() }
+
+            if (isSharedGeneratedCompanion) {
+                if (generated.isNotEmpty()) error(
+                    """
+                    Some plugin(s) generated constructor(s) for companion object for class ${classSymbol.classId}:
+                    ${generated.joinToString("\n") { it.fir.render() }}
+                """.trimIndent()
+                )
+                return listOfNotNull(generateCompanionObjectConstructorForPlugins(classSymbol)?.symbol)
+            }
+
+            return generated
+        }
+
+        /**
+         * Returns `null` if the superclass of [owner] has no constructor that can be called without arguments.
+         * In this case, a plugin can generate the constructor in IR.
+         */
+        private fun generateCompanionObjectConstructorForPlugins(owner: FirClassSymbol<*>): FirConstructor? {
+            val superTypeRef = owner.resolvedSuperTypeRefs.firstOrNull {
+                (it.coneType as? ConeClassLikeType).isClassBasedType(session)
+            } ?: session.builtinTypes.anyType
+            val superConstructorSymbol = superTypeRef.coneType.toRegularClassSymbol(session)
+                ?.declaredMemberScope(session, memberRequiredPhase = null)
+                ?.getDeclaredConstructors()
+                ?.firstOrNull { constructor -> constructor.valueParameterSymbols.all { it.hasDefaultValue } }
+                ?: return null
+            return buildCompanionObjectConstructorForPlugins(owner, superTypeRef, superConstructorSymbol)
+        }
+
+        private fun buildCompanionObjectConstructorForPlugins(
+            owner: FirClassSymbol<*>,
+            superTypeRef: FirResolvedTypeRef,
+            superConstructorSymbol: FirConstructorSymbol,
+        ): FirConstructor = buildPrimaryConstructor {
+            symbol = FirConstructorSymbol(owner.classId)
+            source = owner.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated.Default)
+
+            resolvePhase = FirResolvePhase.BODY_RESOLVE
+            moduleData = session.moduleData
+            origin = GeneratedCompanionKey.origin
+
+            returnTypeRef = owner.defaultType().toFirResolvedTypeRef()
+            val visibility = Visibilities.Private
+            status = FirResolvedDeclarationStatusImpl(
+                visibility,
+                Modality.FINAL,
+                visibility.toEffectiveVisibility(owner, forClass = true)
+            ).apply {
+                isExpect = owner.isExpect
+            }
+            isLocal = owner.isLocal
+            delegatedConstructor = buildDelegatedConstructorCall {
+                constructedTypeRef = superTypeRef
+                calleeReference = buildResolvedNamedReference {
+                    name = superConstructorSymbol.name
+                    resolvedSymbol = superConstructorSymbol
+                }
+                argumentList = FirEmptyArgumentList
+                isThis = false
+            }
+        }.apply {
+            containingClassForStaticMemberAttr = owner.toLookupTag()
         }
     }
 
@@ -264,14 +355,24 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
      */
     internal class ClassifierStorage(
         cachesFactory: FirCachesFactory,
+        private val session: FirSession,
         private val classSymbol: FirClassSymbol<*>,
-        private val extensionsByClassifierName: Map<Name, List<FirDeclarationGenerationExtension>>
+        private val extensionsByClassifierName: ExtensionsByName,
+        private val extensionsNeedingCompanionObject: List<FirDeclarationGenerationExtension>,
     ) {
+        class Context(
+            val extensionsByClassifierName: ExtensionsByName,
+            val extensionsNeedingCompanionObject: List<FirDeclarationGenerationExtension>,
+        )
+
         val classifiersCache: FirCache<Name, FirRegularClassSymbol?, NestedClassGenerationContext> =
             cachesFactory.createCache { name, context -> generateNestedClassifier(name, context) }
 
         val allClassifierNames: Set<Name>
-            get() = extensionsByClassifierName.keys
+            get() = if (needsCompanionObject) extensionsByClassifierName.keys + DEFAULT_NAME_FOR_COMPANION_OBJECT
+            else extensionsByClassifierName.keys
+
+        private val needsCompanionObject get() = extensionsNeedingCompanionObject.isNotEmpty()
 
         private fun generateNestedClassifier(name: Name, generationContext: NestedClassGenerationContext): FirRegularClassSymbol? {
             if (classSymbol is FirRegularClassSymbol) {
@@ -281,7 +382,12 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
                 }
             }
 
-            val extensions = extensionsByClassifierName[name] ?: return null
+            val alreadyHasCompanion = classSymbol is FirRegularClassSymbol && classSymbol.companionObjectSymbol != null
+
+            val needsCompanion =
+                name == DEFAULT_NAME_FOR_COMPANION_OBJECT && !alreadyHasCompanion && needsCompanionObject
+
+            val extensions = extensionsByClassifierName[name].orEmpty()
 
             val generatedClasses = extensions.mapNotNull { extension ->
                 extension.generateNestedClassLikeDeclaration(classSymbol, name, generationContext)?.also { symbol ->
@@ -290,6 +396,48 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
                         symbol.fir.containingClassForLocalAttr = classSymbol.toLookupTag()
                     }
                 }
+            }
+
+            if (needsCompanion) {
+                if (generatedClasses.isNotEmpty()) error(
+                    """
+                     Some plugin(s) request a companion object for ${classSymbol.classId} with `needsCompanionObject`,
+                     but other plugins generate it with `generateNestedClassLikeDeclaration`:
+                    ${generatedClasses.joinToString("\n") { it.fir.render() }}
+                """.trimIndent()
+                )
+
+                return generateCompanionObjectForPlugins(classSymbol) {
+                    var superClass: ConeClassLikeType? = null
+                    val addedSuperTypeIds = mutableSetOf<ClassId>()
+
+                    for (extension in extensionsNeedingCompanionObject) {
+                        val info = extension.getCompanionObjectInfo(classSymbol, generationContext)
+
+                        for (it in info.superTypes) {
+                            if (it.isAny) continue
+                            if (!addedSuperTypeIds.add(it.classId)) continue
+
+                            validateCompanionSupertype(it)
+                            superTypeRefs.add(it.toFirResolvedTypeRef())
+
+                            if (it.isClassBasedType(session)) {
+                                if (superClass == null) {
+                                    superClass = it
+                                } else error(
+                                    """
+                                            Multiple superclasses generated for companion object for class ${classSymbol.classId}:
+                                            ${superClass.renderForDebugging()}
+                                            ${it.renderForDebugging()}
+                                    """.trimIndent()
+                                )
+                            }
+                        }
+
+                        annotations.addAll(info.annotations)
+                    }
+                    if (superClass == null) superTypeRefs.add(0, StandardTypes.Any.toFirResolvedTypeRef())
+                }.symbol
             }
 
             val generatedClass = when (generatedClasses.size) {
@@ -305,6 +453,56 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
             require(generatedClass is FirRegularClassSymbol) { "Only regular class are allowed as nested classes" }
             return generatedClass
         }
+
+        private fun validateCompanionSupertype(type: ConeClassLikeType) {
+            fun fail(reason: String): Nothing = error(
+                "Invalid supertype ${type.renderForDebugging()} generated for companion object of ${classSymbol.classId}: $reason"
+            )
+
+            if (type.isMarkedNullable) fail("a supertype cannot be nullable")
+
+            val expandedType = type.fullyExpandedType(session)
+            // Unresolved supertypes are reported elsewhere
+            val symbol = expandedType.toSymbol(session) as? FirRegularClassSymbol ?: return
+            when (symbol.classKind) {
+                ClassKind.ENUM_CLASS, ClassKind.ENUM_ENTRY, ClassKind.OBJECT, ClassKind.ANNOTATION_CLASS -> fail("a companion object cannot inherit from ${symbol.classKind}")
+                ClassKind.CLASS, ClassKind.INTERFACE -> {}
+            }
+            if (expandedType.typeArguments.size != symbol.typeParameterSymbols.size) {
+                fail("expected ${symbol.typeParameterSymbols.size} type arguments, but got ${expandedType.typeArguments.size}")
+            }
+            expandedType.typeArguments.forEachIndexed { index, argument ->
+                if (argument !is ConeKotlinType) fail("type argument #$index is a projection, which is not allowed in a supertype")
+            }
+        }
+
+        private fun generateCompanionObjectForPlugins(
+            owner: FirClassSymbol<*>,
+            configure: FirRegularClassBuilder.() -> Unit,
+        ): FirRegularClass = buildRegularClass {
+            resolvePhase = FirResolvePhase.BODY_RESOLVE
+            moduleData = session.moduleData
+            origin = GeneratedCompanionKey.origin
+            classKind = ClassKind.OBJECT
+            scopeProvider = session.kotlinScopeProvider
+            val visibility = if (owner.isLocal) Visibilities.Local else Visibilities.Public
+            status = FirResolvedDeclarationStatusImpl(
+                visibility,
+                Modality.FINAL,
+                visibility.toEffectiveVisibility(owner, forClass = true)
+            ).apply {
+                isCompanion = true
+                isExpect = owner.isExpect
+            }
+            source = owner.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated.Default)
+            name = DEFAULT_NAME_FOR_COMPANION_OBJECT
+            symbol = FirRegularClassSymbol(owner.classId.createNestedClassId(DEFAULT_NAME_FOR_COMPANION_OBJECT))
+            configure()
+        }.apply {
+            if (owner.isLocal) {
+                containingClassForLocalAttr = owner.toLookupTag()
+            }
+        }
     }
 
     private inline fun groupExtensionsByName(
@@ -319,7 +517,9 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
         require(session === classSymbol.moduleData.session) {
             "Class $classSymbol is declared in ${classSymbol.moduleData.session}, but generated storage for it taken from $session"
         }
-        return if (classSymbol.origin.generated && !classSymbol.isLocal) {
+        // Every plugin can add declarations to the generated companion, not only the plugins that return `true` from `needsCompanionObject`.
+        // The companion then behaves like a companion object from source.
+        return if (classSymbol.origin.generated && !classSymbol.isLocal && classSymbol.origin != GeneratedCompanionKey.origin) {
             listOf(classSymbol.fir.ownerGenerator!!)
         } else {
             session.extensionService.declarationGenerators

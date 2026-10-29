@@ -1,0 +1,1 @@
+java.lang.IllegalStateException: Invalid supertype generatedCompanion/Provider generated for companion object of generatedCompanion/Owner: expected 1 type arguments, but got 0

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.deserialization.toQualifiedPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
+import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.platform.isCommon
@@ -294,34 +296,17 @@ fun FirDeclaration.excludeFromJsExport(session: FirSession) {
     if (!session.moduleData.platform.isJs() && !session.moduleData.platform.isCommon()) {
         return
     }
-    val jsExportIgnore = session.symbolProvider.getClassLikeSymbolByClassId(SerializationJsDependenciesClassIds.jsExportIgnore)
-    val jsExportIgnoreAnnotation = jsExportIgnore as? FirRegularClassSymbol ?: return
-    val jsExportIgnoreConstructor = jsExportIgnoreAnnotation.declarationSymbols.firstIsInstanceOrNull<FirConstructorSymbol>() ?: return
 
-    val jsExportIgnoreAnnotationCall = buildAnnotationCall {
-        argumentList = FirEmptyArgumentList
-        annotationTypeRef = buildResolvedTypeRef {
-            coneType = jsExportIgnoreAnnotation.defaultType()
-        }
-        calleeReference = buildResolvedNamedReference {
-            name = jsExportIgnoreAnnotation.name
-            resolvedSymbol = jsExportIgnoreConstructor
-        }
-
-        containingDeclarationSymbol = this@excludeFromJsExport.symbol
-    }
-
+    val jsExportIgnoreAnnotationCall = createJsExportIgnoreAnnotation(session)
     replaceAnnotations(annotations + jsExportIgnoreAnnotationCall)
 }
 
-fun createDeprecatedHiddenAnnotation(session: FirSession): FirAnnotation = buildAnnotation {
-    val deprecatedAnno =
-        session.symbolProvider.getClassLikeSymbolByClassId(StandardClassIds.Annotations.Deprecated) as FirRegularClassSymbol
+fun createJsExportIgnoreAnnotation(session: FirSession): FirAnnotation =
+    createAnnotation(session, SerializationJsDependenciesClassIds.jsExportIgnore)
 
-    annotationTypeRef = deprecatedAnno.defaultType().toFirResolvedTypeRef()
-
-    argumentMapping = buildAnnotationArgumentMapping {
-        mapping[Name.identifier("message")] = buildLiteralExpression(
+fun createDeprecatedHiddenAnnotation(session: FirSession): FirAnnotation =
+    createAnnotation(session, StandardClassIds.Annotations.Deprecated) {
+        this[Name.identifier("message")] = buildLiteralExpression(
             null,
             ConstantValueKind.String,
             "This synthesized declaration should not be used directly",
@@ -329,12 +314,19 @@ fun createDeprecatedHiddenAnnotation(session: FirSession): FirAnnotation = build
         )
 
         // It has nothing to do with enums deserialization, but it is simply easier to build it this way.
-        mapping[Name.identifier("level")] = buildEnumEntryDeserializedAccessExpression {
+        this[Name.identifier("level")] = buildEnumEntryDeserializedAccessExpression {
             enumClassId = StandardClassIds.DeprecationLevel
             enumEntryName = Name.identifier("HIDDEN")
         }.toQualifiedPropertyAccessExpression(session)
     }
-}
+
+private fun createAnnotation(session: FirSession, classId: ClassId, buildMapping: (MutableMap<Name, FirExpression>.() -> Unit)? = null) =
+    buildAnnotation {
+        val anno = session.symbolProvider.getClassLikeSymbolByClassId(classId) as FirRegularClassSymbol
+        annotationTypeRef = anno.defaultType().toFirResolvedTypeRef()
+        argumentMapping =
+            if (buildMapping != null) buildAnnotationArgumentMapping { mapping.buildMapping() } else FirEmptyAnnotationArgumentMapping
+    }
 
 fun FirClassLikeDeclaration.markAsDeprecatedHidden(session: FirSession) {
     replaceAnnotations(annotations + listOf(createDeprecatedHiddenAnnotation(session)))

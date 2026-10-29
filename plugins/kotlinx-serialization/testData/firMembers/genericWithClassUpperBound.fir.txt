@@ -13,15 +13,6 @@ FILE: genericWithClassUpperBound.kt
         public final val value: R|kotlin/String| = R|<local>/value|
             public get(): R|kotlin/String|
 
-        public final companion object Companion : R|kotlin/Any| {
-            public final fun serializer(): R|kotlinx/serialization/KSerializer<Leaf>|
-
-            private constructor(): R|Leaf.Companion| {
-                super<R|kotlin/Any|>()
-            }
-
-        }
-
         @R|kotlin/Deprecated|(message = String(This synthesized declaration should not be used directly), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|) public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<Leaf>| {
             public final override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|Leaf|): R|kotlin/Unit|
 
@@ -38,6 +29,15 @@ FILE: genericWithClassUpperBound.kt
 
         }
 
+        public final companion object Companion : R|kotlin/Any| {
+            public final fun serializer(): R|kotlinx/serialization/KSerializer<Leaf>|
+
+            private constructor(): R|Leaf.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
     }
     @R|kotlinx/serialization/Serializable|() public final class Box<T : R|Base|> : R|kotlin/Any| {
         public constructor<T : R|Base|>(content: R|T|): R|Box<T>| {
@@ -46,15 +46,6 @@ FILE: genericWithClassUpperBound.kt
 
         public final val content: R|T| = R|<local>/content|
             public get(): R|T|
-
-        public final companion object Companion : R|kotlin/Any| {
-            public final fun <T> serializer(typeSerial0: R|kotlinx/serialization/KSerializer<T>|): R|kotlinx/serialization/KSerializer<Box<T>>|
-
-            private constructor(): R|Box.Companion| {
-                super<R|kotlin/Any|>()
-            }
-
-        }
 
         @R|kotlin/Deprecated|(message = String(This synthesized declaration should not be used directly), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|) public final class $serializer<T> : R|kotlinx/serialization/internal/GeneratedSerializer<Box<T>>| {
             public final override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|Box<T>|): R|kotlin/Unit|
@@ -73,6 +64,15 @@ FILE: genericWithClassUpperBound.kt
             }
 
             public constructor<T>(typeSerial0: R|kotlinx/serialization/KSerializer<T>|): R|Box.$serializer<T>|
+
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            public final fun <T> serializer(typeSerial0: R|kotlinx/serialization/KSerializer<T>|): R|kotlinx/serialization/KSerializer<Box<T>>|
+
+            private constructor(): R|Box.Companion| {
+                super<R|kotlin/Any|>()
+            }
 
         }
 

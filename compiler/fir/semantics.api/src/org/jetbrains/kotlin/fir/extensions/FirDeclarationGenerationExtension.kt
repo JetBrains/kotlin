@@ -8,10 +8,13 @@ package org.jetbrains.kotlin.fir.extensions
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.FirLazyValue
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassDeclaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirNestedClassifierScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -25,7 +28,7 @@ import kotlin.reflect.KClass
 
 /**
  * All `generate*` members have the contract that the computation should be side-effect-free.
- * That means that all `generate*` function implementations should not modify any state or leak the generated `FirElement` or `FirBasedSymbol` (e.g., by putting it to some cache).
+ * That means that all `generate*` function implementations should not modify any state or leak the generated [org.jetbrains.kotlin.fir.FirElement] or [org.jetbrains.kotlin.fir.symbols.FirBasedSymbol] (e.g., by putting it to some cache).
  * This restriction is imposed by the corresponding IDE cache implementation, which might retry the computation several times.
  */
 abstract class FirDeclarationGenerationExtension(session: FirSession) : FirExtension(session) {
@@ -38,21 +41,43 @@ abstract class FirDeclarationGenerationExtension(session: FirSession) : FirExten
 
     final override val extensionType: KClass<out FirExtension> = FirDeclarationGenerationExtension::class
 
-    /*
-     * Can be called on SUPERTYPES stage
-     *
-     * If classId has `outerClassId.Companion` format then generated class should be a companion object
+    /**
+     * Can be called on [FirResolvePhase.SUPER_TYPES] stage
      */
     @ExperimentalTopLevelDeclarationsGenerationApi
     open fun generateTopLevelClassLikeDeclaration(classId: ClassId): FirClassLikeSymbol<*>? = null
 
+    /**
+     * Can be called on [FirResolvePhase.SUPER_TYPES] stage
+     *
+     * If [name] is `Companion`, the generated class must be a `companion object`.
+     * For any other name, the generated class must not be a `companion object`.
+     *
+     * Prefer generating `companion object` using [needsCompanionObject] and [getCompanionObjectInfo] instead.
+     */
     open fun generateNestedClassLikeDeclaration(
         owner: FirClassSymbol<*>,
         name: Name,
         context: NestedClassGenerationContext
     ): FirClassLikeSymbol<*>? = null
 
-    // Can be called on STATUS stage
+    /**
+     * Can be called on [FirResolvePhase.SUPER_TYPES] stage
+     *
+     * The call happens only if [needsCompanionObject] returns `true` for [owner].
+     */
+    open fun getCompanionObjectInfo(owner: FirClassSymbol<*>, context: NestedClassGenerationContext): CompanionObjectInfo =
+        CompanionObjectInfo()
+
+    /**
+     * The customization of a generated `companion object`.
+     *
+     * @property superTypes extra supertypes to add to the `companion object`
+     * @property annotations extra annotations to add to the `companion object`
+     */
+    class CompanionObjectInfo(val superTypes: List<ConeClassLikeType> = emptyList(), val annotations: List<FirAnnotation> = emptyList())
+
+    /** Can be called on [FirResolvePhase.STATUS] stage */
     open fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> = emptyList()
 
     /**
@@ -65,20 +90,28 @@ abstract class FirDeclarationGenerationExtension(session: FirSession) : FirExten
 
     open fun generateConstructors(context: MemberGenerationContext): List<FirConstructorSymbol> = emptyList()
 
-    // Can be called on IMPORTS stage
+    /** Can be called on [FirResolvePhase.IMPORTS] stage */
     open fun hasPackage(packageFqName: FqName): Boolean = false
 
-    /*
-     * Can be called on SUPERTYPES stage
+    /**
+     * Can be called on [FirResolvePhase.SUPER_TYPES] stage
      *
      * `generate...` methods will be called only if `get...Names/ClassIds/CallableIds` returned corresponding
      *   declaration name
      *
-     * If you want to generate constructor for some class, then you need to return `SpecialNames.INIT` in
+     * If you want to generate constructor for some class, then you need to return [org.jetbrains.kotlin.name.SpecialNames.INIT] in
      *   set of callable names for this class
      */
     open fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> = emptySet()
     open fun getNestedClassifiersNames(classSymbol: FirClassSymbol<*>, context: NestedClassGenerationContext): Set<Name> = emptySet()
+
+    /**
+     * Can be called on [FirResolvePhase.SUPER_TYPES] stage
+     *
+     * If this function returns `true`, the compiler generates a `companion object` for [classSymbol].
+     * All generators share that `companion object`, unlike a nested class from [getNestedClassifiersNames].
+     */
+    open fun needsCompanionObject(classSymbol: FirClassSymbol<*>, context: NestedClassGenerationContext): Boolean = false
 
     @ExperimentalTopLevelDeclarationsGenerationApi
     open fun getTopLevelCallableIds(): Set<CallableId> = emptySet()

@@ -1,0 +1,1 @@
+java.lang.AssertionError: Object should have a primary constructor: Companion
