@@ -236,6 +236,10 @@ fun main(args: Array<String>) {
                 }
             }
 
+            testClass<AbstractLLDiagnosticsTest>("LLJavaModuleAccessibilityTestGenerated") {
+                model("javaModuleAccessibility", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+            }
+
             testClass<AbstractSourceLikeDesignationByPsiTest> {
                 model("designationByPsi", pattern = TestGeneratorUtil.KT_OR_KTS)
             }
