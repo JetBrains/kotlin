@@ -28,11 +28,18 @@ dependencies {
 }
 
 val daemonCompilerClasspath = configurations.create("daemonCompilerClasspath")
+val kotlinxSerializationCompilerPluginClasspath = configurations.create("kotlinxSerializationCompilerPluginClasspath")
+val allOpenCompilerPluginClasspath = configurations.create("allOpenCompilerPluginClasspath")
 
 dependencies {
     add(daemonCompilerClasspath.name, project(":kotlin-compiler"))
     add(daemonCompilerClasspath.name, project(":kotlin-daemon"))
     add(daemonCompilerClasspath.name, project(":kotlin-scripting-compiler"))
+    add(kotlinxSerializationCompilerPluginClasspath.name, project(":kotlinx-serialization-compiler-plugin.embeddable")) {
+        isTransitive = false
+    }
+    add(allOpenCompilerPluginClasspath.name, project(":kotlin-allopen-compiler-plugin")) { isTransitive = false }
+    testImplementation(project(":kotlin-scripting-dependencies-maven"))
 }
 
 sourceSets {
@@ -51,8 +58,18 @@ projectTests {
         dependsOn(":dist")
         workingDir = rootDir
         val classpathProvider = project.provider { daemonCompilerClasspath.files.joinToString(File.pathSeparator) }
+        val serializationPluginClasspathFiles: FileCollection = kotlinxSerializationCompilerPluginClasspath
+        inputs.files(serializationPluginClasspathFiles)
+            .withPropertyName("kotlinxSerializationCompilerPluginClasspath")
+            .withNormalizer(ClasspathNormalizer::class)
+        val allOpenPluginClasspathFiles: FileCollection = allOpenCompilerPluginClasspath
+        inputs.files(allOpenPluginClasspathFiles)
+            .withPropertyName("allOpenCompilerPluginClasspath")
+            .withNormalizer(ClasspathNormalizer::class)
         doFirst {
             systemProperty("kotlinJsr223DaemonCompilerClasspath", classpathProvider.get())
+            systemProperty("kotlin.script.test.kotlinx.serialization.plugin.classpath", serializationPluginClasspathFiles.asPath)
+            systemProperty("kotlin.script.test.allopen.plugin.classpath", allOpenPluginClasspathFiles.asPath)
         }
     }
 }

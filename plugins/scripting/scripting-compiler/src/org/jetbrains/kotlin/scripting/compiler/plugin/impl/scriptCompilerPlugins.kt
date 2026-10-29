@@ -21,11 +21,7 @@ import org.jetbrains.kotlin.extensions.ExtensionPointDescriptor
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.utils.KotlinPaths
 import java.io.File
-import kotlin.script.experimental.api.ScriptCompilationConfiguration
-import kotlin.script.experimental.api.ScriptCompilerPlugin
-import kotlin.script.experimental.api.SourceCode
-import kotlin.script.experimental.api.compilerOptions
-import kotlin.script.experimental.api.compilerPlugins
+import kotlin.script.experimental.api.*
 
 // Short ids are limited to KotlinPaths.Jar entries.
 // Compose requires runtime setup; Parcelize is Android-specific; Atomicfu needs a runtime transformation.
@@ -163,20 +159,9 @@ internal fun CompilerConfiguration.withScriptCompilerPlugins(
     val pluginsByRegistrar = LinkedHashMap<CompilerPluginRegistrar, ScriptCompilerPlugin>()
 
     for (plugin in pluginsToLoad) {
-        val distJar = plugin.id?.let { id ->
-            scriptCompilerPluginDistributionJar(id) ?: return reportError("Unknown compiler plugin id '$id'.")
-        }
-        val classpath = if (distJar != null) {
-            val paths = kotlinPaths
-                ?: return reportError("Compiler plugin id '${plugin.id}' cannot be resolved by this host. Use a jar path instead.")
-            listOf(paths.jar(distJar))
-        } else {
-            plugin.classpath
-        }.map { it.absoluteFile.normalize() }
-
-        for (jar in classpath) {
-            if (!jar.isFile) return reportError("Compiler plugin jar '$jar' does not exist or is not a file.")
-        }
+        val classpath = validateAndResolveScriptCompilerPlugin(plugin, kotlinPaths, globalPluginIds, messageCollector)
+            ?: return null
+        if (classpath.isEmpty()) continue
 
         val classpathArgument = classpath.joinToString(",") { it.path }
         val pluginOptions = plugin.options
@@ -269,8 +254,43 @@ internal fun CompilerConfiguration.withScriptCompilerPlugins(
     return derivedConfiguration
 }
 
-private val ScriptCompilerPlugin.requestKey: String
+internal val ScriptCompilerPlugin.requestKey: String
     get() = id ?: classpath.joinToString(File.pathSeparator) { it.absoluteFile.normalize().path }
+
+internal fun validateAndResolveScriptCompilerPlugin(
+    plugin: ScriptCompilerPlugin,
+    kotlinPaths: KotlinPaths?,
+    globalPluginIds: Set<String>,
+    messageCollector: MessageCollector,
+): List<File>? {
+    fun reportError(message: String): List<File>? {
+        messageCollector.report(CompilerMessageSeverity.ERROR, message)
+        return null
+    }
+
+    if (plugin.id != null && plugin.id in globalPluginIds) {
+        if (plugin.options.isNotEmpty()) {
+            return reportError("Compiler plugin '${plugin.id}' is already loaded globally and cannot be configured from a script.")
+        }
+        return emptyList()
+    }
+
+    val distJar = plugin.id?.let { id ->
+        scriptCompilerPluginDistributionJar(id) ?: return reportError("Unknown compiler plugin id '$id'.")
+    }
+    val classpath = if (distJar != null) {
+        val paths = kotlinPaths
+            ?: return reportError("Compiler plugin id '${plugin.id}' cannot be resolved by this host. Use a jar path instead.")
+        listOf(paths.jar(distJar))
+    } else {
+        plugin.classpath
+    }.map { it.absoluteFile.normalize() }
+
+    for (jar in classpath) {
+        if (!jar.isFile) return reportError("Compiler plugin jar '$jar' does not exist or is not a file.")
+    }
+    return classpath
+}
 
 private val ScriptCompilerPlugin.description: String
     get() = id ?: classpath.joinToString(",")
