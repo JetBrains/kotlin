@@ -5202,6 +5202,7 @@ internal class TypeParameterOnLhsOfDotImpl(
 
 internal class NoCompanionObjectImpl(
     override val klass: KaClassLikeSymbol,
+    override val suggestedConstructor: KaFunctionSymbol?,
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.NoCompanionObject

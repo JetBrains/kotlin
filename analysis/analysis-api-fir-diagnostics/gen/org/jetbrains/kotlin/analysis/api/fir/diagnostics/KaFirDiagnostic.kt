@@ -7362,6 +7362,7 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
             get() = NoCompanionObject::class
 
         public val klass: KaClassLikeSymbol
+        public val suggestedConstructor: KaFunctionSymbol?
     }
 
     @KaUnstableDiagnosticApi

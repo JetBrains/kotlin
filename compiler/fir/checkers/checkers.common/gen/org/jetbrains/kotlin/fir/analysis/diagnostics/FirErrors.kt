@@ -78,6 +78,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -1014,7 +1015,7 @@ object FirErrors : KtDiagnosticsContainer() {
     // Context tracking
     val TYPE_PARAMETER_IS_NOT_AN_EXPRESSION: KtDiagnosticFactory1<FirTypeParameterSymbol> = KtDiagnosticFactory1("TYPE_PARAMETER_IS_NOT_AN_EXPRESSION", ERROR, SourceElementPositioningStrategies.DEFAULT, KtSimpleNameExpression::class, getRendererFactory())
     val TYPE_PARAMETER_ON_LHS_OF_DOT: KtDiagnosticFactory1<FirTypeParameterSymbol> = KtDiagnosticFactory1("TYPE_PARAMETER_ON_LHS_OF_DOT", ERROR, SourceElementPositioningStrategies.DEFAULT, KtSimpleNameExpression::class, getRendererFactory())
-    val NO_COMPANION_OBJECT: KtDiagnosticFactory1<FirClassLikeSymbol<*>> = KtDiagnosticFactory1("NO_COMPANION_OBJECT", ERROR, SourceElementPositioningStrategies.SELECTOR_BY_QUALIFIED, KtExpression::class, getRendererFactory())
+    val NO_COMPANION_OBJECT: KtDiagnosticFactory2<FirClassLikeSymbol<*>, FirConstructorSymbol?> = KtDiagnosticFactory2("NO_COMPANION_OBJECT", ERROR, SourceElementPositioningStrategies.SELECTOR_BY_QUALIFIED, KtExpression::class, getRendererFactory())
     val EXPRESSION_EXPECTED_PACKAGE_FOUND: KtDiagnosticFactory0 = KtDiagnosticFactory0("EXPRESSION_EXPECTED_PACKAGE_FOUND", ERROR, SourceElementPositioningStrategies.SELECTOR_BY_QUALIFIED, KtExpression::class, getRendererFactory())
 
     // Function contracts

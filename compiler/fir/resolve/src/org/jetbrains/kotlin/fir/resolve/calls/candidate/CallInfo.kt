@@ -46,7 +46,7 @@ open class CallInfo(
     val typeArguments: List<FirTypeProjection>,
     val session: FirSession,
     override val containingFile: FirFile,
-    val containingDeclarations: List<FirDeclaration>,
+    override val containingDeclarations: List<FirDeclaration>,
 
     val candidateForCommonInvokeReceiver: Candidate? = null,
 

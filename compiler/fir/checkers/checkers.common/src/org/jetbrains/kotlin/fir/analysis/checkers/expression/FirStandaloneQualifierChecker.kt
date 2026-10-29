@@ -14,9 +14,11 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isExplicit
 import org.jetbrains.kotlin.fir.analysis.checkers.isStandalone
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.suggestConstructorForQualifier
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.isEnabled
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.types.ResolvedQualifierTypeAccess
 import org.jetbrains.kotlin.fir.types.isUnit
 import org.jetbrains.kotlin.fir.types.resolvedType
@@ -45,7 +47,12 @@ object FirStandaloneQualifierChecker : FirResolvedQualifierChecker(MppCheckerKin
         if (isTypeAliasToUnionType()) return true
 
         if (isNotResolvedToObject && !isTypeAliasToClassWithCompanion) {
-            reporter.reportOn(source, FirErrors.NO_COMPANION_OBJECT, symbol)
+            @OptIn(SymbolInternals::class)
+            val suggestedConstructor = context.containingFileSymbol?.fir?.let { file ->
+                val containingDeclarations = context.containingDeclarations.map { it.fir }
+                suggestConstructorForQualifier(symbol, file, containingDeclarations, session = context.session)
+            }
+            reporter.reportOn(source, FirErrors.NO_COMPANION_OBJECT, symbol, suggestedConstructor)
             return true
         }
 
