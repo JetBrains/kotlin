@@ -14,19 +14,19 @@ import org.jetbrains.kotlin.types.Variance
 @Suppress("UNUSED")
 class DefinitelyNotNullTypeCreatorDslTestCases(session: KaSession, caretToType: Map<String, KaType>) :
     DslTypeCreationTestCases(session, caretToType) {
-    fun testCapturedTypeIntOut(): KaType {
+    fun testCapturedTypeIntOut(): KaType? {
         val type = getTypeByCaret("type")
         with(session.typeCreator) {
             val projection = typeProjection(Variance.OUT_VARIANCE, type)
-            val capturedType = capturedType(projection)
+            val capturedType = capturedType(projection) ?: return null
             return definitelyNotNullType(capturedType)
         }
     }
 
-    fun testCapturedTypeWithStarProjection(): KaType {
+    fun testCapturedTypeWithStarProjection(): KaType? {
         with(session.typeCreator) {
             val projection = starTypeProjection()
-            val capturedType = capturedType(projection)
+            val capturedType = capturedType(projection) ?: return null
             return definitelyNotNullType(capturedType)
         }
     }
@@ -71,11 +71,11 @@ class DefinitelyNotNullTypeCreatorDslTestCases(session: KaSession, caretToType: 
         }
     }
 
-    fun testCapturedNullableTypeOutProjection(): KaType {
+    fun testCapturedNullableTypeOutProjection(): KaType? {
         val type = getTypeByCaret("type")
         with(session.typeCreator) {
             val projection = typeProjection(Variance.OUT_VARIANCE, type)
-            val capturedType = capturedType(projection)
+            val capturedType = capturedType(projection) ?: return null
             return definitelyNotNullType(capturedType)
         }
     }
