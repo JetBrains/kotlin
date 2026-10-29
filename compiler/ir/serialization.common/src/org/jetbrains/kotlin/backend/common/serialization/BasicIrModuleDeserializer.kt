@@ -114,7 +114,7 @@ abstract class BasicIrModuleDeserializer(
                 allowErrorNodes = allowErrorNodes,
                 deserializeFunctionBodies = when {
                     fileStrategy.needBodies -> DeserializeFunctionBodies.ALL
-                    fileStrategy.inlineBodies -> DeserializeFunctionBodies.ONLY_INLINE
+                    fileStrategy.needOnlyInlineBodies -> DeserializeFunctionBodies.ONLY_INLINE
                     else -> DeserializeFunctionBodies.NONE
                 },
                 fixSwappedKProperty2TypeParameterOrder = moduleDeserializer.compatibilityMode.swappedKProperty2TypeParameterOrder,

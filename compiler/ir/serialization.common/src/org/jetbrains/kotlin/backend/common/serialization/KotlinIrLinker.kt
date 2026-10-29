@@ -401,6 +401,10 @@ abstract class KotlinIrLinker(
  *   resolvable.
  * @property needBodies Bodies of all deserialized functions are loaded. For example, the main module compiled
  *   to JavaScript needs every function body, because the backend generates code for all of them.
+ * @property needOnlyInlineBodies Bodies of inline functions (and of local functions declared inside them) are loaded,
+ *   even if [needBodies] is not set. For example, when user code calls `list.map { it * 2 }`, the backend has to
+ *   inline the body of `kotlin.collections.map` into the call site, so it needs that body even if `stdlib` itself
+ *   is not going to be compiled.
  * @property explicitlyExported Declarations that the serializer recorded as explicitly exported to the compiler
  *   are deserialized even if nothing refers to them. These are the roots required by the platform rather than by
  *   Kotlin code: `@JsExport` declarations on JS, or functions annotated with `@ExportForCppRuntime` on Native that
@@ -409,17 +413,13 @@ abstract class KotlinIrLinker(
  * @property theWholeWorld All top-level declarations of the file are deserialized, whether referenced or not.
  *   For example, the `dump-ir` command of the `klib` tool must show every declaration of the library, not only
  *   those reachable from somewhere.
- * @property inlineBodies Bodies of inline functions (and of local functions declared inside them) are loaded,
- *   even if [needBodies] is not set. For example, when user code calls `list.map { it * 2 }`, the backend has to
- *   inline the body of `kotlin.collections.map` into the call site, so it needs that body even if `stdlib` itself
- *   is not going to be compiled.
  */
 enum class DeserializationStrategy(
     val onDemand: Boolean = false,
     val needBodies: Boolean = false,
+    val needOnlyInlineBodies: Boolean = needBodies,
     val explicitlyExported: Boolean = false,
     val theWholeWorld: Boolean = false,
-    val inlineBodies: Boolean = false,
 ) : DeserializationStrategyResolver {
     /**
      * The file is hidden from the module fragment. Its declarations are deserialized only when referenced,
@@ -438,7 +438,7 @@ enum class DeserializationStrategy(
      * whole-program compilation, an exported dependency of a Kotlin/Native framework, or when dumping
      * the whole content of a library.
      */
-    ALL(needBodies = true, explicitlyExported = true, theWholeWorld = true, inlineBodies = true),
+    ALL(needBodies = true, explicitlyExported = true, theWholeWorld = true),
 
     /**
      * Only declarations reachable from elsewhere, plus explicitly exported ones, are deserialized,
@@ -448,7 +448,7 @@ enum class DeserializationStrategy(
      * program calls only `println()` from `stdlib`, then only `println()` and whatever it transitively
      * refers to are loaded and compiled, together with the platform roots like `@JsExport` declarations.
      */
-    EXPLICITLY_EXPORTED(needBodies = true, explicitlyExported = true, inlineBodies = true),
+    EXPLICITLY_EXPORTED(needBodies = true, explicitlyExported = true),
 
     /**
      * Only declarations reachable from elsewhere are deserialized, without any function bodies.
@@ -466,7 +466,11 @@ enum class DeserializationStrategy(
      * into the code that is, e.g. unmodified files during JS incremental compilation, or a Kotlin/Native
      * library that is cached as a header cache.
      */
-    WITH_INLINE_BODIES(inlineBodies = true);
+    WITH_INLINE_BODIES(needOnlyInlineBodies = true);
+
+    init {
+        check(needOnlyInlineBodies || !needBodies)
+    }
 
     override fun invoke(filePath: String) = this
 }
