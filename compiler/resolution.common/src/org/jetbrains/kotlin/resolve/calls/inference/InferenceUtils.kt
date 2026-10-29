@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 import org.jetbrains.kotlin.types.EmptyIntersectionTypeKind
 import org.jetbrains.kotlin.types.model.*
+import org.jetbrains.kotlin.util.OnlyForDefaultLanguageFeatureDisabled
 
 fun ConstraintStorage.buildCurrentSubstitutor(
     context: TypeSystemInferenceExtensionContext,
@@ -49,16 +50,39 @@ fun ConstraintStorage.buildNotFixedVariablesToNonSubtypableTypesSubstitutor(
 }
 
 context(c: TypeSystemInferenceExtensionContext)
-fun KotlinTypeMarker.hasRecursiveTypeParametersWithGivenSelfType(languageVersionSettings: LanguageVersionSettings): Boolean {
+fun KotlinTypeMarker.hasRecursionInTypeParametersOrCapturedTypes(languageVersionSettings: LanguageVersionSettings): Boolean =
+    if (languageVersionSettings.supportsFeature(LanguageFeature.ConsiderUseSiteRecursiveBoundsOnCapturedTypes)) {
+        hasRecursionInTypeParametersOrCapturedTypes()
+    } else {
+        @OptIn(OnlyForDefaultLanguageFeatureDisabled::class)
+        typeConstructor().hasRecursiveTypeParametersWithGivenSelfType()
+    }
+
+context(c: TypeSystemInferenceExtensionContext)
+private fun KotlinTypeMarker.hasRecursionInTypeParametersOrCapturedTypes(): Boolean {
     if (typeConstructor().getParameters().any { it.hasRecursiveBounds(typeConstructor()) }) return true
     if (!c.isK2) return false
 
-    val considerUseSiteRecursion = languageVersionSettings.supportsFeature(LanguageFeature.ConsiderUseSiteRecursiveBoundsOnCapturedTypes)
-    val simpleType = if (considerUseSiteRecursion) unwrapToSimpleTypeUsingLowerBound() else this
+    val simpleType = unwrapToSimpleTypeUsingLowerBound()
 
     if (simpleType is CapturedTypeMarker || simpleType.typeConstructor().isIntersection()) {
-        return simpleType.typeConstructor().supertypes().any { it.hasRecursiveTypeParametersWithGivenSelfType(languageVersionSettings) }
-                || considerUseSiteRecursion && simpleType is CapturedTypeMarker && simpleType.hasRecursiveBounds()
+        return simpleType.typeConstructor().supertypes().any { it.hasRecursionInTypeParametersOrCapturedTypes() }
+                || simpleType is CapturedTypeMarker && simpleType.hasRecursiveBounds()
+    }
+
+    return false
+}
+
+@OnlyForDefaultLanguageFeatureDisabled(LanguageFeature.ConsiderUseSiteRecursiveBoundsOnCapturedTypes)
+context(c: TypeSystemInferenceExtensionContext)
+private fun TypeConstructorMarker.hasRecursiveTypeParametersWithGivenSelfType(): Boolean {
+    if (getParameters().any { it.hasRecursiveBounds(this) }) return true
+    if (!c.isK2) return false
+
+    if (this is CapturedTypeConstructorMarker || this.isIntersection()) {
+        return supertypes().any {
+            it.typeConstructor().hasRecursiveTypeParametersWithGivenSelfType()
+        }
     }
 
     return false

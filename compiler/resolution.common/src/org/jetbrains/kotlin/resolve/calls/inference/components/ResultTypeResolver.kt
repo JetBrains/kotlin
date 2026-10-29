@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirectionCalculator.ResolveDirection
 import org.jetbrains.kotlin.resolve.calls.inference.extractTypeForGivenRecursiveTypeParameter
-import org.jetbrains.kotlin.resolve.calls.inference.hasRecursiveTypeParametersWithGivenSelfType
+import org.jetbrains.kotlin.resolve.calls.inference.hasRecursionInTypeParametersOrCapturedTypes
 import org.jetbrains.kotlin.resolve.calls.inference.isEqualityConstraintCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.isSubtypeConstraintCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
@@ -194,7 +194,7 @@ class ResultTypeResolver(
         val preparedSuperType = when {
             approximatedSuperType == null -> null
             shouldBeUsedWithoutApproximation(superType, approximatedSuperType, this) -> superType
-            superType.hasRecursiveTypeParametersWithGivenSelfType(languageVersionSettings) -> superType
+            superType.hasRecursionInTypeParametersOrCapturedTypes(languageVersionSettings) -> superType
             else -> approximatedSuperType
             // Super type should be the most flexible, sub type should be the least one
         }.makeFlexibleIfNecessary(constraints)
@@ -241,7 +241,7 @@ class ResultTypeResolver(
         val preparedSuperType = when {
             superType == null -> null
             similarCapturedTypesInK2 -> superType
-            c.isK2 && superType.hasRecursiveTypeParametersWithGivenSelfType(languageVersionSettings) -> superType
+            c.isK2 && superType.hasRecursionInTypeParametersOrCapturedTypes(languageVersionSettings) -> superType
             else -> typeApproximator.approximateToSubType(superType, TypeApproximatorConfiguration.InternalTypesApproximation) ?: superType
             // Super type should be the most flexible, sub type should be the least one
         }.makeFlexibleIfNecessary(constraints)
