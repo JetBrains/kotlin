@@ -158,6 +158,22 @@ internal class ClasspathMetadataIncrementalTest : BaseCompilationTest() {
     }
 
     @BtaV2StrategyAgnosticCompilationTest
+    @DisplayName("KT-90955: incremental compilation of a common source using an object only as a qualifier")
+    @TestMetadata("object-qualifier-metadata")
+    fun testObjectUsedOnlyAsQualifier(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmScenario(strategyConfig) {
+            val module = objectQualifierModule()
+            module.execute("JvmKt", "qualifierResult=initial")
+
+            module.replaceFileWithVersion("commonMain/qualifierResult.kt", "change")
+
+            // `Holder.select(x: A)` is matched against its platform counterpart, so `A` has to be actualized as well.
+            module.compile(setOf("commonMain/qualifierResult.kt"))
+            module.execute("JvmKt", "qualifierResult=holder")
+        }
+    }
+
+    @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("KT-89044: adding an overload to an expect class with an actual typealias recompiles common call sites")
     @TestMetadata("expect-typealias-overload-metadata")
     fun testExpectClassOverloadAddedViaActualTypealias(strategyConfig: CompilerExecutionStrategyConfiguration) {
@@ -299,6 +315,15 @@ private fun JvmScenario.expectFakeOverrideModuleNoIntermediate() = module(
 @OptIn(ExperimentalCompilerArgument::class)
 private fun JvmScenario.interfaceDelegationModule() = module(
     "interface-delegation-metadata",
+    compilationConfigAction = configureKmpJvmFragments(enableClasspathMetadata = true),
+    icOptionsConfigAction = {
+        it[UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM] = true
+    },
+)
+
+@OptIn(ExperimentalCompilerArgument::class)
+private fun JvmScenario.objectQualifierModule() = module(
+    "object-qualifier-metadata",
     compilationConfigAction = configureKmpJvmFragments(enableClasspathMetadata = true),
     icOptionsConfigAction = {
         it[UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM] = true
