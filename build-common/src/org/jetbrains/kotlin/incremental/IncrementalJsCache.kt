@@ -16,10 +16,8 @@
 
 package org.jetbrains.kotlin.incremental
 
-import com.intellij.util.io.BooleanDataDescriptor
 import com.intellij.util.io.DataExternalizer
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.build.report.debug
 import org.jetbrains.kotlin.incremental.js.*
 import org.jetbrains.kotlin.incremental.storage.*
 import org.jetbrains.kotlin.name.FqName
@@ -39,8 +37,9 @@ open class IncrementalJsCache(
         private const val INLINE_FUNCTIONS = "inline-functions"
         private const val INLINE_FUNCTIONS_REPRESENTATION = "inline-functions-representation"
 
-        private const val METADATA_MAP = "metadata"
-        private const val DIRTY_METADATA_MAP = "dirty-metadata"
+        // KMP only
+        private const val COMMON_METADATA_MAP = "metadata"
+        private const val DIRTY_COMMON_METADATA_MAP = "dirty-metadata"
     }
 
     private val protoData = ProtoDataProvider(serializerProtocol)
@@ -51,23 +50,22 @@ open class IncrementalJsCache(
     private val irTranslationResults = registerMap(IrTranslationResultMap(IR_TRANSLATION_RESULT_MAP.storageFile, icContext))
     private val irInlineTranslationResults = registerMap(IrTranslationResultMap(INLINE_FUNCTIONS.storageFile, icContext))
     private val irInlineFunctionRepresentationMap = registerMap(IrInlineIdsMap(INLINE_FUNCTIONS_REPRESENTATION.storageFile, icContext))
+    private val dirtySources = hashSetOf<File>()
 
     // KMP only
-    private val metadataMap = registerMap(MetadataMap(METADATA_MAP.storageFile, protoData, icContext))
-    private val dirtyMetadataMap = registerMap(DirtyMetadataMap(DIRTY_METADATA_MAP.storageFile, icContext))
-
-    private val dirtySources = hashSetOf<File>()
+    private val commonMetadataMap = registerMap(CommonMetadataMap(COMMON_METADATA_MAP.storageFile, protoData, icContext))
+    private val dirtyCommonMetadataMap = registerMap(DirtyCommonMetadataMap(DIRTY_COMMON_METADATA_MAP.storageFile, icContext))
 
     override fun markDirty(removedAndCompiledSources: Collection<File>) {
         super.markDirty(removedAndCompiledSources)
         dirtySources.addAll(removedAndCompiledSources)
 
-        val removedAndCompiledMetadata = removedAndCompiledSources.filter { source ->
-            metadataMap.keys.any { fragmentName ->
-                metadataMap[fragmentName, source] != null
+        val removedAndCompiledCommonMetadata = removedAndCompiledSources.filter { source ->
+            commonMetadataMap.keys.any { fragmentName ->
+                commonMetadataMap[fragmentName, source] != null
             }
         }
-        dirtyMetadataMap.markDirty(removedAndCompiledMetadata)
+        dirtyCommonMetadataMap.markDirty(removedAndCompiledCommonMetadata)
     }
 
     fun compare(translatedFiles: Map<File, TranslationResultValue>, changesCollector: ChangesCollector) {
@@ -83,9 +81,9 @@ open class IncrementalJsCache(
 
     fun compareAndUpdate(incrementalResults: IncrementalResultsConsumerImpl, changesCollector: ChangesCollector) {
         if (incrementalResults is KmpIncrementalResultsConsumer) {
-            for ([fragmentName, metadata] in incrementalResults.commonPackageParts) {
-                dirtyMetadataMap.notDirty(metadata.keys)
-                metadataMap.putAndCollect(fragmentName, metadata, changesCollector)
+            for ([fragmentName, metadata] in incrementalResults.commonMetadata) {
+                dirtyCommonMetadataMap.notDirty(metadata.keys)
+                commonMetadataMap.putAndCollect(fragmentName, metadata, changesCollector)
             }
         }
 
@@ -165,18 +163,18 @@ open class IncrementalJsCache(
         dirtySources.clear()
         dirtyOutputClassesMap.clear()
 
-        val dirtyMetadataSources = dirtyMetadataMap.getDirtySources()
-        for (fragmentName in metadataMap.keys) {
-            metadataMap.remove(fragmentName, dirtyMetadataSources, changesCollector)
+        val dirtyCommonMetadataSources = dirtyCommonMetadataMap.getDirtySources()
+        for (fragmentName in commonMetadataMap.keys) {
+            commonMetadataMap.remove(fragmentName, dirtyCommonMetadataSources, changesCollector)
         }
-        dirtyMetadataMap.clear()
+        dirtyCommonMetadataMap.clear()
     }
 
-    fun nonDirtyMetadata(fragmentName: String): Map<File, ByteArray> {
-        val metadata = metadataMap[fragmentName] ?: return emptyMap()
-        val dirtyMetadataSources = dirtyMetadataMap.getDirtySources()
+    fun nonDirtyCommonMetadata(fragmentName: String): Map<File, ByteArray> {
+        val metadata = commonMetadataMap[fragmentName] ?: return emptyMap()
+        val dirtyCommonMetadataSources = dirtyCommonMetadataMap.getDirtySources()
 
-        return if (dirtyMetadataSources.isEmpty()) metadata else metadata.filterKeys { it !in dirtyMetadataSources }
+        return if (dirtyCommonMetadataSources.isEmpty()) metadata else metadata.filterKeys { it !in dirtyCommonMetadataSources }
     }
 
     fun nonDirtyPackageParts(): Map<File, TranslationResultValue> =
@@ -223,103 +221,6 @@ private object TranslationResultValueExternalizer : DataExternalizer<Translation
 
         return TranslationResultValue(metadata = metadata)
     }
-}
-
-// TODO (unify with JVM)
-private class MetadataMap(
-    storageFile: File,
-    private val protoDataProvider: ProtoDataProvider,
-    private val icContext: IncrementalCompilationContext,
-) : BasicStringMap<Map<File, ByteArray>>(
-    storageFile,
-    MapExternalizer(icContext.fileDescriptorForSourceFiles, ByteArrayExternalizer),
-    icContext,
-) {
-    operator fun get(key: String, file: File): ByteArray? = storage[key]?.get(file)
-
-    @Synchronized
-    fun putAndCollect(key: String, entries: Map<File, ByteArray>, changesCollector: ChangesCollector) {
-        if (entries.isEmpty()) return
-
-        val old = storage[key]
-        for ([file, newBytes] in entries) {
-            collectChanges(file, old?.get(file), newBytes, changesCollector)
-        }
-
-        val merged = old?.let { HashMap(it) } ?: HashMap(entries.size)
-        merged.putAll(entries)
-
-        storage[key] = merged
-
-        for ([file, _] in entries) {
-            icContext.reporter.debug { "[$key] Saved metadata for file: ${file.path}" }
-        }
-    }
-
-    @Synchronized
-    fun remove(key: String, files: Collection<File>, changesCollector: ChangesCollector) {
-        val inner = storage[key] ?: return
-
-        val filesToRemove = files.filterTo(hashSetOf()) { it in inner }
-        if (filesToRemove.isEmpty()) return
-
-        for (file in filesToRemove) {
-            collectChanges(file, inner.getValue(file), null, changesCollector)
-        }
-
-        val merged = HashMap(inner).apply { keys.removeAll(filesToRemove) }
-
-        if (merged.isEmpty()) {
-            storage.remove(key)
-        } else {
-            storage[key] = merged
-        }
-
-        for (file in filesToRemove) {
-            icContext.reporter.debug { "[$key] Removed metadata for file: ${file.path}" }
-        }
-    }
-
-    private fun collectChanges(sourceFile: File, oldBytes: ByteArray?, newBytes: ByteArray?, changesCollector: ChangesCollector) {
-        if (oldBytes != null && newBytes != null && oldBytes.contentEquals(newBytes)) return
-
-        val oldProtoMap = oldBytes?.let { protoDataProvider(sourceFile, it) } ?: emptyMap()
-        val newProtoMap = newBytes?.let { protoDataProvider(sourceFile, it) } ?: emptyMap()
-
-        for (classId in oldProtoMap.keys + newProtoMap.keys) {
-            changesCollector.collectProtoChanges(oldProtoMap[classId], newProtoMap[classId])
-        }
-    }
-
-    override fun dumpValue(value: Map<File, ByteArray>): String =
-        value.entries.sortedBy { it.key.path }
-            .joinToString(", ", "{", "}") { "${it.key} -> ${java.lang.Long.toHexString(it.value.md5())}" }
-}
-
-/**
- * The source files whose entries in [MetadataMap] are stale, in the same way [AbstractIncrementalCache.dirtyOutputClassesMap] tracks stale
- * classes.
- */
-private class DirtyMetadataMap(
-    storageFile: File,
-    icContext: IncrementalCompilationContext,
-) : AbstractBasicMap<File, Boolean>(storageFile, icContext.fileDescriptorForSourceFiles, BooleanDataDescriptor.INSTANCE, icContext) {
-    @Synchronized
-    fun markDirty(sourceFiles: Collection<File>) {
-        for (sourceFile in sourceFiles) {
-            this[sourceFile] = true
-        }
-    }
-
-    @Synchronized
-    fun notDirty(sourceFiles: Collection<File>) {
-        for (sourceFile in sourceFiles) {
-            remove(sourceFile)
-        }
-    }
-
-    @Synchronized
-    fun getDirtySources(): Set<File> = keys
 }
 
 private class TranslationResultMap(
