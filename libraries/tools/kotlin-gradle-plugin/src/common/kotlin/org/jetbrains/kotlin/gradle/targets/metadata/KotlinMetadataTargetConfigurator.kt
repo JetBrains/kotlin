@@ -238,7 +238,11 @@ internal suspend fun KotlinSourceSet.retrieveExternalDependencies(transitive: Bo
     dependencies.from(project.files(artifacts.map { artifactsSet ->
         if (project.kotlinPropertiesProvider.strictKmpCompilation) {
             /**
-             * FIXME: Both the KeepOriginal and this seems to be needed. Why does this branch exist at all if we have KeepOriginal?
+             * Both the KeepOriginal and this seems to be outputting non-KMP files in the transform.
+             * Maybe we can remove this dependencies.from?
+             *
+             * For strict compilation we must not output random files (jars) here, so that these don't leak into commonMain classpath in
+             * cases like single target jvm.
              */
             emptyList()
         } else {

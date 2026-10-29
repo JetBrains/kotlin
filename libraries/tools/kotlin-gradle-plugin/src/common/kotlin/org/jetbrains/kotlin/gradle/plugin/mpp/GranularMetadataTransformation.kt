@@ -66,6 +66,10 @@ internal sealed class MetadataDependencyResolution(
         dependency: ResolvedComponentResult,
     ) : MetadataDependencyResolution(dependency) {
 
+        /**
+         * For strict compilation this avoids non-expected output (anything except transformed metadata jar) in the transform, but keeps the
+         * transitive dependencies as in KeepOriginal.
+         */
         class KeepDependencyButExcludeResolvedFile(
             dependency: ResolvedComponentResult,
         ) : Exclude(dependency)
@@ -211,7 +215,6 @@ internal class GranularMetadataTransformation(
             } else {
                 { MetadataDependencyResolution.KeepOriginalDependency(it) }
             },
-            // FIXME: Disable strict compilation from custom source sets that refine a non default hierarchy source set?
             sourceSetsExcludedFromVisibility = if (kotlinSourceSet.isStrictSourceSet())
                 defaultTargetHierarchyExcludedSourceSetVisibilityBySourceSet[kotlinSourceSet.name] ?: emptySet() else emptySet()
         )

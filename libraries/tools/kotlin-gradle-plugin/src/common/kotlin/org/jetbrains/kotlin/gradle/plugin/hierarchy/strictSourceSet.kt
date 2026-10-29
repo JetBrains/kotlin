@@ -18,6 +18,18 @@ internal suspend fun KotlinSourceSet.awaitIsStrictSourceSet(): Boolean {
     return isStrictSourceSet()
 }
 
+/**
+ * Compute if the source set is strict. A strict source set can see only "expected" fragments from dependencies and commonization result:
+ *   - expected fragments are those we can see per GMT restricted further by default hierarchy heuristic. E.g. if this source set is
+ *   commonMain, then it should only see commonMain from a dependency (even if it could also see nativeMain)
+ *   - expected commonization result is that only nativeMain and its refiners can see commonization of platform libs, and they also see
+ *   commonization as if all native targets for that source set were enabled. E.g. nativeMain sees the strictest possible commonization result
+ *
+ * A source set that is not in the default hierarchy is not strict and source sets that can see a non-strict source set in the same project
+ * are also not strict.
+ *
+ * All checks are done by name, we don't check that the shape of the source set graph matches the default target hierarchy.
+ */
 internal fun KotlinSourceSet.isStrictSourceSet(): Boolean {
     return isStrictSourceSetWithoutAssociatedSourceSets() && getVisibleSourceSetsFromAssociateCompilations(this).all {
         it.isStrictSourceSetWithoutAssociatedSourceSets()

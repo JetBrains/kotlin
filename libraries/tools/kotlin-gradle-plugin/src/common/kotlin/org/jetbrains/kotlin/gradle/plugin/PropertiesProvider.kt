@@ -145,7 +145,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
             )
         }.orElse(false)
 
-    // FIXME: Wire this with separate compilation
     val strictKmpCompilation: Boolean
         get() = booleanProperty(KOTLIN_KMP_STRICT_COMPILATION) ?: false
 
