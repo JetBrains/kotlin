@@ -131,7 +131,7 @@ object CustomCompilerArguments {
         defaultValue = CodeBlock.of(
             "%M<%T>()",
             MemberName("kotlin.collections", "emptyList"),
-            ClassName(API_ARGUMENTS_PACKAGE, "CompilerPlugin")
+            ClassName(IMPL_ARGUMENTS_PACKAGE, "CompilerPluginImpl")
         ),
     )
 
@@ -149,7 +149,7 @@ object CustomCompilerArguments {
         defaultValue = CodeBlock.of(
             "%M<%T>()",
             MemberName(KOTLIN_COLLECTIONS, "emptyList"),
-            ClassName(API_ARGUMENTS_PACKAGE, "NullabilityAnnotation"),
+            ClassName(IMPL_ARGUMENTS_PACKAGE, "NullabilityAnnotationImpl"),
         ),
     )
 
@@ -160,7 +160,7 @@ object CustomCompilerArguments {
         defaultValue = CodeBlock.of(
             "%M<%T>()",
             MemberName(KOTLIN_COLLECTIONS, "emptyList"),
-            ClassName(API_ARGUMENTS_PACKAGE, "Jsr305"),
+            ClassName(IMPL_ARGUMENTS_PACKAGE, "Jsr305Impl"),
         ),
     )
 
@@ -171,7 +171,7 @@ object CustomCompilerArguments {
         defaultValue = CodeBlock.of(
             "%M<%T>()",
             MemberName(KOTLIN_COLLECTIONS, "emptyList"),
-            ClassName(API_ARGUMENTS_PACKAGE, "WarningLevel"),
+            ClassName(IMPL_ARGUMENTS_PACKAGE, "WarningLevelImpl"),
         ),
     )
 }

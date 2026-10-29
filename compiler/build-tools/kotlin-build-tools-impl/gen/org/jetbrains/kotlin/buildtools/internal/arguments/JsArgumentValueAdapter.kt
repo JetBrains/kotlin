@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.buildtools.`internal`.arguments
 
 import kotlin.Any
-import kotlin.Enum
 import kotlin.OptIn
 import kotlin.collections.List
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
@@ -24,7 +23,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.enums.JsModuleKind as ApiAr
  */
 internal object JsArgumentValueAdapter {
   public fun toApi(`value`: Any?): Any? = when (value) {
-    is List<*> if value.firstOrNull() is Enum<*> -> value.map { toApi(it) }
+    is List<*> -> value.map { toApi(it) }
     is InternalArgumentsEnumsJsIrDiagnosticMode -> value.toApiEnum<ApiArgumentsEnumsJsIrDiagnosticMode>()
     is InternalArgumentsEnumsJsModuleKind -> value.toApiEnum<ApiArgumentsEnumsJsModuleKind>()
     is InternalArgumentsEnumsJsEcmaVersion -> value.toApiEnum<ApiArgumentsEnumsJsEcmaVersion>()
@@ -32,7 +31,7 @@ internal object JsArgumentValueAdapter {
   }
 
   public fun toImpl(`value`: Any?): Any? = when (value) {
-    is List<*> if value.firstOrNull() is Enum<*> -> value.map { toImpl(it) }
+    is List<*> -> value.map { toImpl(it) }
     is ApiArgumentsEnumsJsIrDiagnosticMode -> value.toImplEnum<InternalArgumentsEnumsJsIrDiagnosticMode>()
     is ApiArgumentsEnumsJsModuleKind -> value.toImplEnum<InternalArgumentsEnumsJsModuleKind>()
     is ApiArgumentsEnumsJsEcmaVersion -> value.toImplEnum<InternalArgumentsEnumsJsEcmaVersion>()

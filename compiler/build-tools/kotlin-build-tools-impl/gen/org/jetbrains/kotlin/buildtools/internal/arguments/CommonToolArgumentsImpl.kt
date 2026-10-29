@@ -80,7 +80,7 @@ internal abstract class CommonToolArgumentsImpl(
   @UseFromImplModuleRestricted
   override operator fun <V> `get`(key: ArgumentsCommonToolArguments.CommonToolArgument<V>): V {
     check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return this[key.id] as V
+    return CommonToolArgumentValueAdapter.toApi(this[key.id]) as V
   }
 
   @UseFromImplModuleRestricted
@@ -88,7 +88,7 @@ internal abstract class CommonToolArgumentsImpl(
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 20)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    this[key.id] = `value`
+    this[key.id] = CommonToolArgumentValueAdapter.toImpl(value)
   }
 
   @Deprecated(

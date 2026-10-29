@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.buildtools.`internal`.arguments
 
 import kotlin.Any
-import kotlin.Enum
 import kotlin.OptIn
 import kotlin.collections.List
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
@@ -26,7 +25,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.enums.PartialLinkageMode as
  */
 internal object CommonKlibBasedArgumentValueAdapter {
   public fun toApi(`value`: Any?): Any? = when (value) {
-    is List<*> if value.firstOrNull() is Enum<*> -> value.map { toApi(it) }
+    is List<*> -> value.map { toApi(it) }
     is InternalArgumentsEnumsDuplicatedUniqueNameStrategy -> value.toApiEnum<ApiArgumentsEnumsDuplicatedUniqueNameStrategy>()
     is InternalArgumentsEnumsKlibIrInlinerMode -> value.toApiEnum<ApiArgumentsEnumsKlibIrInlinerMode>()
     is InternalArgumentsEnumsPartialLinkageMode -> value.toApiEnum<ApiArgumentsEnumsPartialLinkageMode>()
@@ -35,7 +34,7 @@ internal object CommonKlibBasedArgumentValueAdapter {
   }
 
   public fun toImpl(`value`: Any?): Any? = when (value) {
-    is List<*> if value.firstOrNull() is Enum<*> -> value.map { toImpl(it) }
+    is List<*> -> value.map { toImpl(it) }
     is ApiArgumentsEnumsDuplicatedUniqueNameStrategy -> value.toImplEnum<InternalArgumentsEnumsDuplicatedUniqueNameStrategy>()
     is ApiArgumentsEnumsKlibIrInlinerMode -> value.toImplEnum<InternalArgumentsEnumsKlibIrInlinerMode>()
     is ApiArgumentsEnumsPartialLinkageMode -> value.toImplEnum<InternalArgumentsEnumsPartialLinkageMode>()
