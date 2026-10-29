@@ -469,6 +469,7 @@ enum class DeserializationStrategy(
     WITH_INLINE_BODIES(needOnlyInlineBodies = true);
 
     init {
+        check(!onDemand || !explicitlyExported)
         check(needOnlyInlineBodies || !needBodies)
     }
 
