@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 
 private object TypeAliasConstructorInfoKey : FirDeclarationDataKey()
 
@@ -49,15 +50,18 @@ val FirConstructorSymbol.typeAliasConstructorInfo: TypeAliasConstructorInfo<*>?
     get() = fir.typeAliasConstructorInfo
 
 /**
- * Typealiased constructors don't copy the contract of the original constructor,
- * so it should be taken from [TypeAliasConstructorInfo.originalConstructor].
+ * The function whose contract applies to calls of this function.
+ *
+ * Neither typealiased constructors nor substitution and intersection fake overrides copy the contract of their original,
+ * so it should be taken from the original. The original of a typealiased constructor may be a substitution override,
+ * but never vice versa, so the typealiased constructor is unwrapped first.
  */
-fun <T : FirFunction> T.originalIfTypeAliasConstructor(): T = typeAliasConstructorInfo?.originalConstructor ?: this
+fun FirFunction.contractOwner(): FirFunction = (typeAliasConstructorInfo?.originalConstructor ?: this).unwrapFakeOverrides()
 
 /**
- * @see originalIfTypeAliasConstructor
+ * @see contractOwner
  */
-fun FirFunctionSymbol<*>.originalIfTypeAliasConstructor(): FirFunctionSymbol<*> = fir.originalIfTypeAliasConstructor().symbol
+fun FirFunctionSymbol<*>.contractOwner(): FirFunctionSymbol<*> = fir.contractOwner().symbol
 
 class FirTypealiasConstructorStorage(val session: FirSession) : FirSessionComponent {
     private val cachesFactory = session.firCachesFactory

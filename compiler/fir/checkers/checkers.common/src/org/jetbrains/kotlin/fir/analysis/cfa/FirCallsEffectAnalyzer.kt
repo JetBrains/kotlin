@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.resolve.isFunctionOrSuspendFunctionInvoke
-import org.jetbrains.kotlin.fir.scopes.impl.originalIfTypeAliasConstructor
+import org.jetbrains.kotlin.fir.scopes.impl.contractOwner
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isNonReflectFunctionType
 import org.jetbrains.kotlin.fir.types.isSomeFunctionType
-import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.fir.util.SetMultimap
 import org.jetbrains.kotlin.fir.util.setMultimapOf
 
@@ -169,9 +168,7 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) {
 
     private fun FirFunctionCall.forEachArgument(session: FirSession, block: (FirExpression, EventOccurrencesRange?) -> Unit) {
         val functionSymbol = toResolvedCallableSymbol() as? FirFunctionSymbol<*>
-        // The callee could be a typealiased constructor or a substitution or intersection fake override;
-        // unwrap and get the effects of the base function.
-        val effects = functionSymbol?.originalIfTypeAliasConstructor()?.unwrapFakeOverrides()?.resolvedContractDescription?.effects
+        val effects = functionSymbol?.contractOwner()?.resolvedContractDescription?.effects
             ?.mapNotNull { it.effect as? ConeCallsEffectDeclaration }
         val isInline = functionSymbol?.isInline == true || functionSymbol?.isArrayLambdaConstructor() == true
         explicitReceiver?.let { arg ->
