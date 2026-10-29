@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.buildtools.tests.arguments
 import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation.Companion.COMPILER_ARGUMENTS_LOG_LEVEL
 import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation.Companion.COMPILER_MESSAGE_RENDERER
+import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation.Companion.COMPILER_REF_INDEX
 import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation.Companion.GENERATE_COMPILER_REF_INDEX
 import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation.Companion.LOOKUP_TRACKER
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
@@ -90,8 +91,13 @@ class AvailableSinceTest : BaseCompilationTest() {
                     trySet(COMPILER_ARGUMENTS_LOG_LEVEL.availableSinceVersion) {
                         this[COMPILER_ARGUMENTS_LOG_LEVEL] = JvmCompilationOperation.CompilerArgumentsLogLevel.DEBUG
                     }
+                    @Suppress("DEPRECATION")
                     trySet(GENERATE_COMPILER_REF_INDEX.availableSinceVersion) {
+                        @Suppress("DEPRECATION")
                         this[GENERATE_COMPILER_REF_INDEX] = false
+                    }
+                    trySet(COMPILER_REF_INDEX.availableSinceVersion) {
+                        this[COMPILER_REF_INDEX] = null
                     }
                     trySet(COMPILER_MESSAGE_RENDERER.availableSinceVersion) {
                         this[COMPILER_MESSAGE_RENDERER] = object : CompilerMessageRenderer {

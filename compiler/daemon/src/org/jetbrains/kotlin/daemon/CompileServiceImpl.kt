@@ -786,7 +786,7 @@ abstract class CompileServiceImplBase(
                     usePreciseJavaTracking = verifiedPreciseJavaTracking
                 ),
                 compilationCanceledStatus = compilationCanceledStatus,
-                generateCompilerRefIndex = incrementalCompilationOptions.generateCompilerRefIndex,
+                compilerRefIndexDirectory = incrementalCompilationOptions.compilerRefIndexDirectory,
                 lookupTrackerDelegate = lookupTracker ?: LookupTracker.DO_NOTHING,
             )
         } else {
@@ -800,7 +800,7 @@ abstract class CompileServiceImplBase(
                     usePreciseJavaTracking = verifiedPreciseJavaTracking
                 ),
                 compilationCanceledStatus = compilationCanceledStatus,
-                generateCompilerRefIndex = incrementalCompilationOptions.generateCompilerRefIndex,
+                compilerRefIndexDirectory = incrementalCompilationOptions.compilerRefIndexDirectory,
                 lookupTrackerDelegate = lookupTracker ?: LookupTracker.DO_NOTHING,
             )
         }

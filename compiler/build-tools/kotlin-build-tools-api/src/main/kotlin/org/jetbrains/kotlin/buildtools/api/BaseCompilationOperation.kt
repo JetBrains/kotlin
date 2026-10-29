@@ -6,9 +6,14 @@
 package org.jetbrains.kotlin.buildtools.api
 
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.buildtools.api.cri.CompilerRefIndexConfiguration
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation.CompilerArgumentsLogLevel
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
+import java.nio.file.Path
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 @ExperimentalBuildToolsApi
 public interface BaseCompilationOperation : BuildOperation<CompilationResult> {
@@ -66,6 +71,17 @@ public interface BaseCompilationOperation : BuildOperation<CompilationResult> {
          * @since 2.4.20
          */
         public fun build(): BaseCompilationOperation
+
+        /**
+         * Creates a builder for the [CompilerRefIndexConfiguration] to set as [COMPILER_REF_INDEX].
+         *
+         * @param outputDirectory the directory the index files are written to
+         * @throws IllegalStateException if the implementation is older than 2.5.20
+         * @since 2.5.20
+         */
+        public fun compilerRefIndexConfigurationBuilder(outputDirectory: Path): CompilerRefIndexConfiguration.Builder {
+            error("The compiler reference index configuration is supported from compiler version 2.5.20.")
+        }
     }
 
     public companion object {
@@ -85,9 +101,25 @@ public interface BaseCompilationOperation : BuildOperation<CompilationResult> {
 
         /**
          * Enables the Compiler Reference Index generation during the compilation.
+         *
+         * The index goes to the [org.jetbrains.kotlin.buildtools.api.cri.CriToolchain.DATA_PATH] directory under the working
+         * directory of [org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration], so it takes
+         * effect only with that configuration. When [COMPILER_REF_INDEX] is set to a configuration, this option is ignored.
          */
+        @Deprecated("Use `COMPILER_REF_INDEX` instead")
         @JvmField
         public val GENERATE_COMPILER_REF_INDEX: Option<Boolean> = Option("GENERATE_COMPILER_REF_INDEX", KotlinReleaseVersion(2, 3, 20))
+
+        /**
+         * Enables the compiler reference index of the compilation and sets its output directory.
+         *
+         * Build the value with [compilerRefIndexConfiguration] or [Builder.compilerRefIndexConfigurationBuilder].
+         * Takes precedence over the deprecated [GENERATE_COMPILER_REF_INDEX].
+         *
+         * @since 2.5.20
+         */
+        @JvmField
+        public val COMPILER_REF_INDEX: Option<CompilerRefIndexConfiguration?> = Option("COMPILER_REF_INDEX", KotlinReleaseVersion(2, 5, 20))
 
         /**
          * Transform compiler diagnostics into formatted strings for output.
@@ -104,4 +136,23 @@ public interface BaseCompilationOperation : BuildOperation<CompilationResult> {
         @JvmField
         public val COMPILER_MESSAGE_RENDERER: Option<CompilerMessageRenderer> = Option("COMPILER_MESSAGE_RENDERER", KotlinReleaseVersion(2, 4, 0))
     }
+}
+
+/**
+ * Creates a [CompilerRefIndexConfiguration] that writes to [outputDirectory], with the options set by [builderAction].
+ *
+ * @return an immutable `CompilerRefIndexConfiguration`.
+ * @see BaseCompilationOperation.Builder.compilerRefIndexConfigurationBuilder
+ * @since 2.5.20
+ */
+@OptIn(ExperimentalContracts::class)
+@ExperimentalBuildToolsApi
+public inline fun BaseCompilationOperation.Builder.compilerRefIndexConfiguration(
+    outputDirectory: Path,
+    builderAction: CompilerRefIndexConfiguration.Builder.() -> Unit = {},
+): CompilerRefIndexConfiguration {
+    contract {
+        callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE)
+    }
+    return compilerRefIndexConfigurationBuilder(outputDirectory).apply(builderAction).build()
 }

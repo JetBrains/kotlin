@@ -8,11 +8,15 @@ package org.jetbrains.kotlin.buildtools.internal
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.reportPerformanceData
 import org.jetbrains.kotlin.buildtools.api.*
+import org.jetbrains.kotlin.buildtools.api.cri.CompilerRefIndexConfiguration
+import org.jetbrains.kotlin.buildtools.api.cri.CriToolchain
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation.CompilerArgumentsLogLevel
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
 import org.jetbrains.kotlin.buildtools.internal.arguments.*
 import org.jetbrains.kotlin.buildtools.internal.arguments.CommonToolArgumentsImpl.Companion.VERBOSE
 import org.jetbrains.kotlin.buildtools.internal.arguments.CommonToolArgumentsImpl.Companion.WERROR
+import org.jetbrains.kotlin.buildtools.internal.cri.CompilerReferenceIndexCollector
+import org.jetbrains.kotlin.buildtools.internal.cri.createCompilerRefIndexConfigurationBuilder
 import org.jetbrains.kotlin.buildtools.internal.trackers.LookupTrackerAdapter
 import org.jetbrains.kotlin.buildtools.internal.trackers.getMetricsReporter
 import org.jetbrains.kotlin.cli.common.CLICompiler
@@ -20,12 +24,15 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginsLoader
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.client.BasicCompilerServicesWithResultsFacadeServer
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.incremental.components.LookupInfo
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
+import org.jetbrains.kotlin.util.toMetadataVersion
 import java.io.ByteArrayOutputStream
 import java.io.ObjectOutputStream
 import java.io.Serializable
@@ -55,6 +62,20 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
     }
 
     class Option<V>(id: String, default: V) : BaseOptionWithDefault<V>(id, defaultValue = default)
+
+    override fun compilerRefIndexConfigurationBuilder(outputDirectory: Path): CompilerRefIndexConfiguration.Builder =
+        createCompilerRefIndexConfigurationBuilder(outputDirectory)
+
+    /**
+     * Returns the directory an incremental compilation writes the compiler reference index to, or `null` when it isn't requested.
+     *
+     * [COMPILER_REF_INDEX] takes precedence over the deprecated [GENERATE_COMPILER_REF_INDEX],
+     * which writes to the [CriToolchain.DATA_PATH] directory under [icWorkingDirectory].
+     * The configured directory is made absolute here because the daemon runs in a directory of its own.
+     */
+    internal fun compilerRefIndexDirectory(icWorkingDirectory: Path): Path? =
+        this[COMPILER_REF_INDEX]?.outputDirectory?.toAbsolutePath()
+            ?: icWorkingDirectory.resolve(CriToolchain.DATA_PATH).takeIf { this[GENERATE_COMPILER_REF_INDEX] }
 
     override fun executeCancellableImpl(
         projectId: ProjectId,
@@ -132,7 +153,6 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
                 reportSeverity = reportSeverity,
                 requestedCompilationResults = requestedCompilationResults,
                 kotlinScriptExtensions = ktsExtensionsAsArray,
-                generateCompilerRefIndex = this[GENERATE_COMPILER_REF_INDEX],
             )
     }
 
@@ -259,6 +279,12 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
 
         populateMetricsCollector(metricsReporter)
 
+        val compilerReferenceIndexCollector = services[CompilerReferenceIndexCollector::class.java]
+        if (compilationResult == CompilationResult.COMPILATION_SUCCESS && compilerReferenceIndexCollector != null) {
+            val metadataVersion = LanguageVersion.fromVersionString(arguments.languageVersion)?.toMetadataVersion() ?: MetadataVersion.INSTANCE
+            compilerReferenceIndexCollector.write(metadataVersion)
+        }
+
         return compilationResult
     }
 
@@ -294,6 +320,8 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
             Option("COMPILER_MESSAGE_RENDERER", default = DefaultCompilerMessageRenderer)
 
         val GENERATE_COMPILER_REF_INDEX: Option<Boolean> = Option("GENERATE_COMPILER_REF_INDEX", false)
+
+        val COMPILER_REF_INDEX: Option<CompilerRefIndexConfiguration?> = Option("COMPILER_REF_INDEX", null)
 
     }
 }

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.OperationCancelledException
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
+import org.jetbrains.kotlin.buildtools.api.compilerRefIndexConfiguration
 import org.jetbrains.kotlin.buildtools.api.getToolchain
 import org.jetbrains.kotlin.buildtools.api.jps.jvm.JvmJpsManagedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jps.jvm.operations.jpsManagedIcConfigurationBuilder
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.jps.build.KotlinBuilder
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.TargetId
 import java.io.File
+import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -47,6 +49,7 @@ internal class JpsBtaJvmCompilationRequest(
     val javaSourceRoots: List<JvmSourceRoot>,
     val friendDirectories: List<File>,
     val modularJdkRoot: File?,
+    val compilerReferenceIndexDirectory: Path?,
 )
 
 internal class JpsBtaCompilerRunner {
@@ -105,6 +108,9 @@ internal class JpsBtaCompilerRunner {
 
         builder[JvmCompilationOperation.INCREMENTAL_COMPILATION] = buildIncrementalConfiguration(builder, request, environment)
         builder[BaseCompilationOperation.COMPILER_MESSAGE_RENDERER] = JpsBtaMessageRenderer(environment.messageCollector)
+        request.compilerReferenceIndexDirectory?.let {
+            builder[BaseCompilationOperation.COMPILER_REF_INDEX] = builder.compilerRefIndexConfiguration(it)
+        }
 
         return builder.build()
     }

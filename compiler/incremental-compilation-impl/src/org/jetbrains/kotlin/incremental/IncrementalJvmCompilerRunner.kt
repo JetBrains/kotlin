@@ -31,7 +31,7 @@ open class IncrementalJvmCompilerRunner(
     private val classpathChanges: ClasspathChanges,
     kotlinSourceFilesExtensions: Set<String> = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS,
     icFeatures: IncrementalCompilationFeatures = IncrementalCompilationFeatures.DEFAULT_CONFIGURATION,
-    generateCompilerRefIndex: Boolean = false,
+    compilerRefIndexDirectory: File? = null,
     compilationCanceledStatus: CompilationCanceledStatus? = null,
     override val lookupTrackerDelegate: LookupTracker = LookupTracker.DO_NOTHING,
     pluginsLoader: PluginsLoader? = null,
@@ -42,7 +42,7 @@ open class IncrementalJvmCompilerRunner(
     outputDirs = outputDirs,
     kotlinSourceFilesExtensions = kotlinSourceFilesExtensions,
     icFeatures = icFeatures,
-    generateCompilerRefIndex = generateCompilerRefIndex,
+    compilerRefIndexDirectory = compilerRefIndexDirectory,
     compilationCanceledStatus = compilationCanceledStatus,
     pluginsLoader = pluginsLoader,
 ) {

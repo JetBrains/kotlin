@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.buildtools.api.jps.jvm.incremental.trackers.*
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
 import org.jetbrains.kotlin.buildtools.internal.*
+import org.jetbrains.kotlin.buildtools.internal.BaseCompilationOperationImpl.Companion.COMPILER_REF_INDEX
+import org.jetbrains.kotlin.buildtools.internal.cri.CompilerReferenceIndexCollector
 import org.jetbrains.kotlin.buildtools.internal.jps.JvmJpsManagedIncrementalCompilationConfigurationImpl.Companion.ENUM_WHEN_TRACKER
 import org.jetbrains.kotlin.buildtools.internal.jps.JvmJpsManagedIncrementalCompilationConfigurationImpl.Companion.FILE_MAPPING_TRACKER
 import org.jetbrains.kotlin.buildtools.internal.jps.JvmJpsManagedIncrementalCompilationConfigurationImpl.Companion.IMPORT_TRACKER
@@ -110,7 +112,7 @@ internal fun JvmClientManagedIncrementalCompilationConfiguration.registerPlatfor
         IncrementalCompilationComponentsAdapter(this.incrementalCompilationComponents),
     )
 
-    this[LOOKUP_TRACKER]?.let { tracker ->
+    val lookupTracker = this[LOOKUP_TRACKER]?.let { tracker ->
         if (operation[BASE_LOOKUP_TRACKER] != null) {
             logger.warn(
                 "A lookup tracker is set both as BaseCompilationOperation.LOOKUP_TRACKER and as " +
@@ -118,14 +120,22 @@ internal fun JvmClientManagedIncrementalCompilationConfiguration.registerPlatfor
             )
         }
 
-        serviceBuilder.register(LookupTracker::class.java, LookupTrackerAdapter(tracker))
+        LookupTrackerAdapter(tracker)
     }
+    val fileMappingTracker = this[FILE_MAPPING_TRACKER]?.let(::FileMappingTrackerAdapter)
+    val compilerReferenceIndexCollector = createCompilerReferenceIndexCollector(
+        lookupTracker ?: operation[BASE_LOOKUP_TRACKER]?.let(::LookupTrackerAdapter),
+        fileMappingTracker,
+    )
 
+    (compilerReferenceIndexCollector?.lookupTracker ?: lookupTracker)?.let { tracker ->
+        serviceBuilder.register(LookupTracker::class.java, tracker)
+    }
     this[IMPORT_TRACKER]?.let { tracker ->
         serviceBuilder.register(ImportTracker::class.java, ImportTrackerAdapter(tracker))
     }
-    this[FILE_MAPPING_TRACKER]?.let { tracker ->
-        serviceBuilder.register(ICFileMappingTracker::class.java, FileMappingTrackerAdapter(tracker))
+    (compilerReferenceIndexCollector?.fileMappingTracker ?: fileMappingTracker)?.let { tracker ->
+        serviceBuilder.register(ICFileMappingTracker::class.java, tracker)
     }
     this[ENUM_WHEN_TRACKER]?.let { tracker ->
         serviceBuilder.register(EnumWhenTracker::class.java, EnumWhenTrackerAdapter(tracker))
@@ -133,6 +143,24 @@ internal fun JvmClientManagedIncrementalCompilationConfiguration.registerPlatfor
     this[INLINE_CONST_TRACKER]?.let { tracker ->
         serviceBuilder.register(InlineConstTracker::class.java, InlineConstTrackerAdapter(tracker))
     }
+    // Lets [org.jetbrains.kotlin.buildtools.internal.BaseCompilationOperationImpl] write the index after a successful
+    // compilation; the compiler never reads it
+    compilerReferenceIndexCollector?.let { collector ->
+        serviceBuilder.register(CompilerReferenceIndexCollector::class.java, collector)
+    }
+}
+
+context(operation: JvmCompilationOperationImpl)
+private fun createCompilerReferenceIndexCollector(
+    lookupTracker: LookupTracker?,
+    fileMappingTracker: ICFileMappingTracker?,
+): CompilerReferenceIndexCollector? {
+    val directory = operation[COMPILER_REF_INDEX]?.outputDirectory ?: return null
+    return CompilerReferenceIndexCollector(
+        directory,
+        lookupTrackerDelegate = lookupTracker ?: LookupTracker.DO_NOTHING,
+        fileMappingTrackerDelegate = fileMappingTracker ?: ICFileMappingTracker.DoNothing,
+    )
 }
 
 @DelicateBuildToolsApi
