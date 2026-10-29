@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.wasm.test.blackbox
 
+import org.jetbrains.kotlin.wasm.test.tools.WASI_BOX_ENTRY_EXPORT
+
 /** The wasm-js export of a grouped batch: `test.mjs` calls it to run the result-collecting driver. */
 internal fun wasmJsGroupedTestsEntryPointSource(runAllFunctionName: String): String =
     """
@@ -21,7 +23,7 @@ internal fun wasmJsGroupedTestsEntryPointSource(runAllFunctionName: String): Str
  */
 internal fun wasmWasiGroupedTestsEntryPointSource(runAllFunctionName: String): String =
     """
-    @kotlin.wasm.WasmExport
+    @kotlin.wasm.WasmExport("$WASI_BOX_ENTRY_EXPORT")
     fun startTest() {
         $runAllFunctionName()
     }
