@@ -1,0 +1,17 @@
+STEP 0:
+    dependencies: cinterop, lib
+    arguments: -opt-in=kotlinx.cinterop.ExperimentalForeignApi
+    modifications:
+        U : main.kt -> main.kt
+
+STEP 1:
+    dependencies: cinterop, lib
+    arguments: -opt-in=kotlinx.cinterop.ExperimentalForeignApi
+    modifications:
+        U : main.1.kt -> main.kt
+
+STEP 2:
+    dependencies: cinterop, lib
+    arguments: -opt-in=kotlinx.cinterop.ExperimentalForeignApi
+    modifications:
+        U : main.kt -> main.kt

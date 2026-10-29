@@ -1,0 +1,4 @@
+language = Objective-C
+package = objclib
+---
+#import <objc/NSObject.h>
