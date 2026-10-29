@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.internal
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.targets.web.npm.NpmDependencyCollectionMode
 import org.jetbrains.kotlin.gradle.utils.isProjectIsolationEnabled
 import org.jetbrains.kotlin.gradle.utils.isRootProject
 
@@ -23,12 +24,16 @@ internal fun Project.jsToolingProject(): Project {
         // subprojects call this on the root project, and that read would violate Isolated Projects (KT-89532).
         project.isRootProject() -> this
         npmSharedProjectsPerProject && isProjectIsolationEnabled -> this
+        isIsolatedProjectsNpmDependencyCollection -> this
         else -> rootProject
     }
 }
 
 private val Project.npmSharedProjectsPerProject: Boolean
     get() = PropertiesProvider(project).npmSharedDependenciesProjectMode.orNull == "PER-PROJECT"
+
+private val Project.isIsolatedProjectsNpmDependencyCollection: Boolean
+    get() = PropertiesProvider(this).npmDependencyCollectionMode.get() == NpmDependencyCollectionMode.ISOLATED_PROJECTS
 
 /**
  * Check if [project] is the project to use for JS and WasmJS tooling plugins.

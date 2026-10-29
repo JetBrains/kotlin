@@ -23,13 +23,13 @@ internal fun setupSharedNpmProject(
     platform: HasPlatformDisambiguator,
     rootDirectoryName: String,
 ) {
-    val sharedDependenciesResolver = project.createResolvableNpmSharedPackageJsonFilesConfiguration(platform)
+    val packageJsonsFromSubprojects = project.createPackageJsonsFromSubprojectsResolver(platform)
 
     project.registerTask<KotlinSetupSharedNpmProjectTask>(platform.setupSharedNpmProjectTaskName) { task ->
         task.description =
             "Assembles the '$rootDirectoryName' shared npm project from the projects declared on '${platform.npmSharedDependenciesConfigurationName}'"
         task.packageJsonFiles.from(
-            sharedDependenciesResolver.incoming.artifactView { it.lenient(true) }.files
+            packageJsonsFromSubprojects.incoming.artifactView { it.lenient(true) }.files
         )
         task.rootPackageName.set(project.name)
         task.rootPackageVersion.set(project.version.toString())
