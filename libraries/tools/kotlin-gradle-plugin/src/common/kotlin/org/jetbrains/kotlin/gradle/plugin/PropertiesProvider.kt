@@ -786,7 +786,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
                     project.reportDiagnosticOncePerBuild(
                         KotlinToolingDiagnostics.ExperimentalFeatureWarning(
                             "Node.js toolchain",
-                            "https://kotl.in/experimantal-nodejs-toolchain",
+                            "https://kotl.in/experimental-nodejs-toolchain",
                         ),
                         key = "NodeJsToolchain"
                     )
