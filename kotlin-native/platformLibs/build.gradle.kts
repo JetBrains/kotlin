@@ -176,6 +176,7 @@ enabledTargets(platformManager).forEach { target ->
                     this.withOptimizations.set(withOptimizations)
                     this.cacheDirectory.set(dist.map { it.cachesRoot(targetName, withOptimizations) })
                     this.cacheName.set(artifactName)
+                    this.kt89897workaround.set(true)
                     dependsOn(nativeDependenciesExtension.targetDependency(target))
 
                     usesService(cachePlatformLibsSemaphore)
