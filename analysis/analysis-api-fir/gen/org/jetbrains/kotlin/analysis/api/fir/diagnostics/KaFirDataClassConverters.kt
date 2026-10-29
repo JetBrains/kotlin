@@ -4047,6 +4047,7 @@ private fun KaDiagnosticConverterBuilder.addConversions82() {
     add(FirErrors.NO_COMPANION_OBJECT) { firDiagnostic ->
         NoCompanionObjectImpl(
             firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.a),
+            firDiagnostic.b?.let { firSymbolBuilder.functionBuilder.buildConstructorSymbol(it) },
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
