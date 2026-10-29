@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.npm.DefaultKotlinNpmDependency
 import org.jetbrains.kotlin.gradle.npm.KotlinNpmDependency
 import org.jetbrains.kotlin.gradle.targets.web.npm.shared.CompilationNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.web.npm.shared.KotlinNpmDependencyReportTask
+import org.jetbrains.kotlin.gradle.targets.web.npm.shared.readNpmDependencyReport
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
@@ -148,6 +149,29 @@ class SharedNpmSubprojectTest {
 
         assertEquals(setOf(isEven, isOdd), project.npmDependencies("jsNpmDependenciesReport").directDependencies.get())
         assertEquals(setOf(isEven, isOdd, cowsay), project.npmDependencies("jsTestNpmDependenciesReport").directDependencies.get())
+    }
+
+    @Test
+    fun `versions of one npm package are joined into one range`() {
+        val project = buildProjectWithMPP {
+            kotlin {
+                js { nodejs() }
+                sourceSets.getByName("commonMain").dependencies {
+                    npm("is-even", "1.0.0")
+                }
+                sourceSets.getByName("jsMain").dependencies {
+                    npm("is-even", ">1.0.0")
+                }
+            }
+        }
+        project.evaluate()
+
+        val task = project.npmDependenciesReportTask("jsNpmDependenciesReport")
+        task.compilation.transitiveArtifacts.setFrom()
+        task.generate()
+
+        val report = readNpmDependencyReport(task.outputFile.get().asFile)
+        assertEquals(mapOf("is-even" to "1.0.0 >1.0.0"), report.compilations.getValue("test").dependencies)
     }
 
     @Test
