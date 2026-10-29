@@ -22,7 +22,10 @@ import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import java.io.File
 import java.nio.file.Path
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 
 @JsGradlePluginTests
 @MustRunOnChangesInGradle
@@ -257,7 +260,7 @@ class SharedNpmDependenciesIT : KGPBaseTest() {
 
             build(":lib-b:jsNpmDependenciesReport") {
                 assertTasksExecuted(":lib-a:jsNpmDependenciesReport")
-                assertEquals(null, libBNpmDependenciesReport().dependencies["left-pad"])
+                assertNull(libBNpmDependenciesReport().dependencies["left-pad"])
             }
 
             build(":lib-b:jsNpmDependenciesReport", "-PaddLeftPad=true") {
@@ -350,6 +353,40 @@ class SharedNpmDependenciesIT : KGPBaseTest() {
                     name = "emptyKts-test-utils",
                     dependencies = testUtilsDependencies,
                 )
+            }
+        }
+    }
+
+    @DisplayName("npm dependencies of a klib declared with files() reach the npm dependency report")
+    @GradleTest
+    fun testNpmDependenciesOfFileKlib(gradleVersion: GradleVersion) {
+        project("emptyKts", gradleVersion) {
+            plugins {
+                kotlin("multiplatform").apply(false)
+            }
+
+            includeOtherProjectAsSubmodule("emptyKts", newSubmoduleName = "lib") {
+                buildScriptInjection {
+                    project.plugins.apply("org.jetbrains.kotlin.multiplatform")
+                    kotlinMultiplatform.apply {
+                        js { nodejs() }
+                        sourceSets.getByName("jsMain").dependencies {
+                            implementation(project.files("foo-js.klib"))
+                        }
+                    }
+                }
+            }
+
+            ZipOutputStream(projectPath.resolve("lib/foo-js.klib").toFile().outputStream()).use { zip ->
+                zip.putNextEntry(ZipEntry("package.json"))
+                zip.write("""{"name": "foo-js", "dependencies": {"left-pad": "1.3.0"}}""".toByteArray())
+            }
+
+            build(":lib:jsNpmDependenciesReport") {
+                val report = readNpmDependencyReport(
+                    projectPath.resolve("lib/build/kotlin-npm/js/npm-dep-reports/emptyKts-lib/npm-dep-report.json").toFile()
+                )
+                assertEquals("1.3.0", report.compilations.getValue("emptyKts-lib").dependencies["left-pad"])
             }
         }
     }

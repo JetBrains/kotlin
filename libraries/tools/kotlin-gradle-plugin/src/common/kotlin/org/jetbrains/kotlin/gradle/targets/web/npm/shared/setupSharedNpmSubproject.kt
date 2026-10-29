@@ -37,7 +37,7 @@ internal val SetupNpmDependencyReportSideEffect = KotlinTargetSideEffect { targe
     )
     val platformDirectoryName = platform.platformDisambiguator ?: JsPlatformDisambiguator.jsPlatform
 
-    val npmRuntimeDependencies = project.maybeCreateNpmRuntimeDependencies(target, platform)
+    project.registerKlibToNpmDependencyReportTransform(target, platform)
     val npmDependenciesReport = project.maybeCreateNpmDependenciesReport(platform)
 
     target.compilations.all { compilation ->
@@ -56,7 +56,7 @@ internal val SetupNpmDependencyReportSideEffect = KotlinTargetSideEffect { targe
         val reportFile = reportTask.flatMap { it.outputFile }
         npmDependenciesReport.outgoing.artifact(reportFile)
         if (compilation.isMain()) {
-            project.artifacts.add(npmRuntimeDependencies.name, reportFile)
+            project.createNpmRuntimeDependenciesVariant(target, platform, reportFile)
         }
     }
 }
@@ -73,7 +73,7 @@ private fun CompilationNpmDependencies.configure(
     moduleName.convention(compilation.outputModuleName)
     directDependencies.convention(project.provider { collectDirectDeclaredNpmDependencies(compilation) })
     toolDependencies.convention(project.provider { project.collectDevNpmDependencies(compilation) })
-    transitiveArtifacts.from(project.npmRuntimeDependenciesReports(npmRuntimeDependenciesResolver, platform))
+    dependencyReports.from(project.npmRuntimeDependenciesReports(npmRuntimeDependenciesResolver, platform))
 }
 
 private fun collectDirectDeclaredNpmDependencies(compilation: KotlinJsIrCompilation): Set<DefaultKotlinNpmDependency> =

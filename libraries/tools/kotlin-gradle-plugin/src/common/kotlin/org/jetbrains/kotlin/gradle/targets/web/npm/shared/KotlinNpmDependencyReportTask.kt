@@ -3,8 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
-
 package org.jetbrains.kotlin.gradle.targets.web.npm.shared
 
 import org.gradle.api.DefaultTask
@@ -20,14 +18,8 @@ import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
-import org.jetbrains.kotlin.gradle.internal.json.KgpJson
 import org.jetbrains.kotlin.gradle.npm.DefaultKotlinNpmDependency
 import org.jetbrains.kotlin.gradle.npm.KotlinNpmDependency
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
-import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJsonDependencies
-import org.jetbrains.kotlin.gradle.targets.js.npm.isCompatibleArchive
-import java.io.File
-import java.util.zip.ZipFile
 
 /**
  * Writes the [NpmDependencyReport] of one JS or WasmJS compilation into [outputFile].
@@ -48,27 +40,10 @@ internal abstract class KotlinNpmDependencyReportTask : DefaultTask() {
     fun generate() {
         val dependencies = compilation.directDependencies.get() +
                 compilation.toolDependencies.get() +
-                compilation.transitiveArtifacts.files.flatMap { it.collectNpmDependencies() }
+                compilation.dependencyReports.files.flatMap { readNpmDependencyReport(it).npmDependencies() }
 
         NpmDependencyReport(target.get(), mapOf(compilation.moduleName.get() to dependencies.toCompilationReport()))
             .writeTo(outputFile.get().asFile)
-    }
-
-    /** A dependency's report, its `package.json`, or a klib with `package.json` inside. */
-    private fun File.collectNpmDependencies(): Collection<KotlinNpmDependency> {
-        if (name == NPM_DEPENDENCY_REPORT_FILE_NAME) {
-            return readNpmDependencyReport(this).compilations.values.flatMap { it.npmDependencies() }
-        }
-        val packageJsonText = when {
-            name == NpmProject.PACKAGE_JSON -> readText()
-            isCompatibleArchive -> ZipFile(this).use { zip ->
-                zip.getEntry(NpmProject.PACKAGE_JSON)
-                    ?.let { zip.getInputStream(it).reader().use { reader -> reader.readText() } }
-            }
-            else -> null
-        } ?: return emptyList()
-
-        return KgpJson.default.decodeFromString<PackageJsonDependencies>(packageJsonText).npmDependencies()
     }
 }
 
@@ -79,7 +54,6 @@ internal abstract class CompilationNpmDependencies {
     abstract val moduleName: Property<String>
 
     /** Declared by the user with `npm`, `npmDev`, `npmOptional` and `npmPeer`. */
-    // TODO KT-87942 to be removed
     @get:Input
     abstract val directDependencies: SetProperty<DefaultKotlinNpmDependency>
 
@@ -87,30 +61,22 @@ internal abstract class CompilationNpmDependencies {
     @get:Input
     abstract val toolDependencies: SetProperty<DefaultKotlinNpmDependency>
 
-    /** Dependency projects' reports and Maven klibs. */
+    /** Reports of runtime dependencies, built from klibs where a dependency has none. */
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.NONE)
-    abstract val transitiveArtifacts: ConfigurableFileCollection
+    abstract val dependencyReports: ConfigurableFileCollection
 }
 
 /** `devDependencies` are not inherited. */
-private fun PackageJsonDependencies.npmDependencies(): List<KotlinNpmDependency> =
-    inheritedNpmDependencies(dependencies, peerDependencies, optionalDependencies)
-
-private fun CompilationNpmDependencyReport.npmDependencies(): List<KotlinNpmDependency> =
-    inheritedNpmDependencies(dependencies, peerDependencies, optionalDependencies)
-
-private fun inheritedNpmDependencies(
-    dependencies: Map<String, String>,
-    peerDependencies: Map<String, String>,
-    optionalDependencies: Map<String, String>,
-): List<KotlinNpmDependency> {
+private fun NpmDependencyReport.npmDependencies(): List<KotlinNpmDependency> {
     fun scope(scope: KotlinNpmDependency.Scope, dependencies: Map<String, String>) =
         dependencies.map { (name, version) -> DefaultKotlinNpmDependency(name, version, scope) }
 
-    return scope(KotlinNpmDependency.Scope.NORMAL, dependencies) +
-            scope(KotlinNpmDependency.Scope.PEER, peerDependencies) +
-            scope(KotlinNpmDependency.Scope.OPTIONAL, optionalDependencies)
+    return compilations.values.flatMap {
+        scope(KotlinNpmDependency.Scope.NORMAL, it.dependencies) +
+                scope(KotlinNpmDependency.Scope.PEER, it.peerDependencies) +
+                scope(KotlinNpmDependency.Scope.OPTIONAL, it.optionalDependencies)
+    }
 }
 
 /** Versions of one package are joined into one npm range, so npm validates them: KT-87942. */

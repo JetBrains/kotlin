@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.gradle.targets.web.npm
 
 import org.gradle.api.Project
+import org.gradle.api.artifacts.FileCollectionDependency
 import org.gradle.api.attributes.Usage
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
@@ -115,12 +116,12 @@ class SharedNpmSubprojectTest {
             Triple(project.jsTarget(), "kotlinNpmRuntimeDependenciesJs", "kotlinNpmRuntimeDependenciesJs"),
             Triple(project.wasmJsTarget(), "kotlinNpmRuntimeDependenciesWasmJs", "kotlinNpmRuntimeDependenciesWasm"),
         )
-        for ((target, configurationName, usageName) in expected) {
-            val configuration = project.configurations.getByName(configurationName)
-            assertEquals(usageName, configuration.attributes.getAttribute(Usage.USAGE_ATTRIBUTE)?.name)
+        for ((target, variantName, usageName) in expected) {
+            val variant = project.configurations.getByName(target.runtimeElementsConfigurationName).outgoing.variants.getByName(variantName)
+            assertEquals(usageName, variant.attributes.getAttribute(Usage.USAGE_ATTRIBUTE)?.name)
             assertEquals(
                 listOf(target.compilations.getByName("main").npmDependenciesReportFile()),
-                configuration.artifacts.files.files.toList(),
+                variant.artifacts.files.files.toList(),
             )
         }
     }
@@ -167,11 +168,30 @@ class SharedNpmSubprojectTest {
         project.evaluate()
 
         val task = project.npmDependenciesReportTask("jsNpmDependenciesReport")
-        task.compilation.transitiveArtifacts.setFrom()
+        task.compilation.dependencyReports.setFrom()
         task.generate()
 
         val report = readNpmDependencyReport(task.outputFile.get().asFile)
         assertEquals(mapOf("is-even" to "1.0.0 >1.0.0"), report.compilations.getValue("test").dependencies)
+    }
+
+    @Test
+    fun `a klib declared with files is kept in the npm runtime dependencies resolver`() {
+        val project = buildProjectWithMPP {
+            kotlin {
+                js { nodejs() }
+                sourceSets.getByName("jsMain").dependencies {
+                    implementation(files("foo-js.klib"))
+                }
+            }
+        }
+        project.evaluate()
+
+        val resolver = project.configurations.getByName("jsNpmRuntimeDependenciesResolver")
+        assertEquals(
+            listOf(setOf(project.file("foo-js.klib"))),
+            resolver.allDependencies.filterIsInstance<FileCollectionDependency>().map { it.files.files },
+        )
     }
 
     @Test
@@ -206,6 +226,22 @@ class SharedNpmSubprojectTest {
     }
 
     @Test
+    fun `collecting the npm dependencies of a test compilation does not compile main`() {
+        val project = buildProjectWithMPP {
+            kotlin { js { nodejs() } }
+        }
+        project.evaluate()
+
+        val mainCompileTask = project.jsTarget().compilations.getByName("main").compileKotlinTaskName
+        val reportBuildDependencies = project.npmDependencies("jsTestNpmDependenciesReport").dependencyReports
+            .buildDependencies.getDependencies(null).map { it.name }
+        assertTrue(
+            mainCompileTask !in reportBuildDependencies,
+            "jsTestNpmDependenciesReport must not depend on $mainCompileTask: $reportBuildDependencies",
+        )
+    }
+
+    @Test
     fun `the npm dependency report of a dependency project is an input of the dependent one`() {
         val root = buildProject(projectBuilder = { withName("root") })
         val lib = buildProjectWithMPP(projectBuilder = { withParent(root).withName("lib") }) {
@@ -222,7 +258,7 @@ class SharedNpmSubprojectTest {
         lib.evaluate()
         app.evaluate()
 
-        val transitive = app.npmDependencies("jsNpmDependenciesReport").transitiveArtifacts
+        val transitive = app.npmDependencies("jsNpmDependenciesReport").dependencyReports
         assertTrue(
             transitive.buildDependencies.getDependencies(null).any { it.name == "jsNpmDependenciesReport" && it.project == lib },
             "app's npm dependency report must be built after lib's",
