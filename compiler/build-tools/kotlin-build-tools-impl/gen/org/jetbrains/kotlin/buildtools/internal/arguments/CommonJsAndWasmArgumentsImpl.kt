@@ -246,32 +246,32 @@ internal abstract class CommonJsAndWasmArgumentsImpl() : CommonKlibBasedArgument
   @Suppress("DEPRECATION")
   protected fun applyCompilerArguments(arguments: CommonJsAndWasmCompilerArguments) {
     super.applyCompilerArguments(arguments)
-    try { cacheDirectory = arguments.cacheDirectory?.let { kotlin.io.path.Path(it) } } catch (_: NoSuchMethodError) {  }
-    try { enableAdvancedOptimizations = arguments.enableAdvancedOptimizations } catch (_: NoSuchMethodError) {  }
-    try { friendModules = arguments.friendModules?.split(File.pathSeparator)?.map { kotlin.io.path.Path(it) } } catch (_: NoSuchMethodError) {  }
-    try { friendModulesDisabled = arguments.friendModulesDisabled } catch (_: NoSuchMethodError) {  }
-    try { generateDts = arguments.generateDts } catch (_: NoSuchMethodError) {  }
-    try { includes = arguments.includes?.let { kotlin.io.path.Path(it) } } catch (_: NoSuchMethodError) {  }
-    try { irDce = arguments.irDce } catch (_: NoSuchMethodError) {  }
-    try { irDcePrintReachabilityInfo = arguments.irDcePrintReachabilityInfo } catch (_: NoSuchMethodError) {  }
-    try { irDceRuntimeDiagnostic = arguments.irDceRuntimeDiagnostic?.let { JsIrDiagnosticMode.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::irDceRuntimeDiagnostic, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xir-dce-runtime-diagnostic value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
-    try { irModuleName = arguments.irModuleName } catch (_: NoSuchMethodError) {  }
-    try { irPerModuleOutputName = arguments.irPerModuleOutputName } catch (_: NoSuchMethodError) {  }
-    try { irProduceJs = arguments.irProduceJs } catch (_: NoSuchMethodError) {  }
-    try { irProduceKlibDir = arguments.irProduceKlibDir } catch (_: NoSuchMethodError) {  }
-    try { irProduceKlibFile = arguments.irProduceKlibFile } catch (_: NoSuchMethodError) {  }
-    try { irPropertyLazyInitialization = arguments.irPropertyLazyInitialization } catch (_: NoSuchMethodError) {  }
-    try { strictImplicitExportType = arguments.strictImplicitExportType } catch (_: NoSuchMethodError) {  }
-    try { outputDir = arguments.outputDir?.let { kotlin.io.path.Path(it) } } catch (_: NoSuchMethodError) {  }
-    try { moduleName = arguments.moduleName } catch (_: NoSuchMethodError) {  }
-    try { libraries = arguments.libraries?.split(File.pathSeparator)?.map { kotlin.io.path.Path(it) } } catch (_: NoSuchMethodError) {  }
-    try { main = arguments.main?.let { JsMainCallMode.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::main, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -main value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
-    try { nopack = arguments.nopack } catch (_: NoSuchMethodError) {  }
-    try { sourceMap = arguments.sourceMap } catch (_: NoSuchMethodError) {  }
-    try { sourceMapBaseDirs = arguments.sourceMapBaseDirs?.split(File.pathSeparator)?.map { kotlin.io.path.Path(it) } } catch (_: NoSuchMethodError) {  }
-    try { sourceMapEmbedSources = arguments.sourceMapEmbedSources?.let { SourceMapEmbedSources.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::sourceMapEmbedSources, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -source-map-embed-sources value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
-    try { sourceMapNamesPolicy = arguments.sourceMapNamesPolicy?.let { SourceMapNamesPolicy.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::sourceMapNamesPolicy, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -source-map-names-policy value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
-    try { sourceMapPrefix = arguments.sourceMapPrefix } catch (_: NoSuchMethodError) {  }
+    cacheDirectory = arguments.cacheDirectory?.let { kotlin.io.path.Path(it) }
+    enableAdvancedOptimizations = arguments.enableAdvancedOptimizations
+    friendModules = arguments.friendModules?.split(File.pathSeparator)?.map { kotlin.io.path.Path(it) }
+    friendModulesDisabled = arguments.friendModulesDisabled
+    generateDts = arguments.generateDts
+    includes = arguments.includes?.let { kotlin.io.path.Path(it) }
+    irDce = arguments.irDce
+    irDcePrintReachabilityInfo = arguments.irDcePrintReachabilityInfo
+    try { irDceRuntimeDiagnostic = arguments.irDceRuntimeDiagnostic?.let { JsIrDiagnosticMode.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::irDceRuntimeDiagnostic, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xir-dce-runtime-diagnostic value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") }
+    irModuleName = arguments.irModuleName
+    irPerModuleOutputName = arguments.irPerModuleOutputName
+    irProduceJs = arguments.irProduceJs
+    irProduceKlibDir = arguments.irProduceKlibDir
+    irProduceKlibFile = arguments.irProduceKlibFile
+    irPropertyLazyInitialization = arguments.irPropertyLazyInitialization
+    strictImplicitExportType = arguments.strictImplicitExportType
+    outputDir = arguments.outputDir?.let { kotlin.io.path.Path(it) }
+    moduleName = arguments.moduleName
+    libraries = arguments.libraries?.split(File.pathSeparator)?.map { kotlin.io.path.Path(it) }
+    try { main = arguments.main?.let { JsMainCallMode.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::main, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -main value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") }
+    nopack = arguments.nopack
+    sourceMap = arguments.sourceMap
+    sourceMapBaseDirs = arguments.sourceMapBaseDirs?.split(File.pathSeparator)?.map { kotlin.io.path.Path(it) }
+    try { sourceMapEmbedSources = arguments.sourceMapEmbedSources?.let { SourceMapEmbedSources.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::sourceMapEmbedSources, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -source-map-embed-sources value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") }
+    try { sourceMapNamesPolicy = arguments.sourceMapNamesPolicy?.let { SourceMapNamesPolicy.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::sourceMapNamesPolicy, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -source-map-names-policy value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") }
+    sourceMapPrefix = arguments.sourceMapPrefix
     internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })
   }
 
