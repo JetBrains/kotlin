@@ -48,10 +48,10 @@ internal class KotlinWasmNode(
 
     override val executable: Provider<String> = nodeJsEnvSpec.executable
 
-    override fun createTestExecutionSpec(
+    override fun createTestExecutionSpecification(
         task: KotlinJsTest,
         launchOpts: ProcessLaunchOptions,
-        nodeJsArgs: MutableList<String>,
+        toolArgs: List<String>,
         debug: Boolean,
     ): TCServiceMessagesTestExecutionSpec {
         val testRunnerFile = writeWasmUnitTestRunner(
@@ -74,7 +74,7 @@ internal class KotlinWasmNode(
 
         val args = mutableListOf<String>()
         with(args) {
-            addAll(nodeJsArgs)
+            addAll(toolArgs)
             add(testRunnerFile.absolutePath)
             addAll(cliArgs.toList())
         }

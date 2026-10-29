@@ -11,6 +11,7 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.internal.tasks.testing.TestExecuter
 import org.gradle.api.internal.tasks.testing.TestExecutionSpec
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 import org.jetbrains.kotlin.gradle.utils.domainObjectSet
 import org.jetbrains.kotlin.gradle.utils.newFileProperty
 import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions.Companion.processLaunchOptions
+import org.jetbrains.kotlin.gradle.utils.providerWithLazyConvention
 import javax.inject.Inject
 
 @DisableCachingByDefault
@@ -103,6 +105,16 @@ internal constructor(
     }
 
     @Input
+    val toolArgs: ListProperty<String> = objects.listProperty(String::class.java)
+        .value(
+            project.objects.providerWithLazyConvention {
+                @Suppress("DEPRECATION")
+                nodeJsArgs
+            }
+        )
+
+    @Deprecated("Use toolArgs instead. Scheduled for removal in Kotlin 2.7")
+    @Internal
     val nodeJsArgs: MutableList<String> =
         mutableListOf()
 
@@ -155,10 +167,10 @@ internal constructor(
             environment.putAll(this@KotlinJsTest.environment)
         }
 
-        return testFramework!!.createTestExecutionSpec(
+        return testFramework!!.createTestExecutionSpecification(
             task = this,
             launchOpts = launchOpts,
-            nodeJsArgs = nodeJsArgs,
+            toolArgs = toolArgs.getOrElse(emptyList()),
             debug = debug
         )
     }
