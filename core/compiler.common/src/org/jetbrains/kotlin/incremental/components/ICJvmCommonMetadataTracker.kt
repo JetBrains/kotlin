@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.incremental.components
 
 import java.io.File
 
-interface ICJvmMetadataTracker {
+interface ICJvmCommonMetadataTracker {
     fun report(fragmentName: String, sourceFile: File, metadata: ByteArray)
 
-    object DoNothing : ICJvmMetadataTracker {
+    object DoNothing : ICJvmCommonMetadataTracker {
         override fun report(fragmentName: String, sourceFile: File, metadata: ByteArray) {
         }
     }

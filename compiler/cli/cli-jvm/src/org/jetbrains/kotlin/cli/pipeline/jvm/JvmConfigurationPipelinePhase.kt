@@ -125,7 +125,7 @@ object JvmConfigurationUpdater : ConfigurationUpdater<K2JVMCompilerArguments>() 
         incrementalCompilationComponents = services[IncrementalCompilationComponents::class.java]
 
         if (arguments.multiPlatform && arguments.useMetadataOnIncrementalClasspath) {
-            icMetadataTracker = services[ICJvmMetadataTracker::class.java]
+            icCommonMetadataTracker = services[ICJvmCommonMetadataTracker::class.java]
         }
     }
 

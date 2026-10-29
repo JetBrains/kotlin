@@ -108,12 +108,12 @@ fun updateIncrementalCache(
     generatedFiles: Iterable<GeneratedFile>,
     cache: IncrementalJvmCache,
     changesCollector: ChangesCollector,
-    jvmMetadataTracker: ICJvmMetadataTrackerImpl?,
+    jvmCommonMetadataTracker: ICJvmCommonMetadataTrackerImpl?,
 ) {
     // Store common-fragment metadata before class files: an `expect` declaration and its `actual` share an FqName,
     // so the platform proto is recorded last.
-    jvmMetadataTracker?.metadataByModule?.forEach { [moduleName, metadata] ->
-        cache.saveMetadataToCache(moduleName, metadata, changesCollector)
+    jvmCommonMetadataTracker?.commonMetadataByModule?.forEach { [moduleName, metadata] ->
+        cache.saveCommonMetadataToCache(moduleName, metadata, changesCollector)
     }
 
     for (generatedFile in generatedFiles) {
