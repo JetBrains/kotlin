@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkAnnotationsAreR
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.canHaveDeferredReturnTypeCalculation
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
@@ -132,9 +131,6 @@ private class LLFirAnnotationArgumentsTargetResolver(resolveTarget: LLFirResolve
     }
 
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
-        // There is no sense to resolve such declarations as they do not have their own annotations
-        if (target is FirCallableDeclaration && target.canHaveDeferredReturnTypeCalculation) return
-
         resolveWithKeeper(
             target,
             target.llFirSession,

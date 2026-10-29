@@ -13,17 +13,17 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.tryCollectDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.withFirDesignationEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirPhaseUpdater
+import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.fakeDeclarationOriginals
+import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.isFakeDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFlightRecorder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
-import org.jetbrains.kotlin.fir.canHaveDeferredReturnTypeCalculation
 import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.componentFunctionSymbol
 import org.jetbrains.kotlin.fir.declarations.utils.correspondingValueParameterFromPrimaryConstructor
-import org.jetbrains.kotlin.fir.originalIfFakeOverrideOrDelegated
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
@@ -49,6 +49,9 @@ import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
  * dependencies or outer declarations are resolved before the target one.
  * We have [resolveDependencies] method which describes common dependencies between declarations.
  * Also, each [LLFirResolveTarget] can define phase-specific rules.
+ *
+ * [Fake declarations][isFakeDeclaration] are not transformed at all, as they share their content with the original declarations.
+ * Instead, [doLazyResolveFakeDeclarationUnderLock] is executed for them.
  *
  * Implementations:
  * - [COMPILER_REQUIRED_ANNOTATIONS][FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS] – [LLFirCompilerRequiredAnnotationsTargetResolver]
@@ -139,10 +142,9 @@ internal sealed class LLFirTargetResolver(
         if (skipDependencyTargetResolutionStep) return
 
         when {
-            // Fake or delegate declaration shared types and annotations from the original one
-            target is FirCallableDeclaration && target.canHaveDeferredReturnTypeCalculation -> {
-                val originalDeclaration = target.originalIfFakeOverrideOrDelegated()
-                originalDeclaration?.lazyResolveToPhase(resolverPhase)
+            // Fake declarations share their content with the original ones
+            target is FirCallableDeclaration && target.isFakeDeclaration -> {
+                target.fakeDeclarationOriginals.forEach { it.lazyResolveToPhase(resolverPhase) }
             }
 
             target is FirProperty -> {
@@ -256,8 +258,28 @@ internal sealed class LLFirTargetResolver(
 
     /**
      * This method executes **under the lock** of [target].
+     *
+     * It is not executed for [fake declarations][isFakeDeclaration].
+     *
+     * @see doLazyResolveFakeDeclarationUnderLock
      */
     protected abstract fun doLazyResolveUnderLock(target: FirElementWithResolveState)
+
+    /**
+     * This method executes **under the lock** of [target] instead of [doLazyResolveUnderLock].
+     *
+     * The shared content of [target] is already resolved by [resolveDependencies] via
+     * [fakeDeclarationOriginals], so only the content which is not shared has to be computed here.
+     */
+    protected open fun doLazyResolveFakeDeclarationUnderLock(target: FirCallableDeclaration) {}
+
+    private fun doLazyResolveUnderLockWithFakeDeclarations(target: FirElementWithResolveState) {
+        if (target is FirCallableDeclaration && target.isFakeDeclaration) {
+            doLazyResolveFakeDeclarationUnderLock(target)
+        } else {
+            doLazyResolveUnderLock(target)
+        }
+    }
 
     /**
      * Executes the resolution.
@@ -296,7 +318,7 @@ internal sealed class LLFirTargetResolver(
                     target,
                     resolverPhase,
                     actionUnderLock = {
-                        doLazyResolveUnderLock(target)
+                        doLazyResolveUnderLockWithFakeDeclarations(target)
                         updatePhaseForDeclarationInternals(target)
                     },
                     actionOnCycle = {
@@ -305,7 +327,7 @@ internal sealed class LLFirTargetResolver(
                 )
             } else {
                 performCustomResolveUnderLock(target) {
-                    doLazyResolveUnderLock(target)
+                    doLazyResolveUnderLockWithFakeDeclarations(target)
                 }
             }
 
