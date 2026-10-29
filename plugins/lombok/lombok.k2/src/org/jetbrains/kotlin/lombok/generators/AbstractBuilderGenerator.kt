@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.StandardTypes
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.hasExplicitReturnType
 import org.jetbrains.kotlin.fir.analysis.checkers.getAllowedAnnotationTargets
 import org.jetbrains.kotlin.fir.analysis.checkers.typeParameterSymbols
 import org.jetbrains.kotlin.fir.caches.FirCache
@@ -451,6 +452,8 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 val itemSymbol = item.variable.symbol
                 val singular = item.singular
                 val newSource = item.variable.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated.Default)
+                // We don't want to generate builder methods for fields that have implicit return types (KT-90508)
+                if (!builderSymbol.hasJavaOrigin && (itemSymbol.fir.returnTypeRef is FirImplicitTypeRef || !itemSymbol.hasExplicitReturnType)) continue
 
                 generatedVariables.addIfNonClashing(itemName, existingVariableNames) {
                     val key = BuilderGeneratorKey(BuilderDeclarationType.Field)
