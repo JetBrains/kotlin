@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
+import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver.Companion.gradleArtifact
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeaKotlinBinaryCoordinates
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution
 import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
@@ -35,7 +36,9 @@ internal object IdeOriginalMetadataDependencyResolver : IdeDependencyResolver {
                 binaryType = IdeaKotlinBinaryDependency.KOTLIN_COMPILE_BINARY_TYPE,
                 classpath = IdeaKotlinClasspath(artifact.file),
                 coordinates = IdeaKotlinBinaryCoordinates(moduleId, artifact.variant.capabilities, artifact.variant.attributes)
-            )
+            ).apply {
+                gradleArtifact = artifact
+            }
         }.toSet()
     }
 }
