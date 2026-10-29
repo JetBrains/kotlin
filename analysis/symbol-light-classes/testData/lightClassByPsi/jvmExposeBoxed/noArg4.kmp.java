@@ -13,6 +13,15 @@ public final class IntWrapper /* IntWrapper*/ {
   public int hashCode();//  hashCode()
 }
 
+@kotlin.OptIn(markerClass = {kotlin.ExperimentalStdlibApi.class})
+public final class RegularClassWithDependentDefault /* RegularClassWithDependentDefault*/ {
+  private final int property;
+
+  private  RegularClassWithDependentDefault(int, boolean, boolean);//  .ctor(int, boolean, boolean)
+
+  public  RegularClassWithDependentDefault();//  .ctor()
+}
+
 public final class RegularClassWithValueConstructor /* RegularClassWithValueConstructor*/ {
   private final int property;
 
