@@ -184,7 +184,7 @@ class IncrementalCompilationCustomScopeTest {
         override fun getStableMultifileFacadeParts(facadeInternalName: String): Collection<String>? = null
         override fun getPackagePartData(partInternalName: String): JvmPackagePartProto? = null
         override fun getModuleMappingData(): ByteArray? = null
-        override fun getMetadata(fragmentName: String): Map<File, ByteArray> = emptyMap()
+        override fun getCommonMetadata(fragmentName: String): Map<File, ByteArray> = emptyMap()
         override fun getClassFilePath(internalClassName: String): String = internalClassName
         override fun close() {}
     }

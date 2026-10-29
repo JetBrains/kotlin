@@ -26,7 +26,7 @@ internal class IncrementalCacheAdapter(private val cache: CompilerIncrementalCac
 
     override fun getModuleMappingData(): ByteArray? = cache.getModuleMappingData()
 
-    override fun getMetadata(fragmentName: String): Map<File, ByteArray> = unsupported()
+    override fun getCommonMetadata(fragmentName: String): Map<File, ByteArray> = unsupported()
 
     override fun getClassFilePath(internalClassName: String): String = unsupported()
 

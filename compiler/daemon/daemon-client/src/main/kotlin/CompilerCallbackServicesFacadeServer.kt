@@ -64,8 +64,8 @@ open class CompilerCallbackServicesFacadeServer(
     override fun incrementalCache_getModuleMappingData(target: TargetId): ByteArray? =
         incrementalCompilationComponents!!.getIncrementalCache(target).getModuleMappingData()
 
-    override fun incrementalCache_getMetadata(target: TargetId, fragmentName: String): Map<File, ByteArray> =
-        incrementalCompilationComponents!!.getIncrementalCache(target).getMetadata(fragmentName)
+    override fun incrementalCache_getCommonMetadata(target: TargetId, fragmentName: String): Map<File, ByteArray> =
+        incrementalCompilationComponents!!.getIncrementalCache(target).getCommonMetadata(fragmentName)
 
     override fun incrementalCache_getClassFilePath(target: TargetId, internalClassName: String): String =
         incrementalCompilationComponents!!.getIncrementalCache(target).getClassFilePath(internalClassName)

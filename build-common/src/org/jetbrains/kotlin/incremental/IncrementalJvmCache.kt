@@ -65,8 +65,8 @@ open class IncrementalJvmCache(
         private const val INLINE_FUNCTIONS = "inline-functions"
         private const val INTERNAL_NAME_TO_SOURCE = "internal-name-to-source"
         private const val JAVA_SOURCES_PROTO_MAP = "java-sources-proto-map"
-        private const val METADATA_MAP = "metadata"
-        private const val DIRTY_METADATA_MAP = "dirty-metadata"
+        private const val COMMON_METADATA_MAP = "metadata"
+        private const val DIRTY_COMMON_METADATA_MAP = "dirty-metadata"
 
         private const val MODULE_MAPPING_FILE_NAME = "." + ModuleMapping.MAPPING_FILE_EXT
     }
@@ -88,11 +88,10 @@ open class IncrementalJvmCache(
     // gradle only
     private val javaSourcesProtoMap = registerMap(JavaSourcesProtoMap(JAVA_SOURCES_PROTO_MAP.storageFile, icContext))
 
-    private val metadataMap = registerMap(MetadataMap(METADATA_MAP.storageFile, icContext))
-    private val dirtyMetadataMap = registerMap(DirtyMetadataMap(DIRTY_METADATA_MAP.storageFile, icContext))
-
     // KMP only
-    private val protoDataProvider by lazy(LazyThreadSafetyMode.NONE) { ProtoDataProvider(KlibMetadataSerializerProtocol) }
+    private val protoDataProvider = ProtoDataProvider(KlibMetadataSerializerProtocol)
+    private val commonMetadataMap = registerMap(CommonMetadataMap(COMMON_METADATA_MAP.storageFile, protoDataProvider, icContext))
+    private val dirtyCommonMetadataMap = registerMap(DirtyCommonMetadataMap(DIRTY_COMMON_METADATA_MAP.storageFile, icContext))
 
     private val outputDir by lazy(LazyThreadSafetyMode.NONE) { requireNotNull(targetOutputDir) { "Target is expected to have output directory" } }
 
@@ -120,12 +119,12 @@ open class IncrementalJvmCache(
     override fun markDirty(removedAndCompiledSources: Collection<File>) {
         super.markDirty(removedAndCompiledSources)
 
-        val removedAndCompiledMetadata = removedAndCompiledSources.filter { source ->
-            metadataMap.keys.any { fragmentName ->
-                metadataMap[fragmentName, source] != null
+        val removedAndCompiledCommonMetadata = removedAndCompiledSources.filter { source ->
+            commonMetadataMap.keys.any { fragmentName ->
+                commonMetadataMap[fragmentName, source] != null
             }
         }
-        dirtyMetadataMap.markDirty(removedAndCompiledMetadata)
+        dirtyCommonMetadataMap.markDirty(removedAndCompiledCommonMetadata)
     }
 
     override fun getClassFilePath(internalClassName: String): String {
@@ -152,9 +151,9 @@ open class IncrementalJvmCache(
         saveClassToCache(KotlinClassInfo.createFrom(generatedClass.outputClass), generatedClass.sourceFiles, changesCollector)
     }
 
-    fun saveMetadataToCache(fragmentName: String, metadata: Map<File, ByteArray>, changesCollector: ChangesCollector) {
-        dirtyMetadataMap.notDirty(metadata.keys)
-        metadataMap.putAndCollect(fragmentName, metadata, changesCollector)
+    fun saveCommonMetadataToCache(fragmentName: String, metadata: Map<File, ByteArray>, changesCollector: ChangesCollector) {
+        dirtyCommonMetadataMap.notDirty(metadata.keys)
+        commonMetadataMap.putAndCollect(fragmentName, metadata, changesCollector)
     }
 
     /**
@@ -366,11 +365,11 @@ open class IncrementalJvmCache(
 
         dirtyOutputClassesMap.clear()
 
-        val dirtySources = dirtyMetadataMap.getDirtySources()
-        for (fragmentName in metadataMap.keys) {
-            metadataMap.remove(fragmentName, dirtySources, changesCollector)
+        val dirtyCommonMetadataSources = dirtyCommonMetadataMap.getDirtySources()
+        for (fragmentName in commonMetadataMap.keys) {
+            commonMetadataMap.remove(fragmentName, dirtyCommonMetadataSources, changesCollector)
         }
-        dirtyMetadataMap.clear()
+        dirtyCommonMetadataMap.clear()
     }
 
     override fun getObsoletePackageParts(): Collection<String> {
@@ -405,11 +404,11 @@ open class IncrementalJvmCache(
         return protoMap[JvmClassName.byInternalName(MODULE_MAPPING_FILE_NAME)]?.bytes
     }
 
-    override fun getMetadata(fragmentName: String): Map<File, ByteArray> {
-        val metadata = metadataMap[fragmentName] ?: return emptyMap()
-        val dirtySources = dirtyMetadataMap.getDirtySources()
+    override fun getCommonMetadata(fragmentName: String): Map<File, ByteArray> {
+        val metadata = commonMetadataMap[fragmentName] ?: return emptyMap()
+        val dirtyCommonMetadataSources = dirtyCommonMetadataMap.getDirtySources()
 
-        return if (dirtySources.isEmpty()) metadata else metadata.filterKeys { it !in dirtySources }
+        return if (dirtyCommonMetadataSources.isEmpty()) metadata else metadata.filterKeys { it !in dirtyCommonMetadataSources }
     }
 
     private inner class ProtoMap(
@@ -677,100 +676,6 @@ open class IncrementalJvmCache(
 
         override fun dumpValue(value: Map<InlineFunctionOrAccessor, Long>): String =
             value.mapKeys { it.key.jvmMethodSignature.asString() }.dumpMap { java.lang.Long.toHexString(it) }
-    }
-
-    private inner class MetadataMap(
-        storageFile: File,
-        icContext: IncrementalCompilationContext,
-    ) : BasicStringMap<Map<File, ByteArray>>(
-        storageFile,
-        MapExternalizer(icContext.fileDescriptorForSourceFiles, ByteArrayExternalizer),
-        icContext,
-    ) {
-        operator fun get(key: String, file: File): ByteArray? = storage[key]?.get(file)
-
-        @Synchronized
-        fun putAndCollect(key: String, entries: Map<File, ByteArray>, changesCollector: ChangesCollector) {
-            if (entries.isEmpty()) return
-
-            val old = storage[key]
-            for ([file, newBytes] in entries) {
-                collectChanges(file, old?.get(file), newBytes, changesCollector)
-            }
-
-            val merged = old?.let { HashMap(it) } ?: HashMap(entries.size)
-            merged.putAll(entries)
-
-            storage[key] = merged
-
-            for ([file, _] in entries) {
-                debugLog("[$key] Saved metadata for file: ${file.path}")
-            }
-        }
-
-        @Synchronized
-        fun remove(key: String, files: Collection<File>, changesCollector: ChangesCollector) {
-            val inner = storage[key] ?: return
-
-            val filesToRemove = files.filterTo(hashSetOf()) { it in inner }
-            if (filesToRemove.isEmpty()) return
-
-            for (file in filesToRemove) {
-                collectChanges(file, inner.getValue(file), null, changesCollector)
-            }
-
-            val merged = HashMap(inner).apply { keys.removeAll(filesToRemove) }
-
-            if (merged.isEmpty()) {
-                storage.remove(key)
-            } else {
-                storage[key] = merged
-            }
-
-            for (file in filesToRemove) {
-                debugLog("[$key] Removed metadata for file: ${file.path}")
-            }
-        }
-
-        private fun collectChanges(sourceFile: File, oldBytes: ByteArray?, newBytes: ByteArray?, changesCollector: ChangesCollector) {
-            if (oldBytes != null && newBytes != null && oldBytes.contentEquals(newBytes)) return
-
-            val oldProtoMap = oldBytes?.let { protoDataProvider(sourceFile, it) } ?: emptyMap()
-            val newProtoMap = newBytes?.let { protoDataProvider(sourceFile, it) } ?: emptyMap()
-
-            for (classId in oldProtoMap.keys + newProtoMap.keys) {
-                changesCollector.collectProtoChanges(oldProtoMap[classId], newProtoMap[classId])
-            }
-        }
-
-        override fun dumpValue(value: Map<File, ByteArray>): String =
-            value.entries.sortedBy { it.key.path }
-                .joinToString(", ", "{", "}") { "${it.key} -> ${java.lang.Long.toHexString(it.value.md5())}" }
-    }
-
-    /**
-     * The source files whose entries in [MetadataMap] are stale, in the same way [dirtyOutputClassesMap] tracks stale class files.
-     */
-    private inner class DirtyMetadataMap(
-        storageFile: File,
-        icContext: IncrementalCompilationContext,
-    ) : AbstractBasicMap<File, Boolean>(storageFile, icContext.fileDescriptorForSourceFiles, BooleanDataDescriptor.INSTANCE, icContext) {
-        @Synchronized
-        fun markDirty(sourceFiles: Collection<File>) {
-            for (sourceFile in sourceFiles) {
-                this[sourceFile] = true
-            }
-        }
-
-        @Synchronized
-        fun notDirty(sourceFiles: Collection<File>) {
-            for (sourceFile in sourceFiles) {
-                remove(sourceFile)
-            }
-        }
-
-        @Synchronized
-        fun getDirtySources(): Set<File> = keys
     }
 
     private fun KotlinClassInfo.scopeFqName() = when (classKind) {
