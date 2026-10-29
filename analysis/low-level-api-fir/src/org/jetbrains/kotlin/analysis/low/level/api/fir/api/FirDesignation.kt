@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.api
 
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
+import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.isFakeDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirDanglingFileSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirLibraryOrLibrarySourceResolvableModuleSession
@@ -138,7 +139,7 @@ private fun tryCollectDesignation(providedFile: FirFile?, target: FirElementWith
             -> {
             // We shouldn't try to build a designation path for such fake declarations as they
             // do not depend on outer classes during resolution
-            if (target.canHaveDeferredReturnTypeCalculation) return FirDesignation(target)
+            if (target.isFakeDeclaration) return FirDesignation(target)
 
             if (target.symbol.isLocalForLazyResolutionPurposes) {
                 return null
