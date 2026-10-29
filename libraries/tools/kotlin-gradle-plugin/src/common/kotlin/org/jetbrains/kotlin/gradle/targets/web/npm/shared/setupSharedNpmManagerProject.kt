@@ -28,7 +28,7 @@ internal fun setupSharedNpmProject(
     project.registerTask<KotlinSetupSharedNpmProjectTask>(platform.setupSharedNpmProjectTaskName) { task ->
         task.description =
             "Assembles the '$rootDirectoryName' shared npm project from the projects declared on '${platform.npmSharedDependenciesConfigurationName}'"
-        task.packageJsonFiles.from(
+        task.reportFiles.from(
             npmDependenciesReportResolver.incoming.artifactView { it.lenient(true) }.files
         )
         task.rootPackageName.set(project.name)

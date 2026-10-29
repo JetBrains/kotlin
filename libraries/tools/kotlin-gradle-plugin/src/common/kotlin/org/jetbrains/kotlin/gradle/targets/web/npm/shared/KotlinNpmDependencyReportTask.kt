@@ -17,7 +17,6 @@ import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Nested
-import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
@@ -31,15 +30,17 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJsonDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.SemVer
 import org.jetbrains.kotlin.gradle.targets.js.npm.isCompatibleArchive
-import org.jetbrains.kotlin.gradle.targets.js.npm.packageJson
 import java.io.File
 import java.util.zip.ZipFile
 
 /**
- * Writes the `package.json` of one JS or WasmJS compilation into [outputFile].
+ * Writes the [NpmDependencyReport] of one JS or WasmJS compilation into [outputFile].
  */
 @CacheableTask
 internal abstract class KotlinNpmDependencyReportTask : DefaultTask() {
+
+    @get:Input
+    abstract val target: Property<String>
 
     @get:Nested
     abstract val compilation: CompilationNpmDependencies
@@ -53,23 +54,21 @@ internal abstract class KotlinNpmDependencyReportTask : DefaultTask() {
         val direct = compilation.directDependencies.get()
         val others = compilation.toolDependencies.get() + compilation.transitiveArtifacts.files.flatMap { it.collectNpmDependencies() }
 
-        packageJson(
-            name = moduleName,
-            version = compilation.packageVersion.get(),
-            main = compilation.main.get(),
-            types = compilation.types.orNull,
-            npmDependencies = disambiguateDependencies(
-                direct.map { it.toDeclaration() },
-                others.map { it.toDeclaration() },
-                logger,
-                moduleName,
-            ),
-            packageJsonHandlers = emptyList(),
-        ).saveTo(outputFile.get().asFile)
+        val declarations = disambiguateDependencies(
+            direct.map { it.toDeclaration() },
+            others.map { it.toDeclaration() },
+            logger,
+            moduleName,
+        )
+        NpmDependencyReport(target.get(), mapOf(moduleName to declarations.toCompilationReport()))
+            .writeTo(outputFile.get().asFile)
     }
 
-    /** Either `package.json`, or a klib with its `package.json` inside. */
+    /** A dependency's report, its `package.json`, or a klib with `package.json` inside. */
     private fun File.collectNpmDependencies(): Collection<KotlinNpmDependency> {
+        if (name == NPM_DEPENDENCY_REPORT_FILE_NAME) {
+            return readNpmDependencyReport(this).compilations.values.flatMap { it.npmDependencies() }
+        }
         val packageJsonText = when {
             name == NpmProject.PACKAGE_JSON -> readText()
             isCompatibleArchive -> ZipFile(this).use { zip ->
@@ -89,16 +88,6 @@ internal abstract class CompilationNpmDependencies {
     @get:Input
     abstract val moduleName: Property<String>
 
-    @get:Input
-    abstract val packageVersion: Property<String>
-
-    @get:Input
-    abstract val main: Property<String>
-
-    @get:Input
-    @get:Optional
-    abstract val types: Property<String>
-
     /** Declared by the user with `npm`, `npmDev`, `npmOptional` and `npmPeer`. */
     // TODO KT-87942 to be removed
     @get:Input
@@ -108,20 +97,42 @@ internal abstract class CompilationNpmDependencies {
     @get:Input
     abstract val toolDependencies: SetProperty<DefaultKotlinNpmDependency>
 
-    /** Dependency projects' package.json and Maven klibs. */
+    /** Dependency projects' reports and Maven klibs. */
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.NONE)
     abstract val transitiveArtifacts: ConfigurableFileCollection
 }
 
 /** `devDependencies` are not inherited. */
-private fun PackageJsonDependencies.npmDependencies(): List<KotlinNpmDependency> {
+private fun PackageJsonDependencies.npmDependencies(): List<KotlinNpmDependency> =
+    inheritedNpmDependencies(dependencies, peerDependencies, optionalDependencies)
+
+private fun CompilationNpmDependencyReport.npmDependencies(): List<KotlinNpmDependency> =
+    inheritedNpmDependencies(dependencies, peerDependencies, optionalDependencies)
+
+private fun inheritedNpmDependencies(
+    dependencies: Map<String, String>,
+    peerDependencies: Map<String, String>,
+    optionalDependencies: Map<String, String>,
+): List<KotlinNpmDependency> {
     fun scope(scope: KotlinNpmDependency.Scope, dependencies: Map<String, String>) =
         dependencies.map { (name, version) -> DefaultKotlinNpmDependency(name, version, scope) }
 
     return scope(KotlinNpmDependency.Scope.NORMAL, dependencies) +
             scope(KotlinNpmDependency.Scope.PEER, peerDependencies) +
             scope(KotlinNpmDependency.Scope.OPTIONAL, optionalDependencies)
+}
+
+private fun Collection<NpmDependencyDeclaration>.toCompilationReport(): CompilationNpmDependencyReport {
+    fun scope(scope: NpmDependencyScopeDeprecated) =
+        filter { it.scope == scope }.associate { it.name to it.version }.toSortedMap()
+
+    return CompilationNpmDependencyReport(
+        dependencies = scope(NpmDependencyScopeDeprecated.NORMAL),
+        devDependencies = scope(NpmDependencyScopeDeprecated.DEV),
+        peerDependencies = scope(NpmDependencyScopeDeprecated.PEER),
+        optionalDependencies = scope(NpmDependencyScopeDeprecated.OPTIONAL),
+    )
 }
 
 private fun KotlinNpmDependency.toDeclaration(): NpmDependencyDeclaration =

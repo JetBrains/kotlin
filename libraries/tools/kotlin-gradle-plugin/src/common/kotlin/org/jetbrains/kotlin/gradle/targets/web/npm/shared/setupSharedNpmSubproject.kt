@@ -18,9 +18,7 @@ import org.jetbrains.kotlin.gradle.targets.js.NpmPackageVersion
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.JsPlatformDisambiguator
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependenciesTask
-import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguator
@@ -46,10 +44,11 @@ internal val SetupNpmDependencyReportSideEffect = KotlinTargetSideEffect { targe
         val npmRuntimeDependenciesResolver = project.createNpmRuntimeDependenciesResolver(compilation)
         val reportTask = project.registerTask<KotlinNpmDependencyReportTask>(compilation.npmDependenciesReportTaskName) { task ->
             task.description = "Collects the npm dependencies of $compilation."
+            task.target.convention(platformDirectoryName)
             task.compilation.configure(project, compilation, npmRuntimeDependenciesResolver, platform)
             task.outputFile.convention(
                 project.layout.buildDirectory.file(
-                    compilation.outputModuleName.map { "kotlin-npm/$platformDirectoryName/shared-package-json/$it/${NpmProject.PACKAGE_JSON}" }
+                    compilation.outputModuleName.map { "kotlin-npm/$platformDirectoryName/npm-dep-reports/$it/$NPM_DEPENDENCY_REPORT_FILE_NAME" }
                 )
             )
         }
@@ -71,11 +70,7 @@ private fun CompilationNpmDependencies.configure(
     npmRuntimeDependenciesResolver: Configuration,
     platform: HasPlatformDisambiguator,
 ) {
-    val npmProject = compilation.npmProject
     moduleName.convention(compilation.outputModuleName)
-    packageVersion.convention(project.provider { project.version.toString() })
-    main.convention(npmProject.main)
-    types.convention(npmProject.typesFilePath)
     directDependencies.convention(project.provider { collectDirectDeclaredNpmDependencies(compilation) })
     toolDependencies.convention(project.provider { project.collectDevNpmDependencies(compilation) })
     transitiveArtifacts.from(project.npmRuntimeDependenciesReports(npmRuntimeDependenciesResolver, platform))
