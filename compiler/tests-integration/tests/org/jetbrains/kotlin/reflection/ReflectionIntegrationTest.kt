@@ -43,28 +43,12 @@ class ReflectionIntegrationTest {
     // This test checks that we use the correct class loader to load .kotlin_builtins resource files.
     // On Android, the class loader used to load the application classes differs from the boot class loader (which loads core JDK classes),
     // so attempting to find kotlin/kotlin.kotlin_builtins in the same class loader that found java.lang.Object can fail.
-    // We should always use the class loader that loads stdlib class files to locate .kotlin_builtins resource files
+    // We should always use the class loader that loads stdlib class files to locate .kotlin_builtins resource files.
+    // Also check that members of mapped built-in classes can load non-mapped stdlib types (e.g. `kotlin.ranges.IntRange` or
+    // `kotlin.Unit`) referenced from their signatures, even though the class loader of the built-in class is the JDK one.
     @Test
     fun testClassLoaderForBuiltIns() {
-        val tmpdir = KotlinTestUtils.tmpDirForTest(testInfo)
-
-        val root = KtTestUtil.getTestDataFileLocatedInCompilerTestData("reflection/classLoaderForBuiltIns").path
-        compileJavaFiles(
-            listOf(File("$root/Main.java")),
-            listOf("-d", tmpdir.absolutePath)
-        ).assertSuccessful()
-
-        val lib = CompilerTestUtil.compileJvmLibrary(File("$root/test.kt"))
-
-        runJava(
-            "-ea",
-            "-classpath",
-            tmpdir.absolutePath,
-            "Main",
-            lib.absolutePath,
-            ForTestCompileRuntime.runtimeJarForTests().absolutePath,
-            ForTestCompileRuntime.reflectJarForTests().absolutePath,
-        )
+        compileAndRunMainWithLibrary(KtTestUtil.getTestDataFileLocatedInCompilerTestData("reflection/classLoaderForBuiltIns").path)
     }
 
     // This test checks that simultaneous access to kotlin-reflect from different threads works, in case the URLClassLoader instance is
@@ -151,9 +135,11 @@ class ReflectionIntegrationTest {
 
     @Test
     fun testDifferentClassLoaders() {
-        val tmpdir = KotlinTestUtils.tmpDirForTest(testInfo)
-        val root = KtTestUtil.getTestDataFileLocatedInCompilerTestData("reflection/differentClassLoaders").path
+        compileAndRunMainWithLibrary(KtTestUtil.getTestDataFileLocatedInCompilerTestData("reflection/differentClassLoaders").path)
+    }
 
+    private fun compileAndRunMainWithLibrary(root: String) {
+        val tmpdir = KotlinTestUtils.tmpDirForTest(testInfo)
         compileJavaFiles(
             listOf(File("$root/Main.java")),
             listOf("-d", tmpdir.absolutePath)
