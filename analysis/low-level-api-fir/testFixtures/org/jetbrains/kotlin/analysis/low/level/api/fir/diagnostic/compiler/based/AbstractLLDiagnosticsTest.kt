@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.utils.bind
 abstract class AbstractLLDiagnosticsTest : AbstractLLCompilerBasedTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         with(builder) {
+            useDirectives(LLDiagnosticsDirectives)
             baseFirDiagnosticTestConfiguration(
                 frontendFacade = ::LowLevelFirFrontendFacade.bind(LLFirAnalyzerFacadeFactoryWithoutPreresolve),
                 testDataConsistencyHandler = ::ReversedFirIdenticalChecker,
@@ -41,6 +42,10 @@ abstract class AbstractLLDiagnosticsTest : AbstractLLCompilerBasedTest() {
             useFailureSuppressors(::LLFirOnlyNonReversedTestSuppressor)
         }
     }
+}
+
+internal object LLDiagnosticsDirectives : SimpleDirectivesContainer() {
+    val MOCK_MODULE_DOES_NOT_READ_SOURCE by directive("Report that the source module does not read package 'a'")
 }
 
 private class ContractViolationSuppressor(testServices: TestServices) : TestFailureSuppressorBySingleDirective(
