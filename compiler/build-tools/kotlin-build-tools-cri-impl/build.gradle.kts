@@ -11,6 +11,8 @@ dependencies {
     compileOnly(project(":core:compiler.common"))
 
     compileOnly(libs.kotlinx.serialization.protobuf)
+    embedded(libs.kotlinx.serialization.protobuf) { isTransitive = false }
+    embedded(libs.kotlinx.serialization.core) { isTransitive = false }
 
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)

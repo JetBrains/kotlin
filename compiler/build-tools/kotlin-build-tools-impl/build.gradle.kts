@@ -15,8 +15,6 @@ dependencies {
     compileOnly(project(":compiler:build-tools:kotlin-build-tools-api-jps"))
     implementation(kotlinStdlib())
     compileOnly(libs.kotlinx.serialization.protobuf)
-    embedded(libs.kotlinx.serialization.protobuf) { isTransitive = false }
-    embedded(libs.kotlinx.serialization.core) { isTransitive = false }
     compileOnly(libs.guava)
     compileOnly(project(":compiler:cli"))
     compileOnly(project(":compiler:cli-jvm"))
