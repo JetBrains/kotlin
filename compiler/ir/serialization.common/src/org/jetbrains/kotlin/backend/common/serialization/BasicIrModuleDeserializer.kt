@@ -127,7 +127,7 @@ abstract class BasicIrModuleDeserializer(
 
         val topLevelDeclarations = fileDeserializationState.fileDeserializer.reversedSignatureIndex.keys
         topLevelDeclarations.forEach {
-            moduleReversedFileIndex.putIfAbsent(it, fileDeserializationState) // TODO Why not simple put?
+            moduleReversedFileIndex[it] = fileDeserializationState
         }
 
         if (fileStrategy.theWholeWorld) {
