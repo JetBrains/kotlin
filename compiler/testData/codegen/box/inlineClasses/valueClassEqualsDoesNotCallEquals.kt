@@ -1,6 +1,5 @@
 // ISSUE: KT-90675
 // TARGET_BACKEND: JS_IR, JS_IR_ES6
-// IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_FIRST_STAGE: JS:1.9,2.0,2.1,2.2,2.3,2.4
 // IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE: JS:2.3,2.4
 // `==` on a value class with the generated `equals` must compare the underlying values without boxing and calling `equals`.
 // Native has the same optimization, but this detection technique (patching `equals` on the boxed prototype) is JS-only.

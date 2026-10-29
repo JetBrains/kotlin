@@ -813,12 +813,26 @@ class IrDeclarationDeserializer(
         }
 
     private companion object {
-        private val declarationOriginIndex by lazy {
-            IrDeclarationOrigin.Companion::class
+        private val declarationOriginIndex: Map<String, IrDeclarationOrigin> by lazy {
+            // Legacy names of renamed origins. KLIBs store origins by name, so a renamed origin must keep resolving
+            // under its old name.
+            //
+            // GENERATED_INLINE_CLASS_MEMBER was named GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER before KT-84904.
+            // Compilers up to 2.4.10 wrote the old name, and so does the stdlib bundled with 2.4.20 and 2.4.21,
+            // which was built by an older bootstrap compiler (KT-90675).
+            val legacyNames = mapOf(
+                "GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER" to IrDeclarationOrigin.GENERATED_INLINE_CLASS_MEMBER,
+            )
+            val currentNames = IrDeclarationOrigin.Companion::class
                 .declaredMemberProperties
                 .mapNotNull { it.get(IrDeclarationOrigin.Companion) as? IrDeclarationOriginImpl }
                 .associateBy { it.name }
+            check(legacyNames.keys.none { it in currentNames }) {
+                "Legacy origin names must not collide with current ones: ${legacyNames.keys.filter { it in currentNames }}"
+            }
+            legacyNames + currentNames
         }
+
         private val unknownDeclarationOriginCache = mutableMapOf<String, IrDeclarationOrigin>()
     }
 
