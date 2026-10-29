@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.await
+import org.jetbrains.kotlin.gradle.plugin.hierarchy.awaitIsStrictSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
@@ -26,7 +27,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.tooling.core.UnsafeApi
 
 internal val KotlinSourceSet.commonizerTarget: Future<CommonizerTarget?> by extrasStoredFuture {
-    if (project.kotlinPropertiesProvider.strictKmpCompilation) {
+    if (awaitIsStrictSourceSet()) {
         val names = defaultTargetHierarchyCommonizationTargetBySourceSet[this.name] ?: return@extrasStoredFuture inferCommonizerTarget(internal.awaitPlatformCompilations())
         if (names.isEmpty()) {
             null
