@@ -45,6 +45,12 @@ class CapturedTypeCreatorDslTestCases(session: KaSession, caretToType: Map<Strin
         return session.typeCreator.capturedType(projection)
     }
 
+    fun testInvariantProjection(): KaType {
+        val type = getTypeByCaret("type")
+        val projection = session.typeCreator.typeProjection(Variance.INVARIANT, type)
+        return session.typeCreator.capturedType(projection)
+    }
+
     fun testTypeParameterOutProjection(): KaType {
         val type = getTypeByCaret("type")
         val projection = session.typeCreator.typeProjection(Variance.OUT_VARIANCE, type)
