@@ -624,6 +624,12 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
     }
 
     @Test
+    @TestMetadata("mapOverridesWithTypeParameters.kt")
+    public void testMapOverridesWithTypeParameters() {
+      run("mapOverridesWithTypeParameters.kt");
+    }
+
+    @Test
     @TestMetadata("multipleCollectionSupertypes.kt")
     public void testMultipleCollectionSupertypes() {
       run("multipleCollectionSupertypes.kt");
