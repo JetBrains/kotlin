@@ -382,6 +382,42 @@ abstract class KotlinIrLinker(
     }
 }
 
+/**
+ * Defines which declarations of a deserialized IR file are loaded, and how much of each declaration.
+ *
+ * A strategy is resolved per file by [DeserializationStrategyResolver]. Every strategy is also a resolver
+ * on its own that returns itself for any file, so it can be passed where a resolver is expected to apply
+ * the same strategy to the whole module.
+ *
+ * Regardless of the strategy, a top-level declaration referenced from any other already deserialized
+ * declaration is always deserialized on demand. Also regardless of the strategy, once any top-level declaration
+ * of a file is deserialized, the declarations that the serializer recorded as explicitly exported in that file
+ * are deserialized as well. The strategy decides what is loaded *in addition* to that, and whether function bodies
+ * are loaded.
+ *
+ * @property onDemand The file is not added to [IrModuleFragment.files] and is not reported among
+ *   [IrModuleDeserializer.fileDeserializers]. Nothing from the file is deserialized until something refers to one of
+ *   its declarations.
+ *   For example, when Kotlin/Native builds a per-file cache for a single file of `stdlib`, all other files
+ *   of `stdlib` are [onDemand]: they must not get into the module fragment (otherwise code would be generated
+ *   for them as well), but a function from such a file that is called from the cached file still has to be
+ *   resolvable.
+ * @property needBodies Bodies of all deserialized functions are loaded. For example, the main module compiled
+ *   to JavaScript needs every function body, because the backend generates code for all of them.
+ * @property explicitlyExported Declarations that the serializer recorded as explicitly exported to the compiler
+ *   are deserialized even if nothing in the file is referenced. These are the roots required by the platform rather
+ *   than by Kotlin code: `@JsExport` declarations on JS, or functions annotated with `@ExportForCppRuntime` on Native
+ *   that are called from the C++ runtime. Without this flag, they are deserialized only together with some other
+ *   referenced declaration of the same file. So a `@JsExport fun greet()` in a file of a dependency that no Kotlin
+ *   code uses anything from would be silently dropped from the resulting JS module.
+ * @property theWholeWorld All top-level declarations of the file are deserialized, whether referenced or not.
+ *   For example, the `dump-ir` command of the `klib` tool must show every declaration of the library, not only
+ *   those reachable from somewhere.
+ * @property inlineBodies Bodies of inline functions (and of local functions declared inside them) are loaded,
+ *   even if [needBodies] is not set. For example, when user code calls `list.map { it * 2 }`, the backend has to
+ *   inline the body of `kotlin.collections.map` into the call site, so it needs that body even if `stdlib` itself
+ *   is not going to be compiled.
+ */
 enum class DeserializationStrategy(
     val onDemand: Boolean = false,
     val needBodies: Boolean = false,
@@ -389,10 +425,53 @@ enum class DeserializationStrategy(
     val theWholeWorld: Boolean = false,
     val inlineBodies: Boolean = false,
 ) : DeserializationStrategyResolver {
+    /**
+     * The file is hidden from the module fragment. Nothing from it is deserialized until one of its declarations
+     * is referenced. No function bodies are loaded.
+     *
+     * Used for files of a library that are not being compiled right now but may still be referenced,
+     * e.g. all files except the cached ones when Kotlin/Native builds a per-file cache.
+     */
     ON_DEMAND(onDemand = true),
+
+    /**
+     * Everything in the file is deserialized: all top-level declarations, explicitly exported ones,
+     * and all function bodies.
+     *
+     * Used for the module that is actually being compiled into a binary, e.g. the main module in JS
+     * whole-program compilation, an exported dependency of a Kotlin/Native framework, or when dumping
+     * the whole content of a library.
+     */
     ALL(needBodies = true, explicitlyExported = true, theWholeWorld = true, inlineBodies = true),
+
+    /**
+     * Only declarations reachable from elsewhere, plus explicitly exported ones, are deserialized,
+     * and all of them get their function bodies.
+     *
+     * Used for regular dependencies in whole-program compilation (Kotlin/Native, Kotlin/JS): if the
+     * program calls only `println()` from `stdlib`, then only `println()` and whatever it transitively
+     * refers to are loaded and compiled, together with the platform roots like `@JsExport` declarations.
+     */
     EXPLICITLY_EXPORTED(needBodies = true, explicitlyExported = true, inlineBodies = true),
+
+    /**
+     * Only declarations reachable from elsewhere are deserialized, without any function bodies. Explicitly
+     * exported declarations of a file are deserialized only once something else in that file is deserialized.
+     *
+     * Used when the code of a library is already compiled and only its declarations need to be
+     * known for linkage, e.g. a library that is fully present in the Kotlin/Native cache. This is also
+     * the default strategy of [IrModuleDeserializer].
+     */
     ONLY_DECLARATION_HEADERS,
+
+    /**
+     * Only declarations reachable from elsewhere are deserialized, and only inline functions get their bodies.
+     * Explicitly exported declarations of a file are deserialized only once something else in that file is deserialized.
+     *
+     * Used when a library is not going to be compiled, but its inline functions still need to be inlined
+     * into the code that is, e.g. unmodified files during JS incremental compilation, or a Kotlin/Native
+     * library that is cached as a header cache.
+     */
     WITH_INLINE_BODIES(inlineBodies = true);
 
     override fun invoke(filePath: String) = this
