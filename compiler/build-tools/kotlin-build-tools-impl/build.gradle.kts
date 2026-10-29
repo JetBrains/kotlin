@@ -101,7 +101,7 @@ generatedSourcesTask(
             generationRoot.toString(),
             version.toString(),
             "impl",
-            "jvmCompilerArguments,wasmArguments,jsArguments,metadataArguments",
+            "jvmCompilerArguments,wasmArguments,jsArguments,metadataArguments,nativeArguments",
         )
     },
 )

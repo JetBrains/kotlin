@@ -50,6 +50,7 @@ internal val ANNOTATION_DELICATE_BUILDTOOLS_API = ClassName("org.jetbrains.kotli
 internal const val KDOC_SINCE = "@since"
 internal const val KDOC_SINCE_2_3_0 = "$KDOC_SINCE 2.3.0"
 internal const val KDOC_SINCE_2_4_20 = "$KDOC_SINCE 2.4.20"
+internal const val KDOC_SINCE_2_5_20 = "$KDOC_SINCE 2.5.20"
 
 internal val KDOC_BASE_OPTIONS_CLASS = """
     An option for configuring [%T].
@@ -82,6 +83,7 @@ internal val experimentalLevelNames = listOf(
     CompilerArgumentsLevelNames.jsArguments,
     CompilerArgumentsLevelNames.commonJsAndWasmArguments,
     CompilerArgumentsLevelNames.wasmArguments,
+    CompilerArgumentsLevelNames.nativeArguments,
 )
 
 internal val levelsSince = mapOf(
@@ -93,6 +95,7 @@ internal val levelsSince = mapOf(
     CompilerArgumentsLevelNames.commonJsAndWasmArguments to KDOC_SINCE_2_4_20,
     CompilerArgumentsLevelNames.commonKlibBasedArguments to KDOC_SINCE_2_4_20,
     CompilerArgumentsLevelNames.metadataArguments to KDOC_SINCE_2_4_20,
+    CompilerArgumentsLevelNames.nativeArguments to KDOC_SINCE_2_5_20,
 ) + syntheticArgumentInterfaces.associate { it.name to KDOC_SINCE_2_4_20 }
 
 internal fun BtaCompilerArgument<*>.extractName(): String = name.uppercase().replace("-", "_").let {

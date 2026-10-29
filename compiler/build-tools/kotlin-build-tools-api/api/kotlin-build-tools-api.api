@@ -1029,6 +1029,152 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/MetadataArgumen
 	public final fun getId ()Ljava/lang/String;
 }
 
+public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerArguments : org/jetbrains/kotlin/buildtools/api/arguments/CommonKlibBasedArguments {
+	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerArguments$Companion;
+	public static final field FRIEND_MODULES Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerArguments$NativeCompilerArgument;
+	public static final field LIBRARY Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerArguments$NativeCompilerArgument;
+	public static final field LIST_TARGETS Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerArguments$NativeCompilerArgument;
+	public static final field MODULE_NAME Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerArguments$NativeCompilerArgument;
+	public static final field NATIVE_LIBRARY Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerArguments$NativeCompilerArgument;
+	public static final field NOSTDLIB Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerArguments$NativeCompilerArgument;
+	public static final field NO_DEFAULT_LIBS Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerArguments$NativeCompilerArgument;
+	public static final field NO_ENDORSED_LIBS Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerArguments$NativeCompilerArgument;
+	public static final field OUTPUT Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerArguments$NativeCompilerArgument;
+	public static final field PRODUCE Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerArguments$NativeCompilerArgument;
+	public static final field TARGET Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerArguments$NativeCompilerArgument;
+	public static final field X_CHECK_DEPENDENCIES Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerArguments$NativeCompilerArgument;
+	public static final field X_EXPORT_KDOC Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerArguments$NativeCompilerArgument;
+	public static final field X_KONAN_DATA_DIR Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerArguments$NativeCompilerArgument;
+	public static final field X_PRINT_FILES Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerArguments$NativeCompilerArgument;
+	public static final field X_PRINT_IR Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerArguments$NativeCompilerArgument;
+	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerArguments$NativeCompilerArgument;)Ljava/lang/Object;
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerArguments$Builder : org/jetbrains/kotlin/buildtools/api/arguments/CommonKlibBasedArguments$Builder {
+	public abstract fun build ()Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerArguments;
+	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerArguments$NativeCompilerArgument;)Ljava/lang/Object;
+	public abstract fun set (Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerArguments$NativeCompilerArgument;Ljava/lang/Object;)V
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerArguments$Companion {
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerArguments$NativeCompilerArgument {
+	public fun <init> (Ljava/lang/String;Lorg/jetbrains/kotlin/buildtools/api/KotlinReleaseVersion;)V
+	public final fun getAvailableSinceVersion ()Lorg/jetbrains/kotlin/buildtools/api/KotlinReleaseVersion;
+	public final fun getId ()Ljava/lang/String;
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerKlibArguments : org/jetbrains/kotlin/buildtools/api/arguments/CommonKlibBasedArgumentsKlibArguments, org/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerArguments {
+	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerKlibArguments$Companion;
+	public static final field INCLUDE_BINARY Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerKlibArguments$NativeCompilerKlibArgument;
+	public static final field LIBRARY_VERSION Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerKlibArguments$NativeCompilerKlibArgument;
+	public static final field MANIFEST Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerKlibArguments$NativeCompilerKlibArgument;
+	public static final field NOPACK Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerKlibArguments$NativeCompilerKlibArgument;
+	public static final field X_HEADER_KLIB_PATH Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerKlibArguments$NativeCompilerKlibArgument;
+	public static final field X_MANIFEST_NATIVE_TARGETS Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerKlibArguments$NativeCompilerKlibArgument;
+	public static final field X_REFINES_PATHS Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerKlibArguments$NativeCompilerKlibArgument;
+	public static final field X_SHORT_MODULE_NAME Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerKlibArguments$NativeCompilerKlibArgument;
+	public static final field X_WRITE_DEPENDENCIES_OF_PRODUCED_KLIB_TO Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerKlibArguments$NativeCompilerKlibArgument;
+	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerKlibArguments$NativeCompilerKlibArgument;)Ljava/lang/Object;
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerKlibArguments$Builder : org/jetbrains/kotlin/buildtools/api/arguments/CommonKlibBasedArgumentsKlibArguments$Builder, org/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerArguments$Builder {
+	public abstract fun build ()Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerKlibArguments;
+	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerKlibArguments$NativeCompilerKlibArgument;)Ljava/lang/Object;
+	public abstract fun set (Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerKlibArguments$NativeCompilerKlibArgument;Ljava/lang/Object;)V
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerKlibArguments$Companion {
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerKlibArguments$NativeCompilerKlibArgument {
+	public fun <init> (Ljava/lang/String;Lorg/jetbrains/kotlin/buildtools/api/KotlinReleaseVersion;)V
+	public final fun getAvailableSinceVersion ()Lorg/jetbrains/kotlin/buildtools/api/KotlinReleaseVersion;
+	public final fun getId ()Ljava/lang/String;
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments : org/jetbrains/kotlin/buildtools/api/arguments/CommonKlibBasedArgumentsLinkingArguments, org/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerArguments {
+	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$Companion;
+	public static final field ENABLE_ASSERTIONS Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field ENTRY Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field G Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field GENERATE_NO_EXIT_TEST_RUNNER Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field GENERATE_TEST_RUNNER Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field GENERATE_WORKER_TEST_RUNNER Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field LINKER_OPTION Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field LINKER_OPTIONS Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field MEMORY_MODEL Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field NOMAIN Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field OPT Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field X_ADD_CACHE Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field X_ADD_LIGHT_DEBUG Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field X_ALLOCATOR Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field X_AUTO_CACHE_DIR Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field X_AUTO_CACHE_FROM Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field X_BACKEND_THREADS Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field X_BINARY Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field X_BUNDLE_ID Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field X_CACHED_LIBRARY Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field X_CACHE_DIRECTORY Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field X_CHECK_STATE_AT_EXTERNAL_CALLS Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field X_COMPILE_FROM_BITCODE Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field X_DEBUG_INFO_VERSION Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field X_DEBUG_PREFIX_MAP Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field X_DESTROY_RUNTIME_MODE Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field X_DUMP_BUILT_CACHES_TO Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field X_DUMP_TESTS_TO Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field X_EMIT_LAZY_OBJC_HEADER Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field X_EXPORT_LIBRARY Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field X_EXTERNAL_DEPENDENCIES Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field X_FILE_TO_CACHE Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field X_FRAMEWORK_IMPORT_HEADER Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field X_G0 Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field X_GC Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field X_G_GENERATE_DEBUG_TRAMPOLINE Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field X_IC_CACHE_DIR Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field X_INCLUDE Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field X_IR_PROPERTY_LAZY_INITIALIZATION Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field X_LLVM_LTO_PASSES Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field X_LLVM_MODULE_PASSES Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field X_LLVM_VARIANT Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field X_MAKE_PER_FILE_CACHE Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field X_NO_OBJC_GENERICS Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field X_OMIT_FRAMEWORK_BINARY Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field X_OVERRIDE_CLANG_OPTIONS Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field X_OVERRIDE_KONAN_PROPERTIES Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field X_PRE_LINK_CACHES Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field X_PRINT_BITCODE Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field X_PURGE_USER_LIBS Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field X_READ_DEPENDENCIES_FROM Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field X_RUNTIME Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field X_RUNTIME_LOGS Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field X_SAVE_LLVM_IR_AFTER Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field X_SAVE_LLVM_IR_DIRECTORY Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field X_STATIC_FRAMEWORK Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field X_TEMPORARY_FILES_DIR Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field X_VERIFY_BITCODE Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field X_VERIFY_COMPILER Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field X_WORKER_EXCEPTION_HANDLING Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public static final field X_WRITE_DEPENDENCIES_TO Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;
+	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;)Ljava/lang/Object;
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$Builder : org/jetbrains/kotlin/buildtools/api/arguments/CommonKlibBasedArgumentsLinkingArguments$Builder, org/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerArguments$Builder {
+	public abstract fun build ()Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments;
+	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;)Ljava/lang/Object;
+	public abstract fun set (Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument;Ljava/lang/Object;)V
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$Companion {
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerLinkingArguments$NativeCompilerLinkingArgument {
+	public fun <init> (Ljava/lang/String;Lorg/jetbrains/kotlin/buildtools/api/KotlinReleaseVersion;)V
+	public final fun getAvailableSinceVersion ()Lorg/jetbrains/kotlin/buildtools/api/KotlinReleaseVersion;
+	public final fun getId ()Ljava/lang/String;
+}
+
 public final class org/jetbrains/kotlin/buildtools/api/arguments/NullabilityAnnotation {
 	public fun <init> (Ljava/lang/String;Lorg/jetbrains/kotlin/buildtools/api/arguments/NullabilityAnnotation$Mode;)V
 	public fun equals (Ljava/lang/Object;)Z
