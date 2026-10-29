@@ -104,7 +104,7 @@ internal class KotlinToolchainsImpl : KotlinToolchains {
             check(operation is BuildOperationImpl<R>) { "Unknown operation type: ${operation::class.qualifiedName}" }
             val operationBody: Callable<R> = {
                 val classloadersCacheWithLogger =
-                    classloadersCache.takeIf { operation[BuildOperationImpl.ENABLE_CLASSLOADER_CACHE] }?.withLogger(logger)
+                    classloadersCache.takeIf { operation.enableClassloaderCache }?.withLogger(logger)
                 operation.execute(
                     projectId,
                     executionPolicy,

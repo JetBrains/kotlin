@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.buildtools.internal.metadata.operations
 
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
+import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.metadata.KotlinMetadataKlibCompilationOperation
 import org.jetbrains.kotlin.buildtools.internal.*
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.buildtools.internal.arguments.MetadataArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorWithDiagnosticId
 import org.jetbrains.kotlin.cli.metadata.KotlinMetadataCompiler
 import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.IncrementalCompilationOptions
@@ -24,9 +26,9 @@ internal class KotlinMetadataKlibCompilationOperationImpl private constructor(
     override val options: Options = Options(KotlinMetadataKlibCompilationOperation::class),
     override val sources: List<Path>,
     override val destination: Path,
-    compilerArguments: MetadataArgumentsImpl = MetadataArgumentsImpl(),
+    override val compilerArguments: MetadataArgumentsImpl = MetadataArgumentsImpl(),
     private val compilerVersion: String,
-) : BaseCompilationOperationImpl<MetadataArgumentsImpl, K2MetadataCompilerArguments>(compilerArguments),
+) : BaseCompilationOperationImpl<MetadataArgumentsImpl, K2MetadataCompilerArguments>(),
     KotlinMetadataKlibCompilationOperation, KotlinMetadataKlibCompilationOperation.Builder,
     DeepCopyable<KotlinMetadataKlibCompilationOperationImpl> {
     constructor(
@@ -53,7 +55,7 @@ internal class KotlinMetadataKlibCompilationOperationImpl private constructor(
             destination,
             compilerArguments.deepCopy(),
             compilerVersion
-        )
+        ).also { it.copyFrom(this) }
     }
 
     @UseFromImplModuleRestricted
@@ -109,7 +111,8 @@ internal class KotlinMetadataKlibCompilationOperationImpl private constructor(
 
     override fun compileIncrementallyInProcess(
         arguments: K2MetadataCompilerArguments,
-        loggerAdapter: KotlinLoggerMessageCollectorAdapter,
+        logger: KotlinLogger,
+        messageCollector: MessageCollectorWithDiagnosticId,
         executionContext: ExecutionContext
     ): CompilationResult {
         error("Metadata compiler doesn't support incremental compilation")

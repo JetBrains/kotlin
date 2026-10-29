@@ -46,7 +46,7 @@ class DaemonConnectionTestImpl {
                 daemonRunDirPath = runDir
                 shutdownDelayMillis = 0
             }
-            val daemonInfo = registry.getCompileServiceSession(policy1, logger).let { session ->
+            val daemonInfo = registry.getCompileServiceSession(policy1, DefaultKotlinLogger, logger).let { session ->
                 assertNotNull(session)
                 val daemonInfo = session?.compileService?.getDaemonInfo()?.get() ?: ""
                 assertTrue("Kotlin daemon on port" in daemonInfo)
@@ -56,7 +56,7 @@ class DaemonConnectionTestImpl {
                 daemonInfo
             }
 
-            registry.getCompileServiceSession(policy1, logger).let { session ->
+            registry.getCompileServiceSession(policy1, DefaultKotlinLogger, logger).let { session ->
                 assertNotNull(session)
                 val daemonInfo2 = session?.compileService?.getDaemonInfo()?.get() ?: ""
                 assertTrue("Kotlin daemon on port" in daemonInfo2)

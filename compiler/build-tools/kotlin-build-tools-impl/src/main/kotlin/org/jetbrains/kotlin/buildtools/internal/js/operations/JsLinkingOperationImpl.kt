@@ -6,12 +6,14 @@
 package org.jetbrains.kotlin.buildtools.internal.js.operations
 
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
+import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsLinkingOperation
 import org.jetbrains.kotlin.buildtools.internal.*
 import org.jetbrains.kotlin.buildtools.internal.arguments.JsArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorWithDiagnosticId
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.IncrementalCompilationOptions
@@ -22,8 +24,8 @@ internal class JsLinkingOperationImpl private constructor(
     override val options: Options = Options(JsLinkingOperation::class),
     override val klib: Path,
     override val destination: Path,
-    compilerArguments: JsArgumentsImpl = JsArgumentsImpl(),
-) : BaseCompilationOperationImpl<JsArgumentsImpl, K2JSCompilerArguments>(compilerArguments),
+    override val compilerArguments: JsArgumentsImpl = JsArgumentsImpl(),
+) : BaseCompilationOperationImpl<JsArgumentsImpl, K2JSCompilerArguments>(),
     JsLinkingOperation, JsLinkingOperation.Builder,
     DeepCopyable<JsLinkingOperationImpl> {
     constructor(
@@ -47,7 +49,7 @@ internal class JsLinkingOperationImpl private constructor(
             klib,
             destination,
             compilerArguments.deepCopy(),
-        )
+        ).also { it.copyFrom(this) }
     }
 
     @UseFromImplModuleRestricted
@@ -103,7 +105,8 @@ internal class JsLinkingOperationImpl private constructor(
 
     override fun compileIncrementallyInProcess(
         arguments: K2JSCompilerArguments,
-        loggerAdapter: KotlinLoggerMessageCollectorAdapter,
+        logger: KotlinLogger,
+        messageCollector: MessageCollectorWithDiagnosticId,
         executionContext: ExecutionContext
     ): CompilationResult {
         error("Linking doesn't support incremental compilation")

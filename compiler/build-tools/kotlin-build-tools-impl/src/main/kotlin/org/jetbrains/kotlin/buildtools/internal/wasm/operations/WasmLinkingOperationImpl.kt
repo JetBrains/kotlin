@@ -6,12 +6,14 @@
 package org.jetbrains.kotlin.buildtools.internal.wasm.operations
 
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
+import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.wasm.operations.WasmLinkingOperation
 import org.jetbrains.kotlin.buildtools.internal.*
 import org.jetbrains.kotlin.buildtools.internal.arguments.WasmArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.arguments.KotlinWasmCompilerArguments
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorWithDiagnosticId
 import org.jetbrains.kotlin.cli.js.KotlinWasmCompiler
 import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.IncrementalCompilationOptions
@@ -21,8 +23,8 @@ internal class WasmLinkingOperationImpl private constructor(
     override val options: Options = Options(WasmLinkingOperation::class),
     override val klib: Path,
     override val destination: Path,
-    compilerArguments: WasmArgumentsImpl = WasmArgumentsImpl(),
-) : BaseCompilationOperationImpl<WasmArgumentsImpl, KotlinWasmCompilerArguments>(compilerArguments),
+    override val compilerArguments: WasmArgumentsImpl = WasmArgumentsImpl(),
+) : BaseCompilationOperationImpl<WasmArgumentsImpl, KotlinWasmCompilerArguments>(),
     WasmLinkingOperation, WasmLinkingOperation.Builder,
     DeepCopyable<WasmLinkingOperationImpl> {
     constructor(
@@ -46,7 +48,7 @@ internal class WasmLinkingOperationImpl private constructor(
             klib,
             destination,
             compilerArguments.deepCopy(),
-        )
+        ).also { it.copyFrom(this) }
     }
 
     @UseFromImplModuleRestricted
@@ -102,7 +104,8 @@ internal class WasmLinkingOperationImpl private constructor(
 
     override fun compileIncrementallyInProcess(
         arguments: KotlinWasmCompilerArguments,
-        loggerAdapter: KotlinLoggerMessageCollectorAdapter,
+        logger: KotlinLogger,
+        messageCollector: MessageCollectorWithDiagnosticId,
         executionContext: ExecutionContext
     ): CompilationResult {
         error("Linking doesn't support incremental compilation")
