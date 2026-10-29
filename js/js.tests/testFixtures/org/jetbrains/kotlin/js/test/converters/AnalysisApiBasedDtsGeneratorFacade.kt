@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.moduleName
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticWithoutSource
+import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.js.tsexport.TypeScriptExportConfig
@@ -21,6 +23,7 @@ import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
+import java.io.File
 import kotlin.io.path.Path
 
 class AnalysisApiBasedDtsGeneratorFacade(
@@ -37,10 +40,25 @@ class AnalysisApiBasedDtsGeneratorFacade(
             compileLongAsBigInt = configuration.compileLongAsBigint,
             implementableInterfaces = configuration.languageVersionSettings.supportsFeature(LanguageFeature.JsExportInterfacesInImplementableWay),
             exportableSuspendLambdas = configuration.languageVersionSettings.supportsFeature(LanguageFeature.JsExportingSuspendLambdas),
+            compileSuspendAsJsGenerator = configuration.compileSuspendAsJsGenerator,
             useUnknownInsteadAny = configuration.exportUntypedAsUnknown,
             dataClassCopyRespectsConstructorVisibility = configuration.languageVersionSettings.supportsFeature(LanguageFeature.DataClassCopyRespectsConstructorVisibility),
             additionalExportedDeclarationNames = configuration.additionalExportedDeclarationNames,
         )
+
+        fun runTypeScriptExportOrFail(klibs: List<KlibInputModule<TypeScriptModuleConfig>>, config: TypeScriptExportConfig): List<File> {
+            val diagnosticsCollector = DiagnosticsCollectorImpl()
+            val result = runTypeScriptExport(klibs, config, diagnosticsCollector)
+            if (diagnosticsCollector.hasErrors) {
+                JUnit5Assertions.fail {
+                    diagnosticsCollector.diagnostics.joinToString(separator = "\n", prefix = "TypeScript export reported errors:\n") {
+                        val location = (it as? KtDiagnosticWithoutSource)?.location?.let { location -> " (at $location)" }.orEmpty()
+                        "${it.factoryName}: ${it.renderMessage()}$location"
+                    }
+                }
+            }
+            return result
+        }
     }
 
     override val inputKind: TestArtifactKind<BinaryArtifacts.KLib>
@@ -90,7 +108,7 @@ class AnalysisApiBasedDtsGeneratorFacade(
                 add(createInputModule(module))
             }
 
-            runTypeScriptExport(inputModules, config)
+            runTypeScriptExportOrFail(inputModules, config)
         }
 
         // TODO(KT-88562): This result is not used down the pipeline, so it doesn't matter what we put here. We need to refactor this

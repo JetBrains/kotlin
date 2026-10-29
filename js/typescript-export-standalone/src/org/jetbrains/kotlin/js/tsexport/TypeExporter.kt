@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.renderer.render
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.*
+import org.jetbrains.kotlin.ir.backend.js.checkers.JsKlibErrors
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedParameter
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedType
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedType.*
@@ -25,7 +26,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.butIf
 import org.jetbrains.kotlin.utils.addToStdlib.foldMap
 
 internal class TypeExporter(
-    private val config: TypeScriptExportConfig,
+    private val context: TypeScriptExportContext,
     private val scope: TypeParameterScope,
     private val transitivelyExportedClasses: MutableSet<KaClassLikeSymbol>?,
     private val superTypeApproximator: SuperTypeApproximator?,
@@ -38,6 +39,9 @@ internal class TypeExporter(
      * finite semantically.
      */
     private val currentlyProcessedTypes = hashSetOf<KaType>()
+
+    private val config: TypeScriptExportConfig
+        get() = context.config
 
     private val anyOrUnknown: ExportedType
         get() = if (config.useUnknownInsteadAny) Primitive.Unknown else Primitive.Any
@@ -95,7 +99,10 @@ internal class TypeExporter(
         if (type.classId == KaStandardTypeClassIds.BOOLEAN)
             return Primitive.Boolean
         if (type.classId == KaStandardTypeClassIds.LONG || type.classId == StandardClassIds.ULong)
-            return if (config.compileLongAsBigInt) Primitive.BigInt else ErrorType("Long")
+            return if (config.compileLongAsBigInt) Primitive.BigInt else {
+                context.report(JsKlibErrors.JS_LONG_EXPORT_ERROR)
+                ErrorType("Long")
+            }
         if (type.classId in KaStandardTypeClassIds.PRIMITIVES && type.classId != KaStandardTypeClassIds.CHAR)
             return Primitive.Number
         if (type.classId == KaStandardTypeClassIds.STRING)
@@ -119,6 +126,9 @@ internal class TypeExporter(
             return if (type.isSuspend && !config.exportableSuspendLambdas) {
                 ErrorType("Suspend functions are not supported")
             } else {
+                if (type.isSuspend && !config.compileSuspendAsJsGenerator) {
+                    context.report(JsKlibErrors.JS_SUSPEND_LAMBDA_EXPORT_ERROR)
+                }
                 Function(
                     parameters = buildList {
                         type.contextParameterTypes.mapTo(this) {
