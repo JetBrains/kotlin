@@ -6162,6 +6162,11 @@ internal class ActualTypealiasWithExpectRichErrorImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ActualTypealiasWithExpectRichError
 
+internal class TypealiasToUnionTypeAsQualifierImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.TypealiasToUnionTypeAsQualifier
+
 internal class OverrideCannotBeStaticImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,

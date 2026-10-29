@@ -2575,6 +2575,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val ACTUAL_TYPEALIAS_TO_NON_ERROR by error<PsiElement>()
         val NON_FINAL_RICH_ERROR_CLASS by error<PsiElement>(MODALITY_MODIFIER)
         val ACTUAL_TYPEALIAS_WITH_EXPECT_RICH_ERROR by error<PsiElement>()
+        val TYPEALIAS_TO_UNION_TYPE_AS_QUALIFIER by error<PsiElement>()
     }
 }
 
