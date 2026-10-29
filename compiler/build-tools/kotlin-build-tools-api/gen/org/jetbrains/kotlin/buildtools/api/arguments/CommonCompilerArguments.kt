@@ -802,6 +802,16 @@ public interface CommonCompilerArguments : CommonToolArguments {
         CommonCompilerArgument("X_RETURN_VALUE_CHECKER", KotlinReleaseVersion(2, 2, 0))
 
     /**
+     * Enable experimental language support for Rich Errors.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_RICH_ERRORS: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_RICH_ERRORS", KotlinReleaseVersion(2, 5, 20))
+
+    /**
      * Allow loading classes with bad metadata versions and pre-release classes.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.

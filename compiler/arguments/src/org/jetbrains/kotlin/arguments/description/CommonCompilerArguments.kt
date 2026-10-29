@@ -1411,4 +1411,18 @@ Warning: this flag is not intended for production use. If you want to configure 
             introducedVersion = KotlinReleaseVersion.v2_5_0
         )
     }
+
+    compilerArgument {
+        name = "Xrich-errors"
+        description = "Enable experimental language support for Rich Errors.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        additionalAnnotations(
+            Enables(RichErrors),
+        )
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_5_20
+        )
+    }
 }

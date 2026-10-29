@@ -939,6 +939,17 @@ with bodies.""",
         }
 
     @Argument(
+        value = "-Xrich-errors",
+        description = "Enable experimental language support for Rich Errors.",
+    )
+    @Enables(LanguageFeature.RichErrors)
+    var richErrors: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xseparate-kmp-compilation",
         description = "Enables the separated compilation scheme, in which common source sets are analyzed against their own dependencies",
     )

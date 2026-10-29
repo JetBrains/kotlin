@@ -142,6 +142,10 @@ internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureCommonL
         put(LanguageFeature.BreakContinueInInlineLambdas, LanguageFeature.State.ENABLED)
     }
 
+    if (arguments.richErrors) {
+        put(LanguageFeature.RichErrors, LanguageFeature.State.ENABLED)
+    }
+
     if (arguments.strictEqualityForStructuralClasses) {
         put(LanguageFeature.StrictEqualsForStructuralClasses, LanguageFeature.State.ENABLED)
     }
