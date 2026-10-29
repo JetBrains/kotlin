@@ -11,6 +11,8 @@ void * _Nullable KotlinStdlib_internal_functional_type_callee_SwiftU2EOptionalU3
 
 void * _Nullable KotlinStdlib_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int64_Swift_Int32__(void * pointerToClosure, int64_t _1, int32_t _2);
 
+void * KotlinStdlib_internal_functional_type_callee_anyU20ExportedKotlinPackagesU2EkotlinU2EcollectionsU2EIterator__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * pointerToClosure);
+
 uint16_t kotlin_CharSequence_get__TypesOfArguments__Swift_Int32____reverse_swift(void * self, int32_t index);
 
 int32_t kotlin_CharSequence_length_get__reverse_swift(void * self);
@@ -212,6 +214,10 @@ int16_t kotlin_Byte_toShort(void * self);
 int32_t kotlin_Byte_unaryMinus(void * self);
 
 int32_t kotlin_Byte_unaryPlus(void * self);
+
+uint16_t kotlin_Char__TypesOfArguments__Swift_UInt16__(uint16_t code);
+
+uint16_t kotlin_Char__TypesOfArguments__Swift_Int32__(int32_t code);
 
 uint16_t kotlin_CharSequence_get__TypesOfArguments__Swift_Int32__(void * self, int32_t index);
 
@@ -1458,6 +1464,8 @@ _Bool kotlin_collections_IntIterator_init_initialize__TypesOfArguments__Swift_Un
 int32_t kotlin_collections_IntIterator_next(void * self);
 
 int32_t kotlin_collections_IntIterator_nextInt(void * self);
+
+void * kotlin_collections_Iterable__TypesOfArguments__U2829202D_U20anyU20ExportedKotlinPackages_kotlin_collections_Iterator__(void * iterator);
 
 void * kotlin_collections_Iterable_iterator(void * self);
 
