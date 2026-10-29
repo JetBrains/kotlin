@@ -829,6 +829,12 @@ public class SymbolLightClassesByPsiForSourceTestGenerated extends AbstractSymbo
       }
 
       @Test
+      @TestMetadata("mutableListOfNullableInt.kt")
+      public void testMutableListOfNullableInt() {
+        run("mutableListOfNullableInt.kt");
+      }
+
+      @Test
       @TestMetadata("mutableListOfString.kt")
       public void testMutableListOfString() {
         run("mutableListOfString.kt");
@@ -1095,6 +1101,12 @@ public class SymbolLightClassesByPsiForSourceTestGenerated extends AbstractSymbo
       }
 
       @Test
+      @TestMetadata("listAbstractClassOfNullableInt.kt")
+      public void testListAbstractClassOfNullableInt() {
+        run("listAbstractClassOfNullableInt.kt");
+      }
+
+      @Test
       @TestMetadata("listAbstractClassOfString.kt")
       public void testListAbstractClassOfString() {
         run("listAbstractClassOfString.kt");
@@ -1230,6 +1242,12 @@ public class SymbolLightClassesByPsiForSourceTestGenerated extends AbstractSymbo
       @TestMetadata("mapInterfaceOfInt.kt")
       public void testMapInterfaceOfInt() {
         run("mapInterfaceOfInt.kt");
+      }
+
+      @Test
+      @TestMetadata("mapInterfaceOfNullableInt.kt")
+      public void testMapInterfaceOfNullableInt() {
+        run("mapInterfaceOfNullableInt.kt");
       }
 
       @Test
