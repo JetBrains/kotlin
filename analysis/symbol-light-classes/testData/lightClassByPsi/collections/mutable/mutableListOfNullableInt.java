@@ -6,19 +6,19 @@ public abstract class SMutableList /* test.SMutableList*/ implements java.util.L
   public abstract @org.jetbrains.annotations.Nullable() java.lang.Integer removeAt(int);//  removeAt(int)
 
   @java.lang.Override()
-  public abstract boolean contains(int);//  contains(int)
+  public abstract boolean contains(@org.jetbrains.annotations.Nullable() java.lang.Integer);//  contains(@org.jetbrains.annotations.Nullable() java.lang.Integer)
 
   @java.lang.Override()
-  public abstract boolean remove(int);//  remove(int)
+  public abstract boolean remove(@org.jetbrains.annotations.Nullable() java.lang.Integer);//  remove(@org.jetbrains.annotations.Nullable() java.lang.Integer)
 
   @java.lang.Override()
   public abstract int getSize();//  getSize()
 
   @java.lang.Override()
-  public abstract int indexOf(int);//  indexOf(int)
+  public abstract int indexOf(@org.jetbrains.annotations.Nullable() java.lang.Integer);//  indexOf(@org.jetbrains.annotations.Nullable() java.lang.Integer)
 
   @java.lang.Override()
-  public abstract int lastIndexOf(int);//  lastIndexOf(int)
+  public abstract int lastIndexOf(@org.jetbrains.annotations.Nullable() java.lang.Integer);//  lastIndexOf(@org.jetbrains.annotations.Nullable() java.lang.Integer)
 
   @java.lang.Override()
   public final @org.jetbrains.annotations.Nullable() java.lang.Integer remove(int);//  remove(int)
@@ -107,18 +107,6 @@ public abstract class SMutableList2 /* test.SMutableList2*/ implements java.util
   public <T> T[] toArray(T[]);// <T>  toArray(T[])
 
   @java.lang.Override()
-  public abstract boolean contains(int);//  contains(int)
-
-  @java.lang.Override()
-  public abstract boolean remove(int);//  remove(int)
-
-  @java.lang.Override()
-  public abstract int indexOf(int);//  indexOf(int)
-
-  @java.lang.Override()
-  public abstract int lastIndexOf(int);//  lastIndexOf(int)
-
-  @java.lang.Override()
   public boolean contains(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Integer);//  contains(@org.jetbrains.annotations.Nullable() java.lang.Integer)
 
   @java.lang.Override()
@@ -194,18 +182,6 @@ public class SMutableList3 /* test.SMutableList3*/ implements java.util.List<@or
 
   @java.lang.Override()
   public <T> T[] toArray(T[]);// <T>  toArray(T[])
-
-  @java.lang.Override()
-  public abstract boolean contains(int);//  contains(int)
-
-  @java.lang.Override()
-  public abstract boolean remove(int);//  remove(int)
-
-  @java.lang.Override()
-  public abstract int indexOf(int);//  indexOf(int)
-
-  @java.lang.Override()
-  public abstract int lastIndexOf(int);//  lastIndexOf(int)
 
   @java.lang.Override()
   public boolean add(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Integer);//  add(@org.jetbrains.annotations.Nullable() java.lang.Integer)
