@@ -89,4 +89,9 @@ public sealed interface SirAttribute {
         override val identifier: String get() = "_documentation"
         override val arguments: List<SirArgument> get() = listOf(SirArgument("visibility", visibility.value))
     }
+
+    object DiscardableResult : SirAttribute {
+        override val identifier: String get() = "discardableResult"
+        override val arguments: List<SirArgument>? get() = null
+    }
 }
