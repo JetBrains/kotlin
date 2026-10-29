@@ -17,9 +17,13 @@ import org.jetbrains.kotlin.name.Name
  *
  * This is available as a local-only optimization. It makes use of the fact that local scopes always have the highest
  * priority in resolution.
+ *
+ * Note: does not work in dangling files.
  */
 @KtExperimentalApi
 fun KtSimpleNameExpression.lookupLocally(): KtNamedDeclaration? {
+    containingFile.let { if (it.originalFile != it) return null }
+
     val contextKind = contextKind ?: return null
 
     return LocalReferenceTargetLookupVisitor(this, contextKind).lookup()
