@@ -113,21 +113,6 @@ val jsShell = configurations.create("jsShell") {
     isCanBeConsumed = false
 }
 
-val wasmEdgeVersion = libs.versions.wasmedge
-val wasmEdgeSuffix = when (currentOsType) {
-    OsType(OsName.LINUX, OsArch.X86_64) -> "manylinux_2_28_x86_64@tar.gz"
-    OsType(OsName.MAC, OsArch.X86_64) -> "darwin_x86_64@tar.gz"
-    OsType(OsName.MAC, OsArch.ARM64) -> "darwin_arm64@tar.gz"
-    OsType(OsName.WINDOWS, OsArch.X86_32),
-    OsType(OsName.WINDOWS, OsArch.X86_64) -> "windows@zip"
-    else -> error("unsupported os type $currentOsType")
-}
-
-val wasmEdge = configurations.create("wasmEdge") {
-    isCanBeResolved = true
-    isCanBeConsumed = false
-}
-
 val jscOsDependentVersion = when (currentOsType.name) {
     OsName.MAC -> libs.versions.jscTahoe
     OsName.LINUX -> libs.versions.jscLinux
@@ -185,12 +170,6 @@ dependencies {
     implicitDependencies("org.mozilla:jsshell:${jsShellVersion.get()}:win64@zip")
     implicitDependencies("org.mozilla:jsshell:${jsShellVersion.get()}:linux-x86_64@zip")
     implicitDependencies("org.mozilla:jsshell:${jsShellVersion.get()}:mac@zip")
-
-    wasmEdge("org.wasmedge:WasmEdge:${wasmEdgeVersion.get()}:$wasmEdgeSuffix")
-
-    implicitDependencies("org.wasmedge:WasmEdge:${wasmEdgeVersion.get()}:windows@zip")
-    implicitDependencies("org.wasmedge:WasmEdge:${wasmEdgeVersion.get()}:manylinux_2_28_x86_64@tar.gz")
-    implicitDependencies("org.wasmedge:WasmEdge:${wasmEdgeVersion.get()}:darwin_arm64@tar.gz")
 
     jsc("org.jsc:jsc:$jscOsDependentRevision:$jscOsDependentClassifier")
 
@@ -274,17 +253,6 @@ val unzipJsShell = tasks.register<Copy>("unzipJsShell") {
     into(jsShellUnpackedDirectory)
 }
 
-val unzipWasmEdge = tasks.register<UnzipWasmEdge>("unzipWasmEdge") {
-    from.setFrom(wasmEdge)
-
-    val currentOsTypeForConfigurationCache = currentOsType.name
-
-    into.fileProvider(toolsDirectory.map { it.dir("WasmEdge").asFile })
-
-    getIsWindows.set(currentOsTypeForConfigurationCache !in setOf(OsName.MAC, OsName.LINUX))
-    getIsMac.set(currentOsTypeForConfigurationCache == OsName.MAC)
-}
-
 val jscDirectory = toolsDirectory.map { it.dir("JavaScriptCore").asFile }
 val unzipJsc = tasks.register<UnzipJsc>("unzipJsc") {
     from.setFrom(jsc)
@@ -326,18 +294,6 @@ fun Test.setupSpiderMonkey() {
     jvmArgumentProviders += objects.newInstance<SystemPropertyClasspathProvider>().apply {
         classpath.from(jsShellExecutablePath)
         property.set("javascript.engine.path.SpiderMonkey")
-    }
-}
-
-fun Test.setupWasmEdge() {
-    val wasmEdgeExecutablePath = unzipWasmEdge
-        .flatMap { task ->
-            task.into.file("bin/wasmedge")
-        }
-
-    jvmArgumentProviders += objects.newInstance<SystemPropertyClasspathProvider>().apply {
-        classpath.from(wasmEdgeExecutablePath)
-        property.set("wasm.engine.path.WasmEdge")
     }
 }
 
@@ -396,7 +352,6 @@ projectTests {
                 setupBinaryen()
             }
             setupSpiderMonkey()
-            setupWasmEdge()
             setupJsc()
             // Note: arbitrary JUnit tag expressions can be used here.
             useJUnitPlatform {
