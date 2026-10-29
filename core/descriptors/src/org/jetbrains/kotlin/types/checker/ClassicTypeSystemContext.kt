@@ -292,15 +292,6 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return hasTypeParameterRecursiveBounds(this, selfConstructor)
     }
 
-    override fun CapturedTypeMarker.hasRecursiveBounds(): Boolean {
-        require(this is NewCapturedType, this::errorMessage)
-
-        fun KotlinType.hasThisAsArgument(): Boolean =
-            arguments.any { it.type.constructor == this@hasRecursiveBounds.typeConstructor() }
-
-        return constructor.supertypes.any { it.hasThisAsArgument() } || lowerType?.hasThisAsArgument() == true
-    }
-
     override fun areEqualTypeConstructors(c1: TypeConstructorMarker, c2: TypeConstructorMarker): Boolean {
         require(c1 is TypeConstructor, c1::errorMessage)
         require(c2 is TypeConstructor, c2::errorMessage)

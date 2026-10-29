@@ -221,15 +221,6 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
         return false
     }
 
-    override fun CapturedTypeMarker.hasRecursiveBounds(): Boolean {
-        require(this is IrCapturedType)
-
-        fun IrType.hasThisAsArgument(): Boolean = true == arguments
-            ?.any { it.typeOrNull?.typeConstructor() == this@hasRecursiveBounds.typeConstructor() }
-
-        return constructor.superTypes.any { it.hasThisAsArgument() } || lowerType?.hasThisAsArgument() == true
-    }
-
     override fun areEqualTypeConstructors(c1: TypeConstructorMarker, c2: TypeConstructorMarker): Boolean =
         if (c1 is IrClassifierSymbol && c2 is IrClassifierSymbol) {
             FqNameEqualityChecker.areEqual(c1 , c2)

@@ -303,6 +303,15 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
      */
     fun RigidTypeMarker.getUpperBoundForApproximationOfIntersectionType() : KotlinTypeMarker? = null
 
+    fun CapturedTypeMarker.hasRecursiveBounds(): Boolean {
+        val ctor = typeConstructor()
+
+        fun KotlinTypeMarker.hasThisAsArgument(): Boolean =
+            getArguments().any { it.getType()?.typeConstructor() == ctor }
+
+        return ctor.supertypes().any { it.hasThisAsArgument() } || lowerType()?.hasThisAsArgument() == true
+    }
+
     fun KotlinTypeMarker.isSpecial(): Boolean
 
     @K2Only
@@ -502,8 +511,6 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun TypeParameterMarker.getUpperBounds(): List<KotlinTypeMarker>
     fun TypeParameterMarker.getTypeConstructor(): TypeConstructorMarker
     fun TypeParameterMarker.hasRecursiveBounds(selfConstructor: TypeConstructorMarker? = null): Boolean
-
-    fun CapturedTypeMarker.hasRecursiveBounds(): Boolean
 
     fun areEqualTypeConstructors(c1: TypeConstructorMarker, c2: TypeConstructorMarker): Boolean
 

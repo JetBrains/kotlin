@@ -245,9 +245,6 @@ context(c: TypeSystemContext)
 fun TypeParameterMarker.hasRecursiveBounds(selfConstructor: TypeConstructorMarker? = null): Boolean = with(c) { hasRecursiveBounds(selfConstructor) }
 
 context(c: TypeSystemContext)
-fun CapturedTypeMarker.hasRecursiveBounds(): Boolean = with(c) { hasRecursiveBounds() }
-
-context(c: TypeSystemContext)
 fun TypeConstructorMarker.isDenotable(): Boolean = with(c) { isDenotable() }
 
 context(c: TypeSystemContext)

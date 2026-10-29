@@ -73,6 +73,9 @@ private fun KotlinTypeMarker.hasRecursionInTypeParametersOrCapturedTypes(): Bool
     return false
 }
 
+context(c: TypeSystemInferenceExtensionContext)
+fun CapturedTypeMarker.hasRecursiveBounds(): Boolean = with(c) { hasRecursiveBounds() }
+
 @OnlyForDefaultLanguageFeatureDisabled(LanguageFeature.ConsiderUseSiteRecursiveBoundsOnCapturedTypes)
 context(c: TypeSystemInferenceExtensionContext)
 private fun TypeConstructorMarker.hasRecursiveTypeParametersWithGivenSelfType(): Boolean {
