@@ -37,8 +37,8 @@ class Intersection : Base<Int>(), WithRun
 
 class SuperCall : Base<Int>() {
     fun inPlaceLambdaViaSuperCall(block: () -> Int) {
-        contract { <!LEAKED_IN_PLACE_LAMBDA, WRONG_INVOCATION_KIND!>callsInPlace(block, InvocationKind.EXACTLY_ONCE)<!> }
-        super.run(<!LEAKED_IN_PLACE_LAMBDA!>block<!>)
+        contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
+        super.run(block)
     }
 }
 
@@ -76,62 +76,62 @@ fun assignmentViaSubstitutedMember(box: Box<Int>) {
 }
 
 fun inPlaceLambdaViaSubstitutedMember(box: Box<Int>, block: () -> Int) {
-    contract { <!LEAKED_IN_PLACE_LAMBDA, WRONG_INVOCATION_KIND!>callsInPlace(block, InvocationKind.EXACTLY_ONCE)<!> }
-    box.run(<!LEAKED_IN_PLACE_LAMBDA!>block<!>)
+    contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
+    box.run(block)
 }
 
 fun inPlaceLambdaViaStarProjectedMember(box: Box<*>, block: () -> Nothing) {
-    contract { <!LEAKED_IN_PLACE_LAMBDA, WRONG_INVOCATION_KIND!>callsInPlace(block, InvocationKind.EXACTLY_ONCE)<!> }
-    box.run(<!LEAKED_IN_PLACE_LAMBDA!>block<!>)
+    contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
+    box.run(block)
 }
 
 fun inPlaceLambdaViaContravariantMember(box: Box<in Int>, block: () -> Int) {
-    contract { <!LEAKED_IN_PLACE_LAMBDA, WRONG_INVOCATION_KIND!>callsInPlace(block, InvocationKind.EXACTLY_ONCE)<!> }
-    box.run(<!LEAKED_IN_PLACE_LAMBDA!>block<!>)
+    contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
+    box.run(block)
 }
 
 fun <T> inPlaceLambdaViaTypeParameterMember(box: Box<T>, block: () -> T) {
-    contract { <!LEAKED_IN_PLACE_LAMBDA, WRONG_INVOCATION_KIND!>callsInPlace(block, InvocationKind.EXACTLY_ONCE)<!> }
-    box.run(<!LEAKED_IN_PLACE_LAMBDA!>block<!>)
+    contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
+    box.run(block)
 }
 
 fun inPlaceLambdaViaSafeCall(box: Box<Int>?, block: () -> Int) {
-    contract { <!LEAKED_IN_PLACE_LAMBDA!>callsInPlace(block, InvocationKind.AT_MOST_ONCE)<!> }
-    box?.run(<!LEAKED_IN_PLACE_LAMBDA!>block<!>)
+    contract { callsInPlace(block, InvocationKind.AT_MOST_ONCE) }
+    box?.run(block)
 }
 
 fun inPlaceLambdaViaInheritedMember(derived: Derived, block: () -> Int) {
-    contract { <!LEAKED_IN_PLACE_LAMBDA, WRONG_INVOCATION_KIND!>callsInPlace(block, InvocationKind.EXACTLY_ONCE)<!> }
-    derived.run(<!LEAKED_IN_PLACE_LAMBDA!>block<!>)
+    contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
+    derived.run(block)
 }
 
 fun inPlaceLambdaViaNestedSubstitution(mid: Mid<Int>, block: () -> Int) {
-    contract { <!LEAKED_IN_PLACE_LAMBDA, WRONG_INVOCATION_KIND!>callsInPlace(block, InvocationKind.EXACTLY_ONCE)<!> }
-    mid.run(<!LEAKED_IN_PLACE_LAMBDA!>block<!>)
+    contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
+    mid.run(block)
 }
 
 fun inPlaceLambdaViaIntersectionOverride(intersection: Intersection, block: () -> Int) {
-    contract { <!LEAKED_IN_PLACE_LAMBDA, WRONG_INVOCATION_KIND!>callsInPlace(block, InvocationKind.EXACTLY_ONCE)<!> }
-    intersection.run(<!LEAKED_IN_PLACE_LAMBDA!>block<!>)
+    contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
+    intersection.run(block)
 }
 
 fun inPlaceLambdaViaJavaSubclass(javaDerived: JavaDerived, block: () -> Int) {
-    contract { <!LEAKED_IN_PLACE_LAMBDA, WRONG_INVOCATION_KIND!>callsInPlace(block, InvocationKind.EXACTLY_ONCE)<!> }
-    javaDerived.run(<!LEAKED_IN_PLACE_LAMBDA!>block<!>)
+    contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
+    javaDerived.run(block)
 }
 
 fun inPlaceLambdaViaInvoke(members: Members<Int>, block: () -> Int) {
-    contract { <!LEAKED_IN_PLACE_LAMBDA, WRONG_INVOCATION_KIND!>callsInPlace(block, InvocationKind.EXACTLY_ONCE)<!> }
-    members(<!LEAKED_IN_PLACE_LAMBDA!>block<!>)
+    contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
+    members(block)
 }
 
 fun inPlaceLambdaViaExtensionReceiver(members: Members<Int>, block: () -> Int) {
-    contract { <!LEAKED_IN_PLACE_LAMBDA, WRONG_INVOCATION_KIND!>callsInPlace(block, InvocationKind.EXACTLY_ONCE)<!> }
-    with(members) { <!LEAKED_IN_PLACE_LAMBDA!>block<!>.call() }
+    contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
+    with(members) { block.call() }
 }
 
 fun inPlaceLambdaViaInlineMember(members: Members<Int>, block: () -> Int) {
-    contract { <!WRONG_INVOCATION_KIND!>callsInPlace(block, InvocationKind.EXACTLY_ONCE)<!> }
+    contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
     members.inlineRun(block)
 }
 
@@ -141,13 +141,13 @@ fun inPlaceLambdaViaGenericConstructor(block: () -> Int) {
 }
 
 fun inPlaceLambdaViaGenericAlias(block: () -> Int) {
-    contract { <!LEAKED_IN_PLACE_LAMBDA, WRONG_INVOCATION_KIND!>callsInPlace(block, InvocationKind.EXACTLY_ONCE)<!> }
-    GenericAlias(<!LEAKED_IN_PLACE_LAMBDA!>block<!>)
+    contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
+    GenericAlias(block)
 }
 
 fun inPlaceLambdaViaGenericAliasWithParameter(block: () -> Int) {
-    contract { <!LEAKED_IN_PLACE_LAMBDA, WRONG_INVOCATION_KIND!>callsInPlace(block, InvocationKind.EXACTLY_ONCE)<!> }
-    GenericAliasWithParameter(<!LEAKED_IN_PLACE_LAMBDA!>block<!>)
+    contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
+    GenericAliasWithParameter(block)
 }
 
 /* GENERATED_FIR_TAGS: assignment, capturedType, classDeclaration, contractCallsEffect, contracts, flexibleType,
