@@ -16,8 +16,8 @@ import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
 import org.jetbrains.kotlin.buildtools.api.trackers.IcEvent
 import org.jetbrains.kotlin.buildtools.api.trackers.IcEventCollector
 import org.jetbrains.kotlin.buildtools.internal.arguments.*
+import org.jetbrains.kotlin.buildtools.internal.cri.CompilerRefIndexConfigurationImpl
 import org.jetbrains.kotlin.buildtools.internal.cri.CompilerReferenceIndexCollector
-import org.jetbrains.kotlin.buildtools.internal.cri.createCompilerRefIndexConfigurationBuilder
 import org.jetbrains.kotlin.buildtools.internal.serializability.CompilerMessageVisitor
 import org.jetbrains.kotlin.buildtools.internal.serializability.IcEventVisitor
 import org.jetbrains.kotlin.buildtools.internal.serializability.LookupMessageVisitor
@@ -155,7 +155,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
     }
 
     override fun compilerRefIndexConfigurationBuilder(outputDirectory: Path): CompilerRefIndexConfiguration.Builder =
-        createCompilerRefIndexConfigurationBuilder(outputDirectory)
+        CompilerRefIndexConfigurationImpl(outputDirectory)
 
     /**
      * Returns the directory an incremental compilation writes the compiler reference index to, or `null` when it isn't requested.

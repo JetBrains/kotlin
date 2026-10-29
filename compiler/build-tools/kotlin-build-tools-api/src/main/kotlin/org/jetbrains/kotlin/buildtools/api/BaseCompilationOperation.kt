@@ -80,9 +80,7 @@ public interface BaseCompilationOperation : BuildOperation<CompilationResult> {
          * @throws IllegalStateException if the implementation is older than 2.5.20
          * @since 2.5.20
          */
-        public fun compilerRefIndexConfigurationBuilder(outputDirectory: Path): CompilerRefIndexConfiguration.Builder {
-            error("The compiler reference index configuration is supported from compiler version 2.5.20.")
-        }
+        public fun compilerRefIndexConfigurationBuilder(outputDirectory: Path): CompilerRefIndexConfiguration.Builder
     }
 
     public companion object {
