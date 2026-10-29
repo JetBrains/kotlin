@@ -21,6 +21,9 @@ import org.jetbrains.kotlin.gradle.internal.kapt.incremental.CLASS_STRUCTURE_ART
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.StructureTransformAction
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinAndroidPluginWrapper
 import org.jetbrains.kotlin.gradle.plugin.KaptExtension
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollectorProvider
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.setupKotlinToolingDiagnosticsParameters
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.toolingDiagnosticsContext
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.tasks.toCompilerPluginOptions
 import org.jetbrains.kotlin.gradle.utils.*
@@ -170,6 +173,10 @@ private fun isAncestor(dir: File, file: File): Boolean {
 internal class KaptWithoutKotlincConfig : KaptConfig<KaptWithoutKotlincTask> {
 
     init {
+        // The task can be registered through KotlinJvmFactory without the Kotlin plugin, so KotlinToolingDiagnosticsSetupAction
+        // may not run. The service is registered here, outside the task configuration action, as that configures the task container.
+        val toolingDiagnosticsCollector = project.kotlinToolingDiagnosticsCollectorProvider
+        val toolingDiagnosticsContext = project.toolingDiagnosticsContext
         configureTask { task ->
             task.addJdkClassesToClasspath.set(
                 project.providers.provider {
@@ -177,6 +184,8 @@ internal class KaptWithoutKotlincConfig : KaptConfig<KaptWithoutKotlincTask> {
                 }
             )
             task.kaptJars.from(project.configurations.getByName(Kapt3GradleSubplugin.KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME))
+            task.usesService(toolingDiagnosticsCollector)
+            task.setupKotlinToolingDiagnosticsParameters(toolingDiagnosticsCollector, toolingDiagnosticsContext)
             task.mapDiagnosticLocations = ext.mapDiagnosticLocations
             task.stubGenerationScheme.convention(ext.stubGenerationScheme)
             if (ext is KaptExtension) {
@@ -185,6 +194,9 @@ internal class KaptWithoutKotlincConfig : KaptConfig<KaptWithoutKotlincTask> {
                 })
             }
             task.disableClassloaderCacheForProcessors = project.disableClassloaderCacheForProcessors()
+            task.detectMemoryLeaks.convention(
+                providers.provider { KaptDetectMemoryLeaksMode.fromExtensionValue(ext.detectMemoryLeaks) }
+            )
             task.classLoadersCacheSize = KaptProperties.getClassloadersCacheSize(project).get()
             task.isolateProcessorsFromBuildClasspath.set(KaptProperties.isIsolateProcessorsFromBuildClasspath(project))
             task.javacOptions.set(getJavaOptions(task.defaultJavaSourceCompatibility))
