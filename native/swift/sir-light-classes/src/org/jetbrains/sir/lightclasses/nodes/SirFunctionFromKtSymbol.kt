@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.sir.util.isUnavailable
 import org.jetbrains.kotlin.sir.util.replaceOrAddPropagatedUnavailability
 import org.jetbrains.kotlin.sir.util.unavailableTypes
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
@@ -86,6 +87,7 @@ internal open class SirFunctionFromKtSymbol(
     override val attributes: List<SirAttribute> by lazy {
         buildList {
             addAll(this@SirFunctionFromKtSymbol.translatedAttributes)
+            addIfNotNull(translatedDiscardableResultAttribute)
             if (overrideStatus is OverrideStatus.Conflicts) {
                 add(SirAttribute.NonOverride)
             }
