@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.hierarchy.isStrictSourceSet
 import org.jetbrains.kotlin.gradle.plugin.internal.KotlinProjectSharedDataProvider
 import org.jetbrains.kotlin.gradle.plugin.internal.kotlinSecondaryVariantsDataSharing
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ArtifactMetadataProvider
@@ -65,7 +66,7 @@ internal sealed class MetadataDependencyResolution(
         dependency: ResolvedComponentResult,
     ) : MetadataDependencyResolution(dependency) {
 
-        class Requested(
+        class KeepDependencyButExcludeResolvedFile(
             dependency: ResolvedComponentResult,
         ) : Exclude(dependency)
 
@@ -205,14 +206,13 @@ internal class GranularMetadataTransformation(
             kmpResolutionStrategy = project.kotlinPropertiesProvider.kmpResolutionStrategy,
             allowMatchingByRequestedCoordinates = project.kotlinPropertiesProvider.allowMatchingByRequestedCoordinatesInGMDT.get(),
             cache = project.kotlinGradleTaskExecutionCache,
-            onNonKmpDependency = if (project.kotlinPropertiesProvider.strictKmpCompilation
-                && kotlinSourceSet.name in (defaultTargetHierarchyExcludedSourceSetVisibilityBySourceSet.keys + "androidMain")) {
-                { MetadataDependencyResolution.Exclude.Requested(it) }
+            onNonKmpDependency = if (kotlinSourceSet.isStrictSourceSet()) {
+                { MetadataDependencyResolution.Exclude.KeepDependencyButExcludeResolvedFile(it) }
             } else {
                 { MetadataDependencyResolution.KeepOriginalDependency(it) }
             },
             // FIXME: Disable strict compilation from custom source sets that refine a non default hierarchy source set?
-            sourceSetsExcludedFromVisibility = if (project.kotlinPropertiesProvider.strictKmpCompilation)
+            sourceSetsExcludedFromVisibility = if (kotlinSourceSet.isStrictSourceSet())
                 defaultTargetHierarchyExcludedSourceSetVisibilityBySourceSet[kotlinSourceSet.name] ?: emptySet() else emptySet()
         )
     }
@@ -465,7 +465,7 @@ internal class GranularMetadataTransformation(
             result.add(dependencyResult)
 
             val transitiveDependenciesToVisit = when (dependencyResult) {
-                is MetadataDependencyResolution.Exclude.Requested,
+                is MetadataDependencyResolution.Exclude.KeepDependencyButExcludeResolvedFile,
                 is MetadataDependencyResolution.KeepOriginalDependency ->
                     selectedComponent.dependencies.filterIsInstance<ResolvedDependencyResult>()
 

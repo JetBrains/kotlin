@@ -10,10 +10,13 @@ import org.gradle.api.internal.project.ProjectInternal
 import org.jetbrains.kotlin.commonizer.konanTargets
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.iosTest
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.await
+import org.jetbrains.kotlin.gradle.plugin.hierarchy.defaultTargetHierarchySourceSets
+import org.jetbrains.kotlin.gradle.plugin.hierarchy.isStrictSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.GranularMetadataTransformation
 import org.jetbrains.kotlin.gradle.plugin.sources.getVisibleSourceSetsFromAssociateCompilations
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
@@ -23,6 +26,7 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.commonizerTarget
 import org.jetbrains.kotlin.gradle.targets.native.internal.defaultTargetHierarchyCommonizationTargetBySourceSet
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
+import org.jetbrains.kotlin.gradle.util.enableKmpStrictCompilation
 import org.jetbrains.kotlin.gradle.utils.future
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import kotlin.test.Test
@@ -30,28 +34,193 @@ import kotlin.test.assertEquals
 
 class StrictCompilationModeTest {
 
-//    @Test
-//    fun `strict compilation mode - coroutines transformation`() {
-//        val a = buildProjectWithMPP(preApplyCode = {
-//            propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_KMP_STRICT_COMPILATION, "true")
-//        }) {
-//            multiplatformExtension.apply {
-//                iosSimulatorArm64()
-//                iosArm64()
-//
-//                sourceSets.commonMain.dependencies {
-//                    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.11.0")
-//                }
-//            }
-//        }.evaluate().multiplatformExtension.iosSimulatorArm64().compilations.getByName("main")
-//            .compileTaskProvider.get().multiplatformStructure
-//            .fragments.get()
-//    }
+    @Test
+    fun `associated source set visibility - is strict for strict source sets`() {
+        val sourceSetMap = buildProjectWithMPP(
+            preApplyCode = { enableKmpStrictCompilation() }
+        ) {
+            multiplatformExtension.apply {
+                iosArm64()
+                iosSimulatorArm64()
+                jvm()
+
+                applyHierarchyTemplate {
+                    common {
+                        group("native") {
+                            group("custom") {
+                                group("macos") {
+                                    withMacos()
+                                }
+                                group("ios") {
+                                    withIos()
+                                }
+                            }
+                            group("linux") {
+                                withLinux()
+                            }
+                        }
+                        group("jvm") {
+                            withJvm()
+                        }
+                    }
+                }
+            }
+        }.evaluate().multiplatformExtension.sourceSets.map {
+            it.name to getVisibleSourceSetsFromAssociateCompilations(it).map { it.name }
+        }.filter { it.second.isNotEmpty() }.toMap()
+
+        assertEquals(
+            mapOf(
+                "commonTest" to listOf(
+                    "commonMain",
+                ),
+                "customTest" to listOf(
+                    "iosMain",
+                    "customMain",
+                    "nativeMain",
+                    "commonMain",
+                ),
+                "iosArm64Test" to listOf(
+                    "iosArm64Main",
+                    "iosMain",
+                    "customMain",
+                    "nativeMain",
+                    "commonMain",
+                ),
+                "iosSimulatorArm64Test" to listOf(
+                    "iosSimulatorArm64Main",
+                    "iosMain",
+                    "customMain",
+                    "nativeMain",
+                    "commonMain",
+                ),
+                "iosTest" to listOf(
+                    "iosMain",
+                    "customMain",
+                    "nativeMain",
+                    "commonMain",
+                ),
+                "jvmTest" to listOf(
+                    "jvmMain",
+                    "commonMain",
+                ),
+                "nativeTest" to listOf(
+                    "customMain",
+                    "nativeMain",
+                    "commonMain",
+                ),
+            ).prettyPrinted,
+            sourceSetMap.prettyPrinted,
+        )
+    }
+
+    @Test
+    fun `isStrictSourceSet - all source sets downstream of a custom one - are not strict`() {
+        val sourceSetMap = buildProjectWithMPP(
+            preApplyCode = { enableKmpStrictCompilation() }
+        ) {
+            multiplatformExtension.apply {
+                iosArm64()
+                iosSimulatorArm64()
+                jvm()
+
+                applyHierarchyTemplate {
+                    common {
+                        group("native") {
+                            group("custom") {
+                                group("macos") {
+                                    withMacos()
+                                }
+                                group("ios") {
+                                    withIos()
+                                }
+                            }
+                            group("linux") {
+                                withLinux()
+                            }
+                        }
+                        group("jvm") {
+                            withJvm()
+                        }
+                    }
+                }
+            }
+        }.evaluate().multiplatformExtension.sourceSets.map { it.name to it.isStrictSourceSet() }.toMap()
+
+        assertEquals(
+            mapOf(
+                "commonMain" to true,
+                "commonTest" to true,
+                "customMain" to false,
+                "customTest" to false,
+                "iosArm64Main" to false,
+                "iosArm64Test" to false,
+                "iosMain" to false,
+                "iosSimulatorArm64Main" to false,
+                "iosSimulatorArm64Test" to false,
+                "iosTest" to false,
+                "jvmMain" to true,
+                "jvmTest" to true,
+                "nativeMain" to true,
+                // It can see customMain
+                "nativeTest" to false,
+            ).prettyPrinted,
+            sourceSetMap.prettyPrinted,
+        )
+    }
+
+    @Test
+    fun `isStrictSourceSet - test source sets associated with a custom source set - are not strict`() {
+        val project = buildProjectWithMPP(
+            preApplyCode = { enableKmpStrictCompilation() }
+        ) {
+            multiplatformExtension.apply {
+                iosArm64()
+                iosSimulatorArm64()
+                jvm()
+
+                val custom = sourceSets.create("custom") {
+                    it.dependsOn(sourceSets.commonMain.get())
+                }
+
+                sourceSets.iosMain.get().dependsOn(custom)
+                sourceSets.iosSimulatorArm64Main.get().dependsOn(sourceSets.iosMain.get())
+                sourceSets.iosArm64Main.get().dependsOn(sourceSets.iosMain.get())
+
+                sourceSets.iosTest.get().dependsOn(sourceSets.commonTest.get())
+                sourceSets.iosSimulatorArm64Test.get().dependsOn(sourceSets.iosTest.get())
+                sourceSets.iosArm64Test.get().dependsOn(sourceSets.iosTest.get())
+            }
+        }.evaluate()
+        val sourceSetMap = project.multiplatformExtension.sourceSets.map { it.name to it.isStrictSourceSet() }.toMap()
+        val iosTestDependencies = project.multiplatformExtension.sourceSets.iosTest.get().internal.dependsOnClosure
+        assertEquals(
+            setOf("commonTest").prettyPrinted,
+            iosTestDependencies.map { it.name }.toSet().prettyPrinted,
+        )
+        assertEquals(
+            mapOf(
+                "commonMain" to true,
+                "commonTest" to true,
+                "custom" to false,
+                "iosArm64Main" to false,
+                "iosArm64Test" to false,
+                "iosMain" to false,
+                "iosTest" to false,
+                "iosSimulatorArm64Main" to false,
+                "iosSimulatorArm64Test" to false,
+                "jvmMain" to true,
+                "jvmTest" to true,
+            ).prettyPrinted,
+            sourceSetMap.prettyPrinted,
+        )
+    }
 
     @Test
     fun `precomputed SS exclusion map and commonization targets - are up to date with all targets`() {
-        // FIXME: disable strict compilation
-        buildProjectWithMPP {
+        buildProjectWithMPP(
+            preApplyCode = { enableKmpStrictCompilation(false) }
+        ) {
             plugins.apply("com.android.kotlin.multiplatform.library")
             multiplatformExtension.apply {
                 targets.withType(KotlinMultiplatformAndroidLibraryTarget::class.java).configureEach { target ->
@@ -92,6 +261,9 @@ class StrictCompilationModeTest {
                     it(multiplatformExtension)
                 }
 
+                val sourceSetNames = project.future {
+                    project.multiplatformExtension.awaitSourceSets().map { it.name }.toSet()
+                }
                 val exclusionMap = project.future {
                     computeExclusionMap()
                 }
@@ -99,6 +271,10 @@ class StrictCompilationModeTest {
                     computeCommonizerTargets()
                 }
                 (project as ProjectInternal).evaluate()
+                assertEquals(
+                    sourceSetNames.getOrThrow().prettyPrinted,
+                    defaultTargetHierarchySourceSets.prettyPrinted,
+                )
                 assertEquals(
                     exclusionMap.getOrThrow().map {
                         it.key.name to it.value.map { it.name }.toSet()
