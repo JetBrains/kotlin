@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jsScenario
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jvmScenario
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.wasmScenario
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.btaClassloader
+import org.jetbrains.kotlin.buildtools.tests.compilation.util.unwrap
 import org.jetbrains.kotlin.testFederation.testFederationAllTestsRequested
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.jetbrains.kotlin.tooling.core.toKotlinVersion
@@ -247,7 +248,7 @@ class BtaVersionsCompilationTestArgumentProvider : ArgumentsProvider {
                         named("[v1][$version]", kotlinToolchainV1Adapter)
                     )
                 }
-                if (kotlinToolchainV1Adapter == null || kotlinToolchainV1Adapter()::class != temporaryKotlinToolchains::class) {
+                if (kotlinToolchainV1Adapter == null || kotlinToolchainV1Adapter().unwrap()::class != temporaryKotlinToolchains.unwrap()::class) {
                     add(
                         named("[v2][$version]", kotlinToolchainsProvider)
                     )

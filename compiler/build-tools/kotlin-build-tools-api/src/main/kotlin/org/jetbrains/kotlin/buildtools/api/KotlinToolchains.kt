@@ -162,8 +162,21 @@ public interface KotlinToolchains {
          */
         @JvmStatic
         public fun loadImplementation(classLoader: ClassLoader): KotlinToolchains = try {
-            var baseImplementation = loadImplementation(KotlinToolchains::class, classLoader)
-            val kotlinCompilerVersion = KotlinCompilerVersion(baseImplementation.getCompilerVersion())
+            val baseImplementation = loadImplementation(KotlinToolchains::class, classLoader)
+            baseImplementation.toCompatibilityWrapper(KotlinCompilerVersion(baseImplementation.getCompilerVersion()))
+        } catch (_: NoImplementationFoundException) {
+            try {
+                val baseImplementation = classLoader.loadClass("org.jetbrains.kotlin.buildtools.internal.compat.KotlinToolchainsV1Adapter")
+                    .constructors.first()
+                    .newInstance(@Suppress("DEPRECATION_ERROR") CompilationService.loadImplementation(classLoader)) as KotlinToolchains
+                baseImplementation.toCompatibilityWrapper(KotlinCompilerVersion(2, 5, 0, null))
+            } catch (e: ClassNotFoundException) {
+                throw NoImplementationFoundException(KotlinToolchains::class).initCause(e)
+            }
+        }
+
+        private fun KotlinToolchains.toCompatibilityWrapper(kotlinCompilerVersion: KotlinCompilerVersion): KotlinToolchains {
+            var baseImplementation = this
 
             if (kotlinCompilerVersion < KotlinCompilerVersion(2, 3, 20, "snapshot")) {
                 baseImplementation = KotlinWrapperPre2_3_20(baseImplementation)
@@ -180,15 +193,7 @@ public interface KotlinToolchains {
             if (kotlinCompilerVersion < KotlinCompilerVersion(2, 5, 20, "snapshot")) {
                 baseImplementation = KotlinWrapperPre2_5_20(baseImplementation)
             }
-            baseImplementation
-        } catch (_: NoImplementationFoundException) {
-            try {
-                classLoader.loadClass("org.jetbrains.kotlin.buildtools.internal.compat.KotlinToolchainsV1Adapter")
-                    .constructors.first()
-                    .newInstance(@Suppress("DEPRECATION_ERROR") CompilationService.loadImplementation(classLoader)) as KotlinToolchains
-            } catch (e: ClassNotFoundException) {
-                throw NoImplementationFoundException(KotlinToolchains::class).initCause(e)
-            }
+            return baseImplementation
         }
 
         /**
