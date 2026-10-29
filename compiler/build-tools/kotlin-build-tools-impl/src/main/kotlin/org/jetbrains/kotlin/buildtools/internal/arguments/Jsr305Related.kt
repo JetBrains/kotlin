@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.internal.arguments
 
+import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.arguments.Jsr305
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
@@ -42,9 +43,11 @@ internal fun applyJsr305(
 private fun jsr305mode(mode: String, fullEntry: String) = Jsr305Impl.Mode.values().firstOrNull { entry -> entry.stringValue == mode }
     ?: throw CompilerArgumentsParseException("Unknown -Xjsr305 mode: $fullEntry")
 
+@Serializable
 internal sealed class Jsr305Impl {
     abstract val mode: Mode
 
+    @Serializable
     class Global(override val mode: Mode) : Jsr305Impl() {
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
@@ -57,6 +60,7 @@ internal sealed class Jsr305Impl {
         override fun toString(): String = "Global(mode=$mode)"
     }
 
+    @Serializable
     class UnderMigration(override val mode: Mode) : Jsr305Impl() {
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
@@ -69,6 +73,7 @@ internal sealed class Jsr305Impl {
         override fun toString(): String = "UnderMigration(mode=$mode)"
     }
 
+    @Serializable
     class SpecificAnnotation(val fqName: String, override val mode: Mode) : Jsr305Impl() {
         val annotationFqName: String = "@$fqName"
 
@@ -88,6 +93,7 @@ internal sealed class Jsr305Impl {
         override fun toString(): String = "SpecificAnnotation(fqName=$fqName, mode=$mode)"
     }
 
+    @Serializable
     enum class Mode(
         val stringValue: String,
     ) {
