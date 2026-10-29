@@ -28,7 +28,7 @@ internal fun withGradleProperty(propertyName: String, value: String?, test: () -
 
 /**
  * Returns the [org.gradle.api.services.BuildServiceSpec.getMaxParallelUsages] configured for the
- * `KotlinNativeToolParallelismLimitService` registered under [serviceName], or `null` if no limit was set.
+ * `KotlinNativeToolParallelismLimitService` registered under [taskName], or `null` if no limit was set.
  */
-internal fun Project.maxParallelUsagesOf(serviceName: String): Int? =
-    gradle.sharedServices.registrations.getByName("KotlinNativeToolParallelismLimitService$serviceName").maxParallelUsages.orNull
+internal fun Project.maxParallelUsagesOf(taskName: String): Int? =
+    gradle.sharedServices.registrations.getByName("KotlinNativeToolParallelismLimitService$taskName").maxParallelUsages.orNull
