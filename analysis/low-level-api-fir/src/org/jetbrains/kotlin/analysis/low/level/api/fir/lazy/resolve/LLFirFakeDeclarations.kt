@@ -5,48 +5,29 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve
 
-import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.originalIfFakeOverrideOrDelegated
 
 /**
  * Whether [this] declaration is a fake one.
  *
  * A fake declaration is created on the fly (usually by a scope) and does not belong to any FIR tree.
- * It shares its content with [fakeDeclarationOriginals], so it shouldn't be transformed by lazy resolvers:
- * - The shared content is resolved via [fakeDeclarationOriginals]
- * - The content which is not shared (e.g., a deferred return type of a substitution override) is computed
+ * It is built from already resolved signatures of the original declarations, and the rest of its content is shared with them,
+ * so it shouldn't be transformed by lazy resolvers:
+ * - The shared annotations are resolved via their owners as foreign annotations on
+ *   [ANNOTATION_ARGUMENTS][org.jetbrains.kotlin.fir.declarations.FirResolvePhase.ANNOTATION_ARGUMENTS] phase,
+ *   so the original declarations do not have to be resolved
+ * - The content which is not shared (e.g., a deferred return type of substitution override) is computed
  *   by phase-specific rules
  * - Some content is intentionally not real (e.g., substitution overrides have STUB expressions instead of
  *   default values), so it must not be changed
  *
  * Fake declarations do not depend on outer classes during resolution, so their designation path is empty.
  *
- * @see fakeDeclarationOriginals
  * @see org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirTargetResolver.doLazyResolveFakeDeclarationUnderLock
  */
 internal val FirCallableDeclaration.isFakeDeclaration: Boolean
     get() = origin.isFakeDeclarationOrigin
-
-/**
- * Declarations which share their content with [this] fake declaration.
- * They have to be resolved before [this] declaration to the same phase.
- *
- * @see isFakeDeclaration
- */
-internal val FirCallableDeclaration.fakeDeclarationOriginals: List<FirElementWithResolveState>
-    get() = when (origin) {
-        // Typealiased constructors are built from already resolved signatures. The only shared content is annotations,
-        // which are resolved via their owners as foreign annotations on ANNOTATION_ARGUMENTS phase.
-        // Note: the attributes are copied from the original constructor, so it shouldn't be unwrapped as a substitution override
-        FirDeclarationOrigin.Synthetic.TypeAliasConstructor,
-            // SAM constructors are built from already resolved signatures as well
-        FirDeclarationOrigin.SamConstructor,
-            -> emptyList()
-
-        else -> listOfNotNull(originalIfFakeOverrideOrDelegated())
-    }
 
 /**
  * The list is exhaustive on purpose: each new origin requires an explicit decision.

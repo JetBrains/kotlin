@@ -36,8 +36,8 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithContract.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val [ResolvedTo(EXPECT_ACTUAL_MATCHING)] R|T|.property: R|T|
-            public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=AbstractClass] get(): R|T|
+        public final [ResolvedTo(STATUS)] val [ResolvedTo(STATUS)] R|T|.property: R|T|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] get(): R|T|
                 [L|Contract description] { LAZY_BLOCK }
 
     }
@@ -58,8 +58,9 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithContract.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(CONTRACTS)] val [ResolvedTo(CONTRACTS)] R|T|.property: R|T|
-            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=AbstractClass] get(): R|T| { LAZY_BLOCK }
+        public final [ResolvedTo(STATUS)] val [ResolvedTo(STATUS)] R|T|.property: R|T|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] get(): R|T|
+                [L|Contract description] { LAZY_BLOCK }
 
     }
 
@@ -79,8 +80,9 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithContract.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|T|.property: R|T|
-            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=AbstractClass] get(): R|T| { LAZY_BLOCK }
+        public final [ResolvedTo(STATUS)] val [ResolvedTo(STATUS)] R|T|.property: R|T|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] get(): R|T|
+                [L|Contract description] { LAZY_BLOCK }
 
     }
 
@@ -100,8 +102,9 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithContract.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(CONSTANT_EVALUATION)] val [ResolvedTo(CONSTANT_EVALUATION)] R|T|.property: R|T|
-            public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=AbstractClass] get(): R|T| { LAZY_BLOCK }
+        public final [ResolvedTo(STATUS)] val [ResolvedTo(STATUS)] R|T|.property: R|T|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] get(): R|T|
+                [L|Contract description] { LAZY_BLOCK }
 
     }
 
@@ -121,8 +124,9 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithContract.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val [ResolvedTo(ANNOTATION_ARGUMENTS)] R|T|.property: R|T|
-            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=AbstractClass] get(): R|T| { LAZY_BLOCK }
+        public final [ResolvedTo(STATUS)] val [ResolvedTo(STATUS)] R|T|.property: R|T|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] get(): R|T|
+                [L|Contract description] { LAZY_BLOCK }
 
     }
 
@@ -142,8 +146,9 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithContract.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val [ResolvedTo(ANNOTATION_ARGUMENTS)] R|T|.property: R|T|
-            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=AbstractClass] get(): R|T| { LAZY_BLOCK }
+        public final [ResolvedTo(STATUS)] val [ResolvedTo(STATUS)] R|T|.property: R|T|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] get(): R|T|
+                [L|Contract description] { LAZY_BLOCK }
 
     }
 

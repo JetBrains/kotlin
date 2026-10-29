@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.tryCollectDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.withFirDesignationEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirPhaseUpdater
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.fakeDeclarationOriginals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.isFakeDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFlightRecorder
@@ -142,10 +141,8 @@ internal sealed class LLFirTargetResolver(
         if (skipDependencyTargetResolutionStep) return
 
         when {
-            // Fake declarations share their content with the original ones
-            target is FirCallableDeclaration && target.isFakeDeclaration -> {
-                target.fakeDeclarationOriginals.forEach { it.lazyResolveToPhase(resolverPhase) }
-            }
+            // Fake declarations do not require their original declarations to be resolved, see isFakeDeclaration
+            target is FirCallableDeclaration && target.isFakeDeclaration -> {}
 
             target is FirProperty -> {
                 // We share type references and annotations with the original parameter
@@ -268,8 +265,7 @@ internal sealed class LLFirTargetResolver(
     /**
      * This method executes **under the lock** of [target] instead of [doLazyResolveUnderLock].
      *
-     * The shared content of [target] is already resolved by [resolveDependencies] via
-     * [fakeDeclarationOriginals], so only the content which is not shared has to be computed here.
+     * Only the content of [target] which is not shared with the original declarations has to be computed here.
      */
     protected open fun doLazyResolveFakeDeclarationUnderLock(target: FirCallableDeclaration) {}
 
