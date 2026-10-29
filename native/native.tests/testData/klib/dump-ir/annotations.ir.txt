@@ -1,0 +1,88 @@
+MODULE_FRAGMENT name:<main>
+  FILE fqName:test fileName:/annotations.kt
+    CLASS ANNOTATION_CLASS name:A0 signature:test/A0|null[0] modality:OPEN visibility:public superTypes:[kotlin.Annotation]
+      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:test.A0
+      CONSTRUCTOR signature:test/A0.<init>|<init>(){}[0] visibility:public returnType:test.A0 [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'kotlin/Any.<init>|<init>(){}[0]'
+          INSTANCE_INITIALIZER_CALL classDescriptor='test/A0|null[0]' type=kotlin.Unit
+    CLASS ANNOTATION_CLASS name:A1 signature:test/A1|null[0] modality:OPEN visibility:public superTypes:[kotlin.Annotation]
+      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:test.A1
+      CONSTRUCTOR signature:test/A1.<init>|<init>(kotlin.String){}[0] visibility:public returnType:test.A1 [primary]
+        VALUE_PARAMETER kind:Regular name:s index:0 type:kotlin.String
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'kotlin/Any.<init>|<init>(){}[0]'
+          INSTANCE_INITIALIZER_CALL classDescriptor='test/A1|null[0]' type=kotlin.Unit
+      PROPERTY name:s signature:test/A1.s|{}s[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:s signature:[ test/A1.s|{}s[0] <- Local[<BF>] ] type:kotlin.String visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 's: kotlin.String declared in test.A1.<init>' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-s> signature:test/A1.s.<get-s>|<get-s>(){}[0] visibility:public modality:FINAL returnType:kotlin.String
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:test.A1
+          correspondingProperty: PROPERTY name:s signature:test/A1.s|{}s[0] visibility:public modality:FINAL [val]
+          BLOCK_BODY
+            RETURN type=kotlin.Nothing from='test/A1.s.<get-s>|<get-s>(){}[0]'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:s signature:[ test/A1.s|{}s[0] <- Local[<BF>] ] type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
+                receiver: GET_VAR '<this>: test.A1 declared in test.A1.<get-s>' type=test.A1 origin=null
+    CLASS ANNOTATION_CLASS name:A2 signature:test/A2|null[0] modality:OPEN visibility:public superTypes:[kotlin.Annotation]
+      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:test.A2
+      CONSTRUCTOR signature:test/A2.<init>|<init>(kotlin.String;kotlin.Int){}[0] visibility:public returnType:test.A2 [primary]
+        VALUE_PARAMETER kind:Regular name:s index:0 type:kotlin.String
+        VALUE_PARAMETER kind:Regular name:i index:1 type:kotlin.Int
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'kotlin/Any.<init>|<init>(){}[0]'
+          INSTANCE_INITIALIZER_CALL classDescriptor='test/A2|null[0]' type=kotlin.Unit
+      PROPERTY name:s signature:test/A2.s|{}s[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:s signature:[ test/A2.s|{}s[0] <- Local[<BF>] ] type:kotlin.String visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 's: kotlin.String declared in test.A2.<init>' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-s> signature:test/A2.s.<get-s>|<get-s>(){}[0] visibility:public modality:FINAL returnType:kotlin.String
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:test.A2
+          correspondingProperty: PROPERTY name:s signature:test/A2.s|{}s[0] visibility:public modality:FINAL [val]
+          BLOCK_BODY
+            RETURN type=kotlin.Nothing from='test/A2.s.<get-s>|<get-s>(){}[0]'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:s signature:[ test/A2.s|{}s[0] <- Local[<BF>] ] type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
+                receiver: GET_VAR '<this>: test.A2 declared in test.A2.<get-s>' type=test.A2 origin=null
+      PROPERTY name:i signature:test/A2.i|{}i[0] visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:i signature:[ test/A2.i|{}i[0] <- Local[<BF>] ] type:kotlin.Int visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'i: kotlin.Int declared in test.A2.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-i> signature:test/A2.i.<get-i>|<get-i>(){}[0] visibility:public modality:FINAL returnType:kotlin.Int
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:test.A2
+          correspondingProperty: PROPERTY name:i signature:test/A2.i|{}i[0] visibility:public modality:FINAL [val]
+          BLOCK_BODY
+            RETURN type=kotlin.Nothing from='test/A2.i.<get-i>|<get-i>(){}[0]'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:i signature:[ test/A2.i|{}i[0] <- Local[<BF>] ] type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+                receiver: GET_VAR '<this>: test.A2 declared in test.A2.<get-i>' type=test.A2 origin=null
+    CLASS CLASS name:C signature:test/C|null[0] modality:FINAL visibility:public superTypes:[kotlin.Any]
+      annotations:
+        A0
+        A1(s = "A1 on C")
+        A2(s = "A2 on C", i = 1)
+      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:test.C
+      CONSTRUCTOR signature:test/C.<init>|<init>(){}[0] visibility:public returnType:test.C [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'kotlin/Any.<init>|<init>(){}[0]'
+          INSTANCE_INITIALIZER_CALL classDescriptor='test/C|null[0]' type=kotlin.Unit
+      FUN name:f signature:test/C.f|f(){}[0] visibility:public modality:FINAL returnType:kotlin.Unit
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:test.C
+        annotations:
+          A0
+          A1(s = "A1 on C.f")
+          A2(s = "A2 on C.f", i = 2)
+        BLOCK_BODY
+      PROPERTY name:v signature:test/C.v|{}v[0] visibility:public modality:FINAL [val]
+        annotations:
+          A0
+          A1(s = "A1 on C.v")
+          A2(s = "A2 on C.v", i = 3)
+        FIELD PROPERTY_BACKING_FIELD name:v signature:[ test/C.v|{}v[0] <- Local[<BF>] ] type:kotlin.Double visibility:private [final]
+          EXPRESSION_BODY
+            CONST Double type=kotlin.Double value=NaN
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-v> signature:test/C.v.<get-v>|<get-v>(){}[0] visibility:public modality:FINAL returnType:kotlin.Double
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:test.C
+          correspondingProperty: PROPERTY name:v signature:test/C.v|{}v[0] visibility:public modality:FINAL [val]
+          BLOCK_BODY
+            RETURN type=kotlin.Nothing from='test/C.v.<get-v>|<get-v>(){}[0]'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:v signature:[ test/C.v|{}v[0] <- Local[<BF>] ] type:kotlin.Double visibility:private [final]' type=kotlin.Double origin=null
+                receiver: GET_VAR '<this>: test.C declared in test.C.<get-v>' type=test.C origin=null
