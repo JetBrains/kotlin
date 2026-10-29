@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.swiftexport.standalone.translation
 
-import org.jetbrains.kotlin.analysis.api.klib.reader.getAllClassifiers
+import org.jetbrains.kotlin.analysis.api.klib.reader.getAllDeclarations
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.session.analyze
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.containingModule
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildModule
 import org.jetbrains.kotlin.sir.providers.SirSession
@@ -33,7 +35,6 @@ import org.jetbrains.kotlin.swiftexport.standalone.builders.translateModule
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftExportConfig
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftModuleConfig
 import org.jetbrains.kotlin.swiftexport.standalone.writer.BridgeSources
-import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.sir.printer.SirPrinter
 
 /**
@@ -47,9 +48,10 @@ internal fun translateModulePublicApi(module: InputModule, kaModules: KaModules,
         val externalTypeReferenceHandler = SirKaClassReferenceHandler { symbol ->
             val symbolContainingModule = symbol.containingModule as? KaLibraryModule
             symbolContainingModule?.let { libraryName ->
-                externalTypeDeclarationReferences
-                    .getOrPut(libraryName) { mutableListOf() }
-                    .addIfNotNull(symbol.translationRootFqName)
+                externalTypeDeclarationReferences.getOrPut(libraryName) { mutableListOf() }.apply {
+                    add(symbol.translationRootFqName ?: return@apply)
+                    addAll(symbol.factoryFunctionFqNames)
+                }
             }
         }
         buildSirSession(module.name, kaModules, config, module.config, externalTypeReferenceHandler).withSessions {
@@ -101,11 +103,13 @@ internal fun translateCrossReferencingModulesTransitively(
         analyze(kaModules.useSiteModule) {
             val libraryName = (symbol.containingModule as? KaLibraryModule)?.libraryName
             translationStates.find { it.kaModule.libraryName == libraryName }?.let {
-                val fqName = symbol.translationRootFqName
-                    ?: return@analyze
-                if (fqName !in it.processedReferences && fqName !in it.currentlyProcessing) {
-                    it.unprocessedReferences += fqName
+                val fqName = symbol.translationRootFqName ?: return@analyze
+                val newFqNames = mutableSetOf(fqName).apply {
+                    addAll(symbol.factoryFunctionFqNames)
+                    removeAll(it.processedReferences)
+                    removeAll(it.currentlyProcessing)
                 }
+                it.unprocessedReferences += newFqNames
             }
         }
     }
@@ -122,9 +126,13 @@ internal fun translateCrossReferencingModulesTransitively(
                 it.unprocessedReferences.clear()
                 val sirModule = it.sirSession.withSessions {
                     translateModule(module = it.kaModule) { module ->
-                        module.getAllClassifiers()
-                            .filterIsInstance<KaClassLikeSymbol>()
-                            .filter { symbol -> symbol.classId?.asSingleFqName() in it.currentlyProcessing }
+                        module.getAllDeclarations().filter { symbol ->
+                            when (symbol) {
+                                is KaClassLikeSymbol -> symbol.classId?.asSingleFqName()
+                                is KaCallableSymbol -> symbol.callableId?.asSingleFqName()
+                                else -> null
+                            } in it.currentlyProcessing
+                        }
                     }
                 }
                 it.processedReferences += it.currentlyProcessing
@@ -153,6 +161,17 @@ internal fun translateCrossReferencingModulesTransitively(
 
 private val KaClassLikeSymbol.translationRootFqName: FqName?
     get() = classId?.let { generateSequence(it) { id -> id.outerClassId }.last().asSingleFqName() }
+
+private val KaClassLikeSymbol.factoryFunctionFqNames: List<FqName>
+    get() = when (classId) {
+        StandardClassIds.List -> listOf(FqName("kotlin.collections.listOf"))
+        StandardClassIds.MutableList -> listOf(FqName("kotlin.collections.mutableListOf"))
+        StandardClassIds.Set -> listOf(FqName("kotlin.collections.setOf"))
+        StandardClassIds.MutableSet -> listOf(FqName("kotlin.collections.mutableSetOf"))
+        StandardClassIds.Map -> listOf(FqName("kotlin.collections.mapOf"))
+        StandardClassIds.MutableMap -> listOf(FqName("kotlin.collections.mutableMapOf"))
+        else -> emptyList()
+    }
 
 context(sir: SirSession)
 private fun createTranslationResult(

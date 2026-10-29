@@ -8,10 +8,16 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(kotlin.collections.ListIterator::class, "_ExportedKotlinPackages_kotlin_collections_ListIterator")
 @file:kotlin.native.internal.objc.BindClassToObjCName(kotlin.enums.EnumEntries::class, "_ExportedKotlinPackages_kotlin_enums_EnumEntries")
 
-import kotlin.native.internal.objc.BindReverseBridgeToMethod
 import kotlin.native.internal.ImportedBridge
 import kotlinx.cinterop.*
+import kotlin.native.internal.objc.BindReverseBridgeToMethod
 import kotlin.native.internal.ExportedBridge
+
+@ImportedBridge("KotlinStdlib_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__")
+internal external fun KotlinStdlib_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(pointerToClosure: kotlin.native.internal.NativePtr, _1: Int): kotlin.native.internal.NativePtr
+
+@ImportedBridge("KotlinStdlib_internal_functional_type_callee_anyU20ExportedKotlinPackagesU2EkotlinU2EcollectionsU2EIterator__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+internal external fun KotlinStdlib_internal_functional_type_callee_anyU20ExportedKotlinPackagesU2EkotlinU2EcollectionsU2EIterator__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToClosure: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
 
 @ImportedBridge("kotlin_collections_Collection_containsAll__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_collections_Collection____reverse_swift")
 internal external fun kotlin_collections_Collection_containsAll__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_collections_Collection____reverse_swift(self: kotlin.native.internal.NativePtr, elements: kotlin.native.internal.NativePtr): Boolean
@@ -365,6 +371,20 @@ public fun kotlin_collections_Collection_size_get(self: kotlin.native.internal.N
     return _result
 }
 
+@ExportedBridge("kotlin_collections_Iterable__TypesOfArguments__U2829202D_U20anyU20ExportedKotlinPackages_kotlin_collections_Iterator__")
+public fun kotlin_collections_Iterable__TypesOfArguments__U2829202D_U20anyU20ExportedKotlinPackages_kotlin_collections_Iterator__(iterator: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __iterator = run {
+        val closurePtr = iterator;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
+        {
+            val _result = KotlinStdlib_internal_functional_type_callee_anyU20ExportedKotlinPackagesU2EkotlinU2EcollectionsU2EIterator__TypesOfArguments__Swift_UnsafeMutableRawPointer__(closureBox.objcPtr())
+            kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.collections.Iterator<kotlin.Any?>
+        }
+    }
+    val _result = kotlin.collections.Iterable<kotlin.Any?>(__iterator)
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
 @ExportedBridge("kotlin_collections_Iterable_iterator")
 public fun kotlin_collections_Iterable_iterator(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.Iterable<kotlin.Any?>
@@ -384,6 +404,22 @@ public fun kotlin_collections_Iterator_next(self: kotlin.native.internal.NativeP
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.Iterator<kotlin.Any?>
     val _result = __self.next()
     return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("kotlin_collections_List__TypesOfArguments__Swift_Int32_U28Swift_Int32U29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
+public fun kotlin_collections_List__TypesOfArguments__Swift_Int32_U28Swift_Int32U29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(size: Int, `init`: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __size = size
+    val __init = run {
+        val closurePtr = `init`;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
+        { arg0: Int ->
+            val _arg0 = arg0
+            val _result = KotlinStdlib_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(closureBox.objcPtr(), _arg0)
+            if (_result == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any
+        }
+    }
+    val _result = kotlin.collections.List<kotlin.Any?>(__size, __init)
+    return _result.objcPtr()
 }
 
 @ExportedBridge("kotlin_collections_ListIterator_hasNext")
@@ -510,5 +546,25 @@ public fun kotlin_collections_List_subList__TypesOfArguments__Swift_Int32_Swift_
     val __fromIndex = fromIndex
     val __toIndex = toIndex
     val _result = __self.subList(__fromIndex, __toIndex)
+    return _result.objcPtr()
+}
+
+@ExportedBridge("kotlin_collections_listOf__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
+public fun kotlin_collections_listOf__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(element: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __element = if (element == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(element) as kotlin.Any
+    val _result = kotlin.collections.listOf<kotlin.Any?>(__element)
+    return _result.objcPtr()
+}
+
+@ExportedBridge("kotlin_collections_listOf__TypesOfArguments__Swift_Array_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___Vararg___")
+public fun kotlin_collections_listOf__TypesOfArguments__Swift_Array_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___Vararg___(elements: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __elements = interpretObjCPointer<kotlin.collections.List<kotlin.Any?>>(elements).toTypedArray()
+    val _result = kotlin.collections.listOf<kotlin.Any?>(*__elements)
+    return _result.objcPtr()
+}
+
+@ExportedBridge("kotlin_collections_listOf")
+public fun kotlin_collections_listOf(): kotlin.native.internal.NativePtr {
+    val _result = kotlin.collections.listOf<kotlin.Any?>()
     return _result.objcPtr()
 }
