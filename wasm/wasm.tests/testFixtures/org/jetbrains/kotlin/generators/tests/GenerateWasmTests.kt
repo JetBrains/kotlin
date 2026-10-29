@@ -171,6 +171,10 @@ fun main(args: Array<String>) {
                 model("codegen/box/coroutines", pattern = KT_WITHOUT_UNDERSCORE_PREFIX)
             }
 
+            testClass<AbstractWasmWasiCodegenCoroutinesStackSwitchingTest> {
+                model("codegen/box/coroutines", pattern = KT_WITHOUT_UNDERSCORE_PREFIX)
+            }
+
             testClass<AbstractWasmJsCodegenSplittingTest>(annotations = listOf(annotation<WasmJsSplittingTest>())) {
                 model("codegen/box", pattern = KT_WITHOUT_UNDERSCORE_PREFIX, excludeDirs = jvmOnlyBoxTests)
                 model("codegen/boxInline", pattern = KT_WITHOUT_UNDERSCORE_PREFIX)

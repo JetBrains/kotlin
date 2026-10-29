@@ -62,7 +62,7 @@ annotation class WasmJsMultiModuleTest
 annotation class WasmWasiBoxTest
 
 /**
- * Tests of the extra compiler configurations (single module and closed world multimodule modes).
+ * Tests of the extra compiler configurations (single module and closed world multimodule modes; WASI stack switching mode).
  * Executed by the `wasmFirCompilerExtraTest` Gradle task.
  *
  * This tag takes precedence over [WasmIcTest]: a test annotated with both of them is run only by the

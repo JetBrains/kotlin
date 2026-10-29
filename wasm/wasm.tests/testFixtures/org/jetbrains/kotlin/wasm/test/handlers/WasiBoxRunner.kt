@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.wasm.test.handlers
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.test.DebugMode
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.RUN_UNIT_TESTS
+import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_STACK_SWITCHING_PROPOSAL
 import org.jetbrains.kotlin.test.groupingStageInputs
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.WasmCompilationSet
@@ -80,13 +81,14 @@ class WasiBoxRunner(
             }
 
             val useNewExceptionProposal = testServices.useNewExceptionHandling(WasmTarget.WASI)
+            val useStackSwitchingProposal = USE_STACK_SWITCHING_PROPOSAL in testServices.moduleStructure.allDirectives
 
             val exceptions = vmsToCheck.mapNotNull { vm ->
                 check(!vm.entryPointIsJsFile) { "WASI VMs cannot run JS entry points, but ${vm.vmName} was asked to run one" }
                 vm.runWithCaughtExceptions(
                     debugMode = debugMode,
                     useNewExceptionHandling = useNewExceptionProposal,
-                    useStackSwitching = false,
+                    useStackSwitching = useStackSwitchingProposal,
                     entryFile = "$WASM_BASE_FILE_NAME.wasm",
                     jsFilePaths = emptyList(),
                     workingDirectory = dir,
