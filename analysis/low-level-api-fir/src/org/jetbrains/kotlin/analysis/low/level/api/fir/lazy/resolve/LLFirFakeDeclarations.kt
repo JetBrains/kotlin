@@ -40,7 +40,11 @@ internal val FirCallableDeclaration.fakeDeclarationOriginals: List<FirElementWit
         // Typealiased constructors are built from already resolved signatures. The only shared content is annotations,
         // which are resolved via their owners as foreign annotations on ANNOTATION_ARGUMENTS phase.
         // Note: the attributes are copied from the original constructor, so it shouldn't be unwrapped as a substitution override
-        FirDeclarationOrigin.Synthetic.TypeAliasConstructor -> emptyList()
+        FirDeclarationOrigin.Synthetic.TypeAliasConstructor,
+            // SAM constructors are built from already resolved signatures as well
+        FirDeclarationOrigin.SamConstructor,
+            -> emptyList()
+
         else -> listOfNotNull(originalIfFakeOverrideOrDelegated())
     }
 
@@ -56,6 +60,7 @@ private val FirDeclarationOrigin.isFakeDeclarationOrigin: Boolean
         is FirDeclarationOrigin.Enhancement,
         is FirDeclarationOrigin.Synthetic.JavaProperty,
         is FirDeclarationOrigin.Synthetic.TypeAliasConstructor,
+        is FirDeclarationOrigin.SamConstructor,
             -> true
 
         is FirDeclarationOrigin.Source,
@@ -80,7 +85,6 @@ private val FirDeclarationOrigin.isFakeDeclarationOrigin: Boolean
         is FirDeclarationOrigin.Synthetic.ReplContainerClass,
         is FirDeclarationOrigin.Synthetic.ReplEvalFunction,
         is FirDeclarationOrigin.DynamicScope,
-        is FirDeclarationOrigin.SamConstructor,
         is FirDeclarationOrigin.ImportedFromObjectOrStatic,
         is FirDeclarationOrigin.RenamedForOverride,
         is FirDeclarationOrigin.WrappedIntegerOperator,
