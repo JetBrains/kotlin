@@ -24,15 +24,35 @@ import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.StandardClassIds
 
-object FirJvmInlineApplicabilityChecker : FirRegularClassChecker(Common) {
+/**
+ * All kinds of checks related to inline value classes declaration syntax: old `inline class` syntax, usage of `value class` without
+ * `@JvmInline` / `inline` / FVC enabled, inapplicable `@JvmInline`, etc.
+ */
+object FirInlineValueClassSyntaxChecker : FirRegularClassChecker(Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirRegularClass) {
-        if (declaration.source?.kind !is KtRealSourceElementKind) return
+        val source = declaration.source?.takeIf { it.kind is KtRealSourceElementKind } ?: return
 
+        val hasInlineModifier = declaration.hasModifier(KtTokens.INLINE_KEYWORD)
+        val valueModifier = declaration.getModifier(KtTokens.VALUE_KEYWORD)
         val annotation = declaration.getAnnotationByClassId(StandardClassIds.Annotations.JvmInline, context.session)
 
-        val valueModifier = declaration.getModifier(KtTokens.VALUE_KEYWORD)
-        val hasInlineModifier = declaration.hasModifier(KtTokens.INLINE_KEYWORD)
+        @OptIn(LegacyJvmInlineHandling::class)
+        val platformRequiresJvmInline = context.session.annotationPlatformSupport.hasJvmInlineAnnotation
+
+        if (hasInlineModifier && (LanguageFeature.ExplicitInlineValueClassesSyntax.isDisabled() || valueModifier == null)) {
+            val replacement = when {
+                LanguageFeature.ExplicitInlineValueClassesSyntax.isEnabled() -> "'inline value'"
+                platformRequiresJvmInline && !declaration.isExpect -> "'@JvmInline value'"
+                else -> "'value'"
+            }
+            val diagnostic = if (LanguageFeature.ExplicitInlineValueClassesSyntaxRequiredOnAllPlatforms.isEnabled()) {
+                FirErrors.INLINE_CLASS_DEPRECATED_ERROR
+            } else {
+                FirErrors.INLINE_CLASS_DEPRECATED
+            }
+            reporter.reportOn(source, diagnostic, replacement)
+        }
 
         if (
             annotation != null && valueModifier != null && declaration.classKind == OBJECT &&
@@ -67,8 +87,7 @@ object FirJvmInlineApplicabilityChecker : FirRegularClassChecker(Common) {
             declaration.classKind == CLASS &&
             LanguageFeature.FullValueClasses.isDisabled() &&
             declaration.primaryConstructorIfAny(context.session)?.valueParameterSymbols?.size == 1 &&
-            @OptIn(LegacyJvmInlineHandling::class)
-            context.session.annotationPlatformSupport.hasJvmInlineAnnotation
+            platformRequiresJvmInline
         ) {
             // If FVCs are disabled (otherwise, such a class would be considered full) and a class
             //   - has explicit 'value' modifier (because deprecated 'inline class' syntax does not require '@JvmInline' anyway)

@@ -168,8 +168,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirFiniteBoundRestrictionChecker,
         FirNonExpansiveInheritanceRestrictionChecker,
         FirObjectConstructorChecker,
-        FirInlineClassDeclarationChecker,
-        FirJvmInlineApplicabilityChecker,
+        FirInlineValueClassSyntaxChecker,
         FirEnumEntryInitializationChecker,
         FirErrorClassChecker,
     )
