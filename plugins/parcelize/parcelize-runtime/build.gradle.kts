@@ -101,8 +101,19 @@ kotlin {
         tvosArm64()
 
         // Tier 3
+        iosX64()
         mingwX64()
         watchosDeviceArm64()
+
+        // Deprecated
+        @Suppress("DEPRECATION")
+        androidNativeArm32()
+        @Suppress("DEPRECATION")
+        androidNativeArm64()
+        @Suppress("DEPRECATION")
+        androidNativeX86()
+        @Suppress("DEPRECATION")
+        androidNativeX64()
     }
 
     sourceSets {
