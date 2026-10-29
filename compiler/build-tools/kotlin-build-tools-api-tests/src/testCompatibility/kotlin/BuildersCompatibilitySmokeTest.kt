@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaVersionsOnlyCo
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.assumeJsDtsGenerationIsSupported
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.supportsMetadata
+import org.jetbrains.kotlin.buildtools.tests.compilation.util.unwrap
 import org.jetbrains.kotlin.testFederation.MustRunAlways
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -171,7 +172,7 @@ class BuildersCompatibilitySmokeTest : BaseCompilationTest() {
         val version = KotlinToolingVersion(kotlinToolchain.getCompilerVersion())
         assumeTrue(
             version >= KotlinToolingVersion(2, 4, 0, "snapshot")
-                    || kotlinToolchain::class.simpleName == "KotlinToolchainsV1Adapter"
+                    || kotlinToolchain.unwrap()::class.simpleName == "KotlinToolchainsV1Adapter"
         )
 
         val classpath = listOf(workingDirectory.resolve("greet-script-template"))

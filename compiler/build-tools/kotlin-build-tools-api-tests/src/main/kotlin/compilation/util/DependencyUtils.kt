@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.tests.compilation.util
 
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.SharedApiClassesClassLoader
 import java.io.File
 import java.net.URLClassLoader
@@ -40,3 +41,13 @@ val currentKotlinWasmWasiStdlibKlibLocation
 
 val currentKotlinMetadataStdlibKlibLocation
     get() = Paths.get(System.getProperty("kotlin.build-tools-api.test.metadataStdlibClasspath"))
+
+fun KotlinToolchains.unwrap(): KotlinToolchains {
+    if (this::class.java.interfaces.any { (it.name == "org.jetbrains.kotlin.buildtools.api.internal.wrappers.KotlinToolchainsWrapper") }) {
+        val baseProperty =
+            this::class.java.interfaces.first { it.name == "org.jetbrains.kotlin.buildtools.api.internal.wrappers.KotlinToolchainsWrapper" }
+                .getDeclaredMethod("getBase").invoke(this)
+        return (baseProperty as KotlinToolchains).unwrap()
+    }
+    return this
+}
