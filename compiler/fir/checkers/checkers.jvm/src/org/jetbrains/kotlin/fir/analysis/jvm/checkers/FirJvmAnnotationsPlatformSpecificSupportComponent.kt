@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirAnnotationsPlatformSpecificSuppo
 import org.jetbrains.kotlin.fir.declarations.FirCompilerRequiredParameterDescription
 import org.jetbrains.kotlin.fir.declarations.FirCraParameterKind
 import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.LegacyJvmInlineHandling
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassIdSafe
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.name.ClassId
@@ -53,7 +54,8 @@ object FirJvmAnnotationsPlatformSpecificSupportComponent : FirAnnotationsPlatfor
         JvmStandardClassIds.Annotations.JvmRepeatable,
     )
 
-    override val jvmInlineAnnotationClassId: ClassId = StandardClassIds.Annotations.JvmInline
+    @LegacyJvmInlineHandling
+    override val hasJvmInlineAnnotation: Boolean = true
 
     override val deprecationAnnotationsWithOverridesPropagation: Map<ClassId, Boolean> = mapOf(
         JvmStandardClassIds.Annotations.Java.Deprecated to false,

@@ -838,6 +838,12 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val WILL_BECOME_VALUE_CLASS_CANNOT_BE_RECURSIVE by error<KtElement>()
         val WILL_BECOME_VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS by error<KtElement>()
         val WILL_BECOME_VALUE_CLASS_CANNOT_BE_CLONEABLE by error<KtDeclaration>(PositioningStrategy.INLINE_OR_VALUE_MODIFIER)
+
+        val VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION by error<PsiElement>()
+        val JVM_INLINE_WITHOUT_VALUE_CLASS by error<PsiElement>()
+        val JVM_INLINE_WITHOUT_VALUE_CLASS_WARNING by error<PsiElement>()
+        val REDUNDANT_JVM_INLINE by warning<PsiElement>()
+        val JVM_INLINE_ON_VALUE_OBJECT by error<PsiElement>()
     }
 
     val APPLICABILITY by object : DiagnosticGroup("Applicability") {
