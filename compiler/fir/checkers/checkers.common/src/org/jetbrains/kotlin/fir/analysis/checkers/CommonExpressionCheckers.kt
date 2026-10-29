@@ -169,6 +169,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
     override val resolvedQualifierCheckers: Set<FirResolvedQualifierChecker> = setOf(
         FirKotlinActualAnnotationHasNoEffectInKotlinExpressionChecker.ResolvedQualifier,
         FirStandaloneQualifierChecker,
+        FirTypeAliasToUnionTypeQualifierChecker,
         FirPackageOnLhsQualifierChecker,
         FirOptInUsageQualifierChecker,
         FirDeprecatedQualifierChecker,
