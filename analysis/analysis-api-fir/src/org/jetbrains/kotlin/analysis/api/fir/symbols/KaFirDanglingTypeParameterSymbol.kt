@@ -68,8 +68,8 @@ internal class KaFirDanglingTypeParameterSymbol private constructor(
         get() = withValidityAssertion { backingPsi?.getReferencedNameAsName() ?: firSymbol.name }
 
     /**
-     * Annotations in `where` clauses are not allowed, and [psiOrSymbolAnnotationList] doesn't count them for declared type parameters
-     * either: only annotations on the declaration do, and there is no declaration.
+     * There is no declaration, so there are no annotations. Annotations in `where` clauses are not annotations of the type parameter:
+     * FIR keeps them apart, in [constraintAnnotations][org.jetbrains.kotlin.fir.declarations.FirTypeParameter.constraintAnnotations].
      */
     override val annotations: KaAnnotationList
         get() = withValidityAssertion { KaBaseEmptyAnnotationList(token) }

@@ -603,8 +603,6 @@ KaTypeParameterSymbol:
   annotations: [
     Declared()
       psi: KtAnnotationEntry
-    Anno()
-      psi: KtAnnotationEntry
   ]
   isActual: false
   isExpect: false
@@ -666,8 +664,6 @@ KaNamedFunctionSymbol:
       anchorPsi: KtTypeParameter
       annotations: [
         Declared()
-          psi: KtAnnotationEntry
-        Anno()
           psi: KtAnnotationEntry
       ]
       isActual: false
@@ -747,8 +743,6 @@ KaTypeParameterSymbol:
   annotations: [
     Declared()
       psi: KtAnnotationEntry
-    Anno()
-      psi: KtAnnotationEntry
   ]
   isActual: false
   isExpect: false
@@ -805,8 +799,6 @@ KaNamedClassSymbol:
       anchorPsi: KtTypeParameter
       annotations: [
         Declared()
-          psi: KtAnnotationEntry
-        Anno()
           psi: KtAnnotationEntry
       ]
       isActual: false

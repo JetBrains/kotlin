@@ -560,6 +560,7 @@ class FirRenderer(
 
         private fun renderTypeParameter(typeParameter: FirTypeParameter, forOuterTypeRef: Boolean = false) {
             annotationRenderer?.render(typeParameter)
+            annotationRenderer?.renderAnnotations(typeParameter.constraintAnnotations)
             modifierRenderer?.renderModifiers(typeParameter)
             renderPhaseAndAttributes(typeParameter)
             typeParameter.variance.renderVariance()

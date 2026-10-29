@@ -679,6 +679,13 @@ object FirTree : AbstractFirTreeBuilder() {
         // TODO: `useMutableOrEmpty = true` is a workaround for KT-60324 until KT-60445 has been fixed.
         +listField("bounds", typeRef, withReplace = true, useMutableOrEmpty = true, withTransform = true)
         +annotations
+        +listField("constraintAnnotations", annotation, withReplace = true, useMutableOrEmpty = true, withTransform = true) {
+            kDoc = """
+                Annotations written on the `where` constraints of this type parameter (`where @A T : Any`).
+                Annotations are not allowed there, and they don't annotate the type parameter, so they are not in [annotations].
+                They are kept as error annotation calls, so they are resolved and ANNOTATION_IN_WHERE_CLAUSE_ERROR is reported.
+            """.trimIndent()
+        }
     }
 
     val constructedClassTypeParameterRef: Element by element(Declaration) {

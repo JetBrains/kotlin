@@ -18,10 +18,10 @@ fun <T> undeclaredTypeParameter() where <!ANNOTATION_IN_WHERE_CLAUSE_ERROR!>@Typ
 @Target(AnnotationTarget.TYPE_PARAMETER)
 annotation class NonRepeatableAnn
 
-fun <@NonRepeatableAnn T> repeatedInWhereClause() where <!ANNOTATION_IN_WHERE_CLAUSE_ERROR, REPEATED_ANNOTATION!>@NonRepeatableAnn<!> T : Any {
+fun <@NonRepeatableAnn T> repeatedInWhereClause() where <!ANNOTATION_IN_WHERE_CLAUSE_ERROR!>@NonRepeatableAnn<!> T : Any {
 }
 
-fun <T> suppressInWhereClause() where <!ANNOTATION_IN_WHERE_CLAUSE_ERROR!>@Suppress("FINAL_UPPER_BOUND")<!> T : String {
+fun <T> suppressInWhereClause() where <!ANNOTATION_IN_WHERE_CLAUSE_ERROR!>@Suppress("FINAL_UPPER_BOUND")<!> T : <!FINAL_UPPER_BOUND!>String<!> {
 }
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, interfaceDeclaration, nullableType,

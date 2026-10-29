@@ -132,13 +132,6 @@
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=Anno1]
                       isClassRef: true
-            ANNOTATION_ENTRY[hasValueArguments=false, shortName=Anno2]
-              valueArguments: [ ]
-              CONSTRUCTOR_CALLEE
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION[referencedName=Anno2]
-                      isClassRef: true
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=I1]

@@ -1062,14 +1062,15 @@ open class PsiRawFirBuilder(
 
         /**
          * Adds the bounds and the annotations of [constraints] on this type parameter.
-         * Annotations are not allowed in `where` clauses, so they become error annotation calls.
+         * Annotations are not allowed in `where` clauses, so they become error annotation calls in
+         * [constraintAnnotations][FirTypeParameterBuilder.constraintAnnotations].
          */
         private fun FirTypeParameterBuilder.addTypeConstraints(constraints: List<KtTypeConstraint>) {
             for (typeConstraint in constraints) {
                 bounds += typeConstraint.boundTypeReference.toFirOrErrorType()
 
                 for (entry in typeConstraint.annotationEntries) {
-                    annotations += buildErrorAnnotationCall {
+                    constraintAnnotations += buildErrorAnnotationCall {
                         source = entry.toFirSourceElement()
                         useSiteTarget = entry.useSiteTarget?.getAnnotationUseSiteTarget()
                         annotationTypeRef = entry.typeReference.toFirOrErrorType()

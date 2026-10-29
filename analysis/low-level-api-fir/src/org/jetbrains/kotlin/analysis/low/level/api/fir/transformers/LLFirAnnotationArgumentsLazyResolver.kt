@@ -40,6 +40,8 @@ internal object LLFirAnnotationArgumentsLazyResolver : LLFirLazyResolver(FirReso
                 for (bound in target.bounds) {
                     checkAnnotationsAreResolved(target, bound)
                 }
+
+                checkAnnotationsAreResolved(target.constraintAnnotations, target)
             }
 
             is FirRegularClass -> {
