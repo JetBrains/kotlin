@@ -36,7 +36,13 @@ internal val FirCallableDeclaration.isFakeDeclaration: Boolean
  * @see isFakeDeclaration
  */
 internal val FirCallableDeclaration.fakeDeclarationOriginals: List<FirElementWithResolveState>
-    get() = listOfNotNull(originalIfFakeOverrideOrDelegated())
+    get() = when (origin) {
+        // Typealiased constructors are built from already resolved signatures. The only shared content is annotations,
+        // which are resolved via their owners as foreign annotations on ANNOTATION_ARGUMENTS phase.
+        // Note: the attributes are copied from the original constructor, so it shouldn't be unwrapped as a substitution override
+        FirDeclarationOrigin.Synthetic.TypeAliasConstructor -> emptyList()
+        else -> listOfNotNull(originalIfFakeOverrideOrDelegated())
+    }
 
 /**
  * The list is exhaustive on purpose: each new origin requires an explicit decision.
@@ -49,6 +55,7 @@ private val FirDeclarationOrigin.isFakeDeclarationOrigin: Boolean
             // Synthetic Java declarations (like fake overrides) might have an implicit return type
         is FirDeclarationOrigin.Enhancement,
         is FirDeclarationOrigin.Synthetic.JavaProperty,
+        is FirDeclarationOrigin.Synthetic.TypeAliasConstructor,
             -> true
 
         is FirDeclarationOrigin.Source,
@@ -65,7 +72,6 @@ private val FirDeclarationOrigin.isFakeDeclarationOrigin: Boolean
         is FirDeclarationOrigin.Synthetic.PluginFile,
         is FirDeclarationOrigin.Synthetic.Builtins,
         is FirDeclarationOrigin.Synthetic.Error,
-        is FirDeclarationOrigin.Synthetic.TypeAliasConstructor,
         is FirDeclarationOrigin.Synthetic.FakeFunction,
         is FirDeclarationOrigin.Synthetic.ForwardDeclaration,
         is FirDeclarationOrigin.Synthetic.DestructuringDeclarationContainer,

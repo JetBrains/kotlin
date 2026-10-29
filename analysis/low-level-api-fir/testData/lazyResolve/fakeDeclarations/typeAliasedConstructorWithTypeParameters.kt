@@ -1,5 +1,3 @@
-// IGNORE_FIR
-// KT-73481: the lazy body calculation revives the substitution override instead of the original constructor
 // MEMBER_CLASS_FILTER: org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 package test
 
