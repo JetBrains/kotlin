@@ -77,6 +77,11 @@ private val KtNameReferenceExpression.contextKind: LocalReferenceTargetLookupVis
             is KtParameter -> {
                 LocalReferenceTargetLookupVisitor.ContextKind.VALUE.takeIf { p.defaultValue == this@contextKind }
             }
+            is KtDelegatedSuperTypeEntry -> {
+                if (p.delegateExpression == this@contextKind) return VALUE
+
+                TYPE
+            }
             is KtValueArgument,
             is KtBinaryExpression,
             is KtBinaryExpressionWithTypeRHS,
@@ -96,7 +101,7 @@ private val KtNameReferenceExpression.contextKind: LocalReferenceTargetLookupVis
             is KtWhenConditionWithExpression,
             is KtWhenEntry,
                 -> LocalReferenceTargetLookupVisitor.ContextKind.VALUE
-            is KtTypeConstraint, is KtDelegatedSuperTypeEntry -> LocalReferenceTargetLookupVisitor.ContextKind.TYPE
+            is KtTypeConstraint -> LocalReferenceTargetLookupVisitor.ContextKind.TYPE
             else -> null
         }
 
