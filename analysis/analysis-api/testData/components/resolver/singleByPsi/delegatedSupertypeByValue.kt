@@ -5,4 +5,3 @@ fun f(x: X) {
     class Y : X by <expr>x</expr>
 }
 
-// IGNORE_LOOKUP_LOCALLY

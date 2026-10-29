@@ -119,7 +119,7 @@ KtNameReferenceExpression(88,89): 'T'
 KtNameReferenceExpression(93,94): 'i'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       i: T
@@ -168,7 +168,7 @@ KtNameReferenceExpression(109,110): 'T'
 KtNameReferenceExpression(114,115): 'i'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       i: T
