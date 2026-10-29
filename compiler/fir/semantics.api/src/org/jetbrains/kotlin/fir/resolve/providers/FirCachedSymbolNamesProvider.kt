@@ -136,6 +136,27 @@ class FirDelegatingCachedSymbolNamesProvider(
         get() = delegate.mayHaveSyntheticFunctionTypes
 
     override fun mayHaveSyntheticFunctionType(classId: ClassId): Boolean = delegate.mayHaveSyntheticFunctionType(classId)
+
+    override val hasSpecificTopLevelClassifierCheck: Boolean get() = delegate.hasSpecificTopLevelClassifierCheck
+
+    // The delegate's specific check doesn't rely on "names in package" sets, so there is nothing to cache and it can be used directly.
+    override fun mayHaveTopLevelClassifier(classId: ClassId): Boolean {
+        if (hasSpecificTopLevelClassifierCheck) {
+            return delegate.mayHaveTopLevelClassifier(classId)
+        }
+
+        return super.mayHaveTopLevelClassifier(classId)
+    }
+
+    override val hasSpecificTopLevelCallableCheck: Boolean get() = delegate.hasSpecificTopLevelCallableCheck
+
+    override fun mayHaveTopLevelCallable(packageFqName: FqName, name: Name): Boolean {
+        if (hasSpecificTopLevelCallableCheck) {
+            return delegate.mayHaveTopLevelCallable(packageFqName, name)
+        }
+
+        return super.mayHaveTopLevelCallable(packageFqName, name)
+    }
 }
 
 open class FirCompositeCachedSymbolNamesProvider(
@@ -169,6 +190,28 @@ open class FirCompositeCachedSymbolNamesProvider(
         // We cannot use `session`'s function type service directly, because the sessions of `providers` aren't necessarily the same as
         // `session`. So we might miss some other session's synthetic function type.
         return providers.any { it.mayHaveSyntheticFunctionType(classId) }
+    }
+
+    // A specific check is only possible if *every* provider has one, because a "names in package" set has to be built for each provider
+    // which doesn't, and such sets are merged across all providers anyway.
+    override val hasSpecificTopLevelClassifierCheck: Boolean = providers.all { it.hasSpecificTopLevelClassifierCheck }
+
+    override fun mayHaveTopLevelClassifier(classId: ClassId): Boolean {
+        if (hasSpecificTopLevelClassifierCheck) {
+            return providers.any { it.mayHaveTopLevelClassifier(classId) }
+        }
+
+        return super.mayHaveTopLevelClassifier(classId)
+    }
+
+    override val hasSpecificTopLevelCallableCheck: Boolean = providers.all { it.hasSpecificTopLevelCallableCheck }
+
+    override fun mayHaveTopLevelCallable(packageFqName: FqName, name: Name): Boolean {
+        if (hasSpecificTopLevelCallableCheck) {
+            return providers.any { it.mayHaveTopLevelCallable(packageFqName, name) }
+        }
+
+        return super.mayHaveTopLevelCallable(packageFqName, name)
     }
 
     companion object {

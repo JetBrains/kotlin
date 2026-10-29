@@ -136,7 +136,10 @@ abstract class FirSyntheticFunctionInterfaceProviderBase(
 
         override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name> = emptySet()
 
+        override val hasSpecificTopLevelClassifierCheck: Boolean get() = true
         override fun mayHaveTopLevelClassifier(classId: ClassId): Boolean = mayHaveSyntheticFunctionType(classId)
+
+        override val hasSpecificTopLevelCallableCheck: Boolean get() = true
         override fun mayHaveTopLevelCallable(packageFqName: FqName, name: Name): Boolean = false
     }
 
