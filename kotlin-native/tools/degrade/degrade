@@ -24,4 +24,5 @@ cd "$SAVED" >/dev/null
 exec "$@" \
   -I "$APP_HOME/degrade.init.gradle.kts" \
   --no-configuration-cache \
+  --no-build-cache \
   -i -Pkotlin.internal.compiler.arguments.log.level=info
