@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -15,6 +16,7 @@ abstract class AbstractCallInfo {
     abstract val callSite: FirElement
     abstract val name: Name
     abstract val containingFile: FirFile
+    abstract val containingDeclarations: List<FirDeclaration>
     abstract val isImplicitInvoke: Boolean
     abstract val explicitReceiver: FirExpression?
     abstract val argumentList: FirArgumentList
