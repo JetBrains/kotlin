@@ -1,5 +1,7 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import com.github.jengelman.gradle.plugins.shadow.transformers.DontIncludeResourceTransformer
+import org.gradle.kotlin.dsl.support.serviceOf
+import org.jetbrains.kotlin.nativeDistribution.registerNativeBootstrapDistribution
 
 plugins {
     id("common-configuration")
@@ -7,6 +9,7 @@ plugins {
     id("generated-sources")
     id("test-inputs-check")
     id("project-tests-convention")
+    id("native-bootstrap-distribution-provisioner")
 }
 
 dependencies {
@@ -29,7 +32,6 @@ dependencies {
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     implementation(project(":kotlin-tooling-core"))
 
-    runtimeOnly(project(":kotlin-compiler-embeddable"))
     runtimeOnly(project(":kotlin-compiler-runner"))
 
     compileOnly(project(":js:typescript-export-standalone"))
@@ -48,6 +50,24 @@ dependencies {
     embedded(project(":kotlin-metadata-jvm")) { isTransitive = false }
     embedded(libs.diff.utils) { isTransitive = false }
 
+    if (kotlinBuildProperties.isKotlinNativeEnabled.get()) {
+        compileOnly(project(":native:cli-native"))
+        runtimeOnly(project(":kotlin-native:prepare:kotlin-native-compiler-embeddable"))
+    } else {
+        runtimeOnly(project(":kotlin-compiler-embeddable"))
+        // when K/N is not available, depend on the required for compilation CLI part from bootstrap K/N distribution
+        val bootstrapNativeCompiler = files(registerNativeBootstrapDistribution().map { it.compilerClasspath })
+        val archiveOperations = serviceOf<ArchiveOperations>()
+        val bootstrapK2NativeStub = tasks.register<Jar>("bootstrapKotlinNativeCompilerStub") {
+            description = "Extracts the Kotlin/Native CLI entry point classes from the bootstrap Kotlin/Native compiler for compilation"
+            archiveClassifier.set("bootstrap-k2native-stub")
+            destinationDirectory.set(layout.buildDirectory.dir("bootstrapKotlinNative"))
+            from(bootstrapNativeCompiler.elements.map { jars -> jars.map { archiveOperations.zipTree(it) } }) {
+                include("org/jetbrains/kotlin/cli/bc/**")
+            }
+        }
+        compileOnly(files(bootstrapK2NativeStub))
+    }
 
     testCompileOnly(project(":compiler:cli"))
     testCompileOnly(intellijPlatformUtil())

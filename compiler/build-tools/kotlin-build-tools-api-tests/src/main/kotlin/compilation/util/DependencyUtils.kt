@@ -40,3 +40,17 @@ val currentKotlinWasmWasiStdlibKlibLocation
 
 val currentKotlinMetadataStdlibKlibLocation
     get() = Paths.get(System.getProperty("kotlin.build-tools-api.test.metadataStdlibClasspath"))
+
+const val NATIVE_STDLIB_CLASSPATH_PROPERTY = "kotlin.build-tools-api.test.nativeStdlibClasspath"
+
+/**
+ * Whether the Kotlin/Native compiler is available to the Build Tools API implementation under test.
+ *
+ * Gradle sets [NATIVE_STDLIB_CLASSPATH_PROPERTY] only for test suites whose BTA classpath contains the Kotlin/Native compiler:
+ * every regular suite when the repository is built with `kotlin.native.enabled=true`, and the `testNative` suite otherwise.
+ */
+val isKotlinNativeCompilerAvailable: Boolean
+    get() = System.getProperty(NATIVE_STDLIB_CLASSPATH_PROPERTY) != null
+
+val currentKotlinNativeStdlibKlibLocation
+    get() = Paths.get(System.getProperty(NATIVE_STDLIB_CLASSPATH_PROPERTY))
