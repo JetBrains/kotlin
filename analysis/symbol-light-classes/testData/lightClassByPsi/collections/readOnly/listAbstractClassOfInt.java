@@ -9,9 +9,6 @@ public abstract class SList /* test.SList*/ implements java.util.List<@org.jetbr
   public @org.jetbrains.annotations.NotNull() java.lang.Integer set(int, int);//  set(int, int)
 
   @java.lang.Override()
-  public abstract @org.jetbrains.annotations.NotNull() java.lang.Integer get(int);//  get(int)
-
-  @java.lang.Override()
   public abstract boolean contains(int);//  contains(int)
 
   @java.lang.Override()
@@ -40,9 +37,6 @@ public abstract class SList /* test.SList*/ implements java.util.List<@org.jetbr
 
   @java.lang.Override()
   public boolean retainAll(java.util.Collection<?>);//  retainAll(java.util.Collection<?>)
-
-  @java.lang.Override()
-  public final @org.jetbrains.annotations.NotNull() java.lang.Integer get(int);//  get(int)
 
   @java.lang.Override()
   public final boolean contains(java.lang.Object);//  contains(java.lang.Object)

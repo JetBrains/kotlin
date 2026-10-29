@@ -3,9 +3,6 @@ public abstract class SMutableList /* test.SMutableList*/ implements java.util.L
   public <T> T[] toArray(T[]);// <T>  toArray(T[])
 
   @java.lang.Override()
-  public abstract @org.jetbrains.annotations.NotNull() java.lang.String get(int);//  get(int)
-
-  @java.lang.Override()
   public abstract @org.jetbrains.annotations.NotNull() java.lang.String removeAt(int);//  removeAt(int)
 
   @java.lang.Override()
@@ -22,9 +19,6 @@ public abstract class SMutableList /* test.SMutableList*/ implements java.util.L
 
   @java.lang.Override()
   public abstract int lastIndexOf(@org.jetbrains.annotations.NotNull() java.lang.String);//  lastIndexOf(@org.jetbrains.annotations.NotNull() java.lang.String)
-
-  @java.lang.Override()
-  public final @org.jetbrains.annotations.NotNull() java.lang.String get(int);//  get(int)
 
   @java.lang.Override()
   public final @org.jetbrains.annotations.NotNull() java.lang.String remove(int);//  remove(int)
