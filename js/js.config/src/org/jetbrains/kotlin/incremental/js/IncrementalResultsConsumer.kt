@@ -140,10 +140,13 @@ open class IncrementalResultsConsumerImpl : IncrementalResultsConsumer {
 }
 
 class KmpIncrementalResultsConsumer : IncrementalResultsConsumerImpl() {
-    val commonPackageParts: Map<String, Map<File, ByteArray>>
+    /**
+     * Serialized metadata of common (non-leaf) fragment files, keyed by fragment name and then by source file.
+     */
+    val commonMetadata: Map<String, Map<File, ByteArray>>
         field = hashMapOf<String, MutableMap<File, ByteArray>>()
 
-    fun processCommonPackagePart(fragmentName: String, sourceFile: File, packagePartMetadata: ByteArray) {
-        commonPackageParts.getOrPut(fragmentName) { hashMapOf() }[sourceFile] = packagePartMetadata
+    fun processCommonMetadata(fragmentName: String, sourceFile: File, metadata: ByteArray) {
+        commonMetadata.getOrPut(fragmentName) { hashMapOf() }[sourceFile] = metadata
     }
 }
