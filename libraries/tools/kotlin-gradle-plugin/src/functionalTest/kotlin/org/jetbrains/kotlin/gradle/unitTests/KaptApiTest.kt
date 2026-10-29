@@ -5,19 +5,26 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
+import org.gradle.api.Project
 import org.gradle.api.internal.project.ProjectInternal
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KaptStubGenerationScheme
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin
+import org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
 import org.jetbrains.kotlin.gradle.internal.KaptWithoutKotlincTask
+import org.jetbrains.kotlin.gradle.plugin.KaptExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinApiPlugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinJvmFactory
 import org.jetbrains.kotlin.gradle.tasks.Kapt
+import org.jetbrains.kotlin.gradle.tasks.KaptGenerateStubs
 import org.jetbrains.kotlin.gradle.util.buildProject
+import org.jetbrains.kotlin.gradle.util.buildProjectWithJvm
+import org.jetbrains.kotlin.gradle.util.propertiesExtension
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.io.TempDir
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 import java.io.File
 
 class KaptApiTest {
@@ -189,6 +196,72 @@ class KaptApiTest {
         )
     }
 
+    @Test
+    fun testGenerateStubsHeaderModeIsOffByDefault() {
+        assertNull(generateStubsKaptOption("headerMode"))
+    }
+
+    @Test
+    fun testGenerateStubsHeaderMode() {
+        plugin.kaptExtension.headerMode.set(true)
+        assertEquals("true", generateStubsKaptOption("headerMode"))
+    }
+
+    @Test
+    fun testGenerateStubsHeaderModeFromGradleProperty() {
+        project.propertiesExtension.set("kapt.header.mode", "true")
+        assertEquals("true", generateStubsKaptOption("headerMode"))
+    }
+
+    @Test
+    fun testGenerateStubsHeaderModeDslOverridesGradleProperty() {
+        project.propertiesExtension.set("kapt.header.mode", "true")
+        plugin.kaptExtension.headerMode.set(false)
+        assertNull(generateStubsKaptOption("headerMode"))
+    }
+
+    @Test
+    fun testKaptPluginHeaderModeIsOffByDefault() {
+        assertNull(kaptPluginGenerateStubsOption("headerMode"))
+    }
+
+    @Test
+    fun testKaptPluginHeaderModeFromGradleProperty() {
+        val option = kaptPluginGenerateStubsOption("headerMode") {
+            propertiesExtension.set("kapt.header.mode", "true")
+        }
+        assertEquals("true", option)
+    }
+
+    @Test
+    fun testKaptPluginHeaderModeDslOverridesGradleProperty() {
+        val option = kaptPluginGenerateStubsOption("headerMode") {
+            propertiesExtension.set("kapt.header.mode", "true")
+            extensions.getByType(KaptExtension::class.java).headerMode.set(false)
+        }
+        assertNull(option)
+    }
+
+    private fun generateStubsKaptOption(key: String): String? = plugin.registerKaptGenerateStubsTask(
+        GENERATE_STUBS,
+        plugin.registerKotlinJvmCompileTask("customCompileKotlin", plugin.createCompilerJvmOptions()),
+        plugin.kaptExtension,
+    ).get().kaptOption(key)
+
+    /** The same option on the stubs task of a project that applies the 'kotlin-kapt' plugin instead of the API. */
+    private fun kaptPluginGenerateStubsOption(key: String, configure: Project.() -> Unit = {}): String? {
+        val project = buildProjectWithJvm {
+            plugins.apply(Kapt3GradleSubplugin::class.java)
+            configure()
+        }
+        project.evaluate()
+        return project.tasks.named("kaptGenerateStubsKotlin", KaptGenerateStubsTask::class.java).get().kaptOption(key)
+    }
+
+    private fun KaptGenerateStubs.kaptOption(key: String): String? = pluginOptions.get()
+        .flatMap { it.allOptions()[Kapt3GradleSubplugin.KAPT_SUBPLUGIN_ID].orEmpty() }
+        .singleOrNull { it.key == key }
+        ?.value
 
     @Test
     fun testGenerateStubsTaskHasCompilerOptionsFromCompileTask() {

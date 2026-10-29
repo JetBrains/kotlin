@@ -227,6 +227,13 @@ enum class KaptCliOption(
         cliToolOption = CliToolOption("-Kapt-isolate-processors-from-build-classpath", FLAG)
     ),
 
+    HEADER_MODE_OPTION(
+        "headerMode",
+        "true | false",
+        "Skip function body resolution during stub generation",
+        cliToolOption = CliToolOption("-Kapt-header-mode", FLAG)
+    ),
+
     STUB_GENERATION_SCHEME_OPTION(
         "stubGenerationScheme",
         "<direct|jtree>",

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.KtSourceFileLinesMapping
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -163,6 +164,9 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
     val headerMode: Boolean,
     val baseScopeProvider: FirScopeProvider,
 ) : AbstractTreeRawFirBuilder<Node, Type>(session, context) {
+    private val keepPropertyBodiesInHeaderMode =
+        session.languageVersionSettings.getFlag(AnalysisFlags.headerModeKeepPropertyBodies)
+
     /**
      * [org.jetbrains.kotlin.parsing.KotlinParsing.parseFile]
      * [org.jetbrains.kotlin.parsing.KotlinParsing.parsePreamble]
@@ -1627,7 +1631,8 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
                     KtNodeTypes.BACKING_FIELD_ID -> fieldDeclaration = it
                     else -> if (it.isExpression()) {
                         context.calleeNamesForLambda += null
-                        val keepBodyInHeaderMode = !isReturnType || modifiers?.isConst() == true
+                        val keepBodyInHeaderMode =
+                            !isReturnType || modifiers?.isConst() == true || keepPropertyBodiesInHeaderMode
                         propertyInitializer = runIf(isLocal || !headerMode || keepBodyInHeaderMode) {
                             context.withForcedLocalContext(keepBodyInHeaderMode) {
                                 expressionConverter.getAsFirExpression(it, "Should have initializer")
@@ -2009,7 +2014,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
             }
             val allowLegacyContractDescription = outerContractDescription == null
             val bodyWithContractDescription = context.withForcedLocalContext(
-                forceKeepingTheBodyInHeaderMode = propertyTypeRef is FirImplicitTypeRef || status.isInline
+                forceKeepingTheBodyInHeaderMode = propertyTypeRef is FirImplicitTypeRef || status.isInline || keepPropertyBodiesInHeaderMode
             ) {
                 convertFunctionBody(block, expression, allowLegacyContractDescription)
             }

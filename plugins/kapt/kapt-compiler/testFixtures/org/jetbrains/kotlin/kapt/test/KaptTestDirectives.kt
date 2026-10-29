@@ -20,6 +20,7 @@ object KaptTestDirectives : SimpleDirectivesContainer() {
     val INCLUDE_COMPILE_CLASSPATH by directive("Enables INCLUDE_COMPILE_CLASSPATH flag")
     val INCREMENTAL_APT by directive("Enables INCREMENTAL_APT flag")
     val STRIP_METADATA by directive("Enables STRIP_METADATA flag")
+    val HEADER_MODE by directive("Enables HEADER_MODE flag")
 
     val NON_EXISTENT_CLASS by directive("Generate stub for class error.NonExistentClass")
     val EXPECTED_ERROR by stringDirective("The following error is expected in this test", multiLine = true)
@@ -33,6 +34,6 @@ object KaptTestDirectives : SimpleDirectivesContainer() {
     val flagDirectives = listOf(
         SHOW_PROCESSOR_STATS, VERBOSE, INFO_AS_WARNINGS, USE_LIGHT_ANALYSIS, CORRECT_ERROR_TYPES,
         DUMP_DEFAULT_PARAMETER_VALUES, MAP_DIAGNOSTIC_LOCATIONS, STRICT, INCLUDE_COMPILE_CLASSPATH,
-        INCREMENTAL_APT, STRIP_METADATA,
+        INCREMENTAL_APT, STRIP_METADATA, HEADER_MODE,
     )
 }

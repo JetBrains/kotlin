@@ -10,9 +10,14 @@ import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.jvm.*
 import org.jetbrains.kotlin.cli.pipeline.withNewDiagnosticCollector
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
+import org.jetbrains.kotlin.config.AnalysisFlag
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
+import org.jetbrains.kotlin.kapt.base.KaptFlag
 import org.jetbrains.kotlin.kapt.base.KaptOptions
 import org.jetbrains.kotlin.kapt.base.util.KaptLogger
 import org.jetbrains.kotlin.kapt.stubs.OriginCollectingClassBuilderFactory
@@ -26,6 +31,10 @@ internal fun compileForStubGeneration(
     withJdk: Boolean,
     onFrontendOutput: (JvmFrontendPipelineArtifact) -> Boolean = { false },
 ): KaptContextForStubGeneration? {
+    if (options[KaptFlag.HEADER_MODE]) {
+        configuration.languageVersionSettings = configuration.languageVersionSettings.withStubGenerationHeaderMode()
+    }
+
     val frontendInput = ConfigurationPipelineArtifact(configuration, disposable)
         .withNewDiagnosticCollector(DiagnosticsCollectorImpl())
     val frontendOutput = JvmFrontendPipelinePhase.executePhase(frontendInput) ?: return null
@@ -54,4 +63,20 @@ internal fun compileForStubGeneration(
         frontendOutput.frontendOutput.outputs.flatMap { it.fir },
         fir2IrOutput.result.irBuiltIns,
     )
+}
+
+/**
+ * Stubs need no function bodies. Pruning would drop declarations stubs must contain; property initializers and accessors are
+ * needed for field initializers and backing fields.
+ */
+private fun LanguageVersionSettings.withStubGenerationHeaderMode(): LanguageVersionSettings {
+    val original = this
+    return object : LanguageVersionSettings by original {
+        @Suppress("UNCHECKED_CAST")
+        override fun <T> getFlag(flag: AnalysisFlag<T>): T = when (flag) {
+            AnalysisFlags.headerMode, AnalysisFlags.headerModeKeepPropertyBodies -> true as T
+            AnalysisFlags.firAggressivePruning -> false as T
+            else -> original.getFlag(flag)
+        }
+    }
 }

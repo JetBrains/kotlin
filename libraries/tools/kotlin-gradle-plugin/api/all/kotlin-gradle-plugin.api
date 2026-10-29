@@ -486,6 +486,7 @@ public class org/jetbrains/kotlin/gradle/plugin/KaptExtension : org/jetbrains/ko
 	public fun getDetectMemoryLeaks ()Ljava/lang/String;
 	public fun getDumpDefaultParameterValues ()Z
 	public fun getGenerateStubs ()Z
+	public fun getHeaderMode ()Lorg/gradle/api/provider/Property;
 	public fun getIncludeCompileClasspath ()Ljava/lang/Boolean;
 	public fun getJavacOptions ()Ljava/util/Map;
 	public fun getKeepJavacAnnotationProcessors ()Z

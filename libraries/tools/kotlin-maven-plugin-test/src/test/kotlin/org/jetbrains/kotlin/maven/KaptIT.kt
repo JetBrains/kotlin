@@ -109,6 +109,34 @@ class KaptIT : KotlinMavenTestBase() {
     }
 
     @MavenTest
+    @DisplayName("KAPT generates stubs in header mode")
+    fun testKaptHeaderMode(mavenVersion: TestVersions.Maven) {
+        // TODO: Cleanup classloaders after the execution in Maven as well. KT-90859
+        val buildOptions = if (isWindowsHost) buildOptions.copy(useKotlinDaemon = false) else buildOptions
+        testProject("test-kapt-generateKotlinCode", mavenVersion, buildOptions) {
+            modifyPomXml("app/pom.xml") {
+                val kaptConfiguration = findKotlinPlugin().findExecution("kapt").getOrCreateChild("configuration")
+                kaptConfiguration.getOrCreateChild("headerMode").textContent = "true"
+            }
+
+            build(
+                "package", "-X",
+                expectedToFail = false
+            ) {
+                assertBuildLogContains(
+                    "[INFO] [kapt] Kapt is enabled.",
+                    "Skip function body resolution during stub generation: true",
+                    "[INFO] [kapt] Annotation processors: example.ExampleAnnotationProcessor"
+                )
+                assertJarExistsAndNotEmpty("app/target/app-1.0-SNAPSHOT.jar")
+                assertFileExists(
+                    "app/target/generated-sources/kaptKotlin/compile/MyClass.kt"
+                ) { "KAPT-generated Kotlin extension file was not found" }
+            }
+        }
+    }
+
+    @MavenTest
     @DisplayName("KAPT processes Dagger annotations on JDK 17")
     fun testDaggerAnnotationProcessing(mavenVersion: TestVersions.Maven) {
         testProject("java8/test-dagger-maven-example", mavenVersion) {

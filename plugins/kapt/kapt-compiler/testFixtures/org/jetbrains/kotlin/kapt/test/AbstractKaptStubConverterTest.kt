@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurat
 abstract class AbstractKaptStubConverterTest(
     private val stubGenerationScheme: StubGenerationScheme,
     private val useCollectionLiteralsBasedAnnotationResolution: Boolean = false,
+    private val headerMode: Boolean = false,
 ) : AbstractKotlinCompilerTest() {
     init {
         doOpenInternalPackagesIfRequired()
@@ -52,6 +53,9 @@ abstract class AbstractKaptStubConverterTest(
             +WITH_STDLIB
             STUB_GENERATION_SCHEME with stubGenerationScheme.stringValue
             TestDumpDirectives.DUMP_CLASSIFIER with dumpClassifier
+            if (headerMode) {
+                +KaptTestDirectives.HEADER_MODE
+            }
             if (useCollectionLiteralsBasedAnnotationResolution) {
                 LANGUAGE with "+${LanguageFeature.CollectionLiteralsBasedAnnotationResolution.name}"
             }
@@ -81,6 +85,9 @@ abstract class AbstractKaptStubConverterTest(
 open class AbstractKaptStubConverterJTreeTest : AbstractKaptStubConverterTest(StubGenerationScheme.JTREE)
 
 open class AbstractKaptStubConverterDirectTest : AbstractKaptStubConverterTest(StubGenerationScheme.DIRECT)
+
+// Header mode must not change the stubs, so it shares the expected output of the direct scheme.
+open class AbstractKaptStubConverterDirectHeaderModeTest : AbstractKaptStubConverterTest(StubGenerationScheme.DIRECT, headerMode = true)
 
 open class AbstractKaptStubConverterDirectWithCollectionLiteralsTest : AbstractKaptStubConverterTest(
     StubGenerationScheme.DIRECT,

@@ -100,6 +100,12 @@ public class KaptToolIntegrationTestGenerated extends AbstractKaptToolIntegratio
   }
 
   @Test
+  @TestMetadata("headerMode")
+  public void testHeaderMode() {
+    runTest("plugins/kapt/kapt-cli/testData/integration/headerMode/");
+  }
+
+  @Test
   @TestMetadata("includeCompileClasspath")
   public void testIncludeCompileClasspath() {
     runTest("plugins/kapt/kapt-cli/testData/integration/includeCompileClasspath/");
