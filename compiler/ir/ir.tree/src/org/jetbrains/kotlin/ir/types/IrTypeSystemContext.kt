@@ -225,7 +225,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
         require(this is IrCapturedType)
 
         fun IrType.hasThisAsArgument(): Boolean = true == arguments
-            ?.any { it.typeOrNull?.typeConstructor() == this@hasRecursiveBounds.unwrapToSimpleTypeUsingLowerBound().typeConstructor() }
+            ?.any { it.typeOrNull?.typeConstructor() == this@hasRecursiveBounds.typeConstructor() }
 
         return constructor.superTypes.any { it.hasThisAsArgument() } || lowerType?.hasThisAsArgument() == true
     }
