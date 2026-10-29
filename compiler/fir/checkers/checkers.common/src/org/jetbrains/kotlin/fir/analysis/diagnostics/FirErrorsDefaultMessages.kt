@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.MODU
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.NAME_OF_CONTAINING_DECLARATION_OR_FILE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.NAME_OF_DECLARATION_OR_FILE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.OF_OPTIONAL_NAME
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.OPTIONAL_CONSTRUCTOR_SUGGESTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.OPTIONAL_OF_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.OPTIONAL_SENTENCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_CLASS_OR_OBJECT_NAME_QUOTED
@@ -3698,8 +3699,9 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             NO_COMPANION_OBJECT,
-            "Classifier ''{0}'' does not have a companion object, so it cannot be used as an expression.",
-            SYMBOL
+            "Classifier ''{0}'' does not have a companion object, so it cannot be used as an expression.{1}",
+            SYMBOL,
+            OPTIONAL_CONSTRUCTOR_SUGGESTION,
         )
         map.put(EXPRESSION_EXPECTED_PACKAGE_FOUND, "Expression expected, but package name found.")
 

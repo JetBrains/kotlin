@@ -2127,6 +2127,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
         val NO_COMPANION_OBJECT by error<KtExpression>(PositioningStrategy.SELECTOR_BY_QUALIFIED) {
             parameter<FirClassLikeSymbol<*>>("klass")
+            parameter<FirConstructorSymbol?>("suggestedConstructor")
         }
         val EXPRESSION_EXPECTED_PACKAGE_FOUND by error<KtExpression>(PositioningStrategy.SELECTOR_BY_QUALIFIED)
     }

@@ -245,6 +245,20 @@ object FirDiagnosticRenderers {
         }
     }
 
+    val OPTIONAL_CONSTRUCTOR_SUGGESTION = Renderer { symbol: FirConstructorSymbol? ->
+        if (symbol == null) return@Renderer ""
+
+        buildString {
+            append(" Did you intend to call the constructor '")
+            append(symbol.name.asString())
+            append("(")
+            if (symbol.valueParameterSymbols.isNotEmpty()) {
+                append("...")
+            }
+            append(")'?")
+        }
+    }
+
     val DECLARATION_FQ_NAME = Renderer { symbol: FirBasedSymbol<*> ->
         when (symbol) {
             is FirCallableSymbol<*> -> symbol.name.asString()
