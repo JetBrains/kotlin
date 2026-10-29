@@ -192,7 +192,7 @@ internal class DumpIr(output: KlibToolOutput, args: ParsedArguments) : KlibToolC
             linker.createAndRegisterModuleDeserializer(
                     moduleDescriptor = createEmulatedStandardLibraryModuleDescriptor(),
                     kotlinLibrary = null,
-                    strategyResolver = DeserializationStrategy.ONLY_REFERENCED,
+                    strategyResolver = DeserializationStrategy.ON_DEMAND,
             )
         }
 

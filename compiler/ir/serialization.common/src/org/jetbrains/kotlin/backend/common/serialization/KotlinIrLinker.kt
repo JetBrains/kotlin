@@ -390,7 +390,6 @@ enum class DeserializationStrategy(
     val inlineBodies: Boolean
 ) : DeserializationStrategyResolver {
     ON_DEMAND(true, false, false, false, false),
-    ONLY_REFERENCED(false, true, false, false, true),
     ALL(false, true, true, true, true),
     EXPLICITLY_EXPORTED(false, true, true, false, true),
     ONLY_DECLARATION_HEADERS(false, false, false, false, false),
