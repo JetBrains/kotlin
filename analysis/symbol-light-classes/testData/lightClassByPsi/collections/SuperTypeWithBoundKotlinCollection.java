@@ -24,6 +24,15 @@ public abstract class KotlinClass /* KotlinClass*/<K extends RegularInterface, V
   public V replace(@org.jetbrains.annotations.NotNull() K, V);//  replace(@org.jetbrains.annotations.NotNull() K, V)
 
   @java.lang.Override()
+  public abstract V get(@org.jetbrains.annotations.NotNull() K);//  get(@org.jetbrains.annotations.NotNull() K)
+
+  @java.lang.Override()
+  public abstract boolean containsKey(@org.jetbrains.annotations.NotNull() K);//  containsKey(@org.jetbrains.annotations.NotNull() K)
+
+  @java.lang.Override()
+  public abstract boolean containsValue(V);//  containsValue(V)
+
+  @java.lang.Override()
   public abstract int getSize();//  getSize()
 
   @java.lang.Override()
@@ -40,6 +49,15 @@ public abstract class KotlinClass /* KotlinClass*/<K extends RegularInterface, V
 
   @java.lang.Override()
   public boolean replace(@org.jetbrains.annotations.NotNull() K, V, V);//  replace(@org.jetbrains.annotations.NotNull() K, V, V)
+
+  @java.lang.Override()
+  public final V get(java.lang.Object);//  get(java.lang.Object)
+
+  @java.lang.Override()
+  public final boolean containsKey(java.lang.Object);//  containsKey(java.lang.Object)
+
+  @java.lang.Override()
+  public final boolean containsValue(java.lang.Object);//  containsValue(java.lang.Object)
 
   @java.lang.Override()
   public final int size();//  size()
