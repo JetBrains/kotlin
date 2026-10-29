@@ -26,6 +26,7 @@ import org.junit.jupiter.api.condition.OS
 import kotlin.jvm.java
 import kotlin.test.assertContains
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 @JsBrowserGradlePluginTests
 class JsBrowserTestsIT : KGPBaseTest() {
@@ -578,6 +579,81 @@ class JsBrowserTestsIT : KGPBaseTest() {
 
                 // first test never get executed with firefox runner as entire test execution was interrupted
                 assertOutputDoesNotContain("JsBrowserInterruptionTest.t1[js, browser, firefox]")
+            }
+        }
+    }
+
+    @GradleTest
+    fun `timeout in one browser runner doesn't prevent execution of subsequent runners`(gradleVersion: GradleVersion) {
+        project(
+            "empty",
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
+        ) {
+            plugins {
+                kotlin("multiplatform")
+            }
+
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    js {
+                        browser {
+                            @OptIn(ExperimentalJsTestDsl::class)
+                            with(test) {
+                                chromium {
+                                    it.timeout.set(1.seconds)
+                                }
+                                // default timeout
+                                firefox()
+                            }
+                        }
+                    }
+
+                    sourceSets.commonTest {
+                        dependencies {
+                            implementation(kotlin("test"))
+                            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.11.0")
+                        }
+                    }
+
+                    sourceSets.commonTest.get().compileSource(
+                        """
+                        import kotlinx.coroutines.Dispatchers
+                        import kotlinx.coroutines.delay
+                        import kotlinx.coroutines.test.runTest
+                        import kotlinx.coroutines.withContext
+                        import kotlin.test.*
+                        import kotlin.time.Duration.Companion.seconds
+                        
+                        class JsBrowserSlowTest {
+                            @Test
+                            fun slowTest() = runTest {
+                                withContext(Dispatchers.Default) {
+                                    delay(3.seconds)
+                                }
+                                println("Slow test finished")
+                            }
+                        }
+                        """.trimIndent()
+                    )
+                }
+            }
+
+            buildAndFail("jsBrowserTest") {
+                assumeFalse(
+                    output.contains("error while loading shared libraries: libglib-2.0"),
+                    "No libglib-2.0 on the test runner machine"
+                )
+                assertTasksFailed(":jsBrowserTest")
+
+                // chromium runner is executed first and times out
+                assertOutputContains("chromium.JsBrowserSlowTest.slowTest[js, browser, chromium] FAILED")
+                assertOutputContains("com.microsoft.playwright.TimeoutError: Timeout 1000ms exceeded")
+
+                // firefox runner is still executed and finishes the slow test within the default timeout
+                assertOutputContains("firefox.JsBrowserSlowTest.slowTest[js, browser, firefox] STANDARD_OUT")
+                assertOutputDoesNotContain("firefox.JsBrowserSlowTest.slowTest[js, browser, firefox] FAILED")
+                assertOutputContains("2 tests completed, 1 failed")
             }
         }
     }

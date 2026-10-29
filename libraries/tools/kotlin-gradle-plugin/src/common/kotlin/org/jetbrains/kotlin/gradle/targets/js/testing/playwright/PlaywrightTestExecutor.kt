@@ -141,8 +141,8 @@ internal class PlaywrightTestExecutor() : TestExecuter<PwExecutionSpec> {
                                     closeSuiteWithFailingTestCause(suiteNode = this, tsEnd, failingTestCause = t)
                                     if (t is PlaywrightException && t.cause is InterruptedException) {
                                         log.warn("Execution of Kotlin/JS browser tests was interrupted for runner '${runner.name}'.")
+                                        throw t
                                     }
-                                    throw t
                                 }
                             }
                         }
