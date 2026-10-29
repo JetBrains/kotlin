@@ -1,7 +1,5 @@
-// TARGET_BACKEND: WASM
+// TARGET_BACKEND: WASM_JS
 // USE_OLD_EXCEPTION_HANDLING_PROPOSAL
-// WASM_IGNORE_FOR: vm=Wasmtime
-// WASM_IGNORE_FOR: vm=WasmEdge
 
 fun f(): Int {
     try {
