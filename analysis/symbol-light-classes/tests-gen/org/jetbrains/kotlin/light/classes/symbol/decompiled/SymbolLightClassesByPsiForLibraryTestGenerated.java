@@ -1083,6 +1083,12 @@ public class SymbolLightClassesByPsiForLibraryTestGenerated extends AbstractSymb
       }
 
       @Test
+      @TestMetadata("listAbstractClassJdk21.kt")
+      public void testListAbstractClassJdk21() {
+        run("listAbstractClassJdk21.kt");
+      }
+
+      @Test
       @TestMetadata("listAbstractClassOfInt.kt")
       public void testListAbstractClassOfInt() {
         run("listAbstractClassOfInt.kt");

@@ -44,7 +44,7 @@ sourceSets {
 
 projectTests {
     testTask(
-        defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0)
+        defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0, JdkMajorVersion.JDK_21_0)
     ) {
         testFederation {
             smokeTests {
