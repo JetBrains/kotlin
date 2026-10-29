@@ -3,6 +3,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+void * _Nullable KotlinStdlib_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(void * pointerToClosure, int32_t _1);
+
+void * KotlinStdlib_internal_functional_type_callee_anyU20ExportedKotlinPackagesU2EkotlinU2EcollectionsU2EIterator__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * pointerToClosure);
+
 _Bool kotlin_collections_Collection_containsAll__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_collections_Collection____reverse_swift(void * self, void * elements);
 
 _Bool kotlin_collections_Collection_contains__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(void * self, void * _Nullable element);
@@ -117,11 +121,15 @@ void * kotlin_collections_Collection_iterator(void * self);
 
 int32_t kotlin_collections_Collection_size_get(void * self);
 
+void * kotlin_collections_Iterable__TypesOfArguments__U2829202D_U20anyU20ExportedKotlinPackages_kotlin_collections_Iterator__(void * iterator);
+
 void * kotlin_collections_Iterable_iterator(void * self);
 
 _Bool kotlin_collections_Iterator_hasNext(void * self);
 
 void * _Nullable kotlin_collections_Iterator_next(void * self);
+
+void * kotlin_collections_List__TypesOfArguments__Swift_Int32_U28Swift_Int32U29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(int32_t size, void * init);
 
 _Bool kotlin_collections_ListIterator_hasNext(void * self);
 
@@ -175,6 +183,8 @@ void * kotlin_collections_MutableIterable_iterator(void * self);
 
 _Bool kotlin_collections_MutableIterator_remove(void * self);
 
+void * kotlin_collections_MutableList__TypesOfArguments__Swift_Int32_U28Swift_Int32U29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(int32_t size, void * init);
+
 _Bool kotlin_collections_MutableListIterator_add__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable element);
 
 _Bool kotlin_collections_MutableListIterator_hasNext(void * self);
@@ -210,5 +220,15 @@ _Bool kotlin_collections_MutableList_retainAll__TypesOfArguments__anyU20Exported
 void * _Nullable kotlin_collections_MutableList_set__TypesOfArguments__Swift_Int32_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, int32_t index, void * _Nullable element);
 
 void * kotlin_collections_MutableList_subList__TypesOfArguments__Swift_Int32_Swift_Int32__(void * self, int32_t fromIndex, int32_t toIndex);
+
+void * kotlin_collections_listOf__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * _Nullable element);
+
+void * kotlin_collections_listOf__TypesOfArguments__Swift_Array_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___Vararg___(NSArray<id> * elements);
+
+void * kotlin_collections_listOf();
+
+void * kotlin_collections_mutableListOf();
+
+void * kotlin_collections_mutableListOf__TypesOfArguments__Swift_Array_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___Vararg___(NSArray<id> * elements);
 
 NS_ASSUME_NONNULL_END

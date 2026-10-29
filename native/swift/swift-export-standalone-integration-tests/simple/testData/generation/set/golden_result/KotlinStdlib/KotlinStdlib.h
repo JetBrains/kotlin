@@ -3,6 +3,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+void * KotlinStdlib_internal_functional_type_callee_anyU20ExportedKotlinPackagesU2EkotlinU2EcollectionsU2EIterator__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * pointerToClosure);
+
 _Bool kotlin_collections_Collection_containsAll__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_collections_Collection____reverse_swift(void * self, void * elements);
 
 _Bool kotlin_collections_Collection_contains__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(void * self, void * _Nullable element);
@@ -71,6 +73,8 @@ void * kotlin_collections_Collection_iterator(void * self);
 
 int32_t kotlin_collections_Collection_size_get(void * self);
 
+void * kotlin_collections_Iterable__TypesOfArguments__U2829202D_U20anyU20ExportedKotlinPackages_kotlin_collections_Iterator__(void * iterator);
+
 void * kotlin_collections_Iterable_iterator(void * self);
 
 _Bool kotlin_collections_Iterator_hasNext(void * self);
@@ -118,5 +122,15 @@ _Bool kotlin_collections_Set_isEmpty(void * self);
 void * kotlin_collections_Set_iterator(void * self);
 
 int32_t kotlin_collections_Set_size_get(void * self);
+
+void * kotlin_collections_mutableSetOf();
+
+void * kotlin_collections_mutableSetOf__TypesOfArguments__Swift_Array_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___Vararg___(NSArray<id> * elements);
+
+NSSet<id> * kotlin_collections_setOf__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * _Nullable element);
+
+NSSet<id> * kotlin_collections_setOf__TypesOfArguments__Swift_Array_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___Vararg___(NSArray<id> * elements);
+
+NSSet<id> * kotlin_collections_setOf();
 
 NS_ASSUME_NONNULL_END

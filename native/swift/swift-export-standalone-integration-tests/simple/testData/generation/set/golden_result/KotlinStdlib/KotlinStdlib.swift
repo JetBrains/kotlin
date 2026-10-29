@@ -340,7 +340,39 @@ extension ExportedKotlinPackages.kotlin.collections {
     }
     public protocol __Set: KotlinRuntimeSupport._KotlinBridgeable, ExportedKotlinPackages.kotlin.collections.__Collection {
     }
+    public static func iterable(
+        iterator: @escaping () -> any ExportedKotlinPackages.kotlin.collections.Iterator
+    ) -> any ExportedKotlinPackages.kotlin.collections.Iterable {
+        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_Iterable__TypesOfArguments__U2829202D_U20anyU20ExportedKotlinPackages_kotlin_collections_Iterator__(Unmanaged.passRetained((iterator as () -> any ExportedKotlinPackages.kotlin.collections.Iterator) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlin.collections.Iterable.Type.self) as! any ExportedKotlinPackages.kotlin.collections.Iterable
+    }
+    public static func mutableSetOf() -> any ExportedKotlinPackages.kotlin.collections.MutableSet {
+        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_mutableSetOf(), conformsTo: ExportedKotlinPackages.kotlin.collections.MutableSet.Type.self) as! any ExportedKotlinPackages.kotlin.collections.MutableSet
+    }
+    public static func mutableSetOf(
+        elements: (any KotlinRuntimeSupport._KotlinBridgeable)?...
+    ) -> any ExportedKotlinPackages.kotlin.collections.MutableSet {
+        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_mutableSetOf__TypesOfArguments__Swift_Array_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___Vararg___(elements.map { it in it as! NSObject? ?? NSNull() }), conformsTo: ExportedKotlinPackages.kotlin.collections.MutableSet.Type.self) as! any ExportedKotlinPackages.kotlin.collections.MutableSet
+    }
+    public static func setOf() -> Swift.Set<Swift.Optional<Swift.AnyHashable>> {
+        return kotlin_collections_setOf() as! Swift.Set<Swift.Optional<Swift.AnyHashable>>
+    }
+    public static func setOf(
+        element: (any KotlinRuntimeSupport._KotlinBridgeable)?
+    ) -> Swift.Set<Swift.Optional<Swift.AnyHashable>> {
+        return kotlin_collections_setOf__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(element.map { it in it.__externalRCRef() } ?? nil) as! Swift.Set<Swift.Optional<Swift.AnyHashable>>
+    }
+    public static func setOf(
+        elements: (any KotlinRuntimeSupport._KotlinBridgeable)?...
+    ) -> Swift.Set<Swift.Optional<Swift.AnyHashable>> {
+        return kotlin_collections_setOf__TypesOfArguments__Swift_Array_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___Vararg___(elements.map { it in it as! NSObject? ?? NSNull() }) as! Swift.Set<Swift.Optional<Swift.AnyHashable>>
+    }
 }
+@_cdecl("KotlinStdlib_internal_functional_type_callee_anyU20ExportedKotlinPackagesU2EkotlinU2EcollectionsU2EIterator__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+package func KotlinStdlib_internal_functional_type_callee_anyU20ExportedKotlinPackagesU2EkotlinU2EcollectionsU2EIterator__TypesOfArguments__Swift_UnsafeMutableRawPointer__(_ pointerToClosure: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
+    let _result: any ExportedKotlinPackages.kotlin.collections.Iterator = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! () -> any ExportedKotlinPackages.kotlin.collections.Iterator)()
+    return _result.__externalRCRef()
+}
+
 @_cdecl("kotlin_collections_Collection_containsAll__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_collections_Collection____reverse_swift")
 package func kotlin_collections_Collection_containsAll__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_collections_Collection____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ elements: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: ExportedKotlinPackages.kotlin.collections.Collection.Type.self) as! any ExportedKotlinPackages.kotlin.collections.Collection

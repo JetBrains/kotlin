@@ -821,6 +821,65 @@ extension ExportedKotlinPackages.kotlin.collections {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
+    public static func mutableListOf() -> any ExportedKotlinPackages.kotlin.collections.MutableList {
+        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_mutableListOf(), conformsTo: ExportedKotlinPackages.kotlin.collections.MutableList.Type.self) as! any ExportedKotlinPackages.kotlin.collections.MutableList
+    }
+    public static func mutableListOf(
+        elements: (any KotlinRuntimeSupport._KotlinBridgeable)?...
+    ) -> any ExportedKotlinPackages.kotlin.collections.MutableList {
+        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_mutableListOf__TypesOfArguments__Swift_Array_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___Vararg___(elements.map { it in it as! NSObject? ?? NSNull() }), conformsTo: ExportedKotlinPackages.kotlin.collections.MutableList.Type.self) as! any ExportedKotlinPackages.kotlin.collections.MutableList
+    }
+    public static func mutableList(
+        size: Swift.Int32,
+        `init`: @escaping (Swift.Int32) -> (any KotlinRuntimeSupport._KotlinBridgeable)?
+    ) -> any ExportedKotlinPackages.kotlin.collections.MutableList {
+        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_MutableList__TypesOfArguments__Swift_Int32_U28Swift_Int32U29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(size, Unmanaged.passRetained((`init` as (Swift.Int32) -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlin.collections.MutableList.Type.self) as! any ExportedKotlinPackages.kotlin.collections.MutableList
+    }
+    public static func iterable(
+        iterator: @escaping () -> any ExportedKotlinPackages.kotlin.collections.Iterator
+    ) -> any ExportedKotlinPackages.kotlin.collections.Iterable {
+        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_Iterable__TypesOfArguments__U2829202D_U20anyU20ExportedKotlinPackages_kotlin_collections_Iterator__(Unmanaged.passRetained((iterator as () -> any ExportedKotlinPackages.kotlin.collections.Iterator) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlin.collections.Iterable.Type.self) as! any ExportedKotlinPackages.kotlin.collections.Iterable
+    }
+    public static func mutableSetOf() -> any ExportedKotlinPackages.kotlin.collections.MutableSet {
+        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_mutableSetOf(), conformsTo: ExportedKotlinPackages.kotlin.collections.MutableSet.Type.self) as! any ExportedKotlinPackages.kotlin.collections.MutableSet
+    }
+    public static func mutableSetOf(
+        elements: (any KotlinRuntimeSupport._KotlinBridgeable)?...
+    ) -> any ExportedKotlinPackages.kotlin.collections.MutableSet {
+        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_mutableSetOf__TypesOfArguments__Swift_Array_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___Vararg___(elements.map { it in it as! NSObject? ?? NSNull() }), conformsTo: ExportedKotlinPackages.kotlin.collections.MutableSet.Type.self) as! any ExportedKotlinPackages.kotlin.collections.MutableSet
+    }
+    public static func listOf(
+        element: (any KotlinRuntimeSupport._KotlinBridgeable)?
+    ) -> [(any KotlinRuntimeSupport._KotlinBridgeable)?] {
+        return kotlin_collections_listOf__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(element.map { it in it.__externalRCRef() } ?? nil) as! Swift.Array<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
+    }
+    public static func listOf(
+        elements: (any KotlinRuntimeSupport._KotlinBridgeable)?...
+    ) -> [(any KotlinRuntimeSupport._KotlinBridgeable)?] {
+        return kotlin_collections_listOf__TypesOfArguments__Swift_Array_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___Vararg___(elements.map { it in it as! NSObject? ?? NSNull() }) as! Swift.Array<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
+    }
+    public static func listOf() -> [(any KotlinRuntimeSupport._KotlinBridgeable)?] {
+        return kotlin_collections_listOf() as! Swift.Array<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
+    }
+    public static func setOf(
+        element: (any KotlinRuntimeSupport._KotlinBridgeable)?
+    ) -> Swift.Set<Swift.Optional<Swift.AnyHashable>> {
+        return kotlin_collections_setOf__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(element.map { it in it.__externalRCRef() } ?? nil) as! Swift.Set<Swift.Optional<Swift.AnyHashable>>
+    }
+    public static func setOf(
+        elements: (any KotlinRuntimeSupport._KotlinBridgeable)?...
+    ) -> Swift.Set<Swift.Optional<Swift.AnyHashable>> {
+        return kotlin_collections_setOf__TypesOfArguments__Swift_Array_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___Vararg___(elements.map { it in it as! NSObject? ?? NSNull() }) as! Swift.Set<Swift.Optional<Swift.AnyHashable>>
+    }
+    public static func setOf() -> Swift.Set<Swift.Optional<Swift.AnyHashable>> {
+        return kotlin_collections_setOf() as! Swift.Set<Swift.Optional<Swift.AnyHashable>>
+    }
+    public static func list(
+        size: Swift.Int32,
+        `init`: @escaping (Swift.Int32) -> (any KotlinRuntimeSupport._KotlinBridgeable)?
+    ) -> [(any KotlinRuntimeSupport._KotlinBridgeable)?] {
+        return kotlin_collections_List__TypesOfArguments__Swift_Int32_U28Swift_Int32U29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(size, Unmanaged.passRetained((`init` as (Swift.Int32) -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque()) as! Swift.Array<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
+    }
 }
 extension ExportedKotlinPackages.kotlin.coroutines {
     public protocol Continuation: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.coroutines._Continuation {
@@ -919,6 +978,12 @@ extension ExportedKotlinPackages.kotlin.coroutines {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
+    public static func continuation(
+        context: any ExportedKotlinPackages.kotlin.coroutines.CoroutineContext,
+        resumeWith: @escaping (ExportedKotlinPackages.kotlin.Result) -> Swift.Void
+    ) -> any ExportedKotlinPackages.kotlin.coroutines.Continuation {
+        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_coroutines_Continuation__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_U28ExportedKotlinPackages_kotlin_ResultU29202D_U20Swift_Void__(context.__externalRCRef(), Unmanaged.passRetained((resumeWith as (ExportedKotlinPackages.kotlin.Result) -> Swift.Void) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlin.coroutines.Continuation.Type.self) as! any ExportedKotlinPackages.kotlin.coroutines.Continuation
+    }
 }
 extension ExportedKotlinPackages.kotlin.coroutines.cancellation {
     open class CancellationException: ExportedKotlinPackages.kotlin.IllegalStateException {
@@ -985,6 +1050,11 @@ extension ExportedKotlinPackages.kotlin.sequences {
     public protocol _Sequence {
     }
     public protocol __Sequence: KotlinRuntimeSupport._KotlinBridgeable {
+    }
+    public static func sequence(
+        iterator: @escaping () -> any ExportedKotlinPackages.kotlin.collections.Iterator
+    ) -> any ExportedKotlinPackages.kotlin.sequences.Sequence {
+        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_sequences_Sequence__TypesOfArguments__U2829202D_U20anyU20ExportedKotlinPackages_kotlin_collections_Iterator__(Unmanaged.passRetained((iterator as () -> any ExportedKotlinPackages.kotlin.collections.Iterator) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlin.sequences.Sequence.Type.self) as! any ExportedKotlinPackages.kotlin.sequences.Sequence
     }
 }
 extension ExportedKotlinPackages.kotlin.time {
@@ -2085,6 +2155,12 @@ extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin
 }
 extension ExportedKotlinPackages.kotlin.collections.ListIterator {
 }
+@_cdecl("KotlinStdlib_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__")
+package func KotlinStdlib_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.Int32) -> Swift.UnsafeMutableRawPointer? {
+    let _result: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (Swift.Int32) -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>)(_1)
+    return _result.map { it in it.__externalRCRef() } ?? nil
+}
+
 @_cdecl("KotlinStdlib_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int64_Swift_Int32_Swift_Int32_Swift_Int32_Swift_Int32__")
 package func KotlinStdlib_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int64_Swift_Int32_Swift_Int32_Swift_Int32_Swift_Int32__(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.Int64, _ _2: Swift.Int32, _ _3: Swift.Int32, _ _4: Swift.Int32, _ _5: Swift.Int32) -> Swift.UnsafeMutableRawPointer? {
     let _result: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (Swift.Int64, Swift.Int32, Swift.Int32, Swift.Int32, Swift.Int32) -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>)(_1, _2, _3, _4, _5)
@@ -2119,6 +2195,18 @@ package func KotlinStdlib_internal_functional_type_callee_SwiftU2EOptionalU3Cany
 package func KotlinStdlib_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinStdlibU2E_ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_ElementU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Element__(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer? {
     let _result: Swift.Optional<any KotlinStdlib._ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Element> = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (any KotlinStdlib._ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Element) -> Swift.Optional<any KotlinStdlib._ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Element>)(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: _1, conformsTo: KotlinStdlib._ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Element.Type.self) as! any KotlinStdlib._ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Element)
     return _result.map { it in it.__externalRCRef() } ?? nil
+}
+
+@_cdecl("KotlinStdlib_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_ExportedKotlinPackages_kotlin_Result__")
+package func KotlinStdlib_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_ExportedKotlinPackages_kotlin_Result__(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _result: Swift.Void = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (ExportedKotlinPackages.kotlin.Result) -> Swift.Void)(ExportedKotlinPackages.kotlin.Result.__createClassWrapper(externalRCRef: _1))
+    return { _result; return true }()
+}
+
+@_cdecl("KotlinStdlib_internal_functional_type_callee_anyU20ExportedKotlinPackagesU2EkotlinU2EcollectionsU2EIterator__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+package func KotlinStdlib_internal_functional_type_callee_anyU20ExportedKotlinPackagesU2EkotlinU2EcollectionsU2EIterator__TypesOfArguments__Swift_UnsafeMutableRawPointer__(_ pointerToClosure: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
+    let _result: any ExportedKotlinPackages.kotlin.collections.Iterator = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! () -> any ExportedKotlinPackages.kotlin.collections.Iterator)()
+    return _result.__externalRCRef()
 }
 
 @_cdecl("kotlin_Throwable_cause_get__reverse_swift")

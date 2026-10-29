@@ -551,7 +551,94 @@ extension ExportedKotlinPackages.kotlin.collections {
     }
     public protocol __Set: KotlinRuntimeSupport._KotlinBridgeable, ExportedKotlinPackages.kotlin.collections.__Collection {
     }
+    public static func iterable(
+        iterator: @escaping () -> any ExportedKotlinPackages.kotlin.collections.Iterator
+    ) -> any ExportedKotlinPackages.kotlin.collections.Iterable {
+        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_Iterable__TypesOfArguments__U2829202D_U20anyU20ExportedKotlinPackages_kotlin_collections_Iterator__(Unmanaged.passRetained((iterator as () -> any ExportedKotlinPackages.kotlin.collections.Iterator) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlin.collections.Iterable.Type.self) as! any ExportedKotlinPackages.kotlin.collections.Iterable
+    }
+    public static func mapOf() -> [Swift.AnyHashable?: (any KotlinRuntimeSupport._KotlinBridgeable)?] {
+        return kotlin_collections_mapOf() as! Swift.Dictionary<Swift.Optional<Swift.AnyHashable>,Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
+    }
+    public static func mapOf(
+        pair: ExportedKotlinPackages.kotlin.Pair
+    ) -> [Swift.AnyHashable?: (any KotlinRuntimeSupport._KotlinBridgeable)?] {
+        return kotlin_collections_mapOf__TypesOfArguments__ExportedKotlinPackages_kotlin_Pair__(pair.__externalRCRef()) as! Swift.Dictionary<Swift.Optional<Swift.AnyHashable>,Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
+    }
+    public static func mapOf(
+        pairs: ExportedKotlinPackages.kotlin.Pair...
+    ) -> [Swift.AnyHashable?: (any KotlinRuntimeSupport._KotlinBridgeable)?] {
+        return kotlin_collections_mapOf__TypesOfArguments__Swift_Array_ExportedKotlinPackages_kotlin_Pair__Vararg___(pairs) as! Swift.Dictionary<Swift.Optional<Swift.AnyHashable>,Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
+    }
+    public static func mutableMapOf() -> any ExportedKotlinPackages.kotlin.collections.MutableMap {
+        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_mutableMapOf(), conformsTo: ExportedKotlinPackages.kotlin.collections.MutableMap.Type.self) as! any ExportedKotlinPackages.kotlin.collections.MutableMap
+    }
+    public static func mutableMapOf(
+        pairs: ExportedKotlinPackages.kotlin.Pair...
+    ) -> any ExportedKotlinPackages.kotlin.collections.MutableMap {
+        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_mutableMapOf__TypesOfArguments__Swift_Array_ExportedKotlinPackages_kotlin_Pair__Vararg___(pairs), conformsTo: ExportedKotlinPackages.kotlin.collections.MutableMap.Type.self) as! any ExportedKotlinPackages.kotlin.collections.MutableMap
+    }
+    public static func mutableSetOf() -> any ExportedKotlinPackages.kotlin.collections.MutableSet {
+        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_mutableSetOf(), conformsTo: ExportedKotlinPackages.kotlin.collections.MutableSet.Type.self) as! any ExportedKotlinPackages.kotlin.collections.MutableSet
+    }
+    public static func mutableSetOf(
+        elements: (any KotlinRuntimeSupport._KotlinBridgeable)?...
+    ) -> any ExportedKotlinPackages.kotlin.collections.MutableSet {
+        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_mutableSetOf__TypesOfArguments__Swift_Array_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___Vararg___(elements.map { it in it as! NSObject? ?? NSNull() }), conformsTo: ExportedKotlinPackages.kotlin.collections.MutableSet.Type.self) as! any ExportedKotlinPackages.kotlin.collections.MutableSet
+    }
+    public static func setOf() -> Swift.Set<Swift.Optional<Swift.AnyHashable>> {
+        return kotlin_collections_setOf() as! Swift.Set<Swift.Optional<Swift.AnyHashable>>
+    }
+    public static func setOf(
+        element: (any KotlinRuntimeSupport._KotlinBridgeable)?
+    ) -> Swift.Set<Swift.Optional<Swift.AnyHashable>> {
+        return kotlin_collections_setOf__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(element.map { it in it.__externalRCRef() } ?? nil) as! Swift.Set<Swift.Optional<Swift.AnyHashable>>
+    }
+    public static func setOf(
+        elements: (any KotlinRuntimeSupport._KotlinBridgeable)?...
+    ) -> Swift.Set<Swift.Optional<Swift.AnyHashable>> {
+        return kotlin_collections_setOf__TypesOfArguments__Swift_Array_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___Vararg___(elements.map { it in it as! NSObject? ?? NSNull() }) as! Swift.Set<Swift.Optional<Swift.AnyHashable>>
+    }
 }
+extension ExportedKotlinPackages.kotlin {
+    public final class Pair: KotlinRuntime.KotlinBase {
+        public var first: (any KotlinRuntimeSupport._KotlinBridgeable)? {
+            get {
+                return { switch kotlin_Pair_first_get(self.__externalRCRef()) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
+            }
+        }
+        public var second: (any KotlinRuntimeSupport._KotlinBridgeable)? {
+            get {
+                return { switch kotlin_Pair_second_get(self.__externalRCRef()) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
+            }
+        }
+        package override init(
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
+        ) {
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+        }
+        public init(
+            first: (any KotlinRuntimeSupport._KotlinBridgeable)?,
+            second: (any KotlinRuntimeSupport._KotlinBridgeable)?
+        ) {
+            let __kt = kotlin_Pair_init_allocate()
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlin_Pair_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(__kt, first.map { it in it.__externalRCRef() } ?? nil, second.map { it in it.__externalRCRef() } ?? nil); return () }()
+        }
+        public func copy(
+            first: (any KotlinRuntimeSupport._KotlinBridgeable)?,
+            second: (any KotlinRuntimeSupport._KotlinBridgeable)?
+        ) -> ExportedKotlinPackages.kotlin.Pair {
+            return ExportedKotlinPackages.kotlin.Pair.__createClassWrapper(externalRCRef: kotlin_Pair_copy__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), first.map { it in it.__externalRCRef() } ?? nil, second.map { it in it.__externalRCRef() } ?? nil))
+        }
+    }
+}
+@_cdecl("KotlinStdlib_internal_functional_type_callee_anyU20ExportedKotlinPackagesU2EkotlinU2EcollectionsU2EIterator__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+package func KotlinStdlib_internal_functional_type_callee_anyU20ExportedKotlinPackagesU2EkotlinU2EcollectionsU2EIterator__TypesOfArguments__Swift_UnsafeMutableRawPointer__(_ pointerToClosure: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
+    let _result: any ExportedKotlinPackages.kotlin.collections.Iterator = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! () -> any ExportedKotlinPackages.kotlin.collections.Iterator)()
+    return _result.__externalRCRef()
+}
+
 @_cdecl("kotlin_collections_Collection_containsAll__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_collections_Collection____reverse_swift")
 package func kotlin_collections_Collection_containsAll__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_collections_Collection____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ elements: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: ExportedKotlinPackages.kotlin.collections.Collection.Type.self) as! any ExportedKotlinPackages.kotlin.collections.Collection
