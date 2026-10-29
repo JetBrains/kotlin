@@ -20,11 +20,8 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.reportArgumentParseProblems
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import java.nio.file.Path
-import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty
-import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.jvm.javaField
-import kotlin.reflect.jvm.jvmName
 
 internal fun CommonToolArgumentsImpl.reportRestrictedViolations(logger: KotlinLogger) {
     for (violation in restrictedArgViolations) {
@@ -139,7 +136,7 @@ internal fun populateExplicitArguments(arguments: CommonToolArguments) {
 internal fun handleCustomPluginArguments(btaArguments: CommonCompilerArgumentsImpl, compilerArgs: CommonCompilerArguments) {
     val explicitArgumentNames = compilerArgs.explicitArguments.keys.map { it.argument.value }
     if (setOf("-Xplugin", "-P", "-Xcompiler-plugin-order").any { it in explicitArgumentNames }) {
-        btaArguments[CommonCompilerArgumentsImpl.COMPILER_PLUGINS] = emptyList()
+        btaArguments.compilerPlugins = emptyList()
     } else {
         compilerArgs.pluginClasspaths = emptyArray()
         compilerArgs.pluginOptions = emptyArray()

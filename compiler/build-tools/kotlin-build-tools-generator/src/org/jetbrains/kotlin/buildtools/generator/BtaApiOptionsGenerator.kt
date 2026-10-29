@@ -96,7 +96,7 @@ internal class BtaApiOptionsGenerator(
         val enumsExperimental = mutableMapOf<KClass<*>, Boolean>()
 
         arguments.forEach { argument ->
-            val name = argument.extractName()
+            val name = argument.getOptionId()
             if (skipXX && name.startsWith("XX_")) return@forEach
             val experimental = name.startsWith("XX_") || name.startsWith("X_")
 
