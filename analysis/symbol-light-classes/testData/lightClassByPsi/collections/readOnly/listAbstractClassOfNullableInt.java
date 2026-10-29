@@ -6,22 +6,22 @@ public abstract class SList /* test.SList*/ implements java.util.List<@org.jetbr
   public @org.jetbrains.annotations.Nullable() java.lang.Integer remove(int);//  remove(int)
 
   @java.lang.Override()
-  public @org.jetbrains.annotations.Nullable() java.lang.Integer set(int, int);//  set(int, int)
+  public @org.jetbrains.annotations.Nullable() java.lang.Integer set(int, @org.jetbrains.annotations.Nullable() java.lang.Integer);//  set(int, @org.jetbrains.annotations.Nullable() java.lang.Integer)
 
   @java.lang.Override()
-  public abstract boolean contains(int);//  contains(int)
+  public abstract boolean contains(@org.jetbrains.annotations.Nullable() java.lang.Integer);//  contains(@org.jetbrains.annotations.Nullable() java.lang.Integer)
 
   @java.lang.Override()
   public abstract int getSize();//  getSize()
 
   @java.lang.Override()
-  public abstract int indexOf(int);//  indexOf(int)
+  public abstract int indexOf(@org.jetbrains.annotations.Nullable() java.lang.Integer);//  indexOf(@org.jetbrains.annotations.Nullable() java.lang.Integer)
 
   @java.lang.Override()
-  public abstract int lastIndexOf(int);//  lastIndexOf(int)
+  public abstract int lastIndexOf(@org.jetbrains.annotations.Nullable() java.lang.Integer);//  lastIndexOf(@org.jetbrains.annotations.Nullable() java.lang.Integer)
 
   @java.lang.Override()
-  public boolean add(int);//  add(int)
+  public boolean add(@org.jetbrains.annotations.Nullable() java.lang.Integer);//  add(@org.jetbrains.annotations.Nullable() java.lang.Integer)
 
   @java.lang.Override()
   public boolean addAll(int, java.util.Collection<? extends @org.jetbrains.annotations.Nullable() java.lang.Integer>);//  addAll(int, java.util.Collection<? extends @org.jetbrains.annotations.Nullable() java.lang.Integer>)
@@ -54,7 +54,7 @@ public abstract class SList /* test.SList*/ implements java.util.List<@org.jetbr
   public java.lang.Object[] toArray();//  toArray()
 
   @java.lang.Override()
-  public void add(int, int);//  add(int, int)
+  public void add(int, @org.jetbrains.annotations.Nullable() java.lang.Integer);//  add(int, @org.jetbrains.annotations.Nullable() java.lang.Integer)
 
   @java.lang.Override()
   public void clear();//  clear()
@@ -96,19 +96,10 @@ public abstract class SList2 /* test.SList2*/ implements java.util.List<@org.jet
   public @org.jetbrains.annotations.Nullable() java.lang.Integer remove(int);//  remove(int)
 
   @java.lang.Override()
-  public @org.jetbrains.annotations.Nullable() java.lang.Integer set(int, int);//  set(int, int)
+  public @org.jetbrains.annotations.Nullable() java.lang.Integer set(int, @org.jetbrains.annotations.Nullable() java.lang.Integer);//  set(int, @org.jetbrains.annotations.Nullable() java.lang.Integer)
 
   @java.lang.Override()
-  public abstract boolean contains(int);//  contains(int)
-
-  @java.lang.Override()
-  public abstract int indexOf(int);//  indexOf(int)
-
-  @java.lang.Override()
-  public abstract int lastIndexOf(int);//  lastIndexOf(int)
-
-  @java.lang.Override()
-  public boolean add(int);//  add(int)
+  public boolean add(@org.jetbrains.annotations.Nullable() java.lang.Integer);//  add(@org.jetbrains.annotations.Nullable() java.lang.Integer)
 
   @java.lang.Override()
   public boolean addAll(int, java.util.Collection<? extends @org.jetbrains.annotations.Nullable() java.lang.Integer>);//  addAll(int, java.util.Collection<? extends @org.jetbrains.annotations.Nullable() java.lang.Integer>)
@@ -159,7 +150,7 @@ public abstract class SList2 /* test.SList2*/ implements java.util.List<@org.jet
   public java.lang.Object[] toArray();//  toArray()
 
   @java.lang.Override()
-  public void add(int, int);//  add(int, int)
+  public void add(int, @org.jetbrains.annotations.Nullable() java.lang.Integer);//  add(int, @org.jetbrains.annotations.Nullable() java.lang.Integer)
 
   @java.lang.Override()
   public void clear();//  clear()
@@ -201,19 +192,10 @@ public class SList3 /* test.SList3*/ implements java.util.List<@org.jetbrains.an
   public @org.jetbrains.annotations.Nullable() java.lang.Integer remove(int);//  remove(int)
 
   @java.lang.Override()
-  public @org.jetbrains.annotations.Nullable() java.lang.Integer set(int, int);//  set(int, int)
+  public @org.jetbrains.annotations.Nullable() java.lang.Integer set(int, @org.jetbrains.annotations.Nullable() java.lang.Integer);//  set(int, @org.jetbrains.annotations.Nullable() java.lang.Integer)
 
   @java.lang.Override()
-  public abstract boolean contains(int);//  contains(int)
-
-  @java.lang.Override()
-  public abstract int indexOf(int);//  indexOf(int)
-
-  @java.lang.Override()
-  public abstract int lastIndexOf(int);//  lastIndexOf(int)
-
-  @java.lang.Override()
-  public boolean add(int);//  add(int)
+  public boolean add(@org.jetbrains.annotations.Nullable() java.lang.Integer);//  add(@org.jetbrains.annotations.Nullable() java.lang.Integer)
 
   @java.lang.Override()
   public boolean addAll(int, java.util.Collection<? extends @org.jetbrains.annotations.Nullable() java.lang.Integer>);//  addAll(int, java.util.Collection<? extends @org.jetbrains.annotations.Nullable() java.lang.Integer>)
@@ -264,7 +246,7 @@ public class SList3 /* test.SList3*/ implements java.util.List<@org.jetbrains.an
   public java.lang.Object[] toArray();//  toArray()
 
   @java.lang.Override()
-  public void add(int, int);//  add(int, int)
+  public void add(int, @org.jetbrains.annotations.Nullable() java.lang.Integer);//  add(int, @org.jetbrains.annotations.Nullable() java.lang.Integer)
 
   @java.lang.Override()
   public void clear();//  clear()

@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.light.classes.symbol.methods.MethodSignature
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodForMappedJavaCollectionStubMethod
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodForMappedKotlinCollectionMethod
 import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.SpecialGenericSignatures
 import org.jetbrains.kotlin.load.kotlin.SignatureBuildingComponents
@@ -437,8 +438,17 @@ private fun createMethodsWithSpecialSignature(
 internal fun PsiType.isTypeParameter(): Boolean =
     this is PsiClassType && this.resolve() is PsiTypeParameter
 
-internal fun PsiType.unboxedOrSelf(): PsiType =
-    PsiPrimitiveType.getUnboxedType(this)?.annotate(TypeAnnotationProvider.EMPTY) ?: this
+/**
+ * Returns the primitive type for this boxed primitive type, e.g., `int` for `Integer`, unless this type is annotated with `@Nullable`.
+ * Other types are returned unchanged.
+ *
+ * The annotation comes from [createPsiSubstitutor], which maps the type arguments of the Kotlin collection supertype to Java types
+ * annotated with their nullability. It marks a nullable Kotlin type, like `Int?` in `List<Int?>`, which can't be primitive.
+ */
+internal fun PsiType.unboxedUnlessNullable(): PsiType = when {
+    hasAnnotation(JvmAnnotationNames.JETBRAINS_NULLABLE_ANNOTATION.asString()) -> this
+    else -> PsiPrimitiveType.getUnboxedType(this)?.annotate(TypeAnnotationProvider.EMPTY) ?: this
+}
 
 internal fun PsiType.isJavaLangObject(): Boolean =
     this is PsiClassType && this.canonicalText == CommonClassNames.JAVA_LANG_OBJECT
