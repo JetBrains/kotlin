@@ -15,5 +15,14 @@ class Foo<<!MISPLACED_TYPE_PARAMETER_CONSTRAINTS!>@TypeParameterAnn("T") T: Any<
 fun <T> undeclaredTypeParameter() where <!ANNOTATION_IN_WHERE_CLAUSE_ERROR!>@TypeParameterAnn("Prohibit me!!!")<!> <!NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER!>AA<!> : Generic<String> {
 }
 
+@Target(AnnotationTarget.TYPE_PARAMETER)
+annotation class NonRepeatableAnn
+
+fun <@NonRepeatableAnn T> repeatedInWhereClause() where <!ANNOTATION_IN_WHERE_CLAUSE_ERROR, REPEATED_ANNOTATION!>@NonRepeatableAnn<!> T : Any {
+}
+
+fun <T> suppressInWhereClause() where <!ANNOTATION_IN_WHERE_CLAUSE_ERROR!>@Suppress("FINAL_UPPER_BOUND")<!> T : String {
+}
+
 /* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, interfaceDeclaration, nullableType,
 primaryConstructor, propertyDeclaration, stringLiteral, typeConstraint, typeParameter */
