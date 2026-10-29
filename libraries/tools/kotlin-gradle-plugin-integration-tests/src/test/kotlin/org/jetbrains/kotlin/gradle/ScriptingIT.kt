@@ -5,14 +5,13 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.gradle.api.JavaVersion
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
-import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerInfrastructure
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerPlugins
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
@@ -20,17 +19,16 @@ import kotlin.io.path.relativeTo
 
 @OsCondition(
     supportedOn = [OS.LINUX, OS.MAC, OS.WINDOWS],
-    enabledOnCI = [OS.LINUX], // Compiler plugin is leaking file descriptor preventing cleaning the project on Windows
+    enabledOnCI = [OS.LINUX], // KT-88458 Compiler plugin is leaking file descriptor preventing cleaning the project on Windows
 )
 @DisplayName("Scripting plugin")
-@MustRunOnChangesInCompilerInfrastructure
-@MustRunOnChangesInCompilerPlugins
-@MustRunOnChangesInBuildToolsApi
+@MustRunOnChangesInGradle
 @OtherGradlePluginTests
 abstract class ScriptingIT : KGPBaseTest() {
 
     @DisplayName("basic script is working")
     @GradleTest
+    @MustRunOnChangesInCompilerPlugins
     open fun testScripting(gradleVersion: GradleVersion) {
         project("scripting", gradleVersion) {
             val appSubProject = subProject("app")
@@ -53,6 +51,8 @@ abstract class ScriptingIT : KGPBaseTest() {
     @Disabled("Gradle synchronization bug: https://github.com/gradle/gradle/issues/23450")
     @DisplayName("With custom file extension compiled non-incremental")
     @GradleTest
+    @MustRunOnChangesInCompilerPlugins
+    @MustRunOnChangesInBuildToolsApi // BTA IC
     fun testScriptingCustomExtensionNonIncremental(gradleVersion: GradleVersion) {
         testScriptingCustomExtensionImpl(gradleVersion, withIC = false)
     }
@@ -60,6 +60,8 @@ abstract class ScriptingIT : KGPBaseTest() {
     @Disabled("Gradle synchronization bug: https://github.com/gradle/gradle/issues/23450")
     @DisplayName("With custom file extension compiled incremental")
     @GradleTest
+    @MustRunOnChangesInCompilerPlugins
+    @MustRunOnChangesInBuildToolsApi // BTA IC
     open fun testScriptingCustomExtensionIncremental(gradleVersion: GradleVersion) {
         testScriptingCustomExtensionImpl(gradleVersion, withIC = true)
     }
@@ -123,15 +125,18 @@ abstract class ScriptingIT : KGPBaseTest() {
     // Compose only works on JDK 11+
     @DisplayName("Compose compiler plugin should work with scripting")
     @GradleTest
+    // TODO KT-90601 Move ScriptingIT testComposeInterop to the main-kts or scripting tests
+    @MustRunOnChangesInCompilerPlugins
     fun testComposeInterop(gradleVersion: GradleVersion) {
         project(
             projectName = "scriptingComposeInterop",
             gradleVersion = gradleVersion,
         ) {
             val appSubProject = subProject("app")
-            build(":app:test", buildOptions = defaultBuildOptions.copy(
-                logLevel = LogLevel.DEBUG,
-            )) {
+            build(
+                ":app:test",
+                buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
+            ) {
                 assertCompiledKotlinSources(
                     listOf(
                         appSubProject.kotlinSourcesDir("test").resolve("script/ComposeMainKtsTest.kt").relativeTo(projectPath),
@@ -143,6 +148,7 @@ abstract class ScriptingIT : KGPBaseTest() {
     }
 }
 
+@MustRunOnChangesInGradle
 @DisplayName("K2 Scripting plugin")
 class ScriptingK2IT : ScriptingIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()

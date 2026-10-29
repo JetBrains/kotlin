@@ -18,9 +18,13 @@ import org.jetbrains.kotlin.gradle.abi.utils.AbiValidationTestDumps.assertDumpsE
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyJvm
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 
+@MustRunOnChangesInGradle
+@MustRunOnChangesInBuildToolsApi
 @JvmGradlePluginTests
 class AbiValidationJvmIT : KGPBaseTest() {
 
@@ -196,6 +200,10 @@ class AbiValidationJvmIT : KGPBaseTest() {
         }
     }
 
+    /**
+     * Test Federation: Gradle only. Fails in KGP's [org.jetbrains.kotlin.gradle.tasks.abi.KotlinAbiUpdateTask.referenceDir] check,
+     * not in the ABI tool.
+     */
     @GradleTest
     fun testCustomWrongReferenceDir(
         gradleVersion: GradleVersion,

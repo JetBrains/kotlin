@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Files
 import java.nio.file.Path
@@ -13,6 +14,8 @@ import kotlin.test.assertTrue
  * build-system-agnostic and live in the Build Tools API tests as `SourceFileModificationTrackingTest`.
  * What remains here is Gradle-specific: non-incremental output cleanup, task up-to-date checks, and task wiring.
  */
+// TODO KT-90606 SourceFileIsModifiedIT NonIC tests run with incremental compilation
+@MustRunOnChangesInGradle
 @DisplayName("Source file modifications")
 @JvmGradlePluginTests
 class SourceFileIsModifiedIT : KGPBaseTest() {

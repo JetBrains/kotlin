@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNpmTooling
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testing.js.PackageLockJson
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.assertNotNull
 import kotlin.io.path.appendText
 import kotlin.io.path.createDirectories
@@ -23,6 +24,7 @@ import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.readText
 import kotlin.test.assertEquals
 
+@MustRunOnChangesInGradle
 @GradleTestVersions(
     // Gradle version is irrelevant
     minVersion = TestVersions.Gradle.MAX_SUPPORTED
@@ -42,7 +44,7 @@ sealed class WasmNpmToolingDependenciesIT(
     }
 
     @GradleTest
-    @WasmJsGradlePluginTests
+    @WasmJsGradlePluginTests // TODO Should remove `@MustRunOnChangesInWasm`. These tests are unaffected by Wasm compiler.
     fun `can override versions of Wasm npm tooling dependencies`(
         gradleVersion: GradleVersion,
     ) {
