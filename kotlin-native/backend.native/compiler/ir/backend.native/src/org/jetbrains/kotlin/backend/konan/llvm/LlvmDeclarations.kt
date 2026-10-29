@@ -145,6 +145,18 @@ internal fun ContextUtils.createClassBody(name: String, declaration: IrClass): O
     )
 }
 
+private tailrec fun gcd(a: Long, b: Long) : Long = if (b == 0L) a else gcd(b, a % b)
+
+internal fun ContextUtils.createLlvmField(bodyType: ObjectBodyType, field: IrField): FieldLlvmDeclarations {
+    val index = bodyType.fieldsIndices[field.symbol]!!
+    val bodyType = bodyType.llvmBodyType
+    return FieldLlvmDeclarations(
+            index,
+            bodyType,
+            gcd(LLVMOffsetOfElement(llvm.runtime.targetData, bodyType, index), llvm.runtime.objectAlignment.toLong()).toInt()
+    )
+}
+
 private class DeclarationsGeneratorVisitor(override val generationState: NativeGenerationState)
     : IrVisitorVoid(), ContextUtils {
 
@@ -336,8 +348,6 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
         // So we are skipping them here too.
     }
 
-    private tailrec fun gcd(a: Long, b: Long) : Long = if (b == 0L) a else gcd(b, a % b)
-
     override fun visitField(declaration: IrField) {
         super.visitField(declaration)
 
@@ -346,15 +356,9 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
             if (!containingClass.requiresRtti()) return
             val classDeclarations = (containingClass.metadata as? KonanMetadata.Class)?.llvm
                     ?: error(containingClass.render())
-            val index = classDeclarations.bodyType.fieldsIndices[declaration.symbol]!!
-            val bodyType = classDeclarations.bodyType.llvmBodyType
             declaration.metadata = KonanMetadata.InstanceField(
                     declaration,
-                    FieldLlvmDeclarations(
-                            index,
-                            bodyType,
-                            gcd(LLVMOffsetOfElement(llvm.runtime.targetData, bodyType, index), llvm.runtime.objectAlignment.toLong()).toInt()
-                    )
+                    createLlvmField(classDeclarations.bodyType, declaration),
             )
         } else {
             // Fields are module-private, so we use internal name:

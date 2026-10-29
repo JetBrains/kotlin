@@ -247,6 +247,18 @@ internal interface ContextUtils : RuntimeAware {
                 generationState.llvmDeclarations.forClass(this).bodyType
             }
         }
+
+    val IrField.llvmInstanceField: FieldLlvmDeclarations
+        get() {
+            return if (isExternal(this)) {
+                runtime.addedLLVMExternalFields.getOrPut(this) {
+                    generationState.dependenciesTracker.add(this)
+                    createLlvmField(parentAsClass.objectBodyType, this)
+                }
+            } else {
+                generationState.llvmDeclarations.forField(this)
+            }
+        }
 }
 
 /**

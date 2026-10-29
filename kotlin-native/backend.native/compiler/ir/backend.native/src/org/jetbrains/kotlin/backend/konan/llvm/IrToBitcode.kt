@@ -1682,7 +1682,9 @@ internal class CodeGeneratorVisitor(
         when {
             !value.symbol.owner.isStatic -> {
                 fieldAddress = fieldPtrOfClass(evaluateExpression(value.receiver!!), value.symbol.owner)
-                alignment = generationState.llvmDeclarations.forField(value.symbol.owner).alignment
+                alignment = with(codegen) {
+                    value.symbol.owner.llvmInstanceField.alignment
+                }
             }
             value.symbol.owner.correspondingPropertySymbol?.owner?.isConst == true -> {
                 // TODO: probably can be removed, as they are inlined.
@@ -1747,7 +1749,9 @@ internal class CodeGeneratorVisitor(
                 thisPtr.type.toTypeString()
             }
             address = fieldPtrOfClass(thisPtr, field)
-            alignment = generationState.llvmDeclarations.forField(field).alignment
+            alignment = with(codegen) {
+                field.llvmInstanceField.alignment
+            }
         } else {
             require(field.isStatic) { "A receiver expected for a non-static field: ${value.render()}" }
             address = staticFieldPtr(field, functionGenerationContext)
@@ -1765,7 +1769,9 @@ internal class CodeGeneratorVisitor(
 
     //-------------------------------------------------------------------------//
     private fun fieldPtrOfClass(thisPtr: LLVMValueRef, value: IrField): LLVMValueRef {
-        val fieldInfo = generationState.llvmDeclarations.forField(value)
+        val fieldInfo = with(codegen) {
+            value.llvmInstanceField
+        }
         val classBodyType = fieldInfo.classBodyType
         val fieldPtr = LLVMBuildStructGEP2(functionGenerationContext.builder, classBodyType, thisPtr, fieldInfo.index, "")
         return fieldPtr!!

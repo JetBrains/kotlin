@@ -9,6 +9,7 @@ import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 
@@ -25,6 +26,7 @@ internal class Runtime(
     val calculatedLLVMTypes: MutableMap<IrType, LLVMTypeRef> = HashMap()
     val addedLLVMExternalFunctions: MutableMap<IrFunction, LlvmFunction> = HashMap()
     val addedLLVMExternalObjectBodyTypes: MutableMap<IrClass, ObjectBodyType> = HashMap()
+    val addedLLVMExternalFields: MutableMap<IrField, FieldLlvmDeclarations> = HashMap()
 
     private fun getStructTypeOrNull(name: String, isClass: Boolean = false) =
             LLVMGetTypeByName(llvmModule, "${if (isClass) "class" else "struct"}.$name")
