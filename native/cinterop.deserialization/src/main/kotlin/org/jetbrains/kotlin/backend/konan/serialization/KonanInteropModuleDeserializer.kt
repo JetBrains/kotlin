@@ -62,7 +62,7 @@ class KonanInteropModuleDeserializer(
     override val klib: KotlinLibrary,
     private val isLibraryCached: Boolean,
     private val linker: KotlinIrLinker,
-    override val strategyResolver: DeserializationStrategyResolver = DeserializationStrategy.ONLY_REFERENCED,
+    override val strategyResolver: DeserializationStrategyResolver = DeserializationStrategy.ON_DEMAND,
 ) : IrModuleDeserializer(moduleFragment, klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT), CInteropModuleDeserializer {
     // Interop Klibs have no real IR files, so the strategy is resolved once for the synthetic file name.
     private val isFullDeserializationRequested: Boolean =
