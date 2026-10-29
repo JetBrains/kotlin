@@ -556,6 +556,7 @@
         </set>
       </option>
     </inspection_tool>
+    <inspection_tool class="UsagesOfObsoleteApi" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
     <inspection_tool class="UseOfPropertiesAsHashtable" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="UtilityClassWithPublicConstructor" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="VolatileLongOrDoubleField" enabled="true" level="WARNING" enabled_by_default="true" />
