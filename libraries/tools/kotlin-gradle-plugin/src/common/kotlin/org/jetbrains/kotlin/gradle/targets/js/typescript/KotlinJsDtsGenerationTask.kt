@@ -24,6 +24,7 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.buildtools.api.DelicateBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
+import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.js.JsDtsGranularity
 import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain.Companion.js
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsDtsGenerationOperation.Companion.GRANULARITY
@@ -39,6 +40,7 @@ import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrOutputGranularity
+import org.jetbrains.kotlin.gradle.tasks.CompilationErrorException
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.jetbrains.kotlin.tooling.core.toKotlinVersion
 import java.io.File
@@ -115,11 +117,15 @@ internal abstract class KotlinJsDtsGenerationTask @Inject constructor(
             }
             .build()
 
-        buildSession.executeOperation(
+        val result = buildSession.executeOperation(
             dtsOperation,
             buildSession.kotlinToolchains.createInProcessExecutionPolicy(),
             GradleKotlinLogger(logger)
         )
+
+        if (result != CompilationResult.COMPILATION_SUCCESS) {
+            throw CompilationErrorException("TypeScript declarations generation failed. See log for more details")
+        }
     }
 
     private fun createLinkingOperation(kotlinToolchains: KotlinToolchains): JsLinkingOperation {

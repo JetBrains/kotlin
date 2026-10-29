@@ -1647,6 +1647,7 @@ public final class org/jetbrains/kotlin/buildtools/api/js/JsPlatformToolchainKt 
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/js/operations/JsDtsGenerationOperation : org/jetbrains/kotlin/buildtools/api/BuildOperation {
 	public static final field COMPILE_LONG_AS_BIG_INT Lorg/jetbrains/kotlin/buildtools/api/js/operations/JsDtsGenerationOperation$Option;
+	public static final field COMPILE_SUSPEND_AS_JS_GENERATOR Lorg/jetbrains/kotlin/buildtools/api/js/operations/JsDtsGenerationOperation$Option;
 	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/js/operations/JsDtsGenerationOperation$Companion;
 	public static final field DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY Lorg/jetbrains/kotlin/buildtools/api/js/operations/JsDtsGenerationOperation$Option;
 	public static final field EXPORT_SUSPEND_LAMBDAS Lorg/jetbrains/kotlin/buildtools/api/js/operations/JsDtsGenerationOperation$Option;

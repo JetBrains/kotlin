@@ -17,7 +17,10 @@ import org.jetbrains.kotlin.buildtools.api.js.operations.JsLinkingOperation
 import org.jetbrains.kotlin.buildtools.internal.BaseOptionWithDefault
 import org.jetbrains.kotlin.buildtools.internal.BuildOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.DeepCopyable
+import org.jetbrains.kotlin.buildtools.internal.DefaultCompilerMessageRenderer
+import org.jetbrains.kotlin.buildtools.internal.DefaultKotlinLogger
 import org.jetbrains.kotlin.buildtools.internal.ExecutionContext
+import org.jetbrains.kotlin.buildtools.internal.KotlinLoggerMessageCollectorAdapter
 import org.jetbrains.kotlin.buildtools.internal.Options
 import org.jetbrains.kotlin.buildtools.internal.UseFromImplModuleRestricted
 import org.jetbrains.kotlin.buildtools.internal.arguments.JsArgumentValueAdapter
@@ -30,6 +33,8 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArgumentsConfigur
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.toLanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
+import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.js.config.JsGenerationGranularity
 import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.js.config.TsCompilationStrategy
@@ -69,6 +74,10 @@ internal class JsDtsGenerationOperationImpl private constructor(
         // The main KLIB is the last one in the list; its manifest drives the merged artifact naming.
         // If there is no klib provided, there is nothing to generate
         val mainModule = inputModules.lastOrNull() ?: return CompilationResult.COMPILATION_SUCCESS
+        val diagnosticsCollector = DiagnosticsCollectorImpl()
+        val messageCollector =
+            KotlinLoggerMessageCollectorAdapter(logger ?: DefaultKotlinLogger, DefaultCompilerMessageRenderer, warningsAsErrors = false)
+
         val typeScriptExportConfig = TypeScriptExportConfig(
             targetPlatform = JsPlatforms.defaultJsPlatform,
             artifactConfiguration = WebArtifactConfiguration(
@@ -84,11 +93,15 @@ internal class JsDtsGenerationOperationImpl private constructor(
             compileLongAsBigInt = this[COMPILE_LONG_AS_BIG_INT],
             implementableInterfaces = this[IMPLEMENT_INTERFACES],
             exportableSuspendLambdas = this[EXPORT_SUSPEND_LAMBDAS],
+            compileSuspendAsJsGenerator = this[COMPILE_SUSPEND_AS_JS_GENERATOR],
             dataClassCopyRespectsConstructorVisibility = this[DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY],
             useUnknownInsteadAny = this[USE_UNKNOWN_INSTEAD_ANY],
         )
-        runTypeScriptExport(inputModules, typeScriptExportConfig)
-        return CompilationResult.COMPILATION_SUCCESS
+
+        runTypeScriptExport(inputModules, typeScriptExportConfig, diagnosticsCollector)
+        diagnosticsCollector.reportToMessageCollector(messageCollector, renderDiagnosticName = false)
+
+        return if (messageCollector.hasErrors()) CompilationResult.COMPILATION_ERROR else CompilationResult.COMPILATION_SUCCESS
     }
 
     override val usesApplicationEnvironment: Boolean
@@ -100,24 +113,26 @@ internal class JsDtsGenerationOperationImpl private constructor(
             .librariesStdlibFirst
             .map { KlibInputModule(it.uniqueName, it.path, TypeScriptModuleConfig(outputName = it.jsOutputName)) }
 
+    @Suppress("EnumValuesSoftDeprecate")
     override fun configureFrom(linkingOperation: JsLinkingOperation) {
         check(linkingOperation is JsLinkingOperationImpl) { "Unexpected linking operation: ${linkingOperation::class}." }
-
-        val target = linkingOperation.compilerArguments[JsArgumentsImpl.TARGET]
-            ?.let { from -> JsEcmaVersion.entries.first { it.name == from.name } }
-
-        this[COMPILE_LONG_AS_BIG_INT] = linkingOperation.compilerArguments[JsArgumentsImpl.X_ES_LONG_AS_BIGINT]
-            ?: (target != null && target >= JsEcmaVersion.ES2020)
-
         // Resolve the language features the same way the compiler does, so that features enabled via
         // dedicated arguments, `-XXLanguage:` or `-language-version` are all taken into account
         val languageVersionSettings = linkingOperation.compilerArguments.toCompilerArguments()
             .toLanguageVersionSettings(CommonCompilerArgumentsConfigurator.Reporter.DoNothing)
 
+        val target = linkingOperation.compilerArguments[JsArgumentsImpl.TARGET]
+            ?.let { from -> JsEcmaVersion.values().first { it.name == from.name } }
+
+        this[COMPILE_LONG_AS_BIG_INT] = linkingOperation.compilerArguments[JsArgumentsImpl.X_ES_LONG_AS_BIGINT]
+            ?: (target != null && target >= JsEcmaVersion.ES2020)
+
+
         this[IMPLEMENT_INTERFACES] = languageVersionSettings.supportsFeature(LanguageFeature.JsExportInterfacesInImplementableWay)
         this[EXPORT_SUSPEND_LAMBDAS] = languageVersionSettings.supportsFeature(LanguageFeature.JsExportingSuspendLambdas)
         this[DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY] =
             languageVersionSettings.supportsFeature(LanguageFeature.DataClassCopyRespectsConstructorVisibility)
+
         this[USE_UNKNOWN_INSTEAD_ANY] =
             linkingOperation.compilerArguments[JsArgumentsImpl.X_DTS_USE_UNKNOWN_INSTEAD_ANY]
 
@@ -181,6 +196,8 @@ internal class JsDtsGenerationOperationImpl private constructor(
         val IMPLEMENT_INTERFACES: Option<Boolean> =
             Option("IMPLEMENT_INTERFACES", defaultArgsReference.allowImplementableInterfacesExporting)
         val EXPORT_SUSPEND_LAMBDAS: Option<Boolean> = Option("EXPORT_SUSPEND_LAMBDAS", defaultArgsReference.allowExportingSuspendLambdas)
+        val COMPILE_SUSPEND_AS_JS_GENERATOR: Option<Boolean> =
+            Option("COMPILE_SUSPEND_AS_JS_GENERATOR", defaultArgsReference.useEsGenerators ?: false)
         val USE_UNKNOWN_INSTEAD_ANY: Option<Boolean> = Option("USE_UNKNOWN_INSTEAD_ANY", defaultArgsReference.useUnknownInsteadAny)
         val DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY: Option<Boolean> =
             Option("DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY", defaultArgsReference.consistentDataClassCopyVisibility)
