@@ -33,13 +33,13 @@ open class Box<T>(val value: T) {
 class Derived : Box<String>("")
 
 fun substituted(box: Box<String>, sb: StringBuilder) {
-    box.<!RETURN_VALUE_NOT_USED!>fold<!> { sb.append(it) }
+    box.fold { sb.append(it) }
     box.<!RETURN_VALUE_NOT_USED!>fold<!> { compute() }
     box.id(sb.append(""))
 }
 
 fun inherited(derived: Derived, sb: StringBuilder) {
-    derived.<!RETURN_VALUE_NOT_USED!>fold<!> { sb.append(it) }
+    derived.fold { sb.append(it) }
     derived.<!RETURN_VALUE_NOT_USED!>fold<!> { compute() }
     derived.id(sb.append(""))
 }
