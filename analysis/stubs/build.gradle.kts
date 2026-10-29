@@ -14,9 +14,16 @@ val jvmAbiGenPlugin = configurations.create("jvmAbiGenPlugin") {
 }
 
 dependencies {
-    implementation(project(":compiler:psi:psi-api"))
-    implementation(project(":analysis:decompiled:decompiler"))
-    implementation(intellijCore())
+    api(project(":compiler:psi:psi-api"))
+    api(project(":core:compiler.common"))
+    api(project(":core:metadata"))
+    implementation(project(":compiler:psi:psi-impl"))
+    implementation(project(":compiler:psi:parser"))
+    implementation(project(":core:error.handling"))
+    implementation(project(":core:util.runtime"))
+
+    compileOnly(intellijCore())
+    compileOnly(libs.org.jetbrains.annotations)
 
     testFixturesApi(testFixtures(project(":compiler:tests-common")))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
@@ -31,12 +38,30 @@ dependencies {
 }
 
 sourceSets {
+    "main" { projectDefault() }
+
     "test" {
         projectDefault()
         generatedTestDir()
     }
 
     "testFixtures" { projectDefault() }
+}
+
+tasks.compileKotlin {
+    compilerOptions {
+        // The stub implementation builds the PSI from stubs, so it opts in to all of psi-api's non-public markers
+        // (the same list psi-api excludes from its ABI dump) instead of repeating the suppression in every file.
+        optIn.addAll(
+            listOf(
+                "org.jetbrains.kotlin.psi.KtImplementationDetail",
+                "org.jetbrains.kotlin.psi.KtNonPublicApi",
+                "org.jetbrains.kotlin.psi.KtIdeApi",
+                "org.jetbrains.kotlin.psi.KtExperimentalApi",
+                "org.jetbrains.kotlin.psi.KtPlatformInterface",
+            )
+        )
+    }
 }
 
 tasks.compileTestFixturesKotlin {

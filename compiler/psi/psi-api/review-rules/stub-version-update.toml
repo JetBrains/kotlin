@@ -1,13 +1,13 @@
 # Changes to the stub format
 watch = [
     "analysis/decompiled/decompiler/src/",
+    "analysis/stubs/src/",
     "compiler/psi/parser/src/",
     "compiler/psi/psi-api/src/org/jetbrains/kotlin/KotlinElementTypeProvider.kt",
     "compiler/psi/psi-api/src/org/jetbrains/kotlin/KtStubBasedElementTypes.kt",
     "compiler/psi/psi-api/src/org/jetbrains/kotlin/lexer/",
     "compiler/psi/psi-api/src/org/jetbrains/kotlin/psi/stubs",
     "compiler/psi/psi-impl/src/",
-    "compiler/psi/psi-stubs/src/",
 ]
 
 # Most likely require changes in the stub version

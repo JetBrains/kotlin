@@ -164,7 +164,6 @@ AnalysisApi:
  - compiler/psi/psi-api
  - compiler/psi/psi-frontend-utils
  - compiler/psi/psi-impl
- - compiler/psi/psi-stubs
  - compiler/psi/psi-utils
  - prepare/analysis-api
 

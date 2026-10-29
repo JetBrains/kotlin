@@ -14,7 +14,6 @@ object CompilerModules {
     val psiModules = arrayOf(
         ":compiler:psi:psi-api",
         ":compiler:psi:psi-impl",
-        ":compiler:psi:psi-stubs",
         ":compiler:psi:psi-utils",
         ":compiler:psi:psi-frontend-utils",
         ":compiler:psi:parser",
