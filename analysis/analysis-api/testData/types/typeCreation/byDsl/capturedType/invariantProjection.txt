@@ -1,2 +1,1 @@
-Exception
-KotlinIllegalArgumentExceptionWithAttachments: Only non-invariant projections can be captured
+null

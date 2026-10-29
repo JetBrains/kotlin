@@ -13,51 +13,51 @@ import org.jetbrains.kotlin.types.Variance
 @Suppress("UNUSED")
 class CapturedTypeCreatorDslTestCases(session: KaSession, caretToType: Map<String, KaType>) :
     DslTypeCreationTestCases(session, caretToType) {
-    fun testFromAnotherCapturedTypeMarkedNullable(): KaType {
+    fun testFromAnotherCapturedTypeMarkedNullable(): KaType? {
         val projection = session.typeCreator.starTypeProjection()
-        val capturedType = session.typeCreator.capturedType(projection)
+        val capturedType = session.typeCreator.capturedType(projection) ?: return null
         return session.typeCreator.capturedType(capturedType) {
             isMarkedNullable = true
         }
     }
 
-    fun testOutIntProjection(): KaType {
+    fun testOutIntProjection(): KaType? {
         val type = getTypeByCaret("type")
         val projection = session.typeCreator.typeProjection(Variance.OUT_VARIANCE, type)
         return session.typeCreator.capturedType(projection)
     }
 
-    fun testStarProjection(): KaType {
+    fun testStarProjection(): KaType? {
         val projection = session.typeCreator.starTypeProjection()
         return session.typeCreator.capturedType(projection)
     }
 
-    fun testStarProjectionMarkedNullable(): KaType {
+    fun testStarProjectionMarkedNullable(): KaType? {
         val projection = session.typeCreator.starTypeProjection()
         return session.typeCreator.capturedType(projection) {
             isMarkedNullable = true
         }
     }
 
-    fun testUserTypeInProjection(): KaType {
+    fun testUserTypeInProjection(): KaType? {
         val type = getTypeByCaret("type")
         val projection = session.typeCreator.typeProjection(Variance.IN_VARIANCE, type)
         return session.typeCreator.capturedType(projection)
     }
 
-    fun testInvariantProjection(): KaType {
+    fun testInvariantProjection(): KaType? {
         val type = getTypeByCaret("type")
         val projection = session.typeCreator.typeProjection(Variance.INVARIANT, type)
         return session.typeCreator.capturedType(projection)
     }
 
-    fun testTypeParameterOutProjection(): KaType {
+    fun testTypeParameterOutProjection(): KaType? {
         val type = getTypeByCaret("type")
         val projection = session.typeCreator.typeProjection(Variance.OUT_VARIANCE, type)
         return session.typeCreator.capturedType(projection)
     }
 
-    fun testStarProjectionWithAnnotations(): KaType {
+    fun testStarProjectionWithAnnotations(): KaType? {
         val annotationClassId1 = ClassId.fromString("MyAnno1")
         val annotationClassId2 = ClassId.fromString("MyAnno2")
         val annotationClassId3 = ClassId.fromString("MyAnno3")
@@ -68,7 +68,7 @@ class CapturedTypeCreatorDslTestCases(session: KaSession, caretToType: Map<Strin
         }
     }
 
-    fun testWithAttributeAnnotations(): KaType {
+    fun testWithAttributeAnnotations(): KaType? {
         val projection = session.typeCreator.starTypeProjection()
         return session.typeCreator.capturedType(projection) {
             annotations(ATTRIBUTE_ANNOTATION_CLASS_IDS)

@@ -108,13 +108,11 @@ public interface KaTypeCreator : KaLifetimeOwner {
     /**
      * Builds a [KaCapturedType] with the given [projection].
      *
-     * Note that if [projection] is [KaTypeArgumentWithVariance],
-     * its [KaTypeArgumentWithVariance.variance] must not be [Variance.INVARIANT].
      * Captured types are only intended to capture non-invariant projections.
-     * Otherwise, an exception is thrown.
+     * If [projection] is [KaTypeArgumentWithVariance] with [Variance.INVARIANT] variance, `null` is returned.
      */
     @KaExperimentalApi
-    public fun capturedType(projection: KaTypeProjection, init: KaCapturedTypeBuilder.() -> Unit = {}): KaCapturedType
+    public fun capturedType(projection: KaTypeProjection, init: KaCapturedTypeBuilder.() -> Unit = {}): KaCapturedType?
 
     /**
      * Builds a [KaDefinitelyNotNullType] wrapping the given [type].

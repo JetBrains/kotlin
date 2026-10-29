@@ -32,13 +32,11 @@ import org.jetbrains.kotlin.fir.resolve.withParameterNameAnnotation
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.CaptureStatus
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.butIf
-import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 internal class KaFirTypeCreator(
     analysisSession: KaFirSession,
@@ -103,14 +101,11 @@ internal class KaFirTypeCreator(
     override fun capturedType(
         projection: KaTypeProjection,
         init: KaCapturedTypeBuilder.() -> Unit,
-    ): KaCapturedType {
+    ): KaCapturedType? {
         withValidityAssertion {
             with(analysisSession) {
                 if ((projection as? KaTypeArgumentWithVariance)?.variance == Variance.INVARIANT) {
-                    errorWithAttachment("Only non-invariant projections can be captured") {
-                        withEntry("projection", Variance.INVARIANT.toString())
-                        withConeTypeEntry("type", projection.type.coneType)
-                    }
+                    return null
                 }
 
                 val builder = KaBaseCapturedTypeBuilder(this@KaFirTypeCreator).apply(init)
