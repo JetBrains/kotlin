@@ -166,6 +166,13 @@ fun Project.enableKmpSeparateCompilation(enabled: Boolean = true) {
     propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_KMP_SEPARATE_COMPILATION, enabled.toString())
 }
 
+fun Project.enableKmpStrictCompilation(enabled: Boolean = true) {
+    if (enabled) {
+        enableKmpSeparateCompilation()
+    }
+    propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_KMP_STRICT_COMPILATION, enabled.toString())
+}
+
 internal fun Project.setUklibResolutionStrategy(strategy: KmpResolutionStrategy) {
     propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_KMP_RESOLUTION_STRATEGY, strategy.propertyName)
 }
