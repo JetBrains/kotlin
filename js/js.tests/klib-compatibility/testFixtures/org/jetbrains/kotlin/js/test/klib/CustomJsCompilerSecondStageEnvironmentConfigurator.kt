@@ -5,15 +5,19 @@
 
 package org.jetbrains.kotlin.js.test.klib
 
+import org.jetbrains.kotlin.backend.common.linkage.partial.setupPartialLinkageConfig
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.IrVerificationMode
+import org.jetbrains.kotlin.config.PartialLinkageConfig
+import org.jetbrains.kotlin.config.PartialLinkageLogLevel
 import org.jetbrains.kotlin.config.verifyIr
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.JsSecondStageEnvironmentConfigurator
 
 /**
- * Disable IR verification on the second compilation phase for KLIBs produced by older compiler versions.
+ * Disable IR verification on the second compilation phase for KLIBs produced by older compiler versions,
+ * and run the partial linkage engine in the same default mode as in production (silently).
  *
  * Note: This configuration is supposed to be used in tests with the custom compiler on the first compilation phase,
  *       so the second stage must be adapted a bit to accept old-style IR
@@ -22,6 +26,6 @@ class CustomJsCompilerSecondStageEnvironmentConfigurator(testServices: TestServi
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
         super.configureCompilerConfiguration(configuration, module)
         configuration.verifyIr = IrVerificationMode.NONE
+        configuration.setupPartialLinkageConfig(PartialLinkageConfig(PartialLinkageLogLevel.DEFAULT))
     }
 }
-

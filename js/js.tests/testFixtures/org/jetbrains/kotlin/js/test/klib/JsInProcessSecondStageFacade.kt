@@ -94,7 +94,7 @@ class JsInProcessSecondStageFacade {
                     JsUnifiedIrDeserializerAndLoweringFacade(services).transform(launcherModule, launcherKlib)
                 }
             } catch (e: Throwable) {
-                // The partial linkage engine reports to the diagnostics collector, which has not been flushed yet.
+                // The compiler reports to the diagnostics collector, which has not been flushed yet.
                 CheckDiagnosticCollector.reportToMessageCollector(configuration)
                 // Warnings are recorded as well (see `ErrorRecordingMessageCollector`), so the recorded messages are rarely
                 // empty, and they may include warnings unrelated to the failure.
@@ -133,7 +133,7 @@ class JsInProcessSecondStageFacade {
             val messages = mutableListOf<String>()
 
             override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
-                // The partial linkage engine reports its issues as warnings, and then fails the compilation with an exception.
+                // Warnings are recorded as well, since they may explain the failure.
                 if (severity.isError || severity.isWarning) messages += listOfNotNull(location?.path, message).joinToString(": ")
                 delegate.report(severity, message, location)
             }
