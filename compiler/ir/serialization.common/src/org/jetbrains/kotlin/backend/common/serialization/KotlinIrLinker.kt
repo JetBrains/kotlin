@@ -383,17 +383,17 @@ abstract class KotlinIrLinker(
 }
 
 enum class DeserializationStrategy(
-    val onDemand: Boolean,
-    val needBodies: Boolean,
-    val explicitlyExported: Boolean,
-    val theWholeWorld: Boolean,
-    val inlineBodies: Boolean
+    val onDemand: Boolean = false,
+    val needBodies: Boolean = false,
+    val explicitlyExported: Boolean = false,
+    val theWholeWorld: Boolean = false,
+    val inlineBodies: Boolean = false,
 ) : DeserializationStrategyResolver {
-    ON_DEMAND(true, false, false, false, false),
-    ALL(false, true, true, true, true),
-    EXPLICITLY_EXPORTED(false, true, true, false, true),
-    ONLY_DECLARATION_HEADERS(false, false, false, false, false),
-    WITH_INLINE_BODIES(false, false, false, false, true);
+    ON_DEMAND(onDemand = true),
+    ALL(needBodies = true, explicitlyExported = true, theWholeWorld = true, inlineBodies = true),
+    EXPLICITLY_EXPORTED(needBodies = true, explicitlyExported = true, inlineBodies = true),
+    ONLY_DECLARATION_HEADERS,
+    WITH_INLINE_BODIES(inlineBodies = true);
 
     override fun invoke(filePath: String) = this
 }
