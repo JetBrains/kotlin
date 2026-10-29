@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.gradle.util.swiftExportEmbedAndSignEnvVariables
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.statistics.metrics.StringAnonymizationPolicy
 import org.jetbrains.kotlin.statistics.metrics.StringListMetrics
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
@@ -47,6 +48,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 @DisplayName("FUS statistic")
+@MustRunOnChangesInGradle
 class FusStatisticsIT : KGPBaseTest() {
     private val expectedMetrics = arrayOf(
         "OS_TYPE",
