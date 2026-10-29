@@ -227,7 +227,7 @@ private fun IncrementalDataProvider.toKlibIcData(moduleData: FirModuleData, kmpM
             val kmpProvider = this as? KmpIncrementalDataProvider
                 ?: error("Non-leaf KMP module '${moduleData.name}' requires a KmpIncrementalDataProvider, got ${this::class.simpleName}")
 
-            KlibIcData(KlibIcMetadataComponent(kmpProvider.metadata(moduleData.name.asStringStripSpecialMarkers())))
+            KlibIcData(KlibIcMetadataComponent(kmpProvider.commonMetadata(moduleData.name.asStringStripSpecialMarkers())))
         }
     }
 

@@ -81,7 +81,7 @@ object WebCommonSerializationPipelinePhase : PipelinePhase<WebFir2IrPipelineArti
                         languageVersionSettings,
                     )
 
-                    incrementalResultsConsumer.processCommonPackagePart(moduleName, sourceFile, packageFragment.toByteArray())
+                    incrementalResultsConsumer.processCommonMetadata(moduleName, sourceFile, packageFragment.toByteArray())
                 }
             }
         }
