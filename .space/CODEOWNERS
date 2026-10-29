@@ -108,7 +108,6 @@
 /compiler/build-tools/kotlin-build-statistics/ "Kotlin Build Tools" "Build Tools API"
 /compiler/build-tools/kotlin-build-tools-api/gen/ "Kotlin"
 /compiler/build-tools/kotlin-build-tools-impl/gen/ "Kotlin"
-/compiler/build-tools/kotlin-build-tools-compat/gen/ "Kotlin"
 /compiler/build-tools/kotlin-build-tools-api/api/kotlin-build-tools-api.api "Kotlin"
 /compiler/cli/ "Kotlin Frontend"
 /compiler/cli/cli-jklib/ "JKlib"
