@@ -28,3 +28,6 @@ The tool runs Gradle build, analyses certain events during the run,
 and generates shell scripts in the `degrade` directory at the project root.
 It emits a script per Kotlin/Native task, and also `rerun-all.sh` and
 `rerun-failed.sh`.
+
+Up-to-date tasks don't run Kotlin/Native tools, so they get no scripts.
+To get scripts for all the tasks, run the build with `clean` or `--rerun-tasks`.
