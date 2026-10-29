@@ -14,6 +14,11 @@ internal fun Project.configureTestSharding() {
         val testShardingArguments = project.testShardingArguments
         testShardingArguments.shardTask.set(path)
         jvmArgumentProviders.add(testShardingArguments)
+        // A shard may get none of the tests of a task, e.g. every shard but one of a task with a single test class.
+        // The sharding filter runs in the test JVM, so Gradle would fail such a shard as a task that discovers no tests.
+        // Gradle skips that check if any JUnit tags are set, as they are when the nightly tests are excluded
+        // (see test-federation-convention), so without this only nightly builds and local runs would fail.
+        failOnNoDiscoveredTests.convention(testShardingArguments.shardIndex.map { false }.orElse(true))
         val shardTimingsPath = project.providers.gradleProperty(TEST_SHARD_TIMINGS_KEY).map { "$TEST_SHARD_TIMINGS_DIRECTORY/$it.tsv" }
 
         doFirst {

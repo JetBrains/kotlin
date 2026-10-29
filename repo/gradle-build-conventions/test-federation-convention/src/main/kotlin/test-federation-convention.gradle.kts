@@ -88,7 +88,9 @@ tasks.withType<Test>().configureEach {
             println("##teamcity[addBuildTag '$testSubset']")
         }
 
-        // Exclude nightly tests if not specifically running in 'nightly' mode
+        // Exclude nightly tests if not specifically running in 'nightly' mode.
+        // Like any tag filter, this also makes Gradle skip its check that the task discovers tests ('failOnNoDiscoveredTests'),
+        // so that check only applies to nightly builds and local runs.
         if (!areNightlyTestsEnabled.get()) {
             testFramework.options.excludeTags("nightly", "org.jetbrains.kotlin.testFederation.NightlyTest")
         }

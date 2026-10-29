@@ -26,7 +26,7 @@ import kotlin.test.fail
 /**
  * End-to-end check of the test sharding with nested Gradle builds:
  * the `-Pkotlin.build.test.shard.*` properties reach the test JVM, the sharding filter is registered by the service loader,
- * and `tests.shardByMethod` is passed through.
+ * `tests.shardByMethod` is passed through, and a shard without tests passes.
  * The detailed sharding behaviour is tested by the fast tests in `repo/test-runtime/src/test`,
  * except for the timings, which are read once per test JVM (see `TimedTestSharding`).
  */
@@ -224,6 +224,24 @@ class TestShardingFunctionalTest {
     }
 
     @Test
+    fun `a shard without tests passes`() {
+        junit5SourcesDirectory.resolve("Test.kt").writeCode(
+            """
+            import kotlin.test.Test
+
+            class MyTest {
+                @Test fun test() = Unit
+            }
+            """.trimIndent()
+        )
+
+        /* A single class leaves one of the shards empty; nightly builds set no tag filters, so Gradle checks that tests are discovered */
+        val runner = createGradleRunner()
+        val shards = (0 until 2).map { shard -> runner.runTests(shardIndex = shard, shardCount = 2, nightly = true).parseExecutedTests() }
+        assertEquals(listOf(0, 1), shards.map { it.size }.sorted())
+    }
+
+    @Test
     fun `invalid shard indices and counts are rejected`() {
         junit5SourcesDirectory.resolve("Test.kt").writeCode(
             """
@@ -268,10 +286,11 @@ class TestShardingFunctionalTest {
     /**
      * @param shardIndex the zero-based index of the shard to run
      * @param shardByMethod shards all test classes by their methods instead of keeping classes together
+     * @param nightly sets `-Pnightly`: when `false`, the nightly tests are excluded by a tag filter
      */
     private fun GradleRunner.runTests(
         shardIndex: Int? = null, shardCount: Int? = null, shardByMethod: Boolean = false,
-        shardSeed: Int? = null, shardTimings: String? = null, expectFailure: Boolean = false,
+        shardSeed: Int? = null, shardTimings: String? = null, nightly: Boolean? = null, expectFailure: Boolean = false,
     ): BuildResult {
         withArguments(
             *listOfNotNull(
@@ -282,6 +301,7 @@ class TestShardingFunctionalTest {
                 if (shardSeed != null) "-Pkotlin.build.test.shard.seed=$shardSeed" else null,
                 if (shardByMethod) "-Ptests.shardByMethod=true" else null,
                 if (shardTimings != null) "-Pkotlin.build.test.shard.timings=$shardTimings" else null,
+                if (nightly != null) "-Pnightly=$nightly" else null,
 
                 /* Allow debugging of test Gradle process */
                 *defaultGradleArguments(xmx = "1g").toTypedArray(),
