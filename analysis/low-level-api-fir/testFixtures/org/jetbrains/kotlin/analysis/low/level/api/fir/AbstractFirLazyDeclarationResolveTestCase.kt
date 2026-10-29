@@ -22,14 +22,19 @@ import org.jetbrains.kotlin.fir.renderer.FirDeclarationRendererWithFilteredAttri
 import org.jetbrains.kotlin.fir.renderer.FirErrorExpressionExtendedRenderer
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.renderer.FirResolvePhaseRenderer
+import org.jetbrains.kotlin.fir.expandedClassWithConstructorsScope
+import org.jetbrains.kotlin.fir.resolve.FirSamResolver
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticPropertiesScope
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseRecursively
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseWithCallableMembers
@@ -121,6 +126,18 @@ abstract class AbstractFirLazyDeclarationResolveTestCase : AbstractAnalysisApiBa
                 symbol to symbol.fir.let { it.parameters + it.declarations }.map { it.symbol }
             }
 
+            // Typealiased and SAM constructors exist only in scopes, so they are not a part of any FIR tree
+            is FirTypeAliasSymbol -> {
+                val constructors = mutableListOf<FirBasedSymbol<*>>()
+                symbol.expandedClassWithConstructorsScope(
+                    resolutionFacade.useSiteFirSession,
+                    resolutionFacade.getScopeSessionFor(resolutionFacade.useSiteFirSession),
+                    memberRequiredPhaseForRegularClasses = FirResolvePhase.STATUS,
+                )?.second?.processDeclaredConstructors { constructors += it }
+
+                symbol to constructors + listOfNotNull(samConstructor(symbol, resolutionFacade))
+            }
+
             else -> error("Unknown container: ${symbol::class.simpleName}")
         }
 
@@ -181,7 +198,17 @@ abstract class AbstractFirLazyDeclarationResolveTestCase : AbstractAnalysisApiBa
             }
         }
 
+        samConstructor(classSymbol, resolutionFacade)?.takeIf(filter)?.let { declarations += it }
+
         return declarations.singleOrNull() ?: error("Can't choose from:\n${declarations.joinToString("\n")}")
+    }
+
+    /**
+     * The SAM constructor is cached in the session, so it is the same instance as the one used by the resolution.
+     */
+    private fun samConstructor(classLikeSymbol: FirClassLikeSymbol<*>, resolutionFacade: LLResolutionFacade): FirNamedFunctionSymbol? {
+        val session = resolutionFacade.useSiteFirSession
+        return FirSamResolver(session, resolutionFacade.getScopeSessionFor(session)).getSamConstructor(classLikeSymbol.fir)?.symbol
     }
 
     override val additionalDirectives: List<DirectivesContainer>
