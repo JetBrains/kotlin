@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.hasModifier
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.annotationPlatformSupport
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -30,9 +31,7 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker(MppCheckerKind.
         if (hasInlineModifier && (LanguageFeature.ExplicitInlineValueClassesSyntax.isDisabled() || !hasValueModifier)) {
             val replacement = when {
                 LanguageFeature.ExplicitInlineValueClassesSyntax.isEnabled() -> "'inline value'"
-                // With full value classes, a JVM value class without `@JvmInline` isn't inlined.
-                LanguageFeature.FullValueClasses.isEnabled() &&
-                        context.session.annotationPlatformSupport.jvmInlineAnnotationClassId != null -> "'@JvmInline value'"
+                context.session.annotationPlatformSupport.jvmInlineAnnotationClassId != null && !declaration.isExpect -> "'@JvmInline value'"
                 else -> "'value'"
             }
             val diagnostic = if (LanguageFeature.ExplicitInlineValueClassesSyntaxRequiredOnAllPlatforms.isEnabled()) {
