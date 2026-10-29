@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCan
 import org.jetbrains.kotlin.fir.resolve.substitution.asCone
 import org.jetbrains.kotlin.fir.scopes.impl.originalIfTypeAliasConstructor
 import org.jetbrains.kotlin.fir.types.isSomeFunctionType
+import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
@@ -202,5 +203,8 @@ private fun Collection<Candidate>.lambdaAtomGroups(): Collection<Collection<Lamb
     return lambdaAtomsGroupedByAnonymousFunction.values
 }
 
+// Candidate could be a typealiased constructor or a substitution or intersection fake override;
+// unwrap and check the contract of the base function.
 private fun Candidate.hasNonTrivialContracts(): Boolean =
-    ((symbol.fir as? FirFunction)?.originalIfTypeAliasConstructor() as? FirContractDescriptionOwner)?.contractDescription != null
+    ((symbol.fir as? FirFunction)?.originalIfTypeAliasConstructor()?.unwrapFakeOverrides() as? FirContractDescriptionOwner)
+        ?.contractDescription != null

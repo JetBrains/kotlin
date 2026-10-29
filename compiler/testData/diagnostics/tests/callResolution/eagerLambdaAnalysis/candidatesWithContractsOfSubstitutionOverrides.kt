@@ -34,12 +34,12 @@ open class Scope<X> {
 
 class Substituted : Scope<Int>() {
     fun substitutedViaImplicitReceiver() {
-        foo(1) { "" }
+        <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>(1) { "" }
     }
 }
 
 fun substitutedViaExplicitReceiver(scope: Scope<Int>) {
-    scope.foo(1) { "" }
+    scope.<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>(1) { "" }
 }
 
 /* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classDeclaration, classReference, contractCallsEffect, contracts,
