@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirRegularClassChecker
@@ -17,12 +18,15 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.processAllProperties
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.classId
+import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics
 import org.jetbrains.kotlin.lombok.LombokNames
 import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations
@@ -62,7 +66,7 @@ object FirLombokBuilderChecker : FirRegularClassChecker(MppCheckerKind.Platform)
                 }
             } else {
                 checkPrimaryConstructorParameters(declaration, primaryConstructor, lombokService)
-                checkBodyPropertiesHaveExplicitTypes(declaration, primaryConstructor)
+                checkBodyBuilderProperties(declaration, primaryConstructor)
                 checkToBuilderCanObtainValues(declaration, classBuilder, primaryConstructor)
             }
         }
@@ -151,19 +155,48 @@ object FirLombokBuilderChecker : FirRegularClassChecker(MppCheckerKind.Platform)
      * before an implicit type is resolved, so `AbstractBuilderGenerator.addBuilderCallables` leaves out a property without
      * an explicit type, and its builder field and setter are silently missing (KT-90508).
      *
-     * A read-only property is never a builder field, so an implicit type on one is left alone here.
+     * `build()` evaluates the initializer of a `@Builder.Default` body property itself when its setter was not called -
+     * see `BuilderBodyBuilder.buildDefaultOrSetValue` - before the entity is constructed, so such an initializer
+     * cannot use the entity instance (KT-90590). A constructor parameter's default value has no such restriction:
+     * its references to earlier parameters are resolved to their already computed values.
+     *
+     * A read-only property is never a builder field, so it is left alone here.
      */
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    private fun checkBodyPropertiesHaveExplicitTypes(declaration: FirRegularClass, primaryConstructor: FirConstructorSymbol) {
+    private fun checkBodyBuilderProperties(declaration: FirRegularClass, primaryConstructor: FirConstructorSymbol) {
         if (primaryConstructor.valueParameterSymbols.isNotEmpty()) return
 
         declaration.processAllDeclarations(context.session) { symbol ->
             val property = symbol as? FirPropertySymbol ?: return@processAllDeclarations
             if (property.fromPrimaryConstructor || !property.isVar || property.name.isSpecial) return@processAllDeclarations
-            if (property.hasExplicitReturnType) return@processAllDeclarations
 
-            reporter.reportOn(property.source, LombokFirDiagnostics.BUILDER_PROPERTY_WITH_IMPLICIT_TYPE, property.name, context)
+            if (!property.hasExplicitReturnType) {
+                reporter.reportOn(property.source, LombokFirDiagnostics.BUILDER_PROPERTY_WITH_IMPLICIT_TYPE, property.name, context)
+                return@processAllDeclarations
+            }
+
+            if (property.findAnnotationOnPropertyOrField(LombokNames.BUILDER_DEFAULT_ID) == null) return@processAllDeclarations
+            val initializer = property.resolvedInitializer ?: return@processAllDeclarations
+            if (initializer.usesInstanceOf(declaration.symbol)) {
+                reporter.reportOn(initializer.source, LombokFirDiagnostics.BUILDER_DEFAULT_INITIALIZER_USES_INSTANCE, context)
+            }
         }
+    }
+
+    /** Whether [this] expression reads a `this` of [classSymbol], explicitly or as an implicit receiver. */
+    private fun FirExpression.usesInstanceOf(classSymbol: FirRegularClassSymbol): Boolean {
+        var found = false
+        accept(object : FirVisitorVoid() {
+            override fun visitElement(element: FirElement) {
+                if (found) return
+                if (element is FirThisReceiverExpression && element.calleeReference.boundSymbol == classSymbol) {
+                    found = true
+                    return
+                }
+                element.acceptChildren(this)
+            }
+        })
+        return found
     }
 
     /**

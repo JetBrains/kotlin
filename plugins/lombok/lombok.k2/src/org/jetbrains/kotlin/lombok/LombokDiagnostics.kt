@@ -55,6 +55,7 @@ import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.NO_ARGS_CONSTRUCTOR_FORC
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.NO_NOARG_CONSTRUCTOR_IN_SUPERCLASS
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.BUILDER_WILL_IGNORE_INITIALIZING_EXPRESSION
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.BUILDER_DEFAULT_REQUIRES_INITIALIZING_EXPRESSION
+import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.BUILDER_DEFAULT_INITIALIZER_USES_INSTANCE
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.BUILDER_DEFAULT_AND_SINGULAR_MIXED
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.BUILDER_FIELD_ANNOTATION_ON_BODY_PROPERTY
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.BUILDER_PROPERTY_WITH_IMPLICIT_TYPE
@@ -123,6 +124,7 @@ object LombokFirDiagnostics : KtDiagnosticsContainer() {
 
     val BUILDER_WILL_IGNORE_INITIALIZING_EXPRESSION by warning0<KtExpression>()
     val BUILDER_DEFAULT_REQUIRES_INITIALIZING_EXPRESSION by warning0<KtAnnotationEntry>()
+    val BUILDER_DEFAULT_INITIALIZER_USES_INSTANCE by error0<KtExpression>()
     val BUILDER_DEFAULT_AND_SINGULAR_MIXED by error0<KtAnnotationEntry>()
     val BUILDER_FIELD_ANNOTATION_ON_BODY_PROPERTY by strongWarning1<KtAnnotationEntry, String>()
     val BUILDER_PROPERTY_WITH_IMPLICIT_TYPE by warning1<KtNamedDeclaration, Name>(SourceElementPositioningStrategies.DECLARATION_NAME)
@@ -262,6 +264,12 @@ object LombokFirDiagnosticsMessages : BaseDiagnosticRendererFactory() {
         map.put(
             BUILDER_DEFAULT_REQUIRES_INITIALIZING_EXPRESSION,
             "'@Builder.Default' requires an initializing expression (' = something;')."
+        )
+        map.put(
+            BUILDER_DEFAULT_INITIALIZER_USES_INSTANCE,
+            "The initializer of a '@Builder.Default' property declared in the class body cannot use the instance being built: " +
+                    "'build()' evaluates it before the instance is created. " +
+                    "To refer to other builder fields, declare the properties in the primary constructor with default values."
         )
         map.put(
             BUILDER_DEFAULT_AND_SINGULAR_MIXED,
