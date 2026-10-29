@@ -51,7 +51,6 @@ import org.jetbrains.kotlin.types.AbstractNullabilityChecker
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.model.TypeVariableTypeConstructorMarker
-import org.jetbrains.kotlin.types.model.anySuperTypeConstructor
 import org.jetbrains.kotlin.types.model.typeConstructor
 import org.jetbrains.kotlin.util.OnlyForDefaultLanguageFeatureDisabled
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -117,9 +116,9 @@ object CheckExtensionReceiver : ResolutionStage() {
 
         if (receiverClassSymbol != expectedReceiverType.toClassSymbol()) {
             sink.reportDiagnostic(
-                InapplicableWrongReceiver(
+                InapplicableCompanionExtensionReceiver(
                     expectedReceiverType,
-                    receiverClassSymbol.toLookupTag().constructClassType()
+                    receiverClassSymbol.defaultType()
                 )
             )
         }
@@ -239,7 +238,7 @@ object CheckDispatchReceiver : ResolutionStage() {
             }
             sink.yieldDiagnostic(InapplicableUnsafeReceiver(actualType))
         } else if (isCandidateFromUnstableSmartcast) {
-            sink.yieldDiagnostic(InapplicableWrongReceiver(actualType = dispatchReceiverValueType))
+            sink.yieldDiagnostic(InapplicableWrongReceiver())
         }
     }
 

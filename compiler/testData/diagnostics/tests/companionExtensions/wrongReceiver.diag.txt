@@ -1,13 +1,13 @@
-/wrongReceiver.kt:9:30: error: Candidate 'companion fun Foo.pip(): String' is inapplicable because of a receiver type mismatch. Actual receiver type is 'Unit'.
+/wrongReceiver.kt:9:30: error: Candidate 'companion fun Foo.pip(): String' is inapplicable because of a receiver type mismatch. Actual receiver type is 'Bar'.
 
-/wrongReceiver.kt:11:33: error: Candidate 'companion fun Foo.pip(): String' is inapplicable because of a receiver type mismatch. Actual receiver type is 'Unit'.
+/wrongReceiver.kt:11:33: error: Candidate 'companion fun Foo.pip(): String' is inapplicable because of a receiver type mismatch. Actual receiver type is 'Bar'.
 
-/wrongReceiver.kt:14:39: error: Candidate 'companion fun Foo.pip(): String' is inapplicable because of a receiver type mismatch. Actual receiver type is 'Unit'.
+/wrongReceiver.kt:14:39: error: Candidate 'companion fun Foo.pip(): String' is inapplicable because of a receiver type mismatch. Actual receiver type is 'Bar'.
 
-/wrongReceiver.kt:15:41: error: Candidate 'companion fun Foo.pip(): String' is inapplicable because of a receiver type mismatch. Actual receiver type is 'Unit'.
+/wrongReceiver.kt:15:41: error: Candidate 'companion fun Foo.pip(): String' is inapplicable because of a receiver type mismatch. Actual receiver type is 'Other'.
 
 /wrongReceiver.kt:16:26: error: Unresolved reference 'pip'.
 
 /wrongReceiver.kt:17:36: error: Unresolved reference 'pip' on receiver of type 'Foo'.
 
-/wrongReceiver.kt:18:50: error: Candidate 'companion fun Foo.pip(): String' is inapplicable because of a receiver type mismatch. Actual receiver type is 'Unit'.
+/wrongReceiver.kt:18:50: error: Candidate 'companion fun Foo.pip(): String' is inapplicable because of a receiver type mismatch. Actual receiver type is 'Other'.

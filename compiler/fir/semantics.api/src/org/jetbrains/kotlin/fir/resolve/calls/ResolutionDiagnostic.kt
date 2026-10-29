@@ -144,9 +144,11 @@ object ResolvedWithLowPriority : ResolutionDiagnostic(RESOLVED_LOW_PRIORITY)
 
 object ResolvedWithSynthetic : ResolutionDiagnostic(K2_SYNTHETIC_RESOLVED)
 
-class InapplicableWrongReceiver(
-    val expectedType: ConeKotlinType? = null,
-    val actualType: ConeKotlinType? = null,
+class InapplicableWrongReceiver : ResolutionDiagnostic(INAPPLICABLE_WRONG_RECEIVER)
+
+class InapplicableCompanionExtensionReceiver(
+    val expectedType: ConeKotlinType,
+    val actualType: ConeKotlinType,
 ) : ResolutionDiagnostic(INAPPLICABLE_WRONG_RECEIVER)
 
 object ReceiverIsNotAClass : ResolutionDiagnostic(INAPPLICABLE_WRONG_RECEIVER)
