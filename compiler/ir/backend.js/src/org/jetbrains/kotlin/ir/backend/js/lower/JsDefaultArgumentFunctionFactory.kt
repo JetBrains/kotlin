@@ -44,6 +44,4 @@ class JsDefaultArgumentFunctionFactory(context: CommonBackendContext) : DefaultA
         origin = JsLoweredDeclarationOrigin.JS_SUPER_CONTEXT_PARAMETER
     }
 
-    override val IrFunction.hasDefaultValues: Boolean
-        get() = parameters.any { it.defaultValue != null || it.origin == JsLoweredDeclarationOrigin.JS_SHADOWED_DEFAULT_PARAMETER }
 }
