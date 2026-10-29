@@ -6117,6 +6117,11 @@ internal class ActualTypealiasToNonErrorImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ActualTypealiasToNonError
 
+internal class TypealiasToUnionTypeAsQualifierImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.TypealiasToUnionTypeAsQualifier
+
 internal class OverrideCannotBeStaticImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
