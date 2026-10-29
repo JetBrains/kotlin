@@ -1,0 +1,181 @@
+STATUS:
+TARGET: @R|test/Anno|[Types](LAZY_EXPRESSION) @R|test/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=A, SubstitutedOverrideOriginalKey=test/A.A, TypeAliasConstructorInfoKey=TypeAliasConstructorInfo(originalConstructor=FirConstructorSymbol test/A.A, typeAliasSymbol=FirTypeAliasSymbol test/TA, substitutor={T -> kotlin/Int})] constructor([ResolvedTo(STATUS)] @R|test/Anno|[Types](LAZY_EXPRESSION) t: R|kotlin/Int|, [ResolvedTo(STATUS)] s: R|kotlin/String| = STUB): R|{test/TA=} test/A<kotlin/Int>|
+
+FILE: [ResolvedTo(IMPORTS)] typeAliasedConstructorWithTypeParameters.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=test/Anno.s] s: String): R|test/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val C: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(STATUS)] class A<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        @R|test/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor<[ResolvedTo(STATUS)] T>([ResolvedTo(STATUS)] @R|test/Anno|[Types](LAZY_EXPRESSION) t: R|T|, [ResolvedTo(STATUS)] s: R|kotlin/String| = LAZY_EXPRESSION): R|test/A<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(SUPER_TYPES)] typealias TA = R|test/A<kotlin/Int>|
+
+EXPECT_ACTUAL_MATCHING:
+TARGET: @R|test/Anno|[Types](LAZY_EXPRESSION) @R|test/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=A, SubstitutedOverrideOriginalKey=test/A.A, TypeAliasConstructorInfoKey=TypeAliasConstructorInfo(originalConstructor=FirConstructorSymbol test/A.A, typeAliasSymbol=FirTypeAliasSymbol test/TA, substitutor={T -> kotlin/Int})] constructor([ResolvedTo(EXPECT_ACTUAL_MATCHING)] @R|test/Anno|[Types](LAZY_EXPRESSION) t: R|kotlin/Int|, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] s: R|kotlin/String| = STUB): R|{test/TA=} test/A<kotlin/Int>|
+
+FILE: [ResolvedTo(IMPORTS)] typeAliasedConstructorWithTypeParameters.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=test/Anno.s] s: String): R|test/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val C: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(STATUS)] class A<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        @R|test/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor<[ResolvedTo(STATUS)] T>([ResolvedTo(STATUS)] @R|test/Anno|[Types](LAZY_EXPRESSION) t: R|T|, [ResolvedTo(STATUS)] s: R|kotlin/String| = LAZY_EXPRESSION): R|test/A<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(SUPER_TYPES)] typealias TA = R|test/A<kotlin/Int>|
+
+CONTRACTS:
+TARGET: @R|test/Anno|[Types](LAZY_EXPRESSION) @R|test/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONTRACTS)] [ContainingClassKey=A, SubstitutedOverrideOriginalKey=test/A.A, TypeAliasConstructorInfoKey=TypeAliasConstructorInfo(originalConstructor=FirConstructorSymbol test/A.A, typeAliasSymbol=FirTypeAliasSymbol test/TA, substitutor={T -> kotlin/Int})] constructor([ResolvedTo(CONTRACTS)] @R|test/Anno|[Types](LAZY_EXPRESSION) t: R|kotlin/Int|, [ResolvedTo(CONTRACTS)] s: R|kotlin/String| = STUB): R|{test/TA=} test/A<kotlin/Int>|
+
+FILE: [ResolvedTo(IMPORTS)] typeAliasedConstructorWithTypeParameters.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=test/Anno.s] s: String): R|test/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val C: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(STATUS)] class A<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        @R|test/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor<[ResolvedTo(STATUS)] T>([ResolvedTo(STATUS)] @R|test/Anno|[Types](LAZY_EXPRESSION) t: R|T|, [ResolvedTo(STATUS)] s: R|kotlin/String| = LAZY_EXPRESSION): R|test/A<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(SUPER_TYPES)] typealias TA = R|test/A<kotlin/Int>|
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+TARGET: @R|test/Anno|[Types](LAZY_EXPRESSION) @R|test/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=A, SubstitutedOverrideOriginalKey=test/A.A, TypeAliasConstructorInfoKey=TypeAliasConstructorInfo(originalConstructor=FirConstructorSymbol test/A.A, typeAliasSymbol=FirTypeAliasSymbol test/TA, substitutor={T -> kotlin/Int})] constructor([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] @R|test/Anno|[Types](LAZY_EXPRESSION) t: R|kotlin/Int|, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] s: R|kotlin/String| = STUB): R|{test/TA=} test/A<kotlin/Int>|
+
+FILE: [ResolvedTo(IMPORTS)] typeAliasedConstructorWithTypeParameters.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=test/Anno.s] s: String): R|test/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val C: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(STATUS)] class A<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        @R|test/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor<[ResolvedTo(STATUS)] T>([ResolvedTo(STATUS)] @R|test/Anno|[Types](LAZY_EXPRESSION) t: R|T|, [ResolvedTo(STATUS)] s: R|kotlin/String| = LAZY_EXPRESSION): R|test/A<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(SUPER_TYPES)] typealias TA = R|test/A<kotlin/Int>|
+
+CONSTANT_EVALUATION:
+TARGET: @R|test/Anno|[Types](LAZY_EXPRESSION) @R|test/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=A, SubstitutedOverrideOriginalKey=test/A.A, TypeAliasConstructorInfoKey=TypeAliasConstructorInfo(originalConstructor=FirConstructorSymbol test/A.A, typeAliasSymbol=FirTypeAliasSymbol test/TA, substitutor={T -> kotlin/Int})] constructor([ResolvedTo(CONSTANT_EVALUATION)] @R|test/Anno|[Types](LAZY_EXPRESSION) t: R|kotlin/Int|, [ResolvedTo(CONSTANT_EVALUATION)] s: R|kotlin/String| = STUB): R|{test/TA=} test/A<kotlin/Int>|
+
+FILE: [ResolvedTo(IMPORTS)] typeAliasedConstructorWithTypeParameters.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=test/Anno.s] s: String): R|test/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val C: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(STATUS)] class A<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        @R|test/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor<[ResolvedTo(STATUS)] T>([ResolvedTo(STATUS)] @R|test/Anno|[Types](LAZY_EXPRESSION) t: R|T|, [ResolvedTo(STATUS)] s: R|kotlin/String| = LAZY_EXPRESSION): R|test/A<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(SUPER_TYPES)] typealias TA = R|test/A<kotlin/Int>|
+
+ANNOTATION_ARGUMENTS:
+TARGET: @R|test/Anno|[Types](s = String(constructor).R|kotlin/String.plus|(R|test/C|) [evaluated = String(constructorc)]) @R|test/Anno|[Types](s = String(constructor).R|kotlin/String.plus|(R|test/C|) [evaluated = String(constructorc)]) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=A, SubstitutedOverrideOriginalKey=test/A.A, TypeAliasConstructorInfoKey=TypeAliasConstructorInfo(originalConstructor=FirConstructorSymbol test/A.A, typeAliasSymbol=FirTypeAliasSymbol test/TA, substitutor={T -> kotlin/Int})] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] @R|test/Anno|[Types](s = String(param).R|kotlin/String.plus|(R|test/C|) [evaluated = String(paramc)]) t: R|kotlin/Int|, [ResolvedTo(ANNOTATION_ARGUMENTS)] s: R|kotlin/String| = STUB): R|{test/TA=} test/A<kotlin/Int>|
+
+FILE: [ResolvedTo(IMPORTS)] typeAliasedConstructorWithTypeParameters.kt
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=test/Anno.s] s: R|kotlin/String|): R|test/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val C: R|kotlin/String| = String(c)
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class A<[ResolvedTo(ANNOTATION_ARGUMENTS)] T> : R|kotlin/Any| {
+        @R|test/Anno|[Types](s = String(constructor).R|kotlin/String.plus|(R|test/C|) [evaluated = String(constructorc)]) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=A] constructor<[ResolvedTo(ANNOTATION_ARGUMENTS)] T>([ResolvedTo(ANNOTATION_ARGUMENTS)] @R|test/Anno|[Types](s = String(param).R|kotlin/String.plus|(R|test/C|) [evaluated = String(paramc)]) t: R|T|, [ResolvedTo(ANNOTATION_ARGUMENTS)] s: R|kotlin/String| = LAZY_EXPRESSION): R|test/A<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(SUPER_TYPES)] typealias TA = R|test/A<kotlin/Int>|
+
+BODY_RESOLVE:
+TARGET: @R|test/Anno|[Types](s = String(constructor).R|kotlin/String.plus|(R|test/C|) [evaluated = String(constructorc)]) @R|test/Anno|[Types](s = String(constructor).R|kotlin/String.plus|(R|test/C|) [evaluated = String(constructorc)]) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A, SubstitutedOverrideOriginalKey=test/A.A, TypeAliasConstructorInfoKey=TypeAliasConstructorInfo(originalConstructor=FirConstructorSymbol test/A.A, typeAliasSymbol=FirTypeAliasSymbol test/TA, substitutor={T -> kotlin/Int})] constructor([ResolvedTo(BODY_RESOLVE)] @R|test/Anno|[Types](s = String(param).R|kotlin/String.plus|(R|test/C|) [evaluated = String(paramc)]) t: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] s: R|kotlin/String| = STUB): R|{test/TA=} test/A<kotlin/Int>|
+
+FILE: [ResolvedTo(IMPORTS)] typeAliasedConstructorWithTypeParameters.kt
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=test/Anno.s] s: R|kotlin/String|): R|test/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val C: R|kotlin/String| = String(c)
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class A<[ResolvedTo(ANNOTATION_ARGUMENTS)] T> : R|kotlin/Any| {
+        @R|test/Anno|[Types](s = String(constructor).R|kotlin/String.plus|(R|test/C|) [evaluated = String(constructorc)]) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=A] constructor<[ResolvedTo(ANNOTATION_ARGUMENTS)] T>([ResolvedTo(ANNOTATION_ARGUMENTS)] @R|test/Anno|[Types](s = String(param).R|kotlin/String.plus|(R|test/C|) [evaluated = String(paramc)]) t: R|T|, [ResolvedTo(ANNOTATION_ARGUMENTS)] s: R|kotlin/String| = LAZY_EXPRESSION): R|test/A<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(SUPER_TYPES)] typealias TA = R|test/A<kotlin/Int>|
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] typeAliasedConstructorWithTypeParameters.kt
+    public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=test/Anno.s] s: R|kotlin/String|): R|test/Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String(c)] val C: R|kotlin/String| = String(c)
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
+    public final [ResolvedTo(BODY_RESOLVE)] class A<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+        @R|test/Anno|[Types](s = String(constructor).R|kotlin/String.plus|(R|test/C|) [evaluated = String(constructorc)]) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor<[ResolvedTo(BODY_RESOLVE)] T>([ResolvedTo(BODY_RESOLVE)] @R|test/Anno|[Types](s = String(param).R|kotlin/String.plus|(R|test/C|) [evaluated = String(paramc)]) t: R|T|, [ResolvedTo(BODY_RESOLVE)] s: R|kotlin/String| = String(default).R|kotlin/String.plus|(R|test/C|)): R|test/A<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] typealias TA = R|test/A<kotlin/Int>|

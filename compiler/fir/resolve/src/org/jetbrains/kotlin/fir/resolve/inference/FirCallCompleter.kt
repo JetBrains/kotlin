@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.contracts.FirAbstractContra
 import org.jetbrains.kotlin.fir.resolve.transformers.isArrayConstructorWithLambda
 import org.jetbrains.kotlin.fir.resolve.transformers.transformInlineStatus
 import org.jetbrains.kotlin.fir.resolve.typeFromCallee
+import org.jetbrains.kotlin.fir.scopes.impl.originalIfTypeAliasConstructor
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SyntheticCallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -721,8 +722,9 @@ class FirCallCompleter(
         val effects = if (transformer is FirAbstractContractResolveTransformerDispatcher && transformer.insideContractDescription) {
             emptyList()
         } else {
-            // Candidate could be a substitution or intersection fake override; unwrap and get the effects of the base function.
-            function.unwrapFakeOverrides<FirFunction>().symbol.resolvedContractDescription?.effects.orEmpty()
+            // Candidate could be a typealiased constructor or a substitution or intersection fake override;
+            // unwrap and get the effects of the base function.
+            function.originalIfTypeAliasConstructor().unwrapFakeOverrides<FirFunction>().symbol.resolvedContractDescription?.effects.orEmpty()
         }
 
         val eventOccurencesRangeByParameter = mutableMapOf<FirValueParameter, EventOccurrencesRange>()

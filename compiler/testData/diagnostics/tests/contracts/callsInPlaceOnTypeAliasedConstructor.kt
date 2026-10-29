@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // OPT_IN: kotlin.contracts.ExperimentalContracts
-// IGNORE_REVERSED_RESOLVE: KT-73488
 
 import kotlin.contracts.*
 
