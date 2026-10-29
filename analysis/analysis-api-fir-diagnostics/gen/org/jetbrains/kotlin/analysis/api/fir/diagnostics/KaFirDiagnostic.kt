@@ -8665,6 +8665,13 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface TypealiasToUnionTypeAsQualifier : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<TypealiasToUnionTypeAsQualifier>
+            get() = TypealiasToUnionTypeAsQualifier::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface OverrideCannotBeStatic : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass: KClass<OverrideCannotBeStatic>
             get() = OverrideCannotBeStatic::class

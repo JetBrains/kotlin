@@ -856,6 +856,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPEALIAS_EXPANSI
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPEALIAS_EXPANSION_DEPRECATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPEALIAS_EXPANSION_DEPRECATION_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPEALIAS_SHOULD_EXPAND_TO_CLASS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPEALIAS_TO_UNION_TYPE_AS_QUALIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED
@@ -4246,5 +4247,6 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(NON_ERROR_SUPERTYPE, "'NonError' cannot be used as explicit supertype.")
         map.put(NON_ERROR_GET_CLASS_CALL, "Class literal on 'NonError' is not supported.")
         map.put(ACTUAL_TYPEALIAS_TO_NON_ERROR, "'actual typealias' cannot expand to 'NonError'.")
+        map.put(TYPEALIAS_TO_UNION_TYPE_AS_QUALIFIER, "Type alias expanding to a union type cannot be used as a qualifier.")
     }
 }
