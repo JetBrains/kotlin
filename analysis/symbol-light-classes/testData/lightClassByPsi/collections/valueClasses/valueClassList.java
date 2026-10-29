@@ -59,6 +59,12 @@ public abstract class CList /* test.CList*/ implements java.util.List<@org.jetbr
   @java.lang.Override()
   public void clear();//  clear()
 
+  @java.lang.Override()
+  public void replaceAll(java.util.function.UnaryOperator<@org.jetbrains.annotations.NotNull() kotlin.UInt>);//  replaceAll(java.util.function.UnaryOperator<@org.jetbrains.annotations.NotNull() kotlin.UInt>)
+
+  @java.lang.Override()
+  public void sort(java.util.Comparator<? super @org.jetbrains.annotations.NotNull() kotlin.UInt>);//  sort(java.util.Comparator<? super @org.jetbrains.annotations.NotNull() kotlin.UInt>)
+
   public  CList();//  .ctor()
 }
 
@@ -145,6 +151,12 @@ public abstract class CList2 /* test.CList2*/ implements java.util.List<@org.jet
   @java.lang.Override()
   public void clear();//  clear()
 
+  @java.lang.Override()
+  public void replaceAll(java.util.function.UnaryOperator<@org.jetbrains.annotations.NotNull() kotlin.UInt>);//  replaceAll(java.util.function.UnaryOperator<@org.jetbrains.annotations.NotNull() kotlin.UInt>)
+
+  @java.lang.Override()
+  public void sort(java.util.Comparator<? super @org.jetbrains.annotations.NotNull() kotlin.UInt>);//  sort(java.util.Comparator<? super @org.jetbrains.annotations.NotNull() kotlin.UInt>)
+
   public  CList2();//  .ctor()
 }
 
@@ -230,6 +242,12 @@ public class CList3 /* test.CList3*/ implements java.util.List<@org.jetbrains.an
 
   @java.lang.Override()
   public void clear();//  clear()
+
+  @java.lang.Override()
+  public void replaceAll(java.util.function.UnaryOperator<@org.jetbrains.annotations.NotNull() kotlin.UInt>);//  replaceAll(java.util.function.UnaryOperator<@org.jetbrains.annotations.NotNull() kotlin.UInt>)
+
+  @java.lang.Override()
+  public void sort(java.util.Comparator<? super @org.jetbrains.annotations.NotNull() kotlin.UInt>);//  sort(java.util.Comparator<? super @org.jetbrains.annotations.NotNull() kotlin.UInt>)
 
   public  CList3();//  .ctor()
 }
