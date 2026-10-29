@@ -5,11 +5,9 @@ import Testing
 import KotlinRuntimeSupport
 
 func assertReversed<T: Equatable>(reversed: any KotlinRuntimeSupport.List<T>, original: any KotlinRuntimeSupport.List<T>) throws {
-    try #require(reversed.count == original.count)
-    let expected: [T] = original.reversed() // TODO: This is O(n) KT-88831
-    for i in reversed.indices {
-        try #require(reversed[i] == expected[Int(i)])
-    }
+    let expected = original.reversed()
+    try #require(expected is ReversedCollection<AnyList<T>>)
+    try #require(reversed.elementsEqual(expected))
 }
 
 func assertEquals<T: Equatable>(actual: any KotlinRuntimeSupport.List<T>, expected: any KotlinRuntimeSupport.List<T>) throws {
@@ -34,7 +32,7 @@ func testArrayOfShort() throws {
     try assertReversed(reversed: reverseListShort(l: original), original: original)
 }
 
-// TODO: kotlin.ClassCastException: class kotlin.Int cannot be cast to class kotlin.Char KT-88831
+// TODO: kotlin.ClassCastException: class kotlin.Int cannot be cast to class kotlin.Char KT-90618
 // @Test
 // func testArrayOfChar() throws {
 //     let original = Array("AB0-Ыß☺🙂系".utf16)
@@ -181,7 +179,7 @@ private func testObjCInterop(provider: FooArrayProvider) throws {
     provider.setFooArray(array)
     let list: any KotlinRuntimeSupport.List<any Foo> = getFooList(provider: provider)
     try #require(list.count == 2)
-//     TODO: ObjC protocol types are converted to _KotlinExistential KT-88831
+//     TODO: ObjC protocol types are converted to _KotlinExistential KT-90924
 //     try #require(list[0].value() == 1)
 //     try #require(list[1].value() == 2)
 

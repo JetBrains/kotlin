@@ -356,21 +356,35 @@ public protocol List<Element> : Collection, Swift.RandomAccessCollection where I
 public extension List {
     var startIndex: Int32 { 0 }
     var endIndex: Int32 { size }
+}
 
-    subscript(position: Int32) -> Element {
-       self._get(index: position)
+public struct AnyList<Element> : Swift.RandomAccessCollection {
+
+    public typealias Index = Int32
+    public typealias SubSequence = ListSubSequence<Element>
+
+    public let base: any List<Element>
+
+    internal init(_ base: any List<Element>) {
+        self.base = base
+    }
+
+    public var startIndex: Int32 { base.startIndex }
+    public var endIndex: Int32 { base.endIndex }
+    public subscript(position: Int32) -> Element { base[position] }
+    public subscript(bounds: Range<Int32>) -> ListSubSequence<Element> { base[bounds] }
+}
+
+public extension List {
+    func reversed() -> ReversedCollection<AnyList<Element>> {
+        AnyList(self).reversed()
     }
 }
 
 public protocol MutableList<Element> : List, Swift.MutableCollection {
     func _set(index: Int32, element: Element) -> Element
-}
-
-public extension MutableList {
-    subscript(position: Int32) -> Element {
-        get { self._get(index: position) }
-        nonmutating set { self._set(index: position, element: newValue) }
-    }
+    override subscript(position: Int32) -> Element { get nonmutating set }
+    override subscript(bounds: Range<Int32>) -> ListSubSequence<Element> { get nonmutating set }
 }
 
 public struct CollectionIteratorImpl<Element> : CollectionIterator {
@@ -424,6 +438,12 @@ public extension TypedList {
         } as! Element
     }
 
+    // TODO: move this default implementation back to the MutableList extension once the Swift compiler bug is fixed
+    // https://github.com/swiftlang/swift/issues/90406
+    subscript(position: Int32) -> Element {
+       self._get(index: position)
+    }
+
     subscript(bounds: Range<Int32>) -> ListSubSequence<Element> {
         let externalRCRef = _kotlin_swift_List_subList(__rawCollection.__externalRCRef(), bounds.lowerBound, bounds.upperBound)
         let subList = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: externalRCRef, conformsTo: nil)
@@ -440,6 +460,13 @@ public extension TypedMutableList {
         return result.flatMap {
             KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: $0, conformsTo: __conformsTo)
         } as! Element
+    }
+
+    // TODO: move this default implementation back to the MutableList extension once the Swift compiler bug is fixed
+    // https://github.com/swiftlang/swift/issues/90406
+    subscript(position: Int32) -> Element {
+        get { self._get(index: position) }
+        nonmutating set { self._set(index: position, element: newValue) }
     }
 
     subscript(bounds: Range<Int32>) -> ListSubSequence<Element> {
