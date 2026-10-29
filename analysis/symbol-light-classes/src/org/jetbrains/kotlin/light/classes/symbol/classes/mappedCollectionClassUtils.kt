@@ -437,6 +437,9 @@ private fun createMethodsWithSpecialSignature(
 internal fun PsiType.isTypeParameter(): Boolean =
     this is PsiClassType && this.resolve() is PsiTypeParameter
 
+internal fun PsiType.unboxedOrSelf(): PsiType =
+    PsiPrimitiveType.getUnboxedType(this)?.annotate(TypeAnnotationProvider.EMPTY) ?: this
+
 internal fun PsiType.isJavaLangObject(): Boolean =
     this is PsiClassType && this.canonicalText == CommonClassNames.JAVA_LANG_OBJECT
 
