@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.buildtools.generator
 
 import com.squareup.kotlinpoet.ClassName
-import com.squareup.kotlinpoet.TypeName
 import org.jetbrains.kotlin.arguments.description.CompilerArgumentsLevelNames
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
@@ -98,7 +97,7 @@ internal val levelsSince = mapOf(
     CompilerArgumentsLevelNames.metadataArguments to KDOC_SINCE_2_4_20,
 ) + syntheticArgumentInterfaces.associate { it.name to KDOC_SINCE_2_4_20 }
 
-internal fun BtaCompilerArgument<*>.extractName(): String = name.uppercase().replace("-", "_").let {
+internal fun BtaCompilerArgument<*>.getOptionId(): String = name.uppercase().replace("-", "_").let {
     when {
         it.startsWith("XX") && it != "XX" -> it.replaceFirst("XX", "XX_")
         it.startsWith("X") && it != "X" -> it.replaceFirst("X", "X_")
