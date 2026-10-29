@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.light.classes.symbol.classes
 
 import com.intellij.psi.*
 import com.intellij.psi.util.ClassUtil
+import com.intellij.psi.util.TypeConversionUtil
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.javaInterop.mapToJvmTypeDescriptor
 import org.jetbrains.kotlin.analysis.api.scopes.memberScope
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.*
@@ -26,6 +28,7 @@ import org.jetbrains.kotlin.load.kotlin.SignatureBuildingComponents
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 
 /**
@@ -134,14 +137,14 @@ internal fun hasCollectionSupertype(allSupertypes: Iterable<KaClassType>): Boole
  *    - The original Kotlin method should be generated normally
  *
  * 2. **Special signature case** (returns `true`):
- *    - The method has special generic types (e.g., `remove(K)` where K is String)
+ *    - The method has special generic types (e.g., `remove(K)` where K is String,
+ *      or `contains(element: E)` with `E : CharSequence`, which erases to `contains(CharSequence)`)
  *    - Generates a final bridge method with the special Java signature
  *    - The original Kotlin method SHOULD still be generated with its Kotlin signature
  *
  * 3. **Erased signature case** (returns `false`):
- *    - The Java method has `Object` parameters, and each of them has a type parameter type in Kotlin
+ *    - The Java method has `Object` parameters, and each of them has a type parameter type that erases to `Object` in Kotlin
  *      (e.g., `contains(element: E)` for `contains(Object)`, or `getOrDefault(key: K, defaultValue: String)` for `getOrDefault(Object, V)`)
- *    - The type parameters are assumed to erase to `Object`, which doesn't hold for a bounded one, like `K : CharSequence`
  *    - Generates a single non-final bridge method with the erased Java signature
  *    - The original Kotlin method should NOT be generated separately
  *
@@ -172,7 +175,7 @@ internal fun processPossiblyMappedCollectionMethod(
             javaMethod.parameterList.parameters.zip(ownFunction.valueParameters)
                 .takeIf { it.isNotEmpty() }
                 ?.all { [javaParameter, parameter] ->
-                    !javaParameter.type.isJavaLangObject() || parameter.returnType is KaTypeParameterType
+                    !javaParameter.type.isJavaLangObject() || parameter.returnType.isTypeParameterErasedToObject()
                 } == true
 
     val lightMemberOrigin = (ownFunction.psi as? KtDeclaration)?.let { originalElement ->
@@ -434,7 +437,7 @@ private fun createMethodsWithSpecialSignature(
     if (javaParameterType == null || !javaParameterType.isJavaLangObject()) return emptyList()
 
     val psiType = substitutor.substitutionMap.values.singleOrNull() ?: return emptyList()
-    if (psiType.isTypeParameter()) return emptyList()
+    if (psiType.isTypeParameterErasedToObject()) return emptyList()
 
     val finalBridgeWithObject = method.finalBridge(containingClass, substitutor)
     val abstractKotlinVariantWithGeneric = method.wrap(containingClass, substitutor, substituteObjectWith = psiType)
@@ -443,6 +446,23 @@ private fun createMethodsWithSpecialSignature(
 
 internal fun PsiType.isTypeParameter(): Boolean =
     this is PsiClassType && this.resolve() is PsiTypeParameter
+
+/**
+ * Returns `true` if this is a type parameter that erases to `Object`, like `E` in `List<E>`.
+ * A Kotlin method with such a type in place of an `Object` parameter has the JVM signature of the Java method.
+ *
+ * A bounded type parameter, like `E : CharSequence`, erases to its bound instead, so `contains(element: E)` is `contains(CharSequence)`
+ * and needs a final bridge `contains(Object)`.
+ */
+private fun PsiType.isTypeParameterErasedToObject(): Boolean =
+    isTypeParameter() && TypeConversionUtil.erasure(this).isJavaLangObject()
+
+/**
+ * Returns `true` if this is a type parameter type that erases to `Object`, like [PsiType.isTypeParameterErasedToObject].
+ */
+context(_: KaSession)
+private fun KaType.isTypeParameterErasedToObject(): Boolean =
+    this is KaTypeParameterType && mapToJvmTypeDescriptor() == AsmTypes.OBJECT_TYPE.descriptor
 
 /**
  * Returns the primitive type for this boxed primitive type, e.g., `int` for `Integer`, unless this type is annotated with `@Nullable`.
@@ -472,24 +492,24 @@ private fun createJavaUtilMapMethodWithSpecialSignature(
 
     val signature = when (method.name) {
         "get" -> {
-            if (k.isTypeParameter()) return null
+            if (k.isTypeParameterErasedToObject()) return null
             MethodSignature(parameterTypes = listOf(k), returnType = v)
         }
 
         "containsKey" -> {
-            if (k.isTypeParameter()) return null
+            if (k.isTypeParameterErasedToObject()) return null
             MethodSignature(parameterTypes = listOf(k), returnType = PsiTypes.booleanType())
         }
 
         "containsValue" -> {
-            if (v.isTypeParameter()) return null
+            if (v.isTypeParameterErasedToObject()) return null
             MethodSignature(parameterTypes = listOf(v), returnType = PsiTypes.booleanType())
         }
 
         "remove" -> {
             // only `remove(Object)` pair (i.e. `remove(K)`) is needed
             if (method.parameterList.parametersCount != 1) return null
-            if (k.isTypeParameter()) return null
+            if (k.isTypeParameterErasedToObject()) return null
             MethodSignature(parameterTypes = listOf(k), returnType = v)
         }
         else -> null
