@@ -162,18 +162,17 @@ class JvmIrCodegenFactory(
         // TODO: consider dividing codegen itself into separate phases (bytecode generation, metadata serialization) to avoid this
         for (generateMultifileFacades in listOf(true, false)) {
             if (executor != null) {
-                val tasks = mutableListOf<CompletableFuture<Void>>()
-                val childrenStats = mutableListOf<UnitStats>()
+                val tasks = mutableListOf<CompletableFuture<UnitStats?>>()
 
                 for (irFile in module.files) {
                     tasks.add(
-                        CompletableFuture.runAsync(
+                        CompletableFuture.supplyAsync(
                             {
                                 val childPerfManager = PerformanceManagerImpl.createChildIfNeeded(perfManager, start = false)
                                 childPerfManager.tryMeasurePhaseTime(PhaseType.Backend) {
                                     generateFile(context, irFile, intrinsicExtensions, generateMultifileFacades)
                                 }
-                                childPerfManager?.let { childrenStats.add(it.unitStats) }
+                                childPerfManager?.unitStats
                             },
                             executor
                         )
@@ -182,7 +181,7 @@ class JvmIrCodegenFactory(
                 CompletableFuture.allOf(*tasks.toTypedArray()).get()
 
                 if (perfManager != null) {
-                    childrenStats.forEach { perfManager.addOtherUnitStats(it) }
+                    tasks.mapNotNull { it.get() }.forEach { perfManager.addOtherUnitStats(it) }
                 }
             } else {
                 perfManager.tryMeasurePhaseTime(PhaseType.Backend) {
