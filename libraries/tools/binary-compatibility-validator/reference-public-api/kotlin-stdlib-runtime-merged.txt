@@ -3395,9 +3395,8 @@ public final class kotlin/coroutines/jvm/internal/TailCallAsyncStackTraceEntryKt
 	public static final fun wrapContinuation (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;I[Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Lkotlin/coroutines/Continuation;
 }
 
-public final class kotlin/coroutines/jvm/internal/TailCallBaseContinuationImpl : kotlin/coroutines/jvm/internal/BaseContinuationImpl {
+public final class kotlin/coroutines/jvm/internal/TailCallBaseContinuationImpl {
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;I[Ljava/lang/Object;Lkotlin/coroutines/Continuation;)V
-	public fun getContext ()Lkotlin/coroutines/CoroutineContext;
 	public final fun getDeclaringClass ()Ljava/lang/String;
 	public final fun getFileName ()Ljava/lang/String;
 	public final fun getLineNumber ()I
