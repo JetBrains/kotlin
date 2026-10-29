@@ -5689,6 +5689,12 @@ internal class InlineClassDeprecatedImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.InlineClassDeprecated
 
+internal class InlineClassDeprecatedErrorImpl(
+    override val replacement: String,
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.InlineClassDeprecatedError
+
 internal class LessVisibleTypeAccessInInlineErrorImpl(
     override val typeVisibility: EffectiveVisibility,
     override val type: KaType,

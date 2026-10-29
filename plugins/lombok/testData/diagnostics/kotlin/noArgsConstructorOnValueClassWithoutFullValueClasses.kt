@@ -1,4 +1,4 @@
-// LANGUAGE: -FullValueClasses
+// LANGUAGE: -FullValueClasses +ExplicitInlineValueClassesSyntaxRequiredOnAllPlatforms
 // WITH_STDLIB
 // ISSUE: KT-89640
 
@@ -12,7 +12,10 @@ import lombok.NoArgsConstructor
 value class OnInlineClass(val value: Int)
 
 <!ANNOTATION_IS_NOT_SUPPORTED_ON_CLASS!>@NoArgsConstructor(force = true)<!>
-<!INLINE_CLASS_DEPRECATED!>inline<!> class OnDeprecatedInlineClass(val value: Int)
+<!INLINE_CLASS_DEPRECATED_ERROR!>inline<!> class OnDeprecatedInlineClass(val value: Int)
+
+<!ANNOTATION_IS_NOT_SUPPORTED_ON_CLASS!>@NoArgsConstructor(force = true)<!>
+inline value class OnInlineValueClass(val value: Int)
 
 fun test() {
     <!NO_VALUE_FOR_PARAMETER!>OnValueClassWithoutJvmInline<!>()

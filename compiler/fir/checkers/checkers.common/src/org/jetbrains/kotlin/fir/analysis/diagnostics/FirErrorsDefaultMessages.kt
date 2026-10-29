@@ -505,6 +505,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INITIALIZER_REQUI
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INITIALIZER_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INLINE_CLASS_DEPRECATED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INLINE_CLASS_DEPRECATED_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INLINE_PROPERTY_WITH_BACKING_FIELD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INLINE_PROPERTY_WITH_BACKING_FIELD_DEPRECATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INLINE_SUSPEND_FUNCTION_TYPE_UNSUPPORTED
@@ -2976,6 +2977,11 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             INLINE_CLASS_DEPRECATED,
+            "''inline'' modifier is deprecated. Use {0} instead.",
+            STRING,
+        )
+        map.put(
+            INLINE_CLASS_DEPRECATED_ERROR,
             "''inline'' modifier is deprecated. Use {0} instead.",
             STRING,
         )

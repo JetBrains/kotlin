@@ -4,6 +4,7 @@
 //  ^^^ KT-88389
 // IGNORE_FIR_DIAGNOSTICS
 // WITH_STDLIB
+// LATEST_LV_DIFFERENCE
 
 // MODULE: common
 // FILE: exp.kt

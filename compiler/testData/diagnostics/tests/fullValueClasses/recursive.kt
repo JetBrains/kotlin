@@ -1,4 +1,5 @@
 // LANGUAGE: +FullValueClasses
+// LANGUAGE_FEATURE_TOGGLED: ExplicitInlineValueClassesSyntaxRequiredOnAllPlatforms
 // RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 
@@ -9,10 +10,10 @@ value class C(val a: C?, val b: <!VALUE_CLASS_CANNOT_BE_RECURSIVE!>C<!>, val c: 
 
 value class D(val a: <!VALUE_CLASS_CANNOT_BE_RECURSIVE!>C<!>)
 
-<!INLINE_CLASS_DEPRECATED!>inline<!> class Inline1(val x: <!VALUE_CLASS_CANNOT_BE_RECURSIVE!>Inline1<!>)
-<!INLINE_CLASS_DEPRECATED!>inline<!> class Inline2(val x: <!VALUE_CLASS_CANNOT_BE_RECURSIVE!>Inline2?<!>)
-<!INLINE_CLASS_DEPRECATED!>inline<!> class Inline3(val x: <!VALUE_CLASS_CANNOT_BE_RECURSIVE!>Inline4<!>)
-<!INLINE_CLASS_DEPRECATED!>inline<!> class Inline4(val x: <!VALUE_CLASS_CANNOT_BE_RECURSIVE!>Inline3?<!>)
+<!INLINE_CLASS_DEPRECATED_ERROR!>inline<!> class Inline1(val x: <!VALUE_CLASS_CANNOT_BE_RECURSIVE!>Inline1<!>)
+<!INLINE_CLASS_DEPRECATED_ERROR!>inline<!> class Inline2(val x: <!VALUE_CLASS_CANNOT_BE_RECURSIVE!>Inline2?<!>)
+<!INLINE_CLASS_DEPRECATED_ERROR!>inline<!> class Inline3(val x: <!VALUE_CLASS_CANNOT_BE_RECURSIVE!>Inline4<!>)
+<!INLINE_CLASS_DEPRECATED_ERROR!>inline<!> class Inline4(val x: <!VALUE_CLASS_CANNOT_BE_RECURSIVE!>Inline3?<!>)
 
 @JvmInline
 value class Old1(val x: <!VALUE_CLASS_CANNOT_BE_RECURSIVE!>New1<!>)

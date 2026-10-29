@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +InlineClasses, -JsAllowValueClassesInExternals, +JsExternalPropertyParameters
-// DIAGNOSTICS: -OPT_IN_USAGE, -INLINE_CLASS_DEPRECATED
+// LANGUAGE: -JsAllowValueClassesInExternals, +JsExternalPropertyParameters
+// DIAGNOSTICS: -OPT_IN_USAGE -INLINE_CLASS_DEPRECATED -INLINE_CLASS_DEPRECATED_ERROR
 // ALLOW_KOTLIN_PACKAGE
 
 // FILE: uint.kt

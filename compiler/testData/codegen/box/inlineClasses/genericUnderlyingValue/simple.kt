@@ -1,7 +1,5 @@
 // CHECK_BYTECODE_LISTING
-// DIAGNOSTICS: -INLINE_CLASS_DEPRECATED
-// IGNORE_BACKED: JVM
 
-inline class ICAny<T>(val value: T)
+inline value class ICAny<T>(val value: T)
 
 fun box(): String = ICAny("OK").value

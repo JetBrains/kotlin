@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +InlineClasses
-// DIAGNOSTICS: -INLINE_CLASS_DEPRECATED
+// DIAGNOSTICS: -INLINE_CLASS_DEPRECATED -INLINE_CLASS_DEPRECATED_ERROR
 
 inline class FileSize(val bytesSize: Long): <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Comparable<!> {
     fun getBytes() = bytesSize

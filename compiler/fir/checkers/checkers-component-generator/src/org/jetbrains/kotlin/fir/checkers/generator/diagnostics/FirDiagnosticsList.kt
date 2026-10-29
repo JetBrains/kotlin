@@ -2371,6 +2371,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<String>("replacement")
         }
 
+        val INLINE_CLASS_DEPRECATED_ERROR by error<KtElement>(PositioningStrategy.INLINE_OR_VALUE_MODIFIER) {
+            parameter<String>("replacement")
+        }
+
         val LESS_VISIBLE_TYPE_ACCESS_IN_INLINE by deprecationError<KtElement>(
             LanguageFeature.ForbidExposingLessVisibleTypesInInline,
             PositioningStrategy.REFERENCE_BY_QUALIFIED

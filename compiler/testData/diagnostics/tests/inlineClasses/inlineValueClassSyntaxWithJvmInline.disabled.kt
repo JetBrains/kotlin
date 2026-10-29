@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE_FEATURE_TOGGLED: ExplicitInlineValueClassesSyntax
+// LANGUAGE_FEATURE_TOGGLED: ExplicitInlineValueClassesSyntax ExplicitInlineValueClassesSyntaxRequiredOnAllPlatforms
 // WITH_STDLIB
 
 <!JVM_INLINE_WITHOUT_VALUE_CLASS!>@JvmInline<!>

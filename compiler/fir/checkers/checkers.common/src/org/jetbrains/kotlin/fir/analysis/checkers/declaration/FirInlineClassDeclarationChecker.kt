@@ -35,7 +35,12 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker(MppCheckerKind.
                         context.session.annotationPlatformSupport.jvmInlineAnnotationClassId != null -> "'@JvmInline value'"
                 else -> "'value'"
             }
-            reporter.reportOn(source, FirErrors.INLINE_CLASS_DEPRECATED, replacement)
+            val diagnostic = if (LanguageFeature.ExplicitInlineValueClassesSyntaxRequiredOnAllPlatforms.isEnabled()) {
+                FirErrors.INLINE_CLASS_DEPRECATED_ERROR
+            } else {
+                FirErrors.INLINE_CLASS_DEPRECATED
+            }
+            reporter.reportOn(source, diagnostic, replacement)
         }
     }
 }
