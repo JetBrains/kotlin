@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirRegularClassChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.hasExplicitReturnType
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
@@ -61,6 +62,7 @@ object FirLombokBuilderChecker : FirRegularClassChecker(MppCheckerKind.Platform)
                 }
             } else {
                 checkPrimaryConstructorParameters(declaration, primaryConstructor, lombokService)
+                checkBodyPropertiesHaveExplicitTypes(declaration, primaryConstructor)
                 checkToBuilderCanObtainValues(declaration, classBuilder, primaryConstructor)
             }
         }
@@ -142,6 +144,27 @@ object FirLombokBuilderChecker : FirRegularClassChecker(MppCheckerKind.Platform)
 
     private val FirRegularClass.isBuilderCapableClass: Boolean
         get() = classKind == ClassKind.CLASS && !isLocal && uninstantiableClassModifier() == null
+
+    /**
+     * A Kotlin class whose primary constructor has no value parameters builds out of the mutable properties declared
+     * in its body instead - see `AbstractBuilderGenerator.calculateBuilderVariables`. The builder members are generated
+     * before an implicit type is resolved, so `AbstractBuilderGenerator.addBuilderCallables` leaves out a property without
+     * an explicit type, and its builder field and setter are silently missing (KT-90508).
+     *
+     * A read-only property is never a builder field, so an implicit type on one is left alone here.
+     */
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkBodyPropertiesHaveExplicitTypes(declaration: FirRegularClass, primaryConstructor: FirConstructorSymbol) {
+        if (primaryConstructor.valueParameterSymbols.isNotEmpty()) return
+
+        declaration.processAllDeclarations(context.session) { symbol ->
+            val property = symbol as? FirPropertySymbol ?: return@processAllDeclarations
+            if (property.fromPrimaryConstructor || !property.isVar || property.name.isSpecial) return@processAllDeclarations
+            if (property.hasExplicitReturnType) return@processAllDeclarations
+
+            reporter.reportOn(property.source, LombokFirDiagnostics.BUILDER_PROPERTY_WITH_IMPLICIT_TYPE, property.name, context)
+        }
+    }
 
     /**
      * `@Builder.Default` and `@Singular` shape a builder field, and a Kotlin class's builder fields are the value
