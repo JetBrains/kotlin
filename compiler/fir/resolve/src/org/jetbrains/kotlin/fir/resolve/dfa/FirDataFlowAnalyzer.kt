@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.chain
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.unwrapAtoms
+import org.jetbrains.kotlin.fir.scopes.impl.contractOwner
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.declarations.utils.equalityBoundTypeOfParameter
 import org.jetbrains.kotlin.fir.diagnostics.ConeSmartcastToTypeVariable
@@ -1381,7 +1382,7 @@ abstract class FirDataFlowAnalyzer(
             processDirectEqualsCall(flow, qualifiedAccess, callee)
         }
 
-        val originalFunction = callee.originalIfFakeOverride()
+        val originalFunction = callee.contractOwner().takeIf { it !== callee }
         val contractDescription = (originalFunction?.symbol ?: callee.symbol).resolvedContractDescription ?: return
 
         val arguments = qualifiedAccess.orderedArguments(callee) ?: return
