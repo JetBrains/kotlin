@@ -3,13 +3,14 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:OptIn(KtImplementationDetail::class)
+
 package org.jetbrains.kotlin.psi
 
 import com.intellij.psi.PsiElement
-import com.intellij.psi.TokenType
-import com.intellij.psi.util.elementType
-import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.LookupLocallyInternals.ContextKind
 import org.jetbrains.kotlin.psi.psiUtil.isPropertyParameter
 
 /**
@@ -28,7 +29,7 @@ import org.jetbrains.kotlin.psi.psiUtil.isPropertyParameter
 fun KtNameReferenceExpression.lookupLocally(): KtNamedDeclaration? {
     containingFile.let { if (it.originalFile != it) return null }
 
-    val contextKind = contextKind ?: return null
+    val contextKind = LookupLocallyInternals.getContextKind(this) ?: return null
 
     return LocalReferenceTargetLookupVisitor(this, contextKind).lookup()
 }
@@ -42,76 +43,7 @@ private val KtElement.nonContainerParent: KtElement?
         return e as? KtElement
     }
 
-private val KtNameReferenceExpression.contextKind: LocalReferenceTargetLookupVisitor.ContextKind?
-    get() =
-        when (val p = nonContainerParent) {
-            is KtCallExpression,
-            is KtImportDirective,
-            is KtPackageDirective,
-            is KtCallableReferenceExpression,
-            is KtValueArgumentName,
-            is KtLabelReferenceExpression,
-                -> null
-            is KtDotQualifiedExpression,
-            is KtSafeQualifiedExpression,
-                -> {
-                LocalReferenceTargetLookupVisitor.ContextKind.VALUE.takeIf { p.receiverExpression == this@contextKind }
-            }
-            is KtUserType -> {
-                LocalReferenceTargetLookupVisitor.ContextKind.TYPE
-                    .takeIf { p.qualifier == null && (p.referenceExpression == this@contextKind) }
-            }
-            is KtClassLiteralExpression -> LocalReferenceTargetLookupVisitor.ContextKind.VALUE_OR_TYPE
-            is KtProperty -> {
-                LocalReferenceTargetLookupVisitor.ContextKind.VALUE.takeIf { p.delegateExpressionOrInitializer == this@contextKind }
-            }
-            is KtDestructuringDeclaration -> {
-                LocalReferenceTargetLookupVisitor.ContextKind.VALUE.takeIf { p.initializer == this@contextKind }
-            }
-            is KtNamedFunction -> {
-                LocalReferenceTargetLookupVisitor.ContextKind.VALUE.takeIf { p.bodyExpression == this@contextKind }
-            }
-            is KtPropertyAccessor -> {
-                LocalReferenceTargetLookupVisitor.ContextKind.VALUE.takeIf { p.bodyExpression == this@contextKind }
-            }
-            is KtParameter -> {
-                LocalReferenceTargetLookupVisitor.ContextKind.VALUE.takeIf { p.defaultValue == this@contextKind }
-            }
-            is KtDelegatedSuperTypeEntry -> {
-                if (p.delegateExpression == this@contextKind) return VALUE
-
-                TYPE
-            }
-            is KtValueArgument,
-            is KtBinaryExpression,
-            is KtBinaryExpressionWithTypeRHS,
-            is KtUnaryExpression,
-            is KtIsExpression,
-            is KtArrayAccessExpression,
-            is KtParenthesizedExpression,
-            is KtReturnExpression,
-            is KtWhileExpression,
-            is KtForExpression,
-            is KtIfExpression,
-            is KtWhenExpression,
-            is KtBlockExpression,
-            is KtExpressionCodeFragment,
-            is KtWhenConditionInRange,
-            is KtSimpleNameStringTemplateEntry,
-            is KtWhenConditionWithExpression,
-            is KtWhenEntry,
-                -> LocalReferenceTargetLookupVisitor.ContextKind.VALUE
-            is KtTypeConstraint -> LocalReferenceTargetLookupVisitor.ContextKind.TYPE
-            else -> null
-        }
-
 private class LocalReferenceTargetLookupVisitor(val element: KtNameReferenceExpression, val contextKind: ContextKind) : KtVisitorVoid() {
-    enum class ContextKind {
-        VALUE,
-        TYPE,
-        VALUE_OR_TYPE,
-    }
-
     fun lookup(): KtNamedDeclaration? {
         var current: KtElement = element
 
@@ -512,4 +444,78 @@ private class LocalReferenceTargetLookupVisitor(val element: KtNameReferenceExpr
             if (_found != null) return
         }
     }
+}
+
+@KtImplementationDetail
+object LookupLocallyInternals {
+    enum class ContextKind {
+        VALUE,
+        TYPE,
+        VALUE_OR_TYPE,
+    }
+
+    fun getContextKind(expression: KtNameReferenceExpression): ContextKind? =
+        when (val p = expression.nonContainerParent) {
+            is KtCallExpression,
+            is KtImportDirective,
+            is KtPackageDirective,
+            is KtCallableReferenceExpression,
+            is KtValueArgumentName,
+            is KtLabelReferenceExpression,
+                -> null
+            is KtDotQualifiedExpression,
+            is KtSafeQualifiedExpression,
+                -> {
+                ContextKind.VALUE.takeIf { p.receiverExpression == expression }
+            }
+            is KtUserType -> {
+                ContextKind.TYPE
+                    .takeIf { p.qualifier == null && (p.referenceExpression == expression) }
+            }
+            is KtClassLiteralExpression -> VALUE_OR_TYPE
+            is KtProperty -> {
+                ContextKind.VALUE.takeIf { p.delegateExpressionOrInitializer == expression }
+            }
+            is KtDestructuringDeclaration -> {
+                ContextKind.VALUE.takeIf { p.initializer == expression }
+            }
+            is KtNamedFunction -> {
+                ContextKind.VALUE.takeIf { p.bodyExpression == expression }
+            }
+            is KtPropertyAccessor -> {
+                ContextKind.VALUE.takeIf { p.bodyExpression == expression }
+            }
+            is KtParameter -> {
+                ContextKind.VALUE.takeIf { p.defaultValue == expression }
+            }
+            is KtDelegatedSuperTypeEntry -> {
+                if (p.delegateExpression == expression) return VALUE
+
+                TYPE
+            }
+            is KtValueArgument,
+            is KtBinaryExpression,
+            is KtBinaryExpressionWithTypeRHS,
+            is KtUnaryExpression,
+            is KtIsExpression,
+            is KtArrayAccessExpression,
+            is KtParenthesizedExpression,
+            is KtReturnExpression,
+            is KtWhileExpression,
+            is KtForExpression,
+            is KtIfExpression,
+            is KtWhenExpression,
+            is KtBlockExpression,
+            is KtExpressionCodeFragment,
+            is KtWhenConditionInRange,
+            is KtSimpleNameStringTemplateEntry,
+            is KtWhenConditionWithExpression,
+            is KtWhenEntry,
+                -> VALUE
+            is KtTypeConstraint -> TYPE
+            else -> null
+        }
+
+    @TestOnly
+    fun canPerformLocalLookup(expression: KtNameReferenceExpression): Boolean = getContextKind(expression) != null
 }
