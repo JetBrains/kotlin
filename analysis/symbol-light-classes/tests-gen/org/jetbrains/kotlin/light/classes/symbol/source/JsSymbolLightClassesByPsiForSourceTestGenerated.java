@@ -582,6 +582,12 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
     }
 
     @Test
+    @TestMetadata("boundedTypeParameters.kt")
+    public void testBoundedTypeParameters() {
+      run("boundedTypeParameters.kt");
+    }
+
+    @Test
     @TestMetadata("customAnnotation.kt")
     public void testCustomAnnotation() {
       run("customAnnotation.kt");
