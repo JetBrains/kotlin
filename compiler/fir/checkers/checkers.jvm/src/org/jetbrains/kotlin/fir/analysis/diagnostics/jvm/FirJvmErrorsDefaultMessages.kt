@@ -111,6 +111,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.POSITIONED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.PROPERTY_HIDES_JAVA_FIELD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.RECEIVER_MUTABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.REDUNDANT_JVM_INLINE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.REDUNDANT_REPEATABLE_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.REPEATABLE_ANNOTATION_HAS_NESTED_CLASS_NAMED_CONTAINER_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.REPEATABLE_CONTAINER_HAS_NON_DEFAULT_PARAMETER_ERROR
@@ -376,6 +377,7 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         map.put(VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION, "Value classes without '@JvmInline' annotation are not yet supported.")
         map.put(JVM_INLINE_WITHOUT_VALUE_CLASS, "'@JvmInline' annotation is applicable only to value classes.")
+        map.put(REDUNDANT_JVM_INLINE, "'@JvmInline' annotation is redundant with 'inline value class' syntax.")
         map.put(JVM_INLINE_ON_VALUE_OBJECT, "'@JvmInline' annotation is not applicable to value objects.")
 
         map.put(INAPPLICABLE_JVM_EXPOSE_BOXED_WITH_NAME, "'@JvmExposeBoxed' with name is applicable only to functions, getters and setters.")
