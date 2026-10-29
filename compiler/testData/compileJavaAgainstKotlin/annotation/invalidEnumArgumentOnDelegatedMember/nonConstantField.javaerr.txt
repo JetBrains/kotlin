@@ -1,0 +1,2 @@
+Greeter.java:24:15:compiler.err.attribute.value.must.be.constant
+Greeter.java:25:15:compiler.err.attribute.value.must.be.constant

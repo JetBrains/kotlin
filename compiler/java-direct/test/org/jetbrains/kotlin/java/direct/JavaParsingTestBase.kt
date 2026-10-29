@@ -15,7 +15,10 @@ import org.jetbrains.kotlin.fir.FirBinaryDependenciesModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 import org.jetbrains.kotlin.fir.SessionConfiguration
+import org.jetbrains.kotlin.fir.caches.FirCachesFactory
+import org.jetbrains.kotlin.fir.caches.FirThreadUnsafeCachesFactory
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.builder.buildEnumEntry
 import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.java.JavaScopeProvider
@@ -23,8 +26,10 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirNullSymbolNamesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
+import org.jetbrains.kotlin.fir.scopes.impl.FirDeclaredMemberScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -38,6 +43,7 @@ import org.jetbrains.kotlin.kmp.tree.LightNode
 import org.jetbrains.kotlin.kmp.tree.LightSyntaxTree
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaClass
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -86,6 +92,9 @@ open class JavaParsingTestBase {
     internal fun createSessionWithSymbols(symbols: Map<ClassId, FirRegularClassSymbol>): FirSession {
         val session = createDummyFirSessionForTests()
         session.register(FirSymbolProvider::class, StubSymbolProvider(session) { symbols[it] })
+        // Member lookups (e.g. enum entries) of the stub symbols go through declared member scopes.
+        session.register(FirCachesFactory::class, FirThreadUnsafeCachesFactory)
+        session.register(FirDeclaredMemberScopeProvider::class, FirDeclaredMemberScopeProvider(session))
         return session
     }
 }
@@ -177,6 +186,7 @@ internal fun libraryClassSymbol(
     classId: ClassId,
     superClassId: ClassId? = null,
     classKind: ClassKind = ClassKind.CLASS,
+    enumEntries: List<String> = emptyList(),
 ): FirRegularClassSymbol = buildRegularClass {
     moduleData = FirBinaryDependenciesModuleData(Name.special("<test>"))
     origin = FirDeclarationOrigin.Library
@@ -187,6 +197,19 @@ internal fun libraryClassSymbol(
     symbol = FirRegularClassSymbol(classId)
     superClassId?.let { superTypeClassId ->
         superTypeRefs += buildResolvedTypeRef { coneType = superTypeClassId.constructClassLikeType() }
+    }
+    for (entry in enumEntries) {
+        declarations += buildEnumEntry {
+            moduleData = this@buildRegularClass.moduleData
+            origin = FirDeclarationOrigin.Library
+            returnTypeRef = buildResolvedTypeRef { coneType = classId.constructClassLikeType() }
+            name = Name.identifier(entry)
+            symbol = FirEnumEntrySymbol(CallableId(classId, name))
+            status = FirResolvedDeclarationStatusImpl(Visibilities.Public, Modality.FINAL, EffectiveVisibility.Public).apply {
+                isStatic = true
+            }
+            isLocal = false
+        }
     }
 }.symbol
 

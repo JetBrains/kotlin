@@ -379,23 +379,6 @@ internal fun isTypeUseAnnotationClass(classId: ClassId): Boolean =
     c.fileContext.session.isTypeUseAnnotationClass(classId)
 
 /**
- * Cross-language constant-field resolution for qualified references such as `Foo.BAR` where
- * `Foo` is a Kotlin class / facade. Returns `null` when no `const val` is found.
- */
-context(c: JavaResolutionContext)
-internal fun resolveExternalFieldValue(classQualifier: String?, qualifierClassId: ClassId?, fieldName: String): Any? =
-    c.fileContext.session.resolveExternalFieldValue(classQualifier, qualifierClassId, fieldName, c.packageFqName)
-
-/**
- * Const-vs-enum-entry disambiguation for annotation arguments that look syntactically like enum
- * entries but may denote a Kotlin `const val`. Returns `null` when the reference is a real enum
- * entry or unresolvable.
- */
-context(c: JavaResolutionContext)
-internal fun resolveConstFieldValue(classId: ClassId, fieldName: Name): Any? =
-    c.fileContext.session.resolveConstFieldValue(classId, fieldName)
-
-/**
  * Materialises [classId] into a navigable [JavaClass]:
  *  - source Java: the finder's canonical instance — required, not just preferred, because FIR
  *    matches `FirJavaTypeParameter` to `JavaTypeParameter` by reference identity;

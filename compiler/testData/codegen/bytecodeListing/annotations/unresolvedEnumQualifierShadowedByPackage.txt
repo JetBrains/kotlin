@@ -1,0 +1,52 @@
+Module: decoy
+@kotlin.Metadata
+public final enum class p/Outer/Inner {
+    // source: 'Inner.kt'
+    private synthetic final static field $ENTRIES: kotlin.enums.EnumEntries
+    private synthetic final static field $VALUES: p.Outer.Inner[]
+    public final enum static field X: p.Outer.Inner
+    private synthetic final static method $values(): p.Outer.Inner[]
+    static method <clinit>(): void
+    private method <init>(p0: java.lang.String, p1: int): void
+    public static @org.jetbrains.annotations.NotNull method getEntries(): kotlin.enums.EnumEntries
+    public static method valueOf(p0: java.lang.String): p.Outer.Inner
+    public static method values(): p.Outer.Inner[]
+}
+Module: main
+@kotlin.Metadata
+public final class p/Delegator {
+    // source: 'main.kt'
+    private synthetic final field $$delegate_0: p.Greeter
+    public method <init>(@org.jetbrains.annotations.NotNull p0: p.Greeter): void
+    public @p.Marker method greet(): java.lang.String
+}
+
+@kotlin.Metadata
+public final enum class p/Marker$Expected {
+    // source: 'Marker.kt'
+    private synthetic final static field $ENTRIES: kotlin.enums.EnumEntries
+    private synthetic final static field $VALUES: p.Marker$Expected[]
+    public final enum static field VALUE: p.Marker$Expected
+    private synthetic final static method $values(): p.Marker$Expected[]
+    static method <clinit>(): void
+    private method <init>(p0: java.lang.String, p1: int): void
+    public static @org.jetbrains.annotations.NotNull method getEntries(): kotlin.enums.EnumEntries
+    public static method valueOf(p0: java.lang.String): p.Marker$Expected
+    public static method values(): p.Marker$Expected[]
+    public final inner class p/Marker$Expected
+}
+
+@kotlin.annotation.Retention(value=RUNTIME)
+@java.lang.annotation.Retention(value=RUNTIME)
+@kotlin.Metadata
+public annotation class p/Marker {
+    // source: 'Marker.kt'
+    public abstract method value(): p.Marker$Expected
+    public final inner class p/Marker$Expected
+}
+
+@kotlin.Metadata
+public final class p/Outer {
+    // source: 'Marker.kt'
+    public method <init>(): void
+}

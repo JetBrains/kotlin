@@ -11,12 +11,14 @@ import com.intellij.platform.syntax.SyntaxElementType
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
+import org.jetbrains.kotlin.fir.resolve.providers.getClassDeclaredPropertySymbols
 import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
 import org.jetbrains.kotlin.java.direct.resolution.getStaticImport
 import org.jetbrains.kotlin.java.direct.util.ConstantEvaluator
 import org.jetbrains.kotlin.java.direct.util.JavaLiteralParser
 import org.jetbrains.kotlin.java.direct.util.computeTypeParameters
 import org.jetbrains.kotlin.java.direct.util.isDeprecatedInJavaDoc
+import org.jetbrains.kotlin.java.direct.util.referenceNameParts
 import org.jetbrains.kotlin.kmp.tree.LightNode
 import org.jetbrains.kotlin.kmp.tree.LightSyntaxTree
 import org.jetbrains.kotlin.load.java.structure.*
@@ -232,12 +234,8 @@ class JavaFieldOverAst(
                 operand != null && isInitializerPotentiallyConstant(operand)
             }
             JavaSyntaxElementType.REFERENCE_EXPRESSION -> {
-                val refText = tree.getText(n).toString().trim()
-                if (refText.contains('.')) {
-                    true
-                } else {
-                    isSimpleNamePotentiallyConstant(refText)
-                }
+                val nameParts = tree.referenceNameParts(n) ?: return true
+                if (nameParts.size > 1) true else isSimpleNamePotentiallyConstant(nameParts.single())
             }
             else -> false
         }
@@ -246,7 +244,7 @@ class JavaFieldOverAst(
     private fun isSimpleNamePotentiallyConstant(name: String): Boolean {
         var currentClass: JavaClass? = containingClass
         while (currentClass != null) {
-            findFieldInHierarchy(currentClass, name, mutableSetOf())?.let { return it.isFinal }
+            findFieldInHierarchy(currentClass, name, mutableSetOf())?.let { return it }
             currentClass = currentClass.outerClass
         }
         return getStaticImport(name, c = containingClass.resolutionContext) != null ||
@@ -257,11 +255,17 @@ class JavaFieldOverAst(
         javaClass: JavaClass,
         name: String,
         visited: MutableSet<ClassId>,
-    ): JavaField? {
+    ): Boolean? {
         val classId = javaClass.classId ?: return null
         if (!visited.add(classId)) return null
 
-        javaClass.fields.find { it.name.asString() == name }?.let { return it }
+        if (javaClass is JavaClassOverAst) {
+            javaClass.fields.find { it.name.asString() == name }?.let { return it.isFinal }
+        } else {
+            // FIR-backed adapters expose members as symbols, not JavaField wrappers; existence is enough here.
+            val session = containingClass.resolutionContext.fileContext.session
+            if (session.getClassDeclaredPropertySymbols(classId, Name.identifier(name)).any()) return true
+        }
         for (supertype in javaClass.supertypes) {
             val superClass = supertype.classifier as? JavaClass ?: continue
             findFieldInHierarchy(superClass, name, visited)?.let { return it }
