@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.kotlinPaths
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.cli.plugins.extractPluginClasspathAndOptions
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.extensions.ExtensionPointDescriptor
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.utils.KotlinPaths
@@ -49,7 +51,7 @@ internal fun collectScriptCompilerPlugins(
     val baseArguments = makeScriptCompilerArguments(baseCompilerOptions)
 
     fun addPlugin(plugin: ScriptCompilerPlugin) {
-        val key = plugin.id ?: plugin.classpath.joinToString(File.pathSeparator) { it.absoluteFile.normalize().path }
+        val key = plugin.requestKey
         val previous = plugins[key]
         if (previous == null) {
             plugins[key] = plugin
@@ -87,6 +89,34 @@ internal fun collectScriptCompilerPlugins(
     return plugins.values.toList()
 }
 
+private val SCRIPT_COMPILER_PLUGIN_LAYER_KEY = CompilerConfigurationKey.create<ScriptCompilerPluginLayer>("script compiler plugin layer")
+
+private data class ScriptCompilerPluginLayer(
+    val globalRegistrars: List<CompilerPluginRegistrar>,
+    val globalStorage: CompilerPluginRegistrar.ExtensionStorage,
+    val pluginRegistrars: List<CompilerPluginRegistrar> = emptyList(),
+    val pluginStorages: List<CompilerPluginRegistrar.ExtensionStorage> = emptyList(),
+    val requestsByKey: Map<String, ScriptCompilerPlugin> = emptyMap(),
+    val requestsByPluginId: Map<String, ScriptCompilerPlugin> = emptyMap(),
+) {
+    fun combinedStorage(): CompilerPluginRegistrar.ExtensionStorage = CompilerPluginRegistrar.ExtensionStorage().apply {
+        copyExtensionsFrom(globalStorage)
+        pluginStorages.forEach { storage ->
+            copyExtensionsFrom(storage)
+            storage.disposables.forEach(::registerDisposable)
+        }
+    }
+}
+
+internal fun CompilerConfiguration.withScriptCompilerPluginLayerFrom(source: CompilerConfiguration?): CompilerConfiguration {
+    val layer = source?.get(SCRIPT_COMPILER_PLUGIN_LAYER_KEY) ?: return this
+    return copy().apply {
+        put(SCRIPT_COMPILER_PLUGIN_LAYER_KEY, layer)
+        put(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS, (layer.globalRegistrars + layer.pluginRegistrars).toMutableList())
+        extensionsStorage = layer.combinedStorage()
+    }
+}
+
 internal fun CompilerConfiguration.withScriptCompilerPlugins(
     plugins: List<ScriptCompilerPlugin>,
     disposable: Disposable,
@@ -99,18 +129,40 @@ internal fun CompilerConfiguration.withScriptCompilerPlugins(
         return null
     }
 
-    val globalRegistrars = getList(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS)
+    val previousLayer = get(SCRIPT_COMPILER_PLUGIN_LAYER_KEY)
+    val globalRegistrars = previousLayer?.globalRegistrars ?: getList(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS)
     val globalPluginIds = globalRegistrars.mapTo(mutableSetOf()) { it.pluginId }
-    val globalStorage = extensionsStorage ?: CompilerPluginRegistrar.ExtensionStorage()
+    val globalStorage = previousLayer?.globalStorage ?: extensionsStorage ?: CompilerPluginRegistrar.ExtensionStorage()
+    val requestsByKey = LinkedHashMap(previousLayer?.requestsByKey.orEmpty())
+    val requestsByPluginId = LinkedHashMap(previousLayer?.requestsByPluginId.orEmpty())
+    val pluginsToLoad = mutableListOf<ScriptCompilerPlugin>()
+
+    for (plugin in plugins) {
+        val key = plugin.requestKey
+        val previousRequest = requestsByKey[key]
+        if (previousRequest != null) {
+            if (previousRequest.options != plugin.options) {
+                return reportError("Conflicting options for compiler plugin '${plugin.description}'.")
+            }
+            continue
+        }
+        requestsByKey[key] = plugin
+        pluginsToLoad.add(plugin)
+    }
+
+    if (pluginsToLoad.isEmpty() && previousLayer != null && requestsByKey == previousLayer.requestsByKey) return this
+
     val derivedConfiguration = copy().apply {
-        put(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS, globalRegistrars.toMutableList())
+        put(
+            CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS,
+            (globalRegistrars + previousLayer?.pluginRegistrars.orEmpty()).toMutableList(),
+        )
         extensionsStorage = CompilerPluginRegistrar.ExtensionStorage()
     }
     val deltaStorage = derivedConfiguration.extensionsStorage!!
     val pluginsByRegistrar = LinkedHashMap<CompilerPluginRegistrar, ScriptCompilerPlugin>()
-    val requestsByPluginId = mutableMapOf<String, ScriptCompilerPlugin>()
 
-    for (plugin in plugins) {
+    for (plugin in pluginsToLoad) {
         val distJar = plugin.id?.let { id ->
             scriptCompilerPluginDistributionJar(id) ?: return reportError("Unknown compiler plugin id '$id'.")
         }
@@ -137,6 +189,13 @@ internal fun CompilerConfiguration.withScriptCompilerPlugins(
 
         val loadedRegistrars = derivedConfiguration.getList(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS).drop(registrarsBefore)
         for (registrar in loadedRegistrars) {
+            val previousRequest = requestsByPluginId[registrar.pluginId]
+            if (previousRequest != null) {
+                if (previousRequest.options != plugin.options) {
+                    return reportError("Conflicting options for compiler plugin '${registrar.pluginId}'.")
+                }
+                continue
+            }
             if (registrar.pluginId in globalPluginIds) {
                 if (plugin.options.isNotEmpty()) {
                     return reportError(
@@ -146,20 +205,12 @@ internal fun CompilerConfiguration.withScriptCompilerPlugins(
                 continue
             }
 
-            val previousRequest = requestsByPluginId[registrar.pluginId]
-            if (previousRequest != null && previousRequest !== plugin) {
-                if (previousRequest.options != plugin.options) {
-                    return reportError("Conflicting options for compiler plugin '${registrar.pluginId}'.")
-                }
-                continue
-            }
             requestsByPluginId[registrar.pluginId] = plugin
             pluginsByRegistrar[registrar] = plugin
         }
     }
 
-    val deltaRegistrars = pluginsByRegistrar.keys
-    if (deltaRegistrars.isEmpty()) return this
+    val deltaRegistrars = pluginsByRegistrar.keys.toList()
 
     val unsupportedRegistrar = deltaRegistrars.firstOrNull { !it.supportsK2 }
     if (unsupportedRegistrar != null) {
@@ -186,18 +237,40 @@ internal fun CompilerConfiguration.withScriptCompilerPlugins(
         }
     }
 
+    if (deltaStorage.disposables.isNotEmpty()) {
+        Disposer.register(disposable) { deltaStorage.disposables.forEach { it.dispose() } }
+    }
+
+    val layer = ScriptCompilerPluginLayer(
+        globalRegistrars = globalRegistrars,
+        globalStorage = globalStorage,
+        pluginRegistrars = previousLayer?.pluginRegistrars.orEmpty() + deltaRegistrars,
+        pluginStorages = previousLayer?.pluginStorages.orEmpty() + listOfNotNull(deltaStorage.takeIf { deltaRegistrars.isNotEmpty() }),
+        requestsByKey = requestsByKey,
+        requestsByPluginId = requestsByPluginId,
+    )
     val combinedStorage = CompilerPluginRegistrar.ExtensionStorage().apply {
         copyExtensionsFrom(globalStorage)
-        copyExtensionsFrom(deltaStorage)
-        deltaStorage.disposables.forEach(::registerDisposable)
+        previousLayer?.pluginStorages.orEmpty().forEach { storage ->
+            copyExtensionsFrom(storage)
+            storage.disposables.forEach(::registerDisposable)
+        }
+        if (deltaRegistrars.isNotEmpty()) {
+            copyExtensionsFrom(deltaStorage)
+            deltaStorage.disposables.forEach(::registerDisposable)
+        }
     }
     derivedConfiguration.extensionsStorage = combinedStorage
     derivedConfiguration.put(
         CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS,
-        (globalRegistrars + deltaRegistrars).toMutableList(),
+        (globalRegistrars + layer.pluginRegistrars).toMutableList(),
     )
+    derivedConfiguration.put(SCRIPT_COMPILER_PLUGIN_LAYER_KEY, layer)
     return derivedConfiguration
 }
+
+private val ScriptCompilerPlugin.requestKey: String
+    get() = id ?: classpath.joinToString(File.pathSeparator) { it.absoluteFile.normalize().path }
 
 private val ScriptCompilerPlugin.description: String
     get() = id ?: classpath.joinToString(",")

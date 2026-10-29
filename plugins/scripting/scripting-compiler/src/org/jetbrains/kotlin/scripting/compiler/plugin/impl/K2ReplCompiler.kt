@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -127,6 +128,7 @@ class K2ReplCompiler(
                     ignoredOptionsReportingState,
                     messageCollector,
                     effectiveHostConfig,
+                    rootDisposable,
                 )
             }
         }
@@ -195,76 +197,98 @@ private fun compileImpl(
         ::getRefinedConfiguration,
         messageCollector,
     )
-    if (scriptCompilerPlugins.isNotEmpty()) {
-        val message = "Compiler plugins from script configuration are not supported in REPL yet."
-        messageCollector.report(CompilerMessageSeverity.ERROR, message)
-        return ResultWithDiagnostics.Failure(listOf(ScriptDiagnostic(ScriptDiagnostic.unspecifiedError, message)))
+    if (messageCollector.hasErrors()) return failure(messageCollector)
+
+    val pluginDisposable = if (scriptCompilerPlugins.isNotEmpty()) {
+        Disposer.newDisposable("REPL snippet compiler plugins").also { Disposer.register(state.rootDisposable, it) }
+    } else {
+        null
     }
+    var pluginsCommitted = false
+    try {
+        val layeredCompilerConfiguration = compilerConfiguration.withScriptCompilerPluginLayerFrom(state.pluginCompilerConfiguration)
+        val effectiveCompilerConfiguration = if (pluginDisposable != null) {
+            layeredCompilerConfiguration.withScriptCompilerPlugins(scriptCompilerPlugins, pluginDisposable, messageCollector)
+                ?: return failure(messageCollector)
+        } else {
+            layeredCompilerConfiguration
+        }
 
-    val [libModuleData, newClassPath] = state.moduleDataProvider.addNewLibraryModuleDataIfNeeded(classpath.map(File::toPath))
+        val [libModuleData, newClassPath] = state.moduleDataProvider.addNewLibraryModuleDataIfNeeded(classpath.map(File::toPath))
 
-    if (newClassPath.isNotEmpty()) {
-        state.projectEnvironment.updateClasspath(newClassPath.map { it.toFile() })
-    }
+        if (newClassPath.isNotEmpty()) {
+            state.projectEnvironment.updateClasspath(newClassPath.map { it.toFile() })
+        }
 
-    val extensionRegistrars = compilerConfiguration.getCompilerExtensions(FirExtensionRegistrar)
-    if (libModuleData != null) {
-        createScriptingAdditionalLibrariesSession(
-            libModuleData,
-            state.sessionFactoryContext,
-            state.moduleDataProvider,
-            state.sharedLibrarySession,
-            extensionRegistrars,
-            compilerConfiguration,
+        // Library sessions are persistent, so they only use plugins committed before this snippet.
+        val committedExtensionRegistrars = state.pluginCompilerConfiguration?.getCompilerExtensions(FirExtensionRegistrar)
+            ?: state.extensionRegistrars
+        if (libModuleData != null) {
+            createScriptingAdditionalLibrariesSession(
+                libModuleData,
+                state.sessionFactoryContext,
+                state.moduleDataProvider,
+                state.sharedLibrarySession,
+                committedExtensionRegistrars,
+                effectiveCompilerConfiguration,
+            )
+            KotlinJavaPsiFacade.getInstance(project).clearPackageCaches()
+        }
+
+        val extensionRegistrars = effectiveCompilerConfiguration.getCompilerExtensions(FirExtensionRegistrar)
+        val moduleData = state.moduleDataProvider.addNewSnippetModuleData(Name.special("<REPL-snippet-${snippet.name!!}>"))
+
+        val session = createScriptSourceSession(
+            moduleData, extensionRegistrars, effectiveCompilerConfiguration, state.sessionFactoryContext, state.hostConfiguration
         )
-        KotlinJavaPsiFacade.getInstance(project).clearPackageCaches()
-    }
 
-    val moduleData = state.moduleDataProvider.addNewSnippetModuleData(Name.special("<REPL-snippet-${snippet.name!!}>"))
+        val sourcesToFir = allSourceFiles.associateWith { it.convertToFir(session, diagnosticsReporter) }
+        val rawFir = sourcesToFir.values.toList()
 
-    val session = createScriptSourceSession(
-        moduleData, extensionRegistrars, compilerConfiguration, state.sessionFactoryContext, state.hostConfiguration
-    )
-
-    val sourcesToFir = allSourceFiles.associateWith { it.convertToFir(session, diagnosticsReporter) }
-    val rawFir = sourcesToFir.values.toList()
-
-    // syntax errors reporting
-    if (diagnosticsReporter.hasErrors) {
-        if (diagnosticsReporter.isIncompleteSnippet(snippet, sourcesToFir[snippet]?.sourceFile)) {
-            messageCollector.report(ScriptDiagnostic(ScriptDiagnostic.incompleteCode, "Incomplete code"))
+        // syntax errors reporting
+        if (diagnosticsReporter.hasErrors) {
+            if (diagnosticsReporter.isIncompleteSnippet(snippet, sourcesToFir[snippet]?.sourceFile)) {
+                messageCollector.report(ScriptDiagnostic(ScriptDiagnostic.incompleteCode, "Incomplete code"))
+            }
+            diagnosticsReporter.reportToMessageCollector(messageCollector, renderDiagnosticName)
+            return failure(messageCollector)
         }
-        diagnosticsReporter.reportToMessageCollector(messageCollector, renderDiagnosticName)
-        return failure(messageCollector)
-    }
 
-    state.hostConfiguration[ScriptingHostConfiguration.repl.firReplHistoryProvider]?.let { historyProvider ->
-        for (importedSource in newSources) {
-            val importedSnippet = sourcesToFir[importedSource]?.declarations?.firstIsInstanceOrNull<FirReplSnippet>() ?: continue
-            historyProvider.putImportedSnippet(importedSnippet.symbol)
+        state.hostConfiguration[ScriptingHostConfiguration.repl.firReplHistoryProvider]?.let { historyProvider ->
+            for (importedSource in newSources) {
+                val importedSnippet = sourcesToFir[importedSource]?.declarations?.firstIsInstanceOrNull<FirReplSnippet>() ?: continue
+                historyProvider.putImportedSnippet(importedSnippet.symbol)
+            }
         }
-    }
 
-    val outputs = listOf(resolveAndCheckFir(session, rawFir, diagnosticsReporter)).also {
-        it.runPlatformCheckers(diagnosticsReporter)
-    }
-    val frontendOutput = AllModulesFrontendOutput(outputs)
+        val outputs = listOf(resolveAndCheckFir(session, rawFir, diagnosticsReporter)).also {
+            it.runPlatformCheckers(diagnosticsReporter)
+        }
+        val frontendOutput = AllModulesFrontendOutput(outputs)
 
-    val [irInput, generationState] = generateCodeIfNoErrors(
-        compilerConfiguration, targetId, frontendOutput, compilerEnvironment, messageCollector, renderDiagnosticName
-    ).valueOr { return it }
+        val [irInput, generationState] = generateCodeIfNoErrors(
+            effectiveCompilerConfiguration, targetId, frontendOutput, compilerEnvironment, messageCollector, renderDiagnosticName
+        ).valueOr { return it }
 
-    return makeCompiledScript(
-        generationState,
-        snippet,
-        { source ->
-            sourcesToFir[source]?.declarations?.firstIsInstanceOrNull<FirReplSnippet>()?.snippetClass?.symbol?.classId?.asSingleFqName()
-        },
-        sourceDependencies,
-        ::getRefinedConfiguration,
-        extractResultFields(irInput.irModuleFragment)
-    ).onSuccess { compiledScript ->
-        ResultWithDiagnostics.Success(compiledScript, messageCollector.diagnostics)
+        val result = makeCompiledScript(
+            generationState,
+            snippet,
+            { source ->
+                sourcesToFir[source]?.declarations?.firstIsInstanceOrNull<FirReplSnippet>()?.snippetClass?.symbol?.classId?.asSingleFqName()
+            },
+            sourceDependencies,
+            ::getRefinedConfiguration,
+            extractResultFields(irInput.irModuleFragment)
+        ).onSuccess { compiledScript ->
+            ResultWithDiagnostics.Success(compiledScript, messageCollector.diagnostics)
+        }
+        if (pluginDisposable != null && result is ResultWithDiagnostics.Success) {
+            state.pluginCompilerConfiguration = effectiveCompilerConfiguration
+            pluginsCommitted = true
+        }
+        return result
+    } finally {
+        if (pluginDisposable != null && !pluginsCommitted) Disposer.dispose(pluginDisposable)
     }
 }
 
