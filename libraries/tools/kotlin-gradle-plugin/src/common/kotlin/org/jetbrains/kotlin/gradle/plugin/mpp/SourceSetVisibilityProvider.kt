@@ -253,13 +253,12 @@ internal class SourceSetVisibilityProvider(
             .ifEmpty { listOf(emptySet()) } // to avoid calling reduce on an empty list
             .reduce { acc, item -> acc intersect item } - excludedSourceSets
 
-        val fixmeStrictCompilationEnabled = excludedSourceSets.isNotEmpty()
-        if (fixmeStrictCompilationEnabled) {
+        val strictCompilationEnabled = excludedSourceSets.isNotEmpty()
+        if (strictCompilationEnabled) {
             /**
              * Coroutines have "nativeDarwinMain -> nativeMain" dependency. If we are transforming commonMain in a project with 2 native
              * targets, then we shouldn't see nativeDarwinMain because we shouldn't see nativeMain per strict compilation heuristic
              */
-            // FIXME: Is this ever reduced in non strict mode?
             visibleSourceSetNames = visibleSourceSetNames.filter {
                 dependencyProjectStructureMetadata.sourceSetsDependsOnRelation[it]?.all {
                     it in visibleSourceSetNames
