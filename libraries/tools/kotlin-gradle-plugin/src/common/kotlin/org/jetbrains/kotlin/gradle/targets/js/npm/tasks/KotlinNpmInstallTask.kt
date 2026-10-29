@@ -19,9 +19,11 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.KotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.targets.js.npm.NodeJsEnvironmentTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJsonFilesTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.UsesKotlinNpmResolutionManager
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import org.jetbrains.kotlin.gradle.utils.property
 
 @DisableCachingByDefault
+@ObsoleteNpmDependencyModel
 abstract class KotlinNpmInstallTask :
     DefaultTask(),
     NodeJsEnvironmentTask,

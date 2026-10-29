@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import org.jetbrains.kotlin.gradle.targets.web.yarn.CommonYarnPlugin
 
 /**
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.gradle.targets.web.yarn.CommonYarnPlugin
  * The `WasmYarnPlugin` applies configurations, tasks, and extensions necessary for managing
  * Yarn as a package manager within Wasm-targeted projects using Gradle.
  */
+@ObsoleteNpmDependencyModel
 abstract class WasmYarnPlugin internal constructor() : CommonYarnPlugin {
     override fun apply(target: Project) {
 

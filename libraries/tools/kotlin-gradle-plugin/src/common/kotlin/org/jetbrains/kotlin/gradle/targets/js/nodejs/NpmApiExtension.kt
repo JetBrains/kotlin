@@ -11,6 +11,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApiExecution
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 
 /**
  * Represents an extension interface for managing and configuring an NPM-based project in a Kotlin/Gradle context.
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApiExecution
  * @param Env The type of package manager environment implementation. Must extend [PackageManagerEnvironment].
  * @param NpmApi The type of NPM API execution implementation. Must extend [NpmApiExecution] with the given environment.
  */
+@ObsoleteNpmDependencyModel
 interface NpmApiExtension<out Env : PackageManagerEnvironment, out NpmApi : NpmApiExecution<Env>> {
     val name: String
 

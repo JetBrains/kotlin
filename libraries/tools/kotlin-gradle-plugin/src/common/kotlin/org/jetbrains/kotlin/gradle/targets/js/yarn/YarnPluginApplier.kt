@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin.Companion.UPGRADE_
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsRootExtension
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import org.jetbrains.kotlin.gradle.targets.web.yarn.BaseYarnRootEnvSpec
 import org.jetbrains.kotlin.gradle.targets.web.yarn.BaseYarnRootExtension
 import org.jetbrains.kotlin.gradle.tasks.registerTask
@@ -42,6 +43,7 @@ import kotlin.reflect.KClass
  * @property nodeJsEnvSpec A lambda function to retrieve Node.js environment specifications from the project.
  * @property lockFileDirectory A function to determine the directory where lock files should be stored.
  */
+@ObsoleteNpmDependencyModel
 internal class YarnPluginApplier(
     private val platformDisambiguate: HasPlatformDisambiguator,
     private val yarnRootKlass: KClass<out BaseYarnRootExtension>,

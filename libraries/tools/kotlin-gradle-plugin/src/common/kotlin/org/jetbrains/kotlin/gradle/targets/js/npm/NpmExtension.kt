@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.JsPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 
 /**
  * Represents an extension for configuring npm-related tasks and settings in a Gradle project.
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
  * @param project The Gradle [Project] instance to which this extension is applied.
  * @param nodeJsRoot The root extension for configuring Node.js and npm settings.
  */
+@ObsoleteNpmDependencyModel
 abstract class NpmExtension internal constructor(
     project: Project,
     nodeJsRoot: NodeJsRootExtension,

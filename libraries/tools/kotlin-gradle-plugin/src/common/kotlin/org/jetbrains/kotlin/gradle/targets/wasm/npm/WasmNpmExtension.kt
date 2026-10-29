@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.BaseNpmExtension
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 
 /**
  * An extension for configuring NPM-related tasks and properties specifically for WebAssembly (Wasm) projects.
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
  *
  * @property EXTENSION_NAME The name of this extension within the Gradle project configuration, used for retrieving the extension instance.
  */
+@ObsoleteNpmDependencyModel
 abstract class WasmNpmExtension internal constructor(
     project: Project,
     nodeJsRoot: WasmNodeJsRootExtension,

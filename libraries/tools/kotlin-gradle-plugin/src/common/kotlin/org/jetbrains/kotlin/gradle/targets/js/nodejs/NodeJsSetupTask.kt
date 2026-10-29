@@ -7,11 +7,13 @@ import org.jetbrains.kotlin.gradle.targets.js.AbstractSetupTask
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.extractNodeJs
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.setUpNodeJs
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.File
 import javax.inject.Inject
 
 @DisableCachingByDefault
+@ObsoleteNpmDependencyModel
 abstract class NodeJsSetupTask @Inject constructor(
     settings: BaseNodeJsEnvSpec,
 ) : AbstractSetupTask<NodeJsEnv, BaseNodeJsEnvSpec>(settings) {

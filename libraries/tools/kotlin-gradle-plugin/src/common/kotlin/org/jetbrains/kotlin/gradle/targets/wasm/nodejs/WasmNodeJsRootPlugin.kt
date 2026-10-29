@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.CommonNodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.NodeJsRootPluginApplier
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.configureNodeJsEnvironmentTasks
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.castIsolatedKotlinPluginClassLoaderAware
 import org.jetbrains.kotlin.gradle.utils.getFile
@@ -43,6 +44,7 @@ import javax.inject.Inject
  * - Configuring dependencies and lockfile management for Wasm project setups.
  *
  */
+@ObsoleteNpmDependencyModel
 abstract class WasmNodeJsRootPlugin
 @Inject
 internal constructor(

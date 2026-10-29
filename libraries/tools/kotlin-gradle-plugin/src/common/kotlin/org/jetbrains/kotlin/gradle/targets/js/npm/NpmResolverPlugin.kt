@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.web.npm.CommonNpmResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.web.npm.NpmResolverPluginApplier
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 
 /**
  * A plugin for configuring and resolving NPM dependencies in a Gradle project.
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.gradle.targets.web.npm.NpmResolverPluginApplier
  * This plugin is suitable for projects using NPM dependencies, and its application ensures consistency
  * and correctness in dealing with those dependencies.
  */
+@ObsoleteNpmDependencyModel
 class NpmResolverPlugin : CommonNpmResolverPlugin {
 
     override fun apply(project: Project) {

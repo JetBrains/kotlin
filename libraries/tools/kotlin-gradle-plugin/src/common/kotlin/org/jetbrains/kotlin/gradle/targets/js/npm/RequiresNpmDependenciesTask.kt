@@ -14,12 +14,14 @@ import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 
 /**
  * A Gradle [org.gradle.api.Task] that uses npm dependencies.
  *
  * @see RequiresNpmDependencies
  */
+@ObsoleteNpmDependencyModel
 interface RequiresNpmDependenciesTask : RequiresNpmDependencies, Task {
 
     /**

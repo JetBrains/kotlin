@@ -12,6 +12,7 @@ import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.work.NormalizeLineEndings
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 
 /**
  * Represents a task that operates on a collection of `package.json` files.
@@ -22,6 +23,7 @@ import org.gradle.work.NormalizeLineEndings
  * The primary input of this task is a list of `package.json` files, allowing tasks to process
  * or interact with these files in a Node.js project setup.
  */
+@ObsoleteNpmDependencyModel
 internal interface PackageJsonFilesTask : NodeJsEnvironmentTask, UsesKotlinNpmResolutionManager {
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:IgnoreEmptyDirectories

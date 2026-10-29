@@ -13,9 +13,11 @@ import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.gradle.internal.execWithProgress
 import org.jetbrains.kotlin.gradle.internal.newBuildOpLogger
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.PreparedKotlinCompilationNpmResolution
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.File
 
+@ObsoleteNpmDependencyModel
 class Npm internal constructor(
     private val execOps: ExecOperations,
     private val objects: ObjectFactory,

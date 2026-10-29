@@ -15,6 +15,7 @@ import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.Input
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependencyDeprecated
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependencyScopeDeprecated
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import java.io.Serializable
 

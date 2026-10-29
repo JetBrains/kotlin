@@ -19,12 +19,14 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinImportMapGenerateTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
 import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.Serializable
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsPlugin.Companion.kotlinNodeJsEnvSpec as wasmKotlinNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin.Companion.kotlinNodeJsRootExtension as wasmKotlinNodeJsRootExtension
 
+@get:ObsoleteNpmDependencyModel
 val KotlinJsIrCompilation.npmProject: NpmProject
     get() = NpmProject(this)
 
@@ -34,6 +36,7 @@ val KotlinJsIrCompilation.npmProject: NpmProject
  *
  * More info can be obtained from [KotlinCompilationNpmResolution], which is available after project resolution (after [KotlinNpmInstallTask] execution).
  */
+@ObsoleteNpmDependencyModel
 open class NpmProject(@Transient val compilation: KotlinJsIrCompilation) : Serializable {
     val compilationName = compilation.disambiguatedName
 
