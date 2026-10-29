@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.test.services.testInfo
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeAsciiOnly
+import java.lang.reflect.InvocationTargetException
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.primaryConstructor
@@ -44,6 +45,8 @@ import kotlin.reflect.full.primaryConstructor
  * which retrieves types from [DslTypeCreationTestCases.caretToType] mapping and returns some value constructed from them using
  * the type-building DSL. The returned value is then rendered in the output file `A.txt`. The mapping from directories (`/classType`) to the
  * corresponding test cases (`ClassTypeCreatorDslTestCases`) is located in [TypeCreatorDslTestRenderer.testClassesMapping].
+ *
+ * If the test case throws an exception, the exception is rendered instead of the value.
  */
 abstract class AbstractTypeCreatorDslTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
@@ -127,6 +130,10 @@ object TypeCreatorDslTestRenderer {
                 is KaStarTypeProjection -> {
                     appendLine("KaStarTypeProjection")
                 }
+                is Throwable -> {
+                    appendLine("Exception")
+                    appendLine("${value::class.simpleName}: ${value.message}")
+                }
                 null -> {
                     appendLine("null")
                 }
@@ -146,9 +153,14 @@ object TypeCreatorDslTestRenderer {
 
         val testMethodName = "test" + testDataFileName.capitalizeAsciiOnly()
 
-        return testClass.members.filterIsInstance<KFunction<*>>()
+        val testMethod = testClass.members.filterIsInstance<KFunction<*>>()
             .single { it.name == testMethodName }
-            .call(testClassInstance)
+
+        return try {
+            testMethod.call(testClassInstance)
+        } catch (e: InvocationTargetException) {
+            e.cause
+        }
     }
 
     private val testClassesMapping: Map<String, KClass<out DslTypeCreationTestCases>> = mapOf(

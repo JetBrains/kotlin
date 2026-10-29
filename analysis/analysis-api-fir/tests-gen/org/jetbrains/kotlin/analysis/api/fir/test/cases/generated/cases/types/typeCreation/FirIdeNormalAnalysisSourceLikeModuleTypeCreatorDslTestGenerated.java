@@ -186,6 +186,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleTypeCreatorDslTestGenerated ext
     }
 
     @Test
+    @TestMetadata("invariantProjection.kt")
+    public void testInvariantProjection() {
+      run("invariantProjection.kt");
+    }
+
+    @Test
     @TestMetadata("outIntProjection.kt")
     public void testOutIntProjection() {
       run("outIntProjection.kt");
