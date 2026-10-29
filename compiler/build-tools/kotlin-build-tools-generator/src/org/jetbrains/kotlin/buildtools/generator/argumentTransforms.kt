@@ -72,6 +72,7 @@ private val levelsToArgumentTransforms: Map<String, Map<String, ArgumentTransfor
         with(removedCommonCompilerArguments) {
             drop("Xuse-k2")
             drop("Xdirect-java-actualization")
+            drop("Xallow-pre-17-runtime-jdk")
             drop("Xintellij-plugin-root")
             drop("Xno-check-actual")
             drop("Xrepl")
