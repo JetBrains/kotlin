@@ -58,7 +58,7 @@ class StrictKmpCompilationIT : KGPBaseTest() {
                 "org.jetbrains.kotlinx-atomicfu-0.23.1-commonMain-.klib",
             ).prettyPrinted,
             commonMainTransform.map { it.name }.toSet().prettyPrinted,
-            "We should only see commonMain and a custom source set. nativeMain or platform libraries commonization which would be previously visible shouldn't be seen"
+            "We should only see commonMain and a custom source set. nativeMain or platform libraries commonization which would be previously visible shouldn't be seen here"
         )
         assertEquals(
             setOf(
