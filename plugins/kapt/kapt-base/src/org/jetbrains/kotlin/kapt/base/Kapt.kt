@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.kapt.base.util.WriterBackedKaptLogger
 import org.jetbrains.kotlin.kapt.base.util.doOpenInternalPackagesIfRequired
 import org.jetbrains.kotlin.kapt.base.util.findClassLoaderWithJavac
 import org.jetbrains.kotlin.kapt.base.util.info
+import org.jetbrains.kotlin.kapt.base.util.runMemoryLeakDetection
 import kotlin.system.measureTimeMillis
 
 object Kapt {
@@ -49,6 +50,8 @@ object Kapt {
                 }
 
                 logger.info { "Annotation processing took $annotationProcessingTime ms" }
+
+                runMemoryLeakDetection(options, processors, logger)
             }
         }
 
