@@ -1,4 +1,3 @@
-// WASM_IGNORE_FOR: vm=WasmEdge
 
 fun box(): String {
     var result = "fail"

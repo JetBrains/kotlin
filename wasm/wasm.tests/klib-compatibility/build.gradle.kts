@@ -9,6 +9,7 @@ plugins {
     id("d8-configuration")
     id("binaryen-configuration")
     id("nodejs-configuration")
+    id("wasmtime-configuration")
     id("test-inputs-check")
 }
 
@@ -71,6 +72,9 @@ fun Project.customCompilerTest(
         addAbsoluteDirectoryProperty(node.nodeProjectDir, "kotlin.wasm.test.node.dir")
         with(binaryenKotlinBuild) {
             setupBinaryen()
+        }
+        with(wasmtimeKotlinBuild) {
+            setupWasmtime()
         }
         val buildFeatures = project.serviceOf<BuildFeatures>()
         if (!buildFeatures.isolatedProjects.active.get()) {

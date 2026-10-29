@@ -12,8 +12,10 @@ import java.lang.Boolean.getBoolean
 
 private val toolLogsEnabled: Boolean = getBoolean("kotlin.js.test.verbose")
 
+/** The export that runs box(). This function's behavior changes depending on the grouping test infrastructure. */
 internal const val WASI_BOX_ENTRY_EXPORT = "startTest"
 
+/** The compiler exports the unit test runner under this name. */
 internal const val WASI_UNIT_TESTS_ENTRY_EXPORT = "startUnitTests"
 
 internal sealed class WasmVM(
@@ -88,24 +90,6 @@ internal sealed class WasmVM(
                 *toolArgs.toTypedArray(),
                 *jsFiles.toTypedArray(),
                 "--module-file=$entryFile",
-                workingDirectory = workingDirectory,
-            )
-    }
-
-    object WasmEdge : WasmVM(property = "wasm.engine.path.WasmEdge", entryPointIsJsFile = false) {
-        override fun run(
-            entryFile: String,
-            jsFiles: List<String>,
-            workingDirectory: File?,
-            useNewExceptionHandling: Boolean,
-            useStackSwitching: Boolean,
-            toolArgs: List<String>,
-            wasiEntryExport: String,
-        ) =
-            tool.run(
-                *toolArgs.toTypedArray(),
-                entryFile,
-                wasiEntryExport,
                 workingDirectory = workingDirectory,
             )
     }
