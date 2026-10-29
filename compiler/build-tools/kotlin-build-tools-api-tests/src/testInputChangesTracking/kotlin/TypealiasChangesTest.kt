@@ -73,6 +73,33 @@ class TypealiasChangesTest : BaseCompilationTest() {
     }
 
     @DefaultStrategyAndPlatformAgnosticScenarioTest
+    @DisplayName("KT-86585: Replacing a typealias with a value class should recompile the unchanged file using it as a parameter type")
+    @TestMetadata("ic-scenarios/typealias-to-value-class")
+    fun testReplacingTypealiasWithValueClass(scenario: ScenarioCreator) {
+        scenario {
+            val mod = module("ic-scenarios/typealias-to-value-class")
+
+            mod.replaceFileWithVersion("Foo.kt", "change-to-value-class")
+            mod.replaceFileWithVersion("Oof.kt", "change-to-value-class")
+
+            mod.compile {
+                when (this@scenario) {
+                    is JvmScenarioDsl -> assertCompiledSources("Foo.kt", "Bar.kt", "Oof.kt")
+                    is JsScenarioDsl, is WasmScenarioDsl -> {
+                        // TODO(KT-89851): the klib IC cache does not track typealiases, so `Bar.kt` does not get into
+                        //  the dirty set, and `Oof.kt` is checked against the stale `bar(HashMap<String, String>)`.
+                        expectFailWithError(
+                            ".*Oof\\.kt:\\d+:\\d+ Argument type mismatch: actual type is 'Foo', but 'HashMap<String, String>' was expected.*".toRegex()
+                        )
+                        assertCompiledSources("Foo.kt", "Oof.kt")
+                    }
+                    else -> error("Unsupported scenario type: ${this@scenario}")
+                }
+            }
+        }
+    }
+
+    @DefaultStrategyAndPlatformAgnosticScenarioTest
     @DisplayName("KT-28233: Changing a typealias should recompile the interface using it as a member return type")
     @TestMetadata("ic-scenarios/typealias-in-interface-member-type")
     fun testChangingTypealiasUsedAsInterfaceMemberType(scenario: ScenarioCreator) {
