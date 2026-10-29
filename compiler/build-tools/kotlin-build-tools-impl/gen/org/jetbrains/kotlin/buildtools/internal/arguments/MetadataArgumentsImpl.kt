@@ -151,14 +151,14 @@ internal class MetadataArgumentsImpl() : CommonCompilerArgumentsImpl(), Metadata
   @Suppress("DEPRECATION")
   protected fun applyCompilerArguments(arguments: K2MetadataCompilerArguments) {
     super.applyCompilerArguments(arguments)
-    try { friendPaths = arguments.friendPaths.mapOrEmpty { kotlin.io.path.Path(it) } } catch (_: NoSuchMethodError) {  }
-    try { klibZipFileAccessorCacheLimit = arguments.klibZipFileAccessorCacheLimit.let { it.toInt() } } catch (_: NoSuchMethodError) {  }
-    try { legacyMetadataJar = arguments.legacyMetadataJar } catch (_: NoSuchMethodError) {  }
-    try { refinesPaths = arguments.refinesPaths.mapOrEmpty { kotlin.io.path.Path(it) } } catch (_: NoSuchMethodError) {  }
-    try { targetPlatform = arguments.targetPlatform.map { MetadataTargetPlatform.values().firstOrNull { entry -> entry.stringValue == it } ?: throw CompilerArgumentsParseException("Unknown -Xtarget-platform value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
-    try { classpath = arguments.classpath?.split(File.pathSeparator)?.map { kotlin.io.path.Path(it) } } catch (_: NoSuchMethodError) {  }
-    try { destination = arguments.destination } catch (_: NoSuchMethodError) {  }
-    try { moduleName = arguments.moduleName } catch (_: NoSuchMethodError) {  }
+    friendPaths = arguments.friendPaths.mapOrEmpty { kotlin.io.path.Path(it) }
+    klibZipFileAccessorCacheLimit = arguments.klibZipFileAccessorCacheLimit.let { it.toInt() }
+    legacyMetadataJar = arguments.legacyMetadataJar
+    refinesPaths = arguments.refinesPaths.mapOrEmpty { kotlin.io.path.Path(it) }
+    try { targetPlatform = arguments.targetPlatform.map { MetadataTargetPlatform.values().firstOrNull { entry -> entry.stringValue == it } ?: throw CompilerArgumentsParseException("Unknown -Xtarget-platform value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") }
+    classpath = arguments.classpath?.split(File.pathSeparator)?.map { kotlin.io.path.Path(it) }
+    destination = arguments.destination
+    moduleName = arguments.moduleName
     internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })
   }
 

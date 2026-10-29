@@ -80,15 +80,6 @@ private fun generateBtaOptions(arguments: List<Array<String>>, genDir: Path, kot
         val targetPackage = if (localArgs.size > 2) {
             localArgs[2]
         } else null
-        val compatLayerConfig = if (localArgs.size > 3 && localArgs[3] == "compat") {
-            CompatLayerConfig(
-                try {
-                    KotlinReleaseVersion.valueOf(localArgs[4])
-                } catch (_: IllegalArgumentException) {
-                    parseLastKotlinReleaseVersion(localArgs[4])
-                }
-            )
-        } else null
 
         when (localArgs[0]) {
             "api" -> {
@@ -99,7 +90,6 @@ private fun generateBtaOptions(arguments: List<Array<String>>, genDir: Path, kot
                     targetPackage ?: IMPL_ARGUMENTS_PACKAGE,
                     skipXX = false,
                     kotlinVersion,
-                    compatLayerConfig
                 ) to allowedLevels
             }
             else -> {
