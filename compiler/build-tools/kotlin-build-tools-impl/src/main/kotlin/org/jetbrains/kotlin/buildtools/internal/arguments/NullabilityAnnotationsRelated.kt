@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.internal.arguments
 
+import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.arguments.NullabilityAnnotation
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
@@ -30,6 +31,7 @@ internal fun applyNullabilityAnnotations(
         NullabilityAnnotationImpl(parts[0].removePrefix("@"), mode)
     }
 
+@Serializable
 internal class NullabilityAnnotationImpl(
     val fqName: String,
     val mode: Mode,

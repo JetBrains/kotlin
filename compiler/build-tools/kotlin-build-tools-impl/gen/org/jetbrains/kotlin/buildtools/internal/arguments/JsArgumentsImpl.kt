@@ -1,6 +1,7 @@
 // This file was generated automatically. See the README.md file
 // DO NOT MODIFY IT MANUALLY.
 
+@file:UseSerializers(PathAsStringSerializer::class)
 @file:OptIn(ExperimentalCompilerArgument::class)
 @file:Suppress("EnumValuesSoftDeprecate")
 
@@ -22,36 +23,18 @@ import kotlin.collections.emptyList
 import kotlin.collections.emptySet
 import kotlin.collections.mutableMapOf
 import kotlin.collections.mutableSetOf
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
+import kotlinx.serialization.UseSerializers
 import org.jetbrains.kotlin.buildtools.`internal`.DeepCopyable
 import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.MODULE_KIND
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.TARGET
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_DTS_USE_UNKNOWN_INSTEAD_ANY
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_ENABLE_EXTENSION_FUNCTIONS_IN_EXTERNALS
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_ENABLE_SUSPEND_FUNCTION_EXPORTING
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_ES_ARROW_FUNCTIONS
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_ES_CLASSES
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_ES_GENERATORS
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_ES_LONG_AS_BIGINT
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_EXPORT_KDOC
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_GENERATE_POLYFILLS
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_INTEGER_DIVISION_CHECK
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_IR_BUILD_CACHE
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_IR_GENERATE_INLINE_ANONYMOUS_FUNCTIONS
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_IR_KEEP
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_IR_MINIMIZED_MEMBER_NAMES
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_IR_PER_FILE
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_IR_PER_MODULE
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_IR_SAFE_EXTERNAL_BOOLEAN
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_IR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_OPTIMIZE_GENERATED_JS
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_PLATFORM_ARGUMENTS_IN_MAIN_FUNCTION
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_SUSPEND_LAMBDA_EXPORTING
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_TYPED_ARRAYS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.JsEcmaVersion
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.JsIrDiagnosticMode
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.JsModuleKind
+import org.jetbrains.kotlin.buildtools.`internal`.serializability.PathAsStringSerializer
+import org.jetbrains.kotlin.buildtools.`internal`.serializability.getPropertyWithSerialNameValue
+import org.jetbrains.kotlin.buildtools.`internal`.serializability.setPropertyWithSerialNameValue
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.DelicateBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
@@ -65,84 +48,154 @@ import org.jetbrains.kotlin.cli.common.arguments.validateArgumentsAllErrors
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgumentStrings
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
-internal class JsArgumentsImpl(
-  argumentValidationErrors: Set<String> = emptySet(),
-  restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
-  argumentParseDiagnostics: ArgumentParseDiagnostics = ArgumentParseDiagnostics(),
-) : CommonJsAndWasmArgumentsImpl(argumentValidationErrors, restrictedArgViolations, argumentParseDiagnostics),
-    JsCompilerArguments,
-    JsCompilerArguments.Builder,
-    JsCompilerKlibArguments,
-    JsCompilerKlibArguments.Builder,
-    JsCompilerLinkingArguments,
-    JsCompilerLinkingArguments.Builder,
-    DeepCopyable<JsArgumentsImpl> {
+@Serializable
+internal class JsArgumentsImpl() : CommonJsAndWasmArgumentsImpl(), JsCompilerArguments,
+    JsCompilerArguments.Builder, JsCompilerKlibArguments, JsCompilerKlibArguments.Builder,
+    JsCompilerLinkingArguments, JsCompilerLinkingArguments.Builder, DeepCopyable<JsArgumentsImpl> {
+  @Transient
+  private val defaultArguments: K2JSCompilerArguments = createDefaultArguments()
+
+  @Transient
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
-  init {
-    applyCompilerArguments(K2JSCompilerArguments())
+
+  @SerialName("X_DTS_USE_UNKNOWN_INSTEAD_ANY")
+  internal var useUnknownInsteadAny: Boolean = defaultArguments.useUnknownInsteadAny
+
+  @SerialName("X_ENABLE_EXTENSION_FUNCTIONS_IN_EXTERNALS")
+  internal var extensionFunctionsInExternals: Boolean =
+      defaultArguments.extensionFunctionsInExternals
+
+  @SerialName("X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT")
+  internal var allowImplementableInterfacesExporting: Boolean =
+      defaultArguments.allowImplementableInterfacesExporting
+
+  @SerialName("X_ENABLE_SUSPEND_FUNCTION_EXPORTING")
+  internal var allowExportingSuspendFunctions: Boolean =
+      defaultArguments.allowExportingSuspendFunctions
+
+  @SerialName("X_ES_ARROW_FUNCTIONS")
+  internal var useEsArrowFunctions: Boolean? = defaultArguments.useEsArrowFunctions
+
+  @SerialName("X_ES_CLASSES")
+  internal var useEsClasses: Boolean? = defaultArguments.useEsClasses
+
+  @SerialName("X_ES_GENERATORS")
+  internal var useEsGenerators: Boolean? = defaultArguments.useEsGenerators
+
+  @SerialName("X_ES_LONG_AS_BIGINT")
+  internal var compileLongAsBigInt: Boolean? = defaultArguments.compileLongAsBigInt
+
+  @SerialName("X_EXPORT_KDOC")
+  internal var exportKDoc: Boolean = defaultArguments.exportKDoc
+
+  @SerialName("X_GENERATE_POLYFILLS")
+  internal var generatePolyfills: Boolean = defaultArguments.generatePolyfills
+
+  @SerialName("X_INTEGER_DIVISION_CHECK")
+  internal var integerDivisionCheck: Boolean = defaultArguments.integerDivisionCheck
+
+  @SerialName("X_IR_BUILD_CACHE")
+  internal var irBuildCache: Boolean = defaultArguments.irBuildCache
+
+  @SerialName("X_IR_GENERATE_INLINE_ANONYMOUS_FUNCTIONS")
+  internal var irGenerateInlineAnonymousFunctions: Boolean =
+      defaultArguments.irGenerateInlineAnonymousFunctions
+
+  @SerialName("X_IR_KEEP")
+  internal var irKeep: String? = defaultArguments.irKeep
+
+  @SerialName("X_IR_MINIMIZED_MEMBER_NAMES")
+  internal var irMinimizedMemberNames: Boolean = defaultArguments.irMinimizedMemberNames
+
+  @SerialName("X_IR_PER_FILE")
+  internal var irPerFile: Boolean = defaultArguments.irPerFile
+
+  @SerialName("X_IR_PER_MODULE")
+  internal var irPerModule: Boolean = defaultArguments.irPerModule
+
+  @SerialName("X_IR_SAFE_EXTERNAL_BOOLEAN")
+  internal var irSafeExternalBoolean: Boolean = defaultArguments.irSafeExternalBoolean
+
+  @SerialName("X_IR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC")
+  internal var irSafeExternalBooleanDiagnostic: JsIrDiagnosticMode? =
+      defaultArguments.irSafeExternalBooleanDiagnostic?.let { JsIrDiagnosticMode.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, defaultArguments::irSafeExternalBooleanDiagnostic, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xir-safe-external-boolean-diagnostic value: $it") }
+
+  @SerialName("X_OPTIMIZE_GENERATED_JS")
+  internal var optimizeGeneratedJs: Boolean = defaultArguments.optimizeGeneratedJs
+
+  @SerialName("X_PLATFORM_ARGUMENTS_IN_MAIN_FUNCTION")
+  internal var platformArgumentsProviderJsExpression: String? =
+      defaultArguments.platformArgumentsProviderJsExpression
+
+  @SerialName("X_SUSPEND_LAMBDA_EXPORTING")
+  internal var allowExportingSuspendLambdas: Boolean = defaultArguments.allowExportingSuspendLambdas
+
+  @SerialName("MODULE_KIND")
+  internal var moduleKind: JsModuleKind? =
+      defaultArguments.moduleKind?.let { JsModuleKind.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, defaultArguments::moduleKind, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -module-kind value: $it") }
+
+  @SerialName("TARGET")
+  internal var target: JsEcmaVersion? =
+      defaultArguments.target?.let { JsEcmaVersion.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, defaultArguments::target, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -target value: $it") }
+
+  public constructor(
+    argumentValidationErrors: Set<String> = emptySet(),
+    restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
+    argumentParseDiagnostics: ArgumentParseDiagnostics = ArgumentParseDiagnostics(),
+  ) : this() {
+    _argumentValidationErrors += argumentValidationErrors
+    _restrictedArgViolations += restrictedArgViolations
+    this.argumentParseDiagnostics += argumentParseDiagnostics
   }
+
+  override fun createDefaultArguments(): K2JSCompilerArguments = K2JSCompilerArguments()
 
   @Suppress("UNCHECKED_CAST")
-  public operator fun <V> `get`(key: JsArgument<V>): V = optionsMap[key.id] as V
+  public operator fun <V> `get`(key: JsArgument<V>): V = JsArgumentsImpl::class.getPropertyWithSerialNameValue(this, key.id)
 
   public operator fun <V> `set`(key: JsArgument<V>, `value`: V) {
-    optionsMap[key.id] = `value`
+    JsArgumentsImpl::class.setPropertyWithSerialNameValue(this, key.id, value)
   }
 
-  public operator fun contains(key: JsArgument<*>): Boolean = key.id in optionsMap
-
-  private operator fun `get`(key: String): Any? = JsArgumentValueAdapter.toApi(optionsMap[key])
-
-  private operator fun `set`(key: String, `value`: Any?) {
-    optionsMap[key] = JsArgumentValueAdapter.toImpl(`value`)
-  }
+  public operator fun contains(key: JsArgument<*>): Boolean = true
 
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
-  override operator fun <V> `get`(key: JsCompilerArguments.JsCompilerArgument<V>): V {
-    check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return JsArgumentValueAdapter.toApi(this[key.id]) as V
-  }
+  override operator fun <V> `get`(key: JsCompilerArguments.JsCompilerArgument<V>): V = try { JsArgumentValueAdapter.toApi(JsArgumentsImpl::class.getPropertyWithSerialNameValue(this, key.id)) } catch (_: IllegalStateException) { optionsMap[key.id] } as V
 
   @UseFromImplModuleRestricted
   override operator fun <V> `set`(key: JsCompilerArguments.JsCompilerArgument<V>, `value`: V) {
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 20)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    this[key.id] = JsArgumentValueAdapter.toImpl(value)
+    try { JsArgumentsImpl::class.setPropertyWithSerialNameValue(this, key.id, JsArgumentValueAdapter.toImpl(value)) } catch (_: IllegalStateException) { optionsMap[key.id] = value }
   }
 
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
-  override operator fun <V> `get`(key: JsCompilerKlibArguments.JsCompilerKlibArgument<V>): V {
-    check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return JsArgumentValueAdapter.toApi(this[key.id]) as V
-  }
+  override operator fun <V> `get`(key: JsCompilerKlibArguments.JsCompilerKlibArgument<V>): V = try { JsArgumentValueAdapter.toApi(JsArgumentsImpl::class.getPropertyWithSerialNameValue(this, key.id)) } catch (_: IllegalStateException) { optionsMap[key.id] } as V
 
   @UseFromImplModuleRestricted
   override operator fun <V> `set`(key: JsCompilerKlibArguments.JsCompilerKlibArgument<V>, `value`: V) {
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 20)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    this[key.id] = JsArgumentValueAdapter.toImpl(value)
+    try { JsArgumentsImpl::class.setPropertyWithSerialNameValue(this, key.id, JsArgumentValueAdapter.toImpl(value)) } catch (_: IllegalStateException) { optionsMap[key.id] = value }
   }
 
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
-  override operator fun <V> `get`(key: JsCompilerLinkingArguments.JsCompilerLinkingArgument<V>): V {
-    check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return JsArgumentValueAdapter.toApi(this[key.id]) as V
-  }
+  override operator fun <V> `get`(key: JsCompilerLinkingArguments.JsCompilerLinkingArgument<V>): V = try { JsArgumentValueAdapter.toApi(JsArgumentsImpl::class.getPropertyWithSerialNameValue(this, key.id)) } catch (_: IllegalStateException) { optionsMap[key.id] } as V
 
   @UseFromImplModuleRestricted
   override operator fun <V> `set`(key: JsCompilerLinkingArguments.JsCompilerLinkingArgument<V>, `value`: V) {
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 20)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    this[key.id] = JsArgumentValueAdapter.toImpl(value)
+    try { JsArgumentsImpl::class.setPropertyWithSerialNameValue(this, key.id, JsArgumentValueAdapter.toImpl(value)) } catch (_: IllegalStateException) { optionsMap[key.id] = value }
   }
 
-  override fun deepCopy(): JsArgumentsImpl = JsArgumentsImpl(argumentValidationErrors.toSet(), restrictedArgViolations.toList(), argumentParseDiagnostics.copy()).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }
+  override fun deepCopy(): JsArgumentsImpl = JsArgumentsImpl(argumentValidationErrors = argumentValidationErrors.toSet(), restrictedArgViolations = restrictedArgViolations.toList(), argumentParseDiagnostics = argumentParseDiagnostics.copy()).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }
 
   override fun build(): JsArgumentsImpl = deepCopy()
 
@@ -150,35 +203,40 @@ internal class JsArgumentsImpl(
   public fun toCompilerArguments(): K2JSCompilerArguments {
     val arguments = K2JSCompilerArguments()
     super.toCompilerArguments(arguments)
-    val unknownArgs = optionsMap.keys.filter { it !in knownArguments }
+    val unknownArgs = optionsMap.keys.filter {
+      when (it) {
+        "X_TYPED_ARRAYS" -> throw IllegalStateException("""Compiler parameter not recognized: X_TYPED_ARRAYS. Current compiler version is: $KC_VERSION, but the argument was removed in 2.3.0""")
+        "OUTPUT" -> throw IllegalStateException("""Compiler parameter not recognized: OUTPUT. Current compiler version is: $KC_VERSION, but the argument was removed in 2.2.0""")
+        else -> true
+      }
+    }
     if (unknownArgs.isNotEmpty()) {
       throw IllegalStateException("Unknown arguments: ${unknownArgs.joinToString()}")
     }
-    if (X_DTS_USE_UNKNOWN_INSTEAD_ANY in this) { arguments.useUnknownInsteadAny = get(X_DTS_USE_UNKNOWN_INSTEAD_ANY)}
-    if (X_ENABLE_EXTENSION_FUNCTIONS_IN_EXTERNALS in this) { arguments.extensionFunctionsInExternals = get(X_ENABLE_EXTENSION_FUNCTIONS_IN_EXTERNALS)}
-    if (X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT in this) { arguments.allowImplementableInterfacesExporting = get(X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT)}
-    if (X_ENABLE_SUSPEND_FUNCTION_EXPORTING in this) { arguments.allowExportingSuspendFunctions = get(X_ENABLE_SUSPEND_FUNCTION_EXPORTING)}
-    if (X_ES_ARROW_FUNCTIONS in this) { arguments.useEsArrowFunctions = get(X_ES_ARROW_FUNCTIONS)}
-    if (X_ES_CLASSES in this) { arguments.useEsClasses = get(X_ES_CLASSES)}
-    if (X_ES_GENERATORS in this) { arguments.useEsGenerators = get(X_ES_GENERATORS)}
-    if (X_ES_LONG_AS_BIGINT in this) { arguments.compileLongAsBigInt = get(X_ES_LONG_AS_BIGINT)}
-    if (X_EXPORT_KDOC in this) { arguments.exportKDoc = get(X_EXPORT_KDOC)}
-    if (X_GENERATE_POLYFILLS in this) { arguments.generatePolyfills = get(X_GENERATE_POLYFILLS)}
-    if (X_INTEGER_DIVISION_CHECK in this) { arguments.integerDivisionCheck = get(X_INTEGER_DIVISION_CHECK)}
-    if (X_IR_BUILD_CACHE in this) { arguments.irBuildCache = get(X_IR_BUILD_CACHE)}
-    if (X_IR_GENERATE_INLINE_ANONYMOUS_FUNCTIONS in this) { arguments.irGenerateInlineAnonymousFunctions = get(X_IR_GENERATE_INLINE_ANONYMOUS_FUNCTIONS)}
-    if (X_IR_KEEP in this) { arguments.irKeep = get(X_IR_KEEP)}
-    if (X_IR_MINIMIZED_MEMBER_NAMES in this) { arguments.irMinimizedMemberNames = get(X_IR_MINIMIZED_MEMBER_NAMES)}
-    if (X_IR_PER_FILE in this) { arguments.irPerFile = get(X_IR_PER_FILE)}
-    if (X_IR_PER_MODULE in this) { arguments.irPerModule = get(X_IR_PER_MODULE)}
-    if (X_IR_SAFE_EXTERNAL_BOOLEAN in this) { arguments.irSafeExternalBoolean = get(X_IR_SAFE_EXTERNAL_BOOLEAN)}
-    if (X_IR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC in this) { arguments.irSafeExternalBooleanDiagnostic = get(X_IR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC)?.stringValue}
-    if (X_OPTIMIZE_GENERATED_JS in this) { arguments.optimizeGeneratedJs = get(X_OPTIMIZE_GENERATED_JS)}
-    if (X_PLATFORM_ARGUMENTS_IN_MAIN_FUNCTION in this) { arguments.platformArgumentsProviderJsExpression = get(X_PLATFORM_ARGUMENTS_IN_MAIN_FUNCTION)}
-    if (X_SUSPEND_LAMBDA_EXPORTING in this) { arguments.allowExportingSuspendLambdas = get(X_SUSPEND_LAMBDA_EXPORTING)}
-    try { if (X_TYPED_ARRAYS in this) { arguments.setUsingReflection("typedArrays", get(X_TYPED_ARRAYS))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_TYPED_ARRAYS. Current compiler version is: $KC_VERSION, but the argument was removed in 2.3.0""").initCause(e) }
-    if (MODULE_KIND in this) { arguments.moduleKind = get(MODULE_KIND)?.stringValue}
-    if (TARGET in this) { arguments.target = get(TARGET)?.stringValue}
+    arguments.useUnknownInsteadAny = useUnknownInsteadAny
+    arguments.extensionFunctionsInExternals = extensionFunctionsInExternals
+    arguments.allowImplementableInterfacesExporting = allowImplementableInterfacesExporting
+    arguments.allowExportingSuspendFunctions = allowExportingSuspendFunctions
+    arguments.useEsArrowFunctions = useEsArrowFunctions
+    arguments.useEsClasses = useEsClasses
+    arguments.useEsGenerators = useEsGenerators
+    arguments.compileLongAsBigInt = compileLongAsBigInt
+    arguments.exportKDoc = exportKDoc
+    arguments.generatePolyfills = generatePolyfills
+    arguments.integerDivisionCheck = integerDivisionCheck
+    arguments.irBuildCache = irBuildCache
+    arguments.irGenerateInlineAnonymousFunctions = irGenerateInlineAnonymousFunctions
+    arguments.irKeep = irKeep
+    arguments.irMinimizedMemberNames = irMinimizedMemberNames
+    arguments.irPerFile = irPerFile
+    arguments.irPerModule = irPerModule
+    arguments.irSafeExternalBoolean = irSafeExternalBoolean
+    arguments.irSafeExternalBooleanDiagnostic = irSafeExternalBooleanDiagnostic?.stringValue
+    arguments.optimizeGeneratedJs = optimizeGeneratedJs
+    arguments.platformArgumentsProviderJsExpression = platformArgumentsProviderJsExpression
+    arguments.allowExportingSuspendLambdas = allowExportingSuspendLambdas
+    arguments.moduleKind = moduleKind?.stringValue
+    arguments.target = target?.stringValue
     arguments.internalArguments = parseCommandLineArguments<K2JSCompilerArguments>(internalArguments.toList()).internalArguments
     populateExplicitArguments(arguments)
     return arguments
@@ -187,62 +245,60 @@ internal class JsArgumentsImpl(
   @Suppress("DEPRECATION")
   protected fun applyCompilerArguments(arguments: K2JSCompilerArguments) {
     super.applyCompilerArguments(arguments)
-    try { this[X_DTS_USE_UNKNOWN_INSTEAD_ANY] = arguments.useUnknownInsteadAny } catch (_: NoSuchMethodError) {  }
-    try { this[X_ENABLE_EXTENSION_FUNCTIONS_IN_EXTERNALS] = arguments.extensionFunctionsInExternals } catch (_: NoSuchMethodError) {  }
-    try { this[X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT] = arguments.allowImplementableInterfacesExporting } catch (_: NoSuchMethodError) {  }
-    try { this[X_ENABLE_SUSPEND_FUNCTION_EXPORTING] = arguments.allowExportingSuspendFunctions } catch (_: NoSuchMethodError) {  }
-    try { this[X_ES_ARROW_FUNCTIONS] = arguments.useEsArrowFunctions } catch (_: NoSuchMethodError) {  }
-    try { this[X_ES_CLASSES] = arguments.useEsClasses } catch (_: NoSuchMethodError) {  }
-    try { this[X_ES_GENERATORS] = arguments.useEsGenerators } catch (_: NoSuchMethodError) {  }
-    try { this[X_ES_LONG_AS_BIGINT] = arguments.compileLongAsBigInt } catch (_: NoSuchMethodError) {  }
-    try { this[X_EXPORT_KDOC] = arguments.exportKDoc } catch (_: NoSuchMethodError) {  }
-    try { this[X_GENERATE_POLYFILLS] = arguments.generatePolyfills } catch (_: NoSuchMethodError) {  }
-    try { this[X_INTEGER_DIVISION_CHECK] = arguments.integerDivisionCheck } catch (_: NoSuchMethodError) {  }
-    try { this[X_IR_BUILD_CACHE] = arguments.irBuildCache } catch (_: NoSuchMethodError) {  }
-    try { this[X_IR_GENERATE_INLINE_ANONYMOUS_FUNCTIONS] = arguments.irGenerateInlineAnonymousFunctions } catch (_: NoSuchMethodError) {  }
-    try { this[X_IR_KEEP] = arguments.irKeep } catch (_: NoSuchMethodError) {  }
-    try { this[X_IR_MINIMIZED_MEMBER_NAMES] = arguments.irMinimizedMemberNames } catch (_: NoSuchMethodError) {  }
-    try { this[X_IR_PER_FILE] = arguments.irPerFile } catch (_: NoSuchMethodError) {  }
-    try { this[X_IR_PER_MODULE] = arguments.irPerModule } catch (_: NoSuchMethodError) {  }
-    try { this[X_IR_SAFE_EXTERNAL_BOOLEAN] = arguments.irSafeExternalBoolean } catch (_: NoSuchMethodError) {  }
-    try { this[X_IR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC] = arguments.irSafeExternalBooleanDiagnostic?.let { JsIrDiagnosticMode.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::irSafeExternalBooleanDiagnostic, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xir-safe-external-boolean-diagnostic value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
-    try { this[X_OPTIMIZE_GENERATED_JS] = arguments.optimizeGeneratedJs } catch (_: NoSuchMethodError) {  }
-    try { this[X_PLATFORM_ARGUMENTS_IN_MAIN_FUNCTION] = arguments.platformArgumentsProviderJsExpression } catch (_: NoSuchMethodError) {  }
-    try { this[X_SUSPEND_LAMBDA_EXPORTING] = arguments.allowExportingSuspendLambdas } catch (_: NoSuchMethodError) {  }
-    try { this[X_TYPED_ARRAYS] = arguments.getUsingReflection<Boolean>("typedArrays") } catch (_: NoSuchMethodError) {  }
-    try { this[MODULE_KIND] = arguments.moduleKind?.let { JsModuleKind.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::moduleKind, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -module-kind value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
-    try { this[TARGET] = arguments.target?.let { JsEcmaVersion.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::target, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -target value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { useUnknownInsteadAny = arguments.useUnknownInsteadAny } catch (_: NoSuchMethodError) {  }
+    try { extensionFunctionsInExternals = arguments.extensionFunctionsInExternals } catch (_: NoSuchMethodError) {  }
+    try { allowImplementableInterfacesExporting = arguments.allowImplementableInterfacesExporting } catch (_: NoSuchMethodError) {  }
+    try { allowExportingSuspendFunctions = arguments.allowExportingSuspendFunctions } catch (_: NoSuchMethodError) {  }
+    try { useEsArrowFunctions = arguments.useEsArrowFunctions } catch (_: NoSuchMethodError) {  }
+    try { useEsClasses = arguments.useEsClasses } catch (_: NoSuchMethodError) {  }
+    try { useEsGenerators = arguments.useEsGenerators } catch (_: NoSuchMethodError) {  }
+    try { compileLongAsBigInt = arguments.compileLongAsBigInt } catch (_: NoSuchMethodError) {  }
+    try { exportKDoc = arguments.exportKDoc } catch (_: NoSuchMethodError) {  }
+    try { generatePolyfills = arguments.generatePolyfills } catch (_: NoSuchMethodError) {  }
+    try { integerDivisionCheck = arguments.integerDivisionCheck } catch (_: NoSuchMethodError) {  }
+    try { irBuildCache = arguments.irBuildCache } catch (_: NoSuchMethodError) {  }
+    try { irGenerateInlineAnonymousFunctions = arguments.irGenerateInlineAnonymousFunctions } catch (_: NoSuchMethodError) {  }
+    try { irKeep = arguments.irKeep } catch (_: NoSuchMethodError) {  }
+    try { irMinimizedMemberNames = arguments.irMinimizedMemberNames } catch (_: NoSuchMethodError) {  }
+    try { irPerFile = arguments.irPerFile } catch (_: NoSuchMethodError) {  }
+    try { irPerModule = arguments.irPerModule } catch (_: NoSuchMethodError) {  }
+    try { irSafeExternalBoolean = arguments.irSafeExternalBoolean } catch (_: NoSuchMethodError) {  }
+    try { irSafeExternalBooleanDiagnostic = arguments.irSafeExternalBooleanDiagnostic?.let { JsIrDiagnosticMode.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::irSafeExternalBooleanDiagnostic, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xir-safe-external-boolean-diagnostic value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { optimizeGeneratedJs = arguments.optimizeGeneratedJs } catch (_: NoSuchMethodError) {  }
+    try { platformArgumentsProviderJsExpression = arguments.platformArgumentsProviderJsExpression } catch (_: NoSuchMethodError) {  }
+    try { allowExportingSuspendLambdas = arguments.allowExportingSuspendLambdas } catch (_: NoSuchMethodError) {  }
+    try { moduleKind = arguments.moduleKind?.let { JsModuleKind.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::moduleKind, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -module-kind value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { target = arguments.target?.let { JsEcmaVersion.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::target, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -target value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })
   }
 
   @Suppress("DEPRECATION")
   public fun toCompilerArgumentsAffectingOutcome(arguments: K2JSCompilerArguments = K2JSCompilerArguments()): K2JSCompilerArguments {
     super.toCompilerArgumentsAffectingOutcome(arguments)
-    if (X_DTS_USE_UNKNOWN_INSTEAD_ANY in this) { arguments.useUnknownInsteadAny = get(X_DTS_USE_UNKNOWN_INSTEAD_ANY)}
-    if (X_ENABLE_EXTENSION_FUNCTIONS_IN_EXTERNALS in this) { arguments.extensionFunctionsInExternals = get(X_ENABLE_EXTENSION_FUNCTIONS_IN_EXTERNALS)}
-    if (X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT in this) { arguments.allowImplementableInterfacesExporting = get(X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT)}
-    if (X_ENABLE_SUSPEND_FUNCTION_EXPORTING in this) { arguments.allowExportingSuspendFunctions = get(X_ENABLE_SUSPEND_FUNCTION_EXPORTING)}
-    if (X_ES_ARROW_FUNCTIONS in this) { arguments.useEsArrowFunctions = get(X_ES_ARROW_FUNCTIONS)}
-    if (X_ES_CLASSES in this) { arguments.useEsClasses = get(X_ES_CLASSES)}
-    if (X_ES_GENERATORS in this) { arguments.useEsGenerators = get(X_ES_GENERATORS)}
-    if (X_ES_LONG_AS_BIGINT in this) { arguments.compileLongAsBigInt = get(X_ES_LONG_AS_BIGINT)}
-    if (X_EXPORT_KDOC in this) { arguments.exportKDoc = get(X_EXPORT_KDOC)}
-    if (X_GENERATE_POLYFILLS in this) { arguments.generatePolyfills = get(X_GENERATE_POLYFILLS)}
-    if (X_INTEGER_DIVISION_CHECK in this) { arguments.integerDivisionCheck = get(X_INTEGER_DIVISION_CHECK)}
-    if (X_IR_BUILD_CACHE in this) { arguments.irBuildCache = get(X_IR_BUILD_CACHE)}
-    if (X_IR_GENERATE_INLINE_ANONYMOUS_FUNCTIONS in this) { arguments.irGenerateInlineAnonymousFunctions = get(X_IR_GENERATE_INLINE_ANONYMOUS_FUNCTIONS)}
-    if (X_IR_KEEP in this) { arguments.irKeep = get(X_IR_KEEP)}
-    if (X_IR_MINIMIZED_MEMBER_NAMES in this) { arguments.irMinimizedMemberNames = get(X_IR_MINIMIZED_MEMBER_NAMES)}
-    if (X_IR_PER_FILE in this) { arguments.irPerFile = get(X_IR_PER_FILE)}
-    if (X_IR_PER_MODULE in this) { arguments.irPerModule = get(X_IR_PER_MODULE)}
-    if (X_IR_SAFE_EXTERNAL_BOOLEAN in this) { arguments.irSafeExternalBoolean = get(X_IR_SAFE_EXTERNAL_BOOLEAN)}
-    if (X_IR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC in this) { arguments.irSafeExternalBooleanDiagnostic = get(X_IR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC)?.stringValue}
-    if (X_OPTIMIZE_GENERATED_JS in this) { arguments.optimizeGeneratedJs = get(X_OPTIMIZE_GENERATED_JS)}
-    if (X_PLATFORM_ARGUMENTS_IN_MAIN_FUNCTION in this) { arguments.platformArgumentsProviderJsExpression = get(X_PLATFORM_ARGUMENTS_IN_MAIN_FUNCTION)}
-    if (X_SUSPEND_LAMBDA_EXPORTING in this) { arguments.allowExportingSuspendLambdas = get(X_SUSPEND_LAMBDA_EXPORTING)}
-    try { if (X_TYPED_ARRAYS in this) { arguments.setUsingReflection("typedArrays", get(X_TYPED_ARRAYS))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_TYPED_ARRAYS. Current compiler version is: $KC_VERSION, but the argument was removed in 2.3.0""").initCause(e) }
-    if (MODULE_KIND in this) { arguments.moduleKind = get(MODULE_KIND)?.stringValue}
-    if (TARGET in this) { arguments.target = get(TARGET)?.stringValue}
+    arguments.useUnknownInsteadAny = useUnknownInsteadAny
+    arguments.extensionFunctionsInExternals = extensionFunctionsInExternals
+    arguments.allowImplementableInterfacesExporting = allowImplementableInterfacesExporting
+    arguments.allowExportingSuspendFunctions = allowExportingSuspendFunctions
+    arguments.useEsArrowFunctions = useEsArrowFunctions
+    arguments.useEsClasses = useEsClasses
+    arguments.useEsGenerators = useEsGenerators
+    arguments.compileLongAsBigInt = compileLongAsBigInt
+    arguments.exportKDoc = exportKDoc
+    arguments.generatePolyfills = generatePolyfills
+    arguments.integerDivisionCheck = integerDivisionCheck
+    arguments.irBuildCache = irBuildCache
+    arguments.irGenerateInlineAnonymousFunctions = irGenerateInlineAnonymousFunctions
+    arguments.irKeep = irKeep
+    arguments.irMinimizedMemberNames = irMinimizedMemberNames
+    arguments.irPerFile = irPerFile
+    arguments.irPerModule = irPerModule
+    arguments.irSafeExternalBoolean = irSafeExternalBoolean
+    arguments.irSafeExternalBooleanDiagnostic = irSafeExternalBooleanDiagnostic?.stringValue
+    arguments.optimizeGeneratedJs = optimizeGeneratedJs
+    arguments.platformArgumentsProviderJsExpression = platformArgumentsProviderJsExpression
+    arguments.allowExportingSuspendLambdas = allowExportingSuspendLambdas
+    arguments.moduleKind = moduleKind?.stringValue
+    arguments.target = target?.stringValue
     return arguments
   }
 
@@ -347,8 +403,6 @@ internal class JsArgumentsImpl(
 
     public val X_SUSPEND_LAMBDA_EXPORTING: JsArgument<Boolean> =
         JsArgument("X_SUSPEND_LAMBDA_EXPORTING")
-
-    public val X_TYPED_ARRAYS: JsArgument<Boolean> = JsArgument("X_TYPED_ARRAYS")
 
     public val MODULE_KIND: JsArgument<JsModuleKind?> = JsArgument("MODULE_KIND")
 

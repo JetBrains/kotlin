@@ -3,12 +3,17 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:UseSerializers(PathAsStringSerializer::class)
+
 package org.jetbrains.kotlin.buildtools.internal.arguments
 
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.UseSerializers
 import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPlugin
 import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPluginOption
 import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPluginPartialOrder
 import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPluginPartialOrderRelation
+import org.jetbrains.kotlin.buildtools.internal.serializability.PathAsStringSerializer
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import java.nio.file.Path
 
@@ -68,6 +73,7 @@ internal fun applyCompilerPlugins(
     return currentValue + rawValue
 }
 
+@Serializable
 internal data class CompilerPluginOptionImpl(val key: String, val value: String) {
     internal fun toApi(): CompilerPluginOption = CompilerPluginOption(key, value)
 }
@@ -85,6 +91,7 @@ internal enum class CompilerPluginPartialOrderRelationImpl {
 internal fun CompilerPluginPartialOrderRelation.toImpl(): CompilerPluginPartialOrderRelationImpl =
     CompilerPluginPartialOrderRelationImpl.valueOf(name)
 
+@Serializable
 internal data class CompilerPluginPartialOrderImpl(
     val relation: CompilerPluginPartialOrderRelationImpl,
     val otherPluginId: String,
@@ -95,6 +102,7 @@ internal data class CompilerPluginPartialOrderImpl(
 internal fun CompilerPluginPartialOrder.toImpl(): CompilerPluginPartialOrderImpl =
     CompilerPluginPartialOrderImpl(relation.toImpl(), otherPluginId)
 
+@Serializable
 internal data class CompilerPluginImpl(
     val pluginId: String,
     val classpath: List<Path>,
