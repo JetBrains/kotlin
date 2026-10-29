@@ -150,7 +150,7 @@ public class SMutableMap3 /* test.SMutableMap3*/<VElem>  implements java.util.Ma
   public final VElem remove(@org.jetbrains.annotations.NotNull() java.lang.Object);//  remove(java.lang.Object)
 
   @java.lang.Override()
-  public VElem getOrDefault(@org.jetbrains.annotations.NotNull() java.lang.Object, VElem);//  getOrDefault(java.lang.Object, VElem)
+  public VElem getOrDefault(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String, VElem);//  getOrDefault(@org.jetbrains.annotations.NotNull() java.lang.String, VElem)
 
   @java.lang.Override()
   public boolean containsKey(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  containsKey(@org.jetbrains.annotations.NotNull() java.lang.String)
@@ -160,6 +160,9 @@ public class SMutableMap3 /* test.SMutableMap3*/<VElem>  implements java.util.Ma
 
   @java.lang.Override()
   public boolean isEmpty();//  isEmpty()
+
+  @java.lang.Override()
+  public final VElem getOrDefault(@org.jetbrains.annotations.NotNull() java.lang.Object, VElem);//  getOrDefault(java.lang.Object, VElem)
 
   @java.lang.Override()
   public final boolean containsKey(@org.jetbrains.annotations.NotNull() java.lang.Object);//  containsKey(java.lang.Object)
