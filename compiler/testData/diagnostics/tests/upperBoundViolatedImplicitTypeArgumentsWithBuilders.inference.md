@@ -124,12 +124,7 @@ R|<local>/shape|.removeTraitIfPresent#()
    	false HAS_PROPER_EQUALITY_CONSTRAINT
    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
-7. `TypeVariable(B) == it(SmithyBuilder<OperationShape> & CapturedType(*))` _from Fix variable B_
-8. Combine `TypeVariable(B) == it(SmithyBuilder<OperationShape> & CapturedType(*))` with `TypeVariable(B) <: AbstractShapeBuilder<TypeVariable(B), OperationShape>`
-    1. `CapturedType(*) <: TypeVariable(B)`
-    2. `TypeVariable(B) <: CapturedType(*)`
-9. Combine `CapturedType(*) <: TypeVariable(B)` with `TypeVariable(B) <: CapturedType(*)`
-    1. `TypeVariable(B) == CapturedType(*)`
+7. `TypeVariable(B) == CapturedType(*)` _from Fix variable B_
 
 ### Call 6
 
@@ -466,12 +461,7 @@ shapeToBuilder#(R|<local>/target|)
    	false HAS_PROPER_EQUALITY_CONSTRAINT
    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
-5. `TypeVariable(B) == it(AbstractShapeBuilder<*, *> & CapturedType(*))` _from Fix variable B_
-6. Combine `TypeVariable(B) == it(AbstractShapeBuilder<*, *> & CapturedType(*))` with `TypeVariable(B) <: AbstractShapeBuilder<TypeVariable(B), SimpleShape>`
-    1. `CapturedType(*) <: TypeVariable(B)`
-    2. `TypeVariable(B) <: CapturedType(*)`
-7. Combine `CapturedType(*) <: TypeVariable(B)` with `TypeVariable(B) <: CapturedType(*)`
-    1. `TypeVariable(B) == CapturedType(*)`
+5. `TypeVariable(B) == CapturedType(*)` _from Fix variable B_
 
 ### Call 10
 

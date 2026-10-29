@@ -2,6 +2,7 @@
 // ISSUE: KT-90176
 // WITH_STDLIB
 // FIR_DUMP
+// LANGUAGE: +ConsiderUseSiteRecursiveBoundsOnCapturedTypes +AvoidStarProjectingSupertypeOfRecursiveCapturedTypes
 
 fun <T : Comparable<T>> firstOf(list: List<*>): T =
     @Suppress("UNCHECKED_CAST") (list[0] as T)

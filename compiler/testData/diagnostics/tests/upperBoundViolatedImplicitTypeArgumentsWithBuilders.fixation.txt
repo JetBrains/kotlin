@@ -57,10 +57,8 @@ CHOSEN for fixation: TypeVariable(B) --- Readiness(
     )
      <: AbstractShapeBuilder<TypeVariable(B), OperationShape>
      <: SmithyBuilder<OperationShape>
-     = it(SmithyBuilder<OperationShape> & CapturedType(*)) (inferred during fixation)
-     >: CapturedType(*) (inferred during fixation)
      = CapturedType(*) (inferred during fixation)
-    FIXED TO: it(SmithyBuilder<OperationShape> & CapturedType(*))
+    FIXED TO: CapturedType(*)
 ********************************
 CHOSEN for fixation: TypeVariable(T) --- Readiness(
     	 true ALLOWED
@@ -308,10 +306,8 @@ CHOSEN for fixation: TypeVariable(B) --- Readiness(
     )
      <: AbstractShapeBuilder<*, *>
      <: AbstractShapeBuilder<TypeVariable(B), SimpleShape>
-     = it(AbstractShapeBuilder<*, *> & CapturedType(*)) (inferred during fixation)
-     >: CapturedType(*) (inferred during fixation)
      = CapturedType(*) (inferred during fixation)
-    FIXED TO: it(AbstractShapeBuilder<*, *> & CapturedType(*))
+    FIXED TO: CapturedType(*)
 ********************************
 CHOSEN for fixation: TypeVariable(S) --- Readiness(
     	 true ALLOWED
