@@ -37,18 +37,16 @@ open class EventICReporter : ICReporter {
     }
 
     override fun reportMarkDirtyClass(affectedFiles: Iterable<File>, classFqName: String) {
+        val reasons = fqNameReasons[classFqName] ?: return
         for (file in affectedFiles) {
-            fqNameReasons.getOrPut(classFqName) { mutableSetOf() }.forEach {
-                fileReasons.getOrPut(file.path) { linkedSetOf() }.add(it)
-            }
+            fileReasons.getOrPut(file.path) { linkedSetOf() }.addAll(reasons)
         }
     }
 
     override fun reportMarkDirtyMember(affectedFiles: Iterable<File>, scope: String, name: String) {
+        val reasons = symbolReasons[scope to name] ?: return
         for (file in affectedFiles) {
-            symbolReasons.getOrPut(Pair(scope, name)) { mutableSetOf() }.forEach {
-                fileReasons.getOrPut(file.path) { linkedSetOf() }.add(it)
-            }
+            fileReasons.getOrPut(file.path) { linkedSetOf() }.addAll(reasons)
         }
     }
 
@@ -57,10 +55,10 @@ open class EventICReporter : ICReporter {
         dirtyClasses: Iterable<String>,
         dirtySealed: Iterable<String>
     ) {
-        dirtySymbols.forEach {
-            symbolReasons.getOrPut(it) { mutableSetOf() }.add(
-                if (it.second == SAM_LOOKUP_NAME.asString()) ScopeExpansionReason.usesInSamConversion(it.first)
-                else ScopeExpansionReason.usesAffectedSymbol(it.first, it.second)
+        for ([scope, name] in dirtySymbols) {
+            symbolReasons.getOrPut(scope to name) { mutableSetOf() }.add(
+                if (name == SAM_LOOKUP_NAME.asString()) ScopeExpansionReason.usesInSamConversion(scope)
+                else ScopeExpansionReason.usesAffectedSymbol(scope, name)
             )
         }
         dirtyClasses.forEach {
