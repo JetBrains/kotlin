@@ -9,6 +9,7 @@ import java.net.URL
 import java.net.URLClassLoader
 import java.util.Queue
 import java.util.concurrent.ConcurrentLinkedQueue
+import java.util.function.Supplier
 
 /**
  * A [URLClassLoader] that remembers every class it defines.
@@ -18,10 +19,12 @@ import java.util.concurrent.ConcurrentLinkedQueue
  *
  * [URLClassLoader] defines classes only from [findClass], so tracking its results covers all classes owned by this loader.
  */
-class ClassTrackingURLClassLoader(urls: Array<URL>, parent: ClassLoader?) : URLClassLoader(urls, parent) {
+class ClassTrackingURLClassLoader(urls: Array<URL>, parent: ClassLoader?) : URLClassLoader(urls, parent), Supplier<Collection<Class<*>>> {
     val definedClasses: Queue<Class<*>>
         field = ConcurrentLinkedQueue<Class<*>>()
 
     override fun findClass(name: String): Class<*> =
         super.findClass(name).also(definedClasses::add)
+
+    override fun get(): Collection<Class<*>> = definedClasses
 }

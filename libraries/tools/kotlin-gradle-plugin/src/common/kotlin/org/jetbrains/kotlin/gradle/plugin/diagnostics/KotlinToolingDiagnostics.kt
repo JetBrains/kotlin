@@ -2104,6 +2104,42 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    object KaptClassLoadersCacheWithCompileClasspathDiscovery : ToolingDiagnosticFactory(
+        predefinedSeverity = WARNING,
+        predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration
+    ) {
+        operator fun invoke(classLoadersCacheSize: Int) = build {
+            title("Kapt annotation processor classloaders cache is disabled")
+                .description(
+                    "The cache cannot be used together with annotation processor discovery from the compilation classpath," +
+                            " which is deprecated. 'kapt.classloaders.cache.size=$classLoadersCacheSize' has no effect" +
+                            " until 'kapt.include.compile.classpath=false' is also set."
+                )
+                .solutions(
+                    "Set 'kapt.include.compile.classpath=false' together with 'kapt.classloaders.cache.size' in 'gradle.properties'.",
+                    "If you disable discovery, declare every annotation processor in a 'kapt' configuration.",
+                )
+        }
+    }
+
+    object KaptMemoryLeakDetectionWithClassLoadersCache : ToolingDiagnosticFactory(
+        predefinedSeverity = WARNING,
+        predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration
+    ) {
+        operator fun invoke() = build {
+            title("Kapt memory leak detection may report false positives")
+                .description(
+                    "Cached annotation processor classloaders are kept alive between builds on purpose, so the 'standard'" +
+                            " memory leak detection mode cannot tell them from leaked ones and reports suspicious static fields" +
+                            " of cached processors as the 'paranoid' mode does."
+                )
+                .solutions(
+                    "Set 'kapt.classloaders.cache.size=0' in 'gradle.properties' to disable the classloaders cache.",
+                    "Set 'detectMemoryLeaks = \"none\"' in the 'kapt' extension to disable memory leak detection.",
+                )
+        }
+    }
+
     object AbiValidationUnsupportedTarget : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Experimental) {
         operator fun invoke(targetType: KlibTargetType): ToolingDiagnostic = build {
             title("ABI Validation: unsupported target")
