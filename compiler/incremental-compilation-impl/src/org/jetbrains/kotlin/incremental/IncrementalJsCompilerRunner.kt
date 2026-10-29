@@ -185,7 +185,7 @@ class IncrementalJsCompilerRunner(
                     val nextRoundChecker = IncrementalNextRoundCheckerImpl(caches, dirtySources)
                     register(IncrementalNextRoundChecker::class.java, nextRoundChecker)
                 }
-                register(IncrementalDataProvider::class.java, IncrementalDataProviderFromCache(caches.platformCache))
+                register(IncrementalDataProvider::class.java, getIncrementalDataProvider(args, caches))
             }
 
             register(
@@ -196,6 +196,9 @@ class IncrementalJsCompilerRunner(
 
     private fun getIncrementalResultsConsumer(args: CommonJsAndWasmCompilerArguments) =
         if (args.multiPlatform) KmpIncrementalResultsConsumer() else IncrementalResultsConsumerImpl()
+
+    private fun getIncrementalDataProvider(args: CommonJsAndWasmCompilerArguments, caches: IncrementalJsCachesManager) =
+        if (args.multiPlatform) KmpIncrementalDataProviderFromCache(caches.platformCache) else IncrementalDataProviderFromCache(caches.platformCache)
 
     override fun updateCaches(
         services: Services,
