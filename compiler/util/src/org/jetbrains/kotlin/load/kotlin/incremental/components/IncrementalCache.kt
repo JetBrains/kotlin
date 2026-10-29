@@ -32,7 +32,7 @@ interface IncrementalCache {
 
     fun getModuleMappingData(): ByteArray?
 
-    fun getMetadata(fragmentName: String): Map<File, ByteArray>
+    fun getCommonMetadata(fragmentName: String): Map<File, ByteArray>
 
     fun getClassFilePath(internalClassName: String): String
 

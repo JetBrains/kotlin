@@ -13,7 +13,7 @@ package org.jetbrains.kotlin.config
  */
 
 import java.io.File
-import org.jetbrains.kotlin.incremental.components.ICJvmMetadataTracker
+import org.jetbrains.kotlin.incremental.components.ICJvmCommonMetadataTracker
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.Module
 
@@ -158,9 +158,9 @@ object JVMConfigurationKeys {
     @JvmField
     val IGNORED_ANNOTATIONS_FOR_BRIDGES = CompilerConfigurationKey.create<List<String>>("IGNORED_ANNOTATIONS_FOR_BRIDGES")
 
-    // Tracks generated in-module JVM metadata for KMP JVM IC
+    // Tracks generated in-module common metadata for KMP JVM IC
     @JvmField
-    val IC_METADATA_TRACKER = CompilerConfigurationKey.create<ICJvmMetadataTracker>("IC_METADATA_TRACKER")
+    val IC_COMMON_METADATA_TRACKER = CompilerConfigurationKey.create<ICJvmCommonMetadataTracker>("IC_COMMON_METADATA_TRACKER")
 
     // Use fragment metadata found on the compilation classpath to perform incremental compilation
     @JvmField
@@ -340,9 +340,9 @@ var CompilerConfiguration.ignoredAnnotationsForBridges: List<String>
     get() = getList(JVMConfigurationKeys.IGNORED_ANNOTATIONS_FOR_BRIDGES)
     set(value) { put(JVMConfigurationKeys.IGNORED_ANNOTATIONS_FOR_BRIDGES, value) }
 
-var CompilerConfiguration.icMetadataTracker: ICJvmMetadataTracker?
-    get() = get(JVMConfigurationKeys.IC_METADATA_TRACKER)
-    set(value) { putIfNotNull(JVMConfigurationKeys.IC_METADATA_TRACKER, value) }
+var CompilerConfiguration.icCommonMetadataTracker: ICJvmCommonMetadataTracker?
+    get() = get(JVMConfigurationKeys.IC_COMMON_METADATA_TRACKER)
+    set(value) { putIfNotNull(JVMConfigurationKeys.IC_COMMON_METADATA_TRACKER, value) }
 
 var CompilerConfiguration.useMetadataOnIncrementalClasspath: Boolean
     get() = getBoolean(JVMConfigurationKeys.USE_METADATA_ON_INCREMENTAL_CLASSPATH)
