@@ -42,21 +42,16 @@ import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
  */
 @PhasePrerequisites(JvmDefaultParameterInjector::class)
 internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTransformerVoid(), ClassLoweringPass {
-    private val removedFunctions = hashMapOf<IrSimpleFunctionSymbol, IrSimpleFunctionSymbol>()
-    private val removedFunctionsWithoutRemapping = mutableSetOf<IrSimpleFunctionSymbol>()
+    private val removedFunctions = hashMapOf<IrSimpleFunctionSymbol, IrSimpleFunctionSymbol?>()
 
     override fun lower(irClass: IrClass) {
-        if (!irClass.isJvmInterface) return
-
         when (irClass.kind) {
             ClassKind.INTERFACE -> handleInterface(irClass)
             ClassKind.ANNOTATION_CLASS -> handleAnnotationClass(irClass)
             else -> return
         }
 
-        irClass.declarations.removeAll {
-            it is IrFunction && (removedFunctions.containsKey(it.symbol) || removedFunctionsWithoutRemapping.contains(it.symbol))
-        }
+        irClass.declarations.removeAll { removedFunctions.containsKey(it.symbol) }
 
         val defaultImplsIrClass = context.cachedDeclarations.getDefaultImplsClass(irClass)
         if (defaultImplsIrClass.declarations.isNotEmpty()) {
@@ -146,7 +141,7 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
                         //move as is
                         val defaultImplsClass = context.cachedDeclarations.getDefaultImplsClass(irClass)
                         defaultImplsClass.declarations.add(function)
-                        removedFunctionsWithoutRemapping.add(function.symbol)
+                        removedFunctions[function.symbol] = null
                         function.parent = defaultImplsClass
                     } else {
                         val defaultImpl = createDefaultImpl(function)
