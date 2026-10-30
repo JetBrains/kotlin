@@ -162,17 +162,13 @@ abstract class AbstractTypeModificationDslTest : AbstractTypeModificationDslTest
     @Test
     @TestMetadata("classType/innerClassWithOuterTypeArguments.kt")
     fun `classType innerClassWithOuterTypeArguments +markNullable`() = test<KaUsualClassType> { type ->
-        type.copy {
-            isMarkedNullable = true
-        }
+        type.markNullableCheckingRoundTrip()
     }
 
     @Test
     @TestMetadata("classType/mixedInnerAndNestedClasses.kt")
     fun `classType mixedInnerAndNestedClasses +markNullable`() = test<KaUsualClassType> { type ->
-        type.copy {
-            isMarkedNullable = true
-        }
+        type.markNullableCheckingRoundTrip()
     }
 
     @Test
@@ -194,17 +190,13 @@ abstract class AbstractTypeModificationDslTest : AbstractTypeModificationDslTest
     @Test
     @TestMetadata("classType/nestedClassOfGenericClass.kt")
     fun `classType nestedClassOfGenericClass +markNullable`() = test<KaUsualClassType> { type ->
-        type.copy {
-            isMarkedNullable = true
-        }
+        type.markNullableCheckingRoundTrip()
     }
 
     @Test
     @TestMetadata("classType/companionOfGenericClass.kt")
     fun `classType companionOfGenericClass +markNullable`() = test<KaUsualClassType> { type ->
-        type.copy {
-            isMarkedNullable = true
-        }
+        type.markNullableCheckingRoundTrip()
     }
 
     // endregion
@@ -369,6 +361,18 @@ abstract class AbstractTypeModificationDslTest : AbstractTypeModificationDslTest
     }
 
     // endregion
+}
+
+/**
+ * Marks [this] type as nullable and checks that marking the result as not-null gives back exactly [this] type,
+ * including the type arguments that the [qualifiers][KaClassType.qualifiers] do not show.
+ */
+context(_: KaSession)
+private fun KaUsualClassType.markNullableCheckingRoundTrip(): KaUsualClassType {
+    val nullableType = copy { isMarkedNullable = true }
+    val roundTripType = nullableType.copy { isMarkedNullable = false }
+    check(roundTripType == this) { "Copying `$this` changed it to `$roundTripType`" }
+    return nullableType
 }
 
 /**
