@@ -153,6 +153,14 @@ abstract class AbstractJsSecondStageGroupingFacade(
             appendLine("    if (result != \"OK\") throw AssertionError(\"Test failed with: \$result. Expected <OK>, actual <\$result>.\")")
             appendLine("}")
             appendLine()
+            // The driver calls `println` and `String.replace`, which the reduced stdlib lacks.
+            appendLine("private fun println(message: String) {")
+            appendLine("    js(\"console.log(message)\")")
+            appendLine("}")
+            appendLine()
+            appendLine("private fun String.replace(oldValue: String, newValue: String): String =")
+            appendLine("    asDynamic().split(oldValue).join(newValue)")
+            appendLine()
             append(GroupedTestsResultProtocol.generateResultCollectingRunnerSource(testCalls, ::jsGroupedTestsEntryPointSource))
         }
         val launcherFile = workingDir.resolve("GroupedBatchLauncher.kt")
