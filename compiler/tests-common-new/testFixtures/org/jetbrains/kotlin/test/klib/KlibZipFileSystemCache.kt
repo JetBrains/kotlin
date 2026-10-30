@@ -31,6 +31,7 @@ class KlibZipFileSystemCache : TestService {
 }
 
 private val TestServices.klibZipFileSystemCache: KlibZipFileSystemCache by TestServices.testServiceAccessor()
+private val TestServices.klibZipFileSystemCacheIfAny: KlibZipFileSystemCache? by TestServices.nullableTestServiceAccessor()
 
 /** Makes the first compilation stage of a test read the zipped KLIBs through its [KlibZipFileSystemCache]. */
 class KlibZipFileSystemCacheConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
@@ -51,4 +52,9 @@ class KlibZipFileSystemCacheCloser(testServices: TestServices) : AfterAnalysisCh
     override fun check(thereWereFailures: Boolean) {
         testServices.klibZipFileSystemCache.accessor.reset()
     }
+}
+
+/** For a pipeline without [KlibZipFileSystemCacheCloser], like the one of a recompilation. */
+fun TestServices.closeKlibZipFileSystemCacheIfAny() {
+    klibZipFileSystemCacheIfAny?.accessor?.reset()
 }

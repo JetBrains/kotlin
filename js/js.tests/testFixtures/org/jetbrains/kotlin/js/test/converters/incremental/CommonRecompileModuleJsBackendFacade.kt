@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.test.builders.testConfiguration
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.RECOMPILE
 import org.jetbrains.kotlin.test.impl.NonGroupingStageTestConfigurationImpl
 import org.jetbrains.kotlin.test.impl.testConfiguration
+import org.jetbrains.kotlin.test.klib.closeKlibZipFileSystemCacheIfAny
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
@@ -102,7 +103,11 @@ abstract class CommonRecompileModuleJsBackendFacade(
             incrementalRunner.failuresInterceptor.reportFailures(checkForUnmuting = true)
             incrementalArtifactsProvider.getArtifact(incrementalModule, ArtifactKinds.Js)
         } finally {
-            disposeRootInWriteAction(incrementalConfiguration.rootDisposable)
+            try {
+                disposeRootInWriteAction(incrementalConfiguration.rootDisposable)
+            } finally {
+                incrementalServices.closeKlibZipFileSystemCacheIfAny()
+            }
         }
 
         return IncrementalJsArtifact(inputArtifact, incrementalArtifact)
