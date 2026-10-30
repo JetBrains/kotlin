@@ -227,11 +227,12 @@ Entry: `ConstantEvaluator.resolveReference`, used for constant expressions (fiel
 annotation arguments) and for single references in annotation arguments. It resolves a reference
 once to a `MemberResolutionResult`: `EnumEntry`, `Constant`, `NonConstantField` or `Unresolved`.
 Annotation arguments map enum entries to enum arguments and constants to literals. A reference with
-a member name keeps the enum-argument shape: a resolved qualifier supplies its class ID, while an
-unresolved qualifier leaves the class ID absent so FIR uses the annotation parameter's enum type.
-Malformed references and known non-constant fields become unknown arguments. FIR does not report
-diagnostics for Java annotations; FIR2IR drops error expressions when converting Java or binary
-annotations. Expressions only use constants.
+a member name keeps the enum-argument shape. A resolved qualifier supplies its class ID; an
+unresolved qualifier gets a top-level class ID unless a shorter prefix resolves as a class, which
+could otherwise select a same-named package type. Without a class ID, FIR uses the annotation
+parameter's enum type. Malformed references and known non-constant fields become unknown arguments.
+FIR does not report diagnostics for Java annotations; FIR2IR drops error expressions when converting
+Java or binary annotations. Expressions only use constants.
 
 1. A qualified reference resolves its qualifier as a type (Scenario D), then looks the member up
    in that class and its supertypes; a simple name is looked up in the containing classes with

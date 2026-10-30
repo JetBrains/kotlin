@@ -120,7 +120,9 @@ internal fun createAnnotationArgumentFromValue(
                 is MemberResolutionResult.Constant -> JavaLiteralAnnotationArgumentOverAst(name, resolution.value)
                 MemberResolutionResult.NonConstantField -> JavaUnknownAnnotationArgumentOverAst(name)
                 is MemberResolutionResult.Unresolved ->
-                    createUnresolvedReferenceArgument(name, tree.referenceNameParts(valueNode), resolution.reference)
+                    createUnresolvedReferenceArgument(
+                        name, tree.referenceNameParts(valueNode), resolution.reference, resolutionContext,
+                    )
             }
         }
         JavaSyntaxElementType.CLASS_OBJECT_ACCESS_EXPRESSION -> {
@@ -143,21 +145,31 @@ internal fun createAnnotationArgumentFromValue(
 
 /**
  * Keeps the enum-argument shape when the reference has a member name. A resolved qualifier supplies
- * its class ID; otherwise FIR derives the enum class from the annotation parameter type. Malformed
- * references and known non-constant fields become unknown arguments.
+ * its class ID; an unresolved qualifier gets a top-level class ID unless a shorter prefix resolves
+ * as a class, which could otherwise select a same-named package type. Without a class ID, FIR uses
+ * the annotation parameter's enum type. Malformed references and known non-constant fields become
+ * unknown arguments.
  */
 private fun createUnresolvedReferenceArgument(
     name: Name?,
     referenceParts: List<String>?,
     reference: StaticMemberReference?,
+    resolutionContext: JavaResolutionContext,
 ): JavaAnnotationArgument {
     val parts = referenceParts ?: return JavaUnknownAnnotationArgumentOverAst(name)
+    val qualifierParts = parts.dropLast(1)
+    val enumClassId = reference?.qualifierClassId
+        ?: qualifierParts.takeIf { it.isNotEmpty() && !it.hasClassPrefix(resolutionContext) }
+            ?.let { ClassId.topLevel(FqName.fromSegments(it)) }
     return JavaEnumValueAnnotationArgumentOverAst(
         name,
-        reference?.qualifierClassId,
+        enumClassId,
         Name.identifier(reference?.memberName ?: parts.last()),
     )
 }
+
+private fun List<String>.hasClassPrefix(resolutionContext: JavaResolutionContext): Boolean =
+    (1 until size).any { resolve(subList(0, it).joinToString("."), c = resolutionContext) != null }
 
 class JavaLiteralAnnotationArgumentOverAst(
     override val name: Name?,
