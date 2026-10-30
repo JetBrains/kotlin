@@ -2768,6 +2768,54 @@ public class FirSourceLikeLazyDeclarationResolveTestGenerated extends AbstractFi
     }
 
     @Test
+    @TestMetadata("importedFromObjectFunction.kt")
+    public void testImportedFromObjectFunction() {
+      run("importedFromObjectFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("importedFromObjectFunctionWithImplicitType.kt")
+    public void testImportedFromObjectFunctionWithImplicitType() {
+      run("importedFromObjectFunctionWithImplicitType.kt");
+    }
+
+    @Test
+    @TestMetadata("importedFromObjectPropertyWithExplicitBackingField.kt")
+    public void testImportedFromObjectPropertyWithExplicitBackingField() {
+      run("importedFromObjectPropertyWithExplicitBackingField.kt");
+    }
+
+    @Test
+    @TestMetadata("importedFromObjectPropertyWithExplicitBackingFieldAndImplicitType.kt")
+    public void testImportedFromObjectPropertyWithExplicitBackingFieldAndImplicitType() {
+      run("importedFromObjectPropertyWithExplicitBackingFieldAndImplicitType.kt");
+    }
+
+    @Test
+    @TestMetadata("importedFromObjectPropertyWithImplicitType.kt")
+    public void testImportedFromObjectPropertyWithImplicitType() {
+      run("importedFromObjectPropertyWithImplicitType.kt");
+    }
+
+    @Test
+    @TestMetadata("importedStaticEnumValueOf.kt")
+    public void testImportedStaticEnumValueOf() {
+      run("importedStaticEnumValueOf.kt");
+    }
+
+    @Test
+    @TestMetadata("importedStaticFromCompanionBlockFunction.kt")
+    public void testImportedStaticFromCompanionBlockFunction() {
+      run("importedStaticFromCompanionBlockFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("importedStaticFromCompanionBlockProperty.kt")
+    public void testImportedStaticFromCompanionBlockProperty() {
+      run("importedStaticFromCompanionBlockProperty.kt");
+    }
+
+    @Test
     @TestMetadata("samConstructor.kt")
     public void testSamConstructor() {
       run("samConstructor.kt");

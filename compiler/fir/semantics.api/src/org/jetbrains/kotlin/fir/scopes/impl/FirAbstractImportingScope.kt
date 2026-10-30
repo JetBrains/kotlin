@@ -8,17 +8,20 @@ package org.jetbrains.kotlin.fir.scopes.impl
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.builder.buildFieldCopy
-import org.jetbrains.kotlin.fir.declarations.builder.buildPropertyCopy
-import org.jetbrains.kotlin.fir.declarations.builder.buildNamedFunctionCopy
+import org.jetbrains.kotlin.fir.declarations.utils.getExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.scopes.DeferredCallableCopyReturnType
 import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -109,6 +112,12 @@ abstract class FirAbstractImportingScope(
                 if (staticsScope != null) {
                     staticsScope.processCallablesByName(importedName) {
                         if (it.isStatic || staticsScopeOwnerSymbol.classKind == ClassKind.OBJECT) {
+                            // Imported copies require a resolved status of the original declaration,
+                            // but unlike the scope of objects, the static scope doesn't resolve its members
+                            if (staticsScopeOwnerSymbol.classKind != ClassKind.OBJECT) {
+                                it.lazyResolveToPhase(FirResolvePhase.STATUS)
+                            }
+
                             processor(it.buildImportedCopy(staticsScopeOwnerSymbol.classId))
                         } else {
                             processor(it)
@@ -151,34 +160,50 @@ abstract class FirAbstractImportingScope(
     abstract override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirAbstractImportingScope
 }
 
+/**
+ * Imported copies are built as fake overrides: they have their own parameters, and they do not have bodies.
+ * So they do not depend on the resolution of the original declaration (e.g., in Low Level FIR),
+ * while clients use the original declaration anyway (see [ImportedFromObjectOrStaticData.original]).
+ */
 internal fun FirNamedFunction.buildImportedVersion(importedClassId: ClassId): FirNamedFunction {
-    return buildNamedFunctionCopy(this) {
-        origin = FirDeclarationOrigin.ImportedFromObjectOrStatic
-        this.symbol = FirNamedFunctionSymbol(CallableId(importedClassId, name))
-    }.apply {
-        importedFromObjectOrStaticData = ImportedFromObjectOrStaticData(importedClassId, this@buildImportedVersion)
-    }
+    return FirFakeOverrideGenerator.createCopyForFirFunction(
+        newSymbol = FirNamedFunctionSymbol(CallableId(importedClassId, name)),
+        baseFunction = this,
+        derivedClassLookupTag = null,
+        session = moduleData.session,
+        origin = FirDeclarationOrigin.ImportedFromObjectOrStatic,
+        newDispatchReceiverType = dispatchReceiverType,
+        deferredReturnTypeCalculation = deferredReturnTypeIfNeeded(),
+        newSource = source,
+        markAsOverride = false,
+    ).withImportedFromObjectOrStaticData(importedClassId, this)
 }
 
 internal fun FirVariable.buildImportedVersion(importedClassId: ClassId): FirVariable {
     return when (this) {
-        is FirProperty -> {
-            buildPropertyCopy(this) {
-                origin = FirDeclarationOrigin.ImportedFromObjectOrStatic
-                this.symbol = FirRegularPropertySymbol(CallableId(importedClassId, name))
-                this.delegateFieldSymbol = null
-            }.apply {
-                importedFromObjectOrStaticData = ImportedFromObjectOrStaticData(importedClassId, this@buildImportedVersion)
-            }
-        }
-        is FirField -> {
-            buildFieldCopy(this) {
-                origin = FirDeclarationOrigin.ImportedFromObjectOrStatic
-                this.symbol = FirFieldSymbol(CallableId(importedClassId, name))
-            }.apply {
-                importedFromObjectOrStaticData = ImportedFromObjectOrStaticData(importedClassId, this@buildImportedVersion)
-            }
-        }
+        is FirProperty -> FirFakeOverrideGenerator.createCopyForFirProperty(
+            newSymbol = FirRegularPropertySymbol(CallableId(importedClassId, name)),
+            baseProperty = this,
+            derivedClassLookupTag = null,
+            session = moduleData.session,
+            origin = FirDeclarationOrigin.ImportedFromObjectOrStatic,
+            newDispatchReceiverType = dispatchReceiverType,
+            deferredReturnTypeCalculation = deferredReturnTypeIfNeeded(),
+            newSource = source,
+            explicitBackingFieldCopySubstitutionForTypeUpdater = getExplicitBackingField()?.deferredReturnTypeIfNeeded(),
+            markAsOverride = false,
+        ).withImportedFromObjectOrStaticData(importedClassId, this)
+
+        is FirField -> FirFakeOverrideGenerator.createCopyForFirField(
+            newSymbol = FirFieldSymbol(CallableId(importedClassId, name)),
+            baseField = this,
+            derivedClassLookupTag = null,
+            session = moduleData.session,
+            origin = FirDeclarationOrigin.ImportedFromObjectOrStatic,
+            newDispatchReceiverType = dispatchReceiverType,
+            deferredReturnTypeCalculation = deferredReturnTypeIfNeeded(),
+        ).withImportedFromObjectOrStaticData(importedClassId, this)
+
         is FirEnumEntry -> {
             // It's not important to create an imported copy of FirEnumEntry
             this
@@ -189,12 +214,27 @@ internal fun FirVariable.buildImportedVersion(importedClassId: ClassId): FirVari
     }
 }
 
+private fun FirCallableDeclaration.deferredReturnTypeIfNeeded(): DeferredCallableCopyReturnType? {
+    if (returnTypeRef is FirResolvedTypeRef) return null
+    return DeferredReturnTypeOfSubstitution(ConeSubstitutor.Empty, symbol)
+}
+
+private fun <D : FirCallableDeclaration> D.withImportedFromObjectOrStaticData(importedClassId: ClassId, original: D): D = apply {
+    importedFromObjectOrStaticData = ImportedFromObjectOrStaticData(importedClassId, original)
+    // The generator doesn't keep the containing class for static members without a derived class
+    containingClassForStaticMemberAttr = original.containingClassForStaticMemberAttr
+}
+
 private object ImportedFromObjectOrStaticClassIdKey : FirDeclarationDataKey()
 
 class ImportedFromObjectOrStaticData<D : FirCallableDeclaration>(
     val objectClassId: ClassId,
     val original: D,
-)
+) {
+    override fun toString(): String {
+        return "ImportedFromObjectOrStaticData(objectClassId=$objectClassId, original=${original.symbol})"
+    }
+}
 
 var <D : FirCallableDeclaration> D.importedFromObjectOrStaticData: ImportedFromObjectOrStaticData<D>?
         by FirDeclarationDataRegistry.data(ImportedFromObjectOrStaticClassIdKey)

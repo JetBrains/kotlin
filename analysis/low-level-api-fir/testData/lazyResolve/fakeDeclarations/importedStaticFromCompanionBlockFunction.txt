@@ -1,0 +1,199 @@
+STATUS:
+TARGET: @R|test/Anno|[Types](LAZY_EXPRESSION) public final static [ResolvedTo(STATUS)] [ContainingClassKey=C, DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol test/C.foo), ImportedFromObjectOrStaticClassIdKey=ImportedFromObjectOrStaticData(objectClassId=test/C, original=FirNamedFunctionSymbol test/C.foo)] fun foo([ResolvedTo(STATUS)] @R|test/Anno|[Types](LAZY_EXPRESSION) i: R|kotlin/Int|): <implicit>
+
+FILE: [ResolvedTo(IMPORTS)] importedStaticFromCompanionBlockFunction.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=test/Anno.s] s: String): R|test/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val S: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(STATUS)] [FirCompanionBlockDataKey=[valid=1 nested=0]] class C : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=C] constructor(): R|test/C| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @R|test/Anno|[Types](LAZY_EXPRESSION) public final static [ResolvedTo(STATUS)] [ContainingClassKey=C] fun foo([ResolvedTo(STATUS)] @R|test/Anno|[Types](LAZY_EXPRESSION) i: R|kotlin/Int| = LAZY_EXPRESSION): <implicit> { LAZY_BLOCK }
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+TARGET: @R|test/Anno|[Types](LAZY_EXPRESSION) public final static [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=C, DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol test/C.foo), ImportedFromObjectOrStaticClassIdKey=ImportedFromObjectOrStaticData(objectClassId=test/C, original=FirNamedFunctionSymbol test/C.foo)] fun foo([ResolvedTo(EXPECT_ACTUAL_MATCHING)] @R|test/Anno|[Types](LAZY_EXPRESSION) i: R|kotlin/Int|): <implicit>
+
+FILE: [ResolvedTo(IMPORTS)] importedStaticFromCompanionBlockFunction.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=test/Anno.s] s: String): R|test/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val S: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(STATUS)] [FirCompanionBlockDataKey=[valid=1 nested=0]] class C : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=C] constructor(): R|test/C| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @R|test/Anno|[Types](LAZY_EXPRESSION) public final static [ResolvedTo(STATUS)] [ContainingClassKey=C] fun foo([ResolvedTo(STATUS)] @R|test/Anno|[Types](LAZY_EXPRESSION) i: R|kotlin/Int| = LAZY_EXPRESSION): <implicit> { LAZY_BLOCK }
+
+    }
+
+CONTRACTS:
+TARGET: @R|test/Anno|[Types](LAZY_EXPRESSION) public final static [ResolvedTo(CONTRACTS)] [ContainingClassKey=C, DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol test/C.foo), ImportedFromObjectOrStaticClassIdKey=ImportedFromObjectOrStaticData(objectClassId=test/C, original=FirNamedFunctionSymbol test/C.foo)] fun foo([ResolvedTo(CONTRACTS)] @R|test/Anno|[Types](LAZY_EXPRESSION) i: R|kotlin/Int|): <implicit>
+
+FILE: [ResolvedTo(IMPORTS)] importedStaticFromCompanionBlockFunction.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=test/Anno.s] s: String): R|test/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val S: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(STATUS)] [FirCompanionBlockDataKey=[valid=1 nested=0]] class C : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=C] constructor(): R|test/C| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @R|test/Anno|[Types](LAZY_EXPRESSION) public final static [ResolvedTo(STATUS)] [ContainingClassKey=C] fun foo([ResolvedTo(STATUS)] @R|test/Anno|[Types](LAZY_EXPRESSION) i: R|kotlin/Int| = LAZY_EXPRESSION): <implicit> { LAZY_BLOCK }
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+TARGET: @R|test/Anno|[Types](LAZY_EXPRESSION) public final static [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=C, ImportedFromObjectOrStaticClassIdKey=ImportedFromObjectOrStaticData(objectClassId=test/C, original=FirNamedFunctionSymbol test/C.foo)] fun foo([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] @R|test/Anno|[Types](LAZY_EXPRESSION) i: R|kotlin/Int|): R|kotlin/String|
+
+FILE: [ResolvedTo(IMPORTS)] importedStaticFromCompanionBlockFunction.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=test/Anno.s] s: String): R|test/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val S: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(STATUS)] [FirCompanionBlockDataKey=[valid=1 nested=0]] class C : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=C] constructor(): R|test/C| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @R|test/Anno|[Types](LAZY_EXPRESSION) public final static [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=C] fun foo([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] @R|test/Anno|[Types](LAZY_EXPRESSION) i: R|kotlin/Int| = IntegerLiteral(42)): R|kotlin/String| {
+            ^foo String(body).R|kotlin/String.plus|(R|<local>/i|)
+        }
+
+    }
+
+CONSTANT_EVALUATION:
+TARGET: @R|test/Anno|[Types](LAZY_EXPRESSION) public final static [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=C, ImportedFromObjectOrStaticClassIdKey=ImportedFromObjectOrStaticData(objectClassId=test/C, original=FirNamedFunctionSymbol test/C.foo)] fun foo([ResolvedTo(CONSTANT_EVALUATION)] @R|test/Anno|[Types](LAZY_EXPRESSION) i: R|kotlin/Int|): R|kotlin/String|
+
+FILE: [ResolvedTo(IMPORTS)] importedStaticFromCompanionBlockFunction.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=test/Anno.s] s: String): R|test/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val S: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(STATUS)] [FirCompanionBlockDataKey=[valid=1 nested=0]] class C : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=C] constructor(): R|test/C| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @R|test/Anno|[Types](LAZY_EXPRESSION) public final static [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=C] fun foo([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] @R|test/Anno|[Types](LAZY_EXPRESSION) i: R|kotlin/Int| = IntegerLiteral(42)): R|kotlin/String| {
+            ^foo String(body).R|kotlin/String.plus|(R|<local>/i|)
+        }
+
+    }
+
+ANNOTATION_ARGUMENTS:
+TARGET: @R|test/Anno|[Types](s = String(function).R|kotlin/String.plus|(R|test/S|) [evaluated = String(functions)]) public final static [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=C, ImportedFromObjectOrStaticClassIdKey=ImportedFromObjectOrStaticData(objectClassId=test/C, original=FirNamedFunctionSymbol test/C.foo)] fun foo([ResolvedTo(ANNOTATION_ARGUMENTS)] @R|test/Anno|[Types](s = String(param).R|kotlin/String.plus|(R|test/S|) [evaluated = String(params)]) i: R|kotlin/Int|): R|kotlin/String|
+
+FILE: [ResolvedTo(IMPORTS)] importedStaticFromCompanionBlockFunction.kt
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=test/Anno.s] s: R|kotlin/String|): R|test/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val S: R|kotlin/String| = String(s)
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
+    public final [ResolvedTo(STATUS)] [FirCompanionBlockDataKey=[valid=1 nested=0]] class C : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=C] constructor(): R|test/C| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @R|test/Anno|[Types](s = String(function).R|kotlin/String.plus|(R|test/S|) [evaluated = String(functions)]) public final static [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=C] fun foo([ResolvedTo(ANNOTATION_ARGUMENTS)] @R|test/Anno|[Types](s = String(param).R|kotlin/String.plus|(R|test/S|) [evaluated = String(params)]) i: R|kotlin/Int| = IntegerLiteral(42)): R|kotlin/String| {
+            ^foo String(body).R|kotlin/String.plus|(R|<local>/i|)
+        }
+
+    }
+
+BODY_RESOLVE:
+TARGET: @R|test/Anno|[Types](s = String(function).R|kotlin/String.plus|(R|test/S|) [evaluated = String(functions)]) public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C, ImportedFromObjectOrStaticClassIdKey=ImportedFromObjectOrStaticData(objectClassId=test/C, original=FirNamedFunctionSymbol test/C.foo)] fun foo([ResolvedTo(BODY_RESOLVE)] @R|test/Anno|[Types](s = String(param).R|kotlin/String.plus|(R|test/S|) [evaluated = String(params)]) i: R|kotlin/Int|): R|kotlin/String|
+
+FILE: [ResolvedTo(IMPORTS)] importedStaticFromCompanionBlockFunction.kt
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=test/Anno.s] s: R|kotlin/String|): R|test/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val S: R|kotlin/String| = String(s)
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
+    public final [ResolvedTo(STATUS)] [FirCompanionBlockDataKey=[valid=1 nested=0]] class C : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=C] constructor(): R|test/C| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @R|test/Anno|[Types](s = String(function).R|kotlin/String.plus|(R|test/S|) [evaluated = String(functions)]) public final static [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=C] fun foo([ResolvedTo(ANNOTATION_ARGUMENTS)] @R|test/Anno|[Types](s = String(param).R|kotlin/String.plus|(R|test/S|) [evaluated = String(params)]) i: R|kotlin/Int| = IntegerLiteral(42)): R|kotlin/String| {
+            ^foo String(body).R|kotlin/String.plus|(R|<local>/i|)
+        }
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] importedStaticFromCompanionBlockFunction.kt
+    public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=test/Anno.s] s: R|kotlin/String|): R|test/Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String(s)] val S: R|kotlin/String| = String(s)
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
+    public final [ResolvedTo(BODY_RESOLVE)] [FirCompanionBlockDataKey=[valid=1 nested=0]] class C : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] constructor(): R|test/C| {
+            super<R|kotlin/Any|>()
+        }
+
+        @R|test/Anno|[Types](s = String(function).R|kotlin/String.plus|(R|test/S|) [evaluated = String(functions)]) public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] fun foo([ResolvedTo(BODY_RESOLVE)] @R|test/Anno|[Types](s = String(param).R|kotlin/String.plus|(R|test/S|) [evaluated = String(params)]) i: R|kotlin/Int| = Int(42)): R|kotlin/String| {
+            ^foo String(body).R|kotlin/String.plus|(R|<local>/i|)
+        }
+
+    }
