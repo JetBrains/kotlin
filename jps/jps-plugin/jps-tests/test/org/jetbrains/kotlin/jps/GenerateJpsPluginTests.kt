@@ -30,11 +30,15 @@ fun main(args: Array<String>) {
         testGroup("jps/jps-plugin/jps-tests/tests-gen", "jps/jps-plugin/testData") {
             fun incrementalJvmTestData(): TestGroup.TestClass.() -> Unit = {
                 val excludePattern = "(^.*Expect.*)"
+                // TODO(KT-91039): JPS misses these metadata-only ABI changes until intellijSdk includes MRI-4749
+                val jpsDependencyGraphGaps = listOf(
+                    "(^varargBecameArray$)",
+                ).joinToString("|")
                 modelForDirectoryBasedTest(
                     "incremental", "pureKotlin",
                     extension = null,
                     recursive = false,
-                    excludedPattern = excludePattern
+                    excludedPattern = "$excludePattern|$jpsDependencyGraphGaps"
                 )
                 modelForDirectoryBasedTest(
                     "incremental",

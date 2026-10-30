@@ -941,6 +941,12 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
     public void testVarBecameVal() {
       runTest("jps/jps-plugin/testData/incremental/pureKotlin/varBecameVal/");
     }
+
+    @Test
+    @TestMetadata("varargBecameArray")
+    public void testVarargBecameArray() {
+      runTest("jps/jps-plugin/testData/incremental/pureKotlin/varargBecameArray/");
+    }
   }
 
   @Nested
