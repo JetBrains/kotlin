@@ -5,9 +5,14 @@
 
 package org.jetbrains.kotlin.wasm.test.blackbox
 
+import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.js.config.friendLibraries
+import org.jetbrains.kotlin.js.config.includes
+import org.jetbrains.kotlin.js.config.libraries
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 import org.jetbrains.kotlin.test.GroupingStageInputArtifact
 import org.jetbrains.kotlin.test.backend.codegenSuppressionChecker
+import org.jetbrains.kotlin.test.diagnostics.DiagnosticsCollectorStub
 import org.jetbrains.kotlin.test.impl.shouldIsolateTestInGroupingConfiguration
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol
@@ -24,8 +29,11 @@ import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.test.services.BatchingPackageInserter.Companion.computePackage
 import org.jetbrains.kotlin.test.services.CompilationStage
 import org.jetbrains.kotlin.test.services.KotlinTestInfo
+import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.artifactsProvider
+import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
+import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.services.sourceFileProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider.Companion.detectPackage
@@ -33,22 +41,26 @@ import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBo
 import org.jetbrains.kotlin.test.services.sourceProviders.SourceContentView
 import org.jetbrains.kotlin.test.services.targetPlatform
 import org.jetbrains.kotlin.test.services.testInfo
-import org.jetbrains.kotlin.wasm.test.WasmCoroutineHelpersModuleTransformer
+import org.jetbrains.kotlin.wasm.test.isHelpersModule
+import org.jetbrains.kotlin.wasm.config.wasmTarget
+import org.jetbrains.kotlin.wasm.test.converters.WasmFirstStageInvoker
 import java.io.File
 
 data class PerTestOutput(val testServices: TestServices, val testModule: TestModule, val klib: BinaryArtifacts.KLib)
 data class DependencyPaths(val regular: Set<String>, val friend: Set<String>)
 
 /**
- * Base class for the two Stage-2 grouping facades for K/Wasm:
+ * Base class for the Stage-2 grouping facades for K/Wasm:
  *
  *  - [CustomWasmSecondStageFacade.Grouping] — the CLI-based implementation for KLib forward compatibility tests.
  *  - [org.jetbrains.kotlin.wasm.test.converters.WasmInProcessSecondStageFacade.Grouping] — the in-process counterpart.
+ *  - [org.jetbrains.kotlin.wasm.test.converters.WasmInProcessSingleModuleSecondStageFacade.Grouping] — the in-process
+ *    facade of the single-module mode, which compiles a batch module by module.
  *
  * It hosts the shared, target-agnostic batch-analysis helpers (collecting the per-test KLIB outputs,
  * generating the groupedBatch proxy launcher source, aggregating batch-wide language settings and dependencies,
- * and deduplicating the synthetic `helpers.klib` artifacts) so both implementations can reuse the exact
- * same logic instead of one delegating to a throwaway instance of the other.
+ * and deduplicating the synthetic `helpers.klib` artifacts) so all implementations can reuse the exact
+ * same logic instead of one delegating to a throwaway instance of another.
  */
 abstract class AbstractWasmSecondStageGroupingFacade(
     val testServices: TestServices,
@@ -182,7 +194,7 @@ abstract class AbstractWasmSecondStageGroupingFacade(
     class BatchSettings(
         val regularDependencies: Set<String>,
         val friendDependencies: Set<String>,
-        val maxLanguageVersion: org.jetbrains.kotlin.config.LanguageVersion,
+        val maxLanguageVersion: LanguageVersion,
         val allOptIns: List<String>,
         val allAllowKotlinPackage: Boolean,
     )
@@ -227,6 +239,81 @@ abstract class AbstractWasmSecondStageGroupingFacade(
         )
     }
 
+    /**
+     * Runs [action] with [module] registered as the only module of [services]: the backend facades access the module
+     * structure expecting the main module, which in a grouped batch is the synthetic launcher, to be there. The mutation
+     * is scoped to [action] so that nothing else observes it.
+     */
+    private fun <T> withTemporarySingleModuleStructure(
+        services: TestServices,
+        module: TestModule,
+        action: () -> T,
+    ): T {
+        val originalModuleStructure = services.moduleStructure
+        val temporaryModuleStructure = object : TestModuleStructure() {
+            override val modules: List<TestModule> = listOf(module)
+            override val allDirectives = originalModuleStructure.allDirectives
+            override val originalTestDataFiles: List<File> = originalModuleStructure.originalTestDataFiles
+        }
+
+        services.register(TestModuleStructure::class, temporaryModuleStructure)
+        return try {
+            action()
+        } finally {
+            services.register(TestModuleStructure::class, originalModuleStructure)
+        }
+    }
+
+    /**
+     * Compiles the launcher of a grouped batch: its source to a small KLIB, which [backend] then links and lowers with the
+     * per-test KLIBs of the batch as libraries, the launcher being the only module of the structure [backend] sees.
+     */
+    protected fun compileGroupedBatchLauncher(
+        services: TestServices,
+        context: BatchExecutionContext,
+        tempDir: File,
+        backend: (TestModule, BinaryArtifacts.KLib) -> BinaryArtifacts.Wasm?,
+    ): BinaryArtifacts.Wasm? {
+        val someModule = services.moduleStructure.modules.last()
+        val batchLauncherFile = generateGroupedBatchLauncherSource(context.filteredOutputs, someModule, tempDir)
+        val settings = context.settings
+
+        val launcherKlibFile = tempDir.resolve("launcher.klib")
+        // Test modules are equal by name, so the launcher shares the cached configuration of `someModule`, which is amended
+        // below: a facade which compiles `someModule` on its own as well must do so before the launcher.
+        val launcherModule = someModule.copy(files = listOf(batchLauncherFile))
+        WasmFirstStageInvoker(testServices).compileSourcesToKlib(
+            launcherModule,
+            listOf(batchLauncherFile.originalFile),
+            launcherKlibFile,
+            // launcher klib is compiled by the current version of 1st stage, which will be fed to current version of 2nd stage.
+            // So even for backward-compatibility tests this languageVersion should not be lower than the latest stable one, to avoid:
+            // - already unsupported language versions like 1.9.20
+            // - export to previous ABI versions, which is unsupported for two major versions back or more.
+            languageVersion = maxOf(settings.maxLanguageVersion, LanguageVersion.LATEST_STABLE),
+            customOptIns = settings.allOptIns,
+            allowKotlinPackage = settings.allAllowKotlinPackage,
+            context.cleanedRegularDependencies + context.perTestKlibPaths,
+            settings.friendDependencies,
+        )
+
+        val configuration = services.compilerConfigurationProvider.getCompilerConfiguration(launcherModule, CompilationStage.SECOND)
+        configuration.includes = launcherKlibFile.absolutePath
+        configuration.friendLibraries = settings.friendDependencies.toList()
+        val runtimeKlibs = WasmEnvironmentConfigurator.getRuntimePathsForModule(configuration.wasmTarget, services)
+        configuration.libraries = runtimeKlibs + context.cleanedRegularDependencies.toList() + settings.friendDependencies.toList() +
+                context.perTestKlibPaths + listOf(launcherKlibFile.absolutePath)
+
+        val launcherKlibArtifact = BinaryArtifacts.KLib(launcherKlibFile, DiagnosticsCollectorStub())
+        return withTemporarySingleModuleStructure(services, launcherModule) {
+            backend(launcherModule, launcherKlibArtifact)
+        }
+    }
+
+    /** The main module of a test: its last module, apart from the synthetic helpers module. */
+    protected fun List<TestModule>.mainModuleOfTest(): TestModule =
+        lastOrNull { !it.isHelpersModule } ?: last()
+
     fun aggregateBatchSettings(
         filteredOutputs: List<PerTestOutput>,
         compilationStage: CompilationStage,
@@ -265,11 +352,11 @@ abstract class AbstractWasmSecondStageGroupingFacade(
      * Deduplicates the per-test KLIB paths so that at most one `helpers.klib` survives in the
      * resulting library list.
      *
-     * When `WITH_COROUTINES` is used, each test in the batch contributes a separate
-     * `helpers.klib` produced by `WasmCoroutineHelpersModuleTransformer`. All such helpers
-     * KLIBs are byte-equivalent in a single batch (built from the same synthetic `helpers`
-     * package files) and all carry the same KLIB `unique_name = "helpers"`. We keep only the
-     * first one so the linker doesn't fail with `The same 'unique_name=helpers' found in more
+     * Each test in the batch may contribute a separate `helpers.klib`: produced by `WasmTestHelpersModuleTransformer`
+     * from its coroutine helpers and common files in the grouped box suites, or by `WasmCoroutineHelpersModuleTransformer`
+     * from its coroutine helpers alone in the others. All such helpers KLIBs are byte-equivalent in a single batch
+     * (`WasmGroupingTestIsolator` batches tests by their helpers) and all carry the same KLIB `unique_name = "helpers"`.
+     * We keep only the first one so the linker doesn't fail with `The same 'unique_name=helpers' found in more
      * than one library`.
      *
      * Note: per-test KLIBs may have OS-specific filenames (e.g. `kt19475-helpers.klib`), but
@@ -281,8 +368,8 @@ abstract class AbstractWasmSecondStageGroupingFacade(
     ): List<String> =
         filteredOutputs
             .distinctBy { [_, module, artifact] ->
-                if (module.name == WasmCoroutineHelpersModuleTransformer.HELPERS_MODULE_NAME) {
-                    WasmCoroutineHelpersModuleTransformer.HELPERS_MODULE_NAME
+                if (module.isHelpersModule) {
+                    module.name
                 } else {
                     artifact.outputFile.absolutePath
                 }
@@ -303,7 +390,7 @@ abstract class AbstractWasmSecondStageGroupingFacade(
         perTestKlibPaths: List<String>,
     ): MutableSet<String> {
         val helperKlibsInPerTest = filteredOutputs
-            .filter { it.testModule.name == WasmCoroutineHelpersModuleTransformer.HELPERS_MODULE_NAME }
+            .filter { it.testModule.isHelpersModule }
             .map { it.klib.outputFile.absolutePath }
             .toSet()
         val keptHelperKlib = perTestKlibPaths.firstOrNull { it in helperKlibsInPerTest }

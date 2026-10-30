@@ -200,6 +200,10 @@ object DirectiveTestUtils {
         LOCAL_NOT_IN_FUNCTION
     )
 
+    /** Whether [sourceCode] has any of the directives which [processDirectives] checks. */
+    fun hasDirectives(sourceCode: String): Boolean =
+        DIRECTIVE_HANDLERS.any { it.isUsedIn(sourceCode) }
+
     @Throws(Exception::class)
     fun processDirectives(
         module: WasmModule,
@@ -263,6 +267,8 @@ object DirectiveTestUtils {
         }
 
         abstract fun processEntry(module: WasmModule, arguments: ArgumentsHelper)
+
+        fun isUsedIn(sourceCode: String): Boolean = findLinesWithPrefixesRemoved(sourceCode, directive).isNotEmpty()
 
         override fun toString(): String = directive
     }
