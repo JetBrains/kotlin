@@ -235,7 +235,7 @@ class DoubleMathTest {
         val intBoundary = 2.0.pow(52)
 
         // Special & integral values
-        for (value in listOf(Double.NaN, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, 0.0, 1.0, -10.0)) {
+        for (value in listOf(Double.NaN, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, 0.0, 1.0, -10.0, intBoundary, -intBoundary)) {
             assertEquals(value, ceil(value))
             assertEquals(value, floor(value))
             assertEquals(value, truncate(value))
