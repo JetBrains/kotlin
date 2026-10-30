@@ -223,16 +223,27 @@ inspects the annotation class's own `@Target`).
 
 ### Scenario I — Cross-language constant value resolution
 
-Entry: `JavaExternalConstResolver`, used by `JavaFieldOverAst.initializerValue` and the
-enum-entry-vs-`const val` disambiguation in annotation arguments.
+Entry: `ConstantEvaluator.resolveReference`, used for constant expressions (field initializers,
+annotation arguments) and for single references in annotation arguments. It resolves a reference
+once to a `MemberResolutionResult`: `EnumEntry`, `Constant`, `NonConstantField` or `Unresolved`.
+Annotation arguments map enum entries to enum arguments and constants to literals. A reference with
+a member name keeps the enum-argument shape. A resolved qualifier supplies its class ID; an
+unresolved qualifier gets a top-level class ID unless a shorter prefix resolves as a class, which
+could otherwise select a same-named package type. Without a class ID, FIR uses the annotation
+parameter's enum type. Malformed references and known non-constant fields become unknown arguments.
+FIR does not report diagnostics for Java annotations; FIR2IR drops error expressions when converting
+Java or binary annotations. Expressions only use constants.
 
-- `resolveExternalFieldValue(qualifier, field)` — tries, in order: top-level property via JVM
-  facade (`MainKt.FOO`), class member, companion-object member; returns the evaluated literal.
-- `resolveConstFieldValue(classId, field)` — enum class → companion only; otherwise class member
-  then companion then top-level facade fallback.
+1. A qualified reference resolves its qualifier as a type (Scenario D), then looks the member up
+   in that class and its supertypes; a simple name is looked up in the containing classes with
+   their supertypes, then single-static and static-on-demand imports (JLS 6.4.1).
+2. Source Java classes are read from the AST. Other classes go through FIR: enum entries
+   (`hasEnumEntry`), then `JavaExternalConstResolver.resolveExternalFieldValue` — class member,
+   then companion-object member; a qualifier that is not a class can only be a JVM facade
+   (`MainKt.FOO`).
 
-Const values are read via `FirExpressionEvaluator` / already-evaluated initializers; unqualified
-cross-language references are unsupported (return `null`).
+Const values are read via `FirExpressionEvaluator` / already-evaluated initializers; simple names
+are never resolved across languages without a static import.
 
 ### Integration
 

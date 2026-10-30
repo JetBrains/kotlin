@@ -47,7 +47,7 @@ abstract class JavaTypeOverAst(
         if (memberAnnotations.isEmpty()) emptyList()
         else memberAnnotations.filter { annotation ->
             val classId = annotation.classId ?: return@filter false
-            with(resolutionContext) { isTypeUseAnnotationClass(classId) }
+            isTypeUseAnnotationClass(classId, c = resolutionContext)
         }
     }
 
@@ -107,7 +107,7 @@ class JavaClassifierTypeOverAst(
     private fun computeClassifier(): JavaClassifier? {
         val parts = rawTypeNameParts
 
-        with(resolutionContext) {
+        context(resolutionContext) {
             if (parts.size == 1) {
                 // Matches PSI implementation's order; javac prefers a same-named nested class over an own type parameter.
                 // Reflected in `diagnostics/tests/javac/typeParameters/OwnNestedClassAndTypeParameterWithSameNames.kt` and
@@ -204,7 +204,7 @@ class JavaClassifierTypeOverAst(
         if (anyOutOfScope || isQualified) {
             val classId = javaClass.classId
             if (!qualifiedByDeclaringOuter && classId != null) {
-                val recovered = with(resolutionContext) { recoverInheritedOuterTypeArguments(classId) }
+                val recovered = recoverInheritedOuterTypeArguments(classId, c = resolutionContext)
                 if (recovered != null) return ownArgs + recovered
             }
             // Nothing binds the enclosing instance's parameters at this reference.
@@ -605,7 +605,7 @@ class EnumSupertypeForJavaDirect(
     private val resolutionContext: JavaResolutionContext,
 ) : JavaClassifierType {
     override val classifier: JavaClassifier? by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        with(resolutionContext) { resolveCanonicalName(classifierQualifiedName)?.let { classifierAdapterFor(it) } }
+        resolveCanonicalName(classifierQualifiedName, c = resolutionContext)?.let { classifierAdapterFor(it, c = resolutionContext) }
     }
     override val classifierQualifiedName: String get() = "java.lang.Enum"
     override val typeArguments: List<JavaType> get() = listOf(EnumSelfTypeArgument())
@@ -639,7 +639,7 @@ class ImplicitSupertypeForJavaDirect(
 ) : JavaClassifierType {
     override val classifierQualifiedName: String = classId.asSingleFqName().asString()
     override val classifier: JavaClassifier? by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        with(resolutionContext) { resolveCanonicalName(classifierQualifiedName)?.let { classifierAdapterFor(it) } }
+        resolveCanonicalName(classifierQualifiedName, c = resolutionContext)?.let { classifierAdapterFor(it, c = resolutionContext) }
     }
     override val typeArguments: List<JavaType> get() = emptyList()
     override val isRaw: Boolean get() = false

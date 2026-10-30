@@ -9,12 +9,12 @@ import com.intellij.java.syntax.element.JavaSyntaxElementType
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
 import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
 import org.jetbrains.kotlin.java.direct.resolution.getSimpleImport
-import org.jetbrains.kotlin.java.direct.resolution.getStaticImport
 import org.jetbrains.kotlin.java.direct.resolution.resolve
-import org.jetbrains.kotlin.java.direct.resolution.resolveConstFieldValue
-import org.jetbrains.kotlin.java.direct.resolution.resolveExternalFieldValue
 import org.jetbrains.kotlin.java.direct.util.ConstantEvaluator
 import org.jetbrains.kotlin.java.direct.util.JavaLiteralParser
+import org.jetbrains.kotlin.java.direct.util.MemberResolutionResult
+import org.jetbrains.kotlin.java.direct.util.StaticMemberReference
+import org.jetbrains.kotlin.java.direct.util.referenceNameParts
 import org.jetbrains.kotlin.kmp.tree.LightNode
 import org.jetbrains.kotlin.kmp.tree.LightSyntaxTree
 import org.jetbrains.kotlin.load.java.structure.*
@@ -54,7 +54,7 @@ class JavaAnnotationOverAst(
     private fun computeClassId(): ClassId? {
         val reference = annotationName ?: return null
 
-        with(resolutionContext) { resolve(reference) }?.let { return it }
+        resolve(reference, c = resolutionContext)?.let { return it }
 
         // No-symbol-provider fallback (parsing-level unit fixtures): `resolve` returned null
         // because `tryResolve` is always `false` without a provider. The `ClassId.topLevel`
@@ -65,7 +65,7 @@ class JavaAnnotationOverAst(
             return ClassId.topLevel(FqName(reference))
         }
 
-        val imported = with(resolutionContext) { getSimpleImport(reference) }
+        val imported = getSimpleImport(reference, c = resolutionContext)
         if (imported != null) {
             return ClassId.topLevel(imported)
         }
@@ -107,26 +107,23 @@ internal fun createAnnotationArgumentFromValue(
     return when (tree.getType(valueNode)) {
         JavaSyntaxElementType.LITERAL_EXPRESSION -> {
             val value = JavaLiteralParser.evaluateLiteral(valueNode, tree)
-            JavaLiteralAnnotationArgumentOverAst(name, value)
+            if (value != null) JavaLiteralAnnotationArgumentOverAst(name, value) else JavaUnknownAnnotationArgumentOverAst(name)
         }
         JavaSyntaxElementType.ARRAY_INITIALIZER_EXPRESSION, JavaSyntaxElementType.ANNOTATION_ARRAY_INITIALIZER -> {
             JavaArrayAnnotationArgumentOverAst(name, valueNode, tree, resolutionContext)
         }
         JavaSyntaxElementType.REFERENCE_EXPRESSION -> {
-            // Could be an enum entry reference (e.g. `RetentionPolicy.RUNTIME`) or a const-val
-            // reference (e.g. `KotlinClass.FOO_INT`). These are disambiguated here through
-            // `JavaResolutionContext.resolveConstFieldValue` (session-backed): if the reference
-            // does not resolve to a const value (or the session has no symbol provider —
-            // parsing-level unit fixtures), fall back to the enum-entry shape.
-            val enumArg = JavaEnumValueAnnotationArgumentOverAst(name, valueNode, tree, resolutionContext)
-            val classId = enumArg.enumClassId
-            val constValue = if (classId != null) {
-                with(resolutionContext) { resolveConstFieldValue(classId, enumArg.entryName) }
-            } else null
-            // Not a `const val`: the reference may still name a Java `static final` constant of
-            // this compilation unit, that is evaluated on the AST.
-            val value = constValue ?: ConstantEvaluator(tree, resolutionContext).evaluate(valueNode)
-            if (value != null) JavaLiteralAnnotationArgumentOverAst(name, value) else enumArg
+            // An enum entry or a constant field; an enum class can declare both.
+            when (val resolution = ConstantEvaluator(tree, resolutionContext).resolveReference(valueNode)) {
+                is MemberResolutionResult.EnumEntry ->
+                    JavaEnumValueAnnotationArgumentOverAst(name, resolution.enumClassId, resolution.entryName)
+                is MemberResolutionResult.Constant -> JavaLiteralAnnotationArgumentOverAst(name, resolution.value)
+                MemberResolutionResult.NonConstantField -> JavaUnknownAnnotationArgumentOverAst(name)
+                is MemberResolutionResult.Unresolved ->
+                    createUnresolvedReferenceArgument(
+                        name, tree.referenceNameParts(valueNode), resolution.reference, resolutionContext,
+                    )
+            }
         }
         JavaSyntaxElementType.CLASS_OBJECT_ACCESS_EXPRESSION -> {
             JavaClassObjectAnnotationArgumentOverAst(name, valueNode, tree, resolutionContext)
@@ -137,8 +134,8 @@ internal fun createAnnotationArgumentFromValue(
         JavaSyntaxElementType.PREFIX_EXPRESSION, JavaSyntaxElementType.BINARY_EXPRESSION,
         JavaSyntaxElementType.POLYADIC_EXPRESSION, JavaSyntaxElementType.PARENTH_EXPRESSION,
         JavaSyntaxElementType.TYPE_CAST_EXPRESSION -> {
-            val value = annotationConstantEvaluator(tree, resolutionContext).evaluate(valueNode)
-            JavaLiteralAnnotationArgumentOverAst(name, value)
+            val value = ConstantEvaluator(tree, resolutionContext).evaluate(valueNode)
+            if (value != null) JavaLiteralAnnotationArgumentOverAst(name, value) else JavaUnknownAnnotationArgumentOverAst(name)
         }
         else -> {
             JavaUnknownAnnotationArgumentOverAst(name)
@@ -147,18 +144,32 @@ internal fun createAnnotationArgumentFromValue(
 }
 
 /**
- * The evaluator for a constant expression written as an annotation argument or as an
- * annotation-method default value (JLS 9.6.1 / 9.7).
- *
- * It is the same [ConstantEvaluator] the field initializers use, so that references to
- * `static final` constants, parenthesized and polyadic sub-expressions and casts are evaluated
- * identically in both positions; cross-language `const val` references inside the expression go
- * through the session-backed `resolveExternalFieldValue`, as they do for fields.
+ * Keeps the enum-argument shape when the reference has a member name. A resolved qualifier supplies
+ * its class ID; an unresolved qualifier gets a top-level class ID unless a shorter prefix resolves
+ * as a class, which could otherwise select a same-named package type. Without a class ID, FIR uses
+ * the annotation parameter's enum type. Malformed references and known non-constant fields become
+ * unknown arguments.
  */
-private fun annotationConstantEvaluator(tree: LightSyntaxTree, resolutionContext: JavaResolutionContext): ConstantEvaluator =
-    ConstantEvaluator(tree, resolutionContext) { classQualifier, fieldName ->
-        with(resolutionContext) { resolveExternalFieldValue(classQualifier, fieldName) }
-    }
+private fun createUnresolvedReferenceArgument(
+    name: Name?,
+    referenceParts: List<String>?,
+    reference: StaticMemberReference?,
+    resolutionContext: JavaResolutionContext,
+): JavaAnnotationArgument {
+    val parts = referenceParts ?: return JavaUnknownAnnotationArgumentOverAst(name)
+    val qualifierParts = parts.dropLast(1)
+    val enumClassId = reference?.qualifierClassId
+        ?: qualifierParts.takeIf { it.isNotEmpty() && !it.hasClassPrefix(resolutionContext) }
+            ?.let { ClassId.topLevel(FqName.fromSegments(it)) }
+    return JavaEnumValueAnnotationArgumentOverAst(
+        name,
+        enumClassId,
+        Name.identifier(reference?.memberName ?: parts.last()),
+    )
+}
+
+private fun List<String>.hasClassPrefix(resolutionContext: JavaResolutionContext): Boolean =
+    (1 until size).any { resolve(subList(0, it).joinToString("."), c = resolutionContext) != null }
 
 class JavaLiteralAnnotationArgumentOverAst(
     override val name: Name?,
@@ -184,62 +195,9 @@ class JavaArrayAnnotationArgumentOverAst(
 
 class JavaEnumValueAnnotationArgumentOverAst(
     override val name: Name?,
-    private val refNode: LightNode,
-    private val tree: LightSyntaxTree,
-    private val resolutionContext: JavaResolutionContext,
-) : JavaEnumValueAnnotationArgument {
-
-    /**
-     * For bare identifiers (no dots), tries to resolve via *static* single-imports only
-     * (`import static example.KotlinDtoMapping.ID;` makes `ID` resolvable as
-     * `className="example.KotlinDtoMapping"`, `entryName="ID"`). Non-static type imports
-     * are deliberately *not* consulted here: an `import a.b.X;` of a type cannot bind a
-     * bare enum-entry reference — only a static-member import can.
-     *
-     * Returns a pair of (className, memberName) if the static import is found, null otherwise.
-     */
-    private val staticImportResolution: Pair<String, String>? by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        val text = tree.getText(refNode).toString()
-        if (text.contains('.')) return@lazy null
-        val importedFqn = with(resolutionContext) { getStaticImport(text) } ?: return@lazy null
-        val fqnStr = importedFqn.asString()
-        val lastDot = fqnStr.lastIndexOf('.')
-        if (lastDot < 0) return@lazy null
-        fqnStr.substring(0, lastDot) to fqnStr.substring(lastDot + 1)
-    }
-
-    private val className: String?
-        get() {
-            val text = tree.getText(refNode).toString()
-            val lastDot = text.lastIndexOf('.')
-            if (lastDot >= 0) return text.substring(0, lastDot)
-            return staticImportResolution?.first
-        }
-
-    override val enumClassId: ClassId?
-        get() {
-            val className = className ?: return null
-
-            // Consult the model's resolver for the full JLS scope walk (local nested-class,
-            // inherited inner classes, imports, same-package, java.lang, star imports).
-            resolve(className, c = resolutionContext)?.let { return it }
-
-            // A static import that does not resolve gives no class to point at (PSI: `resolve()` is null, no qualifier).
-            if (!tree.getText(refNode).contains('.')) return null
-
-            // Unresolved qualifier: take it as written, like PSI's `JavaEnumValueAnnotationArgumentImpl`.
-            return ClassId.topLevel(FqName(className))
-        }
-
-    override val entryName: Name
-        get() {
-            val text = tree.getText(refNode).toString()
-            val lastDot = text.lastIndexOf('.')
-            if (lastDot >= 0) return Name.identifier(text.substring(lastDot + 1))
-            staticImportResolution?.let { return Name.identifier(it.second) }
-            return Name.identifier(text)
-        }
-}
+    override val enumClassId: ClassId?,
+    override val entryName: Name,
+) : JavaEnumValueAnnotationArgument
 
 class JavaClassObjectAnnotationArgumentOverAst(
     override val name: Name?,
