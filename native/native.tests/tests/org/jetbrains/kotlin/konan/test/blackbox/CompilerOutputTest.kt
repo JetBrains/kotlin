@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.forcesPreReleaseBinariesIfEnabled
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.konan.target.presetName
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty
@@ -165,19 +164,33 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
         assertIs<TestCompilationResult.Failure>(compilationResult)
         val output = compilationResult.toOutput().sanitizeCompilationOutput()
 
-        if (testRunSettings.get<CacheMode>() == CacheMode.WithoutCache) {
-            assertFalse(output.contains("compiler caches")) {
-                "The compiler output wrongly mentions compiler caches:\n```\n$output\n```\n"
+        when (testRunSettings.get<CacheMode>()) {
+            CacheMode.WithoutCache -> {
+                assertFalse(
+                    output.contains("compiler caches") ||
+                            output.contains("incremental compilation")
+                ) {
+                    "The compiler output wrongly mentions compiler caches:\n```\n$output\n```\n"
+                }
             }
-        } else {
-            val presetName = targets.testTarget.presetName
-            assertContains(
-                output,
-                """
-                |Please try to disable compiler caches (https://kotl.in/disable-native-cache) and rerun the build.
+            CacheMode.WithIncrementalCache -> {
+                assertContains(
+                    output,
+                    """
+                |Please try to disable incremental compilation (kotlin.incremental.native=false) and rerun the build.
                 |
                 |Also, consider filing an issue with full Gradle log here: https://kotl.in/issue""".trimMargin()
-            )
+                )
+            }
+            else -> {
+                assertContains(
+                    output,
+                    """
+                    |Please try to disable compiler caches (https://kotl.in/disable-native-cache) and rerun the build.
+                    |
+                    |Also, consider filing an issue with full Gradle log here: https://kotl.in/issue""".trimMargin()
+                )
+            }
         }
     }
 
@@ -185,6 +198,8 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
     fun testCacheBuildErrorMessage() {
         // Disable when not using cache:
         Assumptions.assumeFalse(testRunSettings.get<CacheMode>() == CacheMode.WithoutCache)
+        // testIncrementalBuildErrorMessage test covers incremental compilation mode
+        Assumptions.assumeFalse(testRunSettings.get<CacheMode>().useIncrementalCompilation)
         // MinGW support for caches is limited to stdlib, so these tests won't work as expected.
         Assumptions.assumeFalse(targets.testTarget == KonanTarget.MINGW_X64)
 
@@ -325,6 +340,7 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
         Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
         // https://youtrack.jetbrains.com/issue/KT-71097/Kotlin-Native-add-a-flag-to-catch-duplicating-symbols-in-caches
         Assumptions.assumeFalse(testRunSettings.get<CacheMode>().useStaticCacheForUserLibraries)
+        Assumptions.assumeFalse(testRunSettings.get<CacheMode>().useIncrementalCompilation)
 
         val testCase = TestCase(
             id = TestCaseId.Named(name),
