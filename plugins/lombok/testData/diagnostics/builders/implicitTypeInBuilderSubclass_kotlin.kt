@@ -21,14 +21,14 @@ import lombok.Builder
 
 @Builder
 class User {
-    var <!BUILDER_PROPERTY_WITH_IMPLICIT_TYPE!>name<!> = "Alice"
+    var <!BUILDER_PROPERTY_NOT_INCLUDED!>name<!> = "Alice"
 }
 
 @Builder
 class Mixed {
     var id: Int = 0
     var title: String = ""
-    var <!BUILDER_PROPERTY_WITH_IMPLICIT_TYPE!>stuff<!> = emptyList<String>()
+    var <!BUILDER_PROPERTY_NOT_INCLUDED!>stuff<!> = emptyList<String>()
     var owner: User = User()
-    var <!BUILDER_PROPERTY_WITH_IMPLICIT_TYPE!>initialized<!> = false
+    var <!BUILDER_PROPERTY_NOT_INCLUDED!>initialized<!> = false
 }

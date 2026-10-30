@@ -15,7 +15,7 @@ import lombok.Builder
 // The builder is built out of the primary constructor, so the implicitly typed body property is not a builder field
 @Builder
 class User(name: String) {
-    var greeting = "Hello, $name"
+    var <!BUILDER_PROPERTY_NOT_INCLUDED!>greeting<!> = "Hello, $name"
 }
 
 // The body property shares its name with the parameter, so the builder field and setter come from the parameter
@@ -28,5 +28,5 @@ class SameName(greeting: String) {
 
 @Builder(toBuilder = true)
 class WithToBuilder(<!TO_BUILDER_CANNOT_OBTAIN!>name: String<!>) {
-    var greeting = "Hello, $name"
+    var <!BUILDER_PROPERTY_NOT_INCLUDED!>greeting<!> = "Hello, $name"
 }

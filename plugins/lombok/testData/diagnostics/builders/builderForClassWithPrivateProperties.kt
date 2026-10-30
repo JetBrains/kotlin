@@ -6,7 +6,7 @@ import lombok.Builder;
 class Mutable {
     private var x: Int = 0
 
-    private var <!BUILDER_PROPERTY_WITH_IMPLICIT_TYPE!>y<!> = 1
+    private var <!BUILDER_PROPERTY_NOT_INCLUDED!>y<!> = 1
 
     fun test() {
         val ex = builder()

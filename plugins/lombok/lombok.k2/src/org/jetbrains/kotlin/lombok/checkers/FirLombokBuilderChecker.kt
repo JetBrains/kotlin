@@ -16,7 +16,9 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirRegularClassChe
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.hasExplicitReturnType
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
+import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
+import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
@@ -160,18 +162,34 @@ object FirLombokBuilderChecker : FirRegularClassChecker(MppCheckerKind.Platform)
      * cannot use the entity instance (KT-90590). A constructor parameter's default value has no such restriction:
      * its references to earlier parameters are resolved to their already computed values.
      *
-     * A read-only property is never a builder field, so it is left alone here.
+     * Any other property declared in the body - a read-only one, or any one at all when the primary constructor has
+     * value parameters - is not a builder field, which is reported as well (KT-90879). A property without a backing field
+     * holds no state of its own for a builder to set, and one named after a constructor parameter receives its value
+     * from that parameter's builder field (and is what `toBuilder()` reads it back from), so both are left alone.
      */
     context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkBodyBuilderProperties(declaration: FirRegularClass, primaryConstructor: FirConstructorSymbol) {
-        if (primaryConstructor.valueParameterSymbols.isNotEmpty()) return
+        val buildsFromBodyProperties = primaryConstructor.valueParameterSymbols.isEmpty()
+        val parameterNames = primaryConstructor.valueParameterSymbols.mapTo(mutableSetOf()) { it.name }
 
         declaration.processAllDeclarations(context.session) { symbol ->
             val property = symbol as? FirPropertySymbol ?: return@processAllDeclarations
-            if (property.fromPrimaryConstructor || !property.isVar || property.name.isSpecial) return@processAllDeclarations
+            val name = property.name
+            if (property.fromPrimaryConstructor || name.isSpecial) return@processAllDeclarations
+            if (property.origin != FirDeclarationOrigin.Source) return@processAllDeclarations
 
-            if (!property.hasExplicitReturnType) {
-                reporter.reportOn(property.source, LombokFirDiagnostics.BUILDER_PROPERTY_WITH_IMPLICIT_TYPE, property.name, context)
+            val whyNotIncluded = when {
+                !property.hasBackingField -> null
+                name in parameterNames -> null
+                property.isStatic -> null
+                !buildsFromBodyProperties -> NotIncludedReason.BODY_PROPERTY_IN_PRESENCE_OF_PARAMETERS
+                property.isVal -> NotIncludedReason.VAL_BODY_PROPERTY
+                !property.hasExplicitReturnType -> NotIncludedReason.HAS_IMPLICIT_RETURN_TYPE
+                else -> null
+            }
+
+            if (whyNotIncluded != null) {
+                reporter.reportOn(property.source, LombokFirDiagnostics.BUILDER_PROPERTY_NOT_INCLUDED, name, whyNotIncluded, context)
                 return@processAllDeclarations
             }
 
@@ -181,6 +199,24 @@ object FirLombokBuilderChecker : FirRegularClassChecker(MppCheckerKind.Platform)
                 reporter.reportOn(initializer.source, LombokFirDiagnostics.BUILDER_DEFAULT_INITIALIZER_USES_INSTANCE, context)
             }
         }
+    }
+
+    enum class NotIncludedReason(val s: String) {
+        BODY_PROPERTY_IN_PRESENCE_OF_PARAMETERS(
+            "a Kotlin class builds out of its primary constructor''s value parameters. " +
+                    "To make it a builder field, declare it in the primary constructor"
+        ),
+        VAL_BODY_PROPERTY(
+            "a Kotlin class builds out of its mutable properties if there is no primary constructor parameters. " +
+                    "To make it a builder field, declare it in the primary constructor or change it to be a mutable property"
+        ),
+        HAS_IMPLICIT_RETURN_TYPE(
+            "its type is implicit and cannot be resolved before the builder is generated. " +
+                    "To make it possible, specify its type explicitly"
+        ),
+        ;
+
+        override fun toString(): String = s
     }
 
     /** Whether [this] expression reads a `this` of [classSymbol], explicitly or as an implicit receiver. */

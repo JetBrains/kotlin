@@ -12,13 +12,13 @@ class Mutable {
         get() = 2 * field
         set(arg) { field = 2 * arg }
 
-    var w = 0
+    var <!BUILDER_PROPERTY_NOT_INCLUDED!>w<!> = 0
 
     private var y: String by Delegates.observable("") { _, _, _ ->
         w++
     }
 
-    private val zz = mutableListOf<Boolean>()
+    private val <!BUILDER_PROPERTY_NOT_INCLUDED!>zz<!> = mutableListOf<Boolean>()
 
     var z: List<Boolean>
         get() = zz
