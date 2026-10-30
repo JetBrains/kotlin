@@ -35,6 +35,8 @@ import org.jetbrains.kotlin.test.directives.model.ValueDirective
 import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
 import org.jetbrains.kotlin.test.grouping.AbstractTwoStageKotlinCompilerJsTest
 import org.jetbrains.kotlin.test.klib.KlibOnlyFirstStageStateReleaser
+import org.jetbrains.kotlin.test.klib.KlibZipFileSystemCacheCloser
+import org.jetbrains.kotlin.test.klib.KlibZipFileSystemCacheConfigurator
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.DependencyKind
@@ -113,7 +115,9 @@ abstract class AbstractJsTwoStageCodegenBoxTestBase(
 
             // Point the JS stack traces of an isolated test at its dumped artifacts (see `JsGroupingStageArtifactsDumper`).
             useFailureSuppressors(JsArtifactsDumpHandler::Suppressor)
-            useAfterAnalysisCheckers(::NonIncrementalFirstStageStateReleaser)
+            // The non-grouping stage compiles against the zipped stdlib and kotlin-test KLIBs.
+            useConfigurators(::KlibZipFileSystemCacheConfigurator)
+            useAfterAnalysisCheckers(::KlibZipFileSystemCacheCloser, ::NonIncrementalFirstStageStateReleaser)
         }
 
         groupingStage {
