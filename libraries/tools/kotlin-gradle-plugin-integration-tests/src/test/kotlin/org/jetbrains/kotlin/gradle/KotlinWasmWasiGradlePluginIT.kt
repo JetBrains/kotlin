@@ -76,7 +76,7 @@ class KotlinWasmWasiGradlePluginIT : KGPBaseTest() {
                 """
                 |
                 |${PropertiesProvider.PropertyNames.KOTLIN_WASM_WASI_ADAPTER_TOOLCHAIN_MODE}=${WasiAdapterToolchainMode.PREINSTALLED.name}
-                |${PropertiesProvider.PropertyNames.KOTLIN_WASM_WASI_ADAPTER_TOOLCHAIN_PREINSTALLED_EXECUTABLE_PATH}=${fakeAdapter.absolutePath}
+                |${PropertiesProvider.PropertyNames.KOTLIN_WASM_WASI_ADAPTER_TOOLCHAIN_PREINSTALLED_EXECUTABLE_PATH}=${fakeAdapter.invariantSeparatorsPath}
                 """.trimMargin()
             )
 
