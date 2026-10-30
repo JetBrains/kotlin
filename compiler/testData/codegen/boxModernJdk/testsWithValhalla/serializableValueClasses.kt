@@ -25,7 +25,7 @@ fun writeFails(value: Any): Boolean = try {
     write(value)
     false
 } catch (e: InvalidClassException) {
-    e.message == "${value::class.java.name}; cannot serialize due to final value class or strictly-initialized instance fields"
+    e.classname == value::class.java.name
 }
 
 fun box(): String {
