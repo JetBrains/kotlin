@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger
 
 /**
  * Records max concurrent Kotlin/Native tool workers.
- * Each worker waits for [Parameters.expectedRunning] workers to start, so overlap does not depend on timing.
+ * Each worker waits for [Parameters.expectedRunning] workers to start, and fails if more than that run at once.
  */
 internal abstract class KotlinNativeToolParallelismTestProbeService :
     BuildService<KotlinNativeToolParallelismTestProbeService.Parameters>, KotlinNativeToolParallelismProbe, AutoCloseable {
@@ -35,7 +35,11 @@ internal abstract class KotlinNativeToolParallelismTestProbeService :
     private val expectedRunningReached by lazy { CountDownLatch(parameters.expectedRunning.get()) }
 
     override fun workerStarted() {
-        maxRunning.accumulateAndGet(running.incrementAndGet(), ::maxOf)
+        val nowRunning = running.incrementAndGet()
+        maxRunning.accumulateAndGet(nowRunning, ::maxOf)
+        check(nowRunning <= parameters.expectedRunning.get()) {
+            "$nowRunning parallel workers running, but the limit is ${parameters.expectedRunning.get()}"
+        }
         expectedRunningReached.countDown()
         check(expectedRunningReached.await(EXPECTED_RUNNING_WAIT_TIMEOUT_SECONDS, TimeUnit.SECONDS)) {
             "Expected ${parameters.expectedRunning.get()} parallel workers, but only ${maxRunning.get()} overlapped " +
