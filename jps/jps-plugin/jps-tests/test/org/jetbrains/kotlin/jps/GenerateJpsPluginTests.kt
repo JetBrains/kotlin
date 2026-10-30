@@ -35,6 +35,7 @@ fun main(args: Array<String>) {
                     "(^varargBecameArray$)",
                     "(^namedArgumentParameterRenamed$)",
                     "(^defaultValueMovedBetweenParameters$)",
+                    "(^functionBecameProperty$)",
                 ).joinToString("|")
                 modelForDirectoryBasedTest(
                     "incremental", "pureKotlin",

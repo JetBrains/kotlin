@@ -355,6 +355,12 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
     }
 
     @Test
+    @TestMetadata("functionBecameProperty")
+    public void testFunctionBecameProperty() {
+      runTest("jps/jps-plugin/testData/incremental/pureKotlin/functionBecameProperty/");
+    }
+
+    @Test
     @TestMetadata("functionReferencingClass")
     public void testFunctionReferencingClass() {
       runTest("jps/jps-plugin/testData/incremental/pureKotlin/functionReferencingClass/");
