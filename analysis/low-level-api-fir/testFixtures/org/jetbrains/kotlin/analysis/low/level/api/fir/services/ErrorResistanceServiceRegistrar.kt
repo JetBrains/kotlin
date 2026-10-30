@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.services
 import com.intellij.lang.java.JavaLanguage
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.diagnostic.ControlFlowException
 import com.intellij.openapi.project.Project
 import com.intellij.psi.*
 import com.intellij.psi.impl.file.PsiPackageImpl
@@ -49,7 +50,14 @@ internal object ErrorResistanceServiceRegistrar : AnalysisApiTestServiceRegistra
     }
 }
 
-internal class AnalysisInterruptedException : RuntimeException()
+/**
+ * Interrupts the analysis on purpose, see [ErrorResistanceServiceRegistrar.handleInterruption].
+ *
+ * The exception is a [ControlFlowException], like [ProcessCanceledException][com.intellij.openapi.progress.ProcessCanceledException], so
+ * the analysis rethrows it instead of reporting it via `Logger.error` (e.g., in `LLFirDiagnosticVisitor.suppressAndLogExceptions`). In
+ * tests, the logger dumps each error with its stack trace to stderr, even though the test expects the interruption and catches it.
+ */
+internal class AnalysisInterruptedException : RuntimeException(), ControlFlowException
 
 private val ENABLE_INTERRUPTION: ThreadLocal<Boolean> = ThreadLocal.withInitial { false }
 
