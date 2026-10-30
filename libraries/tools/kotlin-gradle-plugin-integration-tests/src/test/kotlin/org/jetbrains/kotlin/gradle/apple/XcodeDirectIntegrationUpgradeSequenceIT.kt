@@ -69,6 +69,8 @@ class XcodeDirectIntegrationUpgradeSequenceIT : KGPBaseTest() {
                 "EXPECTED_TEST_VALUE" to expectedValue
             ),
             buildSettingOverrides = mapOf(
+                // Search path from the old setup docs. KGP doesn't write to this directory anymore, so after an upgrade it holds
+                // a stale framework. Xcode must pick the symlink in BUILT_PRODUCTS_DIR instead.
                 "FRAMEWORK_SEARCH_PATHS" to "\$(SRCROOT)/../shared/build/xcode-frameworks/\$(CONFIGURATION)/\$(SDK_NAME)",
                 "EMBED_AND_SIGN_KOTLIN_VERSION" to kotlinVersion,
                 "EMBED_AND_SIGN_GENERATED_TEST_VALUE" to generatedValue,
