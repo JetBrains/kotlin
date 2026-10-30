@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.analysis.test.framework.base
 import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
 import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileFilter
 import com.intellij.psi.AbstractFileViewProvider
 import com.intellij.psi.impl.PsiManagerEx
 import com.intellij.psi.stubs.StubElement
@@ -215,19 +217,38 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest 
     /**
      * Runs the given [action] with an assertion that fails the test on any attempt to load the AST of [file].
      *
+     * The assertion throws [AstLoadingAssertionError] itself rather than letting [com.intellij.psi.impl.source.PsiFileImpl] report the
+     * access via `Logger.error`. The logger dumps each error with its stack trace to stderr, even when the test expects the error and
+     * catches it (see `AbstractLLStubBasedTest.computeAstLoadingAware`), which floods the test log.
+     *
      * @see com.intellij.psi.impl.source.PsiFileImpl.loadTreeElement
      * @see com.intellij.psi.impl.PsiManagerEx.isAssertOnFileLoading
      */
     protected fun <T> withAstLoadingAssertion(file: KtFile, action: () -> T): T {
         val virtualFile = file.virtualFile
         val disposable = Disposer.newDisposable("AST loading assertion")
-        (file.manager as PsiManagerEx).setAssertOnFileLoadingFilter({ it == virtualFile }, disposable)
+        val filter = VirtualFileFilter {
+            if (it == virtualFile) {
+                throw AstLoadingAssertionError(it)
+            }
+
+            false
+        }
+
+        (file.manager as PsiManagerEx).setAssertOnFileLoadingFilter(filter, disposable)
         return try {
             action()
         } finally {
             Disposer.dispose(disposable)
         }
     }
+
+    /**
+     * Thrown by [withAstLoadingAssertion] on an attempt to load the AST of [file].
+     */
+    protected class AstLoadingAssertionError(file: VirtualFile) : AssertionError(
+        "AST loading is not allowed for '${file.presentableUrl}' in the stub-based part of the test"
+    )
 
     /**
      * Computes [KtClassOrObject.isLocal] for every class stub of the stub-based [file] without loading its AST.
