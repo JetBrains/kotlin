@@ -25,9 +25,15 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrBody
+import org.jetbrains.kotlin.ir.expressions.IrDynamicMemberExpression
+import org.jetbrains.kotlin.ir.expressions.IrDynamicOperator
+import org.jetbrains.kotlin.ir.expressions.IrDynamicOperatorExpression
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
 import org.jetbrains.kotlin.ir.expressions.IrGetField
+import org.jetbrains.kotlin.ir.expressions.IrGetObjectValue
+import org.jetbrains.kotlin.ir.expressions.IrGetSingletonValue
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrSetField
 import org.jetbrains.kotlin.ir.expressions.IrSetValue
@@ -35,6 +41,7 @@ import org.jetbrains.kotlin.ir.expressions.IrThrow
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.getAnnotation
+import org.jetbrains.kotlin.ir.util.isOverridable
 import org.jetbrains.kotlin.ir.util.isStatic
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 
@@ -179,15 +186,32 @@ class EffectAnalysisLowering(val context: JsCommonBackendContext) : BodyLowering
             }
         }
 
+        override fun visitDynamicOperatorExpression(
+            expression: IrDynamicOperatorExpression,
+            data: Effects.Lazy,
+        ) {
+            if (
+                expression.operator.isAssignmentOperator
+                || expression.operator == IrDynamicOperator.INVOKE
+                || expression.operator == IrDynamicOperator.ARRAY_ACCESS
+            ) {
+                data.dependOnNew(expression) {
+                    if (expression.operator == IrDynamicOperator.ARRAY_ACCESS && expression.arguments.size == 1) {
+                        it.setAtLeast(EffectsKind.READ)
+                    } else {
+                        it.setAtLeast(EffectsKind.WRITE)
+                    }
+                }
+            }
+            super.visitDynamicOperatorExpression(expression, data)
+        }
+
         val IrFunction.isFinal: Boolean
             get() {
                 if (this.isStatic) return true
                 if (this !is IrSimpleFunction) return true
                 if (this.modality == Modality.FINAL) return true
-                (this.parent as? IrClass)?.let {
-                    return it.modality == Modality.FINAL
-                }
-                return true
+                return false
             }
     }
 }

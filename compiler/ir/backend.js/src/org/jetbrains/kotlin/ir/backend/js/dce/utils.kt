@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.EffectsKind
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.computeEffectsKind
+import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder.buildComposite
 import org.jetbrains.kotlin.ir.backend.js.lower.PrimaryConstructorLowering
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -94,12 +95,21 @@ fun dumpDeclarationIrSizesIfNeed(path: String?, allModules: List<IrModuleFragmen
 class SetFieldRemover(val context: JsCommonBackendContext, val usefulDeclarations: Set<IrDeclaration>) : IrElementTransformerVoid() {
     override fun visitSetField(expression: IrSetField): IrExpression {
         if (expression.symbol.owner !in usefulDeclarations) {
-            val effects = expression.value.computeEffectsKind(context)
-            return if (effects == EffectsKind.WRITE) {
-                super.visitSetField(expression)
-                expression.value
-            } else {
-                IrCompositeImpl(expression.startOffset, expression.endOffset, expression.type, expression.origin)
+            val receiverEffects = expression.receiver?.computeEffectsKind(context) == EffectsKind.WRITE
+            val valueEffects = expression.value.computeEffectsKind(context) == EffectsKind.WRITE
+            return when (receiverEffects to valueEffects) {
+                true to true -> {
+                    buildComposite(
+                        expression.type,
+                        listOf(
+                            expression.receiver!!.transform(this, null),
+                            expression.value.transform(this, null),
+                        )
+                    )
+                }
+                true to false -> expression.receiver!!.transform(this, null)
+                false to true -> expression.value.transform(this, null)
+                else /* false to false */ -> buildComposite(expression.type)
             }
         }
         return super.visitSetField(expression)
