@@ -140,21 +140,18 @@ abstract class AbstractBinaryClassAnnotationLoader<A : Any, S : AbstractBinaryCl
         isConst: Boolean? = null,
         isMovedFromInterfaceCompanion: Boolean = false
     ): List<A> {
-        val kotlinClass =
-            findClassWithAnnotationsAndInitializers(
-                container,
-                getSpecialCaseContainerClass(
-                    container,
-                    property,
-                    field,
-                    isConst,
-                    isMovedFromInterfaceCompanion,
-                    kotlinClassFinder, metadataVersion
-                )
-            )
-                ?: return listOf()
-
-        return getAnnotationsContainer(kotlinClass).memberAnnotations[signature] ?: listOf()
+        val specialCase = getSpecialCaseContainerClass(
+            container,
+            property,
+            field,
+            isConst,
+            isMovedFromInterfaceCompanion,
+            kotlinClassFinder, metadataVersion
+        )
+        return specialCase
+            ?.let { getAnnotationsContainer(it).memberAnnotations[signature] }
+            ?: (container as? ProtoContainer.Class)?.toBinaryClass()?.let(::getAnnotationsContainer)?.memberAnnotations[signature]
+            ?: listOf()
     }
 
     override fun loadValueParameterAnnotations(

@@ -123,14 +123,16 @@ internal abstract class KotlinKProperty<out V>(
                 return kmProperty.annotations.map { it.toAnnotation(container.jClass.safeClassLoader) }
             }
 
-            val container = originalContainer
-            val annotationContainer = if ((container as? KClassImpl<*>)?.classKind == ClassKind.INTERFACE) {
-                container.jClass.classes.firstOrNull { it.simpleName == JvmAbi.DEFAULT_IMPLS_CLASS_NAME }
-                    ?.kotlin as KDeclarationContainerImpl? ?: container
-            } else container
             val syntheticMethod = kmProperty.syntheticMethodForAnnotations ?: return emptyList()
-            val annotations = annotationContainer.findMethodBySignature(syntheticMethod.name, syntheticMethod.descriptor)
-                ?.annotations?.toList()
+            val container = originalContainer
+            val specialAnnotationContainer = container
+                .takeIf { (it as? KClassImpl<*>)?.classKind == ClassKind.INTERFACE }
+                ?.jClass?.classes?.firstOrNull { it.simpleName == JvmAbi.DEFAULT_IMPLS_CLASS_NAME }
+                ?.kotlin as KDeclarationContainerImpl?
+            val annotationMethod =
+                specialAnnotationContainer?.findMethodBySignature(syntheticMethod.name, syntheticMethod.descriptor)
+                    ?: container.findMethodBySignature(syntheticMethod.name, syntheticMethod.descriptor)
+            val annotations = annotationMethod?.annotations?.toList()
                 ?: throw KotlinReflectionInternalError("No synthetic method found: $this")
             return annotations.unwrapKotlinRepeatableAnnotations()
         }

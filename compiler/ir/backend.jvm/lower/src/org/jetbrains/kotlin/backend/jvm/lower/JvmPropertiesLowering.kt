@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.jvm.getRequiresMangling
 import org.jetbrains.kotlin.backend.jvm.hasMangledReturnType
 import org.jetbrains.kotlin.backend.jvm.ir.accessorShouldBeUsed
 import org.jetbrains.kotlin.backend.jvm.ir.shouldKeepAccessor
+import org.jetbrains.kotlin.backend.jvm.syntheticMethodForProperty
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -205,6 +206,7 @@ internal class JvmPropertiesLowering(
             } ?: emptyList()
             parent = declaration.parent
             metadata = declaration.metadata
+            syntheticMethodForProperty = declaration
         }
 
         fun JvmBackendContext.createSyntheticMethodForPropertyDelegate(declaration: IrProperty) =
