@@ -8,6 +8,8 @@ import org.jetbrains.kotlin.fir.plugin.createConeType
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlinx.dataframe.impl.api.withValuesImpl
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.ColumnType
+import org.jetbrains.kotlinx.dataframe.plugin.findSchemaArgument
+import org.jetbrains.kotlinx.dataframe.plugin.getSchema
 import org.jetbrains.kotlinx.dataframe.plugin.impl.*
 import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 
@@ -194,6 +196,26 @@ internal fun Arguments.extractBaseColumnValuesType(resolvedType: ConeKotlinType?
 class DataFrameOfPairs : SchemaConstructor()
 
 class ColumnOfPairs : SchemaConstructor()
+
+/**
+ * Handles `columnOf(vararg frames: DataFrame<T>): FrameColumn<T>`.
+ * Same as at runtime, the schema of the resulting [org.jetbrains.kotlinx.dataframe.columns.FrameColumn]
+ * is the intersection of the schemas of all given frames.
+ */
+class ColumnOfFrames : AbstractSchemaModificationInterpreter() {
+    val Arguments.frames: FirVarargArgumentsExpression by arg(lens = Interpreter.Id)
+
+    override fun Arguments.interpret(): PluginDataFrameSchema {
+        val schemas = frames.arguments.map {
+            it.resolvedType.findSchemaArgument(isTest)?.getSchema() ?: return PluginDataFrameSchema.EMPTY
+        }
+        if (schemas.isEmpty()) return PluginDataFrameSchema.EMPTY
+        val columns = schemas
+            .map { it.columns() }
+            .reduce { acc, columns -> intersectFrameColumnSchemas(acc, columns) }
+        return PluginDataFrameSchema(columns)
+    }
+}
 
 class DataFrameGenerator : AbstractSchemaModificationInterpreter() {
     val Arguments.size by ignore()
