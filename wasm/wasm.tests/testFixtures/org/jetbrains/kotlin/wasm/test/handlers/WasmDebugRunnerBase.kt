@@ -25,7 +25,8 @@ abstract class WasmDebugRunnerBase(testServices: TestServices, includeLocalVaria
         testServices,
         ArtifactKinds.Wasm,
         includeColumnInformation = true,
-        includeLocalVariableInformation = includeLocalVariableInformation
+        includeLocalVariableInformation = includeLocalVariableInformation,
+        includeTypeInfoForVariables = includeLocalVariableInformation
     ),
     WasmArtifactsCollector {
     protected val modulesToArtifact = mutableMapOf<TestModule, BinaryArtifacts.Wasm>()

@@ -37,8 +37,13 @@ import java.util.logging.Logger
  * For simplicity, only the [FULL_DEV][TranslationMode.FULL_DEV] translation mode is
  * supported.
  */
-class JsDebugRunner(testServices: TestServices) :
-    D8BasedDebugRunner<BinaryArtifacts.Js>(testServices, ArtifactKinds.Js, preserveSteppingOnTheSamePlace = true) {
+open class JsDebugRunner(testServices: TestServices, includeLocalVariableInformation: Boolean = false) :
+    D8BasedDebugRunner<BinaryArtifacts.Js>(
+        testServices,
+        ArtifactKinds.Js,
+        preserveSteppingOnTheSamePlace = true,
+        includeLocalVariableInformation = includeLocalVariableInformation,
+    ) {
     val modulesToArtifact = mutableMapOf<TestModule, BinaryArtifacts.Js>()
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Js) {
@@ -58,7 +63,8 @@ class JsDebugRunner(testServices: TestServices) :
     override val debugMode: DebugMode get() = DebugMode.NONE
 
     // language=js
-    override val jsCodeToGetModuleWithBoxFunction = "const box = main.box"
+    override val jsCodeToGetModuleWithBoxFunction: String
+        get() = "const box = ${testModule.name}.box"
 
     override fun saveEntryFile(outputDir: File, content: String) {
         val testFile = File(outputDir, "test.js")
@@ -82,7 +88,12 @@ class JsDebugRunner(testServices: TestServices) :
             is SourceMapError -> error(parseResult.message)
         }
 
-        writeToFilesAndRunTest(outputDir, listOf(parsedSourceMap), artifactFileName)
+        writeToFilesAndRunTest(
+            outputDir,
+            listOf(parsedSourceMap),
+            artifactFileName,
+            generatedCodeBySourceMap = mapOf(parsedSourceMap to File(jsFilePath).readLines())
+        )
     }
 
     override fun runSavedCode(outputDir: File) =
@@ -112,3 +123,6 @@ class JsDebugRunner(testServices: TestServices) :
             }?.name
     }
 }
+
+class JsLocalVariableDebugRunner(testServices: TestServices) :
+    JsDebugRunner(testServices, includeLocalVariableInformation = true)

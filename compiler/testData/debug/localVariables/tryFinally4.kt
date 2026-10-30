@@ -51,19 +51,19 @@ fun box() {
 // EXPECTATIONS JS_IR
 // test.kt:29 box:
 // test.kt:7 compute:
-// test.kt:9 compute: result="":kotlin.String
-// test.kt:11 compute: result="":kotlin.String, a="a":kotlin.String
-// test.kt:12 compute: result="":kotlin.String, a="a":kotlin.String, b="b":kotlin.String
-// test.kt:12 compute: result="":kotlin.String, a="a":kotlin.String, b="b":kotlin.String
-// test.kt:12 compute: result="":kotlin.String, a="a":kotlin.String, b="b":kotlin.String
-// test.kt:12 compute: result="":kotlin.String, a="a":kotlin.String, b="b":kotlin.String, i=0:number
-// test.kt:13 compute: result="":kotlin.String, a="a":kotlin.String, b="b":kotlin.String, i=0:number
-// test.kt:14 compute: result="":kotlin.String, a="a":kotlin.String, b="b":kotlin.String, i=0:number, e="e":kotlin.String
-// test.kt:15 compute: result="b":kotlin.String, a="a":kotlin.String, b="b":kotlin.String, i=0:number, e="e":kotlin.String
-// test.kt:18 compute: result="b":kotlin.String, a="a":kotlin.String, b="b":kotlin.String, i=0:number, e="e":kotlin.String
-// test.kt:19 compute: result="b":kotlin.String, a="a":kotlin.String, b="b":kotlin.String, i=0:number, e="e":kotlin.String, c="c":kotlin.String
-// test.kt:22 compute: result="bc":kotlin.String, a="a":kotlin.String, b="b":kotlin.String, i=0:number, e="e":kotlin.String, c="c":kotlin.String
-// test.kt:23 compute: result="bc":kotlin.String, a="a":kotlin.String, b="b":kotlin.String, i=0:number, e="e":kotlin.String, c="c":kotlin.String, d="d":kotlin.String
+// test.kt:9 compute: result:kotlin.String="":kotlin.String
+// test.kt:11 compute: result:kotlin.String="":kotlin.String, a:kotlin.String="a":kotlin.String
+// test.kt:12 compute: result:kotlin.String="":kotlin.String, a:kotlin.String="a":kotlin.String, b:kotlin.String="b":kotlin.String
+// test.kt:12 compute: result:kotlin.String="":kotlin.String, a:kotlin.String="a":kotlin.String, b:kotlin.String="b":kotlin.String, inductionVariable:number=0:number
+// test.kt:12 compute: result:kotlin.String="":kotlin.String, a:kotlin.String="a":kotlin.String, b:kotlin.String="b":kotlin.String, inductionVariable:number=0:number
+// test.kt:12 compute: result:kotlin.String="":kotlin.String, a:kotlin.String="a":kotlin.String, b:kotlin.String="b":kotlin.String, inductionVariable:number=0:number, i:number=0:number
+// test.kt:13 compute: result:kotlin.String="":kotlin.String, a:kotlin.String="a":kotlin.String, b:kotlin.String="b":kotlin.String, inductionVariable:number=1:number, i:number=0:number
+// test.kt:14 compute: result:kotlin.String="":kotlin.String, a:kotlin.String="a":kotlin.String, b:kotlin.String="b":kotlin.String, inductionVariable:number=1:number, i:number=0:number, e:kotlin.String="e":kotlin.String
+// test.kt:15 compute: result:kotlin.String="b":kotlin.String, a:kotlin.String="a":kotlin.String, b:kotlin.String="b":kotlin.String, inductionVariable:number=1:number, i:number=0:number, e:kotlin.String="e":kotlin.String
+// test.kt:18 compute: result:kotlin.String="b":kotlin.String, a:kotlin.String="a":kotlin.String, b:kotlin.String="b":kotlin.String, inductionVariable:number=1:number, i:number=0:number, e:kotlin.String="e":kotlin.String
+// test.kt:19 compute: result:kotlin.String="b":kotlin.String, a:kotlin.String="a":kotlin.String, b:kotlin.String="b":kotlin.String, inductionVariable:number=1:number, i:number=0:number, e:kotlin.String="e":kotlin.String, c:kotlin.String="c":kotlin.String
+// test.kt:22 compute: result:kotlin.String="bc":kotlin.String, a:kotlin.String="a":kotlin.String, b:kotlin.String="b":kotlin.String, inductionVariable:number=1:number, i:number=0:number, e:kotlin.String="e":kotlin.String, c:kotlin.String="c":kotlin.String
+// test.kt:23 compute: result:kotlin.String="bc":kotlin.String, a:kotlin.String="a":kotlin.String, b:kotlin.String="b":kotlin.String, inductionVariable:number=1:number, i:number=0:number, e:kotlin.String="e":kotlin.String, c:kotlin.String="c":kotlin.String, d:kotlin.String="d":kotlin.String
 
 // EXPECTATIONS WASM
 // test.kt:29 $box: (4)
