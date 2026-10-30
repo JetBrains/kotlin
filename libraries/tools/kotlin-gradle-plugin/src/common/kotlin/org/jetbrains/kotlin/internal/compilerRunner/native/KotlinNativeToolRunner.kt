@@ -118,9 +118,7 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
         environment.set(toolSpec.environment)
         environmentBlacklist.set(toolSpec.environmentBlacklist)
 
-        shouldRunInProcessMode.set(args.shouldRunInProcessMode)
-        compilerArgumentsLogLevel.set(args.compilerArgumentsLogLevel)
-        arguments.set(args.arguments)
+        this.toolArguments.set(args)
 
         this.taskPath.set(taskPath)
     }
@@ -297,7 +295,7 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
         val shouldRunInProcessMode: Boolean,
         val compilerArgumentsLogLevel: KotlinCompilerArgumentsLogLevel,
         val arguments: List<String>,
-    )
+    ) : java.io.Serializable
 
     internal interface KotlinNativeToolWorkParameters : ToolSpec, WorkParameters {
         // Runner configuration
@@ -309,10 +307,7 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
         val classLoadersCachingService: Property<ClassLoadersCachingBuildService>
         val fusService: Property<BuildFusService<out BuildFusService.Parameters>?>
 
-        // ToolArguments
-        val shouldRunInProcessMode: Property<Boolean>
-        val compilerArgumentsLogLevel: Property<KotlinCompilerArgumentsLogLevel>
-        val arguments: ListProperty<String>
+        val toolArguments: Property<ToolArguments>
 
         // Task path to report collected metrics back to via TaskExecutionResults, if any - see runToolWithWorkers.
         val taskPath: Property<String>
@@ -334,7 +329,7 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
                 parameters.fusService,
             )
             try {
-                runner.runTool(parameters.toToolArguments())
+                runner.runTool(parameters.toolArguments.get())
             } finally {
                 parameters.taskPath.orNull?.let { taskPath ->
                     TaskExecutionResults[taskPath] = TaskExecutionResult(buildMetrics = metricsReporter.getMetrics())
@@ -419,10 +414,3 @@ internal fun ToolSpec.configureDefaultMaxHeapSize(): ToolSpec = apply {
         jvmArgs.add("-Xmx3g")
     }
 }
-
-private fun KotlinNativeToolRunner.KotlinNativeToolWorkParameters.toToolArguments(): KotlinNativeToolRunner.ToolArguments =
-    KotlinNativeToolRunner.ToolArguments(
-        shouldRunInProcessMode = shouldRunInProcessMode.get(),
-        compilerArgumentsLogLevel = compilerArgumentsLogLevel.get(),
-        arguments = arguments.get(),
-    )
