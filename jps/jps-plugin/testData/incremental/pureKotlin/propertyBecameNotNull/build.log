@@ -1,0 +1,22 @@
+================ Step #1 =================
+
+Cleaning output files:
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/O.class
+End of files
+Compiling files:
+  src/o.kt
+End of files
+Exit code: OK
+------------------------------------------
+Cleaning output files:
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/WKt.class
+End of files
+Compiling files:
+  src/w.kt
+End of files
+Exit code: ABORT
+------------------------------------------
+COMPILATION FAILED
+Null cannot be a value of a non-null type 'String'.

@@ -655,6 +655,12 @@ public class IncrementalJsKlibCompilerWithScopeExpansionRunnerTestGenerated exte
     }
 
     @Test
+    @TestMetadata("propertyBecameNotNull")
+    public void testPropertyBecameNotNull() {
+      runTest("jps/jps-plugin/testData/incremental/pureKotlin/propertyBecameNotNull/");
+    }
+
+    @Test
     @TestMetadata("publicPropertyWithPrivateSetter")
     public void testPublicPropertyWithPrivateSetter() {
       runTest("jps/jps-plugin/testData/incremental/pureKotlin/publicPropertyWithPrivateSetter/");

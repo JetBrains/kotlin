@@ -679,6 +679,12 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
     }
 
     @Test
+    @TestMetadata("propertyBecameNotNull")
+    public void testPropertyBecameNotNull() {
+      runTest("jps/jps-plugin/testData/incremental/pureKotlin/propertyBecameNotNull/");
+    }
+
+    @Test
     @TestMetadata("propertyRedeclaration")
     public void testPropertyRedeclaration() {
       runTest("jps/jps-plugin/testData/incremental/pureKotlin/propertyRedeclaration/");
