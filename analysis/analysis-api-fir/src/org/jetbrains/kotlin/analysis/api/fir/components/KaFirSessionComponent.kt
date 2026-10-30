@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.asKaDiagnostic
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirType
 import org.jetbrains.kotlin.analysis.api.fir.utils.*
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.KaSubtypingErrorTypePolicy
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -30,8 +31,14 @@ import org.jetbrains.kotlin.fir.types.ConeTypeProjection
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.types.TypeCheckerState
 
-internal interface KaFirSessionComponent : KaSessionComponent {
+internal abstract class KaFirSessionComponent : KaSessionComponent {
+    abstract val analysisSessionProvider: () -> KaFirSession
+
     val analysisSession: KaFirSession
+        get() = analysisSessionProvider()
+
+    final override val token: KaLifetimeToken
+        get() = analysisSession.token
 
     val project: Project get() = analysisSession.project
     val rootModuleSession: FirSession get() = analysisSession.resolutionFacade.useSiteFirSession
@@ -63,3 +70,7 @@ internal interface KaFirSessionComponent : KaSessionComponent {
 
     fun ConeSubstitutor.toKaSubstitutor(): KaSubstitutor = toKaSubstitutor(analysisSession)
 }
+
+context(sessionComponent: KaFirSessionComponent)
+internal val analysisSession: KaFirSession
+    get() = sessionComponent.analysisSession

@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.*
 import org.jetbrains.kotlin.analysis.api.fir.types.*
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.toVariance
-import org.jetbrains.kotlin.analysis.api.impl.base.types.KaBaseStarTypeProjection
-import org.jetbrains.kotlin.analysis.api.impl.base.types.KaBaseTypeArgumentWithVariance
+import org.jetbrains.kotlin.analysis.api.fir.types.KaFirStarTypeProjection
+import org.jetbrains.kotlin.analysis.api.fir.types.KaFirTypeArgumentWithVariance
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProvider
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
@@ -514,8 +514,8 @@ internal class KaSymbolByFirBuilder(
         fun buildKtType(coneType: FirTypeRef): KaType = buildKtType(coneType.coneType)
 
         fun buildTypeProjection(coneType: ConeTypeProjection): KaTypeProjection = when (coneType) {
-            is ConeStarProjection -> KaBaseStarTypeProjection(token)
-            is ConeKotlinTypeProjection -> KaBaseTypeArgumentWithVariance(
+            is ConeStarProjection -> KaFirStarTypeProjection(token)
+            is ConeKotlinTypeProjection -> KaFirTypeArgumentWithVariance(
                 buildKtType(coneType.type),
                 coneType.kind.toVariance(),
                 token,

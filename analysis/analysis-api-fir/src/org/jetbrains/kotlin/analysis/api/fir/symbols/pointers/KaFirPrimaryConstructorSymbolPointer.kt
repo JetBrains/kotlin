@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
-import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBaseCachedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
@@ -23,7 +22,7 @@ import org.jetbrains.kotlin.fir.getPrimaryConstructorSymbol
 internal class KaFirPrimaryConstructorSymbolPointer(
     private val ownerPointer: KaSymbolPointer<KaClassSymbol>,
     originalSymbol: KaConstructorSymbol?,
-) : KaBaseCachedSymbolPointer<KaConstructorSymbol>(originalSymbol = originalSymbol) {
+) : KaFirCachedSymbolPointer<KaConstructorSymbol>(originalSymbol = originalSymbol) {
     @KaImplementationDetail
     override fun restoreIfNotCached(analysisSession: KaSession): KaConstructorSymbol? {
         require(analysisSession is KaFirSession)

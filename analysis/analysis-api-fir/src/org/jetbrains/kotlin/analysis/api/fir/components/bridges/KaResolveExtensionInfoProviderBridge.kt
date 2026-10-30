@@ -9,7 +9,8 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaResolveExtensionInfoProvider
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.components.KaFirSessionComponent
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsResolveExtensionInfoProvider
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.psi.KtElement
@@ -23,8 +24,8 @@ import org.jetbrains.kotlin.analysis.api.resolve.extensions.resolveExtensionScop
  * `org.jetbrains.kotlin.analysis.api.resolve.extensions` package, which in turn reach the [KaInternalsResolveExtensionInfoProvider] proxy.
  */
 internal class KaResolveExtensionInfoProviderBridge(
-    override val analysisSessionProvider: () -> KaSession,
-) : KaBaseSessionComponent<KaSession>(), KaResolveExtensionInfoProvider {
+    override val analysisSessionProvider: () -> KaFirSession,
+) : KaFirSessionComponent(), KaResolveExtensionInfoProvider {
     override val resolveExtensionScopeWithTopLevelDeclarations: KaScope
         get() = context(analysisSession) { resolveExtensionScopeWithTopLevelDeclarationsEndpoint }
 

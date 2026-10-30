@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticCheckerKind
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostics
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
+import org.jetbrains.kotlin.analysis.api.fir.components.KaFirSessionComponent
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsDiagnosticProvider
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.psi.KtFile
 @Suppress("OVERRIDE_DEPRECATION")
 internal class KaDiagnosticProviderBridge(
     override val analysisSessionProvider: () -> KaFirSession,
-) : KaBaseSessionComponent<KaFirSession>(), KaDiagnosticProvider {
+) : KaFirSessionComponent(), KaDiagnosticProvider {
     private val proxy: KaInternalsDiagnosticProvider
         get() = analysisSession.diagnosticProvider
 

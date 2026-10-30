@@ -10,7 +10,8 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaBuiltinFunctionTypeFamilies
 import org.jetbrains.kotlin.analysis.api.components.KaFunctionTypeFamily
 import org.jetbrains.kotlin.analysis.api.components.KaTypeInformationProvider
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.components.KaFirSessionComponent
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -42,8 +43,8 @@ import org.jetbrains.kotlin.analysis.api.types.isSuspendFunctionType as isSuspen
  * `types`-package interfaces, so the endpoint results are narrowed back to the legacy surface with `as`.
  */
 internal class KaTypeInformationProviderBridge(
-    override val analysisSessionProvider: () -> KaSession,
-) : KaBaseSessionComponent<KaSession>(), KaTypeInformationProvider {
+    override val analysisSessionProvider: () -> KaFirSession,
+) : KaFirSessionComponent(), KaTypeInformationProvider {
     override val KaType.isDenotable: Boolean
         get() = context(analysisSession) { isDenotableEndpoint }
 

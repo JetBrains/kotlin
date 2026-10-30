@@ -11,13 +11,16 @@ import org.jetbrains.kotlin.analysis.api.fir.types.KaFirErrorType
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirType
 import org.jetbrains.kotlin.analysis.api.fir.types.PublicTypeApproximator
 import org.jetbrains.kotlin.analysis.api.fir.utils.ConeSupertypeCalculationMode
+import org.jetbrains.kotlin.analysis.api.fir.utils.ConeTypeCompatibilityChecker
+import org.jetbrains.kotlin.analysis.api.fir.utils.ConeTypeCompatibilityChecker.isCompatible
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.getAllStrictSupertypes
 import org.jetbrains.kotlin.analysis.api.fir.utils.getDirectSupertypes
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseTypeProvider
-import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
+import org.jetbrains.kotlin.analysis.api.internals.KaInternalsTypeProvider
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassifierSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaBuiltinTypes
 import org.jetbrains.kotlin.analysis.api.types.KaErrorType
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -26,8 +29,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.analysis.api.fir.utils.ConeTypeCompatibilityChecker
-import org.jetbrains.kotlin.analysis.api.fir.utils.ConeTypeCompatibilityChecker.isCompatible
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.java.enhancement.EnhancedForWarningConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.defaultType
@@ -46,12 +47,28 @@ import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 internal class KaFirTypeProvider(
     override val analysisSessionProvider: () -> KaFirSession,
-) : KaBaseTypeProvider<KaFirSession>(), KaFirSessionComponent {
+) : KaFirSessionComponent(), KaInternalsTypeProvider {
     private val cachedBuiltinTypes: KaBuiltinTypes by lazy {
         KaFirBuiltInTypes(rootModuleSession.builtinTypes, firSymbolBuilder, token)
     }
 
     override fun builtinTypes(): KaBuiltinTypes = cachedBuiltinTypes
+
+    override fun varargArrayType(symbol: KaValueParameterSymbol): KaType? = withValidityAssertion {
+        if (!symbol.isVararg) {
+            return null
+        }
+
+        return analysisSession.buildVarargArrayType(symbol.returnType)
+    }
+
+    override fun defaultTypeWithStarProjections(symbol: KaClassifierSymbol): KaType = withValidityAssertion {
+        return if (symbol is KaClassLikeSymbol) {
+            analysisSession.typeCreator.classType(symbol)
+        } else {
+            defaultType(symbol)
+        }
+    }
 
     override fun approximateToDenotableSupertype(type: KaType, allowLocalDenotableTypes: Boolean): KaType? = withValidityAssertion {
         val coneType = type.coneType

@@ -7,12 +7,10 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
 import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
+import org.jetbrains.kotlin.analysis.api.fir.KaErrorConstantValueImpl
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.evaluate.FirAnnotationValueConverter
 import org.jetbrains.kotlin.analysis.api.fir.evaluate.FirCompileTimeConstantEvaluator
-import org.jetbrains.kotlin.analysis.api.impl.base.KaErrorConstantValueImpl
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
-import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsEvaluator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.fir.FirElement
@@ -23,7 +21,7 @@ import org.jetbrains.kotlin.psi.KtExpression
 
 internal class KaFirEvaluator(
     override val analysisSessionProvider: () -> KaFirSession
-) : KaBaseSessionComponent<KaFirSession>(), KaInternalsEvaluator, KaFirSessionComponent {
+) : KaFirSessionComponent(), KaInternalsEvaluator {
     override fun evaluate(expression: KtExpression): KaConstantValue? = expression.withPsiValidityAssertion {
         return evaluateFir(expression.getOrBuildFir(resolutionFacade), expression)
     }

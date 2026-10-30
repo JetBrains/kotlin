@@ -67,9 +67,66 @@ KaFunctionType:
       hasFlexibleNullability: false
   ]
   parameters: [
-    KaBaseFunctionValueParameter [name: second, type: kotlin/Int]
-    KaBaseFunctionValueParameter [name: third, type: kotlin/Int]
-    KaBaseFunctionValueParameter [name: fourth, type: kotlin/Int]
+    KaFunctionValueParameter:
+      name: second
+      type: KaUsualClassType:
+        abbreviation: null
+        annotations: [
+          kotlin/ParameterName(name = "second")
+            psi: null
+        ]
+        classId: kotlin/Int
+        qualifiers: [
+          KaResolvedClassTypeQualifier:
+            name: Int
+            symbol: KaNamedClassSymbol(kotlin/Int)
+            typeArguments: []
+        ]
+        symbol: KaNamedClassSymbol(kotlin/Int)
+        typeArguments: []
+        isMarkedNullable: false
+        isNullable: false
+        hasFlexibleNullability: false
+    KaFunctionValueParameter:
+      name: third
+      type: KaUsualClassType:
+        abbreviation: null
+        annotations: [
+          kotlin/ParameterName(name = "third")
+            psi: null
+        ]
+        classId: kotlin/Int
+        qualifiers: [
+          KaResolvedClassTypeQualifier:
+            name: Int
+            symbol: KaNamedClassSymbol(kotlin/Int)
+            typeArguments: []
+        ]
+        symbol: KaNamedClassSymbol(kotlin/Int)
+        typeArguments: []
+        isMarkedNullable: false
+        isNullable: false
+        hasFlexibleNullability: false
+    KaFunctionValueParameter:
+      name: fourth
+      type: KaUsualClassType:
+        abbreviation: null
+        annotations: [
+          kotlin/ParameterName(name = "fourth")
+            psi: null
+        ]
+        classId: kotlin/Int
+        qualifiers: [
+          KaResolvedClassTypeQualifier:
+            name: Int
+            symbol: KaNamedClassSymbol(kotlin/Int)
+            typeArguments: []
+        ]
+        symbol: KaNamedClassSymbol(kotlin/Int)
+        typeArguments: []
+        isMarkedNullable: false
+        isNullable: false
+        hasFlexibleNullability: false
   ]
   qualifiers: [
     KaResolvedClassTypeQualifier:

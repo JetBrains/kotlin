@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols.pointers
 
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBaseCachedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.KaKotlinPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -18,7 +17,7 @@ import org.jetbrains.kotlin.name.Name
 internal class KaFirDynamicPropertySymbolPointer(
     private val name: Name,
     originalSymbol: KaKotlinPropertySymbol?,
-) : KaBaseCachedSymbolPointer<KaKotlinPropertySymbol>(originalSymbol) {
+) : KaFirCachedSymbolPointer<KaKotlinPropertySymbol>(originalSymbol) {
 
     override fun restoreIfNotCached(analysisSession: KaSession): KaKotlinPropertySymbol {
         require(analysisSession is KaFirSession)

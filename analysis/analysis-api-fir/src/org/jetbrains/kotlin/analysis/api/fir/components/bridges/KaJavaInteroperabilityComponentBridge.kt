@@ -12,7 +12,6 @@ import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.analysis.api.components.KaJavaInteroperabilityComponent
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.components.KaFirSessionComponent
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsJavaInteroperabilityComponent
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
@@ -29,7 +28,7 @@ import org.jetbrains.kotlin.analysis.api.javaInterop.namedClassSymbol as namedCl
 
 internal class KaJavaInteroperabilityComponentBridge(
     override val analysisSessionProvider: () -> KaFirSession,
-) : KaBaseSessionComponent<KaFirSession>(), KaJavaInteroperabilityComponent, KaFirSessionComponent {
+) : KaFirSessionComponent(), KaJavaInteroperabilityComponent {
     private val proxy: KaInternalsJavaInteroperabilityComponent
         get() = analysisSession.javaInteroperabilityComponent
 

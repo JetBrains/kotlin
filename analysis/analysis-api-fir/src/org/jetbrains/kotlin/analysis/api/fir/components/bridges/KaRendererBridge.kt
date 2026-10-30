@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.analysis.api.fir.components.bridges
 
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
-import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaRenderer
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.components.KaFirSessionComponent
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.types.KaTypeRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
@@ -18,8 +18,8 @@ import org.jetbrains.kotlin.analysis.api.renderer.render as renderEndpoint
 
 @KaImplementationDetail
 internal class KaRendererBridge(
-    override val analysisSessionProvider: () -> KaSession,
-) : KaBaseSessionComponent<KaSession>(), KaRenderer {
+    override val analysisSessionProvider: () -> KaFirSession,
+) : KaFirSessionComponent(), KaRenderer {
     override fun KaDeclarationSymbol.render(renderer: KaDeclarationRenderer): String =
         context(analysisSession) { renderEndpoint(renderer) }
 

@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analysis.api.components.KaCallableImplementationStat
 import org.jetbrains.kotlin.analysis.api.components.KaSymbolRelationProvider
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.components.KaFirSessionComponent
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -36,7 +35,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.sealedClassInheritors as sealed
 
 internal class KaSymbolRelationProviderBridge(
     override val analysisSessionProvider: () -> KaFirSession,
-) : KaBaseSessionComponent<KaFirSession>(), KaSymbolRelationProvider, KaFirSessionComponent {
+) : KaFirSessionComponent(), KaSymbolRelationProvider {
     override val KaSymbol.containingSymbol: KaSymbol?
         get() = context(analysisSession) { containingSymbolEndpoint }
 

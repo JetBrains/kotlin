@@ -6,13 +6,14 @@
 package org.jetbrains.kotlin.analysis.api.fir
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.fir.components.*
+import org.jetbrains.kotlin.analysis.api.fir.components.KaFirAnalysisScopeProviderImpl
+import org.jetbrains.kotlin.analysis.api.fir.components.KaRendererImpl
 import org.jetbrains.kotlin.analysis.api.fir.components.bridges.*
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbolProvider
-import org.jetbrains.kotlin.analysis.api.impl.base.KaBaseSession
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseAnalysisScopeProviderImpl
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaRendererImpl
-import org.jetbrains.kotlin.analysis.api.impl.base.util.createSession
+import org.jetbrains.kotlin.analysis.api.fir.utils.createSession
 import org.jetbrains.kotlin.analysis.api.internals.*
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.assertIsValid
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.analysis.api.platform.packages.createPackageProvider
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScope
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.allDirectDependencies
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.LLFirResolveExtensionTool
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.llResolveExtensionTool
@@ -43,46 +45,45 @@ import org.jetbrains.kotlin.utils.addIfNotNull
  * strong reference to the `LLFirSession`. See the documentation of [LLFirSession][org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession]
  * for more information.
  */
-@Suppress("AnalysisApiMissingLifetimeCheck")
+@Suppress("AnalysisApiMissingLifetimeCheck", "DEPRECATION")
 internal class KaFirSession
 private constructor(
     val project: Project,
     val resolutionFacade: LLResolutionFacade,
     val extensionTools: List<LLFirResolveExtensionTool>,
-    token: KaLifetimeToken,
+    override val token: KaLifetimeToken,
     analysisSessionProvider: () -> KaFirSession,
     useSiteScope: KaResolutionScope,
-) : KaBaseSession(
-    token,
-    resolver = KaResolverBridge(analysisSessionProvider),
-    symbolRelationProvider = KaSymbolRelationProviderBridge(analysisSessionProvider),
-    diagnosticProvider = KaDiagnosticProviderBridge(analysisSessionProvider),
-    scopeProvider = KaScopeProviderBridge(analysisSessionProvider),
-    completionCandidateChecker = KaCompletionCandidateCheckerBridge(analysisSessionProvider),
-    expressionTypeProvider = KaExpressionTypeProviderBridge(analysisSessionProvider),
-    typeProvider = KaTypeProviderBridge(analysisSessionProvider),
-    typeInformationProvider = KaTypeInformationProviderBridge(analysisSessionProvider),
-    symbolProvider = KaSymbolProviderBridge(analysisSessionProvider),
-    javaInteroperabilityComponent = KaJavaInteroperabilityComponentBridge(analysisSessionProvider),
-    symbolInformationProvider = KaSymbolInformationProviderBridge(analysisSessionProvider),
-    typeRelationChecker = KaTypeRelationCheckerBridge(analysisSessionProvider),
-    expressionInformationProvider = KaExpressionInformationProviderBridge(analysisSessionProvider),
-    evaluator = KaEvaluatorBridge(analysisSessionProvider),
-    referenceShortener = KaReferenceShortenerBridge(analysisSessionProvider),
-    renderer = KaRendererBridge(analysisSessionProvider),
-    visibilityChecker = KaVisibilityCheckerBridge(analysisSessionProvider),
-    typeCreator = KaTypeCreatorBridge(analysisSessionProvider),
-    typeCreatorProvider = KaTypeCreatorProviderBridge(analysisSessionProvider),
-    analysisScopeProvider = KaAnalysisScopeProviderBridge(analysisSessionProvider),
-    signatureSubstitutor = KaSignatureSubstitutorBridge(analysisSessionProvider),
-    resolveExtensionInfoProvider = KaResolveExtensionInfoProviderBridge(analysisSessionProvider),
-    compilerPluginGeneratedDeclarationsProvider = KaCompilerPluginGeneratedDeclarationsProviderBridge(analysisSessionProvider),
-    compilerFacility = KaCompilerFacilityBridge(analysisSessionProvider),
-    substitutorProvider = KaSubstitutorProviderBridge(analysisSessionProvider),
-    dataFlowProvider = KaDataFlowProviderBridge(analysisSessionProvider),
-    sourceProvider = KaSourceProviderBridge(analysisSessionProvider),
-    kDocProvider = KaKDocProviderBridge(analysisSessionProvider),
-) {
+) : KaSession,
+    KaInternals,
+    KaResolver by KaResolverBridge(analysisSessionProvider),
+    KaSymbolRelationProvider by KaSymbolRelationProviderBridge(analysisSessionProvider),
+    KaDiagnosticProvider by KaDiagnosticProviderBridge(analysisSessionProvider),
+    KaScopeProvider by KaScopeProviderBridge(analysisSessionProvider),
+    KaCompletionCandidateChecker by KaCompletionCandidateCheckerBridge(analysisSessionProvider),
+    KaExpressionTypeProvider by KaExpressionTypeProviderBridge(analysisSessionProvider),
+    KaTypeProvider by KaTypeProviderBridge(analysisSessionProvider),
+    KaTypeInformationProvider by KaTypeInformationProviderBridge(analysisSessionProvider),
+    KaSymbolProvider by KaSymbolProviderBridge(analysisSessionProvider),
+    KaJavaInteroperabilityComponent by KaJavaInteroperabilityComponentBridge(analysisSessionProvider),
+    KaSymbolInformationProvider by KaSymbolInformationProviderBridge(analysisSessionProvider),
+    KaTypeRelationChecker by KaTypeRelationCheckerBridge(analysisSessionProvider),
+    KaExpressionInformationProvider by KaExpressionInformationProviderBridge(analysisSessionProvider),
+    KaEvaluator by KaEvaluatorBridge(analysisSessionProvider),
+    KaReferenceShortener by KaReferenceShortenerBridge(analysisSessionProvider),
+    KaRenderer by KaRendererBridge(analysisSessionProvider),
+    KaVisibilityChecker by KaVisibilityCheckerBridge(analysisSessionProvider),
+    KaTypeCreator by KaTypeCreatorBridge(analysisSessionProvider),
+    KaTypeCreatorProvider by KaTypeCreatorProviderBridge(analysisSessionProvider),
+    KaAnalysisScopeProvider by KaAnalysisScopeProviderBridge(analysisSessionProvider),
+    KaSignatureSubstitutor by KaSignatureSubstitutorBridge(analysisSessionProvider),
+    KaResolveExtensionInfoProvider by KaResolveExtensionInfoProviderBridge(analysisSessionProvider),
+    KaCompilerPluginGeneratedDeclarationsProvider by KaCompilerPluginGeneratedDeclarationsProviderBridge(analysisSessionProvider),
+    KaCompilerFacility by KaCompilerFacilityBridge(analysisSessionProvider),
+    KaSubstitutorProvider by KaSubstitutorProviderBridge(analysisSessionProvider),
+    KaDataFlowProvider by KaDataFlowProviderBridge(analysisSessionProvider),
+    KaSourceProvider by KaSourceProviderBridge(analysisSessionProvider),
+    KaKDocProvider by KaKDocProviderBridge(analysisSessionProvider) {
     override val resolver: KaInternalsResolver =
         KaFirResolver(analysisSessionProvider)
 
@@ -132,7 +133,7 @@ private constructor(
         KaFirTypeCreator(analysisSessionProvider)
 
     override val analysisScopeProvider: KaInternalsAnalysisScopeProvider =
-        KaBaseAnalysisScopeProviderImpl(analysisSessionProvider, useSiteScope)
+        KaFirAnalysisScopeProviderImpl(analysisSessionProvider, useSiteScope)
 
     override val completionCandidateChecker: KaInternalsCompletionCandidateChecker =
         KaFirCompletionCandidateChecker(analysisSessionProvider)

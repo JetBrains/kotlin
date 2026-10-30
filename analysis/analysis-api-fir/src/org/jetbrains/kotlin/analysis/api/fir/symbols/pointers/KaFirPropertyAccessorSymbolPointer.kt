@@ -1,0 +1,47 @@
+/*
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.analysis.api.fir.symbols.pointers
+
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+
+internal sealed class KaFirPropertyAccessorSymbolPointer<T : KaPropertyAccessorSymbol>(
+    private val propertySymbolPointer: KaSymbolPointer<KaPropertySymbol>,
+    originalSymbol: T?,
+) : KaFirCachedSymbolPointer<T>(originalSymbol) {
+    protected fun restorePropertySymbol(analysisSession: KaSession): KaPropertySymbol? = with(analysisSession) {
+        return propertySymbolPointer.restoreSymbol()
+    }
+
+    override fun pointsToTheSameSymbolAs(other: KaSymbolPointer<KaSymbol>): Boolean {
+        return this === other ||
+                other is KaFirPropertyAccessorSymbolPointer<*> &&
+                other.javaClass == javaClass &&
+                other.propertySymbolPointer.pointsToTheSameSymbolAs(propertySymbolPointer)
+    }
+}
+
+internal class KaFirPropertyGetterSymbolPointer(
+    propertySymbolPointer: KaSymbolPointer<KaPropertySymbol>,
+    originalSymbol: KaPropertyGetterSymbol?,
+) : KaFirPropertyAccessorSymbolPointer<KaPropertyGetterSymbol>(propertySymbolPointer, originalSymbol) {
+    @KaImplementationDetail
+    override fun restoreIfNotCached(analysisSession: KaSession): KaPropertyGetterSymbol? {
+        return restorePropertySymbol(analysisSession)?.getter
+    }
+}
+
+internal class KaFirPropertySetterSymbolPointer(
+    propertySymbolPointer: KaSymbolPointer<KaPropertySymbol>,
+    originalSymbol: KaPropertySetterSymbol?,
+) : KaFirPropertyAccessorSymbolPointer<KaPropertySetterSymbol>(propertySymbolPointer, originalSymbol) {
+    @KaImplementationDetail
+    override fun restoreIfNotCached(analysisSession: KaSession): KaPropertySetterSymbol? {
+        return restorePropertySymbol(analysisSession)?.setter
+    }
+}
