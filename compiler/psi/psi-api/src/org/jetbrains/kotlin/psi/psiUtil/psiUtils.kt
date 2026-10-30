@@ -12,7 +12,7 @@ import com.intellij.psi.impl.source.tree.LazyParseablePsiElement
 import com.intellij.psi.impl.source.tree.TreeUtil
 import com.intellij.psi.search.PsiSearchScopeUtil
 import com.intellij.psi.search.SearchScope
-import com.intellij.psi.tree.IElementType
+import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.elementType
 import org.jetbrains.kotlin.KtNodeTypes
@@ -396,9 +396,10 @@ fun PsiChildRange.trimWhiteSpaces(): PsiChildRange {
 }
 
 /**
- * See [unwrap()][org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilder.unwrap]
+ * See unwrap() in FIR builders
  */
-val UNWRAPPABLE_TOKEN_TYPES: Set<IElementType> = setOf(PARENTHESIZED, LABELED_EXPRESSION, ANNOTATED_EXPRESSION)
+@KtImplementationDetail
+val UNWRAPPABLE_TOKEN_TYPES: TokenSet = TokenSet.create(PARENTHESIZED, LABELED_EXPRESSION, ANNOTATED_EXPRESSION)
 
 /**
  * Returns the operand this operation applies to, but only when that operand is wrapped in parentheses, a label, or annotations; returns
@@ -416,6 +417,7 @@ fun PsiElement.getAssignmentLhsIfUnwrappable(): PsiElement? =
         // In `(x)++` or `(x) = ...` the LHS source is the first child
         else -> children.firstOrNull()
     }.takeIf {
+        @OptIn(KtImplementationDetail::class)
         it?.elementType in UNWRAPPABLE_TOKEN_TYPES
     }
 

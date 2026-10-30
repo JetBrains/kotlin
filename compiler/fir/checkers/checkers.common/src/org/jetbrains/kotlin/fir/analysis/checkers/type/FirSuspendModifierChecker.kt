@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.type
 
+import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -20,7 +21,7 @@ import org.jetbrains.kotlin.fir.types.FirUnresolvedTypeRef
 import org.jetbrains.kotlin.lexer.KtTokens
 
 object FirSuspendModifierChecker : FirTypeRefChecker(MppCheckerKind.Common) {
-    private val suspendTokenElementSet = setOf(KtTokens.SUSPEND_KEYWORD)
+    private val suspendTokenElementSet = TokenSet.create(KtTokens.SUSPEND_KEYWORD)
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(typeRef: FirTypeRef) {
