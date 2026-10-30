@@ -9,12 +9,16 @@ package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.ExternalModuleDependency
 import org.gradle.api.artifacts.ProjectDependency
+import org.gradle.api.artifacts.result.UnresolvedDependencyResult
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.commonizer.identityString
+import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRedirector
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonMain
 import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.linuxMain
+import org.jetbrains.kotlin.gradle.plugin.configurationResult
 import org.jetbrains.kotlin.gradle.targets.native.internal.CommonizerTargetAttribute
 import org.jetbrains.kotlin.gradle.targets.native.internal.locateOrCreateCommonizedCInteropDependencyConfiguration
 import org.jetbrains.kotlin.gradle.util.*
@@ -154,8 +158,12 @@ class CInteropCommonizerConfigurationTests {
         }
 
         producerAProject.evaluate()
+        producerBProject.evaluate()
 
         consumerProject.runLifecycleAwareTest {
+            // Dependencies of the cinterop configurations are derived from the resolved metadata dependencies
+            configurationResult.await()
+
             val commonMain = consumerProject.multiplatformExtension.sourceSets.commonMain
             val linuxMain = consumerProject.multiplatformExtension.sourceSets.linuxMain
 
@@ -178,6 +186,124 @@ class CInteropCommonizerConfigurationTests {
 
             if (linuxMainCinterop.allProjectDependencies() != setOf(producerAProject, producerBProject))
                 fail("linuxMain Cinterop configuration should depend on both `producer-a` and `producer-b` projects")
+        }
+    }
+
+    @Test
+    fun `test - cinterop configuration - contains only project dependencies`() {
+        val rootProject = buildProject()
+
+        val producerProject = buildProjectWithMPP(
+            projectBuilder = { withParent(rootProject).withName("producer") },
+            preApplyCode = { enableCInteropCommonization() },
+        ) {
+            kotlin {
+                linuxX64().compilations.main.cinterops.create("myInterop")
+                linuxArm64().compilations.main.cinterops.create("myInterop")
+            }
+        }
+
+        val consumerProject = buildProjectWithMPP(
+            projectBuilder = { withParent(rootProject).withName("consumer") },
+            preApplyCode = { enableCInteropCommonization() },
+        ) {
+            enableDependencyVerification(false)
+            repositories.mavenCentralCacheRedirector()
+            kotlin {
+                linuxX64()
+                linuxArm64()
+
+                sourceSets.commonMain.dependencies {
+                    implementation(project(":producer"))
+                    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
+                }
+            }
+        }
+
+        producerProject.evaluate()
+
+        consumerProject.runLifecycleAwareTest {
+            configurationResult.await()
+
+            @OptIn(UnsafeApi::class)
+            val commonMainCinterop = consumerProject.locateOrCreateCommonizedCInteropDependencyConfiguration(
+                consumerProject.multiplatformExtension.sourceSets.commonMain.get()
+            )!!
+
+            assertEquals(
+                setOf(":producer"),
+                commonMainCinterop.allDependencies.filterIsInstance<ProjectDependency>().map { it.path }.toSet(),
+            )
+            assertEquals(
+                emptyList(),
+                commonMainCinterop.allDependencies.filterIsInstance<ExternalModuleDependency>().map { "${it.group}:${it.name}" },
+            )
+            assertEquals(
+                emptyList(),
+                commonMainCinterop.incoming.resolutionResult.allDependencies
+                    .filterIsInstance<UnresolvedDependencyResult>()
+                    .map { result -> generateSequence(result.failure) { it.cause }.joinToString(" <- ") { it.message.orEmpty() } },
+            )
+        }
+    }
+
+    @Test
+    fun `test - cinterop configuration - contains transitive project dependencies`() {
+        val rootProject = buildProject()
+
+        val producerProject = buildProjectWithMPP(
+            projectBuilder = { withParent(rootProject).withName("producer") },
+            preApplyCode = { enableCInteropCommonization() },
+        ) {
+            kotlin {
+                linuxX64().compilations.main.cinterops.create("myInterop")
+                linuxArm64().compilations.main.cinterops.create("myInterop")
+            }
+        }
+
+        val middleProject = buildProjectWithMPP(
+            projectBuilder = { withParent(rootProject).withName("middle") },
+            preApplyCode = { enableCInteropCommonization() },
+        ) {
+            kotlin {
+                linuxX64()
+                linuxArm64()
+
+                sourceSets.commonMain.dependencies {
+                    api(project(":producer"))
+                }
+            }
+        }
+
+        val consumerProject = buildProjectWithMPP(
+            projectBuilder = { withParent(rootProject).withName("consumer") },
+            preApplyCode = { enableCInteropCommonization() },
+        ) {
+            kotlin {
+                linuxX64()
+                linuxArm64()
+
+                sourceSets.commonMain.dependencies {
+                    implementation(project(":middle"))
+                }
+            }
+        }
+
+        producerProject.evaluate()
+        middleProject.evaluate()
+
+        consumerProject.runLifecycleAwareTest {
+            configurationResult.await()
+
+            @OptIn(UnsafeApi::class)
+            val commonMainCinterop = consumerProject.locateOrCreateCommonizedCInteropDependencyConfiguration(
+                consumerProject.multiplatformExtension.sourceSets.commonMain.get()
+            )!!
+
+            assertEquals(
+                setOf(":middle", ":producer"),
+                commonMainCinterop.allDependencies.filterIsInstance<ProjectDependency>().map { it.path }.toSet(),
+            )
         }
     }
 }

@@ -2,6 +2,10 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.Dependency
+import org.gradle.api.artifacts.component.ModuleComponentSelector
+import org.gradle.api.artifacts.component.ProjectComponentIdentifier
+import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
 import org.gradle.api.file.FileCollection
@@ -102,8 +106,8 @@ internal suspend fun Project.locateOrCreateCommonizedCInteropDependencyConfigura
 
     val configuration = configurations.createResolvable(configurationName).also { configuration ->
         configuration.setInvisibleIfSupported()
-        // Extends from Metadata Configuration associated with given source set to ensure matching
-        configuration.extendsFrom(sourceSet.internal.resolvableMetadataConfiguration)
+        configuration.isTransitive = false
+        configuration.dependencies.addAllLater(listProvider { commonizedCInteropFromProjectDependencies(sourceSet) })
         setupBasicCommonizedCInteropConfigurationAttributes(configuration, commonizerTarget)
 
         /**
@@ -119,6 +123,50 @@ internal suspend fun Project.locateOrCreateCommonizedCInteropDependencyConfigura
     }
 
     return configuration
+}
+
+/**
+ * Only project components can provide commonized cinterops (see [KotlinUsages.KOTLIN_COMMONIZED_CINTEROP] attribute).
+ *
+ * Instead of extending from the metadata configuration, which would request every external dependency with commonized cinterop attributes
+ * and fail polluting Gradle daemon heap (see https://github.com/gradle/gradle/issues/39632) all project components are taken from
+ * the already resolved metadata dependency graph. The graph is already transitive, so the producers' own dependencies don't need
+ * to be traversed.
+ *
+ * @return dependencies on all project components (of the current or included builds) found in the metadata dependency graph
+ * of the given [sourceSet]. Projects of included builds can't be referenced directly, so they are declared using module coordinates
+ * to be substituted by Gradle. The coordinates are taken from the module requested in the graph, as this is what the substitution
+ * is matched against (e.g. when included build uses explicit `dependencySubstitution`). If a project was requested by another project
+ * of the included build, then the coordinates of the project itself are used.
+ */
+private fun Project.commonizedCInteropFromProjectDependencies(sourceSet: KotlinSourceSet): List<Dependency> {
+    val resolutionResult = sourceSet.internal.resolvableMetadataConfiguration.incoming.resolutionResult
+    val root = resolutionResult.root
+
+    return resolutionResult.allDependencies
+        .filterIsInstance<ResolvedDependencyResult>()
+        .filter { it.selected != root }
+        .mapNotNull { dependency ->
+            val id = dependency.selected.id as? ProjectComponentIdentifier ?: return@mapNotNull null
+
+            if (id in currentBuild) {
+                "project" to id.projectPath
+            } else {
+                // Dependency is coming from included build
+                val requested = dependency.requested as? ModuleComponentSelector
+                val coordinates = if (requested != null) {
+                    "${requested.group}:${requested.module}:${requested.version}"
+                } else {
+                    val moduleVersion = dependency.selected.moduleVersion ?: return@mapNotNull null
+                    "${moduleVersion.group}:${moduleVersion.name}:${moduleVersion.version}"
+                }
+                "module" to coordinates
+            }
+        }
+        .distinct()
+        .map { (kind, notation) ->
+            if (kind == "project") dependencies.project(mapOf("path" to notation)) else dependencies.create(notation)
+        }
 }
 
 private fun Project.setupBasicCommonizedCInteropConfigurationAttributes(
