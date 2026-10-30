@@ -99,7 +99,7 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
     private fun KotlinNativeToolWorkParameters.from(
         runner: KotlinNativeToolRunner,
         args: ToolArguments,
-        taskPath: String?,
+        taskPath: String,
     ) {
         classLoadersCachingService.set(runner.classLoadersCachingBuildServiceProvider)
         fusService.set(runner.fusMetricsConsumer)
