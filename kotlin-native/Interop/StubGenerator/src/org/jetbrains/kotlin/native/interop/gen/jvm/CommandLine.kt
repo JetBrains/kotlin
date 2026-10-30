@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.native.interop.indexer.MacroNamesCollectingMode
 const val HEADER_FILTER_ADDITIONAL_SEARCH_PREFIX = "headerFilterAdditionalSearchPrefix"
 const val NODEFAULTLIBS_DEPRECATED = "nodefaultlibs"
 const val NODEFAULTLIBS = "no-default-libs"
+const val NOSTDLIB = "nostdlib"
 const val PURGE_USER_LIBS = "Xpurge-user-libs"
 const val TEMP_DIR = "Xtemporary-files-dir"
 const val PROJECT_DIR = "Xproject-dir"
@@ -54,6 +55,8 @@ open class CommonInteropArguments(val argParser: ArgParser) {
             .multiple().delimiter(",")
     val library by argParser.option(ArgType.String, shortName = "l", description = "path to the library to use for building")
             .multiple()
+    val nostdlib by argParser.option(ArgType.Boolean, NOSTDLIB,
+            description = "don't link the standard library from dist/klib automatically").default(false)
     val nodefaultlibs by argParser.option(ArgType.Boolean, NODEFAULTLIBS,
             description = "don't link the libraries from dist/klib automatically").default(false)
     val nodefaultlibsDeprecated by argParser.option(ArgType.Boolean, NODEFAULTLIBS_DEPRECATED,

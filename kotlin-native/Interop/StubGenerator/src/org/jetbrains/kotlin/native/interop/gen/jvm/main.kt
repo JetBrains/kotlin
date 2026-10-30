@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.konan.util.DefFile
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.KotlinAbiVersion.Companion.FIRST_SUPPORTED_COMPILER_VERSION
 import org.jetbrains.kotlin.library.loader.KlibLoader
-import org.jetbrains.kotlin.library.loader.KlibLoaderResult
 import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
 import org.jetbrains.kotlin.library.loader.reportLoadingProblemsIfAny
 import org.jetbrains.kotlin.utils.KotlinNativePaths
@@ -614,7 +613,7 @@ private fun loadLibraries(cinteropArguments: CInteropArguments, target: KonanTar
         libraryPaths(cinteropArguments.library)
         libraryProviders(
                 KlibNativeDistributionLibraryProvider(File(distribution.konanHome)) {
-                    withStdlib()
+                    runUnless(cinteropArguments.nostdlib) { withStdlib() }
                     runUnless(noDefaultLibs) { withPlatformLibs(target) }
                 }
         )
@@ -624,18 +623,22 @@ private fun loadLibraries(cinteropArguments: CInteropArguments, target: KonanTar
         manifestTransformer(KlibNativeManifestTransformer(target))
     }.load()
 
-    validateLoadingResults(loadingResult)
+    val problems: List<String> = buildList {
+        if (loadingResult.librariesStdlibFirst.none { it.isNativeStdlib }) {
+            if (cinteropArguments.nostdlib) {
+                add("stdlib is not found: pass it with -library <path> when -nostdlib is specified")
+            } else {
+                add("stdlib is not found: make sure that the Kotlin/Native distribution is not corrupted")
+            }
+        }
 
-    return loadingResult.librariesStdlibFirst
-}
-
-private fun validateLoadingResults(loadingResult: KlibLoaderResult) {
-    val problems = buildList {
         loadingResult.reportLoadingProblemsIfAny { _, message -> add(message) }
     }
     check(problems.isEmpty()) {
         "Failed to load libraries:\n${problems.joinToString("\n")}"
     }
+
+    return loadingResult.librariesStdlibFirst
 }
 
 internal fun prepareTool(
