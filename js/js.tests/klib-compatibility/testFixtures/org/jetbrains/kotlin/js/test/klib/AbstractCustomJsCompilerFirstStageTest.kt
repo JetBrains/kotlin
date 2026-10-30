@@ -98,7 +98,7 @@ open class AbstractCustomJsCompilerFirstStageTest(val testDataRoot: String = "co
                 ::CustomKlibCompilerTestSuppressor,
 
                 // Point the JS stack traces of an isolated test at its dumped artifacts (see `JsGroupingStageArtifactsDumper`).
-                // The failure of a test of a grouped batch carries no `ScriptExecutionException`, so its paths stay as they are.
+                // The ones of a grouped batch are pointed there by `JsGroupingStageBoxRunner` (see `artifactsAreDumped`).
                 JsArtifactsDumpHandler::Suppressor,
             )
         }
@@ -118,6 +118,7 @@ open class AbstractCustomJsCompilerFirstStageTest(val testDataRoot: String = "co
                                 ::JsBoxRunner,
                                 ::JsSourceMapValidator,
                             ),
+                            artifactsAreDumped = true,
                         )
                     },
                     ::JsGroupingStageArtifactsDumper,
