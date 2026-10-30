@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.plugin.sandbox.fir.generators
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.extensions.*
+import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationType
 import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate
 import org.jetbrains.kotlin.fir.plugin.createTopLevelFunction
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -27,7 +27,7 @@ internal class TopLevelPrivateSuspendFunctionGenerator(session: FirSession) : Fi
     private companion object {
         private val TEST_FUN_NAME = Name.identifier("testFun_generated")
         private val PREDICATE = LookupPredicate.create {
-            annotated("TestTopLevelPrivateSuspendFun".fqn()).matching(KotlinTarget.TOP_LEVEL_FUNCTION)
+            annotated("TestTopLevelPrivateSuspendFun".fqn()).matching(DeclarationType.TOP_LEVEL_FUNCTION)
         }
     }
 

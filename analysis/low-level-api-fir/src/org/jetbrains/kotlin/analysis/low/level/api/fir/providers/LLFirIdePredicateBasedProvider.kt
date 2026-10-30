@@ -131,9 +131,8 @@ internal class LLFirIdePredicateBasedProvider(
             return predicate.a.accept(this, data) || predicate.b.accept(this, data)
         }
 
-        @OptIn(FirExtensionApiInternals::class)
         override fun visitMatchingType(predicate: AbstractPredicate.MatchingType<P>, data: FirDeclaration): Boolean {
-            return PredicateTargets.matches(predicate.targets, data) && predicate.predicate.accept(this, data)
+            return predicate.type.matches(data) && predicate.predicate.accept(this, data)
         }
 
         override fun visitAnnotatedWith(predicate: AbstractPredicate.AnnotatedWith<P>, data: FirDeclaration): Boolean {
@@ -238,13 +237,15 @@ private object SourceFilterBuilder : PredicateVisitor<LookupPredicate, SourceFil
         return { declaration -> a(declaration) || b(declaration) }
     }
 
+    @OptIn(FirExtensionApiInternals::class)
     override fun visitMatchingType(predicate: AbstractPredicate.MatchingType<LookupPredicate>, data: Nothing?): SourceFilter? {
         val childFilter = predicate.predicate.accept(this, data)
-        if (predicate.targets.isEmpty()) {
+        val type = predicate.type
+        if (type !is KotlinTargetDeclarationType) {
             return childFilter
         }
         return { declaration ->
-            mayMatchTargets(predicate.targets, declaration) && (childFilter == null || childFilter(declaration))
+            mayMatchTargets(type.targets, declaration) && (childFilter == null || childFilter(declaration))
         }
     }
 

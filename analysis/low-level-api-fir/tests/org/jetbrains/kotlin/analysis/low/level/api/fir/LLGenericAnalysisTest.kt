@@ -22,15 +22,18 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.LLSour
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiExecutionTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
-import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
+import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.resolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.extensions.FirPredicateBasedProvider
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
+import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationType
 import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.extensions.registeredPluginAnnotations
@@ -48,12 +51,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.utils.findIsInstanceAnd
 import org.junit.jupiter.api.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertFalse
-import kotlin.test.assertNotNull
-import kotlin.test.assertNull
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 class LLGenericAnalysisTest : AbstractAnalysisApiExecutionTest("testData/genericAnalysis") {
     override val configurator = LLSourceLikeTestConfigurator()
@@ -184,56 +182,60 @@ class LLGenericAnalysisTest : AbstractAnalysisApiExecutionTest("testData/generic
         )
     }
 
+    @OptIn(ExperimentalCompilerApi::class)
     @Test
     fun predicateTargets(ktFile: KtFile) {
         withResolutionFacade(ktFile) { resolutionFacade ->
             val provider = resolutionFacade.useSiteFirSession.predicateBasedProvider
             val annotation = FqName("org.jetbrains.kotlin.plugin.sandbox.TestTopLevelPrivateSuspendFun")
 
-            fun lookup(vararg targets: KotlinTarget): Set<String> {
-                val predicate = LookupPredicate.create { annotated(annotation).matching(targets.toSet()) }
+            fun getSymbolsByPredicate(predicate: LookupPredicate): Set<String> {
                 return provider.getSymbolsByPredicate(predicate).mapTo(mutableSetOf()) { it.predicateTestName() }
             }
 
-            assertEquals(
-                provider.getSymbolsByPredicate(LookupPredicate.create { annotated(annotation) }).mapTo(mutableSetOf()) {
-                    it.predicateTestName()
-                },
-                lookup(),
-            )
-            assertEquals(setOf("topLevelFunction"), lookup(KotlinTarget.TOP_LEVEL_FUNCTION))
-            assertEquals(setOf("Outer.memberFunction"), lookup(KotlinTarget.MEMBER_FUNCTION))
-            assertEquals(setOf("topLevelFunction", "Outer.memberFunction"), lookup(KotlinTarget.FUNCTION))
+            fun lookup(type: DeclarationType): Set<String> {
+                return getSymbolsByPredicate(LookupPredicate.create { annotated(annotation).matching(type) })
+            }
+
+            assertEquals(setOf("topLevelFunction"), lookup(DeclarationType.TOP_LEVEL_FUNCTION))
+            assertEquals(setOf("Outer.memberFunction"), lookup(DeclarationType.MEMBER_FUNCTION))
+            assertEquals(setOf("topLevelFunction", "Outer.memberFunction"), lookup(DeclarationType.FUNCTION))
             assertEquals(
                 setOf("TopClass", "TopInterface", "TopObject", "TopEnum", "TopAnnotation", "Outer", "Outer.Nested"),
-                lookup(KotlinTarget.CLASS),
+                lookup(DeclarationType.CLASS),
             )
-            assertEquals(setOf("TopClass", "Outer", "Outer.Nested"), lookup(KotlinTarget.CLASS_ONLY))
-            assertEquals(setOf("TopInterface", "TopObject"), lookup(KotlinTarget.INTERFACE, KotlinTarget.OBJECT))
-            assertEquals(setOf("TopEnum.ENTRY"), lookup(KotlinTarget.ENUM_ENTRY))
-            assertEquals(setOf("Alias"), lookup(KotlinTarget.TYPEALIAS))
-            assertEquals(setOf("ConstructorOnly.ConstructorOnly"), lookup(KotlinTarget.CONSTRUCTOR))
-            assertEquals(setOf("topLevelProperty"), lookup(KotlinTarget.TOP_LEVEL_PROPERTY))
+            assertEquals(setOf("TopClass", "Outer", "Outer.Nested"), lookup(DeclarationType.CLASS_ONLY))
+            assertEquals(
+                setOf("TopInterface", "TopObject"),
+                getSymbolsByPredicate(LookupPredicate.create {
+                    annotated(annotation).matching(DeclarationType.INTERFACE) or
+                            annotated(annotation).matching(DeclarationType.OBJECT)
+                })
+            )
+            assertEquals(setOf("TopEnum.ENTRY"), lookup(DeclarationType.ENUM_ENTRY))
+            assertEquals(setOf("Alias"), lookup(DeclarationType.TYPEALIAS))
+            assertEquals(setOf("ConstructorOnly.ConstructorOnly"), lookup(DeclarationType.CONSTRUCTOR))
+            assertEquals(setOf("topLevelProperty"), lookup(DeclarationType.TOP_LEVEL_PROPERTY))
             // Enum entries are property targets too, like with `@Target`. Getter-only annotations don't make the property match.
-            assertEquals(setOf("topLevelProperty", "Outer.memberProperty", "TopEnum.ENTRY"), lookup(KotlinTarget.PROPERTY))
+            assertEquals(setOf("topLevelProperty", "Outer.memberProperty", "TopEnum.ENTRY"), lookup(DeclarationType.PROPERTY))
 
             val topLevelFunctions = DeclarationPredicate.create {
-                annotated(annotation).matching(KotlinTarget.TOP_LEVEL_FUNCTION)
+                annotated(annotation).matching(DeclarationType.TOP_LEVEL_FUNCTION)
             }
             val functions = provider.getSymbolsByPredicate(
-                LookupPredicate.create { annotated(annotation).matching(KotlinTarget.FUNCTION) }
+                LookupPredicate.create { annotated(annotation).matching(DeclarationType.FUNCTION) }
             )
             assertEquals(
                 setOf("topLevelFunction"),
                 functions.filter { provider.matches(topLevelFunctions, it) }.mapTo(mutableSetOf()) { it.predicateTestName() },
             )
-
-            assertFailsWith<IllegalArgumentException> {
-                LookupPredicate.create { annotated(annotation).matching(KotlinTarget.FIELD) }
-            }
-            assertFailsWith<IllegalArgumentException> {
-                DeclarationPredicate.create { annotated(annotation).matching(KotlinTarget.FIELD) }
-            }
+            assertEquals(
+                setOf("TopClass", "Outer"),
+                lookup(DeclarationType.Custom {
+                    // Only match top-level classes.
+                    (it is FirRegularClass && it.classKind == ClassKind.CLASS && it.symbol.classId.outerClassId == null)
+                }),
+            )
         }
     }
 
@@ -243,8 +245,8 @@ class LLGenericAnalysisTest : AbstractAnalysisApiExecutionTest("testData/generic
             val provider = resolutionFacade.useSiteFirSession.predicateBasedProvider
             val annotation = FqName("org.jetbrains.kotlin.plugin.sandbox.TestTopLevelPrivateSuspendFun")
             val all = LookupPredicate.create { annotated(annotation) }
-            val functions = LookupPredicate.create { annotated(annotation).matching(KotlinTarget.FUNCTION) }
-            val classes = LookupPredicate.create { annotated(annotation).matching(KotlinTarget.CLASS_ONLY) }
+            val functions = LookupPredicate.create { annotated(annotation).matching(DeclarationType.FUNCTION) }
+            val classes = LookupPredicate.create { annotated(annotation).matching(DeclarationType.CLASS_ONLY) }
 
             fun lookup(predicate: LookupPredicate): Set<String> =
                 provider.getSymbolsByPredicate(predicate).mapTo(mutableSetOf()) { it.predicateTestName() }
@@ -258,33 +260,32 @@ class LLGenericAnalysisTest : AbstractAnalysisApiExecutionTest("testData/generic
             assertEquals(lookup(all), lookup(LookupPredicate.create { all or functions }))
             assertEquals(
                 setOf("topLevelFunction"),
-                lookup(LookupPredicate.create { (functions or classes).matching(KotlinTarget.TOP_LEVEL_FUNCTION) }),
+                lookup(LookupPredicate.create { (functions or classes).matching(DeclarationType.TOP_LEVEL_FUNCTION) }),
             )
             assertEquals(
                 setOf("topLevelFunction"),
-                lookup(LookupPredicate.create { functions.matching(KotlinTarget.TOP_LEVEL_FUNCTION) }),
+                lookup(LookupPredicate.create { functions.matching(DeclarationType.TOP_LEVEL_FUNCTION) }),
             )
             assertEquals(emptySet(), lookup(LookupPredicate.create { functions and classes }))
             assertEquals(
                 setOf("Parent.Companion"),
-                lookup(LookupPredicate.create { annotated(annotation).matching(KotlinTarget.COMPANION_OBJECT) }),
+                lookup(LookupPredicate.create { annotated(annotation).matching(DeclarationType.COMPANION_OBJECT) }),
             )
 
             val parentPsi = ktFile.declarations.filterIsInstance<KtClass>().single { it.name == "Parent" }
             val parent = parentPsi.resolveToFirSymbolOfType<FirRegularClassSymbol>(resolutionFacade)
             val member = parentPsi.declarations.filterIsInstance<KtNamedFunction>().single { it.name == "member" }
                 .resolveToFirSymbolOfType<FirNamedFunctionSymbol>(resolutionFacade)
-            assertTrue(provider.matches(LookupPredicate.create { parentAnnotated(annotation).matching(KotlinTarget.MEMBER_FUNCTION) }, member))
-            assertFalse(provider.matches(LookupPredicate.create { parentAnnotated(annotation).matching(KotlinTarget.CLASS) }, member))
-            assertTrue(provider.matches(LookupPredicate.create { hasAnnotated(annotation).matching(KotlinTarget.CLASS_ONLY) }, parent))
-            assertFalse(provider.matches(LookupPredicate.create { hasAnnotated(annotation).matching(KotlinTarget.FUNCTION) }, parent))
-            assertTrue(provider.matches(DeclarationPredicate.create { parentAnnotated(annotation).matching(KotlinTarget.MEMBER_FUNCTION) }, member))
-            assertTrue(provider.matches(DeclarationPredicate.create { hasAnnotated(annotation).matching(KotlinTarget.CLASS_ONLY) }, parent))
-            assertTrue(provider.matches(DeclarationPredicate.create { annotated(annotation).matching() }, parent))
+            assertTrue(provider.matches(LookupPredicate.create { parentAnnotated(annotation).matching(DeclarationType.MEMBER_FUNCTION) }, member))
+            assertFalse(provider.matches(LookupPredicate.create { parentAnnotated(annotation).matching(DeclarationType.CLASS) }, member))
+            assertTrue(provider.matches(LookupPredicate.create { hasAnnotated(annotation).matching(DeclarationType.CLASS_ONLY) }, parent))
+            assertFalse(provider.matches(LookupPredicate.create { hasAnnotated(annotation).matching(DeclarationType.FUNCTION) }, parent))
+            assertTrue(provider.matches(DeclarationPredicate.create { parentAnnotated(annotation).matching(DeclarationType.MEMBER_FUNCTION) }, member))
+            assertTrue(provider.matches(DeclarationPredicate.create { hasAnnotated(annotation).matching(DeclarationType.CLASS_ONLY) }, parent))
 
             val metaAnnotation = FqName("org.jetbrains.kotlin.plugin.sandbox.AllOpen")
             val metaPredicate = DeclarationPredicate.create { metaAnnotated(metaAnnotation, includeItself = false) }
-            val metaClasses = DeclarationPredicate.create { metaPredicate.matching(KotlinTarget.CLASS_ONLY) }
+            val metaClasses = DeclarationPredicate.create { metaPredicate.matching(DeclarationType.CLASS_ONLY) }
             val registeredAnnotations = resolutionFacade.useSiteFirSession.registeredPluginAnnotations
             assertEquals(setOf(FqName("test.MetaMarker")), registeredAnnotations.getAnnotationsForPredicate(metaClasses))
             assertEquals(
@@ -293,7 +294,7 @@ class LLGenericAnalysisTest : AbstractAnalysisApiExecutionTest("testData/generic
             )
             parent.lazyResolveToPhase(FirResolvePhase.STATUS)
             assertTrue(provider.matches(metaClasses, parent))
-            assertFalse(provider.matches(DeclarationPredicate.create { metaPredicate.matching(KotlinTarget.FUNCTION) }, parent))
+            assertFalse(provider.matches(DeclarationPredicate.create { metaPredicate.matching(DeclarationType.FUNCTION) }, parent))
         }
     }
 
@@ -307,7 +308,7 @@ class LLGenericAnalysisTest : AbstractAnalysisApiExecutionTest("testData/generic
             val cache = session.moduleComponents.cache
             val provider = session.predicateBasedProvider
             val annotation = FqName("org.jetbrains.kotlin.plugin.sandbox.TestTopLevelPrivateSuspendFun")
-            val functions = LookupPredicate.create { annotated(annotation).matching(KotlinTarget.TOP_LEVEL_FUNCTION) }
+            val functions = LookupPredicate.create { annotated(annotation).matching(DeclarationType.TOP_LEVEL_FUNCTION) }
 
             assertNull(cache.getCachedFirFile(rejectedFile))
             assertEquals(setOf("selected"), provider.getSymbolsByPredicate(functions).mapTo(mutableSetOf()) { it.predicateTestName() })

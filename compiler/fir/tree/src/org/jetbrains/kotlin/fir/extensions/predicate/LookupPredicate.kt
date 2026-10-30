@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.fir.extensions.predicate
 
-import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.fir.extensions.AnnotationFqn
-import org.jetbrains.kotlin.fir.extensions.FirExtensionApiInternals
 
 /**
  * For reference read KDoc to [AbstractPredicate]
@@ -42,15 +40,10 @@ sealed class LookupPredicate : AbstractPredicate<LookupPredicate> {
         }
     }
 
-    @OptIn(FirExtensionApiInternals::class)
     class MatchingType(
         override val predicate: LookupPredicate,
-        override val targets: Set<KotlinTarget>,
+        override val type: DeclarationType
     ) : LookupPredicate(), AbstractPredicate.MatchingType<LookupPredicate> {
-        init {
-            PredicateTargets.requireSupported(targets)
-        }
-
         override val annotations: Set<AnnotationFqn> = predicate.annotations
 
         override fun <R, D> accept(visitor: PredicateVisitor<LookupPredicate, R, D>, data: D): R {
@@ -124,7 +117,7 @@ sealed class LookupPredicate : AbstractPredicate<LookupPredicate> {
             annotated(annotations) or ancestorAnnotated(annotations)
 
         // ------------------- targets -------------------
-        override fun LookupPredicate.matching(targets: Set<KotlinTarget>): LookupPredicate = MatchingType(this, targets.toSet())
+        override fun LookupPredicate.matching(type: DeclarationType): LookupPredicate = MatchingType(this, type)
     }
 
     companion object {
