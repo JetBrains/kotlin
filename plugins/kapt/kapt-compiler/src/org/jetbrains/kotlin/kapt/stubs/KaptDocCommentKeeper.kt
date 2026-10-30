@@ -13,6 +13,7 @@ import com.sun.tools.javac.tree.TreeScanner
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.kapt.KaptContextForStubGeneration
 import org.jetbrains.kotlin.KtNodeTypeId
+import org.jetbrains.kotlin.syntaxIdSetOf
 import org.jetbrains.kotlin.kapt.util.kdocBody
 import org.jetbrains.kotlin.kapt.util.kdocText
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -68,7 +69,7 @@ internal class KaptDocCommentKeeper(private val kaptContext: KaptContextForStubG
 
 }
 
-internal val CLASS_LIKE_ELEMENT_TYPE_IDS = setOf(KtNodeTypeId.CLASS, KtNodeTypeId.OBJECT_DECLARATION)
+internal val CLASS_LIKE_ELEMENT_TYPE_IDS = syntaxIdSetOf(KtNodeTypeId.CLASS, KtNodeTypeId.OBJECT_DECLARATION)
 
 private class KDocComment(val body: String) : Tokens.Comment {
     override fun getSourcePos(index: Int) = -1

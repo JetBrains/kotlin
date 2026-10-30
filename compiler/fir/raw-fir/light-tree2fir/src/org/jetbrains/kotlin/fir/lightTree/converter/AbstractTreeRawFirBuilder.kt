@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.BasicElementTypeId
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.NO_ID
 import org.jetbrains.kotlin.SyntaxId
+import org.jetbrains.kotlin.SyntaxIdSet
+import org.jetbrains.kotlin.syntaxIdSetOf
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.isExpression
@@ -97,7 +99,7 @@ abstract class AbstractTreeRawFirBuilder<Node : Any, Type : Any>(
         val kidsArray = getChildrenAsArray()
         for (kid in kidsArray) {
             if (kid == null) break
-            if (ignoredTokensId.contains(kid.toTokenId())) continue
+            if (isIgnoredToken(kid.toTokenId())) continue
             f(kid)
         }
     }
@@ -108,7 +110,7 @@ abstract class AbstractTreeRawFirBuilder<Node : Any, Type : Any>(
         val container = mutableListOf<T>()
         for (kid in kidsArray) {
             if (kid == null) break
-            if (ignoredTokensId.contains(kid.toTokenId())) continue
+            if (isIgnoredToken(kid.toTokenId())) continue
             f(kid, container)
         }
 
@@ -201,11 +203,13 @@ abstract class AbstractTreeRawFirBuilder<Node : Any, Type : Any>(
     }
 
     companion object {
-        val ignoredTokensId: HashSet<SyntaxId> = hashSetOf(
+        val ignoredTokensId: SyntaxIdSet = syntaxIdSetOf(
             KtTokenId.EOL_COMMENT, KtTokenId.BLOCK_COMMENT, KtTokenId.DOC_COMMENT, KtTokenId.SHEBANG_COMMENT,
             BasicElementTypeId.WHITE_SPACE, BasicElementTypeId.BAD_CHARACTER, BasicElementTypeId.ERROR_ELEMENT,
             KtTokenId.SEMICOLON,
-            NO_ID, // TODO: preserved for safety but should be removed in future because `NO_ID` should never occur during kotlin files parsing
         )
+
+        // TODO: `NO_ID` is preserved for safety but should be removed in future because `NO_ID` should never occur during kotlin files parsing
+        fun isIgnoredToken(tokenId: SyntaxId): Boolean = tokenId == NO_ID || tokenId in ignoredTokensId
     }
 }
