@@ -90,9 +90,8 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
      * submitting task via [org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults] - this is
      * needed because [metricsReporterProvider] itself is isolated (deep-copied) by Gradle along with the rest of
      * [KotlinNativeToolWorkParameters], so mutating it inside the worker never reaches the original, live reporter.
-     * Pass `null` when there is no actual task to report back to.
      */
-    fun runToolWithWorkers(args: ToolArguments, taskPath: String? = null): WorkQueue =
+    fun runToolWithWorkers(args: ToolArguments, taskPath: String): WorkQueue =
         workerExecutor.noIsolation().apply {
             submit(KotlinNativeToolWorkAction::class.java) { it.from(this@KotlinNativeToolRunner, args, taskPath) }
         }
