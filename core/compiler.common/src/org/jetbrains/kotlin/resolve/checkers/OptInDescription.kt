@@ -23,7 +23,8 @@ data class OptInDescription(
             KotlinTarget.EXPRESSION,
             KotlinTarget.FILE,
             KotlinTarget.TYPE,
-            KotlinTarget.TYPE_PARAMETER
+            KotlinTarget.TYPE_PARAMETER,
+            KotlinTarget.VALUE_PARAMETER
         )
     }
 }

@@ -6,8 +6,8 @@
 package api
 
 @RequiresOptIn(level = RequiresOptIn.Level.WARNING)
-@Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.TYPEALIAS,
-        AnnotationTarget.VALUE_PARAMETER)
+<!OPT_IN_MARKER_WITH_WRONG_TARGET!>@Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.TYPEALIAS,
+        AnnotationTarget.VALUE_PARAMETER)<!>
 @Retention(AnnotationRetention.BINARY)
 annotation class ExperimentalAPI
 

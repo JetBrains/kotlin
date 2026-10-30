@@ -28,15 +28,22 @@ object FirOptInAnnotationClassChecker : FirRegularClassChecker(MppCheckerKind.Co
         val session = context.session
         if (declaration.getAnnotationByClassId(OptInNames.REQUIRES_OPT_IN_CLASS_ID, session) == null) return
         if (declaration.getRetention(session) == AnnotationRetention.SOURCE) {
-            val target = declaration.getRetentionAnnotation(session)
-            reporter.reportOn(target?.source, FirErrors.OPT_IN_MARKER_WITH_WRONG_RETENTION)
-
+            val retention = declaration.getRetentionAnnotation(session)
+            reporter.reportOn(retention?.source, FirErrors.OPT_IN_MARKER_WITH_WRONG_RETENTION)
         }
-        val wrongTargets = declaration.getAllowedAnnotationTargets(session).intersect(OptInDescription.WRONG_TARGETS_FOR_MARKER)
+        // value parameter is a default target but cannot accept opt in markers
+        val targetAnnotation = declaration.getTargetAnnotation(session)
+        val allowedTargets = declaration.getAllowedAnnotationTargets(session)
+        val targetsToCheck = if (targetAnnotation == null) {
+            allowedTargets - KotlinTarget.VALUE_PARAMETER
+        } else {
+            allowedTargets
+        }
+
+        val wrongTargets = targetsToCheck.intersect(OptInDescription.WRONG_TARGETS_FOR_MARKER)
         if (wrongTargets.isNotEmpty()) {
-            val target = declaration.getTargetAnnotation(session)
             reporter.reportOn(
-                target?.source,
+                targetAnnotation?.source,
                 FirErrors.OPT_IN_MARKER_WITH_WRONG_TARGET,
                 wrongTargets.joinToString(transform = KotlinTarget::description)
             )
