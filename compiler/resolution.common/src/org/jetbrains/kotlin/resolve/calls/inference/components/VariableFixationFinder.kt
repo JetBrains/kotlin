@@ -336,7 +336,7 @@ abstract class AbstractVariableReadinessCalculator<Readiness : Comparable<Readin
     private fun Constraint.isProperSelfTypeConstraint(ownerTypeVariable: TypeConstructorMarker): Boolean {
         val typeConstructor = type.typeConstructor()
         return position.from is DeclaredUpperBoundConstraintPosition<*>
-                && (type.hasRecursionInTypeParametersOrCapturedTypes(languageVersionSettings) || typeConstructor.isRecursiveTypeParameter())
+                && (type.typeConstructor().hasRecursionInTypeParametersOrCapturedTypes(languageVersionSettings) || typeConstructor.isRecursiveTypeParameter())
                 && !hasDependencyToOtherTypeVariable(ownerTypeVariable)
     }
 

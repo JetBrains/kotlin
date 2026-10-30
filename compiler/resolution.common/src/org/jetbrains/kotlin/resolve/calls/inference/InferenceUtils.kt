@@ -50,31 +50,35 @@ fun ConstraintStorage.buildNotFixedVariablesToNonSubtypableTypesSubstitutor(
 }
 
 context(c: TypeSystemInferenceExtensionContext)
-fun KotlinTypeMarker.hasRecursionInTypeParametersOrCapturedTypes(languageVersionSettings: LanguageVersionSettings): Boolean =
+fun TypeConstructorMarker.hasRecursionInTypeParametersOrCapturedTypes(languageVersionSettings: LanguageVersionSettings): Boolean =
     if (languageVersionSettings.supportsFeature(LanguageFeature.ConsiderUseSiteRecursiveBoundsOnCapturedTypes)) {
         hasRecursionInTypeParametersOrCapturedTypes()
     } else {
         @OptIn(OnlyForDefaultLanguageFeatureDisabled::class)
-        typeConstructor().hasRecursiveTypeParametersWithGivenSelfType()
+        hasRecursiveTypeParametersWithGivenSelfType()
     }
 
 context(c: TypeSystemInferenceExtensionContext)
-private fun KotlinTypeMarker.hasRecursionInTypeParametersOrCapturedTypes(): Boolean {
-    if (typeConstructor().getParameters().any { it.hasRecursiveBounds(typeConstructor()) }) return true
+private fun TypeConstructorMarker.hasRecursionInTypeParametersOrCapturedTypes(): Boolean {
+    if (getParameters().any { it.hasRecursiveBounds(this) }) return true
     if (!c.isK2) return false
 
-    val simpleType = unwrapToSimpleTypeUsingLowerBound()
-
-    if (simpleType is CapturedTypeMarker || simpleType.typeConstructor().isIntersection()) {
-        return simpleType.typeConstructor().supertypes().any { it.hasRecursionInTypeParametersOrCapturedTypes() }
-                || simpleType is CapturedTypeMarker && simpleType.hasRecursiveBounds()
+    if (this is CapturedTypeConstructorMarker || isIntersection()) {
+        return supertypes().any { it.typeConstructor().hasRecursionInTypeParametersOrCapturedTypes() }
+                || this is CapturedTypeConstructorMarker && hasRecursiveBounds()
     }
 
     return false
 }
 
 context(c: TypeSystemInferenceExtensionContext)
-fun CapturedTypeMarker.hasRecursiveBounds(): Boolean = with(c) { hasRecursiveBounds() }
+private fun CapturedTypeConstructorMarker.hasRecursiveBounds(): Boolean = with(c) {
+    supertypes().any { supertype ->
+        supertype.getArguments().any {
+            it.getType()?.typeConstructor() == this@hasRecursiveBounds
+        }
+    }
+}
 
 @OnlyForDefaultLanguageFeatureDisabled(LanguageFeature.ConsiderUseSiteRecursiveBoundsOnCapturedTypes)
 context(c: TypeSystemInferenceExtensionContext)
