@@ -9,6 +9,7 @@ This is the Kotlin programming language repository containing:
 - Compiler plugins (compose, serialization, allopen, noarg, etc.)
 - Standard library, kotlin-reflect, kotlin-test
 - Build system support (Gradle, Maven, JPS)
+- Kotlin Build Tools libraries: build tool independent libraries shared by build tool integrations (KGP, Maven, JPS, kotlin-toolchain, Bazel)
 - Kotlin scripting support
 - Analysis API
 
@@ -44,6 +45,7 @@ follow the [Diagnostic Message Style Guide](../docs/diagnostic_message_style_gui
 | Backend: Native          |                        | kotlin-native/, native/                                   | [AGENTS.md](../compiler/AGENTS.md)                                               |
 | Backend: WASM            |                        | compiler/ir/backend.wasm/                                 | [AGENTS.md](../compiler/AGENTS.md)                                               |
 | Build Tools API          |                        | compiler/build-tools/                                     | [AGENTS.md](../compiler/build-tools/AGENTS.md)                                   |
+| Build Tools Libraries    |                        | build-tools/libraries/                                    | [AGENTS.md](../build-tools/libraries/AGENTS.md)                                  |
 | Compiler plugins         |                        | plugins/                                                  | —                                                                                |
 | Dependency updates       |                        | gradle/                                                   | [ReadMe.md](../ReadMe.md#updating-a-dependency)                                  |
 | FIR (K2 frontend)        | `Fir*`                 | compiler/fir/                                             | [AGENTS.md](../compiler/AGENTS.md)                                               |

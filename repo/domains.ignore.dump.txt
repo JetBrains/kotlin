@@ -20,6 +20,7 @@ ignored:
  - analysis/symbol-light-classes/README.md
  - analysis/test-data-manager/README.md
  - build-common/src/org/jetbrains/kotlin/incremental/impl/README.md
+ - build-tools/libraries/README.md
  - compiler/android-tests/ReadMe.md
  - compiler/backend.common.jvm/ReadMe.md
  - compiler/backend/ReadMe.md
@@ -175,6 +176,7 @@ ignored:
  - repo/gradle-build-conventions/kgp-build-utils/README.md
  - repo/gradle-build-conventions/kgp-jacoco-plugins/README.md
  - repo/gradle-build-conventions/kgp-npm-tooling-helper/README.md
+ - repo/gradle-build-conventions/kotlin-build-tools-library/README.md
  - repo/gradle-build-conventions/test-data-manager-convention/README.md
  - repo/gradle-build-conventions/test-inputs-check/README.md
  - repo/gradle-settings-conventions/README.md
