@@ -680,6 +680,18 @@ public class JsSymbolLightClassesByFqNameForLibraryTestGenerated extends Abstrac
     }
 
     @Test
+    @TestMetadata("CompanionBlockFieldClash.kt")
+    public void testCompanionBlockFieldClash() {
+      run("CompanionBlockFieldClash.kt");
+    }
+
+    @Test
+    @TestMetadata("CompanionBlockFieldClashInsideValueClass.kt")
+    public void testCompanionBlockFieldClashInsideValueClass() {
+      run("CompanionBlockFieldClashInsideValueClass.kt");
+    }
+
+    @Test
     @TestMetadata("CompanionBlockHidingFunctionWithValueClass.kt")
     public void testCompanionBlockHidingFunctionWithValueClass() {
       run("CompanionBlockHidingFunctionWithValueClass.kt");
