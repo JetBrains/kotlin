@@ -608,13 +608,14 @@ private fun loadLibraries(cinteropArguments: CInteropArguments, target: KonanTar
             cinteropArguments.konanHome ?: KotlinNativePaths.homePath.absolutePath,
             konanDataDir = cinteropArguments.konanDataDir
     )
+    val noStdlib = cinteropArguments.nostdlib
     val noDefaultLibs = cinteropArguments.nodefaultlibs || cinteropArguments.nodefaultlibsDeprecated
 
     val loadingResult = KlibLoader {
         libraryPaths(cinteropArguments.library)
         libraryProviders(
                 KlibNativeDistributionLibraryProvider(File(distribution.konanHome)) {
-                    withStdlib()
+                    runUnless(noStdlib) { withStdlib() }
                     runUnless(noDefaultLibs) { withPlatformLibs(target) }
                 }
         )
