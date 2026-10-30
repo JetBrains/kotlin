@@ -24,7 +24,7 @@
 
 #if __has_builtin(__builtin_roundeven) && (defined(__aarch64__) || defined(__SSE4_1__))
 // On aarch64 and on x86 with SSE 4.1, LLVM emits __builtin_roundeven as instructions, on other targets it emits a call
-// to the actual roundeven function, which is not present in the glibc version(s) that Kotlin runtime currently depends on
+// to the actual roundeven function, which is not present in the libc version(s) that Kotlin runtime currently depends on
 // on Linux and Windows, leading to linking errors on those platforms, hence the fallback path.
 //
 // Once all platforms have roundeven available, the fallback path can be removed.
