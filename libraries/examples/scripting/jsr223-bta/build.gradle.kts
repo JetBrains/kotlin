@@ -27,7 +27,7 @@ dependencies {
     testImplementation(project(":kotlin-script-runtime")) // marker class to locate the jar for legacy-template tests
     // MainKtsConfigurator instantiates a MavenDependenciesResolver in a default constructor
     // argument, so this is needed even though no test resolves dependencies.
-    testRuntimeOnly(project(":kotlin-scripting-dependencies-maven"))
+    testImplementation(project(":kotlin-scripting-dependencies-maven"))
 }
 
 // The Build Tools API implementation plus the compiler it runs on, loaded into an isolated
@@ -38,11 +38,19 @@ val btaImplClasspath = configurations.create("btaImplClasspath")
 // The scripting plugin jar, which has to be the regular (non-relocated) embeddable artifact to match
 // the embeddable compiler above.
 val scriptingCompilerPluginClasspath = configurations.create("scriptingCompilerPluginClasspath")
+val kotlinxSerializationCompilerPluginClasspath = configurations.create("kotlinxSerializationCompilerPluginClasspath")
+val allOpenCompilerPluginClasspath = configurations.create("allOpenCompilerPluginClasspath")
 
 dependencies {
     add(btaImplClasspath.name, project(":compiler:build-tools:kotlin-build-tools-impl"))
     add(btaImplClasspath.name, project(":compiler:build-tools:kotlin-build-tools-compat"))
     add(scriptingCompilerPluginClasspath.name, project(":kotlin-scripting-compiler-embeddable"))
+    add(kotlinxSerializationCompilerPluginClasspath.name, project(":kotlinx-serialization-compiler-plugin.embeddable")) {
+        isTransitive = false
+    }
+    add(allOpenCompilerPluginClasspath.name, project(":kotlin-allopen-compiler-plugin.embeddable")) {
+        isTransitive = false
+    }
 }
 
 sourceSets {
@@ -68,15 +76,25 @@ projectTests {
         workingDir = rootDir
         val btaImplClasspathFiles: FileCollection = btaImplClasspath
         val scriptingPluginClasspathFiles: FileCollection = scriptingCompilerPluginClasspath
+        val serializationPluginClasspathFiles: FileCollection = kotlinxSerializationCompilerPluginClasspath
         inputs.files(btaImplClasspathFiles)
             .withPropertyName("btaImplClasspath")
             .withNormalizer(ClasspathNormalizer::class)
         inputs.files(scriptingPluginClasspathFiles)
             .withPropertyName("scriptingCompilerPluginClasspath")
             .withNormalizer(ClasspathNormalizer::class)
+        inputs.files(serializationPluginClasspathFiles)
+            .withPropertyName("kotlinxSerializationCompilerPluginClasspath")
+            .withNormalizer(ClasspathNormalizer::class)
+        val allOpenPluginClasspathFiles: FileCollection = allOpenCompilerPluginClasspath
+        inputs.files(allOpenPluginClasspathFiles)
+            .withPropertyName("allOpenCompilerPluginClasspath")
+            .withNormalizer(ClasspathNormalizer::class)
         doFirst {
             systemProperty("kotlinJsr223BtaImplClasspath", btaImplClasspathFiles.asPath)
             systemProperty("kotlinJsr223BtaScriptingPluginClasspath", scriptingPluginClasspathFiles.asPath)
+            systemProperty("kotlin.script.test.kotlinx.serialization.plugin.classpath", serializationPluginClasspathFiles.asPath)
+            systemProperty("kotlin.script.test.allopen.plugin.classpath", allOpenPluginClasspathFiles.asPath)
         }
     }
 }

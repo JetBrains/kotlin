@@ -6,6 +6,7 @@ plugins {
 }
 
 val powerAssertCompilerPluginJar = configurations.create("powerAssertCompilerPluginJar")
+val allOpenCompilerPluginClasspath = configurations.create("allOpenCompilerPluginClasspath")
 val kotlinxSerializationGradlePluginClasspath = configurations.create("kotlinxSerializationGradlePluginClasspath")
 val kotlinDataFrameGradlePluginClasspath = configurations.create("kotlinDataFrameGradlePluginClasspath")
 val kotlinxCoroutinesCoreGradlePluginClasspath = configurations.create("kotlinxCoroutinesCoreGradlePluginClasspath")
@@ -34,6 +35,7 @@ dependencies {
     testRuntimeOnly(project(":compiler:fir:plugin.api"))
 
     powerAssertCompilerPluginJar(project(":kotlin-power-assert-compiler-plugin")) { isTransitive = false }
+    allOpenCompilerPluginClasspath(project(":kotlin-allopen-compiler-plugin")) { isTransitive = false }
     kotlinxSerializationGradlePluginClasspath(project(":kotlinx-serialization-compiler-plugin.embeddable")) { isTransitive = true }
     kotlinDataFrameGradlePluginClasspath(project(":kotlin-dataframe-compiler-plugin.embeddable")) { isTransitive = true }
     kotlinxCoroutinesCoreGradlePluginClasspath(libs.kotlinx.coroutines.core) { isTransitive = false }
@@ -60,6 +62,7 @@ projectTests {
         workingDir = rootDir
         addClasspathProperty(testSourceSet.output.classesDirs, "kotlin.test.script.classpath")
         addClasspathProperty(powerAssertCompilerPluginJar, "kotlin.power.assert.compiler.plugin.jar")
+        addClasspathProperty(allOpenCompilerPluginClasspath, "kotlin.script.test.allopen.plugin.classpath")
         addClasspathProperty(kotlinxSerializationGradlePluginClasspath, "kotlin.script.test.kotlinx.serialization.plugin.classpath")
         addClasspathProperty(kotlinDataFrameGradlePluginClasspath, "kotlin.script.test.kotlin.dataframe.plugin.classpath")
         addClasspathProperty(kotlinxCoroutinesCoreGradlePluginClasspath, "kotlin.script.test.kotlinx.coroutines.core.classpath")

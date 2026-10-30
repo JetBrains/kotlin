@@ -4214,6 +4214,12 @@ public class FirSourceLikeLazyDeclarationResolveTestGenerated extends AbstractFi
     }
 
     @Test
+    @TestMetadata("invokeGeneratedCompanionObjectScript.kts")
+    public void testInvokeGeneratedCompanionObjectScript() {
+      run("invokeGeneratedCompanionObjectScript.kts");
+    }
+
+    @Test
     @TestMetadata("preresolvedAliasedAnnotation.kt")
     public void testPreresolvedAliasedAnnotation() {
       run("preresolvedAliasedAnnotation.kt");

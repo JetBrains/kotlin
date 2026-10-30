@@ -5,25 +5,12 @@
 
 package org.jetbrains.kotlin.jsr223.bta
 
-import org.jetbrains.kotlin.buildtools.api.CompilationResult
-import org.jetbrains.kotlin.buildtools.api.DelicateBuildToolsApi
-import org.jetbrains.kotlin.buildtools.api.DeprecatedCompilerArgument
-import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
-import org.jetbrains.kotlin.buildtools.api.KotlinLogger
-import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
-import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPlugin
-import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPluginOption
-import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
-import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
+import org.jetbrains.kotlin.buildtools.api.*
+import org.jetbrains.kotlin.buildtools.api.arguments.*
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.ScriptNames
-import org.jetbrains.kotlin.scripting.compiler.plugin.KOTLIN_SCRIPTING_PLUGIN_ID
-import org.jetbrains.kotlin.scripting.compiler.plugin.ReplSnippetConfigurationCodec
-import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptTemplateWithClasspath
-import org.jetbrains.kotlin.scripting.compiler.plugin.scriptTemplateWithClasspath
-import org.jetbrains.kotlin.scripting.compiler.plugin.withRefinedFromSnippetClass
+import org.jetbrains.kotlin.scripting.compiler.plugin.*
 import java.io.File
 import java.io.IOException
 import java.nio.file.Files
@@ -87,6 +74,7 @@ class BtaReplCompiler(
 
     private val priorOutputDirs = mutableListOf<Path>()
     private val priorClassIds = mutableListOf<ClassId>()
+    private var plugins = StatelessReplCompilerPlugins.EMPTY
 
     private var scriptTemplateCache: Pair<Any, ScriptTemplateWithClasspath?>? = null
 
@@ -162,23 +150,50 @@ class BtaReplCompiler(
         try {
             val scriptFiles = refinedSnippets.map { sourceDir.resolve(it.name).also { file -> file.writeText(it.snippet.text) } }
 
-            logger.clear()
-            val result = runCompilation(scriptFiles, outputDir, configurationFile, batchConfiguration)
+            fun compile(output: Path, pluginSet: StatelessReplCompilerPlugins): CompilationResult {
+                logger.clear()
+                return runCompilation(scriptFiles, output, configurationFile, batchConfiguration, pluginSet)
+            }
+
+            var candidatePlugins = plugins
+            var finalOutputDir = outputDir
+            var result = compile(outputDir, candidatePlugins)
+            // The compiler reports compiler plugins requested by the snippets, but not loaded yet, in a dedicated diagnostic.
+            val requestedPlugins = try {
+                logger.messages.mapNotNull(StatelessReplPluginRequestsCodec::extractMissingPluginRequests)
+                    .takeIf { it.isNotEmpty() }?.flatten()
+            } catch (exception: Exception) {
+                return ResultWithDiagnostics.Failure(
+                    "BtaReplCompiler: unable to decode compiler plugin requests: ${exception.message}".asErrorDiagnostics()
+                )
+            }
+            if (requestedPlugins != null) {
+                candidatePlugins = plugins.merge(requestedPlugins).valueOr { return it }
+
+                finalOutputDir = Files.createDirectories(workRoot.resolve("snippet-batch-$batchIndex-retry-out"))
+                result = compile(finalOutputDir, candidatePlugins)
+                if (logger.messages.any { StatelessReplPluginRequestsCodec.extractMissingPluginRequests(it) != null }) {
+                    return ResultWithDiagnostics.Failure(
+                        "BtaReplCompiler: compiler requested plugins after its single retry".asErrorDiagnostics()
+                    )
+                }
+            }
+
             if (result != COMPILATION_SUCCESS) {
                 return ResultWithDiagnostics.Failure(
                     logger.messages.map { it.asErrorDiagnostics(path = refinedSnippets.last().snippet.locationId) }
                 )
             }
 
-            priorOutputDirs.add(outputDir)
+            priorOutputDirs.add(finalOutputDir)
             for ([refinedSnippet, scriptFile] in refinedSnippets.zip(scriptFiles)) {
                 val classId = snippetClassId(scriptFile)
                 // Brings in compiler-side refinement results, e.g. `@DependsOn`-resolved jars.
                 val compilationConfiguration = refinedSnippet.configuration.withRefinedFromSnippetClass(
-                    outputDir.resolve("${classId.shortClassName.asString()}.class").toFile()
+                    finalOutputDir.resolve("${classId.shortClassName.asString()}.class").toFile()
                 )
                 val compiledSnippet = compiledSnippetFromClassPath(
-                    classPath = listOf(outputDir.toFile()),
+                    classPath = listOf(finalOutputDir.toFile()),
                     snippetClassFQName = classId.asSingleFqName().asString(),
                     snippet = refinedSnippet.snippet,
                     compilationConfiguration = compilationConfiguration,
@@ -186,6 +201,7 @@ class BtaReplCompiler(
                 priorClassIds += classId
                 lastCompiledSnippetInternal = lastCompiledSnippetInternal.add(compiledSnippet)
             }
+            plugins = candidatePlugins
             reports += logger.messages.map {
                 ScriptDiagnostic(
                     ScriptDiagnostic.unspecifiedInfo, it, ScriptDiagnostic.Severity.WARNING,
@@ -198,19 +214,22 @@ class BtaReplCompiler(
         }
     }
 
-    @OptIn(ExperimentalCompilerArgument::class, DeprecatedCompilerArgument::class)
+    @OptIn(ExperimentalCompilerArgument::class)
     private fun runCompilation(
         scriptFiles: List<Path>,
         outputDir: Path,
         configurationFile: Path,
         batchConfiguration: ScriptCompilationConfiguration,
+        plugins: StatelessReplCompilerPlugins,
     ): CompilationResult {
         val operation = toolchain.jvm.jvmCompilationOperationBuilder(scriptFiles, outputDir)
         operation.compilerArguments.let { arguments ->
             arguments[JvmCompilerArguments.CLASSPATH] = additionalClasspath + priorSnippetsResolvedClasspath() + priorOutputDirs
             arguments[CommonCompilerArguments.X_ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS] = true
             arguments[CommonCompilerArguments.X_SUPPRESS_VERSION_WARNINGS] = true
-            arguments[CommonCompilerArguments.COMPILER_PLUGINS] = listOf(scriptingPlugin(configurationFile, batchConfiguration))
+            arguments[CommonCompilerArguments.COMPILER_PLUGINS] =
+                listOf(scriptingPlugin(configurationFile, batchConfiguration, plugins)) +
+                        plugins.asBtaCompilerPlugins()
         }
         return session.executeOperation(operation.build(), executionPolicy, logger)
     }
@@ -219,7 +238,11 @@ class BtaReplCompiler(
      * The scripting compiler plugin declaration that switches this compilation into
      * chained-REPL-snippet mode.
      */
-    private fun scriptingPlugin(configurationFile: Path, batchConfiguration: ScriptCompilationConfiguration): CompilerPlugin =
+    private fun scriptingPlugin(
+        configurationFile: Path,
+        batchConfiguration: ScriptCompilationConfiguration,
+        plugins: StatelessReplCompilerPlugins,
+    ): CompilerPlugin =
         CompilerPlugin(
             pluginId = KOTLIN_SCRIPTING_PLUGIN_ID,
             classpath = scriptingPluginClasspath,
@@ -229,6 +252,9 @@ class BtaReplCompiler(
                     add(CompilerPluginOption("repl-snippet-prior-class", classId.asString()))
                 }
                 add(CompilerPluginOption("repl-snippet-configuration", configurationFile.toAbsolutePath().toString()))
+                plugins.loadedKeyOptions().forEach {
+                    add(CompilerPluginOption("repl-snippet-loaded-plugin", it))
+                }
                 // Refinement handlers are transient and cannot travel in the configuration file, so the compiler
                 // loads the definition from its template and overrides it with the configuration from the file.
                 scriptTemplateWithClasspathOf(batchConfiguration)?.let { template ->
@@ -242,6 +268,20 @@ class BtaReplCompiler(
             },
             orderingRequirements = emptySet(),
         )
+
+    private fun StatelessReplCompilerPlugins.asBtaCompilerPlugins(): List<CompilerPlugin> =
+        entries().map { [_, pluginId, classpath, options] ->
+            CompilerPlugin(
+                pluginId = pluginId,
+                classpath = classpath.map { it.toPath() },
+                rawArguments = options.map { option ->
+                    val separator = option.indexOf('=')
+                    require(separator > 0) { "Invalid compiler plugin option '$option'." }
+                    CompilerPluginOption(option.substring(0, separator), option.substring(separator + 1))
+                },
+                orderingRequirements = emptySet(),
+            )
+        }
 
     private fun scriptTemplateWithClasspathOf(configuration: ScriptCompilationConfiguration): ScriptTemplateWithClasspath? {
         val key = configuration[ScriptCompilationConfiguration.baseClass] to

@@ -371,9 +371,6 @@ internal class LLFirSessionFactory(
             registerAllCommonComponents(languageVersionSettings, resolutionScope)
             registerSourceLikeComponents()
 
-            registerCommonComponentsAfterExtensionsAreConfigured()
-            registerJavaComponents(JavaModuleResolver.getInstance(project))
-
             val provider = LLFirProvider(
                 this,
                 components,
@@ -385,6 +382,15 @@ internal class LLFirSessionFactory(
             register(FirProvider::class, provider)
             register(FirLazyDeclarationResolver::class, LLFirLazyDeclarationResolver())
 
+            registerCompilerPluginServices(project, resolutionScope)
+            FirSessionConfigurator(this).apply {
+                registerCompilerPluginExtensions(project, module)
+                registerScriptExtensions(module.file)
+            }.configure()
+
+            registerCommonComponentsAfterExtensionsAreConfigured()
+            registerJavaComponents(JavaModuleResolver.getInstance(project))
+
             val dependencyProvider = LLDependenciesSymbolProvider(this) {
                 buildList {
                     addMerged(session, computeDependencySymbolProviders(module))
@@ -395,6 +401,19 @@ internal class LLFirSessionFactory(
             val javaSymbolProvider = LLFirJavaSymbolProvider(this, module.contentScope)
             register(JavaSymbolProvider::class, javaSymbolProvider)
 
+            register(DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY, dependencyProvider)
+            register(FirJvmTypeMapper::class, FirJvmTypeMapper(this))
+
+            LLFirSessionConfigurator.configure(this)
+
+            val syntheticFunctionInterfaceProvider =
+                FirExtensionSyntheticFunctionInterfaceProvider.createIfNeeded(this, moduleData, scopeProvider)
+
+            val switchableExtensionDeclarationsSymbolProvider =
+                LLFirSwitchableExtensionDeclarationsSymbolProvider
+                    .createIfNeeded(this)
+                    ?.also { register(FirSwitchableExtensionDeclarationsSymbolProvider::class, it) }
+
             register(
                 FirSymbolProvider::class,
                 LLModuleWithDependenciesSymbolProvider(
@@ -402,22 +421,12 @@ internal class LLFirSessionFactory(
                     providers = listOfNotNull(
                         javaSymbolProvider,
                         provider.symbolProvider,
+                        switchableExtensionDeclarationsSymbolProvider,
+                        syntheticFunctionInterfaceProvider,
                     ),
                     dependencyProvider,
                 )
             )
-
-            register(FirPredicateBasedProvider::class, FirEmptyPredicateBasedProvider)
-            register(DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY, dependencyProvider)
-            register(FirRegisteredPluginAnnotations::class, FirRegisteredPluginAnnotationsImpl(this))
-            register(FirJvmTypeMapper::class, FirJvmTypeMapper(this))
-
-            FirSessionConfigurator(session).apply {
-                registerCompilerPluginExtensions(project, module)
-                registerScriptExtensions(module.file)
-            }.configure()
-
-            LLFirSessionConfigurator.configure(this)
         }
     }
 

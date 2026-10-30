@@ -305,6 +305,119 @@ class CustomK2ReplTest {
     }
 
     @Test
+    fun testCompilerPluginIsKeptForLaterReplSnippets() {
+        if (!isK2) return
+        val plugin = ScriptCompilerPlugin.fromClasspath(
+            listOf(File(System.getProperty("kotlin.script.test.kotlinx.serialization.plugin.classpath")!!))
+        )
+        val compilationConfiguration = serializationCompilationConfiguration()
+        val compilationConfigurationWithPlugin = compilationConfiguration.with { compilerPlugins(plugin) }
+        val result = withMessageCollectorAndDisposable { messageCollector, disposable ->
+            val compiler = K2ReplCompiler(K2ReplCompiler.createCompilationState(messageCollector, disposable, compilationConfiguration))
+            @Suppress("DEPRECATION_ERROR")
+            internalScriptingRunSuspend {
+                compiler.compile(
+                    "import kotlinx.serialization.*\nimport kotlinx.serialization.json.*\n@Serializable data class User(val name: String)\nJson.encodeToString(User(\"James\"))"
+                        .toScriptSource("plugin-user.repl.kts"),
+                    compilationConfigurationWithPlugin,
+                ).valueOr { return@internalScriptingRunSuspend it }
+                compiler.compile(
+                    "import kotlinx.serialization.*\nimport kotlinx.serialization.json.*\nJson.encodeToString(User(\"Bond\"))\n@Serializable data class Project(val name: String)"
+                        .toScriptSource("plugin-project.repl.kts"),
+                ).valueOr { return@internalScriptingRunSuspend it }
+                compiler.compile(
+                    "import kotlinx.serialization.json.*\nJson.encodeToString(Project(\"MI6\"))"
+                        .toScriptSource("plugin-project-serializer.repl.kts")
+                )
+            }
+        }
+        result.valueOrThrow()
+    }
+
+    @Test
+    fun testRepeatedCompilerPluginRequestsAndConflictingOptionsInRepl() {
+        if (!isK2) return
+        val pluginClasspath = File(System.getProperty("kotlin.script.test.kotlinx.serialization.plugin.classpath")!!)
+        val plugin = ScriptCompilerPlugin.fromClasspath(listOf(pluginClasspath))
+        val conflictingPlugin = ScriptCompilerPlugin.fromClasspath(listOf(pluginClasspath), listOf("conflicting-option=true"))
+        val compilationConfiguration = serializationCompilationConfiguration()
+        val samePluginConfiguration = compilationConfiguration.with { compilerPlugins(plugin) }
+        val conflictingPluginConfiguration = compilationConfiguration.with { compilerPlugins(conflictingPlugin) }
+        val result = withMessageCollectorAndDisposable { messageCollector, disposable ->
+            val compiler = K2ReplCompiler(K2ReplCompiler.createCompilationState(messageCollector, disposable, compilationConfiguration))
+            @Suppress("DEPRECATION_ERROR")
+            internalScriptingRunSuspend {
+                compiler.compile(
+                    "import kotlinx.serialization.*\n@Serializable data class User(val name: String)"
+                        .toScriptSource("repeated-plugin-user.repl.kts"),
+                    samePluginConfiguration,
+                ).valueOr { return@internalScriptingRunSuspend it }
+                compiler.compile("1".toScriptSource("repeated-plugin-request.repl.kts"), samePluginConfiguration)
+                    .valueOr { return@internalScriptingRunSuspend it }
+
+                val conflictingResult = compiler.compile(
+                    "2".toScriptSource("conflicting-plugin-request.repl.kts"),
+                    conflictingPluginConfiguration,
+                )
+                if (conflictingResult !is ResultWithDiagnostics.Failure) {
+                    fail("The conflicting compiler plugin options should fail: $conflictingResult")
+                }
+                assertTrue(
+                    conflictingResult.reports.any { it.message.contains("Conflicting options") },
+                    "Unexpected failure: ${conflictingResult.reports}",
+                )
+
+                compiler.compile(
+                    "import kotlinx.serialization.json.*\nJson.encodeToString(User(\"James\"))"
+                        .toScriptSource("plugin-after-conflict.repl.kts")
+                )
+            }
+        }
+        result.valueOrThrow()
+    }
+
+    @Test
+    fun testFailedSnippetDoesNotCommitCompilerPluginToRepl() {
+        if (!isK2) return
+        val plugin = ScriptCompilerPlugin.fromClasspath(
+            listOf(File(System.getProperty("kotlin.script.test.kotlinx.serialization.plugin.classpath")!!))
+        )
+        val compilationConfiguration = serializationCompilationConfiguration()
+        val compilationConfigurationWithPlugin = compilationConfiguration.with { compilerPlugins(plugin) }
+        val result = withMessageCollectorAndDisposable { messageCollector, disposable ->
+            val compiler = K2ReplCompiler(K2ReplCompiler.createCompilationState(messageCollector, disposable, compilationConfiguration))
+            @Suppress("DEPRECATION_ERROR")
+            internalScriptingRunSuspend {
+                val failedSnippet = compiler.compile(
+                    "import kotlinx.serialization.*\n@Serializable data class Broken(val value: Int) { val invalid: String = 1 }"
+                        .toScriptSource("failed-plugin-snippet.repl.kts"),
+                    compilationConfigurationWithPlugin,
+                )
+                if (failedSnippet !is ResultWithDiagnostics.Failure) {
+                    fail("The snippet with a type error should fail: $failedSnippet")
+                }
+
+                compiler.compile(
+                    "import kotlinx.serialization.*\n@Serializable data class NotProcessed(val value: Int)"
+                        .toScriptSource("snippet-without-plugin.repl.kts"),
+                ).valueOr { return@internalScriptingRunSuspend it }
+
+                val serializerLookup = compiler.compile("NotProcessed.serializer()".toScriptSource("no-generated-serializer.repl.kts"))
+                if (serializerLookup !is ResultWithDiagnostics.Failure) {
+                    fail("A plugin from a failed snippet should not generate a serializer in a later snippet: $serializerLookup")
+                }
+                assertTrue(
+                    serializerLookup.reports.any { it.message.contains("serializer") },
+                    "Unexpected failure: ${serializerLookup.reports}",
+                )
+
+                compiler.compile("42".toScriptSource("after-failed-plugin.repl.kts"))
+            }
+        }
+        result.valueOrThrow()
+    }
+
+    @Test
     fun testDataFrame() {
         if (!isK2) return
         val dataFramePluginClasspath = System.getProperty("kotlin.script.test.kotlin.dataframe.plugin.classpath")!!
@@ -859,6 +972,14 @@ private val baseCompilationConfiguration: ScriptCompilationConfiguration =
         updateClasspath(classpath + ForTestCompileRuntime.runtimeJarForTests() + ForTestCompileRuntime.scriptingTestsRuntimeClasspathForTests())
         compilerOptions("-Xrender-internal-diagnostic-names=true")
     }
+
+private fun serializationCompilationConfiguration(): ScriptCompilationConfiguration = baseCompilationConfiguration.with {
+    updateClasspath(
+        runBlocking {
+            dependenciesResolver.resolve("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
+        }.valueOrThrow()
+    )
+}
 
 private val baseEvaluationConfiguration: ScriptEvaluationConfiguration = ScriptEvaluationConfiguration {}
 
