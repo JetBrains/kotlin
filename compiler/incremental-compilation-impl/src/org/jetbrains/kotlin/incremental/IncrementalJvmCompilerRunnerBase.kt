@@ -116,7 +116,8 @@ abstract class IncrementalJvmCompilerRunnerBase(
         caches: IncrementalJvmCachesManager,
         generatedFiles: List<GeneratedFile>,
         services: Services,
-    ): Iterable<File> {
+        dirtySources: Set<File>,
+    ): List<File> {
         if (generatedFiles.isEmpty()) return emptyList()
 
         val cache = caches.platformCache
@@ -161,7 +162,7 @@ abstract class IncrementalJvmCompilerRunnerBase(
 
         result.addAll(cache.getObsoleteMultifileClasses().flatMap(::partsByFacadeName))
 
-        return result
+        return result.filter { it !in dirtySources }
     }
 
     override fun runWithNoDirtyKotlinSources(caches: IncrementalJvmCachesManager): Boolean =
