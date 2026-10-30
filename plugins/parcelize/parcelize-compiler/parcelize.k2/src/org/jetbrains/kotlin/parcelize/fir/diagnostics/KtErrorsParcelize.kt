@@ -45,6 +45,7 @@ object KtErrorsParcelize : KtDiagnosticsContainer() {
     val CREATOR_DEFINITION_IS_NOT_ALLOWED by error0<PsiElement>(NAME_IDENTIFIER)
     val PARCELABLE_TYPE_NOT_SUPPORTED by error0<PsiElement>()
     val PARCELABLE_TYPE_CONTAINS_NOT_SUPPORTED by error1<PsiElement, ConeKotlinType>()
+    val PARCELABLE_RECURSIVE_DATA_CLASS_NOT_SUPPORTED by error1<PsiElement, ConeKotlinType>()
     val PARCELER_SHOULD_BE_OBJECT by error0<PsiElement>()
     val PARCELER_TYPE_INCOMPATIBLE by error2<PsiElement, ConeKotlinType, ConeKotlinType>()
     val DUPLICATING_TYPE_PARCELERS by error0<PsiElement>()
