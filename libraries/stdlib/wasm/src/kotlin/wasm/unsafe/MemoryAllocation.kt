@@ -272,20 +272,18 @@ private object FreeListAllocator {
                 (it.ptr.address.toLong() - allocatedSlot.ptr.address.toLong()).toInt()
             }
 
-            require(minusInsertionPointMinusOne != 0) { "Double-free or use-after-free: allocated slot can't already be in the free list; allocated slot: $allocatedSlot; " + debugDump() }
+            require(minusInsertionPointMinusOne < 0) { "Double-free or use-after-free: allocated slot can't already be in the free list; allocated slot: $allocatedSlot; " + debugDump() }
 
             // convert back to actual insertion point
             val insertionPointIndex = -(minusInsertionPointMinusOne + 1)
             return insertionPointIndex
         }
 
-        fun tryGrowInPlace(allocatedSlot: MemorySlot, newSize: UInt): MemorySlot? {
+        fun tryGrowInPlace(allocatedSlot: MemorySlot, additionalSize: UInt): MemorySlot? {
             assert(!isAlreadyOperating) { "Cannot call tryGrowInPlace from within the allocator" }
             isAlreadyOperating = true
             try {
-                assert(newSize % alignment == 0u) { "Attempted to grow an allocation to a size that is not aligned" }
-
-                val additionalSize = newSize - allocatedSlot.size
+                assert(additionalSize % alignment == 0u) { "Attempted to grow an allocation to a size that is not aligned" }
 
                 val indexOfRight = findInsertionPoint(allocatedSlot)
                 if (indexOfRight == list.size) {
@@ -310,6 +308,7 @@ private object FreeListAllocator {
                 }
 
                 // we return the new version of the allocated slot: it starts at the same point, and has the extended size
+                val newSize = allocatedSlot.size + additionalSize
                 return allocatedSlot.copy(size = newSize)
             } finally {
                 isAlreadyOperating = false
@@ -363,9 +362,20 @@ private object FreeListAllocator {
         FreeList.free(allocatedSlot)
     }
 
-    fun tryGrowInPlace(allocatedSlot: MemorySlot, newSize: UInt): MemorySlot? {
-        return FreeList.tryGrowInPlace(allocatedSlot, newSize)?.growRealMemoryIfNeeded()
+    fun shrinkInPlace(allocatedSlot: MemorySlot, reduceSizeBy: UInt) {
+        val originalSize = allocatedSlot.size
+
+        require(originalSize >= reduceSizeBy) { "Attempted to shrink an allocation to a negative size" }
+
+        val endOfOriginalAllocation = allocatedSlot.ptr.address + originalSize
+        val endOfNewlyShrunkAllocation = endOfOriginalAllocation - reduceSizeBy
+
+        // internally, what needs to be freed is the chunk starting at the point that we don't need anymore, i.e., the end of the shrunk allocation
+        free(MemorySlot(Pointer(endOfNewlyShrunkAllocation), reduceSizeBy))
     }
+
+    fun tryGrowInPlace(allocatedSlot: MemorySlot, additionalSize: UInt): Boolean =
+        FreeList.tryGrowInPlace(allocatedSlot, additionalSize)?.growRealMemoryIfNeeded() != null
 
 }
 
@@ -373,10 +383,6 @@ private object FreeListAllocator {
 @UnsafeWasmMemoryApi
 private class ArenaLikeAllocator : MemoryAllocator() {
     private val allocationsToFree = mutableListOf<MemorySlot>()
-
-    internal fun dumpAllocationsToFree(): String {
-        return allocationsToFree.joinToString("\n") { it.toString() }
-    }
 
     override fun allocate(size: Int): Pointer {
         val allocation = FreeListAllocator.allocate(size)
@@ -390,56 +396,7 @@ private class ArenaLikeAllocator : MemoryAllocator() {
         return allocation.ptr
     }
 
-    private fun trackedIndexOf(ptr: Pointer): Int {
-        val i = allocationsToFree.indexOfFirst { it.ptr == ptr }
-        require(i != -1) { "Attempted to free/modify an allocation that was not allocated by this allocator" }
-        return i
-    }
-
-    fun free(ptr: Pointer, originalSize: UInt) {
-        if (originalSize == 0u) // freeing zero-size allocations is a noop, and they aren't tracked
-            return
-
-        val singleAllocation = allocationsToFree[trackedIndexOf(ptr)]
-
-        require(originalSize == singleAllocation.size) { "Attempted to free an allocation with a different size than expected" }
-
-        val allocationExisted = allocationsToFree.remove(singleAllocation)
-        assert(allocationExisted) { "Attempted to free an allocation that was not allocated by this allocator" }
-        FreeListAllocator.free(singleAllocation)
-    }
-
-    fun shrinkInPlace(ptr: Pointer, newSize: UInt) {
-        assert(newSize % alignment == 0u) { "Attempted to shrink an allocation to a size that is not aligned" }
-
-        // NOTE: because we're only subtracting aligned sizes, the result will still be aligned
-
-        val singleAllocationIndex = trackedIndexOf(ptr)
-        val singleAllocation = allocationsToFree[singleAllocationIndex]
-
-
-        val originalSize = singleAllocation.size
-        require(newSize <= originalSize) { "Attempted to shrink an allocation to a larger size" }
-
-        // internally, what needs to be freed is the chunk starting at the point that we don't need anymore, i.e., the allocation start plus the new size. That part is of size (originalSize - newSize)
-        FreeListAllocator.free(MemorySlot(Pointer(singleAllocation.ptr.address + newSize), originalSize - newSize))
-
-        // keep track of the new allocation size
-        allocationsToFree[singleAllocationIndex] = singleAllocation.copy(size = newSize)
-    }
-
-    fun tryGrowInPlace(ptr: Pointer, newSize: UInt): Boolean {
-        val singleAllocationIndex = trackedIndexOf(ptr)
-        val singleAllocation = allocationsToFree[singleAllocationIndex]
-
-        val newSingleAllocation = FreeListAllocator.tryGrowInPlace(singleAllocation, newSize)
-            // if we don't get a new allocation, the grow-in-place request has failed, so we simply stop
-            ?: return false
-
-        allocationsToFree[singleAllocationIndex] = newSingleAllocation
-
-        return true
-    }
+    // NOTE: we don't expose a free() function directly, to a) make it harder to write use-after-frees/double-frees, and b) not expose MemorySlot / FreeList beyond this file.
 
     fun destroy() {
         // NOTE: this could be optimized by first finding the indices of what to merge and remove, and then shrinking the list all at once, to minimize the amount of copying that's necessary
@@ -478,16 +435,11 @@ internal class ScopedMemoryAllocator(
 
 private const val WASM_PAGE_SIZE_IN_BYTES = 65_536  // 64 KiB
 
-@OptIn(UnsafeWasmMemoryApi::class, ExperimentalWasmInterop::class)
-private var reallocAllocator: ArenaLikeAllocator? = null
-
 /**
  * WebAssembly Component Model Canonical ABI realloc implementation.
  * This function is intended to be exported for Component Model support and must not be called directly!
  *
- * Memory allocated by this function must be freed by either:
- * - calling this function again with the original pointer, the original size, and new size 0.
- * - calling [freeAllComponentModelReallocAllocatedMemory] (without freeing *any* memory manually)
+ * Memory allocated by this function must be freed by calling this function again with the original pointer, the original size, and new size 0.
  */
 @OptIn(UnsafeWasmMemoryApi::class, ExperimentalWasmInterop::class)
 @ComponentModelInternalApi
@@ -498,22 +450,19 @@ public fun componentModelRealloc(
 ): Int {
     check(newSize >= 0) { "Cannot allocate negative size" }
 
-    // The first call to realloc creates a new allocator.
-    // TODO(KT-89312): we use a separate allocator here, only to be able to `freeAllComponentModelReallocAllocatedMemory`. Once this function is removed, we can simplify the implementation of component model realloc to simply use the FreeListAllocator only.
-    if (reallocAllocator == null) {
-        reallocAllocator = ArenaLikeAllocator()
-    }
-    val allocator = reallocAllocator!!
+    val allocator = FreeListAllocator
 
     try {
         // to address the correct slot, we must extend the original size to be aligned, as that will be the internal size of the slot
         val originalAllocationSize = realAllocationSize(originalSize.toUInt())
 
+        val originalAllocatedSlot = MemorySlot(Pointer(originalPtr.toUInt()), originalAllocationSize)
+
         if (newSize == 0) {
             if (originalPtr == 0 && originalSize == 0) // this is a zero-size allocation request, not a free (freeing 0 and allocating 0 are both no-ops, only need to ensure the correct return value)
-                return allocator.allocate(0).address.toInt()
+                return allocator.allocate(0).ptr.address.toInt()
 
-            allocator.free(Pointer(originalPtr.toUInt()), originalAllocationSize)
+            allocator.free(originalAllocatedSlot)
             return -1
         }
 
@@ -533,7 +482,7 @@ public fun componentModelRealloc(
 
         // case 2: shrinking, i.e., the new size is smaller than the old size: nothing to do except free a portion
         if (newAllocationSize < originalAllocationSize) {
-            allocator.shrinkInPlace(Pointer(originalPtr.toUInt()), newAllocationSize)
+            allocator.shrinkInPlace(originalAllocatedSlot, originalAllocationSize - newAllocationSize)
             return originalPtr
         }
 
@@ -542,14 +491,14 @@ public fun componentModelRealloc(
         // case 3a: the original size was 0, hand out a new allocation of the new size
         if (originalSize == 0) {
             val newAllocation = allocator.allocate(newSize)
-            return newAllocation.address.toInt()
+            return newAllocation.ptr.address.toInt()
         }
 
         // We know this from the cases before, assert it only to be defensive in case of changes to this function
         assert(originalAllocationSize <= newAllocationSize) { "Shrinking & non-growing cases should already be handled" }
 
         // try to grow the allocation in place
-        if (allocator.tryGrowInPlace(Pointer(originalPtr.toUInt()), newAllocationSize)) {
+        if (allocator.tryGrowInPlace(originalAllocatedSlot, newAllocationSize - originalAllocationSize)) {
             // case 3b: we can grow the allocation in place:
             // - The `try` call above was successful -> the necessary freeing and state management are done.
             // - There's no copying necessary, as the allocation with the old data is still in place.
@@ -560,39 +509,18 @@ public fun componentModelRealloc(
         // case 3c: we now know the allocation grew (and the original allocation size was non-zero), and couldn't grow in place, so we have to perform an actual new allocation, and copy the old data
         val newAllocation = allocator.allocate(newSize)
         // as this is only for useful bytes, we use the sizes that are given out to the application here, not the allocation sizes
-        wasm_memory_copy(newAllocation.address.toInt(), originalPtr, minOf(originalSize, newSize))
+        wasm_memory_copy(newAllocation.ptr.address.toInt(), originalPtr, minOf(originalSize, newSize))
         // also free the old allocation (from which we copied), which is now useless
-        allocator.free(Pointer(originalPtr.toUInt()), originalAllocationSize)
+        allocator.free(originalAllocatedSlot)
 
-        return newAllocation.address.toInt()
+        return newAllocation.ptr.address.toInt()
     } catch (e: OutOfMemoryError) {
         // the canonical ABI specifies realloc must trap via unreachable in this case
         wasm_unreachable()
     }
 }
 
-// TODO(KT-89312): Remove this function, and simplify componentModelRealloc
-/**
- *  Frees memory allocated by all previous calls of [componentModelRealloc]. This is intended to be used for Component Model support and must not be called directly!
- *
- *  NOTE: This function is incompatible with freeing memory manually through `componentModelRealloc(ptr, size, 0)` calls, as this will result in a double-free.
- */
-@OptIn(UnsafeWasmMemoryApi::class, ExperimentalWasmInterop::class)
-@Deprecated("Freeing all cabi_realloc-allocated memory is incompatible with the WASI preview 1 to preview 2 adapter which uses cabi_realloc to allocate memory that it expects is never freed. This means that the use of this function will always cause use-after-free UB in the adapter.")
-@ComponentModelInternalApi
-public fun freeAllComponentModelReallocAllocatedMemory() {
-    if (reallocAllocator != null) {
-        reallocAllocator!!.destroy()
-        reallocAllocator = null
-    }
-}
-
 @OptIn(UnsafeWasmMemoryApi::class, ExperimentalWasmInterop::class)
 internal fun dumpFreeList(): String {
     return FreeListAllocator.debugDump()
-}
-
-@OptIn(UnsafeWasmMemoryApi::class, ExperimentalWasmInterop::class)
-internal fun dumpReallocAllocatorTrackedAllocations(): String? {
-    return reallocAllocator?.dumpAllocationsToFree()
 }
