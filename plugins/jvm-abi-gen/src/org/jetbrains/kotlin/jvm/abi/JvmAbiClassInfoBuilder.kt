@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.jvm.abi
 
+import java.util.concurrent.ConcurrentHashMap
+
 /**
  * Collects information about kept/stripped/deleted classes, and then adapts it so that it would be consistent if private interfaces
  * are present in the module. The latter is done only if [removePrivateClasses] is enabled.
@@ -17,9 +19,9 @@ package org.jetbrains.kotlin.jvm.abi
  * (in terms of ABI) class in the module. Also, in case such private interface is nested, all its outer classes should be kept but pruned.
  */
 internal class JvmAbiClassInfoBuilder(private val removePrivateClasses: Boolean) {
-    private val abiClassInfo = mutableMapOf<String, AbiClassInfo>()
-    private val innerClassToOuter = mutableMapOf<String, String>()
-    private val allSuperInterfaces = mutableMapOf<String, List<String>>()
+    private val abiClassInfo = ConcurrentHashMap<String, AbiClassInfo>()
+    private val innerClassToOuter = ConcurrentHashMap<String, String>()
+    private val allSuperInterfaces = ConcurrentHashMap<String, List<String>>()
 
     fun recordInitialClassInfo(className: String, info: AbiClassInfo, superInterfaces: List<String>) {
         abiClassInfo[className] = info
