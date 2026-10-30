@@ -60,14 +60,15 @@ fun TypeConstructorMarker.hasRecursionInTypeParametersOrCapturedTypes(languageVe
 
 context(c: TypeSystemInferenceExtensionContext)
 private fun TypeConstructorMarker.hasRecursionInTypeParametersOrCapturedTypes(): Boolean {
-    if (getParameters().any { it.hasRecursiveBounds(this) }) return true
+    fun TypeConstructorMarker.hasRecursionInSupertypes() =
+        supertypes().any { it.typeConstructor().hasRecursionInTypeParametersOrCapturedTypes() }
 
-    if (this is CapturedTypeConstructorMarker || isIntersection()) {
-        return supertypes().any { it.typeConstructor().hasRecursionInTypeParametersOrCapturedTypes() }
-                || this is CapturedTypeConstructorMarker && hasRecursiveBounds()
+    return when {
+        getParameters().any { it.hasRecursiveBounds(this) } -> true
+        isIntersection() -> hasRecursionInSupertypes()
+        this is CapturedTypeConstructorMarker -> hasRecursionInSupertypes() || hasRecursiveBounds()
+        else -> false
     }
-
-    return false
 }
 
 context(c: TypeSystemInferenceExtensionContext)
