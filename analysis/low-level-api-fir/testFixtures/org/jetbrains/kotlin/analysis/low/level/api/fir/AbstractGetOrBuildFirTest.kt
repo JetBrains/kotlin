@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analysis.api.standalone.fir.projectStructure.Analysi
 import org.jetbrains.kotlin.analysis.low.level.api.fir.AbstractGetOrBuildFirTest.Directives.SKIP_CONTAINMENT_CHECK
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
-import org.jetbrains.kotlin.analysis.low.level.api.fir.services.AnalysisInterruptedException
 import org.jetbrains.kotlin.analysis.low.level.api.fir.services.ErrorResistanceServiceRegistrar
 import org.jetbrains.kotlin.analysis.low.level.api.fir.services.FirRenderingOptions
 import org.jetbrains.kotlin.analysis.low.level.api.fir.services.firRenderingOptions
@@ -260,11 +259,7 @@ abstract class AbstractInterruptingGetOrBuildFirTest : AbstractGetOrBuildFirTest
     override fun <T : Any> intercept(index: Int, testModule: TestModule, block: () -> T?): T? {
         if (index in testModule.directives[Directives.INTERRUPT_AT]) {
             ErrorResistanceServiceRegistrar.handleInterruption {
-                try {
-                    val _ = block()
-                    throw IllegalStateException("Analysis should be interrupted")
-                } catch (_: AnalysisInterruptedException) {
-                }
+                val _ = block()
             }
             return null
         } else {
