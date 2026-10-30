@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.serialization.SerializedIrFileFingerp
 import org.jetbrains.kotlin.backend.common.serialization.SerializedKlibFingerprint
 import org.jetbrains.kotlin.backend.konan.util.compilerFingerprint
 import org.jetbrains.kotlin.backend.konan.util.reportCompilationErrorAndThrow
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.reportLog
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -634,18 +635,25 @@ class CacheBuilder(
      *
      * Note: each spawned compilation uses the whole thread pool for its own codegen (see `setupCommonOptionsForCaches`),
      * so the peak number of threads is the size of the wave multiplied by `-Xbackend-threads`; the same applies
-     * to the peak memory consumption of the spawned compilations.
+     * to the peak memory consumption of the spawned compilations. When this actually happens (a wave with more
+     * than one library runs in parallel), a warning about the increased memory usage is reported once, see
+     * [reportParallelCachesMemoryUsageWarning].
      *
      * Returns the built binary archive paths mapped from the processed libraries, in their given order.
      */
     private fun buildMonolithicCaches(libraries: List<KotlinLibrary>, isExternal: Boolean): Map<KotlinLibrary, List<Path>> {
         val pendingLibraries = libraries.toMutableList()
         val builtCaches = LinkedHashMap<KotlinLibrary, List<Path>>()
+        var parallelCachesMemoryWarningReported = false
         while (pendingLibraries.isNotEmpty()) {
             val wave = pendingLibraries.filter { library ->
                 config.klibDag.getAllDependencies(library).all { cacheRootDirectories.containsKey(it) }
             }
             if (wave.isEmpty()) break
+            if (!parallelCachesMemoryWarningReported && wave.size > 1 && compilerExecutor.availableWorkers > 1) {
+                parallelCachesMemoryWarningReported = true
+                reportParallelCachesMemoryUsageWarning(wave.size)
+            }
             val tasks = wave.map { library ->
                 { buildLibraryCache(library, isExternal, emptyList()) }
             }
@@ -660,6 +668,18 @@ class CacheBuilder(
             builtCaches[library] = buildLibraryCache(library, isExternal, emptyList())
         }
         return builtCaches
+    }
+
+    private fun reportParallelCachesMemoryUsageWarning(waveSize: Int) {
+        synchronized(messageCollector) {
+            messageCollector.report(
+                    CompilerMessageSeverity.WARNING,
+                    "Building $waveSize library caches in parallel may require a lot of memory " +
+                            "(each build is a separate compilation with ${config.threadsCount} codegen threads). " +
+                            "To reduce memory usage, lower the '-Xbackend-threads' value " +
+                            "or increase the JVM heap size of the compiler process."
+            )
+        }
     }
 
     private fun buildLibraryCache(library: KotlinLibrary, isExternal: Boolean, filesToCache: List<String>): List<Path> {
