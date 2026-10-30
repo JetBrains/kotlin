@@ -140,6 +140,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColsAtAnyDepth2
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColsOf0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColsOf1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColsOf2
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnOfFrames
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnOfPairs
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnPathCol
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnPathColUntyped
@@ -661,6 +662,7 @@ private fun String.loadImpl(isTest: Boolean): Interpreter<*>? {
         "DataFrameOfPairs" -> DataFrameOfPairs()
         "DataFrameGenerator" -> DataFrameGenerator()
         "ColumnOfPairs" -> ColumnOfPairs()
+        "ColumnOfFrames" -> ColumnOfFrames()
         "DataFrameBuilderInvoke0" -> DataFrameBuilderInvoke0()
         "DataFrameBuilderRandomInt" -> DataFrameBuilderRandomInt()
         "DataFrameBuilderRandomIntRange" -> DataFrameBuilderRandomIntRange()

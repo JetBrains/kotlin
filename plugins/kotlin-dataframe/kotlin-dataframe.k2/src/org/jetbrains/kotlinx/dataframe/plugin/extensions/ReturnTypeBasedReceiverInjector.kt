@@ -33,6 +33,7 @@ class ReturnTypeBasedReceiverInjector(session: FirSession) : FirExpressionResolu
             Names.GROUP_BY_CLASS_ID,
             Names.DATA_ROW_CLASS_ID,
             Names.COLUM_GROUP_CLASS_ID,
+            Names.FRAME_COLUMN_CLASS_ID,
         )
     }
 

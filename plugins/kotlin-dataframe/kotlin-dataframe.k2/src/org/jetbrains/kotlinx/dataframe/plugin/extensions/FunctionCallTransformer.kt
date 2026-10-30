@@ -142,6 +142,7 @@ class FunctionCallTransformer(
         DataFrameCallTransformer(),
         DataRowCallTransformer(),
         ColumnGroupCallTransformer(),
+        FrameColumnCallTransformer(),
     )
 
     override fun intercept(callInfo: CallInfo, symbol: FirNamedFunctionSymbol): CallReturnType? {
@@ -233,6 +234,8 @@ class FunctionCallTransformer(
     inner class DataRowCallTransformer : CallTransformer by DataSchemaLikeCallTransformer(Names.DATA_ROW_CLASS_ID)
 
     inner class ColumnGroupCallTransformer : CallTransformer by DataSchemaLikeCallTransformer(Names.COLUM_GROUP_CLASS_ID)
+
+    inner class FrameColumnCallTransformer : CallTransformer by DataSchemaLikeCallTransformer(Names.FRAME_COLUMN_CLASS_ID)
 
     inner class GroupByCallTransformer : CallTransformer {
         override fun interceptOrNull(
