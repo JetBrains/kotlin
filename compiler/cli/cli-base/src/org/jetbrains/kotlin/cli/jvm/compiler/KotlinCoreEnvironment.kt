@@ -62,6 +62,7 @@ import org.jetbrains.kotlin.extensions.internal.CandidateInterceptor
 import org.jetbrains.kotlin.extensions.internal.InternalNonStableExtensionPoints
 import org.jetbrains.kotlin.extensions.internal.TypeResolutionInterceptor
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFactory
 import org.jetbrains.kotlin.load.java.structure.impl.source.JavaFixedElementSourceFactory
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
@@ -326,8 +327,16 @@ class KotlinCoreEnvironment private constructor(
         sourceFiles += createSourceFilesFromSourceRoots(configuration, project, roots).toSet() - sourceFiles
     }
 
+    /** Scope-based factory for the K1 analysis entry points only; K2 code uses the [JvmClasspath] overload. */
     fun createPackagePartProvider(scope: GlobalSearchScope): JvmPackagePartProvider {
-        return JvmPackagePartProvider(configuration.languageVersionSettings, scope).apply {
+        return JvmPackagePartProvider(configuration.languageVersionSettings) { it in scope }.apply {
+            addRoots(initialRoots, configuration)
+            packagePartProviders += this
+        }
+    }
+
+    fun createPackagePartProvider(classpath: JvmClasspath): JvmPackagePartProvider {
+        return JvmPackagePartProvider(configuration.languageVersionSettings, classpath).apply {
             addRoots(initialRoots, configuration)
             packagePartProviders += this
         }

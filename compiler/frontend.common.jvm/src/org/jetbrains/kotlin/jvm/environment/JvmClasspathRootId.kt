@@ -29,3 +29,26 @@ value class JvmClasspathRootId(val id: String) {
 
 fun VirtualFile.asJvmClasspathRootId(): JvmClasspathRootId =
     JvmClasspathRootId(path.removeSuffix(JAR_SEPARATOR).trimEnd('/'))
+
+fun VirtualFile.isUnder(classpathRoot: JvmClasspathRootId): Boolean {
+    val root = classpathRoot.id
+    val path = path
+    val archiveSeparator = path.indexOf(JAR_SEPARATOR)
+    return when {
+        archiveSeparator >= 0 -> archiveSeparator == root.length && path.startsWith(root)
+        else -> path.length > root.length && path[root.length] == '/' && path.startsWith(root)
+    }
+}
+
+fun VirtualFile.isClasspathRootAtOrUnder(classpathRoot: JvmClasspathRootId): Boolean =
+    asJvmClasspathRootId() == classpathRoot || isUnder(classpathRoot)
+
+fun JvmClasspath.containsFile(file: VirtualFile): Boolean = when (this) {
+    is JvmClasspath.Roots -> roots.any(file::isUnder)
+    is JvmClasspath.ProjectLibraries -> excludedRoots.none(file::isUnder)
+}
+
+fun JvmClasspath.containsRoot(root: VirtualFile): Boolean = when (this) {
+    is JvmClasspath.Roots -> roots.any(root::isClasspathRootAtOrUnder)
+    is JvmClasspath.ProjectLibraries -> excludedRoots.none(root::isClasspathRootAtOrUnder)
+}
