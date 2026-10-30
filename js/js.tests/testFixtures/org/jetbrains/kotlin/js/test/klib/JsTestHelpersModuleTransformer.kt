@@ -5,8 +5,14 @@
 
 package org.jetbrains.kotlin.js.test.klib
 
+import org.jetbrains.kotlin.test.TestInfrastructureInternals
+import org.jetbrains.kotlin.test.impl.shouldIsolateTestInGroupingConfiguration
 import org.jetbrains.kotlin.test.klib.HelperModuleExtractingTransformer
 import org.jetbrains.kotlin.test.model.TestFile
+import org.jetbrains.kotlin.test.services.DefaultsProvider
+import org.jetbrains.kotlin.test.services.ModuleStructureTransformer
+import org.jetbrains.kotlin.test.services.TestModuleStructure
+import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider.Companion.detectPackage
 import org.jetbrains.kotlin.test.services.sourceProviders.SourceContentView
 
@@ -32,4 +38,18 @@ object JsTestHelpersModuleTransformer : HelperModuleExtractingTransformer() {
 
     override fun isHelperFile(file: TestFile): Boolean =
         file.isAdditional && file.name.endsWith(".kt") && detectPackage(file, SourceContentView.ORIGINAL) in HELPER_PACKAGES
+}
+
+/**
+ * Applies [JsTestHelpersModuleTransformer] to a test that is grouped only. An isolated test keeps the module structure
+ * of the one-stage pipeline, which its checks expect: for example, a dump lists every module of the test.
+ * The test is isolated or not by the same rules as for `BatchingPackageInserter`, so the helpers are extracted exactly
+ * from the tests whose packages are renamed.
+ */
+@OptIn(TestInfrastructureInternals::class)
+class JsGroupedTestHelpersModuleTransformer(private val testServices: TestServices) : ModuleStructureTransformer() {
+    override fun transformModuleStructure(moduleStructure: TestModuleStructure, defaultsProvider: DefaultsProvider): TestModuleStructure {
+        if (testServices.shouldIsolateTestInGroupingConfiguration(moduleStructure, fileGenerationPhase = true)) return moduleStructure
+        return JsTestHelpersModuleTransformer.transformModuleStructure(moduleStructure, defaultsProvider)
+    }
 }
