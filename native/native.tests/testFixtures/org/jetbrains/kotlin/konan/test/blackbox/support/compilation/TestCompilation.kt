@@ -24,8 +24,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilat
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.*
-import org.jetbrains.kotlin.library.loader.KlibLoader
-import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import java.io.File
@@ -330,7 +328,22 @@ abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
             addFlattened(friends) { friend -> listOf("-l", friend.path) }
         }
         add(dependencies.includedLibraries) { include -> "-Xinclude=${include.path}" }
+        applyIncrementalCompilationArgs()
         super.applyDependencies(argsBuilder)
+    }
+
+    private fun ArgsBuilder.applyIncrementalCompilationArgs() {
+        if (!cacheMode.useIncrementalCompilation) return
+        // IC only affects the backend, so it's useless for LibraryCompilation (see BasicCompilation.applyDependencies).
+        if (this@SourceBasedCompilation is LibraryCompilation) return
+        // Some tests (e.g. AbstractNativeIncrementalCompilationTest) manage IC themselves.
+        if ("-Xenable-incremental-compilation" in freeCompilerArgs.compilerArgs) return
+
+        // A separate IC cache directory per compilation: user library caches are keyed only by the library name,
+        // so tests running in parallel must not share it.
+        val icCacheDir = expectedArtifact.logFile.resolveSibling("${expectedArtifact.logFile.nameWithoutExtension}.ic-cache")
+        icCacheDir.mkdirs()
+        add("-Xenable-incremental-compilation", "-Xic-cache-dir=${icCacheDir.absolutePath}")
     }
 
     private fun applyK2MPPArgs(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
@@ -821,7 +834,6 @@ class StaticCacheCompilation(
     freeCompilerArgs: TestCompilerArgs,
     private val options: Options,
     dependencies: Iterable<TestCompilationDependency<*>>,
-    makePerFileCacheOverride: Boolean? = null,
     private val createHeaderCache: Boolean = false,
     expectedArtifact: KLIBStaticCache
 ) : BasicCompilation<KLIBStaticCache>(
@@ -850,7 +862,6 @@ class StaticCacheCompilation(
 
     override val sourceModules get() = emptyList<TestModule>()
 
-    private val makePerFileCache: Boolean = makePerFileCacheOverride ?: settings.get<CacheMode>().makePerFileCaches
 
     private val partialLinkageConfig: UsedPartialLinkageConfig = settings.get()
 
@@ -873,12 +884,6 @@ class StaticCacheCompilation(
             "-Xadd-cache=${dependencies.libraryToCache.path}",
             "-Xcache-directory=${expectedArtifact.cacheDir.path}",
         )
-
-        if (makePerFileCache) {
-            val klib = KlibLoader { libraryPaths(dependencies.libraryToCache.path) }.load().librariesStdlibFirst[0]
-            if (!klib.isCInteropLibrary()) // Making per-file cache is not allowed for cinterop klibs.
-                add("-Xmake-per-file-cache")
-        }
 
         applyPartialLinkageArgs(partialLinkageConfig)
         applyFileCheckArgs(expectedArtifact.fileCheckStage, expectedArtifact.fileCheckDump)

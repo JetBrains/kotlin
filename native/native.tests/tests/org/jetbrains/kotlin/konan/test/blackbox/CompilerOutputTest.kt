@@ -155,6 +155,9 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
 
     @Test
     fun testCacheLinkageErrorMessage() {
+        // With incremental compilation, the compiler suggests disabling IC instead of compiler caches.
+        Assumptions.assumeFalse(testRunSettings.get<CacheMode>().useIncrementalCompilation)
+
         val rootDir = ForTestCompileRuntime.transformTestDataPath("native/native.tests/testData/compilerOutput/cacheLinkageErrorMessage")
 
         // Trigger the binary linkage to fail by requesting a non-existing library:
@@ -185,6 +188,8 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
     fun testCacheBuildErrorMessage() {
         // Disable when not using cache:
         Assumptions.assumeFalse(testRunSettings.get<CacheMode>() == CacheMode.WithoutCache)
+        // With incremental compilation, main.klib is cached via IC rather than auto-caching, so the failure isn't triggered.
+        Assumptions.assumeFalse(testRunSettings.get<CacheMode>().useIncrementalCompilation)
         // MinGW support for caches is limited to stdlib, so these tests won't work as expected.
         Assumptions.assumeFalse(targets.testTarget == KonanTarget.MINGW_X64)
 
@@ -325,6 +330,8 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
         Assumptions.assumeTrue(targets.hostTarget.family.isAppleFamily)
         // https://youtrack.jetbrains.com/issue/KT-71097/Kotlin-Native-add-a-flag-to-catch-duplicating-symbols-in-caches
         Assumptions.assumeFalse(testRunSettings.get<CacheMode>().useStaticCacheForUserLibraries)
+        // Incremental compilation caches user libraries as well, see above.
+        Assumptions.assumeFalse(testRunSettings.get<CacheMode>().useIncrementalCompilation)
 
         val testCase = TestCase(
             id = TestCaseId.Named(name),
