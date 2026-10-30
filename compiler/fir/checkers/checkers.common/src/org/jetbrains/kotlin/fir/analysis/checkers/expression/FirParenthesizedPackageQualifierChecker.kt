@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
-import com.intellij.psi.tree.IElementType
+import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtSourceElement
@@ -87,7 +87,7 @@ object FirParenthesizedPackageQualifierChecker : FirResolvedQualifierChecker(Mpp
          * report deprecation warnings for type arguments. This property allows us to find parenthesized expression or type arguments
          * via single check.
          */
-        private val UNWRAPPABLE_OR_TYPE_ARGUMENT_LIST: Set<IElementType> = UNWRAPPABLE_TOKEN_TYPES + KtNodeTypes.TYPE_ARGUMENT_LIST
+        private val UNWRAPPABLE_OR_TYPE_ARGUMENT_LIST: TokenSet = TokenSet.orSet(UNWRAPPABLE_TOKEN_TYPES, TokenSet.create(KtNodeTypes.TYPE_ARGUMENT_LIST))
 
         context(context: CheckerContext, reporter: DiagnosticReporter)
         fun check(

@@ -3840,7 +3840,6 @@ public final class org/jetbrains/kotlin/psi/psiUtil/PsiUtilsKt {
 	public static final fun getTextRange (Lorg/jetbrains/kotlin/psi/psiUtil/PsiChildRange;)Lcom/intellij/openapi/util/TextRange;
 	public static final fun getTextRangeWithoutComments (Lcom/intellij/psi/PsiElement;)Lcom/intellij/openapi/util/TextRange;
 	public static final fun getTextWithLocation (Lcom/intellij/psi/PsiElement;)Ljava/lang/String;
-	public static final fun getUNWRAPPABLE_TOKEN_TYPES ()Ljava/util/Set;
 	public static final fun hasActualModifier (Lorg/jetbrains/kotlin/psi/KtModifierList;)Z
 	public static final fun hasActualModifier (Lorg/jetbrains/kotlin/psi/KtModifierListOwner;)Z
 	public static final fun hasExpectModifier (Lorg/jetbrains/kotlin/psi/KtModifierList;)Z

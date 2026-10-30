@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.KtNodeTypes.DOT_QUALIFIED_EXPRESSION
 import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.psi
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.psiUtil.UNWRAPPABLE_TOKEN_TYPES
 import org.jetbrains.kotlin.psi.psiUtil.getAssignmentLhsIfUnwrappable
 import org.jetbrains.kotlin.psi.psiUtil.getExplicitReceiverOfDotQualified
@@ -45,6 +46,7 @@ fun LighterASTNode.getAssignmentLhsIfUnwrappable(tree: FlyweightCapableTreeStruc
         // In `(x)++` or `(x) = ...` the LHS source is the first child
         else -> getChildren(tree).firstOrNull()
     }.takeIf {
+        @OptIn(KtImplementationDetail::class)
         it?.tokenType in UNWRAPPABLE_TOKEN_TYPES
     }
 
@@ -54,6 +56,7 @@ fun LighterASTNode.getExplicitReceiverOfDotQualified(tree: FlyweightCapableTreeS
         else -> null
     }
 
+@OptIn(KtImplementationDetail::class)
 fun KtSourceElement?.hasUnwrappableAsExplicitReceiver(): Boolean {
     return when (this) {
         is KtLightSourceElement -> lighterASTNode.getExplicitReceiverOfDotQualified(treeStructure)?.tokenType in UNWRAPPABLE_TOKEN_TYPES
