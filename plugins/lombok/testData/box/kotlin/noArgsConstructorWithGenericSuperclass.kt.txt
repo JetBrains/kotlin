@@ -39,7 +39,7 @@ class Derived : Base<String> {
     set
 
   constructor() {
-    super/*Base*/()
+    super/*Base*/<String>()
   }
 
   constructor(x: Int) /* primary */ {
@@ -58,7 +58,7 @@ class Derived2 : Base2<Int, String> {
     set
 
   constructor() {
-    super/*Base2*/()
+    super/*Base2*/<Int, String>()
   }
 
   constructor(x: Int) /* primary */ {
@@ -77,7 +77,7 @@ class DerivedGeneric<E : Any?> : Base<List<E>> {
     set
 
   constructor() {
-    super/*Base*/()
+    super/*Base*/<List<E>>()
   }
 
   constructor(e: E) /* primary */ {

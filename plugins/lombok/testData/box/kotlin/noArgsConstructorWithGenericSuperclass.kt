@@ -15,7 +15,6 @@ open class Base2<K, V> {
 }
 
 // The generated no-args constructor delegates to `Base<String>()`: its super call must carry `<String>`.
-// Currently the type arguments of all generated super calls below are missing, see the `.kt.txt` dump.
 @NoArgsConstructor
 class Derived(var x: Int) : Base<String>()
 
