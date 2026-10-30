@@ -102,8 +102,9 @@ class IrBodyDeserializer(
     private val fileLoops = hashMapOf<Int, IrLoop>()
 
     /**
-     * Whether an annotation argument is being deserialized now. The only constructor calls that are allowed
-     * in annotation arguments are calls of annotation constructors. They are created as [IrAnnotation]s by
+     * Whether an annotation argument (or the default value of an annotation parameter, which is effectively
+     * the same) is being deserialized now. The only constructor calls that are allowed in annotation
+     * arguments are calls of annotation constructors. They are created as [IrAnnotation]s by
      * the frontend, but are serialized as ordinary constructor calls, so they need to be deserialized back
      * as [IrAnnotation]s. Note: Checking the class kind of the callee is not an option, because the
      * constructor symbol might still be unbound at this point.

@@ -319,7 +319,13 @@ class IrDeclarationDeserializer(
         return typeParameter
     }
 
-    private fun deserializeIrValueParameter(proto: ProtoValueParameter, kind: IrParameterKind, parentStart: Int?, setParent: Boolean = true): IrValueParameter =
+    private fun deserializeIrValueParameter(
+        proto: ProtoValueParameter,
+        kind: IrParameterKind,
+        parentStart: Int?,
+        setParent: Boolean = true,
+        isAnnotationParameter: Boolean = false,
+    ): IrValueParameter =
         withDeserializedIrDeclarationBase(proto.base, parentStart, setParent) { symbol, _, startOffset, endOffset, origin, fcode ->
             val flags = ValueParameterFlags.decode(fcode)
             val nameAndType = BinaryNameAndType.decode(proto.nameType)
@@ -337,9 +343,15 @@ class IrDeclarationDeserializer(
                 isNoinline = flags.isNoInline,
                 isHidden = flags.isHidden,
             ).apply {
-                if (proto.hasDefaultValue())
-                    defaultValue = deserializeExpressionBody(proto.defaultValue, startOffset)
+                if (proto.hasDefaultValue()) {
+                    // The default value of an annotation parameter is effectively an annotation argument.
+                    val deserializedDefaultValue = if (isAnnotationParameter)
+                        bodyDeserializer.withinAnnotationArgument { deserializeExpressionBody(proto.defaultValue, startOffset) }
+                    else
+                        deserializeExpressionBody(proto.defaultValue, startOffset)
+                    defaultValue = deserializedDefaultValue
                         ?: irFactory.createExpressionBody(IrCompositeImpl(startOffset, endOffset, type))
+                }
             }
         }
 
@@ -545,6 +557,9 @@ class IrDeclarationDeserializer(
         block: (S, IdSignature, Int, Int, IrDeclarationOrigin, Long) -> T,
     ): T = withDeserializedIrDeclarationBase(proto.base, parentStart, setParent) { symbol, idSig, startOffset, endOffset, origin, fcode ->
         val functionSymbol: S = symbol.checkSymbolType(fallbackSymbolKind)
+        // Note: `currentDeclarationParent` is still the parent of the function here.
+        val isAnnotationConstructor = functionSymbol is IrConstructorSymbol
+                && (currentDeclarationParent as? IrClass)?.kind == ClassKind.ANNOTATION_CLASS
         symbolTable.withScope(functionSymbol) {
             block(functionSymbol, idSig, startOffset, endOffset, origin, fcode).usingDeclarationParent {
                 typeParameters = deserializeTypeParameters(proto.typeParameterList, false, startOffset)
@@ -563,7 +578,9 @@ class IrDeclarationDeserializer(
                             add(deserializeIrValueParameter(proto.extensionReceiver, IrParameterKind.ExtensionReceiver, startOffset))
                         }
                         proto.regularParameterList.mapTo(this) { proto ->
-                            deserializeIrValueParameter(proto, IrParameterKind.Regular, startOffset)
+                            deserializeIrValueParameter(
+                                proto, IrParameterKind.Regular, startOffset, isAnnotationParameter = isAnnotationConstructor
+                            )
                         }
                     }.compactIfPossible()
                     body =
