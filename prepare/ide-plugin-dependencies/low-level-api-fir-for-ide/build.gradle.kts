@@ -4,4 +4,9 @@ plugins {
     kotlin("jvm")
 }
 
-publishJarsForIde(listOf(":analysis:low-level-api-fir"))
+publishJarsForIde(
+    listOf(
+        ":analysis:low-level-api-fir",
+        ":analysis:low-level-api-fir-scripting",
+    )
+)

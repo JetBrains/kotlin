@@ -243,6 +243,13 @@ object CompilerModules {
     )
 
     /**
+     * The array of modules shipped in the 'kotlin-analysis-api-implementation-scripting' artifact.
+     */
+    val analysisApiImplementationScriptingModules = arrayOf(
+        ":analysis:low-level-api-fir-scripting",
+    )
+
+    /**
      * The array of Analysis API modules that aren't part of [commonCompilerModules] (e.g., `:compiler:psi:psi-api`).
      * It only covers production modules, so modules that hold nothing but tests have to be listed separately.
      */
@@ -250,6 +257,7 @@ object CompilerModules {
         *analysisApiSurfaceModules,
         *analysisApiPlatformInterfaceModules,
         *analysisApiStandaloneModules,
+        *analysisApiImplementationScriptingModules,
         ":analysis:analysis-api-fir",
         ":analysis:analysis-api-fir-diagnostics",
         ":analysis:analysis-internal-utils",
@@ -277,6 +285,7 @@ object CompilerModules {
         ":prepare:analysis-api:kotlin-analysis-api-syntax-surface",
         ":prepare:analysis-api:kotlin-analysis-api-platform-interface",
         ":prepare:analysis-api:kotlin-analysis-api-implementation",
+        ":prepare:analysis-api:kotlin-analysis-api-implementation-scripting",
         ":prepare:analysis-api:kotlin-analysis-api-syntax-implementation",
         ":prepare:analysis-api:kotlin-analysis-api-fir-diagnostics",
         ":prepare:analysis-api:kotlin-analysis-api-standalone-surface",

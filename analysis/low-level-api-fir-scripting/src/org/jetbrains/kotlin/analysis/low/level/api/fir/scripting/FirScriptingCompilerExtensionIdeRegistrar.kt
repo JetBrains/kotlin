@@ -4,7 +4,7 @@
  */
 
 
-package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
+package org.jetbrains.kotlin.analysis.low.level.api.fir.scripting
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar

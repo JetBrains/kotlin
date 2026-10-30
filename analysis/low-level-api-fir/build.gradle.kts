@@ -29,7 +29,6 @@ dependencies {
     implementation(project(":core:compiler.common.native"))
     implementation(project(":compiler:backend.common.jvm"))
     implementation(project(":compiler:backend"))
-    implementation(project(":compiler:cli-base"))
     implementation(project(":compiler:frontend.common.jvm"))
     implementation(project(":compiler:psi:psi-impl"))
     implementation(project(":js:js.config"))
@@ -46,10 +45,6 @@ dependencies {
     implementation(project(":analysis:analysis-api"))
     implementation(project(":analysis:analysis-internal-utils"))
     implementation(project(":analysis:stubs"))
-    implementation(project(":kotlin-scripting-compiler"))
-    implementation(project(":kotlin-scripting-common"))
-    implementation(project(":kotlin-assignment-compiler-plugin.k2"))
-    implementation(project(":kotlin-assignment-compiler-plugin.cli"))
     implementation(libs.caffeine)
 
     implementation(libs.opentelemetry.api)

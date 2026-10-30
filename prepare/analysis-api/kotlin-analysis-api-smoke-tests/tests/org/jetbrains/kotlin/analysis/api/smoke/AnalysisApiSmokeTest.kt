@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.analysis.api.smoke
 
 import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.psi.JavaPsiFacade
+import com.intellij.psi.PsiManager
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
@@ -18,6 +20,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds
 import org.jetbrains.kotlin.analysis.api.types.classId
 import org.jetbrains.kotlin.analysis.api.types.lowerBoundIfFlexible
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSdkModule
+import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtScriptModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSourceModule
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -27,6 +30,7 @@ import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Assertions.fail
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -118,6 +122,71 @@ class AnalysisApiSmokeTest {
                 ?: fail("No light class for the Kotlin class")
 
             assertEquals(listOf("greet"), lightClass.methods.filterNot { it.isConstructor }.map { it.name })
+        } finally {
+            Disposer.dispose(disposable)
+        }
+    }
+
+    @Test
+    fun testScriptAnalysis() {
+        val scriptPath = sourceRoot.resolve("script.kts")
+        scriptPath.writeText(
+            """
+            class KotlinGreeter {
+                fun greet(name: String): String = "Hello, " + name
+            }
+
+            KotlinGreeter().greet("world")
+            """.trimIndent()
+        )
+
+        val disposable = Disposer.newDisposable("AnalysisApiSmokeTest")
+        try {
+            lateinit var ktFile: KtFile
+            val session = buildStandaloneAnalysisAPISession(disposable) {
+                buildKtModuleProvider {
+                    platform = JvmPlatforms.defaultJvmPlatform
+
+                    val jdkHome = Paths.get(System.getProperty("java.home"))
+                    val sdk = addModule(
+                        buildKtSdkModule {
+                            addBinaryRootsFromJdkHome(jdkHome, isJre = true)
+                            addBinaryRootsFromJdkHome(jdkHome, isJre = false)
+                            platform = JvmPlatforms.defaultJvmPlatform
+                            libraryName = "JDK"
+                        }
+                    )
+
+                    val virtualFile = StandardFileSystems.local().findFileByPath(scriptPath.toString())
+                        ?: fail("No virtual file for the script")
+
+                    ktFile = PsiManager.getInstance(project).findFile(virtualFile) as KtFile
+
+                    addModule(
+                        buildKtScriptModule {
+                            file = ktFile
+                            addRegularDependency(sdk)
+                            platform = JvmPlatforms.defaultJvmPlatform
+                        }
+                    )
+                }
+            }
+
+            val scriptingProviders = session.project.extensionArea
+                .getExtensionPoint<Any>("org.jetbrains.kotlin.llFirScriptExtensionRegistrarProvider")
+                .extensionList
+
+            assertTrue(scriptingProviders.isNotEmpty(), "Scripting support is not enabled")
+
+            val call = ktFile.collectDescendantsOfType<KtCallExpression>().single { it.text == "greet(\"world\")" }
+
+            analyze(ktFile) {
+                val function = call.resolveSuccessfulCall()?.signature?.symbol
+                    ?: fail("The call to the script's function is unresolved")
+
+                assertEquals(KaSymbolOrigin.SOURCE, function.origin)
+                assertEquals(KaStandardTypeClassIds.STRING, function.returnType.lowerBoundIfFlexible().classId)
+            }
         } finally {
             Disposer.dispose(disposable)
         }

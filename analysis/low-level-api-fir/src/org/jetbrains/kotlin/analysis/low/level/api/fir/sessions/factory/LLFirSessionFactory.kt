@@ -39,12 +39,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.combined.
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.combined.LLCombinedKotlinSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.combined.LLCombinedPackageDelegationSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.combined.LLCombinedSyntheticFunctionSymbolProvider
-import org.jetbrains.kotlin.assignment.plugin.AssignmentCommandLineProcessor
-import org.jetbrains.kotlin.assignment.plugin.AssignmentConfigurationKeys
-import org.jetbrains.kotlin.assignment.plugin.k2.FirAssignmentPluginExtensionRegistrar
-import org.jetbrains.kotlin.cli.create
-import org.jetbrains.kotlin.cli.plugins.processCompilerPluginsOptions
-import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.FirNameConflictsTracker
 import org.jetbrains.kotlin.fir.PrivateSessionConstructor
@@ -71,14 +65,10 @@ import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
-import org.jetbrains.kotlin.scripting.compiler.plugin.FirScriptingSamWithReceiverExtensionRegistrar
-import org.jetbrains.kotlin.scripting.compiler.plugin.impl.makeScriptCompilerArguments
-import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
-import org.jetbrains.kotlin.utils.exceptions.withVirtualFileEntry
 
 @OptIn(PrivateSessionConstructor::class, SessionConfiguration::class)
 internal class LLFirSessionFactory(
@@ -416,40 +406,16 @@ internal class LLFirSessionFactory(
 
             FirSessionConfigurator(session).apply {
                 registerCompilerPluginExtensions(project, module)
-                registerScriptExtensions(module.file)
+                registerScriptExtensions(module)
             }.configure()
 
             LLFirSessionConfigurator.configure(this)
         }
     }
 
-    @OptIn(ExperimentalCompilerApi::class)
-    private fun FirSessionConfigurator.registerScriptExtensions(file: KtFile) {
-        val scriptDefinition = file.findScriptDefinition() ?: errorWithAttachment("Cannot load script definition") {
-            withVirtualFileEntry("file", file.virtualFile)
-        }
-
-        val hostConfiguration = scriptDefinition.hostConfiguration
-
-        val compilerArguments = makeScriptCompilerArguments(scriptDefinition.compilerOptions.toList())
-        val commandLineProcessors = listOf(AssignmentCommandLineProcessor())
-        val compilerConfiguration = CompilerConfiguration.create()
-        processCompilerPluginsOptions(
-            compilerConfiguration, compilerArguments.pluginOptions.asIterable(), commandLineProcessors
-        )
-
-        val extensionRegistrar = FirScriptingCompilerExtensionIdeRegistrar(
-            project,
-            hostConfiguration,
-            scriptDefinitionSources = emptyList(),
-            scriptDefinitions = listOf(scriptDefinition)
-        )
-
-        registerExtensions(extensionRegistrar.configure())
-        registerExtensions(FirScriptingSamWithReceiverExtensionRegistrar().configure())
-
-        compilerConfiguration.getList(AssignmentConfigurationKeys.ASSIGNMENT_ANNOTATION).takeIf { it.isNotEmpty() }?.let {
-            registerExtensions(FirAssignmentPluginExtensionRegistrar(it).configure())
+    private fun FirSessionConfigurator.registerScriptExtensions(module: KaScriptModule) {
+        for (provider in LLFirScriptExtensionRegistrarProvider.getInstances(project)) {
+            provider.getExtensionRegistrars(module).forEach { registerExtensions(it.configure()) }
         }
     }
 
@@ -562,7 +528,7 @@ internal class LLFirSessionFactory(
                 }
                 is KaScriptModule -> {
                     FirSessionConfigurator(session).apply {
-                        registerScriptExtensions(contextModule.file)
+                        registerScriptExtensions(contextModule)
                         registerCompilerPluginExtensions(project, contextModule)
                     }.configure()
                 }

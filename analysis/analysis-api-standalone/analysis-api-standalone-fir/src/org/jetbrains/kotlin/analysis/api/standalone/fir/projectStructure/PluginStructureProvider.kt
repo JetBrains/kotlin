@@ -183,6 +183,7 @@ object PluginStructureProvider {
         "org.jetbrains.kotlin.kaAdditionalKDocResolutionProvider",
         "org.jetbrains.kotlin.kotlinContentScopeRefiner",
         "org.jetbrains.kotlin.kotlinGlobalSearchScopeMergeStrategy",
+        "org.jetbrains.kotlin.llFirScriptExtensionRegistrarProvider",
         "org.jetbrains.kotlin.psiReferenceProvider",
         "com.intellij.psi.classFileDecompiler",
 

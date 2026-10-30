@@ -5,6 +5,11 @@
         interface="org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionConfigurator"
         area="IDEA_PROJECT"
         dynamic="true"/>
+    <extensionPoint
+        qualifiedName="org.jetbrains.kotlin.llFirScriptExtensionRegistrarProvider"
+        interface="org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirScriptExtensionRegistrarProvider"
+        area="IDEA_PROJECT"
+        dynamic="true"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">

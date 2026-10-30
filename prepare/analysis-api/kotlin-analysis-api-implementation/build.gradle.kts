@@ -12,6 +12,7 @@ val analysisApiSyntaxSurfaceModules: Array<String> = CompilerModules.analysisApi
 val analysisApiSyntaxImplementationModules: Array<String> = CompilerModules.analysisApiSyntaxImplementationModules
 val analysisApiPlatformInterfaceModules: Array<String> = CompilerModules.analysisApiPlatformInterfaceModules
 val analysisApiStandaloneModules: Array<String> = CompilerModules.analysisApiStandaloneModules
+val analysisApiImplementationScriptingModules: Array<String> = CompilerModules.analysisApiImplementationScriptingModules
 val analysisApiModules: Array<String> = CompilerModules.analysisApiModules
 
 val additionalCompilerProjects = listOf(
@@ -68,11 +69,6 @@ dependencies {
     implementation(libs.antlr.runtime)
     implementation(project(":kotlin-tooling-core"))
 
-    implementation(project(":kotlin-scripting-compiler")) {
-        exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib")
-        exclude(group = "org.jetbrains.kotlin", module = "kotlin-reflect")
-    }
-
     embedded(protobufFull())
 }
 
@@ -100,6 +96,9 @@ analysisApiArtifact {
 
             // Standalone modules are shipped by the dedicated standalone artifacts
             removeAll(analysisApiStandaloneModules)
+
+            // Scripting support is shipped by the dedicated artifact
+            removeAll(analysisApiImplementationScriptingModules)
 
             // Avoid copying content of 'kotlin-analysis-api-fir-diagnostics'
             remove(":analysis:analysis-api-fir-diagnostics")
