@@ -34,17 +34,29 @@ import kotlin.test.assertEquals
 @NativeGradlePluginTests
 class KotlinNativeWorkersIT : KGPBaseTest() {
 
-    @DisplayName("Native compile, link and cinterop commonizer tasks run in parallel up to their maxWorkers limit")
+    @DisplayName("Native compile, link and cinterop commonizer tasks run in parallel up to their maxWorkers limit with configuration cache disabled")
     @GradleTest
     @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
-    fun testNativeTaskParallelismIsCappedByMaxWorkersProperties(gradleVersion: GradleVersion) {
+    fun testNativeTaskParallelismIsCappedWithConfigurationCacheDisabled(gradleVersion: GradleVersion) =
+        assertNativeTaskParallelismIsCapped(gradleVersion, ConfigurationCacheValue.DISABLED)
+
+    @DisplayName("Native compile, link and cinterop commonizer tasks run in parallel up to their maxWorkers limit with configuration cache enabled")
+    @GradleTest
+    @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
+    fun testNativeTaskParallelismIsCappedWithConfigurationCacheEnabled(gradleVersion: GradleVersion) =
+        assertNativeTaskParallelismIsCapped(gradleVersion, ConfigurationCacheValue.ENABLED)
+
+    private fun assertNativeTaskParallelismIsCapped(
+        gradleVersion: GradleVersion,
+        configurationCache: ConfigurationCacheValue,
+    ) {
         val compileMaxWorkers = 2
         val linkMaxWorkers = 2
         val commonizeCInteropMaxWorkers = 2
         val buildOptions = defaultBuildOptions.copy(
-            configurationCache = ConfigurationCacheValue.DISABLED,
+            configurationCache = configurationCache,
             isolatedProjects = IsolatedProjectsMode.DISABLED,
-            maxWorkers = maxOf(compileMaxWorkers, linkMaxWorkers, commonizeCInteropMaxWorkers) + 1,
+            maxWorkers = compileMaxWorkers + linkMaxWorkers + commonizeCInteropMaxWorkers + 1,
         )
         project("empty", gradleVersion, buildOptions) {
             plugins {
