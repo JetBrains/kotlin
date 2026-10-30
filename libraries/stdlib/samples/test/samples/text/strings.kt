@@ -145,6 +145,28 @@ class Strings {
     }
 
     @Sample
+    fun getOrElse() {
+        val text = "Kotlin"
+
+        assertPrints(text.getOrElse(0) { '?' }, "K")
+        assertPrints(text.getOrElse(text.lastIndex) { '?' }, "n")
+        assertPrints(text.getOrElse(-1) { '?' }, "?")
+        assertPrints(text.getOrElse(text.length) { '?' }, "?")
+        assertPrints("".getOrElse(0) { '?' }, "?")
+    }
+
+    @Sample
+    fun getOrNull() {
+        val text = "Kotlin"
+
+        assertPrints(text.getOrNull(0), "K")
+        assertPrints(text.getOrNull(text.lastIndex), "n")
+        assertPrints(text.getOrNull(-1), "null")
+        assertPrints(text.getOrNull(text.length), "null")
+        assertPrints("".getOrNull(0), "null")
+    }
+
+    @Sample
     fun filter() {
         val text = "a1b2c3d4e5"
 
