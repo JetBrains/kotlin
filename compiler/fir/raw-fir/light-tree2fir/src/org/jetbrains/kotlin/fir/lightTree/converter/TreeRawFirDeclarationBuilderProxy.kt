@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.lightTree.converter
 
+import org.jetbrains.kotlin.BasicElementTypeId
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.KtSourceElement
@@ -1836,7 +1837,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
         // which `forEachChildren` skips
         if (entries.isEmpty()) {
             for (child in node.getChildren()) {
-                if (child.toTokenId() != NO_ID) continue
+                if (child.toTokenId() != BasicElementTypeId.ERROR_ELEMENT) continue
                 for (errorChild in child.getChildren()) {
                     when (errorChild.toTokenId()) {
                         KtTokenId.LBRACKET -> hasSquareBrackets = true

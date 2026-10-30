@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.lightTree.converter
 
+import org.jetbrains.kotlin.BasicElementTypeId
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.KtSourceElement
@@ -706,7 +707,7 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
 
                 // In invalid code like `::foo(args)`, the argument list is parsed
                 // inside an ERROR_ELEMENT child of the callable reference expression
-                NO_ID -> {
+                BasicElementTypeId.ERROR_ELEMENT -> {
                     for (errorChild in child.getChildren()) {
                         if (errorChild.toTokenId() == KtNodeTypeId.VALUE_ARGUMENT_LIST) {
                             errorArgumentListNode = errorChild
