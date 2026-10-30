@@ -198,14 +198,20 @@ class JsDtsGenerationTest : BaseCompilationTest() {
         }
         assertEquals(JsModuleKind.COMMONJS, fromModuleKind[JsDtsGenerationOperation.MODULE_KIND])
 
-        val fromTarget = kotlinToolchain.dtsBuilderConfiguredFrom { this[TARGET] = JsEcmaVersion.ES2015 }
-        assertEquals(JsModuleKind.ES, fromTarget[JsDtsGenerationOperation.MODULE_KIND])
+        val fromEs2015Target = kotlinToolchain.dtsBuilderConfiguredFrom { this[TARGET] = JsEcmaVersion.ES2015 }
+        assertEquals(JsModuleKind.ES, fromEs2015Target[JsDtsGenerationOperation.MODULE_KIND])
+
+        val fromEs2020Target = kotlinToolchain.dtsBuilderConfiguredFrom { this[TARGET] = JsEcmaVersion.ES2020 }
+        assertEquals(JsModuleKind.ES, fromEs2020Target[JsDtsGenerationOperation.MODULE_KIND])
 
         val fromBoth = kotlinToolchain.dtsBuilderConfiguredFrom {
             this[JsCompilerLinkingArguments.MODULE_KIND] = JsModuleKind.COMMONJS
             this[TARGET] = JsEcmaVersion.ES2015
         }
         assertEquals(JsModuleKind.COMMONJS, fromBoth[JsDtsGenerationOperation.MODULE_KIND])
+
+        val fromNeither = kotlinToolchain.dtsBuilderConfiguredFrom { }
+        assertEquals(JsModuleKind.UMD, fromNeither[JsDtsGenerationOperation.MODULE_KIND])
     }
 
     @DisplayName("configureFrom takes GRANULARITY from -Xir-per-file and -Xir-per-module")
