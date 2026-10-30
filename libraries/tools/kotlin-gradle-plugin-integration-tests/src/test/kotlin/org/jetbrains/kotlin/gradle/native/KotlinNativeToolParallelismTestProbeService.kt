@@ -66,7 +66,7 @@ internal abstract class KotlinNativeToolParallelismTestProbeService :
             return reportFile.readText().toInt()
         }
 
-        internal inline fun <reified T : UsesKotlinNativeToolParallelismProbe> Project.registerParallelismProjectServiceIfAbsent(
+        internal inline fun <reified T : UsesKotlinNativeToolParallelismProbe> Project.registerParallelismProbeServiceIfAbsent(
             reportDir: File,
             expectedRunning: Int,
         ): Provider<KotlinNativeToolParallelismTestProbeService> =

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.native
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.native.KotlinNativeToolParallelismTestProbeService.Companion.observedMaxParallelWorkers
-import org.jetbrains.kotlin.gradle.native.KotlinNativeToolParallelismTestProbeService.Companion.registerParallelismProjectServiceIfAbsent
+import org.jetbrains.kotlin.gradle.native.KotlinNativeToolParallelismTestProbeService.Companion.registerParallelismProbeServiceIfAbsent
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
@@ -134,9 +134,9 @@ class KotlinNativeWorkersIT : KGPBaseTest() {
                     sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
                 }
 
-                project.registerParallelismProjectServiceIfAbsent<KotlinNativeCompile>(reportDir, expectedRunning = compileMaxWorkers)
-                project.registerParallelismProjectServiceIfAbsent<KotlinNativeLink>(reportDir, expectedRunning = linkMaxWorkers)
-                project.registerParallelismProjectServiceIfAbsent<CInteropCommonizerTask>(reportDir, expectedRunning = commonizeCInteropMaxWorkers)
+                project.registerParallelismProbeServiceIfAbsent<KotlinNativeCompile>(reportDir, expectedRunning = compileMaxWorkers)
+                project.registerParallelismProbeServiceIfAbsent<KotlinNativeLink>(reportDir, expectedRunning = linkMaxWorkers)
+                project.registerParallelismProbeServiceIfAbsent<CInteropCommonizerTask>(reportDir, expectedRunning = commonizeCInteropMaxWorkers)
             }
 
             listOf("lib1", "lib2").forEach { name ->
@@ -155,8 +155,8 @@ class KotlinNativeWorkersIT : KGPBaseTest() {
                             sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
                         }
 
-                        project.registerParallelismProjectServiceIfAbsent<KotlinNativeCompile>(reportDir, expectedRunning = compileMaxWorkers)
-                        project.registerParallelismProjectServiceIfAbsent<CInteropCommonizerTask>(reportDir, expectedRunning = commonizeCInteropMaxWorkers)
+                        project.registerParallelismProbeServiceIfAbsent<KotlinNativeCompile>(reportDir, expectedRunning = compileMaxWorkers)
+                        project.registerParallelismProbeServiceIfAbsent<CInteropCommonizerTask>(reportDir, expectedRunning = commonizeCInteropMaxWorkers)
                     }
                 }
                 include(subproject, name)
