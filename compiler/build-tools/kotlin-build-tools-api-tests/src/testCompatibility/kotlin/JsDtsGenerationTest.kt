@@ -227,7 +227,6 @@ class JsDtsGenerationTest : BaseCompilationTest() {
         kotlinToolchain.assumeJsDtsGenerationIsSupported()
 
         // TODO (KT-90366): check EXPORT_UNTYPED_AS_UNKNOWN from -Xdts-use-unknown-instead-any
-        // TODO (KT-90519): check the options enabled through -XXLanguage
         // TODO (KT-90528): check IMPLEMENT_INTERFACES once -Xenable-implementing-interfaces-from-typescript is available for linking
         val longAsBigInt = kotlinToolchain.dtsBuilderConfiguredFrom { this[X_ES_LONG_AS_BIGINT] = true }
         assertEquals(true, longAsBigInt[JsDtsGenerationOperation.COMPILE_LONG_AS_BIG_INT])
@@ -272,6 +271,22 @@ class JsDtsGenerationTest : BaseCompilationTest() {
 
         val es2020ExplicitFalse = kotlinToolchain.dtsBuilderConfiguredFromCommandLine("-target", "es2020", "-Xes-long-as-bigint=false")
         assertEquals(false, es2020ExplicitFalse[JsDtsGenerationOperation.COMPILE_LONG_AS_BIG_INT])
+    }
+
+    @DisplayName("configureFrom takes declaration flags from language features enabled through -XXLanguage")
+    @BtaVersionsOnlyCompilationTest
+    fun configureFromTakesDeclarationFlagsFromLanguageFeatures(kotlinToolchain: KotlinToolchains) {
+        kotlinToolchain.assumeJsDtsGenerationIsSupported()
+        kotlinToolchain.assumeJsDtsConfigureFromArgumentResolutionIsSupported()
+
+        val interfaces = kotlinToolchain.dtsBuilderConfiguredFromCommandLine("-XXLanguage:+JsExportInterfacesInImplementableWay")
+        assertEquals(true, interfaces[JsDtsGenerationOperation.IMPLEMENT_INTERFACES])
+
+        val suspendLambdas = kotlinToolchain.dtsBuilderConfiguredFromCommandLine("-XXLanguage:+JsExportingSuspendLambdas")
+        assertEquals(true, suspendLambdas[JsDtsGenerationOperation.EXPORT_SUSPEND_LAMBDAS])
+
+        val dataClassCopy = kotlinToolchain.dtsBuilderConfiguredFromCommandLine("-XXLanguage:+DataClassCopyRespectsConstructorVisibility")
+        assertEquals(true, dataClassCopy[JsDtsGenerationOperation.DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY])
     }
 
     private fun KotlinToolchains.dtsBuilderConfiguredFrom(
