@@ -330,9 +330,7 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
             try {
                 runner.runTool(parameters.toolArguments.get())
             } finally {
-                parameters.taskPath.orNull?.let { taskPath ->
-                    TaskExecutionResults[taskPath] = TaskExecutionResult(buildMetrics = metricsReporter.getMetrics())
-                }
+                TaskExecutionResults[parameters.taskPath.get()] = TaskExecutionResult(buildMetrics = metricsReporter.getMetrics())
             }
         }
     }
