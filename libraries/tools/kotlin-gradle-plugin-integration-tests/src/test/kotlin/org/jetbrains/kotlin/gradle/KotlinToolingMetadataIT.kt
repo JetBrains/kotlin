@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.util.resolveRepoArtifactPath
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.jetbrains.kotlin.tooling.KotlinToolingMetadata
 import org.jetbrains.kotlin.tooling.parseJsonOrThrow
 import org.junit.jupiter.api.DisplayName
@@ -22,6 +23,7 @@ import kotlin.io.path.readText
 import kotlin.test.assertEquals
 
 @MppGradlePluginTests
+@MustRunOnChangesInGradle
 @DisplayName("Multiplatform metadata for tooling")
 class KotlinToolingMetadataMppIT : KGPBaseTest() {
     private val TestProject.defaultKotlinToolingMetadataJsonPath

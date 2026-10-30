@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.TestVersions.AgpCompatibilityMatrix
 import org.jetbrains.kotlin.gradle.util.replaceText
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.jetbrains.kotlin.testFederation.NightlyTest
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.DynamicContainer
@@ -32,6 +33,7 @@ import kotlin.test.fail
 
 @DisplayName("KMP/Android: publication")
 @AndroidGradlePluginTests
+@MustRunOnChangesInGradle
 class KotlinAndroidMppPublicationIT : KGPBaseTest() {
 
     @DisplayName("android mpp lib flavors publication can be configured")

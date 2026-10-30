@@ -9,6 +9,8 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInNative
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 
@@ -17,7 +19,9 @@ import org.junit.jupiter.api.condition.OS
     enabledOnCI = [OS.LINUX, OS.MAC, OS.WINDOWS])
 @DisplayName("K/N tests for hierarchical commonizer")
 @NativeGradlePluginTests
-class CommonizerHierarchicalIT : KGPBaseTest() {
+@MustRunOnChangesInGradle
+@MustRunOnChangesInNative
+open class CommonizerHierarchicalIT : KGPBaseTest() {
 
     @DisplayName("Commonize hierarchically metadata compilations")
     @GradleTest

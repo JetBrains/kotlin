@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.include
 import org.jetbrains.kotlin.gradle.util.isTeamCityRun
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import kotlin.io.path.createParentDirectories
 import kotlin.io.path.moveTo
 import kotlin.io.path.writeText
@@ -29,6 +30,7 @@ import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
 @JsBrowserGradlePluginTests
+@MustRunOnChangesInGradle
 class JsBrowserTestsIT : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions =

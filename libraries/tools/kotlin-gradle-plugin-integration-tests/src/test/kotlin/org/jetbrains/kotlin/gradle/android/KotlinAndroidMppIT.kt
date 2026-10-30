@@ -9,6 +9,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.tooling.BuildKotlinToolingMetadataTask
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import java.io.File
 import java.util.zip.ZipFile
@@ -17,6 +18,7 @@ import kotlin.test.*
 
 @DisplayName("KMP/Android integration")
 @AndroidGradlePluginTests
+@MustRunOnChangesInGradle
 class KotlinAndroidMppIT : KGPBaseTest() {
 
     @DisplayName("KotlinToolingMetadataArtifact is bundled into apk")
