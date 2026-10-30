@@ -1,0 +1,5 @@
+class C(num: Int) {
+    val v: Int = num
+}
+
+fun f(num: Int): Int = num

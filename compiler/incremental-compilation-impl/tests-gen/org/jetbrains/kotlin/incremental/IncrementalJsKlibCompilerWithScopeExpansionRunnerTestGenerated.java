@@ -487,6 +487,12 @@ public class IncrementalJsKlibCompilerWithScopeExpansionRunnerTestGenerated exte
     }
 
     @Test
+    @TestMetadata("namedArgumentParameterRenamed")
+    public void testNamedArgumentParameterRenamed() {
+      runTest("jps/jps-plugin/testData/incremental/pureKotlin/namedArgumentParameterRenamed/");
+    }
+
+    @Test
     @TestMetadata("objectConstantChanged")
     public void testObjectConstantChanged() {
       runTest("jps/jps-plugin/testData/incremental/pureKotlin/objectConstantChanged/");

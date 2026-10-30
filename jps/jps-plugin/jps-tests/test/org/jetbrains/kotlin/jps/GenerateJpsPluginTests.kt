@@ -33,6 +33,7 @@ fun main(args: Array<String>) {
                 // TODO(KT-91039): JPS misses these metadata-only ABI changes until intellijSdk includes MRI-4749
                 val jpsDependencyGraphGaps = listOf(
                     "(^varargBecameArray$)",
+                    "(^namedArgumentParameterRenamed$)",
                 ).joinToString("|")
                 modelForDirectoryBasedTest(
                     "incremental", "pureKotlin",

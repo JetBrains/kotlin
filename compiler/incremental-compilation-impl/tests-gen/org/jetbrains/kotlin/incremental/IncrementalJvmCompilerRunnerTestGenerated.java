@@ -511,6 +511,12 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
     }
 
     @Test
+    @TestMetadata("namedArgumentParameterRenamed")
+    public void testNamedArgumentParameterRenamed() {
+      runTest("jps/jps-plugin/testData/incremental/pureKotlin/namedArgumentParameterRenamed/");
+    }
+
+    @Test
     @TestMetadata("objectConstantChanged")
     public void testObjectConstantChanged() {
       runTest("jps/jps-plugin/testData/incremental/pureKotlin/objectConstantChanged/");
