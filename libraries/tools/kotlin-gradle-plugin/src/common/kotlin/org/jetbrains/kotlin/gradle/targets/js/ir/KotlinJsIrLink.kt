@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.tasks.TaskOutputsBackup
 import org.jetbrains.kotlin.gradle.utils.KotlinJsCompilerOptionsDefault
 import org.jetbrains.kotlin.js.config.EcmaVersion
+import org.jetbrains.kotlin.js.config.supportsEsModules
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import javax.inject.Inject
 
@@ -159,9 +160,12 @@ abstract class KotlinJsIrLink
                 args.target = JsPlatforms.latestSupportedTarget
                 // Also, right now the module system should be defined explicitly, until we introduce package information
                 // saving for ES modules, so that it will be compatible with the other module systems,
-                // and we can delegate module system transpilation to SWC too
+                // and we can delegate module system transpilation to SWC too.
+                // If the user-defined target supports ES modules, they are the implied module system,
+                // so the compiler should produce them, as the rest of the build expects (SWC config, file extensions, run tasks)
                 if (args.moduleKind == null) {
-                    args.moduleKind = JsModuleKind.MODULE_UMD.kind
+                    args.moduleKind =
+                        if (userDefinedTarget.supportsEsModules) JsModuleKind.MODULE_ES.kind else JsModuleKind.MODULE_UMD.kind
                 }
                 // The latest supported target implies Long compilation as BigInt, which can't be transpiled by SWC
                 // to the older JS versions, so we keep the behavior defined by the user-defined target
