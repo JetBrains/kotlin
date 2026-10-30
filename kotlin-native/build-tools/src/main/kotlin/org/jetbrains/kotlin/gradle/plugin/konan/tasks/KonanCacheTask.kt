@@ -106,6 +106,9 @@ open class KonanCacheTask @Inject constructor(
                     .let { wholeXcodeProvisioningEnabled -> target.map { wholeXcodeProvisioningEnabled && isAppleTargetName(it) } }
             )
 
+    @get:Input
+    val kt89897workaround: Property<Boolean> = objectFactory.property(Boolean::class.java)
+
     @get:InputFile
     @get:PathSensitive(PathSensitivity.NONE)
     @Suppress("unused") // used only by Gradle machinery via reflection.
@@ -155,6 +158,9 @@ open class KonanCacheTask @Inject constructor(
             }
             if (useProvisionedXcode.get()) {
                 add("-Xoverride-konan-properties=useProvisionedXcode=true")
+            }
+            if (kt89897workaround.get()) {
+                add("-Xbinary=kt89897workaround=true")
             }
         }
         val workQueue = workerExecutor.noIsolation()
