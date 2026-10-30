@@ -6,7 +6,6 @@ plugins {
 
 dependencies {
     api(project(":compiler:psi:psi-api"))
-    api(project(":compiler:psi:psi-impl"))
     api(project(":analysis:stubs"))
     api(project(":core:deserialization.common"))
     api(project(":core:deserialization.common.jvm"))
