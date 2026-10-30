@@ -144,33 +144,12 @@ class LLGenericAnalysisTest : AbstractAnalysisApiExecutionTest("testData/generic
     }
 
     /**
-     * A regression test for KT-88945.
-     *
-     * @see redeclaredPluginAnnotation
+     * [KotlinAnnotationsResolver] doesn't expand type aliases: the compiler doesn't match `annotated` predicates on non-local
+     * declarations through a type alias (KT-75685).
      */
     @Test
-    fun redeclaredAnnotationTypeAlias(ktFile: KtFile, testServices: TestServices) {
-        assertAnnotationsOnMyClass(ktFile, testServices, "test.MyAnnotation")
-    }
-
-    /**
-     * A regression test for KT-88945.
-     *
-     * @see redeclaredPluginAnnotation
-     */
-    @Test
-    fun qualifiedAnnotationTypeAlias(ktFile: KtFile, testServices: TestServices) {
-        assertAnnotationsOnMyClass(ktFile, testServices, "other.MyAnnotation")
-    }
-
-    /**
-     * A regression test for KT-88945.
-     *
-     * @see redeclaredPluginAnnotation
-     */
-    @Test
-    fun cyclicAnnotationTypeAlias(ktFile: KtFile, testServices: TestServices) {
-        assertAnnotationsOnMyClass(ktFile, testServices, "test.MyAnnotation")
+    fun annotationTypeAlias(ktFile: KtFile, testServices: TestServices) {
+        assertAnnotationsOnMyClass(ktFile, testServices)
     }
 
     private fun assertAnnotationsOnMyClass(ktFile: KtFile, testServices: TestServices, vararg expected: String) {
@@ -346,15 +325,15 @@ class LLGenericAnalysisTest : AbstractAnalysisApiExecutionTest("testData/generic
             }
 
             assertEquals(
-                mapOf("Aliased" to true, "AliasedWithDeprecated" to false, "Direct" to true),
+                mapOf("Aliased" to false, "AliasedWithDeprecated" to false, "Direct" to true),
                 matchesAt(FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS),
             )
             assertEquals(
-                mapOf("Aliased" to true, "AliasedWithDeprecated" to true, "Direct" to true),
+                mapOf("Aliased" to false, "AliasedWithDeprecated" to false, "Direct" to true),
                 matchesAt(FirResolvePhase.TYPES),
             )
             assertEquals(
-                setOf("Aliased", "AliasedWithDeprecated", "Direct"),
+                setOf("Direct"),
                 provider.getSymbolsByPredicate(LookupPredicate.create { annotated(annotation) }).mapTo(mutableSetOf()) {
                     it.predicateTestName()
                 },

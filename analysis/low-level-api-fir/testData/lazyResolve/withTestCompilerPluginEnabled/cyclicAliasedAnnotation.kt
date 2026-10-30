@@ -3,8 +3,7 @@
 
 typealias FirstAlias = SecondAlias
 
-// An erroneous cyclic redeclaration next to the real one:
-// resolution has to terminate and still reach the annotation
+// An erroneous cyclic redeclaration next to the real one: resolution has to terminate
 typealias SecondAlias = FirstAlias
 typealias SecondAlias = org.jetbrains.kotlin.plugin.sandbox.MyInterfaceSupertype
 
