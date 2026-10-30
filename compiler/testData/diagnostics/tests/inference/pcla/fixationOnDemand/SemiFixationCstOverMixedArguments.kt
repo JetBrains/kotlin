@@ -39,19 +39,19 @@ fun <E4> myConsumerOf(x: E4): Consumer<E4> = TODO()
 
 // Covariant position: `Set<E1> <: Z` with E1 not fixed and the proper `Set<B> <: Z`
 fun testVariableFirst(setOfB: Set<B>) {
-    <!TYPE_MISMATCH("B; A")!>buildBox {
-        x = <!ASSIGNMENT_TYPE_MISMATCH("Set<B>; Set<A>")!>mySetOf1<!>(A())
+    buildBox {
+        x = mySetOf1(A())
         x = setOfB
-        <!TYPE_MISMATCH("B; A")!>x<!>.size
-    }<!>.x.iterator().next().foo()
+        x.size
+    }.x.iterator().next().foo()
 }
 
 fun testProperFirst(setOfB: Set<B>) {
-    <!TYPE_MISMATCH("B; A")!>buildBox {
+    buildBox {
         x = setOfB
-        x = <!ASSIGNMENT_TYPE_MISMATCH("Set<B>; Set<A>")!>mySetOf1<!>(A())
-        <!TYPE_MISMATCH("B; A")!>x<!>.size
-    }<!>.x.iterator().next().foo()
+        x = mySetOf1(A())
+        x.size
+    }.x.iterator().next().foo()
 }
 
 fun testTwoProperOneVariable(setOfA: Set<A>, setOfB: Set<B>) {
@@ -65,11 +65,11 @@ fun testTwoProperOneVariable(setOfA: Set<A>, setOfB: Set<B>) {
 
 fun testStringAndInt() {
     val mySetOfInt = mySetOf1(2)
-    val box = <!TYPE_MISMATCH("Int; String")!>buildBox {
-        x = <!ASSIGNMENT_TYPE_MISMATCH("Set<Int>; Set<String>")!>mySetOf2<!>("1")
+    val box = buildBox {
+        x = mySetOf2("1")
         x = mySetOfInt
-        <!TYPE_MISMATCH("Int; String")!>x<!>.size
-    }<!>
+        x.size
+    }
     val probe: Comparable<*> = box.x.iterator().next()
 }
 
@@ -82,11 +82,11 @@ fun <B> buildNullableBox(block: NullableBox<B>.() -> Unit): NullableBox<B> = TOD
 
 fun testKt84797() {
     val setInt: Set<Int> = setOf(42)
-    <!TYPE_MISMATCH("Int; String")!>buildNullableBox {
+    buildNullableBox {
         b = setInt
-        b = <!ASSIGNMENT_TYPE_MISMATCH("Set<Int>?; Set<String>")!>setOf<!>("42")
-        <!TYPE_MISMATCH("Int; String")!>b<!>?.size
-    }<!>
+        b = setOf("42")
+        b?.size
+    }
 }
 
 // Invariant position: the proper argument still determines the semi-fixation result,
@@ -144,21 +144,21 @@ fun testInvariantNested(mutableSetOfListsOfB: MutableSet<List<B>>) {
 // An out-projected argument next to the proper one: `MutableSet<out E7> <: Z`, `MutableSet<B> <: Z`. The result is
 // out-projected in any case, so the position is treated like a covariant one and the variable joins the common supertype
 fun testInvariantOutProjected(mutableSetOfB: MutableSet<B>) {
-    <!TYPE_MISMATCH("B; A")!>buildBox {
-        x = <!ASSIGNMENT_TYPE_MISMATCH("MutableSet<out B>; MutableSet<out A>")!>myMutableSetOfOut<!>(A())
+    buildBox {
+        x = myMutableSetOfOut(A())
         x = mutableSetOfB
-        <!TYPE_MISMATCH("B; A")!>x<!>.size
-    }<!>.x.iterator().next().foo()
+        x.size
+    }.x.iterator().next().foo()
 }
 
 // TODO: review
 // The same with the variable nested in the out-projected argument: `MutableSet<out List<E8>> <: Z`, `MutableSet<List<B>> <: Z`
 fun testInvariantOutProjectedNested(mutableSetOfListsOfB: MutableSet<List<B>>) {
-    <!TYPE_MISMATCH("B; A")!>buildBox {
-        x = <!ASSIGNMENT_TYPE_MISMATCH("MutableSet<out List<B>>; MutableSet<out List<A>>")!>myMutableSetOfOutLists<!>(A())
+    buildBox {
+        x = myMutableSetOfOutLists(A())
         x = mutableSetOfListsOfB
-        <!TYPE_MISMATCH("B; A")!>x<!>.size
-    }<!>.x.iterator().next().iterator().next().foo()
+        x.size
+    }.x.iterator().next().iterator().next().foo()
 }
 
 // TODO: review

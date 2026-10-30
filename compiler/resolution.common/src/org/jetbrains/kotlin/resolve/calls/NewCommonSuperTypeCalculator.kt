@@ -61,7 +61,7 @@ object NewCommonSuperTypeCalculator {
         // Avoid creating synthetic variables for flexible bounds which would result in two different variables.
         // Instead, just add flexible lower constraints when necessary.
         if (thereIsFlexibleTypes && !isTopLevelType && c.supportsSyntheticCstTypeVariables() &&
-            lowers.all { it.isStubTypeForVariableInSubtypingOrCaptured() }
+            lowers.any { it.isStubTypeForVariableInSubtypingOrCaptured() }
         ) {
             return c.createSyntheticCstTypeVariable(lowerBounds = types)
         }
@@ -69,11 +69,12 @@ object NewCommonSuperTypeCalculator {
         val stateStubTypesEqualToAnything = c.newTypeCheckerState(errorTypesEqualToAnything = false, stubTypesEqualToAnything = true)
         val stateStubTypesNotEqual = c.newTypeCheckerState(errorTypesEqualToAnything = false, stubTypesEqualToAnything = false)
 
-        val lowerSuperType = commonSuperTypeForSimpleTypes(lowers, depth, stateStubTypesEqualToAnything, stateStubTypesNotEqual)
+        val lowerSuperType =
+            commonSuperTypeForSimpleTypes(lowers, depth, isTopLevelType, stateStubTypesEqualToAnything, stateStubTypesNotEqual)
         if (!thereIsFlexibleTypes) return lowerSuperType
 
         val upperSuperType = commonSuperTypeForSimpleTypes(
-            types.map { it.upperBoundIfFlexible() }, depth, stateStubTypesEqualToAnything, stateStubTypesNotEqual
+            types.map { it.upperBoundIfFlexible() }, depth, isTopLevelType, stateStubTypesEqualToAnything, stateStubTypesNotEqual
         )
 
         if (!isTopLevelType) {
@@ -98,6 +99,7 @@ object NewCommonSuperTypeCalculator {
     private fun commonSuperTypeForSimpleTypes(
         types: List<RigidTypeMarker>,
         depth: Int,
+        isTopLevelType: Boolean,
         stateStubTypesEqualToAnything: TypeCheckerState,
         stateStubTypesNotEqual: TypeCheckerState,
     ): RigidTypeMarker {
@@ -115,7 +117,7 @@ object NewCommonSuperTypeCalculator {
         val notNullTypes = if (!allNotNull) types.map { it.withNullability(false) } else types
 
         val commonSuperType =
-            commonSuperTypeForNotNullTypes(notNullTypes, depth, stateStubTypesEqualToAnything, stateStubTypesNotEqual)
+            commonSuperTypeForNotNullTypes(notNullTypes, depth, isTopLevelType, stateStubTypesEqualToAnything, stateStubTypesNotEqual)
         return if (!allNotNull)
             refineNullabilityForUndefinedNullability(types, commonSuperType) ?: commonSuperType.withNullability(true)
         else
@@ -223,6 +225,7 @@ object NewCommonSuperTypeCalculator {
     private fun commonSuperTypeForNotNullTypes(
         types: List<RigidTypeMarker>,
         depth: Int,
+        isTopLevelType: Boolean,
         stateStubTypesEqualToAnything: TypeCheckerState,
         stateStubTypesNotEqual: TypeCheckerState,
     ): RigidTypeMarker {
@@ -230,11 +233,19 @@ object NewCommonSuperTypeCalculator {
 
         val nonTypeVariables = types.filter { !it.isStubTypeForVariableInSubtypingOrCaptured() }
 
-        if (nonTypeVariables.isEmpty()) {
-            check(c.supportsSyntheticCstTypeVariables()) {
-                "CST over not-fixed type variables only is only defined with synthetic type variables"
-            }
+        // Some (or all) of the types are not-fixed type variables. At a type argument position, they are folded into
+        // a synthetic type variable bounded by all the types.
+        // NB: it's only run in PCLA/DI context during semi-fixation (supportsSyntheticCstTypeVariables()),
+        // because for actual fixation when having lower constraints like Set<SomeType> <: Tv and Set<Fv> <: Tv,
+        // we would try to fix Fv first whenever it's possible.
+        // And anyway, for such Tv when actually fixing, we can't return `Set<_CST_0>` as a result because it would violate
+        // the invariant that the result type should be proper.
+        if (nonTypeVariables.size < types.size && !isTopLevelType && c.supportsSyntheticCstTypeVariables()) {
             return c.createSyntheticCstTypeVariable(lowerBounds = types)
+        }
+
+        check(nonTypeVariables.isNotEmpty()) {
+            "CST over not-fixed type variables only is defined just for PCLA/DI context, but there are: $types"
         }
 
         val [builderInferenceStubTypes, nonStubTypes] = nonTypeVariables.partition { it.isStubTypeForBuilderInference() }
