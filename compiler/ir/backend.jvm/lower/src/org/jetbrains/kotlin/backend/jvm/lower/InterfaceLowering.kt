@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.*
+import org.jetbrains.kotlin.backend.jvm.syntheticMethodForProperty
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -41,21 +42,16 @@ import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
  */
 @PhasePrerequisites(JvmDefaultParameterInjector::class)
 internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTransformerVoid(), ClassLoweringPass {
-    private val removedFunctions = hashMapOf<IrSimpleFunctionSymbol, IrSimpleFunctionSymbol>()
-    private val removedFunctionsWithoutRemapping = mutableSetOf<IrSimpleFunctionSymbol>()
+    private val removedFunctions = hashMapOf<IrSimpleFunctionSymbol, IrSimpleFunctionSymbol?>()
 
     override fun lower(irClass: IrClass) {
-        if (!irClass.isJvmInterface) return
-
         when (irClass.kind) {
             ClassKind.INTERFACE -> handleInterface(irClass)
             ClassKind.ANNOTATION_CLASS -> handleAnnotationClass(irClass)
             else -> return
         }
 
-        irClass.declarations.removeAll {
-            it is IrFunction && (removedFunctions.containsKey(it.symbol) || removedFunctionsWithoutRemapping.contains(it.symbol))
-        }
+        irClass.declarations.removeAll { removedFunctions.containsKey(it.symbol) }
 
         val defaultImplsIrClass = context.cachedDeclarations.getDefaultImplsClass(irClass)
         if (defaultImplsIrClass.declarations.isNotEmpty()) {
@@ -73,11 +69,15 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
                     (jvmDefaultMode == JvmDefaultMode.NO_COMPATIBILITY && irClass.hasAnnotation(JVM_DEFAULT_WITH_COMPATIBILITY_FQ_NAME))
         // There are 5 cases for functions on interfaces:
         for (function in irClass.functions) {
+            val isSyntheticMethodForCompanionBlockProperty = function.syntheticMethodForProperty
+                ?.let { it.origin == DEFINED && (it.getter?.isStatic == true || it.backingField?.isStatic == true) } == true
             when {
                 /**
-                 * 1) They are plain abstract interface functions or static/companion-block functions, in which case we leave them:
+                 * 1) They are plain abstract interface functions or static/companion-block functions, in which case we leave them.
+                 *    Also leave synthetic methods for property annotations for companion-block properties.
                  */
                 function.modality == Modality.ABSTRACT ||
+                        isSyntheticMethodForCompanionBlockProperty ||
                         (function.isStatic && function.origin != JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS) ->
                     continue
 
@@ -141,7 +141,7 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
                         //move as is
                         val defaultImplsClass = context.cachedDeclarations.getDefaultImplsClass(irClass)
                         defaultImplsClass.declarations.add(function)
-                        removedFunctionsWithoutRemapping.add(function.symbol)
+                        removedFunctions[function.symbol] = null
                         function.parent = defaultImplsClass
                     } else {
                         val defaultImpl = createDefaultImpl(function)
