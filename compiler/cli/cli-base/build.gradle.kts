@@ -25,6 +25,7 @@ dependencies {
     implementation(project(":compiler:frontend.common-psi"))
     implementation(project(":compiler:frontend.common.jvm"))
     implementation(project(":compiler:frontend.java"))
+    implementation(project(":compiler:java-direct"))
     implementation(project(":compiler:util"))
     implementation(project(":core:compiler.common.jvm"))
 

@@ -49,13 +49,13 @@ class PsiBasedProjectFileSearchScope(
 open class VfsBasedProjectEnvironment(
     val project: Project,
     val knownFileSystems: List<VirtualFileSystem>,
-    private val getPackagePartProviderFn: (GlobalSearchScope) -> PackagePartProvider
+    private val getPackagePartProviderFn: (JvmClasspath) -> PackagePartProvider
 ) : JvmCompilationEnvironment {
 
     constructor(
         project: Project,
         fileSystem: VirtualFileSystem,
-        getPackagePartProviderFn: (GlobalSearchScope) -> PackagePartProvider
+        getPackagePartProviderFn: (JvmClasspath) -> PackagePartProvider
     ) : this(project, listOf(fileSystem), getPackagePartProviderFn)
 
     private val indexedClasspathRoots = HashMap<JvmClasspathRootId, VirtualFile>()
@@ -74,23 +74,22 @@ open class VfsBasedProjectEnvironment(
     }
 
     override fun getKotlinClassFinder(classpath: JvmClasspath): KotlinClassFinder =
-        VirtualFileFinderFactory.getInstance(project).create(psiSearchScope(classpath))
+        (VirtualFileFinderFactory.getInstance(project) as? CliVirtualFileFinderFactory
+            ?: error("VfsBasedProjectEnvironment requires CliVirtualFileFinderFactory to filter Kotlin classes by JvmClasspath"))
+            .create(classpath)
 
     override fun getJavaModuleResolver(): JavaModuleResolver =
         JavaModuleResolver.getInstance(project)
 
     override fun getPackagePartProvider(classpath: JvmClasspath): PackagePartProvider =
-        getPackagePartProviderFn(psiSearchScope(classpath))
+        getPackagePartProviderFn(classpath)
 
     /**
      * A (maybe temporary) mechanism for extending the classpath handled by package providers; nop by default
      */
     open fun updateClasspath(classpath: List<File>) {}
 
-    /**
-     * The only place where a [JvmClasspath] becomes an IntelliJ scope: the PSI infrastructure indexes all binaries
-     * at once and restricts a lookup afterwards, so every view this environment hands out is index + scope.
-     */
+    /** Search scope for the PSI Java view; K2 Kotlin lookups use [JvmClasspath] directly. */
     fun psiSearchScope(classpath: JvmClasspath): GlobalSearchScope = when (classpath) {
         is JvmClasspath.Roots -> classPathScope(classpath.roots)
         is JvmClasspath.ProjectLibraries -> {

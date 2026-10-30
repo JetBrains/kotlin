@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.cli.jvm.compiler
 
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.cli.CliDiagnostics.JAVA_MODULE_RESOLUTION_ERROR
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
@@ -15,6 +14,8 @@ import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.cli.reportLog
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.jvm.environment.JvmClasspath
+import org.jetbrains.kotlin.jvm.environment.containsRoot
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartProviderBase
 import org.jetbrains.kotlin.load.kotlin.loadModuleMapping
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
@@ -24,10 +25,19 @@ import java.io.ByteArrayOutputStream
 import java.io.EOFException
 import java.io.PrintStream
 
+/**
+ * Loads `.kotlin_module` mappings from the binary roots accepted by [acceptsRoot].
+ *
+ * Compiler code uses the [JvmClasspath] constructor. The root filter is an implementation seam for hosts that select roots in
+ * their own terms (e.g. Analysis API adapters over `GlobalSearchScope`); it is not meant to be exposed through compiler APIs.
+ */
 class JvmPackagePartProvider(
     languageVersionSettings: LanguageVersionSettings,
-    private val scope: GlobalSearchScope
+    private val acceptsRoot: (VirtualFile) -> Boolean,
 ) : JvmPackagePartProviderBase<VirtualFile>() {
+    constructor(languageVersionSettings: LanguageVersionSettings, classpath: JvmClasspath) :
+            this(languageVersionSettings, classpath::containsRoot)
+
     override val deserializationConfiguration = CommonCompilerDeserializationConfiguration(languageVersionSettings)
 
     override val loadedModules: MutableList<ModuleMappingInfo<VirtualFile>> = SmartList()
@@ -44,7 +54,7 @@ class JvmPackagePartProvider(
     fun addRoots(roots: List<JavaRoot>, configuration: CompilerConfiguration) {
         for ((val root = file, val type) in roots) {
             if (type != JavaRoot.RootType.BINARY) continue
-            if (root !in scope) continue
+            if (!acceptsRoot(root)) continue
 
             val metaInf = root.findChild("META-INF") ?: continue
             for (moduleFile in metaInf.children) {

@@ -165,7 +165,7 @@ private fun createAnnotationResolutionSession(
         roots.map { it.file },
         JvmDependenciesIndexImpl(roots),
     ) { scope ->
-        JvmPackagePartProvider(configuration.languageVersionSettings, scope).apply { addRoots(roots, configuration) }
+        JvmPackagePartProvider(configuration.languageVersionSettings) { it in scope }.apply { addRoots(roots, configuration) }
     }
     val sessionFactoryContext = FirJvmSessionFactory.Context(
         configuration = configuration,
@@ -215,7 +215,7 @@ private class AnnotationResolutionProjectEnvironment(
     override fun getJavaModuleResolver(): JavaModuleResolver = NoJavaModulesResolver
 
     override fun getKotlinClassFinder(classpath: JvmClasspath): KotlinClassFinder =
-        CliVirtualFileFinder(index, scope, enableSearchInCtSym = false, perfManager = null)
+        CliVirtualFileFinder(index, { it in scope }, enableSearchInCtSym = false, perfManager = null)
 
     override fun getPackagePartProvider(classpath: JvmClasspath): PackagePartProvider =
         getPackagePartProviderFn(scope)

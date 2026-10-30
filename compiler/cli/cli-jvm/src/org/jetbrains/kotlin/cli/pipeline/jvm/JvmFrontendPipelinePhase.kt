@@ -12,8 +12,6 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileSystem
-import com.intellij.psi.PsiManager
-import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.io.URLUtil
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.KtPsiSourceFile
@@ -592,8 +590,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         val javaModuleFinder = CliJavaModuleFinder(
             configuration.jdkHome,
             configuration,
-            javaFileManager,
-            project,
+            javaFileManager::findClassOnClasspath,
             jdkRelease
         )
 
@@ -603,14 +600,13 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         val contentRoots = configuration.contentRoots
 
         val classpathRootsResolver = ClasspathRootsResolver(
-            PsiManager.getInstance(project),
             configuration,
             additionalModules = configuration.additionalJavaModules,
             contentRootToVirtualFile = { contentRootToVirtualFile(it, localFileSystem, projectEnvironment.jarFileSystem, configuration) },
             javaModuleFinder,
             requireStdlibModule = !configuration.allowKotlinPackage,
             outputDirectory?.let { localFileSystem.findFileByPath(it) },
-            javaFileManager,
+            javaFileManager::findClassOnClasspath,
             jdkRelease,
             hasKotlinSources = contentRoots.any { it is KotlinSourceRoot },
         )
@@ -631,12 +627,15 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
 
         val perfManager = configuration.perfManager
 
+        val fileFinderFactory = CliVirtualFileFinderFactory(rootsIndex, enableSearchInCtSym = jdkRelease != null, perfManager)
         project.registerService(
             JavaModuleResolver::class.java,
-            CliJavaModuleResolver(classpathRootsResolver.javaModuleGraph, javaModules, javaModuleFinder.systemModules.toList(), project)
+            CliJavaModuleResolver(
+                classpathRootsResolver.javaModuleGraph, javaModules, javaModuleFinder.systemModules.toList(),
+                fileFinderFactory.create(JvmClasspath.ProjectLibraries())::findSourceOrBinaryClassFile,
+            )
         )
 
-        val fileFinderFactory = CliVirtualFileFinderFactory(rootsIndex, enableSearchInCtSym = jdkRelease != null, perfManager)
         project.registerService(VirtualFileFinderFactory::class.java, fileFinderFactory)
         project.registerService(MetadataFinderFactory::class.java, CliMetadataFinderFactory(fileFinderFactory))
 
@@ -666,7 +665,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
     private class ProjectEnvironmentWithCoreEnvironmentEmulation(
         project: Project,
         knownFileSystems: List<VirtualFileSystem>,
-        getPackagePartProviderFn: (GlobalSearchScope) -> PackagePartProvider,
+        getPackagePartProviderFn: (JvmClasspath) -> PackagePartProvider,
         initialRoots: List<JavaRoot>,
         val configuration: CompilerConfiguration,
         val projectEnvironment: KotlinCoreEnvironment.ProjectEnvironment,

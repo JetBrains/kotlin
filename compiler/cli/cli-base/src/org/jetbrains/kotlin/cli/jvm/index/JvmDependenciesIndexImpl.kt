@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.cli.jvm.index
 
-import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.name.ClassId
 import kotlin.concurrent.withLock
 
@@ -18,16 +17,16 @@ import kotlin.concurrent.withLock
 class JvmDependenciesIndexImpl(roots: List<JavaRoot>) : JvmDependenciesIndexBase(roots) {
     // holds the request and the result last time we searched for class
     // helps improve several scenarios, LazyJavaResolverContext.findClassInJava being the most important
-    private var lastClassVirtualFileSearch: Pair<ClassSearchRequest, Collection<VirtualFile>>? = null
+    private var lastClassFileSearch: Pair<ClassSearchRequest, Collection<IndexedClassFile>>? = null
 
-    override fun findClassVirtualFiles(
+    override fun findClassFiles(
         classId: ClassId,
         acceptedExtensions: JavaFileExtensions,
-    ): Collection<VirtualFile> {
+    ): Collection<IndexedClassFile> {
         lock.withLock {
             // TODO: KT-58327 probably should be changed to thread local to fix fast-path
             // make a decision based on information saved from last class search
-            val cachedClasses = lastClassVirtualFileSearch?.let { [cachedRequest, cachedResult] ->
+            val cachedClasses = lastClassFileSearch?.let { [cachedRequest, cachedResult] ->
                 if (cachedRequest.classId != classId) return@let null
 
                 val isMatchingRequest = if (cachedResult.isEmpty()) {
@@ -45,22 +44,22 @@ class JvmDependenciesIndexImpl(roots: List<JavaRoot>) : JvmDependenciesIndexBase
             if (cachedClasses != null) return cachedClasses
 
             val result = searchClasses(classId, acceptedExtensions)
-            lastClassVirtualFileSearch = ClassSearchRequest(classId, acceptedExtensions) to result
+            lastClassFileSearch = ClassSearchRequest(classId, acceptedExtensions) to result
             return result
         }
     }
 
     /**
-     * Searches for class virtual files matching the given [classId] and [acceptedExtensions] by traversing the index.
+     * Searches for class files matching the given [classId] and [acceptedExtensions] by traversing the index.
      *
      * This method does not acquire [lock]. The caller is responsible for synchronization.
      */
     private fun searchClasses(
         classId: ClassId,
         acceptedExtensions: JavaFileExtensions,
-    ): Collection<VirtualFile> {
+    ): Collection<IndexedClassFile> {
         val fileNameWithoutExtension = classId.relativeClassName.asString().replace('.', '$')
-        val results = mutableListOf<VirtualFile>()
+        val results = mutableListOf<IndexedClassFile>()
 
         traverseIndex(classId.packageFqName, acceptedExtensions.rootTypes) { directoryInRoot, root ->
             for (ext in acceptedExtensions) {
@@ -71,7 +70,7 @@ class JvmDependenciesIndexImpl(roots: List<JavaRoot>) : JvmDependenciesIndexBase
                     ?.takeIf { it.isValid }
 
                 if (file != null) {
-                    results.add(file)
+                    results.add(IndexedClassFile(file, root))
 
                     // Stop the search. We've found the first class virtual file.
                     return@traverseIndex false

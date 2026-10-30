@@ -31,7 +31,6 @@ import com.intellij.openapi.vfs.*
 import com.intellij.openapi.vfs.impl.ZipHandler
 import com.intellij.pom.java.InternalPersistentJavaLanguageLevelReaderService
 import com.intellij.psi.PsiElementFinder
-import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiNameHelper
 import com.intellij.psi.impl.*
 import com.intellij.psi.impl.file.impl.JavaFileManager
@@ -62,6 +61,7 @@ import org.jetbrains.kotlin.extensions.internal.CandidateInterceptor
 import org.jetbrains.kotlin.extensions.internal.InternalNonStableExtensionPoints
 import org.jetbrains.kotlin.extensions.internal.TypeResolutionInterceptor
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFactory
 import org.jetbrains.kotlin.load.java.structure.impl.source.JavaFixedElementSourceFactory
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
@@ -232,8 +232,7 @@ class KotlinCoreEnvironment private constructor(
         val javaModuleFinder = CliJavaModuleFinder(
             jdkHome,
             configuration,
-            javaFileManager,
-            project,
+            javaFileManager::findClassOnClasspath,
             releaseTarget
         )
 
@@ -244,14 +243,13 @@ class KotlinCoreEnvironment private constructor(
         val contentRoots = configuration.getList(CLIConfigurationKeys.CONTENT_ROOTS)
 
         classpathRootsResolver = ClasspathRootsResolver(
-            PsiManager.getInstance(project),
             configuration,
             configuration.getList(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES),
             this::contentRootToVirtualFile,
             javaModuleFinder,
             !configuration.getBoolean(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE),
             outputDirectory?.let(this::findLocalFile),
-            javaFileManager,
+            javaFileManager::findClassOnClasspath,
             releaseTarget,
             hasKotlinSources = contentRoots.any { it is KotlinSourceRoot },
         )
@@ -279,12 +277,15 @@ class KotlinCoreEnvironment private constructor(
             perfManager,
         )
 
+        val fileFinderFactory = CliVirtualFileFinderFactory(rootsIndex, releaseTarget != null, perfManager)
         project.registerService(
             JavaModuleResolver::class.java,
-            CliJavaModuleResolver(classpathRootsResolver.javaModuleGraph, javaModules, javaModuleFinder.systemModules.toList(), project)
+            CliJavaModuleResolver(
+                classpathRootsResolver.javaModuleGraph, javaModules, javaModuleFinder.systemModules.toList(),
+                fileFinderFactory.create(JvmClasspath.ProjectLibraries())::findSourceOrBinaryClassFile,
+            )
         )
 
-        val fileFinderFactory = CliVirtualFileFinderFactory(rootsIndex, releaseTarget != null, perfManager)
         project.registerService(VirtualFileFinderFactory::class.java, fileFinderFactory)
         project.registerService(MetadataFinderFactory::class.java, CliMetadataFinderFactory(fileFinderFactory))
 
@@ -326,8 +327,16 @@ class KotlinCoreEnvironment private constructor(
         sourceFiles += createSourceFilesFromSourceRoots(configuration, project, roots).toSet() - sourceFiles
     }
 
+    /** Scope-based factory for the K1 analysis entry points only; K2 code uses the [JvmClasspath] overload. */
     fun createPackagePartProvider(scope: GlobalSearchScope): JvmPackagePartProvider {
-        return JvmPackagePartProvider(configuration.languageVersionSettings, scope).apply {
+        return JvmPackagePartProvider(configuration.languageVersionSettings) { it in scope }.apply {
+            addRoots(initialRoots, configuration)
+            packagePartProviders += this
+        }
+    }
+
+    fun createPackagePartProvider(classpath: JvmClasspath): JvmPackagePartProvider {
+        return JvmPackagePartProvider(configuration.languageVersionSettings, classpath).apply {
             addRoots(initialRoots, configuration)
             packagePartProviders += this
         }

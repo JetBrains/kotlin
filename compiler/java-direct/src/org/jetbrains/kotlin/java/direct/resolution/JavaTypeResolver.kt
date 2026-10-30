@@ -347,7 +347,7 @@ private fun tryResolve(classId: ClassId): Boolean {
     if (finder != null && finder.isClassInIndex(classId) && finder.findClass(JavaClassFinder.Request(classId)) != null) {
         return true
     }
-    val symbol = c.fileContext.session.cycleSafeClassLikeSymbol(classId) ?: return false
+    val symbol = c.fileContext.session?.cycleSafeClassLikeSymbol(classId) ?: return false
     if (symbol is FirTypeAliasSymbol) return false
     return symbol.origin != FirDeclarationOrigin.BuiltIns
 }
@@ -383,7 +383,7 @@ private fun classExists(classId: ClassId, fullResolution: Boolean): Boolean =
  */
 context(c: JavaResolutionContext)
 internal fun isTypeUseAnnotationClass(classId: ClassId): Boolean =
-    c.fileContext.session.isTypeUseAnnotationClass(classId)
+    c.fileContext.session?.isTypeUseAnnotationClass(classId) ?: false
 
 /**
  * Cross-language constant-field resolution for qualified references such as `Foo.BAR` where
@@ -391,7 +391,7 @@ internal fun isTypeUseAnnotationClass(classId: ClassId): Boolean =
  */
 context(c: JavaResolutionContext)
 internal fun resolveExternalFieldValue(classQualifier: String?, fieldName: String): Any? =
-    c.fileContext.session.resolveExternalFieldValue(classQualifier, fieldName, c.packageFqName)
+    c.fileContext.session?.resolveExternalFieldValue(classQualifier, fieldName, c.packageFqName)
 
 /**
  * Const-vs-enum-entry disambiguation for annotation arguments that look syntactically like enum
@@ -400,7 +400,7 @@ internal fun resolveExternalFieldValue(classQualifier: String?, fieldName: Strin
  */
 context(c: JavaResolutionContext)
 internal fun resolveConstFieldValue(classId: ClassId, fieldName: Name): Any? =
-    c.fileContext.session.resolveConstFieldValue(classId, fieldName)
+    c.fileContext.session?.resolveConstFieldValue(classId, fieldName)
 
 /**
  * Materialises [classId] into a navigable [JavaClass]:
@@ -416,7 +416,7 @@ internal fun classifierAdapterFor(classId: ClassId): JavaClass? {
         finder.findClass(JavaClassFinder.Request(classId))?.let { return it }
     }
     val session = c.fileContext.session
-    return if (session.nullableSymbolProvider != null) FirBackedJavaClassAdapter(classId, session) else null
+    return if (session?.nullableSymbolProvider != null) FirBackedJavaClassAdapter(classId, session) else null
 }
 
 /**
@@ -432,7 +432,7 @@ context(c: JavaResolutionContext)
 internal fun recoverInheritedOuterTypeArguments(innerClassId: ClassId): List<JavaType>? {
     val outerClassId = innerClassId.outerClassId ?: return null
     val containingClass = c.scopeContext.containingClass ?: return null
-    val session = c.fileContext.session
+    val session = c.fileContext.session ?: return null
     // Walk the containing class itself and then its outer classes, innermost first: the innermost
     // class that inherits the inner class is the one whose instantiation of the outer class the
     // reference denotes (`class Outer<E1, E2> extends BaseOuter<Integer, E1>` ⇒ `BaseInner`
@@ -546,21 +546,27 @@ private fun substituteTypeArgs(
  */
 @OptIn(SymbolInternals::class)
 context(c: JavaResolutionContext)
-internal fun directSupertypeClassIds(classId: ClassId): List<ClassId> =
-    c.fileContext.session.memoizedDirectSupertypeClassIds(classId) {
-        c.fileContext.session.cycleGuardedSupertypeWalk(classId, default = null) {
-            // 1. Source Java arm.
-            val finder = c.fileContext.classFinder
-            if (finder != null && finder.isClassInIndex(classId)) {
-                val javaClass = finder.findClass(JavaClassFinder.Request(classId))
-                if (javaClass != null) {
-                    return@cycleGuardedSupertypeWalk resolveSupertypeNames(javaClass)
-                }
+internal fun directSupertypeClassIds(classId: ClassId): List<ClassId> {
+    // 1. Source Java arm.
+    fun fromSourceJava(): List<ClassId>? {
+        val finder = c.fileContext.classFinder
+        if (finder != null && finder.isClassInIndex(classId)) {
+            val javaClass = finder.findClass(JavaClassFinder.Request(classId))
+            if (javaClass != null) {
+                return resolveSupertypeNames(javaClass)
             }
+        }
+        return null
+    }
+
+    val session = c.fileContext.session ?: return fromSourceJava().orEmpty()
+    return session.memoizedDirectSupertypeClassIds(classId) {
+        session.cycleGuardedSupertypeWalk(classId, default = null) {
+            fromSourceJava()?.let { return@cycleGuardedSupertypeWalk it }
 
             // A missing symbol (no provider, unknown class, or a KT-74097 in-flight break) and a
             // symbol that is not a class both mean "unknown".
-            val symbol = c.fileContext.session.cycleSafeClassLikeSymbol(classId) ?: return@cycleGuardedSupertypeWalk null
+            val symbol = session.cycleSafeClassLikeSymbol(classId) ?: return@cycleGuardedSupertypeWalk null
             val firClass = symbol.fir as? FirRegularClass ?: return@cycleGuardedSupertypeWalk null
 
             // 2. Binary Java arm.
@@ -569,13 +575,14 @@ internal fun directSupertypeClassIds(classId: ClassId): List<ClassId> =
             }
 
             // 3. Kotlin / built-in / deserialized arm.
-            firClass.resolveSupertypesOnAir(c.fileContext.session).map { ref ->
+            firClass.resolveSupertypesOnAir(session).map { ref ->
                 // A ref that stayed unresolved makes this a partial answer, which must not be cached.
                 (ref.coneTypeOrNull as? ConeClassLikeType)?.lookupTag?.classId
                     ?: return@cycleGuardedSupertypeWalk null
             }
         }
     }
+}
 
 /**
  * Resolves the supertype names of a Java source [enclosing] class to a list of direct-supertype

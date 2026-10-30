@@ -15,23 +15,32 @@ import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileSystem
 import com.intellij.openapi.vfs.local.CoreLocalFileSystem
+import com.intellij.openapi.vfs.impl.ZipHandler
+import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import com.intellij.util.io.URLUtil.JAR_SEPARATOR
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
 import org.jetbrains.kotlin.cli.create
+import org.jetbrains.kotlin.cli.jvm.compiler.CliVirtualFileFinder
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.IncrementalCompilationComponentsWithCustomScope
 import org.jetbrains.kotlin.cli.jvm.compiler.prepareIncrementalCompilationContextAndLibrariesClasspath
 import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
+import org.jetbrains.kotlin.cli.jvm.index.IndexedClassFile
+import org.jetbrains.kotlin.cli.jvm.index.JavaFileExtensions
+import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
+import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndex
 import org.jetbrains.kotlin.cli.jvm.config.VirtualJvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.incrementalCompilationComponents
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.moduleName
 import org.jetbrains.kotlin.config.modules
 import org.jetbrains.kotlin.config.outputDirectory
@@ -39,14 +48,23 @@ import org.jetbrains.kotlin.fir.session.IncrementalCompilationContext
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
+import org.jetbrains.kotlin.jvm.environment.containsFile
+import org.jetbrains.kotlin.jvm.environment.isUnder
+import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.load.kotlin.incremental.components.JvmPackagePartProto
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
+import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf
+import org.jetbrains.kotlin.metadata.jvm.deserialization.serializeToByteArray
 import org.jetbrains.kotlin.modules.TargetId
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -54,6 +72,11 @@ import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
+import kotlin.io.path.createDirectories
+import kotlin.io.path.outputStream
+import kotlin.io.path.writeBytes
 
 /**
  * Emulates the IJ/Bazel build system's use of `IncrementalCompilationComponentsWithCustomScope` to pass the output of the
@@ -63,10 +86,14 @@ class IncrementalCompilationCustomScopeTest {
 
     private val disposable: Disposable = Disposer.newDisposable("${IncrementalCompilationCustomScopeTest::class.simpleName}.disposable")
 
-    /** Disposing a project disposes its `PsiManager`, which the platform allows in a write action only. */
+    /**
+     * Disposing a project disposes its `PsiManager`, which the platform allows in a write action only.
+     * `CoreJarFileSystem` retains archive handles that prevent Windows `@TempDir` cleanup.
+     */
     @AfterEach
     fun disposeEnvironment() {
         ApplicationManager.getApplication().runWriteAction { Disposer.dispose(disposable) }
+        ZipHandler.clearFileAccessorCache()
     }
 
     @Test
@@ -86,15 +113,116 @@ class IncrementalCompilationCustomScopeTest {
     fun testTheInMemoryRootRestrictsTheLookupToItself(@TempDir tempDir: File) {
         val outputFileSystem = InMemoryOutputFileSystem()
         val previousOutputClass = outputFileSystem.addFile("p/Ref.class")
+        val localOutputClass = localClassFile(tempDir)
         val [_, context] = prepareClasspaths(tempDir, ComponentsWithCustomScope(outputFileSystem.root))
 
-        val scope = projectEnvironment.psiSearchScope(context!!.precompiledBinaries!!)
+        val classpath = context!!.precompiledBinaries!!
+        val scope = projectEnvironment.psiSearchScope(classpath)
         assertTrue(scope.contains(previousOutputClass), "the class file of the previous build lies under the root the components named")
         assertFalse(
             scope.contains(InMemoryOutputFileSystem().addFile("p/Ref.class")),
             "a file of another file system of the same shape is not under that root",
         )
-        assertFalse(scope.contains(localClassFile(tempDir)), "a file on disk is not under that root either")
+        assertFalse(scope.contains(localOutputClass), "a file on disk is not under that root either")
+
+        val otherFileSystemClass = InMemoryOutputFileSystem().addFile("p/Ref.class")
+        assertTrue(classpath.containsFile(otherFileSystemClass), "root-ID matching intentionally ignores VirtualFile system identity")
+
+        val finder = CliVirtualFileFinder(
+            FixedJvmDependenciesIndex(listOf(previousOutputClass, localOutputClass)),
+            classpath,
+            enableSearchInCtSym = false,
+            perfManager = null,
+        )
+        assertEquals(previousOutputClass, finder.findVirtualFileWithHeader(ClassId.fromString("p/Ref")))
+        assertNull(finder.findVirtualFileWithHeader(ClassId.fromString("p/Local")))
+    }
+
+    @Test
+    fun testTheRootIdFinderRestrictsLookupToTheLocalOutputDirectory(@TempDir tempDir: File) {
+        val localOutputClass = localClassFile(tempDir)
+        val [_, context] = prepareClasspaths(tempDir, PlainComponents())
+        val finder = projectEnvironment.getKotlinClassFinder(context!!.precompiledBinaries!!) as VirtualFileFinder
+
+        assertEquals(localOutputClass.path, finder.findVirtualFileWithHeader(ClassId.fromString("p/Local"))?.path)
+    }
+
+    /**
+     * Pins the HMPP library-session root split (KT-88892): Kotlin is limited to common dependencies, while the Java facade uses the
+     * complete libraries classpath. This records possibly-wrong current behavior, not a desired precedence rule.
+     */
+    @Test
+    fun testHMPPCommonLibraryKotlinLookupAndJavaLookupUseDifferentRoots(@TempDir tempDir: File) {
+        val [_, context] = prepareClasspaths(tempDir, PlainComponents())
+        assertNotNull(context)
+
+        val commonDependencyRoot = File(tempDir, "common-dependency").apply { mkdirs() }
+        val platformLibraryRoot = File(tempDir, "platform-library").apply { mkdirs() }
+        val platformOnlyClass = File(platformLibraryRoot, "p/JavaOnly.class").apply {
+            parentFile.mkdirs()
+            writeBytes(ByteArray(0))
+        }
+
+        val javaClassFile = localVirtualFile(platformOnlyClass)
+        val index = FixedJvmDependenciesIndex(
+            listOf(javaClassFile),
+            sequenceOf(JavaRoot(localVirtualFile(platformLibraryRoot), JavaRoot.RootType.BINARY)),
+        )
+        val classId = ClassId.fromString("p/JavaOnly")
+        val commonKotlinFinder = CliVirtualFileFinder(
+            index,
+            JvmClasspath.Roots(listOf(JvmClasspathRootId.of(commonDependencyRoot.toPath()))),
+            enableSearchInCtSym = false,
+            perfManager = null,
+        )
+
+        assertNull(commonKotlinFinder.findVirtualFileWithHeader(classId))
+        assertTrue(JvmClasspath.ProjectLibraries().containsFile(javaClassFile))
+    }
+
+    @Test
+    fun testPackagePartProviderUsesClasspathRoots(@TempDir tempDir: File) {
+        prepareClasspaths(tempDir, PlainComponents())
+
+        fun moduleMapping(packageFqName: String): ByteArray = JvmModuleProtoBuf.Module.newBuilder()
+            .addPackageParts(
+                JvmModuleProtoBuf.PackageParts.newBuilder()
+                    .setPackageFqName(packageFqName)
+                    .addShortClassName("PartKt")
+            )
+            .build()
+            .serializeToByteArray(MetadataVersion.INSTANCE, flags = 0)
+
+        val listedDirectory = tempDir.toPath().resolve("out").createDirectories()
+        val nestedDirectory = listedDirectory.resolve("nested").createDirectories()
+        listedDirectory.resolve("META-INF").createDirectories().resolve("test.kotlin_module").writeBytes(moduleMapping("listed"))
+        nestedDirectory.resolve("META-INF").createDirectories().resolve("test.kotlin_module").writeBytes(moduleMapping("nested"))
+        val jar = listedDirectory.resolve("lib.jar")
+        ZipOutputStream(jar.outputStream()).use { output ->
+            output.putNextEntry(ZipEntry("META-INF/test.kotlin_module"))
+            output.write(moduleMapping("jar"))
+            output.closeEntry()
+        }
+        val jarPath = jar.toAbsolutePath().normalize().toString().replace('\\', '/')
+        val jarRoot = checkNotNull(CoreJarFileSystem().findFileByPath(jarPath + JAR_SEPARATOR))
+        val roots = listOf(
+            JavaRoot(localVirtualFile(listedDirectory.toFile()), JavaRoot.RootType.BINARY),
+            JavaRoot(localVirtualFile(nestedDirectory.toFile()), JavaRoot.RootType.BINARY),
+            JavaRoot(jarRoot, JavaRoot.RootType.BINARY),
+        )
+        val classpathRoot = JvmClasspathRootId.of(listedDirectory)
+        val configuration = CompilerConfiguration.create(messageCollector = MessageCollector.NONE)
+
+        val rootProvider = JvmPackagePartProvider(configuration.languageVersionSettings, JvmClasspath.Roots(listOf(classpathRoot)))
+        rootProvider.addRoots(roots, configuration)
+        assertEquals(setOf("listed", "nested"), rootProvider.computePackageSetWithNonClassDeclarations())
+
+        val libraryProvider = JvmPackagePartProvider(
+            configuration.languageVersionSettings,
+            JvmClasspath.ProjectLibraries(excludedRoots = listOf(classpathRoot)),
+        )
+        libraryProvider.addRoots(roots, configuration)
+        assertEquals(setOf("jar"), libraryProvider.computePackageSetWithNonClassDeclarations())
     }
 
     @Test
@@ -176,6 +304,43 @@ class IncrementalCompilationCustomScopeTest {
 
     private class PlainComponents : IncrementalCompilationComponents {
         override fun getIncrementalCache(target: TargetId): IncrementalCache = EmptyIncrementalCache
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    private class FixedJvmDependenciesIndex(
+        private val classFiles: List<VirtualFile>,
+        override val indexedRoots: Sequence<JavaRoot> = emptySequence(),
+    ) : JvmDependenciesIndex {
+
+        override fun findClassFiles(classId: ClassId, acceptedExtensions: JavaFileExtensions): Collection<IndexedClassFile> =
+            classFiles.filter { it.nameWithoutExtension == classId.relativeClassName.asString() }
+                .map { IndexedClassFile(it, rootOf(it)) }
+
+        /** The listed root containing the file, or else the root of its file system, as `JvmDependenciesIndexImpl` would attribute it. */
+        private fun rootOf(file: VirtualFile): JavaRoot =
+            indexedRoots.firstOrNull { file.isUnder(it.id) }
+                ?: JavaRoot(generateSequence(file) { it.parent }.last(), JavaRoot.RootType.BINARY)
+
+        override fun traverseClassVirtualFilesInPackage(
+            packageFqName: FqName,
+            acceptedExtensions: JavaFileExtensions,
+            continueSearch: (VirtualFile) -> Boolean,
+        ) {
+        }
+
+        override fun traverseDirectoriesInPackage(
+            packageFqName: FqName,
+            acceptedRootTypes: Set<JavaRoot.RootType>,
+            continueSearch: (VirtualFile, JavaRoot.RootType) -> Boolean,
+        ) {
+        }
+
+        override fun traverseVirtualFilesInPackage(
+            packageFqName: FqName,
+            acceptedRootTypes: Set<JavaRoot.RootType>,
+            continueSearch: (VirtualFile, JavaRoot.RootType) -> Boolean,
+        ) {
+        }
     }
 
     private object EmptyIncrementalCache : IncrementalCache {
