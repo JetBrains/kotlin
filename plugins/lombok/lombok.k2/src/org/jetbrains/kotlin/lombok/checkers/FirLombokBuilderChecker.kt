@@ -211,8 +211,8 @@ object FirLombokBuilderChecker : FirRegularClassChecker(MppCheckerKind.Platform)
                     "To make the property a builder field, declare it in the primary constructor or change it to be a mutable property"
         ),
         HAS_IMPLICIT_RETURN_TYPE(
-            "its type is implicit and cannot be resolved before the builder is generated. " +
-                    "To make it possible, specify its type explicitly"
+            "its type must not be implicit. " +
+                    "Specify a type explicitly to include property in builder."
         ),
         ;
 
