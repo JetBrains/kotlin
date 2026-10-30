@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.code.TestLifecycleTaskTest.Companion.sanitize
 import org.jetbrains.kotlin.test.KtAssert.fail
 import org.jetbrains.kotlin.test.isTeamCityBuild
 import org.jetbrains.kotlin.testFederation.Domain
+import org.jetbrains.kotlin.testFederation.MustRunAlways
 import org.jetbrains.kotlin.testFederation.fromArgumentStringOrThrow
 import org.jetbrains.kotlin.testFederation.toArgumentString
 import org.junit.jupiter.api.BeforeAll
@@ -32,6 +33,7 @@ import kotlin.test.Test
  * or use `Update all project dumps` to refresh every dump.
  */
 @GradleLock
+@MustRunAlways
 class TestLifecycleTaskTest {
 
     private val qualityGateMasterTasks: Set<String>

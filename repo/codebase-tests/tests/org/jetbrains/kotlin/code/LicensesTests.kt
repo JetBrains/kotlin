@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.code
 
+import org.jetbrains.kotlin.testFederation.MustRunAlways
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import java.io.File
 
+@MustRunAlways
 class LicensesTests {
     companion object {
         private const val LICENSE_README_PATH = "license/README.md"

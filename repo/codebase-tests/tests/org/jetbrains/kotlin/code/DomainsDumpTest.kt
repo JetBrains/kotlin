@@ -11,11 +11,7 @@ import org.jetbrains.kotlin.repoTestFixtures.isGitIgnored
 import org.jetbrains.kotlin.repoTestFixtures.isTestFederationIgnored
 import org.jetbrains.kotlin.repoTestFixtures.toRepositoryPath
 import org.jetbrains.kotlin.test.isTeamCityBuild
-import org.jetbrains.kotlin.testFederation.Domain
-import org.jetbrains.kotlin.testFederation.RepositoryPath
-import org.jetbrains.kotlin.testFederation.allDomainInfos
-import org.jetbrains.kotlin.testFederation.domains
-import org.jetbrains.kotlin.testFederation.isTestFederationIgnored
+import org.jetbrains.kotlin.testFederation.*
 import org.jetbrains.kotlin.tooling.core.withClosure
 import org.opentest4j.AssertionFailedError
 import org.opentest4j.FileInfo
@@ -28,6 +24,7 @@ import kotlin.io.path.isDirectory
 import kotlin.io.path.listDirectoryEntries
 import kotlin.test.Test
 
+@MustRunAlways
 class DomainsDumpTest {
 
     @Test

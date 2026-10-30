@@ -12,12 +12,14 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
+import org.jetbrains.kotlin.testFederation.MustRunAlways
 import org.junit.jupiter.api.Test
 import kotlin.test.assertTrue
 import java.io.File
 import kotlin.test.fail
 
 
+@MustRunAlways
 class DependenciesVerificationMetadataTest {
     @JacksonXmlRootElement(localName = "verification-metadata")
     private data class VerificationMetadata(

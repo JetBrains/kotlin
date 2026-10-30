@@ -8,11 +8,13 @@ package org.jetbrains.kotlin.code
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.code.tools.FileMatcher
 import org.jetbrains.kotlin.code.tools.excludeWalkTopDown
+import org.jetbrains.kotlin.testFederation.MustRunAlways
 import org.junit.jupiter.api.Test
 import java.io.File
 import java.util.regex.Pattern
 import kotlin.test.fail
 
+@MustRunAlways
 class CodeConformanceTest {
     companion object {
         private val JAVA_FILE_PATTERN = Pattern.compile(".+\\.java")

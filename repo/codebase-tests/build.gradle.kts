@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.testFederation.testFederation
-
 plugins {
     id("common-configuration")
     id("com.autonomousapps.dependency-analysis")
@@ -89,9 +87,6 @@ projectTests {
             qualityGateNightlyTasks.set(providers.gradleProperty("quality.gate.nightly.tasks"))
         })
 
-        testFederation {
-            smokeTests { includeAll() }
-        }
         forkEvery = 1
     }
 
