@@ -120,7 +120,8 @@ abstract class AbstractExpectActualIncrementalCompilationIT : KGPBaseTest() {
 }
 
 @DisplayName("Incremental scenarios with expect/actual - K2")
-@MustRunOnChangesInAnyCompiler
+@OptIn(ImpactsAggregatePerformance::class)
+@MustRunOnChangesInAnyCompiler(reason = "This seems to test a Frontend bug; see KT-76041. This test should be moved out of KGP IT")
 class ExpectActualIncrementalCompilationK2IT : AbstractExpectActualIncrementalCompilationIT() {
 
     @DisplayName("Incremental compilation with lenient mode")

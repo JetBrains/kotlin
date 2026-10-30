@@ -38,7 +38,8 @@ open class KlibBasedMppIT : KGPBaseTest() {
 
     @DisplayName("Could be compiled with project dependency")
     @GradleTest
-    @MustRunOnChangesInAnyCompiler
+    @OptIn(ImpactsAggregatePerformance::class)
+    @MustRunOnChangesInAnyCompiler(reason = "This is a smoke test for interproject compilations")
     fun testBuildWithProjectDependency(
         gradleVersion: GradleVersion,
         @TempDir localRepo: Path,

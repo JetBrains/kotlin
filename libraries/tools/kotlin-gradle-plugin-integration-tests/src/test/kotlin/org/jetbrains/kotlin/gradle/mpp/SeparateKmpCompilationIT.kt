@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.gradle.uklibs.*
 import org.jetbrains.kotlin.gradle.util.capitalize
 import org.jetbrains.kotlin.gradle.util.resolveRepoArtifactPath
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
-import org.jetbrains.kotlin.testFederation.MustRunOnChangesInFrontend
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
@@ -256,14 +255,12 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
 
     @DisplayName("inaccessible symbols: local kmp library -> compile consumer")
     @GradleTest
-    @MustRunOnChangesInAnyCompiler
     fun localKmpConsumer(gradleVersion: GradleVersion) {
         doTestInaccessibleSymbols(gradleVersion)
     }
 
     @DisplayName("inaccessible symbols: published kmp library -> compile consumer")
     @GradleTest
-    @MustRunOnChangesInAnyCompiler
     fun remoteKmpConsumer(gradleVersion: GradleVersion, @TempDir localRepository: Path) {
         doTestInaccessibleSymbols(gradleVersion, localRepository)
     }
@@ -699,7 +696,8 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
 
     @DisplayName("JVM metadata serialization for IC enabled with separate compilation")
     @GradleTest
-    @MustRunOnChangesInAnyCompiler
+    @OptIn(ImpactsAggregatePerformance::class)
+    @MustRunOnChangesInAnyCompiler(reason = "This was a compiler regression: https://github.com/jetbrains/kotlin/pull/7764. This test should be moved")
     fun jvmIcEnabledWithSeparateCompilation(gradleVersion: GradleVersion) {
         defaultProject(
             gradleVersion,
@@ -739,7 +737,8 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
 
     @DisplayName("commonMain type implementing Continuation<K> is usable from commonTest with JS+Wasm targets")
     @GradleTest
-    @MustRunOnChangesInAnyCompiler
+    @OptIn(ImpactsAggregatePerformance::class)
+    @MustRunOnChangesInAnyCompiler(reason = "This was a combined compiler and KGP regression. It should be split and moved - https://github.com/jetbrains/kotlin/pull/8202")
     fun `commonMain Continuation subtype is usable from commonTest with js and wasm targets`(gradleVersion: GradleVersion) {
         project(
             "empty",
@@ -777,7 +776,6 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
     @DisplayName("Non-default `concurrentMain` sourceSet in project with tests")
     @GradleTest
     @Disabled("KT-89505")
-    @MustRunOnChangesInAnyCompiler
     fun `test of concurrentMain sourceSet`(gradleVersion: GradleVersion) {
         project(
             "empty",
