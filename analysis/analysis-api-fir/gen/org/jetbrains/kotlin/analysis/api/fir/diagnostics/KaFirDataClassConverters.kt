@@ -400,6 +400,13 @@ private fun KaDiagnosticConverterBuilder.addConversions2() {
             token,
         )
     }
+    add(FirErrors.OPT_IN_MARKER_WITH_WRONG_TARGET_WARNING) { firDiagnostic ->
+        OptInMarkerWithWrongTargetWarningImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirErrors.IMPLICIT_NOTHING_RETURN_TYPE) { firDiagnostic ->
         ImplicitNothingReturnTypeImpl(
             firDiagnostic as KtDiagnosticWithSource,

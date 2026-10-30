@@ -711,6 +711,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPT_IN_MARKER_ON_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPT_IN_MARKER_ON_WRONG_TARGET
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPT_IN_MARKER_WITH_WRONG_RETENTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPT_IN_MARKER_WITH_WRONG_TARGET
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPT_IN_MARKER_WITH_WRONG_TARGET_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPT_IN_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPT_IN_OVERRIDE_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPT_IN_TO_INHERITANCE
@@ -1695,6 +1696,12 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             OPT_IN_MARKER_WITH_WRONG_TARGET,
             "Opt-in requirement marker annotation cannot be used on the following code elements: {0}.",
+            STRING
+        )
+        map.put(
+            OPT_IN_MARKER_WITH_WRONG_TARGET_WARNING,
+            "Opt-in requirement marker annotation cannot be used on the following code elements: {0}."
+                .toDeprecationWarningMessage(LanguageFeature.ForbidValueParameterTargetForOptInMarkers),
             STRING
         )
         map.put(

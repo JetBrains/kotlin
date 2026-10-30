@@ -2380,6 +2380,15 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface OptInMarkerWithWrongTargetWarning : KaFirDiagnostic<KtAnnotationEntry> {
+        override val diagnosticClass: KClass<OptInMarkerWithWrongTargetWarning>
+            get() = OptInMarkerWithWrongTargetWarning::class
+
+        public val target: String
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface OptInMarkerWithWrongRetention : KaFirDiagnostic<KtAnnotationEntry> {
         override val diagnosticClass: KClass<OptInMarkerWithWrongRetention>
             get() = OptInMarkerWithWrongRetention::class

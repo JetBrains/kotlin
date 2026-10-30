@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // OPT_IN: kotlin.RequiresOptIn
+// LANGUAGE: +ForbidValueParameterTargetForOptInMarkers
 // DIAGNOSTICS: -POTENTIALLY_NON_REPORTED_ANNOTATION
 // FILE: api.kt
 
@@ -8,8 +9,8 @@ package api
 import kotlin.annotation.AnnotationTarget.*
 
 @RequiresOptIn(level = RequiresOptIn.Level.WARNING)
-@Target(CLASS, ANNOTATION_CLASS, PROPERTY, FIELD, LOCAL_VARIABLE, VALUE_PARAMETER, CONSTRUCTOR, FUNCTION,
-        PROPERTY_SETTER, TYPEALIAS)
+<!OPT_IN_MARKER_WITH_WRONG_TARGET!>@Target(CLASS, ANNOTATION_CLASS, PROPERTY, FIELD, LOCAL_VARIABLE, VALUE_PARAMETER, CONSTRUCTOR, FUNCTION,
+        PROPERTY_SETTER, TYPEALIAS)<!>
 @Retention(AnnotationRetention.BINARY)
 annotation class E1
 
@@ -43,7 +44,7 @@ annotation class E4
 annotation class E5
 
 @RequiresOptIn(level = RequiresOptIn.Level.WARNING)
-@Target(PROPERTY, FUNCTION, PROPERTY_SETTER, VALUE_PARAMETER, FIELD, LOCAL_VARIABLE, CLASS)
+<!OPT_IN_MARKER_WITH_WRONG_TARGET!>@Target(PROPERTY, FUNCTION, PROPERTY_SETTER, VALUE_PARAMETER, FIELD, LOCAL_VARIABLE, CLASS)<!>
 @Retention(AnnotationRetention.BINARY)
 annotation class E6
 
