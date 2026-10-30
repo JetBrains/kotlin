@@ -1,0 +1,63 @@
+// LL_FIR_DIVERGENCE
+// LL FIR diagnostics tests don't run the JVM backend, so its diagnostics are not reported: `ACCIDENTAL_OVERRIDE`.
+// LL_FIR_DIVERGENCE
+// RUN_PIPELINE_TILL: CODEGEN
+// LANGUAGE: +CompanionBlocks
+
+@file:OptIn(kotlin.ExperimentalVersionOverloading::class)
+
+@JvmInline value class InlineString(val value: String)
+
+open class A {
+    val prop: Int = 0
+    val prop2: String = ""
+    fun memberFoo(x: List<Int>) {}
+    fun memberBar(x: List<Int>) {}
+    fun memberBaz(x: List<Int>) {}
+    fun memberBaz2(x: List<Int>) {}
+    fun memberBaz3(x: List<Int>) {}
+    fun memberBaz4(x: List<Int>) {}
+
+    companion {
+        val prop3 get() = ""
+
+        fun compFoo(x: List<Int>) {}
+        fun compBar(x: List<Int>) {}
+        fun compBaz(x: List<Int>) {}
+        fun compBaz2(x: List<Int>) {}
+        fun compBaz3(x: List<Int>) {}
+        fun compBaz4(x: List<Int>) {}
+
+        fun compWithInlineClass(s: InlineString) {}
+    }
+}
+
+class B : A() {
+    companion {
+        val prop: Int = 0
+        val prop2: String = ""
+
+        fun memberFoo(x: List<Int>) {}
+        fun memberBar(x: List<String>) {}
+        @JvmOverloads
+        fun memberBaz(x: List<Int>, y: Int = 0) {}
+        @JvmOverloads
+        fun memberBaz2(x: List<String>, y: Int = 0) {}
+        fun memberBaz3(x: List<Int>, @IntroducedAt("1.1") y: Int = 0) {}
+        fun memberBaz4(x: List<String>, @IntroducedAt("1.1") y: Int = 0) {}
+
+        fun compFoo(x: List<Int>) {}
+        fun compBar(x: List<String>) {}
+        @JvmOverloads
+        fun compBaz(x: List<Int>, y: Int = 0) {}
+        @JvmOverloads
+        fun compBaz2(x: List<String>, y: Int = 0) {}
+        fun compBaz3(x: List<Int>, @IntroducedAt("1.1") y: Int = 0) {}
+        fun compBaz4(x: List<String>, @IntroducedAt("1.1") y: Int = 0) {}
+
+        // KT-90607
+        fun compWithInlineClass(s: InlineString) {}
+    }
+}
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration */
