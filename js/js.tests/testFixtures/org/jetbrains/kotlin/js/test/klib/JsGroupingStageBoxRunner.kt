@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.js.test.klib
 import org.jetbrains.kotlin.js.config.JsGenerationGranularity
 import org.jetbrains.kotlin.js.engine.ScriptExecutionException
 import org.jetbrains.kotlin.js.test.converters.augmentWithModuleName
+import org.jetbrains.kotlin.js.test.handlers.JsArtifactsDumpHandler
 import org.jetbrains.kotlin.js.test.handlers.JsBoxRunner
 import org.jetbrains.kotlin.js.test.utils.getModeOutputFilePath
 import org.jetbrains.kotlin.js.testOld.V8JsTestChecker
@@ -43,6 +44,7 @@ import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurato
 class JsGroupingStageBoxRunner(
     testServices: TestServices,
     private val isolatedTestHandlers: List<Constructor<JsBinaryArtifactHandler>>,
+    private val artifactsAreDumped: Boolean = false,
 ) : GroupingStageHandler<BinaryArtifacts.Js>(
     testServices,
     failureDisablesNextSteps = false,
@@ -120,7 +122,7 @@ class JsGroupingStageBoxRunner(
         if (parsedBatchResult.malformedLines.isNotEmpty()) {
             val reason = "The grouped batch printed malformed result line(s), so its results cannot be trusted:\n" +
                     parsedBatchResult.malformedLines.joinToString("\n") { it.bounded(MAX_MALFORMED_LINE_LENGTH) }
-            inputs.forEach { it.failWith(reason, vmFailures) }
+            inputs.forEach { it.failWith(reason, vmFailures, launcherServices) }
             return
         }
 
@@ -176,7 +178,7 @@ class JsGroupingStageBoxRunner(
                 }
             }
             if (reasons.isNotEmpty()) {
-                input.failWith(reasons.joinToString("\n"), relevantVmFailures)
+                input.failWith(reasons.joinToString("\n"), relevantVmFailures, launcherServices)
             }
         }
     }
@@ -185,10 +187,13 @@ class JsGroupingStageBoxRunner(
         fun describe(): String = "V8 failed in $executionName:\n${exception.stderr.bounded(MAX_VM_ERROR_LENGTH)}"
     }
 
-    private fun NonGroupingStageOutput.failWith(reason: String, vmFailures: List<VmFailure>) {
+    private fun NonGroupingStageOutput.failWith(reason: String, vmFailures: List<VmFailure>, launcherServices: TestServices) {
         val message = (listOf(reason) + vmFailures.map { it.describe() }).joinToString("\n")
-        executeWithFailureCatching { throw AssertionError(message) }
+        executeWithFailureCatching { throw AssertionError(message.pointedAtDumpedArtifacts(launcherServices)) }
     }
+
+    private fun String.pointedAtDumpedArtifacts(launcherServices: TestServices): String =
+        if (artifactsAreDumped) JsArtifactsDumpHandler.pointAtDumpedArtifacts(this, launcherServices) else this
 
     /** Routes a failure of [block] into the failure sink of this test, so the test engine attributes it to this test. */
     private fun NonGroupingStageOutput.executeWithFailureCatching(block: () -> Unit) {
