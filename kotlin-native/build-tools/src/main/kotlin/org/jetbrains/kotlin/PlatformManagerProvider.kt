@@ -53,10 +53,18 @@ open class PlatformManagerProvider @Inject constructor(
         if (isNativeProtoDistribution) {
             // For proto distribution, we must patch the llvm distribution.
             val llvmOverride = project.llvmDistributionSource.asProperties
+            val libffiOverride = project.providers.gradleProperty("kotlin.native.libffi").orNull?.let { path ->
+                val libffiDirectory = project.rootProject.file(path)
+                require(libffiDirectory.isDirectory) {
+                    "kotlin.native.libffi must point to a local libffi distribution directory: $path"
+                }
+                mapOf("libffiDir.${HostManager.host.name}" to libffiDirectory.absolutePath)
+            }.orEmpty()
+            val nativeOverride = llvmOverride + libffiOverride
             if (project.isWholeXcodeProvisioningEnabled()) {
-                llvmOverride + ("useProvisionedXcode" to "true")
+                nativeOverride + ("useProvisionedXcode" to "true")
             } else {
-                llvmOverride
+                nativeOverride
             }
         } else if (project.isWholeXcodeProvisioningEnabled()) {
             val protoKonanProperties = Properties().apply {

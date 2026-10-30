@@ -31,10 +31,11 @@ class MppDslAssociateCompilationsIT : KGPBaseTest() {
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
             buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
+            val nativeTargetName = MPPNativeTargets.compilationTarget
             val tasks = arrayOf(
                 ":compileIntegrationTestKotlinJvm",
                 ":compileIntegrationTestKotlinJs",
-                ":compileIntegrationTestKotlinLinux64",
+                ":compileIntegrationTestKotlin${nativeTargetName.capitalize()}",
             )
 
             build(*tasks) {
@@ -52,7 +53,7 @@ class MppDslAssociateCompilationsIT : KGPBaseTest() {
                 assertFileInProjectExists("build/classes/kotlin/js/integrationTest/default/manifest")
 
                 // Native:
-                assertFileInProjectExists("build/classes/kotlin/linux64/integrationTest/klib/new-mpp-associate-compilations_integrationTest/default/manifest")
+                assertFileInProjectExists("build/classes/kotlin/$nativeTargetName/integrationTest/klib/new-mpp-associate-compilations_integrationTest/default/manifest")
             }
         }
     }

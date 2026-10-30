@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.supportedHosts
 import org.jetbrains.kotlin.gradle.utils.withType
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
 
 internal object SupportedNativeHostChecker : KotlinGradleProjectChecker {
 
@@ -29,7 +30,8 @@ internal object SupportedNativeHostChecker : KotlinGradleProjectChecker {
         collector.reportOncePerGradleProject(diagnosticsContext,
             KotlinToolingDiagnostics.NativeHostNotSupportedError(
                 HostManager.platformName(),
-                HostManager().supportedHosts
+                HostManager().supportedHosts,
+                experimentalLinuxArm64HostDisabled = HostManager.hostOrNull == KonanTarget.LINUX_ARM64,
             )
         )
     }

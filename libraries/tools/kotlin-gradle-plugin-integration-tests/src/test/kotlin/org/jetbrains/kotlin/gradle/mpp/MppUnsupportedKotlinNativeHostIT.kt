@@ -23,17 +23,25 @@ class MppUnsupportedKotlinNativeHostIT : KGPDaemonsBaseTest() {
      * These parameters are used to specify the operating system name and architecture.
      */
     private val linuxRiscv64HostParameters = listOf("-Dos.name=Linux", "-Dos.arch=riscv64")
-
-    /**
-     * Defines the parameters for a Linux Arm64 host environment.
-     * These parameters are used to specify the operating system name and architecture.
-     */
-    private val linuxArm64HostParameters = listOf("-Dos.name=Linux", "-Dos.arch=aarch64")
+    private val disabledLinuxArm64HostParameters = listOf(
+        "-Dos.name=Linux", "-Dos.arch=aarch64", "-Dkotlin.native.experimental.linuxArm64Host=false"
+    )
 
     @DisplayName("Build multiplatform project should not fail on unsupported native host platforms")
     @GradleTest
     fun testMultiplatformProjectOnUnsupportedHostPlatform(
         gradleVersion: GradleVersion,
+    ) = testMultiplatformProjectOnUnsupportedHostPlatform(gradleVersion, linuxRiscv64HostParameters)
+
+    @DisplayName("Build multiplatform project with experimental Linux ARM64 host support disabled")
+    @GradleTest
+    fun testMultiplatformProjectOnDisabledLinuxArm64HostPlatform(
+        gradleVersion: GradleVersion,
+    ) = testMultiplatformProjectOnUnsupportedHostPlatform(gradleVersion, disabledLinuxArm64HostParameters)
+
+    private fun testMultiplatformProjectOnUnsupportedHostPlatform(
+        gradleVersion: GradleVersion,
+        hostParameters: List<String>,
     ) {
         project(
             "empty",
@@ -74,21 +82,21 @@ class MppUnsupportedKotlinNativeHostIT : KGPDaemonsBaseTest() {
             }
 
             // JVM and JS compile
-            var args = listOf(":compileKotlinJvm") + linuxRiscv64HostParameters
+            var args = listOf(":compileKotlinJvm") + hostParameters
             build(*args.toTypedArray()) {
                 assertTasksExecuted(":compileKotlinJvm")
                 verifyDiagnostics()
                 assertDirectoryInProjectExists("build/classes/kotlin/jvm/main")
             }
 
-            args = listOf(":compileKotlinJs") + linuxRiscv64HostParameters
+            args = listOf(":compileKotlinJs") + hostParameters
             build(*args.toTypedArray()) {
                 assertTasksExecuted(":compileKotlinJs")
                 verifyDiagnostics()
                 assertDirectoryInProjectExists("build/classes/kotlin/js/main")
             }
 
-            args = listOf(":compileKotlinWasmJs") + linuxRiscv64HostParameters
+            args = listOf(":compileKotlinWasmJs") + hostParameters
             build(*args.toTypedArray()) {
                 assertTasksExecuted(":compileKotlinWasmJs")
                 verifyDiagnostics()
@@ -96,26 +104,26 @@ class MppUnsupportedKotlinNativeHostIT : KGPDaemonsBaseTest() {
             }
 
             // Native compile
-            args = listOf(":compileKotlinLinuxX64") + linuxRiscv64HostParameters
+            args = listOf(":compileKotlinLinuxX64") + hostParameters
             build(*args.toTypedArray()) {
                 assertTasksSkipped(":compileKotlinLinuxX64")
                 verifyDiagnostics()
             }
 
-            args = listOf(":compileKotlinMacosArm64") + linuxRiscv64HostParameters
+            args = listOf(":compileKotlinMacosArm64") + hostParameters
             build(*args.toTypedArray()) {
                 assertTasksSkipped(":compileKotlinMacosArm64")
                 verifyDiagnostics()
             }
 
-            args = listOf(":compileKotlinMingwX64") + linuxRiscv64HostParameters
+            args = listOf(":compileKotlinMingwX64") + hostParameters
             build(*args.toTypedArray()) {
                 assertTasksSkipped(":compileKotlinMingwX64")
                 verifyDiagnostics()
             }
 
             // Assemble
-            args = listOf(":assemble") + linuxRiscv64HostParameters
+            args = listOf(":assemble") + hostParameters
             build(*args.toTypedArray()) {
                 assertTasksSkipped(
                     ":compileKotlinMingwX64",
@@ -141,10 +149,21 @@ class MppUnsupportedKotlinNativeHostIT : KGPDaemonsBaseTest() {
         }
     }
 
-    @DisplayName("KT-81443 `ConfigurationCacheError` on Linux arm64 due to disabled iOS targets")
+    @DisplayName("KT-81443 configuration cache with disabled iOS targets on an unsupported host")
     @GradleTest
     fun testConfigurationCacheOnUnsupportedHostPlatform(
         gradleVersion: GradleVersion,
+    ) = testConfigurationCacheOnUnsupportedHostPlatform(gradleVersion, linuxRiscv64HostParameters)
+
+    @DisplayName("KT-81443 configuration cache with experimental Linux ARM64 host support disabled")
+    @GradleTest
+    fun testConfigurationCacheOnDisabledLinuxArm64HostPlatform(
+        gradleVersion: GradleVersion,
+    ) = testConfigurationCacheOnUnsupportedHostPlatform(gradleVersion, disabledLinuxArm64HostParameters)
+
+    private fun testConfigurationCacheOnUnsupportedHostPlatform(
+        gradleVersion: GradleVersion,
+        hostParameters: List<String>,
     ) {
         project(
             "empty",
@@ -170,9 +189,15 @@ class MppUnsupportedKotlinNativeHostIT : KGPDaemonsBaseTest() {
                 }
             }
 
-            val args = listOf(":build") + linuxArm64HostParameters
+            val args = listOf(":build", "--configuration-cache") + hostParameters
             build(*args.toTypedArray()) {
                 assertTasksExecuted(":build")
+                assertTasksSkipped(":compileKotlinIosArm64")
+                assertTasksAreNotInTaskGraph(":downloadKotlinNativeDistribution")
+                assertConfigurationCacheStored()
+            }
+            build(*args.toTypedArray()) {
+                assertConfigurationCacheReused()
             }
         }
     }

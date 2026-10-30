@@ -213,8 +213,19 @@ internal object KotlinToolingDiagnostics {
             get() = "Run the build with '--info' for more details."
     }
 
+    private const val EXPERIMENTAL_LINUX_ARM64_HOST_SOLUTION =
+        "To enable experimental Linux ARM64 host support, set " +
+                "'kotlin.native.experimental.linuxArm64Host=true' as a JVM system property or " +
+                "'KOTLIN_NATIVE_EXPERIMENTAL_LINUX_ARM64_HOST=true' in the environment. " +
+                "Provide a local ARM compiler through 'kotlin.native.home' until a prebuilt archive is available."
+
     internal object PublishingDisabledOnUnsupportedHost : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
-        operator fun invoke(projectName: String, hostName: String, supportedHosts: List<String>) =
+        operator fun invoke(
+            projectName: String,
+            hostName: String,
+            supportedHosts: List<String>,
+            experimentalLinuxArm64HostDisabled: Boolean = false,
+        ) =
             build {
                 val supportedHostsList = supportedHosts
                     .sorted()
@@ -231,18 +242,21 @@ internal object KotlinToolingDiagnostics {
                         """.trimMargin()
                     )
                     .solutions {
-                        listOf(
-                            "Run the publish task on one of the supported host platforms (listed above).",
-                            "If using a CI/CD service, ensure the agent runs a supported OS (e.g., a Linux x86_64 agent).",
-                            "To force publishing (only for non-native targets), add '$KOTLIN_INTERNAL_ALLOW_MULTIPLATFORM_PUBLICATIONS_ON_UNSUPPORTED_HOST=true' to your Gradle properties."
-                        )
+                        buildList {
+                            if (experimentalLinuxArm64HostDisabled) {
+                                add(EXPERIMENTAL_LINUX_ARM64_HOST_SOLUTION)
+                            }
+                            add("Run the publish task on one of the supported host platforms (listed above).")
+                            add("If using a CI/CD service, ensure the agent runs a supported OS (e.g., a Linux x86_64 agent).")
+                            add("To force publishing (only for non-native targets), add '$KOTLIN_INTERNAL_ALLOW_MULTIPLATFORM_PUBLICATIONS_ON_UNSUPPORTED_HOST=true' to your Gradle properties.")
+                        }
                     }
                     .documentationLink(URI("https://kotlinlang.org/docs/native-target-support.html"))
             }
     }
 
     internal object NativeHostNotSupportedError : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
-        operator fun invoke(platform: String, supportedHosts: List<String>) =
+        operator fun invoke(platform: String, supportedHosts: List<String>, experimentalLinuxArm64HostDisabled: Boolean = false) =
             build {
                 val supportedHostsList = supportedHosts
                     .sorted()
@@ -260,10 +274,13 @@ internal object KotlinToolingDiagnostics {
                         """.trimMargin()
                     )
                     .solutions {
-                        listOf(
-                            "Run your build on one of the supported host platforms (listed above).",
-                            "If using a CI/CD service, configure your build pipeline to use a supported runner (e.g., a Linux x86_64 agent)."
-                        )
+                        buildList {
+                            if (experimentalLinuxArm64HostDisabled) {
+                                add(EXPERIMENTAL_LINUX_ARM64_HOST_SOLUTION)
+                            }
+                            add("Run your build on one of the supported host platforms (listed above).")
+                            add("If using a CI/CD service, configure your build pipeline to use a supported runner (e.g., a Linux x86_64 agent).")
+                        }
                     }
                     .documentationLink(URI("https://kotlinlang.org/docs/native-target-support.html"))
             }
