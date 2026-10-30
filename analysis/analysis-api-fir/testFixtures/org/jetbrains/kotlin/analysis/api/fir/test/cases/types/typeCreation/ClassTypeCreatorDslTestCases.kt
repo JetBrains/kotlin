@@ -34,6 +34,14 @@ class ClassTypeCreatorDslTestCases(session: KaSession, caretToType: Map<String, 
         return session.typeCreator.classType(userTypeSymbol)
     }
 
+    /**
+     * The anonymous object captures `T` from `box`, so its type at the call site is `<anonymous><String>`.
+     * The type is not created by the DSL, but taken as is, as it is the source of the copy tests.
+     */
+    fun testAnonymousObjectFromGenericFunction(): KaType {
+        return getTypeByCaret("type")
+    }
+
     fun testBoxedArrayWithStringTypeArgument(): KaType {
         val arrayTypeSymbol = getClassLikeSymbolByCaret("array")
         val stringType = getTypeByCaret("string")
@@ -231,5 +239,78 @@ class ClassTypeCreatorDslTestCases(session: KaSession, caretToType: Map<String, 
         val errorType = getTypeByCaret("type") as KaClassErrorType
         val symbol = errorType.candidateSymbols.single()
         return session.typeCreator.classType(symbol)
+    }
+
+    fun testInnerClassOfGenericClass(): KaType {
+        val innerTypeSymbol = getClassLikeSymbolByCaret("type")
+
+        // Type arguments are ordered from the innermost class outwards
+        return session.typeCreator.classType(innerTypeSymbol) {
+            invariantTypeArgument(getTypeByCaret("string"))
+            invariantTypeArgument(getTypeByCaret("int"))
+        }
+    }
+
+    fun testMixedInnerAndNestedClasses(): KaType {
+        val innerTypeSymbol = getClassLikeSymbolByCaret("type")
+
+        // Type arguments are ordered from the innermost class outwards
+        return session.typeCreator.classType(innerTypeSymbol) {
+            invariantTypeArgument(getTypeByCaret("string"))
+            invariantTypeArgument(getTypeByCaret("int"))
+        }
+    }
+
+    fun testInnerClassOfLocalClass(): KaType {
+        val innerTypeSymbol = getClassLikeSymbolByCaret("type")
+
+        // Type arguments are ordered from the innermost class outwards
+        return session.typeCreator.classType(innerTypeSymbol) {
+            invariantTypeArgument(getTypeByCaret("string"))
+            invariantTypeArgument(getTypeByCaret("int"))
+        }
+    }
+
+    fun testInnerClassOfLocalClassNoArgs(): KaType {
+        val innerTypeSymbol = getClassLikeSymbolByCaret("type")
+
+        // Type arguments are ordered from the innermost class outwards
+        return session.typeCreator.classType(innerTypeSymbol)
+    }
+
+    fun testInnerClassOfLocalClassInGenericMember(): KaType {
+        val innerTypeSymbol = getClassLikeSymbolByCaret("type")
+
+        // Type arguments are ordered from the innermost class outwards
+        return session.typeCreator.classType(innerTypeSymbol) {
+            invariantTypeArgument(getTypeByCaret("string"))
+            invariantTypeArgument(getTypeByCaret("int"))
+        }
+    }
+
+    fun testNestedClassOfGenericClass(): KaType {
+        val nestedTypeSymbol = getClassLikeSymbolByCaret("type")
+
+        return session.typeCreator.classType(nestedTypeSymbol) {
+            invariantTypeArgument(getTypeByCaret("string"))
+        }
+    }
+
+    fun testCompanionOfGenericClass(): KaType {
+        val companionTypeSymbol = getClassLikeSymbolByCaret("type")
+
+        // Type arguments are ordered from the innermost class outwards
+        return session.typeCreator.classType(companionTypeSymbol) {
+            invariantTypeArgument(arrayType(dynamicType()))
+            repeat(10) {
+                invariantTypeArgument(dynamicType())
+            }
+        }
+    }
+
+    fun testCompanionOfGenericClassNoArgs(): KaType {
+        val companionTypeSymbol = getClassLikeSymbolByCaret("type")
+
+        return session.typeCreator.classType(companionTypeSymbol)
     }
 }
