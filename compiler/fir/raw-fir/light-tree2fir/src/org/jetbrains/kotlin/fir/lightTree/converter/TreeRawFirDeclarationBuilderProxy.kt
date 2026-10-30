@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.FirNamedFunctionBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.FirPrimaryConstructorBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.FirReplSnippetBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.FirScriptBuilder
+import org.jetbrains.kotlin.fir.declarations.builder.FirTypeParameterBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.buildAnonymousInitializer
 import org.jetbrains.kotlin.fir.declarations.builder.buildAnonymousObject
 import org.jetbrains.kotlin.fir.declarations.builder.buildBackingField
@@ -54,10 +55,8 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.declarations.utils.DanglingTypeConstraint
 import org.jetbrains.kotlin.fir.declarations.utils.addDeclarations
 import org.jetbrains.kotlin.fir.declarations.utils.addDefaultBoundIfNecessary
-import org.jetbrains.kotlin.fir.declarations.utils.danglingTypeConstraints
 import org.jetbrains.kotlin.fir.declarations.utils.isCopiedDelegatedProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isScriptTopLevelDeclaration
 import org.jetbrains.kotlin.fir.diagnostics.ConeContractMayNotHaveLabel
@@ -152,6 +151,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
@@ -634,6 +634,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
 
 
                 typeParameterList?.let { firTypeParameters += convertTypeParameters(it, typeConstraints, classSymbol) }
+                firTypeParameters += convertDanglingTypeParameters(firTypeParameters, typeConstraints, classSymbol)
 
                 context.withCapturedTypeParameters(
                     status = status.isInner || isLocal,
@@ -800,8 +801,6 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
                         this.delegateFieldsMap = delegatedFieldsMap
                         companionBlockCollector.toCompanionBlockInfoOrNull()?.let { companionBlocks = it }
                     }
-                }.also {
-                    fillDanglingConstraintsTo(firTypeParameters, typeConstraints, it)
                 }
             }
         }.also {
@@ -1674,6 +1673,9 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
                 this.isLocal = context.inLocalContext
 
                 typeParameterList?.let { firTypeParameters += convertTypeParameters(it, typeConstraints, symbol) }
+                if (!isLocal) {
+                    firTypeParameters += convertDanglingTypeParameters(firTypeParameters, typeConstraints, symbol)
+                }
 
                 backingField = fieldDeclaration.convertBackingField(
                     symbol, calculatedModifiers, returnType, isVar,
@@ -1798,12 +1800,8 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
 
                 contextParameters.addContextParameters(modifiers?.contextLists, propertySymbol)
             }.also {
-                if (!isLocal) {
-                    fillDanglingConstraintsTo(firTypeParameters, typeConstraints, it)
-
-                    if (isCompanionBlockMember) {
-                        it.initContainingClassAttr()
-                    }
+                if (!isLocal && isCompanionBlockMember) {
+                    it.initContainingClassAttr()
                 }
             }
         }
@@ -2299,6 +2297,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
 
             val firTypeParameters = mutableListOf<FirTypeParameter>()
             typeParameterList?.let { firTypeParameters += convertTypeParameters(it, typeConstraints, functionSymbol) }
+            firTypeParameters += convertDanglingTypeParameters(firTypeParameters, typeConstraints, functionSymbol)
 
             val function = functionBuilder.apply {
                 moduleData = baseModuleData
@@ -2339,8 +2338,6 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
                 context.firFunctionTargets.removeLast()
             }.build().also {
                 target.bind(it)
-                fillDanglingConstraintsTo(firTypeParameters, typeConstraints, it)
-
                 if (!isLocal && isCompanionBlockMember) {
                     it.initContainingClassAttr()
                 }
@@ -2635,13 +2632,20 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
             isReified = calculatedTypeParameterModifiers.hasReified()
             typeParameterModifiers?.convertAnnotationsTo(annotations)
             firType?.let { bounds += it }
-            for (typeConstraint in typeConstraints) {
-                if (typeConstraint.identifier == identifier) {
-                    bounds += typeConstraint.firTypeRef
-                    annotations += typeConstraint.annotations
-                }
-            }
+            addTypeConstraints(typeConstraints.filter { it.identifier == identifier })
             addDefaultBoundIfNecessary()
+        }
+    }
+
+    /**
+     * Adds the bounds and the annotations of [constraints] on this type parameter.
+     * Annotations are not allowed in `where` clauses, so they are error annotation calls, see [convertTypeConstraint].
+     * They go to [constraintAnnotations][FirTypeParameterBuilder.constraintAnnotations].
+     */
+    private fun FirTypeParameterBuilder.addTypeConstraints(constraints: List<TypeConstraint>) {
+        for (typeConstraint in constraints) {
+            bounds += typeConstraint.firTypeRef
+            constraintAnnotations += typeConstraint.annotations
         }
     }
 
@@ -3038,23 +3042,29 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
         }
     }
 
-    private fun <T> fillDanglingConstraintsTo(
+    /**
+     * @see FirDeclarationOrigin.Synthetic.DanglingTypeParameter
+     */
+    private fun convertDanglingTypeParameters(
         typeParameters: List<FirTypeParameter>,
         typeConstraints: List<TypeConstraint>,
-        to: T
-    ) where T : FirDeclaration, T : FirTypeParameterRefsOwner {
+        containingSymbol: FirBasedSymbol<*>,
+    ): List<FirTypeParameter> {
         val typeParamNames = typeParameters.map { it.name }.toSet()
-        val result = typeConstraints.mapNotNull { constraint ->
-            val name = constraint.identifier?.nameAsSafeName()
-            if (name != null && !typeParamNames.contains(name)) {
-                DanglingTypeConstraint(name, constraint.source)
-            } else {
-                null
+        val constraintsByName = typeConstraints.groupBy { it.identifier?.nameAsSafeName() }
+        return constraintsByName.mapNotNull { [name, constraints] ->
+            if (name == null || name in typeParamNames) return@mapNotNull null
+            buildTypeParameter {
+                source = constraints.first().source.fakeElement(KtFakeSourceElementKind.DanglingTypeParameter)
+                moduleData = baseModuleData
+                origin = FirDeclarationOrigin.Synthetic.DanglingTypeParameter
+                this.name = name
+                symbol = FirTypeParameterSymbol()
+                containingDeclarationSymbol = containingSymbol
+                variance = Variance.INVARIANT
+                isReified = false
+                addTypeConstraints(constraints)
             }
-
-        }
-        if (result.isNotEmpty()) {
-            to.danglingTypeConstraints = result
         }
     }
 

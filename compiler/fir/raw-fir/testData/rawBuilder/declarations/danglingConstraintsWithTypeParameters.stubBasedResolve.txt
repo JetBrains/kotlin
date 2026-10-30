@@ -1,0 +1,51 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] danglingConstraintsWithTypeParameters.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <[ResolvedTo(ANNOTATION_ARGUMENTS)] T, [ResolvedTo(ANNOTATION_ARGUMENTS)] AA : R|@<ERROR TYPE REF: Symbol not found for Anno>()  kotlin/collections/List<@<ERROR TYPE REF: Symbol not found for Anno>()  T>|, R|kotlin/Comparable<AA>|> function([ResolvedTo(ANNOTATION_ARGUMENTS)] a: R|AA|): R|AA| { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <@<ERROR TYPE REF: Symbol not found for Anno>[Types]() [ResolvedTo(ANNOTATION_ARGUMENTS)] T : R|kotlin/Any|, @<ERROR TYPE REF: Symbol not found for Anno>[Types]() [ResolvedTo(ANNOTATION_ARGUMENTS)] AA : R|kotlin/Any|> annotatedConstraint(): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(BODY_RESOLVE)] val <[ResolvedTo(BODY_RESOLVE)] T, [ResolvedTo(BODY_RESOLVE)] AA : R|@<ERROR TYPE REF: Symbol not found for Anno>()  kotlin/Number|> [ResolvedTo(BODY_RESOLVE)] R|T|.property: R|AA|
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|AA| {
+            ^ Null(null)!!
+        }
+    public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass<[ResolvedTo(BODY_RESOLVE)] T, [ResolvedTo(BODY_RESOLVE)] AA : R|@<ERROR TYPE REF: Symbol not found for Anno>()  kotlin/Any|> : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor<[ResolvedTo(BODY_RESOLVE)] T, [ResolvedTo(BODY_RESOLVE)] AA : R|@<ERROR TYPE REF: Symbol not found for Anno>()  kotlin/Any|>(): R|TopLevelClass<T, AA>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <[ResolvedTo(ANNOTATION_ARGUMENTS)] R, [ResolvedTo(ANNOTATION_ARGUMENTS)] BB : R|@<ERROR TYPE REF: Symbol not found for Anno>()  R|> memberFunction([ResolvedTo(ANNOTATION_ARGUMENTS)] b: R|BB|): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class OuterClass<[ResolvedTo(BODY_RESOLVE)] T, [ResolvedTo(BODY_RESOLVE)] AA : R|kotlin/Any|> : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(BODY_RESOLVE)] T, [ResolvedTo(BODY_RESOLVE)] AA : R|kotlin/Any|>(): R|OuterClass<T, AA>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final inner [ResolvedTo(ANNOTATION_ARGUMENTS)] class InnerClass<[ResolvedTo(BODY_RESOLVE)] Outer(T), [ResolvedTo(BODY_RESOLVE)] Outer(AA) : R|kotlin/Any|> : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=InnerClass] OuterClass<T, AA>.constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/OuterClass.InnerClass.a] a: R|AA|): R|OuterClass.InnerClass<T, AA>| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val a: R|AA| = R|<local>/a|
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=InnerClass] get(): R|AA|
+
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=InnerClass] OuterClass<T, AA>.constructor(): R|OuterClass.InnerClass<T, AA>| {
+                LAZY_this<R|OuterClass.InnerClass<T, AA>|>
+            }
+
+        }
+
+    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] enum class EnumClass<[ResolvedTo(ANNOTATION_ARGUMENTS)] AA : R|kotlin/Any|> : R|kotlin/Enum<EnumClass<AA>>| {
+        private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=EnumClass] constructor<[ResolvedTo(ANNOTATION_ARGUMENTS)] AA : R|kotlin/Any|>(): R|EnumClass<AA>| {
+            super<R|kotlin/Enum<EnumClass<AA>>|>()
+        }
+
+        public final static [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=EnumClass] enum entry ENTRY: R|EnumClass<AA>| = LAZY_EXPRESSION
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=EnumClass] fun values(): R|kotlin/Array<EnumClass>| {
+        }
+
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String|): R|EnumClass| {
+        }
+
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
+            public static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=EnumClass] get(): R|kotlin/enums/EnumEntries<EnumClass>|
+
+    }

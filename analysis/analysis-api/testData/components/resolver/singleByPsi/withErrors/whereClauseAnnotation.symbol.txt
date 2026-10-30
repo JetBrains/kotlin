@@ -1,0 +1,4 @@
+KtAnnotationEntry(71,83): '@Anno("str")'
+  KaSimpleSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<ANNOTATION_IN_WHERE_CLAUSE_ERROR: Type parameter annotations are prohibited inside 'where' clauses. Consider moving the annotations to the type parameter declaration.>

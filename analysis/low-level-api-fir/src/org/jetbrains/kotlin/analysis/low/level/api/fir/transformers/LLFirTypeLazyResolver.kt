@@ -49,6 +49,8 @@ internal object LLFirTypeLazyResolver : LLFirLazyResolver(FirResolvePhase.TYPES)
                 for (bound in target.bounds) {
                     checkTypeRefIsResolved(bound, "type parameter bound", target)
                 }
+
+                checkAnnotationTypeIsResolved(target.constraintAnnotations, target)
             }
         }
     }

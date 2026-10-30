@@ -13,14 +13,16 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
+import org.jetbrains.kotlin.fir.declarations.utils.isDangling
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.psi.KtTypeConstraint
 import org.jetbrains.kotlin.psi.KtTypeParameter
 
 object FirTypeParameterSyntaxChecker : FirDeclarationSyntaxChecker<FirTypeParameter, KtTypeParameter>() {
 
+    // A dangling type parameter has no KtTypeParameter, and all its bounds come from constraints
     override fun isApplicable(element: FirTypeParameter, source: KtSourceElement): Boolean =
-        element.bounds.size >= 2
+        element.bounds.size >= 2 && !element.isDangling
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun checkPsi(

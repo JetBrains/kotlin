@@ -1029,34 +1029,7 @@ open class PsiRawFirBuilder(
                     bounds += extendsBound.convert<FirTypeRef>()
                 }
                 val owner = parameter.getStrictParentOfType<KtTypeParameterListOwner>() ?: return@buildTypeParameter
-                for (typeConstraint in owner.typeConstraints) {
-                    val subjectName = typeConstraint.subjectTypeParameterName?.getReferencedNameAsName()
-
-                    if (subjectName == parameterName) {
-                        bounds += typeConstraint.boundTypeReference.toFirOrErrorType()
-                    }
-
-                    for (entry in typeConstraint.annotationEntries) {
-                        annotations += buildErrorAnnotationCall {
-                            source = entry.toFirSourceElement()
-                            useSiteTarget = entry.useSiteTarget?.getAnnotationUseSiteTarget()
-                            annotationTypeRef = entry.typeReference.toFirOrErrorType()
-                            diagnostic = ConeSimpleDiagnostic(
-                                "Type parameter annotations are not allowed inside where clauses",
-                                DiagnosticKind.AnnotationInWhereClause,
-                            )
-                            val name = (annotationTypeRef as? FirUserTypeRef)?.qualifier?.last()?.name
-                                ?: Name.special("<no-annotation-name>")
-                            calleeReference = buildSimpleNamedReference {
-                                source = (entry.typeReference?.typeElement as? KtUserType)?.referenceExpression?.toFirSourceElement()
-                                this.name = name
-                            }
-                            entry.extractArgumentsTo(this)
-                            typeArguments.appendTypeArguments(entry.typeArguments)
-                            containingDeclarationSymbol = context.containerSymbol
-                        }
-                    }
-                }
+                addTypeConstraints(owner.typeConstraints.filter { it.subjectTypeParameterName?.getReferencedNameAsName() == parameterName })
                 addDefaultBoundIfNecessary()
             }
         }
@@ -1065,20 +1038,57 @@ open class PsiRawFirBuilder(
             throw AssertionError("KtTypeParameter should be process via extractTypeParameter")
         }
 
-        private fun <T> KtTypeParameterListOwner.fillDanglingConstraintsTo(to: T) where T : FirDeclaration, T : FirTypeParameterRefsOwner {
+        /**
+         * @see FirDeclarationOrigin.Synthetic.DanglingTypeParameter
+         */
+        private fun KtTypeParameterListOwner.convertDanglingTypeParameters(declarationSymbol: FirBasedSymbol<*>): List<FirTypeParameter> {
             val typeParamNames = typeParameters.mapNotNull { it.nameAsName }.toSet()
-            val result = typeConstraints.mapNotNull { constraint ->
-                constraint.subjectTypeParameterName?.getReferencedNameAsName()?.let { name ->
-                    if (!typeParamNames.contains(name)) {
-                        DanglingTypeConstraint(name, constraint.subjectTypeParameterName!!.toFirSourceElement())
-                    } else {
-                        null
+            val constraintsByName = typeConstraints.groupBy { it.subjectTypeParameterName?.getReferencedNameAsName() }
+            return constraintsByName.mapNotNull { [name, constraints] ->
+                if (name == null || name in typeParamNames) return@mapNotNull null
+                buildTypeParameter {
+                    source = constraints.first().subjectTypeParameterName?.toFirSourceElement(KtFakeSourceElementKind.DanglingTypeParameter)
+                    moduleData = baseModuleData
+                    origin = FirDeclarationOrigin.Synthetic.DanglingTypeParameter
+                    this.name = name
+                    symbol = FirTypeParameterSymbol()
+                    containingDeclarationSymbol = declarationSymbol
+                    variance = Variance.INVARIANT
+                    isReified = false
+                    addTypeConstraints(constraints)
+                }
+            }
+        }
+
+        /**
+         * Adds the bounds and the annotations of [constraints] on this type parameter.
+         * Annotations are not allowed in `where` clauses, so they become error annotation calls in
+         * [constraintAnnotations][FirTypeParameterBuilder.constraintAnnotations].
+         */
+        private fun FirTypeParameterBuilder.addTypeConstraints(constraints: List<KtTypeConstraint>) {
+            for (typeConstraint in constraints) {
+                bounds += typeConstraint.boundTypeReference.toFirOrErrorType()
+
+                for (entry in typeConstraint.annotationEntries) {
+                    constraintAnnotations += buildErrorAnnotationCall {
+                        source = entry.toFirSourceElement()
+                        useSiteTarget = entry.useSiteTarget?.getAnnotationUseSiteTarget()
+                        annotationTypeRef = entry.typeReference.toFirOrErrorType()
+                        diagnostic = ConeSimpleDiagnostic(
+                            "Type parameter annotations are not allowed inside where clauses",
+                            DiagnosticKind.AnnotationInWhereClause,
+                        )
+                        val name = (annotationTypeRef as? FirUserTypeRef)?.qualifier?.last()?.name
+                            ?: Name.special("<no-annotation-name>")
+                        calleeReference = buildSimpleNamedReference {
+                            source = (entry.typeReference?.typeElement as? KtUserType)?.referenceExpression?.toFirSourceElement()
+                            this.name = name
+                        }
+                        entry.extractArgumentsTo(this)
+                        typeArguments.appendTypeArguments(entry.typeArguments)
+                        containingDeclarationSymbol = context.containerSymbol
                     }
                 }
-
-            }
-            if (result.isNotEmpty()) {
-                to.danglingTypeConstraints = result
             }
         }
 
@@ -1903,6 +1913,7 @@ open class PsiRawFirBuilder(
                         isRichError = classOrObject.hasModifier(ERROR_KEYWORD)
                     }
                     val firTypeParameters = classOrObject.convertTypeParameters(classSymbol)
+                    firTypeParameters += classOrObject.convertDanglingTypeParameters(classSymbol)
 
                     context.withCapturedTypeParameters(
                         status = status.isInner || isLocal,
@@ -2009,8 +2020,6 @@ open class PsiRawFirBuilder(
                             companionBlockCollector.toCompanionBlockInfoOrNull()?.let { companionBlocks = it }
                             this.delegateFieldsMap = delegatedFieldsMap
                         }
-                    }.also {
-                        classOrObject.fillDanglingConstraintsTo(it)
                     }
                 }
             }.also {
@@ -2259,6 +2268,7 @@ open class PsiRawFirBuilder(
                     function.extractAnnotationsTo(this)
 
                     function.extractTypeParametersTo(this, functionSymbol)
+                    typeParameters += function.convertDanglingTypeParameters(functionSymbol)
                     contextParameters.addContextParameters(function.modifierList?.contextParameterLists.orEmpty(), functionSymbol)
                     for (valueParameter in function.valueParameters) {
                         valueParameters += valueParameter.toFirValueParameter(
@@ -2286,8 +2296,6 @@ open class PsiRawFirBuilder(
                     context.firFunctionTargets.removeLast()
                 }.build().also {
                     bindFunctionTarget(target, it)
-                    function.fillDanglingConstraintsTo(it)
-
                     if (!isLocalFunction && isCompanionBlockMember) {
                         it.initContainingClassAttr()
                     }
@@ -2608,6 +2616,7 @@ open class PsiRawFirBuilder(
                             dispatchReceiverType = currentDispatchReceiverType()
                         }
                         extractTypeParametersTo(this, symbol)
+                        typeParameters += convertDanglingTypeParameters(symbol)
                         context.withCapturedTypeParameters(true, propertySource, this.typeParameters) {
                             backingField = this@toFirProperty.fieldDeclaration.toFirBackingField(
                                 this@toFirProperty,
@@ -2699,12 +2708,8 @@ open class PsiRawFirBuilder(
 
                     contextParameters.addContextParameters(this@toFirProperty.modifierList?.contextParameterLists.orEmpty(), propertySymbol)
                 }.also {
-                    if (!isLocal) {
-                        fillDanglingConstraintsTo(it)
-
-                        if (isCompanionBlockMember) {
-                            it.initContainingClassAttr()
-                        }
+                    if (!isLocal && isCompanionBlockMember) {
+                        it.initContainingClassAttr()
                     }
                 }
             }

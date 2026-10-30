@@ -40,6 +40,7 @@ internal class FirTypeParameterImpl(
     override val isReified: Boolean,
     override var bounds: MutableOrEmptyList<FirTypeRef>,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
+    override var constraintAnnotations: MutableOrEmptyList<FirAnnotation>,
 ) : FirTypeParameter() {
 
     init {
@@ -52,11 +53,13 @@ internal class FirTypeParameterImpl(
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         bounds.forEach { it.accept(visitor, data) }
         annotations.forEach { it.accept(visitor, data) }
+        constraintAnnotations.forEach { it.accept(visitor, data) }
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirTypeParameterImpl {
         transformBounds(transformer, data)
         transformAnnotations(transformer, data)
+        transformConstraintAnnotations(transformer, data)
         return this
     }
 
@@ -70,11 +73,20 @@ internal class FirTypeParameterImpl(
         return this
     }
 
+    override fun <D> transformConstraintAnnotations(transformer: FirTransformer<D>, data: D): FirTypeParameterImpl {
+        constraintAnnotations.transformInplace(transformer, data)
+        return this
+    }
+
     override fun replaceBounds(newBounds: List<FirTypeRef>) {
         bounds = newBounds.toMutableOrEmpty()
     }
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
         annotations = newAnnotations.toMutableOrEmpty()
+    }
+
+    override fun replaceConstraintAnnotations(newConstraintAnnotations: List<FirAnnotation>) {
+        constraintAnnotations = newConstraintAnnotations.toMutableOrEmpty()
     }
 }

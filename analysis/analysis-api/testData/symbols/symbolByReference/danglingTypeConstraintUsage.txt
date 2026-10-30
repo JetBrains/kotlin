@@ -1,0 +1,25 @@
+KaTypeParameterSymbol:
+  anchorPsi: KtNameReferenceExpression
+  annotations: []
+  isActual: false
+  isExpect: false
+  isExternal: false
+  isReified: false
+  location: LOCAL
+  modality: FINAL
+  name: AA
+  origin: SOURCE_MEMBER_GENERATED
+  psi: KtNameReferenceExpression
+  realPsi: null
+  upperBounds: [
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Number
+  ]
+  variance: INVARIANT
+  visibility: LOCAL
+  getContainingFileSymbol: KaFileSymbol(danglingTypeConstraintUsage.kt)
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecation: null
+  importableFqName: null

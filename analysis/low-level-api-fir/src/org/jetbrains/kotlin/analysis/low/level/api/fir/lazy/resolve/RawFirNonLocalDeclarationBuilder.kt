@@ -310,7 +310,8 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
 
         val psi = parent.psi
         val typeParameters = when (psi) {
-            is KtClassOrObject -> parent.typeParameters.subList(0, psi.typeParameters.size)
+            // Own type parameters include dangling ones, which have no PSI type parameter
+            is KtClassOrObject -> parent.typeParameters.filterIsInstance<FirTypeParameter>()
             else -> errorWithFirSpecificEntries(
                 message = "Expected ${KtClassOrObject::class.simpleName} is not found",
                 fir = parent,

@@ -56,6 +56,7 @@ private val allowedFakeElementKinds: Set<KtFakeSourceElementKind> =
         KtFakeSourceElementKind.SamConstructor,
         KtFakeSourceElementKind.JavaRecordComponentFunction,
         KtFakeSourceElementKind.ReceiverFromType,
+        KtFakeSourceElementKind.DanglingTypeParameter,
     )
 
 @OptIn(SuspiciousFakeSourceCheck::class)

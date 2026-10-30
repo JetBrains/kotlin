@@ -1,0 +1,130 @@
+FILE: danglingTypeConstraints.kt
+    public abstract fun interface TestInterface : R|kotlin/Any| {
+        public abstract fun test(): R|kotlin/Unit|
+
+    }
+    public final class TestClass : R|TestInterface| {
+        public constructor(): R|TestClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open override fun test(): R|kotlin/Unit| {
+        }
+
+    }
+    public final inline fun <reified A, AA : R|TestInterface|> R|A|.unusedReceiver(): R|kotlin/Unit| {
+        <getClass>(R|A|)
+    }
+    public final fun issueUsage(t: R|TestClass|): R|kotlin/Unit| {
+        R|<local>/t|.R|/unusedReceiver<CS errors: /unusedReceiver>#|<R|TestClass|, <ERROR TYPE REF: Cannot infer argument for type parameter AA>>()
+        R|<local>/t|.R|/unusedReceiver<Inapplicable(INAPPLICABLE): /unusedReceiver>#|<R|TestClass|, <ERROR TYPE REF: Cannot infer argument for type parameter AA>>()
+    }
+    public final fun noTypeParameters(a: <ERROR TYPE REF: Symbol not found for AA>): <ERROR TYPE REF: Symbol not found for AA> {
+        lval b: <ERROR TYPE REF: Symbol not found for AA> = R|<local>/a|
+        ^noTypeParameters R|<local>/b|
+    }
+    public final fun <T, AA : R|kotlin/Number|> withTypeParameter(a: R|AA|, t: R|T|): R|AA| {
+        lval b: R|AA| = R|<local>/a|
+        ^withTypeParameter R|<local>/b|
+    }
+    public final fun calls(): R|kotlin/Unit| {
+        R|/noTypeParameters<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /noTypeParameters>#|()
+        R|/noTypeParameters|(Int(1))
+        R|/noTypeParameters<Inapplicable(INAPPLICABLE): /noTypeParameters>#|<R|kotlin/Int|>(Int(1))
+        R|/noTypeParameters<Inapplicable(INAPPLICABLE): /noTypeParameters>#|<R|kotlin/Int|, R|kotlin/String|>(Int(1))
+        R|/withTypeParameter|<R|kotlin/String|, R|kotlin/Int|>(Int(1), String())
+        R|/withTypeParameter<Inapplicable(INAPPLICABLE): /withTypeParameter>#|<R|kotlin/String|, R|kotlin/Int|>(Int(1), String())
+        R|/withTypeParameter|<R|kotlin/String|, R|kotlin/Int|>(Int(1), String())
+    }
+    public final fun <T, AA : R|kotlin/Number|, R|kotlin/Comparable<AA>|> twoConstraints(t: R|T|): R|kotlin/Unit| {
+    }
+    public final fun <T : R|TestInterface|, TestInterface : R|kotlin/Any|> shadowsClass(t: R|T|): R|kotlin/Unit| {
+        R|<local>/t|.<Unresolved name: test>#()
+    }
+    public final class C : R|kotlin/Any| {
+        public constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class D<T, AA : R|kotlin/Any|> : R|kotlin/Any| {
+        public constructor<T, AA : R|kotlin/Any|>(): R|D<T, AA>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun get(a: R|AA|): R|AA| {
+            ^get R|<local>/a|
+        }
+
+    }
+    public final fun classUsages(): R|kotlin/Unit| {
+        R|/C.C|()
+        R|/C.C<Inapplicable(INAPPLICABLE): /C.C>#|<R|kotlin/Int|>()
+        R|/D.D<Inapplicable(INAPPLICABLE): /D.D>#|<R|kotlin/Int|, <ERROR TYPE REF: Cannot infer argument for type parameter AA>>()
+        R|/D.D|<R|kotlin/Int|, R|kotlin/String|>()
+        R|/D.D<Inapplicable(INAPPLICABLE): /D.D>#|<R|kotlin/Int|, <ERROR TYPE REF: Cannot infer argument for type parameter AA>>().R|SubstitutionOverride</D.get: <ERROR TYPE REF: Cannot infer argument for type parameter AA>>|(Int(1))
+    }
+    public final val <T, AA : R|kotlin/Number|> R|T|.prop: R|AA|
+        public get(): R|AA| {
+            ^ Null(null)!!
+        }
+    public final fun propertyUsage(): R|kotlin/Unit| {
+        Int(1).R|/prop<CS errors: /prop>#|<R|kotlin/Int|, <ERROR TYPE REF: Cannot infer argument for type parameter AA>>
+        String().R|/prop<CS errors: /prop>#|<R|kotlin/String|, <ERROR TYPE REF: Cannot infer argument for type parameter AA>>
+    }
+    public abstract interface Base : R|kotlin/Any| {
+        public abstract fun <T> member(t: R|T|): R|kotlin/Unit|
+
+    }
+    public final class Impl : R|Base| {
+        public constructor(): R|Impl| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open override fun <T, AA : R|kotlin/Any|> member(t: R|T|): R|kotlin/Unit| {
+        }
+
+    }
+    public final fun <T, AA : R|kotlin/String|, R|kotlin/Int|> conflictingBounds(t: R|T|): R|kotlin/Unit| {
+    }
+    public final fun <T, AA : R|kotlin/Array<kotlin/Int>|> arrayBound(t: R|T|): R|kotlin/Unit| {
+    }
+    public final fun <T, AA : <ERROR TYPE REF: Type parameter AA has cyclic bounds>, BB : R|AA|> cyclicBounds(t: R|T|): R|kotlin/Unit| {
+    }
+    public final fun <T, _ : R|kotlin/Any|> underscore(t: R|T|): R|kotlin/Unit| {
+    }
+    public final fun localFunction(): R|kotlin/Unit| {
+        local final fun <T, AA : R|kotlin/Number|> local(a: R|AA|, t: R|T|): R|AA| {
+            ^local R|<local>/a|
+        }
+
+        R|<local>/local|<R|kotlin/String|, R|kotlin/Int|>(Int(1), String())
+    }
+    public final class EmptyTypeParameters<AA : R|kotlin/Any|> : R|kotlin/Any| {
+        public constructor<AA : R|kotlin/Any|>(): R|EmptyTypeParameters<AA>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class GenericThrowable<AA : R|kotlin/Any|> : R|kotlin/Throwable| {
+        public constructor<AA : R|kotlin/Any|>(): R|GenericThrowable<AA>| {
+            super<R|kotlin/Throwable|>()
+        }
+
+    }
+    public final enum class GenericEnum<AA : R|kotlin/Any|> : R|kotlin/Enum<GenericEnum<AA>>| {
+        private constructor<AA : R|kotlin/Any|>(): R|GenericEnum<AA>| {
+            super<R|kotlin/Enum<GenericEnum<AA>>|>()
+        }
+
+        public final static enum entry ENTRY: R|GenericEnum<AA>|
+        public final static fun values(): R|kotlin/Array<GenericEnum>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|GenericEnum| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<GenericEnum>|
+            public static get(): R|kotlin/enums/EnumEntries<GenericEnum>|
+
+    }

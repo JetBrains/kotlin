@@ -79,7 +79,11 @@ internal inline fun checkExpressionTypeIsResolved(
 }
 
 internal fun <T> checkAnnotationTypeIsResolved(annotationContainer: T) where T : FirAnnotationContainer, T : FirElementWithResolveState {
-    annotationContainer.annotations.forEach { annotation ->
+    checkAnnotationTypeIsResolved(annotationContainer.annotations, annotationContainer)
+}
+
+internal fun checkAnnotationTypeIsResolved(annotations: List<FirAnnotation>, annotationContainer: FirElementWithResolveState) {
+    annotations.forEach { annotation ->
         checkTypeRefIsResolved(annotation.annotationTypeRef, "annotation type", owner = annotationContainer) {
             withFirEntry("firAnnotation", annotation)
         }
@@ -214,7 +218,11 @@ private object AnnotationChecker : NonLocalAnnotationVisitor<FirAnnotationContai
 }
 
 internal fun checkAnnotationsAreResolved(annotationContainer: FirAnnotationContainer) {
-    for (annotation in annotationContainer.annotations) {
+    checkAnnotationsAreResolved(annotationContainer.annotations, annotationContainer)
+}
+
+internal fun checkAnnotationsAreResolved(annotations: List<FirAnnotation>, annotationContainer: FirAnnotationContainer) {
+    for (annotation in annotations) {
         checkAnnotationIsResolved(annotation, annotationContainer)
     }
 }

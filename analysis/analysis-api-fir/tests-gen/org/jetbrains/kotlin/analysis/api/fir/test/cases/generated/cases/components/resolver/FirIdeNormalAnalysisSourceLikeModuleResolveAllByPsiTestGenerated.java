@@ -374,6 +374,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleResolveAllByPsiTestGenerated ex
     run("unaryOperators.kt");
   }
 
+  @Test
+  @TestMetadata("whereClauseAnnotations.kt")
+  public void testWhereClauseAnnotations() {
+    run("whereClauseAnnotations.kt");
+  }
+
   @Nested
   @TestMetadata("analysis/analysis-api/testData/components/resolver/allByPsi/companionBlocksAndExtensions")
   @TestDataPath("$PROJECT_ROOT")

@@ -402,8 +402,16 @@ internal fun KaFirKtBasedSymbol<KtCallableDeclaration, *>.createKaContextParamet
 
 internal fun KaFirKtBasedSymbol<KtTypeParameterListOwner, *>.createKaTypeParameters(): List<KaTypeParameterSymbol>? =
     ifNotLibrarySource {
-        with(analysisSession) {
-            backingPsi?.typeParameters?.map { it.symbol }
+        val backingPsi = backingPsi ?: return@ifNotLibrarySource null
+        val typeParameters = with(analysisSession) {
+            backingPsi.typeParameters.map { it.symbol }
+        }
+
+        val danglingTypeConstraintSubjects = backingPsi.danglingTypeConstraintSubjects()
+        if (danglingTypeConstraintSubjects.isEmpty()) {
+            typeParameters
+        } else {
+            typeParameters + danglingTypeConstraintSubjects.map { KaFirDanglingTypeParameterSymbol(it, analysisSession) }
         }
     }
 

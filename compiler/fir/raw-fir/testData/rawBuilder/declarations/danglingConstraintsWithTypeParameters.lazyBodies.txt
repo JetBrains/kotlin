@@ -1,0 +1,49 @@
+FILE: danglingConstraintsWithTypeParameters.kt
+    public? final? fun <T, AA : @Anno(LAZY_EXPRESSION) List<@Anno(LAZY_EXPRESSION) T>, Comparable<AA>> function(a: AA): AA { LAZY_BLOCK }
+    public? final? fun <@Anno(LAZY_EXPRESSION) T : Any, @Anno(LAZY_EXPRESSION) AA : Any> annotatedConstraint(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? val <T, AA : @Anno(LAZY_EXPRESSION) Number> T.property: AA
+        public? get(): AA { LAZY_BLOCK }
+    public final? class TopLevelClass<T, AA : @Anno(LAZY_EXPRESSION) Any> : R|kotlin/Any| {
+        public? [ContainingClassKey=TopLevelClass] constructor<T, AA : @Anno(LAZY_EXPRESSION) Any>(): R|TopLevelClass<T, AA>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? fun <R, BB : @Anno(LAZY_EXPRESSION) R> memberFunction(b: BB): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public final? class OuterClass<T, AA : Any> : R|kotlin/Any| {
+        public? [ContainingClassKey=OuterClass] constructor<T, AA : Any>(): R|OuterClass<T, AA>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? inner class InnerClass<Outer(T), Outer(AA) : Any> : R|kotlin/Any| {
+            public? [ContainingClassKey=InnerClass] OuterClass<T, AA>.constructor([CorrespondingProperty=/OuterClass.InnerClass.a] a: AA): R|OuterClass.InnerClass<T, AA>| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [IsFromPrimaryConstructor=true] val a: AA = R|<local>/a|
+                public? [ContainingClassKey=InnerClass] get(): AA
+
+            public? [ContainingClassKey=InnerClass] OuterClass<T, AA>.constructor(): R|OuterClass.InnerClass<T, AA>| {
+                LAZY_this<R|OuterClass.InnerClass<T, AA>|>
+            }
+
+        }
+
+    }
+    public final? enum class EnumClass<AA : Any> : R|kotlin/Enum<EnumClass<AA>>| {
+        private [ContainingClassKey=EnumClass] constructor<AA : Any>(): R|EnumClass<AA>| {
+            LAZY_super<R|kotlin/Enum<EnumClass<AA>>|>
+        }
+
+        public final static [ContainingClassKey=EnumClass] enum entry ENTRY: R|EnumClass<AA>| = LAZY_EXPRESSION
+        public final static [ContainingClassKey=EnumClass] fun values(): R|kotlin/Array<EnumClass>| {
+        }
+
+        public final static [ContainingClassKey=EnumClass] fun valueOf(value: R|kotlin/String|): R|EnumClass| {
+        }
+
+        public final static [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
+            public static [ContainingClassKey=EnumClass] get(): R|kotlin/enums/EnumEntries<EnumClass>|
+
+    }
