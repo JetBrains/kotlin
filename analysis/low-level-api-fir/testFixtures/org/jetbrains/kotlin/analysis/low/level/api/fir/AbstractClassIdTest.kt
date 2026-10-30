@@ -183,7 +183,7 @@ abstract class AbstractClassIdTest : AbstractAnalysisApiBasedTest() {
             val exception = firSymbolResult.exceptionOrNull()!!
 
             // AST loading in the stub-based part is a failure of the whole part, not of a single declaration
-            if (exception.message?.startsWith("Access to tree elements not allowed for") == true) {
+            if (exception is AstLoadingAssertionError) {
                 throw exception
             }
 
