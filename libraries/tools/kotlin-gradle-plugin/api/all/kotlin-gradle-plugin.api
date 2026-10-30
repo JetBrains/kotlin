@@ -3096,6 +3096,7 @@ public abstract class org/jetbrains/kotlin/gradle/targets/js/ir/KotlinBrowserJsI
 	public fun configureDefaultTestFramework (Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTest;)V
 	public fun configureTestDependencies (Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTest;Lorg/jetbrains/kotlin/gradle/targets/js/ir/JsIrBinary;)V
 	public fun devServer (Lorg/gradle/api/Action;)V
+	public fun getBundler ()Lorg/gradle/api/provider/Provider;
 	public fun getTest ()Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsBrowserTestDsl;
 	public fun getTestTaskDescription ()Ljava/lang/String;
 	public fun runTask (Lorg/gradle/api/Action;)V
@@ -5612,6 +5613,7 @@ public final class org/jetbrains/kotlin/gradle/targets/wasm/d8/D8SetupTask$Compa
 
 public abstract interface class org/jetbrains/kotlin/gradle/targets/wasm/dsl/KotlinWasmJsBrowserDsl : org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsBrowserDsl {
 	public abstract fun devServer (Lorg/gradle/api/Action;)V
+	public abstract fun getBundler ()Lorg/gradle/api/provider/Provider;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/targets/wasm/dsl/KotlinWasmtimeDsl : org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsSubTargetDsl {
