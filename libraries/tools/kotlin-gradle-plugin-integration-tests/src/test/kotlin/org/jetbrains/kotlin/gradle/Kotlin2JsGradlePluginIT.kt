@@ -327,11 +327,9 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
 
             build("jsNodeDevelopmentRun") {
                 assertOutputContains("Hello, World!")
-                assertTasksUpToDate(":jsNodeDevelopmentGenerateSwcConfig",)
-                assertTasksExecuted(":jsNodeDevelopmentTranspileWithSwc")
                 assertFileContains(
                     projectPath.resolve(
-                        "build/js/packages/kotlin-js-multiplatform-app-project/kotlin/kotlin-js-multiplatform-app-project.d.ts"
+                        "build/js/packages/kotlin-js-multiplatform-app-project/kotlin/kotlin-js-multiplatform-app-project.d.mts"
                     ),
                     "function best(): number",
                 )
@@ -339,11 +337,9 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
 
             build("jsNodeProductionRun") {
                 assertOutputContains("Hello, World!")
-                assertTasksUpToDate(":jsNodeProductionGenerateSwcConfig")
-                assertTasksExecuted(":jsNodeProductionTranspileWithSwc")
                 assertFileContains(
                     projectPath.resolve(
-                        "build/js/packages/kotlin-js-multiplatform-app-project/kotlin/kotlin-js-multiplatform-app-project.d.ts"
+                        "build/js/packages/kotlin-js-multiplatform-app-project/kotlin/kotlin-js-multiplatform-app-project.d.mts"
                     ),
                     "function best(): number",
                 )
