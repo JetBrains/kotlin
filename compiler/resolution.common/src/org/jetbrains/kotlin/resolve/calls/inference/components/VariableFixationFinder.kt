@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.InferenceLogger.F
 import org.jetbrains.kotlin.resolve.calls.inference.components.InferenceLogger.FixationLogVariableInfo
 import org.jetbrains.kotlin.resolve.calls.inference.components.VariableFixationFinder.Context
 import org.jetbrains.kotlin.resolve.calls.inference.components.VariableFixationFinder.VariableForFixation
-import org.jetbrains.kotlin.resolve.calls.inference.hasRecursionInTypeParametersOrCapturedTypes
+import org.jetbrains.kotlin.resolve.calls.inference.hasRecursiveTypeParametersWithGivenSelfType
 import org.jetbrains.kotlin.resolve.calls.inference.isRecursiveTypeParameter
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
@@ -336,7 +336,7 @@ abstract class AbstractVariableReadinessCalculator<Readiness : Comparable<Readin
     private fun Constraint.isProperSelfTypeConstraint(ownerTypeVariable: TypeConstructorMarker): Boolean {
         val typeConstructor = type.typeConstructor()
         return position.from is DeclaredUpperBoundConstraintPosition<*>
-                && (type.typeConstructor().hasRecursionInTypeParametersOrCapturedTypes(languageVersionSettings) || typeConstructor.isRecursiveTypeParameter())
+                && (type.typeConstructor().hasRecursiveTypeParametersWithGivenSelfType() || typeConstructor.isRecursiveTypeParameter())
                 && !hasDependencyToOtherTypeVariable(ownerTypeVariable)
     }
 

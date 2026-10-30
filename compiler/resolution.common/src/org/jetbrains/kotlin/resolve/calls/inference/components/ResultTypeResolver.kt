@@ -11,7 +11,8 @@ import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirectionCalculator.ResolveDirection
 import org.jetbrains.kotlin.resolve.calls.inference.extractTypeForGivenRecursiveTypeParameter
-import org.jetbrains.kotlin.resolve.calls.inference.hasRecursionInTypeParametersOrCapturedTypes
+import org.jetbrains.kotlin.resolve.calls.inference.hasRecursionCapturedTypes
+import org.jetbrains.kotlin.resolve.calls.inference.hasRecursiveTypeParametersWithGivenSelfType
 import org.jetbrains.kotlin.resolve.calls.inference.isEqualityConstraintCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.isSubtypeConstraintCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
@@ -194,13 +195,18 @@ class ResultTypeResolver(
         val preparedSuperType = when {
             approximatedSuperType == null -> null
             shouldBeUsedWithoutApproximation(superType, approximatedSuperType, this) -> superType
-            superType.typeConstructor().hasRecursionInTypeParametersOrCapturedTypes(languageVersionSettings) -> superType
+            superType.typeConstructor().hasRecursionInTypeParametersOrCapturedTypes() -> superType
             else -> approximatedSuperType
             // Super type should be the most flexible, sub type should be the least one
         }.makeFlexibleIfNecessary(constraints)
 
         return preparedSubType to preparedSuperType
     }
+
+    context(c: TypeSystemInferenceExtensionContext)
+    private fun TypeConstructorMarker.hasRecursionInTypeParametersOrCapturedTypes(): Boolean =
+        hasRecursiveTypeParametersWithGivenSelfType()
+                || languageVersionSettings.supportsFeature(LanguageFeature.ConsiderUseSiteRecursiveBoundsOnCapturedTypes) && hasRecursionCapturedTypes()
 
     /**
      * Returns `true` if using [approximatedResultType] as result type leads to a contradiction.
@@ -241,7 +247,7 @@ class ResultTypeResolver(
         val preparedSuperType = when {
             superType == null -> null
             similarCapturedTypesInK2 -> superType
-            c.isK2 && superType.typeConstructor().hasRecursionInTypeParametersOrCapturedTypes(languageVersionSettings) -> superType
+            c.isK2 && superType.typeConstructor().hasRecursionInTypeParametersOrCapturedTypes() -> superType
             else -> typeApproximator.approximateToSubType(superType, TypeApproximatorConfiguration.InternalTypesApproximation) ?: superType
             // Super type should be the most flexible, sub type should be the least one
         }.makeFlexibleIfNecessary(constraints)
