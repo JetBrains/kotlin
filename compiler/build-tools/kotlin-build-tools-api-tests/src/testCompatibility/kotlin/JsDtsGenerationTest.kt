@@ -31,8 +31,10 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.model.assumeJsDtsGenera
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.jsProject
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInJs
+import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Paths
 import kotlin.io.path.createDirectories
@@ -225,7 +227,6 @@ class JsDtsGenerationTest : BaseCompilationTest() {
         kotlinToolchain.assumeJsDtsGenerationIsSupported()
 
         // TODO (KT-90366): check EXPORT_UNTYPED_AS_UNKNOWN from -Xdts-use-unknown-instead-any
-        // TODO (KT-90489): check COMPILE_LONG_AS_BIG_INT derived from the ES2020 target
         // TODO (KT-90519): check the options enabled through -XXLanguage
         // TODO (KT-90528): check IMPLEMENT_INTERFACES once -Xenable-implementing-interfaces-from-typescript is available for linking
         val longAsBigInt = kotlinToolchain.dtsBuilderConfiguredFrom { this[X_ES_LONG_AS_BIGINT] = true }
@@ -238,6 +239,41 @@ class JsDtsGenerationTest : BaseCompilationTest() {
         assertEquals(true, dataClassCopy[JsDtsGenerationOperation.DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY])
     }
 
+    @DisplayName("configureFrom derives COMPILE_LONG_AS_BIG_INT from -target unless -Xes-long-as-bigint is set")
+    @BtaVersionsOnlyCompilationTest
+    fun configureFromDerivesLongAsBigIntFromTarget(kotlinToolchain: KotlinToolchains) {
+        kotlinToolchain.assumeJsDtsGenerationIsSupported()
+        kotlinToolchain.assumeJsDtsConfigureFromArgumentResolutionIsSupported()
+
+        val es2020 = kotlinToolchain.dtsBuilderConfiguredFrom { this[TARGET] = JsEcmaVersion.ES2020 }
+        assertEquals(true, es2020[JsDtsGenerationOperation.COMPILE_LONG_AS_BIG_INT])
+
+        val es2020ExplicitFalse = kotlinToolchain.dtsBuilderConfiguredFrom {
+            this[TARGET] = JsEcmaVersion.ES2020
+            this[X_ES_LONG_AS_BIGINT] = false
+        }
+        assertEquals(false, es2020ExplicitFalse[JsDtsGenerationOperation.COMPILE_LONG_AS_BIG_INT])
+
+        val es2015 = kotlinToolchain.dtsBuilderConfiguredFrom { this[TARGET] = JsEcmaVersion.ES2015 }
+        assertEquals(false, es2015[JsDtsGenerationOperation.COMPILE_LONG_AS_BIG_INT])
+
+        val noTarget = kotlinToolchain.dtsBuilderConfiguredFrom { }
+        assertEquals(false, noTarget[JsDtsGenerationOperation.COMPILE_LONG_AS_BIG_INT])
+    }
+
+    @DisplayName("configureFrom takes COMPILE_LONG_AS_BIG_INT from command-line linking arguments")
+    @BtaVersionsOnlyCompilationTest
+    fun configureFromTakesLongAsBigIntFromCommandLine(kotlinToolchain: KotlinToolchains) {
+        kotlinToolchain.assumeJsDtsGenerationIsSupported()
+        kotlinToolchain.assumeJsDtsConfigureFromArgumentResolutionIsSupported()
+
+        val es2020 = kotlinToolchain.dtsBuilderConfiguredFromCommandLine("-target", "es2020")
+        assertEquals(true, es2020[JsDtsGenerationOperation.COMPILE_LONG_AS_BIG_INT])
+
+        val es2020ExplicitFalse = kotlinToolchain.dtsBuilderConfiguredFromCommandLine("-target", "es2020", "-Xes-long-as-bigint=false")
+        assertEquals(false, es2020ExplicitFalse[JsDtsGenerationOperation.COMPILE_LONG_AS_BIG_INT])
+    }
+
     private fun KotlinToolchains.dtsBuilderConfiguredFrom(
         linkingArguments: JsCompilerLinkingArguments.Builder.() -> Unit,
     ): JsDtsGenerationOperation.Builder {
@@ -246,6 +282,15 @@ class JsDtsGenerationTest : BaseCompilationTest() {
         }.build()
         return js.jsDtsGenerationOperationBuilder(listOf(Paths.get("main.klib")), Paths.get("dts")).apply {
             configureFrom(linkingOperation)
+        }
+    }
+
+    private fun KotlinToolchains.dtsBuilderConfiguredFromCommandLine(vararg linkingArguments: String): JsDtsGenerationOperation.Builder =
+        dtsBuilderConfiguredFrom { applyCommandLineArguments(linkingArguments.toList()) }
+
+    private fun KotlinToolchains.assumeJsDtsConfigureFromArgumentResolutionIsSupported() {
+        assumeTrue(KotlinToolingVersion(getCompilerVersion()) >= KotlinToolingVersion(2, 5, 20, "Beta1")) {
+            "Resolving JS linking arguments in JsDtsGenerationOperation.Builder.configureFrom is not supported on Kotlin versions before 2.5.20-Beta1"
         }
     }
 }
