@@ -84,13 +84,24 @@ class AppleFrameworkIT : KGPBaseTest() {
             build(
                 "assembleWithoutSymbolicLinkDebugAppleFrameworkForXcodeIosArm64",
                 "symbolicLinkToAssembleWithoutSymbolicLinkDebugAppleFrameworkForXcodeIosArm64",
-                "-Pkotlin.apple.createSymbolicLinkToFrameworkInBuiltProductsDir=false",
+                "-Pkotlin.native.createSymbolicLinkToFrameworkInBuiltProductsDir=false",
                 environmentVariables = environmentVariables
             ) {
                 assertTasksExecuted(":shared:assembleWithoutSymbolicLinkDebugAppleFrameworkForXcodeIosArm64")
                 assertFileInProjectNotExists("shared/build/builtProductsDir/withoutSymbolicLink.framework")
                 assertDirectoryInProjectExists("shared/build/xcode-frameworks/debug/iphoneos/withoutSymbolicLink.framework")
                 assertDirectoryInProjectExists("shared/build/xcode-frameworks/debug/iphoneos/withoutSymbolicLink.framework.dSYM")
+            }
+
+            // the old name still works, with a deprecation warning
+            build(
+                "symbolicLinkToAssembleWithoutSymbolicLinkDebugAppleFrameworkForXcodeIosArm64",
+                "-Pkotlin.apple.createSymbolicLinkToFrameworkInBuiltProductsDir=false",
+                environmentVariables = environmentVariables
+            ) {
+                assertHasDiagnostic(KotlinToolingDiagnostics.DeprecatedPropertyWithReplacement)
+                assertTasksSkipped(":shared:symbolicLinkToAssembleWithoutSymbolicLinkDebugAppleFrameworkForXcodeIosArm64")
+                assertFileInProjectNotExists("shared/build/builtProductsDir/withoutSymbolicLink.framework")
             }
         }
     }
