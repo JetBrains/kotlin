@@ -12,10 +12,6 @@ org.jetbrains.kotlin.psi.KtExpressionCodeFragmentType
 org.jetbrains.kotlin.psi.KtExpressionCodeFragmentType:constructor()
 org.jetbrains.kotlin.psi.KtTypeCodeFragmentType
 org.jetbrains.kotlin.psi.KtTypeCodeFragmentType:constructor()
-org.jetbrains.kotlin.psi.impl.KtCompanionBlockImpl:constructor(ASTNode)
-org.jetbrains.kotlin.psi.impl.KtCompanionBlockImpl:constructor(KotlinPlaceHolderStub<KtCompanionBlockImpl>)
-org.jetbrains.kotlin.psi.impl.KtUnionTypeImpl:constructor(ASTNode)
-org.jetbrains.kotlin.psi.impl.KtUnionTypeImpl:constructor(KotlinPlaceHolderStub<KtUnionTypeImpl>)
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:ANNOTATION
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:ANNOTATION_ENTRY
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:ANNOTATION_TARGET

@@ -51,6 +51,9 @@ but exposed due to the current technical limitations.
   Stub data classes live in `org.jetbrains.kotlin.psi.stubs.impl`.
 - `KotlinElementTypeProvider` (`compiler/psi/psi-api/.../KotlinElementTypeProvider.kt`) is a bridge between element types and their
   implementations (`KotlinElementTypeProviderImpl`).
+- `KotlinElementFactory` (`compiler/psi/psi-impl/.../psi/impl/KotlinElementFactory.kt`), an application service,
+  creates the stub-based PSI whose implementations are internal to `psi-impl` (e.g., `KtCompanionBlockImpl`), so that
+  `KotlinStubRegistryExtension` can bind factories for them.
 
 ## Stub versions
 
