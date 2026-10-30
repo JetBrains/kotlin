@@ -182,6 +182,7 @@ private fun initCache(cache: BoxCache, generationState: NativeGenerationState, c
         val values = (start..end).map { staticData.createConstKotlinObjectBody(kotlinType, createConstant(llvmType, it)) }
         staticData.placeGlobalArray(cacheName, llvmBoxType, values, true).also {
             it.setConstant(true)
+            staticData.placeInPermanentsSection(it)
         }
     }
 }

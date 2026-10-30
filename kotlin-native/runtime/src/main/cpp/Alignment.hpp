@@ -19,6 +19,11 @@ constexpr T AlignUp(T size, T alignment) {
     return (size + alignment - 1) & ~(alignment - 1);
 }
 
+template <typename T>
+constexpr T AlignDown(T size, T alignment) {
+    return size & ~(alignment - 1);
+}
+
 inline void* AlignUp(void* ptr, size_t alignment) {
     static_assert(sizeof(void*) == sizeof(size_t), "size_t size must be equal to pointer size for this to work");
     return reinterpret_cast<void*>(AlignUp(reinterpret_cast<size_t>(ptr), alignment));

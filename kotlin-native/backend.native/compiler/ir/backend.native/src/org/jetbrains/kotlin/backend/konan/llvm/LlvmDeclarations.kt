@@ -91,7 +91,7 @@ internal data class ClassBodyAndAlignmentInfo(
 private fun ContextUtils.createClassBody(name: String, fields: List<ClassLayoutBuilder.FieldInfo>): ClassBodyAndAlignmentInfo {
     val classType = LLVMStructCreateNamed(LLVMGetModuleContext(llvm.module), name)!!
     val packed = context.config.packFields ||
-        fields.any { LLVMABIAlignmentOfType(runtime.targetData, it.type.toLLVMType(llvm)) != it.alignment }
+        fields.any { LLVMABIAlignmentOfType(runtime.targetData, it.type.toFieldLLVMType(llvm)) != it.alignment }
     val alignment = maxOf(runtime.objectAlignment, fields.maxOfOrNull { it.alignment } ?: 0)
     val indices = mutableMapOf<IrFieldSymbol, Int>()
 
@@ -112,7 +112,7 @@ private fun ContextUtils.createClassBody(name: String, fields: List<ClassLayoutB
                 require(currentOffset % field.alignment == 0L)
             }
             indices[field.irFieldSymbol] = this.size
-            addAndCount(field.type.toLLVMType(llvm))
+            addAndCount(field.type.toFieldLLVMType(llvm))
         }
     }
     LLVMStructSetBody(classType, fieldTypes.toCValues(), fieldTypes.size, if (packed) 1 else 0)
@@ -237,7 +237,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
 
         val packedFields = mutableListOf<IndexedField>()
         for (field in fields) {
-            val size = LLVMStoreSizeOfType(llvm.runtime.targetData, field.type.toLLVMType(llvm))
+            val size = LLVMStoreSizeOfType(llvm.runtime.targetData, field.type.toFieldLLVMType(llvm))
             check(size == 1L || size == 2L || size == 4L || size % 8 == 0L)
             check(min(size, 8L) % field.alignment == 0L)
             val offset = nextOffset(size)

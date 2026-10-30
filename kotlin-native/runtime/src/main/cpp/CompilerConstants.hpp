@@ -30,6 +30,7 @@ extern "C" const int32_t Kotlin_concurrentWeakSweep;
 extern "C" const int32_t Kotlin_gcMarkSingleThreaded;
 extern "C" const int32_t Kotlin_fixedBlockPageSize;
 extern "C" const int32_t Kotlin_pagedAllocator;
+extern "C" const int32_t Kotlin_compressedRefs;
 
 class SourceInfo;
 
@@ -82,6 +83,10 @@ ALWAYS_INLINE inline constexpr int32_t fixedBlockPageSize() noexcept {
 }
 ALWAYS_INLINE inline bool pagedAllocator() noexcept {
     return Kotlin_pagedAllocator != 0;
+}
+
+ALWAYS_INLINE inline bool compressedRefs() noexcept {
+    return Kotlin_compressedRefs != 0;
 }
 
 

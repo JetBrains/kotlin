@@ -114,6 +114,8 @@ class FileCheckHandler(testServices: TestServices) : GroupingStageHandler<Binary
             } else {
                 add("CHECK-BIGBINARY")
             }
+            // NativeCompilerSecondStageFacade does not pass kn.binaryOptions to the compiler, so references are not compressed.
+            add("CHECK-FULLREFS")
         }
         val optMode = when (optimizationMode) {
             OptimizationMode.NO, OptimizationMode.DEBUG -> "DEBUG"

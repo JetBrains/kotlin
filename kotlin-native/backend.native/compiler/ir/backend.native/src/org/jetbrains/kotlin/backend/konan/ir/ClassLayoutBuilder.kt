@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.CodegenLlvmHelpers
 import org.jetbrains.kotlin.backend.konan.llvm.computeFunctionName
 import org.jetbrains.kotlin.backend.konan.llvm.localHash
 import org.jetbrains.kotlin.backend.konan.llvm.needsCacheEntryPointForFinalFakeOverride
+import org.jetbrains.kotlin.backend.konan.llvm.toFieldLLVMType
 import org.jetbrains.kotlin.backend.konan.llvm.toLLVMType
 import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
 import org.jetbrains.kotlin.backend.konan.serialization.ClassFieldsDeserializer
@@ -273,7 +274,7 @@ internal class GlobalHierarchyAnalysis(val context: NativeBackendContext, val ir
 }
 
 internal fun IrField.requiredAlignment(llvm: CodegenLlvmHelpers): Int {
-    val llvmType = type.toLLVMType(llvm)
+    val llvmType = if (isStatic) type.toLLVMType(llvm) else type.toFieldLLVMType(llvm)
     val abiAlignment = if (llvmType == llvm.vector128Type) {
         8 // over-aligned objects are not supported now, and this worked somehow, so let's keep it as it for now
     } else {
@@ -472,7 +473,7 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: NativeBacke
             declaredFields
         else
             declaredFields.sortedByDescending {
-                with(llvm) { LLVMStoreSizeOfType(runtime.targetData, it.type.toLLVMType(this)) }
+                with(llvm) { LLVMStoreSizeOfType(runtime.targetData, it.type.toFieldLLVMType(this)) }
             }
 
         return (superFields + sortedDeclaredFields).also { fields = it }

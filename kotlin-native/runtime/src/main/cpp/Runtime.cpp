@@ -11,6 +11,7 @@
 #include "Logging.hpp"
 #include "ObjCExportInit.h"
 #include "Porting.h"
+#include "ReferenceOps.hpp"
 #include "Runtime.h"
 #include "RuntimePrivate.hpp"
 #include "Worker.h"
@@ -144,6 +145,21 @@ void Kotlin_deinitRuntimeCallback(void* argument) {
   deinitRuntime(state);
 }
 
+PermanentRefFixupNode* permanentRefFixupsHeadNode = nullptr;
+
+void ApplyPermanentRefFixups() {
+  for (auto* node = permanentRefFixupsHeadNode; node != nullptr; node = node->next) {
+    auto table = reinterpret_cast<uintptr_t>(node->fixups);
+    for (size_t i = 0; i < node->count; ++i) {
+      auto* slot = reinterpret_cast<mm::HeapRefSlot*>(table + node->fixups[i].slotOffset);
+      auto* target = reinterpret_cast<ObjHeader*>(table + node->fixups[i].targetOffset);
+      auto offset = reinterpret_cast<uintptr_t>(target) - mm::compressedRefsBase();
+      RuntimeCheck(offset < mm::kCompressedRefsWindowSize, "Permanent object %p is outside of the compressed references window", target);
+      mm::DirectRefAccessor(slot).store(target);
+    }
+  }
+}
+
 }  // namespace
 
 bool kotlin::initializeGlobalRuntimeIfNeeded() noexcept {
@@ -155,6 +171,9 @@ bool kotlin::initializeGlobalRuntimeIfNeeded() noexcept {
     logging::OnRuntimeInit();
     crashHandlerInit();
     initGlobalMemory();
+    if (compiler::compressedRefs()) {
+        ApplyPermanentRefFixups();
+    }
 #if KONAN_OBJC_INTEROP
     Kotlin_ObjCExport_initialize();
 #endif
@@ -173,6 +192,11 @@ RUNTIME_NOTHROW void AppendToInitializersTail(InitNode *next) {
     initTailNode->next = next;
   }
   initTailNode = next;
+}
+
+RUNTIME_NOTHROW void AppendPermanentRefFixups(PermanentRefFixupNode* node) {
+  node->next = permanentRefFixupsHeadNode;
+  permanentRefFixupsHeadNode = node;
 }
 
 PERFORMANCE_INLINE RUNTIME_NOTHROW void Kotlin_initRuntimeIfNeeded() {

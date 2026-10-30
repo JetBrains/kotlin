@@ -21,6 +21,7 @@
 #include "Exceptions.h"
 #include "Memory.h"
 #include "Natives.h"
+#include "ReferenceOps.hpp"
 #include "Types.h"
 
 extern "C" void checkRangeIndexes(KInt from, KInt to, KInt size);
@@ -78,12 +79,16 @@ inline T PrimitiveArrayGet(KConstRef thiz, KInt index) {
   return *PrimitiveArrayAddressOfElementAt<T>(array, index);
 }
 
+PERFORMANCE_INLINE KRef loadArrayElement(const ArrayHeader* array, KInt index) {
+  return kotlin::mm::RefFieldAccessor(ArrayAddressOfElementAt(const_cast<ArrayHeader*>(array), index)).load();
+}
+
 template<bool BoundsCheck = true>
-PERFORMANCE_INLINE const KRef* Kotlin_Array_get_value(KConstRef thiz, KInt index) {
+PERFORMANCE_INLINE KRef Kotlin_Array_get_value(KConstRef thiz, KInt index) {
   const ArrayHeader* array = thiz->array();
   if (BoundsCheck)
     boundsCheck(array, index);
-  return ArrayAddressOfElementAt(array, index);
+  return loadArrayElement(array, index);
 }
 
 template<bool BoundsCheck = true>
@@ -121,11 +126,11 @@ extern const ObjHeader theEmptyArray;
 
 // Array.kt
 OBJ_GETTER(Kotlin_Array_get, KConstRef thiz, KInt index) {
-  RETURN_OBJ(*Kotlin_Array_get_value(thiz, index));
+  RETURN_OBJ(Kotlin_Array_get_value(thiz, index));
 }
 
 OBJ_GETTER(Kotlin_Array_get_without_BoundCheck, KConstRef thiz, KInt index){
-  RETURN_OBJ(*Kotlin_Array_get_value<false>(thiz, index));
+  RETURN_OBJ(Kotlin_Array_get_value<false>(thiz, index));
 }
 
 void Kotlin_Array_set(KRef thiz, KInt index, KConstRef value) {
@@ -161,12 +166,12 @@ void Kotlin_Array_copyImpl(KConstRef thiz, KInt fromIndex,
     if (fromIndex >= toIndex) {
       for (int index = 0; index < count; index++) {
         UpdateHeapRef(ArrayAddressOfElementAt(destinationArray, toIndex + index),
-                        *ArrayAddressOfElementAt(array, fromIndex + index));
+                        loadArrayElement(array, fromIndex + index));
       }
     } else {
       for (int index = count - 1; index >= 0; index--) {
         UpdateHeapRef(ArrayAddressOfElementAt(destinationArray, toIndex + index),
-                        *ArrayAddressOfElementAt(array, fromIndex + index));
+                        loadArrayElement(array, fromIndex + index));
       }
     }
 }

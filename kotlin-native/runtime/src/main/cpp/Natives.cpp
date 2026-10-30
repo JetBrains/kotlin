@@ -115,7 +115,7 @@ void Kotlin_CPointer_CopyMemory(KNativePtr to, KNativePtr from, KInt count) {
   memcpy(to, from, count);
 }
 
-RUNTIME_NOTHROW RUNTIME_PURE KRef* Kotlin_arrayGetElementAddress(KRef array, KInt index) {
+RUNTIME_NOTHROW RUNTIME_PURE mm::HeapRefSlot* Kotlin_arrayGetElementAddress(KRef array, KInt index) {
     ArrayHeader* arr = array->array();
     RuntimeAssert(index >= 0 && static_cast<uint32_t>(index) < arr->count_, "Index %" PRId32 " must be in [0, %" PRIu32 ")", index, arr->count_); 
     return ArrayAddressOfElementAt(arr, index);

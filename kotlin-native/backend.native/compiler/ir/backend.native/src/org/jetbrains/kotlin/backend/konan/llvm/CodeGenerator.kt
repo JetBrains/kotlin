@@ -109,6 +109,12 @@ internal enum class ThreadState {
     Native, Runnable
 }
 
+internal enum class RefLocation {
+    HEAP,
+    GLOBAL,
+    STACK
+}
+
 internal inline fun generateFunction(
         codegen: CodeGenerator,
         function: IrSimpleFunction,
@@ -487,7 +493,7 @@ internal class StackLocalsManagerImpl(
 
     // TODO: find better place?
     private val arrayToElementType = mapOf(
-            irBuiltIns.arrayClass to llvm.pointerType,
+            irBuiltIns.arrayClass to llvm.heapRefSlotType,
             irBuiltIns.byteArray to llvm.int8Type,
             irBuiltIns.charArray to llvm.int16Type,
             irBuiltIns.stringClass to llvm.int16Type,
@@ -748,19 +754,28 @@ internal abstract class FunctionGenerationContext(
             isObjectType: Boolean,
             address: LLVMValueRef,
             isVar: Boolean,
+            location: RefLocation,
             resultSlot: LLVMValueRef? = null,
             name: String = "",
             memoryOrder: LLVMAtomicOrdering? = null,
             alignment: Int? = null
     ): LLVMValueRef {
-        val value = LLVMBuildLoad2(builder, type, address, name)!!
-        memoryOrder?.let { LLVMSetOrdering(value, it) }
-        alignment?.let { LLVMSetAlignment(value, it) }
+        val value = if (isObjectType && location == RefLocation.HEAP && generationState.config.compressedRefs) {
+            decompressRef(load(llvm.int32Type, address, name, memoryOrder, alignment))
+        } else {
+            load(type, address, name, memoryOrder, alignment)
+        }
         if (isObjectType && isVar) {
             val slot = resultSlot ?: alloca(type, isObjectType, variableLocation = null)
             storeStackRef(value, slot)
         }
         return value
+    }
+
+    private fun decompressRef(offset: LLVMValueRef): LLVMValueRef {
+        val base = load(codegen.intPtrType, importGlobal("Kotlin_mm_compressedRefsBase", codegen.intPtrType))
+        val address = intToPtr(add(base, shl(zext(offset, codegen.intPtrType), 3)), llvm.pointerType)
+        return select(icmpEq(offset, llvm.int32(0)), llvm.kNull, address)
     }
 
     fun store(value: LLVMValueRef, ptr: LLVMValueRef, memoryOrder: LLVMAtomicOrdering? = null, alignment: Int? = null) {
@@ -770,16 +785,16 @@ internal abstract class FunctionGenerationContext(
     }
 
     fun storeHeapRef(value: LLVMValueRef, ptr: LLVMValueRef) {
-        updateRef(value, ptr, onStack = false)
+        updateRef(value, ptr, RefLocation.HEAP)
     }
 
     fun storeStackRef(value: LLVMValueRef, ptr: LLVMValueRef) {
-        updateRef(value, ptr, onStack = true)
+        updateRef(value, ptr, RefLocation.STACK)
     }
 
-    fun storeAny(value: LLVMValueRef, ptr: LLVMValueRef, isObjectRef: Boolean, onStack: Boolean, isVolatile: Boolean = false, alignment: Int? = null) {
+    fun storeAny(value: LLVMValueRef, ptr: LLVMValueRef, isObjectRef: Boolean, location: RefLocation, isVolatile: Boolean = false, alignment: Int? = null) {
         when {
-            isObjectRef -> updateRef(value, ptr, onStack, isVolatile, alignment)
+            isObjectRef -> updateRef(value, ptr, location, isVolatile, alignment)
             else -> store(value, ptr, if (isVolatile) LLVMAtomicOrdering.LLVMAtomicOrderingSequentiallyConsistent else null, alignment)
         }
     }
@@ -788,18 +803,17 @@ internal abstract class FunctionGenerationContext(
         call(llvm.updateReturnRefFunction, listOf(address, value))
     }
 
-    private fun updateRef(value: LLVMValueRef, address: LLVMValueRef, onStack: Boolean,
+    private fun updateRef(value: LLVMValueRef, address: LLVMValueRef, location: RefLocation,
                           isVolatile: Boolean = false, alignment: Int? = null) {
-        require(alignment == null || alignment % runtime.pointerAlignment == 0)
-        if (onStack) {
-            require(!isVolatile) { "Stack ref update can't be volatile"}
-            call(llvm.updateStackRefFunction, listOf(address, value))
-        } else {
-            if (isVolatile) {
-                call(llvm.UpdateVolatileHeapRef, listOf(address, value))
-            } else {
-                call(llvm.updateHeapRefFunction, listOf(address, value))
+        val slotType = if (location == RefLocation.HEAP) llvm.heapRefSlotType else llvm.pointerType
+        require(alignment == null || alignment % LLVMABIAlignmentOfType(runtime.targetData, slotType) == 0)
+        when (location) {
+            RefLocation.STACK -> {
+                require(!isVolatile) { "Stack ref update can't be volatile"}
+                call(llvm.updateStackRefFunction, listOf(address, value))
             }
+            RefLocation.HEAP -> call(if (isVolatile) llvm.UpdateVolatileHeapRef else llvm.updateHeapRefFunction, listOf(address, value))
+            RefLocation.GLOBAL -> call(if (isVolatile) llvm.UpdateVolatileGlobalRef else llvm.updateGlobalRefFunction, listOf(address, value))
         }
     }
 

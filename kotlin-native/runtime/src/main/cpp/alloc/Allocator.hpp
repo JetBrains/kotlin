@@ -72,6 +72,8 @@ private:
 };
 
 void initObjectPool() noexcept;
+// Zero-filled memory for permanent objects created by the runtime. It is never freed.
+void* allocateRuntimePermanentObject(size_t size) noexcept;
 // Instruct the allocator to free unused resources.
 void compactObjectPoolInCurrentThread() noexcept;
 

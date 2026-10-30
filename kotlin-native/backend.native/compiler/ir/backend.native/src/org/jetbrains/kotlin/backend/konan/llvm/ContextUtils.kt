@@ -419,6 +419,7 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
     val allocArrayFunction = importRtFunction("AllocArrayInstance", true)
     val registerGlobalFunction = importRtFunction("RegisterGlobal", false)
     val updateHeapRefFunction = importRtFunction("UpdateHeapRef", false)
+    val updateGlobalRefFunction = importRtFunction("UpdateGlobalRef", false)
     val updateStackRefFunction = importRtFunction("UpdateStackRef", false)
     val updateReturnRefFunction = importRtFunction("UpdateReturnRef", false)
     val zeroHeapRefFunction = importRtFunction("ZeroHeapRef", false)
@@ -433,6 +434,7 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
     val getTypeInfo = importRtFunction("Kotlin_Any_getTypeInfo", false)
     val throwExceptionFunction = importRtFunction("ThrowException", false)
     val appendToInitalizersTail = importRtFunction("AppendToInitializersTail", false)
+    val appendPermanentRefFixups = importRtFunction("AppendPermanentRefFixups", false)
     val callInitGlobalPossiblyLock = importRtFunction("CallInitGlobalPossiblyLock", false)
     val callInitThreadLocal = importRtFunction("CallInitThreadLocal", false)
     val addTLSRecord = importRtFunction("AddTLSRecord", false)
@@ -497,6 +499,10 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
     val CompareAndSetVolatileHeapRef by lazy { importRtFunction("CompareAndSetVolatileHeapRef", false) }
     val CompareAndSwapVolatileHeapRef by lazy { importRtFunction("CompareAndSwapVolatileHeapRef", true) }
     val GetAndSetVolatileHeapRef by lazy { importRtFunction("GetAndSetVolatileHeapRef", true) }
+    val UpdateVolatileGlobalRef by lazy { importRtFunction("UpdateVolatileGlobalRef", false) }
+    val CompareAndSetVolatileGlobalRef by lazy { importRtFunction("CompareAndSetVolatileGlobalRef", false) }
+    val CompareAndSwapVolatileGlobalRef by lazy { importRtFunction("CompareAndSwapVolatileGlobalRef", true) }
+    val GetAndSetVolatileGlobalRef by lazy { importRtFunction("GetAndSetVolatileGlobalRef", true) }
 
     // TODO: Consider implementing them directly in the code generator.
     val Kotlin_arrayGetElementAddress by lazy { importRtFunction("Kotlin_arrayGetElementAddress", false) }
@@ -522,6 +528,7 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
     val vector128Type = LLVMVectorType(floatType, 4)!!
     val voidType = LLVMVoidTypeInContext(llvmContext)!!
     val pointerType = runtime.pointerType
+    val heapRefSlotType = if (generationState.config.compressedRefs) int32Type else pointerType
 
     fun structType(vararg types: LLVMTypeRef): LLVMTypeRef = structType(types.toList())
 

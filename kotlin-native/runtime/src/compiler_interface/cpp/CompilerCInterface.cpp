@@ -33,6 +33,9 @@ touchType(ArrayHeader)
 touchType(StringHeader)
 touchType(FrameOverlay)
 
+touchType(PermanentRefFixup);
+touchType(PermanentRefFixupNode);
+
 touchFunction(AllocInstance)
 touchFunction(AllocArrayInstance)
 touchFunction(RegisterGlobal)
@@ -42,6 +45,11 @@ touchFunction(UpdateVolatileHeapRef)
 touchFunction(CompareAndSwapVolatileHeapRef)
 touchFunction(CompareAndSetVolatileHeapRef)
 touchFunction(GetAndSetVolatileHeapRef)
+touchFunction(UpdateGlobalRef)
+touchFunction(UpdateVolatileGlobalRef)
+touchFunction(CompareAndSwapVolatileGlobalRef)
+touchFunction(CompareAndSetVolatileGlobalRef)
+touchFunction(GetAndSetVolatileGlobalRef)
 touchFunction(UpdateReturnRef)
 touchFunction(ZeroHeapRef)
 touchFunction(ZeroArrayRefs)
@@ -60,6 +68,7 @@ touchFunction(ThrowException)
 touchFunction(Kotlin_getExceptionObject)
 
 touchFunction(AppendToInitializersTail)
+touchFunction(AppendPermanentRefFixups)
 touchFunction(CallInitGlobalPossiblyLock)
 touchFunction(CallInitThreadLocal)
 
