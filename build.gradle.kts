@@ -491,6 +491,7 @@ tasks {
             dependsOn(":kotlin-native:libclangInterop:check")
             dependsOn(":kotlin-native:libllvmext:check")
             dependsOn(":kotlin-native:llvmInterop:check")
+            dependsOn(":native:cli-native:check")
         }
     }
 
