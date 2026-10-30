@@ -3085,6 +3085,12 @@ public class FirOutOfContentRootWithDependenciesLazyDeclarationResolveTestGenera
     }
 
     @Test
+    @TestMetadata("aliasedAnnotationWithDeprecated.kt")
+    public void testAliasedAnnotationWithDeprecated() {
+      run("aliasedAnnotationWithDeprecated.kt");
+    }
+
+    @Test
     @TestMetadata("aliasedMetaAnnotation.kt")
     public void testAliasedMetaAnnotation() {
       run("aliasedMetaAnnotation.kt");

@@ -1,0 +1,30 @@
+FILE: aliasedAnnotationOnLocalClass.kt
+    public final typealias MyTypeAlias = R|org/jetbrains/kotlin/plugin/sandbox/AllOpen2|
+    @R|{MyTypeAlias=} org/jetbrains/kotlin/plugin/sandbox/AllOpen2|() public final class TopLevel : R|kotlin/Any| {
+        public constructor(): R|TopLevel| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class TopLevelSub : R|TopLevel| {
+        public constructor(): R|TopLevelSub| {
+            super<R|TopLevel|>()
+        }
+
+    }
+    public final fun test(): R|kotlin/Unit| {
+        @R|{MyTypeAlias=} org/jetbrains/kotlin/plugin/sandbox/AllOpen2|() local open class Local : R|kotlin/Any| {
+            public constructor(): R|<local>/Local| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        local open class LocalSub : R|<local>/Local| {
+            public constructor(): R|<local>/LocalSub| {
+                super<R|<local>/Local|>()
+            }
+
+        }
+
+    }
