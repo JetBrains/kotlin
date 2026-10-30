@@ -5,13 +5,17 @@
 
 package org.jetbrains.kotlin.psi.stubs.factories
 
+import com.intellij.lang.LighterAST
+import com.intellij.lang.LighterASTNode
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
 import com.intellij.psi.tree.IElementType
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtValueArgument
 import org.jetbrains.kotlin.psi.stubs.KotlinValueArgumentStub
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinValueArgumentStubImpl
+import org.jetbrains.kotlin.psi.stubs.light.firstChildOfType
 
 /**
  * A factory for elements which represent an argument of a call.
@@ -30,6 +34,16 @@ internal class KtValueArgumentStubSerializingElementFactory<Psi : KtValueArgumen
         parent = parentStub,
         elementType = type,
         isSpread = psi.isSpread,
+    )
+
+    override fun createStub(
+        tree: LighterAST,
+        node: LighterASTNode,
+        parentStub: StubElement<*>,
+    ): KotlinValueArgumentStubImpl<Psi> = KotlinValueArgumentStubImpl(
+        parent = parentStub,
+        elementType = type,
+        isSpread = tree.firstChildOfType(node, KtTokens.MUL) != null,
     )
 
     override fun serialize(stub: KotlinValueArgumentStubImpl<Psi>, dataStream: StubOutputStream) {
