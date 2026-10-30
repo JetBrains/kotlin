@@ -153,6 +153,7 @@ import org.jetbrains.kotlin.syntax.NO_ID
 import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.syntax.SyntaxId
 import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
+import org.jetbrains.kotlin.syntax.syntaxIdSetOf
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
@@ -3346,7 +3347,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
 
     private fun Node.isExpression(): Boolean = toTokenId().isExpression()
 
-    private val scriptDeclarationTokensId = setOf(
+    private val scriptDeclarationTokensId = syntaxIdSetOf(
         KotlinSyntaxNodeTypeIds.CLASS, KotlinSyntaxNodeTypeIds.FUNCTION, KotlinSyntaxNodeTypeIds.PROPERTY,
         KotlinSyntaxNodeTypeIds.TYPEALIAS, KotlinSyntaxNodeTypeIds.OBJECT_DECLARATION, KotlinSyntaxNodeTypeIds.CLASS_INITIALIZER,
         KotlinSyntaxNodeTypeIds.MODIFIER_LIST, KotlinSyntaxNodeTypeIds.SCRIPT_INITIALIZER, KotlinSyntaxNodeTypeIds.DESTRUCTURING_DECLARATION

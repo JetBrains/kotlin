@@ -313,5 +313,35 @@ public final class org/jetbrains/kotlin/syntax/KotlinSyntaxTokenIds {
 
 public final class org/jetbrains/kotlin/syntax/SyntaxIdKt {
 	public static final field NO_ID I
+	public static final fun asSyntaxIdSet (Ljava/lang/Iterable;)Lorg/jetbrains/kotlin/syntax/SyntaxIdSet;
+	public static final fun getEmptySyntaxIdSet ()Lorg/jetbrains/kotlin/syntax/SyntaxIdSet;
+	public static final fun syntaxIdSetOf ([I)Lorg/jetbrains/kotlin/syntax/SyntaxIdSet;
+}
+
+public final class org/jetbrains/kotlin/syntax/SyntaxIdSet : java/util/Set, kotlin/jvm/internal/markers/KMappedMarker {
+	public fun add (I)Z
+	public synthetic fun add (Ljava/lang/Object;)Z
+	public fun addAll (Ljava/util/Collection;)Z
+	public fun clear ()V
+	public fun contains (I)Z
+	public final fun contains (Ljava/lang/Object;)Z
+	public fun containsAll (Ljava/util/Collection;)Z
+	public final fun containsNullable (Ljava/lang/Integer;)Z
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getSize ()I
+	public fun hashCode ()I
+	public fun isEmpty ()Z
+	public fun iterator ()Ljava/util/Iterator;
+	public final fun minus (I)Lorg/jetbrains/kotlin/syntax/SyntaxIdSet;
+	public final fun minus (Ljava/lang/Iterable;)Lorg/jetbrains/kotlin/syntax/SyntaxIdSet;
+	public final fun plus (I)Lorg/jetbrains/kotlin/syntax/SyntaxIdSet;
+	public final fun plus (Ljava/lang/Iterable;)Lorg/jetbrains/kotlin/syntax/SyntaxIdSet;
+	public fun remove (Ljava/lang/Object;)Z
+	public fun removeAll (Ljava/util/Collection;)Z
+	public fun retainAll (Ljava/util/Collection;)Z
+	public final fun size ()I
+	public fun toArray ()[Ljava/lang/Object;
+	public fun toArray ([Ljava/lang/Object;)[Ljava/lang/Object;
+	public fun toString ()Ljava/lang/String;
 }
 

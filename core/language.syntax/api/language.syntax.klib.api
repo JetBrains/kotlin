@@ -6,6 +6,24 @@
 // - Show declarations: true
 
 // Library unique name: <org.jetbrains.kotlin:language.syntax>
+final class org.jetbrains.kotlin.syntax/SyntaxIdSet : kotlin.collections/Set<kotlin/Int> { // org.jetbrains.kotlin.syntax/SyntaxIdSet|null[0]
+    final val size // org.jetbrains.kotlin.syntax/SyntaxIdSet.size|{}size[0]
+        final fun <get-size>(): kotlin/Int // org.jetbrains.kotlin.syntax/SyntaxIdSet.size.<get-size>|<get-size>(){}[0]
+
+    final fun contains(kotlin/Int): kotlin/Boolean // org.jetbrains.kotlin.syntax/SyntaxIdSet.contains|contains(kotlin.Int){}[0]
+    final fun contains(kotlin/Int?): kotlin/Boolean // org.jetbrains.kotlin.syntax/SyntaxIdSet.contains|contains(kotlin.Int?){}[0]
+    final fun containsAll(kotlin.collections/Collection<kotlin/Int>): kotlin/Boolean // org.jetbrains.kotlin.syntax/SyntaxIdSet.containsAll|containsAll(kotlin.collections.Collection<kotlin.Int>){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // org.jetbrains.kotlin.syntax/SyntaxIdSet.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // org.jetbrains.kotlin.syntax/SyntaxIdSet.hashCode|hashCode(){}[0]
+    final fun isEmpty(): kotlin/Boolean // org.jetbrains.kotlin.syntax/SyntaxIdSet.isEmpty|isEmpty(){}[0]
+    final fun iterator(): kotlin.collections/Iterator<kotlin/Int> // org.jetbrains.kotlin.syntax/SyntaxIdSet.iterator|iterator(){}[0]
+    final fun minus(kotlin.collections/Iterable<kotlin/Int>): org.jetbrains.kotlin.syntax/SyntaxIdSet // org.jetbrains.kotlin.syntax/SyntaxIdSet.minus|minus(kotlin.collections.Iterable<kotlin.Int>){}[0]
+    final fun minus(kotlin/Int): org.jetbrains.kotlin.syntax/SyntaxIdSet // org.jetbrains.kotlin.syntax/SyntaxIdSet.minus|minus(kotlin.Int){}[0]
+    final fun plus(kotlin.collections/Iterable<kotlin/Int>): org.jetbrains.kotlin.syntax/SyntaxIdSet // org.jetbrains.kotlin.syntax/SyntaxIdSet.plus|plus(kotlin.collections.Iterable<kotlin.Int>){}[0]
+    final fun plus(kotlin/Int): org.jetbrains.kotlin.syntax/SyntaxIdSet // org.jetbrains.kotlin.syntax/SyntaxIdSet.plus|plus(kotlin.Int){}[0]
+    final fun toString(): kotlin/String // org.jetbrains.kotlin.syntax/SyntaxIdSet.toString|toString(){}[0]
+}
+
 final object org.jetbrains.kotlin.syntax/BasicSyntaxElementTypeIds { // org.jetbrains.kotlin.syntax/BasicSyntaxElementTypeIds|null[0]
     final const val BAD_CHARACTER // org.jetbrains.kotlin.syntax/BasicSyntaxElementTypeIds.BAD_CHARACTER|{}BAD_CHARACTER[0]
         final fun <get-BAD_CHARACTER>(): kotlin/Int // org.jetbrains.kotlin.syntax/BasicSyntaxElementTypeIds.BAD_CHARACTER.<get-BAD_CHARACTER>|<get-BAD_CHARACTER>(){}[0]
@@ -609,3 +627,9 @@ final object org.jetbrains.kotlin.syntax/KotlinSyntaxTokenIds { // org.jetbrains
 
 final const val org.jetbrains.kotlin.syntax/NO_ID // org.jetbrains.kotlin.syntax/NO_ID|{}NO_ID[0]
     final fun <get-NO_ID>(): kotlin/Int // org.jetbrains.kotlin.syntax/NO_ID.<get-NO_ID>|<get-NO_ID>(){}[0]
+
+final val org.jetbrains.kotlin.syntax/emptySyntaxIdSet // org.jetbrains.kotlin.syntax/emptySyntaxIdSet|{}emptySyntaxIdSet[0]
+    final fun <get-emptySyntaxIdSet>(): org.jetbrains.kotlin.syntax/SyntaxIdSet // org.jetbrains.kotlin.syntax/emptySyntaxIdSet.<get-emptySyntaxIdSet>|<get-emptySyntaxIdSet>(){}[0]
+
+final fun (kotlin.collections/Iterable<kotlin/Int>).org.jetbrains.kotlin.syntax/asSyntaxIdSet(): org.jetbrains.kotlin.syntax/SyntaxIdSet // org.jetbrains.kotlin.syntax/asSyntaxIdSet|asSyntaxIdSet@kotlin.collections.Iterable<kotlin.Int>(){}[0]
+final fun org.jetbrains.kotlin.syntax/syntaxIdSetOf(kotlin/IntArray...): org.jetbrains.kotlin.syntax/SyntaxIdSet // org.jetbrains.kotlin.syntax/syntaxIdSetOf|syntaxIdSetOf(kotlin.IntArray...){}[0]

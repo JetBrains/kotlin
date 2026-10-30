@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.syntax
 
 import org.junit.jupiter.api.Test
-import kotlin.reflect.full.declaredMemberProperties
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -16,20 +15,9 @@ class SyntaxIdsTest {
         val ids = buildMap {
             assertConst(::NO_ID.isConst, "NO_ID")
             put("NO_ID", NO_ID)
-            for (holder in listOf(
-                BasicSyntaxElementTypeIds::class,
-                KotlinSyntaxTokenIds::class,
-                KotlinSyntaxNodeTypeIds::class,
-                KDocSyntaxTokenIds::class,
-                KDocSyntaxNodeTypeIds::class,
-            )) {
-                val properties = holder.declaredMemberProperties
-                assertTrue(properties.isNotEmpty(), "No IDs found in ${holder.simpleName}")
-                for (property in properties) {
-                    val name = "${holder.simpleName}.${property.name}"
-                    assertConst(property.isConst, name)
-                    put(name, property.getter.call() as SyntaxId)
-                }
+            for (property in collectSyntaxIdProperties()) {
+                assertConst(property.isConst, property.name)
+                put(property.name, property.value)
             }
         }
 

@@ -47,7 +47,7 @@ types to be compiled into fast table/lookup switches.
 * IDs are contiguous and start from `NO_ID` (`0`). The first ID of each object continues the last ID of the previous
   one (`BasicSyntaxElementTypeIds` → `KotlinSyntaxTokenIds` → `KotlinSyntaxNodeTypeIds` → `KDocSyntaxTokenIds` →
   `KDocSyntaxNodeTypeIds`). Remember to update the first constant of the next object after adding a new identifier.
-* Keep the IDs compact, without gaps or reserved ranges: the upcoming `SyntaxIdSet` is supposed to store IDs as bits
+* Keep the IDs compact, without gaps or reserved ranges: `SyntaxIdSet` stores IDs as bits
   indexed by their values, so its size and efficiency depend on the maximum ID.
 * All identifiers are compile-time constants (`const val`): the compiler computes their values and inlines them at
   every use site. So the cross-object references above (e.g., the first ID of `KotlinSyntaxNodeTypeIds` refers to the

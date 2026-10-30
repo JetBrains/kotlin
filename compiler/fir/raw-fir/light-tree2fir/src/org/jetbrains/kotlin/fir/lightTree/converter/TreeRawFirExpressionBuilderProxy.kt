@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.syntax.NO_ID
 import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
 import org.jetbrains.kotlin.syntax.SyntaxId
+import org.jetbrains.kotlin.syntax.syntaxIdSetOf
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -461,11 +462,11 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
     }
 
     companion object {
-        private val unwrappableTokenTypes: Set<SyntaxId> = setOf(
+        private val unwrappableTokenTypes = syntaxIdSetOf(
             KotlinSyntaxNodeTypeIds.PARENTHESIZED, KotlinSyntaxNodeTypeIds.LABELED_EXPRESSION, KotlinSyntaxNodeTypeIds.ANNOTATED_EXPRESSION
         )
 
-        private val inOperationsId = setOf(KotlinSyntaxTokenIds.IN_MODIFIER, KotlinSyntaxTokenIds.NOT_IN)
+        private val inOperationsId = syntaxIdSetOf(KotlinSyntaxTokenIds.IN_MODIFIER, KotlinSyntaxTokenIds.NOT_IN)
 
         private val ktTokenToBinaryOperationNameMap: Map<Int, Name> = hashMapOf(
             KotlinSyntaxTokenIds.MUL to OperatorNameConventions.TIMES,
@@ -509,12 +510,12 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
             KotlinSyntaxTokenIds.AS_SAFE to FirOperation.SAFE_AS,
         )
 
-        private val incrementOperations: Set<SyntaxId> = setOf(
+        private val incrementOperations = syntaxIdSetOf(
             KotlinSyntaxTokenIds.PLUSPLUS,
             KotlinSyntaxTokenIds.MINUSMINUS,
         )
 
-        private val comparisonOperationsId: Set<SyntaxId> = hashSetOf(
+        private val comparisonOperationsId = syntaxIdSetOf(
             KotlinSyntaxTokenIds.LT,
             KotlinSyntaxTokenIds.LTEQ,
             KotlinSyntaxTokenIds.GTEQ,
