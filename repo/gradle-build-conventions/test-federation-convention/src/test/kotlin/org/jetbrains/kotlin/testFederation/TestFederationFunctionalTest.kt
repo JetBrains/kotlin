@@ -932,7 +932,7 @@ private fun createGradleRunner(
     val gradleUserHome = System.getenv("GRADLE_USER_HOME") ?: error("Missing 'GRADLE_USER_HOME' environment variable")
     return GradleRunner.create()
         .withProjectDir(Path("").toAbsolutePath().toFile())
-        .withEnvironment(System.getenv() + environment)
+        .withEnvironment(environment)
         .withTestKitDir(File(gradleUserHome))
         .forwardOutput()
 }
