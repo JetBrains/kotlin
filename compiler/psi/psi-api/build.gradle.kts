@@ -29,6 +29,8 @@ dependencies {
 
     testFixturesImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(testFixtures(project(":compiler:tests-common")))
+    testImplementation(project(":compiler:multiplatform-parsing"))
+    testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect"))
     testFixturesCompileOnly(intellijCore())
     testCompileOnly(intellijCore())
 }

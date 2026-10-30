@@ -3,27 +3,28 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.kmp.utils
+package org.jetbrains.kotlin
 
 import com.intellij.platform.syntax.SyntaxElementType
 import com.intellij.psi.tree.IElementType
-import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.junit.jupiter.api.Test
 import kotlin.reflect.KProperty
 import kotlin.test.assertEquals
 
-class PsiTokenUtilsTest {
+@OptIn(KtImplementationDetail::class)
+class PsiKmpSyntaxIdsConsistencyTest {
     @Suppress("UnstableApiUsage")
     @Test
-    fun testElementTypeKmpIds() {
+    fun nodeTypes() {
         val psiFields = KtNodeTypes::class.java.declaredFields
         val kmpFields = org.jetbrains.kotlin.kmp.parser.KtNodeTypes::class.members.filterIsInstance<KProperty<*>>().filter { !it.isConst }
 
         psiFields.forEach { psiField ->
             val psiNodeType = psiField.get(null) as IElementType
-            val psiId = psiNodeType.kmpId()
+            val psiId = psiNodeType.syntaxId()
             if (psiField.isAnnotationPresent(java.lang.Deprecated::class.java)) return@forEach
 
             val kmpField = kmpFields.find { it.name == psiField.name }
@@ -41,13 +42,13 @@ class PsiTokenUtilsTest {
 
     @Suppress("UnstableApiUsage")
     @Test
-    fun testTokenKmpIds() {
+    fun tokens() {
         val psiFields = KtTokens::class.java.declaredFields.filter { !it.type.isPrimitive }
         val kmpFields = org.jetbrains.kotlin.kmp.lexer.KtTokens::class.members.filterIsInstance<KProperty<*>>().filter { !it.isConst }
 
         psiFields.forEach { psiField ->
             val psiNodeType = psiField.get(null) as? KtToken ?: return@forEach
-            val psiId = psiNodeType.kmpId()
+            val psiId = psiNodeType.syntaxId()
             if (psiField.isAnnotationPresent(java.lang.Deprecated::class.java)) return@forEach
 
             val kmpField = kmpFields.find { it.name == psiField.name || it.name.replace("_MODIFIER", "_KEYWORD") == psiField.name }
