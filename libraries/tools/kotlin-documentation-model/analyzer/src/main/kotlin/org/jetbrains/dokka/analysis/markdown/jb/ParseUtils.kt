@@ -26,7 +26,7 @@ internal fun String.parseHtmlEncodedWithNormalisedSpaces(
                 accum.append(' ')
                 lastWasWhite = true
             }
-        } else if (Compat.codePointToString(c).let { it != Entities.escape(it) }) {
+        } else if (c.isHtmlEscapedInText()) {
             accum.toString().takeIf { it.isNotBlank() }?.let { tags.add(Text(it)) }
             accum.delete(0, accum.length)
 
@@ -41,3 +41,8 @@ internal fun String.parseHtmlEncodedWithNormalisedSpaces(
     accum.toString().takeIf { it.isNotBlank() }?.let { tags.add(Text(it)) }
     return tags
 }
+
+// `Entities.escape` also escapes quotes, as required in attribute values;
+// they don't need escaping in text content.
+private fun Int.isHtmlEscapedInText(): Boolean =
+    this != '"'.code && this != '\''.code && Compat.codePointToString(this).let { it != Entities.escape(it) }

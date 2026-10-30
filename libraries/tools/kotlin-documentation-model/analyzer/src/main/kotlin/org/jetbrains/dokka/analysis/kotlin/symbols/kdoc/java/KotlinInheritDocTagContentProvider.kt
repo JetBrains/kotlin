@@ -30,6 +30,6 @@ internal class KotlinInheritDocTagContentProvider(
             parseWithChildren = false
         )
         val id = docTagParserContext.store(inheritedDocNode)
-        return """<inheritdoc id="$id"/>"""
+        return """<inheritdoc id="$id"></inheritdoc>"""
     }
 }
