@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.utils.getMostDeepValueClassUnderlyingType
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.builders.IrBlockBuilder
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irIfThenElse
@@ -22,7 +24,6 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrBody
-import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
@@ -44,6 +45,8 @@ class WasmDefaultParameterInjector(
     context: WasmBackendContext
 ) : DefaultParameterInjector<WasmBackendContext>(context, WasmMaskedDefaultArgumentFunctionFactory(context), skipExternalMethods = true) {
     private val intOrSymbol by lazy { context.irBuiltIns.intClass.getSimpleFunction(OperatorNameConventions.OR.asString())!! }
+    private val isUndefined = context.wasmSymbols.jsRelatedSymbols.jsIsUndefined
+    private val intType = context.irBuiltIns.intType
     private lateinit var container: IrDeclaration
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
@@ -64,31 +67,52 @@ class WasmDefaultParameterInjector(
     override fun shouldReplaceWithSyntheticFunction(functionAccess: IrFunctionAccessExpression): Boolean =
         functionAccess.origin == JS_EXPORT_ADAPTER_CALL || super.shouldReplaceWithSyntheticFunction(functionAccess)
 
-    override fun visitCall(expression: IrCall): IrExpression {
-        val stubCall = super.visitCall(expression)
-        if (expression.origin != JS_EXPORT_ADAPTER_CALL || stubCall === expression) return stubCall
+    override fun argumentsForCall(
+        builder: IrBlockBuilder,
+        expression: IrFunctionAccessExpression,
+        stubFunction: IrFunction,
+    ): Map<IrValueParameter, IrExpression?> {
+        if (expression.origin != JS_EXPORT_ADAPTER_CALL) {
+            return super.argumentsForCall(builder, expression, stubFunction)
+        }
 
-        // All the arguments are passed, so set the bits of the ones omitted in JS at runtime,
-        // checking the parameters of the adapter, which correspond to the parameters of the function.
-        stubCall as IrCall
-        val adapter = container as IrFunction
-        val isUndefined = context.wasmSymbols.jsRelatedSymbols.jsInteropAdapters.jsIsUndefinedAdapter
-        val intType = context.irBuiltIns.intType
-        val masks = stubCall.symbol.owner.parameters.filter { it.origin == IrDeclarationOrigin.MASK_FOR_DEFAULT_FUNCTION }
+        val result = mutableMapOf<IrValueParameter, IrExpression?>()
+        expression.arguments.forEachIndexed { index, expression ->
+            result[stubFunction.parameters[index]] = expression
+        }
+
+        val container = container as IrFunction
+        val masks = stubFunction.parameters.filter { it.origin == IrDeclarationOrigin.MASK_FOR_DEFAULT_FUNCTION }
         val defaultableParameters = expression.symbol.owner.parameters.filter { it.canHaveDefaultValue() }
-        with(context.createIrBuilder(adapter.symbol)) {
+        with(context.createIrBuilder(container.symbol)) {
             for ([mask, parameters] in masks zip defaultableParameters.chunked(32)) {
-                val maskValue = parameters.foldIndexed<IrValueParameter, IrExpression>(irInt(0)) { bit, value, parameter ->
+                val maskValue = parameters.foldIndexed<IrValueParameter, IrExpression?>(null) { bit, value, parameter ->
                     if (parameter.defaultValue == null) return@foldIndexed value
-                    val isOmitted = irCall(isUndefined).also { it.arguments[0] = irGet(adapter.parameters[parameter.indexInParameters]) }
-                    irCall(intOrSymbol).also {
-                        it.arguments[0] = value
-                        it.arguments[1] = irIfThenElse(intType, isOmitted, irInt(1 shl bit), irInt(0))
+                    val isOmitted = irCall(isUndefined).also {
+                        it.arguments[0] = irGet(container.parameters[parameter.indexInParameters])
                     }
+
+                    val bitIfOmitted = irIfThenElse(
+                        type = intType,
+                        condition = isOmitted,
+                        thenPart = irInt(1 shl bit),
+                        elsePart = irInt(0)
+                    )
+
+                    value?.let {
+                        irCall(intOrSymbol).also {
+                            it.arguments[0] = it
+                            it.arguments[1] = bitIfOmitted
+                        }
+                    } ?: bitIfOmitted
                 }
-                stubCall.arguments[mask.indexInParameters] = maskValue
+                result[mask] = maskValue ?: irInt(0)
             }
         }
-        return stubCall
+
+        val handler = stubFunction.parameters.single { it.origin == IrDeclarationOrigin.METHOD_HANDLER_IN_DEFAULT_FUNCTION }
+        result[handler] = nullConst(UNDEFINED_OFFSET, UNDEFINED_OFFSET, handler)
+
+        return result
     }
 }

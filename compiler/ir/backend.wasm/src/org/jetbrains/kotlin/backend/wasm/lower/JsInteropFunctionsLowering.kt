@@ -454,7 +454,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         // `undefined` is adapted to `null`, any other value is received as a nullable JS reference and checked for `null` if needed.
         if (kind == JsValueKind.OPTIONAL_PARAMETER) {
             val adapter = makeNullable().jsToKotlinAdapterIfNeeded(JsValueKind.PARAMETER)!!
-            return UndefinedOrAdapter(if (isNullable()) adapter else CombineAdapter(CheckNotNullNoAdapter(this), adapter))
+            return UndefinedOrAdapter(if (isNullable()) adapter else CombineAdapter(CheckNotNullNoAdapter(this), adapter), this)
         }
 
         val notNullType = makeNotNull()
@@ -919,20 +919,27 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
     }
 
     /**
-     * Effectively `if (value === undefined) null else adapter(value)`
+     * Effectively `if (value === undefined) default(valueType) else adapter(value)`
      */
     inner class UndefinedOrAdapter(
-        private val adapter: InteropTypeAdapter
+        private val adapter: InteropTypeAdapter,
+        override val toType: IrType,
     ) : InteropTypeAdapter {
-        override val fromType: IrType = adapter.fromType.makeNullable()
-        override val toType: IrType = adapter.toType.makeNullable()
+        override val fromType: IrType = adapter.fromType
+
         override fun adapt(expression: IrExpression, builder: IrBuilderWithScope): IrExpression {
             return builder.irComposite {
+                val defaultValue = if (toType.isPrimitiveType(nullable = false)) {
+                    defaultValueForType(toType, this)
+                } else {
+                    irNull(toType)
+                }
+
                 val tmp = irTemporary(expression)
                 +irIfThenElse(
                     type = toType,
-                    condition = irCall(adapters.jsIsUndefinedAdapter).also { it.arguments[0] = irGet(tmp) },
-                    thenPart = irNull(toType),
+                    condition = irCall(jsRelatedSymbols.jsIsUndefined).also { it.arguments[0] = irGet(tmp) },
+                    thenPart = defaultValue,
                     elsePart = irImplicitCast(adapter.adapt(irGet(tmp), builder), toType)
                 )
             }
