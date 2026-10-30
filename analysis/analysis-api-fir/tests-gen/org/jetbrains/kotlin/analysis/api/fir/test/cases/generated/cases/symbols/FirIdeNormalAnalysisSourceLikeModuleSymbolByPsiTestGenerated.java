@@ -651,6 +651,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleSymbolByPsiTestGenerated extend
   }
 
   @Test
+  @TestMetadata("valueClassCompanionBlockMembers.kt")
+  public void testValueClassCompanionBlockMembers() {
+    run("valueClassCompanionBlockMembers.kt");
+  }
+
+  @Test
   @TestMetadata("valueClassInSignature.kt")
   public void testValueClassInSignature() {
     run("valueClassInSignature.kt");
