@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 import org.jetbrains.kotlin.utils.sure
 import java.io.File
 
-open class GeneratedFile(
+open class GeneratedFile @JvmOverloads constructor(
     sourceFiles: Collection<File>,
     val outputFile: File,
     compilerGeneratedSyntheticSources: Set<File> = emptySet(),
