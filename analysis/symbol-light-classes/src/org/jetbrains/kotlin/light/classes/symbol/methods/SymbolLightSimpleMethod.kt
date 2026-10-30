@@ -249,6 +249,7 @@ internal open class SymbolLightSimpleMethod protected constructor(
             val isNonMaterializableInlineClassFunction = !suppressInlineClass &&
                     // Static methods should be materialized even inside inline classes if possible
                     !staticsFromCompanion &&
+                    !functionSymbol.isCompanion &&
                     containingClass.isInlineClass &&
                     // Overrides are materialized by default
                     !functionSymbol.isOverride

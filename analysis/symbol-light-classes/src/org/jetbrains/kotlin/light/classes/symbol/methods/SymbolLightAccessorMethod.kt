@@ -501,8 +501,9 @@ internal class SymbolLightAccessorMethod private constructor(
                     )
 
             val isNonMaterializableInlineClassProperty =
-                // Accessors with JvmStatic should be materialized inside the containing inline class
+                // Static accessors, with JvmStatic or of companion block properties, are materialized inside the containing inline class
                 !context.staticsFromCompanion &&
+                        !property.isCompanion &&
                         context.destinationLightClass.isInlineClass &&
                         // Constructor properties are materialized by default
                         (property as? KaKotlinPropertySymbol)?.primaryConstructorParameter == null &&

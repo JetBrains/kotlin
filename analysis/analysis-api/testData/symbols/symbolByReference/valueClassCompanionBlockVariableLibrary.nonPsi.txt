@@ -69,7 +69,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: ValueClass
     getContainingModule: KaLibraryModule "Library lib"
     deprecation: null
-    javaMethodName: null
+    javaMethodName: getStatic1
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -207,7 +207,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: ValueClass
     getContainingModule: KaLibraryModule "Library lib"
     deprecation: null
-    javaMethodName: null
+    javaMethodName: setStatic1
     importableFqName: null
   typeParameters: []
   visibility: PUBLIC

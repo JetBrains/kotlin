@@ -907,7 +907,7 @@ private fun hasMangledNameDueToInlineClasses(symbol: KaCallableSymbol): Boolean 
         isTopLevel = owner == null,
     )
 
-    return isMangledBySignature || isNonMaterializedInlineClassMember(symbol, owner)
+    return isMangledBySignature || isNonMaterializedInlineClassMember(declaration, owner)
 }
 
 /**
@@ -947,24 +947,31 @@ private fun jvmMethodOwner(symbol: KaCallableSymbol): KaDeclarationSymbol? {
 }
 
 /**
- * Whether [symbol] is a member of an inline class that is replaced with a static `-impl` method instead of being materialized as is.
+ * Whether [declaration] is a member of an inline class that is replaced with a static `-impl` method instead of being materialized as is.
+ *
+ * Every member of an inline class is replaced, except for:
+ * - Companion block members, which have no instance to unbox, so they are compiled to plain static methods.
+ * - Overrides, as a member that implements a supertype member keeps an unmangled bridge method.
+ * - The underlying property, which is materialized as a field, so its getter is not replaced.
+ *
+ * For a property accessor, the caller must pass its property as [declaration]: none of the exceptions above recognizes an accessor,
+ * so it would always be reported as replaced.
  */
 context(_: KaSession)
-private fun isNonMaterializedInlineClassMember(symbol: KaCallableSymbol, owner: KaDeclarationSymbol?): Boolean {
-    if (owner !is KaNamedClassSymbol || !owner.isInline) return false
-
-    // A member that implements a supertype member keeps an unmangled bridge method
-    val isOverride = when (symbol) {
-        is KaNamedFunctionSymbol -> symbol.isOverride
-        is KaPropertyAccessorSymbol -> (symbol.containingDeclaration as? KaPropertySymbol)?.isOverride == true
+private fun isNonMaterializedInlineClassMember(declaration: KaCallableSymbol, owner: KaDeclarationSymbol?): Boolean {
+    fun isOverride(): Boolean = when (declaration) {
+        is KaNamedFunctionSymbol -> declaration.isOverride
+        is KaPropertySymbol -> declaration.isOverride
         else -> false
     }
 
-    if (isOverride) return false
-
-    // The underlying property is materialized as a field, so its getter is not replaced
-    val property = (symbol as? KaPropertyAccessorSymbol)?.containingDeclaration
-    return property !is KaKotlinPropertySymbol || property.primaryConstructorParameter == null
+    return when {
+        owner !is KaNamedClassSymbol || !owner.isInline -> false
+        declaration.isCompanion -> false
+        isOverride() -> false
+        declaration is KaKotlinPropertySymbol && declaration.primaryConstructorParameter != null -> false
+        else -> true
+    }
 }
 
 /**
