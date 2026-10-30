@@ -8,11 +8,12 @@ package org.jetbrains.kotlin.fir.analysis
 import org.jetbrains.kotlin.BasicElementTypeId
 import org.jetbrains.kotlin.KtNodeTypeId
 import org.jetbrains.kotlin.KtTokenId
+import org.jetbrains.kotlin.SyntaxId
 import org.jetbrains.kotlin.utils.addToStdlib.popLast
 
 inline fun <T> isCallTheFirstStatement(
     root: T,
-    getElementTokenId: (T) -> Int,
+    getElementTokenId: (T) -> SyntaxId,
     getChildren: (T) -> List<T>,
 ): Boolean {
     val stack = getChildren(root).asReversed().toMutableList()
@@ -38,7 +39,7 @@ inline fun <T> isCallTheFirstStatement(
 
 inline fun <T> firstFunctionCallInBlockHasLambdaArgumentWithLabel(
     root: T,
-    getElementTokenId: (T) -> Int,
+    getElementTokenId: (T) -> SyntaxId,
     getChildren: (T) -> List<T>,
 ): Boolean {
     val functionCall = getChildren(root).firstOrNull { getElementTokenId(it) == KtNodeTypeId.CALL_EXPRESSION } ?: return false

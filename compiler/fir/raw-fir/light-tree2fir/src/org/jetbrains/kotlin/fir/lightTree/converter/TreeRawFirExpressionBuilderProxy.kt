@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.NO_ID
+import org.jetbrains.kotlin.SyntaxId
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -460,7 +461,7 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
     }
 
     companion object {
-        private val unwrappableTokenTypes: Set<Int> = setOf(
+        private val unwrappableTokenTypes: Set<SyntaxId> = setOf(
             KtNodeTypeId.PARENTHESIZED, KtNodeTypeId.LABELED_EXPRESSION, KtNodeTypeId.ANNOTATED_EXPRESSION
         )
 
@@ -508,12 +509,12 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
             KtTokenId.AS_SAFE to FirOperation.SAFE_AS,
         )
 
-        private val incrementOperations: Set<Int> = setOf(
+        private val incrementOperations: Set<SyntaxId> = setOf(
             KtTokenId.PLUSPLUS,
             KtTokenId.MINUSMINUS,
         )
 
-        private val comparisonOperationsId: Set<Int> = hashSetOf(
+        private val comparisonOperationsId: Set<SyntaxId> = hashSetOf(
             KtTokenId.LT,
             KtTokenId.LTEQ,
             KtTokenId.GTEQ,
@@ -1827,7 +1828,7 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
     override val Node.selectorExpression: Node?
         get() = with(rootBuilder) { selectorExpression }
 
-    override fun Type.typeToTokenId(): Int {
+    override fun Type.typeToTokenId(): SyntaxId {
         return with(rootBuilder) { typeToTokenId() }
     }
 

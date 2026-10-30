@@ -38,7 +38,7 @@ abstract class AbstractLightTreeRawFirBuilder(
         get() = this.tokenType
 
     @OptIn(KtImplementationDetail::class)
-    override fun IElementType.typeToTokenId(): Int = syntaxId()
+    override fun IElementType.typeToTokenId(): SyntaxId = syntaxId()
 
     override val LighterASTNode.asText: String
         get() = this.toString()

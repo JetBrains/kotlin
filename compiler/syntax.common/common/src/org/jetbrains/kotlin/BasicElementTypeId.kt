@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin
 
-const val NO_ID: Int = 0
+const val NO_ID: SyntaxId = 0
 
 object BasicElementTypeId {
-    const val WHITE_SPACE: Int = NO_ID + 1
-    const val BAD_CHARACTER: Int = WHITE_SPACE + 1
-    const val ERROR_ELEMENT: Int = BAD_CHARACTER + 1
+    const val WHITE_SPACE: SyntaxId = NO_ID + 1
+    const val BAD_CHARACTER: SyntaxId = WHITE_SPACE + 1
+    const val ERROR_ELEMENT: SyntaxId = BAD_CHARACTER + 1
     /**
      * Remember to update first const in [KtTokenId] after adding new tokens here ^^^
      */

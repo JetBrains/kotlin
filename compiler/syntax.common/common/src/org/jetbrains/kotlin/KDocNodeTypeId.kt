@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin
 
 object KDocNodeTypeId {
-    const val KDOC_SECTION: Int = KDocTokenId.CODE_SPAN_TEXT + 1
-    const val KDOC_TAG: Int = KDOC_SECTION + 1
-    const val KDOC_NAME: Int = KDOC_TAG + 1
+    const val KDOC_SECTION: SyntaxId = KDocTokenId.CODE_SPAN_TEXT + 1
+    const val KDOC_TAG: SyntaxId = KDOC_SECTION + 1
+    const val KDOC_NAME: SyntaxId = KDOC_TAG + 1
 }

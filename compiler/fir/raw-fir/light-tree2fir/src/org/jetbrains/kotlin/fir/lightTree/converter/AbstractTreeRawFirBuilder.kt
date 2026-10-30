@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.lightTree.converter
 import org.jetbrains.kotlin.BasicElementTypeId
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.NO_ID
+import org.jetbrains.kotlin.SyntaxId
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.isExpression
@@ -114,11 +115,11 @@ abstract class AbstractTreeRawFirBuilder<Node : Any, Type : Any>(
         return container
     }
 
-    fun Node.toTokenId(): Int = elementType.typeToTokenId()
+    fun Node.toTokenId(): SyntaxId = elementType.typeToTokenId()
 
-    abstract fun Type.typeToTokenId(): Int
+    abstract fun Type.typeToTokenId(): SyntaxId
 
-    fun Node.getOperationTokenId(): Int {
+    fun Node.getOperationTokenId(): SyntaxId {
         return getChildren().first().toTokenId()
     }
 
@@ -176,11 +177,11 @@ abstract class AbstractTreeRawFirBuilder<Node : Any, Type : Any>(
     override val Node.arrayExpression: Node?
         get() = getFirstChildExpression()
 
-    fun Node.getChildNodeByTokenId(tokenId: Int): Node? {
+    fun Node.getChildNodeByTokenId(tokenId: SyntaxId): Node? {
         return getChildrenAsArray().firstOrNull { it?.toTokenId() == tokenId }
     }
 
-    fun Node?.getChildNodesByTokenId(tokenId: Int): List<Node> {
+    fun Node?.getChildNodesByTokenId(tokenId: SyntaxId): List<Node> {
         return this?.forEachChildrenReturnList { node, container ->
             when (node.toTokenId()) {
                 tokenId -> container += node
@@ -200,7 +201,7 @@ abstract class AbstractTreeRawFirBuilder<Node : Any, Type : Any>(
     }
 
     companion object {
-        val ignoredTokensId: HashSet<Int> = hashSetOf(
+        val ignoredTokensId: HashSet<SyntaxId> = hashSetOf(
             KtTokenId.EOL_COMMENT, KtTokenId.BLOCK_COMMENT, KtTokenId.DOC_COMMENT, KtTokenId.SHEBANG_COMMENT,
             BasicElementTypeId.WHITE_SPACE, BasicElementTypeId.BAD_CHARACTER, BasicElementTypeId.ERROR_ELEMENT,
             KtTokenId.SEMICOLON,

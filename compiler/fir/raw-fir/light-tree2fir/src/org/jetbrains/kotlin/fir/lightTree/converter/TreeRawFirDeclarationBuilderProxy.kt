@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.KtSourceFileLinesMapping
 import org.jetbrains.kotlin.NO_ID
+import org.jetbrains.kotlin.SyntaxId
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -3310,7 +3311,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
     override val Node.selectorExpression: Node?
         get() = with(rootBuilder) { selectorExpression }
 
-    override fun Type.typeToTokenId(): Int {
+    override fun Type.typeToTokenId(): SyntaxId {
         return with(rootBuilder) { typeToTokenId() }
     }
 

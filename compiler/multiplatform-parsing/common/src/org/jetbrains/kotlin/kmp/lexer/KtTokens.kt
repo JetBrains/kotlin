@@ -12,6 +12,7 @@ import com.intellij.platform.syntax.element.SyntaxTokenTypes
 import com.intellij.platform.syntax.syntaxElementTypeSetOf
 import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.kotlin.KtTokenId
+import org.jetbrains.kotlin.SyntaxId
 import org.jetbrains.kotlin.kmp.utils.SyntaxElementTypesWithIds
 
 @ApiStatus.Experimental
@@ -204,7 +205,7 @@ object KtTokens : SyntaxElementTypesWithIds() {
     val EXPECT_MODIFIER: SyntaxElementType = registerToken(KtTokenId.EXPECT_MODIFIER, "expect", soft = true, modifier = true)
     val ACTUAL_MODIFIER: SyntaxElementType = registerToken(KtTokenId.ACTUAL_MODIFIER, "actual", soft = true, modifier = true)
 
-    private fun registerToken(id: Int, name: String, soft: Boolean, modifier: Boolean): SyntaxElementType {
+    private fun registerToken(id: SyntaxId, name: String, soft: Boolean, modifier: Boolean): SyntaxElementType {
         return register(id, name).also {
             val keywordsAndModifiersList = if (soft) softKeywordsAndModifiers else hardKeywordsAndModifiers
             keywordsAndModifiersList.add(it)

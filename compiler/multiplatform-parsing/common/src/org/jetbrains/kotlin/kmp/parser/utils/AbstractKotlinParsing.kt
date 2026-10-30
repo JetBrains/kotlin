@@ -9,6 +9,7 @@ import com.intellij.platform.syntax.SyntaxElementType
 import com.intellij.platform.syntax.SyntaxElementTypeSet
 import com.intellij.platform.syntax.parser.SyntaxTreeBuilder
 import org.jetbrains.kotlin.KtTokenId
+import org.jetbrains.kotlin.SyntaxId
 import org.jetbrains.kotlin.kmp.lexer.KtTokens
 import org.jetbrains.kotlin.kmp.utils.Stack
 
@@ -130,7 +131,7 @@ internal abstract class AbstractKotlinParsing(
         }
     }
 
-    protected val tokenId: Int
+    protected val tokenId: SyntaxId
         get() = KtTokens.getElementTypeId(tt())
 
     protected fun tt(): SyntaxElementType? {

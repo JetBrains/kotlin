@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.NO_ID
+import org.jetbrains.kotlin.SyntaxId
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.isExpression
 import org.jetbrains.kotlin.fir.lightTree.converter.AbstractTreeRawFirBuilder
@@ -35,7 +36,7 @@ abstract class AbstractMultiplatformParsingRawFirBuilder(
     override val LightNode.elementType: SyntaxElementType
         get() = tree.getType(this)
 
-    override fun SyntaxElementType.typeToTokenId(): Int {
+    override fun SyntaxElementType.typeToTokenId(): SyntaxId {
         val nodeTypeId = KtNodeTypes.getElementTypeId(this)
         if (nodeTypeId != NO_ID) return nodeTypeId
         val tokenId = KtTokens.getElementTypeId(this)
