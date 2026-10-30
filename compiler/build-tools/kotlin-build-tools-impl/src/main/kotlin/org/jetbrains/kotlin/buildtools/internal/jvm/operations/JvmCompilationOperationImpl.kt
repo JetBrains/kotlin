@@ -330,6 +330,7 @@ internal class JvmCompilationOperationImpl private constructor(
         } else null
         val configurationInputs =
             makeConfigurationInputs(snapshotBasedIcOptionsAccessor, verifiedPreciseJavaTracking)
+        var compilationError: Throwable? = null
         val compilationResult = try {
             incrementalCompiler.compile(
                 kotlinSources,
@@ -339,8 +340,15 @@ internal class JvmCompilationOperationImpl private constructor(
                 fileLocations,
                 configurationInputs,
             )
+        } catch (e: Throwable) {
+            compilationError = e
+            throw e
         } finally {
-            eventReporter?.let { icEventCollector?.collectEvents(it.events.toIcEvents()) }
+            try {
+                eventReporter?.let { icEventCollector?.collectEvents(it.events.toIcEvents()) }
+            } catch (e: Throwable) {
+                if (compilationError != null) compilationError.addSuppressed(e) else throw e
+            }
         }.asCompilationResult
 
         metricsReporter.endMeasureGc()
