@@ -490,7 +490,10 @@ internal fun createField(
     )
 }
 
-private fun hasBackingField(property: KaPropertySymbol): Boolean {
+/**
+ * Whether a light field is created for [property], see [createField].
+ */
+internal fun hasBackingField(property: KaPropertySymbol): Boolean {
     // Backing field for KaSyntheticJavaPropertySymbol is always `null`.
     // Thus, there is no point in proceeding further as `SymbolLightFieldForProperty` expects a non-null backing field pointer.
     if (property is KaSyntheticJavaPropertySymbol) return false

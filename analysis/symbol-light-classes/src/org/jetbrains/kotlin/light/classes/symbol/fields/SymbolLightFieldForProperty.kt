@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.light.classes.symbol.annotations.*
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForNamedClassLike
+import org.jetbrains.kotlin.light.classes.symbol.classes.hasBackingField
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.with
@@ -145,13 +146,17 @@ internal class SymbolLightFieldForProperty private constructor(
                                     .filterIsInstance<KaEnumEntrySymbol>()
                                     .any())
             } else {
-                // Companion object fields are preferred to the class ones
+                // Static fields, of the companion object or the companion block, are preferred to the class ones
                 classSymbol.companionObject
                     ?.declaredMemberScope
                     ?.callables(propertyName)
                     ?.filterIsInstance<KaPropertySymbol>()
                     .orEmpty()
-                    .any()
+                    .any() ||
+                        classSymbol.staticDeclaredMemberScope
+                            .callables(propertyName)
+                            .filterIsInstance<KaPropertySymbol>()
+                            .any { it.isCompanion && hasBackingField(it) }
             }
         }
     }
