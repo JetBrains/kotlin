@@ -1,17 +1,17 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE_FEATURE_TOGGLED: ExplicitInlineValueClassesSyntax
+// LANGUAGE_FEATURE_TOGGLED: ExplicitInlineValueClassesSyntax ExplicitInlineValueClassesSyntaxRequiredOnAllPlatforms
 // WITH_STDLIB
 
 <!JVM_INLINE_WITHOUT_VALUE_CLASS!>@JvmInline<!>
-<!INLINE_CLASS_DEPRECATED!>inline<!> class Old(val x: Int)
+<!INLINE_CLASS_DEPRECATED_ERROR!>inline<!> class Old(val x: Int)
 
-@JvmInline
+<!REDUNDANT_JVM_INLINE!>@JvmInline<!>
 inline value class New(val x: Int)
 
-@JvmInline
+<!REDUNDANT_JVM_INLINE!>@JvmInline<!>
 value inline class NewReversed(val x: Int)
 
-@JvmInline
+<!REDUNDANT_JVM_INLINE!>@JvmInline<!>
 inline value class TwoFields<!INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE!>(val x: Int, val y: String)<!>
 
 fun f(<!FORBIDDEN_VARARG_PARAMETER_TYPE!>vararg<!> xs: New) {}

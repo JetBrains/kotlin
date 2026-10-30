@@ -2,10 +2,10 @@
 // WITH_STDLIB
 
 // MODULE: lib
-@JvmInline
+<!REDUNDANT_JVM_INLINE!>@JvmInline<!>
 inline value class New(val x: Int)
 
-@JvmInline
+<!REDUNDANT_JVM_INLINE!>@JvmInline<!>
 value inline class NewReversed(val x: Int)
 
 // MODULE: main(lib)

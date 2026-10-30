@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// DIAGNOSTICS: -INLINE_CLASS_DEPRECATED -NO_TAIL_CALLS_FOUND
+// DIAGNOSTICS: -INLINE_CLASS_DEPRECATED -INLINE_CLASS_DEPRECATED_ERROR -NO_TAIL_CALLS_FOUND
 // LANGUAGE: +JsExternalPropertyParameters
 // OPT_IN: kotlin.js.ExperimentalWasmJsInterop
 
@@ -22,7 +22,7 @@ external class C5 {
 
 external inline class <!WRONG_EXTERNAL_DECLARATION!>C8(val x: Int)<!>
 
-external value class <!WRONG_EXTERNAL_DECLARATION!>C9(val x: Int)<!>
+external <!INLINE_VALUE_CLASS_WITHOUT_EXPLICIT_INLINE_WARNING!>value<!> class <!WRONG_EXTERNAL_DECLARATION!>C9(val x: Int)<!>
 
 
 // Interfaces

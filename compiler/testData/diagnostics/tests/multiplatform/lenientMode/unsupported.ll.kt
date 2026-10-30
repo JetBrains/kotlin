@@ -10,7 +10,7 @@ expect enum class E {
 
 expect annotation class A
 
-expect value class V(val s: String)
+expect inline value class V(val s: String)
 
 open class C1(s: String)
 

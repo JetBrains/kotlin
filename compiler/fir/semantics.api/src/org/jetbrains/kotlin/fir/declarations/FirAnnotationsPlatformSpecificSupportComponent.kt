@@ -24,7 +24,9 @@ abstract class FirAnnotationsPlatformSpecificSupportComponent :
     abstract val requiredAnnotations: Set<ClassId>
     abstract val volatileAnnotations: Set<ClassId>
     protected abstract val repeatableAnnotations: Set<ClassId>
-    abstract val jvmInlineAnnotationClassId: ClassId?
+
+    @LegacyJvmInlineHandling
+    abstract val hasJvmInlineAnnotation: Boolean
 
     val requiredAnnotationsShortClassNames: Set<Name> by lazy {
         requiredAnnotations.mapTo(mutableSetOf()) { it.shortClassName }
@@ -72,7 +74,9 @@ abstract class FirAnnotationsPlatformSpecificSupportComponent :
         override val requiredAnnotations: Set<ClassId> = components.flatMapTo(mutableSetOf()) { it.requiredAnnotations }
         override val volatileAnnotations: Set<ClassId> = components.flatMapTo(mutableSetOf()) { it.volatileAnnotations }
         override val repeatableAnnotations: Set<ClassId> = components.flatMapTo(mutableSetOf()) { it.repeatableAnnotations }
-        override val jvmInlineAnnotationClassId: ClassId? = components.firstNotNullOfOrNull { it.jvmInlineAnnotationClassId }
+
+        @LegacyJvmInlineHandling
+        override val hasJvmInlineAnnotation: Boolean = components.any { it.hasJvmInlineAnnotation }
         override val deprecationAnnotationsWithOverridesPropagation: Map<ClassId, Boolean> = buildMap {
             components.forEach { component ->
                 putAll(component.deprecationAnnotationsWithOverridesPropagation)
@@ -162,8 +166,9 @@ abstract class FirAnnotationsPlatformSpecificSupportComponent :
             StandardClassIds.Annotations.Repeatable,
         )
 
-        override val jvmInlineAnnotationClassId: ClassId?
-            get() = null
+        @LegacyJvmInlineHandling
+        override val hasJvmInlineAnnotation: Boolean
+            get() = false
 
         override val deprecationAnnotationsWithOverridesPropagation: Map<ClassId, Boolean> = mapOf(
             StandardClassIds.Annotations.Deprecated to true,
@@ -189,3 +194,16 @@ class AnnotationsPosition(
     val backingFieldAnnotations: List<FirAnnotation>,
     val propertyAnnotations: List<FirAnnotation>,
 )
+
+@RequiresOptIn(
+    message = """
+        Normally, [StandardClassIds.Annotations.JvmInline] should be used directly.
+
+        Before, we only treated '@JvmInline' specially for JVM target / common source sets targeting JVM.
+        Now, '@JvmInline' is meaningful in common source sets that don't target JVM as well (it is still red
+        in leaf non-JVM source sets because the annotation is '@OptionalExpectation') because it forces
+        the class to be inline.
+    """.trimIndent(),
+    level = ERROR,
+)
+annotation class LegacyJvmInlineHandling

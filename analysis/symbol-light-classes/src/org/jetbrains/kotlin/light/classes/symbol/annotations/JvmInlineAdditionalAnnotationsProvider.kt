@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.light.classes.symbol.annotations
 import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForClassOrObject
-import org.jetbrains.kotlin.name.JvmStandardClassIds
+import org.jetbrains.kotlin.name.StandardClassIds
 
 /**
  * Adds `@JvmInline` to the light class of an inline value class.
@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.name.JvmStandardClassIds
  * @see SymbolLightClassForClassOrObject.isInlineClass
  */
 internal object JvmInlineAdditionalAnnotationsProvider : AdditionalAnnotationsProvider {
-    private val JVM_INLINE_QUALIFIER: String = JvmStandardClassIds.Annotations.JvmInline.asFqNameString()
+    private val JVM_INLINE_QUALIFIER: String = StandardClassIds.Annotations.JvmInline.asFqNameString()
 
     override fun addAllAnnotations(
         currentRawAnnotations: MutableList<in PsiAnnotation>,

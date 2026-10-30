@@ -2257,6 +2257,41 @@ internal class WillBecomeValueClassCannotBeCloneableImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KaFirDiagnostic.WillBecomeValueClassCannotBeCloneable
 
+internal class ValueClassWithoutJvmInlineAnnotationImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ValueClassWithoutJvmInlineAnnotation
+
+internal class InlineValueClassWithoutExplicitInlineErrorImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.InlineValueClassWithoutExplicitInlineError
+
+internal class InlineValueClassWithoutExplicitInlineWarningImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.InlineValueClassWithoutExplicitInlineWarning
+
+internal class JvmInlineWithoutValueClassImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.JvmInlineWithoutValueClass
+
+internal class JvmInlineWithoutValueClassWarningImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.JvmInlineWithoutValueClassWarning
+
+internal class RedundantJvmInlineImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.RedundantJvmInline
+
+internal class JvmInlineOnValueObjectImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.JvmInlineOnValueObject
+
 internal class NoneApplicableImpl(
     override val candidates: List<Pair<KaSymbol, List<String>>>,
     firDiagnostic: KtDiagnosticWithSource,
@@ -5689,6 +5724,12 @@ internal class InlineClassDeprecatedImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.InlineClassDeprecated
 
+internal class InlineClassDeprecatedErrorImpl(
+    override val replacement: String,
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.InlineClassDeprecatedError
+
 internal class LessVisibleTypeAccessInInlineErrorImpl(
     override val typeVisibility: EffectiveVisibility,
     override val type: KaType,
@@ -6155,21 +6196,6 @@ internal class FunctionDelegateMemberNameClashImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.FunctionDelegateMemberNameClash
-
-internal class ValueClassWithoutJvmInlineAnnotationImpl(
-    firDiagnostic: KtDiagnosticWithSource,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ValueClassWithoutJvmInlineAnnotation
-
-internal class JvmInlineWithoutValueClassImpl(
-    firDiagnostic: KtDiagnosticWithSource,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.JvmInlineWithoutValueClass
-
-internal class JvmInlineOnValueObjectImpl(
-    firDiagnostic: KtDiagnosticWithSource,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.JvmInlineOnValueObject
 
 internal class InapplicableJvmExposeBoxedWithNameImpl(
     firDiagnostic: KtDiagnosticWithSource,

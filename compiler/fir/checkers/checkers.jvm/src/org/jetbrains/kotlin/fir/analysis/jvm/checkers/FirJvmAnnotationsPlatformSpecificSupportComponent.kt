@@ -12,10 +12,12 @@ import org.jetbrains.kotlin.fir.declarations.FirAnnotationsPlatformSpecificSuppo
 import org.jetbrains.kotlin.fir.declarations.FirCompilerRequiredParameterDescription
 import org.jetbrains.kotlin.fir.declarations.FirCraParameterKind
 import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.LegacyJvmInlineHandling
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassIdSafe
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.JvmStandardClassIds
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.ConstantValueKind
 
 object FirJvmAnnotationsPlatformSpecificSupportComponent : FirAnnotationsPlatformSpecificSupportComponent() {
@@ -40,7 +42,7 @@ object FirJvmAnnotationsPlatformSpecificSupportComponent : FirAnnotationsPlatfor
     override val requiredAnnotations: Set<ClassId> = requiredAnnotationsWithArguments.keys + setOf(
         JvmStandardClassIds.Annotations.Java.Deprecated,
         JvmStandardClassIds.Annotations.JvmRecord,
-        JvmStandardClassIds.Annotations.JvmInline,
+        StandardClassIds.Annotations.JvmInline,
     )
 
     override val volatileAnnotations: Set<ClassId> = setOf(
@@ -52,7 +54,8 @@ object FirJvmAnnotationsPlatformSpecificSupportComponent : FirAnnotationsPlatfor
         JvmStandardClassIds.Annotations.JvmRepeatable,
     )
 
-    override val jvmInlineAnnotationClassId: ClassId = JvmStandardClassIds.Annotations.JvmInline
+    @LegacyJvmInlineHandling
+    override val hasJvmInlineAnnotation: Boolean = true
 
     override val deprecationAnnotationsWithOverridesPropagation: Map<ClassId, Boolean> = mapOf(
         JvmStandardClassIds.Annotations.Java.Deprecated to false,

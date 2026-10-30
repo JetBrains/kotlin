@@ -578,6 +578,7 @@ enum class LanguageFeature(
     ForbidJavaClassPropertyReferences(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KTLC-375"),
     ForbidNonTopLevelEagerInitialization(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KT-89476"),
     ReportSubclassCantCallCompanionProtectedNonStaticWithGenerics(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KTLC-412"),
+    ExplicitInlineValueClassesSyntaxRequiredOnAllPlatforms(KOTLIN_2_6, enabledInProgressiveMode = true, issue = "KT-89772"),
     ConcurrentMapPurelyImplemented(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KTLC-416"),
     ForbidUselessTypeArgumentsIn26(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KTLC-390"),
     EnforceMissingNamedArgumentsOnJavaAnnotation(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KTLC-418"),

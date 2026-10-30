@@ -1,0 +1,28 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// ALLOW_KOTLIN_PACKAGE
+// LANGUAGE_FEATURE_TOGGLED: ExplicitInlineValueClassesSyntaxRequiredOnAllPlatforms
+
+package kotlin.jvm
+
+annotation class JvmInline
+
+<!JVM_INLINE_WITHOUT_VALUE_CLASS!>@JvmInline<!>
+<!INLINE_CLASS_DEPRECATED!>inline<!> class IC(val a: Any)
+
+@JvmInline
+value class VC(val a: Any)
+
+<!JVM_INLINE_WITHOUT_VALUE_CLASS!>@JvmInline<!>
+class C
+
+<!JVM_INLINE_WITHOUT_VALUE_CLASS!>@JvmInline<!>
+interface I
+
+<!JVM_INLINE_WITHOUT_VALUE_CLASS!>@JvmInline<!>
+object O
+
+<!JVM_INLINE_WITHOUT_VALUE_CLASS!>@JvmInline<!>
+data class DC(val a: Any)
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, data, interfaceDeclaration, objectDeclaration,
+primaryConstructor, propertyDeclaration, value */

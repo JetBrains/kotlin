@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +FullValueClasses
+// LANGUAGE_FEATURE_TOGGLED: ExplicitInlineValueClassesSyntaxRequiredOnAllPlatforms
 // WITH_STDLIB
 
 value class A(val a: B?, val i: Int)
@@ -24,7 +25,7 @@ inline value class InlineToSingle(val s: SingleFromInline)
 
 value class SingleFromInline(val i: InlineToSingle?)
 
-<!INLINE_CLASS_DEPRECATED!>inline<!> class DeprecatedInlineToSingle(val s: SingleFromDeprecatedInline)
+<!INLINE_CLASS_DEPRECATED_ERROR!>inline<!> class DeprecatedInlineToSingle(val s: SingleFromDeprecatedInline)
 
 value class SingleFromDeprecatedInline(val i: DeprecatedInlineToSingle?)
 

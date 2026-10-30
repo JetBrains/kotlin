@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageFeature.ErrorAboutDataClassCopyVisibilityChange
+import org.jetbrains.kotlin.config.LanguageFeature.ExplicitInlineValueClassesSyntaxRequiredOnAllPlatforms
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidAnnotationsTypeArgumentsAndParenthesesForPackageQualifier
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidAnnotationsWithUseSiteTargetOnExpressions
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidArrayLiteralsInNonAnnotationContexts
@@ -508,6 +509,12 @@ object FirErrors : KtDiagnosticsContainer() {
     val WILL_BECOME_VALUE_CLASS_CANNOT_BE_RECURSIVE: KtDiagnosticFactory0 = KtDiagnosticFactory0("WILL_BECOME_VALUE_CLASS_CANNOT_BE_RECURSIVE", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val WILL_BECOME_VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS: KtDiagnosticFactory0 = KtDiagnosticFactory0("WILL_BECOME_VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val WILL_BECOME_VALUE_CLASS_CANNOT_BE_CLONEABLE: KtDiagnosticFactory0 = KtDiagnosticFactory0("WILL_BECOME_VALUE_CLASS_CANNOT_BE_CLONEABLE", ERROR, SourceElementPositioningStrategies.INLINE_OR_VALUE_MODIFIER, KtDeclaration::class, getRendererFactory())
+    val VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val INLINE_VALUE_CLASS_WITHOUT_EXPLICIT_INLINE: KtDiagnosticFactoryForDeprecation0 = KtDiagnosticFactoryForDeprecation0("INLINE_VALUE_CLASS_WITHOUT_EXPLICIT_INLINE", ExplicitInlineValueClassesSyntaxRequiredOnAllPlatforms, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val JVM_INLINE_WITHOUT_VALUE_CLASS: KtDiagnosticFactory0 = KtDiagnosticFactory0("JVM_INLINE_WITHOUT_VALUE_CLASS", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val JVM_INLINE_WITHOUT_VALUE_CLASS_WARNING: KtDiagnosticFactory0 = KtDiagnosticFactory0("JVM_INLINE_WITHOUT_VALUE_CLASS_WARNING", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val REDUNDANT_JVM_INLINE: KtDiagnosticFactory0 = KtDiagnosticFactory0("REDUNDANT_JVM_INLINE", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val JVM_INLINE_ON_VALUE_OBJECT: KtDiagnosticFactory0 = KtDiagnosticFactory0("JVM_INLINE_ON_VALUE_OBJECT", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
 
     // Applicability
     val NONE_APPLICABLE: KtDiagnosticFactory1<Collection<Pair<FirBasedSymbol<*>, List<String>>>> = KtDiagnosticFactory1("NONE_APPLICABLE", ERROR, SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED, PsiElement::class, getRendererFactory())
@@ -1109,6 +1116,7 @@ object FirErrors : KtDiagnosticsContainer() {
     val INLINE_SUSPEND_FUNCTION_TYPE_UNSUPPORTED: KtDiagnosticFactory0 = KtDiagnosticFactory0("INLINE_SUSPEND_FUNCTION_TYPE_UNSUPPORTED", ERROR, SourceElementPositioningStrategies.DEFAULT, KtParameter::class, getRendererFactory())
     val INEFFICIENT_EQUALS_OVERRIDING_IN_VALUE_CLASS: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("INEFFICIENT_EQUALS_OVERRIDING_IN_VALUE_CLASS", WARNING, SourceElementPositioningStrategies.DECLARATION_NAME, KtNamedFunction::class, getRendererFactory())
     val INLINE_CLASS_DEPRECATED: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("INLINE_CLASS_DEPRECATED", WARNING, SourceElementPositioningStrategies.INLINE_OR_VALUE_MODIFIER, KtElement::class, getRendererFactory())
+    val INLINE_CLASS_DEPRECATED_ERROR: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("INLINE_CLASS_DEPRECATED_ERROR", ERROR, SourceElementPositioningStrategies.INLINE_OR_VALUE_MODIFIER, KtElement::class, getRendererFactory())
     val LESS_VISIBLE_TYPE_ACCESS_IN_INLINE: KtDiagnosticFactoryForDeprecation3<EffectiveVisibility, ConeKotlinType, EffectiveVisibility> = KtDiagnosticFactoryForDeprecation3("LESS_VISIBLE_TYPE_ACCESS_IN_INLINE", ForbidExposingLessVisibleTypesInInline, SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED, KtElement::class, getRendererFactory())
     val LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE: KtDiagnosticFactoryForDeprecation4<FirBasedSymbol<*>, EffectiveVisibility, ConeKotlinType, EffectiveVisibility> = KtDiagnosticFactoryForDeprecation4("LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE", ForbidExposingLessVisibleTypesInInline, SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED, KtElement::class, getRendererFactory())
     val CALLABLE_REFERENCE_TO_LESS_VISIBLE_DECLARATION_IN_INLINE: KtDiagnosticFactoryForDeprecation3<FirBasedSymbol<*>, EffectiveVisibility, EffectiveVisibility> = KtDiagnosticFactoryForDeprecation3("CALLABLE_REFERENCE_TO_LESS_VISIBLE_DECLARATION_IN_INLINE", ForbidExposingLessVisibleTypesInInline, SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED, KtElement::class, getRendererFactory())

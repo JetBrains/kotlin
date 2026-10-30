@@ -12,11 +12,11 @@ value class BackingFields(val x: Int) {
 class Val {
     operator fun getValue(thisRef: Any?, kProp: Any?) = 1
 }
-<!INLINE_CLASS_DEPRECATED!>inline<!> class DelegatedProp(val x: Int) {
+<!INLINE_CLASS_DEPRECATED_ERROR!>inline<!> class DelegatedProp(val x: Int) {
     val testVal by <!DELEGATED_PROPERTY_INSIDE_VALUE_CLASS!>Val()<!>
 }
 
-<!INLINE_CLASS_DEPRECATED!>inline<!> class ReservedMembers(val x: Int) {
+<!INLINE_CLASS_DEPRECATED_ERROR!>inline<!> class ReservedMembers(val x: Int) {
     fun <!RESERVED_MEMBER_INSIDE_VALUE_CLASS!>box<!>() {}
     fun <!RESERVED_MEMBER_INSIDE_VALUE_CLASS!>unbox<!>() {}
 
@@ -24,7 +24,7 @@ class Val {
     override fun hashCode() = 1
 }
 
-<!INLINE_CLASS_DEPRECATED!>inline<!> class SecondaryConstructors(val x: Int) {
+<!INLINE_CLASS_DEPRECATED_ERROR!>inline<!> class SecondaryConstructors(val x: Int) {
     constructor(y: String) : this(5)
     constructor(x: Int, y: String) : this(x) {
 

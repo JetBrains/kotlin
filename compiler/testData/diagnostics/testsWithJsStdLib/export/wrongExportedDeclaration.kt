@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // OPT_IN: kotlin.js.ExperimentalJsExport
 // RENDER_DIAGNOSTIC_ARGUMENTS
-// DIAGNOSTICS: -INLINE_CLASS_DEPRECATED
+// DIAGNOSTICS: -INLINE_CLASS_DEPRECATED -INLINE_CLASS_DEPRECATED_ERROR
 
 package foo
 
@@ -49,7 +49,7 @@ interface InterfaceWithNamedCompanion {
 }
 
 @JsExport
-value class A(val a: Int)
+<!INLINE_VALUE_CLASS_WITHOUT_EXPLICIT_INLINE_WARNING!>value<!> class A(val a: Int)
 
 @JsExport
 inline class B(val b: Int)

@@ -2,7 +2,7 @@
 import kotlin.experimental.ExperimentalNativeApi
 import kotlin.native.identityHashCode
 
-value class VC(val s: String)
+<!INLINE_VALUE_CLASS_WITHOUT_EXPLICIT_INLINE_WARNING!>value<!> class VC(val s: String)
 
 @OptIn(ExperimentalNativeApi::class)
 fun test(p: VC, p2: VC?, p3: Int, p4: Int?) {

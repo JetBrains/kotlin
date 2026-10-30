@@ -5,7 +5,7 @@
 // MODULE: common
 // FILE: common.kt
 
-expect value class Value1(val x: Char)
+expect inline value class Value1(val x: Char)
 expect value class Value2(val x: Char)
 
 // MODULE: main()()(common)

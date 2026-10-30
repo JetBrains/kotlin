@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: CODEGEN
 // WITH_STDLIB
+// LANGUAGE: -FullValueClasses
 // LANGUAGE: -StrictEquals
 //  ^^^ KT-88389
 
@@ -10,9 +11,9 @@ interface B {
     override fun toString(): String
 }
 
-expect value <!ABSTRACT_MEMBER_NOT_IMPLEMENTED{METADATA}!>class C<!>(val s: String) : B
+expect <!INLINE_VALUE_CLASS_WITHOUT_EXPLICIT_INLINE_WARNING!>value<!> <!ABSTRACT_MEMBER_NOT_IMPLEMENTED{METADATA}!>class C<!>(val s: String) : B
 
-expect value <!ABSTRACT_MEMBER_NOT_IMPLEMENTED{METADATA}!>class D<!>(val s: String) : B
+expect <!INLINE_VALUE_CLASS_WITHOUT_EXPLICIT_INLINE_WARNING!>value<!> <!ABSTRACT_MEMBER_NOT_IMPLEMENTED{METADATA}!>class D<!>(val s: String) : B
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt

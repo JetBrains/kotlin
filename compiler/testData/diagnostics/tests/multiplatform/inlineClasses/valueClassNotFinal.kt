@@ -7,7 +7,7 @@
 
 // MODULE: common
 // FILE: common.kt
-expect final value class A(val s: String)
+expect final inline value class A(val s: String)
 
 // MODULE: jvm()()(common)
 // FILE: jvm.kt

@@ -4,7 +4,7 @@
 @JsExport
 interface I
 
-value class V(val x: Int) : I {
+<!INLINE_VALUE_CLASS_WITHOUT_EXPLICIT_INLINE_WARNING!>value<!> class V(val x: Int) : I {
     constructor() : this(42) {}
 }
 

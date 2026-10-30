@@ -1,0 +1,1 @@
+/module_common_expectInlineClassMessage.kt:7:8: warning: 'inline' modifier is deprecated. Use 'value' instead.

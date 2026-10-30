@@ -132,6 +132,13 @@ internal abstract class IrExpectActualMatchingContext(
         get() = asIr().isInner
     override val RegularClassSymbolMarker.isValue: Boolean
         get() = asIr().let { it.isValue || it.isJavaValueClass }
+
+    // TODO(KT-90748): `AllowExpectValueClassesWithNoPrimaryConstructor` feature results
+    //  in expect inline value class without `valueClassRepresentation`. IR does not have
+    //  `isInline` property for class (yet?) unlike FIR. Hence, there is no nice way to
+    //  implement this check currently, but it is fine, because FIR check should be enough.
+    override val RegularClassSymbolMarker.isInline: Boolean
+        get() = this@isInline.isValue
     override val RegularClassSymbolMarker.isFun: Boolean
         get() = asIr().isFun
 
