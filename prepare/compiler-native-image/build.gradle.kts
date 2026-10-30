@@ -74,11 +74,23 @@ sourceSets {
     "testFixtures" { projectDefault() }
 }
 
+val useG1Gc = kotlinBuildProperties
+    .booleanProperty("kotlin.build.native-image.use-g1", false)
+    .get()
+val usePgo = kotlinBuildProperties
+    .booleanProperty("kotlin.build.native-image.use-pgo", false)
+    .get()
+val pgoInstrument = kotlinBuildProperties
+    .booleanProperty("kotlin.build.native-image.pgo-instrument", false)
+    .get()
 val dynamicPluginsEnabled = kotlinBuildProperties
     .booleanProperty("kotlin.build.native-image.dynamic-plugins", false)
     .get()
 
-val graalLauncher = getNativeImageToolchainLauncherFor(JdkMajorVersion.JDK_25_0)
+val graalLauncher = getNativeImageToolchainLauncherFor(
+    JdkMajorVersion.JDK_25_0,
+    requireOracleJdk = useG1Gc || usePgo || pgoInstrument || dynamicPluginsEnabled,
+)
 
 projectTests {
     testData(project(":compiler").isolated, "testData/codegen")
@@ -116,6 +128,7 @@ projectTests {
             include("**/NativeImageDynamicPluginBoxTestGenerated.class")
             include("**/NativeImageDynamicLegacyPluginBoxTestGenerated.class")
             include("**/NativeImageScriptingTestGenerated.class")
+            withScriptingCommon()
         }
         useNativeImageDist()
         usePlugins()
@@ -154,6 +167,7 @@ val kotlincNativeImageTask = tasks.register<Exec>("kotlincNativeImage") {
     val launcher = graalLauncher
     val resources = layout.projectDirectory.dir("resources")
     val preservedPackagesFile = layout.projectDirectory.file("preserved-packages.txt")
+    val pgoFile = layout.projectDirectory.file("kotlin-compiler-embeddable.iprof")
     val classpathFiles = files(nativeImageClasspath, resources)
 
     val basicNativeArgs = listOf(
@@ -170,22 +184,33 @@ val kotlincNativeImageTask = tasks.register<Exec>("kotlincNativeImage") {
         "--add-opens", "java.desktop/javax.swing=ALL-UNNAMED",
     )
 
-    val dynamicPluginsNativeArgs = if (dynamicPluginsEnabled) listOf(
-        "-H:+RuntimeClassLoading",
-        *providers.fileContents(preservedPackagesFile)
-            .asText.get()
-            .trim()
-            .lineSequence()
-            .filterNot { it.isBlank() || it.startsWith("#") }
-            .map { "-H:Preserve=package=$it" }
-            .toList().toTypedArray(),
-    ) else emptyList()
+    val nativeArgs = buildList {
+        addAll(basicNativeArgs)
+        if (useG1Gc) add("--gc=G1")
+        if (usePgo) add("--pgo=${pgoFile.asFile.absolutePath}")
+        if (pgoInstrument) add("--pgo-instrument")
+        if (dynamicPluginsEnabled) {
+            add("-H:+RuntimeClassLoading")
+            addAll(
+                providers.fileContents(preservedPackagesFile)
+                    .asText.get()
+                    .trim()
+                    .lineSequence()
+                    .filterNot { it.isBlank() || it.startsWith("#") }
+                    .map { "-H:Preserve=package=$it" }
+            )
+        }
+    }
 
-    val nativeArgs = basicNativeArgs + dynamicPluginsNativeArgs
-
-    inputs.files(nativeImageClasspath, resources, launcher.map { it.metadata.installationPath.asFile })
+    inputs.files(nativeImageClasspath, resources)
         .withNormalizer(ClasspathNormalizer::class)
         .withPropertyName("nativeImageClasspath")
+    inputs.file(launcher.map { it.metadata.installationPath.file("release") })
+        .withNormalizer(ClasspathNormalizer::class)
+        .withPropertyName("graalVmRelease")
+    inputs.files(preservedPackagesFile, pgoFile)
+        .withNormalizer(ClasspathNormalizer::class)
+        .withPropertyName("nativeImageConfiguration")
 
     inputs.property("nativeArgs", nativeArgs)
     inputs.property("os", currentOs.name)
