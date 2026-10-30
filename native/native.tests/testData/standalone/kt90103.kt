@@ -10,6 +10,8 @@ import fenv.*
 import kotlin.math.round
 import kotlin.test.*
 
+// This tests only how the ambient rounding mode affects (or rather does not affect) kotlin.math.round, it's not a comprehensive rounding
+// correctness test.
 @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
 fun main() {
     for (mode in intArrayOf(FE_DOWNWARD, FE_TONEAREST, FE_TOWARDZERO, FE_UPWARD)) {
