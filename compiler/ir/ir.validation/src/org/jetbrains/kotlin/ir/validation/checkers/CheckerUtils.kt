@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.toEffectiveVisibilityOrNull
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -19,6 +21,9 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.validation.checkers.context.CheckerContext
 import org.jetbrains.kotlin.ir.validation.checkers.expression.InlineFunctionUseSiteChecker
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.library.KOTLINTEST_MODULE_NAME
 import org.jetbrains.kotlin.library.KOTLIN_JS_STDLIB_NAME
 import org.jetbrains.kotlin.library.KOTLIN_NATIVE_STDLIB_NAME
@@ -59,6 +64,36 @@ internal fun validateVararg(irElement: IrElement, type: IrType, varargElementTyp
         irElement,
         "Vararg type=${type.render()} is expected to be an array of its underlying varargElementType=${varargElementType.render()}",
     )
+}
+
+/**
+ * Reports every plain [IrConstructorCall] (i.e., not an [IrAnnotation]) found in the [root] subtree,
+ * which is expected to contain only annotations and their arguments.
+ */
+context(checker: IrChecker)
+internal fun checkAllAnnotationsAreIrAnnotations(root: IrElement, declaration: IrDeclaration, context: CheckerContext) {
+    root.acceptVoid(PlainConstructorCallFinder(declaration, checker, context))
+}
+
+private class PlainConstructorCallFinder(
+    private val declaration: IrDeclaration,
+    private val checker: IrChecker,
+    private val context: CheckerContext,
+) : IrVisitorVoid() {
+    override fun visitElement(element: IrElement) {
+        element.acceptChildrenVoid(this)
+    }
+
+    override fun visitConstructorCall(expression: IrConstructorCall) {
+        if (expression !is IrAnnotation) {
+            context.error(
+                declaration,
+                checker,
+                "Annotation must be represented by IrAnnotation, not by a plain IrConstructorCall: ${expression.render()}"
+            )
+        }
+        super.visitConstructorCall(expression)
+    }
 }
 
 internal val EXCLUDED_MODULE_NAMES: Set<Name> =

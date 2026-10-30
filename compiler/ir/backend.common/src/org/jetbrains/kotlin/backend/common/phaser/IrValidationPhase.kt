@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.ir.util.isTypeOfIntrinsic
 import org.jetbrains.kotlin.ir.util.resolveFakeOverrideOrSelf
 import org.jetbrains.kotlin.ir.validation.*
 import org.jetbrains.kotlin.ir.validation.checkers.IrNestedOffsetRangeChecker
+import org.jetbrains.kotlin.ir.validation.checkers.declaration.IrAnnotationParameterDefaultValueChecker
+import org.jetbrains.kotlin.ir.validation.checkers.declaration.IrAnnotationUsageChecker
 import org.jetbrains.kotlin.ir.validation.checkers.declaration.IrClassSuperTypesChecker
 import org.jetbrains.kotlin.ir.validation.checkers.declaration.IrExpressionBodyInFunctionChecker
 import org.jetbrains.kotlin.ir.validation.checkers.declaration.IrFieldVisibilityChecker
@@ -94,6 +96,8 @@ class IrValidationAfterInliningAllFunctionsKlibSecondStagePhase<Context : Loweri
                 IrExpressionBodyInFunctionChecker,
                 IrTypeOperatorRedundancyChecker,
                 IrClassSuperTypesChecker,
+                IrAnnotationUsageChecker,
+                IrAnnotationParameterDefaultValueChecker,
             )
             .withVarargChecks()
             //.withTypeChecks() // TODO: Re-enable checking types (KT-68663)
@@ -123,6 +127,8 @@ class IrValidationBeforeLoweringsKlibSecondStagePhase<Context : LoweringContext>
                 IrFieldVisibilityChecker,
                 IrExpressionBodyInFunctionChecker,
                 IrClassSuperTypesChecker,
+                IrAnnotationUsageChecker,
+                IrAnnotationParameterDefaultValueChecker,
             )
             .withVarargChecks()
             //.withTypeChecks() // TODO: Re-enable checking types (KT-68663)
