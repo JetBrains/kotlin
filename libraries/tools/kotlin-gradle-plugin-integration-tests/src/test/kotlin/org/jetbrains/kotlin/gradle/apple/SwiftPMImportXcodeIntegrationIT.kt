@@ -467,7 +467,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
                 environmentVariables = EnvironmentalVariables(
                     "CONFIGURATION" to "Debug",
                     "ARCHS" to "arm64",
-                    "SDK_NAME" to "iphonesimulator",
+                    "PLATFORM_NAME" to "iphonesimulator",
                     "FRAMEWORKS_FOLDER_PATH" to "Frameworks",
                     "TARGET_BUILD_DIR" to xcodeBuildOutput.absolutePathString(),
                     "BUILT_PRODUCTS_DIR" to xcodeBuildOutput.absolutePathString(),
@@ -1398,7 +1398,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
                 environmentVariables = EnvironmentalVariables(
                     "CONFIGURATION" to "Debug",
                     "ARCHS" to "arm64",
-                    "SDK_NAME" to "iphonesimulator",
+                    "PLATFORM_NAME" to "iphonesimulator",
                     "FRAMEWORKS_FOLDER_PATH" to "Frameworks",
                     "TARGET_BUILD_DIR" to xcodeBuildOutput.absolutePathString(),
                     "BUILT_PRODUCTS_DIR" to xcodeBuildOutput.absolutePathString(),

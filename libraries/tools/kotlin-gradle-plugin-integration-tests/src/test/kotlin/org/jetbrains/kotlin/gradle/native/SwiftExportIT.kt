@@ -88,7 +88,7 @@ class SwiftExportIT : KGPBaseTest() {
                 environmentVariables = swiftExportEmbedAndSignEnvVariables(
                     testBuildDir,
                     archs = listOf("arm64", "x86_64"),
-                    sdk = "iphonesimulator",
+                    platform = "iphonesimulator",
                 )
             ) {
                 assertTasksFailed(":validateArchitecturesForEmbedSwiftExportForXcode")
