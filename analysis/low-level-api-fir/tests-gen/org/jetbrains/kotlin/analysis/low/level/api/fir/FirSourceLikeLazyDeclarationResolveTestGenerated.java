@@ -4155,6 +4155,12 @@ public class FirSourceLikeLazyDeclarationResolveTestGenerated extends AbstractFi
     }
 
     @Test
+    @TestMetadata("aliasedAnnotationWithDeprecated.kt")
+    public void testAliasedAnnotationWithDeprecated() {
+      run("aliasedAnnotationWithDeprecated.kt");
+    }
+
+    @Test
     @TestMetadata("aliasedMetaAnnotation.kt")
     public void testAliasedMetaAnnotation() {
       run("aliasedMetaAnnotation.kt");

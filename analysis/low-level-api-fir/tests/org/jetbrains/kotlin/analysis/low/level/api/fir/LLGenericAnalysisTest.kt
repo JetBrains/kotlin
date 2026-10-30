@@ -323,6 +323,46 @@ class LLGenericAnalysisTest : AbstractAnalysisApiExecutionTest("testData/generic
         }
     }
 
+    /**
+     * A regression test for KT-75685.
+     *
+     * The compiler never matches a plugin annotation used through a type alias (KT-69777),
+     * so the answer must not depend on the amount of the performed resolution either.
+     */
+    @Test
+    fun aliasedPluginAnnotation(ktFile: KtFile) {
+        // The test infrastructure has already checked each fixture's FIR before invoking this test.
+        clearCaches(ktFile.project)
+        withResolutionFacade(ktFile) { resolutionFacade ->
+            val provider = resolutionFacade.useSiteFirSession.predicateBasedProvider
+            val annotation = FqName("org.jetbrains.kotlin.plugin.sandbox.AllOpen")
+            val predicate = DeclarationPredicate.create { annotated(annotation) }
+            val classes = ktFile.declarations.filterIsInstance<KtClass>().map {
+                it.resolveToFirSymbolOfType<FirRegularClassSymbol>(resolutionFacade)
+            }
+
+            fun matchesAt(phase: FirResolvePhase): Map<String, Boolean> = classes.associate { symbol ->
+                symbol.lazyResolveToPhase(phase)
+                symbol.predicateTestName() to provider.matches(predicate, symbol)
+            }
+
+            assertEquals(
+                mapOf("Aliased" to true, "AliasedWithDeprecated" to false, "Direct" to true),
+                matchesAt(FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS),
+            )
+            assertEquals(
+                mapOf("Aliased" to true, "AliasedWithDeprecated" to true, "Direct" to true),
+                matchesAt(FirResolvePhase.TYPES),
+            )
+            assertEquals(
+                setOf("Aliased", "AliasedWithDeprecated", "Direct"),
+                provider.getSymbolsByPredicate(LookupPredicate.create { annotated(annotation) }).mapTo(mutableSetOf()) {
+                    it.predicateTestName()
+                },
+            )
+        }
+    }
+
     @Test
     fun rootCompilerPluginAnnotation(ktFile: KtFile, testServices: TestServices) {
         withResolutionFacade(ktFile) { resolutionFacade ->
