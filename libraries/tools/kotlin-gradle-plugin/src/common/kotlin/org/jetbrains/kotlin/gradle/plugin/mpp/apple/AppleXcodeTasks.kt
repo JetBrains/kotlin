@@ -133,6 +133,7 @@ private fun Project.registerAssembleAppleFrameworkTask(framework: Framework, env
 private fun Project.registerSymbolicLinkTask(
     frameworkCopyTaskName: String,
     builtProductsDir: Provider<File>,
+    indexBuiltProductsDirs: List<File>,
 ): TaskProvider<SymbolicLinkToFrameworkTask> {
     return locateOrRegisterTask<SymbolicLinkToFrameworkTask>(
         lowerCamelCaseName(
@@ -142,6 +143,9 @@ private fun Project.registerSymbolicLinkTask(
     ) {
         it.enabled = kotlinPropertiesProvider.appleCreateSymbolicLinkToFrameworkInBuiltProductsDir
         it.builtProductsDirectory.set(builtProductsDir)
+        it.indexBuiltProductsDirectories.set(
+            if (kotlinPropertiesProvider.createSymbolicLinkToFrameworkForXcodeIndexing) indexBuiltProductsDirs else emptyList()
+        )
     }
 }
 
@@ -308,7 +312,8 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
 
     val symbolicLinkTask = registerSymbolicLinkTask(
         frameworkCopyTaskName = assembleTask.taskProvider.name,
-        builtProductsDir = builtProductsDir
+        builtProductsDir = builtProductsDir,
+        indexBuiltProductsDirs = environment.indexBuiltProductsDirs,
     )
     symbolicLinkTask.dependsOn(createBuildSystemDirectory)
     symbolicLinkTask.configure { task ->
