@@ -18,6 +18,15 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
  * This interface defines properties to configure and manage the behavior of the development server.
  * It is usually implemented as part of the Kotlin Gradle plugin setup to facilitate easier
  * local debugging of web applications.
+ *
+ * The server serves files from three directories:
+ * - [contentDirectory] with the built application, whose files are all available;
+ * - the npm root package directory, which contains the project's npm dependencies;
+ * - the project root directory, from which only Kotlin sources (`*.kt` files) are available,
+ *   so that a browser can show the original sources referenced by source maps.
+ *
+ * Any other file of the project root directory is not served, as it may contain secrets,
+ * and requests are accepted only for local host names and IP addresses.
  */
 @ExperimentalWasmDsl
 interface KotlinWasmDevServer : Task {
@@ -26,6 +35,10 @@ interface KotlinWasmDevServer : Task {
      *
      * This property specifies where the static files (HTML, CSS, JS, etc.) for the WASM application are located.
      * It is used to configure the root directory from which files will be served during development.
+     *
+     * All files of this directory are served, as it contains only the produced application artifacts.
+     * Additionally, the development server serves Kotlin sources of the project root directory,
+     * which are required to make source maps work in a browser.
      */
     @get:InputDirectory
     @get:PathSensitive(PathSensitivity.RELATIVE)

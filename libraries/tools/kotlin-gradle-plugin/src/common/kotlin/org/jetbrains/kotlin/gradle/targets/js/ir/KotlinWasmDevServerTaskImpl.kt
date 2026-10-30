@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.workers.WorkerExecutor
@@ -27,6 +29,22 @@ internal abstract class KotlinWasmDevServerTaskImpl
 
     private val rootDirectory: File = project.rootDir
 
+    /**
+     * The directory with the npm dependencies of the project, which is served as is.
+     *
+     * It is not an input of the task, because `node_modules` must not be snapshotted or watched.
+     */
+    @get:Internal
+    internal abstract val npmRootPackageDirectory: DirectoryProperty
+
+    /**
+     * The URL prefix [npmRootPackageDirectory] is served at.
+     *
+     * It must be exactly the prefix of the paths the development import map refers to npm dependencies by.
+     */
+    @get:Internal
+    internal abstract val npmRootPackagePrefix: Property<String>
+
     override val host: Property<String> = project.objects.property(String::class.java).convention("localhost")
 
     private val isContinuous = project.gradle.startParameter.isContinuous
@@ -43,6 +61,8 @@ internal abstract class KotlinWasmDevServerTaskImpl
 
                 workQueue.submit(DevServerWorkAction::class.java) { params ->
                     params.contentDirectory.set(contentDirectory)
+                    params.npmRootPackageDirectory.set(npmRootPackageDirectory)
+                    params.npmRootPackagePrefix.set(npmRootPackagePrefix)
                     params.rootDirectory.set(rootDirectory)
                     params.host.set(host)
                     params.port.set(serverPort)
@@ -55,6 +75,8 @@ internal abstract class KotlinWasmDevServerTaskImpl
 
             workQueue.submit(DevServerWorkAction::class.java) { params ->
                 params.contentDirectory.set(contentDirectory)
+                params.npmRootPackageDirectory.set(npmRootPackageDirectory)
+                params.npmRootPackagePrefix.set(npmRootPackagePrefix)
                 params.rootDirectory.set(rootDirectory)
                 params.host.set(host)
                 params.port.set(serverPort)
