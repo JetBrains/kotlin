@@ -81,6 +81,13 @@ class JvmMethodSignatureClashDetector(
         declarations: Collection<IrFunction>,
         diagnosticReporter: IrDiagnosticReporter
     ) {
+        val overrideChecker =
+            IrOverrideChecker(classCodegen.context.typeSystem, listOf(IrJavaIncompatibilityRulesOverridabilityCondition()))
+        val declarations =
+            declarations
+                .filter { a -> !declarations.all { b -> overrideChecker.canIgnoreConflict(a, b) } }
+        if (declarations.isEmpty()) return
+
         val fakeOverridesCount = declarations.count { it.isFakeOverride }
         val specialOverridesCount = declarations.count { it.isSpecialOverride() }
         val realMethodsCount = declarations.size - fakeOverridesCount - specialOverridesCount
@@ -120,18 +127,12 @@ class JvmMethodSignatureClashDetector(
             }
 
             else -> {
-                val overrideChecker = IrOverrideChecker(
-                    classCodegen.context.typeSystem, listOf(IrJavaIncompatibilityRulesOverridabilityCondition())
+                reportJvmSignatureClash(
+                    diagnosticReporter,
+                    JvmBackendErrors.ACCIDENTAL_OVERRIDE,
+                    declarations.filter { !it.isFakeOverride && !it.isSpecialOverride() },
+                    conflictingJvmDeclarationsData
                 )
-                val canIgnoreConflict = declarations.all { a -> declarations.all { b -> overrideChecker.canIgnoreConflict(a, b) } }
-                if (!canIgnoreConflict) {
-                    reportJvmSignatureClash(
-                        diagnosticReporter,
-                        JvmBackendErrors.ACCIDENTAL_OVERRIDE,
-                        declarations.filter { !it.isFakeOverride && !it.isSpecialOverride() },
-                        conflictingJvmDeclarationsData
-                    )
-                }
             }
         }
     }
@@ -216,15 +217,15 @@ private val IrFunction.isStaticFakeOverrideForKotlin: Boolean
  * To preserve the old behavior of never allowing accidental overrides by synthetic/generated code,
  * only allow it for source-defined functions and property accessors.
  */
-private val IrFunction.isDefinedNonStaticMember: Boolean
-    get() = !isStatic && (origin == IrDeclarationOrigin.DEFINED || origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR)
+private val IrFunction.isDefinedOrFakeOverrideNonStaticMember: Boolean
+    get() = !isStatic && (origin == IrDeclarationOrigin.DEFINED || origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR || isFakeOverride)
 
 private fun IrOverrideChecker.canIgnoreConflict(a: IrFunction, b: IrFunction): Boolean {
     if (a === b) return true
 
     // Allow "accidental overrides" between two declarations if:
     // 1. One of them is a static fake override created for method from Kotlin.
-    // 2. The other one is a member defined in source code.
+    // 2. The other one is a member defined in source code or a fake override.
     // 3. They "override"/hide each other.
     //
     //    Note: This is overly restrictive but needed for preserving behavior of JvmStatic/JvmOverloads-generated
@@ -232,7 +233,7 @@ private fun IrOverrideChecker.canIgnoreConflict(a: IrFunction, b: IrFunction): B
     //          compiler/testData/diagnostics/tests/jvm/duplicateJvmSignature/jvmStatic/jvmStaticInCompanionObject.kt
 
     return (a.isStaticFakeOverrideForKotlin != b.isStaticFakeOverrideForKotlin) &&
-            (a.isDefinedNonStaticMember != b.isDefinedNonStaticMember) &&
+            (a.isDefinedOrFakeOverrideNonStaticMember != b.isDefinedOrFakeOverrideNonStaticMember) &&
             (a is IrOverridableMember && b is IrOverridableMember) &&
             getBothWaysOverridability(MemberWithOriginal(a, null), MemberWithOriginal(b, null)).overridable
 }
