@@ -1,0 +1,31 @@
+# Gradle
+.gradle/
+build/
+gradle-user-home/
+!gradle/wrapper/gradle-wrapper.jar
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# gradle-profiler output
+profile-out/
+profile-out-*/
+benchmark.csv
+benchmark.html
+
+# Python
+__pycache__/
+*.pyc
+
+# Local
+*.local
+.kotlin
+
+profile-async
+
