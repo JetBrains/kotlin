@@ -3,7 +3,7 @@
 // IGNORE_BACKEND: WASM_JS, WASM_WASI
 //   Reason: KT-65794
 // IGNORE_NATIVE: cacheMode=STATIC_EVERYWHERE && target=linux_x64
-// IGNORE_NATIVE: cacheMode=STATIC_PER_FILE_EVERYWHERE && target=linux_x64
+// IGNORE_NATIVE: cacheMode=INCREMENTAL && target=linux_x64
 // ISSUE: KT-65669
 
 // MODULE: a

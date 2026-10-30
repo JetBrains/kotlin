@@ -1,5 +1,5 @@
 // IGNORE_NATIVE: cacheMode=STATIC_EVERYWHERE
-// IGNORE_NATIVE: cacheMode=STATIC_PER_FILE_EVERYWHERE
+// IGNORE_NATIVE: cacheMode=INCREMENTAL
 // IGNORE_NATIVE: cacheMode=STATIC_USE_HEADERS_EVERYWHERE
 // Without optimizations, this test runs too slowly.
 // DISABLE_NATIVE: optimizationMode=DEBUG

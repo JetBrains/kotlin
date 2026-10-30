@@ -3,7 +3,7 @@
 // forceNativeThreadStateForFunctions binary option is incompatible with caches.
 // IGNORE_NATIVE: cacheMode=STATIC_EVERYWHERE
 // IGNORE_NATIVE: cacheMode=STATIC_ONLY_DIST
-// IGNORE_NATIVE: cacheMode=STATIC_PER_FILE_EVERYWHERE
+// IGNORE_NATIVE: cacheMode=INCREMENTAL
 // FREE_COMPILER_ARGS: -opt-in=kotlin.native.SymbolNameIsInternal -Xbinary=forceNativeThreadStateForFunctions=dereferenceWeak
 
 // MODULE: cinterop

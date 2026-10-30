@@ -218,32 +218,45 @@ class Timeouts(val executionTimeout: Duration) {
 sealed class CacheMode {
     abstract val useStaticCacheForDistributionLibraries: Boolean
     abstract val useStaticCacheForUserLibraries: Boolean
-    abstract val makePerFileCaches: Boolean
+
+    /**
+     * Whether final binaries are compiled with incremental compilation (`-Xenable-incremental-compilation`).
+     * The compiler then builds per-file caches for user libraries itself; the test infra doesn't prebuild them.
+     */
+    abstract val useIncrementalCompilation: Boolean
     abstract val useHeaders: Boolean
     abstract val alias: Alias
 
     object WithoutCache : CacheMode() {
         override val useStaticCacheForDistributionLibraries: Boolean = false
         override val useStaticCacheForUserLibraries: Boolean = false
-        override val makePerFileCaches: Boolean = false
+        override val useIncrementalCompilation: Boolean = false
         override val useHeaders = false
         override val alias = Alias.NO
     }
 
+    object WithIncrementalCache : CacheMode() {
+        override val useStaticCacheForDistributionLibraries: Boolean = true
+        override val useStaticCacheForUserLibraries: Boolean = false
+        override val useIncrementalCompilation: Boolean = true
+        override val useHeaders = false
+        override val alias = Alias.INCREMENTAL
+    }
+
     class WithStaticCache(
         override val useStaticCacheForUserLibraries: Boolean,
-        override val makePerFileCaches: Boolean,
         override val useHeaders: Boolean,
         override val alias: Alias,
     ) : CacheMode() {
         override val useStaticCacheForDistributionLibraries: Boolean = true
+        override val useIncrementalCompilation: Boolean = false
 
         companion object {
             private const val CACHE_KIND = "STATIC"
         }
     }
 
-    enum class Alias { NO, STATIC_ONLY_DIST, STATIC_EVERYWHERE, STATIC_PER_FILE_EVERYWHERE, STATIC_USE_HEADERS_EVERYWHERE }
+    enum class Alias { NO, STATIC_ONLY_DIST, STATIC_EVERYWHERE, INCREMENTAL, STATIC_USE_HEADERS_EVERYWHERE }
 
     companion object {
         fun defaultForTestTarget(distribution: Distribution, kotlinNativeTargets: KotlinNativeTargets): Alias {

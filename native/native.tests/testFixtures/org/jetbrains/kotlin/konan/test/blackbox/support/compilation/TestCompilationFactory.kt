@@ -370,8 +370,8 @@ class TestCompilationFactory {
         }
 
         return cachedKlibCompilations.computeIfAbsent(cacheKey) {
-            val [klibCompilation, makePerFileCacheOverride] = if (isGivenKlibArtifact)
-                GivenLibraryCompilation(klibArtifact) to false // Don't make per-file-cache from given dependencies(usually, cinterop)
+            val klibCompilation = if (isGivenKlibArtifact)
+                GivenLibraryCompilation(klibArtifact)
             else {
                 val filesByExtension = sourceModules.first().files
                     .map { it.location }
@@ -383,7 +383,7 @@ class TestCompilationFactory {
                         sourceModules = sourceModules.flatMapToSet { sortDependsOnTopologically(it) },
                         dependencies = dependencies.forKlib(),
                         expectedArtifact = klibArtifact
-                    ) to null
+                    )
                     filesByExtension.contains("def") -> {
                         val defFile = filesByExtension["def"]!!.single()
                         val testTarget = settings.get<KotlinNativeTargets>().testTarget
@@ -402,7 +402,7 @@ class TestCompilationFactory {
                             sources = cSourceFiles,
                             dependencies = dependencies.forKlib(),
                             expectedArtifact = klibArtifact
-                        ) to false // CInterop klib cannot be compiled into per-file cache
+                        )
                     }
                     else -> error("Test module must contain either KT or DEF file")
                 }
@@ -419,7 +419,6 @@ class TestCompilationFactory {
                             settings.get<CacheMode>().useHeaders
                         ),
                         expectedArtifact = staticCacheArtifact,
-                        makePerFileCacheOverride = makePerFileCacheOverride,
                     )
                 }
 

@@ -1,5 +1,5 @@
 // IGNORE_NATIVE: cacheMode=STATIC_EVERYWHERE && target=linux_x64
-// IGNORE_NATIVE: cacheMode=STATIC_PER_FILE_EVERYWHERE && target=linux_x64
+// IGNORE_NATIVE: cacheMode=INCREMENTAL && target=linux_x64
 
 // ISSUE: KT-33411, KT-66338
 

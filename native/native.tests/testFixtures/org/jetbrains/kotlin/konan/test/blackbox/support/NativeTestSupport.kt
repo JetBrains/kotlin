@@ -353,20 +353,20 @@ object NativeTestSupport {
             CacheMode.Alias.NO -> return CacheMode.WithoutCache
             CacheMode.Alias.STATIC_ONLY_DIST -> false
             CacheMode.Alias.STATIC_EVERYWHERE -> true
-            CacheMode.Alias.STATIC_PER_FILE_EVERYWHERE -> true
+            CacheMode.Alias.INCREMENTAL -> false // The compiler caches user libraries itself.
             CacheMode.Alias.STATIC_USE_HEADERS_EVERYWHERE -> true
         }
-        val makePerFileCaches = cacheMode == CacheMode.Alias.STATIC_PER_FILE_EVERYWHERE
         val useHeaders = cacheMode == CacheMode.Alias.STATIC_USE_HEADERS_EVERYWHERE
 
-        return if (defaultCache == CacheMode.Alias.NO)
-            CacheMode.WithoutCache
-        else CacheMode.WithStaticCache(
-            useStaticCacheForUserLibraries,
-            makePerFileCaches,
-            useHeaders,
-            cacheMode
-        )
+        return when {
+            defaultCache == CacheMode.Alias.NO -> CacheMode.WithoutCache
+            cacheMode == CacheMode.Alias.INCREMENTAL -> CacheMode.WithIncrementalCache
+            else -> CacheMode.WithStaticCache(
+                useStaticCacheForUserLibraries,
+                useHeaders,
+                cacheMode
+            )
+        }
     }
 
     private fun computeTestMode(enforcedProperties: EnforcedProperties): TestMode =
