@@ -20,11 +20,17 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.irAttribute
+import org.jetbrains.kotlin.ir.irFlag
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
+
+/**
+ * Whether the class was an enum class that has been lowered into an inline class by [TrivialEnumClassLowering].
+ */
+var IrClass.isLoweredTrivialEnum: Boolean by irFlag(copyByDefault = true)
 
 /**
  * Optimization: replaces `when` subjects of enum types with their ordinals.
@@ -59,7 +65,7 @@ open class EnumWhenLowering(protected open val context: CommonBackendContext) : 
         val subject = expression.statements[0] as? IrVariable
             ?: return expression
         val subjectClass = subject.type.getClass()
-        if (subjectClass == null || subjectClass.kind != ClassKind.ENUM_CLASS || subjectClass.isEffectivelyExternal()) {
+        if (subjectClass == null || (subjectClass.kind != ClassKind.ENUM_CLASS && !subjectClass.isLoweredTrivialEnum) || subjectClass.isEffectivelyExternal()) {
             return expression
         }
         val irWhen = expression.statements[1] as? IrWhen
@@ -70,7 +76,12 @@ open class EnumWhenLowering(protected open val context: CommonBackendContext) : 
         val subjectOrdinalProvider = lazy {
             context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, subject.startOffset, subject.endOffset).run {
                 val integer = if (subject.type.isNullable())
-                    irIfNull(context.irBuiltIns.intType, irGet(subject), irInt(-1), mapRuntimeEnumEntry(this, irGet(subject)))
+                    irIfNull(
+                        context.irBuiltIns.intType,
+                        irGet(subject),
+                        irInt(-1),
+                        mapRuntimeEnumEntry(this, irGet(subject))
+                    )
                 else
                     mapRuntimeEnumEntry(this, irGet(subject))
                 scope.createTemporaryVariable(integer).also {
@@ -184,7 +195,7 @@ private var IrClass.enumEntriesMap: Map<Name, LoweredEnumEntryDescription>? by i
 data class LoweredEnumEntryDescription(val ordinal: Int, val getterId: Int)
 
 fun enumEntriesMap(enumClass: IrClass): Map<Name, LoweredEnumEntryDescription> {
-    require(enumClass.isEnumClass) { "Expected enum class but was: ${enumClass.render()}" }
+    require(enumClass.isEnumClass || enumClass.isLoweredTrivialEnum) { "Expected enum class but was: ${enumClass.render()}" }
     return enumClass::enumEntriesMap.getOrSetIfNull {
         data class NameWithOrdinal(val name: Name, val ordinal: Int)
         enumClass.declarations.asSequence()
