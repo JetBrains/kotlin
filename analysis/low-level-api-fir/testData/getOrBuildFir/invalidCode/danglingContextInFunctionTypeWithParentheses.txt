@@ -1,0 +1,11 @@
+KT element: KtTypeReference
+FIR element: FirResolvedTypeRefImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+R|kotlin/Int|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] danglingContextInFunctionTypeWithParentheses.kt
+    public? final? [ResolvedTo(TYPES)] val p: <ERROR TYPE REF: Incomplete code>
+        public? [ResolvedTo(TYPES)] get(): <ERROR TYPE REF: Incomplete code>

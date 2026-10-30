@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.collectors
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContextForProvider
@@ -248,6 +249,13 @@ abstract class AbstractDiagnosticCollectorVisitor(
     }
 
     override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: Nothing?) {
+        if (resolvedTypeRef.source?.kind == KtFakeSourceElementKind.IncompleteFunctionType) {
+            // Nothing is reported on the function type kept for incomplete code like `context(A) B`, but its nested type refs have
+            // real sources and are checked as in a complete function type
+            resolvedTypeRef.delegatedTypeRef?.acceptChildren(this, data)
+            return
+        }
+
         // Assuming no errors, the children of FirResolvedTypeRef (currently this can be FirAnnotationCalls) will also be present
         // as children in delegatedTypeRef. We should make sure those children are only visited once, otherwise diagnostics will be
         // collected twice: once through resolvedTypeRef's children and another through resolvedTypeRef.delegatedTypeRef's children.

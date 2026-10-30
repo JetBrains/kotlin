@@ -1,0 +1,962 @@
+KtFile: 'danglingContextInFunctionType.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(0,74): '@Target(AnnotationTarget.TYPE)'
+  null
+
+KtDeclarationModifierList(0,41): '@Target(AnnotationTarget.TYPE)'
+  null
+
+KtAnnotationEntry(0,30): '@Target(AnnotationTarget.TYPE)'
+  KaSimpleCallResolutionSuccess:
+    call = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.annotation.Target
+        symbol = <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
+        valueParameters = [
+          KaVariableSignature:
+            name = allowedTargets
+            receiverType = null
+            returnType = kotlin.annotation.AnnotationTarget
+            symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        AnnotationTarget.TYPE -> (KaVariableSignature:
+          name = allowedTargets
+          receiverType = null
+          returnType = kotlin.annotation.AnnotationTarget
+          symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+          contextParameters = []
+          callableId = null)
+      }
+
+KtConstructorCalleeExpression(1,7): 'Target'
+  KaSimpleCallResolutionSuccess:
+    call = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.annotation.Target
+        symbol = <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
+        valueParameters = [
+          KaVariableSignature:
+            name = allowedTargets
+            receiverType = null
+            returnType = kotlin.annotation.AnnotationTarget
+            symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        AnnotationTarget.TYPE -> (KaVariableSignature:
+          name = allowedTargets
+          receiverType = null
+          returnType = kotlin.annotation.AnnotationTarget
+          symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+          contextParameters = []
+          callableId = null)
+      }
+
+KtTypeReference(1,7): 'Target'
+  null
+
+KtUserType(1,7): 'Target'
+  null
+
+KtNameReferenceExpression(1,7): 'Target'
+  KaSimpleCallResolutionSuccess:
+    call = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.annotation.Target
+        symbol = <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
+        valueParameters = [
+          KaVariableSignature:
+            name = allowedTargets
+            receiverType = null
+            returnType = kotlin.annotation.AnnotationTarget
+            symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        AnnotationTarget.TYPE -> (KaVariableSignature:
+          name = allowedTargets
+          receiverType = null
+          returnType = kotlin.annotation.AnnotationTarget
+          symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+          contextParameters = []
+          callableId = null)
+      }
+
+KtValueArgumentList(7,30): '(AnnotationTarget.TYPE)'
+  null
+
+KtValueArgument(8,29): 'AnnotationTarget.TYPE'
+  null
+
+KtDotQualifiedExpression(8,29): 'AnnotationTarget.TYPE'
+  KaSimpleCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = AnnotationTarget
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = TYPE
+        receiverType = null
+        returnType = kotlin.annotation.AnnotationTarget
+        symbol = kotlin/annotation/AnnotationTarget.TYPE
+        contextParameters = []
+        callableId = kotlin/annotation/AnnotationTarget.TYPE
+      typeArgumentsMapping = {}
+
+KtNameReferenceExpression(8,24): 'AnnotationTarget'
+  null
+
+KtNameReferenceExpression(25,29): 'TYPE'
+  KaSimpleCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = AnnotationTarget
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = TYPE
+        receiverType = null
+        returnType = kotlin.annotation.AnnotationTarget
+        symbol = kotlin/annotation/AnnotationTarget.TYPE
+        contextParameters = []
+        callableId = kotlin/annotation/AnnotationTarget.TYPE
+      typeArgumentsMapping = {}
+
+KtPrimaryConstructor(52,74): '(val position: String)'
+  null
+
+KtParameterList(52,74): '(val position: String)'
+  null
+
+KtParameter(53,73): 'val position: String'
+  null
+
+KtTypeReference(67,73): 'String'
+  null
+
+KtUserType(67,73): 'String'
+  null
+
+KtNameReferenceExpression(67,73): 'String'
+  null
+
+KtClass(76,557): 'interface Properties {'
+  null
+
+KtClassBody(97,557): '{'
+  null
+
+KtProperty(103,125): 'val ctx1: context(Int)'
+  null
+
+KtTypeReference(113,125): 'context(Int)'
+  null
+
+KtContextReceiverList(113,125): 'context(Int)'
+  null
+
+KtContextReceiver(121,124): 'Int'
+  null
+
+KtTypeReference(121,124): 'Int'
+  null
+
+KtUserType(121,124): 'Int'
+  null
+
+KtNameReferenceExpression(121,124): 'Int'
+  null
+
+KtProperty(130,155): 'val ctx2: context(Int) ()'
+  null
+
+KtTypeReference(140,155): 'context(Int) ()'
+  null
+
+KtContextReceiverList(140,152): 'context(Int)'
+  null
+
+KtContextReceiver(148,151): 'Int'
+  null
+
+KtTypeReference(148,151): 'Int'
+  null
+
+KtUserType(148,151): 'Int'
+  null
+
+KtNameReferenceExpression(148,151): 'Int'
+  null
+
+KtProperty(160,187): 'val ctx3: context(Int) () -'
+  null
+
+KtTypeReference(170,187): 'context(Int) () -'
+  null
+
+KtContextReceiverList(170,182): 'context(Int)'
+  null
+
+KtContextReceiver(178,181): 'Int'
+  null
+
+KtTypeReference(178,181): 'Int'
+  null
+
+KtUserType(178,181): 'Int'
+  null
+
+KtNameReferenceExpression(178,181): 'Int'
+  null
+
+KtProperty(192,218): 'val ctx4: context(Int) Int'
+  null
+
+KtTypeReference(202,218): 'context(Int) Int'
+  null
+
+KtContextReceiverList(202,214): 'context(Int)'
+  null
+
+KtContextReceiver(210,213): 'Int'
+  null
+
+KtTypeReference(210,213): 'Int'
+  null
+
+KtUserType(210,213): 'Int'
+  null
+
+KtNameReferenceExpression(210,213): 'Int'
+  null
+
+KtUserType(215,218): 'Int'
+  null
+
+KtNameReferenceExpression(215,218): 'Int'
+  null
+
+KtProperty(223,261): 'val ctx4Nullable: context(Int) String?'
+  null
+
+KtTypeReference(241,261): 'context(Int) String?'
+  null
+
+KtContextReceiverList(241,253): 'context(Int)'
+  null
+
+KtContextReceiver(249,252): 'Int'
+  null
+
+KtTypeReference(249,252): 'Int'
+  null
+
+KtUserType(249,252): 'Int'
+  null
+
+KtNameReferenceExpression(249,252): 'Int'
+  null
+
+KtNullableType(254,261): 'String?'
+  null
+
+KtUserType(254,260): 'String'
+  null
+
+KtNameReferenceExpression(254,260): 'String'
+  null
+
+KtProperty(266,293): 'val ctx5: context(Int) Int.'
+  null
+
+KtTypeReference(276,293): 'context(Int) Int.'
+  null
+
+KtContextReceiverList(276,288): 'context(Int)'
+  null
+
+KtContextReceiver(284,287): 'Int'
+  null
+
+KtTypeReference(284,287): 'Int'
+  null
+
+KtUserType(284,287): 'Int'
+  null
+
+KtNameReferenceExpression(284,287): 'Int'
+  null
+
+KtUserType(289,293): 'Int.'
+  null
+
+KtUserType(289,292): 'Int'
+  null
+
+KtNameReferenceExpression(289,292): 'Int'
+  null
+
+KtProperty(298,343): 'val ctx5Parenthesized: context(Int) (String).'
+  null
+
+KtTypeReference(321,343): 'context(Int) (String).'
+  null
+
+KtContextReceiverList(321,333): 'context(Int)'
+  null
+
+KtContextReceiver(329,332): 'Int'
+  null
+
+KtTypeReference(329,332): 'Int'
+  null
+
+KtUserType(329,332): 'Int'
+  null
+
+KtNameReferenceExpression(329,332): 'Int'
+  null
+
+KtFunctionTypeReceiver(334,342): '(String)'
+  null
+
+KtTypeReference(334,342): '(String)'
+  null
+
+KtUserType(335,341): 'String'
+  null
+
+KtNameReferenceExpression(335,341): 'String'
+  null
+
+KtProperty(348,374): 'val named: context(a: Int)'
+  null
+
+KtTypeReference(359,374): 'context(a: Int)'
+  null
+
+KtContextReceiverList(359,374): 'context(a: Int)'
+  null
+
+KtParameter(367,373): 'a: Int'
+  null
+
+KtTypeReference(370,373): 'Int'
+  null
+
+KtUserType(370,373): 'Int'
+  null
+
+KtNameReferenceExpression(370,373): 'Int'
+  null
+
+KtProperty(379,419): 'val severalEntries: context(Int, String)'
+  null
+
+KtTypeReference(399,419): 'context(Int, String)'
+  null
+
+KtContextReceiverList(399,419): 'context(Int, String)'
+  null
+
+KtContextReceiver(407,410): 'Int'
+  null
+
+KtTypeReference(407,410): 'Int'
+  null
+
+KtUserType(407,410): 'Int'
+  null
+
+KtNameReferenceExpression(407,410): 'Int'
+  null
+
+KtContextReceiver(412,418): 'String'
+  null
+
+KtTypeReference(412,418): 'String'
+  null
+
+KtUserType(412,418): 'String'
+  null
+
+KtNameReferenceExpression(412,418): 'String'
+  null
+
+KtProperty(424,468): 'val annotated: context(@Anno("1" + "2") Int)'
+  null
+
+KtTypeReference(439,468): 'context(@Anno("1" + "2") Int)'
+  null
+
+KtContextReceiverList(439,468): 'context(@Anno("1" + "2") Int)'
+  null
+
+KtContextReceiver(447,467): '@Anno("1" + "2") Int'
+  null
+
+KtTypeReference(447,467): '@Anno("1" + "2") Int'
+  null
+
+KtDeclarationModifierList(447,463): '@Anno("1" + "2")'
+  null
+
+KtAnnotationEntry(447,463): '@Anno("1" + "2")'
+  KaSimpleCallResolutionSuccess:
+    call = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(position: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "1" + "2" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+
+KtConstructorCalleeExpression(448,452): 'Anno'
+  KaSimpleCallResolutionSuccess:
+    call = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(position: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "1" + "2" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+
+KtTypeReference(448,452): 'Anno'
+  null
+
+KtUserType(448,452): 'Anno'
+  null
+
+KtNameReferenceExpression(448,452): 'Anno'
+  KaSimpleCallResolutionSuccess:
+    call = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(position: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "1" + "2" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+
+KtValueArgumentList(452,463): '("1" + "2")'
+  null
+
+KtValueArgument(453,462): '"1" + "2"'
+  null
+
+KtBinaryExpression(453,462): '"1" + "2"'
+  KaSimpleCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = "1"
+        isSafeNavigation = false
+        type = kotlin.String
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = kotlin/String.plus(<dispatch receiver>: kotlin.String, other: kotlin.Any?): kotlin.String
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/String.plus
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "2" -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
+
+KtStringTemplateExpression(453,456): '"1"'
+  null
+
+KtLiteralStringTemplateEntry(454,455): '1'
+  null
+
+KtOperationReferenceExpression(457,458): '+'
+  KaSimpleCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = "1"
+        isSafeNavigation = false
+        type = kotlin.String
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = kotlin/String.plus(<dispatch receiver>: kotlin.String, other: kotlin.Any?): kotlin.String
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/String.plus
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "2" -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
+
+KtStringTemplateExpression(459,462): '"2"'
+  null
+
+KtLiteralStringTemplateEntry(460,461): '2'
+  null
+
+KtUserType(464,467): 'Int'
+  null
+
+KtNameReferenceExpression(464,467): 'Int'
+  null
+
+KtProperty(473,514): 'val suspendModifier: suspend context(Int)'
+  null
+
+KtTypeReference(494,514): 'suspend context(Int)'
+  null
+
+KtDeclarationModifierList(494,501): 'suspend'
+  null
+
+KtContextReceiverList(502,514): 'context(Int)'
+  null
+
+KtContextReceiver(510,513): 'Int'
+  null
+
+KtTypeReference(510,513): 'Int'
+  null
+
+KtUserType(510,513): 'Int'
+  null
+
+KtNameReferenceExpression(510,513): 'Int'
+  null
+
+KtProperty(519,555): 'val typeArgument: List<context(Int)>'
+  null
+
+KtTypeReference(537,555): 'List<context(Int)>'
+  null
+
+KtUserType(537,555): 'List<context(Int)>'
+  null
+
+KtNameReferenceExpression(537,541): 'List'
+  null
+
+KtTypeArgumentList(541,555): '<context(Int)>'
+  null
+
+KtTypeProjection(542,554): 'context(Int)'
+  null
+
+KtTypeReference(542,554): 'context(Int)'
+  null
+
+KtContextReceiverList(542,554): 'context(Int)'
+  null
+
+KtContextReceiver(550,553): 'Int'
+  null
+
+KtTypeReference(550,553): 'Int'
+  null
+
+KtUserType(550,553): 'Int'
+  null
+
+KtNameReferenceExpression(550,553): 'Int'
+  null
+
+KtNamedFunction(559,598): 'fun returnType(): context(Int) = TODO()'
+  null
+
+KtParameterList(573,575): '()'
+  null
+
+KtTypeReference(577,589): 'context(Int)'
+  null
+
+KtContextReceiverList(577,589): 'context(Int)'
+  null
+
+KtContextReceiver(585,588): 'Int'
+  null
+
+KtTypeReference(585,588): 'Int'
+  null
+
+KtUserType(585,588): 'Int'
+  null
+
+KtNameReferenceExpression(585,588): 'Int'
+  null
+
+KtCallExpression(592,598): 'TODO()'
+  KaSimpleCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtNameReferenceExpression(592,596): 'TODO'
+  KaSimpleCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtValueArgumentList(596,598): '()'
+  null
+
+KtNamedFunction(600,646): 'fun valueParameter(p: context(Int) String.) {}'
+  null
+
+KtParameterList(618,643): '(p: context(Int) String.)'
+  null
+
+KtParameter(619,642): 'p: context(Int) String.'
+  null
+
+KtTypeReference(622,642): 'context(Int) String.'
+  null
+
+KtContextReceiverList(622,634): 'context(Int)'
+  null
+
+KtContextReceiver(630,633): 'Int'
+  null
+
+KtTypeReference(630,633): 'Int'
+  null
+
+KtUserType(630,633): 'Int'
+  null
+
+KtNameReferenceExpression(630,633): 'Int'
+  null
+
+KtUserType(635,642): 'String.'
+  null
+
+KtUserType(635,641): 'String'
+  null
+
+KtNameReferenceExpression(635,641): 'String'
+  null
+
+KtBlockExpression(644,646): '{}'
+  null
+
+KtNamedFunction(648,696): 'fun <T> intersection(p: context(Int) T & Any) {}'
+  null
+
+KtTypeParameterList(652,655): '<T>'
+  null
+
+KtTypeParameter(653,654): 'T'
+  null
+
+KtParameterList(668,693): '(p: context(Int) T & Any)'
+  null
+
+KtParameter(669,692): 'p: context(Int) T & Any'
+  null
+
+KtTypeReference(672,692): 'context(Int) T & Any'
+  null
+
+KtContextReceiverList(672,684): 'context(Int)'
+  null
+
+KtContextReceiver(680,683): 'Int'
+  null
+
+KtTypeReference(680,683): 'Int'
+  null
+
+KtUserType(680,683): 'Int'
+  null
+
+KtNameReferenceExpression(680,683): 'Int'
+  null
+
+KtIntersectionType(685,692): 'T & Any'
+  null
+
+KtTypeReference(685,686): 'T'
+  null
+
+KtUserType(685,686): 'T'
+  null
+
+KtNameReferenceExpression(685,686): 'T'
+  null
+
+KtTypeReference(689,692): 'Any'
+  null
+
+KtUserType(689,692): 'Any'
+  null
+
+KtNameReferenceExpression(689,692): 'Any'
+  null
+
+KtBlockExpression(694,696): '{}'
+  null
+
+KtNamedFunction(698,799): 'fun body() {'
+  null
+
+KtParameterList(706,708): '()'
+  null
+
+KtBlockExpression(709,799): '{'
+  null
+
+KtProperty(715,747): 'val local: context(Int) = TODO()'
+  null
+
+KtTypeReference(726,738): 'context(Int)'
+  null
+
+KtContextReceiverList(726,738): 'context(Int)'
+  null
+
+KtContextReceiver(734,737): 'Int'
+  null
+
+KtTypeReference(734,737): 'Int'
+  null
+
+KtUserType(734,737): 'Int'
+  null
+
+KtNameReferenceExpression(734,737): 'Int'
+  null
+
+KtCallExpression(741,747): 'TODO()'
+  KaSimpleCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtNameReferenceExpression(741,745): 'TODO'
+  KaSimpleCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtValueArgumentList(745,747): '()'
+  null
+
+KtProperty(752,795): 'val localReceiver: context(Int) Int. = TODO'
+  null
+
+KtTypeReference(771,795): 'context(Int) Int. = TODO'
+  null
+
+KtContextReceiverList(771,783): 'context(Int)'
+  null
+
+KtContextReceiver(779,782): 'Int'
+  null
+
+KtTypeReference(779,782): 'Int'
+  null
+
+KtUserType(779,782): 'Int'
+  null
+
+KtNameReferenceExpression(779,782): 'Int'
+  null
+
+KtUserType(784,790): 'Int. ='
+  null
+
+KtUserType(784,787): 'Int'
+  null
+
+KtNameReferenceExpression(784,787): 'Int'
+  null

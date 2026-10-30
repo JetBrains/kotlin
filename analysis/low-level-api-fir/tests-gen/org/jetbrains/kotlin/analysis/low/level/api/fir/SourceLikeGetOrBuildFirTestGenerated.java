@@ -2714,6 +2714,78 @@ public class SourceLikeGetOrBuildFirTestGenerated extends AbstractSourceLikeGetO
     }
 
     @Test
+    @TestMetadata("danglingContextInFunctionType.kt")
+    public void testDanglingContextInFunctionType() {
+      run("danglingContextInFunctionType.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeAnnotation.kt")
+    public void testDanglingContextInFunctionTypeAnnotation() {
+      run("danglingContextInFunctionTypeAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeLocal.kt")
+    public void testDanglingContextInFunctionTypeLocal() {
+      run("danglingContextInFunctionTypeLocal.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeNamed.kt")
+    public void testDanglingContextInFunctionTypeNamed() {
+      run("danglingContextInFunctionTypeNamed.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeWholeType.kt")
+    public void testDanglingContextInFunctionTypeWholeType() {
+      run("danglingContextInFunctionTypeWholeType.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeWithIncompleteArrow.kt")
+    public void testDanglingContextInFunctionTypeWithIncompleteArrow() {
+      run("danglingContextInFunctionTypeWithIncompleteArrow.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeWithIncompleteType.kt")
+    public void testDanglingContextInFunctionTypeWithIncompleteType() {
+      run("danglingContextInFunctionTypeWithIncompleteType.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeWithParentheses.kt")
+    public void testDanglingContextInFunctionTypeWithParentheses() {
+      run("danglingContextInFunctionTypeWithParentheses.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeWithReceiver.kt")
+    public void testDanglingContextInFunctionTypeWithReceiver() {
+      run("danglingContextInFunctionTypeWithReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeWithReceiverType.kt")
+    public void testDanglingContextInFunctionTypeWithReceiverType() {
+      run("danglingContextInFunctionTypeWithReceiverType.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeWithType.kt")
+    public void testDanglingContextInFunctionTypeWithType() {
+      run("danglingContextInFunctionTypeWithType.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeWithTypeElement.kt")
+    public void testDanglingContextInFunctionTypeWithTypeElement() {
+      run("danglingContextInFunctionTypeWithTypeElement.kt");
+    }
+
+    @Test
     @TestMetadata("delegatedProperty.kt")
     public void testDelegatedProperty() {
       run("delegatedProperty.kt");

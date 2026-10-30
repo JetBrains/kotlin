@@ -2756,6 +2756,8 @@ public final class org/jetbrains/kotlin/psi/KtTypeReference : org/jetbrains/kotl
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun getAnnotationEntries ()Ljava/util/List;
 	public fun getAnnotations ()Ljava/util/List;
+	public final fun getDanglingContextParameterList ()Lorg/jetbrains/kotlin/psi/KtContextParameterList;
+	public final fun getDanglingFunctionTypeReceiver ()Lorg/jetbrains/kotlin/psi/KtFunctionTypeReceiver;
 	public final fun getShortTypeText ()Ljava/lang/String;
 	public final fun getTypeElement ()Lorg/jetbrains/kotlin/psi/KtTypeElement;
 	public final fun getTypeText ()Ljava/lang/String;
