@@ -5,6 +5,10 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_JS_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_JVM_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_WASM_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
@@ -22,7 +26,7 @@ class UnsafeOptimizationsForMultiplatformTest {
     @Test
     fun disabledByDefaultForEveryTarget() {
         assertEnabledTargets(
-            enabledProperty = null,
+            properties = emptyMap(),
             expectedJvm = false, expectedJs = false, expectedWasm = false,
         )
     }
@@ -30,7 +34,7 @@ class UnsafeOptimizationsForMultiplatformTest {
     @Test
     fun jvmPropertyAffectsOnlyJvmTasks() {
         assertEnabledTargets(
-            enabledProperty = "kotlin.jvm.enableIncrementalCompilationOfCommonSources",
+            properties = mapOf(KOTLIN_JVM_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES to true),
             expectedJvm = true, expectedJs = false, expectedWasm = false,
         )
     }
@@ -38,7 +42,7 @@ class UnsafeOptimizationsForMultiplatformTest {
     @Test
     fun jsPropertyAffectsOnlyJsTasks() {
         assertEnabledTargets(
-            enabledProperty = "kotlin.internal.js.enableUnsafeOptimizationsForMultiplatform",
+            properties = mapOf(KOTLIN_JS_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION to true),
             expectedJvm = false, expectedJs = true, expectedWasm = false,
         )
     }
@@ -46,37 +50,58 @@ class UnsafeOptimizationsForMultiplatformTest {
     @Test
     fun wasmPropertyAffectsOnlyWasmTasks() {
         assertEnabledTargets(
-            enabledProperty = "kotlin.internal.wasm.enableUnsafeOptimizationsForMultiplatform",
+            properties = mapOf(KOTLIN_WASM_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION to true),
             expectedJvm = false, expectedJs = false, expectedWasm = true,
         )
     }
 
     @Test
-    fun deprecatedGlobalPropertySetToTrueIsReportedAsError() {
+    fun deprecatedGlobalPropertyStillEnablesEveryTarget() {
+        assertEnabledTargets(
+            properties = mapOf(KOTLIN_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION to true),
+            expectedJvm = true, expectedJs = true, expectedWasm = true,
+        )
+    }
+
+    @Test
+    fun perTargetPropertyOverridesDeprecatedGlobalProperty() {
+        assertEnabledTargets(
+            properties = mapOf(
+                KOTLIN_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION to true,
+                KOTLIN_JVM_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES to false,
+                KOTLIN_JS_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION to false,
+                KOTLIN_WASM_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION to false,
+            ),
+            expectedJvm = false, expectedJs = false, expectedWasm = false,
+        )
+    }
+
+    @Test
+    fun deprecatedGlobalPropertySetToTrueIsReportedAsWarning() {
         assertDeprecationReported(propertyValue = "true")
     }
 
     @Test
-    fun deprecatedGlobalPropertySetToFalseIsReportedAsError() {
+    fun deprecatedGlobalPropertySetToFalseIsReportedAsWarning() {
         assertDeprecationReported(propertyValue = "false")
     }
 
     private fun assertDeprecationReported(propertyValue: String) {
         val project = buildProjectWithJvm(preApplyCode = {
-            extraProperties.set("kotlin.internal.incremental.enableUnsafeOptimizationsForMultiplatform", propertyValue)
+            extraProperties.set(KOTLIN_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION, propertyValue)
         }).evaluate()
 
-        project.assertContainsDiagnostic(KotlinToolingDiagnostics.DeprecatedErrorGradleProperties)
+        project.assertContainsDiagnostic(KotlinToolingDiagnostics.DeprecatedWarningGradleProperties)
     }
 
     private fun assertEnabledTargets(
-        enabledProperty: String?,
+        properties: Map<String, Boolean>,
         expectedJvm: Boolean,
         expectedJs: Boolean,
         expectedWasm: Boolean,
     ) {
         val project = buildKMPWithAllBackends(preApplyCode = {
-            if (enabledProperty != null) extraProperties.set(enabledProperty, "true")
+            properties.forEach { (name, value) -> extraProperties.set(name, value.toString()) }
         })
 
         project.evaluate()
