@@ -207,8 +207,8 @@ object FirLombokBuilderChecker : FirRegularClassChecker(MppCheckerKind.Platform)
                     "To make the property a builder field, declare it in the primary constructor"
         ),
         VAL_BODY_PROPERTY(
-            "a Kotlin class builds out of its mutable properties if there is no primary constructor parameters. " +
-                    "To make it a builder field, declare it in the primary constructor or change it to be a mutable property"
+            "builder fields are generated from the mutable properties if there are no primary constructor parameters. " +
+                    "To make the property a builder field, declare it in the primary constructor or change it to be a mutable property"
         ),
         HAS_IMPLICIT_RETURN_TYPE(
             "its type is implicit and cannot be resolved before the builder is generated. " +
