@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.getPublicSignature
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.fields
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -217,6 +218,7 @@ internal class ClassFieldsDeserializer(
                 ?: error("No signature for ${irClass.render()}")
         val serializedClassFields = classesFields[signature]
                 ?: error("No class fields for ${irClass.render()}, sig = ${signature.render()}")
+        val knownFields = irClass.fields.associateBy { it.name.asString() }
 
         check(irClass.getPackageFragment() !is IrExternalPackageFragment) {
             "Unexpected external package fragment: ${irClass.render()}"
@@ -240,25 +242,32 @@ internal class ClassFieldsDeserializer(
                 }
             } else {
                 val name = field.name
-                val type = when {
-                    field.binaryType == INVALID_INDEX -> builtIns.anyNType
-                    else -> when (PrimitiveBinaryType.entries.getOrNull(field.binaryType)) {
-                        PrimitiveBinaryType.BOOLEAN -> builtIns.booleanType
-                        PrimitiveBinaryType.BYTE -> builtIns.byteType
-                        PrimitiveBinaryType.SHORT -> builtIns.shortType
-                        PrimitiveBinaryType.INT -> builtIns.intType
-                        PrimitiveBinaryType.LONG -> builtIns.longType
-                        PrimitiveBinaryType.FLOAT -> builtIns.floatType
-                        PrimitiveBinaryType.DOUBLE -> builtIns.doubleType
-                        PrimitiveBinaryType.POINTER -> getByClassId(KonanPrimitiveType.NON_NULL_NATIVE_PTR.classId).defaultType
-                        PrimitiveBinaryType.VECTOR128 -> getByClassId(KonanPrimitiveType.VECTOR128.classId).defaultType
-                        else -> error("Bad binary type of field $name of ${irClass.render()}")
-                    }
+                val binaryType = when {
+                    field.binaryType == INVALID_INDEX -> null
+                    else -> PrimitiveBinaryType.entries.getOrNull(field.binaryType)
+                            ?: error("Bad binary type of field $name of ${irClass.render()}")
                 }
+                val type = when (binaryType) {
+                    null -> builtIns.anyNType
+                    PrimitiveBinaryType.BOOLEAN -> builtIns.booleanType
+                    PrimitiveBinaryType.BYTE -> builtIns.byteType
+                    PrimitiveBinaryType.SHORT -> builtIns.shortType
+                    PrimitiveBinaryType.INT -> builtIns.intType
+                    PrimitiveBinaryType.LONG -> builtIns.longType
+                    PrimitiveBinaryType.FLOAT -> builtIns.floatType
+                    PrimitiveBinaryType.DOUBLE -> builtIns.doubleType
+                    PrimitiveBinaryType.POINTER -> getByClassId(KonanPrimitiveType.NON_NULL_NATIVE_PTR.classId).defaultType
+                    PrimitiveBinaryType.VECTOR128 -> getByClassId(KonanPrimitiveType.VECTOR128.classId).defaultType
+                }
+                // TODO: this should compare signatures of corresponding properties.
+                val irFieldSymbol = knownFields[name]?.let {
+                    check(binaryType == it.type.computePrimitiveBinaryTypeOrNull())
+                    it.symbol
+                } ?: IrFieldSymbolImpl()
                 ClassLayoutBuilder.FieldInfo(
                         name, type,
                         isConst = (field.flags and SerializedClassFieldInfo.FLAG_IS_CONST) != 0,
-                        irFieldSymbol = IrFieldSymbolImpl(),
+                        irFieldSymbol = irFieldSymbol,
                         alignment = field.alignment,
                 )
             }
