@@ -201,6 +201,7 @@ internal class SourceSetVisibilityProvider(
         dependingPlatformCompilations: List<PlatformCompilationData>,
         dependencyProjectStructureMetadata: KotlinProjectStructureMetadata,
         resolvedToOtherProject: Boolean,
+        excludedSourceSets: Set<String>,
     ): SourceSetVisibilityResult {
         if (dependingPlatformCompilations.isEmpty())
             return SourceSetVisibilityResult(emptySet(), emptyMap())
@@ -240,7 +241,7 @@ internal class SourceSetVisibilityProvider(
             return SourceSetVisibilityResult(emptySet(), emptyMap())
         }
 
-        val visibleSourceSetNames = visiblePlatformVariantNames
+        var visibleSourceSetNames = visiblePlatformVariantNames
             .mapNotNull { platformVariants ->
                 platformVariants
                     .map { dependencyProjectStructureMetadata.sourceSetNamesByVariantName[it].orEmpty() }
@@ -250,7 +251,20 @@ internal class SourceSetVisibilityProvider(
             }
             // intersect visible variants from different platforms
             .ifEmpty { listOf(emptySet()) } // to avoid calling reduce on an empty list
-            .reduce { acc, item -> acc intersect item }
+            .reduce { acc, item -> acc intersect item } - excludedSourceSets
+
+        val strictCompilationEnabled = excludedSourceSets.isNotEmpty()
+        if (strictCompilationEnabled) {
+            /**
+             * Coroutines have "nativeDarwinMain -> nativeMain" dependency. If we are transforming commonMain in a project with 2 native
+             * targets, then we shouldn't see nativeDarwinMain because we shouldn't see nativeMain per strict compilation heuristic
+             */
+            visibleSourceSetNames = visibleSourceSetNames.filter {
+                dependencyProjectStructureMetadata.sourceSetsDependsOnRelation[it]?.all {
+                    it in visibleSourceSetNames
+                } ?: true
+            }.toSet()
+        }
 
         val hostSpecificArtifactBySourceSet: Map<String, File> =
             if (resolvedToOtherProject) {
