@@ -9,11 +9,6 @@ import org.gradle.kotlin.dsl.withType
 
 internal fun Project.configureTestInventory() {
     tasks.withType<AbstractTestTask>().configureEach {
-
-        val testInventoryListener = TestInventoryListener(name, project.layout.buildDirectory.asFile)
-        addTestListener(testInventoryListener)
-        outputs.file(testInventoryListener.inventoryFile).withPropertyName("testInventory")
-
         val testExecutionsListener = TestExecutionsListener(name, path, project.layout.buildDirectory.asFile)
         addTestListener(testExecutionsListener)
         outputs.file(testExecutionsListener.executionsFile).withPropertyName("testExecutions")
