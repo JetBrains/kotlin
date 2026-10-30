@@ -778,7 +778,7 @@ internal fun hasInlineClassInSignature(
 
 /**
  * Whether the name of the [callableSymbol] is mangled because of an inline class in a parameter position: a value parameter,
- * an extension receiver, or a context parameter.
+ * an extension receiver of a non-companion extension, or a context parameter.
  *
  * @param valueParameterPickMask a bit mask specifying which value parameters of the callable symbol should be picked during the check
  */
@@ -799,7 +799,8 @@ private inline fun hasInlineClassInParameterPosition(
     valueParameterPickMask: BitSet?,
     predicate: (KaType) -> Boolean,
 ): Boolean {
-    if (callableSymbol.receiverType?.let { predicate(it) } == true) return true
+    // A companion extension has no receiver parameter on the JVM, see `SymbolLightParameterForReceiver`
+    if (!callableSymbol.isCompanion && callableSymbol.receiverType?.let { predicate(it) } == true) return true
     if (callableSymbol.contextParameters.any { predicate(it.returnType) }) return true
     if (!skipValueParametersCheck && callableSymbol is KaFunctionSymbol) {
         return callableSymbol.valueParameters.withIndex().any { [index, valueParameter] ->

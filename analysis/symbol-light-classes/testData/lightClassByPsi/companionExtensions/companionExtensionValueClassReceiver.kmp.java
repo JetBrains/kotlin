@@ -16,4 +16,17 @@ public final class C /* one.C*/ {
 
 @kotlin.OptIn(markerClass = {kotlin.ExperimentalStdlibApi.class})
 public final class CompanionExtensionValueClassReceiverKt /* one.CompanionExtensionValueClassReceiverKt*/ {
+  @org.jetbrains.annotations.NotNull()
+  public static final @org.jetbrains.annotations.NotNull() java.lang.String getCurrent();//  getCurrent()
+
+  @org.jetbrains.annotations.NotNull()
+  public static final @org.jetbrains.annotations.NotNull() java.lang.String returnsC();//  returnsC()
+
+  public static final int companionExt();//  companionExt()
+
+  public static final int exposed();//  exposed()
+
+  public static final int getCompanionExtVar();//  getCompanionExtVar()
+
+  public static final void setCompanionExtVar(int);//  setCompanionExtVar(int)
 }
