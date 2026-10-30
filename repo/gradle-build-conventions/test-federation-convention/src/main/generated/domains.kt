@@ -119,7 +119,7 @@ internal object DocumentationModelDomainInfo : DomainInfo {
 
 internal object GradleDomainInfo : DomainInfo {
     override val domain = Domain.Gradle
-    override val include: List<String> = listOf("build-common", "libraries/tools/*gradle*", "compiler/build-tools/kotlin-build-statistics")
+    override val include: List<String> = listOf("build-common", "libraries/tools/*gradle*", "libraries/tools/kotlin-import-models", "compiler/build-tools/kotlin-build-statistics")
     override val exclude: List<String> = listOf()
     override val mustRunAllTestsOnChangesIn: List<DomainInfo> by lazy { listOf() }
 }
