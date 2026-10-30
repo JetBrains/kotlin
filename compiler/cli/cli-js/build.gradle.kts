@@ -10,6 +10,7 @@ dependencies {
     api(project(":compiler:cli"))
     implementation(project(":compiler:psi:psi-api"))
     implementation(project(":core:descriptors"))
+    implementation(project(":compiler:fir:fir-serialization"))
     runtimeOnly(project(":core:deserialization"))
     api(project(":compiler:ir.backend.common"))
     api(project(":compiler:ir.serialization.js"))

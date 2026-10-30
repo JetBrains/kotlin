@@ -3,4 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-fun bar(a: Any) = "Any"
+open class PlatformDerived : Base() {
+    fun select(x: B): Int = 0
+}
+
+actual class Derived actual constructor() : PlatformDerived()

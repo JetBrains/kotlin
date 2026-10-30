@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.common.renderDiagnosticInternalName
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.pipeline.*
+import org.jetbrains.kotlin.cli.pipeline.web.WebCommonSerializationPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.web.WebFir2IrPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.web.WebFrontendPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.web.WebKlibInliningPipelinePhase
@@ -443,6 +444,7 @@ abstract class AbstractInvalidationTest(
                 FrontendFilesForPluginsGenerationPipelinePhase() then
                 WebFir2IrPipelinePhase then
                 WebKlibInliningPipelinePhase then
+                WebCommonSerializationPipelinePhase then
                 WebKlibSerializationPipelinePhase
 
         try {
