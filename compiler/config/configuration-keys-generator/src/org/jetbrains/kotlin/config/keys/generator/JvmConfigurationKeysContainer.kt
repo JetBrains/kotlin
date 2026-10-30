@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.config.keys.generator
 
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.keys.generator.model.KeysContainer
-import org.jetbrains.kotlin.incremental.components.ICJvmMetadataTracker
+import org.jetbrains.kotlin.incremental.components.ICJvmCommonMetadataTracker
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.Module
 import java.io.File
@@ -56,7 +56,7 @@ object JvmConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.confi
     val EXPRESSION_TO_EVALUATE by key<String>("Expression to evaluate in script mode.", throwOnNull = false)
     val WHEN_GENERATION_SCHEME by key<JvmWhenGenerationScheme>("Specifies generation scheme for type-checking 'when' expressions.")
     val IGNORED_ANNOTATIONS_FOR_BRIDGES by key<List<String>>("Annotations fqNames that shall be skipped while copying the annotations from the target to the bridge functions.")
-    val IC_METADATA_TRACKER by key<ICJvmMetadataTracker>("Tracks generated in-module JVM metadata for KMP JVM IC", throwOnNull = false)
+    val IC_COMMON_METADATA_TRACKER by key<ICJvmCommonMetadataTracker>("Tracks generated in-module common metadata for KMP JVM IC", throwOnNull = false)
     val USE_METADATA_ON_INCREMENTAL_CLASSPATH by key<Boolean>("Use fragment metadata found on the compilation classpath to perform incremental compilation")
     val USE_JAVA_DIRECT by key<Boolean>("Use java-direct as frontend Java facade", defaultValue = "true")
 }

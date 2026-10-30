@@ -23,7 +23,7 @@ class KmpIncrementalDataProviderFromCache(
     private val cache: IncrementalJsCache,
 ) : KmpIncrementalDataProvider, IncrementalDataProvider by IncrementalDataProviderFromCache(cache) {
 
-    override fun metadata(fragmentName: String): Map<File, ByteArray> {
-        return cache.nonDirtyMetadata(fragmentName)
+    override fun commonMetadata(fragmentName: String): Map<File, ByteArray> {
+        return cache.nonDirtyCommonMetadata(fragmentName)
     }
 }

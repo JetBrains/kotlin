@@ -17,5 +17,5 @@ interface IncrementalDataProvider {
 }
 
 interface KmpIncrementalDataProvider : IncrementalDataProvider {
-    fun metadata(fragmentName: String): Map<File, ByteArray>
+    fun commonMetadata(fragmentName: String): Map<File, ByteArray>
 }
