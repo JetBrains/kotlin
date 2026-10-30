@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.testResolveAllConfigurations
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.jetbrains.kotlin.utils.addToStdlib.countOccurrencesOf
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
@@ -47,6 +48,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 @MppGradlePluginTests
+@MustRunOnChangesInGradle
 class MppMetadataResolutionIT : KGPBaseTest() {
 
     @GradleTest

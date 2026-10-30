@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.util.isTeamCityRun
 import org.jetbrains.kotlin.gradle.util.x
 import org.jetbrains.kotlin.test.TestDataAssertions.assertEqualsToFile
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.io.TempDir
@@ -38,6 +39,7 @@ data class ConsumerGroup(
 }
 
 @ExtendWith(GradleParameterResolver::class)
+@MustRunOnChangesInGradle
 class MppPublicationCompatibilityIT : KGPBaseTest() {
     companion object {
         private val agpVersions = listOf(

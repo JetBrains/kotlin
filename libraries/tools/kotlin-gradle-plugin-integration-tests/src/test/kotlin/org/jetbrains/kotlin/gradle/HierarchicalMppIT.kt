@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.gradle.util.checkedReplace
 import org.jetbrains.kotlin.gradle.util.resolveIdeDependencies
 import org.jetbrains.kotlin.gradle.util.resolveRepoArtifactPath
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
@@ -38,6 +39,7 @@ import kotlin.test.assertTrue
 import kotlin.test.fail
 
 @MppGradlePluginTests
+@MustRunOnChangesInGradle
 @DisplayName("Hierarchical multiplatform")
 class HierarchicalMppIT : KGPBaseTest() {
 

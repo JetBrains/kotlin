@@ -11,12 +11,14 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import kotlin.test.fail
 
 @DisplayName("Tests for friendModule compiler argument in KMP native compilations")
 @NativeGradlePluginTests
+@MustRunOnChangesInGradle
 class KotlinNativeFriendModuleIT : KGPBaseTest() {
 
     @GradleTest
