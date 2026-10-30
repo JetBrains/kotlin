@@ -155,7 +155,13 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
     ::ComplexExternalDeclarationsToTopLevelFunctionsLowering,
     ::ComplexExternalDeclarationsUsageLowering,
 
+    ::WasmDefaultArgumentStubGenerator,
+    ::WasmDefaultParameterPatchOverridenSymbolsLowering,
+
     ::JsInteropFunctionsLowering,
+
+    ::WasmDefaultParameterInjector,
+    ::createDefaultParameterCleanerPhase,
 
     ::ObjectDeclarationLowering, // Also depends on `WasmCallableReferenceLowering`, but it is hard to represent in the common phase
     ::WasmStaticInitializersDeclarationLowering,
@@ -187,8 +193,6 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
 
     ::WasmForLoopsLowering,
 
-    ::WasmDefaultArgumentStubGenerator,
-    ::WasmDefaultParameterPatchOverridenSymbolsLowering,
     ::WasmDefaultParameterInjector,
     ::createDefaultParameterCleanerPhase,
 
