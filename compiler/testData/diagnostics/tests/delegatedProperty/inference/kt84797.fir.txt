@@ -1,0 +1,129 @@
+FILE: kt84797.kt
+    public abstract interface Artifact : R|kotlin/Any| {
+    }
+    public final class MyArtifact : R|Artifact| {
+        public constructor(value: R|kotlin/String|): R|MyArtifact| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val value: R|kotlin/String| = R|<local>/value|
+            public get(): R|kotlin/String|
+
+    }
+    public final class OtherArtifact : R|Artifact| {
+        public constructor(): R|OtherArtifact| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final object WithBound : R|kotlin/Any| {
+        private constructor(): R|WithBound| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final operator fun <T : R|Artifact|, L : R|kotlin/collections/Collection<T>|> R|L|.provideDelegate(thisRef: R|kotlin/Any?|, property: R|kotlin/Any|): R|L| {
+            ^provideDelegate this@R|/WithBound.provideDelegate|
+        }
+
+        public final operator fun <T : R|Artifact|, L : R|kotlin/collections/Collection<T>|> R|L|.getValue(thisRef: R|kotlin/Any?|, property: R|kotlin/Any|): R|L| {
+            ^getValue this@R|/WithBound.getValue|
+        }
+
+        public final class Foo : R|kotlin/Any| {
+            public constructor(): R|WithBound.Foo| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val strings: R|kotlin/collections/List<kotlin/String>| = R|kotlin/collections/listOf|<R|kotlin/String|>()
+                public get(): R|kotlin/collections/List<kotlin/String>|
+
+            public final val others: R|kotlin/collections/List<OtherArtifact>| = R|kotlin/collections/listOf|<R|OtherArtifact|>()
+                public get(): R|kotlin/collections/List<OtherArtifact>|
+
+            public final val artifacts: R|kotlin/collections/List<Artifact>|by (this@R|/WithBound|, when () {
+                Boolean(true) ->  {
+                    this@R|/WithBound.Foo|.R|/WithBound.Foo.others|
+                }
+                else ->  {
+                    this@R|/WithBound.Foo|.R|/WithBound.Foo.strings|.R|kotlin/collections/map|<R|kotlin/String|, R|MyArtifact|>(<L> = map@fun <anonymous>(it: R|kotlin/String|): R|MyArtifact| <inline=Inline, kind=UNKNOWN>  {
+                        ^ R|/MyArtifact.MyArtifact|(R|<local>/it|)
+                    }
+                    )
+                }
+            }
+            ).R|/WithBound.provideDelegate|<R|Artifact|, R|kotlin/collections/List<Artifact>|>(this@R|/WithBound.Foo|, ::R|/WithBound.Foo.artifacts|)
+                public get(): R|kotlin/collections/List<Artifact>| {
+                    ^ (this@R|/WithBound|, this@R|/WithBound.Foo|.D|/WithBound.Foo.artifacts|).R|/WithBound.getValue|<R|Artifact|, R|kotlin/collections/List<Artifact>|>(this@R|/WithBound.Foo|, ::R|/WithBound.Foo.artifacts|)
+                }
+
+            public final val probeArtifacts: R|kotlin/collections/List<Artifact>| = this@R|/WithBound.Foo|.R|/WithBound.Foo.artifacts|
+                public get(): R|kotlin/collections/List<Artifact>|
+
+            public final val artifactsReversed: R|kotlin/collections/List<Artifact>|by (this@R|/WithBound|, when () {
+                Boolean(true) ->  {
+                    this@R|/WithBound.Foo|.R|/WithBound.Foo.strings|.R|kotlin/collections/map|<R|kotlin/String|, R|MyArtifact|>(<L> = map@fun <anonymous>(it: R|kotlin/String|): R|MyArtifact| <inline=Inline, kind=UNKNOWN>  {
+                        ^ R|/MyArtifact.MyArtifact|(R|<local>/it|)
+                    }
+                    )
+                }
+                else ->  {
+                    this@R|/WithBound.Foo|.R|/WithBound.Foo.others|
+                }
+            }
+            ).R|/WithBound.provideDelegate|<R|Artifact|, R|kotlin/collections/List<Artifact>|>(this@R|/WithBound.Foo|, ::R|/WithBound.Foo.artifactsReversed|)
+                public get(): R|kotlin/collections/List<Artifact>| {
+                    ^ (this@R|/WithBound|, this@R|/WithBound.Foo|.D|/WithBound.Foo.artifactsReversed|).R|/WithBound.getValue|<R|Artifact|, R|kotlin/collections/List<Artifact>|>(this@R|/WithBound.Foo|, ::R|/WithBound.Foo.artifactsReversed|)
+                }
+
+            public final val probeReversed: R|kotlin/collections/List<Artifact>| = this@R|/WithBound.Foo|.R|/WithBound.Foo.artifactsReversed|
+                public get(): R|kotlin/collections/List<Artifact>|
+
+        }
+
+    }
+    public final object WithoutBound : R|kotlin/Any| {
+        private constructor(): R|WithoutBound| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final operator fun <T, L : R|kotlin/collections/Collection<T>|> R|L|.provideDelegate(thisRef: R|kotlin/Any?|, property: R|kotlin/Any|): R|L| {
+            ^provideDelegate this@R|/WithoutBound.provideDelegate|
+        }
+
+        public final operator fun <T, L : R|kotlin/collections/Collection<T>|> R|L|.getValue(thisRef: R|kotlin/Any?|, property: R|kotlin/Any|): R|L| {
+            ^getValue this@R|/WithoutBound.getValue|
+        }
+
+        public final class Foo : R|kotlin/Any| {
+            public constructor(): R|WithoutBound.Foo| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val strings: R|kotlin/collections/List<kotlin/String>| = R|kotlin/collections/listOf|<R|kotlin/String|>()
+                public get(): R|kotlin/collections/List<kotlin/String>|
+
+            public final val ints: R|kotlin/collections/List<kotlin/Int>| = R|kotlin/collections/listOf|<R|kotlin/Int|>()
+                public get(): R|kotlin/collections/List<kotlin/Int>|
+
+            public final val mixed: R|kotlin/collections/List<kotlin/Any>|by (this@R|/WithoutBound|, when () {
+                Boolean(true) ->  {
+                    this@R|/WithoutBound.Foo|.R|/WithoutBound.Foo.ints|
+                }
+                else ->  {
+                    this@R|/WithoutBound.Foo|.R|/WithoutBound.Foo.strings|.R|kotlin/collections/map|<R|kotlin/String|, R|kotlin/String|>(<L> = map@fun <anonymous>(it: R|kotlin/String|): R|kotlin/String| <inline=Inline, kind=UNKNOWN>  {
+                        ^ R|<local>/it|.R|kotlin/String.length|.R|kotlin/Int.toString|()
+                    }
+                    )
+                }
+            }
+            ).R|/WithoutBound.provideDelegate|<R|it(kotlin/Comparable<*> & java/io/Serializable)|, R|kotlin/collections/List<it(kotlin/Comparable<*> & java/io/Serializable)>|>(this@R|/WithoutBound.Foo|, ::R|/WithoutBound.Foo.mixed|)
+                public get(): R|kotlin/collections/List<it(kotlin/Comparable<*> & java/io/Serializable)>| {
+                    ^ (this@R|/WithoutBound|, this@R|/WithoutBound.Foo|.D|/WithoutBound.Foo.mixed|).R|/WithoutBound.getValue|<R|it(kotlin/Comparable<*> & java/io/Serializable)|, R|kotlin/collections/List<it(kotlin/Comparable<*> & java/io/Serializable)>|>(this@R|/WithoutBound.Foo|, ::R|/WithoutBound.Foo.mixed|)
+                }
+
+            public final val probeMixed: R|kotlin/collections/List<kotlin/Any>| = this@R|/WithoutBound.Foo|.R|/WithoutBound.Foo.mixed|
+                public get(): R|kotlin/collections/List<kotlin/Any>|
+
+        }
+
+    }
