@@ -1,5 +1,7 @@
 // WITH_STDLIB
-// IGNORE_NATIVE: useThreadStateChecker=ENABLED
+// IGNORE_NATIVE: useThreadStateChecker=ENABLED && cacheMode=STATIC_ONLY_DIST
+// IGNORE_NATIVE: useThreadStateChecker=ENABLED && cacheMode=STATIC_EVERYWHERE
+// IGNORE_NATIVE: useThreadStateChecker=ENABLED && cacheMode=STATIC_PER_FILE_EVERYWHERE
 // FILE: test.kt
 fun test(x: Int) {
     println(x)
