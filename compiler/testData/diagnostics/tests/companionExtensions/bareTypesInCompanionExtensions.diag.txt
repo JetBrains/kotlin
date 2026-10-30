@@ -34,4 +34,4 @@
 
 /bareTypesInCompanionExtensions.kt:61:10: error: Type arguments are not allowed when static member is accessed.
 
-/bareTypesInCompanionExtensions.kt:61:19: error: Candidate 'companion fun C?.correct4(): Unit' is inapplicable because of a receiver type mismatch. Actual receiver type is 'Unit'.
+/bareTypesInCompanionExtensions.kt:61:19: error: Candidate 'companion fun C?.correct4(): Unit' is inapplicable because of a receiver type mismatch. Actual receiver type is 'Array<T (of class Array<T>)>'.
