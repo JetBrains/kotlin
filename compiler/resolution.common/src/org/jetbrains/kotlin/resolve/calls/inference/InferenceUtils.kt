@@ -61,7 +61,6 @@ fun TypeConstructorMarker.hasRecursionInTypeParametersOrCapturedTypes(languageVe
 context(c: TypeSystemInferenceExtensionContext)
 private fun TypeConstructorMarker.hasRecursionInTypeParametersOrCapturedTypes(): Boolean {
     if (getParameters().any { it.hasRecursiveBounds(this) }) return true
-    if (!c.isK2) return false
 
     if (this is CapturedTypeConstructorMarker || isIntersection()) {
         return supertypes().any { it.typeConstructor().hasRecursionInTypeParametersOrCapturedTypes() }
