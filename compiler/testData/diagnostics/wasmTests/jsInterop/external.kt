@@ -22,7 +22,7 @@ external class C5 {
 
 external inline class <!WRONG_EXTERNAL_DECLARATION!>C8(val x: Int)<!>
 
-external value class <!WRONG_EXTERNAL_DECLARATION!>C9(val x: Int)<!>
+external <!INLINE_VALUE_CLASS_WITHOUT_EXPLICIT_INLINE_WARNING!>value<!> class <!WRONG_EXTERNAL_DECLARATION!>C9(val x: Int)<!>
 
 
 // Interfaces

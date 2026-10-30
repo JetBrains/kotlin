@@ -840,6 +840,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val WILL_BECOME_VALUE_CLASS_CANNOT_BE_CLONEABLE by error<KtDeclaration>(PositioningStrategy.INLINE_OR_VALUE_MODIFIER)
 
         val VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION by error<PsiElement>()
+        val INLINE_VALUE_CLASS_WITHOUT_EXPLICIT_INLINE by deprecationError<PsiElement>(ExplicitInlineValueClassesSyntaxRequiredOnAllPlatforms)
         val JVM_INLINE_WITHOUT_VALUE_CLASS by error<PsiElement>()
         val JVM_INLINE_WITHOUT_VALUE_CLASS_WARNING by error<PsiElement>()
         val REDUNDANT_JVM_INLINE by warning<PsiElement>()

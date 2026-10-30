@@ -1,0 +1,31 @@
+FILE: valueClassWithoutInlineWithFvc.kt
+    public final value class IC : R|kotlin/Any| {
+        public constructor(x: R|kotlin/Int|): R|IC| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/Int| = R|<local>/x|
+            public get(): R|kotlin/Int|
+
+    }
+    public final value class IC2 : R|kotlin/Any| {
+        public constructor(x: R|kotlin/Int|, y: R|kotlin/Int|): R|IC2| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/Int| = R|<local>/x|
+            public get(): R|kotlin/Int|
+
+        public final val y: R|kotlin/Int| = R|<local>/y|
+            public get(): R|kotlin/Int|
+
+    }
+    public final inline value class CorrectIC : R|kotlin/Any| {
+        public constructor(x: R|kotlin/Int|): R|CorrectIC| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/Int| = R|<local>/x|
+            public get(): R|kotlin/Int|
+
+    }

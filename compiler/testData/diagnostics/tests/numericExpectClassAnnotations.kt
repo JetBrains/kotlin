@@ -61,7 +61,7 @@ fun acceptInt(num: Int) {}
 typealias UIntAlias = UInt
 
 @kotlin.NumericClass(actualizations = [UIntAlias::class])
-expect value class SizeT {
+expect inline value class SizeT {
     fun toByte(): Byte
     fun toShort(): Short
     fun toInt(): Int

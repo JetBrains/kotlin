@@ -1,0 +1,13 @@
+/valueClassWithoutInlineDeprecated.kt:5:1: error: This declaration will change its behavior in the future releases.
+
+Class declared as 'value class' is implicitly inline value class.
+However, with full value classes support enabled, it will become a full value class instead.
+ - To preserve the current behavior, use explicit 'inline value class' syntax.
+ - To enable experimental 'full value classes' feature,
+supply '-Xfull-value-classes' compiler argument,
+but note that no stability guarantees are provided for it.
+
+For more information, see corresponding https://kotl.in/inline-value-classes and
+https://kotl.in/full-value-classes language proposals.
+
+/valueClassWithoutInlineDeprecated.kt:7:1: error: The feature "full value classes" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xfull-value-classes', but note that no stability guarantees are provided.

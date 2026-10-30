@@ -2262,6 +2262,16 @@ internal class ValueClassWithoutJvmInlineAnnotationImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ValueClassWithoutJvmInlineAnnotation
 
+internal class InlineValueClassWithoutExplicitInlineErrorImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.InlineValueClassWithoutExplicitInlineError
+
+internal class InlineValueClassWithoutExplicitInlineWarningImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.InlineValueClassWithoutExplicitInlineWarning
+
 internal class JvmInlineWithoutValueClassImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,

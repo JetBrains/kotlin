@@ -82,23 +82,39 @@ object FirInlineValueClassSyntaxChecker : FirRegularClassChecker(Common) {
         } else if (
             annotation == null &&
             valueModifier != null &&
-            !declaration.isExpect &&
             !(hasInlineModifier && LanguageFeature.ExplicitInlineValueClassesSyntax.isEnabled()) &&
             declaration.classKind == CLASS &&
             LanguageFeature.FullValueClasses.isDisabled() &&
-            declaration.primaryConstructorIfAny(context.session)?.valueParameterSymbols?.size == 1 &&
-            platformRequiresJvmInline
+            declaration.canBeInlineByNumberOfParameters
         ) {
             // If FVCs are disabled (otherwise, such a class would be considered full) and a class
             //   - has explicit 'value' modifier (because deprecated 'inline class' syntax does not require '@JvmInline' anyway)
             //   - has no '@JvmInline' annotation
             //   - is not 'inline value class' syntax in >= 2.5
-            //   - is not expect
-            //   - platform is JVM / common with JVM target
-            // it is an inline class that requires '@JvmInline'.
+            // it is an inline class that requires '@JvmInline' / 'inline'.
             // Other conditions are just to filter out cases when we know other diagnostics will be reported.
             // TODO: hint to use FVCs if class has > 1 parameters
-            reporter.reportOn(valueModifier.source, FirErrors.VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION)
+            val diagnostic = when {
+                LanguageFeature.ExplicitInlineValueClassesSyntax.isEnabled() && !declaration.isExpect &&
+                        (LanguageFeature.ExplicitInlineValueClassesSyntaxRequiredOnAllPlatforms.isEnabled() || platformRequiresJvmInline) ->
+                    FirErrors.INLINE_VALUE_CLASS_WITHOUT_EXPLICIT_INLINE.errorFactory
+                LanguageFeature.ExplicitInlineValueClassesSyntax.isEnabled() ->
+                    FirErrors.INLINE_VALUE_CLASS_WITHOUT_EXPLICIT_INLINE.warningFactory
+                platformRequiresJvmInline && !declaration.isExpect ->
+                    FirErrors.VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION
+                else -> null // no syntax pre-ExplicitInlineValueClassesSyntax
+            }
+            diagnostic?.let {
+                reporter.reportOn(valueModifier.source, it)
+            }
         }
     }
+
+    context(context: CheckerContext)
+    private val FirRegularClass.canBeInlineByNumberOfParameters: Boolean
+        get() {
+            val constructor = primaryConstructorIfAny(context.session)
+            return constructor?.valueParameterSymbols?.size == 1 ||
+                    isExpect && LanguageFeature.AllowExpectValueClassesWithNoPrimaryConstructor.isEnabled() && constructor == null
+        }
 }

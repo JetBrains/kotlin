@@ -10,7 +10,7 @@
 
 // MODULE: m1-common
 // FILE: common.kt
-expect value class Value(val x: Int) {
+expect <!INLINE_VALUE_CLASS_WITHOUT_EXPLICIT_INLINE_WARNING!>value<!> class Value(val x: Int) {
     context(x: String)
     <!CONTEXTUAL_OVERLOAD_SHADOWED!>val x: Int<!>
 }

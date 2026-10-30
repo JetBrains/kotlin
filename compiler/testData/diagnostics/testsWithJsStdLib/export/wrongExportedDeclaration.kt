@@ -49,7 +49,7 @@ interface InterfaceWithNamedCompanion {
 }
 
 @JsExport
-value class A(val a: Int)
+<!INLINE_VALUE_CLASS_WITHOUT_EXPLICIT_INLINE_WARNING!>value<!> class A(val a: Int)
 
 @JsExport
 inline class B(val b: Int)

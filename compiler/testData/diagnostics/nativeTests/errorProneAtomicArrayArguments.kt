@@ -6,7 +6,7 @@
 
 // FILE: FooValueClass.kt
 
-value class Foo(val value: UInt)
+<!INLINE_VALUE_CLASS_WITHOUT_EXPLICIT_INLINE_WARNING!>value<!> class Foo(val value: UInt)
 
 // FILE: K.kt
 

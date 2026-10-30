@@ -509,6 +509,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INLINE_CLASS_DEPR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INLINE_PROPERTY_WITH_BACKING_FIELD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INLINE_PROPERTY_WITH_BACKING_FIELD_DEPRECATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INLINE_SUSPEND_FUNCTION_TYPE_UNSUPPORTED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INLINE_VALUE_CLASS_WITHOUT_EXPLICIT_INLINE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INNER_CLASS_CONSTRUCTOR_NO_RECEIVER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INNER_CLASS_INSIDE_VALUE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INNER_CLASS_OF_GENERIC_THROWABLE_SUBCLASS
@@ -2670,6 +2671,22 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(VALUE_CLASS_CANNOT_BE_CLONEABLE, "Value class cannot be 'Cloneable'.")
 
         map.put(VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION, "Value classes without '@JvmInline' annotation are not yet supported.")
+        map.put(
+            INLINE_VALUE_CLASS_WITHOUT_EXPLICIT_INLINE,
+            """
+                This declaration will change its behavior in the future releases.
+                
+                Class declared as 'value class' is implicitly inline value class.
+                However, with full value classes support enabled, it will become a full value class instead.
+                 - To preserve the current behavior, use explicit 'inline value class' syntax.
+                 - To enable experimental '${LanguageFeature.FullValueClasses.presentableName}' feature,
+                supply '${featureToEnablingFlagMap[LanguageFeature.FullValueClasses]}' compiler argument,
+                but note that no stability guarantees are provided for it.
+                
+                For more information, see corresponding https://kotl.in/inline-value-classes and
+                https://kotl.in/full-value-classes language proposals.
+            """.trimIndent()
+        )
         map.put(JVM_INLINE_WITHOUT_VALUE_CLASS, "'@JvmInline' annotation is applicable only to value classes.")
         map.put(
             JVM_INLINE_WITHOUT_VALUE_CLASS_WARNING,

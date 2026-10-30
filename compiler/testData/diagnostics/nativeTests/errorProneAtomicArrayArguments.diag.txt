@@ -1,3 +1,14 @@
+/FooValueClass.kt:9:1: warning: This declaration will change its behavior in the future releases.
+
+Class declared as 'value class' is implicitly inline value class.
+However, with full value classes support enabled, it will become a full value class instead.
+ - To preserve the current behavior, use explicit 'inline value class' syntax.
+ - To enable experimental 'full value classes' feature,
+supply '-Xfull-value-classes' compiler argument,
+but note that no stability guarantees are provided for it.
+
+For more information, see corresponding https://kotl.in/inline-value-classes and
+https://kotl.in/full-value-classes language proposals. This will become an error in language version 2.6. See: https://youtrack.jetbrains.com/issue/KT-89772
 /K.kt:20:26: warning: This call may have inconsistent results because the type of this argument, 'Foo', does not have a consistent identity.
 
 /K.kt:20:31: warning: This call may have inconsistent results because the type of this argument, 'Foo', does not have a consistent identity.
