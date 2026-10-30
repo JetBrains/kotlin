@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.konan.test.blackbox
 import org.jetbrains.kotlin.io.propertyList
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCInteropArgs
+import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.CompilationToolException
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact.KLIB
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeHome
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_DEPENDS
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
@@ -20,8 +20,9 @@ import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import java.io.File
-import java.util.*
+import java.util.Properties
 
 // The golden files were generated with the old library resolution logic, see KT-84665.
 @Tag("cinterop")
@@ -58,11 +59,10 @@ class CInteropKlibDependenciesTest : AbstractNativeSimpleTest() {
     // KT-90839: hermetic builds pass the stdlib with -l and have no klib/ in konan.home.
     @Test
     fun testStdlibFromCliWithoutDistributionKlibs() {
-        val nativeHome = testRunSettings.get<KotlinNativeHome>()
-        val target = testRunSettings.get<KotlinNativeTargets>().testTarget
+        val librariesDir = testRunSettings.get<KotlinNativeHome>().librariesDir
 
-        val stdlibPath = nativeHome.librariesDir.resolve("common/stdlib").assertExists().path
-        val posixPath = nativeHome.librariesDir.resolve("platform/$target/org.jetbrains.kotlin.native.platform.posix").assertExists().path
+        val stdlibPath = librariesDir.resolve("common/stdlib").assertExists().path
+        val posixPath = librariesDir.resolve("platform/${targets.testTarget}/org.jetbrains.kotlin.native.platform.posix").assertExists().path
 
         fun doTest(vararg args: String) {
             val klib = cinterop(
@@ -79,6 +79,13 @@ class CInteropKlibDependenciesTest : AbstractNativeSimpleTest() {
         doTest()
         doTest("-l", stdlibPath)
         doTest("-l", stdlibPath, "-l", posixPath)
+
+        with(assertThrows<CompilationToolException> { doTest("-nostdlib") }) {
+            assertTrue("Failed to load libraries:" in reason)
+            assertTrue("stdlib is not found:" in reason)
+        }
+        doTest("-nostdlib", "-l", stdlibPath)
+        doTest("-nostdlib", "-l", stdlibPath, "-l", posixPath)
     }
 
     private fun testDataDir(scenario: String): File =
