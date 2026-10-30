@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.test.ast.JsAstDirectives
 import org.jetbrains.kotlin.js.test.ast.directives.JsAstDirective
+import org.jetbrains.kotlin.js.test.klib.JsGroupedBatchArtifact
 import org.jetbrains.kotlin.js.translate.utils.name
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.handlers.JsBinaryArtifactHandler
@@ -49,12 +50,16 @@ class JsAstHandler(testServices: TestServices) : JsBinaryArtifactHandler(testSer
         val fileDirectives = moduleStructure.modules.flatMap { it.files }.map { it.directives }
         val moduleDirectives = moduleStructure.modules.map { it.directives }
 
-        processDirectives(
-            jsProgram,
-            module.files.first { !it.isAdditional }.originalFile,
-            testServices.defaultsProvider.targetBackend!!,
-            ComposedRegisteredDirectives(moduleDirectives + fileDirectives),
-        )
+        // The tests of a grouped batch have no checks of their JS (see `JsGroupingTestIsolator`), and the launcher module
+        // the batch is linked from has no file of a test, so the AST of the batch is only verified.
+        if (info !is JsGroupedBatchArtifact) {
+            processDirectives(
+                jsProgram,
+                module.files.first { !it.isAdditional }.originalFile,
+                testServices.defaultsProvider.targetBackend!!,
+                ComposedRegisteredDirectives(moduleDirectives + fileDirectives),
+            )
+        }
 
         jsProgram.verifyAst()
     }

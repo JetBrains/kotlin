@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.js.test.klib
 import org.jetbrains.kotlin.js.config.JsGenerationGranularity
 import org.jetbrains.kotlin.js.engine.ScriptExecutionException
 import org.jetbrains.kotlin.js.test.converters.augmentWithModuleName
+import org.jetbrains.kotlin.js.test.handlers.JsArtifactsDumpHandler
 import org.jetbrains.kotlin.js.test.handlers.JsBoxRunner
 import org.jetbrains.kotlin.js.test.utils.getModeOutputFilePath
 import org.jetbrains.kotlin.js.testOld.V8JsTestChecker
@@ -23,10 +24,13 @@ import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol.ParsedBatch
 import org.jetbrains.kotlin.test.groupingStageInputs
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
+import org.jetbrains.kotlin.test.model.DependencyDescription
 import org.jetbrains.kotlin.test.model.GroupingStageHandler
 import org.jetbrains.kotlin.test.model.TestArtifactKind
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.moduleStructure
+import org.jetbrains.kotlin.utils.DFS.topologicalOrder
 
 /**
  * Runs the executable the grouping stage has linked, on V8.
@@ -34,15 +38,24 @@ import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurato
  * The executable of an isolated test is processed by the handlers of the one-stage pipeline, exactly as it is there.
  * The executable of a grouped batch is run once per translation mode by calling its result-collecting driver; what
  * the driver prints is parsed by [GroupedTestsResultProtocol], and every failure is reported against the test it
- * belongs to, so a failed test does not fail the rest of its batch.
+ * belongs to, so a test whose `box()` fails does not fail the rest of its batch. A failed check of the executable of
+ * the batch as a whole (see [groupedBatchHandlers]) cannot tell the test to blame, so it fails every test of the batch.
  *
  * @param isolatedTestHandlers The handlers of the one-stage pipeline to process the executable of an isolated test
- *   with. They are of no use for a grouped batch, which has no executable of a single test to look at, so a test
- *   that relies on one of them to check something has to be isolated.
+ *   with. They check the executable of a single test, which a grouped batch does not have, so a test that relies on
+ *   one of them for a check that none of [groupedBatchHandlers] makes has to be isolated.
+ * @param groupedBatchHandlers The handlers of the one-stage pipeline that check something of every executable, whatever
+ *   the test, so they process the executable of a grouped batch as well, as the one of its launcher module. They get
+ *   the [JsGroupedBatchArtifact] itself, so a handler can tell it from the executable of a single test.
+ * @param artifactsAreDumped whether the JS of a grouped batch is dumped by [JsGroupingStageArtifactsDumper]. The failures
+ *   of the tests of such a batch then point at the dumped JS instead of the temporary directories, which are deleted by
+ *   the time the failures are seen, as [JsArtifactsDumpHandler.Suppressor] does it for an isolated test.
  */
 class JsGroupingStageBoxRunner(
     testServices: TestServices,
     private val isolatedTestHandlers: List<Constructor<JsBinaryArtifactHandler>>,
+    private val groupedBatchHandlers: List<Constructor<JsBinaryArtifactHandler>> = emptyList(),
+    private val artifactsAreDumped: Boolean = false,
 ) : GroupingStageHandler<BinaryArtifacts.Js>(
     testServices,
     failureDisablesNextSteps = false,
@@ -91,14 +104,27 @@ class JsGroupingStageBoxRunner(
         val completedExecutionNames = mutableSetOf<String>()
         val vmFailures = mutableListOf<VmFailure>()
         val launcherServices = inputs.first().testServices
+        runGroupedBatchHandlers(artifact, inputs)
+        // The file of a module of a per-module mode is loaded after the files of its dependencies, as `getAllFilesForRunner`
+        // does it: the libraries go first, then the modules of the tests. The helpers module is a dependency of every test.
+        val testModuleIdsInLoadingOrder = inputs.flatMap { input ->
+            topologicalOrder(input.testServices.moduleStructure.modules) { module ->
+                module.allDependencies.map(DependencyDescription::dependencyModule)
+            }.reversed().map { computeJsGroupedTestModuleId(input.testServices, it) }
+        }.distinct()
         for ([mode, outputs] in artifact.delegate.compilerResult.entries) {
-            // A batch is linked in the whole-program modes only (see `JsInProcessSecondStageFacade.Grouping`): the files of
-            // a per-module mode would have to be loaded in the dependency order of the modules of all the tests of the batch.
-            checkTestInfrastructure(mode.granularity == JsGenerationGranularity.WHOLE_PROGRAM) {
-                "A grouped batch is linked in the whole-program translation modes only, but it was linked in $mode"
+            // A batch is linked in the whole-program modes, and in the per-module ones if asked to (see `JsInProcessSecondStageFacade.Grouping`).
+            checkTestInfrastructure(
+                mode.granularity == JsGenerationGranularity.WHOLE_PROGRAM ||
+                        mode.granularity == JsGenerationGranularity.PER_MODULE && artifact.linkedPerModule
+            ) {
+                "A grouped batch linked ${if (artifact.linkedPerModule) "" else "not "}per module was linked in $mode"
             }
             val outputFile = getModeOutputFilePath(launcherServices, artifact.launcherModule, mode)
-            val jsFiles = outputs.dependencies.map { outputFile.augmentWithModuleName(it.artifactConfiguration.moduleName) } + outputFile
+            val dependencyIds = outputs.dependencies.map { it.artifactConfiguration.moduleName }
+            val testModuleIds = testModuleIdsInLoadingOrder.filter { it in dependencyIds }
+            val jsFiles = (dependencyIds.filter { it !in testModuleIds } + testModuleIds)
+                .map { outputFile.augmentWithModuleName(it) } + outputFile
             val output = try {
                 V8JsTestChecker.run(jsFiles) {
                     runTestFunction(
@@ -120,7 +146,7 @@ class JsGroupingStageBoxRunner(
         if (parsedBatchResult.malformedLines.isNotEmpty()) {
             val reason = "The grouped batch printed malformed result line(s), so its results cannot be trusted:\n" +
                     parsedBatchResult.malformedLines.joinToString("\n") { it.bounded(MAX_MALFORMED_LINE_LENGTH) }
-            inputs.forEach { it.failWith(reason, vmFailures) }
+            inputs.forEach { it.failWith(reason, vmFailures, launcherServices) }
             return
         }
 
@@ -176,7 +202,28 @@ class JsGroupingStageBoxRunner(
                 }
             }
             if (reasons.isNotEmpty()) {
-                input.failWith(reasons.joinToString("\n"), relevantVmFailures)
+                input.failWith(reasons.joinToString("\n"), relevantVmFailures, launcherServices)
+            }
+        }
+    }
+
+    /**
+     * A check of the executable as a whole cannot tell the test to blame, so its failure fails every test of the batch.
+     * Run alone, as the test engine retries them by default, the tests tell it.
+     */
+    private fun runGroupedBatchHandlers(artifact: JsGroupedBatchArtifact, inputs: List<NonGroupingStageOutput>) {
+        val launcherServices = inputs.first().testServices
+        for (handler in groupedBatchHandlers.map { it(launcherServices) }) {
+            try {
+                handler.processModule(artifact.launcherModule, artifact)
+                handler.processAfterAllModules(someAssertionWasFailed = false)
+            } catch (e: Throwable) {
+                inputs.forEach { input ->
+                    input.executeWithFailureCatching {
+                        val failure = e.toString().pointedAtDumpedArtifacts(launcherServices)
+                        throw AssertionError("A check of the executable of the grouped batch has failed: $failure", e)
+                    }
+                }
             }
         }
     }
@@ -185,10 +232,14 @@ class JsGroupingStageBoxRunner(
         fun describe(): String = "V8 failed in $executionName:\n${exception.stderr.bounded(MAX_VM_ERROR_LENGTH)}"
     }
 
-    private fun NonGroupingStageOutput.failWith(reason: String, vmFailures: List<VmFailure>) {
+    private fun NonGroupingStageOutput.failWith(reason: String, vmFailures: List<VmFailure>, launcherServices: TestServices) {
         val message = (listOf(reason) + vmFailures.map { it.describe() }).joinToString("\n")
-        executeWithFailureCatching { throw AssertionError(message) }
+        executeWithFailureCatching { throw AssertionError(message.pointedAtDumpedArtifacts(launcherServices)) }
     }
+
+    /** The executable of a grouped batch is produced into the artifacts directory of the first test of the batch, [launcherServices]. */
+    private fun String.pointedAtDumpedArtifacts(launcherServices: TestServices): String =
+        if (artifactsAreDumped) JsArtifactsDumpHandler.pointAtDumpedArtifacts(this, launcherServices) else this
 
     /** Routes a failure of [block] into the failure sink of this test, so the test engine attributes it to this test. */
     private fun NonGroupingStageOutput.executeWithFailureCatching(block: () -> Unit) {

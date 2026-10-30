@@ -40,7 +40,10 @@ object JsArtifactsDumpHandler {
             return failedAssertions.map {
                 val cause = it.cause as? ScriptExecutionException ?: return@map it
                 it.withReplacedCause(
-                    ScriptExecutionException(cause.stdout.replacePaths(testServices), cause.stderr.replacePaths(testServices)).apply {
+                    ScriptExecutionException(
+                        pointAtDumpedArtifacts(cause.stdout, testServices),
+                        pointAtDumpedArtifacts(cause.stderr, testServices),
+                    ).apply {
                         stackTrace = cause.stackTrace
                     }
                 )
@@ -59,11 +62,16 @@ object JsArtifactsDumpHandler {
         }
     }
 
-    private fun String.replacePaths(testServices: TestServices): String = supportedTranslationModes.fold(this) { s, translationMode ->
-        val outputDir = getOutputDir(translationMode, testServices)
-        val artifactDir = JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices, translationMode)
-        s.replace(artifactDir.absolutePath + "/", outputDir.absolutePath + "/")
-    }
+    /**
+     * Replaces the paths to the JS artifacts of the test of [testServices] in [text] with the paths these artifacts are
+     * dumped to by [Checker], which outlive the temporary directories of the test.
+     */
+    fun pointAtDumpedArtifacts(text: String, testServices: TestServices): String =
+        supportedTranslationModes.fold(text) { s, translationMode ->
+            val outputDir = getOutputDir(translationMode, testServices)
+            val artifactDir = JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices, translationMode)
+            s.replace(artifactDir.absolutePath + "/", outputDir.absolutePath + "/")
+        }
 
     private fun getOutputDir(translationMode: TranslationMode, testServices: TestServices): File {
         val prefix = when (translationMode) {

@@ -5,11 +5,15 @@
 
 package org.jetbrains.kotlin.js.test.klib
 
+import org.jetbrains.kotlin.js.test.ast.JsAstDirectives
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.KlibAbiDumpDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
+import org.jetbrains.kotlin.test.directives.getClassifiedDumpFile
 import org.jetbrains.kotlin.test.directives.model.Directive
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
@@ -32,7 +36,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 /**
  * Decides which JS box tests can share a grouped batch.
  *
- * A batch is linked into a single whole-program executable by one compiler invocation and is run through a launcher
+ * A batch is linked into a single executable by one compiler invocation and is run through a launcher
  * that calls every `box()` by its fully qualified name. So a test is isolated whenever it needs a compiler or a runner
  * setup of its own, or declares something that is visible outside its (renamed) package. The rules are deliberately
  * conservative: a wrongly isolated test merely runs the way it always did, while a wrongly grouped one fails and can break its whole batch.
@@ -40,18 +44,36 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
  * @param customCompilerStage the stage compiled by a custom (previously released) compiler in this test runner. Only
  *   the `IGNORE_KLIB_*_WITH_CUSTOM_<STAGE>` directives of that stage expect a failure (see `CustomKlibCompilerFirstStageTestSuppressor`
  *   and `CustomKlibCompilerSecondStageTestSuppressor`), so only they isolate a test: the directives of the other stage are no-ops here.
+ *   `null` if both stages are compiled by the current compiler, so none of these directives is in effect.
+ * @param isolateMultiModuleTests whether a test of several modules is isolated, so that its modules keep their names
+ *   and its main module is linked as the main one, as in the one-stage pipeline. In a grouped batch, the modules of
+ *   the tests get names of the batch, and every one of them is linked as a library of the launcher module.
+ * @param isolateTestsWithDumps whether a test that dumps its FIR, IR or KLIB ABI is isolated. `BatchingPackageInserter`
+ *   puts a grouped test into a package of its own, which the dumps would spell, so they could not match the expected ones.
+ * @param isolateTestsWithJsAstChecks whether a test with the checks of its generated JS (see [JsAstDirectives]) is
+ *   isolated. `JsAstHandler` runs them on the executable of an isolated test only: on a grouped batch, it validates
+ *   the JS AST as a whole, which cannot tell the JS of one test from another.
+ * @param additionalIgnoreDirectives the ignore directives the test runner has registered in `BlackBoxCodegenSuppressor`
+ *   on top of `IGNORE_BACKEND*`: a test that lists a JS backend in one of them is expected to fail, so it is isolated.
  */
 class JsGroupingTestIsolator(
     testServices: TestServices,
-    private val customCompilerStage: CompilationStage,
+    private val customCompilerStage: CompilationStage?,
+    private val isolateMultiModuleTests: Boolean = false,
+    private val isolateTestsWithDumps: Boolean = false,
+    private val isolateTestsWithJsAstChecks: Boolean = false,
+    private val additionalIgnoreDirectives: List<ValueDirective<TargetBackend>> = emptyList(),
 ) : GroupingTestIsolator(testServices, affectsFileGenerators = true) {
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(
+        get() = listOfNotNull(
             ConfigurationDirectives,
             JsEnvironmentConfigurationDirectives,
             CodegenTestDirectives,
             LanguageSettingsDirectives,
             CustomKlibCompilerTestDirectives,
+            FirDiagnosticsDirectives,
+            KlibAbiDumpDirectives,
+            JsAstDirectives.takeIf { isolateTestsWithJsAstChecks },
         )
 
     override fun computeBatchToken(moduleStructure: TestModuleStructure): BatchToken {
@@ -60,18 +82,24 @@ class JsGroupingTestIsolator(
         val customCompilerIgnoreDirectives = when (customCompilerStage) {
             CompilationStage.FIRST -> CUSTOM_FIRST_STAGE_IGNORE_DIRECTIVES
             CompilationStage.SECOND -> CUSTOM_SECOND_STAGE_IGNORE_DIRECTIVES
+            null -> emptyList()
         }
         if (customCompilerIgnoreDirectives.any { it in allDirectives }) return BatchToken.Isolated
-        if (IGNORE_BACKEND_DIRECTIVES.any { allDirectives[it].any(::isJsBackend) }) return BatchToken.Isolated
+        if ((IGNORE_BACKEND_DIRECTIVES + additionalIgnoreDirectives).any { allDirectives[it].any(::isJsBackend) }) return BatchToken.Isolated
 
         val modules = moduleStructure.modules
+        if (isolateMultiModuleTests && hasSeveralModules(moduleStructure)) return BatchToken.Isolated
+        if (isolateTestsWithDumps && hasDumps(moduleStructure)) return BatchToken.Isolated
+
         val shouldBeIsolated = modules.any { module ->
             module.files.any { file ->
                 // The batch launcher cannot supply companion JS files, and a recompiled file needs the incremental pipeline.
-                !file.name.endsWith(".kt") || FILE_ISOLATION_DIRECTIVES.any { it in file.directives }
+                !file.name.endsWith(".kt") || FILE_ISOLATION_DIRECTIVES.any { it in file.directives } || file.directives.hasJsAstChecks()
             }
                     // The friendship can be declared only for the included module, which is the launcher in a grouped batch.
                     || module.allDependencies.any { it.relation == DependencyRelation.FriendDependency }
+                    // `JsAstHandler` runs the checks of the generated JS on the executable of an isolated test only.
+                    || module.directives.hasJsAstChecks()
         }
         if (shouldBeIsolated) return BatchToken.Isolated
 
@@ -87,6 +115,9 @@ class JsGroupingTestIsolator(
         if (testFiles.any { it.originalContent.contains(MAIN_MODULE_ONLY_FEATURES_REGEX) }) return BatchToken.Isolated
         if (testFiles.any { it.mentionsOwnPackageInStringLiteral() }) return BatchToken.Isolated
         if (testFiles.any { it.observesJsClassName() }) return BatchToken.Isolated
+        // K/JS supports a class implementing a suspend function type only partially, so a test of such a class suppresses
+        // the diagnostic saying it. Such a test has been seen to pass alone, but to fail in a batch with minimized names.
+        if (testFiles.any { it.originalContent.contains(IMPLEMENTING_SUSPEND_FUNCTION_INTERFACE) }) return BatchToken.Isolated
 
         // Tests share a batch only if they agree on everything the batch is compiled and linked with.
         val batchSettings = listOfNotNull(
@@ -98,6 +129,27 @@ class JsGroupingTestIsolator(
         )
         return if (batchSettings.isEmpty()) BatchToken.Regular else BatchToken.Custom(batchSettings.joinToString("; "))
     }
+
+    private fun RegisteredDirectives.hasJsAstChecks(): Boolean = isolateTestsWithJsAstChecks && any { it in JsAstDirectives }
+
+    /**
+     * The module structure may be still under construction: the module names are escaped for a grouped test as soon as
+     * each module is finished (see `ModuleStructureExtractorImpl`), and the first module of a test of several modules
+     * would be escaped too, if only the finished modules were counted. So the modules declared in the test data count as well.
+     */
+    private fun hasSeveralModules(moduleStructure: TestModuleStructure): Boolean {
+        val finishedModuleCount = moduleStructure.modules.count { it.name != JsTestHelpersModuleTransformer.HELPERS_MODULE_NAME }
+        return finishedModuleCount > 1 || moduleStructure.originalTestDataFiles.any { file ->
+            file.isFile && MODULE_DIRECTIVE_REGEX.findAll(file.readText()).take(2).count() > 1
+        }
+    }
+
+    /**
+     * Whether a handler of the non-grouping stage dumps something of the test to compare it with the expected dump.
+     * `FirDumpHandler` does it not only by the directive, but also whenever the expected dump exists.
+     */
+    private fun hasDumps(moduleStructure: TestModuleStructure): Boolean =
+        DUMP_DIRECTIVES.any { it in moduleStructure.allDirectives } || moduleStructure.getClassifiedDumpFile(FIR_DUMP_EXTENSION).exists()
 
     /**
      * A batch links the helpers KLIB of one of its tests only (see `JsInProcessSecondStageFacade`), so all its tests
@@ -231,8 +283,9 @@ class JsGroupingTestIsolator(
             JsEnvironmentConfigurationDirectives.TS_COMPILATION_STRATEGY,
             JsEnvironmentConfigurationDirectives.GENERATE_DTS_FROM_IR,
             JsEnvironmentConfigurationDirectives.SKIP_IR_INCREMENTAL_CHECKS,
-            // What is expected of the executable of this very test. The grouped pipeline runs `box()` only, so the
-            // expectation is not checked, but a batch executable could not satisfy it anyway.
+            // What is expected of the executable of this very test. A grouped batch is checked by running `box()` and by
+            // the checks of the executable as a whole only, so the expectation is not checked, but it could not hold for
+            // the executable of a batch anyway.
             JsEnvironmentConfigurationDirectives.CHECK_OPTIMIZED_JS,
             JsEnvironmentConfigurationDirectives.JS_DCE_EXPECTED_OUTPUT_SIZE,
         )
@@ -256,6 +309,20 @@ class JsGroupingTestIsolator(
             JsEnvironmentConfigurationDirectives.ENTRY_ES_MODULE,
         )
 
+        /** The directives that make the handlers of the non-grouping stage dump the FIR, IR or KLIB ABI of the test. */
+        private val DUMP_DIRECTIVES: List<Directive> = listOf(
+            CodegenTestDirectives.DUMP_IR,
+            CodegenTestDirectives.DUMP_KT_IR,
+            CodegenTestDirectives.DUMP_IR_AFTER_INLINE,
+            CodegenTestDirectives.DUMP_IR_OF_PREPROCESSED_INLINE_FUNCTIONS,
+            CodegenTestDirectives.DUMP_SOURCE_RANGES_IR,
+            FirDiagnosticsDirectives.FIR_DUMP,
+            FirDiagnosticsDirectives.DUMP_CFG,
+            KlibAbiDumpDirectives.DUMP_KLIB_ABI,
+        )
+
+        private const val FIR_DUMP_EXTENSION = ".fir.txt"
+
         /** The companion JS files of a test, and the `_common.js` of its directory (see `JsAdditionalSourceProvider`). */
         private val COMPANION_JS_FILE_SUFFIXES = listOf(".js", ".mjs", "__main.js", "__main.mjs")
         private const val COMMON_JS_FILE_NAME = "_common.js"
@@ -278,6 +345,10 @@ class JsGroupingTestIsolator(
         private val JS_INTEROP_REGEX = Regex("""@(?:file:)?Js[A-Z]\w*|\bexternal\b|\bjs\s*\(|\bdynamic\b""")
 
         private val JS_CLASS_NAME_REGEX = Regex("""::class\.js\b|\.jsClass\b""")
+
+        private const val IMPLEMENTING_SUSPEND_FUNCTION_INTERFACE = "IMPLEMENTING_SUSPEND_FUNCTION_INTERFACE"
+
+        private val MODULE_DIRECTIVE_REGEX = Regex("""(?m)^\s*//\s*MODULE\s*:""")
 
         /** A class or an object whose supertype list starts with a call of a `Throwable` subclass constructor. */
         private val THROWABLE_SUBCLASS_REGEX = Regex("""\b(?:class|object)\s+[A-Z]\w*\b[^{\n]*?:\s*[\w.]*(?:Exception|Error|Throwable)\s*\(""")

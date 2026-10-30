@@ -57,21 +57,7 @@ abstract class AbstractJsTest(
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         with(builder) {
-            setUpDefaultDirectivesForJsBoxTest(parser)
-            defaultDirectives {
-                +CHECK_SAME_ABI_AFTER_INLINING
-            }
-            configureFirHandlersStep {
-                useHandlers(
-                    ::FirDumpHandler,
-                    ::FirCfgDumpHandler,
-                    ::FirCfgConsistencyHandler,
-                    ::FirResolvedTypesVerifier,
-                )
-            }
-            configureIrHandlersStep {
-                setupIrTextDumpHandlers()
-            }
+            setUpFirstStageForJsBoxTest(parser)
             configureJsArtifactsHandlersStep {
                 useHandlers(
                     ::JsIrRecompiledArtifactsIdentityHandler,
@@ -132,32 +118,6 @@ abstract class AbstractJsCodegenBoxTestBase(
 
         builder.configureIrHandlersStep {
             commonIrHandlersForCodegenTest()
-        }
-    }
-}
-
-abstract class AbstractJsCodegenBoxTest(
-    testGroupOutputDirPrefix: String = "codegen/box/",
-) : AbstractJsCodegenBoxTestBase(
-    pathToTestDir = "compiler/testData/codegen/box",
-    testGroupOutputDirPrefix = testGroupOutputDirPrefix,
-) {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        builder.configureLoweredIrDumpHandlers()
-    }
-}
-
-abstract class AbstractJsCodegenBoxWithInlineAnonymousFunctionsTest(
-    testGroupOutputDirPrefix: String = "codegen/boxWithInlineAnonymousFunctions/",
-) : AbstractJsCodegenBoxTest(testGroupOutputDirPrefix) {
-    override val additionalIgnoreDirectives: List<ValueDirective<TargetBackend>>
-        get() = listOf(IGNORE_WITH_INLINE_ANONYMOUS_FUNCTIONS)
-
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        builder.defaultDirectives {
-            +GENERATE_INLINE_ANONYMOUS_FUNCTIONS
         }
     }
 }
@@ -307,6 +267,28 @@ abstract class AbstractJsCodegenWasmJsInteropTest(
     pathToTestDir = "compiler/testData/codegen/boxWasmJsInterop/",
     testGroupOutputDirPrefix = testGroupOutputDirPrefix
 )
+
+/**
+ * Sets up the defaults and the checks of the first compilation phase (compilation to KLib) that the JS box tests run on
+ * top of the ones of every JS backend test: the dumps of FIR and IR, and the consistency checks of FIR and of the KLIB ABI.
+ */
+fun TestConfigurationBuilder.setUpFirstStageForJsBoxTest(parser: FirParser) {
+    setUpDefaultDirectivesForJsBoxTest(parser)
+    defaultDirectives {
+        +CHECK_SAME_ABI_AFTER_INLINING
+    }
+    configureFirHandlersStep {
+        useHandlers(
+            ::FirDumpHandler,
+            ::FirCfgDumpHandler,
+            ::FirCfgConsistencyHandler,
+            ::FirResolvedTypesVerifier,
+        )
+    }
+    configureIrHandlersStep {
+        setupIrTextDumpHandlers()
+    }
+}
 
 fun TestConfigurationBuilder.setUpDefaultDirectivesForJsBoxTest(parser: FirParser) {
     defaultDirectives {
