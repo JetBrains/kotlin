@@ -10,11 +10,12 @@ import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
+import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
 import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 
 fun FirRegularClass.generatedNestedClassifiers(session: FirSession): List<FirClassLikeDeclaration> {
-    val scope = session.declaredMemberScope(this, memberRequiredPhase = null)
+    val scope = session.nestedClassifierScope(this) ?: return emptyList()
     val result = mutableListOf<FirClassLikeDeclaration>()
     for (name in scope.getClassifierNames()) {
         scope.processClassifiersByName(name) {
