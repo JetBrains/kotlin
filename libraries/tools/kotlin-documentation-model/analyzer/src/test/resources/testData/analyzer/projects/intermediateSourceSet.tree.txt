@@ -1,0 +1,260 @@
+KdBundle
+├── fragments
+│   ├── KdFragment commonMain
+│   │   ├── elements
+│   │   │   ├── KdModule intermediateSourceSet [////PointingToDeclaration/]
+│   │   │   │   └── packages: pkg////PointingToDeclaration/
+│   │   │   ├── KdPackage pkg [pkg////PointingToDeclaration/]
+│   │   │   │   └── declarations: pkg//platformName/#/PointingToDeclaration/, pkg/Shared///PointingToDeclaration/, pkg/SomeClass///PointingToDeclaration/, pkg/commonString///PointingToDeclaration/
+│   │   │   ├── KdFunction platformName(): String [pkg//platformName/#/PointingToDeclaration/]
+│   │   │   ├── KdClass Shared (CLASS) [pkg/Shared///PointingToDeclaration/]
+│   │   │   │   └── declarations: pkg/Shared/Shared/#kotlin.Int/PointingToDeclaration/, pkg/Shared/id/#/PointingToDeclaration/
+│   │   │   ├── KdConstructor(id: Int) [pkg/Shared/Shared/#kotlin.Int/PointingToDeclaration/]
+│   │   │   ├── KdProperty id: Int [pkg/Shared/id/#/PointingToDeclaration/]
+│   │   │   ├── KdClass SomeClass (CLASS) [pkg/SomeClass///PointingToDeclaration/]
+│   │   │   │   └── declarations: pkg/SomeClass/SomeClass/#/PointingToDeclaration/, pkg/SomeClass/cause/#/PointingToDeclaration/, pkg/SomeClass/message/#/PointingToDeclaration/
+│   │   │   ├── KdConstructor() [pkg/SomeClass/SomeClass/#/PointingToDeclaration/]
+│   │   │   ├── KdInheritedMember originalId=kotlin/Throwable/cause/#/PointingToDeclaration/ [pkg/SomeClass/cause/#/PointingToDeclaration/]
+│   │   │   ├── KdInheritedMember originalId=kotlin/Throwable/message/#/PointingToDeclaration/ [pkg/SomeClass/message/#/PointingToDeclaration/]
+│   │   │   └── KdTypealias commonString = String [pkg/commonString///PointingToDeclaration/]
+│   │   └── embeddedElements
+│   │       ├── KdFunction equals(other: Any?): Boolean [kotlin/Any/equals/#kotlin.Any?/PointingToDeclaration/]
+│   │       ├── KdFunction hashCode(): Int [kotlin/Any/hashCode/#/PointingToDeclaration/]
+│   │       ├── KdFunction toString(): String [kotlin/Any/toString/#/PointingToDeclaration/]
+│   │       ├── KdClass Throwable (CLASS) [kotlin/Throwable///PointingToDeclaration/]
+│   │       │   └── declarations: kotlin/Throwable/Throwable/#/PointingToDeclaration/, kotlin/Throwable/Throwable/#kotlin.String?#kotlin.Throwable?/PointingToDeclaration/, kotlin/Throwable/Throwable/#kotlin.String?/PointingToDeclaration/, kotlin/Throwable/Throwable/#kotlin.Throwable?/PointingToDeclaration/, kotlin/Throwable/cause/#/PointingToDeclaration/, kotlin/Throwable/equals/#kotlin.Any?/PointingToDeclaration/, kotlin/Throwable/hashCode/#/PointingToDeclaration/, kotlin/Throwable/message/#/PointingToDeclaration/, kotlin/Throwable/toString/#/PointingToDeclaration/
+│   │       ├── KdConstructor() [kotlin/Throwable/Throwable/#/PointingToDeclaration/]
+│   │       ├── KdConstructor(message: String?, cause: Throwable?) [kotlin/Throwable/Throwable/#kotlin.String?#kotlin.Throwable?/PointingToDeclaration/]
+│   │       ├── KdConstructor(message: String?) [kotlin/Throwable/Throwable/#kotlin.String?/PointingToDeclaration/]
+│   │       ├── KdConstructor(cause: Throwable?) [kotlin/Throwable/Throwable/#kotlin.Throwable?/PointingToDeclaration/]
+│   │       ├── KdProperty cause: Throwable? [kotlin/Throwable/cause/#/PointingToDeclaration/]
+│   │       ├── KdInheritedMember originalId=kotlin/Any/equals/#kotlin.Any?/PointingToDeclaration/ [kotlin/Throwable/equals/#kotlin.Any?/PointingToDeclaration/]
+│   │       ├── KdInheritedMember originalId=kotlin/Any/hashCode/#/PointingToDeclaration/ [kotlin/Throwable/hashCode/#/PointingToDeclaration/]
+│   │       ├── KdProperty message: String? [kotlin/Throwable/message/#/PointingToDeclaration/]
+│   │       └── KdInheritedMember originalId=kotlin/Any/toString/#/PointingToDeclaration/ [kotlin/Throwable/toString/#/PointingToDeclaration/]
+│   ├── KdFragment jsMain
+│   │   ├── elements
+│   │   │   ├── KdModule intermediateSourceSet [////PointingToDeclaration/]
+│   │   │   │   └── packages: pkg////PointingToDeclaration/
+│   │   │   ├── KdPackage pkg [pkg////PointingToDeclaration/]
+│   │   │   │   └── declarations: pkg//jsOnly/#/PointingToDeclaration/, pkg//platformName/#/PointingToDeclaration/, pkg/IntermediateOnly///PointingToDeclaration/, pkg/Shared///PointingToDeclaration/, pkg/SomeClass///PointingToDeclaration/, pkg/commonString///PointingToDeclaration/
+│   │   │   ├── KdFunction jsOnly(): Int [pkg//jsOnly/#/PointingToDeclaration/]
+│   │   │   ├── KdRefinedElement fragmentName=jvmAndJsMain [pkg//platformName/#/PointingToDeclaration/]
+│   │   │   ├── KdClass IntermediateOnly (CLASS) [pkg/IntermediateOnly///PointingToDeclaration/]
+│   │   │   │   └── declarations: pkg/IntermediateOnly/IntermediateOnly/#kotlin.String/PointingToDeclaration/, pkg/IntermediateOnly/value/#/PointingToDeclaration/
+│   │   │   ├── KdConstructor(value: String) [pkg/IntermediateOnly/IntermediateOnly/#kotlin.String/PointingToDeclaration/]
+│   │   │   ├── KdProperty value: String [pkg/IntermediateOnly/value/#/PointingToDeclaration/]
+│   │   │   ├── KdClass Shared (CLASS) [pkg/Shared///PointingToDeclaration/]
+│   │   │   │   └── declarations: pkg/Shared/Shared/#kotlin.Int/PointingToDeclaration/, pkg/Shared/id/#/PointingToDeclaration/
+│   │   │   ├── KdConstructor(id: Int) [pkg/Shared/Shared/#kotlin.Int/PointingToDeclaration/]
+│   │   │   ├── KdProperty id: Int [pkg/Shared/id/#/PointingToDeclaration/]
+│   │   │   ├── KdClass SomeClass (CLASS) [pkg/SomeClass///PointingToDeclaration/]
+│   │   │   │   └── declarations: pkg/SomeClass/SomeClass/#/PointingToDeclaration/, pkg/SomeClass/addSuppressed/#java.lang.Throwable/PointingToDeclaration/, pkg/SomeClass/cause/#/PointingToDeclaration/, pkg/SomeClass/fillInStackTrace/#/PointingToDeclaration/, pkg/SomeClass/initCause/#java.lang.Throwable/PointingToDeclaration/, pkg/SomeClass/localizedMessage/#/PointingToDeclaration/, pkg/SomeClass/message/#/PointingToDeclaration/, pkg/SomeClass/printStackTrace/#/PointingToDeclaration/, pkg/SomeClass/printStackTrace/#java.io.PrintStream/PointingToDeclaration/, pkg/SomeClass/printStackTrace/#java.io.PrintWriter/PointingToDeclaration/, pkg/SomeClass/stackTrace/#/PointingToDeclaration/, pkg/SomeClass/suppressed/#/PointingToDeclaration/
+│   │   │   ├── KdConstructor() [pkg/SomeClass/SomeClass/#/PointingToDeclaration/]
+│   │   │   ├── KdInheritedMember originalId=kotlin/Throwable/addSuppressed/#java.lang.Throwable/PointingToDeclaration/ [pkg/SomeClass/addSuppressed/#java.lang.Throwable/PointingToDeclaration/]
+│   │   │   ├── KdInheritedMember originalId=kotlin/Throwable/cause/#/PointingToDeclaration/ [pkg/SomeClass/cause/#/PointingToDeclaration/]
+│   │   │   ├── KdInheritedMember originalId=kotlin/Throwable/fillInStackTrace/#/PointingToDeclaration/ [pkg/SomeClass/fillInStackTrace/#/PointingToDeclaration/]
+│   │   │   ├── KdInheritedMember originalId=kotlin/Throwable/initCause/#java.lang.Throwable/PointingToDeclaration/ [pkg/SomeClass/initCause/#java.lang.Throwable/PointingToDeclaration/]
+│   │   │   ├── KdInheritedMember originalId=kotlin/Throwable/localizedMessage/#/PointingToDeclaration/ [pkg/SomeClass/localizedMessage/#/PointingToDeclaration/]
+│   │   │   ├── KdInheritedMember originalId=kotlin/Throwable/message/#/PointingToDeclaration/ [pkg/SomeClass/message/#/PointingToDeclaration/]
+│   │   │   ├── KdInheritedMember originalId=kotlin/Throwable/printStackTrace/#/PointingToDeclaration/ [pkg/SomeClass/printStackTrace/#/PointingToDeclaration/]
+│   │   │   ├── KdInheritedMember originalId=kotlin/Throwable/printStackTrace/#java.io.PrintStream/PointingToDeclaration/ [pkg/SomeClass/printStackTrace/#java.io.PrintStream/PointingToDeclaration/]
+│   │   │   ├── KdInheritedMember originalId=kotlin/Throwable/printStackTrace/#java.io.PrintWriter/PointingToDeclaration/ [pkg/SomeClass/printStackTrace/#java.io.PrintWriter/PointingToDeclaration/]
+│   │   │   ├── KdInheritedMember originalId=kotlin/Throwable/stackTrace/#/PointingToDeclaration/ [pkg/SomeClass/stackTrace/#/PointingToDeclaration/]
+│   │   │   ├── KdInheritedMember originalId=kotlin/Throwable/suppressed/#/PointingToDeclaration/ [pkg/SomeClass/suppressed/#/PointingToDeclaration/]
+│   │   │   └── KdRefinedElement fragmentName=commonMain [pkg/commonString///PointingToDeclaration/]
+│   │   └── embeddedElements
+│   │       ├── KdClass Serializable (INTERFACE) [java.io/Serializable///PointingToDeclaration/]
+│   │       │   └── declarations: java.io/Serializable/equals/#kotlin.Any?/PointingToDeclaration/, java.io/Serializable/hashCode/#/PointingToDeclaration/, java.io/Serializable/toString/#/PointingToDeclaration/
+│   │       ├── KdInheritedMember originalId=kotlin/Any/equals/#kotlin.Any?/PointingToDeclaration/ [java.io/Serializable/equals/#kotlin.Any?/PointingToDeclaration/]
+│   │       ├── KdInheritedMember originalId=kotlin/Any/hashCode/#/PointingToDeclaration/ [java.io/Serializable/hashCode/#/PointingToDeclaration/]
+│   │       ├── KdInheritedMember originalId=kotlin/Any/toString/#/PointingToDeclaration/ [java.io/Serializable/toString/#/PointingToDeclaration/]
+│   │       ├── KdFunction equals(other: Any?): Boolean [kotlin/Any/equals/#kotlin.Any?/PointingToDeclaration/]
+│   │       ├── KdFunction hashCode(): Int [kotlin/Any/hashCode/#/PointingToDeclaration/]
+│   │       ├── KdFunction toString(): String [kotlin/Any/toString/#/PointingToDeclaration/]
+│   │       ├── KdClass Throwable (CLASS) [kotlin/Throwable///PointingToDeclaration/]
+│   │       │   └── declarations: kotlin/Throwable/Throwable/#/PointingToDeclaration/, kotlin/Throwable/Throwable/#kotlin.String#kotlin.Throwable#kotlin.Boolean#kotlin.Boolean/PointingToDeclaration/, kotlin/Throwable/Throwable/#kotlin.String?#kotlin.Throwable?/PointingToDeclaration/, kotlin/Throwable/Throwable/#kotlin.String?/PointingToDeclaration/, kotlin/Throwable/Throwable/#kotlin.Throwable?/PointingToDeclaration/, kotlin/Throwable/addSuppressed/#java.lang.Throwable/PointingToDeclaration/, kotlin/Throwable/cause/#/PointingToDeclaration/, kotlin/Throwable/equals/#kotlin.Any?/PointingToDeclaration/, kotlin/Throwable/fillInStackTrace/#/PointingToDeclaration/, kotlin/Throwable/hashCode/#/PointingToDeclaration/, kotlin/Throwable/initCause/#java.lang.Throwable/PointingToDeclaration/, kotlin/Throwable/localizedMessage/#/PointingToDeclaration/, kotlin/Throwable/message/#/PointingToDeclaration/, kotlin/Throwable/printStackTrace/#/PointingToDeclaration/, kotlin/Throwable/printStackTrace/#java.io.PrintStream/PointingToDeclaration/, kotlin/Throwable/printStackTrace/#java.io.PrintWriter/PointingToDeclaration/, kotlin/Throwable/stackTrace/#/PointingToDeclaration/, kotlin/Throwable/suppressed/#/PointingToDeclaration/, kotlin/Throwable/toString/#/PointingToDeclaration/
+│   │       ├── KdConstructor() [kotlin/Throwable/Throwable/#/PointingToDeclaration/]
+│   │       ├── KdConstructor(p0: String, p1: Throwable, p2: Boolean, p3: Boolean) [kotlin/Throwable/Throwable/#kotlin.String#kotlin.Throwable#kotlin.Boolean#kotlin.Boolean/PointingToDeclaration/]
+│   │       ├── KdConstructor(message: String?, cause: Throwable?) [kotlin/Throwable/Throwable/#kotlin.String?#kotlin.Throwable?/PointingToDeclaration/]
+│   │       ├── KdConstructor(message: String?) [kotlin/Throwable/Throwable/#kotlin.String?/PointingToDeclaration/]
+│   │       ├── KdConstructor(cause: Throwable?) [kotlin/Throwable/Throwable/#kotlin.Throwable?/PointingToDeclaration/]
+│   │       ├── KdFunction addSuppressed(p0: Throwable): Unit [kotlin/Throwable/addSuppressed/#java.lang.Throwable/PointingToDeclaration/]
+│   │       ├── KdProperty cause: Throwable? [kotlin/Throwable/cause/#/PointingToDeclaration/]
+│   │       ├── KdInheritedMember originalId=kotlin/Any/equals/#kotlin.Any?/PointingToDeclaration/ [kotlin/Throwable/equals/#kotlin.Any?/PointingToDeclaration/]
+│   │       ├── KdFunction fillInStackTrace(): Throwable [kotlin/Throwable/fillInStackTrace/#/PointingToDeclaration/]
+│   │       ├── KdInheritedMember originalId=kotlin/Any/hashCode/#/PointingToDeclaration/ [kotlin/Throwable/hashCode/#/PointingToDeclaration/]
+│   │       ├── KdFunction initCause(p0: Throwable): Throwable [kotlin/Throwable/initCause/#java.lang.Throwable/PointingToDeclaration/]
+│   │       ├── KdProperty localizedMessage: String [kotlin/Throwable/localizedMessage/#/PointingToDeclaration/]
+│   │       ├── KdProperty message: String? [kotlin/Throwable/message/#/PointingToDeclaration/]
+│   │       ├── KdFunction printStackTrace(): Unit [kotlin/Throwable/printStackTrace/#/PointingToDeclaration/]
+│   │       ├── KdFunction printStackTrace(p0: PrintStream): Unit [kotlin/Throwable/printStackTrace/#java.io.PrintStream/PointingToDeclaration/]
+│   │       ├── KdFunction printStackTrace(p0: PrintWriter): Unit [kotlin/Throwable/printStackTrace/#java.io.PrintWriter/PointingToDeclaration/]
+│   │       ├── KdProperty stackTrace: Array<StackTraceElement> [kotlin/Throwable/stackTrace/#/PointingToDeclaration/]
+│   │       ├── KdProperty suppressed: Array<Throwable> [kotlin/Throwable/suppressed/#/PointingToDeclaration/]
+│   │       └── KdInheritedMember originalId=kotlin/Any/toString/#/PointingToDeclaration/ [kotlin/Throwable/toString/#/PointingToDeclaration/]
+│   ├── KdFragment jvmAndJsMain
+│   │   ├── elements
+│   │   │   ├── KdModule intermediateSourceSet [////PointingToDeclaration/]
+│   │   │   │   └── packages: pkg////PointingToDeclaration/
+│   │   │   ├── KdPackage pkg [pkg////PointingToDeclaration/]
+│   │   │   │   └── declarations: pkg//platformName/#/PointingToDeclaration/, pkg/IntermediateOnly///PointingToDeclaration/, pkg/Shared///PointingToDeclaration/, pkg/SomeClass///PointingToDeclaration/, pkg/commonString///PointingToDeclaration/
+│   │   │   ├── KdFunction platformName(): String [pkg//platformName/#/PointingToDeclaration/]
+│   │   │   ├── KdClass IntermediateOnly (CLASS) [pkg/IntermediateOnly///PointingToDeclaration/]
+│   │   │   │   └── declarations: pkg/IntermediateOnly/IntermediateOnly/#kotlin.String/PointingToDeclaration/, pkg/IntermediateOnly/value/#/PointingToDeclaration/
+│   │   │   ├── KdConstructor(value: String) [pkg/IntermediateOnly/IntermediateOnly/#kotlin.String/PointingToDeclaration/]
+│   │   │   ├── KdProperty value: String [pkg/IntermediateOnly/value/#/PointingToDeclaration/]
+│   │   │   ├── KdClass Shared (CLASS) [pkg/Shared///PointingToDeclaration/]
+│   │   │   │   └── declarations: pkg/Shared/Shared/#kotlin.Int/PointingToDeclaration/, pkg/Shared/id/#/PointingToDeclaration/
+│   │   │   ├── KdConstructor(id: Int) [pkg/Shared/Shared/#kotlin.Int/PointingToDeclaration/]
+│   │   │   ├── KdProperty id: Int [pkg/Shared/id/#/PointingToDeclaration/]
+│   │   │   ├── KdClass SomeClass (CLASS) [pkg/SomeClass///PointingToDeclaration/]
+│   │   │   │   └── declarations: pkg/SomeClass/SomeClass/#/PointingToDeclaration/, pkg/SomeClass/cause/#/PointingToDeclaration/, pkg/SomeClass/message/#/PointingToDeclaration/
+│   │   │   ├── KdConstructor() [pkg/SomeClass/SomeClass/#/PointingToDeclaration/]
+│   │   │   ├── KdInheritedMember originalId=kotlin/Throwable/cause/#/PointingToDeclaration/ [pkg/SomeClass/cause/#/PointingToDeclaration/]
+│   │   │   ├── KdInheritedMember originalId=kotlin/Throwable/message/#/PointingToDeclaration/ [pkg/SomeClass/message/#/PointingToDeclaration/]
+│   │   │   └── KdRefinedElement fragmentName=commonMain [pkg/commonString///PointingToDeclaration/]
+│   │   └── embeddedElements
+│   │       ├── KdFunction equals(other: Any?): Boolean [kotlin/Any/equals/#kotlin.Any?/PointingToDeclaration/]
+│   │       ├── KdFunction hashCode(): Int [kotlin/Any/hashCode/#/PointingToDeclaration/]
+│   │       ├── KdFunction toString(): String [kotlin/Any/toString/#/PointingToDeclaration/]
+│   │       ├── KdClass Throwable (CLASS) [kotlin/Throwable///PointingToDeclaration/]
+│   │       │   └── declarations: kotlin/Throwable/Throwable/#/PointingToDeclaration/, kotlin/Throwable/Throwable/#kotlin.String?#kotlin.Throwable?/PointingToDeclaration/, kotlin/Throwable/Throwable/#kotlin.String?/PointingToDeclaration/, kotlin/Throwable/Throwable/#kotlin.Throwable?/PointingToDeclaration/, kotlin/Throwable/cause/#/PointingToDeclaration/, kotlin/Throwable/equals/#kotlin.Any?/PointingToDeclaration/, kotlin/Throwable/hashCode/#/PointingToDeclaration/, kotlin/Throwable/message/#/PointingToDeclaration/, kotlin/Throwable/toString/#/PointingToDeclaration/
+│   │       ├── KdConstructor() [kotlin/Throwable/Throwable/#/PointingToDeclaration/]
+│   │       ├── KdConstructor(message: String?, cause: Throwable?) [kotlin/Throwable/Throwable/#kotlin.String?#kotlin.Throwable?/PointingToDeclaration/]
+│   │       ├── KdConstructor(message: String?) [kotlin/Throwable/Throwable/#kotlin.String?/PointingToDeclaration/]
+│   │       ├── KdConstructor(cause: Throwable?) [kotlin/Throwable/Throwable/#kotlin.Throwable?/PointingToDeclaration/]
+│   │       ├── KdProperty cause: Throwable? [kotlin/Throwable/cause/#/PointingToDeclaration/]
+│   │       ├── KdInheritedMember originalId=kotlin/Any/equals/#kotlin.Any?/PointingToDeclaration/ [kotlin/Throwable/equals/#kotlin.Any?/PointingToDeclaration/]
+│   │       ├── KdInheritedMember originalId=kotlin/Any/hashCode/#/PointingToDeclaration/ [kotlin/Throwable/hashCode/#/PointingToDeclaration/]
+│   │       ├── KdProperty message: String? [kotlin/Throwable/message/#/PointingToDeclaration/]
+│   │       └── KdInheritedMember originalId=kotlin/Any/toString/#/PointingToDeclaration/ [kotlin/Throwable/toString/#/PointingToDeclaration/]
+│   ├── KdFragment jvmMain
+│   │   ├── elements
+│   │   │   ├── KdModule intermediateSourceSet [////PointingToDeclaration/]
+│   │   │   │   └── packages: pkg////PointingToDeclaration/
+│   │   │   ├── KdPackage pkg [pkg////PointingToDeclaration/]
+│   │   │   │   └── declarations: pkg//jvmOnly/#/PointingToDeclaration/, pkg//platformName/#/PointingToDeclaration/, pkg/IntermediateOnly///PointingToDeclaration/, pkg/Shared///PointingToDeclaration/, pkg/SomeClass///PointingToDeclaration/, pkg/commonString///PointingToDeclaration/
+│   │   │   ├── KdFunction jvmOnly(): Int [pkg//jvmOnly/#/PointingToDeclaration/]
+│   │   │   ├── KdRefinedElement fragmentName=jvmAndJsMain [pkg//platformName/#/PointingToDeclaration/]
+│   │   │   ├── KdClass IntermediateOnly (CLASS) [pkg/IntermediateOnly///PointingToDeclaration/]
+│   │   │   │   └── declarations: pkg/IntermediateOnly/IntermediateOnly/#kotlin.String/PointingToDeclaration/, pkg/IntermediateOnly/value/#/PointingToDeclaration/
+│   │   │   ├── KdConstructor(value: String) [pkg/IntermediateOnly/IntermediateOnly/#kotlin.String/PointingToDeclaration/]
+│   │   │   ├── KdProperty value: String [pkg/IntermediateOnly/value/#/PointingToDeclaration/]
+│   │   │   ├── KdClass Shared (CLASS) [pkg/Shared///PointingToDeclaration/]
+│   │   │   │   └── declarations: pkg/Shared/Shared/#kotlin.Int/PointingToDeclaration/, pkg/Shared/id/#/PointingToDeclaration/
+│   │   │   ├── KdConstructor(id: Int) [pkg/Shared/Shared/#kotlin.Int/PointingToDeclaration/]
+│   │   │   ├── KdProperty id: Int [pkg/Shared/id/#/PointingToDeclaration/]
+│   │   │   ├── KdClass SomeClass (CLASS) [pkg/SomeClass///PointingToDeclaration/]
+│   │   │   │   └── declarations: pkg/SomeClass/SomeClass/#/PointingToDeclaration/, pkg/SomeClass/addSuppressed/#java.lang.Throwable/PointingToDeclaration/, pkg/SomeClass/cause/#/PointingToDeclaration/, pkg/SomeClass/fillInStackTrace/#/PointingToDeclaration/, pkg/SomeClass/initCause/#java.lang.Throwable/PointingToDeclaration/, pkg/SomeClass/localizedMessage/#/PointingToDeclaration/, pkg/SomeClass/message/#/PointingToDeclaration/, pkg/SomeClass/printStackTrace/#/PointingToDeclaration/, pkg/SomeClass/printStackTrace/#java.io.PrintStream/PointingToDeclaration/, pkg/SomeClass/printStackTrace/#java.io.PrintWriter/PointingToDeclaration/, pkg/SomeClass/stackTrace/#/PointingToDeclaration/, pkg/SomeClass/suppressed/#/PointingToDeclaration/
+│   │   │   ├── KdConstructor() [pkg/SomeClass/SomeClass/#/PointingToDeclaration/]
+│   │   │   ├── KdInheritedMember originalId=kotlin/Throwable/addSuppressed/#java.lang.Throwable/PointingToDeclaration/ [pkg/SomeClass/addSuppressed/#java.lang.Throwable/PointingToDeclaration/]
+│   │   │   ├── KdInheritedMember originalId=kotlin/Throwable/cause/#/PointingToDeclaration/ [pkg/SomeClass/cause/#/PointingToDeclaration/]
+│   │   │   ├── KdInheritedMember originalId=kotlin/Throwable/fillInStackTrace/#/PointingToDeclaration/ [pkg/SomeClass/fillInStackTrace/#/PointingToDeclaration/]
+│   │   │   ├── KdInheritedMember originalId=kotlin/Throwable/initCause/#java.lang.Throwable/PointingToDeclaration/ [pkg/SomeClass/initCause/#java.lang.Throwable/PointingToDeclaration/]
+│   │   │   ├── KdInheritedMember originalId=kotlin/Throwable/localizedMessage/#/PointingToDeclaration/ [pkg/SomeClass/localizedMessage/#/PointingToDeclaration/]
+│   │   │   ├── KdInheritedMember originalId=kotlin/Throwable/message/#/PointingToDeclaration/ [pkg/SomeClass/message/#/PointingToDeclaration/]
+│   │   │   ├── KdInheritedMember originalId=kotlin/Throwable/printStackTrace/#/PointingToDeclaration/ [pkg/SomeClass/printStackTrace/#/PointingToDeclaration/]
+│   │   │   ├── KdInheritedMember originalId=kotlin/Throwable/printStackTrace/#java.io.PrintStream/PointingToDeclaration/ [pkg/SomeClass/printStackTrace/#java.io.PrintStream/PointingToDeclaration/]
+│   │   │   ├── KdInheritedMember originalId=kotlin/Throwable/printStackTrace/#java.io.PrintWriter/PointingToDeclaration/ [pkg/SomeClass/printStackTrace/#java.io.PrintWriter/PointingToDeclaration/]
+│   │   │   ├── KdInheritedMember originalId=kotlin/Throwable/stackTrace/#/PointingToDeclaration/ [pkg/SomeClass/stackTrace/#/PointingToDeclaration/]
+│   │   │   ├── KdInheritedMember originalId=kotlin/Throwable/suppressed/#/PointingToDeclaration/ [pkg/SomeClass/suppressed/#/PointingToDeclaration/]
+│   │   │   └── KdRefinedElement fragmentName=commonMain [pkg/commonString///PointingToDeclaration/]
+│   │   └── embeddedElements
+│   │       ├── KdClass Serializable (INTERFACE) [java.io/Serializable///PointingToDeclaration/]
+│   │       │   └── declarations: java.io/Serializable/equals/#kotlin.Any?/PointingToDeclaration/, java.io/Serializable/hashCode/#/PointingToDeclaration/, java.io/Serializable/toString/#/PointingToDeclaration/
+│   │       ├── KdInheritedMember originalId=kotlin/Any/equals/#kotlin.Any?/PointingToDeclaration/ [java.io/Serializable/equals/#kotlin.Any?/PointingToDeclaration/]
+│   │       ├── KdInheritedMember originalId=kotlin/Any/hashCode/#/PointingToDeclaration/ [java.io/Serializable/hashCode/#/PointingToDeclaration/]
+│   │       ├── KdInheritedMember originalId=kotlin/Any/toString/#/PointingToDeclaration/ [java.io/Serializable/toString/#/PointingToDeclaration/]
+│   │       ├── KdFunction equals(other: Any?): Boolean [kotlin/Any/equals/#kotlin.Any?/PointingToDeclaration/]
+│   │       ├── KdFunction hashCode(): Int [kotlin/Any/hashCode/#/PointingToDeclaration/]
+│   │       ├── KdFunction toString(): String [kotlin/Any/toString/#/PointingToDeclaration/]
+│   │       ├── KdClass Throwable (CLASS) [kotlin/Throwable///PointingToDeclaration/]
+│   │       │   └── declarations: kotlin/Throwable/Throwable/#/PointingToDeclaration/, kotlin/Throwable/Throwable/#kotlin.String#kotlin.Throwable#kotlin.Boolean#kotlin.Boolean/PointingToDeclaration/, kotlin/Throwable/Throwable/#kotlin.String?#kotlin.Throwable?/PointingToDeclaration/, kotlin/Throwable/Throwable/#kotlin.String?/PointingToDeclaration/, kotlin/Throwable/Throwable/#kotlin.Throwable?/PointingToDeclaration/, kotlin/Throwable/addSuppressed/#java.lang.Throwable/PointingToDeclaration/, kotlin/Throwable/cause/#/PointingToDeclaration/, kotlin/Throwable/equals/#kotlin.Any?/PointingToDeclaration/, kotlin/Throwable/fillInStackTrace/#/PointingToDeclaration/, kotlin/Throwable/hashCode/#/PointingToDeclaration/, kotlin/Throwable/initCause/#java.lang.Throwable/PointingToDeclaration/, kotlin/Throwable/localizedMessage/#/PointingToDeclaration/, kotlin/Throwable/message/#/PointingToDeclaration/, kotlin/Throwable/printStackTrace/#/PointingToDeclaration/, kotlin/Throwable/printStackTrace/#java.io.PrintStream/PointingToDeclaration/, kotlin/Throwable/printStackTrace/#java.io.PrintWriter/PointingToDeclaration/, kotlin/Throwable/stackTrace/#/PointingToDeclaration/, kotlin/Throwable/suppressed/#/PointingToDeclaration/, kotlin/Throwable/toString/#/PointingToDeclaration/
+│   │       ├── KdConstructor() [kotlin/Throwable/Throwable/#/PointingToDeclaration/]
+│   │       ├── KdConstructor(p0: String, p1: Throwable, p2: Boolean, p3: Boolean) [kotlin/Throwable/Throwable/#kotlin.String#kotlin.Throwable#kotlin.Boolean#kotlin.Boolean/PointingToDeclaration/]
+│   │       ├── KdConstructor(message: String?, cause: Throwable?) [kotlin/Throwable/Throwable/#kotlin.String?#kotlin.Throwable?/PointingToDeclaration/]
+│   │       ├── KdConstructor(message: String?) [kotlin/Throwable/Throwable/#kotlin.String?/PointingToDeclaration/]
+│   │       ├── KdConstructor(cause: Throwable?) [kotlin/Throwable/Throwable/#kotlin.Throwable?/PointingToDeclaration/]
+│   │       ├── KdFunction addSuppressed(p0: Throwable): Unit [kotlin/Throwable/addSuppressed/#java.lang.Throwable/PointingToDeclaration/]
+│   │       ├── KdProperty cause: Throwable? [kotlin/Throwable/cause/#/PointingToDeclaration/]
+│   │       ├── KdInheritedMember originalId=kotlin/Any/equals/#kotlin.Any?/PointingToDeclaration/ [kotlin/Throwable/equals/#kotlin.Any?/PointingToDeclaration/]
+│   │       ├── KdFunction fillInStackTrace(): Throwable [kotlin/Throwable/fillInStackTrace/#/PointingToDeclaration/]
+│   │       ├── KdInheritedMember originalId=kotlin/Any/hashCode/#/PointingToDeclaration/ [kotlin/Throwable/hashCode/#/PointingToDeclaration/]
+│   │       ├── KdFunction initCause(p0: Throwable): Throwable [kotlin/Throwable/initCause/#java.lang.Throwable/PointingToDeclaration/]
+│   │       ├── KdProperty localizedMessage: String [kotlin/Throwable/localizedMessage/#/PointingToDeclaration/]
+│   │       ├── KdProperty message: String? [kotlin/Throwable/message/#/PointingToDeclaration/]
+│   │       ├── KdFunction printStackTrace(): Unit [kotlin/Throwable/printStackTrace/#/PointingToDeclaration/]
+│   │       ├── KdFunction printStackTrace(p0: PrintStream): Unit [kotlin/Throwable/printStackTrace/#java.io.PrintStream/PointingToDeclaration/]
+│   │       ├── KdFunction printStackTrace(p0: PrintWriter): Unit [kotlin/Throwable/printStackTrace/#java.io.PrintWriter/PointingToDeclaration/]
+│   │       ├── KdProperty stackTrace: Array<StackTraceElement> [kotlin/Throwable/stackTrace/#/PointingToDeclaration/]
+│   │       ├── KdProperty suppressed: Array<Throwable> [kotlin/Throwable/suppressed/#/PointingToDeclaration/]
+│   │       └── KdInheritedMember originalId=kotlin/Any/toString/#/PointingToDeclaration/ [kotlin/Throwable/toString/#/PointingToDeclaration/]
+│   └── KdFragment nativeMain
+│       ├── elements
+│       │   ├── KdModule intermediateSourceSet [////PointingToDeclaration/]
+│       │   │   └── packages: pkg////PointingToDeclaration/
+│       │   ├── KdPackage pkg [pkg////PointingToDeclaration/]
+│       │   │   └── declarations: pkg//nativeOnly/#/PointingToDeclaration/, pkg//platformName/#/PointingToDeclaration/, pkg/Shared///PointingToDeclaration/, pkg/SomeClass///PointingToDeclaration/, pkg/commonString///PointingToDeclaration/
+│       │   ├── KdFunction nativeOnly(): Int [pkg//nativeOnly/#/PointingToDeclaration/]
+│       │   ├── KdFunction platformName(): String [pkg//platformName/#/PointingToDeclaration/]
+│       │   ├── KdClass Shared (CLASS) [pkg/Shared///PointingToDeclaration/]
+│       │   │   └── declarations: pkg/Shared/Shared/#kotlin.Int/PointingToDeclaration/, pkg/Shared/id/#/PointingToDeclaration/
+│       │   ├── KdConstructor(id: Int) [pkg/Shared/Shared/#kotlin.Int/PointingToDeclaration/]
+│       │   ├── KdProperty id: Int [pkg/Shared/id/#/PointingToDeclaration/]
+│       │   ├── KdClass SomeClass (CLASS) [pkg/SomeClass///PointingToDeclaration/]
+│       │   │   └── declarations: pkg/SomeClass/SomeClass/#/PointingToDeclaration/, pkg/SomeClass/cause/#/PointingToDeclaration/, pkg/SomeClass/dumpStackTrace/#/PointingToDeclaration/, pkg/SomeClass/getStackTrace/#/PointingToDeclaration/, pkg/SomeClass/getStackTraceAddressesInternal/#/PointingToDeclaration/, pkg/SomeClass/message/#/PointingToDeclaration/, pkg/SomeClass/printStackTrace/#/PointingToDeclaration/, pkg/SomeClass/stackTrace/#/PointingToDeclaration/, pkg/SomeClass/stackTraceStrings/#/PointingToDeclaration/, pkg/SomeClass/suppressedExceptionsList/#/PointingToDeclaration/, pkg/SomeClass/toString/#/PointingToDeclaration/
+│       │   ├── KdConstructor() [pkg/SomeClass/SomeClass/#/PointingToDeclaration/]
+│       │   ├── KdInheritedMember originalId=kotlin/Throwable/cause/#/PointingToDeclaration/ [pkg/SomeClass/cause/#/PointingToDeclaration/]
+│       │   ├── KdInheritedMember originalId=kotlin/Throwable/dumpStackTrace/#/PointingToDeclaration/ [pkg/SomeClass/dumpStackTrace/#/PointingToDeclaration/]
+│       │   ├── KdInheritedMember originalId=kotlin/Throwable/getStackTrace/#/PointingToDeclaration/ [pkg/SomeClass/getStackTrace/#/PointingToDeclaration/]
+│       │   ├── KdInheritedMember originalId=kotlin/Throwable/getStackTraceAddressesInternal/#/PointingToDeclaration/ [pkg/SomeClass/getStackTraceAddressesInternal/#/PointingToDeclaration/]
+│       │   ├── KdInheritedMember originalId=kotlin/Throwable/message/#/PointingToDeclaration/ [pkg/SomeClass/message/#/PointingToDeclaration/]
+│       │   ├── KdInheritedMember originalId=kotlin/Throwable/printStackTrace/#/PointingToDeclaration/ [pkg/SomeClass/printStackTrace/#/PointingToDeclaration/]
+│       │   ├── KdInheritedMember originalId=kotlin/Throwable/stackTrace/#/PointingToDeclaration/ [pkg/SomeClass/stackTrace/#/PointingToDeclaration/]
+│       │   ├── KdInheritedMember originalId=kotlin/Throwable/stackTraceStrings/#/PointingToDeclaration/ [pkg/SomeClass/stackTraceStrings/#/PointingToDeclaration/]
+│       │   ├── KdInheritedMember originalId=kotlin/Throwable/suppressedExceptionsList/#/PointingToDeclaration/ [pkg/SomeClass/suppressedExceptionsList/#/PointingToDeclaration/]
+│       │   ├── KdInheritedMember originalId=kotlin/Throwable/toString/#/PointingToDeclaration/ [pkg/SomeClass/toString/#/PointingToDeclaration/]
+│       │   └── KdRefinedElement fragmentName=commonMain [pkg/commonString///PointingToDeclaration/]
+│       └── embeddedElements
+│           ├── KdFunction equals(other: Any?): Boolean [kotlin/Any/equals/#kotlin.Any?/PointingToDeclaration/]
+│           ├── KdFunction hashCode(): Int [kotlin/Any/hashCode/#/PointingToDeclaration/]
+│           ├── KdFunction toString(): String [kotlin/Any/toString/#/PointingToDeclaration/]
+│           ├── KdClass ExceptionTraceBuilder (CLASS) [kotlin/Throwable.ExceptionTraceBuilder///PointingToDeclaration/]
+│           │   └── declarations: kotlin/Throwable.ExceptionTraceBuilder/ExceptionTraceBuilder/#kotlin.Throwable/PointingToDeclaration/, kotlin/Throwable.ExceptionTraceBuilder/build/#/PointingToDeclaration/, kotlin/Throwable.ExceptionTraceBuilder/commonStackFrames/kotlin.Throwable#/PointingToDeclaration/, kotlin/Throwable.ExceptionTraceBuilder/dumpFullTrace/kotlin.Throwable#kotlin.String#kotlin.String/PointingToDeclaration/, kotlin/Throwable.ExceptionTraceBuilder/dumpSelfTrace/kotlin.Throwable#kotlin.String#kotlin.String/PointingToDeclaration/, kotlin/Throwable.ExceptionTraceBuilder/endln/kotlin.text.StringBuilder#/PointingToDeclaration/, kotlin/Throwable.ExceptionTraceBuilder/equals/#kotlin.Any?/PointingToDeclaration/, kotlin/Throwable.ExceptionTraceBuilder/hashCode/#/PointingToDeclaration/, kotlin/Throwable.ExceptionTraceBuilder/print/#/PointingToDeclaration/, kotlin/Throwable.ExceptionTraceBuilder/printOut/#/PointingToDeclaration/, kotlin/Throwable.ExceptionTraceBuilder/target/#/PointingToDeclaration/, kotlin/Throwable.ExceptionTraceBuilder/toString/#/PointingToDeclaration/, kotlin/Throwable.ExceptionTraceBuilder/top/#/PointingToDeclaration/, kotlin/Throwable.ExceptionTraceBuilder/visited/#/PointingToDeclaration/
+│           ├── KdConstructor(top: Throwable) [kotlin/Throwable.ExceptionTraceBuilder/ExceptionTraceBuilder/#kotlin.Throwable/PointingToDeclaration/]
+│           ├── KdFunction build(): String [kotlin/Throwable.ExceptionTraceBuilder/build/#/PointingToDeclaration/]
+│           ├── KdFunction commonStackFrames(): Int [kotlin/Throwable.ExceptionTraceBuilder/commonStackFrames/kotlin.Throwable#/PointingToDeclaration/]
+│           ├── KdFunction dumpFullTrace(indent: String, qualifier: String): Unit [kotlin/Throwable.ExceptionTraceBuilder/dumpFullTrace/kotlin.Throwable#kotlin.String#kotlin.String/PointingToDeclaration/]
+│           ├── KdFunction dumpSelfTrace(indent: String, qualifier: String): Boolean [kotlin/Throwable.ExceptionTraceBuilder/dumpSelfTrace/kotlin.Throwable#kotlin.String#kotlin.String/PointingToDeclaration/]
+│           ├── KdFunction endln(): Unit [kotlin/Throwable.ExceptionTraceBuilder/endln/kotlin.text.StringBuilder#/PointingToDeclaration/]
+│           ├── KdInheritedMember originalId=kotlin/Any/equals/#kotlin.Any?/PointingToDeclaration/ [kotlin/Throwable.ExceptionTraceBuilder/equals/#kotlin.Any?/PointingToDeclaration/]
+│           ├── KdInheritedMember originalId=kotlin/Any/hashCode/#/PointingToDeclaration/ [kotlin/Throwable.ExceptionTraceBuilder/hashCode/#/PointingToDeclaration/]
+│           ├── KdFunction print(): Unit [kotlin/Throwable.ExceptionTraceBuilder/print/#/PointingToDeclaration/]
+│           ├── KdProperty printOut: Boolean [kotlin/Throwable.ExceptionTraceBuilder/printOut/#/PointingToDeclaration/]
+│           ├── KdProperty target: StringBuilder [kotlin/Throwable.ExceptionTraceBuilder/target/#/PointingToDeclaration/]
+│           ├── KdInheritedMember originalId=kotlin/Any/toString/#/PointingToDeclaration/ [kotlin/Throwable.ExceptionTraceBuilder/toString/#/PointingToDeclaration/]
+│           ├── KdProperty top: Throwable [kotlin/Throwable.ExceptionTraceBuilder/top/#/PointingToDeclaration/]
+│           ├── KdProperty visited: MutableSet<Throwable> [kotlin/Throwable.ExceptionTraceBuilder/visited/#/PointingToDeclaration/]
+│           ├── KdClass Throwable (CLASS) [kotlin/Throwable///PointingToDeclaration/]
+│           │   └── declarations: kotlin/Throwable.ExceptionTraceBuilder///PointingToDeclaration/, kotlin/Throwable/Throwable/#/PointingToDeclaration/, kotlin/Throwable/Throwable/#kotlin.String?#kotlin.Throwable?/PointingToDeclaration/, kotlin/Throwable/Throwable/#kotlin.String?/PointingToDeclaration/, kotlin/Throwable/Throwable/#kotlin.Throwable?/PointingToDeclaration/, kotlin/Throwable/cause/#/PointingToDeclaration/, kotlin/Throwable/dumpStackTrace/#/PointingToDeclaration/, kotlin/Throwable/equals/#kotlin.Any?/PointingToDeclaration/, kotlin/Throwable/getStackTrace/#/PointingToDeclaration/, kotlin/Throwable/getStackTraceAddressesInternal/#/PointingToDeclaration/, kotlin/Throwable/hashCode/#/PointingToDeclaration/, kotlin/Throwable/message/#/PointingToDeclaration/, kotlin/Throwable/printStackTrace/#/PointingToDeclaration/, kotlin/Throwable/stackTrace/#/PointingToDeclaration/, kotlin/Throwable/stackTraceStrings/#/PointingToDeclaration/, kotlin/Throwable/suppressedExceptionsList/#/PointingToDeclaration/, kotlin/Throwable/toString/#/PointingToDeclaration/
+│           ├── KdConstructor() [kotlin/Throwable/Throwable/#/PointingToDeclaration/]
+│           ├── KdConstructor(message: String?, cause: Throwable?) [kotlin/Throwable/Throwable/#kotlin.String?#kotlin.Throwable?/PointingToDeclaration/]
+│           ├── KdConstructor(message: String?) [kotlin/Throwable/Throwable/#kotlin.String?/PointingToDeclaration/]
+│           ├── KdConstructor(cause: Throwable?) [kotlin/Throwable/Throwable/#kotlin.Throwable?/PointingToDeclaration/]
+│           ├── KdProperty cause: Throwable? [kotlin/Throwable/cause/#/PointingToDeclaration/]
+│           ├── KdFunction dumpStackTrace(): String [kotlin/Throwable/dumpStackTrace/#/PointingToDeclaration/]
+│           ├── KdInheritedMember originalId=kotlin/Any/equals/#kotlin.Any?/PointingToDeclaration/ [kotlin/Throwable/equals/#kotlin.Any?/PointingToDeclaration/]
+│           ├── KdFunction getStackTrace(): Array<String> [kotlin/Throwable/getStackTrace/#/PointingToDeclaration/]
+│           ├── KdFunction getStackTraceAddressesInternal(): List<Long> [kotlin/Throwable/getStackTraceAddressesInternal/#/PointingToDeclaration/]
+│           ├── KdInheritedMember originalId=kotlin/Any/hashCode/#/PointingToDeclaration/ [kotlin/Throwable/hashCode/#/PointingToDeclaration/]
+│           ├── KdProperty message: String? [kotlin/Throwable/message/#/PointingToDeclaration/]
+│           ├── KdFunction printStackTrace(): Unit [kotlin/Throwable/printStackTrace/#/PointingToDeclaration/]
+│           ├── KdProperty stackTrace: NativePtrArray [kotlin/Throwable/stackTrace/#/PointingToDeclaration/]
+│           ├── KdProperty stackTraceStrings: Array<String> [kotlin/Throwable/stackTraceStrings/#/PointingToDeclaration/]
+│           ├── KdProperty suppressedExceptionsList: MutableList<Throwable>? [kotlin/Throwable/suppressedExceptionsList/#/PointingToDeclaration/]
+│           └── KdFunction toString(): String [kotlin/Throwable/toString/#/PointingToDeclaration/]
+└── expectActualMappings
+    └── KdExpectActualMapping
+        ├── expectIds: commonMain=pkg//platformName/#/PointingToDeclaration/
+        └── actualIds: jvmAndJsMain=pkg//platformName/#/PointingToDeclaration/, nativeMain=pkg//platformName/#/PointingToDeclaration/

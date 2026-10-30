@@ -1,0 +1,14 @@
+KdBundle
+├── fragments
+│   └── KdFragment main
+│       └── elements
+│           ├── KdModule simpleJvmProject [////PointingToDeclaration/]
+│           │   └── packages: pkg////PointingToDeclaration/
+│           ├── KdPackage pkg [pkg////PointingToDeclaration/]
+│           │   └── declarations: pkg/Greeter///PointingToDeclaration/
+│           ├── KdClass Greeter (CLASS) [pkg/Greeter///PointingToDeclaration/]
+│           │   └── declarations: pkg/Greeter/Greeter/#kotlin.String/PointingToDeclaration/, pkg/Greeter/greet/#/PointingToDeclaration/, pkg/Greeter/name/#/PointingToDeclaration/
+│           ├── KdConstructor(name: String) [pkg/Greeter/Greeter/#kotlin.String/PointingToDeclaration/]
+│           ├── KdFunction greet(): String [pkg/Greeter/greet/#/PointingToDeclaration/]
+│           └── KdProperty name: String [pkg/Greeter/name/#/PointingToDeclaration/]
+└── expectActualMappings

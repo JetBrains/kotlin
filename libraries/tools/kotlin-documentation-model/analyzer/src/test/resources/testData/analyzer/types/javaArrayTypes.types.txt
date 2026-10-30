@@ -1,0 +1,112 @@
+bundle.fragments[0].elements[KdElementId(value=example/JavaTypes/primitiveArray/#/PointingToDeclaration/)].type:
+KdClassLikeType {
+  annotations = []
+  classLikeId = "kotlin/Array///PointingToDeclaration/"
+  isEnhancedNullability = false
+  isMarkedNullable = false
+  qualifiers = [
+    KdClassTypeQualifier {
+      name = "Array"
+      typeArguments = [
+        Invariant {
+          type = KdClassLikeType {
+            annotations = []
+            classLikeId = "kotlin/Int///PointingToDeclaration/"
+            isEnhancedNullability = false
+            isMarkedNullable = false
+            qualifiers = [
+              KdClassTypeQualifier {
+                name = "int"
+                typeArguments = []
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
+bundle.fragments[0].elements[KdElementId(value=example/JavaTypes/referenceArray/#/PointingToDeclaration/)].type:
+KdClassLikeType {
+  annotations = []
+  classLikeId = "kotlin/Array///PointingToDeclaration/"
+  isEnhancedNullability = false
+  isMarkedNullable = false
+  qualifiers = [
+    KdClassTypeQualifier {
+      name = "Array"
+      typeArguments = [
+        Invariant {
+          type = KdClassLikeType {
+            annotations = []
+            classLikeId = "kotlin/Array///PointingToDeclaration/"
+            isEnhancedNullability = false
+            isMarkedNullable = false
+            qualifiers = [
+              KdClassTypeQualifier {
+                name = "Array"
+                typeArguments = [
+                  Invariant {
+                    type = KdClassLikeType {
+                      annotations = []
+                      classLikeId = "java.lang/String///PointingToDeclaration/"
+                      isEnhancedNullability = false
+                      isMarkedNullable = false
+                      qualifiers = [
+                        KdClassTypeQualifier {
+                          name = "String"
+                          typeArguments = []
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
+bundle.fragments[0].elements[KdElementId(value=example/JavaTypes/varargs/#java.lang.String.../PointingToDeclaration/)].returnType:
+KdClassLikeType {
+  annotations = []
+  classLikeId = "kotlin/Unit///PointingToDeclaration/"
+  isEnhancedNullability = false
+  isMarkedNullable = false
+  qualifiers = [
+    KdClassTypeQualifier {
+      name = "Unit"
+      typeArguments = []
+    }
+  ]
+}
+bundle.fragments[0].elements[KdElementId(value=example/JavaTypes/varargs/#java.lang.String.../PointingToDeclaration/)].valueParameters[0].type:
+KdClassLikeType {
+  annotations = []
+  classLikeId = "kotlin/Array///PointingToDeclaration/"
+  isEnhancedNullability = false
+  isMarkedNullable = false
+  qualifiers = [
+    KdClassTypeQualifier {
+      name = "Array"
+      typeArguments = [
+        Invariant {
+          type = KdClassLikeType {
+            annotations = []
+            classLikeId = "java.lang/String///PointingToDeclaration/"
+            isEnhancedNullability = false
+            isMarkedNullable = false
+            qualifiers = [
+              KdClassTypeQualifier {
+                name = "String"
+                typeArguments = []
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+bundle.fragments[0].elements[KdElementId(value=example/Types/definitelyNotNull/#TypeParam(bounds=[kotlin.Any?])/PointingToDeclaration/)].returnType:
+KdDefinitelyNotNullType {
+  original = KdTypeParameterType {
+    annotations = []
+    containerElementId = "example/Types/definitelyNotNull/#TypeParam(bounds=[kotlin.Any?])/PointingToDeclaration/"
+    isMarkedNullable = false
+    name = "R"
+  }
+}
+bundle.fragments[0].elements[KdElementId(value=example/Types/definitelyNotNull/#TypeParam(bounds=[kotlin.Any?])/PointingToDeclaration/)].typeParameters[0].upperBounds[0]:
+KdClassLikeType {
+  annotations = []
+  classLikeId = "kotlin/Any///PointingToDeclaration/"
+  isEnhancedNullability = false
+  isMarkedNullable = true
+  qualifiers = [
+    KdClassTypeQualifier {
+      name = "Any"
+      typeArguments = []
+    }
+  ]
+}
+bundle.fragments[0].elements[KdElementId(value=example/Types/definitelyNotNull/#TypeParam(bounds=[kotlin.Any?])/PointingToDeclaration/)].valueParameters[0].type:
+KdDefinitelyNotNullType {
+  original = KdTypeParameterType {
+    annotations = []
+    containerElementId = "example/Types/definitelyNotNull/#TypeParam(bounds=[kotlin.Any?])/PointingToDeclaration/"
+    isMarkedNullable = false
+    name = "R"
+  }
+}
