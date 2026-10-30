@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.native.checkers
 
+import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.KtNodeTypes.REFERENCE_EXPRESSION
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -14,15 +15,16 @@ import org.jetbrains.kotlin.fir.analysis.forEachChildOfType
 import org.jetbrains.kotlin.fir.analysis.native.checkers.FirNativeIdentifierChecker.checkNameAndReport
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.text
 
 object FirNativePackageDirectiveChecker : FirFileChecker(MppCheckerKind.Common) {
+    private val REFERENCE_EXPRESSION_SET = TokenSet.create(REFERENCE_EXPRESSION)
+
     override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
         get() = true
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirFile) {
-        declaration.packageDirective.source?.forEachChildOfType(setOf(REFERENCE_EXPRESSION), depth = -1) {
+        declaration.packageDirective.source?.forEachChildOfType(REFERENCE_EXPRESSION_SET, depth = -1) {
             checkNameAndReport(
                 Name.identifier(it.text.toString()),
                 it

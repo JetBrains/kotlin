@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.type
 
 import com.intellij.lang.LighterASTNode
 import com.intellij.psi.PsiElement
+import com.intellij.psi.tree.TokenSet
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -46,7 +47,7 @@ object FirContextualFunctionTypeChecker : FirResolvedTypeRefChecker(MppCheckerKi
         source.requireFeatureSupport(LanguageFeature.ContextParameters)
     }
 
-    private val valueParameterElementSet = setOf(KtNodeTypes.VALUE_PARAMETER)
+    private val valueParameterElementSet = TokenSet.create(KtNodeTypes.VALUE_PARAMETER)
 
     private fun KtSourceElement.findContextReceiverListSource(): KtSourceElement? {
         fun PsiElement.findContextReceiverListSource(): KtPsiSourceElement? {
