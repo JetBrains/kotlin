@@ -18,13 +18,13 @@ import java.lang.Deprecated
  * @return The ID from `core:language.syntax` that is consistent across all frontends (PSI/LightTree and KMP).
  * Only Kotlin tokens ([KotlinSyntaxTokenIds]), node types declared in [KotlinSyntaxNodeTypeIds], [KtTokens.DOC_COMMENT],
  * and the basic element types [TokenType.WHITE_SPACE], [TokenType.BAD_CHARACTER] and [TokenType.ERROR_ELEMENT] are mapped.
- * For other element types (e.g., KDoc element types or non-Kotlin ones), the result is [NO_ID].
+ * For other element types (e.g., KDoc element types or non-Kotlin or unregistered ones), the result is [NO_ID].
  */
 @KtImplementationDetail
 fun IElementType.syntaxId(): SyntaxId =
     when {
         this is KtToken -> tokenId
-        index < indexToId.size -> indexToId[index.toInt()]
+        index >= 0 && index < indexToId.size -> indexToId[index.toInt()]
         else -> NO_ID
     }
 
