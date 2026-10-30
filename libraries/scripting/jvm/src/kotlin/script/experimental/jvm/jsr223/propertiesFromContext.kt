@@ -6,7 +6,9 @@
 package kotlin.script.experimental.jvm.jsr223
 
 import java.lang.ref.WeakReference
+import java.lang.reflect.Method
 import java.lang.reflect.Modifier
+import java.lang.reflect.Proxy
 import javax.script.Bindings
 import javax.script.ScriptContext
 import kotlin.reflect.KClass
@@ -142,6 +144,88 @@ private fun renderBindingTypeName(qualifiedName: String, kclass: KClass<*>): Str
 
 private fun Class<*>.enclosingGenericOwner(): Class<*>? =
     if (isMemberClass && !Modifier.isStatic(modifiers)) enclosingClass else null
+
+/**
+ * Returns the type reference under which a binding value of the runtime class [valueClass] is exposed to snippets, or
+ * null if there is no suitable type and the binding should be exposed as `Any?`.
+ *
+ * The runtime class itself is often not accessible from a snippet: e.g. `listOf(1, 2)` is a private JDK class, `emptyList()`
+ * is a Kotlin `internal` object, `Path.of(...)` lives in a package that isn't exported. Referencing such a class would make
+ * the synthetic bindings snippet fail to compile, which breaks every eval on the engine (KT-90641). In that case the nearest
+ * accessible superclass is used, or the most specific accessible interface if it is more specific than that superclass or
+ * if there is no such superclass, e.g. `List<*>` for `emptyList()`, or `MyService` for `internal class MyServiceImpl : MyService`.
+ */
+private fun findBindingTypeName(valueClass: Class<*>): String? {
+    valueClass.renderIfAccessibleFromSnippet()?.let { return it }
+    var superclass: Class<*>? = valueClass.superclass
+    var superclassTypeName: String? = null
+    // Proxy classes (handled by the interface lookup below) extend `java.lang.reflect.Proxy`, which is not a useful type.
+    while (superclass != null && superclass != Any::class.java && superclass != Proxy::class.java) {
+        superclassTypeName = superclass.renderIfAccessibleFromSnippet()
+        if (superclassTypeName != null) break
+        superclass = superclass.superclass
+    }
+    val iface = findMostSpecificAccessibleInterface(valueClass) ?: return superclassTypeName
+    return if (superclassTypeName != null && iface.first.isAssignableFrom(superclass!!)) superclassTypeName else iface.second
+}
+
+/**
+ * Returns the unique accessible interface of [valueClass], direct or inherited, that is a subtype of all its other
+ * accessible interfaces, with its rendered type reference, or null if there is no such interface. Marker interfaces
+ * without methods (e.g. `Serializable`, `RandomAccess`, `kotlin.jvm.internal.markers.KMappedMarker`) are ignored.
+ */
+private fun findMostSpecificAccessibleInterface(valueClass: Class<*>): Pair<Class<*>, String>? {
+    val candidates = LinkedHashMap<Class<*>, String>()
+    val visited = HashSet<Class<*>>()
+    fun collect(c: Class<*>) {
+        for (iface in c.interfaces) {
+            if (!visited.add(iface)) continue
+            if (iface.methods.isNotEmpty()) {
+                iface.renderIfAccessibleFromSnippet()?.let { candidates[iface] = it }
+            }
+            collect(iface)
+        }
+    }
+    var c: Class<*>? = valueClass
+    while (c != null) {
+        collect(c)
+        c = c.superclass
+    }
+    val mostSpecific = candidates.keys.singleOrNull { candidate -> candidates.keys.all { it.isAssignableFrom(candidate) } }
+        ?: return null
+    return mostSpecific to candidates.getValue(mostSpecific)
+}
+
+/**
+ * Renders this class as a type reference (see [renderBindingTypeName]) if a snippet can reference it, or returns null.
+ */
+private fun Class<*>.renderIfAccessibleFromSnippet(): String? {
+    if (isArray) return if (componentType.isPrimitive) kotlin.qualifiedName else "kotlin.Array<*>"
+    // Proxy and synthetic classes have no class files the compiler could resolve.
+    if (isSynthetic || Proxy.isProxyClass(this)) return null
+    val qualifiedName = kotlin.qualifiedName ?: return null
+    if (!isParseableKotlinQualifiedName(qualifiedName)) return null
+    var c: Class<*>? = this
+    while (c != null) {
+        if (!Modifier.isPublic(c.modifiers) || !c.isPackageExported() || !c.hasPublicKotlinVisibility()) return null
+        c = c.enclosingClass
+    }
+    return renderBindingTypeName(qualifiedName, kotlin)
+}
+
+// `Class.getModule` and `Module.isExported` are only available since JDK 9, while this module targets JDK 8.
+private val classGetModuleMethod: Method? =
+    runCatching { Class::class.java.getMethod("getModule") }.getOrNull()
+private val moduleIsExportedMethod: Method? =
+    runCatching { Class.forName("java.lang.Module").getMethod("isExported", String::class.java) }.getOrNull()
+
+/** Returns false if this class belongs to a named module that does not export its package unconditionally. */
+private fun Class<*>.isPackageExported(): Boolean {
+    val getModule = classGetModuleMethod ?: return true
+    val isExported = moduleIsExportedMethod ?: return true
+    val packageName = name.substringBeforeLast('.', "")
+    return runCatching { isExported.invoke(getModule.invoke(this), packageName) as Boolean }.getOrDefault(false)
+}
 
 /** Escapes a string for embedding inside a Kotlin regular string literal ("..."). */
 private fun escapeForKotlinStringLiteral(s: String): String = buildString {
@@ -330,10 +414,10 @@ class __Jsr223BindingDelegate<T>(
             }
             val qn = v::class.qualifiedName
             if (qn == null || !isParseableKotlinQualifiedName(qn)) continue
-            val renderedTypeName = renderBindingTypeName(qn, v::class) ?: continue
             // TODO: find out how this is implemented in other JSR-223 engines for typed languages, since
             //  this approach prevents certain usage scenarios, e.g. assigning back a value of a "sibling" type.
-            currentBindings[k] = KotlinType(renderedTypeName)
+            currentBindings[k] = findBindingTypeName(v::class.java)?.let { KotlinType(it) }
+                ?: KotlinType(Any::class, isNullable = true)
         }
 
         // Emit a fresh accessor for each binding that is new or retyped since it was last exposed

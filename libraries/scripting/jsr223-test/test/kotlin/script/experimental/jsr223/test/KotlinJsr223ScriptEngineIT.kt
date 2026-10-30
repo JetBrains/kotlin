@@ -43,6 +43,32 @@ inline fun inlineCallLambda(x: Int, aFunction: (Int) -> Int): Int = aFunction.in
 fun ScriptWithBindings.myFunFromBindings(n: Int): Int =
     (bindings["myFunFromBindings"] as (Int) -> Int).invoke(n)
 
+// Bound as values in the tests below, exposed to the snippets as typed properties
+interface Jsr223TestService {
+    fun answer(): Int
+}
+
+interface Jsr223OtherTestService {
+    fun other(): Int
+}
+
+open class Jsr223TestBase {
+    val base: Int get() = 10
+}
+
+class Jsr223PublicTestValue(val x: Int)
+
+internal class Jsr223InternalTestService : Jsr223TestService {
+    override fun answer(): Int = 42
+}
+
+internal class Jsr223InternalTestDerived : Jsr223TestBase()
+
+internal class Jsr223InternalTestMultiService : Jsr223TestService, Jsr223OtherTestService {
+    override fun answer(): Int = 1
+    override fun other(): Int = 2
+}
+
 
 class KotlinJsr223ScriptEngineIT {
 
@@ -274,6 +300,51 @@ obj
         assertEquals(2, engine.eval("1 + 1"))
         assertEquals(2, engine.eval("boundList.size"))
         assertEquals(1, engine.eval("boundMap.size"))
+    }
+
+    @Test
+    fun testBindValuesOfInaccessibleJavaClasses() {
+        val engine = ScriptEngineManager().getEngineByExtension("kts")!!
+        // The runtime classes of these values are private, package-private, or in packages not exported by the JDK modules.
+        // Referencing them makes the synthetic bindings snippet fail to compile, which breaks every eval on the engine,
+        // including snippets that don't touch the bindings (KT-90641). An accessible supertype is used instead.
+        engine.put("asList", listOf(1, 2)) // java.util.Arrays$ArrayList -> java.util.AbstractList
+        engine.put("unmodifiableList", java.util.Collections.unmodifiableList(arrayListOf(1, 2, 3))) // -> List
+        engine.put("singletonMap", mapOf("a" to 1)) // java.util.Collections$SingletonMap -> java.util.AbstractMap
+        engine.put("keySet", hashMapOf("a" to 1, "b" to 2).keys) // java.util.HashMap$KeySet -> java.util.AbstractSet
+        engine.put("path", java.nio.file.Paths.get("dir", "file.txt")) // sun.nio.fs.UnixPath/WindowsPath -> java.nio.file.Path
+        engine.put("proxy", java.lang.reflect.Proxy.newProxyInstance(javaClass.classLoader, arrayOf(Runnable::class.java)) { _, _, _ -> null })
+        engine.put("array", arrayOf("a", "b"))
+        assertEquals(2, engine.eval("1 + 1"))
+        assertEquals(2, engine.eval("asList[1]"))
+        assertEquals(3, engine.eval("unmodifiableList[2]"))
+        assertEquals(1, engine.eval("singletonMap[\"a\"]"))
+        assertEquals(true, engine.eval("keySet.contains(\"b\")"))
+        assertEquals("file.txt", engine.eval("path.fileName.toString()"))
+        assertEquals(1, engine.eval("proxy.run(); 1"))
+        assertEquals("b", engine.eval("array[1]"))
+    }
+
+    @Test
+    fun testBindValuesOfInaccessibleKotlinClasses() {
+        val engine = ScriptEngineManager().getEngineByExtension("kts")!!
+        // Kotlin internal classes are public in the bytecode, but can't be referenced from a snippet either (KT-90641)
+        engine.put("emptyList", emptyList<Int>()) // internal kotlin.collections.EmptyList -> List
+        engine.put("emptyMap", emptyMap<String, Int>()) // internal kotlin.collections.EmptyMap -> Map
+        engine.put("service", Jsr223InternalTestService()) // -> Jsr223TestService
+        engine.put("derived", Jsr223InternalTestDerived()) // -> Jsr223TestBase
+        engine.put("multiService", Jsr223InternalTestMultiService()) // no unique interface -> Any?
+        engine.put("publicValue", Jsr223PublicTestValue(7)) // public, exposed as is
+        assertEquals(2, engine.eval("1 + 1"))
+        assertEquals(true, engine.eval("emptyList.isEmpty()"))
+        assertEquals(0, engine.eval("emptyMap.size"))
+        assertEquals(42, engine.eval("service.answer()"))
+        assertEquals(10, engine.eval("derived.base"))
+        assertEquals(2, engine.eval("(multiService as kotlin.script.experimental.jsr223.test.Jsr223OtherTestService).other()"))
+        assertEquals(7, engine.eval("publicValue.x"))
+        // A binding exposed as `Any?` accepts a value of any type
+        engine.eval("multiService = 5")
+        assertEquals(5, engine.get("multiService"))
     }
 
     @Test
