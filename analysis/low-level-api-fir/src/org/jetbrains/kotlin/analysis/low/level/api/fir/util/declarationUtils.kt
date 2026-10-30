@@ -331,6 +331,16 @@ internal val PsiElement.parentsCodeFragmentAware: Sequence<PsiElement>
 internal val PsiFile.danglingFileContextFile: PsiFile?
     get() = copyOrigin ?: (this as? KtFile)?.analysisContext?.containingFile
 
+/**
+ * The file at the base of the [danglingFileContextFile] chain, skipping context files which are themselves dangling files, or `null` if
+ * there is no [danglingFileContextFile].
+ *
+ * For example, the context file of a copy of a dangling file is that dangling file, while the base context file is the file which the
+ * dangling file stands in for.
+ */
+internal val PsiFile.baseDanglingFileContextFile: PsiFile?
+    get() = generateSequence(danglingFileContextFile) { it.danglingFileContextFile }.lastOrNull()
+
 internal fun <T : PsiElement> T.unwrapCopy(containingFile: PsiFile = this.containingFile): T? {
     val originalFile = containingFile.danglingFileContextFile ?: return null
 
