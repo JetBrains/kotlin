@@ -16,8 +16,6 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
-import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.types.defaultType
@@ -189,8 +187,7 @@ internal fun buildSerializedClassFields(
                             name = "",
                             binaryType = INVALID_INDEX,
                             flags = 0,
-                            field.alignment,
-                            field.irField!!.correspondingPropertySymbol?.signature
+                            field.alignment
                     )
                 } else {
                     var flags = 0
@@ -202,8 +199,7 @@ internal fun buildSerializedClassFields(
                             field.name,
                             primitiveBinaryType?.ordinal ?: INVALID_INDEX,
                             flags,
-                            field.alignment,
-                            field.irField!!.correspondingPropertySymbol?.signature
+                            field.alignment
                     )
                 }
             })
@@ -235,20 +231,6 @@ internal class ClassFieldsDeserializer(
             ) as IrClassSymbol
         }
 
-        fun getFieldForCorrespondingProperty(signature: IdSignature?): IrFieldSymbol {
-            if (signature == null)
-                return IrFieldSymbolImpl()
-            val propertySymbol = deserializer.linker.deserializeOrReturnUnboundIrSymbolIfPartialLinkageEnabled(
-                    signature,
-                    BinarySymbolData.SymbolKind.PROPERTY_SYMBOL,
-                    deserializer
-            ) as IrPropertySymbol
-            check(propertySymbol.isBound)
-            val backingField = propertySymbol.owner.backingField
-            checkNotNull(backingField)
-            return backingField.symbol
-        }
-
         return serializedClassFields.fields.mapIndexed { index, field ->
             if (index == serializedClassFields.outerThisIndex) {
                 require(irClass.isInner) { "Expected an inner class: ${irClass.render()}" }
@@ -276,7 +258,7 @@ internal class ClassFieldsDeserializer(
                 ClassLayoutBuilder.FieldInfo(
                         name, type,
                         isConst = (field.flags and SerializedClassFieldInfo.FLAG_IS_CONST) != 0,
-                        irFieldSymbol = getFieldForCorrespondingProperty(field.correspondingPropertySignature),
+                        irFieldSymbol = IrFieldSymbolImpl(),
                         alignment = field.alignment,
                 )
             }
@@ -353,13 +335,7 @@ internal object InlineFunctionBodyReferenceSerializer {
 
 // [binaryType] is needed in case a field is of a primitive type. Otherwise we know it's an object type and
 // that is enough information for the backend.
-class SerializedClassFieldInfo(
-        val name: String,
-        val binaryType: Int,
-        val flags: Int,
-        val alignment: Int,
-        val correspondingPropertySignature: IdSignature?,
-) {
+class SerializedClassFieldInfo(val name: String, val binaryType: Int, val flags: Int, val alignment: Int) {
     companion object {
         const val FLAG_IS_CONST = 1
     }
