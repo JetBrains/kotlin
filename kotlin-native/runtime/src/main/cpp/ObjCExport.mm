@@ -713,10 +713,7 @@ static const TypeInfo* createTypeInfo(
     result->instanceSize_ = superType->instanceSize_;
     result->instanceAlignment_ = superType->instanceAlignment_;
     result->objOffsets_ = superType->objOffsets_;
-    result->objOffsetsCount_ = superType->objOffsetsCount_; // So TF_IMMUTABLE can also be inherited:
-    if ((superType->flags_ & TF_IMMUTABLE) != 0) {
-      result->flags_ |= TF_IMMUTABLE;
-    }
+    result->objOffsetsCount_ = superType->objOffsetsCount_;
     result->processObjectInMark = superType->processObjectInMark;
   } else {
     result->instanceSize_ = fieldsInfo->instanceSize_;

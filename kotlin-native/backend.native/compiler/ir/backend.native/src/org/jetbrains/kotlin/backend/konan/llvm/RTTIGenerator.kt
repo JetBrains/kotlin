@@ -25,43 +25,8 @@ internal class RTTIGenerator(
         private val referencedFunctions: Set<IrSimpleFunction>?,
 ) : ContextUtils {
 
-    private val acyclicCache = mutableMapOf<IrType, Boolean>()
-    private val safeAcyclicFieldTypes = setOf(
-            context.irBuiltIns.stringClass,
-            context.irBuiltIns.booleanClass, context.irBuiltIns.charClass,
-            context.irBuiltIns.byteClass, context.irBuiltIns.shortClass, context.irBuiltIns.intClass,
-            context.irBuiltIns.longClass,
-            context.irBuiltIns.floatClass, context.irBuiltIns.doubleClass) +
-            context.irBuiltIns.primitiveTypesToPrimitiveArrays.values +
-            context.irBuiltIns.unsignedTypesToUnsignedArrays.values
-
-    // TODO: extend logic here by taking into account final acyclic classes.
-    private fun checkAcyclicFieldType(type: IrType): Boolean = acyclicCache.getOrPut(type) {
-        when {
-            type.isInterface() -> false
-            type.computePrimitiveBinaryTypeOrNull() != null -> true
-            else -> {
-                val classifier = type.classifierOrNull
-                (classifier != null && classifier in safeAcyclicFieldTypes)
-            }
-        }
-    }
-
-    private fun checkAcyclicClass(irClass: IrClass): Boolean = when {
-        irClass.symbol == context.irBuiltIns.arrayClass -> false
-        irClass.isArray -> true
-        context.getLayoutBuilder(irClass).getFields(llvm).all { checkAcyclicFieldType(it.type) } -> true
-        else -> false
-    }
-
     private fun flagsFromClass(irClass: IrClass): Int {
         var result = 0
-        // TODO: maybe perform deeper analysis to find surely acyclic types.
-        if (!irClass.isInterface && !irClass.isAbstract() && !irClass.isAnnotationClass) {
-            if (checkAcyclicClass(irClass)) {
-                result = result or TF_ACYCLIC
-            }
-        }
         if (irClass.isInterface)
             result = result or TF_INTERFACE
 
@@ -499,7 +464,6 @@ internal class RTTIGenerator(
             irClass: IrClass,
             methodImpls: Map<IrSimpleFunction, ConstPointer>,
             bodyType: ObjectBodyType,
-            immutable: Boolean = false
     ): ConstPointer {
         assert(irClass.isInterface)
 
@@ -557,7 +521,7 @@ internal class RTTIGenerator(
                 interfaceTableSize = interfaceTableSize, interfaceTable = interfaceTablePtr,
                 packageName = ReflectionInfo.EMPTY.packageName,
                 relativeName = ReflectionInfo.EMPTY.relativeName,
-                flags = flagsFromClass(irClass) or (if (immutable) TF_IMMUTABLE else 0),
+                flags = flagsFromClass(irClass),
                 classId = typeHierarchyInfo.classIdLo,
                 writableTypeInfo = writableTypeInfo,
                 associatedObjects = null,
@@ -617,13 +581,10 @@ internal class RTTIGenerator(
 }
 
 // Keep in sync with Konan_TypeFlags in TypeInfo.h.
-private const val TF_IMMUTABLE = 1
-private const val TF_ACYCLIC   = 2
-private const val TF_INTERFACE = 4
-private const val TF_OBJC_DYNAMIC = 8
-private const val TF_LEAK_DETECTOR_CANDIDATE = 16
-private const val TF_SUSPEND_FUNCTION = 32
-private const val TF_HAS_FINALIZER = 64
-private const val TF_HAS_FREEZE_HOOK = 128
-private const val TF_REFLECTION_SHOW_PKG_NAME = 256
-private const val TF_REFLECTION_SHOW_REL_NAME = 512
+private const val TF_INTERFACE = 1 shl 2
+private const val TF_OBJC_DYNAMIC = 1 shl 3
+private const val TF_KOTLIN_OBJC_CLASS = 1 shl 4
+private const val TF_SUSPEND_FUNCTION = 1 shl 5
+private const val TF_HAS_FINALIZER = 1 shl 6
+private const val TF_REFLECTION_SHOW_PKG_NAME = 1 shl 8
+private const val TF_REFLECTION_SHOW_REL_NAME = 1 shl 9
