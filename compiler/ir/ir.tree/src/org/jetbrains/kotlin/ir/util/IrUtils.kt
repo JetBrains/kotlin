@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -419,10 +419,10 @@ fun IrFunction.isExternalOrInheritedFromExternal(): Boolean {
 inline fun <reified T : IrDeclaration> IrDeclarationContainer.findDeclaration(predicate: (T) -> Boolean): T? =
     declarations.find { it is T && predicate(it) } as? T
 
-fun IrValueParameter.hasDefaultValue(): Boolean = DFS.ifAny(
+fun IrValueParameter.hasDefaultValue(predicate: (IrValueParameter) -> Boolean = { it.defaultValue != null }): Boolean = DFS.ifAny(
     listOf(this),
     { current -> (current.parent as? IrSimpleFunction)?.overriddenSymbols?.map { it.owner.parameters[current.indexInParameters] } ?: listOf() },
-    { current -> current.defaultValue != null }
+    predicate,
 )
 
 @ObsoleteDescriptorBasedAPI
