@@ -101,6 +101,26 @@ class IrBodyDeserializer(
 
     private val fileLoops = hashMapOf<Int, IrLoop>()
 
+    /**
+     * Whether an annotation argument (or the default value of an annotation parameter, which is effectively
+     * the same) is being deserialized now. The only constructor calls that are allowed in annotation
+     * arguments are calls of annotation constructors. They are created as [IrAnnotation]s by
+     * the frontend, but are serialized as ordinary constructor calls, so they need to be deserialized back
+     * as [IrAnnotation]s. Note: Checking the class kind of the callee is not an option, because the
+     * constructor symbol might still be unbound at this point.
+     */
+    private var isInsideAnnotationArgument = false
+
+    internal inline fun <T> withinAnnotationArgument(block: () -> T): T {
+        val oldValue = isInsideAnnotationArgument
+        isInsideAnnotationArgument = true
+        try {
+            return block()
+        } finally {
+            isInsideAnnotationArgument = oldValue
+        }
+    }
+
     private fun deserializeLoopHeader(loopIndex: Int, loopBuilder: () -> IrLoop): IrLoop =
         fileLoops.getOrPut(loopIndex, loopBuilder)
 
@@ -325,20 +345,20 @@ class IrBodyDeserializer(
             SourceElement.NO_SOURCE,
         ).also {
             deserializeMemberAccessCommonPre_2_4_0(it, proto.memberAccessPre240)
-            it.arguments.addAll(deserializeArguments(proto.argumentList, coords.startOffset))
+            it.arguments.addAll(withinAnnotationArgument { deserializeArguments(proto.argumentList, coords.startOffset) })
             it.typeArguments.addAll(deserializeTypeArguments(proto.typeArgumentList))
         }
     }
 
     private fun deserializeConstructorCall(proto: ProtoConstructorCall, start: Int, end: Int, type: IrType): IrConstructorCall {
         val symbol = deserializeTypedSymbol<IrConstructorSymbol>(proto.symbol, CONSTRUCTOR_SYMBOL)
-        return IrConstructorCallImplRaw(
-            start, end, type,
-            symbol,
-            proto.constructorTypeArgumentsCount,
-            deserializeIrStatementOrigin(proto.hasOriginName()) { proto.originName },
-            SourceElement.NO_SOURCE,
-        ).also {
+        val constructorTypeArgumentsCount = proto.constructorTypeArgumentsCount
+        val origin = deserializeIrStatementOrigin(proto.hasOriginName()) { proto.originName }
+        val constructorCall = if (isInsideAnnotationArgument)
+            IrAnnotationImplRaw(start, end, type, symbol, constructorTypeArgumentsCount, origin, SourceElement.NO_SOURCE)
+        else
+            IrConstructorCallImplRaw(start, end, type, symbol, constructorTypeArgumentsCount, origin, SourceElement.NO_SOURCE)
+        return constructorCall.also {
             deserializeMemberAccessCommonPre_2_4_0(it, proto.memberAccessPre240)
             it.arguments.addAll(deserializeArguments(proto.argumentList, start))
             it.typeArguments.addAll(deserializeTypeArguments(proto.typeArgumentList))

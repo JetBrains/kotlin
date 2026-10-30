@@ -1,0 +1,78 @@
+open annotation class A1 : Annotation {
+  val x: Int
+    field = x
+    get
+
+  constructor(x: Int = 0) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+open annotation class A2 : Annotation {
+  val a: A1
+    field = a
+    get
+
+  constructor(a: A1 = A1(x = 42)) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+open annotation class A3 : Annotation {
+  val a2: A2
+    field = a2
+    get
+
+  constructor(a2: A2 = A2(a = A1(x = 1))) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+open annotation class AA : Annotation {
+  val xs: Array<A1>
+    field = xs
+    get
+
+  constructor(xs: Array<A1> = [A1(x = 1), A1(x = 2)]) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+open annotation class AV : Annotation {
+  val xs: Array<out A1>
+    field = xs
+    get
+
+  constructor(vararg xs: A1 = [A1(x = 3)]) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@A2
+@A3
+@AA
+@AV
+fun test1() {
+}
+
+@A2(a = A1)
+@A3(a2 = A2(a = A1(x = 2)))
+@AA(xs = [A1(x = 3)])
+@AV(xs = [A1(x = 4), A1(x = 5)])
+fun test2() {
+}
