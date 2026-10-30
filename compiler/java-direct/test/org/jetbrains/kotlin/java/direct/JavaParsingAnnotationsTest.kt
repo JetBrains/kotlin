@@ -560,6 +560,23 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
     }
 
     @Test
+    fun testEnumValueArgumentUnresolvedQualifierKeepsClassHint() {
+        // JSR-305 migration annotations can mention an enum class that is not on the test classpath.
+        // Keep its written name so downstream consumers can still read the enum entry.
+        val source = """
+            @UnderMigration(status = MigrationStatus.STRICT)
+            public class MyClass {}
+        """.trimIndent()
+        val javaClass = parseFirstClass(source)
+
+        val annotation = javaClass.annotations.first { it.classId?.shortClassName?.asString() == "UnderMigration" }
+        val arg = annotation.arguments.first() as JavaEnumValueAnnotationArgument
+
+        assertEquals(ClassId.topLevel(FqName("MigrationStatus")), arg.enumClassId)
+        assertEquals("STRICT", arg.entryName?.asString())
+    }
+
+    @Test
     fun testConstantExpressionAnnotationArguments() {
         // An annotation argument is a constant expression (JLS 9.7.1), not necessarily a literal:
         // concatenation, arithmetic, parentheses and references to `static final` constants are all
