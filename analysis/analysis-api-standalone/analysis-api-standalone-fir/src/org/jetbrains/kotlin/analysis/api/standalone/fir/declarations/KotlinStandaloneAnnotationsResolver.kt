@@ -69,17 +69,15 @@ private class KotlinStandaloneAnnotationsResolver(
         return FqName.fromSegments(allQualifiers)
     }
 
-    private fun KtTypeReference.resolveAnnotationClassIds(
-        candidates: MutableSet<ClassId> = mutableSetOf(),
-        visitedClassIds: MutableSet<ClassId> = mutableSetOf(),
-    ): Set<ClassId> {
+    private fun KtTypeReference.resolveAnnotationClassIds(): Set<ClassId> {
         val annotationTypeElement = typeElement as? KtUserType
         val referencedName = annotationTypeElement?.referencedFqName() ?: return emptySet()
         if (referencedName.isRoot) return emptySet()
 
+        val candidates = mutableSetOf<ClassId>()
         if (!referencedName.parent().isRoot) {
             // we assume here that the annotation is used by its fully-qualified name
-            referencedName.resolveToClassIds(candidates, visitedClassIds)
+            referencedName.resolveToClassIds(candidates)
             return candidates
         }
 
@@ -87,12 +85,12 @@ private class KotlinStandaloneAnnotationsResolver(
         for (import in containingKtFile.importDirectives) {
             val importedName = import.importedFqName ?: continue
             when {
-                import.isAllUnder -> importedName.child(targetName).resolveToClassIds(candidates, visitedClassIds)
-                importedName.shortName() == targetName -> importedName.resolveToClassIds(candidates, visitedClassIds)
+                import.isAllUnder -> importedName.child(targetName).resolveToClassIds(candidates)
+                importedName.shortName() == targetName -> importedName.resolveToClassIds(candidates)
             }
         }
 
-        containingKtFile.packageFqName.child(targetName).resolveToClassIds(candidates, visitedClassIds)
+        containingKtFile.packageFqName.child(targetName).resolveToClassIds(candidates)
         return candidates
     }
 
@@ -113,20 +111,14 @@ private class KotlinStandaloneAnnotationsResolver(
         }
     }
 
-    fun FqName.resolveToClassIds(to: MutableSet<ClassId>, visitedClassIds: MutableSet<ClassId>) {
+    fun FqName.resolveToClassIds(to: MutableSet<ClassId>) {
         for (classId in toClassIdSequence()) {
             // The same class id may be provided by several declarations, e.g., by a source declaration and by a library
             // declaration shadowed by it. The resolver is allowed to report false positives, so every declaration
             // contributes instead of only an unambiguous one
             //
-            // Type aliases may form a cycle in erroneous code, so every class id is expanded at most once.
-            // Expanding it again cannot contribute anything new anyway
-            if (visitedClassIds.add(classId)) {
-                for (typeAlias in declarationProvider.getAllTypeAliasesByClassId(classId)) {
-                    typeAlias.getTypeReference()?.resolveAnnotationClassIds(to, visitedClassIds)
-                }
-            }
-
+            // Type aliases are not expanded, as in the IDE implementation: the compiler doesn't match `annotated` predicates
+            // on non-local declarations through a type alias (KT-69777)
             val classes = declarationProvider.getAllClassesByClassId(classId)
             if (classes.any { it is KtClass && it.isAnnotation() }) {
                 to += classId

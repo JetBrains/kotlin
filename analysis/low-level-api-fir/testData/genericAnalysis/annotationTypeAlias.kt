@@ -2,14 +2,20 @@
 package test
 
 @MyAnno
+@other.OtherAnno
 class MyClass
 
 // FILE: alias.kt
 package test
 
-typealias MyAnno = other.MyAnnotation
+typealias MyAnno = MyAnnotation
 
 // FILE: MyAnnotation.kt
-package other
+package test
 
 annotation class MyAnnotation
+
+// FILE: other.kt
+package other
+
+typealias OtherAnno = test.MyAnnotation
