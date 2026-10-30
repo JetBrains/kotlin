@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.parcelize.ParcelizeNames
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.ADD_PARCELABLE_SUPERTYPE_CLASS_ID
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.DEPRECATED_RUNTIME_PACKAGE
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.IGNORED_ON_PARCEL_CLASS_IDS
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCEL_TAG_CLASS_IDS
@@ -58,6 +59,9 @@ object FirParcelizeAnnotationChecker : FirAnnotationCallChecker(MppCheckerKind.P
             }
             in PARCEL_TAG_CLASS_IDS -> {
                 checkParcelTagUsage(expression, context, reporter)
+            }
+            ADD_PARCELABLE_SUPERTYPE_CLASS_ID -> {
+                checkAddParcelableSupertypeUsage(expression, context, reporter)
             }
         }
     }
@@ -181,6 +185,21 @@ object FirParcelizeAnnotationChecker : FirAnnotationCallChecker(MppCheckerKind.P
 
         if (!isContainingClassPolymorphicSealed || !implementsContainingClass) {
             reporter.reportOn(annotationCall.source, KtErrorsParcelize.INAPPLICABLE_PARCEL_TAG, context)
+        }
+    }
+
+    private fun checkAddParcelableSupertypeUsage(
+        annotationCall: FirAnnotationCall,
+        context: CheckerContext,
+        reporter: DiagnosticReporter
+    ) {
+        val isInapplicable = when (val annotatedClass = context.annotationContainers.lastOrNull()) {
+            is FirRegularClass -> annotatedClass.classKind == ClassKind.ANNOTATION_CLASS
+            is FirAnonymousObject -> true
+            else -> false
+        }
+        if (isInapplicable) {
+            reporter.reportOn(annotationCall.source, KtErrorsParcelize.INAPPLICABLE_ADD_PARCELABLE_SUPERTYPE, context)
         }
     }
 }

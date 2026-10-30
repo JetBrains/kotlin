@@ -246,5 +246,10 @@ object KtDefaultErrorMessagesParcelize : BaseDiagnosticRendererFactory() {
             KtErrorsParcelize.INAPPLICABLE_PARCEL_TAG,
             "'@ParcelTag' is only applicable to concrete subclasses of a '@PolymorphicSealed' hierarchy."
         )
+
+        map.put(
+            KtErrorsParcelize.INAPPLICABLE_ADD_PARCELABLE_SUPERTYPE,
+            "'@AddParcelableSupertype' is inapplicable to annotation classes and anonymous objects."
+        )
     }
 }
