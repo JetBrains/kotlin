@@ -8,34 +8,13 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.backend.js.EffectAnalysisClassIds
-import org.jetbrains.kotlin.ir.backend.js.EffectsKind
-import org.jetbrains.kotlin.ir.backend.js.Effects
-import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
-import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin.OBJECT_GET_INSTANCE_FUNCTION
-import org.jetbrains.kotlin.ir.backend.js.effects
-import org.jetbrains.kotlin.ir.backend.js.enableEffectAnalysis
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.FIELD_FOR_OBJECT_INSTANCE
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.PROPERTY_BACKING_FIELD
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.expressions.IrBody
-import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
-import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
-import org.jetbrains.kotlin.ir.expressions.IrGetField
-import org.jetbrains.kotlin.ir.expressions.IrGetValue
-import org.jetbrains.kotlin.ir.expressions.IrSetField
-import org.jetbrains.kotlin.ir.expressions.IrSetValue
-import org.jetbrains.kotlin.ir.expressions.IrThrow
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.isUnit
-import org.jetbrains.kotlin.ir.util.constructedClass
-import org.jetbrains.kotlin.ir.util.getAnnotation
-import org.jetbrains.kotlin.ir.util.isStatic
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 
 class EffectAnalysisLowering(val context: JsCommonBackendContext) : BodyLoweringPass {
@@ -81,6 +60,20 @@ class EffectAnalysisLowering(val context: JsCommonBackendContext) : BodyLowering
             if (owner.isExternal) {
                 return Effects.Exact(EffectsKind.WRITE)
             }
+
+            // Special handling for static_init functions of objects: they do some writing to the global state, but semantically their
+            // effects are the same as those of the corresponding object constructors.
+            if (owner.origin == WebStaticInitializersDeclarationLowering.STATIC_CLASS_INITIALIZER) {
+                val klass = owner.parentAsClass
+                if (klass.isObject) {
+                    return Effects.Lazy(context, owner, owner).also {
+                        owner.effects = it
+                        it.dependOn(maybeVisit(klass.primaryConstructor!!))
+                        it.freeze()
+                    }
+                }
+            }
+
             return Effects.Lazy(context, owner, owner).also {
                 owner.effects = it
                 owner.accept(this, it)
