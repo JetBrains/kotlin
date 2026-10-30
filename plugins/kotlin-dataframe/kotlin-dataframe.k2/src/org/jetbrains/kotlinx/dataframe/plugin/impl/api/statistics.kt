@@ -20,6 +20,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.utils.isSelfComparable
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.reflect.full.createType
+import kotlin.reflect.typeOf
 
 private object PrimitiveClassIds {
     const val INT = "kotlin/Int"
@@ -108,7 +109,7 @@ private fun Arguments.createColumnWithUpdatedType(
 internal const val skipNaN = true
 internal const val ddofDefault: Int = 1
 internal const val percentileArg: Double = 30.0
-internal val sum = Aggregators.sum(skipNaN)
+internal val sum = Aggregators.sum(skipNaN, typeOf<Number>())
 internal val mean = Aggregators.mean(skipNaN)
 internal val std = Aggregators.std(skipNaN, ddofDefault)
 internal val median = Aggregators.median(skipNaN)
