@@ -71,6 +71,7 @@ class PseudoTest {
         }
     }
 
+    @Suppress("DEPRECATION")
     @NightlyTest
     @Test
     fun `nightly test`() {
