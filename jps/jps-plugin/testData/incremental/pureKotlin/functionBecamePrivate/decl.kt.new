@@ -1,0 +1,1 @@
+private fun f(): Int = 1

@@ -355,6 +355,12 @@ public class IncrementalJvmJpsTestGenerated extends AbstractIncrementalJvmJpsTes
     }
 
     @Test
+    @TestMetadata("functionBecamePrivate")
+    public void testFunctionBecamePrivate() {
+      runTest("jps/jps-plugin/testData/incremental/pureKotlin/functionBecamePrivate/");
+    }
+
+    @Test
     @TestMetadata("functionReferencingClass")
     public void testFunctionReferencingClass() {
       runTest("jps/jps-plugin/testData/incremental/pureKotlin/functionReferencingClass/");
