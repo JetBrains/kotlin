@@ -9,19 +9,26 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirRegularClassChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.hasExplicitReturnType
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
+import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
+import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.processAllProperties
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.classId
+import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics
 import org.jetbrains.kotlin.lombok.LombokNames
 import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations
@@ -61,6 +68,7 @@ object FirLombokBuilderChecker : FirRegularClassChecker(MppCheckerKind.Platform)
                 }
             } else {
                 checkPrimaryConstructorParameters(declaration, primaryConstructor, lombokService)
+                checkBodyBuilderProperties(declaration, primaryConstructor)
                 checkToBuilderCanObtainValues(declaration, classBuilder, primaryConstructor)
             }
         }
@@ -142,6 +150,90 @@ object FirLombokBuilderChecker : FirRegularClassChecker(MppCheckerKind.Platform)
 
     private val FirRegularClass.isBuilderCapableClass: Boolean
         get() = classKind == ClassKind.CLASS && !isLocal && uninstantiableClassModifier() == null
+
+    /**
+     * A Kotlin class whose primary constructor has no value parameters builds out of the mutable properties declared
+     * in its body instead - see `AbstractBuilderGenerator.calculateBuilderVariables`. The builder members are generated
+     * before an implicit type is resolved, so `AbstractBuilderGenerator.addBuilderCallables` leaves out a property without
+     * an explicit type, and its builder field and setter are silently missing (KT-90508).
+     *
+     * `build()` evaluates the initializer of a `@Builder.Default` body property itself when its setter was not called -
+     * see `BuilderBodyBuilder.buildDefaultOrSetValue` - before the entity is constructed, so such an initializer
+     * cannot use the entity instance (KT-90590). A constructor parameter's default value has no such restriction:
+     * its references to earlier parameters are resolved to their already computed values.
+     *
+     * Any other property declared in the body - a read-only one, or any one at all when the primary constructor has
+     * value parameters - is not a builder field, which is reported as well (KT-90879). A property without a backing field
+     * holds no state of its own for a builder to set, and one named after a constructor parameter receives its value
+     * from that parameter's builder field (and is what `toBuilder()` reads it back from), so both are left alone.
+     */
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkBodyBuilderProperties(declaration: FirRegularClass, primaryConstructor: FirConstructorSymbol) {
+        val buildsFromBodyProperties = primaryConstructor.valueParameterSymbols.isEmpty()
+        val parameterNames = primaryConstructor.valueParameterSymbols.mapTo(mutableSetOf()) { it.name }
+
+        declaration.processAllDeclarations(context.session) { symbol ->
+            val property = symbol as? FirPropertySymbol ?: return@processAllDeclarations
+            val name = property.name
+            if (property.fromPrimaryConstructor || name.isSpecial) return@processAllDeclarations
+            if (property.origin != FirDeclarationOrigin.Source) return@processAllDeclarations
+
+            val whyNotIncluded = when {
+                !property.hasBackingField -> null
+                name in parameterNames -> null
+                property.isStatic -> null
+                !buildsFromBodyProperties -> NotIncludedReason.BODY_PROPERTY_IN_PRESENCE_OF_PARAMETERS
+                property.isVal -> NotIncludedReason.VAL_BODY_PROPERTY
+                !property.hasExplicitReturnType -> NotIncludedReason.HAS_IMPLICIT_RETURN_TYPE
+                else -> null
+            }
+
+            if (whyNotIncluded != null) {
+                reporter.reportOn(property.source, LombokFirDiagnostics.BUILDER_PROPERTY_NOT_INCLUDED, name, whyNotIncluded, context)
+                return@processAllDeclarations
+            }
+
+            if (property.findAnnotationOnPropertyOrField(LombokNames.BUILDER_DEFAULT_ID) == null) return@processAllDeclarations
+            val initializer = property.resolvedInitializer ?: return@processAllDeclarations
+            if (initializer.usesInstanceOf(declaration.symbol)) {
+                reporter.reportOn(initializer.source, LombokFirDiagnostics.BUILDER_DEFAULT_INITIALIZER_USES_INSTANCE, context)
+            }
+        }
+    }
+
+    enum class NotIncludedReason(private val message: String) {
+        BODY_PROPERTY_IN_PRESENCE_OF_PARAMETERS(
+            "builder fields are generated from the primary constructor''s value parameters. " +
+                    "To make the property a builder field, declare it in the primary constructor"
+        ),
+        VAL_BODY_PROPERTY(
+            "builder fields are generated from the mutable properties if there are no primary constructor parameters. " +
+                    "To make the property a builder field, declare it in the primary constructor or change it to be a mutable property"
+        ),
+        HAS_IMPLICIT_RETURN_TYPE(
+            "its type must not be implicit. " +
+                    "Specify a type explicitly to include property in builder."
+        ),
+        ;
+
+        override fun toString(): String = s
+    }
+
+    /** Whether [this] expression reads a `this` of [classSymbol], explicitly or as an implicit receiver. */
+    private fun FirExpression.usesInstanceOf(classSymbol: FirRegularClassSymbol): Boolean {
+        var found = false
+        accept(object : FirVisitorVoid() {
+            override fun visitElement(element: FirElement) {
+                if (found) return
+                if (element is FirThisReceiverExpression && element.calleeReference.boundSymbol == classSymbol) {
+                    found = true
+                    return
+                }
+                element.acceptChildren(this)
+            }
+        })
+        return found
+    }
 
     /**
      * `@Builder.Default` and `@Singular` shape a builder field, and a Kotlin class's builder fields are the value

@@ -9,15 +9,15 @@ import kotlin.test.assertEquals
 // were passed and gets no builder field of its own.
 @Builder
 class Mixed(val a: Int, b: String, var c: Long) {
-    val fromParameter: String = b + "!"
-    val computed: Int = a * 2
+    val <!BUILDER_PROPERTY_NOT_INCLUDED("fromParameter; a Kotlin class builds out of its primary constructor''s value parameters. To make it a builder field, declare it in the primary constructor")!>fromParameter<!>: String = b + "!"
+    val <!BUILDER_PROPERTY_NOT_INCLUDED!>computed<!>: Int = a * 2
 
     val b: String get() = fromParameter.dropLast(1)
 }
 
 @Builder
 class SingularWithoutVal(id: Int, @Singular("tag") tags: List<String>) {
-    val description: String = "$id: ${tags.joinToString()}"
+    val <!BUILDER_PROPERTY_NOT_INCLUDED!>description<!>: String = "$id: ${tags.joinToString()}"
 }
 
 // `toBuilder()` copies each builder field off the entity's property of that name, so a parameter without
