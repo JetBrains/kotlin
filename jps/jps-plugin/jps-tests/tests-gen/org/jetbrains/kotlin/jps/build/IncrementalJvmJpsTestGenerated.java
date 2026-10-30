@@ -947,6 +947,12 @@ public class IncrementalJvmJpsTestGenerated extends AbstractIncrementalJvmJpsTes
     public void testValRemoveCustomAccessor() {
       runTest("jps/jps-plugin/testData/incremental/pureKotlin/valRemoveCustomAccessor/");
     }
+
+    @Test
+    @TestMetadata("varBecameVal")
+    public void testVarBecameVal() {
+      runTest("jps/jps-plugin/testData/incremental/pureKotlin/varBecameVal/");
+    }
   }
 
   @Nested

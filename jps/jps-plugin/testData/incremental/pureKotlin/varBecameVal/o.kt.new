@@ -1,0 +1,3 @@
+object O {
+    val p: Int = 1
+}
