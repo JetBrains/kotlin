@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // USE_PSI_JAVA_FACADE: false
 // ISSUE: KT-90790
+// MUTE_LL_FIR: KT-90993 StackOverflowError: symbol light class constant evaluation recurses through the PSI Java constant evaluator
 
 // FILE: p/Greeter.java
 package p;
