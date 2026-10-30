@@ -33,6 +33,7 @@ interface MyList<out T>: List<T> {
 
 }
 
+// KT-85981: the bridge loses the alias's type argument and doesn't compile (List<Any?> passed where List<Int> is expected)
 //typealias MyList<T> = List<T>
 
 fun testListInt(l: MyList<Int>) = l

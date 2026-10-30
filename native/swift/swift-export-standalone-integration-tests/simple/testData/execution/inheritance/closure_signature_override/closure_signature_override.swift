@@ -32,6 +32,16 @@ func swiftCanOverrideKotlinMethodReturningClosure() throws {
 }
 
 @Test
+func swiftCanOverrideKotlinFunctionTypedProperty() throws {
+    class SwiftProducer: ProducerPropertyBase {
+        override var producer: () -> String { { "swift-producer" } }
+    }
+
+    #expect(callProducer(value: SwiftProducer()) == "swift-producer")
+    #expect(callProducer(value: ProducerPropertyBase()) == "kotlin-producer")
+}
+
+@Test
 func swiftOverrideOfMethodTakingClosureTakingClosure() throws {
     class Nested: Transformer {
         override func applyTwice(input: Int32, transform: @escaping (@escaping (Int32) -> Int32) -> Int32) -> Int32 {

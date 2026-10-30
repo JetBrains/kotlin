@@ -3,19 +3,9 @@
 // MODULE: Inheritance
 // FILE: ungrouped.kt
 
-open class FunctionMemberBase {
-    open val producer: () -> String = { "kotlin-producer" }
-    open fun transform(mapper: (String) -> String): String = mapper("kotlin")
-}
-
-fun callProducer(value: FunctionMemberBase): String = value.producer()
-fun callTransform(value: FunctionMemberBase, prefix: String): String = value.transform { "$prefix:$it" }
-
 open class SideEffectBase {
-
     open val tag: String? = "kotlin-tag"
 }
-
 
 // Safe call on a value that a Swift override may have made null.
 fun tagLength(value: SideEffectBase): Int = value.tag?.length ?: -1
@@ -43,7 +33,3 @@ open class TypeRichBase {
 fun callMapData(value: TypeRichBase, payload: DataPayload): DataPayload = value.mapData(payload)
 fun callMapEnum(value: TypeRichBase, mode: InheritanceMode): InheritanceMode = value.mapEnum(mode)
 fun callMapInline(value: TypeRichBase, payload: InlinePayload): InlinePayload = value.mapInline(payload)
-
-fun callToString(value: FunctionMemberBase): String {
-    return value.toString()
-}

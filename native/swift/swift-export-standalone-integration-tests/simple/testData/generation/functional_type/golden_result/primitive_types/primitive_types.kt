@@ -7,8 +7,26 @@ import kotlin.native.internal.ExportedBridge
 @ImportedBridge("primitive_types_internal_functional_type_callee_SwiftU2EInt8__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int8__")
 internal external fun primitive_types_internal_functional_type_callee_SwiftU2EInt8__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int8__(pointerToClosure: kotlin.native.internal.NativePtr, _1: Byte): Byte
 
+@ImportedBridge("primitive_types_internal_functional_type_callee_SwiftU2EInt8__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__")
+internal external fun primitive_types_internal_functional_type_callee_SwiftU2EInt8__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__(pointerToClosure: kotlin.native.internal.NativePtr, _1: Boolean): Byte
+
 @ImportedBridge("primitive_types_internal_functional_type_callee_SwiftU2EUInt32__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_UInt32__")
 internal external fun primitive_types_internal_functional_type_callee_SwiftU2EUInt32__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_UInt32__(pointerToClosure: kotlin.native.internal.NativePtr, _1: UInt): UInt
+
+@ExportedBridge("__root___consume_block_with_Unit_id__TypesOfArguments__U28Swift_VoidU29202D_U20Swift_Int8__")
+public fun __root___consume_block_with_Unit_id__TypesOfArguments__U28Swift_VoidU29202D_U20Swift_Int8__(block: kotlin.native.internal.NativePtr): Byte {
+    val __block = run {
+        val closurePtr = block;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
+        { arg0: Unit ->
+            val _arg0 = run { arg0; true }
+            val _result = primitive_types_internal_functional_type_callee_SwiftU2EInt8__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__(closureBox.objcPtr(), _arg0)
+            _result
+        }
+    }
+    val _result = consume_block_with_Unit_id(__block)
+    return _result
+}
 
 @ExportedBridge("__root___consume_block_with_byte_id__TypesOfArguments__U28Swift_Int8U29202D_U20Swift_Int8__")
 public fun __root___consume_block_with_byte_id__TypesOfArguments__U28Swift_Int8U29202D_U20Swift_Int8__(block: kotlin.native.internal.NativePtr): Byte {

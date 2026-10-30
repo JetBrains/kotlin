@@ -36,6 +36,12 @@ fun callRunAction(t: Transformer) {
 fun callApplyOptional(t: Transformer, input: Int, pass: Boolean): Int =
     t.applyOptional(input, if (pass) ({ v: Int -> v + 100 }) else null)
 
+open class ProducerPropertyBase {
+    open val producer: () -> String = { "kotlin-producer" }
+}
+
+fun callProducer(value: ProducerPropertyBase): String = value.producer()
+
 interface Producer {
     fun produce(): () -> String
     fun consume(block: (String) -> Unit)

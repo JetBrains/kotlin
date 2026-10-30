@@ -16,16 +16,14 @@ func testSimple() throws {
 
 @Test
 func nullable() throws {
-    // Currently crashes with SIGSEGV
-    //let n1 = nullable(some: -10 ... -5)
-    //let n2 = nullable(some: nil)
-    //#expect(n1 == -11 ... -4)
-    //#expect(n2 == nil)
+    let n1 = nullable(some: -10 ... -5)
+    let n2 = nullable(some: nil)
+    #expect(n1 == -11 ... -4)
+    #expect(n2 == nil)
 }
 
-@Test
+@Test(.disabled("KT-82567: crashes with CCE (__SwiftValue cannot be cast to kotlin.ranges.IntRange)"))
 func testTotal() throws {
-    // Currently crashes with CCE
-    //let t = total(list: [1 ... 5, 0 ... 4, 2 ... 7])
-    //#expect(t == 0 ... 7)
+    let t = total(list: [1 ... 5, 0 ... 4, 2 ... 7])
+    #expect(t == 0 ... 7)
 }

@@ -246,6 +246,21 @@ open class Child: overrides.Parent {
     public final override func finalOverrideFunc() -> Swift.Void {
         return { Child_finalOverrideFunc(self.__externalRCRef()); return () }()
     }
+    open override func functionTypeFunc(
+        arg: @escaping (overrides.Child) -> overrides.Parent
+    ) -> (overrides.Child) -> overrides.Parent {
+        if Self.self == overrides.Child.self {
+            return {
+            let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: Child_functionTypeFunc__TypesOfArguments__U28overrides_ChildU29202D_U20overrides_Parent__(self.__externalRCRef(), Unmanaged.passRetained((arg as (overrides.Child) -> overrides.Parent) as AnyObject).toOpaque()), options: .asBestFittingWrapper)
+            return { _1 in return overrides.Parent.__createClassWrapper(externalRCRef: overrides_internal_functional_type_caller_overridesU2EParent__TypesOfArguments__Swift_UnsafeMutableRawPointer_overrides_Child__(pointerToBlock.__externalRCRef(), _1.__externalRCRef())) }
+        }()
+        } else {
+            return {
+            let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: Child_functionTypeFunc__TypesOfArguments__U28overrides_ChildU29202D_U20overrides_Parent___direct(self.__externalRCRef(), Unmanaged.passRetained((arg as (overrides.Child) -> overrides.Parent) as AnyObject).toOpaque()), options: .asBestFittingWrapper)
+            return { _1 in return overrides.Parent.__createClassWrapper(externalRCRef: overrides_internal_functional_type_caller_overridesU2EParent__TypesOfArguments__Swift_UnsafeMutableRawPointer_overrides_Child__(pointerToBlock.__externalRCRef(), _1.__externalRCRef())) }
+        }()
+        }
+    }
     open func genericReturnTypeFunc() -> [overrides.Child] {
         if Self.self == overrides.Child.self {
             return Child_genericReturnTypeFunc(self.__externalRCRef()) as! Swift.Array<overrides.Child>
@@ -547,6 +562,21 @@ open class Parent: KotlinRuntime.KotlinBase {
             return { Parent_finalOverrideHopFunc_direct(self.__externalRCRef()); return () }()
         }
     }
+    open func functionTypeFunc(
+        arg: @escaping (overrides.Child) -> overrides.Parent
+    ) -> (overrides.Child) -> overrides.Parent {
+        if Self.self == overrides.Parent.self {
+            return {
+            let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: Parent_functionTypeFunc__TypesOfArguments__U28overrides_ChildU29202D_U20overrides_Parent__(self.__externalRCRef(), Unmanaged.passRetained((arg as (overrides.Child) -> overrides.Parent) as AnyObject).toOpaque()), options: .asBestFittingWrapper)
+            return { _1 in return overrides.Parent.__createClassWrapper(externalRCRef: overrides_internal_functional_type_caller_overridesU2EParent__TypesOfArguments__Swift_UnsafeMutableRawPointer_overrides_Child__(pointerToBlock.__externalRCRef(), _1.__externalRCRef())) }
+        }()
+        } else {
+            return {
+            let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: Parent_functionTypeFunc__TypesOfArguments__U28overrides_ChildU29202D_U20overrides_Parent___direct(self.__externalRCRef(), Unmanaged.passRetained((arg as (overrides.Child) -> overrides.Parent) as AnyObject).toOpaque()), options: .asBestFittingWrapper)
+            return { _1 in return overrides.Parent.__createClassWrapper(externalRCRef: overrides_internal_functional_type_caller_overridesU2EParent__TypesOfArguments__Swift_UnsafeMutableRawPointer_overrides_Child__(pointerToBlock.__externalRCRef(), _1.__externalRCRef())) }
+        }()
+        }
+    }
     open func genericReturnTypeFunc() -> [overrides.Parent] {
         if Self.self == overrides.Parent.self {
             return Parent_genericReturnTypeFunc(self.__externalRCRef()) as! Swift.Array<overrides.Parent>
@@ -600,6 +630,21 @@ open class Parent: KotlinRuntime.KotlinBase {
             return Parent_primitiveTypeFunc__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), arg)
         } else {
             return Parent_primitiveTypeFunc__TypesOfArguments__Swift_Int32___direct(self.__externalRCRef(), arg)
+        }
+    }
+    open func subtypeFunctionTypeFunc(
+        arg: @escaping (overrides.Child) -> overrides.Parent
+    ) -> (overrides.Child) -> overrides.Parent {
+        if Self.self == overrides.Parent.self {
+            return {
+            let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: Parent_subtypeFunctionTypeFunc__TypesOfArguments__U28overrides_ChildU29202D_U20overrides_Parent__(self.__externalRCRef(), Unmanaged.passRetained((arg as (overrides.Child) -> overrides.Parent) as AnyObject).toOpaque()), options: .asBestFittingWrapper)
+            return { _1 in return overrides.Parent.__createClassWrapper(externalRCRef: overrides_internal_functional_type_caller_overridesU2EParent__TypesOfArguments__Swift_UnsafeMutableRawPointer_overrides_Child__(pointerToBlock.__externalRCRef(), _1.__externalRCRef())) }
+        }()
+        } else {
+            return {
+            let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: Parent_subtypeFunctionTypeFunc__TypesOfArguments__U28overrides_ChildU29202D_U20overrides_Parent___direct(self.__externalRCRef(), Unmanaged.passRetained((arg as (overrides.Child) -> overrides.Parent) as AnyObject).toOpaque()), options: .asBestFittingWrapper)
+            return { _1 in return overrides.Parent.__createClassWrapper(externalRCRef: overrides_internal_functional_type_caller_overridesU2EParent__TypesOfArguments__Swift_UnsafeMutableRawPointer_overrides_Child__(pointerToBlock.__externalRCRef(), _1.__externalRCRef())) }
+        }()
         }
     }
     open func subtypeObjectFunc(
@@ -732,6 +777,16 @@ package func Child_contains__TypesOfArguments__Swift_Int32____reverse_swift(_ `s
     let _self = overrides.Child.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.Bool = _self.contains(element: element)
     return _result
+}
+
+@_cdecl("Child_functionTypeFunc__TypesOfArguments__U28overrides_ChildU29202D_U20overrides_Parent____reverse_swift")
+package func Child_functionTypeFunc__TypesOfArguments__U28overrides_ChildU29202D_U20overrides_Parent____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ arg: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
+    let _self = overrides.Child.__createClassWrapper(externalRCRef: `self`)
+    let _result: (overrides.Child) -> overrides.Parent = _self.functionTypeFunc(arg: {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: arg, options: .asBestFittingWrapper)
+    return { _1 in return overrides.Parent.__createClassWrapper(externalRCRef: overrides_internal_functional_type_caller_overridesU2EParent__TypesOfArguments__Swift_UnsafeMutableRawPointer_overrides_Child__(pointerToBlock.__externalRCRef(), _1.__externalRCRef())) }
+}())
+    return Unmanaged.passRetained((_result as (overrides.Child) -> overrides.Parent) as AnyObject).toOpaque()
 }
 
 @_cdecl("Child_genericReturnTypeFunc__reverse_swift")
@@ -930,6 +985,16 @@ package func Parent_finalOverrideHopFunc__reverse_swift(_ `self`: Swift.UnsafeMu
     return { _result; return true }()
 }
 
+@_cdecl("Parent_functionTypeFunc__TypesOfArguments__U28overrides_ChildU29202D_U20overrides_Parent____reverse_swift")
+package func Parent_functionTypeFunc__TypesOfArguments__U28overrides_ChildU29202D_U20overrides_Parent____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ arg: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
+    let _self = overrides.Parent.__createClassWrapper(externalRCRef: `self`)
+    let _result: (overrides.Child) -> overrides.Parent = _self.functionTypeFunc(arg: {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: arg, options: .asBestFittingWrapper)
+    return { _1 in return overrides.Parent.__createClassWrapper(externalRCRef: overrides_internal_functional_type_caller_overridesU2EParent__TypesOfArguments__Swift_UnsafeMutableRawPointer_overrides_Child__(pointerToBlock.__externalRCRef(), _1.__externalRCRef())) }
+}())
+    return Unmanaged.passRetained((_result as (overrides.Child) -> overrides.Parent) as AnyObject).toOpaque()
+}
+
 @_cdecl("Parent_genericReturnTypeFunc__reverse_swift")
 package func Parent_genericReturnTypeFunc__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Any {
     let _self = overrides.Parent.__createClassWrapper(externalRCRef: `self`)
@@ -1000,6 +1065,16 @@ package func Parent_primitiveTypeVar_get__reverse_swift(_ `self`: Swift.UnsafeMu
     return _result
 }
 
+@_cdecl("Parent_subtypeFunctionTypeFunc__TypesOfArguments__U28overrides_ChildU29202D_U20overrides_Parent____reverse_swift")
+package func Parent_subtypeFunctionTypeFunc__TypesOfArguments__U28overrides_ChildU29202D_U20overrides_Parent____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ arg: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
+    let _self = overrides.Parent.__createClassWrapper(externalRCRef: `self`)
+    let _result: (overrides.Child) -> overrides.Parent = _self.subtypeFunctionTypeFunc(arg: {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: arg, options: .asBestFittingWrapper)
+    return { _1 in return overrides.Parent.__createClassWrapper(externalRCRef: overrides_internal_functional_type_caller_overridesU2EParent__TypesOfArguments__Swift_UnsafeMutableRawPointer_overrides_Child__(pointerToBlock.__externalRCRef(), _1.__externalRCRef())) }
+}())
+    return Unmanaged.passRetained((_result as (overrides.Child) -> overrides.Parent) as AnyObject).toOpaque()
+}
+
 @_cdecl("Parent_subtypeObjectFunc__TypesOfArguments__overrides_Child____reverse_swift")
 package func Parent_subtypeObjectFunc__TypesOfArguments__overrides_Child____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ arg: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
     let _self = overrides.Parent.__createClassWrapper(externalRCRef: `self`)
@@ -1068,4 +1143,10 @@ package func Parent_varToVar_set__TypesOfArguments__Swift_Int32____reverse_swift
     let _self = overrides.Parent.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.Void = { _self.varToVar = newValue }()
     return { _result; return true }()
+}
+
+@_cdecl("overrides_internal_functional_type_callee_overridesU2EParent__TypesOfArguments__Swift_UnsafeMutableRawPointer_overrides_Child__")
+package func overrides_internal_functional_type_callee_overridesU2EParent__TypesOfArguments__Swift_UnsafeMutableRawPointer_overrides_Child__(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
+    let _result: overrides.Parent = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (overrides.Child) -> overrides.Parent)(overrides.Child.__createClassWrapper(externalRCRef: _1))
+    return _result.__externalRCRef()
 }

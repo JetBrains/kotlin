@@ -269,6 +269,9 @@ public func enumId(
 ) -> ExportedKotlinPackages.kotlin.Enum {
     return ExportedKotlinPackages.kotlin.Enum.__createClassWrapper(externalRCRef: __root___enumId__TypesOfArguments__ExportedKotlinPackages_kotlin_Enum__(e.__externalRCRef()))
 }
+public func ewamEntries() -> any ExportedKotlinPackages.kotlin.enums.EnumEntries {
+    return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___ewamEntries(), conformsTo: ExportedKotlinPackages.kotlin.enums.EnumEntries.Type.self) as! any ExportedKotlinPackages.kotlin.enums.EnumEntries
+}
 public func ewamValues() -> ExportedKotlinPackages.kotlin.Array {
     return ExportedKotlinPackages.kotlin.Array.__createClassWrapper(externalRCRef: __root___ewamValues())
 }

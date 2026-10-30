@@ -17,7 +17,7 @@ open class Parent(val value: String) {
     open fun genericReturnTypeFunc(): List<Parent> = emptyList()
     open override operator fun equals(to: Any?) = false
     open operator fun contains(element: Int) = false
-//    open fun functionTypeFunc(arg: (Child) -> Parent): (Child) -> Parent = { TODO() }
+    open fun functionTypeFunc(arg: (Child) -> Parent): (Child) -> Parent = { TODO() }
 
     open val primitiveTypeVar: Int get() = 42
     open val objectVar: Parent get() = this
@@ -28,7 +28,7 @@ open class Parent(val value: String) {
     open val valToVar: Int get() = 42
     open val subtypeValToVar: Parent get() = this
     open var varToVar: Int = 42
-//    open fun subtypeFunctionTypeFunc(arg: (Child) -> Parent): (Child) -> Parent = { TODO() }
+    open fun subtypeFunctionTypeFunc(arg: (Child) -> Parent): (Child) -> Parent = { TODO() }
 
     open fun hopFunc() = Unit
     open fun finalOverrideFunc() = Unit
@@ -54,7 +54,7 @@ open class Child(value: Int) : Parent("$value") {
     override fun genericReturnTypeFunc(): List<Child> = emptyList()
     open override operator fun equals(to: Any?) = false
     override open operator fun contains(element: Int) = false
-//    override fun functionTypeFunc(arg: (Child) -> Parent): (Child) -> Parent = { TODO() }
+    override fun functionTypeFunc(arg: (Child) -> Parent): (Child) -> Parent = { TODO() }
 
     override val primitiveTypeVar: Int get() = 45
     override val objectVar: Parent get() = this
