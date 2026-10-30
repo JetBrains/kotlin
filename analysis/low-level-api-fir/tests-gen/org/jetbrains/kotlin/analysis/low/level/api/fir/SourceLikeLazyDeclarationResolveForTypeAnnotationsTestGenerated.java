@@ -1052,6 +1052,12 @@ public class SourceLikeLazyDeclarationResolveForTypeAnnotationsTestGenerated ext
     }
 
     @Test
+    @TestMetadata("constPropertyWithAnnotatedType.kt")
+    public void testConstPropertyWithAnnotatedType() {
+      run("constPropertyWithAnnotatedType.kt");
+    }
+
+    @Test
     @TestMetadata("constructorParameter.kt")
     public void testConstructorParameter() {
       run("constructorParameter.kt");
@@ -1097,6 +1103,12 @@ public class SourceLikeLazyDeclarationResolveForTypeAnnotationsTestGenerated ext
     @TestMetadata("explicitBackingFieldWithAnnotatedImplicitType.kt")
     public void testExplicitBackingFieldWithAnnotatedImplicitType() {
       run("explicitBackingFieldWithAnnotatedImplicitType.kt");
+    }
+
+    @Test
+    @TestMetadata("explicitBackingFieldWithAnnotatedPropertyType.kt")
+    public void testExplicitBackingFieldWithAnnotatedPropertyType() {
+      run("explicitBackingFieldWithAnnotatedPropertyType.kt");
     }
 
     @Test
@@ -1373,6 +1385,12 @@ public class SourceLikeLazyDeclarationResolveForTypeAnnotationsTestGenerated ext
     @TestMetadata("resultWithPropagatedTypeUnavailable.kts")
     public void testResultWithPropagatedTypeUnavailable() {
       run("resultWithPropagatedTypeUnavailable.kts");
+    }
+
+    @Test
+    @TestMetadata("setterWithAnnotatedReturnType.kt")
+    public void testSetterWithAnnotatedReturnType() {
+      run("setterWithAnnotatedReturnType.kt");
     }
 
     @Test

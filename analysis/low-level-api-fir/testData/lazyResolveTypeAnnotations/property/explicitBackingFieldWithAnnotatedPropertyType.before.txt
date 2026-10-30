@@ -1,0 +1,30 @@
+@R|Anno|(LAZY_EXPRESSION)  kotlin/Any
+  context -> FirRegularPropertySymbol /A.property
+  anchor -> [FirRegularPropertySymbol /A.property]
+
+@R|Anno|(LAZY_EXPRESSION)  kotlin/Any
+  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /A.property
+  anchor -> [FirRegularPropertySymbol /A.property]
+
+FILE: [ResolvedTo(IMPORTS)] explicitBackingFieldWithAnnotatedPropertyType.kt
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](AnnotationTarget#.TYPE#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.TYPE|))] public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public open [ResolvedTo(TYPES)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(TYPES)] val property: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/Any|
+            private final? [ResolvedTo(TYPES)] [ContainingClassKey=A] backing field field: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(TYPES)] [ContainingClassKey=A] get(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/Any|
+
+    }
