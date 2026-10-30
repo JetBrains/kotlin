@@ -5,11 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.testbase
 
-import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
-import org.jetbrains.kotlin.testFederation.MustRunOnChangesInJs
-import org.jetbrains.kotlin.testFederation.MustRunOnChangesInNative
-import org.jetbrains.kotlin.testFederation.MustRunOnChangesInSwiftExport
-import org.jetbrains.kotlin.testFederation.MustRunOnChangesInWasm
 import org.junit.jupiter.api.Tag
 
 /**
@@ -46,7 +41,6 @@ annotation class JvmGradlePluginTests
 @Target(AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
 @Tag("JsKGP")
-@MustRunOnChangesInJs
 annotation class JsGradlePluginTests
 
 /**
@@ -59,7 +53,6 @@ annotation class JsGradlePluginTests
 @Target(AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
 @Tag("JsBrowserKGP")
-@MustRunOnChangesInJs
 annotation class JsBrowserGradlePluginTests
 
 /**
@@ -75,7 +68,6 @@ annotation class JsBrowserGradlePluginTests
 @Target(AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
 @Tag("WasmKGP")
-@MustRunOnChangesInWasm
 annotation class WasmGradlePluginTests
 
 /**
@@ -89,7 +81,6 @@ annotation class WasmGradlePluginTests
 @Retention(AnnotationRetention.RUNTIME)
 @Tag("WasmKGP")
 @Tag("WasmJsKGP")
-@MustRunOnChangesInWasm
 annotation class WasmJsGradlePluginTests
 
 /**
@@ -103,7 +94,6 @@ annotation class WasmJsGradlePluginTests
 @Retention(AnnotationRetention.RUNTIME)
 @Tag("WasmKGP")
 @Tag("WasmWasiKGP")
-@MustRunOnChangesInWasm
 annotation class WasmWasiGradlePluginTests
 
 /**
@@ -116,7 +106,6 @@ annotation class WasmWasiGradlePluginTests
 @Target(AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
 @Tag("NativeKGP")
-@MustRunOnChangesInNative
 annotation class NativeGradlePluginTests
 
 /**
@@ -129,7 +118,6 @@ annotation class NativeGradlePluginTests
 @Target(AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
 @Tag("SwiftPMImportKGP")
-@MustRunOnChangesInGradle
 annotation class SwiftPMImportGradlePluginTests
 
 /**
@@ -142,7 +130,6 @@ annotation class SwiftPMImportGradlePluginTests
 @Target(AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
 @Tag("SwiftExportKGP")
-@MustRunOnChangesInSwiftExport
 annotation class SwiftExportGradlePluginTests
 
 /**
