@@ -1,5 +1,6 @@
 // WITH_STDLIB
 // WITH_COROUTINES
+// CHECK_OPTIMIZED_JS
 import helpers.*
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
