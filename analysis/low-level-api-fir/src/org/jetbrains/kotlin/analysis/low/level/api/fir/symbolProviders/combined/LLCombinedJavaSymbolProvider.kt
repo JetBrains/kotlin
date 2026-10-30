@@ -62,6 +62,8 @@ internal class LLCombinedJavaSymbolProvider private constructor(
         override val hasSpecificClassifierPackageNamesComputation: Boolean get() = false
 
         override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<Name>? = null
+
+        override val hasSpecificTopLevelClassifierCheck: Boolean get() = true
         override fun mayHaveTopLevelClassifier(classId: ClassId): Boolean = true
     }
 

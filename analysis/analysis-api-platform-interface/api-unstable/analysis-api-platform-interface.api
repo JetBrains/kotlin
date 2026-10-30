@@ -159,6 +159,8 @@ public final class org/jetbrains/kotlin/analysis/api/platform/declarations/Kotli
 	public fun getClassLikeDeclarationByClassId (Lorg/jetbrains/kotlin/name/ClassId;)Lorg/jetbrains/kotlin/psi/KtClassLikeDeclaration;
 	public fun getHasSpecificCallablePackageNamesComputation ()Z
 	public fun getHasSpecificClassifierPackageNamesComputation ()Z
+	public fun getMayHaveTopLevelCallable ()Lkotlin/jvm/functions/Function2;
+	public fun getMayHaveTopLevelKotlinClassLikeDeclaration ()Lkotlin/jvm/functions/Function1;
 	public fun getProviders ()Ljava/util/List;
 	public fun getTopLevelCallableFiles (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
 	public fun getTopLevelCallableNamesInPackage (Lorg/jetbrains/kotlin/name/FqName;)Ljava/util/Set;
@@ -185,6 +187,8 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/platform/decla
 	public abstract fun getClassLikeDeclarationByClassId (Lorg/jetbrains/kotlin/name/ClassId;)Lorg/jetbrains/kotlin/psi/KtClassLikeDeclaration;
 	public abstract fun getHasSpecificCallablePackageNamesComputation ()Z
 	public abstract fun getHasSpecificClassifierPackageNamesComputation ()Z
+	public fun getMayHaveTopLevelCallable ()Lkotlin/jvm/functions/Function2;
+	public fun getMayHaveTopLevelKotlinClassLikeDeclaration ()Lkotlin/jvm/functions/Function1;
 	public abstract fun getTopLevelCallableFiles (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
 	public abstract fun getTopLevelCallableNamesInPackage (Lorg/jetbrains/kotlin/name/FqName;)Ljava/util/Set;
 	public abstract fun getTopLevelFunctions (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
@@ -242,6 +246,8 @@ public final class org/jetbrains/kotlin/analysis/api/platform/declarations/Kotli
 	public fun getClassLikeDeclarationByClassId (Lorg/jetbrains/kotlin/name/ClassId;)Lorg/jetbrains/kotlin/psi/KtClassLikeDeclaration;
 	public fun getHasSpecificCallablePackageNamesComputation ()Z
 	public fun getHasSpecificClassifierPackageNamesComputation ()Z
+	public fun getMayHaveTopLevelCallable ()Lkotlin/jvm/functions/Function2;
+	public fun getMayHaveTopLevelKotlinClassLikeDeclaration ()Lkotlin/jvm/functions/Function1;
 	public synthetic fun getTopLevelCallableFiles (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
 	public fun getTopLevelCallableFiles (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/List;
 	public fun getTopLevelCallableNamesInPackage (Lorg/jetbrains/kotlin/name/FqName;)Ljava/util/Set;

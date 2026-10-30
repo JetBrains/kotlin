@@ -9,6 +9,7 @@ import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.permissions.forbidAnalysis
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinFileBasedDeclarationProvider
@@ -102,12 +103,19 @@ private class LLFirResolveExtensionToolSymbolNamesProvider(
             .flatMapTo(mutableSetOf()) { it.getTopLevelCallableNames() }
     }
 
+    // Specific checks are deliberately disabled for now. This hurts composability, since composites containing this provider cannot use
+    // specific checks either, but resolve extensions are expected to be absent in most projects.
+    override val hasSpecificTopLevelClassifierCheck: Boolean get() = false
+
     override fun mayHaveTopLevelClassifier(classId: ClassId): Boolean = forbidAnalysis {
         if (!packageFilter.packageExists(classId.packageFqName)) return false
 
         fileProvider.getFilesByPackage(classId.packageFqName)
             .any { it.mayHaveTopLevelClassifier(classId.getTopLevelShortClassName()) }
     }
+
+    // See the comment on `hasSpecificTopLevelClassifierCheck`.
+    override val hasSpecificTopLevelCallableCheck: Boolean get() = false
 
     override fun mayHaveTopLevelCallable(packageFqName: FqName, name: Name): Boolean = forbidAnalysis {
         if (!packageFilter.packageExists(packageFqName)) return false
@@ -211,6 +219,11 @@ class LLFirResolveExtensionToolDeclarationProvider internal constructor(
             .flatMapTo(mutableSetOf()) { it.getTopLevelKotlinClassLikeDeclarationNamesInPackage(packageFqName) }
     }
 
+    // Native checks are deliberately disabled for now. This hurts composability, since composite declaration providers containing this
+    // provider cannot have native checks either, but resolve extensions are expected to be absent in most projects.
+    @KaExperimentalApi
+    override val mayHaveTopLevelKotlinClassLikeDeclaration: ((ClassId) -> Boolean)? get() = null
+
     override fun getTopLevelProperties(callableId: CallableId): Collection<KtProperty> = forbidAnalysis {
         return getDeclarationProvidersByPackage(callableId.packageName) { it.mayHaveTopLevelCallable(callableId.callableName) }
             .flatMapTo(mutableListOf()) { it.getTopLevelProperties(callableId) }
@@ -229,6 +242,10 @@ class LLFirResolveExtensionToolDeclarationProvider internal constructor(
     override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name> = forbidAnalysis {
         return extensionProvider.getFilesByPackage(packageFqName).flatMapTo(mutableSetOf()) { it.getTopLevelCallableNames() }
     }
+
+    // See the comment on `mayHaveTopLevelKotlinClassLikeDeclaration`.
+    @KaExperimentalApi
+    override val mayHaveTopLevelCallable: ((FqName, Name) -> Boolean)? get() = null
 
     override fun findFilesForFacadeByPackage(packageFqName: FqName): Collection<KtFile> = forbidAnalysis {
         return getDeclarationProvidersByPackage(packageFqName) { file ->

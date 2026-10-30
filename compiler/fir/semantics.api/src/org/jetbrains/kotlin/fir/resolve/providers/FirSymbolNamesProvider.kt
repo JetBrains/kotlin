@@ -98,6 +98,21 @@ abstract class FirSymbolNamesProvider {
     open fun mayHaveSyntheticFunctionType(classId: ClassId): Boolean = mayHaveSyntheticFunctionTypes
 
     /**
+     * Whether [mayHaveTopLevelClassifier] has a specific, cheap implementation which doesn't rely on [getTopLevelClassifierNamesInPackage],
+     * such as a point query to an index or a constant result.
+     *
+     * Composite symbol names providers rely on this property to decide whether they should call [mayHaveTopLevelClassifier] on each child
+     * provider directly, instead of building a combined "names in package" set. The property only affects performance:
+     * [mayHaveTopLevelClassifier] must be correct regardless of its value.
+     *
+     * The value should be constant, because it allows composite symbol providers to cache their own value.
+     *
+     * This property is experimental and may disappear at any moment. It was introduced because building "names in package" sets can be
+     * too slow for large projects, see https://youtrack.jetbrains.com/issue/LSP-1689.
+     */
+    open val hasSpecificTopLevelClassifierCheck: Boolean get() = false
+
+    /**
      * Checks if the provider's scope may contain a top-level classifier (class, interface, object, or type alias) with the given [classId].
      */
     open fun mayHaveTopLevelClassifier(classId: ClassId): Boolean {
@@ -114,6 +129,16 @@ abstract class FirSymbolNamesProvider {
         }
         return true
     }
+
+    /**
+     * Whether [mayHaveTopLevelCallable] has a specific, cheap implementation which doesn't rely on [getTopLevelCallableNamesInPackage].
+     *
+     * This property is experimental and may disappear at any moment. It was introduced because building "names in package" sets can be
+     * too slow for large projects, see https://youtrack.jetbrains.com/issue/LSP-1689.
+     *
+     * @see hasSpecificTopLevelClassifierCheck
+     */
+    open val hasSpecificTopLevelCallableCheck: Boolean get() = false
 
     /**
      * Checks if the provider's scope may contain a top-level callable (function or property) called [name] inside the [packageFqName]
@@ -149,7 +174,10 @@ object FirNullSymbolNamesProvider : FirSymbolNamesProvider() {
     override val mayHaveSyntheticFunctionTypes: Boolean get() = true
     override fun mayHaveSyntheticFunctionType(classId: ClassId): Boolean = true
 
+    override val hasSpecificTopLevelClassifierCheck: Boolean get() = true
     override fun mayHaveTopLevelClassifier(classId: ClassId): Boolean = true
+
+    override val hasSpecificTopLevelCallableCheck: Boolean get() = true
     override fun mayHaveTopLevelCallable(packageFqName: FqName, name: Name): Boolean = true
 }
 
@@ -165,7 +193,10 @@ object FirEmptySymbolNamesProvider : FirSymbolNamesProvider() {
     override val hasSpecificCallablePackageNamesComputation: Boolean get() = false
     override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name> = emptySet()
 
+    override val hasSpecificTopLevelClassifierCheck: Boolean get() = true
     override fun mayHaveTopLevelClassifier(classId: ClassId): Boolean = false
+
+    override val hasSpecificTopLevelCallableCheck: Boolean get() = true
     override fun mayHaveTopLevelCallable(packageFqName: FqName, name: Name): Boolean = false
 }
 
@@ -173,6 +204,7 @@ abstract class FirSymbolNamesProviderWithoutCallables : FirSymbolNamesProvider()
     override val hasSpecificCallablePackageNamesComputation: Boolean get() = true
     override fun getPackageNamesWithTopLevelCallables(): Set<String> = emptySet()
     override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name>? = emptySet()
+    override val hasSpecificTopLevelCallableCheck: Boolean get() = true
     override fun mayHaveTopLevelCallable(packageFqName: FqName, name: Name): Boolean = false
 }
 
@@ -204,6 +236,28 @@ open class FirCompositeSymbolNamesProvider(val providers: List<FirSymbolNamesPro
     override val mayHaveSyntheticFunctionTypes: Boolean = providers.any { it.mayHaveSyntheticFunctionTypes }
 
     override fun mayHaveSyntheticFunctionType(classId: ClassId): Boolean = providers.any { it.mayHaveSyntheticFunctionType(classId) }
+
+    // A specific check is only possible if *every* provider has one, because a "names in package" set has to be built for each provider
+    // which doesn't, and such sets are merged across all providers anyway.
+    override val hasSpecificTopLevelClassifierCheck: Boolean = providers.all { it.hasSpecificTopLevelClassifierCheck }
+
+    override fun mayHaveTopLevelClassifier(classId: ClassId): Boolean {
+        if (hasSpecificTopLevelClassifierCheck) {
+            return providers.any { it.mayHaveTopLevelClassifier(classId) }
+        }
+
+        return super.mayHaveTopLevelClassifier(classId)
+    }
+
+    override val hasSpecificTopLevelCallableCheck: Boolean = providers.all { it.hasSpecificTopLevelCallableCheck }
+
+    override fun mayHaveTopLevelCallable(packageFqName: FqName, name: Name): Boolean {
+        if (hasSpecificTopLevelCallableCheck) {
+            return providers.any { it.mayHaveTopLevelCallable(packageFqName, name) }
+        }
+
+        return super.mayHaveTopLevelCallable(packageFqName, name)
+    }
 
     companion object {
         fun create(providers: List<FirSymbolNamesProvider>): FirSymbolNamesProvider = when (providers.size) {
