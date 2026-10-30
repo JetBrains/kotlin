@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.ir.util.findDeclaration
 import org.jetbrains.kotlin.ir.util.functions
+import org.jetbrains.kotlin.ir.util.isEqualsInheritedFromAny
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.lombok.LombokNames
@@ -272,11 +273,11 @@ object EqualsAndHashCodeIrBodyBuilder : IrBodyBuilder<EqualsAndHashCodeGenerator
     ): IrExpression? {
         val superClass = irClass.nonInterfaceSuperclass() ?: return null
 
+        // Only the `equals(Any?)` override qualifies: an overload like `fun <T : CharSequence> equals(other: T)`
+        // merely shares the name and must never be called here.
         @OptIn(UnsafeDuringIrConstructionAPI::class)
         val superEquals = superClass.functions.firstOrNull {
-            it.name == OperatorNameConventions.EQUALS &&
-                    it.parameters.count { p -> p.kind == IrParameterKind.Regular } == 1 &&
-                    it.parameters.singleOrNull { p -> p.kind == IrParameterKind.DispatchReceiver } != null
+            it.isEqualsInheritedFromAny()
         } ?: return null
 
         return IrCallImpl(
