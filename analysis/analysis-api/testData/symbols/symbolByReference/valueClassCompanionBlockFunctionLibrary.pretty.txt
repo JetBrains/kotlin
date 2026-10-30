@@ -1,0 +1,1 @@
+fun static1()

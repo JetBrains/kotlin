@@ -2,6 +2,10 @@
 public final class C /* one.C*/ {
   private final int value;
 
+  private static int counter = 0 /* initializer type: int */;
+
+  private static int current;
+
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()
 

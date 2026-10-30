@@ -2573,6 +2573,12 @@ public class SymbolLightClassesByPsiForLibraryTestGenerated extends AbstractSymb
       }
 
       @Test
+      @TestMetadata("valueClassCompanionBlock.kt")
+      public void testValueClassCompanionBlock() {
+        run("valueClassCompanionBlock.kt");
+      }
+
+      @Test
       @TestMetadata("vararg.kt")
       public void testVararg() {
         run("vararg.kt");

@@ -1,0 +1,18 @@
+@kotlin.jvm.JvmInline
+inline class ValueClass(value: kotlin.String) {
+  val value: kotlin.String
+
+  fun companionBlockFunction()
+
+  fun companionBlockFunctionWithValueClassType(): ValueClass?
+
+  @kotlin.jvm.JvmOverloads
+  fun companionBlockFunctionWithJvmOverloads(a: kotlin.Int, b: kotlin.Int)
+
+  val companionBlockProperty: kotlin.Int
+    get()
+
+  var companionBlockVariable: kotlin.Int
+
+  var companionBlockVariableWithValueClassType: ValueClass?
+}

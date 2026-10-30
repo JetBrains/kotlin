@@ -729,6 +729,18 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByReferenceTestGenerat
   }
 
   @Test
+  @TestMetadata("valueClassCompanionBlockFunctionLibrary.kt")
+  public void testValueClassCompanionBlockFunctionLibrary() {
+    run("valueClassCompanionBlockFunctionLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("valueClassCompanionBlockVariableLibrary.kt")
+  public void testValueClassCompanionBlockVariableLibrary() {
+    run("valueClassCompanionBlockVariableLibrary.kt");
+  }
+
+  @Test
   @TestMetadata("valueParameter.kt")
   public void testValueParameter() {
     run("valueParameter.kt");
