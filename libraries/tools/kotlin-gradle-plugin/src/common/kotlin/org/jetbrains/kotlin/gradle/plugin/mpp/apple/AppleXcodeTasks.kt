@@ -141,7 +141,7 @@ private fun Project.registerSymbolicLinkTask(
             frameworkCopyTaskName
         )
     ) {
-        it.enabled = kotlinPropertiesProvider.appleCreateSymbolicLinkToFrameworkInBuiltProductsDir
+        it.enabled = kotlinPropertiesProvider.createSymbolicLinkToFrameworkInBuiltProductsDir
         it.builtProductsDirectory.set(builtProductsDir)
         it.indexBuiltProductsDirectories.set(
             if (kotlinPropertiesProvider.createSymbolicLinkToFrameworkForXcodeIndexing) indexBuiltProductsDirs else emptyList()
