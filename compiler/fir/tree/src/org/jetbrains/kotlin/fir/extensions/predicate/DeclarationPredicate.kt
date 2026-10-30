@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.fir.extensions.predicate
 
-import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.fir.extensions.AnnotationFqn
-import org.jetbrains.kotlin.fir.extensions.FirExtensionApiInternals
 
 // -------------------------------------------- Predicates --------------------------------------------
 
@@ -45,15 +43,10 @@ sealed class DeclarationPredicate : AbstractPredicate<DeclarationPredicate> {
         }
     }
 
-    @OptIn(FirExtensionApiInternals::class)
     class MatchingType(
         override val predicate: DeclarationPredicate,
-        override val targets: Set<KotlinTarget>,
+        override val type: DeclarationType
     ) : DeclarationPredicate(), AbstractPredicate.MatchingType<DeclarationPredicate> {
-        init {
-            PredicateTargets.requireSupported(targets)
-        }
-
         override val annotations: Set<AnnotationFqn> = predicate.annotations
         override val metaAnnotations: Set<AnnotationFqn> = predicate.metaAnnotations
 
@@ -163,7 +156,7 @@ sealed class DeclarationPredicate : AbstractPredicate<DeclarationPredicate> {
             MetaAnnotatedWith(metaAnnotations.toSet(), includeItself)
 
         // ------------------- targets -------------------
-        override fun DeclarationPredicate.matching(targets: Set<KotlinTarget>): DeclarationPredicate = MatchingType(this, targets.toSet())
+        override fun DeclarationPredicate.matching(type: DeclarationType): DeclarationPredicate = MatchingType(this, type)
     }
 
     companion object {

@@ -59,25 +59,17 @@ sealed interface AbstractPredicate<P : AbstractPredicate<P>> {
     }
 
     /**
-     * Filters the declarations matched by [predicate] to those with one of [targets].
-     * The targets apply to the matched declaration, including when [predicate] checks its parents or children.
-     * Nested matching predicates require the declaration to match each wrapper's targets. A declaration can have multiple targets,
-     * so matching [KotlinTarget.FUNCTION] and then [KotlinTarget.TOP_LEVEL_FUNCTION] matches top-level functions.
+     * Filters the declarations matched by [predicate] to that of [type].
+     * The type applies to the [accepted][accept] declaration, even when [predicate] checks its parents or children.
+     * Nested matching predicates require the declaration to match each wrapper's type.
      */
     sealed interface MatchingType<P : AbstractPredicate<P>> : AbstractPredicate<P> {
         val predicate: P
 
         /**
-         * Kinds of declarations this predicate matches. An empty set matches declarations of any kind.
-         *
-         * These are the same targets the compiler checks for `@Target`. For example, [KotlinTarget.FUNCTION] matches
-         * every function and [KotlinTarget.TOP_LEVEL_FUNCTION] matches only top-level functions.
-         * Only [PredicateTargets.supported] are allowed.
-         *
-         * [FirPredicateBasedProvider.getSymbolsByPredicate] checks targets before recording a symbol for incremental compilation.
-         * Declarations of other kinds aren't recorded.
+         * Kind of declaration this predicate matches.
          */
-        val targets: Set<KotlinTarget>
+        val type: DeclarationType
 
         override fun <R, D> accept(visitor: PredicateVisitor<P, R, D>, data: D): R {
             return visitor.visitMatchingType(this, data)
@@ -272,15 +264,13 @@ sealed interface AbstractPredicate<P : AbstractPredicate<P>> {
 
         // ------------------- targets -------------------
         /**
-         * Restricts the declarations matched by this predicate to the given [targets].
-         * See [MatchingType.targets].
+         * Restricts the declarations matched by this predicate to the given [type].
+         *
+         * [FirPredicateBasedProvider.getSymbolsByPredicate] checks the type before recording a symbol for incremental compilation.
+         * Declarations of other types aren't recorded.
+         * Adding a matching predicate can improve incremental compilation performance if it produces a smaller set of declarations,
+         * thus causing a smaller set of files to be recompiled.
          */
-        fun P.matching(vararg targets: KotlinTarget): P = matching(targets.toSet())
-
-        /**
-         * Restricts the declarations matched by this predicate to the given [targets].
-         * See [MatchingType.targets].
-         */
-        abstract fun P.matching(targets: Set<KotlinTarget>): P
+        abstract fun P.matching(type: DeclarationType): P
     }
 }

@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.extensions.predicate.AbstractPredicate
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
 import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate
-import org.jetbrains.kotlin.fir.extensions.predicate.PredicateTargets
 import org.jetbrains.kotlin.fir.extensions.predicate.PredicateVisitor
 import org.jetbrains.kotlin.fir.lookupTracker
 import org.jetbrains.kotlin.fir.resolve.fqName
@@ -121,9 +120,8 @@ class FirPredicateBasedProviderImpl(private val session: FirSession) : FirPredic
             return predicate.a.accept(this, data) || predicate.b.accept(this, data)
         }
 
-        @OptIn(FirExtensionApiInternals::class)
         override fun visitMatchingType(predicate: AbstractPredicate.MatchingType<P>, data: FirDeclaration): Boolean {
-            return PredicateTargets.matches(predicate.targets, data) && predicate.predicate.accept(this, data)
+            return predicate.type.matches(data) && predicate.predicate.accept(this, data)
         }
 
         // ------------------------------------ Annotated ------------------------------------
