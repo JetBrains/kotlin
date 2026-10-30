@@ -80,13 +80,16 @@ val useG1Gc = kotlinBuildProperties
 val usePgo = kotlinBuildProperties
     .booleanProperty("kotlin.build.native-image.use-pgo", false)
     .get()
+val pgoInstrument = kotlinBuildProperties
+    .booleanProperty("kotlin.build.native-image.pgo-instrument", false)
+    .get()
 val dynamicPluginsEnabled = kotlinBuildProperties
     .booleanProperty("kotlin.build.native-image.dynamic-plugins", false)
     .get()
 
 val graalLauncher = getNativeImageToolchainLauncherFor(
     JdkMajorVersion.JDK_25_0,
-    requireOracleJdk = useG1Gc || usePgo || dynamicPluginsEnabled,
+    requireOracleJdk = useG1Gc || usePgo || pgoInstrument || dynamicPluginsEnabled,
 )
 
 projectTests {
@@ -185,6 +188,7 @@ val kotlincNativeImageTask = tasks.register<Exec>("kotlincNativeImage") {
         addAll(basicNativeArgs)
         if (useG1Gc) add("--gc=G1")
         if (usePgo) add("--pgo=${pgoFile.asFile.absolutePath}")
+        if (pgoInstrument) add("--pgo-instrument")
         if (dynamicPluginsEnabled) {
             add("-H:+RuntimeClassLoading")
             addAll(

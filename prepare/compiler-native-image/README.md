@@ -154,3 +154,20 @@ provides some [performance benefits](https://youtrack.jetbrains.com/issue/KT-909
 So it is still more beneficial than no profile at all. 
 
 We are planning to collect and provide a more comprehensive profile for the Kotlin compiler in the future.
+
+### Collecting a custom profile
+
+To collect a custom profile you need to rebuild the compiler native image with `--pgo-instrument` option. You may use `-Pkotlin.build.native-image.pgo-instrument=true`
+option to do so:
+```bash
+./gradlew -Pkotlin.build.native-image.pgo-instrument=true :kotlin-compiler-native-image:kotlincNativeImageArtifacts
+```
+
+After that, you can use the newly built image to collect a profile on a given workload. You can also specify where to
+store the collected profile using `-XX:ProfilesDumpFile=file.iprof` option, be default it will produce a `default.iprof` file.
+```bash
+./prepare/compiler-native-image/build/dist/bin/kotlinc-native-image.sh -XX:ProfilesDumpFile=prepare/compiler-native-image/kotlin-compiler-embeddable.iprof HelloWorld.kt
+```
+
+You can also collect multiple profiles and merge them into a single file using `native-image-utils`, see [GraalVM documentation](https://www.graalvm.org/latest/reference-manual/native-image/optimizations-and-performance/PGO/merging-profiles/)
+for more details.
