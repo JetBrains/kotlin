@@ -756,6 +756,119 @@ public final class org/jetbrains/kotlin/gradle/dsl/jvm/JvmTargetValidationMode :
 	public static fun values ()[Lorg/jetbrains/kotlin/gradle/dsl/jvm/JvmTargetValidationMode;
 }
 
+public abstract class org/jetbrains/kotlin/gradle/dsl/toolchain/DownloadedToolchainParameters : org/jetbrains/kotlin/gradle/dsl/toolchain/KotlinToolchainService$Parameters {
+	public fun <init> ()V
+	public abstract fun getDownloadBaseUrl ()Lorg/gradle/api/provider/Property;
+	public abstract fun getInstallationDir ()Lorg/gradle/api/file/DirectoryProperty;
+	public abstract fun getOffline ()Lorg/gradle/api/provider/Property;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/KotlinToolchainService : org/gradle/api/services/BuildService {
+	public abstract fun request (Lorg/jetbrains/kotlin/gradle/dsl/toolchain/ToolchainRequest;)Lorg/gradle/api/provider/Provider;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/KotlinToolchainService$Parameters : org/gradle/api/services/BuildServiceParameters {
+}
+
+public abstract class org/jetbrains/kotlin/gradle/dsl/toolchain/PreInstalledToolchainParameters : org/jetbrains/kotlin/gradle/dsl/toolchain/KotlinToolchainService$Parameters {
+	public fun <init> ()V
+	public abstract fun getExecutable ()Lorg/gradle/api/provider/Property;
+}
+
+public abstract class org/jetbrains/kotlin/gradle/dsl/toolchain/ToolchainExecutable {
+	public abstract fun getExecutable ()Lorg/gradle/api/provider/Property;
+	public abstract fun getPlatform ()Lorg/gradle/api/provider/Property;
+	public abstract fun getVersion ()Lorg/gradle/api/provider/Property;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/ToolchainManagementDsl {
+	public abstract fun disable ()V
+	public abstract fun toolchainService (Lkotlin/jvm/functions/Function1;)V
+	public abstract fun toolchainService (Lkotlin/reflect/KClass;Lkotlin/jvm/functions/Function1;)V
+	public abstract fun toolchainService (Lkotlin/reflect/KClass;Lorg/gradle/api/Action;)V
+	public abstract fun toolchainService (Lorg/gradle/api/Action;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/dsl/toolchain/ToolchainManagementDsl$DefaultImpls {
+	public static fun toolchainService (Lorg/jetbrains/kotlin/gradle/dsl/toolchain/ToolchainManagementDsl;Lkotlin/reflect/KClass;Lorg/gradle/api/Action;)V
+	public static fun toolchainService (Lorg/jetbrains/kotlin/gradle/dsl/toolchain/ToolchainManagementDsl;Lorg/gradle/api/Action;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/dsl/toolchain/ToolchainPlatform : java/io/Serializable {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/toolchain/ToolchainPlatform;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/dsl/toolchain/ToolchainPlatform;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/dsl/toolchain/ToolchainPlatform;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getArch ()Ljava/lang/String;
+	public final fun getOs ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract class org/jetbrains/kotlin/gradle/dsl/toolchain/ToolchainRequest {
+	public abstract fun getPlatform ()Lorg/gradle/api/provider/Property;
+	public abstract fun getVersion ()Lorg/gradle/api/provider/Property;
+	public final fun version (Ljava/lang/String;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/dsl/toolchain/ToolchainVersion : java/io/Serializable {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/toolchain/ToolchainVersion;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/dsl/toolchain/ToolchainVersion;Ljava/lang/String;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/dsl/toolchain/ToolchainVersion;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getVersion ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/binaryen/BinaryenToolchainManagementDsl : org/jetbrains/kotlin/gradle/dsl/toolchain/ToolchainManagementDsl {
+}
+
+public final class org/jetbrains/kotlin/gradle/dsl/toolchain/binaryen/BinaryenToolchainManagementDsl$DefaultImpls {
+	public static fun toolchainService (Lorg/jetbrains/kotlin/gradle/dsl/toolchain/binaryen/BinaryenToolchainManagementDsl;Lkotlin/reflect/KClass;Lorg/gradle/api/Action;)V
+	public static fun toolchainService (Lorg/jetbrains/kotlin/gradle/dsl/toolchain/binaryen/BinaryenToolchainManagementDsl;Lorg/gradle/api/Action;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/binaryen/BinaryenToolchainService : org/jetbrains/kotlin/gradle/dsl/toolchain/KotlinToolchainService {
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/binaryen/DefaultBinaryenToolchainService : org/jetbrains/kotlin/gradle/dsl/toolchain/binaryen/BinaryenToolchainService {
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/binaryen/DisabledBinaryenToolchainService : org/jetbrains/kotlin/gradle/dsl/toolchain/binaryen/BinaryenToolchainService {
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/binaryen/PreInstalledBinaryenToolchainService : org/jetbrains/kotlin/gradle/dsl/toolchain/binaryen/BinaryenToolchainService {
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/d8/D8ToolchainManagementDsl : org/jetbrains/kotlin/gradle/dsl/toolchain/ToolchainManagementDsl {
+}
+
+public final class org/jetbrains/kotlin/gradle/dsl/toolchain/d8/D8ToolchainManagementDsl$DefaultImpls {
+	public static fun toolchainService (Lorg/jetbrains/kotlin/gradle/dsl/toolchain/d8/D8ToolchainManagementDsl;Lkotlin/reflect/KClass;Lorg/gradle/api/Action;)V
+	public static fun toolchainService (Lorg/jetbrains/kotlin/gradle/dsl/toolchain/d8/D8ToolchainManagementDsl;Lorg/gradle/api/Action;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/d8/D8ToolchainService : org/jetbrains/kotlin/gradle/dsl/toolchain/KotlinToolchainService {
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/d8/DefaultD8ToolchainService : org/jetbrains/kotlin/gradle/dsl/toolchain/d8/D8ToolchainService {
+}
+
+public abstract class org/jetbrains/kotlin/gradle/dsl/toolchain/d8/DefaultD8ToolchainService$Parameters : org/jetbrains/kotlin/gradle/dsl/toolchain/DownloadedToolchainParameters {
+	public fun <init> ()V
+	public abstract fun getEdition ()Lorg/gradle/api/provider/Property;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/d8/DisabledD8ToolchainService : org/jetbrains/kotlin/gradle/dsl/toolchain/d8/D8ToolchainService {
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/d8/PreInstalledD8ToolchainService : org/jetbrains/kotlin/gradle/dsl/toolchain/d8/D8ToolchainService {
+}
+
 public final class org/jetbrains/kotlin/gradle/dsl/toolchain/nodejs/BuildPlatform : java/io/Serializable {
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
 	public final fun component1 ()Ljava/lang/String;
@@ -832,6 +945,26 @@ public abstract class org/jetbrains/kotlin/gradle/dsl/toolchain/nodejs/PreInstal
 	public abstract fun getNodeJsExecutable ()Lorg/gradle/api/provider/Property;
 }
 
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/swc/DefaultSwcToolchainService : org/jetbrains/kotlin/gradle/dsl/toolchain/swc/SwcToolchainService {
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/swc/DisabledSwcToolchainService : org/jetbrains/kotlin/gradle/dsl/toolchain/swc/SwcToolchainService {
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/swc/PreInstalledSwcToolchainService : org/jetbrains/kotlin/gradle/dsl/toolchain/swc/SwcToolchainService {
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/swc/SwcToolchainManagementDsl : org/jetbrains/kotlin/gradle/dsl/toolchain/ToolchainManagementDsl {
+}
+
+public final class org/jetbrains/kotlin/gradle/dsl/toolchain/swc/SwcToolchainManagementDsl$DefaultImpls {
+	public static fun toolchainService (Lorg/jetbrains/kotlin/gradle/dsl/toolchain/swc/SwcToolchainManagementDsl;Lkotlin/reflect/KClass;Lorg/gradle/api/Action;)V
+	public static fun toolchainService (Lorg/jetbrains/kotlin/gradle/dsl/toolchain/swc/SwcToolchainManagementDsl;Lorg/gradle/api/Action;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/swc/SwcToolchainService : org/jetbrains/kotlin/gradle/dsl/toolchain/KotlinToolchainService {
+}
+
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/wasiadapter/DefaultWasiAdapterToolchainService : org/jetbrains/kotlin/gradle/dsl/toolchain/wasiadapter/WasiAdapterToolchainService {
 }
 
@@ -897,6 +1030,26 @@ public final class org/jetbrains/kotlin/gradle/dsl/toolchain/wasiadapter/WasiAda
 	public fun <init> (Ljava/lang/String;)V
 	public final fun getVersion ()Ljava/lang/String;
 	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtime/DefaultWasmtimeToolchainService : org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtime/WasmtimeToolchainService {
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtime/DisabledWasmtimeToolchainService : org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtime/WasmtimeToolchainService {
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtime/PreInstalledWasmtimeToolchainService : org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtime/WasmtimeToolchainService {
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtime/WasmtimeToolchainManagementDsl : org/jetbrains/kotlin/gradle/dsl/toolchain/ToolchainManagementDsl {
+}
+
+public final class org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtime/WasmtimeToolchainManagementDsl$DefaultImpls {
+	public static fun toolchainService (Lorg/jetbrains/kotlin/gradle/dsl/toolchain/wasmtime/WasmtimeToolchainManagementDsl;Lkotlin/reflect/KClass;Lorg/gradle/api/Action;)V
+	public static fun toolchainService (Lorg/jetbrains/kotlin/gradle/dsl/toolchain/wasmtime/WasmtimeToolchainManagementDsl;Lorg/gradle/api/Action;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtime/WasmtimeToolchainService : org/jetbrains/kotlin/gradle/dsl/toolchain/KotlinToolchainService {
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/DefaultWasmToolsToolchainService : org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsToolchainService {
@@ -1870,6 +2023,22 @@ public abstract interface class org/jetbrains/kotlin/gradle/tasks/abi/KotlinLega
 
 public abstract interface class org/jetbrains/kotlin/gradle/tasks/nodejs/UsesNodeJsToolchainService : org/gradle/api/Task {
 	public abstract fun getNodeJsToolchainService ()Lorg/gradle/api/provider/Property;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/tasks/toolchain/UsesBinaryenToolchainService : org/gradle/api/Task {
+	public abstract fun getBinaryenToolchainService ()Lorg/gradle/api/provider/Property;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/tasks/toolchain/UsesD8ToolchainService : org/gradle/api/Task {
+	public abstract fun getD8ToolchainService ()Lorg/gradle/api/provider/Property;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/tasks/toolchain/UsesSwcToolchainService : org/gradle/api/Task {
+	public abstract fun getSwcToolchainService ()Lorg/gradle/api/provider/Property;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/tasks/toolchain/UsesWasmtimeToolchainService : org/gradle/api/Task {
+	public abstract fun getWasmtimeToolchainService ()Lorg/gradle/api/provider/Property;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/tasks/wasiadapter/UsesWasiAdapterToolchainService : org/gradle/api/Task {

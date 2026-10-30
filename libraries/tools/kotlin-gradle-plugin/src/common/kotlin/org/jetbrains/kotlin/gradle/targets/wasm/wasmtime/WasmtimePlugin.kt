@@ -3,16 +3,21 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:OptIn(ExperimentalKotlinToolchainDsl::class)
+
 package org.jetbrains.kotlin.gradle.targets.wasm.wasmtime
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.BasePlugin
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinToolchainDsl
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.toolchains.DEFAULT_WASMTIME_VERSION
+import org.jetbrains.kotlin.gradle.toolchains.wasmtimeToolchain
 
 @ExperimentalWasmDsl
 abstract class WasmtimePlugin internal constructor() : Plugin<Project> {
@@ -20,6 +25,12 @@ abstract class WasmtimePlugin internal constructor() : Plugin<Project> {
         project.plugins.apply(BasePlugin::class.java)
 
         val spec = project.createWasmtimeEnvSpec()
+
+        if (!wasmtimeToolchain.isDisabled(project)) {
+            // The Wasmtime toolchain provisions Wasmtime once for the whole build, so the per-project setup task
+            // and its detached configuration are not needed.
+            return
+        }
 
         project.registerTask<WasmtimeSetupTask>(
             WasmPlatformDisambiguator.extensionName(WasmtimeSetupTask.BASE_NAME),
@@ -51,7 +62,7 @@ abstract class WasmtimePlugin internal constructor() : Plugin<Project> {
             installationDirectory.convention(
                 gradleHome.dir("wasmtime")
             )
-            version.convention("50.0.0")
+            version.convention(DEFAULT_WASMTIME_VERSION)
             command.convention("wasmtime")
         }
     }

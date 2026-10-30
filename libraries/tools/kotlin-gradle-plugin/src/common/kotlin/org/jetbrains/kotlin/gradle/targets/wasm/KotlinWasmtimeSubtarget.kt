@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.wasm
 
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinToolchainDsl
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.JsIrBinary
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSubTarget
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.wasm.dsl.KotlinWasmtimeDsl
 import org.jetbrains.kotlin.gradle.targets.wasm.testing.KotlinWasmtime
 import org.jetbrains.kotlin.gradle.targets.wasm.wasmtime.WasmtimePlugin
+import org.jetbrains.kotlin.gradle.toolchains.wasmtimeToolchain
 import javax.inject.Inject
 
 @OptIn(ExperimentalWasmDsl::class)
@@ -34,7 +36,12 @@ internal constructor(
         test.testFramework = KotlinWasmtime(test)
     }
 
+    @OptIn(ExperimentalKotlinToolchainDsl::class)
     override fun configureTestDependencies(test: KotlinJsTest, binary: JsIrBinary) {
+        val wasmtimeToolchainService = wasmtimeToolchain.registerIfAbsent(project)
+        test.usesService(wasmtimeToolchainService)
+        if (!wasmtimeToolchain.isDisabled(project)) return
+
         with(wasmtime) {
             test.dependsOn(project.wasmtimeSetupTaskProvider)
         }

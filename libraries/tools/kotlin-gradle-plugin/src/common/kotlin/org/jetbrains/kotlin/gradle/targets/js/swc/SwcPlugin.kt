@@ -3,18 +3,23 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:OptIn(ExperimentalKotlinToolchainDsl::class)
+
 package org.jetbrains.kotlin.gradle.targets.js.swc
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.plugins.ExtensionContainer
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinToolchainDsl
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.JsPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.toolchains.DEFAULT_SWC_VERSION
+import org.jetbrains.kotlin.gradle.toolchains.swcToolchain
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 @InternalKotlinGradlePluginApi
@@ -24,6 +29,12 @@ abstract class SwcPlugin internal constructor() : Plugin<Project> {
 
         val spec = project.extensions.createSwcEnvSpec()
         spec.initializeSwcRootEnvSpec(project)
+
+        if (!swcToolchain.isDisabled(project)) {
+            // The SWC toolchain provisions SWC once for the whole build,
+            // so the per-project setup task and its detached configuration are not needed.
+            return
+        }
 
         project.registerTask<SwcSetupTask>(
             JsPlatformDisambiguator.extensionName(SwcSetupTask.BASE_NAME),
@@ -56,7 +67,7 @@ abstract class SwcPlugin internal constructor() : Plugin<Project> {
         downloadBaseUrl.set("https://github.com/swc-project/swc/releases/download")
         allowInsecureProtocol.convention(false)
         installationDirectory.fileValue(gradleHome.resolve("swc"))
-        version.convention("1.16.2")
+        version.convention(DEFAULT_SWC_VERSION)
         command.convention("compile")
         platform.convention(
             project.providers.systemProperty("os.name")

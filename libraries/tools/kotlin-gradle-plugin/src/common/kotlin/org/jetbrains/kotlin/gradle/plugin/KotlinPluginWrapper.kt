@@ -25,6 +25,7 @@ import org.gradle.api.logging.Logging
 import org.gradle.internal.operations.BuildOperationListenerManager
 import org.jetbrains.kotlin.compilerRunner.btapi.BuildSessionService
 import org.jetbrains.kotlin.compilerRunner.maybeCreateCommonizerClasspathConfiguration
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinToolchainDsl
 import org.jetbrains.kotlin.gradle.ExperimentalNodeJsToolchainDsl
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.*
@@ -64,6 +65,9 @@ import org.jetbrains.kotlin.gradle.tasks.publishing.addPgpSignatureHelpers
 import org.jetbrains.kotlin.gradle.tasks.publishing.addPomValidationHelpers
 import org.jetbrains.kotlin.gradle.tasks.publishing.addSigningValidationHelpers
 import org.jetbrains.kotlin.gradle.testing.internal.KotlinTestsRegistry
+import org.jetbrains.kotlin.gradle.toolchains.d8Toolchain
+import org.jetbrains.kotlin.gradle.toolchains.swcToolchain
+import org.jetbrains.kotlin.gradle.toolchains.wasmtimeToolchain
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import javax.inject.Inject
@@ -85,7 +89,7 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
     private val logger = Logging.getLogger(DefaultKotlinBasePlugin::class.java)
     override val pluginVersion: String = getKotlinPluginVersion(logger)
 
-    @OptIn(ExperimentalNodeJsToolchainDsl::class, ExperimentalWasmDsl::class)
+    @OptIn(ExperimentalNodeJsToolchainDsl::class, ExperimentalWasmDsl::class, ExperimentalKotlinToolchainDsl::class)
     override fun apply(project: Project) {
         project.checkCompilerEmbeddableInClasspath()
         project.registerDefaultVariantImplementations()
@@ -127,6 +131,10 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
         registerWasiAdapterToolchainServiceIfAbsent(project)
 
         registerWasmToolsToolchainServiceIfAbsent(project)
+
+        d8Toolchain.registerIfAbsent(project)
+        wasmtimeToolchain.registerIfAbsent(project)
+        swcToolchain.registerIfAbsent(project)
     }
 
     private fun addKotlinCompilerConfiguration(project: Project) {

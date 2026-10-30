@@ -7,18 +7,27 @@ package org.jetbrains.kotlin.gradle.targets.wasm.wasmtime
 
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinToolchainDsl
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.dsl.toolchain.ToolchainRequest
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.tasks.toolchain.UsesWasmtimeToolchainService
+import org.jetbrains.kotlin.gradle.toolchains.wasmtimeToolchain
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.newFileProperty
 
+@OptIn(ExperimentalKotlinToolchainDsl::class)
 @ExperimentalWasmDsl
 @DisableCachingByDefault
-abstract class WasmtimeExec internal constructor() : AbstractExecTask<WasmtimeExec>(WasmtimeExec::class.java) {
+abstract class WasmtimeExec internal constructor() :
+    AbstractExecTask<WasmtimeExec>(WasmtimeExec::class.java),
+    UsesWasmtimeToolchainService {
     init {
         this.onlyIf {
             !inputFileProperty.isPresent || inputFileProperty.asFile.map { it.exists() }.get()
@@ -28,6 +37,17 @@ abstract class WasmtimeExec internal constructor() : AbstractExecTask<WasmtimeEx
     @get:Input
     abstract val wasmtimeArgs: ListProperty<String>
 
+    /**
+     * The Wasmtime executable of the old, environment spec based setup.
+     * It is empty when the Wasmtime toolchain provisions Wasmtime.
+     */
+    @get:Input
+    @get:Optional
+    internal abstract val legacyExecutable: Property<String>
+
+    @get:Nested
+    internal val wasmtimeRequest: Provider<ToolchainRequest> = wasmtimeToolchain.defaultRequest(project)
+
     @Optional
     @PathSensitive(PathSensitivity.ABSOLUTE)
     @InputFile
@@ -35,6 +55,9 @@ abstract class WasmtimeExec internal constructor() : AbstractExecTask<WasmtimeEx
     val inputFileProperty: RegularFileProperty = project.newFileProperty()
 
     override fun exec() {
+        // Resolved at execution time, because it may provision Wasmtime
+        executable = wasmtimeToolchain.resolveExecutable(wasmtimeToolchainService.get(), legacyExecutable, wasmtimeRequest)
+
         val newArgs = mutableListOf<String>()
         newArgs.addAll(wasmtimeArgs.get())
         val inputFile = inputFileProperty.getFile()
@@ -58,15 +81,15 @@ abstract class WasmtimeExec internal constructor() : AbstractExecTask<WasmtimeEx
             val target = compilation.target
             val project = target.project
             val wasmtime = WasmtimePlugin.applyWithEnvSpec(project)
+            val toolchainDisabled = wasmtimeToolchain.isDisabled(project)
             return project.registerTask(
                 name
             ) {
-                // executable does not have Provider API,
-                // dependsOn(wasmtimeSetupTaskProvider) required
-                it.executable = wasmtime.executable.get()
-
-                with(wasmtime) {
-                    it.dependsOn(project.wasmtimeSetupTaskProvider)
+                if (toolchainDisabled) {
+                    it.legacyExecutable.set(wasmtime.executable)
+                    with(wasmtime) {
+                        it.dependsOn(project.wasmtimeSetupTaskProvider)
+                    }
                 }
                 it.configuration()
             }

@@ -10,25 +10,21 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.tasks.CacheableTask
-import org.gradle.api.tasks.IgnoreEmptyDirectories
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputDirectory
-import org.gradle.api.tasks.InputFile
-import org.gradle.api.tasks.OutputDirectory
-import org.gradle.api.tasks.PathSensitive
-import org.gradle.api.tasks.PathSensitivity
-import org.gradle.api.tasks.TaskAction
-import org.gradle.api.tasks.TaskProvider
+import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
 import org.gradle.work.ChangeType
 import org.gradle.work.Incremental
 import org.gradle.work.InputChanges
 import org.gradle.work.NormalizeLineEndings
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinToolchainDsl
+import org.jetbrains.kotlin.gradle.dsl.toolchain.ToolchainRequest
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrOutputGranularity
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
 import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.tasks.toolchain.UsesSwcToolchainService
+import org.jetbrains.kotlin.gradle.toolchains.swcToolchain
 import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.platform.js.SwcConfig
 import javax.inject.Inject
@@ -38,15 +34,24 @@ import javax.inject.Inject
  *
  * See [Speedy Web Compiler](https://swc.rs/)
  */
+@OptIn(ExperimentalKotlinToolchainDsl::class)
 @CacheableTask
 internal abstract class SwcExec
 @Inject
 internal constructor(
     private val execOps: ExecOperations,
     private val fs: FileSystemOperations,
-) : DefaultTask() {
+) : DefaultTask(), UsesSwcToolchainService {
+    /**
+     * The SWC executable of the old, environment spec based setup.
+     * It is empty when the SWC toolchain provisions SWC.
+     */
     @get:Input
-    abstract val executable: Property<String>
+    @get:Optional
+    abstract val legacyExecutable: Property<String>
+
+    @get:Nested
+    val swcRequest: Provider<ToolchainRequest> = swcToolchain.defaultRequest(project)
 
     @get:Input
     abstract val mode: Property<Mode>
@@ -109,8 +114,11 @@ internal constructor(
                 environmentCode = mode.get().code
             )
 
+            // Resolved at execution time, because it may provision SWC
+            val swcExecutable = swcToolchain.resolveExecutable(swcToolchainService.get(), legacyExecutable, swcRequest)
+
             execOps.exec { spec ->
-                spec.executable = executable.get()
+                spec.executable = swcExecutable
                 spec.workingDir = inputDirectory.get().asFile
                 spec.args = args
             }
@@ -134,12 +142,15 @@ internal constructor(
                 .flatMap(GenerateSwcConfig::moduleSystemToUse)
                 .map { it.jsExtension.removePrefix(".") }
 
+            val toolchainDisabled = swcToolchain.isDisabled(project)
             return project.registerTask(name) {
-                it.executable.set(swc.executable)
                 it.configFile.set(configFile)
                 it.fileExtension.set(fileExtension)
 
-                it.dependsOn(with(swc) { project.swcSetupTaskProvider })
+                if (toolchainDisabled) {
+                    it.legacyExecutable.set(swc.executable)
+                    it.dependsOn(with(swc) { project.swcSetupTaskProvider })
+                }
                 it.configuration()
             }
         }

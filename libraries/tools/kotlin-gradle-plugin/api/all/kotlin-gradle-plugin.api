@@ -5460,7 +5460,7 @@ public final class org/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenEnv
 	public fun getPlatformDisambiguator ()Ljava/lang/String;
 }
 
-public abstract class org/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenExec : org/gradle/api/tasks/AbstractExecTask {
+public abstract class org/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenExec : org/gradle/api/tasks/AbstractExecTask, org/jetbrains/kotlin/gradle/tasks/toolchain/UsesBinaryenToolchainService {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenExec$Companion;
 	public fun <init> ()V
 	protected fun exec ()V
@@ -5563,7 +5563,7 @@ public final class org/jetbrains/kotlin/gradle/targets/wasm/d8/D8EnvSpec$Compani
 	public fun getPlatformDisambiguator ()Ljava/lang/String;
 }
 
-public abstract class org/jetbrains/kotlin/gradle/targets/wasm/d8/D8Exec : org/gradle/api/tasks/AbstractExecTask {
+public abstract class org/jetbrains/kotlin/gradle/targets/wasm/d8/D8Exec : org/gradle/api/tasks/AbstractExecTask, org/jetbrains/kotlin/gradle/tasks/toolchain/UsesD8ToolchainService {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/wasm/d8/D8Exec$Companion;
 	protected fun exec ()V
 	public abstract fun getD8Args ()Lorg/gradle/api/provider/ListProperty;
@@ -5721,7 +5721,7 @@ public final class org/jetbrains/kotlin/gradle/targets/wasm/wasmtime/WasmtimeEnv
 	public fun getPlatformDisambiguator ()Ljava/lang/String;
 }
 
-public abstract class org/jetbrains/kotlin/gradle/targets/wasm/wasmtime/WasmtimeExec : org/gradle/api/tasks/AbstractExecTask {
+public abstract class org/jetbrains/kotlin/gradle/targets/wasm/wasmtime/WasmtimeExec : org/gradle/api/tasks/AbstractExecTask, org/jetbrains/kotlin/gradle/tasks/toolchain/UsesWasmtimeToolchainService {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/wasm/wasmtime/WasmtimeExec$Companion;
 	protected fun exec ()V
 	public final fun getInputFileProperty ()Lorg/gradle/api/file/RegularFileProperty;
