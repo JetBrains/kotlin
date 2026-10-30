@@ -36,6 +36,7 @@ internal object WebCommonSerializationPipelinePhase : PipelinePhase<WebFir2IrPip
         return input
     }
 
+    // TODO (unify with JVM)
     private fun serializeCommonMetadataIfNeeded(input: WebFir2IrPipelineArtifact) {
         val configuration = input.configuration
         if (!configuration.jsIncrementalCompilationEnabled) return
