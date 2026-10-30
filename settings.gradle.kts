@@ -599,6 +599,8 @@ include(
     ":prepare:ide-plugin-dependencies:incremental-compilation-impl-tests-for-ide",
     ":prepare:ide-plugin-dependencies:js-ir-runtime-for-ide",
     ":prepare:ide-plugin-dependencies:kotlin-build-common-tests-for-ide",
+    ":prepare:ide-plugin-dependencies:kotlin-build-common-for-ide",
+    ":prepare:ide-plugin-dependencies:kotlin-daemon-client-for-ide",
     ":prepare:ide-plugin-dependencies:kotlin-compiler-cli-for-ide",
     ":prepare:ide-plugin-dependencies:kotlin-dist-for-ide",
     ":prepare:ide-plugin-dependencies:kotlin-gradle-statistics-for-ide",
