@@ -278,14 +278,6 @@ open class FirDeclarationsResolveTransformer(
                         // we still need to resolve types in accessors (as per IMPLICIT_TYPES_BODY_RESOLVE contract).
                         property.getter?.transformTypeWithPropertyType(propertyTypeRefAfterResolve)
                         property.setter?.transformTypeWithPropertyType(propertyTypeRefAfterResolve)
-                        property.setter?.transformReturnTypeRef(
-                            transformer,
-                            ResolutionMode.UpdateImplicitTypeRef(
-                                buildResolvedTypeRef {
-                                    coneType = StandardTypes.Unit
-                                }
-                            )
-                        )
                     }
                 }
 
