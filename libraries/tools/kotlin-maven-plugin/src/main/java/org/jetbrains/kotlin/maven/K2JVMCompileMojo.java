@@ -407,8 +407,24 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
                 }
             }
 
+            // One directory given two ways is walked twice, and kotlinc counts a source module per module-info.java path.
+            // Other paths are compared as written, since kotlinc collapses ".." in a Kotlin path as text
+            // and compiles a symlinked Kotlin file to its own facade class.
+            // Strings are compared, since Path and File equality ignore case on Windows.
+            Set<String> seenPaths = new HashSet<>();
+            Set<String> seenModuleInfoFiles = new HashSet<>();
+            List<Path> uniqueSources = new ArrayList<>();
+            for (Path file : allSources) {
+                boolean isNew = file.getFileName().toString().equals(PsiJavaModule.MODULE_INFO_FILE)
+                                ? seenModuleInfoFiles.add(file.toFile().getCanonicalPath())
+                                : seenPaths.add(file.toString());
+                if (isNew) {
+                    uniqueSources.add(file);
+                }
+            }
+
             Path destination = getEffectiveDestinationDirectory(arguments);
-            JvmCompilationOperation.Builder compilationOperation = jvmToolchain.jvmCompilationOperationBuilder(allSources, destination);
+            JvmCompilationOperation.Builder compilationOperation = jvmToolchain.jvmCompilationOperationBuilder(uniqueSources, destination);
 
             boolean isIncrementalCompilationEnabled = isIncremental();
             // Same default as in the Kotlin Gradle plugin: generate CRI unless running on CI
