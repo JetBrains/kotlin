@@ -463,6 +463,12 @@ public class IncrementalJvmJpsTestGenerated extends AbstractIncrementalJvmJpsTes
     }
 
     @Test
+    @TestMetadata("internalFunBecamePublic")
+    public void testInternalFunBecamePublic() {
+      runTest("jps/jps-plugin/testData/incremental/pureKotlin/internalFunBecamePublic/");
+    }
+
+    @Test
     @TestMetadata("internalMemberInClassChanged")
     public void testInternalMemberInClassChanged() {
       runTest("jps/jps-plugin/testData/incremental/pureKotlin/internalMemberInClassChanged/");
