@@ -26,7 +26,6 @@ dependencies {
     // Only the extension type is needed here; at runtime common-configuration applies the convention itself
     compileOnly(project(":project-tests-convention"))
     implementation(kotlinBuildHelpers())
-    implementation(libs.kotlinx.bcv)
     // Generated version catalog accessors, so the precompiled script can read `libs`
     implementation(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
     compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}")

@@ -7,10 +7,10 @@
 // See README.md next to this project and build-tools/libraries/AGENTS.md for the rules these modules follow.
 
 import org.gradle.accessors.dm.LibrariesForLibs
+import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 
 plugins {
     kotlin("jvm")
-    id("org.jetbrains.kotlinx.binary-compatibility-validator")
     id("test-inputs-check")
 }
 
@@ -24,6 +24,9 @@ configureKotlinCompileTasksGradleCompatibility()
 
 kotlin {
     explicitApi()
+
+    @OptIn(ExperimentalAbiValidation::class)
+    abiValidation()
 }
 
 publish {
@@ -50,11 +53,6 @@ dependencies {
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.platform.launcher)
-}
-
-// Dump the API from the jar, as the other KGP-compatible libraries do
-tasks.apiBuild {
-    inputJar.value(tasks.jar.flatMap { it.archiveFile })
 }
 
 // The repository's test task factory attaches the instrumenting agent that test-inputs-check relies on

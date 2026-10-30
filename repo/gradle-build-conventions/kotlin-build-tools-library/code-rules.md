@@ -15,7 +15,7 @@ src/**/*.gradle.kts
 ```
 
 Every plugin the precompiled script applies by id in `plugins {}` must be on this project's classpath
-through a dependency in `build.gradle.kts` (`libs.kotlinx.bcv`, `project(":test-inputs-check")`, …),
+through a dependency in `build.gradle.kts` (`project(":test-inputs-check")`, …),
 and a dependency removed there must not still be applied.
 
 # Stay lazy and inside the project

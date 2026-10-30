@@ -4,8 +4,7 @@ This convention plugin sets up a Kotlin Build Tools library: one of the build to
 `build-tools/libraries` that Kotlin build tool integrations (KGP, Maven, JPS, kotlin-toolchain,
 Bazel rules) share.
 
-It applies `common-configuration`, `kotlin("jvm")`, `org.jetbrains.kotlinx.binary-compatibility-validator`
-and `test-inputs-check`, and then:
+It applies `common-configuration`, `kotlin("jvm")` and `test-inputs-check`, and then:
 
 - publishes under the repository-wide group `org.jetbrains.kotlin` as `build-tools-<project name>`;
 - compiles the way KGP does (`configureKotlinCompileTasksGradleCompatibility()`), with the stdlib as
@@ -14,7 +13,8 @@ and `test-inputs-check`, and then:
 - configures publishing, taking the POM description from the project's `description`;
 - configures JUnit 5 tests through the repository's `projectTests` factory, which attaches the
   instrumenting agent that `test-inputs-check` needs;
-- dumps the public API from the jar into `api/<name>.api`.
+- turns on Kotlin's built-in ABI validation, which dumps the public API into `api/<name>.api`
+  (`updateKotlinAbi`) and checks it as part of `check` (`checkKotlinAbi`).
 
 ## Usage
 
