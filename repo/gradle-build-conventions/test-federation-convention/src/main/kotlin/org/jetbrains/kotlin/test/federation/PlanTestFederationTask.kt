@@ -20,6 +20,9 @@ import org.gradle.api.tasks.TaskAction
 open class PlanTestFederationTask : DefaultTask() {
 
     @get:Input
+    internal val testFederationEnabled = project.testFederationEnabled
+
+    @get:Input
     internal val changedFiles = project.testFederationChangedFiles
 
     @get:Input
@@ -68,6 +71,10 @@ open class PlanTestFederationTask : DefaultTask() {
         val changedDomains = if (isDefaultBranch) allDomains else changedDomains.get()
         val affectedDomains = if (isDefaultBranch) allDomains else affectedDomains.get()
         val forcedSubsets = forcedSubsets.orNull.orEmpty()
+
+        if (testFederationEnabled && forcedSubsets.isNotEmpty()) {
+            error("Illegal attempt to force subsets to $forcedSubsets while Test Federation is disabled")
+        }
 
         val plan = TestFederationPlan.resolve(
             isDefaultBranch = isDefaultBranch,
