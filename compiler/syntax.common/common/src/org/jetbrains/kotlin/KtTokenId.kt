@@ -6,10 +6,8 @@
 package org.jetbrains.kotlin
 
 object KtTokenId {
-    const val DOC_COMMENT: Int = NO_ID + 1
-    const val WHITE_SPACE: Int = DOC_COMMENT + 1
-
-    const val EOF: Int = WHITE_SPACE + 1
+    const val DOC_COMMENT: Int = BasicElementTypeId.ERROR_ELEMENT + 1
+    const val EOF: Int = DOC_COMMENT + 1
     const val RESERVED: Int = EOF + 1
     const val BLOCK_COMMENT: Int = RESERVED + 1
     const val EOL_COMMENT: Int = BLOCK_COMMENT + 1

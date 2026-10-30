@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin
 
 import com.intellij.platform.syntax.SyntaxElementType
+import com.intellij.platform.syntax.element.SyntaxTokenTypes
+import com.intellij.psi.TokenType
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -13,10 +15,11 @@ import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.junit.jupiter.api.Test
 import kotlin.reflect.KProperty
 import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
 
 @OptIn(KtImplementationDetail::class)
+@Suppress("UnstableApiUsage")
 class PsiKmpSyntaxIdsConsistencyTest {
-    @Suppress("UnstableApiUsage")
     @Test
     fun nodeTypes() {
         val psiFields = KtNodeTypes::class.java.declaredFields
@@ -40,7 +43,6 @@ class PsiKmpSyntaxIdsConsistencyTest {
         }
     }
 
-    @Suppress("UnstableApiUsage")
     @Test
     fun tokens() {
         val psiFields = KtTokens::class.java.declaredFields.filter { !it.type.isPrimitive }
@@ -60,6 +62,24 @@ class PsiKmpSyntaxIdsConsistencyTest {
             assertEquals(
                 psiId, kmpId,
                 "KMP_ID = $kmpId KMP_NODE_TYPE = $kmpNodeType PSI_ID = $psiId PSI_NODE_TYPE = $psiNodeType"
+            )
+        }
+    }
+
+    @Test
+    fun basicElementTypes() {
+        listOf(
+            TokenType.WHITE_SPACE to SyntaxTokenTypes.WHITE_SPACE,
+            TokenType.BAD_CHARACTER to SyntaxTokenTypes.BAD_CHARACTER,
+            TokenType.ERROR_ELEMENT to SyntaxTokenTypes.ERROR_ELEMENT,
+        ).forEach { [psiElementType, kmpElementType] ->
+            val psiId = psiElementType.syntaxId()
+            val kmpId = org.jetbrains.kotlin.kmp.lexer.BasicElementTypes.getElementTypeId(kmpElementType)
+
+            assertNotEquals(NO_ID, psiId, "PSI_ELEMENT_TYPE = $psiElementType has no ID")
+            assertEquals(
+                psiId, kmpId,
+                "KMP_ID = $kmpId KMP_ELEMENT_TYPE = $kmpElementType PSI_ID = $psiId PSI_ELEMENT_TYPE = $psiElementType"
             )
         }
     }

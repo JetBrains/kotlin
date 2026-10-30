@@ -23,8 +23,13 @@ abstract class SyntaxElementTypesWithIds {
      */
     fun getElementTypeId(syntaxElementType: SyntaxElementType?): Int = syntaxElementType?.index?.let { indexToIdMap[it] } ?: NO_ID
 
-    fun register(id: Int, name: String): SyntaxElementType {
-        return SyntaxElementType(name).also {
+    fun register(id: Int, name: String): SyntaxElementType = register(id, SyntaxElementType(name))
+
+    /**
+     * Associates [id] with an already existing [syntaxElementType], e.g., a platform one such as `SyntaxTokenTypes.WHITE_SPACE`.
+     */
+    fun register(id: Int, syntaxElementType: SyntaxElementType): SyntaxElementType {
+        return syntaxElementType.also {
             if (indexToIdMap.containsValue(id)) {
                 error("The element with id $id is already registered. Please fix the constant.")
             }

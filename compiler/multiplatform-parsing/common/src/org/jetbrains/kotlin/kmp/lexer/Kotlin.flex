@@ -266,7 +266,7 @@ LONELY_BACKTICK=`
 
 // Mere mortals
 
-({WHITE_SPACE_CHAR})+ { return KtTokens.WHITE_SPACE }
+({WHITE_SPACE_CHAR})+ { return BasicElementTypes.WHITE_SPACE }
 
 {EOL_COMMENT} { return KtTokens.EOL_COMMENT }
 {SHEBANG_COMMENT} {

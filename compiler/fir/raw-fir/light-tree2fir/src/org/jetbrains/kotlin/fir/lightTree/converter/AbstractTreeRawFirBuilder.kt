@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.lightTree.converter
 
+import org.jetbrains.kotlin.BasicElementTypeId
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.NO_ID
 import org.jetbrains.kotlin.fir.FirElement
@@ -201,7 +202,7 @@ abstract class AbstractTreeRawFirBuilder<Node : Any, Type : Any>(
     companion object {
         val ignoredTokensId: HashSet<Int> = hashSetOf(
             KtTokenId.EOL_COMMENT, KtTokenId.BLOCK_COMMENT, KtTokenId.DOC_COMMENT, KtTokenId.SHEBANG_COMMENT,
-            KtTokenId.WHITE_SPACE, KtTokenId.SEMICOLON, NO_ID,
+            BasicElementTypeId.WHITE_SPACE, KtTokenId.SEMICOLON, NO_ID,
         )
     }
 }

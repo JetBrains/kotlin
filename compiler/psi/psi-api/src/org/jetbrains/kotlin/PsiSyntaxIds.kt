@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin
 
+import com.intellij.psi.TokenType
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.psi.KtImplementationDetail
@@ -12,8 +13,8 @@ import org.jetbrains.kotlin.psi.KtImplementationDetail
 /**
  * @receiver A Kotlin element type
  * @return The ID from `syntax.common` that is consistent across all frontends (PSI/LightTree and KMP).
- * Only Kotlin tokens ([KtTokenId]), node types declared in [KtNodeTypeId], [org.jetbrains.kotlin.lexer.KtTokens.DOC_COMMENT]
- * and [org.jetbrains.kotlin.lexer.KtTokens.WHITE_SPACE] are mapped.
+ * Only Kotlin tokens ([KtTokenId]), node types declared in [KtNodeTypeId], [org.jetbrains.kotlin.lexer.KtTokens.DOC_COMMENT],
+ * and the basic element types [TokenType.WHITE_SPACE], [TokenType.BAD_CHARACTER] and [TokenType.ERROR_ELEMENT] are mapped.
  * For other element types (e.g., KDoc element types or non-Kotlin ones), the result is [NO_ID].
  */
 @KtImplementationDetail
@@ -43,10 +44,15 @@ private val indexToId: IntArray = run {
             maxIndex = it
         }
     }
-    org.jetbrains.kotlin.lexer.KtTokens.WHITE_SPACE.index.let {
-        indexToIdMap[it] = KtTokenId.WHITE_SPACE
-        if (it > maxIndex) {
-            maxIndex = it
+    listOf(
+        TokenType.WHITE_SPACE to BasicElementTypeId.WHITE_SPACE,
+        TokenType.BAD_CHARACTER to BasicElementTypeId.BAD_CHARACTER,
+        TokenType.ERROR_ELEMENT to BasicElementTypeId.ERROR_ELEMENT,
+    ).forEach { [elementType, basicId] ->
+        val index = elementType.index
+        indexToIdMap[index] = basicId
+        if (index > maxIndex) {
+            maxIndex = index
         }
     }
 

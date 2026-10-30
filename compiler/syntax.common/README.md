@@ -15,6 +15,7 @@ The module is part of getting rid of the IntelliJ platform dependency in the com
 
 The module holds the list of all syntax element identifiers, which are consistent across all three frontends:
 
+* `BasicElementTypeId`
 * `KtTokenId`
 * `KtNodeTypeId`
 * `KDocTokenId`
@@ -54,7 +55,7 @@ frontend, so that the light tree-based utilities and FIR can work with any tree:
 ## Rules for identifiers
 
 * IDs are contiguous and start from `NO_ID` (`0`). The first ID of each object continues the last ID of the previous
-  one (`KtTokenId` → `KtNodeTypeId` → `KDocTokenId` → `KDocNodeTypeId`). Remember to update the first constant of the next
+  one (`BasicElementTypeId` → `KtTokenId` → `KtNodeTypeId` → `KDocTokenId` → `KDocNodeTypeId`). Remember to update the first constant of the next
   object after adding a new identifier.
 * Every identifier must be unique.
 * Element types with the same identifier must represent the same syntax element in all frontends.
