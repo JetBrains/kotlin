@@ -13,8 +13,10 @@ import org.jetbrains.kotlin.gradle.targets.js.internal.jsToolingProject
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import org.jetbrains.kotlin.gradle.targets.web.yarn.BaseYarnRootExtension
 
+@ObsoleteNpmDependencyModel
 abstract class WasmYarnRootExtension internal constructor(
     project: Project,
     nodeJsRoot: WasmNodeJsRootExtension,

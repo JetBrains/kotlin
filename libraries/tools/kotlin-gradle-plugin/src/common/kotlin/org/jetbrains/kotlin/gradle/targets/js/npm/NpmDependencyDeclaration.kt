@@ -10,9 +10,11 @@ package org.jetbrains.kotlin.gradle.targets.js.npm
 import org.gradle.api.tasks.Input
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.npm.KotlinNpmDependency
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import java.io.Serializable
 
 @InternalKotlinGradlePluginApi
+@ObsoleteNpmDependencyModel
 data class NpmDependencyDeclaration(
     @Input
     @Suppress("DEPRECATION")
@@ -24,9 +26,11 @@ data class NpmDependencyDeclaration(
 ) : Serializable
 
 @InternalKotlinGradlePluginApi
+@ObsoleteNpmDependencyModel
 fun NpmDependencyDeclaration.uniqueRepresentation() =
     "$scope $name:$version"
 
+@ObsoleteNpmDependencyModel
 internal fun NpmDependencyDeprecated.toNpmDependencyDeclaration(): NpmDependencyDeclaration =
     NpmDependencyDeclaration(
         scope = this.scope,
@@ -34,6 +38,7 @@ internal fun NpmDependencyDeprecated.toNpmDependencyDeclaration(): NpmDependency
         version = this.version,
     )
 
+@ObsoleteNpmDependencyModel
 internal fun KotlinNpmDependency.toNpmDependencyDeclaration(): NpmDependencyDeclaration =
     NpmDependencyDeclaration(
         scope = this.scope.toDeprecatedScope(),
@@ -41,6 +46,7 @@ internal fun KotlinNpmDependency.toNpmDependencyDeclaration(): NpmDependencyDecl
         version = this.version,
     )
 
+@ObsoleteNpmDependencyModel
 internal fun KotlinNpmDependency.Scope.toDeprecatedScope(): NpmDependencyScopeDeprecated =
     when (this) {
         KotlinNpmDependency.Scope.NORMAL -> NpmDependencyScopeDeprecated.NORMAL

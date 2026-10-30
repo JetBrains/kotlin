@@ -10,12 +10,14 @@ import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.file.FileTree
 import org.jetbrains.kotlin.gradle.targets.js.ir.KLIB_TYPE
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import java.io.File
 import kotlin.io.path.name
 
 /**
  * Creates fake NodeJS module directory from given Gradle `dependency`.
  */
+@ObsoleteNpmDependencyModel
 internal class GradleNodeModuleBuilder(
     val fs: FileSystemOperations,
     val archiveOperations: ArchiveOperations,

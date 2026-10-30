@@ -10,9 +10,11 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.work.DisableCachingByDefault
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import org.jetbrains.kotlin.gradle.utils.contentEqualsIgnoringLineEndings
 
 @DisableCachingByDefault
+@ObsoleteNpmDependencyModel
 abstract class LockStoreTask : LockCopyTask() {
     @get:Input
     abstract val lockFileMismatchReport: Property<LockFileMismatchReport>

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.targets.js.NpmPackageVersionInternal
 import org.jetbrains.kotlin.gradle.targets.js.npm.NodeJsEnvironmentTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.loadPropertyFromResources
 import org.jetbrains.kotlin.gradle.utils.use
@@ -38,6 +39,7 @@ import java.nio.file.StandardOpenOption
  *
  */
 @DisableCachingByDefault
+@ObsoleteNpmDependencyModel
 abstract class KotlinToolingSetupTask
 internal constructor() :
     DefaultTask(),

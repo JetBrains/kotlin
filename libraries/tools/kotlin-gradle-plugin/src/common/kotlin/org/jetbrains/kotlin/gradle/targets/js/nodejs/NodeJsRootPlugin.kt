@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.NpmExtension
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.CommonNodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.NodeJsRootPluginApplier
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import org.jetbrains.kotlin.gradle.utils.castIsolatedKotlinPluginClassLoaderAware
 
 /**
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.gradle.utils.castIsolatedKotlinPluginClassLoaderAwar
  * - Managing root-level configurations for Node.js and dependency resolution.
  * - Setting up shared resources such as lock files and task groups.
  */
+@ObsoleteNpmDependencyModel
 abstract class NodeJsRootPlugin internal constructor() : CommonNodeJsRootPlugin {
 
     override fun apply(target: Project) {

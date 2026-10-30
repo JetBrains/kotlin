@@ -10,9 +10,11 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.internal.hash.FileHasher
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.targets.js.npm.UsesGradleNodeModulesCache
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import javax.inject.Inject
 
 @DisableCachingByDefault
+@ObsoleteNpmDependencyModel
 abstract class KotlinNpmCachesSetup :
     DefaultTask(),
     UsesGradleNodeModulesCache {

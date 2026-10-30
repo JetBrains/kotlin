@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.gradle.targets.js.yarn
 import org.gradle.api.model.ObjectFactory
 import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApiExecution
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 
+@ObsoleteNpmDependencyModel
 class Yarn internal constructor(
     execOps: ExecOperations,
     objects: ObjectFactory,

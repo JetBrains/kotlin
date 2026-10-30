@@ -16,10 +16,12 @@ import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import java.io.File
 import javax.inject.Inject
 
 @DisableCachingByDefault
+@ObsoleteNpmDependencyModel
 abstract class LockCopyTask : DefaultTask() {
 
     @get:NormalizeLineEndings
@@ -82,6 +84,7 @@ abstract class LockCopyTask : DefaultTask() {
     }
 }
 
+@ObsoleteNpmDependencyModel
 enum class LockFileMismatchReport {
     NONE,
     WARNING,

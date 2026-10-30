@@ -9,12 +9,14 @@ import org.gradle.api.tasks.Internal
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.targets.js.AbstractSetupTask
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import org.jetbrains.kotlin.gradle.targets.web.yarn.BaseYarnRootEnvSpec
 import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.File
 import javax.inject.Inject
 
 @DisableCachingByDefault
+@ObsoleteNpmDependencyModel
 abstract class YarnSetupTask @Inject constructor(
     settings: BaseYarnRootEnvSpec
 ) : AbstractSetupTask<YarnEnv, BaseYarnRootEnvSpec>(settings) {

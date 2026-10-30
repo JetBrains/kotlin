@@ -11,9 +11,11 @@ import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockFileMismatchReport
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockStoreTask
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import java.io.File
 
 @DisableCachingByDefault
+@ObsoleteNpmDependencyModel
 abstract class YarnLockCopyTask : LockCopyTask()
 
 /**
@@ -25,6 +27,7 @@ abstract class YarnLockCopyTask : LockCopyTask()
  * See https://kotl.in/js-project-setup/version-locking
  */
 @DisableCachingByDefault
+@ObsoleteNpmDependencyModel
 abstract class YarnLockUpgradeTask internal constructor() : YarnLockCopyTask() {
 
     override fun copy() {
@@ -56,6 +59,7 @@ abstract class YarnLockUpgradeTask internal constructor() : YarnLockCopyTask() {
  * See https://kotl.in/js-project-setup/version-locking
  */
 @DisableCachingByDefault
+@ObsoleteNpmDependencyModel
 abstract class YarnLockStoreTask : LockStoreTask() {
     @get:Internal
     val yarnLockMismatchReport: Provider<YarnLockMismatchReport>
@@ -89,6 +93,7 @@ private fun isEmptyYarnLock(file: File?): Boolean =
                 lines.all { it.startsWith("#") || it.isBlank() }
             }
 
+@ObsoleteNpmDependencyModel
 enum class YarnLockMismatchReport {
     NONE,
     WARNING,

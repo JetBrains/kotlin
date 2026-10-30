@@ -107,6 +107,15 @@ configurations.embedded.configure {
     excludeGradleCommonDependencies()
 }
 
+// gradle-public-api pins org.jetbrains:annotations with `strictly`, which would conflict with our own version.
+configurations.configureEach {
+    withDependencies {
+        filterIsInstance<ExternalModuleDependency>()
+            .filter { it.group == "org.gradle.experimental" && it.name == "gradle-public-api" }
+            .forEach { it.exclude(group = "org.jetbrains", module = "annotations") }
+    }
+}
+
 dependencies {
     commonApi(platform(project(":kotlin-gradle-plugins-bom")))
     commonApi(project(":kotlin-gradle-plugin-api"))
@@ -116,6 +125,7 @@ dependencies {
         commonCompileOnly(project(compilerRuntimeDependency)) { isTransitive = false }
     }
     commonCompileOnly(libs.guava)
+    commonCompileOnly(libs.org.jetbrains.annotations)
     commonCompileOnly(project(":daemon-common")) {
         isTransitive = false
     }

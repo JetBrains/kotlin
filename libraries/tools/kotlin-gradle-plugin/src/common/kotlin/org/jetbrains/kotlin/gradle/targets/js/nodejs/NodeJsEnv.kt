@@ -1,8 +1,10 @@
 package org.jetbrains.kotlin.gradle.targets.js.nodejs
 
 import org.jetbrains.kotlin.gradle.targets.js.AbstractEnv
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import java.io.File
 
+@ObsoleteNpmDependencyModel
 data class NodeJsEnv(
     override val download: Boolean,
     override val dir: File,

@@ -7,11 +7,13 @@ package org.jetbrains.kotlin.gradle.targets.js.yarn
 
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.JsPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import org.jetbrains.kotlin.gradle.targets.web.yarn.BaseYarnRootEnvSpec
 
 /**
  * Spec for Yarn - package manager to install NPM dependencies
  */
+@ObsoleteNpmDependencyModel
 abstract class YarnRootEnvSpec : BaseYarnRootEnvSpec() {
     companion object : HasPlatformDisambiguator by JsPlatformDisambiguator {
         val YARN: String

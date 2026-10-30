@@ -13,12 +13,14 @@ import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.NpmToolingEnv
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinToolingSetupTask
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import org.jetbrains.kotlin.gradle.utils.property
 
 /**
  * Extension for configuring Node.js-specific settings and tasks in a Kotlin/JS project,
  * specifically tailored towards supporting WebAssembly (Wasm) runtime via Node.js.
  */
+@ObsoleteNpmDependencyModel
 abstract class WasmNodeJsRootExtension internal constructor(
     project: Project,
     rootDir: String,

@@ -21,9 +21,11 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinRootNpmResoluti
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinCompilationNpmResolver
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinProjectNpmResolver
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinRootNpmResolver
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
 
+@ObsoleteNpmDependencyModel
 internal interface UsesKotlinNpmResolutionManager : Task {
     @get:Internal
     val npmResolutionManager: Property<KotlinNpmResolutionManager>
@@ -54,6 +56,7 @@ internal interface UsesKotlinNpmResolutionManager : Task {
  * It provides [KotlinRootNpmResolution] into [KotlinNpmResolutionManager]
  * and since then it stores all information about resolution process in execution phase.
  */
+@ObsoleteNpmDependencyModel
 abstract class KotlinNpmResolutionManager : BuildService<KotlinNpmResolutionManager.Parameters> {
 
     interface Parameters : BuildServiceParameters {

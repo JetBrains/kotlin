@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.gradle.utils.withType
  * for the root Node.js project configuration.
  * @property singleNodeJsApply A function to apply per-project Node.js-specific configurations.
  */
+@ObsoleteNpmDependencyModel
 internal class NpmResolverPluginApplier(
     private val nodeJsRootApply: (Project) -> BaseNodeJsRootExtension,
     private val singleNodeJsApply: (Project) -> Unit,

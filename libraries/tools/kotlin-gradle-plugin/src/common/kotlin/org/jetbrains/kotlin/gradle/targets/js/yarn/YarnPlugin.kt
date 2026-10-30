@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin.Companion.kotl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import org.jetbrains.kotlin.gradle.targets.web.yarn.CommonYarnPlugin
 
 /**
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.gradle.targets.web.yarn.CommonYarnPlugin
  * The `YarnPlugin` applies configurations, tasks, and extensions necessary for managing
  * Yarn as a package manager within JS-targeted projects using Gradle.
  */
+@ObsoleteNpmDependencyModel
 open class YarnPlugin : CommonYarnPlugin {
     override fun apply(target: Project) {
         YarnPluginApplier(
