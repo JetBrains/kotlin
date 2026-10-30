@@ -54,12 +54,13 @@ class TypeResolutionConfiguration private constructor(
     val sealedClassForContextSensitiveResolution: FirRegularClassSymbol?,
     val lastCompanionBlockOwner: FirClass?,
 ) {
+    @OptIn(ExperimentalVersionOverloading::class)
     constructor(
         scopes: Iterable<FirScope>,
         containingClassDeclarations: List<FirClass>,
         useSiteFile: FirFile?,
         topContainer: FirDeclaration? = null,
-        lastCompanionBlockOwner: FirClass? = null,
+        @IntroducedAt("2.5.20") lastCompanionBlockOwner: FirClass? = null,
     ) : this(
         scopes,
         containingClassDeclarations,
