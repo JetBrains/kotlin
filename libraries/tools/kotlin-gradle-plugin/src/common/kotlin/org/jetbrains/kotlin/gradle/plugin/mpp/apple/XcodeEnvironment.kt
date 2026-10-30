@@ -49,6 +49,46 @@ internal class XcodeEnvironment(private val project: Project) {
     val builtProductsDir: File?
         get() = readEnvVariable("BUILT_PRODUCTS_DIR")?.let(::File)
 
+    val buildDir: File?
+        get() = readEnvVariable("BUILD_DIR")?.let(::File)
+
+    val effectivePlatformName: String?
+        get() = readEnvVariable("EFFECTIVE_PLATFORM_NAME")
+
+    /**
+     * Where Xcode's indexer expects `BUILT_PRODUCTS_DIR`. Since Xcode 13 indexing always uses the Debug configuration,
+     * so a framework built for another configuration is invisible to code completion unless it is reachable from here
+     * (KT-76278).
+     *
+     * Xcode defines `BUILT_PRODUCTS_DIR` as `$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)`; the editor keeps
+     * a second copy under `<DerivedData>/Index.noindex/Build/Products`. [builtProductsDir] itself is excluded, the regular
+     * symbolic link already covers it.
+     */
+    val indexBuiltProductsDirs: List<File>
+        get() {
+            // archives build into ArchiveIntermediates, which no indexer reads
+            if (action == Action.install) return emptyList()
+            val buildDir = buildDir ?: return emptyList()
+            val configuration = readEnvVariable("CONFIGURATION") ?: return emptyList()
+            val effectivePlatformName = effectivePlatformName ?: return emptyList()
+            val builtProductsDir = builtProductsDir ?: return emptyList()
+
+            // a project overriding CONFIGURATION_BUILD_DIR breaks the formula, and with it our guess where the indexer looks
+            if (!builtProductsDir.isSameDirectory(buildDir.resolve("$configuration$effectivePlatformName"))) return emptyList()
+
+            val debugProducts = buildDir.resolve("Debug$effectivePlatformName")
+            val candidates = mutableListOf(debugProducts)
+            // <DerivedData>/Build/Products -> <DerivedData>/Index.noindex/Build/Products
+            val derivedData = buildDir.takeIf { it.name == "Products" }?.parentFile?.takeIf { it.name == "Build" }?.parentFile
+            if (derivedData != null) {
+                candidates += derivedData.resolve("Index.noindex/Build/Products").resolve(debugProducts.name)
+            }
+            return candidates.filterNot { it.isSameDirectory(builtProductsDir) }
+        }
+
+    // the default Apple file system is case-insensitive, so `debug-iphoneos` and `Debug-iphoneos` are one directory
+    private fun File.isSameDirectory(other: File): Boolean = normalize().path.equals(other.normalize().path, ignoreCase = true)
+
     val embeddedFrameworksDir: File?
         get() {
             val xcodeTargetBuildDir = readEnvVariable("TARGET_BUILD_DIR") ?: return null
@@ -103,6 +143,7 @@ internal class XcodeEnvironment(private val project: Project) {
           targets=$targets
           frameworkSearchDir=$frameworkSearchDir
           builtProductDir=$builtProductsDir
+          indexBuiltProductsDirs=$indexBuiltProductsDirs
           embeddedFrameworksDir=$embeddedFrameworksDir
           sign=$sign
           userScriptSandboxingEnabled=$userScriptSandboxingEnabled

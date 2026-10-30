@@ -17,6 +17,7 @@ import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 import java.nio.file.attribute.PosixFilePermission
 import kotlin.io.path.*
+import kotlin.test.assertEquals
 
 
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
@@ -88,6 +89,85 @@ class AppleFrameworkIT : KGPBaseTest() {
                 assertFileInProjectNotExists("shared/build/builtProductsDir/withoutSymbolicLink.framework")
                 assertDirectoryInProjectExists("shared/build/xcode-frameworks/debug/iphoneos123/withoutSymbolicLink.framework")
                 assertDirectoryInProjectExists("shared/build/xcode-frameworks/debug/iphoneos123/withoutSymbolicLink.framework.dSYM")
+            }
+        }
+    }
+
+    @DisplayName("KT-76278: framework is linked into the Debug products dir for indexing")
+    @OptIn(EnvironmentalVariablesOverride::class)
+    @GradleTest
+    fun shouldLinkAppleFrameworkForXcodeIndexing(
+        gradleVersion: GradleVersion,
+    ) {
+        nativeProject(
+            "sharedAppleFramework",
+            gradleVersion,
+        ) {
+            val buildDir = projectPath.resolve("shared/build/dd/Build/Products")
+            val environmentVariables = EnvironmentalVariables(
+                "CONFIGURATION" to "Release",
+                "SDK_NAME" to "iphoneos123",
+                "ARCHS" to "arm64",
+                "TARGET_BUILD_DIR" to "no use",
+                "FRAMEWORKS_FOLDER_PATH" to "no use",
+                "BUILD_DIR" to buildDir.toString(),
+                "EFFECTIVE_PLATFORM_NAME" to "-iphoneos",
+                "BUILT_PRODUCTS_DIR" to buildDir.resolve("Release-iphoneos").toString(),
+            )
+            val tasks = arrayOf(
+                "assembleReleaseAppleFrameworkForXcodeIosArm64",
+                "symbolicLinkToAssembleReleaseAppleFrameworkForXcodeIosArm64",
+            )
+
+            build(*tasks, environmentVariables = environmentVariables) {
+                assertTasksExecuted(":shared:symbolicLinkToAssembleReleaseAppleFrameworkForXcodeIosArm64")
+                assertSymlinkInProjectPointsToProjectPath(
+                    "shared/build/dd/Build/Products/Release-iphoneos/sdk.framework",
+                    "shared/build/xcode-frameworks/Release/iphoneos123/sdk.framework",
+                )
+                // the indexer looks in the Debug folder
+                assertSymlinkInProjectPointsToProjectPath(
+                    "shared/build/dd/Build/Products/Debug-iphoneos/sdk.framework",
+                    "shared/build/xcode-frameworks/Release/iphoneos123/sdk.framework",
+                )
+                assertFileInProjectNotExists("shared/build/dd/Build/Products/Debug-iphoneos/sdk.framework.dSYM")
+                // marked like Xcode's own output, so Clean Build Folder removes it
+                val debugProductsDir = projectPath.resolve("shared/build/dd/Build/Products/Debug-iphoneos")
+                assertEquals(
+                    "true",
+                    ProcessBuilder("xattr", "-p", "com.apple.xcode.CreatedByBuildSystem", debugProductsDir.toString())
+                        .start().inputStream.bufferedReader().readText().trim(),
+                )
+                // the index arena is used when present, never created
+                assertFileInProjectNotExists("shared/build/dd/Index.noindex")
+            }
+
+            projectPath.resolve("shared/build/dd/Index.noindex/Build/Products").createDirectories()
+
+            build(*tasks, environmentVariables = environmentVariables) {
+                assertTasksExecuted(":shared:symbolicLinkToAssembleReleaseAppleFrameworkForXcodeIosArm64")
+                assertSymlinkInProjectPointsToProjectPath(
+                    "shared/build/dd/Index.noindex/Build/Products/Debug-iphoneos/sdk.framework",
+                    "shared/build/xcode-frameworks/Release/iphoneos123/sdk.framework",
+                )
+            }
+
+            build(*tasks, environmentVariables = environmentVariables) {
+                assertTasksUpToDate(":shared:symbolicLinkToAssembleReleaseAppleFrameworkForXcodeIosArm64")
+            }
+
+            build("clean")
+
+            build(
+                *tasks,
+                "-Pkotlin.native.createSymbolicLinkToFrameworkForXcodeIndexing=false",
+                environmentVariables = environmentVariables,
+            ) {
+                assertSymlinkInProjectPointsToProjectPath(
+                    "shared/build/dd/Build/Products/Release-iphoneos/sdk.framework",
+                    "shared/build/xcode-frameworks/Release/iphoneos123/sdk.framework",
+                )
+                assertFileInProjectNotExists("shared/build/dd/Build/Products/Debug-iphoneos")
             }
         }
     }

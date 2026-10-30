@@ -552,6 +552,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val appleCreateSymbolicLinkToFrameworkInBuiltProductsDir: Boolean
         get() = booleanProperty(PropertyNames.KOTLIN_APPLE_CREATE_SYMBOLIC_LINK_TO_FRAMEWORK_IN_BUILT_PRODUCTS_DIR) ?: true
 
+    val createSymbolicLinkToFrameworkForXcodeIndexing: Boolean
+        get() = booleanProperty(PropertyNames.KOTLIN_NATIVE_CREATE_SYMBOLIC_LINK_TO_FRAMEWORK_FOR_XCODE_INDEXING) ?: true
+
     val appleCopyDsymDuringArchiving: Boolean
         get() = booleanProperty(PropertyNames.KOTLIN_APPLE_COPY_DSYM_DURING_ARCHIVING) ?: true
 
@@ -986,6 +989,8 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_PROJECT_PERSISTENT_DIR_GRADLE_DISABLE_WRITE = property("kotlin.project.persistent.dir.gradle.disableWrite")
         val KOTLIN_APPLE_CREATE_SYMBOLIC_LINK_TO_FRAMEWORK_IN_BUILT_PRODUCTS_DIR =
             property("kotlin.apple.createSymbolicLinkToFrameworkInBuiltProductsDir")
+        val KOTLIN_NATIVE_CREATE_SYMBOLIC_LINK_TO_FRAMEWORK_FOR_XCODE_INDEXING =
+            property("kotlin.native.createSymbolicLinkToFrameworkForXcodeIndexing")
         val KOTLIN_APPLE_COPY_DSYM_DURING_ARCHIVING = property("kotlin.apple.copyDsymDuringArchiving")
         val KOTLIN_APPLE_XCODE_COMPATIBILITY_NOWARN = property("kotlin.apple.xcodeCompatibility.nowarn")
         val KOTLIN_NATIVE_COCOAPODS_SWIFTPM_MIGRATION_NOWARN = property("kotlin.native.cocoapods.swiftpmMigration.nowarn")

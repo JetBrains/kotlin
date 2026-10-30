@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.internal.project.ProjectInternal
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.CopyDsymDuringArchiving
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.FrameworkCopy
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.SymbolicLinkToFrameworkTask
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.gradle.util.assertDependsOn
 import org.jetbrains.kotlin.gradle.util.assertIsInstance
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
+import org.jetbrains.kotlin.gradle.util.propertiesExtension
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.jupiter.api.Assumptions
@@ -217,6 +219,135 @@ class EmbedAndSignTaskTests {
     }
 
     @Test
+    fun `symbolic link task - index directories - when building non-Debug configuration`() {
+        val project = embedAndSignProjectWithUniversalTargetCombination(
+            archs = "arm64",
+            configuration = "Release",
+            buildDirectory = "/dd/Build/Products",
+            effectivePlatformName = "-iphonesimulator",
+            builtProductsDirectory = "/dd/Build/Products/Release-iphonesimulator",
+        ).evaluate()
+
+        val symbolicLinkTask = assertIsInstance<SymbolicLinkToFrameworkTask>(
+            project.tasks.getByName("symbolicLinkToAssembleReleaseAppleFrameworkForXcodeIosSimulatorArm64")
+        )
+
+        assertEquals(
+            listOf(
+                File("/dd/Build/Products/Debug-iphonesimulator"),
+                File("/dd/Index.noindex/Build/Products/Debug-iphonesimulator"),
+            ),
+            symbolicLinkTask.indexBuiltProductsDirectories.get(),
+        )
+    }
+
+    @Test
+    fun `symbolic link task - index directories - when building Debug configuration`() {
+        val project = embedAndSignProjectWithUniversalTargetCombination(
+            archs = "arm64",
+            buildDirectory = "/dd/Build/Products",
+            effectivePlatformName = "-iphonesimulator",
+            builtProductsDirectory = "/dd/Build/Products/Debug-iphonesimulator",
+        ).evaluate()
+
+        val symbolicLinkTask = assertIsInstance<SymbolicLinkToFrameworkTask>(
+            project.tasks.getByName("symbolicLinkToAssembleDebugAppleFrameworkForXcodeIosSimulatorArm64")
+        )
+
+        assertEquals(
+            listOf(File("/dd/Index.noindex/Build/Products/Debug-iphonesimulator")),
+            symbolicLinkTask.indexBuiltProductsDirectories.get(),
+        )
+    }
+
+    @Test
+    fun `symbolic link task - index directories - when BUILD_DIR is outside DerivedData`() {
+        val project = embedAndSignProjectWithUniversalTargetCombination(
+            archs = "arm64",
+            configuration = "Release",
+            buildDirectory = "/custom/out",
+            effectivePlatformName = "-iphonesimulator",
+            builtProductsDirectory = "/custom/out/Release-iphonesimulator",
+        ).evaluate()
+
+        val symbolicLinkTask = assertIsInstance<SymbolicLinkToFrameworkTask>(
+            project.tasks.getByName("symbolicLinkToAssembleReleaseAppleFrameworkForXcodeIosSimulatorArm64")
+        )
+
+        assertEquals(
+            listOf(File("/custom/out/Debug-iphonesimulator")),
+            symbolicLinkTask.indexBuiltProductsDirectories.get(),
+        )
+    }
+
+    @Test
+    fun `symbolic link task - index directories - when BUILD_DIR is unknown`() {
+        val project = embedAndSignProjectWithUniversalTargetCombination(
+            archs = "arm64",
+            configuration = "Release",
+        ).evaluate()
+
+        val symbolicLinkTask = assertIsInstance<SymbolicLinkToFrameworkTask>(
+            project.tasks.getByName("symbolicLinkToAssembleReleaseAppleFrameworkForXcodeIosSimulatorArm64")
+        )
+
+        assertEquals(emptyList(), symbolicLinkTask.indexBuiltProductsDirectories.get())
+    }
+
+    @Test
+    fun `symbolic link task - index directories - when disabled by property`() {
+        val project = embedAndSignProjectWithUniversalTargetCombination(
+            archs = "arm64",
+            configuration = "Release",
+            buildDirectory = "/dd/Build/Products",
+            effectivePlatformName = "-iphonesimulator",
+            builtProductsDirectory = "/dd/Build/Products/Release-iphonesimulator",
+            createSymbolicLinkForXcodeIndexing = false,
+        ).evaluate()
+
+        val symbolicLinkTask = assertIsInstance<SymbolicLinkToFrameworkTask>(
+            project.tasks.getByName("symbolicLinkToAssembleReleaseAppleFrameworkForXcodeIosSimulatorArm64")
+        )
+
+        assertEquals(emptyList(), symbolicLinkTask.indexBuiltProductsDirectories.get())
+    }
+
+    @Test
+    fun `symbolic link task - index directories - when archiving`() {
+        val project = embedAndSignProjectWithUniversalTargetCombination(
+            archs = "arm64",
+            configuration = "Release",
+            buildDirectory = "/dd/Build/Products",
+            effectivePlatformName = "-iphonesimulator",
+            builtProductsDirectory = "/dd/Build/Products/Release-iphonesimulator",
+            action = "install",
+        ).evaluate()
+
+        val symbolicLinkTask = assertIsInstance<SymbolicLinkToFrameworkTask>(
+            project.tasks.getByName("symbolicLinkToAssembleReleaseAppleFrameworkForXcodeIosSimulatorArm64")
+        )
+
+        assertEquals(emptyList(), symbolicLinkTask.indexBuiltProductsDirectories.get())
+    }
+
+    @Test
+    fun `symbolic link task - index directories - when CONFIGURATION_BUILD_DIR is overridden`() {
+        val project = embedAndSignProjectWithUniversalTargetCombination(
+            archs = "arm64",
+            configuration = "Release",
+            buildDirectory = "/dd/Build/Products",
+            effectivePlatformName = "-iphonesimulator",
+            builtProductsDirectory = "/custom/out/Release-iphonesimulator",
+        ).evaluate()
+
+        val symbolicLinkTask = assertIsInstance<SymbolicLinkToFrameworkTask>(
+            project.tasks.getByName("symbolicLinkToAssembleReleaseAppleFrameworkForXcodeIosSimulatorArm64")
+        )
+
+        assertEquals(emptyList(), symbolicLinkTask.indexBuiltProductsDirectories.get())
+    }
+
+    @Test
     fun `dward dsym copy task - is created disabled by default`() {
         val project = embedAndSignProjectWithUniversalTargetCombination(
             archs = "arm64",
@@ -303,21 +434,33 @@ class EmbedAndSignTaskTests {
 
     private fun embedAndSignProjectWithUniversalTargetCombination(
         archs: String,
+        configuration: String = "Debug",
         builtProductsDirectory: String = "/dd",
+        buildDirectory: String? = null,
+        effectivePlatformName: String? = null,
         dwarfDsymFolderPath: String? = null,
         isFrameworkStatic: Boolean? = null,
         action: String = "build",
+        createSymbolicLinkForXcodeIndexing: Boolean? = null,
     ): ProjectInternal {
         return buildProjectWithMPP(
             preApplyCode = {
                 applyEmbedAndSignEnvironment(
-                    configuration = "Debug",
+                    configuration = configuration,
                     sdk = "iphonesimulator",
                     archs = archs,
                     builtProductsDirectory = builtProductsDirectory,
+                    buildDirectory = buildDirectory,
+                    effectivePlatformName = effectivePlatformName,
                     dwarfDsymFolderPath = dwarfDsymFolderPath,
                     action = action,
                 )
+                createSymbolicLinkForXcodeIndexing?.let {
+                    propertiesExtension.set(
+                        PropertiesProvider.PropertyNames.KOTLIN_NATIVE_CREATE_SYMBOLIC_LINK_TO_FRAMEWORK_FOR_XCODE_INDEXING,
+                        it.toString(),
+                    )
+                }
             }
         ) {
             kotlin {
