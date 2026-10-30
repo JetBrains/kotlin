@@ -187,7 +187,12 @@ fun main(args: Array<String>) {
                     "diagnostics/tests",
                     excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
                     pattern = KT_OR_KTS.canFreezeIDE,
-                    excludeDirs = listOf("jvm", "headerMode")
+                    excludeDirs = listOf("headerMode", "jvm/duplicateJvmSignature", "jvm/exposedPrivate")
+                )
+                model(
+                    "diagnostics/tests/jvm/duplicateJvmSignature/javaInterop",
+                    excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
+                    pattern = KT_OR_KTS.canFreezeIDE,
                 )
                 model(
                     "diagnostics/testsWithStdLib",
