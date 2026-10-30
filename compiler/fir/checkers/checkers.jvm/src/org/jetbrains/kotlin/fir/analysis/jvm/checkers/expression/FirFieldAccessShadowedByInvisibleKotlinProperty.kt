@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirPropertyAccessEx
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JAVA_FIELD_SHADOWED_BY_KOTLIN_PROPERTY
 import org.jetbrains.kotlin.fir.declarations.isJavaOrEnhancement
+import org.jetbrains.kotlin.fir.declarations.staticScope
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.isEnabled
@@ -22,12 +23,14 @@ import org.jetbrains.kotlin.fir.isVisible
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
+import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.getProperties
 import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.visibilityChecker
+import org.jetbrains.kotlin.utils.findIsInstanceAnd
 
 object FirFieldAccessShadowedByInvisibleKotlinProperty : FirPropertyAccessExpressionChecker(MppCheckerKind.Platform) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -55,6 +58,7 @@ private fun checkFieldAccess(
     val dispatchReceiver = expression.dispatchReceiver ?: return
     checkClashWithInvisibleProperty(fieldSymbol, containingFile, dispatchReceiver, expression)
     checkClashWithCompanionProperty(fieldSymbol, expression)
+    checkClashWithCompanionBlockProperty(fieldSymbol, expression)
 }
 
 context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -93,13 +97,25 @@ private fun checkClashWithCompanionProperty(
 ) {
     val dispatchReceiverClass = expression.dispatchReceiver?.resolvedType?.toRegularClassSymbol() ?: return
     val companionClass = dispatchReceiverClass.resolvedCompanionObjectSymbol ?: return
-    val companionScope = companionClass.unsubstitutedScope()
-    val properties = companionScope.getProperties(fieldSymbol.name)
-    for (property in properties) {
-        if (property !is FirPropertySymbol) continue
-        if (property.hasBackingField) {
-            reporter.reportOn(expression.source, JAVA_FIELD_SHADOWED_BY_KOTLIN_PROPERTY, property)
-            break
-        }
-    }
+    checkClashWithPropertyInScope(fieldSymbol, companionClass.unsubstitutedScope(), expression)
+}
+
+context(context: CheckerContext, reporter: DiagnosticReporter)
+private fun checkClashWithCompanionBlockProperty(
+    fieldSymbol: FirFieldSymbol,
+    expression: FirQualifiedAccessExpression,
+) {
+    val dispatchReceiverClass = expression.dispatchReceiver?.resolvedType?.toRegularClassSymbol() ?: return
+    checkClashWithPropertyInScope(fieldSymbol, dispatchReceiverClass.staticScope(context) ?: return, expression)
+}
+
+context(context: CheckerContext, reporter: DiagnosticReporter)
+private fun checkClashWithPropertyInScope(
+    fieldSymbol: FirFieldSymbol,
+    scope: FirContainingNamesAwareScope,
+    expression: FirQualifiedAccessExpression,
+) {
+    scope.getProperties(fieldSymbol.name)
+        .findIsInstanceAnd<FirPropertySymbol> { it.hasBackingField }
+        ?.let { reporter.reportOn(expression.source, JAVA_FIELD_SHADOWED_BY_KOTLIN_PROPERTY, it) }
 }
