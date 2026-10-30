@@ -97,9 +97,12 @@ public typealias dataObjectWithPackage = main.DATA_OBJECT_WITH_PACKAGE
 public typealias deeper_closure_typealias = main.closure
 public typealias enumClass = main.ENUM
 public typealias generic = main.GENERIC_CLASS
+public typealias inheritanceCouple = main.INHERITANCE_COUPLE
 public typealias inheritanceSingleClass = main.INHERITANCE_SINGLE_CLASS
+public typealias inhertanceSingleProto = main.INHERITANCE_SINGLE_PROTO
 public typealias inlineClass = main.INLINE_CLASS
 public typealias inlineClassWithRef = main.INLINE_CLASS_WITH_REF
+public typealias innerInterface = main._OUTSIDE_PROTO_INSIDE_PROTO
 public typealias never = Swift.Never
 public typealias nullable_class = ExportedKotlinPackages.typealiases.Foo?
 public typealias nullable_primitive = Swift.Int32?
@@ -225,11 +228,37 @@ public final class GENERIC_CLASS: KotlinRuntime.KotlinBase {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
 }
+public final class INHERITANCE_COUPLE: main._OUTSIDE_PROTO_INSIDE_PROTO, main.OUTSIDE_PROTO, main.__OUTSIDE_PROTO {
+    public override init() {
+        let __kt = __root___INHERITANCE_COUPLE_init_allocate()
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { __root___INHERITANCE_COUPLE_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
+    }
+    package override init(
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
+        options: KotlinRuntime.KotlinBaseConstructionOptions
+    ) {
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+    }
+}
 public final class INHERITANCE_SINGLE_CLASS: main.OPEN_CLASS {
     public override init() {
         let __kt = __root___INHERITANCE_SINGLE_CLASS_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___INHERITANCE_SINGLE_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
+    }
+    package override init(
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
+        options: KotlinRuntime.KotlinBaseConstructionOptions
+    ) {
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+    }
+}
+public final class INHERITANCE_SINGLE_PROTO: main._OUTSIDE_PROTO_INSIDE_PROTO {
+    public override init() {
+        let __kt = __root___INHERITANCE_SINGLE_PROTO_init_allocate()
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { __root___INHERITANCE_SINGLE_PROTO_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
     package override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
@@ -403,6 +432,20 @@ open class SEALED: KotlinRuntime.KotlinBase {
         }
     }
 }
+open class _OUTSIDE_PROTO_INSIDE_PROTO: KotlinRuntime.KotlinBase {
+    public override init() {
+        precondition(Self.self != main._OUTSIDE_PROTO_INSIDE_PROTO.self, "main._OUTSIDE_PROTO_INSIDE_PROTO is an abstract class and cannot be instantiated directly")
+        let __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { OUTSIDE_PROTO_INSIDE_PROTO_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
+    }
+    package override init(
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
+        options: KotlinRuntime.KotlinBaseConstructionOptions
+    ) {
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+    }
+}
 public var block: main.closure {
     get {
         return {
@@ -442,6 +485,7 @@ public func produce_closure() -> main.closure {
 extension main.OUTSIDE_PROTO where Self : main.__OUTSIDE_PROTO {
 }
 extension main.OUTSIDE_PROTO {
+    public typealias INSIDE_PROTO = main._OUTSIDE_PROTO_INSIDE_PROTO
 }
 @_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: main.OUTSIDE_PROTO, main.__OUTSIDE_PROTO where Wrapped : main._OUTSIDE_PROTO {

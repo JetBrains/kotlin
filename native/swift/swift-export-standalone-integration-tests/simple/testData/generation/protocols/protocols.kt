@@ -72,8 +72,6 @@ fun ContainerProtocol.NestedProtocol.NestedClass.foo(): Unit { TODO() }
 fun SiblingProtocol.NestedClass.foo(): Unit { TODO() }
 fun ContainerProtocol.NestedProtocol.foo(): Unit { TODO() }
 
-// FIXME: See the commend above on ContainerProtocol.NestedClass
-
 class INHERITANCE_COUPLE : ContainerProtocol.NestedClass(), ContainerProtocol
 class INHERITANCE_SINGLE_PROTO : ContainerProtocol.NestedClass()
 

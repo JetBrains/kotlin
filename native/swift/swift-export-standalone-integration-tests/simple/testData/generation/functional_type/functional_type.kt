@@ -26,18 +26,14 @@ fun consume_block_with_string_id(block: (String) -> String): String = TODO()
 fun consume_block_with_uint_id(block: (UInt) -> UInt): UInt = TODO()
 fun consume_block_with_byte_id(block: (Byte) -> Byte): Byte = TODO()
 fun produce_block_with_byte_byte(): (Byte, Byte, Byte)-> Byte = TODO()
-// todo: crashes konan backend: Internal compiler error: doesn't correspond to any C type: kotlin.Unit
-// at convertBlockPtrToKotlinFunction<(Unit)->Byte>(block)
-// fun consume_block_with_Unit_id(block: (Unit) -> Byte): Byte = TODO()
+fun consume_block_with_Unit_id(block: (Unit) -> Byte): Byte = TODO()
 
 // MODULE: never_type
 // EXPORT_TO_SWIFT
 // FILE: never_type.kt
 
-// todo: support(currently code gen tries to dereference Nothing)
-// fun consume_block_with_never(block: (Nothing) -> Nothing): Nothing = TODO()
-// todo: support(as with functions - we can drop optional nothings from C representation)
-// fun consume_block_with_opt_never(block: (Int, Nothing?) -> Int): Nothing = TODO()
+fun consume_block_with_never(block: (Nothing) -> Nothing): Nothing = TODO()
+fun consume_block_with_opt_never(block: (Int, Nothing?) -> Int): Nothing = TODO()
 
 // MODULE: optional_closure
 // EXPORT_TO_SWIFT
@@ -63,8 +59,7 @@ fun consume_block_consuming_block(block: (()->Unit) -> Unit): Unit = TODO()
 // FILE: collections.kt
 
 fun consume_block_with_listRef_id(block: (List<Foo>) -> List<Foo>): List<Foo> = TODO()
-// todo: KT-75183 problem with settranslation, not with closures
-// fun consume_block_with_setRef_id(block: (Set<Foo>) -> Set<Foo>): Set<Foo> = TODO()
+fun consume_block_with_setRef_id(block: (Set<Foo>) -> Set<Foo>): Set<Foo> = TODO()
 fun consume_block_with_dictRef_id(block: (Map<String, Foo>) -> Map<String, Foo>): Map<String, Foo> = TODO()
 
 fun consume_block_with_list_id(block: (List<Int>) -> List<Int>): List<Int> = TODO()

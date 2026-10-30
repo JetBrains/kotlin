@@ -23,6 +23,11 @@ public func consume_block_with_list_id(
 ) -> [Swift.Int32] {
     return __root___consume_block_with_list_id__TypesOfArguments__U28Swift_Array_Swift_Int32_U29202D_U20Swift_Array_Swift_Int32___(Unmanaged.passRetained((block as (Swift.Array<Swift.Int32>) -> Swift.Array<Swift.Int32>) as AnyObject).toOpaque()) as! Swift.Array<Swift.Int32>
 }
+public func consume_block_with_setRef_id(
+    block: @escaping (Swift.Set<data.Foo>) -> Swift.Set<data.Foo>
+) -> Swift.Set<data.Foo> {
+    return __root___consume_block_with_setRef_id__TypesOfArguments__U28Swift_Set_data_Foo_U29202D_U20Swift_Set_data_Foo___(Unmanaged.passRetained((block as (Swift.Set<data.Foo>) -> Swift.Set<data.Foo>) as AnyObject).toOpaque()) as! Swift.Set<data.Foo>
+}
 public func consume_block_with_set_id(
     block: @escaping (Swift.Set<Swift.Int32>) -> Swift.Set<Swift.Int32>
 ) -> Swift.Set<Swift.Int32> {
@@ -56,4 +61,10 @@ package func collections_internal_functional_type_callee_SwiftU2EDictionaryU3CSw
 package func collections_internal_functional_type_callee_SwiftU2ESetU3CSwiftU2EInt32U3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Set_Swift_Int32___(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Any) -> Any {
     let _result: Swift.Set<Swift.Int32> = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (Swift.Set<Swift.Int32>) -> Swift.Set<Swift.Int32>)(_1 as! Swift.Set<Swift.Int32>)
     return Set(_result.map { it in NSNumber(value: it) })
+}
+
+@_cdecl("collections_internal_functional_type_callee_SwiftU2ESetU3CdataU2EFooU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Set_data_Foo___")
+package func collections_internal_functional_type_callee_SwiftU2ESetU3CdataU2EFooU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Set_data_Foo___(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Any) -> Any {
+    let _result: Swift.Set<data.Foo> = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (Swift.Set<data.Foo>) -> Swift.Set<data.Foo>)(_1 as! Swift.Set<data.Foo>)
+    return _result
 }

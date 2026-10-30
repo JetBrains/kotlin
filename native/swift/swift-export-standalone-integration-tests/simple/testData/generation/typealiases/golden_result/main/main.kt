@@ -7,7 +7,9 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(DATA_OBJECT_WITH_PACKAGE::class, "4main24DATA_OBJECT_WITH_PACKAGEC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(ENUM.INSIDE_ENUM::class, "4main4ENUMO11INSIDE_ENUMC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(GENERIC_CLASS::class, "4main13GENERIC_CLASSC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(INHERITANCE_COUPLE::class, "4main18INHERITANCE_COUPLEC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(INHERITANCE_SINGLE_CLASS::class, "4main24INHERITANCE_SINGLE_CLASSC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(INHERITANCE_SINGLE_PROTO::class, "4main24INHERITANCE_SINGLE_PROTOC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(INLINE_CLASS::class, "4main12INLINE_CLASSC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(INLINE_CLASS_WITH_REF::class, "4main21INLINE_CLASS_WITH_REFC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(OBJECT_WITH_CLASS_INHERITANCE::class, "4main29OBJECT_WITH_CLASS_INHERITANCEC")
@@ -17,6 +19,7 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(SEALED::class, "4main6SEALEDC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(SEALED.O::class, "4main6SEALEDC1OC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(OUTSIDE_PROTO::class, "_main_OUTSIDE_PROTO")
+@file:kotlin.native.internal.objc.BindClassToObjCName(OUTSIDE_PROTO.INSIDE_PROTO::class, "4main27_OUTSIDE_PROTO_INSIDE_PROTOC")
 
 import kotlin.native.internal.ImportedBridge
 import kotlinx.cinterop.*
@@ -171,6 +174,13 @@ public fun OBJECT_WITH_GENERIC_INHERITANCE_previousIndex(self: kotlin.native.int
     return _result
 }
 
+@ExportedBridge("OUTSIDE_PROTO_INSIDE_PROTO_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__", nonVirtualTargetMethod = "<init>")
+public fun OUTSIDE_PROTO_INSIDE_PROTO_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    kotlin.native.internal.initInstance(____kt, OUTSIDE_PROTO.INSIDE_PROTO())
+    return true
+}
+
 @ExportedBridge("SEALED_O_get")
 public fun SEALED_O_get(): kotlin.native.internal.NativePtr {
     val _result = SEALED.O
@@ -238,6 +248,19 @@ public fun __root___GENERIC_CLASS_init_initialize__TypesOfArguments__Swift_Unsaf
     return true
 }
 
+@ExportedBridge("__root___INHERITANCE_COUPLE_init_allocate")
+public fun __root___INHERITANCE_COUPLE_init_allocate(): kotlin.native.internal.NativePtr {
+    val _result = kotlin.native.internal.createUninitializedInstance<INHERITANCE_COUPLE>()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___INHERITANCE_COUPLE_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+public fun __root___INHERITANCE_COUPLE_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    kotlin.native.internal.initInstance(____kt, INHERITANCE_COUPLE())
+    return true
+}
+
 @ExportedBridge("__root___INHERITANCE_SINGLE_CLASS_init_allocate")
 public fun __root___INHERITANCE_SINGLE_CLASS_init_allocate(): kotlin.native.internal.NativePtr {
     val _result = kotlin.native.internal.createUninitializedInstance<INHERITANCE_SINGLE_CLASS>()
@@ -248,6 +271,19 @@ public fun __root___INHERITANCE_SINGLE_CLASS_init_allocate(): kotlin.native.inte
 public fun __root___INHERITANCE_SINGLE_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     kotlin.native.internal.initInstance(____kt, INHERITANCE_SINGLE_CLASS())
+    return true
+}
+
+@ExportedBridge("__root___INHERITANCE_SINGLE_PROTO_init_allocate")
+public fun __root___INHERITANCE_SINGLE_PROTO_init_allocate(): kotlin.native.internal.NativePtr {
+    val _result = kotlin.native.internal.createUninitializedInstance<INHERITANCE_SINGLE_PROTO>()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___INHERITANCE_SINGLE_PROTO_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+public fun __root___INHERITANCE_SINGLE_PROTO_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    kotlin.native.internal.initInstance(____kt, INHERITANCE_SINGLE_PROTO())
     return true
 }
 

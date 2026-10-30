@@ -15,6 +15,8 @@ _Bool Child_actuallyOverride__TypesOfArguments__Swift_Optional_Swift_Int32__over
 
 _Bool Child_contains__TypesOfArguments__Swift_Int32____reverse_swift(void * self, int32_t element);
 
+void * Child_functionTypeFunc__TypesOfArguments__U28overrides_ChildU29202D_U20overrides_Parent____reverse_swift(void * self, void * arg);
+
 NSArray<id> * Child_genericReturnTypeFunc__reverse_swift(void * self);
 
 _Bool Child_nonoverride__reverse_swift(void * self);
@@ -71,6 +73,8 @@ _Bool Parent_finalOverrideFunc__reverse_swift(void * self);
 
 _Bool Parent_finalOverrideHopFunc__reverse_swift(void * self);
 
+void * Parent_functionTypeFunc__TypesOfArguments__U28overrides_ChildU29202D_U20overrides_Parent____reverse_swift(void * self, void * arg);
+
 NSArray<id> * Parent_genericReturnTypeFunc__reverse_swift(void * self);
 
 _Bool Parent_hopFunc__reverse_swift(void * self);
@@ -90,6 +94,8 @@ _Bool Parent_overrideChainFunc__reverse_swift(void * self);
 int32_t Parent_primitiveTypeFunc__TypesOfArguments__Swift_Int32____reverse_swift(void * self, int32_t arg);
 
 int32_t Parent_primitiveTypeVar_get__reverse_swift(void * self);
+
+void * Parent_subtypeFunctionTypeFunc__TypesOfArguments__U28overrides_ChildU29202D_U20overrides_Parent____reverse_swift(void * self, void * arg);
 
 void * Parent_subtypeObjectFunc__TypesOfArguments__overrides_Child____reverse_swift(void * self, void * arg);
 
@@ -111,6 +117,8 @@ int32_t Parent_varToVar_get__reverse_swift(void * self);
 
 _Bool Parent_varToVar_set__TypesOfArguments__Swift_Int32____reverse_swift(void * self, int32_t newValue);
 
+void * overrides_internal_functional_type_callee_overridesU2EParent__TypesOfArguments__Swift_UnsafeMutableRawPointer_overrides_Child__(void * pointerToClosure, void * _1);
+
 _Bool AbstractBase_abstractFun1(void * self);
 
 _Bool AbstractBase_abstractFun2(void * self);
@@ -128,6 +136,10 @@ _Bool Child_contains__TypesOfArguments__Swift_Int32__(void * self, int32_t eleme
 _Bool Child_contains__TypesOfArguments__Swift_Int32___direct(void * self, int32_t element);
 
 _Bool Child_finalOverrideFunc(void * self);
+
+void * Child_functionTypeFunc__TypesOfArguments__U28overrides_ChildU29202D_U20overrides_Parent__(void * self, void * arg);
+
+void * Child_functionTypeFunc__TypesOfArguments__U28overrides_ChildU29202D_U20overrides_Parent___direct(void * self, void * arg);
 
 NSArray<id> * Child_genericReturnTypeFunc(void * self);
 
@@ -247,6 +259,10 @@ _Bool Parent_finalOverrideHopFunc(void * self);
 
 _Bool Parent_finalOverrideHopFunc_direct(void * self);
 
+void * Parent_functionTypeFunc__TypesOfArguments__U28overrides_ChildU29202D_U20overrides_Parent__(void * self, void * arg);
+
+void * Parent_functionTypeFunc__TypesOfArguments__U28overrides_ChildU29202D_U20overrides_Parent___direct(void * self, void * arg);
+
 NSArray<id> * Parent_genericReturnTypeFunc(void * self);
 
 NSArray<id> * Parent_genericReturnTypeFunc_direct(void * self);
@@ -286,6 +302,10 @@ int32_t Parent_primitiveTypeFunc__TypesOfArguments__Swift_Int32___direct(void * 
 int32_t Parent_primitiveTypeVar_get(void * self);
 
 int32_t Parent_primitiveTypeVar_get_direct(void * self);
+
+void * Parent_subtypeFunctionTypeFunc__TypesOfArguments__U28overrides_ChildU29202D_U20overrides_Parent__(void * self, void * arg);
+
+void * Parent_subtypeFunctionTypeFunc__TypesOfArguments__U28overrides_ChildU29202D_U20overrides_Parent___direct(void * self, void * arg);
 
 void * Parent_subtypeObjectFunc__TypesOfArguments__overrides_Child__(void * self, void * arg);
 
@@ -374,5 +394,7 @@ _Bool __root___RenamedInitDerived_init_initialize__TypesOfArguments__Swift_Unsaf
 void * __root___SameInitDerived_init_allocate();
 
 _Bool __root___SameInitDerived_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(void * __kt, int32_t a);
+
+void * overrides_internal_functional_type_caller_overridesU2EParent__TypesOfArguments__Swift_UnsafeMutableRawPointer_overrides_Child__(void * pointerToBlock, void * _1);
 
 NS_ASSUME_NONNULL_END
