@@ -239,10 +239,19 @@ internal abstract class CInteropCommonizerTask
         outputDirectory.deleteRecursively()
         if (cinteropsForTarget.isEmpty()) return
 
-        GradleCliCommonizer(
-            commonizerToolRunner.get(),
-            kotlinCompilerArgumentsLogLevel.get(),
-        ).commonizeLibraries(
+        val runner = commonizerToolRunner.get()
+        val compilerArgumentsLogLevel = kotlinCompilerArgumentsLogLevel.get()
+
+        CliCommonizer { arguments ->
+            runner.runToolWithWorkers(
+                KotlinNativeToolRunner.ToolArguments(
+                    shouldRunInProcessMode = false,
+                    compilerArgumentsLogLevel = compilerArgumentsLogLevel,
+                    arguments = arguments,
+                ),
+                taskPath = path,
+            )
+        }.commonizeLibraries(
             konanHome = konanHome.get(),
             outputTargets = group.targets,
             inputLibraries = cinteropsForTarget.map { it.libraryFile.get() }.filter { it.exists() }.toSet(),

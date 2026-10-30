@@ -51,7 +51,7 @@ private fun ObjectFactory.kotlinToolSpec(
     jvmArgs: Provider<List<String>>,
     konanPropertiesBuildService: Provider<KonanPropertiesBuildService>,
     kotlinNativeVersion: Provider<String>,
-) = KotlinNativeToolRunner.ToolSpec(
+) = ToolSpec(
     displayName = property("konanc"),
     optionalToolName = property("konanc"),
     mainClass = nativeMainClass,
