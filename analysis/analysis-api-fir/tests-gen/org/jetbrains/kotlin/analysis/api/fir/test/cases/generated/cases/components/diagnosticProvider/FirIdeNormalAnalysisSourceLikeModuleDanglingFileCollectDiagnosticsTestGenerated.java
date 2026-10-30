@@ -698,9 +698,33 @@ public class FirIdeNormalAnalysisSourceLikeModuleDanglingFileCollectDiagnosticsT
     }
 
     @Test
+    @TestMetadata("classRedeclarationKotlinKotlinKotlinCopyOfDanglingFile.kt")
+    public void testClassRedeclarationKotlinKotlinKotlinCopyOfDanglingFile() {
+      run("classRedeclarationKotlinKotlinKotlinCopyOfDanglingFile.kt");
+    }
+
+    @Test
+    @TestMetadata("classRedeclarationKotlinKotlinKotlinIgnoreSelf.kt")
+    public void testClassRedeclarationKotlinKotlinKotlinIgnoreSelf() {
+      run("classRedeclarationKotlinKotlinKotlinIgnoreSelf.kt");
+    }
+
+    @Test
     @TestMetadata("functionRedeclaration.kt")
     public void testFunctionRedeclaration() {
       run("functionRedeclaration.kt");
+    }
+
+    @Test
+    @TestMetadata("functionRedeclarationCopyOfDanglingFile.kt")
+    public void testFunctionRedeclarationCopyOfDanglingFile() {
+      run("functionRedeclarationCopyOfDanglingFile.kt");
+    }
+
+    @Test
+    @TestMetadata("functionRedeclarationIgnoreSelf.kt")
+    public void testFunctionRedeclarationIgnoreSelf() {
+      run("functionRedeclarationIgnoreSelf.kt");
     }
 
     @Test
