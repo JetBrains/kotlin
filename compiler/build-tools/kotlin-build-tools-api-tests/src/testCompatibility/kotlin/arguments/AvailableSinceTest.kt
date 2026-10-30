@@ -223,6 +223,11 @@ class AvailableSinceTest : BaseCompilationTest() {
                             @OptIn(ExperimentalCompilerArgument::class)
                             this[JvmSnapshotBasedIncrementalCompilationConfiguration.USE_FIR_RUNNER] = false
                         }
+                        @OptIn(ExperimentalCompilerArgument::class)
+                        trySet(JvmSnapshotBasedIncrementalCompilationConfiguration.ENABLE_ERROR_RECOVERY_ROUND.availableSinceVersion) {
+                            @OptIn(ExperimentalCompilerArgument::class)
+                            this[JvmSnapshotBasedIncrementalCompilationConfiguration.ENABLE_ERROR_RECOVERY_ROUND] = true
+                        }
                     }
             }
         }
