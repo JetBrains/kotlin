@@ -447,9 +447,10 @@ private fun FirClassLikeSymbol<*>.expandedClassWithConstructorsScope(): Pair<Fir
     expandedClassWithConstructorsScope(context.session, context.scopeSession, FirResolvePhase.STATUS)
 
 /**
- * Whether [conflicting] belongs to the module of [declaration], which is the use-site module.
+ * Whether [declaration] and [conflicting] can conflict as declarations of the same module: [conflicting] belongs to the module of
+ * [declaration], which is the use-site module, or [FirConflictsFromDifferentModuleExtension] treats its module as such.
  */
-private fun FirSession.areFromSameModule(declaration: FirBasedSymbol<*>, conflicting: FirBasedSymbol<*>): Boolean =
+private fun FirSession.canConflictAsSameModule(declaration: FirBasedSymbol<*>, conflicting: FirBasedSymbol<*>): Boolean =
     declaration.moduleData == conflicting.moduleData ||
             conflictsFromDifferentModuleExtension?.canConflictWithDeclarationsOfModule(conflicting.moduleData) == true
 
@@ -474,7 +475,7 @@ private fun FirDeclarationCollector<FirBasedSymbol<*>>.collectTopLevelConflict(
     conflictingSymbol.lazyResolveToPhase(FirResolvePhase.STATUS)
     if (conflictingSymbol == declaration) return
     if (
-        !session.areFromSameModule(declaration, conflictingSymbol) &&
+        !session.canConflictAsSameModule(declaration, conflictingSymbol) &&
         !shouldCheckForMultiplatformRedeclaration(declaration, conflictingSymbol)
     ) return
     val actualConflictingPresentation = conflictingPresentation ?: FirRedeclarationPresenter.represent(conflictingSymbol)
@@ -544,7 +545,7 @@ private fun FirDeclarationCollector<*>.getConflictState(
     declaration: FirBasedSymbol<*>,
     conflicting: FirBasedSymbol<*>,
 ): ConflictState {
-    if (isAtLeastOneExpect(declaration, conflicting) && !session.areFromSameModule(declaration, conflicting)) {
+    if (isAtLeastOneExpect(declaration, conflicting) && !session.canConflictAsSameModule(declaration, conflicting)) {
         return ConflictState.NoConflict
     }
 
