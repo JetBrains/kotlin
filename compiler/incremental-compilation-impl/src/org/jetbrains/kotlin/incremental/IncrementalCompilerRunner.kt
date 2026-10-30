@@ -637,7 +637,6 @@ abstract class IncrementalCompilerRunner<
                 // todo: feels dirty, can this be refactored?
                 val additionalDirtyFiles = additionalDirtyFiles(caches, generatedFiles, services, dirtySources)
                 if (additionalDirtyFiles.isNotEmpty()) {
-                    reporter.reportMarkDirty(additionalDirtyFiles, ScopeExpansionReason.SHARED_CLASS_NAME)
                     dirtySources.addAll(additionalDirtyFiles)
                     generatedFiles.forEach { transaction.deleteFile(it.outputFile.toPath()) }
                     continue
