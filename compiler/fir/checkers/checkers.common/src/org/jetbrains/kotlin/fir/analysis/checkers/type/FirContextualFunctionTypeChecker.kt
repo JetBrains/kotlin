@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.type
 
+import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -39,5 +40,5 @@ object FirContextualFunctionTypeChecker : FirResolvedTypeRefChecker(MppCheckerKi
         source.requireFeatureSupport(LanguageFeature.ContextParameters)
     }
 
-    private val valueParameterElementSet = setOf(KtNodeTypes.VALUE_PARAMETER)
+    private val valueParameterElementSet = TokenSet.create(KtNodeTypes.VALUE_PARAMETER)
 }

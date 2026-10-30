@@ -12,7 +12,7 @@ import com.intellij.psi.impl.source.tree.LazyParseablePsiElement
 import com.intellij.psi.impl.source.tree.TreeUtil
 import com.intellij.psi.search.PsiSearchScopeUtil
 import com.intellij.psi.search.SearchScope
-import com.intellij.psi.tree.IElementType
+import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.elementType
 import org.jetbrains.kotlin.KtNodeTypes
@@ -398,7 +398,7 @@ fun PsiChildRange.trimWhiteSpaces(): PsiChildRange {
 /**
  * See [unwrap()][org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilder.unwrap]
  */
-val UNWRAPPABLE_TOKEN_TYPES: Set<IElementType> = setOf(PARENTHESIZED, LABELED_EXPRESSION, ANNOTATED_EXPRESSION)
+val UNWRAPPABLE_TOKEN_TYPES: TokenSet = TokenSet.create(PARENTHESIZED, LABELED_EXPRESSION, ANNOTATED_EXPRESSION)
 
 /**
  * Returns the operand this operation applies to, but only when that operand is wrapped in parentheses, a label, or annotations; returns
