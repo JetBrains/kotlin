@@ -35,7 +35,6 @@ object FirJvmInlineTargetQualifiedAccessChecker : FirQualifiedAccessExpressionCh
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirQualifiedAccessExpression) {
         val callableSymbol = expression.calleeReference.toResolvedCallableSymbol() ?: return
-        if (callableSymbol.origin.fromSource) return
 
         val isInline = when (callableSymbol) {
             is FirFunctionSymbol<*> -> callableSymbol.isInline
@@ -60,24 +59,14 @@ object FirJvmInlineTargetQualifiedAccessChecker : FirQualifiedAccessExpressionCh
 
         // The inline body belongs to the original declaration, not to a fake override in a subclass.
         val declarationSymbol = callableSymbol.unwrapFakeOverrides()
-        val containingClass = declarationSymbol.containingClassLookupTag()
-        // Stub-based library declarations in the Analysis API have no binary class, so their sources provide the version themselves
-        val binaryEntity = if (containingClass != null) {
-            val containingClassSymbol = containingClass.toRegularClassSymbol() ?: return
-
-            @OptIn(SymbolInternals::class)
-            when (val sourceElement = containingClassSymbol.fir.sourceElement) {
-                is KotlinJvmBinarySourceElement -> sourceElement.binaryClass
-                else -> sourceElement
-            }
+        val inlinedVersion = if (declarationSymbol.origin.fromSource) {
+            // A source dependency module analyzed by the IDE is compiled with its own JVM target.
+            // In one compilation, all source modules share the JVM target.
+            declarationSymbol.moduleData.session.jvmTargetProvider?.jvmTarget?.majorVersion
         } else {
-            when (val containerSource = declarationSymbol.containerSource) {
-                is JvmPackagePartSource -> containerSource.knownJvmBinaryClass
-                else -> containerSource
-            }
-        }
+            declarationSymbol.classFileMajorVersion()
+        } ?: return
 
-        val inlinedVersion = (binaryEntity as? JvmClassFileBacked)?.classFileMajorVersion ?: return
         val currentVersion = currentJvmTarget.majorVersion
 
         if (currentVersion < inlinedVersion) {
@@ -88,5 +77,27 @@ object FirJvmInlineTargetQualifiedAccessChecker : FirQualifiedAccessExpressionCh
                 JvmTarget.getDescription(currentVersion)
             )
         }
+    }
+
+    context(context: CheckerContext)
+    private fun FirCallableSymbol<*>.classFileMajorVersion(): Int? {
+        val containingClass = containingClassLookupTag()
+        // Stub-based library declarations in the Analysis API have no binary class, so their sources provide the version themselves
+        val binaryEntity = if (containingClass != null) {
+            val containingClassSymbol = containingClass.toRegularClassSymbol() ?: return null
+
+            @OptIn(SymbolInternals::class)
+            when (val sourceElement = containingClassSymbol.fir.sourceElement) {
+                is KotlinJvmBinarySourceElement -> sourceElement.binaryClass
+                else -> sourceElement
+            }
+        } else {
+            when (val containerSource = containerSource) {
+                is JvmPackagePartSource -> containerSource.knownJvmBinaryClass
+                else -> containerSource
+            }
+        }
+
+        return (binaryEntity as? JvmClassFileBacked)?.classFileMajorVersion
     }
 }
