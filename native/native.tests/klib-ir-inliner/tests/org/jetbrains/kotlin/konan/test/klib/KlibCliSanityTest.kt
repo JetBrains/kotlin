@@ -247,7 +247,7 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
                     // for that, we need the same header file accessible to both `a` and `b`.
                     // Instead of overcomplicating the test engine, let's do a little shortcut:
                     patchManifestAsMap(JUnit5Assertions, successKlib.resultingArtifact.klibFile) { properties ->
-                        properties[KLIB_PROPERTY_DEPENDS] += " a"
+                        properties[KLIB_PROPERTY_DEPENDS] = listOfNotNull(properties[KLIB_PROPERTY_DEPENDS], "a").joinToString(" ")
                     }
                     // In other words: unlike the previous test, don't compile-and-remove "a" at all,
                     // but just patch the manifest to mention it as if it existed.

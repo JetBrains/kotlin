@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.buildDir
 import org.jetbrains.kotlin.konan.test.blackbox.cinteropToLibrary
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCompilerArgs
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult
+import org.jetbrains.kotlin.library.KLIB_PROPERTY_DEPENDS
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.testFederation.HostDependent
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -137,12 +138,18 @@ class CInteropGenerateKlibInOlderAbiVersionTest : AbstractNativeSimpleTest() {
 
     @Test
     fun expectedAbiAndMetadataVersionsWrittenToKlibs() {
-        class TestData(val abiCompatibilityLevel: String, val expectedAbiVersion: String, val expectedMetadataVersion: String)
+        class TestData(
+            val abiCompatibilityLevel: String,
+            val expectedAbiVersion: String,
+            val expectedMetadataVersion: String,
+            val expectedDepends: String?,
+        )
 
-        listOf(
-            TestData(abiCompatibilityLevel = "2.4", expectedAbiVersion = "2.4.0", expectedMetadataVersion = "2.4.0"),
-            TestData(abiCompatibilityLevel = "2.5", expectedAbiVersion = "2.5.0", expectedMetadataVersion = "2.5.0"),
-        ).forEach { testData ->
+        val testDataList = listOf(
+            TestData(abiCompatibilityLevel = "2.4", expectedAbiVersion = "2.4.0", expectedMetadataVersion = "2.4.0", expectedDepends = "stdlib"),
+            TestData(abiCompatibilityLevel = "2.5", expectedAbiVersion = "2.5.0", expectedMetadataVersion = "2.5.0", expectedDepends = null),
+        )
+        for (testData in testDataList) {
             val cinteropArgs = listOf(
                 "-Xklib-abi-compatibility-level", testData.abiCompatibilityLevel,
                 "-Xccall-mode", "DIRECT",
@@ -168,6 +175,10 @@ class CInteropGenerateKlibInOlderAbiVersionTest : AbstractNativeSimpleTest() {
 
                     assertEquals(testData.expectedMetadataVersion, library.versions.metadataVersion?.toString()) {
                         "Unexpected metadata version for ${library.path}: ${library.versions.metadataVersion} instead of ${testData.expectedMetadataVersion}"
+                    }
+
+                    assertEquals(testData.expectedDepends, library.manifestProperties.getProperty(KLIB_PROPERTY_DEPENDS)) {
+                        "Unexpected depends property for ${library.path}: ${library.manifestProperties.getProperty(KLIB_PROPERTY_DEPENDS)} instead of ${testData.expectedDepends}"
                     }
                 }
 
