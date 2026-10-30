@@ -201,7 +201,7 @@ object FirLombokBuilderChecker : FirRegularClassChecker(MppCheckerKind.Platform)
         }
     }
 
-    enum class NotIncludedReason(val s: String) {
+    enum class NotIncludedReason(private val message: String) {
         BODY_PROPERTY_IN_PRESENCE_OF_PARAMETERS(
             "a Kotlin class builds out of its primary constructor''s value parameters. " +
                     "To make it a builder field, declare it in the primary constructor"
