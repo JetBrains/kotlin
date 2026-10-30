@@ -1,5 +1,3 @@
-// IGNORE_FIR
-// KT-77554: the implicit type phase transforms the explicit setter return type with lazy annotation arguments
 @Target(AnnotationTarget.TYPE)
 annotation class Anno(val position: String)
 

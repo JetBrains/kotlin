@@ -1,7 +1,6 @@
 // RUN_PIPELINE_TILL: CODEGEN
 // FIR_DUMP
 // ISSUE: KT-77554
-// MUTE_LL_FIR: KT-77554 the implicit type phase visits explicit setter return types
 
 @Target(AnnotationTarget.TYPE)
 annotation class Anno(val position: String)
