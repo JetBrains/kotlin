@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Action
+import org.gradle.api.DomainObjectCollection
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.jvm.toolchain.JavaToolchainSpec
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
@@ -22,7 +23,7 @@ internal interface InternalKotlinTarget : KotlinTarget, HasMutableExtras {
 
     @InternalKotlinGradlePluginApi
     override val components: Set<KotlinTargetSoftwareComponent>
-    fun onPublicationCreated(publication: MavenPublication)
+    fun onPublicationRegistered(publications: DomainObjectCollection<MavenPublication>)
 
     @Deprecated(TOOLCHAIN_DSL_WRONG_USAGE_ERROR, level = DeprecationLevel.ERROR)
     fun jvmToolchain(action: Action<JavaToolchainSpec>): Unit = error(TOOLCHAIN_DSL_WRONG_USAGE_ERROR)
