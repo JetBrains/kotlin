@@ -549,7 +549,7 @@ fun checkTypeMismatch(
             val calleeSource = (rValue as? FirQualifiedAccessExpression)?.calleeReference?.source
             val factory = when {
                 !isInitializer -> FirErrors.ASSIGNMENT_TYPE_MISMATCH
-                source.elementType == KtNodeTypes.BACKING_FIELD -> FirErrors.FIELD_INITIALIZER_TYPE_MISMATCH
+                source.syntaxId == KtNodeTypeId.BACKING_FIELD -> FirErrors.FIELD_INITIALIZER_TYPE_MISMATCH
                 calleeSource?.kind is KtFakeSourceElementKind.DesugaredForLoop -> FirErrors.TYPE_MISMATCH
                 else -> FirErrors.INITIALIZER_TYPE_MISMATCH
             }

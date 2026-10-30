@@ -14,10 +14,10 @@ import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiWhiteSpace
-import com.intellij.psi.tree.IElementType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.ArrayLiteralResolution
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.getElementTextWithContext
 import java.util.Objects
@@ -1068,7 +1068,7 @@ object KtMissingSourceElement : AbstractKtSourceElement() {
  */
 // TODO: consider renaming to something like AstBasedSourceElement
 sealed class KtSourceElement : AbstractKtSourceElement() {
-    abstract val elementType: IElementType?
+    abstract val syntaxId: SyntaxId?
     abstract val kind: KtSourceElementKind
     abstract val lighterASTNode: LighterASTNode
     abstract val treeStructure: FlyweightCapableTreeStructure<LighterASTNode>
@@ -1092,7 +1092,7 @@ sealed class KtSourceElement : AbstractKtSourceElement() {
 }
 
 // NB: in certain situations, psi.node could be null (see e.g. KT-44152)
-// Potentially exceptions can be provoked by elementType / lighterASTNode
+// Potentially exceptions can be provoked by elementTypeId / lighterASTNode
 sealed class KtPsiSourceElement(val psi: PsiElement) : KtSourceElement() {
     companion object {
         @JvmStatic
@@ -1110,8 +1110,9 @@ sealed class KtPsiSourceElement(val psi: PsiElement) : KtSourceElement() {
         )
     }
 
-    override val elementType: IElementType?
-        get() = psi.node?.elementType
+    @OptIn(KtImplementationDetail::class)
+    override val syntaxId: SyntaxId?
+        get() = psi.node?.elementType?.syntaxId()
 
     override val startOffset: Int
         get() = psi.textRange.startOffset
@@ -1364,8 +1365,9 @@ class KtLightSourceElement(
     override val treeStructure: FlyweightCapableTreeStructure<LighterASTNode>,
     override val kind: KtSourceElementKind = KtRealSourceElementKind,
 ) : KtSourceElement() {
-    override val elementType: IElementType
-        get() = lighterASTNode.tokenType
+    @OptIn(KtImplementationDetail::class)
+    override val syntaxId: SyntaxId
+        get() = lighterASTNode.tokenType.syntaxId()
 
     /**
      * We can create a [KtLightSourceElement] from a [KtPsiSourceElement] by using [KtPsiSourceElement.lighterASTNode];
@@ -1411,7 +1413,7 @@ class KtLightSourceElement(
     override fun toString(): String = buildString {
         append(this@KtLightSourceElement::class.simpleName)
         append("(")
-        append(elementType)
+        append(lighterASTNode.tokenType)
         if (kind is KtFakeSourceElementKind) {
             append(", ").append(kind)
         }

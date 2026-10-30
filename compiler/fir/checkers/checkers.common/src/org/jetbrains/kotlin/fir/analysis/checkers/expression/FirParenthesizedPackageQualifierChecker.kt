@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtLightSourceElement
+import org.jetbrains.kotlin.KtNodeTypeId
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.KtSourceElement
@@ -143,7 +144,7 @@ object FirParenthesizedPackageQualifierChecker : FirResolvedQualifierChecker(Mpp
         context(context: CheckerContext, reporter: DiagnosticReporter)
         private fun checkNestedPackages(source: KtSourceElement) {
             val parenthesizedOrTypeArgumentList = source.getChild(UNWRAPPABLE_OR_TYPE_ARGUMENT_LIST) ?: return
-            if (parenthesizedOrTypeArgumentList.elementType == KtNodeTypes.TYPE_ARGUMENT_LIST) {
+            if (parenthesizedOrTypeArgumentList.syntaxId == KtNodeTypeId.TYPE_ARGUMENT_LIST) {
                 reporter.reportOn(
                     parenthesizedOrTypeArgumentList,
                     FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED_IN_PACKAGE_QUALIFIER_WARNING

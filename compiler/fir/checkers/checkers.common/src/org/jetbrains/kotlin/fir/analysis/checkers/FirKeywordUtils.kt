@@ -117,7 +117,7 @@ fun KtSourceElement?.getModifierList(): FirModifierList? {
 operator fun FirModifierList?.contains(token: KtModifierKeywordToken): Boolean = this?.contains(token) == true
 
 fun FirElement.getModifierList(): FirModifierList? = when {
-    source?.kind is KtFakeSourceElementKind.DelegatedPropertyAccessor && source?.elementType != KtNodeTypes.PROPERTY_ACCESSOR -> null
+    source?.kind is KtFakeSourceElementKind.DelegatedPropertyAccessor && source?.syntaxId != KtNodeTypeId.PROPERTY_ACCESSOR -> null
     else -> source.getModifierList()
 }
 

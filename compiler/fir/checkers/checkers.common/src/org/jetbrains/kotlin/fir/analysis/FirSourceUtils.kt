@@ -142,7 +142,7 @@ fun FirImport.getSourceForImportSegment(indexFromLast: Int): KtSourceElement? {
         segmentSource = segmentSource.getChild(IMPORT_PARENT_TOKEN_TYPES, depth = 1) ?: return null
     }
 
-    return segmentSource.takeIf { it.elementType == KtNodeTypes.REFERENCE_EXPRESSION }
+    return segmentSource.takeIf { it.syntaxId == KtNodeTypeId.REFERENCE_EXPRESSION }
         ?: segmentSource.getChild(KtNodeTypes.REFERENCE_EXPRESSION, depth = 1, reverse = true)
 }
 

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.test.frontend.fir
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.KtNodeTypeId
 import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.contracts.description.LogicOperationKind
@@ -302,7 +302,7 @@ private class TagsCollectorVisitor(private val session: FirSession) : FirVisitor
         tags += FirTags.PROPERTY
 
         if (property.delegateFieldSymbol != null) tags += FirTags.PROPERTY_DELEGATE
-        if (property.source?.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION) tags += FirTags.DESTRUCTURING_DECLARATION
+        if (property.source?.syntaxId == KtNodeTypeId.DESTRUCTURING_DECLARATION) tags += FirTags.DESTRUCTURING_DECLARATION
         if (property.receiverParameter != null) tags += FirTags.PROPERTY_WITH_EXTENSION_RECEIVER
         if (property.getter?.symbol?.isDefault == false && property.getter?.source?.kind !is KtFakeSourceElementKind.DelegatedPropertyAccessor)
             tags += FirTags.GETTER
@@ -380,7 +380,7 @@ private class TagsCollectorVisitor(private val session: FirSession) : FirVisitor
     override fun visitWhileLoop(whileLoop: FirWhileLoop) {
         visitElement(whileLoop)
 
-        tags += if (whileLoop.source?.elementType == KtNodeTypes.FOR) FirTags.FOR_LOOP
+        tags += if (whileLoop.source?.syntaxId == KtNodeTypeId.FOR) FirTags.FOR_LOOP
         else FirTags.WHILE_LOOP
     }
 
@@ -475,7 +475,7 @@ private class TagsCollectorVisitor(private val session: FirSession) : FirVisitor
 
     override fun visitWhenExpression(whenExpression: FirWhenExpression) {
         visitElement(whenExpression)
-        tags += if (whenExpression.source?.elementType == KtNodeTypes.IF) FirTags.IF_EXPRESSION
+        tags += if (whenExpression.source?.syntaxId == KtNodeTypeId.IF) FirTags.IF_EXPRESSION
         else FirTags.WHEN_EXPRESSION
         if (whenExpression.subjectVariable != null) tags += FirTags.WHEN_WITH_SUBJECT
     }
