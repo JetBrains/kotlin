@@ -344,6 +344,7 @@ fun serializeModuleIntoKlib(
             }
             includeMetadata(serializerOutput.serializedMetadata)
             includeIr(fullSerializedIr)
+            includeSignatureIndex(fullSerializedIr.signatureIndex)
         }.writeTo(klibPath)
     }
 }
