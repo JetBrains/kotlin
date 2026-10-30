@@ -9,6 +9,7 @@ plugins {
 }
 
 val analysisApiSyntaxSurfaceDependencies: List<String> = CompilerModules.analysisApiSyntaxSurfaceDependencies
+val analysisApiSyntaxSurfaceModules: Array<String> = CompilerModules.analysisApiSyntaxSurfaceModules
 
 dependencies {
     api(project(":prepare:analysis-api:kotlin-analysis-api-intellij-api-surface-components"))
@@ -18,6 +19,7 @@ dependencies {
 analysisApiArtifact {
     content {
         projects(analysisApiSyntaxSurfaceDependencies)
+        projects(analysisApiSyntaxSurfaceModules)
     }
 }
 

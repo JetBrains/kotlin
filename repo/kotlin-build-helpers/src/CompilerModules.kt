@@ -200,13 +200,16 @@ object CompilerModules {
         ":core:error.handling",
         ":core:names",
         ":core:language.model",
-        ":compiler:psi:psi-api",
     )
 
     val analysisApiSurfaceDependencies = analysisApiSyntaxSurfaceDependencies + listOf(
         ":core:language.targets",
         ":core:language.targets.jvm",
         ":core:language.version-settings",
+    )
+
+    val analysisApiSyntaxSurfaceModules = arrayOf(
+        ":compiler:psi:psi-api",
     )
 
     val cliCompilerModules = arrayOf(
