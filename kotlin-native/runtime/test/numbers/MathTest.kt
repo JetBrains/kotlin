@@ -67,6 +67,29 @@ class DoubleMathNativeTest {
         assertTrue(atan2(Double.NaN, 1.0).isNaN())
         assertTrue(atan2(1.0, Double.NaN).isNaN())
     }
+
+    @Test fun customNaNRounding() {
+        val quietNaNBitMask = 1L shl 51
+        for (bits in longArrayOf(0x7ff0_0000_0000_0001L, -0x000f_ffff_ffff_ffffL, 0x7ff8000000000001L)) {
+            val value = Double.fromBits(bits)
+            val expectedBits = bits or quietNaNBitMask
+
+            // Here we test signaling NaN quieting & payload preservation that FloatMathTest.rounding() cannot test.
+            ceil(value).toRawBits().let {
+                assertEquals(quietNaNBitMask, it and quietNaNBitMask, "ceil($bits) is not a quiet NaN")
+                assertEquals(expectedBits, it, "ceil($bits) does not preserve the NaN payload")
+            }
+            floor(value).toRawBits().let {
+                assertEquals(quietNaNBitMask, it and quietNaNBitMask, "floor($bits) is not a quiet NaN")
+                assertEquals(expectedBits, it, "floor($bits) does not preserve the NaN payload")
+            }
+            assertEquals(value, truncate(value))
+            round(value).toRawBits().let {
+                assertEquals(quietNaNBitMask, it and quietNaNBitMask, "round($bits) is not a quiet NaN")
+                assertEquals(expectedBits, it, "round($bits) does not preserve the NaN payload")
+            }
+        }
+    }
 }
 
 class FloatMathNativeTest {
@@ -187,6 +210,29 @@ class FloatMathNativeTest {
                 val previousUlp = it.nextUp().ulp
 
                 assertEquals(2.0f, it.ulp / previousUlp)
+            }
+        }
+    }
+
+    @Test fun customNaNRounding() {
+        val quietNaNBitMask = 1 shl 22
+        for (bits in intArrayOf(0x7f80_0001, -0x007f_ffff, 0x7fc00001)) {
+            val value = Float.fromBits(bits)
+            val expectedBits = bits or quietNaNBitMask
+
+            // Here we test signaling NaN quieting & payload preservation that FloatMathTest.rounding() cannot test.
+            ceil(value).toRawBits().let {
+                assertEquals(quietNaNBitMask, it and quietNaNBitMask, "ceil($bits) is not a quiet NaN")
+                assertEquals(expectedBits, it, "ceil($bits) does not preserve the NaN payload")
+            }
+            floor(value).toRawBits().let {
+                assertEquals(quietNaNBitMask, it and quietNaNBitMask, "floor($bits) is not a quiet NaN")
+                assertEquals(expectedBits, it, "floor($bits) does not preserve the NaN payload")
+            }
+            assertEquals(value, truncate(value))
+            round(value).toRawBits().let {
+                assertEquals(quietNaNBitMask, it and quietNaNBitMask, "round($bits) is not a quiet NaN")
+                assertEquals(expectedBits, it, "round($bits) does not preserve the NaN payload")
             }
         }
     }
