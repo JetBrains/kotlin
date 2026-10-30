@@ -1,0 +1,15 @@
+fun ValueClass.companionExtensionFunction()
+
+fun ValueClass.companionExtensionFunctionWithValueClassParameter(v: ValueClass)
+
+val ValueClass.companionExtensionProperty: kotlin.Int
+  get()
+
+var ValueClass.companionExtensionVariable: kotlin.Int
+  get()
+  set(value: kotlin.Int)
+
+@kotlin.jvm.JvmInline
+inline class ValueClass(value: kotlin.String) {
+  val value: kotlin.String
+}

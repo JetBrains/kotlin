@@ -753,6 +753,18 @@ public class FirIdeNormalAnalysisSourceLikeModuleSymbolByReferenceTestGenerated 
   }
 
   @Test
+  @TestMetadata("valueClassCompanionExtensionFunctionLibrary.kt")
+  public void testValueClassCompanionExtensionFunctionLibrary() {
+    run("valueClassCompanionExtensionFunctionLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("valueClassCompanionExtensionVariableLibrary.kt")
+  public void testValueClassCompanionExtensionVariableLibrary() {
+    run("valueClassCompanionExtensionVariableLibrary.kt");
+  }
+
+  @Test
   @TestMetadata("valueParameter.kt")
   public void testValueParameter() {
     run("valueParameter.kt");
