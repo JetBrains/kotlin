@@ -236,8 +236,9 @@ class IncrementalJsCompilerRunner(
     override fun additionalDirtyFiles(
         caches: IncrementalJsCachesManager,
         generatedFiles: List<GeneratedFile>,
-        services: Services
-    ): Iterable<File> {
+        services: Services,
+        dirtySources: Set<File>,
+    ): List<File> {
         val additionalDirtyFiles: Set<File> =
             when (scopeExpansion) {
                 CompileScopeExpansionMode.ALWAYS ->
@@ -246,7 +247,7 @@ class IncrementalJsCompilerRunner(
                     emptySet()
             }
 
-        return additionalDirtyFiles + super.additionalDirtyFiles(caches, generatedFiles, services)
+        return additionalDirtyFiles.filter { it !in dirtySources }
     }
 
     inner class IncrementalNextRoundCheckerImpl(
