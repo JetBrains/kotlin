@@ -271,7 +271,7 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_OBJECT,
-            "Identity-sensitive operations are prohibited on instances of value type ''{0}'', which are value objects.",
+            "Identity-sensitive operations are prohibited on instances of value type ''{0}''.",
             RENDER_TYPE,
         )
         map.put(
