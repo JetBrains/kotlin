@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.testFederation
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 
@@ -17,6 +18,9 @@ import org.gradle.api.tasks.TaskAction
  * The same table is published as an HTML file to be shown as a report tab.
  */
 open class PlanTestFederationTask : DefaultTask() {
+
+    @get:Input
+    internal val testFederationEnabled = project.testFederationEnabled
 
     @get:Input
     internal val changedFiles = project.testFederationChangedFiles
@@ -29,6 +33,10 @@ open class PlanTestFederationTask : DefaultTask() {
 
     @get:Input
     val defaultBranch = project.providers.gradleProperty("isDefaultBranch").map { it.toBoolean() }.orElse(false)
+
+    @get:Input
+    @get:Optional
+    val forcedSubsets = project.providers.gradleProperty("forcedSubsets").map { it.toTestSubsets() }
 
     @OutputFile
     val diffFile: RegularFileProperty = project.objects.fileProperty()
@@ -62,11 +70,17 @@ open class PlanTestFederationTask : DefaultTask() {
         val isDefaultBranch = defaultBranch.get()
         val changedDomains = if (isDefaultBranch) allDomains else changedDomains.get()
         val affectedDomains = if (isDefaultBranch) allDomains else affectedDomains.get()
+        val forcedSubsets = forcedSubsets.orNull.orEmpty()
+
+        if (testFederationEnabled && forcedSubsets.isNotEmpty()) {
+            error("Illegal attempt to force subsets to $forcedSubsets while Test Federation is disabled")
+        }
 
         val plan = TestFederationPlan.resolve(
             isDefaultBranch = isDefaultBranch,
             changedDomains = changedDomains,
-            affectedDomains = affectedDomains
+            affectedDomains = affectedDomains,
+            forcedSubsets = forcedSubsets
         )
 
         logger.quiet(plan.renderAscii())
