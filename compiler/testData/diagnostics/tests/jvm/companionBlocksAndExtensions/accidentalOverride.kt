@@ -26,10 +26,16 @@ open class A {
         fun compBaz4(x: List<Int>) {}
 
         fun compWithInlineClass(s: InlineString) {}
+
+        val companionVal = 0
+        val companionDelegatedVal by lazy { 0 }
     }
 }
 
 class B : A() {
+    val companionVal = 0
+    val companionDelegatedVal by lazy { 0 }
+
     companion {
         <!ACCIDENTAL_OVERRIDE!>val prop: Int<!> = 0
         <!ACCIDENTAL_OVERRIDE!>val prop2: String<!> = ""

@@ -359,3 +359,8 @@ internal fun IrFunctionAccessExpression.isGenericCallWithCallersSingleTypeParame
     val callerTypeParam = caller.typeParameters.singleOrNull() ?: return false
     return calleeTypeArg.name == callerTypeParam.name && calleeTypeArg.parent.kotlinFqName == callerTypeParam.parent.kotlinFqName
 }
+
+val IrDeclaration.isDefinedOrigin: Boolean
+    get() = origin == IrDeclarationOrigin.DEFINED ||
+            origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR ||
+            origin == IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR

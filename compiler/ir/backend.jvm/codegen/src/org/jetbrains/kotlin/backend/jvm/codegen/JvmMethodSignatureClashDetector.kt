@@ -217,7 +217,7 @@ private val IrFunction.isStaticFakeOverrideForKotlin: Boolean
  * only allow it for source-defined functions and property accessors.
  */
 private val IrFunction.isDefinedNonStaticMember: Boolean
-    get() = !isStatic && (origin == IrDeclarationOrigin.DEFINED || origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR)
+    get() = !isStatic && isDefinedOrigin
 
 private fun IrOverrideChecker.canIgnoreConflict(a: IrFunction, b: IrFunction): Boolean {
     if (a === b) return true
