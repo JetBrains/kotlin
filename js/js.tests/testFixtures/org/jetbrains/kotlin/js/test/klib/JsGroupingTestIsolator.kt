@@ -87,6 +87,9 @@ class JsGroupingTestIsolator(
         if (testFiles.any { it.originalContent.contains(MAIN_MODULE_ONLY_FEATURES_REGEX) }) return BatchToken.Isolated
         if (testFiles.any { it.mentionsOwnPackageInStringLiteral() }) return BatchToken.Isolated
         if (testFiles.any { it.observesJsClassName() }) return BatchToken.Isolated
+        // K/JS supports a class implementing a suspend function type only partially, so a test of such a class suppresses
+        // the diagnostic saying it. Such a test has been seen to pass alone, but to fail in a batch with minimized names.
+        if (testFiles.any { it.originalContent.contains(IMPLEMENTING_SUSPEND_FUNCTION_INTERFACE) }) return BatchToken.Isolated
 
         // Tests share a batch only if they agree on everything the batch is compiled and linked with.
         val batchSettings = listOfNotNull(
@@ -278,6 +281,8 @@ class JsGroupingTestIsolator(
         private val JS_INTEROP_REGEX = Regex("""@(?:file:)?Js[A-Z]\w*|\bexternal\b|\bjs\s*\(|\bdynamic\b""")
 
         private val JS_CLASS_NAME_REGEX = Regex("""::class\.js\b|\.jsClass\b""")
+
+        private const val IMPLEMENTING_SUSPEND_FUNCTION_INTERFACE = "IMPLEMENTING_SUSPEND_FUNCTION_INTERFACE"
 
         /** A class or an object whose supertype list starts with a call of a `Throwable` subclass constructor. */
         private val THROWABLE_SUBCLASS_REGEX = Regex("""\b(?:class|object)\s+[A-Z]\w*\b[^{\n]*?:\s*[\w.]*(?:Exception|Error|Throwable)\s*\(""")
