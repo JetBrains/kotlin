@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.jvmClassNameIfDeserialized
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirBuiltinsAndCloneableSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.JvmStubDeserializedBuiltInsContainerSource
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.deserialization.AbstractFirDeserializedSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.*
@@ -181,38 +183,52 @@ internal class LLDependenciesSymbolProvider(
 
     @FirSymbolProviderInternals
     override fun getTopLevelCallableSymbolsTo(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name) {
-        val facades = SmartSet.create<JvmClassName>()
-        for (provider in providers) {
-            val newSymbols = buildSmartList {
-                provider.getTopLevelCallableSymbolsTo(this, packageFqName, name)
-            }
-            addNewSymbolsConsideringJvmFacades(destination, newSymbols, facades)
+        collectTopLevelCallableSymbols(destination) { provider, symbols ->
+            provider.getTopLevelCallableSymbolsTo(symbols, packageFqName, name)
         }
     }
 
     @FirSymbolProviderInternals
     override fun getTopLevelFunctionSymbolsTo(destination: MutableList<FirNamedFunctionSymbol>, packageFqName: FqName, name: Name) {
-        val facades = SmartSet.create<JvmClassName>()
-        for (provider in providers) {
-            val newSymbols = buildSmartList {
-                provider.getTopLevelFunctionSymbolsTo(this, packageFqName, name)
-            }
-            addNewSymbolsConsideringJvmFacades(destination, newSymbols, facades)
+        collectTopLevelCallableSymbols(destination) { provider, symbols ->
+            provider.getTopLevelFunctionSymbolsTo(symbols, packageFqName, name)
         }
     }
 
     @FirSymbolProviderInternals
     override fun getTopLevelPropertySymbolsTo(destination: MutableList<FirPropertySymbol>, packageFqName: FqName, name: Name) {
-        val facades = SmartSet.create<JvmClassName>()
-        for (provider in providers) {
-            val newSymbols = buildSmartList {
-                provider.getTopLevelPropertySymbolsTo(this, packageFqName, name)
-            }
-            addNewSymbolsConsideringJvmFacades(destination, newSymbols, facades)
+        collectTopLevelCallableSymbols(destination) { provider, symbols ->
+            provider.getTopLevelPropertySymbolsTo(symbols, packageFqName, name)
         }
     }
 
     override fun hasPackage(fqName: FqName): Boolean = providers.any { it.hasPackage(fqName) }
+
+    /**
+     * Collects the top-level callables of all [providers] into [destination], see [addNewSymbolsConsideringJvmFacades].
+     *
+     * The fallback builtins provider (of [LLFirBuiltinsAndCloneableSession]) is skipped once a library, usually the stdlib, has provided
+     * callables from its builtins files (`.kotlin_builtins`). The fallback builtins would duplicate them and be filtered out, but looking
+     * them up is costly: a stub-based provider binds the stub of the whole builtins file to its PSI first. The compiler's
+     * `FirJvmBuiltinsSymbolProvider` likewise queries fallback builtins only if the builtins from the classpath provide no callables
+     * with the requested name.
+     */
+    private inline fun <S : FirCallableSymbol<*>> collectTopLevelCallableSymbols(
+        destination: MutableList<S>,
+        collect: (FirSymbolProvider, MutableList<S>) -> Unit,
+    ) {
+        val facades = SmartSet.create<JvmClassName>()
+        var hasLibraryBuiltins = false
+        for (provider in providers) {
+            if (hasLibraryBuiltins && provider.session is LLFirBuiltinsAndCloneableSession) continue
+
+            val newSymbols = buildSmartList { collect(provider, this) }
+            if (!hasLibraryBuiltins) {
+                hasLibraryBuiltins = newSymbols.any { it.fir.containerSource is JvmStubDeserializedBuiltInsContainerSource }
+            }
+            addNewSymbolsConsideringJvmFacades(destination, newSymbols, facades)
+        }
+    }
 
     /**
      * Filters out any top-level [FirCallableSymbol]s defined in a facade class which have already been added by a previous symbol provider
@@ -229,7 +245,8 @@ internal class LLDependenciesSymbolProvider(
      * Hence, we filter them out.
      *
      * Regarding builtins, this logic filters out callables from fallback builtins if they have already been added from the stdlib, since
-     * the fallback builtins provider is ordered last.
+     * the fallback builtins provider is ordered last. [collectTopLevelCallableSymbols] doesn't even query fallback builtins if the stdlib
+     * has provided builtins callables with the requested name.
      */
     private fun <S : FirCallableSymbol<*>> addNewSymbolsConsideringJvmFacades(
         destination: MutableList<S>,
