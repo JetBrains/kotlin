@@ -72,16 +72,6 @@ dependencies {
 
 fun registerSwiftExportEmbeddableValidationTasks(swiftExportEmbeddableJarTask: TaskProvider<out org.gradle.jvm.tasks.Jar>) {
     val runtimeClasspathCopy = configurations.runtimeClasspath.get().copyRecursive()
-    runtimeClasspathCopy.dependencies.addAll(
-        listOf(
-            /**
-             * These are needed for .kts files analysis; we don't actually want them in Swift Export, but currently ProGuard sees these in
-             * shared Analysis API code and complaints
-             */
-            dependencies.create(dependencies.project(":kotlin-scripting-compiler-embeddable")),
-            dependencies.create(dependencies.project(":kotlin-assignment-compiler-plugin.embeddable")),
-        )
-    )
 
     // FIXME: Publish the ProGuarded version of swift-export-embeddable - KT-69180
     val validateSwiftExportEmbeddableHasProperDependenciesInTheClasspath = validateEmbeddedJarClasspathUsingProguard(

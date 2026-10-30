@@ -1,0 +1,7 @@
+<idea-plugin>
+  <extensions defaultExtensionNs="com.intellij">
+    <projectService
+        serviceInterface="org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirScriptExtensionRegistrarProvider"
+        serviceImplementation="org.jetbrains.kotlin.analysis.low.level.api.fir.scripting.LLFirScriptingExtensionRegistrarProvider"/>
+  </extensions>
+</idea-plugin>

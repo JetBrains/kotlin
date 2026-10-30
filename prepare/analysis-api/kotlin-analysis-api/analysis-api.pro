@@ -39,9 +39,6 @@
 -dontwarn com.google.common.hash.Hashing$Crc32cMethodHandles
 -dontwarn com.google.common.hash.ChecksumHashFunction$ChecksumMethodHandles
 
-# From LLFirAbstractSessionFactory (KT-85503)
--dontwarn org.jetbrains.kotlin.assignment.plugin.**
-
 # From CliCompilerUtils.kt, Javac mode (disabled by default & obsolete)
 -dontwarn org.jetbrains.kotlin.javac.**
 

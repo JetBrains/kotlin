@@ -75,21 +75,5 @@
       <version>ArtifactsTest.version</version>
       <scope>runtime</scope>
     </dependency>
-    <dependency>
-      <groupId>org.jetbrains.kotlin</groupId>
-      <artifactId>kotlin-scripting-compiler</artifactId>
-      <version>ArtifactsTest.version</version>
-      <scope>runtime</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.jetbrains.kotlin</groupId>
-          <artifactId>kotlin-reflect</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.jetbrains.kotlin</groupId>
-          <artifactId>kotlin-stdlib</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
   </dependencies>
 </project>
