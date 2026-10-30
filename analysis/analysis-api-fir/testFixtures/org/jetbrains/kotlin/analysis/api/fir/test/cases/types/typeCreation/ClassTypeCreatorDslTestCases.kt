@@ -208,12 +208,24 @@ class ClassTypeCreatorDslTestCases(session: KaSession, caretToType: Map<String, 
     fun testInnerClassWithOuterTypeArguments(): KaType {
         val innerTypeSymbol = getClassLikeSymbolByCaret("type")
 
-        // Type arguments are ordered from the innermost class outwards
         return session.typeCreator.classType(innerTypeSymbol) {
             invariantTypeArgument(getTypeByCaret("long"))
             invariantTypeArgument(getTypeByCaret("double"))
-            invariantTypeArgument(getTypeByCaret("boolean"))
-            invariantTypeArgument(getTypeByCaret("char"))
+
+            outerClasses { index, symbol ->
+                when (symbol.name?.asString()) {
+                    "Middle" -> {
+                        invariantTypeArgument(getTypeByCaret("boolean"))
+                        invariantTypeArgument(getTypeByCaret("char"))
+                    }
+                }
+            }
+
+            outerClasses { index, symbol ->
+                when (symbol.name?.asString()) {
+                    "Outer" -> invariantTypeArgument(getTypeByCaret("long"))
+                }
+            }
         }
     }
 
@@ -226,30 +238,43 @@ class ClassTypeCreatorDslTestCases(session: KaSession, caretToType: Map<String, 
     fun testInnerClassOfGenericClass(): KaType {
         val innerTypeSymbol = getClassLikeSymbolByCaret("type")
 
-        // Type arguments are ordered from the innermost class outwards
         return session.typeCreator.classType(innerTypeSymbol) {
             invariantTypeArgument(getTypeByCaret("string"))
-            invariantTypeArgument(getTypeByCaret("int"))
-        }
+            outerClasses { index, _ ->
+                check(index == 0)
+                invariantTypeArgument(getTypeByCaret("int"))
+            }
+        }.checkSameAsTypeAtCaret()
     }
 
     fun testMixedInnerAndNestedClasses(): KaType {
         val innerTypeSymbol = getClassLikeSymbolByCaret("type")
 
-        // Type arguments are ordered from the innermost class outwards
         return session.typeCreator.classType(innerTypeSymbol) {
             invariantTypeArgument(getTypeByCaret("string"))
-            invariantTypeArgument(getTypeByCaret("int"))
-        }
+            outerClasses { index, symbol ->
+                when (index) {
+                    // `Outer` is nested, so the type arguments of `Top` are ignored
+                    0 -> invariantTypeArgument(getTypeByCaret("string"))
+                    1 -> invariantTypeArgument(getTypeByCaret("int"))
+                    // `Middle` has no type parameters
+                    2 -> invariantTypeArgument(getTypeByCaret("string"))
+                    else -> error("Unexpected outer class $symbol at $index")
+                }
+            }
+        }.checkSameAsTypeAtCaret()
     }
 
     fun testInnerClassOfLocalClass(): KaType {
         val innerTypeSymbol = getClassLikeSymbolByCaret("type")
 
-        // Type arguments are ordered from the innermost class outwards
         return session.typeCreator.classType(innerTypeSymbol) {
             invariantTypeArgument(getTypeByCaret("string"))
-            invariantTypeArgument(getTypeByCaret("int"))
+            // The type parameter `F` captured from the containing function is star-projected
+            outerClasses { index, _ ->
+                check(index == 0)
+                invariantTypeArgument(getTypeByCaret("int"))
+            }
         }
     }
 
@@ -263,10 +288,14 @@ class ClassTypeCreatorDslTestCases(session: KaSession, caretToType: Map<String, 
     fun testInnerClassOfLocalClassInGenericMember(): KaType {
         val innerTypeSymbol = getClassLikeSymbolByCaret("type")
 
-        // Type arguments are ordered from the innermost class outwards
         return session.typeCreator.classType(innerTypeSymbol) {
             invariantTypeArgument(getTypeByCaret("string"))
-            invariantTypeArgument(getTypeByCaret("int"))
+            // The qualifiers stop at the local class, so `A` is not visited.
+            // The type parameters `F` and `AA` captured from the containing declarations are star-projected
+            outerClasses { index, symbol ->
+                check(index == 0 && symbol.name?.asString() == "Local") { "Unexpected outer class $symbol at $index" }
+                invariantTypeArgument(getTypeByCaret("int"))
+            }
         }
     }
 
@@ -275,17 +304,23 @@ class ClassTypeCreatorDslTestCases(session: KaSession, caretToType: Map<String, 
 
         return session.typeCreator.classType(nestedTypeSymbol) {
             invariantTypeArgument(getTypeByCaret("string"))
-        }
+            // `Nested` is not inner, so the type arguments of `Outer` are ignored
+            outerClasses { _, _ -> invariantTypeArgument(getTypeByCaret("string")) }
+        }.checkSameAsTypeAtCaret()
     }
 
     fun testCompanionOfGenericClass(): KaType {
         val companionTypeSymbol = getClassLikeSymbolByCaret("type")
 
-        // Type arguments are ordered from the innermost class outwards
         return session.typeCreator.classType(companionTypeSymbol) {
-            invariantTypeArgument(arrayType(dynamicType()))
             repeat(10) {
-                invariantTypeArgument(dynamicType())
+                invariantTypeArgument(arrayType(dynamicType()))
+            }
+
+            outerClasses { _, _ ->
+                repeat(10) {
+                    invariantTypeArgument(dynamicType())
+                }
             }
         }
     }
@@ -294,5 +329,14 @@ class ClassTypeCreatorDslTestCases(session: KaSession, caretToType: Map<String, 
         val companionTypeSymbol = getClassLikeSymbolByCaret("type")
 
         return session.typeCreator.classType(companionTypeSymbol)
+    }
+
+    /**
+     * Checks that the created type is exactly the type at the `type` caret, including the type arguments
+     * that the [qualifiers][org.jetbrains.kotlin.analysis.api.types.KaClassType.qualifiers] do not show.
+     */
+    private fun KaType.checkSameAsTypeAtCaret(): KaType = apply {
+        val expectedType = getTypeByCaret("type")
+        check(this == expectedType) { "The created type `$this` differs from the type at the caret `$expectedType`" }
     }
 }
