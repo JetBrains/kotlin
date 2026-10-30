@@ -192,7 +192,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
     )
 
     /**
-     * Called as early as SUPER_TYPES, so only names are computed here, from raw declarations and compiler-required
+     * Called as early as STATUS, so only names are computed here, from raw declarations and compiler-required
      * annotations. The result may contain some extra names: [createCallables] decides what is actually generated.
      */
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
