@@ -186,7 +186,7 @@ private fun fireEnvException(frameworkTaskName: String, envBuildType: NativeBuil
     } else {
         throw IllegalStateException(
             "Please run the $frameworkTaskName task from Xcode " +
-                    "('SDK_NAME', 'CONFIGURATION', 'TARGET_BUILD_DIR', 'ARCHS' and 'FRAMEWORKS_FOLDER_PATH' not provided)" +
+                    "('PLATFORM_NAME', 'CONFIGURATION', 'TARGET_BUILD_DIR', 'ARCHS' and 'FRAMEWORKS_FOLDER_PATH' not provided)" +
                     "\n$environment"
         )
     }

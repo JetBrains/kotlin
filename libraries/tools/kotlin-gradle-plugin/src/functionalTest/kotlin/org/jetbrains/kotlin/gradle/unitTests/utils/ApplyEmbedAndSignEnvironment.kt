@@ -23,7 +23,7 @@ fun Project.applyEmbedAndSignEnvironment(
         configuration
     )
     extensions.extraProperties.set(
-        "${XcodeEnvironment.XCODE_ENVIRONMENT_OVERRIDE_KEY}.SDK_NAME",
+        "${XcodeEnvironment.XCODE_ENVIRONMENT_OVERRIDE_KEY}.PLATFORM_NAME",
         sdk
     )
     extensions.extraProperties.set(

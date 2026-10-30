@@ -47,18 +47,17 @@ import org.jetbrains.kotlin.gradle.uklibs.publish
 internal fun GradleProject.swiftExportEmbedAndSignEnvVariables(
     testBuildDir: Path,
     archs: List<String> = listOf("arm64"),
-    sdk: String = "iphoneos",
+    platform: String = "iphoneos",
     iphoneOsDeploymentTarget: String = "18.0",
     customVariables: Map<String, String> = emptyMap(),
 ) = EnvironmentalVariables(
     buildMap {
         put("CONFIGURATION", "Debug")
-        put("SDK_NAME", sdk)
         put("ARCHS", archs.joinToString(" "))
         put("ONLY_ACTIVE_ARCH", "YES")
         put("TARGET_BUILD_DIR", testBuildDir.absolutePathString())
         put("FRAMEWORKS_FOLDER_PATH", "build/xcode-derived")
-        put("PLATFORM_NAME", sdk)
+        put("PLATFORM_NAME", platform)
         put("DEPLOYMENT_TARGET_SETTING_NAME", "IPHONEOS_DEPLOYMENT_TARGET")
         put("IPHONEOS_DEPLOYMENT_TARGET", iphoneOsDeploymentTarget)
         put("BUILT_PRODUCTS_DIR", projectPath.resolve("build/builtProductsDir").absolutePathString())

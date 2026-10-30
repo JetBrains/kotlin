@@ -67,7 +67,7 @@ class MacosCapableConfigurationCacheIT : AbstractConfigurationCacheIT() {
             gradleVersion = gradleVersion,
             environmentVariables = EnvironmentalVariables(
                 "CONFIGURATION" to "Debug",
-                "SDK_NAME" to "iphoneos",
+                "PLATFORM_NAME" to "iphoneos",
                 "ARCHS" to "arm64",
                 "EXPANDED_CODE_SIGN_IDENTITY" to "-",
                 "TARGET_BUILD_DIR" to targetBuildDir.toString(),

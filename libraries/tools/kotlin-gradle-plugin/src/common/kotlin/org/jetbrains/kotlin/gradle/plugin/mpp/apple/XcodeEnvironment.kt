@@ -33,17 +33,17 @@ internal class XcodeEnvironment(private val project: Project) {
 
     val targets: List<KonanTarget>
         get() {
-            val sdk = readEnvVariable("SDK_NAME") ?: return emptyList()
+            val platform = readEnvVariable("PLATFORM_NAME") ?: return emptyList()
             val archs = readEnvVariable("ARCHS")?.split(" ") ?: return emptyList()
             val isCatalyst = readEnvVariable("IS_MACCATALYST") == "YES"
-            return AppleSdk.defineNativeTargets(sdk, archs, isCatalyst)
+            return AppleSdk.defineNativeTargets(platform, archs, isCatalyst)
         }
 
     val frameworkSearchDir: File?
         get() {
             val configuration = readEnvVariable("CONFIGURATION") ?: return null
-            val sdk = readEnvVariable("SDK_NAME") ?: return null
-            return File(configuration, sdk)
+            val platform = readEnvVariable("PLATFORM_NAME") ?: return null
+            return File(configuration, platform)
         }
 
     val builtProductsDir: File?

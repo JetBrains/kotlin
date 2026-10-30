@@ -30,7 +30,7 @@ class AppleFrameworkWithCocoapodsIT : KGPBaseTest() {
         multiProjectWithCocoapodsDependency(gradleVersion) {
             val environmentVariables = mapOf(
                 "CONFIGURATION" to "debug",
-                "SDK_NAME" to "iphonesimulator",
+                "PLATFORM_NAME" to "iphonesimulator",
                 "ARCHS" to "arm64",
                 "TARGET_BUILD_DIR" to "no use",
                 "FRAMEWORKS_FOLDER_PATH" to "no use",
@@ -61,7 +61,7 @@ class AppleFrameworkWithCocoapodsIT : KGPBaseTest() {
 
                 val environmentVariables = mapOf(
                     "CONFIGURATION" to "debug",
-                    "SDK_NAME" to "iphonesimulator",
+                    "PLATFORM_NAME" to "iphonesimulator",
                     "ARCHS" to "arm64",
                     "TARGET_BUILD_DIR" to "no use",
                     "FRAMEWORKS_FOLDER_PATH" to "no use",
