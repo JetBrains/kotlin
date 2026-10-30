@@ -1,0 +1,5 @@
+fun f(a: Int, b: String = "z"): String = a.toString() + b
+
+class C(a: Int, b: String = "z") {
+    val s: String = a.toString() + b
+}

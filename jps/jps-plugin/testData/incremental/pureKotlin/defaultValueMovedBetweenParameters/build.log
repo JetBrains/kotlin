@@ -1,0 +1,24 @@
+================ Step #1 =================
+
+Cleaning output files:
+  out/production/module/C.class
+  out/production/module/DeclKt.class
+  out/production/module/META-INF/module.kotlin_module
+End of files
+Compiling files:
+  src/decl.kt
+End of files
+Exit code: OK
+------------------------------------------
+Cleaning output files:
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/UseKt.class
+End of files
+Compiling files:
+  src/use.kt
+End of files
+Exit code: ABORT
+------------------------------------------
+COMPILATION FAILED
+No value passed for parameter 'a'.
+No value passed for parameter 'a'.

@@ -241,6 +241,12 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
     }
 
     @Test
+    @TestMetadata("defaultValueMovedBetweenParameters")
+    public void testDefaultValueMovedBetweenParameters() {
+      runTest("jps/jps-plugin/testData/incremental/pureKotlin/defaultValueMovedBetweenParameters/");
+    }
+
+    @Test
     @TestMetadata("defaultValueRemoved1")
     public void testDefaultValueRemoved1() {
       runTest("jps/jps-plugin/testData/incremental/pureKotlin/defaultValueRemoved1/");

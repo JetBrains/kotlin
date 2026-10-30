@@ -34,6 +34,7 @@ fun main(args: Array<String>) {
                 val jpsDependencyGraphGaps = listOf(
                     "(^varargBecameArray$)",
                     "(^namedArgumentParameterRenamed$)",
+                    "(^defaultValueMovedBetweenParameters$)",
                 ).joinToString("|")
                 modelForDirectoryBasedTest(
                     "incremental", "pureKotlin",

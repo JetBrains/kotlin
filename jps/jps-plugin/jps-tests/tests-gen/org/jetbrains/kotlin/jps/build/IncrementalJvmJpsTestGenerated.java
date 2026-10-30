@@ -63,7 +63,7 @@ public class IncrementalJvmJpsTestGenerated extends AbstractIncrementalJvmJpsTes
 
     @Test
     public void testAllFilesPresentInPureKotlinAbstractIncrementalJvmJpsTest() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/pureKotlin"), Pattern.compile("^([^.]+)$"), Pattern.compile("(^.*Expect.*)|(^varargBecameArray$)|(^namedArgumentParameterRenamed$)"), false);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/pureKotlin"), Pattern.compile("^([^.]+)$"), Pattern.compile("(^.*Expect.*)|(^varargBecameArray$)|(^namedArgumentParameterRenamed$)|(^defaultValueMovedBetweenParameters$)"), false);
     }
 
     @Test
