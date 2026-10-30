@@ -613,6 +613,12 @@ public class IncrementalJvmJpsTestGenerated extends AbstractIncrementalJvmJpsTes
     }
 
     @Test
+    @TestMetadata("parameterBecameReceiver")
+    public void testParameterBecameReceiver() {
+      runTest("jps/jps-plugin/testData/incremental/pureKotlin/parameterBecameReceiver/");
+    }
+
+    @Test
     @TestMetadata("parameterWithDefaultValueAdded")
     public void testParameterWithDefaultValueAdded() {
       runTest("jps/jps-plugin/testData/incremental/pureKotlin/parameterWithDefaultValueAdded/");
