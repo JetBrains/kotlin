@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.create
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_LINK_MAX_WORKERS
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
@@ -48,6 +49,10 @@ import org.jetbrains.kotlin.gradle.targets.native.toolchain.UsesKotlinNativeBund
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeCompilerRunner
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeToolRunner
+import org.jetbrains.kotlin.internal.compilerRunner.native.UsesKotlinNativeToolParallelismProbe
+import org.jetbrains.kotlin.internal.compilerRunner.native.maxParallelUsagesFromAvailableRam
+import org.jetbrains.kotlin.internal.compilerRunner.native.maxParallelUsagesFromGradleProperty
+import org.jetbrains.kotlin.internal.compilerRunner.native.registerKotlinNativeParallelismLimitService
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
@@ -75,6 +80,7 @@ constructor(
     UsesClassLoadersCachingBuildService,
     KotlinToolTask<KotlinCommonCompilerToolOptions>,
     UsesKotlinNativeBundleBuildService,
+    UsesKotlinNativeToolParallelismProbe,
     UsesKotlinToolingDiagnostics,
     UsesBuildFusService {
 
@@ -86,6 +92,14 @@ constructor(
                 is NoopKotlinNativeProvider -> true
             }
         }
+
+        usesService(
+            project.registerKotlinNativeParallelismLimitService(
+                name = "KotlinNativeLink",
+                maxParallelUsagesFromGradleProperty(project.providers, KOTLIN_NATIVE_LINK_MAX_WORKERS),
+                maxParallelUsagesFromAvailableRam(approximateTaskInstanceRamUsageMb = 500),
+            )
+        )
     }
 
     // Used by IDEA import, should be addressed via KTIJ-38346
@@ -532,12 +546,14 @@ constructor(
                 CompilerArgumentMetrics.collectMetrics(arguments, buildArguments.toTypedArray(), logger, it)
             }
 
-            nativeCompilerRunner.runTool(
+            nativeCompilerRunner.runToolWithWorkers(
                 KotlinNativeToolRunner.ToolArguments(
                     shouldRunInProcessMode = !forceDisableRunningInProcess.get(),
                     compilerArgumentsLogLevel = kotlinCompilerArgumentsLogLevel.get(),
                     arguments = buildArguments
-                )
+                ),
+                taskPath = path,
+                parallelismProbe = kotlinNativeToolParallelismProbe,
             )
         }
     }

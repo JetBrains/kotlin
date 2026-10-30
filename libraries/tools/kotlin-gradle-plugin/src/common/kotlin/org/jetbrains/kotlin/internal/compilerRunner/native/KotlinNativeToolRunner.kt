@@ -5,11 +5,20 @@
 
 package org.jetbrains.kotlin.internal.compilerRunner.native
 
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
 import org.gradle.api.logging.Logging
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.MapProperty
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.gradle.api.provider.SetProperty
 import org.gradle.process.ExecOperations
+import org.gradle.workers.WorkAction
+import org.gradle.workers.WorkParameters
+import org.gradle.workers.WorkQueue
+import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.metrics.measure
 import org.jetbrains.kotlin.buildtools.internal.KotlinBuildToolsInternalJdkUtils
@@ -21,8 +30,13 @@ import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.ParentClassLoaderProvider
 import org.jetbrains.kotlin.gradle.logging.GradleErrorMessageCollector
 import org.jetbrains.kotlin.gradle.logging.gradleLogLevel
+import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.gradle.plugin.statistics.BuildFusService
+import org.jetbrains.kotlin.gradle.report.TaskExecutionResult
 import org.jetbrains.kotlin.gradle.utils.escapeStringCharacters
+import org.jetbrains.kotlin.gradle.utils.listProperty
+import org.jetbrains.kotlin.gradle.utils.newInstance
+import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.statistics.FusMetricRetrievalException
 import java.io.File
@@ -40,11 +54,13 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
     private val toolSpec: ToolSpec,
     private val fusMetricsConsumer: Provider<out BuildFusService<out BuildFusService.Parameters>>,
     private val execOperations: ExecOperations,
+    private val workerExecutor: WorkerExecutor,
 ) {
 
     companion object {
         private val dumpPerfArgument = CommonCompilerArguments::dumpPerf.argumentAnnotation.value
     }
+
     private val logger = Logging.getLogger(toolSpec.displayName.get())
     private val errorMessageCollector = GradleErrorMessageCollector(logger)
     private val classLoadersCachingBuildService: ClassLoadersCachingBuildService
@@ -59,6 +75,62 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
                 runViaExec(args)
             }
         }
+    }
+
+    /**
+     * Submits a single [runTool] invocation to a Gradle [org.gradle.workers.WorkQueue], so that several
+     * independent [KotlinNativeToolRunner] invocations (e.g. one per Kotlin/Native link/compile/commonize
+     * task) can execute concurrently instead of serially as part of each task's own action.
+     *
+     * `noIsolation` is used by default: Gradle still isolates (deep-copies) the submitted [KotlinNativeToolWorkParameters],
+     * so this runner (and the build services it wraps) can't be passed directly - instead, only plain,
+     * serializable values and build-service references are captured here, and a fresh [KotlinNativeToolRunner]
+     * is rebuilt from them inside [KotlinNativeToolWorkAction.execute]. See [KotlinNativeToolWorkAction] for details.
+     *
+     * [taskPath], when provided, lets [KotlinNativeToolWorkAction] hand the metrics it collects back to the
+     * submitting task via [org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults] - this is
+     * needed because [metricsReporterProvider] itself is isolated (deep-copied) by Gradle along with the rest of
+     * [KotlinNativeToolWorkParameters], so mutating it inside the worker never reaches the original, live reporter.
+     * Pass `null` when there is no actual task to report back to.
+     */
+    fun runToolWithWorkers(
+        args: ToolArguments,
+        taskPath: String? = null,
+        parallelismProbe: Provider<out KotlinNativeToolParallelismProbe>,
+    ): WorkQueue =
+        workerExecutor.noIsolation().apply {
+            submit(KotlinNativeToolWorkAction::class.java) { executor ->
+                executor.from(this@KotlinNativeToolRunner, args, taskPath)
+                executor.parallelismProbe.set(parallelismProbe)
+            }
+        }
+
+    private fun KotlinNativeToolWorkParameters.from(
+        runner: KotlinNativeToolRunner,
+        args: ToolArguments,
+        taskPath: String?,
+    ) {
+        classLoadersCachingService.set(runner.classLoadersCachingBuildServiceProvider)
+        fusService.set(runner.fusMetricsConsumer)
+
+        val toolSpec = runner.toolSpec
+        displayName.set(toolSpec.displayName)
+        optionalToolName.set(toolSpec.optionalToolName)
+        mainClass.set(toolSpec.mainClass)
+        daemonEntryPoint.set(toolSpec.daemonEntryPoint)
+        classpath.from(toolSpec.classpath)
+        jvmArgs.set(toolSpec.jvmArgs)
+        shouldPassArgumentsViaArgFile.set(toolSpec.shouldPassArgumentsViaArgFile)
+        collectNativeCompilerMetrics.set(toolSpec.collectNativeCompilerMetrics)
+        systemProperties.set(toolSpec.systemProperties)
+        environment.set(toolSpec.environment)
+        environmentBlacklist.set(toolSpec.environmentBlacklist)
+
+        shouldRunInProcessMode.set(args.shouldRunInProcessMode)
+        compilerArgumentsLogLevel.set(args.compilerArgumentsLogLevel)
+        arguments.set(args.arguments)
+
+        this.taskPath.set(taskPath)
     }
 
     private fun runViaExec(args: ToolArguments) {
@@ -280,6 +352,72 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
         val arguments: List<String>,
     )
 
+    /**
+     * Flat, worker-safe representation of a single [runTool] invocation: the [ToolSpec]/[ToolArguments] that
+     * belong to a [KotlinNativeToolRunner], plus the build services it needs, captured as plain values and
+     * build-service references so Gradle can isolate (deep-copy) them when submitting [KotlinNativeToolWorkAction].
+     */
+    internal interface KotlinNativeToolWorkParameters : WorkParameters {
+        // Runner configuration
+        //
+        // Note: there's no `metricsReporter` property here - unlike the other build-service references below,
+        // a plain, Serializable BuildMetricsReporter would survive isolation silently as a disconnected copy
+        // instead of failing loudly, so mutating it inside the worker would never reach the task's live reporter.
+        // KotlinNativeToolWorkAction builds its own fresh reporter instead and reports back via [taskPath].
+        val classLoadersCachingService: Property<ClassLoadersCachingBuildService>
+        val fusService: Property<BuildFusService<out BuildFusService.Parameters>?>
+
+        // ToolSpec
+        val displayName: Property<String>
+        val optionalToolName: Property<String>
+        val mainClass: Property<String>
+        val daemonEntryPoint: Property<String>
+        val classpath: ConfigurableFileCollection
+        val jvmArgs: ListProperty<String>
+        val shouldPassArgumentsViaArgFile: Property<Boolean>
+        val collectNativeCompilerMetrics: Property<Boolean>
+        val systemProperties: MapProperty<String, String>
+        val environment: MapProperty<String, String>
+        val environmentBlacklist: SetProperty<String>
+
+        // ToolArguments
+        val shouldRunInProcessMode: Property<Boolean>
+        val compilerArgumentsLogLevel: Property<KotlinCompilerArgumentsLogLevel>
+        val arguments: ListProperty<String>
+
+        // Task path to report collected metrics back to via TaskExecutionResults, if any - see runToolWithWorkers.
+        val taskPath: Property<String>
+
+        val parallelismProbe: Property<KotlinNativeToolParallelismProbe>
+    }
+
+    /**
+     * Runs a single [KotlinNativeToolRunner.runTool] invocation inside a Gradle worker, rebuilding the runner
+     * from [KotlinNativeToolWorkParameters] since the original, live runner can't be passed through worker isolation.
+     */
+    internal abstract class KotlinNativeToolWorkAction @Inject constructor(
+        private val objectFactory: ObjectFactory,
+    ) : WorkAction<KotlinNativeToolWorkParameters> {
+        override fun execute() {
+            val metricsReporter = BuildMetricsReporterImpl<BuildTimeMetric, BuildPerformanceMetric>()
+            val runner = objectFactory.newInstance<KotlinNativeToolRunner>(
+                objectFactory.property<BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>>(metricsReporter),
+                parameters.classLoadersCachingService,
+                parameters.toToolSpec(objectFactory),
+                parameters.fusService,
+            )
+            val parallelismProbe = parameters.parallelismProbe.orNull
+            try {
+                parallelismProbe?.workerStarted()
+                runner.runTool(parameters.toToolArguments())
+            } finally {
+                parallelismProbe?.workerFinished()
+                parameters.taskPath.orNull?.let { taskPath ->
+                    TaskExecutionResults[taskPath] = TaskExecutionResult(buildMetrics = metricsReporter.getMetrics())
+                }
+            }
+        }
+    }
 
     internal fun BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>.parseCompilerMetricsFromFile(
         jsonFile: File,
@@ -292,3 +430,35 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
         }
     }
 }
+
+private fun KotlinNativeToolRunner.KotlinNativeToolWorkParameters.toToolSpec(
+    objectFactory: ObjectFactory,
+): KotlinNativeToolRunner.ToolSpec {
+    // TODO: Report this WorkParameters generic-erasure issue to Gradle if it is not tracked yet.
+    // jvmArgs reaches us as Provider<List<Object>>, which breaks ToolSpec's internal
+    // listProperty<String>().value(provider)-style checks if passed straight through.
+    // We materialize it into a fresh, properly-typed ListProperty<String> instead - the same
+    // workaround already used by CInteropWorkAction for the identical issue.
+    val materializedJvmArgs = objectFactory.listProperty<String>().apply { set(jvmArgs.map { it }) }
+
+    return KotlinNativeToolRunner.ToolSpec(
+        displayName = displayName,
+        optionalToolName = optionalToolName,
+        mainClass = mainClass,
+        daemonEntryPoint = daemonEntryPoint,
+        classpath = classpath,
+        jvmArgs = materializedJvmArgs,
+        shouldPassArgumentsViaArgFile = shouldPassArgumentsViaArgFile,
+        collectNativeCompilerMetrics = collectNativeCompilerMetrics,
+        systemProperties = systemProperties.get(),
+        environment = environment.get(),
+        environmentBlacklist = environmentBlacklist.get(),
+    )
+}
+
+private fun KotlinNativeToolRunner.KotlinNativeToolWorkParameters.toToolArguments(): KotlinNativeToolRunner.ToolArguments =
+    KotlinNativeToolRunner.ToolArguments(
+        shouldRunInProcessMode = shouldRunInProcessMode.get(),
+        compilerArgumentsLogLevel = compilerArgumentsLogLevel.get(),
+        arguments = arguments.get(),
+    )

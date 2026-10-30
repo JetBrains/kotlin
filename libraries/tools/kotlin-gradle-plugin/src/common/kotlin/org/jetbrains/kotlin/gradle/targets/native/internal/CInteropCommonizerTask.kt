@@ -21,11 +21,13 @@ import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
 import org.jetbrains.kotlin.commonizer.*
 import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeToolRunner
+import org.jetbrains.kotlin.internal.compilerRunner.native.UsesKotlinNativeToolParallelismProbe
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.internal.UsesClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_COMMONIZE_CINTEROP_MAX_WORKERS
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.withDependsOnClosure
@@ -38,6 +40,9 @@ import org.jetbrains.kotlin.gradle.targets.native.toolchain.NoopKotlinNativeProv
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.UsesKotlinNativeBundleBuildService
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.internal.compilerRunner.native.maxParallelUsagesFromAvailableRam
+import org.jetbrains.kotlin.internal.compilerRunner.native.maxParallelUsagesFromGradleProperty
+import org.jetbrains.kotlin.internal.compilerRunner.native.registerKotlinNativeParallelismLimitService
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 import javax.inject.Inject
@@ -54,7 +59,18 @@ internal abstract class CInteropCommonizerTask
     providerFactory: ProviderFactory,
 ) : AbstractCInteropCommonizerTask(),
     UsesClassLoadersCachingBuildService,
-    UsesKotlinNativeBundleBuildService {
+    UsesKotlinNativeBundleBuildService,
+    UsesKotlinNativeToolParallelismProbe {
+
+    init {
+        usesService(
+            project.registerKotlinNativeParallelismLimitService(
+                name = "CInteropCommonizerTask",
+                maxParallelUsagesFromGradleProperty(project.providers, KOTLIN_NATIVE_COMMONIZE_CINTEROP_MAX_WORKERS),
+                maxParallelUsagesFromAvailableRam(approximateTaskInstanceRamUsageMb = 500),
+            )
+        )
+    }
 
     internal class CInteropGist(
         @get:Input val identifier: CInteropIdentifier,
@@ -239,10 +255,20 @@ internal abstract class CInteropCommonizerTask
         outputDirectory.deleteRecursively()
         if (cinteropsForTarget.isEmpty()) return
 
-        GradleCliCommonizer(
-            commonizerToolRunner.get(),
-            kotlinCompilerArgumentsLogLevel.get(),
-        ).commonizeLibraries(
+        val runner = commonizerToolRunner.get()
+        val compilerArgumentsLogLevel = kotlinCompilerArgumentsLogLevel.get()
+
+        CliCommonizer { arguments ->
+            runner.runToolWithWorkers(
+                KotlinNativeToolRunner.ToolArguments(
+                    shouldRunInProcessMode = false,
+                    compilerArgumentsLogLevel = compilerArgumentsLogLevel,
+                    arguments = arguments,
+                ),
+                taskPath = path,
+                parallelismProbe = kotlinNativeToolParallelismProbe,
+            )
+        }.commonizeLibraries(
             konanHome = konanHome.get(),
             outputTargets = group.targets,
             inputLibraries = cinteropsForTarget.map { it.libraryFile.get() }.filter { it.exists() }.toSet(),
