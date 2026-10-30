@@ -319,6 +319,12 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                 )
             }
 
+            buildScriptInjection {
+                kotlinMultiplatform.js {
+                    compilerOptions.target.set("es2015")
+                }
+            }
+
             build("jsNodeDevelopmentRun") {
                 assertOutputContains("Hello, World!")
                 assertTasksUpToDate(":jsNodeDevelopmentGenerateSwcConfig",)
@@ -498,6 +504,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
             }
         }
     }
+
 
     @DisplayName("delegated transpilation is turned off by default for library")
     @GradleTest
