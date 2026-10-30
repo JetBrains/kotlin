@@ -42,7 +42,7 @@ class Test1 : Base<String> {
   @Deprecated(message = "No-arg constructor is hidden from direct usage", level = DeprecationLevel.HIDDEN)
   @Deprecated
   constructor() {
-    super/*Base*/()
+    super/*Base*/<String>()
   }
 
   constructor(b: String) /* primary */ {
@@ -62,7 +62,7 @@ class Test2 : Base2<Int, String> {
   @Deprecated(message = "No-arg constructor is hidden from direct usage", level = DeprecationLevel.HIDDEN)
   @Deprecated
   constructor() {
-    super/*Base2*/()
+    super/*Base2*/<Int, String>()
   }
 
   constructor(b: String) /* primary */ {
@@ -82,7 +82,7 @@ class Test3<E : Any?> : Base<List<E>> {
   @Deprecated(message = "No-arg constructor is hidden from direct usage", level = DeprecationLevel.HIDDEN)
   @Deprecated
   constructor() {
-    super/*Base*/()
+    super/*Base*/<List<E>>()
   }
 
   constructor(e: E) /* primary */ {
@@ -102,7 +102,7 @@ class Test4 : JavaBase<String> {
   @Deprecated(message = "No-arg constructor is hidden from direct usage", level = DeprecationLevel.HIDDEN)
   @Deprecated
   constructor() {
-    super/*JavaBase*/()
+    super/*JavaBase*/<String, Any?>()
   }
 
   constructor(b: String) /* primary */ {
