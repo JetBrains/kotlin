@@ -975,6 +975,17 @@ The default value is 1.""".asReleaseDependent()
     }
 
     compilerArgument {
+        name = "Xin-process-obj-emission"
+        description = """Emit object files from LLVM bitcode in-process, without invoking an external clang process.
+This is an experimental mode and is expected to be faster than the default one.""".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_5_0,
+        )
+    }
+
+    compilerArgument {
         name = "Xmanifest-native-targets"
         description =
             "Comma-separated list that will be written as the value of 'native_targets' property in the .klib manifest. Unknown values are discarded.".asReleaseDependent()

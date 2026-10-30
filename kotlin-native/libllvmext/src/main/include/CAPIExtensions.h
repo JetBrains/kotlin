@@ -21,6 +21,14 @@ void LLVMKotlinInitializeTargets(void);
 
 void LLVMKotlinSetNoTailCall(LLVMValueRef Call);
 
+/// Returns true if code built for the `Actual` triple can be linked into a
+/// module built for the `Expected` triple. On top of
+/// `llvm::Triple::isCompatibleWith`, the environments must match exactly,
+/// because it ignores differences that matter for Apple platforms (device vs.
+/// simulator, Mac Catalyst vs. macOS).
+LLVMBool LLVMKotlinIsTargetTripleCompatible(const char *Expected,
+                                            const char *Actual);
+
 /// Run `Passes` on module `M`.
 /// When `Profile` is not `NULL` also collect profiling data and store the
 /// result in it.
@@ -35,6 +43,29 @@ LLVMErrorRef LLVMKotlinRunPasses(LLVMModuleRef M, const char *Passes,
                                  LLVMKotlinPassesProfileRef *Profile,
                                  const char *SaveIRAfterPasses,
                                  const char *SaveIRDirectory);
+
+/// Instruction selector used by a target machine created with
+/// `LLVMKotlinCreateTargetMachine`. The selection is explicit and overrides
+/// the target's own per-optimization-level policy, with one exception:
+/// `GlobalISel` is treated as `SelectionDAG` for non-Apple targets and for
+/// configurations GlobalISel doesn't support (on AArch64: the ILP32 ABIs, such
+/// as `arm64_32`, and the large code model on MachO).
+/// With `GlobalISel`, functions it cannot select silently fall back to
+/// SelectionDAG.
+typedef enum {
+  LLVMKotlinInstructionSelectorSelectionDAG = 0,
+  LLVMKotlinInstructionSelectorGlobalISel = 1,
+} LLVMKotlinInstructionSelector;
+
+/// Create a target machine for `TargetTriple` (normalized first).
+/// Returns `NULL` on failure and, if `ErrorMessage` is not `NULL`, stores the
+/// reason in it; dispose it with `LLVMDisposeMessage`.
+LLVMTargetMachineRef
+LLVMKotlinCreateTargetMachine(const char *TargetTriple, const char *CPU,
+                              const char *Features, LLVMRelocMode RM,
+                              LLVMCodeModel CM, LLVMCodeGenOptLevel OL,
+                              LLVMKotlinInstructionSelector Selector,
+                              char **ErrorMessage);
 
 LLVM_C_EXTERN_C_END
 
