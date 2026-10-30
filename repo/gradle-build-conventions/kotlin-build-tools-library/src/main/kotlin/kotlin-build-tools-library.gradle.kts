@@ -55,9 +55,8 @@ dependencies {
     testRuntimeOnly(libs.junit.platform.launcher)
 }
 
-// The repository's test task factory attaches the instrumenting agent that test-inputs-check relies on
-extensions.configure<ProjectTestsExtension>("projectTests") {
-    testTask {
-        useJUnitPlatform()
-    }
+// The repository's test task factory attaches the instrumenting agent that test-inputs-check relies on.
+// There is no `projectTests {}` accessor here: generating it fails the same way as for common-configuration.
+configure<ProjectTestsExtension> {
+    testTask()
 }
