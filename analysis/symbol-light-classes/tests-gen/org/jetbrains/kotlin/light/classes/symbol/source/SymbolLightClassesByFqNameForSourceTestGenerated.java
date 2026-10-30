@@ -692,6 +692,12 @@ public class SymbolLightClassesByFqNameForSourceTestGenerated extends AbstractSy
     }
 
     @Test
+    @TestMetadata("CompanionBlockInInterfaceConstField.kt")
+    public void testCompanionBlockInInterfaceConstField() {
+      run("CompanionBlockInInterfaceConstField.kt");
+    }
+
+    @Test
     @TestMetadata("CompanionBlockInInterfaceInlineWithDefaultArgument.kt")
     public void testCompanionBlockInInterfaceInlineWithDefaultArgument() {
       run("CompanionBlockInInterfaceInlineWithDefaultArgument.kt");
@@ -707,6 +713,12 @@ public class SymbolLightClassesByFqNameForSourceTestGenerated extends AbstractSy
     @TestMetadata("CompanionBlockInInterfaceInlineWithDefaultArgumentJvmDefaultNoCompatibility.kt")
     public void testCompanionBlockInInterfaceInlineWithDefaultArgumentJvmDefaultNoCompatibility() {
       run("CompanionBlockInInterfaceInlineWithDefaultArgumentJvmDefaultNoCompatibility.kt");
+    }
+
+    @Test
+    @TestMetadata("CompanionBlockInInterfaceJvmField.kt")
+    public void testCompanionBlockInInterfaceJvmField() {
+      run("CompanionBlockInInterfaceJvmField.kt");
     }
 
     @Test
