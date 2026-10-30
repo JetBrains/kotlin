@@ -21,6 +21,10 @@ import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
 import org.jetbrains.kotlin.commonizer.CliCommonizer
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeToolRunner
+import org.jetbrains.kotlin.internal.compilerRunner.native.ToolSpec
+import org.jetbrains.kotlin.internal.compilerRunner.native.configureDefaultMaxHeapSize
+import org.jetbrains.kotlin.internal.compilerRunner.native.disableC2
+import org.jetbrains.kotlin.internal.compilerRunner.native.enableAssertions
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
 import org.jetbrains.kotlin.gradle.plugin.KLIB_COMMONIZER_CLASSPATH_CONFIGURATION_NAME
@@ -79,7 +83,7 @@ internal fun ObjectFactory.KotlinNativeCommonizerToolRunner(
 private fun ObjectFactory.kotlinNativeCommonizerToolSpec(
     toolClasspath: FileCollection,
     toolJvmArgs: ListProperty<String>,
-) = KotlinNativeToolRunner.ToolSpec(
+) = ToolSpec(
     displayName = property("Kotlin/Native KLIB commonizer"),
     optionalToolName = property(),
     mainClass = property("org.jetbrains.kotlin.commonizer.cli.CommonizerCLI"),
