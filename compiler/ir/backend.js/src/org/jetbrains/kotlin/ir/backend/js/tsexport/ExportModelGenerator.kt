@@ -156,7 +156,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
                         .memoryOptimizedMap {
                             exportParameter(
                                 it,
-                                it.hasDefaultValue || realOverrideTarget?.parameters?.get(it.indexInParameters)?.hasDefaultValue == true,
+                                it.hasDefaultValue,
                                 functionTypeParameterScope,
                                 inlineClassesShouldBeUnboxed
                             )
@@ -221,7 +221,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
     }
 
     private val IrValueParameter.hasDefaultValue: Boolean
-        get() = origin == JsLoweredDeclarationOrigin.JS_SHADOWED_DEFAULT_PARAMETER
+        get() = hasDefaultValue { it.origin == JsLoweredDeclarationOrigin.JS_SHADOWED_DEFAULT_PARAMETER }
 
     private fun exportProperty(
         property: IrProperty,

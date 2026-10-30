@@ -153,7 +153,7 @@ declare namespace JS_TESTS {
         }
         abstract class AbstractWithSuspendAndDefaultArgument {
             constructor();
-            value(suffix?: string): Promise<string>;
+            abstract value(suffix?: string): Promise<string>;
         }
         namespace AbstractWithSuspendAndDefaultArgument {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
@@ -163,6 +163,7 @@ declare namespace JS_TESTS {
         }
         class KotlinImplWithSuspendAndDefaultArg extends foo.AbstractWithSuspendAndDefaultArgument.$metadata$.constructor {
             constructor();
+            value(suffix?: string): Promise<string>;
         }
         namespace KotlinImplWithSuspendAndDefaultArg {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
