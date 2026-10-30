@@ -449,8 +449,12 @@ abstract class IncrementalCompilerRunner<
         changesCollector: ChangesCollector,
     )
 
-    protected open fun additionalDirtyFiles(caches: CacheManager, generatedFiles: List<GeneratedFile>, services: Services): Iterable<File> =
-        emptyList()
+    protected open fun additionalDirtyFiles(
+        caches: CacheManager,
+        generatedFiles: List<GeneratedFile>,
+        services: Services,
+        dirtySources: Set<File>,
+    ): List<File> = emptyList()
 
     protected open fun additionalDirtyLookupSymbols(): Iterable<LookupSymbol> =
         emptyList()
@@ -631,8 +635,7 @@ abstract class IncrementalCompilerRunner<
             }
             if (compilationMode is CompilationMode.Incremental) {
                 // todo: feels dirty, can this be refactored?
-                val dirtySourcesSet = dirtySources.toHashSet()
-                val additionalDirtyFiles = additionalDirtyFiles(caches, generatedFiles, services).filter { it !in dirtySourcesSet }
+                val additionalDirtyFiles = additionalDirtyFiles(caches, generatedFiles, services, dirtySources)
                 if (additionalDirtyFiles.isNotEmpty()) {
                     reporter.reportMarkDirty(additionalDirtyFiles, ScopeExpansionReason.SHARED_CLASS_NAME)
                     dirtySources.addAll(additionalDirtyFiles)
