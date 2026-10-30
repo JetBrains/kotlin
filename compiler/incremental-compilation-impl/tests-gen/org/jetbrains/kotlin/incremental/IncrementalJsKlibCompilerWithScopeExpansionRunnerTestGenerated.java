@@ -79,6 +79,12 @@ public class IncrementalJsKlibCompilerWithScopeExpansionRunnerTestGenerated exte
     }
 
     @Test
+    @TestMetadata("argumentsBecameNotNull")
+    public void testArgumentsBecameNotNull() {
+      runTest("jps/jps-plugin/testData/incremental/pureKotlin/argumentsBecameNotNull/");
+    }
+
+    @Test
     @TestMetadata("changeTypeImplicitlyWithCircularDependency")
     public void testChangeTypeImplicitlyWithCircularDependency() {
       runTest("jps/jps-plugin/testData/incremental/pureKotlin/changeTypeImplicitlyWithCircularDependency/");

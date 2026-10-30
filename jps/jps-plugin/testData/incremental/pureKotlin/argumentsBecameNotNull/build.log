@@ -1,0 +1,26 @@
+================ Step #1 =================
+
+Cleaning output files:
+  out/production/module/C.class
+  out/production/module/DeclKt.class
+  out/production/module/META-INF/module.kotlin_module
+End of files
+Compiling files:
+  src/decl.kt
+End of files
+Exit code: OK
+------------------------------------------
+Cleaning output files:
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/UseCtorKt.class
+  out/production/module/UseFunKt.class
+End of files
+Compiling files:
+  src/useCtor.kt
+  src/useFun.kt
+End of files
+Exit code: ABORT
+------------------------------------------
+COMPILATION FAILED
+Null cannot be a value of a non-null type 'String'.
+Null cannot be a value of a non-null type 'String'.

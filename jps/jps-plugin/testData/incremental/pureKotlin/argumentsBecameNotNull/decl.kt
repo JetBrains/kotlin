@@ -1,0 +1,3 @@
+class C(val s: String?)
+
+fun f(s: String?): Int = s?.length ?: 0

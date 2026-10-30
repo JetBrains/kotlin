@@ -73,6 +73,12 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
     }
 
     @Test
+    @TestMetadata("argumentsBecameNotNull")
+    public void testArgumentsBecameNotNull() {
+      runTest("jps/jps-plugin/testData/incremental/pureKotlin/argumentsBecameNotNull/");
+    }
+
+    @Test
     @TestMetadata("bridgeWithThrows")
     public void testBridgeWithThrows() {
       runTest("jps/jps-plugin/testData/incremental/pureKotlin/bridgeWithThrows/");
