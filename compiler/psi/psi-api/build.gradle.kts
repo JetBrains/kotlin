@@ -15,7 +15,6 @@ dependencies {
     api(project(":core:language.model"))
     implementation(project(":core:error.handling"))
 
-    compileOnly(project(":kotlin-util-klib"))
     compileOnly(intellijCore())
     compileOnly(libs.org.jetbrains.annotations)
 
