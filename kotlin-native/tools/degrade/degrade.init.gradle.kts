@@ -6,59 +6,57 @@ class DegradePlugin : Plugin<Project> {
     override fun apply(target: Project) {
         if (target != target.rootProject) return
 
-        Degrade(target).register()
+        val service = target.gradle.sharedServices.registerIfAbsent("degrade", DegradeService::class.java) {
+            parameters.scriptDir.set(target.file("degrade"))
+        }
+        target.gradle.taskGraph.whenReady {
+            service.get().setupTaskLogs(allTasks)
+        }
     }
 }
 
-private class Degrade(val rootProject: Project) {
-    private val scriptDir = rootProject.file("degrade")
+abstract class DegradeService : BuildService<DegradeService.Parameters>, AutoCloseable {
+    interface Parameters : BuildServiceParameters {
+        val scriptDir: DirectoryProperty
+    }
 
-    private class TaskLog {
+    private class TaskLog(val konanHome: String) {
         val stdout = StringBuilder()
-
-        fun clear() {
-            stdout.clear()
-        }
     }
 
     private fun setupTaskLog(task: Task): TaskLog {
-        val log = TaskLog()
+        val project = task.project
+        val konanHome = project.findProperty("konanHome") ?: project.findProperty("kotlinNativeDist")
+        val log = TaskLog(konanHome.toString())
         task.logging.addStandardOutputListener { log.stdout.append(it) }
         return log
     }
 
-    fun register() {
-        rootProject.gradle.addListener(object : BuildAdapter(), TaskExecutionListener {
-            val taskToLog = mutableMapOf<Task, TaskLog>()
-            val allScripts = mutableListOf<String>()
-            val failedScripts = mutableListOf<String>()
+    private var taskToLog = emptyMap<Task, TaskLog>()
 
-            @Synchronized
-            override fun beforeExecute(task: Task) {
-                taskToLog.getOrPut(task) { setupTaskLog(task) }.clear()
-            }
+    fun setupTaskLogs(tasks: List<Task>) {
+        taskToLog = tasks.associateWith { setupTaskLog(it) }
+    }
 
-            @Synchronized
-            override fun afterExecute(task: Task, state: TaskState) {
-                val log = taskToLog[task] ?: return
-                val script = generateScriptForTask(task, log) ?: return
-                allScripts += script
-                if (state.failure != null) {
-                    failedScripts += script
-                }
-            }
+    // Gradle closes the service at the end of the build.
+    override fun close() {
+        generateScripts()
+    }
 
-            @Synchronized
-            override fun buildFinished(result: BuildResult) {
-                try {
-                    generateAggregateScript("rerun-all.sh", allScripts)
-                    generateAggregateScript("rerun-failed.sh", failedScripts)
-                } finally {
-                    failedScripts.clear()
-                    allScripts.clear()
-                }
+    private fun generateScripts() {
+        val allScripts = mutableListOf<String>()
+        val failedScripts = mutableListOf<String>()
+
+        taskToLog.forEach { (task, log) ->
+            val script = generateScriptForTask(task, log) ?: return@forEach
+            allScripts += script
+            if (task.state.failure != null) {
+                failedScripts += script
             }
-        })
+        }
+
+        generateAggregateScript("rerun-all.sh", allScripts)
+        generateAggregateScript("rerun-failed.sh", failedScripts)
     }
 
     private fun generateAggregateScript(name: String, scripts: List<String>) = generateScript(name) {
@@ -70,14 +68,12 @@ private class Degrade(val rootProject: Project) {
     }
 
     private fun generateScriptForTask(task: Task, taskLog: TaskLog): String? {
-        val project = task.project
-
         val stdoutLinesIterator = taskLog.stdout.split('\n').iterator()
         val commands = parseKotlinNativeCommands { stdoutLinesIterator.takeIf { it.hasNext() }?.next() }
 
         if (commands.isEmpty()) return null
 
-        val konanHome = project.properties["konanHome"] ?: project.properties["kotlinNativeDist"]
+        val konanHome = taskLog.konanHome
 
         val scriptName = task.path.substring(1).replace(':', '_') + ".sh"
 
@@ -88,7 +84,7 @@ private class Degrade(val rootProject: Project) {
                 appendLine(""""${"$"}kotlinNativeDist/bin/run_konan" \""")
                 command.transformedArguments.forEachIndexed { index, argument ->
                     append("    ")
-                    append(argument.replace(konanHome.toString(), "\$kotlinNativeDist"))
+                    append(argument.replace(konanHome, "\$kotlinNativeDist"))
                     if (index != command.transformedArguments.lastIndex) {
                         appendLine(" \\")
                     }
@@ -109,9 +105,9 @@ private class Degrade(val rootProject: Project) {
             val toolName = listOf(
                     "Run \"(.*)\" tool in a separate JVM process",
                     "Run in-process tool \"(.*)\""
-            ).map { Regex(it) }.firstNotNullOfOrNull {
-                it.find(line)?.groups?.get(1)?.value
-            } ?: continue
+            ).asSequence().mapNotNull {
+                Regex(it).find(line)?.groups?.get(1)?.value
+            }.firstOrNull() ?: continue
             val secondLine = nextLine() ?: break
 
             if (secondLine != "Main class = $kotlinNativeEntryPointClass"
@@ -124,17 +120,17 @@ private class Degrade(val rootProject: Project) {
 
             val transformedArguments = generateSequence(nextLine)
                     .takeWhile { it != "]" }
+                    .toList()
                     .flatMap {
-                        val line = it.trimStart()
-                        if (line.startsWith("@")) { // argument with filename containing list of arguments
-                            File(line.substringAfter("@"))
+                        val argument = it.trimStart()
+                        if (argument.startsWith("@")) { // argument with filename containing list of arguments
+                            File(argument.substringAfter("@"))
                                     .readText()
                                     .split("\n")
                                     .map { it.substringAfter('"').substringBeforeLast('"') }
                         } else
-                            listOf(line)
+                            listOf(argument)
                     }
-                    .toList()
 
             result += KotlinNativeCommand(listOf(toolName) + transformedArguments)
         }
@@ -158,6 +154,7 @@ private class Degrade(val rootProject: Project) {
     }
 
     private fun generateScript(name: String, generateBody: Appendable.() -> Unit) {
+        val scriptDir = parameters.scriptDir.get().asFile
         scriptDir.mkdirs()
         val file = File(scriptDir, name)
         file.bufferedWriter().use { writer ->
