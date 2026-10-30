@@ -20,6 +20,12 @@ public enum Foo /* Foo*/ {
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()
 
+  @org.jetbrains.annotations.NotNull()
+  public static @org.jetbrains.annotations.NotNull() Foo @org.jetbrains.annotations.NotNull() [] values();//  values()
+
+  @org.jetbrains.annotations.NotNull()
+  public static @org.jetbrains.annotations.NotNull() kotlin.enums.EnumEntries<@org.jetbrains.annotations.NotNull() Foo> getEntries();//  getEntries()
+
   public final int getX();//  getX()
 }
 
