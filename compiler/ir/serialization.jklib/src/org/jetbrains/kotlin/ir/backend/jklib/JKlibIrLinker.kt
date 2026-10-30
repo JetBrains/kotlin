@@ -72,7 +72,7 @@ class JKlibIrLinker(
     override val irMangler: KotlinMangler.IrMangler = JKlibIrMangler()
 
     override val fakeOverrideBuilder = IrLinkerFakeOverrideProvider(
-        linker = this,
+        fileLocalSymbolProvider = fileLocalSymbolProvider,
         symbolTable = symbolTable,
         mangler = irMangler,
         friendModules = emptyMap(),

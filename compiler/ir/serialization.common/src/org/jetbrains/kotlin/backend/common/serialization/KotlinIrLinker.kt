@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.linkage.IrDeserializer
 import org.jetbrains.kotlin.backend.common.linkage.issues.*
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageDiagnostics
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupportForLinker
-import org.jetbrains.kotlin.backend.common.overrides.FileLocalAwareLinker
+import org.jetbrains.kotlin.backend.common.overrides.FileLocalSymbolProvider
 import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvider
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.cli.report
@@ -38,7 +38,7 @@ abstract class KotlinIrLinker(
     val symbolTable: SymbolTable,
     val errorCallback: (String) -> Unit,
     val deserializedSymbolPostProcessor: (IrSymbol, IdSignature, IrFileSymbol) -> IrSymbol = { s, _, _ -> s },
-) : IrDeserializer, FileLocalAwareLinker {
+) : IrDeserializer {
     constructor(
         configuration: CompilerConfiguration,
         symbolTable: SymbolTable,
@@ -55,6 +55,26 @@ abstract class KotlinIrLinker(
 
     val irInterner = IrInterningService()
     val fileEntryDeserializer = FileEntryDeserializer(irInterner)
+
+    protected val fileLocalSymbolProvider = object : FileLocalSymbolProvider {
+        override fun referenceSimpleFunction(file: IrFile, signature: IdSignature.FileLocalSignature): IrSimpleFunctionSymbol =
+            referenceCallable(file, signature, BinarySymbolData.SymbolKind.FUNCTION_SYMBOL) as IrSimpleFunctionSymbol
+
+        override fun referenceProperty(file: IrFile, signature: IdSignature.FileLocalSignature): IrPropertySymbol =
+            referenceCallable(file, signature, BinarySymbolData.SymbolKind.PROPERTY_SYMBOL) as IrPropertySymbol
+
+        private fun referenceCallable(
+            file: IrFile,
+            signature: IdSignature.FileLocalSignature,
+            symbolKind: BinarySymbolData.SymbolKind,
+        ): IrSymbol {
+            val moduleDeserializer = firstNotNullOfModuleDeserializersOrNull(file.packageFqName) { moduleDeserializer ->
+                moduleDeserializer.fileDeserializers().firstOrNull { it.file == file }
+            } ?: error("No file deserializer found for file: $file")
+
+            return moduleDeserializer.symbolDeserializer.deserializeSymbolWithOwnerInCurrentFile(signature, symbolKind)
+        }
+    }
 
     /**
      * This is the queue of modules containing top-level declarations to be deserialized. This is
@@ -138,8 +158,9 @@ abstract class KotlinIrLinker(
             currentModuleIfSearched = moduleDeserializer
         }
         if (actualModuleDeserializer == null) {
-            val candidateModules = getModulesDefiningPackage(topLevelSignature.packageFqName())
-            actualModuleDeserializer = candidateModules.firstOrNull { it != currentModuleIfSearched && topLevelSignature in it }
+            actualModuleDeserializer = firstModuleDeserializerOrNull(topLevelSignature.packageFqName()) {
+                it != currentModuleIfSearched && topLevelSignature in it
+            }
         }
 
         // Note: It might happen that the top-level symbol still exists in KLIB, but nested symbol has been removed.
@@ -163,23 +184,44 @@ abstract class KotlinIrLinker(
             ).raiseIssue(errorCallback)
     }
 
-    private fun resolveModuleDeserializer(irFile: IrFile): IrModuleDeserializer? {
-        val candidateModules = getModulesDefiningPackage(irFile.packageFqName)
-        return candidateModules.firstOrNull { moduleDeserializer ->
-            moduleDeserializer.fileDeserializers().any { it.file == irFile }
-        }
-    }
+    private fun resolveModuleDeserializer(idSignature: IdSignature): IrModuleDeserializer? =
+        firstModuleDeserializerOrNull(idSignature.packageFqName()) { idSignature in it }
 
-    private fun resolveModuleDeserializer(idSignature: IdSignature): IrModuleDeserializer? {
-        val candidateModules = getModulesDefiningPackage(idSignature.packageFqName())
-        return candidateModules.firstOrNull { idSignature in it }
-    }
+    /**
+     * Returns the first module deserializer that may define declarations in the package [packageFqName]
+     * and matches the given [filter], or `null` if no such module deserializer is found.
+     *
+     * Similar to [firstOrNull] from stdlib, but only checks module deserializers that are relevant for [packageFqName],
+     * in the following order:
+     * 1. Module deserializers whose list of defined package names includes [packageFqName].
+     * 2. Module deserializers that cannot tell which packages they define
+     *    ([IrModuleDeserializer.getDefinedPackageNames] returns `null`). These are checked for every package.
+     *
+     * Inside each group, module deserializers are checked in the order they were registered with [createAndRegisterModuleDeserializer].
+     */
+    private inline fun firstModuleDeserializerOrNull(
+        packageFqName: FqName,
+        filter: (IrModuleDeserializer) -> Boolean,
+    ): IrModuleDeserializer? = moduleDeserializersByPackageName[packageFqName]?.firstOrNull(filter)
+        ?: moduleDeserializersWithUnknownPackageNames.firstOrNull(filter)
 
-    private fun getModulesDefiningPackage(packageFqName: FqName): List<IrModuleDeserializer> {
-        val indexedModules = moduleDeserializersByPackageName[packageFqName].orEmpty()
-        return if (moduleDeserializersWithUnknownPackageNames.isEmpty()) indexedModules
-        else indexedModules + moduleDeserializersWithUnknownPackageNames
-    }
+    /**
+     * Applies the given [transformer] to module deserializers that may define declarations in the package [packageFqName]
+     * and returns the first non-null result, or `null` if [transformer] returns `null` for all of them.
+     *
+     * Similar to [firstNotNullOfOrNull] from stdlib, but only checks module deserializers that are relevant for [packageFqName],
+     * in the following order:
+     * 1. Module deserializers whose list of defined package names includes [packageFqName].
+     * 2. Module deserializers that cannot tell which packages they define
+     *    ([IrModuleDeserializer.getDefinedPackageNames] returns `null`). These are checked for every package.
+     *
+     * Inside each group, module deserializers are checked in the order they were registered with [createAndRegisterModuleDeserializer].
+     */
+    private inline fun <T : Any> firstNotNullOfModuleDeserializersOrNull(
+        packageFqName: FqName,
+        transformer: (IrModuleDeserializer) -> T?,
+    ): T? = moduleDeserializersByPackageName[packageFqName]?.firstNotNullOfOrNull(transformer)
+        ?: moduleDeserializersWithUnknownPackageNames.firstNotNullOfOrNull(transformer)
 
     protected abstract fun createModuleDeserializer(
         moduleFragment: IrModuleFragment,
@@ -239,16 +281,6 @@ abstract class KotlinIrLinker(
         //}
 
         return symbol.owner as IrDeclaration
-    }
-
-    override fun tryReferencingSimpleFunctionByLocalSignature(file: IrFile?, idSignature: IdSignature): IrSimpleFunctionSymbol? {
-        if (idSignature.isPubliclyVisible || file == null) return null
-        return resolveModuleDeserializer(file)?.referenceSimpleFunctionByLocalSignature(file, idSignature)
-    }
-
-    override fun tryReferencingPropertyByLocalSignature(file: IrFile?, idSignature: IdSignature): IrPropertySymbol? {
-        if (idSignature.isPubliclyVisible || file == null) return null
-        return resolveModuleDeserializer(file)?.referencePropertyByLocalSignature(file, idSignature)
     }
 
     override fun getSymbolAndPutIntoQueue(signature: IdSignature, kind: IrDeserializer.TopLevelSymbolKind): IrSymbol? {
@@ -350,19 +382,96 @@ abstract class KotlinIrLinker(
     }
 }
 
+/**
+ * Defines which declarations of a deserialized IR file are loaded, and how much of each declaration.
+ *
+ * A strategy is resolved per file by [DeserializationStrategyResolver]. Every strategy is also a resolver
+ * on its own that returns itself for any file, so it can be passed where a resolver is expected to apply
+ * the same strategy to the whole module.
+ *
+ * Regardless of the strategy, a top-level declaration referenced from any other already deserialized
+ * declaration is always deserialized on demand. The strategy decides what is loaded *in addition* to that,
+ * and whether function bodies are loaded.
+ *
+ * @property onDemand The file is not added to [IrModuleFragment.files] and is not reported among
+ *   [IrModuleDeserializer.fileDeserializers]. Its declarations are deserialized only when something refers to them.
+ *   For example, when Kotlin/Native builds a per-file cache for a single file of `stdlib`, all other files
+ *   of `stdlib` are [onDemand]: they must not get into the module fragment (otherwise code would be generated
+ *   for them as well), but a function from such a file that is called from the cached file still has to be
+ *   resolvable.
+ * @property needBodies Bodies of all deserialized functions are loaded. For example, the main module compiled
+ *   to JavaScript needs every function body, because the backend generates code for all of them.
+ * @property needOnlyInlineBodies Bodies of inline functions (and of local functions declared inside them) are loaded,
+ *   even if [needBodies] is not set. For example, when user code calls `list.map { it * 2 }`, the backend has to
+ *   inline the body of `kotlin.collections.map` into the call site, so it needs that body even if `stdlib` itself
+ *   is not going to be compiled.
+ * @property explicitlyExported Declarations that the serializer recorded as explicitly exported to the compiler
+ *   are deserialized even if nothing refers to them. These are the roots required by the platform rather than by
+ *   Kotlin code: `@JsExport` declarations on JS, or functions annotated with `@ExportForCppRuntime` on Native that
+ *   are called from the C++ runtime. Without this flag, a `@JsExport fun greet()` in a dependency that no Kotlin
+ *   code calls would be silently dropped from the resulting JS module.
+ * @property theWholeWorld All top-level declarations of the file are deserialized, whether referenced or not.
+ *   For example, the `dump-ir` command of the `klib` tool must show every declaration of the library, not only
+ *   those reachable from somewhere.
+ */
 enum class DeserializationStrategy(
-    val onDemand: Boolean,
-    val needBodies: Boolean,
-    val explicitlyExported: Boolean,
-    val theWholeWorld: Boolean,
-    val inlineBodies: Boolean
+    val onDemand: Boolean = false,
+    val needBodies: Boolean = false,
+    val needOnlyInlineBodies: Boolean = needBodies,
+    val explicitlyExported: Boolean = false,
+    val theWholeWorld: Boolean = false,
 ) : DeserializationStrategyResolver {
-    ON_DEMAND(true, false, false, false, false),
-    ONLY_REFERENCED(false, true, false, false, true),
-    ALL(false, true, true, true, true),
-    EXPLICITLY_EXPORTED(false, true, true, false, true),
-    ONLY_DECLARATION_HEADERS(false, false, false, false, false),
-    WITH_INLINE_BODIES(false, false, false, false, true);
+    /**
+     * The file is hidden from the module fragment. Its declarations are deserialized only when referenced,
+     * and without function bodies.
+     *
+     * Used for files of a library that are not being compiled right now but may still be referenced,
+     * e.g. all files except the cached ones when Kotlin/Native builds a per-file cache.
+     */
+    ON_DEMAND(onDemand = true),
+
+    /**
+     * Everything in the file is deserialized: all top-level declarations, explicitly exported ones,
+     * and all function bodies.
+     *
+     * Used for the module that is actually being compiled into a binary, e.g. the main module in JS
+     * whole-program compilation, an exported dependency of a Kotlin/Native framework, or when dumping
+     * the whole content of a library.
+     */
+    ALL(needBodies = true, explicitlyExported = true, theWholeWorld = true),
+
+    /**
+     * Only declarations reachable from elsewhere, plus explicitly exported ones, are deserialized,
+     * and all of them get their function bodies.
+     *
+     * Used for regular dependencies in whole-program compilation (Kotlin/Native, Kotlin/JS): if the
+     * program calls only `println()` from `stdlib`, then only `println()` and whatever it transitively
+     * refers to are loaded and compiled, together with the platform roots like `@JsExport` declarations.
+     */
+    EXPLICITLY_EXPORTED(needBodies = true, explicitlyExported = true),
+
+    /**
+     * Only declarations reachable from elsewhere are deserialized, without any function bodies.
+     *
+     * Used when the code of a library is already compiled and only its declarations need to be
+     * known for linkage, e.g. a library that is fully present in the Kotlin/Native cache. This is also
+     * the default strategy of [IrModuleDeserializer].
+     */
+    ONLY_DECLARATION_HEADERS,
+
+    /**
+     * Only declarations reachable from elsewhere are deserialized, and only inline functions get their bodies.
+     *
+     * Used when a library is not going to be compiled, but its inline functions still need to be inlined
+     * into the code that is, e.g. unmodified files during JS incremental compilation, or a Kotlin/Native
+     * library that is cached as a header cache.
+     */
+    WITH_INLINE_BODIES(needOnlyInlineBodies = true);
+
+    init {
+        check(!onDemand || !explicitlyExported)
+        check(needOnlyInlineBodies || !needBodies)
+    }
 
     override fun invoke(filePath: String) = this
 }

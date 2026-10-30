@@ -45,9 +45,29 @@ interface FakeOverrideClassFilter {
     fun needToConstructFakeOverrides(clazz: IrClass): Boolean
 }
 
-interface FileLocalAwareLinker {
-    fun tryReferencingSimpleFunctionByLocalSignature(file: IrFile?, idSignature: IdSignature): IrSimpleFunctionSymbol?
-    fun tryReferencingPropertyByLocalSignature(file: IrFile?, idSignature: IdSignature): IrPropertySymbol?
+/**
+ * Provides symbols referenced by signatures that are local to a particular [IrFile]
+ * (i.e., signatures that are not publicly visible and therefore can't be looked up in the global [SymbolTable]).
+ *
+ * Used during fake override construction to obtain symbols for fake overrides with file-local signatures,
+ * e.g. fake overrides of private members or members of local/private classes.
+ */
+interface FileLocalSymbolProvider {
+    /**
+     * Returns a symbol of the simple function with the file-local [signature] in the scope of the given [file].
+     * Throws an exception, if [file] isn't known to this provider.
+     *
+     * If the symbol hasn't been referenced in the [file] yet, it is created.
+     */
+    fun referenceSimpleFunction(file: IrFile, signature: IdSignature.FileLocalSignature): IrSimpleFunctionSymbol
+
+    /**
+     * Returns a symbol of the property with the file-local [signature] in the scope of the given [file].
+     * Throws an exception, if [file] isn't known to this provider.
+     *
+     * If the symbol hasn't been referenced in the [file] yet, it is created.
+     */
+    fun referenceProperty(file: IrFile, signature: IdSignature.FileLocalSignature): IrPropertySymbol
 }
 
 object DefaultFakeOverrideClassFilter : FakeOverrideClassFilter {
@@ -55,7 +75,7 @@ object DefaultFakeOverrideClassFilter : FakeOverrideClassFilter {
 }
 
 private class IrLinkerFakeOverrideBuilderStrategy(
-    val linker: FileLocalAwareLinker,
+    val fileLocalSymbolProvider: FileLocalSymbolProvider,
     val symbolTable: SymbolTable,
     private val irBuiltIns: IrBuiltIns,
     private val partialLinkageSupport: PartialLinkageSupportForLinker,
@@ -169,11 +189,10 @@ private class IrLinkerFakeOverrideBuilderStrategy(
         manglerCompatibleMode: Boolean
     ): Pair<IdSignature, IrSimpleFunctionSymbol> {
         // The class may be declared inside IrExternalPackageFragment instead of IrFile (e.g. in the case of C-interop stubs).
-        val file = function.parentAsClass.fileOrNull
+        val file: IrFile? = function.parentAsClass.fileOrNull
 
         val signature = composeSignature(function, manglerCompatibleMode)
-        val symbol = linker.tryReferencingSimpleFunctionByLocalSignature(file, signature)
-            ?: symbolTable.referenceSimpleFunction(signature)
+        val symbol = getFunctionFakeOverrideSymbol(file, signature)
 
         if (!partialLinkageSupport.isEnabled
             || !symbol.isBound
@@ -193,8 +212,7 @@ private class IrLinkerFakeOverrideBuilderStrategy(
         val disambiguatedSignature = composeSignature(functionWithDisambiguatedSignature, manglerCompatibleMode)
         assert(disambiguatedSignature != signature) { "Failed to compute disambiguated signature for fake override $function" }
 
-        val symbolWithDisambiguatedSignature = linker.tryReferencingSimpleFunctionByLocalSignature(file, disambiguatedSignature)
-            ?: symbolTable.referenceSimpleFunction(disambiguatedSignature)
+        val symbolWithDisambiguatedSignature = getFunctionFakeOverrideSymbol(file, disambiguatedSignature)
 
         return disambiguatedSignature to symbolWithDisambiguatedSignature
     }
@@ -204,11 +222,10 @@ private class IrLinkerFakeOverrideBuilderStrategy(
         manglerCompatibleMode: Boolean
     ): Pair<IdSignature, IrPropertySymbol> {
         // The class may be declared inside IrExternalPackageFragment instead of IrFile (e.g. in the case of C-interop stubs).
-        val file = property.parentAsClass.fileOrNull
+        val file: IrFile? = property.parentAsClass.fileOrNull
 
         val signature = composeSignature(property, manglerCompatibleMode)
-        val symbol = linker.tryReferencingPropertyByLocalSignature(file, signature)
-            ?: symbolTable.referenceProperty(signature)
+        val symbol = getPropertyFakeOverrideSymbol(file, signature)
 
         if (!partialLinkageSupport.isEnabled
             || !symbol.isBound
@@ -229,10 +246,23 @@ private class IrLinkerFakeOverrideBuilderStrategy(
         val disambiguatedSignature = composeSignature(propertyWithDisambiguatedSignature, manglerCompatibleMode)
         assert(disambiguatedSignature != signature) { "Failed to compute disambiguated signature for fake override $property" }
 
-        val symbolWithDisambiguatedSignature = linker.tryReferencingPropertyByLocalSignature(file, disambiguatedSignature)
-            ?: symbolTable.referenceProperty(disambiguatedSignature)
+        val symbolWithDisambiguatedSignature = getPropertyFakeOverrideSymbol(file, disambiguatedSignature)
 
         return disambiguatedSignature to symbolWithDisambiguatedSignature
+    }
+
+    private fun getFunctionFakeOverrideSymbol(file: IrFile?, signature: IdSignature): IrSimpleFunctionSymbol {
+        // The FO-holding class may be declared inside IrExternalPackageFragment instead of IrFile (e.g. in the case of C-interop stubs).
+        return runIf(file != null && signature is IdSignature.FileLocalSignature) {
+            fileLocalSymbolProvider.referenceSimpleFunction(file, signature)
+        } ?: symbolTable.referenceSimpleFunction(signature)
+    }
+
+    private fun getPropertyFakeOverrideSymbol(file: IrFile?, signature: IdSignature): IrPropertySymbol {
+        // The FO-holding class may be declared inside IrExternalPackageFragment instead of IrFile (e.g. in the case of C-interop stubs).
+        return runIf(file != null && signature is IdSignature.FileLocalSignature) {
+            fileLocalSymbolProvider.referenceProperty(file, signature)
+        } ?: symbolTable.referenceProperty(signature)
     }
 
     private fun buildFunctionWithDisambiguatedSignature(function: IrSimpleFunction): IrSimpleFunction =
@@ -272,7 +302,7 @@ private class IrLinkerFakeOverrideBuilderStrategy(
 }
 
 class IrLinkerFakeOverrideProvider(
-    private val linker: FileLocalAwareLinker,
+    private val fileLocalSymbolProvider: FileLocalSymbolProvider,
     private val symbolTable: SymbolTable,
     val mangler: KotlinMangler.IrMangler,
     private val friendModules: Map<String, Collection<String>>,
@@ -316,7 +346,7 @@ class IrLinkerFakeOverrideProvider(
         val fakeOverrideBuilder = IrFakeOverrideBuilder(
             typeSystem,
             IrLinkerFakeOverrideBuilderStrategy(
-                linker,
+                fileLocalSymbolProvider,
                 symbolTable,
                 typeSystem.irBuiltIns,
                 partialLinkageSupport,
