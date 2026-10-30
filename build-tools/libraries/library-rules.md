@@ -11,9 +11,9 @@ The convention plugin does not enforce this, so review has to.
 
 Applies to: `build.gradle.kts`
 
-The script applies `kotlin-build-tools-library` and sets `description`. It must not re-apply
-`binary-compatibility-validator` or `test-inputs-check`, and must not change the Kotlin language/API
-version, JVM target or stdlib setup the plugin configures. BTA is added with
+The script applies `kotlin-build-tools-library` and sets `description`. It must not configure ABI
+validation or `test-inputs-check` itself, and must not change the Kotlin language/API version, JVM
+target or stdlib setup the plugin configures. BTA is added with
 `api(project(":compiler:build-tools:kotlin-build-tools-api"))` when needed.
 
 # Flag third-party dependencies

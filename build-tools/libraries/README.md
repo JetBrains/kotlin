@@ -10,8 +10,8 @@ have to write for itself.
 
 The libraries ship with Kotlin releases and are meant for Kotlin's build tool integrations, which
 use the library version released with them. The API can change in any Kotlin release, without a
-deprecation cycle. Each library has a binary-compatibility-validator dump that records every change,
-so changes are visible in review.
+deprecation cycle. Each library has an ABI dump that records every change, so changes are visible
+in review.
 
 ## Layout
 

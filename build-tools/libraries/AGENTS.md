@@ -65,7 +65,7 @@ mention the new dependency in the commit message.
    For the first library, also add
    `/repo/artifacts-tests/src/test/resources/org/jetbrains/kotlin/build-tools-*/ "Kotlin Build Tools"`
    to `.space/CODEOWNERS` in the same commit: `SpaceCodeOwnersTest` rejects a rule that matches no file.
-5. Run `./gradlew :build-tools:libraries:<tool>:apiDump` and commit `api/<tool>.api`.
+5. Run `./gradlew :build-tools:libraries:<tool>:updateKotlinAbi` and commit `api/<tool>.api`.
 6. Add tests under `src/test/kotlin` (see [Testing](#testing)).
 7. Create `<tool>/code-rules.md` with the single line `@../library-rules.md`. That enables the AI review
    rules in [library-rules.md](library-rules.md) for the library (`/review` on a PR, or
@@ -85,7 +85,7 @@ mention the new dependency in the commit message.
 ./gradlew :build-tools:libraries:<tool>:test --tests "org.jetbrains.kotlin.buildtools.<tool>.<Subject>Test" -q
 
 # After changing public declarations
-./gradlew :build-tools:libraries:<tool>:apiDump
+./gradlew :build-tools:libraries:<tool>:updateKotlinAbi
 
 # Published POM after a dependency change; this test compares only locally published POMs
 ./gradlew :build-tools:libraries:<tool>:publish -q
@@ -113,9 +113,9 @@ tests is incomplete. The only exception is a module that holds nothing but decla
 ## Rules
 
 - `explicitApi()` is on, and every public declaration has KDoc.
-- The public API is dumped into `api/<tool>.api` by binary-compatibility-validator. Commit the dump with
-  the change that alters it; `check` fails on a stale dump. Review the dump diff like code: it is the
-  record of what consumers see.
+- Kotlin's built-in ABI validation dumps the public API into `api/<tool>.api`. Commit the dump with
+  the change that alters it; `check` fails on a stale dump (`checkKotlinAbi`). Review the dump diff
+  like code: it is the record of what consumers see.
 - Plain Kotlin/JDK types at the boundary: `java.nio.file.Path`, `String`, collections, data or value
   classes. No lazy Gradle-style wrappers.
 - Take collaborators as parameters (a BTA `KotlinLogger` for logging, for example), not from global state.
@@ -146,9 +146,6 @@ dependencies or must be loaded in an isolated class loader: the API module
 (`build-tools/libraries/<tool>-api/`, project `:build-tools:libraries:<tool>-api`, artifact `build-tools-<tool>-api`)
 holds interfaces, data classes and a loader entry point and has no third-party dependencies; the
 implementation stays in `<tool>/` and depends on it. Both apply the convention plugin.
-
-The two are siblings, not nested: binary-compatibility-validator configures every project under the
-one it is applied to, so an api module inside `<tool>/` would be configured twice and the build fails.
 
 ## Commits
 
