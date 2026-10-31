@@ -16,7 +16,8 @@ fun call(f: () -> Unit) { f() }
 fun Foo.call(f: Foo.() -> Unit) { f() }
 
 // FILE: b.kt
-// EXPECT_GENERATED_JS: function=consumer1 expect=relocation.consumer1.js
+// EXPECT_GENERATED_JS: function=consumer1 expect=relocation.consumer1.js IGNORED_MODES=USE_CONST_AND_LET_FOR_VARIABLES
+// EXPECT_GENERATED_JS: function=consumer1 expect=relocation.consumer1.constLet.js TARGET_MODES=USE_CONST_AND_LET_FOR_VARIABLES
 fun consumer1(): String {
     call(::topLevel)
     if (::topLevel != ::topLevel)
@@ -30,7 +31,8 @@ fun consumer1(): String {
 }
 
 // FILE: c.kt
-// EXPECT_GENERATED_JS: function=consumer2 expect=relocation.consumer2.js
+// EXPECT_GENERATED_JS: function=consumer2 expect=relocation.consumer2.js IGNORED_MODES=USE_CONST_AND_LET_FOR_VARIABLES
+// EXPECT_GENERATED_JS: function=consumer2 expect=relocation.consumer2.constLet.js TARGET_MODES=USE_CONST_AND_LET_FOR_VARIABLES
 fun consumer2(): String {
     call(::topLevel)
     if (::topLevel != ::topLevel)

@@ -297,6 +297,7 @@ class IrModuleToJsTransformer(
                 program.asFragments(),
                 sourceMapInfo,
                 generateCallToMain = true,
+                backendContext.configuration.useEs6ConstLet,
                 outJsProgram = outJsProgram,
             )
             JsGenerationGranularity.PER_FILE,
@@ -306,6 +307,7 @@ class IrModuleToJsTransformer(
                 program,
                 sourceMapInfo,
                 outJsProgram,
+                backendContext.configuration.useEs6ConstLet,
             )
         }
     }
@@ -586,12 +588,13 @@ private fun generateMultiWrappedModuleBody(
     artifactConfiguration: WebArtifactConfiguration,
     program: JsIrProgram,
     sourceMapsInfo: SourceMapsInfo?,
-    outJsProgram: Boolean
+    outJsProgram: Boolean,
+    useEs6ConstLet: Boolean,
 ): CompilationOutputsBuilt {
     // mutable container allows explicitly remove elements from itself,
     // so we are able to help GC to free heavy JsIrModule objects
     // TODO: It makes sense to invent something better, because this logic can be easily broken
-    val moduleToRef = program.asCrossModuleDependencies(artifactConfiguration.moduleKind).toMutableList()
+    val moduleToRef = program.asCrossModuleDependencies(artifactConfiguration.moduleKind, useEs6ConstLet).toMutableList()
 
     val mainModule = moduleToRef.removeLast().let { [main, mainRef] ->
         generateSingleWrappedModuleBody(
@@ -599,6 +602,7 @@ private fun generateMultiWrappedModuleBody(
             main.fragments,
             sourceMapsInfo,
             generateCallToMain = true,
+            useEs6ConstLet,
             mainRef,
             outJsProgram
         )
@@ -610,6 +614,7 @@ private fun generateMultiWrappedModuleBody(
             module.fragments,
             sourceMapsInfo,
             generateCallToMain = false,
+            useEs6ConstLet,
             moduleRef,
             outJsProgram,
         )
@@ -623,7 +628,8 @@ fun generateSingleWrappedModuleBody(
     fragments: List<JsIrProgramFragment>,
     sourceMapsInfo: SourceMapsInfo?,
     generateCallToMain: Boolean,
-    crossModuleReferences: CrossModuleReferences = CrossModuleReferences.Empty(artifactConfiguration.moduleKind),
+    useEs6ConstLet: Boolean,
+    crossModuleReferences: CrossModuleReferences = CrossModuleReferences.Empty(artifactConfiguration.moduleKind, useEs6ConstLet),
     outJsProgram: Boolean = true
 ): CompilationOutputsBuilt {
     val program = Merger(
@@ -633,6 +639,7 @@ fun generateSingleWrappedModuleBody(
         crossModuleReferences,
         generateRegionComments = true,
         generateCallToMain,
+        useEs6ConstLet,
     ).merge()
 
     program.resolveTemporaryNames()

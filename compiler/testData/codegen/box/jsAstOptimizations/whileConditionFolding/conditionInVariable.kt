@@ -1,5 +1,6 @@
 // CHECK_OPTIMIZED_JS
-// EXPECT_GENERATED_JS: function=box expect=conditionInVariable.optimized.js
+// EXPECT_GENERATED_JS: function=box expect=conditionInVariable.optimized.js IGNORED_MODES=USE_CONST_AND_LET_FOR_VARIABLES
+// EXPECT_GENERATED_JS: function=box expect=conditionInVariable.optimized.constLet.js TARGET_MODES=USE_CONST_AND_LET_FOR_VARIABLES
 
 fun box(): String {
     var i = 0

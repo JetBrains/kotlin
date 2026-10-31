@@ -10,7 +10,10 @@ import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.sourceFileWhenInlined
-import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.JsCompositeBlock
+import org.jetbrains.kotlin.js.backend.ast.JsEmpty
+import org.jetbrains.kotlin.js.backend.ast.JsStatement
+import org.jetbrains.kotlin.js.backend.ast.JsVars
 
 @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
 class IrDeclarationToJsTransformer : BaseIrElementToJsNodeTransformer<JsStatement, JsGenerationContext>() {
@@ -51,7 +54,7 @@ class IrDeclarationToJsTransformer : BaseIrElementToJsNodeTransformer<JsStatemen
             initializerBlock.statements += jsAssignment(fieldName.makeRef(), initializer).makeStmt()
         }
 
-        return JsVars(JsVars.Variant.Var, JsVars.JsVar(fieldName))
+        return JsVars(context.varVariant(isMutable = true), JsVars.JsVar(fieldName))
     }
 
     override fun visitVariable(declaration: IrVariable, context: JsGenerationContext): JsStatement {
