@@ -1,3 +1,4 @@
+// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-73434, KT-88674
 
@@ -26,7 +27,7 @@ fun <E3 : Enum<E3>> funB() {
         defaultB(),
     )
 
-    <!TYPE_MISMATCH("Enum<CapturedType(*)!>!; CapturedType(*) & Any")!>funA(
+    <!TYPE_MISMATCH!>funA(
         JavaHelper.createInterfaceA(),
         defaultB(),
     )<!>
