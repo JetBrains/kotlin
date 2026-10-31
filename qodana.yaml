@@ -2,3 +2,5 @@ version: "1.0"
 disableSanityInspections: true
 profile:
   name: empty
+include:
+  - name: no-map-get-not-null-assertion

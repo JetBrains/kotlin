@@ -59,7 +59,6 @@ and list it in [Inspections](#inspections) below.
 
 ## Inspections
 
-There are no inspections yet.
-
 | Id | Reports |
 |----|---------|
+| `no-map-get-not-null-assertion` | `!!` applied directly to an indexed access such as `map[key]!!` |
