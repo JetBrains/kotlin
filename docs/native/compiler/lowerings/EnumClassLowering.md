@@ -135,7 +135,7 @@ block is kept, its last statement is replaced by the `initInstance` call, and th
 
 - `EnumConstructorsLowering` adds the `name`/`ordinal` constructor parameters seen above.
 - `NativeEnumWhenLowering` uses `ordinal` from the same `enumEntriesMap`.
-- `EnumUsageLowering` rewrites entry accesses and the `enumValues`/`enumValueOf`/`enumEntries` intrinsics.
+- [EnumUsageLowering](EnumUsageLowering.md) rewrites entry accesses and the `enumValues`/`enumValueOf`/`enumEntries` intrinsics.
 - [ObjectClassLowering](ObjectClassLowering.md) uses the same publish-before-construct pattern for objects.
 - [StaticInitializersLowering](StaticInitializersLowering.md) makes `$VALUES`/`$ENTRIES` lazily initialized.
 - [static-initializers.md](../static-initializers.md), section "Objects, companions, enums, instance initializers".
