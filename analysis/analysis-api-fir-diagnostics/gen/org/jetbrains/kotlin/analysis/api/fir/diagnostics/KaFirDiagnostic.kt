@@ -8914,6 +8914,13 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface SerializableValueClassWithoutWriteReplace : KaFirDiagnostic<KtClassOrObject> {
+        override val diagnosticClass: KClass<SerializableValueClassWithoutWriteReplace>
+            get() = SerializableValueClassWithoutWriteReplace::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface JavaTypeMismatch : KaFirDiagnostic<KtExpression> {
         override val diagnosticClass: KClass<JavaTypeMismatch>
             get() = JavaTypeMismatch::class
@@ -9534,6 +9541,15 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
             get() = InapplicableJvmFieldWarning::class
 
         public val message: String
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface IdentitySensitiveOperationsWithValueObject : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<IdentitySensitiveOperationsWithValueObject>
+            get() = IdentitySensitiveOperationsWithValueObject::class
+
+        public val type: KaType
     }
 
     @KaUnstableDiagnosticApi

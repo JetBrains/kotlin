@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.fir.analysis.checkers
 
 import com.intellij.lang.LighterASTNode
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -26,6 +28,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
+import org.jetbrains.kotlin.fir.enableWarningsForValueBasedJavaClasses
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
@@ -61,8 +64,6 @@ import org.jetbrains.kotlin.types.model.isNullableType
 import org.jetbrains.kotlin.util.ImplementationStatus
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.getChildren
-import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.contract
 
 private val INLINE_ONLY_ANNOTATION_CLASS_ID: ClassId = ClassId.topLevel(FqName("kotlin.internal.InlineOnly"))
 
@@ -152,23 +153,9 @@ fun ConeKotlinType.isValueClass(session: FirSession): Boolean =
  *
  * Unlike [FirRegularClassSymbol.isPlatformValueClass], which checks only the class itself.
  */
-private fun ConeKotlinType.isPlatformValueClassType(
-    session: FirSession,
-    visited: MutableSet<FirTypeParameterSymbol> = mutableSetOf(),
-): Boolean = unwrapToSimpleTypeUsingLowerBound().isPlatformValueClassType(session, visited)
-
-private fun ConeSimpleKotlinType.isPlatformValueClassType(session: FirSession, visited: MutableSet<FirTypeParameterSymbol>): Boolean =
-    when (this) {
-        is ConeIntersectionType -> intersectedTypes.any { it.isPlatformValueClassType(session, visited) }
-        is ConeTypeParameterType ->
-            visited.add(lookupTag.symbol) &&
-                    lookupTag.symbol.resolvedBounds.any { it.coneType.isPlatformValueClassType(session, visited) }
-        is ConeCapturedType -> constructor.supertypes.orEmpty().any { it.isPlatformValueClassType(session, visited) }
-        is ConeClassLikeType -> toRegularClassSymbol(session)?.let {
-            it.isPlatformValueClass(session) || it.isMappedToPlatformValueClass(session)
-        } == true
-        is ConeUnionType, is ConeTypeVariableType, is ConeStubTypeForTypeVariableInSubtyping, is ConeIntegerLiteralType,
-            -> false
+private fun ConeKotlinType.isPlatformValueClassType(session: FirSession): Boolean =
+    collectUpperBounds(session.typeContext).any { type ->
+        type.toRegularClassSymbol(session)?.let { it.isPlatformValueClass(session) || it.isMappedToPlatformValueClass(session) } == true
     }
 
 fun ConeKotlinType.isFlexiblePrimitive(): Boolean {
@@ -1121,9 +1108,14 @@ inline fun FirElement.requireFeatureSupport(
 
 context(context: CheckerContext)
 internal val ConeKotlinType.hasStableIdentityForAtomicOperations: Boolean
-    get() = fullyExpandedType().unwrapToSimpleTypeUsingLowerBound().let {
-        !it.isPrimitiveOrNullablePrimitive && !it.isValueClass(context.session)
+    get() = when (fullyExpandedType().identityKind()) {
+        IdentityKind.VALUE_TYPE, IdentityKind.FLEXIBLE_PRIMITIVE -> false
+        IdentityKind.VALUE_BASED -> !enableWarningsForValueBasedJavaClasses()
+        null -> true
     }
+
+fun ConeKotlinType.isBoundedByPrimitiveOrValueClass(session: FirSession): Boolean =
+    collectUpperBounds(session.typeContext).any { it.isPrimitiveOrNullablePrimitive || it.isValueClass(session) }
 
 context(context: CheckerContext, reporter: DiagnosticReporter)
 fun checkAtomicCallReceiverForStableIdentity(
