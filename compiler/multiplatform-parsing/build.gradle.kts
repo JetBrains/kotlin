@@ -28,6 +28,7 @@ kotlin {
         val commonMain = getByName("commonMain") {
             dependencies {
                 api(kotlinStdlib())
+                api(project(":compiler:syntax.common"))
                 implementation(libs.org.jetbrains.syntax.api)
                 implementation(libs.org.jetbrains.annotations)
             }

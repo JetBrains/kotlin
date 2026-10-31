@@ -596,6 +596,7 @@ tasks {
         dependsOn(":kotlin-daemon-tests:test")
         dependsOn(":compiler:arguments:check")
         dependsOn(":compiler:multiplatform-parsing:jvmTest")
+        dependsOn(":compiler:syntax.common:jvmTest")
         dependsOn(":compiler:fir:modularized-tests:test")
         dependsOn(":compiler:util:test")
         dependsOn(":core:names:check")

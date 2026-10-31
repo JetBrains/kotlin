@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.lightTree.fir.modifier
 
-import org.jetbrains.kotlin.kmp.lexer.KtTokens
+import org.jetbrains.kotlin.KtTokenId
 
 enum class ModifierFlag(val value: Long) {
     NONE(0L),
@@ -51,52 +51,52 @@ enum class ModifierFlag(val value: Long) {
     companion object {
         val ElementTypeToModifierFlagMap: Map<Int, ModifierFlag> = hashMapOf(
             // Class
-            KtTokens.ENUM_MODIFIER_ID to CLASS_ENUM,
-            KtTokens.ANNOTATION_MODIFIER_ID to CLASS_ANNOTATION,
-            KtTokens.DATA_MODIFIER_ID to CLASS_DATA,
-            KtTokens.INNER_MODIFIER_ID to CLASS_INNER,
-            KtTokens.COMPANION_MODIFIER_ID to CLASS_COMPANION,
-            KtTokens.FUN_MODIFIER_ID to CLASS_FUN,
-            KtTokens.ERROR_MODIFIER_ID to CLASS_ERROR,
+            KtTokenId.ENUM_MODIFIER to CLASS_ENUM,
+            KtTokenId.ANNOTATION_MODIFIER to CLASS_ANNOTATION,
+            KtTokenId.DATA_MODIFIER to CLASS_DATA,
+            KtTokenId.INNER_MODIFIER to CLASS_INNER,
+            KtTokenId.COMPANION_MODIFIER to CLASS_COMPANION,
+            KtTokenId.FUN_MODIFIER to CLASS_FUN,
+            KtTokenId.ERROR_MODIFIER to CLASS_ERROR,
 
             // Member
-            KtTokens.OVERRIDE_MODIFIER_ID to MEMBER_OVERRIDE,
-            KtTokens.LATEINIT_MODIFIER_ID to MEMBER_LATEINIT,
+            KtTokenId.OVERRIDE_MODIFIER to MEMBER_OVERRIDE,
+            KtTokenId.LATEINIT_MODIFIER to MEMBER_LATEINIT,
 
             // Visibility
-            KtTokens.PUBLIC_MODIFIER_ID to VISIBILITY_PUBLIC,
-            KtTokens.PRIVATE_MODIFIER_ID to VISIBILITY_PRIVATE,
-            KtTokens.INTERNAL_MODIFIER_ID to VISIBILITY_INTERNAL,
-            KtTokens.PROTECTED_MODIFIER_ID to VISIBILITY_PROTECTED,
+            KtTokenId.PUBLIC_MODIFIER to VISIBILITY_PUBLIC,
+            KtTokenId.PRIVATE_MODIFIER to VISIBILITY_PRIVATE,
+            KtTokenId.INTERNAL_MODIFIER to VISIBILITY_INTERNAL,
+            KtTokenId.PROTECTED_MODIFIER to VISIBILITY_PROTECTED,
 
             // Function
-            KtTokens.TAILREC_MODIFIER_ID to FUNCTION_TAILREC,
-            KtTokens.OPERATOR_MODIFIER_ID to FUNCTION_OPERATOR,
-            KtTokens.INFIX_MODIFIER_ID to FUNCTION_INFIX,
-            KtTokens.EXTERNAL_MODIFIER_ID to FUNCTION_EXTERNAL,
-            KtTokens.SUSPEND_MODIFIER_ID to FUNCTION_SUSPEND,
+            KtTokenId.TAILREC_MODIFIER to FUNCTION_TAILREC,
+            KtTokenId.OPERATOR_MODIFIER to FUNCTION_OPERATOR,
+            KtTokenId.INFIX_MODIFIER to FUNCTION_INFIX,
+            KtTokenId.EXTERNAL_MODIFIER to FUNCTION_EXTERNAL,
+            KtTokenId.SUSPEND_MODIFIER to FUNCTION_SUSPEND,
 
             // Inheritance
-            KtTokens.ABSTRACT_MODIFIER_ID to INHERITANCE_ABSTRACT,
-            KtTokens.FINAL_MODIFIER_ID to INHERITANCE_FINAL,
-            KtTokens.OPEN_MODIFIER_ID to INHERITANCE_OPEN,
-            KtTokens.SEALED_MODIFIER_ID to INHERITANCE_SEALED,
+            KtTokenId.ABSTRACT_MODIFIER to INHERITANCE_ABSTRACT,
+            KtTokenId.FINAL_MODIFIER to INHERITANCE_FINAL,
+            KtTokenId.OPEN_MODIFIER to INHERITANCE_OPEN,
+            KtTokenId.SEALED_MODIFIER to INHERITANCE_SEALED,
 
             // Parameter
-            KtTokens.VARARG_MODIFIER_ID to PARAMETER_VARARG,
-            KtTokens.NOINLINE_MODIFIER_ID to PARAMETER_NOINLINE,
-            KtTokens.CROSSINLINE_MODIFIER_ID to PARAMETER_CROSSINLINE,
+            KtTokenId.VARARG_MODIFIER to PARAMETER_VARARG,
+            KtTokenId.NOINLINE_MODIFIER to PARAMETER_NOINLINE,
+            KtTokenId.CROSSINLINE_MODIFIER to PARAMETER_CROSSINLINE,
 
             // Platform
-            KtTokens.EXPECT_MODIFIER_ID to PLATFORM_EXPECT,
-            KtTokens.ACTUAL_MODIFIER_ID to PLATFORM_ACTUAL,
+            KtTokenId.EXPECT_MODIFIER to PLATFORM_EXPECT,
+            KtTokenId.ACTUAL_MODIFIER to PLATFORM_ACTUAL,
 
             // Variance
-            KtTokens.IN_MODIFIER_ID to VARIANCE_IN,
-            KtTokens.OUT_MODIFIER_ID to VARIANCE_OUT,
+            KtTokenId.IN_MODIFIER to VARIANCE_IN,
+            KtTokenId.OUT_MODIFIER to VARIANCE_OUT,
 
             // Reification
-            KtTokens.REIFIED_MODIFIER_ID to REIFICATION_REIFIED,
+            KtTokenId.REIFIED_MODIFIER to REIFICATION_REIFIED,
         )
     }
 }

@@ -7,343 +7,190 @@ package org.jetbrains.kotlin.kmp.parser
 
 import com.intellij.platform.syntax.SyntaxElementType
 import org.jetbrains.annotations.ApiStatus
-import org.jetbrains.kotlin.kmp.lexer.KtTokens
+import org.jetbrains.kotlin.KtNodeTypeId
 import org.jetbrains.kotlin.kmp.utils.SyntaxElementTypesWithIds
 
 @ApiStatus.Experimental
 object KtNodeTypes : SyntaxElementTypesWithIds() {
-    /**
-     * The following constants are needed to force the compiler to generate a fast table / lookup switch on when expressions with multiple branches.
-     * They should match corresponding element types.
-     * As an example, see [SyntaxElementTypesWithIds.getElementTypeId] usages.
-     */
-    const val FILE_ID: Int = KtTokens.WHITE_SPACE_ID + 1
-
-    const val CLASS_ID: Int = FILE_ID + 1
-    const val FUNCTION_ID: Int = CLASS_ID + 1
-    const val PROPERTY_ID: Int = FUNCTION_ID + 1
-    const val DESTRUCTURING_DECLARATION_ID: Int = PROPERTY_ID + 1
-    const val DESTRUCTURING_DECLARATION_ENTRY_ID: Int = DESTRUCTURING_DECLARATION_ID + 1
-
-    const val OBJECT_DECLARATION_ID: Int = DESTRUCTURING_DECLARATION_ENTRY_ID + 1
-    const val TYPEALIAS_ID: Int = OBJECT_DECLARATION_ID + 1
-    const val COMPANION_BLOCK_ID: Int = TYPEALIAS_ID + 1
-
-    const val ENUM_ENTRY_ID: Int = COMPANION_BLOCK_ID + 1
-    const val CLASS_INITIALIZER_ID: Int = ENUM_ENTRY_ID + 1
-    const val SCRIPT_INITIALIZER_ID: Int = CLASS_INITIALIZER_ID + 1
-    const val SECONDARY_CONSTRUCTOR_ID: Int = SCRIPT_INITIALIZER_ID + 1
-    const val PRIMARY_CONSTRUCTOR_ID: Int = SECONDARY_CONSTRUCTOR_ID + 1
-    const val CONTEXT_RECEIVER_ID: Int = PRIMARY_CONSTRUCTOR_ID + 1
-    const val CONTEXT_PARAMETER_LIST_ID: Int = CONTEXT_RECEIVER_ID + 1
-    const val TYPE_PARAMETER_LIST_ID: Int = CONTEXT_PARAMETER_LIST_ID + 1
-    const val TYPE_PARAMETER_ID: Int = TYPE_PARAMETER_LIST_ID + 1
-    const val SUPER_TYPE_LIST_ID: Int = TYPE_PARAMETER_ID + 1
-    const val DELEGATED_SUPER_TYPE_ENTRY_ID: Int = SUPER_TYPE_LIST_ID + 1
-    const val SUPER_TYPE_CALL_ENTRY_ID: Int = DELEGATED_SUPER_TYPE_ENTRY_ID + 1
-    const val SUPER_TYPE_ENTRY_ID: Int = SUPER_TYPE_CALL_ENTRY_ID + 1
-    const val PROPERTY_DELEGATE_ID: Int = SUPER_TYPE_ENTRY_ID + 1
-    const val CONSTRUCTOR_CALLEE_ID: Int = PROPERTY_DELEGATE_ID + 1
-    const val VALUE_PARAMETER_LIST_ID: Int = CONSTRUCTOR_CALLEE_ID + 1
-    const val VALUE_PARAMETER_ID: Int = VALUE_PARAMETER_LIST_ID + 1
-
-    const val CLASS_BODY_ID: Int = VALUE_PARAMETER_ID + 1
-    const val IMPORT_LIST_ID: Int = CLASS_BODY_ID + 1
-    const val FILE_ANNOTATION_LIST_ID: Int = IMPORT_LIST_ID + 1
-    const val IMPORT_DIRECTIVE_ID: Int = FILE_ANNOTATION_LIST_ID + 1
-    const val IMPORT_ALIAS_ID: Int = IMPORT_DIRECTIVE_ID + 1
-    const val MODIFIER_LIST_ID: Int = IMPORT_ALIAS_ID + 1
-    const val ANNOTATION_ID: Int = MODIFIER_LIST_ID + 1
-    const val ANNOTATION_ENTRY_ID: Int = ANNOTATION_ID + 1
-    const val ANNOTATION_TARGET_ID: Int = ANNOTATION_ENTRY_ID + 1
-
-    const val TYPE_ARGUMENT_LIST_ID: Int = ANNOTATION_TARGET_ID + 1
-    const val VALUE_ARGUMENT_LIST_ID: Int = TYPE_ARGUMENT_LIST_ID + 1
-    const val VALUE_ARGUMENT_ID: Int = VALUE_ARGUMENT_LIST_ID + 1
-    const val CONTRACT_EFFECT_LIST_ID: Int = VALUE_ARGUMENT_ID + 1
-    const val CONTRACT_EFFECT_ID: Int = CONTRACT_EFFECT_LIST_ID + 1
-    const val LAMBDA_ARGUMENT_ID: Int = CONTRACT_EFFECT_ID + 1
-    const val VALUE_ARGUMENT_NAME_ID: Int = LAMBDA_ARGUMENT_ID + 1
-    const val TYPE_REFERENCE_ID: Int = VALUE_ARGUMENT_NAME_ID + 1
-
-    const val USER_TYPE_ID: Int = TYPE_REFERENCE_ID + 1
-    const val DYNAMIC_TYPE_ID: Int = USER_TYPE_ID + 1
-    const val FUNCTION_TYPE_ID: Int = DYNAMIC_TYPE_ID + 1
-    const val FUNCTION_TYPE_RECEIVER_ID: Int = FUNCTION_TYPE_ID + 1
-    const val NULLABLE_TYPE_ID: Int = FUNCTION_TYPE_RECEIVER_ID + 1
-    const val INTERSECTION_TYPE_ID: Int = NULLABLE_TYPE_ID + 1
-    const val UNION_TYPE_ID: Int = INTERSECTION_TYPE_ID + 1
-    const val TYPE_PROJECTION_ID: Int = UNION_TYPE_ID + 1
-
-    const val PROPERTY_ACCESSOR_ID: Int = TYPE_PROJECTION_ID + 1
-    const val BACKING_FIELD_ID: Int = PROPERTY_ACCESSOR_ID + 1
-    const val INITIALIZER_LIST_ID: Int = BACKING_FIELD_ID + 1
-    const val TYPE_CONSTRAINT_LIST_ID: Int = INITIALIZER_LIST_ID + 1
-    const val TYPE_CONSTRAINT_ID: Int = TYPE_CONSTRAINT_LIST_ID + 1
-
-    const val CONSTRUCTOR_DELEGATION_CALL_ID: Int = TYPE_CONSTRAINT_ID + 1
-    const val CONSTRUCTOR_DELEGATION_REFERENCE_ID: Int = CONSTRUCTOR_DELEGATION_CALL_ID + 1
-
-    const val NULL_ID: Int = CONSTRUCTOR_DELEGATION_REFERENCE_ID + 1
-    const val BOOLEAN_CONSTANT_ID: Int = NULL_ID + 1
-    const val FLOAT_CONSTANT_ID: Int = BOOLEAN_CONSTANT_ID + 1
-    const val CHARACTER_CONSTANT_ID: Int = FLOAT_CONSTANT_ID + 1
-    const val INTEGER_CONSTANT_ID: Int = CHARACTER_CONSTANT_ID + 1
-
-    const val STRING_TEMPLATE_ID: Int = INTEGER_CONSTANT_ID + 1
-    const val LONG_STRING_TEMPLATE_ENTRY_ID: Int = STRING_TEMPLATE_ID + 1
-    const val SHORT_STRING_TEMPLATE_ENTRY_ID: Int = LONG_STRING_TEMPLATE_ENTRY_ID + 1
-    const val LITERAL_STRING_TEMPLATE_ENTRY_ID: Int = SHORT_STRING_TEMPLATE_ENTRY_ID + 1
-    const val ESCAPE_STRING_TEMPLATE_ENTRY_ID: Int = LITERAL_STRING_TEMPLATE_ENTRY_ID + 1
-    const val STRING_INTERPOLATION_PREFIX_ID: Int = ESCAPE_STRING_TEMPLATE_ENTRY_ID + 1
-
-    const val PARENTHESIZED_ID: Int = STRING_INTERPOLATION_PREFIX_ID + 1
-    const val RETURN_ID: Int = PARENTHESIZED_ID + 1
-    const val THROW_ID: Int = RETURN_ID + 1
-    const val CONTINUE_ID: Int = THROW_ID + 1
-    const val BREAK_ID: Int = CONTINUE_ID + 1
-    const val IF_ID: Int = BREAK_ID + 1
-    const val CONDITION_ID: Int = IF_ID + 1
-    const val THEN_ID: Int = CONDITION_ID + 1
-    const val ELSE_ID: Int = THEN_ID + 1
-    const val TRY_ID: Int = ELSE_ID + 1
-    const val CATCH_ID: Int = TRY_ID + 1
-    const val FINALLY_ID: Int = CATCH_ID + 1
-    const val FOR_ID: Int = FINALLY_ID + 1
-    const val WHILE_ID: Int = FOR_ID + 1
-    const val DO_WHILE_ID: Int = WHILE_ID + 1
-    const val LOOP_RANGE_ID: Int = DO_WHILE_ID + 1
-    const val BODY_ID: Int = LOOP_RANGE_ID + 1
-
-    const val BLOCK_ID: Int = BODY_ID + 1
-
-    const val LAMBDA_EXPRESSION_ID: Int = BLOCK_ID + 1
-
-    const val FUNCTION_LITERAL_ID: Int = LAMBDA_EXPRESSION_ID + 1
-    const val ANNOTATED_EXPRESSION_ID: Int = FUNCTION_LITERAL_ID + 1
-
-    const val REFERENCE_EXPRESSION_ID: Int = ANNOTATED_EXPRESSION_ID + 1
-    const val ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION_ID: Int = REFERENCE_EXPRESSION_ID + 1
-    const val OPERATION_REFERENCE_ID: Int = ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION_ID + 1
-    const val LABEL_ID: Int = OPERATION_REFERENCE_ID + 1
-
-    const val LABEL_QUALIFIER_ID: Int = LABEL_ID + 1
-
-    const val THIS_EXPRESSION_ID: Int = LABEL_QUALIFIER_ID + 1
-    const val SUPER_EXPRESSION_ID: Int = THIS_EXPRESSION_ID + 1
-    const val BINARY_EXPRESSION_ID: Int = SUPER_EXPRESSION_ID + 1
-    const val BINARY_WITH_TYPE_ID: Int = BINARY_EXPRESSION_ID + 1
-    const val IS_EXPRESSION_ID: Int = BINARY_WITH_TYPE_ID + 1
-    const val PREFIX_EXPRESSION_ID: Int = IS_EXPRESSION_ID + 1
-    const val POSTFIX_EXPRESSION_ID: Int = PREFIX_EXPRESSION_ID + 1
-    const val LABELED_EXPRESSION_ID: Int = POSTFIX_EXPRESSION_ID + 1
-    const val CALL_EXPRESSION_ID: Int = LABELED_EXPRESSION_ID + 1
-    const val ARRAY_ACCESS_EXPRESSION_ID: Int = CALL_EXPRESSION_ID + 1
-    const val INDICES_ID: Int = ARRAY_ACCESS_EXPRESSION_ID + 1
-    const val DOT_QUALIFIED_EXPRESSION_ID: Int = INDICES_ID + 1
-    const val CALLABLE_REFERENCE_EXPRESSION_ID: Int = DOT_QUALIFIED_EXPRESSION_ID + 1
-    const val CLASS_LITERAL_EXPRESSION_ID: Int = CALLABLE_REFERENCE_EXPRESSION_ID + 1
-    const val SAFE_ACCESS_EXPRESSION_ID: Int = CLASS_LITERAL_EXPRESSION_ID + 1
-    const val ERROR_SAFE_ACCESS_EXPRESSION_ID: Int = SAFE_ACCESS_EXPRESSION_ID + 1
-
-    const val OBJECT_LITERAL_ID: Int = ERROR_SAFE_ACCESS_EXPRESSION_ID + 1
-
-    const val WHEN_ID: Int = OBJECT_LITERAL_ID + 1
-    const val WHEN_ENTRY_ID: Int = WHEN_ID + 1
-    const val WHEN_ENTRY_GUARD_ID: Int = WHEN_ENTRY_ID + 1
-
-    const val WHEN_CONDITION_IN_RANGE_ID: Int = WHEN_ENTRY_GUARD_ID + 1
-    const val WHEN_CONDITION_IS_PATTERN_ID: Int = WHEN_CONDITION_IN_RANGE_ID + 1
-    const val WHEN_CONDITION_EXPRESSION_ID: Int = WHEN_CONDITION_IS_PATTERN_ID + 1
-
-    const val COLLECTION_LITERAL_EXPRESSION_ID: Int = WHEN_CONDITION_EXPRESSION_ID + 1
-
-    const val PACKAGE_DIRECTIVE_ID: Int = COLLECTION_LITERAL_EXPRESSION_ID + 1
-    const val SCRIPT_ID: Int = PACKAGE_DIRECTIVE_ID + 1
-
-    const val TYPE_CODE_FRAGMENT_ID: Int = SCRIPT_ID + 1
-    const val EXPRESSION_CODE_FRAGMENT_ID: Int = TYPE_CODE_FRAGMENT_ID + 1
-    const val BLOCK_CODE_FRAGMENT_ID: Int = EXPRESSION_CODE_FRAGMENT_ID + 1
-
-    val FILE: SyntaxElementType = register(FILE_ID, "kotlin.FILE")
+    val FILE: SyntaxElementType = register(KtNodeTypeId.FILE, "kotlin.FILE")
 
     // Start of stub element types
 
-    val CLASS: SyntaxElementType = register(CLASS_ID, "CLASS")
-    val FUN: SyntaxElementType = register(FUNCTION_ID, "FUNCTION")
-    val PROPERTY: SyntaxElementType = register(PROPERTY_ID, "PROPERTY")
-    val PROPERTY_ACCESSOR: SyntaxElementType = register(PROPERTY_ACCESSOR_ID, "PROPERTY_ACCESSOR")
-    val BACKING_FIELD: SyntaxElementType = register(BACKING_FIELD_ID, "BACKING_FIELD")
-    val TYPEALIAS: SyntaxElementType = register(TYPEALIAS_ID, "TYPEALIAS")
+    val CLASS: SyntaxElementType = register(KtNodeTypeId.CLASS, "CLASS")
+    val FUN: SyntaxElementType = register(KtNodeTypeId.FUNCTION, "FUNCTION")
+    val PROPERTY: SyntaxElementType = register(KtNodeTypeId.PROPERTY, "PROPERTY")
+    val PROPERTY_ACCESSOR: SyntaxElementType = register(KtNodeTypeId.PROPERTY_ACCESSOR, "PROPERTY_ACCESSOR")
+    val BACKING_FIELD: SyntaxElementType = register(KtNodeTypeId.BACKING_FIELD, "BACKING_FIELD")
+    val TYPEALIAS: SyntaxElementType = register(KtNodeTypeId.TYPEALIAS, "TYPEALIAS")
 
-    val ENUM_ENTRY: SyntaxElementType = register(ENUM_ENTRY_ID, "ENUM_ENTRY")
-    val OBJECT_DECLARATION: SyntaxElementType = register(OBJECT_DECLARATION_ID, "OBJECT_DECLARATION")
-    val CLASS_INITIALIZER: SyntaxElementType = register(CLASS_INITIALIZER_ID, "CLASS_INITIALIZER")
-    val SECONDARY_CONSTRUCTOR: SyntaxElementType = register(SECONDARY_CONSTRUCTOR_ID, "SECONDARY_CONSTRUCTOR")
-    val PRIMARY_CONSTRUCTOR: SyntaxElementType = register(PRIMARY_CONSTRUCTOR_ID, "PRIMARY_CONSTRUCTOR")
+    val ENUM_ENTRY: SyntaxElementType = register(KtNodeTypeId.ENUM_ENTRY, "ENUM_ENTRY")
+    val OBJECT_DECLARATION: SyntaxElementType = register(KtNodeTypeId.OBJECT_DECLARATION, "OBJECT_DECLARATION")
+    val CLASS_INITIALIZER: SyntaxElementType = register(KtNodeTypeId.CLASS_INITIALIZER, "CLASS_INITIALIZER")
+    val SECONDARY_CONSTRUCTOR: SyntaxElementType = register(KtNodeTypeId.SECONDARY_CONSTRUCTOR, "SECONDARY_CONSTRUCTOR")
+    val PRIMARY_CONSTRUCTOR: SyntaxElementType = register(KtNodeTypeId.PRIMARY_CONSTRUCTOR, "PRIMARY_CONSTRUCTOR")
 
-    val VALUE_PARAMETER: SyntaxElementType = register(VALUE_PARAMETER_ID, "VALUE_PARAMETER")
-    val VALUE_PARAMETER_LIST: SyntaxElementType = register(VALUE_PARAMETER_LIST_ID, "VALUE_PARAMETER_LIST")
+    val VALUE_PARAMETER: SyntaxElementType = register(KtNodeTypeId.VALUE_PARAMETER, "VALUE_PARAMETER")
+    val VALUE_PARAMETER_LIST: SyntaxElementType = register(KtNodeTypeId.VALUE_PARAMETER_LIST, "VALUE_PARAMETER_LIST")
 
-    val TYPE_PARAMETER: SyntaxElementType = register(TYPE_PARAMETER_ID, "TYPE_PARAMETER")
-    val TYPE_PARAMETER_LIST: SyntaxElementType = register(TYPE_PARAMETER_LIST_ID, "TYPE_PARAMETER_LIST")
+    val TYPE_PARAMETER: SyntaxElementType = register(KtNodeTypeId.TYPE_PARAMETER, "TYPE_PARAMETER")
+    val TYPE_PARAMETER_LIST: SyntaxElementType = register(KtNodeTypeId.TYPE_PARAMETER_LIST, "TYPE_PARAMETER_LIST")
 
-    val ANNOTATION_ENTRY: SyntaxElementType = register(ANNOTATION_ENTRY_ID, "ANNOTATION_ENTRY")
-    val ANNOTATION: SyntaxElementType = register(ANNOTATION_ID, "ANNOTATION")
+    val ANNOTATION_ENTRY: SyntaxElementType = register(KtNodeTypeId.ANNOTATION_ENTRY, "ANNOTATION_ENTRY")
+    val ANNOTATION: SyntaxElementType = register(KtNodeTypeId.ANNOTATION, "ANNOTATION")
 
-    val ANNOTATION_TARGET: SyntaxElementType = register(ANNOTATION_TARGET_ID, "ANNOTATION_TARGET")
+    val ANNOTATION_TARGET: SyntaxElementType = register(KtNodeTypeId.ANNOTATION_TARGET, "ANNOTATION_TARGET")
 
-    val CLASS_BODY: SyntaxElementType = register(CLASS_BODY_ID, "CLASS_BODY")
+    val CLASS_BODY: SyntaxElementType = register(KtNodeTypeId.CLASS_BODY, "CLASS_BODY")
 
-    val COMPANION_BLOCK: SyntaxElementType = register(COMPANION_BLOCK_ID, "COMPANION_BLOCK")
+    val COMPANION_BLOCK: SyntaxElementType = register(KtNodeTypeId.COMPANION_BLOCK, "COMPANION_BLOCK")
 
-    val IMPORT_LIST: SyntaxElementType = register(IMPORT_LIST_ID, "IMPORT_LIST")
+    val IMPORT_LIST: SyntaxElementType = register(KtNodeTypeId.IMPORT_LIST, "IMPORT_LIST")
 
-    val FILE_ANNOTATION_LIST: SyntaxElementType = register(FILE_ANNOTATION_LIST_ID, "FILE_ANNOTATION_LIST")
+    val FILE_ANNOTATION_LIST: SyntaxElementType = register(KtNodeTypeId.FILE_ANNOTATION_LIST, "FILE_ANNOTATION_LIST")
 
-    val IMPORT_DIRECTIVE: SyntaxElementType = register(IMPORT_DIRECTIVE_ID, "IMPORT_DIRECTIVE")
+    val IMPORT_DIRECTIVE: SyntaxElementType = register(KtNodeTypeId.IMPORT_DIRECTIVE, "IMPORT_DIRECTIVE")
 
-    val IMPORT_ALIAS: SyntaxElementType = register(IMPORT_ALIAS_ID, "IMPORT_ALIAS")
+    val IMPORT_ALIAS: SyntaxElementType = register(KtNodeTypeId.IMPORT_ALIAS, "IMPORT_ALIAS")
 
-    val PACKAGE_DIRECTIVE: SyntaxElementType = register(PACKAGE_DIRECTIVE_ID, "PACKAGE_DIRECTIVE")
+    val PACKAGE_DIRECTIVE: SyntaxElementType = register(KtNodeTypeId.PACKAGE_DIRECTIVE, "PACKAGE_DIRECTIVE")
 
-    val MODIFIER_LIST: SyntaxElementType = register(MODIFIER_LIST_ID, "MODIFIER_LIST")
+    val MODIFIER_LIST: SyntaxElementType = register(KtNodeTypeId.MODIFIER_LIST, "MODIFIER_LIST")
 
-    val TYPE_CONSTRAINT_LIST: SyntaxElementType = register(TYPE_CONSTRAINT_LIST_ID, "TYPE_CONSTRAINT_LIST")
+    val TYPE_CONSTRAINT_LIST: SyntaxElementType = register(KtNodeTypeId.TYPE_CONSTRAINT_LIST, "TYPE_CONSTRAINT_LIST")
 
-    val TYPE_CONSTRAINT: SyntaxElementType = register(TYPE_CONSTRAINT_ID, "TYPE_CONSTRAINT")
+    val TYPE_CONSTRAINT: SyntaxElementType = register(KtNodeTypeId.TYPE_CONSTRAINT, "TYPE_CONSTRAINT")
 
-    val NULLABLE_TYPE: SyntaxElementType = register(NULLABLE_TYPE_ID, "NULLABLE_TYPE")
+    val NULLABLE_TYPE: SyntaxElementType = register(KtNodeTypeId.NULLABLE_TYPE, "NULLABLE_TYPE")
 
-    val INTERSECTION_TYPE: SyntaxElementType = register(INTERSECTION_TYPE_ID, "INTERSECTION_TYPE")
-    val UNION_TYPE: SyntaxElementType = register(UNION_TYPE_ID, "UNION_TYPE")
+    val INTERSECTION_TYPE: SyntaxElementType = register(KtNodeTypeId.INTERSECTION_TYPE, "INTERSECTION_TYPE")
+    val UNION_TYPE: SyntaxElementType = register(KtNodeTypeId.UNION_TYPE, "UNION_TYPE")
 
-    val TYPE_REFERENCE: SyntaxElementType = register(TYPE_REFERENCE_ID, "TYPE_REFERENCE")
+    val TYPE_REFERENCE: SyntaxElementType = register(KtNodeTypeId.TYPE_REFERENCE, "TYPE_REFERENCE")
 
-    val USER_TYPE: SyntaxElementType = register(USER_TYPE_ID, "USER_TYPE")
-    val DYNAMIC_TYPE: SyntaxElementType = register(DYNAMIC_TYPE_ID, "DYNAMIC_TYPE")
+    val USER_TYPE: SyntaxElementType = register(KtNodeTypeId.USER_TYPE, "USER_TYPE")
+    val DYNAMIC_TYPE: SyntaxElementType = register(KtNodeTypeId.DYNAMIC_TYPE, "DYNAMIC_TYPE")
 
-    val FUNCTION_TYPE: SyntaxElementType = register(FUNCTION_TYPE_ID, "FUNCTION_TYPE")
+    val FUNCTION_TYPE: SyntaxElementType = register(KtNodeTypeId.FUNCTION_TYPE, "FUNCTION_TYPE")
 
-    val TYPE_CODE_FRAGMENT: SyntaxElementType = register(TYPE_CODE_FRAGMENT_ID, "kotlin.TYPE_CODE_FRAGMENT")
-    val EXPRESSION_CODE_FRAGMENT: SyntaxElementType = register(EXPRESSION_CODE_FRAGMENT_ID, "kotlin.EXPRESSION_CODE_FRAGMENT")
-    val BLOCK_CODE_FRAGMENT: SyntaxElementType = register(BLOCK_CODE_FRAGMENT_ID, "kotlin.BLOCK_CODE_FRAGMENT")
+    val TYPE_CODE_FRAGMENT: SyntaxElementType = register(KtNodeTypeId.TYPE_CODE_FRAGMENT, "kotlin.TYPE_CODE_FRAGMENT")
+    val EXPRESSION_CODE_FRAGMENT: SyntaxElementType = register(KtNodeTypeId.EXPRESSION_CODE_FRAGMENT, "kotlin.EXPRESSION_CODE_FRAGMENT")
+    val BLOCK_CODE_FRAGMENT: SyntaxElementType = register(KtNodeTypeId.BLOCK_CODE_FRAGMENT, "kotlin.BLOCK_CODE_FRAGMENT")
 
-    val TYPE_PROJECTION: SyntaxElementType = register(TYPE_PROJECTION_ID, "TYPE_PROJECTION")
+    val TYPE_PROJECTION: SyntaxElementType = register(KtNodeTypeId.TYPE_PROJECTION, "TYPE_PROJECTION")
 
-    val FUNCTION_TYPE_RECEIVER: SyntaxElementType = register(FUNCTION_TYPE_RECEIVER_ID, "FUNCTION_TYPE_RECEIVER")
+    val FUNCTION_TYPE_RECEIVER: SyntaxElementType = register(KtNodeTypeId.FUNCTION_TYPE_RECEIVER, "FUNCTION_TYPE_RECEIVER")
 
-    val REFERENCE_EXPRESSION: SyntaxElementType = register(REFERENCE_EXPRESSION_ID, "REFERENCE_EXPRESSION")
-    val DOT_QUALIFIED_EXPRESSION: SyntaxElementType = register(DOT_QUALIFIED_EXPRESSION_ID, "DOT_QUALIFIED_EXPRESSION")
+    val REFERENCE_EXPRESSION: SyntaxElementType = register(KtNodeTypeId.REFERENCE_EXPRESSION, "REFERENCE_EXPRESSION")
+    val DOT_QUALIFIED_EXPRESSION: SyntaxElementType = register(KtNodeTypeId.DOT_QUALIFIED_EXPRESSION, "DOT_QUALIFIED_EXPRESSION")
     val ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION: SyntaxElementType =
-        register(ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION_ID, "ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION")
-    val TYPE_ARGUMENT_LIST: SyntaxElementType = register(TYPE_ARGUMENT_LIST_ID, "TYPE_ARGUMENT_LIST")
+        register(KtNodeTypeId.ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION, "ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION")
+    val TYPE_ARGUMENT_LIST: SyntaxElementType = register(KtNodeTypeId.TYPE_ARGUMENT_LIST, "TYPE_ARGUMENT_LIST")
 
-    val VALUE_ARGUMENT_LIST: SyntaxElementType = register(VALUE_ARGUMENT_LIST_ID, "VALUE_ARGUMENT_LIST")
+    val VALUE_ARGUMENT_LIST: SyntaxElementType = register(KtNodeTypeId.VALUE_ARGUMENT_LIST, "VALUE_ARGUMENT_LIST")
 
-    val VALUE_ARGUMENT: SyntaxElementType = register(VALUE_ARGUMENT_ID, "VALUE_ARGUMENT")
+    val VALUE_ARGUMENT: SyntaxElementType = register(KtNodeTypeId.VALUE_ARGUMENT, "VALUE_ARGUMENT")
 
-    val CONTRACT_EFFECT_LIST: SyntaxElementType = register(CONTRACT_EFFECT_LIST_ID, "CONTRACT_EFFECT_LIST")
+    val CONTRACT_EFFECT_LIST: SyntaxElementType = register(KtNodeTypeId.CONTRACT_EFFECT_LIST, "CONTRACT_EFFECT_LIST")
 
-    val CONTRACT_EFFECT: SyntaxElementType = register(CONTRACT_EFFECT_ID, "CONTRACT_EFFECT")
+    val CONTRACT_EFFECT: SyntaxElementType = register(KtNodeTypeId.CONTRACT_EFFECT, "CONTRACT_EFFECT")
 
-    val LAMBDA_ARGUMENT: SyntaxElementType = register(LAMBDA_ARGUMENT_ID, "LAMBDA_ARGUMENT")
+    val LAMBDA_ARGUMENT: SyntaxElementType = register(KtNodeTypeId.LAMBDA_ARGUMENT, "LAMBDA_ARGUMENT")
 
-    val VALUE_ARGUMENT_NAME: SyntaxElementType = register(VALUE_ARGUMENT_NAME_ID, "VALUE_ARGUMENT_NAME")
+    val VALUE_ARGUMENT_NAME: SyntaxElementType = register(KtNodeTypeId.VALUE_ARGUMENT_NAME, "VALUE_ARGUMENT_NAME")
 
-    val SUPER_TYPE_LIST: SyntaxElementType = register(SUPER_TYPE_LIST_ID, "SUPER_TYPE_LIST")
+    val SUPER_TYPE_LIST: SyntaxElementType = register(KtNodeTypeId.SUPER_TYPE_LIST, "SUPER_TYPE_LIST")
 
-    val INITIALIZER_LIST: SyntaxElementType = register(INITIALIZER_LIST_ID, "INITIALIZER_LIST")
+    val INITIALIZER_LIST: SyntaxElementType = register(KtNodeTypeId.INITIALIZER_LIST, "INITIALIZER_LIST")
 
-    val DELEGATED_SUPER_TYPE_ENTRY: SyntaxElementType = register(DELEGATED_SUPER_TYPE_ENTRY_ID, "DELEGATED_SUPER_TYPE_ENTRY")
+    val DELEGATED_SUPER_TYPE_ENTRY: SyntaxElementType = register(KtNodeTypeId.DELEGATED_SUPER_TYPE_ENTRY, "DELEGATED_SUPER_TYPE_ENTRY")
 
-    val SUPER_TYPE_CALL_ENTRY: SyntaxElementType = register(SUPER_TYPE_CALL_ENTRY_ID, "SUPER_TYPE_CALL_ENTRY")
-    val SUPER_TYPE_ENTRY: SyntaxElementType = register(SUPER_TYPE_ENTRY_ID, "SUPER_TYPE_ENTRY")
-    val CONSTRUCTOR_CALLEE: SyntaxElementType = register(CONSTRUCTOR_CALLEE_ID, "CONSTRUCTOR_CALLEE")
+    val SUPER_TYPE_CALL_ENTRY: SyntaxElementType = register(KtNodeTypeId.SUPER_TYPE_CALL_ENTRY, "SUPER_TYPE_CALL_ENTRY")
+    val SUPER_TYPE_ENTRY: SyntaxElementType = register(KtNodeTypeId.SUPER_TYPE_ENTRY, "SUPER_TYPE_ENTRY")
+    val CONSTRUCTOR_CALLEE: SyntaxElementType = register(KtNodeTypeId.CONSTRUCTOR_CALLEE, "CONSTRUCTOR_CALLEE")
 
-    val CONTEXT_RECEIVER: SyntaxElementType = register(CONTEXT_RECEIVER_ID, "CONTEXT_RECEIVER")
-    val CONTEXT_PARAMETER_LIST: SyntaxElementType = register(CONTEXT_PARAMETER_LIST_ID, "CONTEXT_PARAMETER_LIST")
+    val CONTEXT_RECEIVER: SyntaxElementType = register(KtNodeTypeId.CONTEXT_RECEIVER, "CONTEXT_RECEIVER")
+    val CONTEXT_PARAMETER_LIST: SyntaxElementType = register(KtNodeTypeId.CONTEXT_PARAMETER_LIST, "CONTEXT_PARAMETER_LIST")
 
-    val NULL: SyntaxElementType = register(NULL_ID, "NULL")
-    val BOOLEAN_CONSTANT: SyntaxElementType = register(BOOLEAN_CONSTANT_ID, "BOOLEAN_CONSTANT")
-    val FLOAT_CONSTANT: SyntaxElementType = register(FLOAT_CONSTANT_ID, "FLOAT_CONSTANT")
-    val CHARACTER_CONSTANT: SyntaxElementType = register(CHARACTER_CONSTANT_ID, "CHARACTER_CONSTANT")
-    val INTEGER_CONSTANT: SyntaxElementType = register(INTEGER_CONSTANT_ID, "INTEGER_CONSTANT")
-    val CLASS_LITERAL_EXPRESSION: SyntaxElementType = register(CLASS_LITERAL_EXPRESSION_ID, "CLASS_LITERAL_EXPRESSION")
-    val COLLECTION_LITERAL_EXPRESSION: SyntaxElementType = register(COLLECTION_LITERAL_EXPRESSION_ID, "COLLECTION_LITERAL_EXPRESSION")
+    val NULL: SyntaxElementType = register(KtNodeTypeId.NULL, "NULL")
+    val BOOLEAN_CONSTANT: SyntaxElementType = register(KtNodeTypeId.BOOLEAN_CONSTANT, "BOOLEAN_CONSTANT")
+    val FLOAT_CONSTANT: SyntaxElementType = register(KtNodeTypeId.FLOAT_CONSTANT, "FLOAT_CONSTANT")
+    val CHARACTER_CONSTANT: SyntaxElementType = register(KtNodeTypeId.CHARACTER_CONSTANT, "CHARACTER_CONSTANT")
+    val INTEGER_CONSTANT: SyntaxElementType = register(KtNodeTypeId.INTEGER_CONSTANT, "INTEGER_CONSTANT")
+    val CLASS_LITERAL_EXPRESSION: SyntaxElementType = register(KtNodeTypeId.CLASS_LITERAL_EXPRESSION, "CLASS_LITERAL_EXPRESSION")
+    val COLLECTION_LITERAL_EXPRESSION: SyntaxElementType = register(KtNodeTypeId.COLLECTION_LITERAL_EXPRESSION, "COLLECTION_LITERAL_EXPRESSION")
 
-    val STRING_TEMPLATE: SyntaxElementType = register(STRING_TEMPLATE_ID, "STRING_TEMPLATE")
+    val STRING_TEMPLATE: SyntaxElementType = register(KtNodeTypeId.STRING_TEMPLATE, "STRING_TEMPLATE")
 
-    val LONG_STRING_TEMPLATE_ENTRY: SyntaxElementType = register(LONG_STRING_TEMPLATE_ENTRY_ID, "LONG_STRING_TEMPLATE_ENTRY")
+    val LONG_STRING_TEMPLATE_ENTRY: SyntaxElementType = register(KtNodeTypeId.LONG_STRING_TEMPLATE_ENTRY, "LONG_STRING_TEMPLATE_ENTRY")
 
-    val SHORT_STRING_TEMPLATE_ENTRY: SyntaxElementType = register(SHORT_STRING_TEMPLATE_ENTRY_ID, "SHORT_STRING_TEMPLATE_ENTRY")
+    val SHORT_STRING_TEMPLATE_ENTRY: SyntaxElementType = register(KtNodeTypeId.SHORT_STRING_TEMPLATE_ENTRY, "SHORT_STRING_TEMPLATE_ENTRY")
 
-    val LITERAL_STRING_TEMPLATE_ENTRY: SyntaxElementType = register(LITERAL_STRING_TEMPLATE_ENTRY_ID, "LITERAL_STRING_TEMPLATE_ENTRY")
+    val LITERAL_STRING_TEMPLATE_ENTRY: SyntaxElementType = register(KtNodeTypeId.LITERAL_STRING_TEMPLATE_ENTRY, "LITERAL_STRING_TEMPLATE_ENTRY")
 
-    val ESCAPE_STRING_TEMPLATE_ENTRY: SyntaxElementType = register(ESCAPE_STRING_TEMPLATE_ENTRY_ID, "ESCAPE_STRING_TEMPLATE_ENTRY")
+    val ESCAPE_STRING_TEMPLATE_ENTRY: SyntaxElementType = register(KtNodeTypeId.ESCAPE_STRING_TEMPLATE_ENTRY, "ESCAPE_STRING_TEMPLATE_ENTRY")
 
-    val SCRIPT: SyntaxElementType = register(SCRIPT_ID, "SCRIPT")
+    val SCRIPT: SyntaxElementType = register(KtNodeTypeId.SCRIPT, "SCRIPT")
 
-    val STRING_INTERPOLATION_PREFIX: SyntaxElementType = register(STRING_INTERPOLATION_PREFIX_ID, "STRING_INTERPOLATION_PREFIX")
+    val STRING_INTERPOLATION_PREFIX: SyntaxElementType = register(KtNodeTypeId.STRING_INTERPOLATION_PREFIX, "STRING_INTERPOLATION_PREFIX")
 
     // End of Stub element types
 
-    val DESTRUCTURING_DECLARATION: SyntaxElementType = register(DESTRUCTURING_DECLARATION_ID, "DESTRUCTURING_DECLARATION")
+    val DESTRUCTURING_DECLARATION: SyntaxElementType = register(KtNodeTypeId.DESTRUCTURING_DECLARATION, "DESTRUCTURING_DECLARATION")
     val DESTRUCTURING_DECLARATION_ENTRY: SyntaxElementType =
-        register(DESTRUCTURING_DECLARATION_ENTRY_ID, "DESTRUCTURING_DECLARATION_ENTRY")
-    val SCRIPT_INITIALIZER: SyntaxElementType = register(SCRIPT_INITIALIZER_ID, "SCRIPT_INITIALIZER")
-    val PROPERTY_DELEGATE: SyntaxElementType = register(PROPERTY_DELEGATE_ID, "PROPERTY_DELEGATE")
-    val CONSTRUCTOR_DELEGATION_CALL: SyntaxElementType = register(CONSTRUCTOR_DELEGATION_CALL_ID, "CONSTRUCTOR_DELEGATION_CALL")
+        register(KtNodeTypeId.DESTRUCTURING_DECLARATION_ENTRY, "DESTRUCTURING_DECLARATION_ENTRY")
+    val SCRIPT_INITIALIZER: SyntaxElementType = register(KtNodeTypeId.SCRIPT_INITIALIZER, "SCRIPT_INITIALIZER")
+    val PROPERTY_DELEGATE: SyntaxElementType = register(KtNodeTypeId.PROPERTY_DELEGATE, "PROPERTY_DELEGATE")
+    val CONSTRUCTOR_DELEGATION_CALL: SyntaxElementType = register(KtNodeTypeId.CONSTRUCTOR_DELEGATION_CALL, "CONSTRUCTOR_DELEGATION_CALL")
     val CONSTRUCTOR_DELEGATION_REFERENCE: SyntaxElementType =
-        register(CONSTRUCTOR_DELEGATION_REFERENCE_ID, "CONSTRUCTOR_DELEGATION_REFERENCE")
+        register(KtNodeTypeId.CONSTRUCTOR_DELEGATION_REFERENCE, "CONSTRUCTOR_DELEGATION_REFERENCE")
 
-    val PARENTHESIZED: SyntaxElementType = register(PARENTHESIZED_ID, "PARENTHESIZED")
-    val RETURN: SyntaxElementType = register(RETURN_ID, "RETURN")
-    val THROW: SyntaxElementType = register(THROW_ID, "THROW")
-    val CONTINUE: SyntaxElementType = register(CONTINUE_ID, "CONTINUE")
-    val BREAK: SyntaxElementType = register(BREAK_ID, "BREAK")
-    val IF: SyntaxElementType = register(IF_ID, "IF")
-    val CONDITION: SyntaxElementType = register(CONDITION_ID, "CONDITION")
-    val THEN: SyntaxElementType = register(THEN_ID, "THEN")
-    val ELSE: SyntaxElementType = register(ELSE_ID, "ELSE")
-    val TRY: SyntaxElementType = register(TRY_ID, "TRY")
-    val CATCH: SyntaxElementType = register(CATCH_ID, "CATCH")
-    val FINALLY: SyntaxElementType = register(FINALLY_ID, "FINALLY")
-    val FOR: SyntaxElementType = register(FOR_ID, "FOR")
-    val WHILE: SyntaxElementType = register(WHILE_ID, "WHILE")
-    val DO_WHILE: SyntaxElementType = register(DO_WHILE_ID, "DO_WHILE")
-    val LOOP_RANGE: SyntaxElementType = register(LOOP_RANGE_ID, "LOOP_RANGE")
-    val BODY: SyntaxElementType = register(BODY_ID, "BODY")
+    val PARENTHESIZED: SyntaxElementType = register(KtNodeTypeId.PARENTHESIZED, "PARENTHESIZED")
+    val RETURN: SyntaxElementType = register(KtNodeTypeId.RETURN, "RETURN")
+    val THROW: SyntaxElementType = register(KtNodeTypeId.THROW, "THROW")
+    val CONTINUE: SyntaxElementType = register(KtNodeTypeId.CONTINUE, "CONTINUE")
+    val BREAK: SyntaxElementType = register(KtNodeTypeId.BREAK, "BREAK")
+    val IF: SyntaxElementType = register(KtNodeTypeId.IF, "IF")
+    val CONDITION: SyntaxElementType = register(KtNodeTypeId.CONDITION, "CONDITION")
+    val THEN: SyntaxElementType = register(KtNodeTypeId.THEN, "THEN")
+    val ELSE: SyntaxElementType = register(KtNodeTypeId.ELSE, "ELSE")
+    val TRY: SyntaxElementType = register(KtNodeTypeId.TRY, "TRY")
+    val CATCH: SyntaxElementType = register(KtNodeTypeId.CATCH, "CATCH")
+    val FINALLY: SyntaxElementType = register(KtNodeTypeId.FINALLY, "FINALLY")
+    val FOR: SyntaxElementType = register(KtNodeTypeId.FOR, "FOR")
+    val WHILE: SyntaxElementType = register(KtNodeTypeId.WHILE, "WHILE")
+    val DO_WHILE: SyntaxElementType = register(KtNodeTypeId.DO_WHILE, "DO_WHILE")
+    val LOOP_RANGE: SyntaxElementType = register(KtNodeTypeId.LOOP_RANGE, "LOOP_RANGE")
+    val BODY: SyntaxElementType = register(KtNodeTypeId.BODY, "BODY")
 
-    val BLOCK: SyntaxElementType = register(BLOCK_ID, "BLOCK")
-    val LAMBDA_EXPRESSION: SyntaxElementType = register(LAMBDA_EXPRESSION_ID, "LAMBDA_EXPRESSION")
-    val FUNCTION_LITERAL: SyntaxElementType = register(FUNCTION_LITERAL_ID, "FUNCTION_LITERAL")
-    val ANNOTATED_EXPRESSION: SyntaxElementType = register(ANNOTATED_EXPRESSION_ID, "ANNOTATED_EXPRESSION")
-    val OPERATION_REFERENCE: SyntaxElementType = register(OPERATION_REFERENCE_ID, "OPERATION_REFERENCE")
-    val LABEL: SyntaxElementType = register(LABEL_ID, "LABEL")
-    val LABEL_QUALIFIER: SyntaxElementType = register(LABEL_QUALIFIER_ID, "LABEL_QUALIFIER")
+    val BLOCK: SyntaxElementType = register(KtNodeTypeId.BLOCK, "BLOCK")
+    val LAMBDA_EXPRESSION: SyntaxElementType = register(KtNodeTypeId.LAMBDA_EXPRESSION, "LAMBDA_EXPRESSION")
+    val FUNCTION_LITERAL: SyntaxElementType = register(KtNodeTypeId.FUNCTION_LITERAL, "FUNCTION_LITERAL")
+    val ANNOTATED_EXPRESSION: SyntaxElementType = register(KtNodeTypeId.ANNOTATED_EXPRESSION, "ANNOTATED_EXPRESSION")
+    val OPERATION_REFERENCE: SyntaxElementType = register(KtNodeTypeId.OPERATION_REFERENCE, "OPERATION_REFERENCE")
+    val LABEL: SyntaxElementType = register(KtNodeTypeId.LABEL, "LABEL")
+    val LABEL_QUALIFIER: SyntaxElementType = register(KtNodeTypeId.LABEL_QUALIFIER, "LABEL_QUALIFIER")
 
-    val THIS_EXPRESSION: SyntaxElementType = register(THIS_EXPRESSION_ID, "THIS_EXPRESSION")
-    val SUPER_EXPRESSION: SyntaxElementType = register(SUPER_EXPRESSION_ID, "SUPER_EXPRESSION")
-    val BINARY_EXPRESSION: SyntaxElementType = register(BINARY_EXPRESSION_ID, "BINARY_EXPRESSION")
-    val BINARY_WITH_TYPE: SyntaxElementType = register(BINARY_WITH_TYPE_ID, "BINARY_WITH_TYPE")
-    val IS_EXPRESSION: SyntaxElementType = register(IS_EXPRESSION_ID, "IS_EXPRESSION")
-    val PREFIX_EXPRESSION: SyntaxElementType = register(PREFIX_EXPRESSION_ID, "PREFIX_EXPRESSION")
-    val POSTFIX_EXPRESSION: SyntaxElementType = register(POSTFIX_EXPRESSION_ID, "POSTFIX_EXPRESSION")
-    val LABELED_EXPRESSION: SyntaxElementType = register(LABELED_EXPRESSION_ID, "LABELED_EXPRESSION")
-    val CALL_EXPRESSION: SyntaxElementType = register(CALL_EXPRESSION_ID, "CALL_EXPRESSION")
-    val ARRAY_ACCESS_EXPRESSION: SyntaxElementType = register(ARRAY_ACCESS_EXPRESSION_ID, "ARRAY_ACCESS_EXPRESSION")
-    val INDICES: SyntaxElementType = register(INDICES_ID, "INDICES")
+    val THIS_EXPRESSION: SyntaxElementType = register(KtNodeTypeId.THIS_EXPRESSION, "THIS_EXPRESSION")
+    val SUPER_EXPRESSION: SyntaxElementType = register(KtNodeTypeId.SUPER_EXPRESSION, "SUPER_EXPRESSION")
+    val BINARY_EXPRESSION: SyntaxElementType = register(KtNodeTypeId.BINARY_EXPRESSION, "BINARY_EXPRESSION")
+    val BINARY_WITH_TYPE: SyntaxElementType = register(KtNodeTypeId.BINARY_WITH_TYPE, "BINARY_WITH_TYPE")
+    val IS_EXPRESSION: SyntaxElementType = register(KtNodeTypeId.IS_EXPRESSION, "IS_EXPRESSION")
+    val PREFIX_EXPRESSION: SyntaxElementType = register(KtNodeTypeId.PREFIX_EXPRESSION, "PREFIX_EXPRESSION")
+    val POSTFIX_EXPRESSION: SyntaxElementType = register(KtNodeTypeId.POSTFIX_EXPRESSION, "POSTFIX_EXPRESSION")
+    val LABELED_EXPRESSION: SyntaxElementType = register(KtNodeTypeId.LABELED_EXPRESSION, "LABELED_EXPRESSION")
+    val CALL_EXPRESSION: SyntaxElementType = register(KtNodeTypeId.CALL_EXPRESSION, "CALL_EXPRESSION")
+    val ARRAY_ACCESS_EXPRESSION: SyntaxElementType = register(KtNodeTypeId.ARRAY_ACCESS_EXPRESSION, "ARRAY_ACCESS_EXPRESSION")
+    val INDICES: SyntaxElementType = register(KtNodeTypeId.INDICES, "INDICES")
     val CALLABLE_REFERENCE_EXPRESSION: SyntaxElementType =
-        register(CALLABLE_REFERENCE_EXPRESSION_ID, "CALLABLE_REFERENCE_EXPRESSION")
-    val SAFE_ACCESS_EXPRESSION: SyntaxElementType = register(SAFE_ACCESS_EXPRESSION_ID, "SAFE_ACCESS_EXPRESSION")
-    val ERROR_SAFE_ACCESS_EXPRESSION: SyntaxElementType = register(ERROR_SAFE_ACCESS_EXPRESSION_ID, "ERROR_SAFE_ACCESS_EXPRESSION")
+        register(KtNodeTypeId.CALLABLE_REFERENCE_EXPRESSION, "CALLABLE_REFERENCE_EXPRESSION")
+    val SAFE_ACCESS_EXPRESSION: SyntaxElementType = register(KtNodeTypeId.SAFE_ACCESS_EXPRESSION, "SAFE_ACCESS_EXPRESSION")
+    val ERROR_SAFE_ACCESS_EXPRESSION: SyntaxElementType = register(KtNodeTypeId.ERROR_SAFE_ACCESS_EXPRESSION, "ERROR_SAFE_ACCESS_EXPRESSION")
 
-    val OBJECT_LITERAL: SyntaxElementType = register(OBJECT_LITERAL_ID, "OBJECT_LITERAL")
-    val WHEN: SyntaxElementType = register(WHEN_ID, "WHEN")
-    val WHEN_ENTRY: SyntaxElementType = register(WHEN_ENTRY_ID, "WHEN_ENTRY")
-    val WHEN_ENTRY_GUARD: SyntaxElementType = register(WHEN_ENTRY_GUARD_ID, "WHEN_ENTRY_GUARD")
-    val WHEN_CONDITION_IN_RANGE: SyntaxElementType = register(WHEN_CONDITION_IN_RANGE_ID, "WHEN_CONDITION_IN_RANGE")
-    val WHEN_CONDITION_IS_PATTERN: SyntaxElementType = register(WHEN_CONDITION_IS_PATTERN_ID, "WHEN_CONDITION_IS_PATTERN")
-    val WHEN_CONDITION_EXPRESSION: SyntaxElementType = register(WHEN_CONDITION_EXPRESSION_ID, "WHEN_CONDITION_WITH_EXPRESSION")
+    val OBJECT_LITERAL: SyntaxElementType = register(KtNodeTypeId.OBJECT_LITERAL, "OBJECT_LITERAL")
+    val WHEN: SyntaxElementType = register(KtNodeTypeId.WHEN, "WHEN")
+    val WHEN_ENTRY: SyntaxElementType = register(KtNodeTypeId.WHEN_ENTRY, "WHEN_ENTRY")
+    val WHEN_ENTRY_GUARD: SyntaxElementType = register(KtNodeTypeId.WHEN_ENTRY_GUARD, "WHEN_ENTRY_GUARD")
+    val WHEN_CONDITION_IN_RANGE: SyntaxElementType = register(KtNodeTypeId.WHEN_CONDITION_IN_RANGE, "WHEN_CONDITION_IN_RANGE")
+    val WHEN_CONDITION_IS_PATTERN: SyntaxElementType = register(KtNodeTypeId.WHEN_CONDITION_IS_PATTERN, "WHEN_CONDITION_IS_PATTERN")
+    val WHEN_CONDITION_EXPRESSION: SyntaxElementType = register(KtNodeTypeId.WHEN_CONDITION_EXPRESSION, "WHEN_CONDITION_WITH_EXPRESSION")
 }
