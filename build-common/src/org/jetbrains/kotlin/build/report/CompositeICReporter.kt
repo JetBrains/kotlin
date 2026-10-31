@@ -3,16 +3,27 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.daemon.report
+package org.jetbrains.kotlin.build.report
 
 import org.jetbrains.kotlin.build.report.ICReporter.ReportSeverity
-import org.jetbrains.kotlin.build.report.RemoteICReporter
 import org.jetbrains.kotlin.cli.common.ExitCode
 import java.io.File
 
-internal class CompositeICReporter(private val reporters: Iterable<RemoteICReporter>) : RemoteICReporter {
+open class CompositeICReporter(private val reporters: Iterable<ICReporter>) : ICReporter {
     override fun report(message: () -> String, severity: ReportSeverity) {
         reporters.forEach { it.report(message, severity) }
+    }
+
+    override fun reportCompilationStart(isIncremental: Boolean, reason: String?) {
+        reporters.forEach { it.reportCompilationStart(isIncremental, reason) }
+    }
+
+    override fun reportProcessedChanges(
+        dirtySymbols: Iterable<Pair<String, String>>,
+        dirtyClasses: Iterable<String>,
+        dirtySealed: Iterable<String>
+    ) {
+        reporters.forEach { it.reportProcessedChanges(dirtySymbols, dirtyClasses, dirtySealed) }
     }
 
     override fun reportCompileIteration(incremental: Boolean, sourceFiles: Collection<File>, exitCode: ExitCode) {
@@ -29,9 +40,5 @@ internal class CompositeICReporter(private val reporters: Iterable<RemoteICRepor
 
     override fun reportMarkDirty(affectedFiles: Iterable<File>, reason: String) {
         reporters.forEach { it.reportMarkDirty(affectedFiles, reason) }
-    }
-
-    override fun flush() {
-        reporters.forEach { it.flush() }
     }
 }

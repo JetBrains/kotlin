@@ -10,9 +10,11 @@ import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.build.GeneratedJvmClass
 import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.debug
+import org.jetbrains.kotlin.build.report.events.ScopeExpansionReason
 import org.jetbrains.kotlin.build.report.info
 import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
+import org.jetbrains.kotlin.build.report.reportMarkDirty
 import org.jetbrains.kotlin.build.report.reportPerformanceData
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.cri.CriToolchain.Companion.DATA_PATH
@@ -116,7 +118,8 @@ abstract class IncrementalJvmCompilerRunnerBase(
         caches: IncrementalJvmCachesManager,
         generatedFiles: List<GeneratedFile>,
         services: Services,
-    ): Iterable<File> {
+        dirtySources: Set<File>,
+    ): List<File> {
         if (generatedFiles.isEmpty()) return emptyList()
 
         val cache = caches.platformCache
@@ -161,7 +164,9 @@ abstract class IncrementalJvmCompilerRunnerBase(
 
         result.addAll(cache.getObsoleteMultifileClasses().flatMap(::partsByFacadeName))
 
-        return result
+        val filteredResult = result.filter { it !in dirtySources }
+        reporter.reportMarkDirty(filteredResult, ScopeExpansionReason.SHARED_CLASS_NAME)
+        return filteredResult
     }
 
     override fun runWithNoDirtyKotlinSources(caches: IncrementalJvmCachesManager): Boolean =

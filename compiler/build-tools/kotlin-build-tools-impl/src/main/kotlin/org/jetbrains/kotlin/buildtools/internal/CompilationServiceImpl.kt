@@ -315,6 +315,7 @@ internal object CompilationServiceImpl : CompilationService {
                 loggerAdapter.kotlinLogger,
                 compilationConfiguration.aggregatedIcConfiguration?.options?.rootProjectDir,
                 DoNothingBuildMetricsReporter,
+                null,
             )
         ).get()
 

@@ -10,8 +10,10 @@ import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.debug
 import org.jetbrains.kotlin.build.report.info
+import org.jetbrains.kotlin.build.report.events.ScopeExpansionReason
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute.*
+import org.jetbrains.kotlin.build.report.reportMarkDirty
 import org.jetbrains.kotlin.build.report.warn
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
@@ -447,8 +449,12 @@ abstract class IncrementalCompilerRunner<
         changesCollector: ChangesCollector,
     )
 
-    protected open fun additionalDirtyFiles(caches: CacheManager, generatedFiles: List<GeneratedFile>, services: Services): Iterable<File> =
-        emptyList()
+    protected open fun additionalDirtyFiles(
+        caches: CacheManager,
+        generatedFiles: List<GeneratedFile>,
+        services: Services,
+        dirtySources: Set<File>,
+    ): List<File> = emptyList()
 
     protected open fun additionalDirtyLookupSymbols(): Iterable<LookupSymbol> =
         emptyList()
@@ -489,6 +495,10 @@ abstract class IncrementalCompilerRunner<
         caches: CacheManager,
         messageCollector: MessageCollector,
     ): ExitCode {
+        when (compilationMode) {
+            is CompilationMode.Incremental -> reporter.reportCompilationStart(true, null)
+            is CompilationMode.Rebuild -> reporter.reportCompilationStart(false, compilationMode.reason.readableString)
+        }
         performWorkBeforeCompilation(compilationMode, args)
 
         val allKotlinFiles = allSourceFiles.filter { it.isKotlinFile(kotlinSourceFilesExtensions) }
@@ -552,8 +562,17 @@ abstract class IncrementalCompilerRunner<
         while (dirtySources.any() || runWithNoDirtyKotlinSources(caches)) {
             val complementaryFiles = caches.platformCache.getComplementaryFilesRecursive(dirtySources)
             dirtySources.addAll(complementaryFiles)
-            dirtySources.addAll(caches.compilerPluginFilesCache.getSourceFilesReferencedByPlugins())
+            val sourceFilesPreviouslyReferencedByPlugins = caches.compilerPluginFilesCache.getSourceFilesReferencedByPlugins()
+            reporter.reportMarkDirty(
+                sourceFilesPreviouslyReferencedByPlugins,
+                ScopeExpansionReason.REFERENCED_BY_COMPILER_PLUGIN
+            )
+            dirtySources.addAll(sourceFilesPreviouslyReferencedByPlugins)
             val sourceFilesPreviouslyGeneratedByPlugins = caches.compilerPluginFilesCache.getSourceFilesGeneratedByPlugins()
+            reporter.reportMarkDirty(
+                sourceFilesPreviouslyGeneratedByPlugins,
+                ScopeExpansionReason.GENERATED_BY_COMPILER_PLUGIN
+            )
             dirtySources.addAll(sourceFilesPreviouslyGeneratedByPlugins)
             caches.platformCache.markDirty(dirtySources)
             caches.inputsCache.removeOutputForSourceFiles(dirtySources)
@@ -616,8 +635,7 @@ abstract class IncrementalCompilerRunner<
             }
             if (compilationMode is CompilationMode.Incremental) {
                 // todo: feels dirty, can this be refactored?
-                val dirtySourcesSet = dirtySources.toHashSet()
-                val additionalDirtyFiles = additionalDirtyFiles(caches, generatedFiles, services).filter { it !in dirtySourcesSet }
+                val additionalDirtyFiles = additionalDirtyFiles(caches, generatedFiles, services, dirtySources)
                 if (additionalDirtyFiles.isNotEmpty()) {
                     dirtySources.addAll(additionalDirtyFiles)
                     generatedFiles.forEach { transaction.deleteFile(it.outputFile.toPath()) }
@@ -678,6 +696,7 @@ abstract class IncrementalCompilerRunner<
                         // At this point we have determined that some new source files need to be recompiled,
                         // and we can add previously compiled files to the dirtySources set for logical consistency.
                         // (Take note that outer loop triggers compilation steps while there are not-yet-recompiled affected files.)
+                        reporter.reportMarkDirty(compiledInThisIterationSet, ScopeExpansionReason.FOR_CONSISTENCY)
                         addAll(compiledInThisIterationSet)
                     }
                 }
