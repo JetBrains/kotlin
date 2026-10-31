@@ -7,9 +7,18 @@ package org.jetbrains.kotlin.fir.symbols.impl
 
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
+import org.jetbrains.kotlin.fir.symbols.id.FirSymbolId
+import org.jetbrains.kotlin.fir.symbols.id.FirUniqueSymbolId
 
-class FirAnonymousInitializerSymbol : FirBasedSymbol<FirAnonymousInitializer>() {
+class FirAnonymousInitializerSymbol(
+    symbolId: FirSymbolId<FirAnonymousInitializerSymbol>,
+) : FirBasedSymbol<FirAnonymousInitializer>(symbolId) {
+    /**
+     * Creates a [FirAnonymousInitializerSymbol] with a [unique symbol ID][FirUniqueSymbolId].
+     * See [FirBasedSymbol] for when to use this default constructor.
+     */
+    constructor() : this(FirUniqueSymbolId())
+
     override fun toString(): String = "${this::class.simpleName} <init>"
 
     val containingDeclarationSymbol: FirBasedSymbol<*>

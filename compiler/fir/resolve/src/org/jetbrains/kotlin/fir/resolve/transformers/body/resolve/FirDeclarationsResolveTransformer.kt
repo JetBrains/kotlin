@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.asCone
 import org.jetbrains.kotlin.fir.resolve.transformers.FirStatusResolver
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.runContractResolveForFunction
 import org.jetbrains.kotlin.fir.resolve.transformers.transformVarargTypeToArrayType
+import org.jetbrains.kotlin.fir.symbols.id.symbolIdFactory
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
@@ -1424,7 +1425,7 @@ open class FirDeclarationsResolveTransformer(
                         moduleData = session.moduleData
                         origin = FirDeclarationOrigin.Source
                         name = SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
-                        symbol = FirValueParameterSymbol()
+                        symbol = FirValueParameterSymbol(session.symbolIdFactory.sourceBasedOrUnique(sourceElement))
                         returnTypeRef = receiverType.toFirResolvedTypeRef(sourceElement)
                         valueParameterKind = FirValueParameterKind.ContextParameter
                     }
@@ -1513,9 +1514,11 @@ open class FirDeclarationsResolveTransformer(
         return when {
             lambda.valueParameters.isEmpty() && singleParameterType != null -> {
                 val name = StandardNames.IMPLICIT_LAMBDA_PARAMETER_NAME
+                val itSource = lambda.source?.fakeElement(KtFakeSourceElementKind.ItLambdaParameter)
+
                 val itParam = buildValueParameter {
                     resolvePhase = FirResolvePhase.BODY_RESOLVE
-                    source = lambda.source?.fakeElement(KtFakeSourceElementKind.ItLambdaParameter)
+                    source = itSource
                     containingDeclarationSymbol = resolvedLambdaAtom.anonymousFunction.symbol
                     moduleData = session.moduleData
                     origin = FirDeclarationOrigin.Source
@@ -1523,11 +1526,12 @@ open class FirDeclarationsResolveTransformer(
                         source = lambda.source?.fakeElement(KtFakeSourceElementKind.ImplicitReturnTypeOfLambdaValueParameter)
                     )
                     this.name = name
-                    symbol = FirValueParameterSymbol()
+                    symbol = FirValueParameterSymbol(session.symbolIdFactory.sourceBasedOrUnique(itSource))
                     isCrossinline = false
                     isNoinline = false
                     isVararg = false
                 }
+
                 listOf(itParam)
             }
 

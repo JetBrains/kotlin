@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.id.FirSymbolId
+import org.jetbrains.kotlin.fir.symbols.id.FirUniqueSymbolId
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -25,8 +27,9 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 
 sealed class FirClassLikeSymbol<out D : FirClassLikeDeclaration>(
+    symbolId: FirSymbolId<FirClassLikeSymbol<D>>,
     val classId: ClassId,
-) : FirClassifierSymbol<D>(), ClassLikeSymbolMarker {
+) : FirClassifierSymbol<D>(symbolId), ClassLikeSymbolMarker {
     @OptIn(ClassIdBasedLocality::class)
     protected val lookupTag: ConeClassLikeLookupTag =
         if (classId.isLocal) ConeClassLikeLookupTagWithFixedSymbol(classId, this)
@@ -70,7 +73,10 @@ sealed class FirClassLikeSymbol<out D : FirClassLikeDeclaration>(
     override fun toString(): String = "${this::class.simpleName} ${classId.asString()}"
 }
 
-sealed class FirClassSymbol<out C : FirClass>(classId: ClassId) : FirClassLikeSymbol<C>(classId) {
+sealed class FirClassSymbol<out C : FirClass>(
+    symbolId: FirSymbolId<FirClassSymbol<C>>,
+    classId: ClassId,
+) : FirClassLikeSymbol<C>(symbolId, classId) {
     val resolvedSuperTypeRefs: List<FirResolvedTypeRef>
         get() {
             lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)
@@ -89,7 +95,16 @@ sealed class FirClassSymbol<out C : FirClass>(classId: ClassId) : FirClassLikeSy
         get() = fir.classKind
 }
 
-class FirRegularClassSymbol(classId: ClassId) : FirClassSymbol<FirRegularClass>(classId), RegularClassSymbolMarker {
+class FirRegularClassSymbol(
+    symbolId: FirSymbolId<FirRegularClassSymbol>,
+    classId: ClassId,
+) : FirClassSymbol<FirRegularClass>(symbolId, classId), RegularClassSymbolMarker {
+    /**
+     * Creates a [FirRegularClassSymbol] with a [unique symbol ID][FirUniqueSymbolId].
+     * See [FirBasedSymbol] for when to use this default constructor.
+     */
+    constructor(classId: ClassId) : this(FirUniqueSymbolId(), classId)
+
     /**
      * The raw companion object symbol.
      * The value might be `null` even if there is a compiler plugin that should generate a companion object
@@ -133,11 +148,30 @@ class FirRegularClassSymbol(classId: ClassId) : FirClassSymbol<FirRegularClass>(
         }
 }
 
-class FirAnonymousObjectSymbol(packageFqName: FqName) : FirClassSymbol<FirAnonymousObject>(
+class FirAnonymousObjectSymbol(
+    symbolId: FirSymbolId<FirAnonymousObjectSymbol>,
+    packageFqName: FqName,
+) : FirClassSymbol<FirAnonymousObject>(
+    symbolId,
     ClassId(packageFqName, SpecialNames.ANONYMOUS_FQ_NAME, isLocal = true)
-)
+) {
+    /**
+     * Creates a [FirAnonymousObjectSymbol] with a [unique symbol ID][FirUniqueSymbolId].
+     * See [FirBasedSymbol] for when to use this default constructor.
+     */
+    constructor(packageFqName: FqName) : this(FirUniqueSymbolId(), packageFqName)
+}
 
-class FirTypeAliasSymbol(classId: ClassId) : FirClassLikeSymbol<FirTypeAlias>(classId), TypeAliasSymbolMarker {
+class FirTypeAliasSymbol(
+    symbolId: FirSymbolId<FirTypeAliasSymbol>,
+    classId: ClassId,
+) : FirClassLikeSymbol<FirTypeAlias>(symbolId, classId), TypeAliasSymbolMarker {
+    /**
+     * Creates a [FirTypeAliasSymbol] with a [unique symbol ID][FirUniqueSymbolId].
+     * See [FirBasedSymbol] for when to use this default constructor.
+     */
+    constructor(classId: ClassId) : this(FirUniqueSymbolId(), classId)
+
     val resolvedExpandedTypeRef: FirResolvedTypeRef
         get() {
             lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)

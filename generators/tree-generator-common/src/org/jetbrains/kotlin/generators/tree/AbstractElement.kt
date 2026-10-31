@@ -200,6 +200,23 @@ abstract class AbstractElement<Element, Field, Implementation>(
 
     var doPrint = true
 
+    /**
+     * The names of the fields which define the equality of the element. If any are specified, the element class overrides `equals` and
+     * `hashCode`, which compare and hash exactly these fields. The fields may be declared in the element itself or inherited from its
+     * parents.
+     *
+     * @see equalityBy
+     */
+    val equalityFieldNames: List<String>
+        field = mutableListOf<String>()
+
+    /**
+     * Bases the equality of the element on the fields with the given [fieldNames] (see [equalityFieldNames]).
+     */
+    fun equalityBy(vararg fieldNames: String) {
+        equalityFieldNames.addAll(fieldNames)
+    }
+
     final override fun copy(nullable: Boolean) = ElementRef(element, args, nullable)
 
     final override fun copy(args: Map<NamedTypeParameterRef, TypeRef>) = ElementRef(element, args, nullable)

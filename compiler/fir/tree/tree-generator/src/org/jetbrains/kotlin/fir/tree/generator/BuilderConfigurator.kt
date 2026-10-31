@@ -37,10 +37,6 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
             isSealed = true
         }
 
-        builder(file) {
-            default("symbol", "FirFileSymbol()")
-        }
-
         builder(regularClass) {
             parents += classBuilder
             parents += typeParameterRefsOwnerBuilder
@@ -404,7 +400,6 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
 
         builder(anonymousInitializer) {
             parents += declarationBuilder
-            default("symbol", "FirAnonymousInitializerSymbol()")
         }
 
         builder(spreadArgumentExpression) {

@@ -38,7 +38,7 @@ class FirFileBuilder : FirAnnotationContainerBuilder {
     lateinit var name: String
     var sourceFile: KtSourceFile? = null
     var sourceFileLinesMapping: KtSourceFileLinesMapping? = null
-    var symbol: FirFileSymbol = FirFileSymbol()
+    lateinit var symbol: FirFileSymbol
 
     override fun build(): FirFile {
         return FirFileImpl(
