@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,27 +10,31 @@ import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.ir.isPure
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrArithBuilder
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.lower.AbstractValueUsageLowering.Companion.getActualType
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.RemoveInlineDeclarationsWithReifiedTypeParametersLowering
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isNullable
+import org.jetbrains.kotlin.ir.util.isSubtypeOf
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.js.config.compileLongAsBigint
 import org.jetbrains.kotlin.utils.addToStdlib.butIf
+import kotlin.Boolean
+import kotlin.TODO
+import kotlin.apply
+import kotlin.assert
+import kotlin.run
 
 private val NOT_NULL_CHECK by IrStatementOriginImpl
 
@@ -258,6 +262,18 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
              * └─────────────┻─────────────────────────────┴───────────────────────────────┘
              * ```
              * Note: advanced check is performed when casting to primitive types, array types, function types, or interfaces.
+             *
+             * If we statically know that this is an upcast, we try to generate no checks.
+             * In this case, the following logic is applied:
+             * ```
+             *               ┌─────────────┬─────────────┐
+             *               │ to non-null │ to nullable │
+             * ┌─────────────╋━━━━━━━━━━━━━┻━━━━━━━━━━━━━┫
+             * │from non-null┃           true            │
+             * ├─────────────╋─────────────┬─────────────┤
+             * │from nullable┃ null check  │    true     │
+             * └─────────────┻─────────────┴─────────────┘
+             * ```
              */
             private fun generateTypeCheck(
                 argument: () -> IrExpression,
@@ -266,9 +282,21 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
             ): IrExpression {
                 val toNotNullable = toType.makeNotNull()
                 val argumentInstance = argument()
-                val instanceCheck = generateTypeCheckNonNull(argumentInstance, toNotNullable, isDefinitelyNotNull)
-                val isFromNullable = argumentInstance.type.isNullable()
+                val fromType = argumentInstance.type
+                val fromNotNullable = fromType.makeNotNull()
+
+                val isFromNullable = fromType.isNullable()
                 val isToNullable = toType.isNullable()
+
+                if (fromNotNullable !is IrDynamicType && fromNotNullable.isSubtypeOf(toNotNullable, context.typeSystem)) {
+                    // This is an upcast
+                    return when {
+                        isFromNullable && !isToNullable -> calculator.run { not(nullCheck(argument())) }
+                        else -> IrConstImpl.constTrue(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.booleanType)
+                    }
+                }
+
+                val instanceCheck = generateTypeCheckNonNull(argumentInstance, toNotNullable, isDefinitelyNotNull)
                 val isNativeCheck = !advancedCheckRequired(toNotNullable)
 
                 return when {
