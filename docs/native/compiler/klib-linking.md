@@ -49,6 +49,11 @@ IR serialization) → NativeKlibWritingPipelinePhase`. IR generation is skipped 
 (`-Xheader-mode`, `-Xheader-mode-type=compilation`) unless the module has inline functions, inline accessors or value classes
 (`requireIrForHeaderCompilationMode`). Native-specific pieces:
 
+- **Compiler extensions and actualization.** [`NativeFrontendPipelinePhase`](../../../compiler/cli/cli-native-klib/src/main/kotlin/org/jetbrains/kotlin/native/pipeline/NativeFrontendPipelinePhase.kt)
+  installs configured `FirExtensionRegistrar`s during session preparation. On the IR-producing branch,
+  [`NativeFir2IrPipelinePhase`](../../../compiler/cli/cli-native-klib/src/main/kotlin/org/jetbrains/kotlin/native/pipeline/NativeFir2IrPipelinePhase.kt)
+  calls `convertToIrAndActualize` with the configured `IrGenerationExtension`s. Expect/actual resolution and plugin-generated
+  IR therefore enter this path before Native pre-serialization lowerings; stage 2 consumes their serialized result.
 - **Used-library computation.** [`NativeFir2IrPipelinePhase`](../../../compiler/cli/cli-native-klib/src/main/kotlin/org/jetbrains/kotlin/native/pipeline/NativeFir2IrPipelinePhase.kt)
   walks every symbol cached by fir2ir, collects the packages of external package fragments (minus forward-declaration packages)
   and maps them to klibs via `metadata.getPackageNames()`. [`FirNativeSerializer.kt`](../../../compiler/cli/cli-native-klib/src/main/kotlin/org/jetbrains/kotlin/native/FirNativeSerializer.kt)

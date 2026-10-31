@@ -49,12 +49,12 @@ flowchart LR
     Bdeps -.-> Bcompile
 
     Bcompile --> Bklib
-    
+
     Aklib --> linkTask
     Adeps --> linkTask
     Bklib --> linkTask
     Bdeps --> linkTask
-    
+
     linkTask --> binary
 ```
 
@@ -93,7 +93,7 @@ Performed by Gradle or the compiler.
 # Kinds of binaries
 
 The compiler can produce a few different kinds of binaries.
-* **Executables** — native runnable executables, calling `fun main` upon 
+* **Executables** — native runnable executables, calling `fun main` upon
   launch.
 * **Test executables** — native runnable executables, running all the `@Test`
   methods. They are used for the test tasks in Gradle.
@@ -176,13 +176,13 @@ project dependencies to separate chunks of native code, storing them under
 `~/.konan`. So, those are fairly persistent, and thus can be reused across
 compiler invocations.
 
-The entry point to this machinery can be found 
+The entry point to this machinery can be found
 [here](../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/CacheBuilder.kt).
 
 ### Cache format
 
 Such chunks of native code are represented as static libraries (`.a` files).
-They are augmented with 
+They are augmented with
 [additional meta-information](../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/CacheStorage.kt)
 (stored as separate files), for example, class field layouts.
 
@@ -196,11 +196,11 @@ Within the caching implementation, the compiler additionally takes care of
 properly accounting parameters affecting the compilation, e.g., compiler flags
 or dependencies.
 
-For example, compiling with `-Xgc=cms` and `-Xgc=pmcs` produces different
+For example, compiling with `-Xbinary=gc=cms` and `-Xbinary=gc=pmcs` produces different
 machine code.
 
 Compiling klib2 against klib1 (its dependency) might produce different machine
-code after changing the version of klib1 (even if those are binary compatible 
+code after changing the version of klib1 (even if those are binary compatible
 with regard to Kotlin).
 
 In such cases, the compiler can distinguish incompatible compiler caches.
@@ -245,7 +245,7 @@ changed files, and recompile only these files and files depending on them.
 The up-to-date checks for files here are based not on source files as such, but
 on "compiled files" files represented as Kotlin backend IR in klibs.
 This decision serves at least two purposes:
-* The second compilation stage operates klibs, not source files. So using the 
+* The second compilation stage operates klibs, not source files. So using the
   klib-level representation is a matter of encapsulation.
 * It allows handling subtle changes that don't affect the contents of file or
   its dependencies, but affect the resolution and thus change the actual
@@ -376,7 +376,7 @@ added one-by-one, if used in other parts of the resulting API).
 
 ### Closed world strikes back
 
-The thing worth mentioning (repeating) here is 
+The thing worth mentioning (repeating) here is
 [the closed-world compilation model](#closed-world-compilation-model).
 A compiled framework is a closed world. So, it always contains all the
 dependencies. When working with multiple such frameworks, this might be
@@ -438,7 +438,7 @@ See also
 
 ## Consuming Kotlin libraries in C/C++
 
-Basically everything from the section 
+Basically everything from the section
 [above](#consuming-kotlin-libraries-in-objective-c-or-swift) applies to
 [consuming Kotlin in C/C++](https://kotlinlang.org/docs/native-dynamic-libraries.html).
 

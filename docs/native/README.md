@@ -85,7 +85,7 @@ The C++ runtime and the ABI it shares with generated code. Start at the overview
 |------|----------------|
 | [runtime/README.md](runtime/README.md) | The C++ runtime: lifecycle, threads, suspension, roots, logging; overview of GC and allocation. *Read it when you work on:* runtime asserts, hangs; start here, then gc.md / allocator.md |
 | [compiler-runtime-contract.md](runtime/compiler-runtime-contract.md) | The ABI shared by generated code and the runtime: object layout, TypeInfo, entry points, thread states, roots. *Read it when you work on:* any change that touches both `llvm/` and `runtime/` |
-| [gc.md](runtime/gc.md) | The collectors (CMS, PMCS, STMS, noop): phases, barriers, termination, roots, weak processing; the scheduler |
+| [gc.md](runtime/gc.md) | The collectors (CMS, PMCS, STWMS, noop): phases, barriers, termination, roots, weak processing; the scheduler |
 | [allocator.md](runtime/allocator.md) | The custom allocator: pages, size classes, sweep protocol, finalizer queues, accounting, options |
 | [exceptions.md](runtime/exceptions.md) | Throw, C++ unwinding and the shadow stack, landing pads, interop filtering, ObjC/Swift `NSError` bridging, unhandled exceptions and termination, stack-trace symbolication |
 

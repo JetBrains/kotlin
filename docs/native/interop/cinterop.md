@@ -258,6 +258,26 @@ vector ops) and some are `@GCUnsafeCall` runtime calls (`Kotlin_objc_*`, pinning
 `memScoped`, `Arena`, `CValues` and `StableRef` are plain Kotlin on top of them. `interpretPointed`/`CPointer` creation is not
 magic: `InteropLowering` only replaces `NativePointed.rawPtr` and `CPointer.rawValue` getters with intrinsics.
 
+Ownership is separate from pointer representation. A `CPointer` neither owns its target storage nor roots an arbitrary Kotlin
+object at that address. In [`Utils.kt`](../../../kotlin-native/Interop/Runtime/src/main/kotlin/kotlinx/cinterop/Utils.kt),
+`nativeHeap` allocations require explicit freeing, while `Arena.clear` frees its allocations and `memScoped` clears its scope
+in `finally`. Pointers into that storage must not be used after it is freed.
+
+For managed storage, [`Pinning.kt`](../../../kotlin-native/Interop/Runtime/src/native/kotlin/kotlinx/cinterop/Pinning.kt)
+stores the pinnable object in an ordinary field of the `Pinned` handle, so it stays alive while that handle is reachable and
+not yet `unpin`ned (`unpin` clears the field); `usePinned` unpins in `finally`, and `refTo` arranges unpinning
+through the receiving `AutofreeScope`. String pinning can retain a UTF-16 conversion (`Kotlin_Interop_pinnable` in
+[`Interop.cpp`](../../../kotlin-native/runtime/src/main/cpp/Interop.cpp)). A pointer obtained from the handle does not itself
+extend that lifetime.
+
+For an opaque callback context, [`StableRef`](../../../kotlin-native/Interop/Runtime/src/main/kotlin/kotlinx/cinterop/StableRef.kt)
+creates a retained external reference, exposes its handle through `asCPointer`, and recovers the Kotlin object through `get`.
+The owner must call `dispose` after native code stops using the handle; the Native implementation releases and disposes the
+ExternalRCRef ([`NativeStableRef.kt`](../../../kotlin-native/Interop/Runtime/src/native/kotlin/kotlinx/cinterop/NativeStableRef.kt)).
+This handle keeps the object alive; it is not a pointer to the object's fields and involves no user-visible C allocation.
+For ordinary objects, `dispose` marks the runtime `ExternalRCRefImpl` node for later registry reclamation. Permanent objects
+use a tagged object pointer instead, whose disposal is a no-op.
+
 The pointer and value types of `kotlinx.cinterop`, as declared in
 [`Interop/Runtime/src/main/kotlin/kotlinx/cinterop/Types.kt`](../../../kotlin-native/Interop/Runtime/src/main/kotlin/kotlinx/cinterop/Types.kt)
 (`ObjCObjectVar` is in `ObjectiveCImpl.kt`; the `*VarOf` classes are one per primitive type, aliased as `IntVar`, `LongVar`, …):

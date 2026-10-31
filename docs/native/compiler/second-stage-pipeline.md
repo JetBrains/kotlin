@@ -108,10 +108,12 @@ flowchart TD
     RUN -->|"LIBRARY, BITCODE"| ERR["error(...)"]
     PB --> K1["runK1Frontend: ModuleDescriptors for all klibs"]
     PC --> K1
-    PF --> OBJC["ProduceObjCExportInterfacePhase<br/>CreateObjCFrameworkPhase (header, Info.plist)"]
+    PF --> K1F["runK1Frontend: framework ModuleDescriptors"]
+    K1F --> OBJC["ProduceObjCExportInterfacePhase<br/>CreateObjCFrameworkPhase (header, Info.plist)"]
     OBJC -->|"-Xomit-framework-binary"| STOP["return"]
-    OBJC --> K1
-    PT --> TB["CreateTestBundlePhase"] --> K1
+    OBJC -->|"binary requested"| LK
+    PT --> K1T["runK1Frontend: test-bundle ModuleDescriptors"]
+    K1T --> TB["CreateTestBundlePhase"] --> LK
     K1 --> LK["linkKlibs: LinkKlibsPhase + SpecialBackendChecks"]
     PC -.->|"inside linkKlibs: BuildCExports (K1)<br/>or after it: BuildCExportsFromIr"| LK
     PF -.->|"inside linkKlibs: CreateObjCExportCodeSpecPhase"| LK

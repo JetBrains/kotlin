@@ -11,7 +11,7 @@ emits, safepoint insertion) is in [compiler-runtime-contract.md](compiler-runtim
 
 | Term | Meaning | Where |
 |------|---------|-------|
-| Mutator | A thread registered with the runtime that runs Kotlin code. The GC thread, finalizer thread and timer thread are not mutators. | [ThreadRegistry.hpp](../../../kotlin-native/runtime/src/main/cpp/mm/ThreadRegistry.hpp) |
+| Mutator | A thread registered with the runtime that runs Kotlin code. The regular finalizer thread registers once at start (`Kotlin_initRuntimeIfNeeded`) and is Runnable only while running finalizers. The main/auxiliary GC threads and the timer thread are `UtilityThread`s and are not mutators. | [ThreadRegistry.hpp](../../../kotlin-native/runtime/src/main/cpp/mm/ThreadRegistry.hpp), [FinalizerProcessor.hpp](../../../kotlin-native/runtime/src/main/cpp/alloc/FinalizerProcessor.hpp) |
 | `ThreadData` | Per-mutator state: shadow stack, TLS, thread-local queues, allocator/GC/scheduler thread parts, suspension state. Pinned, lives in the registry's list. | [ThreadData.hpp](../../../kotlin-native/runtime/src/main/cpp/mm/ThreadData.hpp) |
 | `GlobalData` | The single process-wide root object: thread registry, globals registry, `ExternalRCRefRegistry`, scheduler, allocator, GC. Created once, never destroyed. | [GlobalData.hpp](../../../kotlin-native/runtime/src/main/cpp/mm/GlobalData.hpp) |
 | Thread state | `kRunnable` (may touch the heap; must reach safepoints) or `kNative` (must not touch the heap; GC may inspect the thread's data). | [ThreadState.hpp](../../../kotlin-native/runtime/src/main/cpp/mm/ThreadState.hpp) |
@@ -85,6 +85,60 @@ Process shutdown is deliberately minimal. `Konan_main` calls `Init_and_run_start
 `kNative` "so the GC thread does not wait on it". Nothing is freed; `GlobalData` has a deleted destructor. Unverified: no
 caller of `Init_and_run_start` with `memoryDeInit = 0` was found, and there is no "destroy runtime mode" binary option in
 [BinaryOptions.kt](../../../native/binary-options/src/main/kotlin/org/jetbrains/kotlin/config/nativeBinaryOptions/BinaryOptions.kt).
+
+### Workers, queued jobs and futures
+
+[`Worker.kt`](../../../kotlin-native/runtime/src/main/kotlin/kotlin/native/concurrent/Worker.kt) and
+[`Future.kt`](../../../kotlin-native/runtime/src/main/kotlin/kotlin/native/concurrent/Future.kt) expose `@ObsoleteWorkersApi`
+value classes containing integer IDs. The queues and future records live in
+[`Worker.cpp`](../../../kotlin-native/runtime/src/main/cpp/Worker.cpp), in `State::workers_` / `State::futures_` and each
+worker's immediate deque and time-ordered delayed set. `Worker.start` creates a native thread whose `workerRoutine` initializes
+the runtime and runs `processQueueElement(true)` in Runnable state. Other Kotlin threads also get a worker through `WorkerInit`,
+but no automatic event loop: their current worker must use `processQueue()` for queued work or `park(process = true)` to wait
+and process work, including delayed requests. This runtime facility is separate from `kotlinx.coroutines` dispatchers.
+
+`Worker.execute` is the `WORKER_EXECUTE` intrinsic ([intrinsics.md](../compiler/intrinsics.md)): `InteropLowering.lowerWorkerExecute`
+replaces it with `executeImpl`, passing a raw pointer to the non-capturing job function. The producer runs on the caller's thread.
+The current implementation ignores `TransferMode`; it does not enforce the legacy isolated-object-graph transfer rules.
+The handoff is an ownership protocol using retained external references, not a copy of the object graph:
+
+| Step | Owner and root | Implementation |
+|---|---|---|
+| Produce and submit | `executeImpl` retains `producer()`; the C++ entry adopts the handle as `OwningExternalRCRef`. Rejected submission releases/disposes it through that owner. | [`Internal.kt`](../../../kotlin-native/runtime/src/main/kotlin/kotlin/native/concurrent/Internal.kt), `Kotlin_Worker_executeInternal` |
+| Queue | `State::addJobToWorkerUnlocked` allocates a C++ future and detaches the argument handle into `Job`. The retained handle roots the argument while queued. | `Worker.cpp` |
+| Execute | `WorkerExecuteLaunchpad` dereferences the argument into a Kotlin local, releases/disposes its handle, invokes the job, then retains its result. | `Internal.kt` |
+| Complete | `Future::storeResultUnlocked` moves the result into `result_`, marks the future `COMPUTED` and signals waiters. The C++ future owns the root even if the Kotlin `Future` wrapper is dropped. | `Worker.cpp`, [`ExternalRCRef.hpp`](../../../kotlin-native/runtime/src/main/cpp/ExternalRCRef.hpp) |
+| Consume | `State::consumeFutureUnlocked` waits for completion, moves the result out, erases/deletes the future record, and returns the handle. Kotlin `consumeFuture` dereferences, releases and disposes it before `Future.consume` invokes the caller's block. | `Worker.cpp`, `Internal.kt`, `Future.kt` |
+
+Successful consumption is one-shot: later state lookup is `INVALID`. Dropping the Kotlin ID wrapper does not consume the
+native record or release a completed result. Job exceptions instead set `THROWN`; consumption throws `IllegalStateException`,
+not the original exception. With error reporting enabled, regular jobs print through `ReportUnhandledException`; `executeAfter`
+uses the unhandled-exception hook/termination path ([exceptions.md](exceptions.md#step-6--unhandled-exceptions-and-termination)). In the current
+`THROWN` path, `Future::consumeResultUnlocked` throws before `State::consumeFutureUnlocked` erases the record, so the successful
+consumption cleanup above must not be assumed for failed jobs: the caller sees the message-less `IllegalStateException` from the
+runtime (the `"Job has thrown an exception"` branch in `Future.consume` is never reached), the native record stays in `futures_`,
+and its state stays `THROWN`, so a second `consume` throws again instead of reporting `INVALID`.
+
+`executeAfter` retains the operation closure itself and returns no future. A zero delay appends to the immediate deque; a
+positive delay inserts into the delayed set. `waitForQueueLocked` checks that set when the immediate queue is empty and moves
+due work to the deque. `WorkerExecuteAfterLaunchpad` releases/disposes the closure handle after loading it into a Kotlin local,
+before calling it. There is no public delayed-job cancellation operation. Queue waits and future waits use `waitInNativeState`
+(`pthread_cond_wait` or a timed wait in Native state); `Locker` switches to Native around every `pthread_mutex_lock`, except `Locker(lock, false)` during thread-data destruction. Executing Kotlin
+jobs and dereferencing their handles requires Runnable state, as in the thread-state protocol below.
+
+Termination is another queue element. `requestTermination(true)` appends the marker and sets `waitDelayed`: if delayed work
+remains, processing the marker waits as needed and requeues it at the back of the immediate queue, so jobs submitted after the
+request can run before termination. `false` puts the marker at the front without waiting for delayed
+work; it does not interrupt the currently executing job. Processing the marker sets `terminated_`, removes the worker from
+the addressable worker map and completes the termination future. Work submitted behind a marker can remain unexecuted;
+requesting termination is not itself a submission barrier. During thread teardown, `WorkerDeinit` destroys the worker:
+`Worker::~Worker` releases/disposes remaining argument and closure handles and marks pending regular/termination futures
+`CANCELLED`. Those future records still need consumption; `Future.consume` reports cancellation when it observes that state.
+
+**The termination future acknowledges the marker, not completion of thread teardown.** It must be consumed, but its `.result`
+does not call `pthread_join`. The internal `waitWorkerTermination` entry joins a terminating native worker separately, in Native
+state; thread teardown detaches an unjoined handle via `WorkerDestroyThreadDataIfNeeded`. A job that processes its own termination
+marker through `processQueue` can still finish and publish its result before teardown. The tests below exercise this distinction.
 
 ### Thread states and safepoints
 
@@ -213,7 +267,7 @@ Summary only; the allocator's data structures, sweep protocol and finalizer queu
 ([ObjectOps.cpp](../../../kotlin-native/runtime/src/main/cpp/mm/ObjectOps.cpp)): assert `kRunnable`, `allocator().allocateObject`, `gc().onAllocation(object)` (CMS/PMCS allocate black while marking), then a
 release fence so another thread that later reads the reference sees an initialized header (KT-58995). Reference stores from
 Kotlin go through `mm::RefAccessor` ([ReferenceOps.hpp](../../../kotlin-native/runtime/src/main/cpp/ReferenceOps.hpp)): stack slots
-have no barrier; heap stores call `gc::beforeHeapRefUpdate`, which is empty for STMS, PMCS and noop and a real barrier for CMS.
+have no barrier; heap stores call `gc::beforeHeapRefUpdate`, which is empty for STWMS, PMCS and noop and a real barrier for CMS.
 
 The default allocator is `custom` ([alloc/custom/README.md](../../../kotlin-native/runtime/src/alloc/custom/README.md); page
 types, per-thread pages, sweep-on-demand). GC accounting is coarse: `AllocatedSizeTracker::onPageOverflow`
@@ -476,6 +530,11 @@ Style and conventions: [codestyle/cpp/README.md](../../../kotlin-native/runtime/
   table in [HACKING.md](../../../kotlin-native/HACKING.md#testing)). Stress tests: [native.tests/stress](../../../native/native.tests/stress);
   GC fuzzing: [gc-fuzzing-tests/README.md](../../../native/native.tests/gc-fuzzing-tests/README.md); memory-model litmus tests:
   [litmus-tests/guide.md](../../../native/native.tests/litmus-tests/guide.md).
+- Worker ownership and termination: [`WorkerTest.kt`](../../../kotlin-native/runtime/test/native/concurrent/WorkerTest.kt)
+  covers success, failed jobs, delayed ordering, termination during a running job, cancellation and repeated consumption;
+  [`workerCancelJobsWithGC.kt`](../../../native/native.tests/testData/gc/workerCancelJobsWithGC.kt) covers teardown of queued
+  jobs with GC in flight (the jobs left queued have `Unit` arguments) and separately waits for native-thread termination. Main-thread queue termination is covered by
+  [`terminateMainThreadWorker.kt`](../../../native/native.tests/testData/standalone/termination/terminateMainThreadWorker.kt).
 
 ## Open questions
 

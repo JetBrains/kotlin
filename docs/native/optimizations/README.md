@@ -22,7 +22,7 @@ initialization story, including the redundant-call removal) and [casts-optimizat
 | Term                       | Meaning                                                                                                                                                                                                                                                                  |
 |----------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | DataFlowIR / DFG           | A per-function "sea of nodes" abstraction of IR that keeps only what matters for types and object flow: calls, allocations, field/array reads and writes, variables, parameters, returns. [DataFlowIR.kt](../../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/optimizations/DataFlowIR.kt) |
-| `ModuleDFG`                | `functions: Map<FunctionSymbol, Function>` plus the `SymbolTable`. Built once by `BuildDFGPhase`, then mutated in place by every phase that rewrites IR. [DFGBuilder.kt](../../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/optimizations/DFGBuilder.kt) |
+| `ModuleDFG`                | `functions: Map<FunctionSymbol, Function>` plus the `SymbolTable`. Built once by `BuildDFGPhase`, then updated by rewrites that change its abstraction of IR. [DFGBuilder.kt](../../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/optimizations/DFGBuilder.kt) |
 | `FunctionSymbol`           | DFG identity of a function or a static field initializer. `Public`/`Private` for declared, `External` for bodiless ones. Carries attributes (`EXPLICITLY_EXPORTED`, `IS_STATIC_FIELD_INITIALIZER`, …) and, for externals, `escapes`/`pointsTo`.                 |
 | `Type.Virtual`             | Marker type meaning "do not reason about this receiver": ObjC classes and forward declarations map to it (`SymbolTable.mapClassReferenceType`).                                                                                                               |
 | Root set                   | Functions assumed callable from outside the analysed code. Computed by `DevirtualizationAnalysis.computeRootSet` and shared by every analysis via `CallGraphBuilder`.                                                                                             |
@@ -130,8 +130,10 @@ flowchart LR
 Phases are disabled in two ways that look identical from outside: the driver passes `disable = true` (the table above), or the user
 lists the phase name in `-Xdisable-phases`. Both return `outputIfNotEnabled`
 ([PhaseEngine.kt](../../../compiler/ir/backend.common/src/org/jetbrains/kotlin/backend/common/phaser/PhaseEngine.kt),
-[CompilerPhase.kt](../../../compiler/config/src/org/jetbrains/kotlin/config/phaser/CompilerPhase.kt)). The analyses are therefore
-individually droppable: every consumer tolerates "no result" (`null` DCE set, empty lifetimes, empty DFG, `ghaEnabled() == false`).
+[CompilerPhase.kt](../../../compiler/config/src/org/jetbrains/kotlin/config/phaser/CompilerPhase.kt)). Result consumers support
+fallbacks such as a `null` DCE set, empty lifetimes and `ghaEnabled() == false`, but prerequisites still matter: disabling
+`BuildDFG` alone leaves an unpopulated, unsealed symbol table, while devirtualization analysis requires its sealed type hierarchy.
+The driver disables DFG construction and its consumers together when global optimizations are off.
 
 **Why `!hasStaticCaches`.** The comment in `runCodegen` says "It's ok to run global optimizations on a cache as long as it doesn't
 have other dependencies (stdlib)". The analyses assume they see all code that can run; a prebuilt static cache contains machine code
@@ -299,10 +301,10 @@ devirtualization can manifest as "my top-level `val` is not initialized".
 
 ## Invariants and ordering constraints
 
-- **The DFG must mirror the IR.** Every phase that rewrites IR (devirtualization, both inliner runs, static-initializer removal)
-  ends with `FunctionDFGBuilder(...).build(declaration)` for each changed declaration and stores it in `moduleDFG.functions`. A new
-  IR rewrite between `BuildDFG` and `EscapeAnalysis` that forgets this makes EA/DCE reason about stale bodies — the classic source of
-  "stack-allocated object escapes" corruption.
+- **The DFG must remain a sound abstraction of the IR.** Devirtualization, both inliner runs and static-initializer removal
+  rebuild changed bodies with `FunctionDFGBuilder(...).build(declaration)` and update `moduleDFG.functions`. Other rewrites can
+  preserve the existing abstraction: coroutine spilling retains the symbolic `SaveCoroutineState` effects in the DFG even after
+  IR contains field traffic. A new rewrite must preserve that model or rebuild affected DFG bodies before later analyses use them.
 - **The symbol table is sealed after `populateWith`.** Introducing a new class or a new function with a body after `BuildDFG` fails
   with "The symbol table has been sealed". Lowerings that create declarations must run before it (which is why
   `PropertyAccessorInlineLowering` etc. are placed before, and only cleanup-style lowerings after).
@@ -311,7 +313,7 @@ devirtualization can manifest as "my top-level `val` is not initialized".
 - **GHA must run after DCE and before `RTTI`**, since it assigns ids consumed by `RTTIGenerator` and `CodeGenerator.checkIsSubtype`.
   Interface ids are also used by `SymbolTable` (`iface.classId`) — but when GHA is disabled `classId` falls back to a hash, so the
   itable keys are stable per run either way.
-- **Every analysis is optional**: downstream code must keep working with `null`/empty results. Keep this property when adding one.
+- **Optional analysis results need fallbacks**, but disabling a prerequisite such as `BuildDFG` also requires disabling its consumers.
 - **Closed world only for programs.** `entryPoint == null` switches all analyses to "library mode" (every public symbol is a root,
   no unfolding of non-devirtualized calls in EA). ObjC classes are `Type.Virtual` and never devirtualized; cinterop and user
   `external fun`s get pessimistic EA summaries.
@@ -326,7 +328,7 @@ devirtualization can manifest as "my top-level `val` is not initialized".
 |---------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Add a new stdlib `external fun` with reference params   | Annotate it with `@Escapes`/`@Escapes.Nothing`/`@PointsTo` in the runtime sources; `EscapeAnalysisChecker` fails the stdlib build otherwise, and EA `require`s it at link time.    |
 | Make something new reachable "from outside"             | Extend `computeRootSet` (or set `EXPLICITLY_EXPORTED` in `SymbolTable.mapFunction`). Both devirtualization and DCE pick it up; EA roots follow through `CallGraphBuilder`.          |
-| New IR rewrite inside `runCodegen`                      | Place it relative to `BuildDFG`; if after, rebuild DFG for changed functions; if it creates declarations, place it before.                                                          |
+| New IR rewrite inside `runCodegen`                      | Place it relative to `BuildDFG`; if after, preserve the DFG abstraction or rebuild changed functions; if it creates declarations, place it before. |
 | Change class/interface id layout (GHA)                  | `ClassGlobalHierarchyInfo`, `RTTIGenerator` and the runtime type-check code (`IsSubclassFast`, itable lookup in `kotlin-native/runtime`) form one contract; see [compiler-runtime-contract.md](../runtime/compiler-runtime-contract.md). |
 | New `Lifetime` kind (e.g. `LOCAL` arenas)               | `ContextUtils.Lifetime`, `computeLifetimes`, `CodeGenerator.allocInstance/allocArray`, `StackLocalsManager`, plus GC support in the runtime ([runtime/README.md](../runtime/README.md)).            |
 | New unfold heuristics                                   | `DevirtualizationUnfoldFactors`; IR-side in `devirtualize`, graph-side in `CallGraphBuilder.handleFunction`.                                                                        |
@@ -342,11 +344,11 @@ on library-mode roots; cinterop ([cinterop.md](../interop/cinterop.md)) is opaqu
 | Flag                                                   | Effect                                                                                                          |
 |--------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------|
 | `-opt` / `-g`                                          | `optimizationsEnabled` (the K/N test infra maps `optimizationMode=OPT` to `-opt`, `DEBUG` to `-g`)              |
-| `-Xdisable-phases=EscapeAnalysis,Devirtualization,DevirtualizationAnalysis,DCEPhase,PreCodegenInliner,RemoveRedundantCallsToStaticInitializersPhase,GHAPhase,BuildDFG,ComputeTypesPass,CastsOptimization` | bisect; names are the `name =` strings in `LTO.kt` (lowerings use their class name) |
+| `-Xdisable-phases=EscapeAnalysis,Devirtualization,DevirtualizationAnalysis,DCEPhase,PreCodegenInliner,RemoveRedundantCallsToStaticInitializersPhase,GHAPhase,ComputeTypesPass,CastsOptimization` | bisection candidates; preserve phase prerequisites. Names are the `name =` strings in `LTO.kt` (lowerings use their class name). |
 | `-Xlist-phases`, `-Xverbose-phases=<name>`, `-Xprofile-phases` | enumerate; enable `context.log` output (DFG dumps, constraint graphs, "Devirtualized: N%"); time them |
 | `-Xphases-to-dump-after=<name>` (`-Xdump-directory=`, `-Xdump-fqname=`) | IR dump after a phase, e.g. after `Devirtualization` or `DCEPhase`                            |
 | `-Xbinary=preCodegenInlineThreshold=N`                 | enable the pre-codegen inliner                                                                                  |
-| `-Xbinary=genericSafeCasts=true|false`                 | toggles `CastsOptimization` vs `CastsLowering`                                                                  |
+| `-Xbinary=genericSafeCasts=true\|false`                | gates `CastsOptimization` (default: on without `-opt`, off with it); independently, `CastsLowering` runs only without optimizations. Optimized codegen handles remaining casts directly. |
 | `-Xbinary=escapeAnalysisPropagateExiledToHeapObjects=` | see EA above                                                                                                    |
 | `-Xbinary=enableReleaseBinaryCache=true`               | use caches in `-opt` (turns global optimizations off)                                                           |
 | `-Xsave-llvm-ir-after=<phase> -Xsave-llvm-ir-directory=`, `-Xprint-bitcode` | see the LLVM IR, e.g. check for `alloca %"kclassbody:..."` vs `call @AllocInstance` |

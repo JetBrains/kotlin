@@ -240,8 +240,8 @@ continuation. Coroutines are already state machines: `IrSuspendableExpression` d
 in the continuation, `IrSuspensionPoint` registers a resume block (`evaluateSuspendableExpression`); the state-machine construction
 and the `scope()` mapping of `invokeSuspend` are in [coroutines.md](../compiler/coroutines.md#step-6--codegen).
 
-**try/catch.** `evaluateTry` assumes `finally` is lowered away. A `CatchScope` lazily creates one `landingpad` block that catches
-the C++ `ExceptionObjHolder` (`_ZTI18ExceptionObjHolder`), extracts the Kotlin object (`catchKotlinException`) and jumps to the handler,
+**try/catch.** `evaluateTry` assumes `finally` is lowered away. A `CatchScope` lazily creates one catch-all `landingpad` block (no `typeid` check, see
+[exceptions.md](../runtime/exceptions.md)) that extracts the Kotlin object from the C++ `ExceptionObjHolder` (`catchKotlinException`) and jumps to the handler,
 which runs `instanceof` checks per `catch` clause and rethrows via the outer handler. Throws inside a `try` body are a local branch,
 not a C++ throw (`ExceptionHandler.Local.genThrow`). The personality is the C++ one, so exceptions interoperate with ObjC/C++ frames.
 The landing-pad shapes (`callRaw` vs `call` with an `ExceptionHandler`, cleanup vs filtering pads) and the unwinding contract with

@@ -16,7 +16,7 @@ also remove the question from the page's "Open questions").
 | [optimizations/README.md](optimizations/README.md) | overview and gating of the whole-program analyses | `optimizations/*`, `TopLevelPhases.kt`, FileCheck tests |
 | [llvm-codegen.md](codegen/llvm-codegen.md) | IR → LLVM IR, declarations and naming, RTTI emission, debug info, runtime module linking, LLVM pipelines, object files, linker | `llvm/*`, `CompilerOutput.kt`, `OptimizationPipeline.kt`, `Linker.kt`, `libllvmext` |
 | [compiler-runtime-contract.md](runtime/compiler-runtime-contract.md) | object layout, TypeInfo, boxing, runtime entry points and annotations, thread states, GC roots, initializers, exceptions, binary options → constants | `TypeInfo.h`, `Memory.h`, `RTTIGenerator.kt`, `Runtime.kt`, `ContextUtils.kt`, `CompilerConstants.hpp`, stdlib annotations |
-| [runtime/README.md](runtime/README.md) | lifecycle, thread states and STW, roots, allocation and GC overview, scheduler summary, logging, variants and tests | `runtime/src/main/cpp/mm/*`, `gc/*`, `gcScheduler/*`, `alloc/*`, gtests |
+| [runtime/README.md](runtime/README.md) | lifecycle, Worker/Future ownership and termination, thread states and STW, roots, allocation and GC overview, scheduler summary, logging, variants and tests | `runtime/src/main/cpp/mm/*`, `Worker.cpp`, `concurrent/{Worker,Future,Internal}.kt`, `gc/*`, `gcScheduler/*`, `alloc/*`, gtests, `WorkerTest.kt` |
 | [caches.md](build-and-tooling/caches.md) | `CacheBuilder`, cache layout and flavors, per-file caches, additional cache info, dependency tracking, cache ABI, prelink, test modes | `CacheBuilder.kt`, `CachedLibraries.kt`, `CacheStorage.kt`, `DependenciesTracker.kt`, `CachesAbiLowering.kt`, test settings |
 | [klib-linking.md](compiler/klib-linking.md) | first-stage klib production, resolution, K1 descriptors, IR deserialization strategies, partial linkage | `cli-native-klib`, `serialization.native`, `K1Frontend.kt`, `linkKlibs.kt`, `serialization/*` |
 | [cinterop.md](interop/cinterop.md) | cinterop tool, `.def` files, cinterop klibs, metadata → IR, interop lowerings and C stubs, call modes, ObjC interop | `Interop/*`, `cinterop.deserialization`, `InteropLowering.kt`, `CStubsManager.kt` |
@@ -29,7 +29,7 @@ also remove the question from the page's "Open questions").
 | [static-initializers.md](compiler/static-initializers.md) | container classification, trigger insertion, objects/enums/companions, codegen fast path, runtime state machine, eager path, caches, redundant-call removal | `StaticInitializersLowering.kt`, `ObjectClassLowering.kt`, `StaticInitializersOptimization.kt`, `IrToBitcode.kt`, `Runtime.cpp` |
 | [casts-optimization.md](optimizations/casts-optimization.md) | generic safe casts in Autoboxing/bridges, `CastsOptimization` predicates, `ComputeTypesPass`, pipeline order, codegen and runtime checks | `CastsOptimization.kt`, `ComputeTypesPass.kt`, `Autoboxing.kt`, `BridgesBuilding.kt`, `Types.cpp` |
 | [incremental-compilation.md](build-and-tooling/incremental-compilation.md) | KGP flags, IC entry, staleness, dirty-file analysis, rebuild, link, correctness table, test grammar | `KotlinNativeLink.kt`, `CacheBuilder.kt`, `CacheStorage.kt`, `DependenciesTracker.kt`, `testData/caches/ic` |
-| [gc.md](runtime/gc.md) | common framework, STMS/PMCS/CMS/noop algorithms, barriers, termination, scheduler numbers, codegen requirements, interop, options and history | `gc/*`, `gcScheduler/*`, `mm/*`, `GC.kt`, `NativeSecondStageCompilationConfig.kt` |
+| [gc.md](runtime/gc.md) | common framework, STWMS/PMCS/CMS/noop algorithms, barriers, termination, scheduler numbers, codegen requirements, interop, options and history | `gc/*`, `gcScheduler/*`, `mm/*`, `GC.kt`, `NativeSecondStageCompilationConfig.kt` |
 | [allocator.md](runtime/allocator.md) | API, custom allocator pages and paths, sweep, finalizer queues, OS memory, accounting, legacy allocator, options and history | `alloc/*`, `main/cpp/alloc/*`, `RuntimeModule.kt` |
 | [platform-libraries.md](interop/platform-libraries.md) | `.def` sources and conventions, `depends`, build tasks and cinterop args, SDK/Xcode, consumption, KGP/IDE/commonizer, contracts | `platformLibs/*`, `build-tools`, `konan.properties`, `loadNativeKlibs.kt`, KGP sources |
 | [compatibility-and-migration.md](build-and-tooling/compatibility-and-migration.md) | every compatibility surface, its enforcement, migration examples, checklist | `KotlinAbiVersion.kt`, `klibArguments.kt`, checkers, `BinaryOptions.kt`, `KonanTarget.kt`, `compiler/arguments` |
@@ -75,8 +75,9 @@ Facts that span pages and are the usual cause of "I changed X and Y broke". Each
 - **Whole-program optimizations are off with any static cache** (`runGlobalOptimizations`), GHA also when producing a cache;
   release builds ignore caches unless `-Xbinary=enableReleaseBinaryCache=true`, and `-opt` therefore silently disables IC.
   [optimizations/README.md](optimizations/README.md), [caches.md](build-and-tooling/caches.md), [incremental-compilation.md](build-and-tooling/incremental-compilation.md)
-- **Declaration-creating lowerings must run before `BuildDFG`** (sealed symbol table); any IR rewrite between `BuildDFG` and
-  `EscapeAnalysis` must rebuild the changed functions' DFG (and coroutine liveness). [dataflow-ir.md](optimizations/dataflow-ir.md)
+- **Declaration-creating lowerings must run before `BuildDFG`** (sealed symbol table); an IR rewrite between `BuildDFG` and
+  `EscapeAnalysis` must preserve the DFG abstraction or rebuild affected bodies (and refresh coroutine liveness if it changes).
+  Coroutine spilling retains symbolic DFG effects. [dataflow-ir.md](optimizations/dataflow-ir.md)
 - **New ways of exposing Kotlin functions to the outside must be rooted** in `computeRootSet` / `EXPLICITLY_EXPORTED`; otherwise
   release builds may DCE them, call the wrong override, or throw "Unexpected receiver type". In library mode every public
   function is a root, which is what export and cinterop callbacks rely on. [devirtualization.md](optimizations/devirtualization.md),
@@ -178,10 +179,10 @@ because something would fail if it stopped holding.
 | OOM aborts rather than throwing `OutOfMemoryError`; only 8-byte alignment is guaranteed | both allocators | [allocator.md](runtime/allocator.md) |
 | `compiler_version` and `depends` manifest properties are informational | no compiler reader found; `-Xmetadata-klib` outputs have no `depends` at all | [compatibility-and-migration.md](build-and-tooling/compatibility-and-migration.md), [commonizer.md](interop/commonizer.md) |
 | Cross bundles combine Darwin and host distributions from one revision | unchecked | [platform-libraries.md](interop/platform-libraries.md) |
-| Nothing between `CoroutinesLivenessAnalysis` and `CoroutinesVarSpillingLowering` changes the set of live variables at a suspension point | passes in between do not touch them today; a stale list is a silently wrong resume | [coroutines.md](compiler/coroutines.md) |
+| Changes between `CoroutinesLivenessAnalysis` and `CoroutinesVarSpillingLowering` must keep suspension-point liveness current | the pre-codegen inliner reruns liveness after inlining; a stale list can produce a wrong resume | [coroutines.md](compiler/coroutines.md) |
 | Stdlib coroutine classes (`BaseContinuationImpl`, `ContinuationImpl`, `SafeContinuation`, `COROUTINE_SUSPENDED` identity, the `Function{N+1}` supertype trick) keep the shape the lowering emits against | same build; `kotlinx.coroutines` tested outside this repository | [coroutines.md](compiler/coroutines.md) |
 | `$<fn>COROUTINE$<n>` class names are not keyed on by IC, caches or symbolication | per-file counters; classes are private | [coroutines.md](compiler/coroutines.md), [incremental-compilation.md](build-and-tooling/incremental-compilation.md) |
-| `@GCUnsafeCall` callees have the C++ signature the Kotlin declaration implies, and do not block or allocate in Runnable state | prototype derived from Kotlin; no check against the runtime; a drift is UB | [intrinsics.md](compiler/intrinsics.md) |
+| `@GCUnsafeCall` callees have the C++ signature the Kotlin declaration implies and handle GC cooperation: switch to Native for blocking work; allocate in Runnable with normal rooting and safepoint discipline | prototype derived from Kotlin; no check against the runtime; a drift is UB | [intrinsics.md](compiler/intrinsics.md) |
 | Every `@ExportForCppRuntime` function is called in Runnable state | verified for the launcher path and by the `EnterFrame` assertion only | [intrinsics.md](compiler/intrinsics.md) |
 | `IntrinsicType` strings in the stdlib and the compiler agree; `BackendNativeSymbols` resolve | same build; surfaces lazily in the first compilation that needs a kind | [intrinsics.md](compiler/intrinsics.md) |
 | `@NoReorderFields` is only used on final classes without inherited fields | comment in `LlvmDeclarations.packFields`; unchecked | [intrinsics.md](compiler/intrinsics.md) |
@@ -219,7 +220,6 @@ Recorded as open questions on the pages, listed here because they look like late
   `@ThreadLocal` initializers may register TLS records of different sizes for the same key, which the debug runtime asserts
   against ([static-initializers.md](compiler/static-initializers.md)).
 - `-Xpartial-linkage={enable|disable}` is parsed but nothing non-generated reads it ([klib-linking.md](compiler/klib-linking.md)).
-- `objcDisposeWithRunLoop` is emitted as a runtime constant with no runtime reader found ([gc.md](runtime/gc.md)).
 - The light-distribution platform-library generator omits `-Xccall-mode indirect` and names cache directories without the
   `-system` suffix the compiler uses ([platform-libraries.md](interop/platform-libraries.md), [tooling-integration.md](build-and-tooling/tooling-integration.md)).
 - `reversedWholeLibraryDependencies` is built but never traversed by the IC dirty-file analysis ([incremental-compilation.md](build-and-tooling/incremental-compilation.md)).
@@ -376,7 +376,6 @@ Collected from the pages; each is also listed at the end of its page.
 ### llvm-codegen.md
 - Full list of phases accepting `-Xsave-llvm-ir-after`; what `cCallMode = Direct` changes in emitted calls.
 - Hypothesis: `runLLVMPassesInCompiler` is a temporary gate; the Kotlin and C++ pass implementations must stay equivalent.
-- Interaction of `-g` with `-opt` across `Linker` and `BitcodeCompiler`.
 
 ### compiler-runtime-contract.md
 - The `TF_*` flag collision above; the `ShadowStack.hpp` "incompatible" TODO. (`@ExportForCompiler`'s consumer is the mangler's
@@ -420,7 +419,8 @@ Collected from the pages; each is also listed at the end of its page.
 ### runtime/README.md, gc.md, allocator.md
 - Any remaining runtime teardown path (`memoryDeInit=0`); `Platform.isMemoryLeakCheckerActive` without a leak checker.
 - Lock ordering (gcLock → ThreadRegistry → registries) is inferred, not documented.
-- `objcDisposeWithRunLoop` reader; MinGW CMS default vs `gcMarkSingleThreaded` only for PMCS; registry lock held across the
+- Inverted CMS check for `escapeAnalysisPropagateExiledToHeapObjects` (warns on `true`, accepts `false`).
+- MinGW CMS default vs `gcMarkSingleThreaded` only for PMCS; registry lock held across the
   whole CMS mark; arbitrary ParallelProcessor / SafePointTracker constants; `GCStatistics` asserts ≤ 2 pauses; is
   `concurrentWeakSweep=false` supported.
 - `instanceAlignment_` never read; why `disableMmap` defaults true when `pagedAllocator=false`; `MAP_POPULATE` rationale;

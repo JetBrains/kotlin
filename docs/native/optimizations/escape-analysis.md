@@ -390,7 +390,7 @@ outside the frame's lifetime. What relies on that:
 | Runtime piece | Behaviour | Source |
 |---------------|-----------|--------|
 | Mark (all GCs) | A root that is a stack or permanent object is *traversed* but not enqueued ("has own entry in the root set"); fields pointing to non-heap objects are never enqueued. Asserts a non-heap object has no meta-object | `collectRoot`, `processFieldInMark` in [MarkAndSweepUtils.hpp](../../../kotlin-native/runtime/src/main/cpp/gc/MarkAndSweepUtils.hpp) |
-| Heap → stack references | `RuntimeAssert(!field->stack(), "Heap object %p references stack object %p")` when `!Traits::kAllowHeapToStackRefs`. STMS and PMCS set it `true` ([MarkTraits.hpp](../../../kotlin-native/runtime/src/gc/stms/cpp/MarkTraits.hpp), [ParallelMark.hpp](../../../kotlin-native/runtime/src/gc/pmcs/cpp/ParallelMark.hpp)); CMS sets it `false` ([ConcurrentMark.hpp](../../../kotlin-native/runtime/src/gc/cms/cpp/ConcurrentMark.hpp)) | same |
+| Heap → stack references | `RuntimeAssert(!field->stack(), "Heap object %p references stack object %p")` when `!Traits::kAllowHeapToStackRefs`. STWMS and PMCS set it `true` ([MarkTraits.hpp](../../../kotlin-native/runtime/src/gc/stms/cpp/MarkTraits.hpp), [ParallelMark.hpp](../../../kotlin-native/runtime/src/gc/pmcs/cpp/ParallelMark.hpp)); CMS sets it `false` ([ConcurrentMark.hpp](../../../kotlin-native/runtime/src/gc/cms/cpp/ConcurrentMark.hpp)) | same |
 | `ExternalRCRef` | Asserts the object is not stack-allocated when creating a ref (ObjC/Swift/C `StableRef` to a stack object would outlive the frame) | [ExternalRCRef.cpp](../../../kotlin-native/runtime/src/main/cpp/mm/ExternalRCRef.cpp) |
 | Shadow stack | Header TODO: "currently incompatible with stack-allocated objects" | [ShadowStack.hpp](../../../kotlin-native/runtime/src/main/cpp/mm/ShadowStack.hpp) |
 | Debugging | `Kotlin_Debugging_isStack` returns `obj->stack()`; exposed as `kotlin.native.internal.isStack()` | [Runtime.cpp](../../../kotlin-native/runtime/src/main/cpp/Runtime.cpp), [Debugging.kt](../../../kotlin-native/runtime/src/main/kotlin/kotlin/native/internal/Debugging.kt) |
@@ -403,9 +403,10 @@ in `kotlin::gc::Mark`"; the test's `left`/`right` recursion alternates allocatin
 makes EA treat every exiled object as an escape origin, so its referents go to the heap too. History: a runtime-side fix
 ("CMS: Supported local objects", `2af545c4e997`, KT-69731) was reverted (`b0ea5362d97f`); EA then hard-coded propagation for
 CMS only; commit `f7d3b8074e7c` turned it into the binary option and made it the default for every GC because the memory dumper
-walks dead heap objects as well and crashed the same way (KT-85811). Setting it to `false` under CMS produces a strong warning
-("CMS GC requires escapeAnalysisPropagateExiledToHeapObjects=true") in
-[NativeSecondStageCompilationConfig.kt](../../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/NativeSecondStageCompilationConfig.kt).
+walks dead heap objects as well and crashed the same way (KT-85811). The CMS check in
+[NativeSecondStageCompilationConfig.kt](../../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/NativeSecondStageCompilationConfig.kt)
+is inverted: an explicit `true` produces the strong warning "CMS GC requires escapeAnalysisPropagateExiledToHeapObjects=true",
+while `false` is accepted silently.
 Only two tests set it to `false`, both `DISABLE_NATIVE: gcType=CMS`. Non-default values of a binary option enter the cache flavor
 ([caches.md](../build-and-tooling/caches.md)); EA itself never runs for cached code, so the option matters only for the main binary.
 
@@ -418,15 +419,16 @@ Only two tests set it to `false`, both `DISABLE_NATIVE: gcType=CMS`. Non-default
 | `-Xverbose-phases=EscapeAnalysis` | logs the call graph, condensation, per-function DFG, PTG before/after calls and after closure (Graphviz `digraph` blocks), per-call-site summaries, "Forcing node … to escape", divergence warnings and final statistics |
 | `-Xbinary=escapeAnalysisPropagateExiledToHeapObjects=true\|false` | see above; `false` is unsafe with CMS and the memory dumper. [BinaryOptions.kt](../../../native/binary-options/src/main/kotlin/org/jetbrains/kotlin/config/nativeBinaryOptions/BinaryOptions.kt) |
 | `-Xsave-llvm-ir-after=Codegen -Xsave-llvm-ir-directory=<dir>` | inspect `alloca %"kclassbody:…"` / `local#…` vs `call @AllocInstance` |
-| `-Xbinary=gc=cms|pmcs|stms` | changes which runtime asserts fire (`kAllowHeapToStackRefs`); combine with `-Xbinary=runtimeAssertionsMode=panic` |
+| `-Xbinary=gc=cms|pmcs|stwms` | changes which runtime asserts fire (`kAllowHeapToStackRefs`); combine with `-Xbinary=runtimeAssertionsMode=panic` |
 
 There is no flag to tune the budget, the unfold factors or the divergence parameters; they are constants.
 
 ## Invariants and implied contracts
 
-- **A `STACK` object must never be referenced after its frame (or loop iteration) ends, nor from a heap object.** EA guarantees it
-  only if the DFG mirrors the IR that codegen sees (every IR rewrite after `BuildDFG` must rebuild the function's DFG,
-  [optimizations/README.md](README.md)) and every callee summary is sound.
+- **A `STACK` object must never be referenced after its frame (or loop iteration) ends.** The default exile propagation also
+  prevents heap-to-stack references; CMS requires that restriction, while STWMS/PMCS permit them under the conditions described
+  below. EA requires a sound DFG abstraction of the IR: rewrites after `BuildDFG` must preserve that abstraction or rebuild
+  affected bodies ([optimizations/README.md](README.md)), and every callee summary must be sound.
 - **Every stdlib `external fun` whose signature has a reference type must carry `@Escapes`/`@Escapes.Nothing`/`@PointsTo`**, and the
   annotation must be *correct*: the checker validates shape, not semantics. A missing annotation fails the stdlib build; a wrong
   one (e.g. `@Escapes.Nothing` on a function that stores its argument in a global) is a silent memory-corruption bug in every
@@ -437,7 +439,7 @@ There is no flag to tune the budget, the unfold factors or the divergence parame
   an open method EA could not devirtualize is heap-allocated in frameworks and static/dynamic libraries.
 - **Finalized classes are heap-only** (`@HasFinalizer`); adding the annotation to a class silently changes EA's verdicts for it.
 - **Exceptions are heap-only** (thrown values are escape origins), so `Throwable` allocation is never optimized.
-- **The GC variant is a soundness parameter**: STMS/PMCS tolerate a dead exiled heap object referencing a stack object (they never
+- **The GC variant is a soundness parameter**: STWMS/PMCS tolerate a dead exiled heap object referencing a stack object (they never
   scan dead objects); CMS and the memory dumper do not. Anyone adding a heap walker that visits possibly-dead objects inherits
   the same requirement.
 - **Export**: ObjC/Swift/C export never hands a stack object out — a `STACK` verdict requires that the object never flows to a
@@ -449,7 +451,7 @@ There is no flag to tune the budget, the unfold factors or the divergence parame
 |---------|-----------|
 | Crash/corruption only with `-opt`, fine with `-g` or with `-opt` plus caches | Rebuild with `-Xdisable-phases=EscapeAnalysis`. If it disappears, EA. Then `-Xsave-llvm-ir-after=Codegen` and look for `alloca %"kclassbody:<Class>"` of the suspicious class in the function; `-Xverbose-phases=EscapeAnalysis` shows why it was `STACK` ("Processing callSite … Callee escape analysis result") |
 | `RuntimeAssert … Heap object references stack object` (CMS) or `Creating ExternalRCRefImpl to a stack-allocated object` | A heap object or an external ref got a stack object: a wrong/missing `@Escapes`/`@PointsTo` on a stdlib external used on that path, an IR rewrite that did not rebuild the DFG, or `escapeAnalysisPropagateExiledToHeapObjects=false` |
-| Same with `gc=stms` passes, `gc=cms` fails intermittently | Exiled-object pattern (KT-75317); check the option value and whether the object is an over-budget `Array<T>` or finalized class |
+| Same with `gc=stwms` passes, `gc=cms` fails intermittently | Exiled-object pattern (KT-75317); check the option value and whether the object is an over-budget `Array<T>` or finalized class |
 | "Escape analysis failure: …" compile error | EA threw (often `require` on a stdlib external lacking annotations, or "Drains have not been built correctly"); reproduce with `-Xverbose-phases=EscapeAnalysis`, workaround with `-Xdisable-phases=EscapeAnalysis` |
 | Fewer stack allocations than expected | Check in the verbose log whether the call site was `VIRTUAL`/`EXTERNAL` (pessimistic) or the SCC "seems not to be converging"; in library mode expect virtual calls to pessimize |
 

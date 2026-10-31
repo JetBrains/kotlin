@@ -112,7 +112,7 @@ config.isFinalBinary, timePasses = phaseConfig.needProfiling)` and shares it acr
 
 | Field | `-opt` | neither | `-g` | Notes |
 |-------|--------|---------|------|-------|
-| `optimizationLevel` | `AGGRESSIVE` (3) | `DEFAULT` (1) | `NONE` (0) | `shouldOptimize()` wins over `shouldContainDebugInfo()`, so `-opt -g` behaves as `-opt` here |
+| `optimizationLevel` | `AGGRESSIVE` (3) | `DEFAULT` (1) | `NONE` (0) | Internally `shouldOptimize()` takes precedence over `shouldContainDebugInfo()`; the CLI rejects simultaneous `-opt -g` in `SetupConfiguration.kt`. |
 | `sizeLevel` | `NONE`, or `AGGRESSIVE` when `smallBinary` | same | `NONE` (`smallBinary` is forced off with `-g`) | `optimizationFlag` becomes `Oz` whenever size level is `AGGRESSIVE`; `Os` (`DEFAULT`) is never produced by the config (commit `178e8392bdbc`) |
 | `codegenOptimizationLevel` | `LLVMCodeGenLevelAggressive` | `LLVMCodeGenLevelDefault` | `LLVMCodeGenLevelNone` | Only affects the `TargetMachine` handed to the `PassBuilder` (cost models); real ISel happens later in clang |
 | `inlineThreshold` | `llvmInlineThreshold` from `konan.properties` (global default `100`, `50` for `watchos_arm32`); `-1`/null if unparsable | null (LLVM default) | null | Comment in [konan.properties](../../../kotlin-native/konan/konan.properties): LLVM's `O3` default is 250 and "leads to unreasonably bloated runtime code without any measurable performance benefits"; `-1` means "unset" (`a68b4e1b1482`) |
@@ -438,8 +438,9 @@ different directories and diff per function; symbol names are identical across m
   `UpdateHeapRef`-style calls that it cannot see through. More precise metadata is possible but would have to be kept correct
   under the GC's barriers.
 - **Mode coupling.** `-g` means `O0` *and* `Optimize` runtime linkage *and* no `alwaysinline` *and* `_debug` thread-state
-  switches; `-opt -g` behaves as `-opt` in the pipeline but as `-g` in codegen decisions that check `shouldContainDebugInfo()`.
-  Investigating "only in debug" bugs therefore changes several things at once.
+  switches. Investigating "only in debug" bugs therefore changes several things at once. The CLI rejects simultaneous
+  `-opt -g` ([SetupConfiguration.kt](../../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/SetupConfiguration.kt));
+  local precedence in the configuration builder does not make that a supported CLI mode.
 - **Safepoint dedup is name-based and position-based.** `kotlin-remove-sp` recognizes exactly one callee name and assumes that
   a safepoint in the entry block dominates the function; a future change that moves the prologue safepoint after a branch, or
   renames the runtime function, silently disables the pass.

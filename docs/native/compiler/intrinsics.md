@@ -407,10 +407,11 @@ first compilation that needs them.
   `EnterFrame`'s assertion in asserts-enabled builds only.
 - **The DFG models every intrinsic that produces or stores references** (`AllocInstance`, `AllocArray`, `ArrayRead/Write`,
   `IDENTITY`, the volatile `IrSetField`s, `executeImpl`'s synthetic calls). A new kind that is not modelled is treated as an opaque
-  external call, which is *conservative* for escape analysis only if its declaration also carries `@Escapes`/`@PointsTo`; a kind
-  emitted by codegen with no stdlib annotation and no DFG case is assumed to leak nothing (`FunctionSymbol.External` with
-  `escapes == null` is handled by EA's "no summary" path, see [escape-analysis.md](../optimizations/escape-analysis.md)). Enforced by: the
-  first-stage checker for `kotlin.*` externals only.
+  external call. EA uses annotations for eligible `kfun:kotlin.*` externals (excluding the concurrent packages); missing both
+  annotations on a non-builtin function with reference parameters or a reference return fails its `require` checks.
+  Other unknown external and virtual calls get a pessimistic summary. Missing annotations do not universally mean "leaks nothing"
+  ([escape-analysis.md](../optimizations/escape-analysis.md)). New intrinsics must model their reference effects explicitly;
+  the first-stage checker validates annotations on eligible `kotlin.*` externals.
 - **`@NoReorderFields` classes are final and have no inherited fields** (comment in `packFields`). Enforced by: nothing.
 - **Classes with `@ExportTypeInfo` have the layout the runtime expects** (`IsLayoutCompatible` for arrays,
   [compiler-runtime-contract.md](../runtime/compiler-runtime-contract.md)). Enforced by: gtests for the array/string headers only.

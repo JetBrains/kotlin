@@ -43,9 +43,9 @@ a suspend function is split into a *stub* that takes an extra `Continuation` par
 is not an integer but a code address: the body stays a single structured expression (`IrSuspendableExpression`) whose
 suspension points are `IrSuspensionPoint` nodes, and codegen resolves each to an LLVM `blockaddress` and dispatches with
 `indirectbr` ([IrToBitcode.kt][i2b]), so no `when (label)` is ever built in IR. Second, which locals must survive a
-suspension is decided by a real liveness analysis and the field stores/loads are materialized *after* devirtualization,
-escape analysis and DCE ([NativeLoweringPhases.kt][nlp], `runCodegen` in `TopLevelPhases.kt`); until then the analyses see
-a symbolic `SaveCoroutineState(liveVariables)` node ([dataflow-ir.md](../optimizations/dataflow-ir.md)). Third, suspend lambdas are not their
+suspension is decided by a real liveness analysis and the field stores/loads are materialized *after* devirtualization and DCE,
+but before escape analysis ([NativeLoweringPhases.kt][nlp], `runCodegen` in `TopLevelPhases.kt`). The DFG retains a symbolic
+`SaveCoroutineState(liveVariables)` node that escape analysis subsequently reads ([dataflow-ir.md](../optimizations/dataflow-ir.md)). Third, suspend lambdas are not their
 own state machines: their `invoke` is lowered like any other suspend function, with a separate coroutine class
 (`buildCoroutine(function, isSuspendLambdaInvokeMethod = false)` in [NativeSuspendFunctionLowering.kt][nsfl]). The runtime
 and the GC have no notion of a continuation: a suspended coroutine is an ordinary heap object graph reachable from whoever
@@ -70,8 +70,9 @@ CoroutinesLivenessAnalysisFallback             "While this is simple"; no-op unl
 ExpressionBodyTransformer, ObjectClassLowering, StaticInitializersLowering, ComputeTypesPass (2nd run), ...
 Autoboxing, ...                                boxes the Any-typed results of suspend calls
 --- whole-program part (runCodegen in TopLevelPhases.kt, see optimizations/README.md) ---
-BuildDFG -> Devirtualization -> EscapeAnalysis -> DCE
+BuildDFG -> Devirtualization -> DCE
 CoroutinesVarSpillingLowering                  saveCoroutineState/restoreCoroutineState -> field stores/loads
+CreateLLVMDeclarations -> GHA -> RTTI -> EscapeAnalysis
 Codegen                                        IrSuspendableExpression / IrSuspensionPoint -> indirectbr
 ```
 
@@ -249,7 +250,8 @@ visibleVariablesAtSuspensionPoint ?: error(...)`, and replaces the `saveCoroutin
 `this.f_x = x` for each live `x` and the `restoreCoroutineState()` call by `x = this.f_x`. Each spilled variable gets its own
 field named after it ("TODO: optimize by using the same property for different locals") and is made `var`, since a `val`
 cannot be re-assigned on resume. The lowering runs in `runCodegen` after DCE ([lowerings.md](lowerings.md),
-[optimizations/README.md](../optimizations/README.md) step 11); up to that point the analyses see the intrinsic calls:
+[optimizations/README.md](../optimizations/README.md) step 11). It does not rebuild the DFG: escape analysis runs later and
+still reads the symbolic spill effects built from the intrinsic calls:
 
 | Consumer | What it sees | Source |
 |---|---|---|

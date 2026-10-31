@@ -179,7 +179,7 @@ Direction runtime → Kotlin: `Exceptions.h` declares `ThrowNullPointerException
 
 | Annotation ([KT internal Annotations.kt], [KT native Annotations.kt])  | Consumer and effect                                                                         |
 |----------------------------------------|--------------------------------------------------------------------------------------------------------------|
-| `@ExportForCppRuntime(name)`           | `BinaryInterface.funSymbolNameImpl`: fixed symbol name. Also a DCE root (`EXPLICITLY_EXPORTED` in [DataFlowIR.kt]), gets a cleanup landing pad + `LeaveFrame` ([CodeGenerator.kt] `needCleanupLandingpadAndLeaveFrame`), and the file is kept out of per-file cache splitting (`isReferencedByNativeRuntime`, [TopLevelPhases.kt]) |
+| `@ExportForCppRuntime(name)`           | `BinaryInterface.funSymbolNameImpl`: fixed symbol name. Also a DCE root (`EXPLICITLY_EXPORTED` in [DataFlowIR.kt]), gets a cleanup landing pad + `LeaveFrame` ([CodeGenerator.kt] `needCleanupLandingpadAndLeaveFrame`), and its file becomes a dependency of the stdlib Runtime.kt cache fragment (`isReferencedByNativeRuntime`, [TopLevelPhases.kt]) |
 | `@ExportTypeInfo(name)`                | `RTTIGenerator.exportTypeInfoIfRequired` emits a global `name` = `TypeInfo*`; same `isReferencedByNativeRuntime` rule |
 | `@SymbolName(name)` on `external fun`  | `externalSymbolOrThrow` ([IrUtils.kt]): call the C symbol directly, **no** thread-state switch, exceptions not filtered |
 | `@GCUnsafeCall(callee)`                | Same resolution as `@SymbolName` (runtime-implemented intrinsic); the callee is responsible for GC safety     |
@@ -258,14 +258,17 @@ flowchart TD
   from C++ also get a cleanup landing pad that calls `LeaveFrame`. `CheckCurrentFrame` verifies this in debug.
 - **Return slot.** Object-returning functions receive `ObjHeader** result` last (`OBJ_GETTER`, `RETURN_OBJ` →
   `UpdateReturnRef`); callers pass a slot chosen by the escape-analysis `Lifetime`/`SlotType` ([ContextUtils.kt]).
-- **Globals.** Reference-typed static fields are registered once by the eager file initializer through `RegisterGlobal`
-  ([IrToBitcode.kt] `initializedGlobals` → `GlobalsRegistry` [GlobalsRegistry.hpp]). Writes use `UpdateHeapRef`
+- **Globals.** Non-TLS reference fields listed in `initializedGlobals` are registered through `RegisterGlobal` at the start
+  of their owning lazy or eager initializer, before its body runs ([IrToBitcode.kt] `handleStaticInitializerBody` →
+  `GlobalsRegistry` [GlobalsRegistry.hpp]). Writes use `UpdateHeapRef`
   (`storeHeapRef`) and `UpdateVolatileHeapRef`/`CompareAndSwapVolatileHeapRef` for `@Volatile`.
 - **Thread-locals.** `AddTLSRecord(memory, __KonanTlsKey, count)` during `ALLOC_THREAD_LOCAL_GLOBALS`; access via
   `LookupTLS(key, index)`; roots come from `ThreadLocalStorage` ([RootSet.hpp]).
 - **Stack-allocated objects** (escape analysis, `Lifetime.STACK`): `StackLocalsManagerImpl.alloc` allocas the body,
-  tags the header `OBJECT_TAG_STACK`, and stores the pointer into an ordinary root slot. The runtime asserts that heap
-  objects never reference stack objects ([MarkAndSweepUtils.hpp]) and that no `ExternalRCRef` points to one
+  tags the header `OBJECT_TAG_STACK`, and stores the pointer into an ordinary root slot. CMS asserts that heap objects never
+  reference stack objects (`kAllowHeapToStackRefs = false`, [MarkAndSweepUtils.hpp]); STWMS and PMCS allow such edges.
+  The compiler's default `escapeAnalysisPropagateExiledToHeapObjects=true` prevents them for all collectors.
+  The runtime also asserts that no `ExternalRCRef` points to a stack object
   ([ExternalRCRef.cpp]); `ShadowStack.hpp` still carries a TODO about stack objects.
 - **Exceptions in flight** are roots through `ExceptionObjHolderImpl`'s `OwningExternalRCRef` ([ExceptionObjHolder.cpp]).
 - **Suspended coroutines** are not roots: their live locals are spilled into the heap-allocated coroutine object before the
@@ -290,11 +293,12 @@ in [CodeGenerator.kt] (`count` always includes the two overlay words; `parameter
   ([IrToBitcode.kt] `evaluateFileGlobalInitializerCall`); the runtime encodes `FILE_BEING_INITIALIZED | threadId << 2`
   and reports failures through the Kotlin `StaticInitializationFailure`.
 - **Exceptions:** `ThrowException(obj)` → `ExceptionObjHolder::Throw` → C++ `throw` ([Exceptions.cpp]). Generated code
-  uses the Itanium personality (`__gxx_personality_seh0` on `MINGW_X64`), a `landingpad` clause on
-  `_ZTI18ExceptionObjHolder`, then `__cxa_begin_catch` / `Kotlin_getExceptionObject(holder, slot)` / `__cxa_end_catch`
-  ([CodeGenerator.kt] `kotlinExceptionRtti`, `catchKotlinException`). Kotlin `catch` clauses are `genInstanceOfImpl`
-  checks on the extracted object ([IrToBitcode.kt] `CatchingScope`). Foreign exceptions reaching a
-  `filteringExceptionHandler` either terminate or, on Apple targets with `OBJC_WRAP`, become a Kotlin
+  uses the Itanium personality (`__gxx_personality_seh0` on `MINGW_X64`) and a catch-all (`null`) `landingpad` clause for
+  Kotlin catches, then `__cxa_begin_catch` / `Kotlin_getExceptionObject(holder, slot)` / `__cxa_end_catch`
+  ([CodeGenerator.kt] `catchKotlinException`). Kotlin `catch` clauses are `genInstanceOfImpl`
+  checks on the extracted object ([IrToBitcode.kt] `CatchingScope`). The interop `filteringExceptionHandler` instead uses
+  `_ZTI18ExceptionObjHolder` (`kotlinExceptionRtti`) to distinguish Kotlin exceptions from foreign ones before forwarding to Kotlin handling.
+  Foreign exceptions either terminate or, on Apple targets with `OBJC_WRAP`, become a Kotlin
   `ForeignException` via `createForeignException`. Unhandled Kotlin exceptions reach the runtime terminate handler
   installed by `SetKonanTerminateHandler`, which calls the Kotlin hook (`Kotlin_runUnhandledExceptionHook`). The whole path,
   including `SetCurrentFrame` in landing pads and the stack-trace format, is in [exceptions.md](exceptions.md).
@@ -347,7 +351,8 @@ Commits that touched both `TypeInfo.h` and `RTTIGenerator.kt` (from `git log`):
 - Generated code may call the runtime only in Runnable; `EnterFrame` precedes the first safepoint and any allocation;
   `LeaveFrame` (or `SetCurrentFrame` in a landing pad) must restore the shadow stack before the frame dies.
 - A reference that lives across a call that may GC must be in a slot, a global registered with `RegisterGlobal`, TLS, or
-  an `ExternalRCRef`. Heap objects must not point to stack objects (escape analysis guarantees it; debug runtime asserts).
+  an `ExternalRCRef`. Heap objects must not point to stack objects under CMS; escape analysis prevents such edges by default
+  for all collectors, while STWMS/PMCS also support the configurable local-heap-object case (see [gc.md](gc.md)).
 - Thread-local initializers run only after all shared globals of the file are initialized (the inline check in
   `evaluateFileThreadLocalInitializerCall`); `INIT_GLOBALS` runs once per process, the TLS phases once per runtime.
 - The data layout and target triple of the generated module come from the runtime module, so the runtime must be built

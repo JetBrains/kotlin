@@ -57,8 +57,8 @@ flowchart TD
 `BuildDFGPhase` ([LTO.kt](../../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/driver/phases/LTO.kt))
 runs `ModuleDFGBuilder.build()` once, right after `PropertyAccessorInlineLowering`/`InlineClassPropertyAccessorsLowering` in
 `runCodegen` ([TopLevelPhases.kt](../../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/driver/phases/TopLevelPhases.kt)).
-After that the IR keeps changing, and each rewriting phase re-runs `FunctionDFGBuilder(...).build(declaration)` for the functions it
-touched and stores the result into `moduleDFG.functions`:
+After that the IR keeps changing. Rewrites that change the DFG model re-run `FunctionDFGBuilder(...).build(declaration)` for
+affected functions and store the result into `moduleDFG.functions`; others preserve the existing abstraction:
 
 | Phase                                           | Rebuilds the DFG of…                                                                                | Where                                                                                                                                                              |
 |-------------------------------------------------|-----------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -402,8 +402,9 @@ points (details and class names in [optimizations/README.md](README.md#tests)):
   class fails. The lowerings placed after `BuildDFG` in `runCodegen` (`RedundantCoercionsCleaner`, `UnboxInlineLowering`,
   `CoroutinesVarSpillingLowering`) only rewrite bodies. Hypothesis: there is no automated check of this; the `require(!sealed)` is
   the enforcement.
-- **Every IR rewrite between `BuildDFG` and `EscapeAnalysis` must rebuild the DFG of changed functions**, including re-running
-  liveness for suspension points if it changed them. EA keys lifetimes by `irCallSite`/`ir` identity, so a stale DFG points at
+- **Every IR rewrite between `BuildDFG` and `EscapeAnalysis` must preserve the DFG abstraction or rebuild changed bodies**,
+  including re-running liveness if suspension-point liveness changed. Coroutine spilling preserves the symbolic
+  `SaveCoroutineState` model without rebuilding it into field traffic. EA keys lifetimes by `irCallSite`/`ir` identity, so a stale DFG points at
   dead IR nodes and the allocation silently gets `GLOBAL` — or, worse, a new allocation inherits a `STACK` verdict computed for
   different code.
 - **`devirtualizedCallSite` is an attribute on the `IrCall`** (`irAttribute(copyByDefault = true)`): a `VirtualCall` node reaches

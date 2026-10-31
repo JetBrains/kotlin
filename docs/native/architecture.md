@@ -133,6 +133,9 @@ The pipeline runs these phases in order:
      → `NativeIrSerializationPipelinePhase`
 4. `NativeKlibWritingPipelinePhase`
 
+FIR extension registrars and IR generation extensions participate in this first stage; `NativeFir2IrPipelinePhase` performs
+fir2ir and expect/actual resolution before Native pre-serialization lowerings. See [klib-linking.md](compiler/klib-linking.md#first-stage-what-native-adds-to-the-common-klib-pipeline) for the extension boundary.
+
 The branch, as composed with `then` / `thenIf` in `NativeKlibCliPipeline.createCompoundPhase` and decided by `skipIrGeneration`:
 
 ```mermaid

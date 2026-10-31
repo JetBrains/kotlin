@@ -320,7 +320,9 @@ flowchart TD
     USR --> AUTODIR["#lt;-Xauto-cache-dir or dist klib/cache#gt;/#lt;user flavor#gt;/<br/>#lt;uniqueName#gt;/#lt;fingerprint of lib + deps#gt;/"]
     USR --> ICDIR["#lt;-Xic-cache-dir#gt;/#lt;user flavor#gt;/<br/>IC per-file and cinterop caches"]
     COMMON -. "every entry must also be forwarded by" .-> FWD["setupCommonOptionsForCaches<br/>into the spawned cache build"]
-``` Distribution caches are produced by `KonanCacheTask`
+```
+
+Distribution caches are produced by `KonanCacheTask`
 ([KonanCacheTask.kt](../../../kotlin-native/build-tools/src/main/kotlin/org/jetbrains/kotlin/gradle/plugin/konan/tasks/KonanCacheTask.kt))
 from [runtime/build.gradle.kts](../../../kotlin-native/runtime/build.gradle.kts) (`<target>StdlibCache`, per-file for debug) and
 [platformLibs/build.gradle.kts](../../../kotlin-native/platformLibs/build.gradle.kts); `cacheableTargets.<host>` in

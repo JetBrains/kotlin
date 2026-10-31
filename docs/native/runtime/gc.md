@@ -29,20 +29,20 @@ after every epoch), with a timer for idle programs and "mutator assists" as the 
 
 ### Mark state: `GC::ObjectData`
 
-Each GC defines `GC::ObjectData` ([stms](../../../kotlin-native/runtime/src/gc/stms/cpp/ObjectData.hpp),
+Each GC defines `GC::ObjectData` ([stwms](../../../kotlin-native/runtime/src/gc/stms/cpp/ObjectData.hpp),
 [pmcs](../../../kotlin-native/runtime/src/gc/pmcs/cpp/ObjectData.hpp),
 [cms](../../../kotlin-native/runtime/src/gc/cms/cpp/ObjectData.hpp)): one pointer `next_`. `marked()` is `next_ != nullptr`;
 `tryMark()` CASes `nullptr → 1` (`kNoQueueMark`); `markUncontended()` is a plain store used for freshly allocated objects;
 `tryResetMark()` is what the sweep calls. The same field is the link of an `intrusive_forward_list<ObjectData>`
 ([IntrusiveList.hpp](../../../kotlin-native/runtime/src/main/cpp/IntrusiveList.hpp)): insertion sets
 `next_` to a non-null value and removal never nulls it, so **"was ever enqueued" ⇔ "marked"**, and `try_push_front` fails on an
-already-marked object. `stms` uses non-atomic accesses; `pmcs`/`cms` use relaxed atomics with a `compare_exchange_strong` for
+already-marked object. `stwms` uses non-atomic accesses; `pmcs`/`cms` use relaxed atomics with a `compare_exchange_strong` for
 `trySetNext`. The allocator places this header before every heap object (`alloc::objectDataForObject`,
 [AllocatorImpl.cpp](../../../kotlin-native/runtime/src/alloc/custom/cpp/AllocatorImpl.cpp); the byte layout is drawn in
 [compiler-runtime-contract.md](compiler-runtime-contract.md#object-layout)); `noop` makes it zero-sized. `GC.hpp`
 requires it to be trivially destructible because it is never deinitialized.
 
-The values `next_` can take over one epoch, as implemented in `cms/ObjectData.hpp` (`stms` is the same without atomics) and
+The values `next_` can take over one epoch, as implemented in `cms/ObjectData.hpp` (`stwms` is the same without atomics) and
 `IntrusiveList.hpp` (`try_push_front` is `trySetNext` from `nullptr`; `pop_front` never writes the popped node):
 
 ```mermaid
@@ -63,7 +63,7 @@ traversed, which is why there is no cheap way to skip the deletion barrier for a
 
 Marking is generic over `Traits` ([MarkAndSweepUtils.hpp](../../../kotlin-native/runtime/src/main/cpp/gc/MarkAndSweepUtils.hpp)):
 
-| Traits member | Meaning | stms ([MarkTraits.hpp](../../../kotlin-native/runtime/src/gc/stms/cpp/MarkTraits.hpp)) | pmcs / cms |
+| Traits member | Meaning | stwms ([MarkTraits.hpp](../../../kotlin-native/runtime/src/gc/stms/cpp/MarkTraits.hpp)) | pmcs / cms |
 |---|---|---|---|
 | `MarkQueue` | What `processObjectInMark` receives as `state` | the intrusive list itself | `ParallelProcessor::Worker` |
 | `tryEnqueue` | mark + push | `try_push_front` | `Worker::tryPush` (or `tryPushLocal` under `gcMarkSingleThreaded` in pmcs) |
@@ -113,7 +113,7 @@ locked thread registry, calls `thread.Publish()` (moves the thread's globals que
 lists, [ThreadData.hpp](../../../kotlin-native/runtime/src/main/cpp/mm/ThreadData.hpp)) and walks `ThreadRootSet` (shadow stack, then
 TLS), then `GlobalRootSet` (globals, then `ExternalRCRefRegistry::roots()`). A suspended coroutine is not a root of its own: its
 locals survive only because they were spilled into the heap-allocated coroutine object ([coroutines.md](../compiler/coroutines.md#what-the-gc-sees-during-a-suspension))
-([RootSet.hpp](../../../kotlin-native/runtime/src/main/cpp/mm/RootSet.hpp)). Who walks a thread's stack: always a GC worker, never the owner, in `stms`/`cms`; in `pmcs` a cooperating mutator may walk its
+([RootSet.hpp](../../../kotlin-native/runtime/src/main/cpp/mm/RootSet.hpp)). Who walks a thread's stack: always a GC worker, never the owner, in `stwms`/`cms`; in `pmcs` a cooperating mutator may walk its
 own or another stopped mutator's stack. In every case the owner is in `kNative` (suspended at a safepoint, or genuinely in
 native code), which is what makes the lock-free walk of `FrameOverlay` frames safe; a thread in `kNative` cannot push or pop
 frames. `tryLockRootSet` (an acq_rel CAS on a per-thread flag) makes workers compete for threads so each stack is scanned once.
@@ -311,19 +311,20 @@ how long the registry lock is held — as sequenced in `MainGCThread::PerformFul
    registry, `prepareForGC` in `MainGCThread`, resume, concurrent sweep.
 
 Threads joining or leaving: the registry lock is a `std::recursive_mutex` held by the GC thread from `setupBeforeSTW` to the
-end of marking, so **no thread can register or unregister while CMS marks** — `RegisterCurrentThread` blocks. This is why
-`BarriersThreadData::onThreadRegistration` (pick up a mark handle if the phase is not `kDisabled`) can only fire during the
-concurrent weak-processing/sweep tail, when a new thread's allocations must be marked but it has no mark queue. `pmcs`
-has the same shape with its weak barriers. CMS asserts `gcMutatorsCooperate == false` and `auxGCThreads == 0`
+end of `markInSTW`, including concurrent weak processing and the final pause. Thus **no thread can register or unregister
+during that interval** — `RegisterCurrentThread` blocks. The lock is released only after barriers are disabled and mutator
+mark queues are destroyed; a thread registering afterwards does not join this epoch's mark queues or weak-processing window.
+`BarriersThreadData::onThreadRegistration` checks the barrier phase, but CMS's lock lifetime must not be confused with PMCS's
+concurrent weak-processing path, which releases the registry earlier. CMS asserts `gcMutatorsCooperate == false` and `auxGCThreads == 0`
 ([cms/GCImpl.hpp](../../../kotlin-native/runtime/src/gc/cms/cpp/GCImpl.hpp)); the compiler downgrades them with a warning.
 
 Stack objects: `kAllowHeapToStackRefs = false`. A heap object pointing at a stack-allocated object is fatal for CMS because the
 frame can die while the marker is still following the edge. The compiler therefore exiles any escape-analysis "local but not on
-stack" allocation to `GLOBAL` lifetime (`escapeAnalysisPropagateExiledToHeapObjects`, default `true`, warning if disabled with
-CMS; comment cites KT-75317, KT-85811, KT-69731 in
+stack" allocation to `GLOBAL` lifetime (`escapeAnalysisPropagateExiledToHeapObjects`, default `true`; the CMS warning check is
+inverted and warns on an explicit `true`, accepting `false` silently). The comment cites KT-75317, KT-85811, KT-69731 in
 [NativeSecondStageCompilationConfig.kt](../../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/NativeSecondStageCompilationConfig.kt);
-mechanism in [EscapeAnalysis.kt](../../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/optimizations/EscapeAnalysis.kt)
-`propagateExiledToHeapObjects`). An attempt to support local objects in CMS was reverted (`git log -S"kAllowHeapToStackRefs"`:
+the mechanism is in [EscapeAnalysis.kt](../../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/optimizations/EscapeAnalysis.kt)
+`propagateExiledToHeapObjects`. An attempt to support local objects in CMS was reverted (`git log -S"kAllowHeapToStackRefs"`:
 commits "CMS: Supported local objects" and its revert).
 
 ## Sweep: the GC/allocator boundary
@@ -452,8 +453,9 @@ header ([ObjectOps.cpp](../../../kotlin-native/runtime/src/main/cpp/mm/ObjectOps
   ([MainThreadFinalizerProcessor.hpp](../../../kotlin-native/runtime/src/main/cpp/alloc/MainThreadFinalizerProcessor.hpp)), which runs
   batches of 100 inside an autoreleasepool, at most 300 ms per task, 1 ms apart (`RunLoopFinalizerProcessorConfig`, tunable via
   `GC.MainThreadFinalizerProcessor`). If the main run loop never processes the attach block, `available()` stays `false` and
-  everything is merged into the regular queue. `objcDisposeWithRunLoop` (default `true`) is a compiler constant with no reader
-  found in the current runtime sources — Unverified whether it still has an effect.
+  everything is merged into the regular queue. Separately, `objcDisposeWithRunLoop` (default `true`) selects the regular
+  finalizer thread's Core Foundation run loop on ObjC-enabled targets; `FinalizerProcessor::makeProcessingLoop` otherwise
+  selects a condition-variable loop (see [allocator.md](allocator.md#finalizer-queues-and-the-finalizer-threads)).
 - **Threads created by foreign code** register lazily through `CalledFromNativeGuard`/`Kotlin_initRuntimeIfNeeded` in `kNative`
   and are left in `kNative` on return (see runtime/README.md); for the GC they are ordinary mutators whose stacks are empty while they
   are outside Kotlin. Registration blocks while CMS marks (registry lock), which is an observable latency on thread creation.
@@ -468,14 +470,14 @@ header ([ObjectOps.cpp](../../../kotlin-native/runtime/src/main/cpp/mm/ObjectOps
 | `gc` | `cms` (default since 2.3.20, commit `0851ea86878b`, KT-82635; before that `pmcs`. CMS had first been made the default of the then-experimental new MM in 2022, commit `1e78036a1b98`) | module selection | which `*_gc.bc` is linked; part of the cache flavor |
 | `gcSchedulerType` | `adaptive`; `manual` for `gc=noop` | module selection | which `*_gcScheduler.bc`; cache flavor |
 | `gcMarkSingleThreaded` | `true` only for MinGW + `pmcs` | constant `Kotlin_gcMarkSingleThreaded` | pmcs: local-only queues, no pacer, no helpers; cms: ignored |
-| `concurrentWeakSweep` | `true` | constant `Kotlin_concurrentWeakSweep` | pmcs: weak processing outside STW with read barriers; cms/stms: ignored |
+| `concurrentWeakSweep` | `true` | constant `Kotlin_concurrentWeakSweep` | pmcs: weak processing outside STW with read barriers; cms/stwms: ignored |
 | `concurrentMarkMaxIterations` | 100 | constant | cms: rounds before the STW fallback |
 | `gcMutatorsCooperate` | `true` for pmcs; forced `false` (warning) for cms or single-threaded mark | constant | pmcs: suspended mutators mark |
 | `auxGCThreads` | 0; forced 0 under single-threaded mark | constant | pmcs: extra permanent mark threads |
 | `enableSafepointSignposts` | `false`; warning on non-Apple | constant | signpost interval per safepoint slow path |
 | `appStateTracking` | `disabled` | constant | adaptive timer skips epochs in background (UIKit only) |
-| `objcDisposeOnMain` / `objcDisposeWithRunLoop` | `true` / `true` | constants | main-thread finalizer routing (see above) |
-| `escapeAnalysisPropagateExiledToHeapObjects` | `true`; warning if `false` with cms | compiler only | exile heap-allocated locals |
+| `objcDisposeOnMain` / `objcDisposeWithRunLoop` | `true` / `true` | constants | main-thread finalizer routing / regular finalizer thread's CF run loop (see above) |
+| `escapeAnalysisPropagateExiledToHeapObjects` | `true`; with cms, an explicit value warns "CMS GC requires …=true" only when it is `true` (inverted check), and `false` is accepted silently | compiler only | exile heap-allocated locals |
 | `memoryModel`, `freezing` | — | [SetupConfiguration.kt](../../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/SetupConfiguration.kt) | strong warning "deprecated and will be removed"; `freezing` other than `disabled` is an error with the new MM |
 
 Migration note: `gcSchedulerType=disabled|with_timer|on_safe_points` still parse; the compiler warns and substitutes
@@ -569,11 +571,14 @@ Things that silently depend on GC behaviour:
 
 ## Open questions
 
-- `objcDisposeWithRunLoop` is emitted as a constant but no runtime reader was found; is it dead?
+- The CMS check for `escapeAnalysisPropagateExiledToHeapObjects` in `NativeSecondStageCompilationConfig` warns on an explicit
+  `true` and accepts `false`, the opposite of its message. Is this a bug (it dates from f7d3b8074e7c)?
 - Why does MinGW default `gcMarkSingleThreaded` only for `pmcs` while `cms` stays the default there — is CMS known to work
   with winpthreads, or is the MinGW default effectively untested?
 - Does the registry lock held across the CMS mark cause measurable thread-start latency in practice, and is lifting it planned
-  (the `onThreadRegistration` hook suggests the design anticipates registration during marking)?
+  (the `onThreadRegistration` hook can pick up barrier state for a thread registered during marking, but it cannot fire in
+  production today, because registration blocks on the registry lock until barriers are disabled;
+  `BarriersTest.AllocationDuringMarkBarreirs` exercises it by registering a thread with barriers enabled)?
 - `ParallelProcessor` batch sizes (512/4096) and `SafePointTracker` limits (16 frames, 100 000 entries) are documented as arbitrary;
   no benchmark history was found.
 - `GCStatistics` asserts at most two pauses per epoch; CMS's STW fallback plus the prepare-to-sweep pause stays at two, but a
