@@ -6,26 +6,26 @@
 package org.jetbrains.kotlin.fir.analysis
 
 import com.intellij.lang.LighterASTNode
-import com.intellij.psi.tree.IElementType
-import com.intellij.psi.tree.TokenSet
+import com.intellij.psi.util.elementType
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.fir.declarations.FirImport
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.util.getChildren
 import org.jetbrains.kotlin.utils.addToStdlib.butIf
 import org.jetbrains.kotlin.utils.addToStdlib.popLast
 
-fun KtSourceElement.getChild(type: IElementType, index: Int = 0, depth: Int = -1, reverse: Boolean = false): KtSourceElement? =
+fun KtSourceElement.getChild(type: SyntaxId, index: Int = 0, depth: Int = -1, reverse: Boolean = false): KtSourceElement? =
     getChildMatching(index, depth, reverse) { it == type }
 
-fun KtSourceElement.getChild(types: TokenSet, index: Int = 0, depth: Int = -1, reverse: Boolean = false): KtSourceElement? =
+fun KtSourceElement.getChild(types: SyntaxIdSet, index: Int = 0, depth: Int = -1, reverse: Boolean = false): KtSourceElement? =
     getChildMatching(index, depth, reverse) { it in types }
 
 private inline fun KtSourceElement.getChildMatching(
     index: Int,
     depth: Int,
     reverse: Boolean,
-    isTargetType: (IElementType) -> Boolean,
+    isTargetType: (SyntaxId) -> Boolean,
 ): KtSourceElement? {
     var idx = index
 
@@ -43,7 +43,7 @@ private inline fun KtSourceElement.getChildMatching(
  * `processChild` is invoked for each child having a type in the `types` set.
  */
 inline fun KtSourceElement.forEachChildOfType(
-    types: TokenSet,
+    types: SyntaxIdSet,
     depth: Int,
     reverse: Boolean = false,
     processChild: (KtSourceElement) -> Unit,
@@ -56,18 +56,19 @@ inline fun KtSourceElement.forEachChildOfType(
  *
  * TODO: Will be replaced with platform-independent `forEachChildOfType` call from a syntax component (`KtPsiSourceElement` and `KtLightSourceElement` branches will be dropped).
  */
+@OptIn(KtImplementationDetail::class)
 @PublishedApi
 internal inline fun KtSourceElement.forEachChildMatching(
     depth: Int,
     reverse: Boolean,
-    isTargetType: (IElementType) -> Boolean,
+    isTargetType: (SyntaxId) -> Boolean,
     processChild: (KtSourceElement) -> Unit,
 ) {
     when (this) {
         is KtPsiSourceElement -> {
             forEachChildOfType(
                 psi, depth, reverse, isTargetType,
-                getElementType = { it.node.elementType },
+                getElementType = { it.elementType?.syntaxId() ?: NO_ID },
                 getChildren = { it.allChildren.toList() },
             ) {
                 processChild(it.toKtPsiSourceElement())
@@ -76,7 +77,7 @@ internal inline fun KtSourceElement.forEachChildMatching(
         is KtLightSourceElement -> {
             forEachChildOfType(
                 lighterASTNode, depth, reverse, isTargetType,
-                getElementType = { it.tokenType },
+                getElementType = { it.tokenType.syntaxId() },
                 getChildren = { it.getChildren(treeStructure) },
             ) {
                 processChild(it.toKtLightSourceElement(treeStructure))
@@ -89,8 +90,8 @@ inline fun <T> forEachChildOfType(
     root: T,
     depth: Int,
     reverse: Boolean = false,
-    isTargetType: (IElementType) -> Boolean,
-    getElementType: (T) -> IElementType,
+    isTargetType: (SyntaxId) -> Boolean,
+    getElementType: (T) -> SyntaxId,
     getChildren: (T) -> List<T>,
     processChild: (T) -> Unit,
 ) {
@@ -125,7 +126,7 @@ internal fun KtLightSourceElement.buildChildSourceElement(childNode: LighterASTN
     )
 }
 
-private val IMPORT_PARENT_TOKEN_TYPES = TokenSet.create(KtNodeTypes.DOT_QUALIFIED_EXPRESSION, KtNodeTypes.REFERENCE_EXPRESSION)
+private val IMPORT_PARENT_TOKEN_TYPES = syntaxIdSetOf(KtNodeTypeId.DOT_QUALIFIED_EXPRESSION, KtNodeTypeId.REFERENCE_EXPRESSION)
 
 /**
  * Returns a source element for the import segment that is [indexFromLast]th from last.
@@ -138,7 +139,7 @@ fun FirImport.getSourceForImportSegment(indexFromLast: Int): KtSourceElement? {
     }
 
     return segmentSource.takeIf { it.syntaxId == KtNodeTypeId.REFERENCE_EXPRESSION }
-        ?: segmentSource.getChild(KtNodeTypes.REFERENCE_EXPRESSION, depth = 1, reverse = true)
+        ?: segmentSource.getChild(KtNodeTypeId.REFERENCE_EXPRESSION, depth = 1, reverse = true)
 }
 
 /**
@@ -146,4 +147,4 @@ fun FirImport.getSourceForImportSegment(indexFromLast: Int): KtSourceElement? {
  * of `importedFqName`.
  */
 fun FirImport.getLastImportedFqNameSegmentSource(): KtSourceElement? =
-    source?.getChild(KtNodeTypes.REFERENCE_EXPRESSION, reverse = true)
+    source?.getChild(KtNodeTypeId.REFERENCE_EXPRESSION, reverse = true)

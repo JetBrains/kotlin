@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.fir.symbols.asCone
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
@@ -229,7 +228,7 @@ private fun ConeInapplicableCandidateError.mapInapplicableCandidateError(
             )
 
             is NonVarargSpread -> FirErrors.NON_VARARG_SPREAD.createOn(
-                rootCause.argument.source?.getChild(KtTokens.MUL, depth = 1)!!,
+                rootCause.argument.source?.getChild(KtTokenId.MUL, depth = 1)!!,
                 session
             )
             is ArgumentPassedTwice -> FirErrors.ARGUMENT_PASSED_TWICE.createOn(rootCause.argument.source, session)
@@ -750,11 +749,11 @@ private fun inapplicableNullableReceiver(
         // TODO, KT-59809: No need to check for source.syntaxId == BINARY_EXPRESSION if we use operator as callee reference source
         //  (see FirExpressionsResolveTransformer.transformAssignmentOperatorStatement)
         val operationSource = if (source.syntaxId == KtNodeTypeId.BINARY_EXPRESSION) {
-            source.getChild(KtNodeTypes.OPERATION_REFERENCE)
+            source.getChild(KtNodeTypeId.OPERATION_REFERENCE)
         } else {
             source
         }
-        return if (operationSource?.getChild(KtTokens.IDENTIFIER) != null) {
+        return if (operationSource?.getChild(KtTokenId.IDENTIFIER) != null) {
             FirErrors.UNSAFE_INFIX_CALL.createOn(
                 source,
                 rootCause.actualType,

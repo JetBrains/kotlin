@@ -46,7 +46,6 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.resolvedControlFlowGraphReference
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
-import org.jetbrains.kotlin.lexer.KtTokens.VAL_VAR
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.resolve.AnnotationTargetList
@@ -328,10 +327,12 @@ val FirFunctionCall.isIterator: Boolean
 fun ConeKotlinType.isSubtypeOfThrowable(session: FirSession): Boolean =
     session.builtinTypes.throwableType.coneType.isSupertypeOf(session.typeContext, this.fullyExpandedType(session))
 
+internal val VAL_VAR_IDS: SyntaxIdSet = syntaxIdSetOf(KtTokenId.VAL_KEYWORD, KtTokenId.VAR_KEYWORD)
+
 val FirValueParameter.hasValOrVar: Boolean
     get() {
         val source = this.source ?: return false
-        return source.getChild(VAL_VAR) != null
+        return source.getChild(VAL_VAR_IDS) != null
     }
 
 fun KotlinTypeMarker.isSupertypeOf(context: TypeCheckerProviderContext, type: KotlinTypeMarker?): Boolean =
