@@ -50,7 +50,7 @@ public inline fun CharSequence.elementAtOrNull(index: Int): Char? {
 /**
  * Returns the first character matching the given [predicate], or `null` if no such character was found.
  * 
- * @sample samples.collections.Collections.Elements.find
+ * @sample samples.text.Strings.find
  */
 @kotlin.internal.InlineOnly
 public inline fun CharSequence.find(predicate: (Char) -> Boolean): Char? {
