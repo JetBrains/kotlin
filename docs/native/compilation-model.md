@@ -15,7 +15,7 @@ By "Gradle" this document mostly means
 When compiling projects with multiple K/N targets, the build has to handle
 common parts between these targets, which is not trivial.
 This is out of scope for this document, and additionally involves things like
-[commonizer](../../native/commonizer) (see [commonizer.md](commonizer.md)) and common metadata compilation.
+[commonizer](../../native/commonizer) (see [commonizer.md](interop/commonizer.md)) and common metadata compilation.
 
 So, this document focuses on the single target case. Below is the chart:
 

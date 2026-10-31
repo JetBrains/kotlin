@@ -154,7 +154,7 @@ All Native test directives are defined in
 #### Test infrastructure overview
 
 The full description of how the infrastructure works inside (settings hierarchy, grouping, the test runner and dump, the
-expected-failure protocol, cache modes, class generation) is [docs/native/test-infrastructure.md](../docs/native/test-infrastructure.md).
+expected-failure protocol, cache modes, class generation) is [docs/native/build-and-tooling/test-infrastructure.md](../docs/native/build-and-tooling/test-infrastructure.md).
 In short, the infrastructure lives in
 [native/native.tests/testFixtures](../native/native.tests/testFixtures/org/jetbrains/kotlin/konan/test/blackbox):
 * `Abstract*Test.kt` are the base classes of the generated tests: `AbstractNativeBlackBoxTest` for test data–driven tests,

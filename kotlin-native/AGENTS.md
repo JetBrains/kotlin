@@ -14,30 +14,30 @@ page per subsystem, a [glossary](../docs/native/glossary.md) and a symptom → s
 |-----------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------|
 | A bug report or a failing test, and you do not know where to start | [docs/native/debugging.md](../docs/native/debugging.md)                                                                   |
 | Running or adding compiler tests, test directives               | [HACKING.md#testing](HACKING.md#testing)                                                                                     |
-| Caches, klibs vs binaries, interop or export semantics          | [docs/native/compilation-model.md](../docs/native/compilation-model.md); implementation: [caches.md](../docs/native/caches.md), [klib-linking.md](../docs/native/klib-linking.md), [cinterop.md](../docs/native/cinterop.md), [export.md](../docs/native/export.md) |
-| The driver: what runs when, phase contexts, dump/disable flags  | [docs/native/second-stage-pipeline.md](../docs/native/second-stage-pipeline.md)                                              |
-| Lowerings: order, synchronization points, which run where       | [docs/native/lowerings.md](../docs/native/lowerings.md)                                                                      |
-| Devirtualization, DCE, escape analysis, `-opt`-only bugs        | [docs/native/optimizations.md](../docs/native/optimizations.md), then the per-analysis pages it links (devirtualization, escape-analysis, dce-and-gha, pre-codegen-inliner, static-initializers, casts-optimization) |
-| Incremental compilation                                         | [docs/native/incremental-compilation.md](../docs/native/incremental-compilation.md)                                          |
-| GC algorithms, barriers, scheduler; the allocator               | [docs/native/gc.md](../docs/native/gc.md), [docs/native/allocator.md](../docs/native/allocator.md)                           |
-| Platform libraries; compatibility, deprecations, migrations     | [docs/native/platform-libraries.md](../docs/native/platform-libraries.md), [docs/native/compatibility-and-migration.md](../docs/native/compatibility-and-migration.md) |
-| What KGP, the IDE and the commonizer expect from the compiler   | [docs/native/tooling-integration.md](../docs/native/tooling-integration.md)                                                  |
-| IR → LLVM IR, runtime bitcode, LLVM passes, linker              | [docs/native/llvm-codegen.md](../docs/native/llvm-codegen.md)                                                                |
-| Anything touching both `llvm/` and `runtime/`                   | [docs/native/compiler-runtime-contract.md](../docs/native/compiler-runtime-contract.md)                                      |
-| Runtime C++ (GC, allocator, thread states)                      | [docs/native/runtime.md](../docs/native/runtime.md), [runtime/README.md](runtime/README.md), [runtime/codestyle/cpp/README.md](runtime/codestyle/cpp/README.md) |
-| Suspend functions, coroutine state machines, spilling           | [docs/native/coroutines.md](../docs/native/coroutines.md)                                                                    |
-| Exceptions, unwinding, stack traces, `@Throws`/`NSError`        | [docs/native/exceptions.md](../docs/native/exceptions.md)                                                                    |
-| Debug info, LLDB, `konan_lldb.py`, symbolication                | [docs/native/debug-info.md](../docs/native/debug-info.md)                                                                    |
-| `kotlin.native.internal` intrinsics and annotations             | [docs/native/intrinsics.md](../docs/native/intrinsics.md)                                                                    |
-| LLVM passes, `-opt` vs `-g` pipelines, `kotlin-*` passes        | [docs/native/llvm-passes.md](../docs/native/llvm-passes.md)                                                                  |
-| The klib commonizer                                             | [docs/native/commonizer.md](../docs/native/commonizer.md)                                                                    |
-| How the test infrastructure works inside                        | [docs/native/test-infrastructure.md](../docs/native/test-infrastructure.md)                                                  |
+| Caches, klibs vs binaries, interop or export semantics          | [docs/native/compilation-model.md](../docs/native/compilation-model.md); implementation: [caches.md](../docs/native/build-and-tooling/caches.md), [klib-linking.md](../docs/native/compiler/klib-linking.md), [cinterop.md](../docs/native/interop/cinterop.md), [export.md](../docs/native/interop/export.md) |
+| The driver: what runs when, phase contexts, dump/disable flags  | [docs/native/compiler/second-stage-pipeline.md](../docs/native/compiler/second-stage-pipeline.md)                            |
+| Lowerings: order, synchronization points, which run where       | [docs/native/compiler/lowerings.md](../docs/native/compiler/lowerings.md)                                                    |
+| Devirtualization, DCE, escape analysis, `-opt`-only bugs        | [docs/native/optimizations/README.md](../docs/native/optimizations/README.md), then the per-analysis pages it links (devirtualization, escape-analysis, dce-and-gha, pre-codegen-inliner, static-initializers, casts-optimization) |
+| Incremental compilation                                         | [docs/native/build-and-tooling/incremental-compilation.md](../docs/native/build-and-tooling/incremental-compilation.md)      |
+| GC algorithms, barriers, scheduler; the allocator               | [docs/native/runtime/gc.md](../docs/native/runtime/gc.md), [docs/native/runtime/allocator.md](../docs/native/runtime/allocator.md) |
+| Platform libraries; compatibility, deprecations, migrations     | [docs/native/interop/platform-libraries.md](../docs/native/interop/platform-libraries.md), [docs/native/build-and-tooling/compatibility-and-migration.md](../docs/native/build-and-tooling/compatibility-and-migration.md) |
+| What KGP, the IDE and the commonizer expect from the compiler   | [docs/native/build-and-tooling/tooling-integration.md](../docs/native/build-and-tooling/tooling-integration.md)              |
+| IR → LLVM IR, runtime bitcode, LLVM passes, linker              | [docs/native/codegen/llvm-codegen.md](../docs/native/codegen/llvm-codegen.md)                                                |
+| Anything touching both `llvm/` and `runtime/`                   | [docs/native/runtime/compiler-runtime-contract.md](../docs/native/runtime/compiler-runtime-contract.md)                      |
+| Runtime C++ (GC, allocator, thread states)                      | [docs/native/runtime/README.md](../docs/native/runtime/README.md), [runtime/README.md](runtime/README.md), [runtime/codestyle/cpp/README.md](runtime/codestyle/cpp/README.md) |
+| Suspend functions, coroutine state machines, spilling           | [docs/native/compiler/coroutines.md](../docs/native/compiler/coroutines.md)                                                  |
+| Exceptions, unwinding, stack traces, `@Throws`/`NSError`        | [docs/native/runtime/exceptions.md](../docs/native/runtime/exceptions.md)                                                    |
+| Debug info, LLDB, `konan_lldb.py`, symbolication                | [docs/native/codegen/debug-info.md](../docs/native/codegen/debug-info.md)                                                    |
+| `kotlin.native.internal` intrinsics and annotations             | [docs/native/compiler/intrinsics.md](../docs/native/compiler/intrinsics.md)                                                  |
+| LLVM passes, `-opt` vs `-g` pipelines, `kotlin-*` passes        | [docs/native/codegen/llvm-passes.md](../docs/native/codegen/llvm-passes.md)                                                  |
+| The klib commonizer                                             | [docs/native/interop/commonizer.md](../docs/native/interop/commonizer.md)                                                    |
+| How the test infrastructure works inside                        | [docs/native/build-and-tooling/test-infrastructure.md](../docs/native/build-and-tooling/test-infrastructure.md)              |
 | Cross-module inlining in klibs                                  | [docs/inlining/klib-inining.md](../docs/inlining/klib-inining.md)                                                            |
 | LLVM IR dumps, a debugger on the compiler                       | [HACKING.md](HACKING.md) (LLVM and Debugging sections)                                                                       |
 | Swift export                                                    | [docs/swift-export/README.md](../docs/swift-export/README.md)                                                                |
 | ObjC header generation                                          | [native/objcexport-header-generator/ReadMe.md](../native/objcexport-header-generator/ReadMe.md)                              |
 | Binary options (`-Xbinary=`)                                    | `native/binary-options/src/main/kotlin/org/jetbrains/kotlin/config/nativeBinaryOptions/BinaryOptions.kt`                                  |
-| Targets, toolchains, `konan.properties`, the distribution       | [docs/native/targets-and-toolchains.md](../docs/native/targets-and-toolchains.md)                                            |
+| Targets, toolchains, `konan.properties`, the distribution       | [docs/native/build-and-tooling/targets-and-toolchains.md](../docs/native/build-and-tooling/targets-and-toolchains.md)        |
 
 ## Build and test commands
 
