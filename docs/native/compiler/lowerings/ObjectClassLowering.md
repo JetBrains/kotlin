@@ -126,7 +126,7 @@ are processed first. It then:
   superclass other than `Any` all fall back to runtime initialization, even when the values are constant (`Plain` above).
 - **Published before construction.** In the runtime path the field holds the uninitialized instance while the constructor runs,
   so a re-entrant read on the same thread sees a partially initialized object instead of recursing.
-- **`FIELD_PRE_INIT` has no reader.** `IrStatementOriginFieldPreInit` (also used by `EnumClassLowering` for `$VALUES`) is
+- **`FIELD_PRE_INIT` has no reader.** `IrStatementOriginFieldPreInit` (also used by [EnumClassLowering](EnumClassLowering.md) for `$VALUES`) is
   described as "a hack to avoid early freezing" and is not checked anywhere in this checkout.
 - **Primary constructor only.** `declaration.constructors.single { it.isPrimary }` plus the empty-parameters `require`. An object
   without exactly one parameterless primary constructor fails here.

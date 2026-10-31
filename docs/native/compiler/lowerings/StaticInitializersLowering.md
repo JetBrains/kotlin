@@ -195,5 +195,5 @@ thread-local lists.
 - [static-initializers.md](../static-initializers.md): codegen state words, the runtime state machine, eager initialization and
   caches, redundant-call removal.
 - [lowerings.md](../lowerings.md): pipeline position.
-- [ObjectClassLowering](ObjectClassLowering.md) and `EnumClassLowering` create the static fields that this lowering initializes.
+- [ObjectClassLowering](ObjectClassLowering.md) and [EnumClassLowering](EnumClassLowering.md) create the static fields that this lowering initializes.
 - `ExpressionBodyTransformer` is the prerequisite.
