@@ -27,8 +27,13 @@ annotation class MustRunAlways
  * These tests are not required for merging to master.
  *
  * This annotation does not select a test on its own. Test Federation selection and other test filters still apply.
+ *
+ * Warning: Use the annotation only after explicitly agreeing with the infrastructure team,
+ * as applying it to existing CI configurations may cause flaky behaviour due to incorrect
+ * assumptions about timeouts, memory, and agent environment.
  */
 @Tag("nightly")
+@Deprecated("Do not use without consulting with the Infra first (KTI-3534)")
 annotation class NightlyTest
 
 /**
