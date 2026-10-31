@@ -6,7 +6,6 @@
 package kotlin.script.experimental.jvm.jsr223
 
 import java.lang.ref.WeakReference
-import java.lang.reflect.Modifier
 import javax.script.Bindings
 import javax.script.ScriptContext
 import kotlin.reflect.KClass
@@ -124,24 +123,48 @@ private fun isParseableKotlinQualifiedName(qualifiedName: String): Boolean {
 }
 
 /**
- * Renders a binding value's class as a type reference with star-projected type arguments. Returns null
- * for an inner class of a generic class: such a reference needs type arguments on its outer part, which
- * a dot-separated qualified name cannot carry.
+ * Renders the type with which a binding whose value is an instance of [kclass] is exposed to snippets: the nearest
+ * supertype of [kclass] (itself included) that a snippet can reference, see [renderExposableTypeName]. Supertypes are
+ * visited breadth-first, superclasses before interfaces; marker interfaces (e.g. `Serializable`) are skipped, since they
+ * would hide every member of the value. Falls back to `kotlin.Any` if no such supertype exists.
  */
-private fun renderBindingTypeName(qualifiedName: String, kclass: KClass<*>): String? {
-    val jClass = kclass.java
-    var outer = jClass.enclosingGenericOwner()
-    while (outer != null) {
-        if (outer.typeParameters.isNotEmpty()) return null
-        outer = outer.enclosingGenericOwner()
+private fun renderBindingTypeName(kclass: KClass<*>): String {
+    val visited = HashSet<Class<*>>()
+    val queue = ArrayDeque<Class<*>>()
+    queue.add(kclass.java)
+    while (queue.isNotEmpty()) {
+        val jClass = queue.removeFirst()
+        if (visited.add(jClass)) {
+            val isMarkerInterface = jClass.isInterface && jClass.declaredMethods.isEmpty()
+            if (!isMarkerInterface) renderExposableTypeName(jClass)?.let { return it }
+            jClass.superclass?.takeIf { it != Any::class.java }?.let(queue::add)
+            queue.addAll(jClass.interfaces)
+        }
     }
-    val arity = jClass.typeParameters.size
-    return if (arity == 0) qualifiedName
-    else (1..arity).joinToString(", ", "$qualifiedName<", ">") { "*" }
+    return "kotlin.Any"
 }
 
-private fun Class<*>.enclosingGenericOwner(): Class<*>? =
-    if (isMemberClass && !Modifier.isStatic(modifiers)) enclosingClass else null
+/**
+ * Renders [jClass] as a type reference with star-projected type arguments, or returns null if a snippet can't reference
+ * it: if it's not accessible (see [isAccessibleFromSnippets]), if its name can't be embedded into source, or if it is an
+ * inner class of a generic class, since such a reference needs type arguments on its outer part, which a dot-separated
+ * qualified name cannot carry. Classes mapped to a Kotlin built-in type (e.g. arrays, or the internal
+ * `kotlin.jvm.internal.IntCompanionObject` for `kotlin.Int.Companion`) are rendered as that type, which is always public.
+ */
+private fun renderExposableTypeName(jClass: Class<*>): String? {
+    // Kotlin names of mapped Java classes, e.g. `kotlin.collections.List` for `java.util.List`
+    val qualifiedName = jClass.kotlin.qualifiedName
+    val isMappedToBuiltIn = qualifiedName != jClass.canonicalName
+    // `kotlin.Array` is generic, but the JVM array classes have no type parameters
+    val arity = if (jClass.isArray && !jClass.componentType.isPrimitive) 1 else jClass.typeParameters.size
+    return when {
+        qualifiedName == null || !isParseableKotlinQualifiedName(qualifiedName) -> null
+        !isMappedToBuiltIn && !jClass.isAccessibleFromSnippets() -> null
+        jClass.hasGenericOwner() -> null
+        arity == 0 -> qualifiedName
+        else -> List(arity) { "*" }.joinToString(", ", "$qualifiedName<", ">")
+    }
+}
 
 /** Escapes a string for embedding inside a Kotlin regular string literal ("..."). */
 private fun escapeForKotlinStringLiteral(s: String): String = buildString {
@@ -318,7 +341,8 @@ class __Jsr223BindingDelegate<T>(
                 putAll(engineScopeBindings)
         }
         // Bindings whose name is a usable identifier and whose value type can be embedded as a Kotlin
-        // type reference are exposed as typed properties. The rest, including indy lambdas and
+        // type reference are exposed as typed properties, typed with the nearest supertype of the value
+        // class that snippets can access (see renderBindingTypeName). The rest, including indy lambdas and
         // local/anonymous classes, stay reachable only via `bindings["..."]`.
         val currentBindings = LinkedHashMap<String, KotlinType>()
         for ([k, v] in allBindings) {
@@ -330,7 +354,7 @@ class __Jsr223BindingDelegate<T>(
             }
             val qn = v::class.qualifiedName
             if (qn == null || !isParseableKotlinQualifiedName(qn)) continue
-            val renderedTypeName = renderBindingTypeName(qn, v::class) ?: continue
+            val renderedTypeName = renderBindingTypeName(v::class)
             // TODO: find out how this is implemented in other JSR-223 engines for typed languages, since
             //  this approach prevents certain usage scenarios, e.g. assigning back a value of a "sibling" type.
             currentBindings[k] = KotlinType(renderedTypeName)
