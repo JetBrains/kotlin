@@ -1,0 +1,23 @@
+@NoArgsConstructor
+class Derived : JavaBase<String> {
+  var x: Int
+    field = x
+    get
+    set
+
+  constructor() {
+    super/*JavaBase*/<String, Any?>()
+  }
+
+  constructor(x: Int) /* primary */ {
+    super/*JavaBase*/<String, /* null */>(u = "")
+    /* <init>() */
+
+  }
+
+}
+
+fun box(): String {
+  assertEquals<Int>(expected = 0, actual = Derived().<get-x>())
+  return "OK"
+}

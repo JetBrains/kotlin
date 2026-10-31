@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.noarg
 
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.test.backend.handlers.IrPrettyKotlinDumpHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
@@ -23,6 +25,11 @@ open class AbstractFirLightTreeBlackBoxCodegenTestForNoArg : AbstractFirLightTre
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.enableNoArg()
+        builder.configureIrHandlersStep {
+            useHandlers(
+                ::IrPrettyKotlinDumpHandler
+            )
+        }
     }
 }
 

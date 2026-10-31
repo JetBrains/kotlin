@@ -26,6 +26,7 @@ abstract class AbstractDataFrameDiagnosticTest : AbstractKotlinCompilerTest() {
             +FirDiagnosticsDirectives.EXPLICITLY_GENERATE_PLUGIN_FILES
             FirDiagnosticsDirectives.FIR_PARSER with FirParser.LightTree
             JvmEnvironmentConfigurationDirectives.JDK_KIND with TestJdkKind.FULL_JDK
+            +DataFrameDirectives.ENABLE_DATAFRAME
         }
 
         builder.useDirectives(DataFrameDirectives)

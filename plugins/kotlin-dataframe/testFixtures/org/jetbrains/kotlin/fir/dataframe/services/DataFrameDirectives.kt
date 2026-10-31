@@ -8,6 +8,10 @@ package org.jetbrains.kotlin.fir.dataframe.services
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 
 object DataFrameDirectives : SimpleDirectivesContainer() {
+    val ENABLE_DATAFRAME by directive(
+        description = "Enables dataframe plugin"
+    )
+
     val WITH_SCHEMA_READER by directive(
         description = """
         Adds library declarations for @DataSchemaSource
