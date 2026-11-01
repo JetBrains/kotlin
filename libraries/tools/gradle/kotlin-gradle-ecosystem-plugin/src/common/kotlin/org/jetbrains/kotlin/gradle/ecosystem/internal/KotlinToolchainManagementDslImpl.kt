@@ -5,19 +5,22 @@
 
 package org.jetbrains.kotlin.gradle.ecosystem.internal
 
+import org.jetbrains.kotlin.gradle.ExperimentalExternalToolchainDsl
 import org.jetbrains.kotlin.gradle.ExperimentalNodeJsToolchainDsl
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.dsl.toolchain.binaryen.BinaryenToolchainManagementDsl
 import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.NodeJsToolchainManagementDsl
 import org.jetbrains.kotlin.gradle.dsl.toolchain.wasiadapter.WasiAdapterToolchainManagementDsl
 import org.jetbrains.kotlin.gradle.dsl.toolchain.wasmtools.WasmToolsToolchainManagementDsl
 import org.jetbrains.kotlin.gradle.ecosystem.KotlinToolchainManagementDsl
 import javax.inject.Inject
 
-@OptIn(ExperimentalWasmDsl::class)
+@OptIn(ExperimentalWasmDsl::class, ExperimentalExternalToolchainDsl::class)
 internal abstract class KotlinToolchainManagementDslImpl @Inject constructor(
     private val nodeJsDsl: NodeJsToolchainManagementDsl,
     private val wasiAdapterDsl: WasiAdapterToolchainManagementDsl,
     private val wasmToolsDsl: WasmToolsToolchainManagementDsl,
+    private val binaryenDsl: BinaryenToolchainManagementDsl,
 ) : KotlinToolchainManagementDsl {
 
     @ExperimentalNodeJsToolchainDsl
@@ -33,5 +36,10 @@ internal abstract class KotlinToolchainManagementDslImpl @Inject constructor(
     @ExperimentalWasmDsl
     override fun wasmTools(configure: WasmToolsToolchainManagementDsl.() -> Unit) {
         wasmToolsDsl.configure()
+    }
+
+    @ExperimentalExternalToolchainDsl
+    override fun binaryen(configure: BinaryenToolchainManagementDsl.() -> Unit) {
+        binaryenDsl.configure()
     }
 }

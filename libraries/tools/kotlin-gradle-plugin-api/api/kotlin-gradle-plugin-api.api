@@ -771,6 +771,55 @@ public final class org/jetbrains/kotlin/gradle/dsl/toolchain/ExternalToolchainPl
 	public fun toString ()Ljava/lang/String;
 }
 
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/binaryen/BinaryenToolchainManagementDsl {
+	public abstract fun disable ()V
+	public abstract fun toolchainService (Lkotlin/jvm/functions/Function1;)V
+	public abstract fun toolchainService (Lkotlin/reflect/KClass;Lkotlin/jvm/functions/Function1;)V
+	public abstract fun toolchainService (Lkotlin/reflect/KClass;Lorg/gradle/api/Action;)V
+	public abstract fun toolchainService (Lorg/gradle/api/Action;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/dsl/toolchain/binaryen/BinaryenToolchainManagementDsl$DefaultImpls {
+	public static fun toolchainService (Lorg/jetbrains/kotlin/gradle/dsl/toolchain/binaryen/BinaryenToolchainManagementDsl;Lkotlin/reflect/KClass;Lorg/gradle/api/Action;)V
+	public static fun toolchainService (Lorg/jetbrains/kotlin/gradle/dsl/toolchain/binaryen/BinaryenToolchainManagementDsl;Lorg/gradle/api/Action;)V
+}
+
+public abstract class org/jetbrains/kotlin/gradle/dsl/toolchain/binaryen/BinaryenToolchainRequest {
+	public abstract fun getPlatform ()Lorg/gradle/api/provider/Property;
+	public abstract fun getVersion ()Lorg/gradle/api/provider/Property;
+	public final fun version (Ljava/lang/String;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/binaryen/BinaryenToolchainService : org/gradle/api/services/BuildService {
+	public abstract fun request (Lorg/jetbrains/kotlin/gradle/dsl/toolchain/binaryen/BinaryenToolchainRequest;)Lorg/gradle/api/provider/Provider;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/binaryen/DefaultBinaryenToolchainService : org/jetbrains/kotlin/gradle/dsl/toolchain/binaryen/BinaryenToolchainService {
+}
+
+public abstract class org/jetbrains/kotlin/gradle/dsl/toolchain/binaryen/DefaultBinaryenToolchainService$Parameters : org/gradle/api/services/BuildServiceParameters {
+	public fun <init> ()V
+	public abstract fun getDownloadBaseUrl ()Lorg/gradle/api/provider/Property;
+	public abstract fun getInstallationDir ()Lorg/gradle/api/file/DirectoryProperty;
+	public abstract fun getOffline ()Lorg/gradle/api/provider/Property;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/binaryen/DisabledBinaryenToolchainService : org/jetbrains/kotlin/gradle/dsl/toolchain/binaryen/BinaryenToolchainService {
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/binaryen/PreInstalledBinaryenToolchainService : org/jetbrains/kotlin/gradle/dsl/toolchain/binaryen/BinaryenToolchainService {
+}
+
+public abstract class org/jetbrains/kotlin/gradle/dsl/toolchain/binaryen/PreInstalledBinaryenToolchainService$Parameters : org/gradle/api/services/BuildServiceParameters {
+	public fun <init> ()V
+	public abstract fun getToolchainDir ()Lorg/gradle/api/file/DirectoryProperty;
+}
+
+public final class org/jetbrains/kotlin/gradle/dsl/toolchain/binaryen/ProvisionedBinaryenToolchain {
+	public fun <init> (Ljava/nio/file/Path;)V
+	public final fun getWasmOpt ()Ljava/nio/file/Path;
+}
+
 public final class org/jetbrains/kotlin/gradle/dsl/toolchain/nodejs/BuildPlatform : java/io/Serializable {
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
 	public final fun component1 ()Ljava/lang/String;
@@ -1887,6 +1936,10 @@ public abstract interface class org/jetbrains/kotlin/gradle/tasks/abi/KotlinLega
 
 public abstract interface class org/jetbrains/kotlin/gradle/tasks/nodejs/UsesNodeJsToolchainService : org/gradle/api/Task {
 	public abstract fun getNodeJsToolchainService ()Lorg/gradle/api/provider/Property;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/tasks/toolchain/UsesBinaryenToolchainService : org/gradle/api/Task {
+	public abstract fun getBinaryenToolchainService ()Lorg/gradle/api/provider/Property;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/tasks/wasiadapter/UsesWasiAdapterToolchainService : org/gradle/api/Task {
