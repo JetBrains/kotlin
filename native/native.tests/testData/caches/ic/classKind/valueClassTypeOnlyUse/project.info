@@ -1,0 +1,17 @@
+// DISABLE_NATIVE: targetFamily=MINGW
+
+
+// A sibling of classKind/valueClass, but here pass.kt uses V only as a type. It never uses a member of V, so its
+// generated code references no symbol of v.kt, and no dependency is recorded. But class -> value class changes how V
+// is passed and returned (an object reference vs an unboxed Int), so the cache of pass.kt must be rebuilt.
+
+MODULES: lib, main
+
+STEP 0:
+    libs: lib, main
+
+STEP 1:
+    libs: lib, main
+
+STEP 2:
+    libs: lib, main

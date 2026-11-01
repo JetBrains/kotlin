@@ -1,0 +1,17 @@
+STEP 0:
+    modifications:
+        U : v.kt -> v.kt
+        U : pass.kt -> pass.kt
+    added cache: v.kt, pass.kt
+
+// v.1.kt: class -> value class
+STEP 1:
+    modifications:
+        U : v.1.kt -> v.kt
+    modified cache: v.kt, pass.kt
+
+// v.kt: value class -> class
+STEP 2:
+    modifications:
+        U : v.kt -> v.kt
+    modified cache: v.kt, pass.kt
