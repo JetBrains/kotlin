@@ -1,0 +1,16 @@
+// DISABLE_NATIVE: targetFamily=MINGW
+
+
+// A sibling of dependencies/changedExternalDependency (KT-87194). lib starts to depend on externalLib, which is
+// already cached and does not change. So only the dependencies fingerprint of lib changes, and lib gets a full rebuild.
+// In the same step lib changes an inline function that user inlined. The fingerprint of user stays the same (user used
+// externalLib from the start), so the cache of use.kt must be rebuilt through the dirty-file analysis.
+// The other reasons for a full rebuild of a single library (e.g. toggling -Xcompanion-blocks) take the same path.
+
+MODULES: externalLib, lib, user, main
+
+STEP 0:
+    libs: externalLib, lib, user, main
+
+STEP 1:
+    libs: lib, user, main
