@@ -1,0 +1,9 @@
+STEP 0:
+    dependencies: lib1
+    modifications:
+        U : use.kt -> use.kt
+    added cache: use.kt
+
+STEP 1:
+    dependencies: lib1
+    modified cache: use.kt
