@@ -1,0 +1,13 @@
+STEP 0:
+    modifications:
+        U : marker.kt -> marker.kt
+        U : s.kt -> s.kt
+        U : check.kt -> check.kt
+    added cache: marker.kt, s.kt, check.kt
+
+// s.1.kt: S does not implement Marker anymore
+STEP 1:
+    modifications:
+        U : s.1.kt -> s.kt
+    modified cache: s.kt, check.kt
+    unchanged cache: marker.kt

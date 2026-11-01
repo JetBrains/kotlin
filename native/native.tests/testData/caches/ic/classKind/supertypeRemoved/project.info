@@ -1,0 +1,14 @@
+// DISABLE_NATIVE: targetFamily=MINGW
+
+
+// S implements Marker, so `x is Marker` in check.kt is true for every x of type S, and the check is folded.
+// The cache of check.kt then references no symbol of s.kt, and no dependency is recorded.
+// When S stops implementing Marker, the IR of check.kt stays the same, but its cache must be rebuilt.
+
+MODULES: lib, main
+
+STEP 0:
+    libs: lib, main
+
+STEP 1:
+    libs: lib, main
