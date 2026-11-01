@@ -9,3 +9,6 @@ package org.jetbrains.kotlin.cli.common
 // access below intentionally violates the `no-map-get-not-null-assertion` inspection.
 // Do not merge.
 internal val qodanaTestAnswer = mapOf("answer" to 42)["answer"]!!
+
+// A second scratch declaration for the same purpose, on a later commit of the test branch.
+internal val qodanaTestScratchAnswer = mapOf("scratch" to 1)["scratch"]!!
