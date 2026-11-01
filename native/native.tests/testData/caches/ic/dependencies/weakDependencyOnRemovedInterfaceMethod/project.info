@@ -1,0 +1,16 @@
+// DISABLE_NATIVE: targetFamily=MINGW
+
+
+// A sibling of basic/renamedFileWithWeakDependency (KT-89876), but here the file is changed, not removed.
+// lib2 calls A.run() virtually, so the cache of use.kt depends on lib1's a.kt only weakly (through the virtual call
+// trampoline). lib1 removes A.run(), and lib2 is not recompiled. The cache of use.kt must be rebuilt, so that partial
+// linkage replaces the call. Otherwise the link fails with an undefined trampoline symbol.
+
+MODULES: lib1, lib2, main
+
+STEP 0:
+    libs: lib1, lib2, main
+
+// lib1 removes A.run(). lib2 is NOT recompiled: its klib still calls A.run().
+STEP 1:
+    libs: lib1, main
