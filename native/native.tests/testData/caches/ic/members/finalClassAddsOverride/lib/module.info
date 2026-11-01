@@ -1,0 +1,13 @@
+STEP 0:
+    modifications:
+        U : base.kt -> base.kt
+        U : sub.kt -> sub.kt
+        U : call.kt -> call.kt
+    added cache: base.kt, sub.kt, call.kt
+
+// sub.1.kt: Sub overrides foo()
+STEP 1:
+    modifications:
+        U : sub.1.kt -> sub.kt
+    modified cache: sub.kt, call.kt
+    unchanged cache: base.kt
