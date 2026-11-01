@@ -762,6 +762,15 @@ public final class org/jetbrains/kotlin/gradle/dsl/jvm/JvmTargetValidationMode :
 	public static fun values ()[Lorg/jetbrains/kotlin/gradle/dsl/jvm/JvmTargetValidationMode;
 }
 
+public final class org/jetbrains/kotlin/gradle/dsl/toolchain/ExternalToolchainPlatform : java/io/Serializable {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getArch ()Ljava/lang/String;
+	public final fun getOs ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class org/jetbrains/kotlin/gradle/dsl/toolchain/nodejs/BuildPlatform : java/io/Serializable {
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
 	public final fun component1 ()Ljava/lang/String;
