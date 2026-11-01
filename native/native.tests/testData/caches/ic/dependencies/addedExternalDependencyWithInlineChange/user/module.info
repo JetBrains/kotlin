@@ -1,0 +1,10 @@
+STEP 0:
+    dependencies: lib, externalLib
+    modifications:
+        U : use.kt -> use.kt
+    added cache: use.kt
+
+// use.kt inlined the old msg(), so its cache must be rebuilt.
+STEP 1:
+    dependencies: lib, externalLib
+    modified cache: use.kt
