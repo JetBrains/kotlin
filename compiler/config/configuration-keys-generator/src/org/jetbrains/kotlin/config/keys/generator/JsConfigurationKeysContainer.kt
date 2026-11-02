@@ -97,6 +97,8 @@ object JsConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.js.con
 
     val USE_ES6_CLASSES by key<Boolean>()
 
+    val USE_ES6_CONST_LET by key<Boolean>()
+
     val INCLUDES by key<String>("List of KLibs for this linking phase.")
     val PRODUCE_KLIB_FILE by key<Boolean>("Need to produce KLib file or not.")
     val PRODUCE_KLIB_DIR by key<Boolean>("Need to produce unpacked KLib dir or not.")
