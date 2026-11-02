@@ -72,6 +72,7 @@ import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.NodeJsToolchainM
 import org.jetbrains.kotlin.gradle.targets.web.WebIsolatedProjectsSupport
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
+import org.jetbrains.kotlin.gradle.toolchains.binaryen.DEFAULT_BINARYEN_VERSION
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.jetbrains.kotlin.gradle.utils.localProperties
 import org.jetbrains.kotlin.internal.KgpBuildConstants
@@ -810,6 +811,11 @@ internal class PropertiesProvider private constructor(private val project: Proje
             .orElse(KgpBuildConstants.DEFAULT_NODE_JS_VERSION)
             .map(::NodeJsVersion)
 
+    /** The default version requested by the Binaryen toolchain service; does not configure the legacy setup. */
+    val binaryenDefaultVersion: Provider<String>
+        get() = property(PropertyNames.KOTLIN_BINARYEN_DEFAULT_VERSION)
+            .orElse(DEFAULT_BINARYEN_VERSION)
+
     val nodeJsToolchainMode: NodeJsToolchainMode
         get() = property(PropertyNames.KOTLIN_JS_NODEJS_TOOLCHAIN_MODE).orNull
             ?.let { NodeJsToolchainMode.valueOf(it.toUpperCaseAsciiOnly()) }
@@ -1005,6 +1011,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_WASM_WASM_TOOLS_TOOLCHAIN_DOWNLOAD_URL = property("kotlin.wasm.wasmToolsToolchainDownloadUrl")
         val KOTLIN_WASM_WASM_TOOLS_TOOLCHAIN_PREINSTALLED_EXECUTABLE_PATH = property("kotlin.wasm.wasmToolsToolchainPreinstalledExecutablePath")
 
+        val KOTLIN_BINARYEN_DEFAULT_VERSION = property("kotlin.defaultBinaryenVersion")
         val KOTLIN_WASM_BINARYEN_TOOLCHAIN_MODE = property("kotlin.wasm.binaryenToolchainMode")
         val KOTLIN_WASM_BINARYEN_TOOLCHAIN_INSTALLATION_DIR = property("kotlin.wasm.binaryenToolchainInstallationDir")
         val KOTLIN_WASM_BINARYEN_TOOLCHAIN_DOWNLOAD_URL = property("kotlin.wasm.binaryenToolchainDownloadUrl")
