@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -14,44 +13,60 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirImport
 import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
-import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 
 object FirHomePackageResolutionInvestigationChecker : FirFileChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirFile) {
         // if (LanguageFeature.HomePackageResolution.isDisabled()) return
 
-        val hpr = declaration.imports.count { it.redundantHPR() }
-        val star = declaration.imports.count { it.isAllUnder }
-
-        val total = declaration.imports.size
+        val imports = declaration.imports.groupBy { it.importKind() }
         reporter.reportOn(
             declaration.source,
-            FirErrors.HOME_PACKAGE_RESOLUTION_INVESTIGATION,
-            total,
-            star,
-            hpr
+            FirErrors.HOME_PACKAGE_RESOLUTION_INVESTIGATION_1,
+            imports[ImportKind.HPR]?.size ?: 0,
+            imports.filter { it.key is ImportKind.ExtensionNotHPR }.map { it.value.size }.sum(),
+            imports[ImportKind.NotExtension]?.size ?: 0,
+        )
+        reporter.reportOn(
+            declaration.source,
+            FirErrors.HOME_PACKAGE_RESOLUTION_INVESTIGATION_2,
+            imports[ImportKind.Star]?.size ?: 0,
+            imports[ImportKind.Rest]?.size ?: 0,
+            imports[ImportKind.Problematic]?.size ?: 0,
         )
     }
 
+    sealed interface ImportKind {
+        data object Star : ImportKind
+        data object HPR : ImportKind
+        data class ExtensionNotHPR(val type: FirClassLikeSymbol<*>) : ImportKind
+        data object NotExtension : ImportKind
+        data object Rest : ImportKind
+        data object Problematic : ImportKind
+    }
+
     context(context: CheckerContext)
-    fun FirImport.redundantHPR(): Boolean {
-        if (isAllUnder) return false  // * imports never count
-        if (this !is FirResolvedImport) return false
-        val importedFqName = importedFqName?.takeIf { !it.isRoot } ?: return false
+    fun FirImport.importKind(): ImportKind {
+        if (isAllUnder) return Star
+        if (this !is FirResolvedImport) return Problematic
+        val importedFqName = importedFqName?.takeIf { !it.isRoot } ?: return Problematic
         val importedName = importedFqName.shortName()
-        if (importedName.isSpecial || importedName.identifier.isEmpty()) return false
+        if (importedName.isSpecial || importedName.identifier.isEmpty()) return Problematic
 
         val symbolProvider = context.session.symbolProvider
         val parentFqName = importedFqName.parent()
         val topLevelCallableSymbol = symbolProvider.getTopLevelCallableSymbols(parentFqName, importedName)
 
-        return topLevelCallableSymbol.any {
-            it.resolvedReceiverType?.toClassLikeSymbol()?.packageFqName() == parentFqName
-        }
+        if (topLevelCallableSymbol.isEmpty()) return Rest
+        if (topLevelCallableSymbol.any { it.resolvedReceiverType?.toClassLikeSymbol()?.packageFqName() == parentFqName }) return HPR
+
+        val receiver = topLevelCallableSymbol.firstOrNull { it.resolvedReceiverType != null }?.resolvedReceiverType?.toClassLikeSymbol()
+        if (receiver == null) return NotExtension
+        return ImportKind.ExtensionNotHPR(receiver)
     }
 
 }

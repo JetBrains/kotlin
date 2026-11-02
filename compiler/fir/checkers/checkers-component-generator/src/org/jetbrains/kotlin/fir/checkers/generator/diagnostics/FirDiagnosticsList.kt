@@ -2439,10 +2439,18 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<Name>("originalClassName")
         }
 
-        val HOME_PACKAGE_RESOLUTION_INVESTIGATION by warning<KtElement> {
-            parameter<Int>("total")
-            parameter<Int>("star")
+        val HOME_PACKAGE_RESOLUTION_INVESTIGATION_1 by warning<KtElement> {
             parameter<Int>("hpr")
+            parameter<Int>("extensionNotHpr")
+            parameter<Int>("notExtension")
+        }
+        val HOME_PACKAGE_RESOLUTION_INVESTIGATION_2 by warning<KtElement> {
+            parameter<Int>("star")
+            parameter<Int>("rest")
+            parameter<Int>("problematic")
+        }
+        val HOME_PACKAGE_RESOLUTION_NON_HPR_EXTENSION by warning<KtElement> {
+            parameter<FirClassLikeSymbol<*>>("type")
         }
     }
 

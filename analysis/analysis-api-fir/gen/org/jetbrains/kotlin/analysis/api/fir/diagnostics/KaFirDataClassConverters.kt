@@ -527,6 +527,15 @@ private fun KaDiagnosticConverterBuilder.addConversions5() {
             token,
         )
     }
+    add(FirErrors.HOME_PACKAGE_RESOLUTION_INVESTIGATION_2) { firDiagnostic ->
+        HomePackageResolutionInvestigation2Impl(
+            firDiagnostic.a,
+            firDiagnostic.b,
+            firDiagnostic.c,
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirErrors.ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL) { firDiagnostic ->
         IllegalRestrictedSuspendingFunctionCallImpl(
             firDiagnostic as KtDiagnosticWithSource,
@@ -556,6 +565,15 @@ private fun KaDiagnosticConverterBuilder.addConversions6() {
     }
     add(FirErrors.UNUSED_EXPRESSION) { firDiagnostic ->
         UnusedExpressionImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
+    add(FirErrors.HOME_PACKAGE_RESOLUTION_INVESTIGATION_1) { firDiagnostic ->
+        HomePackageResolutionInvestigation1Impl(
+            firDiagnostic.a,
+            firDiagnostic.b,
+            firDiagnostic.c,
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -2031,15 +2049,6 @@ private fun KaDiagnosticConverterBuilder.addConversions39() {
         ComponentFunctionMissingImpl(
             firDiagnostic.a,
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
-            firDiagnostic as KtDiagnosticWithSource,
-            token,
-        )
-    }
-    add(FirErrors.HOME_PACKAGE_RESOLUTION_INVESTIGATION) { firDiagnostic ->
-        HomePackageResolutionInvestigationImpl(
-            firDiagnostic.a,
-            firDiagnostic.b,
-            firDiagnostic.c,
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -3567,6 +3576,13 @@ private fun KaDiagnosticConverterBuilder.addConversions73() {
         NonPublicInlineCallFromPublicInlineImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
             firSymbolBuilder.buildSymbol(firDiagnostic.b),
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
+    add(FirErrors.HOME_PACKAGE_RESOLUTION_NON_HPR_EXTENSION) { firDiagnostic ->
+        HomePackageResolutionNonHprExtensionImpl(
+            firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.a),
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )

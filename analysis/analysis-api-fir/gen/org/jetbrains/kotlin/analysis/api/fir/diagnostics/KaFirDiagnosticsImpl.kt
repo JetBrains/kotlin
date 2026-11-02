@@ -5809,13 +5809,27 @@ internal class TypealiasAsCallableQualifierInImportWarningImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtImportDirective>(firDiagnostic, token), KaFirDiagnostic.TypealiasAsCallableQualifierInImportWarning
 
-internal class HomePackageResolutionInvestigationImpl(
-    override val total: Int,
-    override val star: Int,
+internal class HomePackageResolutionInvestigation1Impl(
     override val hpr: Int,
+    override val extensionNotHpr: Int,
+    override val notExtension: Int,
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.HomePackageResolutionInvestigation
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.HomePackageResolutionInvestigation1
+
+internal class HomePackageResolutionInvestigation2Impl(
+    override val star: Int,
+    override val rest: Int,
+    override val problematic: Int,
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.HomePackageResolutionInvestigation2
+
+internal class HomePackageResolutionNonHprExtensionImpl(
+    override val type: KaClassLikeSymbol,
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.HomePackageResolutionNonHprExtension
 
 internal class IllegalSuspendFunctionCallImpl(
     override val suspendCallable: KaSymbol,
