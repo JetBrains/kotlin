@@ -16,8 +16,8 @@ import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.PsiElement
 import com.intellij.util.concurrency.AppExecutorUtil
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.fir.sessions.KaBaseSessionProvider
 import org.jetbrains.kotlin.analysis.api.fir.utils.KaFirCacheCleaner
-import org.jetbrains.kotlin.analysis.api.impl.base.sessions.KaBaseSessionProvider
 import org.jetbrains.kotlin.analysis.api.impl.base.util.withKaModuleEntry
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.permissions.KaAnalysisPermissionRegistry

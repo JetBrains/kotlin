@@ -14,8 +14,6 @@ import org.jetbrains.kotlin.analysis.api.fir.utils.ConeSupertypeCalculationMode
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.getAllStrictSupertypes
 import org.jetbrains.kotlin.analysis.api.fir.utils.getDirectSupertypes
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseTypeProvider
-import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaBuiltinTypes

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.test.framework.services.libraries
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
+import org.jetbrains.kotlin.analysis.api.fir.utils.LibraryUtils
 import org.jetbrains.kotlin.test.services.TestService
 import org.jetbrains.kotlin.test.services.TestServices
 import java.nio.file.Path

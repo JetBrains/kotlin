@@ -8,7 +8,11 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 import com.intellij.psi.util.parentOfType
 import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.components.*
 import org.jetbrains.kotlin.analysis.api.fir.scopes.*
+import org.jetbrains.kotlin.analysis.api.fir.scopes.KaBaseCompositeScope
+import org.jetbrains.kotlin.analysis.api.fir.scopes.KaBaseCompositeTypeScope
+import org.jetbrains.kotlin.analysis.api.fir.scopes.KaBaseEmptyScope
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirAnonymousObjectSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirFileSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedClassSymbolBase
@@ -16,10 +20,6 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirScriptSymbol
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirType
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.getAvailableScopesForPosition
-import org.jetbrains.kotlin.analysis.api.impl.base.components.*
-import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaBaseCompositeScope
-import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaBaseCompositeTypeScope
-import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaBaseEmptyScope
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsScopeProvider
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope

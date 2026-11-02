@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.api.standalone.fir.projectStructure.builde
 
 import com.intellij.core.CoreApplicationEnvironment
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
+import org.jetbrains.kotlin.analysis.api.fir.utils.LibraryUtils
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.standalone.StandaloneWorkaroundApi
 import org.jetbrains.kotlin.analysis.project.structure.builder.KtSdkModuleBuilder

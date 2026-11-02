@@ -7,12 +7,11 @@ package org.jetbrains.kotlin.analysis.api.fir
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.fir.components.*
+import org.jetbrains.kotlin.analysis.api.fir.components.KaBaseAnalysisScopeProviderImpl
+import org.jetbrains.kotlin.analysis.api.fir.components.KaRendererImpl
 import org.jetbrains.kotlin.analysis.api.fir.components.bridges.*
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbolProvider
-import org.jetbrains.kotlin.analysis.api.impl.base.KaBaseSession
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseAnalysisScopeProviderImpl
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaRendererImpl
-import org.jetbrains.kotlin.analysis.api.impl.base.util.createSession
+import org.jetbrains.kotlin.analysis.api.fir.utils.createSession
 import org.jetbrains.kotlin.analysis.api.internals.*
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.assertIsValid

@@ -20,8 +20,6 @@ import org.jetbrains.kotlin.analysis.api.fir.references.KDocReferenceResolver
 import org.jetbrains.kotlin.analysis.api.fir.utils.computeImportableName
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.getAvailableScopesForPosition
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
-import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsReferenceShortener
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol

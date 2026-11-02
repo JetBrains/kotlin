@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
 import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
 import org.jetbrains.kotlin.analysis.api.components.KaEvaluator
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
+import org.jetbrains.kotlin.analysis.api.fir.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.analysis.api.evaluation.evaluate as evaluateEndpoint
 import org.jetbrains.kotlin.analysis.api.evaluation.evaluateAsAnnotationValue as evaluateAsAnnotationValueEndpoint

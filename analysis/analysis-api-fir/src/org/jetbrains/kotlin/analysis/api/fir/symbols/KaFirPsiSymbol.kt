@@ -10,11 +10,11 @@ import com.intellij.psi.PsiMember
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.annotations.KaBaseEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
+import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaBasePsiSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.withSymbolAttachment
 import org.jetbrains.kotlin.analysis.api.fir.visibilityByModifiers
-import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaBaseEmptyAnnotationList
-import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBasePsiSymbolPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.kaModule
@@ -335,7 +335,7 @@ internal inline fun <R> KaFirPsiSymbol<*, *>.ifSource(action: () -> R): R? {
 }
 
 /**
- * Potentially, we may use [KaFirKtBasedSymbol.backingPsi] to create [org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBasePsiSymbolPointer] for library elements as well,
+ * Potentially, we may use [KaFirKtBasedSymbol.backingPsi] to create [org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaBasePsiSymbolPointer] for library elements as well,
  * but it triggers AST tree calculation.
  *
  * Another potential issue: the library PSI may represent both [KaSymbolOrigin.SOURCE] and as [KaSymbolOrigin.LIBRARY],

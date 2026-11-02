@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir.components.bridges
 import org.jetbrains.kotlin.analysis.api.components.KaExpressionInformationProvider
 import org.jetbrains.kotlin.analysis.api.components.KaWhenMissingCase
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
+import org.jetbrains.kotlin.analysis.api.fir.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsExpressionInformationProvider
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtWhenExpression

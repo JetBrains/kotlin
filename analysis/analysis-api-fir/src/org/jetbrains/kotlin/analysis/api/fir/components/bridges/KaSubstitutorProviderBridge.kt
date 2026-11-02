@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir.components.bridges
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaSubstitutorProvider
 import org.jetbrains.kotlin.analysis.api.components.KaUnificationSubstitutorPolicy
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
+import org.jetbrains.kotlin.analysis.api.fir.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor

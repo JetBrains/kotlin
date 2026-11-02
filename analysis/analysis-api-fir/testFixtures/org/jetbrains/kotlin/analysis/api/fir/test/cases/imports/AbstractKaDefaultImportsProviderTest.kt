@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.test.cases.imports
 
-import org.jetbrains.kotlin.analysis.api.impl.base.imports.KaDefaultImportImpl
+import org.jetbrains.kotlin.analysis.api.fir.imports.KaDefaultImportImpl
 import org.jetbrains.kotlin.analysis.api.imports.KaDefaultImport
 import org.jetbrains.kotlin.analysis.api.imports.KaDefaultImportPriority
 import org.jetbrains.kotlin.analysis.api.imports.getDefaultImports
