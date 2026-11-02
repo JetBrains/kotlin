@@ -24,20 +24,24 @@ internal class SimpleKType(
     override val mutableCollectionClass: KClass<*>?,
     computeJavaType: Lazy<Type>? = null,
 ) : AbstractKType(computeJavaType), KTypeBase {
-    override fun makeNullableAsSpecified(nullable: Boolean): AbstractKType = SimpleKType(
-        classifier.toWrapperClassIfNeeded(nullable), arguments, nullable, lazyAnnotations, abbreviation,
-        isDefinitelyNotNullType = isDefinitelyNotNullType && !nullable, isNothingType, isSuspendFunctionType, mutableCollectionClass,
-    )
+    override fun makeNullableAsSpecified(nullable: Boolean): AbstractKType =
+        if (nullable == isMarkedNullable) this
+        else SimpleKType(
+            classifier.toWrapperClassIfNeeded(nullable), arguments, nullable, lazyAnnotations, abbreviation,
+            isDefinitelyNotNullType = isDefinitelyNotNullType && !nullable, isNothingType, isSuspendFunctionType, mutableCollectionClass,
+        )
 
     private fun KClassifier.toWrapperClassIfNeeded(nullable: Boolean): KClassifier {
         if (this !is KClass<*>) return this
         return if (nullable) javaObjectType.kotlin else javaPrimitiveType?.kotlin ?: this
     }
 
-    override fun makeDefinitelyNotNullAsSpecified(isDefinitelyNotNull: Boolean): AbstractKType = SimpleKType(
-        classifier, arguments, isMarkedNullable = isMarkedNullable && !isDefinitelyNotNull, lazyAnnotations, abbreviation,
-        isDefinitelyNotNull, isNothingType, isSuspendFunctionType, mutableCollectionClass,
-    )
+    override fun makeDefinitelyNotNullAsSpecified(isDefinitelyNotNull: Boolean): AbstractKType =
+        if (isDefinitelyNotNull == isDefinitelyNotNullType) this
+        else SimpleKType(
+            classifier, arguments, isMarkedNullable = isMarkedNullable && !isDefinitelyNotNull, lazyAnnotations, abbreviation,
+            isDefinitelyNotNull, isNothingType, isSuspendFunctionType, mutableCollectionClass,
+        )
 
     override fun lowerBoundIfFlexible(): AbstractKType? = null
     override fun upperBoundIfFlexible(): AbstractKType? = null
