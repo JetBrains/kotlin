@@ -5,12 +5,19 @@
 
 package org.jetbrains.kotlin.gradle.unitTests.checkers
 
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.npm.npmDependenciesCollector
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.NpmDependencyInGradleScope
 import org.jetbrains.kotlin.gradle.util.assertNoDiagnostics
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.checkDiagnosticsWithMppProject
 import org.jetbrains.kotlin.gradle.util.kotlin
+import org.junit.jupiter.api.io.TempDir
+import java.nio.file.Path
+import kotlin.io.path.createParentDirectories
+import kotlin.io.path.writeText
 import kotlin.test.Test
+import kotlin.test.assertContains
 
 class NpmDependencyInGradleScopeCheckerTest {
     private val diagnosticsDir = "NpmDependencyInGradleScopeCheckerTest"
@@ -85,5 +92,30 @@ class NpmDependencyInGradleScopeCheckerTest {
         }.evaluate()
 
         project.assertNoDiagnostics(NpmDependencyInGradleScope)
+    }
+
+    @Test
+    fun testSwcHelpersAddedByDelegatedTranspilationIsNotReported(@TempDir projectDir: Path) {
+        projectDir.resolve("gradle.properties").apply {
+            createParentDirectories()
+            writeText("kotlin.js.delegated.transpilation=true")
+        }
+        val project = buildProjectWithMPP(
+            projectBuilder = { withProjectDir(projectDir.toFile()) }
+        ) {
+            kotlin {
+                js {
+                    nodejs()
+                    binaries.library()
+                }
+            }
+        }.evaluate()
+
+        project.assertNoDiagnostics(NpmDependencyInGradleScope)
+
+        val jsMainNpmDependencies = project.multiplatformExtension.sourceSets.getByName("jsMain")
+            .npmDependenciesCollector.npmDependencies.get()
+            .map { it.name }
+        assertContains(jsMainNpmDependencies, "@swc/helpers")
     }
 }
