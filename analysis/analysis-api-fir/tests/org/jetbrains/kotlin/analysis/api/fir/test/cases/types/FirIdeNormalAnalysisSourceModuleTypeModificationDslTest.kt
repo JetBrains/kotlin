@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.test.cases.types
 
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.typeCreation.AbstractTypeModificationDslTest
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.types.typeCreation.AbstractTypeModificationDslTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.LLSourceLikeTestConfigurator
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.junit.jupiter.api.Test
