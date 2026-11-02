@@ -116,6 +116,7 @@ dependencies {
         commonCompileOnly(project(compilerRuntimeDependency)) { isTransitive = false }
     }
     commonCompileOnly(libs.guava)
+    commonCompileOnly(libs.org.jetbrains.annotations)
     commonCompileOnly(project(":daemon-common")) {
         isTransitive = false
     }
