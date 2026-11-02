@@ -5,15 +5,11 @@
 
 package org.jetbrains.kotlin.internal.compilerRunner.native
 
-import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
 import org.gradle.api.logging.Logging
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.provider.ListProperty
-import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
-import org.gradle.api.provider.SetProperty
 import org.gradle.process.ExecOperations
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
@@ -60,7 +56,7 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
         private val dumpPerfArgument = CommonCompilerArguments::dumpPerf.argumentAnnotation.value
     }
 
-    private val logger = Logging.getLogger(toolSpec.displayName.get())
+    private val logger = Logging.getLogger(toolSpec.displayName)
     private val errorMessageCollector = GradleErrorMessageCollector(logger)
     private val classLoadersCachingBuildService: ClassLoadersCachingBuildService
         get() = classLoadersCachingBuildServiceProvider.get()
@@ -104,18 +100,7 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
         classLoadersCachingService.set(runner.classLoadersCachingBuildServiceProvider)
         fusService.set(runner.fusMetricsConsumer)
 
-        val toolSpec = runner.toolSpec
-        displayName.set(toolSpec.displayName)
-        optionalToolName.set(toolSpec.optionalToolName)
-        mainClass.set(toolSpec.mainClass)
-        daemonEntryPoint.set(toolSpec.daemonEntryPoint)
-        classpath.from(toolSpec.classpath)
-        jvmArgs.set(toolSpec.jvmArgs)
-        shouldPassArgumentsViaArgFile.set(toolSpec.shouldPassArgumentsViaArgFile)
-        collectNativeCompilerMetrics.set(toolSpec.collectNativeCompilerMetrics)
-        systemProperties.set(toolSpec.systemProperties)
-        environment.set(toolSpec.environment)
-        environmentBlacklist.set(toolSpec.environmentBlacklist)
+        this.toolSpec.set(runner.toolSpec)
 
         this.toolArguments.set(args)
 
@@ -131,46 +116,46 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
                 .map { (k, v) -> k.toString() to v.toString() }
                 .filter { (k, _) -> k !in systemPropertiesBlacklist }
                 .escapeQuotesForWindows()
-                .toMap() + toolSpec.systemProperties.get()
+                .toMap() + toolSpec.systemProperties
 
             val reportFile = File.createTempFile("native_compiler_${::runViaExec.name}_report", ".json")
-            val reportArguments = if (toolSpec.collectNativeCompilerMetrics.get()) {
+            val reportArguments = if (toolSpec.collectNativeCompilerMetrics) {
                 listOf("$dumpPerfArgument=${reportFile.absolutePath}")
             } else emptyList()
 
-            val toolArgsPair = if (toolSpec.shouldPassArgumentsViaArgFile.get()) {
+            val toolArgsPair = if (toolSpec.shouldPassArgumentsViaArgFile) {
                 val argFile = args.toArgFile(reportArguments)
                 argFile to listOfNotNull(
-                    toolSpec.optionalToolName.orNull,
+                    toolSpec.optionalToolName,
                     "@${argFile.toFile().absolutePath}"
                 )
             } else {
-                null to listOfNotNull(toolSpec.optionalToolName.orNull) + args.arguments + reportArguments
+                null to listOfNotNull(toolSpec.optionalToolName) + args.arguments + reportArguments
             }
 
             try {
                 logger.log(
                     args.compilerArgumentsLogLevel.gradleLogLevel,
                     """
-                |Run "${toolSpec.displayName.get()}" tool in a separate JVM process
-                |Main class = ${toolSpec.mainClass.get()}
+                |Run "${toolSpec.displayName}" tool in a separate JVM process
+                |Main class = ${toolSpec.mainClass}
                 |Arguments = ${args.arguments.toPrettyString()}
                 |Transformed arguments = ${toolArgsPair.second.toPrettyString()}
-                |Classpath = ${toolSpec.classpath.files.map { it.absolutePath }.toPrettyString()}
-                |JVM options = ${toolSpec.jvmArgs.get().toPrettyString()}
+                |Classpath = ${toolSpec.classpath.map { it.absolutePath }.toPrettyString()}
+                |JVM options = ${toolSpec.jvmArgs.toPrettyString()}
                 |Java system properties = ${systemProperties.toPrettyString()}
-                |Suppressed ENV variables = ${toolSpec.environmentBlacklist.get().toPrettyString()}
-                |Custom ENV variables = ${toolSpec.environment.get().toPrettyString()}
+                |Suppressed ENV variables = ${toolSpec.environmentBlacklist.toPrettyString()}
+                |Custom ENV variables = ${toolSpec.environment.toPrettyString()}
                 """.trimMargin()
                 )
 
                 execOperations.javaexec { spec ->
                     spec.mainClass.set(toolSpec.mainClass)
-                    spec.classpath = toolSpec.classpath
-                    spec.jvmArgs(toolSpec.jvmArgs.get())
+                    spec.classpath(toolSpec.classpath)
+                    spec.jvmArgs(toolSpec.jvmArgs)
                     spec.systemProperties(systemProperties)
-                    spec.environment(toolSpec.environment.get())
-                    toolSpec.environmentBlacklist.get().forEach { spec.environment.remove(it) }
+                    spec.environment(toolSpec.environment)
+                    toolSpec.environmentBlacklist.forEach { spec.environment.remove(it) }
                     spec.args(toolArgsPair.second)
                 }
                 metricsReporter.parseCompilerMetricsFromFile(reportFile)
@@ -188,7 +173,7 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
     private fun runInProcess(args: ToolArguments) {
         metricsReporter.measure(NATIVE_IN_PROCESS) {
             val isolatedClassLoader = classLoadersCachingBuildService.getClassLoader(
-                toolSpec.classpath.files.toList(),
+                toolSpec.classpath.toList(),
                 // Required for KotlinNativePaths to properly detect konan home directory
                 object : ParentClassLoaderProvider {
                     @OptIn(KotlinBuildToolsInternalJdkUtils::class)
@@ -200,28 +185,28 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
                         other is ParentClassLoaderProvider && other.getClassLoader() == jdkClassesClassLoader
                 }
             )
-            if (toolSpec.jvmArgs.get().contains("-ea")) isolatedClassLoader.setDefaultAssertionStatus(true)
+            if (toolSpec.jvmArgs.contains("-ea")) isolatedClassLoader.setDefaultAssertionStatus(true)
 
             logger.log(
                 args.compilerArgumentsLogLevel.gradleLogLevel,
                 """
-                |Run in-process tool "${toolSpec.displayName.get()}"
-                |Entry point method = ${toolSpec.mainClass.get()}.${toolSpec.daemonEntryPoint.get()}
-                |Classpath = ${toolSpec.classpath.files.map { it.absolutePath }.toPrettyString()}
+                |Run in-process tool "${toolSpec.displayName}"
+                |Entry point method = ${toolSpec.mainClass}.${toolSpec.daemonEntryPoint}
+                |Classpath = ${toolSpec.classpath.map { it.absolutePath }.toPrettyString()}
                 |Arguments = ${args.arguments.toPrettyString()}
                 """.trimMargin()
             )
 
-            val toolArgs = listOf(toolSpec.displayName.get()) + args.arguments
+            val toolArgs = listOf(toolSpec.displayName) + args.arguments
             try {
-                val mainClass = isolatedClassLoader.loadClass(toolSpec.mainClass.get())
+                val mainClass = isolatedClassLoader.loadClass(toolSpec.mainClass)
                 val entryPoint = mainClass
                     .methods
-                    .singleOrNull { it.name == toolSpec.daemonEntryPoint.get() }
-                    ?: error("Couldn't find daemon entry point '${toolSpec.daemonEntryPoint.get()}'")
+                    .singleOrNull { it.name == toolSpec.daemonEntryPoint }
+                    ?: error("Couldn't find daemon entry point '${toolSpec.daemonEntryPoint}'")
 
                 metricsReporter.measure(RUN_ENTRY_POINT) {
-                    if (toolSpec.collectNativeCompilerMetrics.get()) {
+                    if (toolSpec.collectNativeCompilerMetrics) {
                         val reportFile = Files.createTempFile("native_compiler_${::runInProcess.name}_report", ".json")
                         val toolArgsWithPerformance = toolArgs.toMutableList()
                         toolArgsWithPerformance.add("$dumpPerfArgument=${reportFile.toAbsolutePath()}")
@@ -296,7 +281,7 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
         val arguments: List<String>,
     ) : java.io.Serializable
 
-    internal interface KotlinNativeToolWorkParameters : ToolSpec, WorkParameters {
+    internal interface KotlinNativeToolWorkParameters : WorkParameters {
         // Runner configuration
         //
         // Note: there's no `metricsReporter` property here - unlike the other build-service references below,
@@ -305,6 +290,8 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
         // KotlinNativeToolWorkAction builds its own fresh reporter instead and reports back via [taskPath].
         val classLoadersCachingService: Property<ClassLoadersCachingBuildService>
         val fusService: Property<BuildFusService<out BuildFusService.Parameters>?>
+
+        val toolSpec: Property<ToolSpec>
 
         val toolArguments: Property<ToolArguments>
 
@@ -324,7 +311,7 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
             val runner = objectFactory.newInstance<KotlinNativeToolRunner>(
                 objectFactory.property<BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>>(metricsReporter),
                 parameters.classLoadersCachingService,
-                parameters,
+                parameters.toolSpec.get(),
                 parameters.fusService,
             )
             try {
@@ -347,19 +334,19 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
     }
 }
 
-internal interface ToolSpec {
-    val displayName: Property<String>
-    val optionalToolName: Property<String>
-    val mainClass: Property<String>
-    val daemonEntryPoint: Property<String>
-    val classpath: ConfigurableFileCollection
-    val jvmArgs: ListProperty<String>
-    val shouldPassArgumentsViaArgFile: Property<Boolean>
-    val collectNativeCompilerMetrics: Property<Boolean>
-    val systemProperties: MapProperty<String, String>
-    val environment: MapProperty<String, String>
-    val environmentBlacklist: SetProperty<String>
-}
+internal data class ToolSpec(
+    val displayName: String,
+    val optionalToolName: String?,
+    val mainClass: String,
+    val daemonEntryPoint: String,
+    val classpath: Set<File>,
+    val jvmArgs: List<String>,
+    val shouldPassArgumentsViaArgFile: Boolean,
+    val collectNativeCompilerMetrics: Boolean,
+    val systemProperties: Map<String, String> = emptyMap(),
+    val environment: Map<String, String> = emptyMap(),
+    val environmentBlacklist: Set<String> = emptySet(),
+) : java.io.Serializable
 
 private val systemPropertiesBlacklist: Set<String> = setOf(
     "java.endorsed.dirs",       // Fix for KT-25887
@@ -367,7 +354,7 @@ private val systemPropertiesBlacklist: Set<String> = setOf(
     "java.system.class.loader"  // Don't use custom class loaders
 )
 
-internal fun ObjectFactory.ToolSpec(
+internal fun ToolSpec(
     displayName: Provider<String>,
     optionalToolName: Provider<String>,
     mainClass: Provider<String>,
@@ -379,35 +366,31 @@ internal fun ObjectFactory.ToolSpec(
     systemProperties: Map<String, String> = emptyMap(),
     environment: Map<String, String> = emptyMap(),
     environmentBlacklist: Set<String> = emptySet(),
-): ToolSpec = newInstance<ToolSpec>().apply {
-    this.displayName.set(displayName)
-    this.optionalToolName.set(optionalToolName)
-    this.mainClass.set(mainClass)
-    this.daemonEntryPoint.set(daemonEntryPoint)
-    this.classpath.from(classpath)
-    this.jvmArgs.set(jvmArgs)
-    this.shouldPassArgumentsViaArgFile.set(shouldPassArgumentsViaArgFile)
-    this.collectNativeCompilerMetrics.set(collectNativeCompilerMetrics)
-    this.systemProperties.set(systemProperties)
-    this.environment.set(environment)
-    this.environmentBlacklist.set(environmentBlacklist)
-}
+): ToolSpec = ToolSpec(
+    displayName = displayName.get(),
+    optionalToolName = optionalToolName.orNull,
+    mainClass = mainClass.get(),
+    daemonEntryPoint = daemonEntryPoint.get(),
+    classpath = classpath.files,
+    jvmArgs = jvmArgs.get(),
+    shouldPassArgumentsViaArgFile = shouldPassArgumentsViaArgFile.get(),
+    collectNativeCompilerMetrics = collectNativeCompilerMetrics.get(),
+    systemProperties = systemProperties,
+    environment = environment,
+    environmentBlacklist = environmentBlacklist,
+)
 
 /**
  * Disable C2 compiler for HotSpot VM to improve compilation speed.
  */
-internal fun ToolSpec.disableC2(): ToolSpec = apply {
-    System.getProperty("java.vm.name")?.let { vmName ->
-        if (vmName.contains("HotSpot", true)) jvmArgs.add("-XX:TieredStopAtLevel=1")
-    }
+internal fun ToolSpec.disableC2(): ToolSpec {
+    val vmName = System.getProperty("java.vm.name")
+    return if (vmName != null && vmName.contains("HotSpot", true)) {
+        copy(jvmArgs = jvmArgs + "-XX:TieredStopAtLevel=1")
+    } else this
 }
 
-internal fun ToolSpec.enableAssertions(): ToolSpec = apply {
-    jvmArgs.add("-ea")
-}
+internal fun ToolSpec.enableAssertions(): ToolSpec = copy(jvmArgs = jvmArgs + "-ea")
 
-internal fun ToolSpec.configureDefaultMaxHeapSize(): ToolSpec = apply {
-    if (jvmArgs.get().none { it.startsWith("-Xmx") }) {
-        jvmArgs.add("-Xmx3g")
-    }
-}
+internal fun ToolSpec.configureDefaultMaxHeapSize(): ToolSpec =
+    if (jvmArgs.none { it.startsWith("-Xmx") }) copy(jvmArgs = jvmArgs + "-Xmx3g") else this
