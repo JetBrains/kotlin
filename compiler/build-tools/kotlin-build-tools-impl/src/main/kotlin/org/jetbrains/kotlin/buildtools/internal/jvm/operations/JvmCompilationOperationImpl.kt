@@ -53,29 +53,36 @@ import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.storage.FileLocations
 import java.nio.file.Path
 
-internal class JvmCompilationOperationImpl private constructor(
-    override val options: Options = Options(JvmCompilationOperation::class),
-    override val sources: List<Path>,
-    override val destinationDirectory: Path,
-    override val compilerArguments: JvmCompilerArgumentsImpl = JvmCompilerArgumentsImpl(),
-    private val compilerVersion: String,
-) : BaseCompilationOperationImpl<JvmCompilerArgumentsImpl, K2JVMCompilerArguments>(),
+internal class JvmCompilationOperationImpl : BaseCompilationOperationImpl<JvmCompilerArgumentsImpl, K2JVMCompilerArguments>,
     JvmCompilationOperation,
     JvmCompilationOperation.Builder,
     DeepCopyable<JvmCompilationOperationImpl> {
+
+    override val options: Options
+    override val sources: List<Path>
+    override val destinationDirectory: Path
+    override val compilerArguments: JvmCompilerArgumentsImpl
+    private val compilerVersion: String
+
+    private constructor(other: JvmCompilationOperationImpl) : super(other) {
+        options = other.options.deepCopy()
+        sources = other.sources.toList()
+        destinationDirectory = other.destinationDirectory
+        compilerArguments = other.compilerArguments.deepCopy()
+        compilerVersion = other.compilerVersion
+    }
 
     constructor(
         sources: List<Path>,
         destinationDirectory: Path,
         compilerArguments: JvmCompilerArgumentsImpl = JvmCompilerArgumentsImpl(),
         compilerVersion: String,
-    ) : this(
-        options = Options(JvmCompilationOperation::class),
-        sources = sources,
-        destinationDirectory = destinationDirectory,
-        compilerArguments = compilerArguments,
-        compilerVersion = compilerVersion,
-    ) {
+    ) : super() {
+        this.options = Options(JvmCompilationOperation::class)
+        this.sources = sources
+        this.destinationDirectory = destinationDirectory
+        this.compilerArguments = compilerArguments
+        this.compilerVersion = compilerVersion
         initializeOptions(this::class, options)
     }
 
@@ -84,13 +91,7 @@ internal class JvmCompilationOperationImpl private constructor(
     override fun toBuilder(): JvmCompilationOperation.Builder = deepCopy()
 
     override fun deepCopy(): JvmCompilationOperationImpl {
-        return JvmCompilationOperationImpl(
-            options.deepCopy(),
-            sources,
-            destinationDirectory,
-            compilerArguments.deepCopy(),
-            compilerVersion,
-        ).also { it.copyFrom(this) }
+        return JvmCompilationOperationImpl(this)
     }
 
     @UseFromImplModuleRestricted

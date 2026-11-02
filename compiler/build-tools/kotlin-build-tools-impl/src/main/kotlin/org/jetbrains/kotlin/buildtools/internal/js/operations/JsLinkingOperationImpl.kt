@@ -20,36 +20,37 @@ import org.jetbrains.kotlin.daemon.common.IncrementalCompilationOptions
 import java.nio.file.Path
 
 
-internal class JsLinkingOperationImpl private constructor(
-    override val options: Options = Options(JsLinkingOperation::class),
-    override val klib: Path,
-    override val destination: Path,
-    override val compilerArguments: JsArgumentsImpl = JsArgumentsImpl(),
-) : BaseCompilationOperationImpl<JsArgumentsImpl, K2JSCompilerArguments>(),
+internal class JsLinkingOperationImpl : BaseCompilationOperationImpl<JsArgumentsImpl, K2JSCompilerArguments>,
     JsLinkingOperation, JsLinkingOperation.Builder,
     DeepCopyable<JsLinkingOperationImpl> {
+    override val options: Options
+    override val klib: Path
+    override val destination: Path
+    override val compilerArguments: JsArgumentsImpl
+
+    private constructor(other: JsLinkingOperationImpl) : super(other) {
+        options = other.options.deepCopy()
+        klib = other.klib
+        destination = other.destination
+        compilerArguments = other.compilerArguments.deepCopy()
+    }
+
     constructor(
         klib: Path,
         destination: Path,
         compilerArguments: JsArgumentsImpl = JsArgumentsImpl(),
-    ) : this(
-        options = Options(JsLinkingOperation::class),
-        klib = klib,
-        destination = destination,
-        compilerArguments = compilerArguments,
-    ) {
+    ) : super() {
+        this.options = Options(JsLinkingOperation::class)
+        this.klib = klib
+        this.destination = destination
+        this.compilerArguments = compilerArguments
         initializeOptions(this::class, options)
     }
 
     override fun toBuilder(): JsLinkingOperation.Builder = deepCopy()
 
     override fun deepCopy(): JsLinkingOperationImpl {
-        return JsLinkingOperationImpl(
-            options.deepCopy(),
-            klib,
-            destination,
-            compilerArguments.deepCopy(),
-        ).also { it.copyFrom(this) }
+        return JsLinkingOperationImpl(this)
     }
 
     @UseFromImplModuleRestricted

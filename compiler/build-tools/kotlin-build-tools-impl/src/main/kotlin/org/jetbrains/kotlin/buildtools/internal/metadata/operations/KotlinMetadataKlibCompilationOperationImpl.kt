@@ -22,41 +22,41 @@ import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.IncrementalCompilationOptions
 import java.nio.file.Path
 
-internal class KotlinMetadataKlibCompilationOperationImpl private constructor(
-    override val options: Options = Options(KotlinMetadataKlibCompilationOperation::class),
-    override val sources: List<Path>,
-    override val destination: Path,
-    override val compilerArguments: MetadataArgumentsImpl = MetadataArgumentsImpl(),
-    private val compilerVersion: String,
-) : BaseCompilationOperationImpl<MetadataArgumentsImpl, K2MetadataCompilerArguments>(),
+internal class KotlinMetadataKlibCompilationOperationImpl :
+    BaseCompilationOperationImpl<MetadataArgumentsImpl, K2MetadataCompilerArguments>,
     KotlinMetadataKlibCompilationOperation, KotlinMetadataKlibCompilationOperation.Builder,
     DeepCopyable<KotlinMetadataKlibCompilationOperationImpl> {
+    override val options: Options
+    override val sources: List<Path>
+    override val destination: Path
+    override val compilerArguments: MetadataArgumentsImpl
+    private val compilerVersion: String
+
     constructor(
         sources: List<Path>,
         destination: Path,
         compilerArguments: MetadataArgumentsImpl = MetadataArgumentsImpl(),
-        compilerVersion: String,
-    ) : this(
-        options = Options(KotlinMetadataKlibCompilationOperation::class),
-        sources = sources,
-        destination = destination,
-        compilerArguments = compilerArguments,
-        compilerVersion = compilerVersion,
-    ) {
+        compilerVersion: String
+    ) : super() {
+        this.options = Options(KotlinMetadataKlibCompilationOperation::class)
+        this.sources = sources
+        this.destination = destination
+        this.compilerArguments = compilerArguments
+        this.compilerVersion = compilerVersion
         initializeOptions(this::class, options)
+    }
+
+    private constructor(other: KotlinMetadataKlibCompilationOperationImpl) : super(other) {
+        this.options = other.options.deepCopy()
+        this.sources = other.sources.toList()
+        this.destination = other.destination
+        this.compilerArguments = other.compilerArguments.deepCopy()
+        this.compilerVersion = other.compilerVersion
     }
 
     override fun toBuilder(): KotlinMetadataKlibCompilationOperation.Builder = deepCopy()
 
-    override fun deepCopy(): KotlinMetadataKlibCompilationOperationImpl {
-        return KotlinMetadataKlibCompilationOperationImpl(
-            options.deepCopy(),
-            sources,
-            destination,
-            compilerArguments.deepCopy(),
-            compilerVersion
-        ).also { it.copyFrom(this) }
-    }
+    override fun deepCopy(): KotlinMetadataKlibCompilationOperationImpl = KotlinMetadataKlibCompilationOperationImpl(this)
 
     @UseFromImplModuleRestricted
     override fun <V> get(key: KotlinMetadataKlibCompilationOperation.Option<V>): V = options[key]

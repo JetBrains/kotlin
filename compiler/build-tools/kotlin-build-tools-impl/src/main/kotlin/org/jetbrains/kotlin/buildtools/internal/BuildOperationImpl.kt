@@ -20,6 +20,13 @@ import kotlin.concurrent.atomics.ExperimentalAtomicApi
 @OptIn(ExperimentalAtomicApi::class)
 @Serializable
 internal abstract class BuildOperationImpl<R> : BuildOperation<R>, BuildOperation.Builder, BtaSerializable {
+    protected constructor() : super()
+    protected constructor(other: BuildOperationImpl<R>) {
+        metricsCollector = other.metricsCollector
+        kgpMetricsCollector = other.kgpMetricsCollector
+        kgpMetricsCollectorOut = other.kgpMetricsCollectorOut
+        enableClassloaderCache = other.enableClassloaderCache
+    }
 
     protected abstract val options: Options // to be removed when subclasses are also converted to serializable
 
@@ -37,13 +44,6 @@ internal abstract class BuildOperationImpl<R> : BuildOperation<R>, BuildOperatio
     internal var kgpMetricsCollectorOut: ByteArray? = null
 
     internal var enableClassloaderCache: Boolean = false
-
-    internal open fun copyFrom(other: BuildOperationImpl<R>) {
-        metricsCollector = other.metricsCollector
-        kgpMetricsCollector = other.kgpMetricsCollector
-        kgpMetricsCollectorOut = other.kgpMetricsCollectorOut
-        enableClassloaderCache = other.enableClassloaderCache
-    }
 
     @Transient
     private val executionStarted = AtomicBoolean(false)

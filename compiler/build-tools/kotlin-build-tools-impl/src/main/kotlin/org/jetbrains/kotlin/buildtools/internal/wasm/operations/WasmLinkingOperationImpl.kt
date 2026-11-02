@@ -19,37 +19,36 @@ import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.IncrementalCompilationOptions
 import java.nio.file.Path
 
-internal class WasmLinkingOperationImpl private constructor(
-    override val options: Options = Options(WasmLinkingOperation::class),
-    override val klib: Path,
-    override val destination: Path,
-    override val compilerArguments: WasmArgumentsImpl = WasmArgumentsImpl(),
-) : BaseCompilationOperationImpl<WasmArgumentsImpl, KotlinWasmCompilerArguments>(),
+internal class WasmLinkingOperationImpl : BaseCompilationOperationImpl<WasmArgumentsImpl, KotlinWasmCompilerArguments>,
     WasmLinkingOperation, WasmLinkingOperation.Builder,
     DeepCopyable<WasmLinkingOperationImpl> {
+    override val options: Options
+    override val klib: Path
+    override val destination: Path
+    override val compilerArguments: WasmArgumentsImpl
+
     constructor(
         klib: Path,
         destination: Path,
-        compilerArguments: WasmArgumentsImpl = WasmArgumentsImpl(),
-    ) : this(
-        options = Options(WasmLinkingOperation::class),
-        klib = klib,
-        destination = destination,
-        compilerArguments = compilerArguments,
-    ) {
+        compilerArguments: WasmArgumentsImpl = WasmArgumentsImpl()
+    ) : super() {
+        this.options = Options(WasmLinkingOperation::class)
+        this.klib = klib
+        this.destination = destination
+        this.compilerArguments = compilerArguments
         initializeOptions(this::class, options)
+    }
+
+    private constructor(other: WasmLinkingOperationImpl) : super(other) {
+        this.options = other.options.deepCopy()
+        this.klib = other.klib
+        this.destination = other.destination
+        this.compilerArguments = other.compilerArguments.deepCopy()
     }
 
     override fun toBuilder(): WasmLinkingOperation.Builder = deepCopy()
 
-    override fun deepCopy(): WasmLinkingOperationImpl {
-        return WasmLinkingOperationImpl(
-            options.deepCopy(),
-            klib,
-            destination,
-            compilerArguments.deepCopy(),
-        ).also { it.copyFrom(this) }
-    }
+    override fun deepCopy(): WasmLinkingOperationImpl = WasmLinkingOperationImpl(this)
 
     @UseFromImplModuleRestricted
     override fun <V> get(key: WasmLinkingOperation.Option<V>): V = options[key]
