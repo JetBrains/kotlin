@@ -1,0 +1,40 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.analysis.api.fir.test.cases.components.typeInfoProvider
+
+import org.jetbrains.kotlin.analysis.api.expressions.expectedType
+import org.jetbrains.kotlin.analysis.api.renderer.render
+import org.jetbrains.kotlin.analysis.api.types.functionTypeFamily
+import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
+import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.types.Variance
+
+abstract class AbstractFunctionClassKindTest : AbstractAnalysisApiBasedTest() {
+    override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
+        val expressionAtCaret = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret(mainFile) as KtExpression
+
+        val [type, functionTypeFamily] = executeOnPooledThreadInReadAction {
+            copyAwareAnalyzeForTest(expressionAtCaret) { contextExpression ->
+                val functionType = contextExpression.expectedType
+                functionType?.render(position = Variance.INVARIANT) to functionType?.functionTypeFamily
+            }
+        }
+        val actual = buildString {
+            appendLine("expression: ${expressionAtCaret.text}")
+            appendLine("expected type: $type")
+            appendLine("functionTypeFamily: $functionTypeFamily")
+            appendLine("typeRenderingPrefix: ${functionTypeFamily?.typeRenderingPrefix}")
+            appendLine("markerAnnotationClassId: ${functionTypeFamily?.markerAnnotationClassId}")
+        }
+        testServices.assertions.assertEqualsToTestOutputFile(actual)
+    }
+}

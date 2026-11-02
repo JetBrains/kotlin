@@ -1,0 +1,785 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.generators.tests.analysis.api
+
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.annotations.*
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.analysisScopeProvider.AbstractCanBeAnalysedTest
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.compileTimeConstantProvider.AbstractCompileTimeConstantEvaluatorTest
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.compilerPluginGeneratedDeclarationsProvider.AbstractCompilerPluginGeneratedDeclarationsTest
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.containingDeclarationProvider.*
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.dataFlowInfoProvider.AbstractExitPointSnapshotTest
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.dataFlowInfoProvider.AbstractHLSmartCastInfoTest
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.diagnosticProvider.AbstractCodeFragmentCollectDiagnosticsTest
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.diagnosticProvider.AbstractCollectDiagnosticsTest
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.diagnosticProvider.AbstractDanglingFileCollectDiagnosticsTest
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.diagnosticProvider.AbstractElementDiagnosticsTest
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.expressionInfoProvider.AbstractIsStableForSmartCastingTest
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.expressionInfoProvider.AbstractIsUsedAsExpressionTest
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.expressionInfoProvider.AbstractReturnTargetSymbolTest
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.expressionInfoProvider.AbstractWhenMissingCasesTest
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.fileAnnotationProvider.AbstractContainingFileAnnotationProviderTest
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.inheritorsProvider.AbstractDanglingFileSealedInheritorsTest
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.inheritorsProvider.AbstractSealedInheritorsTest
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.javaInteroperabilityComponent.*
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.kdocProvider.AbstractKDocProviderTest
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.klibSourceFileProvider.AbstractGetKlibSourceFileNameTest
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.readWriteAccess.AbstractReadWriteAccessTest
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.relationProvider.*
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.resolveExtensionInfoProvider.AbstractResolveExtensionInfoProviderTest
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.resolver.*
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.scopeProvider.*
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.signatureSubstitution.AbstractAnalysisApiSignatureContractsTest
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.signatureSubstitution.AbstractAnalysisApiSignatureSubstitutionTest
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.signatureSubstitution.AbstractAnalysisApiSymbolAsSignatureTest
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.signatureSubstitution.AbstractAnalysisApiSymbolSubstitutionTest
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.substitutorProvider.AbstractCreateInheritanceTypeSubstitutorTest
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.substitutorProvider.AbstractCreateSubtypingUnificationSubstitutorTest
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.substututorFactory.AbstractSubstitutorBuilderTest
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.symbolDeclarationOverridesProvider.AbstractIsSubclassOfTest
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.symbolDeclarationOverridesProvider.AbstractOverriddenDeclarationProviderTest
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.symbolDeclarationRenderer.AbstractLegacyRenderingTest
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.symbolDeclarationRenderer.AbstractRendererTest
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.symbolDeclarationRenderer.AbstractSymbolRenderingByReferenceTest
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.symbolInfoProvider.*
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.typeCreator.AbstractBuildArrayTypeTest
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.typeCreator.AbstractBuildClassTypeTest
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.typeCreator.AbstractTypeParameterTypeTest
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.typeInfoProvider.AbstractDoubleColonReceiverTypeTest
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.typeInfoProvider.AbstractFunctionClassKindTest
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.typeInfoProvider.AbstractIsDenotableTest
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.typeProvider.*
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.typeRelationChecker.*
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.visibilityChecker.AbstractVisibilityCheckerTest
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.danglingFileAnalysis.AbstractDanglingFileResolutionModeProviderTest
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.references.AbstractReferenceImportAliasTest
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.references.AbstractReferenceShortenerForWholeFileTest
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.references.AbstractReferenceShortenerTest
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.restrictedAnalysis.AbstractRestrictedAnalysisExceptionWrappingTest
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.restrictedAnalysis.AbstractRestrictedAnalysisRejectionTest
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.session.*
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.symbols.*
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.types.*
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.types.typeCreation.AbstractTypeCreatorDslTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerFacility.AbstractCompilerFacilityTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerFacility.AbstractFirPluginPrototypeCompilerFacilityTestWithAnalysis
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerFacility.AbstractFirPluginPrototypeMultiModuleCompilerFacilityTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionTypeProvider.AbstractDeclarationReturnTypeTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionTypeProvider.AbstractExpectedExpressionTypeTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionTypeProvider.AbstractExpressionTypeTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.AbstractSessionInvalidationTest
+import org.jetbrains.kotlin.analysis.test.framework.services.TargetPlatformEnum
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfiguratorFactoryData
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisSessionMode
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind
+import org.jetbrains.kotlin.generators.dsl.TestGroup
+import org.jetbrains.kotlin.generators.tests.analysis.api.dsl.*
+import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
+
+fun AnalysisApiTestGroup.generateAnalysisApiTests() {
+    component(
+        directory = "resolver",
+        filter = testModuleKindIs(TestModuleKind.SourceLike, TestModuleKind.LibrarySource) and
+                analysisSessionModeIs(AnalysisSessionMode.Normal),
+    ) {
+        val singleByPsiInit: TestGroup.TestClass.(data: AnalysisApiTestConfiguratorFactoryData) -> Unit = { data ->
+            val excludeDirs = buildList {
+                if (data.analysisApiMode == AnalysisApiMode.Standalone || data.moduleKind == TestModuleKind.LibrarySource) {
+                    add("withTestCompilerPluginEnabled")
+                }
+
+                when (data.moduleKind) {
+                    TestModuleKind.LibrarySource -> {
+                        // Sources with errors cannot be compiled to a library.
+                        add("withErrors")
+
+                        // Main modules in tests which rely on missing dependencies (e.g. the main module missing a dependency to a library
+                        // module) cannot be compiled to a library.
+                        add("missingDependency")
+
+                        // For some platforms, `Cloneable` is unresolved and the test cannot be compiled to a library. We could place these
+                        // tests under `withErrors`, but it'd split the test data, which is undesirable.
+                        add("cloneable")
+
+                        // Companion blocks aren't supported yet
+                        add("companionExtensionAndBlock")
+                    }
+
+                    else -> {}
+                }
+            }
+
+            model(data, "singleByPsi", excludeDirsRecursively = excludeDirs)
+        }
+
+        test<AbstractResolveSingleByPsiTest>(init = singleByPsiInit)
+
+        group(filter = testModuleKindIs(TestModuleKind.SourceLike)) {
+            val allByPsiInit: TestGroup.TestClass.(data: AnalysisApiTestConfiguratorFactoryData) -> Unit = { data ->
+                model(data, "allByPsi")
+            }
+
+            test<AbstractResolveAllByPsiTest>(init = allByPsiInit)
+
+            test<AbstractResolveSymbolWithResolveExtensionTest> {
+                model(it, "resolveExtensions")
+            }
+        }
+
+        test<AbstractPhysicalResolveDanglingFileSymbolTest> {
+            model("danglingFile", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+        }
+
+        test<AbstractNonPhysicalResolveDanglingFileSymbolTest> {
+            model("danglingFile", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+        }
+    }
+
+    group(filter = testModuleKindIs(TestModuleKind.Source, TestModuleKind.LibrarySource)) {
+        test<AbstractDanglingFileResolutionModeProviderTest>(filter = testModuleKindIs(TestModuleKind.Source)) {
+            model("danglingFileResolutionModeProvider", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+        }
+    }
+
+    component(
+        "compilerFacility",
+        filter = testModuleKindIs(TestModuleKind.Source, TestModuleKind.LibrarySource, TestModuleKind.LibraryBinary)
+                and analysisSessionModeIs(AnalysisSessionMode.Normal)
+                and analysisApiModeIs(AnalysisApiMode.Ide)
+    ) {
+        test<AbstractCompilerFacilityTest>(filter = testModuleKindIs(TestModuleKind.LibrarySource)) {
+            model("compilation", pattern = TestGeneratorUtil.KT, excludeDirs = listOf("codeFragments/reifiedTypeParams"))
+        }
+
+        test<AbstractCompilerFacilityTest>(filter = testModuleKindIs(TestModuleKind.Source)) {
+            model("compilation", pattern = TestGeneratorUtil.KT)
+        }
+
+        test<AbstractFirPluginPrototypeMultiModuleCompilerFacilityTest>(filter = testModuleKindIs(TestModuleKind.Source)) {
+            model("firPluginPrototypeMultiModule", pattern = TestGeneratorUtil.KT)
+        }
+
+        test<AbstractFirPluginPrototypeCompilerFacilityTestWithAnalysis>(filter = testModuleKindIs(TestModuleKind.Source)) {
+            model("bugsFromRealComposeApps", pattern = TestGeneratorUtil.KT)
+        }
+    }
+
+    group(filter = testModuleKindIs(TestModuleKind.SourceLike)) {
+        generateAnalysisApiComponentsTestsForSourceLike()
+    }
+
+    group(filter = testModuleKindIs(TestModuleKind.LibraryBinary, TestModuleKind.LibrarySource)) {
+        generateAnalysisApiComponentsTestsForLibraries()
+    }
+
+    component(
+        "compilerPluginGeneratedDeclarationsProvider",
+        filter = testModuleKindIs(TestModuleKind.Source) and
+                analysisSessionModeIs(AnalysisSessionMode.Normal) and
+                analysisApiModeIs(AnalysisApiMode.Ide)
+    ) {
+        test<AbstractCompilerPluginGeneratedDeclarationsTest> {
+            model(it, "compilerPluginGeneratedDeclarations")
+        }
+    }
+
+
+    generateAnalysisApiNonComponentsTests()
+}
+
+private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
+    group(filter = testModuleKindIs(TestModuleKind.SourceLike)) {
+        group("symbols", filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
+            fun TestGroup.TestClass.symbolsModel(data: AnalysisApiTestConfiguratorFactoryData, path: String) {
+                if (data.analysisApiMode == AnalysisApiMode.Standalone || data.targetPlatform != TargetPlatformEnum.JVM) {
+                    model(data, path, excludeDirsRecursively = listOf("withTestCompilerPluginEnabled"))
+                } else {
+                    model(data, path)
+                }
+            }
+
+            test<AbstractSymbolByPsiTest> {
+                symbolsModel(it, "symbolByPsi")
+            }
+
+            test<AbstractSymbolByJavaPsiTest> {
+                symbolsModel(it, "symbolByJavaPsi")
+            }
+
+            test<AbstractSingleSymbolByPsiTest>(
+                targetPlatforms = listOf(
+                    TargetPlatformEnum.JVM,
+                    TargetPlatformEnum.JS,
+                    TargetPlatformEnum.Wasm,
+                    TargetPlatformEnum.WasmWasi,
+                    TargetPlatformEnum.Common
+                )
+            ) {
+                symbolsModel(it, "singleSymbolByPsi")
+            }
+
+            test<AbstractSymbolRestoreFromDifferentModuleTest> {
+                symbolsModel(it, "symbolRestoreFromDifferentModule")
+            }
+
+            test<AbstractSymbolByFqNameTest> {
+                symbolsModel(it, "symbolByFqName")
+            }
+
+            test<AbstractSymbolByReferenceTest> {
+                symbolsModel(it, "symbolByReference")
+            }
+
+            test<AbstractPackageSymbolTest> {
+                symbolsModel(it, "packages")
+            }
+        }
+
+        group("annotations") {
+            test<AbstractAnalysisApiAnnotationsOnTypesTest> {
+                model(it, "annotationsOnTypes")
+            }
+
+            test<AbstractAnalysisApiAnnotationsOnDeclarationsTest> {
+                model(it, "annotationsOnDeclaration")
+            }
+
+            test<AbstractAnalysisApiSpecificAnnotationOnDeclarationTest> {
+                model(it, "specificAnnotations")
+            }
+
+            test<AbstractAnalysisApiAnnotationsOnFilesTest>(
+                filter = analysisSessionModeIs(AnalysisSessionMode.Normal),
+            ) {
+                model(it, "annotationsOnFiles")
+            }
+
+            test<AbstractAnalysisApiAnnotationsOnDeclarationsWithMetaTest> {
+                model(it, "metaAnnotations")
+            }
+
+        }
+
+        group("imports") {
+            test<AbstractReferenceImportAliasTest>(
+                filter = analysisSessionModeIs(AnalysisSessionMode.Normal)
+            ) {
+                model(it, "importAliases")
+            }
+        }
+
+        group("restrictedAnalysis", filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
+            test<AbstractRestrictedAnalysisExceptionWrappingTest> {
+                model(it, "exceptionWrapping")
+            }
+
+            test<AbstractRestrictedAnalysisRejectionTest> {
+                model(it, "restriction")
+            }
+        }
+
+        group("substitutors") {
+            test<AbstractAnalysisApiSubstitutorsTest> {
+                model(it, "typeSubstitution")
+            }
+        }
+    }
+
+    group("types", filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
+        group(filter = testModuleKindIs(TestModuleKind.SourceLike)) {
+            test<AbstractTypeByDeclarationReturnTypeTest> {
+                model(it, "byDeclarationReturnType")
+            }
+
+            test<AbstractBuiltInTypeTest> {
+                model(it, "builtins")
+            }
+
+            group("typePointers") {
+                test<AbstractTypePointerConsistencyTest> {
+                    model(it, "consistency")
+                }
+            }
+
+            group("typeCreation") {
+                test<AbstractTypeCreatorDslTest> {
+                    model(it, "byDsl")
+                }
+            }
+        }
+
+        group(filter = testModuleKindIs(TestModuleKind.Source, TestModuleKind.LibraryBinary)) {
+            test<AbstractAbbreviatedTypeTest> {
+                model(it, "abbreviatedType")
+            }
+        }
+    }
+
+    group("sessions", filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
+        test<AbstractUseSiteLibraryModuleAnalysisRejectionTest>(filter = testModuleKindIs(TestModuleKind.LibraryBinary)) {
+            model(it, "allowUseSiteLibraryModuleAnalysis")
+        }
+
+        // We don't test Standalone API analysis session invalidation because it doesn't support modification (yet). The test infrastructure
+        // registers an "always accessible" lifetime token, which is at odds with checking the validity of an analysis session after
+        // invalidation.
+        group(
+            filter = testModuleKindIs(TestModuleKind.Source) and analysisApiModeIs(AnalysisApiMode.Ide),
+        ) {
+            test<AbstractModuleStateModificationAnalysisSessionInvalidationTest> {
+                model("sessionInvalidation", excludeDirsRecursively = AbstractSessionInvalidationTest.TEST_OUTPUT_DIRECTORY_NAMES)
+            }
+
+            test<AbstractModuleOutOfBlockModificationAnalysisSessionInvalidationTest> {
+                model("sessionInvalidation", excludeDirsRecursively = AbstractSessionInvalidationTest.TEST_OUTPUT_DIRECTORY_NAMES)
+            }
+
+            test<AbstractGlobalModuleStateModificationAnalysisSessionInvalidationTest> {
+                model("sessionInvalidation", excludeDirsRecursively = AbstractSessionInvalidationTest.TEST_OUTPUT_DIRECTORY_NAMES)
+            }
+
+            test<AbstractGlobalSourceModuleStateModificationAnalysisSessionInvalidationTest> {
+                model("sessionInvalidation", excludeDirsRecursively = AbstractSessionInvalidationTest.TEST_OUTPUT_DIRECTORY_NAMES)
+            }
+
+            test<AbstractGlobalSourceOutOfBlockModificationAnalysisSessionInvalidationTest> {
+                model("sessionInvalidation", excludeDirsRecursively = AbstractSessionInvalidationTest.TEST_OUTPUT_DIRECTORY_NAMES)
+            }
+
+            test<AbstractCodeFragmentContextModificationAnalysisSessionInvalidationTest> {
+                model("sessionInvalidation", excludeDirsRecursively = AbstractSessionInvalidationTest.TEST_OUTPUT_DIRECTORY_NAMES)
+            }
+        }
+    }
+}
+
+private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTestsForSourceLike() {
+    component("analysisScopeProvider", filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
+        test<AbstractCanBeAnalysedTest> {
+            model(it, "canBeAnalysed")
+        }
+    }
+
+    component("compileTimeConstantProvider") {
+        test<AbstractCompileTimeConstantEvaluatorTest> {
+            model(it, "evaluate")
+        }
+    }
+
+    component("expressionInfoProvider") {
+        test<AbstractWhenMissingCasesTest> {
+            model(it, "whenMissingCases")
+        }
+
+        test<AbstractReturnTargetSymbolTest> {
+            model(it, "returnExpressionTargetSymbol")
+        }
+
+        test<AbstractIsUsedAsExpressionTest> {
+            model(it, "isUsedAsExpression")
+        }
+
+        test<AbstractIsStableForSmartCastingTest> {
+            model(it, "isStableForSmartCasting")
+        }
+
+        test<AbstractReadWriteAccessTest> {
+            model(it, "readWriteAccess")
+        }
+    }
+
+    component("referenceShortener", filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
+        test<AbstractReferenceShortenerTest> {
+            model(it, "shortenRange")
+        }
+
+        test<AbstractReferenceShortenerForWholeFileTest> {
+            model(it, "shortenWholeFile")
+        }
+    }
+
+    component("expressionTypeProvider") {
+        test<AbstractExpectedExpressionTypeTest> {
+            model(it, "expectedExpressionType")
+        }
+
+        test<AbstractExpressionTypeTest> {
+            model(it, "expressionType")
+        }
+
+        test<AbstractDeclarationReturnTypeTest> {
+            model(it, "declarationReturnType")
+        }
+    }
+
+    component("diagnosticsProvider", filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
+        test<AbstractCollectDiagnosticsTest> {
+            model(it, "diagnostics")
+        }
+
+        test<AbstractDanglingFileCollectDiagnosticsTest> {
+            model(it, "diagnostics")
+        }
+
+        test<AbstractElementDiagnosticsTest> {
+            model(it, "elementDiagnostics")
+        }
+
+        test<AbstractCodeFragmentCollectDiagnosticsTest>(
+            filter = testModuleKindIs(TestModuleKind.Source),
+        ) {
+            model("codeFragmentDiagnostics", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+        }
+    }
+
+    component("containingDeclarationProvider") {
+        test<AbstractContainingDeclarationProviderByPsiTest> {
+            model(it, "containingDeclarationByPsi")
+        }
+
+        test<AbstractContainingDeclarationProviderByReferenceTest> {
+            model(it, "containingDeclarationByReference")
+        }
+
+        test<AbstractContainingDeclarationProviderByMemberScopeTest> {
+            model(it, "containingDeclarationFromMemberScope")
+        }
+
+        test<AbstractContainingDeclarationProviderForSetterParameterTest> {
+            model(it, "containingDeclarationForSetterParameter")
+        }
+
+        test<AbstractContainingDeclarationProviderByDelegatedMemberScopeTest> {
+            model(it, "containingDeclarationByDelegatedMemberScope")
+        }
+
+        // The containing module of a file in dependent analysis is always the dangling file module, so there's no sense in generating
+        // dependent analysis tests here.
+        test<AbstractContainingModuleByFileTest>(filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
+            model(it, "containingModuleByFile")
+        }
+    }
+
+    component("inheritorsProvider", filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
+        test<AbstractSealedInheritorsTest> {
+            model(it, "sealedInheritors")
+        }
+
+        test<AbstractDanglingFileSealedInheritorsTest> {
+            model(it, "sealedInheritors")
+        }
+    }
+
+    component("javaInteroperabilityComponent") {
+        test<AbstractDeclarationTypeAsPsiTypeTest> {
+            model(it, "asPsiType/forDeclaration")
+        }
+
+        test<AbstractExpressionTypeAsPsiTypeTest>(filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
+            model(it, "asPsiType/forExpression")
+        }
+
+        test<AbstractPsiTypeAsKaTypeTest> {
+            model(it, "asKaType")
+        }
+
+        test<AbstractMapToJvmTypeDescriptorTest> {
+            model(it, "mapToJvmTypeDescriptor")
+        }
+
+        test<AbstractIsPrimitiveBackedTest> {
+            model(it, "isPrimitiveBacked")
+        }
+    }
+
+    component("resolveExtensionInfoProvider") {
+        test<AbstractResolveExtensionInfoProviderTest> {
+            model(it, "extensionScopeWithPsi")
+        }
+    }
+
+    component("symbolDeclarationOverridesProvider") {
+        test<AbstractOverriddenDeclarationProviderTest> {
+            model(it, "overriddenSymbols")
+        }
+
+        test<AbstractIsSubclassOfTest> {
+            model(it, "isSubclassOf")
+        }
+    }
+
+    component("renderer") {
+        test<AbstractLegacyRenderingTest> {
+            model(it, "allByPsi")
+        }
+
+        test<AbstractRendererTest> {
+            model(it, "allByPsi")
+        }
+
+        test<AbstractSymbolRenderingByReferenceTest>(analysisApiModeIs(AnalysisApiMode.Ide, AnalysisApiMode.Standalone)) {
+            model(it, "symbolByReference")
+        }
+    }
+
+    component("symbolInfoProvider") {
+        test<AbstractAnnotationApplicableTargetsTest> {
+            model(it, "annotationApplicableTargets")
+        }
+
+        test<AbstractFunctionalInterfaceBySamConstructorTest> {
+            model(it, "functionalInterfaceBySamConstructor")
+        }
+
+        test<AbstractFunctionalInterfaceFunctionTest> {
+            model(it, "functionalInterfaceFunction")
+        }
+
+        test<AbstractCanBeOperatorTest> {
+            model(it, "canBeOperator")
+        }
+
+        test<AbstractEqualityBoundTest> {
+            model(it, "equalityBound")
+        }
+
+        test<AbstractContainingFileAnnotationProviderTest> {
+            model(it, "containingFileAnnotations")
+        }
+
+        test<AbstractDefaultAnnotationTargetsTest> {
+            model(it, "defaultAnnotationTargets")
+        }
+    }
+
+    component("typeCreator") {
+        test<AbstractTypeParameterTypeTest> {
+            model(it, "typeParameter")
+        }
+
+        test<AbstractBuildClassTypeTest> {
+            model(it, "classType")
+        }
+
+        test<AbstractBuildArrayTypeTest> {
+            model(it, "arrayType")
+        }
+    }
+
+    component("typeInfoProvider") {
+        test<AbstractFunctionClassKindTest> {
+            model(it, "functionClassKind")
+        }
+        test<AbstractAnalysisApiGetSuperTypesTest> {
+            model(it, "superTypes")
+        }
+        test<AbstractDoubleColonReceiverTypeTest> {
+            model(it, "doubleColonReceiverType")
+        }
+        test<AbstractIsDenotableTest> {
+            model(it, "isDenotable", excludedPattern = ".*\\.descriptors\\.kt$")
+        }
+    }
+
+    component("typeProvider") {
+        group(filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
+            test<AbstractHasCommonSubtypeTest> {
+                model(it, "haveCommonSubtype")
+            }
+        }
+
+        test<AbstractTypeReferenceTest> {
+            model(it, "typeReference")
+        }
+
+        test<AbstractTypeReferenceInResolvedDeclarationTest> {
+            model(it, "typeReferenceInResolvedDeclaration")
+        }
+
+        test<AbstractDefaultTypeTest> {
+            model(it, "defaultType")
+        }
+
+        test<AbstractVarargArrayTypeTest> {
+            model(it, "varargArrayType")
+        }
+    }
+
+    component("signatureSubstitution") {
+        group(filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
+            test<AbstractAnalysisApiSymbolAsSignatureTest> {
+                model(it, "symbolAsSignature")
+            }
+
+            test<AbstractAnalysisApiSymbolSubstitutionTest> {
+                model(it, "symbolSubstitution")
+            }
+
+            test<AbstractAnalysisApiSignatureSubstitutionTest> {
+                model(it, "signatureSubstitution")
+            }
+
+            test<AbstractAnalysisApiSignatureContractsTest> {
+                model(it, "signatureContracts")
+            }
+        }
+    }
+
+    component("substitutorFactory") {
+        group(filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
+            test<AbstractSubstitutorBuilderTest> {
+                model(it, "substitutorBuilder")
+            }
+        }
+    }
+
+    component("substitutorProvider") {
+        test<AbstractCreateInheritanceTypeSubstitutorTest> {
+            model(it, "createInheritanceTypeSubstitutor")
+        }
+
+        test<AbstractCreateSubtypingUnificationSubstitutorTest> {
+            model(it, "createSubtypingUnificationSubstitutor")
+        }
+    }
+
+    component("typeRelationChecker") {
+        test<AbstractTypeRelationCheckerTest> {
+            model(it, "subtypingAndEquality")
+        }
+    }
+
+    component("relationProvider") {
+        test<AbstractOriginalConstructorIfTypeAliasedTest> {
+            model(it, "originalConstructorIfTypeAliased")
+        }
+
+        test<AbstractFakeOverrideOriginalTest> {
+            model(it, "fakeOverrideOriginal")
+        }
+
+        test<AbstractGetExpectsForActualByMarkerTest> {
+            model(it, "getExpectsForActual")
+        }
+
+        test<AbstractGetExpectsForActualByCoordinatesTest> {
+            model(it, "getExpectsForActual")
+        }
+
+        test<AbstractHasConflictingSignatureWithTest> {
+            model(it, "hasConflictingSignatureWith")
+        }
+
+        test<AbstractImplementationStateTest> {
+            model(it, "implementationState")
+        }
+    }
+
+    component("scopeProvider") {
+        group {
+            test<AbstractTypeScopeTest> {
+                model(it, "typeScope")
+            }
+
+            test<AbstractScopeContextForPositionTest> {
+                model(it, "scopeContextForPosition")
+            }
+
+            test<AbstractFileImportingScopeContextTest> {
+                model(it, "importingScopeContext")
+            }
+        }
+
+        group(filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
+            test<AbstractFileScopeTest> {
+                model(it, "fileScopeTest")
+            }
+
+            test<AbstractDelegateMemberScopeTest> {
+                model(it, "delegatedMemberScope")
+            }
+
+            test<AbstractPackageScopeTest> {
+                model(it, "packageScope")
+            }
+
+            test<AbstractSubstitutionOverridesUnwrappingTest> {
+                model(it, "substitutionOverridesUnwrapping")
+            }
+
+            group {
+                test<AbstractMemberScopeTest> {
+                    when (it.analysisApiMode) {
+                        AnalysisApiMode.Ide ->
+                            model(it, "memberScope")
+                        AnalysisApiMode.Standalone ->
+                            model(it, "memberScope", excludeDirsRecursively = listOf("withTestCompilerPluginEnabled"))
+                    }
+                }
+
+                test<AbstractStaticMemberScopeTest> {
+                    model(it, "staticMemberScope")
+                }
+
+                test<AbstractDeclaredMemberScopeTest> {
+                    model(it, "declaredMemberScope")
+                }
+
+                test<AbstractStaticDeclaredMemberScopeTest> {
+                    model(it, "staticDeclaredMemberScope")
+                }
+
+                test<AbstractCombinedDeclaredMemberScopeTest> {
+                    model(it, "combinedDeclaredMemberScope")
+                }
+
+                test<AbstractNameFilteredMemberScopeTest> {
+                    model(it, "nameFilteredMemberScope")
+                }
+            }
+        }
+    }
+
+    component("dataFlowInfoProvider") {
+        test<AbstractHLSmartCastInfoTest> {
+            model(it, "smartCastInfo")
+        }
+
+        test<AbstractExitPointSnapshotTest> {
+            model(it, "exitPointSnapshot")
+        }
+    }
+
+    component("klibSourceFileNameProvider", filter = analysisApiModeIs(AnalysisApiMode.Standalone)) {
+        test<AbstractGetKlibSourceFileNameTest> {
+            model(it, "getKlibSourceFileName")
+        }
+    }
+
+    component("visibilityChecker") {
+        test<AbstractVisibilityCheckerTest> {
+            model(it, "visibility")
+        }
+    }
+
+    component("kdocProvider") {
+        test<AbstractKDocProviderTest> {
+            model(it, "kdoc")
+        }
+    }
+}
+
+private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTestsForLibraries() {
+    /**
+     * [AbstractGetExpectsForActualByCoordinatesTest] performs [org.jetbrains.kotlin.codegen.optimization.common.analyze] for
+     * library declarations – it's prohibited in Standalone (see KT-76042).
+     */
+    component("relationProvider", filter = analysisApiModeIs(AnalysisApiMode.Ide)) {
+        test<AbstractGetExpectsForActualByCoordinatesTest> {
+            model(it, "getExpectsForActual", excludeDirsRecursively = listOf("incorrectMatching"))
+        }
+    }
+}

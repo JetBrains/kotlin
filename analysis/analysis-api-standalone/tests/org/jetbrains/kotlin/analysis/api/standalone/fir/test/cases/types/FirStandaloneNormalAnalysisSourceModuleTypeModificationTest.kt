@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.types
 
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.typeCreation.AbstractTypeModificationDslTest
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.types.typeCreation.AbstractTypeModificationDslTest
 import org.jetbrains.kotlin.analysis.api.standalone.fir.test.configurators.StandaloneModeConfigurator
 
 @Suppress("JUnitTestCaseWithNoTests")
