@@ -9,7 +9,7 @@ annotation class Other
 
 val annotated: @Anno context(Int)<!SYNTAX!><!>
 val annotatedWithType: @Anno context(Int) String<!SYNTAX!><!>
-val annotatedUnresolved: @Anno context(Unresolved)<!SYNTAX!><!>
+val annotatedUnresolved: @Anno context(<!UNRESOLVED_REFERENCE!>Unresolved<!>)<!SYNTAX!><!>
 val annotatedUnresolvedType: @Anno context(Int) <!UNRESOLVED_REFERENCE!>Unresolved<!><!SYNTAX!><!>
 
 fun after() {}
@@ -26,7 +26,7 @@ interface Forms {
 
 interface InsideList {
     val inside: context(@Anno Int)<!SYNTAX!><!>
-    val insideUnresolved: context(@Anno Unresolved)<!SYNTAX!><!>
+    val insideUnresolved: context(@Anno <!UNRESOLVED_REFERENCE!>Unresolved<!>)<!SYNTAX!><!>
     val bothSides: @Anno context(@Other Int, @Anno("x") String)<!SYNTAX!><!>
     val named: @Anno context(a: @Other Int)<!SYNTAX!><!>
 }

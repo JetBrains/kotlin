@@ -227,16 +227,25 @@ KtContextReceiver(162,165): 'Int'
   null
 
 KtTypeReference(162,165): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(162,165): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(162,165): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtProperty(167,215): 'val annotatedWithType: @Anno context(Int) String'
   null
@@ -290,16 +299,25 @@ KtContextReceiver(204,207): 'Int'
   null
 
 KtTypeReference(204,207): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(204,207): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(204,207): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(209,215): 'String'
   KaSimpleSymbolResolutionSuccess:
@@ -341,16 +359,25 @@ KtContextReceiver(243,246): 'Int'
   null
 
 KtTypeReference(243,246): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(243,246): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(243,246): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtBlockExpression(251,251): ''
   null
@@ -377,16 +404,25 @@ KtContextReceiver(292,295): 'Int'
   null
 
 KtTypeReference(292,295): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(292,295): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(292,295): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtBlockExpression(298,300): '{}'
   null
@@ -413,16 +449,25 @@ KtContextReceiver(335,338): 'Int'
   null
 
 KtTypeReference(335,338): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(335,338): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(335,338): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtBlockExpression(341,343): '{}'
   null
@@ -452,16 +497,25 @@ KtContextReceiver(381,384): 'Int'
   null
 
 KtTypeReference(381,384): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(381,384): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(381,384): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(386,392): 'String'
   KaSimpleSymbolResolutionSuccess:
@@ -539,16 +593,25 @@ KtContextReceiver(445,448): 'Int'
   null
 
 KtTypeReference(445,448): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(445,448): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(445,448): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtBlockExpression(451,453): '{}'
   null
@@ -614,37 +677,61 @@ KtContextReceiver(506,516): '@Other Int'
   null
 
 KtTypeReference(506,516): '@Other Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtDeclarationModifierList(506,512): '@Other'
   null
 
 KtAnnotationEntry(506,512): '@Other'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): Other
+    ]
 
 KtConstructorCalleeExpression(507,512): 'Other'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): Other
+    ]
 
 KtTypeReference(507,512): 'Other'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /Other
+    ]
 
 KtUserType(507,512): 'Other'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /Other
+    ]
 
 KtNameReferenceExpression(507,512): 'Other'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /Other
+    ]
 
 KtUserType(513,516): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(513,516): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(518,524): 'String'
   KaSimpleSymbolResolutionSuccess:
@@ -686,31 +773,49 @@ KtContextReceiver(570,573): 'Int'
   null
 
 KtTypeReference(570,573): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(570,573): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(570,573): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtFunctionTypeReceiver(575,583): '(String)'
   null
 
 KtTypeReference(575,583): '(String)'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtUserType(576,582): 'String'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtNameReferenceExpression(576,582): 'String'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtBlockExpression(586,588): '{}'
   null
@@ -740,16 +845,25 @@ KtContextReceiver(621,624): 'Int'
   null
 
 KtTypeReference(621,624): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(621,624): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(621,624): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtClass(628,974): 'interface Forms {'
   null
@@ -806,16 +920,25 @@ KtContextReceiver(676,679): 'Int'
   null
 
 KtTypeReference(676,679): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(676,679): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(676,679): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtProperty(685,733): 'val withArguments: @Anno("1" + "2") context(Int)'
   null
@@ -899,16 +1022,25 @@ KtContextReceiver(729,732): 'Int'
   null
 
 KtTypeReference(729,732): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(729,732): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(729,732): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtProperty(738,776): 'val several: @Anno @Other context(Int)'
   null
@@ -992,16 +1124,25 @@ KtContextReceiver(772,775): 'Int'
   null
 
 KtTypeReference(772,775): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(772,775): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(772,775): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtProperty(781,822): 'val bracketed: @[Anno Other] context(Int)'
   null
@@ -1088,16 +1229,25 @@ KtContextReceiver(818,821): 'Int'
   null
 
 KtTypeReference(818,821): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(818,821): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(818,821): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtProperty(827,873): 'val useSiteTarget: @receiver:Anno context(Int)'
   null
@@ -1151,16 +1301,25 @@ KtContextReceiver(869,872): 'Int'
   null
 
 KtTypeReference(869,872): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(869,872): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(869,872): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtProperty(878,922): 'val suspendAfter: @Anno suspend context(Int)'
   null
@@ -1211,16 +1370,25 @@ KtContextReceiver(918,921): 'Int'
   null
 
 KtTypeReference(918,921): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(918,921): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(918,921): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtProperty(927,972): 'val suspendBefore: suspend @Anno context(Int)'
   null
@@ -1271,16 +1439,25 @@ KtContextReceiver(968,971): 'Int'
   null
 
 KtTypeReference(968,971): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(968,971): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(968,971): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtClass(976,1195): 'interface InsideList {'
   null
@@ -1301,37 +1478,61 @@ KtContextReceiver(1023,1032): '@Anno Int'
   null
 
 KtTypeReference(1023,1032): '@Anno Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtDeclarationModifierList(1023,1028): '@Anno'
   null
 
 KtAnnotationEntry(1023,1028): '@Anno'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(value: kotlin.String): Anno
+    ]
 
 KtConstructorCalleeExpression(1024,1028): 'Anno'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(value: kotlin.String): Anno
+    ]
 
 KtTypeReference(1024,1028): 'Anno'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /Anno
+    ]
 
 KtUserType(1024,1028): 'Anno'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /Anno
+    ]
 
 KtNameReferenceExpression(1024,1028): 'Anno'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /Anno
+    ]
 
 KtUserType(1029,1032): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(1029,1032): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtProperty(1038,1085): 'val insideUnresolved: context(@Anno Unresolved)'
   null
@@ -1346,37 +1547,58 @@ KtContextReceiver(1068,1084): '@Anno Unresolved'
   null
 
 KtTypeReference(1068,1084): '@Anno Unresolved'
-  null
+  KaSimpleSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Unresolved'.>
 
 KtDeclarationModifierList(1068,1073): '@Anno'
   null
 
 KtAnnotationEntry(1068,1073): '@Anno'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(value: kotlin.String): Anno
+    ]
 
 KtConstructorCalleeExpression(1069,1073): 'Anno'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(value: kotlin.String): Anno
+    ]
 
 KtTypeReference(1069,1073): 'Anno'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /Anno
+    ]
 
 KtUserType(1069,1073): 'Anno'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /Anno
+    ]
 
 KtNameReferenceExpression(1069,1073): 'Anno'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /Anno
+    ]
 
 KtUserType(1074,1084): 'Unresolved'
-  null
+  KaSimpleSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Unresolved'.>
 
 KtNameReferenceExpression(1074,1084): 'Unresolved'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Unresolved'.>
 
 KtProperty(1090,1149): 'val bothSides: @Anno context(@Other Int, @Anno("x") String)'
   null
@@ -1427,64 +1649,106 @@ KtContextReceiver(1119,1129): '@Other Int'
   null
 
 KtTypeReference(1119,1129): '@Other Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtDeclarationModifierList(1119,1125): '@Other'
   null
 
 KtAnnotationEntry(1119,1125): '@Other'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): Other
+    ]
 
 KtConstructorCalleeExpression(1120,1125): 'Other'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): Other
+    ]
 
 KtTypeReference(1120,1125): 'Other'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /Other
+    ]
 
 KtUserType(1120,1125): 'Other'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /Other
+    ]
 
 KtNameReferenceExpression(1120,1125): 'Other'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /Other
+    ]
 
 KtUserType(1126,1129): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(1126,1129): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtContextReceiver(1131,1148): '@Anno("x") String'
   null
 
 KtTypeReference(1131,1148): '@Anno("x") String'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtDeclarationModifierList(1131,1141): '@Anno("x")'
   null
 
 KtAnnotationEntry(1131,1141): '@Anno("x")'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(value: kotlin.String): Anno
+    ]
 
 KtConstructorCalleeExpression(1132,1136): 'Anno'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(value: kotlin.String): Anno
+    ]
 
 KtTypeReference(1132,1136): 'Anno'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /Anno
+    ]
 
 KtUserType(1132,1136): 'Anno'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /Anno
+    ]
 
 KtNameReferenceExpression(1132,1136): 'Anno'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /Anno
+    ]
 
 KtValueArgumentList(1136,1141): '("x")'
   null
@@ -1499,13 +1763,19 @@ KtLiteralStringTemplateEntry(1138,1139): 'x'
   null
 
 KtUserType(1142,1148): 'String'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtNameReferenceExpression(1142,1148): 'String'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtProperty(1154,1193): 'val named: @Anno context(a: @Other Int)'
   null
@@ -1556,37 +1826,61 @@ KtParameter(1179,1192): 'a: @Other Int'
   null
 
 KtTypeReference(1182,1192): '@Other Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtDeclarationModifierList(1182,1188): '@Other'
   null
 
 KtAnnotationEntry(1182,1188): '@Other'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): Other
+    ]
 
 KtConstructorCalleeExpression(1183,1188): 'Other'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): Other
+    ]
 
 KtTypeReference(1183,1188): 'Other'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /Other
+    ]
 
 KtUserType(1183,1188): 'Other'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /Other
+    ]
 
 KtNameReferenceExpression(1183,1188): 'Other'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /Other
+    ]
 
 KtUserType(1189,1192): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(1189,1192): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtClass(1197,1367): 'interface TypeAfterList {'
   null
@@ -1646,16 +1940,25 @@ KtContextReceiver(1251,1254): 'Int'
   null
 
 KtTypeReference(1251,1254): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(1251,1254): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(1251,1254): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(1256,1262): 'String'
   KaSimpleSymbolResolutionSuccess:
@@ -1723,16 +2026,25 @@ KtContextReceiver(1301,1304): 'Int'
   null
 
 KtTypeReference(1301,1304): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(1301,1304): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(1301,1304): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(1306,1316): 'Unresolved'
   KaSimpleSymbolResolutionError:
@@ -1799,16 +2111,25 @@ KtContextReceiver(1353,1356): 'Int'
   null
 
 KtTypeReference(1353,1356): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(1353,1356): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(1353,1356): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNullableType(1358,1365): 'String?'
   KaSimpleSymbolResolutionSuccess:
@@ -1886,16 +2207,25 @@ KtContextReceiver(1433,1436): 'Int'
   null
 
 KtTypeReference(1433,1436): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(1433,1436): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(1433,1436): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtClass(1442,1622): 'interface Nested {'
   null
@@ -1979,16 +2309,25 @@ KtContextReceiver(1502,1505): 'Int'
   null
 
 KtTypeReference(1502,1505): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(1502,1505): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(1502,1505): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtProperty(1512,1567): 'val functionTypeParameter: (@Anno context(Int)) -> Unit'
   null
@@ -2057,16 +2396,25 @@ KtContextReceiver(1554,1557): 'Int'
   null
 
 KtTypeReference(1554,1557): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(1554,1557): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(1554,1557): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtTypeReference(1563,1567): 'Unit'
   KaSimpleSymbolResolutionSuccess:
@@ -2153,16 +2501,25 @@ KtContextReceiver(1616,1619): 'Int'
   null
 
 KtTypeReference(1616,1619): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(1616,1619): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(1616,1619): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNamedFunction(1624,1662): 'fun (@Anno context(Int)).receiver() {}'
   null
@@ -2213,16 +2570,25 @@ KtContextReceiver(1643,1646): 'Int'
   null
 
 KtTypeReference(1643,1646): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(1643,1646): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(1643,1646): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtParameterList(1657,1659): '()'
   null
@@ -2285,16 +2651,25 @@ KtContextReceiver(1695,1698): 'Int'
   null
 
 KtTypeReference(1695,1698): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(1695,1698): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(1695,1698): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtBlockExpression(1701,1703): '{}'
   null
@@ -2351,16 +2726,25 @@ KtContextReceiver(1737,1740): 'Int'
   null
 
 KtTypeReference(1737,1740): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(1737,1740): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(1737,1740): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtCallExpression(1744,1750): 'TODO()'
   KaSimpleSymbolResolutionSuccess:
@@ -2435,16 +2819,25 @@ KtContextReceiver(1775,1778): 'Int'
   null
 
 KtTypeReference(1775,1778): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(1775,1778): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(1775,1778): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtParameterList(1786,1788): '()'
   null
@@ -2525,16 +2918,25 @@ KtContextReceiver(1843,1846): 'Int'
   null
 
 KtTypeReference(1843,1846): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(1843,1846): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(1843,1846): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtBlockExpression(1848,1850): '{}'
   null
@@ -2588,16 +2990,25 @@ KtContextReceiver(1884,1887): 'Int'
   null
 
 KtTypeReference(1884,1887): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(1884,1887): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(1884,1887): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtClass(1890,1933): 'interface Supertype : @Anno context(Int) {}'
   null
@@ -2654,16 +3065,25 @@ KtContextReceiver(1926,1929): 'Int'
   null
 
 KtTypeReference(1926,1929): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(1926,1929): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(1926,1929): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtClassBody(1931,1933): '{}'
   null
@@ -2729,16 +3149,25 @@ KtContextReceiver(1981,1984): 'Int'
   null
 
 KtTypeReference(1981,1984): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(1981,1984): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(1981,1984): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtClass(1988,2065): 'class Setter {'
   null
@@ -2828,16 +3257,25 @@ KtContextReceiver(2055,2058): 'Int'
   null
 
 KtTypeReference(2055,2058): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(2055,2058): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(2055,2058): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtBlockExpression(2061,2063): '{}'
   null
@@ -2924,16 +3362,25 @@ KtContextReceiver(2115,2118): 'Int'
   null
 
 KtTypeReference(2115,2118): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(2115,2118): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(2115,2118): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtCallExpression(2122,2128): 'TODO()'
   KaSimpleSymbolResolutionSuccess:
@@ -3014,16 +3461,25 @@ KtContextReceiver(2165,2168): 'Int'
   null
 
 KtTypeReference(2165,2168): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(2165,2168): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(2165,2168): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtBlockExpression(2173,2173): ''
   null
@@ -3086,16 +3542,25 @@ KtContextReceiver(2224,2227): 'Int'
   null
 
 KtTypeReference(2224,2227): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(2224,2227): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(2224,2227): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtBlockExpression(2230,2232): '{}'
   null
@@ -3170,16 +3635,25 @@ KtContextReceiver(2272,2275): 'Int'
   null
 
 KtTypeReference(2272,2275): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(2272,2275): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(2272,2275): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtProperty(2282,2322): 'val isTarget = (a is @Anno context(Int))'
   null
@@ -3251,16 +3725,25 @@ KtContextReceiver(2317,2320): 'Int'
   null
 
 KtTypeReference(2317,2320): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(2317,2320): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(2317,2320): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtTryExpression(2327,2366): 'try {} catch (e: @Anno context(Int)) {}'
   null
@@ -3323,16 +3806,25 @@ KtContextReceiver(2358,2361): 'Int'
   null
 
 KtTypeReference(2358,2361): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(2358,2361): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(2358,2361): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtBlockExpression(2364,2366): '{}'
   null
