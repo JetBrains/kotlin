@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.common.IdSignaturesExtractorFromRegularKlib
 import org.jetbrains.kotlin.backend.common.LoadedNativeKlibs
 import org.jetbrains.kotlin.backend.konan.serialization.IdSignaturesExtractorFromCInteropKlib
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.konan.KonanPendingCompilationError
 import org.jetbrains.kotlin.konan.library.SerializedKlibDAG
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_PACKAGE
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -232,10 +233,12 @@ interface KlibDAGNode {
     val allDependencies: Set<KotlinLibrary>
 }
 
-class KlibDAGCyclicDependencyException(cycle: List<KotlinLibrary>) : Exception(
-    "Cyclic dependency detected while computing DAG of KLIB dependencies:\n" +
-            (cycle + cycle.first()).joinToString(" ->\n") { it.path.pathString }
-)
+class KlibDAGCyclicDependencyException(override val message: String) : KonanPendingCompilationError, Exception(message) {
+    constructor(cycle: List<KotlinLibrary>) : this(
+        "Cyclic dependency detected while computing DAG of KLIB dependencies:\n" +
+                (cycle + cycle.first()).joinToString(" ->\n") { it.path.pathString }
+    )
+}
 
 @RequiresOptIn("Direct access to the internal Klib DAG API is discouraged.")
 annotation class InternalKlibDAGApi

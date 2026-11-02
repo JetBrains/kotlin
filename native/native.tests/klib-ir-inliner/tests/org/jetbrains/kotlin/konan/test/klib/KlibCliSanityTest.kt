@@ -491,13 +491,20 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
         ).result
 
         val compilationToolCall = (compilationResult as TestCompilationResult.CompilationToolFailure).loggedData
-        assertNotEquals(ExitCode.OK, compilationToolCall.exitCode)
+        assertEquals(ExitCode.COMPILATION_ERROR, compilationToolCall.exitCode)
 
-        val toolOutput = compilationToolCall.toolOutput
-        assertTrue("Cyclic dependency detected while computing DAG of KLIB dependencies:" in toolOutput) { toolOutput }
-        for (klibPath in moduleNameToKlibPath.values) {
-            assertTrue(klibPath in toolOutput) { "Library $klibPath is not mentioned in the compiler output:\n$toolOutput" }
-        }
+        // Note: The cycle is reported starting from the first library in the load order, i.e. in the order of `-library` arguments.
+        // a depends on c, c depends on b, b depends on a.
+        val expectedDiagnostic = """
+            error: cyclic dependency detected while computing DAG of KLIB dependencies:
+            ${moduleNameToKlibPath["a"]} ->
+            ${moduleNameToKlibPath["c"]} ->
+            ${moduleNameToKlibPath["b"]} ->
+            ${moduleNameToKlibPath["a"]}
+        """.trimIndent()
+
+
+        assertEquals(expectedDiagnostic, compilationToolCall.toolOutput.trimEnd())
     }
 
     @Test
