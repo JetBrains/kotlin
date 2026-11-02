@@ -1,0 +1,12 @@
+Diagnostics from foo1.kt:
+  for PSI element of type KtNamedFunction at (4,1) - (5,33)
+    CONFLICTING_OVERLOADS      text ranges: [(55,82)]
+      PSI: KtNamedFunction at (4,1) - (5,33)
+
+Diagnostics from foo2.kt:
+  <NO DIAGNOSTICS>
+
+Diagnostics from foo3.kt:
+  for PSI element of type KtNamedFunction at (10,1) - (11,33)
+    CONFLICTING_OVERLOADS      text ranges: [(26,53)]
+      PSI: KtNamedFunction at (10,1) - (11,33)

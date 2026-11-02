@@ -27,6 +27,7 @@ abstract class AbstractDanglingFileCollectDiagnosticsTest : AbstractCollectDiagn
     private object Directives : SimpleDirectivesContainer() {
         val IGNORE_DANGLING_FILES by stringDirective("Ignore dangling file diagnostic tests.")
         val IGNORE_SELF_MODE by stringDirective("Whether to use ${KaDanglingFileResolutionMode.IGNORE_SELF} mode.")
+        val COPY_OF_DANGLING_FILE by stringDirective("Whether to analyze a copy of the dangling file instead of the dangling file itself.")
     }
 
     override fun doTest(testServices: TestServices) {
@@ -43,11 +44,20 @@ abstract class AbstractDanglingFileCollectDiagnosticsTest : AbstractCollectDiagn
         val contextModule = KotlinProjectStructureProvider.getModule(ktFile.project, ktFile, useSiteModule = null)
         val ktPsiFactory = KtPsiFactory.contextual(ktFile, markGenerated = true, eventSystemEnabled = false)
 
+        val directives = testServices.moduleStructure.allDirectives
         val fakeFile = ktPsiFactory.createFile("fake.kt", ktFile.text).apply {
             this.contextModule = contextModule
-            if (Directives.IGNORE_SELF_MODE in testServices.moduleStructure.allDirectives) {
+            if (Directives.IGNORE_SELF_MODE in directives) {
                 originalFile = ktFile
             }
+        }
+
+        if (Directives.COPY_OF_DANGLING_FILE in directives) {
+            val fakeFileCopy = KtPsiFactory(ktFile.project, markGenerated = true).createFile("fake.kt", ktFile.text).apply {
+                originalFile = fakeFile
+            }
+
+            return PreparedFile(fakeFileCopy, ktFile.name)
         }
 
         return PreparedFile(fakeFile, ktFile.name)
