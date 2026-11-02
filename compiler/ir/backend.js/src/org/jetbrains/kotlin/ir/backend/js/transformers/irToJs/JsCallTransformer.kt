@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.config.useEs6ConstLet
 
 class JsCallTransformer(private val jsOrJsFuncCall: IrCall, private val context: JsGenerationContext) {
     private val statements = getJsStatements()
@@ -81,7 +82,8 @@ class JsCallTransformer(private val jsOrJsFuncCall: IrCall, private val context:
             context.checkIfJsCode(jsOrJsFuncCall.symbol) -> {
                 translateJsCodeIntoStatementList(
                     jsOrJsFuncCall.arguments[0] ?: compilationException("JsCode is expected", jsOrJsFuncCall),
-                    context.currentFileEntry
+                    context.currentFileEntry,
+                    context.staticContext.backendContext.configuration.useEs6ConstLet,
                 )
                     ?: compilationException("Cannot compute js code", jsOrJsFuncCall)
             }

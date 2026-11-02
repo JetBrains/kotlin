@@ -19,11 +19,13 @@ import org.jetbrains.kotlin.js.backend.ast.JsFunction
 import org.jetbrains.kotlin.js.backend.ast.JsInvocation
 import org.jetbrains.kotlin.js.backend.ast.JsStatement
 import org.jetbrains.kotlin.js.config.compileLambdasAsEs6ArrowFunctions
+import org.jetbrains.kotlin.js.config.useEs6ConstLet
 import org.jetbrains.kotlin.name.Name
 import java.util.*
 
 class JsPolyfills(configuration: CompilerConfiguration) {
     private val useEs6Arrows = configuration.compileLambdasAsEs6ArrowFunctions
+    private val useEs6ConstLet = configuration.useEs6ConstLet
 
     private val polyfillsPerFile = hashMapOf<IrFile, MutableSet<IrDeclaration>>()
 
@@ -65,11 +67,12 @@ class JsPolyfills(configuration: CompilerConfiguration) {
 
             if (polyfillCodeString in orderedMapOfPolyfills) continue
 
-            orderedMapOfPolyfills[polyfillCodeString] = translateJsCodeIntoStatementList(polyfillCodeExpression, declaration)
-                // Wrap the polyfill code in an immediately invoked function expression so that 'var's declared in the polyfill
-                // don't pollute the global scope.
-                ?.wrapInIIFE()
-                ?: emptyList()
+            orderedMapOfPolyfills[polyfillCodeString] =
+                translateJsCodeIntoStatementList(polyfillCodeExpression, declaration, useEs6ConstLet)
+                    // Wrap the polyfill code in an immediately invoked function expression so that 'var's declared in the polyfill
+                    // don't pollute the global scope.
+                    ?.wrapInIIFE()
+                    ?: emptyList()
         }
 
         return orderedMapOfPolyfills.flatMap { it.value }
