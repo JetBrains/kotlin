@@ -8,6 +8,14 @@ public final class org/jetbrains/kotlin/platform/JsPlatformKt {
 	public static final fun isJs (Lorg/jetbrains/kotlin/platform/TargetPlatform;)Z
 }
 
+public abstract class org/jetbrains/kotlin/platform/JvmPlatform : org/jetbrains/kotlin/platform/SimplePlatform {
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public final class org/jetbrains/kotlin/platform/JvmPlatformKt {
+	public static final fun isJvm (Lorg/jetbrains/kotlin/platform/TargetPlatform;)Z
+}
+
 public abstract class org/jetbrains/kotlin/platform/NativePlatform : org/jetbrains/kotlin/platform/SimplePlatform {
 	public fun <init> (Ljava/lang/String;)V
 }

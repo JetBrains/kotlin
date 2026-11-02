@@ -6,12 +6,11 @@
 package org.jetbrains.kotlin.platform.jvm
 
 import org.jetbrains.kotlin.config.JvmTarget
-import org.jetbrains.kotlin.platform.SimplePlatform
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.TargetPlatformVersion
 import org.jetbrains.kotlin.platform.toTargetPlatform
 
-abstract class JvmPlatform : SimplePlatform("JVM") {
+abstract class JvmPlatform : org.jetbrains.kotlin.platform.JvmPlatform("JVM") {
     override val oldFashionedDescription: String
         get() = "JVM "
 }
