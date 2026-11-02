@@ -64,6 +64,7 @@ object CompilerModules {
         ":wasm:wasm.config",
         ":native:base",
         ":native:native.config",
+        ":native:kotlin-native-targets",
         ":native:kotlin-native-utils",
     )
 
@@ -438,6 +439,7 @@ object CompilerModules {
         ":kotlin-util-io",
         ":kotlin-util-klib",
         ":kotlin-util-klib-metadata",
+        ":native:kotlin-native-targets",
         ":native:kotlin-native-utils",
         ":compiler:build-tools:kotlin-build-tools-api",
         ":compiler:build-tools:kotlin-build-tools-api-jps",

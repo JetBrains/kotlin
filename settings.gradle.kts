@@ -231,6 +231,7 @@ include(
     ":js:js.tests:klib-compatibility",
     ":native:unsafe-mem",
     ":native:kotlin-native-utils",
+    ":native:kotlin-native-targets",
     ":native:frontend.native",
     ":native:kotlin-klib-commonizer",
     ":native:kotlin-klib-commonizer-api",
@@ -844,6 +845,7 @@ project(":kotlin-util-klib").projectDir = File("$rootDir/compiler/util-klib")
 project(":kotlin-util-klib-metadata").projectDir = File("$rootDir/compiler/util-klib-metadata")
 project(":kotlin-util-klib-abi").projectDir = File("$rootDir/compiler/util-klib-abi")
 project(":native:kotlin-native-utils").projectDir = File("$rootDir/native/utils")
+project(":native:kotlin-native-targets").projectDir = File("$rootDir/native/targets")
 project(":native:frontend.native").projectDir = File("$rootDir/native/frontend")
 project(":native:kotlin-klib-commonizer").projectDir = File("$rootDir/native/commonizer")
 project(":native:kotlin-klib-commonizer-api").projectDir = File("$rootDir/native/commonizer-api")

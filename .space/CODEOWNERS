@@ -256,6 +256,7 @@
 /core/language.model/api/language-model-api.foreign "Kotlin Analysis API"
 /core/language.targets/api/language-targets-api.foreign "Kotlin Analysis API"
 /core/language.targets.jvm/api/language-targets-jvm-api.foreign "Kotlin Analysis API"
+/native/targets/api/kotlin-native-targets-api.foreign "Kotlin Analysis API"
 /core/language.version-settings/api/language-version-settings-api.foreign "Kotlin Analysis API"
 /core/compiler.common/ "Kotlin Frontend"
 /core/compiler.common.jvm/ "Kotlin Frontend" "Kotlin JVM"
