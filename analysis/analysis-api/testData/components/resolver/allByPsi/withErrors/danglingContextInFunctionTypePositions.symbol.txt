@@ -887,16 +887,25 @@ KtContextReceiver(637,640): 'Int'
   null
 
 KtTypeReference(637,640): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(637,640): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(637,640): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(642,648): 'String'
   KaSimpleSymbolResolutionSuccess:
@@ -2306,16 +2315,25 @@ KtContextReceiver(1505,1508): 'Int'
   null
 
 KtTypeReference(1505,1508): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(1505,1508): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(1505,1508): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtProperty(1516,1562): 'val nullableWithoutAnnotation: (context(Int))?'
   null
@@ -2333,16 +2351,25 @@ KtContextReceiver(1556,1559): 'Int'
   null
 
 KtTypeReference(1556,1559): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(1556,1559): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(1556,1559): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtProperty(1567,1617): 'val nullableWithType: (@Anno context(Int) String)?'
   null
@@ -2402,16 +2429,25 @@ KtContextReceiver(1604,1607): 'Int'
   null
 
 KtTypeReference(1604,1607): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(1604,1607): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(1604,1607): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(1609,1615): 'String'
   KaSimpleSymbolResolutionSuccess:
@@ -2480,31 +2516,49 @@ KtContextReceiver(1663,1666): 'Int'
   null
 
 KtTypeReference(1663,1666): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(1663,1666): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(1663,1666): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtFunctionTypeReceiver(1668,1676): '(String)'
   null
 
 KtTypeReference(1668,1676): '(String)'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtUserType(1669,1675): 'String'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtNameReferenceExpression(1669,1675): 'String'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtProperty(1684,1728): 'val doubleNullable: ((@Anno context(Int))?)?'
   null
@@ -2561,16 +2615,25 @@ KtContextReceiver(1720,1723): 'Int'
   null
 
 KtTypeReference(1720,1723): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(1720,1723): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(1720,1723): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtProperty(1733,1803): 'val nullableInsideDangling: @Anno context(Int) (@Other context(Long))?'
   null
@@ -2687,16 +2750,25 @@ KtContextReceiver(1796,1800): 'Long'
   null
 
 KtTypeReference(1796,1800): 'Long'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Long
+    ]
 
 KtUserType(1796,1800): 'Long'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Long
+    ]
 
 KtNameReferenceExpression(1796,1800): 'Long'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Long
+    ]
 
 KtProperty(1808,1836): 'val nullableWithoutType: ()?'
   null
@@ -2723,37 +2795,61 @@ KtContextReceiver(1878,1888): '@Other Int'
   null
 
 KtTypeReference(1878,1888): '@Other Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtDeclarationModifierList(1878,1884): '@Other'
   null
 
 KtAnnotationEntry(1878,1884): '@Other'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): Other
+    ]
 
 KtConstructorCalleeExpression(1879,1884): 'Other'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): Other
+    ]
 
 KtTypeReference(1879,1884): 'Other'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /Other
+    ]
 
 KtUserType(1879,1884): 'Other'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /Other
+    ]
 
 KtNameReferenceExpression(1879,1884): 'Other'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /Other
+    ]
 
 KtUserType(1885,1888): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(1885,1888): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtProperty(1896,1945): 'val nullableNullableType: (context(Int) String?)?'
   null
@@ -2777,16 +2873,25 @@ KtContextReceiver(1931,1934): 'Int'
   null
 
 KtTypeReference(1931,1934): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(1931,1934): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(1931,1934): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNullableType(1936,1943): 'String?'
   KaSimpleSymbolResolutionSuccess:
@@ -2828,16 +2933,25 @@ KtContextReceiver(1988,1991): 'Int'
   null
 
 KtTypeReference(1988,1991): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(1988,1991): 'Int'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(1988,1991): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtProperty(1999,2063): 'val suspendInsideDangling: context(Int) (suspend context(Long))?'
   null
@@ -2885,16 +2999,25 @@ KtContextReceiver(2056,2060): 'Long'
   null
 
 KtTypeReference(2056,2060): 'Long'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Long
+    ]
 
 KtUserType(2056,2060): 'Long'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Long
+    ]
 
 KtNameReferenceExpression(2056,2060): 'Long'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Long
+    ]
 
 KtProperty(2068,2133): 'val suspendOutsideDangling: suspend context(Int) (context(Long))?'
   null
@@ -2942,16 +3065,25 @@ KtContextReceiver(2126,2130): 'Long'
   null
 
 KtTypeReference(2126,2130): 'Long'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Long
+    ]
 
 KtUserType(2126,2130): 'Long'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Long
+    ]
 
 KtNameReferenceExpression(2126,2130): 'Long'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Long
+    ]
 
 KtProperty(2138,2177): 'val parenthesized: (@Anno context(Int))'
   null

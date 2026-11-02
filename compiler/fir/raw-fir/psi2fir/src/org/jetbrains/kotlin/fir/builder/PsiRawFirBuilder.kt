@@ -2783,26 +2783,44 @@ open class PsiRawFirBuilder(
             // `getModifierList()` only returns the first one, so we have to get all modifier list children.
             val allModifierLists = allModifierLists.toMutableList()
 
+            // A nullable type with a dangling context parameter list is kept as a whole, see the `is KtNullableType` branch below
             fun KtTypeElement?.unwrapNullable(): KtTypeElement? =
                 when (this) {
                     is KtNullableType -> {
                         allModifierLists += this.allModifierLists
-                        this.innerType.unwrapNullable()
+                        if (this.danglingContextParameterList != null) this else this.innerType.unwrapNullable()
                     }
                     else -> this
                 }
 
             // In incomplete code like `context(A)` or `context(A) B`, no function type follows the context parameter list, so the parser
-            // leaves the list directly under the type reference. Such a type is an error, and the incomplete function type is kept as its
-            // partially resolved type ref: the type element becomes its return type, so its source moves from the type reference to the
-            // type element.
-            val danglingContextParameterList = danglingContextParameterList
-            val typeElementSource = when {
-                danglingContextParameterList != null && typeElement != null -> typeElement.toFirSourceElement()
-                else -> source
+            // leaves the list directly under the type reference (or under the nullable type in `(context(A))?`). Such a type is an error,
+            // and the incomplete function type is kept as its partially resolved type ref: the type element becomes its return type, so
+            // its source moves from the type reference to the type element.
+            fun buildIncompleteFunctionType(
+                source: KtPsiSourceElement,
+                contextParameterList: KtContextParameterList,
+                receiver: KtFunctionTypeReceiver?,
+                isNullable: Boolean,
+                returnTypeRef: FirTypeRef?,
+            ): FirErrorTypeRefBuilder = FirErrorTypeRefBuilder().apply {
+                this.source = source
+                diagnostic = ConeSyntaxDiagnostic("Incomplete code")
+                partiallyResolvedTypeRef = buildFunctionTypeRef {
+                    this.source = source.fakeElement(KtFakeSourceElementKind.IncompleteFunctionType)
+                    isMarkedNullable = isNullable
+                    isSuspend = allModifierLists.any { it.hasSuspendModifier() }
+                    receiverTypeRef = receiver?.typeReference?.toFirType()
+                    this.returnTypeRef = returnTypeRef ?: buildErrorTypeRef { diagnostic = ConeSyntaxDiagnostic("Incomplete code") }
+                    contextParameterList.convertContextParameterTypesTo(contextParameterTypeRefs)
+                }
             }
 
-            val typeElementBuilder = when (val unwrappedElement = typeElement.unwrapNullable()) {
+            fun convertTypeElement(
+                unwrappedElement: KtTypeElement?,
+                typeElementSource: KtPsiSourceElement,
+                isNullable: Boolean,
+            ): FirAnnotationContainerBuilder = when (unwrappedElement) {
                 is KtDynamicType -> FirDynamicTypeRefBuilder().apply {
                     this.source = typeElementSource
                     isMarkedNullable = isNullable
@@ -2863,6 +2881,16 @@ open class PsiRawFirBuilder(
                     isMarkedNullable = isNullable
                     unwrappedElement.types.mapTo(types) { it.toFirOrErrorType() }
                 }
+                // `(context(A) B)?`: the same as `context(A) B`, but the list is under the nullable type
+                is KtNullableType -> buildIncompleteFunctionType(
+                    typeElementSource,
+                    unwrappedElement.danglingContextParameterList!!,
+                    unwrappedElement.danglingFunctionTypeReceiver,
+                    isNullable = true,
+                    returnTypeRef = unwrappedElement.innerType?.let {
+                        convertTypeElement(it.unwrapNullable(), it.toFirSourceElement(), it is KtNullableType).build() as FirTypeRef
+                    },
+                )
                 null -> FirErrorTypeRefBuilder().apply {
                     this.source = typeElementSource
                     diagnostic = ConeSyntaxDiagnostic("Incomplete code")
@@ -2872,23 +2900,22 @@ open class PsiRawFirBuilder(
                 }
             }
 
+            val danglingContextParameterList = danglingContextParameterList
+            val typeElementSource = when {
+                danglingContextParameterList != null && typeElement != null -> typeElement.toFirSourceElement()
+                else -> source
+            }
+            val typeElementBuilder = convertTypeElement(typeElement.unwrapNullable(), typeElementSource, isNullable)
+
             val firTypeBuilder = when (danglingContextParameterList) {
                 null -> typeElementBuilder
-                else -> FirErrorTypeRefBuilder().apply {
-                    this.source = source
-                    diagnostic = ConeSyntaxDiagnostic("Incomplete code")
-                    partiallyResolvedTypeRef = buildFunctionTypeRef {
-                        this.source = source.fakeElement(KtFakeSourceElementKind.IncompleteFunctionType)
-                        isMarkedNullable = false
-                        isSuspend = allModifierLists.any { it.hasSuspendModifier() }
-                        receiverTypeRef = danglingFunctionTypeReceiver?.typeReference?.toFirType()
-                        returnTypeRef = when (typeElement) {
-                            null -> buildErrorTypeRef { diagnostic = ConeSyntaxDiagnostic("Incomplete code") }
-                            else -> typeElementBuilder.build() as FirTypeRef
-                        }
-                        danglingContextParameterList.convertContextParameterTypesTo(contextParameterTypeRefs)
-                    }
-                }
+                else -> buildIncompleteFunctionType(
+                    source,
+                    danglingContextParameterList,
+                    danglingFunctionTypeReceiver,
+                    isNullable = false,
+                    returnTypeRef = if (typeElement != null) typeElementBuilder.build() as FirTypeRef else null,
+                )
             }
 
             for (modifierList in allModifierLists) {

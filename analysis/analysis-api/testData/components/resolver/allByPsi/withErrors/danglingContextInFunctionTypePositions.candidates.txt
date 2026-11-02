@@ -4038,10 +4038,40 @@ KtDeclarationModifierList(1878,1884): '@Other'
   NO_CANDIDATES
 
 KtAnnotationEntry(1878,1884): '@Other'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Other
+        symbol = <constructor>(): Other
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
 
 KtConstructorCalleeExpression(1879,1884): 'Other'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Other
+        symbol = <constructor>(): Other
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
 
 KtTypeReference(1879,1884): 'Other'
   NO_CANDIDATES
@@ -4050,7 +4080,22 @@ KtUserType(1879,1884): 'Other'
   NO_CANDIDATES
 
 KtNameReferenceExpression(1879,1884): 'Other'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Other
+        symbol = <constructor>(): Other
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
 
 KtUserType(1885,1888): 'Int'
   NO_CANDIDATES

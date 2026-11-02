@@ -1941,6 +1941,8 @@ public abstract interface annotation class org/jetbrains/kotlin/psi/KtNonPublicA
 
 public class org/jetbrains/kotlin/psi/KtNullableType : org/jetbrains/kotlin/psi/KtModifierListOwnerStub, org/jetbrains/kotlin/psi/KtTypeElement, org/jetbrains/kotlin/resolution/KtResolvable {
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
+	public fun getDanglingContextParameterList ()Lorg/jetbrains/kotlin/psi/KtContextParameterList;
+	public fun getDanglingFunctionTypeReceiver ()Lorg/jetbrains/kotlin/psi/KtFunctionTypeReceiver;
 	public fun getInnerType ()Lorg/jetbrains/kotlin/psi/KtTypeElement;
 	public fun getQuestionMarkNode ()Lcom/intellij/lang/ASTNode;
 	public fun getTypeArgumentsAsTypes ()Ljava/util/List;

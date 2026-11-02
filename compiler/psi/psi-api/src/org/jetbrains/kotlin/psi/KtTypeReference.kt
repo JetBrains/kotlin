@@ -56,7 +56,8 @@ class KtTypeReference : KtModifierListOwnerStub<KotlinPlaceHolderStub<KtTypeRefe
      *
      * In valid code, the context parameter list belongs to the [KtFunctionType] (see [KtFunctionType.getContextParameterList]). When no
      * function type follows the list, the parser leaves the list directly under the type reference, and the [typeElement] (if any) is the
-     * type after the list.
+     * type after the list. In a nullable type like `(context(Int))?`, the list is under the [KtNullableType] instead
+     * (see [KtNullableType.getDanglingContextParameterList]).
      *
      * ### Example:
      *
@@ -72,7 +73,9 @@ class KtTypeReference : KtModifierListOwnerStub<KotlinPlaceHolderStub<KtTypeRefe
      * The receiver of an incomplete function type, or `null` if there is none.
      *
      * In valid code, the receiver belongs to the [KtFunctionType] (see [KtFunctionType.getReceiver]). When no parameter list follows the
-     * dot after the receiver type, the parser leaves the receiver directly under the type reference.
+     * dot after the receiver type, the parser leaves the receiver directly under the type reference. In a nullable type like
+     * `(context(Int) (String).)?`, the receiver is under the [KtNullableType] instead
+     * (see [KtNullableType.getDanglingFunctionTypeReceiver]).
      *
      * ### Example:
      *

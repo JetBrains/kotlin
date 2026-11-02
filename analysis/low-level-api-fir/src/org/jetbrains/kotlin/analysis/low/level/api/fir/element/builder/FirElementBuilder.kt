@@ -58,7 +58,12 @@ internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolv
                     unwrappedElement.getArgumentExpression()
                 }
                 is KtStringTemplateEntryWithExpression -> unwrappedElement.expression
-                is KtUserType if unwrappedElement.parent is KtNullableType -> unwrappedElement.parent as KtNullableType
+                is KtUserType -> {
+                    // In an incomplete function type like `(context(A) B)?`, the nullable type has a dangling context parameter list,
+                    // and the user type is the type after the list, with its own FIR element
+                    val nullableType = unwrappedElement.parent as? KtNullableType
+                    nullableType?.takeIf { it.danglingContextParameterList == null } ?: unwrappedElement
+                }
                 else -> unwrappedElement
             }
         }
