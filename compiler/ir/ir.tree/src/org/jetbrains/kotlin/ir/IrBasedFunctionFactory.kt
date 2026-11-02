@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.ir
 
-import org.jetbrains.kotlin.builtins.FunctionInterfacePackageFragment
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.ir.builders.declarations.IrValueParameterBuilder
 import org.jetbrains.kotlin.ir.builders.declarations.buildReceiverParameter
@@ -23,35 +24,18 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
-import org.jetbrains.kotlin.ir.types.defaultTypeWithoutArguments
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeBuilder
 import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
-import org.jetbrains.kotlin.ir.types.makeNullable
-import org.jetbrains.kotlin.ir.types.typeWith
-import org.jetbrains.kotlin.ir.types.typeWithParameters
-import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
-import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
-import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.util.addFile
-import org.jetbrains.kotlin.ir.util.createThisReceiverParameter
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.Variance
-import java.io.File
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 abstract class IrAbstractFunctionFactory {
-    open fun functionClassDescriptor(arity: Int): FunctionClassDescriptor? = null
-    open fun kFunctionClassDescriptor(arity: Int): FunctionClassDescriptor? = null
-    open fun suspendFunctionClassDescriptor(arity: Int): FunctionClassDescriptor? = null
-    open fun kSuspendFunctionClassDescriptor(arity: Int): FunctionClassDescriptor? = null
-
     open fun functionClassSignature(arity: Int): IdSignature? = null
     open fun kFunctionClassSignature(arity: Int): IdSignature? = null
     open fun suspendFunctionClassSignature(arity: Int): IdSignature? = null
@@ -63,15 +47,9 @@ abstract class IrAbstractFunctionFactory {
     abstract fun kSuspendFunctionN(arity: Int, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass
 
     private fun SymbolTable.declare(
-        descriptor: FunctionClassDescriptor?,
         signature: IdSignature?,
         callback: (IrClassSymbol) -> IrClass,
     ): IrClass = when {
-        descriptor != null -> {
-            descriptorExtension.declareClass(descriptor) { symbol ->
-                callback(symbol)
-            }
-        }
         signature != null -> {
             declareClass(signature, { IrClassSymbolImpl(descriptor = null, signature) }) { symbol ->
                 callback(symbol)
@@ -81,27 +59,23 @@ abstract class IrAbstractFunctionFactory {
     }
 
     fun functionN(n: Int) = functionN(n) { callback ->
-        val descriptor = functionClassDescriptor(n)
         val signature = functionClassSignature(n)
-        declare(descriptor, signature, callback)
+        declare(signature, callback)
     }
 
     fun kFunctionN(n: Int): IrClass = kFunctionN(n) { callback ->
-        val descriptor = kFunctionClassDescriptor(n)
         val signature = kFunctionClassSignature(n)
-        declare(descriptor, signature, callback)
+        declare(signature, callback)
     }
 
     fun suspendFunctionN(n: Int): IrClass = suspendFunctionN(n) { callback ->
-        val descriptor = suspendFunctionClassDescriptor(n)
         val signature = suspendFunctionClassSignature(n)
-        declare(descriptor, signature, callback)
+        declare(signature, callback)
     }
 
     fun kSuspendFunctionN(n: Int): IrClass = kSuspendFunctionN(n) { callback ->
-        val descriptor = kSuspendFunctionClassDescriptor(n)
         val signature = kSuspendFunctionClassSignature(n)
-        declare(descriptor, signature, callback)
+        declare(signature, callback)
     }
 
     companion object {
