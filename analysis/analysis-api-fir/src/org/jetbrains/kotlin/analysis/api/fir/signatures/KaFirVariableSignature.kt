@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.signatures
 
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotation
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.buildSymbol
 import org.jetbrains.kotlin.analysis.api.fir.types.AbstractKaFirSubstitutor
@@ -17,14 +19,50 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaVariableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.receiverType
 import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.arrayElementType
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
-internal sealed class KaFirVariableSignature<out S : KaVariableSymbol> : KaBaseVariableSignature<S>(), FirSymbolBasedSignature {
+internal sealed class KaFirVariableSignature<out S : KaVariableSymbol> : KaVariableSignature<S>, FirSymbolBasedSignature {
+    override val name: Name
+        get() = withValidityAssertion {
+            // The case where PSI is null is when calling `invoke()` on a variable with functional type, e.g. `x(1)` below:
+            //
+            //   fun foo(x: (item: Int) -> Unit) { x(1) }
+            //   fun bar(x: Function1<@ParameterName("item") Int, Unit>) { x(1) }
+            val nameCanBeDeclaredInAnnotation = symbol.psi == null
+
+            runIf(nameCanBeDeclaredInAnnotation) { getValueFromParameterNameAnnotation() } ?: symbol.name
+        }
+
+    private fun getValueFromParameterNameAnnotation(): Name? {
+        val resultingAnnotation = findParameterNameAnnotation() ?: return null
+        val parameterNameArgument = resultingAnnotation.arguments
+            .singleOrNull { it.name == StandardClassIds.Annotations.ParameterNames.parameterNameName }
+
+        val constantArgumentValue = parameterNameArgument?.expression as? KaAnnotationValue.ConstantValue ?: return null
+
+        return (constantArgumentValue.value.value as? String)?.let(Name::identifier)
+    }
+
+    private fun findParameterNameAnnotation(): KaAnnotation? {
+        val allParameterNameAnnotations = returnType.annotations[StandardNames.FqNames.parameterNameClassId]
+        val [explicitAnnotations, implicitAnnotations] = allParameterNameAnnotations.partition { it.psi != null }
+
+        return if (explicitAnnotations.isNotEmpty()) {
+            explicitAnnotations.first()
+        } else {
+            implicitAnnotations.singleOrNull()
+        }
+    }
+
     abstract override fun substitute(substitutor: KaSubstitutor): KaFirVariableSignature<S>
 
     override fun equals(other: Any?): Boolean = this === other ||
