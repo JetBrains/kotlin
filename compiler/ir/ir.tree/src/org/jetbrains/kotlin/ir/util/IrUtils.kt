@@ -1665,5 +1665,39 @@ val IrSimpleFunction.isTrivialGetter: Boolean
         return (receiver as? IrGetValue)?.symbol?.owner === this.dispatchReceiverParameter
     }
 
+val IrSimpleFunction.isTrivialSetter: Boolean
+    get() {
+        val property = this.correspondingPropertySymbol?.owner ?: return false
+        val backingField = property.backingField ?: return false
+        val body = this.body?.let { it as IrBlockBody } ?: return false
+
+        val statementsSizeCheck = when (body.statements.size) {
+            1 -> true
+            // In K/N backend this lowering should be called after devirtualization. At this point IrReturns are already added.
+            2 -> (body.statements[1] as? IrReturn)?.value?.type?.isUnit() == true
+            else -> false
+        }
+        if (!statementsSizeCheck) return false
+        val stmt = body.statements[0]
+        val setFieldStmt = stmt as? IrSetField ?: return false
+        if (setFieldStmt.symbol !== backingField.symbol) return false
+
+        // TODO: support constant setters
+        val setValue = setFieldStmt.value as? IrGetValue ?: return false
+        val valueSymbol = parameters.single { it.kind == IrParameterKind.Regular }.symbol
+        if (setValue.symbol !== valueSymbol) return false
+
+        val receiver = setFieldStmt.receiver
+
+        if (receiver == null) {
+            require(this.dispatchReceiverParameter == null)
+            return true
+        }
+
+        if (receiver is IrGetValue) return receiver.symbol.owner === this.dispatchReceiverParameter
+
+        return false
+    }
+
 fun IrSimpleFunction.findOverriddenMethodOfAny() =
     allOverridden().firstOrNull { it.parentClassOrNull?.isAny() == true }

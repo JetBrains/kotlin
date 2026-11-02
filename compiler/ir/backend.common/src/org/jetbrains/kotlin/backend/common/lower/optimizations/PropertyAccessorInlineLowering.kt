@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.isTopLevel
 import org.jetbrains.kotlin.ir.util.isTrivialGetter
+import org.jetbrains.kotlin.ir.util.isTrivialSetter
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
@@ -37,6 +38,8 @@ open class PropertyAccessorInlineLowering(
         isSafeToInlineInClosedWorld()
 
     protected open fun isSimpleGetter(callee: IrSimpleFunction): Boolean = callee.isTrivialGetter
+
+    protected open fun isSimpleSetter(callee: IrSimpleFunction): Boolean = callee.isTrivialSetter
 
     // TODO: implement general function inlining optimization and replace it with
     private inner class AccessorInliner(val container: IrDeclaration) : IrElementTransformerVoid() {
@@ -126,42 +129,12 @@ open class PropertyAccessorInlineLowering(
         }
 
         private fun tryInlineSimpleSetter(call: IrCall, callee: IrSimpleFunction, backingField: IrField): IrExpression? {
-            if (!isSimpleSetter(callee, backingField)) return null
+            if (!isSimpleSetter(callee)) return null
 
             return call.run {
                 val value = arguments.last() ?: error("Setter should have a value argument")
                 IrSetFieldImpl(startOffset, endOffset, backingField.symbol, call.dispatchReceiver, value, unitType, origin)
             }
-        }
-
-        private fun isSimpleSetter(callee: IrSimpleFunction, backingField: IrField): Boolean {
-            val body = callee.body?.let { it as IrBlockBody } ?: return false
-            val statementsSizeCheck = when (body.statements.size) {
-                1 -> true
-                // In K/N backend this lowering should be called after devirtualization. At this point IrReturns are already added.
-                2 -> (body.statements[1] as? IrReturn)?.value?.type?.isUnit() == true
-                else -> false
-            }
-            if (!statementsSizeCheck) return false
-            val stmt = body.statements[0]
-            val setFieldStmt = stmt as? IrSetField ?: return false
-            if (setFieldStmt.symbol !== backingField.symbol) return false
-
-            // TODO: support constant setters
-            val setValue = setFieldStmt.value as? IrGetValue ?: return false
-            val valueSymbol = callee.parameters.single { it.kind == IrParameterKind.Regular }.symbol
-            if (setValue.symbol !== valueSymbol) return false
-
-            val receiver = setFieldStmt.receiver
-
-            if (receiver == null) {
-                assert(callee.dispatchReceiverParameter == null)
-                return true
-            }
-
-            if (receiver is IrGetValue) return receiver.symbol.owner === callee.dispatchReceiverParameter
-
-            return false
         }
     }
 

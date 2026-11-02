@@ -606,6 +606,7 @@ class SerializedTrivialFunction(
 ) : FileAwareSerializedData(file) {
     enum class Kind {
         GETTER,
+        SETTER,
     }
 }
 
@@ -639,6 +640,14 @@ internal class TrivialFunctionsDeserializer(
                 ?: error("No cache for ${deserializer.klib.path}")
         cache.serializedTrivialFunctions.mapNotNullTo(hashSetOf()) { function ->
             function.signature.takeIf { function.kind == SerializedTrivialFunction.Kind.GETTER }
+        }
+    }
+
+    val trivialSetterSignatures: Set<IdSignature> by lazy {
+        val cache = cachedLibraries.getLibraryCache(deserializer.klib, allowIncomplete = true)
+                ?: error("No cache for ${deserializer.klib.path}")
+        cache.serializedTrivialFunctions.mapNotNullTo(hashSetOf()) { function ->
+            function.signature.takeIf { function.kind == SerializedTrivialFunction.Kind.SETTER }
         }
     }
 }

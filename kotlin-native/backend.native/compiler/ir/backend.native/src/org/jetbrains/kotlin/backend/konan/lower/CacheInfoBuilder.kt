@@ -88,6 +88,20 @@ internal class CacheInfoBuilder(
                             )
                         }
                     }
+
+                    val setter = declaration.setter
+                    if (setter != null
+                            && !setter.isFakeOverride
+                            && setter.isExported
+                            && setter.isTrivialSetter
+                    ) {
+                        val signature = setter.symbol.signature
+                        if (signature != null) {
+                            generationState.trivialFunctions.add(
+                                    SerializedTrivialFunction(SerializedFileReference(irFile), signature, SerializedTrivialFunction.Kind.SETTER)
+                            )
+                        }
+                    }
                 }
             })
 

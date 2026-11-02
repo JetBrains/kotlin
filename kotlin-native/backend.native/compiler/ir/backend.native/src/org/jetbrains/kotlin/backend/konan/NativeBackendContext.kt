@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 import org.jetbrains.kotlin.ir.util.isTrivialGetter
+import org.jetbrains.kotlin.ir.util.isTrivialSetter
 import org.jetbrains.kotlin.ir.util.moduleFragment
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
@@ -105,7 +106,7 @@ internal class NativeBackendContext(
      *
      * For getters declared in the current module we just delegate to [IrSimpleFunction.isTrivialGetter].
      * For getters declared in a cached dependency, the IR body may be empty, so we instead consult
-     * the cache built when that dependency was first compiled (see `CacheInfoBuilder` and `TrivialGetterSerializer`).
+     * the cache built when that dependency was first compiled (see `CacheInfoBuilder` and `TrivialFunctionsSerializer`).
      */
     fun isTrivialGetter(function: IrSimpleFunction): Boolean {
         val deserializer = moduleDeserializerProvider.getDeserializerOrNull(function)
@@ -116,6 +117,24 @@ internal class NativeBackendContext(
             TrivialFunctionsDeserializer(config.cachedLibraries, deserializer)
         }
         return signature in trivialFunctionsDeserializer.trivialGetterSignatures
+    }
+
+    /**
+     * Cache-aware version of [IrSimpleFunction.isTrivialSetter].
+     *
+     * For getters declared in the current module we just delegate to [IrSimpleFunction.isTrivialSetter].
+     * For getters declared in a cached dependency, the IR body may be empty, so we instead consult
+     * the cache built when that dependency was first compiled (see `CacheInfoBuilder` and `TrivialFunctionsSerializer`).
+     */
+    fun isTrivialSetter(function: IrSimpleFunction): Boolean {
+        val deserializer = moduleDeserializerProvider.getDeserializerOrNull(function)
+                ?: return function.isTrivialSetter // Function from current module.
+
+        val signature = function.symbol.signature ?: return false
+        val trivialFunctionsDeserializer = trivialFunctionsDeserializers.getOrPut(deserializer) {
+            TrivialFunctionsDeserializer(config.cachedLibraries, deserializer)
+        }
+        return signature in trivialFunctionsDeserializer.trivialSetterSignatures
     }
 
     fun getLayoutBuilder(irClass: IrClass): ClassLayoutBuilder {

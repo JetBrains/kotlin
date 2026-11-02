@@ -13,4 +13,8 @@ internal class NativePropertyAccessorInlineLowering(private val generationState:
     override fun isSimpleGetter(callee: IrSimpleFunction): Boolean {
         return generationState.context.isTrivialGetter(callee)
     }
+
+    override fun isSimpleSetter(callee: IrSimpleFunction): Boolean {
+        return generationState.context.isTrivialSetter(callee)
+    }
 }
