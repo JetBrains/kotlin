@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.getPublicSignature
 import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.ir.util.fields
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -600,28 +599,47 @@ internal object ObjCAdapterSerializer {
     }
 }
 
-class SerializedTrivialGetter(
-        file: SerializedFileReference, val getterSignature: IdSignature
-) : FileAwareSerializedData(file)
+class SerializedTrivialFunction(
+        file: SerializedFileReference,
+        val signature: IdSignature,
+        val kind: Kind?,
+) : FileAwareSerializedData(file) {
+    enum class Kind {
+        GETTER,
+    }
+}
 
-internal object TrivialGettersSerializer : IdSignatureAwareSerializer<SerializedTrivialGetter>() {
-    override fun signatureOf(item: SerializedTrivialGetter) = item.getterSignature
+internal object TrivialFunctionsSerializer : IdSignatureAwareSerializer<SerializedTrivialFunction>() {
+    override fun signatureOf(item: SerializedTrivialFunction) = item.signature
+
+    override fun extraPayloadSize(item: SerializedTrivialFunction): Int {
+        return Int.SIZE_BYTES
+    }
+
+    override fun ByteArrayStream.writeExtraPayload(stringTable: StringTable, item: SerializedTrivialFunction) {
+        writeInt(item.kind?.ordinal ?: INVALID_INDEX)
+    }
 
     override fun ByteArrayStream.readItem(
             stringTable: Array<String>,
             file: SerializedFileReference,
             signature: IdSignature,
-    ): SerializedTrivialGetter = SerializedTrivialGetter(file, signature)
+    ): SerializedTrivialFunction {
+        val kind = readInt()
+        return SerializedTrivialFunction(file, signature, SerializedTrivialFunction.Kind.entries.getOrNull(kind))
+    }
 }
 
-internal class TrivialGettersDeserializer(
+internal class TrivialFunctionsDeserializer(
         val cachedLibraries: CachedLibraries,
         val deserializer: KonanPartialModuleDeserializer,
 ) {
     val trivialGetterSignatures: Set<IdSignature> by lazy {
         val cache = cachedLibraries.getLibraryCache(deserializer.klib, allowIncomplete = true)
                 ?: error("No cache for ${deserializer.klib.path}")
-        cache.serializedTrivialGetters.mapTo(hashSetOf()) { it.getterSignature }
+        cache.serializedTrivialFunctions.mapNotNullTo(hashSetOf()) { function ->
+            function.signature.takeIf { function.kind == SerializedTrivialFunction.Kind.GETTER }
+        }
     }
 }
 

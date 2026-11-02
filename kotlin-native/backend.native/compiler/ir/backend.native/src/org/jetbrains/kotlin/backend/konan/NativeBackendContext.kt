@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.backend.konan.serialization.ModuleDeserializerProvid
 import org.jetbrains.kotlin.backend.konan.serialization.InlineFunctionDeserializer
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
 import org.jetbrains.kotlin.backend.konan.serialization.KonanPartialModuleDeserializer
-import org.jetbrains.kotlin.backend.konan.serialization.TrivialGettersDeserializer
+import org.jetbrains.kotlin.backend.konan.serialization.TrivialFunctionsDeserializer
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
@@ -98,12 +98,12 @@ internal class NativeBackendContext(
         }
     }
 
-    private val trivialGettersDeserializers = mutableMapOf<KonanPartialModuleDeserializer, TrivialGettersDeserializer>()
+    private val trivialFunctionsDeserializers = mutableMapOf<KonanPartialModuleDeserializer, TrivialFunctionsDeserializer>()
 
     /**
-     * Cache-aware version of [isTrivialGetter] specialized for `val` properties.
+     * Cache-aware version of [IrSimpleFunction.isTrivialGetter].
      *
-     * For getters declared in the current module we just delegate to [isTrivialGetter].
+     * For getters declared in the current module we just delegate to [IrSimpleFunction.isTrivialGetter].
      * For getters declared in a cached dependency, the IR body may be empty, so we instead consult
      * the cache built when that dependency was first compiled (see `CacheInfoBuilder` and `TrivialGetterSerializer`).
      */
@@ -112,10 +112,10 @@ internal class NativeBackendContext(
                 ?: return function.isTrivialGetter // Function from current module.
 
         val signature = function.symbol.signature ?: return false
-        val trivialGettersDeserializer = trivialGettersDeserializers.getOrPut(deserializer) {
-            TrivialGettersDeserializer(config.cachedLibraries, deserializer)
+        val trivialFunctionsDeserializer = trivialFunctionsDeserializers.getOrPut(deserializer) {
+            TrivialFunctionsDeserializer(config.cachedLibraries, deserializer)
         }
-        return signature in trivialGettersDeserializer.trivialGetterSignatures
+        return signature in trivialFunctionsDeserializer.trivialGetterSignatures
     }
 
     fun getLayoutBuilder(irClass: IrClass): ClassLayoutBuilder {

@@ -77,7 +77,7 @@ class OutputFiles(val outputName: String, target: KonanTarget, val produce: Comp
 
     val eagerInitializedPropertiesFile = tempCacheDirectory?.cacheIrPart()?.resolve(CachedLibraries.EAGER_INITIALIZED_PROPERTIES_FILE_NAME)
 
-    val trivialGettersFile = tempCacheDirectory?.cacheIrPart()?.resolve(CachedLibraries.TRIVIAL_GETTERS_FILE_NAME)
+    val trivialFunctionsFile = tempCacheDirectory?.cacheIrPart()?.resolve(CachedLibraries.TRIVIAL_FUNCTIONS_FILE_NAME)
 
     val objCAdaptersFile = tempCacheDirectory?.cacheIrPart()?.resolve(CachedLibraries.OBJC_ADAPTERS_FILE_NAME)
 

@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.backend.konan.serialization.EagerInitializedProperty
 import org.jetbrains.kotlin.backend.konan.serialization.InlineFunctionBodyReferenceSerializer
 import org.jetbrains.kotlin.backend.konan.serialization.ObjCAdapterSerializer
 import org.jetbrains.kotlin.backend.konan.serialization.PartialLinkageIssuesSerializer
-import org.jetbrains.kotlin.backend.konan.serialization.TrivialGettersSerializer
+import org.jetbrains.kotlin.backend.konan.serialization.TrivialFunctionsSerializer
 import org.jetbrains.kotlin.backend.konan.util.compilerFingerprint
 import org.jetbrains.kotlin.backend.konan.util.runtimeFingerprint
 import org.jetbrains.kotlin.konan.config.cachedLibraryDependenciesFingerprint
@@ -88,7 +88,7 @@ internal class CacheStorage(private val generationState: NativeGenerationState) 
         saveCacheBitcodeDependencies()
         saveClassFields()
         saveEagerInitializedProperties()
-        saveTrivialGetters()
+        saveTrivialFunctions()
         saveObjCAdapters()
         savePartialLinkageIssues()
     }
@@ -119,9 +119,9 @@ internal class CacheStorage(private val generationState: NativeGenerationState) 
                 EagerInitializedPropertySerializer.serialize(generationState.eagerInitializedFiles))
     }
 
-    private fun saveTrivialGetters() {
-        outputFiles.trivialGettersFile!!.writeBytes(
-                TrivialGettersSerializer.serialize(generationState.trivialGetters))
+    private fun saveTrivialFunctions() {
+        outputFiles.trivialFunctionsFile!!.writeBytes(
+                TrivialFunctionsSerializer.serialize(generationState.trivialFunctions))
     }
 
     private fun saveObjCAdapters() {
