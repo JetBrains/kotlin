@@ -3,12 +3,14 @@ package org.jetbrains.kotlin.gradle.targets.js
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.gradle.targets.web.ObsoleteJsAndWasmToolingProvisioning
 
 /**
  * Instance which describes specific runtimes for JS and Wasm targets
  *
  * It encapsulates necessary information about a tool to run application and tests
  */
+@ObsoleteJsAndWasmToolingProvisioning
 abstract class EnvSpec<T : AbstractEnv> {
 
     /**

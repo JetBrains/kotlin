@@ -2,7 +2,9 @@ package org.jetbrains.kotlin.gradle.targets.js
 
 import org.gradle.api.file.DirectoryProperty
 import org.jetbrains.kotlin.gradle.internal.ConfigurationPhaseAware
+import org.jetbrains.kotlin.gradle.targets.web.ObsoleteJsAndWasmToolingProvisioning
 
+@ObsoleteJsAndWasmToolingProvisioning
 abstract class AbstractSettings<Env : AbstractEnv> : ConfigurationPhaseAware<Env>() {
 
     internal abstract val downloadProperty: org.gradle.api.provider.Property<Boolean>

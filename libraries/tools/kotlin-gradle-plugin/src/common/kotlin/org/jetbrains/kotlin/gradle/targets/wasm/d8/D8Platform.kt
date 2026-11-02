@@ -5,9 +5,12 @@
 
 package org.jetbrains.kotlin.gradle.targets.wasm.d8
 
+import org.jetbrains.kotlin.gradle.targets.web.ObsoleteJsAndWasmToolingProvisioning
+
 /**
  * Provides platform and architecture names that is used to download D8.
  */
+@ObsoleteJsAndWasmToolingProvisioning
 internal object D8Platform {
     private val props = System.getProperties()
     private fun property(name: String) = props.getProperty(name) ?: System.getProperty(name)
