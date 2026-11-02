@@ -13,7 +13,14 @@ import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.name.ClassId
 
-internal class LLNameConflictsTracker(private val session: LLFirSession) : FirNameConflictsTracker() {
+/**
+ * @param conflictsExtension The conflicts extension if [session] is a dangling file session. Classifiers of a dangling file conflict with
+ *  classifiers of its context module if [LLFirConflictsFromDifferentModuleExtension.conflictsWithContextModule] holds.
+ */
+internal class LLNameConflictsTracker(
+    private val session: LLFirSession,
+    private val conflictsExtension: LLFirConflictsFromDifferentModuleExtension?,
+) : FirNameConflictsTracker() {
     private data class LLClassifierRedeclaration(override val classifierSymbol: FirClassLikeSymbol<*>) : ClassifierRedeclaration() {
         // Grabbing the containing file via the symbol provider is non-trivial. Specifying it is optional, and it can later be retrieved
         // separately.
@@ -23,13 +30,14 @@ internal class LLNameConflictsTracker(private val session: LLFirSession) : FirNa
     override fun getClassifierRedeclarations(classId: ClassId): Collection<ClassifierRedeclaration> {
         // As noted in the KDoc of `getClassifierRedeclarations`, Java redeclarations should not be returned by this component. As such,
         // we limit the scope to Kotlin symbols by taking the FIR provider's symbol provider.
-        val symbolProvider = session.firProvider.symbolProvider
+        val contextSession = conflictsExtension?.takeIf { it.conflictsWithContextModule }?.contextSession
+        val symbols = session.firProvider.symbolProvider.getAllClassLikeSymbolsByClassIdOrSingle(classId) +
+                contextSession?.firProvider?.symbolProvider?.getAllClassLikeSymbolsByClassIdOrSingle(classId).orEmpty()
 
         // While redeclarations are rare, we don't know whether a given class is redeclared somewhere else in the whole module. So this
         // function will be called once for each top-level classifier. Still, we don't cache the result since checkers are only run on
         // specific files, not all files visited by lazy resolution.
-        return symbolProvider
-            .getAllClassLikeSymbolsByClassIdOrSingle(classId)
+        return symbols
             .takeIf { it.size >= 2 }
             .orEmpty()
             .map { LLClassifierRedeclaration(it) }

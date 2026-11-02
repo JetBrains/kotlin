@@ -446,6 +446,14 @@ context(context: CheckerContext)
 private fun FirClassLikeSymbol<*>.expandedClassWithConstructorsScope(): Pair<FirRegularClassSymbol, FirScope>? =
     expandedClassWithConstructorsScope(context.session, context.scopeSession, FirResolvePhase.STATUS)
 
+/**
+ * Whether [declaration] and [conflicting] can conflict as declarations of the same module: [conflicting] belongs to the module of
+ * [declaration], which is the use-site module, or [FirConflictsFromDifferentModuleExtension] treats its module as such.
+ */
+private fun FirSession.canConflictAsSameModule(declaration: FirBasedSymbol<*>, conflicting: FirBasedSymbol<*>): Boolean =
+    declaration.moduleData == conflicting.moduleData ||
+            conflictsFromDifferentModuleExtension?.canConflictWithDeclarationsOfModule(conflicting.moduleData) == true
+
 private fun shouldCheckForMultiplatformRedeclaration(dependency: FirBasedSymbol<*>, dependent: FirBasedSymbol<*>): Boolean {
     if (dependency.moduleData !in dependent.moduleData.allDependsOnDependencies) return false
 
@@ -467,17 +475,22 @@ private fun FirDeclarationCollector<FirBasedSymbol<*>>.collectTopLevelConflict(
     conflictingSymbol.lazyResolveToPhase(FirResolvePhase.STATUS)
     if (conflictingSymbol == declaration) return
     if (
-        declaration.moduleData != conflictingSymbol.moduleData &&
+        !session.canConflictAsSameModule(declaration, conflictingSymbol) &&
         !shouldCheckForMultiplatformRedeclaration(declaration, conflictingSymbol)
     ) return
     val actualConflictingPresentation = conflictingPresentation ?: FirRedeclarationPresenter.represent(conflictingSymbol)
     if (actualConflictingPresentation != declarationPresentation) return
+    val conflictingFirProvider = conflictingSymbol.moduleData.session.firProvider
     val actualConflictingFile =
         conflictingFile ?: when (conflictingSymbol) {
-            is FirClassLikeSymbol<*> -> session.firProvider.getFirClassifierContainerFileIfAny(conflictingSymbol)
-            is FirCallableSymbol<*> -> session.firProvider.getFirCallableContainerFile(conflictingSymbol)
+            is FirClassLikeSymbol<*> -> conflictingFirProvider.getFirClassifierContainerFileIfAny(conflictingSymbol)
+            is FirCallableSymbol<*> -> conflictingFirProvider.getFirCallableContainerFile(conflictingSymbol)
             else -> null
         }
+    if (
+        actualConflictingFile != null &&
+        session.conflictsFromDifferentModuleExtension?.isAnalyzedInPlaceOf(containingFile, actualConflictingFile) == true
+    ) return
     if (!conflictingSymbol.isCollectable()) return
     if (areCompatibleMainFunctions(declaration, containingFile, conflictingSymbol, actualConflictingFile, session)) return
 
@@ -532,7 +545,9 @@ private fun FirDeclarationCollector<*>.getConflictState(
     declaration: FirBasedSymbol<*>,
     conflicting: FirBasedSymbol<*>,
 ): ConflictState {
-    if (isAtLeastOneExpect(declaration, conflicting) && declaration.moduleData != conflicting.moduleData) return ConflictState.NoConflict
+    if (isAtLeastOneExpect(declaration, conflicting) && !session.canConflictAsSameModule(declaration, conflicting)) {
+        return ConflictState.NoConflict
+    }
 
     val declarationIsLowPriority = hasLowPriorityAnnotation(declaration.resolvedAnnotationsWithClassIds)
     val conflictingIsLowPriority = hasLowPriorityAnnotation(conflicting.resolvedAnnotationsWithClassIds)

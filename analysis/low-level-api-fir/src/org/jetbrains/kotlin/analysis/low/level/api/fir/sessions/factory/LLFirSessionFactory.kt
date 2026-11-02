@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirGlobalResolveCompone
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirLazyDeclarationResolver
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.*
+import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirConflictsFromDifferentModuleExtension
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirIdeRegisteredPluginAnnotations
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirLibrarySessionProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirProvider
@@ -48,6 +49,7 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.FirNameConflictsTracker
 import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 import org.jetbrains.kotlin.fir.SessionConfiguration
+import org.jetbrains.kotlin.fir.analysis.checkers.FirConflictsFromDifferentModuleExtension
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmTypeMapper
 import org.jetbrains.kotlin.fir.deserialization.FirKDocDeserializer
 import org.jetbrains.kotlin.fir.extensions.*
@@ -534,7 +536,9 @@ internal class LLFirSessionFactory(
             register(FirKotlinScopeProvider::class, scopeProvider)
 
             registerAllCommonComponents(languageVersionSettings, resolutionScope)
-            registerSourceLikeComponents()
+            val conflictsExtension = LLFirConflictsFromDifferentModuleExtension(module, contextSession)
+            registerSourceLikeComponents(conflictsExtension)
+            register(FirConflictsFromDifferentModuleExtension::class, conflictsExtension)
 
             val firProvider = LLFirProvider(
                 this,
@@ -753,8 +757,8 @@ internal class LLFirSessionFactory(
         registerResolveComponents()
     }
 
-    private fun LLFirSession.registerSourceLikeComponents() {
-        register(FirNameConflictsTracker::class, LLNameConflictsTracker(this))
+    private fun LLFirSession.registerSourceLikeComponents(conflictsExtension: LLFirConflictsFromDifferentModuleExtension? = null) {
+        register(FirNameConflictsTracker::class, LLNameConflictsTracker(this, conflictsExtension))
     }
 
     private inline fun LLFirSession.registerPlatformSpecificComponents(
