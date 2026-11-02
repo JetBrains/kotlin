@@ -10,11 +10,13 @@ import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.targets.js.npm.GradleNodeModule
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependencyDeclaration
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import java.io.Serializable
 
 /**
  * Resolved [NpmProject]
  */
+@ObsoleteNpmDependencyModel
 class PreparedKotlinCompilationNpmResolution(
     val npmProjectDir: Provider<Directory>,
     val externalGradleDependencies: Collection<GradleNodeModule>,

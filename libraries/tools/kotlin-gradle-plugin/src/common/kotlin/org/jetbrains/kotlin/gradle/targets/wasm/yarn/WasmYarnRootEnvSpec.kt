@@ -7,12 +7,15 @@ package org.jetbrains.kotlin.gradle.targets.wasm.yarn
 
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguator
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import org.jetbrains.kotlin.gradle.targets.web.yarn.BaseYarnRootEnvSpec
 
 /**
  * Spec for Yarn - package manager to install NPM dependencies
  */
+@ObsoleteNpmDependencyModel
 abstract class WasmYarnRootEnvSpec internal constructor() : BaseYarnRootEnvSpec() {
+    @ObsoleteNpmDependencyModel
     companion object : HasPlatformDisambiguator by WasmPlatformDisambiguator {
         val YARN: String
             get() = extensionName("yarnSpec")

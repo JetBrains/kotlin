@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.targets.wasm.internal.isWasm
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsRootExtension
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import java.io.File
 import javax.inject.Inject
@@ -64,6 +65,7 @@ open class KotlinJsIrCompilation @Inject internal constructor(
  *
  * **Don't forget:** to call [Task.dependsOnNpmTooling] when setting [npmToolingDir] to task property.
  */
+@ObsoleteNpmDependencyModel
 internal fun KotlinJsIrCompilation.npmToolingDir(): Provider<Directory> {
     val npmToolingDir: Provider<File> = webTargetVariant(
         jsVariant = { npmProject.dir.map { it.asFile } },
@@ -73,6 +75,7 @@ internal fun KotlinJsIrCompilation.npmToolingDir(): Provider<Directory> {
     return project.objects.directoryProperty().fileProvider(npmToolingDir)
 }
 
+@ObsoleteNpmDependencyModel
 internal fun Task.dependsOnNpmTooling(compilation: KotlinJsIrCompilation) {
     val task = this
     with(compilation) {
@@ -87,6 +90,7 @@ internal fun Task.dependsOnNpmTooling(compilation: KotlinJsIrCompilation) {
     }
 }
 
+@ObsoleteNpmDependencyModel
 internal fun KotlinJsIrCompilation.nodeJsRoot(): BaseNodeJsRootExtension {
     return webTargetVariant(
         { NodeJsRootPlugin.apply(project.jsToolingProject()) },

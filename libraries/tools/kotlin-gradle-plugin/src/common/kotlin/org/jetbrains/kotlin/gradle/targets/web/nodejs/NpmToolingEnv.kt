@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.web.nodejs
 
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import java.io.File
 
 /**
@@ -13,6 +14,7 @@ import java.io.File
  * @property version The version of the npm tooling environment.
  * @property dir The root directory associated with the npm tooling environment.
  */
+@ObsoleteNpmDependencyModel
 open class NpmToolingEnv(
     val version: String,
     val dir: File,

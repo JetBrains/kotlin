@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.PreparedKotlinCompilationNpmResolution
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import java.io.File
 
+@ObsoleteNpmDependencyModel
 class NpmImportedPackagesVersionResolver(
     npmProjects: Collection<PreparedKotlinCompilationNpmResolution>,
-    private val nodeJsWorldDir: File
+    private val nodeJsWorldDir: File,
 ) {
     private val resolvedVersion = mutableMapOf<String, ResolvedNpmDependency>()
     private val importedProjectWorkspaces = mutableListOf<String>()
@@ -41,7 +43,8 @@ class NpmImportedPackagesVersionResolver(
     }
 }
 
+@ObsoleteNpmDependencyModel
 private data class ResolvedNpmDependency(
     val version: String,
-    val file: File
+    val file: File,
 )

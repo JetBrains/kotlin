@@ -10,12 +10,14 @@ import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.file.FileTree
 import org.jetbrains.kotlin.gradle.targets.js.ir.KLIB_TYPE
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import java.io.File
 import kotlin.io.path.name
 
 /**
  * Creates fake NodeJS module directory from given Gradle `dependency`.
  */
+@ObsoleteNpmDependencyModel
 internal class GradleNodeModuleBuilder(
     val fs: FileSystemOperations,
     val archiveOperations: ArchiveOperations,
@@ -89,6 +91,7 @@ internal class GradleNodeModuleBuilder(
     }
 }
 
+@get:ObsoleteNpmDependencyModel
 internal val File.isCompatibleArchive
     get() = isFile
             && (extension == "jar"
@@ -105,6 +108,7 @@ private fun isKotlinJsRuntimeFile(file: File): Boolean {
             || name.endsWith(".html")
 }
 
+@ObsoleteNpmDependencyModel
 private fun createNodeModule(
     container: File,
     packageJson: PackageJson,
@@ -139,6 +143,7 @@ private fun createNodeModule(
  *
  * Protects against path traversal.
  */
+@ObsoleteNpmDependencyModel
 internal fun importedPackageDirWithinCache(container: File, packageName: String, packageVersion: String): File {
     // A scoped npm name, `@scope/name`, is the only packageName that may contain a `/`: it gets one directory per part.
     // Every other name, including `@scope` without a `/`, must resolve to a single directory.
