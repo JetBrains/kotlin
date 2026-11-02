@@ -13,6 +13,7 @@ enum class Domain {
     CoreLibs,
     AnalysisApi,
     BuildToolsApi,
+    BuildToolsLibraries,
     SwiftExport,
     CompilerPlugins,
     DocumentationModel,
@@ -96,6 +97,13 @@ internal object BuildToolsApiDomainInfo : DomainInfo {
     override val mustRunAllTestsOnChangesIn: List<DomainInfo> by lazy { listOf(CompilerInfrastructureDomainInfo) }
 }
 
+internal object BuildToolsLibrariesDomainInfo : DomainInfo {
+    override val domain = Domain.BuildToolsLibraries
+    override val include: List<String> = listOf("build-tools/libraries")
+    override val exclude: List<String> = listOf()
+    override val mustRunAllTestsOnChangesIn: List<DomainInfo> by lazy { listOf(BuildToolsApiDomainInfo) }
+}
+
 internal object SwiftExportDomainInfo : DomainInfo {
     override val domain = Domain.SwiftExport
     override val include: List<String> = listOf("native/swift", "libraries/tools/analysis-api-based-klib-reader")
@@ -165,6 +173,7 @@ val allDomainInfos: List<DomainInfo> by lazy {
         CoreLibsDomainInfo,
         AnalysisApiDomainInfo,
         BuildToolsApiDomainInfo,
+        BuildToolsLibrariesDomainInfo,
         SwiftExportDomainInfo,
         CompilerPluginsDomainInfo,
         DocumentationModelDomainInfo,
