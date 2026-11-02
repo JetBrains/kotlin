@@ -64,8 +64,8 @@ object ConeTypeUnifier {
 
         val flattenedErrorTypes = richErrorTypes.flatMap { it.flattenRecursively() }
 
-        if (flattenedErrorTypes.size == 1 && primaryType.isNothingOrNullableNothing) {
-            return flattenedErrorTypes.single().withNullability(primaryType.isMarkedNullable, typeContext, attributes)
+        if (flattenedErrorTypes.size == 1 && primaryType.isNothing) {
+            return flattenedErrorTypes.single()
         }
 
         val unionType = ConeUnionType(primaryType, flattenedErrorTypes.distinctBy { it.lookupTagIfAny }, attributes)
