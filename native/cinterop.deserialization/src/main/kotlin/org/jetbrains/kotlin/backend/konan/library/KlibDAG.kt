@@ -217,7 +217,7 @@ fun SerializedKlibDAG.deserialize(librariesUsedInCurrentCompilation: Collection<
                         "that is not in the list of the libraries used in the current compilation: " +
                         librariesUsedInCurrentCompilation.joinToString { it.canonicalPath.pathString }
             )
-            node.targets += dagUnderConstruction.getValue(directDependencyLibrary)
+            node.nodes += dagUnderConstruction.getValue(directDependencyLibrary)
         }
     }
 
@@ -356,7 +356,7 @@ private class KlibDAGBuilderImpl(private val parameters: KlibDAGBuilder.Paramete
                 usedNodes.putIfAbsent(dependencyNode, State.SCHEDULED_FOR_PROCESSING)
 
                 // Record it as a dependency.
-                node.targets += dependencyNode
+                node.nodes += dependencyNode
             }
 
             for (importedSignature in nodeToImportedSignatures.getValue(node)) {
@@ -405,7 +405,7 @@ private class KlibDAGBuilderImpl(private val parameters: KlibDAGBuilder.Paramete
     private fun stampStdlibNodeAsDependencyForEveryone() {
         if (stdlibNode != null) {
             for (node in dagUnderConstruction.values) {
-                if (node != stdlibNode) node.targets += stdlibNode
+                if (node != stdlibNode) node.nodes += stdlibNode
             }
         }
     }
@@ -479,16 +479,16 @@ private class KlibDAGBuilderImpl(private val parameters: KlibDAGBuilder.Paramete
 }
 
 private class KlibDAGNodeImpl(override val library: KotlinLibrary) : KlibDAGNode {
-    val targets = hashSetOf<KlibDAGNodeImpl>()
+    val nodes = hashSetOf<KlibDAGNodeImpl>()
 
     override val directDependencies: Set<KotlinLibrary> by lazy {
-        targets.mapTo(hashSetOf()) { it.library }
+        nodes.mapTo(hashSetOf()) { it.library }
     }
 
     override val allDependencies: Set<KotlinLibrary> by lazy {
         buildSet {
             addAll(directDependencies)
-            targets.flatMapTo(this, KlibDAGNode::allDependencies)
+            nodes.flatMapTo(this, KlibDAGNode::allDependencies)
         }
     }
 }
