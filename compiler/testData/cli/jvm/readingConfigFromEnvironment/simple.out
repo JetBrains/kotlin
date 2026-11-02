@@ -17,6 +17,8 @@ fun plus(other: Float): Float:
 
 fun plus(other: Double): Double:
   Expression '""' of type 'String' does not conform to value parameter 'other' of type 'Double'.
-    val x = 1 + ""
-              ^
+In source code:
+1 | fun main() {
+2 |     val x = 1 + ""
+  |               ^
 COMPILATION_ERROR

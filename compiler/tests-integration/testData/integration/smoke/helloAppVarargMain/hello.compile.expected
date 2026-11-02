@@ -1,6 +1,7 @@
 ERR:
 hello.kt:4:10: warning: unused return value of 'size'. If this is intentional, use 'val _ = ' to ignore the value explicitly.
-    args.size
-         ^^^^
+3 | fun main(vararg args: kotlin.String) {
+4 |     args.size
+  |          ^^^^
 
 Return code: 0

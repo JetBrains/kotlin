@@ -1,7 +1,7 @@
-
 ERR:
 hello.kt:4:5: error: unresolved reference 'a'.
-    a
-    ^
+3 | fun main() {
+4 |     a
+  |     ^
 
 Return code: 1

@@ -20,7 +20,10 @@ import org.fusesource.jansi.AnsiConsole
 import org.fusesource.jansi.internal.CLibrary
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.isWindows
+import org.jetbrains.kotlin.fir.analysis.diagnostics.RenderedLineWithNumber
+import org.jetbrains.kotlin.fir.analysis.diagnostics.renderLocationDecoration
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeAsciiOnly
+import java.io.File
 import java.util.*
 
 // This constructor can be used in a compilation server to still be able to generate colored output, even if stderr is not a TTY.
@@ -78,21 +81,34 @@ abstract class PlainTextMessageRenderer @JvmOverloads constructor(private val co
         }
 
         if (lineContent != null && 1 <= column && column <= lineContent.length + 1) {
-            result.append(LINE_SEPARATOR)
-            result.append(lineContent)
-            result.append(LINE_SEPARATOR)
-            result.append(" ".repeat(column - 1))
-            if (lineEnd > line) {
-                result.append("^".repeat(lineContent.length - column + 1))
-            } else if (lineEnd == line && columnEnd > column) {
-                result.append("^".repeat(columnEnd - column))
-            } else {
-                result.append("^")
+            if (message.lines().size > 1) {
+                result.append(LINE_SEPARATOR)
+                result.append("In source code:")
             }
+            val highlighting = when {
+                lineEnd > line -> "^".repeat(lineContent.length - column + 1)
+                lineEnd == line && columnEnd > column -> "^".repeat(columnEnd - column)
+                else -> "^"
+            }
+            val firstLine = File(location.path).takeIf { it.exists() }
+                ?.readLines()?.getOrNull(line - 2)
+                ?.takeIf { it.isNotBlank() && it.indentLength < lineContent.indentLength }
+                ?.let { RenderedLineWithNumber(number = line - 1, it) }
+            val lines = listOfNotNull(
+                firstLine,
+                RenderedLineWithNumber(number = line, lineContent),
+                RenderedLineWithNumber(number = null, " ".repeat(column - 1) + highlighting),
+            )
+            val render = renderLocationDecoration(renderedLines = lines)
+            result.append(LINE_SEPARATOR)
+            result.append(render)
         }
 
         return result.toString()
     }
+
+    private val String.indentLength: Int
+        get() = replace("""(^\s*).*""".toRegex(), "$1").length
 
     protected abstract fun getPath(location: CompilerMessageSourceLocation): String?
 

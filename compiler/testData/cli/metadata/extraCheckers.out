@@ -1,4 +1,5 @@
 compiler/testData/cli/metadata/extraCheckers.kt:2:9: warning: variable is unused.
-    val a = a + 1
-        ^
+1 | fun foo(a: Int) {
+2 |     val a = a + 1
+  |         ^
 OK

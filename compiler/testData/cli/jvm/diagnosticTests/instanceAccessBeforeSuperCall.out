@@ -1,19 +1,23 @@
 compiler/testData/cli/jvm/diagnosticTests/instanceAccessBeforeSuperCall.kt:2:26: error: cannot access '<this>' before the instance has been initialized.
-    constructor(x: Int = getSomeInt(), other: A = this, header: String = keker) {}
-                         ^^^^^^^^^^
+1 | class A {
+2 |     constructor(x: Int = getSomeInt(), other: A = this, header: String = keker) {}
+  |                          ^^^^^^^^^^
 compiler/testData/cli/jvm/diagnosticTests/instanceAccessBeforeSuperCall.kt:2:51: error: cannot access '<this>' before the instance has been initialized.
-    constructor(x: Int = getSomeInt(), other: A = this, header: String = keker) {}
-                                                  ^^^^
+1 | class A {
+2 |     constructor(x: Int = getSomeInt(), other: A = this, header: String = keker) {}
+  |                                                   ^^^^
 compiler/testData/cli/jvm/diagnosticTests/instanceAccessBeforeSuperCall.kt:2:74: error: cannot access '<this>' before the instance has been initialized.
-    constructor(x: Int = getSomeInt(), other: A = this, header: String = keker) {}
-                                                                         ^^^^^
+1 | class A {
+2 |     constructor(x: Int = getSomeInt(), other: A = this, header: String = keker) {}
+  |                                                                          ^^^^^
 compiler/testData/cli/jvm/diagnosticTests/instanceAccessBeforeSuperCall.kt:7:20: error: cannot access '<this>' before the instance has been initialized.
-class B(other: B = this)
-                   ^^^^
+7 | class B(other: B = this)
+  |                    ^^^^
 compiler/testData/cli/jvm/diagnosticTests/instanceAccessBeforeSuperCall.kt:10:32: error: expression '{ ... }' of type '() -> ??? (Unknown lambda return type)' does not conform to value parameter 'x' of type 'Int'.
-    constructor(x: Int) : this({
-                               ^
+ 9 | class C() {
+10 |     constructor(x: Int) : this({
+   |                                ^
 compiler/testData/cli/jvm/diagnosticTests/instanceAccessBeforeSuperCall.kt:12:9: error: cannot access '<this>' before the instance has been initialized.
-        this
-        ^^^^
+12 |         this
+   |         ^^^^
 COMPILATION_ERROR

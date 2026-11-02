@@ -1,7 +1,9 @@
 compiler/testData/compileKotlinAgainstCustomBinaries/computeSupertypeWithMissingDependency/source.kt:7:11: error: cannot access class 'a.A'. Check your module classpath for missing or conflicting dependencies.
-        b.foo()
-          ^^^
+6 |     if (true) {
+7 |         b.foo()
+  |           ^^^
 compiler/testData/compileKotlinAgainstCustomBinaries/computeSupertypeWithMissingDependency/source.kt:9:11: error: cannot access class 'a.A'. Check your module classpath for missing or conflicting dependencies.
-        b.bar()
-          ^^^
+8 |     } else {
+9 |         b.bar()
+  |           ^^^
 COMPILATION_ERROR

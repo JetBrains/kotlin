@@ -1,4 +1,5 @@
 compiler/testData/cli/metadata/lambdaWithReceiver.kt:2:18: warning: expression is unused.
-    "OK".apply { this }
-                 ^^^^
+1 | fun foo() {
+2 |     "OK".apply { this }
+  |                  ^^^^
 OK

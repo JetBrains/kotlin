@@ -1,4 +1,5 @@
 compiler/testData/cli/jvm/severalAnnotations.kt:4:11: error: null cannot be a value of a non-null type 'String'.
-    a.foo(null)
-          ^^^^
+3 | fun bar(a: A, b: B) {
+4 |     a.foo(null)
+  |           ^^^^
 COMPILATION_ERROR

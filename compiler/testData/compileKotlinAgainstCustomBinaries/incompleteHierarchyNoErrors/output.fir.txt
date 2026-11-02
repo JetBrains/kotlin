@@ -8,18 +8,18 @@ as no stability/compatibility guarantees are given on
 compiler or generated code. Use it at your own risk!
 
 compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyNoErrors/source.kt:12:32: warning: cannot access 'test.Super' which is a supertype of 'test.Sub'. This may be forbidden soon. Check the module classpath for missing or conflicting dependencies.
-fun simpleFun(arg: Sub): Sub = Sub()
-                               ^^^
+12 | fun simpleFun(arg: Sub): Sub = Sub()
+   |                                ^^^
 compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyNoErrors/source.kt:20:18: warning: cannot access 'test.Super' which is a supertype of 'test.Sub'. This may be forbidden soon. Check the module classpath for missing or conflicting dependencies.
-    val x: Sub = Sub()
-                 ^^^
+20 |     val x: Sub = Sub()
+   |                  ^^^
 compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyNoErrors/source.kt:22:18: warning: cannot access 'test.Super' which is a supertype of 'test.Sub'. This may be forbidden soon. Check the module classpath for missing or conflicting dependencies.
-    useCallRef(::Sub)
-                 ^^^
+22 |     useCallRef(::Sub)
+   |                  ^^^
 compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyNoErrors/source.kt:23:15: warning: cannot access 'test.Super' which is a supertype of 'test.Sub'. This may be forbidden soon. Check the module classpath for missing or conflicting dependencies.
-    simpleFun(Sub())
-              ^^^
+23 |     simpleFun(Sub())
+   |               ^^^
 compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyNoErrors/source.kt:24:20: warning: cannot access 'test.Super' which is a supertype of 'test.Sub'. This may be forbidden soon. Check the module classpath for missing or conflicting dependencies.
-    inlineFun<Sub>(Sub())
-                   ^^^
+24 |     inlineFun<Sub>(Sub())
+   |                    ^^^
 OK

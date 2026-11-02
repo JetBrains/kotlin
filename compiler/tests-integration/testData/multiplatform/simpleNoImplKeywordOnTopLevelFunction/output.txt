@@ -6,5 +6,5 @@ Output:
 Exit code: COMPILATION_ERROR
 Output:
 compiler/tests-integration/testData/multiplatform/simpleNoImplKeywordOnTopLevelFunction/jvm.kt:3:5: error: declaration must be marked with 'actual'.
-fun foo(s: String): Array<CharSequence?> = arrayOf(s)
-    ^^^
+3 | fun foo(s: String): Array<CharSequence?> = arrayOf(s)
+  |     ^^^
