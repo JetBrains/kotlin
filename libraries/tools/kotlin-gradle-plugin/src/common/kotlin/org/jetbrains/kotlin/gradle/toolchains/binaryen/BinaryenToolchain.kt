@@ -274,15 +274,13 @@ internal abstract class DisabledBinaryenToolchainServiceImpl : DisabledBinaryenT
 internal fun Project.isBinaryenToolchainDisabled(): Boolean =
     locateOrRegisterBinaryenToolchainService().get() is DisabledBinaryenToolchainService
 
-/**
- * Requests the default Binaryen version on the machine running the build.
- * The provider captures the object factory rather than the project for configuration cache compatibility.
- */
+
 internal fun Project.requestDefaultBinaryenToolchain(): Provider<BinaryenToolchainRequest> {
     val objects = objects
+    val version = kotlinPropertiesProvider.binaryenDefaultVersion
     return providers.detectExternalToolchainPlatform().map { platform ->
         objects.newInstance<BinaryenToolchainRequest>().also {
-            it.version.convention(DEFAULT_BINARYEN_VERSION)
+            it.version.convention(version)
             it.platform.convention(platform)
         }
     }

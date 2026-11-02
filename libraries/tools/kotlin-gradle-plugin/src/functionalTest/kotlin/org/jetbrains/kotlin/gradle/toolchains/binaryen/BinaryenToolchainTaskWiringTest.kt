@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalExternalToolchainDsl
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.toolchain.binaryen.BinaryenToolchainService
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenEnvSpec
 import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenExec
 import org.jetbrains.kotlin.gradle.tasks.toolchain.UsesBinaryenToolchainService
 import org.jetbrains.kotlin.gradle.toolchains.externalToolchainServiceName
@@ -56,6 +57,30 @@ class BinaryenToolchainTaskWiringTest {
             )
             assertEquals(DEFAULT_BINARYEN_VERSION, task.binaryenToolchainRequest.get().version.get())
         }
+    }
+
+    @Test
+    fun `binaryen task requests use the configured default version`() {
+        val project = wasmJsProject {
+            propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_WASM_BINARYEN_TOOLCHAIN_MODE, "download")
+            propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_BINARYEN_DEFAULT_VERSION, "134")
+        }
+
+        val binaryenTasks = project.tasks.withType(BinaryenExec::class.java).toList()
+        assertTrue(binaryenTasks.isNotEmpty(), "Expected at least one BinaryenExec task")
+        binaryenTasks.forEach { task ->
+            assertEquals("134", task.binaryenToolchainRequest.get().version.get())
+        }
+    }
+
+    @Test
+    fun `default version override does not configure the legacy binaryen setup`() {
+        val project = wasmJsProject {
+            propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_BINARYEN_DEFAULT_VERSION, "134")
+        }
+
+        val legacySpec = project.extensions.getByType(BinaryenEnvSpec::class.java)
+        assertEquals(DEFAULT_BINARYEN_VERSION, legacySpec.version.get())
     }
 
     @Test
