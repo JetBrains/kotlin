@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.unwrapCopy
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.danglingFileContextFile
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirPrivateVisibleFromDifferentModuleExtension
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -53,7 +53,7 @@ internal class LLFirPrivateVisibleFromDifferentModuleExtension(private val llFir
         val danglingFile = this.files.singleOrNull() ?: return null
         return when (danglingFile) {
             is KtCodeFragment -> danglingFile.context?.containingFile
-            else -> danglingFile.unwrapCopy(danglingFile)
+            else -> danglingFile.danglingFileContextFile
         }
     }
 }
