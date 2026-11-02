@@ -650,7 +650,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                 val coneTypes = typeRef.types.mapTo(mutableListOf()) { it.coneType }
 
                 val firstType = coneTypes.first()
-                val primaryType = if (firstType.isNonRichError()) {
+                val primaryType = if (firstType.isNonRichError() || firstType is ConeUnionType) {
                     coneTypes.removeAt(0)
                     firstType.applyIf(typeRef.isMarkedNullable) {
                         withNullability(true, session.typeContext)

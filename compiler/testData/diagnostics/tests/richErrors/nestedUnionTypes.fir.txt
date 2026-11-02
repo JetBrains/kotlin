@@ -1,0 +1,21 @@
+FILE: nestedUnionTypes.kt
+    public final error class Foo : R|kotlin/RichError| {
+        public constructor(): R|Foo| {
+            super<R|kotlin/RichError|>()
+        }
+
+    }
+    public final error class Bar : R|kotlin/RichError| {
+        public constructor(): R|Bar| {
+            super<R|kotlin/RichError|>()
+        }
+
+    }
+    public final error class Baz : R|kotlin/RichError| {
+        public constructor(): R|Baz| {
+            super<R|kotlin/RichError|>()
+        }
+
+    }
+    public final fun test(a: R|union(primary=kotlin/String, errors=Foo | Bar)|, b: R|union(primary=kotlin/String?, errors=Foo | Bar)|, c: R|union(primary=kotlin/String?, errors=Foo | Bar)|, d: R|union(primary=kotlin/String?, errors=Foo | Bar)|, e: R|union(primary=kotlin/String?, errors=Foo | Bar)|, f: R|union(primary=kotlin/Nothing?, errors=Foo | Bar | Baz)|, g: R|union(primary=kotlin/Nothing?, errors=Foo | Baz)|, h: R|union(primary=kotlin/Nothing?, errors=Foo | Baz)|): R|kotlin/Unit| {
+    }
