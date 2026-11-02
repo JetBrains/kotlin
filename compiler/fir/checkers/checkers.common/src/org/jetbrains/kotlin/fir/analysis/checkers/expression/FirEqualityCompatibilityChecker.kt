@@ -20,12 +20,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirEqualityOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirOperation
 import org.jetbrains.kotlin.fir.analysis.checkers.firPlatformSpecificEqualityChecker
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.declarations.calculateEqualityBoundType
-import org.jetbrains.kotlin.fir.declarations.utils.isExpect
-import org.jetbrains.kotlin.fir.declarations.utils.isValue
-import org.jetbrains.kotlin.fir.declarations.utils.modality
-import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.isEnabled
@@ -61,12 +56,14 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
             // account for them.
             val isCaseMissedByK1 = isCaseMissedByK1Intersector(l.originalTypeInfo, r.originalTypeInfo)
                     && isCaseMissedByAdditionalK1IncompatibleEnumsCheck(l.originalType, r.originalType, context.session)
-                    && !(it == Applicability.INAPPLICABLE_AS_IDENTITY_LESS &&
-                    (l.originalType.isFinalExpectValueClass(context.session) || r.originalType.isFinalExpectValueClass(context.session)))
+            // Comparing a final expect value class by identity is an error, as it is on the platform.
+            val isIdentityLessFinalExpectValueClass = it == Applicability.INAPPLICABLE_AS_IDENTITY_LESS &&
+                    (l.originalTypeInfo.isFinalExpectValueClass || r.originalTypeInfo.isFinalExpectValueClass)
             val replicateK1Behavior = LanguageFeature.ReportErrorsForComparisonOperators.isDisabled()
 
             return reporter.reportInapplicabilityDiagnostic(
-                expression, it, expression.operation, forceWarning = isCaseMissedByK1 && replicateK1Behavior,
+                expression, it, expression.operation,
+                forceWarning = isCaseMissedByK1 && replicateK1Behavior && !isIdentityLessFinalExpectValueClass,
                 l.originalTypeInfo, r.originalTypeInfo,
                 l.userType, r.userType,
             )
@@ -386,10 +383,6 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
  */
 internal fun isCaseMissedByK1Intersector(a: TypeInfo, b: TypeInfo): Boolean =
     a.canHaveSubtypesAccordingToK1 && b.canHaveSubtypesAccordingToK1
-
-// Unlike other expect classes, a final expect value class is actualized by a final class, so it has no subtypes as on the platform.
-private fun ConeKotlinType.isFinalExpectValueClass(session: FirSession): Boolean =
-    toRegularClassSymbol(session)?.let { it.isExpect && it.isValue && it.modality == Modality.FINAL } == true
 
 /**
  * This function simply replicates `if` with

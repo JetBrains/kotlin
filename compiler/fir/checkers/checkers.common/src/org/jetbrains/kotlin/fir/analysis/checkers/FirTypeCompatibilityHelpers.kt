@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers
 
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -37,6 +38,8 @@ class TypeInfo(
     val isBuiltin: Boolean,
     val isFullValueClassOrObject: Boolean,
     val isInlineValueClass: Boolean,
+    /** Unlike other expect classes, a final expect value class is actualized by a final class, so it has no subtypes as on the platform. */
+    val isFinalExpectValueClass: Boolean,
     val isAnnotationClass: Boolean,
     val isDataClassOrObject: Boolean,
     val isFinal: Boolean,
@@ -85,6 +88,7 @@ fun ConeKotlinType.toTypeInfo(session: FirSession): TypeInfo {
                 (symbol.isFullValueClass || symbol.isPlatformValueClass(session) || symbol.isMappedToPlatformValueClass(session))
         },
         isInlineValueClass = boundsSymbols.any { (it as? FirRegularClassSymbol)?.isInlineClass == true },
+        isFinalExpectValueClass = boundsSymbols.any { it.isExpect && it.isValue && it.modality == Modality.FINAL },
         isAnnotationClass = boundsSymbols.any { it.isAnnotationClass },
         isDataClassOrObject = boundsSymbols.any { it.isData },
         isFinal = boundsSymbols.any { it.isFinalClass },
