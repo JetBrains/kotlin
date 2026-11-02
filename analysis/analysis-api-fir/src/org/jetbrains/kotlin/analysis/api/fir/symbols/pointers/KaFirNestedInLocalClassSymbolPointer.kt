@@ -29,7 +29,7 @@ internal class KaFirNestedInLocalClassSymbolPointer<T : KaClassLikeSymbol>(
     private val firOrigin: FirDeclarationOrigin,
     private val expectedClass: KClass<T>,
     originalSymbol: T?,
-) : KaBaseCachedSymbolPointer<T>(originalSymbol) {
+) : KaFirCachedSymbolPointer<T>(originalSymbol) {
 
     @KaImplementationDetail
     override fun restoreIfNotCached(analysisSession: KaSession): T? {

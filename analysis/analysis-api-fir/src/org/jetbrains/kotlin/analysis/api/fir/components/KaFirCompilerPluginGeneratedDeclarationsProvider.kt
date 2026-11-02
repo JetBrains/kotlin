@@ -5,11 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.compilerPlugins.KaCompilerPluginGeneratedDeclarations
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
-import org.jetbrains.kotlin.analysis.api.fir.scopes.KaBaseEmptyScope
-import org.jetbrains.kotlin.analysis.api.fir.scopes.KaBaseScope
+import org.jetbrains.kotlin.analysis.api.fir.scopes.KaFirEmptyScope
+import org.jetbrains.kotlin.analysis.api.fir.scopes.KaFirScope
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsCompilerPluginGeneratedDeclarationsProvider
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -33,14 +34,14 @@ internal class KaFirCompilerPluginGeneratedDeclarationsProvider(
         withValidityAssertion {
             val firSessionForModule = analysisSession.resolutionFacade.sessionProvider.getSession(module)
             val generatedDeclarationsSymbolProviderForModule = firSessionForModule.generatedDeclarationsSymbolProvider
-                ?: return KaBaseCompilerPluginGeneratedDeclarations(KaBaseEmptyScope(analysisSession.token))
+                ?: return KaFirCompilerPluginGeneratedDeclarations(KaFirEmptyScope(analysisSession.token))
 
             val topLevelScope = KaFirTopLevelCompilerPluginGeneratedDeclarationsScope(
                 generatedDeclarationsSymbolProviderForModule,
                 analysisSession.firSymbolBuilder,
             )
 
-            KaBaseCompilerPluginGeneratedDeclarations(topLevelScope)
+            KaFirCompilerPluginGeneratedDeclarations(topLevelScope)
         }
 }
 
@@ -52,7 +53,7 @@ internal class KaFirCompilerPluginGeneratedDeclarationsProvider(
 private class KaFirTopLevelCompilerPluginGeneratedDeclarationsScope(
     private val generatedDeclarationsSymbolProvider: FirSwitchableExtensionDeclarationsSymbolProvider,
     private val symbolByFirBuilder: KaSymbolByFirBuilder,
-) : KaBaseScope() {
+) : KaFirScope() {
 
     override val token: KaLifetimeToken get() = symbolByFirBuilder.token
 
@@ -165,4 +166,14 @@ private class KaFirTopLevelCompilerPluginGeneratedDeclarationsScope(
             }
         }
     }
+}
+
+@KaImplementationDetail
+class KaFirCompilerPluginGeneratedDeclarations(
+    private val backingTopLevelDeclarationsScope: KaScope,
+) : org.jetbrains.kotlin.analysis.api.components.KaCompilerPluginGeneratedDeclarations {
+    override val token: KaLifetimeToken = backingTopLevelDeclarationsScope.token
+
+    override val topLevelDeclarationsScope: KaScope
+        get() = withValidityAssertion { backingTopLevelDeclarationsScope }
 }

@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.fir.annotations.KaBaseEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
+import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.hasAnnotation
 import org.jetbrains.kotlin.analysis.api.fir.parameterName
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirValueParameterSymbolPointer
@@ -115,7 +115,7 @@ internal class KaFirValueParameterSymbol private constructor(
             if (backingPsi != null && backingPsi.annotationEntries.isEmpty()) {
                 val property = (backingPsi.ownerDeclaration as? KtPropertyAccessor)?.property
                 if (property?.hasAnnotation(AnnotationUseSiteTarget.SETTER_PARAMETER) != true) {
-                    return@withValidityAssertion KaBaseEmptyAnnotationList(token)
+                    return@withValidityAssertion KaFirEmptyAnnotationList(token)
                 }
             }
 

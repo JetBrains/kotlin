@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
  *
  * Inheriting from [KotlinJavaModuleJavaAnnotationsProvider] allows the component to provide [JavaAnnotation]s directly, without having to
  * convert them to PSI annotations (and then another conversion of those PSI annotations back into [JavaAnnotation] in
- * `KaBaseJavaModuleResolver`).
+ * `KaFirJavaModuleResolver`).
  */
 @KaImplementationDetail
 class KotlinStandaloneJavaModuleAnnotationsProvider(

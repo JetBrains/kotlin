@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.name.Name
 internal class KaFirFileScope(
     private val owner: KaFirFileSymbol,
     private val builder: KaSymbolByFirBuilder
-) : KaBaseScope() {
+) : KaFirScope() {
     override val token: KaLifetimeToken get() = builder.token
 
     private val allNamesCached by cached {

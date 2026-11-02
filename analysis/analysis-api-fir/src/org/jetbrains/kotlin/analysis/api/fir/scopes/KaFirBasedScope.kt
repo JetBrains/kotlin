@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.name.Name
 internal abstract class KaFirBasedScope<S : FirScope>(
     internal val firScope: S,
     protected val builder: KaSymbolByFirBuilder,
-) : KaBaseScope() {
+) : KaFirScope() {
     final override val token: KaLifetimeToken get() = builder.token
 
     override fun callables(nameFilter: (Name) -> Boolean): Sequence<KaCallableSymbol> = withValidityAssertion {

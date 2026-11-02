@@ -9,7 +9,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.fir.components.*
-import org.jetbrains.kotlin.analysis.api.fir.components.KaBaseAnalysisScopeProviderImpl
+import org.jetbrains.kotlin.analysis.api.fir.components.KaFirAnalysisScopeProviderImpl
 import org.jetbrains.kotlin.analysis.api.fir.components.KaRendererImpl
 import org.jetbrains.kotlin.analysis.api.fir.components.bridges.*
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbolProvider
@@ -133,7 +133,7 @@ private constructor(
         KaFirTypeCreator(analysisSessionProvider)
 
     override val analysisScopeProvider: KaInternalsAnalysisScopeProvider =
-        KaBaseAnalysisScopeProviderImpl(analysisSessionProvider, useSiteScope)
+        KaFirAnalysisScopeProviderImpl(analysisSessionProvider, useSiteScope)
 
     override val completionCandidateChecker: KaInternalsCompletionCandidateChecker =
         KaFirCompletionCandidateChecker(analysisSessionProvider)

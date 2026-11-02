@@ -18,7 +18,7 @@ internal class KaFirClassLikeSymbolPointer<T : KaClassLikeSymbol>(
     private val classId: ClassId,
     private val expectedClass: KClass<T>,
     originalSymbol: T?,
-) : KaBaseCachedSymbolPointer<T>(originalSymbol) {
+) : KaFirCachedSymbolPointer<T>(originalSymbol) {
     @KaImplementationDetail
     override fun restoreIfNotCached(analysisSession: KaSession): T? {
         require(analysisSession is KaFirSession)

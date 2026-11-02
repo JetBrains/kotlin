@@ -10,9 +10,9 @@ import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractConstan
 import org.jetbrains.kotlin.analysis.api.contracts.description.booleans.*
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.contracts.description.*
-import org.jetbrains.kotlin.analysis.api.fir.contracts.description.KaBaseContractReturnsContractEffectDeclarations.KaBaseContractReturnsNotNullEffectDeclaration
-import org.jetbrains.kotlin.analysis.api.fir.contracts.description.KaBaseContractReturnsContractEffectDeclarations.KaBaseContractReturnsSpecificValueEffectDeclaration
-import org.jetbrains.kotlin.analysis.api.fir.contracts.description.KaBaseContractReturnsContractEffectDeclarations.KaBaseContractReturnsSuccessfullyEffectDeclaration
+import org.jetbrains.kotlin.analysis.api.fir.contracts.description.KaFirContractReturnsContractEffectDeclarations.KaFirContractReturnsNotNullEffectDeclaration
+import org.jetbrains.kotlin.analysis.api.fir.contracts.description.KaFirContractReturnsContractEffectDeclarations.KaFirContractReturnsSpecificValueEffectDeclaration
+import org.jetbrains.kotlin.analysis.api.fir.contracts.description.KaFirContractReturnsContractEffectDeclarations.KaFirContractReturnsSuccessfullyEffectDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.contracts.description.booleans.*
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.withSymbolAttachment
@@ -39,7 +39,7 @@ private class ConeContractDescriptionElementToAnalysisApi(
     override fun visitConditionalEffectDeclaration(
         conditionalEffect: ConeConditionalEffectDeclaration,
         data: Unit
-    ): KaContractConditionalContractEffectDeclaration = KaBaseContractConditionalContractEffectDeclaration(
+    ): KaContractConditionalContractEffectDeclaration = KaFirContractConditionalContractEffectDeclaration(
         conditionalEffect.effect.accept(),
         conditionalEffect.condition.accept()
     )
@@ -50,11 +50,11 @@ private class ConeContractDescriptionElementToAnalysisApi(
     ): KaContractReturnsContractEffectDeclaration =
         when (val value = returnsEffect.value) {
             ConeContractConstantValues.NULL ->
-                KaBaseContractReturnsSpecificValueEffectDeclaration(KaBaseContractConstantValue(KaContractConstantType.NULL, builder.token))
-            ConeContractConstantValues.NOT_NULL -> KaBaseContractReturnsNotNullEffectDeclaration(builder.token)
-            ConeContractConstantValues.WILDCARD -> KaBaseContractReturnsSuccessfullyEffectDeclaration(builder.token)
-            is KtBooleanConstantReference -> KaBaseContractReturnsSpecificValueEffectDeclaration(
-                KaBaseContractConstantValue(
+                KaFirContractReturnsSpecificValueEffectDeclaration(KaFirContractConstantValue(KaContractConstantType.NULL, builder.token))
+            ConeContractConstantValues.NOT_NULL -> KaFirContractReturnsNotNullEffectDeclaration(builder.token)
+            ConeContractConstantValues.WILDCARD -> KaFirContractReturnsSuccessfullyEffectDeclaration(builder.token)
+            is KtBooleanConstantReference -> KaFirContractReturnsSpecificValueEffectDeclaration(
+                KaFirContractConstantValue(
                     when (value) {
                         ConeContractConstantValues.TRUE -> KaContractConstantType.TRUE
                         ConeContractConstantValues.FALSE -> KaContractConstantType.FALSE
@@ -71,7 +71,7 @@ private class ConeContractDescriptionElementToAnalysisApi(
         }
 
     override fun visitCallsEffectDeclaration(callsEffect: KtCallsEffectDeclaration<ConeKotlinType, ConeDiagnostic>, data: Unit): KaContractCallsInPlaceContractEffectDeclaration =
-        KaBaseContractCallsInPlaceContractEffectDeclaration(
+        KaFirContractCallsInPlaceContractEffectDeclaration(
             backingValueParameterReference = callsEffect.valueParameterReference.accept(),
             backingOccurrencesRange = callsEffect.kind,
         )
@@ -80,7 +80,7 @@ private class ConeContractDescriptionElementToAnalysisApi(
         returnsResultOfEffect: KtReturnsResultOfDeclaration<ConeKotlinType, ConeDiagnostic>,
         data: Unit,
     ): KaContractReturnsResultOfEffectDeclaration =
-        KaBaseContractReturnsResultOfEffectDeclaration(
+        KaFirContractReturnsResultOfEffectDeclaration(
             returnsResultOfEffect.valueParameterReference.accept(),
         )
 
@@ -88,14 +88,14 @@ private class ConeContractDescriptionElementToAnalysisApi(
         returnsParameterEffect: KtReturnsParameterDeclaration<ConeKotlinType, ConeDiagnostic>,
         data: Unit,
     ): KaContractReturnsParameterEffectDeclaration =
-        KaBaseContractReturnsParameterEffectDeclaration(
+        KaFirContractReturnsParameterEffectDeclaration(
             returnsParameterEffect.valueParameterReference.accept(),
         )
 
     override fun visitLogicalBinaryOperationContractExpression(
         binaryLogicExpression: ConeBinaryLogicExpression,
         data: Unit
-    ): KaContractBinaryLogicExpression = KaBaseContractBinaryLogicExpression(
+    ): KaContractBinaryLogicExpression = KaFirContractBinaryLogicExpression(
         binaryLogicExpression.left.accept(),
         binaryLogicExpression.right.accept(),
         when (binaryLogicExpression.kind) {
@@ -105,32 +105,32 @@ private class ConeContractDescriptionElementToAnalysisApi(
     )
 
     override fun visitLogicalNot(logicalNot: ConeLogicalNot, data: Unit): KaContractLogicalNotExpression =
-        KaBaseContractLogicalNotExpression(logicalNot.arg.accept())
+        KaFirContractLogicalNotExpression(logicalNot.arg.accept())
 
     override fun visitIsInstancePredicate(isInstancePredicate: ConeIsInstancePredicate, data: Unit): KaContractIsInstancePredicateExpression =
-        KaBaseContractIsInstancePredicateExpression(
+        KaFirContractIsInstancePredicateExpression(
             isInstancePredicate.arg.accept(),
             builder.typeBuilder.buildKtType(isInstancePredicate.type),
             isInstancePredicate.isNegated
         )
 
     override fun visitIsNullPredicate(isNullPredicate: ConeIsNullPredicate, data: Unit): KaContractIsNullPredicateExpression =
-        KaBaseContractIsNullPredicateExpression(isNullPredicate.arg.accept(), isNullPredicate.isNegated)
+        KaFirContractIsNullPredicateExpression(isNullPredicate.arg.accept(), isNullPredicate.isNegated)
 
     override fun visitBooleanConstantDescriptor(
         booleanConstantDescriptor: ConeBooleanConstantReference,
         data: Unit
     ): KaContractBooleanConstantExpression =
         when (booleanConstantDescriptor) {
-            ConeContractConstantValues.TRUE -> KaBaseContractBooleanConstantExpression(true, builder.token)
-            ConeContractConstantValues.FALSE -> KaBaseContractBooleanConstantExpression(false, builder.token)
+            ConeContractConstantValues.TRUE -> KaFirContractBooleanConstantExpression(true, builder.token)
+            ConeContractConstantValues.FALSE -> KaFirContractBooleanConstantExpression(false, builder.token)
             else -> error("Can't convert $booleanConstantDescriptor to Analysis API")
         }
 
     override fun visitHoldsInEffectDeclaration(
         holdsInEffect: KtHoldsInEffectDeclaration<ConeKotlinType, ConeDiagnostic>,
         data: Unit,
-    ): KaContractHoldsInEffectDeclaration = KaBaseContractHoldsInEffectDeclaration(
+    ): KaContractHoldsInEffectDeclaration = KaFirContractHoldsInEffectDeclaration(
         backingCondition = holdsInEffect.argumentsCondition.accept(),
         backingValueParameterReference = holdsInEffect.valueParameterReference.accept(),
     )
@@ -138,7 +138,7 @@ private class ConeContractDescriptionElementToAnalysisApi(
     override fun visitConditionalReturnsDeclaration(
         conditionalEffect: KtConditionalReturnsDeclaration<ConeKotlinType, ConeDiagnostic>,
         data: Unit
-    ): KaContractConditionalContractEffectDeclaration = KaBaseContractConditionalContractEffectDeclaration(
+    ): KaContractConditionalContractEffectDeclaration = KaFirContractConditionalContractEffectDeclaration(
         backingEffect = conditionalEffect.returnsEffect.accept(),
         backingCondition = conditionalEffect.argumentsCondition.accept(),
     )
@@ -153,7 +153,7 @@ private class ConeContractDescriptionElementToAnalysisApi(
         data: Unit
     ): KaContractBooleanValueParameterExpression {
         val parameterValue = visitValueParameterReference(booleanValueParameterReference)
-        return KaBaseContractBooleanValueParameterExpression(parameterValue)
+        return KaFirContractBooleanValueParameterExpression(parameterValue)
     }
 
     private fun visitValueParameterReference(valueParameterReference: ConeValueParameterReference): KaContractParameterValue {
@@ -169,7 +169,7 @@ private class ConeContractDescriptionElementToAnalysisApi(
                         withSymbolAttachment("functionSymbol", this@with, firFunctionSymbol)
                     }
 
-                    return KaBaseContractOwnerParameterValue(containingClass)
+                    return KaFirContractOwnerParameterValue(containingClass)
                 }
 
             in firFunctionSymbol.valueParameters.indices -> firFunctionSymbol.valueParameters[index]
@@ -181,7 +181,7 @@ private class ConeContractDescriptionElementToAnalysisApi(
                 }
         }
 
-        return KaBaseContractExplicitParameterValue(parameterSymbol)
+        return KaFirContractExplicitParameterValue(parameterSymbol)
     }
 
     // Util function to avoid hard coding names of the classes. Type inference will do a better job figuring out the best type to cast to.

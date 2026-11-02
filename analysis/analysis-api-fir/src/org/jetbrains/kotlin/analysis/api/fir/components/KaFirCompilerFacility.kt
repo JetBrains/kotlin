@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.components.*
 import org.jetbrains.kotlin.analysis.api.fir.components.compilation.CodeFragmentContextDeclarationCache
 import org.jetbrains.kotlin.analysis.api.fir.components.compilation.getNonLocalContainingOrThisDeclarationWithIrMetadata
-import org.jetbrains.kotlin.analysis.api.fir.utils.KaBaseCompiledFileForOutputFile
+import org.jetbrains.kotlin.analysis.api.fir.utils.KaFirCompiledFileForOutputFile
 import org.jetbrains.kotlin.analysis.api.fir.utils.KaNonBoundToPsiErrorDiagnostic
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsCompilerFacility
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -154,23 +154,23 @@ internal class KaFirCompilerFacility(
     override val analysisSessionProvider: () -> KaFirSession
 ) : KaFirSessionComponent(), KaInternalsCompilerFacility {
     override fun compile(file: KtFile, options: KaCompilationOptions): KaCompilationResult = withPsiValidityAssertion(file) {
-        val opts = options as KaBaseCompilationOptions
+        val opts = options as KaFirCompilationOptions
         return withPsiValidityAssertion(file) {
             compileWithRetry(file, opts)
         }
     }
 
     override fun createCompilationOptions(init: KaCompilationOptionsBuilder.() -> Unit): KaCompilationOptions = withValidityAssertion {
-        return KaBaseCompilationOptionsBuilder(token, CompilerConfiguration.create()).apply(init).build()
+        return KaFirCompilationOptionsBuilder(token, CompilerConfiguration.create()).apply(init).build()
     }
 
     override fun modify(options: KaCompilationOptions, init: KaCompilationOptionsBuilder.() -> Unit): KaCompilationOptions = withValidityAssertion {
-        return (options as KaBaseCompilationOptions).modify(init)
+        return (options as KaFirCompilationOptions).modify(init)
     }
 
     private fun compileWithRetry(
         file: KtFile,
-        options: KaBaseCompilationOptions,
+        options: KaFirCompilationOptions,
     ): KaCompilationResult {
         val disabledIrExtensions = mutableListOf<Class<out IrGenerationExtension>>()
         val mutedExceptions = mutableListOf<Throwable>()
@@ -208,7 +208,7 @@ internal class KaFirCompilerFacility(
 
     private fun compileUnsafe(
         mainFile: KtFile,
-        options: KaBaseCompilationOptions,
+        options: KaFirCompilationOptions,
         disabledIrExtensions: List<Class<out IrGenerationExtension>>,
     ): KaCompilationResult {
         val syntaxErrors = SyntaxErrorReportingVisitor(analysisSession.firSession) { it.asKaDiagnostic() }
@@ -858,7 +858,7 @@ internal class KaFirCompilerFacility(
         chunk: ChunkToCompile,
         fir2IrResult: Fir2IrActualizedResult,
         configuration: CompilerConfiguration,
-        options: KaBaseCompilationOptions,
+        options: KaFirCompilationOptions,
         codeFragmentMappings: CodeFragmentMappings?,
         codegenFactory: JvmIrCodegenFactory,
         diagnosticsCollector: BaseDiagnosticsCollector,
@@ -911,7 +911,7 @@ internal class KaFirCompilerFacility(
 
         val compiledFiles = generationState.factory.asList()
             .filter { isMatchingRelativeClassPath(it.relativePath) }
-            .map(::KaBaseCompiledFileForOutputFile)
+            .map(::KaFirCompiledFileForOutputFile)
 
         val capturedValues = buildList {
             if (codeFragmentMappings != null) {
@@ -952,7 +952,7 @@ internal class KaFirCompilerFacility(
     private fun compileChunk(
         module: KaModule,
         chunk: ChunkToCompile,
-        options: KaBaseCompilationOptions,
+        options: KaFirCompilationOptions,
         codeFragmentMappings: CodeFragmentMappings?,
         compiledCodeProvider: CompiledCodeProvider,
         contextDeclarationCache: CodeFragmentContextDeclarationCache?,

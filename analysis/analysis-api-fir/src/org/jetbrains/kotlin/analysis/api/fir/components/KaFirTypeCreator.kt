@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.components.KaArrayTypeBuilder
 import org.jetbrains.kotlin.analysis.api.components.KaClassTypeBuilder
 import org.jetbrains.kotlin.analysis.api.components.KaTypeParameterTypeBuilder
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.fir.types.KaBaseStarTypeProjection
+import org.jetbrains.kotlin.analysis.api.fir.types.KaFirStarTypeProjection
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsTypeCreator
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -30,11 +30,11 @@ import org.jetbrains.kotlin.types.Variance
 internal class KaFirTypeCreator(
     override val analysisSessionProvider: () -> KaFirSession,
 ) : KaFirSessionComponent(), KaInternalsTypeCreator {
-    override fun buildStarTypeProjection(): KaStarTypeProjection = KaBaseStarTypeProjection(token)
+    override fun buildStarTypeProjection(): KaStarTypeProjection = KaFirStarTypeProjection(token)
 
     override fun buildArrayType(elementType: KaType, init: KaArrayTypeBuilder.() -> Unit): KaType = withValidityAssertion {
         with(analysisSession) {
-            val builder = KaBaseArrayTypeBuilder.ByElementType(elementType, token).apply(init)
+            val builder = KaFirArrayTypeBuilder.ByElementType(elementType, token).apply(init)
 
             val builderElementType = builder.elementType
 
@@ -64,21 +64,21 @@ internal class KaFirTypeCreator(
     }
 
     override fun buildClassType(classId: ClassId, init: KaClassTypeBuilder.() -> Unit): KaType = withValidityAssertion {
-        return buildClassType(KaBaseClassTypeBuilder.ByClassId(classId, token).apply(init))
+        return buildClassType(KaFirClassTypeBuilder.ByClassId(classId, token).apply(init))
     }
 
     override fun buildClassType(symbol: KaClassLikeSymbol, init: KaClassTypeBuilder.() -> Unit): KaType = withValidityAssertion {
-        return buildClassType(KaBaseClassTypeBuilder.BySymbol(symbol, token).apply(init))
+        return buildClassType(KaFirClassTypeBuilder.BySymbol(symbol, token).apply(init))
     }
 
-    private fun buildClassType(builder: KaBaseClassTypeBuilder): KaType {
+    private fun buildClassType(builder: KaFirClassTypeBuilder): KaType {
         val lookupTag = when (builder) {
-            is KaBaseClassTypeBuilder.ByClassId -> {
+            is KaFirClassTypeBuilder.ByClassId -> {
                 val classSymbol = rootModuleSession.symbolProvider.getClassLikeSymbolByClassId(builder.classId)
                     ?: return ConeErrorType(ConeUnresolvedSymbolError(builder.classId)).asKaType()
                 classSymbol.toLookupTag()
             }
-            is KaBaseClassTypeBuilder.BySymbol -> {
+            is KaFirClassTypeBuilder.BySymbol -> {
                 val symbol = builder.symbol
                 symbol.classId?.toLookupTag() ?: symbol.firSymbol.toLookupTag()
             }
@@ -96,7 +96,7 @@ internal class KaFirTypeCreator(
 
     override fun buildTypeParameterType(symbol: KaTypeParameterSymbol, init: KaTypeParameterTypeBuilder.() -> Unit): KaTypeParameterType {
         withValidityAssertion {
-            val builder = KaBaseTypeParameterTypeBuilder.BySymbol(symbol, token).apply(init)
+            val builder = KaFirTypeParameterTypeBuilder.BySymbol(symbol, token).apply(init)
             val symbol = builder.symbol
             val coneType = symbol.firSymbol.toConeType()
                 .withNullability(nullable = builder.isMarkedNullable, typeContext = analysisSession.firSession.typeContext)
