@@ -1,5 +1,7 @@
-// RUN_PIPELINE_TILL: CODEGEN
+// LATEST_LV_DIFFERENCE
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-73434, KT-88674
+// RENDER_DIAGNOSTIC_ARGUMENTS
 
 // FILE: JavaHelper.java
 public interface JavaHelper {
@@ -26,10 +28,10 @@ fun <E3 : Enum<E3>> funB() {
         defaultB(),
     )
 
-    funA(
+    <!TYPE_MISMATCH("Enum<CapturedType(*)!>!; CapturedType(*) & Any")!>funA(
         JavaHelper.createInterfaceA(),
         defaultB(),
-    )
+    )<!>
 
     funA<E3>(
         createInterfaceAKotlin(),
