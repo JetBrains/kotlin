@@ -136,6 +136,16 @@ def _symbol_loaded_address(name, debugger=lldb.debugger):
     return 0
 
 
+# The runtime sets the base of compressed references at startup, without them it stays 0.
+def _compressed_refs(target):
+    for context in target.FindSymbols("Kotlin_mm_compressedRefsBase"):
+        address = context.GetSymbol().GetStartAddress().GetLoadAddress(target)
+        error = lldb.SBError()
+        base = target.GetProcess().ReadPointerFromMemory(address, error)
+        return error.Success() and base != 0
+    return False
+
+
 def _type_info_by_address(address, debugger=lldb.debugger):
     target = debugger.GetSelectedTarget()
     process = target.GetProcess()
@@ -345,6 +355,17 @@ class KonanHelperProvider(lldb.SBSyntheticValueProvider):
         self._log.debug(
             "[%s, type:%s, address:%s]", index, value_type, _hex(address)
         )
+        if int(value_type) == 1 and _compressed_refs(self._target):
+            # References inside objects may be compressed, so they are read by the runtime.
+            reference = _evaluate(
+                f"(void *)Konan_DebugGetFieldReference({_hex(self._valobj.unsigned)}, {index})"
+            ).unsigned
+            data = lldb.SBData.CreateDataFromUInt64Array(
+                self._process.GetByteOrder(), self._process.GetAddressByteSize(), [reference]
+            )
+            return self._valobj.CreateValueFromData(
+                str(self._field_name(index)), data, self._valobj.GetType()
+            )
         return _TYPE_CONVERSION[int(value_type)](
             self, self._valobj, address, str(self._field_name(index))
         )

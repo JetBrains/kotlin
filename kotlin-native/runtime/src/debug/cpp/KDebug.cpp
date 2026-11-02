@@ -23,6 +23,7 @@
 #include "Memory.h"
 #include "Natives.h"
 #include "Porting.h"
+#include "ReferenceOps.hpp"
 #include "Types.h"
 
 #ifndef KONAN_NO_DEBUG_API
@@ -75,6 +76,7 @@ enum Konan_DebugOperation {
   DO_DebugGetFieldAddress = 10,
   DO_DebugGetFieldName = 11,
   DO_DebugGetTypeName = 12,
+  DO_DebugGetFieldReference = 13,
 };
 
 template <typename F>
@@ -187,6 +189,8 @@ void* Konan_DebugGetFieldAddressImpl(KRef obj, int32_t index) {
         return nullptr;
 
       int32_t typeIndex = -extendedTypeInfo->fieldsCount_;
+      if (typeIndex == Konan_RuntimeType::RT_OBJECT)
+        return ArrayAddressOfElementAt(obj->array(), index);
       return reinterpret_cast<uint8_t*>(obj->array())
           + alignUp(sizeof(struct ArrayHeader), runtimeTypeAlignment[typeIndex])
           + index * runtimeTypeSize[typeIndex];
@@ -199,6 +203,15 @@ void* Konan_DebugGetFieldAddressImpl(KRef obj, int32_t index) {
 }
 
 // Compute address of field or an array element at the index, or null, if incorrect.
+KRef Konan_DebugGetFieldReferenceImpl(KRef obj, int32_t index) {
+  if (Konan_DebugGetFieldTypeImpl(obj, index) != Konan_RuntimeType::RT_OBJECT)
+    return nullptr;
+  auto* address = Konan_DebugGetFieldAddressImpl(obj, index);
+  if (address == nullptr)
+    return nullptr;
+  return kotlin::mm::DirectRefAccessor(static_cast<kotlin::mm::HeapRefSlot*>(address)).load();
+}
+
 const char* Konan_DebugGetFieldNameImpl(KRef obj, int32_t index) {
   if (obj == nullptr || index < 0)
     return nullptr;
@@ -302,6 +315,12 @@ RUNTIME_EXPORT RUNTIME_WEAK const char* Konan_DebugGetFieldName(KRef obj, int32_
   return impl(obj, index);
 }
 
+RUNTIME_EXPORT RUNTIME_WEAK KRef Konan_DebugGetFieldReference(KRef obj, int32_t index) {
+  auto* impl = getImpl<KRef (*)(KRef, int32_t)>(obj, DO_DebugGetFieldReference);
+  if (impl == nullptr) return nullptr;
+  return impl(obj, index);
+}
+
 RUNTIME_EXPORT RUNTIME_WEAK const char* Konan_DebugGetTypeName(KRef obj) {
   auto* impl = getImpl<const char* (*)(KRef)>(obj, DO_DebugGetTypeName);
   if (impl == nullptr) return nullptr;
@@ -321,7 +340,8 @@ const void* Konan_debugOperationsList[] = {
   reinterpret_cast<const void*>(&Konan_DebugGetFieldTypeImpl),
   reinterpret_cast<const void*>(&Konan_DebugGetFieldAddressImpl),
   reinterpret_cast<const void*>(&Konan_DebugGetFieldNameImpl),
-  reinterpret_cast<const void*>(&Konan_DebugGetTypeNameImpl)
+  reinterpret_cast<const void*>(&Konan_DebugGetTypeNameImpl),
+  reinterpret_cast<const void*>(&Konan_DebugGetFieldReferenceImpl)
 };
 
 }  // extern "C"

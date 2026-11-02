@@ -20,6 +20,19 @@ struct InitNode {
   InitNode* next;
 };
 
+// With compressed references, reference slots of permanent objects are emitted zeroed and filled in at startup.
+// Offsets are relative to the fixups table, so the table needs no relocations at load time.
+struct PermanentRefFixup {
+  int32_t slotOffset;
+  int32_t targetOffset;
+};
+
+struct PermanentRefFixupNode {
+  const PermanentRefFixup* fixups;
+  size_t count;
+  PermanentRefFixupNode* next;
+};
+
 // If runtime gets initialized, it will be in the native state after this.
 RUNTIME_NOTHROW void Kotlin_initRuntimeIfNeeded();
 void deinitRuntimeIfNeeded();
@@ -32,6 +45,9 @@ void Kotlin_shutdownRuntime();
 
 // Appends given node to an initializer list.
 RUNTIME_NOTHROW void AppendToInitializersTail(struct InitNode*);
+
+// Appends given node to a list of permanent reference fixups.
+RUNTIME_NOTHROW void AppendPermanentRefFixups(struct PermanentRefFixupNode*);
 
 void CallInitGlobalPossiblyLock(uintptr_t* state, void (*init)(), const TypeInfo* typeInfo);
 void CallInitThreadLocal(uintptr_t volatile* globalState, uintptr_t* localState, void (*init)(), const TypeInfo* typeInfo);

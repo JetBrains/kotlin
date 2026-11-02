@@ -83,6 +83,10 @@ const char* Konan_DebugGetFieldName(KRef obj, int32_t index);
 RUNTIME_EXPORT RUNTIME_WEAK
 const char* Konan_DebugGetTypeName(KRef obj);
 
+// Read the reference in the field or the array element at the index, or null, if incorrect.
+RUNTIME_EXPORT RUNTIME_WEAK
+KRef Konan_DebugGetFieldReference(KRef obj, int32_t index);
+
 /**
  * Given an object finds debugger interface operation suitable for manipulation with this object.
  * Important for cases where multiple K/N runtimes coexist in the same address space and debugger

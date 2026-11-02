@@ -293,7 +293,8 @@ val refArr = arrayOfNulls<String?>(2)
 
 // CHECK-LABEL: define ptr @"kfun:#refArr_atomicGet(){}kotlin.String?"
 // CHECK: call ptr @Kotlin_arrayGetElementAddress(ptr noundef %{{[0-9]+}}, i32 noundef 0)
-// CHECK: load atomic ptr, ptr %{{[0-9]+}} seq_cst
+// CHECK-FULLREFS: load atomic ptr, ptr %{{[0-9]+}} seq_cst
+// CHECK-COMPRESSEDREFS: load atomic i32, ptr %{{[0-9]+}} seq_cst
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 fun refArr_atomicGet() = refArr.atomicGet(0)
 

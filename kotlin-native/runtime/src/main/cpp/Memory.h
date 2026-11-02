@@ -21,6 +21,7 @@
 #include <std_support/Atomic.hpp>
 
 #include "Alignment.hpp"
+#include "CompressedRefs.hpp"
 #include "KAssert.h"
 #include "Common.h"
 #include "TypeInfo.h"
@@ -207,20 +208,27 @@ void RegisterGlobal(ObjHeader** location) RUNTIME_NOTHROW;
 //
 
 // Zeroes heap location.
-void ZeroHeapRef(ObjHeader** location) RUNTIME_NOTHROW;
+void ZeroHeapRef(kotlin::mm::HeapRefSlot* location) RUNTIME_NOTHROW;
 // Zeroes an array.
 void ZeroArrayRefs(ArrayHeader* array) RUNTIME_NOTHROW;
 // Zeroes stack location.
 void ZeroStackRef(ObjHeader** location) RUNTIME_NOTHROW;
 // Updates stack location.
 void UpdateStackRef(ObjHeader** location, const ObjHeader* object) RUNTIME_NOTHROW;
-// Updates heap/static data location.
-void UpdateHeapRef(ObjHeader** location, const ObjHeader* object) RUNTIME_NOTHROW;
-// Updates volatile heap/static data location.
-void UpdateVolatileHeapRef(ObjHeader** location, const ObjHeader* object) RUNTIME_NOTHROW;
-OBJ_GETTER(CompareAndSwapVolatileHeapRef, ObjHeader** location, ObjHeader* expectedValue, ObjHeader* newValue) RUNTIME_NOTHROW;
-bool CompareAndSetVolatileHeapRef(ObjHeader** location, ObjHeader* expectedValue, ObjHeader* newValue) RUNTIME_NOTHROW;
-OBJ_GETTER(GetAndSetVolatileHeapRef, ObjHeader** location, ObjHeader* newValue) RUNTIME_NOTHROW;
+// Updates heap location.
+void UpdateHeapRef(kotlin::mm::HeapRefSlot* location, const ObjHeader* object) RUNTIME_NOTHROW;
+// Updates volatile heap location.
+void UpdateVolatileHeapRef(kotlin::mm::HeapRefSlot* location, const ObjHeader* object) RUNTIME_NOTHROW;
+OBJ_GETTER(CompareAndSwapVolatileHeapRef, kotlin::mm::HeapRefSlot* location, ObjHeader* expectedValue, ObjHeader* newValue) RUNTIME_NOTHROW;
+bool CompareAndSetVolatileHeapRef(kotlin::mm::HeapRefSlot* location, ObjHeader* expectedValue, ObjHeader* newValue) RUNTIME_NOTHROW;
+OBJ_GETTER(GetAndSetVolatileHeapRef, kotlin::mm::HeapRefSlot* location, ObjHeader* newValue) RUNTIME_NOTHROW;
+// Updates static data location.
+void UpdateGlobalRef(ObjHeader** location, const ObjHeader* object) RUNTIME_NOTHROW;
+// Updates volatile static data location.
+void UpdateVolatileGlobalRef(ObjHeader** location, const ObjHeader* object) RUNTIME_NOTHROW;
+OBJ_GETTER(CompareAndSwapVolatileGlobalRef, ObjHeader** location, ObjHeader* expectedValue, ObjHeader* newValue) RUNTIME_NOTHROW;
+bool CompareAndSetVolatileGlobalRef(ObjHeader** location, ObjHeader* expectedValue, ObjHeader* newValue) RUNTIME_NOTHROW;
+OBJ_GETTER(GetAndSetVolatileGlobalRef, ObjHeader** location, ObjHeader* newValue) RUNTIME_NOTHROW;
 
 // Updates location if it is null, atomically.
 // Updates reference in return slot.

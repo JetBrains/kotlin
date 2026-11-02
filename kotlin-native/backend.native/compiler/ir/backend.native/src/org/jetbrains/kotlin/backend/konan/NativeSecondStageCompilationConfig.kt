@@ -446,11 +446,27 @@ class NativeSecondStageCompilationConfig(
     // KT-85811 K/N: FirNativeGCTestGenerated.testMemoryDump fails
     // KT-69731 Kotlin/Native: handle heap-allocated non-escaping objects with CMS
     val escapeAnalysisPropagateExiledToHeapObjects by lazy {
-        configuration.get(BinaryOptions.escapeAnalysisPropagateExiledToHeapObjects)?.also {
+        val propagateExiledToHeapObjects = configuration.get(BinaryOptions.escapeAnalysisPropagateExiledToHeapObjects)?.also {
             if (it && gc == GC.CONCURRENT_MARK_AND_SWEEP) {
                 configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING, "CMS GC requires escapeAnalysisPropagateExiledToHeapObjects=true")
             }
         } ?: true
+        if (!propagateExiledToHeapObjects && compressedRefs) {
+            configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING, "Compressed references require escapeAnalysisPropagateExiledToHeapObjects=true")
+            true
+        } else {
+            propagateExiledToHeapObjects
+        }
+    }
+
+    val compressedRefs: Boolean by lazy {
+        val compressedRefs = configuration.get(BinaryOptions.compressedRefs) ?: false
+        if (compressedRefs && (target.pointerBits() != 64 || target.family == Family.MINGW || gc != GC.CONCURRENT_MARK_AND_SWEEP || allocationMode != AllocationMode.CUSTOM || produce == CompilerOutputKind.DYNAMIC_CACHE)) {
+            configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING, "Compressed references require a 64-bit non-MinGW target, CMS GC and the custom allocator, and are not supported for dynamic caches")
+            false
+        } else {
+            compressedRefs
+        }
     }
 
     val enableReleaseBinaryCache: Boolean
@@ -538,6 +554,8 @@ class NativeSecondStageCompilationConfig(
             append("-latin1_strings${if (latin1Strings) "ENABLE" else "DISABLE"}")
         if (assertsEnabled != defaultAsserts)
             append("-asserts${if (assertsEnabled) "ENABLE" else "DISABLE"}")
+        if (compressedRefs)
+            append("-compressed_refs")
     }
 
     private val systemCacheFlavorString = buildString {

@@ -481,6 +481,30 @@ internal class CodeGeneratorVisitor(
 
     //-------------------------------------------------------------------------//
 
+    private fun createPermanentRefFixupsInitializer(): LlvmCallable? {
+        val fixups = codegen.staticData.permanentRefFixups
+        if (fixups.isEmpty()) return null
+        val fixupType = llvm.runtime.permanentRefFixupType
+
+        val table = codegen.staticData.createGlobal(LLVMArrayType(fixupType, fixups.size)!!, "permanent_ref_fixups")
+        val tableAddress = LLVMConstPtrToInt(table.llvmGlobal, llvm.int64Type)!!
+        fun offsetInTable(value: ConstValue) =
+                constValue(LLVMConstTrunc(LLVMConstSub(LLVMConstPtrToInt(value.llvm, llvm.int64Type), tableAddress), llvm.int32Type)!!)
+        table.setInitializer(ConstArray(fixupType, fixups.map { Struct(fixupType, offsetInTable(it.slot), offsetInTable(it.target)) }))
+        table.setConstant(true)
+
+        val node = Struct(llvm.runtime.permanentRefFixupNodeType, table.pointer, llvm.constInt64(fixups.size.toLong()), null)
+        val nodePtr = codegen.staticData.placeGlobal("permanent_ref_fixup_node", node).llvmGlobal
+
+        val proto = ctorFunctionSignature.toProto("", null, LLVMLinkage.LLVMPrivateLinkage)
+        return generateFunctionNoRuntime(codegen, proto) {
+            call(llvm.appendPermanentRefFixups, listOf(nodePtr))
+            ret(null)
+        }
+    }
+
+    //-------------------------------------------------------------------------//
+
     override fun visitFile(declaration: IrFile) {
         @Suppress("UNCHECKED_CAST")
         using(FileScope(declaration, declaration.fileEntry)) {
@@ -1698,6 +1722,7 @@ internal class CodeGeneratorVisitor(
                 value.type.binaryTypeIsReference(),
                 fieldAddress,
                 !value.symbol.owner.isFinal,
+                if (value.symbol.owner.isStatic) RefLocation.GLOBAL else RefLocation.HEAP,
                 resultSlot,
                 memoryOrder = order,
                 alignment = alignment
@@ -1754,7 +1779,7 @@ internal class CodeGeneratorVisitor(
             alignment = generationState.llvmDeclarations.forStaticField(field).alignment
         }
         functionGenerationContext.storeAny(
-                valueToAssign, address, field.type.binaryTypeIsReference(), false,
+                valueToAssign, address, field.type.binaryTypeIsReference(), if (field.isStatic) RefLocation.GLOBAL else RefLocation.HEAP,
                 isVolatile = field.hasAnnotation(KonanFqNames.volatile),
                 alignment = alignment,
         )
@@ -1847,7 +1872,7 @@ internal class CodeGeneratorVisitor(
                         require(value.type.toLLVMType(llvm) == llvm.pointerType) {
                             "Can't wrap ${value.value.kind.asString} constant to type ${value.type.render()}"
                         }
-                        value.toBoxCacheValue(generationState) ?: codegen.staticData.createConstKotlinObject(
+                        value.toBoxCacheValue(generationState) ?: codegen.staticData.createConstKotlinBox(
                                 constructedType.getClass()!!,
                                 evaluateConst(value.value)
                         )
@@ -2756,6 +2781,9 @@ internal class CodeGeneratorVisitor(
 
     //-------------------------------------------------------------------------//
     fun appendStaticInitializers() {
+        val permanentRefFixupsInitializer = createPermanentRefFixupsInitializer()
+        val permanentRefFixupsLibrary = generationState.cacheInfo?.klib
+
         // Note: the list of libraries is topologically sorted (in order for initializers to be called correctly).
         val dependencies = (generationState.dependenciesTracker.allBitcodeDependencies + listOf(null)/* Null for "current" non-library module */)
 
@@ -2796,9 +2824,10 @@ internal class CodeGeneratorVisitor(
 
             if (library == null || generationState.llvmModuleSpecification.containsLibrary(library)) {
                 val otherInitializers = llvm.otherStaticInitializers.takeIf { library == null }.orEmpty()
+                val fixupsInitializer = permanentRefFixupsInitializer.takeIf { library == permanentRefFixupsLibrary }
 
                 listOf(
-                    appendStaticInitializers(ctorProto(ctorName), listOfNotNull(initializer) + otherInitializers)
+                    appendStaticInitializers(ctorProto(ctorName), listOfNotNull(initializer, fixupsInitializer) + otherInitializers)
                 )
             } else {
                 // A cached library.
@@ -2951,6 +2980,7 @@ internal fun NativeGenerationState.generateRuntimeConstantsModule(): LLVMModuleR
         setRuntimeConstGlobal(NativeRuntimeConstants.GC_MARK_SINGLE_THREADED, config.gcMarkSingleThreaded.toLlvmConstInt32())
         setRuntimeConstGlobal(NativeRuntimeConstants.FIXED_BLOCK_PAGE_SIZE, config.fixedBlockPageSize.toInt().toLlvmConstInt32())
         setRuntimeConstGlobal(NativeRuntimeConstants.PAGED_ALLOCATOR, config.pagedAllocator.toLlvmConstInt32())
+        setRuntimeConstGlobal(NativeRuntimeConstants.COMPRESSED_REFS, config.compressedRefs.toLlvmConstInt32())
     }
 
     return llvmModule

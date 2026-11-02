@@ -55,6 +55,9 @@ internal class Runtime(
 
     val initNodeType = getStructType("InitNode")
 
+    val permanentRefFixupType = getStructType("PermanentRefFixup")
+    val permanentRefFixupNodeType = getStructType("PermanentRefFixupNode")
+
     val target = LLVMGetTarget(llvmModule)!!.toKString()
 
     val dataLayout = LLVMGetDataLayout(llvmModule)!!.toKString()

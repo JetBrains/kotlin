@@ -291,6 +291,7 @@ internal fun CompilerConfiguration.setupCommonOptionsForCaches(config: NativeSec
     put(BinaryOptions.concurrentWeakSweep, config.concurrentWeakSweep)
     put(BinaryOptions.checkStateAtExternalCalls, config.checkStateAtExternalCalls)
     putIfNotNull(RUNTIME_LOGS, config.configuration.runtimeLogs)
+    put(BinaryOptions.compressedRefs, config.compressedRefs)
 }
 
 private fun Array<String>?.toNonNullList() = this?.asList().orEmpty()

@@ -21,6 +21,10 @@ std::atomic<size_t> allocatedBytesCounter = 0;
 
 void alloc::initObjectPool() noexcept {}
 
+void* alloc::allocateRuntimePermanentObject(size_t size) noexcept {
+    return ::calloc(1, size);
+}
+
 void* alloc::allocateInObjectPool(size_t size) noexcept {
     // TODO: Check that alignment to kObjectAlignment is satisfied.
     void* result = ::calloc(1, size);

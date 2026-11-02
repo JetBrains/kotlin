@@ -1,0 +1,5 @@
+b main.kt:10
+r
+v node->next
+v node->next->value
+q

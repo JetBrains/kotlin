@@ -155,7 +155,7 @@ internal class RTTIGenerator(
     }
 
     private val arrayClasses = mapOf(
-            IdSignatureValues.array to llvm.pointerType,
+            IdSignatureValues.array to llvm.heapRefSlotType,
             primitiveArrayTypesSignatures[PrimitiveType.BYTE] to llvm.int8Type,
             primitiveArrayTypesSignatures[PrimitiveType.CHAR] to llvm.int16Type,
             primitiveArrayTypesSignatures[PrimitiveType.SHORT] to llvm.int16Type,
@@ -380,7 +380,7 @@ internal class RTTIGenerator(
 
     private fun mapRuntimeType(type: LLVMTypeRef, isObjectType: Boolean): Int {
         if (isObjectType) {
-            require(type == llvm.pointerType) { "Expected object type, got ${type.toTypeString()}" }
+            require(type == llvm.heapRefSlotType) { "Expected object type, got ${type.toTypeString()}" }
             return RT_OBJECT
         }
 

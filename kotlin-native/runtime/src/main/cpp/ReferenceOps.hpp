@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include "CompilerConstants.hpp"
+#include "CompressedRefs.hpp"
 #include "Memory.h"
 #include "std_support/Atomic.hpp"
 
@@ -39,11 +41,12 @@ public:
     DirectRefAccessor() = delete;
     DirectRefAccessor& operator=(const DirectRefAccessor&) = delete;
 
-    explicit DirectRefAccessor(ObjHeader*& fieldRef) noexcept : ref_(fieldRef) {}
-    explicit DirectRefAccessor(ObjHeader** fieldPtr) noexcept : DirectRefAccessor(*fieldPtr) {}
+    explicit DirectRefAccessor(ObjHeader*& fieldRef) noexcept : DirectRefAccessor(&fieldRef) {}
+    explicit DirectRefAccessor(ObjHeader** fieldPtr) noexcept : location_(fieldPtr), compressed_(false) {}
+    explicit DirectRefAccessor(HeapRefSlot* slot) noexcept : location_(slot), compressed_(compiler::compressedRefs()) {}
     DirectRefAccessor(const DirectRefAccessor& other) = default;
 
-    ObjHeader** location() const noexcept { return &ref_; }
+    void* location() const noexcept { return location_; }
 
     PERFORMANCE_INLINE operator ObjHeader*() const noexcept { return load(); }
     PERFORMANCE_INLINE ObjHeader* operator=(ObjHeader* desired) noexcept { store(desired); return desired; }
@@ -59,7 +62,7 @@ public:
 #endif
         return loaded;
 #else
-        return ref_;
+        return compressed_ ? decompressRef(*compressedRef()) : *fullRef();
 #endif
     }
 
@@ -67,32 +70,51 @@ public:
 #if STRICT_ATOMICS_IN_HEAP
         storeAtomic(desired, std::memory_order_relaxed);
 #else
-        ref_ = desired;
+        if (compressed_) {
+            *compressedRef() = compressRef(desired);
+        } else {
+            *fullRef() = desired;
+        }
 #endif
     }
 
-    PERFORMANCE_INLINE auto atomic() noexcept {
-        return std_support::atomic_ref{ref_};
-    }
-    PERFORMANCE_INLINE auto atomic() const noexcept {
-        return std_support::atomic_ref{ref_};
-    }
-
     PERFORMANCE_INLINE ObjHeader* loadAtomic(std::memory_order order) const noexcept {
-        return atomic().load(order);
+        if (compressed_) return decompressRef(std_support::atomic_ref{*compressedRef()}.load(order));
+        return std_support::atomic_ref{*fullRef()}.load(order);
     }
     PERFORMANCE_INLINE void storeAtomic(ObjHeader* desired, std::memory_order order) noexcept {
-        atomic().store(desired, order);
+        if (compressed_) {
+            std_support::atomic_ref{*compressedRef()}.store(compressRef(desired), order);
+        } else {
+            std_support::atomic_ref{*fullRef()}.store(desired, order);
+        }
     }
     PERFORMANCE_INLINE ObjHeader* exchange(ObjHeader* desired, std::memory_order order) noexcept {
-        return atomic().exchange(desired, order);
+        if (compressed_) return decompressRef(std_support::atomic_ref{*compressedRef()}.exchange(compressRef(desired), order));
+        return std_support::atomic_ref{*fullRef()}.exchange(desired, order);
     }
     PERFORMANCE_INLINE bool compareAndExchange(ObjHeader*& expected, ObjHeader* desired, std::memory_order order) noexcept {
-        return atomic().compare_exchange_strong(expected, desired, order);
+        if (compressed_) {
+            auto expectedOffset = compressRef(expected);
+            bool result = std_support::atomic_ref{*compressedRef()}.compare_exchange_strong(expectedOffset, compressRef(desired), order);
+            expected = decompressRef(expectedOffset);
+            return result;
+        }
+        return std_support::atomic_ref{*fullRef()}.compare_exchange_strong(expected, desired, order);
     }
 
 private:
-    ObjHeader*& ref_;
+    uint32_t* compressedRef() const noexcept { return static_cast<uint32_t*>(location_); }
+    ObjHeader** fullRef() const noexcept { return static_cast<ObjHeader**>(location_); }
+
+    void* location_;
+    bool compressed_;
+};
+
+enum class RefLocation {
+    kHeap,
+    kGlobal,
+    kStack
 };
 
 /**
@@ -100,14 +122,19 @@ private:
  * With all the necessary GC barriers etc.
  * Prefer using aliases below.
  */
-template<bool kOnStack>
+template<RefLocation kLocation>
 class RefAccessor {
 public:
     RefAccessor() = delete;
     RefAccessor& operator=(const RefAccessor&) = delete;
 
-    explicit RefAccessor(ObjHeader*& fieldRef) noexcept : direct_(fieldRef) {}
+    explicit RefAccessor(ObjHeader*& fieldRef) noexcept : direct_(fieldRef) {
+        static_assert(kLocation != RefLocation::kHeap, "Slots inside objects are addressed with HeapRefSlot*");
+    }
     explicit RefAccessor(ObjHeader** fieldPtr) noexcept : RefAccessor(*fieldPtr) {}
+    explicit RefAccessor(HeapRefSlot* slot) noexcept : direct_(slot) {
+        static_assert(kLocation == RefLocation::kHeap, "Only slots inside objects are addressed with HeapRefSlot*");
+    }
     RefAccessor(const RefAccessor& other) noexcept : direct_(other.direct_) {}
 
     DirectRefAccessor direct() const noexcept { return direct_; }
@@ -175,21 +202,21 @@ private:
     DirectRefAccessor direct_;
 };
 
-using RefFieldAccessor = RefAccessor<false>;
-using GlobalRefAccessor = RefAccessor<false>;
-using StackRefAccessor = RefAccessor<true>;
+using RefFieldAccessor = RefAccessor<RefLocation::kHeap>;
+using GlobalRefAccessor = RefAccessor<RefLocation::kGlobal>;
+using StackRefAccessor = RefAccessor<RefLocation::kStack>;
 
 class RefField : private Pinned {
 public:
     auto accessor() noexcept {
-        return mm::RefFieldAccessor(value_);
+        return mm::RefFieldAccessor(reinterpret_cast<HeapRefSlot*>(&value_));
     }
     auto direct() noexcept {
         return accessor().direct();
     }
     // FIXME probably most of the uses should instead use accessor
-    auto ptr() noexcept {
-        return direct().location();
+    ObjHeader** ptr() noexcept {
+        return &value_;
     }
 
     // TODO consider adding other operations

@@ -20,6 +20,7 @@
 
 #include "Memory.h"
 #include "KString.h"
+#include "ReferenceOps.hpp"
 #include "WritableTypeInfo.hpp"
 
 extern "C" {
@@ -53,7 +54,8 @@ RUNTIME_NOTHROW int Kotlin_internal_reflect_getObjectReferenceFieldsCount(ObjHea
 }
 
 RUNTIME_NOTHROW OBJ_GETTER(Kotlin_internal_reflect_getObjectReferenceFieldByIndex, ObjHeader* object, int index) {
-    RETURN_OBJ(*reinterpret_cast<ObjHeader**>(reinterpret_cast<uintptr_t>(object) + object->type_info()->objOffsets_[index]));
+    auto* slot = reinterpret_cast<kotlin::mm::HeapRefSlot*>(reinterpret_cast<uintptr_t>(object) + object->type_info()->objOffsets_[index]);
+    RETURN_OBJ(kotlin::mm::RefFieldAccessor(slot).load());
 }
 
 RUNTIME_NOTHROW OBJ_GETTER(Kotlin_native_internal_reflect_objCNameOrNull, const TypeInfo* typeInfo) {

@@ -27,6 +27,7 @@
 #include "CompilerConstants.hpp"
 #include "CustomAllocator.hpp"
 #include "CustomLogging.hpp"
+#include "HeapReservation.hpp"
 #include "mm/ExtraObjectData.hpp"
 #include "FinalizerHooks.hpp"
 #include "gc/GC.hpp"
@@ -113,7 +114,14 @@ void* kotlin::alloc::SafeAlloc(uint64_t size) noexcept {
     }
     void* memory;
     bool error;
-    if (kotlin::compiler::disableMmap()) {
+    if (kotlin::compiler::compressedRefs()) {
+#if KONAN_WINDOWS
+        RuntimeFail("Compressed references are not supported on mingw");
+#else
+        memory = HeapReservation::instance().allocate(size);
+        error = false;
+#endif
+    } else if (kotlin::compiler::disableMmap()) {
         memory = calloc(size, 1);
         error = memory == nullptr;
     } else {
@@ -142,7 +150,13 @@ void* kotlin::alloc::SafeAlloc(uint64_t size) noexcept {
 
 void kotlin::alloc::Free(void* ptr, size_t size) noexcept {
     CustomAllocDebug("Free(%p, %zu)", ptr, size);
-    if (kotlin::compiler::disableMmap()) {
+    if (kotlin::compiler::compressedRefs()) {
+#if KONAN_WINDOWS
+        RuntimeFail("Compressed references are not supported on mingw");
+#else
+        HeapReservation::instance().free(ptr, size);
+#endif
+    } else if (kotlin::compiler::disableMmap()) {
         free(ptr);
     } else {
 #if KONAN_WINDOWS

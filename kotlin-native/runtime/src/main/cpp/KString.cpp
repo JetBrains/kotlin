@@ -21,6 +21,7 @@
 #include <string>
 #include <optional>
 
+#include "alloc/Allocator.hpp"
 #include "CompilerConstants.hpp"
 #include "CallsChecker.hpp"
 #include "KAssert.h"
@@ -107,7 +108,7 @@ KRef allocateString(StringEncoding encoding, uint32_t sizeInUnits, Allocator&& a
 
 KRef allocatePermanentString(StringEncoding encoding, size_t sizeInUnits) {
     return allocateString(encoding, sizeInUnits, [](size_t sizeInChars) {
-        auto result = reinterpret_cast<ObjHeader*>(std::calloc(sizeof(ArrayHeader) + sizeInChars * sizeof(KChar), 1));
+        auto result = reinterpret_cast<ObjHeader*>(kotlin::alloc::allocateRuntimePermanentObject(sizeof(ArrayHeader) + sizeInChars * sizeof(KChar)));
         result->typeInfoOrMeta_ = setPointerBits((TypeInfo *)theStringTypeInfo, OBJECT_TAG_PERMANENT);
         result->array()->count_ = sizeInChars;
         return result;
