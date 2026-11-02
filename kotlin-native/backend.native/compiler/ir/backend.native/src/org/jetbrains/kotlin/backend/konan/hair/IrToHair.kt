@@ -372,6 +372,11 @@ internal class HairGenerator(val context: NativeBackendContext, val module: IrMo
                             condBlock.replaceArgs(preds.toTypedArray())
                         }
 
+                        // `while (true)` without break
+                        if (cond is True && breakExits.isEmpty()) {
+                            breakControlFlowWithUnreachable()
+                        }
+
                         return unitConst
                     }
 
@@ -394,6 +399,11 @@ internal class HairGenerator(val context: NativeBackendContext, val module: IrMo
                         if (continueExits.isNotEmpty()) {
                             val preds = entryBlock.preds + continueExits
                             entryBlock.replaceArgs(preds.toTypedArray())
+                        }
+
+                        // `while (true)` without break
+                        if (cond is True && breakExits.isEmpty()) {
+                            breakControlFlowWithUnreachable()
                         }
 
                         return unitConst
@@ -433,10 +443,14 @@ internal class HairGenerator(val context: NativeBackendContext, val module: IrMo
                         returns[expression.symbol] = mutableListOf()
                         val mainResult = super.visitReturnableBlock(expression, data)
                         val mainExit = if (controlBuilder.lastControl !is Unreachable) Goto() else null
-                        @Suppress("UNCHECKED_CAST")
-                        val results = (returns[expression.symbol]!! + listOf(mainExit to mainResult)).filter { it.first != null } as List<Pair<BlockExit, Node>>
-                        val exitBlock = BlockEntry(*results.map { it.first }.toTypedArray())
-                        return Phi(exitBlock, *results.toTypedArray())
+                        val results = (returns.getValue(expression.symbol) + (mainExit to mainResult))
+                                .mapNotNull { [exit, value] -> exit?.let { it to value } }
+                        return results.takeIf { it.isNotEmpty() }
+                                ?.let {
+                                    val exitBlock = BlockEntry(*results.map { it.first }.toTypedArray())
+                                    Phi(exitBlock, *results.toTypedArray())
+                                }
+                                ?: NoValue()
                     }
 
                     override fun visitTypeOperator(expression: IrTypeOperatorCall, data: Unit): Node {

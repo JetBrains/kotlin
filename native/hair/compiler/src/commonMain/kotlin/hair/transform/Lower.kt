@@ -12,6 +12,7 @@ import hair.ir.nodes.ControlFlowBuilder
 import hair.ir.nodes.IsInstanceOf
 import hair.ir.nodes.Node
 import hair.ir.nodes.NodeBuilder
+import hair.ir.nodes.replaceValueUses
 import hair.sym.CmpOp
 import hair.sym.HairType
 import hair.sym.RuntimeInterface
@@ -65,7 +66,8 @@ fun Session.lower() {
 
                         override fun visitCheckCast(node: CheckCast) {
                             // TODO strike out?
-                            node.replaceValueUsesAndKill(node.obj)
+                            node.replaceValueUses(node.obj)
+                            node.removeFromControl()
                         }
 
                         override fun visitArrayIndexCheck(node: ArrayIndexCheck) {
@@ -87,6 +89,7 @@ fun Session.lower() {
                     }
 
                     for (node in worklist) {
+                        if (!node.registered) continue
                         node.accept(lowering)
                     }
                 }
