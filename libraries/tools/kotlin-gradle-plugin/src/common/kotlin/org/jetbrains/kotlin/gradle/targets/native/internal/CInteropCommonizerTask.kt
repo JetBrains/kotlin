@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.internal.UsesClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_COMMONIZE_CINTEROP_MAX_WORKERS
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.withDependsOnClosure
@@ -39,8 +39,6 @@ import org.jetbrains.kotlin.gradle.targets.native.toolchain.NoopKotlinNativeProv
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.UsesKotlinNativeBundleBuildService
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.gradle.utils.*
-import org.jetbrains.kotlin.internal.compilerRunner.native.maxParallelUsagesFromAvailableRam
-import org.jetbrains.kotlin.internal.compilerRunner.native.maxParallelUsagesFromGradleProperty
 import org.jetbrains.kotlin.internal.compilerRunner.native.registerKotlinNativeParallelismLimitService
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
@@ -61,13 +59,9 @@ internal abstract class CInteropCommonizerTask
     UsesKotlinNativeBundleBuildService {
 
     init {
-        usesService(
-            project.registerKotlinNativeParallelismLimitService(
-                name = "CInteropCommonizerTask",
-                maxParallelUsagesFromGradleProperty(project.providers, KOTLIN_NATIVE_COMMONIZE_CINTEROP_MAX_WORKERS),
-                maxParallelUsagesFromAvailableRam(approximateTaskInstanceRamUsageMb = 500),
-            )
-        )
+        project.kotlinPropertiesProvider.nativeCommonizeCInteropMaxWorkers?.let { maxParallelUsages ->
+            usesService(project.registerKotlinNativeParallelismLimitService(name = "CInteropCommonizerTask", maxParallelUsages))
+        }
     }
 
     internal class CInteropGist(

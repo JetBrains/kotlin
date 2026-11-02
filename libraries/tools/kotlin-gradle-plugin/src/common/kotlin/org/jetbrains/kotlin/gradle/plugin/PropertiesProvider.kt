@@ -419,6 +419,15 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val nativeParallelThreads: Int?
         get() = this.property(PropertyNames.KOTLIN_NATIVE_PARALLEL_THREADS).orNull?.toInt()
 
+    val nativeCompileMaxWorkers: Int?
+        get() = this.property(PropertyNames.KOTLIN_NATIVE_COMPILE_MAX_WORKERS).orNull?.toIntOrNull()
+
+    val nativeLinkMaxWorkers: Int?
+        get() = this.property(PropertyNames.KOTLIN_NATIVE_LINK_MAX_WORKERS).orNull?.toIntOrNull()
+
+    val nativeCommonizeCInteropMaxWorkers: Int?
+        get() = this.property(PropertyNames.KOTLIN_NATIVE_COMMONIZE_CINTEROP_MAX_WORKERS).orNull?.toIntOrNull()
+
     val nativeEnableReleaseBinaryCache: Boolean
         get() = booleanProperty(PropertyNames.KOTLIN_NATIVE_ENABLE_RELEASE_BINARY_CACHE) ?: false
 

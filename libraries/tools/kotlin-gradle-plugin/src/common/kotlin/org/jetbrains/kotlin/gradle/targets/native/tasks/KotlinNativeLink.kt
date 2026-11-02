@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.create
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_LINK_MAX_WORKERS
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
@@ -49,8 +49,6 @@ import org.jetbrains.kotlin.gradle.targets.native.toolchain.UsesKotlinNativeBund
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeCompilerRunner
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeToolRunner
-import org.jetbrains.kotlin.internal.compilerRunner.native.maxParallelUsagesFromAvailableRam
-import org.jetbrains.kotlin.internal.compilerRunner.native.maxParallelUsagesFromGradleProperty
 import org.jetbrains.kotlin.internal.compilerRunner.native.registerKotlinNativeParallelismLimitService
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -91,13 +89,9 @@ constructor(
             }
         }
 
-        usesService(
-            project.registerKotlinNativeParallelismLimitService(
-                name = "KotlinNativeLink",
-                maxParallelUsagesFromGradleProperty(project.providers, KOTLIN_NATIVE_LINK_MAX_WORKERS),
-                maxParallelUsagesFromAvailableRam(approximateTaskInstanceRamUsageMb = 500),
-            )
-        )
+        project.kotlinPropertiesProvider.nativeLinkMaxWorkers?.let { maxParallelUsages ->
+            usesService(project.registerKotlinNativeParallelismLimitService(name = "KotlinNativeLink", maxParallelUsages))
+        }
     }
 
     // Used by IDEA import, should be addressed via KTIJ-38346

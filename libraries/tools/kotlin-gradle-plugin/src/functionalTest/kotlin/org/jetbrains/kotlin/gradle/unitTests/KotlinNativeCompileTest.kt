@@ -8,46 +8,44 @@ package org.jetbrains.kotlin.gradle.unitTests
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_COMPILE_MAX_WORKERS
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
+import org.jetbrains.kotlin.gradle.util.isParallelismLimitServiceRegistered
 import org.jetbrains.kotlin.gradle.util.kotlin
 import org.jetbrains.kotlin.gradle.util.maxParallelUsagesOf
-import org.jetbrains.kotlin.gradle.util.withGradleProperty
+import org.jetbrains.kotlin.gradle.util.propertiesExtension
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNull
+import kotlin.test.assertFalse
 
 class KotlinNativeCompileTest {
 
     @Test
     fun `KotlinNativeCompile task configures the parallelism limit service using the KOTLIN_NATIVE_COMPILE_MAX_WORKERS property, when set`() {
-        withGradleProperty(KOTLIN_NATIVE_COMPILE_MAX_WORKERS, value = "3") {
-            val project = buildProjectWithMPP {
-                kotlin {
-                    linuxX64()
-                }
+        val project = buildProjectWithMPP {
+            propertiesExtension.set(KOTLIN_NATIVE_COMPILE_MAX_WORKERS, "3")
+            kotlin {
+                linuxX64()
             }
-            project.evaluate()
-
-            // Force the KotlinNativeCompile task to be instantiated, so its init block runs
-            project.tasks.getByName("compileKotlinLinuxX64") as KotlinNativeCompile
-
-            assertEquals(3, project.maxParallelUsagesOf("KotlinNativeCompile"))
         }
+        project.evaluate()
+
+        // Force the KotlinNativeCompile task to be instantiated, so its init block runs
+        project.tasks.getByName("compileKotlinLinuxX64") as KotlinNativeCompile
+
+        assertEquals(3, project.maxParallelUsagesOf("KotlinNativeCompile"))
     }
 
     @Test
-    fun `KotlinNativeCompile task sets no parallelism limit when the KOTLIN_NATIVE_COMPILE_MAX_WORKERS property is not set`() {
-        withGradleProperty(KOTLIN_NATIVE_COMPILE_MAX_WORKERS, value = null) {
-            val project = buildProjectWithMPP {
-                kotlin {
-                    linuxX64()
-                }
+    fun `KotlinNativeCompile task does not register the parallelism limit service when the KOTLIN_NATIVE_COMPILE_MAX_WORKERS property is not set`() {
+        val project = buildProjectWithMPP {
+            kotlin {
+                linuxX64()
             }
-            project.evaluate()
-
-            // Force the KotlinNativeCompile task to be instantiated, so its init block runs
-            project.tasks.getByName("compileKotlinLinuxX64") as KotlinNativeCompile
-
-            assertNull(project.maxParallelUsagesOf("KotlinNativeCompile"))
         }
+        project.evaluate()
+
+        // Force the KotlinNativeCompile task to be instantiated, so its init block runs
+        project.tasks.getByName("compileKotlinLinuxX64") as KotlinNativeCompile
+
+        assertFalse(project.isParallelismLimitServiceRegistered("KotlinNativeCompile"))
     }
 }

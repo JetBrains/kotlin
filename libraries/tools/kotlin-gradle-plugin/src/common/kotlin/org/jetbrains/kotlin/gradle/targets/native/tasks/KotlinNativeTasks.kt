@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.create
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_COMPILE_MAX_WORKERS
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.filterAndReportUnsupportedKotlinArchiveLibraries
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
@@ -60,7 +60,6 @@ import org.jetbrains.kotlin.gradle.targets.native.tasks.readHeaderHashes
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeCompilerRunner
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeToolRunner
-import org.jetbrains.kotlin.internal.compilerRunner.native.maxParallelUsagesFromGradleProperty
 import org.jetbrains.kotlin.internal.compilerRunner.native.registerKotlinNativeParallelismLimitService
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind.*
@@ -270,12 +269,9 @@ internal constructor(
     UsesKotlinToolingDiagnostics {
 
     init {
-        usesService(
-            project.registerKotlinNativeParallelismLimitService(
-                name = "KotlinNativeCompile",
-                maxParallelUsagesFromGradleProperty(project.providers, KOTLIN_NATIVE_COMPILE_MAX_WORKERS),
-            )
-        )
+        project.kotlinPropertiesProvider.nativeCompileMaxWorkers?.let { maxParallelUsages ->
+            usesService(project.registerKotlinNativeParallelismLimitService(name = "KotlinNativeCompile", maxParallelUsages))
+        }
     }
 
     @get:Input
