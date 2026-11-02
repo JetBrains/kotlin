@@ -115,6 +115,17 @@ annotation class MustRunOnChangesInAnalysisApi
 annotation class MustRunOnChangesInBuildToolsApi
 
 /**
+* Requires the annotated tests to run and pass before merging to master when [Domain.BuildToolsLibraries] contains changed files.
+* The tests still run whenever all tests in their own domain must run.
+* Other test filters, including [NightlyTest], still apply.
+*
+* ### Extra: Contract tests
+* Use this annotation for tests that check behavior another domain relies on.
+*/
+@Tag("contract:BuildToolsLibraries")
+annotation class MustRunOnChangesInBuildToolsLibraries
+
+/**
 * Requires the annotated tests to run and pass before merging to master when [Domain.SwiftExport] contains changed files.
 * The tests still run whenever all tests in their own domain must run.
 * Other test filters, including [NightlyTest], still apply.
@@ -213,6 +224,7 @@ fun mustRunOnChangesInAnnotationOf(domain: Domain) = when (domain) {
     Domain.CoreLibs -> MustRunOnChangesInCoreLibs::class
     Domain.AnalysisApi -> MustRunOnChangesInAnalysisApi::class
     Domain.BuildToolsApi -> MustRunOnChangesInBuildToolsApi::class
+    Domain.BuildToolsLibraries -> MustRunOnChangesInBuildToolsLibraries::class
     Domain.SwiftExport -> MustRunOnChangesInSwiftExport::class
     Domain.CompilerPlugins -> MustRunOnChangesInCompilerPlugins::class
     Domain.DocumentationModel -> MustRunOnChangesInDocumentationModel::class

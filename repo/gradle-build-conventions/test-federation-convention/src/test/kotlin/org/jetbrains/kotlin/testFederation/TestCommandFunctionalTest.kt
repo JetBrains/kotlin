@@ -49,7 +49,10 @@ class TestCommandFunctionalTest {
 
             assertEquals(TaskOutcome.SUCCESS, result.task(":inferAffectedDomains")?.outcome)
             assertChangedDomains(result, setOf(Domain.BuildToolsApi, Domain.CommonBackend))
-            assertAffectedDomains(result, setOf(Domain.BuildToolsApi, Domain.IntelliJ, Domain.CommonBackend))
+            assertAffectedDomains(
+                result,
+                setOf(Domain.BuildToolsApi, Domain.BuildToolsLibraries, Domain.IntelliJ, Domain.CommonBackend),
+            )
             assertEquals(changedFile, projectDir.resolve(".test-federation.diff.txt").readText().trim())
         }
     }

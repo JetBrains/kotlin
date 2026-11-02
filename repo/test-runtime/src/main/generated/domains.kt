@@ -14,6 +14,7 @@ enum class Domain {
     CoreLibs,
     AnalysisApi,
     BuildToolsApi,
+    BuildToolsLibraries,
     SwiftExport,
     CompilerPlugins,
     DocumentationModel,
