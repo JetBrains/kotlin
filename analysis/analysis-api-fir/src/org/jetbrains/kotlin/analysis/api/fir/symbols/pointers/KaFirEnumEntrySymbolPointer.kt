@@ -23,7 +23,7 @@ internal class KaFirEnumEntrySymbolPointer(
     private val ownerPointer: KaSymbolPointer<KaClassSymbol>,
     private val name: Name,
     originalSymbol: KaEnumEntrySymbol?,
-) : KaBaseCachedSymbolPointer<KaEnumEntrySymbol>(originalSymbol) {
+) : KaFirCachedSymbolPointer<KaEnumEntrySymbol>(originalSymbol) {
     @KaImplementationDetail
     override fun restoreIfNotCached(analysisSession: KaSession): KaEnumEntrySymbol? {
         require(analysisSession is KaFirSession)

@@ -20,7 +20,7 @@ internal class KaFirScriptParameterSymbolPointer(
     private val parameterName: Name,
     private val scriptPointer: KaSymbolPointer<KaScriptSymbol>,
     originalSymbol: KaLocalVariableSymbol?,
-) : KaBaseCachedSymbolPointer<KaLocalVariableSymbol>(originalSymbol) {
+) : KaFirCachedSymbolPointer<KaLocalVariableSymbol>(originalSymbol) {
     @KaImplementationDetail
     override fun restoreIfNotCached(analysisSession: KaSession): KaLocalVariableSymbol? {
         require(analysisSession is KaFirSession)

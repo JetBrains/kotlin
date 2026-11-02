@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.fir.annotations.KaBaseEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
+import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.hasAnnotation
 import org.jetbrains.kotlin.analysis.api.fir.kaSymbolModalityByModifiers
 import org.jetbrains.kotlin.analysis.api.fir.visibilityByModifiers
@@ -144,7 +144,7 @@ internal sealed interface KaFirBasePropertyAccessorSymbol : KaFirKtBasedSymbol<K
             if (backingPsi?.annotationEntries.isNullOrEmpty() &&
                 owningKaProperty.backingPsi?.hasAnnotation(annotationUseSiteTarget) == false
             ) {
-                KaBaseEmptyAnnotationList(token)
+                KaFirEmptyAnnotationList(token)
             } else {
                 KaFirAnnotationListForDeclaration.create(firSymbol, builder)
             }

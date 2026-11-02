@@ -65,7 +65,7 @@ internal class KaFirAnnotationListForType private constructor(
     companion object {
         fun create(coneType: ConeKotlinType, builder: KaSymbolByFirBuilder): KaAnnotationList {
             return if (coneType.typeAnnotations.isEmpty()) {
-                KaBaseEmptyAnnotationList(builder.token)
+                KaFirEmptyAnnotationList(builder.token)
             } else {
                 KaFirAnnotationListForType(coneType, builder)
             }

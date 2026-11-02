@@ -61,7 +61,7 @@ internal class KaFirAnnotationListForDeclaration private constructor(
     companion object {
         fun create(firSymbol: FirBasedSymbol<*>, builder: KaSymbolByFirBuilder): KaAnnotationList = when {
             firSymbol.mightHaveAnnotations -> KaFirAnnotationListForDeclaration(firSymbol, builder)
-            else -> KaBaseEmptyAnnotationList(builder.token)
+            else -> KaFirEmptyAnnotationList(builder.token)
         }
     }
 }

@@ -10,9 +10,9 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMember
 import com.intellij.psi.PsiPackage
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.fir.components.KaBaseIllegalPsiException
-import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaBaseCachedSymbolPointer.Companion.isCacheable
-import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaBasePsiSymbolPointer
+import org.jetbrains.kotlin.analysis.api.fir.components.KaFirIllegalPsiException
+import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirCachedSymbolPointer.Companion.isCacheable
+import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirPsiSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.symbols.SymbolTestDirectives.DO_NOT_REQUIRE_NON_PSI_SYMBOL_RESTORATION
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.symbols.SymbolTestDirectives.DO_NOT_REQUIRE_SYMBOL_RESTORATION
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.symbols.SymbolTestDirectives.PRETTY_RENDERER_OPTION
@@ -178,7 +178,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
     }
 
     private fun KaSymbol.createPointerForTest(disablePsiBasedLogic: Boolean): KaSymbolPointer<*> =
-        KaBasePsiSymbolPointer.withDisabledPsiBasedPointers(disable = disablePsiBasedLogic) { createPointer() }
+        KaFirPsiSymbolPointer.withDisabledPsiBasedPointers(disable = disablePsiBasedLogic) { createPointer() }
 
     private fun assertSymbolPointer(pointer: KaSymbolPointer<*>, testServices: TestServices) {
         testServices.assertions.assertTrue(value = pointer.pointsToTheSameSymbolAs(pointer)) {
@@ -700,7 +700,7 @@ private fun KaSymbol.dropBackingPsi() {
 
 private val Throwable.isIllegalPsiException: Boolean
     get() = when (this) {
-        is KaBaseIllegalPsiException -> true
+        is KaFirIllegalPsiException -> true
         is ExecutionException -> cause?.isIllegalPsiException == true
         is KotlinIllegalArgumentExceptionWithAttachments -> {
             message?.startsWith("Creating ${KaVariableSymbol::class.simpleName} for function type parameter is not possible.") == true

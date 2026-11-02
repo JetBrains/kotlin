@@ -19,7 +19,7 @@ internal class KaFirValueParameterSymbolPointer(
     private val name: Name,
     private val index: Int,
     originalSymbol: KaValueParameterSymbol?,
-) : KaBaseCachedSymbolPointer<KaValueParameterSymbol>(originalSymbol) {
+) : KaFirCachedSymbolPointer<KaValueParameterSymbol>(originalSymbol) {
     @KaImplementationDetail
     override fun restoreIfNotCached(analysisSession: KaSession): KaValueParameterSymbol? {
         require(analysisSession is KaFirSession)

@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.psi.util.parentOfType
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.fir.components.*
 import org.jetbrains.kotlin.analysis.api.fir.scopes.*
-import org.jetbrains.kotlin.analysis.api.fir.scopes.KaBaseCompositeScope
-import org.jetbrains.kotlin.analysis.api.fir.scopes.KaBaseCompositeTypeScope
-import org.jetbrains.kotlin.analysis.api.fir.scopes.KaBaseEmptyScope
+import org.jetbrains.kotlin.analysis.api.fir.scopes.KaFirCompositeScope
+import org.jetbrains.kotlin.analysis.api.fir.scopes.KaFirCompositeTypeScope
+import org.jetbrains.kotlin.analysis.api.fir.scopes.KaFirEmptyScope
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirAnonymousObjectSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirFileSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedClassSymbolBase
@@ -21,12 +21,15 @@ import org.jetbrains.kotlin.analysis.api.fir.types.KaFirType
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.getAvailableScopesForPosition
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsScopeProvider
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.scopes.KaTypeScope
+import org.jetbrains.kotlin.analysis.api.symbols.KaContextParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPackageSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
@@ -242,7 +245,7 @@ internal class KaFirScopeProvider(
         }
 
     private fun createEmptyScope(): KaScope {
-        return KaBaseEmptyScope(token)
+        return KaFirEmptyScope(token)
     }
 
     override fun packageScope(symbol: KaPackageSymbol): KaScope =
@@ -251,7 +254,7 @@ internal class KaFirScopeProvider(
         }
 
     override fun asCompositeScope(scopes: List<KaScope>): KaScope = withValidityAssertion {
-        return KaBaseCompositeScope.create(scopes, token)
+        return KaFirCompositeScope.create(scopes, token)
     }
 
     override fun compositeScope(scopeContext: KaScopeContext, filter: (KaScopeKind) -> Boolean): KaScope =
@@ -272,7 +275,7 @@ internal class KaFirScopeProvider(
         withValidityAssertion {
             return when (typeScope) {
                 is KaFirDelegatingTypeScope -> KaFirDelegatingNamesAwareScope(typeScope.firScope, analysisSession.firSymbolBuilder)
-                is KaBaseCompositeTypeScope -> KaBaseCompositeScope.create(typeScope.subScopes.map { declarationScope(it) }, token)
+                is KaFirCompositeTypeScope -> KaFirCompositeScope.create(typeScope.subScopes.map { declarationScope(it) }, token)
                 else -> unexpectedElementError<KaTypeScope>(typeScope)
             }
         }
@@ -299,7 +302,7 @@ internal class KaFirScopeProvider(
 
             val ktScopesWithKinds = createScopesWithKind(firImportingScopesIndexed)
 
-            return KaBaseScopeContext(
+            return KaFirScopeContext(
                 scopes = ktScopesWithKinds,
                 implicitValues = emptyList(),
                 possibleSmartCasts = emptyList(),
@@ -336,7 +339,7 @@ internal class KaFirScopeProvider(
                     val label = with(towerDataContext.implicitValueStorage) { receiver.label() }
                         ?.asString()
                         ?.takeIf(labelsForShadowing::add)
-                    val receiverValue = KaBaseScopeImplicitReceiverValue(
+                    val receiverValue = KaFirScopeImplicitReceiverValue(
                         backingType = firSymbolBuilder.typeBuilder.buildKtType(receiver.type),
                         ownerSymbol = firSymbolBuilder.buildSymbol(receiver.referencedMemberSymbol),
                         scopeIndexInTower = index,
@@ -348,7 +351,7 @@ internal class KaFirScopeProvider(
 
                 val arguments = towerDataElement.contextParameterGroup.orEmpty()
                 for (argument in arguments) {
-                    val argumentValue = KaBaseScopeImplicitArgumentValue(
+                    val argumentValue = KaFirScopeImplicitArgumentValue(
                         backingType = firSymbolBuilder.typeBuilder.buildKtType(argument.type),
                         symbol = firSymbolBuilder.variableBuilder.buildContextParameterSymbol(argument.boundSymbol),
                         scopeIndexInTower = index,
@@ -366,7 +369,7 @@ internal class KaFirScopeProvider(
             availableScopes.map { IndexedValue(index, it) }
         }
 
-        return KaBaseScopeContext(
+        return KaFirScopeContext(
             scopes = createScopesWithKind(firScopes),
             implicitValues = implicitValues,
             possibleSmartCasts = computeSmartCastPossibilities(context),
@@ -386,7 +389,7 @@ internal class KaFirScopeProvider(
                 return@mapNotNull null
             }
 
-            KaBaseSmartCastPossibility(
+            KaFirSmartCastPossibility(
                 source = source,
                 smartCastTypes = narrowingTypes.map { firSymbolBuilder.typeBuilder.buildKtType(it) },
                 isStable = smartCast.stability == SmartcastStability.STABLE_VALUE
@@ -396,7 +399,7 @@ internal class KaFirScopeProvider(
 
     private fun computeSmartCastSource(realVariable: RealVariable): KaSmartCastSource? {
         val symbol = firSymbolBuilder.buildSymbol(realVariable.symbol) as? KaDeclarationSymbol ?: return null
-        return KaBaseSmartCastSource(
+        return KaFirSmartCastSource(
             symbol = symbol,
             dispatchReceiver = realVariable.dispatchReceiver?.let(::computeSmartCastSource),
             extensionReceiver = realVariable.extensionReceiver?.let(::computeSmartCastSource),
@@ -511,3 +514,89 @@ private val JAVA_ENHANCEMENT_FOR_DECLARED_MEMBERS = scopeSessionKey<FirRegularCl
 private val JAVA_ENHANCEMENT_FOR_STATIC_DECLARED_MEMBERS = scopeSessionKey<FirRegularClassSymbol, FirContainingNamesAwareScope>()
 
 private val JAVA_ENHANCEMENT_FOR_ALL_DECLARED_MEMBERS = scopeSessionKey<FirRegularClassSymbol, FirContainingNamesAwareScope>()
+
+@KaImplementationDetail
+class KaFirScopeContext(
+    scopes: List<KaScopeWithKind>,
+    implicitValues: List<KaScopeImplicitValue>,
+    possibleSmartCasts: List<KaSmartCastPossibility>,
+    override val token: KaLifetimeToken,
+) : KaScopeContext {
+    private val backingImplicitValues: List<KaScopeImplicitValue> = implicitValues
+    private val backingScopes: List<KaScopeWithKind> = scopes
+    private val backingPossibleSmartCasts: List<KaSmartCastPossibility> = possibleSmartCasts
+
+    override val implicitValues: List<KaScopeImplicitValue> get() = withValidityAssertion { backingImplicitValues }
+    override val scopes: List<KaScopeWithKind> get() = withValidityAssertion { backingScopes }
+    override val possibleSmartCasts: List<KaSmartCastPossibility> get() = withValidityAssertion { backingPossibleSmartCasts }
+}
+
+@KaImplementationDetail
+class KaFirSmartCastPossibility(
+    source: KaSmartCastSource,
+    smartCastTypes: List<KaType>,
+    isStable: Boolean
+) : KaSmartCastPossibility {
+    private val backingSource: KaSmartCastSource = source
+    private val backingSmartCastTypes: List<KaType> = smartCastTypes
+    private val backingIsStable: Boolean = isStable
+
+    override val token: KaLifetimeToken get() = backingSource.token
+
+    override val source: KaSmartCastSource get() = withValidityAssertion { backingSource }
+    override val smartCastTypes: List<KaType> get() = withValidityAssertion { backingSmartCastTypes }
+    override val isStable: Boolean get() = withValidityAssertion { backingIsStable }
+}
+
+@KaImplementationDetail
+class KaFirSmartCastSource(
+    symbol: KaDeclarationSymbol,
+    dispatchReceiver: KaSmartCastSource?,
+    extensionReceiver: KaSmartCastSource?,
+    originalType: KaType,
+) : KaSmartCastSource {
+    private val backingSymbol: KaDeclarationSymbol = symbol
+    private val backingDispatchReceiver: KaSmartCastSource? = dispatchReceiver
+    private val backingExtensionReceiver: KaSmartCastSource? = extensionReceiver
+    private val backingOriginalType: KaType = originalType
+
+    override val token: KaLifetimeToken get() = backingSymbol.token
+
+    override val symbol: KaDeclarationSymbol get() = withValidityAssertion { backingSymbol }
+    override val dispatchReceiver: KaSmartCastSource? get() = withValidityAssertion { backingDispatchReceiver }
+    override val extensionReceiver: KaSmartCastSource? get() = withValidityAssertion { backingExtensionReceiver }
+    override val originalType: KaType get() = withValidityAssertion { backingOriginalType }
+}
+
+@KaImplementationDetail
+class KaFirScopeImplicitReceiverValue(
+    private val backingType: KaType,
+    ownerSymbol: KaSymbol,
+    scopeIndexInTower: Int,
+    label: String?,
+) : KaImplicitReceiver {
+    private val backingOwnerSymbol: KaSymbol = ownerSymbol
+    private val backingScopeIndexInTower: Int = scopeIndexInTower
+    private val backingLabel: String? = label
+    override val token: KaLifetimeToken get() = backingType.token
+
+    override val type: KaType get() = withValidityAssertion { backingType }
+    override val ownerSymbol: KaSymbol get() = withValidityAssertion { backingOwnerSymbol }
+    override val scopeIndexInTower: Int get() = withValidityAssertion { backingScopeIndexInTower }
+    override val label: String? get() = withValidityAssertion { backingLabel }
+}
+
+@KaImplementationDetail
+class KaFirScopeImplicitArgumentValue(
+    private val backingType: KaType,
+    symbol: KaContextParameterSymbol,
+    scopeIndexInTower: Int,
+) : KaScopeImplicitArgumentValue {
+    override val token: KaLifetimeToken get() = backingType.token
+    private val backingSymbol: KaContextParameterSymbol = symbol
+    private val backingScopeIndexInTower: Int = scopeIndexInTower
+
+    override val type: KaType get() = withValidityAssertion { backingType }
+    override val scopeIndexInTower: Int get() = withValidityAssertion { backingScopeIndexInTower }
+    override val symbol: KaContextParameterSymbol get() = withValidityAssertion { backingSymbol }
+}
