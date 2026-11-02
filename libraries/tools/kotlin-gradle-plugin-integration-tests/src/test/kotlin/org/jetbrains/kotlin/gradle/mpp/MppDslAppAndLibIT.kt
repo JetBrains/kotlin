@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.plugin.ProjectLocalConfigurations
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import java.util.zip.ZipFile
 import kotlin.io.path.appendText
 import kotlin.io.path.deleteRecursively
@@ -19,6 +20,7 @@ import kotlin.io.path.nameWithoutExtension
 import kotlin.test.assertContains
 
 @MppGradlePluginTests
+@MustRunOnChangesInGradle
 class MppDslAppAndLibIT : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions
@@ -27,17 +29,7 @@ class MppDslAppAndLibIT : KGPBaseTest() {
 
     @GradleTest
     @TestMetadata(value = "new-mpp-lib-and-app")
-    fun testLibAndApp(gradleVersion: GradleVersion) {
-        doTestLibAndApp(
-            libProjectPath = "new-mpp-lib-and-app/sample-lib",
-            appProjectPath = "new-mpp-lib-and-app/sample-app",
-            gradleVersion = gradleVersion,
-        )
-    }
-
-    @GradleTest
-    @TestMetadata(value = "new-mpp-lib-and-app")
-    fun testLibAndAppWithoutHMPP(gradleVersion: GradleVersion) = doTestLibAndApp(
+    fun testLibAndApp(gradleVersion: GradleVersion) = doTestLibAndApp(
         libProjectPath = "new-mpp-lib-and-app/sample-lib",
         appProjectPath = "new-mpp-lib-and-app/sample-app",
         gradleVersion = gradleVersion,

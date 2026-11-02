@@ -10,8 +10,6 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceWithVersion
 import org.jetbrains.kotlin.test.TestMetadata
-import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
-import org.jetbrains.kotlin.testFederation.MustRunOnChangesInFrontend
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.writeText
 
@@ -23,8 +21,8 @@ import kotlin.io.path.writeText
  */
 @DisplayName("Incremental scenarios with expect/actual")
 @MppGradlePluginTests
-@MustRunOnChangesInFrontend
-@MustRunOnChangesInBuildToolsApi
+@OptIn(ImpactsAggregatePerformance::class)
+@MustRunOnChangesInAnyCompiler(reason = "This seems to test a Frontend bug; see KT-76041. This test should be moved out of KGP IT")
 class ExpectActualIncrementalCompilationIT : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.copy(

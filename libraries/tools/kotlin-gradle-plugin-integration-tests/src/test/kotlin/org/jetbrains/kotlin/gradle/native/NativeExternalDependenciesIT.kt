@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.KOTLIN_VERSION
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInNative
 import org.junit.jupiter.api.DisplayName
 import java.io.File
 import kotlin.test.assertEquals
@@ -16,6 +17,7 @@ import kotlin.test.assertNotNull
 
 @DisplayName("Tests for K/N builds with external dependencies")
 @NativeGradlePluginTests
+@MustRunOnChangesInNative
 internal class NativeExternalDependenciesIT : KGPBaseTest() {
 
     @DisplayName("K/N shouldn't contain any external dependencies by default")

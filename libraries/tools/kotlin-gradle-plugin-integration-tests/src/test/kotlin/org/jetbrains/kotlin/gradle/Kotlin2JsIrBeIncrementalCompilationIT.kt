@@ -20,6 +20,7 @@ import kotlin.test.assertTrue
 
 @DisplayName("Incremental compilation tests for Kotlin JS IR backend")
 @JsGradlePluginTests
+@MustRunOnChangesInJsIrCompiler
 class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
     override val defaultBuildOptions = BuildOptions(
         jsOptions = BuildOptions.JsOptions(
