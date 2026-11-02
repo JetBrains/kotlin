@@ -139,7 +139,6 @@ KtNameReferenceExpression(119,128): 'something'
 KtOperationReferenceExpression(129,130): '='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtConstantExpression(131,132): '1'
@@ -179,7 +178,6 @@ KtNameReferenceExpression(147,156): 'something'
 KtOperationReferenceExpression(157,159): '+='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
@@ -222,7 +220,6 @@ KtNameReferenceExpression(176,185): 'something'
 KtOperationReferenceExpression(185,187): '++'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
@@ -238,7 +235,6 @@ KtPrefixExpression(192,213): '--javaClass.something'
 KtOperationReferenceExpression(192,194): '--'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.dec(<dispatch receiver>: kotlin.Int): kotlin.Int
@@ -287,7 +283,6 @@ KtNameReferenceExpression(219,228): 'something'
 KtOperationReferenceExpression(228,230): '++'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
@@ -315,7 +310,6 @@ KtNameReferenceExpression(236,245): 'something'
 KtOperationReferenceExpression(246,248): '++'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
@@ -342,7 +336,6 @@ KtNameReferenceExpression(254,263): 'something'
 KtOperationReferenceExpression(265,266): '='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtConstantExpression(267,268): '1'
@@ -384,7 +377,6 @@ KtNameReferenceExpression(284,293): 'something'
 KtOperationReferenceExpression(295,296): '='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtConstantExpression(297,298): '1'

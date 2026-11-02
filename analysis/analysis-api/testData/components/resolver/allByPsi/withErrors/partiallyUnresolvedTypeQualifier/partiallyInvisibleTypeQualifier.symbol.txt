@@ -56,5 +56,4 @@ KtConstantExpression(43,47): 'null'
 KtOperationReferenceExpression(47,49): '!!'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null

@@ -169,7 +169,6 @@ KtConstantExpression(126,127): '1'
 KtOperationReferenceExpression(128,130): 'in'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
@@ -253,7 +252,6 @@ KtConstantExpression(171,172): '2'
 KtOperationReferenceExpression(173,176): '!in'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
@@ -295,7 +293,6 @@ KtWhenConditionInRange(211,223): 'in MyClass()'
 KtOperationReferenceExpression(211,213): 'in'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
@@ -343,7 +340,6 @@ KtWhenConditionInRange(270,283): '!in MyClass()'
 KtOperationReferenceExpression(270,273): '!in'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean

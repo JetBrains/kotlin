@@ -61,7 +61,7 @@ KtUserType(21,22): 'A'
 KtNameReferenceExpression(21,22): 'A'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /A
@@ -394,7 +394,6 @@ KtNameReferenceExpression(248,249): 'a'
 KtOperationReferenceExpression(249,251): '..'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /A.rangeTo(<dispatch receiver>: A, other: A): kotlin.ranges.ClosedRange<A>
@@ -427,7 +426,6 @@ KtNameReferenceExpression(257,258): 'a'
 KtOperationReferenceExpression(258,261): '..<'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /A.rangeUntil(<dispatch receiver>: A, other: A): kotlin.ranges.OpenEndRange<A>

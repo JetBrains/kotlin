@@ -112,7 +112,6 @@ KtConstantExpression(118,119): '1'
 KtOperationReferenceExpression(120,122): 'in'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Container.contains(<dispatch receiver>: Container, element: kotlin.Int): kotlin.Boolean
@@ -139,7 +138,6 @@ KtConstantExpression(129,130): '2'
 KtOperationReferenceExpression(131,134): '!in'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Container.contains(<dispatch receiver>: Container, element: kotlin.Int): kotlin.Boolean

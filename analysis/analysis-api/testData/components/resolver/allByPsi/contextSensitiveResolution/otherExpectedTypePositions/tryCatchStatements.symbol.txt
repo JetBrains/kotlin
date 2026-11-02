@@ -253,7 +253,7 @@ KtValueArgument(382,383): 'm'
 KtNameReferenceExpression(382,383): 'm'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       m: kotlin.String
@@ -337,7 +337,7 @@ KtValueArgument(416,417): 'm'
 KtNameReferenceExpression(416,417): 'm'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       m: kotlin.String
@@ -421,7 +421,7 @@ KtValueArgument(450,451): 'm'
 KtNameReferenceExpression(450,451): 'm'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       m: kotlin.String

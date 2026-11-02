@@ -415,7 +415,6 @@ KtNameReferenceExpression(307,308): 'x'
 KtOperationReferenceExpression(309,311): 'is'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(312,319): 'A<*>.B1'
@@ -484,7 +483,6 @@ KtNameReferenceExpression(334,335): 'x'
 KtOperationReferenceExpression(336,338): 'is'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(339,348): 'A<Int>.B2'
@@ -574,7 +572,6 @@ KtNameReferenceExpression(363,364): 'x'
 KtOperationReferenceExpression(365,367): 'is'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(368,371): 'A.C'
@@ -640,7 +637,6 @@ KtNameReferenceExpression(404,405): 'x'
 KtOperationReferenceExpression(406,408): 'is'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(409,411): 'B1'
@@ -685,7 +681,6 @@ KtNameReferenceExpression(426,427): 'x'
 KtOperationReferenceExpression(428,430): 'is'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(431,433): 'B2'
@@ -730,7 +725,6 @@ KtNameReferenceExpression(448,449): 'x'
 KtOperationReferenceExpression(450,452): 'is'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(453,454): 'C'

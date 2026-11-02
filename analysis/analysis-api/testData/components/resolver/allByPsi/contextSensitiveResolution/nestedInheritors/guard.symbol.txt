@@ -256,7 +256,6 @@ KtNameReferenceExpression(356,364): 'instance'
 KtOperationReferenceExpression(365,367): 'is'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(368,391): 'IndirectSealedInheritor'
@@ -559,7 +558,6 @@ KtNameReferenceExpression(752,760): 'instance'
 KtOperationReferenceExpression(761,763): 'is'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(764,798): 'IndirectSealedInheritorOfOpenClass'
