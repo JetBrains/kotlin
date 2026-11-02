@@ -57,7 +57,7 @@ internal class SwcConfigurator(private val subTarget: KotlinJsIrSubTarget) :
         // Add @swc/helpers dependency to minify the result output by swc
         compilation.defaultSourceSet.dependencies {
             with(nodeJsRoot.versions) {
-                implementation(npm(swcHelpers.name, swcHelpers.version))
+                npm(swcHelpers.name, swcHelpers.version)
             }
         }
     }
