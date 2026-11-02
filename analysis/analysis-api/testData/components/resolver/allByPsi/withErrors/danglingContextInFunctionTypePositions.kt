@@ -15,6 +15,7 @@ fun withVarargType(vararg p: context(Int) String) {}
 fun withAnnotatedVararg(vararg p: @Anno context(Int)) {}
 fun withAnnotatedVarargType(vararg p: @Anno context(@Other Int) String) {}
 fun withVarargReceiver(vararg p: context(Int) (String).) {}
+fun withNullableVararg(vararg p: (@Anno context(Int) String)?) {}
 
 data class Data(val p: context(Int))
 
@@ -41,7 +42,19 @@ interface TypeAfterList {
     val nullableType: @Anno context(Int) String?
 }
 
-interface Parenthesized {
+interface NullableAndParenthesized {
+    val nullable: (@Anno context(Int))?
+    val nullableWithoutAnnotation: (context(Int))?
+    val nullableWithType: (@Anno context(Int) String)?
+    val nullableWithReceiver: (@Anno context(Int) (String).)?
+    val doubleNullable: ((@Anno context(Int))?)?
+    val nullableInsideDangling: @Anno context(Int) (@Other context(Long))?
+    val nullableWithoutType: ()?
+    val nullableAnnotatedEntry: (context(@Other Int))?
+    val nullableNullableType: (context(Int) String?)?
+    val nullableSuspend: (suspend context(Int))?
+    val suspendInsideDangling: context(Int) (suspend context(Long))?
+    val suspendOutsideDangling: suspend context(Int) (context(Long))?
     val parenthesized: (@Anno context(Int))
 }
 
