@@ -41,7 +41,8 @@ interface TypeAfterList {
     val nullableType: @Anno context(Int) String?
 }
 
-interface Parenthesized {
+interface NullableAndParenthesized {
+    val nullableWithoutType: ()?
     val parenthesized: (@Anno context(Int))
 }
 
