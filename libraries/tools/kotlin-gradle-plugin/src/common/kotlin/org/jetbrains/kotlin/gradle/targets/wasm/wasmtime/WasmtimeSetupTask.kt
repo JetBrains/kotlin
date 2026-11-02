@@ -13,6 +13,7 @@ import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.targets.js.AbstractSetupTask
+import org.jetbrains.kotlin.gradle.targets.web.ObsoleteJsAndWasmToolingProvisioning
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.setExecutable
 import java.io.File
@@ -21,6 +22,7 @@ import kotlin.io.path.Path
 
 @DisableCachingByDefault
 @ExperimentalWasmDsl
+@ObsoleteJsAndWasmToolingProvisioning
 abstract class WasmtimeSetupTask @Inject constructor(
     settings: WasmtimeEnvSpec,
 ) : AbstractSetupTask<WasmtimeEnv, WasmtimeEnvSpec>(settings) {
@@ -75,6 +77,7 @@ abstract class WasmtimeSetupTask @Inject constructor(
         }
     }
 
+    @ObsoleteJsAndWasmToolingProvisioning
     companion object {
         @InternalKotlinGradlePluginApi
         const val BASE_NAME: String = "WasmtimeSetup"

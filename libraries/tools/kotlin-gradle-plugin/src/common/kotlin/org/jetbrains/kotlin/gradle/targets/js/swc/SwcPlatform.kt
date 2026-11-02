@@ -5,9 +5,12 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.swc
 
+import org.jetbrains.kotlin.gradle.targets.web.ObsoleteJsAndWasmToolingProvisioning
+
 /**
  * Provides platform and architecture names used to download Swc.
  */
+@ObsoleteJsAndWasmToolingProvisioning
 internal data class SwcPlatform(
     val name: String,
     val arch: String,
@@ -32,6 +35,7 @@ internal data class SwcPlatform(
         return name == WIN
     }
 
+    @ObsoleteJsAndWasmToolingProvisioning
     companion object {
         const val WIN = "win32"
         const val LINUX = "linux"

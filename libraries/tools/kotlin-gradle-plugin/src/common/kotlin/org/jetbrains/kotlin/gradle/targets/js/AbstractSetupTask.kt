@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.statistics.UrlRepoConfigurationMetrics
 import org.jetbrains.kotlin.gradle.plugin.statistics.UsesBuildFusService
 import org.jetbrains.kotlin.gradle.targets.js.internal.calculateDirHash
 import org.jetbrains.kotlin.gradle.targets.js.internal.toHex
+import org.jetbrains.kotlin.gradle.targets.web.ObsoleteJsAndWasmToolingProvisioning
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.mapOrNull
 import java.io.File
@@ -23,6 +24,7 @@ import java.net.URI
 import javax.inject.Inject
 
 @DisableCachingByDefault
+@ObsoleteJsAndWasmToolingProvisioning
 abstract class AbstractSetupTask<Env : AbstractEnv, Spec : EnvSpec<Env>>(
     spec: Spec,
 ) : DefaultTask(), UsesBuildFusService {
@@ -226,6 +228,7 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Spec : EnvSpec<Env>>(
 
     abstract fun extract(archive: File)
 
+    @ObsoleteJsAndWasmToolingProvisioning
     companion object {
         const val CACHE_VERSION = "2"
     }

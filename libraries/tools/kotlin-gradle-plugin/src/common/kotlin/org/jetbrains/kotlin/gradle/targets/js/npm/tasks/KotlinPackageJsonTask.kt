@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinRootNpmResolver
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.PackageJsonProducerInputs
 import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsRootExtension
-import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.currentBuild
 import org.jetbrains.kotlin.gradle.utils.mapToFile
@@ -35,7 +34,6 @@ import java.io.File
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin.Companion.kotlinNpmResolutionManager as wasmKotlinNpmResolutionManager
 
 @DisableCachingByDefault
-@ObsoleteNpmDependencyModel
 abstract class KotlinPackageJsonTask :
     DefaultTask(),
     UsesKotlinNpmResolutionManager,
@@ -114,7 +112,6 @@ abstract class KotlinPackageJsonTask :
         )
     }
 
-    @ObsoleteNpmDependencyModel
     companion object {
         fun create(compilation: KotlinJsIrCompilation): TaskProvider<KotlinPackageJsonTask> {
             val target = compilation.target
@@ -260,10 +257,12 @@ abstract class KotlinPackageJsonTask :
                     findDependentTasks(
                         rootResolver = nodeJsRoot.resolver,
                         compilationNpmResolution = getCompilationResolver().compilationNpmResolution,
-                        rootPackageJsonTaskName = ":${nodeJsRoot.extensionName(
-                            RootPackageJsonTask.NAME,
-                            prefix = null,
-                        )}",
+                        rootPackageJsonTaskName = ":${
+                            nodeJsRoot.extensionName(
+                                RootPackageJsonTask.NAME,
+                                prefix = null,
+                            )
+                        }",
                     )
                 }
             )

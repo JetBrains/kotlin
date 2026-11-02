@@ -14,10 +14,12 @@ import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.JsPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
+import org.jetbrains.kotlin.gradle.targets.web.ObsoleteJsAndWasmToolingProvisioning
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 @InternalKotlinGradlePluginApi
+@ObsoleteJsAndWasmToolingProvisioning
 abstract class SwcPlugin internal constructor() : Plugin<Project> {
     override fun apply(project: Project) {
         project.plugins.apply(BasePlugin::class.java)
@@ -69,6 +71,7 @@ abstract class SwcPlugin internal constructor() : Plugin<Project> {
     }
 
     @InternalKotlinGradlePluginApi
+    @ObsoleteJsAndWasmToolingProvisioning
     companion object : HasPlatformDisambiguator by WasmPlatformDisambiguator {
         const val TASKS_GROUP_NAME: String = "swc"
 

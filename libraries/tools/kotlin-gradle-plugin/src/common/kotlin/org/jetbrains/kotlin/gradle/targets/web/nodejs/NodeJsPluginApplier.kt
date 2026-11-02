@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsSetupTask
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.parsePlatform
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
+import org.jetbrains.kotlin.gradle.targets.web.ObsoleteJsAndWasmToolingProvisioning
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.currentHostOs
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import kotlin.reflect.KClass
@@ -30,6 +31,7 @@ import kotlin.reflect.KClass
  * @param nodeJsEnvSpecName The name of the NodeJs environment specification configuration to be registered.
  * @param nodeJsRootApply A function that provides the root NodeJs environment extension in the project.
  */
+@ObsoleteJsAndWasmToolingProvisioning
 internal class NodeJsPluginApplier(
     private val platformDisambiguate: HasPlatformDisambiguator,
     private val nodeJsEnvSpecKlass: KClass<out BaseNodeJsEnvSpec>,

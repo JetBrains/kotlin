@@ -11,11 +11,13 @@ import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.targets.js.AbstractSetupTask
+import org.jetbrains.kotlin.gradle.targets.web.ObsoleteJsAndWasmToolingProvisioning
 import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.File
 import javax.inject.Inject
 
 @DisableCachingByDefault
+@ObsoleteJsAndWasmToolingProvisioning
 abstract class D8SetupTask @Inject constructor(
     settings: D8EnvSpec,
 ) : AbstractSetupTask<D8Env, D8EnvSpec>(settings) {
@@ -47,6 +49,7 @@ abstract class D8SetupTask @Inject constructor(
         }
     }
 
+    @ObsoleteJsAndWasmToolingProvisioning
     companion object {
         @InternalKotlinGradlePluginApi
         const val BASE_NAME: String = "D8Setup"

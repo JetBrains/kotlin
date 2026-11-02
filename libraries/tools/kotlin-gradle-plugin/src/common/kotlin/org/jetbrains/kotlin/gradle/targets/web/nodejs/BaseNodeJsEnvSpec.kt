@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsSetupTask
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.Platform
 import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsPlugin
+import org.jetbrains.kotlin.gradle.targets.web.ObsoleteJsAndWasmToolingProvisioning
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.nodeJsDistributionName
 import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.File
@@ -24,6 +25,7 @@ import java.io.File
 /**
  * Spec for Node.js - common JS and Wasm runtime.
  */
+@ObsoleteJsAndWasmToolingProvisioning
 abstract class BaseNodeJsEnvSpec : EnvSpec<NodeJsEnv>() {
 
     /**
@@ -85,6 +87,7 @@ abstract class BaseNodeJsEnvSpec : EnvSpec<NodeJsEnv>() {
 }
 
 @Deprecated("Using an Ivy repository is incompatible with Gradle’s Centralizing Repository Declarations feature, please use Node.Js Toolchain")
+@get:ObsoleteJsAndWasmToolingProvisioning
 internal val KotlinJsIrCompilation.nodeJsEnvSpec: BaseNodeJsEnvSpec
     get() = webTargetVariant(
         jsVariant = { NodeJsPlugin.apply(project) },
