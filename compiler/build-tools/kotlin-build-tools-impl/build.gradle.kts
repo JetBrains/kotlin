@@ -107,6 +107,7 @@ generatedSourcesTask(
             "jvmCompilerArguments,wasmArguments,jsArguments,metadataArguments",
         )
     },
+    versionDependent = true,
 )
 
 testing {
