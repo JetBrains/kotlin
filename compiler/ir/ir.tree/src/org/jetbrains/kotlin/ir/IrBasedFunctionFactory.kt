@@ -98,36 +98,46 @@ class IrBasedFunctionFactory(
 
     private val irFactory: IrFactory get() = symbolTable.irFactory
 
-    private fun SymbolTable.declare(
-        signature: IdSignature?,
-        callback: (IrClassSymbol) -> IrClass,
-    ): IrClass = when {
-        signature != null -> {
-            declareClass(signature, { IrClassSymbolImpl(descriptor = null, signature) }) { symbol ->
-                callback(symbol)
-            }
+    private fun buildFunctionN(
+        n: Int,
+        cache: MutableMap<Int, IrClass>,
+        signatureFactory: (Int) -> IdSignature,
+        classFactory: (IrClassSymbol) -> IrClass
+    ): IrClass {
+        return cache.getOrPut(n) {
+            val signature = signatureFactory(n)
+            symbolTable.declareClass(
+                signature,
+                symbolFactory = { IrClassSymbolImpl(signature = signature) },
+                classFactory = { symbol -> classFactory(symbol) }
+            )
         }
-        else -> error("No descriptor or signature was provided")
     }
 
-    fun functionN(n: Int) = functionN(n) { callback ->
-        val signature = functionClassSignature(n)
-        declare(signature, callback)
+    fun functionN(n: Int): IrClass {
+        return buildFunctionN(n, functionNMap, ::functionClassSignature) { symbol ->
+            createFunctionClass(symbol, isK = false, isSuspend = false, n, listOf(functionClass), kotlinPackageFragment)
+        }
     }
 
-    fun kFunctionN(n: Int): IrClass = kFunctionN(n) { callback ->
-        val signature = kFunctionClassSignature(n)
-        declare(signature, callback)
+    fun kFunctionN(n: Int): IrClass {
+        val functionNClass = functionN(n).symbol
+        return buildFunctionN(n, kFunctionNMap, ::kFunctionClassSignature) { symbol ->
+            createFunctionClass(symbol, isK = true, isSuspend = false, n, listOf(kFunctionClass, functionNClass), kotlinReflectPackageFragment)
+        }
     }
 
-    fun suspendFunctionN(n: Int): IrClass = suspendFunctionN(n) { callback ->
-        val signature = suspendFunctionClassSignature(n)
-        declare(signature, callback)
+    fun suspendFunctionN(n: Int): IrClass {
+        return buildFunctionN(n, suspendFunctionNMap, ::suspendFunctionClassSignature) { symbol ->
+            createFunctionClass(symbol, isK = false, isSuspend = true, n, listOf(functionClass), kotlinCoroutinesPackageFragment)
+        }
     }
 
-    fun kSuspendFunctionN(n: Int): IrClass = kSuspendFunctionN(n) { callback ->
-        val signature = kSuspendFunctionClassSignature(n)
-        declare(signature, callback)
+    fun kSuspendFunctionN(n: Int): IrClass {
+        val functionNClass = suspendFunctionN(n).symbol
+        return buildFunctionN(n, kSuspendFunctionNMap, ::kSuspendFunctionClassSignature) { symbol ->
+            createFunctionClass(symbol, isK = true, isSuspend = true, n, listOf(kFunctionClass, functionNClass), kotlinReflectPackageFragment)
+        }
     }
 
     private fun functionClassSignature(arity: Int): IdSignature {
@@ -154,40 +164,6 @@ class IrBasedFunctionFactory(
             mask = 0L,
             description = null
         )
-    }
-
-    private fun functionN(arity: Int, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass {
-        return functionNMap.getOrPut(arity) {
-            symbolTable.declarator { symbol ->
-                createFunctionClass(symbol, isK = false, isSuspend = false, arity, listOf(functionClass), kotlinPackageFragment)
-            }
-        }
-    }
-
-    private fun suspendFunctionN(arity: Int, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass {
-        return suspendFunctionNMap.getOrPut(arity) {
-            symbolTable.declarator { symbol ->
-                createFunctionClass(symbol, isK = false, isSuspend = true, arity, listOf(functionClass), kotlinCoroutinesPackageFragment)
-            }
-        }
-    }
-
-    private fun kFunctionN(arity: Int, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass {
-        val functionNClass = functionN(arity).symbol
-        return kFunctionNMap.getOrPut(arity) {
-            symbolTable.declarator { symbol ->
-                createFunctionClass(symbol, isK = true, isSuspend = false, arity, listOf(kFunctionClass, functionNClass), kotlinReflectPackageFragment)
-            }
-        }
-    }
-
-    private fun kSuspendFunctionN(arity: Int, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass {
-        val functionNClass = suspendFunctionN(arity).symbol
-        return kSuspendFunctionNMap.getOrPut(arity) {
-            symbolTable.declarator { symbol ->
-                createFunctionClass(symbol, isK = true, isSuspend = true, arity, listOf(kFunctionClass, functionNClass), kotlinReflectPackageFragment)
-            }
-        }
     }
 
     private fun IrTypeParametersContainer.createTypeParameters(n: Int): IrTypeParameter {
