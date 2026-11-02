@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-73434, KT-88674
 
 // FILE: JavaHelper.java
@@ -26,10 +26,10 @@ fun <E3 : Enum<E3>> funB() {
         defaultB(),
     )
 
-    <!TYPE_MISMATCH("Enum<CapturedType(*)!>!; CapturedType(*) & Any")!>funA(
+    funA(
         JavaHelper.createInterfaceA(),
         defaultB(),
-    )<!>
+    )
 
     funA<E3>(
         createInterfaceAKotlin(),

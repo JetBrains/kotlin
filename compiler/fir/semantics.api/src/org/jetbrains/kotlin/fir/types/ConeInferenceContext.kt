@@ -338,6 +338,28 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         )
     }
 
+    override fun createCapturedTypeForSelfReferentialSupertypes(
+        typeVariable: TypeVariableTypeConstructorMarker,
+        supertypes: List<KotlinTypeMarker>,
+        status: CaptureStatus,
+    ): CapturedTypeMarker? {
+        val typeParameter = typeVariable.typeParameter ?: return null
+        val capturedType = ConeCapturedType(
+            constructor = ConeCapturedTypeConstructor(
+                projection = createStarProjection(typeParameter),
+                lowerType = null,
+                captureStatus = status,
+                supertypes = null, // Initialized further down - self-referential
+                typeParameterMarker = typeParameter
+            )
+        )
+        val substitutor = typeSubstitutorByTypeConstructor(mapOf(typeVariable to capturedType))
+        capturedType.constructor.supertypes = supertypes.map {
+            substitutor.safeSubstitute(this, it) as ConeKotlinType
+        }
+        return capturedType
+    }
+
     override fun createStubTypeForBuilderInference(typeVariable: TypeVariableMarker): StubTypeMarker {
         shouldNotBeCalled("PCLA does not use stub types for builder inference")
     }
