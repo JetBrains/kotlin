@@ -3901,10 +3901,38 @@ KtDeclarationModifierList(1878,1884): '@Other'
   null
 
 KtAnnotationEntry(1878,1884): '@Other'
-  null
+  KaSimpleCallResolutionSuccess:
+    call = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Other
+        symbol = <constructor>(): Other
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(1879,1884): 'Other'
-  null
+  KaSimpleCallResolutionSuccess:
+    call = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Other
+        symbol = <constructor>(): Other
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtTypeReference(1879,1884): 'Other'
   null
@@ -3913,7 +3941,21 @@ KtUserType(1879,1884): 'Other'
   null
 
 KtNameReferenceExpression(1879,1884): 'Other'
-  null
+  KaSimpleCallResolutionSuccess:
+    call = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Other
+        symbol = <constructor>(): Other
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtUserType(1885,1888): 'Int'
   null

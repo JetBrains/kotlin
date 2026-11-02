@@ -37,7 +37,7 @@ FILE: danglingContextInFunctionTypePositions.kt
     }
     public? final? fun withVarargReceiver(vararg p: R|kotlin/Array<out ERROR CLASS: Incomplete code>|): R|kotlin/Unit| {
     }
-    public? final? fun withNullableVararg(vararg p: @Anno() String?): R|kotlin/Unit| {
+    public? final? fun withNullableVararg(vararg p: R|kotlin/Array<out ERROR CLASS: Incomplete code>|): R|kotlin/Unit| {
     }
     public final? data class Data : R|kotlin/Any| {
         public? [ContainingClassKey=Data] constructor([CorrespondingProperty=/Data.p] p: <ERROR TYPE REF: Incomplete code>): R|Data| {
@@ -107,8 +107,8 @@ FILE: danglingContextInFunctionTypePositions.kt
         public? final? val nullableWithoutAnnotation: <ERROR TYPE REF: Incomplete code>
             public? [ContainingClassKey=NullableAndParenthesized] get(): <ERROR TYPE REF: Incomplete code>
 
-        public? final? val nullableWithType: @Anno() String?
-            public? [ContainingClassKey=NullableAndParenthesized] get(): @Anno() String?
+        public? final? val nullableWithType: @Anno() <ERROR TYPE REF: Incomplete code>
+            public? [ContainingClassKey=NullableAndParenthesized] get(): @Anno() <ERROR TYPE REF: Incomplete code>
 
         public? final? val nullableWithReceiver: @Anno() <ERROR TYPE REF: Incomplete code>
             public? [ContainingClassKey=NullableAndParenthesized] get(): @Anno() <ERROR TYPE REF: Incomplete code>
@@ -125,8 +125,8 @@ FILE: danglingContextInFunctionTypePositions.kt
         public? final? val nullableAnnotatedEntry: <ERROR TYPE REF: Incomplete code>
             public? [ContainingClassKey=NullableAndParenthesized] get(): <ERROR TYPE REF: Incomplete code>
 
-        public? final? val nullableNullableType: String?
-            public? [ContainingClassKey=NullableAndParenthesized] get(): String?
+        public? final? val nullableNullableType: <ERROR TYPE REF: Incomplete code>
+            public? [ContainingClassKey=NullableAndParenthesized] get(): <ERROR TYPE REF: Incomplete code>
 
         public? final? val nullableSuspend: <ERROR TYPE REF: Incomplete code>
             public? [ContainingClassKey=NullableAndParenthesized] get(): <ERROR TYPE REF: Incomplete code>

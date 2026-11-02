@@ -180,6 +180,12 @@ context -> FirRegularPropertySymbol /NullableAndParenthesized.nullableInsideDang
 context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /NullableAndParenthesized.nullableInsideDangling
 context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /NullableAndParenthesized.nullableInsideDangling
 
+@Other()
+owner -> FirRegularPropertySymbol /NullableAndParenthesized.nullableAnnotatedEntry
+context -> FirRegularPropertySymbol /NullableAndParenthesized.nullableAnnotatedEntry
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /NullableAndParenthesized.nullableAnnotatedEntry
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /NullableAndParenthesized.nullableAnnotatedEntry
+
 @Anno()
 owner -> FirRegularPropertySymbol /NullableAndParenthesized.parenthesized
 context -> FirRegularPropertySymbol /NullableAndParenthesized.parenthesized

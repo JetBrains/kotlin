@@ -68,4 +68,40 @@ public class KtNullableType extends KtModifierListOwnerStub<KotlinPlaceHolderStu
     public KtTypeElement getInnerType() {
         return KtStubbedPsiUtil.getStubOrPsiChild(this, KtTokenSets.TYPE_ELEMENT_TYPES, KtTypeElement.ARRAY_FACTORY);
     }
+
+    /**
+     * Returns the context parameter list of an incomplete function type in parentheses, or {@code null} if there is none.
+     *
+     * <p>In valid code, the context parameter list belongs to the {@link KtFunctionType}. When no function type follows the list,
+     * the parser leaves the list directly under the nullable type, and the {@link #getInnerType() inner type} (if any) is the type
+     * after the list. See {@link KtTypeReference#getDanglingContextParameterList()} for the same case without parentheses.
+     *
+     * <h3>Example:</h3>
+     * <pre>{@code
+     * val x: (context(Int) String)?
+     * //      ^__________^
+     * }</pre>
+     */
+    @Nullable
+    public KtContextParameterList getDanglingContextParameterList() {
+        return getStubOrPsiChild(KtNodeTypes.CONTEXT_PARAMETER_LIST, KtContextParameterList.class);
+    }
+
+    /**
+     * Returns the receiver of an incomplete function type in parentheses, or {@code null} if there is none.
+     *
+     * <p>In valid code, the receiver belongs to the {@link KtFunctionType}. When no parameter list follows the dot after the
+     * receiver type, the parser leaves the receiver directly under the nullable type.
+     * See {@link KtTypeReference#getDanglingFunctionTypeReceiver()} for the same case without parentheses.
+     *
+     * <h3>Example:</h3>
+     * <pre>{@code
+     * val x: (context(Int) (String).)?
+     * //                   ^______^
+     * }</pre>
+     */
+    @Nullable
+    public KtFunctionTypeReceiver getDanglingFunctionTypeReceiver() {
+        return getStubOrPsiChild(KtNodeTypes.FUNCTION_TYPE_RECEIVER, KtFunctionTypeReceiver.class);
+    }
 }

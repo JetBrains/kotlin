@@ -24,27 +24,27 @@ fun catchParameter() {
     try {} catch (e: context(<!UNRESOLVED_REFERENCE!>Unresolved<!>)<!SYNTAX!><!>) {}
 }
 
-data class NullableData(val p: (context(Unresolved)<!SYNTAX!><!>)?)
+data class NullableData(val p: (context(<!UNRESOLVED_REFERENCE!>Unresolved<!>)<!SYNTAX!><!>)?)
 
 class NullableSetter {
     var p: Int = 0
-        set(value: (context(Unresolved)<!SYNTAX!><!>)?) {}
+        set(value: (context(<!UNRESOLVED_REFERENCE!>Unresolved<!>)<!SYNTAX!><!>)?) {}
 }
 
 interface NullableBase {
-    fun foo(): (context(Unresolved)<!SYNTAX!><!>)?
+    fun foo(): (context(<!UNRESOLVED_REFERENCE!>Unresolved<!>)<!SYNTAX!><!>)?
 }
 
 class NullableDerived : NullableBase {
     override fun <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>foo<!>() = TODO()
 }
 
-typealias NullableAlias = (context(Unresolved)<!SYNTAX!><!>)?
+typealias NullableAlias = (context(<!UNRESOLVED_REFERENCE!>Unresolved<!>)<!SYNTAX!><!>)?
 
 val nullableAliased: NullableAlias = TODO()
 
 fun nullableCatchParameter() {
-    try {} catch (e: (context(Unresolved)<!SYNTAX!><!>)?) {}
+    try {} catch (e: (context(<!UNRESOLVED_REFERENCE!>Unresolved<!>)<!SYNTAX!><!>)?) {}
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, data, functionDeclaration, integerLiteral, interfaceDeclaration, localProperty,
