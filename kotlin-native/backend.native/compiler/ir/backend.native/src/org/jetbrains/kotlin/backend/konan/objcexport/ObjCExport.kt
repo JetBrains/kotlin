@@ -27,15 +27,6 @@ import kotlin.io.path.createTempFile
 import kotlin.io.path.name
 import kotlin.io.path.writeLines
 
-internal class ObjCExportedInterface(
-        val generatedClasses: Set<ClassDescriptor>,
-        val categoryMembers: Map<ClassDescriptor, List<CallableMemberDescriptor>>,
-        val topLevel: Map<SourceFile, List<CallableMemberDescriptor>>,
-        val headerLines: List<String>,
-        val namer: ObjCExportNamer,
-        val mapper: ObjCExportMapper
-)
-
 internal fun produceObjCExportInterface(
     context: NativeBackendPhaseContext,
     moduleDescriptor: ModuleDescriptor,
