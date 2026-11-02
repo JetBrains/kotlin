@@ -362,6 +362,7 @@ public class KaDebugRenderer(
             is KaNamedAnnotationValue -> renderNamedConstantValue(value, printer, currentSymbolStack)
             is KaInitializerValue -> renderKaInitializerValue(value, printer)
             is KaContextReceiver -> renderRegularValue(value, printer, currentSymbolStack)
+            is KaFunctionValueParameter -> renderRegularValue(value, printer, currentSymbolStack)
             is KaAnnotation -> renderAnnotationApplication(value, printer, currentSymbolStack)
             is KaAnnotationList -> renderAnnotationsList(value, printer, currentSymbolStack)
             is KaModule -> renderModule(value, printer)
