@@ -59,5 +59,6 @@ generatedSourcesTask(
             "api",
             "jvmCompilerArguments,wasmArguments,jsArguments,metadataArguments",
         )
-    }
+    },
+    versionDependent = true,
 )

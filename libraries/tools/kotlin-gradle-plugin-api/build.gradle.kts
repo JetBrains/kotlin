@@ -64,7 +64,8 @@ generatedSourcesTask(
             version.toString(),
             layout.projectDirectory.file("native-cache-kotlin-versions.txt").toString(),
         )
-    }
+    },
+    versionDependent = true,
 ).configure {
     // 1. Trigger apiDump after generation
     finalizedBy("apiDump")

@@ -59,6 +59,9 @@ fun Project.generatedConfigurationKeys(
  *   Use it with caution
  * @param [additionalInputsToTrack] add files used by generator as generator task input. On change in these files - generator task will re-run
  * instead of being in 'UP-TO-DATE' state
+ * @param [versionDependent] set to true if the generated output depends on the Kotlin version of the build.
+ *   Only such generators are allowed to skip the "Re-generation needed!" check when `kotlin.build.disable.regeneration.check`
+ *   is set during version branching. See KT-91109.
  */
 fun Project.generatedSourcesTask(
     taskName: String,
@@ -68,6 +71,7 @@ fun Project.generatedSourcesTask(
     dependOnTaskOutput: Boolean = true,
     generatedSourceSetKind: GeneratedSourceSetKind = GeneratedSourceSetKind.JvmMain,
     additionalInputsToTrack: (ConfigurableFileCollection) -> Unit = {},
+    versionDependent: Boolean = false,
 ): TaskProvider<JavaExec> {
     val generatorDependencies = configurations.dependencyScope("${taskName}GeneratorDependencies")
     val generatorClasspath = configurations.resolvable("${taskName}GeneratorClasspath") {
@@ -84,6 +88,7 @@ fun Project.generatedSourcesTask(
         dependOnTaskOutput = dependOnTaskOutput,
         generatedSourceSetKind = generatedSourceSetKind,
         additionalInputsToTrack = additionalInputsToTrack,
+        versionDependent = versionDependent,
     )
 }
 
@@ -99,6 +104,7 @@ fun Project.generatedSourcesTask(
     dependOnTaskOutput: Boolean = true,
     generatedSourceSetKind: GeneratedSourceSetKind = GeneratedSourceSetKind.JvmMain,
     additionalInputsToTrack: (ConfigurableFileCollection) -> Unit = {},
+    versionDependent: Boolean = false,
 ): TaskProvider<JavaExec> {
     val generationRoot = layout.projectDirectory.dir(generatedSourceSetKind.genPath)
     val task = tasks.register<JavaExec>(taskName) {
@@ -107,7 +113,9 @@ fun Project.generatedSourcesTask(
         mainClass.set(generatorMainClass)
         systemProperties["line.separator"] = "\n"
         systemProperties["teamcity"] = kotlinBuildProperties.isTeamcityBuild.get()
-        systemProperties["kotlin.build.disable.regeneration.check"] = kotlinBuildProperties.regenerationCheckDisabled.get()
+        if (versionDependent) {
+            systemProperties["kotlin.build.disable.regeneration.check"] = kotlinBuildProperties.regenerationCheckDisabled.get()
+        }
         args(argsProvider(generationRoot))
 
         val additionalInputFiles = objects.fileCollection()

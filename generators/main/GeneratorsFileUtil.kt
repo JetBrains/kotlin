@@ -18,12 +18,11 @@ object GeneratorsFileUtil {
      * Makes generators write the new content instead of reporting a "Re-generation needed!" build problem.
      *
      * Enabled during version branching, when every version-dependent generator produces a diff at once. See KT-88942.
-     *
-     * The env variable covers generators not launched through the `generator`/`generatedSourcesTask` build conventions.
+     * The build passes the property only to tasks declared with `generatedSourcesTask(versionDependent = true)`,
+     * so the other generators keep the check on. See KT-91109.
      */
     private val isRegenerationCheckDisabled: Boolean =
-        System.getProperty("kotlin.build.disable.regeneration.check", "false").toBoolean() ||
-                System.getenv("KOTLIN_BUILD_DISABLE_REGENERATION_CHECK") != null
+        System.getProperty("kotlin.build.disable.regeneration.check", "false").toBoolean()
 
     val GENERATED_MESSAGE = """
     /*
@@ -92,7 +91,8 @@ object GeneratorsFileUtil {
         }.toString()
 
         val fullMessage = "[Re-generation needed!] $message\n" +
-                "Run correspondent (check the log above) Gradle task locally and commit changes."
+                "Run correspondent (check the log above) Gradle task locally and commit changes.\n" +
+                "If the output depends on the Kotlin version, declare its task with `generatedSourcesTask(versionDependent = true)`. See KT-91109."
 
         println("##teamcity[buildProblem description='${fullMessage.escapeForTC()}']")
         return true

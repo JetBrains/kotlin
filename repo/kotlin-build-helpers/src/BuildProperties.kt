@@ -146,8 +146,17 @@ class KotlinBuildProperties internal constructor(
 
     val verificationTasksDisabled: Provider<Boolean> = booleanProperty("kotlin.build.disable.verification.tasks")
 
-    /** Disables the "Re-generation needed!" check of code generators on TeamCity. Used during version branching, see KT-88942. */
-    val regenerationCheckDisabled: Provider<Boolean> = booleanProperty("kotlin.build.disable.regeneration.check")
+    /**
+     * Disables the "Re-generation needed!" check on TeamCity for tasks declared with
+     * `generatedSourcesTask(versionDependent = true)`. Used during version branching, see KT-88942 and KT-91109.
+     *
+     * The `KOTLIN_BUILD_DISABLE_REGENERATION_CHECK` env variable has the same effect. Gradle reads it here and passes it
+     * on with the property, so it reaches only the version-dependent tasks.
+     */
+    val regenerationCheckDisabled: Provider<Boolean> = booleanProperty(
+        "kotlin.build.disable.regeneration.check",
+        propertiesBuildService.flatMap { it.envProperty("KOTLIN_BUILD_DISABLE_REGENERATION_CHECK").map { true }.orElse(false) }
+    )
 
     val jarCompression: Boolean get() = booleanProperty("kotlin.build.jar.compression", isTeamcityBuild).get()
 
