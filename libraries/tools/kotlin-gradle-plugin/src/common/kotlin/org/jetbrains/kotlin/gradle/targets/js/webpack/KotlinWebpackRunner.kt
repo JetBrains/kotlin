@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.gradle.internal.TeamCityMessageCommonClient
 import org.jetbrains.kotlin.gradle.internal.execWithErrorLogger
 import org.jetbrains.kotlin.gradle.internal.newBuildOpLogger
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessageOutputStreamHandler
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
 import org.jetbrains.kotlin.gradle.utils.processes.ExecAsyncHandle
 import org.jetbrains.kotlin.gradle.utils.processes.ExecAsyncHandle.Companion.execAsync
@@ -51,8 +50,8 @@ internal data class KotlinWebpackRunner(
         ) { execSpec ->
             configureExec(
                 execSpec,
-                standardClient,
-                errorClient,
+                standardClient = standardClient,
+                errorClient = errorClient,
             )
         }
     }
@@ -65,8 +64,8 @@ internal data class KotlinWebpackRunner(
         ) { execSpec ->
             configureExec(
                 execSpec,
-                standardClient,
-                errorClient,
+                standardClient = standardClient,
+                errorClient = errorClient,
             )
         }.start()
     }
@@ -97,8 +96,8 @@ internal data class KotlinWebpackRunner(
 
     private fun configureExec(
         execSpec: ExecSpec,
-        errorClient: TeamCityMessageCommonClient,
         standardClient: TeamCityMessageCommonClient,
+        errorClient: TeamCityMessageCommonClient,
     ) {
         check(config.entry?.isFile == true) {
             "${this}: Entry file does not exist \"${config.entry}\""
