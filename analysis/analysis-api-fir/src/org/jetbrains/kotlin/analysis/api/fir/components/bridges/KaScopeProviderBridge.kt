@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.components.KaScopeContext
 import org.jetbrains.kotlin.analysis.api.components.KaScopeKind
 import org.jetbrains.kotlin.analysis.api.components.KaScopeProvider
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
+import org.jetbrains.kotlin.analysis.api.fir.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsScopeProvider
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.scopes.KaTypeScope

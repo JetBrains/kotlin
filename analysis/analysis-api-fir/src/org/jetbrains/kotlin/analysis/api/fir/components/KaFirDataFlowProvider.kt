@@ -19,10 +19,6 @@ import org.jetbrains.kotlin.analysis.api.dataflow.KaImplicitReceiverSmartCastKin
 import org.jetbrains.kotlin.analysis.api.dataflow.KaSmartCastInfo
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.utils.unwrap
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseImplicitReceiverSmartCast
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSmartCastInfo
-import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
 import org.jetbrains.kotlin.analysis.api.impl.base.util.withKaModuleEntry
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsDataFlowProvider
 import org.jetbrains.kotlin.analysis.api.types.KaType

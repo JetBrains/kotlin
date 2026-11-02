@@ -1,1 +1,1 @@
-// THROW: org.jetbrains.kotlin.analysis.api.impl.base.restrictedAnalysis.KaBaseRestrictedAnalysisException
+// THROW: org.jetbrains.kotlin.analysis.api.fir.restrictedAnalysis.KaBaseRestrictedAnalysisException

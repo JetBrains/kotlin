@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.analysis.api.fir
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotation
+import org.jetbrains.kotlin.analysis.api.fir.annotations.KaAnnotationImpl
 import org.jetbrains.kotlin.analysis.api.fir.annotations.computeAnnotationArguments
-import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaAnnotationImpl
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.builtins.StandardNames

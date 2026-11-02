@@ -6,8 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
-import org.jetbrains.kotlin.analysis.api.impl.base.symbols.asKaSymbolVisibility
-import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBasePropertySetterSymbolPointer
+import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaBasePropertySetterSymbolPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer

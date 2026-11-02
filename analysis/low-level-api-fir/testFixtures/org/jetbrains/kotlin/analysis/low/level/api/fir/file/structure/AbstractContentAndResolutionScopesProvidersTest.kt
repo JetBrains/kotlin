@@ -10,7 +10,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils.getAllVirtualFilesFromJar
+import org.jetbrains.kotlin.analysis.api.fir.utils.LibraryUtils.getAllVirtualFilesFromJar
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScopeProvider
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinContentScopeRefiner
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinGlobalSearchScopeMergeStrategy

@@ -10,9 +10,6 @@ import org.jetbrains.kotlin.analysis.api.annotations.KaNamedAnnotationValue
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.evaluate.FirAnnotationValueConverter
 import org.jetbrains.kotlin.analysis.api.fir.toKaAnnotation
-import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaArrayAnnotationValueImpl
-import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaBaseNamedAnnotationValue
-import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaEnumEntryAnnotationValueImpl
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession

@@ -20,11 +20,11 @@ import org.jetbrains.kotlin.analysis.api.compile.KaCodeFragmentCapturedValue
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.components.*
 import org.jetbrains.kotlin.analysis.api.fir.components.compilation.CodeFragmentContextDeclarationCache
 import org.jetbrains.kotlin.analysis.api.fir.components.compilation.getNonLocalContainingOrThisDeclarationWithIrMetadata
-import org.jetbrains.kotlin.analysis.api.impl.base.components.*
-import org.jetbrains.kotlin.analysis.api.impl.base.util.KaBaseCompiledFileForOutputFile
-import org.jetbrains.kotlin.analysis.api.impl.base.util.KaNonBoundToPsiErrorDiagnostic
+import org.jetbrains.kotlin.analysis.api.fir.utils.KaBaseCompiledFileForOutputFile
+import org.jetbrains.kotlin.analysis.api.fir.utils.KaNonBoundToPsiErrorDiagnostic
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsCompilerFacility
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaDanglingFileModuleImpl

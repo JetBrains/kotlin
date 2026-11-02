@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.test.framework.services
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.api.impl.base.util.callableId
+import org.jetbrains.kotlin.analysis.api.fir.utils.callableId
 import org.jetbrains.kotlin.analysis.api.platform.declarations.createDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinActualDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider

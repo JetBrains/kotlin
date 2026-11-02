@@ -11,8 +11,8 @@ import com.intellij.psi.PsiMember
 import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.analysis.api.components.KaJavaInteroperabilityComponent
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.fir.components.KaFirSessionComponent
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsJavaInteroperabilityComponent
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol

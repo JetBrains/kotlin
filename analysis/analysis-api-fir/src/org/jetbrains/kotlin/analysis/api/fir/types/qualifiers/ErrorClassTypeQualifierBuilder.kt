@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.analysis.api.fir.types.qualifiers
 
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
-import org.jetbrains.kotlin.analysis.api.impl.base.types.KaBaseResolvedClassTypeQualifier
-import org.jetbrains.kotlin.analysis.api.impl.base.types.KaBaseUnresolvedClassTypeQualifier
+import org.jetbrains.kotlin.analysis.api.fir.types.KaBaseResolvedClassTypeQualifier
+import org.jetbrains.kotlin.analysis.api.fir.types.KaBaseUnresolvedClassTypeQualifier
 import org.jetbrains.kotlin.analysis.api.types.KaClassTypeQualifier
 import org.jetbrains.kotlin.analysis.api.types.KaResolvedClassTypeQualifier
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol

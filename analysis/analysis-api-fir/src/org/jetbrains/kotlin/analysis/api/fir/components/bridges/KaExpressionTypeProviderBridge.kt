@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir.components.bridges
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.components.KaExpressionTypeProvider
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
+import org.jetbrains.kotlin.analysis.api.fir.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsExpressionTypeProvider
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.psi.KtDeclarationWithReturnType

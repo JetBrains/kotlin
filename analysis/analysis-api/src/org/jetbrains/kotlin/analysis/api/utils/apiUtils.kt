@@ -10,7 +10,6 @@ import kotlin.reflect.KClass
 import kotlin.reflect.full.allSuperclasses
 
 private val implementationPackageNames = listOf(
-    "org.jetbrains.kotlin.analysis.api.impl.base",
     "org.jetbrains.kotlin.analysis.api.fir",
 )
 
