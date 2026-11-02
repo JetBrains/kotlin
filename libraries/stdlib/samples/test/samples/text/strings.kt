@@ -163,6 +163,16 @@ class Strings {
     }
 
     @Sample
+    fun find() {
+        val text = "a1b2c3d4e5"
+
+        assertPrints(text.find { it.isLetter() }, "a")
+        assertPrints(text.find { it.isDigit() }, "1")
+        assertPrints(text.find { it.isUpperCase() }, "null")
+        assertPrints("".find { it.isLowerCase() }, "null")
+    }
+
+    @Sample
     fun findLast() {
         val text = "a1b2c3d4e5"
 
