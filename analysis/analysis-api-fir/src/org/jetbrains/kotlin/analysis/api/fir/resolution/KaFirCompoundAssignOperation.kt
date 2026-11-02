@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.resolution
 
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.resolution.KaCompoundAssignOperation
@@ -14,8 +13,7 @@ import org.jetbrains.kotlin.analysis.api.resolution.KaPartiallyAppliedFunctionSy
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.psi.KtExpression
 
-@KaImplementationDetail
-class KaFirCompoundAssignOperation(
+internal class KaFirCompoundAssignOperation(
     private val backingOperationCall: KaFunctionCall<KaNamedFunctionSymbol>,
     private val backingKind: KaCompoundAssignOperation.Kind,
     private val backingOperand: KtExpression,

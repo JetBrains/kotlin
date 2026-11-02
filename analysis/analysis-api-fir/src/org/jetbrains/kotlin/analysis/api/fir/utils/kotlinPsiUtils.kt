@@ -35,8 +35,7 @@ val KtProperty.callableId: CallableId?
     get() = if (isLocal) null else callableIdForName(nameAsSafeName)
 
 @OptIn(KtExperimentalApi::class)
-@KaImplementationDetail
-fun KtDeclaration.callableIdForName(callableName: Name): CallableId? {
+internal fun KtDeclaration.callableIdForName(callableName: Name): CallableId? {
     when (val containingDeclaration = containingClassOrScript) {
         null -> {}
 

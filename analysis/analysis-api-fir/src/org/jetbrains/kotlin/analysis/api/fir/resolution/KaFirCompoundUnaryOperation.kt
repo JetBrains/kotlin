@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.resolution
 
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.resolution.KaCompoundUnaryOperation
@@ -13,8 +12,7 @@ import org.jetbrains.kotlin.analysis.api.resolution.KaFunctionCall
 import org.jetbrains.kotlin.analysis.api.resolution.KaPartiallyAppliedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 
-@KaImplementationDetail
-class KaFirCompoundUnaryOperation(
+internal class KaFirCompoundUnaryOperation(
     private val backingOperationCall: KaFunctionCall<KaNamedFunctionSymbol>,
     private val backingKind: KaCompoundUnaryOperation.Kind,
     private val backingPrecedence: KaCompoundUnaryOperation.Precedence,

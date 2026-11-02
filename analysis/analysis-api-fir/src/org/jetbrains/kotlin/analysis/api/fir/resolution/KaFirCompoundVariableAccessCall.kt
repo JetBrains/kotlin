@@ -6,14 +6,12 @@
 package org.jetbrains.kotlin.analysis.api.fir.resolution
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.resolution.*
 import org.jetbrains.kotlin.analysis.api.symbols.KaVariableSymbol
 
-@KaImplementationDetail
-class KaFirCompoundVariableAccessCall(
+internal class KaFirCompoundVariableAccessCall(
     private val backingVariableCall: KaVariableAccessCall,
     private val backingCompoundOperation: KaCompoundOperation,
 ) : KaCompoundVariableAccessCall {

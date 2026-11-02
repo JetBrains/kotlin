@@ -5,13 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.imports
 
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.imports.KaDefaultImport
 import org.jetbrains.kotlin.analysis.api.imports.KaDefaultImportPriority
 import org.jetbrains.kotlin.resolve.ImportPath
 
-@KaImplementationDetail
-class KaDefaultImportImpl(
+internal class KaDefaultImportImpl(
     override val importPath: ImportPath,
     override val priority: KaDefaultImportPriority,
 ) : KaDefaultImport {

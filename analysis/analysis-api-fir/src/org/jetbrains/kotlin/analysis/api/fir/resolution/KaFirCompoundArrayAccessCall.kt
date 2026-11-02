@@ -6,15 +6,13 @@
 package org.jetbrains.kotlin.analysis.api.fir.resolution
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.resolution.*
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.psi.KtExpression
 
-@KaImplementationDetail
-class KaFirCompoundArrayAccessCall(
+internal class KaFirCompoundArrayAccessCall(
     private val backingCompoundAccess: KaCompoundOperation,
     private val backingIndexArguments: List<KtExpression>,
     private val backingGetterCall: KaFunctionCall<KaNamedFunctionSymbol>,

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.resolution
 
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.resolution.KaImplicitInvokeCall
@@ -17,11 +16,10 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.psi.KtExpression
 
-@KaImplementationDetail
 // This suppression is required to preserve the semantic compatibility with KaSimpleFunctionCall.
 // It is safe since effectively type parameters are the same
 @Suppress("INCONSISTENT_TYPE_PARAMETER_VALUES")
-class KaFirImplicitInvokeCall(
+internal class KaFirImplicitInvokeCall(
     private val backingPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>,
     private val backingArgumentMapping: Map<KtExpression, KaVariableSignature<KaParameterSymbol>>,
     private val backingTypeArgumentsMapping: Map<KaTypeParameterSymbol, KaType>,

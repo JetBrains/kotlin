@@ -5,15 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.resolution
 
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.resolution.KaReceiverValue
 import org.jetbrains.kotlin.analysis.api.resolution.KaSmartCastedReceiverValue
 import org.jetbrains.kotlin.analysis.api.types.KaType
 
-@KaImplementationDetail
-class KaFirSmartCastedReceiverValue(
+internal class KaFirSmartCastedReceiverValue(
     private val backingOriginal: KaReceiverValue,
     smartCastType: KaType,
 ) : KaSmartCastedReceiverValue {

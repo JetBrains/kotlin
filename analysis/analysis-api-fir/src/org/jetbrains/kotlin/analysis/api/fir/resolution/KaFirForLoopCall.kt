@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.fir.resolution
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.resolution.KaForLoopCall
@@ -14,8 +13,7 @@ import org.jetbrains.kotlin.analysis.api.resolution.KaFunctionCall
 import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleCall
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 
-@KaImplementationDetail
-class KaFirForLoopCall(
+internal class KaFirForLoopCall(
     private val backingIteratorCall: KaFunctionCall<KaNamedFunctionSymbol>,
     private val backingHasNextCall: KaFunctionCall<KaNamedFunctionSymbol>,
     private val backingNextCall: KaFunctionCall<KaNamedFunctionSymbol>,

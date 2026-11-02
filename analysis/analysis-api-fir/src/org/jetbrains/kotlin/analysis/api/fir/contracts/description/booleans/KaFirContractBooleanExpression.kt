@@ -5,15 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.contracts.description.booleans
 
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractParameterValue
 import org.jetbrains.kotlin.analysis.api.contracts.description.booleans.KaContractBooleanConstantExpression
 import org.jetbrains.kotlin.analysis.api.contracts.description.booleans.KaContractBooleanValueParameterExpression
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 
-@KaImplementationDetail
-class KaFirContractBooleanValueParameterExpression(
+internal class KaFirContractBooleanValueParameterExpression(
     private val backingParameterSymbol: KaContractParameterValue,
 ) : KaContractBooleanValueParameterExpression {
     override val token: KaLifetimeToken get() = backingParameterSymbol.token
@@ -29,8 +27,7 @@ class KaFirContractBooleanValueParameterExpression(
     override fun hashCode(): Int = backingParameterSymbol.hashCode()
 }
 
-@KaImplementationDetail
-class KaFirContractBooleanConstantExpression(
+internal class KaFirContractBooleanConstantExpression(
     private val backingBooleanConstant: Boolean,
     override val token: KaLifetimeToken
 ) : KaContractBooleanConstantExpression {

@@ -14,9 +14,8 @@ import org.jetbrains.kotlin.analysis.api.types.KaType
  * A [KaSubstitutor] which substitution logic can be represented as a [Map] from a [KaTypeParameterSymbol] to corresponding [KaType]
  * This is an implementation details and Analysis API clients should not depend on the fact if some [KaSubstitutor] is [KaMapBackedSubstitutor] or not.
  */
-@KaImplementationDetail
 @SubclassOptInRequired(KaImplementationDetail::class)
-interface KaMapBackedSubstitutor : KaSubstitutor {
+internal interface KaMapBackedSubstitutor : KaSubstitutor {
     /**
      * Substitution rules in a form of a `Map<KaTypeParameterSymbol, KaType>`
      */
@@ -29,9 +28,8 @@ interface KaMapBackedSubstitutor : KaSubstitutor {
  * This is an implementation detail,
  * and Analysis API clients should not depend on the fact if some [KaSubstitutor] is [KaChainedSubstitutor] or not.
  */
-@KaImplementationDetail
 @SubclassOptInRequired(KaImplementationDetail::class)
-interface KaChainedSubstitutor : KaSubstitutor {
+internal interface KaChainedSubstitutor : KaSubstitutor {
     val first: KaSubstitutor
     val second: KaSubstitutor
 }

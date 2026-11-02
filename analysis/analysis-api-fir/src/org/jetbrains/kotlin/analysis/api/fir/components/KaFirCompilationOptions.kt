@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaIdeApi
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.compilation.KaCompilationTarget
 import org.jetbrains.kotlin.analysis.api.compilation.KaCompiledClassHandler
@@ -23,8 +22,7 @@ import org.jetbrains.kotlin.analysis.api.components.KaCompilationTarget as KaLeg
 import org.jetbrains.kotlin.analysis.api.components.KaCompiledClassHandler as KaLegacyCompiledClassHandler
 import org.jetbrains.kotlin.analysis.api.components.KaCompilerFacilityModuleActualizer as KaLegacyCompilerFacilityModuleActualizer
 
-@KaImplementationDetail
-class KaFirCompilationOptions(
+internal class KaFirCompilationOptions(
     override val token: KaLifetimeToken,
     val configuration: CompilerConfiguration,
     val target: KaCompilationTarget?,
@@ -74,8 +72,7 @@ class KaFirCompilationOptions(
     }
 }
 
-@KaImplementationDetail
-class KaFirCompilationOptionsBuilder(
+internal class KaFirCompilationOptionsBuilder(
     override val token: KaLifetimeToken,
     val configuration: CompilerConfiguration,
 ) : KaCompilationOptionsBuilder {

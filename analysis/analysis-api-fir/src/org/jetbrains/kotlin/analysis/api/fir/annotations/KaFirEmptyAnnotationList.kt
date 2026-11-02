@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.annotations
 
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotation
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
@@ -13,8 +12,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.name.ClassId
 import java.util.Collections
 
-@KaImplementationDetail
-class KaFirEmptyAnnotationList(override val token: KaLifetimeToken) : AbstractList<KaAnnotation>(), KaAnnotationList {
+internal class KaFirEmptyAnnotationList(override val token: KaLifetimeToken) : AbstractList<KaAnnotation>(), KaAnnotationList {
     override val size: Int
         get() = withValidityAssertion { 0 }
 

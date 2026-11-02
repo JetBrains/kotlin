@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.resolution
 
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.resolution.KaPartiallyAppliedFunctionSymbol
@@ -16,8 +15,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.psi.KtExpression
 
-@KaImplementationDetail
-class KaFirSimpleFunctionCall(
+internal class KaFirSimpleFunctionCall(
     private val backingPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaFunctionSymbol>,
     private val backingArgumentMapping: Map<KtExpression, KaVariableSignature<KaParameterSymbol>>,
     private val backingTypeArgumentsMapping: Map<KaTypeParameterSymbol, KaType>,

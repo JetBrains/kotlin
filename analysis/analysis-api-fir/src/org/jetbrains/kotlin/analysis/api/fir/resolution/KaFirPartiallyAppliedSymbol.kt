@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.resolution
 
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.resolution.KaPartiallyAppliedSymbol
@@ -14,8 +13,7 @@ import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleCall
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 
-@KaImplementationDetail
-class KaFirPartiallyAppliedSymbol<out S : KaCallableSymbol, out C : KaCallableSignature<S>>(
+internal class KaFirPartiallyAppliedSymbol<out S : KaCallableSymbol, out C : KaCallableSignature<S>>(
     private val backingSignature: C,
     dispatchReceiver: KaReceiverValue?,
     extensionReceiver: KaReceiverValue?,

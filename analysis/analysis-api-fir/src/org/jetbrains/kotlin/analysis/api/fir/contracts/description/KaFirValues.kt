@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.contracts.description
 
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractConstantValue
 import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractConstantValue.KaContractConstantType
 import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractExplicitParameterValue
@@ -15,8 +14,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaParameterSymbol
 
-@KaImplementationDetail
-class KaFirContractConstantValue(
+internal class KaFirContractConstantValue(
     private val backingConstantType: KaContractConstantType,
     override val token: KaLifetimeToken,
 ) : KaContractConstantValue {
@@ -29,8 +27,7 @@ class KaFirContractConstantValue(
     override fun hashCode(): Int = backingConstantType.hashCode()
 }
 
-@KaImplementationDetail
-class KaFirContractExplicitParameterValue(private val backingSymbol: KaParameterSymbol) : KaContractExplicitParameterValue {
+internal class KaFirContractExplicitParameterValue(private val backingSymbol: KaParameterSymbol) : KaContractExplicitParameterValue {
     override val token: KaLifetimeToken get() = backingSymbol.token
 
     override val symbol: KaParameterSymbol get() = withValidityAssertion { backingSymbol }
@@ -42,8 +39,7 @@ class KaFirContractExplicitParameterValue(private val backingSymbol: KaParameter
     override fun hashCode(): Int = backingSymbol.hashCode()
 }
 
-@KaImplementationDetail
-class KaFirContractOwnerParameterValue(private val backingSymbol: KaClassSymbol) : KaContractOwnerParameterValue {
+internal class KaFirContractOwnerParameterValue(private val backingSymbol: KaClassSymbol) : KaContractOwnerParameterValue {
     override val token: KaLifetimeToken get() = backingSymbol.token
 
     override val symbol: KaClassSymbol get() = withValidityAssertion { backingSymbol }

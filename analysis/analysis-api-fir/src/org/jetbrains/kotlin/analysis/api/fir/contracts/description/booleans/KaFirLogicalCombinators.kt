@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.contracts.description.booleans
 
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.contracts.description.booleans.KaContractBinaryLogicExpression
 import org.jetbrains.kotlin.analysis.api.contracts.description.booleans.KaContractBinaryLogicExpression.KaLogicOperation
 import org.jetbrains.kotlin.analysis.api.contracts.description.booleans.KaContractBooleanExpression
@@ -14,8 +13,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import java.util.*
 
-@KaImplementationDetail
-class KaFirContractBinaryLogicExpression(
+internal class KaFirContractBinaryLogicExpression(
     private val backingLeft: KaContractBooleanExpression,
     private val backingRight: KaContractBooleanExpression,
     private val backingOperation: KaLogicOperation
@@ -43,8 +41,7 @@ class KaFirContractBinaryLogicExpression(
     override fun hashCode(): Int = Objects.hash(backingLeft, backingRight, backingOperation)
 }
 
-@KaImplementationDetail
-class KaFirContractLogicalNotExpression(private val backingArgument: KaContractBooleanExpression) : KaContractLogicalNotExpression {
+internal class KaFirContractLogicalNotExpression(private val backingArgument: KaContractBooleanExpression) : KaContractLogicalNotExpression {
     override val token: KaLifetimeToken get() = backingArgument.token
 
     override val argument: KaContractBooleanExpression get() = withValidityAssertion { backingArgument }

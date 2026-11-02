@@ -10,8 +10,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 
-@KaImplementationDetail
-sealed class KaFirPropertyAccessorSymbolPointer<T : KaPropertyAccessorSymbol>(
+internal sealed class KaFirPropertyAccessorSymbolPointer<T : KaPropertyAccessorSymbol>(
     private val propertySymbolPointer: KaSymbolPointer<KaPropertySymbol>,
     originalSymbol: T?,
 ) : KaFirCachedSymbolPointer<T>(originalSymbol) {
@@ -27,8 +26,7 @@ sealed class KaFirPropertyAccessorSymbolPointer<T : KaPropertyAccessorSymbol>(
     }
 }
 
-@KaImplementationDetail
-class KaFirPropertyGetterSymbolPointer(
+internal class KaFirPropertyGetterSymbolPointer(
     propertySymbolPointer: KaSymbolPointer<KaPropertySymbol>,
     originalSymbol: KaPropertyGetterSymbol?,
 ) : KaFirPropertyAccessorSymbolPointer<KaPropertyGetterSymbol>(propertySymbolPointer, originalSymbol) {
@@ -38,8 +36,7 @@ class KaFirPropertyGetterSymbolPointer(
     }
 }
 
-@KaImplementationDetail
-class KaFirPropertySetterSymbolPointer(
+internal class KaFirPropertySetterSymbolPointer(
     propertySymbolPointer: KaSymbolPointer<KaPropertySymbol>,
     originalSymbol: KaPropertySetterSymbol?,
 ) : KaFirPropertyAccessorSymbolPointer<KaPropertySetterSymbol>(propertySymbolPointer, originalSymbol) {

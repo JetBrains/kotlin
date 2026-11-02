@@ -13,8 +13,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.name.Name
 
-@KaImplementationDetail
-class KaFirContextParameterSymbolPointer(
+internal class KaFirContextParameterSymbolPointer(
     private val ownerPointer: KaSymbolPointer<KaCallableSymbol>,
     private val name: Name,
     private val index: Int,
