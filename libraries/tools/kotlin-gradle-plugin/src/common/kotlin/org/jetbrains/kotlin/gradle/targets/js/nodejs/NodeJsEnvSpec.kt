@@ -8,11 +8,13 @@ package org.jetbrains.kotlin.gradle.targets.js.nodejs
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.JsPlatformDisambiguator.extensionName
+import org.jetbrains.kotlin.gradle.targets.web.ObsoleteJsAndWasmToolingProvisioning
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsEnvSpec
 
 /**
  * Spec for Node.js - common JS and Wasm runtime.
  */
+@ObsoleteJsAndWasmToolingProvisioning
 abstract class NodeJsEnvSpec : BaseNodeJsEnvSpec() {
 
     override val Project.nodeJsSetupTaskProvider: TaskProvider<out NodeJsSetupTask>
@@ -23,6 +25,7 @@ abstract class NodeJsEnvSpec : BaseNodeJsEnvSpec() {
                 )
             )
 
+    @ObsoleteJsAndWasmToolingProvisioning
     companion object {
         val EXTENSION_NAME: String
             get() = extensionName("nodeJsSpec")
