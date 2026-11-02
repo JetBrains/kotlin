@@ -58,8 +58,9 @@ class ArgumentUpdaterImpl(val session: Session, val nodeBuilder: NodeBuilder) : 
                 (node as? Controlling)?.nextOrNull?.let {
                     it.control = normal as Controlling
                 }
+                // DCE replaces ValueNodes with Unreachable
                 val valueReplacement =
-                    if (node is ValueNode && (replacement is BlockExit)) context(nodeBuilder) { NoValue() }
+                    if (node is ValueNode && (replacement is Unreachable)) context(nodeBuilder) { NoValue() }
                     else replacement
                 node.replaceValueUsesAndKill(valueReplacement)
             } else {

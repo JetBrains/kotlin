@@ -6,6 +6,7 @@ import hair.opt.optimize
 import hair.sym.HairType
 import hair.test.Cls
 import hair.test.Fld
+import hair.test.Fun
 import hair.test.Var
 import hair.transform.buildSSA
 import hair.utils.printGraphviz
@@ -34,14 +35,13 @@ class SimplificationTest : IrTest {
     // if (true) v = 42 else v = obj.value; return v
     @Test
     fun testIfTrueWithControlledValueInDeadBranch() = withTestSession {
-        val field = Fld("value", HairType.INT, Cls("C"))
+        val func = Fun("foo")
         buildInitialIR {
             val v = Var.nextNumbered()
-            val obj = Param(0)
             branch(
                 True(),
                 { AssignVar(v)(Const(42)) },
-                { AssignVar(v)(LoadField(field)(obj)) },   // controlled value in the dead branch
+                { AssignVar(v)(InvokeStatic(func)(callArgs = arrayOf<Node>())) },   // controlled value in the dead branch
             )
             Return(ReadVar(v))
         }
