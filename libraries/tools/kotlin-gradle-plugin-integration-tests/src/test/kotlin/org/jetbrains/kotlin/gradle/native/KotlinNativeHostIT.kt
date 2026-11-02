@@ -61,4 +61,64 @@ class KotlinNativeHostIT : KGPBaseTest() {
     /** The value the build script printed as `key=value` on its own line. */
     private fun BuildResult.printedValue(key: String): String =
         output.lineSequence().single { it.startsWith("$key=") }.substringAfter("=")
+
+    @DisplayName("HostManager still works in a build script but reports a deprecation that names KotlinNativeHost")
+    @GradleTest
+    @OsCondition(supportedOn = [OS.MAC, OS.LINUX, OS.WINDOWS], enabledOnCI = [OS.MAC, OS.LINUX, OS.WINDOWS])
+    fun testHostManagerIsDeprecatedInBuildScripts(gradleVersion: GradleVersion) {
+        val host = KotlinNativeHost.current()
+
+        nativeProject("native-host-dsl", gradleVersion) {
+            buildGradleKts.append(
+                """
+                |
+                |logger.quiet("legacy.hostIsMac=" + org.jetbrains.kotlin.konan.target.HostManager.hostIsMac)
+                """.trimMargin()
+            )
+
+            build("help") {
+                assertEquals((host.isMacOs && host.isSupported).toString(), printedValue("legacy.hostIsMac"))
+                // The class and its companion may each report the deprecation.
+                val deprecationMessages = output.lineSequence()
+                    .filter { it.startsWith("w: ") && "is deprecated. " in it }
+                    .map { it.substringAfter("is deprecated. ") }
+                    .toSet()
+                assertEquals(
+                    setOf("HostManager is internal to Kotlin/Native and will be hidden from build scripts in a future Kotlin release."),
+                    deprecationMessages,
+                )
+            }
+        }
+    }
+
+    @DisplayName("A plain kotlin-native-utils on the buildscript classpath next to the bundled copy does not break the build")
+    @GradleTest
+    @OsCondition(supportedOn = [OS.MAC, OS.LINUX, OS.WINDOWS], enabledOnCI = [OS.MAC, OS.LINUX, OS.WINDOWS])
+    fun testPlainKotlinNativeUtilsOnBuildscriptClasspath(gradleVersion: GradleVersion) {
+        nativeProject("native-host-dsl", gradleVersion) {
+            buildGradleKts.modify { script ->
+                script.replaceFirst(
+                    "plugins {",
+                    """
+                    |buildscript {
+                    |    repositories {
+                    |        mavenLocal()
+                    |        mavenCentral()
+                    |    }
+                    |    dependencies {
+                    |        classpath("org.jetbrains.kotlin:kotlin-native-utils:${buildOptions.kotlinVersion}")
+                    |    }
+                    |}
+                    |
+                    |plugins {
+                    """.trimMargin()
+                )
+            }
+
+            build("linkDebugExecutableNative") {
+                assertTasksExecuted(":linkDebugExecutableNative")
+                assertEquals("native", printedValue("hostNativeTarget.name"))
+            }
+        }
+    }
 }

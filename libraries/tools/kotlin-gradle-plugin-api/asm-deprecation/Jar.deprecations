@@ -1,0 +1,2 @@
+The following packages are (non-transitively) deprecated by the `asm-deprecating-transformer` plugin:
+package org.jetbrains.kotlin.konan.target

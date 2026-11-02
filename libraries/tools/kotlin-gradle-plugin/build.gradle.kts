@@ -123,6 +123,8 @@ dependencies {
         isTransitive = false
     }
     commonCompileOnly(project(":kotlin-gradle-compiler-types"))
+    // kotlin-gradle-plugin-api bundles kotlin-native-utils, so it is not on the classpath of projects in this build
+    commonCompileOnly(project(":native:kotlin-native-utils"))
     commonCompileOnly(project(":kotlin-compiler-runner-unshaded")) {
         isTransitive = false
     }
@@ -170,7 +172,10 @@ dependencies {
 
     commonImplementation(project(":kotlin-gradle-plugin-idea"))
     commonImplementation(project(":kotlin-gradle-plugin-idea-proto"))
-    commonImplementation(project(":native:kotlin-klib-commonizer-api")) // TODO: consider removing in KT-70247
+    commonImplementation(project(":native:kotlin-klib-commonizer-api")) { // TODO: consider removing in KT-70247
+        // kotlin-gradle-plugin-api bundles kotlin-native-utils with HostManager deprecated; a second, plain copy would hide that
+        exclude(group = "org.jetbrains.kotlin", module = "kotlin-native-utils")
+    }
 
     commonImplementation(project(":compiler:build-tools:kotlin-build-statistics"))
     commonImplementation(project(":kotlin-util-klib-metadata")) // TODO: consider removing in KT-70247

@@ -178,6 +178,10 @@
       <exclusions>
         <exclusion>
           <groupId>org.jetbrains.kotlin</groupId>
+          <artifactId>kotlin-native-utils</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-reflect</artifactId>
         </exclusion>
         <exclusion>
