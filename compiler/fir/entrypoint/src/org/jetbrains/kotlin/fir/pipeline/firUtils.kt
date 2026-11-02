@@ -19,13 +19,16 @@ import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.session.sourcesToPathsMapper
+import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.readSourceFileWithMapping
+import java.io.File
 
 fun FirSession.buildFirViaLightTree(
     files: Collection<KtSourceFile>,
     diagnosticsReporter: DiagnosticReporter?,
     useMultiplatformParsing: Boolean,
+    sourceSetByFile: Map<File, File> = emptyMap(),
     reportFilesAndLines: ((Int, Int) -> Unit)?,
 ): List<FirFile> {
     val firProvider = (firProvider as FirProviderImpl)
@@ -46,19 +49,31 @@ fun FirSession.buildFirViaLightTree(
         }
         builder.buildFirFile(code, file, linesMapping).also { firFile ->
             firProvider.recordFile(firFile)
-            sourcesToPathsMapper.registerFileSource(firFile.source!!, file.path ?: file.name)
+            sourcesToPathsMapper.registerFileSource(
+                sourceElement = firFile.source!!,
+                path = file.path ?: file.name,
+                owningSourceRootPath = file.path?.let { sourceSetByFile[File(it)] }?.canonicalPath,
+            )
         }
     }
     reportFilesAndLines?.invoke(files.count(), linesCount)
     return firFiles
 }
 
-fun FirSession.buildFirFromKtFiles(ktFiles: Collection<KtFile>): List<FirFile> {
+fun FirSession.buildFirFromKtFiles(
+    ktFiles: Collection<KtFile>,
+    sourceSetByFile: Map<File, File> = emptyMap(),
+): List<FirFile> {
     val firProvider = (firProvider as FirProviderImpl)
     val builder = PsiRawFirBuilder(this, firProvider.kotlinScopeProvider)
     return ktFiles.map {
         builder.buildFirFile(it).also { firFile ->
             firProvider.recordFile(firFile)
+            firFile.source?.psi?.containingFile?.virtualFile?.path?.let { path ->
+                sourceSetByFile[File(path)]?.let { owningSourceRoot ->
+                    sourcesToPathsMapper.registerOwningSourceRoot(path, owningSourceRoot.canonicalPath)
+                }
+            }
         }
     }
 }
@@ -66,9 +81,10 @@ fun FirSession.buildFirFromKtFiles(ktFiles: Collection<KtFile>): List<FirFile> {
 fun buildResolveAndCheckFirFromKtFiles(
     session: FirSession,
     ktFiles: List<KtFile>,
-    diagnosticsReporter: BaseDiagnosticsCollector
+    diagnosticsReporter: BaseDiagnosticsCollector,
+    sourceSetByFile: Map<File, File> = emptyMap(),
 ): SingleModuleFrontendOutput {
-    return resolveAndCheckFir(session, session.buildFirFromKtFiles(ktFiles), diagnosticsReporter)
+    return resolveAndCheckFir(session, session.buildFirFromKtFiles(ktFiles, sourceSetByFile), diagnosticsReporter)
 }
 
 /**
@@ -92,8 +108,15 @@ fun buildResolveAndCheckFirViaLightTree(
     session: FirSession,
     ktFiles: Collection<KtSourceFile>,
     diagnosticsReporter: BaseDiagnosticsCollector,
+    sourceSetByFile: Map<File, File> = emptyMap(),
     countFilesAndLines: ((Int, Int) -> Unit)?
 ): SingleModuleFrontendOutput {
-    val firFiles = session.buildFirViaLightTree(ktFiles, diagnosticsReporter, useMultiplatformParsing = false, countFilesAndLines)
+    val firFiles = session.buildFirViaLightTree(
+        files = ktFiles,
+        diagnosticsReporter = diagnosticsReporter,
+        useMultiplatformParsing = false,
+        sourceSetByFile = sourceSetByFile,
+        reportFilesAndLines = countFilesAndLines,
+    )
     return resolveAndCheckFir(session, firFiles, diagnosticsReporter)
 }

@@ -163,10 +163,16 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
 
         val countFilesAndLines = if (perfManager == null) null else perfManager::addSourcesStats
         val diagnosticsCollector = configuration.diagnosticsCollector
-        val outputs = sessionsWithSources.map { (val session, val sources = files) ->
+        val outputs = sessionsWithSources.map { (val session, val files) ->
             val rawFirFiles = when (configuration.parserMode.treeBased) {
-                true -> session.buildFirViaLightTree(sources, diagnosticsCollector, useMultiplatformParsing = false, countFilesAndLines)
-                false -> session.buildFirFromKtFiles(sources.asKtFilesList())
+                true -> session.buildFirViaLightTree(
+                    files = files,
+                    diagnosticsReporter = diagnosticsCollector,
+                    useMultiplatformParsing = false,
+                    sourceSetByFile = sources.sourceSetByFile, // configuration.kotlinSourceRoots
+                    reportFilesAndLines = countFilesAndLines,
+                )
+                false -> session.buildFirFromKtFiles(files.asKtFilesList(), sources.sourceSetByFile)
             }
             resolveAndCheckFir(session, rawFirFiles, diagnosticsCollector)
         }
@@ -240,7 +246,8 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                 }
             }
         }
-        return GroupedKtSources(platformSources, commonSources, sourcesByModuleName)
+        // TODO: Set proper sourceSetByFile?
+        return GroupedKtSources(platformSources, commonSources, sourcesByModuleName, emptyMap())
     }
 
     private fun checkNotSupportedPlugins(compilerConfiguration: CompilerConfiguration): Boolean {

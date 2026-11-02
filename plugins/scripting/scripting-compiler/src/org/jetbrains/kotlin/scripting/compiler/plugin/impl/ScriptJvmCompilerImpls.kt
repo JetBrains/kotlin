@@ -275,7 +275,8 @@ private fun doCompileWithK2(
         configurationProvider = context.environment.configuration.getCompilerExtensions(ScriptConfigurationsProvider).firstOrNull()
     }
 
-    val rawFir = session.buildFirFromKtFiles(ktFiles) //.reversed()
+    // TODO: Set the proper value to sourceSetByFile?
+    val rawFir = session.buildFirFromKtFiles(ktFiles, sourceSetByFile = emptyMap()) //.reversed()
 
     val orderedRawFir =
         if (scriptDefinitionProviderService == null) rawFir

@@ -282,7 +282,8 @@ fun SourceCode.convertToFirViaLightTree(session: FirSession, diagnosticsReporter
     }
     return builder.buildFirFile(sanitizedText, toKtSourceFile(), linesMapping).also { firFile ->
         (session.firProvider as FirProviderImpl).recordFile(firFile)
-        sourcesToPathsMapper.registerFileSource(firFile.source!!, locationId ?: name!!)
+        // TODO: Set the proper owning source root?
+        sourcesToPathsMapper.registerFileSource(firFile.source!!, locationId ?: name!!, owningSourceRootPath = null)
     }
 }
 

@@ -278,6 +278,7 @@ fun SourceCode.convertToFirViaPsi(
     val builder = PsiRawFirBuilder(session, session.kotlinScopeProvider)
     return builder.buildFirFile(ktFile).also { firFile ->
         (session.firProvider as FirProviderImpl).recordFile(firFile)
-        session.sourcesToPathsMapper.registerFileSource(firFile.source!!, locationId ?: name!!)
+        // TODO: Set the proper owning source root?
+        session.sourcesToPathsMapper.registerFileSource(firFile.source!!, locationId ?: name!!, owningSourceRootPath = null)
     }
 }

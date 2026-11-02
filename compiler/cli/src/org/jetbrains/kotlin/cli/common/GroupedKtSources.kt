@@ -32,6 +32,7 @@ data class GroupedKtSources(
     val platformSources: Collection<KtSourceFile>,
     val commonSources: Collection<KtSourceFile>,
     val sourcesByModuleName: Map<String, Set<KtSourceFile>>,
+    val sourceSetByFile: Map<File, File>,
 ) {
     fun isEmpty(): Boolean = platformSources.isEmpty() && commonSources.isEmpty()
 }
@@ -58,6 +59,7 @@ fun collectSources(
     val platformSources = createSet()
     val commonSources = createSet()
     val sourcesByModuleName = mutableMapOf<String, MutableSet<KtSourceFile>>()
+    val sourceSetByFile = mutableMapOf<File, File>()
 
     @OptIn(K1Deprecation::class)
     val virtualFileCreator = PreprocessedFileCreator(projectEnvironment.project)
@@ -117,10 +119,15 @@ fun collectSources(
                 fileInfo.moduleName?.let {
                     sourcesByModuleName.getOrPut(it) { mutableSetOf() }.add(file)
                 }
+
+                file.path?.let { path ->
+                    // In general, individual sources can be passed to the compiler as free arguments with no source set at all.
+                    sourceSetByFile[File(path)] = fileInfo.sourceRoot.takeIf { it.isDirectory } ?: fileInfo.sourceRoot.parentFile
+                }
             }
         }
 
-    return GroupedKtSources(platformSources, commonSources, sourcesByModuleName)
+    return GroupedKtSources(platformSources, commonSources, sourcesByModuleName, sourceSetByFile)
 }
 
 /**

@@ -158,9 +158,10 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
 
         val reporter = DiagnosticsCollectorImpl()
         val commonAnalysis =
-            buildResolveAndCheckFirFromKtFiles(commonSession, commonKtFiles, reporter)
+            // TODO: Set the proper value to sourceSetByFile?
+            buildResolveAndCheckFirFromKtFiles(commonSession, commonKtFiles, reporter, sourceSetByFile = emptyMap())
         val platformAnalysis =
-            buildResolveAndCheckFirFromKtFiles(platformSession, platformKtFiles, reporter)
+            buildResolveAndCheckFirFromKtFiles(platformSession, platformKtFiles, reporter, sourceSetByFile = emptyMap())
 
         return FirAnalysisResult(
             AllModulesFrontendOutput(listOf(commonAnalysis, platformAnalysis)),

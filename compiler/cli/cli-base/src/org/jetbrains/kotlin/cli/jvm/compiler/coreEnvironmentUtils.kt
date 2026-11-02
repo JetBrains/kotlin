@@ -32,7 +32,12 @@ import org.jetbrains.kotlin.psi.hmppModuleName
 import org.jetbrains.kotlin.psi.isCommonSource
 import java.io.File
 
-class SourceFileWithModule<T>(val sourceFiles: Iterable<T>, val isCommon: Boolean, val moduleName: String?)
+class SourceFileWithModule<T>(
+    val sourceFiles: Iterable<T>,
+    val isCommon: Boolean,
+    val moduleName: String?,
+    val sourceRoot: File,
+)
 
 @OptIn(K1Deprecation::class)
 fun List<KotlinSourceRoot>.forAllFiles(
@@ -116,7 +121,7 @@ fun <VirtualFile, Source> List<KotlinSourceRoot>.allSourceFilesSequence(
             val virtualFile = findVirtualFile(file.absoluteFile)
             if (virtualFile != null && processedFiles.add(virtualFile)) {
                 if (filter(virtualFile, false))
-                    yield(SourceFileWithModule(convertToSourceFiles(virtualFile), isCommon, hmppModuleName))
+                    yield(SourceFileWithModule(convertToSourceFiles(virtualFile), isCommon, hmppModuleName, sourceRoot))
             }
         }
     }

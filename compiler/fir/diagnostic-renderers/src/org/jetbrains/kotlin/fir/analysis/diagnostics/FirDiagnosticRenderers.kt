@@ -41,8 +41,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.render
 import org.jetbrains.kotlin.resolve.ReturnValueStatus
 import org.jetbrains.kotlin.toLinesMapping
-import org.jetbrains.kotlin.utils.fileUtils.descendantRelativeTo
-import java.io.File
 import java.text.MessageFormat
 
 @Suppress("NO_EXPLICIT_RETURN_TYPE_IN_API_MODE_WARNING")
@@ -113,8 +111,7 @@ object FirDiagnosticRenderers {
                 val indentString = " ".repeat(numberString.length)
                 val physicalLocation = lineAndColumn
                     ?.let { [line, column] ->
-                        symbol.source?.let(symbol.moduleData.session.sourcesToPathsMapper::getSourceFilePath)
-                            ?.let { File(it).descendantRelativeTo(File(".").absoluteFile).path }
+                        symbol.source?.let(symbol.moduleData.session.sourcesToPathsMapper::getRelativeSourceFilePath)
                             ?.let { "$indentString--> $it:$line:$column" }
                     }
                 listOfNotNull(

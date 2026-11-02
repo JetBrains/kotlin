@@ -1,14 +1,14 @@
 /contractInDiagnosticRendering.kt:23:5: error: None of the following candidates is applicable for expression 'foo(Any()) {}':
 
 In package 'root package' of module '<main>':
- --> /private/var/folders/5r/wwlpp6t51j3910jcq7298jx40000kt/T/analysis-testsProject_test_18156878438737579365/org.jetbrains.kotlin.test.runners.PhasedJvmDiagnosticLightTreeTestGenerated_Tests_ContractstestContractInDiagnosticRendering/kotlin-sources/main/contractInDiagnosticRendering.kt:6:1
+ --> contractInDiagnosticRendering.kt:6:1
   |
 6 | fun foo(s: String, f: () -> Unit): Unit
   |
 reason: Expression 'Any()' of type 'Any' does not conform to value parameter 's' of type 'String'.
 
 In package 'root package' of module '<main>':
-  --> /private/var/folders/5r/wwlpp6t51j3910jcq7298jx40000kt/T/analysis-testsProject_test_18156878438737579365/org.jetbrains.kotlin.test.runners.PhasedJvmDiagnosticLightTreeTestGenerated_Tests_ContractstestContractInDiagnosticRendering/kotlin-sources/main/contractInDiagnosticRendering.kt:14:1
+  --> contractInDiagnosticRendering.kt:14:1
    |
 14 | fun foo(i: Int, f: () -> Unit): Unit
    |

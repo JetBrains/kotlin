@@ -111,13 +111,17 @@ object MetadataFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifa
             val firFiles = when {
                 parserMode.treeBased -> {
                     session.buildFirViaLightTree(
-                        files, diagnosticsReporter, useMultiplatformParsing = parserMode == KmpTree
+                        files, diagnosticsReporter, useMultiplatformParsing = parserMode == KmpTree,
+                        sourceSetByFile = groupedSources.sourceSetByFile,
                     ) { files, lines ->
                         perfManager?.addSourcesStats(files, lines)
                     }
                 }
                 else -> {
-                    session.buildFirFromKtFiles(files.map { (it as KtPsiSourceFile).psiFile as KtFile })
+                    session.buildFirFromKtFiles(
+                        ktFiles = files.map { (it as KtPsiSourceFile).psiFile as KtFile },
+                        sourceSetByFile = groupedSources.sourceSetByFile,
+                    )
                 }
             }
             resolveAndCheckFir(session, firFiles, diagnosticsReporter)

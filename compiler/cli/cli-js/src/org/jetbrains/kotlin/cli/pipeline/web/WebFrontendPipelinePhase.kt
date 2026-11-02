@@ -166,7 +166,8 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
             isCommonSource = isCommonSourceForPsi,
             fileBelongsToModule = fileBelongsToModuleForPsi,
             buildResolveAndCheckFir = { session, files ->
-                buildResolveAndCheckFirFromKtFiles(session, files, diagnosticsReporter)
+                // TODO: Set the proper value to sourceSetByFile?
+                buildResolveAndCheckFirFromKtFiles(session, files, diagnosticsReporter, sourceSetByFile = emptyMap())
             },
             useWasmPlatform = useWasmPlatform,
         )
@@ -198,7 +199,13 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
             isCommonSource = { groupedSources.isCommonSourceForLt(it) },
             fileBelongsToModule = { file, it -> groupedSources.fileBelongsToModuleForLt(file, it) },
             buildResolveAndCheckFir = { session, files ->
-                buildResolveAndCheckFirViaLightTree(session, files, diagnosticsReporter, performanceManager?.let { it::addSourcesStats })
+                buildResolveAndCheckFirViaLightTree(
+                    session = session,
+                    ktFiles = files,
+                    diagnosticsReporter = diagnosticsReporter,
+                    sourceSetByFile = groupedSources.sourceSetByFile,
+                    countFilesAndLines = performanceManager?.let { it::addSourcesStats }
+                )
             },
             useWasmPlatform = useWasmPlatform,
         )

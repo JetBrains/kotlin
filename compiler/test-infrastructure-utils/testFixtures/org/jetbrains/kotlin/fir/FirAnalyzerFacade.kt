@@ -45,11 +45,14 @@ class FirAnalyzerFacade(
             }
             FirParser.LightTree -> {
                 session.buildFirViaLightTree(
-                    lightTreeFiles, diagnosticReporterForLightTree, useMultiplatformParsing = false, reportFilesAndLines = null
+                    lightTreeFiles, diagnosticReporterForLightTree, useMultiplatformParsing = false, reportFilesAndLines = null,
+                    // TODO: Set the proper value to sourceSetByFile?
+                    sourceSetByFile = emptyMap(),
                 )
             }
             FirParser.Psi -> {
-                session.buildFirFromKtFiles(ktFiles)
+                // TODO: Set the proper value to sourceSetByFile?
+                session.buildFirFromKtFiles(ktFiles, sourceSetByFile = emptyMap())
             }
         }
     }

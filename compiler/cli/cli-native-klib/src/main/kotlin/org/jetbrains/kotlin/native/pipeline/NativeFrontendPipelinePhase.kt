@@ -125,7 +125,8 @@ object NativeFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact
             isCommonSource = isCommonSourceForPsi,
             fileBelongsToModule = fileBelongsToModuleForPsi,
             buildResolveAndCheckFir = { session, files, diagnosticsReporter ->
-                buildResolveAndCheckFirFromKtFiles(session, files, diagnosticsReporter)
+                // TODO: Set the proper value to sourceSetByFile?
+                buildResolveAndCheckFirFromKtFiles(session, files, diagnosticsReporter, sourceSetByFile = emptyMap())
             },
         )
     }
@@ -153,7 +154,12 @@ object NativeFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact
             isCommonSource = { groupedSources.isCommonSourceForLt(it) },
             fileBelongsToModule = { file, it -> groupedSources.fileBelongsToModuleForLt(file, it) },
             buildResolveAndCheckFir = { session, files, diagnosticsReporter ->
-                buildResolveAndCheckFirViaLightTree(session, files, diagnosticsReporter) { files, lines ->
+                buildResolveAndCheckFirViaLightTree(
+                    session = session,
+                    ktFiles = files,
+                    diagnosticsReporter = diagnosticsReporter,
+                    sourceSetByFile = groupedSources.sourceSetByFile,
+                ) { files, lines ->
                     configuration.perfManager?.addSourcesStats(files, lines)
                 }
             },
