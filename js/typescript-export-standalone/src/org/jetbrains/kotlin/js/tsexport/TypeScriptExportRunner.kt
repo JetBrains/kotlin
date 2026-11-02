@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.js.tsexport
 import org.jetbrains.kotlin.analysis.api.klib.reader.createKaModulesForStandaloneAnalysis
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.session.analyze
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.impl.deduplicating
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedDeclaration
 import org.jetbrains.kotlin.ir.backend.js.tsexport.toTypeScript
 import org.jetbrains.kotlin.ir.backend.js.tsexport.toTypeScriptFragment
@@ -31,6 +33,7 @@ public data class TypeScriptExportConfig(
     public val compileLongAsBigInt: Boolean,
     public val implementableInterfaces: Boolean,
     public val exportableSuspendLambdas: Boolean,
+    public val compileSuspendAsJsGenerator: Boolean,
     public val dataClassCopyRespectsConstructorVisibility: Boolean,
     public val useUnknownInsteadAny: Boolean,
     public val additionalExportedDeclarationNames: Set<FqName> = emptySet(),
@@ -46,20 +49,29 @@ public data class TypeScriptModuleConfig(
     public val outputName: String?,
 )
 
-public fun runTypeScriptExport(klibs: List<KlibInputModule<TypeScriptModuleConfig>>, config: TypeScriptExportConfig): List<File> {
+public fun runTypeScriptExport(
+    klibs: List<KlibInputModule<TypeScriptModuleConfig>>,
+    config: TypeScriptExportConfig,
+    diagnosticReporter: DiagnosticReporter,
+): List<File> {
     if (config.artifactConfiguration.tsCompilationStrategy == TsCompilationStrategy.NONE) {
         return emptyList()
     }
 
     val kaModules = createKaModulesForStandaloneAnalysis(klibs, config.targetPlatform)
     val exportModel = kaModules.use { kaModules ->
-        val generator = ExportModelGenerator(config)
+        val generator = ExportModelGenerator(
+            TypeScriptExportContext(
+                config,
+                diagnosticReporter.deduplicating()
+            )
+        )
         analyze(kaModules.useSiteModule) {
             generator.generateExport(kaModules)
         }
     }
 
-    if (exportModel.isEmpty()) return emptyList()
+    if (exportModel.isEmpty() || diagnosticReporter.hasErrors) return emptyList()
 
     val artifacts = TsArtifactProducer.generateArtifacts(exportModel, config.artifactConfiguration.granularity)
     config.artifactConfiguration.outputDirectory.normalizedAbsoluteFile.mkdirs()

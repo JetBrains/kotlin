@@ -348,9 +348,10 @@ internal fun MutableList<ExportedDeclaration>.addSuperTypesSpecialProperties(
     superTypes: Collection<KaType>,
     superTypeApproximator: SuperTypeApproximator?,
     typeParameterScope: TypeParameterScope,
-    config: TypeScriptExportConfig,
+    context: TypeScriptExportContext,
     hasNonExportedAbstractMembers: Boolean,
 ) {
+    val config = context.config
     val allSuperTypesWithBrandProperty = klass.collectAllImplementableAndNotImplementableInterfaces(superTypes, config)
     val typeItselfShouldNotBeImplemented = klass.shouldContainNotImplementableProperty(config, hasNonExportedAbstractMembers)
 
@@ -374,7 +375,7 @@ internal fun MutableList<ExportedDeclaration>.addSuperTypesSpecialProperties(
                 }
             }
             ExportedType.PropertyType(
-                TypeExporter(config, typeParameterScope, null, superTypeApproximator).exportType(superTypeWithDynamicArguments),
+                TypeExporter(context, typeParameterScope, null, superTypeApproximator).exportType(superTypeWithDynamicArguments),
                 ExportedType.LiteralType.StringLiteralType(notImplementablePropertyName),
             )
         }

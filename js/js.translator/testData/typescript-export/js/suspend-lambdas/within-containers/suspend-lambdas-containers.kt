@@ -1,5 +1,8 @@
-// IGNORE_BACKEND: JS_IR
-// IGNORE_ANALYSIS_API_BASED_TYPESCRIPT_EXPORT: JS_IR
+// ES6_MODE
+// ^^^^^^
+// Since we use suspend lambdas in the test that are supported only with usage of ES2015 generators
+
+// DONT_TARGET_EXACT_BACKEND: JS_IR
 // CHECK_TYPESCRIPT_DECLARATIONS
 // RUN_PLAIN_BOX_FUNCTION
 // WITH_STDLIB
