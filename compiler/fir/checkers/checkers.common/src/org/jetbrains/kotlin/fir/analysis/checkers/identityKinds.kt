@@ -10,9 +10,9 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.collectUpperBounds
-import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.enableWarningsForValueBasedJavaClasses
-import org.jetbrains.kotlin.fir.resolve.toClassSymbol
+import org.jetbrains.kotlin.fir.isValueBasedClass
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.typeContext
 
@@ -28,7 +28,7 @@ enum class IdentityKind {
     /** A primitive type from Java, like `Int!`, which is its box. */
     FLEXIBLE_PRIMITIVE,
 
-    /** A JDK class annotated with `@jdk.internal.ValueBased`. */
+    /** A value-based class of the platform, like a JDK class annotated with `@jdk.internal.ValueBased`. */
     VALUE_BASED,
 }
 
@@ -63,5 +63,5 @@ inline fun reportIdentitySensitiveOperation(source: KtSourceElement?, type: Cone
 context(sessionHolder: SessionHolder)
 fun ConeKotlinType.isJavaValueBasedClass(): Boolean =
     collectUpperBounds(sessionHolder.session.typeContext).any {
-        it.toClassSymbol()?.hasAnnotation(JDK_INTERNAL_VALUE_BASED_ANNOTATION_CLASS_ID, sessionHolder.session) == true
+        it.toRegularClassSymbol(sessionHolder.session)?.isValueBasedClass(sessionHolder.session) == true
     }

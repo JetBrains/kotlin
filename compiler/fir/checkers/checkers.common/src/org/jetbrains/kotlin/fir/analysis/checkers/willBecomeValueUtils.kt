@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.isValue
 import org.jetbrains.kotlin.fir.declarations.utils.modality
+import org.jetbrains.kotlin.fir.isValueBasedClass
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -71,7 +72,7 @@ fun FirRegularClassSymbol.willBecomeKotlinValueClass(session: FirSession): Boole
  * may extend it.
  */
 fun FirRegularClassSymbol.willBecomeKotlinOrJdkValueClass(session: FirSession): Boolean =
-    willBecomeKotlinValueClass(session) || hasAnnotation(JDK_INTERNAL_VALUE_BASED_ANNOTATION_CLASS_ID, session)
+    willBecomeKotlinValueClass(session) || isValueBasedClass(session)
 
 /**
  * Reports an identity-sensitive operation performed on [type] if that type is annotated with '@WillBecomeValue'.

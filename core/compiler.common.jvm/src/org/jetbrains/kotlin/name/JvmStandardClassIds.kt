@@ -175,6 +175,12 @@ object JvmStandardClassIds {
         object ParameterNames {
             val jvmExposeBoxedName = Name.identifier("jvmName")
         }
+
+        /**
+         * JEP 390 marks JDK classes whose identity must not be relied upon, and JEP 401 migrates all of them to value classes.
+         * It is the JVM counterpart of [StandardClassIds.Annotations.WillBecomeValue].
+         */
+        val ValueBased = ClassId.fromString("jdk/internal/ValueBased")
     }
 
     object Java {

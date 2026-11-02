@@ -67,12 +67,6 @@ import org.jetbrains.kotlin.util.getChildren
 
 private val INLINE_ONLY_ANNOTATION_CLASS_ID: ClassId = ClassId.topLevel(FqName("kotlin.internal.InlineOnly"))
 
-/**
- * JEP 390 marks JDK classes whose identity must not be relied upon, and JEP 401 migrates all of them to value classes.
- * It is the JVM counterpart of [StandardClassIds.Annotations.WillBecomeValue].
- */
-val JDK_INTERNAL_VALUE_BASED_ANNOTATION_CLASS_ID: ClassId = ClassId.fromString("jdk/internal/ValueBased")
-
 context(context: CheckerContext)
 fun FirClass.unsubstitutedScope(): FirTypeScope =
     this.unsubstitutedScope(

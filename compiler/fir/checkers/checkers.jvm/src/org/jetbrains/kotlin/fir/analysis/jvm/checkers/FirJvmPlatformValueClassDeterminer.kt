@@ -11,19 +11,27 @@ import org.jetbrains.kotlin.config.isJvmTargetValhallaCompatible
 import org.jetbrains.kotlin.fir.FirPlatformValueClassDeterminer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.NoMutableState
+import org.jetbrains.kotlin.fir.declarations.hasAnnotation
+import org.jetbrains.kotlin.fir.isJavaValueClass
 import org.jetbrains.kotlin.fir.java.jvmTargetProvider
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 
 /**
- * The JDK classes of [JDK_VALUE_CLASSES] are value classes with the JVM preview features of a Valhalla-compatible target. The JDK's
- * non-preview class files, which are the ones read, declare them as identity classes.
+ * Java value classes are value classes, and so are the JDK classes of [JDK_VALUE_CLASSES] with the JVM preview features of a
+ * Valhalla-compatible target, although the JDK's non-preview class files, which are the ones read, declare them as identity classes.
+ * The JDK classes annotated with `@jdk.internal.ValueBased` are value-based (JEP 390).
  */
 @NoMutableState
 class FirJvmPlatformValueClassDeterminer(private val session: FirSession) : FirPlatformValueClassDeterminer() {
     override fun isPlatformValueClass(symbol: FirRegularClassSymbol): Boolean =
-        session.isJvmTargetValhallaCompatible && JvmClassName.internalNameByClassId(symbol.classId) in JDK_VALUE_CLASSES
+        symbol.isJavaValueClass ||
+                session.isJvmTargetValhallaCompatible && JvmClassName.internalNameByClassId(symbol.classId) in JDK_VALUE_CLASSES
+
+    override fun isValueBasedClass(symbol: FirRegularClassSymbol): Boolean =
+        symbol.hasAnnotation(JvmStandardClassIds.Annotations.ValueBased, session)
 }
 
 // Whether the JVM target of this compilation has value classes (JEP 401).
