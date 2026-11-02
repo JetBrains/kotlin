@@ -1,0 +1,10 @@
+================ Step #1 =================
+
+Compiling files:
+  src/Data.kt
+  src/main.kt
+End of files
+Exit code: ABORT
+------------------------------------------
+COMPILATION FAILED
+Type is not directly supported by 'Parcelize'. Annotate the parameter type with '@RawValue' if you want it to be serialized using 'writeValue()'.

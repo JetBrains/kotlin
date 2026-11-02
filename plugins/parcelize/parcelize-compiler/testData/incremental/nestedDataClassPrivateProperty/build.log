@@ -1,0 +1,10 @@
+================ Step #1 =================
+
+Compiling files:
+  src/Inner.kt
+  src/main.kt
+End of files
+Exit code: ABORT
+------------------------------------------
+COMPILATION FAILED
+Type is not directly supported by 'Parcelize' because it contains an instance of Inner. Add the '@TypeParceler<Inner, ...>' annotation to provide the missing serialization logic.
