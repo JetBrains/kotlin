@@ -630,6 +630,14 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         errorSupportedOnlyInTypeInference()
     }
 
+    override fun createCapturedTypeForSelfReferentialSupertypes(
+        typeVariable: TypeVariableTypeConstructorMarker,
+        supertypes: List<KotlinTypeMarker>,
+        status: CaptureStatus,
+    ): CapturedTypeMarker {
+        errorSupportedOnlyInTypeInference()
+    }
+
     override fun createStubTypeForBuilderInference(typeVariable: TypeVariableMarker): StubTypeMarker {
         errorSupportedOnlyInTypeInference()
     }
