@@ -1,0 +1,8 @@
+Diagnostics from A1.kt:
+  <NO DIAGNOSTICS>
+
+Diagnostics from A2.kt:
+  <NO DIAGNOSTICS>
+
+Diagnostics from A3.kt:
+  <NO DIAGNOSTICS>
