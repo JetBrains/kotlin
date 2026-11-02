@@ -5,14 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.imports
 
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.imports.KaDefaultImport
 import org.jetbrains.kotlin.analysis.api.imports.KaDefaultImports
 import org.jetbrains.kotlin.resolve.ImportPath
 
 
-@KaImplementationDetail
-class KaDefaultImportsImpl(
+internal class KaDefaultImportsImpl(
     override val defaultImports: List<KaDefaultImport>,
     override val excludedFromDefaultImports: List<ImportPath>
 ) : KaDefaultImports {

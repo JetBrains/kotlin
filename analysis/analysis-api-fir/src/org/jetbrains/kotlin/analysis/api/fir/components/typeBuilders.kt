@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.components.KaArrayTypeBuilder
 import org.jetbrains.kotlin.analysis.api.components.KaClassTypeBuilder
 import org.jetbrains.kotlin.analysis.api.components.KaTypeParameterTypeBuilder
@@ -18,8 +17,7 @@ import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.Variance
 
-@KaImplementationDetail
-sealed class KaFirClassTypeBuilder : KaClassTypeBuilder {
+internal sealed class KaFirClassTypeBuilder : KaClassTypeBuilder {
     private val backingArguments = mutableListOf<KaTypeProjection>()
 
     override var isMarkedNullable: Boolean = false
@@ -40,14 +38,12 @@ sealed class KaFirClassTypeBuilder : KaClassTypeBuilder {
         backingArguments += KaFirTypeArgumentWithVariance(type, variance, type.token)
     }
 
-    @KaImplementationDetail
     class ByClassId(classId: ClassId, override val token: KaLifetimeToken) : KaFirClassTypeBuilder() {
         private val backingClassId: ClassId = classId
 
         val classId: ClassId get() = withValidityAssertion { backingClassId }
     }
 
-    @KaImplementationDetail
     class BySymbol(symbol: KaClassLikeSymbol, override val token: KaLifetimeToken) : KaFirClassTypeBuilder() {
         private val backingSymbol: KaClassLikeSymbol = symbol
 
@@ -87,8 +83,7 @@ internal sealed class KaFirArrayTypeBuilder : KaArrayTypeBuilder {
     }
 }
 
-@KaImplementationDetail
-sealed class KaFirTypeParameterTypeBuilder : KaTypeParameterTypeBuilder {
+internal sealed class KaFirTypeParameterTypeBuilder : KaTypeParameterTypeBuilder {
     override var isMarkedNullable: Boolean = false
         get() = withValidityAssertion { field }
         set(value) {
@@ -97,7 +92,6 @@ sealed class KaFirTypeParameterTypeBuilder : KaTypeParameterTypeBuilder {
             }
         }
 
-    @KaImplementationDetail
     class BySymbol(symbol: KaTypeParameterSymbol, override val token: KaLifetimeToken) : KaFirTypeParameterTypeBuilder() {
         private val backingSymbol: KaTypeParameterSymbol = symbol
 

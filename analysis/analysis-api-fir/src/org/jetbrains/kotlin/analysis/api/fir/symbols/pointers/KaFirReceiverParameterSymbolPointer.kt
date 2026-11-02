@@ -12,8 +12,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 
-@KaImplementationDetail
-class KaFirReceiverParameterSymbolPointer(
+internal class KaFirReceiverParameterSymbolPointer(
     private val ownerPointer: KaSymbolPointer<KaCallableSymbol>,
     originalSymbol: KaReceiverParameterSymbol?,
 ) : KaFirCachedSymbolPointer<KaReceiverParameterSymbol>(originalSymbol) {

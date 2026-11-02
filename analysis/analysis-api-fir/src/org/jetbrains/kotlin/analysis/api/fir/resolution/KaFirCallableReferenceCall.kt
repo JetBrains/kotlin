@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.fir.resolution
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.resolution.KaCallableReferenceCall
@@ -18,8 +17,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 
 @KaExperimentalApi
-@KaImplementationDetail
-class KaFirCallableReferenceCall<S : KaCallableSymbol, C : KaCallableSignature<S>>(
+internal class KaFirCallableReferenceCall<S : KaCallableSymbol, C : KaCallableSignature<S>>(
     internal val backingPartiallyAppliedSymbol: KaPartiallyAppliedSymbol<S, C>,
     private val backingTypeArgumentsMapping: Map<KaTypeParameterSymbol, KaType>,
 ) : KaCallableReferenceCall<S, C> {

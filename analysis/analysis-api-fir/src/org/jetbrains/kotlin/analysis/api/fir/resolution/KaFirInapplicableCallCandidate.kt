@@ -5,15 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.resolution
 
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.resolution.KaInapplicableCallCandidate
 import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleOrMultiCall
 
-@KaImplementationDetail
-class KaFirInapplicableCallCandidate(
+internal class KaFirInapplicableCallCandidate(
     private val backingCandidate: KaSimpleOrMultiCall,
     private val backingIsInBestCandidates: Boolean,
     private val backingDiagnostic: KaDiagnostic,

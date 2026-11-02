@@ -12,8 +12,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 
-@KaImplementationDetail
-class KaFirValueParameterFromDefaultSetterSymbolPointer(
+internal class KaFirValueParameterFromDefaultSetterSymbolPointer(
     private val ownerPointer: KaSymbolPointer<KaPropertySymbol>,
     originalSymbol: KaValueParameterSymbol?,
 ) : KaFirCachedSymbolPointer<KaValueParameterSymbol>(originalSymbol) {

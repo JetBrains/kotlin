@@ -5,14 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.scopes
 
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.name.Name
 
-@KaImplementationDetail
-class KaFirEmptyScope(override val token: KaLifetimeToken) : KaFirScope() {
+internal class KaFirEmptyScope(override val token: KaLifetimeToken) : KaFirScope() {
     override fun getAllPossibleNames(): Set<Name> = withValidityAssertion {
         return emptySet()
     }

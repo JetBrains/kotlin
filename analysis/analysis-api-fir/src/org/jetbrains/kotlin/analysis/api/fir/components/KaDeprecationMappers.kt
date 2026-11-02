@@ -5,12 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeprecationLevel
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 
-@KaImplementationDetail
-fun DeprecationLevelValue.toKaLevel(): KaDeprecationLevel {
+internal fun DeprecationLevelValue.toKaLevel(): KaDeprecationLevel {
     return when (this) {
         DeprecationLevelValue.WARNING -> KaDeprecationLevel.WARNING
         DeprecationLevelValue.ERROR -> KaDeprecationLevel.ERROR

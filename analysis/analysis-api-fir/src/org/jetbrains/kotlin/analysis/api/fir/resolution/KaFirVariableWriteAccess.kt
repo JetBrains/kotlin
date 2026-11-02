@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.resolution
 
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.resolution.KaVariableAccessCall
 import org.jetbrains.kotlin.psi.KtExpression
 
-@KaImplementationDetail
-class KaFirVariableWriteAccess(override val value: KtExpression?) : KaVariableAccessCall.Kind.Write,
+internal class KaFirVariableWriteAccess(override val value: KtExpression?) : KaVariableAccessCall.Kind.Write,
     @Suppress("DEPRECATION_ERROR") org.jetbrains.kotlin.analysis.api.resolution.KaSimpleVariableAccess.Write

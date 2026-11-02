@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.resolution
 
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.resolution.KaVariableAccessCall
 
-@KaImplementationDetail
-object KaFirVariableReadAccess : KaVariableAccessCall.Kind.Read,
+internal object KaFirVariableReadAccess : KaVariableAccessCall.Kind.Read,
     @Suppress("DEPRECATION_ERROR") org.jetbrains.kotlin.analysis.api.resolution.KaSimpleVariableAccess.Read
