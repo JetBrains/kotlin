@@ -1474,6 +1474,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleResolveAllByPsiTestGenerated ex
     }
 
     @Test
+    @TestMetadata("danglingContextInFunctionTypePositions.kt")
+    public void testDanglingContextInFunctionTypePositions() {
+      run("danglingContextInFunctionTypePositions.kt");
+    }
+
+    @Test
     @TestMetadata("enumArrayAsAnnotationArgumentWithMissedValue.kt")
     public void testEnumArrayAsAnnotationArgumentWithMissedValue() {
       run("enumArrayAsAnnotationArgumentWithMissedValue.kt");

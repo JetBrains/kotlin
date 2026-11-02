@@ -2756,9 +2756,51 @@ public class SourceLikeGetOrBuildFirTestGenerated extends AbstractSourceLikeGetO
     }
 
     @Test
+    @TestMetadata("danglingContextInFunctionTypeAnnotatedContextType.kt")
+    public void testDanglingContextInFunctionTypeAnnotatedContextType() {
+      run("danglingContextInFunctionTypeAnnotatedContextType.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeAnnotatedEntryType.kt")
+    public void testDanglingContextInFunctionTypeAnnotatedEntryType() {
+      run("danglingContextInFunctionTypeAnnotatedEntryType.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeAnnotatedTypeElement.kt")
+    public void testDanglingContextInFunctionTypeAnnotatedTypeElement() {
+      run("danglingContextInFunctionTypeAnnotatedTypeElement.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeAnnotatedWholeType.kt")
+    public void testDanglingContextInFunctionTypeAnnotatedWholeType() {
+      run("danglingContextInFunctionTypeAnnotatedWholeType.kt");
+    }
+
+    @Test
     @TestMetadata("danglingContextInFunctionTypeAnnotation.kt")
     public void testDanglingContextInFunctionTypeAnnotation() {
       run("danglingContextInFunctionTypeAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeAnnotationType.kt")
+    public void testDanglingContextInFunctionTypeAnnotationType() {
+      run("danglingContextInFunctionTypeAnnotationType.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeFunctionTypeParameter.kt")
+    public void testDanglingContextInFunctionTypeFunctionTypeParameter() {
+      run("danglingContextInFunctionTypeFunctionTypeParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeLambdaParameter.kt")
+    public void testDanglingContextInFunctionTypeLambdaParameter() {
+      run("danglingContextInFunctionTypeLambdaParameter.kt");
     }
 
     @Test
@@ -2771,6 +2813,42 @@ public class SourceLikeGetOrBuildFirTestGenerated extends AbstractSourceLikeGetO
     @TestMetadata("danglingContextInFunctionTypeNamed.kt")
     public void testDanglingContextInFunctionTypeNamed() {
       run("danglingContextInFunctionTypeNamed.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeOuterAnnotation.kt")
+    public void testDanglingContextInFunctionTypeOuterAnnotation() {
+      run("danglingContextInFunctionTypeOuterAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeTypeArgument.kt")
+    public void testDanglingContextInFunctionTypeTypeArgument() {
+      run("danglingContextInFunctionTypeTypeArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeVararg.kt")
+    public void testDanglingContextInFunctionTypeVararg() {
+      run("danglingContextInFunctionTypeVararg.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeVarargAnnotated.kt")
+    public void testDanglingContextInFunctionTypeVarargAnnotated() {
+      run("danglingContextInFunctionTypeVarargAnnotated.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeVarargTypeElement.kt")
+    public void testDanglingContextInFunctionTypeVarargTypeElement() {
+      run("danglingContextInFunctionTypeVarargTypeElement.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeVarargWholeType.kt")
+    public void testDanglingContextInFunctionTypeVarargWholeType() {
+      run("danglingContextInFunctionTypeVarargWholeType.kt");
     }
 
     @Test

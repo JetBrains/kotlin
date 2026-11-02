@@ -1,0 +1,5339 @@
+KtFile: 'danglingContextInFunctionTypePositions.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(0,0): ''
+  NO_CANDIDATES
+
+KtImportList(0,0): ''
+  NO_CANDIDATES
+
+KtClass(0,76): '@Target(AnnotationTarget.TYPE)'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(0,41): '@Target(AnnotationTarget.TYPE)'
+  NO_CANDIDATES
+
+KtAnnotationEntry(0,30): '@Target(AnnotationTarget.TYPE)'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.annotation.Target
+        symbol = <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
+        valueParameters = [
+          KaVariableSignature:
+            name = allowedTargets
+            receiverType = null
+            returnType = kotlin.annotation.AnnotationTarget
+            symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        AnnotationTarget.TYPE -> (KaVariableSignature:
+          name = allowedTargets
+          receiverType = null
+          returnType = kotlin.annotation.AnnotationTarget
+          symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(1,7): 'Target'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.annotation.Target
+        symbol = <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
+        valueParameters = [
+          KaVariableSignature:
+            name = allowedTargets
+            receiverType = null
+            returnType = kotlin.annotation.AnnotationTarget
+            symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        AnnotationTarget.TYPE -> (KaVariableSignature:
+          name = allowedTargets
+          receiverType = null
+          returnType = kotlin.annotation.AnnotationTarget
+          symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtTypeReference(1,7): 'Target'
+  NO_CANDIDATES
+
+KtUserType(1,7): 'Target'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1,7): 'Target'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.annotation.Target
+        symbol = <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
+        valueParameters = [
+          KaVariableSignature:
+            name = allowedTargets
+            receiverType = null
+            returnType = kotlin.annotation.AnnotationTarget
+            symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        AnnotationTarget.TYPE -> (KaVariableSignature:
+          name = allowedTargets
+          receiverType = null
+          returnType = kotlin.annotation.AnnotationTarget
+          symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtValueArgumentList(7,30): '(AnnotationTarget.TYPE)'
+  NO_CANDIDATES
+
+KtValueArgument(8,29): 'AnnotationTarget.TYPE'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(8,29): 'AnnotationTarget.TYPE'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = AnnotationTarget
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = TYPE
+        receiverType = null
+        returnType = kotlin.annotation.AnnotationTarget
+        symbol = kotlin/annotation/AnnotationTarget.TYPE
+        contextParameters = []
+        callableId = kotlin/annotation/AnnotationTarget.TYPE
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(8,24): 'AnnotationTarget'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.annotation.AnnotationTarget
+        symbol = <constructor>(): kotlin.annotation.AnnotationTarget
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(25,29): 'TYPE'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = AnnotationTarget
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = TYPE
+        receiverType = null
+        returnType = kotlin.annotation.AnnotationTarget
+        symbol = kotlin/annotation/AnnotationTarget.TYPE
+        contextParameters = []
+        callableId = kotlin/annotation/AnnotationTarget.TYPE
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtPrimaryConstructor(52,76): '(val value: String = "")'
+  NO_CANDIDATES
+
+KtParameterList(52,76): '(val value: String = "")'
+  NO_CANDIDATES
+
+KtParameter(53,75): 'val value: String = ""'
+  NO_CANDIDATES
+
+KtTypeReference(64,70): 'String'
+  NO_CANDIDATES
+
+KtUserType(64,70): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(64,70): 'String'
+  NO_CANDIDATES
+
+KtStringTemplateExpression(73,75): '""'
+  NO_CANDIDATES
+
+KtClass(78,131): '@Target(AnnotationTarget.TYPE)'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(78,119): '@Target(AnnotationTarget.TYPE)'
+  NO_CANDIDATES
+
+KtAnnotationEntry(78,108): '@Target(AnnotationTarget.TYPE)'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.annotation.Target
+        symbol = <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
+        valueParameters = [
+          KaVariableSignature:
+            name = allowedTargets
+            receiverType = null
+            returnType = kotlin.annotation.AnnotationTarget
+            symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        AnnotationTarget.TYPE -> (KaVariableSignature:
+          name = allowedTargets
+          receiverType = null
+          returnType = kotlin.annotation.AnnotationTarget
+          symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(79,85): 'Target'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.annotation.Target
+        symbol = <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
+        valueParameters = [
+          KaVariableSignature:
+            name = allowedTargets
+            receiverType = null
+            returnType = kotlin.annotation.AnnotationTarget
+            symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        AnnotationTarget.TYPE -> (KaVariableSignature:
+          name = allowedTargets
+          receiverType = null
+          returnType = kotlin.annotation.AnnotationTarget
+          symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtTypeReference(79,85): 'Target'
+  NO_CANDIDATES
+
+KtUserType(79,85): 'Target'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(79,85): 'Target'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.annotation.Target
+        symbol = <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
+        valueParameters = [
+          KaVariableSignature:
+            name = allowedTargets
+            receiverType = null
+            returnType = kotlin.annotation.AnnotationTarget
+            symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        AnnotationTarget.TYPE -> (KaVariableSignature:
+          name = allowedTargets
+          receiverType = null
+          returnType = kotlin.annotation.AnnotationTarget
+          symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtValueArgumentList(85,108): '(AnnotationTarget.TYPE)'
+  NO_CANDIDATES
+
+KtValueArgument(86,107): 'AnnotationTarget.TYPE'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(86,107): 'AnnotationTarget.TYPE'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = AnnotationTarget
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = TYPE
+        receiverType = null
+        returnType = kotlin.annotation.AnnotationTarget
+        symbol = kotlin/annotation/AnnotationTarget.TYPE
+        contextParameters = []
+        callableId = kotlin/annotation/AnnotationTarget.TYPE
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(86,102): 'AnnotationTarget'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.annotation.AnnotationTarget
+        symbol = <constructor>(): kotlin.annotation.AnnotationTarget
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(103,107): 'TYPE'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = AnnotationTarget
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = TYPE
+        receiverType = null
+        returnType = kotlin.annotation.AnnotationTarget
+        symbol = kotlin/annotation/AnnotationTarget.TYPE
+        contextParameters = []
+        callableId = kotlin/annotation/AnnotationTarget.TYPE
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtProperty(133,166): 'val annotated: @Anno context(Int)'
+  NO_CANDIDATES
+
+KtTypeReference(148,166): '@Anno context(Int)'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(148,153): '@Anno'
+  NO_CANDIDATES
+
+KtAnnotationEntry(148,153): '@Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(149,153): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(149,153): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(149,153): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(149,153): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtContextReceiverList(154,166): 'context(Int)'
+  NO_CANDIDATES
+
+KtContextReceiver(162,165): 'Int'
+  NO_CANDIDATES
+
+KtTypeReference(162,165): 'Int'
+  NO_CANDIDATES
+
+KtUserType(162,165): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(162,165): 'Int'
+  NO_CANDIDATES
+
+KtProperty(167,215): 'val annotatedWithType: @Anno context(Int) String'
+  NO_CANDIDATES
+
+KtTypeReference(190,215): '@Anno context(Int) String'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(190,195): '@Anno'
+  NO_CANDIDATES
+
+KtAnnotationEntry(190,195): '@Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(191,195): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(191,195): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(191,195): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(191,195): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtContextReceiverList(196,208): 'context(Int)'
+  NO_CANDIDATES
+
+KtContextReceiver(204,207): 'Int'
+  NO_CANDIDATES
+
+KtTypeReference(204,207): 'Int'
+  NO_CANDIDATES
+
+KtUserType(204,207): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(204,207): 'Int'
+  NO_CANDIDATES
+
+KtUserType(209,215): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(209,215): 'String'
+  NO_CANDIDATES
+
+KtProperty(217,252): 'val lambda = { p: context(Int) -> }'
+  NO_CANDIDATES
+
+KtLambdaExpression(230,252): '{ p: context(Int) -> }'
+  NO_CANDIDATES
+
+KtFunctionLiteral(230,252): '{ p: context(Int) -> }'
+  NO_CANDIDATES
+
+KtParameterList(232,247): 'p: context(Int)'
+  NO_CANDIDATES
+
+KtParameter(232,247): 'p: context(Int)'
+  NO_CANDIDATES
+
+KtTypeReference(235,247): 'context(Int)'
+  NO_CANDIDATES
+
+KtContextReceiverList(235,247): 'context(Int)'
+  NO_CANDIDATES
+
+KtContextReceiver(243,246): 'Int'
+  NO_CANDIDATES
+
+KtTypeReference(243,246): 'Int'
+  NO_CANDIDATES
+
+KtUserType(243,246): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(243,246): 'Int'
+  NO_CANDIDATES
+
+KtBlockExpression(251,251): ''
+  NO_CANDIDATES
+
+KtProperty(253,300): 'val anonymousFunction = fun(p: context(Int)) {}'
+  NO_CANDIDATES
+
+KtNamedFunction(277,300): 'fun(p: context(Int)) {}'
+  NO_CANDIDATES
+
+KtParameterList(280,297): '(p: context(Int))'
+  NO_CANDIDATES
+
+KtParameter(281,296): 'p: context(Int)'
+  NO_CANDIDATES
+
+KtTypeReference(284,296): 'context(Int)'
+  NO_CANDIDATES
+
+KtContextReceiverList(284,296): 'context(Int)'
+  NO_CANDIDATES
+
+KtContextReceiver(292,295): 'Int'
+  NO_CANDIDATES
+
+KtTypeReference(292,295): 'Int'
+  NO_CANDIDATES
+
+KtUserType(292,295): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(292,295): 'Int'
+  NO_CANDIDATES
+
+KtBlockExpression(298,300): '{}'
+  NO_CANDIDATES
+
+KtNamedFunction(302,343): 'fun withVararg(vararg p: context(Int)) {}'
+  NO_CANDIDATES
+
+KtParameterList(316,340): '(vararg p: context(Int))'
+  NO_CANDIDATES
+
+KtParameter(317,339): 'vararg p: context(Int)'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(317,323): 'vararg'
+  NO_CANDIDATES
+
+KtTypeReference(327,339): 'context(Int)'
+  NO_CANDIDATES
+
+KtContextReceiverList(327,339): 'context(Int)'
+  NO_CANDIDATES
+
+KtContextReceiver(335,338): 'Int'
+  NO_CANDIDATES
+
+KtTypeReference(335,338): 'Int'
+  NO_CANDIDATES
+
+KtUserType(335,338): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(335,338): 'Int'
+  NO_CANDIDATES
+
+KtBlockExpression(341,343): '{}'
+  NO_CANDIDATES
+
+KtNamedFunction(344,396): 'fun withVarargType(vararg p: context(Int) String) {}'
+  NO_CANDIDATES
+
+KtParameterList(362,393): '(vararg p: context(Int) String)'
+  NO_CANDIDATES
+
+KtParameter(363,392): 'vararg p: context(Int) String'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(363,369): 'vararg'
+  NO_CANDIDATES
+
+KtTypeReference(373,392): 'context(Int) String'
+  NO_CANDIDATES
+
+KtContextReceiverList(373,385): 'context(Int)'
+  NO_CANDIDATES
+
+KtContextReceiver(381,384): 'Int'
+  NO_CANDIDATES
+
+KtTypeReference(381,384): 'Int'
+  NO_CANDIDATES
+
+KtUserType(381,384): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(381,384): 'Int'
+  NO_CANDIDATES
+
+KtUserType(386,392): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(386,392): 'String'
+  NO_CANDIDATES
+
+KtBlockExpression(394,396): '{}'
+  NO_CANDIDATES
+
+KtNamedFunction(397,453): 'fun withAnnotatedVararg(vararg p: @Anno context(Int)) {}'
+  NO_CANDIDATES
+
+KtParameterList(420,450): '(vararg p: @Anno context(Int))'
+  NO_CANDIDATES
+
+KtParameter(421,449): 'vararg p: @Anno context(Int)'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(421,427): 'vararg'
+  NO_CANDIDATES
+
+KtTypeReference(431,449): '@Anno context(Int)'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(431,436): '@Anno'
+  NO_CANDIDATES
+
+KtAnnotationEntry(431,436): '@Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(432,436): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(432,436): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(432,436): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(432,436): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtContextReceiverList(437,449): 'context(Int)'
+  NO_CANDIDATES
+
+KtContextReceiver(445,448): 'Int'
+  NO_CANDIDATES
+
+KtTypeReference(445,448): 'Int'
+  NO_CANDIDATES
+
+KtUserType(445,448): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(445,448): 'Int'
+  NO_CANDIDATES
+
+KtBlockExpression(451,453): '{}'
+  NO_CANDIDATES
+
+KtNamedFunction(454,528): 'fun withAnnotatedVarargType(vararg p: @Anno context(@Other Int) String) {}'
+  NO_CANDIDATES
+
+KtParameterList(481,525): '(vararg p: @Anno context(@Other Int) String)'
+  NO_CANDIDATES
+
+KtParameter(482,524): 'vararg p: @Anno context(@Other Int) String'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(482,488): 'vararg'
+  NO_CANDIDATES
+
+KtTypeReference(492,524): '@Anno context(@Other Int) String'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(492,497): '@Anno'
+  NO_CANDIDATES
+
+KtAnnotationEntry(492,497): '@Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(493,497): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(493,497): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(493,497): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(493,497): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtContextReceiverList(498,517): 'context(@Other Int)'
+  NO_CANDIDATES
+
+KtContextReceiver(506,516): '@Other Int'
+  NO_CANDIDATES
+
+KtTypeReference(506,516): '@Other Int'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(506,512): '@Other'
+  NO_CANDIDATES
+
+KtAnnotationEntry(506,512): '@Other'
+  NO_CANDIDATES
+
+KtConstructorCalleeExpression(507,512): 'Other'
+  NO_CANDIDATES
+
+KtTypeReference(507,512): 'Other'
+  NO_CANDIDATES
+
+KtUserType(507,512): 'Other'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(507,512): 'Other'
+  NO_CANDIDATES
+
+KtUserType(513,516): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(513,516): 'Int'
+  NO_CANDIDATES
+
+KtUserType(518,524): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(518,524): 'String'
+  NO_CANDIDATES
+
+KtBlockExpression(526,528): '{}'
+  NO_CANDIDATES
+
+KtNamedFunction(529,588): 'fun withVarargReceiver(vararg p: context(Int) (String).) {}'
+  NO_CANDIDATES
+
+KtParameterList(551,585): '(vararg p: context(Int) (String).)'
+  NO_CANDIDATES
+
+KtParameter(552,584): 'vararg p: context(Int) (String).'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(552,558): 'vararg'
+  NO_CANDIDATES
+
+KtTypeReference(562,584): 'context(Int) (String).'
+  NO_CANDIDATES
+
+KtContextReceiverList(562,574): 'context(Int)'
+  NO_CANDIDATES
+
+KtContextReceiver(570,573): 'Int'
+  NO_CANDIDATES
+
+KtTypeReference(570,573): 'Int'
+  NO_CANDIDATES
+
+KtUserType(570,573): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(570,573): 'Int'
+  NO_CANDIDATES
+
+KtFunctionTypeReceiver(575,583): '(String)'
+  NO_CANDIDATES
+
+KtTypeReference(575,583): '(String)'
+  NO_CANDIDATES
+
+KtUserType(576,582): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(576,582): 'String'
+  NO_CANDIDATES
+
+KtBlockExpression(586,588): '{}'
+  NO_CANDIDATES
+
+KtClass(590,626): 'data class Data(val p: context(Int))'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(590,594): 'data'
+  NO_CANDIDATES
+
+KtPrimaryConstructor(605,626): '(val p: context(Int))'
+  NO_CANDIDATES
+
+KtParameterList(605,626): '(val p: context(Int))'
+  NO_CANDIDATES
+
+KtParameter(606,625): 'val p: context(Int)'
+  NO_CANDIDATES
+
+KtTypeReference(613,625): 'context(Int)'
+  NO_CANDIDATES
+
+KtContextReceiverList(613,625): 'context(Int)'
+  NO_CANDIDATES
+
+KtContextReceiver(621,624): 'Int'
+  NO_CANDIDATES
+
+KtTypeReference(621,624): 'Int'
+  NO_CANDIDATES
+
+KtUserType(621,624): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(621,624): 'Int'
+  NO_CANDIDATES
+
+KtClass(628,974): 'interface Forms {'
+  NO_CANDIDATES
+
+KtClassBody(644,974): '{'
+  NO_CANDIDATES
+
+KtProperty(650,680): 'val simple: @Anno context(Int)'
+  NO_CANDIDATES
+
+KtTypeReference(662,680): '@Anno context(Int)'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(662,667): '@Anno'
+  NO_CANDIDATES
+
+KtAnnotationEntry(662,667): '@Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(663,667): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(663,667): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(663,667): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(663,667): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtContextReceiverList(668,680): 'context(Int)'
+  NO_CANDIDATES
+
+KtContextReceiver(676,679): 'Int'
+  NO_CANDIDATES
+
+KtTypeReference(676,679): 'Int'
+  NO_CANDIDATES
+
+KtUserType(676,679): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(676,679): 'Int'
+  NO_CANDIDATES
+
+KtProperty(685,733): 'val withArguments: @Anno("1" + "2") context(Int)'
+  NO_CANDIDATES
+
+KtTypeReference(704,733): '@Anno("1" + "2") context(Int)'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(704,720): '@Anno("1" + "2")'
+  NO_CANDIDATES
+
+KtAnnotationEntry(704,720): '@Anno("1" + "2")'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "1" + "2" -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = kotlin.String
+          symbol = value: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(705,709): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "1" + "2" -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = kotlin.String
+          symbol = value: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtTypeReference(705,709): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(705,709): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(705,709): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "1" + "2" -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = kotlin.String
+          symbol = value: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtValueArgumentList(709,720): '("1" + "2")'
+  NO_CANDIDATES
+
+KtValueArgument(710,719): '"1" + "2"'
+  NO_CANDIDATES
+
+KtBinaryExpression(710,719): '"1" + "2"'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = "1"
+        isSafeNavigation = false
+        type = kotlin.String
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = kotlin/String.plus(<dispatch receiver>: kotlin.String, other: kotlin.Any?): kotlin.String
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/String.plus
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "2" -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtStringTemplateExpression(710,713): '"1"'
+  NO_CANDIDATES
+
+KtLiteralStringTemplateEntry(711,712): '1'
+  NO_CANDIDATES
+
+KtOperationReferenceExpression(714,715): '+'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = "1"
+        isSafeNavigation = false
+        type = kotlin.String
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = kotlin/String.plus(<dispatch receiver>: kotlin.String, other: kotlin.Any?): kotlin.String
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/String.plus
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "2" -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtStringTemplateExpression(716,719): '"2"'
+  NO_CANDIDATES
+
+KtLiteralStringTemplateEntry(717,718): '2'
+  NO_CANDIDATES
+
+KtContextReceiverList(721,733): 'context(Int)'
+  NO_CANDIDATES
+
+KtContextReceiver(729,732): 'Int'
+  NO_CANDIDATES
+
+KtTypeReference(729,732): 'Int'
+  NO_CANDIDATES
+
+KtUserType(729,732): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(729,732): 'Int'
+  NO_CANDIDATES
+
+KtProperty(738,776): 'val several: @Anno @Other context(Int)'
+  NO_CANDIDATES
+
+KtTypeReference(751,776): '@Anno @Other context(Int)'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(751,763): '@Anno @Other'
+  NO_CANDIDATES
+
+KtAnnotationEntry(751,756): '@Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(752,756): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(752,756): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(752,756): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(752,756): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtAnnotationEntry(757,763): '@Other'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Other
+        symbol = <constructor>(): Other
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(758,763): 'Other'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Other
+        symbol = <constructor>(): Other
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(758,763): 'Other'
+  NO_CANDIDATES
+
+KtUserType(758,763): 'Other'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(758,763): 'Other'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Other
+        symbol = <constructor>(): Other
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtContextReceiverList(764,776): 'context(Int)'
+  NO_CANDIDATES
+
+KtContextReceiver(772,775): 'Int'
+  NO_CANDIDATES
+
+KtTypeReference(772,775): 'Int'
+  NO_CANDIDATES
+
+KtUserType(772,775): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(772,775): 'Int'
+  NO_CANDIDATES
+
+KtProperty(781,822): 'val bracketed: @[Anno Other] context(Int)'
+  NO_CANDIDATES
+
+KtTypeReference(796,822): '@[Anno Other] context(Int)'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(796,809): '@[Anno Other]'
+  NO_CANDIDATES
+
+KtAnnotation(796,809): '@[Anno Other]'
+  NO_CANDIDATES
+
+KtAnnotationEntry(798,802): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(798,802): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(798,802): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(798,802): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(798,802): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtAnnotationEntry(803,808): 'Other'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Other
+        symbol = <constructor>(): Other
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(803,808): 'Other'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Other
+        symbol = <constructor>(): Other
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(803,808): 'Other'
+  NO_CANDIDATES
+
+KtUserType(803,808): 'Other'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(803,808): 'Other'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Other
+        symbol = <constructor>(): Other
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtContextReceiverList(810,822): 'context(Int)'
+  NO_CANDIDATES
+
+KtContextReceiver(818,821): 'Int'
+  NO_CANDIDATES
+
+KtTypeReference(818,821): 'Int'
+  NO_CANDIDATES
+
+KtUserType(818,821): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(818,821): 'Int'
+  NO_CANDIDATES
+
+KtProperty(827,873): 'val useSiteTarget: @receiver:Anno context(Int)'
+  NO_CANDIDATES
+
+KtTypeReference(846,873): '@receiver:Anno context(Int)'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(846,860): '@receiver:Anno'
+  NO_CANDIDATES
+
+KtAnnotationEntry(846,860): '@receiver:Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtAnnotationUseSiteTarget(847,855): 'receiver'
+  NO_CANDIDATES
+
+KtConstructorCalleeExpression(856,860): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(856,860): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(856,860): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(856,860): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtContextReceiverList(861,873): 'context(Int)'
+  NO_CANDIDATES
+
+KtContextReceiver(869,872): 'Int'
+  NO_CANDIDATES
+
+KtTypeReference(869,872): 'Int'
+  NO_CANDIDATES
+
+KtUserType(869,872): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(869,872): 'Int'
+  NO_CANDIDATES
+
+KtProperty(878,922): 'val suspendAfter: @Anno suspend context(Int)'
+  NO_CANDIDATES
+
+KtTypeReference(896,922): '@Anno suspend context(Int)'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(896,909): '@Anno suspend'
+  NO_CANDIDATES
+
+KtAnnotationEntry(896,901): '@Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(897,901): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(897,901): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(897,901): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(897,901): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtContextReceiverList(910,922): 'context(Int)'
+  NO_CANDIDATES
+
+KtContextReceiver(918,921): 'Int'
+  NO_CANDIDATES
+
+KtTypeReference(918,921): 'Int'
+  NO_CANDIDATES
+
+KtUserType(918,921): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(918,921): 'Int'
+  NO_CANDIDATES
+
+KtProperty(927,972): 'val suspendBefore: suspend @Anno context(Int)'
+  NO_CANDIDATES
+
+KtTypeReference(946,972): 'suspend @Anno context(Int)'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(946,959): 'suspend @Anno'
+  NO_CANDIDATES
+
+KtAnnotationEntry(954,959): '@Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(955,959): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(955,959): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(955,959): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(955,959): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtContextReceiverList(960,972): 'context(Int)'
+  NO_CANDIDATES
+
+KtContextReceiver(968,971): 'Int'
+  NO_CANDIDATES
+
+KtTypeReference(968,971): 'Int'
+  NO_CANDIDATES
+
+KtUserType(968,971): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(968,971): 'Int'
+  NO_CANDIDATES
+
+KtClass(976,1195): 'interface InsideList {'
+  NO_CANDIDATES
+
+KtClassBody(997,1195): '{'
+  NO_CANDIDATES
+
+KtProperty(1003,1033): 'val inside: context(@Anno Int)'
+  NO_CANDIDATES
+
+KtTypeReference(1015,1033): 'context(@Anno Int)'
+  NO_CANDIDATES
+
+KtContextReceiverList(1015,1033): 'context(@Anno Int)'
+  NO_CANDIDATES
+
+KtContextReceiver(1023,1032): '@Anno Int'
+  NO_CANDIDATES
+
+KtTypeReference(1023,1032): '@Anno Int'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(1023,1028): '@Anno'
+  NO_CANDIDATES
+
+KtAnnotationEntry(1023,1028): '@Anno'
+  NO_CANDIDATES
+
+KtConstructorCalleeExpression(1024,1028): 'Anno'
+  NO_CANDIDATES
+
+KtTypeReference(1024,1028): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(1024,1028): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1024,1028): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(1029,1032): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1029,1032): 'Int'
+  NO_CANDIDATES
+
+KtProperty(1038,1085): 'val insideUnresolved: context(@Anno Unresolved)'
+  NO_CANDIDATES
+
+KtTypeReference(1060,1085): 'context(@Anno Unresolved)'
+  NO_CANDIDATES
+
+KtContextReceiverList(1060,1085): 'context(@Anno Unresolved)'
+  NO_CANDIDATES
+
+KtContextReceiver(1068,1084): '@Anno Unresolved'
+  NO_CANDIDATES
+
+KtTypeReference(1068,1084): '@Anno Unresolved'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(1068,1073): '@Anno'
+  NO_CANDIDATES
+
+KtAnnotationEntry(1068,1073): '@Anno'
+  NO_CANDIDATES
+
+KtConstructorCalleeExpression(1069,1073): 'Anno'
+  NO_CANDIDATES
+
+KtTypeReference(1069,1073): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(1069,1073): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1069,1073): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(1074,1084): 'Unresolved'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1074,1084): 'Unresolved'
+  NO_CANDIDATES
+
+KtProperty(1090,1149): 'val bothSides: @Anno context(@Other Int, @Anno("x") String)'
+  NO_CANDIDATES
+
+KtTypeReference(1105,1149): '@Anno context(@Other Int, @Anno("x") String)'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(1105,1110): '@Anno'
+  NO_CANDIDATES
+
+KtAnnotationEntry(1105,1110): '@Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(1106,1110): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(1106,1110): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(1106,1110): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1106,1110): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtContextReceiverList(1111,1149): 'context(@Other Int, @Anno("x") String)'
+  NO_CANDIDATES
+
+KtContextReceiver(1119,1129): '@Other Int'
+  NO_CANDIDATES
+
+KtTypeReference(1119,1129): '@Other Int'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(1119,1125): '@Other'
+  NO_CANDIDATES
+
+KtAnnotationEntry(1119,1125): '@Other'
+  NO_CANDIDATES
+
+KtConstructorCalleeExpression(1120,1125): 'Other'
+  NO_CANDIDATES
+
+KtTypeReference(1120,1125): 'Other'
+  NO_CANDIDATES
+
+KtUserType(1120,1125): 'Other'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1120,1125): 'Other'
+  NO_CANDIDATES
+
+KtUserType(1126,1129): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1126,1129): 'Int'
+  NO_CANDIDATES
+
+KtContextReceiver(1131,1148): '@Anno("x") String'
+  NO_CANDIDATES
+
+KtTypeReference(1131,1148): '@Anno("x") String'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(1131,1141): '@Anno("x")'
+  NO_CANDIDATES
+
+KtAnnotationEntry(1131,1141): '@Anno("x")'
+  NO_CANDIDATES
+
+KtConstructorCalleeExpression(1132,1136): 'Anno'
+  NO_CANDIDATES
+
+KtTypeReference(1132,1136): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(1132,1136): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1132,1136): 'Anno'
+  NO_CANDIDATES
+
+KtValueArgumentList(1136,1141): '("x")'
+  NO_CANDIDATES
+
+KtValueArgument(1137,1140): '"x"'
+  NO_CANDIDATES
+
+KtStringTemplateExpression(1137,1140): '"x"'
+  NO_CANDIDATES
+
+KtLiteralStringTemplateEntry(1138,1139): 'x'
+  NO_CANDIDATES
+
+KtUserType(1142,1148): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1142,1148): 'String'
+  NO_CANDIDATES
+
+KtProperty(1154,1193): 'val named: @Anno context(a: @Other Int)'
+  NO_CANDIDATES
+
+KtTypeReference(1165,1193): '@Anno context(a: @Other Int)'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(1165,1170): '@Anno'
+  NO_CANDIDATES
+
+KtAnnotationEntry(1165,1170): '@Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(1166,1170): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(1166,1170): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(1166,1170): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1166,1170): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtContextReceiverList(1171,1193): 'context(a: @Other Int)'
+  NO_CANDIDATES
+
+KtParameter(1179,1192): 'a: @Other Int'
+  NO_CANDIDATES
+
+KtTypeReference(1182,1192): '@Other Int'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(1182,1188): '@Other'
+  NO_CANDIDATES
+
+KtAnnotationEntry(1182,1188): '@Other'
+  NO_CANDIDATES
+
+KtConstructorCalleeExpression(1183,1188): 'Other'
+  NO_CANDIDATES
+
+KtTypeReference(1183,1188): 'Other'
+  NO_CANDIDATES
+
+KtUserType(1183,1188): 'Other'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1183,1188): 'Other'
+  NO_CANDIDATES
+
+KtUserType(1189,1192): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1189,1192): 'Int'
+  NO_CANDIDATES
+
+KtClass(1197,1367): 'interface TypeAfterList {'
+  NO_CANDIDATES
+
+KtClassBody(1221,1367): '{'
+  NO_CANDIDATES
+
+KtProperty(1227,1262): 'val type: @Anno context(Int) String'
+  NO_CANDIDATES
+
+KtTypeReference(1237,1262): '@Anno context(Int) String'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(1237,1242): '@Anno'
+  NO_CANDIDATES
+
+KtAnnotationEntry(1237,1242): '@Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(1238,1242): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(1238,1242): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(1238,1242): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1238,1242): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtContextReceiverList(1243,1255): 'context(Int)'
+  NO_CANDIDATES
+
+KtContextReceiver(1251,1254): 'Int'
+  NO_CANDIDATES
+
+KtTypeReference(1251,1254): 'Int'
+  NO_CANDIDATES
+
+KtUserType(1251,1254): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1251,1254): 'Int'
+  NO_CANDIDATES
+
+KtUserType(1256,1262): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1256,1262): 'String'
+  NO_CANDIDATES
+
+KtProperty(1267,1316): 'val unresolvedType: @Anno context(Int) Unresolved'
+  NO_CANDIDATES
+
+KtTypeReference(1287,1316): '@Anno context(Int) Unresolved'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(1287,1292): '@Anno'
+  NO_CANDIDATES
+
+KtAnnotationEntry(1287,1292): '@Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(1288,1292): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(1288,1292): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(1288,1292): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1288,1292): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtContextReceiverList(1293,1305): 'context(Int)'
+  NO_CANDIDATES
+
+KtContextReceiver(1301,1304): 'Int'
+  NO_CANDIDATES
+
+KtTypeReference(1301,1304): 'Int'
+  NO_CANDIDATES
+
+KtUserType(1301,1304): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1301,1304): 'Int'
+  NO_CANDIDATES
+
+KtUserType(1306,1316): 'Unresolved'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1306,1316): 'Unresolved'
+  NO_CANDIDATES
+
+KtProperty(1321,1365): 'val nullableType: @Anno context(Int) String?'
+  NO_CANDIDATES
+
+KtTypeReference(1339,1365): '@Anno context(Int) String?'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(1339,1344): '@Anno'
+  NO_CANDIDATES
+
+KtAnnotationEntry(1339,1344): '@Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(1340,1344): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(1340,1344): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(1340,1344): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1340,1344): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtContextReceiverList(1345,1357): 'context(Int)'
+  NO_CANDIDATES
+
+KtContextReceiver(1353,1356): 'Int'
+  NO_CANDIDATES
+
+KtTypeReference(1353,1356): 'Int'
+  NO_CANDIDATES
+
+KtUserType(1353,1356): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1353,1356): 'Int'
+  NO_CANDIDATES
+
+KtNullableType(1358,1365): 'String?'
+  NO_CANDIDATES
+
+KtUserType(1358,1364): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1358,1364): 'String'
+  NO_CANDIDATES
+
+KtClass(1369,1440): 'interface Parenthesized {'
+  NO_CANDIDATES
+
+KtClassBody(1393,1440): '{'
+  NO_CANDIDATES
+
+KtProperty(1399,1438): 'val parenthesized: (@Anno context(Int))'
+  NO_CANDIDATES
+
+KtTypeReference(1418,1438): '(@Anno context(Int))'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(1419,1424): '@Anno'
+  NO_CANDIDATES
+
+KtAnnotationEntry(1419,1424): '@Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(1420,1424): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(1420,1424): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(1420,1424): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1420,1424): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtContextReceiverList(1425,1437): 'context(Int)'
+  NO_CANDIDATES
+
+KtContextReceiver(1433,1436): 'Int'
+  NO_CANDIDATES
+
+KtTypeReference(1433,1436): 'Int'
+  NO_CANDIDATES
+
+KtUserType(1433,1436): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1433,1436): 'Int'
+  NO_CANDIDATES
+
+KtClass(1442,1622): 'interface Nested {'
+  NO_CANDIDATES
+
+KtClassBody(1459,1622): '{'
+  NO_CANDIDATES
+
+KtProperty(1465,1507): 'val typeArgument: List<@Anno context(Int)>'
+  NO_CANDIDATES
+
+KtTypeReference(1483,1507): 'List<@Anno context(Int)>'
+  NO_CANDIDATES
+
+KtUserType(1483,1507): 'List<@Anno context(Int)>'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1483,1487): 'List'
+  NO_CANDIDATES
+
+KtTypeArgumentList(1487,1507): '<@Anno context(Int)>'
+  NO_CANDIDATES
+
+KtTypeProjection(1488,1506): '@Anno context(Int)'
+  NO_CANDIDATES
+
+KtTypeReference(1488,1506): '@Anno context(Int)'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(1488,1493): '@Anno'
+  NO_CANDIDATES
+
+KtAnnotationEntry(1488,1493): '@Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(1489,1493): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(1489,1493): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(1489,1493): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1489,1493): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtContextReceiverList(1494,1506): 'context(Int)'
+  NO_CANDIDATES
+
+KtContextReceiver(1502,1505): 'Int'
+  NO_CANDIDATES
+
+KtTypeReference(1502,1505): 'Int'
+  NO_CANDIDATES
+
+KtUserType(1502,1505): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1502,1505): 'Int'
+  NO_CANDIDATES
+
+KtProperty(1512,1567): 'val functionTypeParameter: (@Anno context(Int)) -> Unit'
+  NO_CANDIDATES
+
+KtTypeReference(1539,1567): '(@Anno context(Int)) -> Unit'
+  NO_CANDIDATES
+
+KtFunctionType(1539,1567): '(@Anno context(Int)) -> Unit'
+  NO_CANDIDATES
+
+KtParameterList(1539,1559): '(@Anno context(Int))'
+  NO_CANDIDATES
+
+KtParameter(1540,1558): '@Anno context(Int)'
+  NO_CANDIDATES
+
+KtTypeReference(1540,1558): '@Anno context(Int)'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(1540,1545): '@Anno'
+  NO_CANDIDATES
+
+KtAnnotationEntry(1540,1545): '@Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(1541,1545): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(1541,1545): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(1541,1545): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1541,1545): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtContextReceiverList(1546,1558): 'context(Int)'
+  NO_CANDIDATES
+
+KtContextReceiver(1554,1557): 'Int'
+  NO_CANDIDATES
+
+KtTypeReference(1554,1557): 'Int'
+  NO_CANDIDATES
+
+KtUserType(1554,1557): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1554,1557): 'Int'
+  NO_CANDIDATES
+
+KtTypeReference(1563,1567): 'Unit'
+  NO_CANDIDATES
+
+KtUserType(1563,1567): 'Unit'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1563,1567): 'Unit'
+  NO_CANDIDATES
+
+KtProperty(1572,1620): 'val functionTypeReturn: () -> @Anno context(Int)'
+  NO_CANDIDATES
+
+KtTypeReference(1596,1620): '() -> @Anno context(Int)'
+  NO_CANDIDATES
+
+KtFunctionType(1596,1620): '() -> @Anno context(Int)'
+  NO_CANDIDATES
+
+KtParameterList(1596,1598): '()'
+  NO_CANDIDATES
+
+KtTypeReference(1602,1620): '@Anno context(Int)'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(1602,1607): '@Anno'
+  NO_CANDIDATES
+
+KtAnnotationEntry(1602,1607): '@Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(1603,1607): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(1603,1607): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(1603,1607): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1603,1607): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtContextReceiverList(1608,1620): 'context(Int)'
+  NO_CANDIDATES
+
+KtContextReceiver(1616,1619): 'Int'
+  NO_CANDIDATES
+
+KtTypeReference(1616,1619): 'Int'
+  NO_CANDIDATES
+
+KtUserType(1616,1619): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1616,1619): 'Int'
+  NO_CANDIDATES
+
+KtNamedFunction(1624,1662): 'fun (@Anno context(Int)).receiver() {}'
+  NO_CANDIDATES
+
+KtTypeReference(1628,1648): '(@Anno context(Int))'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(1629,1634): '@Anno'
+  NO_CANDIDATES
+
+KtAnnotationEntry(1629,1634): '@Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(1630,1634): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(1630,1634): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(1630,1634): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1630,1634): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtContextReceiverList(1635,1647): 'context(Int)'
+  NO_CANDIDATES
+
+KtContextReceiver(1643,1646): 'Int'
+  NO_CANDIDATES
+
+KtTypeReference(1643,1646): 'Int'
+  NO_CANDIDATES
+
+KtUserType(1643,1646): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1643,1646): 'Int'
+  NO_CANDIDATES
+
+KtParameterList(1657,1659): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(1660,1662): '{}'
+  NO_CANDIDATES
+
+KtNamedFunction(1664,1703): 'fun parameter(p: @Anno context(Int)) {}'
+  NO_CANDIDATES
+
+KtParameterList(1677,1700): '(p: @Anno context(Int))'
+  NO_CANDIDATES
+
+KtParameter(1678,1699): 'p: @Anno context(Int)'
+  NO_CANDIDATES
+
+KtTypeReference(1681,1699): '@Anno context(Int)'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(1681,1686): '@Anno'
+  NO_CANDIDATES
+
+KtAnnotationEntry(1681,1686): '@Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(1682,1686): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(1682,1686): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(1682,1686): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1682,1686): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtContextReceiverList(1687,1699): 'context(Int)'
+  NO_CANDIDATES
+
+KtContextReceiver(1695,1698): 'Int'
+  NO_CANDIDATES
+
+KtTypeReference(1695,1698): 'Int'
+  NO_CANDIDATES
+
+KtUserType(1695,1698): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1695,1698): 'Int'
+  NO_CANDIDATES
+
+KtBlockExpression(1701,1703): '{}'
+  NO_CANDIDATES
+
+KtNamedFunction(1705,1750): 'fun returnType(): @Anno context(Int) = TODO()'
+  NO_CANDIDATES
+
+KtParameterList(1719,1721): '()'
+  NO_CANDIDATES
+
+KtTypeReference(1723,1741): '@Anno context(Int)'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(1723,1728): '@Anno'
+  NO_CANDIDATES
+
+KtAnnotationEntry(1723,1728): '@Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(1724,1728): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(1724,1728): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(1724,1728): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1724,1728): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtContextReceiverList(1729,1741): 'context(Int)'
+  NO_CANDIDATES
+
+KtContextReceiver(1737,1740): 'Int'
+  NO_CANDIDATES
+
+KtTypeReference(1737,1740): 'Int'
+  NO_CANDIDATES
+
+KtUserType(1737,1740): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1737,1740): 'Int'
+  NO_CANDIDATES
+
+KtCallExpression(1744,1750): 'TODO()'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(reason: kotlin.String): kotlin.Nothing
+        valueParameters = [
+          KaVariableSignature:
+            name = reason
+            receiverType = null
+            returnType = kotlin.String
+            symbol = reason: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/TODO
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason'.>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(1744,1748): 'TODO'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(reason: kotlin.String): kotlin.Nothing
+        valueParameters = [
+          KaVariableSignature:
+            name = reason
+            receiverType = null
+            returnType = kotlin.String
+            symbol = reason: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/TODO
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason'.>
+    isInBestCandidates = false
+
+KtValueArgumentList(1748,1750): '()'
+  NO_CANDIDATES
+
+KtNamedFunction(1752,1791): 'fun <T : @Anno context(Int)> bound() {}'
+  NO_CANDIDATES
+
+KtTypeParameterList(1756,1780): '<T : @Anno context(Int)>'
+  NO_CANDIDATES
+
+KtTypeParameter(1757,1779): 'T : @Anno context(Int)'
+  NO_CANDIDATES
+
+KtTypeReference(1761,1779): '@Anno context(Int)'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(1761,1766): '@Anno'
+  NO_CANDIDATES
+
+KtAnnotationEntry(1761,1766): '@Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(1762,1766): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(1762,1766): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(1762,1766): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1762,1766): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtContextReceiverList(1767,1779): 'context(Int)'
+  NO_CANDIDATES
+
+KtContextReceiver(1775,1778): 'Int'
+  NO_CANDIDATES
+
+KtTypeReference(1775,1778): 'Int'
+  NO_CANDIDATES
+
+KtUserType(1775,1778): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1775,1778): 'Int'
+  NO_CANDIDATES
+
+KtParameterList(1786,1788): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(1789,1791): '{}'
+  NO_CANDIDATES
+
+KtNamedFunction(1793,1850): 'fun <T> whereConstraint() where T : @Anno context(Int) {}'
+  NO_CANDIDATES
+
+KtTypeParameterList(1797,1800): '<T>'
+  NO_CANDIDATES
+
+KtTypeParameter(1798,1799): 'T'
+  NO_CANDIDATES
+
+KtParameterList(1816,1818): '()'
+  NO_CANDIDATES
+
+KtTypeConstraintList(1825,1847): 'T : @Anno context(Int)'
+  NO_CANDIDATES
+
+KtTypeConstraint(1825,1847): 'T : @Anno context(Int)'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1825,1826): 'T'
+  NO_CANDIDATES
+
+KtTypeReference(1829,1847): '@Anno context(Int)'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(1829,1834): '@Anno'
+  NO_CANDIDATES
+
+KtAnnotationEntry(1829,1834): '@Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(1830,1834): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(1830,1834): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(1830,1834): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1830,1834): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtContextReceiverList(1835,1847): 'context(Int)'
+  NO_CANDIDATES
+
+KtContextReceiver(1843,1846): 'Int'
+  NO_CANDIDATES
+
+KtTypeReference(1843,1846): 'Int'
+  NO_CANDIDATES
+
+KtUserType(1843,1846): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1843,1846): 'Int'
+  NO_CANDIDATES
+
+KtBlockExpression(1848,1850): '{}'
+  NO_CANDIDATES
+
+KtTypeAlias(1852,1888): 'typealias Alias = @Anno context(Int)'
+  NO_CANDIDATES
+
+KtTypeReference(1870,1888): '@Anno context(Int)'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(1870,1875): '@Anno'
+  NO_CANDIDATES
+
+KtAnnotationEntry(1870,1875): '@Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(1871,1875): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(1871,1875): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(1871,1875): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1871,1875): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtContextReceiverList(1876,1888): 'context(Int)'
+  NO_CANDIDATES
+
+KtContextReceiver(1884,1887): 'Int'
+  NO_CANDIDATES
+
+KtTypeReference(1884,1887): 'Int'
+  NO_CANDIDATES
+
+KtUserType(1884,1887): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1884,1887): 'Int'
+  NO_CANDIDATES
+
+KtClass(1890,1933): 'interface Supertype : @Anno context(Int) {}'
+  NO_CANDIDATES
+
+KtSuperTypeList(1912,1930): '@Anno context(Int)'
+  NO_CANDIDATES
+
+KtSuperTypeEntry(1912,1930): '@Anno context(Int)'
+  NO_CANDIDATES
+
+KtTypeReference(1912,1930): '@Anno context(Int)'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(1912,1917): '@Anno'
+  NO_CANDIDATES
+
+KtAnnotationEntry(1912,1917): '@Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(1913,1917): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(1913,1917): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(1913,1917): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1913,1917): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtContextReceiverList(1918,1930): 'context(Int)'
+  NO_CANDIDATES
+
+KtContextReceiver(1926,1929): 'Int'
+  NO_CANDIDATES
+
+KtTypeReference(1926,1929): 'Int'
+  NO_CANDIDATES
+
+KtUserType(1926,1929): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1926,1929): 'Int'
+  NO_CANDIDATES
+
+KtClassBody(1931,1933): '{}'
+  NO_CANDIDATES
+
+KtClass(1935,1986): 'data class AnnotatedData(val p: @Anno context(Int))'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(1935,1939): 'data'
+  NO_CANDIDATES
+
+KtPrimaryConstructor(1959,1986): '(val p: @Anno context(Int))'
+  NO_CANDIDATES
+
+KtParameterList(1959,1986): '(val p: @Anno context(Int))'
+  NO_CANDIDATES
+
+KtParameter(1960,1985): 'val p: @Anno context(Int)'
+  NO_CANDIDATES
+
+KtTypeReference(1967,1985): '@Anno context(Int)'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(1967,1972): '@Anno'
+  NO_CANDIDATES
+
+KtAnnotationEntry(1967,1972): '@Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(1968,1972): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(1968,1972): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(1968,1972): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1968,1972): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtContextReceiverList(1973,1985): 'context(Int)'
+  NO_CANDIDATES
+
+KtContextReceiver(1981,1984): 'Int'
+  NO_CANDIDATES
+
+KtTypeReference(1981,1984): 'Int'
+  NO_CANDIDATES
+
+KtUserType(1981,1984): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1981,1984): 'Int'
+  NO_CANDIDATES
+
+KtClass(1988,2065): 'class Setter {'
+  NO_CANDIDATES
+
+KtClassBody(2001,2065): '{'
+  NO_CANDIDATES
+
+KtProperty(2007,2063): 'var p: Int = 0'
+  NO_CANDIDATES
+
+KtTypeReference(2014,2017): 'Int'
+  NO_CANDIDATES
+
+KtUserType(2014,2017): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(2014,2017): 'Int'
+  NO_CANDIDATES
+
+KtConstantExpression(2020,2021): '0'
+  NO_CANDIDATES
+
+KtPropertyAccessor(2030,2063): 'set(value: @Anno context(Int)) {}'
+  NO_CANDIDATES
+
+KtParameterList(2033,2060): '(value: @Anno context(Int))'
+  NO_CANDIDATES
+
+KtParameter(2034,2059): 'value: @Anno context(Int)'
+  NO_CANDIDATES
+
+KtTypeReference(2041,2059): '@Anno context(Int)'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(2041,2046): '@Anno'
+  NO_CANDIDATES
+
+KtAnnotationEntry(2041,2046): '@Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(2042,2046): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(2042,2046): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(2042,2046): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(2042,2046): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtContextReceiverList(2047,2059): 'context(Int)'
+  NO_CANDIDATES
+
+KtContextReceiver(2055,2058): 'Int'
+  NO_CANDIDATES
+
+KtTypeReference(2055,2058): 'Int'
+  NO_CANDIDATES
+
+KtUserType(2055,2058): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(2055,2058): 'Int'
+  NO_CANDIDATES
+
+KtBlockExpression(2061,2063): '{}'
+  NO_CANDIDATES
+
+KtNamedFunction(2067,2368): 'fun body(a: Any) {'
+  NO_CANDIDATES
+
+KtParameterList(2075,2083): '(a: Any)'
+  NO_CANDIDATES
+
+KtParameter(2076,2082): 'a: Any'
+  NO_CANDIDATES
+
+KtTypeReference(2079,2082): 'Any'
+  NO_CANDIDATES
+
+KtUserType(2079,2082): 'Any'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(2079,2082): 'Any'
+  NO_CANDIDATES
+
+KtBlockExpression(2084,2368): '{'
+  NO_CANDIDATES
+
+KtProperty(2090,2128): 'val local: @Anno context(Int) = TODO()'
+  NO_CANDIDATES
+
+KtTypeReference(2101,2119): '@Anno context(Int)'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(2101,2106): '@Anno'
+  NO_CANDIDATES
+
+KtAnnotationEntry(2101,2106): '@Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(2102,2106): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(2102,2106): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(2102,2106): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(2102,2106): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtContextReceiverList(2107,2119): 'context(Int)'
+  NO_CANDIDATES
+
+KtContextReceiver(2115,2118): 'Int'
+  NO_CANDIDATES
+
+KtTypeReference(2115,2118): 'Int'
+  NO_CANDIDATES
+
+KtUserType(2115,2118): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(2115,2118): 'Int'
+  NO_CANDIDATES
+
+KtCallExpression(2122,2128): 'TODO()'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(reason: kotlin.String): kotlin.Nothing
+        valueParameters = [
+          KaVariableSignature:
+            name = reason
+            receiverType = null
+            returnType = kotlin.String
+            symbol = reason: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/TODO
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason'.>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(2122,2126): 'TODO'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(reason: kotlin.String): kotlin.Nothing
+        valueParameters = [
+          KaVariableSignature:
+            name = reason
+            receiverType = null
+            returnType = kotlin.String
+            symbol = reason: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/TODO
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason'.>
+    isInBestCandidates = false
+
+KtValueArgumentList(2126,2128): '()'
+  NO_CANDIDATES
+
+KtProperty(2133,2174): 'val lambda = { p: @Anno context(Int) -> }'
+  NO_CANDIDATES
+
+KtLambdaExpression(2146,2174): '{ p: @Anno context(Int) -> }'
+  NO_CANDIDATES
+
+KtFunctionLiteral(2146,2174): '{ p: @Anno context(Int) -> }'
+  NO_CANDIDATES
+
+KtParameterList(2148,2169): 'p: @Anno context(Int)'
+  NO_CANDIDATES
+
+KtParameter(2148,2169): 'p: @Anno context(Int)'
+  NO_CANDIDATES
+
+KtTypeReference(2151,2169): '@Anno context(Int)'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(2151,2156): '@Anno'
+  NO_CANDIDATES
+
+KtAnnotationEntry(2151,2156): '@Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(2152,2156): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(2152,2156): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(2152,2156): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(2152,2156): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtContextReceiverList(2157,2169): 'context(Int)'
+  NO_CANDIDATES
+
+KtContextReceiver(2165,2168): 'Int'
+  NO_CANDIDATES
+
+KtTypeReference(2165,2168): 'Int'
+  NO_CANDIDATES
+
+KtUserType(2165,2168): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(2165,2168): 'Int'
+  NO_CANDIDATES
+
+KtBlockExpression(2173,2173): ''
+  NO_CANDIDATES
+
+KtProperty(2179,2232): 'val anonymousFunction = fun(p: @Anno context(Int)) {}'
+  NO_CANDIDATES
+
+KtNamedFunction(2203,2232): 'fun(p: @Anno context(Int)) {}'
+  NO_CANDIDATES
+
+KtParameterList(2206,2229): '(p: @Anno context(Int))'
+  NO_CANDIDATES
+
+KtParameter(2207,2228): 'p: @Anno context(Int)'
+  NO_CANDIDATES
+
+KtTypeReference(2210,2228): '@Anno context(Int)'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(2210,2215): '@Anno'
+  NO_CANDIDATES
+
+KtAnnotationEntry(2210,2215): '@Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(2211,2215): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(2211,2215): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(2211,2215): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(2211,2215): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtContextReceiverList(2216,2228): 'context(Int)'
+  NO_CANDIDATES
+
+KtContextReceiver(2224,2227): 'Int'
+  NO_CANDIDATES
+
+KtTypeReference(2224,2227): 'Int'
+  NO_CANDIDATES
+
+KtUserType(2224,2227): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(2224,2227): 'Int'
+  NO_CANDIDATES
+
+KtBlockExpression(2230,2232): '{}'
+  NO_CANDIDATES
+
+KtProperty(2237,2277): 'val asTarget = (a as @Anno context(Int))'
+  NO_CANDIDATES
+
+KtParenthesizedExpression(2252,2277): '(a as @Anno context(Int))'
+  NO_CANDIDATES
+
+KtBinaryExpressionWithTypeRHS(2253,2276): 'a as @Anno context(Int)'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(2253,2254): 'a'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = a
+        receiverType = null
+        returnType = kotlin.Any
+        symbol = a: kotlin.Any
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(2255,2257): 'as'
+  NO_CANDIDATES
+
+KtTypeReference(2258,2276): '@Anno context(Int)'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(2258,2263): '@Anno'
+  NO_CANDIDATES
+
+KtAnnotationEntry(2258,2263): '@Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(2259,2263): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(2259,2263): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(2259,2263): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(2259,2263): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtContextReceiverList(2264,2276): 'context(Int)'
+  NO_CANDIDATES
+
+KtContextReceiver(2272,2275): 'Int'
+  NO_CANDIDATES
+
+KtTypeReference(2272,2275): 'Int'
+  NO_CANDIDATES
+
+KtUserType(2272,2275): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(2272,2275): 'Int'
+  NO_CANDIDATES
+
+KtProperty(2282,2322): 'val isTarget = (a is @Anno context(Int))'
+  NO_CANDIDATES
+
+KtParenthesizedExpression(2297,2322): '(a is @Anno context(Int))'
+  NO_CANDIDATES
+
+KtIsExpression(2298,2321): 'a is @Anno context(Int)'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(2298,2299): 'a'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = a
+        receiverType = null
+        returnType = kotlin.Any
+        symbol = a: kotlin.Any
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(2300,2302): 'is'
+  NO_CANDIDATES
+
+KtTypeReference(2303,2321): '@Anno context(Int)'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(2303,2308): '@Anno'
+  NO_CANDIDATES
+
+KtAnnotationEntry(2303,2308): '@Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(2304,2308): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(2304,2308): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(2304,2308): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(2304,2308): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtContextReceiverList(2309,2321): 'context(Int)'
+  NO_CANDIDATES
+
+KtContextReceiver(2317,2320): 'Int'
+  NO_CANDIDATES
+
+KtTypeReference(2317,2320): 'Int'
+  NO_CANDIDATES
+
+KtUserType(2317,2320): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(2317,2320): 'Int'
+  NO_CANDIDATES
+
+KtTryExpression(2327,2366): 'try {} catch (e: @Anno context(Int)) {}'
+  NO_CANDIDATES
+
+KtBlockExpression(2331,2333): '{}'
+  NO_CANDIDATES
+
+KtCatchClause(2334,2366): 'catch (e: @Anno context(Int)) {}'
+  NO_CANDIDATES
+
+KtParameterList(2340,2363): '(e: @Anno context(Int))'
+  NO_CANDIDATES
+
+KtParameter(2341,2362): 'e: @Anno context(Int)'
+  NO_CANDIDATES
+
+KtTypeReference(2344,2362): '@Anno context(Int)'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(2344,2349): '@Anno'
+  NO_CANDIDATES
+
+KtAnnotationEntry(2344,2349): '@Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(2345,2349): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(2345,2349): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(2345,2349): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(2345,2349): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(value: kotlin.String): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtContextReceiverList(2350,2362): 'context(Int)'
+  NO_CANDIDATES
+
+KtContextReceiver(2358,2361): 'Int'
+  NO_CANDIDATES
+
+KtTypeReference(2358,2361): 'Int'
+  NO_CANDIDATES
+
+KtUserType(2358,2361): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(2358,2361): 'Int'
+  NO_CANDIDATES
+
+KtBlockExpression(2364,2366): '{}'
+  NO_CANDIDATES

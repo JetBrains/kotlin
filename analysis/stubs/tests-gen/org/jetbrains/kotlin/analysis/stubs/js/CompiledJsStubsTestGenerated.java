@@ -2440,6 +2440,12 @@ public class CompiledJsStubsTestGenerated extends AbstractCompiledJsStubsTest {
     }
 
     @Test
+    @TestMetadata("danglingContextInFunctionTypeAnnotated.kt")
+    public void testDanglingContextInFunctionTypeAnnotated() {
+      run("danglingContextInFunctionTypeAnnotated.kt");
+    }
+
+    @Test
     @TestMetadata("danglingContextParameter.kt")
     public void testDanglingContextParameter() {
       run("danglingContextParameter.kt");
