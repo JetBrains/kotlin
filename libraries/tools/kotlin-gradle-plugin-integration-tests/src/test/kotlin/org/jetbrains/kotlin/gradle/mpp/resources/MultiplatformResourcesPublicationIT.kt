@@ -12,7 +12,6 @@ import kotlin.io.path.writeText
 @MppGradlePluginTests
 @MustRunOnChangesInGradle
 @DisplayName("Test multiplatform resources publication")
-@MustRunOnChangesInGradle
 class MultiplatformResourcesPublicationIT : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions
