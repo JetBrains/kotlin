@@ -88,7 +88,6 @@ internal class Fir2IrJvmResultsConverter(testServices: TestServices) : AbstractF
             fir2IrResult.irModuleFragment,
             fir2IrResult.irBuiltIns,
             fir2IrResult.symbolTable,
-            fir2IrResult.components.irProviders,
             debuggerExtensions = null,
             FirJvmBackendExtension(
                 fir2IrResult.components,

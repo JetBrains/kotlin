@@ -49,7 +49,7 @@ object JvmLoweringsPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmL
         )
         val baseBackendInput = with(fir2IrResult) {
             JvmIrCodegenFactory.BackendInput(
-                irModuleFragment, irBuiltIns, symbolTable, components.irProviders,
+                irModuleFragment, irBuiltIns, symbolTable,
                 debuggerExtensions = null, jvmBackendExtension, pluginContext
             )
         }
