@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-90176
 // WITH_STDLIB
-// LANGUAGE: -ConsiderUseSiteRecursiveBoundsOnCapturedTypes
+// LANGUAGE: -ConsiderUseSiteRecursiveBoundsOnCapturedTypes +AvoidStarProjectingSupertypeOfRecursiveCapturedTypes
 // FIR_DUMP
 
 import kotlin.test.assertFailsWith
