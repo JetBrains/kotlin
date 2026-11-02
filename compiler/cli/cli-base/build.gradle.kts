@@ -10,6 +10,7 @@ plugins {
 dependencies {
     api(project(":core:util.runtime"))
     api(project(":compiler:arguments.common"))
+    api(project(":core:language.targets.common"))
     api(project(":compiler:plugin-api"))
     implementation(project(":compiler:psi:parser"))
     implementation(project(":core:error.handling"))

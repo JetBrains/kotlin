@@ -7,6 +7,7 @@ plugins {
 }
 
 dependencies {
+    api(project(":core:language.targets.js"))
     api(project(":compiler:config"))
     compileOnly(intellijCore())
 

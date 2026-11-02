@@ -1,0 +1,39 @@
+public final class org/jetbrains/kotlin/platform/konan/KonanPlatformKt {
+	public static final fun isNative (Lorg/jetbrains/kotlin/platform/TargetPlatform;)Z
+}
+
+public abstract class org/jetbrains/kotlin/platform/konan/NativePlatform : org/jetbrains/kotlin/platform/NativePlatform {
+	public fun getOldFashionedDescription ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/platform/konan/NativePlatformKt {
+	public static final fun isNative (Lorg/jetbrains/kotlin/platform/TargetPlatform;)Z
+	public static final fun legacySerializeToString (Lorg/jetbrains/kotlin/platform/konan/NativePlatformUnspecifiedTarget;)Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/platform/konan/NativePlatformUnspecifiedTarget : org/jetbrains/kotlin/platform/konan/NativePlatform {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/platform/konan/NativePlatformUnspecifiedTarget;
+	public fun getTargetName ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/platform/konan/NativePlatformWithTarget : org/jetbrains/kotlin/platform/konan/NativePlatform {
+	public fun <init> (Lorg/jetbrains/kotlin/konan/target/KonanTarget;)V
+	public final fun component1 ()Lorg/jetbrains/kotlin/konan/target/KonanTarget;
+	public final fun copy (Lorg/jetbrains/kotlin/konan/target/KonanTarget;)Lorg/jetbrains/kotlin/platform/konan/NativePlatformWithTarget;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/platform/konan/NativePlatformWithTarget;Lorg/jetbrains/kotlin/konan/target/KonanTarget;ILjava/lang/Object;)Lorg/jetbrains/kotlin/platform/konan/NativePlatformWithTarget;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getTarget ()Lorg/jetbrains/kotlin/konan/target/KonanTarget;
+	public fun getTargetName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/platform/konan/NativePlatforms {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/platform/konan/NativePlatforms;
+	public final fun getAllNativePlatforms ()Ljava/util/List;
+	public final fun getUnspecifiedNativePlatform ()Lorg/jetbrains/kotlin/platform/TargetPlatform;
+	public final fun nativePlatformBySingleTarget (Lorg/jetbrains/kotlin/konan/target/KonanTarget;)Lorg/jetbrains/kotlin/platform/TargetPlatform;
+	public final fun nativePlatformByTargetNames (Ljava/util/Collection;)Lorg/jetbrains/kotlin/platform/TargetPlatform;
+	public final fun nativePlatformByTargets (Ljava/util/Collection;)Lorg/jetbrains/kotlin/platform/TargetPlatform;
+}
+
