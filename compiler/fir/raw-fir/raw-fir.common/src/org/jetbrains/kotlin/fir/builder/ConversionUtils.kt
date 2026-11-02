@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRefCopy
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
@@ -756,12 +757,23 @@ fun AnnotationUseSiteTarget?.appliesToPrimaryConstructorParameter(): Boolean = t
         this == AnnotationUseSiteTarget.FILE ||
         this == AnnotationUseSiteTarget.ALL
 
+/**
+ * Builds the `Array` type of a vararg parameter whose element type is already an error type.
+ * The array type is treated as resolved, so the type resolution doesn't visit [this] type on its own:
+ * it reaches its annotations through the array type, like the one built from a resolved element type,
+ * and its partially resolved type through the `ArrayTypeFromVarargParameter` source kind.
+ */
 fun FirErrorTypeRef.wrapIntoArray(): FirResolvedTypeRef {
     val typeRef = this
     return buildResolvedTypeRef {
         source = typeRef.source
         coneType = StandardClassIds.Array.constructClassLikeType(arrayOf(ConeKotlinTypeProjectionOut(typeRef.coneType)))
-        delegatedTypeRef = typeRef.copyWithNewSourceKind(KtFakeSourceElementKind.ArrayTypeFromVarargParameter)
+        annotations += typeRef.annotations
+        // Not `copyWithNewSourceKind`: it would give the partially resolved type the source of the whole type,
+        // and the diagnostics of the partially resolved type would be lost
+        delegatedTypeRef = buildErrorTypeRefCopy(typeRef) {
+            source = typeRef.source?.fakeElement(KtFakeSourceElementKind.ArrayTypeFromVarargParameter)
+        }
     }
 }
 
