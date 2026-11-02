@@ -255,6 +255,24 @@ public class FirIdeNormalAnalysisSourceLikeModuleReferenceShortenerTestGenerated
   }
 
   @Test
+  @TestMetadata("danglingContextInFunctionTypeNullable.kt")
+  public void testDanglingContextInFunctionTypeNullable() {
+    run("danglingContextInFunctionTypeNullable.kt");
+  }
+
+  @Test
+  @TestMetadata("danglingContextInFunctionTypeNullableNested.kt")
+  public void testDanglingContextInFunctionTypeNullableNested() {
+    run("danglingContextInFunctionTypeNullableNested.kt");
+  }
+
+  @Test
+  @TestMetadata("danglingContextInFunctionTypeNullableNullableType.kt")
+  public void testDanglingContextInFunctionTypeNullableNullableType() {
+    run("danglingContextInFunctionTypeNullableNullableType.kt");
+  }
+
+  @Test
   @TestMetadata("danglingContextInFunctionTypeWithReceiver.kt")
   public void testDanglingContextInFunctionTypeWithReceiver() {
     run("danglingContextInFunctionTypeWithReceiver.kt");

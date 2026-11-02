@@ -27,6 +27,7 @@ FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] danglingContextInFunctionTypePositions.
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun withAnnotatedVararg([ResolvedTo(ANNOTATION_ARGUMENTS)] vararg p: R|kotlin/Array<out ERROR CLASS: Incomplete code>|): R|kotlin/Unit| { LAZY_BLOCK }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun withAnnotatedVarargType([ResolvedTo(ANNOTATION_ARGUMENTS)] vararg p: R|kotlin/Array<out ERROR CLASS: Incomplete code>|): R|kotlin/Unit| { LAZY_BLOCK }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun withVarargReceiver([ResolvedTo(ANNOTATION_ARGUMENTS)] vararg p: R|kotlin/Array<out ERROR CLASS: Incomplete code>|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun withNullableVararg([ResolvedTo(ANNOTATION_ARGUMENTS)] vararg p: R|kotlin/Array<out @R|Anno|()  kotlin/String?>|): R|kotlin/Unit| { LAZY_BLOCK }
     public final data [ResolvedTo(BODY_RESOLVE)] class Data : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Data] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Data.p] p: <ERROR TYPE REF: Incomplete code>): R|Data| {
             super<R|kotlin/Any|>()
@@ -89,7 +90,40 @@ FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] danglingContextInFunctionTypePositions.
 
     }
     public abstract [ResolvedTo(BODY_RESOLVE)] interface NullableAndParenthesized : R|kotlin/Any| {
+        public abstract [ResolvedTo(BODY_RESOLVE)] val nullable: @R|Anno|[Types]() <ERROR TYPE REF: Incomplete code>
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=NullableAndParenthesized] get(): @R|Anno|[Types]() <ERROR TYPE REF: Incomplete code>
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] val nullableWithoutAnnotation: <ERROR TYPE REF: Incomplete code>
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=NullableAndParenthesized] get(): <ERROR TYPE REF: Incomplete code>
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] val nullableWithType: R|@R|Anno|()  kotlin/String?|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=NullableAndParenthesized] get(): R|@R|Anno|()  kotlin/String?|
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] val nullableWithReceiver: @R|Anno|[Types]() <ERROR TYPE REF: Incomplete code>
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=NullableAndParenthesized] get(): @R|Anno|[Types]() <ERROR TYPE REF: Incomplete code>
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] val doubleNullable: @R|Anno|[Types]() <ERROR TYPE REF: Incomplete code>
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=NullableAndParenthesized] get(): @R|Anno|[Types]() <ERROR TYPE REF: Incomplete code>
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] val nullableInsideDangling: @R|Anno|[Types]() @R|Other|[Types]() <ERROR TYPE REF: Incomplete code>
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=NullableAndParenthesized] get(): @R|Anno|[Types]() @R|Other|[Types]() <ERROR TYPE REF: Incomplete code>
+
         public abstract [ResolvedTo(BODY_RESOLVE)] val nullableWithoutType: <ERROR TYPE REF: Incomplete code>
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=NullableAndParenthesized] get(): <ERROR TYPE REF: Incomplete code>
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] val nullableAnnotatedEntry: <ERROR TYPE REF: Incomplete code>
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=NullableAndParenthesized] get(): <ERROR TYPE REF: Incomplete code>
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] val nullableNullableType: R|kotlin/String?|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=NullableAndParenthesized] get(): R|kotlin/String?|
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] val nullableSuspend: <ERROR TYPE REF: Incomplete code>
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=NullableAndParenthesized] get(): <ERROR TYPE REF: Incomplete code>
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] val suspendInsideDangling: <ERROR TYPE REF: Incomplete code>
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=NullableAndParenthesized] get(): <ERROR TYPE REF: Incomplete code>
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] val suspendOutsideDangling: <ERROR TYPE REF: Incomplete code>
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=NullableAndParenthesized] get(): <ERROR TYPE REF: Incomplete code>
 
         public abstract [ResolvedTo(BODY_RESOLVE)] val parenthesized: @R|Anno|[Types]() <ERROR TYPE REF: Incomplete code>

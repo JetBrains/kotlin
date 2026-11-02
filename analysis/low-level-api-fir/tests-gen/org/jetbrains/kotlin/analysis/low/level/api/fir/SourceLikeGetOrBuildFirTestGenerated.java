@@ -2816,6 +2816,60 @@ public class SourceLikeGetOrBuildFirTestGenerated extends AbstractSourceLikeGetO
     }
 
     @Test
+    @TestMetadata("danglingContextInFunctionTypeNullable.kt")
+    public void testDanglingContextInFunctionTypeNullable() {
+      run("danglingContextInFunctionTypeNullable.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeNullableAnnotatedEntryType.kt")
+    public void testDanglingContextInFunctionTypeNullableAnnotatedEntryType() {
+      run("danglingContextInFunctionTypeNullableAnnotatedEntryType.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeNullableAnnotation.kt")
+    public void testDanglingContextInFunctionTypeNullableAnnotation() {
+      run("danglingContextInFunctionTypeNullableAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeNullableLambdaParameter.kt")
+    public void testDanglingContextInFunctionTypeNullableLambdaParameter() {
+      run("danglingContextInFunctionTypeNullableLambdaParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeNullableNullableTypeElement.kt")
+    public void testDanglingContextInFunctionTypeNullableNullableTypeElement() {
+      run("danglingContextInFunctionTypeNullableNullableTypeElement.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeNullableReceiverType.kt")
+    public void testDanglingContextInFunctionTypeNullableReceiverType() {
+      run("danglingContextInFunctionTypeNullableReceiverType.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeNullableTypeElement.kt")
+    public void testDanglingContextInFunctionTypeNullableTypeElement() {
+      run("danglingContextInFunctionTypeNullableTypeElement.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeNullableVararg.kt")
+    public void testDanglingContextInFunctionTypeNullableVararg() {
+      run("danglingContextInFunctionTypeNullableVararg.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeNullableWholeType.kt")
+    public void testDanglingContextInFunctionTypeNullableWholeType() {
+      run("danglingContextInFunctionTypeNullableWholeType.kt");
+    }
+
+    @Test
     @TestMetadata("danglingContextInFunctionTypeOuterAnnotation.kt")
     public void testDanglingContextInFunctionTypeOuterAnnotation() {
       run("danglingContextInFunctionTypeOuterAnnotation.kt");
