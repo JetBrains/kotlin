@@ -18,6 +18,13 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 
+/**
+ * The element type of an error-typed vararg parameter, under its `Array` type.
+ * Raw FIR builds such an array type as already resolved, so its element type must be resolved through it.
+ */
+internal val FirResolvedTypeRef.varargErrorElementTypeRef: FirErrorTypeRef?
+    get() = (delegatedTypeRef as? FirErrorTypeRef)?.takeIf { it.source?.kind == KtFakeSourceElementKind.ArrayTypeFromVarargParameter }
+
 internal fun FirValueParameter.transformVarargTypeToArrayType(session: FirSession) {
     if (isVararg) {
         this.transformTypeToArrayType(session)
