@@ -106,6 +106,46 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     }
 
     @MustRunOnChangesInJs
+    @DisplayName("Rich TS export emit diagnostics")
+    @GradleTest
+    fun richDtsEmitDiagnostics(gradleVersion: GradleVersion) {
+        project("kotlin2JsIrDtsGeneration", gradleVersion) {
+            gradleProperties.appendText("\nkotlin.js.generateRichTypeScriptDeclarations=true\n")
+            buildScriptInjection {
+                kotlinMultiplatform.js {
+                    compilerOptions {
+                        freeCompilerArgs.add("-Xsuspend-lambda-exporting")
+                    }
+                }
+            }
+            kotlinSourcesDir("jsMain").resolve("Test.kt").writeText(
+                """
+                |package foo
+                |
+                |@JsExport
+                |fun produceSuspendLambda(): suspend (Int) -> Int = { value -> value * 2 }
+                """.trimMargin()
+            )
+            buildAndFail("jsProductionExecutableGenerateTypeScriptDefinitions") {
+                assertOutputContains("Suspend lambdas cannot be exported without using generators")
+            }
+
+            kotlinSourcesDir("jsMain").resolve("Test.kt").writeText(
+                """
+                |package foo
+                |
+                |@JsExport
+                |fun produceLong(): Long = 42L
+                """.trimMargin()
+            )
+            buildAndFail("jsProductionExecutableGenerateTypeScriptDefinitions") {
+                assertOutputContains("Long cannot be exported without using the bigint type.")
+            }
+        }
+    }
+
+
+    @MustRunOnChangesInJs
     @DisplayName("TS type declarations are generated with the right extension for ES modules")
     @GradleTest
     fun generateDtsWithEsModules(gradleVersion: GradleVersion) {
@@ -175,30 +215,6 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                     """
                     |export declare const value: {
                     |    get(): bigint;
-                    |};
-                    """.trimMargin()
-                )
-            }
-            buildScriptInjection {
-                kotlinMultiplatform.js {
-                    compilerOptions {
-                        freeCompilerArgs.set(listOf("-Xes-long-as-bigint=false"))
-                    }
-                }
-            }
-            build("build") {
-                val outputDir = projectPath.resolve("build/js/packages/js-executable/kotlin/")
-                val outputFile = outputDir.resolve("js-executable.mjs")
-
-                assertFileExists(outputFile)
-                assertFileDoesNotContain(outputFile, "1234567890123n")
-
-                val outputDtsFile = outputDir.resolve("js-executable.d.mts")
-                assertFileContains(
-                    outputDtsFile,
-                    """
-                    |export declare const value: {
-                    |    get(): any /*Long*/;
                     |};
                     """.trimMargin()
                 )

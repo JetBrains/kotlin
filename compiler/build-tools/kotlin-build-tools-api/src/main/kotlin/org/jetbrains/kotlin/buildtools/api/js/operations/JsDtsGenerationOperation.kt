@@ -141,6 +141,13 @@ public interface JsDtsGenerationOperation : BuildOperation<CompilationResult> {
         public val EXPORT_SUSPEND_LAMBDAS: Option<Boolean> = Option("EXPORT_SUSPEND_LAMBDAS", KotlinReleaseVersion(2, 5, 0))
 
         /**
+         * Whether suspend functions are compiled as ES generators. Must match the JS linking `-Xes-generators`.
+         * Exporting suspend lambdas (see [EXPORT_SUSPEND_LAMBDAS]) is only supported when this option is enabled.
+         */
+        @JvmField
+        public val COMPILE_SUSPEND_AS_JS_GENERATOR: Option<Boolean> = Option("COMPILE_SUSPEND_AS_JS_GENERATOR", KotlinReleaseVersion(2, 5, 20))
+
+        /**
          * Whether the generated `copy` of a data class respects the visibility of its primary constructor
          * (corresponds to the `DataClassCopyRespectsConstructorVisibility` language feature).
          */

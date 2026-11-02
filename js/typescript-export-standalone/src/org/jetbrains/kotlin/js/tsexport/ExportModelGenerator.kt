@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.analysis.api.scopes.staticDeclaredMemberScope
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.ir.backend.js.tsexport.*
 import org.jetbrains.kotlin.js.common.makeValidES5Identifier
 import org.jetbrains.kotlin.js.common.safeModuleName
@@ -37,7 +38,8 @@ public const val EXTENSION_RECEIVER_NAME: String = "_this_"
 
 private typealias WholeWorldExportModel = Map<KaLibraryModule, MutableMap<FileArtifactKey, MutableList<ExportedDeclaration>>>
 
-internal class ExportModelGenerator(private val config: TypeScriptExportConfig) {
+internal class ExportModelGenerator(private val context: TypeScriptExportContext) {
+    private val config = context.config
     private var pendingTransitivelyExportedClasses = linkedSetOf<KaClassLikeSymbol>()
     private val superTypeApproximator = SuperTypeApproximator(config)
 
@@ -104,18 +106,24 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
         }
 
         @OptIn(KaNonPublicApi::class)
+        val sourceFileName = declaration.klibSourceFileName
+
+        @OptIn(KaNonPublicApi::class)
         val fileName = declaration.containingFileAnnotations?.getJsFileName()
-            ?: declaration.klibSourceFileName?.removeSuffix(".kt")
+            ?: sourceFileName?.removeSuffix(".kt")
             ?: return null
 
         val key = FileArtifactKey(packageFqName, fileName)
-        val exportedDeclarations = when (declaration) {
-            is KaNamedFunctionSymbol -> listOfNotNull(exportFunction(declaration, parent = null, classTypeParameterScope = emptyMap()))
-            is KaPropertySymbol -> exportProperty(declaration, parent = null, classTypeParameterScope = emptyMap())
-            is KaNamedClassSymbol -> listOfNotNull(exportClass(declaration, parent = null, outerClassTypeParameterScope = emptyMap()))
-            is KaTypeAliasSymbol -> listOf(exportTypeAlias(declaration))
-            else -> return null
-        }
+        // Analysis API doesn't have any source location information except source file name
+        val exportedDeclarations = context.withSourceFile(sourceFileName) {
+            when (declaration) {
+                is KaNamedFunctionSymbol -> listOfNotNull(exportFunction(declaration, parent = null, classTypeParameterScope = emptyMap()))
+                is KaPropertySymbol -> exportProperty(declaration, parent = null, classTypeParameterScope = emptyMap())
+                is KaNamedClassSymbol -> listOfNotNull(exportClass(declaration, parent = null, outerClassTypeParameterScope = emptyMap()))
+                is KaTypeAliasSymbol -> listOf(exportTypeAlias(declaration))
+                else -> null
+            }
+        } ?: return null
 
         if (exportedDeclarations.isEmpty()) return null
 
@@ -139,7 +147,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
 
         val typeParameterScope = TypeParameterScope(
             container = klass,
-            config = config,
+            context = context,
             transitivelyExportedClasses = pendingTransitivelyExportedClasses,
             superTypeApproximator = superTypeApproximator,
             outerScope = if (klass.isInner) outerClassTypeParameterScope else emptyMap(),
@@ -204,7 +212,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
         val inheritedBounds = collectInheritedTypeParameterBounds(typeAlias)
         val typeParameterScope = TypeParameterScope(
             container = typeAlias,
-            config = config,
+            context = context,
             transitivelyExportedClasses = pendingTransitivelyExportedClasses,
             superTypeApproximator = superTypeApproximator,
             inheritedBounds = inheritedBounds,
@@ -289,7 +297,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
                 val outerScope = if (!isStatic || isFactoryPropertyForInnerClass) classTypeParameterScope else emptyMap()
                 val functionTypeParameterScope = TypeParameterScope(
                     function,
-                    config,
+                    context,
                     pendingTransitivelyExportedClasses,
                     superTypeApproximator,
                     outerScope
@@ -457,7 +465,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
             }
             for (parameter in function.valueParameters) {
                 val type = if (parameter.isVararg) {
-                    TypeExporter(config, functionTypeParameterScope, pendingTransitivelyExportedClasses, superTypeApproximator)
+                    TypeExporter(context, functionTypeParameterScope, pendingTransitivelyExportedClasses, superTypeApproximator)
                         .exportSpecializedArrayWithElementType(parameter.returnType)
                 } else {
                     exportType(
@@ -861,7 +869,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
                 superTypes,
                 superTypeApproximator,
                 typeParameterScope,
-                config,
+                context,
                 classHasNonExportedAbstractMember,
             )
         }
@@ -952,7 +960,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
     private fun KaNamedClassSymbol.toFactoryPropertyForInnerClass(outerClassTypeParameterScope: TypeParameterScope): ExportedPropertyGetter {
         val typeParameterScope = TypeParameterScope(
             this,
-            config,
+            context,
             pendingTransitivelyExportedClasses,
             superTypeApproximator,
             outerClassTypeParameterScope
@@ -974,7 +982,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
         shouldCalculateExportedSupertypeForImplicit: Boolean = true,
         inlineClassesShouldBeUnboxed: Boolean = false,
     ): ExportedType = TypeExporter(
-        config,
+        context,
         scope,
         pendingTransitivelyExportedClasses,
         superTypeApproximator.takeIf { shouldCalculateExportedSupertypeForImplicit }
