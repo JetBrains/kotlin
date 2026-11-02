@@ -283,6 +283,12 @@ public class LLReversedSerializationBlackBoxTestGenerated extends AbstractLLReve
     }
 
     @Test
+    @TestMetadata("JavaEnums.kt")
+    public void testJavaEnums() {
+      run("JavaEnums.kt");
+    }
+
+    @Test
     @TestMetadata("KeepGeneratedSerializer.kt")
     public void testKeepGeneratedSerializer() {
       run("KeepGeneratedSerializer.kt");
