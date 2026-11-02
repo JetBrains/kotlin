@@ -1,17 +1,33 @@
 /test.kt:25:40: error: None of the following candidates is applicable:
 
-interface A : Any:
-  Classifier 'interface A : Any' does not have a companion object, so it cannot be used as an expression.
+In package 'p' of module '<main>':
+ --> /private/var/folders/5r/wwlpp6t51j3910jcq7298jx40000kt/T/analysis-testsProject_test_18156878438737579365/org.jetbrains.kotlin.test.runners.PhasedJvmDiagnosticLightTreeTestGenerated_Tests_StrictEquals_Enabled_DeclarationSiteCheckstestAmbiguousArgument/kotlin-sources/main/p/f1.kt:7:1
+  |
+7 | interface A : Any
+  |
+reason: Classifier 'interface A : Any' does not have a companion object, so it cannot be used as an expression.
 
-interface A : Any:
-  Classifier 'interface A : Any' does not have a companion object, so it cannot be used as an expression.
+In package 'q' of module '<main>':
+  --> /private/var/folders/5r/wwlpp6t51j3910jcq7298jx40000kt/T/analysis-testsProject_test_18156878438737579365/org.jetbrains.kotlin.test.runners.PhasedJvmDiagnosticLightTreeTestGenerated_Tests_StrictEquals_Enabled_DeclarationSiteCheckstestAmbiguousArgument/kotlin-sources/main/q/f2.kt:13:1
+   |
+13 | interface A : Any
+   |
+reason: Classifier 'interface A : Any' does not have a companion object, so it cannot be used as an expression.
 
 /test.kt:29:40: error: None of the following candidates is applicable:
 
-interface A : Any:
-  Classifier 'interface A : Any' does not have a companion object, so it cannot be used as an expression.
+In package 'p' of module '<main>':
+ --> /private/var/folders/5r/wwlpp6t51j3910jcq7298jx40000kt/T/analysis-testsProject_test_18156878438737579365/org.jetbrains.kotlin.test.runners.PhasedJvmDiagnosticLightTreeTestGenerated_Tests_StrictEquals_Enabled_DeclarationSiteCheckstestAmbiguousArgument/kotlin-sources/main/p/f1.kt:7:1
+  |
+7 | interface A : Any
+  |
+reason: Classifier 'interface A : Any' does not have a companion object, so it cannot be used as an expression.
 
-interface A : Any:
-  Classifier 'interface A : Any' does not have a companion object, so it cannot be used as an expression.
+In package 'q' of module '<main>':
+  --> /private/var/folders/5r/wwlpp6t51j3910jcq7298jx40000kt/T/analysis-testsProject_test_18156878438737579365/org.jetbrains.kotlin.test.runners.PhasedJvmDiagnosticLightTreeTestGenerated_Tests_StrictEquals_Enabled_DeclarationSiteCheckstestAmbiguousArgument/kotlin-sources/main/q/f2.kt:13:1
+   |
+13 | interface A : Any
+   |
+reason: Classifier 'interface A : Any' does not have a companion object, so it cannot be used as an expression.
 
 /test.kt:34:40: error: Equality bound argument is ambiguous between following candidates: p.B, q.B.

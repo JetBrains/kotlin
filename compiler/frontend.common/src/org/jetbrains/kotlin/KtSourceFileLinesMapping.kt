@@ -124,3 +124,8 @@ fun CharSequence.toSourceLinesMapping(): KtSourceFileLinesMapping {
     }
     return KtSourceFileLinesMappingFromLineStartOffsets(lineOffsets.toIntArray(), offset)
 }
+
+fun KtSourceElement.toLinesMapping(): KtSourceFileLinesMapping = when (this) {
+    is KtPsiSourceElement -> KtPsiSourceFileLinesMapping(this.psi.containingFile)
+    is KtLightSourceElement -> this.treeStructure.toString(this.treeStructure.root).toSourceLinesMapping()
+}

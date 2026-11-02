@@ -2,8 +2,16 @@
 
 /unresolvedReferenceWrongReceiverMessage.kt:12:10: error: None of the following candidates is applicable:
 
-fun String.bar(): Unit:
-  Candidate 'fun String.bar(): Unit' is inapplicable because of a receiver type mismatch. Actual receiver type is 'Boolean'.
+In package 'root package' of module '<main>':
+ --> /private/var/folders/5r/wwlpp6t51j3910jcq7298jx40000kt/T/analysis-testsProject_test_18156878438737579365/org.jetbrains.kotlin.test.runners.PhasedJvmDiagnosticLightTreeTestGenerated_Tests_DiagnosticstestUnresolvedReferenceWrongReceiverMessage/kotlin-sources/main/unresolvedReferenceWrongReceiverMessage.kt:7:1
+  |
+7 | fun String.bar(): Unit
+  |
+reason: Candidate 'fun String.bar(): Unit' is inapplicable because of a receiver type mismatch. Actual receiver type is 'Boolean'.
 
-fun Int.bar(): Unit:
-  Candidate 'fun Int.bar(): Unit' is inapplicable because of a receiver type mismatch. Actual receiver type is 'Boolean'.
+In package 'root package' of module '<main>':
+ --> /private/var/folders/5r/wwlpp6t51j3910jcq7298jx40000kt/T/analysis-testsProject_test_18156878438737579365/org.jetbrains.kotlin.test.runners.PhasedJvmDiagnosticLightTreeTestGenerated_Tests_DiagnosticstestUnresolvedReferenceWrongReceiverMessage/kotlin-sources/main/unresolvedReferenceWrongReceiverMessage.kt:8:1
+  |
+8 | fun Int.bar(): Unit
+  |
+reason: Candidate 'fun Int.bar(): Unit' is inapplicable because of a receiver type mismatch. Actual receiver type is 'Boolean'.

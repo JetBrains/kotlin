@@ -16,9 +16,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.*
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.containingClassLookupTag
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
-import org.jetbrains.kotlin.fir.declarations.isJavaOrEnhancement
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.UnsafeExpressionUtility
@@ -30,14 +28,11 @@ import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.renderer.*
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.session.sourcesToPathsMapper
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.ConeReceiverInfo
-import org.jetbrains.kotlin.fir.types.ConeUnionType
-import org.jetbrains.kotlin.fir.types.canBeNull
-import org.jetbrains.kotlin.fir.types.hasError
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement
 import org.jetbrains.kotlin.mpp.DeclarationSymbolMarker
 import org.jetbrains.kotlin.name.CallableId
@@ -45,6 +40,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.render
 import org.jetbrains.kotlin.resolve.ReturnValueStatus
+import org.jetbrains.kotlin.toLinesMapping
 import java.text.MessageFormat
 
 @Suppress("NO_EXPLICIT_RETURN_TYPE_IN_API_MODE_WARNING")
@@ -109,7 +105,24 @@ object FirDiagnosticRenderers {
                 val packageName = if (symbol.packageFqName().isRoot) "root package" else symbol.packageFqName().render()
                 val moduleName = symbol.moduleData.name
 
-                "$elementRender defined in $packageName in module $moduleName"
+                val lineAndColumn = symbol.source?.let { it.toLinesMapping().getLineAndColumnByOffset(it.startOffset) }
+                    ?.let { [line, column] -> (line + 1) to (column + 1) }
+                val numberString = lineAndColumn?.let { [line, _] -> line.toString() } ?: ""
+                val indentString = " ".repeat(numberString.length)
+                val physicalLocation = lineAndColumn
+                    ?.let { [line, column] ->
+                        symbol.source?.let(symbol.moduleData.session.sourcesToPathsMapper::getSourceFilePath)
+                            ?.let { "$indentString--> $it:$line:$column" }
+                    }
+                listOfNotNull(
+                    "In package '$packageName' of module '$moduleName':",
+                    physicalLocation,
+                    """
+                    |$indentString |
+                    |$numberString | $elementRender
+                    |$indentString |
+                    """.trimMargin()
+                ).joinToString("\n")
             }
             is FirTypeParameterSymbol -> symbol.name.asString()
             else -> ""
@@ -453,14 +466,18 @@ object FirDiagnosticRenderers {
     val CANDIDATES_WITH_DIAGNOSTIC_MESSAGES = Renderer { list: Collection<Pair<FirBasedSymbol<*>, List<String>>> ->
         buildString {
             for ([symbol, diagnostics] in list) {
-                append(SYMBOL.render(symbol))
+                append(SYMBOL_WITH_LOCATION.render(symbol))
 
                 if (diagnostics.isNotEmpty()) {
-                    appendLine(":")
-
-                    diagnostics.forEach {
-                        append("  ")
-                        appendLine(it)
+                    if (diagnostics.size == 1) {
+                        append("\nreason: ")
+                        appendLine(diagnostics.single())
+                    } else {
+                        appendLine("\nreasons:")
+                        diagnostics.forEach {
+                            append("  - ")
+                            appendLine(it)
+                        }
                     }
                 }
 

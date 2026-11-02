@@ -1,10 +1,10 @@
-/typeParameterAsExpression.kt:6:15: error: None of the following candidates is applicable:
+/typeParameterAsExpression.kt:6:15: error: None of the following candidates is applicable for expression 'T':
 
-T:
-  Type parameter 'T' is not an expression.
+T
+reason: Type parameter 'T' is not an expression.
 
-T:
-  Type parameter 'T' is not an expression.
+T
+reason: Type parameter 'T' is not an expression.
 
 /typeParameterAsExpression.kt:12:6: error: Conflicting declarations:
 T
@@ -14,10 +14,10 @@ T
 T
 T
 
-/typeParameterAsExpression.kt:13:5: error: None of the following candidates is applicable:
+/typeParameterAsExpression.kt:13:5: error: None of the following candidates is applicable for expression 'T':
 
-T:
-  Type parameter 'T' is not an expression.
+T
+reason: Type parameter 'T' is not an expression.
 
-T:
-  Type parameter 'T' is not an expression.
+T
+reason: Type parameter 'T' is not an expression.
