@@ -22,6 +22,31 @@
 #include "Exceptions.h"
 #include "Types.h"
 
+#if __has_builtin(__builtin_roundeven) && __has_builtin(__builtin_roundevenf) && \
+    (defined(__aarch64__) || defined(__SSE4_1__))
+// On aarch64 and on x86 with SSE 4.1, LLVM emits __builtin_roundeven[f] as instructions, on other targets it emits a
+// call to the actual roundeven function, which is not present in the libc version(s) that Kotlin runtime currently
+// depends on on Linux and Windows, leading to linking errors on those platforms, hence the fallback path.
+//
+// Once all supported targets can use __builtin_roundeven[f] without relying on unavailable libc symbols, the runtime
+// SSE 4.1 dispatch and fallback paths can be removed.
+#define KONAN_USE_BUILTIN_ROUNDEVEN 1
+#else
+#define KONAN_USE_BUILTIN_ROUNDEVEN 0
+#endif
+// Even if we can't use the builtins unconditionally, we are still able to:
+// - compile SSE 4.1-targeted functions calling the builtins
+// - use __builtin_cpu_supports("sse4.1") in runtime and call those if the check passes
+#if !KONAN_USE_BUILTIN_ROUNDEVEN && defined(__x86_64__) && \
+    __has_builtin(__builtin_roundeven) && \
+    __has_builtin(__builtin_roundevenf) && \
+    __has_builtin(__builtin_cpu_supports) && \
+    __has_attribute(target)
+#define KONAN_USE_RUNTIME_SSE41_ROUNDEVEN 1
+#else
+#define KONAN_USE_RUNTIME_SSE41_ROUNDEVEN 0
+#endif
+
 #if (__MINGW32__ || __MINGW64__)
 #define KONAN_NEED_ASINH_ACOSH 1
 #else
@@ -92,6 +117,20 @@ namespace {
 }
 #endif
 
+#if KONAN_USE_RUNTIME_SSE41_ROUNDEVEN
+namespace {
+    __attribute__((target("sse4.1")))
+    KDouble roundevenSse41(KDouble x) {
+        return __builtin_roundeven(x);
+    }
+
+    __attribute__((target("sse4.1")))
+    KFloat roundevenfSse41(KFloat x) {
+        return __builtin_roundevenf(x);
+    }
+}
+#endif
+
 extern "C" {
 
 // region Double math.
@@ -143,7 +182,36 @@ KDouble Kotlin_math_ln1p(KDouble x) { return log1p(x); }
 
 KDouble Kotlin_math_ceil(KDouble x) { return ceil(x); }
 KDouble Kotlin_math_floor(KDouble x) { return floor(x); }
-KDouble Kotlin_math_round(KDouble x) { return rint(x); }
+KDouble Kotlin_math_round(KDouble x) {
+#if KONAN_USE_BUILTIN_ROUNDEVEN
+    return __builtin_roundeven(x);
+#elif KONAN_USE_RUNTIME_SSE41_ROUNDEVEN
+    if (__builtin_cpu_supports("sse4.1")) {
+        return roundevenSse41(x);
+    }
+#endif
+    // If |x| >= 2^52, x is already integral or infinity. The condition is inverted to also be true on NaN.
+    // The check also guarantees that the cast of x to int64_t below is defined.
+    if (!(fabs(x) < 0x1p52)) {
+        if (__builtin_isnan(x)) {
+            // Arithmetic quiets signaling NaNs, preserving the rest of their payload, just like roundeven.
+            return x + x;
+        }
+        return x;
+    }
+
+    KDouble rounded = __builtin_trunc(x);
+    // The subtraction is exact according to https://en.wikipedia.org/wiki/Sterbenz_lemma.
+    KDouble fraction = fabs(x - rounded);
+    const bool isOdd = static_cast<int64_t>(rounded) % 2 != 0;
+
+    if (fraction > 0.5 || (fraction == 0.5 && isOdd)) {
+        // Also exact because of the initial range check: all integers are exactly representable.
+        rounded += copysign(1.0, x);
+    }
+
+    return copysign(rounded, x);
+}
 
 KDouble Kotlin_math_abs(KDouble x) { return fabs(x); }
 
@@ -221,7 +289,36 @@ KFloat Kotlin_math_ln1pf(KFloat x) { return log1pf(x); }
 
 KFloat Kotlin_math_ceilf(KFloat x) { return ceilf(x); }
 KFloat Kotlin_math_floorf(KFloat x) { return floorf(x); }
-KFloat Kotlin_math_roundf(KFloat x) { return rintf(x); }
+KFloat Kotlin_math_roundf(KFloat x) {
+#if KONAN_USE_BUILTIN_ROUNDEVEN
+    return __builtin_roundevenf(x);
+#elif KONAN_USE_RUNTIME_SSE41_ROUNDEVEN
+    if (__builtin_cpu_supports("sse4.1")) {
+        return roundevenfSse41(x);
+    }
+#endif
+    // If |x| >= 2^23, x is already integral or infinity. The condition is inverted to also be true on NaN.
+    // The check also guarantees that the cast of x to int32_t below is defined.
+    if (!(fabsf(x) < 0x1p23f)) {
+        if (__builtin_isnan(x)) {
+            // Arithmetic quiets signaling NaNs, preserving the rest of their payload, just like roundevenf.
+            return x + x;
+        }
+        return x;
+    }
+
+    KFloat rounded = __builtin_truncf(x);
+    // The subtraction is exact according to https://en.wikipedia.org/wiki/Sterbenz_lemma.
+    KFloat fraction = fabsf(x - rounded);
+    const bool isOdd = static_cast<int32_t>(rounded) % 2 != 0;
+
+    if (fraction > 0.5f || (fraction == 0.5f && isOdd)) {
+        // Also exact because of the initial range check: all integers are exactly representable.
+        rounded += copysignf(1.0f, x);
+    }
+
+    return copysignf(rounded, x);
+}
 
 KFloat Kotlin_math_absf(KFloat x) { return fabsf(x); }
 
