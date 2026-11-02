@@ -218,7 +218,16 @@ internal class ClassFieldsDeserializer(
                 ?: error("No signature for ${irClass.render()}")
         val serializedClassFields = classesFields[signature]
                 ?: error("No class fields for ${irClass.render()}, sig = ${signature.render()}")
-        val knownFields = irClass.fields.associateBy { it.name.asString() }
+        val knownFields = buildMap {
+            irClass.declarations.forEach {
+                when (it) {
+                    is IrField -> put(it.name.asString(), it)
+                    is IrProperty -> it.backingField?.let {
+                        put(it.name.asString(), it)
+                    }
+                }
+            }
+        }
 
         check(irClass.getPackageFragment() !is IrExternalPackageFragment) {
             "Unexpected external package fragment: ${irClass.render()}"
