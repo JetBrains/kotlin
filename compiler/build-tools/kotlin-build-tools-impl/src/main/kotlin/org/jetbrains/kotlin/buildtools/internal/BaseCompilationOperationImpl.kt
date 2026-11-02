@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.buildtools.internal
 
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Transient
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.reportPerformanceData
@@ -41,8 +40,17 @@ import java.io.Serializable
 import java.nio.file.Path
 
 @kotlinx.serialization.Serializable
-internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCompilerArgumentsImpl, CompilerArgs : CommonCompilerArguments>() :
-    CancellableBuildOperationImpl<CompilationResult>(), BaseCompilationOperation, BaseCompilationOperation.Builder {
+internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCompilerArgumentsImpl, CompilerArgs : CommonCompilerArguments> :
+    CancellableBuildOperationImpl<CompilationResult>, BaseCompilationOperation, BaseCompilationOperation.Builder {
+
+    protected constructor() : super()
+    protected constructor(other: BaseCompilationOperationImpl<BtaCompilerArgs, CompilerArgs>) : super(other) {
+        lookupTracker = other.lookupTracker
+        compilerArgumentsLogLevel = other.compilerArgumentsLogLevel
+        compilerMessageRenderer = other.compilerMessageRenderer
+        generateCompilerRefIndex = other.generateCompilerRefIndex
+        icEventCollector = other.icEventCollector
+    }
 
     abstract override val compilerArguments: BtaCompilerArgs
 
@@ -69,24 +77,19 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
     }
 
     @Transient
-    @SerialName("LOOKUP_TRACKER")
     var lookupTracker: CompilerLookupTracker? = null
         set(value) {
             hasLookupTracker = value != null
             field = value
         }
 
-    @SerialName("HAS_LOOKUP_TRACKER")
     private var hasLookupTracker: Boolean = false
 
-    @SerialName("COMPILER_ARGUMENTS_LOG_LEVEL")
     internal var compilerArgumentsLogLevel: CompilerArgumentsLogLevel = DEBUG
 
-    @SerialName("COMPILER_MESSAGE_RENDERER")
     @Transient
     override var compilerMessageRenderer: CompilerMessageRenderer = DefaultCompilerMessageRenderer
 
-    @SerialName("GENERATE_COMPILER_REF_INDEX")
     internal var generateCompilerRefIndex: Boolean = false
 
     var icEventCollector: IcEventCollector? = null
@@ -106,15 +109,6 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
     // In-process compilation and linking run a CLICompiler, which creates and uses the shared application environment.
     override val usesApplicationEnvironment: Boolean
         get() = true
-
-    internal fun copyFrom(from: BaseCompilationOperationImpl<BtaCompilerArgs, CompilerArgs>) {
-        super.copyFrom(from)
-        lookupTracker = from.lookupTracker
-        compilerArgumentsLogLevel = from.compilerArgumentsLogLevel
-        compilerMessageRenderer = from.compilerMessageRenderer
-        generateCompilerRefIndex = from.generateCompilerRefIndex
-        icEventCollector = from.icEventCollector
-    }
 
     @Suppress("UNCHECKED_CAST")
     @UseFromImplModuleRestricted

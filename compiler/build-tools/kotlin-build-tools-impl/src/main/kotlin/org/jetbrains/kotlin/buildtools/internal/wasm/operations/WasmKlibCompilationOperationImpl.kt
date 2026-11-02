@@ -44,28 +44,35 @@ import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistoryJs
 import org.jetbrains.kotlin.incremental.storage.FileLocations
 import java.nio.file.Path
 
-internal class WasmKlibCompilationOperationImpl private constructor(
-    override val options: Options = Options(WasmKlibCompilationOperation::class),
-    override val sources: List<Path>,
-    override val destination: Path,
-    override val compilerArguments: WasmArgumentsImpl = WasmArgumentsImpl(),
-    private val compilerVersion: String,
-) : BaseCompilationOperationImpl<WasmArgumentsImpl, KotlinWasmCompilerArguments>(),
+internal class WasmKlibCompilationOperationImpl : BaseCompilationOperationImpl<WasmArgumentsImpl, KotlinWasmCompilerArguments>,
     WasmKlibCompilationOperation, WasmKlibCompilationOperation.Builder,
     DeepCopyable<WasmKlibCompilationOperationImpl> {
+    override val options: Options
+    override val sources: List<Path>
+    override val destination: Path
+    override val compilerArguments: WasmArgumentsImpl
+    private val compilerVersion: String
+
     constructor(
         sources: List<Path>,
         destination: Path,
         compilerArguments: WasmArgumentsImpl = WasmArgumentsImpl(),
         compilerVersion: String,
-    ) : this(
-        options = Options(WasmKlibCompilationOperation::class),
-        sources = sources,
-        destination = destination,
-        compilerArguments = compilerArguments,
-        compilerVersion = compilerVersion,
-    ) {
+    ) : super() {
+        this.options = Options(WasmKlibCompilationOperation::class)
+        this.sources = sources
+        this.destination = destination
+        this.compilerArguments = compilerArguments
+        this.compilerVersion = compilerVersion
         initializeOptions(this::class, options)
+    }
+
+    private constructor(other: WasmKlibCompilationOperationImpl) : super(other) {
+        this.options = other.options.deepCopy()
+        this.sources = other.sources
+        this.destination = other.destination
+        this.compilerArguments = other.compilerArguments.deepCopy()
+        this.compilerVersion = other.compilerVersion
     }
 
     override fun historyBasedIcConfigurationBuilder(
@@ -79,15 +86,7 @@ internal class WasmKlibCompilationOperationImpl private constructor(
 
     override fun toBuilder(): WasmKlibCompilationOperation.Builder = deepCopy()
 
-    override fun deepCopy(): WasmKlibCompilationOperationImpl {
-        return WasmKlibCompilationOperationImpl(
-            options.deepCopy(),
-            sources,
-            destination,
-            compilerArguments.deepCopy(),
-            compilerVersion
-        ).also { it.copyFrom(this) }
-    }
+    override fun deepCopy(): WasmKlibCompilationOperationImpl = WasmKlibCompilationOperationImpl(this)
 
     @UseFromImplModuleRestricted
     override fun <V> get(key: WasmKlibCompilationOperation.Option<V>): V = options[key]
@@ -212,7 +211,7 @@ internal class WasmKlibCompilationOperationImpl private constructor(
         arguments: KotlinWasmCompilerArguments,
         logger: KotlinLogger,
         messageCollector: MessageCollectorWithDiagnosticId,
-        executionContext: ExecutionContext
+        executionContext: ExecutionContext,
     ): CompilationResult {
         val icConfiguration = get(INCREMENTAL_COMPILATION)
         requireNotNull(icConfiguration) { "Missing INCREMENTAL_COMPILATION option." }

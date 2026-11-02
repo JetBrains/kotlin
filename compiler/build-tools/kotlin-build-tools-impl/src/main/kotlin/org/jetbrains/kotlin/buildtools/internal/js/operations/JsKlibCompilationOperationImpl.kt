@@ -47,27 +47,34 @@ import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistoryJs
 import org.jetbrains.kotlin.incremental.storage.FileLocations
 import java.nio.file.Path
 
-internal class JsKlibCompilationOperationImpl private constructor(
-    override val options: Options = Options(JsKlibCompilationOperation::class),
-    override val sources: List<Path>,
-    override val destination: Path,
-    override val compilerArguments: JsArgumentsImpl = JsArgumentsImpl(),
-    private val compilerVersion: String,
-) : BaseCompilationOperationImpl<JsArgumentsImpl, K2JSCompilerArguments>(),
+internal class JsKlibCompilationOperationImpl : BaseCompilationOperationImpl<JsArgumentsImpl, K2JSCompilerArguments>,
     JsKlibCompilationOperation, JsKlibCompilationOperation.Builder,
     DeepCopyable<JsKlibCompilationOperationImpl> {
+    override val options: Options
+    override val sources: List<Path>
+    override val destination: Path
+    override val compilerArguments: JsArgumentsImpl
+    private val compilerVersion: String
+
+    private constructor(other: JsKlibCompilationOperationImpl) : super(other) {
+        options = other.options.deepCopy()
+        sources = other.sources.toList()
+        destination = other.destination
+        compilerArguments = other.compilerArguments.deepCopy()
+        compilerVersion = other.compilerVersion
+    }
+
     constructor(
         sources: List<Path>,
         destination: Path,
         compilerArguments: JsArgumentsImpl = JsArgumentsImpl(),
         compilerVersion: String,
-    ) : this(
-        options = Options(JsKlibCompilationOperation::class),
-        sources = sources,
-        destination = destination,
-        compilerArguments = compilerArguments,
-        compilerVersion = compilerVersion,
-    ) {
+    ) : super() {
+        this.options = Options(JsKlibCompilationOperation::class)
+        this.sources = sources
+        this.destination = destination
+        this.compilerArguments = compilerArguments
+        this.compilerVersion = compilerVersion
         initializeOptions(this::class, options)
     }
 
@@ -83,13 +90,7 @@ internal class JsKlibCompilationOperationImpl private constructor(
     override fun toBuilder(): JsKlibCompilationOperation.Builder = deepCopy()
 
     override fun deepCopy(): JsKlibCompilationOperationImpl {
-        return JsKlibCompilationOperationImpl(
-            options.deepCopy(),
-            sources,
-            destination,
-            compilerArguments.deepCopy(),
-            compilerVersion
-        ).also { it.copyFrom(this) }
+        return JsKlibCompilationOperationImpl(this)
     }
 
     @UseFromImplModuleRestricted

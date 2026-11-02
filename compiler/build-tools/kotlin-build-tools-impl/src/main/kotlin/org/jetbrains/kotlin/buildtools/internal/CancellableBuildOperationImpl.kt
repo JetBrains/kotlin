@@ -18,7 +18,10 @@ import kotlin.concurrent.atomics.incrementAndFetch
 
 @OptIn(ExperimentalAtomicApi::class)
 @Serializable
-internal abstract class CancellableBuildOperationImpl<R> : BuildOperationImpl<R>(), CancellableBuildOperation<R> {
+internal abstract class CancellableBuildOperationImpl<R> : BuildOperationImpl<R>, CancellableBuildOperation<R> {
+    protected constructor() : super()
+    protected constructor(other: CancellableBuildOperationImpl<R>) : super(other)
+
     @Transient
     private val isCancelled: AtomicBoolean = AtomicBoolean(false)
 

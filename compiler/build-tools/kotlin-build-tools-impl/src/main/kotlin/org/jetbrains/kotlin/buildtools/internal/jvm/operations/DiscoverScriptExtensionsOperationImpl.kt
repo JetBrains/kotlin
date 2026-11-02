@@ -16,13 +16,20 @@ import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionsFromClasspath
 import java.nio.file.Path
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 
-internal class DiscoverScriptExtensionsOperationImpl private constructor(
-    override val options: Options = Options(DiscoverScriptExtensionsOperation::class),
-    override val classpath: List<Path>,
-) : BuildOperationImpl<Collection<String>>(), DiscoverScriptExtensionsOperation, DiscoverScriptExtensionsOperation.Builder,
+internal class DiscoverScriptExtensionsOperationImpl : BuildOperationImpl<Collection<String>>, DiscoverScriptExtensionsOperation, DiscoverScriptExtensionsOperation.Builder,
     DeepCopyable<DiscoverScriptExtensionsOperation> {
 
-    constructor(classpath: List<Path>) : this(Options(DiscoverScriptExtensionsOperation::class), classpath) {
+    override val options: Options
+    override val classpath: List<Path>
+
+    private constructor(other: DiscoverScriptExtensionsOperationImpl) : super(other) {
+        options = other.options.deepCopy()
+        classpath = other.classpath.toList()
+    }
+
+    constructor(classpath: List<Path>) : super() {
+        this.options = Options(DiscoverScriptExtensionsOperation::class)
+        this.classpath = classpath
         initializeOptions(this::class, options)
     }
 
@@ -59,7 +66,7 @@ internal class DiscoverScriptExtensionsOperationImpl private constructor(
 
     override fun build(): DiscoverScriptExtensionsOperation = deepCopy()
 
-    override fun deepCopy(): DiscoverScriptExtensionsOperationImpl = DiscoverScriptExtensionsOperationImpl(options.deepCopy(), classpath).also { it.copyFrom(this) }
+    override fun deepCopy(): DiscoverScriptExtensionsOperationImpl = DiscoverScriptExtensionsOperationImpl(this)
 
     private operator fun <V> get(key: Option<V>): V = options[key]
 
