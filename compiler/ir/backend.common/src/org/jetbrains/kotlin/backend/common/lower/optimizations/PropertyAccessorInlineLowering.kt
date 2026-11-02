@@ -36,6 +36,8 @@ open class PropertyAccessorInlineLowering(
     open fun IrProperty.isSafeToInline(accessContainer: IrDeclaration): Boolean =
         isSafeToInlineInClosedWorld()
 
+    protected open fun isSimpleGetter(callee: IrSimpleFunction): Boolean = callee.isTrivialGetter
+
     // TODO: implement general function inlining optimization and replace it with
     private inner class AccessorInliner(val container: IrDeclaration) : IrElementTransformerVoid() {
 
@@ -108,7 +110,7 @@ open class PropertyAccessorInlineLowering(
         }
 
         private fun tryInlineSimpleGetter(call: IrCall, callee: IrSimpleFunction, backingField: IrField): IrExpression? {
-            if (!callee.isTrivialGetter) return null
+            if (!isSimpleGetter(callee)) return null
 
             val builder = context.createIrBuilder(call.symbol, call.startOffset, call.endOffset)
 
