@@ -17,4 +17,14 @@ fun topLevel(): String = <!UNRESOLVED_REFERENCE!>pip<!>()
 fun onInstance(f: Foo): String = f.<!UNRESOLVED_REFERENCE!>pip<!>()
 companion fun Other.inOtherExtension(): String = <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>pip<!>()
 
+open class HasCompanion {
+    companion object
+}
+companion fun HasCompanion.pop(): String = "pop"
+
+fun testHasCompanion() {
+    Other.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>pop<!>()
+    HasCompanion.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>pip<!>()
+}
+
 /* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, stringLiteral */

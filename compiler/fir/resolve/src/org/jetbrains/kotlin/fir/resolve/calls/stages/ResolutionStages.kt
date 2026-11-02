@@ -116,9 +116,9 @@ object CheckExtensionReceiver : ResolutionStage() {
 
         if (receiverClassSymbol != expectedReceiverType.toClassSymbol()) {
             sink.reportDiagnostic(
-                InapplicableWrongReceiver(
+                InapplicableCompanionExtensionReceiver(
                     expectedReceiverType,
-                    receiverClassSymbol.toLookupTag().constructClassType()
+                    receiverClassSymbol.defaultType()
                 )
             )
         }
@@ -238,7 +238,7 @@ object CheckDispatchReceiver : ResolutionStage() {
             }
             sink.yieldDiagnostic(InapplicableUnsafeReceiver(actualType))
         } else if (isCandidateFromUnstableSmartcast) {
-            sink.yieldDiagnostic(InapplicableWrongReceiver(actualType = dispatchReceiverValueType))
+            sink.yieldDiagnostic(InapplicableWrongReceiver())
         }
     }
 }

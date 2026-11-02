@@ -619,7 +619,8 @@ private fun ConeDiagnostic.mapOtherDiagnostic(
             // This diagnostic only fires when the extension receiver of `symbol` doesn't typecheck.
             // Observation: if the call site has both an explicit and an implicit receiver, it
             // must have necessarily been the explicit one that failed.
-            candidate.chosenExtensionReceiver?.expression?.resolvedType
+            (diagnostic as? InapplicableCompanionExtensionReceiver)?.actualType
+                ?: candidate.chosenExtensionReceiver?.expression?.resolvedType
                 ?: candidate.dispatchReceiver?.expression?.resolvedType
                 ?: error("Receiver missing in ConeInapplicableWrongReceiver"),
             session,

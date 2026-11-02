@@ -313,7 +313,7 @@ internal object ArgumentCheckingProcessor {
         when {
             isReceiver && isDispatch -> {
                 if (!expectedType.isMarkedOrFlexiblyNullable && argumentType.isMarkedNullable) {
-                    reportDiagnostic(InapplicableWrongReceiver(expectedType, argumentType))
+                    reportDiagnostic(InapplicableWrongReceiver())
                 }
             }
 
@@ -359,7 +359,7 @@ internal object ArgumentCheckingProcessor {
                     reportDiagnostic(InapplicableUnsafeReceiver(actualType))
                 } else {
                     csBuilder.addSubtypeConstraint(argumentType, expectedType, position)
-                    reportDiagnostic(InapplicableWrongReceiver(expectedType, argumentType))
+                    reportDiagnostic(InapplicableWrongReceiver())
                 }
             }
         }
