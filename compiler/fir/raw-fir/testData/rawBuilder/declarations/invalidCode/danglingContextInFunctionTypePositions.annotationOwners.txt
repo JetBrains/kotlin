@@ -141,10 +141,10 @@ context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySym
 context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /TypeAfterList.nullableType
 
 @Anno()
-owner -> FirRegularPropertySymbol /Parenthesized.parenthesized
-context -> FirRegularPropertySymbol /Parenthesized.parenthesized
-context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /Parenthesized.parenthesized
-context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /Parenthesized.parenthesized
+owner -> FirRegularPropertySymbol /NullableAndParenthesized.parenthesized
+context -> FirRegularPropertySymbol /NullableAndParenthesized.parenthesized
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /NullableAndParenthesized.parenthesized
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /NullableAndParenthesized.parenthesized
 
 @Anno()
 owner -> FirRegularPropertySymbol /Nested.typeArgument
