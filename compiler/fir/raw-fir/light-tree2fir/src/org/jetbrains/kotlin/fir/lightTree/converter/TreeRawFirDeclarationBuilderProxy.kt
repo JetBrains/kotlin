@@ -125,6 +125,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.ConeTypeProjection
+import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -2709,18 +2710,14 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
                 source = typeRefSource
                 diagnostic = ConeSyntaxDiagnostic("Incomplete code")
             }
-            else -> buildErrorTypeRef {
-                source = typeRefSource
-                diagnostic = ConeSyntaxDiagnostic("Incomplete code")
-                partiallyResolvedTypeRef = buildFunctionTypeRef {
-                    source = typeRefSource.fakeElement(KtFakeSourceElementKind.IncompleteFunctionType)
-                    isMarkedNullable = false
-                    isSuspend = allTypeModifiers.any { it.hasSuspend() }
-                    receiverTypeRef = danglingFunctionTypeReceiver?.let(::convertReceiverType)
-                    returnTypeRef = firType ?: buildErrorTypeRef { diagnostic = ConeSyntaxDiagnostic("Incomplete code") }
-                    contextParameterList.convertContextParameterTypesTo(contextParameterTypeRefs)
-                }
-            }
+            else -> buildIncompleteFunctionType(
+                typeRefSource,
+                contextParameterList,
+                danglingFunctionTypeReceiver,
+                firType,
+                allTypeModifiers,
+                isNullable = false,
+            )
         }
 
         for (modifierList in allTypeModifiers) {
@@ -2791,24 +2788,63 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
         isNullable: Boolean = true
     ): FirTypeRef {
         var firType: FirTypeRef? = null
+        // `(context(A) B)?` is the same as `context(A) B` (see `convertType`), but the list is under the nullable type
+        var danglingContextParameterList: Node? = null
+        var danglingFunctionTypeReceiver: Node? = null
+        fun Node.innerTypeSource(): KtSourceElement = if (danglingContextParameterList != null) toFirSourceElement() else typeRefSource
+        fun isInnerTypeNullable(): Boolean = danglingContextParameterList == null && isNullable
+
         nullableType.forEachChildren {
             when (it.toTokenId()) {
                 KotlinSyntaxNodeTypeIds.MODIFIER_LIST -> allTypeModifiers += convertModifierList(it)
-                KotlinSyntaxNodeTypeIds.USER_TYPE -> firType = convertUserType(typeRefSource, it, isNullable)
-                KotlinSyntaxNodeTypeIds.FUNCTION_TYPE -> firType = convertFunctionType(typeRefSource, it, allTypeModifiers, isNullable)
-                KotlinSyntaxNodeTypeIds.NULLABLE_TYPE -> firType = convertNullableType(typeRefSource, it, allTypeModifiers)
+                KotlinSyntaxNodeTypeIds.USER_TYPE -> firType = convertUserType(it.innerTypeSource(), it, isInnerTypeNullable())
+                KotlinSyntaxNodeTypeIds.FUNCTION_TYPE -> firType =
+                    convertFunctionType(it.innerTypeSource(), it, allTypeModifiers, isInnerTypeNullable())
+                KotlinSyntaxNodeTypeIds.NULLABLE_TYPE -> firType = convertNullableType(it.innerTypeSource(), it, allTypeModifiers)
                 KotlinSyntaxNodeTypeIds.DYNAMIC_TYPE -> firType = buildDynamicTypeRef {
-                    source = typeRefSource
-                    isMarkedNullable = true
+                    source = it.innerTypeSource()
+                    isMarkedNullable = isInnerTypeNullable()
                 }
-                KotlinSyntaxNodeTypeIds.INTERSECTION_TYPE -> firType = convertIntersectionType(typeRefSource, it, isNullable)
-                KotlinSyntaxNodeTypeIds.UNION_TYPE -> firType = convertUnionType(typeRefSource, it, isNullable)
+                KotlinSyntaxNodeTypeIds.INTERSECTION_TYPE -> firType = convertIntersectionType(it.innerTypeSource(), it, isInnerTypeNullable())
+                KotlinSyntaxNodeTypeIds.UNION_TYPE -> firType = convertUnionType(it.innerTypeSource(), it, isInnerTypeNullable())
+                KotlinSyntaxNodeTypeIds.CONTEXT_PARAMETER_LIST -> danglingContextParameterList = it
+                KotlinSyntaxNodeTypeIds.FUNCTION_TYPE_RECEIVER -> danglingFunctionTypeReceiver = it
             }
         }
 
-        return firType ?: buildErrorTypeRef {
-            source = typeRefSource
-            diagnostic = ConeSyntaxDiagnostic("Incomplete code")
+        return when (val contextParameterList = danglingContextParameterList) {
+            null -> firType ?: buildErrorTypeRef {
+                source = typeRefSource
+                diagnostic = ConeSyntaxDiagnostic("Incomplete code")
+            }
+            else -> buildIncompleteFunctionType(
+                typeRefSource,
+                contextParameterList,
+                danglingFunctionTypeReceiver,
+                firType,
+                allTypeModifiers,
+                isNullable = true,
+            )
+        }
+    }
+
+    private fun buildIncompleteFunctionType(
+        typeRefSource: KtSourceElement,
+        contextParameterList: Node,
+        receiver: Node?,
+        returnTypeRef: FirTypeRef?,
+        allTypeModifiers: List<ModifierList<Node>>,
+        isNullable: Boolean,
+    ): FirErrorTypeRef = buildErrorTypeRef {
+        source = typeRefSource
+        diagnostic = ConeSyntaxDiagnostic("Incomplete code")
+        partiallyResolvedTypeRef = buildFunctionTypeRef {
+            source = typeRefSource.fakeElement(KtFakeSourceElementKind.IncompleteFunctionType)
+            isMarkedNullable = isNullable
+            isSuspend = allTypeModifiers.any { it.hasSuspend() }
+            receiverTypeRef = receiver?.let(::convertReceiverType)
+            this.returnTypeRef = returnTypeRef ?: buildErrorTypeRef { diagnostic = ConeSyntaxDiagnostic("Incomplete code") }
+            contextParameterList.convertContextParameterTypesTo(contextParameterTypeRefs)
         }
     }
 
