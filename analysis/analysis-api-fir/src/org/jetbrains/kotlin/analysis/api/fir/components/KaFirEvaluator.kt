@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.psi.KtExpression
 
 internal class KaFirEvaluator(
     override val analysisSessionProvider: () -> KaFirSession
-) : KaBaseSessionComponent<KaFirSession>(), KaInternalsEvaluator, KaFirSessionComponent {
+) : KaFirSessionComponent(), KaInternalsEvaluator {
     override fun evaluate(expression: KtExpression): KaConstantValue? = expression.withPsiValidityAssertion {
         return evaluateFir(expression.getOrBuildFir(resolutionFacade), expression)
     }

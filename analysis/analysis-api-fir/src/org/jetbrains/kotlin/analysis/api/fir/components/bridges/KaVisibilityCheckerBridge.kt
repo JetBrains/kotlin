@@ -9,7 +9,8 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaUseSiteVisibilityChecker
 import org.jetbrains.kotlin.analysis.api.components.KaVisibilityChecker
-import org.jetbrains.kotlin.analysis.api.fir.components.KaBaseSessionComponent
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.components.KaFirSessionComponent
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
@@ -24,8 +25,8 @@ import org.jetbrains.kotlin.analysis.api.visibility.isVisibleInClass as isVisibl
  * reach the [org.jetbrains.kotlin.analysis.api.internals.KaInternalsVisibilityChecker] proxy.
  */
 internal class KaVisibilityCheckerBridge(
-    override val analysisSessionProvider: () -> KaSession,
-) : KaBaseSessionComponent<KaSession>(), KaVisibilityChecker {
+    override val analysisSessionProvider: () -> KaFirSession,
+) : KaFirSessionComponent(), KaVisibilityChecker {
     override fun createUseSiteVisibilityChecker(
         useSiteFile: KaFileSymbol,
         receiverExpression: KtExpression?,

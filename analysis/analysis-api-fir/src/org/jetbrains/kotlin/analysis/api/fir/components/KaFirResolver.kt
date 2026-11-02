@@ -97,7 +97,7 @@ import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 internal class KaFirResolver(
     override val analysisSessionProvider: () -> KaFirSession,
-) : KaBaseSessionComponent<KaFirSession>(), KaInternalsResolver, KaFirSessionComponent {
+) : KaFirSessionComponent(), KaInternalsResolver {
     override fun tryResolveSymbols(resolvable: KtResolvable): KaSymbolResolutionAttempt? = withValidityAssertion {
         when (resolvable) {
             is KtOperationReferenceExpression -> resolvable.tryResolveSymbolsForOperationReference()

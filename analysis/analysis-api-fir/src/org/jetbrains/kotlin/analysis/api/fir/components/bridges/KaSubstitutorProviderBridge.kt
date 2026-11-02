@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components.bridges
 
-import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaSubstitutorProvider
 import org.jetbrains.kotlin.analysis.api.components.KaUnificationSubstitutorPolicy
-import org.jetbrains.kotlin.analysis.api.fir.components.KaBaseSessionComponent
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.components.KaFirSessionComponent
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
@@ -19,8 +19,8 @@ import org.jetbrains.kotlin.analysis.api.types.createSubstitutor as createSubsti
 import org.jetbrains.kotlin.analysis.api.types.createSubtypingUnificationSubstitutor as createSubtypingUnificationSubstitutorEndpoint
 
 internal class KaSubstitutorProviderBridge(
-    override val analysisSessionProvider: () -> KaSession,
-) : KaBaseSessionComponent<KaSession>(), KaSubstitutorProvider {
+    override val analysisSessionProvider: () -> KaFirSession,
+) : KaFirSessionComponent(), KaSubstitutorProvider {
     override fun createSubstitutor(mappings: Map<KaTypeParameterSymbol, KaType>): KaSubstitutor =
         context(analysisSession) { createSubstitutorEndpoint(mappings) }
 

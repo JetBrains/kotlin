@@ -80,7 +80,7 @@ import org.jetbrains.kotlin.analysis.api.fir.components.isSubClassOf as computeI
 
 internal class KaFirSymbolRelationProvider(
     override val analysisSessionProvider: () -> KaFirSession,
-) : KaBaseSessionComponent<KaFirSession>(), KaInternalsSymbolRelationProvider, KaFirSessionComponent {
+) : KaFirSessionComponent(), KaInternalsSymbolRelationProvider {
     override fun containingSymbol(symbol: KaSymbol): KaSymbol? = withValidityAssertion {
         when (symbol) {
             is KaPackageSymbol -> null

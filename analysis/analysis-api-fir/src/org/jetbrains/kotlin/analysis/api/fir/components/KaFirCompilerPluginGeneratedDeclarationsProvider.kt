@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.name.Name
 
 internal class KaFirCompilerPluginGeneratedDeclarationsProvider(
     override val analysisSessionProvider: () -> KaFirSession,
-) : KaBaseSessionComponent<KaFirSession>(), KaInternalsCompilerPluginGeneratedDeclarationsProvider {
+) : KaFirSessionComponent(), KaInternalsCompilerPluginGeneratedDeclarationsProvider {
     override fun compilerPluginGeneratedDeclarations(module: KaModule): KaCompilerPluginGeneratedDeclarations =
         withValidityAssertion {
             val firSessionForModule = analysisSession.resolutionFacade.sessionProvider.getSession(module)

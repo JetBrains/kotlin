@@ -80,10 +80,9 @@ private val allowIllegalPsiAccess = ThreadLocal.withInitial { false }
 /**
  * **Important**: this function has to be guarded by [withValidityAssertion]
  */
-@KaImplementationDetail
-context(component: KaBaseSessionComponent<S>)
-fun <S : KaSession> PsiElement.checkValidity() {
-    val session = component.analysisSession
+context(component: KaFirSessionComponent)
+internal fun PsiElement.checkValidity() {
+    val session: KaSession = component.analysisSession
     val canBeAnalyzed = if (session is KaInternals) {
         session.analysisScopeProvider.canBeAnalysedImpl(this)
     } else {
@@ -99,24 +98,21 @@ fun <S : KaSession> PsiElement.checkValidity() {
     }
 }
 
-@KaImplementationDetail
-context(component: KaBaseSessionComponent<S>)
 @JvmName("withPsiValidityAssertionAsReceiver")
-inline fun <S : KaSession, R> PsiElement?.withPsiValidityAssertion(builder: () -> R): R = component.withValidityAssertion {
+context(component: KaFirSessionComponent)
+internal inline fun <R> PsiElement?.withPsiValidityAssertion(builder: () -> R): R = component.withValidityAssertion {
     this?.checkValidity()
     builder()
 }
 
-@KaImplementationDetail
-context(component: KaBaseSessionComponent<S>)
-inline fun <S : KaSession, R> withPsiValidityAssertion(
+context(component: KaFirSessionComponent)
+internal inline fun <R> withPsiValidityAssertion(
     element: PsiElement?,
     builder: () -> R,
 ): R = element.withPsiValidityAssertion(builder)
 
-@KaImplementationDetail
-context(component: KaBaseSessionComponent<S>)
-inline fun <S : KaSession, R> withPsiValidityAssertion(
+context(component: KaFirSessionComponent)
+internal inline fun <R> withPsiValidityAssertion(
     vararg elements: PsiElement?,
     builder: () -> R,
 ): R = component.withValidityAssertion {
@@ -127,9 +123,8 @@ inline fun <S : KaSession, R> withPsiValidityAssertion(
     builder()
 }
 
-@KaImplementationDetail
-context(component: KaBaseSessionComponent<S>)
-inline fun <S : KaSession, R> withPsiValidityAssertion(
+context(component: KaFirSessionComponent)
+internal inline fun <R> withPsiValidityAssertion(
     elements: Iterable<PsiElement?>,
     builder: () -> R,
 ): R = component.withValidityAssertion {

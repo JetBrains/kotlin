@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 
 internal class KaFirTypeRelationChecker(
     override val analysisSessionProvider: () -> KaFirSession
-) : KaBaseSessionComponent<KaFirSession>(), KaInternalsTypeRelationChecker, KaFirSessionComponent {
+) : KaFirSessionComponent(), KaInternalsTypeRelationChecker {
     override fun semanticallyEquals(
         type: KaType,
         other: KaType,

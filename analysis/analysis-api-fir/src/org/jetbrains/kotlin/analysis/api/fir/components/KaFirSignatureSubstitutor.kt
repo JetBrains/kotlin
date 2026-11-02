@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 
 internal class KaFirSignatureSubstitutor(
     override val analysisSessionProvider: () -> KaFirSession
-) : KaBaseSessionComponent<KaFirSession>(), KaInternalsSignatureSubstitutor, KaFirSessionComponent {
+) : KaFirSessionComponent(), KaInternalsSignatureSubstitutor {
     override fun <S : KaFunctionSymbol> substitute(
         symbol: S,
         substitutor: KaSubstitutor,

@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.utils.filterToSetOrEmpty
 
 internal class KaFirSubstitutorProvider(
     override val analysisSessionProvider: () -> KaFirSession
-) : KaBaseSessionComponent<KaFirSession>(), KaInternalsSubstitutorProvider, KaFirSessionComponent {
+) : KaFirSessionComponent(), KaInternalsSubstitutorProvider {
     override fun createInheritanceTypeSubstitutor(subClass: KaClassSymbol, superClass: KaClassSymbol): KaSubstitutor? {
         withValidityAssertion {
             if (subClass == superClass) {

@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.analysis.api.components.KaDeprecationLevel
 import org.jetbrains.kotlin.analysis.api.components.KaReturnValueStatus
 import org.jetbrains.kotlin.analysis.api.components.KaSymbolInformationProvider
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.fir.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.fir.components.KaFirSessionComponent
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.name.FqName
@@ -36,7 +35,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.returnValueStatus as returnValu
  */
 internal class KaSymbolInformationProviderBridge(
     override val analysisSessionProvider: () -> KaFirSession,
-) : KaBaseSessionComponent<KaFirSession>(), KaSymbolInformationProvider, KaFirSessionComponent {
+) : KaFirSessionComponent(), KaSymbolInformationProvider {
     override val KaSymbol.deprecation: KaDeprecation?
         get() = context(analysisSession) { deprecationEndpoint?.toLegacyDeprecation() }
 
