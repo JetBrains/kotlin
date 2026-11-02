@@ -35,59 +35,6 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.Variance
 
-abstract class IrAbstractFunctionFactory {
-    open fun functionClassSignature(arity: Int): IdSignature? = null
-    open fun kFunctionClassSignature(arity: Int): IdSignature? = null
-    open fun suspendFunctionClassSignature(arity: Int): IdSignature? = null
-    open fun kSuspendFunctionClassSignature(arity: Int): IdSignature? = null
-
-    abstract fun functionN(arity: Int, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass
-    abstract fun kFunctionN(arity: Int, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass
-    abstract fun suspendFunctionN(arity: Int, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass
-    abstract fun kSuspendFunctionN(arity: Int, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass
-
-    private fun SymbolTable.declare(
-        signature: IdSignature?,
-        callback: (IrClassSymbol) -> IrClass,
-    ): IrClass = when {
-        signature != null -> {
-            declareClass(signature, { IrClassSymbolImpl(descriptor = null, signature) }) { symbol ->
-                callback(symbol)
-            }
-        }
-        else -> error("No descriptor or signature was provided")
-    }
-
-    fun functionN(n: Int) = functionN(n) { callback ->
-        val signature = functionClassSignature(n)
-        declare(signature, callback)
-    }
-
-    fun kFunctionN(n: Int): IrClass = kFunctionN(n) { callback ->
-        val signature = kFunctionClassSignature(n)
-        declare(signature, callback)
-    }
-
-    fun suspendFunctionN(n: Int): IrClass = suspendFunctionN(n) { callback ->
-        val signature = suspendFunctionClassSignature(n)
-        declare(signature, callback)
-    }
-
-    fun kSuspendFunctionN(n: Int): IrClass = kSuspendFunctionN(n) { callback ->
-        val signature = kSuspendFunctionClassSignature(n)
-        declare(signature, callback)
-    }
-
-    companion object {
-        val classOrigin = IrDeclarationOriginImpl("FUNCTION_INTERFACE_CLASS")
-        val memberOrigin = IrDeclarationOrigin.FUNCTION_INTERFACE_MEMBER
-        internal const val offset = SYNTHETIC_OFFSET
-
-        internal fun functionClassName(isK: Boolean, isSuspend: Boolean, arity: Int): String =
-            "${if (isK) "K" else ""}${if (isSuspend) "Suspend" else ""}Function$arity"
-    }
-}
-
 private var IrFile.isSyntheticForFunctionInterfaceFile: Boolean? by irAttribute(copyByDefault = true)
 
 class IrBasedFunctionFactory(
@@ -98,13 +45,19 @@ class IrBasedFunctionFactory(
     private val symbolTable: SymbolTable,
     private val signatureComputer: (IrDeclaration) -> IdSignature,
     private val onCreateNewClass: (IrClass, IdSignature) -> Unit,
-) : IrAbstractFunctionFactory() {
+) {
     companion object {
+        val classOrigin = IrDeclarationOriginImpl("FUNCTION_INTERFACE_CLASS")
+        val memberOrigin = IrDeclarationOrigin.FUNCTION_INTERFACE_MEMBER
+        internal const val offset = SYNTHETIC_OFFSET
         private const val FUNCTION_TYPE_INTERFACE_DIR = "function-type-interface"
         private const val FUNCTION_TYPE_INTERFACE_FILE = "[K][Suspend]Functions"
 
         val IrPackageFragment.isFunctionInterfaceFile: Boolean
             get() = this is IrFile && this.isSyntheticForFunctionInterfaceFile == true
+
+        internal fun functionClassName(isK: Boolean, isSuspend: Boolean, arity: Int): String =
+            "${if (isK) "K" else ""}${if (isSuspend) "Suspend" else ""}Function$arity"
     }
 
     public var typeSystem: IrTypeSystemContext? = null
@@ -145,19 +98,51 @@ class IrBasedFunctionFactory(
 
     private val irFactory: IrFactory get() = symbolTable.irFactory
 
-    override fun functionClassSignature(arity: Int): IdSignature {
+    private fun SymbolTable.declare(
+        signature: IdSignature?,
+        callback: (IrClassSymbol) -> IrClass,
+    ): IrClass = when {
+        signature != null -> {
+            declareClass(signature, { IrClassSymbolImpl(descriptor = null, signature) }) { symbol ->
+                callback(symbol)
+            }
+        }
+        else -> error("No descriptor or signature was provided")
+    }
+
+    fun functionN(n: Int) = functionN(n) { callback ->
+        val signature = functionClassSignature(n)
+        declare(signature, callback)
+    }
+
+    fun kFunctionN(n: Int): IrClass = kFunctionN(n) { callback ->
+        val signature = kFunctionClassSignature(n)
+        declare(signature, callback)
+    }
+
+    fun suspendFunctionN(n: Int): IrClass = suspendFunctionN(n) { callback ->
+        val signature = suspendFunctionClassSignature(n)
+        declare(signature, callback)
+    }
+
+    fun kSuspendFunctionN(n: Int): IrClass = kSuspendFunctionN(n) { callback ->
+        val signature = kSuspendFunctionClassSignature(n)
+        declare(signature, callback)
+    }
+
+    private fun functionClassSignature(arity: Int): IdSignature {
         return StandardClassIds.FunctionN(arity).toSignature()
     }
 
-    override fun suspendFunctionClassSignature(arity: Int): IdSignature {
+    private fun suspendFunctionClassSignature(arity: Int): IdSignature {
         return StandardClassIds.SuspendFunctionN(arity).toSignature()
     }
 
-    override fun kFunctionClassSignature(arity: Int): IdSignature {
+    private fun kFunctionClassSignature(arity: Int): IdSignature {
         return StandardClassIds.KFunctionN(arity).toSignature()
     }
 
-    override fun kSuspendFunctionClassSignature(arity: Int): IdSignature {
+    private fun kSuspendFunctionClassSignature(arity: Int): IdSignature {
         return StandardClassIds.KSuspendFunctionN(arity).toSignature()
     }
 
@@ -171,7 +156,7 @@ class IrBasedFunctionFactory(
         )
     }
 
-    override fun functionN(arity: Int, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass {
+    private fun functionN(arity: Int, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass {
         return functionNMap.getOrPut(arity) {
             symbolTable.declarator { symbol ->
                 createFunctionClass(symbol, isK = false, isSuspend = false, arity, listOf(functionClass), kotlinPackageFragment)
@@ -179,7 +164,7 @@ class IrBasedFunctionFactory(
         }
     }
 
-    override fun suspendFunctionN(arity: Int, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass {
+    private fun suspendFunctionN(arity: Int, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass {
         return suspendFunctionNMap.getOrPut(arity) {
             symbolTable.declarator { symbol ->
                 createFunctionClass(symbol, isK = false, isSuspend = true, arity, listOf(functionClass), kotlinCoroutinesPackageFragment)
@@ -187,7 +172,7 @@ class IrBasedFunctionFactory(
         }
     }
 
-    override fun kFunctionN(arity: Int, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass {
+    private fun kFunctionN(arity: Int, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass {
         val functionNClass = functionN(arity).symbol
         return kFunctionNMap.getOrPut(arity) {
             symbolTable.declarator { symbol ->
@@ -196,7 +181,7 @@ class IrBasedFunctionFactory(
         }
     }
 
-    override fun kSuspendFunctionN(arity: Int, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass {
+    private fun kSuspendFunctionN(arity: Int, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass {
         val functionNClass = suspendFunctionN(arity).symbol
         return kSuspendFunctionNMap.getOrPut(arity) {
             symbolTable.declarator { symbol ->
