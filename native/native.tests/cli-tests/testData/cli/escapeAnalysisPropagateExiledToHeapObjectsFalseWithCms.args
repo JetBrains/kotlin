@@ -1,0 +1,6 @@
+$TESTDATA_DIR$/simple.kt
+-opt
+-Xbinary=gc=cms
+-Xbinary=escapeAnalysisPropagateExiledToHeapObjects=false
+-o
+$TEMP_DIR$/simple
