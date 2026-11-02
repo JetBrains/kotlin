@@ -36,6 +36,7 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.fail
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
@@ -330,18 +331,23 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
         }
         assertEquals(3, moduleNameToLibraryPath.size)
 
-        val libraries = loadLibraries(stdlib = false, others = moduleNameToLibraryPath.values)
+        // Note: The load order matters, as the cycle is reported starting from the first library in the load order.
+        val libraries = loadLibraries(stdlib = false, others = listOf("A", "B", "C").map(moduleNameToLibraryPath::getValue))
 
-        val dag = KlibDAGBuilder(buildParams(libraries)).build()
-        val anyLibraryNode: KlibDAGNode = dag[dag.librariesReverseTopoSorted.first()]
-        anyLibraryNode.directDependencies // that should be successful
-
-        try {
-            anyLibraryNode.allDependencies // that should fail
-            fail("DAG dependencies should have failed because of the cycle")
-        } catch (_: KlibDAGCyclicDependencyException) {
-            // OK
+        val exception = assertThrows<KlibDAGCyclicDependencyException> {
+            KlibDAGBuilder(buildParams(libraries)).build()
         }
+
+        // A depends on C, C depends on B, B depends on A.
+        val expectedMessage = """
+            Cyclic dependency detected while computing DAG of KLIB dependencies:
+            ${moduleNameToLibraryPath["A"]} ->
+            ${moduleNameToLibraryPath["C"]} ->
+            ${moduleNameToLibraryPath["B"]} ->
+            ${moduleNameToLibraryPath["A"]}
+        """.trimIndent()
+
+        assertEquals(expectedMessage, exception.message)
     }
 
     @Test

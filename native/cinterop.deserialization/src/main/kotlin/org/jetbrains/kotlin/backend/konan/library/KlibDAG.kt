@@ -23,8 +23,6 @@ import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.packageFqName
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.storage.LockBasedStorageManager
-import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 import java.nio.file.Path
 import java.util.PriorityQueue
@@ -79,58 +77,10 @@ class KlibDAG internal constructor(private val dag: Map<KotlinLibrary, KlibDAGNo
      * an intermediate klib is being produced with a random name and path somewhere in a temporary directory.
      * - Sort by the `LoadedNativeKlibs.all` order. This gives us a stable order for a given compilation configuration.
      * So, `LoadedNativeKlibs.all` was chosen as the second-best alternative to `depends`.
+     *
+     * Note: Computed eagerly, because the sorting also serves as the check that there are no cycles in the DAG.
      */
-    val librariesReverseTopoSorted: List<KotlinLibrary> by lazy {
-        // Kahn's algorithm is used rather than a DFS because a DFS takes its *neighbour* order as part of
-        // the output order, and `KlibDAGNode.directDependencies` is an unordered `HashSet`. Even if it was
-        // a `LinkedHashSet` its order would be tied to the order we discover IR links between modules, which
-        // itself isn't stable. So a DFS would place sibling libraries in the result in an unstable order.
-        // Probably reproducible for a fixed command line, but perturbed by adding, removing or moving a library
-        // that nothing depends on.
-        //
-        // NB! this relies on `dag` preserving insertion order.
-
-        val librariesInLoadOrder = ArrayList<KotlinLibrary>(dag.size) // Resolves a [LibraryIndex] back to a library.
-        // The number of dependencies each library is still waiting for, indexed by [LibraryIndex].
-        val pendingDependencies = IntArray(dag.size)
-        // Reverse edges. A dependent is appended in load order, and only the size of `directDependencies` feeds
-        // the counter — so that HashSet's order cannot reach the output.
-        val dependents = HashMap<KotlinLibrary, MutableList<LibraryIndex>>(2 * dag.size) // Reverse edges
-        // Of the libraries that are ready to be emitted, always take the one that comes first in load order.
-        val ready = PriorityQueue<LibraryIndex>()
-
-        dag.entries.forEachIndexed { index, entry ->
-            val dependencies = entry.value.directDependencies
-
-            librariesInLoadOrder += entry.key // Appended at `index`, so that is the [LibraryIndex] used below.
-            pendingDependencies[index] = dependencies.size
-            // Nothing has been emitted yet, so a library is ready exactly when it has no dependencies at all.
-            if (dependencies.isEmpty()) ready += index
-
-            for (dependency in dependencies) {
-                dependents.getOrPut(dependency) { ArrayList() } += index
-            }
-        }
-
-        val emitted = ArrayList<KotlinLibrary>(dag.size)
-        while (ready.isNotEmpty()) {
-            val next = librariesInLoadOrder[ready.poll()]
-            emitted += next
-
-            for (dependent in dependents[next].orEmpty()) {
-                pendingDependencies[dependent] -= 1
-                if (pendingDependencies[dependent] == 0) ready += dependent
-            }
-        }
-
-        if (emitted.size != dag.size) {
-            // Unreachable in an acyclic graph: anything left is part of a cycle, or depends on one, and so
-            // never became ready.
-            librariesInLoadOrder.filterIndexedTo(emitted) { index, _ -> pendingDependencies[index] != 0 }
-        }
-
-        emitted
-    }
+    val librariesReverseTopoSorted: List<KotlinLibrary> = reverseTopoSortCheckingNoCycles(dag)
 
     /**
      * A (library -> it's serial index in [librariesReverseTopoSorted]) mapping.
@@ -149,6 +99,87 @@ class KlibDAG internal constructor(private val dag: Map<KotlinLibrary, KlibDAGNo
      * Serialize this DAG to [SerializedKlibDAG].
      */
     fun serialize(): SerializedKlibDAG = serializedDag
+
+    companion object {
+        /**
+         * Compute [librariesReverseTopoSorted]. Throws [KlibDAGCyclicDependencyException] if there is a cycle in the DAG.
+         */
+        private fun reverseTopoSortCheckingNoCycles(dag: Map<KotlinLibrary, KlibDAGNode>): List<KotlinLibrary> {
+            // Kahn's algorithm is used rather than a DFS because a DFS takes its *neighbour* order as part of
+            // the output order, and `KlibDAGNode.directDependencies` is an unordered `HashSet`. Even if it was
+            // a `LinkedHashSet` its order would be tied to the order we discover IR links between modules, which
+            // itself isn't stable. So a DFS would place sibling libraries in the result in an unstable order.
+            // Probably reproducible for a fixed command line, but perturbed by adding, removing or moving a library
+            // that nothing depends on.
+            //
+            // NB! this relies on `dag` preserving insertion order.
+
+            val librariesInLoadOrder = ArrayList<KotlinLibrary>(dag.size) // Resolves a [LibraryIndex] back to a library.
+            // The number of dependencies each library is still waiting for, indexed by [LibraryIndex].
+            val pendingDependencies = IntArray(dag.size)
+            // Reverse edges. A dependent is appended in load order, and only the size of `directDependencies` feeds
+            // the counter — so that HashSet's order cannot reach the output.
+            val dependents = HashMap<KotlinLibrary, MutableList<LibraryIndex>>(2 * dag.size) // Reverse edges
+            // Of the libraries that are ready to be emitted, always take the one that comes first in load order.
+            val ready = PriorityQueue<LibraryIndex>()
+
+            dag.entries.forEachIndexed { index, entry ->
+                val dependencies = entry.value.directDependencies
+
+                librariesInLoadOrder += entry.key // Appended at `index`, so that is the [LibraryIndex] used below.
+                pendingDependencies[index] = dependencies.size
+                // Nothing has been emitted yet, so a library is ready exactly when it has no dependencies at all.
+                if (dependencies.isEmpty()) ready += index
+
+                for (dependency in dependencies) {
+                    dependents.getOrPut(dependency) { ArrayList() } += index
+                }
+            }
+
+            val emitted = ArrayList<KotlinLibrary>(dag.size)
+            while (ready.isNotEmpty()) {
+                val next = librariesInLoadOrder[ready.poll()]
+                emitted += next
+
+                for (dependent in dependents[next].orEmpty()) {
+                    pendingDependencies[dependent] -= 1
+                    if (pendingDependencies[dependent] == 0) ready += dependent
+                }
+            }
+
+            if (emitted.size != dag.size) {
+                // Anything left is part of a cycle, or depends on one, and so never became ready.
+                val notEmitted = librariesInLoadOrder.filterIndexedTo(linkedSetOf()) { index, _ -> pendingDependencies[index] != 0 }
+                throwCyclicDependencyException(dag, notEmitted)
+            }
+
+            return emitted
+        }
+
+        /**
+         * Find a cycle in the DAG and throw [KlibDAGCyclicDependencyException] with all libraries forming the cycle.
+         *
+         * [notEmitted] are the libraries left over by Kahn's algorithm in [reverseTopoSortCheckingNoCycles].
+         * Each of them has at least one dependency that is also in [notEmitted] (otherwise it would have been emitted).
+         * So, walking from any of them to any of such dependencies never gets stuck, and since the number of libraries
+         * is finite, the walk eventually comes back to an already visited library. Everything on the walked path
+         * starting from that library forms the cycle.
+         */
+        private fun throwCyclicDependencyException(
+            dag: Map<KotlinLibrary, KlibDAGNode>,
+            notEmitted: Set<KotlinLibrary>,
+        ): Nothing {
+            // Libraries on the walked path, in the order they were visited.
+            val librariesOnPath = LinkedHashSet<KotlinLibrary>()
+
+            var current = notEmitted.first()
+            while (librariesOnPath.add(current)) {
+                current = dag.getValue(current).directDependencies.first { it in notEmitted }
+            }
+
+            throw KlibDAGCyclicDependencyException(librariesOnPath.dropWhile { it != current })
+        }
+    }
 }
 
 /**
@@ -201,7 +232,10 @@ interface KlibDAGNode {
     val allDependencies: Set<KotlinLibrary>
 }
 
-class KlibDAGCyclicDependencyException : Exception("Cyclic dependency detected while computing DAG of KLIB dependencies")
+class KlibDAGCyclicDependencyException(cycle: List<KotlinLibrary>) : Exception(
+    "Cyclic dependency detected while computing DAG of KLIB dependencies:\n" +
+            (cycle + cycle.first()).joinToString(" ->\n") { it.path.pathString }
+)
 
 @RequiresOptIn("Direct access to the internal Klib DAG API is discouraged.")
 annotation class InternalKlibDAGApi
@@ -444,21 +478,16 @@ private class KlibDAGBuilderImpl(private val parameters: KlibDAGBuilder.Paramete
 private class KlibDAGNodeImpl(override val library: KotlinLibrary) : KlibDAGNode {
     val targets = hashSetOf<KlibDAGNodeImpl>()
 
-    override val directDependencies: Set<KotlinLibrary> by LockBasedStorageManager.NO_LOCKS.createLazyValue {
+    override val directDependencies: Set<KotlinLibrary> by lazy {
         targets.mapTo(hashSetOf()) { it.library }
     }
 
-    override val allDependencies: Set<KotlinLibrary> by LockBasedStorageManager.NO_LOCKS.createLazyValue(
-        computable = {
-            buildSet {
-                addAll(directDependencies)
-                targets.flatMapTo(this, KlibDAGNode::allDependencies)
-            }
-        },
-        onRecursiveCall = {
-            throw KlibDAGCyclicDependencyException()
+    override val allDependencies: Set<KotlinLibrary> by lazy {
+        buildSet {
+            addAll(directDependencies)
+            targets.flatMapTo(this, KlibDAGNode::allDependencies)
         }
-    )
+    }
 }
 
 /**
