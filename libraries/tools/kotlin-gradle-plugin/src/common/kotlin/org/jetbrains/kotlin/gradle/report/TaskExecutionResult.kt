@@ -20,7 +20,31 @@ internal class TaskExecutionResult(
     val buildMetrics: BuildMetrics<BuildTimeMetric, BuildPerformanceMetric>,
     val taskInfo: TaskExecutionInfo = TaskExecutionInfo(),
     val icLogLines: List<String> = emptyList()
-)
+) {
+    /**
+     * Combines this result with [other], instead of one overwriting the other. This is needed because, for tasks
+     * whose actual compiler/tool invocation is submitted to a Gradle worker without being awaited (see
+     * [org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeToolRunner.runToolWithWorkers]), the worker
+     * can write its collected metrics into [org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults]
+     * for the same task path either before or after the task action's own [TaskExecutionResult] (carrying
+     * [taskInfo]) is written - so neither side can simply overwrite the other without potentially losing data.
+     */
+    fun merge(other: TaskExecutionResult): TaskExecutionResult {
+        val mergedMetrics = BuildMetrics<BuildTimeMetric, BuildPerformanceMetric>()
+        mergedMetrics.addAll(buildMetrics)
+        mergedMetrics.addAll(other.buildMetrics)
+        return TaskExecutionResult(
+            buildMetrics = mergedMetrics,
+            taskInfo = TaskExecutionInfo(
+                kotlinLanguageVersion = taskInfo.kotlinLanguageVersion ?: other.taskInfo.kotlinLanguageVersion,
+                changedFiles = taskInfo.changedFiles ?: other.taskInfo.changedFiles,
+                compilerArguments = taskInfo.compilerArguments.ifEmpty { other.taskInfo.compilerArguments },
+                tags = taskInfo.tags + other.taskInfo.tags,
+            ),
+            icLogLines = icLogLines + other.icLogLines,
+        )
+    }
+}
 
 internal class TaskExecutionInfo(
     val kotlinLanguageVersion: KotlinVersion? = null,

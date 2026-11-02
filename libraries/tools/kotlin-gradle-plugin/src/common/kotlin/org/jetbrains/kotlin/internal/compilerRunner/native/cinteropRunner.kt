@@ -37,7 +37,7 @@ private fun ObjectFactory.kotlinToolSpec(
     jvmArgs: Provider<List<String>>,
     useXcodeMessageStyle: Provider<Boolean>,
     konanPropertiesBuildService: Provider<KonanPropertiesBuildService>,
-) = KotlinNativeToolRunner.ToolSpec(
+) = ToolSpec(
     displayName = property("cinterop"),
     optionalToolName = property("cinterop"),
     mainClass = nativeMainClass,

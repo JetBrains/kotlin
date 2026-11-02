@@ -7,9 +7,14 @@ package org.jetbrains.kotlin.internal.compilerRunner.native
 
 import org.gradle.api.file.FileCollection
 import org.gradle.api.logging.Logging
-import org.gradle.api.provider.ListProperty
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.process.ExecOperations
+import org.gradle.workers.WorkAction
+import org.gradle.workers.WorkParameters
+import org.gradle.workers.WorkQueue
+import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.metrics.measure
 import org.jetbrains.kotlin.buildtools.internal.KotlinBuildToolsInternalJdkUtils
@@ -21,8 +26,12 @@ import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.ParentClassLoaderProvider
 import org.jetbrains.kotlin.gradle.logging.GradleErrorMessageCollector
 import org.jetbrains.kotlin.gradle.logging.gradleLogLevel
+import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.gradle.plugin.statistics.BuildFusService
+import org.jetbrains.kotlin.gradle.report.TaskExecutionResult
 import org.jetbrains.kotlin.gradle.utils.escapeStringCharacters
+import org.jetbrains.kotlin.gradle.utils.newInstance
+import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.statistics.FusMetricRetrievalException
 import java.io.File
@@ -40,12 +49,14 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
     private val toolSpec: ToolSpec,
     private val fusMetricsConsumer: Provider<out BuildFusService<out BuildFusService.Parameters>>,
     private val execOperations: ExecOperations,
+    private val workerExecutor: WorkerExecutor,
 ) {
 
     companion object {
         private val dumpPerfArgument = CommonCompilerArguments::dumpPerf.argumentAnnotation.value
     }
-    private val logger = Logging.getLogger(toolSpec.displayName.get())
+
+    private val logger = Logging.getLogger(toolSpec.displayName)
     private val errorMessageCollector = GradleErrorMessageCollector(logger)
     private val classLoadersCachingBuildService: ClassLoadersCachingBuildService
         get() = classLoadersCachingBuildServiceProvider.get()
@@ -61,6 +72,41 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
         }
     }
 
+    /**
+     * Submits a single [runTool] invocation to a Gradle [org.gradle.workers.WorkQueue], so that several
+     * independent [KotlinNativeToolRunner] invocations (e.g. one per Kotlin/Native link/compile/commonize
+     * task) can execute concurrently instead of serially as part of each task's own action.
+     *
+     * `noIsolation` is used by default: Gradle still isolates (deep-copies) the submitted [KotlinNativeToolWorkParameters],
+     * so this runner (and the build services it wraps) can't be passed directly - instead, only plain,
+     * serializable values and build-service references are captured here, and a fresh [KotlinNativeToolRunner]
+     * is rebuilt from them inside [KotlinNativeToolWorkAction.execute]. See [KotlinNativeToolWorkAction] for details.
+     *
+     * [taskPath], when provided, lets [KotlinNativeToolWorkAction] hand the metrics it collects back to the
+     * submitting task via [org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults] - this is
+     * needed because [metricsReporterProvider] itself is isolated (deep-copied) by Gradle along with the rest of
+     * [KotlinNativeToolWorkParameters], so mutating it inside the worker never reaches the original, live reporter.
+     */
+    fun runToolWithWorkers(args: ToolArguments, taskPath: String): WorkQueue =
+        workerExecutor.noIsolation().apply {
+            submit(KotlinNativeToolWorkAction::class.java) { it.from(this@KotlinNativeToolRunner, args, taskPath) }
+        }
+
+    private fun KotlinNativeToolWorkParameters.from(
+        runner: KotlinNativeToolRunner,
+        args: ToolArguments,
+        taskPath: String,
+    ) {
+        classLoadersCachingService.set(runner.classLoadersCachingBuildServiceProvider)
+        fusService.set(runner.fusMetricsConsumer)
+
+        this.toolSpec.set(runner.toolSpec)
+
+        this.toolArguments.set(args)
+
+        this.taskPath.set(taskPath)
+    }
+
     private fun runViaExec(args: ToolArguments) {
         metricsReporter.measure(NATIVE_IN_EXECUTOR) {
             val systemProperties = System.getProperties()
@@ -68,35 +114,35 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
                 .snapshot()
                 .asSequence()
                 .map { (k, v) -> k.toString() to v.toString() }
-                .filter { (k, _) -> k !in toolSpec.systemPropertiesBlacklist }
+                .filter { (k, _) -> k !in systemPropertiesBlacklist }
                 .escapeQuotesForWindows()
                 .toMap() + toolSpec.systemProperties
 
             val reportFile = File.createTempFile("native_compiler_${::runViaExec.name}_report", ".json")
-            val reportArguments = if (toolSpec.collectNativeCompilerMetrics.get()) {
+            val reportArguments = if (toolSpec.collectNativeCompilerMetrics) {
                 listOf("$dumpPerfArgument=${reportFile.absolutePath}")
             } else emptyList()
 
-            val toolArgsPair = if (toolSpec.shouldPassArgumentsViaArgFile.get()) {
+            val toolArgsPair = if (toolSpec.shouldPassArgumentsViaArgFile) {
                 val argFile = args.toArgFile(reportArguments)
                 argFile to listOfNotNull(
-                    toolSpec.optionalToolName.orNull,
+                    toolSpec.optionalToolName,
                     "@${argFile.toFile().absolutePath}"
                 )
             } else {
-                null to listOfNotNull(toolSpec.optionalToolName.orNull) + args.arguments + reportArguments
+                null to listOfNotNull(toolSpec.optionalToolName) + args.arguments + reportArguments
             }
 
             try {
                 logger.log(
                     args.compilerArgumentsLogLevel.gradleLogLevel,
                     """
-                |Run "${toolSpec.displayName.get()}" tool in a separate JVM process
-                |Main class = ${toolSpec.mainClass.get()}
+                |Run "${toolSpec.displayName}" tool in a separate JVM process
+                |Main class = ${toolSpec.mainClass}
                 |Arguments = ${args.arguments.toPrettyString()}
                 |Transformed arguments = ${toolArgsPair.second.toPrettyString()}
-                |Classpath = ${toolSpec.classpath.files.map { it.absolutePath }.toPrettyString()}
-                |JVM options = ${toolSpec.jvmArgs.get().toPrettyString()}
+                |Classpath = ${toolSpec.classpath.map { it.absolutePath }.toPrettyString()}
+                |JVM options = ${toolSpec.jvmArgs.toPrettyString()}
                 |Java system properties = ${systemProperties.toPrettyString()}
                 |Suppressed ENV variables = ${toolSpec.environmentBlacklist.toPrettyString()}
                 |Custom ENV variables = ${toolSpec.environment.toPrettyString()}
@@ -105,8 +151,8 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
 
                 execOperations.javaexec { spec ->
                     spec.mainClass.set(toolSpec.mainClass)
-                    spec.classpath = toolSpec.classpath
-                    spec.jvmArgs(toolSpec.jvmArgs.get())
+                    spec.classpath(toolSpec.classpath)
+                    spec.jvmArgs(toolSpec.jvmArgs)
                     spec.systemProperties(systemProperties)
                     spec.environment(toolSpec.environment)
                     toolSpec.environmentBlacklist.forEach { spec.environment.remove(it) }
@@ -127,7 +173,7 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
     private fun runInProcess(args: ToolArguments) {
         metricsReporter.measure(NATIVE_IN_PROCESS) {
             val isolatedClassLoader = classLoadersCachingBuildService.getClassLoader(
-                toolSpec.classpath.files.toList(),
+                toolSpec.classpath.toList(),
                 // Required for KotlinNativePaths to properly detect konan home directory
                 object : ParentClassLoaderProvider {
                     @OptIn(KotlinBuildToolsInternalJdkUtils::class)
@@ -139,28 +185,28 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
                         other is ParentClassLoaderProvider && other.getClassLoader() == jdkClassesClassLoader
                 }
             )
-            if (toolSpec.jvmArgs.get().contains("-ea")) isolatedClassLoader.setDefaultAssertionStatus(true)
+            if (toolSpec.jvmArgs.contains("-ea")) isolatedClassLoader.setDefaultAssertionStatus(true)
 
             logger.log(
                 args.compilerArgumentsLogLevel.gradleLogLevel,
                 """
-                |Run in-process tool "${toolSpec.displayName.get()}"
-                |Entry point method = ${toolSpec.mainClass.get()}.${toolSpec.daemonEntryPoint.get()}
-                |Classpath = ${toolSpec.classpath.files.map { it.absolutePath }.toPrettyString()}
+                |Run in-process tool "${toolSpec.displayName}"
+                |Entry point method = ${toolSpec.mainClass}.${toolSpec.daemonEntryPoint}
+                |Classpath = ${toolSpec.classpath.map { it.absolutePath }.toPrettyString()}
                 |Arguments = ${args.arguments.toPrettyString()}
                 """.trimMargin()
             )
 
-            val toolArgs = listOf(toolSpec.displayName.get()) + args.arguments
+            val toolArgs = listOf(toolSpec.displayName) + args.arguments
             try {
-                val mainClass = isolatedClassLoader.loadClass(toolSpec.mainClass.get())
+                val mainClass = isolatedClassLoader.loadClass(toolSpec.mainClass)
                 val entryPoint = mainClass
                     .methods
-                    .singleOrNull { it.name == toolSpec.daemonEntryPoint.get() }
-                    ?: error("Couldn't find daemon entry point '${toolSpec.daemonEntryPoint.get()}'")
+                    .singleOrNull { it.name == toolSpec.daemonEntryPoint }
+                    ?: error("Couldn't find daemon entry point '${toolSpec.daemonEntryPoint}'")
 
                 metricsReporter.measure(RUN_ENTRY_POINT) {
-                    if (toolSpec.collectNativeCompilerMetrics.get()) {
+                    if (toolSpec.collectNativeCompilerMetrics) {
                         val reportFile = Files.createTempFile("native_compiler_${::runInProcess.name}_report", ".json")
                         val toolArgsWithPerformance = toolArgs.toMutableList()
                         toolArgsWithPerformance.add("$dumpPerfArgument=${reportFile.toAbsolutePath()}")
@@ -229,57 +275,52 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
         w.println("\"$escapedArg\"")
     }
 
-    class ToolSpec(
-        val displayName: Provider<String>,
-        val optionalToolName: Provider<String>,
-        val mainClass: Provider<String>,
-        val daemonEntryPoint: Provider<String>,
-        val classpath: FileCollection,
-        val jvmArgs: ListProperty<String>,
-        val shouldPassArgumentsViaArgFile: Provider<Boolean>,
-        val collectNativeCompilerMetrics: Provider<Boolean>,
-        val systemProperties: Map<String, String> = emptyMap(),
-        val environment: Map<String, String> = emptyMap(),
-        val environmentBlacklist: Set<String> = emptySet(),
-    ) {
-        val systemPropertiesBlacklist: Set<String> = setOf(
-            "java.endorsed.dirs",       // Fix for KT-25887
-            "user.dir",                 // Don't propagate the working dir of the current Gradle process
-            "java.system.class.loader"  // Don't use custom class loaders
-        )
-
-        /**
-         * Disable C2 compiler for HotSpot VM to improve compilation speed.
-         */
-        fun disableC2(): ToolSpec {
-            System.getProperty("java.vm.name")?.let { vmName ->
-                if (vmName.contains("HotSpot", true)) jvmArgs.add("-XX:TieredStopAtLevel=1")
-            }
-
-            return this
-        }
-
-        fun enableAssertions(): ToolSpec {
-            jvmArgs.add("-ea")
-
-            return this
-        }
-
-        fun configureDefaultMaxHeapSize(): ToolSpec {
-            if (jvmArgs.get().none { it.startsWith("-Xmx") }) {
-                jvmArgs.add("-Xmx3g")
-            }
-
-            return this
-        }
-    }
-
     data class ToolArguments(
         val shouldRunInProcessMode: Boolean,
         val compilerArgumentsLogLevel: KotlinCompilerArgumentsLogLevel,
         val arguments: List<String>,
-    )
+    ) : java.io.Serializable
 
+    internal interface KotlinNativeToolWorkParameters : WorkParameters {
+        // Runner configuration
+        //
+        // Note: there's no `metricsReporter` property here - unlike the other build-service references below,
+        // a plain, Serializable BuildMetricsReporter would survive isolation silently as a disconnected copy
+        // instead of failing loudly, so mutating it inside the worker would never reach the task's live reporter.
+        // KotlinNativeToolWorkAction builds its own fresh reporter instead and reports back via [taskPath].
+        val classLoadersCachingService: Property<ClassLoadersCachingBuildService>
+        val fusService: Property<BuildFusService<out BuildFusService.Parameters>?>
+
+        val toolSpec: Property<ToolSpec>
+
+        val toolArguments: Property<ToolArguments>
+
+        // Task path to report collected metrics back to via TaskExecutionResults, if any - see runToolWithWorkers.
+        val taskPath: Property<String>
+    }
+
+    /**
+     * Runs a single [KotlinNativeToolRunner.runTool] invocation inside a Gradle worker, rebuilding the runner
+     * from [KotlinNativeToolWorkParameters] since the original, live runner can't be passed through worker isolation.
+     */
+    internal abstract class KotlinNativeToolWorkAction @Inject constructor(
+        private val objectFactory: ObjectFactory,
+    ) : WorkAction<KotlinNativeToolWorkParameters> {
+        override fun execute() {
+            val metricsReporter = BuildMetricsReporterImpl<BuildTimeMetric, BuildPerformanceMetric>()
+            val runner = objectFactory.newInstance<KotlinNativeToolRunner>(
+                objectFactory.property<BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>>(metricsReporter),
+                parameters.classLoadersCachingService,
+                parameters.toolSpec.get(),
+                parameters.fusService,
+            )
+            try {
+                runner.runTool(parameters.toolArguments.get())
+            } finally {
+                TaskExecutionResults[parameters.taskPath.get()] = TaskExecutionResult(buildMetrics = metricsReporter.getMetrics())
+            }
+        }
+    }
 
     internal fun BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>.parseCompilerMetricsFromFile(
         jsonFile: File,
@@ -292,3 +333,68 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
         }
     }
 }
+
+@ConsistentCopyVisibility
+internal data class ToolSpec private constructor(
+    val displayName: String,
+    val optionalToolName: String?,
+    val mainClass: String,
+    val daemonEntryPoint: String,
+    val classpath: Set<File>,
+    val jvmArgs: List<String>,
+    val shouldPassArgumentsViaArgFile: Boolean,
+    val collectNativeCompilerMetrics: Boolean,
+    val systemProperties: Map<String, String> = emptyMap(),
+    val environment: Map<String, String> = emptyMap(),
+    val environmentBlacklist: Set<String> = emptySet(),
+) : java.io.Serializable {
+
+    companion object {
+        operator fun invoke(
+            displayName: Provider<String>,
+            optionalToolName: Provider<String>,
+            mainClass: Provider<String>,
+            daemonEntryPoint: Provider<String>,
+            classpath: FileCollection,
+            jvmArgs: Provider<List<String>>,
+            shouldPassArgumentsViaArgFile: Provider<Boolean>,
+            collectNativeCompilerMetrics: Provider<Boolean>,
+            systemProperties: Map<String, String> = emptyMap(),
+            environment: Map<String, String> = emptyMap(),
+            environmentBlacklist: Set<String> = emptySet(),
+        ): ToolSpec = ToolSpec(
+            displayName = displayName.get(),
+            optionalToolName = optionalToolName.orNull,
+            mainClass = mainClass.get(),
+            daemonEntryPoint = daemonEntryPoint.get(),
+            classpath = classpath.files,
+            jvmArgs = jvmArgs.get(),
+            shouldPassArgumentsViaArgFile = shouldPassArgumentsViaArgFile.get(),
+            collectNativeCompilerMetrics = collectNativeCompilerMetrics.get(),
+            systemProperties = systemProperties,
+            environment = environment,
+            environmentBlacklist = environmentBlacklist,
+        )
+    }
+
+    /**
+     * Disable C2 compiler for HotSpot VM to improve compilation speed.
+     */
+    fun disableC2(): ToolSpec {
+        val vmName = System.getProperty("java.vm.name")
+        return if (vmName != null && vmName.contains("HotSpot", true)) {
+            copy(jvmArgs = jvmArgs + "-XX:TieredStopAtLevel=1")
+        } else this
+    }
+
+    fun enableAssertions(): ToolSpec = copy(jvmArgs = jvmArgs + "-ea")
+
+    fun configureDefaultMaxHeapSize(): ToolSpec =
+        if (jvmArgs.none { it.startsWith("-Xmx") }) copy(jvmArgs = jvmArgs + "-Xmx3g") else this
+}
+
+private val systemPropertiesBlacklist: Set<String> = setOf(
+    "java.endorsed.dirs",       // Fix for KT-25887
+    "user.dir",                 // Don't propagate the working dir of the current Gradle process
+    "java.system.class.loader"  // Don't use custom class loaders
+)
