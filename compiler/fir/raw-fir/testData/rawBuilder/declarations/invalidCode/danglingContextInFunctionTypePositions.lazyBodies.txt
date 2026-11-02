@@ -88,9 +88,12 @@ FILE: danglingContextInFunctionTypePositions.kt
             public? [ContainingClassKey=TypeAfterList] get(): @Anno() <ERROR TYPE REF: Incomplete code>
 
     }
-    public final? interface Parenthesized : R|kotlin/Any| {
+    public final? interface NullableAndParenthesized : R|kotlin/Any| {
+        public? final? val nullableWithoutType: <ERROR TYPE REF: Incomplete code>
+            public? [ContainingClassKey=NullableAndParenthesized] get(): <ERROR TYPE REF: Incomplete code>
+
         public? final? val parenthesized: @Anno() <ERROR TYPE REF: Incomplete code>
-            public? [ContainingClassKey=Parenthesized] get(): @Anno() <ERROR TYPE REF: Incomplete code>
+            public? [ContainingClassKey=NullableAndParenthesized] get(): @Anno() <ERROR TYPE REF: Incomplete code>
 
     }
     public final? interface Nested : R|kotlin/Any| {

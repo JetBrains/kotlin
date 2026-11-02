@@ -88,9 +88,12 @@ FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] danglingContextInFunctionTypePositions.
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TypeAfterList] get(): @R|Anno|[Types]() <ERROR TYPE REF: Incomplete code>
 
     }
-    public abstract [ResolvedTo(BODY_RESOLVE)] interface Parenthesized : R|kotlin/Any| {
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface NullableAndParenthesized : R|kotlin/Any| {
+        public abstract [ResolvedTo(BODY_RESOLVE)] val nullableWithoutType: <ERROR TYPE REF: Incomplete code>
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=NullableAndParenthesized] get(): <ERROR TYPE REF: Incomplete code>
+
         public abstract [ResolvedTo(BODY_RESOLVE)] val parenthesized: @R|Anno|[Types]() <ERROR TYPE REF: Incomplete code>
-            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Parenthesized] get(): @R|Anno|[Types]() <ERROR TYPE REF: Incomplete code>
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=NullableAndParenthesized] get(): @R|Anno|[Types]() <ERROR TYPE REF: Incomplete code>
 
     }
     public abstract [ResolvedTo(BODY_RESOLVE)] interface Nested : R|kotlin/Any| {

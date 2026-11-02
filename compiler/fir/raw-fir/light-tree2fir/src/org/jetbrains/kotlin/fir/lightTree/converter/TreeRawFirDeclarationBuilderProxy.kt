@@ -2790,7 +2790,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
         allTypeModifiers: MutableList<ModifierList<Node>>,
         isNullable: Boolean = true
     ): FirTypeRef {
-        lateinit var firType: FirTypeRef
+        var firType: FirTypeRef? = null
         nullableType.forEachChildren {
             when (it.toTokenId()) {
                 KotlinSyntaxNodeTypeIds.MODIFIER_LIST -> allTypeModifiers += convertModifierList(it)
@@ -2806,7 +2806,10 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
             }
         }
 
-        return firType
+        return firType ?: buildErrorTypeRef {
+            source = typeRefSource
+            diagnostic = ConeSyntaxDiagnostic("Incomplete code")
+        }
     }
 
     /**
