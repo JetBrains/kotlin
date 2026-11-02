@@ -5,13 +5,18 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
+import org.jetbrains.kotlin.analysis.api.components.KaArrayTypeBuilder
 import org.jetbrains.kotlin.analysis.api.components.KaClassTypeBuilder
 import org.jetbrains.kotlin.analysis.api.components.KaTypeParameterTypeBuilder
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.types.KaBaseStarTypeProjection
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
+import org.jetbrains.kotlin.analysis.api.internals.KaInternalsTypeCreator
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
+import org.jetbrains.kotlin.analysis.api.types.KaClassType
+import org.jetbrains.kotlin.analysis.api.types.KaStarTypeProjection
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedSymbolError
@@ -19,10 +24,45 @@ import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.types.Variance
 
 internal class KaFirTypeCreator(
     override val analysisSessionProvider: () -> KaFirSession,
-) : KaBaseTypeCreator<KaFirSession>(), KaFirSessionComponent {
+) : KaBaseSessionComponent<KaFirSession>(), KaInternalsTypeCreator, KaFirSessionComponent {
+    override fun buildStarTypeProjection(): KaStarTypeProjection = KaBaseStarTypeProjection(token)
+
+    override fun buildArrayType(elementType: KaType, init: KaArrayTypeBuilder.() -> Unit): KaType = withValidityAssertion {
+        with(analysisSession) {
+            val builder = KaBaseArrayTypeBuilder.ByElementType(elementType, token).apply(init)
+
+            val builderElementType = builder.elementType
+
+            if (builderElementType is KaClassType && builder.shouldPreferPrimitiveTypes && !builderElementType.isMarkedNullable) {
+                val classId = builderElementType.classId
+                val primitiveArrayId =
+                    StandardClassIds.primitiveArrayTypeByElementType[classId]
+                        ?: StandardClassIds.unsignedArrayTypeByElementType[classId]
+                if (primitiveArrayId != null) {
+                    return buildClassType(primitiveArrayId) {
+                        isMarkedNullable = builder.isMarkedNullable
+                    }
+                }
+            }
+
+            return buildClassType(StandardClassIds.Array) {
+                isMarkedNullable = builder.isMarkedNullable
+                argument(builderElementType, builder.variance)
+            }
+        }
+    }
+
+    override fun buildVarargArrayType(elementType: KaType): KaType = withValidityAssertion {
+        buildArrayType(elementType) {
+            variance = Variance.OUT_VARIANCE
+        }
+    }
+
     override fun buildClassType(classId: ClassId, init: KaClassTypeBuilder.() -> Unit): KaType = withValidityAssertion {
         return buildClassType(KaBaseClassTypeBuilder.ByClassId(classId, token).apply(init))
     }
