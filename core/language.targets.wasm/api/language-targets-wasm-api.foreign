@@ -1,0 +1,2 @@
+org/jetbrains/kotlin/platform/TargetPlatform
+org/jetbrains/kotlin/platform/WasmPlatform

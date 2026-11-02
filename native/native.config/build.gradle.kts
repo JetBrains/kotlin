@@ -9,6 +9,7 @@ dependencies {
     api(project(":core:compiler.common")) { isTransitive = false }
     api(project(":core:language.model")) { isTransitive = false }
     api(project(":core:language.targets")) { isTransitive = false }
+    api(project(":core:language.targets.native"))
     api(project(":compiler:config")) { isTransitive = false }
     api(project(":native:kotlin-native-utils"))
     compileOnly(intellijCore())

@@ -6,6 +6,7 @@ plugins {
 }
 
 dependencies {
+    api(project(":core:language.targets.wasm"))
     api(project(":compiler:config"))
 }
 

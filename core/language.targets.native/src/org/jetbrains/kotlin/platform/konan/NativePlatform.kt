@@ -31,7 +31,7 @@ object NativePlatforms {
         KonanTarget.predefinedTargets.values.associateWith { NativePlatformWithTarget(it) }
 
     private val predefinedNativeTargetToNativePlatform: Map<KonanTarget, TargetPlatform> =
-        predefinedNativeTargetToSimpleNativePlatform.mapValues { [_, simplePlatform] -> simplePlatform.toTargetPlatform() }
+        predefinedNativeTargetToSimpleNativePlatform.mapValues { it.value.toTargetPlatform() }
 
     val unspecifiedNativePlatform: TargetPlatform
         get() = CompatNativePlatform

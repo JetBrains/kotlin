@@ -1,0 +1,32 @@
+public final class org/jetbrains/kotlin/js/config/EcmaVersion : java/lang/Enum {
+	public static final field Companion Lorg/jetbrains/kotlin/js/config/EcmaVersion$Companion;
+	public static final field es2015 Lorg/jetbrains/kotlin/js/config/EcmaVersion;
+	public static final field es2020 Lorg/jetbrains/kotlin/js/config/EcmaVersion;
+	public static final field es5 Lorg/jetbrains/kotlin/js/config/EcmaVersion;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/js/config/EcmaVersion;
+	public static fun values ()[Lorg/jetbrains/kotlin/js/config/EcmaVersion;
+}
+
+public final class org/jetbrains/kotlin/js/config/EcmaVersion$Companion {
+	public final fun defaultVersion ()Lorg/jetbrains/kotlin/js/config/EcmaVersion;
+	public final fun fromName (Ljava/lang/String;)Lorg/jetbrains/kotlin/js/config/EcmaVersion;
+	public final fun latestSupportedVersion ()Lorg/jetbrains/kotlin/js/config/EcmaVersion;
+}
+
+public final class org/jetbrains/kotlin/js/config/EcmaVersionKt {
+	public static final fun getSupportsEsModules (Lorg/jetbrains/kotlin/js/config/EcmaVersion;)Z
+	public static final fun getSupportsPerFileGranularity (Lorg/jetbrains/kotlin/js/config/EcmaVersion;)Z
+}
+
+public final class org/jetbrains/kotlin/platform/js/JsPlatforms {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/platform/js/JsPlatforms;
+	public final fun getAllJsPlatforms ()Ljava/util/List;
+	public final fun getDefaultJsPlatform ()Lorg/jetbrains/kotlin/platform/TargetPlatform;
+	public final fun getLatestSupportedTarget ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/platform/js/JsPlatforms$DefaultSimpleJsPlatform : org/jetbrains/kotlin/platform/JsPlatform {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/platform/js/JsPlatforms$DefaultSimpleJsPlatform;
+}
+

@@ -47,7 +47,11 @@ CompilerInfrastructure:
  - core/error.handling
  - core/language.model
  - core/language.targets
+ - core/language.targets.common
+ - core/language.targets.js
  - core/language.targets.jvm
+ - core/language.targets.native
+ - core/language.targets.wasm
  - core/language.version-settings
  - core/names
  - core/script.runtime

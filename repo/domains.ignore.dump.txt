@@ -70,7 +70,11 @@ ignored:
  - compiler/util-klib-abi/ReadMe.md
  - core/language.model/README.md
  - core/language.syntax/README.md
+ - core/language.targets.common/README.md
+ - core/language.targets.js/README.md
  - core/language.targets.jvm/README.md
+ - core/language.targets.native/README.md
+ - core/language.targets.wasm/README.md
  - core/language.targets/README.md
  - core/language.version-settings/README.md
  - core/names/README.md

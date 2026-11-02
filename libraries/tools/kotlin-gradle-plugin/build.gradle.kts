@@ -98,8 +98,8 @@ val unpublishedCompilerRuntimeDependencies = listOf(
     ":core:language.version-settings", // For LanguageFeature
     ":core:names", // For ClassId
     ":kotlin-build-common", // for incremental compilation setup
-    ":js:js.config", // for k/js task
-    ":wasm:wasm.config", // for k/js task
+    ":js:js.config", ":core:language.targets.js", // for k/js task
+    ":wasm:wasm.config", ":core:language.targets.wasm", // for k/js task
 )
 
 configurations.embedded.configure {

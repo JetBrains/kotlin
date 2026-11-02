@@ -608,6 +608,10 @@ tasks {
         dependsOn(":core:language.syntax:checkForeignClassUsage")
         dependsOn(":core:language.targets:check")
         dependsOn(":core:language.targets.jvm:check")
+        dependsOn(":core:language.targets.js:check")
+        dependsOn(":core:language.targets.wasm:check")
+        dependsOn(":core:language.targets.native:check")
+        dependsOn(":core:language.targets.common:check")
         dependsOn(":core:language.version-settings:check")
         dependsOn(":core:language.version-settings:test")
     }
