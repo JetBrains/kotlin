@@ -268,6 +268,12 @@ public class SerializationJsBoxTestGenerated extends AbstractSerializationJsBoxT
   }
 
   @Test
+  @TestMetadata("JavaEnums.kt")
+  public void testJavaEnums() {
+    run("JavaEnums.kt");
+  }
+
+  @Test
   @TestMetadata("KeepGeneratedSerializer.kt")
   public void testKeepGeneratedSerializer() {
     run("KeepGeneratedSerializer.kt");
