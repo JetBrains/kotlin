@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.packageFqName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
+import org.jetbrains.kotlin.utils.newHashSetWithExpectedSize
 import java.nio.file.Path
 import java.util.PriorityQueue
 import java.util.concurrent.ConcurrentHashMap
@@ -482,13 +483,15 @@ private class KlibDAGNodeImpl(override val library: KotlinLibrary) : KlibDAGNode
     val nodes = hashSetOf<KlibDAGNodeImpl>()
 
     override val directDependencies: Set<KotlinLibrary> by lazy {
-        nodes.mapTo(hashSetOf()) { it.library }
+        nodes.mapTo(newHashSetWithExpectedSize(nodes.size)) { it.library }
     }
 
-    override val allDependencies: Set<KotlinLibrary> by lazy {
-        buildSet {
-            addAll(directDependencies)
-            nodes.flatMapTo(this, KlibDAGNode::allDependencies)
+    override val allDependencies: Set<KotlinLibrary>
+        get() = buildSet { for (node in nodes) node.collectDependencies(collector = this@buildSet) }
+
+    private fun collectDependencies(collector: MutableSet<KotlinLibrary>) {
+        if (collector.add(library)) {
+            for (node in nodes) node.collectDependencies(collector)
         }
     }
 }
