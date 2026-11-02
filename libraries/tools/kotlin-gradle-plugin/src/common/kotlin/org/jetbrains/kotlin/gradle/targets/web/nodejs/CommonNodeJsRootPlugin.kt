@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.web.nodejs
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 
 /**
  * Defines a root plugin interface for managing common Node.js configurations in a Gradle project.
@@ -18,4 +19,5 @@ import org.gradle.api.Project
  * This interface is intended to be implemented by plugins that require Node.js functionality for tasks such as building
  * JavaScript applications, managing npm dependencies, or running Node.js-based tools in a unified environment.
  */
+@ObsoleteNpmDependencyModel
 interface CommonNodeJsRootPlugin : Plugin<Project>

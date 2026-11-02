@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.js.npm.resolver
 import org.gradle.api.artifacts.ResolvedArtifact
 import org.gradle.api.artifacts.ResolvedDependency
 import org.gradle.api.initialization.IncludedBuild
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import java.io.File
 import java.io.Serializable
 
@@ -32,6 +33,7 @@ import java.io.Serializable
  * @see org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinCompilationNpmResolver.ConfigurationVisitor.visitArtifact
  * @see org.gradle.api.artifacts.ResolvedDependency
  */
+@ObsoleteNpmDependencyModel
 data class ExternalGradleDependency(
     val dependency: ResolvedDependency,
     val artifact: ResolvedArtifact,
@@ -58,6 +60,7 @@ data class ExternalGradleDependency(
  * @see KotlinCompilationNpmResolver
  * @see org.gradle.api.artifacts.FileCollectionDependency
  */
+@ObsoleteNpmDependencyModel
 data class FileCollectionExternalGradleDependency(
     val files: Collection<File>,
     val dependencyVersion: String?,
@@ -71,6 +74,7 @@ data class FileCollectionExternalGradleDependency(
  * @see KotlinCompilationNpmResolver
  * @see ExternalGradleDependency
  */
+@ObsoleteNpmDependencyModel
 data class FileExternalGradleDependency(
     val dependencyName: String,
     val dependencyVersion: String,
@@ -87,6 +91,7 @@ data class FileExternalGradleDependency(
  *
  * @see KotlinCompilationNpmResolver
  */
+@ObsoleteNpmDependencyModel
 data class CompositeDependency(
     @Transient
     val includedBuild: IncludedBuild?,
@@ -102,6 +107,7 @@ data class CompositeDependency(
  * @see KotlinCompilationNpmResolver
  * @see org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinCompilationNpmResolution.createPreparedResolution
  */
+@ObsoleteNpmDependencyModel
 data class InternalDependency(
     val projectPath: String,
     val compilationName: String,

@@ -13,11 +13,13 @@ import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Internal
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
 import java.io.File
 import javax.inject.Inject
 
+@ObsoleteNpmDependencyModel
 internal interface UsesGradleNodeModulesCache : Task {
     @get:Internal
     val gradleNodeModules: Property<GradleNodeModulesCache>
@@ -26,6 +28,7 @@ internal interface UsesGradleNodeModulesCache : Task {
 /**
  * Cache for storing already created [GradleNodeModule]s
  */
+@ObsoleteNpmDependencyModel
 abstract class GradleNodeModulesCache : AbstractNodeModulesCache() {
 
     @get:Inject
@@ -47,6 +50,7 @@ abstract class GradleNodeModulesCache : AbstractNodeModulesCache() {
         return module.rebuild()
     }
 
+    @ObsoleteNpmDependencyModel
     companion object {
         private val serviceClass = GradleNodeModulesCache::class.java
         private val serviceName = serviceClass.name

@@ -11,17 +11,20 @@ import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import org.gradle.internal.hash.FileHasher
 import org.jetbrains.kotlin.gradle.internal.ProcessedFilesCache
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import java.io.File
 
 /**
  * Cache for storing already created [GradleNodeModule]s
  */
+@ObsoleteNpmDependencyModel
 abstract class AbstractNodeModulesCache : AutoCloseable, BuildService<AbstractNodeModulesCache.Parameters> {
     interface Parameters : BuildServiceParameters {
         val rootProjectDir: DirectoryProperty
         val cacheDir: DirectoryProperty
     }
 
+    @ObsoleteNpmDependencyModel
     companion object {
         const val STATE_FILE_NAME = ".visited"
     }
