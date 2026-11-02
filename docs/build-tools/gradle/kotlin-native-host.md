@@ -375,17 +375,25 @@ with a message that says when the value is available and suggests reading it in 
 
 ### Deprecating `HostManager` for KGP consumers only
 
-`HostManager` stays untouched for Kotlin/Native. KT-74608 deprecates it for KGP consumers with the `asm-deprecating-transformer`
-convention from KT-70251, which adds `@kotlin.Deprecated` with a message to classes bundled into a jar, and a checked `.deprecations`
-dump guards the set. The transformer only works on `embedded` artifacts, and `kotlin-native-utils` is currently a published `api`
-dependency of `kotlin-gradle-plugin-api`. So KT-74608 bundles `kotlin-native-utils` into `kotlin-gradle-plugin-api` without relocation,
-as `kotlin-gradle-compiler-types` already is, and deprecates `HostManager` and its companion with a message that points to
-`KotlinNativeHost`. `KonanTarget` and the rest of the module stay undeprecated because they are public API. So does
-`TargetSupportException`: only `HostManager` throws it, and a second warning on every `catch` would not help anyone migrate.
+`HostManager` stays untouched for Kotlin/Native. The mechanism for a consumer-side deprecation already exists: the
+`asm-deprecating-transformer` convention from KT-70251 adds `@kotlin.Deprecated` with a message to classes bundled into a jar, and a
+checked `.deprecations` dump guards the set. It only works on `embedded` artifacts, and `kotlin-native-utils` used to be a published
+`api` dependency of `kotlin-gradle-plugin-api`. So `kotlin-gradle-plugin-api` now bundles `kotlin-native-utils` without relocation, as
+it already bundles `kotlin-gradle-compiler-types`, keeps `kotlin-util-io` (the module's own dependency) as a regular dependency, and
+deprecates `HostManager` and its companion with a message that points to `KotlinNativeHost`. `KonanTarget`, `Family` and the rest of
+the module stay undeprecated because they are public API. So does `TargetSupportException`: only `HostManager` throws it, and a
+second warning on every `catch` would not help anyone migrate.
 
-The risk is a second, undeprecated copy of `kotlin-native-utils` on the buildscript classpath, for example through
-`kotlin-klib-commonizer-api` or `kotlin-compiler-embeddable`. An integration test puts a plain copy next to KGP and checks that the
-build still works. The deprecation needs agreement with the owners of KT-70247.
+Dropping the `api` dependency is not enough on its own. `kotlin-klib-commonizer-api`, a runtime dependency of KGP, also depends on
+`kotlin-native-utils`, and its plain copy would keep an undeprecated `HostManager` on every buildscript classpath. KGP excludes it
+there, so the bundled copy is the only one. Projects in this repository compile against the classes of `kotlin-gradle-plugin-api`,
+which do not contain bundled jars, so the ones that use `KonanTarget` declare `compileOnly` on `kotlin-native-utils`, as they already
+do for `kotlin-gradle-compiler-types`.
+
+The BOM keeps its `kotlin-native-utils` entry. A build that still adds the module itself, directly or through another plugin, then gets
+the same version as the bundled copy, so the duplicate classes are identical. An integration test puts a plain `kotlin-native-utils` on
+the buildscript classpath next to KGP and checks that the build still links. Removing the classes from the KGP API altogether stays
+with KT-70247, and the deprecation needs agreement with its owners.
 
 ### Rollout
 
@@ -491,8 +499,10 @@ These check configuration state only, following the KGP test layering.
   others) switch to the new DSL.
 * A Groovy smoke test reads `KotlinNativeHost.current().supported` and `nativeHost.macOs` and calls
   `kotlin.hostNativeTarget("native") { }` from `build.gradle`.
-* For the deprecation in KT-74608: a build script that calls `HostManager.hostIsMac` compiles with a deprecation warning that names
-  the replacement. The assertion checks the warning line only.
+* A build script that calls `HostManager.hostIsMac` still gets the right value and compiles with a deprecation warning that names
+  the replacement. The assertion checks the message of the warning lines only.
+* A build script with a plain `kotlin-native-utils` on its buildscript classpath, next to the bundled copy, still links the host
+  target.
 
 ### Repository guards
 
@@ -501,7 +511,8 @@ These check configuration state only, following the KGP test layering.
 * `CodeConformanceTest.testNoHostManagerInKgpMainSources` fails on any `HostManager` reference in the main sources of
   `kotlin-gradle-plugin` and `kotlin-gradle-plugin-api`. Tests may still use it to compare the two tables.
 * `:build-tools:libraries:native-host:checkKotlinAbi` and `:kotlin-gradle-plugin-api:apiCheck` guard the public surface.
-* KT-74608 adds the `checkDeprecationsFor*` dumps of `kotlin-gradle-plugin-api`.
+* `checkDeprecationsForJar` and `checkDeprecationsForGradle96Jar` in `kotlin-gradle-plugin-api` fail when the set of deprecated
+  packages in its jars changes, so a pattern that starts deprecating more than `HostManager` cannot slip in.
 
 ## Related work
 
