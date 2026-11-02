@@ -125,7 +125,7 @@ x#
 #### Candidate 1: `FirRegularPropertySymbol /Box.x` --- `var x: List<Int>`
 ##### Call Completion:
 
-1. `TypeVariable(Z) == kotlin/collections/List<TypeVariable(T)>` _from Fix variable Z_
+1. `TypeVariable(Z) == kotlin/collections/List<TypeVariable(T)>` _from Semi-fix variable Z_
 
 ### Call 2
 
@@ -352,7 +352,7 @@ x#
 #### Candidate 1: `FirRegularPropertySymbol /Box.x` --- `var x: Set<*>`
 ##### Call Completion:
 
-1. `TypeVariable(Z) == kotlin/collections/Set<*>` _from Fix variable Z_
+1. `TypeVariable(Z) == kotlin/collections/Set<*>` _from Semi-fix variable Z_
 
 ### Call 6
 
@@ -650,7 +650,7 @@ x#
 #### Candidate 1: `FirRegularPropertySymbol /Box.x` --- `var x: Set<*>`
 ##### Call Completion:
 
-1. `TypeVariable(Z) == kotlin/collections/Set<*>` _from Fix variable Z_
+1. `TypeVariable(Z) == kotlin/collections/Set<*>` _from Semi-fix variable Z_
 
 ### Call 11
 
@@ -950,7 +950,7 @@ x#
 #### Candidate 1: `FirRegularPropertySymbol /Box.x` --- `var x: Collection<*>`
 ##### Call Completion:
 
-1. `TypeVariable(Z) == kotlin/collections/Collection<*>` _from Fix variable Z_
+1. `TypeVariable(Z) == kotlin/collections/Collection<*>` _from Semi-fix variable Z_
 
 ### Call 16
 
@@ -1233,7 +1233,7 @@ x#
 #### Candidate 1: `FirRegularPropertySymbol /Box.x` --- `var x: List<*>`
 ##### Call Completion:
 
-1. `TypeVariable(Z) == kotlin/collections/List<*>` _from Fix variable Z_
+1. `TypeVariable(Z) == kotlin/collections/List<*>` _from Semi-fix variable Z_
 
 ### Call 21
 
@@ -1467,7 +1467,7 @@ x#
 #### Candidate 1: `FirRegularPropertySymbol /Box.x` --- `var x: List<it(Comparable<*> & Serializable)>`
 ##### Call Completion:
 
-1. `TypeVariable(Z) == kotlin/collections/List<TypeVariable(T)>` _from Fix variable Z_
+1. `TypeVariable(Z) == kotlin/collections/List<TypeVariable(T)>` _from Semi-fix variable Z_
 
 ### Call 31
 

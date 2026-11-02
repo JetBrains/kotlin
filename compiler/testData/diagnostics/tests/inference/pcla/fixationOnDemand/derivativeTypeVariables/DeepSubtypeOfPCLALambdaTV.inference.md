@@ -119,7 +119,7 @@ R?C|<local>/otvOwner|.provide#()
 #### Candidate 1: `FirNamedFunctionSymbol /TypeVariableOwner.provide` --- `fun provide(): ScopeOwner`
 ##### Call Completion:
 
-1. `TypeVariable(OT) == ScopeOwner` _from Fix variable OT_
+1. `TypeVariable(OT) == ScopeOwner` _from Semi-fix variable OT_
 2. Combine `TypeVariable(PNT) <: TypeVariable(OT)` with `TypeVariable(OT) == ScopeOwner`
     1. `TypeVariable(PNT) <: ScopeOwner`
 3. Combine `ScopeOwner <: TypeVariable(PNT)` with `TypeVariable(PNT) <: ScopeOwner`
@@ -518,7 +518,7 @@ R?C|<local>/otvOwner|.provide#()
 #### Candidate 1: `FirNamedFunctionSymbol /TypeVariableOwner.provide` --- `fun provide(): ScopeOwner`
 ##### Call Completion:
 
-1. `TypeVariable(OT) == ScopeOwner` _from Fix variable OT_
+1. `TypeVariable(OT) == ScopeOwner` _from Semi-fix variable OT_
 2. Combine `TypeVariable(PNT) <: TypeVariable(OT)` with `TypeVariable(OT) == ScopeOwner`
     1. `TypeVariable(PNT) <: ScopeOwner`
 3. Combine `ScopeOwner <: TypeVariable(PNT)` with `TypeVariable(PNT) <: ScopeOwner`
@@ -714,7 +714,7 @@ R?C|<local>/pntvOwner|.provide#()
 #### Candidate 1: `FirNamedFunctionSymbol /TypeVariableOwner.provide` --- `fun provide(): BaseType`
 ##### Call Completion:
 
-1. `TypeVariable(PNT) == TypeVariable(OT)` _from Fix variable PNT_
+1. `TypeVariable(PNT) == TypeVariable(OT)` _from Semi-fix variable PNT_
 2. Combine `TypeVariable(PNT) == TypeVariable(OT)` with `TypeVariable(PNT) <: CapturedType(in TypeVariable(OT))`
     1. `TypeVariable(OT) <: CapturedType(in TypeVariable(OT))`
 

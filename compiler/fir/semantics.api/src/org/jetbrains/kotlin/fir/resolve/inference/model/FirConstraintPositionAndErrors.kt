@@ -20,7 +20,7 @@ class ConeDeclaredUpperBoundConstraintPosition : DeclaredUpperBoundConstraintPos
 }
 
 class ConeSemiFixVariableConstraintPosition(variable: TypeVariableMarker) : SemiFixVariableConstraintPosition(variable) {
-    override fun toString(): String = "Fix variable ${variable.asCone().typeConstructor.name}"
+    override fun toString(): String = "Semi-fix variable ${variable.asCone().typeConstructor.name}"
 }
 
 class ConeFixVariableConstraintPosition(variable: TypeVariableMarker) : FixVariableConstraintPosition<Nothing?>(variable, null) {

@@ -263,7 +263,7 @@ x#
 3. Combine `kotlin/String <: TypeVariable(E1)` with `TypeVariable(E1) <: TypeVariable(_CST_0)`
     1. `kotlin/String <: TypeVariable(_CST_0)`
 4. `TypeVariable(E2) <: TypeVariable(_CST_0)` _from Synthetic CST variable bound_
-5. `TypeVariable(Z) == kotlin/collections/Set<TypeVariable(_CST_0)>` _from Fix variable Z_
+5. `TypeVariable(Z) == kotlin/collections/Set<TypeVariable(_CST_0)>` _from Semi-fix variable Z_
 
 ### Call 15
 
@@ -449,7 +449,7 @@ x#
 3. Combine `kotlin/String <: TypeVariable(E1)` with `TypeVariable(E1) <: TypeVariable(_CST_0)`
     1. `kotlin/String <: TypeVariable(_CST_0)`
 4. `TypeVariable(E2) <: TypeVariable(_CST_0)` _from Synthetic CST variable bound_
-5. `TypeVariable(Z) == kotlin/collections/Set<TypeVariable(_CST_0)>` _from Fix variable Z_
+5. `TypeVariable(Z) == kotlin/collections/Set<TypeVariable(_CST_0)>` _from Semi-fix variable Z_
 6. Combine `TypeVariable(Z) == kotlin/collections/Set<TypeVariable(_CST_0)>` with `TypeVariable(Z) <: kotlin/collections/Collection<kotlin/Any>`
     1. `TypeVariable(_CST_0) <: kotlin/Any`
 7. Combine `TypeVariable(E1) <: TypeVariable(_CST_0)` with `TypeVariable(_CST_0) <: kotlin/Any`
@@ -639,7 +639,7 @@ x#
     1. `kotlin/String <: TypeVariable(_CST_1)`
 8. `TypeVariable(T)! <: TypeVariable(_CST_1)` _from Synthetic CST variable bound_
     1. `TypeVariable(T) <: TypeVariable(_CST_1)!`
-9. `TypeVariable(Z) == ft<kotlin/collections/Set<TypeVariable(_CST_0)>, kotlin/collections/Set<TypeVariable(_CST_1)>?>` _from Fix variable Z_
+9. `TypeVariable(Z) == ft<kotlin/collections/Set<TypeVariable(_CST_0)>, kotlin/collections/Set<TypeVariable(_CST_1)>?>` _from Semi-fix variable Z_
 
 ### Call 25
 
@@ -836,7 +836,7 @@ x#
 3. Combine `kotlin/String <: TypeVariable(E3)` with `TypeVariable(E3) <: TypeVariable(_CST_0)`
     1. `kotlin/String <: TypeVariable(_CST_0)`
 4. `TypeVariable(E4) <: TypeVariable(_CST_0)` _from Synthetic CST variable bound_
-5. `TypeVariable(Z) == kotlin/collections/MutableSet<out TypeVariable(_CST_0)>` _from Fix variable Z_
+5. `TypeVariable(Z) == kotlin/collections/MutableSet<out TypeVariable(_CST_0)>` _from Semi-fix variable Z_
 
 ### Call 30
 
@@ -1017,7 +1017,7 @@ x#
 3. Combine `kotlin/String <: TypeVariable(E7)` with `TypeVariable(E7) <: TypeVariable(_CST_0)`
     1. `kotlin/String <: TypeVariable(_CST_0)`
 4. `TypeVariable(E8) <: TypeVariable(_CST_0)` _from Synthetic CST variable bound_
-5. `TypeVariable(Z) == kotlin/collections/MutableSet<out kotlin/collections/List<TypeVariable(_CST_0)>>` _from Fix variable Z_
+5. `TypeVariable(Z) == kotlin/collections/MutableSet<out kotlin/collections/List<TypeVariable(_CST_0)>>` _from Semi-fix variable Z_
 
 ### Call 35
 
@@ -1256,7 +1256,7 @@ x#
 #### Candidate 1: `FirRegularPropertySymbol /Box.x` --- `var x: Consumer<*>`
 ##### Call Completion:
 
-1. `TypeVariable(Z) == Consumer<*>` _from Fix variable Z_
+1. `TypeVariable(Z) == Consumer<*>` _from Semi-fix variable Z_
 
 ### Call 37
 
