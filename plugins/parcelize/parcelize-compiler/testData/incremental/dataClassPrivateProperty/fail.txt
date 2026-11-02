@@ -1,3 +1,0 @@
-Expected: `main.kt` is recompiled, and the build fails with `PARCELABLE_TYPE_NOT_SUPPORTED`, which is what a clean build does.
-
-Actual: only `Data.kt` is recompiled and the build succeeds.
