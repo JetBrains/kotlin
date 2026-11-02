@@ -133,7 +133,6 @@ internal fun generateCodeFromIr(
             input.irModuleFragment,
             input.pluginContext.irBuiltIns,
             input.symbolTable,
-            input.components.irProviders,
             debuggerExtensions = null,
             FirJvmBackendExtension(
                 input.components,

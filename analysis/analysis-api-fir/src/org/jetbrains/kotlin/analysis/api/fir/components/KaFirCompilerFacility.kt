@@ -896,7 +896,6 @@ internal class KaFirCompilerFacility(
             fir2IrResult.irModuleFragment,
             fir2IrResult.pluginContext.irBuiltIns,
             fir2IrResult.symbolTable,
-            fir2IrResult.components.irProviders,
             CompilerFacilityJvmDebuggerExtensions(),
             FirJvmBackendExtension(fir2IrResult.components, null),
             fir2IrResult.pluginContext,

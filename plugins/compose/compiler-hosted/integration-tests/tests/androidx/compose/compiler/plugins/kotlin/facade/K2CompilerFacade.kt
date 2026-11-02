@@ -214,7 +214,6 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
             irModuleFragment,
             frontendResult.pluginContext.irBuiltIns,
             frontendResult.symbolTable,
-            components.irProviders,
             debuggerExtensions = null,
             FirJvmBackendExtension(
                 components,
