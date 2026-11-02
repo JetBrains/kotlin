@@ -290,6 +290,7 @@ val gradleVersions = listOf(
     "9.6.1",
     "9.7.0",
     "9.8.1",
+    "9.9.0-rc-1",
 )
 
 // Keep in sync with testTags.kt
