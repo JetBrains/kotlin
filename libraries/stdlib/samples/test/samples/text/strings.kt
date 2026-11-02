@@ -167,6 +167,7 @@ class Strings {
         val text = "a1b2c3d4e5"
 
         assertPrints(text.find { it.isLetter() }, "a")
+        assertPrints(text.find { it.isDigit() }, "1")
         assertPrints(text.find { it.isUpperCase() }, "null")
         assertPrints("".find { it.isLowerCase() }, "null")
     }
