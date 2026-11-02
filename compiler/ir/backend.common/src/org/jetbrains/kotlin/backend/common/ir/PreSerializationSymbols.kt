@@ -73,7 +73,6 @@ fun findSharedVariableBoxClass(primitiveType: PrimitiveType?): PreSerializationK
  */
 interface PreSerializationSymbols {
     val throwUninitializedPropertyAccessException: IrSimpleFunctionSymbol
-    val throwUnsupportedOperationException: IrSimpleFunctionSymbol
 
     val syntheticConstructorMarker: IrClassSymbol
     val coroutineContextGetter: IrSimpleFunctionSymbol
@@ -97,13 +96,10 @@ interface PreSerializationKlibSymbols : PreSerializationSymbols {
         override val syntheticConstructorMarker: IrClassSymbol = ClassIds.SyntheticConstructorMarker.classSymbol()
         override val throwUninitializedPropertyAccessException: IrSimpleFunctionSymbol
                 by CallableIds.throwUninitializedPropertyAccessException.functionSymbol()
-        override val throwUnsupportedOperationException: IrSimpleFunctionSymbol
-                by CallableIds.throwUnsupportedOperationException.functionSymbol()
     }
 
     companion object {
         const val THROW_UNINITIALIZED_PROPERTY_ACCESS_NAME = "throwUninitializedPropertyAccessException"
-        const val THROW_UNSUPPORTED_OPERATION_NAME = "throwUnsupportedOperationException"
         const val GET_COROUTINE_CONTEXT_NAME = "getCoroutineContext"
         const val COROUTINE_CONTEXT_NAME = "coroutineContext"
 
@@ -117,7 +113,6 @@ interface PreSerializationKlibSymbols : PreSerializationSymbols {
 
         private object CallableIds {
             val throwUninitializedPropertyAccessException = THROW_UNINITIALIZED_PROPERTY_ACCESS_NAME.internalCallableId
-            val throwUnsupportedOperationException = THROW_UNSUPPORTED_OPERATION_NAME.internalCallableId
         }
     }
 }

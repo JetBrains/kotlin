@@ -93,10 +93,6 @@ private class JKlibPreSerializationSymbols(irBuiltIns: IrBuiltIns) : PreSerializ
     override val throwUninitializedPropertyAccessException: IrSimpleFunctionSymbol
         get() = notNeededOnTheFirstPhase("kotlin.internal.throwUninitializedPropertyAccessException")
 
-    // Not used by any lowering of the first phase.
-    override val throwUnsupportedOperationException: IrSimpleFunctionSymbol
-        get() = notNeededOnTheFirstPhase("kotlin.internal.throwUnsupportedOperationException")
-
     // The coroutine symbols are only used by `InlineFunctionResolverReplacingCoroutineIntrinsics`, which the JKlib first phase does not
     // run (see `JKlibPreSerializationInlineFunctionResolver`). The consumer of the KLIB replaces the coroutine intrinsics itself.
 
