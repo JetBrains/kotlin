@@ -7,24 +7,12 @@ package org.jetbrains.kotlin.ir
 
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.UnsignedType
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
-import org.jetbrains.kotlin.ir.builders.declarations.buildClass
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
-import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
-import org.jetbrains.kotlin.ir.declarations.IrFactory
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
-import org.jetbrains.kotlin.ir.util.addFakeOverrides
-import org.jetbrains.kotlin.ir.util.createThisReceiverParameter
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.StandardClassIds
 
 @RequiresOptIn(level = RequiresOptIn.Level.ERROR, message = "This is temporary API to be removed soon")
 @Target(AnnotationTarget.PROPERTY)
@@ -39,7 +27,7 @@ abstract class IrBuiltIns : SymbolFinderHolder {
     abstract val irFactory: IrFactory
 
     @UnstableBuiltInsApi
-    open var functionFactory: IrAbstractFunctionFactory? = null
+    open var functionFactory: IrBasedFunctionFactory? = null
 
     abstract val anyType: IrType
     abstract val anyClass: IrClassSymbol
