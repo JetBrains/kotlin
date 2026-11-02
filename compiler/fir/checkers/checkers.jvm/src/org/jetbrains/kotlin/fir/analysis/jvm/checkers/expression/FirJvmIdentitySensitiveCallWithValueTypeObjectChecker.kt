@@ -130,9 +130,12 @@ object FirJvmIdentitySensitiveCallWithValueTypeObjectChecker : FirCallChecker(Mp
             in operationsToCheckFirstTypeArgCallableIds -> when (expression) {
                 is FirFunctionCall -> {
                     val type = expression.resolvedType.firstExpandedTypeArgument() ?: return
-                    val typeArgument = expression.typeArguments.firstOrNull() as? FirTypeProjectionWithVariance
                     val isTypeAliasConstructor = (function as? FirConstructorSymbol)?.typeAliasConstructorInfo != null
-                    val source = if (isTypeAliasConstructor) expression.calleeReference.source else typeArgument?.source
+                    val source = if (isTypeAliasConstructor) {
+                        expression.calleeReference.source
+                    } else {
+                        (expression.typeArguments.firstOrNull() as? FirTypeProjectionWithVariance)?.source
+                    }
                     checkType(type, source ?: expression.calleeReference.source)
                 }
                 is FirDelegatedConstructorCall -> {
