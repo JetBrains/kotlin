@@ -38,7 +38,20 @@ interface TypeAfterList {
 }
 
 interface NullableAndParenthesized {
+    val nullable: (@Anno context(Int)<!SYNTAX!><!>)?
+    val nullableWithoutAnnotation: (context(Int)<!SYNTAX!><!>)?
+    val nullableWithType: (@Anno context(Int) String<!SYNTAX!><!>)?
+    val nullableWithReceiver: (@Anno context(Int) (String).<!SYNTAX!><!>)?
+    val doubleNullable: ((@Anno context(Int)<!SYNTAX!><!>)?)?
+    val nullableInsideDangling: @Anno context(Int) (@Other context(Long)<!SYNTAX!><!>)?<!SYNTAX!><!>
     val nullableWithoutType: (<!SYNTAX!><!>)?
+    val nullableUnresolved: (@Anno context(Unresolved) <!UNRESOLVED_REFERENCE!>Unresolved<!><!SYNTAX!><!>)?
+    val nullableAnnotatedEntry: (context(@Other Int)<!SYNTAX!><!>)?
+    val nullableNullableType: (context(Int) String?<!SYNTAX!><!>)?
+    val nullableSuspend: (suspend context(Int)<!SYNTAX!><!>)?
+    val suspendInsideDangling: context(Int) (suspend context(Long)<!SYNTAX!><!>)?<!SYNTAX!><!>
+    val suspendOutsideDangling: suspend context(Int) (context(Long)<!SYNTAX!><!>)?<!SYNTAX!><!>
+    val nullableAnnotatedEntryUnresolved: (context(@Other Unresolved)<!SYNTAX!><!>)?
     val parenthesized: (@Anno context(Int)<!SYNTAX!><!>)
 }
 
