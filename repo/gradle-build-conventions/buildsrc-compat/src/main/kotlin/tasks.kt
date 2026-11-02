@@ -27,6 +27,7 @@ val kotlinGradlePluginAndItsRequired = arrayOf(
     ":kotlin-parcelize-compiler",
     ":kotlin-compiler-embeddable",
     ":native:kotlin-native-utils",
+    ":native:kotlin-native-targets",
     ":kotlin-util-klib",
     ":kotlin-util-io",
     ":kotlin-compiler-runner",

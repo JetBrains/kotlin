@@ -445,6 +445,7 @@
 /native/objcexport-header-generator/ "Kotlin Native"
 /native/objcexport-header-generator/impl/analysis-api/ "Kotlin Native"
 /native/swift/ artem.olkov@jetbrains.com gleb.lukianets@jetbrains.com anton.bannykh@jetbrains.com aleksei.glushko@jetbrains.com rick.clephas.external@jetbrains.com
+/native/targets/api/kotlin-native-targets-api.foreign "Kotlin Analysis API"
 
 /plugins/allopen/ "Kotlin Frontend"
 /plugins/assign-plugin/ "Kotlin Frontend"

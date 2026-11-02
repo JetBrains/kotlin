@@ -139,6 +139,7 @@ Native:
  - native/native.config
  - native/native.tests
  - native/objcexport-header-generator
+ - native/targets
  - native/unsafe-mem
  - native/utils
 

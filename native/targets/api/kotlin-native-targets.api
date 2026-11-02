@@ -1,0 +1,145 @@
+public final class org/jetbrains/kotlin/konan/target/Architecture : java/lang/Enum {
+	public static final field ARM32 Lorg/jetbrains/kotlin/konan/target/Architecture;
+	public static final field ARM64 Lorg/jetbrains/kotlin/konan/target/Architecture;
+	public static final field X64 Lorg/jetbrains/kotlin/konan/target/Architecture;
+	public static final field X86 Lorg/jetbrains/kotlin/konan/target/Architecture;
+	public final fun getBitness ()I
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/konan/target/Architecture;
+	public static fun values ()[Lorg/jetbrains/kotlin/konan/target/Architecture;
+}
+
+public final class org/jetbrains/kotlin/konan/target/Family : java/lang/Enum {
+	public static final field ANDROID Lorg/jetbrains/kotlin/konan/target/Family;
+	public static final field IOS Lorg/jetbrains/kotlin/konan/target/Family;
+	public static final field LINUX Lorg/jetbrains/kotlin/konan/target/Family;
+	public static final field MINGW Lorg/jetbrains/kotlin/konan/target/Family;
+	public static final field OSX Lorg/jetbrains/kotlin/konan/target/Family;
+	public static final field TVOS Lorg/jetbrains/kotlin/konan/target/Family;
+	public static final field WATCHOS Lorg/jetbrains/kotlin/konan/target/Family;
+	public final fun getDynamicPrefix ()Ljava/lang/String;
+	public final fun getDynamicSuffix ()Ljava/lang/String;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getExeSuffix ()Ljava/lang/String;
+	public final fun getStaticPrefix ()Ljava/lang/String;
+	public final fun getStaticSuffix ()Ljava/lang/String;
+	public final fun isAppleFamily ()Z
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/konan/target/Family;
+	public static fun values ()[Lorg/jetbrains/kotlin/konan/target/Family;
+}
+
+public abstract class org/jetbrains/kotlin/konan/target/KonanTarget : java/io/Serializable, org/jetbrains/kotlin/konan/util/Named {
+	public static final field Companion Lorg/jetbrains/kotlin/konan/target/KonanTarget$Companion;
+	public synthetic fun <init> (Ljava/lang/String;Lorg/jetbrains/kotlin/konan/target/Family;Lorg/jetbrains/kotlin/konan/target/Architecture;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getArchitecture ()Lorg/jetbrains/kotlin/konan/target/Architecture;
+	public final fun getFamily ()Lorg/jetbrains/kotlin/konan/target/Family;
+	public fun getName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/konan/target/KonanTarget$ANDROID_ARM32 : org/jetbrains/kotlin/konan/target/KonanTarget {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/konan/target/KonanTarget$ANDROID_ARM32;
+}
+
+public final class org/jetbrains/kotlin/konan/target/KonanTarget$ANDROID_ARM64 : org/jetbrains/kotlin/konan/target/KonanTarget {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/konan/target/KonanTarget$ANDROID_ARM64;
+}
+
+public final class org/jetbrains/kotlin/konan/target/KonanTarget$ANDROID_X64 : org/jetbrains/kotlin/konan/target/KonanTarget {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/konan/target/KonanTarget$ANDROID_X64;
+}
+
+public final class org/jetbrains/kotlin/konan/target/KonanTarget$ANDROID_X86 : org/jetbrains/kotlin/konan/target/KonanTarget {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/konan/target/KonanTarget$ANDROID_X86;
+}
+
+public final class org/jetbrains/kotlin/konan/target/KonanTarget$Companion {
+	public final fun getDeprecatedTargets ()Ljava/util/Set;
+	public final fun getPredefinedTargets ()Ljava/util/Map;
+	public final fun getToleratedDeprecatedTargets ()Ljava/util/Set;
+}
+
+public final class org/jetbrains/kotlin/konan/target/KonanTarget$IOS_ARM64 : org/jetbrains/kotlin/konan/target/KonanTarget {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/konan/target/KonanTarget$IOS_ARM64;
+}
+
+public final class org/jetbrains/kotlin/konan/target/KonanTarget$IOS_SIMULATOR_ARM64 : org/jetbrains/kotlin/konan/target/KonanTarget {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/konan/target/KonanTarget$IOS_SIMULATOR_ARM64;
+}
+
+public final class org/jetbrains/kotlin/konan/target/KonanTarget$IOS_X64 : org/jetbrains/kotlin/konan/target/KonanTarget {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/konan/target/KonanTarget$IOS_X64;
+}
+
+public final class org/jetbrains/kotlin/konan/target/KonanTarget$LINUX_ARM32_HFP : org/jetbrains/kotlin/konan/target/KonanTarget {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/konan/target/KonanTarget$LINUX_ARM32_HFP;
+}
+
+public final class org/jetbrains/kotlin/konan/target/KonanTarget$LINUX_ARM64 : org/jetbrains/kotlin/konan/target/KonanTarget {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/konan/target/KonanTarget$LINUX_ARM64;
+}
+
+public final class org/jetbrains/kotlin/konan/target/KonanTarget$LINUX_X64 : org/jetbrains/kotlin/konan/target/KonanTarget {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/konan/target/KonanTarget$LINUX_X64;
+}
+
+public final class org/jetbrains/kotlin/konan/target/KonanTarget$MACOS_ARM64 : org/jetbrains/kotlin/konan/target/KonanTarget {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/konan/target/KonanTarget$MACOS_ARM64;
+}
+
+public final class org/jetbrains/kotlin/konan/target/KonanTarget$MACOS_X64 : org/jetbrains/kotlin/konan/target/KonanTarget {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/konan/target/KonanTarget$MACOS_X64;
+}
+
+public final class org/jetbrains/kotlin/konan/target/KonanTarget$MINGW_X64 : org/jetbrains/kotlin/konan/target/KonanTarget {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/konan/target/KonanTarget$MINGW_X64;
+}
+
+public final class org/jetbrains/kotlin/konan/target/KonanTarget$TVOS_ARM64 : org/jetbrains/kotlin/konan/target/KonanTarget {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/konan/target/KonanTarget$TVOS_ARM64;
+}
+
+public final class org/jetbrains/kotlin/konan/target/KonanTarget$TVOS_SIMULATOR_ARM64 : org/jetbrains/kotlin/konan/target/KonanTarget {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/konan/target/KonanTarget$TVOS_SIMULATOR_ARM64;
+}
+
+public final class org/jetbrains/kotlin/konan/target/KonanTarget$TVOS_X64 : org/jetbrains/kotlin/konan/target/KonanTarget {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/konan/target/KonanTarget$TVOS_X64;
+}
+
+public final class org/jetbrains/kotlin/konan/target/KonanTarget$WATCHOS_ARM32 : org/jetbrains/kotlin/konan/target/KonanTarget {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/konan/target/KonanTarget$WATCHOS_ARM32;
+}
+
+public final class org/jetbrains/kotlin/konan/target/KonanTarget$WATCHOS_ARM64 : org/jetbrains/kotlin/konan/target/KonanTarget {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/konan/target/KonanTarget$WATCHOS_ARM64;
+}
+
+public final class org/jetbrains/kotlin/konan/target/KonanTarget$WATCHOS_DEVICE_ARM64 : org/jetbrains/kotlin/konan/target/KonanTarget {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/konan/target/KonanTarget$WATCHOS_DEVICE_ARM64;
+}
+
+public final class org/jetbrains/kotlin/konan/target/KonanTarget$WATCHOS_SIMULATOR_ARM64 : org/jetbrains/kotlin/konan/target/KonanTarget {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/konan/target/KonanTarget$WATCHOS_SIMULATOR_ARM64;
+}
+
+public final class org/jetbrains/kotlin/konan/target/KonanTarget$WATCHOS_X64 : org/jetbrains/kotlin/konan/target/KonanTarget {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/konan/target/KonanTarget$WATCHOS_X64;
+}
+
+public final class org/jetbrains/kotlin/konan/target/KonanTargetKt {
+	public static final field DEPRECATED_TARGET_AS_ERROR_MESSAGE Ljava/lang/String;
+	public static final field DEPRECATED_TARGET_MESSAGE Ljava/lang/String;
+}
+
+public abstract interface class org/jetbrains/kotlin/konan/util/Named {
+	public abstract fun getName ()Ljava/lang/String;
+	public fun getVisibleName ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/konan/util/VisibleNamedKt {
+	public static final fun getVisibleName (Ljava/lang/Enum;)Ljava/lang/String;
+}
+

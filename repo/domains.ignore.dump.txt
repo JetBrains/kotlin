@@ -161,6 +161,7 @@ ignored:
  - native/swift/sir/README.md
  - native/swift/swift-export-standalone-integration-tests/README.md
  - native/swift/swift-export-standalone/README.md
+ - native/targets/README.md
  - plugins/compose/README.md
  - plugins/js-plain-objects/README.md
  - plugins/kotlin-dataframe/README.md

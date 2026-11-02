@@ -11,6 +11,7 @@ description = "Kotlin/Native utils"
 dependencies {
     val coreDepsVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
     compileOnly(kotlin("stdlib", coreDepsVersion))
+    api(project(":native:kotlin-native-targets"))
     api(project(":kotlin-util-io"))
     api(project(":kotlin-util-klib"))
 
