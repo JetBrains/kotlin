@@ -76,14 +76,10 @@
     </dependency>
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
-      <artifactId>kotlin-native-utils</artifactId>
+      <artifactId>kotlin-util-io</artifactId>
       <version>ArtifactsTest.version</version>
       <scope>compile</scope>
       <exclusions>
-        <exclusion>
-          <groupId>org.jetbrains.kotlin</groupId>
-          <artifactId>kotlin-util-klib</artifactId>
-        </exclusion>
         <exclusion>
           <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-reflect</artifactId>
