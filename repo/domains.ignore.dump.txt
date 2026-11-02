@@ -20,6 +20,7 @@ ignored:
  - analysis/symbol-light-classes/README.md
  - analysis/test-data-manager/README.md
  - build-common/src/org/jetbrains/kotlin/incremental/impl/README.md
+ - build-tools/libraries/README.md
  - compiler/android-tests/ReadMe.md
  - compiler/backend.common.jvm/ReadMe.md
  - compiler/backend/ReadMe.md

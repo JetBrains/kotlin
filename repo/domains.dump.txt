@@ -186,6 +186,9 @@ BuildToolsApi:
  - compiler/daemon
  - compiler/incremental-compilation-impl
 
+BuildToolsLibraries:
+ - build-tools/libraries
+
 SwiftExport:
  - native/swift
 
