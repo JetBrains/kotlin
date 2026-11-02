@@ -42,7 +42,10 @@ open class FirTestDataConsistencyHandler(testServices: TestServices) : AfterAnal
 
     private fun checkFirAndLatestLVTestData(latestLVTestData: File) {
         val firTestData = latestLVTestData.originalTestDataFile
-        checkTwoFiles(firTestData, latestLVTestData, "Original and Latest Stable LV testdata aren't identical. ")
+        checkTwoFiles(
+            firTestData, latestLVTestData, "Original and Latest Stable LV testdata aren't identical. ",
+            ignoredDirectives = listOf(RUN_PIPELINE_TILL),
+        )
     }
 
     /**
