@@ -15,10 +15,10 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithVisibility
 import org.jetbrains.kotlin.name.Name
 
 abstract class IrDeclarationBuilder : IrElementBuilder() {
-    var origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED
-    var visibility: DescriptorVisibility = DescriptorVisibilities.PUBLIC
+    open var origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED
+    open var visibility: DescriptorVisibility = DescriptorVisibilities.PUBLIC
 
-    lateinit var name: Name
+    open lateinit var name: Name
 
     fun updateFrom(from: IrDeclaration) {
         super.updateFrom(from)

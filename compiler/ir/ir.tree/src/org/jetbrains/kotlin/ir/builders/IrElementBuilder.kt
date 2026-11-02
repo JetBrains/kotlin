@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 
 abstract class IrElementBuilder {
 
-    var startOffset: Int = UNDEFINED_OFFSET
-    var endOffset: Int = UNDEFINED_OFFSET
+    open var startOffset: Int = UNDEFINED_OFFSET
+    open var endOffset: Int = UNDEFINED_OFFSET
 
     fun updateFrom(from: IrElement) {
         startOffset = from.startOffset

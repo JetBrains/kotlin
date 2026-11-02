@@ -5,19 +5,36 @@
 
 package org.jetbrains.kotlin.ir.builders.declarations
 
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
+import org.jetbrains.kotlin.ir.expressions.IrBody
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 class IrFunctionBuilder : IrDeclarationBuilder() {
+    override var startOffset: Int = UNDEFINED_OFFSET
+    override var endOffset: Int = UNDEFINED_OFFSET
+    override var origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED
+    override var visibility: DescriptorVisibility = DescriptorVisibilities.PUBLIC
+
+    @Suppress("LateinitVarOverridesLateinitVar")
+    override lateinit var name: Name
 
     var isInline: Boolean = false
     var isExternal: Boolean = false
 
     var returnType: IrType? = null
+    val parameters: MutableList<IrValueParameter> = []
+    var body: IrBody? = null
 
     var modality: Modality = Modality.FINAL
     var isTailrec: Boolean = false
@@ -29,6 +46,15 @@ class IrFunctionBuilder : IrDeclarationBuilder() {
     var isPrimary: Boolean = false
 
     var isFakeOverride: Boolean = false
+    val overriddenSymbols: MutableList<IrSimpleFunctionSymbol> = []
+    var correspondingPropertySymbol: IrPropertySymbol? = null
+    var companionExtensionClass: IrClassSymbol? = null
+
+    var parent: IrDeclarationParent? = null
+    val annotations: MutableList<IrAnnotation> = []
+    val typeParameters: MutableList<IrTypeParameter> = []
+    var metadata: MetadataSource? = null
+    var attributeOwnerId: IrElement? = null
 
     var originalDeclaration: IrFunction? = null
     var containerSource: DeserializedContainerSource? = null

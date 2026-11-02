@@ -61,7 +61,19 @@ internal fun IrFactory.buildClass(builder: IrClassBuilder): IrClass = with(build
         isExpect = isExpect,
         isFun = isFun,
         hasEnumEntries = hasEnumEntries,
-    )
+        source = source,
+    ).also {
+        it.superTypes = superTypes
+        it.thisReceiver = thisReceiver
+        it.valueClassRepresentation = valueClassRepresentation
+        it.sealedSubclasses = sealedSubclasses
+        parent?.let { parent -> it.parent = parent }
+        it.annotations = annotations
+        it.typeParameters = typeParameters
+        it.declarations.addAll(declarations)
+        it.metadata = metadata
+        attributeOwnerId?.let { attributeOwnerId -> it.attributeOwnerId = attributeOwnerId }
+    }
 }
 
 inline fun IrFactory.buildClass(builder: IrClassBuilder.() -> Unit) =
@@ -399,12 +411,23 @@ internal fun IrFactory.buildFunction(builder: IrFunctionBuilder): IrSimpleFuncti
         isExternal = isExternal,
         containerSource = containerSource,
         isFakeOverride = isFakeOverride,
-    )
+        companionExtensionClass = companionExtensionClass,
+    ).also {
+        it.parameters = parameters
+        it.body = body
+        it.overriddenSymbols = overriddenSymbols
+        it.correspondingPropertySymbol = correspondingPropertySymbol
+        parent?.let { parent -> it.parent = parent }
+        it.annotations = annotations
+        it.typeParameters = typeParameters
+        it.metadata = metadata
+        attributeOwnerId?.let { attributeOwnerId -> it.attributeOwnerId = attributeOwnerId }
+    }
 }
 
 @PublishedApi
 internal fun IrFactory.buildConstructor(builder: IrFunctionBuilder): IrConstructor = with(builder) {
-    return createConstructor(
+    createConstructor(
         startOffset = startOffset,
         endOffset = endOffset,
         origin = origin,
@@ -417,7 +440,15 @@ internal fun IrFactory.buildConstructor(builder: IrFunctionBuilder): IrConstruct
         isPrimary = isPrimary,
         isExternal = isExternal,
         containerSource = containerSource,
-    )
+    ).also {
+        it.parameters = parameters
+        it.body = body
+        parent?.let { parent -> it.parent = parent }
+        it.annotations = annotations
+        it.typeParameters = typeParameters
+        it.metadata = metadata
+        attributeOwnerId?.let { attributeOwnerId -> it.attributeOwnerId = attributeOwnerId }
+    }
 }
 
 inline fun IrFactory.buildFun(builder: IrFunctionBuilder.() -> Unit): IrSimpleFunction =
