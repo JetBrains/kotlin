@@ -15,8 +15,8 @@ fun setOK(): Int {
     return 1
 }
 
-// EXPECT_GENERATED_JS: function=box expect=inlineEmptyFunctionTest.js IGNORED_MODES=USE_CONST_AND_LET_FOR_VARIABLES
-// EXPECT_GENERATED_JS: function=box expect=inlineEmptyFunctionTest.constLet.js TARGET_MODES=USE_CONST_AND_LET_FOR_VARIABLES
+// EXPECT_GENERATED_JS: function=box expect=inlineEmptyFunction.out.js IGNORED_MODES=USE_CONST_AND_LET_FOR_VARIABLES
+// EXPECT_GENERATED_JS: function=box expect=inlineEmptyFunction.out.constLet.js TARGET_MODES=USE_CONST_AND_LET_FOR_VARIABLES
 fun box(): String {
     sep("Simple call")
     inlineFunction(1)
