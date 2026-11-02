@@ -9,8 +9,6 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.fir.components.*
-import org.jetbrains.kotlin.analysis.api.fir.components.KaFirAnalysisScopeProviderImpl
-import org.jetbrains.kotlin.analysis.api.fir.components.KaRendererImpl
 import org.jetbrains.kotlin.analysis.api.fir.components.bridges.*
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbolProvider
 import org.jetbrains.kotlin.analysis.api.fir.utils.createSession

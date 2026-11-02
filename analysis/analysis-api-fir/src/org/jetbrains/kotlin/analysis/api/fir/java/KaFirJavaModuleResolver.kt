@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,12 +7,8 @@ package org.jetbrains.kotlin.analysis.api.fir.java
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.analysis.api.platform.java.KotlinJavaModuleAnnotationsProvider
 import org.jetbrains.kotlin.analysis.api.platform.caches.NullableCaffeineCache
-import org.jetbrains.kotlin.analysis.api.platform.java.KotlinJavaModuleAccessibilityChecker
-import org.jetbrains.kotlin.analysis.api.platform.java.KotlinJavaModuleAccessibilityError
-import org.jetbrains.kotlin.analysis.api.platform.java.KotlinJavaModuleJavaAnnotationsProvider
-import org.jetbrains.kotlin.analysis.api.platform.java.KotlinJavaModulePsiAnnotationsProvider
+import org.jetbrains.kotlin.analysis.api.platform.java.*
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.impl.JavaAnnotationImpl
 import org.jetbrains.kotlin.load.java.structure.impl.convert

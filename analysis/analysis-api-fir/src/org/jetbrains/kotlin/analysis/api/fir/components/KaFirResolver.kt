@@ -93,7 +93,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.exceptions.*
-import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 internal class KaFirResolver(
     override val analysisSessionProvider: () -> KaFirSession,

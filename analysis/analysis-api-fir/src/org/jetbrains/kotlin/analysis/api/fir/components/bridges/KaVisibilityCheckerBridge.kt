@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.fir.components.bridges
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaUseSiteVisibilityChecker
 import org.jetbrains.kotlin.analysis.api.components.KaVisibilityChecker
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession

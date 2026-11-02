@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.generators.tests.analysis.api.dsl
 
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.*
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfiguratorFactoryData
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisSessionMode
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind
 
 typealias TestFilter = (AnalysisApiTestConfiguratorFactoryData) -> Boolean
 

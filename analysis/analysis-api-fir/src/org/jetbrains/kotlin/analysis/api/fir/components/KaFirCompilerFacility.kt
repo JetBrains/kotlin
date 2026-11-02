@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.analysis.api.compile.KaCodeFragmentCapturedValue
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.fir.components.*
 import org.jetbrains.kotlin.analysis.api.fir.components.compilation.CodeFragmentContextDeclarationCache
 import org.jetbrains.kotlin.analysis.api.fir.components.compilation.getNonLocalContainingOrThisDeclarationWithIrMetadata
 import org.jetbrains.kotlin.analysis.api.fir.utils.KaFirCompiledFileForOutputFile

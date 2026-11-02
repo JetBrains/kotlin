@@ -7,7 +7,10 @@ package org.jetbrains.kotlin.analysis.api.fir.resolution
 
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.resolution.*
+import org.jetbrains.kotlin.analysis.api.resolution.KaForLoopCall
+import org.jetbrains.kotlin.analysis.api.resolution.KaForLoopCallResolutionAttempt
+import org.jetbrains.kotlin.analysis.api.resolution.KaFunctionCall
+import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleCallResolutionAttempt
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 
 internal class KaFirForLoopCallResolutionAttempt(

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.fir.components.bridges
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaBuiltinFunctionTypeFamilies
 import org.jetbrains.kotlin.analysis.api.components.KaFunctionTypeFamily
 import org.jetbrains.kotlin.analysis.api.components.KaTypeInformationProvider

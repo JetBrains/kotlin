@@ -11,8 +11,6 @@ import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractEffectD
 import org.jetbrains.kotlin.analysis.api.fir.*
 import org.jetbrains.kotlin.analysis.api.fir.contracts.coneEffectDeclarationToAnalysisApi
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.*
-import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaCannotCreateSymbolPointerForLocalLibraryDeclarationException
-import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaUnsupportedSymbolLocation
 import org.jetbrains.kotlin.analysis.api.fir.utils.callableId
 import org.jetbrains.kotlin.analysis.api.fir.utils.kotlinFunctionInvokeCallableIds
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
