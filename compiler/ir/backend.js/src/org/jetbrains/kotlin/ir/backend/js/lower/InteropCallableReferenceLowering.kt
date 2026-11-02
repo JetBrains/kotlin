@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.js.config.compileLambdasAsEs6ArrowFunctions
 import org.jetbrains.kotlin.js.config.compileSuspendAsJsGenerator
 import org.jetbrains.kotlin.js.config.generateInlineAnonymousFunctions
+import org.jetbrains.kotlin.js.config.useEs6ConstLet
 import org.jetbrains.kotlin.name.JsStandardClassIds
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
@@ -227,7 +228,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
      *
      * ES6 `let` statements don't have this problem.
      */
-    private class ClosureUsageAnalyser : IrVisitorVoid() {
+    private inner class ClosureUsageAnalyser : IrVisitorVoid() {
 
         private val lambdaConstructorCalls: MutableMap<IrConstructorSymbol, MutableList<IrConstructorCall>> = hashMapOf()
         private val variablesDeclaredInLoops: MutableSet<IrValueDeclaration> = hashSetOf()
@@ -280,6 +281,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
             arguments.any { it!!.referencesVariablesDeclaredInLoops() }
 
         fun lambdaCapturesVariablesDeclaredInLoops(lambdaClass: IrClass): Boolean {
+            if (context.configuration.useEs6ConstLet) return false
             val primaryConstructor = lambdaClass.primaryConstructor ?: return false
             val ctorCalls = lambdaConstructorCalls[primaryConstructor.symbol] ?: return false
             return ctorCalls.any { it.referencesVariablesDeclaredInLoops() }

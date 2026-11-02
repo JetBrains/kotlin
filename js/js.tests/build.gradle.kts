@@ -177,6 +177,10 @@ projectTests {
         setUpJsBoxTests()
     }
 
+    jsTestTask(taskName = "jsES6ConstLetTest", tag = "jsConstLet", skipInLocalBuild = true) {
+        setUpJsBoxTests()
+    }
+
     jsTestTask(taskName = "jsSwcTest", tag = swcTag) {
         with(swcKotlinBuild) {
             setupSwc()

@@ -7,7 +7,8 @@ fun foo(x: Int): Int {
     return x
 }
 
-// EXPECT_GENERATED_JS: function=box expect=labeledContinueInNestedLoop.optimized.js
+// EXPECT_GENERATED_JS: function=box expect=labeledContinueInNestedLoop.optimized.js IGNORED_MODES=USE_CONST_AND_LET_FOR_VARIABLES
+// EXPECT_GENERATED_JS: function=box expect=labeledContinueInNestedLoop.optimized.constLet.js TARGET_MODES=USE_CONST_AND_LET_FOR_VARIABLES
 fun box(): String {
     var i = 0
     loop@ do {
