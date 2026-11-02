@@ -334,7 +334,8 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
     }
 }
 
-internal data class ToolSpec(
+@ConsistentCopyVisibility
+internal data class ToolSpec private constructor(
     val displayName: String,
     val optionalToolName: String?,
     val mainClass: String,
@@ -346,51 +347,54 @@ internal data class ToolSpec(
     val systemProperties: Map<String, String> = emptyMap(),
     val environment: Map<String, String> = emptyMap(),
     val environmentBlacklist: Set<String> = emptySet(),
-) : java.io.Serializable
+) : java.io.Serializable {
+
+    companion object {
+        operator fun invoke(
+            displayName: Provider<String>,
+            optionalToolName: Provider<String>,
+            mainClass: Provider<String>,
+            daemonEntryPoint: Provider<String>,
+            classpath: FileCollection,
+            jvmArgs: Provider<List<String>>,
+            shouldPassArgumentsViaArgFile: Provider<Boolean>,
+            collectNativeCompilerMetrics: Provider<Boolean>,
+            systemProperties: Map<String, String> = emptyMap(),
+            environment: Map<String, String> = emptyMap(),
+            environmentBlacklist: Set<String> = emptySet(),
+        ): ToolSpec = ToolSpec(
+            displayName = displayName.get(),
+            optionalToolName = optionalToolName.orNull,
+            mainClass = mainClass.get(),
+            daemonEntryPoint = daemonEntryPoint.get(),
+            classpath = classpath.files,
+            jvmArgs = jvmArgs.get(),
+            shouldPassArgumentsViaArgFile = shouldPassArgumentsViaArgFile.get(),
+            collectNativeCompilerMetrics = collectNativeCompilerMetrics.get(),
+            systemProperties = systemProperties,
+            environment = environment,
+            environmentBlacklist = environmentBlacklist,
+        )
+    }
+
+    /**
+     * Disable C2 compiler for HotSpot VM to improve compilation speed.
+     */
+    fun disableC2(): ToolSpec {
+        val vmName = System.getProperty("java.vm.name")
+        return if (vmName != null && vmName.contains("HotSpot", true)) {
+            copy(jvmArgs = jvmArgs + "-XX:TieredStopAtLevel=1")
+        } else this
+    }
+
+    fun enableAssertions(): ToolSpec = copy(jvmArgs = jvmArgs + "-ea")
+
+    fun configureDefaultMaxHeapSize(): ToolSpec =
+        if (jvmArgs.none { it.startsWith("-Xmx") }) copy(jvmArgs = jvmArgs + "-Xmx3g") else this
+}
 
 private val systemPropertiesBlacklist: Set<String> = setOf(
     "java.endorsed.dirs",       // Fix for KT-25887
     "user.dir",                 // Don't propagate the working dir of the current Gradle process
     "java.system.class.loader"  // Don't use custom class loaders
 )
-
-internal fun ToolSpec(
-    displayName: Provider<String>,
-    optionalToolName: Provider<String>,
-    mainClass: Provider<String>,
-    daemonEntryPoint: Provider<String>,
-    classpath: FileCollection,
-    jvmArgs: Provider<List<String>>,
-    shouldPassArgumentsViaArgFile: Provider<Boolean>,
-    collectNativeCompilerMetrics: Provider<Boolean>,
-    systemProperties: Map<String, String> = emptyMap(),
-    environment: Map<String, String> = emptyMap(),
-    environmentBlacklist: Set<String> = emptySet(),
-): ToolSpec = ToolSpec(
-    displayName = displayName.get(),
-    optionalToolName = optionalToolName.orNull,
-    mainClass = mainClass.get(),
-    daemonEntryPoint = daemonEntryPoint.get(),
-    classpath = classpath.files,
-    jvmArgs = jvmArgs.get(),
-    shouldPassArgumentsViaArgFile = shouldPassArgumentsViaArgFile.get(),
-    collectNativeCompilerMetrics = collectNativeCompilerMetrics.get(),
-    systemProperties = systemProperties,
-    environment = environment,
-    environmentBlacklist = environmentBlacklist,
-)
-
-/**
- * Disable C2 compiler for HotSpot VM to improve compilation speed.
- */
-internal fun ToolSpec.disableC2(): ToolSpec {
-    val vmName = System.getProperty("java.vm.name")
-    return if (vmName != null && vmName.contains("HotSpot", true)) {
-        copy(jvmArgs = jvmArgs + "-XX:TieredStopAtLevel=1")
-    } else this
-}
-
-internal fun ToolSpec.enableAssertions(): ToolSpec = copy(jvmArgs = jvmArgs + "-ea")
-
-internal fun ToolSpec.configureDefaultMaxHeapSize(): ToolSpec =
-    if (jvmArgs.none { it.startsWith("-Xmx") }) copy(jvmArgs = jvmArgs + "-Xmx3g") else this
