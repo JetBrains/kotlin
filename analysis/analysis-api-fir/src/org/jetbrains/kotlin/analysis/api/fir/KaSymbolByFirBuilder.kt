@@ -13,8 +13,6 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.*
 import org.jetbrains.kotlin.analysis.api.fir.types.*
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.toVariance
-import org.jetbrains.kotlin.analysis.api.fir.types.KaFirStarTypeProjection
-import org.jetbrains.kotlin.analysis.api.fir.types.KaFirTypeArgumentWithVariance
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProvider
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
@@ -52,12 +50,10 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.typeParameterSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectOrStaticData
 import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorInfo
-import org.jetbrains.kotlin.fir.types.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry

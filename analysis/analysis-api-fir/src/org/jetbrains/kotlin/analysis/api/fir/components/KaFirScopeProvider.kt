@@ -9,9 +9,6 @@ import com.intellij.psi.util.parentOfType
 import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.scopes.*
-import org.jetbrains.kotlin.analysis.api.fir.scopes.KaFirCompositeScope
-import org.jetbrains.kotlin.analysis.api.fir.scopes.KaFirCompositeTypeScope
-import org.jetbrains.kotlin.analysis.api.fir.scopes.KaFirEmptyScope
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirAnonymousObjectSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirFileSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedClassSymbolBase
@@ -24,11 +21,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.scopes.KaTypeScope
-import org.jetbrains.kotlin.analysis.api.symbols.KaContextParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaPackageSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile

@@ -24,7 +24,10 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeUnreportedDuplicateDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.psi
-import org.jetbrains.kotlin.fir.references.*
+import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
+import org.jetbrains.kotlin.fir.references.FirNamedReference
+import org.jetbrains.kotlin.fir.references.FirReference
+import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDiagnosticWithCandidates
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDiagnosticWithSymbol
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeHiddenCandidateError

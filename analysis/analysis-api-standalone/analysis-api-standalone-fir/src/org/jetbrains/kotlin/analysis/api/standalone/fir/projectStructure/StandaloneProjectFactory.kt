@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.analysis.api.standalone.fir.declarations.KotlinStand
 import org.jetbrains.kotlin.analysis.api.standalone.fir.declarations.KotlinStandaloneJvmDependenciesIndex
 import org.jetbrains.kotlin.analysis.api.standalone.fir.java.KotlinStandaloneJavaModuleAccessibilityChecker
 import org.jetbrains.kotlin.analysis.api.standalone.fir.java.KotlinStandaloneJavaModuleAnnotationsProvider
+import org.jetbrains.kotlin.analysis.api.standalone.fir.projectStructure.StandaloneProjectFactory.registerJavaPsiFacade
 import org.jetbrains.kotlin.analysis.api.standalone.projectStructure.StandaloneLibraryScopeConstructionMode
 import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProvider
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsKotlinBinaryClassCache

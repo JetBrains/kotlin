@@ -12,11 +12,7 @@ import org.jetbrains.kotlin.analysis.api.internals.KaInternalsTypeInformationPro
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeAliasSymbol
-import org.jetbrains.kotlin.analysis.api.types.KaBuiltinFunctionTypeFamilies
-import org.jetbrains.kotlin.analysis.api.types.KaClassType
-import org.jetbrains.kotlin.analysis.api.types.KaFunctionTypeFamily
-import org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds
-import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.builtins.functions.isSuspendOrKSuspendFunction
 import org.jetbrains.kotlin.fir.resolve.FirSamResolver

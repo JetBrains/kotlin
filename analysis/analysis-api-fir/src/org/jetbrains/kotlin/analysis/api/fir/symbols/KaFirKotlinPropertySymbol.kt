@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.*
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.*
-import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaUnsupportedSymbolLocation
 import org.jetbrains.kotlin.analysis.api.fir.utils.callableId
 import org.jetbrains.kotlin.analysis.api.fir.utils.callableIdForName
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion

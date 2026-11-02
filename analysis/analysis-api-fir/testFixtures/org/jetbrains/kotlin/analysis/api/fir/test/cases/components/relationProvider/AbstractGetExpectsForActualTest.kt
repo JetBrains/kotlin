@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
-import org.junit.jupiter.api.Assumptions
 import org.opentest4j.TestAbortedException
 
 abstract class AbstractGetExpectsForActualTest : AbstractAnalysisApiBasedTest() {

@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.api.fir.components.bridges
 
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaResolveExtensionInfoProvider
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.components.KaFirSessionComponent

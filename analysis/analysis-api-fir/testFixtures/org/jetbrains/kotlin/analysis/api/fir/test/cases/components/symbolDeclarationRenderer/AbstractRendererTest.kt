@@ -6,12 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.test.cases.components.symbolDeclarationRenderer
 
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
-import org.jetbrains.kotlin.analysis.api.rendering.KaRenderer
-import org.jetbrains.kotlin.analysis.api.rendering.KaRendererBuilder
-import org.jetbrains.kotlin.analysis.api.rendering.KaRenderingOption
-import org.jetbrains.kotlin.analysis.api.rendering.KaRenderingOutput
-import org.jetbrains.kotlin.analysis.api.rendering.render
-import org.jetbrains.kotlin.analysis.api.rendering.reset
+import org.jetbrains.kotlin.analysis.api.rendering.*
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.symbol
 import org.jetbrains.kotlin.analysis.test.data.manager.TestVariantChain
@@ -19,11 +14,7 @@ import org.jetbrains.kotlin.analysis.test.data.manager.withAdditionalVariant
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
-import org.jetbrains.kotlin.psi.KtClassInitializer
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtScript
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue

@@ -10,9 +10,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
 import org.jetbrains.kotlin.analysis.api.annotations.KaNamedAnnotationValue
 import org.jetbrains.kotlin.analysis.api.fir.*
-import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.annotations.*
-import org.jetbrains.kotlin.analysis.api.fir.findAnnotationConstructor
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.declarations.getTargetType
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic

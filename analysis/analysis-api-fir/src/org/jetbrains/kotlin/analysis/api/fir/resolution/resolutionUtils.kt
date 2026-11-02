@@ -5,11 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.resolution
 
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.resolution.KaCompoundOperation
 import org.jetbrains.kotlin.analysis.api.resolution.KaFunctionCall
-import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleCallResolutionSuccess
 import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleCallResolutionAttempt
+import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleCallResolutionSuccess
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableSignature
 import org.jetbrains.kotlin.analysis.api.symbols.KaContextParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol

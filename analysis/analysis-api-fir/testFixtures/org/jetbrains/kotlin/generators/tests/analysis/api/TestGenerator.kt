@@ -51,7 +51,7 @@ import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.typeInfoProvi
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.typeInfoProvider.AbstractFunctionClassKindTest
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.typeInfoProvider.AbstractIsDenotableTest
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.typeProvider.*
-import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.typeRelationChecker.*
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.typeRelationChecker.AbstractTypeRelationCheckerTest
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.visibilityChecker.AbstractVisibilityCheckerTest
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.danglingFileAnalysis.AbstractDanglingFileResolutionModeProviderTest
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.references.AbstractReferenceImportAliasTest

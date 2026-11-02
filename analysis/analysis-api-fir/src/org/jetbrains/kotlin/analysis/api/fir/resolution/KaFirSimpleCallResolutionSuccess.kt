@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.analysis.api.fir.resolution
 
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleCallResolutionSuccess
 import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleCall
+import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleCallResolutionSuccess
 
 internal class KaFirSimpleCallResolutionSuccess(
     private val backingCall: KaSimpleCall<*, *>,
