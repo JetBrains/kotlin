@@ -12,12 +12,14 @@ import org.gradle.internal.service.ServiceRegistry
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnv
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.PackageManagerEnvironment
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.PreparedKotlinCompilationNpmResolution
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import java.io.File
 import java.io.Serializable
 
 /**
  * NodeJS package manager API
  */
+@ObsoleteNpmDependencyModel
 interface NpmApiExecution<out T : PackageManagerEnvironment> : Serializable {
     fun preparedFiles(nodeJs: NodeJsEnvironment): Collection<File>
 
@@ -60,18 +62,21 @@ interface NpmApiExecution<out T : PackageManagerEnvironment> : Serializable {
         args: List<String>,
     )
 
+    @ObsoleteNpmDependencyModel
     companion object {
         fun resolveOperationDescription(packageManagerTitle: String): String =
             "Resolving NPM dependencies using $packageManagerTitle"
     }
 }
 
+@ObsoleteNpmDependencyModel
 data class NodeJsEnvironment(
     val rootPackageDir: Provider<Directory>,
     val nodeExecutable: String,
     val packageManager: NpmApiExecution<PackageManagerEnvironment>,
 ) : Serializable
 
+@ObsoleteNpmDependencyModel
 internal fun asNodeJsEnvironment(
     rootPackageDirectory: Provider<Directory>,
     packageManager: Provider<NpmApiExecution<PackageManagerEnvironment>>,

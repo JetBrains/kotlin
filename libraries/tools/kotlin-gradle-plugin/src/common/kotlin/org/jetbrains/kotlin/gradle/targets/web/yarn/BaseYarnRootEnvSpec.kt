@@ -13,11 +13,13 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.Platform
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnEnv
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockMismatchReport
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnResolution
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import org.jetbrains.kotlin.gradle.utils.getFile
 
 /**
  * Spec for Yarn - package manager to install NPM dependencies
  */
+@ObsoleteNpmDependencyModel
 abstract class BaseYarnRootEnvSpec internal constructor() : EnvSpec<YarnEnv>() {
 
     /**

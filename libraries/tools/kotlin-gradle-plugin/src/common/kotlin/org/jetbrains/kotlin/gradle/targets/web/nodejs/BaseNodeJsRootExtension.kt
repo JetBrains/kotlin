@@ -23,11 +23,13 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmCachesSetup
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.RootPackageJsonTask
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import org.jetbrains.kotlin.gradle.utils.property
 
 /**
  * Abstract base class for configuring the Node.js environment and related tasks in a Kotlin/JS project.
  */
+@ObsoleteNpmDependencyModel
 abstract class BaseNodeJsRootExtension internal constructor(
     val project: Project,
     rootDir: String,

@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import java.io.Serializable
 
+@ObsoleteNpmDependencyModel
 class NpmOverride(
-    val path: String
+    val path: String,
 ) : Serializable {
     var includedVersions = mutableListOf<String>()
     var excludedVersions = mutableListOf<String>()
@@ -22,6 +24,7 @@ class NpmOverride(
     }
 }
 
+@ObsoleteNpmDependencyModel
 fun NpmOverride.toVersionString(): String {
     return buildNpmVersion(includedVersions, excludedVersions)
 }

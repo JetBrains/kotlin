@@ -13,9 +13,15 @@ import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.TasksRequirements
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinRootNpmResolution
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import java.io.File
 import java.io.Serializable
 
+/**
+ * Collects npm dependencies of all projects through the root project, which is incompatible with Isolated Projects.
+ * Superseded by the shared npm project, see [org.jetbrains.kotlin.gradle.targets.web.npm.KotlinSharedNpmProjectPlugin] (KT-80311).
+ */
+@ObsoleteNpmDependencyModel
 class KotlinRootNpmResolver internal constructor(
     private val rootProjectName: String,
     private val rootProjectVersion: String,

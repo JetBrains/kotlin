@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm.resolved
 
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinCompilationNpmResolution
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import java.io.Serializable
 
+@ObsoleteNpmDependencyModel
 class KotlinProjectNpmResolution(
     val byCompilation: Map<String, KotlinCompilationNpmResolution>,
 ) : Serializable {
@@ -18,6 +20,7 @@ class KotlinProjectNpmResolution(
         return byCompilation.getValue(compilationName)
     }
 
+    @ObsoleteNpmDependencyModel
     companion object {
         fun empty() = KotlinProjectNpmResolution(emptyMap())
     }
