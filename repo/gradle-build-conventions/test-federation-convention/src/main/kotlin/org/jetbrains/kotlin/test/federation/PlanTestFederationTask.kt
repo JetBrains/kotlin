@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.testFederation
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 
@@ -29,6 +30,10 @@ open class PlanTestFederationTask : DefaultTask() {
 
     @get:Input
     val defaultBranch = project.providers.gradleProperty("isDefaultBranch").map { it.toBoolean() }.orElse(false)
+
+    @get:Input
+    @get:Optional
+    val forcedSubsets = project.providers.gradleProperty("forcedSubsets").map { it.toTestSubsets() }
 
     @OutputFile
     val diffFile: RegularFileProperty = project.objects.fileProperty()
@@ -62,11 +67,13 @@ open class PlanTestFederationTask : DefaultTask() {
         val isDefaultBranch = defaultBranch.get()
         val changedDomains = if (isDefaultBranch) allDomains else changedDomains.get()
         val affectedDomains = if (isDefaultBranch) allDomains else affectedDomains.get()
+        val forcedSubsets = forcedSubsets.orNull.orEmpty()
 
         val plan = TestFederationPlan.resolve(
             isDefaultBranch = isDefaultBranch,
             changedDomains = changedDomains,
-            affectedDomains = affectedDomains
+            affectedDomains = affectedDomains,
+            forcedSubsets = forcedSubsets
         )
 
         logger.quiet(plan.renderAscii())
