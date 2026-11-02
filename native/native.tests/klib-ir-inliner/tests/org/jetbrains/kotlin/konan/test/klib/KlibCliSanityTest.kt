@@ -42,6 +42,7 @@ import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.io.path.absolutePathString
+import kotlin.io.path.pathString
 import kotlin.reflect.KProperty1
 
 @Tag("klib")
@@ -438,6 +439,64 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
                 cliParameter = testedCliParameter,
                 stdlibPath, posixPath, cinteropLibPath
             )
+        }
+    }
+
+    @Test
+    fun `Compiler reports cyclic dependency between KLIBs on 2nd phase`() {
+        val moduleNameToKlibPath: MutableMap</* name of test module */ String, /* original path of KLIB */ String> = linkedMapOf()
+
+        /*
+         * a <-- b <-- c
+         */
+        newSourceModules {
+            addRegularModule("a")
+            addRegularModule("b") { dependsOn("a") }
+            addRegularModule("c") { dependsOn("b") }
+        }.compileToKlibsViaCli { module, successKlib ->
+            moduleNameToKlibPath[module.name] = successKlib.resultingArtifact.klibFile.path
+        }
+        assertEquals(3, moduleNameToKlibPath.size)
+
+        /*
+         * Now adding one more edge between a and c:
+         * +-- a <-- b <-- c <--+
+         * |                    |
+         * +--------------------+
+         */
+        newSourceModules {
+            addRegularModule("a") {
+                sourceFileAddend("fun a2() = c.c(0)\nfun main() = Unit")
+            }
+        }.compileToKlibsViaCli(
+            extraCliArgs = listOf(CLI_PARAM_LIBRARIES, moduleNameToKlibPath.getValue("c"))
+        ) { module, successKlib ->
+            assertEquals("a", module.name)
+            moduleNameToKlibPath["a"] = successKlib.resultingArtifact.klibFile.path
+        }
+        assertEquals(3, moduleNameToKlibPath.size)
+
+        val compilationResult = ExecutableCompilation(
+            settings = testRunSettings,
+            freeCompilerArgs = TestCompilerArgs(
+                buildList {
+                    for (klibPath in moduleNameToKlibPath.values) this += listOf(CLI_PARAM_LIBRARIES, klibPath)
+                    this += K2NativeCompilerArguments::includes.cliArgument(moduleNameToKlibPath.getValue("a"))
+                }
+            ),
+            sourceModules = emptyList(),
+            extras = TestCase.NoTestRunnerExtras(entryPoint = "a.main"),
+            dependencies = emptySet(),
+            expectedArtifact = TestCompilationArtifact.Executable(buildDir.resolve("kexe.kexe")),
+        ).result
+
+        val compilationToolCall = (compilationResult as TestCompilationResult.CompilationToolFailure).loggedData
+        assertNotEquals(ExitCode.OK, compilationToolCall.exitCode)
+
+        val toolOutput = compilationToolCall.toolOutput
+        assertTrue("Cyclic dependency detected while computing DAG of KLIB dependencies:" in toolOutput) { toolOutput }
+        for (klibPath in moduleNameToKlibPath.values) {
+            assertTrue(klibPath in toolOutput) { "Library $klibPath is not mentioned in the compiler output:\n$toolOutput" }
         }
     }
 
