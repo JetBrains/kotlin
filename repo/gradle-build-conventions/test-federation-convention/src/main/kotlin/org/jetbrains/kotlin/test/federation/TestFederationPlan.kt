@@ -49,6 +49,7 @@ internal class TestFederationPlan private constructor(
 
                 val changedDependencies = domainInfo.mustRunAllTestsOnChangesIn
                     .filter { it.domain in changedDomains }
+                    .map { it.domain }
 
                 PlanEntry(
                     domain = domainInfo.domain,
