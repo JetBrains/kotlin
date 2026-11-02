@@ -1,3 +1,15 @@
+FILE: bar.kt
+    package classes.bar
+
+    public final inline fun <reified T : R|classes/Bar|> nameOf(): R|kotlin/String| {
+        ^nameOf String(Bar)
+    }
+FILE: foo.kt
+    package classes.foo
+
+    public final inline fun <reified T : R|classes/Foo|> nameOf(): R|kotlin/String| {
+        ^nameOf String(Foo)
+    }
 FILE: classes.kt
     package classes
 
@@ -12,18 +24,6 @@ FILE: classes.kt
             super<R|kotlin/Any|>()
         }
 
-    }
-FILE: bar.kt
-    package classes.bar
-
-    public final inline fun <reified T : R|classes/Bar|> nameOf(): R|kotlin/String| {
-        ^nameOf String(Bar)
-    }
-FILE: foo.kt
-    package classes.foo
-
-    public final inline fun <reified T : R|classes/Foo|> nameOf(): R|kotlin/String| {
-        ^nameOf String(Foo)
     }
 FILE: main.kt
     package main

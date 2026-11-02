@@ -1,13 +1,3 @@
-FILE: A.kt
-    public final class A : R|SuperA| {
-        public constructor(): R|A| {
-            super<R|SuperA|>()
-        }
-
-    }
-    private final fun test(): R|kotlin/Unit| {
-        lval a: R|A| = <Not a superclass of 'List' expected>#(Int(42))
-    }
 FILE: B.kt
     public final class B : R|SuperB| {
         public constructor(): R|B| {
@@ -33,4 +23,14 @@ FILE: C.kt
         lval c0: R|C| = Q|C|.R|/C.of*s|()
         lval c1: R|C| = Q|C|.R|/C.of*s|(vararg(Int(42)))
         lval c2: R|C| = Q|C|.R|/C.of*s|(vararg(Int(42), Int(42)))
+    }
+FILE: A.kt
+    public final class A : R|SuperA| {
+        public constructor(): R|A| {
+            super<R|SuperA|>()
+        }
+
+    }
+    private final fun test(): R|kotlin/Unit| {
+        lval a: R|A| = <Not a superclass of 'List' expected>#(Int(42))
     }

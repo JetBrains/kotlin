@@ -1,3 +1,6 @@
+FILE: b.kt
+    package vvv
+
 FILE: a.kt
     @R|kotlin/RequiresOptIn|() public final annotation class MyOptIn : R|kotlin/Annotation| {
         public constructor(): R|MyOptIn| {
@@ -5,5 +8,3 @@ FILE: a.kt
         }
 
     }
-FILE: b.kt
-    package vvv

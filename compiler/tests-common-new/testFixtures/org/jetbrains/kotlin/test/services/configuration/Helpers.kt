@@ -57,12 +57,14 @@ fun CompilerConfiguration.addSourcesForDependsOnClosure(
 ) {
     val isMppCompilation = module.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)
     for (mppModule in module.transitiveDependsOnDependencies(includeSelf = true, reverseOrder = true)) {
+        addKotlinSourceRoot(
+            path = testServices.sourceFileProvider.getKotlinSourceDirectoryForModule(mppModule).canonicalPath,
+            hmppModuleName = runIf(isMppCompilation) { mppModule.name }
+        )
         val files = if (HAS_CUSTOM_EXTENSION_FILES in module.directives) mppModule.files else mppModule.kotlinFiles
         for (file in files) {
-            addKotlinSourceRoot(
-                path = testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(file).canonicalPath,
-                hmppModuleName = runIf(isMppCompilation) { mppModule.name }
-            )
+            // Actually creates the files, allowing for subsequent `walkTopDown()` calls over the source root.
+            testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(file)
         }
     }
 }

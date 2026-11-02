@@ -11,13 +11,6 @@ FILE: K1.kt
         R|<local>/k|.R|/J1.getNestedSubClass|().R|SubstitutionOverride</J1.NestedSubClass.nested: R|kotlin/Unit|>|(String())
         R|<local>/k|.R|/J1.getNestedSubClass|().R|SubstitutionOverride</J1.NestedSubClass.nested: R|kotlin/Unit|><Inapplicable(INAPPLICABLE): /J1.NestedSubClass.nested>#|(Int(1))
     }
-FILE: K2.kt
-    public open class KFirst : R|SuperClass<kotlin/String>|, R|SuperI<kotlin/Int>| {
-        public constructor(): R|KFirst| {
-            super<R|SuperClass<kotlin/String>|>()
-        }
-
-    }
 FILE: K3.kt
     public abstract class SuperClass<T> : R|kotlin/Any| {
         public constructor<T>(): R|SuperClass<T>| {
@@ -40,6 +33,13 @@ FILE: K3.kt
             public open fun nestedI(f: R|F|): R|kotlin/Unit| {
             }
 
+        }
+
+    }
+FILE: K2.kt
+    public open class KFirst : R|SuperClass<kotlin/String>|, R|SuperI<kotlin/Int>| {
+        public constructor(): R|KFirst| {
+            super<R|SuperClass<kotlin/String>|>()
         }
 
     }

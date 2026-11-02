@@ -1,27 +1,3 @@
-FILE: AbstractToolConfig.kt
-    public abstract class AbstractToolConfig : R|kotlin/Any| {
-        public constructor(): R|AbstractToolConfig| {
-            super<R|kotlin/Any|>()
-        }
-
-        private final val platformManager: R|PlatformManager| = this@R|/AbstractToolConfig|.R|/AbstractToolConfig.platformManager|()
-            private get(): R|PlatformManager|
-
-        private final val targetManager: R|TargetManager| = this@R|/AbstractToolConfig|.R|/AbstractToolConfig.platformManager|.R|/PlatformManager.targetManager|()
-            private get(): R|TargetManager|
-
-        public final val target: R|KonanTarget| = this@R|/AbstractToolConfig|.R|/AbstractToolConfig.targetManager|.R|/TargetManager.target|
-            public get(): R|KonanTarget|
-
-        protected final val platform: R|Platform| = this@R|/AbstractToolConfig|.R|/AbstractToolConfig.platformManager|.R|/PlatformManager.platform|(this@R|/AbstractToolConfig|.R|/AbstractToolConfig.target|)
-            protected get(): R|Platform|
-
-        public final val llvmHome: R|kotlin/String| = this@R|/AbstractToolConfig|.R|/AbstractToolConfig.platform|.R|/Platform.absoluteLlvmHome|
-            public get(): R|kotlin/String|
-
-        public abstract fun platformManager(): R|PlatformManager|
-
-    }
 FILE: Platform.kt
     public final class Platform : R|Configurables| {
         public constructor(configurables: R|Configurables|): R|Platform| {
@@ -60,16 +36,10 @@ FILE: Platform.kt
         public abstract fun loadConfigurables(target: R|KonanTarget|): R|Configurables|
 
     }
-FILE: HostManager.kt
-    public open class HostManager : R|kotlin/Any| {
-        public constructor(): R|HostManager| {
-            super<R|kotlin/Any|>()
-        }
-
-        public final val enabled: R|kotlin/collections/List<KonanTarget>|
-            public get(): R|kotlin/collections/List<KonanTarget>| {
-                ^ R|kotlin/collections/emptyList|<R|KonanTarget|>()
-            }
+FILE: TargetManager.kt
+    public abstract interface TargetManager : R|kotlin/Any| {
+        public abstract val target: R|KonanTarget|
+            public get(): R|KonanTarget|
 
     }
 FILE: Configurables.kt
@@ -87,6 +57,18 @@ FILE: Configurables.kt
         public abstract fun absolute(value: R|kotlin/String?|): R|kotlin/String|
 
         public abstract fun hostString(key: R|kotlin/String|): R|kotlin/String?|
+
+    }
+FILE: HostManager.kt
+    public open class HostManager : R|kotlin/Any| {
+        public constructor(): R|HostManager| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val enabled: R|kotlin/collections/List<KonanTarget>|
+            public get(): R|kotlin/collections/List<KonanTarget>| {
+                ^ R|kotlin/collections/emptyList|<R|KonanTarget|>()
+            }
 
     }
 FILE: KonanTarget.kt
@@ -110,9 +92,27 @@ FILE: KonanTarget.kt
         }
 
     }
-FILE: TargetManager.kt
-    public abstract interface TargetManager : R|kotlin/Any| {
-        public abstract val target: R|KonanTarget|
+FILE: AbstractToolConfig.kt
+    public abstract class AbstractToolConfig : R|kotlin/Any| {
+        public constructor(): R|AbstractToolConfig| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final val platformManager: R|PlatformManager| = this@R|/AbstractToolConfig|.R|/AbstractToolConfig.platformManager|()
+            private get(): R|PlatformManager|
+
+        private final val targetManager: R|TargetManager| = this@R|/AbstractToolConfig|.R|/AbstractToolConfig.platformManager|.R|/PlatformManager.targetManager|()
+            private get(): R|TargetManager|
+
+        public final val target: R|KonanTarget| = this@R|/AbstractToolConfig|.R|/AbstractToolConfig.targetManager|.R|/TargetManager.target|
             public get(): R|KonanTarget|
+
+        protected final val platform: R|Platform| = this@R|/AbstractToolConfig|.R|/AbstractToolConfig.platformManager|.R|/PlatformManager.platform|(this@R|/AbstractToolConfig|.R|/AbstractToolConfig.target|)
+            protected get(): R|Platform|
+
+        public final val llvmHome: R|kotlin/String| = this@R|/AbstractToolConfig|.R|/AbstractToolConfig.platform|.R|/Platform.absoluteLlvmHome|
+            public get(): R|kotlin/String|
+
+        public abstract fun platformManager(): R|PlatformManager|
 
     }

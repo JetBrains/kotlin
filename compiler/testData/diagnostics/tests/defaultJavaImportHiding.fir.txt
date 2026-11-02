@@ -1,12 +1,3 @@
-FILE: LinkedList.kt
-    package foo
-
-    public final class LinkedList<T> : R|java/util/LinkedList<T>| {
-        public constructor<T>(): R|foo/LinkedList<T>| {
-            super<R|java/util/LinkedList<T>|>()
-        }
-
-    }
 FILE: HashSet.kt
     package util
 
@@ -39,4 +30,13 @@ FILE: main.kt
     }
     public final fun test_5(): R|kotlin/Unit| {
         lval map: R|foo/LinkedHashMap<kotlin/Int, kotlin/Int>| = R|foo/LinkedHashMap.LinkedHashMap|<R|kotlin/Int|, R|kotlin/Int|>()
+    }
+FILE: LinkedList.kt
+    package foo
+
+    public final class LinkedList<T> : R|java/util/LinkedList<T>| {
+        public constructor<T>(): R|foo/LinkedList<T>| {
+            super<R|java/util/LinkedList<T>|>()
+        }
+
     }

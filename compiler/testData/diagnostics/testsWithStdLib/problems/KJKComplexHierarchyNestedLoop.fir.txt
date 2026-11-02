@@ -19,16 +19,6 @@ FILE: K1.kt
         }
 
     }
-FILE: K2.kt
-    public open class KFirst : R|SuperClass|, R|SuperI| {
-        public constructor(): R|KFirst| {
-            super<R|SuperClass|>()
-        }
-
-        public final fun foo(): R|kotlin/Unit| {
-        }
-
-    }
 FILE: K3.kt
     public abstract class SuperClass : R|kotlin/Any| {
         public constructor(): R|SuperClass| {
@@ -41,6 +31,16 @@ FILE: K3.kt
     }
     public abstract interface SuperI : R|kotlin/Any| {
         public open fun superI(): R|kotlin/Unit| {
+        }
+
+    }
+FILE: K2.kt
+    public open class KFirst : R|SuperClass|, R|SuperI| {
+        public constructor(): R|KFirst| {
+            super<R|SuperClass|>()
+        }
+
+        public final fun foo(): R|kotlin/Unit| {
         }
 
     }

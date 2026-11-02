@@ -1,3 +1,9 @@
+FILE: Cinterop.kt
+    package kotlinx.cinterop
+
+    public final inline fun <reified R : R|kotlin/Any|> R|kotlin/Int|.convert(): R|R| {
+        ^convert R|kotlin/TODO|()
+    }
 FILE: Stdlib.kt
     package kotlin
 
@@ -9,12 +15,6 @@ FILE: Stdlib.kt
         public final val actualizations: R|kotlin/Array<out kotlin/reflect/KClass<*>>| = R|<local>/actualizations|
             public get(): R|kotlin/Array<out kotlin/reflect/KClass<*>>|
 
-    }
-FILE: Cinterop.kt
-    package kotlinx.cinterop
-
-    public final inline fun <reified R : R|kotlin/Any|> R|kotlin/Int|.convert(): R|R| {
-        ^convert R|kotlin/TODO|()
     }
 FILE: Main.kt
     @R|kotlin/NumericClass|(actualizations = vararg(<getClass>(Q|kotlin/Long|)) [evaluated = vararg(<getClass>(Q|kotlin/Long|))]) public final expect class NSInteger : R|kotlin/Any| {

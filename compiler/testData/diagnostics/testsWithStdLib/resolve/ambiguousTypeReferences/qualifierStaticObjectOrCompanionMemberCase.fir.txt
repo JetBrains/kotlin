@@ -1,20 +1,4 @@
 FILE: Some.kt
-    package some
-
-    public final class Some : R|kotlin/Any| {
-        public constructor(): R|some/Some| {
-            super<R|kotlin/Any|>()
-        }
-
-        public final object foo : R|kotlin/Any| {
-            private constructor(): R|some/Some.foo| {
-                super<R|kotlin/Any|>()
-            }
-
-        }
-
-    }
-FILE: Some.kt
     package some2
 
     public final class Some : R|kotlin/Any| {
@@ -36,4 +20,20 @@ FILE: Some.kt
 FILE: main.kt
     public final fun test(): R|kotlin/String| {
         ^test Q|some2/Some|.R|some2/Some.Companion.foo|
+    }
+FILE: Some.kt
+    package some
+
+    public final class Some : R|kotlin/Any| {
+        public constructor(): R|some/Some| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final object foo : R|kotlin/Any| {
+            private constructor(): R|some/Some.foo| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
     }

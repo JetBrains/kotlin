@@ -1,3 +1,12 @@
+FILE: B.kt
+    package b
+
+    public final class My : R|a/Outer.Nested| {
+        public constructor(): R|b/My| {
+            super<R|a/Outer.Nested|>()
+        }
+
+    }
 FILE: A.kt
     package a
 
@@ -11,15 +20,6 @@ FILE: A.kt
                 super<R|kotlin/Any|>()
             }
 
-        }
-
-    }
-FILE: B.kt
-    package b
-
-    public final class My : R|a/Outer.Nested| {
-        public constructor(): R|b/My| {
-            super<R|a/Outer.Nested|>()
         }
 
     }

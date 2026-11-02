@@ -1,3 +1,13 @@
+FILE: usages.kt
+    public final fun use(c: R|C|): R|kotlin/Unit| {
+        <Ambiguity: topA, [/topA, /topA]>#.<Unresolved name: length>#
+        R|/topB|.R|kotlin/String.length|
+        R|/topC|.R|kotlin/Int.inc|()
+        R|/topG| = Int(1)
+        R|<local>/c|.<Ambiguity: a, [/C.a, /C.a]>#.<Unresolved name: length>#
+        R|<local>/c|.R|/C.b|.R|kotlin/String.length|
+        R|<local>/c|.R|/C.d|.R|kotlin/String.length|
+    }
 FILE: declarations.kt
     public final data class X : R|kotlin/Any| {
         public constructor(a: R|kotlin/Int|, b: R|kotlin/String|): R|X| {
@@ -84,14 +94,4 @@ FILE: declarations.kt
             this@R|/C|.R|/C.d|.R|kotlin/String.length|
         }
 
-    }
-FILE: usages.kt
-    public final fun use(c: R|C|): R|kotlin/Unit| {
-        <Ambiguity: topA, [/topA, /topA]>#.<Unresolved name: length>#
-        R|/topB|.R|kotlin/String.length|
-        R|/topC|.R|kotlin/Int.inc|()
-        R|/topG| = Int(1)
-        R|<local>/c|.<Ambiguity: a, [/C.a, /C.a]>#.<Unresolved name: length>#
-        R|<local>/c|.R|/C.b|.R|kotlin/String.length|
-        R|<local>/c|.R|/C.d|.R|kotlin/String.length|
     }

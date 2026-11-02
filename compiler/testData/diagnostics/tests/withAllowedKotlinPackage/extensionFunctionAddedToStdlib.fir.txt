@@ -1,3 +1,14 @@
+FILE: stdlibExt.kt
+    package kotlin
+
+    public final class MyClass : R|kotlin/Any| {
+        public constructor(): R|kotlin/MyClass| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun R|kotlin/MyClass|.extensionFun(): R|kotlin/Unit| {
+    }
 FILE: main.kt
     package test
 
@@ -10,15 +21,4 @@ FILE: main.kt
             <Unresolved name: extensionFun>#()
         }
 
-    }
-FILE: stdlibExt.kt
-    package kotlin
-
-    public final class MyClass : R|kotlin/Any| {
-        public constructor(): R|kotlin/MyClass| {
-            super<R|kotlin/Any|>()
-        }
-
-    }
-    public final fun R|kotlin/MyClass|.extensionFun(): R|kotlin/Unit| {
     }

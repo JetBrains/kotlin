@@ -1,3 +1,27 @@
+FILE: j.kt
+    package j
+
+    public final class C : R|kotlin/Any| {
+        public constructor(): R|j/C| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val p1: R|kotlin/Int| = Q|j/JavaPackageLocal|.R|j/JavaPackageLocal.javaPPackage*s|
+            public get(): R|kotlin/Int|
+
+        public final val p2: R|kotlin/Int| = Q|j/JavaProtected|.R|j/JavaProtected.javaPProtectedStatic*s|
+            public get(): R|kotlin/Int|
+
+        public final val p3: R|kotlin/Int| = R|j/JavaProtected.JavaProtected|().R|j/JavaProtected.javaPProtectedPackage|
+            public get(): R|kotlin/Int|
+
+        public final fun test(): R|kotlin/Unit| {
+            Q|j/JavaProtected|.R|j/JavaProtected.javaMProtectedStatic*s|()
+            Q|j/JavaProtected|.R|j/JavaProtected.javaMProtectedStatic*s|()
+            Q|j/JavaPackageLocal|.R|j/JavaPackageLocal.javaMPackage*s|()
+        }
+
+    }
 FILE: k.kt
     package k
 
@@ -38,30 +62,6 @@ FILE: k.kt
         public final fun test(): R|kotlin/Unit| {
             Q|j/JavaProtected|.R|j/JavaProtected.javaMProtectedStatic*s|()
             Q|j/JavaPackageLocal|.R|j/JavaPackageLocal.javaMPackage*s<HIDDEN: j/JavaPackageLocal.javaMPackage is invisible>#|()
-        }
-
-    }
-FILE: j.kt
-    package j
-
-    public final class C : R|kotlin/Any| {
-        public constructor(): R|j/C| {
-            super<R|kotlin/Any|>()
-        }
-
-        public final val p1: R|kotlin/Int| = Q|j/JavaPackageLocal|.R|j/JavaPackageLocal.javaPPackage*s|
-            public get(): R|kotlin/Int|
-
-        public final val p2: R|kotlin/Int| = Q|j/JavaProtected|.R|j/JavaProtected.javaPProtectedStatic*s|
-            public get(): R|kotlin/Int|
-
-        public final val p3: R|kotlin/Int| = R|j/JavaProtected.JavaProtected|().R|j/JavaProtected.javaPProtectedPackage|
-            public get(): R|kotlin/Int|
-
-        public final fun test(): R|kotlin/Unit| {
-            Q|j/JavaProtected|.R|j/JavaProtected.javaMProtectedStatic*s|()
-            Q|j/JavaProtected|.R|j/JavaProtected.javaMProtectedStatic*s|()
-            Q|j/JavaPackageLocal|.R|j/JavaPackageLocal.javaMPackage*s|()
         }
 
     }

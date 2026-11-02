@@ -1,3 +1,7 @@
+FILE: main.kt
+    public final fun test(): <ERROR TYPE REF: Unresolved name: foo> {
+        ^test <Ambiguity: Some, [some/Some, some3/Some]>#.<Unresolved name: foo>#
+    }
 FILE: Some.kt
     package some
 
@@ -13,8 +17,4 @@ FILE: Some.kt
 
         }
 
-    }
-FILE: main.kt
-    public final fun test(): <ERROR TYPE REF: Unresolved name: foo> {
-        ^test <Ambiguity: Some, [some/Some, some3/Some]>#.<Unresolved name: foo>#
     }

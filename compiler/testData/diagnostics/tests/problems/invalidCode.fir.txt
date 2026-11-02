@@ -1,7 +1,4 @@
-FILE: a.kt
-    package a
-
-    @R|kotlin/Suppress|() <DANGLING MODIFIER: Top level declaration expected>FILE: b.kt
+FILE: b.kt
     package b
 
     public abstract interface I : R|kotlin/Any| {
@@ -51,7 +48,10 @@ FILE: d.kt
         }
 
     }
-FILE: e.kt
+FILE: a.kt
+    package a
+
+    @R|kotlin/Suppress|() <DANGLING MODIFIER: Top level declaration expected>FILE: e.kt
     package e
 
     public final class A<E> : R|kotlin/Any| {

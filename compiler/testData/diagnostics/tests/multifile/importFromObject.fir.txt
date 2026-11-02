@@ -1,3 +1,9 @@
+FILE: b.kt
+    package b
+
+    public final fun bar(): R|kotlin/Unit| {
+        Q|a/A|.R|a/A.foo|()
+    }
 FILE: a.kt
     package a
 
@@ -9,10 +15,4 @@ FILE: a.kt
         public final fun foo(): R|kotlin/Unit| {
         }
 
-    }
-FILE: b.kt
-    package b
-
-    public final fun bar(): R|kotlin/Unit| {
-        Q|a/A|.R|a/A.foo|()
     }

@@ -1,3 +1,13 @@
+FILE: b.kt
+    public abstract class B : R|kotlin/Any| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+        protected abstract val message: R|kotlin/String|
+            protected get(): R|kotlin/String|
+
+    }
 FILE: a.kt
     public final object A : R|kotlin/Any| {
         private constructor(): R|A| {
@@ -15,15 +25,5 @@ FILE: a.kt
         }
 
             public get(): R|B|
-
-    }
-FILE: b.kt
-    public abstract class B : R|kotlin/Any| {
-        public constructor(): R|B| {
-            super<R|kotlin/Any|>()
-        }
-
-        protected abstract val message: R|kotlin/String|
-            protected get(): R|kotlin/String|
 
     }

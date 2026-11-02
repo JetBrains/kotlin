@@ -1,23 +1,4 @@
 FILE: Some.kt
-    package some
-
-    public final enum class Some : R|kotlin/Enum<some/Some>| {
-        private constructor(): R|some/Some| {
-            super<R|kotlin/Enum<some/Some>|>()
-        }
-
-        public final static enum entry foo: R|some/Some|
-        public final static fun values(): R|kotlin/Array<some/Some>| {
-        }
-
-        public final static fun valueOf(value: R|kotlin/String|): R|some/Some| {
-        }
-
-        public final static val entries: R|kotlin/enums/EnumEntries<some/Some>|
-            public static get(): R|kotlin/enums/EnumEntries<some/Some>|
-
-    }
-FILE: Some.kt
     package some2
 
     public final enum class Some : R|kotlin/Enum<some2/Some>| {
@@ -49,4 +30,23 @@ FILE: Some.kt
 FILE: main.kt
     public final fun test(): R|some2/Some| {
         ^test Q|some2/Some|.R|some2/Some.foo|
+    }
+FILE: Some.kt
+    package some
+
+    public final enum class Some : R|kotlin/Enum<some/Some>| {
+        private constructor(): R|some/Some| {
+            super<R|kotlin/Enum<some/Some>|>()
+        }
+
+        public final static enum entry foo: R|some/Some|
+        public final static fun values(): R|kotlin/Array<some/Some>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|some/Some| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<some/Some>|
+            public static get(): R|kotlin/enums/EnumEntries<some/Some>|
+
     }

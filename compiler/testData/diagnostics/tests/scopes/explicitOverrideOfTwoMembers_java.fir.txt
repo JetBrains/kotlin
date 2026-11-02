@@ -1,3 +1,8 @@
+FILE: main.kt
+    public final fun test(d: R|D|): R|kotlin/Unit| {
+        lval a: R|kotlin/Int| = R|<local>/d|.R|/A.x|
+        lval b: R|kotlin/Int| = R|<local>/d|.R|/D.y|
+    }
 FILE: lib.kt
     public abstract interface A : R|kotlin/Any| {
         public abstract fun foo(): R|kotlin/Any|
@@ -18,9 +23,4 @@ FILE: lib.kt
         public abstract val y: R|kotlin/Int|
             public get(): R|kotlin/Int|
 
-    }
-FILE: main.kt
-    public final fun test(d: R|D|): R|kotlin/Unit| {
-        lval a: R|kotlin/Int| = R|<local>/d|.R|/A.x|
-        lval b: R|kotlin/Int| = R|<local>/d|.R|/D.y|
     }

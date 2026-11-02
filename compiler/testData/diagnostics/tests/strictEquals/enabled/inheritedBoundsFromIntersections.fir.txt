@@ -41,6 +41,43 @@ FILE: regular.kt
         public abstract override operator fun equals([EqualityBoundType=n/I10] other: R|kotlin/Any?|): R|kotlin/Boolean|
 
     }
+FILE: interfaceAndClass.kt
+    package ic
+
+    public abstract interface I : R|kotlin/Any| {
+        public abstract override operator fun equals([EqualityBoundType=ic/I] @R|kotlin/EqualityBound|(bound = <getClass>(Q|ic/I|) [evaluated = <getClass>(Q|ic/I|)]) other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+    }
+    public open class C : R|kotlin/Any| {
+        public constructor(): R|ic/C| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open override operator fun equals([EqualityBoundType=ic/C] @R|kotlin/EqualityBound|(bound = <getClass>(Q|ic/C|) [evaluated = <getClass>(Q|ic/C|)]) other: R|kotlin/Any?|): R|kotlin/Boolean| {
+            ^equals Boolean(true)
+        }
+
+    }
+    public final class D : R|ic/C|, R|ic/I| {
+        public constructor(): R|ic/D| {
+            super<R|ic/C|>()
+        }
+
+        public open override operator fun equals([EqualityBoundType=it(ic/C & ic/I)] other: R|kotlin/Any?|): R|kotlin/Boolean| {
+            ^equals Boolean(true)
+        }
+
+    }
+    public final class E : R|ic/I|, R|ic/C| {
+        public constructor(): R|ic/E| {
+            super<R|ic/C|>()
+        }
+
+        public open override operator fun equals([EqualityBoundType=it(ic/I & ic/C)] other: R|kotlin/Any?|): R|kotlin/Boolean| {
+            ^equals Boolean(true)
+        }
+
+    }
 FILE: generic.kt
     package g
 
@@ -94,42 +131,5 @@ FILE: generic.kt
     }
     public abstract interface D4 : R|g/D2|, R|g/D3| {
         public abstract override operator fun equals([EqualityBoundType=g/D1<*>] other: R|kotlin/Any?|): R|kotlin/Boolean|
-
-    }
-FILE: interfaceAndClass.kt
-    package ic
-
-    public abstract interface I : R|kotlin/Any| {
-        public abstract override operator fun equals([EqualityBoundType=ic/I] @R|kotlin/EqualityBound|(bound = <getClass>(Q|ic/I|) [evaluated = <getClass>(Q|ic/I|)]) other: R|kotlin/Any?|): R|kotlin/Boolean|
-
-    }
-    public open class C : R|kotlin/Any| {
-        public constructor(): R|ic/C| {
-            super<R|kotlin/Any|>()
-        }
-
-        public open override operator fun equals([EqualityBoundType=ic/C] @R|kotlin/EqualityBound|(bound = <getClass>(Q|ic/C|) [evaluated = <getClass>(Q|ic/C|)]) other: R|kotlin/Any?|): R|kotlin/Boolean| {
-            ^equals Boolean(true)
-        }
-
-    }
-    public final class D : R|ic/C|, R|ic/I| {
-        public constructor(): R|ic/D| {
-            super<R|ic/C|>()
-        }
-
-        public open override operator fun equals([EqualityBoundType=it(ic/C & ic/I)] other: R|kotlin/Any?|): R|kotlin/Boolean| {
-            ^equals Boolean(true)
-        }
-
-    }
-    public final class E : R|ic/I|, R|ic/C| {
-        public constructor(): R|ic/E| {
-            super<R|ic/C|>()
-        }
-
-        public open override operator fun equals([EqualityBoundType=it(ic/I & ic/C)] other: R|kotlin/Any?|): R|kotlin/Boolean| {
-            ^equals Boolean(true)
-        }
 
     }

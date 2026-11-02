@@ -1,3 +1,12 @@
+FILE: main.kt
+    public final fun test_1(): R|kotlin/Unit| {
+        lval a: <ERROR TYPE REF: Unresolved name: A> = <Unresolved name: A>#()
+        lval b: R|foo/A| = R|foo/A.A|()
+        lval c: R|foo/A| = <Unresolved name: A>#()
+    }
+    public final fun test_2(b: R|foo/A|): R|kotlin/Unit| {
+        R|<local>/b|.R|foo/A.foo|()
+    }
 FILE: A.kt
     package foo
 
@@ -9,13 +18,4 @@ FILE: A.kt
         public final fun foo(): R|kotlin/Unit| {
         }
 
-    }
-FILE: main.kt
-    public final fun test_1(): R|kotlin/Unit| {
-        lval a: <ERROR TYPE REF: Unresolved name: A> = <Unresolved name: A>#()
-        lval b: R|foo/A| = R|foo/A.A|()
-        lval c: R|foo/A| = <Unresolved name: A>#()
-    }
-    public final fun test_2(b: R|foo/A|): R|kotlin/Unit| {
-        R|<local>/b|.R|foo/A.foo|()
     }

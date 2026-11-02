@@ -8,14 +8,6 @@ FILE: KotlinBase.kt
             public get(): R|kotlin/String|
 
     }
-FILE: KotlinProxy.kt
-    public abstract interface KotlinProxy : R|kotlin/Any| {
-        public open val zyxw: R|kotlin/String|
-            public get(): R|kotlin/String| {
-                ^ String(zyxw)
-            }
-
-    }
 FILE: test.kt
     public final class Derived : R|Test|, R|KotlinProxy| {
         public constructor(): R|Derived| {
@@ -26,5 +18,13 @@ FILE: test.kt
             this@R|/Derived|.R|/Test.abcd|
             this@R|/Derived|.R|/Test.zyxw|
         }
+
+    }
+FILE: KotlinProxy.kt
+    public abstract interface KotlinProxy : R|kotlin/Any| {
+        public open val zyxw: R|kotlin/String|
+            public get(): R|kotlin/String| {
+                ^ String(zyxw)
+            }
 
     }
