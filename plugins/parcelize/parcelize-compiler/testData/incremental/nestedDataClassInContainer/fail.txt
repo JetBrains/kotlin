@@ -1,3 +1,0 @@
-Expected: `main.kt` is recompiled, since the primary constructor of `Inner` changed and the generated `DataWrapper` code calls it.
-
-Actual: only `Data.kt` and `Inner.kt` are recompiled.

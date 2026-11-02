@@ -1,3 +1,0 @@
-Expected: `main.kt` is recompiled, since `Foo` changed from `Parcelable` to `Serializable` and the generated `DataWrapper` code has to serialize it differently.
-
-Actual: only `Data.kt` and `Foo.kt` are recompiled.
