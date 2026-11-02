@@ -7,17 +7,15 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
-import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsAnalysisScopeProvider
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScope
 
-@KaImplementationDetail
-class KaBaseAnalysisScopeProviderImpl(
-    override val analysisSessionProvider: () -> KaSession,
+internal class KaBaseAnalysisScopeProviderImpl(
+    override val analysisSessionProvider: () -> KaFirSession,
     private val resolutionScope: KaResolutionScope,
-) : KaBaseSessionComponent<KaSession>(), KaInternalsAnalysisScopeProvider {
+) : KaFirSessionComponent(), KaInternalsAnalysisScopeProvider {
     override val analysisScope: GlobalSearchScope
         get() = withValidityAssertion { resolutionScope }
 

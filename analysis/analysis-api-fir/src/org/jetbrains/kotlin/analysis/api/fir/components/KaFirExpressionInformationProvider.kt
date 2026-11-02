@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 @KaImplementationDetail
 internal class KaFirExpressionInformationProvider(
     override val analysisSessionProvider: () -> KaFirSession,
-) : KaBaseSessionComponent<KaFirSession>(), KaInternalsExpressionInformationProvider, KaFirSessionComponent {
+) : KaFirSessionComponent(), KaInternalsExpressionInformationProvider {
     override fun targetSymbol(returnExpression: KtReturnExpression): KaCallableSymbol? =
         with(analysisSession) { returnExpression.resolveSymbol() }
 

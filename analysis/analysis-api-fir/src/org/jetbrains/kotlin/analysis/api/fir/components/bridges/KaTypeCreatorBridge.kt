@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.components.KaClassTypeBuilder
 import org.jetbrains.kotlin.analysis.api.components.KaTypeCreator
 import org.jetbrains.kotlin.analysis.api.components.KaTypeParameterTypeBuilder
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.fir.components.KaBaseSessionComponent
+import org.jetbrains.kotlin.analysis.api.fir.components.KaFirSessionComponent
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsTypeCreator
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.name.ClassId
 
 internal class KaTypeCreatorBridge(
     override val analysisSessionProvider: () -> KaFirSession,
-) : KaBaseSessionComponent<KaFirSession>(), KaTypeCreator {
+) : KaFirSessionComponent(), KaTypeCreator {
     private val proxy: KaInternalsTypeCreator
         get() = analysisSession.legacyTypeCreator
 

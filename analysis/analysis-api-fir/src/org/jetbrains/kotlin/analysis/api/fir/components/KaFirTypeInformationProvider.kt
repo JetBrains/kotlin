@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 
 internal class KaFirTypeInformationProvider(
     override val analysisSessionProvider: () -> KaFirSession
-) : KaBaseSessionComponent<KaFirSession>(), KaInternalsTypeInformationProvider, KaFirSessionComponent {
+) : KaFirSessionComponent(), KaInternalsTypeInformationProvider {
     override fun functionTypeFamily(type: KaType): KaFunctionTypeFamily? = type.withValidityAssertion {
         computeFunctionTypeKind(type)?.let(::KaBaseFunctionTypeFamily)
     }

@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.psi.KtExpression
 
 internal class KaFirVisibilityChecker(
     override val analysisSessionProvider: () -> KaFirSession,
-) : KaBaseSessionComponent<KaFirSession>(), KaInternalsVisibilityChecker, KaFirSessionComponent {
+) : KaFirSessionComponent(), KaInternalsVisibilityChecker {
     override fun createUseSiteVisibilityChecker(
         useSiteFile: KaFileSymbol,
         receiverExpression: KtExpression?,

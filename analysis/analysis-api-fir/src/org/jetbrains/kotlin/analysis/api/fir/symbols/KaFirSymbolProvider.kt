@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiErrorElement
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.fir.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.fir.components.KaFirSessionComponent
 import org.jetbrains.kotlin.analysis.api.fir.components.withPsiValidityAssertion
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsSymbolProvider
@@ -28,7 +27,7 @@ import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 internal class KaFirSymbolProvider(
     override val analysisSessionProvider: () -> KaFirSession,
     private val firSymbolProvider: FirSymbolProvider,
-) : KaBaseSessionComponent<KaFirSession>(), KaInternalsSymbolProvider, KaFirSessionComponent {
+) : KaFirSessionComponent(), KaInternalsSymbolProvider {
     override fun symbol(declaration: KtDeclaration): KaDeclarationSymbol = withValidityAssertion {
         when (declaration) {
             is KtParameter -> symbol(declaration)

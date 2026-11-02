@@ -71,7 +71,7 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 internal class KaFirReferenceShortener(
     override val analysisSessionProvider: () -> KaFirSession
-) : KaBaseSessionComponent<KaFirSession>(), KaInternalsReferenceShortener, KaFirSessionComponent {
+) : KaFirSessionComponent(), KaInternalsReferenceShortener {
     private val context by lazy { FirShorteningContext(analysisSession) }
 
     override fun collectPossibleReferenceShorteningsInElement(

@@ -5,26 +5,22 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
-import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaSymbolRelationProvider
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 
-@KaImplementationDetail
-fun <T> T.getDirectlyOverriddenSymbolsForParameter(
+internal fun <T> T.getDirectlyOverriddenSymbolsForParameter(
     symbol: KaValueParameterSymbol,
 ): Sequence<KaCallableSymbol> where
-        T : KaBaseSessionComponent<out KaSession>,
+        T : KaFirSessionComponent,
         T : KaSymbolRelationProvider = with(analysisSession) {
     symbol.primaryConstructorProperty?.directlyOverriddenSymbols.orEmpty()
 }
 
-@KaImplementationDetail
-fun <T> T.getAllOverriddenSymbolsForParameter(
+internal fun <T> T.getAllOverriddenSymbolsForParameter(
     symbol: KaValueParameterSymbol,
 ): Sequence<KaCallableSymbol> where
-        T : KaBaseSessionComponent<out KaSession>,
+        T : KaFirSessionComponent,
         T : KaSymbolRelationProvider = with(analysisSession) {
     symbol.primaryConstructorProperty?.allOverriddenSymbols.orEmpty()
 }
