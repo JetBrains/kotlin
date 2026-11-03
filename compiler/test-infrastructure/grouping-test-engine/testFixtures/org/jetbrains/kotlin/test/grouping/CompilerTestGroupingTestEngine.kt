@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.grouping
 
+import com.intellij.openapi.util.Disposer
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.test.DynamicWithMaxThresholdParallelExecutionConfigu
 import org.jetbrains.kotlin.test.NonGroupingStageOutput
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.test.model.GroupingTestIsolator.BatchToken
+import org.jetbrains.kotlin.test.pinApplicationEnvironment
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.junit.jupiter.engine.config.CachingJupiterConfiguration
@@ -48,6 +50,10 @@ import java.util.concurrent.TimeUnit
  * non-grouping stage for every test of a batch, followed by a single grouping stage for the whole batch.
  * Tests of different top-level classes never share a batch: such classes may configure different targets or runners
  * for the grouping stage, which the engine has no generic way to compare.
+ *
+ * The shared application environment is disposed when the last live test project is disposed. The planning pass disposes
+ * many test projects, so the environment would be re-created many times per run. To avoid this, the engine pins it for
+ * the whole run, see [pinApplicationEnvironment].
  */
 class CompilerTestGroupingTestEngine : TestEngine {
     companion object {
@@ -84,6 +90,9 @@ class CompilerTestGroupingTestEngine : TestEngine {
 
     private class ExecutionContext(params: ConfigurationParameters) : Closeable {
         private val workerPool: ExecutorService
+
+        /** Keeps the shared application environment alive for the whole run, see [pinApplicationEnvironment]. */
+        private val applicationPin = Disposer.newDisposable("CompilerTestGroupingTestEngine.applicationPin")
         val dispatcher: ExecutorCoroutineDispatcher
         val activeBatches: Semaphore
         val methodsChunkSize: Int
@@ -107,11 +116,18 @@ class CompilerTestGroupingTestEngine : TestEngine {
             methodsChunkSize = params.get(SIMULTANEOUS_METHODS_GROUP_SIZE_PROP).orElse(null)?.toInt()?.also {
                 require(it > 0) { "Number of methods in a group must be positive, but was $it" }
             } ?: DEFAULT_SIMULTANEOUS_METHODS_GROUP_SIZE
+
+            // Pin last: if initialization fails, `close()` is never called, and the pin would leak.
+            pinApplicationEnvironment(applicationPin)
         }
 
         override fun close() {
-            workerPool.shutdown()
-            workerPool.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS)
+            try {
+                workerPool.shutdown()
+                workerPool.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS)
+            } finally {
+                Disposer.dispose(applicationPin)
+            }
         }
     }
 
