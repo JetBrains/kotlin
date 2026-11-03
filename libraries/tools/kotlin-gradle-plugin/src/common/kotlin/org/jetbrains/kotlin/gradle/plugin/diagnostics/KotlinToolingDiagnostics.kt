@@ -2007,6 +2007,22 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    internal object SwiftPackageExportUnsupportedHost : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke(currentHost: String) = build {
+            title("Swift Package Export Is Not Supported on This Host")
+                .description(
+                    "'swiftPackageIntegration { }' is configured, but the current host ($currentHost) is not macOS. " +
+                            "The Swift package export tasks require Xcode, so they are skipped on this host."
+                )
+                .solutions {
+                    listOf(
+                        "Run the Swift package export on a macOS host.",
+                        "To suppress this warning, add '$KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS=true' to gradle.properties.",
+                    )
+                }
+        }
+    }
+
     internal object DeprecatedSwiftExportDsl : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Deprecation) {
         operator fun invoke() = build {
             title("Deprecated 'swiftExport { }' DSL")
