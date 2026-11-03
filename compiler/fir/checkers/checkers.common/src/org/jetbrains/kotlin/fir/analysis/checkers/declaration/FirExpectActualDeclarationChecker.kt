@@ -30,6 +30,8 @@ import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualIncompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.MemberIncompatibility
 import org.jetbrains.kotlin.utils.addToStdlib.partitionIsInstance
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 @Suppress("DuplicatedCode")
 object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind.Platform) {
@@ -395,6 +397,14 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
                 !(declaration.isPrimaryConstructorOfInlineOrValueClass(platformSession) && actualContainingClass.isInlineClass) &&
                 !isUnderlyingPropertyOfValueClass(declaration, actualContainingClass, platformSession) &&
                 declaration !is FirEnumEntrySymbol
+    }
+
+    @OptIn(ExperimentalContracts::class)
+    private fun FirBasedSymbol<*>.isPrimaryConstructorOfInlineOrValueClass(session: FirSession): Boolean {
+        contract { returns(true) implies (this@isPrimaryConstructorOfInlineOrValueClass is FirConstructorSymbol) }
+        if (this !is FirConstructorSymbol) return false
+        val constructedClass = getConstructedClass(session) ?: return false
+        return constructedClass.isValue && this.isPrimary
     }
 
     // Ideally, this function shouldn't exist KT-63751
