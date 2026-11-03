@@ -37,10 +37,12 @@ import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.ir.classSymbol
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
@@ -56,6 +58,11 @@ import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.IrTypeProjection
+import org.jetbrains.kotlin.ir.util.IrTreeSymbolsVisitor
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.callableId
 import org.jetbrains.kotlin.ir.util.classId
@@ -68,6 +75,8 @@ import org.jetbrains.kotlin.ir.validation.IrValidationError
 import org.jetbrains.kotlin.ir.validation.IrValidationSeverity
 import org.jetbrains.kotlin.ir.validation.IrValidatorConfig
 import org.jetbrains.kotlin.ir.validation.validateIr
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -238,6 +247,12 @@ private class JKlibNonPrivateFunctionInlining(context: JKlibPreSerializationLowe
  */
 private class JKlibValidateNoUnboundSymbols(private val context: JKlibPreSerializationLoweringContext) : ModuleLoweringPass {
     override fun lower(irModule: IrModuleFragment) {
+        // Looking for unbound symbols with a plain traversal is significantly cheaper than running the IR validator, which keeps track
+        // of all the visited elements to be able to report errors; so only run the validator to report the errors if there are any.
+        val unboundSymbolFinder = UnboundSymbolFinder()
+        irModule.acceptVoid(unboundSymbolFinder)
+        if (!unboundSymbolFinder.hasUnboundSymbols) return
+
         validateIr(
             irModule,
             context.irBuiltIns,
@@ -246,6 +261,38 @@ private class JKlibValidateNoUnboundSymbols(private val context: JKlibPreSeriali
             getSeverity = { error -> runIf(error.cause == IrValidationError.Cause.UnboundSymbol) { IrValidationSeverity.ERROR } },
             phaseName = "JKlibValidateNoUnboundSymbols",
         )
+    }
+}
+
+/**
+ * Finds whether there are unbound symbols, visiting the symbols that the IR validator checks when looking for unbound symbols (see
+ * `CheckTreeConsistencyVisitor`).
+ *
+ * Since the validator only runs if this finds an unbound symbol, both need to visit the same symbols. So, like
+ * `CheckTreeConsistencyVisitor`, this does not visit the annotations of declarations and types.
+ */
+private class UnboundSymbolFinder : IrTreeSymbolsVisitor() {
+    var hasUnboundSymbols = false
+
+    override fun visitDeclaration(declaration: IrDeclarationBase) {
+        declaration.acceptChildrenVoid(this)
+    }
+
+    override fun visitTypeRecursively(container: IrElement, type: IrType) {
+        visitType(container, type)
+        if (type is IrSimpleType) {
+            for (argument in type.arguments) {
+                if (argument is IrTypeProjection) {
+                    visitTypeRecursively(container, argument.type)
+                }
+            }
+        }
+    }
+
+    override fun visitSymbol(container: IrElement, symbol: IrSymbol) {
+        if (!symbol.isBound) {
+            hasUnboundSymbols = true
+        }
     }
 }
 
