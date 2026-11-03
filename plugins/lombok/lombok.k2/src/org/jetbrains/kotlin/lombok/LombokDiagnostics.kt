@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.diagnostics.errorWithoutSource
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.BaseSourcelessDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers
+import org.jetbrains.kotlin.diagnostics.rendering.Renderer
 import org.jetbrains.kotlin.diagnostics.strongWarning1
 import org.jetbrains.kotlin.diagnostics.strongWarning2
 import org.jetbrains.kotlin.diagnostics.warning0
@@ -67,6 +68,7 @@ import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.TO_BUILDER_CANNOT_OBTAIN
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.SINGULAR_REQUIRES_EXPLICIT_NAME
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.CANNOT_SINGULARIZE_NAME
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.COMPANION_OBJECT_SERIALIZABLE_CONFLICT
+import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.NOT_INCLUDED_REASON
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.UNSUPPORTED_SINGULAR_TYPE
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.SINGULAR_REQUIRES_GUAVA
 import org.jetbrains.kotlin.name.FqName
@@ -141,7 +143,7 @@ object LombokFirDiagnostics : KtDiagnosticsContainer() {
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = LombokFirDiagnosticsMessages
 
-    enum class NotIncludedReason(private val message: String) {
+    enum class NotIncludedReason(internal val message: String?) {
         CLASS_PROPERTY_IN_PRESENCE_OF_PARAMETERS(
             "builder fields are generated from the primary constructor''s value parameters. " +
                     "To make the property a builder field, declare it in the primary constructor. " +
@@ -152,12 +154,20 @@ object LombokFirDiagnostics : KtDiagnosticsContainer() {
                     "To make the property a builder field, declare it in the primary constructor or change it to be a mutable property"
         ),
         HAS_IMPLICIT_RETURN_TYPE(
-            "its type must not be implicit. " +
-                    "Specify a type explicitly to include property in builder."
+            "its type must not be implicit. Specify a type explicitly to include property in builder"
         ),
+
+        /**
+         * We still don't include this property into builder, but don't report about it
+         */
+        NOT_REPORTED(null),
         ;
 
-        override fun toString(): String = message
+        override fun toString(): String = message ?: "???"
+    }
+
+    internal val NOT_INCLUDED_REASON = Renderer { element: NotIncludedReason ->
+        element.message ?: error("This reason should never be used in a real diagnostic")
     }
 }
 
@@ -307,13 +317,13 @@ object LombokFirDiagnosticsMessages : BaseDiagnosticRendererFactory() {
             BUILDER_PROPERTY_NOT_INCLUDED,
             "Property ''{0}'' is not included in the builder: {1}.",
             CommonRenderers.NAME,
-            TO_STRING,
+            NOT_INCLUDED_REASON,
         )
         map.put(
             BUILDER_PROPERTY_NOT_INCLUDED_ERROR,
             "Property ''{0}'' is not included in the builder: {1}.",
             CommonRenderers.NAME,
-            TO_STRING,
+            NOT_INCLUDED_REASON,
         )
         map.put(
             BUILDER_REQUIRES_EXPLICIT_RETURN_TYPE,
