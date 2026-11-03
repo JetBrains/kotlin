@@ -12,4 +12,6 @@ object ParcelizeConfigurationKeys {
         CompilerConfigurationKey.create(ParcelizeCommandLineProcessor.ADDITIONAL_ANNOTATION_OPTION.description)
     val EXPERIMENTAL_CODE_GENERATION: CompilerConfigurationKey<Boolean> =
         CompilerConfigurationKey.create(ParcelizeCommandLineProcessor.EXPERIMENTAL_CODE_GENERATION.description)
+    val IMPLICITLY_ADD_PARCELABLE_SUPERTYPE: CompilerConfigurationKey<Boolean> =
+        CompilerConfigurationKey.create(ParcelizeCommandLineProcessor.IMPLICITLY_ADD_PARCELABLE_SUPERTYPE.description)
 }

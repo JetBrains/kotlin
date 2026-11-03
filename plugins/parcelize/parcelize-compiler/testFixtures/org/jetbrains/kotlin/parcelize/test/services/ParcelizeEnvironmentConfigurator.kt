@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.parcelize.ParcelizeComponentRegistrar
 import org.jetbrains.kotlin.parcelize.ParcelizeConfigurationKeys
 import org.jetbrains.kotlin.parcelize.kotlinxImmutable
 import org.jetbrains.kotlin.parcelize.test.services.ParcelizeDirectives.ENABLE_PARCELIZE
+import org.jetbrains.kotlin.parcelize.test.services.ParcelizeDirectives.IMPLICITLY_ADD_PARCELABLE_SUPERTYPE
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
@@ -44,6 +45,10 @@ class ParcelizeEnvironmentConfigurator(testServices: TestServices) : Environment
         configuration.put(ParcelizeConfigurationKeys.ADDITIONAL_ANNOTATION, listOf("test.TriggerParcelize"))
         // Allow bare value arguments for inherited classes.
         configuration.put(ParcelizeConfigurationKeys.EXPERIMENTAL_CODE_GENERATION, true)
+        configuration.put(
+            ParcelizeConfigurationKeys.IMPLICITLY_ADD_PARCELABLE_SUPERTYPE,
+            IMPLICITLY_ADD_PARCELABLE_SUPERTYPE in module.directives,
+        )
     }
 
     override fun CompilerPluginRegistrar.ExtensionStorage.registerCompilerExtensions(
@@ -51,16 +56,13 @@ class ParcelizeEnvironmentConfigurator(testServices: TestServices) : Environment
         configuration: CompilerConfiguration
     ) {
         if (ENABLE_PARCELIZE !in module.directives) return
-        val additionalAnnotation = configuration.get(ParcelizeConfigurationKeys.ADDITIONAL_ANNOTATION) ?: emptyList()
-        val experimentalCodeGeneration = configuration.get(ParcelizeConfigurationKeys.EXPERIMENTAL_CODE_GENERATION) ?: false
-        ParcelizeComponentRegistrar.registerParcelizeComponents(
-            this,
-            additionalAnnotation,
-            experimentalCodeGeneration,
-        )
+        with(ParcelizeComponentRegistrar()) { registerExtensions(configuration) }
     }
 }
 
 object ParcelizeDirectives : SimpleDirectivesContainer() {
     val ENABLE_PARCELIZE by directive("Enables parcelize plugin")
+    val IMPLICITLY_ADD_PARCELABLE_SUPERTYPE by directive(
+        "Adds kotlinx.parcelize.internal.Parcelable as a supertype to @Parcelize declarations that do not implement Parcelable directly"
+    )
 }

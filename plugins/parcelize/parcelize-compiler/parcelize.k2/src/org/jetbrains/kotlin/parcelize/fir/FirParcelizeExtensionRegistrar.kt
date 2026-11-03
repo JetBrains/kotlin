@@ -14,10 +14,14 @@ import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize
 class FirParcelizeExtensionRegistrar(
     private val parcelizeAnnotationFqNames: List<FqName>,
     private val experimentalCodeGeneration: Boolean = false,
+    private val implicitlyAddParcelableSupertype: Boolean = false,
 ) : FirExtensionRegistrar() {
     override fun ExtensionRegistrarContext.configurePlugin() {
         +FirParcelizeService.getFactory(parcelizeAnnotationFqNames, experimentalCodeGeneration)
         +::FirParcelizeDeclarationGenerator.bind(parcelizeAnnotationFqNames)
+        if (implicitlyAddParcelableSupertype) {
+            +::FirParcelizeSupertypeGenerator.bind(parcelizeAnnotationFqNames)
+        }
         +::FirParcelizeCheckersExtension
 
         registerDiagnosticContainers(KtErrorsParcelize)
