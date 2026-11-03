@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.isHeaderCacheFromAugmented
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -301,11 +302,14 @@ open class FirDeclarationsResolveTransformer(
                     property.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(it))
                 }
             }
+
+            val isHeaderCacheFromAugmented = session.languageVersionSettings.isHeaderCacheFromAugmented
             if (session.languageVersionSettings.getFlag(AnalysisFlags.headerMode) &&
                 !property.isConst &&
-                !property.isLocal &&
                 property.returnTypeRef !is FirImplicitTypeRef &&
-                !property.hasAnonymousReturnType(session)
+                !property.hasAnonymousReturnType(session) &&
+                !(property.isLocal && isHeaderCacheFromAugmented) &&
+                !(isHeaderCacheFromAugmented && property.correspondingValueParameterFromPrimaryConstructor != null)
             ) {
                 property.replaceInitializer(null)
             }
