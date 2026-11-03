@@ -23,8 +23,6 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.syntax.SyntaxIdSet
 
 object FirMissingConstructorKeywordSyntaxChecker : FirDeclarationSyntaxChecker<FirConstructor>() {
-    override fun isApplicable(element: FirConstructor, source: KtSourceElement): Boolean = true
-
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun checkPsi(
         element: FirConstructor,

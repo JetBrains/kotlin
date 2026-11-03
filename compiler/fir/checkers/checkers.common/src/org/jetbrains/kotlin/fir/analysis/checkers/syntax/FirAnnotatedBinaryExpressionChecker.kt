@@ -20,12 +20,8 @@ import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 
 object FirAnnotatedBinaryExpressionChecker : FirExpressionSyntaxChecker<FirStatement>() {
     override fun isApplicable(element: FirStatement, source: KtSourceElement): Boolean {
-        return source.kind is KtRealSourceElementKind && source.syntaxId == KotlinSyntaxNodeTypeIds.BINARY_EXPRESSION && source.hasAnnotatedLhs
+        return source.kind is KtRealSourceElementKind && source.syntaxId == KotlinSyntaxNodeTypeIds.BINARY_EXPRESSION
     }
-
-    private val KtSourceElement.hasAnnotatedLhs: Boolean
-        get() = (psi as? KtBinaryExpression)?.left is KtAnnotatedExpression
-                || treeStructure.getChildrenArray(lighterASTNode).firstOrNull()?.tokenType == KtNodeTypes.ANNOTATED_EXPRESSION
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun checkPsi(
@@ -33,6 +29,9 @@ object FirAnnotatedBinaryExpressionChecker : FirExpressionSyntaxChecker<FirState
         source: KtPsiSourceElement,
     ) {
         var current = source.psi
+
+        if ((current as? KtBinaryExpression)?.left !is KtAnnotatedExpression) return
+
         var parent = current.parent
 
         while (parent is KtBinaryExpression) {
@@ -55,15 +54,19 @@ object FirAnnotatedBinaryExpressionChecker : FirExpressionSyntaxChecker<FirState
         source: KtLightSourceElement,
     ) {
         var current = source.lighterASTNode
-        var parent: LighterASTNode? = source.treeStructure.getParent(current)
+        val treeStructure = source.treeStructure
+
+        if (treeStructure.getChildrenArray(current).firstOrNull()?.tokenType != KtNodeTypes.ANNOTATED_EXPRESSION) return
+
+        var parent: LighterASTNode? = treeStructure.getParent(current)
 
         while (parent?.tokenType == KtNodeTypes.BINARY_EXPRESSION) {
-            if (source.treeStructure.getChildrenArray(parent).firstOrNull() != current) {
+            if (treeStructure.getChildrenArray(parent).firstOrNull() != current) {
                 return
             }
 
             current = parent
-            parent = source.treeStructure.getParent(parent)
+            parent = treeStructure.getParent(parent)
         }
 
         if (parent?.isStatementContainer == true) {
