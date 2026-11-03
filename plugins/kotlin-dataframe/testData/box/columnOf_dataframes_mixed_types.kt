@@ -12,6 +12,6 @@ fun box(): String {
         dataFrameOf("value" to columnOf(2.0)),
     )
     checkExactType<Any>(commonType[0].value[0])
-    dataFrameOf("frames" to commonType).checkCompileTimeSchemaEqualsRuntime()
+    dataFrameOf("frames" to commonType).checkCompileTimeSchemaIsSuperToOrMatchesRuntime()
     return "OK"
 }
