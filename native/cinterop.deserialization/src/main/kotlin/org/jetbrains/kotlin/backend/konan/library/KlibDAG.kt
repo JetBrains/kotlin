@@ -166,6 +166,12 @@ class KlibDAG internal constructor(private val dag: Map<KotlinLibrary, KlibDAGNo
          * So, walking from any of them to any of such dependencies never gets stuck, and since the number of libraries
          * is finite, the walk eventually comes back to an already visited library. Everything on the walked path
          * starting from that library forms the cycle.
+         *
+         * The walk starts from the first library in [notEmitted] and always proceeds to the dependency that comes first
+         * in [notEmitted], which preserves the load order. So the reported cycle depends only on the DAG and the load order,
+         * not on the iteration order of [KlibDAGNode.directDependencies]: it is a [HashSet] of [KotlinLibrary]s, which
+         * use identity hash codes. Picking the next dependency costs O(|notEmitted|), so the walk is quadratic
+         * in the worst case. This is acceptable, as it runs only once, right before the compilation fails.
          */
         private fun throwCyclicDependencyException(
             dag: Map<KotlinLibrary, KlibDAGNode>,
@@ -176,7 +182,8 @@ class KlibDAG internal constructor(private val dag: Map<KotlinLibrary, KlibDAGNo
 
             var current = notEmitted.first()
             while (librariesOnPath.add(current)) {
-                current = dag.getValue(current).directDependencies.first { it in notEmitted }
+                val directDependencies = dag.getValue(current).directDependencies
+                current = notEmitted.first { it in directDependencies }
             }
 
             throw KlibDAGCyclicDependencyException(librariesOnPath.dropWhile { it != current })
