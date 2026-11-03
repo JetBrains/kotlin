@@ -12,18 +12,15 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
-import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDelegatedSuperTypeEntry
 
-object FirDelegationInExpectClassSyntaxChecker : FirDeclarationSyntaxChecker<FirRegularClass, KtClassOrObject>() {
-
+object FirDelegationInExpectClassSyntaxChecker : FirDeclarationSyntaxChecker<FirRegularClass>() {
     override fun isApplicable(element: FirRegularClass, source: KtSourceElement): Boolean = element.isExpect
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun checkPsi(
         element: FirRegularClass,
         source: KtPsiSourceElement,
-        psi: KtClassOrObject,
     ) {
         for (superTypeRef in element.superTypeRefs) {
             val superSource = superTypeRef.source ?: continue

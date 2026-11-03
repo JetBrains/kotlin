@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-object FirFunctionTypeParametersSyntaxChecker : FirDeclarationSyntaxChecker<FirNamedFunction, KtFunction>() {
+object FirFunctionTypeParametersSyntaxChecker : FirDeclarationSyntaxChecker<FirNamedFunction>() {
     override fun isApplicable(element: FirNamedFunction, source: KtSourceElement): Boolean =
         source.kind !is KtFakeSourceElementKind
 
@@ -27,8 +27,8 @@ object FirFunctionTypeParametersSyntaxChecker : FirDeclarationSyntaxChecker<FirN
     override fun checkPsi(
         element: FirNamedFunction,
         source: KtPsiSourceElement,
-        psi: KtFunction,
     ) {
+        val psi = source.psi as KtFunction
         val typeParamsNode = psi.typeParameterList
         val nameNode = psi.nameIdentifier
 

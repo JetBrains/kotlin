@@ -23,9 +23,8 @@ import org.jetbrains.kotlin.fir.resolve.transformers.resolveToPackageOrClass
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.syntax.withSyntax
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.psi.KtFile
 
-object FirUnresolvedInMiddleOfImportChecker : FirDeclarationSyntaxChecker<FirFile, KtFile>() {
+object FirUnresolvedInMiddleOfImportChecker : FirDeclarationSyntaxChecker<FirFile>() {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun checkPsiOrLightTree(
         element: FirFile,

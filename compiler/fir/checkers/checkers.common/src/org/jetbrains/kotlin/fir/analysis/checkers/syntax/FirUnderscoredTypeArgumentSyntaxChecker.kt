@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.syntax
 
 import com.intellij.lang.LighterASTNode
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.annotations
@@ -18,7 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.psi.KtTypeProjection
 
-object FirUnderscoredTypeArgumentSyntaxChecker : FirExpressionSyntaxChecker<FirFunctionCall, PsiElement>() {
+object FirUnderscoredTypeArgumentSyntaxChecker : FirExpressionSyntaxChecker<FirFunctionCall>() {
     override fun isApplicable(element: FirFunctionCall, source: KtSourceElement): Boolean =
         element.typeArguments.isNotEmpty()
 
@@ -28,7 +27,6 @@ object FirUnderscoredTypeArgumentSyntaxChecker : FirExpressionSyntaxChecker<FirF
     override fun checkPsi(
         element: FirFunctionCall,
         source: KtPsiSourceElement,
-        psi: PsiElement,
     ) {
         for (typeProjection in element.typeArguments) {
             val psiTypeArgument = typeProjection.source?.psi as? KtTypeProjection ?: continue

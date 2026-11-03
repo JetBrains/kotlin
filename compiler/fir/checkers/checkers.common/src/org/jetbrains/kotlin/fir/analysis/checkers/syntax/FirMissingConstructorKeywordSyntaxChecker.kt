@@ -22,16 +22,15 @@ import org.jetbrains.kotlin.psi.KtConstructor
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.syntax.SyntaxIdSet
 
-object FirMissingConstructorKeywordSyntaxChecker : FirDeclarationSyntaxChecker<FirConstructor, KtDeclaration>() {
-
+object FirMissingConstructorKeywordSyntaxChecker : FirDeclarationSyntaxChecker<FirConstructor>() {
     override fun isApplicable(element: FirConstructor, source: KtSourceElement): Boolean = true
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun checkPsi(
         element: FirConstructor,
         source: KtPsiSourceElement,
-        psi: KtDeclaration,
     ) {
+        val psi = source.psi as KtDeclaration
         if (psi is KtConstructor<*> && psi.modifierList != null && psi.getConstructorKeyword() == null) {
             reporter.reportOn(source, FirErrors.MISSING_CONSTRUCTOR_KEYWORD)
         }

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.syntax
 
 import com.intellij.lang.LighterASTNode
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.getChildrenArray
@@ -19,7 +18,7 @@ import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtPsiUtil.isStatementContainer
 import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 
-object FirAnnotatedBinaryExpressionChecker : FirExpressionSyntaxChecker<FirStatement, PsiElement>() {
+object FirAnnotatedBinaryExpressionChecker : FirExpressionSyntaxChecker<FirStatement>() {
     override fun isApplicable(element: FirStatement, source: KtSourceElement): Boolean {
         return source.kind is KtRealSourceElementKind && source.syntaxId == KotlinSyntaxNodeTypeIds.BINARY_EXPRESSION && source.hasAnnotatedLhs
     }
@@ -32,7 +31,6 @@ object FirAnnotatedBinaryExpressionChecker : FirExpressionSyntaxChecker<FirState
     override fun checkPsi(
         element: FirStatement,
         source: KtPsiSourceElement,
-        psi: PsiElement,
     ) {
         var current = source.psi
         var parent = current.parent
