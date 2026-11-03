@@ -57,4 +57,9 @@ class B : A() {
     }
 }
 
+class C : A() {
+    @JvmOverloads
+    fun compFoo(x: List<Int>, y: Int = 0) {}
+}
+
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration */
