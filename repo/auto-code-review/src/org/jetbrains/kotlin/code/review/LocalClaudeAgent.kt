@@ -179,8 +179,9 @@ class LocalClaudeAgent private constructor(
                     # Diff:
                     
                     The full diff is available from $diffDescription.
+                    It may contain other changes besides the ones below.
                     
-                    Here is the part featuring the files that are subject to the rule:
+                    Check the rule only against the following diff, which features files that are subject to the rule:
                     
                     ```diff
                 """.trimIndent()
