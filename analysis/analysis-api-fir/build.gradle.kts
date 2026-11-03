@@ -21,8 +21,6 @@ dependencies {
     implementation(project(":compiler:backend.common.jvm"))
     implementation(project(":compiler:ir.tree"))
     implementation(project(":compiler:cli-base"))
-    implementation(project(":compiler:frontend"))
-    implementation(project(":compiler:frontend.java"))
     implementation(project(":compiler:ir.psi2ir"))
     api(project(":compiler:fir:entrypoint"))
     api(project(":analysis:low-level-api-fir"))

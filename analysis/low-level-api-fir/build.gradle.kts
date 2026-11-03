@@ -31,7 +31,6 @@ dependencies {
     implementation(project(":compiler:backend"))
     implementation(project(":compiler:cli-base"))
     implementation(project(":compiler:frontend.common.jvm"))
-    implementation(project(":compiler:frontend.java"))
     implementation(project(":compiler:psi:psi-impl"))
     implementation(project(":js:js.config"))
     implementation(project(":kotlin-util-klib-metadata"))
