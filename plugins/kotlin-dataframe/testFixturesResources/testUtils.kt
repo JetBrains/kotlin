@@ -21,6 +21,21 @@ inline fun <reified T> DataFrame<T>.checkCompileTimeSchemaEqualsRuntime() {
     }
 }
 
+inline fun <reified T> DataFrame<T>.checkCompileTimeSchemaIsSuperToOrMatchesRuntime() {
+    val schema = schema()
+    val compileTimeSchema = compileTimeSchema()
+    val compare = compileTimeSchema.compare(schema)
+    require(compare.isSuperOrMatches()) {
+        buildString {
+            appendLine("Compile time schema is not super to runtime schema.")
+            appendLine("Runtime:")
+            appendLine(schema.toString())
+            appendLine("Compile:")
+            appendLine(compileTimeSchema.toString())
+        }
+    }
+}
+
 inline fun <reified T> DataFrame<T>.compareSchemas(strict: Boolean = false) {
     val schema = schema()
     val compileTimeSchema = compileTimeSchema()
