@@ -43,14 +43,19 @@ class ControlFlowAnalysisDiagnosticComponent(
     private val variableAssignmentCheckers = declarationCheckers.variableAssignmentCfaBasedCheckers
 
     private fun analyze(declaration: FirControlFlowGraphOwner, context: CheckerContext) {
-        analyze(declaration, declaration.controlFlowGraphReference?.controlFlowGraph, context)
+        analyze(declaration, declaration.controlFlowGraphReference?.controlFlowGraph, kind = null, context)
     }
 
-    private fun analyze(declaration: FirControlFlowGraphOwner, graph: ControlFlowGraph?, context: CheckerContext) {
+    private fun analyze(
+        declaration: FirControlFlowGraphOwner,
+        graph: ControlFlowGraph?,
+        kind: ControlFlowGraph.Kind?,
+        context: CheckerContext,
+    ) {
         if (graph == null) return
         if (graph.isSubGraph) return
         val container = context.containingDeclarations.lastOrNull()
-        if (container != null && declaration.isUsedInControlFlowGraph(container)) return
+        if (container != null && declaration.isUsedInControlFlowGraph(container, kind)) return
 
         context(context, reporter) {
             cfaCheckers.forEach { it.analyze(graph) }
@@ -79,8 +84,8 @@ class ControlFlowAnalysisDiagnosticComponent(
     // ------------------------------- Class initializer -------------------------------
 
     override fun visitRegularClass(regularClass: FirRegularClass, data: CheckerContext) {
-        analyze(regularClass, regularClass.controlFlowGraphReference?.controlFlowGraph, data)
-        analyze(regularClass, regularClass.staticControlFlowGraphReference?.controlFlowGraph, data)
+        analyze(regularClass, regularClass.controlFlowGraphReference?.controlFlowGraph, kind = ControlFlowGraph.Kind.Class, data)
+        analyze(regularClass, regularClass.staticControlFlowGraphReference?.controlFlowGraph, kind = ControlFlowGraph.Kind.Static, data)
     }
 
     override fun visitAnonymousObject(anonymousObject: FirAnonymousObject, data: CheckerContext) {
@@ -141,9 +146,7 @@ class ControlFlowAnalysisDiagnosticComponent(
                     // Recusing to a CFG-independent element is a navigation violation in the Analysis API.
                     if (element.isUsedInControlFlowGraph(container = data)) {
                         val container = element.controlFlowGraphReference?.controlFlowGraph ?: data
-                        if (container === data || container in data.subGraphs) {
-                            element.acceptChildren(this, container)
-                        }
+                        element.acceptChildren(this, container)
                     }
                 }
 
