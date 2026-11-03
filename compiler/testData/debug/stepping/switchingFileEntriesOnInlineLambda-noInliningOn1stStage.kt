@@ -61,23 +61,23 @@ fun box(): String {
 // InlineFunDeclaration.kt:29 render
 // scalars.kt:10 render
 // scalars.kt:11 render
-// InlineFunCallSite.kt:21 render
-// InlineFunCallSite.kt:21 render
-// InlineFunCallSite.kt:22 render
+// InlineFunDeclaration.kt:30 render
+// InlineFunDeclaration.kt:30 render
+// InlineFunDeclaration.kt:31 render
 // bar.kt:42 render
 // scalars.kt:10 render
 // scalars.kt:11 render
+// bar.kt:43 render
+// bar.kt:44 render
+// InlineFunDeclaration.kt:32 render
+// InlineFunDeclaration.kt:32 render
+// InlineFunDeclaration.kt:33 render
+// bar.kt:44 render
+// InlineFunDeclaration.kt:35 render
+// InlineFunCallSite.kt:21 render
 // InlineFunCallSite.kt:21 render
 // InlineFunCallSite.kt:22 render
-// InlineFunCallSite.kt:23 render
-// InlineFunCallSite.kt:23 render
-// InlineFunCallSite.kt:27 render
-// InlineFunCallSite.kt:22 render
-// InlineFunCallSite.kt:27 render
-// InlineFunCallSite.kt:21 render
-// InlineFunCallSite.kt:21 render
-// InlineFunCallSite.kt:22 render
-// InlineFunCallSite.kt:27 render
+// InlineFunDeclaration.kt:35 render
 // InlineFunCallSite.kt:23 render
 // InlineFunCallSite.kt:24 render
 // test.kt:51 box
@@ -87,11 +87,11 @@ fun box(): String {
 // test.kt:51 box
 // InlineFunCallSite.kt:18 <init>
 // test.kt:51 box
+// InlineFunDeclaration.kt:30 render
+// bar.kt:43 render
+// InlineFunDeclaration.kt:32 render
 // InlineFunCallSite.kt:21 render
-// InlineFunCallSite.kt:21 render
-// InlineFunCallSite.kt:23 render
-// InlineFunCallSite.kt:21 render
-// InlineFunDeclaration.kt:27 render
+// InlineFunDeclaration.kt:35 render
 // InlineFunCallSite.kt:20 render
 
 // EXPECTATIONS WASM
@@ -102,19 +102,19 @@ fun box(): String {
 // InlineFunDeclaration.kt:29 $InlineFunCallSite.render (17, 4)
 // scalars.kt:10 $InlineFunCallSite.render (15)
 // scalars.kt:11 $InlineFunCallSite.render (8)
-// InlineFunCallSite.kt:21 $InlineFunCallSite.render (15, 7)
-// InlineFunCallSite.kt:22 $InlineFunCallSite.render (8, 4)
+// InlineFunDeclaration.kt:30 $InlineFunCallSite.render (16, 8)
+// InlineFunDeclaration.kt:31 $InlineFunCallSite.render (12, 8)
 // bar.kt:42 $InlineFunCallSite.render (17, 4)
 // scalars.kt:10 $InlineFunCallSite.render (15)
 // scalars.kt:11 $InlineFunCallSite.render (8)
-// InlineFunCallSite.kt:21 $InlineFunCallSite.render (11, 3)
-// InlineFunCallSite.kt:22 $InlineFunCallSite.render (8)
-// InlineFunCallSite.kt:23 $InlineFunCallSite.render (8, 0)
-// InlineFunCallSite.kt:27 $InlineFunCallSite.render (11, 15)
-// InlineFunCallSite.kt:22 $InlineFunCallSite.render (1)
-// InlineFunCallSite.kt:27 $InlineFunCallSite.render (41)
+// bar.kt:43 $InlineFunCallSite.render (16, 8)
+// bar.kt:44 $InlineFunCallSite.render (15)
+// InlineFunDeclaration.kt:32 $InlineFunCallSite.render (20, 12)
+// InlineFunDeclaration.kt:33 $InlineFunCallSite.render (12, 16)
+// bar.kt:44 $InlineFunCallSite.render (8)
+// InlineFunDeclaration.kt:35 $InlineFunCallSite.render (15)
 // InlineFunCallSite.kt:21 $InlineFunCallSite.render (20, 12)
 // InlineFunCallSite.kt:22 $InlineFunCallSite.render (23, 12)
-// InlineFunCallSite.kt:27 $InlineFunCallSite.render (34)
+// InlineFunDeclaration.kt:35 $InlineFunCallSite.render (8)
 // InlineFunCallSite.kt:20 $InlineFunCallSite.render (8)
 // test.kt:51 $box (4)
