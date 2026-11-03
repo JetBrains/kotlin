@@ -36,11 +36,11 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
 
 // See old FE's [DeclarationsChecker]
 object FirTopLevelPropertiesChecker : FirFileChecker(MppCheckerKind.Common) {
@@ -128,7 +128,7 @@ internal fun checkPropertyInitializer(
     reachable: Boolean = true,
 ) {
     val inInterfaceAndNonStatic = containingClass?.isInterface == true && !propertySymbol.isStatic
-    val hasAbstractModifier = KtTokens.ABSTRACT_KEYWORD in modifierList
+    val hasAbstractModifier = KotlinSyntaxTokenIds.ABSTRACT_MODIFIER in modifierList
     val isAbstract = propertySymbol.isAbstract || hasAbstractModifier
     if (isAbstract) {
         val returnTypeRef = propertySymbol.resolvedReturnTypeRef
