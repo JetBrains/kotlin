@@ -62,7 +62,7 @@ object FirJvmExternalDeclarationChecker : FirBasicDeclarationChecker(MppCheckerK
             }
             val externalModifier = declaration.getModifier(KtTokens.EXTERNAL_KEYWORD)
             externalModifier?.let {
-                reporter.reportOn(it.source, FirErrors.WRONG_MODIFIER_TARGET, it.token, target)
+                reporter.reportOn(it.source, FirErrors.WRONG_MODIFIER_TARGET, it.tokenName, target)
             }
             return
         }

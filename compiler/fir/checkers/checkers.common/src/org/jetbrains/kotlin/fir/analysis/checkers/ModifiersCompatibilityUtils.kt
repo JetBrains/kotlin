@@ -33,36 +33,36 @@ internal fun checkCompatibilityType(
         }
         Compatibility.REPEATED ->
             if (reportedNodes.add(secondModifier)) {
-                reporter.reportOn(secondModifier.source, FirErrors.REPEATED_MODIFIER, secondModifierToken)
+                reporter.reportOn(secondModifier.source, FirErrors.REPEATED_MODIFIER, secondModifier.tokenName)
             }
         Compatibility.REDUNDANT -> {
             reporter.reportOn(
                 secondModifier.source,
                 FirErrors.REDUNDANT_MODIFIER,
-                secondModifierToken,
-                firstModifierToken
+                secondModifier.tokenName,
+                firstModifier.tokenName
             )
         }
         Compatibility.REVERSE_REDUNDANT -> {
             reporter.reportOn(
                 firstModifier.source,
                 FirErrors.REDUNDANT_MODIFIER,
-                firstModifierToken,
-                secondModifierToken
+                firstModifier.tokenName,
+                secondModifier.tokenName
             )
         }
         Compatibility.DEPRECATED -> {
             reporter.reportOn(
                 firstModifier.source,
                 FirErrors.DEPRECATED_MODIFIER_PAIR,
-                firstModifierToken,
-                secondModifierToken
+                firstModifier.tokenName,
+                secondModifier.tokenName
             )
             reporter.reportOn(
                 secondModifier.source,
                 FirErrors.DEPRECATED_MODIFIER_PAIR,
-                secondModifierToken,
-                firstModifierToken
+                secondModifier.tokenName,
+                firstModifier.tokenName
             )
         }
         Compatibility.INLINE_VALUE_ALLOWED if (LanguageFeature.ExplicitInlineValueClassesSyntax.isEnabled()) -> {
@@ -76,16 +76,16 @@ internal fun checkCompatibilityType(
                 reporter.reportOn(
                     firstModifier.source,
                     FirErrors.INCOMPATIBLE_MODIFIERS,
-                    firstModifierToken,
-                    secondModifierToken
+                    firstModifier.tokenName,
+                    secondModifier.tokenName
                 )
             }
             if (reportedNodes.add(secondModifier)) {
                 reporter.reportOn(
                     secondModifier.source,
                     FirErrors.INCOMPATIBLE_MODIFIERS,
-                    secondModifierToken,
-                    firstModifierToken
+                    secondModifier.tokenName,
+                    firstModifier.tokenName
                 )
             }
         }

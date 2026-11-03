@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.declarations.FirDeprecationInfo
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.lexer.KtKeywordToken
-import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement.Version
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -1821,69 +1820,69 @@ internal class ExposedTypeParameterBoundDeprecationWarningImpl(
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.ExposedTypeParameterBoundDeprecationWarning
 
 internal class RepeatedModifierImpl(
-    override val modifier: KtModifierKeywordToken,
+    override val modifier: String,
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.RepeatedModifier
 
 internal class WrongModifierTargetImpl(
-    override val modifier: KtModifierKeywordToken,
+    override val modifier: String,
     override val target: String,
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.WrongModifierTarget
 
 internal class WrongModifierContainingDeclarationImpl(
-    override val modifier: KtModifierKeywordToken,
+    override val modifier: String,
     override val target: String,
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.WrongModifierContainingDeclaration
 
 internal class DeprecatedModifierImpl(
-    override val deprecatedModifier: KtModifierKeywordToken,
-    override val actualModifier: KtModifierKeywordToken,
+    override val deprecatedModifier: String,
+    override val actualModifier: String,
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.DeprecatedModifier
 
 internal class DeprecatedModifierForTargetImpl(
-    override val deprecatedModifier: KtModifierKeywordToken,
+    override val deprecatedModifier: String,
     override val target: String,
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.DeprecatedModifierForTarget
 
 internal class DeprecatedModifierContainingDeclarationImpl(
-    override val modifier: KtModifierKeywordToken,
+    override val modifier: String,
     override val target: String,
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.DeprecatedModifierContainingDeclaration
 
 internal class IncompatibleModifiersImpl(
-    override val modifier1: KtModifierKeywordToken,
-    override val modifier2: KtModifierKeywordToken,
+    override val modifier1: String,
+    override val modifier2: String,
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.IncompatibleModifiers
 
 internal class DeprecatedModifierPairImpl(
-    override val deprecatedModifier: KtModifierKeywordToken,
-    override val conflictingModifier: KtModifierKeywordToken,
+    override val deprecatedModifier: String,
+    override val conflictingModifier: String,
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.DeprecatedModifierPair
 
 internal class RedundantModifierImpl(
-    override val redundantModifier: KtModifierKeywordToken,
-    override val conflictingModifier: KtModifierKeywordToken,
+    override val redundantModifier: String,
+    override val conflictingModifier: String,
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.RedundantModifier
 
 internal class RedundantModifierForTargetImpl(
-    override val redundantModifier: KtModifierKeywordToken,
+    override val redundantModifier: String,
     override val target: String,
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
