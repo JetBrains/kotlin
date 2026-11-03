@@ -13,12 +13,9 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirRegularClassChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.hasExplicitReturnType
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
-import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
-import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
@@ -35,6 +32,7 @@ import org.jetbrains.kotlin.lombok.LombokNames
 import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations
 import org.jetbrains.kotlin.lombok.config.LombokService
 import org.jetbrains.kotlin.lombok.config.lombokService
+import org.jetbrains.kotlin.lombok.generators.AbstractBuilderGenerator
 import org.jetbrains.kotlin.lombok.generators.Singulars
 import org.jetbrains.kotlin.lombok.generators.hasReceiverOrContextParameters
 import org.jetbrains.kotlin.lombok.generators.kotlin.findAnnotationOnPropertyOrField
@@ -170,7 +168,6 @@ object FirLombokBuilderChecker : FirRegularClassChecker(MppCheckerKind.Platform)
      */
     context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkBodyBuilderProperties(declaration: FirRegularClass, primaryConstructor: FirConstructorSymbol) {
-        val buildsFromBodyProperties = primaryConstructor.valueParameterSymbols.isEmpty()
         val parameterNames = primaryConstructor.valueParameterSymbols.mapTo(mutableSetOf()) { it.name }
 
         declaration.processAllDeclarations(context.session) { symbol ->
@@ -179,17 +176,11 @@ object FirLombokBuilderChecker : FirRegularClassChecker(MppCheckerKind.Platform)
             if (property.fromPrimaryConstructor || name.isSpecial) return@processAllDeclarations
             if (property.origin != FirDeclarationOrigin.Source) return@processAllDeclarations
 
-            val whyNotIncluded = when {
-                !property.hasBackingField -> null
-                name in parameterNames -> null
-                property.isStatic -> null
-                !buildsFromBodyProperties -> NotIncludedReason.CLASS_PROPERTY_IN_PRESENCE_OF_PARAMETERS
-                property.isVal -> NotIncludedReason.VAL_BODY_PROPERTY
-                !property.hasExplicitReturnType -> NotIncludedReason.HAS_IMPLICIT_RETURN_TYPE
-                else -> null
+            val whyNotIncluded = with(AbstractBuilderGenerator) {
+                property.whyNotIncludedInBuilder(parameterNames, resolveInProcess = false)
             }
 
-            if (whyNotIncluded != null) {
+            if (whyNotIncluded != null && whyNotIncluded != NotIncludedReason.NOT_REPORTED) {
                 val diagnostic = if (whyNotIncluded == HAS_IMPLICIT_RETURN_TYPE) {
                     LombokFirDiagnostics.BUILDER_PROPERTY_NOT_INCLUDED_ERROR
                 } else {

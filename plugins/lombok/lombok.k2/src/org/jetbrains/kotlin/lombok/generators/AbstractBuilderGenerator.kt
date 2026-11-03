@@ -66,6 +66,7 @@ import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
 import org.jetbrains.kotlin.load.java.structure.*
+import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.NotIncludedReason
 import org.jetbrains.kotlin.lombok.LombokNames
 import org.jetbrains.kotlin.lombok.LombokNames.TABLE_ID
 import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations.AbstractBuilder
@@ -133,6 +134,33 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
     FirDeclarationGenerationExtension(session), LombokCompanionObjectContributor {
     companion object {
         private val TO_BUILDER = identifier("toBuilder")
+
+        // We use this function both for filtering properties in resolve (in this context only null/non-null is important),
+        // and for reporting diagnostics in checkers.
+        @OptIn(SymbolInternals::class)
+        internal fun FirPropertySymbol.whyNotIncludedInBuilder(
+            parameterNames: Set<Name>,
+            resolveInProcess: Boolean,
+        ): NotIncludedReason? = when {
+            // Currently it's not important if property has backing field or not to include it in builder,
+            // but even if it is included, we don't want to report anything as we consider the situation as questionable.
+            // See also KT-90822.
+            !resolveInProcess && !hasBackingField && hasExplicitReturnType-> null
+            // If we have parameters, we never include any properties,
+            // but we don't report ones that have matching names (as in fact they are INCLUDED as parameters).
+            name in parameterNames -> NotIncludedReason.NOT_REPORTED
+            // Don't report and don't include static properties, independent of whether we have constructor parameters.
+            isStatic -> NotIncludedReason.NOT_REPORTED
+            // Don't include properties in presence of parameters.
+            // Here we may move @Builder to a constructor to avoid the diagnostics.
+            parameterNames.isNotEmpty() -> NotIncludedReason.CLASS_PROPERTY_IN_PRESENCE_OF_PARAMETERS
+            isVal -> NotIncludedReason.VAL_BODY_PROPERTY
+            // Both next situations are errors (it's assumed that the type should be added and properties will be included),
+            // but during resolve we may check only first one.
+            fir.returnTypeRef is FirImplicitTypeRef -> NotIncludedReason.HAS_IMPLICIT_RETURN_TYPE
+            !resolveInProcess && !hasExplicitReturnType -> NotIncludedReason.HAS_IMPLICIT_RETURN_TYPE
+            else -> null
+        }
     }
 
     protected val lombokService: LombokService
@@ -267,10 +295,14 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                     val primaryConstructor = entityClass.declarations.firstNotNullOfOrNull { declaration ->
                         (declaration as? FirConstructor)?.takeIf { it.isPrimary }
                     }
-                    primaryConstructor?.valueParameters?.takeIf { it.isNotEmpty() }
-                        ?: entityClass.declarations.mapNotNull { declaration ->
-                            (declaration as? FirProperty)?.takeIf { it.isVar }
+                    val valueParameters = primaryConstructor?.valueParameters.orEmpty()
+                    val parameterNames = valueParameters.mapTo(mutableSetOf()) { it.name }
+
+                    valueParameters + entityClass.declarations.mapNotNull { declaration ->
+                        (declaration as? FirProperty)?.takeIf {
+                            it.symbol.whyNotIncludedInBuilder(parameterNames, resolveInProcess = true) == null
                         }
+                    }
                 }
             }
             is FirConstructor -> declaration.valueParameters
@@ -452,8 +484,6 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 val itemSymbol = item.variable.symbol
                 val singular = item.singular
                 val newSource = item.variable.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated.Default)
-                // We don't want to generate builder methods for fields that have implicit return types (KT-90508)
-                if (!builderSymbol.hasJavaOrigin && (itemSymbol.fir.returnTypeRef is FirImplicitTypeRef || !itemSymbol.hasExplicitReturnType)) continue
 
                 generatedVariables.addIfNonClashing(itemName, existingVariableNames) {
                     val key = BuilderGeneratorKey(BuilderDeclarationType.Field)
