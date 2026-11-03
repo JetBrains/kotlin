@@ -135,7 +135,7 @@ class SwiftExportIT : KGPBaseTest() {
 
                 assertDirectoryInProjectExists("build/MergedLibraries/ios/Debug")
                 assertDirectoryInProjectExists("build/SPMBuild/iosArm64/Debug")
-                assertDirectoryInProjectExists("build/SPMDerivedData")
+                assertDirectoryInProjectExists("build/SPMDerivedData/iosArm64/Debug")
                 assertDirectoryInProjectExists("build/SPMPackage/iosArm64/Debug")
                 assertDirectoryInProjectExists("build/SwiftExport/iosArm64")
 

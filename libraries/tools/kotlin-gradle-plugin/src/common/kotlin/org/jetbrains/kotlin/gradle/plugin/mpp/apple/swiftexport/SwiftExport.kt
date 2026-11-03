@@ -440,7 +440,7 @@ private fun Project.registerSPMPackageBuild(
 
         // Output
         task.packageBuildDir.set(layout.buildDirectory.dir("SPMBuild/${target.name}/$configuration"))
-        task.packageDerivedData.set(layout.buildDirectory.dir("SPMDerivedData"))
+        task.packageDerivedData.set(layout.buildDirectory.dir("SPMDerivedData/${target.name}/$configuration"))
     }
 }
 

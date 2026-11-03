@@ -363,6 +363,32 @@ class SwiftExportUnitTests {
     }
 
     @Test
+    fun `test swift export SPM package builds use separate derived data as local state`() {
+        val project = swiftExportProject(archs = "arm64 x86_64", multiplatform = {
+            // fixme: KT-89587 Clean up tests after iosX64 target deprecation
+            listOf(iosSimulatorArm64(), iosX64())
+        })
+
+        project.evaluate()
+
+        val buildSPMTasks = listOf("iosSimulatorArm64", "iosX64").map { targetName ->
+            targetName to project.tasks.getByName("${targetName}DebugBuildSPMPackage") as BuildSPMSwiftExportPackage
+        }
+
+        buildSPMTasks.forEach { (targetName, task) ->
+            val derivedData = task.packageDerivedData.get().asFile
+            assertEquals(project.layout.buildDirectory.dir("SPMDerivedData/$targetName/Debug").get().asFile, derivedData)
+            assertFalse(
+                derivedData in task.outputs.files.files,
+                "DerivedData of ${task.name} must not be declared as a task output"
+            )
+        }
+
+        val derivedDataDirs = buildSPMTasks.map { (_, task) -> task.packageDerivedData.get().asFile }
+        assertEquals(derivedDataDirs.size, derivedDataDirs.distinct().size, "DerivedData directories must not be shared")
+    }
+
+    @Test
     fun `test swift export multiple modules tasks graph`() {
         val projects = multiModuleSwiftExportProject(subprojects = listOf("subproject", "anotherproject", "miniproject"))
         projects.forEach { it.evaluate() }

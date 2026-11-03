@@ -111,7 +111,8 @@ internal abstract class BuildSPMSwiftExportPackage @Inject constructor(
     @get:Internal
     abstract val swiftPMImportCheckout: DirectoryProperty
 
-    @get:OutputDirectory
+    // xcodebuild scratch space: consumers only read packageBuildDir, so Gradle shouldn't snapshot it.
+    @get:LocalState
     abstract val packageDerivedData: DirectoryProperty
 
     @get:OutputDirectory
