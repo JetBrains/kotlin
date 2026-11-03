@@ -39,7 +39,8 @@ import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.builder.buildUserTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
 import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
-import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
+import org.jetbrains.kotlin.fir.resolve.transformers.FirAbstractResolveTransformer
+import org.jetbrains.kotlin.fir.resolve.transformers.FirAbstractResolveTransformerSubclassing
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -47,13 +48,13 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.util.PrivateForInline
 
-@OptIn(PrivateForInline::class)
+@OptIn(PrivateForInline::class, FirAbstractResolveTransformerSubclassing::class)
 abstract class AbstractFirSpecificAnnotationResolveTransformer(
     @property:PrivateForInline override val session: FirSession,
     @property:PrivateForInline override val scopeSession: ScopeSession,
     @property:PrivateForInline val computationSession: CompilerRequiredAnnotationsComputationSession,
     containingDeclarations: List<FirDeclaration> = emptyList(),
-) : FirDefaultTransformer<Nothing?>(), SessionAndScopeSessionHolder {
+) : FirAbstractResolveTransformer<Nothing?>(), SessionAndScopeSessionHolder {
 
     private fun resolveCompilerRequiredArguments(
         annotationCall: FirAnnotationCall,
