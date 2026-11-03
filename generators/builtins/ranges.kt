@@ -62,8 +62,6 @@ public class $range(start: $t, endInclusive: $t) : ${t}Progression(start, endInc
      */
     override fun equals(other: Any?): Boolean = super.equals(other)
 
-    override fun hashCode(): Int = super.hashCode()
-
     override fun toString(): String = $toString
 
     public companion object {
