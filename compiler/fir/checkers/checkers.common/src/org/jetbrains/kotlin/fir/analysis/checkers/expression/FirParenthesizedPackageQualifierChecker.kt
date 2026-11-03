@@ -20,8 +20,7 @@ import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeTypeArgumentsForOuterClass
-import org.jetbrains.kotlin.psi.psiUtil.getExplicitReceiverOfDotQualified
-import org.jetbrains.kotlin.resolve.source.getExplicitReceiverOfDotQualified
+import org.jetbrains.kotlin.fir.syntaxComponent
 import org.jetbrains.kotlin.resolve.source.hasUnwrappableAsExplicitReceiver
 
 object FirParenthesizedPackageQualifierChecker : FirResolvedQualifierChecker(MppCheckerKind.Common) {
@@ -108,17 +107,8 @@ object FirParenthesizedPackageQualifierChecker : FirResolvedQualifierChecker(Mpp
                         reportParenthesizedPackageQualifier(source, onReceiver = true)
                         return
                     }
-                    val packageReceiverSource = when (source) {
-                        is KtLightSourceElement -> {
-                            source.lighterASTNode
-                                .getExplicitReceiverOfDotQualified(source.treeStructure)
-                                ?.toKtLightSourceElement(source.treeStructure)
-                        }
-                        is KtPsiSourceElement -> {
-                            source.psi
-                                .getExplicitReceiverOfDotQualified()
-                                ?.toKtPsiSourceElement()
-                        }
+                    val packageReceiverSource = with(context.session.syntaxComponent) {
+                        source.findExplicitReceiverOfDotQualifiedSource()
                     }
                     packageReceiverSource?.let {
                         checkNestedPackages(it)

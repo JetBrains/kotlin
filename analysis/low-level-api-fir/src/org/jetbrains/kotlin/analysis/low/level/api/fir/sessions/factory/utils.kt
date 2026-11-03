@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirElementFinder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirExceptionHandler
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.builder.FirPsiSyntaxComponent
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.declarations.FirHiddenDeprecationProvider
 import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProvider
@@ -58,6 +59,8 @@ internal fun LLFirSession.registerIdeComponents(
         createLookupDefaultStarImportsInSourcesSettingHolder(languageVersionSettings)
     )
     register(LLCheckersFactory::class, LLCheckersFactory(this))
+    // The Analysis API works only with PSI.
+    register(FirSyntaxComponent::class, FirPsiSyntaxComponent)
     registerResolveExtensionTool()
     register(FirHiddenDeprecationProvider::class, LLHiddenDeprecationProvider(this))
 

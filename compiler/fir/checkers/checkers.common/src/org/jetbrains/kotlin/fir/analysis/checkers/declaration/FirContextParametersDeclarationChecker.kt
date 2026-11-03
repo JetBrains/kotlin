@@ -5,11 +5,9 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.diagnostics.findChildByType
-import org.jetbrains.kotlin.diagnostics.findChildrenByType
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -21,8 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isOperator
 import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
-import org.jetbrains.kotlin.psi.KtModifierList
-import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
+import org.jetbrains.kotlin.fir.syntaxComponent
 import org.jetbrains.kotlin.resolve.allowedInContextParameters
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -34,7 +31,11 @@ object FirContextParametersDeclarationChecker : FirBasicDeclarationChecker(MppCh
         val contextListSources = when (declaration) {
             is FirFile -> declaration.packageDirective.source
             else -> declaration.source
-        }?.findContextParameterListSources().orEmpty().ifEmpty { return }
+        }?.let {
+            with(context.session.syntaxComponent) {
+                it.findContextParameterListSources()
+            }
+        }.orEmpty().ifEmpty { return }
 
         val source = contextListSources.first()
 
@@ -111,18 +112,6 @@ object FirContextParametersDeclarationChecker : FirBasicDeclarationChecker(MppCh
             is FirCallableDeclaration -> contextParameters
             is FirRegularClass -> contextParameters
             else -> emptyList()
-        }
-    }
-
-    private fun KtSourceElement.findContextParameterListSources(): List<KtSourceElement> {
-        return when (this) {
-            is KtPsiSourceElement ->
-                psi.getChildOfType<KtModifierList>()?.contextParameterLists?.map { it.toKtPsiSourceElement() }.orEmpty()
-            is KtLightSourceElement ->
-                treeStructure.findChildByType(lighterASTNode, KtNodeTypes.MODIFIER_LIST)
-                    ?.let { treeStructure.findChildrenByType(it, KtNodeTypes.CONTEXT_PARAMETER_LIST) }
-                    ?.map { it.toKtLightSourceElement(treeStructure) }
-                    .orEmpty()
         }
     }
 }

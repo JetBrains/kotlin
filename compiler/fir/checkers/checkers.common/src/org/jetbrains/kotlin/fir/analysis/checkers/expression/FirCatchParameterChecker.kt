@@ -23,7 +23,7 @@ object FirCatchParameterChecker : FirTryExpressionChecker(MppCheckerKind.Common)
             val catchParameter = catchEntry.parameter
             val source = catchParameter.source ?: continue
 
-            if (catchParameter.source?.defaultValueForParameter != null) {
+            if (source.defaultValueForParameter != null) {
                 reporter.reportOn(source, FirErrors.CATCH_PARAMETER_WITH_DEFAULT_VALUE)
             }
 

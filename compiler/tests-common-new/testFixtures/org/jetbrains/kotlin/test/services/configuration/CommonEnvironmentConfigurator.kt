@@ -64,6 +64,14 @@ class CommonEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
         if (FirDiagnosticsDirectives.DUMP_INFERENCE_LOGS in module.directives) {
             configuration.dumpInferenceLogs = true
         }
+        // Must be set for all facades (not only CLI-based ones),
+        // since `FirSyntaxComponent` of source sessions is selected by `parserMode`.
+        when (module.directives.singleOrZeroValue(FirDiagnosticsDirectives.FIR_PARSER)) {
+            FirParser.Psi -> configuration.parserMode = ParserMode.Psi
+            FirParser.LightTree -> configuration.parserMode = ParserMode.LightTree
+            FirParser.KmpTree -> configuration.parserMode = ParserMode.KmpTree
+            null -> {}
+        }
 
         setupK2CliConfiguration(module, configuration)
     }
@@ -147,13 +155,6 @@ class CommonEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
 
         if (FirDiagnosticsDirectives.WITH_EXPERIMENTAL_CHECKERS in module.directives) {
             configuration.useFirExperimentalCheckers = true
-        }
-        // TODO: KT-89415
-        when (module.directives.singleOrZeroValue(FirDiagnosticsDirectives.FIR_PARSER)) {
-            FirParser.Psi -> configuration.parserMode = ParserMode.Psi
-            FirParser.LightTree -> configuration.parserMode = ParserMode.LightTree
-            FirParser.KmpTree -> configuration.parserMode = ParserMode.KmpTree
-            null -> {}
         }
         configuration.allowNoSourceFiles = true
         configuration.allowAnyScriptsInSourceRoots = true
