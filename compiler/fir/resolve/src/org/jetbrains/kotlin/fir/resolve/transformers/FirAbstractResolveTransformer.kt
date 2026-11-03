@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.visitors
+package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.fir.declarations.FirConstructedClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
@@ -12,9 +12,22 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirReference
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.types.*
 
-abstract class FirDefaultTransformer<D> : FirTransformer<D>() {
+@RequiresOptIn("FirAbstractResolveTransformer only delegates some specific transform methods (type refs, jumps, etc) to ones for the element's supertype.")
+annotation class FirAbstractResolveTransformerSubclassing
+
+/**
+ * Base class for resolve transformers.
+ *
+ * Unlike [FirTransformer], where every `transform*` method falls back to [FirTransformer.transformElement],
+ * some `transform*` methods here fall back to the method of a more general element.
+ * For example, [transformErrorTypeRef] calls [transformResolvedTypeRef], and every type reference eventually reaches [transformTypeRef].
+ * This way, overriding the method for a general element also covers its special cases.
+ */
+@SubclassOptInRequired(FirAbstractResolveTransformerSubclassing::class)
+abstract class FirAbstractResolveTransformer<D> : FirTransformer<D>() {
     override fun transformImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef, data: D): FirTypeRef {
         return transformTypeRef(implicitTypeRef, data)
     }
@@ -117,4 +130,3 @@ abstract class FirDefaultTransformer<D> : FirTransformer<D>() {
         return transformTypeParameterRef(outerClassTypeParameterRef, data)
     }
 }
-

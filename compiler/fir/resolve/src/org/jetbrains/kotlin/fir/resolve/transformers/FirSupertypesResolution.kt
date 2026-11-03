@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
-import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -101,7 +101,7 @@ private class FirApplySupertypesTransformer(
     private val supertypeComputationSession: SupertypeComputationSession,
     private val session: FirSession,
     private val scopeSession: ScopeSession,
-) : FirDefaultTransformer<Any?>() {
+) : FirTransformer<Any?>() {
 
     override fun <E : FirElement> transformElement(element: E, data: Any?): E {
         return element
