@@ -125,7 +125,7 @@ class SwiftExportRelocatabilityIT : KGPBaseTest() {
             .flatMap { listOf(it.toAbsolutePath().normalize(), it.toRealPath()) }
             .map { it.toString() }
             .distinct()
-        val outputDirectory = project.projectPath.resolve("build/SwiftExport/iosArm64")
+        val outputDirectory = project.projectPath.resolve("build/SwiftExport/iosArm64/output")
         val outputFiles = outputDirectory.walk().filter { it.isRegularFile() }.toList()
         assertTrue(outputFiles.isNotEmpty(), "Swift Export wrote nothing to $outputDirectory")
 

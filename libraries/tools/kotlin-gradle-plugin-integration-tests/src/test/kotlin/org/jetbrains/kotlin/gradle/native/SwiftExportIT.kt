@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.native
 
+import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.apple.SYNTHETIC_IMPORT_TARGET_MAGIC_NAME
@@ -137,7 +138,7 @@ class SwiftExportIT : KGPBaseTest() {
                 assertDirectoryInProjectExists("build/SPMBuild/iosArm64/Debug")
                 assertDirectoryInProjectExists("build/SPMDerivedData/iosArm64/Debug")
                 assertDirectoryInProjectExists("build/SPMPackage/iosArm64/Debug")
-                assertDirectoryInProjectExists("build/SwiftExport/iosArm64")
+                assertDirectoryInProjectExists("build/SwiftExport/iosArm64/output")
 
                 val buildProductsDir = this@project.gradleRunner.environment?.get("BUILT_PRODUCTS_DIR")?.let { File(it) }
                 assertNotNull(buildProductsDir)
@@ -401,11 +402,11 @@ class SwiftExportIT : KGPBaseTest() {
                 environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
             ) {
                 assertTasksExecuted(":iosArm64SwiftExport")
-                assertDirectoryInProjectExists("build/SwiftExport/iosArm64")
+                assertDirectoryInProjectExists("build/SwiftExport/iosArm64/output")
             }
 
             val swiftFile = projectPath
-                .resolve("build/SwiftExport/iosArm64/files/Shared/Shared.swift")
+                .resolve("build/SwiftExport/iosArm64/output/files/Shared/Shared.swift")
                 .readText()
 
             assert(swiftFile.contains("iosBar()")) { "Swift file doesn't contain iosBar() from iosMain source set" }
@@ -616,15 +617,15 @@ class SwiftExportIT : KGPBaseTest() {
                 assertTasksExecuted(":dep-two:compileKotlinIosArm64")
                 assertTasksExecuted(":compileKotlinIosArm64")
 
-                val sharedPath = projectPath.resolve("build/SwiftExport/iosArm64/files/Shared")
-                val depOnePath = projectPath.resolve("build/SwiftExport/iosArm64/files/SharedDepOne")
-                val depTwoPath = projectPath.resolve("build/SwiftExport/iosArm64/files/SharedDepTwo")
+                val sharedPath = projectPath.resolve("build/SwiftExport/iosArm64/output/files/Shared")
+                val depOnePath = projectPath.resolve("build/SwiftExport/iosArm64/output/files/SharedDepOne")
+                val depTwoPath = projectPath.resolve("build/SwiftExport/iosArm64/output/files/SharedDepTwo")
 
                 assertDirectoryExists(sharedPath)
                 assertDirectoryExists(depOnePath)
                 assertDirectoryDoesNotExist(depTwoPath)
 
-                val modulesFile = projectPath.resolve("build/SwiftExport/iosArm64/modules.json")
+                val modulesFile = projectPath.resolve("build/SwiftExport/iosArm64/output/modules.json")
                 assertFileExists(modulesFile)
 
                 val modules = parseJsonToMap(modulesFile).getNestedList("modules")
@@ -815,7 +816,7 @@ class SwiftExportIT : KGPBaseTest() {
                 environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
             ) {
                 val librarySwiftPath = projectPath
-                    .resolve("build/SwiftExport/iosArm64/files/FooMultiplatformLibrary/FooMultiplatformLibrary.swift")
+                    .resolve("build/SwiftExport/iosArm64/output/files/FooMultiplatformLibrary/FooMultiplatformLibrary.swift")
                 assertFileExists(librarySwiftPath)
                 assertContains(
                     librarySwiftPath.readText(),
@@ -1427,6 +1428,53 @@ class SwiftExportIT : KGPBaseTest() {
                     generatedPackage.dependencies,
                     "Expected no SPM package dependency without swiftPMDependencies"
                 )
+            }
+        }
+    }
+
+    @DisplayName("KT-90760: bridges compile after a build with the stable release's per build type layout")
+    @GradleTest
+    fun testBridgesCompileAfterBuildWithStableRelease(
+        gradleVersion: GradleVersion,
+        @TempDir testBuildDir: Path,
+    ) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "shared"
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosArm64()
+                }
+            }
+
+            val compileBridges = ":compileSwiftExportMainKotlinIosArm64"
+            // The stable release reads the platform from SDK_NAME.
+            val xcodeEnvironment = swiftExportEmbedAndSignEnvVariables(
+                testBuildDir,
+                customVariables = mapOf("SDK_NAME" to "iphoneos"),
+            )
+
+            build(compileBridges, environmentVariables = xcodeEnvironment)
+
+            // The stable release writes its output to build/SwiftExport/iosArm64/Debug, under its own task name.
+            build(
+                compileBridges,
+                environmentVariables = xcodeEnvironment,
+                buildOptions = buildOptions.copy(
+                    kotlinVersion = TestVersions.Kotlin.STABLE_RELEASE,
+                    // The stable release triggers Gradle deprecation warnings on newer Gradle versions.
+                    warningMode = WarningMode.Summary,
+                ),
+            )
+            assertDirectoryInProjectExists("build/SwiftExport/iosArm64/Debug")
+
+            // The run has nothing to redo, so the bridges must not pick up the stale Debug directory.
+            build(compileBridges, environmentVariables = xcodeEnvironment) {
+                assertTasksUpToDate(":iosArm64SwiftExport")
             }
         }
     }

@@ -2357,7 +2357,7 @@ class ExportExtensionSwiftPackageIntegrationTests {
         assertFalse(generateTask.collectIncludes.get())
         val swiftExportDirectory = project.layout.buildDirectory.dir("SwiftPackageExport").get().asFile
         assertEquals(
-            listOf("iosArm64", "iosSimulatorArm64", "macosArm64").map { swiftExportDirectory.resolve("$it/modules.json") },
+            listOf("iosArm64", "iosSimulatorArm64", "macosArm64").map { swiftExportDirectory.resolve("$it/output/modules.json") },
             targetOutputs.map { it.swiftModulesFile.get().asFile },
         )
     }
@@ -2411,8 +2411,8 @@ class ExportExtensionSwiftPackageIntegrationTests {
         val swiftExportDirectory = project.layout.buildDirectory.dir("SwiftPackageExport").get().asFile
         assertEquals(
             listOf(
-                KonanTarget.MACOS_ARM64 to swiftExportDirectory.resolve("desktop/modules.json"),
-                KonanTarget.IOS_ARM64 to swiftExportDirectory.resolve("phone/modules.json"),
+                KonanTarget.MACOS_ARM64 to swiftExportDirectory.resolve("desktop/output/modules.json"),
+                KonanTarget.IOS_ARM64 to swiftExportDirectory.resolve("phone/output/modules.json"),
             ),
             generateTask.targetOutputs.get().map { it.target.get() to it.swiftModulesFile.get().asFile },
         )

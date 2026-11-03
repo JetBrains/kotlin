@@ -253,7 +253,9 @@ private fun Project.registerSwiftExportRun(
     // So there's one run per target, like the Kotlin compile tasks.
     val swiftExportTaskName = target.disambiguateName(names.run)
 
-    val outputDirectory = layout.buildDirectory.dir("${names.outputDirectory}/${target.name}")
+    // Not <target> itself: older versions wrote to <target>/<Configuration>, and an UP-TO-DATE run doesn't clean that
+    // up. The bridges are compiled from the whole directory, so it must not contain the old one.
+    val outputDirectory = layout.buildDirectory.dir("${names.outputDirectory}/${target.name}/output")
 
     return locateOrRegisterTask<SwiftExportTask>(swiftExportTaskName) { task ->
         // When the task is configured, so a run restored from the build cache still warns. Not on registration:

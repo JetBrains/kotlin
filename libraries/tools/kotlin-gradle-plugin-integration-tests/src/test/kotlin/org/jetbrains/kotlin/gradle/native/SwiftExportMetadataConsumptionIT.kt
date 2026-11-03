@@ -490,7 +490,7 @@ class SwiftExportMetadataConsumptionIT : KGPBaseTest() {
 
                 if (rootPackageOverride != null) {
                     val subprojectSwiftPath =
-                        projectPath.resolve("build/SwiftExport/iosArm64/files/$expectedDirectDependencyModuleName/$expectedDirectDependencyModuleName.swift")
+                        projectPath.resolve("build/SwiftExport/iosArm64/output/files/$expectedDirectDependencyModuleName/$expectedDirectDependencyModuleName.swift")
                     assertFileContains(
                         subprojectSwiftPath,
                         "public typealias LibFoo = ExportedKotlinPackages.$rootPackageOverride.LibFoo"
@@ -499,7 +499,7 @@ class SwiftExportMetadataConsumptionIT : KGPBaseTest() {
                 // Root package overrides for transitive dependencies are ignored!
                 if (expectedTransitiveDependencyModuleName != null && transitiveRootPackageOverride != null) {
                     val subprojectSwiftPath =
-                        projectPath.resolve("build/SwiftExport/iosArm64/files/$expectedTransitiveDependencyModuleName/$expectedTransitiveDependencyModuleName.swift")
+                        projectPath.resolve("build/SwiftExport/iosArm64/output/files/$expectedTransitiveDependencyModuleName/$expectedTransitiveDependencyModuleName.swift")
                     assertFileDoesNotContain(
                         subprojectSwiftPath,
                         "public typealias LibBar = ExportedKotlinPackages.$transitiveRootPackageOverride.LibBar",
