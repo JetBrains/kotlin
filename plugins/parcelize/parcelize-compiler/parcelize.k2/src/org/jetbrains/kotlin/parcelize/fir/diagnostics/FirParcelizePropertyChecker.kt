@@ -84,7 +84,7 @@ object FirParcelizePropertyChecker : FirPropertyChecker(MppCheckerKind.Platform)
         val customParcelerTypes = getCustomParcelerTypes(
             property.annotations + containingClassSymbol.resolvedAnnotationsWithClassIds, session
         )
-        val unsupported = checkParcelableType(type, customParcelerTypes, context)
+        val unsupported = checkParcelableType(type, ParcelizeTypeCheckState(context, customParcelerTypes))
         if (type in unsupported) {
             reporter.reportOn(property.returnTypeRef.source, KtErrorsParcelize.PARCELABLE_TYPE_NOT_SUPPORTED, context)
         } else {
@@ -104,14 +104,16 @@ object FirParcelizePropertyChecker : FirPropertyChecker(MppCheckerKind.Platform)
             }
         }
 
+    private data class ParcelizeTypeCheckState(
+        val context: CheckerContext,
+        val customParcelerTypes: Set<ConeKotlinType>,
+        val inDataClass: Boolean = false,
+    )
+
     // Returns the set of types that are *not* supported. This set can include types other than `type`
     // if it is a generally supported container type that contains unsupported elements in this instantiation.
-    private fun checkParcelableType(
-        type: ConeKotlinType,
-        customParcelerTypes: Set<ConeKotlinType>,
-        context: CheckerContext,
-        inDataClass: Boolean = false
-    ): Set<ConeKotlinType> {
+    private fun checkParcelableType(type: ConeKotlinType, state: ParcelizeTypeCheckState): Set<ConeKotlinType> {
+        val (context, customParcelerTypes, inDataClass) = state
         val session = context.session
         if (
             type.hasParcelerAnnotation(session) ||
@@ -137,7 +139,7 @@ object FirParcelizePropertyChecker : FirPropertyChecker(MppCheckerKind.Platform)
         if (fqName in BuiltinParcelableTypes.PARCELABLE_CONTAINER_FQNAMES) {
             return upperBound.typeArguments.fold(emptySet()) { acc, arg ->
                 val elementType = arg.type ?: StandardTypes.NullableAny
-                acc union checkParcelableType(elementType, customParcelerTypes, context)
+                acc union checkParcelableType(elementType, state.copy(inDataClass = false))
             }
         }
 
@@ -161,7 +163,7 @@ object FirParcelizePropertyChecker : FirPropertyChecker(MppCheckerKind.Platform)
             val substitutor = substitutorByMap(typeMapping, context.session)
             return properties.fold(emptySet()) { acc, property ->
                 val elementType = substitutor.substituteOrSelf(property.resolvedReturnType)
-                acc union checkParcelableType(elementType, customParcelerTypes, context, inDataClass = true)
+                acc union checkParcelableType(elementType, state.copy(inDataClass = true))
             }
         }
 
