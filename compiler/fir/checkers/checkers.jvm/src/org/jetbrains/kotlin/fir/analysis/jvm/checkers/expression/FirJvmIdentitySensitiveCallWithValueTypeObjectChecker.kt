@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.IdentityKind
@@ -15,12 +16,16 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirCallChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirCallableReferenceAccessChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.finalApproximationOrSelf
 import org.jetbrains.kotlin.fir.analysis.checkers.identityKind
+import org.jetbrains.kotlin.fir.analysis.checkers.isMappedToPlatformValueClass
+import org.jetbrains.kotlin.fir.analysis.checkers.isValueClass
 import org.jetbrains.kotlin.fir.analysis.checkers.reportIdentitySensitiveOperation
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE
+import org.jetbrains.kotlin.fir.collectUpperBounds
+import org.jetbrains.kotlin.fir.declarations.isFullValueClass
 import org.jetbrains.kotlin.fir.enableWarningsForIdentitySensitiveOperationsOnValueClassesAndPrimitives
 import org.jetbrains.kotlin.fir.enableWarningsForValueBasedJavaClasses
 import org.jetbrains.kotlin.fir.expressions.FirCall
@@ -32,20 +37,26 @@ import org.jetbrains.kotlin.fir.expressions.FirVarargArgumentsExpression
 import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.expressions.resolvedArgumentMapping
 import org.jetbrains.kotlin.fir.expressions.unwrapArgument
+import org.jetbrains.kotlin.fir.isEnabled
+import org.jetbrains.kotlin.fir.isPlatformValueClass
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorInfo
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.isPrimitiveOrNullablePrimitive
 import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.types.type
+import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
@@ -176,6 +187,24 @@ object FirJvmIdentitySensitiveCallWithValueTypeObjectChecker : FirCallChecker(Mp
         }
     }
 
+    // Before Kotlin 2.6, a type that is only bounded by inline value classes or primitives gets a warning, since it wasn't reported earlier.
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun reportSynchronizedOnValueType(source: KtSourceElement?, type: ConeKotlinType) {
+        val session = context.session
+        val classType = type.lowerBoundIfFlexible().fullyExpandedType() as? ConeClassLikeType
+        val isError = LanguageFeature.ProhibitIdentitySensitiveOperationsOnValueClassesThroughBoundsAndExpectClasses.isEnabled() ||
+                classType != null && (classType.isPrimitiveOrNullablePrimitive || classType.isValueClass(session)) ||
+                type.collectUpperBounds(session.typeContext).any { bound ->
+                    val symbol = bound.toRegularClassSymbol(session) ?: return@any false
+                    symbol.isFullValueClass || symbol.isPlatformValueClass(session) || symbol.isMappedToPlatformValueClass(session)
+                }
+        if (isError) {
+            reporter.reportOn(source, SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE, type)
+        } else {
+            reporter.reportOn(source, SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE.warningFactory, type)
+        }
+    }
+
     context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkSynchronizedCall(
         expression: FirFunctionCall,
@@ -185,7 +214,7 @@ object FirJvmIdentitySensitiveCallWithValueTypeObjectChecker : FirCallChecker(Mp
             val type = argument.resolvedType.finalApproximationOrSelf()
             reportIdentitySensitiveOperation(argument.source, type) { kind ->
                 when (kind) {
-                    IdentityKind.VALUE_TYPE -> reporter.reportOn(argument.source, SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE, type)
+                    IdentityKind.VALUE_TYPE -> reportSynchronizedOnValueType(argument.source, type)
                     IdentityKind.FLEXIBLE_PRIMITIVE -> if (enableWarningsForIdentitySensitiveOperationsOnValueClassesAndPrimitives()) {
                         reporter.reportOn(argument.source, IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE, type)
                     }

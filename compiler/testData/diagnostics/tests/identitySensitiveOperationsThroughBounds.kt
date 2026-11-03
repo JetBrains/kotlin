@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LATEST_LV_DIFFERENCE
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
 // LANGUAGE: +FullValueClasses
@@ -15,7 +16,7 @@ value class FullVal(val x: Int)
 abstract value class AbstractVal
 
 fun <T : <!FINAL_UPPER_BOUND!>InlineVal<!>> boundedByInlineValueClass(t: T) {
-    synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>t<!>) {}
+    synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_WARNING!>t<!>) {}
     WeakReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>t<!>)
     System.identityHashCode(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>t<!>)
     IdentityHashMap<<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>T<!>, Any>()
@@ -32,16 +33,16 @@ fun <T : AbstractVal> boundedByAbstractValueClass(t: T) {
 }
 
 fun <T : <!FINAL_UPPER_BOUND!>Int<!>> boundedByPrimitive(t: T) {
-    synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>t<!>) {}
+    synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_WARNING!>t<!>) {}
     WeakReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>t<!>)
 }
 
 fun <T : Int?> boundedByNullablePrimitive(t: T & Any) {
-    synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>t<!>) {}
+    synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_WARNING!>t<!>) {}
 }
 
 fun <T : <!FINAL_UPPER_BOUND!>InlineVal<!>, U : T> boundedByTypeParameter(u: U) {
-    synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>u<!>) {}
+    synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_WARNING!>u<!>) {}
 }
 
 fun captured(inlines: MutableList<out InlineVal>, fulls: MutableList<out FullVal>, ints: MutableList<out Int>) {

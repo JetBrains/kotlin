@@ -56,9 +56,11 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
             // account for them.
             val isCaseMissedByK1 = isCaseMissedByK1Intersector(l.originalTypeInfo, r.originalTypeInfo)
                     && isCaseMissedByAdditionalK1IncompatibleEnumsCheck(l.originalType, r.originalType, context.session)
-            // Comparing a final expect value class by identity is an error, as it is on the platform.
+            // Comparing a final expect value class by identity is an error, as it is on the platform; for inline value classes, since Kotlin 2.6.
             val isIdentityLessFinalExpectValueClass = it == Applicability.INAPPLICABLE_AS_IDENTITY_LESS &&
-                    (l.originalTypeInfo.isFinalExpectValueClass || r.originalTypeInfo.isFinalExpectValueClass)
+                    (l.originalTypeInfo.isFinalExpectValueClass || r.originalTypeInfo.isFinalExpectValueClass) &&
+                    (LanguageFeature.ProhibitIdentitySensitiveOperationsOnValueClassesThroughBoundsAndExpectClasses.isEnabled() ||
+                            !l.originalTypeInfo.isInlineValueClass && !r.originalTypeInfo.isInlineValueClass)
             val replicateK1Behavior = LanguageFeature.ReportErrorsForComparisonOperators.isDisabled()
 
             return reporter.reportInapplicabilityDiagnostic(
