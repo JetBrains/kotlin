@@ -42,7 +42,7 @@ internal class LruClassLoadersCache private constructor(
             .removalListener<CacheKey, URLClassLoader> { [key, cl] ->
                 check(key != null && cl != null)
                 logger?.info("Removing classloader from cache: ${key.entries.map { it.path }}")
-                cl.close()
+                cl.close() // TODO: KT-91193 this causes problems when the classloader is still in use
             }.build()
     )
 
