@@ -335,7 +335,7 @@ class ExportDslIT : KGPBaseTest() {
             ) {
                 assertTasksExecuted(":iosArm64SwiftExport")
 
-                val files = projectPath.resolve("build/SwiftExport/iosArm64/files")
+                val files = projectPath.resolve("build/SwiftExport/iosArm64/output/files")
                 // The derived name for `:sub` would have been `Sub`.
                 assertDirectoryDoesNotExist(files.resolve("Sub"))
                 val renamedSwift = files.resolve("Renamed/Renamed.swift")
@@ -344,7 +344,7 @@ class ExportDslIT : KGPBaseTest() {
                 // Flattening the package exposes `com.example.sub.One` at the top level of the module.
                 assertContains(renamedSwift.readText(), "public typealias One = ExportedKotlinPackages.com.example.sub.One")
 
-                val modules = parseJsonToMap(projectPath.resolve("build/SwiftExport/iosArm64/modules.json"))
+                val modules = parseJsonToMap(projectPath.resolve("build/SwiftExport/iosArm64/output/modules.json"))
                     .getNestedList("modules")
                     .orEmpty()
                     .map { it["name"]?.jsonPrimitive?.content }
@@ -750,7 +750,7 @@ class ExportDslIT : KGPBaseTest() {
             include(mid, "mid")
 
             val swiftApiFiles = {
-                projectPath.resolve("build/SwiftExport/iosArm64/files").toFile().walk()
+                projectPath.resolve("build/SwiftExport/iosArm64/output/files").toFile().walk()
                     .filter { it.extension == "swift" }.map { it.toPath() }.toList()
             }
 
