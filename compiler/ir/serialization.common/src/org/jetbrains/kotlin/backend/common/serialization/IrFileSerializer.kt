@@ -130,13 +130,36 @@ open class IrFileSerializer(
     /**
      * Like [skipIfPrivate], but keeps declarations that are needed to produce a header cache from this augmented header klib.
      */
-    private fun canSkip(declaration: IrDeclaration): Boolean =
-        skipIfPrivate(declaration) && !(settings.augmentHeaderKlib && declaration.isNeededForAugmentedKlib())
+    private fun canSkip(declaration: IrDeclaration): Boolean = if (settings.augmentHeaderKlib) {
+        // Entities inside a private class that are not needed for augmentation are dropped.
+        // E.g.: overriding methods.
+        // Doing so reduces the surface area we expose which in return reduces the probability of generating a different
+        // augmented header klib upon some change/edit. That said, it could cause linkage errors. Such errors, if not
+        // covered via partial linkage can result in a hard crash when generating the klibs or consuming them. Then, either
+        // tweak isEffectivelyPrivate() or mark them as needed for augmentation.
+        declaration.isEffectivelyPrivate() && !declaration.isNeededForAugmentedKlib()
+    } else {
+        skipIfPrivate(declaration)
+    }
+
+    private fun IrDeclaration.isEffectivelyPrivate(): Boolean {
+        var current = this
+        while (true) {
+            if ((current as? IrClass)?.isInterface == true) return false
+            if (skipIfPrivate(current)) return true
+            current = current.parent as? IrDeclaration ?: return false
+        }
+    }
 
     private fun IrDeclaration.isNeededForAugmentedKlib(): Boolean = when (this) {
         // Every non-local class should be retained.
         is IrClass -> isNonLocal()
-        is IrConstructor -> isPrimary && constructedClass.isObject && constructedClass.isNonLocal()
+        is IrEnumEntry -> isNonLocal()
+        is IrConstructor -> constructedClass.isNonLocal()
+                && ((isPrimary && constructedClass.isObject)
+                || constructedClass.isEnumClass
+                || constructedClass.isEnumEntry
+                || constructedClass.isAnnotationClass)
         // `class_fields`: a private property is kept to aid in calculating the layout later.
         // `trivial_getters`: purely optimisation purposes.
         is IrProperty -> backingField?.isFieldForAugmentedKlib() == true
