@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.common.lower.optimizations.PropertyAccessorInlineLowering
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.isStatic
 import org.jetbrains.kotlin.ir.util.isTopLevel
 
@@ -16,6 +17,15 @@ internal class NativePropertyAccessorInlineLowering(private val generationState:
         if (generationState.context.moduleDeserializerProvider.getDeserializerOrNull(callee) != null) {
             if (callee.isTopLevel || callee.isStatic) {
                 return false
+            }
+            // TODO: Monolithic opt treats this getters as non-trivial (they have a reinterpret call);
+            //       Cached opt thinks they are trivial when building a cache (it's just a get field).
+            //       Why is it so?
+            callee.fqNameWhenAvailable?.asString()?.let { fqName ->
+                when (fqName) {
+                    "kotlinx.cinterop.CPointer.<get-value>",
+                    "kotlinx.cinterop.NativePointed.<get-rawPtr>" -> return false
+                }
             }
         }
         return generationState.context.isTrivialGetter(callee)
