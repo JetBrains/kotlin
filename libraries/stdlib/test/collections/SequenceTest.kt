@@ -63,6 +63,44 @@ public class SequenceTest {
 
     @Test fun filterIndexed() {
         assertEquals(listOf(1, 2, 5, 13, 34), fibonacci().filterIndexed { index, _ -> index % 2 == 1 }.take(5).toList())
+
+        // Index tracking matches expected sequential index
+        val indices = mutableListOf<Int>()
+        val values = sequenceOf("a", "b", "c", "d").filterIndexed { index, value ->
+            indices.add(index)
+            index % 2 == 0
+        }.toList()
+        assertEquals(listOf(0, 1, 2, 3), indices)
+        assertEquals(listOf("a", "c"), values)
+
+        // Empty sequence
+        var predicateCallCount = 0
+        val emptyResult = emptySequence<String>().filterIndexed { index, _ ->
+            predicateCallCount++
+            true
+        }.toList()
+        assertEquals(emptyList(), emptyResult)
+        assertEquals(0, predicateCallCount)
+
+        // Multiple iterations correctly reset index
+        val indexedSeq = sequenceOf("x", "y", "z").filterIndexed { index, value -> index == 1 }
+        assertEquals(listOf("y"), indexedSeq.toList())
+        assertEquals(listOf("y"), indexedSeq.toList())
+
+        // Sequence with null elements
+        val withNulls = sequenceOf("a", null, "b", null, "c").filterIndexed { index, value ->
+            index % 2 == 1 && value == null
+        }.toList()
+        assertEquals(listOf(null, null), withNulls)
+
+        // Early termination with take
+        var evaluatedCount = 0
+        val earlyTerm = generateSequence(0) { it + 1 }.filterIndexed { index, value ->
+            evaluatedCount++
+            value % 2 == 0
+        }.take(3).toList()
+        assertEquals(listOf(0, 2, 4), earlyTerm)
+        assertEquals(5, evaluatedCount)
     }
 
     @Test fun filterNullable() {
