@@ -205,18 +205,25 @@ val Project.nativeDistribution: Provider<NativeDistribution>
 
 
 /**
- * Get released Native distribution of [version].
+ * Get released Native distribution of [bootstrapKotlinVersion].
+ *
+ * The distribution is unpacked into a version-specific subdirectory of a stable parent directory,
+ * so that a version bump replaces the previously unpacked distribution instead of keeping it around.
  */
-fun Project.registerNativeReleasedDistribution(version: String): Provider<NativeDistribution> {
+fun Project.registerNativeBootstrapDistribution(): Provider<NativeDistribution> {
+    val version = bootstrapKotlinVersion
     val configuration = releasedNativeDistributionConfiguration(version)
     val distributionFiles = configuration.incoming.files
-    val targetDirectory = layout.buildDirectory.dir("nativeDistributionV$version")
+    val parentDirectory = layout.buildDirectory.dir("nativeReleasedDistribution")
+    val distributionDirectoryName = "nativeDistributionV$version"
+    val targetDirectory = parentDirectory.map { it.dir(distributionDirectoryName) }
 
     /*
     Setup a 'sync' task to unpack the native distribution archive.
     We're using a sync into the build directory in favor of any artifact transform, because this native
     distribution is ment to used, as is, for further builds. Such builds might store files within the distribution
     which would violate Gradle invariants for artifact transforms (which are ment to stay immutable).
+    The sync goes into the parent directory, so that distributions of other versions are removed.
      */
     val syncTaskName = "syncNativeDistributionV$version"
     val syncTask = if (syncTaskName !in tasks.names) tasks.register<Sync>(syncTaskName) {
@@ -230,11 +237,11 @@ fun Project.registerNativeReleasedDistribution(version: String): Provider<Native
             }
         }).builtBy(distributionFiles)) {
             eachFile {
-                relativePath = RelativePath(true, *relativePath.segments.drop(1).toTypedArray())
+                relativePath = RelativePath(true, distributionDirectoryName, *relativePath.segments.drop(1).toTypedArray())
             }
             includeEmptyDirs = false
         }
-        into(targetDirectory)
+        into(parentDirectory)
 
         /*
         Create distribution hash
@@ -257,11 +264,5 @@ fun Project.registerNativeReleasedDistribution(version: String): Provider<Native
         }
     } else tasks.named<Sync>(syncTaskName)
 
-    return syncTask.map { NativeDistribution(project.layout.buildDirectory.dir("nativeDistributionV$version").get()) }
+    return syncTask.map { NativeDistribution(targetDirectory.get()) }
 }
-
-/**
- * Get Native bootstrap distribution.
- */
-fun Project.registerNativeBootstrapDistribution(): Provider<NativeDistribution> =
-        registerNativeReleasedDistribution(bootstrapKotlinVersion)
