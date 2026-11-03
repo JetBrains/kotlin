@@ -433,6 +433,8 @@ internal fun PhaseEngine<NativeGenerationState>.runPostCodegen() {
     newEngine(context as BitcodePostProcessingContext) { it.runBitcodePostProcessing() }
     if (context.config.produce.isFullCache) {
         runAndMeasurePhase(SaveAdditionalCacheInfoPhase)
+    } else if (context.config.produce.isObjCCache) {
+        runAndMeasurePhase(SaveObjCCacheBitcodeDependenciesPhase)
     }
 }
 

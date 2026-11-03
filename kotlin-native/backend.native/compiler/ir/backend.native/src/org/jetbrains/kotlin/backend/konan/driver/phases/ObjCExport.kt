@@ -61,7 +61,7 @@ internal val CreateObjCExportCodeSpecPhase = createSimpleNamedCompilerPhase<Link
         "ObjCExportCodeCodeSpec",
         outputIfNotEnabled = { _, _, _, _, -> ObjCExportCodeSpec(emptyList(), emptyList(), emptyList()) }
 ) { context, input ->
-    input.createCodeSpec(context.symbolTable!!, context.config.objCCaches).also {
+    input.createCodeSpec(context.symbolTable!!).also {
         // Dump selector -> signature mapping using the SymbolTable from the linking phase.
         context.config.dumpObjcSelectorToSignatureMapping?.let { path ->
             check(!context.config.omitFrameworkBinary)

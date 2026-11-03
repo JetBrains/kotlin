@@ -74,7 +74,9 @@ class ObjCExportUnits internal constructor(
 ) {
     internal val events: Sequence<ObjCExportUnitEvent>
         get() = classes.asSequence().flatMap { it.events } +
-                categoryMembers.asSequence().flatMap { it.thrownEvents + it.events } +
+                categoryMembers.asSequence().flatMap {
+                    sequenceOf(ObjCExportUnitEvent(isEarly = true, it.classId)) + it.thrownEvents + it.events
+                } +
                 files.asSequence().flatMap { it.events }
 
     fun write(writer: Writer, exportKDoc: Boolean) {

@@ -93,6 +93,11 @@ internal class CacheStorage(private val generationState: NativeGenerationState) 
         savePartialLinkageIssues()
     }
 
+    fun saveObjCCacheBitcodeDependencies() {
+        outputFiles.prepareTempDirectories()
+        saveCacheBitcodeDependencies()
+    }
+
     private fun saveMetadata() {
         outputFiles.cacheMetadata!!.bufferedWriter().use {
             CacheMetadataSerializer.serialize(it, generationState.generateCacheMetadata())

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.konan
 import org.jetbrains.kotlin.backend.common.serialization.FingerprintHash
 import org.jetbrains.kotlin.backend.konan.CacheSupport.Companion.cacheFileId
 import org.jetbrains.kotlin.backend.konan.library.KlibDAG
+import org.jetbrains.kotlin.backend.konan.objcexport.MainPackageGuesser
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportUnits
 import org.jetbrains.kotlin.backend.konan.objcexport.objCExportNamingConfiguration
 import org.jetbrains.kotlin.backend.common.lazyEvaluatedFingerprintHash
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.uniqueName
+import org.jetbrains.kotlin.name.FqName
 import java.nio.file.Path
 import java.util.Properties
 import java.util.zip.GZIPInputStream
@@ -265,7 +267,12 @@ class CachedLibraries(
             implicitCacheDirectories.flatMap { dir -> dir.listDirectoryEntriesIfDirectoryExists().map { it.name to it } }
                     .toMap()
 
-    class ObjCCache(val binaryPath: String, val metadata: ObjCCacheMetadata, val units: ObjCExportUnits)
+    class ObjCCache(
+            val binaryPath: String,
+            val metadata: ObjCCacheMetadata,
+            val units: ObjCExportUnits,
+            val bitcodeDependencies: List<DependenciesTracker.UnresolvedDependency>,
+    )
 
     fun exportedDependencies(library: KotlinLibrary, exportedLibraries: Set<KotlinLibrary>): List<String> =
             klibDag.getAllDependencies(library)
@@ -302,7 +309,8 @@ class CachedLibraries(
                 )
             }
             val units = loadObjCExportUnits(archive) ?: return@mapNotNull null
-            library to ObjCCache(archive.absolutePathString(), metadata, units)
+            val bitcodeDependencies = loadObjCCacheBitcodeDependencies(archive) ?: return@mapNotNull null
+            library to ObjCCache(archive.absolutePathString(), metadata, units, bitcodeDependencies)
         }.toMap()
     }
 
@@ -328,6 +336,10 @@ class CachedLibraries(
 
     private fun loadObjCExportUnits(archive: Path): ObjCExportUnits? = runCatching {
         GZIPInputStream(archive.resolveSibling(OBJC_CACHE_UNITS_FILE_NAME).inputStream()).bufferedReader().use { ObjCExportUnits.read(it) }
+    }.getOrElse { ignoreObjCCache(archive.parent.parent, "is incomplete or unreadable (${it.message})") }
+
+    private fun loadObjCCacheBitcodeDependencies(archive: Path): List<DependenciesTracker.UnresolvedDependency>? = runCatching {
+        DependenciesSerializer.deserialize(archive.absolutePathString(), archive.resolveSibling(BITCODE_DEPENDENCIES_FILE_NAME).readLines())
     }.getOrElse { ignoreObjCCache(archive.parent.parent, "is incomplete or unreadable (${it.message})") }
 
     private fun findObjCCache(library: KotlinLibrary, moduleName: String, directoriesByName: Map<String, List<Path>>): Path? {
@@ -444,10 +456,15 @@ class CachedLibraries(
     }
 }
 
-data class ObjCCacheAdapterEntry(val objcName: String, val isInterface: Boolean, val symbolName: String) {
+data class ObjCCacheAdapterEntry(
+    val objcName: String,
+    val isInterface: Boolean,
+    val symbolName: String,
+    val superClassName: String? = null,
+) {
     companion object {
-        fun typeAdapter(objcName: String, isInterface: Boolean) = ObjCCacheAdapterEntry(
-            objcName, isInterface, "_Kotlin_ObjCExport_TypeAdapter_${if (isInterface) "Protocol" else "Class"}_$objcName",
+        fun typeAdapter(objcName: String, isInterface: Boolean, superClassName: String? = null) = ObjCCacheAdapterEntry(
+            objcName, isInterface, "_Kotlin_ObjCExport_TypeAdapter_${if (isInterface) "Protocol" else "Class"}_$objcName", superClassName,
         )
 
         fun categoryAdapter(objcName: String, library: KotlinLibrary) = ObjCCacheAdapterEntry(
@@ -464,6 +481,7 @@ class ObjCCacheMetadata(
     val extraClassAdapters: List<ObjCCacheAdapterEntry>,
     val extraProtocolAdapters: List<ObjCCacheAdapterEntry>,
     val namingConfiguration: String,
+    val packages: MainPackageGuesser.ModulePackages,
 ) {
     fun serialize(writer: java.io.Writer) {
         writer.appendLine("format=$FORMAT_VERSION")
@@ -471,9 +489,12 @@ class ObjCCacheMetadata(
         writer.appendLine("protocolAdapters=${protocolAdapters.serializeEntries()}")
         writer.appendLine("categoryAdapters=${categoryAdapters.serializeEntries()}")
         writer.appendLine("exportedLibraries=${exportedLibraries.sorted().joinToString(";")}")
-        writer.appendLine("extraClassAdapters=${extraClassAdapters.serializeEntries()}")
+        val extraClasses = extraClassAdapters.map { "${it.objcName}:${it.superClassName.orEmpty()}" }.sorted()
+        writer.appendLine("extraClassAdapters=${extraClasses.joinToString(";")}")
         writer.appendLine("extraProtocolAdapters=${extraProtocolAdapters.serializeEntries()}")
         writer.appendLine("namingConfiguration=$namingConfiguration")
+        packages.commonNonEmptyPackage?.let { writer.appendLine("commonNonEmptyPackage=${it.asString()}") }
+        packages.longestPackage?.let { writer.appendLine("longestPackage=${it.asString()}") }
     }
 
     companion object {
@@ -491,9 +512,16 @@ class ObjCCacheMetadata(
                 protocolAdapters = parseTypeAdapters("protocolAdapters", isInterface = true),
                 categoryAdapters = parseList("categoryAdapters").map { ObjCCacheAdapterEntry.categoryAdapter(it, library) },
                 exportedLibraries = parseList("exportedLibraries"),
-                extraClassAdapters = parseTypeAdapters("extraClassAdapters", isInterface = false),
+                extraClassAdapters = parseList("extraClassAdapters").map {
+                    val [objcName, superClassName] = it.split(':', limit = 2)
+                    ObjCCacheAdapterEntry.typeAdapter(objcName, isInterface = false, superClassName.ifEmpty { null })
+                },
                 extraProtocolAdapters = parseTypeAdapters("extraProtocolAdapters", isInterface = true),
                 namingConfiguration = property("namingConfiguration"),
+                packages = MainPackageGuesser.ModulePackages(
+                    properties.getProperty("commonNonEmptyPackage")?.let(::FqName),
+                    properties.getProperty("longestPackage")?.let(::FqName),
+                ),
             )
         }
     }

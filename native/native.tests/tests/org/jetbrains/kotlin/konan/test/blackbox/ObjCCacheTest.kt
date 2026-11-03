@@ -284,10 +284,12 @@ class ObjCCacheTest : ObjCCacheTestBase() {
         assertEquals(
             setOf(
                 "format", "classAdapters", "protocolAdapters", "categoryAdapters", "exportedLibraries",
-                "extraClassAdapters", "extraProtocolAdapters", "namingConfiguration",
+                "extraClassAdapters", "extraProtocolAdapters", "namingConfiguration", "commonNonEmptyPackage", "longestPackage",
             ),
             metadata.stringPropertyNames(),
         )
+        assertEquals("test.layout", metadata.getProperty("commonNonEmptyPackage"))
+        assertTrue(binDir.resolve("bitcode_deps").isFile) { "Expected the bitcode dependencies of the cache in $binDir" }
         assertEquals("1", metadata.getProperty("format"))
         assertEquals(listOf("KtLayoutWorker"), metadata.records("classAdapters"))
         assertEquals(listOf("KtLayoutProtocol"), metadata.records("protocolAdapters"))
@@ -808,11 +810,16 @@ class ObjCCacheTest : ObjCCacheTestBase() {
             ),
         )
         fun extraAdapters(libraryName: String, key: String) = objCCacheMetadata(libraries.cacheDir, libraryName).records(key)
-        assertTrue(extraAdapters("libB", "extraClassAdapters").containsAll(listOf("KtLibAAlpha", "KtLibAShade")))
+        val libBExtraClasses = extraAdapters("libB", "extraClassAdapters")
+        val expectedExtraClasses = listOf("KtBase:", "KtLibAAlpha:KtBase", "KtLibAShade:KtKotlinEnum")
+        assertTrue(libBExtraClasses.containsAll(expectedExtraClasses)) { "$libBExtraClasses" }
         assertTrue("KtLibALabeled" in extraAdapters("libB", "extraProtocolAdapters"))
-        assertTrue("KtLibAAlpha" in extraAdapters("libC", "extraClassAdapters"))
-        assertEquals(1, definedSymbols(objCCacheArchive(libraries.cacheDir, "libB")).count { it.endsWith("_OBJC_PROTOCOL_\$_KtNamed") }) {
-            "Expected the libB cache to define the Objective-C protocol KtNamed"
+        assertTrue("KtLibAAlpha:KtBase" in extraAdapters("libC", "extraClassAdapters"))
+        val libBSymbols = definedSymbols(objCCacheArchive(libraries.cacheDir, "libB"))
+        for (protocol in listOf("KtNamed", "KtLibALabeled")) {
+            assertEquals(1, libBSymbols.count { it.endsWith("_OBJC_PROTOCOL_\$_$protocol") }) {
+                "Expected the libB cache to define the Objective-C protocol $protocol"
+            }
         }
 
         val framework = linkFramework(libraries)
@@ -839,6 +846,43 @@ class ObjCCacheTest : ObjCCacheTestBase() {
                 """,
         )
     }
+
+    @Test
+    fun testCacheContainsReferencedClassesOutsideMainPass() {
+        val metadata = objCCacheMetadata(classesOutsideMainPass().cacheDir, "libB")
+        val extraClasses = metadata.records("extraClassAdapters")
+        assertTrue(extraClasses.containsAll(listOf("KtLibNHidden:KtBase", "KtHolderNested:KtBase"))) { "$extraClasses" }
+        assertTrue("KtLocalInner" in metadata.records("classAdapters")) { "${metadata.records("classAdapters")}" }
+    }
+
+    private fun classesOutsideMainPass(): Libraries = compileLibraries(
+        Library("libN", "package app.libn\nclass Hidden(val x: Int)", isExported = false),
+        Library(
+            "libA",
+            """
+            package app.liba
+            class Plain(val p: Int)
+            annotation class Holder {
+                class Nested(val v: Int)
+            }
+            """,
+        ),
+        Library(
+            "libB",
+            """
+            package app.libb
+            import app.liba.Holder
+            import app.libn.Hidden
+            annotation class Local {
+                class Inner(val v: Int)
+            }
+            fun Hidden.ext(): Int = x + 1
+            fun Local.Inner.twice(): Int = v * 2
+            fun makeNested(v: Int): Holder.Nested = Holder.Nested(v)
+            """,
+            listOf("libA", "libN"),
+        ),
+    )
 
     @Test
     fun testNotUsedWithoutCollisionErrors() {

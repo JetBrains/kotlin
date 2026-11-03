@@ -52,6 +52,12 @@ internal val SaveAdditionalCacheInfoPhase = createSimpleNamedCompilerPhase<Nativ
     CacheStorage(context).saveAdditionalCacheInfo()
 }
 
+internal val SaveObjCCacheBitcodeDependenciesPhase = createSimpleNamedCompilerPhase<NativeGenerationState, Unit>(
+        name = "SaveObjCCacheBitcodeDependencies",
+) { context, _ ->
+    CacheStorage(context).saveObjCCacheBitcodeDependencies()
+}
+
 /**
  * Finalizes cache (renames temp to the final dist).
  */

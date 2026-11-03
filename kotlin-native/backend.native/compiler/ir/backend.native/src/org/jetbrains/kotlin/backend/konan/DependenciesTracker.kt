@@ -288,6 +288,13 @@ internal class DependenciesTrackerImpl(
                 }
             }
 
+            config.objCCaches.values.forEach { objCCache ->
+                objCCache.bitcodeDependencies
+                        .filter { allLibraries[it.libName]?.let(config.cachedLibraries::isLibraryCached) != false }
+                        .map { resolveDependency(it) }
+                        .forEach { addDependency(it) }
+            }
+
             allDependencies = moduleDependencies.map { DependenciesTracker.ResolvedDependency.wholeModule(it) } +
                     fileDependencies.filterNot { it.key in moduleDependencies }
                             .map { [library, files] ->
@@ -349,15 +356,16 @@ internal class DependenciesTrackerImpl(
             val bitcodeModuleDependencies = mutableListOf<DependenciesTracker.ResolvedDependency>()
             val bitcodeFileDependencies = mutableListOf<DependenciesTracker.ResolvedDependency>()
             val strategy = libraryToCache?.strategy as? CacheDeserializationStrategy.SingleFile
+            val libraryToSkip = libraryToCache?.klib?.takeUnless { config.produce.isObjCCache }
 
             // Note: Unclear, whether the order of libraries is important or not.
             usefulLibrariesInRTO.forEach { library ->
                 val filesUsed = usedBitcode[library]
-                if (filesUsed == null && bitcodeIsUsed(library) && library != libraryToCache?.klib /* Skip loops */) {
+                if (filesUsed == null && bitcodeIsUsed(library) && library != libraryToSkip /* Skip loops */) {
                     // Dependency on the entire library.
                     bitcodeModuleDependencies.add(DependenciesTracker.ResolvedDependency.wholeModule(library))
                 }
-                filesUsed?.filter { library != libraryToCache?.klib || strategy?.filePath != it.file.filePath /* Skip loops */ }
+                filesUsed?.filter { library != libraryToSkip || strategy?.filePath != it.file.filePath /* Skip loops */ }
                         ?.map { (file, weak) ->
                             DependenciesTracker.FileDependency(
                                     CacheSupport.cacheFileId(file.fqName, file.filePath), weak

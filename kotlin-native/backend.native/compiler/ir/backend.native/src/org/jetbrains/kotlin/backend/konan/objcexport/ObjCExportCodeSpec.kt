@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.backend.konan.objcexport
 
-import org.jetbrains.kotlin.backend.konan.CachedLibraries
-import org.jetbrains.kotlin.backend.konan.ObjCCacheAdapterEntry
 import org.jetbrains.kotlin.backend.konan.descriptors.contributedMethods
 import org.jetbrains.kotlin.backend.konan.descriptors.enumEntries
 import org.jetbrains.kotlin.backend.konan.descriptors.isArray
@@ -20,17 +18,12 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.IdSignatureComposer
 import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperClassifiers
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import java.io.PrintStream
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-internal fun ObjCExportedInterface.createCodeSpec(
-        symbolTable: SymbolTable,
-        objCCaches: Map<KotlinLibrary, CachedLibraries.ObjCCache> = emptyMap(),
-): ObjCExportCodeSpec {
+internal fun ObjCExportedInterface.createCodeSpec(symbolTable: SymbolTable): ObjCExportCodeSpec {
 
     fun createObjCMethods(methods: List<FunctionDescriptor>) = methods.map {
         ObjCMethodForKotlinMethod(
@@ -137,21 +130,7 @@ internal fun ObjCExportedInterface.createCodeSpec(
         }
     }
 
-    val extraClassAdapters = objCCaches.values.flatMap { it.metadata.extraClassAdapters }.associateBy { it.objcName }
-    val extraProtocolAdapters = objCCaches.values.flatMap { it.metadata.extraProtocolAdapters }.associateBy { it.objcName }
-    fun extraAdapterFromObjCCache(descriptor: ClassDescriptor): ObjCCacheAdapterEntry? =
-            (if (descriptor.isInterface) extraProtocolAdapters else extraClassAdapters)[namer.getClassOrProtocolName(descriptor).binaryName]
-
-    val classesWithSpec = generatedClasses.filter { extraAdapterFromObjCCache(it) == null }.flatMapTo(mutableSetOf()) { descriptor ->
-        descriptor.getAllSuperClassifiers().filterIsInstance<ClassDescriptor>()
-    }
-
-    val types = generatedClasses.filter { it in classesWithSpec }.map { getType(it) }
-
-    val typesFromObjCCaches = generatedClasses.mapNotNull { descriptor ->
-        val adapter = extraAdapterFromObjCCache(descriptor) ?: return@mapNotNull null
-        ObjCTypeFromObjCCache(adapter, descriptor.getSuperClassNotAny()?.let { namer.getClassOrProtocolName(it).binaryName })
-    }
+    val types = generatedClasses.map { getType(it) }
 
     val categories = categoryMembers.flatMap { [descriptor, members] ->
         val binaryName = namer.getClassOrProtocolName(descriptor).binaryName
@@ -161,7 +140,7 @@ internal fun ObjCExportedInterface.createCodeSpec(
         }
     }
 
-    return ObjCExportCodeSpec(files, types, categories, typesFromObjCCaches)
+    return ObjCExportCodeSpec(files, types, categories)
 }
 
 internal fun <S : IrFunctionSymbol> createObjCMethodSpecBaseMethod(
@@ -182,12 +161,6 @@ internal class ObjCExportCodeSpec(
         val files: List<ObjCClassForKotlinFile>,
         val types: List<ObjCTypeForKotlinType>,
         val categories: List<ObjCCategoryForKotlinClass>,
-        val typesFromObjCCaches: List<ObjCTypeFromObjCCache> = emptyList(),
-)
-
-internal class ObjCTypeFromObjCCache(
-        val adapter: ObjCCacheAdapterEntry,
-        val superClassBinaryName: String?,
 )
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)

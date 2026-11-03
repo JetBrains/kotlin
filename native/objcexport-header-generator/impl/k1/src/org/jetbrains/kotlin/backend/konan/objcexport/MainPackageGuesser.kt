@@ -17,38 +17,40 @@ import org.jetbrains.kotlin.name.isSubpackageOf
  */
 @InternalKotlinNativeApi
 class MainPackageGuesser {
+    class ModulePackages(val commonNonEmptyPackage: FqName?, val longestPackage: FqName?)
+
     fun guess(
         moduleDescriptor: ModuleDescriptor,
         includedLibraryDescriptors: List<ModuleDescriptor>,
         exportedDependencies: List<ModuleDescriptor>,
     ): FqName {
         // Consider exported libraries only if we cannot infer the package from sources or included libs.
-        return guessMainPackage(includedLibraryDescriptors + moduleDescriptor)
-            ?: guessMainPackage(exportedDependencies)
+        return guessMainPackage((includedLibraryDescriptors + moduleDescriptor).map(::packagesOf))
+            ?: guessMainPackage(exportedDependencies.map(::packagesOf))
             ?: FqName.ROOT
     }
 
-    private fun guessMainPackage(modules: List<ModuleDescriptor>): FqName? {
-        if (modules.isEmpty()) {
-            return null
-        }
-
-        val allPackages = modules.flatMap {
-            it.getPackageFragments() // Includes also all parent packages, e.g. the root one.
-        }
+    fun packagesOf(module: ModuleDescriptor): ModulePackages {
+        val packages = module.getPackageFragments() // Includes also all parent packages, e.g. the root one.
 
         var commonNonEmptyPackage: FqName? = null
-        for (fragment in allPackages) {
+        for (fragment in packages) {
             val current = commonNonEmptyPackage
             if (current != null && fragment.fqName.isSubpackageOf(current)) continue
             if (fragment.getMemberScope().getContributedDescriptors().isEmpty()) continue
             commonNonEmptyPackage = current?.commonAncestorWith(fragment.fqName) ?: fragment.fqName
         }
 
-        return allPackages.map { it.fqName }.distinct()
-            .filter { candidate -> commonNonEmptyPackage == null || commonNonEmptyPackage.isSubpackageOf(candidate) }
-            // Now there are all common ancestors of non-empty packages. Longest of them is the least common accessor:
-            .maxByOrNull { it.asString().length }
+        return ModulePackages(commonNonEmptyPackage, packages.map { it.fqName }.maxByOrNull { it.asString().length })
+    }
+
+    fun guessMainPackage(modules: List<ModulePackages>): FqName? {
+        var commonNonEmptyPackage: FqName? = null
+        for (module in modules) {
+            val packageName = module.commonNonEmptyPackage ?: continue
+            commonNonEmptyPackage = commonNonEmptyPackage?.commonAncestorWith(packageName) ?: packageName
+        }
+        return commonNonEmptyPackage ?: modules.mapNotNull { it.longestPackage }.maxByOrNull { it.asString().length }
     }
 
     private fun FqName.commonAncestorWith(other: FqName): FqName {

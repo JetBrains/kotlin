@@ -135,8 +135,7 @@ internal fun produceObjCExportInterface(
             val units = headerGenerator.translateUnits().single()
             headerGenerator.assembleHeader(listOf(ObjCExportModuleUnits(0, units)))
             val exportedModules = moduleDescriptors.toSet()
-            headerGenerator.translateReferencedClassesOfModules(units) { it !in exportedModules }
-            val cacheUnits = namer.withRecordedNames(units)
+            val cacheUnits = namer.withRecordedNames(headerGenerator.translateReferencedClassesOfModules(units) { it !in exportedModules })
             return headerGenerator.buildInterface(objCCacheUnits = cacheUnits)
         }
         cachedModules.isNotEmpty() -> {
@@ -332,6 +331,7 @@ internal class ObjCExport(
 
         if (config.produce.isObjCCache && exportedInterface != null) {
             val library = requireNotNull(config.librariesToCache.keys.singleOrNull())
+            val libraryModule = (listOf(moduleDescriptor) + moduleDescriptor.allDependencyModules).first { it.library == library }
             val metadata = ObjCCacheMetadata(
                     classAdapters = objCCodeGenerator.objCCacheClassAdapters,
                     protocolAdapters = objCCodeGenerator.objCCacheProtocolAdapters,
@@ -340,6 +340,7 @@ internal class ObjCExport(
                     extraClassAdapters = objCCodeGenerator.objCCacheExtraClassAdapters,
                     extraProtocolAdapters = objCCodeGenerator.objCCacheExtraProtocolAdapters,
                     namingConfiguration = objCExportNamingConfiguration(config.configuration),
+                    packages = MainPackageGuesser().packagesOf(libraryModule),
             )
             generationState.outputFiles.objcCacheMetadataFile?.let { file ->
                 file.parent.createDirectories()

@@ -47,9 +47,9 @@ abstract class ObjCExportHeaderGenerator @InternalKotlinNativeApi constructor(
     private val referencedClasses = mutableMapOf<String, ClassDescriptor>()
     private val insertedLines = mutableListOf<Pair<Int, List<String>>>()
     private var protocolStubs: Pair<List<String>, Set<ClassDescriptor>>? = null
-    private var isExtraModule: (ModuleDescriptor) -> Boolean = { false }
+    private var isExtraClass: (ClassDescriptor) -> Boolean = { false }
 
-    protected fun isTranslatedAsExtraModule(module: ModuleDescriptor): Boolean = isExtraModule(module)
+    protected fun isTranslatedAsExtraClass(descriptor: ClassDescriptor): Boolean = isExtraClass(descriptor)
 
     open val shouldExportKDoc = false
 
@@ -170,11 +170,37 @@ abstract class ObjCExportHeaderGenerator @InternalKotlinNativeApi constructor(
     }
 
     @InternalKotlinNativeApi
-    fun translateReferencedClassesOfModules(units: ObjCExportUnits, modules: (ModuleDescriptor) -> Boolean) {
-        protocolStubs = buildHeader().renderForProtocolStubs(baseDeclarations) to generatedClasses.toSet()
-        isExtraModule = modules
-        units.events.mapNotNull { referencedClasses[it.classId] }.filter { modules(it.module) }.forEach { requireClassOrInterface(it) }
-        translateExtraClasses()
+    fun translateReferencedClassesOfModules(units: ObjCExportUnits, modules: (ModuleDescriptor) -> Boolean): ObjCExportUnits {
+        isExtraClass = { modules(it.module) || !isCollectedInMainPass(it) }
+        val unitClassIds = units.classes.mapTo(mutableSetOf()) { it.classId }
+        val extraUnits = mutableListOf<ObjCExportClassUnit>()
+        var events = units.events.toList()
+        while (true) {
+            val descriptors = events.mapNotNull { referencedClasses[it.classId] }
+                .filter { isExtraClass(it) && shouldTranslateExtraClass(it) && unitClassIds.add(it.classId.toString()) }
+            if (descriptors.isEmpty()) break
+            val newUnits = descriptors.mapNotNull { descriptor ->
+                recordClassUnit(descriptor, index = -1, isInMainPass = false) { generateClassOrInterface(descriptor) }
+            }
+            extraUnits += newUnits
+            events = newUnits.flatMap { it.events }
+        }
+        val extraUnitsById = extraUnits.associateBy { it.classId }
+        val emitted = mutableSetOf<String>()
+        fun emitWithEarlyDependencies(unit: ObjCExportClassUnit) {
+            if (!emitted.add(unit.classId)) return
+            unit.events.filter { it.isEarly }.forEach { event -> extraUnitsById[event.classId]?.let(::emitWithEarlyDependencies) }
+            emit(unit.content)
+        }
+        val localStubCount = stubs.size
+        extraUnits.forEach(::emitWithEarlyDependencies)
+        val baseStubCount = baseDeclarations.size
+        val extrasFirst = stubs.take(baseStubCount) + stubs.drop(localStubCount) + stubs.subList(baseStubCount, localStubCount)
+        protocolStubs = buildHeader().copy(stubs = extrasFirst).renderForProtocolStubs(baseDeclarations) to generatedClasses.toSet()
+        return ObjCExportUnits(
+            units.classes + extraUnits, units.categoryMembers, units.files,
+            classForwardDeclarations.toSet(), protocolForwardDeclarations.toSet(),
+        )
     }
 
     private class ModuleStructure(
@@ -356,6 +382,10 @@ abstract class ObjCExportHeaderGenerator @InternalKotlinNativeApi constructor(
                 }
             }
     }
+
+    private fun isCollectedInMainPass(descriptor: ClassDescriptor): Boolean =
+        generateSequence(descriptor.containingDeclaration as? ClassDescriptor) { it.containingDeclaration as? ClassDescriptor }
+            .all { mapper.shouldBeExposed(it) }
 
     private fun translatePackageFragments() {
         val packageFragments = moduleDescriptors
