@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.importmodels
 
+/** Ids of the import models that the IDE can request through [ModelRequest.kotlinModelId]. */
 public object KotlinImportModelIds {
     public const val BASE: String = "base"
     public const val PROJECT_INFORMATION: String = "projectInformation"

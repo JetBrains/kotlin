@@ -7,6 +7,10 @@ package org.jetbrains.kotlin.importmodels
 
 import java.io.Serializable
 
+/**
+ * Model that the Kotlin Gradle Plugin returns to the IDE for a [ModelRequest].
+ * [kotlinModelResult] holds a serialized [org.jetbrains.kotlin.importmodels.proto.Result].
+ */
 interface KotlinGradleModel : Serializable {
     val kotlinModelResult: ByteArray
 }
