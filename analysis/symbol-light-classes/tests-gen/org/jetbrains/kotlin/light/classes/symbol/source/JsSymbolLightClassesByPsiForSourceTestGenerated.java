@@ -1287,6 +1287,12 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
       }
 
       @Test
+      @TestMetadata("mapValueNullability.kt")
+      public void testMapValueNullability() {
+        run("mapValueNullability.kt");
+      }
+
+      @Test
       @TestMetadata("setAbstractClass.kt")
       public void testSetAbstractClass() {
         run("setAbstractClass.kt");
