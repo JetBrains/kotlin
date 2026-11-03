@@ -169,26 +169,7 @@ class LocalClaudeAgent private constructor(
             is GitDiff.Origin.GitHub -> diffOrigin.rawDiffUrl
         }
 
-        val input = buildString {
-            appendLine("# Rule: ${rule.name}")
-            appendLine()
-            appendLine(rule.text)
-            appendLine(
-                """
-                    
-                    # Diff:
-                    
-                    The full diff is available from $diffDescription.
-                    It may contain other changes besides the ones below.
-                    
-                    Check the rule only against the following diff, which features files that are subject to the rule:
-                    
-                    ```diff
-                """.trimIndent()
-            )
-            changedFiles.forEach { it.patchLines.forEach(::appendLine) }
-            appendLine("```")
-        }
+        val input = buildInput(rule, diffDescription, changedFiles)
 
         var executionResult: ExecutionResult? = null
         var output: ClaudeOutput? = null
@@ -240,6 +221,31 @@ class LocalClaudeAgent private constructor(
                 output = output?.result
             )
         }
+    }
+
+    private fun buildInput(
+        rule: CodeRule,
+        diffDescription: String,
+        changedFiles: List<GitDiff.ChangedFile>,
+    ): String = buildString {
+        appendLine("# Rule: ${rule.name}")
+        appendLine()
+        appendLine(rule.text)
+        appendLine(
+            """
+                
+                # Diff:
+                
+                The full diff is available from $diffDescription.
+                It may contain other changes besides the ones below.
+                
+                Check the rule only against the following diff, which features files that are subject to the rule:
+                
+                ```diff
+            """.trimIndent()
+        )
+        changedFiles.forEach { it.patchLines.forEach(::appendLine) }
+        appendLine("```")
     }
 
     @Serializable
