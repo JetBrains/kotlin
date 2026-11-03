@@ -3,4 +3,4 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-fun bar(a: Any) = "Any"
+fun bar(a: Any): String = "Any"

@@ -34,6 +34,7 @@ abstract class WebCliPipeline<T : CommonJsAndWasmCompilerArguments>(
                 FrontendFilesForPluginsGenerationPipelinePhase() then
                 WebFir2IrPipelinePhase then
                 WebKlibInliningPipelinePhase then
+                WebCommonSerializationPipelinePhase then
                 WebKlibSerializationPipelinePhase
     }
 
