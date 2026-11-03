@@ -42,13 +42,31 @@ private suspend fun runReview(
     // Even if the remote API endpoint doesn't have any limits, local machine resources do.
     val semaphore = Semaphore(8)
 
-    val agentResults = ruleToFiles.entries.map { [rule, changedFiles] ->
+    val ruleResults = ruleToFiles.entries.map { [rule, changedFiles] ->
         async {
             semaphore.withPermit {
                 agent.checkRule(rule, changedFiles, diff.origin)
-            }
+            }.toRuleReviewResult(rule)
         }
     }.awaitAll()
 
-    ReviewResult(agentResults, diff.origin)
+    ReviewResult(ruleResults, diff.origin)
+}
+
+/**
+ * Converts the result of one agent run to the outcome of checking [rule].
+ */
+private fun AgentResult.toRuleReviewResult(rule: CodeRule): RuleReviewResult = when (this) {
+    is AgentResult.Success -> RuleReviewResult(
+        rule = rule,
+        comments = comments.comments,
+        failures = emptyList(),
+        meta = meta,
+    )
+    is AgentResult.Failure -> RuleReviewResult(
+        rule = rule,
+        comments = emptyList(),
+        failures = listOf(this),
+        meta = meta,
+    )
 }

@@ -8,34 +8,49 @@ package org.jetbrains.kotlin.code.review
 import kotlinx.serialization.Serializable
 
 @Serializable
-class RuleReviewResult(val comments: List<Comment>) {
-    @Serializable
-    class Comment(val relativeFilePath: ProjectFilePath, val line: Int, val message: String)
-}
+class ReviewComments(val comments: List<ReviewComment>)
+
+@Serializable
+class ReviewComment(val relativeFilePath: ProjectFilePath, val line: Int, val message: String)
 
 class ReviewMeta(val costUSD: Double)
 
-sealed class AgentResult(val rule: CodeRule, val meta: ReviewMeta?) {
-    val costUSD: Double? get() = meta?.costUSD
+/**
+ * The result of one agent run: either the reported review comments, or a failure.
+ */
+sealed class AgentResult {
+    abstract val meta: ReviewMeta?
 
     class Success(
-        rule: CodeRule,
-        val reviewResult: RuleReviewResult,
-        meta: ReviewMeta,
-    ) : AgentResult(rule, meta)
+        val comments: ReviewComments,
+        override val meta: ReviewMeta,
+    ) : AgentResult()
 
     class Failure(
-        rule: CodeRule,
-        meta: ReviewMeta?,
+        override val meta: ReviewMeta?,
         val exception: Throwable,
         val executionResult: ExecutionResult?,
         val output: String?
-    ) : AgentResult(rule, meta)
+    ) : AgentResult()
 }
 
-class ReviewResult(val agentResults: List<AgentResult>, val diffOrigin: GitDiff.Origin) {
-    val successfulAgentResults: List<AgentResult.Success> = agentResults.filterIsInstance<AgentResult.Success>()
-    val failingAgentResults: List<AgentResult.Failure> = agentResults.filterIsInstance<AgentResult.Failure>()
+/**
+ * The outcome of checking one rule: the comments and failures of the agent runs that checked it,
+ * and their meta information.
+ */
+class RuleReviewResult(
+    val rule: CodeRule,
+    val comments: List<ReviewComment>,
+    val failures: List<AgentResult.Failure>,
+    /**
+     * The meta information of the agent runs, or null if it is unknown for one of them.
+     */
+    val meta: ReviewMeta?,
+) {
+    val costUSD: Double?
+        get() = meta?.costUSD
+}
 
-    val firstException: Throwable? = failingAgentResults.firstOrNull()?.exception
+class ReviewResult(val ruleResults: List<RuleReviewResult>, val diffOrigin: GitDiff.Origin) {
+    val firstException: Throwable? = ruleResults.firstNotNullOfOrNull { it.failures.firstOrNull()?.exception }
 }

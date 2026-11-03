@@ -230,10 +230,9 @@ class LocalClaudeAgent private constructor(
 
             check(output.structuredOutput != null) { "Claude produced no structured_output" }
 
-            AgentResult.Success(rule, output.structuredOutput, output.buildMeta())
+            AgentResult.Success(output.structuredOutput, output.buildMeta())
         }.getOrElse {
             AgentResult.Failure(
-                rule = rule,
                 meta = output?.buildMeta(),
                 exception = it,
                 executionResult = executionResult,
@@ -252,7 +251,7 @@ class LocalClaudeAgent private constructor(
         @SerialName("total_cost_usd")
         val totalCostUSD: Double,
         @SerialName("structured_output")
-        val structuredOutput: RuleReviewResult? = null,
+        val structuredOutput: ReviewComments? = null,
     ) {
         fun buildMeta(): ReviewMeta = ReviewMeta(this.totalCostUSD)
     }
