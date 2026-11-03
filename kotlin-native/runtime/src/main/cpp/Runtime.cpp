@@ -154,7 +154,7 @@ void ApplyPermanentRefFixups() {
       auto* slot = reinterpret_cast<mm::HeapRefSlot*>(table + node->fixups[i].slotOffset);
       auto* target = reinterpret_cast<ObjHeader*>(table + node->fixups[i].targetOffset);
       auto offset = reinterpret_cast<uintptr_t>(target) - mm::compressedRefsBase();
-      RuntimeCheck(offset < mm::kCompressedRefsWindowSize, "Permanent object %p is outside of the compressed references window", target);
+      RuntimeCheck(static_cast<uint64_t>(offset) < mm::kCompressedRefsWindowSize, "Permanent object %p is outside of the compressed references window", target);
       mm::DirectRefAccessor(slot).store(target);
     }
   }

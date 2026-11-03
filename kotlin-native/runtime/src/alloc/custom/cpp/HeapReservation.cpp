@@ -199,7 +199,7 @@ alloc::HeapReservation::HeapReservation() noexcept {
 
     Kotlin_mm_compressedRefsBase = std::min(permanentsStart, start_) - pageSize_;
     RuntimeCheck(
-            std::max(permanentsEnd, start_ + size_) - mm::compressedRefsBase() <= mm::kCompressedRefsWindowSize,
+            static_cast<uint64_t>(std::max(permanentsEnd, start_ + size_) - mm::compressedRefsBase()) <= mm::kCompressedRefsWindowSize,
             "The heap and the permanent objects do not fit into the compressed references window");
     freeRanges_.emplace(start_, size_);
 

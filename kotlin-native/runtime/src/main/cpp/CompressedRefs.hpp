@@ -38,7 +38,7 @@ ALWAYS_INLINE inline uintptr_t compressedRefsBase() noexcept {
 ALWAYS_INLINE inline uint32_t compressRef(ObjHeader* object) noexcept {
     if (object == nullptr) return 0;
     auto offset = reinterpret_cast<uintptr_t>(object) - compressedRefsBase();
-    RuntimeAssert(offset < kCompressedRefsWindowSize, "%p is outside of the compressed references window", object);
+    RuntimeAssert(static_cast<uint64_t>(offset) < kCompressedRefsWindowSize, "%p is outside of the compressed references window", object);
     return static_cast<uint32_t>(offset >> kCompressedRefsShift);
 }
 
