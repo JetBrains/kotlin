@@ -338,4 +338,8 @@ public class ForTestCompileRuntime {
     public static List<File> parcelizeRuntimeForTests() {
         return getFilesFromProperty(PARCELIZE_COMPILER_PLUGIN_CLASSPATH);
     }
+
+    public static List<File> parcelizeCommonRuntimeForTests() {
+        return getFilesFromProperty(PARCELIZE_COMMON_RUNTIME_CLASSPATH);
+    }
 }

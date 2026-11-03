@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.parcelize.test.services
 
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
-import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.PARCELIZE_COMPILER_PLUGIN_CLASSPATH
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.parcelize.ParcelizeComponentRegistrar
@@ -14,10 +14,12 @@ import org.jetbrains.kotlin.parcelize.ParcelizeConfigurationKeys
 import org.jetbrains.kotlin.parcelize.kotlinxImmutable
 import org.jetbrains.kotlin.parcelize.test.services.ParcelizeDirectives.ENABLE_PARCELIZE
 import org.jetbrains.kotlin.parcelize.test.services.ParcelizeDirectives.IMPLICITLY_ADD_PARCELABLE_SUPERTYPE
+import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.targetPlatform
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
@@ -31,14 +33,12 @@ private fun getLibraryJar(classToDetect: String): File? = try {
 class ParcelizeEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
         if (ENABLE_PARCELIZE !in module.directives) return
-        val runtimeLibraries = System.getProperty(PARCELIZE_COMPILER_PLUGIN_CLASSPATH)
-            .split(File.pathSeparator)
-            .map { File(it) }
-        val androidApiJar = KtTestUtil.findAndroidApiJar()
-
-        configuration.addJvmClasspathRoots(
-            runtimeLibraries + androidApiJar
-        )
+        val runtimeLibraries = if (module.targetPlatform(testServices).isCommon()) {
+            ForTestCompileRuntime.parcelizeCommonRuntimeForTests()
+        } else {
+            ForTestCompileRuntime.parcelizeRuntimeForTests() + KtTestUtil.findAndroidApiJar()
+        }
+        configuration.addJvmClasspathRoots(runtimeLibraries)
 
         // Hard coding a name of an additional annotation for parcelize. Test that use this, need to provide the
         // additional annotations as part of the test sources.

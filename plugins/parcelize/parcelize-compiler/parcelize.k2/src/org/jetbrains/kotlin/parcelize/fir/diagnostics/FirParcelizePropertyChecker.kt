@@ -51,7 +51,7 @@ object FirParcelizePropertyChecker : FirPropertyChecker(MppCheckerKind.Platform)
             ) {
                 reporter.reportOn(declaration.source, KtErrorsParcelize.PROPERTY_WONT_BE_SERIALIZED)
             }
-            if (fromPrimaryConstructor) {
+            if (fromPrimaryConstructor && !session.isMetadataCompilation) {
                 checkParcelableClassProperty(declaration, containingClassSymbol, context, reporter)
             }
         }
