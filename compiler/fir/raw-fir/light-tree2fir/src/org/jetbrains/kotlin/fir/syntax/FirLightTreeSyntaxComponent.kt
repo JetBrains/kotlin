@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.diagnostics.findChildByType
 import org.jetbrains.kotlin.diagnostics.findChildrenByType
 import org.jetbrains.kotlin.diagnostics.valOrVarKeyword
 import org.jetbrains.kotlin.fir.NoMutableState
+import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtImplementationDetail
@@ -55,6 +56,32 @@ object FirLightTreeSyntaxComponent : FirSyntaxComponent<KtLightSourceElement>() 
         ) {
             processChild(it.toKtLightSourceElement(tree))
         }
+    }
+
+    override fun KtSourceElement.findModifierList(): FirModifierList? {
+        val source = unwrap()
+        val tree = source.treeStructure
+        val modifierListNode = source.lighterASTNode.getChildren(tree).find { it.tokenType == KtNodeTypes.MODIFIER_LIST }
+            ?: return null
+        // Keeps the 'padding' of the source element (if its offsets differ from the node's ones) in the modifier sources
+        val offsetDelta = source.startOffset - source.lighterASTNode.startOffset
+        val modifiers = mutableListOf<FirModifier>()
+        val annotationSources = mutableListOf<KtSourceElement>()
+        for (node in modifierListNode.getChildren(tree)) {
+            when (val tokenType = node.tokenType) {
+                is KtModifierKeywordToken -> modifiers += FirModifier(
+                    tokenType.tokenId,
+                    tokenType.value,
+                    node.toKtLightSourceElement(
+                        tree,
+                        startOffset = node.startOffset + offsetDelta,
+                        endOffset = node.endOffset + offsetDelta,
+                    ),
+                )
+                KtNodeTypes.ANNOTATION_ENTRY -> annotationSources += node.toKtLightSourceElement(tree)
+            }
+        }
+        return FirModifierList(modifiers, annotationSources)
     }
 
     override fun KtSourceElement.findContextParameterListSources(): List<KtSourceElement> {

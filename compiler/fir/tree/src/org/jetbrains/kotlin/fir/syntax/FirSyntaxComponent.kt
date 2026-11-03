@@ -87,6 +87,8 @@ abstract class FirSyntaxComponent<T> : FirSessionComponent {
         }
     }
 
+    abstract fun KtSourceElement.findModifierList(): FirModifierList?
+
     abstract fun KtSourceElement.findContextParameterListSources(): List<KtSourceElement>
 
     abstract fun KtSourceElement.findFunctionTypeContextParameterListSource(): KtSourceElement?

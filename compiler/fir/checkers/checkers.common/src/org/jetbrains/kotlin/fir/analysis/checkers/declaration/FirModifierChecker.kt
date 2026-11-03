@@ -30,6 +30,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
+import org.jetbrains.kotlin.fir.syntax.FirModifier
+import org.jetbrains.kotlin.fir.syntax.FirModifierList
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
 
@@ -60,7 +62,7 @@ object FirModifierChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
 
         // general strategy: report no more than one error and any number of warnings
         // therefore, a track of nodes with already reported errors should be kept
-        val reportedNodes = hashSetOf<FirModifier<*>>()
+        val reportedNodes = hashSetOf<FirModifier>()
 
         val actualTargets = getActualTargetList(owner).defaultTargets
 
@@ -102,7 +104,7 @@ object FirModifierChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkTarget(
         modifierSource: KtSourceElement,
-        modifier: FirModifier<*>,
+        modifier: FirModifier,
         actualTargets: List<KotlinTarget>,
         parent: FirBasedSymbol<*>?,
     ): Boolean {
@@ -155,7 +157,7 @@ object FirModifierChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkParent(
         modifierSource: KtSourceElement,
-        modifier: FirModifier<*>,
+        modifier: FirModifier,
         actualParents: List<KotlinTarget>,
         owner: FirDeclaration,
         parent: FirBasedSymbol<*>?,

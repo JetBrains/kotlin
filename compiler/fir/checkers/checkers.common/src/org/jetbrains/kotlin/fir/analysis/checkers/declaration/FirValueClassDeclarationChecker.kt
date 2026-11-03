@@ -506,6 +506,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
     private fun FirPropertySymbol.isRelatedToParameter(parameter: FirValueParameterSymbol?): Boolean =
         name == parameter?.name && source?.kind is KtFakeSourceElementKind
 
+    context(context: CheckerContext)
     private fun FirValueParameterSymbol.isNotFinalReadOnly(primaryConstructorProperty: FirPropertySymbol?): Boolean {
         if (primaryConstructorProperty == null) return true
 

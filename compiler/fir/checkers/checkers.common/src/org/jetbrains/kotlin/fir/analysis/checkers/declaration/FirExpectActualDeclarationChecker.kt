@@ -70,6 +70,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
         }
     }
 
+    context(context: CheckerContext)
     private fun containsExpectOrActualModifier(declaration: FirMemberDeclaration): Boolean {
         return declaration.source.getModifierList()?.let { modifiers ->
             KotlinSyntaxTokenIds.EXPECT_MODIFIER in modifiers || KotlinSyntaxTokenIds.ACTUAL_MODIFIER in modifiers
@@ -408,6 +409,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
     }
 
     // Ideally, this function shouldn't exist KT-63751
+    context(context: CheckerContext)
     private fun FirElement.hasActualModifier(): Boolean {
         return when (source?.kind) {
             null -> false

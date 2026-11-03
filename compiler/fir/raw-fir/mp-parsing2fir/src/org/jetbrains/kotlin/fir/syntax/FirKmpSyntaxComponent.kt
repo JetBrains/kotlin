@@ -32,6 +32,10 @@ object FirKmpSyntaxComponent : FirSyntaxComponent<Any>() {
         notYetImplemented()
     }
 
+    override fun KtSourceElement.findModifierList(): FirModifierList? {
+        notYetImplemented()
+    }
+
     override fun KtSourceElement.findContextParameterListSources(): List<KtSourceElement> {
         notYetImplemented()
     }

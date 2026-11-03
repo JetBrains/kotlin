@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.analysis.cfa.PropertyInitializationCheckProcesso
 import org.jetbrains.kotlin.fir.analysis.cfa.requiresInitialization
 import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfoData
 import org.jetbrains.kotlin.fir.analysis.cfa.util.VariableInitializationInfo
-import org.jetbrains.kotlin.fir.analysis.checkers.FirModifierList
+import org.jetbrains.kotlin.fir.syntax.FirModifierList
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.contains
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext

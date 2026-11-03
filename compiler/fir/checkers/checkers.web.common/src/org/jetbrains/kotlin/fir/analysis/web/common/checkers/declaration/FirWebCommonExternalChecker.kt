@@ -232,6 +232,7 @@ abstract class FirWebCommonExternalChecker(
         reporter.reportOn(source, FirWebCommonErrors.EXTERNAL_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER)
     }
 
+    context(context: CheckerContext)
     private fun FirDeclaration.isDirectlyExternal(session: FirSession): Boolean {
         // source kind is checked, otherwise this function
         // may return true for a primary constructor of an external class

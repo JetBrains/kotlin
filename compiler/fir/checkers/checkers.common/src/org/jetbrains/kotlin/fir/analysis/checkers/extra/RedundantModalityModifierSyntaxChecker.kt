@@ -66,6 +66,7 @@ object RedundantModalityModifierSyntaxChecker : FirDeclarationSyntaxChecker<FirD
     /**
      * [KtTokens.OPEN_KEYWORD] in interfaces is already reported by [FirErrors.REDUNDANT_OPEN_IN_INTERFACE].
      */
+    context(context: CheckerContext)
     private val FirDeclaration.declaresOpenModality: Boolean
         get() = source?.getModifierList()?.modifiers?.any { it.tokenId == KotlinSyntaxTokenIds.OPEN_MODIFIER } == true
 }

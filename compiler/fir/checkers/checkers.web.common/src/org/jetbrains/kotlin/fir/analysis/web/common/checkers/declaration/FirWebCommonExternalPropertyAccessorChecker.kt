@@ -32,6 +32,7 @@ object FirWebCommonExternalPropertyAccessorChecker : FirPropertyAccessorChecker(
         }
     }
 
+    context(context: CheckerContext)
     private fun FirPropertyAccessor.isDirectlyExternal(): Boolean {
         return hasModifier(KotlinSyntaxTokenIds.EXTERNAL_MODIFIER)
     }
