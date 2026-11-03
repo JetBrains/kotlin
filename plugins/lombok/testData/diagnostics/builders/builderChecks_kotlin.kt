@@ -54,7 +54,7 @@ class ParametersWithoutVal(
     <!CANNOT_SINGULARIZE_NAME!>@Singular<!> sheep: List<String>,
     <!UNSUPPORTED_SINGULAR_TYPE!>@Singular("thing")<!> things: Array<String>,
 ) {
-    val summary: String = plain + sheep.size + things.size
+    val <!BUILDER_PROPERTY_NOT_INCLUDED!>summary<!>: String = plain + sheep.size + things.size
 }
 
 // A property declared in the class body is not a builder field at all - `build()` has only the primary
@@ -62,16 +62,16 @@ class ParametersWithoutVal(
 // a `@Singular` or `@Builder.Default` that cannot reach a builder field is reported as having no effect.
 @Builder
 class BodyPropertiesAreNotBuilderFields(val id: Int, extra: String) {
-    val derived: String = extra + id
+    val <!BUILDER_PROPERTY_NOT_INCLUDED!>derived<!>: String = extra + id
 
     <!BUILDER_FIELD_ANNOTATION_ON_BODY_PROPERTY!>@Builder.Default<!>
-    val defaulted: Int = 1
+    val <!BUILDER_PROPERTY_NOT_INCLUDED!>defaulted<!>: Int = 1
 
     <!BUILDER_FIELD_ANNOTATION_ON_BODY_PROPERTY!>@Singular<!>
-    val sheep: List<String> = emptyList()
+    val <!BUILDER_PROPERTY_NOT_INCLUDED!>sheep<!>: List<String> = emptyList()
 
     <!BUILDER_FIELD_ANNOTATION_ON_BODY_PROPERTY!>@Singular("thing")<!>
-    val things: Array<String> = emptyArray()
+    val <!BUILDER_PROPERTY_NOT_INCLUDED!>things<!>: Array<String> = emptyArray()
 }
 
 // A parameter declared without `val` may be shadowed by a body property of the same name, which is the one
@@ -100,7 +100,7 @@ class AnnotatedParameterShadowedByProperty(@Singular names: List<String>) {
 // `@Builder.ObtainVia` to point elsewhere, which isn't implemented here.
 @Builder(toBuilder = true)
 class ToBuilderWithoutProperty(val kept: Int, <!TO_BUILDER_CANNOT_OBTAIN!>lost: Int<!>) {
-    val doubled: Int = lost * 2
+    val <!BUILDER_PROPERTY_NOT_INCLUDED!>doubled<!>: Int = lost * 2
 }
 
 // A property declared by hand is enough - it need not be a promoted one.
