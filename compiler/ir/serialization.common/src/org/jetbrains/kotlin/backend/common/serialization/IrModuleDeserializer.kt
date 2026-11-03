@@ -116,13 +116,13 @@ abstract class IrModuleDeserializer(
 
     open val strategyResolver: DeserializationStrategyResolver = DeserializationStrategy.ONLY_DECLARATION_HEADERS
 
-    open fun fileDeserializers(): Collection<IrFileDeserializer> = emptyList()
+    open val fileDeserializers: Map<IrFile, IrFileDeserializer> get() = emptyMap()
 
     val compatibilityMode: CompatibilityMode get() = CompatibilityMode(libraryAbiVersion)
 
     open fun getAllMatchingSignatures(callableId: CallableId, signatureKind: IrDeserializer.TopLevelSymbolKind): List<IdSignature> {
-        return this.fileDeserializers().flatMap {
-            it.getAllMatchingSignatures(callableId, signatureKind)
+        return fileDeserializers.flatMap { [_, fileDeserializer] ->
+            fileDeserializer.getAllMatchingSignatures(callableId, signatureKind)
         }
     }
 }
@@ -239,9 +239,8 @@ class IrModuleDeserializerWithBuiltIns(
         delegate.addModuleReachableTopLevel(topLevelDeclarationSignature)
     }
 
-    override fun fileDeserializers(): Collection<IrFileDeserializer> {
-        return delegate.fileDeserializers()
-    }
+    override val fileDeserializers: Map<IrFile, IrFileDeserializer>
+        get() = delegate.fileDeserializers
 
     override fun postProcess() {
         delegate.postProcess()

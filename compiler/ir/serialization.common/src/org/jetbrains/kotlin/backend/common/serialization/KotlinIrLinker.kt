@@ -69,7 +69,7 @@ abstract class KotlinIrLinker(
             symbolKind: BinarySymbolData.SymbolKind,
         ): IrSymbol? {
             val moduleDeserializer = firstNotNullOfModuleDeserializersOrNull(file.packageFqName) { moduleDeserializer ->
-                moduleDeserializer.fileDeserializers().firstOrNull { it.file == file }
+                moduleDeserializer.fileDeserializers[file]
             } ?: return null
 
             return moduleDeserializer.symbolDeserializer.deserializeSymbolWithOwnerInCurrentFile(signature, symbolKind)
@@ -395,7 +395,7 @@ abstract class KotlinIrLinker(
  * are deserialized as well. The strategy decides what is loaded *in addition* to that, and whether function bodies
  * are loaded.
  *
- * @property onDemand The file is not added to [IrModuleFragment.files] and is not reported among
+ * @property onDemand The file is not added to [IrModuleFragment.files], however it is reported among
  *   [IrModuleDeserializer.fileDeserializers]. Nothing from the file is deserialized until something refers to one of
  *   its declarations.
  *   For example, when Kotlin/Native builds a per-file cache for a single file of `stdlib`, all other files

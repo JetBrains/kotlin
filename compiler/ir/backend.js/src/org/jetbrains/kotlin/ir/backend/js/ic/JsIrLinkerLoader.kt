@@ -69,7 +69,7 @@ internal class LoadedJsIr(
 
     private fun collectSignatureProviders(lib: KotlinLibraryFile, irModule: IrModuleFragment): List<FileSignatureProvider> {
         val moduleDeserializer = linker.moduleDeserializer(irModule)
-        val deserializers = moduleDeserializer.fileDeserializers()
+        val deserializers = moduleDeserializer.fileDeserializers.values
         val providers = ArrayList<FileSignatureProvider>(deserializers.size)
         val sourceFiles = getIrFileNames(irModule)
 
