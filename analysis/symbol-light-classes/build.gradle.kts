@@ -12,7 +12,6 @@ plugins {
 
 dependencies {
     implementation(project(":compiler:psi:psi-api"))
-    implementation(project(":compiler:frontend.java"))
     implementation(project(":core:compiler.common"))
     implementation(project(":analysis:light-classes-base"))
     implementation(project(":compiler:backend.common.jvm"))
