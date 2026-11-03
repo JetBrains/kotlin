@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
 import org.jetbrains.kotlin.gradle.targets.js.npm.fromSrcPackageJson
 import org.jetbrains.kotlin.gradle.targets.web.npm.KotlinSharedNpmProjectPlugin
-import org.jetbrains.kotlin.gradle.targets.web.npm.shared.CompilationNpmDependencyReport
+import org.jetbrains.kotlin.gradle.targets.web.npm.shared.NpmDependencyReport
 import org.jetbrains.kotlin.gradle.targets.web.npm.shared.readNpmDependencyReport
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
@@ -254,9 +254,9 @@ class SharedNpmDependenciesIT : KGPBaseTest() {
                 }
             }
 
-            fun TestProject.libBNpmDependenciesReport(): CompilationNpmDependencyReport =
+            fun TestProject.libBNpmDependenciesReport(): NpmDependencyReport =
                 projectPath.resolve("lib-b/build/kotlin-npm/js/npm-dep-reports/emptyKts-lib-b/npm-dep-report.json").toFile()
-                    .let { readNpmDependencyReport(it).compilations.getValue("emptyKts-lib-b") }
+                    .let { readNpmDependencyReport(it) }
 
             build(":lib-b:jsNpmDependenciesReport") {
                 assertTasksExecuted(":lib-a:jsNpmDependenciesReport")
@@ -386,7 +386,8 @@ class SharedNpmDependenciesIT : KGPBaseTest() {
                 val report = readNpmDependencyReport(
                     projectPath.resolve("lib/build/kotlin-npm/js/npm-dep-reports/emptyKts-lib/npm-dep-report.json").toFile()
                 )
-                assertEquals("1.3.0", report.compilations.getValue("emptyKts-lib").dependencies["left-pad"])
+                assertEquals("emptyKts-lib", report.compilation)
+                assertEquals("1.3.0", report.dependencies["left-pad"])
             }
         }
     }
