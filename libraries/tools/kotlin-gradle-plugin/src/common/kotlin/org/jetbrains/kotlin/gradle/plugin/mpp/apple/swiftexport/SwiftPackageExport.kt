@@ -12,6 +12,8 @@ import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.supportedAppleTargets
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleTarget
@@ -69,6 +71,10 @@ internal fun swiftPackagePlatforms(families: Iterable<Family>): List<SwiftPackag
  */
 internal fun Project.registerSwiftPackageExportPipeline(exportExtension: ExportExtension) {
     val integration = exportExtension.swiftExportConfiguration.activatedSwiftPackageIntegration ?: return
+    // The tasks are still registered but get skipped here, and Gradle only says why at --info.
+    if (!HostManager.hostIsMac && kotlinPropertiesProvider.ignoreDisabledNativeTargets != true) {
+        reportDiagnostic(KotlinToolingDiagnostics.SwiftPackageExportUnsupportedHost(HostManager.platformName()))
+    }
     // The setup action doesn't get here without Apple targets.
     val appleTargets = multiplatformExtension.supportedAppleTargets().toList()
 
@@ -158,7 +164,7 @@ private fun Project.registerSwiftPackageSync(
         task.description = "Exports the $configuration Swift package into swiftPackageIntegration.outputDirectory/$configuration"
         task.group = SwiftExportDSLConstants.TASK_GROUP
         // On other hosts there is nothing to copy, and a Sync of nothing empties its destination.
-        task.onlyIf { HostManager.hostIsMac }
+        task.onlyIf(SwiftExportConstants.MACOS_HOST_REQUIRED) { HostManager.hostIsMac }
 
         task.from(generateTask.flatMap { it.packagePath })
         task.from(assembleTask.flatMap { it.binaryDirectory })

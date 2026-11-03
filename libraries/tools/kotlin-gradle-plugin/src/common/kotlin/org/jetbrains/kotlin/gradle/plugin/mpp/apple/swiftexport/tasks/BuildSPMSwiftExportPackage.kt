@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.gradle.utils.relativeOrAbsolute
 import org.jetbrains.kotlin.gradle.utils.runCommand
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportConstants
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import javax.inject.Inject
@@ -34,7 +35,7 @@ internal abstract class BuildSPMSwiftExportPackage @Inject constructor(
     private val objectFactory: ObjectFactory,
 ) : DefaultTask() {
     init {
-        onlyIf { HostManager.hostIsMac }
+        onlyIf(SwiftExportConstants.MACOS_HOST_REQUIRED) { HostManager.hostIsMac }
     }
 
     @get:Input
