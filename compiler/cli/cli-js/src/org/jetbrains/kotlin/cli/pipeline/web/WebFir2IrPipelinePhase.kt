@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
 import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
 import org.jetbrains.kotlin.fir.backend.Fir2IrVisibilityConverter
-import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.backend.js.checkers.JsKlibCheckers
@@ -77,7 +76,7 @@ object WebFir2IrPipelinePhase : PipelinePhase<WebFrontendPipelineArtifact, WebFi
         var builtInsModule: KotlinBuiltIns? = null
         val dependencies = mutableListOf<ModuleDescriptorImpl>()
 
-        val librariesDescriptors = resolvedLibraries.map { resolvedLibrary ->
+        resolvedLibraries.forEach { resolvedLibrary ->
             val storageManager = LockBasedStorageManager("ModulesStructure")
 
             val moduleName = special("<${resolvedLibrary.uniqueName}>")
@@ -100,8 +99,6 @@ object WebFir2IrPipelinePhase : PipelinePhase<WebFrontendPipelineArtifact, WebFi
 
             val isBuiltIns = resolvedLibrary.isJsStdlib || resolvedLibrary.isWasmStdlib
             if (isBuiltIns) builtInsModule = moduleDescriptor.builtIns
-
-            moduleDescriptor
         }
 
         val firResult = AllModulesFrontendOutput(firOutputs)
@@ -115,9 +112,7 @@ object WebFir2IrPipelinePhase : PipelinePhase<WebFrontendPipelineArtifact, WebFi
             typeSystemContextProvider = ::IrTypeSystemContextImpl,
             createSpecialAnnotationsProvider = null,
             extraActualDeclarationExtractorsInitializer = { emptyList() },
-        ) { irModuleFragment ->
-            (irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = librariesDescriptors }
-        }
+        )
     }
 }
 

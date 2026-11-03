@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
@@ -21,7 +20,6 @@ import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
 import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
 import org.jetbrains.kotlin.fir.backend.Fir2IrVisibilityConverter
-import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -94,7 +92,7 @@ abstract class AbstractFir2IrResultsConverter(
         val fir2IrExtensions = createFir2IrExtensions(compilerConfiguration)
 
         val libraries: List<KotlinLibrary> = resolveLibraries(module, compilerConfiguration)
-        val [dependencies: List<ModuleDescriptor>, builtIns: KotlinBuiltIns?] = loadModuleDescriptors(
+        val builtIns: KotlinBuiltIns? = loadModuleDescriptors(
             libraries,
             testServices.targetPlatformProvider.getTargetPlatform(module),
         )
@@ -112,9 +110,7 @@ abstract class AbstractFir2IrResultsConverter(
             createTypeSystemContextProvider(),
             createSpecialAnnotationsProvider = createSpecialAnnotationsProvider(),
             extraActualDeclarationExtractorsInitializer = createExtraActualDeclarationExtractorInitializer(),
-        ).also {
-            (it.irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = dependencies }
-        }
+        )
 
         return createBackendInput(
             module,
@@ -148,7 +144,7 @@ abstract class AbstractFir2IrResultsConverter(
     private fun loadModuleDescriptors(
         libraries: List<KotlinLibrary>,
         targetPlatform: TargetPlatform,
-    ): Pair<List<ModuleDescriptor>, KotlinBuiltIns?> {
+    ): KotlinBuiltIns? {
         val stdlib: KotlinLibrary? = libraries.firstOrNull { it.isAnyPlatformStdlib }
 
         var builtIns: KotlinBuiltIns? = null
@@ -180,19 +176,16 @@ abstract class AbstractFir2IrResultsConverter(
             return moduleDescriptor
         }
 
-        val moduleDescriptors = mutableListOf<ModuleDescriptorImpl>()
         if (stdlib != null) {
-            val stdlibModuleDescriptor = loadDescriptor(stdlib)
-            moduleDescriptors += stdlibModuleDescriptor
-            builtIns = stdlibModuleDescriptor.builtIns
+            builtIns = loadDescriptor(stdlib).builtIns
         }
 
         libraries.forEach { library ->
             if (library == stdlib) return@forEach
-            moduleDescriptors += loadDescriptor(library)
+            loadDescriptor(library)
         }
 
-        return moduleDescriptors to builtIns
+        return builtIns
     }
 }
 
