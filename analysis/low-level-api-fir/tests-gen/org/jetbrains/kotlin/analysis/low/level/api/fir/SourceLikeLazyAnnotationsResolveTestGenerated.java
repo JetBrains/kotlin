@@ -49,6 +49,24 @@ public class SourceLikeLazyAnnotationsResolveTestGenerated extends AbstractSourc
     }
 
     @Test
+    @TestMetadata("allAnnotationOnParameter_getter.kt")
+    public void testAllAnnotationOnParameter_getter() {
+      run("allAnnotationOnParameter_getter.kt");
+    }
+
+    @Test
+    @TestMetadata("allAnnotationOnParameter_setter.kt")
+    public void testAllAnnotationOnParameter_setter() {
+      run("allAnnotationOnParameter_setter.kt");
+    }
+
+    @Test
+    @TestMetadata("allAnnotationOnSetterParameter.kt")
+    public void testAllAnnotationOnSetterParameter() {
+      run("allAnnotationOnSetterParameter.kt");
+    }
+
+    @Test
     public void testAllFilesPresentInAnnotations() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyAnnotations/annotations"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
     }
@@ -111,6 +129,12 @@ public class SourceLikeLazyAnnotationsResolveTestGenerated extends AbstractSourc
     @TestMetadata("deprecation_class.kt")
     public void testDeprecation_class() {
       run("deprecation_class.kt");
+    }
+
+    @Test
+    @TestMetadata("fieldAnnotationNextToPropertyAnnotation_backingField.kt")
+    public void testFieldAnnotationNextToPropertyAnnotation_backingField() {
+      run("fieldAnnotationNextToPropertyAnnotation_backingField.kt");
     }
 
     @Test
@@ -267,6 +291,24 @@ public class SourceLikeLazyAnnotationsResolveTestGenerated extends AbstractSourc
     }
 
     @Test
+    @TestMetadata("allAnnotationOnParameter_getter.kt")
+    public void testAllAnnotationOnParameter_getter() {
+      run("allAnnotationOnParameter_getter.kt");
+    }
+
+    @Test
+    @TestMetadata("allAnnotationOnParameter_setter.kt")
+    public void testAllAnnotationOnParameter_setter() {
+      run("allAnnotationOnParameter_setter.kt");
+    }
+
+    @Test
+    @TestMetadata("allAnnotationOnSetterParameter.kt")
+    public void testAllAnnotationOnSetterParameter() {
+      run("allAnnotationOnSetterParameter.kt");
+    }
+
+    @Test
     public void testAllFilesPresentInClassIds() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyAnnotations/classIds"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
     }
@@ -329,6 +371,12 @@ public class SourceLikeLazyAnnotationsResolveTestGenerated extends AbstractSourc
     @TestMetadata("deprecation_class.kt")
     public void testDeprecation_class() {
       run("deprecation_class.kt");
+    }
+
+    @Test
+    @TestMetadata("fieldAnnotationNextToPropertyAnnotation_backingField.kt")
+    public void testFieldAnnotationNextToPropertyAnnotation_backingField() {
+      run("fieldAnnotationNextToPropertyAnnotation_backingField.kt");
     }
 
     @Test
@@ -503,6 +551,48 @@ public class SourceLikeLazyAnnotationsResolveTestGenerated extends AbstractSourc
     }
 
     @Test
+    @TestMetadata("allAnnotationOnParameterFalseProperty_getter.kt")
+    public void testAllAnnotationOnParameterFalseProperty_getter() {
+      run("allAnnotationOnParameterFalseProperty_getter.kt");
+    }
+
+    @Test
+    @TestMetadata("allAnnotationOnParameterFalse_getter.kt")
+    public void testAllAnnotationOnParameterFalse_getter() {
+      run("allAnnotationOnParameterFalse_getter.kt");
+    }
+
+    @Test
+    @TestMetadata("allAnnotationOnParameter_getter.kt")
+    public void testAllAnnotationOnParameter_getter() {
+      run("allAnnotationOnParameter_getter.kt");
+    }
+
+    @Test
+    @TestMetadata("allAnnotationOnParameter_setter.kt")
+    public void testAllAnnotationOnParameter_setter() {
+      run("allAnnotationOnParameter_setter.kt");
+    }
+
+    @Test
+    @TestMetadata("allAnnotationOnSetterParameter.kt")
+    public void testAllAnnotationOnSetterParameter() {
+      run("allAnnotationOnSetterParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("allAnnotationOnSetterParameterFalse.kt")
+    public void testAllAnnotationOnSetterParameterFalse() {
+      run("allAnnotationOnSetterParameterFalse.kt");
+    }
+
+    @Test
+    @TestMetadata("allAnnotationOnSetterParameterFalseProperty.kt")
+    public void testAllAnnotationOnSetterParameterFalseProperty() {
+      run("allAnnotationOnSetterParameterFalseProperty.kt");
+    }
+
+    @Test
     public void testAllFilesPresentInContains() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyAnnotations/contains"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
     }
@@ -607,6 +697,12 @@ public class SourceLikeLazyAnnotationsResolveTestGenerated extends AbstractSourc
     @TestMetadata("falseTarget.kt")
     public void testFalseTarget() {
       run("falseTarget.kt");
+    }
+
+    @Test
+    @TestMetadata("fieldAnnotationNextToPropertyAnnotation_backingField.kt")
+    public void testFieldAnnotationNextToPropertyAnnotation_backingField() {
+      run("fieldAnnotationNextToPropertyAnnotation_backingField.kt");
     }
 
     @Test
@@ -847,6 +943,48 @@ public class SourceLikeLazyAnnotationsResolveTestGenerated extends AbstractSourc
     }
 
     @Test
+    @TestMetadata("allAnnotationOnParameterFalseProperty_getter.kt")
+    public void testAllAnnotationOnParameterFalseProperty_getter() {
+      run("allAnnotationOnParameterFalseProperty_getter.kt");
+    }
+
+    @Test
+    @TestMetadata("allAnnotationOnParameterFalse_getter.kt")
+    public void testAllAnnotationOnParameterFalse_getter() {
+      run("allAnnotationOnParameterFalse_getter.kt");
+    }
+
+    @Test
+    @TestMetadata("allAnnotationOnParameter_getter.kt")
+    public void testAllAnnotationOnParameter_getter() {
+      run("allAnnotationOnParameter_getter.kt");
+    }
+
+    @Test
+    @TestMetadata("allAnnotationOnParameter_setter.kt")
+    public void testAllAnnotationOnParameter_setter() {
+      run("allAnnotationOnParameter_setter.kt");
+    }
+
+    @Test
+    @TestMetadata("allAnnotationOnSetterParameter.kt")
+    public void testAllAnnotationOnSetterParameter() {
+      run("allAnnotationOnSetterParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("allAnnotationOnSetterParameterFalse.kt")
+    public void testAllAnnotationOnSetterParameterFalse() {
+      run("allAnnotationOnSetterParameterFalse.kt");
+    }
+
+    @Test
+    @TestMetadata("allAnnotationOnSetterParameterFalseProperty.kt")
+    public void testAllAnnotationOnSetterParameterFalseProperty() {
+      run("allAnnotationOnSetterParameterFalseProperty.kt");
+    }
+
+    @Test
     public void testAllFilesPresentInGet() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyAnnotations/get"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
     }
@@ -951,6 +1089,12 @@ public class SourceLikeLazyAnnotationsResolveTestGenerated extends AbstractSourc
     @TestMetadata("falseTarget.kt")
     public void testFalseTarget() {
       run("falseTarget.kt");
+    }
+
+    @Test
+    @TestMetadata("fieldAnnotationNextToPropertyAnnotation_backingField.kt")
+    public void testFieldAnnotationNextToPropertyAnnotation_backingField() {
+      run("fieldAnnotationNextToPropertyAnnotation_backingField.kt");
     }
 
     @Test
