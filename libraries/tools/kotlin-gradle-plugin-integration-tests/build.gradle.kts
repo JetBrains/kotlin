@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import org.jetbrains.kotlin.konan.target.HostManager
 import java.nio.file.Paths
+import CleanUpKonanDataDirTask.Companion.registerCleanUpKonanDataDirTask
 
 plugins {
     id("common-configuration")
@@ -16,6 +17,7 @@ plugins {
     id("android-sdk-provisioner")
     id("kotlin-git.gradle-build-conventions.file-leak-detector-downloader")
     id("kgp-jacoco-offline")
+    id("kgp-build-utils")
 }
 
 
@@ -237,14 +239,21 @@ val cleanUserHomeKonanDir = tasks.register("cleanUserHomeKonanDir", Delete::clas
     }
 }
 
+val konanDataDirForIntegrationTests: Directory =
+    layout.settingsDirectory.dir(".kotlin/konan-for-gradle-tests")
+
+val cleanUpKonanForGradleTests = registerCleanUpKonanDataDirTask(
+      isTeamCityBuild = project.kotlinBuildProperties.isTeamcityBuild,
+      konanDataDirForIntegrationTests = konanDataDirForIntegrationTests,
+)
+
 fun Test.applyKotlinNativeConfiguration() {
     // This directory is used as a shared konan cache across IT runs
     systemProperty(
         "konanDataDirForIntegrationTests",
-        project.rootDir
-            .resolve(".kotlin")
-            .resolve("konan-for-gradle-tests").absolutePath
+        konanDataDirForIntegrationTests.asFile.absolutePath,
     )
+    dependsOn(cleanUpKonanForGradleTests)
 
     // Install K/N into Maven Local for local test runs with enabled K/N
     if (project.kotlinBuildProperties.isKotlinNativeEnabled.get() && !project.kotlinBuildProperties.isTeamcityBuild.get()) {
