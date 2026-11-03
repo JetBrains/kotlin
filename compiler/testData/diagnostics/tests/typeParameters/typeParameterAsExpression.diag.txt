@@ -1,0 +1,49 @@
+/typeParameterAsExpression.kt:6:15: error: None of the following candidates is applicable for expression 'T':
+
+In package 'root package' of module '<main>':
+ --> typeParameterAsExpression.kt:5:17
+  |
+5 | T
+  |
+reason: Type parameter 'T' is not an expression.
+
+In package 'root package' of module '<main>':
+ --> typeParameterAsExpression.kt:4:9
+  |
+4 | T
+  |
+reason: Type parameter 'T' is not an expression.
+
+/typeParameterAsExpression.kt:12:6: error: Conflicting declarations:
+In package 'root package' of module '<main>':
+  --> typeParameterAsExpression.kt
+   |
+12 | T
+   | ...
+12 | T
+   |
+
+/typeParameterAsExpression.kt:12:9: error: Conflicting declarations:
+In package 'root package' of module '<main>':
+  --> typeParameterAsExpression.kt
+   |
+12 | T
+   | ...
+12 | T
+   |
+
+/typeParameterAsExpression.kt:13:5: error: None of the following candidates is applicable for expression 'T':
+
+In package 'root package' of module '<main>':
+  --> typeParameterAsExpression.kt:12:6
+   |
+12 | T
+   |
+reason: Type parameter 'T' is not an expression.
+
+In package 'root package' of module '<main>':
+  --> typeParameterAsExpression.kt:12:9
+   |
+12 | T
+   |
+reason: Type parameter 'T' is not an expression.

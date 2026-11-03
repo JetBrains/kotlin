@@ -2,37 +2,61 @@ compiler/testData/cli/jvm/readingConfigFromEnvironment/simple.kt:2:15: error: [N
 
 In package 'kotlin' of module '<regular dependencies of main>':
  |
- | fun plus(other: Int): Int
+ | class Int : Number, Comparable<Int>, Serializable {
+ | ...
+ |     fun plus(other: Int): Int
+ | ...
+ | }
  |
 reason: Expression '""' of type 'String' does not conform to value parameter 'other' of type 'Int'.
 
 In package 'kotlin' of module '<regular dependencies of main>':
  |
- | fun plus(other: Byte): Int
+ | class Int : Number, Comparable<Int>, Serializable {
+ | ...
+ |     fun plus(other: Byte): Int
+ | ...
+ | }
  |
 reason: Expression '""' of type 'String' does not conform to value parameter 'other' of type 'Byte'.
 
 In package 'kotlin' of module '<regular dependencies of main>':
  |
- | fun plus(other: Short): Int
+ | class Int : Number, Comparable<Int>, Serializable {
+ | ...
+ |     fun plus(other: Short): Int
+ | ...
+ | }
  |
 reason: Expression '""' of type 'String' does not conform to value parameter 'other' of type 'Short'.
 
 In package 'kotlin' of module '<regular dependencies of main>':
  |
- | fun plus(other: Long): Long
+ | class Int : Number, Comparable<Int>, Serializable {
+ | ...
+ |     fun plus(other: Long): Long
+ | ...
+ | }
  |
 reason: Expression '""' of type 'String' does not conform to value parameter 'other' of type 'Long'.
 
 In package 'kotlin' of module '<regular dependencies of main>':
  |
- | fun plus(other: Float): Float
+ | class Int : Number, Comparable<Int>, Serializable {
+ | ...
+ |     fun plus(other: Float): Float
+ | ...
+ | }
  |
 reason: Expression '""' of type 'String' does not conform to value parameter 'other' of type 'Float'.
 
 In package 'kotlin' of module '<regular dependencies of main>':
  |
- | fun plus(other: Double): Double
+ | class Int : Number, Comparable<Int>, Serializable {
+ | ...
+ |     fun plus(other: Double): Double
+ | ...
+ | }
  |
 reason: Expression '""' of type 'String' does not conform to value parameter 'other' of type 'Double'.
     val x = 1 + ""

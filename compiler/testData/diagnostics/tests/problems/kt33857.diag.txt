@@ -2,20 +2,37 @@
 In package 'root package' of module '<main>':
  --> kt33857.kt:8:5
   |
-8 | fun component1(): Int
+1 | class A : Any {
+  | ...
+8 |     fun component1(): Int
+  | ...
+  | }
   |
 
 /kt33857.kt:8:14: error: Conflicting overloads:
 In package 'root package' of module '<main>':
  --> kt33857.kt:7:5
   |
-7 | fun component1(): Int
+1 | class A : Any {
+  | ...
+7 |     fun component1(): Int
+  | ...
+  | }
   |
 
 /kt33857.kt:17:20: error: Operator call 'component1()' is ambiguous for destructuring of type 'A'. Applicable candidates:
 In package 'root package' of module '<main>':
  --> kt33857.kt
   |
-7 | fun component1(): Int
-8 | fun component1(): Int
+1 | class A : Any {
+  | ...
+7 |     fun component1(): Int
+  | ...
+  | }
+  | ...
+1 | class A : Any {
+  | ...
+8 |     fun component1(): Int
+  | ...
+  | }
   |

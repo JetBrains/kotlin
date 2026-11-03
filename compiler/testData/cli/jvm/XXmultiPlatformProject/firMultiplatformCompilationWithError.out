@@ -12,7 +12,10 @@ compiler/testData/cli/jvm/XXmultiPlatformProject/firMultiplatformCompilationWith
 In package 'root package' of module '<main>':
  --> jvm.kt:4:5
   |
-4 | fun foo(): Unit
+3 | actual interface B : Any {
+4 |     fun foo(): Unit
+  | ...
+  | }
   |
 class CommonClass : B
 ^^^^^^^^^^^^^^^^^

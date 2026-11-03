@@ -41,6 +41,8 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.render
 import org.jetbrains.kotlin.resolve.ReturnValueStatus
 import org.jetbrains.kotlin.toLinesMapping
+import org.jetbrains.kotlin.utils.addToStdlib.partitionNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.text.MessageFormat
 
 @Suppress("NO_EXPLICIT_RETURN_TYPE_IN_API_MODE_WARNING")
@@ -83,106 +85,150 @@ object FirDiagnosticRenderers {
         }
     }
 
-    @OptIn(SymbolInternals::class)
     val SYMBOL_WITH_LOCATION = Renderer { symbol: DeclarationSymbolMarker ->
         when (symbol) {
-            is FirClassLikeSymbol<*>, is FirCallableSymbol<*> -> decorateLocation(
-                logicalLocation = symbol.toLogicalLocation(),
-                physicalLocation = symbol.toPhysicalLocation(),
-                elementRender = FirRenderer(
-                    typeRenderer = ConeTypeRendererForReadability { ConeIdShortRenderer() },
-                    idRenderer = ConeIdShortRenderer(),
-                    classMemberRenderer = FirNoClassMemberRenderer(),
-                    bodyRenderer = null,
-                    propertyAccessorRenderer = null,
-                    callArgumentsRenderer = FirCallNoArgumentsRenderer(),
-                    modifierRenderer = FirPartialModifierRenderer(DiagnosticStaticPolicy),
-                    callableSignatureRenderer = FirCallableSignatureRendererForReadability(),
-                    declarationRenderer = FirDeclarationRenderer("local ", renderVerboseAccessors = true),
-                    contractRenderer = null,
-                    annotationRenderer = null,
-                    lineBreakAfterContextParameters = false,
-                    renderFieldAnnotationSeparately = false,
-                ).renderElementAsString(symbol.fir, trim = true)
-            )
-            is FirTypeParameterSymbol -> decorateLocation(
-                logicalLocation = symbol.toLogicalLocation(),
-                physicalLocation = symbol.toPhysicalLocation(),
-                elementRender = symbol.name.asString(),
-            )
+            is FirClassLikeSymbol<*>, is FirCallableSymbol<*> -> symbol.renderWithLocation(SYMBOL::render)
+            is FirTypeParameterSymbol -> symbol.renderWithLocation { symbol.name.asString() }
             else -> ""
         }
     }
 
-    private inline fun Iterable<FirBasedSymbol<*>>.renderDecoratedSymbolsAs(render: (FirBasedSymbol<*>) -> String): String {
-        val symbolsWithOrigin = map { symbol -> Triple(symbol.toLogicalLocation(), symbol.toPhysicalLocation(), symbol) }
-
-        return buildList {
-            for ([logicalLocation, symbolsWithPhysical] in symbolsWithOrigin.groupBy({ it.first }, { it.second to it.third })) {
-                val completeResults = symbolsWithPhysical.mapNotNull { [physicalLocation, symbol] -> physicalLocation?.to(symbol) }
-                val incompleteResults = symbolsWithPhysical.filter { it.first == null }.map { render(it.second) }
-
-                for ([_, symbolsInFile] in completeResults.groupBy({ it.first.filePath })) {
-                    add(decorateCompleteLocation(logicalLocation, symbolsInFile.sortedBy { it.first.line }.map { it.first to render(it.second) }))
-                }
-
-                if (incompleteResults.isNotEmpty()) {
-                    add(decorateIncompleteLocation(logicalLocation, incompleteResults))
-                }
-            }
-        }.joinToString("\n")
+    private inline fun FirBasedSymbol<*>.renderWithLocation(render: (FirBasedSymbol<*>) -> String): String {
+        val logicalLocation = toLogicalLocation()
+        return when (val physicalLocation = toPhysicalLocation()) {
+            null -> decorateIncompleteLocation(logicalLocation, listOf(this), render)
+            else -> decorateCompleteLocation(logicalLocation, listOf(physicalLocation to this), render)
+        }
     }
 
-    private fun decorateLocation(logicalLocation: LogicalLocation, physicalLocation: PhysicalLocation?, elementRender: String): String =
-        when (physicalLocation) {
-            null -> decorateIncompleteLocation(logicalLocation, listOf(elementRender))
-            else -> decorateCompleteLocation(logicalLocation, listOf(physicalLocation to elementRender))
+    private inline fun Iterable<FirBasedSymbol<*>>.renderWithLocationInGroups(render: (FirBasedSymbol<*>) -> String): String =
+        map { symbol -> symbol.toLogicalLocation() to symbol }
+            .groupBy({ it.first }, { it.second })
+            .flatMap { [logicalLocation, symbols] ->
+                val [completeResults, incompleteResults] = symbols.partitionNotNull { it.toPhysicalLocation()?.to(it) }
+
+                val blocksForComplete = completeResults.groupBy({ it.first.filePath }).map { [_, symbolsInFile] ->
+                    decorateCompleteLocation(logicalLocation, symbolsInFile.sortedBy { it.first.line }, render)
+                }
+                val blockForIncomplete = runIf(incompleteResults.isNotEmpty()) {
+                    decorateIncompleteLocation(logicalLocation, incompleteResults, render)
+                }
+
+                blocksForComplete + listOfNotNull(blockForIncomplete)
+            }
+            .joinToString("\n")
+
+    private data class RenderedLineWithNumber(
+        val number: Int?,
+        val renderedLine: String,
+    )
+
+    private inline fun FirBasedSymbol<*>.renderToLinesWithNumber(render: (FirBasedSymbol<*>) -> String): List<RenderedLineWithNumber> =
+        render(this).lines().mapIndexed { index, line ->
+            RenderedLineWithNumber(number = if (index == 0) toPhysicalLocation()?.line else null, renderedLine = line)
         }
 
-    private fun decorateCompleteLocation(
-        logicalLocation: LogicalLocation,
-        elementRenders: Collection<Pair<PhysicalLocation, String>>,
-    ): String {
-        val longestNumberString = elementRenders.map { it.first.line.toString() }.maxByOrNull { it.length } ?: ""
-        val indentString = " ".repeat(longestNumberString.length)
-        val lineAndColumnSuffix = elementRenders.singleOrNull()?.first?.let { (line, column) -> ":$line:$column" } ?: ""
+    private fun List<RenderedLineWithNumber>.wrapIntoContainersRenderOf(symbol: FirBasedSymbol<*>): List<RenderedLineWithNumber> {
+        val containers = generateSequence(symbol.getContainingClassSymbol()) { it.getContainingClassSymbol() }.toList().reversed()
 
-        val filePath = elementRenders.firstOrNull()?.first?.filePath ?: return ""
-        val fileLine = "$indentString--> $filePath$lineAndColumnSuffix"
+        return buildList {
+            this += containers.flatMapIndexed { index, it ->
+                val lines = it.renderToLinesWithNumber(SYMBOL::render)
+                val indentString = "    ".repeat(index)
 
-        val renderedContents = buildList {
-            var previousElementLine = elementRenders.firstOrNull()?.first?.line?.let { it - 1 } ?: -1
-
-            for ([physicalLocation, elementRender] in elementRenders) {
-                if (previousElementLine < physicalLocation.line - 1) {
-                    add("$indentString | ...")
-                }
-                val numberString = physicalLocation.line.toString().padStart(indentString.length, ' ')
-                add("$numberString | $elementRender")
-                previousElementLine = physicalLocation.line
+                lines.dropLast(1).map { line -> line.copy(renderedLine = indentString + line.renderedLine) } +
+                        lines.last().copy(renderedLine = indentString + lines.last().renderedLine + " {")
             }
-        }.joinToString("\n")
-
-        return renderLocationDecoration(logicalLocation, fileLine, indentString, renderedContents)
+            this += this@wrapIntoContainersRenderOf.map { line -> line.copy(renderedLine = "    ".repeat(containers.size) + line.renderedLine) }
+            this += List(containers.reversed().size) { indent ->
+                RenderedLineWithNumber(number = null, "    ".repeat(indent) + "}")
+            }
+        }
     }
 
-    private fun decorateIncompleteLocation(logicalLocation: LogicalLocation, elementRenders: Collection<String>): String =
-        renderLocationDecoration(logicalLocation, fileLine = null, indentString = "", elementRenders.joinToString { " | $it" })
+    private inline fun decorateCompleteLocation(
+        logicalLocation: LogicalLocation,
+        symbols: Collection<Pair<PhysicalLocation, FirBasedSymbol<*>>>,
+        render: (FirBasedSymbol<*>) -> String,
+    ): String {
+        val renderedLines = symbols.flatMap { [_, symbol] ->
+            symbol.renderToLinesWithNumber(render).wrapIntoContainersRenderOf(symbol)
+        }
+
+        val longestNumberString = renderedLines.mapNotNull { it.number?.toString() }.maxByOrNull { it.length } ?: ""
+        val indentString = " ".repeat(longestNumberString.length)
+        val lineAndColumnSuffix = symbols.singleOrNull()?.first?.let { (line, column) -> ":$line:$column" } ?: ""
+
+        val filePath = symbols.firstOrNull()?.first?.filePath ?: return ""
+        val fileLine = "$indentString--> $filePath$lineAndColumnSuffix"
+
+        return renderLocationDecorationContents(
+            logicalLocation, fileLine,
+            renderedLines = renderedLines,
+        )
+    }
+
+    private inline fun decorateIncompleteLocation(
+        logicalLocation: LogicalLocation,
+        symbols: Collection<FirBasedSymbol<*>>,
+        render: (FirBasedSymbol<*>) -> String,
+    ): String = renderLocationDecorationContents(
+        logicalLocation, fileLine = null,
+        renderedLines = symbols.flatMap { symbol ->
+            symbol.renderToLinesWithNumber(render).wrapIntoContainersRenderOf(symbol)
+        }
+    )
+
+    private fun renderLocationDecorationContents(
+        logicalLocation: LogicalLocation,
+        fileLine: String?,
+        renderedLines: List<RenderedLineWithNumber>,
+    ): String {
+        val longestNumberString = renderedLines.mapNotNull { it.number?.toString() }.maxByOrNull { it.length } ?: ""
+        val indentString = " ".repeat(longestNumberString.length)
+
+        val renderedLinesWithSeparators = renderedLines.interleaveWith { previous, next ->
+            when {
+                previous.number != null && previous.number + 1 == next.number -> null
+                else -> RenderedLineWithNumber(number = null, renderedLine = "...")
+            }
+        }
+        val paddedRenderedLines = renderedLinesWithSeparators.joinToString("\n") {
+            val numberString = it.number?.toString()?.padStart(indentString.length, ' ') ?: indentString
+            "$numberString | ${it.renderedLine}"
+        }
+
+        return renderLocationDecoration(logicalLocation, fileLine, indentString, paddedRenderedLines)
+    }
+
+    private inline fun <T> List<T>.interleaveWith(produceInterleave: (T, T) -> T?): Collection<T> {
+        if (size <= 1) return this
+
+        return buildList {
+            add(this@interleaveWith.first())
+
+            for (it in 1 until this@interleaveWith.size) {
+                produceInterleave(this@interleaveWith[it - 1], this@interleaveWith[it])?.let(::add)
+                add(this@interleaveWith[it])
+            }
+        }
+    }
 
     private fun renderLocationDecoration(
         logicalLocation: LogicalLocation,
         fileLine: String?,
         indentString: String,
-        renderedContents: String,
+        content: String,
     ): String = listOfNotNull(
         "In package '${logicalLocation.packageName}' of module '${logicalLocation.moduleName}':",
         fileLine,
         "$indentString |",
-        renderedContents,
+        content,
         "$indentString |",
     ).joinToString("\n")
 
     private fun FirBasedSymbol<*>.toLogicalLocation(): LogicalLocation {
+        if (this is FirTypeParameterSymbol) return containingDeclarationSymbol.toLogicalLocation()
         val packageName = if (packageFqName().isRoot) "root package" else packageFqName().render()
         val moduleName = moduleData.name
         return LogicalLocation(packageName, moduleName)
@@ -235,7 +281,7 @@ object FirDiagnosticRenderers {
      * Adds a line break before the list, then prints one symbol per line.
      */
     val SYMBOLS_ON_NEXT_LINES = Renderer { symbols: Collection<FirBasedSymbol<*>> ->
-        "\n" + symbols.renderDecoratedSymbolsAs(SYMBOL::render)
+        "\n" + symbols.renderWithLocationInGroups(SYMBOL::render)
     }
 
     /**

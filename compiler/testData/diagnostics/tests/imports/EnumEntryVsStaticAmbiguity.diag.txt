@@ -1,10 +1,17 @@
 /test.kt:27:9: error: Overload resolution ambiguity between candidates:
 In package 'first' of module '<main>':
  |
- | static field SOME: String
+ | interface KtNodeTypes : Any {
+ | ...
+ |     static field SOME: String
+ | ...
+ | }
  |
 In package 'second' of module '<main>':
   --> SomeEnum.kt:17:5
    |
-17 | enum entry SOME: SomeEnum
+16 | enum class SomeEnum : Enum<SomeEnum> {
+17 |     enum entry SOME: SomeEnum
+   | ...
+   | }
    |

@@ -2,9 +2,15 @@ compiler/testData/cli/jvm/twoDiagnosticsOnSingleElement.kt:11:1: error: class 'C
 In package 'test' of module '<main>':
  --> twoDiagnosticsOnSingleElement.kt
   |
-4 | fun <T> foo(): Unit
+3 | interface I1 : Any {
+4 |     fun <T> foo(): Unit
   | ...
-8 | fun foo(): Unit
+  | }
+  | ...
+7 | interface I2 : Any {
+8 |     fun foo(): Unit
+  | ...
+  | }
   |
 class C : I1, I2
 ^^^^^^^
