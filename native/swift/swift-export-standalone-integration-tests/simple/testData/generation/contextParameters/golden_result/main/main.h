@@ -7,7 +7,7 @@ _Bool main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift
 
 _Bool main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_Context_Swift_String__(void * pointerToClosure, void * ctx0, NSString * _2);
 
-void * Foo_bar__TypesOfArgumentsC1__main_Context_anyU20KotlinRuntimeSupport__KotlinBridgeable__(void * self, void * ctx, void * arg);
+void * Foo_bar__TypesOfArgumentsC1__main_Context_Any__(void * self, void * ctx, void * arg);
 
 void * Foo_baz_get__TypesOfArgumentsC1__main_Context__(void * self, void * ctx);
 
@@ -43,7 +43,7 @@ _Bool __root___Context_init_initialize__TypesOfArguments__Swift_UnsafeMutableRaw
 
 void * __root___Foo_get();
 
-void * __root___bar__TypesOfArgumentsC1__main_Context_anyU20KotlinRuntimeSupport__KotlinBridgeable__(void * ctx, void * arg);
+void * __root___bar__TypesOfArgumentsC1__main_Context_Any__(void * ctx, void * arg);
 
 void * __root___baz_get__TypesOfArgumentsC1__main_Context__(void * ctx);
 

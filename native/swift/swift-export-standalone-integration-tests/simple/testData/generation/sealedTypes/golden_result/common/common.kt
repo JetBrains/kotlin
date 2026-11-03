@@ -266,7 +266,7 @@ public fun org_kotlin_foo_QueryResult_AsyncValue_init_allocate(): kotlin.native.
 @ExportedBridge("org_kotlin_foo_QueryResult_AsyncValue_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
 public fun org_kotlin_foo_QueryResult_AsyncValue_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(__kt: kotlin.native.internal.NativePtr, value: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val __value = if (value == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(value) as kotlin.Any
+    val __value = if (value == kotlin.native.internal.NativePtr.NULL) null else (kotlin.native.internal.ref.dereferenceExternalRCRef(value) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(value); kotlin.native.internal.ref.disposeExternalRCRef(value) }
     kotlin.native.internal.initInstance(____kt, org.kotlin.foo.QueryResult.AsyncValue<kotlin.Any?>(__value))
     return true
 }
@@ -287,7 +287,7 @@ public fun org_kotlin_foo_QueryResult_Value_init_allocate(): kotlin.native.inter
 @ExportedBridge("org_kotlin_foo_QueryResult_Value_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
 public fun org_kotlin_foo_QueryResult_Value_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(__kt: kotlin.native.internal.NativePtr, value: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val __value = if (value == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(value) as kotlin.Any
+    val __value = if (value == kotlin.native.internal.NativePtr.NULL) null else (kotlin.native.internal.ref.dereferenceExternalRCRef(value) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(value); kotlin.native.internal.ref.disposeExternalRCRef(value) }
     kotlin.native.internal.initInstance(____kt, org.kotlin.foo.QueryResult.Value<kotlin.Any?>(__value))
     return true
 }

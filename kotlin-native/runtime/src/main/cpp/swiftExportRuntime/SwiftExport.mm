@@ -15,6 +15,7 @@
 #include "std_support/Atomic.hpp"
 #include "Types.h"
 #include "ObjCExport.h"
+#include "ObjCInterop.h"
 
 using namespace kotlin;
 
@@ -180,6 +181,27 @@ Class swiftExportRuntime::protocolWrapperFor(const TypeInfo* typeInfo) noexcept 
 extern "C" const TypeInfo* Kotlin_ObjCExport_getAssociatedTypeInfo(Class clazz);
 extern "C" const TypeInfo* Kotlin_SwiftExport_getBoundKotlinTypeInfoForClass(Class clazz);
 extern "C" const TypeInfo* Kotlin_SwiftExport_getOrCreateTypeInfoForSwiftSubclass(Class swiftSubclass, Class boundClass, const TypeInfo* kotlinSuperTypeInfo);
+
+RUNTIME_EXPORT RUNTIME_WEAK extern "C" void* Kotlin_SwiftExport_retainedForeignObjCObject(void* externalRCRef) {
+    RuntimeAssert(compiler::swiftExport(), "Only available in Swift Export");
+    kotlin::AssertThreadState(kotlin::ThreadState::kNative); // Called from Swift.
+
+    id associated = nullptr;
+    {
+        kotlin::ThreadStateGuard guard(kotlin::ThreadState::kRunnable);
+        ObjHeader* obj = kotlin::mm::dereferenceExternalRCRef(static_cast<kotlin::mm::RawExternalRCRef*>(externalRCRef));
+        if (obj == nullptr || obj->permanent()) return nullptr;
+
+        associated = GetAssociatedObject(obj);
+        if (associated == nullptr) return nullptr;
+
+        if (IsKotlinObjCClass(object_getClass(associated))) return nullptr;
+    }
+
+    if ([associated isKindOfClass: anyWrapperClass()]) return nullptr;
+
+    return Kotlin_objc_retain_inNative(associated);
+}
 
 /// Allocates an uninitialized Kotlin instance for a Swift subclass of an exported Kotlin class.
 RUNTIME_EXPORT RUNTIME_WEAK extern "C" void* Kotlin_SwiftExport_allocInstanceForSwiftSubclass(Class swiftSubclass) {

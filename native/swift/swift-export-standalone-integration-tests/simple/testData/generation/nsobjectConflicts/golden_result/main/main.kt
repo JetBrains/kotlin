@@ -6,10 +6,10 @@
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
 
-@ExportedBridge("ClassB_hash__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__")
-public fun ClassB_hash__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(self: kotlin.native.internal.NativePtr, intoOk: kotlin.native.internal.NativePtr): Boolean {
+@ExportedBridge("ClassB_hash__TypesOfArguments__Any__")
+public fun ClassB_hash__TypesOfArguments__Any__(self: kotlin.native.internal.NativePtr, intoOk: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as ClassB
-    val __intoOk = kotlin.native.internal.ref.dereferenceExternalRCRef(intoOk) as kotlin.Any
+    val __intoOk = (kotlin.native.internal.ref.dereferenceExternalRCRef(intoOk) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(intoOk); kotlin.native.internal.ref.disposeExternalRCRef(intoOk) }
     __self.hash(__intoOk)
     return true
 }
@@ -47,9 +47,9 @@ public fun __root___ClassB_init_initialize__TypesOfArguments__Swift_UnsafeMutabl
     return true
 }
 
-@ExportedBridge("__root___forwardingTarget__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__")
-public fun __root___forwardingTarget__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(`for`: kotlin.native.internal.NativePtr): Boolean {
-    val __for = kotlin.native.internal.ref.dereferenceExternalRCRef(`for`) as kotlin.Any
+@ExportedBridge("__root___forwardingTarget__TypesOfArguments__Any__")
+public fun __root___forwardingTarget__TypesOfArguments__Any__(`for`: kotlin.native.internal.NativePtr): Boolean {
+    val __for = (kotlin.native.internal.ref.dereferenceExternalRCRef(`for`) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(`for`); kotlin.native.internal.ref.disposeExternalRCRef(`for`) }
     forwardingTarget(__for)
     return true
 }

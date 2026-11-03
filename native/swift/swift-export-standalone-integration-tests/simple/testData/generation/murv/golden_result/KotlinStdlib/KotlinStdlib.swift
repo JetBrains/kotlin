@@ -13,7 +13,7 @@ extension ExportedKotlinPackages.kotlin.collections.Collection where Self : Expo
     public func contains(
         element: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> Swift.Bool {
-        return kotlin_collections_Collection_contains__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), element.map { it in it.__externalRCRef() } ?? nil)
+        return kotlin_collections_Collection_contains__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), element.map { it in KotlinRuntime.KotlinBase.__externalRCRefForAny(it) } ?? nil)
     }
     public func containsAll(
         elements: any ExportedKotlinPackages.kotlin.collections.Collection
@@ -69,7 +69,7 @@ extension ExportedKotlinPackages.kotlin.collections.List where Self : ExportedKo
     public func contains(
         element: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> Swift.Bool {
-        return kotlin_collections_List_contains__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), element.map { it in it.__externalRCRef() } ?? nil)
+        return kotlin_collections_List_contains__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), element.map { it in KotlinRuntime.KotlinBase.__externalRCRefForAny(it) } ?? nil)
     }
     public func containsAll(
         elements: any ExportedKotlinPackages.kotlin.collections.Collection
@@ -79,7 +79,7 @@ extension ExportedKotlinPackages.kotlin.collections.List where Self : ExportedKo
     public func indexOf(
         element: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> Swift.Int32 {
-        return kotlin_collections_List_indexOf__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), element.map { it in it.__externalRCRef() } ?? nil)
+        return kotlin_collections_List_indexOf__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), element.map { it in KotlinRuntime.KotlinBase.__externalRCRefForAny(it) } ?? nil)
     }
     public func isEmpty() -> Swift.Bool {
         return kotlin_collections_List_isEmpty(self.__externalRCRef())
@@ -90,7 +90,7 @@ extension ExportedKotlinPackages.kotlin.collections.List where Self : ExportedKo
     public func lastIndexOf(
         element: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> Swift.Int32 {
-        return kotlin_collections_List_lastIndexOf__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), element.map { it in it.__externalRCRef() } ?? nil)
+        return kotlin_collections_List_lastIndexOf__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), element.map { it in KotlinRuntime.KotlinBase.__externalRCRefForAny(it) } ?? nil)
     }
     public func listIterator() -> any ExportedKotlinPackages.kotlin.collections.ListIterator {
         return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_List_listIterator(self.__externalRCRef()), conformsTo: ExportedKotlinPackages.kotlin.collections.ListIterator.Type.self) as! any ExportedKotlinPackages.kotlin.collections.ListIterator
@@ -151,7 +151,7 @@ extension ExportedKotlinPackages.kotlin.collections.MutableCollection where Self
     public func add(
         element: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> Swift.Bool {
-        return kotlin_collections_MutableCollection_add__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), element.map { it in it.__externalRCRef() } ?? nil)
+        return kotlin_collections_MutableCollection_add__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), element.map { it in KotlinRuntime.KotlinBase.__externalRCRefForAny(it) } ?? nil)
     }
     @discardableResult
     public func addAll(
@@ -169,7 +169,7 @@ extension ExportedKotlinPackages.kotlin.collections.MutableCollection where Self
     public func remove(
         element: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> Swift.Bool {
-        return kotlin_collections_MutableCollection_remove__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), element.map { it in it.__externalRCRef() } ?? nil)
+        return kotlin_collections_MutableCollection_remove__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), element.map { it in KotlinRuntime.KotlinBase.__externalRCRefForAny(it) } ?? nil)
     }
     @discardableResult
     public func removeAll(
@@ -209,19 +209,19 @@ extension ExportedKotlinPackages.kotlin.collections.MutableList where Self : Exp
         index: Swift.Int32,
         element: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        return { switch kotlin_collections_MutableList_set__TypesOfArguments__Swift_Int32_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), index, element.map { it in it.__externalRCRef() } ?? nil) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
+        return { switch kotlin_collections_MutableList_set__TypesOfArguments__Swift_Int32_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), index, element.map { it in KotlinRuntime.KotlinBase.__externalRCRefForAny(it) } ?? nil) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
     }
     @discardableResult
     public func add(
         element: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> Swift.Bool {
-        return kotlin_collections_MutableList_add__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), element.map { it in it.__externalRCRef() } ?? nil)
+        return kotlin_collections_MutableList_add__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), element.map { it in KotlinRuntime.KotlinBase.__externalRCRefForAny(it) } ?? nil)
     }
     public func add(
         index: Swift.Int32,
         element: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> Swift.Void {
-        return { kotlin_collections_MutableList_add__TypesOfArguments__Swift_Int32_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), index, element.map { it in it.__externalRCRef() } ?? nil); return () }()
+        return { kotlin_collections_MutableList_add__TypesOfArguments__Swift_Int32_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), index, element.map { it in KotlinRuntime.KotlinBase.__externalRCRefForAny(it) } ?? nil); return () }()
     }
     @discardableResult
     public func addAll(
@@ -251,7 +251,7 @@ extension ExportedKotlinPackages.kotlin.collections.MutableList where Self : Exp
     public func remove(
         element: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> Swift.Bool {
-        return kotlin_collections_MutableList_remove__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), element.map { it in it.__externalRCRef() } ?? nil)
+        return kotlin_collections_MutableList_remove__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), element.map { it in KotlinRuntime.KotlinBase.__externalRCRefForAny(it) } ?? nil)
     }
     @discardableResult
     public func removeAll(
@@ -285,7 +285,7 @@ extension ExportedKotlinPackages.kotlin.collections.MutableListIterator where Se
     public func add(
         element: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> Swift.Void {
-        return { kotlin_collections_MutableListIterator_add__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), element.map { it in it.__externalRCRef() } ?? nil); return () }()
+        return { kotlin_collections_MutableListIterator_add__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), element.map { it in KotlinRuntime.KotlinBase.__externalRCRefForAny(it) } ?? nil); return () }()
     }
     public func hasNext() -> Swift.Bool {
         return kotlin_collections_MutableListIterator_hasNext(self.__externalRCRef())
@@ -299,7 +299,7 @@ extension ExportedKotlinPackages.kotlin.collections.MutableListIterator where Se
     public func set(
         element: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> Swift.Void {
-        return { kotlin_collections_MutableListIterator_set__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), element.map { it in it.__externalRCRef() } ?? nil); return () }()
+        return { kotlin_collections_MutableListIterator_set__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), element.map { it in KotlinRuntime.KotlinBase.__externalRCRefForAny(it) } ?? nil); return () }()
     }
 }
 extension ExportedKotlinPackages.kotlin.collections.MutableListIterator {
@@ -617,7 +617,7 @@ package func kotlin_collections_Iterator_hasNext__reverse_swift(_ `self`: Swift.
 package func kotlin_collections_Iterator_next__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer? {
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: ExportedKotlinPackages.kotlin.collections.Iterator.Type.self) as! any ExportedKotlinPackages.kotlin.collections.Iterator
     let _result: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = _self.next()
-    return _result.map { it in it.__externalRCRef() } ?? nil
+    return _result.map { it in KotlinRuntime.KotlinBase.__externalRCRefForAny(it) } ?? nil
 }
 
 @_cdecl("kotlin_collections_ListIterator_hasNext__reverse_swift")
@@ -645,7 +645,7 @@ package func kotlin_collections_ListIterator_nextIndex__reverse_swift(_ `self`: 
 package func kotlin_collections_ListIterator_next__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer? {
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: ExportedKotlinPackages.kotlin.collections.ListIterator.Type.self) as! any ExportedKotlinPackages.kotlin.collections.ListIterator
     let _result: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = _self.next()
-    return _result.map { it in it.__externalRCRef() } ?? nil
+    return _result.map { it in KotlinRuntime.KotlinBase.__externalRCRefForAny(it) } ?? nil
 }
 
 @_cdecl("kotlin_collections_ListIterator_previousIndex__reverse_swift")
@@ -659,7 +659,7 @@ package func kotlin_collections_ListIterator_previousIndex__reverse_swift(_ `sel
 package func kotlin_collections_ListIterator_previous__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer? {
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: ExportedKotlinPackages.kotlin.collections.ListIterator.Type.self) as! any ExportedKotlinPackages.kotlin.collections.ListIterator
     let _result: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = _self.previous()
-    return _result.map { it in it.__externalRCRef() } ?? nil
+    return _result.map { it in KotlinRuntime.KotlinBase.__externalRCRefForAny(it) } ?? nil
 }
 
 @_cdecl("kotlin_collections_List_containsAll__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_collections_Collection____reverse_swift")
@@ -680,7 +680,7 @@ package func kotlin_collections_List_contains__TypesOfArguments__Swift_Optional_
 package func kotlin_collections_List_get__TypesOfArguments__Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ index: Swift.Int32) -> Swift.UnsafeMutableRawPointer? {
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: ExportedKotlinPackages.kotlin.collections.List.Type.self) as! any ExportedKotlinPackages.kotlin.collections.List
     let _result: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = _self._get(index: index)
-    return _result.map { it in it.__externalRCRef() } ?? nil
+    return _result.map { it in KotlinRuntime.KotlinBase.__externalRCRefForAny(it) } ?? nil
 }
 
 @_cdecl("kotlin_collections_List_indexOf__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
@@ -820,7 +820,7 @@ package func kotlin_collections_MutableListIterator_hasNext__reverse_swift(_ `se
 package func kotlin_collections_MutableListIterator_next__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer? {
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: ExportedKotlinPackages.kotlin.collections.MutableListIterator.Type.self) as! any ExportedKotlinPackages.kotlin.collections.MutableListIterator
     let _result: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = _self.next()
-    return _result.map { it in it.__externalRCRef() } ?? nil
+    return _result.map { it in KotlinRuntime.KotlinBase.__externalRCRefForAny(it) } ?? nil
 }
 
 @_cdecl("kotlin_collections_MutableListIterator_remove__reverse_swift")
@@ -897,7 +897,7 @@ package func kotlin_collections_MutableList_removeAll__TypesOfArguments__anyU20E
 package func kotlin_collections_MutableList_removeAt__TypesOfArguments__Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ index: Swift.Int32) -> Swift.UnsafeMutableRawPointer? {
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: ExportedKotlinPackages.kotlin.collections.MutableList.Type.self) as! any ExportedKotlinPackages.kotlin.collections.MutableList
     let _result: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = _self.removeAt(index: index)
-    return _result.map { it in it.__externalRCRef() } ?? nil
+    return _result.map { it in KotlinRuntime.KotlinBase.__externalRCRefForAny(it) } ?? nil
 }
 
 @_cdecl("kotlin_collections_MutableList_remove__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
@@ -918,7 +918,7 @@ package func kotlin_collections_MutableList_retainAll__TypesOfArguments__anyU20E
 package func kotlin_collections_MutableList_set__TypesOfArguments__Swift_Int32_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ index: Swift.Int32, _ element: Swift.UnsafeMutableRawPointer?) -> Swift.UnsafeMutableRawPointer? {
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: ExportedKotlinPackages.kotlin.collections.MutableList.Type.self) as! any ExportedKotlinPackages.kotlin.collections.MutableList
     let _result: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = _self._set(index: index, element: { switch element { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }())
-    return _result.map { it in it.__externalRCRef() } ?? nil
+    return _result.map { it in KotlinRuntime.KotlinBase.__externalRCRefForAny(it) } ?? nil
 }
 
 @_cdecl("kotlin_collections_MutableList_subList__TypesOfArguments__Swift_Int32_Swift_Int32____reverse_swift")

@@ -35,12 +35,12 @@ public final class ClassB: KotlinRuntime.KotlinBase {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
     public func hash(
-        intoOk: any KotlinRuntimeSupport._KotlinBridgeable
+        intoOk: Any
     ) -> Swift.Void {
-        return { ClassB_hash__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(self.__externalRCRef(), intoOk.__externalRCRef()); return () }()
+        return { ClassB_hash__TypesOfArguments__Any__(self.__externalRCRef(), KotlinRuntime.KotlinBase.__externalRCRefForAny(intoOk)); return () }()
     }
-    public func mutableCopyOk() -> any KotlinRuntimeSupport._KotlinBridgeable {
-        return KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: ClassB_mutableCopy(self.__externalRCRef()))
+    public func mutableCopyOk() -> Any {
+        return KotlinRuntime.KotlinBase.__createBridgeableAny(externalRCRef: ClassB_mutableCopy(self.__externalRCRef()))
     }
 }
 public var hash: Swift.Int32 {
@@ -49,9 +49,9 @@ public var hash: Swift.Int32 {
     }
 }
 public func forwardingTarget(
-    `for`: any KotlinRuntimeSupport._KotlinBridgeable
+    `for`: Any
 ) -> Swift.Void {
-    return { __root___forwardingTarget__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(`for`.__externalRCRef()); return () }()
+    return { __root___forwardingTarget__TypesOfArguments__Any__(KotlinRuntime.KotlinBase.__externalRCRefForAny(`for`)); return () }()
 }
 @_documentation(visibility: internal)
 extension main.Semaphore where Self : main.__Semaphore {

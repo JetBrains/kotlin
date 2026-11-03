@@ -97,16 +97,16 @@ public fun __root___foo__TypesOfArguments__Swift_Optional_main_Bar___(a: kotlin.
     return true
 }
 
-@ExportedBridge("__root___foo_any__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__")
-public fun __root___foo_any__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(a: kotlin.native.internal.NativePtr): Boolean {
-    val __a = kotlin.native.internal.ref.dereferenceExternalRCRef(a) as kotlin.Any
+@ExportedBridge("__root___foo_any__TypesOfArguments__Any__")
+public fun __root___foo_any__TypesOfArguments__Any__(a: kotlin.native.internal.NativePtr): Boolean {
+    val __a = (kotlin.native.internal.ref.dereferenceExternalRCRef(a) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(a); kotlin.native.internal.ref.disposeExternalRCRef(a) }
     foo_any(__a)
     return true
 }
 
-@ExportedBridge("__root___foo_any__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
-public fun __root___foo_any__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(a: kotlin.native.internal.NativePtr): Boolean {
-    val __a = if (a == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(a) as kotlin.Any
+@ExportedBridge("__root___foo_any__TypesOfArguments__Swift_Optional_Any___")
+public fun __root___foo_any__TypesOfArguments__Swift_Optional_Any___(a: kotlin.native.internal.NativePtr): Boolean {
+    val __a = if (a == kotlin.native.internal.NativePtr.NULL) null else (kotlin.native.internal.ref.dereferenceExternalRCRef(a) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(a); kotlin.native.internal.ref.disposeExternalRCRef(a) }
     foo_any(__a)
     return true
 }

@@ -33,9 +33,9 @@ _Bool Foo_d_get(void * self);
 
 _Bool Foo_d_set__TypesOfArguments__Swift_Bool__(void * self, _Bool newValue);
 
-int32_t Foo_e_get__TypesOfArgumentsC1__anyU20KotlinRuntimeSupport__KotlinBridgeable__(void * self, void * c);
+int32_t Foo_e_get__TypesOfArgumentsC1__Any__(void * self, void * c);
 
-_Bool Foo_e_set__TypesOfArgumentsC1__anyU20KotlinRuntimeSupport__KotlinBridgeable_Swift_Int32__(void * self, void * c, int32_t _);
+_Bool Foo_e_set__TypesOfArgumentsC1__Any_Swift_Int32__(void * self, void * c, int32_t _);
 
 NSString * Foo_f_get(void * self);
 
@@ -51,7 +51,7 @@ _Bool __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPoin
 
 _Bool __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
-_Bool __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinRuntimeSupport__KotlinBridgeable__(void * __kt, void * arg);
+_Bool __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Any__(void * __kt, void * arg);
 
 _Bool __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_String__(void * __kt, NSString * a);
 

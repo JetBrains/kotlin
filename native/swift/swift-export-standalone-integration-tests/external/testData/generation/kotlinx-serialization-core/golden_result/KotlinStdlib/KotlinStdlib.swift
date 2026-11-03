@@ -43,7 +43,7 @@ extension ExportedKotlinPackages.kotlin {
             index: Swift.Int32,
             value: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Void {
-            return { kotlin_Array_set__TypesOfArguments__Swift_Int32_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), index, value.map { it in it.__externalRCRef() } ?? nil); return () }()
+            return { kotlin_Array_set__TypesOfArguments__Swift_Int32_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), index, value.map { it in KotlinRuntime.KotlinBase.__externalRCRefForAny(it) } ?? nil); return () }()
         }
         public func iterator() -> any ExportedKotlinPackages.kotlin.collections.Iterator {
             return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_Array_iterator(self.__externalRCRef()), conformsTo: ExportedKotlinPackages.kotlin.collections.Iterator.Type.self) as! any ExportedKotlinPackages.kotlin.collections.Iterator
@@ -4289,13 +4289,13 @@ extension ExportedKotlinPackages.kotlin {
             }
         }
         public func _plus(
-            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
+            other: Any?
         ) -> Swift.String {
-            return kotlin_String_plus__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
+            return kotlin_String_plus__TypesOfArguments__Swift_Optional_Any___(self.__externalRCRef(), other.map { it in KotlinRuntime.KotlinBase.__externalRCRefForAny(it) } ?? nil)
         }
         public static func +(
             this: ExportedKotlinPackages.kotlin.String,
-            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
+            other: Any?
         ) -> Swift.String {
             this._plus(other: other)
         }
@@ -7224,7 +7224,7 @@ extension ExportedKotlinPackages.kotlin.collections.Collection where Self : Expo
     public func contains(
         element: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> Swift.Bool {
-        return kotlin_collections_Collection_contains__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), element.map { it in it.__externalRCRef() } ?? nil)
+        return kotlin_collections_Collection_contains__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), element.map { it in KotlinRuntime.KotlinBase.__externalRCRefForAny(it) } ?? nil)
     }
     public static func ~=(
         this: Self,
@@ -7692,25 +7692,25 @@ extension ExportedKotlinPackages.kotlin.collections.Iterator {
 @_cdecl("KotlinStdlib_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int64_Swift_Int32_Swift_Int32_Swift_Int32_Swift_Int32__")
 package func KotlinStdlib_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int64_Swift_Int32_Swift_Int32_Swift_Int32_Swift_Int32__(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.Int64, _ _2: Swift.Int32, _ _3: Swift.Int32, _ _4: Swift.Int32, _ _5: Swift.Int32) -> Swift.UnsafeMutableRawPointer? {
     let _result: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (Swift.Int64, Swift.Int32, Swift.Int32, Swift.Int32, Swift.Int32) -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>)(_1, _2, _3, _4, _5)
-    return _result.map { it in it.__externalRCRef() } ?? nil
+    return _result.map { it in KotlinRuntime.KotlinBase.__externalRCRefForAny(it) } ?? nil
 }
 
 @_cdecl("KotlinStdlib_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int64_Swift_Int32_Swift_Int32_Swift_Int32__")
 package func KotlinStdlib_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int64_Swift_Int32_Swift_Int32_Swift_Int32__(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.Int64, _ _2: Swift.Int32, _ _3: Swift.Int32, _ _4: Swift.Int32) -> Swift.UnsafeMutableRawPointer? {
     let _result: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (Swift.Int64, Swift.Int32, Swift.Int32, Swift.Int32) -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>)(_1, _2, _3, _4)
-    return _result.map { it in it.__externalRCRef() } ?? nil
+    return _result.map { it in KotlinRuntime.KotlinBase.__externalRCRefForAny(it) } ?? nil
 }
 
 @_cdecl("KotlinStdlib_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int64_Swift_Int32_Swift_Int32__")
 package func KotlinStdlib_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int64_Swift_Int32_Swift_Int32__(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.Int64, _ _2: Swift.Int32, _ _3: Swift.Int32) -> Swift.UnsafeMutableRawPointer? {
     let _result: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (Swift.Int64, Swift.Int32, Swift.Int32) -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>)(_1, _2, _3)
-    return _result.map { it in it.__externalRCRef() } ?? nil
+    return _result.map { it in KotlinRuntime.KotlinBase.__externalRCRefForAny(it) } ?? nil
 }
 
 @_cdecl("KotlinStdlib_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int64_Swift_Int32__")
 package func KotlinStdlib_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int64_Swift_Int32__(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.Int64, _ _2: Swift.Int32) -> Swift.UnsafeMutableRawPointer? {
     let _result: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (Swift.Int64, Swift.Int32) -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>)(_1, _2)
-    return _result.map { it in it.__externalRCRef() } ?? nil
+    return _result.map { it in KotlinRuntime.KotlinBase.__externalRCRefForAny(it) } ?? nil
 }
 
 @_cdecl("kotlin_CharSequence_get__TypesOfArguments__Swift_Int32____reverse_swift")
@@ -7876,7 +7876,7 @@ package func kotlin_collections_Iterator_hasNext__reverse_swift(_ `self`: Swift.
 package func kotlin_collections_Iterator_next__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer? {
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: ExportedKotlinPackages.kotlin.collections.Iterator.Type.self) as! any ExportedKotlinPackages.kotlin.collections.Iterator
     let _result: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = _self.next()
-    return _result.map { it in it.__externalRCRef() } ?? nil
+    return _result.map { it in KotlinRuntime.KotlinBase.__externalRCRefForAny(it) } ?? nil
 }
 
 @_cdecl("kotlin_ranges_CharProgression_isEmpty__reverse_swift")

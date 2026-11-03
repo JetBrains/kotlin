@@ -241,8 +241,28 @@ extension KotlinBase {
         }
     }
 
+    package static func __createBridgeableAny(externalRCRef ref: UnsafeMutableRawPointer, conformsTo: ((AnyClass?) -> Bool)? = nil) -> Any {
+        if let foreign = Kotlin_SwiftExport_retainedForeignObjCObject(ref) {
+            let foreignObject = Unmanaged<AnyObject>.fromOpaque(foreign).takeRetainedValue()
+            KotlinBridgeable_disposeRef(ref)
+            return foreignObject
+        }
+        return __createBridgeable(externalRCRef: ref, conformsTo: conformsTo)
+    }
+
     package static func __createProtocolWrapper<T>(externalRCRef ref: UnsafeMutableRawPointer, conformsTo type: T.Type) -> KotlinBase {
         return __createProtocolWrapper(externalRCRef: ref, conformsTo: { wrapperClass in wrapperClass is T })
+    }
+
+    package static func __externalRCRefForAny(_ value: Any) -> UnsafeMutableRawPointer {
+        if let base = value as? KotlinBase {
+            return KotlinBridgeable_ObjCObject_box(Unmanaged.passUnretained(base).toOpaque())
+        }
+        if let bridgeable = value as? _KotlinBridgeable {
+            return bridgeable.__externalRCRef()
+        }
+        let foreignObject = value as AnyObject
+        return KotlinBridgeable_ObjCObject_box(Unmanaged.passUnretained(foreignObject).toOpaque())
     }
 }
 

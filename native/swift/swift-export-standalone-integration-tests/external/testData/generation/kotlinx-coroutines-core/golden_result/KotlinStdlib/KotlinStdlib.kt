@@ -166,7 +166,7 @@ internal external fun kotlin_collections_Iterator_next__reverse_swift(self: kotl
 public fun kotlin_collections_Iterator_next__reverse(self: kotlin.collections.Iterator<kotlin.Any?>): kotlin.Any? {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val _result = kotlin_collections_Iterator_next__reverse_swift(__self)
-    return if (_result == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any
+    return if (_result == kotlin.native.internal.NativePtr.NULL) null else (kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(_result); kotlin.native.internal.ref.disposeExternalRCRef(_result) }
 }
 
 @ImportedBridge("kotlin_collections_ListIterator_hasNext__reverse_swift")
@@ -206,7 +206,7 @@ internal external fun kotlin_collections_ListIterator_next__reverse_swift(self: 
 public fun kotlin_collections_ListIterator_next__reverse(self: kotlin.collections.ListIterator<kotlin.Any?>): kotlin.Any? {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val _result = kotlin_collections_ListIterator_next__reverse_swift(__self)
-    return if (_result == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any
+    return if (_result == kotlin.native.internal.NativePtr.NULL) null else (kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(_result); kotlin.native.internal.ref.disposeExternalRCRef(_result) }
 }
 
 @ImportedBridge("kotlin_collections_ListIterator_previousIndex__reverse_swift")
@@ -226,7 +226,7 @@ internal external fun kotlin_collections_ListIterator_previous__reverse_swift(se
 public fun kotlin_collections_ListIterator_previous__reverse(self: kotlin.collections.ListIterator<kotlin.Any?>): kotlin.Any? {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val _result = kotlin_collections_ListIterator_previous__reverse_swift(__self)
-    return if (_result == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any
+    return if (_result == kotlin.native.internal.NativePtr.NULL) null else (kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(_result); kotlin.native.internal.ref.disposeExternalRCRef(_result) }
 }
 
 @ImportedBridge("kotlin_collections_List_containsAll__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_collections_Collection____reverse_swift")
@@ -258,7 +258,7 @@ internal external fun kotlin_collections_List_get__TypesOfArguments__Swift_Int32
 public fun kotlin_collections_List_get__TypesOfArguments__Swift_Int32____reverse(self: kotlin.collections.List<kotlin.Any?>, index: Int): kotlin.Any? {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val _result = kotlin_collections_List_get__TypesOfArguments__Swift_Int32____reverse_swift(__self, index)
-    return if (_result == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any
+    return if (_result == kotlin.native.internal.NativePtr.NULL) null else (kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(_result); kotlin.native.internal.ref.disposeExternalRCRef(_result) }
 }
 
 @ImportedBridge("kotlin_collections_List_indexOf__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
@@ -476,7 +476,7 @@ internal external fun kotlin_collections_MutableListIterator_next__reverse_swift
 public fun kotlin_collections_MutableListIterator_next__reverse(self: kotlin.collections.MutableListIterator<kotlin.Any?>): kotlin.Any? {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val _result = kotlin_collections_MutableListIterator_next__reverse_swift(__self)
-    return if (_result == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any
+    return if (_result == kotlin.native.internal.NativePtr.NULL) null else (kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(_result); kotlin.native.internal.ref.disposeExternalRCRef(_result) }
 }
 
 @ImportedBridge("kotlin_collections_MutableListIterator_remove__reverse_swift")
@@ -592,7 +592,7 @@ internal external fun kotlin_collections_MutableList_removeAt__TypesOfArguments_
 public fun kotlin_collections_MutableList_removeAt__TypesOfArguments__Swift_Int32____reverse(self: kotlin.collections.MutableList<kotlin.Any?>, index: Int): kotlin.Any? {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val _result = kotlin_collections_MutableList_removeAt__TypesOfArguments__Swift_Int32____reverse_swift(__self, index)
-    return if (_result == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any
+    return if (_result == kotlin.native.internal.NativePtr.NULL) null else (kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(_result); kotlin.native.internal.ref.disposeExternalRCRef(_result) }
 }
 
 @ImportedBridge("kotlin_collections_MutableList_remove__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
@@ -625,7 +625,7 @@ public fun kotlin_collections_MutableList_set__TypesOfArguments__Swift_Int32_Swi
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val __element = if (element == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(element)
     val _result = kotlin_collections_MutableList_set__TypesOfArguments__Swift_Int32_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(__self, index, __element)
-    return if (_result == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any
+    return if (_result == kotlin.native.internal.NativePtr.NULL) null else (kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(_result); kotlin.native.internal.ref.disposeExternalRCRef(_result) }
 }
 
 @ImportedBridge("kotlin_collections_MutableList_subList__TypesOfArguments__Swift_Int32_Swift_Int32____reverse_swift")
@@ -849,7 +849,7 @@ public fun kotlin_coroutines_CoroutineContext_Element_fold__TypesOfArguments__Sw
     val __initial = if (initial == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(initial)
     val __operation = kotlin.native.internal.ref.createRetainedExternalRCRef(operation)
     val _result = kotlin_coroutines_CoroutineContext_Element_fold__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_ElementU29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(__self, __initial, __operation)
-    return if (_result == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any
+    return if (_result == kotlin.native.internal.NativePtr.NULL) null else (kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(_result); kotlin.native.internal.ref.disposeExternalRCRef(_result) }
 }
 
 @ImportedBridge("kotlin_coroutines_CoroutineContext_Element_get__TypesOfArguments__anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Key____reverse_swift")
@@ -893,7 +893,7 @@ public fun kotlin_coroutines_CoroutineContext_fold__TypesOfArguments__Swift_Opti
     val __initial = if (initial == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(initial)
     val __operation = kotlin.native.internal.ref.createRetainedExternalRCRef(operation)
     val _result = kotlin_coroutines_CoroutineContext_fold__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_ElementU29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(__self, __initial, __operation)
-    return if (_result == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any
+    return if (_result == kotlin.native.internal.NativePtr.NULL) null else (kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(_result); kotlin.native.internal.ref.disposeExternalRCRef(_result) }
 }
 
 @ImportedBridge("kotlin_coroutines_CoroutineContext_get__TypesOfArguments__anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Key____reverse_swift")
@@ -942,7 +942,7 @@ public fun kotlin_sequences_Sequence_iterator__reverse(self: kotlin.sequences.Se
 @ExportedBridge("KotlinStdlib_internal_functional_type_caller_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Element__")
 public fun KotlinStdlib_internal_functional_type_caller_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Element__(pointerToBlock: kotlin.native.internal.NativePtr, _1: kotlin.native.internal.NativePtr, _2: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __pointerToBlock = kotlin.native.internal.ref.dereferenceExternalRCRef(pointerToBlock)!!
-    val ___1 = if (_1 == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(_1) as kotlin.Any
+    val ___1 = if (_1 == kotlin.native.internal.NativePtr.NULL) null else (kotlin.native.internal.ref.dereferenceExternalRCRef(_1) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(_1); kotlin.native.internal.ref.disposeExternalRCRef(_1) }
     val ___2 = kotlin.native.internal.ref.dereferenceExternalRCRef(_2) as kotlin.coroutines.CoroutineContext.Element
     val _result = (__pointerToBlock as Function2<kotlin.Any?, kotlin.coroutines.CoroutineContext.Element, kotlin.Any?>).invoke(___1, ___2)
     return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
@@ -967,7 +967,7 @@ public fun kotlin_Array_iterator(self: kotlin.native.internal.NativePtr): kotlin
 public fun kotlin_Array_set__TypesOfArguments__Swift_Int32_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, index: Int, value: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Array<kotlin.Any?>
     val __index = index
-    val __value = if (value == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(value) as kotlin.Any
+    val __value = if (value == kotlin.native.internal.NativePtr.NULL) null else (kotlin.native.internal.ref.dereferenceExternalRCRef(value) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(value); kotlin.native.internal.ref.disposeExternalRCRef(value) }
     __self.`set`(__index, __value)
     return true
 }
@@ -1155,7 +1155,7 @@ public fun kotlin_Result_Companion_get(): kotlin.native.internal.NativePtr {
 @ExportedBridge("kotlin_Result_Companion_success__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
 public fun kotlin_Result_Companion_success__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, value: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Result.Companion
-    val __value = if (value == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(value) as kotlin.Any
+    val __value = if (value == kotlin.native.internal.NativePtr.NULL) null else (kotlin.native.internal.ref.dereferenceExternalRCRef(value) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(value); kotlin.native.internal.ref.disposeExternalRCRef(value) }
     val _result = __self.success<kotlin.Any?>(__value)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
@@ -1310,7 +1310,7 @@ public fun kotlin_Throwable_printStackTrace(self: kotlin.native.internal.NativeP
 @ExportedBridge("kotlin_collections_Collection_contains__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
 public fun kotlin_collections_Collection_contains__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, element: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.Collection<kotlin.Any?>
-    val __element = if (element == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(element) as kotlin.Any
+    val __element = if (element == kotlin.native.internal.NativePtr.NULL) null else (kotlin.native.internal.ref.dereferenceExternalRCRef(element) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(element); kotlin.native.internal.ref.disposeExternalRCRef(element) }
     val _result = __self.contains(__element)
     return _result
 }
@@ -1348,7 +1348,7 @@ public fun kotlin_collections_Collection_size_get(self: kotlin.native.internal.N
 public fun kotlin_collections_IndexedValue_copy__TypesOfArguments__Swift_Int32_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, index: Int, value: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.IndexedValue<kotlin.Any?>
     val __index = index
-    val __value = if (value == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(value) as kotlin.Any
+    val __value = if (value == kotlin.native.internal.NativePtr.NULL) null else (kotlin.native.internal.ref.dereferenceExternalRCRef(value) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(value); kotlin.native.internal.ref.disposeExternalRCRef(value) }
     val _result = __self.copy(__index, __value)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
@@ -1370,7 +1370,7 @@ public fun kotlin_collections_IndexedValue_init_allocate(): kotlin.native.intern
 public fun kotlin_collections_IndexedValue_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(__kt: kotlin.native.internal.NativePtr, index: Int, value: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val __index = index
-    val __value = if (value == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(value) as kotlin.Any
+    val __value = if (value == kotlin.native.internal.NativePtr.NULL) null else (kotlin.native.internal.ref.dereferenceExternalRCRef(value) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(value); kotlin.native.internal.ref.disposeExternalRCRef(value) }
     kotlin.native.internal.initInstance(____kt, kotlin.collections.IndexedValue<kotlin.Any?>(__index, __value))
     return true
 }
@@ -1469,7 +1469,7 @@ public fun kotlin_collections_ListIterator_previousIndex(self: kotlin.native.int
 @ExportedBridge("kotlin_collections_List_contains__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
 public fun kotlin_collections_List_contains__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, element: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.List<kotlin.Any?>
-    val __element = if (element == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(element) as kotlin.Any
+    val __element = if (element == kotlin.native.internal.NativePtr.NULL) null else (kotlin.native.internal.ref.dereferenceExternalRCRef(element) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(element); kotlin.native.internal.ref.disposeExternalRCRef(element) }
     val _result = __self.contains(__element)
     return _result
 }
@@ -1493,7 +1493,7 @@ public fun kotlin_collections_List_get__TypesOfArguments__Swift_Int32__(self: ko
 @ExportedBridge("kotlin_collections_List_indexOf__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
 public fun kotlin_collections_List_indexOf__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, element: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.List<kotlin.Any?>
-    val __element = if (element == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(element) as kotlin.Any
+    val __element = if (element == kotlin.native.internal.NativePtr.NULL) null else (kotlin.native.internal.ref.dereferenceExternalRCRef(element) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(element); kotlin.native.internal.ref.disposeExternalRCRef(element) }
     val _result = __self.indexOf(__element)
     return _result
 }
@@ -1515,7 +1515,7 @@ public fun kotlin_collections_List_iterator(self: kotlin.native.internal.NativeP
 @ExportedBridge("kotlin_collections_List_lastIndexOf__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
 public fun kotlin_collections_List_lastIndexOf__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, element: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.List<kotlin.Any?>
-    val __element = if (element == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(element) as kotlin.Any
+    val __element = if (element == kotlin.native.internal.NativePtr.NULL) null else (kotlin.native.internal.ref.dereferenceExternalRCRef(element) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(element); kotlin.native.internal.ref.disposeExternalRCRef(element) }
     val _result = __self.lastIndexOf(__element)
     return _result
 }
@@ -1575,7 +1575,7 @@ public fun kotlin_collections_LongIterator_nextLong(self: kotlin.native.internal
 @ExportedBridge("kotlin_collections_MutableCollection_add__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
 public fun kotlin_collections_MutableCollection_add__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, element: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.MutableCollection<kotlin.Any?>
-    val __element = if (element == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(element) as kotlin.Any
+    val __element = if (element == kotlin.native.internal.NativePtr.NULL) null else (kotlin.native.internal.ref.dereferenceExternalRCRef(element) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(element); kotlin.native.internal.ref.disposeExternalRCRef(element) }
     val _result = __self.add(__element)
     return _result
 }
@@ -1605,7 +1605,7 @@ public fun kotlin_collections_MutableCollection_iterator(self: kotlin.native.int
 @ExportedBridge("kotlin_collections_MutableCollection_remove__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
 public fun kotlin_collections_MutableCollection_remove__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, element: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.MutableCollection<kotlin.Any?>
-    val __element = if (element == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(element) as kotlin.Any
+    val __element = if (element == kotlin.native.internal.NativePtr.NULL) null else (kotlin.native.internal.ref.dereferenceExternalRCRef(element) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(element); kotlin.native.internal.ref.disposeExternalRCRef(element) }
     val _result = __self.remove(__element)
     return _result
 }
@@ -1643,7 +1643,7 @@ public fun kotlin_collections_MutableIterator_remove(self: kotlin.native.interna
 @ExportedBridge("kotlin_collections_MutableListIterator_add__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
 public fun kotlin_collections_MutableListIterator_add__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, element: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.MutableListIterator<kotlin.Any?>
-    val __element = if (element == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(element) as kotlin.Any
+    val __element = if (element == kotlin.native.internal.NativePtr.NULL) null else (kotlin.native.internal.ref.dereferenceExternalRCRef(element) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(element); kotlin.native.internal.ref.disposeExternalRCRef(element) }
     __self.add(__element)
     return true
 }
@@ -1672,7 +1672,7 @@ public fun kotlin_collections_MutableListIterator_remove(self: kotlin.native.int
 @ExportedBridge("kotlin_collections_MutableListIterator_set__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
 public fun kotlin_collections_MutableListIterator_set__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, element: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.MutableListIterator<kotlin.Any?>
-    val __element = if (element == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(element) as kotlin.Any
+    val __element = if (element == kotlin.native.internal.NativePtr.NULL) null else (kotlin.native.internal.ref.dereferenceExternalRCRef(element) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(element); kotlin.native.internal.ref.disposeExternalRCRef(element) }
     __self.`set`(__element)
     return true
 }
@@ -1680,7 +1680,7 @@ public fun kotlin_collections_MutableListIterator_set__TypesOfArguments__Swift_O
 @ExportedBridge("kotlin_collections_MutableList_add__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
 public fun kotlin_collections_MutableList_add__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, element: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.MutableList<kotlin.Any?>
-    val __element = if (element == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(element) as kotlin.Any
+    val __element = if (element == kotlin.native.internal.NativePtr.NULL) null else (kotlin.native.internal.ref.dereferenceExternalRCRef(element) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(element); kotlin.native.internal.ref.disposeExternalRCRef(element) }
     val _result = __self.add(__element)
     return _result
 }
@@ -1689,7 +1689,7 @@ public fun kotlin_collections_MutableList_add__TypesOfArguments__Swift_Optional_
 public fun kotlin_collections_MutableList_add__TypesOfArguments__Swift_Int32_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, index: Int, element: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.MutableList<kotlin.Any?>
     val __index = index
-    val __element = if (element == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(element) as kotlin.Any
+    val __element = if (element == kotlin.native.internal.NativePtr.NULL) null else (kotlin.native.internal.ref.dereferenceExternalRCRef(element) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(element); kotlin.native.internal.ref.disposeExternalRCRef(element) }
     __self.add(__index, __element)
     return true
 }
@@ -1736,7 +1736,7 @@ public fun kotlin_collections_MutableList_listIterator__TypesOfArguments__Swift_
 @ExportedBridge("kotlin_collections_MutableList_remove__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
 public fun kotlin_collections_MutableList_remove__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, element: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.MutableList<kotlin.Any?>
-    val __element = if (element == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(element) as kotlin.Any
+    val __element = if (element == kotlin.native.internal.NativePtr.NULL) null else (kotlin.native.internal.ref.dereferenceExternalRCRef(element) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(element); kotlin.native.internal.ref.disposeExternalRCRef(element) }
     val _result = __self.remove(__element)
     return _result
 }
@@ -1769,7 +1769,7 @@ public fun kotlin_collections_MutableList_retainAll__TypesOfArguments__anyU20Exp
 public fun kotlin_collections_MutableList_set__TypesOfArguments__Swift_Int32_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, index: Int, element: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.MutableList<kotlin.Any?>
     val __index = index
-    val __element = if (element == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(element) as kotlin.Any
+    val __element = if (element == kotlin.native.internal.NativePtr.NULL) null else (kotlin.native.internal.ref.dereferenceExternalRCRef(element) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(element); kotlin.native.internal.ref.disposeExternalRCRef(element) }
     val _result = __self.`set`(__index, __element)
     return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
@@ -1786,7 +1786,7 @@ public fun kotlin_collections_MutableList_subList__TypesOfArguments__Swift_Int32
 @ExportedBridge("kotlin_collections_MutableSet_add__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
 public fun kotlin_collections_MutableSet_add__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, element: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.MutableSet<kotlin.Any?>
-    val __element = if (element == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(element) as kotlin.Any
+    val __element = if (element == kotlin.native.internal.NativePtr.NULL) null else (kotlin.native.internal.ref.dereferenceExternalRCRef(element) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(element); kotlin.native.internal.ref.disposeExternalRCRef(element) }
     val _result = __self.add(__element)
     return _result
 }
@@ -1816,7 +1816,7 @@ public fun kotlin_collections_MutableSet_iterator(self: kotlin.native.internal.N
 @ExportedBridge("kotlin_collections_MutableSet_remove__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
 public fun kotlin_collections_MutableSet_remove__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, element: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.MutableSet<kotlin.Any?>
-    val __element = if (element == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(element) as kotlin.Any
+    val __element = if (element == kotlin.native.internal.NativePtr.NULL) null else (kotlin.native.internal.ref.dereferenceExternalRCRef(element) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(element); kotlin.native.internal.ref.disposeExternalRCRef(element) }
     val _result = __self.remove(__element)
     return _result
 }
@@ -1840,7 +1840,7 @@ public fun kotlin_collections_MutableSet_retainAll__TypesOfArguments__anyU20Expo
 @ExportedBridge("kotlin_collections_Set_contains__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
 public fun kotlin_collections_Set_contains__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, element: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.Set<kotlin.Any?>
-    val __element = if (element == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(element) as kotlin.Any
+    val __element = if (element == kotlin.native.internal.NativePtr.NULL) null else (kotlin.native.internal.ref.dereferenceExternalRCRef(element) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(element); kotlin.native.internal.ref.disposeExternalRCRef(element) }
     val _result = __self.contains(__element)
     return _result
 }
@@ -1994,7 +1994,7 @@ public fun kotlin_coroutines_Continuation_resumeWith__TypesOfArguments__Exported
 @ExportedBridge("kotlin_coroutines_CoroutineContext_Element_fold__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_ElementU29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
 public fun kotlin_coroutines_CoroutineContext_Element_fold__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_ElementU29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, initial: kotlin.native.internal.NativePtr, operation: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.coroutines.CoroutineContext.Element
-    val __initial = if (initial == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(initial) as kotlin.Any
+    val __initial = if (initial == kotlin.native.internal.NativePtr.NULL) null else (kotlin.native.internal.ref.dereferenceExternalRCRef(initial) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(initial); kotlin.native.internal.ref.disposeExternalRCRef(initial) }
     val __operation = run {
         val closurePtr = operation;
         val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
@@ -2002,7 +2002,7 @@ public fun kotlin_coroutines_CoroutineContext_Element_fold__TypesOfArguments__Sw
             val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
             val _arg1 = kotlin.native.internal.ref.createRetainedExternalRCRef(arg1)
             val _result = KotlinStdlib_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Element__(closureBox.objcPtr(), _arg0, _arg1)
-            if (_result == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any
+            if (_result == kotlin.native.internal.NativePtr.NULL) null else (kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(_result); kotlin.native.internal.ref.disposeExternalRCRef(_result) }
         }
     }
     val _result = __self.fold<kotlin.Any?>(__initial, __operation)
@@ -2012,7 +2012,7 @@ public fun kotlin_coroutines_CoroutineContext_Element_fold__TypesOfArguments__Sw
 @ExportedBridge("kotlin_coroutines_CoroutineContext_Element_fold__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_ElementU29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____direct", nonVirtualTargetMethod = "fold")
 public fun kotlin_coroutines_CoroutineContext_Element_fold__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_ElementU29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____direct(self: kotlin.native.internal.NativePtr, initial: kotlin.native.internal.NativePtr, operation: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.coroutines.CoroutineContext.Element
-    val __initial = if (initial == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(initial) as kotlin.Any
+    val __initial = if (initial == kotlin.native.internal.NativePtr.NULL) null else (kotlin.native.internal.ref.dereferenceExternalRCRef(initial) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(initial); kotlin.native.internal.ref.disposeExternalRCRef(initial) }
     val __operation = run {
         val closurePtr = operation;
         val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
@@ -2020,7 +2020,7 @@ public fun kotlin_coroutines_CoroutineContext_Element_fold__TypesOfArguments__Sw
             val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
             val _arg1 = kotlin.native.internal.ref.createRetainedExternalRCRef(arg1)
             val _result = KotlinStdlib_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Element__(closureBox.objcPtr(), _arg0, _arg1)
-            if (_result == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any
+            if (_result == kotlin.native.internal.NativePtr.NULL) null else (kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(_result); kotlin.native.internal.ref.disposeExternalRCRef(_result) }
         }
     }
     val _result = __self.fold<kotlin.Any?>(__initial, __operation)
@@ -2069,7 +2069,7 @@ public fun kotlin_coroutines_CoroutineContext_Element_minusKey__TypesOfArguments
 @ExportedBridge("kotlin_coroutines_CoroutineContext_fold__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_ElementU29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
 public fun kotlin_coroutines_CoroutineContext_fold__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_ElementU29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, initial: kotlin.native.internal.NativePtr, operation: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.coroutines.CoroutineContext
-    val __initial = if (initial == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(initial) as kotlin.Any
+    val __initial = if (initial == kotlin.native.internal.NativePtr.NULL) null else (kotlin.native.internal.ref.dereferenceExternalRCRef(initial) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(initial); kotlin.native.internal.ref.disposeExternalRCRef(initial) }
     val __operation = run {
         val closurePtr = operation;
         val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
@@ -2077,7 +2077,7 @@ public fun kotlin_coroutines_CoroutineContext_fold__TypesOfArguments__Swift_Opti
             val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
             val _arg1 = kotlin.native.internal.ref.createRetainedExternalRCRef(arg1)
             val _result = KotlinStdlib_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Element__(closureBox.objcPtr(), _arg0, _arg1)
-            if (_result == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any
+            if (_result == kotlin.native.internal.NativePtr.NULL) null else (kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(_result); kotlin.native.internal.ref.disposeExternalRCRef(_result) }
         }
     }
     val _result = __self.fold<kotlin.Any?>(__initial, __operation)
@@ -2602,7 +2602,7 @@ public fun kotlin_time_Duration_toComponents__TypesOfArguments__U28Swift_Int64_U
             val _arg3 = arg3
             val _arg4 = arg4
             val _result = KotlinStdlib_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int64_Swift_Int32_Swift_Int32_Swift_Int32_Swift_Int32__(closureBox.objcPtr(), _arg0, _arg1, _arg2, _arg3, _arg4)
-            if (_result == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any
+            if (_result == kotlin.native.internal.NativePtr.NULL) null else (kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(_result); kotlin.native.internal.ref.disposeExternalRCRef(_result) }
         }
     }
     val _result = __self.toComponents<kotlin.Any?>(__action)
@@ -2621,7 +2621,7 @@ public fun kotlin_time_Duration_toComponents__TypesOfArguments__U28Swift_Int64_U
             val _arg2 = arg2
             val _arg3 = arg3
             val _result = KotlinStdlib_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int64_Swift_Int32_Swift_Int32_Swift_Int32__(closureBox.objcPtr(), _arg0, _arg1, _arg2, _arg3)
-            if (_result == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any
+            if (_result == kotlin.native.internal.NativePtr.NULL) null else (kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(_result); kotlin.native.internal.ref.disposeExternalRCRef(_result) }
         }
     }
     val _result = __self.toComponents<kotlin.Any?>(__action)
@@ -2639,7 +2639,7 @@ public fun kotlin_time_Duration_toComponents__TypesOfArguments__U28Swift_Int64_U
             val _arg1 = arg1
             val _arg2 = arg2
             val _result = KotlinStdlib_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int64_Swift_Int32_Swift_Int32__(closureBox.objcPtr(), _arg0, _arg1, _arg2)
-            if (_result == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any
+            if (_result == kotlin.native.internal.NativePtr.NULL) null else (kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(_result); kotlin.native.internal.ref.disposeExternalRCRef(_result) }
         }
     }
     val _result = __self.toComponents<kotlin.Any?>(__action)
@@ -2656,7 +2656,7 @@ public fun kotlin_time_Duration_toComponents__TypesOfArguments__U28Swift_Int64_U
             val _arg0 = arg0
             val _arg1 = arg1
             val _result = KotlinStdlib_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int64_Swift_Int32__(closureBox.objcPtr(), _arg0, _arg1)
-            if (_result == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any
+            if (_result == kotlin.native.internal.NativePtr.NULL) null else (kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(_result); kotlin.native.internal.ref.disposeExternalRCRef(_result) }
         }
     }
     val _result = __self.toComponents<kotlin.Any?>(__action)

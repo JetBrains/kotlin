@@ -25,10 +25,10 @@ import kotlin.native.internal.ExportedBridge
 @ImportedBridge("main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 internal external fun main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToClosure: kotlin.native.internal.NativePtr): Boolean
 
-@ExportedBridge("DATA_CLASS_WITH_REF_copy__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__")
-public fun DATA_CLASS_WITH_REF_copy__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(self: kotlin.native.internal.NativePtr, o: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+@ExportedBridge("DATA_CLASS_WITH_REF_copy__TypesOfArguments__Any__")
+public fun DATA_CLASS_WITH_REF_copy__TypesOfArguments__Any__(self: kotlin.native.internal.NativePtr, o: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as DATA_CLASS_WITH_REF
-    val __o = kotlin.native.internal.ref.dereferenceExternalRCRef(o) as kotlin.Any
+    val __o = (kotlin.native.internal.ref.dereferenceExternalRCRef(o) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(o); kotlin.native.internal.ref.disposeExternalRCRef(o) }
     val _result = __self.copy(__o)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
@@ -190,10 +190,10 @@ public fun __root___DATA_CLASS_WITH_REF_init_allocate(): kotlin.native.internal.
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("__root___DATA_CLASS_WITH_REF_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinRuntimeSupport__KotlinBridgeable__")
-public fun __root___DATA_CLASS_WITH_REF_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinRuntimeSupport__KotlinBridgeable__(__kt: kotlin.native.internal.NativePtr, o: kotlin.native.internal.NativePtr): Boolean {
+@ExportedBridge("__root___DATA_CLASS_WITH_REF_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Any__")
+public fun __root___DATA_CLASS_WITH_REF_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Any__(__kt: kotlin.native.internal.NativePtr, o: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val __o = kotlin.native.internal.ref.dereferenceExternalRCRef(o) as kotlin.Any
+    val __o = (kotlin.native.internal.ref.dereferenceExternalRCRef(o) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(o); kotlin.native.internal.ref.disposeExternalRCRef(o) }
     kotlin.native.internal.initInstance(____kt, DATA_CLASS_WITH_REF(__o))
     return true
 }

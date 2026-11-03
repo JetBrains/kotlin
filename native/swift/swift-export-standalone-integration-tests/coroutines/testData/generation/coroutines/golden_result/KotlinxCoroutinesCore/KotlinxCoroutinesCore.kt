@@ -120,7 +120,7 @@ internal external fun kotlinx_coroutines_flow_MutableStateFlow_value_get__revers
 public fun kotlinx_coroutines_flow_MutableStateFlow_value_get__reverse(self: kotlinx.coroutines.flow.MutableStateFlow<kotlin.Any?>): kotlin.Any? {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val _result = kotlinx_coroutines_flow_MutableStateFlow_value_get__reverse_swift(__self)
-    return if (_result == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any
+    return if (_result == kotlin.native.internal.NativePtr.NULL) null else (kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(_result); kotlin.native.internal.ref.disposeExternalRCRef(_result) }
 }
 
 @ImportedBridge("kotlinx_coroutines_flow_MutableStateFlow_value_set__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
@@ -166,7 +166,7 @@ internal external fun kotlinx_coroutines_flow_StateFlow_value_get__reverse_swift
 public fun kotlinx_coroutines_flow_StateFlow_value_get__reverse(self: kotlinx.coroutines.flow.StateFlow<kotlin.Any?>): kotlin.Any? {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val _result = kotlinx_coroutines_flow_StateFlow_value_get__reverse_swift(__self)
-    return if (_result == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any
+    return if (_result == kotlin.native.internal.NativePtr.NULL) null else (kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(_result); kotlin.native.internal.ref.disposeExternalRCRef(_result) }
 }
 
 @ExportedBridge("KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__")
@@ -208,7 +208,7 @@ public fun kotlinx_coroutines_flow_FlowCollector__TypesOfArguments__U28Swift_Opt
 @ExportedBridge("kotlinx_coroutines_flow_FlowCollector_emit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
 public fun kotlinx_coroutines_flow_FlowCollector_emit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, value: kotlin.native.internal.NativePtr, continuation: kotlin.native.internal.NativePtr, exception: kotlin.native.internal.NativePtr, cancellation: kotlin.native.internal.NativePtr): Unit {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.coroutines.flow.FlowCollector<kotlin.Any?>
-    val __value = if (value == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(value) as kotlin.Any
+    val __value = if (value == kotlin.native.internal.NativePtr.NULL) null else (kotlin.native.internal.ref.dereferenceExternalRCRef(value) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(value); kotlin.native.internal.ref.disposeExternalRCRef(value) }
     val __continuation = run {
         val closurePtr = continuation;
         val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
@@ -264,7 +264,7 @@ public fun kotlinx_coroutines_flow_Flow_collect__TypesOfArguments__anyU20Exporte
 @ExportedBridge("kotlinx_coroutines_flow_MutableSharedFlow_emit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
 public fun kotlinx_coroutines_flow_MutableSharedFlow_emit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, value: kotlin.native.internal.NativePtr, continuation: kotlin.native.internal.NativePtr, exception: kotlin.native.internal.NativePtr, cancellation: kotlin.native.internal.NativePtr): Unit {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.coroutines.flow.MutableSharedFlow<kotlin.Any?>
-    val __value = if (value == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(value) as kotlin.Any
+    val __value = if (value == kotlin.native.internal.NativePtr.NULL) null else (kotlin.native.internal.ref.dereferenceExternalRCRef(value) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(value); kotlin.native.internal.ref.disposeExternalRCRef(value) }
     val __continuation = run {
         val closurePtr = continuation;
         val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
@@ -307,7 +307,7 @@ public fun kotlinx_coroutines_flow_MutableSharedFlow_subscriptionCount_get(self:
 @ExportedBridge("kotlinx_coroutines_flow_MutableSharedFlow_tryEmit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
 public fun kotlinx_coroutines_flow_MutableSharedFlow_tryEmit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, value: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.coroutines.flow.MutableSharedFlow<kotlin.Any?>
-    val __value = if (value == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(value) as kotlin.Any
+    val __value = if (value == kotlin.native.internal.NativePtr.NULL) null else (kotlin.native.internal.ref.dereferenceExternalRCRef(value) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(value); kotlin.native.internal.ref.disposeExternalRCRef(value) }
     val _result = __self.tryEmit(__value)
     return _result
 }
@@ -315,8 +315,8 @@ public fun kotlinx_coroutines_flow_MutableSharedFlow_tryEmit__TypesOfArguments__
 @ExportedBridge("kotlinx_coroutines_flow_MutableStateFlow_compareAndSet__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
 public fun kotlinx_coroutines_flow_MutableStateFlow_compareAndSet__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, `expect`: kotlin.native.internal.NativePtr, update: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.coroutines.flow.MutableStateFlow<kotlin.Any?>
-    val __expect = if (`expect` == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(`expect`) as kotlin.Any
-    val __update = if (update == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(update) as kotlin.Any
+    val __expect = if (`expect` == kotlin.native.internal.NativePtr.NULL) null else (kotlin.native.internal.ref.dereferenceExternalRCRef(`expect`) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(`expect`); kotlin.native.internal.ref.disposeExternalRCRef(`expect`) }
+    val __update = if (update == kotlin.native.internal.NativePtr.NULL) null else (kotlin.native.internal.ref.dereferenceExternalRCRef(update) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(update); kotlin.native.internal.ref.disposeExternalRCRef(update) }
     val _result = __self.compareAndSet(__expect, __update)
     return _result
 }
@@ -331,7 +331,7 @@ public fun kotlinx_coroutines_flow_MutableStateFlow_value_get(self: kotlin.nativ
 @ExportedBridge("kotlinx_coroutines_flow_MutableStateFlow_value_set__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
 public fun kotlinx_coroutines_flow_MutableStateFlow_value_set__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, newValue: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.coroutines.flow.MutableStateFlow<kotlin.Any?>
-    val __newValue = if (newValue == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(newValue) as kotlin.Any
+    val __newValue = if (newValue == kotlin.native.internal.NativePtr.NULL) null else (kotlin.native.internal.ref.dereferenceExternalRCRef(newValue) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(newValue); kotlin.native.internal.ref.disposeExternalRCRef(newValue) }
     __self.value = __newValue
     return true
 }

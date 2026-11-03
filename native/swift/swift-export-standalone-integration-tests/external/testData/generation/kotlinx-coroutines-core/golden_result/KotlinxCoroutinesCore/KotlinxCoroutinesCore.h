@@ -103,7 +103,7 @@ _Bool KotlinxCoroutinesCore_internal_functional_type_callee_async_anyU20KotlinCo
 
 _Bool kotlinx_coroutines_CancellableContinuation_cancel__TypesOfArguments__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable_____reverse_swift(void * self, void * _Nullable cause);
 
-_Bool kotlinx_coroutines_CancellableContinuation_completeResume__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable____reverse_swift(void * self, void * token);
+_Bool kotlinx_coroutines_CancellableContinuation_completeResume__TypesOfArguments__Any____reverse_swift(void * self, void * token);
 
 _Bool kotlinx_coroutines_CancellableContinuation_initCancellability__reverse_swift(void * self);
 
@@ -123,9 +123,9 @@ _Bool kotlinx_coroutines_CancellableContinuation_resume__TypesOfArguments__Swift
 
 void * _Nullable kotlinx_coroutines_CancellableContinuation_tryResumeWithException__TypesOfArguments__ExportedKotlinPackages_kotlin_Throwable____reverse_swift(void * self, void * exception);
 
-void * _Nullable kotlinx_coroutines_CancellableContinuation_tryResume__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_U28ExportedKotlinPackages_kotlin_ThrowableU29202D_U20Swift_Void_____reverse_swift(void * self, void * _Nullable value, void * _Nullable idempotent, void * _Nullable onCancellation);
+void * _Nullable kotlinx_coroutines_CancellableContinuation_tryResume__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_Any__Swift_Optional_U28ExportedKotlinPackages_kotlin_ThrowableU29202D_U20Swift_Void_____reverse_swift(void * self, void * _Nullable value, void * _Nullable idempotent, void * _Nullable onCancellation);
 
-void * _Nullable kotlinx_coroutines_CancellableContinuation_tryResume__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(void * self, void * _Nullable value, void * _Nullable idempotent);
+void * _Nullable kotlinx_coroutines_CancellableContinuation_tryResume__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_Any_____reverse_swift(void * self, void * _Nullable value, void * _Nullable idempotent);
 
 _Bool kotlinx_coroutines_CloseableCoroutineDispatcher_close__reverse_swift(void * self);
 
@@ -273,7 +273,7 @@ void * kotlinx_coroutines_flow_internal_FusibleFlow_fuse__TypesOfArguments__anyU
 
 void * kotlinx_coroutines_internal_AtomicOp_atomicOp_get__reverse_swift(void * self);
 
-_Bool kotlinx_coroutines_internal_AtomicOp_complete__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(void * self, void * _Nullable affected, void * _Nullable failure);
+_Bool kotlinx_coroutines_internal_AtomicOp_complete__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_Any_____reverse_swift(void * self, void * _Nullable affected, void * _Nullable failure);
 
 void * _Nullable kotlinx_coroutines_internal_AtomicOp_prepare__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(void * self, void * _Nullable affected);
 
@@ -291,7 +291,7 @@ int32_t kotlinx_coroutines_internal_MainDispatcherFactory_loadPriority_get__reve
 
 void * _Nullable kotlinx_coroutines_internal_OpDescriptor_atomicOp_get__reverse_swift(void * self);
 
-void * _Nullable kotlinx_coroutines_internal_OpDescriptor_perform__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(void * self, void * _Nullable affected);
+void * _Nullable kotlinx_coroutines_internal_OpDescriptor_perform__TypesOfArguments__Swift_Optional_Any_____reverse_swift(void * self, void * _Nullable affected);
 
 int32_t kotlinx_coroutines_internal_ThreadSafeHeapNode_index_get__reverse_swift(void * self);
 
@@ -311,21 +311,21 @@ void * kotlinx_coroutines_selects_SelectInstance_context_get__reverse_swift(void
 
 _Bool kotlinx_coroutines_selects_SelectInstance_disposeOnCompletion__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_coroutines_DisposableHandle____reverse_swift(void * self, void * disposableHandle);
 
-_Bool kotlinx_coroutines_selects_SelectInstance_selectInRegistrationPhase__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(void * self, void * _Nullable internalResult);
+_Bool kotlinx_coroutines_selects_SelectInstance_selectInRegistrationPhase__TypesOfArguments__Swift_Optional_Any_____reverse_swift(void * self, void * _Nullable internalResult);
 
-_Bool kotlinx_coroutines_selects_SelectInstance_trySelect__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(void * self, void * clauseObject, void * _Nullable result);
+_Bool kotlinx_coroutines_selects_SelectInstance_trySelect__TypesOfArguments__Any_Swift_Optional_Any_____reverse_swift(void * self, void * clauseObject, void * _Nullable result);
 
-_Bool kotlinx_coroutines_sync_Mutex_holdsLock__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable____reverse_swift(void * self, void * owner);
+_Bool kotlinx_coroutines_sync_Mutex_holdsLock__TypesOfArguments__Any____reverse_swift(void * self, void * owner);
 
 _Bool kotlinx_coroutines_sync_Mutex_isLocked_get__reverse_swift(void * self);
 
-_Bool kotlinx_coroutines_sync_Mutex_lock__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(void * self, void * _Nullable owner, void * continuation, void * exception, void * cancellation);
+_Bool kotlinx_coroutines_sync_Mutex_lock__TypesOfArguments__Swift_Optional_Any_____reverse_swift(void * self, void * _Nullable owner, void * continuation, void * exception, void * cancellation);
 
 void * kotlinx_coroutines_sync_Mutex_onLock_get__reverse_swift(void * self);
 
-_Bool kotlinx_coroutines_sync_Mutex_tryLock__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(void * self, void * _Nullable owner);
+_Bool kotlinx_coroutines_sync_Mutex_tryLock__TypesOfArguments__Swift_Optional_Any_____reverse_swift(void * self, void * _Nullable owner);
 
-_Bool kotlinx_coroutines_sync_Mutex_unlock__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(void * self, void * _Nullable owner);
+_Bool kotlinx_coroutines_sync_Mutex_unlock__TypesOfArguments__Swift_Optional_Any_____reverse_swift(void * self, void * _Nullable owner);
 
 _Bool kotlinx_coroutines_sync_Semaphore_acquire__reverse_swift(void * self, void * continuation, void * exception, void * cancellation);
 
@@ -379,7 +379,7 @@ _Bool kotlinx_coroutines_AbstractCoroutine_start__TypesOfArguments__ExportedKotl
 
 _Bool kotlinx_coroutines_CancellableContinuation_cancel__TypesOfArguments__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(void * self, void * _Nullable cause);
 
-_Bool kotlinx_coroutines_CancellableContinuation_completeResume__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(void * self, void * token);
+_Bool kotlinx_coroutines_CancellableContinuation_completeResume__TypesOfArguments__Any__(void * self, void * token);
 
 _Bool kotlinx_coroutines_CancellableContinuation_initCancellability(void * self);
 
@@ -397,9 +397,9 @@ _Bool kotlinx_coroutines_CancellableContinuation_resumeUndispatched__TypesOfArgu
 
 _Bool kotlinx_coroutines_CancellableContinuation_resumeUndispatchedWithException__TypesOfArgumentsE__ExportedKotlinPackages_kotlinx_coroutines_CoroutineDispatcher_ExportedKotlinPackages_kotlin_Throwable__(void * self, void * receiver, void * exception);
 
-void * _Nullable kotlinx_coroutines_CancellableContinuation_tryResume__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable value, void * _Nullable idempotent);
+void * _Nullable kotlinx_coroutines_CancellableContinuation_tryResume__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_Any___(void * self, void * _Nullable value, void * _Nullable idempotent);
 
-void * _Nullable kotlinx_coroutines_CancellableContinuation_tryResume__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_U28ExportedKotlinPackages_kotlin_ThrowableU29202D_U20Swift_Void___(void * self, void * _Nullable value, void * _Nullable idempotent, void * _Nullable onCancellation);
+void * _Nullable kotlinx_coroutines_CancellableContinuation_tryResume__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_Any__Swift_Optional_U28ExportedKotlinPackages_kotlin_ThrowableU29202D_U20Swift_Void___(void * self, void * _Nullable value, void * _Nullable idempotent, void * _Nullable onCancellation);
 
 void * _Nullable kotlinx_coroutines_CancellableContinuation_tryResumeWithException__TypesOfArguments__ExportedKotlinPackages_kotlin_Throwable__(void * self, void * exception);
 
@@ -1151,11 +1151,11 @@ void * kotlinx_coroutines_internal_AtomicOp_atomicOp_get(void * self);
 
 void * kotlinx_coroutines_internal_AtomicOp_atomicOp_get_direct(void * self);
 
-_Bool kotlinx_coroutines_internal_AtomicOp_complete__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable affected, void * _Nullable failure);
+_Bool kotlinx_coroutines_internal_AtomicOp_complete__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_Any___(void * self, void * _Nullable affected, void * _Nullable failure);
 
 _Bool kotlinx_coroutines_internal_AtomicOp_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
-void * _Nullable kotlinx_coroutines_internal_AtomicOp_perform__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable affected);
+void * _Nullable kotlinx_coroutines_internal_AtomicOp_perform__TypesOfArguments__Swift_Optional_Any___(void * self, void * _Nullable affected);
 
 void * _Nullable kotlinx_coroutines_internal_AtomicOp_prepare__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable affected);
 
@@ -1197,7 +1197,7 @@ void * _Nullable kotlinx_coroutines_internal_OpDescriptor_atomicOp_get(void * se
 
 _Bool kotlinx_coroutines_internal_OpDescriptor_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
-void * _Nullable kotlinx_coroutines_internal_OpDescriptor_perform__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable affected);
+void * _Nullable kotlinx_coroutines_internal_OpDescriptor_perform__TypesOfArguments__Swift_Optional_Any___(void * self, void * _Nullable affected);
 
 int32_t kotlinx_coroutines_internal_ThreadSafeHeapNode_index_get(void * self);
 
@@ -1251,9 +1251,9 @@ void * kotlinx_coroutines_selects_SelectInstance_context_get(void * self);
 
 _Bool kotlinx_coroutines_selects_SelectInstance_disposeOnCompletion__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_coroutines_DisposableHandle__(void * self, void * disposableHandle);
 
-_Bool kotlinx_coroutines_selects_SelectInstance_selectInRegistrationPhase__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable internalResult);
+_Bool kotlinx_coroutines_selects_SelectInstance_selectInRegistrationPhase__TypesOfArguments__Swift_Optional_Any___(void * self, void * _Nullable internalResult);
 
-_Bool kotlinx_coroutines_selects_SelectInstance_trySelect__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * clauseObject, void * _Nullable result);
+_Bool kotlinx_coroutines_selects_SelectInstance_trySelect__TypesOfArguments__Any_Swift_Optional_Any___(void * self, void * clauseObject, void * _Nullable result);
 
 _Bool kotlinx_coroutines_selects_onTimeout__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectBuilder_Swift_Int64_U282920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * receiver, int64_t timeMillis, void * block);
 
@@ -1271,17 +1271,17 @@ _Bool kotlinx_coroutines_suspendCancellableCoroutine__TypesOfArguments__U28anyU2
 
 void * kotlinx_coroutines_sync_Mutex__TypesOfArguments__Swift_Bool__(_Bool locked);
 
-_Bool kotlinx_coroutines_sync_Mutex_holdsLock__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(void * self, void * owner);
+_Bool kotlinx_coroutines_sync_Mutex_holdsLock__TypesOfArguments__Any__(void * self, void * owner);
 
 _Bool kotlinx_coroutines_sync_Mutex_isLocked_get(void * self);
 
-_Bool kotlinx_coroutines_sync_Mutex_lock__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable owner, void * continuation, void * exception, void * cancellation);
+_Bool kotlinx_coroutines_sync_Mutex_lock__TypesOfArguments__Swift_Optional_Any___(void * self, void * _Nullable owner, void * continuation, void * exception, void * cancellation);
 
 void * kotlinx_coroutines_sync_Mutex_onLock_get(void * self);
 
-_Bool kotlinx_coroutines_sync_Mutex_tryLock__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable owner);
+_Bool kotlinx_coroutines_sync_Mutex_tryLock__TypesOfArguments__Swift_Optional_Any___(void * self, void * _Nullable owner);
 
-_Bool kotlinx_coroutines_sync_Mutex_unlock__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable owner);
+_Bool kotlinx_coroutines_sync_Mutex_unlock__TypesOfArguments__Swift_Optional_Any___(void * self, void * _Nullable owner);
 
 void * kotlinx_coroutines_sync_Semaphore__TypesOfArguments__Swift_Int32_Swift_Int32__(int32_t permits, int32_t acquiredPermits);
 
@@ -1291,7 +1291,7 @@ int32_t kotlinx_coroutines_sync_Semaphore_availablePermits_get(void * self);
 
 _Bool kotlinx_coroutines_sync_Semaphore_tryAcquire(void * self);
 
-_Bool kotlinx_coroutines_sync_withLock__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_sync_Mutex_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U2829202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * receiver, void * _Nullable owner, void * action, void * continuation, void * exception, void * cancellation);
+_Bool kotlinx_coroutines_sync_withLock__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_sync_Mutex_Swift_Optional_Any__U2829202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * receiver, void * _Nullable owner, void * action, void * continuation, void * exception, void * cancellation);
 
 _Bool kotlinx_coroutines_sync_withPermit__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_sync_Semaphore_U2829202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * receiver, void * action, void * continuation, void * exception, void * cancellation);
 

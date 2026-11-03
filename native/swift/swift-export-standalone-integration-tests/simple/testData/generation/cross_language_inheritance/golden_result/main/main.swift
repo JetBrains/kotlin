@@ -479,7 +479,7 @@ package func Boxed_label__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer)
 package func Boxed_unbox__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer? {
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: main.Boxed.Type.self) as! any main.Boxed
     let _result: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = _self.unbox()
-    return _result.map { it in it.__externalRCRef() } ?? nil
+    return _result.map { it in KotlinRuntime.KotlinBase.__externalRCRefForAny(it) } ?? nil
 }
 
 @_cdecl("Defaulter_describe__reverse_swift")

@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.sir.providers
 
 import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysis
+import org.jetbrains.kotlin.sir.SirType
 import org.jetbrains.kotlin.sir.providers.support.SirTranslationTest
 import org.jetbrains.kotlin.sir.providers.support.functionsNamed
 import org.jetbrains.kotlin.sir.providers.support.translate
-import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeSupportModule
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
@@ -28,12 +28,13 @@ class AnyTypeTranslationTest : SirTranslationTest() {
             val getMainObject = it.functionsNamed("getMainObject").first()
             val isMainObject = it.functionsNamed("isMainObject").first()
 
-            // Check that the return type of getMainObject() is mapped to KotlinBase
-            assertEquals(KotlinRuntimeSupportModule.kotlinBridgeableType, getMainObject.returnType)
+            // Check that the return type of getMainObject() is mapped to `Any`: any Swift value can
+            // cross into Kotlin's `Any`, including foreign ObjC/Swift objects (KT-90924)
+            assertEquals(SirType.any, getMainObject.returnType)
 
-            // Check that the parameter type of isMainObject(obj: Any) is mapped to KotlinBase
+            // Check that the parameter type of isMainObject(obj: Any) is mapped to `Any`
             val objParam = isMainObject.parameters.first()
-            assertEquals(KotlinRuntimeSupportModule.kotlinBridgeableType, objParam.type)
+            assertEquals(SirType.any, objParam.type)
         }
     }
 }

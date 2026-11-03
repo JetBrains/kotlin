@@ -102,11 +102,11 @@ public final class Foo: KotlinRuntime.KotlinBase {
     /// - Parameters:
     ///   - arg: A regular parameter that accepts any object
     public init(
-        arg: any KotlinRuntimeSupport._KotlinBridgeable
+        arg: Any
     ) {
         let __kt = __root___Foo_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
-        { __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinRuntimeSupport__KotlinBridgeable__(__kt, arg.__externalRCRef()); return () }()
+        { __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Any__(__kt, KotlinRuntime.KotlinBase.__externalRCRefForAny(arg)); return () }()
     }
     package override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
@@ -180,10 +180,10 @@ public final class Foo: KotlinRuntime.KotlinBase {
     /// - Parameters:
     ///   - context: A context parameter accepting any object
     public func getE(
-        _ context: any KotlinRuntimeSupport._KotlinBridgeable
+        _ context: Any
     ) -> Swift.Int32 {
         let (c) = context
-        return Foo_e_get__TypesOfArgumentsC1__anyU20KotlinRuntimeSupport__KotlinBridgeable__(self.__externalRCRef(), c.__externalRCRef())
+        return Foo_e_get__TypesOfArgumentsC1__Any__(self.__externalRCRef(), KotlinRuntime.KotlinBase.__externalRCRefForAny(c))
     }
     /// A property with a receiver parameter
     ///
@@ -202,11 +202,11 @@ public final class Foo: KotlinRuntime.KotlinBase {
     /// - Parameters:
     ///   - context: A context parameter accepting any object
     public func setE(
-        _ context: any KotlinRuntimeSupport._KotlinBridgeable,
+        _ context: Any,
         `_`: Swift.Int32
     ) -> Swift.Void {
         let (c) = context
-        return { Foo_e_set__TypesOfArgumentsC1__anyU20KotlinRuntimeSupport__KotlinBridgeable_Swift_Int32__(self.__externalRCRef(), c.__externalRCRef(), `_`); return () }()
+        return { Foo_e_set__TypesOfArgumentsC1__Any_Swift_Int32__(self.__externalRCRef(), KotlinRuntime.KotlinBase.__externalRCRefForAny(c), `_`); return () }()
     }
 }
 @_documentation(visibility: internal)

@@ -58,6 +58,9 @@ NSSet * KotlinBridgeable_Set_unbox(void * ref);
 void * KotlinBridgeable_Dictionary_box(NSDictionary * value);
 NSDictionary * KotlinBridgeable_Dictionary_unbox(void * ref);
 
+void * KotlinBridgeable_ObjCObject_box(void * value);
+void * _Nullable Kotlin_SwiftExport_retainedForeignObjCObject(void * ref);
+
 // _KotlinBridgeable type-tag dispatch for __createBridgeable
 int32_t KotlinBridgeable_getTypeTag(void * ref);
 void KotlinBridgeable_disposeRef(void * ref);

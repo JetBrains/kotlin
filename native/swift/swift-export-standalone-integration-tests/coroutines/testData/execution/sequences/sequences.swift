@@ -117,8 +117,8 @@ func testEmpty() async {
 @Test
 @MainActor
 func testUnit() async {
-    let task = Task<[(any _KotlinBridgeable)?], any Error>.detached {
-        var actual: [(any _KotlinBridgeable)?] = []
+    let task = Task<[(Any)?], any Error>.detached {
+        var actual: [(Any)?] = []
         for try await element in testUnit().asAsyncSequence() {
             actual.append(element)
         }

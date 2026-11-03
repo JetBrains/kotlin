@@ -71,10 +71,10 @@ public final class Foo: KotlinRuntime.KotlinBase {
     }
     public func bar(
         _ context: main.Context,
-        arg: any KotlinRuntimeSupport._KotlinBridgeable
-    ) -> any KotlinRuntimeSupport._KotlinBridgeable {
+        arg: Any
+    ) -> Any {
         let (ctx) = context
-        return KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: Foo_bar__TypesOfArgumentsC1__main_Context_anyU20KotlinRuntimeSupport__KotlinBridgeable__(self.__externalRCRef(), ctx.__externalRCRef(), arg.__externalRCRef()))
+        return KotlinRuntime.KotlinBase.__createBridgeableAny(externalRCRef: Foo_bar__TypesOfArgumentsC1__main_Context_Any__(self.__externalRCRef(), ctx.__externalRCRef(), KotlinRuntime.KotlinBase.__externalRCRefForAny(arg)))
     }
     public func complexContextFunction(
         _ context: (contextA: main.ContextA, context: main.Context, contextB: main.ContextB),
@@ -92,9 +92,9 @@ public final class Foo: KotlinRuntime.KotlinBase {
     }
     public func getBaz(
         _ context: main.Context
-    ) -> any KotlinRuntimeSupport._KotlinBridgeable {
+    ) -> Any {
         let (ctx) = context
-        return KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: Foo_baz_get__TypesOfArgumentsC1__main_Context__(self.__externalRCRef(), ctx.__externalRCRef()))
+        return KotlinRuntime.KotlinBase.__createBridgeableAny(externalRCRef: Foo_baz_get__TypesOfArgumentsC1__main_Context__(self.__externalRCRef(), ctx.__externalRCRef()))
     }
     public func getComplexContextProperty(
         _ context: (contextB: main.ContextB, contextA: main.ContextA),
@@ -133,10 +133,10 @@ public final class Foo: KotlinRuntime.KotlinBase {
 }
 public func bar(
     _ context: main.Context,
-    arg: any KotlinRuntimeSupport._KotlinBridgeable
-) -> any KotlinRuntimeSupport._KotlinBridgeable {
+    arg: Any
+) -> Any {
     let (ctx) = context
-    return KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: __root___bar__TypesOfArgumentsC1__main_Context_anyU20KotlinRuntimeSupport__KotlinBridgeable__(ctx.__externalRCRef(), arg.__externalRCRef()))
+    return KotlinRuntime.KotlinBase.__createBridgeableAny(externalRCRef: __root___bar__TypesOfArgumentsC1__main_Context_Any__(ctx.__externalRCRef(), KotlinRuntime.KotlinBase.__externalRCRefForAny(arg)))
 }
 public func combine(
     _ context: main.Bar,
@@ -195,9 +195,9 @@ public func foo(
 }
 public func getBaz(
     _ context: main.Context
-) -> any KotlinRuntimeSupport._KotlinBridgeable {
+) -> Any {
     let (ctx) = context
-    return KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: __root___baz_get__TypesOfArgumentsC1__main_Context__(ctx.__externalRCRef()))
+    return KotlinRuntime.KotlinBase.__createBridgeableAny(externalRCRef: __root___baz_get__TypesOfArgumentsC1__main_Context__(ctx.__externalRCRef()))
 }
 public func getComplexContextProperty(
     _ context: (contextA: main.ContextA, contextB: main.ContextB),

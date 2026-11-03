@@ -27,7 +27,7 @@ void * AFactory_create(void * self);
 
 void * _Nullable A_foo_get(void * self);
 
-_Bool AnyConsumer_consume__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(void * self, void * item);
+_Bool AnyConsumer_consume__TypesOfArguments__Any__(void * self, void * item);
 
 void * ArrayBox_ints_get(void * self);
 

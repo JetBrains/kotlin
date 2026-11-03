@@ -35,9 +35,9 @@ public func testMapListIntSetInt(
     return __root___testMapListIntSetInt__TypesOfArguments__Swift_Dictionary_Swift_Array_Swift_Int32__Swift_Set_Swift_Int32____(Dictionary(uniqueKeysWithValues: m.map { key, value in (key.map { it in NSNumber(value: it) }, Set(value.map { it in NSNumber(value: it) }) )})) as! Swift.Dictionary<Swift.Array<Swift.Int32>,Swift.Set<Swift.Int32>>
 }
 public func testMapLongAny(
-    m: [Swift.Int64: any KotlinRuntimeSupport._KotlinBridgeable]
-) -> [Swift.Int64: any KotlinRuntimeSupport._KotlinBridgeable] {
-    return __root___testMapLongAny__TypesOfArguments__Swift_Dictionary_Swift_Int64_anyU20KotlinRuntimeSupport__KotlinBridgeable___(Dictionary(uniqueKeysWithValues: m.map { key, value in (NSNumber(value: key), value )})) as! Swift.Dictionary<Swift.Int64,any KotlinRuntimeSupport._KotlinBridgeable>
+    m: [Swift.Int64: Any]
+) -> [Swift.Int64: Any] {
+    return __root___testMapLongAny__TypesOfArguments__Swift_Dictionary_Swift_Int64_Any___(Dictionary(uniqueKeysWithValues: m.map { key, value in (NSNumber(value: key), value )})) as! Swift.Dictionary<Swift.Int64,Any>
 }
 public func testMapNothingOptNothing(
     m: [Swift.Never: Swift.Never?]

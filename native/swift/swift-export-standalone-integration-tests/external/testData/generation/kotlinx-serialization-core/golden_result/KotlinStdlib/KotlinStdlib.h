@@ -957,7 +957,7 @@ _Bool kotlin_String_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPoi
 
 int32_t kotlin_String_length_get(void * self);
 
-NSString * kotlin_String_plus__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
+NSString * kotlin_String_plus__TypesOfArguments__Swift_Optional_Any___(void * self, void * _Nullable other);
 
 void * kotlin_String_subSequence__TypesOfArguments__Swift_Int32_Swift_Int32__(void * self, int32_t startIndex, int32_t endIndex);
 

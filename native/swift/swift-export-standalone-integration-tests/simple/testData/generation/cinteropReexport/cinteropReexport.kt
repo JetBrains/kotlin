@@ -78,3 +78,9 @@ fun producesFoo(): Foo? = null
 fun consumesBar(x: ZarProtocol): Int = 0
 
 fun consumesBar(x: ZarableProtocol): ZarableProtocol = TODO()
+
+// An ObjC/Swift object returned as Kotlin `Any` must surface in Swift unchanged instead of being
+// wrapped into a KotlinExistential (KT-90924).
+fun returnFooAsAny(x: Foo): Any = x
+
+fun returnZarAsAny(x: ZarProtocol): Any = x

@@ -66,10 +66,10 @@ public fun __root___Object_init_initialize__TypesOfArguments__Swift_UnsafeMutabl
     }
 }
 
-@ExportedBridge("__root___Object_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinRuntimeSupport__KotlinBridgeable__")
-public fun __root___Object_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinRuntimeSupport__KotlinBridgeable__(__kt: kotlin.native.internal.NativePtr, arg: kotlin.native.internal.NativePtr, __error: kotlinx.cinterop.COpaquePointerVar): Boolean {
+@ExportedBridge("__root___Object_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Any__")
+public fun __root___Object_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Any__(__kt: kotlin.native.internal.NativePtr, arg: kotlin.native.internal.NativePtr, __error: kotlinx.cinterop.COpaquePointerVar): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val __arg = kotlin.native.internal.ref.dereferenceExternalRCRef(arg) as kotlin.Any
+    val __arg = (kotlin.native.internal.ref.dereferenceExternalRCRef(arg) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(arg); kotlin.native.internal.ref.disposeExternalRCRef(arg) }
     val ____error = __error
     try {
         kotlin.native.internal.initInstance(____kt, Object(__arg))
@@ -80,10 +80,10 @@ public fun __root___Object_init_initialize__TypesOfArguments__Swift_UnsafeMutabl
     }
 }
 
-@ExportedBridge("__root___Object_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
-public fun __root___Object_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(__kt: kotlin.native.internal.NativePtr, arg: kotlin.native.internal.NativePtr, __error: kotlinx.cinterop.COpaquePointerVar): Boolean {
+@ExportedBridge("__root___Object_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Any___")
+public fun __root___Object_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Any___(__kt: kotlin.native.internal.NativePtr, arg: kotlin.native.internal.NativePtr, __error: kotlinx.cinterop.COpaquePointerVar): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val __arg = if (arg == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(arg) as kotlin.Any
+    val __arg = if (arg == kotlin.native.internal.NativePtr.NULL) null else (kotlin.native.internal.ref.dereferenceExternalRCRef(arg) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(arg); kotlin.native.internal.ref.disposeExternalRCRef(arg) }
     val ____error = __error
     try {
         kotlin.native.internal.initInstance(____kt, Object(__arg))
@@ -120,9 +120,9 @@ public fun __root___throwing_fun_any(_out_error: kotlinx.cinterop.COpaquePointer
     }
 }
 
-@ExportedBridge("__root___throwing_fun_any__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__")
-public fun __root___throwing_fun_any__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(arg: kotlin.native.internal.NativePtr, _out_error: kotlinx.cinterop.COpaquePointerVar): kotlin.native.internal.NativePtr {
-    val __arg = kotlin.native.internal.ref.dereferenceExternalRCRef(arg) as kotlin.Any
+@ExportedBridge("__root___throwing_fun_any__TypesOfArguments__Any__")
+public fun __root___throwing_fun_any__TypesOfArguments__Any__(arg: kotlin.native.internal.NativePtr, _out_error: kotlinx.cinterop.COpaquePointerVar): kotlin.native.internal.NativePtr {
+    val __arg = (kotlin.native.internal.ref.dereferenceExternalRCRef(arg) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(arg); kotlin.native.internal.ref.disposeExternalRCRef(arg) }
     val ___out_error = _out_error
     try {
         val _result = throwing_fun_any(__arg)
@@ -257,9 +257,9 @@ public fun __root___throwing_fun_nullable(_out_error: kotlinx.cinterop.COpaquePo
     }
 }
 
-@ExportedBridge("__root___throwing_fun_nullable__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
-public fun __root___throwing_fun_nullable__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(arg: kotlin.native.internal.NativePtr, _out_error: kotlinx.cinterop.COpaquePointerVar): kotlin.native.internal.NativePtr {
-    val __arg = if (arg == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(arg) as kotlin.Any
+@ExportedBridge("__root___throwing_fun_nullable__TypesOfArguments__Swift_Optional_Any___")
+public fun __root___throwing_fun_nullable__TypesOfArguments__Swift_Optional_Any___(arg: kotlin.native.internal.NativePtr, _out_error: kotlinx.cinterop.COpaquePointerVar): kotlin.native.internal.NativePtr {
+    val __arg = if (arg == kotlin.native.internal.NativePtr.NULL) null else (kotlin.native.internal.ref.dereferenceExternalRCRef(arg) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(arg); kotlin.native.internal.ref.disposeExternalRCRef(arg) }
     val ___out_error = _out_error
     try {
         val _result = throwing_fun_nullable(__arg)
@@ -282,9 +282,9 @@ public fun __root___throwing_fun_object(_out_error: kotlinx.cinterop.COpaquePoin
     }
 }
 
-@ExportedBridge("__root___throwing_fun_object__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__")
-public fun __root___throwing_fun_object__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(arg: kotlin.native.internal.NativePtr, _out_error: kotlinx.cinterop.COpaquePointerVar): kotlin.native.internal.NativePtr {
-    val __arg = kotlin.native.internal.ref.dereferenceExternalRCRef(arg) as kotlin.Any
+@ExportedBridge("__root___throwing_fun_object__TypesOfArguments__Any__")
+public fun __root___throwing_fun_object__TypesOfArguments__Any__(arg: kotlin.native.internal.NativePtr, _out_error: kotlinx.cinterop.COpaquePointerVar): kotlin.native.internal.NativePtr {
+    val __arg = (kotlin.native.internal.ref.dereferenceExternalRCRef(arg) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(arg); kotlin.native.internal.ref.disposeExternalRCRef(arg) }
     val ___out_error = _out_error
     try {
         val _result = throwing_fun_object(__arg)

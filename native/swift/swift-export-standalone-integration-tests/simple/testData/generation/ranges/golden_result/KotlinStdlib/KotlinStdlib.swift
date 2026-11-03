@@ -69,7 +69,7 @@ extension ExportedKotlinPackages.kotlin.Comparable where Self : ExportedKotlinPa
     public func _compareTo(
         other: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> Swift.Int32 {
-        return kotlin_Comparable_compareTo__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
+        return kotlin_Comparable_compareTo__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in KotlinRuntime.KotlinBase.__externalRCRefForAny(it) } ?? nil)
     }
 }
 extension ExportedKotlinPackages.kotlin.Comparable {

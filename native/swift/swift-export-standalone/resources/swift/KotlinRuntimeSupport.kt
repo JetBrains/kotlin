@@ -216,6 +216,14 @@ public fun KotlinBridgeable_Dictionary_unbox(ref: kotlin.native.internal.NativeP
     return map.objcPtr()
 }
 
+// _KotlinBridgeable bridge functions for foreign ObjC/Swift objects
+
+@ExportedBridge("KotlinBridgeable_ObjCObject_box")
+public fun KotlinBridgeable_ObjCObject_box(value: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val obj = interpretObjCPointer<ObjCObject>(value)
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(obj)
+}
+
 // _KotlinBridgeable type-tag dispatch for __createBridgeable
 
 @ExportedBridge("KotlinBridgeable_getTypeTag")

@@ -31,6 +31,12 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 private val SirFunctionalType.bridgeNameSuffix: String
     get() = (if (isAsync) "async_" else "") + returnType.swiftName
 
+private fun consumeExternalRCRefAsKotlinAny(valueExpression: String): String =
+    "(kotlin.native.internal.ref.dereferenceExternalRCRef($valueExpression) as kotlin.Any).also { " +
+            "kotlin.native.internal.ref.releaseExternalRCRef($valueExpression); " +
+            "kotlin.native.internal.ref.disposeExternalRCRef($valueExpression) " +
+            "}"
+
 context(session: SirSession)
 internal fun bridgeType(type: SirType): BidirectionalBridge =
     bridgeType(type, SirTypeVariance.INVARIANT) as BidirectionalBridge
@@ -110,6 +116,9 @@ private fun bridgeReifiedType(type: SirType, position: SirTypeVariance): Bridge?
 }
 
 private fun bridgeExistential(type: SirExistentialType, position: SirTypeVariance): Bridge {
+    if (type.protocols.isEmpty()) {
+        return AsAny
+    }
     if (type.protocols.singleOrNull()?.first == KotlinRuntimeSupportModule.kotlinBridgeable) {
         return AsAnyBridgeable
     }
@@ -131,6 +140,7 @@ internal fun bridgeAsNSCollectionElement(type: SirType): BidirectionalBridge = w
     is AsObject,
     is AsExistential,
     is AsAnyBridgeable,
+    is AsAny,
     is AsTyped,
     is AsOpaqueObject,
     is SirCustomTypeTranslatorImpl.RangeBridge,
@@ -159,6 +169,7 @@ private fun bridgeNominalType(type: SirNominalType, position: SirTypeVariance): 
             is AsObjCBridged,
             is AsExistential,
             is AsAnyBridgeable,
+            is AsAny,
             is AsTyped,
             is AsInvariantBlock,
             is AsError,
@@ -463,7 +474,10 @@ internal sealed interface Bridge {
     /**
      * A bridge that converts a `_KotlinBridgeable` to `Any` using native pointers.
      *
-     * This kind of bridge is currently used exclusively for the `Any` type in Kotlin.
+     * This kind of bridge is currently used for erasures of Kotlin type parameters, star projections
+     * and other "some Kotlin type" positions: only Kotlin values can inhabit those, so the Swift
+     * side is the Kotlin-values-only existential `any _KotlinBridgeable`.
+     *
      * Conceptually, it is a specialized version of [AsExistential], but with one key distinction:
      * `Any` is not an interface.
      *
@@ -471,8 +485,8 @@ internal sealed interface Bridge {
      * In Kotlin wrapper functions (Objective-C), it is represented as a GC-aware pointer (passed as a `NativePtr`).
      *
      * The sequence is as follows:
-     * 1. The Swift function uses `_KotlinBridgeable.__externalRCRef` to obtain a GC-aware pointer to a Kotlin object, represented in Swift as `UnsafeMutableRawPointer`.
-     * 2. The Kotlin wrapper function uses `dereferenceExternalRCRef(ptr)` to obtain the Kotlin object as `Any`.
+     * 1. The Swift function uses `KotlinBase.__externalRCRefForAny` to obtain a GC-aware pointer to a Kotlin object, represented in Swift as `UnsafeMutableRawPointer` (an owned ref).
+     * 2. The Kotlin wrapper function uses `dereferenceExternalRCRef(ptr)` to obtain the Kotlin object as `Any`, then releases and disposes the consumed ref.
      * 3. After receiving the Kotlin result, the wrapper function calls `createRetainedExternalRCRef(res)` to obtain the pointer back.
      * 4. Finally, the Swift function calls `__createProtocolWrapper(externalRCRef: ptr, conformsTo: nil)` to reconstruct the Swift value.
      */
@@ -483,7 +497,7 @@ internal sealed interface Bridge {
         override val inKotlinSources = object : ValueConversion {
             context(session: SirSession)
             override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) =
-                "kotlin.native.internal.ref.dereferenceExternalRCRef($valueExpression) as kotlin.Any"
+                consumeExternalRCRefAsKotlinAny(valueExpression)
 
             context(session: SirSession)
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) =
@@ -496,12 +510,50 @@ internal sealed interface Bridge {
                 typeNamer: SirTypeNamer,
                 valueExpression: String,
             ): String {
-                return "$valueExpression.__externalRCRef()"
+                return "${typeNamer.swiftFqName(SirNominalType(KotlinRuntimeModule.kotlinBase))}.__externalRCRefForAny($valueExpression)"
             }
 
             context(session: SirSession)
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) =
                 "${typeNamer.swiftFqName(SirNominalType(KotlinRuntimeModule.kotlinBase))}.__createBridgeable(externalRCRef: $valueExpression)"
+        }
+    }
+
+    /**
+     * A bridge for Kotlin's `Any` type proper.
+     *
+     * Unlike [AsAnyBridgeable], the Swift side is `Any`, so any Swift value can cross into a
+     * Kotlin `Any`, including foreign ObjC/Swift objects (KT-90924): `__createBridgeableAny`
+     * surfaces those unchanged instead of wrapping them into a KotlinExistential.
+     *
+     * The rest of the sequence matches [AsAnyBridgeable].
+     */
+    object AsAny : BidirectionalBridge {
+        override val swiftType: SirType = SirType.any
+        override val kotlinType = KotlinType.KotlinObject
+        override val cType = CType.Object
+        override val inKotlinSources = object : ValueConversion {
+            context(session: SirSession)
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) =
+                consumeExternalRCRefAsKotlinAny(valueExpression)
+
+            context(session: SirSession)
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) =
+                "kotlin.native.internal.ref.createRetainedExternalRCRef($valueExpression)"
+        }
+
+        override val inSwiftSources: ValueConversion = object : ValueConversion {
+            context(session: SirSession)
+            override fun swiftToKotlin(
+                typeNamer: SirTypeNamer,
+                valueExpression: String,
+            ): String {
+                return "${typeNamer.swiftFqName(SirNominalType(KotlinRuntimeModule.kotlinBase))}.__externalRCRefForAny($valueExpression)"
+            }
+
+            context(session: SirSession)
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) =
+                "${typeNamer.swiftFqName(SirNominalType(KotlinRuntimeModule.kotlinBase))}.__createBridgeableAny(externalRCRef: $valueExpression)"
         }
     }
 
@@ -954,7 +1006,8 @@ internal sealed interface Bridge {
             override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
                 require(
                     wrappedObject is AsObjCBridged || wrappedObject is AsObject ||
-                            wrappedObject is AsExistential || wrappedObject is AsAnyBridgeable || wrappedObject is AsTyped ||
+                            wrappedObject is AsExistential || wrappedObject is AsAnyBridgeable || wrappedObject is AsAny ||
+                            wrappedObject is AsTyped ||
                             wrappedObject is AsInvariantBlock ||
                             wrappedObject is AsError ||
                             wrappedObject is SirCustomTypeTranslatorImpl.RangeBridge
@@ -968,7 +1021,7 @@ internal sealed interface Bridge {
                 return when (wrappedObject) {
                     is AsObjCBridged, is AsInvariantBlock ->
                         valueExpression.mapSwift { wrappedObject.inSwiftSources.kotlinToSwift(typeNamer, it) }
-                    is AsObject, is AsExistential, is AsAnyBridgeable, is AsTyped, is AsError, is SirCustomTypeTranslatorImpl.RangeBridge ->
+                    is AsObject, is AsExistential, is AsAnyBridgeable, is AsAny, is AsTyped, is AsError, is SirCustomTypeTranslatorImpl.RangeBridge ->
                         "{ switch $valueExpression { case ${wrappedObject.renderNil()}: .none; case let res?: ${
                             wrappedObject.inSwiftSources.kotlinToSwift(typeNamer, "res")
                         }; } }()"

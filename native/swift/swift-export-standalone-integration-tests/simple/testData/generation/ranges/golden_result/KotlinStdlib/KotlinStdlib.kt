@@ -61,7 +61,7 @@ public fun kotlin_ranges_ClosedRange_start_get__reverse(self: kotlin.ranges.Clos
 @ExportedBridge("kotlin_Comparable_compareTo__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
 public fun kotlin_Comparable_compareTo__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, other: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Comparable<kotlin.Any?>
-    val __other = if (other == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(other) as kotlin.Any
+    val __other = if (other == kotlin.native.internal.NativePtr.NULL) null else (kotlin.native.internal.ref.dereferenceExternalRCRef(other) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(other); kotlin.native.internal.ref.disposeExternalRCRef(other) }
     val _result = __self.compareTo(__other)
     return _result
 }

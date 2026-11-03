@@ -41,3 +41,19 @@ public fun main_producesFoo(): kotlin.native.internal.NativePtr {
     val _result = main.producesFoo()
     return if (_result == null) kotlin.native.internal.NativePtr.NULL else _result.objcPtr()
 }
+
+@ExportedBridge("main_returnFooAsAny__TypesOfArguments__Foo__")
+@OptIn(kotlinx.cinterop.BetaInteropApi::class, kotlinx.cinterop.ExperimentalForeignApi::class)
+public fun main_returnFooAsAny__TypesOfArguments__Foo__(x: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __x = interpretObjCPointer<foo.Foo>(x)
+    val _result = main.returnFooAsAny(__x)
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("main_returnZarAsAny__TypesOfArguments__anyU20Zar__")
+@OptIn(kotlinx.cinterop.BetaInteropApi::class, kotlinx.cinterop.ExperimentalForeignApi::class)
+public fun main_returnZarAsAny__TypesOfArguments__anyU20Zar__(x: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __x = interpretObjCPointer<foo.ZarProtocol>(x)
+    val _result = main.returnZarAsAny(__x)
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}

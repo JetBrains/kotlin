@@ -129,7 +129,7 @@ _Bool kotlinx_serialization_encoding_AbstractEncoder_encodeShort__TypesOfArgumen
 
 _Bool kotlinx_serialization_encoding_AbstractEncoder_encodeString__TypesOfArguments__Swift_String____reverse_swift(void * self, NSString * value);
 
-_Bool kotlinx_serialization_encoding_AbstractEncoder_encodeValue__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable____reverse_swift(void * self, void * value);
+_Bool kotlinx_serialization_encoding_AbstractEncoder_encodeValue__TypesOfArguments__Any____reverse_swift(void * self, void * value);
 
 _Bool kotlinx_serialization_encoding_AbstractEncoder_endStructure__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift(void * self, void * descriptor);
 
@@ -727,9 +727,9 @@ _Bool kotlinx_serialization_encoding_AbstractEncoder_encodeStringElement__TypesO
 
 _Bool kotlinx_serialization_encoding_AbstractEncoder_encodeString__TypesOfArguments__Swift_String___direct(void * self, NSString * value);
 
-_Bool kotlinx_serialization_encoding_AbstractEncoder_encodeValue__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(void * self, void * value);
+_Bool kotlinx_serialization_encoding_AbstractEncoder_encodeValue__TypesOfArguments__Any__(void * self, void * value);
 
-_Bool kotlinx_serialization_encoding_AbstractEncoder_encodeValue__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable___direct(void * self, void * value);
+_Bool kotlinx_serialization_encoding_AbstractEncoder_encodeValue__TypesOfArguments__Any___direct(void * self, void * value);
 
 _Bool kotlinx_serialization_encoding_AbstractEncoder_endStructure__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor__(void * self, void * descriptor);
 

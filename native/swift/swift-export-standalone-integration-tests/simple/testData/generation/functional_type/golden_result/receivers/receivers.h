@@ -3,17 +3,17 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+_Bool receivers_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Any__(void * pointerToClosure, void * _1);
+
 _Bool receivers_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Array_Swift_Int32___(void * pointerToClosure, NSArray<NSNumber *> * _1);
 
 _Bool receivers_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(void * pointerToClosure, int32_t _1);
 
 _Bool receivers_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String___(void * pointerToClosure, NSString * _Nullable _1);
 
-_Bool receivers_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinRuntimeSupport__KotlinBridgeable__(void * pointerToClosure, void * _1);
-
 _Bool __root___foo__TypesOfArguments__U28Swift_Int32U29202D_U20Swift_Void__(void * i);
 
-_Bool __root___fooAny__TypesOfArguments__U28anyU20KotlinRuntimeSupport__KotlinBridgeableU29202D_U20Swift_Void__(void * i);
+_Bool __root___fooAny__TypesOfArguments__U28AnyU29202D_U20Swift_Void__(void * i);
 
 _Bool __root___fooList__TypesOfArguments__U28Swift_Array_Swift_Int32_U29202D_U20Swift_Void__(void * i);
 

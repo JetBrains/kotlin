@@ -104,17 +104,17 @@ internal object StandaloneSirTypeNamer : SirTypeNamer {
     }
 
     context(session: KaSession)
-    private fun kotlinFqName(type: SirExistentialType): String = type.protocols.single().let { [protocol, typeArguments] ->
+    private fun kotlinFqName(type: SirExistentialType): String = type.protocols.singleOrNull()?.let { [protocol, typeArguments] ->
         if (protocol == KotlinRuntimeSupportModule.kotlinBridgeable) return@let "kotlin.Any"
         val symbol = protocol.kaSymbolOrNull<KaClassLikeSymbol>()!!
         val fqName = symbol.classId!!.asFqNameString()
         val typeArgs = when {
             symbol.typeParameters.isEmpty() -> null
             typeArguments.isEmpty() -> symbol.typeParameters.map { "*" }
-            else -> typeArguments.map { kotlinParametrizedName(it) }
+        else -> typeArguments.map { kotlinParametrizedName(it) }
         }?.joinToString(prefix = "<", postfix = ">") ?: ""
         "$fqName$typeArgs"
-    }
+    } ?: "kotlin.Any" // The empty existential is the Swift side of Kotlin `Any` (AsAny).
 
     context(session: KaSession)
     private fun kotlinFqName(type: SirNominalType): String {

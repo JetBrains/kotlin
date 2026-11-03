@@ -13,4 +13,8 @@ int32_t main_consumesFoo__TypesOfArguments__Foo__(id<NSObject> x);
 
 id<NSObject> _Nullable main_producesFoo();
 
+void * main_returnFooAsAny__TypesOfArguments__Foo__(id<NSObject> x);
+
+void * main_returnZarAsAny__TypesOfArguments__anyU20Zar__(id x);
+
 NS_ASSUME_NONNULL_END

@@ -7,9 +7,9 @@ public func foo() -> any ExportedKotlinPackages.kotlin.collections.MutableList {
     return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___foo(), conformsTo: ExportedKotlinPackages.kotlin.collections.MutableList.Type.self) as! any ExportedKotlinPackages.kotlin.collections.MutableList
 }
 public func testListAny(
-    l: [any KotlinRuntimeSupport._KotlinBridgeable]
-) -> [any KotlinRuntimeSupport._KotlinBridgeable] {
-    return __root___testListAny__TypesOfArguments__Swift_Array_anyU20KotlinRuntimeSupport__KotlinBridgeable___(l) as! Swift.Array<any KotlinRuntimeSupport._KotlinBridgeable>
+    l: [Any]
+) -> [Any] {
+    return __root___testListAny__TypesOfArguments__Swift_Array_Any___(l) as! Swift.Array<Any>
 }
 public func testListInt(
     l: [Swift.Int32]
@@ -27,9 +27,9 @@ public func testListNothing(
     return __root___testListNothing__TypesOfArguments__Swift_Array_Swift_Never___(l) as! Swift.Array<Swift.Never>
 }
 public func testListOptAny(
-    l: [(any KotlinRuntimeSupport._KotlinBridgeable)?]
-) -> [(any KotlinRuntimeSupport._KotlinBridgeable)?] {
-    return __root___testListOptAny__TypesOfArguments__Swift_Array_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(l.map { it in it as! NSObject? ?? NSNull() }) as! Swift.Array<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
+    l: [Any?]
+) -> [Any?] {
+    return __root___testListOptAny__TypesOfArguments__Swift_Array_Swift_Optional_Any____(l.map { it in it as! NSObject? ?? NSNull() }) as! Swift.Array<Swift.Optional<Any>>
 }
 public func testListOptInt(
     l: [Swift.Int32?]

@@ -73,20 +73,20 @@ public var baz: Swift.Int32 {
         return __root___baz_get()
     }
 }
-public var foo: any KotlinRuntimeSupport._KotlinBridgeable {
+public var foo: Any {
     get {
-        return KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: __root___foo_get())
+        return KotlinRuntime.KotlinBase.__createBridgeableAny(externalRCRef: __root___foo_get())
     }
     set {
-        return { __root___foo_set__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(newValue.__externalRCRef()); return () }()
+        return { __root___foo_set__TypesOfArguments__Any__(KotlinRuntime.KotlinBase.__externalRCRefForAny(newValue)); return () }()
     }
 }
-public var lateinit_foo: any KotlinRuntimeSupport._KotlinBridgeable {
+public var lateinit_foo: Any {
     get {
-        return KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: __root___lateinit_foo_get())
+        return KotlinRuntime.KotlinBase.__createBridgeableAny(externalRCRef: __root___lateinit_foo_get())
     }
     set {
-        return { __root___lateinit_foo_set__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(newValue.__externalRCRef()); return () }()
+        return { __root___lateinit_foo_set__TypesOfArguments__Any__(KotlinRuntime.KotlinBase.__externalRCRefForAny(newValue)); return () }()
     }
 }
 extension ExportedKotlinPackages.inline {

@@ -16,14 +16,14 @@ import kotlin.native.internal.ImportedBridge
 import kotlinx.cinterop.*
 import kotlin.native.internal.ExportedBridge
 
-@ImportedBridge("Baz_foo__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable____reverse_swift")
-internal external fun Baz_foo__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable____reverse_swift(self: kotlin.native.internal.NativePtr, result: kotlin.native.internal.NativePtr): Boolean
+@ImportedBridge("Baz_foo__TypesOfArguments__Any____reverse_swift")
+internal external fun Baz_foo__TypesOfArguments__Any____reverse_swift(self: kotlin.native.internal.NativePtr, result: kotlin.native.internal.NativePtr): Boolean
 
 @BindReverseBridgeToMethod(Baz::class, "foo")
-public fun Baz_foo__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable____reverse(self: Baz, result: kotlin.Any): Unit {
+public fun Baz_foo__TypesOfArguments__Any____reverse(self: Baz, result: kotlin.Any): Unit {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val __result = kotlin.native.internal.ref.createRetainedExternalRCRef(result)
-    val _result = Baz_foo__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable____reverse_swift(__self, __result)
+    val _result = Baz_foo__TypesOfArguments__Any____reverse_swift(__self, __result)
     return run<Unit> { _result }
 }
 
@@ -119,10 +119,10 @@ public fun SomeInterface_something_set__TypesOfArgumentsE__Swift_String_Swift_In
     return run<Unit> { _result }
 }
 
-@ExportedBridge("Baz_foo__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__")
-public fun Baz_foo__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(self: kotlin.native.internal.NativePtr, result: kotlin.native.internal.NativePtr): Boolean {
+@ExportedBridge("Baz_foo__TypesOfArguments__Any__")
+public fun Baz_foo__TypesOfArguments__Any__(self: kotlin.native.internal.NativePtr, result: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Baz
-    val __result = kotlin.native.internal.ref.dereferenceExternalRCRef(result) as kotlin.Any
+    val __result = (kotlin.native.internal.ref.dereferenceExternalRCRef(result) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(result); kotlin.native.internal.ref.disposeExternalRCRef(result) }
     __self.foo(__result)
     return true
 }

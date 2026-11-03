@@ -31,8 +31,8 @@ public fun __root___testMapListIntSetInt__TypesOfArguments__Swift_Dictionary_Swi
     return _result.objcPtr()
 }
 
-@ExportedBridge("__root___testMapLongAny__TypesOfArguments__Swift_Dictionary_Swift_Int64_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
-public fun __root___testMapLongAny__TypesOfArguments__Swift_Dictionary_Swift_Int64_anyU20KotlinRuntimeSupport__KotlinBridgeable___(m: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+@ExportedBridge("__root___testMapLongAny__TypesOfArguments__Swift_Dictionary_Swift_Int64_Any___")
+public fun __root___testMapLongAny__TypesOfArguments__Swift_Dictionary_Swift_Int64_Any___(m: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __m = interpretObjCPointer<kotlin.collections.Map<Long, kotlin.Any>>(m)
     val _result = testMapLongAny(__m)
     return _result.objcPtr()

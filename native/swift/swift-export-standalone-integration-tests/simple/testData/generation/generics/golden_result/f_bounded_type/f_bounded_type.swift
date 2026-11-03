@@ -60,7 +60,7 @@ extension f_bounded_type.MyComparable where Self : f_bounded_type.__MyComparable
     public func compareTo(
         other: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> Swift.Int32 {
-        return MyComparable_compareTo__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
+        return MyComparable_compareTo__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in KotlinRuntime.KotlinBase.__externalRCRefForAny(it) } ?? nil)
     }
 }
 extension f_bounded_type.MyComparable {

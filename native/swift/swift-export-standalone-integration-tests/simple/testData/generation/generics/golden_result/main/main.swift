@@ -89,9 +89,9 @@ public final class AnyConsumer: KotlinRuntime.KotlinBase {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
     public func consume(
-        item: any KotlinRuntimeSupport._KotlinBridgeable
+        item: Any
     ) -> Swift.Void {
-        return { AnyConsumer_consume__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(self.__externalRCRef(), item.__externalRCRef()); return () }()
+        return { AnyConsumer_consume__TypesOfArguments__Any__(self.__externalRCRef(), KotlinRuntime.KotlinBase.__externalRCRefForAny(item)); return () }()
     }
 }
 public final class ArrayBox: KotlinRuntime.KotlinBase {
@@ -138,7 +138,7 @@ open class Box: KotlinRuntime.KotlinBase {
         precondition(Self.self != main.Box.self, "main.Box is an abstract class and cannot be instantiated directly")
         let __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
-        { __root___Box_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(__kt, t.map { it in it.__externalRCRef() } ?? nil); return () }()
+        { __root___Box_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(__kt, t.map { it in KotlinRuntime.KotlinBase.__externalRCRefForAny(it) } ?? nil); return () }()
     }
     package override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
@@ -171,7 +171,7 @@ public final class DefaultBox: main.Box {
     ) {
         let __kt = __root___DefaultBox_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
-        { __root___DefaultBox_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(__kt, t.map { it in it.__externalRCRef() } ?? nil); return () }()
+        { __root___DefaultBox_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(__kt, t.map { it in KotlinRuntime.KotlinBase.__externalRCRefForAny(it) } ?? nil); return () }()
     }
     package override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
@@ -282,7 +282,7 @@ public final class IdentityProcessor: KotlinRuntime.KotlinBase {
     public func process(
         input: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        return { switch IdentityProcessor_process__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), input.map { it in it.__externalRCRef() } ?? nil) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
+        return { switch IdentityProcessor_process__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), input.map { it in KotlinRuntime.KotlinBase.__externalRCRefForAny(it) } ?? nil) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
     }
 }
 public final class Pair: KotlinRuntime.KotlinBase {
@@ -308,7 +308,7 @@ public final class Pair: KotlinRuntime.KotlinBase {
     ) {
         let __kt = __root___Pair_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
-        { __root___Pair_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(__kt, first.map { it in it.__externalRCRef() } ?? nil, second.map { it in it.__externalRCRef() } ?? nil); return () }()
+        { __root___Pair_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(__kt, first.map { it in KotlinRuntime.KotlinBase.__externalRCRefForAny(it) } ?? nil, second.map { it in KotlinRuntime.KotlinBase.__externalRCRefForAny(it) } ?? nil); return () }()
     }
 }
 open class StringProducer: KotlinRuntime.KotlinBase {
@@ -366,7 +366,7 @@ public func bar(
     param1: (any KotlinRuntimeSupport._KotlinBridgeable)?,
     param2: (any KotlinRuntimeSupport._KotlinBridgeable)?
 ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-    return { switch __root___bar__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(param1.map { it in it.__externalRCRef() } ?? nil, param2.map { it in it.__externalRCRef() } ?? nil) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
+    return { switch __root___bar__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(param1.map { it in KotlinRuntime.KotlinBase.__externalRCRefForAny(it) } ?? nil, param2.map { it in KotlinRuntime.KotlinBase.__externalRCRefForAny(it) } ?? nil) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
 }
 public func createMap(
     pairs: [main.Pair]
@@ -383,7 +383,7 @@ public func foo(
     param1: (any KotlinRuntimeSupport._KotlinBridgeable)?,
     param2: (any KotlinRuntimeSupport._KotlinBridgeable)?
 ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-    return { switch __root___foo__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(param1.map { it in it.__externalRCRef() } ?? nil, param2.map { it in it.__externalRCRef() } ?? nil) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
+    return { switch __root___foo__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(param1.map { it in KotlinRuntime.KotlinBase.__externalRCRefForAny(it) } ?? nil, param2.map { it in KotlinRuntime.KotlinBase.__externalRCRefForAny(it) } ?? nil) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
 }
 public func produceBoxStar(
     box: @escaping (main.Box) -> Swift.Void
@@ -411,12 +411,12 @@ public func returnGenericConstraintToGeneric(
     arg1: (any KotlinRuntimeSupport._KotlinBridgeable)?,
     arg2: (any KotlinRuntimeSupport._KotlinBridgeable)?
 ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-    return { switch __root___returnGenericConstraintToGeneric__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(arg1.map { it in it.__externalRCRef() } ?? nil, arg2.map { it in it.__externalRCRef() } ?? nil) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
+    return { switch __root___returnGenericConstraintToGeneric__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(arg1.map { it in KotlinRuntime.KotlinBase.__externalRCRefForAny(it) } ?? nil, arg2.map { it in KotlinRuntime.KotlinBase.__externalRCRefForAny(it) } ?? nil) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
 }
 public func returnSomeBoxForArg(
     arg: (any KotlinRuntimeSupport._KotlinBridgeable)?
 ) -> main.Box {
-    return main.Box.__createClassWrapper(externalRCRef: __root___returnSomeBoxForArg__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(arg.map { it in it.__externalRCRef() } ?? nil))
+    return main.Box.__createClassWrapper(externalRCRef: __root___returnSomeBoxForArg__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(arg.map { it in KotlinRuntime.KotlinBase.__externalRCRefForAny(it) } ?? nil))
 }
 public func takeBoxStarProjection(
     box: main.Box
@@ -474,7 +474,7 @@ extension main.Consumer where Self : main.__Consumer {
     public func consume(
         item: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> Swift.Void {
-        return { Consumer_consume__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), item.map { it in it.__externalRCRef() } ?? nil); return () }()
+        return { Consumer_consume__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), item.map { it in KotlinRuntime.KotlinBase.__externalRCRefForAny(it) } ?? nil); return () }()
     }
 }
 extension main.Consumer {
@@ -494,7 +494,7 @@ extension main.Processor where Self : main.__Processor {
     public func process(
         input: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        return { switch Processor_process__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), input.map { it in it.__externalRCRef() } ?? nil) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
+        return { switch Processor_process__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), input.map { it in KotlinRuntime.KotlinBase.__externalRCRefForAny(it) } ?? nil) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
     }
 }
 extension main.Processor {
@@ -566,14 +566,14 @@ package func AFactory_create__reverse_swift(_ `self`: Swift.UnsafeMutableRawPoin
 package func A_foo_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer? {
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: main.A.Type.self) as! any main.A
     let _result: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = _self.foo
-    return _result.map { it in it.__externalRCRef() } ?? nil
+    return _result.map { it in KotlinRuntime.KotlinBase.__externalRCRefForAny(it) } ?? nil
 }
 
 @_cdecl("B_foo_get__reverse_swift")
 package func B_foo_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer? {
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: main.B.Type.self) as! any main.B
     let _result: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = _self.foo
-    return _result.map { it in it.__externalRCRef() } ?? nil
+    return _result.map { it in KotlinRuntime.KotlinBase.__externalRCRefForAny(it) } ?? nil
 }
 
 @_cdecl("Consumer_consume__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
@@ -587,14 +587,14 @@ package func Consumer_consume__TypesOfArguments__Swift_Optional_anyU20KotlinRunt
 package func Processor_process__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ input: Swift.UnsafeMutableRawPointer?) -> Swift.UnsafeMutableRawPointer? {
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: main.Processor.Type.self) as! any main.Processor
     let _result: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = _self.process(input: { switch input { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }())
-    return _result.map { it in it.__externalRCRef() } ?? nil
+    return _result.map { it in KotlinRuntime.KotlinBase.__externalRCRefForAny(it) } ?? nil
 }
 
 @_cdecl("Producer_produce__reverse_swift")
 package func Producer_produce__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer? {
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: main.Producer.Type.self) as! any main.Producer
     let _result: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = _self.produce()
-    return _result.map { it in it.__externalRCRef() } ?? nil
+    return _result.map { it in KotlinRuntime.KotlinBase.__externalRCRefForAny(it) } ?? nil
 }
 
 @_cdecl("StringProducer_produce__reverse_swift")

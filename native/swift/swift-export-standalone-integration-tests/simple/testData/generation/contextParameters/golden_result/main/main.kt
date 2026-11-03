@@ -15,11 +15,11 @@ internal external fun main_internal_functional_type_callee_SwiftU2EVoid__TypesOf
 @ImportedBridge("main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_Context_Swift_String__")
 internal external fun main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_Context_Swift_String__(pointerToClosure: kotlin.native.internal.NativePtr, ctx0: kotlin.native.internal.NativePtr, _2: kotlin.native.internal.NativePtr): Boolean
 
-@ExportedBridge("Foo_bar__TypesOfArgumentsC1__main_Context_anyU20KotlinRuntimeSupport__KotlinBridgeable__")
-public fun Foo_bar__TypesOfArgumentsC1__main_Context_anyU20KotlinRuntimeSupport__KotlinBridgeable__(self: kotlin.native.internal.NativePtr, ctx: kotlin.native.internal.NativePtr, arg: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+@ExportedBridge("Foo_bar__TypesOfArgumentsC1__main_Context_Any__")
+public fun Foo_bar__TypesOfArgumentsC1__main_Context_Any__(self: kotlin.native.internal.NativePtr, ctx: kotlin.native.internal.NativePtr, arg: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foo
     val __ctx = kotlin.native.internal.ref.dereferenceExternalRCRef(ctx) as Context
-    val __arg = kotlin.native.internal.ref.dereferenceExternalRCRef(arg) as kotlin.Any
+    val __arg = (kotlin.native.internal.ref.dereferenceExternalRCRef(arg) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(arg); kotlin.native.internal.ref.disposeExternalRCRef(arg) }
     val _result = context(__ctx) { __self.bar(__arg) }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
@@ -159,10 +159,10 @@ public fun __root___Foo_get(): kotlin.native.internal.NativePtr {
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("__root___bar__TypesOfArgumentsC1__main_Context_anyU20KotlinRuntimeSupport__KotlinBridgeable__")
-public fun __root___bar__TypesOfArgumentsC1__main_Context_anyU20KotlinRuntimeSupport__KotlinBridgeable__(ctx: kotlin.native.internal.NativePtr, arg: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+@ExportedBridge("__root___bar__TypesOfArgumentsC1__main_Context_Any__")
+public fun __root___bar__TypesOfArgumentsC1__main_Context_Any__(ctx: kotlin.native.internal.NativePtr, arg: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __ctx = kotlin.native.internal.ref.dereferenceExternalRCRef(ctx) as Context
-    val __arg = kotlin.native.internal.ref.dereferenceExternalRCRef(arg) as kotlin.Any
+    val __arg = (kotlin.native.internal.ref.dereferenceExternalRCRef(arg) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(arg); kotlin.native.internal.ref.disposeExternalRCRef(arg) }
     val _result = context(__ctx) { bar(__arg) }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }

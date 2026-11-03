@@ -366,9 +366,9 @@ extension ExportedKotlinPackages.kotlin.text {
         }
         @discardableResult
         public func append(
-            value: (any KotlinRuntimeSupport._KotlinBridgeable)?
+            value: Any?
         ) -> ExportedKotlinPackages.kotlin.text.StringBuilder {
-            return ExportedKotlinPackages.kotlin.text.StringBuilder.__createClassWrapper(externalRCRef: kotlin_text_StringBuilder_append__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), value.map { it in it.__externalRCRef() } ?? nil))
+            return ExportedKotlinPackages.kotlin.text.StringBuilder.__createClassWrapper(externalRCRef: kotlin_text_StringBuilder_append__TypesOfArguments__Swift_Optional_Any___(self.__externalRCRef(), value.map { it in KotlinRuntime.KotlinBase.__externalRCRefForAny(it) } ?? nil))
         }
         @discardableResult
         public func append(
@@ -505,9 +505,9 @@ extension ExportedKotlinPackages.kotlin.text {
         @discardableResult
         public func insert(
             index: Swift.Int32,
-            value: (any KotlinRuntimeSupport._KotlinBridgeable)?
+            value: Any?
         ) -> ExportedKotlinPackages.kotlin.text.StringBuilder {
-            return ExportedKotlinPackages.kotlin.text.StringBuilder.__createClassWrapper(externalRCRef: kotlin_text_StringBuilder_insert__TypesOfArguments__Swift_Int32_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), index, value.map { it in it.__externalRCRef() } ?? nil))
+            return ExportedKotlinPackages.kotlin.text.StringBuilder.__createClassWrapper(externalRCRef: kotlin_text_StringBuilder_insert__TypesOfArguments__Swift_Int32_Swift_Optional_Any___(self.__externalRCRef(), index, value.map { it in KotlinRuntime.KotlinBase.__externalRCRefForAny(it) } ?? nil))
         }
         @discardableResult
         public func insert(

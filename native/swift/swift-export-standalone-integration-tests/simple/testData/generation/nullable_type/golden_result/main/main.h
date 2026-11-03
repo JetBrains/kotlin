@@ -29,9 +29,9 @@ _Bool __root___foo__TypesOfArguments__main_Bar__(void * a);
 
 _Bool __root___foo__TypesOfArguments__Swift_Optional_main_Bar___(void * _Nullable a);
 
-_Bool __root___foo_any__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(void * a);
+_Bool __root___foo_any__TypesOfArguments__Any__(void * a);
 
-_Bool __root___foo_any__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * _Nullable a);
+_Bool __root___foo_any__TypesOfArguments__Swift_Optional_Any___(void * _Nullable a);
 
 _Bool __root___opt_to_non_opt_usage__TypesOfArguments__Swift_Optional_main_Bar___(void * _Nullable i);
 

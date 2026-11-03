@@ -36,4 +36,14 @@ extension ExportedKotlinPackages.main {
     public static func producesFoo() -> Foo? {
         return main_producesFoo().map { it in it as! Foo }
     }
+    public static func returnFooAsAny(
+        x: Foo
+    ) -> Any {
+        return KotlinRuntime.KotlinBase.__createBridgeableAny(externalRCRef: main_returnFooAsAny__TypesOfArguments__Foo__(x))
+    }
+    public static func returnZarAsAny(
+        x: any Zar
+    ) -> Any {
+        return KotlinRuntime.KotlinBase.__createBridgeableAny(externalRCRef: main_returnZarAsAny__TypesOfArguments__anyU20Zar__(x))
+    }
 }

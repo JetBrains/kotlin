@@ -164,12 +164,12 @@ public fun DATA_CLASS_WITH_MANY_FIELDS_c_get(self: kotlin.native.internal.Native
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("DATA_CLASS_WITH_MANY_FIELDS_copy__TypesOfArguments__Swift_Int32_Swift_String_anyU20KotlinRuntimeSupport__KotlinBridgeable__")
-public fun DATA_CLASS_WITH_MANY_FIELDS_copy__TypesOfArguments__Swift_Int32_Swift_String_anyU20KotlinRuntimeSupport__KotlinBridgeable__(self: kotlin.native.internal.NativePtr, a: Int, b: kotlin.native.internal.NativePtr, c: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+@ExportedBridge("DATA_CLASS_WITH_MANY_FIELDS_copy__TypesOfArguments__Swift_Int32_Swift_String_Any__")
+public fun DATA_CLASS_WITH_MANY_FIELDS_copy__TypesOfArguments__Swift_Int32_Swift_String_Any__(self: kotlin.native.internal.NativePtr, a: Int, b: kotlin.native.internal.NativePtr, c: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as DATA_CLASS_WITH_MANY_FIELDS
     val __a = a
     val __b = interpretObjCPointer<kotlin.String>(b)
-    val __c = kotlin.native.internal.ref.dereferenceExternalRCRef(c) as kotlin.Any
+    val __c = (kotlin.native.internal.ref.dereferenceExternalRCRef(c) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(c); kotlin.native.internal.ref.disposeExternalRCRef(c) }
     val _result = __self.copy(__a, __b, __c)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
@@ -188,10 +188,10 @@ public fun DATA_CLASS_WITH_MANY_FIELDS_e_get(self: kotlin.native.internal.Native
     return _result.objcPtr()
 }
 
-@ExportedBridge("DATA_CLASS_WITH_REF_copy__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__")
-public fun DATA_CLASS_WITH_REF_copy__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(self: kotlin.native.internal.NativePtr, o: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+@ExportedBridge("DATA_CLASS_WITH_REF_copy__TypesOfArguments__Any__")
+public fun DATA_CLASS_WITH_REF_copy__TypesOfArguments__Any__(self: kotlin.native.internal.NativePtr, o: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as DATA_CLASS_WITH_REF
-    val __o = kotlin.native.internal.ref.dereferenceExternalRCRef(o) as kotlin.Any
+    val __o = (kotlin.native.internal.ref.dereferenceExternalRCRef(o) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(o); kotlin.native.internal.ref.disposeExternalRCRef(o) }
     val _result = __self.copy(__o)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
@@ -558,12 +558,12 @@ public fun __root___DATA_CLASS_WITH_MANY_FIELDS_init_allocate(): kotlin.native.i
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("__root___DATA_CLASS_WITH_MANY_FIELDS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32_Swift_String_anyU20KotlinRuntimeSupport__KotlinBridgeable__")
-public fun __root___DATA_CLASS_WITH_MANY_FIELDS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32_Swift_String_anyU20KotlinRuntimeSupport__KotlinBridgeable__(__kt: kotlin.native.internal.NativePtr, a: Int, b: kotlin.native.internal.NativePtr, c: kotlin.native.internal.NativePtr): Boolean {
+@ExportedBridge("__root___DATA_CLASS_WITH_MANY_FIELDS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32_Swift_String_Any__")
+public fun __root___DATA_CLASS_WITH_MANY_FIELDS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32_Swift_String_Any__(__kt: kotlin.native.internal.NativePtr, a: Int, b: kotlin.native.internal.NativePtr, c: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val __a = a
     val __b = interpretObjCPointer<kotlin.String>(b)
-    val __c = kotlin.native.internal.ref.dereferenceExternalRCRef(c) as kotlin.Any
+    val __c = (kotlin.native.internal.ref.dereferenceExternalRCRef(c) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(c); kotlin.native.internal.ref.disposeExternalRCRef(c) }
     kotlin.native.internal.initInstance(____kt, DATA_CLASS_WITH_MANY_FIELDS(__a, __b, __c))
     return true
 }
@@ -574,10 +574,10 @@ public fun __root___DATA_CLASS_WITH_REF_init_allocate(): kotlin.native.internal.
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("__root___DATA_CLASS_WITH_REF_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinRuntimeSupport__KotlinBridgeable__")
-public fun __root___DATA_CLASS_WITH_REF_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinRuntimeSupport__KotlinBridgeable__(__kt: kotlin.native.internal.NativePtr, o: kotlin.native.internal.NativePtr): Boolean {
+@ExportedBridge("__root___DATA_CLASS_WITH_REF_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Any__")
+public fun __root___DATA_CLASS_WITH_REF_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Any__(__kt: kotlin.native.internal.NativePtr, o: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val __o = kotlin.native.internal.ref.dereferenceExternalRCRef(o) as kotlin.Any
+    val __o = (kotlin.native.internal.ref.dereferenceExternalRCRef(o) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(o); kotlin.native.internal.ref.disposeExternalRCRef(o) }
     kotlin.native.internal.initInstance(____kt, DATA_CLASS_WITH_REF(__o))
     return true
 }

@@ -29,13 +29,13 @@ NSString * DATA_CLASS_WITH_MANY_FIELDS_b_get(void * self);
 
 void * DATA_CLASS_WITH_MANY_FIELDS_c_get(void * self);
 
-void * DATA_CLASS_WITH_MANY_FIELDS_copy__TypesOfArguments__Swift_Int32_Swift_String_anyU20KotlinRuntimeSupport__KotlinBridgeable__(void * self, int32_t a, NSString * b, void * c);
+void * DATA_CLASS_WITH_MANY_FIELDS_copy__TypesOfArguments__Swift_Int32_Swift_String_Any__(void * self, int32_t a, NSString * b, void * c);
 
 double DATA_CLASS_WITH_MANY_FIELDS_d_get(void * self);
 
 NSString * DATA_CLASS_WITH_MANY_FIELDS_e_get(void * self);
 
-void * DATA_CLASS_WITH_REF_copy__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(void * self, void * o);
+void * DATA_CLASS_WITH_REF_copy__TypesOfArguments__Any__(void * self, void * o);
 
 void * DATA_CLASS_WITH_REF_o_get(void * self);
 
@@ -143,11 +143,11 @@ _Bool __root___CLASS_WITH_SAME_NAME_init_initialize__TypesOfArguments__Swift_Uns
 
 void * __root___DATA_CLASS_WITH_MANY_FIELDS_init_allocate();
 
-_Bool __root___DATA_CLASS_WITH_MANY_FIELDS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32_Swift_String_anyU20KotlinRuntimeSupport__KotlinBridgeable__(void * __kt, int32_t a, NSString * b, void * c);
+_Bool __root___DATA_CLASS_WITH_MANY_FIELDS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32_Swift_String_Any__(void * __kt, int32_t a, NSString * b, void * c);
 
 void * __root___DATA_CLASS_WITH_REF_init_allocate();
 
-_Bool __root___DATA_CLASS_WITH_REF_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinRuntimeSupport__KotlinBridgeable__(void * __kt, void * o);
+_Bool __root___DATA_CLASS_WITH_REF_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Any__(void * __kt, void * o);
 
 void * __root___DATA_CLASS_init_allocate();
 

@@ -9,8 +9,8 @@ public fun __root___foo(): kotlin.native.internal.NativePtr {
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("__root___testListAny__TypesOfArguments__Swift_Array_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
-public fun __root___testListAny__TypesOfArguments__Swift_Array_anyU20KotlinRuntimeSupport__KotlinBridgeable___(l: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+@ExportedBridge("__root___testListAny__TypesOfArguments__Swift_Array_Any___")
+public fun __root___testListAny__TypesOfArguments__Swift_Array_Any___(l: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __l = interpretObjCPointer<kotlin.collections.List<kotlin.Any>>(l)
     val _result = testListAny(__l)
     return _result.objcPtr()
@@ -37,8 +37,8 @@ public fun __root___testListNothing__TypesOfArguments__Swift_Array_Swift_Never__
     return _result.objcPtr()
 }
 
-@ExportedBridge("__root___testListOptAny__TypesOfArguments__Swift_Array_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____")
-public fun __root___testListOptAny__TypesOfArguments__Swift_Array_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(l: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+@ExportedBridge("__root___testListOptAny__TypesOfArguments__Swift_Array_Swift_Optional_Any____")
+public fun __root___testListOptAny__TypesOfArguments__Swift_Array_Swift_Optional_Any____(l: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __l = interpretObjCPointer<kotlin.collections.List<kotlin.Any?>>(l)
     val _result = testListOptAny(__l)
     return _result.objcPtr()

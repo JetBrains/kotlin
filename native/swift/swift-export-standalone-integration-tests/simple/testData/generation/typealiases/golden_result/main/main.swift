@@ -156,17 +156,17 @@ public final class DATA_CLASS: KotlinRuntime.KotlinBase {
     }
 }
 public final class DATA_CLASS_WITH_REF: KotlinRuntime.KotlinBase {
-    public var o: any KotlinRuntimeSupport._KotlinBridgeable {
+    public var o: Any {
         get {
-            return KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: DATA_CLASS_WITH_REF_o_get(self.__externalRCRef()))
+            return KotlinRuntime.KotlinBase.__createBridgeableAny(externalRCRef: DATA_CLASS_WITH_REF_o_get(self.__externalRCRef()))
         }
     }
     public init(
-        o: any KotlinRuntimeSupport._KotlinBridgeable
+        o: Any
     ) {
         let __kt = __root___DATA_CLASS_WITH_REF_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
-        { __root___DATA_CLASS_WITH_REF_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinRuntimeSupport__KotlinBridgeable__(__kt, o.__externalRCRef()); return () }()
+        { __root___DATA_CLASS_WITH_REF_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Any__(__kt, KotlinRuntime.KotlinBase.__externalRCRefForAny(o)); return () }()
     }
     package override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
@@ -175,9 +175,9 @@ public final class DATA_CLASS_WITH_REF: KotlinRuntime.KotlinBase {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
     public func copy(
-        o: any KotlinRuntimeSupport._KotlinBridgeable
+        o: Any
     ) -> main.DATA_CLASS_WITH_REF {
-        return main.DATA_CLASS_WITH_REF.__createClassWrapper(externalRCRef: DATA_CLASS_WITH_REF_copy__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(self.__externalRCRef(), o.__externalRCRef()))
+        return main.DATA_CLASS_WITH_REF.__createClassWrapper(externalRCRef: DATA_CLASS_WITH_REF_copy__TypesOfArguments__Any__(self.__externalRCRef(), KotlinRuntime.KotlinBase.__externalRCRefForAny(o)))
     }
 }
 public final class DATA_OBJECT_WITH_PACKAGE: KotlinRuntime.KotlinBase {

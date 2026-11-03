@@ -91,7 +91,7 @@ public final class _ExportedKotlinPackages_org_kotlin_foo_QueryResult_AsyncValue
     ) {
         let __kt = org_kotlin_foo_QueryResult_AsyncValue_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
-        { org_kotlin_foo_QueryResult_AsyncValue_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(__kt, value.map { it in it.__externalRCRef() } ?? nil); return () }()
+        { org_kotlin_foo_QueryResult_AsyncValue_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(__kt, value.map { it in KotlinRuntime.KotlinBase.__externalRCRefForAny(it) } ?? nil); return () }()
     }
     package override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
@@ -111,7 +111,7 @@ public final class _ExportedKotlinPackages_org_kotlin_foo_QueryResult_Value: Kot
     ) {
         let __kt = org_kotlin_foo_QueryResult_Value_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
-        { org_kotlin_foo_QueryResult_Value_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(__kt, value.map { it in it.__externalRCRef() } ?? nil); return () }()
+        { org_kotlin_foo_QueryResult_Value_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(__kt, value.map { it in KotlinRuntime.KotlinBase.__externalRCRefForAny(it) } ?? nil); return () }()
     }
     package override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,

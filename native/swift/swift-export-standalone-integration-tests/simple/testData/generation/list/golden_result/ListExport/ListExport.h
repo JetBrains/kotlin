@@ -5,7 +5,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 void * __root___foo();
 
-NSArray<id> * __root___testListAny__TypesOfArguments__Swift_Array_anyU20KotlinRuntimeSupport__KotlinBridgeable___(NSArray<id> * l);
+NSArray<id> * __root___testListAny__TypesOfArguments__Swift_Array_Any___(NSArray<id> * l);
 
 NSArray<NSNumber *> * __root___testListInt__TypesOfArguments__Swift_Array_Swift_Int32___(NSArray<NSNumber *> * l);
 
@@ -13,7 +13,7 @@ NSArray<NSArray<NSNumber *> *> * __root___testListListInt__TypesOfArguments__Swi
 
 NSArray<id> * __root___testListNothing__TypesOfArguments__Swift_Array_Swift_Never___(NSArray<id> * l);
 
-NSArray<id> * __root___testListOptAny__TypesOfArguments__Swift_Array_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(NSArray<id> * l);
+NSArray<id> * __root___testListOptAny__TypesOfArguments__Swift_Array_Swift_Optional_Any____(NSArray<id> * l);
 
 NSArray<id> * __root___testListOptInt__TypesOfArguments__Swift_Array_Swift_Optional_Swift_Int32____(NSArray<id> * l);
 

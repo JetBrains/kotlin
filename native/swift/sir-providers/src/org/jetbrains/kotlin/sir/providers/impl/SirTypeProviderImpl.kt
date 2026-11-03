@@ -43,6 +43,9 @@ public class SirTypeProviderImpl(
     ) {
         public fun anyRepresentativeType(): SirType =
             if (requiresHashableAsAny) SirType.anyHashable else KotlinRuntimeSupportModule.kotlinBridgeableType
+
+        public fun kotlinAnyRepresentativeType(): SirType =
+            if (requiresHashableAsAny) SirType.anyHashable else SirType.any
     }
 
     override fun KaType.translateType(
@@ -76,7 +79,7 @@ public class SirTypeProviderImpl(
                 is KaUsualClassType -> {
                     when {
                         kaType.classId == KaStandardTypeClassIds.NOTHING -> SirNominalType(SirSwiftModule.never)
-                        kaType.classId == KaStandardTypeClassIds.ANY -> ctx.anyRepresentativeType()
+                        kaType.classId == KaStandardTypeClassIds.ANY -> ctx.kotlinAnyRepresentativeType()
 
                         else -> {
                             if (sirSession.isClassIdSupported(kaType.classId)) {
@@ -175,6 +178,9 @@ public class SirTypeProviderImpl(
         return@withSessions when (symbol.upperBounds.size) {
             0 -> anyRepresentativeType().optional()
             1 -> {
+                if (symbol.upperBounds.single().classId == KaStandardTypeClassIds.ANY) {
+                    return@withSessions anyRepresentativeType().optionalIfNeeded(type)
+                }
                 val upperBound = symbol.upperBounds.single().translateType(this@translateTypeParameterType)
                 if (type.isMarkedNullable) {
                     upperBound.optional()

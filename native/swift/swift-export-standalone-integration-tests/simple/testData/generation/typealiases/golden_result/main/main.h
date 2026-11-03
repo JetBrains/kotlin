@@ -5,7 +5,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 _Bool main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * pointerToClosure);
 
-void * DATA_CLASS_WITH_REF_copy__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(void * self, void * o);
+void * DATA_CLASS_WITH_REF_copy__TypesOfArguments__Any__(void * self, void * o);
 
 void * DATA_CLASS_WITH_REF_o_get(void * self);
 
@@ -53,7 +53,7 @@ _Bool __root___ABSTRACT_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMut
 
 void * __root___DATA_CLASS_WITH_REF_init_allocate();
 
-_Bool __root___DATA_CLASS_WITH_REF_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinRuntimeSupport__KotlinBridgeable__(void * __kt, void * o);
+_Bool __root___DATA_CLASS_WITH_REF_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Any__(void * __kt, void * o);
 
 void * __root___DATA_CLASS_init_allocate();
 

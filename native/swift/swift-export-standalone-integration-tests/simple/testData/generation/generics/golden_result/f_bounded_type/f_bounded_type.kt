@@ -41,7 +41,7 @@ public fun BaseClass_v_get(self: kotlin.native.internal.NativePtr): kotlin.nativ
 @ExportedBridge("MyComparable_compareTo__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
 public fun MyComparable_compareTo__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, other: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as MyComparable<kotlin.Any?>
-    val __other = if (other == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(other) as kotlin.Any
+    val __other = if (other == kotlin.native.internal.NativePtr.NULL) null else (kotlin.native.internal.ref.dereferenceExternalRCRef(other) as kotlin.Any).also { kotlin.native.internal.ref.releaseExternalRCRef(other); kotlin.native.internal.ref.disposeExternalRCRef(other) }
     val _result = __self.compareTo(__other)
     return _result
 }

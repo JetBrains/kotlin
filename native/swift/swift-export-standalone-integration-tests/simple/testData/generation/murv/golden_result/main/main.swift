@@ -399,7 +399,7 @@ public func addAndIgnoreResult(
     _ receiver: any ExportedKotlinPackages.kotlin.collections.MutableList,
     element: (any KotlinRuntimeSupport._KotlinBridgeable)?
 ) -> Swift.Bool {
-    return __root___addAndIgnoreResult__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlin_collections_MutableList_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.__externalRCRef(), element.map { it in it.__externalRCRef() } ?? nil)
+    return __root___addAndIgnoreResult__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlin_collections_MutableList_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.__externalRCRef(), element.map { it in KotlinRuntime.KotlinBase.__externalRCRefForAny(it) } ?? nil)
 }
 @discardableResult
 public func ignorableInMarkedFile() -> Swift.Int32 {

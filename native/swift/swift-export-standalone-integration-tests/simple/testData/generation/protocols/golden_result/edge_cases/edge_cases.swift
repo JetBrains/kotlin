@@ -5,7 +5,7 @@ import KotlinRuntimeSupport
 
 public protocol Baz: KotlinRuntime.KotlinBase, edge_cases._Baz {
     func foo(
-        result: any KotlinRuntimeSupport._KotlinBridgeable
+        result: Any
     ) -> Swift.Void
 }
 public protocol InterfaceA: KotlinRuntime.KotlinBase, edge_cases._InterfaceA {
@@ -113,9 +113,9 @@ extension ExportedKotlinPackages.conflictingTypealiases.Bar {
 @_documentation(visibility: internal)
 extension edge_cases.Baz where Self : edge_cases.__Baz {
     public func foo(
-        result: any KotlinRuntimeSupport._KotlinBridgeable
+        result: Any
     ) -> Swift.Void {
-        return { Baz_foo__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(self.__externalRCRef(), result.__externalRCRef()); return () }()
+        return { Baz_foo__TypesOfArguments__Any__(self.__externalRCRef(), KotlinRuntime.KotlinBase.__externalRCRefForAny(result)); return () }()
     }
 }
 extension edge_cases.Baz {
@@ -277,10 +277,10 @@ extension ExportedKotlinPackages.org.jetbrains.kotlin.`internal`.u2764_️s_u20_
 }
 extension ExportedKotlinPackages.org.jetbrains.kotlin.`internal`.u2764_️s_u20_Kotlin {
 }
-@_cdecl("Baz_foo__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable____reverse_swift")
-package func Baz_foo__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ result: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+@_cdecl("Baz_foo__TypesOfArguments__Any____reverse_swift")
+package func Baz_foo__TypesOfArguments__Any____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ result: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: edge_cases.Baz.Type.self) as! any edge_cases.Baz
-    let _result: Swift.Void = _self.foo(result: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: result))
+    let _result: Swift.Void = _self.foo(result: KotlinRuntime.KotlinBase.__createBridgeableAny(externalRCRef: result))
     return { _result; return true }()
 }
 
