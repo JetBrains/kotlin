@@ -36,7 +36,7 @@ object FirNativeExternalDeclarationChecker : FirBasicDeclarationChecker(MppCheck
         reporter.reportOn(
             modifier.source,
             FirErrors.WRONG_MODIFIER_TARGET,
-            modifier.token,
+            modifier.tokenName,
             FirDiagnosticRenderers.SYMBOL_KIND.render(declaration.symbol)
         )
     }

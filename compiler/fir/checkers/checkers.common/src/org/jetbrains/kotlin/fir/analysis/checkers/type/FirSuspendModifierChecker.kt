@@ -54,14 +54,14 @@ object FirSuspendModifierChecker : FirTypeRefChecker(MppCheckerKind.Common) {
             reporter.reportOn(
                 suspendModifierSources.first(),
                 FirErrors.WRONG_MODIFIER_TARGET,
-                KtTokens.SUSPEND_KEYWORD,
+                KtTokens.SUSPEND_KEYWORD.toString(),
                 "non-functional type"
             )
         } else if (suspendModifierSources.size > 1) {
             reporter.reportOn(
                 suspendModifierSources.first(),
                 FirErrors.REPEATED_MODIFIER,
-                KtTokens.SUSPEND_KEYWORD
+                KtTokens.SUSPEND_KEYWORD.toString()
             )
         }
     }

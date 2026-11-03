@@ -31,7 +31,7 @@ object FirStarProjectionModifierChecker : FirResolvedTypeRefChecker(MppCheckerKi
                     reporter.reportOn(
                         modifier.source,
                         FirErrors.WRONG_MODIFIER_TARGET,
-                        modifier.token,
+                        modifier.tokenName,
                         KotlinTarget.STAR_PROJECTION.description
                     )
                 }
