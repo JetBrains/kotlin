@@ -54,7 +54,6 @@ internal abstract class CompilationNpmDependencies {
     abstract val moduleName: Property<String>
 
     /** Declared by the user with `npm`, `npmDev`, `npmOptional` and `npmPeer`. */
-    // TODO KT-87942 to be removed
     @get:Input
     abstract val directDependencies: SetProperty<DefaultKotlinNpmDependency>
 
