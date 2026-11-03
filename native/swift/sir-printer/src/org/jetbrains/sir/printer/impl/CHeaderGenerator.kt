@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.sir.*
 
 internal class CBridgePrinter {
 
-    private val includes = mutableSetOf<String>("Foundation/Foundation.h")
+    private val includes = mutableSetOf<String>("Foundation/Foundation.h", "KotlinBase.h")
 
     private val functions = mutableSetOf<List<String>>()
 

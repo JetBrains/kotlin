@@ -300,6 +300,7 @@ abstract class AbstractSwiftExportTest : ExternalSourceTransformersProvider {
             swiftExtraOpts = listOf(
                 *(modulemapFileToSwiftCompilerOptionsIfNeeded(kotlinBridgeModuleMap)).toTypedArray(),
                 "-Xcc", "-fmodule-map-file=${Distribution(KotlinNativePaths.homePath.absolutePath).kotlinRuntimeForSwiftModuleMap}",
+                "-I", Distribution(KotlinNativePaths.homePath.absolutePath).kotlinRuntimeForSwiftHome,
                 *deps.flatMap { dependency ->
                     listOf(
                         "-L", dependency.binaryLibrary.parentFile.absolutePath,

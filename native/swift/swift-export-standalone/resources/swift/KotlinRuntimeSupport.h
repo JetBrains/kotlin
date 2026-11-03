@@ -64,4 +64,7 @@ void KotlinBridgeable_disposeRef(void * ref);
 
 void * Kotlin_SwiftExport_allocInstanceForSwiftSubclass(Class swiftSubclass);
 
+void * KotlinBridgeable_String_toKotlin(NSString * value);
+NSString * KotlinBridgeable_String_fromKotlin(void * value);
+
 NS_ASSUME_NONNULL_END

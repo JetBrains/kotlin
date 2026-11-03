@@ -59,6 +59,12 @@ public object KotlinRuntimeModule : SirModule() {
             }.also { it.getter?.parent = it }
         }.initializeParentForSelfAndChildren(KotlinRuntimeModule)
     }
+
+    public val kotlinBridgeableRef: SirStruct = buildStruct {
+        name = "KotlinBridgeableRef"
+    }.apply {
+        parent = KotlinRuntimeModule
+    }
 }
 
 public object KotlinRuntimeSupportModule : SirModule() {
@@ -95,6 +101,12 @@ public object KotlinRuntimeSupportModule : SirModule() {
         returnType = SirNominalType(SirSwiftModule.unsafeMutableRawPointer)
     }
 
+    public val kotlinBridgeableKotlinBridgeableRef: SirFunction = buildFunction {
+        origin = KotlinRuntimeElement()
+        name = "__kotlinBridgeableRef"
+        returnType = SirNominalType(KotlinRuntimeModule.kotlinBridgeableRef)
+    }
+
     public val kotlinBridgeable: SirProtocol by lazy {
         buildProtocol {
             name = "_KotlinBridgeable"
@@ -102,6 +114,7 @@ public object KotlinRuntimeSupportModule : SirModule() {
 
             declarations += kotlinBridgeableInit
             declarations += kotlinBridgeableExternalRcRef
+            declarations += kotlinBridgeableKotlinBridgeableRef
         }.initializeParentForSelfAndChildren(KotlinRuntimeSupportModule)
     }
 

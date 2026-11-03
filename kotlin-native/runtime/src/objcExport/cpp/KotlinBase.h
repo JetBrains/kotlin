@@ -82,4 +82,40 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+typedef enum {
+    KotlinBridgeableTypeNil, KotlinBridgeableTypeVoid,
+    KotlinBridgeableTypeBool,
+    KotlinBridgeableTypeInt8,
+    KotlinBridgeableTypeInt16,
+    KotlinBridgeableTypeInt32,
+    KotlinBridgeableTypeInt64,
+    KotlinBridgeableTypeUInt8,
+    KotlinBridgeableTypeUInt16,
+    KotlinBridgeableTypeUInt32,
+    KotlinBridgeableTypeUInt64,
+    KotlinBridgeableTypeDouble,
+    KotlinBridgeableTypeFloat,
+    KotlinBridgeableTypeObject, KotlinBridgeableTypeString, KotlinBridgeableTypeError, KotlinBridgeableTypeNative,
+} KotlinBridgeableType;
+
+typedef union {
+    bool boolValue;
+    int8_t int8Value;
+    int16_t int16Value;
+    int32_t int32Value;
+    int64_t int64Value;
+    uint8_t uint8Value;
+    uint16_t uint16Value;
+    uint32_t uint32Value;
+    uint64_t uint64Value;
+    double doubleValue;
+    float floatValue;
+    void * ptrValue;
+} KotlinBridgeableValue;
+
+typedef struct {
+    KotlinBridgeableValue value;
+    KotlinBridgeableType type;
+} KotlinBridgeableRef;
+
 NS_ASSUME_NONNULL_END

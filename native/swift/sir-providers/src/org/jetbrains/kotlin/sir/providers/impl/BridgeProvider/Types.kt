@@ -53,6 +53,7 @@ internal sealed class CType {
     class NSSet(elem: CType) : Generic("NSSet", elem)
     class NSDictionary(key: CType, value: CType) : Generic("NSDictionary", key, value)
 
+    data object BridgeableRef : Predefined("KotlinBridgeableRef")
 }
 
 internal enum class KotlinType(val repr: String) {
@@ -82,6 +83,8 @@ internal enum class KotlinType(val repr: String) {
     ObjCObjectUnretained("kotlin.native.internal.NativePtr"),
 
     String("String"),
+
+    BridgeableRef("kotlinx.cinterop.CValue<KotlinBridgeableRef>"),
 }
 
 internal val KotlinType.defaultValue: String
@@ -106,6 +109,7 @@ internal val KotlinType.defaultValue: String
         KotlinType.ObjCObjectUnretained, // This is semantically +0, so we're allowed to simply dismiss the pointer.
             -> "kotlin.native.internal.NativePtr.NULL"
         KotlinType.String -> ""
+        KotlinType.BridgeableRef -> "kotlinx.cinterop.cValue()"
     }
 
 internal fun CType.toSwiftTypeName(): String = when (this) {
@@ -128,6 +132,7 @@ internal fun CType.toSwiftTypeName(): String = when (this) {
     CType.NSError -> "Swift.Error"
     CType.NSObject -> "Any"
     CType.NSNumber -> "Foundation.NSNumber"
+    CType.BridgeableRef -> "KotlinRuntime.KotlinBridgeableRef"
     is CType.NullabilityAnnotated -> wrapped.toSwiftTypeName() + if (nullability == CType.Nullability.NONNULL) "" else "?"
     else -> "Any"
 }

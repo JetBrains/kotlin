@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.SirTypeNamer
 import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.Bridge.*
+import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.Bridge.AsIs
 import org.jetbrains.kotlin.sir.providers.sirModule
 import org.jetbrains.kotlin.sir.providers.source.kaSymbolOrNull
 import org.jetbrains.kotlin.sir.providers.toBridge
@@ -121,19 +122,21 @@ private fun bridgeExistential(type: SirExistentialType, position: SirTypeVarianc
 
 context(session: SirSession)
 internal fun bridgeAsNSCollectionElement(type: SirType): BidirectionalBridge = when (val bridge = bridgeType(type)) {
-    is AsIs -> AsNSNumber(bridge.swiftType)
+    is AsIs, is PrimitiveBridge -> AsNSNumber(bridge.swiftType)
     is AsOptionalWrapper -> when (bridge.wrappedObject) {
         is AsInvariantBlock -> AsBlockPointerInCollection(bridge.wrappedObject, bridge.swiftType)
         else -> AsObjCBridgedOptional(bridge.wrappedObject.swiftType)
     }
+    is PrimitiveBridge.Optional, is OptionalObjectBridge, is AsAnyBridgeable.Optional -> AsObjCBridgedOptional(bridge.swiftType.nonOptional())
     is AsOptionalNothing -> AsObjCBridgedOptional(bridge.swiftType)
-    is AsOptionalVoid -> AsObjCBridgedOptional(bridge.swiftType)
+    is AsVoid.Optional -> AsObjCBridgedOptional(bridge.swiftType)
     is AsObject,
     is AsExistential,
     is AsAnyBridgeable,
     is AsTyped,
     is AsOpaqueObject,
     is SirCustomTypeTranslatorImpl.RangeBridge,
+    AsString,
     AsNothing,
         -> AsObjCBridged(bridge.swiftType, CType.id)
     is AsInvariantBlock -> AsBlockPointerInCollection(bridge)
@@ -158,15 +161,15 @@ private fun bridgeNominalType(type: SirNominalType, position: SirTypeVariance): 
             is AsObject,
             is AsObjCBridged,
             is AsExistential,
-            is AsAnyBridgeable,
             is AsTyped,
             is AsInvariantBlock,
             is AsError,
             is SirCustomTypeTranslatorImpl.RangeBridge
                 -> AsOptionalWrapper(bridge)
 
+            is AsAnyBridgeable -> AsAnyBridgeable.Optional
             is AsNothing -> AsOptionalNothing
-            is AsVoid -> AsOptionalVoid
+            is AsVoid -> AsVoid.Optional
 
             is AsIs,
                 -> AsOptionalWrapper(
@@ -301,6 +304,122 @@ internal sealed interface BidirectionalBridge : SwiftToKotlinBridge, KotlinToSwi
     override val inSwiftSources: ValueConversion
 }
 
+internal sealed class PrimitiveBridge(
+    private val swiftDeclaration: SirScopeDefiningDeclaration,
+    override val kotlinType: KotlinType,
+    override val cType: CType,
+) : BidirectionalBridge {
+
+    override val swiftType = SirNominalType(swiftDeclaration)
+
+    override val inKotlinSources = IdentityValueConversion
+    override val inSwiftSources = IdentityValueConversion
+
+    class Optional(
+        base: PrimitiveBridge,
+    ) : BidirectionalBridge {
+        override val swiftType = SirNominalType(base.swiftDeclaration).optional()
+        override val kotlinType = KotlinType.BridgeableRef
+        override val cType = CType.BridgeableRef
+
+        override val inKotlinSources = object : ValueConversion {
+            context(session: SirSession)
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
+                val fqName = typeNamer.kotlinFqName(swiftType, SirTypeNamer.KotlinNameType.PARAMETRIZED)
+                return "$valueExpression.asAny() as $fqName"
+            }
+
+            context(session: SirSession)
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String =
+                "$valueExpression.asKotlinBridgeableRef()"
+        }
+
+        override val inSwiftSources = object : ValueConversion {
+            context(session: SirSession)
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String =
+                "$valueExpression.__kotlinBridgeableRef()"
+
+            context(session: SirSession)
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
+                val kotlinBase = typeNamer.swiftFqName(SirNominalType(KotlinRuntimeModule.kotlinBase))
+                val fqName = typeNamer.swiftFqName(swiftType)
+                return "$kotlinBase.__createBridgeable(ref: $valueExpression) as! $fqName"
+            }
+        }
+    }
+
+    fun optional() = Optional(this)
+}
+
+internal sealed class RuntimeBridge(
+    val bridgeName: String,
+    override val swiftType: SirType,
+    override val kotlinType: KotlinType,
+    override val cType: CType,
+) : BidirectionalBridge {
+
+    final override val inKotlinSources = object : ValueConversion {
+        context(session: SirSession)
+        override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String =
+            "KotlinBridgeable_${bridgeName}_fromSwift($valueExpression)"
+
+        context(session: SirSession)
+        override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String =
+            "KotlinBridgeable_${bridgeName}_toSwift($valueExpression)"
+    }
+
+    final override val inSwiftSources = object : ValueConversion {
+        context(session: SirSession)
+        override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String =
+            "KotlinBridgeable_${bridgeName}_toKotlin($valueExpression)"
+
+        context(session: SirSession)
+        override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String =
+            "KotlinBridgeable_${bridgeName}_fromKotlin($valueExpression)"
+    }
+}
+
+internal class OptionalObjectBridge(
+    private val base: BidirectionalBridge,
+) : BidirectionalBridge {
+
+    override val swiftType: SirType = base.swiftType.optional()
+    override val kotlinType: KotlinType = KotlinType.KotlinObject
+    override val cType: CType = CType.Object
+
+    init {
+        check(base.kotlinType == kotlinType && base.cType == cType) {
+            "OptionalBridge only supports object types"
+        }
+    }
+
+    override val inKotlinSources = object : ValueConversion {
+        context(session: SirSession)
+        override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
+            val base = base.inKotlinSources.swiftToKotlin(typeNamer, valueExpression)
+            return "if ($valueExpression == kotlin.native.internal.NativePtr.NULL) null else $base"
+        }
+
+        context(session: SirSession)
+        override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
+            val base = base.inKotlinSources.kotlinToSwift(typeNamer, valueExpression)
+            return "if ($valueExpression == null) kotlin.native.internal.NativePtr.NULL else $base"
+        }
+    }
+
+    override val inSwiftSources = object : ValueConversion {
+        context(session: SirSession)
+        override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String =
+            "$valueExpression.map { ${base.inSwiftSources.swiftToKotlin(typeNamer, "$0")} } ?? nil"
+
+        context(session: SirSession)
+        override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
+            val base = base.inSwiftSources.kotlinToSwift(typeNamer, valueExpression)
+            return "{ guard let $valueExpression else { return nil }; return $base }()"
+        }
+    }
+}
+
 internal sealed interface Bridge {
     val swiftType: SirType
 
@@ -328,54 +447,95 @@ internal sealed interface Bridge {
         override val inSwiftSources = IdentityValueConversion
     }
 
-    object AsVoid : BidirectionalBridge {
-        override val swiftType = SirNominalType(SirSwiftModule.void)
-        override val kotlinType = KotlinType.Boolean
-        override val cType = CType.Bool
-        override val inKotlinSources = object : ValueConversion {
-            context(session: SirSession)
-            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String =
-                "run<Unit> { $valueExpression }"
+    object AsVoid : RuntimeBridge(
+        bridgeName = "Void",
+        swiftType = SirNominalType(SirSwiftModule.void),
+        kotlinType = KotlinType.Boolean,
+        cType = CType.Bool,
+    ) {
+        object Optional : RuntimeBridge(
+            bridgeName = "OptVoid",
+            swiftType = SirNominalType(SirSwiftModule.void).optional(),
+            kotlinType = KotlinType.Boolean,
+            cType = CType.Bool,
+        )
 
-            context(session: SirSession)
-            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String =
-                "run { ${valueExpression}; true }"
-        }
-
-        override val inSwiftSources = object : ValueConversion {
-            context(session: SirSession)
-            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String =
-                "{ ${valueExpression}; return true }()"
-
-            context(session: SirSession)
-            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String =
-                "{ ${valueExpression}; return () }()"
-        }
+        fun optional() = Optional
     }
 
-    object AsOptionalVoid : BidirectionalBridge {
-        override val swiftType = SirNominalType(SirSwiftModule.optional, listOf(SirNominalType(SirSwiftModule.void)))
-        override val kotlinType = KotlinType.Boolean
-        override val cType = CType.Bool
-        override val inKotlinSources = object : ValueConversion {
-            context(session: SirSession)
-            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String =
-                "(if ($valueExpression) Unit else null)"
+    object AsBool : PrimitiveBridge(
+        swiftDeclaration = SirSwiftModule.bool,
+        kotlinType = KotlinType.Boolean,
+        cType = CType.Bool,
+    )
 
-            context(session: SirSession)
-            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String =
-                "($valueExpression != null)"
-        }
+    object AsInt8 : PrimitiveBridge(
+        swiftDeclaration = SirSwiftModule.int8,
+        kotlinType = KotlinType.Byte,
+        cType = CType.Int8,
+    )
 
-        override val inSwiftSources = object : ValueConversion {
-            context(session: SirSession)
-            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String =
-                "($valueExpression != nil)"
+    object AsInt16 : PrimitiveBridge(
+        swiftDeclaration = SirSwiftModule.int16,
+        kotlinType = KotlinType.Short,
+        cType = CType.Int16,
+    )
 
-            context(session: SirSession)
-            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String =
-                "($valueExpression ? () : nil)"
-        }
+    object AsInt32 : PrimitiveBridge(
+        swiftDeclaration = SirSwiftModule.int32,
+        kotlinType = KotlinType.Int,
+        cType = CType.Int32,
+    )
+
+    object AsInt64 : PrimitiveBridge(
+        swiftDeclaration = SirSwiftModule.int64,
+        kotlinType = KotlinType.Long,
+        cType = CType.Int64,
+    )
+
+    object AsUInt8 : PrimitiveBridge(
+        swiftDeclaration = SirSwiftModule.uint8,
+        kotlinType = KotlinType.UByte,
+        cType = CType.UInt8,
+    )
+
+    object AsUInt16 : PrimitiveBridge(
+        swiftDeclaration = SirSwiftModule.uint16,
+        kotlinType = KotlinType.UShort,
+        cType = CType.UInt16,
+    )
+
+    object AsUInt32 : PrimitiveBridge(
+        swiftDeclaration = SirSwiftModule.uint32,
+        kotlinType = KotlinType.UInt,
+        cType = CType.UInt32,
+    )
+
+    object AsUInt64 : PrimitiveBridge(
+        swiftDeclaration = SirSwiftModule.uint64,
+        kotlinType = KotlinType.ULong,
+        cType = CType.UInt64,
+    )
+
+    object AsDouble : PrimitiveBridge(
+        swiftDeclaration = SirSwiftModule.double,
+        kotlinType = KotlinType.Double,
+        cType = CType.Double,
+    )
+
+    object AsFloat : PrimitiveBridge(
+        swiftDeclaration = SirSwiftModule.float,
+        kotlinType = KotlinType.Float,
+        cType = CType.Float,
+    )
+
+    object AsString : RuntimeBridge(
+        bridgeName = "String",
+        swiftType = SirNominalType(SirSwiftModule.string),
+        kotlinType = KotlinType.KotlinObject,
+        cType = CType.Object,
+    ) {
+        fun optional() = OptionalObjectBridge(this)
     }
 
     /**
@@ -478,30 +638,56 @@ internal sealed interface Bridge {
      */
     object AsAnyBridgeable : BidirectionalBridge {
         override val swiftType: SirType = KotlinRuntimeSupportModule.kotlinBridgeableType
-        override val kotlinType = KotlinType.KotlinObject
-        override val cType = CType.Object
+        override val kotlinType = KotlinType.BridgeableRef
+        override val cType = CType.BridgeableRef
+
         override val inKotlinSources = object : ValueConversion {
             context(session: SirSession)
             override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) =
-                "kotlin.native.internal.ref.dereferenceExternalRCRef($valueExpression) as kotlin.Any"
+                "${Optional.inKotlinSources.swiftToKotlin(typeNamer, valueExpression)}!!"
 
             context(session: SirSession)
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) =
-                "kotlin.native.internal.ref.createRetainedExternalRCRef($valueExpression)"
+                Optional.inKotlinSources.kotlinToSwift(typeNamer, valueExpression)
         }
 
         override val inSwiftSources: ValueConversion = object : ValueConversion {
             context(session: SirSession)
-            override fun swiftToKotlin(
-                typeNamer: SirTypeNamer,
-                valueExpression: String,
-            ): String {
-                return "$valueExpression.__externalRCRef()"
-            }
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String =
+                Optional.inSwiftSources.swiftToKotlin(typeNamer, valueExpression)
 
             context(session: SirSession)
-            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) =
-                "${typeNamer.swiftFqName(SirNominalType(KotlinRuntimeModule.kotlinBase))}.__createBridgeable(externalRCRef: $valueExpression)"
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String =
+                "${Optional.inSwiftSources.kotlinToSwift(typeNamer, valueExpression)}!"
+        }
+
+        object Optional : BidirectionalBridge {
+            override val swiftType: SirType = KotlinRuntimeSupportModule.kotlinBridgeableType.optional()
+            override val kotlinType = KotlinType.BridgeableRef
+            override val cType = CType.BridgeableRef
+
+            override val inKotlinSources = object : ValueConversion {
+                context(session: SirSession)
+                override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) =
+                    "$valueExpression.asAny()"
+
+                context(session: SirSession)
+                override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) =
+                    "$valueExpression.asKotlinBridgeableRef()"
+            }
+
+            override val inSwiftSources: ValueConversion = object : ValueConversion {
+                context(session: SirSession)
+                override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
+                    return "$valueExpression.__kotlinBridgeableRef()"
+                }
+
+                context(session: SirSession)
+                override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
+                    val kotlinBase = typeNamer.swiftFqName(SirNominalType(KotlinRuntimeModule.kotlinBase))
+                    return "$kotlinBase.__createBridgeable(ref: $valueExpression)"
+                }
+            }
         }
     }
 
@@ -976,11 +1162,14 @@ internal sealed interface Bridge {
                     is AsIs,
                     is AsOpaqueObject,
                     is AsOutError,
+                    is PrimitiveBridge, AsString
                         -> TODO("not yet supported")
 
                     is AsNothing -> error("AsOptionalNothing must be used for AsNothing")
                     is AsVoid -> error("AsOptionalVoid must be used for AsVoid")
-                    is AsOptionalWrapper, AsOptionalNothing, AsOptionalVoid -> error("there is not optional wrappers for optional")
+                    is AsOptionalWrapper, AsOptionalNothing, AsVoid.Optional, is AsVoid.Optional,
+                    is AsAnyBridgeable.Optional, is OptionalObjectBridge, is PrimitiveBridge.Optional
+                        -> error("there is not optional wrappers for optional")
                 }
             }
         }

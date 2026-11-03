@@ -116,6 +116,7 @@ private class SirEnumFromKtSymbol(
     private fun syntheticDeclarations(): List<SirDeclaration> = listOf(
         kotlinBaseInitDeclaration(),
         kotlinBridgeableExternalRcRef(),
+        kotlinBridgeableKotlinBridgeableRef(),
         description(),
         failableInitFromString(),
         rawValue(),
@@ -181,6 +182,18 @@ private class SirEnumFromKtSymbol(
                     return switch self {
                     $caseSelector
                     }
+                """.trimIndent()
+            )
+        )
+    }.also { it.parent = this }
+
+    private fun kotlinBridgeableKotlinBridgeableRef(): SirFunction = buildFunctionCopy(KotlinRuntimeSupportModule.kotlinBridgeableKotlinBridgeableRef) {
+        origin = SirOrigin.KotlinBridgeableExternalRcRefOverride(`for` = KotlinSource(ktSymbol))
+        body = SirFunctionBody(
+            listOf(
+                """
+                    let value = KotlinBridgeableValue(ptrValue: self.__externalRCRef())
+                    return KotlinBridgeableRef(value: value, type: KotlinBridgeableTypeObject)
                 """.trimIndent()
             )
         )
