@@ -13,7 +13,6 @@ dependencies {
     implementation(project(":core:compiler.common"))
     implementation(project(":core:compiler.common.jvm"))
     implementation(project(":core:descriptors"))
-    implementation(project(":core:deserialization"))
     implementation(project(":kotlin-util-klib"))
     implementation(project(":kotlin-util-klib-metadata"))
 
