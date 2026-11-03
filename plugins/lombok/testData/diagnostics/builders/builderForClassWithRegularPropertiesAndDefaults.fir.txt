@@ -1,0 +1,72 @@
+FILE: test.kt
+    @R|lombok/Builder|() public final class RefBodyVar : R|kotlin/Any| {
+        public constructor(): R|RefBodyVar| {
+            super<R|kotlin/Any|>()
+        }
+
+        field:@R|lombok/Builder.Default|() public final var a: R|kotlin/Int| = Int(1)
+            public get(): R|kotlin/Int|
+            public set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+        field:@R|lombok/Builder.Default|() public final var b: R|kotlin/Int| = this@R|/RefBodyVar|.R|/RefBodyVar.a|.R|kotlin/Int.plus|(Int(1))
+            public get(): R|kotlin/Int|
+            public set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+        field:@R|lombok/Builder.Default|() public final var c: R|kotlin/Int| = this@R|/RefBodyVar.Companion|.R|/RefBodyVar.Companion.x|.R|kotlin/Int.plus|(R|/y|)
+            public get(): R|kotlin/Int|
+            public set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|RefBodyVar.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final const val x: R|kotlin/Int| = Int(10)
+                public get(): R|kotlin/Int|
+
+            @R|kotlin/jvm/JvmStatic|() public final fun builder(): R|RefBodyVar.RefBodyVarBuilder|
+
+        }
+
+        public open class RefBodyVarBuilder : R|kotlin/Any| {
+            public open fun build(): R|RefBodyVar|
+
+            public open fun a(a: R|kotlin/Int|): R|RefBodyVar.RefBodyVarBuilder|
+
+            private final var a: R|kotlin/Int|
+                private get(): R|kotlin/Int|
+                private set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+            private final var a$set: R|kotlin/Boolean|
+                private get(): R|kotlin/Boolean|
+                private set(value: R|kotlin/Boolean|): R|kotlin/Unit|
+
+            public open fun b(b: R|kotlin/Int|): R|RefBodyVar.RefBodyVarBuilder|
+
+            private final var b: R|kotlin/Int|
+                private get(): R|kotlin/Int|
+                private set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+            private final var b$set: R|kotlin/Boolean|
+                private get(): R|kotlin/Boolean|
+                private set(value: R|kotlin/Boolean|): R|kotlin/Unit|
+
+            public open fun c(c: R|kotlin/Int|): R|RefBodyVar.RefBodyVarBuilder|
+
+            private final var c: R|kotlin/Int|
+                private get(): R|kotlin/Int|
+                private set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+            private final var c$set: R|kotlin/Boolean|
+                private get(): R|kotlin/Boolean|
+                private set(value: R|kotlin/Boolean|): R|kotlin/Unit|
+
+            internal constructor(): R|RefBodyVar.RefBodyVarBuilder| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final const val y: R|kotlin/Int| = Int(20)
+        public get(): R|kotlin/Int|
