@@ -1492,7 +1492,7 @@ class ExportExtensionSwiftExportTests {
     }
 
     @Test
-    fun `an override with an invalid module name is reported`() {
+    fun `an override with an invalid module name fails`() {
         val project = swiftExportProject(
             multiplatform = {
                 iosSimulatorArm64()
@@ -1511,8 +1511,7 @@ class ExportExtensionSwiftExportTests {
 
         project.evaluate()
 
-        project.realizeSwiftModules()
-        project.assertContainsDiagnostic(KotlinToolingDiagnostics.SwiftExportInvalidModuleName)
+        project.assertRealizingSwiftModulesFailsWith(KotlinToolingDiagnostics.SwiftExportInvalidModuleName)
     }
 
     @Test
@@ -1535,6 +1534,24 @@ class ExportExtensionSwiftExportTests {
 
         project.realizeSwiftModules()
         project.assertContainsDiagnostic(KotlinToolingDiagnostics.SwiftExportModuleResolutionError)
+    }
+
+    // KT-90135
+    @Test
+    fun `an unmatched override does not fail the task`() {
+        val project = swiftExportProject(
+            swiftExport = {
+                xcodeIntegration {
+                    configure("unknown:qa:1.0", SwiftExportVisibility.HIDDEN)
+                }
+            }
+        )
+
+        project.evaluate()
+
+        // configure() only selects dependencies, so a selector that matches nothing changes no module.
+        // Uses the task's own reporter, as a real build does, which would throw on a FATAL diagnostic.
+        project.tasks.withType(SwiftExportTask::class.java).single().resolveSwiftExportedModules()
     }
 
     @Test
