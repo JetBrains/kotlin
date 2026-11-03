@@ -36,6 +36,9 @@ public abstract class SCollection /* test.SCollection*/ implements java.util.Col
   public java.lang.Object[] toArray();//  toArray()
 
   @java.lang.Override()
+  public java.util.Iterator<@org.jetbrains.annotations.NotNull() java.lang.String> iterator();//  iterator()
+
+  @java.lang.Override()
   public void clear();//  clear()
 
   public  SCollection();//  .ctor()

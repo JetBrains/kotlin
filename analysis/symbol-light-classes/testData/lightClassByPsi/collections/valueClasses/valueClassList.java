@@ -54,6 +54,15 @@ public abstract class CList /* test.CList*/ implements java.util.List<@org.jetbr
   public java.lang.Object[] toArray();//  toArray()
 
   @java.lang.Override()
+  public java.util.List<@org.jetbrains.annotations.NotNull() kotlin.UInt> subList(int, int);//  subList(int, int)
+
+  @java.lang.Override()
+  public java.util.ListIterator<@org.jetbrains.annotations.NotNull() kotlin.UInt> listIterator();//  listIterator()
+
+  @java.lang.Override()
+  public java.util.ListIterator<@org.jetbrains.annotations.NotNull() kotlin.UInt> listIterator(int);//  listIterator(int)
+
+  @java.lang.Override()
   public void add(int, @org.jetbrains.annotations.NotNull() kotlin.UInt);//  add(int, @org.jetbrains.annotations.NotNull() kotlin.UInt)
 
   @java.lang.Override()

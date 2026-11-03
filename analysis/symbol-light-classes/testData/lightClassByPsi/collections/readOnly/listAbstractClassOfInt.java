@@ -54,6 +54,15 @@ public abstract class SList /* test.SList*/ implements java.util.List<@org.jetbr
   public java.lang.Object[] toArray();//  toArray()
 
   @java.lang.Override()
+  public java.util.List<@org.jetbrains.annotations.NotNull() java.lang.Integer> subList(int, int);//  subList(int, int)
+
+  @java.lang.Override()
+  public java.util.ListIterator<@org.jetbrains.annotations.NotNull() java.lang.Integer> listIterator();//  listIterator()
+
+  @java.lang.Override()
+  public java.util.ListIterator<@org.jetbrains.annotations.NotNull() java.lang.Integer> listIterator(int);//  listIterator(int)
+
+  @java.lang.Override()
   public void add(int, int);//  add(int, int)
 
   @java.lang.Override()
