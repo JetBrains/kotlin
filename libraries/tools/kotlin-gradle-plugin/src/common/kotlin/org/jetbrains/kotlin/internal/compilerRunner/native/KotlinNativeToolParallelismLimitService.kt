@@ -24,47 +24,40 @@ private const val PARALLELISM_LIMIT_SERVICE_NAME = "KotlinNativeToolParallelismL
  * to execute at the same time, regardless of how much parallelism (Workers API, Configuration Cache) would
  * otherwise be available.
  *
- * Users should register the service using the [registerKotlinNativeParallelismLimitService] helper, providing
- * a unique name. There's no limitation on multiple task types using the same service to limit parallelism, but
- * the canonical use case is one service instance per task type.
+ * Register via [registerKotlinNativeParallelismLimitService], one service per task type.
  */
 private abstract class KotlinNativeToolParallelismLimitService : BuildService<BuildServiceParameters.None>
 
 /**
- * Registers (or reuses) the build service that caps how many instances of the calling task (identified by
- * [name], used as a suffix of the shared service name) are allowed to execute in parallel. Callers
- * (e.g. [KotlinNativeLink]) are meant to call this once at task *configuration* time, for their own task
- * type/[name], and declare [org.gradle.api.Task.usesService] with the returned provider - Gradle's own
- * task scheduling (driven by [org.gradle.api.services.BuildServiceSpec.getMaxParallelUsages]) then takes
- * care of capping parallelism, so every task type ends up with its own, independently-limited instance
- * of the service.
- *
- * The concrete service type is a private implementation detail of this file, so it's exposed here only
- * as a [BuildService], which is enough for callers to declare [org.gradle.api.Task.usesService].
+ * Registers (or reuses) the service that caps parallel tasks of [taskType] at [maxParallelUsages].
+ * Tasks of [taskType] must declare [Task.usesService] with the returned provider.
  */
 internal fun Project.registerKotlinNativeParallelismLimitService(
-    name: String,
+    taskType: Class<out Task>,
     maxParallelUsages: Int,
 ): Provider<out BuildService<*>> =
     gradle.sharedServices.registerIfAbsent(
-        "$PARALLELISM_LIMIT_SERVICE_NAME$name",
+        parallelismLimitServiceName(taskType),
         KotlinNativeToolParallelismLimitService::class.java
     ) { spec ->
         spec.maxParallelUsages.set(maxParallelUsages)
     }
+
+internal fun parallelismLimitServiceName(taskType: Class<out Task>): String =
+    "$PARALLELISM_LIMIT_SERVICE_NAME${taskType.simpleName}"
 
 /**
  * Makes [KotlinNativeCompile], [KotlinNativeLink] and [CInteropCommonizerTask] use their parallelism limit service,
  * when the matching `kotlin.native.*MaxWorkers` property is set.
  */
 internal val KotlinNativeToolParallelismLimitSetupAction = KotlinProjectSetupAction {
-    limitParallelismOf<KotlinNativeCompile>("KotlinNativeCompile", kotlinPropertiesProvider.nativeCompileMaxWorkers)
-    limitParallelismOf<KotlinNativeLink>("KotlinNativeLink", kotlinPropertiesProvider.nativeLinkMaxWorkers)
-    limitParallelismOf<CInteropCommonizerTask>("CInteropCommonizerTask", kotlinPropertiesProvider.nativeCommonizeCInteropMaxWorkers)
+    limitParallelismOf<KotlinNativeCompile>(kotlinPropertiesProvider.nativeCompileMaxWorkers)
+    limitParallelismOf<KotlinNativeLink>(kotlinPropertiesProvider.nativeLinkMaxWorkers)
+    limitParallelismOf<CInteropCommonizerTask>(kotlinPropertiesProvider.nativeCommonizeCInteropMaxWorkers)
 }
 
-private inline fun <reified T : Task> Project.limitParallelismOf(name: String, maxParallelUsages: Int?) {
+private inline fun <reified T : Task> Project.limitParallelismOf(maxParallelUsages: Int?) {
     if (maxParallelUsages == null) return
-    val limitService = registerKotlinNativeParallelismLimitService(name, maxParallelUsages)
+    val limitService = registerKotlinNativeParallelismLimitService(T::class.java, maxParallelUsages)
     tasks.withType<T>().configureEach { it.usesService(limitService) }
 }

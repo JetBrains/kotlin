@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
+import org.gradle.api.DefaultTask
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.maxParallelUsagesOf
 import org.jetbrains.kotlin.internal.compilerRunner.native.registerKotlinNativeParallelismLimitService
@@ -14,33 +15,36 @@ import kotlin.test.assertSame
 
 class KotlinNativeToolParallelismLimitServiceTest {
 
+    abstract class FirstTask : DefaultTask()
+    abstract class SecondTask : DefaultTask()
+
     @Test
-    fun `registerKotlinNativeParallelismLimitService with an int sets that value as maxParallelUsages`() {
+    fun `registerKotlinNativeParallelismLimitService sets maxParallelUsages`() {
         val project = buildProject()
 
-        project.registerKotlinNativeParallelismLimitService("SomeTask", maxParallelUsages = 3)
+        project.registerKotlinNativeParallelismLimitService(FirstTask::class.java, maxParallelUsages = 3)
 
-        assertEquals(3, project.maxParallelUsagesOf("SomeTask"))
+        assertEquals(3, project.maxParallelUsagesOf<FirstTask>())
     }
 
     @Test
-    fun `registerKotlinNativeParallelismLimitService reuses the same service instance for the same name`() {
+    fun `registerKotlinNativeParallelismLimitService reuses the same service instance for the same task type`() {
         val project = buildProject()
 
-        val first = project.registerKotlinNativeParallelismLimitService("SomeTask", maxParallelUsages = 2)
-        val second = project.registerKotlinNativeParallelismLimitService("SomeTask", maxParallelUsages = 2)
+        val first = project.registerKotlinNativeParallelismLimitService(FirstTask::class.java, maxParallelUsages = 2)
+        val second = project.registerKotlinNativeParallelismLimitService(FirstTask::class.java, maxParallelUsages = 2)
 
         assertSame(first.get(), second.get())
     }
 
     @Test
-    fun `registerKotlinNativeParallelismLimitService uses independent services for different names`() {
+    fun `registerKotlinNativeParallelismLimitService uses independent services for different task types`() {
         val project = buildProject()
 
-        project.registerKotlinNativeParallelismLimitService("FirstTask", maxParallelUsages = 2)
-        project.registerKotlinNativeParallelismLimitService("SecondTask", maxParallelUsages = 6)
+        project.registerKotlinNativeParallelismLimitService(FirstTask::class.java, maxParallelUsages = 2)
+        project.registerKotlinNativeParallelismLimitService(SecondTask::class.java, maxParallelUsages = 6)
 
-        assertEquals(2, project.maxParallelUsagesOf("FirstTask"))
-        assertEquals(6, project.maxParallelUsagesOf("SecondTask"))
+        assertEquals(2, project.maxParallelUsagesOf<FirstTask>())
+        assertEquals(6, project.maxParallelUsagesOf<SecondTask>())
     }
 }

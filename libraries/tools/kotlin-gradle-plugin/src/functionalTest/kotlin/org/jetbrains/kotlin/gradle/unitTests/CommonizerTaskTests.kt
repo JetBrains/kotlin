@@ -11,6 +11,7 @@ import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_COMMONIZE_CINTEROP_MAX_WORKERS
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
+import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerTask
 import org.jetbrains.kotlin.gradle.targets.native.internal.cInteropCommonizationEnabled
 import org.jetbrains.kotlin.gradle.targets.native.internal.copyCommonizeCInteropForIdeTask
 import org.jetbrains.kotlin.gradle.util.*
@@ -93,7 +94,7 @@ class CommonizerTaskTests {
         configureDefaultTestProjects()
         subproject.assertContainsTaskWithName("commonizeCInterop")
 
-        assertEquals(3, subproject.maxParallelUsagesOf("CInteropCommonizerTask"))
+        assertEquals(3, subproject.maxParallelUsagesOf<CInteropCommonizerTask>())
     }
 
     @Test
@@ -101,7 +102,7 @@ class CommonizerTaskTests {
         configureDefaultTestProjects()
         subproject.assertContainsTaskWithName("commonizeCInterop")
 
-        assertFalse(subproject.isParallelismLimitServiceRegistered("CInteropCommonizerTask"))
+        assertFalse(subproject.isParallelismLimitServiceRegistered<CInteropCommonizerTask>())
     }
 
     @Test

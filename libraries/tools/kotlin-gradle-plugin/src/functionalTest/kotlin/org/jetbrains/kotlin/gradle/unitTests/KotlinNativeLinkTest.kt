@@ -98,7 +98,7 @@ class KotlinNativeLinkTest {
         }
         project.evaluate()
 
-        assertEquals(3, project.maxParallelUsagesOf("KotlinNativeLink"))
+        assertEquals(3, project.maxParallelUsagesOf<KotlinNativeLink>())
     }
 
     @Test
@@ -112,7 +112,7 @@ class KotlinNativeLinkTest {
         }
         project.evaluate()
 
-        assertFalse(project.isParallelismLimitServiceRegistered("KotlinNativeLink"))
+        assertFalse(project.isParallelismLimitServiceRegistered<KotlinNativeLink>())
     }
 
 }

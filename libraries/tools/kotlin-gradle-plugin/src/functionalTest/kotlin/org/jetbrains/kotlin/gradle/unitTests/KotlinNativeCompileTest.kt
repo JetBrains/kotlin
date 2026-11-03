@@ -32,7 +32,7 @@ class KotlinNativeCompileTest {
         // Force the KotlinNativeCompile task to be instantiated, so its configureEach actions run
         project.tasks.getByName("compileKotlinLinuxX64") as KotlinNativeCompile
 
-        assertEquals(3, project.maxParallelUsagesOf("KotlinNativeCompile"))
+        assertEquals(3, project.maxParallelUsagesOf<KotlinNativeCompile>())
     }
 
     @Test
@@ -47,6 +47,6 @@ class KotlinNativeCompileTest {
         // Force the KotlinNativeCompile task to be instantiated, so its configureEach actions run
         project.tasks.getByName("compileKotlinLinuxX64") as KotlinNativeCompile
 
-        assertFalse(project.isParallelismLimitServiceRegistered("KotlinNativeCompile"))
+        assertFalse(project.isParallelismLimitServiceRegistered<KotlinNativeCompile>())
     }
 }
