@@ -7,9 +7,6 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.factory
 
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
-import com.intellij.psi.util.CachedValue
-import com.intellij.psi.util.CachedValueProvider
-import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaBuiltinsModuleImpl
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaBuiltinsModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
@@ -36,6 +33,7 @@ import org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
+import java.lang.ref.SoftReference
 import java.util.concurrent.ConcurrentHashMap
 
 @OptIn(PrivateSessionConstructor::class, SessionConfiguration::class)
@@ -45,7 +43,15 @@ class LLFirBuiltinsSessionFactory(private val project: Project) {
 
     private val builtinsModules = ConcurrentHashMap<TargetPlatform, KaBuiltinsModule>()
 
-    private val builtinsAndCloneableSessions = ConcurrentHashMap<TargetPlatform, CachedValue<LLFirBuiltinsAndCloneableSession>>()
+    /**
+     * The builtins sessions by platform. Each session is held via a [SoftReference] to the session itself, so it stays cached while it is
+     * strongly reachable, e.g., as a dependency of other sessions.
+     *
+     * A [CachedValue][com.intellij.psi.util.CachedValue] would hold the session via a wrapper that is only softly reachable, so it could
+     * drop a session that is still in use. [getBuiltinsSession] would then create a second session for the same platform, with different
+     * FIR symbols for the same builtin declarations.
+     */
+    private val builtinsAndCloneableSessions = ConcurrentHashMap<TargetPlatform, SoftReference<LLFirBuiltinsAndCloneableSession>>()
 
     /**
      * Returns the [platform]'s [KaBuiltinsModule]. [getBuiltinsModule] should be used instead of [getBuiltinsSession] when a
@@ -56,13 +62,28 @@ class LLFirBuiltinsSessionFactory(private val project: Project) {
     fun getBuiltinsModule(platform: TargetPlatform): KaBuiltinsModule =
         builtinsModules.getOrPut(platform) { KaBuiltinsModuleImpl(platform, project) }
 
-    fun getBuiltinsSession(platform: TargetPlatform): LLFirBuiltinsAndCloneableSession =
-        builtinsAndCloneableSessions.getOrPut(platform) {
-            CachedValuesManager.getManager(project).createCachedValue {
-                val session = createBuiltinsAndCloneableSession(platform)
-                CachedValueProvider.Result(session, session.createValidityTracker())
+    /**
+     * Returns the [platform]'s builtins session, creating it if it is not cached or no longer valid.
+     *
+     * The new session is created outside [ConcurrentHashMap.compute] so that the session creation cannot update the map recursively. If
+     * several threads create a session concurrently, all of them return the session that is cached first.
+     */
+    fun getBuiltinsSession(platform: TargetPlatform): LLFirBuiltinsAndCloneableSession {
+        builtinsAndCloneableSessions[platform]?.get()?.takeIf { it.isValid }?.let { return it }
+
+        val newSession = createBuiltinsAndCloneableSession(platform)
+        var session = newSession
+        builtinsAndCloneableSessions.compute(platform) { _, reference ->
+            val cachedSession = reference?.get()?.takeIf { it.isValid }
+            if (cachedSession != null) {
+                session = cachedSession
+                reference
+            } else {
+                SoftReference(newSession)
             }
-        }.value
+        }
+        return session
+    }
 
     /**
      * Invalidates all builtins modules and sessions.
