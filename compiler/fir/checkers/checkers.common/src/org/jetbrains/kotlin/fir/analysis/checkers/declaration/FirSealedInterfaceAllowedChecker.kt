@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.utils.isFun
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
-import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
 
 object FirSealedInterfaceAllowedChecker : FirClassChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -22,7 +22,7 @@ object FirSealedInterfaceAllowedChecker : FirClassChecker(MppCheckerKind.Common)
         if (!declaration.isInterface || !declaration.isFun) {
             return
         }
-        val keyword = declaration.getModifier(KtTokens.SEALED_KEYWORD) ?: return
+        val keyword = declaration.getModifier(KotlinSyntaxTokenIds.SEALED_MODIFIER) ?: return
         reporter.reportOn(keyword.source, FirErrors.UNSUPPORTED_SEALED_FUN_INTERFACE)
     }
 }

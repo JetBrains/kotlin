@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
-import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
 
 object FirJvmExternalDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
@@ -60,7 +60,7 @@ object FirJvmExternalDeclarationChecker : FirBasicDeclarationChecker(MppCheckerK
                 is FirRegularClass -> "class"
                 else -> "non-function declaration"
             }
-            val externalModifier = declaration.getModifier(KtTokens.EXTERNAL_KEYWORD)
+            val externalModifier = declaration.getModifier(KotlinSyntaxTokenIds.EXTERNAL_MODIFIER)
             externalModifier?.let {
                 reporter.reportOn(it.source, FirErrors.WRONG_MODIFIER_TARGET, it.tokenName, target)
             }

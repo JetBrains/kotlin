@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
-import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
 
 object FirNativeExternalDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
@@ -31,7 +31,7 @@ object FirNativeExternalDeclarationChecker : FirBasicDeclarationChecker(MppCheck
         if (declaration is FirFunction || declaration is FirTypeAlias) return
         if (declaration.source?.kind !is KtRealSourceElementKind) return
 
-        val modifier = declaration.getModifier(KtTokens.EXTERNAL_KEYWORD) ?: return
+        val modifier = declaration.getModifier(KotlinSyntaxTokenIds.EXTERNAL_MODIFIER) ?: return
 
         reporter.reportOn(
             modifier.source,

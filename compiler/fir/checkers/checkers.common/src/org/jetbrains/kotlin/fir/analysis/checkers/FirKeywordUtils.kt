@@ -17,11 +17,15 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtModifierList
 import org.jetbrains.kotlin.psi.KtModifierListOwner
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtValVarKeywordOwner
 import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
+import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
+import org.jetbrains.kotlin.syntax.SyntaxId
+import org.jetbrains.kotlin.syntax.elementType
 import org.jetbrains.kotlin.util.getChildren
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
@@ -36,7 +40,7 @@ sealed class FirModifierList {
     class FirPsiModifierList(val modifierList: KtModifierList) : FirModifierList() {
         override val modifiers: List<FirModifier.FirPsiModifier>
             get() = modifierList.node.getChildren(MODIFIER_KEYWORD_SET).map { node ->
-                FirModifier.FirPsiModifier(node, node.elementType as KtModifierKeywordToken)
+                FirModifier.FirPsiModifier(node, (node.elementType as KtModifierKeywordToken).tokenId)
             }
     }
 
@@ -50,35 +54,42 @@ sealed class FirModifierList {
                 val modifierNodes = modifierList.getChildren(tree)
                 return modifierNodes
                     .filter { it.tokenType is KtModifierKeywordToken }
-                    .map { FirModifier.FirLightModifier(it, it.tokenType as KtModifierKeywordToken, tree, offsetDelta) }
+                    .map { FirModifier.FirLightModifier(it, (it.tokenType as KtModifierKeywordToken).tokenId, tree, offsetDelta) }
             }
     }
 
-    operator fun get(token: KtModifierKeywordToken): FirModifier<*>? = modifiers.firstOrNull { it.token == token }
+    operator fun get(tokenId: SyntaxId): FirModifier<*>? = modifiers.firstOrNull { it.tokenId == tokenId }
 
-    operator fun contains(token: KtModifierKeywordToken): Boolean = modifiers.any { it.token == token }
+    operator fun contains(tokenId: SyntaxId): Boolean = modifiers.any { it.tokenId == tokenId }
 }
 
 private val MODIFIER_KEYWORD_SET = TokenSet.orSet(KtTokens.SOFT_KEYWORDS, TokenSet.create(KtTokens.IN_KEYWORD, KtTokens.FUN_KEYWORD))
 
-sealed class FirModifier<Node : Any>(val node: Node, val token: KtModifierKeywordToken) {
+/**
+ * @property tokenId The ID of the modifier keyword (one of the `*_MODIFIER` IDs from [KotlinSyntaxTokenIds]).
+ */
+sealed class FirModifier<Node : Any>(val node: Node, val tokenId: SyntaxId) {
+    /**
+     * The keyword text of the modifier (e.g., `public`) to be used in diagnostic messages.
+     */
+    @OptIn(KtImplementationDetail::class)
     val tokenName: String
-        get() = token.toString()
+        get() = tokenId.elementType().toString()
 
     class FirPsiModifier(
         node: ASTNode,
-        token: KtModifierKeywordToken
-    ) : FirModifier<ASTNode>(node, token) {
+        tokenId: SyntaxId,
+    ) : FirModifier<ASTNode>(node, tokenId) {
         override val source: KtSourceElement
             get() = node.psi.toKtPsiSourceElement()
     }
 
     class FirLightModifier(
         node: LighterASTNode,
-        token: KtModifierKeywordToken,
+        tokenId: SyntaxId,
         val tree: FlyweightCapableTreeStructure<LighterASTNode>,
         private val offsetDelta: Int
-    ) : FirModifier<LighterASTNode>(node, token) {
+    ) : FirModifier<LighterASTNode>(node, tokenId) {
         override val source: KtSourceElement
             get() = node.toKtLightSourceElement(
                 tree,
@@ -117,19 +128,19 @@ fun KtSourceElement?.getModifierList(): FirModifierList? {
     }
 }
 
-operator fun FirModifierList?.contains(token: KtModifierKeywordToken): Boolean = this?.contains(token) == true
+operator fun FirModifierList?.contains(tokenId: SyntaxId): Boolean = this?.contains(tokenId) == true
 
 fun FirElement.getModifierList(): FirModifierList? = when {
     source?.kind is KtFakeSourceElementKind.DelegatedPropertyAccessor && source?.syntaxId != KotlinSyntaxNodeTypeIds.PROPERTY_ACCESSOR -> null
     else -> source.getModifierList()
 }
 
-fun FirElement.getModifier(token: KtModifierKeywordToken): FirModifier<*>? = getModifierList()?.get(token)
+fun FirElement.getModifier(tokenId: SyntaxId): FirModifier<*>? = getModifierList()?.get(tokenId)
 
-fun FirElement.hasModifier(token: KtModifierKeywordToken): Boolean = token in getModifierList()
+fun FirElement.hasModifier(tokenId: SyntaxId): Boolean = tokenId in getModifierList()
 
 @OptIn(SymbolInternals::class)
-fun FirBasedSymbol<*>.hasModifier(token: KtModifierKeywordToken): Boolean = fir.hasModifier(token)
+fun FirBasedSymbol<*>.hasModifier(tokenId: SyntaxId): Boolean = fir.hasModifier(tokenId)
 
 internal val KtSourceElement?.valOrVarKeyword: KtKeywordToken?
     get() = when (this) {

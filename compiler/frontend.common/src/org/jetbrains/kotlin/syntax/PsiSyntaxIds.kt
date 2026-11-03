@@ -33,40 +33,53 @@ fun IElementType.syntaxId(): SyntaxId =
         else -> NO_ID
     }
 
-private val indexToId: IntArray = run {
-    val indexToIdMap = mutableMapOf<Short, SyntaxId>()
+/**
+ * The inverse of [syntaxId].
+ *
+ * @receiver An ID from `core:language.syntax`.
+ * @return The PSI element type with the given ID, or `null` if there is no such element type (e.g., for [NO_ID]).
+ * Useful for getting the name of an element (e.g., a modifier keyword for diagnostic messages) by its ID.
+ * Kotlin tokens ([KtTokens]) and the element types listed in [syntaxId] are mapped.
+ */
+@KtImplementationDetail
+fun SyntaxId.elementType(): IElementType? = idToElementType.getOrNull(this)
 
-    var maxIndex: Short = 0
+/**
+ * Element types that are not [KtToken]s (their IDs aren't stored in the element types themselves).
+ */
+private val nonTokenElementTypesWithIds: List<Pair<IElementType, SyntaxId>> = buildList {
     var id = KotlinSyntaxNodeTypeIds.FILE
-    KtNodeTypes::class.java.declaredFields.forEach {
-        if (it.isAnnotationPresent(Deprecated::class.java)) return@forEach
-        val index = (it.get(null) as IElementType).index
-        indexToIdMap[index] = id++
-        if (index > maxIndex) {
-            maxIndex = index
-        }
+    for (field in KtNodeTypes::class.java.declaredFields) {
+        if (field.isAnnotationPresent(Deprecated::class.java)) continue
+        add((field.get(null) as IElementType) to id++)
     }
-    KtTokens.DOC_COMMENT.index.let {
-        indexToIdMap[it] = KotlinSyntaxTokenIds.DOC_COMMENT
-        if (it > maxIndex) {
-            maxIndex = it
-        }
-    }
-    listOf(
-        TokenType.WHITE_SPACE to BasicSyntaxElementTypeIds.WHITE_SPACE,
-        TokenType.BAD_CHARACTER to BasicSyntaxElementTypeIds.BAD_CHARACTER,
-        TokenType.ERROR_ELEMENT to BasicSyntaxElementTypeIds.ERROR_ELEMENT,
-    ).forEach { [elementType, basicId] ->
-        val index = elementType.index
-        indexToIdMap[index] = basicId
-        if (index > maxIndex) {
-            maxIndex = index
-        }
-    }
+    add(KtTokens.DOC_COMMENT to KotlinSyntaxTokenIds.DOC_COMMENT)
+    add(TokenType.WHITE_SPACE to BasicSyntaxElementTypeIds.WHITE_SPACE)
+    add(TokenType.BAD_CHARACTER to BasicSyntaxElementTypeIds.BAD_CHARACTER)
+    add(TokenType.ERROR_ELEMENT to BasicSyntaxElementTypeIds.ERROR_ELEMENT)
+}
 
-    IntArray(maxIndex.toInt() + 1).apply {
-        indexToIdMap.forEach { [index, id] ->
-            this[index.toInt()] = id
+private val indexToId: IntArray = run {
+    val maxIndex = nonTokenElementTypesWithIds.maxOf { it.first.index.toInt() }
+    IntArray(maxIndex + 1).apply {
+        for ([elementType, id] in nonTokenElementTypesWithIds) {
+            this[elementType.index.toInt()] = id
+        }
+    }
+}
+
+private val idToElementType: Array<IElementType?> = run {
+    val tokens = KtTokens::class.java.declaredFields.mapNotNull { field ->
+        if (field.isAnnotationPresent(Deprecated::class.java)) return@mapNotNull null
+        (field.get(null) as? KtToken)?.takeIf { it.tokenId > NO_ID }
+    }
+    val maxId = maxOf(nonTokenElementTypesWithIds.maxOf { it.second }, tokens.maxOf { it.tokenId })
+    arrayOfNulls<IElementType>(maxId + 1).apply {
+        for ([elementType, id] in nonTokenElementTypesWithIds) {
+            this[id] = elementType
+        }
+        for (token in tokens) {
+            this[token.tokenId] = token
         }
     }
 }
