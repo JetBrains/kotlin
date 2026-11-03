@@ -117,6 +117,13 @@ private val IrDeclarationWithVisibility.jvmVisibilityRank: Int
 private fun IrSimpleFunction.computeJvmSignature(classCodegen: ClassCodegen): Method {
     if (isInCurrentModule()) return classCodegen.methodSignatureMapper.mapFakeOverrideSignatureSkipGeneric(this).asmMethod
 
+    /*
+     * Functions from other modules must be "manually lowered", since they did not go through the JvmLoweringPhases.
+     * The two significant lowerings that affect JVM signature are:
+     * 1. Inline class lowering, which mangles functions with inline class parameters.
+     * 2. Suspend function lowering, which adds a continuation parameters to suspend functions.
+     */
+
     val irFunction = classCodegen.context.inlineClassReplacements.getReplacementFunction(this) ?: this
     val method = classCodegen.methodSignatureMapper.mapFakeOverrideSignatureSkipGeneric(irFunction).asmMethod
     if (isSuspend) {

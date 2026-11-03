@@ -6,7 +6,7 @@
 // ISSUE: KT-90567
 
 /*
- * Weakening access privelege by @JvmStatic/etc. members is not checked (they are reported as accidential overrides).
+ * Weakening access privelege by @JvmStatic/etc. members is not checked (they are reported as accidental overrides).
  * Weakening access privelege of @JvmStatic/etc. is allowed to be consistent with cross-module case.
  */
 
