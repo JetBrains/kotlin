@@ -93,6 +93,9 @@ The review tool runs Claude Code in [bare mode](https://code.claude.com/docs/en/
 passing the rule and the diff of the affected files as input.
 It runs invocations in parallel.
 
+If the diff of the files subject to a rule is too large, it is split into batches,
+each checked in a separate invocation.
+
 While having a separate session per each rule probably doesn't scale perfectly, it is the easiest way to start with
 this rule-based AI code review.
 It also makes sure that each invocation is focused on a single rule and receives only the relevant diff.
