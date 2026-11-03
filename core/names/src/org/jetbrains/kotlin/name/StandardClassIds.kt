@@ -297,6 +297,10 @@ object StandardClassIds {
 
             val deprecatedMessage = Name.identifier("message")
             val deprecatedLevel = Name.identifier("level")
+            val deprecatedReplaceWith = Name.identifier("replaceWith")
+
+            val replaceWithExpression = Name.identifier("expression")
+            val replaceWithImports = Name.identifier("imports")
 
             val deprecatedSinceKotlinWarningSince = Name.identifier("warningSince")
             val deprecatedSinceKotlinErrorSince = Name.identifier("errorSince")

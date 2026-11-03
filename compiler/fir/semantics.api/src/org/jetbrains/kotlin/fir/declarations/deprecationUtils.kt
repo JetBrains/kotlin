@@ -479,4 +479,39 @@ class SimpleFirDeprecationInfo(
         return annotation.getStringArgument(ParameterNames.deprecatedMessage)
     }
 
+    override fun getReplaceWith(session: FirSession): FirDeprecationReplaceWith? {
+        (annotation as? FirAnnotationCall)?.containingDeclarationSymbol?.lazyResolveToPhase(FirResolvePhase.ANNOTATION_ARGUMENTS)
+        val replaceWith = annotation.findArgumentByName(ParameterNames.deprecatedReplaceWith, returnFirstWhenNotFound = false)
+        return replaceWith?.extractReplaceWith()
+    }
 }
+
+
+private fun FirExpression.extractReplaceWith(): FirDeprecationReplaceWith? {
+    val expression: String
+    val imports: List<String>
+
+    // The `ReplaceWith(...)` argument is represented as a [FirAnnotation] for deserialized declarations
+    // and as a [FirFunctionCall] of the annotation constructor for source declarations.
+    when (this) {
+        is FirAnnotation -> {
+            expression = getStringArgument(ParameterNames.replaceWithExpression) ?: return null
+            imports = getStringArrayArgument(ParameterNames.replaceWithImports).orEmpty()
+        }
+        is FirFunctionCall -> {
+            // Arguments are guaranteed to be evaluated, we don't need to handle string concatenation, const val calls, etc.
+            val mapping = resolvedArgumentMapping ?: return null
+            expression =
+                (mapping.entries.firstOrNull { it.value.name == ParameterNames.replaceWithExpression }?.key as? FirLiteralExpression)
+                    ?.value as? String
+                    ?: return null
+            imports =
+                (mapping.entries.firstOrNull { it.value.name == ParameterNames.replaceWithImports }?.key as? FirCollectionLiteral)
+                    ?.arguments?.mapNotNull { (it as? FirLiteralExpression)?.value as? String }.orEmpty()
+        }
+        else -> return null
+    }
+
+    return FirDeprecationReplaceWith(expression, imports)
+}
+
