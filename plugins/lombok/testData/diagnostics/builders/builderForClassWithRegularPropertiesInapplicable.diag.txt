@@ -1,0 +1,43 @@
+/builderForClassWithRegularPropertiesInapplicable.kt:11:9: strong_warning: Property 'valWithoutDefault' is not included in the builder: builder fields are generated from the mutable properties if there are no primary constructor parameters. To make the property a builder field, declare it in the primary constructor or change it to be a mutable property.
+
+/builderForClassWithRegularPropertiesInapplicable.kt:14:5: strong_warning: '@Builder.Default' has no effect on a read-only property declared in the class body: a Kotlin class builds out of the value parameters of the constructor, mutable properties, or function 'build()' calls, so only those are builder fields. Declare the property in the primary constructor to make it one.
+
+/builderForClassWithRegularPropertiesInapplicable.kt:15:9: strong_warning: Property 'valWithDefault' is not included in the builder: builder fields are generated from the mutable properties if there are no primary constructor parameters. To make the property a builder field, declare it in the primary constructor or change it to be a mutable property.
+
+/builderForClassWithRegularPropertiesInapplicable.kt:18:5: strong_warning: '@Singular' has no effect on a read-only property declared in the class body: a Kotlin class builds out of the value parameters of the constructor, mutable properties, or function 'build()' calls, so only those are builder fields. Declare the property in the primary constructor to make it one.
+
+/builderForClassWithRegularPropertiesInapplicable.kt:19:9: strong_warning: Property 'singularVals' is not included in the builder: builder fields are generated from the mutable properties if there are no primary constructor parameters. To make the property a builder field, declare it in the primary constructor or change it to be a mutable property.
+
+/builderForClassWithRegularPropertiesInapplicable.kt:31:17: error: Unresolved reference 'valWithoutDefault' on receiver of type 'WithoutConstructor.WithoutConstructorBuilder'.
+
+/builderForClassWithRegularPropertiesInapplicable.kt:32:17: error: Unresolved reference 'valWithDefault' on receiver of type 'WithoutConstructor.WithoutConstructorBuilder'.
+
+/builderForClassWithRegularPropertiesInapplicable.kt:33:17: error: Unresolved reference 'singularVal' on receiver of type 'WithoutConstructor.WithoutConstructorBuilder'.
+
+/builderForClassWithRegularPropertiesInapplicable.kt:39:9: strong_warning: Property 'varWithoutDefault' is not included in the builder: builder fields are generated from the primary constructor's value parameters. To make the property a builder field, declare it in the primary constructor. You may also move @Builder annotation from the class to its constructor to avoid this warning.
+
+/builderForClassWithRegularPropertiesInapplicable.kt:40:9: strong_warning: Property 'valWithoutDefault' is not included in the builder: builder fields are generated from the primary constructor's value parameters. To make the property a builder field, declare it in the primary constructor. You may also move @Builder annotation from the class to its constructor to avoid this warning.
+
+/builderForClassWithRegularPropertiesInapplicable.kt:42:9: strong_warning: Property 'varWithDefault' is not included in the builder: builder fields are generated from the primary constructor's value parameters. To make the property a builder field, declare it in the primary constructor. You may also move @Builder annotation from the class to its constructor to avoid this warning.
+
+/builderForClassWithRegularPropertiesInapplicable.kt:43:5: strong_warning: '@Builder.Default' has no effect on a read-only property declared in the class body: a Kotlin class builds out of the value parameters of the constructor, mutable properties, or function 'build()' calls, so only those are builder fields. Declare the property in the primary constructor to make it one.
+
+/builderForClassWithRegularPropertiesInapplicable.kt:44:9: strong_warning: Property 'valWithDefault' is not included in the builder: builder fields are generated from the primary constructor's value parameters. To make the property a builder field, declare it in the primary constructor. You may also move @Builder annotation from the class to its constructor to avoid this warning.
+
+/builderForClassWithRegularPropertiesInapplicable.kt:46:9: strong_warning: Property 'singularVars' is not included in the builder: builder fields are generated from the primary constructor's value parameters. To make the property a builder field, declare it in the primary constructor. You may also move @Builder annotation from the class to its constructor to avoid this warning.
+
+/builderForClassWithRegularPropertiesInapplicable.kt:47:5: strong_warning: '@Singular' has no effect on a read-only property declared in the class body: a Kotlin class builds out of the value parameters of the constructor, mutable properties, or function 'build()' calls, so only those are builder fields. Declare the property in the primary constructor to make it one.
+
+/builderForClassWithRegularPropertiesInapplicable.kt:48:9: strong_warning: Property 'singularVals' is not included in the builder: builder fields are generated from the primary constructor's value parameters. To make the property a builder field, declare it in the primary constructor. You may also move @Builder annotation from the class to its constructor to avoid this warning.
+
+/builderForClassWithRegularPropertiesInapplicable.kt:60:17: error: Unresolved reference 'varWithoutDefault' on receiver of type 'WithConstructor.WithConstructorBuilder'.
+
+/builderForClassWithRegularPropertiesInapplicable.kt:61:17: error: Unresolved reference 'varWithDefault' on receiver of type 'WithConstructor.WithConstructorBuilder'.
+
+/builderForClassWithRegularPropertiesInapplicable.kt:62:17: error: Unresolved reference 'singularVal' on receiver of type 'WithConstructor.WithConstructorBuilder'.
+
+/builderForClassWithRegularPropertiesInapplicable.kt:63:17: error: Unresolved reference 'valWithoutDefault' on receiver of type 'WithConstructor.WithConstructorBuilder'.
+
+/builderForClassWithRegularPropertiesInapplicable.kt:64:17: error: Unresolved reference 'valWithDefault' on receiver of type 'WithConstructor.WithConstructorBuilder'.
+
+/builderForClassWithRegularPropertiesInapplicable.kt:65:17: error: Unresolved reference 'singularVal' on receiver of type 'WithConstructor.WithConstructorBuilder'.

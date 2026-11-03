@@ -1,5 +1,6 @@
 // ISSUE: KT-90879
 // WITH_STDLIB
+// RENDER_DIAGNOSTICS_FULL_TEXT
 
 import lombok.Builder
 import lombok.Singular
@@ -7,7 +8,7 @@ import lombok.Singular
 @Builder
 class WithoutConstructor {
     var varWithoutDefault: Int = 0
-    val <!BUILDER_PROPERTY_NOT_INCLUDED("valWithoutDefault; builder fields are generated from the mutable properties if there are no primary constructor parameters. To make the property a builder field, declare it in the primary constructor or change it to be a mutable property")!>valWithoutDefault<!>: Int = 0
+    val <!BUILDER_PROPERTY_NOT_INCLUDED!>valWithoutDefault<!>: Int = 0
     @Builder.Default
     var varWithDefault: Int = 0
     <!BUILDER_FIELD_ANNOTATION_ON_BODY_PROPERTY!>@Builder.Default<!>
@@ -15,7 +16,7 @@ class WithoutConstructor {
     @Singular
     var singularVars: List<String> = emptyList()
     <!BUILDER_FIELD_ANNOTATION_ON_BODY_PROPERTY!>@Singular<!>
-    val <!BUILDER_PROPERTY_NOT_INCLUDED("singularVals; builder fields are generated from the mutable properties if there are no primary constructor parameters. To make the property a builder field, declare it in the primary constructor or change it to be a mutable property")!>singularVals<!>: List<String> = emptyList()
+    val <!BUILDER_PROPERTY_NOT_INCLUDED!>singularVals<!>: List<String> = emptyList()
 
     val valWithoutField: Int
         get() = valWithoutDefault
@@ -35,8 +36,8 @@ class WithoutConstructor {
 
 @Builder
 class WithConstructor(var constructorProperty: Int) {
-    var <!BUILDER_PROPERTY_NOT_INCLUDED("varWithoutDefault; builder fields are generated from the primary constructor''s value parameters. To make the property a builder field, declare it in the primary constructor. You may also move @Builder annotation from the class to its constructor to avoid this warning")!>varWithoutDefault<!>: Int = 0
-    val <!BUILDER_PROPERTY_NOT_INCLUDED("valWithoutDefault; builder fields are generated from the primary constructor''s value parameters. To make the property a builder field, declare it in the primary constructor. You may also move @Builder annotation from the class to its constructor to avoid this warning")!>valWithoutDefault<!>: Int = 0
+    var <!BUILDER_PROPERTY_NOT_INCLUDED!>varWithoutDefault<!>: Int = 0
+    val <!BUILDER_PROPERTY_NOT_INCLUDED!>valWithoutDefault<!>: Int = 0
     @Builder.Default
     var <!BUILDER_PROPERTY_NOT_INCLUDED!>varWithDefault<!>: Int = 0
     <!BUILDER_FIELD_ANNOTATION_ON_BODY_PROPERTY!>@Builder.Default<!>

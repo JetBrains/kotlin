@@ -1,5 +1,6 @@
 // ISSUE: KT-90508
 // WITH_STDLIB
+// RENDER_DIAGNOSTICS_FULL_TEXT
 // FILE: usage.kt
 
 fun usage(): Entity = Entity.builder().title("Main").build()
@@ -26,7 +27,7 @@ import lombok.Builder
 // A read-only property is never a builder field, so its implicit type is not reported
 @Builder
 class Entity {
-    val <!BUILDER_PROPERTY_NOT_INCLUDED("id; builder fields are generated from the mutable properties if there are no primary constructor parameters. To make the property a builder field, declare it in the primary constructor or change it to be a mutable property")!>id<!> = 42
+    val <!BUILDER_PROPERTY_NOT_INCLUDED!>id<!> = 42
     val <!BUILDER_PROPERTY_NOT_INCLUDED!>tags<!> = emptyList<String>()
     val <!BUILDER_PROPERTY_NOT_INCLUDED!>explicit<!>: String = ""
     var title: String = ""

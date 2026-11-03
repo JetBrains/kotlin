@@ -9,7 +9,7 @@ import kotlin.test.assertEquals
 // were passed and gets no builder field of its own.
 @Builder
 class Mixed(val a: Int, b: String, var c: Long) {
-    val <!BUILDER_PROPERTY_NOT_INCLUDED("fromParameter; builder fields are generated from the primary constructor''s value parameters. To make the property a builder field, declare it in the primary constructor. You may also move @Builder annotation from the class to its constructor to avoid this warning")!>fromParameter<!>: String = b + "!"
+    val <!BUILDER_PROPERTY_NOT_INCLUDED("fromParameter; builder fields are generated from the primary constructor's value parameters. To make the property a builder field, declare it in the primary constructor. You may also move @Builder annotation from the class to its constructor to avoid this warning")!>fromParameter<!>: String = b + "!"
     val <!BUILDER_PROPERTY_NOT_INCLUDED!>computed<!>: Int = a * 2
 
     val b: String get() = fromParameter.dropLast(1)
