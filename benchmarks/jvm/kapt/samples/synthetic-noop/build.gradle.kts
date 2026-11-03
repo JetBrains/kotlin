@@ -93,4 +93,9 @@ afterEvaluate {
     // afterEvaluate: kaptGenerateStubsKotlin is registered lazily by the kapt plugin.
     tasks.named("compileKotlin") { dependsOn(generateSources) }
     tasks.named("kaptGenerateStubsKotlin") { dependsOn(generateSources) }
+
+    // The samples have no tests. kapt registers stub/AP tasks for the empty test compilation
+    // anyway; the stub task lacks @SkipWhenEmpty, so it executes on every test-compiling
+    // build doing no work and (being new) trips the build-cache check on CI.
+    tasks.named("kaptGenerateStubsTestKotlin") { enabled = false }
 }
