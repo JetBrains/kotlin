@@ -13,6 +13,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
 import org.jetbrains.kotlin.gradle.targets.js.ir.JsIrBinary
 import org.jetbrains.kotlin.gradle.targets.js.ir.KLIB_TYPE
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.JsPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.UPGRADE_PACKAGE_LOCK_BASE_NAME
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
@@ -73,34 +74,63 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
             buildScriptInjection {
                 kotlinMultiplatform.js {
                     compilerOptions {
-                        freeCompilerArgs.set(listOf("-Xexport-kdoc"))
-                    }
-                }
-            }
-            build("assemble") {
-                val dts = projectPath.resolve("build/js/packages/kotlin2JsIrDtsGeneration/kotlin/kotlin2JsIrDtsGeneration.d.ts")
-
-                assertOutputContains("GenerateTypeScriptDefinitions")
-
-                assertFileExists(dts)
-                assertFileContains(dts, "function bar(): string")
-                assertFileContains(dts, "A declaration generated from KLIB metadata.")
-            }
-            buildScriptInjection {
-                kotlinMultiplatform.js {
-                    compilerOptions {
+                        outputModuleName.set("MyCustomLib")
                         freeCompilerArgs.set(listOf("-XXLanguage:+ExportKDocDocumentationToKlib"))
                     }
                 }
             }
             build("assemble") {
-                val dts = projectPath.resolve("build/js/packages/kotlin2JsIrDtsGeneration/kotlin/kotlin2JsIrDtsGeneration.d.ts")
-
-                assertOutputContains("GenerateTypeScriptDefinitions")
+                val dts = projectPath.resolve("build/js/packages/MyCustomLib/kotlin/MyCustomLib.d.ts")
 
                 assertFileExists(dts)
                 assertFileContains(dts, "function bar(): string")
                 assertFileContains(dts, "A declaration generated from KLIB metadata.")
+                assertFileContains(dts, "export as namespace kotlin2JsIrDtsGeneration")
+            }
+            buildScriptInjection {
+                kotlinMultiplatform.js {
+                    compilerOptions {
+                        outputModuleName.set("MyCustomLib2")
+                    }
+                }
+            }
+            build("assemble") {
+                val dts = projectPath.resolve("build/js/packages/MyCustomLib2/kotlin/MyCustomLib2.d.ts")
+
+                assertFileExists(dts)
+                assertFileNotExists( projectPath.resolve("build/js/packages/MyCustomLib2/kotlin/MyCustomLib.d.ts"))
+                assertFileContains(dts, "function bar(): string")
+                assertFileContains(dts, "A declaration generated from KLIB metadata.")
+                assertFileContains(dts, "export as namespace kotlin2JsIrDtsGeneration")
+            }
+            buildScriptInjection {
+                kotlinMultiplatform.js {
+                    compilerOptions.freeCompilerArgs.set(listOf("-Xexport-kdoc"))
+                }
+                project.tasks.withType(KotlinJsIrLink::class.java).configureEach {
+                    it.compilerOptions.moduleName.set("CustomModuleName")
+                }
+            }
+            build("assemble") {
+                val dts = projectPath.resolve("build/js/packages/MyCustomLib2/kotlin/CustomModuleName.d.ts")
+
+                assertFileExists(dts)
+                assertFileContains(dts, "function bar(): string")
+                assertFileContains(dts, "A declaration generated from KLIB metadata.")
+                assertFileContains(dts, "export as namespace kotlin2JsIrDtsGeneration")
+            }
+            buildScriptInjection {
+                project.tasks.withType(KotlinJsIrLink::class.java).configureEach {
+                    it.compilerOptions.freeCompilerArgs.add("-Xir-module-name=MyLib")
+                }
+            }
+            build("assemble") {
+                val dts = projectPath.resolve("build/js/packages/MyCustomLib2/kotlin/CustomModuleName.d.ts")
+
+                assertFileExists(dts)
+                assertFileContains(dts, "function bar(): string")
+                assertFileContains(dts, "A declaration generated from KLIB metadata.")
+                assertFileContains(dts, "export as namespace MyLib")
             }
         }
     }

@@ -367,6 +367,7 @@ internal constructor(
                 linkTask.get().compilerOptions,
                 task.linkCompilerOptions,
             )
+            task.linkFreeCompilerArgs.set(linkTask.flatMap { it.enhancedFreeCompilerArgs })
             task.klibs.from(linkTask.map { it.libraries })
             task.entryModule.set(linkTask.flatMap { it.entryModule })
             task.granularity.set(linkTask.map { it.outputGranularity })
