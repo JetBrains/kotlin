@@ -10,11 +10,11 @@ plugins {
     id("test-inputs-check")
 }
 
-val embedded = configurations.embedded.get().apply {
+configurations.embedded {
     isTransitive = false
-    configurations.compileOnly.get().extendsFrom(this)
-    configurations.testImplementation.get().extendsFrom(this)
 }
+configurations.compileOnly { extendsFrom(configurations.embedded) }
+configurations.testImplementation { extendsFrom(configurations.embedded) }
 
 dependencies {
     val coreDepsVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
@@ -35,7 +35,7 @@ sourceSets.main.configure {
 }
 
 publish(sbom = false)
-// Libraries packed into the JAR have to be listed in the SBOM as well
+// Replaces the default SBOM, because libraries packed into the JAR have to be listed as well
 configureSbom(gradleConfigurations = setOf("runtimeClasspath", "embedded"))
 javadocJar()
 sourcesJar()
