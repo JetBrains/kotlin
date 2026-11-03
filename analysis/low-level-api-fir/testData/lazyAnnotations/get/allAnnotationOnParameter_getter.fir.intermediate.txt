@@ -1,1 +1,1 @@
-public? [ResolvedTo(RAW_FIR)] get(): Int
+@R|Get|[Types]() public? [ResolvedTo(TYPES)] get(): R|kotlin/Int|

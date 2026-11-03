@@ -16,6 +16,9 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.classLikeLookupTagIfAny
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolIdEntry
@@ -119,17 +122,34 @@ private fun List<FirAnnotation>.resolveAnnotationsWithArguments(anchorElement: F
 }
 
 private fun FirAnnotationContainer.isDefinitelyEmpty(anchorElement: FirBasedSymbol<*>): Boolean = when {
-    annotations.isNotEmpty() -> false
+    // Check the property first: resolution adds moved annotations to this declaration before it removes them from the property
+    anchorElement.mayReceivePropertyAnnotations() -> false
+    else -> annotations.isEmpty()
+}
 
-    // Annotations on the backing field could appear later during resolution
-    anchorElement is FirBackingFieldSymbol -> anchorElement.propertySymbol.annotations.any {
+/**
+ * Whether resolution to [FirResolvePhase.TYPES] may move annotations of the containing property to [this] symbol.
+ */
+private fun FirBasedSymbol<*>.mayReceivePropertyAnnotations(): Boolean = when (this) {
+    is FirBackingFieldSymbol -> propertySymbol.annotations.any {
         when (it.useSiteTarget) {
-            null, AnnotationUseSiteTarget.FIELD, AnnotationUseSiteTarget.ALL -> false
-            else -> true
+            null, AnnotationUseSiteTarget.FIELD, AnnotationUseSiteTarget.ALL -> true
+            else -> false
         }
     }
 
-    else -> true
+    // Annotations with the `all` use-site target are copied to the getter and the setter parameter
+    is FirPropertyAccessorSymbol -> isGetter && propertySymbol.hasAllUseSiteTargetAnnotations()
+    is FirValueParameterSymbol -> {
+        val setterSymbol = containingDeclarationSymbol as? FirPropertyAccessorSymbol
+        setterSymbol != null && setterSymbol.isSetter && setterSymbol.propertySymbol.hasAllUseSiteTargetAnnotations()
+    }
+
+    else -> false
+}
+
+private fun FirPropertySymbol.hasAllUseSiteTargetAnnotations(): Boolean = annotations.any {
+    it.useSiteTarget == AnnotationUseSiteTarget.ALL
 }
 
 
