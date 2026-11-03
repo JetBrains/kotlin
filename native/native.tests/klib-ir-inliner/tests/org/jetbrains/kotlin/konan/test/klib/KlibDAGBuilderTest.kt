@@ -299,55 +299,123 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
     @ParameterizedTest
     @EnumSource
     fun `cycling dependency is an error`(mode: KlibDAGBuildingMode) = context(mode) {
-        val moduleNameToLibraryPath: MutableMap</* name of test module */ String, /* path of KLIB */ Path> = mutableMapOf()
-
         /*
+         * First compiling:
          * A <-- B <-- C
-         */
-        newSourceModules {
-            addRegularModule("A")
-            addRegularModule("B") { dependsOn("A") }
-            addRegularModule("C") { dependsOn("B") }
-        }.compileToKlibsViaCli { module, successKlib ->
-            moduleNameToLibraryPath[module.name] = successKlib.resultingArtifact.klibFile.toPath()
-        }
-        assertEquals(3, moduleNameToLibraryPath.size)
-
-        /*
-         * Now adding one more edge between A and C:
+         *
+         * Then adding one more edge between A and C:
          * +-- A <-- B <-- C <--+
          * |                    |
          * +--------------------+
          */
-        newSourceModules {
-            addRegularModule("A") {
-                sourceFileAddend("fun A2() { C.C(0) }")
-            }
-        }.compileToKlibsViaCli(
-            extraCliArgs = listOf("-l", moduleNameToLibraryPath["C"]!!.absolutePathString())
-        ) { module, successKlib ->
-            assertEquals("A", module.name)
-            moduleNameToLibraryPath["A"] = successKlib.resultingArtifact.klibFile.toPath()
-        }
-        assertEquals(3, moduleNameToLibraryPath.size)
-
-        // Note: The load order matters, as the cycle is reported starting from the first library in the load order.
-        val libraries = loadLibraries(stdlib = false, others = listOf("A", "B", "C").map(moduleNameToLibraryPath::getValue))
-
-        val exception = assertThrows<KlibDAGCyclicDependencyException> {
-            KlibDAGBuilder(buildParams(libraries)).build()
+        val moduleNameToLibraryPath = compileModulesWithBackEdges(
+            backEdges = listOf("A" to "C"),
+        ) {
+            addRegularModule("A")
+            addRegularModule("B") { dependsOn("A") }
+            addRegularModule("C") { dependsOn("B") }
         }
 
         // A depends on C, C depends on B, B depends on A.
-        val expectedMessage = """
-            Cyclic dependency detected while computing DAG of KLIB dependencies:
-            ${moduleNameToLibraryPath["A"]} ->
-            ${moduleNameToLibraryPath["C"]} ->
-            ${moduleNameToLibraryPath["B"]} ->
-            ${moduleNameToLibraryPath["A"]}
-        """.trimIndent()
+        assertCycleReported(
+            moduleNameToLibraryPath,
+            loadOrder = listOf("A", "B", "C"),
+            expectedCycle = listOf("A", "C", "B"),
+        )
+    }
 
-        assertEquals(expectedMessage, exception.message)
+    @ParameterizedTest
+    @EnumSource
+    fun `cycling dependency of two libraries is an error`(mode: KlibDAGBuildingMode) = context(mode) {
+        /*
+         * First compiling:
+         * A <-- B
+         *
+         * Then adding one more edge between A and B:
+         * +-- A <-- B <--+
+         * |              |
+         * +--------------+
+         */
+        val moduleNameToLibraryPath = compileModulesWithBackEdges(
+            backEdges = listOf("A" to "B"),
+        ) {
+            addRegularModule("A")
+            addRegularModule("B") { dependsOn("A") }
+        }
+
+        // A depends on B, B depends on A.
+        assertCycleReported(
+            moduleNameToLibraryPath,
+            loadOrder = listOf("A", "B"),
+            expectedCycle = listOf("A", "B"),
+        )
+    }
+
+    @ParameterizedTest
+    @EnumSource
+    fun `library that depends on a cycle is not reported as a part of the cycle`(mode: KlibDAGBuildingMode) = context(mode) {
+        /*
+         * First compiling:
+         * A <-- B <-- C
+         * ^
+         * +---- D
+         *
+         * Then adding one more edge between A and C:
+         * +-- A <-- B <-- C <--+
+         * |   ^                |
+         * |   +---- D          |
+         * +--------------------+
+         */
+        val moduleNameToLibraryPath = compileModulesWithBackEdges(
+            backEdges = listOf("A" to "C"),
+        ) {
+            addRegularModule("A")
+            addRegularModule("B") { dependsOn("A") }
+            addRegularModule("C") { dependsOn("B") }
+            addRegularModule("D") { dependsOn("A") }
+        }
+
+        // D comes first in the load order, so the walk starts from D, but D is not a part of the cycle.
+        // A depends on C, C depends on B, B depends on A.
+        assertCycleReported(
+            moduleNameToLibraryPath,
+            loadOrder = listOf("D", "A", "B", "C"),
+            expectedCycle = listOf("A", "C", "B"),
+        )
+    }
+
+    @ParameterizedTest
+    @EnumSource
+    fun `only the first cycle in the load order is reported`(mode: KlibDAGBuildingMode) = context(mode) {
+        /*
+         * First compiling:
+         * A <-- B
+         * C <-- D
+         *
+         * Then adding one more edge between A and B, and one more edge between C and D:
+         * +-- A <-- B <--+
+         * |              |
+         * +--------------+
+         * +-- C <-- D <--+
+         * |              |
+         * +--------------+
+         */
+        val moduleNameToLibraryPath = compileModulesWithBackEdges(
+            backEdges = listOf("A" to "B", "C" to "D"),
+        ) {
+            addRegularModule("A")
+            addRegularModule("B") { dependsOn("A") }
+            addRegularModule("C")
+            addRegularModule("D") { dependsOn("C") }
+        }
+
+        // C comes first in the load order, so only the cycle of C and D is reported.
+        // C depends on D, D depends on C.
+        assertCycleReported(
+            moduleNameToLibraryPath,
+            loadOrder = listOf("C", "A", "D", "B"),
+            expectedCycle = listOf("C", "D"),
+        )
     }
 
     @Test
@@ -450,6 +518,68 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
         assertFalse(loadingResult.hasProblems)
 
         return loadingResult.librariesStdlibFirst
+    }
+
+    /**
+     * Compile the modules defined in [init] to KLIBs. Then, for each `from -> to` pair from [backEdges] recompile
+     * the `from` module with one more edge to the `to` module, making a cycle in the graph of dependencies.
+     *
+     * Note: The `from` module is recompiled with only the new edge, so it should not have any other dependencies in [init].
+     *
+     * @return The mapping from the name of a module to the path of its KLIB.
+     */
+    private fun compileModulesWithBackEdges(
+        backEdges: List<Pair</* from */ String, /* to */ String>>,
+        init: KlibTestSourceModulesBuilder.() -> Unit,
+    ): Map</* name of test module */ String, /* path of KLIB */ Path> {
+        val moduleNameToLibraryPath: MutableMap<String, Path> = mutableMapOf()
+
+        val modules = newSourceModules(init = init)
+        modules.compileToKlibsViaCli { module, successKlib ->
+            moduleNameToLibraryPath[module.name] = successKlib.resultingArtifact.klibFile.toPath()
+        }
+        assertEquals(modules.modules.size, moduleNameToLibraryPath.size)
+
+        for ([from, to] in backEdges) {
+            newSourceModules {
+                addRegularModule(from) {
+                    sourceFileAddend("fun ${from}2() { $to.$to(0) }")
+                }
+            }.compileToKlibsViaCli(
+                extraCliArgs = listOf("-l", moduleNameToLibraryPath.getValue(to).absolutePathString())
+            ) { module, successKlib ->
+                assertEquals(from, module.name)
+                moduleNameToLibraryPath[from] = successKlib.resultingArtifact.klibFile.toPath()
+            }
+        }
+        assertEquals(modules.modules.size, moduleNameToLibraryPath.size)
+
+        return moduleNameToLibraryPath
+    }
+
+    /**
+     * Load libraries in the [loadOrder] and check that building the DAG fails with exactly the [expectedCycle] reported.
+     *
+     * Note: The load order matters, as the cycle is reported starting from the first library in the load order.
+     */
+    context(mode: KlibDAGBuildingMode)
+    private fun assertCycleReported(
+        moduleNameToLibraryPath: Map</* name of test module */ String, /* path of KLIB */ Path>,
+        loadOrder: List</* name of test module */ String>,
+        expectedCycle: List</* name of test module */ String>,
+    ) {
+        val libraries = loadLibraries(stdlib = false, others = loadOrder.map(moduleNameToLibraryPath::getValue))
+
+        val exception = assertThrows<KlibDAGCyclicDependencyException> {
+            KlibDAGBuilder(buildParams(libraries)).build()
+        }
+
+        val expectedMessage = (expectedCycle + expectedCycle.first()).joinToString(
+            separator = " ->\n",
+            prefix = "Cyclic dependency detected while computing DAG of KLIB dependencies:\n",
+        ) { moduleNameToLibraryPath.getValue(it).pathString }
+
+        assertEquals(expectedMessage, exception.message)
     }
 
     private val nativeHome: File
