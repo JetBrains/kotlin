@@ -12,7 +12,6 @@ import org.gradle.api.file.FileTree
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
@@ -55,10 +54,11 @@ internal abstract class BuildSPMSwiftExportPackage @Inject constructor(
         providerFactory.environmentVariable("DEPLOYMENT_TARGET_SETTING_NAME")
     )
 
-    @get:Internal
-    val deploymentTarget: Provider<String> = deploymentTargetSettingName.flatMap {
-        providerFactory.environmentVariable(it)
-    }
+    // An input of its own: the objects xcodebuild produces depend on the value, not only on the setting name
+    @get:Input
+    val deploymentTarget: Property<String> = objectFactory.property<String>().convention(
+        deploymentTargetSettingName.flatMap { providerFactory.environmentVariable(it) }
+    )
 
     @get:Optional
     @get:Input

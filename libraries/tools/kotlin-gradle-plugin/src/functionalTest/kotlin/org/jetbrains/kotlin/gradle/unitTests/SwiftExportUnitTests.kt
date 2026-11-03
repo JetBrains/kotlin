@@ -349,6 +349,20 @@ class SwiftExportUnitTests {
     }
 
     @Test
+    fun `test swift export package build tracks the deployment target`() {
+        val project = swiftExportProject()
+        project.evaluate()
+
+        val buildSPMTask = project.tasks.withType(BuildSPMSwiftExportPackage::class.java).single()
+        buildSPMTask.deploymentTargetSettingName.set("IPHONEOS_DEPLOYMENT_TARGET")
+        buildSPMTask.deploymentTarget.set("16.0")
+
+        val inputs = buildSPMTask.inputs.properties
+        assertEquals("IPHONEOS_DEPLOYMENT_TARGET", inputs["deploymentTargetSettingName"])
+        assertEquals("16.0", inputs["deploymentTarget"])
+    }
+
+    @Test
     fun `test swift export multiple modules tasks graph`() {
         val projects = multiModuleSwiftExportProject(subprojects = listOf("subproject", "anotherproject", "miniproject"))
         projects.forEach { it.evaluate() }
