@@ -33,18 +33,28 @@ class ParcelizeCommandLineProcessor : CommandLineProcessor {
                 required = false,
                 allowMultipleOccurrences = false,
             )
+        val IMPLICITLY_ADD_PARCELABLE_SUPERTYPE: CliOption =
+            CliOption(
+                "implicitlyAddParcelableSupertype",
+                "<true|false>",
+                "Add 'kotlinx.parcelize.internal.Parcelable' as a supertype to @Parcelize declarations that do not implement Parcelable directly.",
+                required = false,
+                allowMultipleOccurrences = false,
+            )
     }
 
     override val pluginId: String
         get() = COMPILER_PLUGIN_ID
 
     override val pluginOptions: Collection<AbstractCliOption>
-        get() = listOf(ADDITIONAL_ANNOTATION_OPTION, EXPERIMENTAL_CODE_GENERATION)
+        get() = listOf(ADDITIONAL_ANNOTATION_OPTION, EXPERIMENTAL_CODE_GENERATION, IMPLICITLY_ADD_PARCELABLE_SUPERTYPE)
 
     override fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) {
         when (option) {
             ADDITIONAL_ANNOTATION_OPTION -> configuration.appendList(ParcelizeConfigurationKeys.ADDITIONAL_ANNOTATION, value)
             EXPERIMENTAL_CODE_GENERATION -> configuration.put(ParcelizeConfigurationKeys.EXPERIMENTAL_CODE_GENERATION, value == "true")
+            IMPLICITLY_ADD_PARCELABLE_SUPERTYPE ->
+                configuration.put(ParcelizeConfigurationKeys.IMPLICITLY_ADD_PARCELABLE_SUPERTYPE, value == "true")
             else -> throw CliOptionProcessingException("Unknown option: ${option.optionName}")
         }
     }

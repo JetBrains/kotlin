@@ -13,6 +13,7 @@ object ParcelizeNames {
     // -------------------- Packages --------------------
 
     private val RUNTIME_PACKAGE = FqName("kotlinx.parcelize")
+    private val INTERNAL_RUNTIME_PACKAGE = FqName("kotlinx.parcelize.internal")
 
     val DEPRECATED_RUNTIME_PACKAGE = FqName("kotlinx.android.parcel")
 
@@ -22,10 +23,12 @@ object ParcelizeNames {
 
     val PARCEL_ID = ClassId(FqName("android.os"), Name.identifier("Parcel"))
     val PARCELABLE_ID = ClassId(FqName("android.os"), Name.identifier("Parcelable"))
+    val INTERNAL_PARCELABLE_ID = ClassId(INTERNAL_RUNTIME_PACKAGE, Name.identifier("Parcelable"))
     val CREATOR_ID = PARCELABLE_ID.createNestedClassId(Name.identifier("Creator"))
     val PARCELER_ID = ClassId(FqName("kotlinx.parcelize"), Name.identifier("Parceler"))
     val OLD_PARCELER_ID = ClassId(FqName("kotlinx.android.parcel"), Name.identifier("Parceler"))
 
+    val PARCELABLE_CLASS_IDS = listOf(PARCELABLE_ID, INTERNAL_PARCELABLE_ID)
     val TYPE_PARCELER_CLASS_IDS = createClassIds("TypeParceler")
     val WRITE_WITH_CLASS_IDS = createClassIds("WriteWith")
     val IGNORED_ON_PARCEL_CLASS_IDS = createClassIds("IgnoredOnParcel")
