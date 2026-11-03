@@ -232,6 +232,7 @@ tasks {
     named<Delete>("clean") {
         delete(distDir)
         delete(layout.buildDirectory.dir("repo"))
+        delete(layout.projectDirectory.dir(".kotlin/konan-for-gradle-tests"))
     }
 
     register<Delete>("cleanupArtifacts") {
