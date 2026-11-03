@@ -153,7 +153,7 @@ internal fun ContextUtils.importGlobal(name: String, type: LLVMTypeRef): LLVMVal
 internal fun ContextUtils.importNativeRuntimeGlobal(name: String, type: LLVMTypeRef) =
         importGlobal(name, type).also { generationState.dependenciesTracker.addNativeRuntime() }
 
-private fun CodeGenerator.replaceExternalWeakOrCommonGlobal(name: String, value: ConstValue) {
+internal fun CodeGenerator.replaceExternalWeakOrCommonGlobal(name: String, value: ConstValue) {
     if (generationState.llvmModuleSpecification.importsKotlinDeclarationsFromOtherSharedLibraries()) {
         // When some dynamic caches are used, we consider that stdlib is in the dynamic cache as well.
         // Runtime is linked into stdlib module only, so import runtime global from it.

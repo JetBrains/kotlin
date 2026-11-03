@@ -11,20 +11,29 @@ import llvm.*
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.driver.phases.*
+import org.jetbrains.kotlin.backend.konan.llvm.generateFrameworkFromCachesBitcode
 import org.jetbrains.kotlin.backend.konan.llvm.parseBitcodeFile
+import org.jetbrains.kotlin.backend.konan.objcexport.OBJC_CACHE_BINARY_OPTIONS
+import org.jetbrains.kotlin.backend.konan.objcexport.createObjCFrameworkFromCaches
+import org.jetbrains.kotlin.backend.konan.objcexport.hasObjCCacheBinaryOptions
+import org.jetbrains.kotlin.backend.konan.util.reportCompilationErrorAndThrow
 import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.report
+import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
 import org.jetbrains.kotlin.config.nativeBinaryOptions.CInterfaceGenerationMode
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.konan.config.konanHome
+import org.jetbrains.kotlin.konan.config.verifyBitcode
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import org.jetbrains.kotlin.utils.usingNativeMemoryAllocator
 import kotlin.io.path.Path
 import kotlin.io.path.readLines
+import kotlin.io.path.writeLines
 
 /**
  * Driver orchestrates and connects different parts of the compiler into a complete pipeline.
@@ -63,6 +72,11 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
      * With `-produce objc_cache`, compile the Objective-C export of one library into a cache instead.
      */
     private fun produceObjCFramework(engine: PhaseEngine<NativeBackendPhaseContext>, config: NativeSecondStageCompilationConfig, environment: KotlinCoreEnvironment) {
+        if (config.produce == CompilerOutputKind.FRAMEWORK && canProduceObjCFrameworkFromCaches(config, environment) &&
+                produceObjCFrameworkFromCaches(engine, config)) {
+            return
+        }
+
         val frontendOutput = performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) { engine.runK1Frontend(config, environment) }
                 ?: return
 
@@ -88,6 +102,91 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
             it.objCExportCodeSpec = objCCodeSpec
         }
         engine.runBackend(backendContext, linkKlibsOutput.irModulesToCompile, performanceManager)
+    }
+
+    private fun canProduceObjCFrameworkFromCaches(config: NativeSecondStageCompilationConfig, environment: KotlinCoreEnvironment): Boolean {
+        val explicitSetting = config.configuration.get(BinaryOptions.frameworkFromCaches)
+        if (explicitSetting == false) return false
+
+        val hasSources = environment.getSourceFiles().isNotEmpty()
+        val hasIncludedLibraries = config.loadedKlibs.included.isNotEmpty()
+        val hasSelectorToSignatureDump = config.dumpObjcSelectorToSignatureMapping != null
+        val exportedLibraries = config.exportedLibrariesForObjCCache
+        val uncachedLibraries = config.klibDag.librariesReverseTopoSorted.filterNot { config.cachedLibraries.isLibraryCached(it) }
+        val hasObjCCacheBinaryOptions = config.configuration.hasObjCCacheBinaryOptions()
+        val [librariesWithIgnoredObjCCache, librariesWithoutObjCCache] = exportedLibraries
+                .filterNot { it in config.objCCaches }
+                .partition { config.cachedLibraries.whyObjCCacheIsIgnored(it) != null }
+        val reasons = buildList {
+            if (hasSources) add("source files are present")
+            if (hasIncludedLibraries) add("-Xinclude libraries are present")
+            if (hasSelectorToSignatureDump) add("dumpObjcSelectorToSignatureMapping is enabled")
+            if (config.swiftExport) add("Swift export is enabled")
+            if (exportedLibraries.isEmpty()) add("no libraries are exported")
+            if (uncachedLibraries.isNotEmpty()) add("[${uncachedLibraries.joinToString { it.uniqueName }}] have no binary cache")
+            if (!hasObjCCacheBinaryOptions) {
+                add("Objective-C caches require $OBJC_CACHE_BINARY_OPTIONS")
+            } else if (!hasSelectorToSignatureDump && !config.swiftExport) {
+                if (librariesWithoutObjCCache.isNotEmpty()) {
+                    add("[${librariesWithoutObjCCache.joinToString { it.uniqueName }}] have no Objective-C cache")
+                }
+                librariesWithIgnoredObjCCache.mapTo(this) { config.cachedLibraries.whyObjCCacheIsIgnored(it)!! }
+            }
+        }
+        if (explicitSetting == true && reasons.isNotEmpty()) {
+            config.configuration.reportCompilationErrorAndThrow(
+                    "Cannot produce the framework from caches (-Xbinary=frameworkFromCaches=true):\n" +
+                            reasons.joinToString("\n") { "- $it" }
+            )
+        }
+        return reasons.isEmpty()
+    }
+
+    private fun produceObjCFrameworkFromCaches(
+            engine: PhaseEngine<NativeBackendPhaseContext>,
+            config: NativeSecondStageCompilationConfig,
+    ): Boolean {
+        val outputFiles = OutputFiles(config.outputPath, config.target, config.produce)
+        val created = performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) {
+            createObjCFrameworkFromCaches(engine.context, outputFiles.mainFile)
+        }
+        if (!created) return false
+        if (config.omitFrameworkBinary) return true
+
+        val llvmModuleSpecification = DefaultLlvmModuleSpecification(config.cachedLibraries)
+        val dependenciesTracker = DependenciesTrackerImpl(llvmModuleSpecification, config, context = null, libraryToCache = null)
+        val generationState = NativeGenerationState(
+                config,
+                contextOrNull = null,
+                cacheInfo = null,
+                dependenciesTracker = dependenciesTracker,
+                llvmModuleSpecification = llvmModuleSpecification,
+                outputFiles = outputFiles,
+                llvmModuleName = "out",
+                performanceManager = performanceManager,
+        )
+        try {
+            performanceManager?.notifyPhaseStarted(PhaseType.Backend)
+            engine.newEngine(generationState) { generationStateEngine ->
+                generateFrameworkFromCachesBitcode(generationState)
+                if (config.needCompilerVerification || config.configuration.verifyBitcode) {
+                    generationStateEngine.runAndMeasurePhase(VerifyBitcodePhase, generationState.llvm.module)
+                }
+                if (generationState.shouldPrintBitCode()) {
+                    generationStateEngine.runAndMeasurePhase(PrintBitcodePhase, generationState.llvm.module)
+                }
+                generationStateEngine.runAndMeasurePhase(LinkBitcodeDependenciesPhase, emptyList())
+            }
+            val dependencies = dependenciesTracker.collectResult()
+            config.writeSerializedDependencies?.takeIf { it.isNotEmpty() }?.let {
+                Path(it).writeLines(DependenciesTrackingResult.serialize(dependencies))
+            }
+            engine.runBitcodeBackend(generationState, dependencies)
+        } finally {
+            performanceManager?.notifyPhaseFinished(PhaseType.Backend)
+            generationState.dispose()
+        }
+        return true
     }
 
     private fun produceCLibrary(engine: PhaseEngine<NativeBackendPhaseContext>, config: NativeSecondStageCompilationConfig, environment: KotlinCoreEnvironment) {

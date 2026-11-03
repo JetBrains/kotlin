@@ -691,6 +691,62 @@ private fun ObjCExportCodeGenerator.emitBoxConverter(
 
 internal fun objCCacheBoxConverterSymbolName(boxBinaryName: String): String = "_Kotlin_ObjCExport_${boxBinaryName}ToNSNumber"
 
+internal fun generateObjCExportFromCaches(codegen: CodeGenerator) {
+    val generationState = codegen.generationState
+    val llvm = codegen.llvm
+    val dataGenerator = codegen.objCDataGenerator!!
+    val topLevelNamePrefix = generationState.objCExportTopLevelNamePrefix
+
+    emitObjCExportAdapterTables(codegen, mutableMapOf(), mutableMapOf(), mutableListOf())
+
+    NSNumberKind.entries.mapNotNull { it.mappedKotlinClassId }.forEach {
+        dataGenerator.exportClass(ObjCExportNamer.numberBoxName(topLevelNamePrefix, it).binaryName)
+    }
+    dataGenerator.exportClass(ObjCExportNamer.mutableSetName(topLevelNamePrefix).binaryName)
+    dataGenerator.exportClass(ObjCExportNamer.mutableMapName(topLevelNamePrefix).binaryName)
+    dataGenerator.exportClass(ObjCExportNamer.kotlinAnyName(topLevelNamePrefix).binaryName)
+
+    val kotlinToObjCFunctionType = LlvmFunctionSignature(
+            LlvmRetType(llvm.pointerType, isObjectType = false),
+            listOf(LlvmParamType(llvm.pointerType)),
+            isVararg = false
+    )
+    fun importConverter(name: String): ConstPointer = llvm.externalNativeRuntimeFunction(name, kotlinToObjCFunctionType).toConstPointer()
+
+    codegen.bindObjCExportConvertToRetainedByFqName(
+            "kotlin.String",
+            llvm.Kotlin_ObjCExport_CreateRetainedNSStringFromKString.toConstPointer(),
+    )
+    listOf(
+            "kotlin.collections.List" to "Kotlin_Interop_CreateRetainedNSArrayFromKList",
+            "kotlin.collections.MutableList" to "Kotlin_Interop_CreateRetainedNSMutableArrayFromKList",
+            "kotlin.collections.Set" to "Kotlin_Interop_CreateRetainedNSSetFromKSet",
+            "kotlin.collections.MutableSet" to "Kotlin_Interop_CreateRetainedKotlinMutableSetFromKSet",
+            "kotlin.collections.Map" to "Kotlin_Interop_CreateRetainedNSDictionaryFromKMap",
+            "kotlin.collections.MutableMap" to "Kotlin_Interop_CreateRetainedKotlinMutableDictionaryFromKMap",
+    ).forEach { [fqName, converter] -> codegen.bindObjCExportConvertToRetainedByFqName(fqName, importConverter(converter)) }
+    NSNumberKind.entries.mapNotNull { it.mappedKotlinClassId }.forEach { classId ->
+        val converter = objCCacheBoxConverterSymbolName(ObjCExportNamer.numberBoxName(topLevelNamePrefix, classId).binaryName)
+        codegen.bindObjCExportConvertToRetainedByFqName(classId.asSingleFqName().asString(), importConverter(converter))
+    }
+
+    codegen.replaceExternalWeakOrCommonGlobalFromNativeRuntime(
+            "Kotlin_ObjCInterop_uniquePrefix",
+            codegen.staticData.cStringLiteral(topLevelNamePrefix)
+    )
+
+    dataGenerator.emitClass("${topLevelNamePrefix}KotlinSelectorsHolder", superName = "NSObject", instanceMethods = emptyList())
+
+    if (determineLinkerOutput(generationState) == LinkerOutputKind.STATIC_LIBRARY &&
+            generationState.llvmModuleSpecification.importsKotlinDeclarationsFromOtherObjectFiles()) {
+        val global = codegen.staticData.placeGlobal(
+                "See https://youtrack.jetbrains.com/issue/KT-42254", llvm.constInt8(0), isExported = true,
+        )
+        llvm.usedGlobals += global.llvmGlobal
+        LLVMSetVisibility(global.llvmGlobal, LLVMVisibility.LLVMHiddenVisibility)
+    }
+}
+
 internal fun emitObjCExportAdapterTables(
         codegen: CodeGenerator,
         placedClassAdapters: MutableMap<String, ConstPointer>,

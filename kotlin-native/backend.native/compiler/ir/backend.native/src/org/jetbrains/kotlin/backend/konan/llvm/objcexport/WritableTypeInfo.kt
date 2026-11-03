@@ -90,6 +90,18 @@ internal fun CodeGenerator.bindObjCExportConvertToRetained(
         )
 )
 
+internal fun CodeGenerator.bindObjCExportConvertToRetainedByFqName(
+        fqName: String,
+        convertToRetained: ConstPointer,
+) = replaceExternalWeakOrCommonGlobal(
+        "ktypew:$fqName",
+        buildWritableTypeInfoValue(
+                convertToRetained = convertToRetained,
+                objCClass = null,
+                typeAdapter = null,
+        )
+)
+
 /**
  * @throws WritableTypeInfoOverrideError if [typeAdapter] cannot be bound to [irClass]
  */

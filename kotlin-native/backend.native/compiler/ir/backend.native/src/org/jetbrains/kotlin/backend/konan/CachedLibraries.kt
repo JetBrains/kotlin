@@ -289,13 +289,14 @@ class CachedLibraries(
             val directory = archive.parent.parent
             if (getLibraryCache(library)?.kind != Kind.STATIC) {
                 val reason = "requires a static cache of ${library.uniqueName}, which this compilation does not use"
-                return@mapNotNull ignoreObjCCache(directory, reason)
+                return@mapNotNull ignoreObjCCache(library, directory, reason)
             }
             val metadata = loadObjCCacheMetadata(archive, library) ?: return@mapNotNull null
             val expected = exportedDependencies(library, exportedLibraries)
             if (metadata.exportedLibraries != expected) {
                 val built = metadata.exportedLibraries.joinToString()
                 return@mapNotNull ignoreObjCCache(
+                        library,
                         directory,
                         "was built exporting [$built] of the dependencies of ${library.uniqueName}, " +
                                 "but this compilation exports [${expected.joinToString()}]",
@@ -303,19 +304,26 @@ class CachedLibraries(
             }
             if (metadata.namingConfiguration != namingConfiguration) {
                 return@mapNotNull ignoreObjCCache(
+                        library,
                         directory,
                         "was built with the Objective-C export options [${metadata.namingConfiguration}], " +
                                 "but this compilation uses [$namingConfiguration]",
                 )
             }
-            val units = loadObjCExportUnits(archive) ?: return@mapNotNull null
-            val bitcodeDependencies = loadObjCCacheBitcodeDependencies(archive) ?: return@mapNotNull null
+            val units = loadObjCExportUnits(archive, library) ?: return@mapNotNull null
+            val bitcodeDependencies = loadObjCCacheBitcodeDependencies(archive, library) ?: return@mapNotNull null
             library to ObjCCache(archive.absolutePathString(), metadata, units, bitcodeDependencies)
         }.toMap()
     }
 
-    private fun ignoreObjCCache(directory: Path, reason: String): Nothing? {
-        configuration.report(CliDiagnostics.KONAN_ARGUMENT_WARNING, "Objective-C cache at $directory $reason. Ignoring cache.")
+    private val ignoredObjCCaches = mutableMapOf<KotlinLibrary, String>()
+
+    fun whyObjCCacheIsIgnored(library: KotlinLibrary): String? = ignoredObjCCaches[library]
+
+    private fun ignoreObjCCache(library: KotlinLibrary, directory: Path, reason: String): Nothing? {
+        val message = "Objective-C cache at $directory $reason"
+        ignoredObjCCaches.putIfAbsent(library, message)
+        configuration.report(CliDiagnostics.KONAN_ARGUMENT_WARNING, "$message. Ignoring cache.")
         return null
     }
 
@@ -328,19 +336,22 @@ class CachedLibraries(
             val expectedFormat = ObjCCacheMetadata.FORMAT_VERSION.toString()
             if (format != expectedFormat) {
                 val reason = "was built in format ${format ?: "unknown"}, but this compiler reads format $expectedFormat"
-                return ignoreObjCCache(directory, reason)
+                return ignoreObjCCache(library, directory, reason)
             }
             ObjCCacheMetadata.deserialize(properties, library)
-        }.getOrElse { ignoreObjCCache(directory, "is incomplete or unreadable (${it.message})") }
+        }.getOrElse { ignoreObjCCache(library, directory, "is incomplete or unreadable (${it.message})") }
     }
 
-    private fun loadObjCExportUnits(archive: Path): ObjCExportUnits? = runCatching {
+    private fun loadObjCExportUnits(archive: Path, library: KotlinLibrary): ObjCExportUnits? = runCatching {
         GZIPInputStream(archive.resolveSibling(OBJC_CACHE_UNITS_FILE_NAME).inputStream()).bufferedReader().use { ObjCExportUnits.read(it) }
-    }.getOrElse { ignoreObjCCache(archive.parent.parent, "is incomplete or unreadable (${it.message})") }
+    }.getOrElse { ignoreObjCCache(library, archive.parent.parent, "is incomplete or unreadable (${it.message})") }
 
-    private fun loadObjCCacheBitcodeDependencies(archive: Path): List<DependenciesTracker.UnresolvedDependency>? = runCatching {
+    private fun loadObjCCacheBitcodeDependencies(
+            archive: Path,
+            library: KotlinLibrary,
+    ): List<DependenciesTracker.UnresolvedDependency>? = runCatching {
         DependenciesSerializer.deserialize(archive.absolutePathString(), archive.resolveSibling(BITCODE_DEPENDENCIES_FILE_NAME).readLines())
-    }.getOrElse { ignoreObjCCache(archive.parent.parent, "is incomplete or unreadable (${it.message})") }
+    }.getOrElse { ignoreObjCCache(library, archive.parent.parent, "is incomplete or unreadable (${it.message})") }
 
     private fun findObjCCache(library: KotlinLibrary, moduleName: String, directoriesByName: Map<String, List<Path>>): Path? {
         val candidateName = getObjCCachedLibraryName(library, moduleName)
@@ -348,7 +359,7 @@ class CachedLibraries(
             val archive = dir.resolve(PER_FILE_CACHE_BINARY_LEVEL_DIR_NAME)
                     .resolve(getArtifactName(target, candidateName, CompilerOutputKind.OBJC_CACHE))
             if (archive.exists()) return archive.absolute()
-            ignoreObjCCache(dir.absolute(), "is incomplete or unreadable (no archive)")
+            ignoreObjCCache(library, dir.absolute(), "is incomplete or unreadable (no archive)")
         }
         return null
     }

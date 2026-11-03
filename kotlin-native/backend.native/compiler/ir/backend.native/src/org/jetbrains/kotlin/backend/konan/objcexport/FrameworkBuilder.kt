@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.konan.NativeSecondStageCompilationConfig
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.io.ensureSymbolicLinkTo
+import org.jetbrains.kotlin.name.FqName
 import kotlin.io.path.Path
 import java.nio.file.Path
 import kotlin.io.path.createDirectories
@@ -30,6 +31,38 @@ internal class FrameworkBuilder(
             frameworkName: String,
             headerLines: List<String>,
             moduleDependencies: Set<String>,
+    ) {
+        build(
+            frameworkDirectory,
+            frameworkName,
+            headerLines,
+            moduleDependencies,
+            infoPListBuilder.build(frameworkName, mainPackageGuesser, moduleDescriptor),
+        )
+    }
+
+    fun build(
+            frameworkDirectory: Path,
+            frameworkName: String,
+            headerLines: List<String>,
+            moduleDependencies: Set<String>,
+            mainPackage: FqName,
+    ) {
+        build(
+            frameworkDirectory,
+            frameworkName,
+            headerLines,
+            moduleDependencies,
+            infoPListBuilder.build(frameworkName, mainPackage),
+        )
+    }
+
+    private fun build(
+            frameworkDirectory: Path,
+            frameworkName: String,
+            headerLines: List<String>,
+            moduleDependencies: Set<String>,
+            infoPlistContents: String,
     ) {
         val target = config.target
         val frameworkContents = when (target.family) {
@@ -63,7 +96,6 @@ internal class FrameworkBuilder(
         }
 
         val infoPlistFile = directory.resolve("Info.plist")
-        val infoPlistContents = infoPListBuilder.build(frameworkName, mainPackageGuesser, moduleDescriptor)
         infoPlistFile.writeBytes(infoPlistContents.toByteArray())
         if (target.family == Family.OSX) {
             frameworkDirectory.resolve("Versions/Current").ensureSymbolicLinkTo(Path("A"))

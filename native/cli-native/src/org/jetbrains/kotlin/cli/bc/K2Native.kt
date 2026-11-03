@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.konan.KonanPendingCompilationError
 import org.jetbrains.kotlin.konan.config.NativeConfigurationKeys
 import org.jetbrains.kotlin.konan.config.konanProducedArtifactKind
 import org.jetbrains.kotlin.konan.config.overrideKonanProperties
+import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.native.pipeline.NativeKlibCliPipeline
@@ -204,7 +205,9 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             // So, such compilation is split to two stages:
             // - source files are compiled to intermediate KLib by FIR frontend
             // - intermediate Klib is compiled to binary by K2/Native backend
-            if (isOneStageCompilation(arguments)) {
+            val isFrameworkFromCaches = configuration.konanProducedArtifactKind == CompilerOutputKind.FRAMEWORK &&
+                    configuration.get(BinaryOptions.frameworkFromCaches) == true
+            if (isOneStageCompilation(arguments) && !isFrameworkFromCaches) {
                 val intermediateKlib = createIntermediateKlib()
                 val klibArgs = prepareKlibArgumentsForOneStage(arguments, intermediateKlib.canonicalPathString())
                 val klibCompilationExitCode = doExecutePhasedKlibCompilation(

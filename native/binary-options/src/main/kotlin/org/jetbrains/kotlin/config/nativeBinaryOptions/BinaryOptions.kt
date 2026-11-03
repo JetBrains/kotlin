@@ -152,6 +152,8 @@ object BinaryOptions : BinaryOptionRegistry() {
 
     // Workaround for KT-89897: run libtool with MallocZeroOnAlloc=1
     val kt89897workaround by booleanOption()
+
+    val frameworkFromCaches by booleanOption()
 }
 
 open class BinaryOption<T : Any>(

@@ -147,6 +147,8 @@ abstract class ObjCCacheTestBase : AbstractNativeSimpleTest() {
         extraArgs: List<String> = emptyList(),
         source: String = frameworkMarkerSource,
         dir: File = buildDir,
+        withSource: Boolean = true,
+        bundleId: String? = "foo.bar",
         binaryOptions: List<String> = objCCacheBinaryOptions,
     ): Framework {
         val sourceDir = dir.resolve("framework").apply { mkdirs() }
@@ -162,13 +164,13 @@ abstract class ObjCCacheTestBase : AbstractNativeSimpleTest() {
                 listOfNotNull(
                     "-Xstatic-framework".takeIf { staticFramework },
                     "-opt-in=kotlinx.cinterop.ExperimentalForeignApi",
-                    "-Xbinary=bundleId=foo.bar",
+                    bundleId?.let { "-Xbinary=bundleId=$it" },
                     "-module-name", "Kt",
                     "-Xcache-directory=${libraries.cacheDir.absolutePath}".takeIf { withCaches },
                     "-Xdisable-ir-checkers=IrVisibilityChecker",
                 ) + included.map { "-Xinclude=${libraries.klib(it).absolutePath}" } + binaryOptions + extraArgs
             ),
-            sourceModules = testCase.modules,
+            sourceModules = if (withSource) testCase.modules else emptyList(),
             dependencies = linked.map { libraries.klibs.getValue(it.name).asLibraryDependency() },
             expectedArtifact = TestCompilationArtifact.ObjCFramework(dir, "Kt"),
             exportedLibraries = linked.filter { it.isExported }.map { libraries.klibs.getValue(it.name) },
@@ -188,6 +190,9 @@ abstract class ObjCCacheTestBase : AbstractNativeSimpleTest() {
                 .replace(sourceDir.absolutePath, "<sources>")
 
         val header: String get() = result.assertSuccess().resultingArtifact.mainHeader.readText()
+
+        val infoPlist: String
+            get() = result.assertSuccess().resultingArtifact.frameworkDir.walk().first { it.name == "Info.plist" }.readText()
 
         val binary: File
             get() {
@@ -1042,6 +1047,192 @@ class ObjCCacheTest : ObjCCacheTestBase() {
         }
         assertTrue(cached.result !is TestCompilationResult.Success) { "Expected the build with caches to fail:\n${cached.output}" }
         assertEquals(uncached.output, cached.output) { "Expected the build with caches to fail like the build without caches" }
+    }
+
+    @Test
+    fun testStaticFrameworkFromCaches() = frameworkFromCachesImpl(staticFramework = true)
+
+    @Test
+    fun testDynamicFrameworkFromCaches() = frameworkFromCachesImpl(staticFramework = false)
+
+    private fun frameworkFromCachesImpl(staticFramework: Boolean) {
+        val libraries = compileLibraries(
+            Library(
+                "libN",
+                """
+                package app.libn
+                open class Hidden(val name: String) {
+                    open fun shout(): String = name.uppercase()
+                }
+                interface HiddenListener {
+                    fun onHidden(): Int
+                }
+                val eagerHidden = Hidden("eager")
+                """,
+                isExported = false,
+            ),
+            Library(
+                "libA",
+                """
+                package app.liba
+                interface Named {
+                    fun label(): String
+                }
+                open class Alpha(val name: String) : Named {
+                    override fun label(): String = name
+                    open fun greet(): String = "Hello " + name
+                    override fun toString(): String = "Alpha(" + name + ")"
+                }
+                enum class Shade { LIGHT, DARK }
+                """,
+            ),
+            Library(
+                "libB",
+                """
+                package app.libb
+                import app.liba.Alpha
+                import app.libn.*
+                class Beta(name: String, val count: Int) : Alpha(name) {
+                    override fun greet(): String = "Beta " + name + " " + count
+                    fun hidden(): Hidden = eagerHidden
+                    fun listener(): HiddenListener = object : HiddenListener {
+                        override fun onHidden() = count
+                    }
+                    val numbers: List<Int> = listOf(1, 2, 3)
+                }
+                fun Alpha.shout(): String = greet().uppercase()
+                fun callGreet(alpha: Alpha): String = alpha.greet()
+                """,
+                listOf("libA", "libN"),
+            ),
+        )
+        val fast = linkFromCachesAndCompare(libraries, staticFramework)
+        assertTrue("<string>app.Kt</string>" in fast.infoPlist) { fast.infoPlist }
+        fast.assertObjCCachesLinked("libA", "libB")
+        fast.runSwift(
+            declarations = """
+                class SwiftAlpha : Alpha {
+                    override func greet() -> String {
+                        return "Swift " + name
+                    }
+                }
+                """,
+            body = """
+                let beta = Beta(name: "B", count: 2)
+                try assertEquals(actual: beta.greet(), expected: "Beta B 2")
+                try assertEquals(actual: beta.shout(), expected: "BETA B 2")
+                try assertEquals(actual: beta.label(), expected: "B")
+                try assertEquals(actual: beta.description, expected: "Alpha(B)")
+                try assertEquals(actual: beta.hidden().shout(), expected: "EAGER")
+                try assertEquals(actual: beta.listener().onHidden(), expected: 2)
+                try assertEquals(actual: beta.numbers.map { $0.intValue }, expected: [1, 2, 3])
+                try assertEquals(actual: Shade.dark.name, expected: "DARK")
+                try assertEquals(actual: LibBKt.callGreet(alpha: SwiftAlpha(name: "S")), expected: "Swift S")
+                try assertTrue(NSProtocolFromString("KtNamed") != nil)
+                try assertTrue(NSProtocolFromString("KtLibNHiddenListener") != nil)
+                """,
+        )
+    }
+
+    @Test
+    fun testFrameworkFromCachesWithReferencedClassesOutsideMainPass() {
+        linkFromCachesAndCompare(classesOutsideMainPass()).runSwift(
+            """
+            try assertEquals(actual: LibNHidden(x: 1).ext(), expected: 2)
+            try assertTrue(NSClassFromString("KtLocalInner") != nil)
+            try assertTrue(NSClassFromString("KtHolderNested") != nil)
+            """
+        )
+    }
+
+    private fun linkFromCachesAndCompare(libraries: Libraries, staticFramework: Boolean = true): Framework {
+        fun link(variant: String, withCaches: Boolean = true, extraArgs: List<String> = emptyList()) = linkFramework(
+            libraries, staticFramework, withCaches, extraArgs = extraArgs + "-Xdump-perf=${buildDir.resolve("$variant.perf")}",
+            dir = buildDir.resolve(variant), withSource = false, bundleId = null,
+        )
+        fun linksIr(variant: String) = "IR LINKING" in buildDir.resolve("$variant.perf").readText()
+        val fast = link("fast", extraArgs = listOf("-Xbinary=frameworkFromCaches=true"))
+        assertFalse(linksIr("fast")) { "Expected the framework to be built from caches:\n${buildDir.resolve("fast.perf").readText()}" }
+        val normal = link("normal", extraArgs = listOf("-Xbinary=frameworkFromCaches=false"))
+        assertTrue(linksIr("normal")) { "Expected the regular build to link IR:\n${buildDir.resolve("normal.perf").readText()}" }
+        for (other in listOf(normal, link("clean", withCaches = false))) {
+            assertEquals(other.header, fast.header) { "Expected the header of the framework built from caches to match" }
+            assertEquals(other.infoPlist, fast.infoPlist) { "Expected the Info.plist of the framework built from caches to match" }
+        }
+        return fast
+    }
+
+    @Test
+    fun testFrameworkFromCachesDoesNotAffectOtherOutputKinds() {
+        val source = buildDir.resolve("program.kt").apply { writeText("fun main() = println(1)") }
+        runCompiler(
+            listOf(
+                "-produce", "program", "-output", buildDir.resolve("program").absolutePath, "-Xbinary=frameworkFromCaches=true",
+                source.absolutePath,
+            )
+        )
+    }
+
+    @Test
+    fun testFrameworkFromCachesFallsBackOnCollisions() {
+        val libraries = compileLibraries(
+            Library("libA", "package liba\nclass Widget(val tag: String)"),
+            Library("libB", "package libb\nclass Widget(val tag: String)"),
+        )
+        val uncached = linkFramework(libraries, withCaches = false, withSource = false, dir = buildDir.resolve("uncached"))
+        val cached = linkFramework(
+            libraries, extraArgs = listOf("-Xbinary=frameworkFromCaches=true"), withSource = false, dir = buildDir.resolve("cached"),
+        )
+        assertTrue(uncached.result !is TestCompilationResult.Success && "conflicts with class Widget" in uncached.output) {
+            uncached.output
+        }
+        assertEquals(uncached.output, cached.output) { "Expected the build from caches to fail like the build without caches" }
+    }
+
+    @Test
+    fun testFrameworkFromCachesReportsUnmetRequirements() {
+        val libraries = compileLibraries(
+            Library("libA", alphaSource), Library("libB", betaSource, listOf("libA"), hasObjCCache = false),
+        )
+        fun assertUnmetRequirements(
+            variant: String,
+            extraArgs: List<String>,
+            binaryOptions: List<String>,
+            vararg expected: String,
+        ): String {
+            val framework = linkFramework(
+                libraries, extraArgs = listOf("-Xbinary=frameworkFromCaches=true") + extraArgs, withSource = false,
+                dir = buildDir.resolve(variant), binaryOptions = binaryOptions,
+            )
+            assertTrue(framework.result !is TestCompilationResult.Success) { framework.output }
+            for (text in listOf("cannot produce the framework from caches (-Xbinary=frameworkFromCaches=true):") + expected) {
+                assertTrue(text in framework.output) { "Expected '$text' in:\n${framework.output}" }
+            }
+            return framework.output
+        }
+        assertUnmetRequirements("missing", emptyList(), objCCacheBinaryOptions, "\n- [libB] have no Objective-C cache")
+        val libACacheDir = libraries.cacheDir.resolve("libA-Kt.objc_cache").absolutePath
+        assertUnmetRequirements(
+            "ignored", listOf("-Xbinary=objcExportExplicitMethodFamily=true"), objCCacheBinaryOptions,
+            "\n- [libB] have no Objective-C cache",
+            "\n- Objective-C cache at $libACacheDir was built with the Objective-C export options [",
+        )
+        assertUnmetRequirements(
+            "options", emptyList(), emptyList(),
+            "\n- Objective-C caches require -Xbinary=objcExportErrorOnNameCollisions=true, " +
+                    "-Xbinary=objcExportDisableSwiftMemberNameMangling=true and -Xbinary=objcExportIgnoreInterfaceMethodCollisions=true",
+        )
+        val disablingOptions = listOf(
+            Triple("swiftExport", "-Xbinary=swiftExport=true", "Swift export is enabled"),
+            Triple(
+                "selectors", "-Xbinary=dumpObjcSelectorToSignatureMapping=${buildDir.resolve("selectors.txt")}",
+                "dumpObjcSelectorToSignatureMapping is enabled",
+            ),
+        )
+        for ([variant, option, reason] in disablingOptions) {
+            val output = assertUnmetRequirements(variant, listOf(option), objCCacheBinaryOptions, "\n- $reason")
+            assertFalse("have no Objective-C cache" in output) { "Expected only '$reason' to disable the caches:\n$output" }
+        }
     }
 }
 

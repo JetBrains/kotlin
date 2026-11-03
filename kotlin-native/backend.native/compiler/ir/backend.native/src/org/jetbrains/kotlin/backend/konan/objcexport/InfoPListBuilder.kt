@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.konan.target.AppleConfigurables
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.platformName
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 internal enum class BundleType {
@@ -38,8 +39,17 @@ internal class InfoPListBuilder(
         name: String,
         mainPackageGuesser: MainPackageGuesser,
         moduleDescriptor: ModuleDescriptor,
+    ): String = build(name, computeBundleID(name, mainPackageGuesser, moduleDescriptor))
+
+    fun build(
+        name: String,
+        mainPackage: FqName,
+    ): String = build(name, computeBundleID(name, mainPackage))
+
+    private fun build(
+        name: String,
+        bundleId: String,
     ): String {
-        val bundleId = computeBundleID(name, mainPackageGuesser, moduleDescriptor)
 
         val bundleShortVersionString = configuration[BinaryOptions.bundleShortVersionString] ?: "1.0"
         val bundleVersion = configuration[BinaryOptions.bundleVersion] ?: "1"
@@ -173,6 +183,15 @@ internal class InfoPListBuilder(
                 moduleDescriptor.getIncludedLibraryDescriptors(config),
                 moduleDescriptor.getExportedDependencies(config),
         )
+        return computeBundleID(bundleName, mainPackage)
+    }
+
+    private fun computeBundleID(
+        bundleName: String,
+        mainPackage: FqName,
+    ): String {
+        configuration[BinaryOptions.bundleId]?.let { return it }
+
         // Bundle ID must contain only alphanumerics, `-` and `.`: https://developer.apple.com/documentation/bundleresources/information-property-list/cfbundleidentifier#Discussion
         // Replace any other character with `-`.
         val bundleID = mainPackage.child(Name.identifier(bundleName)).asString().replace("[^0-9a-zA-Z.-]".toRegex(), "-")

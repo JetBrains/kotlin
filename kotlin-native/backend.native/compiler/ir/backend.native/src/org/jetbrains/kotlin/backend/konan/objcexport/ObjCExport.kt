@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.llvm.CodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCExportBlockCodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCExportCodeGenerator
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.cli.common.messages.MessageUtil
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.klibModuleOriginOrNull
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.source.getPsi
 import java.nio.file.Path
@@ -153,13 +155,7 @@ internal fun produceObjCExportInterface(
                 uncachedProblems.replayTo(reporter)
                 throw KonanCompilationException()
             }
-            val typeParameterClashes = namer.typeParameterClashes()
-            if (typeParameterClashes.isNotEmpty()) {
-                typeParameterClashes.forEach {
-                    reporter.reportError("type parameter $it has the same name as an Objective-C class or protocol, which Objective-C caches do not support")
-                }
-                throw KonanCompilationException()
-            }
+            namer.reportTypeParameterClashes(reporter)
             cachedProblems?.replayTo(reporter)
         }
         else -> headerGenerator.translateModuleDeclarations()
@@ -275,6 +271,73 @@ internal fun createObjCFramework(
             exportedInterface.headerLines,
             moduleDependencies = setOf("Foundation")
     )
+}
+
+private fun ObjCExportNamerImpl.reportTypeParameterClashes(reporter: ObjCExportProblemCollector) {
+    val typeParameterClashes = typeParameterClashes()
+    if (typeParameterClashes.isEmpty()) return
+    typeParameterClashes.forEach {
+        reporter.reportError(
+                "type parameter $it has the same name as an Objective-C class or protocol, which Objective-C caches do not support"
+        )
+    }
+    throw KonanCompilationException()
+}
+
+internal fun createObjCFrameworkFromCaches(context: NativeBackendPhaseContext, frameworkDirectory: Path): Boolean {
+    val config = context.config
+    val objCCaches = config.objCCaches
+    val rank = config.klibDag.libraryReverseTopoRank
+    val caches = config.exportedLibrariesForObjCCache.sortedBy { rank.getValue(it) }.map { objCCaches.getValue(it) }
+
+    val mapper = ObjCExportMapper(config.languageVersionSettings, unitSuspendFunctionExport = config.unitSuspendFunctionObjCExport)
+    val objcGenerics = config.configuration.objcGenerics
+    val namer = ObjCExportNamerImpl(
+            emptySet(),
+            DefaultBuiltIns.Instance,
+            mapper,
+            ObjCExportProblemCollector.SILENT,
+            context.objCExportTopLevelNamePrefix,
+            local = false,
+            objcGenerics = objcGenerics,
+            disableSwiftMemberNameMangling = config.configuration.getBoolean(BinaryOptions.objcExportDisableSwiftMemberNameMangling),
+            ignoreInterfaceMethodCollisions = config.configuration.getBoolean(BinaryOptions.objcExportIgnoreInterfaceMethodCollisions),
+            explicitMethodFamily = config.configuration.getBoolean(BinaryOptions.objcExportExplicitMethodFamily),
+    )
+    val headerGenerator = ObjCExportHeaderGenerator.createInstance(
+            emptyList(), mapper, namer, ObjCExportProblemCollector.SILENT, objcGenerics,
+            config.configuration.get(BinaryOptions.objcExportBlockExplicitParameterNames, false),
+            shouldExportKDoc = context.shouldExportKDoc(),
+            additionalImports = config.configuration.getNotNull(NativeConfigurationKeys.FRAMEWORK_IMPORT_HEADERS),
+    )
+
+    headerGenerator.translateBaseDeclarations()
+    namer.useCachedNames(caches.map { it.units })
+    if (namer.hasCollisions) return false
+    namer.reportTypeParameterClashes(ObjCExportCompilerProblemCollector(context))
+    var hasMissingClasses = false
+    headerGenerator.assembleHeader(caches.mapIndexed { index, cache -> ObjCExportModuleUnits(index + 1, cache.units) }) {
+        hasMissingClasses = true
+        null
+    }
+    if (hasMissingClasses) return false
+
+    val mainPackage = MainPackageGuesser().guessMainPackage(caches.map { it.metadata.packages }) ?: FqName.ROOT
+    val frameworkBuilder = FrameworkBuilder(
+            config,
+            infoPListBuilder = InfoPListBuilder(config),
+            moduleMapBuilder = ModuleMapBuilder(),
+            objCHeaderWriter = ObjCHeaderWriter(),
+            mainPackageGuesser = MainPackageGuesser(),
+    )
+    frameworkBuilder.build(
+            frameworkDirectory,
+            frameworkDirectory.name.removeSuffix(CompilerOutputKind.FRAMEWORK.suffix()),
+            headerGenerator.build(),
+            moduleDependencies = setOf("Foundation"),
+            mainPackage = mainPackage,
+    )
+    return true
 }
 
 internal fun createTestBundle(
