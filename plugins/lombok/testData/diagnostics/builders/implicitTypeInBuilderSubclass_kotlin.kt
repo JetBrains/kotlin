@@ -11,7 +11,7 @@ class CustomMixedBuilder : Mixed.MixedBuilder() {
     override fun build(): Mixed = super.build()
 }
 
-fun bob(): User = CustomUserBuilder().name("Bob").build()
+fun bob(): User = CustomUserBuilder().<!UNRESOLVED_REFERENCE!>name<!>("Bob").build()
 
 fun mixed(): Mixed = CustomMixedBuilder().id(42).title("Main").owner(bob()).build()
 
