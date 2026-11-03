@@ -1,5 +1,3 @@
-// IGNORE_STABILITY: candidates
-
 // FILE: main.kt
 class KotlinClass : JavaClass<Any>() {
     override fun getFoo(): Foo<Any> {

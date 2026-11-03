@@ -98,6 +98,21 @@ internal class KaFirSyntheticJavaPropertySymbol(
         )
     }
 
-    override fun equals(other: Any?): Boolean = symbolEquals(other)
-    override fun hashCode(): Int = symbolHashCode()
+    /**
+     * Synthetic properties are built anew on each scope lookup, so two symbols of the same property usually have different
+     * [firSymbol]s. The property is defined by its name and its Java accessors, which are stable.
+     */
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is KaFirSyntheticJavaPropertySymbol) return false
+        if (firSymbol == other.firSymbol) return true
+
+        val fir = firSymbol.fir as FirSyntheticProperty
+        val otherFir = other.firSymbol.fir as FirSyntheticProperty
+        return fir.name == otherFir.name &&
+                fir.getter.delegate.symbol == otherFir.getter.delegate.symbol &&
+                fir.setter?.delegate?.symbol == otherFir.setter?.delegate?.symbol
+    }
+
+    override fun hashCode(): Int = (firSymbol.fir as FirSyntheticProperty).getter.delegate.symbol.hashCode()
 }
