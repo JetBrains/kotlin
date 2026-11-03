@@ -69,9 +69,9 @@ fun box(): String {
 // scalars.kt:11 render
 // bar.kt:43 render
 // bar.kt:44 render
-// InlineFunCallSite.kt:23 render
-// InlineFunCallSite.kt:23 render
-// InlineFunCallSite.kt:27 render
+// InlineFunDeclaration.kt:32 render
+// InlineFunDeclaration.kt:32 render
+// InlineFunDeclaration.kt:33 render
 // bar.kt:44 render
 // InlineFunDeclaration.kt:35 render
 // InlineFunCallSite.kt:21 render
@@ -89,7 +89,7 @@ fun box(): String {
 // test.kt:51 box
 // InlineFunDeclaration.kt:30 render
 // bar.kt:43 render
-// InlineFunCallSite.kt:23 render
+// InlineFunDeclaration.kt:32 render
 // InlineFunCallSite.kt:21 render
 // InlineFunDeclaration.kt:35 render
 // InlineFunCallSite.kt:20 render
@@ -109,8 +109,8 @@ fun box(): String {
 // scalars.kt:11 $InlineFunCallSite.render (8)
 // bar.kt:43 $InlineFunCallSite.render (16, 8)
 // bar.kt:44 $InlineFunCallSite.render (15)
-// InlineFunCallSite.kt:23 $InlineFunCallSite.render (8, 0)
-// InlineFunCallSite.kt:27 $InlineFunCallSite.render (11, 15)
+// InlineFunDeclaration.kt:32 $InlineFunCallSite.render (20, 12)
+// InlineFunDeclaration.kt:33 $InlineFunCallSite.render (12, 16)
 // bar.kt:44 $InlineFunCallSite.render (8)
 // InlineFunDeclaration.kt:35 $InlineFunCallSite.render (15)
 // InlineFunCallSite.kt:21 $InlineFunCallSite.render (20, 12)

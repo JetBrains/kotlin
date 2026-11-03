@@ -84,11 +84,14 @@ abstract class FunctionInlining(
         if (actualCallee.body == null) {
             return expression
         }
-        actualCallee.body?.transformChildren(this, actualCallee)
-        actualCallee.parameters.forEachIndexed { index, param ->
-            if (expression.arguments[index] == null) {
-                // Default values can recursively reference [callee] - transform only needed.
-                param.defaultValue = param.defaultValue?.transform(this@FunctionInlining, actualCallee)
+        // The shared callee body must be inlined in its definition's source context.
+        withFileEntry(actualCallee.fileEntry) {
+            actualCallee.body?.transformChildren(this, actualCallee)
+            actualCallee.parameters.forEachIndexed { index, param ->
+                if (expression.arguments[index] == null) {
+                    // Default values can recursively reference [callee] - transform only needed.
+                    param.defaultValue = param.defaultValue?.transform(this@FunctionInlining, actualCallee)
+                }
             }
         }
 
