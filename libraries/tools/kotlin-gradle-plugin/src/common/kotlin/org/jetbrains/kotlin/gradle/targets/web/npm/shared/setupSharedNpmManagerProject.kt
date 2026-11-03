@@ -31,9 +31,9 @@ internal fun setupSharedNpmProject(
         task.reportFiles.from(
             npmDependenciesReportResolver.incoming.artifactView { it.lenient(true) }.files
         )
-        task.rootPackageName.set(project.name)
-        task.rootPackageVersion.set(project.version.toString())
-        task.outputDirectory.set(project.layout.buildDirectory.dir("$rootDirectoryName/shared-npm-project"))
+        task.rootPackageName.convention(project.name)
+        task.rootPackageVersion.convention(project.provider { project.version.toString() })
+        task.outputDirectory.convention(project.layout.buildDirectory.dir("$rootDirectoryName/shared-npm-project"))
         task.usesService(project.kotlinToolingDiagnosticsCollectorProvider)
         task.setupKotlinToolingDiagnosticsParameters(project)
     }
