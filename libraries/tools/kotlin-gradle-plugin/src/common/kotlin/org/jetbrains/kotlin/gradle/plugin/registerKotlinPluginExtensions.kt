@@ -61,6 +61,7 @@ import org.jetbrains.kotlin.gradle.targets.wasm.component.internal.WitTransformR
 import org.jetbrains.kotlin.gradle.targets.web.npm.shared.PublishSharedPackageJsonSideEffect
 import org.jetbrains.kotlin.gradle.tooling.RegisterBuildKotlinToolingMetadataTask
 import org.jetbrains.kotlin.gradle.utils.RegisterIsAllGradleProjectsEvaluatedListener
+import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeToolParallelismLimitSetupAction
 
 /**
  * Active Extensions (using the [KotlinGradlePluginExtensionPoint] infrastructure) will be registered here by the Kotlin Gradle Plugin.
@@ -127,6 +128,7 @@ internal fun Project.registerKotlinPluginExtensions() {
             register(project, UklibConsumptionSetupAction)
             register(project, KotlinMetadataCompilationTargetPlatformConfiguration)
             register(project, SetupKotlinArchiveAction)
+            register(project, KotlinNativeToolParallelismLimitSetupAction)
         }
 
     }

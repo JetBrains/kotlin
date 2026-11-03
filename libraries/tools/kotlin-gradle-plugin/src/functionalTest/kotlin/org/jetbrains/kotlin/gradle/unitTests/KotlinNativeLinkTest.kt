@@ -87,9 +87,10 @@ class KotlinNativeLinkTest {
 
     @Test
     fun `KotlinNativeLink task configures the parallelism limit service using the KOTLIN_NATIVE_LINK_MAX_WORKERS property, when set`() {
-        val project = buildProjectWithMPP {
-            propertiesExtension.set(KOTLIN_NATIVE_LINK_MAX_WORKERS, "3")
-            // Force all tasks to instantiate eagerly, so the KotlinNativeLink's init block runs
+        val project = buildProjectWithMPP(
+            preApplyCode = { propertiesExtension.set(KOTLIN_NATIVE_LINK_MAX_WORKERS, "3") }
+        ) {
+            // Force all tasks to instantiate eagerly, so the KotlinNativeLink's configureEach actions run
             tasks.all { }
             kotlin {
                 iosSimulatorArm64().binaries.framework { }
@@ -103,7 +104,7 @@ class KotlinNativeLinkTest {
     @Test
     fun `KotlinNativeLink task does not register the parallelism limit service when the KOTLIN_NATIVE_LINK_MAX_WORKERS property is not set`() {
         val project = buildProjectWithMPP {
-            // Force all tasks to instantiate eagerly, so the KotlinNativeLink's init block runs
+            // Force all tasks to instantiate eagerly, so the KotlinNativeLink's configureEach actions run
             tasks.all { }
             kotlin {
                 iosSimulatorArm64().binaries.framework { }

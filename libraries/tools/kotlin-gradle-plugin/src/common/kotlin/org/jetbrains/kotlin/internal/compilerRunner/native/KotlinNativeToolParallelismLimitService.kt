@@ -6,9 +6,16 @@
 package org.jetbrains.kotlin.internal.compilerRunner.native
 
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
+import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerTask
+import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
+import org.jetbrains.kotlin.gradle.tasks.withType
 
 private const val PARALLELISM_LIMIT_SERVICE_NAME = "KotlinNativeToolParallelismLimitService"
 
@@ -46,3 +53,18 @@ internal fun Project.registerKotlinNativeParallelismLimitService(
         spec.maxParallelUsages.set(maxParallelUsages)
     }
 
+/**
+ * Makes [KotlinNativeCompile], [KotlinNativeLink] and [CInteropCommonizerTask] use their parallelism limit service,
+ * when the matching `kotlin.native.*MaxWorkers` property is set.
+ */
+internal val KotlinNativeToolParallelismLimitSetupAction = KotlinProjectSetupAction {
+    limitParallelismOf<KotlinNativeCompile>("KotlinNativeCompile", kotlinPropertiesProvider.nativeCompileMaxWorkers)
+    limitParallelismOf<KotlinNativeLink>("KotlinNativeLink", kotlinPropertiesProvider.nativeLinkMaxWorkers)
+    limitParallelismOf<CInteropCommonizerTask>("CInteropCommonizerTask", kotlinPropertiesProvider.nativeCommonizeCInteropMaxWorkers)
+}
+
+private inline fun <reified T : Task> Project.limitParallelismOf(name: String, maxParallelUsages: Int?) {
+    if (maxParallelUsages == null) return
+    val limitService = registerKotlinNativeParallelismLimitService(name, maxParallelUsages)
+    tasks.withType<T>().configureEach { it.usesService(limitService) }
+}
