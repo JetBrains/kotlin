@@ -1,0 +1,278 @@
+/**
+ * public final class A : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // signature: plain()Ljava/lang/String;
+ *   public final static fun plain(): kotlin/String
+ *
+ *   // signature: renamed()Ljava/lang/String;
+ *   @kotlin/jvm/JvmName(name = "renamed")
+ *   public final static fun named(): kotlin/String
+ *
+ *   // signature: suspended(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+ *   public final suspend static fun suspended(): kotlin/Int
+ *
+ *   // signature: withContext(Ljava/lang/String;I)Ljava/lang/String;
+ *   context(c: kotlin/String)
+ *   public final static fun withContext(x: kotlin/Int): kotlin/String
+ *
+ *   // field: CONST:Ljava/lang/String;
+ *   public final const static val CONST: kotlin/String (* = ... *)
+ *     public final get
+ *
+ *   // field: field:Ljava/lang/String;
+ *   @field:kotlin/jvm/JvmField
+ *   public final static val field: kotlin/String
+ *     public final get
+ *
+ *   // field: instanceProperty:I
+ *   // getter: getInstanceProperty()I
+ *   public final val instanceProperty: kotlin/Int
+ *     public final get
+ *
+ *   // field: mutable:I
+ *   // getter: getMutable()I
+ *   // setter: setMutable(I)V
+ *   public final static var mutable: kotlin/Int
+ *     public final get
+ *     public final set
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class A {
+    private final int instanceProperty = 0;
+    private static int mutable = 1;
+    @org.jetbrains.annotations.NotNull()
+    public static final java.lang.String CONST = "const";
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public static final java.lang.String field = "field";
+
+    public A() {
+        super();
+    }
+
+    public final int getInstanceProperty() {
+        return 0;
+    }
+
+    public static final int getMutable() {
+        return 0;
+    }
+
+    public static final void setMutable(int p0) {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public static final java.lang.String plain() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.Nullable()
+    public static final java.lang.Object suspended(@org.jetbrains.annotations.NotNull()
+    kotlin.coroutines.Continuation<? super java.lang.Integer> $completion) {
+        return null;
+    }
+
+    @kotlin.jvm.JvmName(name = "renamed")
+    @org.jetbrains.annotations.NotNull()
+    public static final java.lang.String renamed() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public static final java.lang.String withContext(@org.jetbrains.annotations.NotNull()
+    java.lang.String c, int x) {
+        return null;
+    }
+}
+
+////////////////////
+
+
+/**
+ * package {
+ *
+ *   // signature: extension()Ljava/lang/String;
+ *   public final companion fun A.extension(): kotlin/String
+ *
+ *   // field: extensionCounter:I
+ *   // getter: getExtensionCounter()I
+ *   // setter: setExtensionCounter(I)V
+ *   public final companion var A.extensionCounter: kotlin/Int
+ *     public final get
+ *     public final set
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class CompanionBlocksAndExtensionsMemberKindsKt {
+    private static int extensionCounter = 0;
+
+    @org.jetbrains.annotations.NotNull()
+    public static final java.lang.String extension() {
+        return null;
+    }
+
+    public static final int getExtensionCounter() {
+        return 0;
+    }
+
+    public static final void setExtensionCounter(int p0) {
+    }
+}
+
+////////////////////
+
+
+/**
+ * public abstract interface Constants : kotlin/Any {
+ *
+ *   // field: NAME:Ljava/lang/String;
+ *   @field:kotlin/jvm/JvmField
+ *   public final static val NAME: kotlin/String
+ *     public final get
+ *
+ *   // module name: main
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
+ * }
+ */
+@kotlin.Metadata()
+public abstract interface Constants {
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public static final java.lang.String NAME = "constants";
+}
+
+////////////////////
+
+
+/**
+ * public abstract interface Factory : kotlin/Any {
+ *
+ *   // signature: create()LFactory;
+ *   public final static fun create(): Factory
+ *
+ *   // module name: main
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
+ * }
+ */
+@kotlin.Metadata()
+public abstract interface Factory {
+
+    @org.jetbrains.annotations.NotNull()
+    public static Factory create() {
+        return null;
+    }
+}
+
+////////////////////
+
+
+/**
+ * public final enum class Level : kotlin/Enum<Level> {
+ *
+ *   // signature: <init>(Ljava/lang/String;I)V
+ *   private constructor()
+ *
+ *   // signature: parse(Ljava/lang/String;)LLevel;
+ *   public final static fun parse(s: kotlin/String): Level
+ *
+ *   LOW,
+ *
+ *   HIGH,
+ *
+ *   // module name: main
+ *
+ *   // has Enum.entries
+ * }
+ */
+@kotlin.Metadata()
+public enum Level {
+    /*public static final*/ LOW /* = new Level() */,
+    /*public static final*/ HIGH /* = new Level() */;
+
+    Level() {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public static final Level parse(@org.jetbrains.annotations.NotNull()
+    java.lang.String s) {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public static kotlin.enums.EnumEntries<Level> getEntries() {
+        return null;
+    }
+}
+
+////////////////////
+
+
+/**
+ * public final class WithCompanionObject : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // signature: fromBlock()Ljava/lang/String;
+ *   public final static fun fromBlock(): kotlin/String
+ *
+ *   // companion object: Companion
+ *
+ *   // nested class: Companion
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class WithCompanionObject {
+    @org.jetbrains.annotations.NotNull()
+    public static final WithCompanionObject.Companion Companion = null;
+
+    public WithCompanionObject() {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public static final java.lang.String fromBlock() {
+        return null;
+    }
+
+    /**
+     * public final companion object WithCompanionObject.Companion : kotlin/Any {
+     *
+     *   // signature: <init>()V
+     *   private constructor()
+     *
+     *   // signature: fromObject()Ljava/lang/String;
+     *   public final fun fromObject(): kotlin/String
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public static final class Companion {
+
+        private Companion() {
+            super();
+        }
+
+        @org.jetbrains.annotations.NotNull()
+        public final java.lang.String fromObject() {
+            return null;
+        }
+    }
+}

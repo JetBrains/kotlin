@@ -112,5 +112,13 @@ interface I9 {
         const val Y = 1
     }
 }
+
+// @JvmField must be public in interfaces, as for companion objects.
+interface I10 {
+    companion {
+        <!INAPPLICABLE_JVM_FIELD!>@JvmField<!>
+        internal val X = 1
+    }
+}
 /* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, integerLiteral, interfaceDeclaration, lambdaLiteral,
 nullableType, propertyDeclaration, propertyDelegate */

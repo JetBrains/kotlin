@@ -1,4 +1,4 @@
-// LANGUAGE: +ContextParameters +CallableReferencesToContextual +CompanionBlocks
+// LANGUAGE: +ContextParameters +CallableReferencesToContextual +CompanionBlocks +CompanionExtensions
 // TARGET_BACKEND: JVM
 // WITH_REFLECT
 // ISSUE: KT-86452
@@ -16,6 +16,16 @@ class WithCompanionBlock {
     }
 }
 
+interface WithInterfaceCompanionBlock {
+    companion {
+        context(c: String)
+        fun greet(arg: String): String = "interface:" + c + arg
+    }
+}
+
+context(c: String)
+companion fun WithCompanionBlock.extGreet(arg: String): String = "ext:" + c + arg
+
 fun box(): String {
     context("ctx:") {
         val g = WithCompanionBlock::greet
@@ -24,6 +34,9 @@ fun box(): String {
         val d = WithCompanionBlock::decorated
         assertEquals("[ctx:]", d.call())
         assertEquals("[ctx:]", d.getter.call())
+
+        assertEquals("interface:ctx:arg", WithInterfaceCompanionBlock::greet.call("arg"))
+        assertEquals("ext:ctx:arg", WithCompanionBlock::extGreet.call("arg"))
     }
     return "OK"
 }
