@@ -33,6 +33,16 @@ val testJsRuntime: Configuration = configurations.create("testJsRuntime") {
     }
 }
 
+val testNativeRuntime: Configuration = configurations.create("testNativeRuntime") {
+    attributes {
+        attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
+        hostKonanTargetAttribute()
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
+    }
+}
+
+val composePluginForNativeTests: Configuration = configurations.create("composePluginForNativeTests")
+
 dependencies {
     implementation(project(":kotlin-stdlib"))
     compileOnly(project(":compiler:backend.common.jvm"))
@@ -88,6 +98,22 @@ dependencies {
     }
     testJsRuntime(libs.kotlinx.coroutines.core) { isTransitive = false }
     testJsRuntime("org.jetbrains.kotlinx:atomicfu-js:0.25.0") { isTransitive = false }
+
+    // native runtimes for tests
+    testNativeRuntime(composeRuntime()) {
+        // Kotlin/Native stdlib is provided by the compiler distribution
+        exclude(group = "org.jetbrains.kotlin")
+    }
+    // Older versions are compiled against an outdated stdlib ABI (e.g. `SubclassOptInRequired` constructor),
+    // which fails partial linkage.
+    testNativeRuntime(libs.kotlinx.coroutines.core.compose.native.tests) {
+        exclude(group = "org.jetbrains.kotlin")
+    }
+    // Kotlin/Native compiler is embeddable, so it requires the plugin with relocated IntelliJ classes
+    composePluginForNativeTests(project(":plugins:compose-compiler-plugin:compiler"))
+
+    // Kotlin/Native test infra
+    testImplementation(testFixtures(project(":native:native.tests")))
 
     // other compose
     testImplementationArtifactOnly(compose("foundation", "foundation"))
@@ -149,7 +175,20 @@ projectTests {
         addClasspathProperty(testJsRuntime, "compose.compiler.test.js.classpath")
         useJsIrBoxTests(buildDir = layout.buildDirectory)
 
+        useJUnitPlatform {
+            // Kotlin/Native tests are launched by the `nativeTest` task.
+            excludeTags("compose-native")
+        }
     }
+
+    nativeTestTask(
+        taskName = "nativeTest",
+        tag = "compose-native",
+        // atomicfu (a dependency of Compose runtime) uses platform.posix
+        requirePlatformLibs = true,
+        customTestDependencies = listOf(testNativeRuntime),
+        compilerPluginDependencies = listOf(composePluginForNativeTests),
+    )
 
     testGenerator("androidx.compose.compiler.plugins.kotlin.TestGeneratorKt", doNotSetFixturesSourceSetDependency = true)
 

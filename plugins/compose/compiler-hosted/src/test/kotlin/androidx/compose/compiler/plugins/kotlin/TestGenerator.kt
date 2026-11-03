@@ -6,6 +6,13 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
+import org.jetbrains.kotlin.generators.model.annotation
+import org.jetbrains.kotlin.generators.tests.provider
+import org.jetbrains.kotlin.generators.tests.standalone
+import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeCodegenBoxTest
+import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedHostTarget
+import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseExtTestCaseGroupProvider
+import org.junit.jupiter.api.Tag
 
 fun main() {
     System.setProperty("java.awt.headless", "true")
@@ -30,6 +37,22 @@ fun main() {
             testClass<AbstractJsIrTextTestForCompose> {
                 model("common")
             }
+            // Requires Kotlin/Native, run with `nativeTest` task.
+            testClass<AbstractNativeCodegenBoxTest>(
+                suiteTestClassName = "ComposeNativeBoxTestGenerated",
+                annotations = listOf(
+                    // Package names are not patched in standalone mode, so imports of Compose runtime are preserved.
+                    standalone(),
+                    annotation(Tag::class.java, COMPOSE_NATIVE_TEST_TAG),
+                    // Compose runtime klibs are provided only for the host target.
+                    annotation(EnforcedHostTarget::class.java),
+                    provider<UseExtTestCaseGroupProvider>(),
+                )
+            ) {
+                model("nativeBox")
+            }
         }
     }
 }
+
+private const val COMPOSE_NATIVE_TEST_TAG = "compose-native"
