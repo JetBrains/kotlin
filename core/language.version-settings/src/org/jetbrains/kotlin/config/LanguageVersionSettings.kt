@@ -572,6 +572,7 @@ enum class LanguageFeature(
 
     // 2.6
 
+    CallableReferencesWithBoundCompanionDontWinOverDefaultImports(sinceVersion = KOTLIN_2_6, "KT-86000"),
     ReportReificationProblemsInDnnAndFlexible(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KTLC-399"),
     ForbidSamConstructorCallsWithMissingDependencySupertype(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KT-81075"),
     ExplicitContextArguments(sinceVersion = KOTLIN_2_6, issue = "KT-81684"),

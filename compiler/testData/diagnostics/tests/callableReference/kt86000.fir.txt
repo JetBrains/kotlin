@@ -2,13 +2,13 @@ FILE: f1.kt
     package p1
 
     public final fun test(): R|kotlin/Unit| {
-        Q|kotlin/String?|::R|kotlin/Any.hashCode|
+        Q|kotlin/String?|::R|kotlin/hashCode|
         Q|kotlin/String|::R|kotlin/Any.hashCode|
-        Q|kotlin/Int?|::R|kotlin/Any.toString|
+        Q|kotlin/Int?|::R|kotlin/toString|
         Q|kotlin/Int|::R|kotlin/Int.toString|
         lval <unused var>: R|(kotlin/String?) -> kotlin/Int| = Q|kotlin/String?|::R|kotlin/hashCode|
         lval <unused var>: R|(kotlin/String) -> kotlin/Int| = Q|kotlin/String?|::R|kotlin/hashCode|
-        lval <unused var>: R|(kotlin/String.Companion?) -> kotlin/Int| = Q|kotlin/String?|::R|kotlin/Any.hashCode|
+        lval <unused var>: R|(kotlin/String.Companion?) -> kotlin/Int| = Q|kotlin/String?|::R|kotlin/hashCode|
         lval <unused var>: R|(kotlin/String.Companion?) -> kotlin/Int| = Q|kotlin/String.Companion?|::R|kotlin/hashCode|
         lval <unused var>: R|(kotlin/String.Companion) -> kotlin/Int| = Q|kotlin/String|::R|kotlin/Any.hashCode|
     }
@@ -40,9 +40,9 @@ FILE: f3.kt
     }
     public final fun test(): R|kotlin/Unit| {
         Q|p3/WithCustomCompanion|::R|kotlin/Any.toString|
-        Q|p3/WithCustomCompanion?|::R|kotlin/Any.toString|
-        Q|p3/WithCustomCompanion|::R|p3/WithCustomCompanion.Companion.apply|
-        Q|p3/WithCustomCompanion?|::R|p3/WithCustomCompanion.Companion.apply|
+        Q|p3/WithCustomCompanion?|::R|kotlin/toString|
+        Q|p3/WithCustomCompanion|::R|kotlin/apply<p3/WithCustomCompanion>|
+        Q|p3/WithCustomCompanion?|::R|kotlin/apply<p3/WithCustomCompanion?>|
     }
 FILE: f5.kt
     package p5
@@ -59,6 +59,6 @@ FILE: f5.kt
     public final fun test(): R|kotlin/Unit| {
         Q|p5/B|::R|kotlin/Any.toString|
         Q|p5/B|::R|p5/B.apply|
-        Q|p5/B?|::R|kotlin/Any.toString|
-        Q|p5/B?|::R|p5/B.apply|
+        Q|p5/B?|::R|kotlin/toString|
+        Q|p5/B?|::R|kotlin/apply<p5/B?>|
     }
