@@ -4,6 +4,7 @@
 
 #include "KotlinPlugin.h"
 
+#include "Passes/ArrayLoadMetadata.h"
 #include "Passes/CallsChecker.h"
 #include "Passes/HideSymbols.h"
 #include "Passes/PrepareStackProtector.h"
@@ -86,6 +87,10 @@ PassPluginLibraryInfo getKotlinPluginInfo() {
                    ArrayRef<PassBuilder::PipelineElement>) {
                   if (parsePass(Name, "kotlin-tsan")) {
                     PM.addPass(PrepareThreadSanitizerPass());
+                    return true;
+                  }
+                  if (parsePass(Name, "kotlin-array-load-metadata")) {
+                    PM.addPass(ArrayLoadMetadataPass());
                     return true;
                   }
                   if (auto Param = parsePass(Name, "kotlin-ssp",

@@ -329,7 +329,14 @@ class MandatoryOptimizationPipeline(config: LlvmPipelineConfig, performanceManag
 class ModuleOptimizationPipeline(config: LlvmPipelineConfig, performanceManager: PerformanceManager?, logger: LoggingContext? = null) :
         LlvmOptimizationPipeline(config, performanceManager, logger) {
     override val pipelineName = "llvm-default"
-    override val passes = listOf(config.modulePasses ?: "default<$optimizationFlag>")
+    override val passes =
+            if (config.modulePasses != null) listOf(config.modulePasses)
+            else buildList {
+                if (config.optimizationLevel != LlvmOptimizationLevel.NONE || config.sizeLevel != LlvmSizeLevel.NONE) {
+                    add("function(kotlin-array-load-metadata)")
+                }
+                add("default<$optimizationFlag>")
+            }
 }
 
 class LTOOptimizationPipeline(config: LlvmPipelineConfig, performanceManager: PerformanceManager?, logger: LoggingContext? = null) :
