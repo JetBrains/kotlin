@@ -9,7 +9,7 @@ class RefBodyVar {
     var a: Int = 1
 
     @Builder.Default
-    var b: Int = a + 1
+    var b: Int = <!BUILDER_DEFAULT_INITIALIZER_USES_INSTANCE!>a + 1<!>
 
     @Builder.Default
     var c: Int = x + y
