@@ -5,14 +5,22 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower.calls
 
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.lower.SAFE_NULLABLE_BOXING
 import org.jetbrains.kotlin.ir.backend.js.utils.inlineClassRepresentation
 import org.jetbrains.kotlin.ir.backend.js.utils.isEqualsInheritedFromAny
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrBlock
+import org.jetbrains.kotlin.ir.expressions.IrBranch
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrConst
+import org.jetbrains.kotlin.ir.expressions.IrElseBranch
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
+import org.jetbrains.kotlin.ir.expressions.IrGetValue
+import org.jetbrains.kotlin.ir.expressions.IrWhen
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
@@ -20,7 +28,10 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.js.config.compileLongAsBigint
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.atMostOne
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : CallsTransformer {
     private val symbols = context.symbols
@@ -85,10 +96,17 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
         val lhs = call.arguments[0]!!
         val rhs = call.arguments[1]!!
 
-        return if (lhs.isCharBoxing() && rhs.isCharBoxing()) {
-            optimizeInlineClassEquality(call, lhs, rhs)
-        } else {
-            irCall(call, symbols.jsEqeqeq)
+        return when {
+            lhs.isCharBoxing() && rhs.isCharBoxing() ->
+                optimizeInlineClassEquality(call, lhs, rhs)
+
+            lhs.isNullConst() || rhs.isNullConst() -> {
+                call.unwrapBoxingOfNullCheckOperand(lhs, rhs)
+                irCall(call, symbols.jsEqeqeq)
+            }
+
+            else ->
+                irCall(call, symbols.jsEqeqeq)
         }
     }
 
@@ -110,8 +128,10 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
                 irCall(call, symbols.jsEqeq)
 
             // Special optimization for "<expression> == null"
-            lhs.isNullConst() || rhs.isNullConst() ->
+            lhs.isNullConst() || rhs.isNullConst() -> {
+                call.unwrapBoxingOfNullCheckOperand(lhs, rhs)
                 irCall(call, symbols.jsEqeq)
+            }
 
             // For non-float primitives of the same type use JS `==`
             lhsJsType == rhsJsType && lhsJsType.canBeUsedWithJsEq() ->
@@ -238,8 +258,33 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
             it === IrDeclarationOrigin.GENERATED_INLINE_CLASS_MEMBER || it === IrDeclarationOrigin.GENERATED_FULL_VALUE_CLASS_MEMBER
         }
 
-    private fun IrExpression.isBoxIntrinsic() =
-        this is IrCall && symbol == icUtils.boxIntrinsic
+    private fun IrExpression.isBoxIntrinsic(): Boolean {
+        @OptIn(ExperimentalContracts::class)
+        contract { returns(true) implies (this@isBoxIntrinsic is IrCall) }
+        return this is IrCall && symbol == icUtils.boxIntrinsic
+    }
+
+    private fun IrFunctionAccessExpression.unwrapBoxingOfNullCheckOperand(lhs: IrExpression, rhs: IrExpression) {
+        if (lhs.isNullConst()) {
+            arguments[1] = rhs.unwrapBoxingForNullCheck()
+        } else {
+            arguments[0] = lhs.unwrapBoxingForNullCheck()
+        }
+    }
+
+    /**
+     * Boxing never changes nullness, so for a comparison with `null` the boxing can be dropped:
+     *  - `boxIntrinsic(x)` -> `x`
+     *  - `{ val tmp = x; if (tmp == null) null else boxIntrinsic(tmp) }` -> `x`
+     *  - `if (tmp == null) null else boxIntrinsic(tmp)` -> `tmp` (the temporary is already extracted by the block decomposer)
+     */
+    private fun IrExpression.unwrapBoxingForNullCheck(): IrExpression =
+        if (this is IrWhen && origin == SAFE_NULLABLE_BOXING) {
+            val elseBranch = branches.lastOrNull() as? IrElseBranch
+            val result = elseBranch?.result
+            val resultCall = runIf(result?.isBoxIntrinsic() == true) { result }
+            resultCall?.arguments?.get(0) ?: compilationException("Unexpected format of SAFE_NULLABLE_BOXING", this)
+        } else this
 
     private fun IrExpression.unboxParamWithInlinedClass(): Pair<IrExpression, IrClass?> {
         val unboxed = (this as IrFunctionAccessExpression).arguments[0]

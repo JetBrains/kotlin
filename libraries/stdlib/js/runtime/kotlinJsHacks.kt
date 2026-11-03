@@ -55,3 +55,9 @@ internal annotation class JsOutlinedFunction(val jsFunctionExpression: String, v
 @PublishedApi
 @Suppress("unused") // used by @JsPlainObject compiler plugin
 internal annotation class JsNoDispatchReceiver
+
+@OptIn(ExperimentalStdlibApi::class)
+@Suppress("DEPRECATION")
+@EagerInitialization
+@UsedFromCompilerGeneratedCode
+internal val ENUM_HASHCODE_RANDOMIZER: Int = compileTimeRandomNumber(from = 0, to = Int.MAX_VALUE / 2)

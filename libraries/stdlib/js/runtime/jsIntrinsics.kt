@@ -317,6 +317,11 @@ internal fun <A> slice(a: A): A
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
 @Effects(EffectsKind.PURE)
+internal fun <A> jsArrayIndexOf(array: Array<A>, a: A): Int
+
+@JsIntrinsic
+@UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun <T> jsArrayLike2Array(arrayLike: Any?): Array<T>
 
 @JsIntrinsic
@@ -428,3 +433,12 @@ internal fun jsLongToString(value: Long, radix: Int): String {
     @OptIn(BoxedLongApi::class)
     return value.toStringImpl(radix)
 }
+
+@UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
+internal fun compileTimeRandomNumber(from: Int, to: Int): Int {
+    // TODO: Remove body after bootstrap
+    val maximum = to - from
+    return js("Math.round(Math.random() * maximum) + from")
+}
+
