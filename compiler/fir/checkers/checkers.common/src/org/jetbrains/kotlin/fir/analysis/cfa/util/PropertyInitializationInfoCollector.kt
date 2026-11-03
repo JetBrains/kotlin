@@ -159,9 +159,7 @@ private class PropertyDeclarationCollector(
                 // Recusing to a CFG-independent element is a navigation violation in the Analysis API.
                 if (element.isUsedInControlFlowGraph(container = data.container)) {
                     val container = element.controlFlowGraphReference?.controlFlowGraph ?: data.container
-                    if (container === data.container || container in data.container.subGraphs) {
-                        element.acceptChildren(this, data.copy(container = container))
-                    }
+                    element.acceptChildren(this, data.copy(container = container))
                 }
             }
 

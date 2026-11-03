@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa.cfg
 
-import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanionBlockMember
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
@@ -102,11 +102,15 @@ val FirControlFlowGraphOwner.isUsedInControlFlowGraphBuilderForScript: Boolean
  * So for a [FirControlFlowGraphOwner], properties of the owned graph cannot be used to determine if it is used,
  * as the graph may be `null` because the element is unresolved.
  */
-fun FirControlFlowGraphOwner.isUsedInControlFlowGraph(container: FirBasedSymbol<*>): Boolean {
+fun FirControlFlowGraphOwner.isUsedInControlFlowGraph(container: FirBasedSymbol<*>, kind: ControlFlowGraph.Kind? = null): Boolean {
     return when (container) {
         is FirFileSymbol -> isUsedInControlFlowGraphBuilderForFile
         is FirScriptSymbol -> isUsedInControlFlowGraphBuilderForScript
-        is FirClassSymbol<*> -> container.isLocal || isUsedInControlFlowGraphBuilderForClassOrStatic
+        is FirClassSymbol<*> -> container.isLocal || when (kind) {
+            ControlFlowGraph.Kind.Class -> isUsedInControlFlowGraphBuilderForClass
+            ControlFlowGraph.Kind.Static -> isUsedInControlFlowGraphBuilderForStatic
+            else -> isUsedInControlFlowGraphBuilderForClassOrStatic
+        }
         is FirPropertySymbol -> container is FirLocalPropertySymbol || this !is FirPropertyAccessor
         else -> true
     }
@@ -121,5 +125,5 @@ fun FirControlFlowGraphOwner.isUsedInControlFlowGraph(container: FirBasedSymbol<
  * as the graph may be `null` because the element is unresolved.
  */
 fun FirControlFlowGraphOwner.isUsedInControlFlowGraph(container: ControlFlowGraph): Boolean {
-    return isUsedInControlFlowGraph(container.declaration?.symbol ?: return true)
+    return isUsedInControlFlowGraph(container.declaration?.symbol ?: return true, container.kind)
 }
