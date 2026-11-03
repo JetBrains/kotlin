@@ -1,3 +1,5 @@
+// The dangling-file expectation is tracked by KT-91218.
+
 // MODULE: moduleA
 // FILE: module-info.java
 module moduleA {

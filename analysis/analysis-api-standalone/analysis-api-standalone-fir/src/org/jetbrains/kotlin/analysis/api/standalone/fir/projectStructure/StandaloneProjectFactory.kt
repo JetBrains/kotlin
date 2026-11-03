@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.allDirectDependencies
+import org.jetbrains.kotlin.analysis.api.projectStructure.baseContextModuleOrSelf
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider
 import org.jetbrains.kotlin.analysis.api.standalone.StandaloneWorkaroundApi
 import org.jetbrains.kotlin.analysis.api.standalone.fir.declarations.KotlinStandaloneIndexCache
@@ -233,7 +234,9 @@ object StandaloneProjectFactory {
 
         val psiManager = PsiManager.getInstance(project)
         val sourceJavaModuleByFile: (VirtualFile) -> JavaModule.Explicit? = { file ->
-            val sourceModule = psiManager.findFile(file)?.let { projectStructureProvider.getModule(it, null) } as? KaSourceModule
+            val sourceModule = psiManager.findFile(file)
+                ?.let { projectStructureProvider.getModule(it, null) }
+                ?.baseContextModuleOrSelf as? KaSourceModule
             javaModulesByKaSourceModule[sourceModule]
         }
 
