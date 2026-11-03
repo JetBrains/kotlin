@@ -226,6 +226,49 @@ public class RangeIterationTest : RangeIterationTestBase() {
     }
 
 
+    @Test fun emptyDownUntil() {
+        doTest(5 downUntil 10, 5, 11, -1, listOf())
+        doTest(5.toByte() downUntil 10.toByte(), 5, 11, -1, listOf())
+        doTest(5.toShort() downUntil 10.toShort(), 5, 11, -1, listOf())
+        doTest(5L downUntil 10L, 5L, 11L, -1L, listOf())
+
+        doTest('a' downUntil 'z', 'a', '{', -1, listOf())
+
+        doTest(5u downUntil 10u, 5u, 11u, -1, listOf())
+        doTest(5u.toUByte() downUntil 10u.toUByte(), 5u, 11u, -1, listOf())
+        doTest(5u.toUShort() downUntil 10u.toUShort(), 5u, 11u, -1, listOf())
+        doTest(5uL downUntil 10uL, 5uL, 11uL, -1L, listOf())
+    }
+
+    @Test fun oneElementDownUntil() {
+        doTest(5 downUntil 4, 5, 5, -1, listOf(5))
+        doTest(5.toByte() downUntil 4.toByte(), 5, 5, -1, listOf(5))
+        doTest(5.toShort() downUntil 4.toShort(), 5, 5, -1, listOf(5))
+        doTest(5L downUntil 4L, 5L, 5L, -1L, listOf(5L))
+
+        doTest('k' downUntil 'j', 'k', 'k', -1, listOf('k'))
+
+        doTest(5u downUntil 4u, 5u, 5u, -1, listOf(5u))
+        doTest(5u.toUByte() downUntil 4u.toUByte(), 5u, 5u, -1, listOf(5u))
+        doTest(5u.toUShort() downUntil 4u.toUShort(), 5u, 5u, -1, listOf(5u))
+        doTest(5uL downUntil 4uL, 5uL, 5uL, -1L, listOf(5uL))
+    }
+
+    @Test fun simpleDownUntil() {
+        doTest(9 downUntil 3, 9, 4, -1, listOf(9, 8, 7, 6, 5, 4))
+        doTest(9.toByte() downUntil 3.toByte(), 9, 4, -1, listOf(9, 8, 7, 6, 5, 4))
+        doTest(9.toShort() downUntil 3.toShort(), 9, 4, -1, listOf(9, 8, 7, 6, 5, 4))
+        doTest(9L downUntil 3L, 9L, 4L, -1L, listOf(9, 8, 7, 6, 5, 4))
+
+        doTest('g' downUntil 'c', 'g', 'd', -1, listOf('g', 'f', 'e', 'd'))
+
+        doTest(5u downUntil 3u, 5u, 4u, -1, listOf(5u, 4u))
+        doTest(5u.toUByte() downUntil 3u.toUByte(), 5u, 4u, -1, listOf(5u, 4u))
+        doTest(5u.toUShort() downUntil 3u.toUShort(), 5u, 4u, -1, listOf(5u, 4u))
+        doTest(5uL downUntil 3uL, 5uL, 4uL, -1L, listOf(5u, 4u))
+    }
+
+
     @Test fun simpleSteppedRange() {
         doTest(3..9 step 2, 3, 9, 2, listOf(3, 5, 7, 9))
         doTest(3.toByte()..9.toByte() step 2, 3, 9, 2, listOf(3, 5, 7, 9))
