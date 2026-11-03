@@ -24,11 +24,12 @@ object FirHomePackageResolutionInvestigationChecker : FirFileChecker(MppCheckerK
         // if (LanguageFeature.HomePackageResolution.isDisabled()) return
 
         val imports = declaration.imports.groupBy { it.importKind() }
+        val extensionsNotHPR = imports.filterKeys { it is ExtensionNotHPR }
         reporter.reportOn(
             declaration.source,
             FirErrors.HOME_PACKAGE_RESOLUTION_INVESTIGATION_1,
             imports[ImportKind.HPR]?.size ?: 0,
-            imports.filter { it.key is ImportKind.ExtensionNotHPR }.map { it.value.size }.sum(),
+            extensionsNotHPR.values.sumOf { it.size },
             imports[ImportKind.NotExtension]?.size ?: 0,
         )
         reporter.reportOn(
@@ -38,6 +39,13 @@ object FirHomePackageResolutionInvestigationChecker : FirFileChecker(MppCheckerK
             imports[ImportKind.Rest]?.size ?: 0,
             imports[ImportKind.Problematic]?.size ?: 0,
         )
+        for (info in extensionsNotHPR.keys) {
+            reporter.reportOn(
+                declaration.source,
+                FirErrors.HOME_PACKAGE_RESOLUTION_NON_HPR_EXTENSION,
+                (info as ExtensionNotHPR).type,
+            )
+        }
     }
 
     sealed interface ImportKind {
