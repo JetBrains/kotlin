@@ -12,6 +12,7 @@ import llvm.*
 import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.konan.binaryTypeIsReference
+import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.lower.originalConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -200,7 +201,7 @@ internal class LlvmFunctionProto(
     /**
      * Given the current [context], it creates a new function definition within the [llvmModule] module.
      */
-    fun createLlvmFunction(context: NativeBackendContext, llvmModule: LLVMModuleRef): LlvmFunction.Definition {
+    fun createLlvmFunction(context: NativeBackendPhaseContext, llvmModule: LLVMModuleRef): LlvmFunction.Definition {
         val function = LLVMAddFunction(llvmModule, name, signature.llvmFunctionType)!!
         addDefaultLlvmFunctionAttributes(context, function)
         addTargetCpuAndFeaturesAttributes(context, function)

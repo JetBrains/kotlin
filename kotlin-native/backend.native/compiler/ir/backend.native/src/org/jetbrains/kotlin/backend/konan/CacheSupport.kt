@@ -238,3 +238,8 @@ internal class FileIdProvider(private val deserializer: KonanPartialModuleDeseri
                 .map { CacheSupport.cacheFileId(it.file.packageFqName.asString(), it.file.fileEntry.name) }
     }
 }
+
+internal val KotlinLibrary.sortedFileIds: List<String>
+    get() = getFilesWithFqNames()
+            .sortedBy { it.filePath }
+            .map { CacheSupport.cacheFileId(it.fqName, it.filePath) }

@@ -41,7 +41,7 @@ internal class CodeGenerator(override val generationState: NativeGenerationState
      * Creates an LLVM function declaration within the current context and the associated LLVM module.
      */
     fun addFunctionDefinition(proto: LlvmFunctionProto): LlvmFunction.Definition =
-            proto.createLlvmFunction(context, llvm.module)
+            proto.createLlvmFunction(generationState, llvm.module)
 
     fun getLlvmFunctionFrom(function: IrSimpleFunction): LlvmFunction =
             getLlvmFunctionOrNullFrom(function) ?: error("No function ${function.name} in ${function.file.packageFqName}")
@@ -49,7 +49,8 @@ internal class CodeGenerator(override val generationState: NativeGenerationState
     fun getLlvmFunctionOrNullFrom(function: IrSimpleFunction): LlvmFunction? =
             function.llvmFunctionOrNull
 
-    val llvmDeclarations = generationState.llvmDeclarations
+    val llvmDeclarations
+        get() = generationState.llvmDeclarations
     val intPtrType = LLVMIntPtrTypeInContext(llvm.llvmContext, llvmTargetData)!!
 
     internal val immOneIntPtrType = LLVMConstInt(intPtrType, 1, 1)!!
@@ -78,7 +79,7 @@ internal class CodeGenerator(override val generationState: NativeGenerationState
         LLVMCreateLocation(LLVMGetModuleContext(llvm.module), locationInfo.line, locationInfo.column, locationInfo.scope)
 
     val objCDataGenerator = when {
-        context.config.target.family.isAppleFamily -> ObjCDataGenerator(this)
+        generationState.config.target.family.isAppleFamily -> ObjCDataGenerator(this)
         else -> null
     }
 
@@ -623,7 +624,8 @@ internal abstract class FunctionGenerationContext(
     )
 
     override val generationState = codegen.generationState
-    val llvmDeclarations = generationState.llvmDeclarations
+    val llvmDeclarations
+        get() = generationState.llvmDeclarations
     val vars = VariableManager(this)
     private val basicBlockToLastLocation = mutableMapOf<LLVMBasicBlockRef, LocationInfoRange>()
 
@@ -657,7 +659,7 @@ internal abstract class FunctionGenerationContext(
 
     private var setCurrentFrameIsCalled: Boolean = false
 
-    val stackLocalsManager = StackLocalsManagerImpl(this, stackLocalsInitBb)
+    val stackLocalsManager by lazy { StackLocalsManagerImpl(this, stackLocalsInitBb) }
 
     private var cleanupLangdingpadIsUsed = false
 
@@ -951,7 +953,7 @@ internal abstract class FunctionGenerationContext(
     }
 
     fun unreachable(): LLVMValueRef? {
-        if (context.config.debug) {
+        if (generationState.config.debug) {
             call(llvm.llvmTrap, emptyList())
         }
         val res = LLVMBuildUnreachable(builder)
@@ -1080,7 +1082,7 @@ internal abstract class FunctionGenerationContext(
     ): ExceptionHandler {
         val lpBlock = basicBlockInFunction("filteringExceptionHandler", position()?.start)
 
-        val wrapExceptionMode = context.config.target.family.isAppleFamily &&
+        val wrapExceptionMode = generationState.config.target.family.isAppleFamily &&
                 foreignExceptionMode == ForeignExceptionMode.Mode.OBJC_WRAP
 
         appendingTo(lpBlock) {
@@ -1213,7 +1215,7 @@ internal abstract class FunctionGenerationContext(
     }
 
     fun generateFrameCheck() {
-        if (!context.shouldOptimize())
+        if (!generationState.shouldOptimize())
             call(llvm.checkCurrentFrameFunction, listOf(slotsPhi!!))
     }
 
@@ -1262,7 +1264,7 @@ internal abstract class FunctionGenerationContext(
     }
 
     internal fun debugLocation(startLocationInfo: LocationInfo, endLocation: LocationInfo?) {
-        if (!context.shouldContainLocationDebugInfo()) return
+        if (!generationState.shouldContainLocationDebugInfo()) return
 
         // If there is no actual offset, use the previous one if it exists.
         if (startLocationInfo.line != 0 || basicBlockToLastLocation[currentBlock] == null)
@@ -1352,7 +1354,7 @@ internal abstract class FunctionGenerationContext(
     }
 
     fun resetDebugLocation() {
-        if (!context.shouldContainLocationDebugInfo()) return
+        if (!generationState.shouldContainLocationDebugInfo()) return
         currentPositionHolder.resetBuilderDebugLocation()
     }
 
@@ -1558,16 +1560,16 @@ internal abstract class FunctionGenerationContext(
         }
 
         fun resetBuilderDebugLocation() {
-            if (!context.shouldContainLocationDebugInfo()) return
+            if (!generationState.shouldContainLocationDebugInfo()) return
             LLVMBuilderResetDebugLocation(builder)
         }
 
         fun setBuilderDebugLocation(debugLocation: DILocationRef?) {
-            if (!context.shouldContainLocationDebugInfo()) return
+            if (!generationState.shouldContainLocationDebugInfo()) return
             LLVMBuilderSetDebugLocation(builder, debugLocation)
         }
 
-        fun hasDebugLocation() = context.shouldContainLocationDebugInfo() && LLVMGetCurrentDebugLocation2(builder) != null
+        fun hasDebugLocation() = generationState.shouldContainLocationDebugInfo() && LLVMGetCurrentDebugLocation2(builder) != null
     }
 
     private var currentPositionHolder: PositionHolder = PositionHolder()

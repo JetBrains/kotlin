@@ -327,7 +327,7 @@ internal open class BasicLlvmHelpers(bitcodeContext: BitcodePostProcessingContex
 
 @Suppress("FunctionName", "PropertyName", "PrivatePropertyName")
 internal class CodegenLlvmHelpers(private val generationState: NativeGenerationState, module: LLVMModuleRef) : BasicLlvmHelpers(generationState, module), RuntimeAware {
-    private val context = generationState.context
+    private val context get() = generationState.context
 
     private fun importFunction(name: String, otherModule: LLVMModuleRef, returnsObjectType: Boolean): LlvmFunction {
         if (LLVMGetNamedFunction(module, name) != null) {
@@ -349,7 +349,7 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
     private fun importMemset(): LlvmCallable {
         val functionType = functionType(voidType, false, pointerType, int8Type, int32Type, int1Type)
         return llvmIntrinsic(
-                if (context.config.useLlvmOpaquePointers) "llvm.memset.p0.i32"
+                if (generationState.config.useLlvmOpaquePointers) "llvm.memset.p0.i32"
                 else "llvm.memset.p0i8.i32",
                 functionType)
     }
@@ -376,7 +376,7 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
             require(LLVMGetLinkage(found) == llvmFunctionProto.linkage)
             return LlvmFunction.Declaration(found, llvmFunctionProto.signature)
         } else {
-            return llvmFunctionProto.createLlvmFunction(context, module)
+            return llvmFunctionProto.createLlvmFunction(generationState, module)
         }
     }
 
@@ -404,7 +404,7 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
 
     val staticData = KotlinStaticData(generationState, this, module)
 
-    private val target = context.config.target
+    private val target = generationState.config.target
 
     override val runtime get() = generationState.runtime
 

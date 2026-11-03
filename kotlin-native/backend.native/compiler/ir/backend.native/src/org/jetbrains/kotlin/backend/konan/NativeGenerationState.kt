@@ -26,6 +26,21 @@ import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.konan.config.konanHome
 import org.jetbrains.kotlin.util.PerformanceManager
+import java.lang.reflect.Proxy
+
+private fun unreachableNativeLoweringContext(config: NativeSecondStageCompilationConfig): NativeLoweringContext {
+    val configChecks: ConfigChecks = BasicNativeBackendPhaseContext(config)
+    return Proxy.newProxyInstance(
+            NativeLoweringContext::class.java.classLoader,
+            arrayOf(NativeLoweringContext::class.java)
+    ) { _, method, args ->
+        if (method.declaringClass.isAssignableFrom(ConfigChecks::class.java)) {
+            method.invoke(configChecks, *(args ?: emptyArray()))
+        } else {
+            error("NativeLoweringContext.${method.name} is not available without NativeBackendContext")
+        }
+    } as NativeLoweringContext
+}
 
 internal class FileLowerState {
     private var functionReferenceCount = 0
@@ -58,14 +73,20 @@ internal class NativeGenerationState(
         config: NativeSecondStageCompilationConfig,
         // TODO: Get rid of this property completely once transition to the dynamic driver is complete.
         //  It will reduce code coupling and make it easier to create NativeGenerationState instances.
-        val context: NativeBackendContext,
+        val contextOrNull: NativeBackendContext?,
         val cacheInfo: PartialCacheInfo?,
         val dependenciesTracker: DependenciesTracker,
         val llvmModuleSpecification: LlvmModuleSpecification,
         val outputFiles: OutputFiles,
         val llvmModuleName: String,
         override val performanceManager: PerformanceManager?,
-) : BasicNativeBackendPhaseContext(config), NativeLoweringContext by context, LlvmIrHolder, BitcodePostProcessingContext {
+) : BasicNativeBackendPhaseContext(config),
+        NativeLoweringContext by (contextOrNull ?: unreachableNativeLoweringContext(config)),
+        LlvmIrHolder,
+        BitcodePostProcessingContext {
+    val context: NativeBackendContext
+        get() = contextOrNull ?: error("NativeBackendContext is not available")
+
     val cacheDeserializationStrategy: CacheDeserializationStrategy?
         get() = cacheInfo?.strategy
 
@@ -84,7 +105,8 @@ internal class NativeGenerationState(
 
     lateinit var fileLowerState: FileLowerState
 
-    val producedLlvmModuleContainsStdlib = llvmModuleSpecification.containsModule(context.irLinker.getBuiltInsModule())
+    val producedLlvmModuleContainsStdlib =
+            contextOrNull != null && llvmModuleSpecification.containsModule(contextOrNull.irLinker.getBuiltInsModule())
 
     internal val runtimeModulesConfig = RuntimeModulesConfig(config)
 
@@ -122,7 +144,7 @@ internal class NativeGenerationState(
         get() = super.inVerbosePhase
         set(value) {
             super.inVerbosePhase = value
-            context.inVerbosePhase = value
+            contextOrNull?.inVerbosePhase = value
         }
 
     override fun log(message: String) {

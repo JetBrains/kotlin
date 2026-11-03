@@ -124,6 +124,28 @@ interface ObjCExportNamer {
 
         @InternalKotlinNativeApi
         const val nsEnumPropertyName: String = "nsEnum"
+
+        @InternalKotlinNativeApi
+        fun specialStandardClassOrProtocolName(topLevelNamePrefix: String, baseName: String) = ClassOrProtocolName(
+            swiftName = "Kotlin$baseName",
+            objCName = "$topLevelNamePrefix$baseName"
+        )
+
+        @InternalKotlinNativeApi
+        fun kotlinAnyName(topLevelNamePrefix: String) = specialStandardClassOrProtocolName(topLevelNamePrefix, "Base")
+
+        @InternalKotlinNativeApi
+        fun mutableSetName(topLevelNamePrefix: String) = specialStandardClassOrProtocolName(topLevelNamePrefix, "MutableSet")
+
+        @InternalKotlinNativeApi
+        fun mutableMapName(topLevelNamePrefix: String) = specialStandardClassOrProtocolName(topLevelNamePrefix, "MutableDictionary")
+
+        @InternalKotlinNativeApi
+        fun kotlinNumberName(topLevelNamePrefix: String) = specialStandardClassOrProtocolName(topLevelNamePrefix, "Number")
+
+        @InternalKotlinNativeApi
+        fun numberBoxName(topLevelNamePrefix: String, classId: ClassId) =
+            specialStandardClassOrProtocolName(topLevelNamePrefix, classId.shortClassName.asString())
     }
 }
 
@@ -361,20 +383,15 @@ class ObjCExportNamerImpl(
     override val topLevelNamePrefix get() = configuration.topLevelNamePrefix
     private val helper = ObjCExportNamingHelper(configuration.topLevelNamePrefix, objcGenerics)
 
-    private fun String.toSpecialStandardClassOrProtocolName() = ObjCExportNamer.ClassOrProtocolName(
-        swiftName = "Kotlin$this",
-        objCName = "${topLevelNamePrefix}$this"
-    )
+    override val kotlinAnyName = ObjCExportNamer.kotlinAnyName(topLevelNamePrefix)
 
-    override val kotlinAnyName = "Base".toSpecialStandardClassOrProtocolName()
-
-    override val mutableSetName = "MutableSet".toSpecialStandardClassOrProtocolName()
-    override val mutableMapName = "MutableDictionary".toSpecialStandardClassOrProtocolName()
+    override val mutableSetName = ObjCExportNamer.mutableSetName(topLevelNamePrefix)
+    override val mutableMapName = ObjCExportNamer.mutableMapName(topLevelNamePrefix)
 
     override fun numberBoxName(classId: ClassId): ObjCExportNamer.ClassOrProtocolName =
-        classId.shortClassName.asString().toSpecialStandardClassOrProtocolName()
+        ObjCExportNamer.numberBoxName(topLevelNamePrefix, classId)
 
-    override val kotlinNumberName = "Number".toSpecialStandardClassOrProtocolName()
+    override val kotlinNumberName = ObjCExportNamer.kotlinNumberName(topLevelNamePrefix)
 
     private val methodSelectors = object : Mapping<FunctionDescriptor, String>(ObjCExportNameKind.SELECTOR) {
 

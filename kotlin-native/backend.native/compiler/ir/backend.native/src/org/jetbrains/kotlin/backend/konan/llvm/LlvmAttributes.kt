@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
 import llvm.*
-import org.jetbrains.kotlin.backend.konan.NativeBackendContext
+import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.Family
 
@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.konan.target.Family
  * Mimics parts of clang's `CodeGenModule::getDefaultFunctionAttributes`
  * that are required for Kotlin/Native compiler.
  */
-internal fun addDefaultLlvmFunctionAttributes(context: NativeBackendContext, llvmFunction: LLVMValueRef) {
+internal fun addDefaultLlvmFunctionAttributes(context: NativeBackendPhaseContext, llvmFunction: LLVMValueRef) {
     if (shouldEnforceFramePointer(context)) {
         // Note: this is default for clang on at least on iOS and macOS.
         enforceFramePointer(llvmFunction, context)
@@ -25,7 +25,7 @@ internal fun addDefaultLlvmFunctionAttributes(context: NativeBackendContext, llv
 /**
  * Set target cpu and its features to make LLVM generate correct machine code.
  */
-internal fun addTargetCpuAndFeaturesAttributes(context: NativeBackendContext, llvmFunction: LLVMValueRef) {
+internal fun addTargetCpuAndFeaturesAttributes(context: NativeBackendPhaseContext, llvmFunction: LLVMValueRef) {
     context.config.platform.targetCpu?.let {
         LLVMAddTargetDependentFunctionAttr(llvmFunction, "target-cpu", it)
     }
@@ -34,7 +34,7 @@ internal fun addTargetCpuAndFeaturesAttributes(context: NativeBackendContext, ll
     }
 }
 
-private fun shouldEnforceFramePointer(context: NativeBackendContext): Boolean {
+private fun shouldEnforceFramePointer(context: NativeBackendPhaseContext): Boolean {
     // TODO: do we still need it?
     if (!context.shouldOptimize()) {
         return true
@@ -46,7 +46,7 @@ private fun shouldEnforceFramePointer(context: NativeBackendContext): Boolean {
     }
 }
 
-private fun enforceFramePointer(llvmFunction: LLVMValueRef, context: NativeBackendContext) {
+private fun enforceFramePointer(llvmFunction: LLVMValueRef, context: NativeBackendPhaseContext) {
     val target = context.config.target
 
     // Matches Clang behaviour.

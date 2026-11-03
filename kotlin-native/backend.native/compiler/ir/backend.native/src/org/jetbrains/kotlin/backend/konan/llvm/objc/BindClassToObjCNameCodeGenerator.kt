@@ -126,12 +126,14 @@ private fun buildSerializedObjCAdapter(
  * just like the adapters of the files compiled here.
  */
 internal fun CodeGenerator.emitBindClassToObjCNameAdaptersFromCaches() {
-    if (!context.config.isFinalBinary) return
-    if (!context.config.target.family.isAppleFamily) return
+    val config = generationState.config
+    if (!config.isFinalBinary) return
+    if (!config.target.family.isAppleFamily) return
 
-    context.irModules.forEach { module ->
-        val library = module.kotlinLibrary ?: return@forEach
-        val cache = context.config.cachedLibraries.getLibraryCache(library) ?: return@forEach
+    val libraries = generationState.contextOrNull?.irModules?.mapNotNull { it.kotlinLibrary }
+            ?: config.klibDag.librariesReverseTopoSorted
+    libraries.forEach { library ->
+        val cache = config.cachedLibraries.getLibraryCache(library) ?: return@forEach
         cache.serializedObjCAdapters.forEach { emitObjCAdapterFromCache(library, it) }
     }
 }
@@ -174,9 +176,14 @@ private fun CodeGenerator.emitObjCAdapterFromCache(
 }
 
 private fun CodeGenerator.markCachedFileAsUsed(library: KotlinLibrary, fileReference: SerializedFileReference) {
-    val moduleDeserializer = context.moduleDeserializerProvider.getDeserializerOrNull(library) ?: return
-    val irFile = with(moduleDeserializer) { fileReference.deserializationState.file }
-    generationState.dependenciesTracker.add(irFile, onlyBitcode = true)
+    val context = generationState.contextOrNull
+    if (context != null) {
+        val moduleDeserializer = context.moduleDeserializerProvider.getDeserializerOrNull(library) ?: return
+        val irFile = with(moduleDeserializer) { fileReference.deserializationState.file }
+        generationState.dependenciesTracker.add(irFile, onlyBitcode = true)
+    } else {
+        generationState.dependenciesTracker.addFileOfLibrary(library, fileReference.fqName, fileReference.path, onlyBitcode = true)
+    }
 }
 
 /**

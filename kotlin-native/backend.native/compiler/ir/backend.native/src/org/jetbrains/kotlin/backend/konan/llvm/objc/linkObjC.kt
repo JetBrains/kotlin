@@ -13,12 +13,13 @@ import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.runtime.RuntimeModule
 import org.jetbrains.kotlin.backend.konan.objcexport.NSNumberKind
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamer
+import org.jetbrains.kotlin.backend.konan.objcexport.objCExportTopLevelNamePrefix
 
 internal fun patchObjCRuntimeModule(generationState: NativeGenerationState): LLVMModuleRef? {
     val config = generationState.config
     if (!(config.isFinalBinary && config.target.family.isAppleFamily)) return null
 
-    val patchBuilder = PatchBuilder(generationState.objCExport.namer)
+    val patchBuilder = PatchBuilder(generationState.objCExportTopLevelNamePrefix)
     patchBuilder.addObjCPatches()
 
     val bitcodeFile = generationState.runtimeModulesConfig.absolutePathFor(RuntimeModule.OBJC)
@@ -28,7 +29,7 @@ internal fun patchObjCRuntimeModule(generationState: NativeGenerationState): LLV
     return parsedModule
 }
 
-private class PatchBuilder(val objCExportNamer: ObjCExportNamer) {
+private class PatchBuilder(val topLevelNamePrefix: String) {
     enum class GlobalKind(val prefix: String) {
         OBJC_CLASS("OBJC_CLASS_\$_"),
         OBJC_METACLASS("OBJC_METACLASS_\$_"),
@@ -54,7 +55,7 @@ private class PatchBuilder(val objCExportNamer: ObjCExportNamer) {
 
     // Note: exported classes anyway use the same prefix,
     // so using more unique private prefix wouldn't help to prevent any clashes.
-    private val privatePrefix = objCExportNamer.topLevelNamePrefix
+    private val privatePrefix = topLevelNamePrefix
 
     fun addProtocolImport(name: String) {
         literalPatches += LiteralPatch(ObjCDataGenerator.classNameGenerator, name, name)
@@ -116,14 +117,14 @@ private fun PatchBuilder.addObjCPatches() {
     addPrivateCategory("NSDictionaryToKotlin")
     addPrivateCategory("NSEnumeratorAsAssociatedObject")
 
-    addExportedClass(objCExportNamer.kotlinAnyName, "KotlinBase", "refHolder")
+    addExportedClass(ObjCExportNamer.kotlinAnyName(topLevelNamePrefix), "KotlinBase", "refHolder")
 
-    addExportedClass(objCExportNamer.mutableSetName, "KotlinMutableSet", "setHolder")
-    addExportedClass(objCExportNamer.mutableMapName, "KotlinMutableDictionary", "mapHolder")
+    addExportedClass(ObjCExportNamer.mutableSetName(topLevelNamePrefix), "KotlinMutableSet", "setHolder")
+    addExportedClass(ObjCExportNamer.mutableMapName(topLevelNamePrefix), "KotlinMutableDictionary", "mapHolder")
 
-    addExportedClass(objCExportNamer.kotlinNumberName, "KotlinNumber")
+    addExportedClass(ObjCExportNamer.kotlinNumberName(topLevelNamePrefix), "KotlinNumber")
     NSNumberKind.values().mapNotNull { it.mappedKotlinClassId }.forEach {
-        addExportedClass(objCExportNamer.numberBoxName(it), "Kotlin${it.shortClassName}", "value_")
+        addExportedClass(ObjCExportNamer.numberBoxName(topLevelNamePrefix, it), "Kotlin${it.shortClassName}", "value_")
     }
 }
 

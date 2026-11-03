@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.*
 
 internal open class ObjCCodeGenerator(val codegen: CodeGenerator) {
     val generationState = codegen.generationState
-    val context = codegen.context
+    val context get() = codegen.context
     val llvm = codegen.llvm
 
     val dataGenerator = codegen.objCDataGenerator!!
@@ -60,7 +60,7 @@ internal open class ObjCCodeGenerator(val codegen: CodeGenerator) {
 
     val objcRetainAutoreleasedReturnValueMarker: LLVMValueRef? by lazy {
         // See emitAutoreleasedReturnValueMarker in Clang.
-        val asmString = codegen.context.config.target.getARCRetainAutoreleasedReturnValueMarker() ?: return@lazy null
+        val asmString = generationState.config.target.getARCRetainAutoreleasedReturnValueMarker() ?: return@lazy null
         LLVMGetInlineAsm(
                 Ty = functionType(llvm.voidType, false),
                 AsmString = asmString,

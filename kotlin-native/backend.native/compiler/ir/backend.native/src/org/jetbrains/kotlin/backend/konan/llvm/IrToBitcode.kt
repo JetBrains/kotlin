@@ -2672,64 +2672,15 @@ internal class CodeGeneratorVisitor(
 
     //-------------------------------------------------------------------------//
 
-    private fun appendLlvmUsed(name: String, args: List<LLVMValueRef>) {
-        if (args.isEmpty()) return
-
-        val llvmUsedGlobal = codegen.staticData.placeGlobalArray(name, llvm.pointerType, args.map { constPointer(it) })
-
-        LLVMSetLinkage(llvmUsedGlobal.llvmGlobal, LLVMLinkage.LLVMAppendingLinkage)
-        LLVMSetSection(llvmUsedGlobal.llvmGlobal, "llvm.metadata")
-    }
+    private fun appendLlvmUsed(name: String, args: List<LLVMValueRef>) =
+            appendLlvmUsed(codegen, name, args)
 
     // Globals set this way cannot be const, but are overridable when producing final executable.
     private fun overrideRuntimeGlobal(name: String, value: ConstValue) =
             codegen.replaceExternalWeakOrCommonGlobalFromNativeRuntime(name, value)
 
-    private fun overrideRuntimeGlobals() {
-        if (!context.config.isFinalBinary)
-            return
-
-        context(llvm) {
-            overrideRuntimeGlobal(NativeRuntimeOverridableConstants.GC_MUTATORS_COOPERATE, context.config.gcMutatorsCooperate.toLlvmConstInt32())
-            overrideRuntimeGlobal(NativeRuntimeOverridableConstants.AUX_GC_THREADS, context.config.auxGCThreads.toInt().toLlvmConstInt32())
-            overrideRuntimeGlobal(NativeRuntimeOverridableConstants.CONCURRENT_MARK_MAX_ITERATIONS, context.config.concurrentMarkMaxIterations.toInt().toLlvmConstInt32())
-            overrideRuntimeGlobal(NativeRuntimeOverridableConstants.SUSPEND_FUNCTIONS_FROM_ANY_THREAD_FROM_OBJC, context.config.suspendFunctionsFromAnyThreadFromObjC.toLlvmConstInt32())
-
-            val getSourceInfoFunctionName = when (context.config.sourceInfoType) {
-                SourceInfoType.NOOP -> null
-                SourceInfoType.LIBBACKTRACE -> NativeRuntimeOverridableConstants.GET_SOURCE_INFO_LIB_BACKTRACE
-                SourceInfoType.CORESYMBOLICATION -> NativeRuntimeOverridableConstants.GET_SOURCE_INFO_CORE_SYMBOLICATION
-            }
-            if (getSourceInfoFunctionName != null) {
-                val getSourceInfoFunction = LLVMGetNamedFunction(llvm.module, getSourceInfoFunctionName)
-                        ?: LLVMAddFunction(llvm.module, getSourceInfoFunctionName,
-                                functionType(llvm.int32Type, false, llvm.pointerType, llvm.pointerType, llvm.int32Type))
-                overrideRuntimeGlobal(NativeRuntimeOverridableConstants.GET_SOURCE_INFO_FUNCTION, constValue(getSourceInfoFunction!!))
-            }
-
-            overrideRuntimeGlobal(NativeRuntimeOverridableConstants.CORE_SYMBOLICATION_USE_ONLY_KOTLIN_IMAGE, context.config.coreSymbolicationUseOnlyKotlinImage.toLlvmConstInt32())
-
-            if (context.config.target.family == Family.ANDROID && context.config.produce == CompilerOutputKind.PROGRAM) {
-                val configuration = context.config.configuration
-                val programType = configuration[BinaryOptions.androidProgramType] ?: AndroidProgramType.Default
-                overrideRuntimeGlobal(NativeRuntimeOverridableConstants.PRINT_TO_ANDROID_LOGCAT, programType.consolePrintsToLogcat.toLlvmConstInt32())
-            }
-            overrideRuntimeGlobal(NativeRuntimeOverridableConstants.APP_STATE_TRACKING, context.config.appStateTracking.value.toLlvmConstInt32())
-
-            overrideRuntimeGlobal(NativeRuntimeOverridableConstants.OBJC_DISPOSE_ON_MAIN, context.config.objcDisposeOnMain.toLlvmConstInt32())
-            overrideRuntimeGlobal(NativeRuntimeOverridableConstants.OBJC_DSIPOSE_WITH_RUN_LOOP, context.config.objcDisposeWithRunLoop.toLlvmConstInt32())
-
-            overrideRuntimeGlobal(NativeRuntimeOverridableConstants.ENABLE_SAFEPOINT_SIGNPOSTS, context.config.enableSafepointSignposts.toLlvmConstInt32())
-            overrideRuntimeGlobal(NativeRuntimeOverridableConstants.SWIFT_EXPORT, context.config.swiftExport.toLlvmConstInt32())
-            overrideRuntimeGlobal(NativeRuntimeOverridableConstants.LATIN1_STRINGS, context.config.latin1Strings.toLlvmConstInt32())
-            overrideRuntimeGlobal(NativeRuntimeOverridableConstants.MMAP_TAG, context.config.mmapTag.toLlvmConstUInt8())
-
-            overrideRuntimeGlobal(NativeRuntimeOverridableConstants.MINIDUMP_LOCATION, context.config.minidumpLocation.toCStringLiteral())
-            overrideRuntimeGlobal(NativeRuntimeOverridableConstants.MINIDUMP_ON_SIGTERM, context.config.minidumpOnSIGTERM.toLlvmConstInt32())
-
-            overrideRuntimeGlobal(NativeRuntimeOverridableConstants.RUNTIME_LOGS, context.config.runtimeLogs.toLLVMConstArray())
-        }
-    }
+    private fun overrideRuntimeGlobals() =
+            overrideRuntimeGlobals(codegen)
 
     //-------------------------------------------------------------------------//
     // Create type { i32, void ()*, i8* }
@@ -2739,156 +2690,14 @@ internal class CodeGeneratorVisitor(
     //-------------------------------------------------------------------------//
     // Create object { i32, void ()*, i8* } { i32 1, void ()* @ctorFunction, i8* null }
 
-    fun createGlobalCtor(ctorFunction: LlvmCallable): ConstPointer {
-        val priority = if (context.config.target.family == Family.MINGW) {
-            // Workaround MinGW bug. Using this value makes the compiler generate
-            // '.ctors' section instead of '.ctors.XXXXX', which can't be recognized by ld
-            // when string table is too long.
-            // More details: https://youtrack.jetbrains.com/issue/KT-39548
-            llvm.int32(65535)
-            // Note: this difference in priorities doesn't actually make initializers
-            // platform-dependent, because handling priorities for initializers
-            // from different object files is platform-dependent anyway.
-        } else {
-            llvm.kImmInt32One
-        }
-        val data = llvm.kNull
-        val argList = cValuesOf(priority, ctorFunction.toConstPointer().llvm, data)
-        val ctorItem = LLVMConstNamedStruct(kCtorType, argList, 3)!!
-        return constPointer(ctorItem)
-    }
+    fun createGlobalCtor(ctorFunction: LlvmCallable): ConstPointer =
+            createGlobalCtor(codegen, kCtorType, ctorFunction)
 
     //-------------------------------------------------------------------------//
-    fun appendStaticInitializers() {
-        // Note: the list of libraries is topologically sorted (in order for initializers to be called correctly).
-        val dependencies = (generationState.dependenciesTracker.allBitcodeDependencies + listOf(null)/* Null for "current" non-library module */)
-
-        val libraryToInitializers = dependencies.associate { it?.library to mutableListOf<RuntimeInitializer>() }
-
-        llvm.irStaticInitializers.forEach {
-            val library = it.konanLibrary
-            val initializers = libraryToInitializers[library]
-                    ?: error("initializer for not included library ${library?.path}")
-
-            initializers.add(it.runtimeInitializer)
-        }
-
-        fun fileCtorName(libraryName: String, fileName: String) = "$libraryName:$fileName".moduleConstructorName
-
-        fun ctorProto(ctorName: String): LlvmFunctionProto {
-            return ctorFunctionSignature.toProto(ctorName, null, LLVMLinkage.LLVMExternalLinkage)
-        }
-
-        val ctorFunctions = dependencies.flatMap { dependency ->
-            val library = dependency?.library
-            val initializer = mergeRuntimeInitializers(libraryToInitializers.getValue(library))
-                    ?.let { createInitCtor(createInitNode(it)) }
-
-            val ctorName = when {
-                // TODO: Try to not use moduleId.
-                library == null -> when {
-                    !context.config.produce.isCache -> context.config.moduleId.moduleConstructorName
-                    context.config.producePerFileCache && generationState.cacheInfo != null ->
-                        fileCtorName(generationState.cacheInfo.klib.uniqueName, generationState.outputFiles.cacheFileName)
-                    else -> generationState.outputFiles.cacheFileName.moduleConstructorName
-                }
-                library == generationState.cacheInfo?.klib
-                        && context.config.producePerFileCache ->
-                    fileCtorName(library.uniqueName, generationState.outputFiles.perFileCacheFileName)
-                else -> library.moduleConstructorName
+    fun appendStaticInitializers() =
+            appendStaticInitializers(codegen) { initializers ->
+                mergeRuntimeInitializers(initializers)?.let { createInitCtor(createInitNode(it)) }
             }
-
-            if (library == null || generationState.llvmModuleSpecification.containsLibrary(library)) {
-                val otherInitializers = llvm.otherStaticInitializers.takeIf { library == null }.orEmpty()
-
-                listOf(
-                    appendStaticInitializers(ctorProto(ctorName), listOfNotNull(initializer) + otherInitializers)
-                )
-            } else {
-                // A cached library.
-                check(initializer == null) {
-                    "found initializer from ${library.path}, which is not included into compilation"
-                }
-
-                val cache = context.config.cachedLibraries.getLibraryCache(library)
-                        ?: error("Library ${library.path} is expected to be cached")
-
-                when (cache) {
-                    is CachedLibraries.Cache.Monolithic -> listOf(ctorProto(ctorName))
-                    is CachedLibraries.Cache.PerFile -> {
-                        val files = when (dependency.kind) {
-                            is DependenciesTracker.DependencyKind.WholeModule -> {
-                                val fileIdProvider: FileIdProvider = context.moduleDeserializerProvider.getDeserializerOrNull(library)
-                                        ?.let { FileIdProvider(it) }
-                                        ?: error("Can't find deserializer for ${library.path}")
-                                fileIdProvider.sortedFileIds
-                            }
-                            is DependenciesTracker.DependencyKind.CertainFiles ->
-                                dependency.kind.files.map { it.name }
-                        }
-                        files.map { ctorProto(fileCtorName(library.uniqueName, it)) }
-                    }
-                }.map {
-                    codegen.addFunctionDefinition(it)
-                }
-            }
-        }
-
-        appendGlobalCtors(ctorFunctions)
-    }
-
-    private fun appendStaticInitializers(ctorCallableProto: LlvmFunctionProto, initializers: List<LlvmCallable>) : LlvmCallable {
-        return generateFunctionNoRuntime(codegen, ctorCallableProto) {
-            val initGuardName = function.name.orEmpty() + "_guard"
-            val initGuard = LLVMAddGlobal(llvm.module, llvm.int32Type, initGuardName)
-            LLVMSetInitializer(initGuard, llvm.kImmInt32Zero)
-            LLVMSetLinkage(initGuard, LLVMLinkage.LLVMPrivateLinkage)
-            val bbInited = basicBlock("inited", null)
-            val bbNeedInit = basicBlock("need_init", null)
-
-
-            val value = LLVMBuildLoad2(builder, llvm.int32Type, initGuard, "")!!
-            condBr(icmpEq(value, llvm.kImmInt32Zero), bbNeedInit, bbInited)
-
-            appendingTo(bbInited) {
-                ret(null)
-            }
-
-            appendingTo(bbNeedInit) {
-                LLVMBuildStore(builder, llvm.kImmInt32One, initGuard)
-
-                // TODO: shall we put that into the try block?
-                initializers.forEach {
-                    call(it, emptyList(), Lifetime.IRRELEVANT,
-                            exceptionHandler = ExceptionHandler.Caller, verbatim = true)
-                }
-                ret(null)
-            }
-        }
-    }
-
-    private fun appendGlobalCtors(ctorFunctions: List<LlvmCallable>) {
-        if (context.config.isFinalBinary) {
-            // Generate function calling all [ctorFunctions].
-            val ctorProto = ctorFunctionSignature.toProto(
-                    name = "_Konan_constructors",
-                    origin = null,
-                    linkage = if (context.config.produce == CompilerOutputKind.PROGRAM) LLVMLinkage.LLVMExternalLinkage else LLVMLinkage.LLVMPrivateLinkage
-            )
-            val globalCtorCallable = generateFunctionNoRuntime(codegen, ctorProto) {
-                ctorFunctions.forEach {
-                    call(it, emptyList(), Lifetime.IRRELEVANT,
-                            exceptionHandler = ExceptionHandler.Caller, verbatim = true)
-                }
-                ret(null)
-            }
-
-            // Append initializers of global variables in "llvm.global_ctors" array.
-            val globalCtors = codegen.staticData.placeGlobalArray("llvm.global_ctors", kCtorType,
-                    listOf(createGlobalCtor(globalCtorCallable)))
-            LLVMSetLinkage(globalCtors.llvmGlobal, LLVMLinkage.LLVMAppendingLinkage)
-        }
-    }
 
     //-------------------------------------------------------------------------//
 
@@ -2941,6 +2750,240 @@ private fun Map<LoggingTag, LoggingLevel>.toLLVMConstArray() = ConstArray(
         }
 )
 
+private fun appendLlvmUsed(codegen: CodeGenerator, name: String, args: List<LLVMValueRef>) {
+    if (args.isEmpty()) return
+
+    val llvm = codegen.llvm
+    val llvmUsedGlobal = codegen.staticData.placeGlobalArray(name, llvm.pointerType, args.map { constPointer(it) })
+
+    LLVMSetLinkage(llvmUsedGlobal.llvmGlobal, LLVMLinkage.LLVMAppendingLinkage)
+    LLVMSetSection(llvmUsedGlobal.llvmGlobal, "llvm.metadata")
+}
+
+private fun overrideRuntimeGlobals(codegen: CodeGenerator) {
+    val config = codegen.generationState.config
+    if (!config.isFinalBinary)
+        return
+
+    val llvm = codegen.llvm
+    fun overrideRuntimeGlobal(name: String, value: ConstValue) =
+            codegen.replaceExternalWeakOrCommonGlobalFromNativeRuntime(name, value)
+
+    context(llvm) {
+        overrideRuntimeGlobal(NativeRuntimeOverridableConstants.GC_MUTATORS_COOPERATE, config.gcMutatorsCooperate.toLlvmConstInt32())
+        overrideRuntimeGlobal(NativeRuntimeOverridableConstants.AUX_GC_THREADS, config.auxGCThreads.toInt().toLlvmConstInt32())
+        overrideRuntimeGlobal(
+                NativeRuntimeOverridableConstants.CONCURRENT_MARK_MAX_ITERATIONS,
+                config.concurrentMarkMaxIterations.toInt().toLlvmConstInt32(),
+        )
+        overrideRuntimeGlobal(
+                NativeRuntimeOverridableConstants.SUSPEND_FUNCTIONS_FROM_ANY_THREAD_FROM_OBJC,
+                config.suspendFunctionsFromAnyThreadFromObjC.toLlvmConstInt32(),
+        )
+
+        val getSourceInfoFunctionName = when (config.sourceInfoType) {
+            SourceInfoType.NOOP -> null
+            SourceInfoType.LIBBACKTRACE -> NativeRuntimeOverridableConstants.GET_SOURCE_INFO_LIB_BACKTRACE
+            SourceInfoType.CORESYMBOLICATION -> NativeRuntimeOverridableConstants.GET_SOURCE_INFO_CORE_SYMBOLICATION
+        }
+        if (getSourceInfoFunctionName != null) {
+            val getSourceInfoFunction = LLVMGetNamedFunction(llvm.module, getSourceInfoFunctionName)
+                    ?: LLVMAddFunction(llvm.module, getSourceInfoFunctionName,
+                            functionType(llvm.int32Type, false, llvm.pointerType, llvm.pointerType, llvm.int32Type))
+            overrideRuntimeGlobal(NativeRuntimeOverridableConstants.GET_SOURCE_INFO_FUNCTION, constValue(getSourceInfoFunction!!))
+        }
+
+        overrideRuntimeGlobal(
+                NativeRuntimeOverridableConstants.CORE_SYMBOLICATION_USE_ONLY_KOTLIN_IMAGE,
+                config.coreSymbolicationUseOnlyKotlinImage.toLlvmConstInt32(),
+        )
+
+        if (config.target.family == Family.ANDROID && config.produce == CompilerOutputKind.PROGRAM) {
+            val configuration = config.configuration
+            val programType = configuration[BinaryOptions.androidProgramType] ?: AndroidProgramType.Default
+            overrideRuntimeGlobal(
+                    NativeRuntimeOverridableConstants.PRINT_TO_ANDROID_LOGCAT,
+                    programType.consolePrintsToLogcat.toLlvmConstInt32(),
+            )
+        }
+        overrideRuntimeGlobal(NativeRuntimeOverridableConstants.APP_STATE_TRACKING, config.appStateTracking.value.toLlvmConstInt32())
+
+        overrideRuntimeGlobal(NativeRuntimeOverridableConstants.OBJC_DISPOSE_ON_MAIN, config.objcDisposeOnMain.toLlvmConstInt32())
+        overrideRuntimeGlobal(
+                NativeRuntimeOverridableConstants.OBJC_DSIPOSE_WITH_RUN_LOOP,
+                config.objcDisposeWithRunLoop.toLlvmConstInt32(),
+        )
+
+        overrideRuntimeGlobal(
+                NativeRuntimeOverridableConstants.ENABLE_SAFEPOINT_SIGNPOSTS,
+                config.enableSafepointSignposts.toLlvmConstInt32(),
+        )
+        overrideRuntimeGlobal(NativeRuntimeOverridableConstants.SWIFT_EXPORT, config.swiftExport.toLlvmConstInt32())
+        overrideRuntimeGlobal(NativeRuntimeOverridableConstants.LATIN1_STRINGS, config.latin1Strings.toLlvmConstInt32())
+        overrideRuntimeGlobal(NativeRuntimeOverridableConstants.MMAP_TAG, config.mmapTag.toLlvmConstUInt8())
+
+        overrideRuntimeGlobal(NativeRuntimeOverridableConstants.MINIDUMP_LOCATION, config.minidumpLocation.toCStringLiteral())
+        overrideRuntimeGlobal(NativeRuntimeOverridableConstants.MINIDUMP_ON_SIGTERM, config.minidumpOnSIGTERM.toLlvmConstInt32())
+
+        overrideRuntimeGlobal(NativeRuntimeOverridableConstants.RUNTIME_LOGS, config.runtimeLogs.toLLVMConstArray())
+    }
+}
+
+private fun createGlobalCtor(codegen: CodeGenerator, kCtorType: LLVMTypeRef, ctorFunction: LlvmCallable): ConstPointer {
+    val llvm = codegen.llvm
+    val priority = if (codegen.generationState.config.target.family == Family.MINGW) {
+        llvm.int32(65535)
+    } else {
+        llvm.kImmInt32One
+    }
+    val data = llvm.kNull
+    val argList = cValuesOf(priority, ctorFunction.toConstPointer().llvm, data)
+    val ctorItem = LLVMConstNamedStruct(kCtorType, argList, 3)!!
+    return constPointer(ctorItem)
+}
+
+private fun appendStaticInitializers(
+        codegen: CodeGenerator,
+        createModuleInitializer: (List<RuntimeInitializer>) -> LlvmCallable? = { null },
+) {
+    val generationState = codegen.generationState
+    val config = generationState.config
+    val llvm = generationState.llvm
+    val ctorFunctionSignature = LlvmFunctionSignature(LlvmRetType(llvm.voidType, isObjectType = false))
+    val kCtorType = llvm.structType(llvm.int32Type, llvm.pointerType, llvm.pointerType)
+
+    // Note: the list of libraries is topologically sorted (in order for initializers to be called correctly).
+    val dependencies =
+            (generationState.dependenciesTracker.allBitcodeDependencies + listOf(null)/* Null for "current" non-library module */)
+
+    val libraryToInitializers = dependencies.associate { it?.library to mutableListOf<RuntimeInitializer>() }
+
+    llvm.irStaticInitializers.forEach {
+        val library = it.konanLibrary
+        val initializers = libraryToInitializers[library]
+                ?: error("initializer for not included library ${library?.path}")
+
+        initializers.add(it.runtimeInitializer)
+    }
+
+    fun fileCtorName(libraryName: String, fileName: String) = "$libraryName:$fileName".moduleConstructorName
+
+    fun ctorProto(ctorName: String): LlvmFunctionProto {
+        return ctorFunctionSignature.toProto(ctorName, null, LLVMLinkage.LLVMExternalLinkage)
+    }
+
+    val ctorFunctions = dependencies.flatMap { dependency ->
+        val library = dependency?.library
+        val initializer = createModuleInitializer(libraryToInitializers.getValue(library))
+
+        val ctorName = when {
+            // TODO: Try to not use moduleId.
+            library == null -> when {
+                !config.produce.isCache -> config.moduleId.moduleConstructorName
+                config.producePerFileCache && generationState.cacheInfo != null ->
+                    fileCtorName(generationState.cacheInfo.klib.uniqueName, generationState.outputFiles.cacheFileName)
+                else -> generationState.outputFiles.cacheFileName.moduleConstructorName
+            }
+            library == generationState.cacheInfo?.klib
+                    && config.producePerFileCache ->
+                fileCtorName(library.uniqueName, generationState.outputFiles.perFileCacheFileName)
+            else -> library.moduleConstructorName
+        }
+
+        if (library == null || generationState.llvmModuleSpecification.containsLibrary(library)) {
+            val otherInitializers = llvm.otherStaticInitializers.takeIf { library == null }.orEmpty()
+
+            listOf(
+                appendStaticInitializers(codegen, ctorProto(ctorName), listOfNotNull(initializer) + otherInitializers)
+            )
+        } else {
+            // A cached library.
+            check(initializer == null) {
+                "found initializer from ${library.path}, which is not included into compilation"
+            }
+
+            val cache = config.cachedLibraries.getLibraryCache(library)
+                    ?: error("Library ${library.path} is expected to be cached")
+
+            when (cache) {
+                is CachedLibraries.Cache.Monolithic -> listOf(ctorProto(ctorName))
+                is CachedLibraries.Cache.PerFile -> {
+                    val files = when (dependency.kind) {
+                        is DependenciesTracker.DependencyKind.WholeModule -> {
+                            val fileIdProvider = generationState.contextOrNull?.moduleDeserializerProvider?.getDeserializerOrNull(library)
+                                    ?.let { FileIdProvider(it) }
+                            fileIdProvider?.sortedFileIds ?: library.sortedFileIds
+                        }
+                        is DependenciesTracker.DependencyKind.CertainFiles ->
+                            dependency.kind.files.map { it.name }
+                    }
+                    files.map { ctorProto(fileCtorName(library.uniqueName, it)) }
+                }
+            }.map {
+                codegen.addFunctionDefinition(it)
+            }
+        }
+    }
+
+    if (config.isFinalBinary) {
+        // Generate function calling all [ctorFunctions].
+        val ctorProto = ctorFunctionSignature.toProto(
+                name = "_Konan_constructors",
+                origin = null,
+                linkage = if (config.produce == CompilerOutputKind.PROGRAM) {
+                    LLVMLinkage.LLVMExternalLinkage
+                } else {
+                    LLVMLinkage.LLVMPrivateLinkage
+                }
+        )
+        val globalCtorCallable = generateFunctionNoRuntime(codegen, ctorProto) {
+            ctorFunctions.forEach {
+                call(it, emptyList(), Lifetime.IRRELEVANT,
+                        exceptionHandler = ExceptionHandler.Caller, verbatim = true)
+            }
+            ret(null)
+        }
+
+        // Append initializers of global variables in "llvm.global_ctors" array.
+        val globalCtors = codegen.staticData.placeGlobalArray("llvm.global_ctors", kCtorType,
+                listOf(createGlobalCtor(codegen, kCtorType, globalCtorCallable)))
+        LLVMSetLinkage(globalCtors.llvmGlobal, LLVMLinkage.LLVMAppendingLinkage)
+    }
+}
+
+private fun appendStaticInitializers(
+        codegen: CodeGenerator,
+        ctorCallableProto: LlvmFunctionProto,
+        initializers: List<LlvmCallable>,
+): LlvmCallable {
+    return generateFunctionNoRuntime(codegen, ctorCallableProto) {
+        val initGuardName = function.name.orEmpty() + "_guard"
+        val initGuard = LLVMAddGlobal(llvm.module, llvm.int32Type, initGuardName)
+        LLVMSetInitializer(initGuard, llvm.kImmInt32Zero)
+        LLVMSetLinkage(initGuard, LLVMLinkage.LLVMPrivateLinkage)
+        val bbInited = basicBlock("inited", null)
+        val bbNeedInit = basicBlock("need_init", null)
+
+        val value = LLVMBuildLoad2(builder, llvm.int32Type, initGuard, "")!!
+        condBr(icmpEq(value, llvm.kImmInt32Zero), bbNeedInit, bbInited)
+
+        appendingTo(bbInited) {
+            ret(null)
+        }
+
+        appendingTo(bbNeedInit) {
+            LLVMBuildStore(builder, llvm.kImmInt32One, initGuard)
+
+            // TODO: shall we put that into the try block?
+            initializers.forEach {
+                call(it, emptyList(), Lifetime.IRRELEVANT,
+                        exceptionHandler = ExceptionHandler.Caller, verbatim = true)
+            }
+            ret(null)
+        }
+    }
+}
+
 internal fun NativeGenerationState.generateRuntimeConstantsModule(): LLVMModuleRef {
     val llvmModule = LLVMModuleCreateWithNameInContext("constants", llvmContext)!!
     LLVMSetDataLayout(llvmModule, runtime.dataLayout)
@@ -2951,7 +2994,7 @@ internal fun NativeGenerationState.generateRuntimeConstantsModule(): LLVMModuleR
         setRuntimeConstGlobal(NativeRuntimeConstants.RUNTIME_ASSERTS_MODE, config.runtimeAssertsMode.value.toLlvmConstInt32())
         setRuntimeConstGlobal(NativeRuntimeConstants.DISABLE_MMAP, config.disableMmap.toLlvmConstInt32())
         setRuntimeConstGlobal(NativeRuntimeConstants.RUNTIME_LOGS_ENABLED, config.runtimeLogsEnabled.toLlvmConstInt32())
-        setRuntimeConstGlobal(NativeRuntimeConstants.CONCURRENT_WEAK_SWEEP, context.config.concurrentWeakSweep.toLlvmConstInt32())
+        setRuntimeConstGlobal(NativeRuntimeConstants.CONCURRENT_WEAK_SWEEP, config.concurrentWeakSweep.toLlvmConstInt32())
         setRuntimeConstGlobal(NativeRuntimeConstants.GC_MARK_SINGLE_THREADED, config.gcMarkSingleThreaded.toLlvmConstInt32())
         setRuntimeConstGlobal(NativeRuntimeConstants.FIXED_BLOCK_PAGE_SIZE, config.fixedBlockPageSize.toInt().toLlvmConstInt32())
         setRuntimeConstGlobal(NativeRuntimeConstants.PAGED_ALLOCATOR, config.pagedAllocator.toLlvmConstInt32())
