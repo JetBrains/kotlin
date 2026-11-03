@@ -470,9 +470,13 @@ class ObjCExportNamerImpl(
             get() = false
     }
 
-    private inner class EnumNameMapping : ClassSelectorNameMapping<DeclarationDescriptor>() {
+    private inner class EnumNameMapping(
+        private val reservesSelectorNames: Boolean = true,
+    ) : ClassSelectorNameMapping<DeclarationDescriptor>() {
         override fun conflict(first: DeclarationDescriptor, second: DeclarationDescriptor) =
             first.containingDeclaration == second.containingDeclaration
+
+        override fun reserved(name: String) = reservesSelectorNames && super.reserved(name)
 
         override fun placeFor(element: DeclarationDescriptor): ObjCExportNamePlace? =
             (element.containingDeclaration as? ClassDescriptor)?.classId?.let { ObjCExportNamePlace(it.toString(), isExact = true) }
@@ -481,7 +485,7 @@ class ObjCExportNamerImpl(
     private val enumClassSelectors = EnumNameMapping()
     private val enumClassSwiftNames = EnumNameMapping()
     private val closedEnumEntryNames = GlobalNameMapping<ClassDescriptor, String>(ObjCExportNameKind.CLOSED_ENUM_ENTRY)
-    private val closedEnumSwiftNames = EnumNameMapping()
+    private val closedEnumSwiftNames = EnumNameMapping(reservesSelectorNames = false)
 
     @InternalKotlinNativeApi
     var hasCollisions = false

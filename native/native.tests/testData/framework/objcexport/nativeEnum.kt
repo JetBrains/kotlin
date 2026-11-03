@@ -12,4 +12,6 @@ enum class MyKotlinEnum {
     @ObjCEnum.EntryName("renamed")
     ORIGINAL,
     COPY,
+    @ObjCEnum.EntryName("publicEntry", swiftName = "public")
+    PUBLIC_ENTRY,
 }

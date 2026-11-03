@@ -9,6 +9,7 @@ import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.konan.descriptors.enumEntries
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamer
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerImpl
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamer.ClassOrProtocolName
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamer.PropertyName
 import org.jetbrains.kotlin.backend.konan.testUtils.*
@@ -24,6 +25,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 
 /**
  * ## Test Scope
@@ -211,5 +213,26 @@ class ObjCExportNamerTest : InlineSourceTestEnvironment {
         assertEquals(ClassOrProtocolName("Foo", "Foo"), namer.getClassOrProtocolName(foo))
         assertEquals("a", namer.getEnumEntrySelector(fooA))
         assertEquals("a", namer.getEnumEntrySwiftName(fooA))
+    }
+
+    @Test
+    fun `test - closed enum entries keep Swift names that are C keywords or NSObject methods`() {
+        val module = createModuleDescriptor(
+            """
+            import kotlin.native.ObjCEnum
+
+            @ObjCEnum
+            enum class Foo {
+                @ObjCEnum.EntryName("publicEntry", swiftName = "public") A,
+                @ObjCEnum.EntryName("releaseEntry", swiftName = "release") B,
+            }
+        """.trimIndent()
+        )
+
+        val foo = module.findClassAcrossModuleDependencies(ClassId.fromString("Foo"))!!
+        val namer = createObjCExportNamer() as ObjCExportNamerImpl
+
+        assertEquals(listOf("public", "release"), foo.enumEntries.map { namer.getNSClosedEnumEntrySwiftName(it) })
+        assertFalse(namer.hasCollisions)
     }
 }

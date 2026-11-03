@@ -41,3 +41,9 @@ enum class Foo {
 @ObjCEnum(name = "N") enum class C {
     @ObjCName("O") ENTRY_4,
 }
+
+// Swift names in NS_CLOSED_ENUM are not selectors, so C keywords and NSObject methods should be kept.
+@ObjCEnum(name = "K") enum class D {
+    @ObjCEnum.EntryName(name = "publicEntry", swiftName = "public") ENTRY_5,
+    @ObjCEnum.EntryName(name = "releaseEntry", swiftName = "release") ENTRY_6,
+}

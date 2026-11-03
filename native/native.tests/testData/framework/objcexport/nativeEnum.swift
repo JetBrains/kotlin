@@ -9,6 +9,7 @@ private func testNativeEnumValues() throws {
         case SwiftFoo.alpha: try fail()
         case .renamed: try assertEquals(actual: nsEnum, expected: ktEnum.nsEnum)
         case .theCopy: try fail()
+        case .public: try fail()
     }
 }
 
