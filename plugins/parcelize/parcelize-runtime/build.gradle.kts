@@ -165,6 +165,17 @@ tasks.named<Jar>("jvmJar") {
     archiveAppendix = ""
 }
 
+val commonMetadataJar = tasks.register<Jar>("commonMetadataJar") {
+    archiveAppendix = "common-metadata"
+    archiveExtension = "klib"
+}
+kotlin.metadata().compilations.named { it == "commonMain" }.configureEach {
+    commonMetadataJar.configure { from(output.allOutputs) }
+}
+configurations.consumable("commonMainMetadataElements") {
+    outgoing.artifact(commonMetadataJar)
+}
+
 val httpClientVersion = libs.versions.http.client.get()
 val jsonVersion = libs.versions.json.get()
 configurations.configureEach {
