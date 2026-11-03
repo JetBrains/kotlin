@@ -386,6 +386,46 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
 
     @ParameterizedTest
     @EnumSource
+    fun `cycle is chosen by the load order when a library has multiple dependencies in cycles`(
+        mode: KlibDAGBuildingMode,
+    ) = context(mode) {
+        /*
+         * First compiling:
+         * A <-- B
+         * ^
+         * +---- C
+         *
+         * Then making A depend on both B and C:
+         * +---> B ---+
+         * |          |
+         * A <--------+
+         * |          |
+         * +---> C ---+
+         */
+        val moduleNameToLibraryPath = compileModulesWithBackEdges(
+            backEdges = listOf("A" to "B", "A" to "C"),
+        ) {
+            addRegularModule("A")
+            addRegularModule("B") { dependsOn("A") }
+            addRegularModule("C") { dependsOn("A") }
+        }
+
+        // A depends on both B and C, so the walk from A proceeds to whichever of them comes first in the load order.
+        // Note: Checking both load orders makes it unlikely that the test passes by chance if the choice is not stable.
+        assertCycleReported(
+            moduleNameToLibraryPath,
+            loadOrder = listOf("A", "B", "C"),
+            expectedCycle = listOf("A", "B"),
+        )
+        assertCycleReported(
+            moduleNameToLibraryPath,
+            loadOrder = listOf("A", "C", "B"),
+            expectedCycle = listOf("A", "C"),
+        )
+    }
+
+    @ParameterizedTest
+    @EnumSource
     fun `only the first cycle in the load order is reported`(mode: KlibDAGBuildingMode) = context(mode) {
         /*
          * First compiling:
@@ -540,13 +580,14 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
         }
         assertEquals(modules.modules.size, moduleNameToLibraryPath.size)
 
-        for ([from, to] in backEdges) {
+        // Each module is recompiled only once, with all its back edges at once.
+        for ([from, tos] in backEdges.groupBy(keySelector = { it.first }, valueTransform = { it.second })) {
             newSourceModules {
                 addRegularModule(from) {
-                    sourceFileAddend("fun ${from}2() { $to.$to(0) }")
+                    sourceFileAddend("fun ${from}2() { ${tos.joinToString("; ") { to -> "$to.$to(0)" }} }")
                 }
             }.compileToKlibsViaCli(
-                extraCliArgs = listOf("-l", moduleNameToLibraryPath.getValue(to).absolutePathString())
+                extraCliArgs = tos.flatMap { to -> listOf("-l", moduleNameToLibraryPath.getValue(to).absolutePathString()) }
             ) { module, successKlib ->
                 assertEquals(from, module.name)
                 moduleNameToLibraryPath[from] = successKlib.resultingArtifact.klibFile.toPath()
