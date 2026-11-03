@@ -38,7 +38,8 @@ abstract class BasicIrModuleDeserializer(
     private val deserializeTypeAliases: Boolean = false,
 ) : IrModuleDeserializer(moduleFragment, libraryAbiVersion) {
 
-    private val fileToDeserializerMap = mutableMapOf<IrFile, IrFileDeserializer>()
+    final override val fileDeserializers: Map<IrFile, IrFileDeserializer>
+        field = mutableMapOf<IrFile, IrFileDeserializer>()
 
     private val moduleDeserializationState = ModuleDeserializationState()
 
@@ -50,10 +51,6 @@ abstract class BasicIrModuleDeserializer(
     protected val moduleReversedFileIndex = hashMapOf<IdSignature, FileDeserializationState>()
 
     protected val ir: KlibIrComponent get() = klib.irOrFail
-
-    override fun fileDeserializers(): Collection<IrFileDeserializer> {
-        return fileToDeserializerMap.values.filterNot { strategyResolver(it.file.fileEntry.name).onDemand }
-    }
 
     init {
         val fileCount = ir.irFileCount
@@ -123,7 +120,7 @@ abstract class BasicIrModuleDeserializer(
             moduleDeserializer,
         )
 
-        fileToDeserializerMap[file] = fileDeserializationState.fileDeserializer
+        fileDeserializers[file] = fileDeserializationState.fileDeserializer
 
         val topLevelDeclarations = fileDeserializationState.fileDeserializer.reversedSignatureIndex.keys
         topLevelDeclarations.forEach {
