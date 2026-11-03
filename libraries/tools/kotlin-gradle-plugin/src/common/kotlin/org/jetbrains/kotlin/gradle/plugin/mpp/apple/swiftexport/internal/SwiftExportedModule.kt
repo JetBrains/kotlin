@@ -13,6 +13,7 @@ import org.gradle.api.artifacts.result.ResolvedArtifactResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsSeverity.FATAL
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.internal.KotlinProjectSharedDataProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SWIFT_EXPORT_METADATA_SCHEMA_VERSION
@@ -362,9 +363,9 @@ private fun findAndCreateSwiftExportedModules(
         if (matchingArtifact != null) {
             result.add(
                 createFullyExportedSwiftExportedModule(
-                    explicitModule.moduleName.orElse(
-                        normalizedAndValidatedModuleName(explicitModule.inheritedName, reportDiagnostic)
-                    ).get(),
+                    // Validate the derived name only if it is used, an unused invalid name must not fail the build.
+                    explicitModule.moduleName.orNull
+                        ?: normalizedAndValidatedModuleName(explicitModule.inheritedName, reportDiagnostic),
                     explicitModule.flattenPackage.orNull,
                     matchingArtifact.artifact.file
                 )
@@ -378,9 +379,12 @@ private fun findAndCreateSwiftExportedModules(
     }
 
     if (missingModules.isNotEmpty()) {
+        // export() asks for these modules, so a build without them is broken.
         reportDiagnostic(
             KotlinToolingDiagnostics.SwiftExportModuleResolutionError(
-                missingModules.map { it.name })
+                missingModules.map { it.name },
+                severity = FATAL,
+            )
         )
     }
 

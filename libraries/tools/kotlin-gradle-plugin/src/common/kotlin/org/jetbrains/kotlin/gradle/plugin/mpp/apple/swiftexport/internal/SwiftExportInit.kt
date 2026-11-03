@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.attributes.KlibPackaging
 import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsSeverity.FATAL
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollector
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.toolingDiagnosticsContext
@@ -99,9 +100,13 @@ internal val String.normalizedSwiftExportModuleName: String
 internal fun Project.validateSwiftExportModuleName(moduleName: String) =
     kotlinToolingDiagnosticsCollector.validateSwiftExportModuleName(this, moduleName)
 
+/**
+ * Validates a module name derived while the Swift Export task runs. Reported as FATAL: at that point an ERROR would
+ * only be logged and the build would go on with an invalid name.
+ */
 internal fun validateSwiftExportModuleName(moduleName: String, reportDiagnostic: (ToolingDiagnostic) -> Unit) {
     if (!moduleName.matches(Regex(SWIFT_EXPORT_MODULE_NAME_VALIDATION_PATTERN))) {
-        reportDiagnostic(KotlinToolingDiagnostics.SwiftExportInvalidModuleName(moduleName))
+        reportDiagnostic(KotlinToolingDiagnostics.SwiftExportInvalidModuleName(moduleName, FATAL))
     }
 }
 

@@ -1888,7 +1888,13 @@ internal object KotlinToolingDiagnostics {
     }
 
     object SwiftExportInvalidModuleName : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
-        operator fun invoke(moduleName: String) = build {
+        /**
+         * @param severity FATAL when reported while the Swift Export task runs, where an ERROR is only logged
+         */
+        operator fun invoke(
+            moduleName: String,
+            severity: KotlinToolingDiagnosticsSeverity = ERROR,
+        ) = build(severity = severity) {
             title("Invalid Swift Module Name")
                 .description {
                     "The Swift module name '$moduleName' is invalid"
@@ -1903,8 +1909,14 @@ internal object KotlinToolingDiagnostics {
         /**
          * @param modules the modules that were requested but not found, rendered for the user
          * @param dsl the DSL snippet the request came from, so the message points at the right place
+         * @param severity FATAL for a missing `export()` module. The diagnostic is reported while the Swift Export task
+         * runs, after `checkKotlinGradlePluginConfigurationErrors`, so an ERROR is only logged and the build goes on.
          */
-        operator fun invoke(modules: List<String>, dsl: String = "swiftExport { export() }") = build {
+        operator fun invoke(
+            modules: List<String>,
+            dsl: String = "swiftExport { export() }",
+            severity: KotlinToolingDiagnosticsSeverity = ERROR,
+        ) = build(severity = severity) {
             title("Swift Module Resolution Error")
                 .description {
                     "The following modules specified in $dsl were not found in the resolved components: ${
