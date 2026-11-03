@@ -49,14 +49,16 @@ fun StringBuilder.appendOrigin(review: ReviewResult) {
 
 context(renderingContext: RenderingContext)
 private fun StringBuilder.appendFailures(review: ReviewResult) {
-    val failures = review.failingAgentResults
-    val failure = failures.firstOrNull() ?: return
+    val failedResults = review.ruleResults.filter { it.failures.isNotEmpty() }
+    val firstFailedResult = failedResults.firstOrNull() ?: return
+    val failedRuns = failedResults.sumOf { it.failures.size }
+    val failure = firstFailedResult.failures.first()
     appendLine(
         """
-            # $WARNING_EMOJI ${failures.size} failures happened
+            # $WARNING_EMOJI $failedRuns failures happened
             First failure:
             
-            Rule: ${renderingContext.ruleLink(failure.rule)}
+            Rule: ${renderingContext.ruleLink(firstFailedResult.rule)}
             
         """.trimIndent()
     )
@@ -88,15 +90,15 @@ private fun StringBuilder.appendCodeBlock(language: String, text: String) {
 
 context(renderingContext: RenderingContext)
 private fun StringBuilder.appendReview(review: ReviewResult) {
-    if (review.successfulAgentResults.all { it.reviewResult.comments.isEmpty() }) {
+    if (review.ruleResults.all { it.comments.isEmpty() }) {
         appendLine("# No rule violations found")
     }
 
-    for (result in review.successfulAgentResults) {
-        if (result.reviewResult.comments.isEmpty()) continue
+    for (result in review.ruleResults) {
+        if (result.comments.isEmpty()) continue
         appendLine("# ${renderingContext.ruleLink(result.rule)}")
         appendLine()
-        result.reviewResult.comments.forEach {
+        result.comments.forEach {
             val link = renderingContext.codeLink(it.relativeFilePath, it.line)
             appendLine("## $link")
             appendLine(it.message)
@@ -123,33 +125,19 @@ private fun StringBuilder.appendMeta(review: ReviewResult) = appendCollapsed("Me
         """.trimIndent()
     )
 
-    val costs = review.agentResults.map { it.costUSD }
-    val totalComments = review.successfulAgentResults.sumOf { it.reviewResult.comments.size }
+    val costs = review.ruleResults.map { it.costUSD }
+    val totalComments = review.ruleResults.sumOf { it.comments.size }
 
     appendLine(
         "| **Total** | %s%d | %s%.2f |".format(
-            if (review.failingAgentResults.isNotEmpty()) WARNING_EMOJI else "",
+            if (review.ruleResults.any { it.failures.isNotEmpty() }) WARNING_EMOJI else "",
             totalComments,
             if (costs.any { it == null }) WARNING_EMOJI else "",
             costs.sumOf { it ?: 0.0 }
         )
     )
-    review.agentResults.sortedByDescending { it.costUSD }.forEach { result ->
-        val rule = result.rule
-        val link = renderingContext.ruleLink(rule)
-
-        val comments: String = when (result) {
-            is AgentResult.Failure -> WARNING_EMOJI
-            is AgentResult.Success -> {
-                val count = result.reviewResult.comments.size
-                val countString = count.toString()
-                if (count == 0) {
-                    countString
-                } else {
-                    renderingContext.localLink(countString, rule.name) ?: countString
-                }
-            }
-        }
+    review.ruleResults.sortedByDescending { it.costUSD }.forEach { result ->
+        val link = renderingContext.ruleLink(result.rule)
 
         val cost = if (result.costUSD != null) {
             "%.2f".format(result.costUSD)
@@ -157,8 +145,20 @@ private fun StringBuilder.appendMeta(review: ReviewResult) = appendCollapsed("Me
             WARNING_EMOJI
         }
 
-        appendLine("| $link | $comments | $cost |")
+        appendLine("| $link | ${commentsCell(result)} | $cost |")
     }
+}
+
+context(renderingContext: RenderingContext)
+private fun commentsCell(result: RuleReviewResult): String {
+    val count = result.comments.size
+    if (count == 0) {
+        return if (result.failures.isEmpty()) "0" else WARNING_EMOJI
+    }
+
+    val countString = count.toString()
+    val linkedCount = renderingContext.localLink(countString, result.rule.name) ?: countString
+    return if (result.failures.isEmpty()) linkedCount else "$linkedCount $WARNING_EMOJI"
 }
 
 fun slugifyMarkdownTitle(title: String): String =
