@@ -236,7 +236,7 @@ object FirDeprecationChecker : FirBasicExpressionChecker(MppCheckerKind.Common) 
                 source,
                 FirErrors.DEPRECATION_ERROR_MIGRATION_PERIOD_WARNING,
                 referencedSymbol,
-                deprecationInfo.getMessage(context.session) ?: "",
+                deprecationInfo.getMessageWithReplacement(),
                 migrationLF,
             )
             return
@@ -246,13 +246,34 @@ object FirDeprecationChecker : FirBasicExpressionChecker(MppCheckerKind.Common) 
                 DeprecationLevelValue.ERROR, DeprecationLevelValue.HIDDEN -> FirErrors.DEPRECATION_ERROR
                 DeprecationLevelValue.WARNING -> FirErrors.DEPRECATION
             }
-            reporter.reportOn(source, diagnostic, referencedSymbol, deprecationInfo.getMessage(context.session) ?: "")
+            reporter.reportOn(source, diagnostic, referencedSymbol, deprecationInfo.getMessageWithReplacement())
         } else {
+            // The replacement isn't rendered here because it's applicable to the expanded declaration, not to the typealias.
             val diagnostic = when (deprecationInfo.deprecationLevel) {
                 DeprecationLevelValue.ERROR, DeprecationLevelValue.HIDDEN -> FirErrors.TYPEALIAS_EXPANSION_DEPRECATION_ERROR
                 DeprecationLevelValue.WARNING -> FirErrors.TYPEALIAS_EXPANSION_DEPRECATION
             }
             reporter.reportOn(source, diagnostic, referencedSymbol, referencedSymbol, deprecationInfo.getMessage(context.session) ?: "")
+        }
+    }
+
+    context(context: CheckerContext)
+    private fun FirDeprecationInfo.getMessageWithReplacement(): String {
+        val message = getMessage(context.session)?.trim().orEmpty()
+        val (expression, imports) = getReplaceWith(context.session) ?: return message
+        return buildString {
+            if (message.isNotEmpty()) {
+                append(message)
+                if (!message.endsWith(".")) append(".")
+                append(" ")
+            }
+            append("Replace with '")
+            append(expression)
+            append("'")
+            if (imports.isNotEmpty()) {
+                imports.joinTo(this, prefix = " and import ") { "'$it'" }
+            }
+            append(".")
         }
     }
 
