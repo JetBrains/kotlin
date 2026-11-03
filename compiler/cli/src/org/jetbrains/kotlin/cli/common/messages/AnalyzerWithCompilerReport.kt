@@ -109,13 +109,11 @@ class AnalyzerWithCompilerReport(private val configuration: CompilerConfiguratio
 
     override fun analyzeAndReport(files: Collection<KtFile>, analyze: () -> AnalysisResult) {
         analysisResult = analyze()
-        if (!analysisResult.isError()) {
-            OptInUsageChecker.checkCompilerArguments(
-                analysisResult.moduleDescriptor, configuration.languageVersionSettings,
-                reportError = { message -> messageCollector.report(ERROR, message) },
-                reportWarning = { message -> messageCollector.report(WARNING, message) }
-            )
-        }
+        OptInUsageChecker.checkCompilerArguments(
+            analysisResult.moduleDescriptor, configuration.languageVersionSettings,
+            reportError = { message -> messageCollector.report(ERROR, message) },
+            reportWarning = { message -> messageCollector.report(WARNING, message) }
+        )
         reportSyntaxErrors(files)
         reportDiagnostics(analysisResult.bindingContext.diagnostics, messageCollector, configuration.renderDiagnosticInternalName)
         reportIncompleteHierarchies()
