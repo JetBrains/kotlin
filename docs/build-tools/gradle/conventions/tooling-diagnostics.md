@@ -62,20 +62,23 @@ DOs and DON'Ts:
 
 ## Writing a useful diagnostic
 
-The message is often the only thing the user sees — write it so they can act without opening the docs:
+The message is often the only thing the user sees — it must be understandable and actionable without any other source:
 
+- **Language**: understandable without advanced Gradle knowledge — describe what happened in terms of the user's own build (their targets, properties, build script), not KGP internals or Gradle lifecycle jargon.
 - **Title**: short, names the problem, includes the offending item (target, source set, property).
 - **Description**: the *consequence* — what breaks and why — not just what was detected. Include the project name/path so users in multi-project builds can tell which module it came from.
-- **Solutions**: each a single concrete step, performable immediately. Prefer one; add more only for genuinely distinct fixes.
+- **Solutions**: each a single concrete step, to fix or to investigate. Prefer one; add more only for genuinely distinct fixes.
 - Attach a stacktrace when *where it was reported from* matters more than the message (e.g. which DSL call triggered it).
 
 DOs and DON'Ts:
 
 - **DO** say exactly what to do ("rename the duplicated source sets") — the user should never have to reverse-engineer the fix.
+- **DO** have a technical writer review the text — they catch what authors gloss over: jargon, unactionable steps, missing links.
 - **DON'T** restate the title as the description, or offer "solutions" like "check your configuration" — a step the user can't perform is noise.
+- **DON'T** lean on KGP-internal vocabulary (lifecycle stages, internal class names) — the reader is a build author, not a KGP developer.
 
 ## Links
 
-- User-facing docs → a **`kotl.in` short link** in the `documentationLink` field — it renders as a "see … for more details" line and reaches the Gradle Problems report. Never hardcode deep URLs: short links survive doc reorganizations.
+- If a documentation page exists, link it → a **`kotl.in` short link** in the `documentationLink` field — it renders as a "see … for more details" line and reaches the Gradle Problems report. Never hardcode deep URLs: short links survive doc reorganizations.
 - A known, tracked problem → link the **YouTrack issue** (KT-XXXXX) in the description — it carries workarounds and status.
 - "Please report this" → **`kotl.in/issue`**.
