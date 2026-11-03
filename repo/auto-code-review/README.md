@@ -90,7 +90,8 @@ JetBrains employees can also run the tool on the CI.
 ## Operation
 
 The review tool runs Claude Code in [bare mode](https://code.claude.com/docs/en/headless#start-faster-with-bare-mode),
-passing the rule and the diff of the affected files as input.
+passing the rule as input, and the diff of the affected files in a file
+that the agent can read and search as the rule requires.
 It runs invocations in parallel.
 
 If the diff of the files subject to a rule is too large, it is split into batches,
