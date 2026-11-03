@@ -145,7 +145,7 @@ object LombokFirDiagnostics : KtDiagnosticsContainer() {
 
     enum class NotIncludedReason(internal val message: String?) {
         CLASS_PROPERTY_IN_PRESENCE_OF_PARAMETERS(
-            "builder fields are generated from the primary constructor''s value parameters. " +
+            "builder fields are generated from the primary constructor's value parameters. " +
                     "To make the property a builder field, declare it in the primary constructor. " +
                     "You may also move @Builder annotation from the class to its constructor to avoid this warning"
         ),

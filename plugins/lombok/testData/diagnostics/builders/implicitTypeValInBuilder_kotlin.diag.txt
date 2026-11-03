@@ -1,0 +1,20 @@
+/usage.kt:9:22: error: Unresolved reference 'counter' on receiver of type 'Entity.EntityBuilder'.
+
+/usage.kt:13:22: error: Unresolved reference 'id' on receiver of type 'Entity.EntityBuilder'.
+
+/usage.kt:14:22: error: Unresolved reference 'tags' on receiver of type 'Entity.EntityBuilder'.
+
+/usage.kt:15:22: error: Unresolved reference 'explicit' on receiver of type 'Entity.EntityBuilder'.
+
+/usage.kt:20:6: error: Unresolved reference 'counter' on receiver of type 'WithConstructor.WithConstructorBuilder'.
+/Entity.kt:30:9: strong_warning: Property 'id' is not included in the builder: builder fields are generated from the mutable properties if there are no primary constructor parameters. To make the property a builder field, declare it in the primary constructor or change it to be a mutable property.
+
+/Entity.kt:31:9: strong_warning: Property 'tags' is not included in the builder: builder fields are generated from the mutable properties if there are no primary constructor parameters. To make the property a builder field, declare it in the primary constructor or change it to be a mutable property.
+
+/Entity.kt:32:9: strong_warning: Property 'explicit' is not included in the builder: builder fields are generated from the mutable properties if there are no primary constructor parameters. To make the property a builder field, declare it in the primary constructor or change it to be a mutable property.
+
+/Entity.kt:34:9: strong_warning: Property 'counter' is not included in the builder: its type must not be implicit. Specify a type explicitly to include property in builder.
+
+/Entity.kt:40:9: strong_warning: Property 'id' is not included in the builder: builder fields are generated from the primary constructor's value parameters. To make the property a builder field, declare it in the primary constructor. You may also move @Builder annotation from the class to its constructor to avoid this warning.
+
+/Entity.kt:41:9: strong_warning: Property 'counter' is not included in the builder: builder fields are generated from the primary constructor's value parameters. To make the property a builder field, declare it in the primary constructor. You may also move @Builder annotation from the class to its constructor to avoid this warning.
