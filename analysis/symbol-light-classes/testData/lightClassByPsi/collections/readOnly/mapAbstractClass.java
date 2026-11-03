@@ -1,27 +1,27 @@
 public abstract class CMap /* test.CMap*/<KElem, VElem>  implements java.util.Map<KElem, VElem>, kotlin.jvm.internal.markers.KMappedMarker {
   @java.lang.Override()
-  public VElem compute(KElem, java.util.function.BiFunction<? super KElem, ? super VElem, ? extends VElem>);//  compute(KElem, java.util.function.BiFunction<? super KElem, ? super VElem, ? extends VElem>)
+  public @org.jetbrains.annotations.Nullable() VElem compute(KElem, java.util.function.BiFunction<? super KElem, ? super @org.jetbrains.annotations.Nullable() VElem, ? extends @org.jetbrains.annotations.Nullable() VElem>);//  compute(KElem, java.util.function.BiFunction<? super KElem, ? super @org.jetbrains.annotations.Nullable() VElem, ? extends @org.jetbrains.annotations.Nullable() VElem>)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.Nullable() VElem computeIfPresent(KElem, java.util.function.BiFunction<? super KElem, ? super VElem, ? extends @org.jetbrains.annotations.Nullable() VElem>);//  computeIfPresent(KElem, java.util.function.BiFunction<? super KElem, ? super VElem, ? extends @org.jetbrains.annotations.Nullable() VElem>)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.Nullable() VElem merge(KElem, VElem, java.util.function.BiFunction<? super VElem, ? super VElem, ? extends @org.jetbrains.annotations.Nullable() VElem>);//  merge(KElem, VElem, java.util.function.BiFunction<? super VElem, ? super VElem, ? extends @org.jetbrains.annotations.Nullable() VElem>)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.Nullable() VElem put(KElem, VElem);//  put(KElem, VElem)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.Nullable() VElem putIfAbsent(KElem, VElem);//  putIfAbsent(KElem, VElem)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.Nullable() VElem remove(java.lang.Object);//  remove(java.lang.Object)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.Nullable() VElem replace(KElem, VElem);//  replace(KElem, VElem)
 
   @java.lang.Override()
   public VElem computeIfAbsent(KElem, java.util.function.Function<? super KElem, ? extends VElem>);//  computeIfAbsent(KElem, java.util.function.Function<? super KElem, ? extends VElem>)
-
-  @java.lang.Override()
-  public VElem computeIfPresent(KElem, java.util.function.BiFunction<? super KElem, ? super VElem, ? extends VElem>);//  computeIfPresent(KElem, java.util.function.BiFunction<? super KElem, ? super VElem, ? extends VElem>)
-
-  @java.lang.Override()
-  public VElem merge(KElem, VElem, java.util.function.BiFunction<? super VElem, ? super VElem, ? extends VElem>);//  merge(KElem, VElem, java.util.function.BiFunction<? super VElem, ? super VElem, ? extends VElem>)
-
-  @java.lang.Override()
-  public VElem put(KElem, VElem);//  put(KElem, VElem)
-
-  @java.lang.Override()
-  public VElem putIfAbsent(KElem, VElem);//  putIfAbsent(KElem, VElem)
-
-  @java.lang.Override()
-  public VElem remove(java.lang.Object);//  remove(java.lang.Object)
-
-  @java.lang.Override()
-  public VElem replace(KElem, VElem);//  replace(KElem, VElem)
 
   @java.lang.Override()
   public abstract int getSize();//  getSize()
@@ -80,31 +80,31 @@ public abstract class CMap2 /* test.CMap2*/<KElem, VElem>  implements java.util.
 
   @java.lang.Override()
   @org.jetbrains.annotations.Nullable()
-  public VElem get(java.lang.Object);//  get(java.lang.Object)
+  public @org.jetbrains.annotations.Nullable() VElem get(java.lang.Object);//  get(java.lang.Object)
 
   @java.lang.Override()
-  public VElem compute(KElem, java.util.function.BiFunction<? super KElem, ? super VElem, ? extends VElem>);//  compute(KElem, java.util.function.BiFunction<? super KElem, ? super VElem, ? extends VElem>)
+  public @org.jetbrains.annotations.Nullable() VElem compute(KElem, java.util.function.BiFunction<? super KElem, ? super @org.jetbrains.annotations.Nullable() VElem, ? extends @org.jetbrains.annotations.Nullable() VElem>);//  compute(KElem, java.util.function.BiFunction<? super KElem, ? super @org.jetbrains.annotations.Nullable() VElem, ? extends @org.jetbrains.annotations.Nullable() VElem>)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.Nullable() VElem computeIfPresent(KElem, java.util.function.BiFunction<? super KElem, ? super VElem, ? extends @org.jetbrains.annotations.Nullable() VElem>);//  computeIfPresent(KElem, java.util.function.BiFunction<? super KElem, ? super VElem, ? extends @org.jetbrains.annotations.Nullable() VElem>)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.Nullable() VElem merge(KElem, VElem, java.util.function.BiFunction<? super VElem, ? super VElem, ? extends @org.jetbrains.annotations.Nullable() VElem>);//  merge(KElem, VElem, java.util.function.BiFunction<? super VElem, ? super VElem, ? extends @org.jetbrains.annotations.Nullable() VElem>)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.Nullable() VElem put(KElem, VElem);//  put(KElem, VElem)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.Nullable() VElem putIfAbsent(KElem, VElem);//  putIfAbsent(KElem, VElem)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.Nullable() VElem remove(java.lang.Object);//  remove(java.lang.Object)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.Nullable() VElem replace(KElem, VElem);//  replace(KElem, VElem)
 
   @java.lang.Override()
   public VElem computeIfAbsent(KElem, java.util.function.Function<? super KElem, ? extends VElem>);//  computeIfAbsent(KElem, java.util.function.Function<? super KElem, ? extends VElem>)
-
-  @java.lang.Override()
-  public VElem computeIfPresent(KElem, java.util.function.BiFunction<? super KElem, ? super VElem, ? extends VElem>);//  computeIfPresent(KElem, java.util.function.BiFunction<? super KElem, ? super VElem, ? extends VElem>)
-
-  @java.lang.Override()
-  public VElem merge(KElem, VElem, java.util.function.BiFunction<? super VElem, ? super VElem, ? extends VElem>);//  merge(KElem, VElem, java.util.function.BiFunction<? super VElem, ? super VElem, ? extends VElem>)
-
-  @java.lang.Override()
-  public VElem put(KElem, VElem);//  put(KElem, VElem)
-
-  @java.lang.Override()
-  public VElem putIfAbsent(KElem, VElem);//  putIfAbsent(KElem, VElem)
-
-  @java.lang.Override()
-  public VElem remove(java.lang.Object);//  remove(java.lang.Object)
-
-  @java.lang.Override()
-  public VElem replace(KElem, VElem);//  replace(KElem, VElem)
 
   @java.lang.Override()
   public boolean containsKey(java.lang.Object);//  containsKey(java.lang.Object)
@@ -163,34 +163,34 @@ public class CMap3 /* test.CMap3*/<KElem, VElem>  implements java.util.Map<KElem
 
   @java.lang.Override()
   @org.jetbrains.annotations.Nullable()
-  public VElem get(java.lang.Object);//  get(java.lang.Object)
+  public @org.jetbrains.annotations.Nullable() VElem get(java.lang.Object);//  get(java.lang.Object)
 
   @java.lang.Override()
-  public VElem compute(KElem, java.util.function.BiFunction<? super KElem, ? super VElem, ? extends VElem>);//  compute(KElem, java.util.function.BiFunction<? super KElem, ? super VElem, ? extends VElem>)
+  public @org.jetbrains.annotations.Nullable() VElem compute(KElem, java.util.function.BiFunction<? super KElem, ? super @org.jetbrains.annotations.Nullable() VElem, ? extends @org.jetbrains.annotations.Nullable() VElem>);//  compute(KElem, java.util.function.BiFunction<? super KElem, ? super @org.jetbrains.annotations.Nullable() VElem, ? extends @org.jetbrains.annotations.Nullable() VElem>)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.Nullable() VElem computeIfPresent(KElem, java.util.function.BiFunction<? super KElem, ? super VElem, ? extends @org.jetbrains.annotations.Nullable() VElem>);//  computeIfPresent(KElem, java.util.function.BiFunction<? super KElem, ? super VElem, ? extends @org.jetbrains.annotations.Nullable() VElem>)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.Nullable() VElem merge(KElem, VElem, java.util.function.BiFunction<? super VElem, ? super VElem, ? extends @org.jetbrains.annotations.Nullable() VElem>);//  merge(KElem, VElem, java.util.function.BiFunction<? super VElem, ? super VElem, ? extends @org.jetbrains.annotations.Nullable() VElem>)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.Nullable() VElem put(KElem, VElem);//  put(KElem, VElem)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.Nullable() VElem putIfAbsent(KElem, VElem);//  putIfAbsent(KElem, VElem)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.Nullable() VElem remove(java.lang.Object);//  remove(java.lang.Object)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.Nullable() VElem replace(KElem, VElem);//  replace(KElem, VElem)
 
   @java.lang.Override()
   public VElem computeIfAbsent(KElem, java.util.function.Function<? super KElem, ? extends VElem>);//  computeIfAbsent(KElem, java.util.function.Function<? super KElem, ? extends VElem>)
 
   @java.lang.Override()
-  public VElem computeIfPresent(KElem, java.util.function.BiFunction<? super KElem, ? super VElem, ? extends VElem>);//  computeIfPresent(KElem, java.util.function.BiFunction<? super KElem, ? super VElem, ? extends VElem>)
-
-  @java.lang.Override()
   public VElem getOrDefault(java.lang.Object, VElem);//  getOrDefault(java.lang.Object, VElem)
-
-  @java.lang.Override()
-  public VElem merge(KElem, VElem, java.util.function.BiFunction<? super VElem, ? super VElem, ? extends VElem>);//  merge(KElem, VElem, java.util.function.BiFunction<? super VElem, ? super VElem, ? extends VElem>)
-
-  @java.lang.Override()
-  public VElem put(KElem, VElem);//  put(KElem, VElem)
-
-  @java.lang.Override()
-  public VElem putIfAbsent(KElem, VElem);//  putIfAbsent(KElem, VElem)
-
-  @java.lang.Override()
-  public VElem remove(java.lang.Object);//  remove(java.lang.Object)
-
-  @java.lang.Override()
-  public VElem replace(KElem, VElem);//  replace(KElem, VElem)
 
   @java.lang.Override()
   public boolean containsKey(java.lang.Object);//  containsKey(java.lang.Object)

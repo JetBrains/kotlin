@@ -1,9 +1,9 @@
 public abstract class CMutableMap /* test.CMutableMap*/ implements test.IMutableMap {
   @java.lang.Override()
-  public abstract @org.jetbrains.annotations.NotNull() java.lang.String get(@org.jetbrains.annotations.NotNull() java.lang.String);//  get(@org.jetbrains.annotations.NotNull() java.lang.String)
+  public abstract @org.jetbrains.annotations.Nullable() java.lang.String get(@org.jetbrains.annotations.NotNull() java.lang.String);//  get(@org.jetbrains.annotations.NotNull() java.lang.String)
 
   @java.lang.Override()
-  public abstract @org.jetbrains.annotations.NotNull() java.lang.String remove(@org.jetbrains.annotations.NotNull() java.lang.String);//  remove(@org.jetbrains.annotations.NotNull() java.lang.String)
+  public abstract @org.jetbrains.annotations.Nullable() java.lang.String remove(@org.jetbrains.annotations.NotNull() java.lang.String);//  remove(@org.jetbrains.annotations.NotNull() java.lang.String)
 
   @java.lang.Override()
   public abstract boolean containsKey(@org.jetbrains.annotations.NotNull() java.lang.String);//  containsKey(@org.jetbrains.annotations.NotNull() java.lang.String)
@@ -24,10 +24,10 @@ public abstract class CMutableMap /* test.CMutableMap*/ implements test.IMutable
   public abstract java.util.Set<java.util.Map.Entry<@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String>> getEntries();//  getEntries()
 
   @java.lang.Override()
-  public final @org.jetbrains.annotations.NotNull() java.lang.String get(java.lang.Object);//  get(java.lang.Object)
+  public final @org.jetbrains.annotations.Nullable() java.lang.String get(java.lang.Object);//  get(java.lang.Object)
 
   @java.lang.Override()
-  public final @org.jetbrains.annotations.NotNull() java.lang.String remove(java.lang.Object);//  remove(java.lang.Object)
+  public final @org.jetbrains.annotations.Nullable() java.lang.String remove(java.lang.Object);//  remove(java.lang.Object)
 
   @java.lang.Override()
   public final boolean containsKey(java.lang.Object);//  containsKey(java.lang.Object)
@@ -64,7 +64,7 @@ public abstract class CMutableMap2 /* test.CMutableMap2*/ implements test.IMutab
   @java.lang.Override()
   @kotlin.IgnorableReturnValue()
   @org.jetbrains.annotations.Nullable()
-  public final @org.jetbrains.annotations.NotNull() java.lang.String remove(@org.jetbrains.annotations.NotNull() java.lang.Object);//  remove(java.lang.Object)
+  public final @org.jetbrains.annotations.Nullable() java.lang.String remove(@org.jetbrains.annotations.NotNull() java.lang.Object);//  remove(java.lang.Object)
 
   @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
@@ -84,7 +84,7 @@ public abstract class CMutableMap2 /* test.CMutableMap2*/ implements test.IMutab
 
   @java.lang.Override()
   @org.jetbrains.annotations.Nullable()
-  public final @org.jetbrains.annotations.NotNull() java.lang.String get(@org.jetbrains.annotations.NotNull() java.lang.Object);//  get(java.lang.Object)
+  public final @org.jetbrains.annotations.Nullable() java.lang.String get(@org.jetbrains.annotations.NotNull() java.lang.Object);//  get(java.lang.Object)
 
   @java.lang.Override()
   public boolean containsKey(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  containsKey(@org.jetbrains.annotations.NotNull() java.lang.String)
@@ -160,11 +160,11 @@ public class CMutableMap3 /* test.CMutableMap3*/ implements test.IMutableMap {
 
   @java.lang.Override()
   @org.jetbrains.annotations.Nullable()
-  public final @org.jetbrains.annotations.NotNull() java.lang.String get(@org.jetbrains.annotations.NotNull() java.lang.Object);//  get(java.lang.Object)
+  public final @org.jetbrains.annotations.Nullable() java.lang.String get(@org.jetbrains.annotations.NotNull() java.lang.Object);//  get(java.lang.Object)
 
   @java.lang.Override()
   @org.jetbrains.annotations.Nullable()
-  public final @org.jetbrains.annotations.NotNull() java.lang.String remove(@org.jetbrains.annotations.NotNull() java.lang.Object);//  remove(java.lang.Object)
+  public final @org.jetbrains.annotations.Nullable() java.lang.String remove(@org.jetbrains.annotations.NotNull() java.lang.Object);//  remove(java.lang.Object)
 
   @java.lang.Override()
   public boolean containsKey(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  containsKey(@org.jetbrains.annotations.NotNull() java.lang.String)

@@ -78,34 +78,34 @@ public abstract class GenericMutableMap /* test.GenericMutableMap*/<K, V>  imple
 
 public abstract class GenericValueMap /* test.GenericValueMap*/<V>  implements java.util.Map<@org.jetbrains.annotations.NotNull() java.lang.String, V>, kotlin.jvm.internal.markers.KMappedMarker {
   @java.lang.Override()
-  public V compute(@org.jetbrains.annotations.NotNull() java.lang.String, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() java.lang.String, ? super V, ? extends V>);//  compute(@org.jetbrains.annotations.NotNull() java.lang.String, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() java.lang.String, ? super V, ? extends V>)
+  public @org.jetbrains.annotations.Nullable() V compute(@org.jetbrains.annotations.NotNull() java.lang.String, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() java.lang.String, ? super @org.jetbrains.annotations.Nullable() V, ? extends @org.jetbrains.annotations.Nullable() V>);//  compute(@org.jetbrains.annotations.NotNull() java.lang.String, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() java.lang.String, ? super @org.jetbrains.annotations.Nullable() V, ? extends @org.jetbrains.annotations.Nullable() V>)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.Nullable() V computeIfPresent(@org.jetbrains.annotations.NotNull() java.lang.String, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() java.lang.String, ? super V, ? extends @org.jetbrains.annotations.Nullable() V>);//  computeIfPresent(@org.jetbrains.annotations.NotNull() java.lang.String, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() java.lang.String, ? super V, ? extends @org.jetbrains.annotations.Nullable() V>)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.Nullable() V merge(@org.jetbrains.annotations.NotNull() java.lang.String, V, java.util.function.BiFunction<? super V, ? super V, ? extends @org.jetbrains.annotations.Nullable() V>);//  merge(@org.jetbrains.annotations.NotNull() java.lang.String, V, java.util.function.BiFunction<? super V, ? super V, ? extends @org.jetbrains.annotations.Nullable() V>)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.Nullable() V put(@org.jetbrains.annotations.NotNull() java.lang.String, V);//  put(@org.jetbrains.annotations.NotNull() java.lang.String, V)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.Nullable() V putIfAbsent(@org.jetbrains.annotations.NotNull() java.lang.String, V);//  putIfAbsent(@org.jetbrains.annotations.NotNull() java.lang.String, V)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.Nullable() V remove(java.lang.Object);//  remove(java.lang.Object)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.Nullable() V replace(@org.jetbrains.annotations.NotNull() java.lang.String, V);//  replace(@org.jetbrains.annotations.NotNull() java.lang.String, V)
 
   @java.lang.Override()
   public V computeIfAbsent(@org.jetbrains.annotations.NotNull() java.lang.String, java.util.function.Function<? super @org.jetbrains.annotations.NotNull() java.lang.String, ? extends V>);//  computeIfAbsent(@org.jetbrains.annotations.NotNull() java.lang.String, java.util.function.Function<? super @org.jetbrains.annotations.NotNull() java.lang.String, ? extends V>)
 
   @java.lang.Override()
-  public V computeIfPresent(@org.jetbrains.annotations.NotNull() java.lang.String, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() java.lang.String, ? super V, ? extends V>);//  computeIfPresent(@org.jetbrains.annotations.NotNull() java.lang.String, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() java.lang.String, ? super V, ? extends V>)
-
-  @java.lang.Override()
   public V getOrDefault(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String, V);//  getOrDefault(@org.jetbrains.annotations.NotNull() java.lang.String, V)
 
   @java.lang.Override()
-  public V merge(@org.jetbrains.annotations.NotNull() java.lang.String, V, java.util.function.BiFunction<? super V, ? super V, ? extends V>);//  merge(@org.jetbrains.annotations.NotNull() java.lang.String, V, java.util.function.BiFunction<? super V, ? super V, ? extends V>)
-
-  @java.lang.Override()
-  public V put(@org.jetbrains.annotations.NotNull() java.lang.String, V);//  put(@org.jetbrains.annotations.NotNull() java.lang.String, V)
-
-  @java.lang.Override()
-  public V putIfAbsent(@org.jetbrains.annotations.NotNull() java.lang.String, V);//  putIfAbsent(@org.jetbrains.annotations.NotNull() java.lang.String, V)
-
-  @java.lang.Override()
-  public V remove(java.lang.Object);//  remove(java.lang.Object)
-
-  @java.lang.Override()
-  public V replace(@org.jetbrains.annotations.NotNull() java.lang.String, V);//  replace(@org.jetbrains.annotations.NotNull() java.lang.String, V)
-
-  @java.lang.Override()
-  public abstract V get(@org.jetbrains.annotations.NotNull() java.lang.String);//  get(@org.jetbrains.annotations.NotNull() java.lang.String)
+  public abstract @org.jetbrains.annotations.Nullable() V get(@org.jetbrains.annotations.NotNull() java.lang.String);//  get(@org.jetbrains.annotations.NotNull() java.lang.String)
 
   @java.lang.Override()
   public abstract boolean containsKey(@org.jetbrains.annotations.NotNull() java.lang.String);//  containsKey(@org.jetbrains.annotations.NotNull() java.lang.String)
@@ -129,7 +129,7 @@ public abstract class GenericValueMap /* test.GenericValueMap*/<V>  implements j
   public boolean replace(@org.jetbrains.annotations.NotNull() java.lang.String, V, V);//  replace(@org.jetbrains.annotations.NotNull() java.lang.String, V, V)
 
   @java.lang.Override()
-  public final V get(java.lang.Object);//  get(java.lang.Object)
+  public final @org.jetbrains.annotations.Nullable() V get(java.lang.Object);//  get(java.lang.Object)
 
   @java.lang.Override()
   public final V getOrDefault(@org.jetbrains.annotations.NotNull() java.lang.Object, V);//  getOrDefault(java.lang.Object, V)
@@ -166,10 +166,10 @@ public abstract class GenericValueMutableMap /* test.GenericValueMutableMap*/<V>
   public V getOrDefault(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String, V);//  getOrDefault(@org.jetbrains.annotations.NotNull() java.lang.String, V)
 
   @java.lang.Override()
-  public abstract V get(@org.jetbrains.annotations.NotNull() java.lang.String);//  get(@org.jetbrains.annotations.NotNull() java.lang.String)
+  public abstract @org.jetbrains.annotations.Nullable() V get(@org.jetbrains.annotations.NotNull() java.lang.String);//  get(@org.jetbrains.annotations.NotNull() java.lang.String)
 
   @java.lang.Override()
-  public abstract V remove(@org.jetbrains.annotations.NotNull() java.lang.String);//  remove(@org.jetbrains.annotations.NotNull() java.lang.String)
+  public abstract @org.jetbrains.annotations.Nullable() V remove(@org.jetbrains.annotations.NotNull() java.lang.String);//  remove(@org.jetbrains.annotations.NotNull() java.lang.String)
 
   @java.lang.Override()
   public abstract boolean containsKey(@org.jetbrains.annotations.NotNull() java.lang.String);//  containsKey(@org.jetbrains.annotations.NotNull() java.lang.String)
@@ -190,13 +190,13 @@ public abstract class GenericValueMutableMap /* test.GenericValueMutableMap*/<V>
   public boolean remove(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String, V);//  remove(@org.jetbrains.annotations.NotNull() java.lang.String, V)
 
   @java.lang.Override()
-  public final V get(java.lang.Object);//  get(java.lang.Object)
+  public final @org.jetbrains.annotations.Nullable() V get(java.lang.Object);//  get(java.lang.Object)
+
+  @java.lang.Override()
+  public final @org.jetbrains.annotations.Nullable() V remove(java.lang.Object);//  remove(java.lang.Object)
 
   @java.lang.Override()
   public final V getOrDefault(@org.jetbrains.annotations.NotNull() java.lang.Object, V);//  getOrDefault(java.lang.Object, V)
-
-  @java.lang.Override()
-  public final V remove(java.lang.Object);//  remove(java.lang.Object)
 
   @java.lang.Override()
   public final boolean containsKey(java.lang.Object);//  containsKey(java.lang.Object)

@@ -17,7 +17,7 @@ public abstract class Awd /* test.Awd*/ extends kotlin.collections.AbstractMap<@
 
   @java.lang.Override()
   @org.jetbrains.annotations.Nullable()
-  public final @org.jetbrains.annotations.NotNull() java.lang.String get(@org.jetbrains.annotations.NotNull() java.lang.Object);//  get(java.lang.Object)
+  public final @org.jetbrains.annotations.Nullable() java.lang.String get(@org.jetbrains.annotations.NotNull() java.lang.Object);//  get(java.lang.Object)
 
   @java.lang.Override()
   public boolean containsKey(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  containsKey(@org.jetbrains.annotations.NotNull() java.lang.String)

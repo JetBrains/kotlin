@@ -1,30 +1,30 @@
 public abstract class KotlinClass /* KotlinClass*/<K extends RegularInterface, V extends RegularInterface>  implements java.util.Map<K, V>, kotlin.jvm.internal.markers.KMappedMarker {
   @java.lang.Override()
-  public V compute(@org.jetbrains.annotations.NotNull() K, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() K, ? super V, ? extends V>);//  compute(@org.jetbrains.annotations.NotNull() K, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() K, ? super V, ? extends V>)
+  public @org.jetbrains.annotations.Nullable() V compute(@org.jetbrains.annotations.NotNull() K, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() K, ? super @org.jetbrains.annotations.Nullable() V, ? extends @org.jetbrains.annotations.Nullable() V>);//  compute(@org.jetbrains.annotations.NotNull() K, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() K, ? super @org.jetbrains.annotations.Nullable() V, ? extends @org.jetbrains.annotations.Nullable() V>)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.Nullable() V computeIfPresent(@org.jetbrains.annotations.NotNull() K, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() K, ? super V, ? extends @org.jetbrains.annotations.Nullable() V>);//  computeIfPresent(@org.jetbrains.annotations.NotNull() K, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() K, ? super V, ? extends @org.jetbrains.annotations.Nullable() V>)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.Nullable() V merge(@org.jetbrains.annotations.NotNull() K, V, java.util.function.BiFunction<? super V, ? super V, ? extends @org.jetbrains.annotations.Nullable() V>);//  merge(@org.jetbrains.annotations.NotNull() K, V, java.util.function.BiFunction<? super V, ? super V, ? extends @org.jetbrains.annotations.Nullable() V>)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.Nullable() V put(@org.jetbrains.annotations.NotNull() K, V);//  put(@org.jetbrains.annotations.NotNull() K, V)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.Nullable() V putIfAbsent(@org.jetbrains.annotations.NotNull() K, V);//  putIfAbsent(@org.jetbrains.annotations.NotNull() K, V)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.Nullable() V remove(java.lang.Object);//  remove(java.lang.Object)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.Nullable() V replace(@org.jetbrains.annotations.NotNull() K, V);//  replace(@org.jetbrains.annotations.NotNull() K, V)
 
   @java.lang.Override()
   public V computeIfAbsent(@org.jetbrains.annotations.NotNull() K, java.util.function.Function<? super @org.jetbrains.annotations.NotNull() K, ? extends V>);//  computeIfAbsent(@org.jetbrains.annotations.NotNull() K, java.util.function.Function<? super @org.jetbrains.annotations.NotNull() K, ? extends V>)
 
   @java.lang.Override()
-  public V computeIfPresent(@org.jetbrains.annotations.NotNull() K, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() K, ? super V, ? extends V>);//  computeIfPresent(@org.jetbrains.annotations.NotNull() K, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() K, ? super V, ? extends V>)
-
-  @java.lang.Override()
-  public V merge(@org.jetbrains.annotations.NotNull() K, V, java.util.function.BiFunction<? super V, ? super V, ? extends V>);//  merge(@org.jetbrains.annotations.NotNull() K, V, java.util.function.BiFunction<? super V, ? super V, ? extends V>)
-
-  @java.lang.Override()
-  public V put(@org.jetbrains.annotations.NotNull() K, V);//  put(@org.jetbrains.annotations.NotNull() K, V)
-
-  @java.lang.Override()
-  public V putIfAbsent(@org.jetbrains.annotations.NotNull() K, V);//  putIfAbsent(@org.jetbrains.annotations.NotNull() K, V)
-
-  @java.lang.Override()
-  public V remove(java.lang.Object);//  remove(java.lang.Object)
-
-  @java.lang.Override()
-  public V replace(@org.jetbrains.annotations.NotNull() K, V);//  replace(@org.jetbrains.annotations.NotNull() K, V)
-
-  @java.lang.Override()
-  public abstract V get(@org.jetbrains.annotations.NotNull() K);//  get(@org.jetbrains.annotations.NotNull() K)
+  public abstract @org.jetbrains.annotations.Nullable() V get(@org.jetbrains.annotations.NotNull() K);//  get(@org.jetbrains.annotations.NotNull() K)
 
   @java.lang.Override()
   public abstract boolean containsKey(@org.jetbrains.annotations.NotNull() K);//  containsKey(@org.jetbrains.annotations.NotNull() K)
@@ -51,7 +51,7 @@ public abstract class KotlinClass /* KotlinClass*/<K extends RegularInterface, V
   public boolean replace(@org.jetbrains.annotations.NotNull() K, V, V);//  replace(@org.jetbrains.annotations.NotNull() K, V, V)
 
   @java.lang.Override()
-  public final V get(java.lang.Object);//  get(java.lang.Object)
+  public final @org.jetbrains.annotations.Nullable() V get(java.lang.Object);//  get(java.lang.Object)
 
   @java.lang.Override()
   public final boolean containsKey(java.lang.Object);//  containsKey(java.lang.Object)

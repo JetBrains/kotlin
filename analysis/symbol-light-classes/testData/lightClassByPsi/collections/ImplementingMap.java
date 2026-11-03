@@ -1,12 +1,12 @@
 public final class TypeHierarchyMap /* p1.TypeHierarchyMap*/<TValue>  implements java.util.Map<@org.jetbrains.annotations.NotNull() java.lang.Class<?>, TValue>, kotlin.jvm.internal.markers.KMappedMarker {
   @java.lang.Override()
-  public TValue put(@org.jetbrains.annotations.NotNull() java.lang.Class<?>, TValue);//  put(@org.jetbrains.annotations.NotNull() java.lang.Class<?>, TValue)
+  public @org.jetbrains.annotations.Nullable() TValue put(@org.jetbrains.annotations.NotNull() java.lang.Class<?>, TValue);//  put(@org.jetbrains.annotations.NotNull() java.lang.Class<?>, TValue)
 
   @java.lang.Override()
-  public TValue remove(java.lang.Object);//  remove(java.lang.Object)
+  public @org.jetbrains.annotations.Nullable() TValue remove(java.lang.Object);//  remove(java.lang.Object)
 
   @java.lang.Override()
-  public abstract TValue get(@org.jetbrains.annotations.NotNull() java.lang.Class<?>);//  get(@org.jetbrains.annotations.NotNull() java.lang.Class<?>)
+  public abstract @org.jetbrains.annotations.Nullable() TValue get(@org.jetbrains.annotations.NotNull() java.lang.Class<?>);//  get(@org.jetbrains.annotations.NotNull() java.lang.Class<?>)
 
   @java.lang.Override()
   public abstract int getSize();//  getSize()
@@ -24,7 +24,7 @@ public final class TypeHierarchyMap /* p1.TypeHierarchyMap*/<TValue>  implements
   public boolean containsKey(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.Class<?>);//  containsKey(@org.jetbrains.annotations.NotNull() java.lang.Class<?>)
 
   @java.lang.Override()
-  public final TValue get(java.lang.Object);//  get(java.lang.Object)
+  public final @org.jetbrains.annotations.Nullable() TValue get(java.lang.Object);//  get(java.lang.Object)
 
   @java.lang.Override()
   public final boolean containsKey(@org.jetbrains.annotations.NotNull() java.lang.Object);//  containsKey(java.lang.Object)

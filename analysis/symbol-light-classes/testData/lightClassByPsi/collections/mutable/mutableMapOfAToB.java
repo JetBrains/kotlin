@@ -4,10 +4,10 @@ public final class A /* test.A*/ {
 
 public abstract class ABMutableMap /* test.ABMutableMap*/ implements java.util.Map<@org.jetbrains.annotations.NotNull() test.A, @org.jetbrains.annotations.NotNull() test.B>, kotlin.jvm.internal.markers.KMutableMap {
   @java.lang.Override()
-  public abstract @org.jetbrains.annotations.NotNull() test.B get(@org.jetbrains.annotations.NotNull() test.A);//  get(@org.jetbrains.annotations.NotNull() test.A)
+  public abstract @org.jetbrains.annotations.Nullable() test.B get(@org.jetbrains.annotations.NotNull() test.A);//  get(@org.jetbrains.annotations.NotNull() test.A)
 
   @java.lang.Override()
-  public abstract @org.jetbrains.annotations.NotNull() test.B remove(@org.jetbrains.annotations.NotNull() test.A);//  remove(@org.jetbrains.annotations.NotNull() test.A)
+  public abstract @org.jetbrains.annotations.Nullable() test.B remove(@org.jetbrains.annotations.NotNull() test.A);//  remove(@org.jetbrains.annotations.NotNull() test.A)
 
   @java.lang.Override()
   public abstract boolean containsKey(@org.jetbrains.annotations.NotNull() test.A);//  containsKey(@org.jetbrains.annotations.NotNull() test.A)
@@ -28,10 +28,10 @@ public abstract class ABMutableMap /* test.ABMutableMap*/ implements java.util.M
   public abstract java.util.Set<java.util.Map.Entry<@org.jetbrains.annotations.NotNull() test.A, @org.jetbrains.annotations.NotNull() test.B>> getEntries();//  getEntries()
 
   @java.lang.Override()
-  public final @org.jetbrains.annotations.NotNull() test.B get(java.lang.Object);//  get(java.lang.Object)
+  public final @org.jetbrains.annotations.Nullable() test.B get(java.lang.Object);//  get(java.lang.Object)
 
   @java.lang.Override()
-  public final @org.jetbrains.annotations.NotNull() test.B remove(java.lang.Object);//  remove(java.lang.Object)
+  public final @org.jetbrains.annotations.Nullable() test.B remove(java.lang.Object);//  remove(java.lang.Object)
 
   @java.lang.Override()
   public final boolean containsKey(java.lang.Object);//  containsKey(java.lang.Object)
@@ -68,7 +68,7 @@ public abstract class ABMutableMap2 /* test.ABMutableMap2*/ implements java.util
   @java.lang.Override()
   @kotlin.IgnorableReturnValue()
   @org.jetbrains.annotations.Nullable()
-  public final @org.jetbrains.annotations.NotNull() test.B remove(@org.jetbrains.annotations.NotNull() java.lang.Object);//  remove(java.lang.Object)
+  public final @org.jetbrains.annotations.Nullable() test.B remove(@org.jetbrains.annotations.NotNull() java.lang.Object);//  remove(java.lang.Object)
 
   @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
@@ -88,7 +88,7 @@ public abstract class ABMutableMap2 /* test.ABMutableMap2*/ implements java.util
 
   @java.lang.Override()
   @org.jetbrains.annotations.Nullable()
-  public final @org.jetbrains.annotations.NotNull() test.B get(@org.jetbrains.annotations.NotNull() java.lang.Object);//  get(java.lang.Object)
+  public final @org.jetbrains.annotations.Nullable() test.B get(@org.jetbrains.annotations.NotNull() java.lang.Object);//  get(java.lang.Object)
 
   @java.lang.Override()
   public boolean containsKey(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.A);//  containsKey(@org.jetbrains.annotations.NotNull() test.A)
@@ -164,11 +164,11 @@ public class ABMutableMap3 /* test.ABMutableMap3*/ implements java.util.Map<@org
 
   @java.lang.Override()
   @org.jetbrains.annotations.Nullable()
-  public final @org.jetbrains.annotations.NotNull() test.B get(@org.jetbrains.annotations.NotNull() java.lang.Object);//  get(java.lang.Object)
+  public final @org.jetbrains.annotations.Nullable() test.B get(@org.jetbrains.annotations.NotNull() java.lang.Object);//  get(java.lang.Object)
 
   @java.lang.Override()
   @org.jetbrains.annotations.Nullable()
-  public final @org.jetbrains.annotations.NotNull() test.B remove(@org.jetbrains.annotations.NotNull() java.lang.Object);//  remove(java.lang.Object)
+  public final @org.jetbrains.annotations.Nullable() test.B remove(@org.jetbrains.annotations.NotNull() java.lang.Object);//  remove(java.lang.Object)
 
   @java.lang.Override()
   public boolean containsKey(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.A);//  containsKey(@org.jetbrains.annotations.NotNull() test.A)

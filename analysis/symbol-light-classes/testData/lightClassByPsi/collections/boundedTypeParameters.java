@@ -278,31 +278,31 @@ public abstract class BoundedMapOverrides /* test.BoundedMapOverrides*/<K extend
 
   @java.lang.Override()
   @org.jetbrains.annotations.Nullable()
-  public final @org.jetbrains.annotations.NotNull() V get(@org.jetbrains.annotations.NotNull() java.lang.Object);//  get(java.lang.Object)
-
-  @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() V compute(@org.jetbrains.annotations.NotNull() K, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() K, ? super @org.jetbrains.annotations.NotNull() V, ? extends @org.jetbrains.annotations.NotNull() V>);//  compute(@org.jetbrains.annotations.NotNull() K, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() K, ? super @org.jetbrains.annotations.NotNull() V, ? extends @org.jetbrains.annotations.NotNull() V>)
+  public final @org.jetbrains.annotations.Nullable() V get(@org.jetbrains.annotations.NotNull() java.lang.Object);//  get(java.lang.Object)
 
   @java.lang.Override()
   public @org.jetbrains.annotations.NotNull() V computeIfAbsent(@org.jetbrains.annotations.NotNull() K, java.util.function.Function<? super @org.jetbrains.annotations.NotNull() K, ? extends @org.jetbrains.annotations.NotNull() V>);//  computeIfAbsent(@org.jetbrains.annotations.NotNull() K, java.util.function.Function<? super @org.jetbrains.annotations.NotNull() K, ? extends @org.jetbrains.annotations.NotNull() V>)
 
   @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() V computeIfPresent(@org.jetbrains.annotations.NotNull() K, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() K, ? super @org.jetbrains.annotations.NotNull() V, ? extends @org.jetbrains.annotations.NotNull() V>);//  computeIfPresent(@org.jetbrains.annotations.NotNull() K, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() K, ? super @org.jetbrains.annotations.NotNull() V, ? extends @org.jetbrains.annotations.NotNull() V>)
+  public @org.jetbrains.annotations.Nullable() V compute(@org.jetbrains.annotations.NotNull() K, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() K, ? super @org.jetbrains.annotations.Nullable() V, ? extends @org.jetbrains.annotations.Nullable() V>);//  compute(@org.jetbrains.annotations.NotNull() K, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() K, ? super @org.jetbrains.annotations.Nullable() V, ? extends @org.jetbrains.annotations.Nullable() V>)
 
   @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() V merge(@org.jetbrains.annotations.NotNull() K, @org.jetbrains.annotations.NotNull() V, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() V, ? super @org.jetbrains.annotations.NotNull() V, ? extends @org.jetbrains.annotations.NotNull() V>);//  merge(@org.jetbrains.annotations.NotNull() K, @org.jetbrains.annotations.NotNull() V, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() V, ? super @org.jetbrains.annotations.NotNull() V, ? extends @org.jetbrains.annotations.NotNull() V>)
+  public @org.jetbrains.annotations.Nullable() V computeIfPresent(@org.jetbrains.annotations.NotNull() K, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() K, ? super @org.jetbrains.annotations.NotNull() V, ? extends @org.jetbrains.annotations.Nullable() V>);//  computeIfPresent(@org.jetbrains.annotations.NotNull() K, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() K, ? super @org.jetbrains.annotations.NotNull() V, ? extends @org.jetbrains.annotations.Nullable() V>)
 
   @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() V put(@org.jetbrains.annotations.NotNull() K, @org.jetbrains.annotations.NotNull() V);//  put(@org.jetbrains.annotations.NotNull() K, @org.jetbrains.annotations.NotNull() V)
+  public @org.jetbrains.annotations.Nullable() V merge(@org.jetbrains.annotations.NotNull() K, @org.jetbrains.annotations.NotNull() V, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() V, ? super @org.jetbrains.annotations.NotNull() V, ? extends @org.jetbrains.annotations.Nullable() V>);//  merge(@org.jetbrains.annotations.NotNull() K, @org.jetbrains.annotations.NotNull() V, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() V, ? super @org.jetbrains.annotations.NotNull() V, ? extends @org.jetbrains.annotations.Nullable() V>)
 
   @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() V putIfAbsent(@org.jetbrains.annotations.NotNull() K, @org.jetbrains.annotations.NotNull() V);//  putIfAbsent(@org.jetbrains.annotations.NotNull() K, @org.jetbrains.annotations.NotNull() V)
+  public @org.jetbrains.annotations.Nullable() V put(@org.jetbrains.annotations.NotNull() K, @org.jetbrains.annotations.NotNull() V);//  put(@org.jetbrains.annotations.NotNull() K, @org.jetbrains.annotations.NotNull() V)
 
   @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() V remove(java.lang.Object);//  remove(java.lang.Object)
+  public @org.jetbrains.annotations.Nullable() V putIfAbsent(@org.jetbrains.annotations.NotNull() K, @org.jetbrains.annotations.NotNull() V);//  putIfAbsent(@org.jetbrains.annotations.NotNull() K, @org.jetbrains.annotations.NotNull() V)
 
   @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() V replace(@org.jetbrains.annotations.NotNull() K, @org.jetbrains.annotations.NotNull() V);//  replace(@org.jetbrains.annotations.NotNull() K, @org.jetbrains.annotations.NotNull() V)
+  public @org.jetbrains.annotations.Nullable() V remove(java.lang.Object);//  remove(java.lang.Object)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.Nullable() V replace(@org.jetbrains.annotations.NotNull() K, @org.jetbrains.annotations.NotNull() V);//  replace(@org.jetbrains.annotations.NotNull() K, @org.jetbrains.annotations.NotNull() V)
 
   @java.lang.Override()
   public abstract boolean containsKey(@org.jetbrains.annotations.NotNull() K);//  containsKey(@org.jetbrains.annotations.NotNull() K)
@@ -411,10 +411,10 @@ public abstract class BoundedMutableMapOverrides /* test.BoundedMutableMapOverri
 
   @java.lang.Override()
   @org.jetbrains.annotations.Nullable()
-  public final V remove(@org.jetbrains.annotations.NotNull() java.lang.Object);//  remove(java.lang.Object)
+  public final @org.jetbrains.annotations.Nullable() V remove(@org.jetbrains.annotations.NotNull() java.lang.Object);//  remove(java.lang.Object)
 
   @java.lang.Override()
-  public abstract V get(@org.jetbrains.annotations.NotNull() K);//  get(@org.jetbrains.annotations.NotNull() K)
+  public abstract @org.jetbrains.annotations.Nullable() V get(@org.jetbrains.annotations.NotNull() K);//  get(@org.jetbrains.annotations.NotNull() K)
 
   @java.lang.Override()
   public abstract boolean containsKey(@org.jetbrains.annotations.NotNull() K);//  containsKey(@org.jetbrains.annotations.NotNull() K)
@@ -435,7 +435,7 @@ public abstract class BoundedMutableMapOverrides /* test.BoundedMutableMapOverri
   public boolean remove(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() K, V);//  remove(@org.jetbrains.annotations.NotNull() K, V)
 
   @java.lang.Override()
-  public final V get(java.lang.Object);//  get(java.lang.Object)
+  public final @org.jetbrains.annotations.Nullable() V get(java.lang.Object);//  get(java.lang.Object)
 
   @java.lang.Override()
   public final boolean containsKey(java.lang.Object);//  containsKey(java.lang.Object)

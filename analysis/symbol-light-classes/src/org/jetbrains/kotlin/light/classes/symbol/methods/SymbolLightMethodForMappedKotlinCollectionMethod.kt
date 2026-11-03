@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_BASE
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForClassOrObject
 import org.jetbrains.kotlin.light.classes.symbol.classes.isTypeParameter
+import org.jetbrains.kotlin.light.classes.symbol.classes.nullableParts
+import org.jetbrains.kotlin.light.classes.symbol.classes.substituteWithKotlinNullability
 import org.jetbrains.kotlin.light.classes.symbol.classes.unboxedUnlessNullable
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightValueParameterWithCustomType
 
@@ -78,8 +80,17 @@ internal class SymbolLightMethodForMappedKotlinCollectionMethod(
     private fun substituteType(psiType: PsiType): PsiType =
         substitutor.substitute(psiType) ?: psiType
 
-    override fun getReturnType(): PsiType =
-        javaMethod.returnType?.let { substituteType(it) } ?: PsiTypes.voidType()
+    override fun getReturnType(): PsiType = _returnType
+
+    /**
+     * The return type of [javaMethod], nullable where the Kotlin function returns a nullable type,
+     * like `get(Object)` for `override fun get(key: K): V?`.
+     */
+    private val _returnType: PsiType by lazyPub {
+        val javaReturnType = javaMethod.returnType ?: return@lazyPub PsiTypes.voidType()
+        val kotlinNullability = withFunctionSymbol { it.returnType.nullableParts }
+        javaReturnType.substituteWithKotlinNullability(substitutor, kotlinNullability, annotationParent = this)
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

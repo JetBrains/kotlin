@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures
+import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolLightSimpleAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.methods.MethodSignature
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodForMappedJavaCollectionStubMethod
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodForMappedKotlinCollectionMethod
@@ -28,6 +29,8 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.SpecialGenericSignatures
 import org.jetbrains.kotlin.load.kotlin.SignatureBuildingComponents
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
@@ -516,6 +519,110 @@ internal fun PsiType.unboxedUnlessNullable(): PsiType = when {
 
 internal fun PsiType.isJavaLangObject(): Boolean =
     this is PsiClassType && this.canonicalText == CommonClassNames.JAVA_LANG_OBJECT
+
+/**
+ * The nullable parts of a Kotlin type: the type itself ([isNullable]) and its type arguments ([typeArguments]),
+ * e.g., the type arguments `V?` of `BiFunction<in K, in V?, out V?>`. A type without nullable parts is represented by `null`.
+ */
+internal class KotlinTypeNullability(val isNullable: Boolean, val typeArguments: List<KotlinTypeNullability?>)
+
+/**
+ * The nullable parts of the return type and the value parameter types of a Kotlin function, see [KotlinTypeNullability].
+ */
+internal class KotlinSignatureNullability(val returnType: KotlinTypeNullability?, val parameterTypes: List<KotlinTypeNullability?>)
+
+/**
+ * The nullable parts of this type, or `null` if it has none. A flexible type is not nullable, like its lower bound.
+ */
+context(_: KaSession)
+internal val KaType.nullableParts: KotlinTypeNullability?
+    get() {
+        val type = (this as? KaFlexibleType)?.lowerBound ?: this
+        val typeArguments = (type as? KaClassType)?.typeArguments.orEmpty().map { it.type?.nullableParts }
+        if (!type.isMarkedNullable && typeArguments.all { it == null }) return null
+        return KotlinTypeNullability(type.isMarkedNullable, typeArguments)
+    }
+
+/**
+ * The nullable parts of the types of the Kotlin counterpart of this method of a JDK collection, e.g., the return type `V?` of `get`
+ * or `compute` of `java.util.Map`, or `null` if there is no Kotlin function with the same name and number of parameters.
+ *
+ * The counterpart is a member of the mutable Kotlin collection mapped to the JDK collection, like `kotlin.collections.MutableMap`
+ * for `java.util.Map`. It has the members of the read-only collection, like `get`, its own members, like `put`,
+ * and the JDK methods with the nullability of `predefinedEnhancementInfo.kt`, like `compute`.
+ */
+context(_: KaSession)
+internal val PsiMethod.kotlinSignatureNullability: KotlinSignatureNullability?
+    get() {
+        val javaClassFqName = containingClass?.qualifiedName ?: return null
+        val readOnlyClassId = JavaToKotlinClassMap.mapJavaToKotlin(FqName(javaClassFqName)) ?: return null
+        val mutableClassId = JavaToKotlinClassMap.readOnlyToMutable(readOnlyClassId) ?: return null
+        val kotlinFunction = findClass(mutableClassId)?.memberScope?.callables(Name.identifier(name))
+            ?.filterIsInstance<KaNamedFunctionSymbol>()
+            ?.singleOrNull { it.valueParameters.size == parameterList.parametersCount }
+            ?: return null
+
+        return KotlinSignatureNullability(
+            returnType = kotlinFunction.returnType.nullableParts,
+            parameterTypes = kotlinFunction.valueParameters.map { it.returnType.nullableParts },
+        )
+    }
+
+/**
+ * Substitutes [substitutor] into this type from the signature of a JDK collection method, and makes each substituted type parameter
+ * nullable where the Kotlin counterpart of the method has a nullable type ([kotlinNullability]), e.g., the return type `V?` of `Map.get`.
+ *
+ * The JDK collections don't declare nullability, so otherwise a substituted type parameter has the nullability of the type argument,
+ * like `@NotNull Integer` for `V` of `Map<String, Int>`. The types that contain nullable parts are rebuilt rather than substituted,
+ * because the parts of a substituted type can be shared with other types.
+ */
+internal fun PsiType.substituteWithKotlinNullability(
+    substitutor: PsiSubstitutor,
+    kotlinNullability: KotlinTypeNullability?,
+    annotationParent: PsiElement,
+): PsiType {
+    if (kotlinNullability == null) return substitutor.substitute(this) ?: this
+
+    val psiClass = (this as? PsiClassType)?.resolve()
+    val bound = (this as? PsiWildcardType)?.bound
+    return when {
+        psiClass is PsiTypeParameter -> {
+            val substituted = substitutor.substitute(this) ?: this
+            if (kotlinNullability.isNullable) substituted.withNullableAnnotation(annotationParent) else substituted
+        }
+
+        psiClass != null && hasParameters() -> {
+            val typeArguments = parameters.mapIndexed { index, typeArgument ->
+                val typeArgumentNullability = kotlinNullability.typeArguments.getOrNull(index)
+                typeArgument.substituteWithKotlinNullability(substitutor, typeArgumentNullability, annotationParent)
+            }
+            JavaPsiFacade.getElementFactory(psiClass.project).createType(psiClass, *typeArguments.toTypedArray())
+        }
+
+        this is PsiWildcardType && bound != null -> {
+            val substitutedBound = bound.substituteWithKotlinNullability(substitutor, kotlinNullability, annotationParent)
+            when {
+                isExtends -> PsiWildcardType.createExtends(manager, substitutedBound)
+                else -> PsiWildcardType.createSuper(manager, substitutedBound)
+            }
+        }
+
+        else -> substitutor.substitute(this) ?: this
+    }
+}
+
+/**
+ * Returns this type annotated with `@Nullable` instead of its nullability annotation, keeping its other type annotations.
+ */
+internal fun PsiType.withNullableAnnotation(annotationParent: PsiElement): PsiType {
+    val nullabilityAnnotationNames = setOf(
+        JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION.asString(),
+        JvmAnnotationNames.JETBRAINS_NULLABLE_ANNOTATION.asString(),
+    )
+    val otherAnnotations = annotations.filter { it.qualifiedName !in nullabilityAnnotationNames }
+    val nullableAnnotation = SymbolLightSimpleAnnotation(JvmAnnotationNames.JETBRAINS_NULLABLE_ANNOTATION.asString(), annotationParent)
+    return annotate(TypeAnnotationProvider.Static.create((otherAnnotations + nullableAnnotation).toTypedArray()))
+}
 
 private fun createJavaUtilMapMethodWithSpecialSignature(
     containingClass: SymbolLightClassForClassOrObject,

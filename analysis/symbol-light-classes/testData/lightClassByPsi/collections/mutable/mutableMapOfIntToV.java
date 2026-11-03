@@ -1,9 +1,9 @@
 public abstract class SMutableMap /* test.SMutableMap*/<VElem>  implements java.util.Map<@org.jetbrains.annotations.NotNull() java.lang.Integer, VElem>, kotlin.jvm.internal.markers.KMutableMap {
   @java.lang.Override()
-  public abstract VElem get(int);//  get(int)
+  public abstract @org.jetbrains.annotations.Nullable() VElem get(int);//  get(int)
 
   @java.lang.Override()
-  public abstract VElem remove(int);//  remove(int)
+  public abstract @org.jetbrains.annotations.Nullable() VElem remove(int);//  remove(int)
 
   @java.lang.Override()
   public abstract boolean containsKey(int);//  containsKey(int)
@@ -21,10 +21,10 @@ public abstract class SMutableMap /* test.SMutableMap*/<VElem>  implements java.
   public abstract java.util.Set<java.util.Map.Entry<@org.jetbrains.annotations.NotNull() java.lang.Integer, VElem>> getEntries();//  getEntries()
 
   @java.lang.Override()
-  public final VElem get(java.lang.Object);//  get(java.lang.Object)
+  public final @org.jetbrains.annotations.Nullable() VElem get(java.lang.Object);//  get(java.lang.Object)
 
   @java.lang.Override()
-  public final VElem remove(java.lang.Object);//  remove(java.lang.Object)
+  public final @org.jetbrains.annotations.Nullable() VElem remove(java.lang.Object);//  remove(java.lang.Object)
 
   @java.lang.Override()
   public final boolean containsKey(java.lang.Object);//  containsKey(java.lang.Object)
@@ -58,7 +58,7 @@ public abstract class SMutableMap2 /* test.SMutableMap2*/<VElem>  implements jav
   @java.lang.Override()
   @kotlin.IgnorableReturnValue()
   @org.jetbrains.annotations.Nullable()
-  public final VElem remove(java.lang.Object);//  remove(java.lang.Object)
+  public final @org.jetbrains.annotations.Nullable() VElem remove(java.lang.Object);//  remove(java.lang.Object)
 
   @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
@@ -78,7 +78,7 @@ public abstract class SMutableMap2 /* test.SMutableMap2*/<VElem>  implements jav
 
   @java.lang.Override()
   @org.jetbrains.annotations.Nullable()
-  public final VElem get(java.lang.Object);//  get(java.lang.Object)
+  public final @org.jetbrains.annotations.Nullable() VElem get(java.lang.Object);//  get(java.lang.Object)
 
   @java.lang.Override()
   public boolean containsKey(int);//  containsKey(int)
@@ -143,11 +143,11 @@ public class SMutableMap3 /* test.SMutableMap3*/<VElem>  implements java.util.Ma
 
   @java.lang.Override()
   @org.jetbrains.annotations.Nullable()
-  public final VElem get(java.lang.Object);//  get(java.lang.Object)
+  public final @org.jetbrains.annotations.Nullable() VElem get(java.lang.Object);//  get(java.lang.Object)
 
   @java.lang.Override()
   @org.jetbrains.annotations.Nullable()
-  public final VElem remove(java.lang.Object);//  remove(java.lang.Object)
+  public final @org.jetbrains.annotations.Nullable() VElem remove(java.lang.Object);//  remove(java.lang.Object)
 
   @java.lang.Override()
   public VElem getOrDefault(int, VElem);//  getOrDefault(int, VElem)

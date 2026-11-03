@@ -18,16 +18,22 @@ import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.light.classes.symbol.annotations.EmptyAnnotationsProvider
 import org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.MethodAdditionalAnnotationsProvider
+import org.jetbrains.kotlin.light.classes.symbol.classes.KotlinSignatureNullability
+import org.jetbrains.kotlin.light.classes.symbol.classes.KotlinTypeNullability
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForClassOrObject
 import org.jetbrains.kotlin.light.classes.symbol.classes.isJavaLangObject
 import org.jetbrains.kotlin.light.classes.symbol.classes.isTypeParameter
+import org.jetbrains.kotlin.light.classes.symbol.classes.kotlinSignatureNullability
+import org.jetbrains.kotlin.light.classes.symbol.classes.substituteWithKotlinNullability
 import org.jetbrains.kotlin.light.classes.symbol.classes.unboxedUnlessNullable
+import org.jetbrains.kotlin.light.classes.symbol.classes.withNullableAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.with
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightParameterForMappedJavaCollectionStubMethod
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightParameterList
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightTypeParameterListForMappedJavaCollectionStubMethod
+import org.jetbrains.kotlin.light.classes.symbol.utils.analyzeForLightClasses
 import org.jetbrains.kotlin.light.classes.symbol.utils.cachedValue
 import javax.swing.Icon
 
@@ -116,7 +122,7 @@ internal class SymbolLightMethodForMappedJavaCollectionStubMethod(
     internal fun computeParameterType(javaParameter: PsiParameter, index: Int): PsiType {
         val typeFromJava = javaParameter.type
         val providedType = providedSignature?.parameterTypes?.get(index)
-        val candidateType = providedType ?: substituteType(typeFromJava)
+        val candidateType = providedType ?: substituteType(typeFromJava, kotlinNullability?.parameterTypes?.getOrNull(index))
         val shouldTryToUnbox = providedType != null ||
                 (typeFromJava.isJavaLangObject() && substituteObjectWith == candidateType) ||
                 (typeFromJava.isTypeParameter() && !javaMethod.hasModifierProperty(PsiModifier.DEFAULT))
@@ -138,8 +144,16 @@ internal class SymbolLightMethodForMappedJavaCollectionStubMethod(
         }
     }
 
-    private fun substituteType(psiType: PsiType): PsiType {
-        val substituted = methodSubstitutor.substitute(psiType) ?: psiType
+    /**
+     * The nullable parts of the types of the Kotlin counterpart of [javaMethod], which the substituted types follow,
+     * see [substituteWithKotlinNullability].
+     */
+    private val kotlinNullability: KotlinSignatureNullability? by lazyPub {
+        analyzeForLightClasses(useSiteModule) { javaMethod.kotlinSignatureNullability }
+    }
+
+    private fun substituteType(psiType: PsiType, kotlinNullability: KotlinTypeNullability?): PsiType {
+        val substituted = psiType.substituteWithKotlinNullability(methodSubstitutor, kotlinNullability, annotationParent = this)
         return if (substituted.isJavaLangObject() && substituteObjectWith != null) {
             substituteObjectWith
         } else {
@@ -149,8 +163,21 @@ internal class SymbolLightMethodForMappedJavaCollectionStubMethod(
 
     override fun getName(): String = name
 
-    override fun getReturnType(): PsiType? =
-        providedSignature?.returnType ?: javaMethod.returnType?.let { substituteType(it) }
+    override fun getReturnType(): PsiType? = _returnType
+
+    /**
+     * The return type of [javaMethod] or [providedSignature], nullable where the Kotlin counterpart of [javaMethod] returns
+     * a nullable type, like `V?` of `Map.get`.
+     */
+    private val _returnType: PsiType? by lazyPub {
+        val returnTypeNullability = kotlinNullability?.returnType
+        val providedReturnType = providedSignature?.returnType
+        when {
+            providedReturnType == null -> javaMethod.returnType?.let { substituteType(it, returnTypeNullability) }
+            returnTypeNullability?.isNullable == true -> providedReturnType.withNullableAnnotation(annotationParent = this)
+            else -> providedReturnType
+        }
+    }
 
     private val _typeParameterList: PsiTypeParameterList? by lazyPub {
         val javaTypeParameters = javaMethod.typeParameters

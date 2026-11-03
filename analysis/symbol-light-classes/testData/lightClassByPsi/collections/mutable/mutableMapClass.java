@@ -35,7 +35,7 @@ public abstract class CMutableMap2 /* test.CMutableMap2*/<KElem, VElem>  impleme
   @java.lang.Override()
   @kotlin.IgnorableReturnValue()
   @org.jetbrains.annotations.Nullable()
-  public VElem remove(java.lang.Object);//  remove(java.lang.Object)
+  public @org.jetbrains.annotations.Nullable() VElem remove(java.lang.Object);//  remove(java.lang.Object)
 
   @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
@@ -51,7 +51,7 @@ public abstract class CMutableMap2 /* test.CMutableMap2*/<KElem, VElem>  impleme
 
   @java.lang.Override()
   @org.jetbrains.annotations.Nullable()
-  public VElem get(java.lang.Object);//  get(java.lang.Object)
+  public @org.jetbrains.annotations.Nullable() VElem get(java.lang.Object);//  get(java.lang.Object)
 
   @java.lang.Override()
   public boolean containsKey(java.lang.Object);//  containsKey(java.lang.Object)
@@ -101,15 +101,15 @@ public class CMutableMap3 /* test.CMutableMap3*/<KElem, VElem>  implements java.
 
   @java.lang.Override()
   @org.jetbrains.annotations.Nullable()
+  public @org.jetbrains.annotations.Nullable() VElem get(java.lang.Object);//  get(java.lang.Object)
+
+  @java.lang.Override()
+  @org.jetbrains.annotations.Nullable()
   public @org.jetbrains.annotations.Nullable() VElem put(KElem, VElem);//  put(KElem, VElem)
 
   @java.lang.Override()
   @org.jetbrains.annotations.Nullable()
-  public VElem get(java.lang.Object);//  get(java.lang.Object)
-
-  @java.lang.Override()
-  @org.jetbrains.annotations.Nullable()
-  public VElem remove(java.lang.Object);//  remove(java.lang.Object)
+  public @org.jetbrains.annotations.Nullable() VElem remove(java.lang.Object);//  remove(java.lang.Object)
 
   @java.lang.Override()
   public VElem getOrDefault(java.lang.Object, VElem);//  getOrDefault(java.lang.Object, VElem)

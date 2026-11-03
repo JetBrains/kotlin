@@ -1,30 +1,30 @@
 public abstract class CMap /* test.CMap*/ implements test.IMap {
   @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() java.lang.Integer compute(@org.jetbrains.annotations.NotNull() java.lang.Integer, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>);//  compute(@org.jetbrains.annotations.NotNull() java.lang.Integer, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>)
-
-  @java.lang.Override()
   public @org.jetbrains.annotations.NotNull() java.lang.Integer computeIfAbsent(@org.jetbrains.annotations.NotNull() java.lang.Integer, java.util.function.Function<? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>);//  computeIfAbsent(@org.jetbrains.annotations.NotNull() java.lang.Integer, java.util.function.Function<? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>)
 
   @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() java.lang.Integer computeIfPresent(@org.jetbrains.annotations.NotNull() java.lang.Integer, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>);//  computeIfPresent(@org.jetbrains.annotations.NotNull() java.lang.Integer, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>)
+  public @org.jetbrains.annotations.Nullable() java.lang.Integer compute(@org.jetbrains.annotations.NotNull() java.lang.Integer, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? super @org.jetbrains.annotations.Nullable() java.lang.Integer, ? extends @org.jetbrains.annotations.Nullable() java.lang.Integer>);//  compute(@org.jetbrains.annotations.NotNull() java.lang.Integer, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? super @org.jetbrains.annotations.Nullable() java.lang.Integer, ? extends @org.jetbrains.annotations.Nullable() java.lang.Integer>)
 
   @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() java.lang.Integer merge(@org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>);//  merge(@org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>)
+  public @org.jetbrains.annotations.Nullable() java.lang.Integer computeIfPresent(@org.jetbrains.annotations.NotNull() java.lang.Integer, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends @org.jetbrains.annotations.Nullable() java.lang.Integer>);//  computeIfPresent(@org.jetbrains.annotations.NotNull() java.lang.Integer, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends @org.jetbrains.annotations.Nullable() java.lang.Integer>)
 
   @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() java.lang.Integer put(int, int);//  put(int, int)
+  public @org.jetbrains.annotations.Nullable() java.lang.Integer merge(@org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends @org.jetbrains.annotations.Nullable() java.lang.Integer>);//  merge(@org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends @org.jetbrains.annotations.Nullable() java.lang.Integer>)
 
   @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() java.lang.Integer putIfAbsent(@org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer);//  putIfAbsent(@org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer)
+  public @org.jetbrains.annotations.Nullable() java.lang.Integer put(int, int);//  put(int, int)
 
   @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() java.lang.Integer remove(java.lang.Object);//  remove(java.lang.Object)
+  public @org.jetbrains.annotations.Nullable() java.lang.Integer putIfAbsent(@org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer);//  putIfAbsent(@org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer)
 
   @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() java.lang.Integer replace(@org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer);//  replace(@org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer)
+  public @org.jetbrains.annotations.Nullable() java.lang.Integer remove(java.lang.Object);//  remove(java.lang.Object)
 
   @java.lang.Override()
-  public abstract @org.jetbrains.annotations.NotNull() java.lang.Integer get(int);//  get(int)
+  public @org.jetbrains.annotations.Nullable() java.lang.Integer replace(@org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer);//  replace(@org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer)
+
+  @java.lang.Override()
+  public abstract @org.jetbrains.annotations.Nullable() java.lang.Integer get(int);//  get(int)
 
   @java.lang.Override()
   public abstract boolean containsKey(int);//  containsKey(int)
@@ -51,7 +51,7 @@ public abstract class CMap /* test.CMap*/ implements test.IMap {
   public boolean replace(@org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer);//  replace(@org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer)
 
   @java.lang.Override()
-  public final @org.jetbrains.annotations.NotNull() java.lang.Integer get(java.lang.Object);//  get(java.lang.Object)
+  public final @org.jetbrains.annotations.Nullable() java.lang.Integer get(java.lang.Object);//  get(java.lang.Object)
 
   @java.lang.Override()
   public final boolean containsKey(java.lang.Object);//  containsKey(java.lang.Object)
@@ -102,31 +102,31 @@ public abstract class CMap2 /* test.CMap2*/ implements test.IMap {
 
   @java.lang.Override()
   @org.jetbrains.annotations.Nullable()
-  public final @org.jetbrains.annotations.NotNull() java.lang.Integer get(java.lang.Object);//  get(java.lang.Object)
-
-  @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() java.lang.Integer compute(@org.jetbrains.annotations.NotNull() java.lang.Integer, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>);//  compute(@org.jetbrains.annotations.NotNull() java.lang.Integer, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>)
+  public final @org.jetbrains.annotations.Nullable() java.lang.Integer get(java.lang.Object);//  get(java.lang.Object)
 
   @java.lang.Override()
   public @org.jetbrains.annotations.NotNull() java.lang.Integer computeIfAbsent(@org.jetbrains.annotations.NotNull() java.lang.Integer, java.util.function.Function<? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>);//  computeIfAbsent(@org.jetbrains.annotations.NotNull() java.lang.Integer, java.util.function.Function<? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>)
 
   @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() java.lang.Integer computeIfPresent(@org.jetbrains.annotations.NotNull() java.lang.Integer, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>);//  computeIfPresent(@org.jetbrains.annotations.NotNull() java.lang.Integer, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>)
+  public @org.jetbrains.annotations.Nullable() java.lang.Integer compute(@org.jetbrains.annotations.NotNull() java.lang.Integer, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? super @org.jetbrains.annotations.Nullable() java.lang.Integer, ? extends @org.jetbrains.annotations.Nullable() java.lang.Integer>);//  compute(@org.jetbrains.annotations.NotNull() java.lang.Integer, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? super @org.jetbrains.annotations.Nullable() java.lang.Integer, ? extends @org.jetbrains.annotations.Nullable() java.lang.Integer>)
 
   @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() java.lang.Integer merge(@org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>);//  merge(@org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>)
+  public @org.jetbrains.annotations.Nullable() java.lang.Integer computeIfPresent(@org.jetbrains.annotations.NotNull() java.lang.Integer, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends @org.jetbrains.annotations.Nullable() java.lang.Integer>);//  computeIfPresent(@org.jetbrains.annotations.NotNull() java.lang.Integer, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends @org.jetbrains.annotations.Nullable() java.lang.Integer>)
 
   @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() java.lang.Integer put(int, int);//  put(int, int)
+  public @org.jetbrains.annotations.Nullable() java.lang.Integer merge(@org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends @org.jetbrains.annotations.Nullable() java.lang.Integer>);//  merge(@org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends @org.jetbrains.annotations.Nullable() java.lang.Integer>)
 
   @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() java.lang.Integer putIfAbsent(@org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer);//  putIfAbsent(@org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer)
+  public @org.jetbrains.annotations.Nullable() java.lang.Integer put(int, int);//  put(int, int)
 
   @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() java.lang.Integer remove(java.lang.Object);//  remove(java.lang.Object)
+  public @org.jetbrains.annotations.Nullable() java.lang.Integer putIfAbsent(@org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer);//  putIfAbsent(@org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer)
 
   @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() java.lang.Integer replace(@org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer);//  replace(@org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer)
+  public @org.jetbrains.annotations.Nullable() java.lang.Integer remove(java.lang.Object);//  remove(java.lang.Object)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.Nullable() java.lang.Integer replace(@org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer);//  replace(@org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer)
 
   @java.lang.Override()
   public boolean containsKey(int);//  containsKey(int)
@@ -203,31 +203,31 @@ public class CMap3 /* test.CMap3*/ implements test.IMap {
 
   @java.lang.Override()
   @org.jetbrains.annotations.Nullable()
-  public final @org.jetbrains.annotations.NotNull() java.lang.Integer get(java.lang.Object);//  get(java.lang.Object)
-
-  @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() java.lang.Integer compute(@org.jetbrains.annotations.NotNull() java.lang.Integer, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>);//  compute(@org.jetbrains.annotations.NotNull() java.lang.Integer, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>)
+  public final @org.jetbrains.annotations.Nullable() java.lang.Integer get(java.lang.Object);//  get(java.lang.Object)
 
   @java.lang.Override()
   public @org.jetbrains.annotations.NotNull() java.lang.Integer computeIfAbsent(@org.jetbrains.annotations.NotNull() java.lang.Integer, java.util.function.Function<? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>);//  computeIfAbsent(@org.jetbrains.annotations.NotNull() java.lang.Integer, java.util.function.Function<? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>)
 
   @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() java.lang.Integer computeIfPresent(@org.jetbrains.annotations.NotNull() java.lang.Integer, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>);//  computeIfPresent(@org.jetbrains.annotations.NotNull() java.lang.Integer, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>)
+  public @org.jetbrains.annotations.Nullable() java.lang.Integer compute(@org.jetbrains.annotations.NotNull() java.lang.Integer, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? super @org.jetbrains.annotations.Nullable() java.lang.Integer, ? extends @org.jetbrains.annotations.Nullable() java.lang.Integer>);//  compute(@org.jetbrains.annotations.NotNull() java.lang.Integer, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? super @org.jetbrains.annotations.Nullable() java.lang.Integer, ? extends @org.jetbrains.annotations.Nullable() java.lang.Integer>)
 
   @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() java.lang.Integer merge(@org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>);//  merge(@org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>)
+  public @org.jetbrains.annotations.Nullable() java.lang.Integer computeIfPresent(@org.jetbrains.annotations.NotNull() java.lang.Integer, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends @org.jetbrains.annotations.Nullable() java.lang.Integer>);//  computeIfPresent(@org.jetbrains.annotations.NotNull() java.lang.Integer, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends @org.jetbrains.annotations.Nullable() java.lang.Integer>)
 
   @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() java.lang.Integer put(int, int);//  put(int, int)
+  public @org.jetbrains.annotations.Nullable() java.lang.Integer merge(@org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends @org.jetbrains.annotations.Nullable() java.lang.Integer>);//  merge(@org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends @org.jetbrains.annotations.Nullable() java.lang.Integer>)
 
   @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() java.lang.Integer putIfAbsent(@org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer);//  putIfAbsent(@org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer)
+  public @org.jetbrains.annotations.Nullable() java.lang.Integer put(int, int);//  put(int, int)
 
   @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() java.lang.Integer remove(java.lang.Object);//  remove(java.lang.Object)
+  public @org.jetbrains.annotations.Nullable() java.lang.Integer putIfAbsent(@org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer);//  putIfAbsent(@org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer)
 
   @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() java.lang.Integer replace(@org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer);//  replace(@org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer)
+  public @org.jetbrains.annotations.Nullable() java.lang.Integer remove(java.lang.Object);//  remove(java.lang.Object)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.Nullable() java.lang.Integer replace(@org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer);//  replace(@org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer)
 
   @java.lang.Override()
   public boolean containsKey(int);//  containsKey(int)

@@ -1,30 +1,30 @@
 public abstract class CMap /* test.CMap*/ implements java.util.Map<@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt>, kotlin.jvm.internal.markers.KMappedMarker {
   @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() kotlin.UInt compute(@org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>);//  compute(@org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>)
-
-  @java.lang.Override()
   public @org.jetbrains.annotations.NotNull() kotlin.UInt computeIfAbsent(@org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.Function<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>);//  computeIfAbsent(@org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.Function<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>)
 
   @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() kotlin.UInt computeIfPresent(@org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>);//  computeIfPresent(@org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>)
+  public @org.jetbrains.annotations.Nullable() kotlin.UInt compute(@org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.Nullable() kotlin.UInt, ? extends @org.jetbrains.annotations.Nullable() kotlin.UInt>);//  compute(@org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.Nullable() kotlin.UInt, ? extends @org.jetbrains.annotations.Nullable() kotlin.UInt>)
 
   @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() kotlin.UInt merge(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>);//  merge(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>)
+  public @org.jetbrains.annotations.Nullable() kotlin.UInt computeIfPresent(@org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.Nullable() kotlin.UInt>);//  computeIfPresent(@org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.Nullable() kotlin.UInt>)
 
   @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() kotlin.UInt put(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt);//  put(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt)
+  public @org.jetbrains.annotations.Nullable() kotlin.UInt merge(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.Nullable() kotlin.UInt>);//  merge(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.Nullable() kotlin.UInt>)
 
   @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() kotlin.UInt putIfAbsent(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt);//  putIfAbsent(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt)
+  public @org.jetbrains.annotations.Nullable() kotlin.UInt put(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt);//  put(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt)
 
   @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() kotlin.UInt remove(java.lang.Object);//  remove(java.lang.Object)
+  public @org.jetbrains.annotations.Nullable() kotlin.UInt putIfAbsent(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt);//  putIfAbsent(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt)
 
   @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() kotlin.UInt replace(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt);//  replace(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt)
+  public @org.jetbrains.annotations.Nullable() kotlin.UInt remove(java.lang.Object);//  remove(java.lang.Object)
 
   @java.lang.Override()
-  public abstract @org.jetbrains.annotations.NotNull() kotlin.UInt get(@org.jetbrains.annotations.NotNull() kotlin.UInt);//  get(@org.jetbrains.annotations.NotNull() kotlin.UInt)
+  public @org.jetbrains.annotations.Nullable() kotlin.UInt replace(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt);//  replace(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt)
+
+  @java.lang.Override()
+  public abstract @org.jetbrains.annotations.Nullable() kotlin.UInt get(@org.jetbrains.annotations.NotNull() kotlin.UInt);//  get(@org.jetbrains.annotations.NotNull() kotlin.UInt)
 
   @java.lang.Override()
   public abstract boolean containsKey(@org.jetbrains.annotations.NotNull() kotlin.UInt);//  containsKey(@org.jetbrains.annotations.NotNull() kotlin.UInt)
@@ -51,7 +51,7 @@ public abstract class CMap /* test.CMap*/ implements java.util.Map<@org.jetbrain
   public boolean replace(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt);//  replace(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt)
 
   @java.lang.Override()
-  public final @org.jetbrains.annotations.NotNull() kotlin.UInt get(java.lang.Object);//  get(java.lang.Object)
+  public final @org.jetbrains.annotations.Nullable() kotlin.UInt get(java.lang.Object);//  get(java.lang.Object)
 
   @java.lang.Override()
   public final boolean containsKey(java.lang.Object);//  containsKey(java.lang.Object)
@@ -98,34 +98,34 @@ public abstract class CMap2 /* test.CMap2*/ implements java.util.Map<@org.jetbra
 
   @java.lang.Override()
   @org.jetbrains.annotations.Nullable()
-  public final @org.jetbrains.annotations.NotNull() kotlin.UInt get(java.lang.Object);//  get(java.lang.Object)
-
-  @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() kotlin.UInt compute(@org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>);//  compute(@org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>)
+  public final @org.jetbrains.annotations.Nullable() kotlin.UInt get(java.lang.Object);//  get(java.lang.Object)
 
   @java.lang.Override()
   public @org.jetbrains.annotations.NotNull() kotlin.UInt computeIfAbsent(@org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.Function<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>);//  computeIfAbsent(@org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.Function<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>)
 
   @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() kotlin.UInt computeIfPresent(@org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>);//  computeIfPresent(@org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>)
+  public @org.jetbrains.annotations.Nullable() kotlin.UInt compute(@org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.Nullable() kotlin.UInt, ? extends @org.jetbrains.annotations.Nullable() kotlin.UInt>);//  compute(@org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.Nullable() kotlin.UInt, ? extends @org.jetbrains.annotations.Nullable() kotlin.UInt>)
 
   @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() kotlin.UInt merge(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>);//  merge(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>)
+  public @org.jetbrains.annotations.Nullable() kotlin.UInt computeIfPresent(@org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.Nullable() kotlin.UInt>);//  computeIfPresent(@org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.Nullable() kotlin.UInt>)
 
   @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() kotlin.UInt put(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt);//  put(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt)
+  public @org.jetbrains.annotations.Nullable() kotlin.UInt merge(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.Nullable() kotlin.UInt>);//  merge(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.Nullable() kotlin.UInt>)
 
   @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() kotlin.UInt putIfAbsent(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt);//  putIfAbsent(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt)
+  public @org.jetbrains.annotations.Nullable() kotlin.UInt put(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt);//  put(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt)
 
   @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() kotlin.UInt remove(java.lang.Object);//  remove(java.lang.Object)
+  public @org.jetbrains.annotations.Nullable() kotlin.UInt putIfAbsent(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt);//  putIfAbsent(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt)
 
   @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() kotlin.UInt replace(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt);//  replace(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt)
+  public @org.jetbrains.annotations.Nullable() kotlin.UInt remove(java.lang.Object);//  remove(java.lang.Object)
 
   @java.lang.Override()
-  public abstract @org.jetbrains.annotations.NotNull() kotlin.UInt get(@org.jetbrains.annotations.NotNull() kotlin.UInt);//  get(@org.jetbrains.annotations.NotNull() kotlin.UInt)
+  public @org.jetbrains.annotations.Nullable() kotlin.UInt replace(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt);//  replace(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt)
+
+  @java.lang.Override()
+  public abstract @org.jetbrains.annotations.Nullable() kotlin.UInt get(@org.jetbrains.annotations.NotNull() kotlin.UInt);//  get(@org.jetbrains.annotations.NotNull() kotlin.UInt)
 
   @java.lang.Override()
   public abstract boolean containsKey(@org.jetbrains.annotations.NotNull() kotlin.UInt);//  containsKey(@org.jetbrains.annotations.NotNull() kotlin.UInt)
@@ -194,34 +194,34 @@ public class CMap3 /* test.CMap3*/ implements java.util.Map<@org.jetbrains.annot
 
   @java.lang.Override()
   @org.jetbrains.annotations.Nullable()
-  public final @org.jetbrains.annotations.NotNull() kotlin.UInt get(java.lang.Object);//  get(java.lang.Object)
-
-  @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() kotlin.UInt compute(@org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>);//  compute(@org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>)
+  public final @org.jetbrains.annotations.Nullable() kotlin.UInt get(java.lang.Object);//  get(java.lang.Object)
 
   @java.lang.Override()
   public @org.jetbrains.annotations.NotNull() kotlin.UInt computeIfAbsent(@org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.Function<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>);//  computeIfAbsent(@org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.Function<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>)
 
   @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() kotlin.UInt computeIfPresent(@org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>);//  computeIfPresent(@org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>)
+  public @org.jetbrains.annotations.Nullable() kotlin.UInt compute(@org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.Nullable() kotlin.UInt, ? extends @org.jetbrains.annotations.Nullable() kotlin.UInt>);//  compute(@org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.Nullable() kotlin.UInt, ? extends @org.jetbrains.annotations.Nullable() kotlin.UInt>)
 
   @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() kotlin.UInt merge(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>);//  merge(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>)
+  public @org.jetbrains.annotations.Nullable() kotlin.UInt computeIfPresent(@org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.Nullable() kotlin.UInt>);//  computeIfPresent(@org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.Nullable() kotlin.UInt>)
 
   @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() kotlin.UInt put(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt);//  put(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt)
+  public @org.jetbrains.annotations.Nullable() kotlin.UInt merge(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.Nullable() kotlin.UInt>);//  merge(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.Nullable() kotlin.UInt>)
 
   @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() kotlin.UInt putIfAbsent(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt);//  putIfAbsent(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt)
+  public @org.jetbrains.annotations.Nullable() kotlin.UInt put(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt);//  put(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt)
 
   @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() kotlin.UInt remove(java.lang.Object);//  remove(java.lang.Object)
+  public @org.jetbrains.annotations.Nullable() kotlin.UInt putIfAbsent(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt);//  putIfAbsent(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt)
 
   @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() kotlin.UInt replace(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt);//  replace(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt)
+  public @org.jetbrains.annotations.Nullable() kotlin.UInt remove(java.lang.Object);//  remove(java.lang.Object)
 
   @java.lang.Override()
-  public abstract @org.jetbrains.annotations.NotNull() kotlin.UInt get(@org.jetbrains.annotations.NotNull() kotlin.UInt);//  get(@org.jetbrains.annotations.NotNull() kotlin.UInt)
+  public @org.jetbrains.annotations.Nullable() kotlin.UInt replace(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt);//  replace(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt)
+
+  @java.lang.Override()
+  public abstract @org.jetbrains.annotations.Nullable() kotlin.UInt get(@org.jetbrains.annotations.NotNull() kotlin.UInt);//  get(@org.jetbrains.annotations.NotNull() kotlin.UInt)
 
   @java.lang.Override()
   public abstract boolean containsKey(@org.jetbrains.annotations.NotNull() kotlin.UInt);//  containsKey(@org.jetbrains.annotations.NotNull() kotlin.UInt)
