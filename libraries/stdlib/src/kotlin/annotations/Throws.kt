@@ -11,6 +11,9 @@ import kotlin.reflect.KClass
  * This annotation indicates what exceptions should be declared by a function when compiled to a platform method
  * in Kotlin/JVM and Kotlin/Native.
  *
+ * In Kotlin/Native, this annotation is supported only on functions and constructors.
+ * It cannot be applied to property getters or setters.
+ *
  * @property exceptionClasses the list of checked exception classes that may be thrown by the function.
  */
 @SinceKotlin("1.4")
