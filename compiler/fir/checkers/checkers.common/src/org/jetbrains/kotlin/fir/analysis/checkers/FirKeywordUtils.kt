@@ -10,18 +10,16 @@ import com.intellij.lang.LighterASTNode
 import com.intellij.psi.tree.TokenSet
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.*
-import org.jetbrains.kotlin.diagnostics.valOrVarKeyword
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
-import org.jetbrains.kotlin.lexer.KtKeywordToken
+import org.jetbrains.kotlin.fir.syntax.FirSyntaxComponent
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtModifierList
 import org.jetbrains.kotlin.psi.KtModifierListOwner
 import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.psi.KtValVarKeywordOwner
 import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
 import org.jetbrains.kotlin.syntax.SyntaxId
@@ -142,9 +140,15 @@ fun FirElement.hasModifier(tokenId: SyntaxId): Boolean = tokenId in getModifierL
 @OptIn(SymbolInternals::class)
 fun FirBasedSymbol<*>.hasModifier(tokenId: SyntaxId): Boolean = fir.hasModifier(tokenId)
 
-internal val KtSourceElement?.valOrVarKeyword: KtKeywordToken?
-    get() = when (this) {
-        null -> null
-        is KtPsiSourceElement -> (psi as? KtValVarKeywordOwner)?.valOrVarKeyword?.let { it.node?.elementType as? KtKeywordToken }
-        is KtLightSourceElement -> treeStructure.valOrVarKeyword(lighterASTNode)?.tokenType as? KtKeywordToken
+internal enum class ValOrVarKeyword(val keyword: String) {
+    VAL("val"),
+    VAR("var")
+}
+
+context(syntax: FirSyntaxComponent<*>)
+internal val KtSourceElement?.valOrVarKeyword: ValOrVarKeyword?
+    get() = when (with(syntax) { this@valOrVarKeyword?.findValOrVarKeywordSource() }?.syntaxId) {
+        KotlinSyntaxTokenIds.VAL_KEYWORD -> ValOrVarKeyword.VAL
+        KotlinSyntaxTokenIds.VAR_KEYWORD -> ValOrVarKeyword.VAR
+        else -> null
     }
