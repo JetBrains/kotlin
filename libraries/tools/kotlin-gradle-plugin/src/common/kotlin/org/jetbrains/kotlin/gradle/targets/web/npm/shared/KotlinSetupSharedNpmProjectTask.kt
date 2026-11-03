@@ -53,9 +53,10 @@ internal abstract class KotlinSetupSharedNpmProjectTask : DefaultTask(), UsesKot
 
         val workspaceVersion = fixSemver(rootPackageVersion.get())
         val workspaceNames = reportFiles.files
-            .flatMap { file -> file.compilationReports().entries }
-            .map { (name, report) ->
-                report.toPackageJson(name, workspaceVersion).saveTo(packagesDirectory.resolve(name).resolve(NpmProject.PACKAGE_JSON))
+            .mapNotNull { file -> file.npmDependencyReport() }
+            .map { report ->
+                val name = report.compilation
+                report.toPackageJson(workspaceVersion).saveTo(packagesDirectory.resolve(name).resolve(NpmProject.PACKAGE_JSON))
                 name
             }
             .sorted()
@@ -66,17 +67,17 @@ internal abstract class KotlinSetupSharedNpmProjectTask : DefaultTask(), UsesKot
         }.saveTo(outputDirectory.resolve(NpmProject.PACKAGE_JSON))
     }
 
-    private fun File.compilationReports(): Map<String, CompilationNpmDependencyReport> {
-        val compilations = runCatching { readNpmDependencyReport(this).compilations }.getOrNull()
-        if (compilations == null || compilations.keys.any { it.isBlank() }) {
+    private fun File.npmDependencyReport(): NpmDependencyReport? {
+        val report = runCatching { readNpmDependencyReport(this) }.getOrNull()
+        if (report == null || report.compilation.isBlank()) {
             reportDiagnostic(KotlinToolingDiagnostics.SharedNpmProjectInvalidNpmDependencyReport(this))
-            return emptyMap()
+            return null
         }
-        return compilations
+        return report
     }
 }
 
-private fun CompilationNpmDependencyReport.toPackageJson(name: String, version: String) = PackageJson(name, version).also {
+private fun NpmDependencyReport.toPackageJson(version: String) = PackageJson(compilation, version).also {
     it.dependencies.putAll(dependencies)
     it.devDependencies.putAll(devDependencies)
     it.peerDependencies.putAll(peerDependencies)

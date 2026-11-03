@@ -42,7 +42,7 @@ internal abstract class KotlinNpmDependencyReportTask : DefaultTask() {
                 compilation.toolDependencies.get() +
                 compilation.dependencyReports.files.flatMap { readNpmDependencyReport(it).npmDependencies() }
 
-        NpmDependencyReport(target.get(), mapOf(compilation.moduleName.get() to dependencies.toCompilationReport()))
+        dependencies.toNpmDependencyReport(target.get(), compilation.moduleName.get())
             .writeTo(outputFile.get().asFile)
     }
 }
@@ -72,21 +72,22 @@ private fun NpmDependencyReport.npmDependencies(): List<KotlinNpmDependency> {
     fun scope(scope: KotlinNpmDependency.Scope, dependencies: Map<String, String>) =
         dependencies.map { (name, version) -> DefaultKotlinNpmDependency(name, version, scope) }
 
-    return compilations.values.flatMap {
-        scope(KotlinNpmDependency.Scope.NORMAL, it.dependencies) +
-                scope(KotlinNpmDependency.Scope.PEER, it.peerDependencies) +
-                scope(KotlinNpmDependency.Scope.OPTIONAL, it.optionalDependencies)
-    }
+    return scope(KotlinNpmDependency.Scope.NORMAL, dependencies) +
+            scope(KotlinNpmDependency.Scope.PEER, peerDependencies) +
+            scope(KotlinNpmDependency.Scope.OPTIONAL, optionalDependencies)
 }
 
 /** Versions of one package are joined into one npm range, so npm validates them: KT-87942. */
-private fun Collection<KotlinNpmDependency>.toCompilationReport(): CompilationNpmDependencyReport {
+private fun Collection<KotlinNpmDependency>.toNpmDependencyReport(target: String, compilation: String): NpmDependencyReport {
+    // TODO(KT-87942): improve version merging logic, eg. handle `||` and hyphen ranges, which change meaning when joined with a space.
     fun scope(scope: KotlinNpmDependency.Scope) = filter { it.scope == scope }
         .groupBy({ it.name }, { it.version })
         .mapValues { (_, versions) -> versions.distinct().sorted().joinToString(" ") }
         .toSortedMap()
 
-    return CompilationNpmDependencyReport(
+    return NpmDependencyReport(
+        target = target,
+        compilation = compilation,
         dependencies = scope(KotlinNpmDependency.Scope.NORMAL),
         devDependencies = scope(KotlinNpmDependency.Scope.DEV),
         peerDependencies = scope(KotlinNpmDependency.Scope.PEER),

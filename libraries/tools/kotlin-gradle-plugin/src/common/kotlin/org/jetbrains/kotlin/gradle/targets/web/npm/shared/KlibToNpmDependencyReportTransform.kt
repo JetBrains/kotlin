@@ -40,13 +40,13 @@ internal abstract class KlibToNpmDependencyReportTransform : TransformAction<Kli
         val packageJson = klib.packageJsonText() ?: return
         val dependencies = KgpJson.default.decodeFromString<PackageJsonDependencies>(packageJson)
 
-        val report = CompilationNpmDependencyReport(
+        NpmDependencyReport(
+            target = parameters.target.get(),
+            compilation = klib.nameWithoutExtension,
             dependencies = dependencies.dependencies,
             peerDependencies = dependencies.peerDependencies,
             optionalDependencies = dependencies.optionalDependencies,
-        )
-        NpmDependencyReport(parameters.target.get(), mapOf(klib.nameWithoutExtension to report))
-            .writeTo(outputs.file(NPM_DEPENDENCY_REPORT_FILE_NAME))
+        ).writeTo(outputs.file(NPM_DEPENDENCY_REPORT_FILE_NAME))
     }
 
     private fun File.packageJsonText(): String? = when {

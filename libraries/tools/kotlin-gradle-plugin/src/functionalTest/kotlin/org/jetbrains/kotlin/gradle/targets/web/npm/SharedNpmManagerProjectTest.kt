@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.npm.fromSrcPackageJson
-import org.jetbrains.kotlin.gradle.targets.web.npm.shared.CompilationNpmDependencyReport
 import org.jetbrains.kotlin.gradle.targets.web.npm.shared.KotlinSetupSharedNpmProjectTask
 import org.jetbrains.kotlin.gradle.targets.web.npm.shared.NpmDependencyReport
 import org.jetbrains.kotlin.gradle.targets.web.npm.shared.writeTo
@@ -63,7 +62,7 @@ class SharedNpmManagerProjectTest {
     fun `setup task assembles the root and workspace package json files`() {
         val inputs = reportFiles(jsBrowser, jsNodejs)
         inputs.forEachIndexed { index, file ->
-            NpmDependencyReport("js", mapOf("lib-$index" to CompilationNpmDependencyReport(dependencies = mapOf("is-even" to "1.$index.0")))).writeTo(file)
+            NpmDependencyReport("js", "lib-$index", dependencies = mapOf("is-even" to "1.$index.0")).writeTo(file)
         }
 
         val outputDirectory = assembleJsSharedNpmProject()
@@ -84,10 +83,10 @@ class SharedNpmManagerProjectTest {
     @Test
     fun `invalid npm dependency reports are skipped`() {
         val (valid, unparsable, unnamed) = reportFiles(jsBrowser, jsNodejs)
-        NpmDependencyReport("js", mapOf("valid" to CompilationNpmDependencyReport())).writeTo(valid)
+        NpmDependencyReport("js", "valid").writeTo(valid)
         unparsable.parentFile.mkdirs()
         unparsable.writeText("{ not json")
-        NpmDependencyReport("js", mapOf("" to CompilationNpmDependencyReport())).writeTo(unnamed)
+        NpmDependencyReport("js", "").writeTo(unnamed)
 
         val outputDirectory = assembleJsSharedNpmProject()
 

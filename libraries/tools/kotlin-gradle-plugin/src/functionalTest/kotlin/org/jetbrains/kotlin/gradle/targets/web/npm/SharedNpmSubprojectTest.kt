@@ -172,7 +172,8 @@ class SharedNpmSubprojectTest {
         task.generate()
 
         val report = readNpmDependencyReport(task.outputFile.get().asFile)
-        assertEquals(mapOf("is-even" to "1.0.0 >1.0.0"), report.compilations.getValue("test").dependencies)
+        assertEquals("test", report.compilation)
+        assertEquals(mapOf("is-even" to "1.0.0 >1.0.0"), report.dependencies)
     }
 
     @Test

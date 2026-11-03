@@ -10,17 +10,13 @@ import org.jetbrains.kotlin.gradle.internal.json.KgpJson
 import java.io.File
 
 /**
- * npm dependencies of JS or WasmJS compilations, keyed by module name.
+ * npm dependencies of one JS or WasmJS compilation, named by its module name.
  * Internal format, so fields can change freely.
  */
 @Serializable
 internal data class NpmDependencyReport(
     val target: String,
-    val compilations: Map<String, CompilationNpmDependencyReport>,
-)
-
-@Serializable
-internal data class CompilationNpmDependencyReport(
+    val compilation: String,
     val dependencies: Map<String, String> = emptyMap(),
     val devDependencies: Map<String, String> = emptyMap(),
     val peerDependencies: Map<String, String> = emptyMap(),
