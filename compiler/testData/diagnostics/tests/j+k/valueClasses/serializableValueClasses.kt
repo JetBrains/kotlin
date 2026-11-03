@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +FullValueClasses
+// LANGUAGE: +FullValueClasses +ContextParameters +CompanionBlocks
 // TARGET_BACKEND: JVM
 // JVM_TARGET: 28
 // ENABLE_JVM_PREVIEW
@@ -47,5 +47,37 @@ class Identity(val x: Int) : BaseWithoutWriteReplace()
 
 value class NotSerializable(val x: Int)
 
-/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, interfaceDeclaration, objectDeclaration,
-primaryConstructor, propertyDeclaration, stringLiteral, thisExpression, value */
+// The JDK uses a private `writeReplace` only of the serialized class itself.
+abstract value class PrivateWriteReplaceBase : Serializable {
+    private fun writeReplace(): Any = 0
+}
+
+value class InheritsPrivateWriteReplace(val x: Int) : PrivateWriteReplaceBase()
+
+// An internal function has a mangled name on the JVM.
+abstract value class InternalWriteReplaceBase : Serializable {
+    internal fun writeReplace(): Any = 0
+}
+
+value class InheritsInternalWriteReplace(val x: Int) : InternalWriteReplaceBase()
+
+// The JDK requires `writeReplace` to return `Object`.
+value class WriteReplaceReturningString(val x: Int) : Serializable {
+    private fun writeReplace(): String = ""
+}
+
+// A context parameter is a parameter of the JVM method.
+value class WriteReplaceWithContextParameter(val x: Int) : Serializable {
+    context(c: Int)
+    private fun writeReplace(): Any = c
+}
+
+// A companion block member is a static JVM method.
+value class CompanionBlockWriteReplace(val x: Int) : Serializable {
+    companion {
+        fun writeReplace(): Any = 0
+    }
+}
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionDeclarationWithContext, integerLiteral,
+interfaceDeclaration, objectDeclaration, primaryConstructor, propertyDeclaration, stringLiteral, thisExpression, value */

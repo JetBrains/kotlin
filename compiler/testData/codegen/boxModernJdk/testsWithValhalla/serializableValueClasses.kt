@@ -1,5 +1,5 @@
 // VALHALLA_VALUE_CLASSES
-// LANGUAGE: +FullValueClasses
+// LANGUAGE: +FullValueClasses +ContextParameters +CompanionBlocks
 // WITH_STDLIB
 import java.io.*
 
@@ -14,6 +14,33 @@ value class WithWriteReplace(val x: Int) : Serializable {
 
 class Proxy(val x: Int) : Serializable {
     private fun readResolve(): Any = WithWriteReplace(x)
+}
+
+abstract value class PrivateWriteReplaceBase : Serializable {
+    private fun writeReplace(): Any = 0
+}
+
+value class InheritsPrivateWriteReplace(val x: Int) : PrivateWriteReplaceBase()
+
+abstract value class InternalWriteReplaceBase : Serializable {
+    internal fun writeReplace(): Any = 0
+}
+
+value class InheritsInternalWriteReplace(val x: Int) : InternalWriteReplaceBase()
+
+value class WriteReplaceReturningString(val x: Int) : Serializable {
+    private fun writeReplace(): String = ""
+}
+
+value class WriteReplaceWithContextParameter(val x: Int) : Serializable {
+    context(c: Int)
+    private fun writeReplace(): Any = c
+}
+
+value class CompanionBlockWriteReplace(val x: Int) : Serializable {
+    companion {
+        fun writeReplace(): Any = 0
+    }
 }
 
 fun write(value: Any): ByteArray =
@@ -31,6 +58,11 @@ fun writeFails(value: Any): Boolean = try {
 fun box(): String {
     if (!writeFails(Full(1, "a"))) return "Fail: Full"
     if (!writeFails(Inline("b"))) return "Fail: Inline"
+    if (!writeFails(InheritsPrivateWriteReplace(3))) return "Fail: InheritsPrivateWriteReplace"
+    if (!writeFails(InheritsInternalWriteReplace(4))) return "Fail: InheritsInternalWriteReplace"
+    if (!writeFails(WriteReplaceReturningString(5))) return "Fail: WriteReplaceReturningString"
+    if (!writeFails(WriteReplaceWithContextParameter(6))) return "Fail: WriteReplaceWithContextParameter"
+    if (!writeFails(CompanionBlockWriteReplace(7))) return "Fail: CompanionBlockWriteReplace"
     val read = read(write(WithWriteReplace(2)))
     if (read != WithWriteReplace(2)) return "Fail: WithWriteReplace $read"
     return "OK"
