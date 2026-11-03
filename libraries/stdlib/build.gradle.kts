@@ -31,6 +31,7 @@ import plugins.configureDefaultPublishing
 import plugins.configureKotlinPomAttributes
 import plugins.publishing.configureMultiModuleMavenPublishing
 import plugins.publishing.copyAttributes
+import java.nio.file.Paths
 import kotlin.io.path.copyTo
 
 plugins {
@@ -853,6 +854,22 @@ tasks {
     dexMethodCount {
         from(jvmJar)
         ownPackages.set(listOf("kotlin"))
+    }
+
+    // TODO(fzhinkin): can we do better here?
+    // The task mainly verifies that multi-release part of the Jar does not expose any classes not available for the base target
+    register("validateJvmJar", Exec::class) {
+        executable(Paths.get(getToolchainJdkHomeFor(JdkMajorVersion.JDK_25_0).get()).resolve("bin/jar").toString())
+        args(
+            "--validate",
+            "--file",
+            jvmJar.get().archiveFile.get().toString()
+        )
+    }.also {
+        it.configure {
+            dependsOn(jvmJar)
+        }
+        getByName("check").dependsOn(it)
     }
 
     val jsJar = named("jsJar", Jar::class) {
