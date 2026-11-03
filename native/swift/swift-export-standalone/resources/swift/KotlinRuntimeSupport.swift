@@ -148,6 +148,10 @@ extension Swift.Bool: KotlinRuntimeSupport._KotlinBridgeable {
     public func __externalRCRef() -> UnsafeMutableRawPointer {
         return KotlinBridgeable_Bool_box(self)
     }
+
+    public func __kotlinBridgeableRef() -> KotlinBridgeableRef {
+        return KotlinBridgeableRef(type: KotlinBridgeableTypeBool, value: KotlinBridgeableValue(boolValue: self))
+    }
 }
 
 extension Swift.Float: KotlinRuntimeSupport._KotlinBridgeable {
@@ -243,6 +247,26 @@ extension KotlinBase {
 
     package static func __createProtocolWrapper<T>(externalRCRef ref: UnsafeMutableRawPointer, conformsTo type: T.Type) -> KotlinBase {
         return __createProtocolWrapper(externalRCRef: ref, conformsTo: { wrapperClass in wrapperClass is T })
+    }
+
+    package static func __createBridgeable(ref: KotlinBridgeableRef) -> (any _KotlinBridgeable)? {
+        switch ref.type {
+        case KotlinBridgeableTypeNil: return nil
+        case KotlinBridgeableTypeVoid: fatalError("Make Void conform to _KotlinBridgeable")
+        case KotlinBridgeableTypeBool: return ref.value.boolValue
+        case KotlinBridgeableTypeInt8: return ref.value.int8Value
+        case KotlinBridgeableTypeInt16: return ref.value.int16Value
+        case KotlinBridgeableTypeInt32: return ref.value.int32Value
+        case KotlinBridgeableTypeInt64: return ref.value.int64Value
+        case KotlinBridgeableTypeUInt8: return ref.value.uint8Value
+        case KotlinBridgeableTypeUInt16: return ref.value.uint16Value
+        case KotlinBridgeableTypeUInt32: return ref.value.uint32Value
+        case KotlinBridgeableTypeUInt64: return ref.value.uint64Value
+        case KotlinBridgeableTypeDouble: return ref.value.doubleValue
+        case KotlinBridgeableTypeFloat: return ref.value.floatValue
+        case KotlinBridgeableTypeString: return ref.value.ptrValue.load(as: String.self)
+        default: fatalError("Unsupported KotlinBridgeableType: \(ref.type)")
+        }
     }
 }
 

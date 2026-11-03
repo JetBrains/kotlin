@@ -254,3 +254,149 @@ internal external fun KotlinRuntimeSupport_linkAnchor()
 public fun KotlinRuntimeSupport_ensureLinked() {
     KotlinRuntimeSupport_linkAnchor()
 }
+
+public enum class KotlinBridgeableType : CEnum {
+    Nil, Void,
+    Bool,
+    Int8,
+    Int16,
+    Int32,
+    Int64,
+    UInt8,
+    UInt16,
+    UInt32,
+    UInt64,
+    Double,
+    Float,
+    Object, String, Error, Native,
+    ;
+
+    public override val value: UInt get() = ordinal.toUInt()
+
+    public companion object {
+        public fun byValue(value: UInt): KotlinBridgeableType = KotlinBridgeableType.entries[value.toInt()]
+    }
+
+    public class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
+
+        @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.", level = DeprecationLevel.ERROR)
+        @Suppress("DEPRECATION_ERROR")
+        public companion object : Type(sizeOf<UIntVar>().toInt())
+
+        public var value: KotlinBridgeableType
+            get() = byValue(reinterpret<UIntVar>().value)
+            set(value) { reinterpret<UIntVar>().value = value.value }
+    }
+}
+
+public class KotlinBridgeableValue(rawPtr: NativePtr) : CStructVar(rawPtr) {
+
+    @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.", level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
+    public companion object : Type(sizeOf<CPointerVar<CPointed>>(), alignOf<CPointerVar<CPointed>>())
+
+    public var boolValue: Boolean
+        get() = memberAt<BooleanVar>(0).value
+        set(value) { memberAt<BooleanVar>(0).value = value }
+
+    public var int8Value: Byte
+        get() = memberAt<ByteVar>(0).value
+        set(value) { memberAt<ByteVar>(0).value = value }
+
+    public var int16Value: Short
+        get() = memberAt<ShortVar>(0).value
+        set(value) { memberAt<ShortVar>(0).value = value }
+
+    public var int32Value: Int
+        get() = memberAt<IntVar>(0).value
+        set(value) { memberAt<IntVar>(0).value = value }
+
+    public var int64Value: Long
+        get() = memberAt<LongVar>(0).value
+        set(value) { memberAt<LongVar>(0).value = value }
+
+    public var uint8Value: UByte
+        get() = memberAt<UByteVar>(0).value
+        set(value) { memberAt<UByteVar>(0).value = value }
+
+    public var uint16Value: UShort
+        get() = memberAt<UShortVar>(0).value
+        set(value) { memberAt<UShortVar>(0).value = value }
+
+    public var uint32Value: UInt
+        get() = memberAt<UIntVar>(0).value
+        set(value) { memberAt<UIntVar>(0).value = value }
+
+    public var uint64Value: ULong
+        get() = memberAt<ULongVar>(0).value
+        set(value) { memberAt<ULongVar>(0).value = value }
+
+    public var doubleValue: Double
+        get() = memberAt<DoubleVar>(0).value
+        set(value) { memberAt<DoubleVar>(0).value = value }
+
+    public var floatValue: Float
+        get() = memberAt<FloatVar>(0).value
+        set(value) { memberAt<FloatVar>(0).value = value }
+
+    public var ptrValue: CPointer<CPointed>?
+        get() = memberAt<CPointerVar<CPointed>>(0).value
+        set(value) { memberAt<CPointerVar<CPointed>>(0).value = value }
+}
+
+public class KotlinBridgeableRef(rawPtr: NativePtr) : CStructVar(rawPtr) {
+
+    @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.", level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
+    public companion object : Type(
+        sizeOf<KotlinBridgeableType.Var>() + sizeOf<KotlinBridgeableValue>(),
+        alignOf<KotlinBridgeableType.Var>() + alignOf<KotlinBridgeableValue>(),
+    )
+
+    public var type: KotlinBridgeableType
+        get() = memberAt<KotlinBridgeableType.Var>(0).value
+        set(value) { memberAt<KotlinBridgeableType.Var>(0).value = value }
+
+    public val value: KotlinBridgeableValue
+        get() = memberAt(sizeOf<KotlinBridgeableType.Var>())
+}
+
+public fun Any?.asKotlinBridgeableRef(): CValue<KotlinBridgeableRef> = when (this) {
+    null -> cValue {
+        type = KotlinBridgeableType.Nil
+    }
+    Unit -> cValue {
+        type = KotlinBridgeableType.Void
+    }
+    is Boolean -> cValue {
+        type = KotlinBridgeableType.Bool
+        value.boolValue = this@asKotlinBridgeableRef
+    }
+    is String -> cValue {
+        type = KotlinBridgeableType.String
+        value.ptrValue = interpretCPointer(this@asKotlinBridgeableRef.objcPtr())
+    }
+    else -> error("Unsupported KotlinBridgeable value: $this")
+}
+
+public fun CValue<KotlinBridgeableRef>.asAny(): Any? = useContents {
+    when (type) {
+        KotlinBridgeableType.Nil -> null
+        KotlinBridgeableType.Void -> Unit
+        KotlinBridgeableType.Bool -> value.boolValue
+        KotlinBridgeableType.Int8 -> value.int8Value
+        KotlinBridgeableType.Int16 -> value.int16Value
+        KotlinBridgeableType.Int32 -> value.int32Value
+        KotlinBridgeableType.Int64 -> value.int64Value
+        KotlinBridgeableType.UInt8 -> value.uint8Value
+        KotlinBridgeableType.UInt16 -> value.uint16Value
+        KotlinBridgeableType.UInt32 -> value.uint32Value
+        KotlinBridgeableType.UInt64 -> value.uint64Value
+        KotlinBridgeableType.Double -> value.doubleValue
+        KotlinBridgeableType.Float -> value.floatValue
+        KotlinBridgeableType.Object -> TODO()
+        KotlinBridgeableType.String -> TODO()
+        KotlinBridgeableType.Error -> TODO()
+        KotlinBridgeableType.Native -> TODO()
+    }
+}
