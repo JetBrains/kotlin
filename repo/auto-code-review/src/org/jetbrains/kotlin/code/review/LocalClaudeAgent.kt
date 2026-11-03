@@ -194,7 +194,7 @@ class LocalClaudeAgent private constructor(
         var output: ClaudeOutput? = null
 
         return runCatching {
-            val temporaryConfigDir = createTempDirectory(prefix = "claude-config")
+            val runDir = createTempDirectory(prefix = "auto-code-review-")
             try {
                 executionResult = runProcess(
                     directory = project.root,
@@ -202,7 +202,7 @@ class LocalClaudeAgent private constructor(
                     addEnvironment = mapOf(
                         // Don't read ~/.claude.json.
                         // See https://code.claude.com/docs/en/agent-sdk/claude-code-features#what-settingsources-does-not-control.
-                        "CLAUDE_CONFIG_DIR" to temporaryConfigDir.pathString,
+                        "CLAUDE_CONFIG_DIR" to runDir.resolve("config").pathString,
 
                         // Don't write prompt history to disk.
                         "CLAUDE_CODE_SKIP_PROMPT_HISTORY" to "1",
@@ -211,7 +211,7 @@ class LocalClaudeAgent private constructor(
                 )
             } finally {
                 @OptIn(ExperimentalPathApi::class)
-                temporaryConfigDir.deleteRecursively()
+                runDir.deleteRecursively()
             }
             val claudeStdout = when (authMethod) {
                 AuthMethod.LocalConfiguration -> executionResult.stdout
