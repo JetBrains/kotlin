@@ -106,6 +106,7 @@ internal fun collectModules(
     exportedModules: Set<SwiftExportedDependency>,
     dependencyOptionsOverrides: Map<SwiftExportDependencySelector, SwiftExportDeclaredModuleOptions>,
     rootModuleName: String,
+    integrationDsl: String,
     reportDiagnostic: (ToolingDiagnostic) -> Unit,
 ): List<SwiftExportedModule> {
     val modules = applySwiftExportConsumerOverrides(
@@ -127,6 +128,7 @@ internal fun collectModules(
         exportConfiguration = exportConfiguration,
         apiConfiguration = apiConfiguration,
         rootModuleName = rootModuleName,
+        integrationDsl = integrationDsl,
         reportDiagnostic = reportDiagnostic,
     )
     return modules + swiftPMImportCinteropModules(exportConfiguration)

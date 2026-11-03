@@ -1683,7 +1683,8 @@ class ExportExtensionSwiftExportTests {
 
         project.assertRealizingSwiftModulesFailsWith(
             KotlinToolingDiagnostics.SwiftExportDuplicateModuleNames(
-                mapOf("Shared" to listOf("the module being exported", "org.jetbrains.kotlinx:kotlinx-io-bytestring-iossimulatorarm64:0.7.0"))
+                mapOf("Shared" to listOf("the module being exported", "org.jetbrains.kotlinx:kotlinx-io-bytestring-iossimulatorarm64:0.7.0")),
+                "xcodeIntegration",
             )
         )
     }
@@ -1709,7 +1710,8 @@ class ExportExtensionSwiftExportTests {
 
         project.assertRealizingSwiftModulesFailsWith(
             KotlinToolingDiagnostics.SwiftExportDuplicateModuleNames(
-                mapOf("Shared/shared" to listOf("the module being exported", "org.jetbrains.kotlinx:kotlinx-io-bytestring-iossimulatorarm64:0.7.0"))
+                mapOf("Shared/shared" to listOf("the module being exported", "org.jetbrains.kotlinx:kotlinx-io-bytestring-iossimulatorarm64:0.7.0")),
+                "xcodeIntegration",
             )
         )
     }
@@ -2583,4 +2585,59 @@ class ExportExtensionSwiftPackageIntegrationTests {
         val generateTask = assertIs<GenerateSPMPackageFromSwiftExport>(project.tasks.findByName("generateDebugSwiftPackage"))
         assertEquals(listOf(SwiftPackagePlatform("iOS", "18.0")), generateTask.platforms.get())
     }
+
+    // KT-91059
+    @Test
+    fun `an unresolved override of the swift package integration points at that integration`() {
+        val project = exportDslProject {
+            exportExtension.swift {
+                moduleName.set("Shared")
+                swiftPackageIntegration {
+                    configure("org.example:not-in-the-graph:1.0") { moduleName.set("Absent") }
+                }
+            }
+        }
+
+        project.swiftPackageExportRun().resolveSwiftExportedModules(project::reportDiagnostic)
+
+        project.assertContainsDiagnostic(
+            KotlinToolingDiagnostics.SwiftExportModuleResolutionError(
+                listOf("org.example:not-in-the-graph"),
+                "export { swift { swiftPackageIntegration { configure() } } }",
+            )
+        )
+    }
+
+    // KT-91059
+    @Test
+    fun `a module name clash in the swift package integration points at that integration`() {
+        val project = exportDslProject(
+            multiplatform = {
+                iosSimulatorArm64()
+                sourceSets.commonMain.dependencies {
+                    api("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0")
+                }
+            }
+        ) {
+            exportExtension.swift {
+                moduleName.set("Shared")
+                swiftPackageIntegration {
+                    configure("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0") { moduleName.set("Shared") }
+                }
+            }
+        }
+
+        // The diagnostic is FATAL, so the collector throws right after recording it.
+        assertFails { project.swiftPackageExportRun().resolveSwiftExportedModules(project::reportDiagnostic) }
+
+        project.assertContainsDiagnostic(
+            KotlinToolingDiagnostics.SwiftExportDuplicateModuleNames(
+                mapOf("Shared" to listOf("the module being exported", "org.jetbrains.kotlinx:kotlinx-io-bytestring-iossimulatorarm64:0.7.0")),
+                "swiftPackageIntegration",
+            )
+        )
+    }
+
+    private fun Project.swiftPackageExportRun(): SwiftExportTask =
+        assertIs<SwiftExportTask>(tasks.findByName("iosSimulatorArm64SwiftPackageExport"))
 }

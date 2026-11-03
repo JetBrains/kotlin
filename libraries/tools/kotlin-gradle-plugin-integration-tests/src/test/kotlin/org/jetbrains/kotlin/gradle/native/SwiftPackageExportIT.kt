@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.gradle.apple.repoRef
 import org.jetbrains.kotlin.gradle.apple.targetDependencyPlatforms
 import org.jetbrains.kotlin.gradle.apple.withLockFileFixture
 import org.jetbrains.kotlin.gradle.apple.writePackageManifest
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.PackageResolvedSynchronization
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMDependency
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMImportExtension
@@ -213,6 +214,70 @@ class SwiftPackageExportIT : KGPBaseTest() {
                 exportedPackage.resolve("Sources").directoryNames(),
             )
             assertEquals(setOf("AfterKotlin.xcframework"), exportedPackage.directoryNames().filter { it.endsWith(".xcframework") }.toSet())
+        }
+    }
+
+    // KT-91059
+    @DisplayName("A module name clash in the Swift package integration points at that integration")
+    @GradleTest
+    fun testModuleNameClashPointsAtTheSwiftPackageIntegration(
+        gradleVersion: GradleVersion,
+    ) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "shared"
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosSimulatorArm64()
+                    sourceSets.commonMain {
+                        compileStubSourceWithSourceSetName()
+                        dependencies {
+                            api(project(":sub"))
+                        }
+                    }
+                }
+                export.swift {
+                    moduleName.set("Shared")
+                    swiftPackageIntegration {
+                        configure(project.dependencies.project(mapOf("path" to ":sub"))) {
+                            moduleName.set("Shared")
+                        }
+                    }
+                }
+            }
+
+            val subproject = project("empty", gradleVersion) {
+                buildScriptInjection {
+                    project.applyMultiplatform {
+                        iosSimulatorArm64()
+                        sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+                    }
+                }
+            }
+
+            include(subproject, "sub")
+
+            buildAndFail(":iosSimulatorArm64SwiftPackageExport") {
+                assertHasDiagnostic(KotlinToolingDiagnostics.SwiftExportDuplicateModuleNames)
+                // Gradle renders the solution on a line of its own, more than once and with different prefixes.
+                val solutions = output.lines()
+                    .map { it.trim().removePrefix("> ").removePrefix("Possible solution: ") }
+                    .filter { it.startsWith("Give each module a distinct name") }
+                    .toSet()
+                assertEquals(
+                    setOf(
+                        "Give each module a distinct name with " +
+                                "export { swift { swiftPackageIntegration { configure(dependency) { moduleName = \"...\" } } } }. " +
+                                "If the collision is with the root module's own name, rename the root module instead with " +
+                                "export { swift { moduleName = \"...\" } }."
+                    ),
+                    solutions,
+                )
+            }
         }
     }
 
