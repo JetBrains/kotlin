@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
@@ -49,6 +50,7 @@ import kotlin.io.path.Path
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.name
 import kotlin.io.path.pathString
+import kotlin.io.path.relativeTo
 
 @Tag("klib")
 @Execution(ExecutionMode.SAME_THREAD)
@@ -457,6 +459,129 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
             expectedCycle = listOf("C", "D"),
         )
     }
+
+    @ParameterizedTest
+    @EnumSource
+    fun `compilation of KLIB with dependency with the same unique_name does not fail (KT-91046)`(mode: KlibDAGBuildingMode) = context(mode) {
+            val moduleNameToLibraryPath: MutableMap<String, Path> = mutableMapOf()
+
+            /*
+             * A1 <-- A2, both with unique_name=A2
+             */
+            newSourceModules {
+                addRegularModule("A1")
+                addRegularModule("A2") { dependsOn("A1") }
+            }.compileToKlibsViaCli { module, successKlib ->
+                val libraryPath = successKlib.resultingArtifact.klibFile.toPath()
+                moduleNameToLibraryPath[module.name] = libraryPath
+
+                if (module.name == "A1") {
+                    val manifestPath = libraryPath.resolve("default/manifest")
+                    val manifest = manifestPath.readProperties()
+                    manifest[KLIB_PROPERTY_UNIQUE_NAME] = "A2"
+                    manifestPath.writeProperties(manifest)
+                }
+            }
+            assertEquals(2, moduleNameToLibraryPath.size)
+
+            val a2Manifest = moduleNameToLibraryPath.getValue("A2").resolve("default/manifest").readProperties()
+            assertEquals("A2", a2Manifest[KLIB_PROPERTY_UNIQUE_NAME])
+            assertTrue("A2" in a2Manifest.getProperty(KLIB_PROPERTY_DEPENDS).split(" "))
+
+            run {
+                val libraries = loadLibraries(others = listOf(moduleNameToLibraryPath.getValue("A2")))
+                val [stdlib, a2] = libraries
+
+                val dag = KlibDAGBuilder(buildParams(libraries)).build()
+                assertEquals(listOf(stdlib, a2), dag.librariesReverseTopoSorted)
+                assertEquals(setOf(stdlib), dag[a2].directDependencies)
+                assertEquals(setOf(stdlib), dag[a2].allDependencies)
+
+                assertLosslessDeserialization(dag)
+            }
+
+            run {
+                val libraries =
+                    loadLibraries(others = listOf(moduleNameToLibraryPath.getValue("A2"), moduleNameToLibraryPath.getValue("A1")))
+                val [stdlib, a2, a1] = libraries
+
+                val dag = KlibDAGBuilder(buildParams(libraries)).build()
+                assertEquals(listOf(stdlib, a1, a2), dag.librariesReverseTopoSorted)
+                assertEquals(setOf(stdlib, a1), dag[a2].directDependencies)
+                assertEquals(setOf(stdlib, a1), dag[a2].allDependencies)
+                assertEquals(setOf(stdlib), dag[a1].directDependencies)
+
+                assertLosslessDeserialization(dag)
+            }
+        }
+
+    @ParameterizedTest
+    @EnumSource
+    fun `the same KLIB passed several times by absolute and relative paths is a single DAG node`(mode: KlibDAGBuildingMode) =
+        context(mode) {
+            val moduleNameToLibraryPath: MutableMap<String, Path> = mutableMapOf()
+
+            /*
+             * A <-- B, A is passed twice by the absolute path and once by the relative path
+             */
+            newSourceModules {
+                addRegularModule("A")
+                addRegularModule("B") { dependsOn("A") }
+            }.compileToKlibsViaCli { module, successKlib ->
+                moduleNameToLibraryPath[module.name] = successKlib.resultingArtifact.klibFile.toPath()
+            }
+            assertEquals(2, moduleNameToLibraryPath.size)
+
+            val aAbsolutePath = moduleNameToLibraryPath.getValue("A")
+            val aRelativePath = aAbsolutePath.relativeTo(Path(System.getProperty("user.dir")))
+            assertNotEquals(aAbsolutePath, aRelativePath)
+
+            val libraries =
+                loadLibraries(others = listOf(moduleNameToLibraryPath.getValue("B"), aAbsolutePath, aAbsolutePath, aRelativePath))
+            assertEquals(3, libraries.size)
+            val [stdlib, b, a] = libraries
+
+            val dag = KlibDAGBuilder(buildParams(libraries)).build()
+            assertEquals(listOf(stdlib, a, b), dag.librariesReverseTopoSorted)
+            assertEquals(setOf(stdlib, a), dag[b].directDependencies)
+            assertEquals(setOf(stdlib), dag[a].directDependencies)
+
+            assertLosslessDeserialization(dag)
+        }
+
+    @ParameterizedTest
+    @EnumSource
+    fun `missing transitive dependency is not added to DAG`(mode: KlibDAGBuildingMode) =
+        context(mode) {
+            val moduleNameToLibraryPath: MutableMap<String, Path> = mutableMapOf()
+
+            /*
+             * A <-- B <-- C, A is not passed
+             */
+            newSourceModules {
+                addRegularModule("A")
+                addRegularModule("B") { dependsOn("A") }
+                addRegularModule("C") { dependsOn("B") }
+            }.compileToKlibsViaCli { module, successKlib ->
+                moduleNameToLibraryPath[module.name] = successKlib.resultingArtifact.klibFile.toPath()
+            }
+            assertEquals(3, moduleNameToLibraryPath.size)
+
+            val bManifest = moduleNameToLibraryPath.getValue("B").resolve("default/manifest").readProperties()
+            assertTrue("A" in bManifest.getProperty(KLIB_PROPERTY_DEPENDS).split(" "))
+
+            val libraries = loadLibraries(others = listOf(moduleNameToLibraryPath.getValue("B"), moduleNameToLibraryPath.getValue("C")))
+            assertEquals(3, libraries.size)
+            val [stdlib, b, c] = libraries
+
+            val dag = KlibDAGBuilder(buildParams(libraries)).build()
+            assertEquals(listOf(stdlib, b, c), dag.librariesReverseTopoSorted)
+            assertEquals(setOf(stdlib), dag[b].directDependencies)
+            assertEquals(setOf(stdlib, b), dag[c].directDependencies)
+            assertEquals(setOf(stdlib, b), dag[c].allDependencies)
+
+            assertLosslessDeserialization(dag)
+        }
 
     @Test
     fun `SerializedKlibDAG creation sanity test (positive)`() {
