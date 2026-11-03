@@ -229,7 +229,7 @@ internal fun processPossiblyMappedCollectionMethod(
  *   a final bridge method with the Java name and an abstract/concrete method with the Kotlin name (`getSize`)
  * - Methods not in the Kotlin interface: generates open bridge methods.
  *   Java default methods get them only if the Kotlin interface is read-only and only its mutable counterpart has them
- *   (e.g., `removeIf`)
+ *   (e.g., `removeIf`, or `remove` of `java.util.Iterator`, which `kotlin.collections.MutableIterator` declares)
  * - Methods in a read-only Kotlin interface that its mutable counterpart redeclares (e.g., `iterator`): generates open bridge methods,
  *   see [functionNamesDeclaredByMutableCounterpart]
  * - Methods in the Kotlin interface with special signatures: generates appropriate bridge methods with type substitution
@@ -341,7 +341,8 @@ private fun generateJavaCollectionMethodStubs(
         when {
             method.hasModifierProperty(PsiModifier.STATIC) -> false
             // The JVM backend generates stubs only for the default methods that read-only Kotlin collections don't have
-            method.hasModifierProperty(PsiModifier.DEFAULT) -> isReadOnlyCollection && method.isMutableOnlyJdkMethod(javaClassId)
+            method.hasModifierProperty(PsiModifier.DEFAULT) ->
+                isReadOnlyCollection && (method.isMutableOnlyJdkMethod(javaClassId) || method.name in mutableCounterpartNames)
             else -> true
         }
     }
@@ -379,7 +380,8 @@ private fun PsiMethod.isMutableOnlyJdkMethod(javaClassId: ClassId): Boolean {
  * Empty if this collection is not read-only.
  *
  * The JVM backend generates a throwing stub for each such function that a class implementing the read-only collection doesn't implement,
- * even if the read-only collection declares the function too, like `iterator` (`CollectionStubComputer`, see KT-36724).
+ * even if the read-only collection declares the function too, like `iterator` (`CollectionStubComputer`, see KT-36724),
+ * or the JDK collection has a default method for it, like `remove` of `java.util.Iterator`.
  */
 context(_: KaSession)
 private val KaClassSymbol.functionNamesDeclaredByMutableCounterpart: Set<String>
