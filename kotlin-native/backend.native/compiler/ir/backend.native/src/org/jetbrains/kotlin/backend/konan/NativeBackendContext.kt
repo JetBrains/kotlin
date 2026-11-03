@@ -122,8 +122,8 @@ internal class NativeBackendContext(
     /**
      * Cache-aware version of [IrSimpleFunction.isTrivialSetter].
      *
-     * For getters declared in the current module we just delegate to [IrSimpleFunction.isTrivialSetter].
-     * For getters declared in a cached dependency, the IR body may be empty, so we instead consult
+     * For setters declared in the current module we just delegate to [IrSimpleFunction.isTrivialSetter].
+     * For setters declared in a cached dependency, the IR body may be empty, so we instead consult
      * the cache built when that dependency was first compiled (see `CacheInfoBuilder` and `TrivialFunctionsSerializer`).
      */
     fun isTrivialSetter(function: IrSimpleFunction): Boolean {
