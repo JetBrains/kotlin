@@ -34,7 +34,8 @@ private const val SWIFT_EXPORT_CLASSPATH = "swiftExportClasspath"
 private const val SWIFT_EXPORT_CLASSPATH_RESOLVABLE = "swiftExportClasspathResolvable"
 private const val SWIFT_EXPORT_EMBEDDABLE_MODULE = "swift-export-embeddable"
 internal const val SWIFT_EXPORT_MODULE_NAME_VALIDATION_PATTERN = "^[A-Za-z_][A-Za-z0-9_]*$"
-internal const val SWIFT_EXPORT_MODULE_NAME_DELIMITERS_PATTERN = "[:\\-]+"
+internal const val SWIFT_EXPORT_MODULE_NAME_DELIMITERS_PATTERN = "[:.\\-]+"
+private val swiftExportModuleNameDelimiters = Regex(SWIFT_EXPORT_MODULE_NAME_DELIMITERS_PATTERN)
 
 internal fun Project.initSwiftExportClasspathConfigurations() {
     maybeCreateSwiftExportClasspathDependenciesConfiguration()
@@ -83,15 +84,12 @@ internal fun KotlinNativeTarget.exportedSwiftExportApiConfiguration(
 
 /**
  * Converts a string to a Swift-compatible module name in UpperCamelCase.
- * This function handles various separators like dashes and colons.
- * For example, ":shared:core-api" becomes "SharedCoreApi".
+ * Colons, dots and dashes are treated as word separators.
+ * For example, ":shared:core-api" becomes "SharedCoreApi" and "kotlinx.cli" becomes "KotlinxCli".
  */
 internal val String.normalizedSwiftExportModuleName: String
     get() {
-        // Regex to split by any sequence of one or more non-alphanumeric characters.
-        val delimiters = Regex(SWIFT_EXPORT_MODULE_NAME_DELIMITERS_PATTERN)
-
-        return this.split(delimiters)
+        return this.split(swiftExportModuleNameDelimiters)
             // Filter out empty parts that can result from leading/trailing delimiters
             // (e.g., ":api" splits into "" and "api").
             .filter { it.isNotEmpty() }

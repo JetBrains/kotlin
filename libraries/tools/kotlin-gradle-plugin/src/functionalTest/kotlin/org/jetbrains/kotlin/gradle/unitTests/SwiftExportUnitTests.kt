@@ -799,6 +799,59 @@ class SwiftExportUnitTests {
     }
 
     @Test
+    fun `test swift export project name with dots`() {
+        val project = swiftExportProject(
+            projectBuilder = {
+                withName("kotlinx.cli")
+            }
+        )
+        project.evaluate()
+
+        val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
+        assertEquals("KotlinxCli", swiftExportTask.mainModuleInput.moduleName.get())
+
+        project.assertNoDiagnostics(KotlinToolingDiagnostics.SwiftExportInvalidModuleName)
+    }
+
+    @Test
+    fun `test exporting subproject with dots in name`() {
+        val project = buildProject(
+            projectBuilder = {
+                withName("shared")
+            },
+            configureProject = {
+                configureRepositoriesForTests()
+            }
+        )
+        val projectDependency = project.subProject("lib.core") {
+            iosSimulatorArm64()
+        }
+        project.setupForSwiftExport(
+            multiplatform = {
+                iosSimulatorArm64()
+                sourceSets.commonMain.dependencies {
+                    implementation(projectDependency)
+                }
+            },
+            swiftExport = {
+                export(projectDependency)
+            }
+        )
+
+        project.evaluate()
+        projectDependency.evaluate()
+
+        val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
+        val actualModules = swiftExportTask.resolveSwiftExportedModules { project.reportDiagnostic(it) }
+
+        assertEquals(
+            setOf(SwiftExportModuleForAssertion("LibCore", "lib.core", true)),
+            actualModules.toModulesForAssertion(),
+        )
+        project.assertNoDiagnostics(KotlinToolingDiagnostics.SwiftExportInvalidModuleName)
+    }
+
+    @Test
     fun `test exporting transitive dependency was not fully exported`() {
         val project = swiftExportProject(
             projectBuilder = {
