@@ -582,9 +582,9 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         map.put(
             JAVA_FIELD_SHADOWED_BY_KOTLIN_PROPERTY,
-            "This variable access is resolved to Java field, but it is clashed with Kotlin property ''{0}'' with backing field " +
-                    "which leads to the incorrect bytecode generation and failure at runtime. So such calls are prohibited until " +
-                    "corresponding bug will be fixed. See https://youtrack.jetbrains.com/issue/KT-56386 for more details.",
+            "This variable access resolves to a Java field, but it clashes with the Kotlin property with backing field ''{0}'' " +
+                    "which leads to incorrect bytecode generation and failures at runtime. " +
+                    "Until the corresponding bug is fixed, such calls are prohibited. See https://youtrack.jetbrains.com/issue/KT-56386 for more details.",
             SYMBOL
         )
 
