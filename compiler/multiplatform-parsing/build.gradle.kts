@@ -103,6 +103,7 @@ for (lexerName in listOf("KDoc", "Kotlin")) {
         generatorMainClass = "jflex.Main",
         argsProvider = { generationRoot ->
             listOf(
+                "--quiet",
                 lexerFile.asFile.absolutePath,
                 "-skel",
                 skeletonFile.asFile.absolutePath,
