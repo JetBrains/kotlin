@@ -138,9 +138,131 @@ public final class CCollection6 /* test.CCollection6*/ implements java.util.Coll
   public void clear();//  clear()
 }
 
+public abstract class CIterable /* test.CIterable*/ implements test.IIterable {
+  @org.jetbrains.annotations.NotNull()
+  public java.util.Iterator<java.lang.String> iterator();//  iterator()
+
+  public  CIterable();//  .ctor()
+}
+
+public abstract class CIterator /* test.CIterator*/ implements test.IIterator {
+  public  CIterator();//  .ctor()
+
+  public void remove();//  remove()
+}
+
+public abstract class CList /* test.CList*/ implements test.IList {
+  @org.jetbrains.annotations.NotNull()
+  public java.util.List<java.lang.String> subList(int, int);//  subList(int, int)
+
+  public  CList();//  .ctor()
+
+  public <T> T[] toArray(T[]);// <T>  toArray(T[])
+
+  public abstract boolean contains(java.lang.String);//  contains(java.lang.String)
+
+  public abstract int getSize();//  getSize()
+
+  public abstract int indexOf(java.lang.String);//  indexOf(java.lang.String)
+
+  public abstract int lastIndexOf(java.lang.String);//  lastIndexOf(java.lang.String)
+
+  public boolean add(java.lang.String);//  add(java.lang.String)
+
+  public boolean addAll(int, java.util.Collection<? extends java.lang.String>);//  addAll(int, java.util.Collection<? extends java.lang.String>)
+
+  public boolean addAll(java.util.Collection<? extends java.lang.String>);//  addAll(java.util.Collection<? extends java.lang.String>)
+
+  public boolean remove(java.lang.Object);//  remove(java.lang.Object)
+
+  public boolean removeAll(java.util.Collection<?>);//  removeAll(java.util.Collection<?>)
+
+  public boolean retainAll(java.util.Collection<?>);//  retainAll(java.util.Collection<?>)
+
+  public final boolean contains(java.lang.Object);//  contains(java.lang.Object)
+
+  public final int indexOf(java.lang.Object);//  indexOf(java.lang.Object)
+
+  public final int lastIndexOf(java.lang.Object);//  lastIndexOf(java.lang.Object)
+
+  public final int size();//  size()
+
+  public java.lang.Object[] toArray();//  toArray()
+
+  public java.lang.String remove(int);//  remove(int)
+
+  public java.lang.String set(int, java.lang.String);//  set(int, java.lang.String)
+
+  public java.util.ListIterator<java.lang.String> listIterator();//  listIterator()
+
+  public java.util.ListIterator<java.lang.String> listIterator(int);//  listIterator(int)
+
+  public void add(int, java.lang.String);//  add(int, java.lang.String)
+
+  public void clear();//  clear()
+
+  public void replaceAll(java.util.function.UnaryOperator<java.lang.String>);//  replaceAll(java.util.function.UnaryOperator<java.lang.String>)
+
+  public void sort(java.util.Comparator<? super java.lang.String>);//  sort(java.util.Comparator<? super java.lang.String>)
+}
+
+public abstract class CListIterator /* test.CListIterator*/ implements test.IListIterator {
+  public  CListIterator();//  .ctor()
+
+  public boolean hasNext();//  hasNext()
+
+  public java.lang.String next();//  next()
+
+  public void add(java.lang.String);//  add(java.lang.String)
+
+  public void remove();//  remove()
+
+  public void set(java.lang.String);//  set(java.lang.String)
+}
+
 public abstract class Foo /* test.Foo*/ {
   public  Foo();//  .ctor()
 }
 
 public abstract interface ICollection /* test.ICollection*/<Elem>  extends java.util.Collection<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
+}
+
+public abstract interface IIterable /* test.IIterable*/ extends java.lang.Iterable<java.lang.String>, kotlin.jvm.internal.markers.KMappedMarker {
+  @org.jetbrains.annotations.NotNull()
+  public default java.util.Iterator<java.lang.String> iterator();//  iterator()
+
+  public static final class DefaultImpls /* test.IIterable.DefaultImpls*/ {
+    @java.lang.Deprecated()
+    @org.jetbrains.annotations.NotNull()
+    public static java.util.Iterator<java.lang.String> iterator(@org.jetbrains.annotations.NotNull() test.IIterable);//  iterator(test.IIterable)
+  }
+}
+
+public abstract interface IIterator /* test.IIterator*/ extends java.util.Iterator<java.lang.String>, kotlin.jvm.internal.markers.KMappedMarker {
+  public default void remove();//  remove()
+
+  public static final class DefaultImpls /* test.IIterator.DefaultImpls*/ {
+    @java.lang.Deprecated()
+    public static void remove(@org.jetbrains.annotations.NotNull() test.IIterator);//  remove(test.IIterator)
+  }
+}
+
+public abstract interface IList /* test.IList*/ extends java.util.List<java.lang.String>, kotlin.jvm.internal.markers.KMappedMarker {
+  @org.jetbrains.annotations.NotNull()
+  public default java.util.List<java.lang.String> subList(int, int);//  subList(int, int)
+
+  public static final class DefaultImpls /* test.IList.DefaultImpls*/ {
+    @java.lang.Deprecated()
+    @org.jetbrains.annotations.NotNull()
+    public static java.util.List<java.lang.String> subList(@org.jetbrains.annotations.NotNull() test.IList, int, int);//  subList(test.IList, int, int)
+  }
+}
+
+public abstract interface IListIterator /* test.IListIterator*/ extends java.util.ListIterator<java.lang.String>, kotlin.jvm.internal.markers.KMappedMarker {
+  public default boolean hasNext();//  hasNext()
+
+  public static final class DefaultImpls /* test.IListIterator.DefaultImpls*/ {
+    @java.lang.Deprecated()
+    public static boolean hasNext(@org.jetbrains.annotations.NotNull() test.IListIterator);//  hasNext(test.IListIterator)
+  }
 }

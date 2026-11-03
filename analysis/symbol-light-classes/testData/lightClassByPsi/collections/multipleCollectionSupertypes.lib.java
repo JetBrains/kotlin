@@ -153,3 +153,11 @@ public abstract class MyClass2 /* test.MyClass2*/ implements java.util.Collectio
 
   public void sort(java.util.Comparator<? super java.lang.String>);//  sort(java.util.Comparator<? super java.lang.String>)
 }
+
+public abstract class MyClass3 /* test.MyClass3*/ implements java.lang.Iterable<java.lang.String>, java.util.Iterator<java.lang.String>, kotlin.jvm.internal.markers.KMappedMarker {
+  public  MyClass3();//  .ctor()
+
+  public java.util.Iterator<java.lang.String> iterator();//  iterator()
+
+  public void remove();//  remove()
+}
