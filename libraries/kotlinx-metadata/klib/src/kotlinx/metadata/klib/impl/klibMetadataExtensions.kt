@@ -89,6 +89,7 @@ internal class KlibMetadataExtensions : MetadataExtensions {
         proto.getExtensionOrNull(KlibMetadataProtoBuf.classFile)?.let {
             extension.file = c.getSourceFile(it)
         }
+        extension.kdoc = proto.getExtensionOrNull(KlibMetadataProtoBuf.classKdoc)
     }
 
     override fun readPackageExtensions(kmPackage: KmPackage, proto: ProtoBuf.Package, c: ReadContext) {
@@ -124,6 +125,7 @@ internal class KlibMetadataExtensions : MetadataExtensions {
         proto.getExtensionOrNull(KlibMetadataProtoBuf.functionFile)?.let {
             extension.file = c.getSourceFile(it)
         }
+        extension.kdoc = proto.getExtensionOrNull(KlibMetadataProtoBuf.functionKdoc)
     }
 
     override fun readPropertyExtensions(kmProperty: KmProperty, proto: ProtoBuf.Property, c: ReadContext) {
@@ -171,10 +173,15 @@ internal class KlibMetadataExtensions : MetadataExtensions {
                 extension.compileTimeValue = it
             }
         }
+        extension.kdoc = proto.getExtensionOrNull(KlibMetadataProtoBuf.propertyKdoc)
+        extension.getterKdoc = proto.getExtensionOrNull(KlibMetadataProtoBuf.propertyGetterKdoc)
+        extension.setterKdoc = proto.getExtensionOrNull(KlibMetadataProtoBuf.propertySetterKdoc)
     }
 
     override fun readConstructorExtensions(kmConstructor: KmConstructor, proto: ProtoBuf.Constructor, c: ReadContext) {
         readAnnotations(proto.annotationList, proto.getExtension(KlibMetadataProtoBuf.constructorAnnotation), c, kmConstructor.annotations)
+
+        kmConstructor.klibExtensions.kdoc = proto.getExtensionOrNull(KlibMetadataProtoBuf.constructorKdoc)
     }
 
     override fun readTypeParameterExtensions(kmTypeParameter: KmTypeParameter, proto: ProtoBuf.TypeParameter, c: ReadContext) {
@@ -192,6 +199,8 @@ internal class KlibMetadataExtensions : MetadataExtensions {
         extension.ordinal = proto.getExtensionOrNull(KlibMetadataProtoBuf.enumEntryOrdinal)
 
         readAnnotations(proto.annotationList, proto.getExtension(KlibMetadataProtoBuf.enumEntryAnnotation), c, kmEnumEntry.annotations)
+
+        extension.kdoc = proto.getExtensionOrNull(KlibMetadataProtoBuf.enumEntryKdoc)
     }
 
     override fun readTypeExtensions(kmType: KmType, proto: ProtoBuf.Type, c: ReadContext) {
@@ -199,7 +208,9 @@ internal class KlibMetadataExtensions : MetadataExtensions {
         c.processTypeAfterReading(kmType)
     }
 
-    override fun readTypeAliasExtensions(kmTypeAlias: KmTypeAlias, proto: ProtoBuf.TypeAlias, c: ReadContext) {}
+    override fun readTypeAliasExtensions(kmTypeAlias: KmTypeAlias, proto: ProtoBuf.TypeAlias, c: ReadContext) {
+        kmTypeAlias.klibExtensions.kdoc = proto.getExtensionOrNull(KlibMetadataProtoBuf.typeAliasKdoc)
+    }
 
     override fun readValueParameterExtensions(kmValueParameter: KmValueParameter, proto: ProtoBuf.ValueParameter, c: ReadContext) {
         readAnnotations(proto.annotationList, proto.getExtension(KlibMetadataProtoBuf.parameterAnnotation), c, kmValueParameter.annotations)
@@ -212,6 +223,9 @@ internal class KlibMetadataExtensions : MetadataExtensions {
 
         kmClass.file?.let { file ->
             proto.setExtension(KlibMetadataProtoBuf.classFile, c.getIndexOf(file))
+        }
+        kmClass.kdoc?.let { kdoc ->
+            proto.setExtension(KlibMetadataProtoBuf.classKdoc, kdoc)
         }
     }
 
@@ -245,6 +259,9 @@ internal class KlibMetadataExtensions : MetadataExtensions {
         kmFunction.file?.let { file ->
             proto.setExtension(KlibMetadataProtoBuf.functionFile, c.getIndexOf(file))
         }
+        kmFunction.kdoc?.let { kdoc ->
+            proto.setExtension(KlibMetadataProtoBuf.functionKdoc, kdoc)
+        }
     }
 
     override fun writePropertyExtensions(kmProperty: KmProperty, proto: ProtoBuf.Property.Builder, c: WriteContext) {
@@ -274,11 +291,23 @@ internal class KlibMetadataExtensions : MetadataExtensions {
         kmProperty.compileTimeValue?.let { value ->
             proto.setExtension(KlibMetadataProtoBuf.compileTimeValue, value.writeAnnotationArgument(c.strings).build())
         }
+        kmProperty.kdoc?.let { kdoc ->
+            proto.setExtension(KlibMetadataProtoBuf.propertyKdoc, kdoc)
+        }
+        kmProperty.getterKdoc?.let { kdoc ->
+            proto.setExtension(KlibMetadataProtoBuf.propertyGetterKdoc, kdoc)
+        }
+        kmProperty.setterKdoc?.let { kdoc ->
+            proto.setExtension(KlibMetadataProtoBuf.propertySetterKdoc, kdoc)
+        }
     }
 
     override fun writeConstructorExtensions(kmConstructor: KmConstructor, proto: ProtoBuf.Constructor.Builder, c: WriteContext) {
         writeAnnotations(kmConstructor.annotations, c, proto::addAllAnnotation) {
             proto.setExtension(KlibMetadataProtoBuf.constructorAnnotation, it)
+        }
+        kmConstructor.kdoc?.let { kdoc ->
+            proto.setExtension(KlibMetadataProtoBuf.constructorKdoc, kdoc)
         }
     }
 
@@ -296,6 +325,10 @@ internal class KlibMetadataExtensions : MetadataExtensions {
         writeAnnotations(enumEntry.annotations, c, proto::addAllAnnotation) {
             proto.setExtension(KlibMetadataProtoBuf.enumEntryAnnotation, it)
         }
+
+        enumEntry.kdoc?.let { kdoc ->
+            proto.setExtension(KlibMetadataProtoBuf.enumEntryKdoc, kdoc)
+        }
     }
 
     override fun writeTypeExtensions(type: KmType, proto: ProtoBuf.Type.Builder, c: WriteContext) {
@@ -305,7 +338,11 @@ internal class KlibMetadataExtensions : MetadataExtensions {
         }
     }
 
-    override fun writeTypeAliasExtensions(typeAlias: KmTypeAlias, proto: ProtoBuf.TypeAlias.Builder, c: WriteContext) {}
+    override fun writeTypeAliasExtensions(typeAlias: KmTypeAlias, proto: ProtoBuf.TypeAlias.Builder, c: WriteContext) {
+        typeAlias.kdoc?.let { kdoc ->
+            proto.setExtension(KlibMetadataProtoBuf.typeAliasKdoc, kdoc)
+        }
+    }
 
     override fun writeValueParameterExtensions(valueParameter: KmValueParameter, proto: ProtoBuf.ValueParameter.Builder, c: WriteContext) {
         writeAnnotations(valueParameter.annotations, c, proto::addAllAnnotation) {
