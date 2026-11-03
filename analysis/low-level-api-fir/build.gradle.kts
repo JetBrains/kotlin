@@ -34,7 +34,6 @@ dependencies {
     implementation(project(":compiler:psi:psi-impl"))
     implementation(project(":js:js.config"))
     implementation(project(":kotlin-util-klib-metadata"))
-    implementation(project(":native:frontend.native"))
     implementation(project(":native:native.config"))
     implementation(project(":wasm:wasm.config"))
     testFixturesApi(project(":analysis:analysis-api-fir"))
