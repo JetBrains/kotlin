@@ -1,0 +1,4 @@
+Diagnostics from file:
+  for PSI element of type KtNameReferenceExpression at (22,5-6)
+    JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE      text ranges: [(65,66)]
+      PSI: KtNameReferenceExpression at (22,5-6)

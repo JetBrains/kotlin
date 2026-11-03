@@ -1,7 +1,3 @@
-// RUN_PIPELINE_TILL: FRONTEND
-// JDK_KIND: FULL_JDK_11
-// MOCK_MODULE_DOES_NOT_READ_SOURCE
-
 // MODULE: moduleA
 // FILE: module-info.java
 module moduleA {
@@ -23,5 +19,5 @@ module moduleB {
 import a.A
 
 fun usage() {
-    <!JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE!>A<!>()
+    A()
 }

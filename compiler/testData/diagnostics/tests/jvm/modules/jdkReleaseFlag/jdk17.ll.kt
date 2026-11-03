@@ -1,6 +1,7 @@
 // LL_FIR_DIVERGENCE
-// The LL test platform doesn't build the Java module graph from source `module-info.java` files: all default JDK
-// modules stay visible, so `javax.swing` from `java.desktop`, which is not required, is resolved.
+// The LL FIR path resolves JDK symbols before it checks Java module readability, so it reports
+// `JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE`. The compiler path filters unread JDK modules during symbol resolution, so it reports
+// `UNRESOLVED_REFERENCE`.
 // LL_FIR_DIVERGENCE
 // RUN_PIPELINE_TILL: FRONTEND
 // JDK_KIND: FULL_JDK_17
@@ -76,7 +77,7 @@ package foo;
 
 public class Foo {
     //no requirement
-    val z: javax.swing.JFrame? = null
+    val z: <!JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE!>javax.swing.JFrame?<!> = null
 }
 
 // FILE: foo/Foo2.kt
