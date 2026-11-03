@@ -16,10 +16,8 @@ import org.jetbrains.kotlin.fir.declarations.utils.isDangling
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.syntax.withSyntax
 import org.jetbrains.kotlin.psi.KtTypeConstraint
-import org.jetbrains.kotlin.psi.KtTypeParameter
 
-object FirTypeParameterSyntaxChecker : FirDeclarationSyntaxChecker<FirTypeParameter, KtTypeParameter>() {
-
+object FirTypeParameterSyntaxChecker : FirDeclarationSyntaxChecker<FirTypeParameter>() {
     // A dangling type parameter has no KtTypeParameter, and all its bounds come from constraints
     override fun isApplicable(element: FirTypeParameter, source: KtSourceElement): Boolean =
         element.bounds.size >= 2 && !element.isDangling
@@ -28,7 +26,6 @@ object FirTypeParameterSyntaxChecker : FirDeclarationSyntaxChecker<FirTypeParame
     override fun checkPsi(
         element: FirTypeParameter,
         source: KtPsiSourceElement,
-        psi: KtTypeParameter,
     ) {
         val [constraint, params] = element.bounds.partition { it.psi?.parent is KtTypeConstraint }
         if (params.isNotEmpty() && constraint.isNotEmpty()) {

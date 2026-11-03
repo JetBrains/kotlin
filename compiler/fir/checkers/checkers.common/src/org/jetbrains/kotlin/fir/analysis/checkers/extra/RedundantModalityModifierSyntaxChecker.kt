@@ -27,11 +27,9 @@ import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
 
-object RedundantModalityModifierSyntaxChecker : FirDeclarationSyntaxChecker<FirDeclaration, KtDeclaration>() {
-
+object RedundantModalityModifierSyntaxChecker : FirDeclarationSyntaxChecker<FirDeclaration>() {
     override fun isApplicable(element: FirDeclaration, source: KtSourceElement): Boolean =
         element.isMemberWithRealSource && element !is FirValueParameter
                 || element.source?.kind == KtFakeSourceElementKind.PropertyFromParameter

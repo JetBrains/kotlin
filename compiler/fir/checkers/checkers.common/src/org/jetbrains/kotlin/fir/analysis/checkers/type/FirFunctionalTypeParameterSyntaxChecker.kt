@@ -11,11 +11,10 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.syntax.FirSyntaxChecker
 import org.jetbrains.kotlin.fir.types.FirFunctionTypeRef
-import org.jetbrains.kotlin.psi.KtParameter
 
 abstract class FirFunctionalTypeParameterSyntaxChecker : FirFunctionTypeRefChecker(
     MppCheckerKind.Common
-), FirSyntaxChecker<FirFunctionTypeParameter, KtParameter> {
+), FirSyntaxChecker<FirFunctionTypeParameter> {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(typeRef: FirFunctionTypeRef) {
         for (parameter in typeRef.parameters) {

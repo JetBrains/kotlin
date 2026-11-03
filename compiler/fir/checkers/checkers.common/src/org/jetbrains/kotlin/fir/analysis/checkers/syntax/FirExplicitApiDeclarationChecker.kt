@@ -28,11 +28,10 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.syntax.withSyntax
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.syntax.KotlinSyntaxIdSets
+import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 
-object FirExplicitApiDeclarationChecker : FirDeclarationSyntaxChecker<FirDeclaration, KtDeclaration>() {
+object FirExplicitApiDeclarationChecker : FirDeclarationSyntaxChecker<FirDeclaration>() {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun checkPsiOrLightTree(
         element: FirDeclaration,

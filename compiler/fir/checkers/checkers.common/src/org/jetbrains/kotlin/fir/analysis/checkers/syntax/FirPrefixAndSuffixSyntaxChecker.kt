@@ -28,14 +28,14 @@ import org.jetbrains.kotlin.psi.psiUtil.prevLeaf
  * performance-critical, so it is acceptable here.
  */
 @OptIn(KtImplementationDetail::class)
-object FirPrefixAndSuffixSyntaxChecker : FirExpressionSyntaxChecker<FirStatement, KtExpression>() {
+object FirPrefixAndSuffixSyntaxChecker : FirExpressionSyntaxChecker<FirStatement>() {
     override fun isApplicable(element: FirStatement, source: KtSourceElement): Boolean =
         source is KtPsiSourceElement &&
                 source.kind !is KtFakeSourceElementKind &&
                 source.psi.node?.elementType in KtLiteralPrefixAndSuffix.relevantLiteralTypes
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    override fun checkPsi(element: FirStatement, source: KtPsiSourceElement, psi: KtExpression) {
+    override fun checkPsi(element: FirStatement, source: KtPsiSourceElement) {
         fun check(affix: PsiElement, prefix: Boolean) {
             if (KtLiteralPrefixAndSuffix.isProhibitedPrefixOrSuffix(affix.node.elementType)) {
                 reporter.reportOn(
@@ -45,6 +45,7 @@ object FirPrefixAndSuffixSyntaxChecker : FirExpressionSyntaxChecker<FirStatement
             }
         }
 
+        val psi = source.psi as KtExpression
         psi.prevLeaf()?.let { check(it, prefix = true) }
         psi.nextLeaf()?.let { check(it, prefix = false) }
     }

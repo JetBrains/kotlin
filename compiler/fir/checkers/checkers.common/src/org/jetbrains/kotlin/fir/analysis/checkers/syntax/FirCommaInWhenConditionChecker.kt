@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.syntax
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.syntax.withSyntax
 import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.KtSourceElement
@@ -19,7 +18,7 @@ import org.jetbrains.kotlin.fir.expressions.FirWhenBranch
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 
-object FirCommaInWhenConditionChecker : FirExpressionSyntaxChecker<FirWhenExpression, PsiElement>() {
+object FirCommaInWhenConditionChecker : FirExpressionSyntaxChecker<FirWhenExpression>() {
     override fun isApplicable(element: FirWhenExpression, source: KtSourceElement): Boolean {
         return element.subjectVariable == null
     }

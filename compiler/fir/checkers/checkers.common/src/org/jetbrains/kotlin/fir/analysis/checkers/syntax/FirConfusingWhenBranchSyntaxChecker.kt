@@ -6,17 +6,13 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.syntax
 
 import com.intellij.lang.LighterASTNode
-import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import com.intellij.util.diff.FlyweightCapableTreeStructure
-import org.jetbrains.kotlin.AbstractKtSourceElement
+import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.ElementTypeUtils.getOperationSymbol
 import org.jetbrains.kotlin.ElementTypeUtils.isExpression
-import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.KtNodeTypes.*
-import org.jetbrains.kotlin.KtPsiSourceElement
-import org.jetbrains.kotlin.KtRealPsiSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -30,7 +26,7 @@ import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.util.getChildren
 
-object FirConfusingWhenBranchSyntaxChecker : FirExpressionSyntaxChecker<FirWhenExpression, PsiElement>() {
+object FirConfusingWhenBranchSyntaxChecker : FirExpressionSyntaxChecker<FirWhenExpression>() {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun checkLightTree(
         element: FirWhenExpression,
@@ -78,11 +74,10 @@ object FirConfusingWhenBranchSyntaxChecker : FirExpressionSyntaxChecker<FirWhenE
     override fun checkPsi(
         element: FirWhenExpression,
         source: KtPsiSourceElement,
-        psi: PsiElement,
     ) {
         val subjectType = element.subjectVariable?.initializer?.resolvedType ?: element.subjectVariable?.returnTypeRef?.coneType ?: return
         val booleanSubject = subjectType.isBooleanOrNullableBoolean
-        val whenExpression = psi as KtWhenExpression
+        val whenExpression = source.psi as KtWhenExpression
         if (whenExpression.subjectExpression == null && whenExpression.subjectVariable == null) return
         for (entry in whenExpression.entries) {
             for (condition in entry.conditions) {
