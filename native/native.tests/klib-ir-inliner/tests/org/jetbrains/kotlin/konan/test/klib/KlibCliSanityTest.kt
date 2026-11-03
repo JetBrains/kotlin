@@ -544,6 +544,49 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
     }
 
     @Test
+    fun `Compiler does not load platform libraries implicitly when -no-default-libs is passed`() {
+        try {
+            newSourceModules {
+                addRegularModule("a") {
+                    sourceFileAddend(
+                        """
+                            @kotlinx.cinterop.ExperimentalForeignApi
+                            fun callPosix() = platform.posix.fopen("test.txt", "r")
+                        """.trimIndent()
+                    )
+                }
+            }.compileToKlibsViaCli(extraCliArgs = listOf("-no-default-libs"))
+
+            fail { "CompilationToolException is expected" }
+        } catch (cte: CompilationToolException) {
+            if (!cte.reason.contains("error: unresolved reference 'platform'"))
+                throw cte
+        }
+    }
+
+    @Test
+    fun `Compiler fails on missing direct dependency`() {
+        fun compile(passA: Boolean) = newSourceModules {
+            addRegularModule("a") { sourceFileAddend("fun foo() = 42") }
+            addRegularModule("b") {
+                if (passA) dependsOn("a")
+                sourceFileAddend("fun useA() = a.foo()")
+            }
+        }.compileToKlibsViaCli()
+
+        compile(passA = true)
+
+        try {
+            compile(passA = false)
+
+            fail { "CompilationToolException is expected" }
+        } catch (cte: CompilationToolException) {
+            if (!cte.reason.contains("error: unresolved reference 'a'"))
+                throw cte
+        }
+    }
+
+    @Test
     fun `Klibs in distribution have signature index`() {
         val libraries = KlibLoader {
             libraryProviders(
