@@ -4,7 +4,7 @@ import kotlin.test.assertEquals
 
 @Builder
 class User(name: String) {
-    var greeting = "Hello, $name"
+    var <!BUILDER_PROPERTY_NOT_INCLUDED("greeting; builder fields are generated from the primary constructor''s value parameters. To make the property a builder field, declare it in the primary constructor. You may also move @Builder annotation from the class to its constructor to avoid this warning")!>greeting<!> = "Hello, $name"
 }
 
 // The body property shares its name with the parameter, so `toBuilder()` can read it
