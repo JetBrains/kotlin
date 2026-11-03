@@ -1,5 +1,8 @@
 public abstract class MyClass1 /* test.MyClass1*/ implements java.util.List<@org.jetbrains.annotations.NotNull() java.lang.String>, java.util.Map<@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.Integer>, kotlin.jvm.internal.markers.KMappedMarker, kotlin.jvm.internal.markers.KMappedMarker {
   @java.lang.Override()
+  public <T> T[] toArray(T[]);// <T>  toArray(T[])
+
+  @java.lang.Override()
   public @org.jetbrains.annotations.NotNull() java.lang.Integer compute(@org.jetbrains.annotations.NotNull() java.lang.String, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() java.lang.String, ? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>);//  compute(@org.jetbrains.annotations.NotNull() java.lang.String, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() java.lang.String, ? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>)
 
   @java.lang.Override()
@@ -24,7 +27,16 @@ public abstract class MyClass1 /* test.MyClass1*/ implements java.util.List<@org
   public @org.jetbrains.annotations.NotNull() java.lang.Integer replace(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.Integer);//  replace(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.Integer)
 
   @java.lang.Override()
+  public @org.jetbrains.annotations.NotNull() java.lang.String remove(int);//  remove(int)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.NotNull() java.lang.String set(int, @org.jetbrains.annotations.NotNull() java.lang.String);//  set(int, @org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
   public abstract @org.jetbrains.annotations.NotNull() java.lang.Integer get(@org.jetbrains.annotations.NotNull() java.lang.String);//  get(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public abstract boolean contains(@org.jetbrains.annotations.NotNull() java.lang.String);//  contains(@org.jetbrains.annotations.NotNull() java.lang.String)
 
   @java.lang.Override()
   public abstract boolean containsKey(@org.jetbrains.annotations.NotNull() java.lang.String);//  containsKey(@org.jetbrains.annotations.NotNull() java.lang.String)
@@ -36,6 +48,12 @@ public abstract class MyClass1 /* test.MyClass1*/ implements java.util.List<@org
   public abstract int getSize();//  getSize()
 
   @java.lang.Override()
+  public abstract int indexOf(@org.jetbrains.annotations.NotNull() java.lang.String);//  indexOf(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public abstract int lastIndexOf(@org.jetbrains.annotations.NotNull() java.lang.String);//  lastIndexOf(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
   public abstract java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.Integer> getValues();//  getValues()
 
   @java.lang.Override()
@@ -45,19 +63,43 @@ public abstract class MyClass1 /* test.MyClass1*/ implements java.util.List<@org
   public abstract java.util.Set<java.util.Map.Entry<@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.Integer>> getEntries();//  getEntries()
 
   @java.lang.Override()
+  public boolean add(@org.jetbrains.annotations.NotNull() java.lang.String);//  add(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public boolean addAll(int, java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.String>);//  addAll(int, java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.String>)
+
+  @java.lang.Override()
+  public boolean addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.String>);//  addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.String>)
+
+  @java.lang.Override()
   public boolean remove(java.lang.Object, java.lang.Object);//  remove(java.lang.Object, java.lang.Object)
+
+  @java.lang.Override()
+  public boolean removeAll(java.util.Collection<?>);//  removeAll(java.util.Collection<?>)
 
   @java.lang.Override()
   public boolean replace(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer);//  replace(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer)
 
   @java.lang.Override()
+  public boolean retainAll(java.util.Collection<?>);//  retainAll(java.util.Collection<?>)
+
+  @java.lang.Override()
   public final @org.jetbrains.annotations.NotNull() java.lang.Integer get(java.lang.Object);//  get(java.lang.Object)
+
+  @java.lang.Override()
+  public final boolean contains(java.lang.Object);//  contains(java.lang.Object)
 
   @java.lang.Override()
   public final boolean containsKey(java.lang.Object);//  containsKey(java.lang.Object)
 
   @java.lang.Override()
   public final boolean containsValue(java.lang.Object);//  containsValue(java.lang.Object)
+
+  @java.lang.Override()
+  public final int indexOf(java.lang.Object);//  indexOf(java.lang.Object)
+
+  @java.lang.Override()
+  public final int lastIndexOf(java.lang.Object);//  lastIndexOf(java.lang.Object)
 
   @java.lang.Override()
   public final int size();//  size()
@@ -72,6 +114,21 @@ public abstract class MyClass1 /* test.MyClass1*/ implements java.util.List<@org
   public final java.util.Set<java.util.Map.Entry<@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.Integer>> entrySet();//  entrySet()
 
   @java.lang.Override()
+  public java.lang.Object[] toArray();//  toArray()
+
+  @java.lang.Override()
+  public java.util.List<@org.jetbrains.annotations.NotNull() java.lang.String> subList(int, int);//  subList(int, int)
+
+  @java.lang.Override()
+  public java.util.ListIterator<@org.jetbrains.annotations.NotNull() java.lang.String> listIterator();//  listIterator()
+
+  @java.lang.Override()
+  public java.util.ListIterator<@org.jetbrains.annotations.NotNull() java.lang.String> listIterator(int);//  listIterator(int)
+
+  @java.lang.Override()
+  public void add(int, @org.jetbrains.annotations.NotNull() java.lang.String);//  add(int, @org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
   public void clear();//  clear()
 
   @java.lang.Override()
@@ -79,6 +136,12 @@ public abstract class MyClass1 /* test.MyClass1*/ implements java.util.List<@org
 
   @java.lang.Override()
   public void replaceAll(java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() java.lang.String, ? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>);//  replaceAll(java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() java.lang.String, ? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>)
+
+  @java.lang.Override()
+  public void replaceAll(java.util.function.UnaryOperator<@org.jetbrains.annotations.NotNull() java.lang.String>);//  replaceAll(java.util.function.UnaryOperator<@org.jetbrains.annotations.NotNull() java.lang.String>)
+
+  @java.lang.Override()
+  public void sort(java.util.Comparator<? super @org.jetbrains.annotations.NotNull() java.lang.String>);//  sort(java.util.Comparator<? super @org.jetbrains.annotations.NotNull() java.lang.String>)
 
   public  MyClass1();//  .ctor()
 }
@@ -163,6 +226,9 @@ public abstract class MyClass2 /* test.MyClass2*/ implements java.util.Collectio
 }
 
 public abstract class MyClass3 /* test.MyClass3*/ implements java.lang.Iterable<@org.jetbrains.annotations.NotNull() java.lang.String>, java.util.Iterator<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMappedMarker, kotlin.jvm.internal.markers.KMappedMarker {
+  @java.lang.Override()
+  public java.util.Iterator<@org.jetbrains.annotations.NotNull() java.lang.String> iterator();//  iterator()
+
   @java.lang.Override()
   public void remove();//  remove()
 
