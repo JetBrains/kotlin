@@ -77,6 +77,7 @@ tasks.named<ShadowJar>(EMBEDDABLE_COMPILER_TASK_NAME) {
     transform(DontIncludeResourceTransformer::class.java) {
         resource = "META-INF/services/org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar"
     }
+    relocate("kotlinx.serialization", "org.jetbrains.kotlin.buildtools.internal.serialization")
 }
 
 projectTests {
