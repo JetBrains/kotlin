@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.native.checkers
 
 import org.jetbrains.kotlin.KtRealSourceElementKind
+import org.jetbrains.kotlin.KtTokenId
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -18,7 +19,6 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
-import org.jetbrains.kotlin.lexer.KtTokens
 
 object FirNativeExternalDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
@@ -31,7 +31,7 @@ object FirNativeExternalDeclarationChecker : FirBasicDeclarationChecker(MppCheck
         if (declaration is FirFunction || declaration is FirTypeAlias) return
         if (declaration.source?.kind !is KtRealSourceElementKind) return
 
-        val modifier = declaration.getModifier(KtTokens.EXTERNAL_KEYWORD) ?: return
+        val modifier = declaration.getModifier(KtTokenId.EXTERNAL_MODIFIER) ?: return
 
         reporter.reportOn(
             modifier.source,

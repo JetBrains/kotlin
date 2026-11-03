@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration
 
 import org.jetbrains.kotlin.KtRealSourceElementKind
+import org.jetbrains.kotlin.KtTokenId
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -22,7 +23,6 @@ import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.isEnabled
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 
 object FirJvmInlineApplicabilityChecker : FirRegularClassChecker(MppCheckerKind.Common) {
@@ -35,8 +35,8 @@ object FirJvmInlineApplicabilityChecker : FirRegularClassChecker(MppCheckerKind.
 
         val annotation = declaration.getAnnotationByClassId(JvmStandardClassIds.Annotations.JvmInline, context.session)
 
-        val valueModifier = declaration.getModifier(KtTokens.VALUE_KEYWORD)
-        val hasInlineModifier = declaration.hasModifier(KtTokens.INLINE_KEYWORD)
+        val valueModifier = declaration.getModifier(KtTokenId.VALUE_MODIFIER)
+        val hasInlineModifier = declaration.hasModifier(KtTokenId.INLINE_MODIFIER)
 
         if (
             annotation != null && valueModifier != null && declaration.classKind == ClassKind.OBJECT &&

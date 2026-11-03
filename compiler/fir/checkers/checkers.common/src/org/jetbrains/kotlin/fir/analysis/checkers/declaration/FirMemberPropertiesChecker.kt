@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtTokenId
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.contracts.description.isDefinitelyVisited
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -27,7 +28,6 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.NormalPath
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.lexer.KtTokens
 
 // See old FE's [DeclarationsChecker]
 object FirMemberPropertiesChecker : FirClassChecker(MppCheckerKind.Common) {
@@ -121,7 +121,7 @@ internal fun checkProperty(
     )
 
     if (containingDeclaration != null) {
-        val hasAbstractModifier = KtTokens.ABSTRACT_KEYWORD in modifierList
+        val hasAbstractModifier = KtTokenId.ABSTRACT_MODIFIER in modifierList
         val isAbstract = propertySymbol.isAbstract || hasAbstractModifier
         if (containingDeclaration.isInterface &&
             Visibilities.isPrivate(propertySymbol.visibility) &&
@@ -154,7 +154,7 @@ internal fun checkProperty(
             }
         }
 
-        val hasOpenModifier = KtTokens.OPEN_KEYWORD in modifierList
+        val hasOpenModifier = KtTokenId.OPEN_MODIFIER in modifierList
         if (hasOpenModifier &&
             containingDeclaration.isInterface &&
             shouldReportOpenInInterface(propertySymbol, containingDeclaration.symbol)
@@ -169,7 +169,7 @@ internal fun checkProperty(
 context(context: CheckerContext)
 fun shouldReportOpenInInterface(symbol: FirCallableSymbol<*>, containingClassSymbol: FirClassSymbol<*>): Boolean {
     val modifierList = symbol.source.getModifierList()
-    val hasAbstractModifier = KtTokens.ABSTRACT_KEYWORD in modifierList
+    val hasAbstractModifier = KtTokenId.ABSTRACT_MODIFIER in modifierList
 
     return !hasAbstractModifier &&
             symbol.isAbstract &&

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtTokenId
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
@@ -20,7 +21,6 @@ import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.hasBody
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isExternal
-import org.jetbrains.kotlin.lexer.KtTokens
 
 val FirSession.platformDiagnosticSuppressor: FirPlatformDiagnosticSuppressor? by FirSession.nullableSessionComponentAccessor()
 
@@ -34,7 +34,7 @@ object FirNonMemberFunctionsChecker : FirFunctionChecker(MppCheckerKind.Common) 
 
         val source = declaration.source ?: return
         if (source.kind is KtFakeSourceElementKind) return
-        if (declaration.hasModifier(KtTokens.ABSTRACT_KEYWORD)) return
+        if (declaration.hasModifier(KtTokenId.ABSTRACT_MODIFIER)) return
         if (declaration.isExternal) return
         if (!declaration.hasBody &&
             !declaration.isExpect &&

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.KtTokenId
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.contracts.description.isDefinitelyVisited
 import org.jetbrains.kotlin.descriptors.Modality
@@ -36,7 +37,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -128,7 +128,7 @@ internal fun checkPropertyInitializer(
     reachable: Boolean = true,
 ) {
     val inInterfaceAndNonStatic = containingClass?.isInterface == true && !propertySymbol.isStatic
-    val hasAbstractModifier = KtTokens.ABSTRACT_KEYWORD in modifierList
+    val hasAbstractModifier = KtTokenId.ABSTRACT_MODIFIER in modifierList
     val isAbstract = propertySymbol.isAbstract || hasAbstractModifier
     if (isAbstract) {
         val returnTypeRef = propertySymbol.resolvedReturnTypeRef

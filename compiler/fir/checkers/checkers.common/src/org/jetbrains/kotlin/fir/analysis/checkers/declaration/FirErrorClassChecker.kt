@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.KtTokenId
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -19,7 +20,6 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.StandardClassIds
 
 object FirErrorClassChecker : FirRegularClassChecker(MppCheckerKind.Common) {
@@ -29,7 +29,7 @@ object FirErrorClassChecker : FirRegularClassChecker(MppCheckerKind.Common) {
 
         if (LanguageFeature.RichErrors.isDisabled()) {
             reporter.reportOn(
-                declaration.getModifier(KtTokens.ERROR_KEYWORD)?.source,
+                declaration.getModifier(KtTokenId.ERROR_MODIFIER)?.source,
                 FirErrors.UNSUPPORTED_FEATURE,
                 LanguageFeature.RichErrors to context.languageVersionSettings
             )

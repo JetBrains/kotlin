@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.native.checkers
 
+import org.jetbrains.kotlin.KtTokenId
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -31,7 +32,6 @@ import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenFunctionsWithBaseScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.hasError
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.annotations.KOTLIN_THROWS_ANNOTATION_FQ_NAME
@@ -83,7 +83,7 @@ sealed class FirNativeThrowsChecker(mppKind: MppCheckerKind) : FirBasicDeclarati
             return
         }
 
-        if (declaration.hasModifier(KtTokens.SUSPEND_KEYWORD) && classIds.none { it in cancellationExceptionAndSupersClassIds }) {
+        if (declaration.hasModifier(KtTokenId.SUSPEND_MODIFIER) && classIds.none { it in cancellationExceptionAndSupersClassIds }) {
             reporter.reportOn(
                 throwsAnnotation.source,
                 FirNativeErrors.MISSING_EXCEPTION_IN_THROWS_ON_SUSPEND,

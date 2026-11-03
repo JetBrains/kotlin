@@ -13,9 +13,12 @@ import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.junit.jupiter.api.Test
+import java.lang.reflect.Modifier
 import kotlin.reflect.KProperty
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 
 @OptIn(KtImplementationDetail::class)
 @Suppress("UnstableApiUsage")
@@ -82,5 +85,27 @@ class PsiKmpSyntaxIdsConsistencyTest {
                 "KMP_ID = $kmpId KMP_ELEMENT_TYPE = $kmpElementType PSI_ID = $psiId PSI_ELEMENT_TYPE = $psiElementType"
             )
         }
+    }
+
+    @Test
+    fun elementTypeIsInverseOfSyntaxId() {
+        assertNull(NO_ID.elementType())
+
+        // KDoc element types are not mapped by `syntaxId()`
+        for (holder in listOf(BasicElementTypeId::class, KtTokenId::class, KtNodeTypeId::class)) {
+            val fields = holder.java.declaredFields.filter { Modifier.isStatic(it.modifiers) && it.type == Int::class.javaPrimitiveType }
+            for (field in fields) {
+                val id = field.getInt(null)
+                val elementType = assertNotNull(id.elementType(), "No element type for ${holder.simpleName}.${field.name} = $id")
+                assertEquals(id, elementType.syntaxId(), "${holder.simpleName}.${field.name} is mapped to $elementType with another ID")
+            }
+        }
+    }
+
+    @Test
+    fun modifierElementTypeNames() {
+        assertEquals("public", KtTokenId.PUBLIC_MODIFIER.elementType().toString())
+        assertEquals("fun", KtTokenId.FUN_MODIFIER.elementType().toString())
+        assertEquals("in", KtTokenId.IN_MODIFIER.elementType().toString())
     }
 }

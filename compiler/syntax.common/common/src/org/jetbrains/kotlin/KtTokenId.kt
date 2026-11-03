@@ -168,4 +168,9 @@ object KtTokenId {
     /**
      * Remember to update first const in [KtNodeTypeId] after adding new tokens here ^^^
      */
+
+    /**
+     * Sets of IDs (they mirror the corresponding sets of `org.jetbrains.kotlin.lexer.KtTokens`)
+     */
+    val VISIBILITY_MODIFIERS: SyntaxIdSet = syntaxIdSetOf(PRIVATE_MODIFIER, PUBLIC_MODIFIER, INTERNAL_MODIFIER, PROTECTED_MODIFIER)
 }

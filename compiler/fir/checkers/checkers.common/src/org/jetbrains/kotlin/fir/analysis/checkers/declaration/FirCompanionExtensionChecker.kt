@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.KtTokenId
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -27,7 +28,6 @@ import org.jetbrains.kotlin.fir.types.abbreviatedTypeOrSelf
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isMarkedNullable
 import org.jetbrains.kotlin.fir.types.unwrapToSimpleTypeUsingLowerBound
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 object FirCompanionExtensionChecker : FirCallableDeclarationChecker(MppCheckerKind.Platform) {
@@ -37,7 +37,7 @@ object FirCompanionExtensionChecker : FirCallableDeclarationChecker(MppCheckerKi
 
         if (LanguageFeature.CompanionExtensions.isDisabled()) {
             reporter.reportOn(
-                declaration.getModifier(KtTokens.COMPANION_KEYWORD)?.source,
+                declaration.getModifier(KtTokenId.COMPANION_MODIFIER)?.source,
                 FirErrors.UNSUPPORTED_FEATURE,
                 LanguageFeature.CompanionExtensions to context.languageVersionSettings
             )

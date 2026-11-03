@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.web.common.checkers.declaration
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealSourceElementKind
+import org.jetbrains.kotlin.KtTokenId
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
@@ -36,7 +37,6 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isMarkedOrFlexiblyNullable
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
 
@@ -236,7 +236,7 @@ abstract class FirWebCommonExternalChecker(
         // source kind is checked, otherwise this function
         // may return true for a primary constructor of an external class
         if (this is FirDefaultPropertyAccessor || this.source?.kind !is KtRealSourceElementKind) return false
-        return hasModifier(KtTokens.EXTERNAL_KEYWORD) || hasExternalLikeAnnotations(this, session)
+        return hasModifier(KtTokenId.EXTERNAL_MODIFIER) || hasExternalLikeAnnotations(this, session)
     }
 
     private fun FirDeclaration.isPrivateMemberOfExternalClass(session: FirSession): Boolean {

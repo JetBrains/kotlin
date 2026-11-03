@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.KtTokenId
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -20,7 +21,6 @@ import org.jetbrains.kotlin.fir.declarations.processAllDeclaredCallables
 import org.jetbrains.kotlin.fir.declarations.utils.isOpen
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
-import org.jetbrains.kotlin.lexer.KtTokens
 
 object FirOpenMemberChecker : FirClassChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -32,7 +32,7 @@ object FirOpenMemberChecker : FirClassChecker(MppCheckerKind.Common) {
             ) return@processAllDeclaredCallables
             val source = memberDeclaration.source ?: return@processAllDeclaredCallables
             if (memberDeclaration.isOpen && !memberDeclaration.isOverride && declaration.classKind == ClassKind.ANNOTATION_CLASS ||
-                memberDeclaration.hasModifier(KtTokens.OPEN_KEYWORD) && source.shouldReportOpenFromSource
+                memberDeclaration.hasModifier(KtTokenId.OPEN_MODIFIER) && source.shouldReportOpenFromSource
             ) {
                 if (declaration.classKind == ClassKind.OBJECT) {
                     reporter.reportOn(source, FirErrors.NON_FINAL_MEMBER_IN_OBJECT)

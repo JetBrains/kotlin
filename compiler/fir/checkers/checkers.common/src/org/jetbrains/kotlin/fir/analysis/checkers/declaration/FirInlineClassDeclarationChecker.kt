@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtRealSourceElementKind
+import org.jetbrains.kotlin.KtTokenId
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -17,15 +18,14 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.annotationPlatformSupport
 import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.isEnabled
-import org.jetbrains.kotlin.lexer.KtTokens
 
 object FirInlineClassDeclarationChecker : FirRegularClassChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirRegularClass) {
         val source = declaration.source?.takeIf { it.kind is KtRealSourceElementKind } ?: return
 
-        val hasInlineModifier = declaration.hasModifier(KtTokens.INLINE_KEYWORD)
-        val hasValueModifier = declaration.hasModifier(KtTokens.VALUE_KEYWORD)
+        val hasInlineModifier = declaration.hasModifier(KtTokenId.INLINE_MODIFIER)
+        val hasValueModifier = declaration.hasModifier(KtTokenId.VALUE_MODIFIER)
 
         if (hasInlineModifier && (LanguageFeature.ExplicitInlineValueClassesSyntax.isDisabled() || !hasValueModifier)) {
             val replacement = when {
