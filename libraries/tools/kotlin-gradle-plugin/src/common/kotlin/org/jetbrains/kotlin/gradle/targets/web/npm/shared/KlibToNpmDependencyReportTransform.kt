@@ -24,7 +24,6 @@ import java.io.File
 import java.util.zip.ZipFile
 
 /** Reads the `package.json` of a klib that comes without an [NpmDependencyReport]. */
-@CacheableTransform
 internal abstract class KlibToNpmDependencyReportTransform : TransformAction<KlibToNpmDependencyReportTransform.Parameters> {
 
     interface Parameters : TransformParameters {
