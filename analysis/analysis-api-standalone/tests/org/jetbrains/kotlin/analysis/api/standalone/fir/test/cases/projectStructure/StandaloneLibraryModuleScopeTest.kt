@@ -113,9 +113,8 @@ class StandaloneLibraryModuleScopeTest : AbstractStandaloneTest() {
             "The unpacked KLIB should contain at least one metadata file.",
         )
 
-        // KT-90490: the library scope should contain the files of the unpacked KLIB
-        val scope = libraryModule.baseContentScope
-        Assertions.assertEquals(emptyList<VirtualFile>(), klibFiles.filter { scope.contains(it) })
+        val nonContainedFiles = listOf(klibRoot.parent, getLocalVirtualFile(testDataPath("library").resolve("library.kt")))
+        assertLibraryScope(libraryModule, "Parent-traversal library search scope", LibraryFiles(klibFiles, nonContainedFiles))
     }
 
     /**
