@@ -21,7 +21,7 @@ internal val BuildCExports = createSimpleNamedCompilerPhase<LinkKlibsContext, K1
     val prefix = context.config.cExportPrefix
 
     val typeTranslator = CAdapterTypeTranslator(prefix)
-    CAdapterGenerator(context, typeTranslator).buildExports(input.moduleDescriptor)
+    CAdapterGenerator(context, typeTranslator).buildExports(input.moduleDescriptor, input.klibModuleDescriptors)
 }
 
 /**

@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.konan.config.NativeConfigurationKeys
 import org.jetbrains.kotlin.konan.config.objcGenerics
 import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.source.getPsi
 import java.nio.file.Path
@@ -39,6 +40,7 @@ internal class ObjCExportedInterface(
 internal fun produceObjCExportInterface(
     context: NativeBackendPhaseContext,
     moduleDescriptor: ModuleDescriptor,
+    klibModuleDescriptors: Map<KotlinLibrary, ModuleDescriptor>,
 ): ObjCExportedInterface {
     val config = context.config
     require(config.target.family.isAppleFamily)
@@ -51,7 +53,7 @@ internal fun produceObjCExportInterface(
     //   and can't do this per-module, e.g. due to global name conflict resolution.
 
     val unitSuspendFunctionExport = config.unitSuspendFunctionObjCExport
-    val moduleDescriptors = listOf(moduleDescriptor) + moduleDescriptor.getExportedDependenciesInCanonicalRTO(config)
+    val moduleDescriptors = listOf(moduleDescriptor) + klibModuleDescriptors.getExportedDependenciesInCanonicalRTO(config)
     val entryPoints = config.objcEntryPoints
     val expandEntryPoints = config.configuration.getBoolean(BinaryOptions.objcExportExpandEntryPoints)
     val effectiveEntryPoints = if (entryPoints != ObjCEntryPoints.ALL && expandEntryPoints) {
@@ -139,13 +141,14 @@ private class ObjCExportCompilerProblemCollector(val context: NativeBackendPhase
 internal fun createObjCFramework(
         config: NativeSecondStageCompilationConfig,
         moduleDescriptor: ModuleDescriptor,
+        klibModuleDescriptors: Map<KotlinLibrary, ModuleDescriptor>,
         exportedInterface: ObjCExportedInterface,
         frameworkDirectory: Path
 ) {
     val frameworkName = frameworkDirectory.name.removeSuffix(CompilerOutputKind.FRAMEWORK.suffix())
     val frameworkBuilder = FrameworkBuilder(
         config,
-        infoPListBuilder = InfoPListBuilder(config),
+        infoPListBuilder = InfoPListBuilder(config, klibModuleDescriptors),
         moduleMapBuilder = ModuleMapBuilder(),
         objCHeaderWriter = ObjCHeaderWriter(),
         mainPackageGuesser = MainPackageGuesser(),
@@ -162,12 +165,13 @@ internal fun createObjCFramework(
 internal fun createTestBundle(
         config: NativeSecondStageCompilationConfig,
         moduleDescriptor: ModuleDescriptor,
+        klibModuleDescriptors: Map<KotlinLibrary, ModuleDescriptor>,
         bundleDirectory: Path
 ) {
     val name = bundleDirectory.name.removeSuffix(CompilerOutputKind.TEST_BUNDLE.suffix())
     BundleBuilder(
             config = config,
-            infoPListBuilder = InfoPListBuilder(config, BundleType.XCTEST),
+            infoPListBuilder = InfoPListBuilder(config, klibModuleDescriptors, BundleType.XCTEST),
             mainPackageGuesser = MainPackageGuesser()
     ).build(moduleDescriptor, bundleDirectory, name)
 }

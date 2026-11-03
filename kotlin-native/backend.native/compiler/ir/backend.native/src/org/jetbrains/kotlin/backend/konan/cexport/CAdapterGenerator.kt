@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.konan.allParameters
 import org.jetbrains.kotlin.K1Deprecation
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.CurrentKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.SyntheticModulesOrigin
@@ -386,10 +387,10 @@ internal class CAdapterGenerator(
                 CurrentKlibModuleOrigin, SyntheticModulesOrigin -> Int.MAX_VALUE
             }
 
-    fun buildExports(moduleDescriptor: ModuleDescriptor): CAdapterExportedElements {
+    fun buildExports(moduleDescriptor: ModuleDescriptor, klibModuleDescriptors: Map<KotlinLibrary, ModuleDescriptor>): CAdapterExportedElements {
         scopes.push(ExportedElementScope(ScopeKind.TOP, "kotlin"))
         moduleDescriptors += moduleDescriptor
-        moduleDescriptors += moduleDescriptor.getExportedDependencies(context.config)
+        moduleDescriptors += klibModuleDescriptors.getExportedDependencies(context.config)
 
         currentPackageFragments = moduleDescriptors.flatMap { it.getPackageFragments() }.toSet()
                 .sortedWith(

@@ -97,7 +97,7 @@ internal val K1FrontendPhase: NamedCompilerPhase<NativeBackendPhaseContext, Kotl
     val frontendOutputs = setupModuleDescriptor(context)
     setupContainerAndDumpObjcHeader(context, frontendOutputs)
     val moduleDescriptor = frontendOutputs.moduleDescriptor
-    context.config.configuration.sourcesModules = moduleDescriptor.getIncludedLibraryDescriptors(context.config).toSet() + moduleDescriptor
+    context.config.configuration.sourcesModules = frontendOutputs.klibModuleDescriptors.getIncludedLibraryDescriptors(context.config).toSet() + moduleDescriptor
 
     K1FrontendPhaseOutput(moduleDescriptor, frontendOutputs.klibModuleDescriptors, frontendOutputs.forwardDeclarationsModule) {
         val bindingContext = frontendOutputs.trace.bindingContext as CleanableBindingContext
