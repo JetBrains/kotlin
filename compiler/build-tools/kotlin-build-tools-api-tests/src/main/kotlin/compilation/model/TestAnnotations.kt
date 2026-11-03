@@ -61,6 +61,9 @@ annotation class BtaV2StrategyAndPlatformAgnosticCompilationTest
  * without fixing an execution policy. The test receives a [ProjectWithPolicyCreator] and the `KotlinToolchains`, and
  * chooses the execution policy itself (e.g. in-process, to observe in-process compiler state a daemon run would not
  * expose).
+ *
+ * `[Native]` is included only when the Kotlin/Native compiler is available (the repository is built with `kotlin.native.enabled=true`);
+ * Kotlin/Native compilation does not support the daemon execution policy yet.
  */
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
 @Retention(AnnotationRetention.RUNTIME)
@@ -73,7 +76,8 @@ annotation class BtaV2PlatformAgnosticCompilationTest
 
 /**
  * Annotation for parameterized tests that evaluate compilation behavior using both BTA implementations on all supported platforms
- * This involves the variants: [daemon, in-process] x [jvm, js]
+ * This involves the variants: [daemon, in-process] x [jvm, js, wasm, metadata] plus [in-process] x [native] when the
+ * Kotlin/Native compiler is available (the repository is built with `kotlin.native.enabled=true`).
  */
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
 @Retention(AnnotationRetention.RUNTIME)
