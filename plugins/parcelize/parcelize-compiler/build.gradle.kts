@@ -91,9 +91,9 @@ dependencies {
 
     // This dependency is an `.aar` file.
     robolectricClasspath("androidx.test:monitor:1.8.0")
-    robolectricClasspath(project(":plugins:parcelize:parcelize-runtime")) { isTransitive = false }
+    robolectricClasspath(project(":plugins:parcelize:parcelize-runtime", configuration = "androidRuntimeElements")) { isTransitive = false }
 
-    parcelizeRuntimeForTests(project(":plugins:parcelize:parcelize-runtime")) { isTransitive = false }
+    parcelizeRuntimeForTests(project(":plugins:parcelize:parcelize-runtime", configuration = "androidRuntimeElements")) { isTransitive = false }
     parcelizeRuntimeForTests(commonDependency("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm")) { isTransitive = false }
 
     layoutLib("org.jetbrains.intellij.deps.android.tools:layoutlib:26.5.0") { isTransitive = false }
