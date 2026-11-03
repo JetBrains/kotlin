@@ -31,9 +31,9 @@ fun box(): String = if (defaultCall() == 7 && explicitCall(1) == 3) "OK" else "F
 // default.kt:17 defaultCall
 // default.kt:18 defaultCall
 // wrapped.kt:11 defaultCall
-// default.kt:22 defaultCall
+// wrapped.kt:9 defaultCall
 // wrapped.kt:7 defaultValue
-// default.kt:22 defaultCall
+// wrapped.kt:9 defaultCall
 // wrapped.kt:11 defaultCall
 // default.kt:18 defaultCall
 // default.kt:19 defaultCall
@@ -58,9 +58,9 @@ fun box(): String = if (defaultCall() == 7 && explicitCall(1) == 3) "OK" else "F
 // test.kt:28 $box (24)
 // default.kt:18 $defaultCall (11)
 // wrapped.kt:11 $defaultCall (11)
-// default.kt:22 $defaultCall (0)
+// wrapped.kt:9 $defaultCall (4)
 // wrapped.kt:7 $defaultValue (26, 27)
-// default.kt:22 $defaultCall (14)
+// wrapped.kt:9 $defaultCall (18)
 // wrapped.kt:11 $defaultCall (4)
 // default.kt:18 $defaultCall (4)
 // test.kt:28 $box (41, 24, 59, 46)
