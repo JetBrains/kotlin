@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.declarations.FirDeprecationInfo
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement.Version
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -343,7 +342,7 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass: KClass<ValOrVarOnLoopParameter>
             get() = ValOrVarOnLoopParameter::class
 
-        public val valOrVar: KtKeywordToken
+        public val valOrVar: String
     }
 
     @KaUnstableDiagnosticApi
@@ -352,7 +351,7 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass: KClass<ValOrVarOnFunParameter>
             get() = ValOrVarOnFunParameter::class
 
-        public val valOrVar: KtKeywordToken
+        public val valOrVar: String
     }
 
     @KaUnstableDiagnosticApi
@@ -361,7 +360,7 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass: KClass<ValOrVarOnCatchParameter>
             get() = ValOrVarOnCatchParameter::class
 
-        public val valOrVar: KtKeywordToken
+        public val valOrVar: String
     }
 
     @KaUnstableDiagnosticApi
@@ -370,7 +369,7 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass: KClass<ValOrVarOnSecondaryConstructorParameter>
             get() = ValOrVarOnSecondaryConstructorParameter::class
 
-        public val valOrVar: KtKeywordToken
+        public val valOrVar: String
     }
 
     @KaUnstableDiagnosticApi

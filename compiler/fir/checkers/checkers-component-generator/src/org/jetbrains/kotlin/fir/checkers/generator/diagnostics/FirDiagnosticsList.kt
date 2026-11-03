@@ -107,16 +107,16 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val DIVISION_BY_ZERO by warning<KtExpression>()
         val TRIM_MARGIN_BLANK_PREFIX by warning<KtExpression>()
         val VAL_OR_VAR_ON_LOOP_PARAMETER by error<KtParameter>(PositioningStrategy.VAL_OR_VAR_NODE) {
-            parameter<KtKeywordToken>("valOrVar")
+            parameter<String>("valOrVar")
         }
         val VAL_OR_VAR_ON_FUN_PARAMETER by error<KtParameter>(PositioningStrategy.VAL_OR_VAR_NODE) {
-            parameter<KtKeywordToken>("valOrVar")
+            parameter<String>("valOrVar")
         }
         val VAL_OR_VAR_ON_CATCH_PARAMETER by error<KtParameter>(PositioningStrategy.VAL_OR_VAR_NODE) {
-            parameter<KtKeywordToken>("valOrVar")
+            parameter<String>("valOrVar")
         }
         val VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER by error<KtParameter>(PositioningStrategy.VAL_OR_VAR_NODE) {
-            parameter<KtKeywordToken>("valOrVar")
+            parameter<String>("valOrVar")
         }
         val INNER_ON_TOP_LEVEL_SCRIPT_CLASS by deprecationError<PsiElement>(LanguageFeature.ProhibitScriptTopLevelInnerClasses)
         val ERROR_SUPPRESSION by warning<PsiElement> {

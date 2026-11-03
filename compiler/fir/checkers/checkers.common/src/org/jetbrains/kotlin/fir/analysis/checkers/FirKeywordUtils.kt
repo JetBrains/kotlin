@@ -138,9 +138,21 @@ fun FirElement.hasModifier(tokenId: SyntaxId): Boolean = tokenId in getModifierL
 @OptIn(SymbolInternals::class)
 fun FirBasedSymbol<*>.hasModifier(tokenId: SyntaxId): Boolean = fir.hasModifier(tokenId)
 
-internal val KtSourceElement?.valOrVarKeyword: KtKeywordToken?
-    get() = when (this) {
-        null -> null
-        is KtPsiSourceElement -> (psi as? KtValVarKeywordOwner)?.valOrVarKeyword?.let { it.node?.elementType as? KtKeywordToken }
-        is KtLightSourceElement -> treeStructure.valOrVarKeyword(lighterASTNode)?.tokenType as? KtKeywordToken
+internal enum class ValOrVarKeyword(val keyword: String) {
+    VAL("val"),
+    VAR("var")
+}
+
+internal val KtSourceElement?.valOrVarKeyword: ValOrVarKeyword?
+    get() {
+        val keywordToken = when (this) {
+            null -> null
+            is KtPsiSourceElement -> (psi as? KtValVarKeywordOwner)?.valOrVarKeyword?.let { it.node?.elementType as? KtKeywordToken }
+            is KtLightSourceElement -> treeStructure.valOrVarKeyword(lighterASTNode)?.tokenType as? KtKeywordToken
+        }
+        return when (keywordToken) {
+            KtTokens.VAL_KEYWORD -> ValOrVarKeyword.VAL
+            KtTokens.VAR_KEYWORD -> ValOrVarKeyword.VAR
+            else -> null
+        }
     }

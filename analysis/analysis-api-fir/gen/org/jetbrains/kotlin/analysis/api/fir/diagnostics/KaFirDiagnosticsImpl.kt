@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnosticWithSource
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.declarations.FirDeprecationInfo
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement.Version
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -266,25 +265,25 @@ internal class TrimMarginBlankPrefixImpl(
 ) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.TrimMarginBlankPrefix
 
 internal class ValOrVarOnLoopParameterImpl(
-    override val valOrVar: KtKeywordToken,
+    override val valOrVar: String,
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtParameter>(firDiagnostic, token), KaFirDiagnostic.ValOrVarOnLoopParameter
 
 internal class ValOrVarOnFunParameterImpl(
-    override val valOrVar: KtKeywordToken,
+    override val valOrVar: String,
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtParameter>(firDiagnostic, token), KaFirDiagnostic.ValOrVarOnFunParameter
 
 internal class ValOrVarOnCatchParameterImpl(
-    override val valOrVar: KtKeywordToken,
+    override val valOrVar: String,
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtParameter>(firDiagnostic, token), KaFirDiagnostic.ValOrVarOnCatchParameter
 
 internal class ValOrVarOnSecondaryConstructorParameterImpl(
-    override val valOrVar: KtKeywordToken,
+    override val valOrVar: String,
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtParameter>(firDiagnostic, token), KaFirDiagnostic.ValOrVarOnSecondaryConstructorParameter

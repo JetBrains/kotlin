@@ -145,9 +145,9 @@ object FirFunctionParameterChecker : FirFunctionChecker(MppCheckerKind.Common) {
         if (source?.kind is KtFakeSourceElementKind) return
         source.valOrVarKeyword?.let {
             if (valueParameter.containingDeclarationSymbol is FirConstructorSymbol) {
-                reporter.reportOn(source, FirErrors.VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER, it)
+                reporter.reportOn(source, FirErrors.VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER, it.keyword)
             } else {
-                reporter.reportOn(source, FirErrors.VAL_OR_VAR_ON_FUN_PARAMETER, it)
+                reporter.reportOn(source, FirErrors.VAL_OR_VAR_ON_FUN_PARAMETER, it.keyword)
             }
         }
     }
