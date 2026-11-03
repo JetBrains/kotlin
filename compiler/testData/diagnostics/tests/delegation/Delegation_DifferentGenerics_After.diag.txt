@@ -1,53 +1,126 @@
 /KC.kt:67:1: error: Class 'KC' is not abstract and does not implement abstract members:
-fun <C> foo(): List<C>
-fun <D> baz(): D
-fun <E, F> bar(): List<F>
+In package 'root package' of module '<main>':
+  --> KI.kt
+   |
+58 | fun <C> foo(): List<C>
+   | ...
+60 | fun <D> baz(): D
+   | ...
+62 | fun <E, F> bar(): List<F>
+   |
 
 /KC.kt:68:5: error: 'foo' overrides nothing. Potential signatures for overriding:
-fun <C> foo(): List<C>
+In package 'root package' of module '<main>':
+  --> KI.kt:58:5
+   |
+58 | fun <C> foo(): List<C>
+   |
 
 /KC.kt:68:14: error: Conflicting overloads:
-fun foo(): List<String>
-fun <C> foo(): List<C>
+In package 'root package' of module '<main>':
+  --> KC.kt:68:5
+   |
+68 | fun foo(): List<String>
+   |
+In package 'root package' of module '<main>':
+  --> KI.kt:58:5
+   |
+58 | fun <C> foo(): List<C>
+   |
 
 /KC.kt:70:5: error: 'baz' overrides nothing. Potential signatures for overriding:
-fun <D> baz(): D
+In package 'root package' of module '<main>':
+  --> KI.kt:60:5
+   |
+60 | fun <D> baz(): D
+   |
 
 /KC.kt:70:14: error: Conflicting overloads:
-fun baz(): Any
-fun <D> baz(): D
+In package 'root package' of module '<main>':
+  --> KC.kt:70:5
+   |
+70 | fun baz(): Any
+   |
+In package 'root package' of module '<main>':
+  --> KI.kt:60:5
+   |
+60 | fun <D> baz(): D
+   |
 
 /KC.kt:72:5: error: 'bar' overrides nothing. Potential signatures for overriding:
-fun <E, F> bar(): List<F>
+In package 'root package' of module '<main>':
+  --> KI.kt:62:5
+   |
+62 | fun <E, F> bar(): List<F>
+   |
 
 /KC.kt:72:14: error: Conflicting overloads:
-fun bar(): List<Int>
-fun <E, F> bar(): List<F>
+In package 'root package' of module '<main>':
+  --> KC.kt:72:5
+   |
+72 | fun bar(): List<Int>
+   |
+In package 'root package' of module '<main>':
+  --> KI.kt:62:5
+   |
+62 | fun <E, F> bar(): List<F>
+   |
 /KJC.kt:77:1: error: Class 'KJC' is not abstract and does not implement abstract members:
-fun <C : Any!> foo(): (Mutable)List<C!>!
-fun <D : Any!> baz(): D!
-fun <E : Any!, F : Any!> bar(): (Mutable)List<F!>!
+In package 'root package' of module '<main>':
+ |
+ | fun <C : Any!> foo(): (Mutable)List<C!>!,  | fun <D : Any!> baz(): D!,  | fun <E : Any!, F : Any!> bar(): (Mutable)List<F!>!
+ |
 
 /KJC.kt:78:5: error: 'foo' overrides nothing. Potential signatures for overriding:
-fun <C : Any!> foo(): (Mutable)List<C!>!
+In package 'root package' of module '<main>':
+ |
+ | fun <C : Any!> foo(): (Mutable)List<C!>!
+ |
 
 /KJC.kt:78:14: error: Conflicting overloads:
-fun foo(): List<String>
-fun <C : Any!> foo(): (Mutable)List<C!>!
+In package 'root package' of module '<main>':
+  --> KJC.kt:78:5
+   |
+78 | fun foo(): List<String>
+   |
+In package 'root package' of module '<main>':
+ |
+ | fun <C : Any!> foo(): (Mutable)List<C!>!
+ |
 
 /KJC.kt:80:5: error: 'baz' overrides nothing. Potential signatures for overriding:
-fun <D : Any!> baz(): D!
+In package 'root package' of module '<main>':
+ |
+ | fun <D : Any!> baz(): D!
+ |
 
 /KJC.kt:80:14: error: Conflicting overloads:
-fun baz(): Any
-fun <D : Any!> baz(): D!
+In package 'root package' of module '<main>':
+  --> KJC.kt:80:5
+   |
+80 | fun baz(): Any
+   |
+In package 'root package' of module '<main>':
+ |
+ | fun <D : Any!> baz(): D!
+ |
 
 /KJC.kt:82:5: error: 'bar' overrides nothing. Potential signatures for overriding:
-fun <E : Any!, F : Any!> bar(): (Mutable)List<F!>!
+In package 'root package' of module '<main>':
+ |
+ | fun <E : Any!, F : Any!> bar(): (Mutable)List<F!>!
+ |
 
 /KJC.kt:82:14: error: Conflicting overloads:
-fun bar(): List<Int>
-fun <E : Any!, F : Any!> bar(): (Mutable)List<F!>!
+In package 'root package' of module '<main>':
+  --> KJC.kt:82:5
+   |
+82 | fun bar(): List<Int>
+   |
+In package 'root package' of module '<main>':
+ |
+ | fun <E : Any!, F : Any!> bar(): (Mutable)List<F!>!
+ |
 /test.kt:87:24: error: The function 'fun <C : Any!> foo(): (Mutable)List<C!>!' defined in 'JI' from an interface is generic, but the function 'fun foo(): (Mutable)List<String!>!' defined in 'JC' from a delegate is not.
 Such an implementation can provoke runtime errors.
 

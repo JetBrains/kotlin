@@ -1,72 +1,113 @@
 compiler/testData/cli/jvm/diagnosticTests/diagnosticsOrder1.kt:1:5: error: conflicting declarations:
-val x: Int
-val x: Int
-val x: Int
-val x: Int
-val x: Int
-val x: Int
+In package 'root package' of module '<main>':
+ --> diagnosticsOrder1.kt
+  |
+2 | val x: Int
+3 | val x: Int
+4 | val x: Int
+5 | val x: Int
+6 | val x: Int
+7 | val x: Int
+  |
 val x = 5
     ^
 compiler/testData/cli/jvm/diagnosticTests/diagnosticsOrder1.kt:2:5: error: conflicting declarations:
-val x: Int
-val x: Int
-val x: Int
-val x: Int
-val x: Int
-val x: Int
+In package 'root package' of module '<main>':
+ --> diagnosticsOrder1.kt
+  |
+1 | val x: Int
+  | ...
+3 | val x: Int
+4 | val x: Int
+5 | val x: Int
+6 | val x: Int
+7 | val x: Int
+  |
 val x = 5
     ^
 compiler/testData/cli/jvm/diagnosticTests/diagnosticsOrder1.kt:3:5: error: conflicting declarations:
-val x: Int
-val x: Int
-val x: Int
-val x: Int
-val x: Int
-val x: Int
+In package 'root package' of module '<main>':
+ --> diagnosticsOrder1.kt
+  |
+1 | val x: Int
+2 | val x: Int
+  | ...
+4 | val x: Int
+5 | val x: Int
+6 | val x: Int
+7 | val x: Int
+  |
 val x = 5
     ^
 compiler/testData/cli/jvm/diagnosticTests/diagnosticsOrder1.kt:4:5: error: conflicting declarations:
-val x: Int
-val x: Int
-val x: Int
-val x: Int
-val x: Int
-val x: Int
+In package 'root package' of module '<main>':
+ --> diagnosticsOrder1.kt
+  |
+1 | val x: Int
+2 | val x: Int
+3 | val x: Int
+  | ...
+5 | val x: Int
+6 | val x: Int
+7 | val x: Int
+  |
 val x = 5
     ^
 compiler/testData/cli/jvm/diagnosticTests/diagnosticsOrder1.kt:5:5: error: conflicting declarations:
-val x: Int
-val x: Int
-val x: Int
-val x: Int
-val x: Int
-val x: Int
+In package 'root package' of module '<main>':
+ --> diagnosticsOrder1.kt
+  |
+1 | val x: Int
+2 | val x: Int
+3 | val x: Int
+4 | val x: Int
+  | ...
+6 | val x: Int
+7 | val x: Int
+  |
 val x = 5
     ^
 compiler/testData/cli/jvm/diagnosticTests/diagnosticsOrder1.kt:6:5: error: conflicting declarations:
-val x: Int
-val x: Int
-val x: Int
-val x: Int
-val x: Int
-val x: Int
+In package 'root package' of module '<main>':
+ --> diagnosticsOrder1.kt
+  |
+1 | val x: Int
+2 | val x: Int
+3 | val x: Int
+4 | val x: Int
+5 | val x: Int
+  | ...
+7 | val x: Int
+  |
 val x = 5
     ^
 compiler/testData/cli/jvm/diagnosticTests/diagnosticsOrder1.kt:7:5: error: conflicting declarations:
-val x: Int
-val x: Int
-val x: Int
-val x: Int
-val x: Int
-val x: Int
+In package 'root package' of module '<main>':
+ --> diagnosticsOrder1.kt
+  |
+1 | val x: Int
+2 | val x: Int
+3 | val x: Int
+4 | val x: Int
+5 | val x: Int
+6 | val x: Int
+  |
 val x = 5
     ^
 compiler/testData/cli/jvm/diagnosticTests/diagnosticsOrder2.kt:1:5: error: conflicting declarations:
-val y: Int
+In package 'root package' of module '<main>':
+ --> diagnosticsOrder2.kt:2:1
+  |
+2 | val y: Int
+  |
 val y = 5
     ^
 compiler/testData/cli/jvm/diagnosticTests/diagnosticsOrder2.kt:2:5: error: conflicting declarations:
-val y: Int
+In package 'root package' of module '<main>':
+ --> diagnosticsOrder2.kt:1:1
+  |
+1 | val y: Int
+  |
 val y = 5
     ^
 COMPILATION_ERROR

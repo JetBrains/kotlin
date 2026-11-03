@@ -1,3 +1,10 @@
 /test.kt:27:9: error: Overload resolution ambiguity between candidates:
-static field SOME: String
-enum entry SOME: SomeEnum
+In package 'first' of module '<main>':
+ |
+ | static field SOME: String
+ |
+In package 'second' of module '<main>':
+  --> SomeEnum.kt:17:5
+   |
+17 | enum entry SOME: SomeEnum
+   |

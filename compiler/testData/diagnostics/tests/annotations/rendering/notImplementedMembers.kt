@@ -24,8 +24,8 @@ abstract class D {
     abstract val d: @An Int
 }
 
-<!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED("Class 'E'; member:val d: Int"), ABSTRACT_MEMBER_NOT_IMPLEMENTED("Class 'E'; member:fun a(arg: Int): Unit")!>class E<!> : D(), A
-<!ABSTRACT_MEMBER_NOT_IMPLEMENTED("Class 'F'; member:fun a(arg: Int): Unit")!>class F<!> : A
+<!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED("Class 'E'; member:In package 'root package' of module '<main>':  --> notImplementedMembers.kt:23:5   |23 | val d: Int   |"), ABSTRACT_MEMBER_NOT_IMPLEMENTED("Class 'E'; member:In package 'root package' of module '<main>': --> notImplementedMembers.kt:9:5  |9 | fun a(arg: Int): Unit  |")!>class E<!> : D(), A
+<!ABSTRACT_MEMBER_NOT_IMPLEMENTED("Class 'F'; member:In package 'root package' of module '<main>': --> notImplementedMembers.kt:9:5  |9 | fun a(arg: Int): Unit  |")!>class F<!> : A
 
 @An
 interface G {

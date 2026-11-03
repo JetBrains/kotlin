@@ -1,9 +1,17 @@
 compiler/testData/cli/jvm/diagnosticTests/conflictingOverloads.kt:1:1: error: conflicting overloads:
-fun a(): List<String>
+In package 'root package' of module '<main>':
+ --> conflictingOverloads.kt:2:1
+  |
+2 | fun a(): List<String>
+  |
 fun a(): List<Int> = null!!
 ^^^^^^^^^^^^^^^^^^
 compiler/testData/cli/jvm/diagnosticTests/conflictingOverloads.kt:2:1: error: conflicting overloads:
-fun a(): List<Int>
+In package 'root package' of module '<main>':
+ --> conflictingOverloads.kt:1:1
+  |
+1 | fun a(): List<Int>
+  |
 fun a(): List<String> = null!!
 ^^^^^^^^^^^^^^^^^^^^^
 COMPILATION_ERROR

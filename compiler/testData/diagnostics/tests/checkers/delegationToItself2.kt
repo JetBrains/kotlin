@@ -9,7 +9,7 @@ interface SomeInterface {
 enum class EEE {
     A, B, C;
 
-    companion <!ABSTRACT_MEMBER_INCORRECTLY_DELEGATED_WARNING("Object 'EEE.Companion'; member:val x: Int")!>object<!> : SomeInterface by EEE
+    companion <!ABSTRACT_MEMBER_INCORRECTLY_DELEGATED_WARNING("Object 'EEE.Companion'; member:In package 'root package' of module '<main>':  --> delegationToItself2.kt:12:5   |12 | val x: Int   |")!>object<!> : SomeInterface by EEE
 }
 
 class Some {

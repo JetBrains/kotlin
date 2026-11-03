@@ -1,7 +1,15 @@
 /RedeclarationThroughDestructuring.kt:7:14: error: Conflicting declarations:
-local val b: String
-local val b: Int
+In package '`<local>`' of module '<main>':
+ --> RedeclarationThroughDestructuring.kt
+  |
+7 | local val b: String
+7 | local val b: Int
+  |
 
 /RedeclarationThroughDestructuring.kt:7:17: error: Conflicting declarations:
-local val b: String
-local val b: Int
+In package '`<local>`' of module '<main>':
+ --> RedeclarationThroughDestructuring.kt
+  |
+7 | local val b: String
+7 | local val b: Int
+  |

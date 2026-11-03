@@ -1,7 +1,15 @@
 /enum.kt:31:5: error: Enum entry 'EnumClass.E2' does not implement abstract members:
-fun foo(): Int
-val bar: String
+In package 'root package' of module '<main>':
+  --> enum.kt
+   |
+37 | fun foo(): Int
+38 | val bar: String
+   |
 
 /enum.kt:35:5: error: Enum entry 'EnumClass.E3' does not implement abstract members:
-fun foo(): Int
-val bar: String
+In package 'root package' of module '<main>':
+  --> enum.kt
+   |
+37 | fun foo(): Int
+38 | val bar: String
+   |
