@@ -9,7 +9,6 @@
 #include <cstdint>
 
 #include "Common.h"
-#include "CompilerConstants.hpp"
 #include "KAssert.h"
 
 struct ObjHeader;
@@ -28,7 +27,7 @@ inline constexpr uint64_t kCompressedRefsWindowSize = uint64_t{1} << (32 + kComp
 struct HeapRefSlot;
 
 ALWAYS_INLINE inline size_t heapRefSlotSize() noexcept {
-    return compiler::compressedRefs() ? sizeof(uint32_t) : sizeof(ObjHeader*);
+    return sizeof(ObjHeader*);
 }
 
 ALWAYS_INLINE inline uintptr_t compressedRefsBase() noexcept {

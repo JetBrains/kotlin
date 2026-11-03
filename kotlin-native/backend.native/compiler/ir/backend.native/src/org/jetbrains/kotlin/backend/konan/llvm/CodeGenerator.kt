@@ -748,7 +748,7 @@ internal abstract class FunctionGenerationContext(
             memoryOrder: LLVMAtomicOrdering? = null,
             alignment: Int? = null
     ): LLVMValueRef {
-        val value = if (isObjectType && location == RefLocation.HEAP && generationState.config.compressedRefs) {
+        val value = if (isObjectType && location == RefLocation.HEAP && generationState.config.compressedRefSlots) {
             decompressRef(load(llvm.int32Type, address, name, memoryOrder, alignment))
         } else {
             load(type, address, name, memoryOrder, alignment)

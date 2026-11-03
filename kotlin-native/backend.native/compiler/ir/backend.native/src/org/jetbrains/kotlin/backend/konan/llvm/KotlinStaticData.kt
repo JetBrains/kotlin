@@ -101,7 +101,7 @@ internal class KotlinStaticData(override val generationState: NativeGenerationSt
 
     fun createConstKotlinArray(arrayClass: IrClass, elements: List<ConstValue>): ConstPointer {
         val arrayHeader = arrayHeader(arrayClass.typeInfoPtr, elements.size)
-        if (generationState.config.compressedRefs && arrayClass.symbol == context.irBuiltIns.arrayClass) {
+        if (generationState.config.compressedRefSlots && arrayClass.symbol == context.irBuiltIns.arrayClass) {
             val arrayBody = ConstArray(llvm.int32Type, elements.map { llvm.constInt32(0) })
             val value = llvm.struct(arrayHeader, arrayBody)
             val bodyOffset = runtime.offsetOf(value.llvmType, 1)
@@ -113,7 +113,7 @@ internal class KotlinStaticData(override val generationState: NativeGenerationSt
     }
 
     fun createConstKotlinObject(type: IrClass, vararg fields: ConstValue): ConstPointer {
-        if (!generationState.config.compressedRefs) return createConstant(createConstKotlinObjectBody(type, *fields))
+        if (!generationState.config.compressedRefSlots) return createConstant(createConstKotlinObjectBody(type, *fields))
         val isRef = context.getLayoutBuilder(type).getFields(llvm).map { it.type.binaryTypeIsReference() }
         val value = createConstKotlinObjectBody(type, *fields.mapIndexed { index, field -> if (isRef[index]) llvm.constInt32(0) else field }.toTypedArray())
         // Element 0 is the object header.

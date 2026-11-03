@@ -5,7 +5,6 @@
 
 #pragma once
 
-#include "CompilerConstants.hpp"
 #include "CompressedRefs.hpp"
 #include "Memory.h"
 #include "std_support/Atomic.hpp"
@@ -43,7 +42,7 @@ public:
 
     explicit DirectRefAccessor(ObjHeader*& fieldRef) noexcept : DirectRefAccessor(&fieldRef) {}
     explicit DirectRefAccessor(ObjHeader** fieldPtr) noexcept : location_(fieldPtr), compressed_(false) {}
-    explicit DirectRefAccessor(HeapRefSlot* slot) noexcept : location_(slot), compressed_(compiler::compressedRefs()) {}
+    explicit DirectRefAccessor(HeapRefSlot* slot) noexcept : location_(slot), compressed_(false) {}
     DirectRefAccessor(const DirectRefAccessor& other) = default;
 
     void* location() const noexcept { return location_; }

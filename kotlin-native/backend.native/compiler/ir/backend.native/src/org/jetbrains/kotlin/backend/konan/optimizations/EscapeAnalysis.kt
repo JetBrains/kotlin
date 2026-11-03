@@ -1829,7 +1829,7 @@ internal object EscapeAnalysis {
             InterproceduralAnalysis(context, generationState, callGraph,
                     moduleDFG, lifetimes,
                     propagateExiledToHeapObjects = context.config.escapeAnalysisPropagateExiledToHeapObjects,
-                    forbidStackObjectsInFields = context.config.compressedRefs
+                    forbidStackObjectsInFields = context.config.compressedRefSlots
             ).analyze()
         } catch (t: Throwable) {
             val extraUserInfo =

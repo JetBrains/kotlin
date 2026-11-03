@@ -470,6 +470,9 @@ class NativeSecondStageCompilationConfig(
         }
     }
 
+    // Measurement: the compressed-refs heap placement stays, but reference slots hold full-width pointers.
+    val compressedRefSlots: Boolean get() = false
+
     val enableReleaseBinaryCache: Boolean
         get() = configuration.get(BinaryOptions.enableReleaseBinaryCache) ?: false
 
@@ -558,7 +561,7 @@ class NativeSecondStageCompilationConfig(
         if (assertsEnabled != defaultAsserts)
             append("-asserts${if (assertsEnabled) "ENABLE" else "DISABLE"}")
         if (compressedRefs)
-            append("-compressed_refs")
+            append("-compressed_refs_full_ptrs")
     }
 
     private val systemCacheFlavorString = buildString {
