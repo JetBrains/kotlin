@@ -173,6 +173,8 @@ class LocalClaudeAgent private constructor(
         private const val ANTHROPIC_AUTH_TOKEN = "ANTHROPIC_AUTH_TOKEN"
     }
 
+    override val info = AgentInfo("Claude Code", MODEL, EFFORT)
+
     @Serializable
     private class AuthSettings(
         val apiKeyHelper: String? = null,
