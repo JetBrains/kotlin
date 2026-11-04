@@ -1,6 +1,4 @@
 compiler/testData/cli/metadata/lambdaWithReceiver.kt:2:18: warning: expression is unused.
-In source code:
- --> $TESTDATA_DIR$/lambdaWithReceiver.kt
   |
 2 |     "OK".apply { this }
   |                  ^^^^

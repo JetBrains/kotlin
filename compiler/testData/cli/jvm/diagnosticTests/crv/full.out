@@ -1,6 +1,4 @@
 compiler/testData/cli/jvm/diagnosticTests/crv/full.kt:4:5: warning: unused return value of 'basic'.
-In source code:
- --> $TESTDATA_DIR$/full.kt
   |
 4 |     basic()
   |     ^^^^^

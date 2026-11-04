@@ -1,6 +1,4 @@
 compiler/testData/cli/jvm/noReflect.kt:4:19: error: unresolved reference 'primaryConstructor' on receiver of type 'KClass<String>'.
-In source code:
- --> $TESTDATA_DIR$/noReflect.kt
   |
 4 |     String::class.primaryConstructor
   |                   ^^^^^^^^^^^^^^^^^^

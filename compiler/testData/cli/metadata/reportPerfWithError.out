@@ -1,6 +1,4 @@
 compiler/testData/cli/reportPerfWithError.kt:1:17: error: initializer type mismatch: expected 'String', actual 'Int'.
-In source code:
- --> $USER_DIR$/compiler/testData/cli/reportPerfWithError.kt
   |
 1 | val str: String = 42
   |                 ^

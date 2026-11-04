@@ -1,12 +1,8 @@
 compiler/testData/cli/jvm/diagnosticTests/javaSrcWrongPackage.kt:1:13: error: unresolved reference 'A'.
-In source code:
- --> $TESTDATA_DIR$/javaSrcWrongPackage.kt
   |
 1 | fun test(): A.Nested = A().nested()
   |             ^
 compiler/testData/cli/jvm/diagnosticTests/javaSrcWrongPackage.kt:1:24: error: unresolved reference 'A'.
-In source code:
- --> $TESTDATA_DIR$/javaSrcWrongPackage.kt
   |
 1 | fun test(): A.Nested = A().nested()
   |                        ^

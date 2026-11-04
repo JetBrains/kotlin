@@ -1,7 +1,5 @@
 warning: unknown language feature 'UnknownFeature' in passed internal argument '-XXLanguage:+UnknownFeature'
 compiler/testData/cli/jvm/legacySmartCastsAfterTry.kt:8:10: warning: unused return value of 'length'.
-In source code:
- --> $USER_DIR$/compiler/testData/cli/jvm/legacySmartCastsAfterTry.kt
   |
 8 |     some.length
   |          ^^^^^^

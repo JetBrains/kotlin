@@ -1,6 +1,4 @@
 compiler/testData/cli/jvm/progressive/progressiveTest.kt:3:9: warning: 'operator' modifier is not applicable to function: must override 'equals()' in Any. This will become an error in language version 2.5. See: https://youtrack.jetbrains.com/issue/KT-86143
-In source code:
- --> $TESTDATA_DIR$/progressive/progressiveTest.kt
   |
 3 |         operator fun equals(a: Int, b: Int): Boolean = true
   |         ^^^^^^^^

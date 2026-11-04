@@ -1,6 +1,4 @@
 compiler/testData/cli/jvm/diagnosticTests/recordAsSingleFileRoot.kt:5:14: error: unresolved reference 'Unresolved'.
-In source code:
- --> $TESTDATA_DIR$/recordAsSingleFileRoot.kt
   |
 5 | fun error(): Unresolved? = null
   |              ^^^^^^^^^^

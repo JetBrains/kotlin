@@ -1,12 +1,8 @@
 compiler/testData/cli/jvm/firErrorOnLastLine.kt:1:9: error: 'this' is not defined in this context.
-In source code:
- --> $TESTDATA_DIR$/firErrorOnLastLine.kt
   |
 1 | val x = this
   |         ^^^^
 compiler/testData/cli/jvm/firErrorOnLastLine.kt:2:9: error: 'this' is not defined in this context.
-In source code:
- --> $TESTDATA_DIR$/firErrorOnLastLine.kt
   |
 2 | val y = this // EOL AFTER THIS LINE!
   |         ^^^^

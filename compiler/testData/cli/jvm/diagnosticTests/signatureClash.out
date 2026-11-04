@@ -2,7 +2,6 @@ compiler/testData/cli/jvm/diagnosticTests/signatureClash.kt:6:5: error: accident
 fun `<get-x>`(): Int defined in A
 fun getX(): Int defined in A
 In source code:
- --> $TESTDATA_DIR$/signatureClash.kt
   |
 6 |     fun getX() = 1
   |     ^^^^^^^^^^
@@ -10,7 +9,6 @@ compiler/testData/cli/jvm/diagnosticTests/signatureClash.kt:8:5: error: platform
 fun `<get-a>`(): Int defined in A
 fun getA(): Int defined in A
 In source code:
- --> $TESTDATA_DIR$/signatureClash.kt
   |
 8 |     fun getA(): Int = 1
   |     ^^^^^^^^^^^^^^^
@@ -18,7 +16,6 @@ compiler/testData/cli/jvm/diagnosticTests/signatureClash.kt:9:5: error: platform
 fun `<get-a>`(): Int defined in A
 fun getA(): Int defined in A
 In source code:
- --> $TESTDATA_DIR$/signatureClash.kt
   |
 9 |     val a: Int = 1
   |     ^^^^^^^^^^
@@ -26,7 +23,6 @@ compiler/testData/cli/jvm/diagnosticTests/signatureClash.kt:12:1: error: platfor
 fun `<get-b>`(): Int defined in root package
 fun getB(): Int defined in root package
 In source code:
-  --> $TESTDATA_DIR$/signatureClash.kt
    |
 12 | fun getB(): Int = 1
    | ^^^^^^^^^^^^^^^
@@ -34,7 +30,6 @@ compiler/testData/cli/jvm/diagnosticTests/signatureClash.kt:13:1: error: platfor
 fun `<get-b>`(): Int defined in root package
 fun getB(): Int defined in root package
 In source code:
-  --> $TESTDATA_DIR$/signatureClash.kt
    |
 13 | val b: Int = 1
    | ^^^^^^^^^^
@@ -42,7 +37,6 @@ compiler/testData/cli/jvm/diagnosticTests/signatureClash.kt:20:5: error: acciden
 fun `<get-tr>`(): Int defined in SubTr
 fun getTr(): Int defined in SubTr
 In source code:
-  --> $TESTDATA_DIR$/signatureClash.kt
    |
 20 |     val tr = 1
    |     ^^^^^^
@@ -50,7 +44,6 @@ compiler/testData/cli/jvm/diagnosticTests/signatureClash.kt:24:1: error: platfor
 fun `access$f`(`$this`: C): Unit defined in C
 fun `access$f`(c: C): Unit defined in C
 In source code:
-  --> $TESTDATA_DIR$/signatureClash.kt
    |
 24 | class C {
    | ^
@@ -58,7 +51,6 @@ compiler/testData/cli/jvm/diagnosticTests/signatureClash.kt:26:5: error: platfor
 fun `access$f`(`$this`: C): Unit defined in C
 fun `access$f`(c: C): Unit defined in C
 In source code:
-  --> $TESTDATA_DIR$/signatureClash.kt
    |
 26 |     fun `access$f`(c: C) {}
    |     ^^^^^^^^^^^^^^^^^^^^

@@ -1,6 +1,4 @@
 compiler/testData/cli/jvm/dfaWarningExampleK2.kt:3:14: warning: cast is redundant.
-In source code:
- --> $TESTDATA_DIR$/dfaWarningExampleK2.kt
   |
 3 |         (arg as String).length
   |              ^^^^^^^^^

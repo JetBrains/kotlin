@@ -1,6 +1,4 @@
 compiler/testData/cli/metadata/extraCheckers.kt:2:9: warning: variable is unused.
-In source code:
- --> $TESTDATA_DIR$/extraCheckers.kt
   |
 2 |     val a = a + 1
   |         ^

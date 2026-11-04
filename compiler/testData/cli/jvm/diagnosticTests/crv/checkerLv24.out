@@ -1,6 +1,4 @@
 compiler/testData/cli/jvm/diagnosticTests/crv/checker.kt:10:15: warning: unused return value of 'annotated'.
-In source code:
-  --> $TESTDATA_DIR$/checker.kt
    |
 10 |     Annotated.annotated()
    |               ^^^^^^^^^

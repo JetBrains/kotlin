@@ -2,7 +2,6 @@ compiler/testData/cli/jvm/syntheticAccessorSignatureClash.kt:14:1: error: accide
 fun `access$foo`(d: Derived): Unit defined in Derived
 fun `access$foo`(`$this`: Derived): Unit defined in Derived
 In source code:
-  --> $TESTDATA_DIR$/syntheticAccessorSignatureClash.kt
    |
 14 | class Derived : Base() {
    | ^

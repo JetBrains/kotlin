@@ -1,12 +1,8 @@
 compiler/testData/cli/jvm/diagnosticTests/inlineCycle.kt:2:5: error: the 'b' invocation is part of an inline cycle.
-In source code:
- --> $TESTDATA_DIR$/inlineCycle.kt
   |
 2 |     b(q)
   |     ^^^^
 compiler/testData/cli/jvm/diagnosticTests/inlineCycle.kt:18:5: error: the 'a' invocation is part of an inline cycle.
-In source code:
-  --> $TESTDATA_DIR$/inlineCycle.kt
    |
 18 |     a(p)
    |     ^^^^

@@ -1,30 +1,20 @@
 compiler/testData/cli/jvm/diagnosticTests/multipleTextRangesInDiagnosticsOrder.kt:6:5: error: modifier 'override' is incompatible with 'private'.
-In source code:
- --> $TESTDATA_DIR$/multipleTextRangesInDiagnosticsOrder.kt
   |
 6 |     override protected private val c: Int
   |     ^^^^^^^^
 compiler/testData/cli/jvm/diagnosticTests/multipleTextRangesInDiagnosticsOrder.kt:6:14: error: cannot weaken access privilege private for 'accessor' in 'A'.
-In source code:
- --> $TESTDATA_DIR$/multipleTextRangesInDiagnosticsOrder.kt
   |
 6 |     override protected private val c: Int
   |              ^^^^^^^^^
 compiler/testData/cli/jvm/diagnosticTests/multipleTextRangesInDiagnosticsOrder.kt:6:14: error: abstract property in interface cannot be private.
-In source code:
- --> $TESTDATA_DIR$/multipleTextRangesInDiagnosticsOrder.kt
   |
 6 |     override protected private val c: Int
   |              ^^^^^^^^^
 compiler/testData/cli/jvm/diagnosticTests/multipleTextRangesInDiagnosticsOrder.kt:6:14: error: modifier 'protected' is not applicable inside 'interface'.
-In source code:
- --> $TESTDATA_DIR$/multipleTextRangesInDiagnosticsOrder.kt
   |
 6 |     override protected private val c: Int
   |              ^^^^^^^^^
 compiler/testData/cli/jvm/diagnosticTests/multipleTextRangesInDiagnosticsOrder.kt:6:24: error: modifier 'private' is incompatible with 'override'.
-In source code:
- --> $TESTDATA_DIR$/multipleTextRangesInDiagnosticsOrder.kt
   |
 6 |     override protected private val c: Int
   |                        ^^^^^^^

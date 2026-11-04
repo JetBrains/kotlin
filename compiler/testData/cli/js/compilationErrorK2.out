@@ -1,6 +1,4 @@
 compiler/testData/cli/js/compilationErrorK2.kt:9:13: error: cannot access 'companion object Test : Any': it is private in 'Foo'.
-In source code:
- --> $TESTDATA_DIR$/compilationErrorK2.kt
   |
 9 |         Foo.Test
   |             ^^^^

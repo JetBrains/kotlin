@@ -8,8 +8,6 @@ as no stability/compatibility guarantees are given on
 compiler or generated code. Use it at your own risk!
 
 compiler/testData/cli/js/illegalJsCodeWithInlinedFunInKlib.kt:2:8: error: JavaScript error: Invalid assignment left-hand side.
-In source code:
- --> $TESTDATA_DIR$/illegalJsCodeWithInlinedFunInKlib.kt
   |
 2 |     js("this = x;")
   |        ^^^^^^^^^^^

@@ -5,7 +5,6 @@ private inline fun privateInlineFun3()
 
 
 In source code:
-  --> $TESTDATA_DIR$/compilationErrorExposureOfPrivateTypes.kt
    |
 14 | internal inline fun internalInlineFun() = privateInlineFun3()
    |                                           ^^^^^^^^^^^^^^^^^^^

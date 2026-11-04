@@ -1,6 +1,4 @@
 compiler/testData/cli/jvm/diagnosticTests/fileClassAndMultifileClassClash1.kt:1:1: error: duplicate JVM class name 'test/Util' generated from: Util, Util
-In source code:
- --> $TESTDATA_DIR$/fileClassAndMultifileClassClash1.kt
   |
 1 | @file:JvmName("Util")
   | ^^^^^^^^^^^^^^^^^^^^^

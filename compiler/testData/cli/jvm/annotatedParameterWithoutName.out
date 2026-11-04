@@ -1,6 +1,4 @@
 compiler/testData/cli/jvm/annotatedParameterWithoutName.kt:5:13: error: syntax error: Expecting a parameter declaration.
-In source code:
- --> $TESTDATA_DIR$/annotatedParameterWithoutName.kt
   |
 5 | fun foo(@Ann) = ""
   |             ^

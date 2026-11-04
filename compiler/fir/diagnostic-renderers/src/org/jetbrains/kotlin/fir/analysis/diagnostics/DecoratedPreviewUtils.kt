@@ -220,10 +220,8 @@ private inline fun <T> List<T>.interleaveWith(produceInterleave: (T, T) -> T?): 
 }
 
 sealed class DecorationHeader {
-    abstract val filePath: String?
-
-    data class Candidates(val logicalLocation: LogicalLocation, override val filePath: String?) : DecorationHeader()
-    data class VerbatimSource(override val filePath: String) : DecorationHeader()
+    data class Candidates(val logicalLocation: LogicalLocation, val filePath: String?) : DecorationHeader()
+    data object None : DecorationHeader()
 }
 
 enum class DecorationPadding(val padTop: Boolean, val padBottom: Boolean) {
@@ -238,11 +236,13 @@ private fun renderLocationDecoration(
     padding: DecorationPadding = DecorationPadding.FULL_PADDING,
 ): String = listOfNotNull(
     when (header) {
-        is DecorationHeader.Candidates -> header.logicalLocation
-            .let { [packageName, moduleName] -> "In package '$packageName' of module '$moduleName':" }
-        is VerbatimSource -> "In source code:"
+        is Candidates -> header.logicalLocation.let { [packageName, moduleName] -> "In package '$packageName' of module '$moduleName':" }
+        is None -> null
     },
-    header.filePath?.let { "$indentString--> $it" },
+    when (header) {
+        is Candidates -> header.filePath?.let { "$indentString--> $it" }
+        is None -> null
+    },
     "$indentString |".takeIf { padding.padTop },
     content,
     "$indentString |".takeIf { padding.padBottom },

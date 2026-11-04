@@ -1,6 +1,4 @@
 compiler/testData/cli/jvm/optIn/optInEmptyMessageFir.kt:8:5: error: this declaration needs opt-in. Its usage must be marked with '@EmptyMarker' or '@OptIn(EmptyMarker::class)'
-In source code:
- --> $TESTDATA_DIR$/optInEmptyMessageFir.kt
   |
 8 |     foo()
   |     ^^^

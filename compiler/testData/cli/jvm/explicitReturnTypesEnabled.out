@@ -1,6 +1,4 @@
 compiler/testData/cli/jvm/explicitReturnTypesEnabled.kt:1:5: warning: return type must be specified in explicit API mode.
-In source code:
- --> $TESTDATA_DIR$/explicitReturnTypesEnabled.kt
   |
 1 | fun publicFun() = "hello"
   |     ^^^^^^^^^

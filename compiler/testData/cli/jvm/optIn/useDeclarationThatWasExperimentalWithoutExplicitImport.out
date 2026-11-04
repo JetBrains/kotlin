@@ -1,12 +1,8 @@
 compiler/testData/cli/jvm/optIn/useDeclarationThatWasExperimentalWithoutExplicitImport.kt:3:8: warning: unused return value of 'lowercase'.
-In source code:
- --> $TESTDATA_DIR$/useDeclarationThatWasExperimentalWithoutExplicitImport.kt
   |
 3 |     "".lowercase()
   |        ^^^^^^^^^
 compiler/testData/cli/jvm/optIn/useDeclarationThatWasExperimentalWithoutExplicitImport.kt:4:7: warning: unused return value of 'digitToChar'.
-In source code:
- --> $TESTDATA_DIR$/useDeclarationThatWasExperimentalWithoutExplicitImport.kt
   |
 4 |     1.digitToChar()
   |       ^^^^^^^^^^^

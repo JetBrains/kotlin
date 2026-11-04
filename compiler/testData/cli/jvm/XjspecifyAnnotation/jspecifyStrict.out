@@ -1,12 +1,8 @@
 compiler/testData/cli/jvm/XjspecifyAnnotation/jspecifyUsage.kt:4:11: error: null cannot be a value of a non-null type 'String'.
-In source code:
- --> $TESTDATA_DIR$/jspecifyUsage.kt
   |
 4 |     a.foo(null)
   |           ^^^^
 compiler/testData/cli/jvm/XjspecifyAnnotation/jspecifyUsage.kt:5:12: error: unsafe call on receiver of nullable type 'String?'. Consider using a safe call '?.' or non-null asserted call '!!.'.
-In source code:
- --> $TESTDATA_DIR$/jspecifyUsage.kt
   |
 5 |     a.bar().length
   |            ^

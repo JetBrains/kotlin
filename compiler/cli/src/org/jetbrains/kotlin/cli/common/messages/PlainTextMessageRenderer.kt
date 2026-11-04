@@ -82,6 +82,10 @@ abstract class PlainTextMessageRenderer @JvmOverloads constructor(private val co
         }
 
         if (lineContent != null && 1 <= column && column <= lineContent.length + 1) {
+            if (message.lines().size > 1) {
+                result.append(LINE_SEPARATOR)
+                result.append("In source code:")
+            }
             val highlighting = when {
                 lineEnd > line -> "^".repeat(lineContent.length - column + 1)
                 lineEnd == line && columnEnd > column -> "^".repeat(columnEnd - column)
@@ -92,7 +96,7 @@ abstract class PlainTextMessageRenderer @JvmOverloads constructor(private val co
                 RenderedLineWithNumber(number = null, 0, " ".repeat(column - 1) + highlighting),
             )
             val render = renderLocationDecoration(
-                header = DecorationHeader.VerbatimSource(location.path),
+                header = DecorationHeader.None,
                 renderedLines = lines,
                 padding = DecorationPadding.TOP_ONLY,
             )

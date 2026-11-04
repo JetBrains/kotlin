@@ -3,7 +3,6 @@ fun `<get-x>`(): Int defined in Foo
 fun getX(): Int defined in Foo
 fun getY(): Int defined in Foo
 In source code:
- --> $TESTDATA_DIR$/conflictingJvmDeclarations.kt
   |
 3 |         get() = 42
   |         ^^^^^
@@ -12,7 +11,6 @@ fun `<get-x>`(): Int defined in Foo
 fun getX(): Int defined in Foo
 fun getY(): Int defined in Foo
 In source code:
- --> $TESTDATA_DIR$/conflictingJvmDeclarations.kt
   |
 8 |     @JvmName("getX")
   |     ^^^^^^^^^^^^^^^^

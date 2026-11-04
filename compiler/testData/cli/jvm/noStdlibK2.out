@@ -1,30 +1,20 @@
 compiler/testData/cli/jvm/noStdlibK2.kt:4:5: error: cannot access built-in declaration 'kotlin.String'. Ensure that you have a dependency on the Kotlin standard library.
-In source code:
- --> $TESTDATA_DIR$/noStdlibK2.kt
   |
 4 |     String::class.primaryConstructor
   |     ^^^^^^
 compiler/testData/cli/jvm/noStdlibK2.kt:4:19: error: unresolved reference 'primaryConstructor' on receiver of type 'KClass<String>'.
-In source code:
- --> $TESTDATA_DIR$/noStdlibK2.kt
   |
 4 |     String::class.primaryConstructor
   |                   ^^^^^^^^^^^^^^^^^^
 compiler/testData/cli/jvm/noStdlibK2.kt:6:7: error: cannot access built-in declaration 'kotlin.Unit'. Ensure that you have a dependency on the Kotlin standard library.
-In source code:
- --> $TESTDATA_DIR$/noStdlibK2.kt
   |
 6 |     ::foo.name
   |       ^^^
 compiler/testData/cli/jvm/noStdlibK2.kt:6:11: error: cannot access built-in declaration 'kotlin.String'. Ensure that you have a dependency on the Kotlin standard library.
-In source code:
- --> $TESTDATA_DIR$/noStdlibK2.kt
   |
 6 |     ::foo.name
   |           ^^^^
 compiler/testData/cli/jvm/noStdlibK2.kt:7:5: error: unresolved reference 'listOf'.
-In source code:
- --> $TESTDATA_DIR$/noStdlibK2.kt
   |
 7 |     listOf(42)
   |     ^^^^^^

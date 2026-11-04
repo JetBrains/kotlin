@@ -5,7 +5,6 @@ In package 'root package' of module '<main>':
 2 | fun a(): List<String>
   |
 In source code:
- --> $TESTDATA_DIR$/conflictingOverloads.kt
   |
 1 | fun a(): List<Int> = null!!
   | ^^^^^^^^^^^^^^^^^^
@@ -16,7 +15,6 @@ In package 'root package' of module '<main>':
 1 | fun a(): List<Int>
   |
 In source code:
- --> $TESTDATA_DIR$/conflictingOverloads.kt
   |
 2 | fun a(): List<String> = null!!
   | ^^^^^^^^^^^^^^^^^^^^^

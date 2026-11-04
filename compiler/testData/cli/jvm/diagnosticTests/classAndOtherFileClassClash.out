@@ -1,12 +1,8 @@
 compiler/testData/cli/jvm/diagnosticTests/classAndOtherFileClassClash1.kt:1:1: error: duplicate JVM class name 'test/Foo' generated from: Foo, Foo
-In source code:
- --> $TESTDATA_DIR$/classAndOtherFileClassClash1.kt
   |
 1 | @file:JvmName("Foo")
   | ^^^^^^^^^^^^^^^^^^^^
 compiler/testData/cli/jvm/diagnosticTests/classAndOtherFileClassClash2.kt:3:1: error: duplicate JVM class name 'test/Foo' generated from: Foo, Foo
-In source code:
- --> $TESTDATA_DIR$/classAndOtherFileClassClash2.kt
   |
 3 | class Foo
   | ^^^^^^^^^

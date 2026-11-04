@@ -1,24 +1,16 @@
 compiler/testData/cli/jvm/Xjsr305/jsr305Migration.kt:2:19: warning: Java type mismatch: inferred type is 'Nothing?', but 'String' was expected.
-In source code:
- --> $TESTDATA_DIR$/jsr305Migration.kt
   |
 2 |     annotated.foo(null)
   |                   ^^^^
 compiler/testData/cli/jvm/Xjsr305/jsr305Migration.kt:3:19: warning: Java type mismatch: inferred type is 'Nothing?', but 'String' was expected.
-In source code:
- --> $TESTDATA_DIR$/jsr305Migration.kt
   |
 3 |     annotated.bar(null)
   |                   ^^^^
 compiler/testData/cli/jvm/Xjsr305/jsr305Migration.kt:4:5: warning: unsafe call on receiver of nullable type 'String?'. Consider using a safe call '?.' or non-null asserted call '!!.'.
-In source code:
- --> $TESTDATA_DIR$/jsr305Migration.kt
   |
 4 |     annotated.nullable().length
   |     ^^^^^^^^^^^^^^^^^^^^
 compiler/testData/cli/jvm/Xjsr305/jsr305Migration.kt:4:26: warning: unused return value of 'length'.
-In source code:
- --> $TESTDATA_DIR$/jsr305Migration.kt
   |
 4 |     annotated.nullable().length
   |                          ^^^^^^

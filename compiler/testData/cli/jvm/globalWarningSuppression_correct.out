@@ -1,6 +1,4 @@
 compiler/testData/cli/jvm/globalWarningSuppression.kt:7:16: error: [CONFLICTING_PROJECTION] Projection conflicts with variance of the corresponding type parameter of 'Out<in Int>'. Remove the projection or replace it with '*'.
-In source code:
- --> $TESTDATA_DIR$/globalWarningSuppression.kt
   |
 7 | fun bar(x: Out<in Int>) {}
   |                ^^

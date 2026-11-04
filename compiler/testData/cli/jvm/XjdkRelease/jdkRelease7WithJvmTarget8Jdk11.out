@@ -1,6 +1,4 @@
 compiler/testData/cli/jvm/XjdkRelease/jdkRelease.kt:5:26: error: unresolved reference 'stream'.
-In source code:
- --> $TESTDATA_DIR$/jdkRelease.kt
   |
 5 | fun stream() = java.util.stream.Stream.of(42)
   |                          ^^^^^^

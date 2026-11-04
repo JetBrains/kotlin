@@ -2,7 +2,6 @@ compiler/testData/cli/jvm/syntheticAccessorPropertyAndFunSignatureClash.kt:3:1: 
 fun `access$getFoo$p`(`$this`: A): Int defined in A
 fun `access$getFoo$p`(a: A): Int defined in A
 In source code:
- --> $TESTDATA_DIR$/syntheticAccessorPropertyAndFunSignatureClash.kt
   |
 3 | class A {
   | ^
@@ -10,7 +9,6 @@ compiler/testData/cli/jvm/syntheticAccessorPropertyAndFunSignatureClash.kt:6:5: 
 fun `access$getFoo$p`(`$this`: A): Int defined in A
 fun `access$getFoo$p`(a: A): Int defined in A
 In source code:
- --> $TESTDATA_DIR$/syntheticAccessorPropertyAndFunSignatureClash.kt
   |
 6 |     fun `access$getFoo$p`(a: A): Int = 1
   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -18,7 +16,6 @@ compiler/testData/cli/jvm/syntheticAccessorPropertyAndFunSignatureClash.kt:7:5: 
 fun `access$setFoo$p`(`$this`: A, `<set-?>`: Int): Unit defined in A
 fun `access$setFoo$p`(a: A, d: Int): Unit defined in A
 In source code:
- --> $TESTDATA_DIR$/syntheticAccessorPropertyAndFunSignatureClash.kt
   |
 7 |     fun `access$setFoo$p`(a: A, d: Int) {}
   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -26,7 +23,6 @@ compiler/testData/cli/jvm/syntheticAccessorPropertyAndFunSignatureClash.kt:12:5:
 fun `access$getFoo`(`$this`: A): Int defined in A
 fun `access$getFoo`(a: A): Int defined in A
 In source code:
-  --> $TESTDATA_DIR$/syntheticAccessorPropertyAndFunSignatureClash.kt
    |
 12 |     fun `access$getFoo`(a: A): Int = 1
    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -34,7 +30,6 @@ compiler/testData/cli/jvm/syntheticAccessorPropertyAndFunSignatureClash.kt:13:5:
 fun `access$setFoo`(`$this`: A, i: Int): Unit defined in A
 fun `access$setFoo`(a: A, d: Int): Unit defined in A
 In source code:
-  --> $TESTDATA_DIR$/syntheticAccessorPropertyAndFunSignatureClash.kt
    |
 13 |     fun `access$setFoo`(a: A, d: Int) {}
    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
