@@ -21,7 +21,7 @@ import java.lang.Deprecated
  * For other element types (e.g., KDoc element types or non-Kotlin ones), the result is [BasicSyntaxElementTypeIds.NO_ID].
  */
 @KtImplementationDetail
-fun IElementType.syntaxId(): Int =
+fun IElementType.syntaxId(): SyntaxId =
     when {
         this is KtToken -> tokenId
         index < indexToId.size -> indexToId[index.toInt()]
@@ -29,7 +29,7 @@ fun IElementType.syntaxId(): Int =
     }
 
 private val indexToId: IntArray = run {
-    val indexToIdMap = mutableMapOf<Short, Int>()
+    val indexToIdMap = mutableMapOf<Short, SyntaxId>()
 
     var maxIndex: Short = 0
     var id = KotlinSyntaxNodeTypeIds.FILE

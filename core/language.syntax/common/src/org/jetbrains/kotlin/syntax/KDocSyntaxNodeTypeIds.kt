@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.syntax
 
 public object KDocSyntaxNodeTypeIds {
-    public const val KDOC_SECTION: Int = KDocSyntaxTokenIds.CODE_SPAN_TEXT + 1
-    public const val KDOC_TAG: Int = KDOC_SECTION + 1
-    public const val KDOC_NAME: Int = KDOC_TAG + 1
+    public const val KDOC_SECTION: SyntaxId = KDocSyntaxTokenIds.CODE_SPAN_TEXT + 1
+    public const val KDOC_TAG: SyntaxId = KDOC_SECTION + 1
+    public const val KDOC_NAME: SyntaxId = KDOC_TAG + 1
 }
