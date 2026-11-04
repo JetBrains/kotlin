@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.toolchain.wasiadapter.PreInstalledWasiAdapterToolchainService
 import org.jetbrains.kotlin.gradle.dsl.toolchain.wasiadapter.WasiAdapter
 import org.jetbrains.kotlin.gradle.dsl.toolchain.wasiadapter.WasiAdapterRequest
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import java.io.File
@@ -35,7 +36,7 @@ internal abstract class PreInstalledWasiAdapterToolchainServiceImpl @Inject inte
             } else {
                 error(
                     "WASI adapter toolchain is configured in PREINSTALLED mode, but no adapter file was provided. " +
-                            "Configure the adapter file via the 'kotlin.wasm.wasiadapter.toolchain.local.path' property or the " +
+                            "Configure the adapter file via the '${PropertiesProvider.PropertyNames.KOTLIN_WASM_WASI_ADAPTER_TOOLCHAIN_PREINSTALLED_EXECUTABLE_PATH}' property or the " +
                             "'toolchainManagement { wasiAdapter { toolchainService(PreInstalledWasiAdapterToolchainService::class) { adapterFile.set(...) } } }' settings block."
                 )
             }
@@ -43,7 +44,7 @@ internal abstract class PreInstalledWasiAdapterToolchainServiceImpl @Inject inte
             if (!adapterFile.isFile) {
                 error(
                     "Configured pre-installed WASI adapter file '$adapterFile' does not exist. " +
-                        "Make sure the file exists or configure the Kotlin Gradle Plugin to download the adapter by setting 'kotlin.wasm.wasiadapter.toolchain=DOWNLOAD'."
+                            "Make sure the file exists or configure the Kotlin Gradle Plugin to download the adapter by setting '${PropertiesProvider.PropertyNames.KOTLIN_WASM_WASI_ADAPTER_TOOLCHAIN_MODE}=${WasiAdapterToolchainMode.DOWNLOAD.name}'."
                 )
             }
 
