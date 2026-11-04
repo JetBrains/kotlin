@@ -1,0 +1,18 @@
+--- a/kt43217.ir.txt
++++ b/kt43217.ir.jklib.txt
+@@ -25,7 +25,6 @@
+                 VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Double
+                 annotations:
+                   NotNull(value = <null>)
+-                  Override
+                 overridden:
+                   public open fun isEqualTo (value: kotlin.Double): @[EnhancedNullability] kotlin.Any declared in <root>.DoubleExpression
+               FUN FAKE_OVERRIDE name:isEqualTo visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.Any [fake_override]
+@@ -93,7 +92,6 @@
+       VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Double
+       annotations:
+         NotNull(value = <null>)
+-        Override
+       overridden:
+         public open fun isEqualTo (value: kotlin.Double): @[EnhancedNullability] kotlin.Any declared in <root>.DoubleExpression
+     FUN FAKE_OVERRIDE name:isEqualTo visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.Any [fake_override]
