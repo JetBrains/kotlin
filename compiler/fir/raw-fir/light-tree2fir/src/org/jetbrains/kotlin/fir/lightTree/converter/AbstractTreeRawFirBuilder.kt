@@ -204,7 +204,7 @@ abstract class AbstractTreeRawFirBuilder<Node : Any, Type : Any>(
             SyntaxTokenIds.EOL_COMMENT, SyntaxTokenIds.BLOCK_COMMENT, SyntaxTokenIds.DOC_COMMENT, SyntaxTokenIds.SHEBANG_COMMENT,
             SyntaxBasicElementTypeIds.WHITE_SPACE, SyntaxBasicElementTypeIds.BAD_CHARACTER, SyntaxBasicElementTypeIds.ERROR_ELEMENT,
             SyntaxTokenIds.SEMICOLON,
-            NO_ID, // TODO: preserved for safety but should be removed in future because `NO_ID` should never occur during kotlin files parsing
+            NO_ID, // TODO: it should be removed, KT-91283
         )
     }
 }
