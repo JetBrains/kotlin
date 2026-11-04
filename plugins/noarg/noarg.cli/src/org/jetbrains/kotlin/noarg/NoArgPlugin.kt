@@ -80,7 +80,7 @@ class NoArgComponentRegistrar : CompilerPluginRegistrar() {
             invokeInitializers: Boolean
         ): Unit = with(extensionStorage) {
             FirExtensionRegistrar.registerExtension(FirNoArgExtensionRegistrar(annotations))
-            IrGenerationExtension.registerExtension(NoArgConstructorBodyIrGenerationExtension(annotations, invokeInitializers))
+            IrGenerationExtension.registerExtension(NoArgConstructorBodyIrGenerationExtension(invokeInitializers))
         }
     }
 }
