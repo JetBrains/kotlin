@@ -149,6 +149,9 @@ object BinaryOptions : BinaryOptionRegistry() {
     val runLLVMPassesInCompiler by booleanOption()
 
     val enableReleaseBinaryCache by booleanOption()
+
+    // Workaround for KT-89897: run libtool with MallocZeroOnAlloc=1
+    val kt89897workaround by booleanOption()
 }
 
 open class BinaryOption<T : Any>(
