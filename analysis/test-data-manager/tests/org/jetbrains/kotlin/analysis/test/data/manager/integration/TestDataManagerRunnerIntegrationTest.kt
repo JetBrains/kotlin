@@ -82,7 +82,7 @@ internal class TestDataManagerRunnerIntegrationTest {
             add("tests: ${outcome.totalTests}, passed: ${outcome.passedTests}, failed: ${outcome.failedTests}, skipped: ${outcome.skippedTests}")
             add("executions: ${outcome.testExecutions}, successful: ${outcome.isSuccessful}")
             outcome.runErrors.forEach { add("run error: ${it.replace(tempDir.toString(), "<root>")}") }
-            outcome.mismatchesByPath.toSortedMap().forEach { [path, chains] -> add("mismatch: $path $chains") }
+            outcome.problems.map { "${it.kind} ${tempDir.relativize(it.file)} (${it.testName})" }.sorted().forEach(::add)
             outcome.errors.map { "error: ${it.testName} - ${it.exception}" }.sorted().forEach(::add)
             testDataDirectory.listDirectoryEntries("*.txt").sortedBy { it.name }.forEach { add("${it.name}: ${it.readText().trim()}") }
         }.joinToString("\n")
@@ -112,7 +112,9 @@ internal class TestDataManagerRunnerIntegrationTest {
             """
                 tests: 7, passed: 4, failed: 3, skipped: 0
                 executions: 10, successful: false
-                mismatch: runner/first.kt [[], [js], [knm, js]]
+                MISMATCH runner/first.js.txt (FakeRunnerJsTestGenerated.testFirst)
+                MISMATCH runner/first.js.txt (FakeRunnerKnmJsTestGenerated.testFirst)
+                MISMATCH runner/first.txt (FakeRunnerGoldenTestGenerated.testFirst)
                 first.txt: expected
             """.trimIndent(),
             run(TestDataManagerMode.CHECK),
@@ -132,14 +134,15 @@ internal class TestDataManagerRunnerIntegrationTest {
     }
 
     @Test
-    fun `mismatch of a test without TestMetadata passes the run`() {
+    fun `mismatch of a test without TestMetadata fails the run`() {
         setupFiles("noMetadata.txt" to "expected")
         FakeRunnerScenario.outputs["noMetadata"] = "actual"
 
         assertEquals(
             """
                 tests: 7, passed: 6, failed: 1, skipped: 0
-                executions: 8, successful: true
+                executions: 8, successful: false
+                MISMATCH runner/noMetadata.txt (FakeRunnerNoMetadataTestGenerated.testWithoutMetadata)
                 noMetadata.txt: expected
             """.trimIndent(),
             run(TestDataManagerMode.CHECK),

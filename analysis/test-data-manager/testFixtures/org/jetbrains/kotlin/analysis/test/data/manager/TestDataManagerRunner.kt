@@ -22,6 +22,7 @@ import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder
 import org.junit.platform.launcher.core.LauncherFactory
 import java.nio.file.Path
 import kotlin.io.path.Path
+import kotlin.io.path.invariantSeparatorsPathString
 import kotlin.system.exitProcess
 import kotlin.time.Duration
 import kotlin.time.measureTime
@@ -150,7 +151,7 @@ internal object TestDataManagerRunner {
         val totalTests: Int,
         val passedTests: Int,
         val skippedTests: Int,
-        val mismatchesByPath: Map<String, Set<TestVariantChain>>,
+        val problems: Set<TestDataProblem>,
         val errors: Set<TestError>,
         val testExecutions: Int,
         val runErrors: List<String> = emptyList(),
@@ -160,25 +161,25 @@ internal object TestDataManagerRunner {
 
         /** Whether the run passes; otherwise the runner exits with 1. */
         val isSuccessful: Boolean
-            get() = mismatchesByPath.isEmpty() && errors.isEmpty() && runErrors.isEmpty()
+            get() = problems.isEmpty() && errors.isEmpty() && runErrors.isEmpty()
 
         fun withRunErrors(runErrors: List<String>): RunOutcome =
-            RunOutcome(totalTests, passedTests, skippedTests, mismatchesByPath, errors, testExecutions, runErrors)
+            RunOutcome(totalTests, passedTests, skippedTests, problems, errors, testExecutions, runErrors)
 
         companion object {
-            val EMPTY = RunOutcome(0, 0, 0, emptyMap(), emptySet(), 0)
+            val EMPTY = RunOutcome(0, 0, 0, emptySet(), emptySet(), 0)
         }
     }
 
     /**
-     * Result of running a test group, containing mismatches and errors.
+     * Result of running a test group, containing test data problems and errors.
      *
      * @property finalPassFailedTestIds Test IDs that failed in the final convergence pass.
      *           Used to calculate passed/failed counts - if a test eventually passes after
      *           convergence, it counts as passed (matching standard Gradle behavior).
      */
     private data class RunResult(
-        val mismatchesByPath: Map<String, Set<TestVariantChain>>,
+        val problems: Set<TestDataProblem>,
         val errors: Set<TestError>,
         val finalPassFailedTestIds: Set<String>,
         val testExecutions: Int,
@@ -274,7 +275,7 @@ internal object TestDataManagerRunner {
         timingStats: TimingStats,
         discoveredTests: List<DiscoveredTest>,
     ): RunOutcome {
-        val allMismatches = mutableMapOf<String, MutableSet<TestVariantChain>>()
+        val allProblems = mutableSetOf<TestDataProblem>()
         val allErrors = mutableSetOf<TestError>()
         val allFinalFailedTestIds = mutableSetOf<String>()
         var testExecutions = 0
@@ -329,10 +330,7 @@ internal object TestDataManagerRunner {
 
             val groupTime = measureTime {
                 val result = runGroupWithConvergence(launcher, effectiveGroup)
-                result.mismatchesByPath.forEach { [path, variantChains] ->
-                    allMismatches.getOrPut(path) { mutableSetOf() }.addAll(variantChains)
-                }
-
+                allProblems.addAll(result.problems)
                 allErrors.addAll(result.errors)
                 allFinalFailedTestIds.addAll(result.finalPassFailedTestIds)
                 testExecutions += result.testExecutions
@@ -360,15 +358,10 @@ internal object TestDataManagerRunner {
         val failedTests = allFinalFailedTestIds.size
         val passedTests = totalTests - failedTests - skippedTests
 
-        // Collect all unique variant chain configurations for summary
-        val allVariantChains: Set<TestVariantChain> = groupingResult.groups
-            .flatMap { it.uniqueVariantChains }
-            .toSet()
-
-        printSummary(allMismatches, allVariantChains, allErrors, totalTests, passedTests, skippedTests)
+        printSummary(allProblems, allErrors, totalTests, passedTests, skippedTests)
         printTimingSummary(timingStats)
 
-        return RunOutcome(totalTests, passedTests, skippedTests, allMismatches, allErrors, testExecutions)
+        return RunOutcome(totalTests, passedTests, skippedTests, allProblems, allErrors, testExecutions)
     }
 
     internal fun buildDiscoveryRequest(
@@ -483,7 +476,7 @@ internal object TestDataManagerRunner {
     }
 
     private fun runConvergenceLoop(launcher: Launcher, group: TestGroup): RunResult {
-        val aggregatedMismatches = mutableMapOf<String, MutableSet<TestVariantChain>>()
+        val aggregatedProblems = mutableSetOf<TestDataProblem>()
         val aggregatedErrors = mutableSetOf<TestError>()
         var lastPassFailedTestIds: Set<String> = emptySet()
         var lastErrorTestCount = 0
@@ -534,11 +527,8 @@ internal object TestDataManagerRunner {
             // Capture failed test IDs from this pass (will keep the last pass's value)
             lastPassFailedTestIds = errorTests
 
-            // Aggregate mismatches and errors from this pass
-            mismatchesByPath.forEach { [path, prefixSets] ->
-                aggregatedMismatches.getOrPut(path) { mutableSetOf() }.addAll(prefixSets)
-            }
-
+            // Aggregate problems and errors from this pass
+            aggregatedProblems.addAll(fileTrackingListener.getTestDataProblems())
             aggregatedErrors.addAll(fileTrackingListener.getTestErrors())
 
             val errorTestCount = errorTests.size
@@ -547,7 +537,7 @@ internal object TestDataManagerRunner {
 
             if (lastErrorTestCount == errorTestCount && lastMismatchedTestCount == mismatchedTestCount) {
                 println("  Convergence reached.")
-                return RunResult(aggregatedMismatches, aggregatedErrors, lastPassFailedTestIds, testExecutions)
+                return RunResult(aggregatedProblems, aggregatedErrors, lastPassFailedTestIds, testExecutions)
             } else {
                 lastErrorTestCount = errorTestCount
                 lastMismatchedTestCount = mismatchedTestCount
@@ -562,12 +552,11 @@ internal object TestDataManagerRunner {
             testIdsToExecute = lastPassFailedTestIds
         }
 
-        return RunResult(aggregatedMismatches, aggregatedErrors, lastPassFailedTestIds, testExecutions)
+        return RunResult(aggregatedProblems, aggregatedErrors, lastPassFailedTestIds, testExecutions)
     }
 
     private fun printSummary(
-        mismatchesByPath: Map<String, Set<TestVariantChain>>,
-        allVariantChains: Set<TestVariantChain>,
+        problems: Set<TestDataProblem>,
         errors: Set<TestError>,
         totalTests: Int,
         passedTests: Int,
@@ -581,11 +570,13 @@ internal object TestDataManagerRunner {
         val skippedSuffix = if (skippedTests > 0) ", $skippedTests skipped (incremental)" else ""
         println("$totalTests tests completed, $passedTests passed, $failedTests failed$skippedSuffix")
 
-        if (mismatchesByPath.isNotEmpty()) {
-            println("\n=== Mismatches (${mismatchesByPath.size} test data paths) ===")
-            for ([path, failedVariants] in mismatchesByPath.entries.sortedBy { it.key }) {
-                val variantSuffix = formatVariantSuffix(failedVariants, allVariantChains)
-                println("$path$variantSuffix")
+        if (problems.isNotEmpty()) {
+            val rootDir = System.getProperty(TEST_DATA_MANAGER_OPTIONS_ROOT_DIR)?.let(::Path)
+            val files = problems.mapTo(HashSet()) { it.file }
+            println("\n=== Test data problems (${files.size} files) ===")
+            for (problem in problems.sortedWith(compareBy({ it.file }, { it.testName }))) {
+                val file = rootDir?.takeIf(problem.file::startsWith)?.relativize(problem.file) ?: problem.file
+                println("${problem.kind} ${file.invariantSeparatorsPathString} (${problem.testName})")
             }
             // In UPDATE, mismatches come only from assertions that can't update their files
             if (TestDataManagerMode.currentMode == TestDataManagerMode.CHECK) {
@@ -600,27 +591,9 @@ internal object TestDataManagerRunner {
             }
         }
 
-        if (mismatchesByPath.isEmpty() && errors.isEmpty()) {
+        if (problems.isEmpty() && errors.isEmpty()) {
             println("\nAll tests passed!")
         }
-    }
-
-    private fun formatVariantSuffix(
-        failedVariants: Set<TestVariantChain>,
-        allVariantChains: Set<TestVariantChain>,
-    ): String {
-        // If all variant configurations failed, don't show the suffix
-        if (failedVariants.size >= allVariantChains.size) {
-            return ""
-        }
-
-        // Use the last variant as the display name for each failed configuration
-        val names = failedVariants
-            .filter { it.isNotEmpty() }
-            .map { it.last() }
-            .sorted()
-
-        return if (names.isNotEmpty()) " (${names.joinToString(", ")})" else ""
     }
 
     private fun printTimingSummary(timingStats: TimingStats) {
