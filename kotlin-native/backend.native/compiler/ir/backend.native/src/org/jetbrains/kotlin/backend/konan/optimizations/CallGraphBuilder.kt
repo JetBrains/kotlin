@@ -142,7 +142,7 @@ private class CallGraphHierarchyDispatchCache(
                 is DataFlowIR.Node.VtableCall ->
                     Key(call.receiverType.index, 0 /* Invalid interface ID */, call.calleeVtableIndex)
                 is DataFlowIR.Node.ItableCall ->
-                    Key(call.receiverType.index, call.interfaceId, call.calleeItableIndex)
+                    Key(call.receiverType.index, call.interfaceId, call.calleeVtableIndex)
             }
     ) {
         val collector = CallGraphCalleeCollector(unfoldFactor)
@@ -153,7 +153,7 @@ private class CallGraphHierarchyDispatchCache(
             if (receiverType.isAbstract) return@forEachBit
             val actualCallee = when (call) {
                 is DataFlowIR.Node.VtableCall -> receiverType.vtable[call.calleeVtableIndex]
-                is DataFlowIR.Node.ItableCall -> receiverType.itable[call.interfaceId]!![call.calleeItableIndex]
+                is DataFlowIR.Node.ItableCall -> receiverType.itable[call.interfaceId]!![call.calleeVtableIndex]
             }
             collector.add(actualCallee, handleRoot)
         }

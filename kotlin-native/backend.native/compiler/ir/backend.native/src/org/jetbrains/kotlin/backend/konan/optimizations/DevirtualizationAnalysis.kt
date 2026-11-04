@@ -274,7 +274,7 @@ internal object DevirtualizationAnalysis {
                 vtable[callSite.calleeVtableIndex]
 
             is DataFlowIR.Node.ItableCall ->
-                itable[callSite.interfaceId]!![callSite.calleeItableIndex]
+                itable[callSite.interfaceId]!![callSite.calleeVtableIndex]
         }
 
         fun logPathToType(reversedEdges: IntArray, node: Node, type: Int) {
@@ -1135,7 +1135,7 @@ internal object DevirtualizationAnalysis {
                         VirtualDispatchKey(node.receiverType.index, 0 /* Invalid value */, node.calleeVtableIndex)
 
                     is DataFlowIR.Node.ItableCall ->
-                        VirtualDispatchKey(node.receiverType.index, node.interfaceId, node.calleeItableIndex)
+                        VirtualDispatchKey(node.receiverType.index, node.interfaceId, node.calleeVtableIndex)
                 }
             }
         }

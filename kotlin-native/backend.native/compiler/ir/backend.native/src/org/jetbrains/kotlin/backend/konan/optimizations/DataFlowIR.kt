@@ -17,12 +17,10 @@ import org.jetbrains.kotlin.backend.konan.llvm.computeFunctionName
 import org.jetbrains.kotlin.backend.konan.llvm.computeSymbolName
 import org.jetbrains.kotlin.backend.konan.llvm.isExported
 import org.jetbrains.kotlin.backend.konan.llvm.localHash
-import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_BRIDGE_METHOD
 import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
 import org.jetbrains.kotlin.backend.konan.lower.getDefaultValueForOverriddenBuiltinFunction
 import org.jetbrains.kotlin.backend.konan.lower.isEagerStaticInitializer
 import org.jetbrains.kotlin.backend.konan.util.CustomBitSet
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -236,7 +234,7 @@ internal object DataFlowIR {
                          arguments: List<Edge>, returnType: Type, irCallSite: IrCall?)
             : VirtualCall(callee, arguments, receiverType, returnType, irCallSite)
 
-        class ItableCall(callee: FunctionSymbol, receiverType: Type, val interfaceId: Int, val calleeItableIndex: Int,
+        class ItableCall(callee: FunctionSymbol, receiverType: Type, val interfaceId: Int, val calleeVtableIndex: Int,
                          arguments: List<Edge>, returnType: Type, irCallSite: IrCall?)
             : VirtualCall(callee, arguments, receiverType, returnType, irCallSite)
 
@@ -343,7 +341,7 @@ internal object DataFlowIR {
                 is Node.ItableCall -> buildString {
                     appendLine("        INTERFACE CALL ${node.callee}. Return type = ${node.returnType}")
                     appendLine("            RECEIVER: ${node.receiverType}")
-                    append("            INTERFACE ID: ${node.interfaceId}. ITABLE INDEX: ${node.calleeItableIndex}")
+                    append("            INTERFACE ID: ${node.interfaceId}. ITABLE INDEX: ${node.calleeVtableIndex}")
                     appendList(node.arguments) {
                         append("            ARG #${ids[it.node]!!}")
                         appendCastTo(it.castToType)
