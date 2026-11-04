@@ -1054,7 +1054,7 @@ class BuildReportsIT : KGPBaseTest() {
                 validateJsonReport(
                     taskName = null,
                     NATIVE_IN_PROCESS,
-                    CustomBuildTimeMetric.createIfDoesNotExistAndReturn("AvoidLocalFOsInInlineFunctionsLowering", IR_PRE_LOWERING),
+                    CustomBuildTimeMetric.createIfDoesNotExistAndReturn("AvoidLocalFakeOverridesLowering", IR_PRE_LOWERING),
                     CustomBuildTimeMetric.createIfDoesNotExistAndReturn("llvm-default.AlwaysInlinerPass", BACKEND)
                 ) { jsonReport ->
                     val compilerMetrics = COMPILER_PERFORMANCE.getAllChildren()
@@ -1096,7 +1096,7 @@ class BuildReportsIT : KGPBaseTest() {
                     NATIVE_IN_PROCESS,
                     CustomBuildTimeMetric.createIfDoesNotExistAndReturn("UpgradeCallableReferences", IR_PRE_LOWERING),
                     CustomBuildTimeMetric.createIfDoesNotExistAndReturn("NativeAssertionWrapperLowering", IR_PRE_LOWERING),
-                    CustomBuildTimeMetric.createIfDoesNotExistAndReturn("AvoidLocalFOsInInlineFunctionsLowering", IR_PRE_LOWERING),
+                    CustomBuildTimeMetric.createIfDoesNotExistAndReturn("AvoidLocalFakeOverridesLowering", IR_PRE_LOWERING),
                     CustomBuildTimeMetric.createIfDoesNotExistAndReturn("LateinitLowering", IR_PRE_LOWERING)
                 ) { buildExecutionData ->
                     val compilerMetrics = COMPILER_PERFORMANCE.getAllChildren()

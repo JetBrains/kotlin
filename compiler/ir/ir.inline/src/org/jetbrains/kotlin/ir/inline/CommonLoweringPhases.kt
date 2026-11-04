@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.backend.common.lower.LateinitLowering
 import org.jetbrains.kotlin.backend.common.lower.RedundantCastsRemoverLowering
 import org.jetbrains.kotlin.backend.common.lower.SharedVariablesLowering
 import org.jetbrains.kotlin.backend.common.lower.VersionOverloadsLowering
-import org.jetbrains.kotlin.backend.common.lower.inline.AvoidLocalFOsInInlineFunctionsLowering
+import org.jetbrains.kotlin.backend.common.lower.inline.AvoidLocalFakeOverridesLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.InlineCallCycleCheckerLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
 import org.jetbrains.kotlin.backend.common.phaser.IrValidationAfterInliningAllFunctionsKlibFirstStagePhase
@@ -70,7 +70,7 @@ fun loweringsOfTheFirstPhase(
     }
 
     return buildList {
-        this += ::AvoidLocalFOsInInlineFunctionsLowering
+        this += ::AvoidLocalFakeOverridesLowering
         this += ::VersionOverloadsLowering
         this += ::InlineCallCycleCheckerLowering
         if (inlineIntraModule) {

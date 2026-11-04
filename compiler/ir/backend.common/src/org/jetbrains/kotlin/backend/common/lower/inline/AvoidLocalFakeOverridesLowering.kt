@@ -50,7 +50,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
  * }
  * ```
  */
-class AvoidLocalFOsInInlineFunctionsLowering(val context: LoweringContext) : BodyLoweringPass {
+class AvoidLocalFakeOverridesLowering(val context: LoweringContext) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         val function = ((container as? IrValueParameter)?.parent ?: container) as? IrFunction ?: return
         if (!function.isInline) {
