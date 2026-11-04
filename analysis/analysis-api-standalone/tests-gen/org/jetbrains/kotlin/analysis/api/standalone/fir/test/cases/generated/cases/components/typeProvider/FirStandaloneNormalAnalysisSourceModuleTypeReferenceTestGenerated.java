@@ -140,6 +140,24 @@ public class FirStandaloneNormalAnalysisSourceModuleTypeReferenceTestGenerated e
   }
 
   @Test
+  @TestMetadata("danglingTypeConstraintBound.kt")
+  public void testDanglingTypeConstraintBound() {
+    run("danglingTypeConstraintBound.kt");
+  }
+
+  @Test
+  @TestMetadata("danglingTypeConstraintBoundTypeArgument.kt")
+  public void testDanglingTypeConstraintBoundTypeArgument() {
+    run("danglingTypeConstraintBoundTypeArgument.kt");
+  }
+
+  @Test
+  @TestMetadata("danglingTypeConstraintUsage.kt")
+  public void testDanglingTypeConstraintUsage() {
+    run("danglingTypeConstraintUsage.kt");
+  }
+
+  @Test
   @TestMetadata("functionReceiver.kt")
   public void testFunctionReceiver() {
     run("functionReceiver.kt");

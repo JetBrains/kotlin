@@ -1,0 +1,8 @@
+fun <T> foo(a: ERROR_TYPE(Symbol not found for AA), t: T): ERROR_TYPE(Symbol not found for AA)
+
+fun <T : kotlin.Any, U> annotated(t: T, u: U)
+
+class Foo<T>
+
+@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.TYPE_PARAMETER])
+annotation class Anno
