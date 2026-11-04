@@ -1460,6 +1460,12 @@ public class SymbolLightClassesByPsiForSourceTestGenerated extends AbstractSymbo
     }
 
     @Test
+    @TestMetadata("companionExtensionValueClassReceiver.kt")
+    public void testCompanionExtensionValueClassReceiver() {
+      run("companionExtensionValueClassReceiver.kt");
+    }
+
+    @Test
     @TestMetadata("companionMembersNamedLikeEnumSpecials.kt")
     public void testCompanionMembersNamedLikeEnumSpecials() {
       run("companionMembersNamedLikeEnumSpecials.kt");
