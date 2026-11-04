@@ -144,23 +144,24 @@ internal object TestDataManagerRunner {
     internal class RunOutcome(
         val totalTests: Int,
         val passedTests: Int,
+        val skippedTests: Int,
         val mismatchesByPath: Map<String, Set<TestVariantChain>>,
         val errors: Set<TestError>,
         val testExecutions: Int,
         val runErrors: List<String> = emptyList(),
     ) {
         val failedTests: Int
-            get() = totalTests - passedTests
+            get() = totalTests - passedTests - skippedTests
 
         /** Whether the run passes; otherwise the runner exits with 1. */
         val isSuccessful: Boolean
             get() = mismatchesByPath.isEmpty() && errors.isEmpty() && runErrors.isEmpty()
 
         fun withRunErrors(runErrors: List<String>): RunOutcome =
-            RunOutcome(totalTests, passedTests, mismatchesByPath, errors, testExecutions, runErrors)
+            RunOutcome(totalTests, passedTests, skippedTests, mismatchesByPath, errors, testExecutions, runErrors)
 
         companion object {
-            val EMPTY = RunOutcome(0, 0, emptyMap(), emptySet(), 0)
+            val EMPTY = RunOutcome(0, 0, 0, emptyMap(), emptySet(), 0)
         }
     }
 
@@ -307,6 +308,7 @@ internal object TestDataManagerRunner {
 
                 if (filtered.size < group.tests.size) {
                     println("\n  Incremental: running ${filtered.size}/${group.tests.size} tests for variants: ${group.uniqueVariantChains}")
+                    skippedTests += group.tests.size - filtered.size
                 }
 
                 TestGroup(group.variantDepth, filtered)
@@ -345,17 +347,17 @@ internal object TestDataManagerRunner {
         // Calculate test counts based on final pass results
         val totalTests = discoveredTests.size
         val failedTests = allFinalFailedTestIds.size
-        val passedTests = totalTests - failedTests
+        val passedTests = totalTests - failedTests - skippedTests
 
         // Collect all unique variant chain configurations for summary
         val allVariantChains: Set<TestVariantChain> = groupingResult.groups
             .flatMap { it.uniqueVariantChains }
             .toSet()
 
-        printSummary(allMismatches, allVariantChains, allErrors, totalTests, passedTests)
+        printSummary(allMismatches, allVariantChains, allErrors, totalTests, passedTests, skippedTests)
         printTimingSummary(timingStats)
 
-        return RunOutcome(totalTests, passedTests, allMismatches, allErrors, testExecutions)
+        return RunOutcome(totalTests, passedTests, skippedTests, allMismatches, allErrors, testExecutions)
     }
 
     internal fun buildDiscoveryRequest(
@@ -558,13 +560,15 @@ internal object TestDataManagerRunner {
         errors: Set<TestError>,
         totalTests: Int,
         passedTests: Int,
+        skippedTests: Int,
     ) {
         println("\n========================================")
         println("SUMMARY")
         println("========================================")
 
-        val failedTests = totalTests - passedTests
-        println("$totalTests tests completed, $passedTests passed, $failedTests failed")
+        val failedTests = totalTests - passedTests - skippedTests
+        val skippedSuffix = if (skippedTests > 0) ", $skippedTests skipped (incremental)" else ""
+        println("$totalTests tests completed, $passedTests passed, $failedTests failed$skippedSuffix")
 
         if (mismatchesByPath.isNotEmpty()) {
             println("\n=== Mismatches (${mismatchesByPath.size} test data paths) ===")
