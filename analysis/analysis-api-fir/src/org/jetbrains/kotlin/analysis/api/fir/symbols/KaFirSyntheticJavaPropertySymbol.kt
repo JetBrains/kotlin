@@ -112,5 +112,5 @@ internal class KaFirSyntheticJavaPropertySymbol(
                 firSymbol.setterSymbol?.delegateFunctionSymbol == other.firSymbol.setterSymbol?.delegateFunctionSymbol
     }
 
-    override fun hashCode(): Int = (firSymbol.fir as FirSyntheticProperty).getter.delegate.symbol.hashCode()
+    override fun hashCode(): Int = firSymbol.getterSymbol?.delegateFunctionSymbol.hashCode()
 }
