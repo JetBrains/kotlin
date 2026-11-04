@@ -122,7 +122,69 @@ missing golden file and deletes redundant ones; see the behavior matrix in [AGEN
 
 ## Usage
 
-### Global Execution (Recommended)
+### Wrapper script (recommended for agents and scripts)
+
+[`test-data-manager.py`](test-data-manager.py) is a thin wrapper: it runs `checkTestData` or `updateTestData` in the
+modules with managed test data in one Gradle call with a shared run id, passes the options to the runner as is, and
+aggregates the reports the modules print into one summary:
+
+```bash
+# Check test data under a directory
+python3 analysis/test-data-manager/test-data-manager.py check --path compiler/psi/psi-impl/testData/psi/annotation
+
+# Update it; the summary lists the created, updated and deleted files
+python3 analysis/test-data-manager/test-data-manager.py update --path compiler/psi/psi-impl/testData/psi/annotation
+
+# Several paths go into one --path, separated by commas, as in the testDataPath option of the tasks
+python3 analysis/test-data-manager/test-data-manager.py check \
+    --path compiler/psi/psi-impl/testData/psi/annotation,compiler/psi/psi-impl/testData/psi/examples
+
+# Limit the modules, print the summary as JSON
+python3 analysis/test-data-manager/test-data-manager.py check --path analysis/analysis-api/testData/components \
+    --module :analysis:analysis-api-fir --json
+```
+
+On top of the module reports, it fails when a module wrote no report for the run (the task didn't run, or its JVM
+crashed) and when no test in any module matches the filters. The Gradle output goes to
+`build/test-data-manager/<runId>.gradle.log` and the summary to `build/test-data-manager/<runId>.summary.json`. Both
+paths are printed to stderr, each on its own line, before Gradle starts, so a long run can be followed. The summary path
+is also the last line of the output (`--json` prints the file instead of the text). The summary is written at once
+when the run ends, so it is never read half-written. Whether the run is over is told by the process exit, not by the
+file: a killed wrapper writes none. The summary is an index: the status, the run errors, the totals, the
+counts of problems and changed files by kind, and the module reports, which hold the entries themselves. The text output
+lists at most 50 entries of each kind. The 5 most recent runs are kept. `--run-id` sets the id, and so the paths of the
+log, the summary and the module reports, in advance. When Gradle fails for another reason than a failing module report
+(a compilation error, a configuration failure, an unknown module), the summary lists its `* What went wrong:` sections
+and the compiler errors from the log (`gradleFailures` and `compilerErrors`).
+
+Compared with calling Gradle directly, the command is much shorter, a mistyped option fails instead of being ignored
+(Gradle silently ignores an unknown `-P` property, so a misspelled `testDataPath` would run every test), and the output
+is a few lines however many modules run.
+
+With `--path`, it runs only the modules whose generated tests may have test data under the paths, so the others aren't
+even built. It reads the `@TestMetadata` of the generated tests. The committed ones in `tests-gen` give the path of
+every test, matched as the runner matches them. For `generateTestsInBuildDirectory`, the ones in `build/tests-gen` may be
+older than the test data, so only the directories of their outermost classes count: a new file or directory of a suite
+is inside one. A module without generated tests always runs. Each path is a binary search, so thousands of files are
+fine. A path that doesn't exist fails the run before Gradle starts. A path no module has tests of fails it too, while
+the modules of the other paths still run: an output file (`foo.txt`; the error names its test data file `foo.kt`), an
+unmanaged file, or a new test data file before `./gradlew generateTests`.
+The summary lists the skipped modules. `--module` runs the given modules as is.
+It takes a project path, with or without the leading `:`, or the module directory (`analysis/stubs`).
+
+Exit codes: `0` passed, `1` test data problems or test errors, `2` the run itself failed (run errors of a module, a
+missing report, Gradle failing without a failing report), `130` interrupted with Ctrl+C. An interrupt stops Gradle,
+waiting for it to cancel the build (a second Ctrl+C kills it). The summary is still written, with `"interrupted": true`
+and the reports of the modules that finished.
+
+Its tests use only the standard library and run in temporary git repositories, with a stub `gradlew`; they aren't part
+of the Gradle build, so run them after changing the script:
+
+```bash
+python3 analysis/test-data-manager/test-data-manager-test.py
+```
+
+### Global Execution
 
 Run across all modules with the test-data-manager plugin:
 
