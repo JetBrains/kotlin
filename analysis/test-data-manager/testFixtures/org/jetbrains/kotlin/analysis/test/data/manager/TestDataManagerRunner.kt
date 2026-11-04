@@ -640,7 +640,9 @@ internal object TestDataManagerRunner {
             val mismatchedTestCount = mismatchesByPath.size
             detail("  Tests with errors: $errorTestCount (including $mismatchedTestCount mismatches)")
 
-            if (lastErrorTestCount == errorTestCount && lastMismatchedTestCount == mismatchedTestCount) {
+            // A read-only check changes no file, so a re-run would only repeat the same results
+            val isReadOnly = TestDataManagerMode.isExplicitCheck
+            if (isReadOnly || lastErrorTestCount == errorTestCount && lastMismatchedTestCount == mismatchedTestCount) {
                 detail("  Convergence reached.")
                 return RunResult(finalProblems.values.flatten().toSet(), finalErrors.values.flatten().toSet(), lastPassFailedTestIds, testExecutions, recoveredTests.values)
             } else {

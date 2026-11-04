@@ -113,14 +113,14 @@ internal class TestDataManagerRunnerIntegrationTest {
     }
 
     @Test
-    fun `check reports mismatches and re-runs the failing tests once`() {
+    fun `check reports mismatches without re-running the failing tests`() {
         setupFiles("first.txt" to "expected")
         FakeRunnerScenario.outputs["first"] = "actual"
 
         assertEquals(
             """
                 tests: 7, passed: 4, failed: 3, skipped: 0
-                executions: 10, successful: false
+                executions: 7, successful: false
                 MISMATCH runner/first.js.txt (FakeRunnerJsTestGenerated.testFirst)
                 MISMATCH runner/first.js.txt (FakeRunnerKnmJsTestGenerated.testFirst)
                 MISMATCH runner/first.txt (FakeRunnerGoldenTestGenerated.testFirst)
@@ -150,7 +150,7 @@ internal class TestDataManagerRunnerIntegrationTest {
         assertEquals(
             """
                 tests: 7, passed: 6, failed: 1, skipped: 0
-                executions: 8, successful: false
+                executions: 7, successful: false
                 MISMATCH runner/noMetadata.txt (FakeRunnerNoMetadataTestGenerated.testWithoutMetadata)
                 noMetadata.txt: expected
             """.trimIndent(),
@@ -167,6 +167,20 @@ internal class TestDataManagerRunnerIntegrationTest {
                 tests: 7, passed: 7, failed: 0, skipped: 0
                 executions: 8, successful: true
                 recovered in pass 2: FakeRunnerGoldenTestGenerated.testFlaky - IllegalStateException: Flaky failure
+            """.trimIndent(),
+            run(TestDataManagerMode.UPDATE),
+        )
+    }
+
+    @Test
+    fun `check does not re-run a failing test`() {
+        FakeRunnerScenario.flakyFailures.set(1)
+
+        assertEquals(
+            """
+                tests: 7, passed: 6, failed: 1, skipped: 0
+                executions: 7, successful: false
+                error: FakeRunnerGoldenTestGenerated.testFlaky - IllegalStateException: Flaky failure
             """.trimIndent(),
             run(TestDataManagerMode.CHECK),
         )
