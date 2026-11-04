@@ -107,11 +107,9 @@ internal class KaFirSyntheticJavaPropertySymbol(
         if (other !is KaFirSyntheticJavaPropertySymbol) return false
         if (firSymbol == other.firSymbol) return true
 
-        val fir = firSymbol.fir as FirSyntheticProperty
-        val otherFir = other.firSymbol.fir as FirSyntheticProperty
-        return fir.name == otherFir.name &&
-                fir.getter.delegate.symbol == otherFir.getter.delegate.symbol &&
-                fir.setter?.delegate?.symbol == otherFir.setter?.delegate?.symbol
+        return firSymbol.name == other.firSymbol.name &&
+                firSymbol.getterSymbol?.delegateFunctionSymbol == other.firSymbol.getterSymbol?.delegateFunctionSymbol &&
+                firSymbol.setterSymbol?.delegateFunctionSymbol == other.firSymbol.setterSymbol?.delegateFunctionSymbol
     }
 
     override fun hashCode(): Int = (firSymbol.fir as FirSyntheticProperty).getter.delegate.symbol.hashCode()
