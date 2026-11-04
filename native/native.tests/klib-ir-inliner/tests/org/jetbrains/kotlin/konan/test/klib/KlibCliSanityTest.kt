@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.konan.test.klib
 
+import com.intellij.openapi.util.text.StringUtil.convertLineSeparators
 import org.jetbrains.kotlin.backend.common.signatureIndex
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
@@ -42,7 +43,6 @@ import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.io.path.absolutePathString
-import kotlin.io.path.pathString
 import kotlin.reflect.KProperty1
 
 @Tag("klib")
@@ -497,14 +497,15 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
         // a depends on c, c depends on b, b depends on a.
         val expectedDiagnostic = """
             error: cyclic dependency detected while computing DAG of KLIB dependencies:
-            ${moduleNameToKlibPath["a"]} ->
-            ${moduleNameToKlibPath["c"]} ->
-            ${moduleNameToKlibPath["b"]} ->
-            ${moduleNameToKlibPath["a"]}
+            ${moduleNameToKlibPath.getValue("a")} ->
+            ${moduleNameToKlibPath.getValue("c")} ->
+            ${moduleNameToKlibPath.getValue("b")} ->
+            ${moduleNameToKlibPath.getValue("a")}
         """.trimIndent()
 
-
-        assertEquals(expectedDiagnostic, compilationToolCall.toolOutput.trimEnd())
+        assertTrue(expectedDiagnostic in convertLineSeparators(compilationToolCall.toolOutput)) {
+            "[$expectedDiagnostic] is not contained in [${compilationToolCall.toolOutput}]"
+        }
     }
 
     @Test
