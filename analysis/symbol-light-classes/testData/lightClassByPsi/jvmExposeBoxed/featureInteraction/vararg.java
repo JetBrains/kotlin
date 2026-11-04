@@ -1,6 +1,6 @@
 public final class Bar /* Bar*/ {
   @kotlin.jvm.JvmExposeBoxed()
-  public final /* vararg */ void foo(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() StringWrapper @org.jetbrains.annotations.NotNull() ...);//  foo(@org.jetbrains.annotations.NotNull() StringWrapper @org.jetbrains.annotations.NotNull() [])
+  public final /* vararg */ void foo(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String @org.jetbrains.annotations.NotNull() ...);//  foo(@org.jetbrains.annotations.NotNull() java.lang.String @org.jetbrains.annotations.NotNull() [])
 
   public  Bar();//  .ctor()
 }
@@ -24,5 +24,5 @@ public final class StringWrapper /* StringWrapper*/ {
 @kotlin.OptIn(markerClass = {kotlin.ExperimentalStdlibApi.class})
 public final class VarargKt /* VarargKt*/ {
   @kotlin.jvm.JvmExposeBoxed()
-  public static final /* vararg */ void foo(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() StringWrapper @org.jetbrains.annotations.NotNull() ...);//  foo(@org.jetbrains.annotations.NotNull() StringWrapper @org.jetbrains.annotations.NotNull() [])
+  public static final /* vararg */ void foo(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String @org.jetbrains.annotations.NotNull() ...);//  foo(@org.jetbrains.annotations.NotNull() java.lang.String @org.jetbrains.annotations.NotNull() [])
 }

@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.*
+import org.jetbrains.kotlin.analysis.api.types.typeCreation.typeCreator
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.classes.KotlinSuperTypeListBuilder
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
@@ -214,7 +215,7 @@ internal fun <T : KaFunctionSymbol> createMethodsJvmOverloadsAware(
     } else {
         BitSet(parameterCount).apply {
             valueParameters.forEachIndexed { index, valueParameter ->
-                if (typeForInlineClass(valueParameter.returnType)) {
+                if (typeForInlineClass(valueParameter.parameterType)) {
                     set(index)
                 }
             }
@@ -806,6 +807,7 @@ internal fun hasManglingInlineClassInParameterPosition(
  * or a value parameter picked by [valueParameterPickMask], unless [skipValueParametersCheck] is `true`. A companion extension has no
  * receiver parameter on the JVM, see `SymbolLightParameterForReceiver`.
  */
+context(_: KaSession)
 private inline fun hasInlineClassInParameterPosition(
     callableSymbol: KaCallableSymbol,
     skipValueParametersCheck: Boolean,
@@ -817,12 +819,22 @@ private inline fun hasInlineClassInParameterPosition(
     if (callableSymbol.contextParameters.any { predicate(it.returnType) }) return true
     if (!skipValueParametersCheck && callableSymbol is KaFunctionSymbol) {
         return callableSymbol.valueParameters.withIndex().any { [index, valueParameter] ->
-            valueParameterPickMask?.get(index) != false && predicate(valueParameter.returnType)
+            valueParameterPickMask?.get(index) != false && predicate(valueParameter.parameterType)
         }
     }
 
     return false
 }
+
+/**
+ * The type of this value parameter, which is an array for a `vararg` parameter, unlike [KaValueParameterSymbol.returnType].
+ *
+ * Such an array is an inline class only for a non-null unsigned element type, as `UIntArray` for `vararg xs: UInt`. Otherwise, it is
+ * `Array<out T>`, as for `vararg xs: UInt?` or `vararg xs: T` with an inline class upper bound of `T`.
+ */
+context(_: KaSession)
+private val KaValueParameterSymbol.parameterType: KaType
+    get() = if (isVararg) typeCreator.varargArrayType(returnType) else returnType
 
 context(_: KaSession)
 internal fun hasInlineClassInReturnType(callableSymbol: KaCallableSymbol): Boolean {

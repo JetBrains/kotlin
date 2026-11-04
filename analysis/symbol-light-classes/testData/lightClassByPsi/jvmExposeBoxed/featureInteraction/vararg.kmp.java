@@ -1,5 +1,7 @@
 public final class Bar /* Bar*/ {
   public  Bar();//  .ctor()
+
+  public final /* vararg */ void foo(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String @org.jetbrains.annotations.NotNull() ...);//  foo(@org.jetbrains.annotations.NotNull() java.lang.String @org.jetbrains.annotations.NotNull() [])
 }
 
 @kotlin.jvm.JvmInline()
@@ -20,4 +22,5 @@ public final class StringWrapper /* StringWrapper*/ {
 
 @kotlin.OptIn(markerClass = {kotlin.ExperimentalStdlibApi.class})
 public final class VarargKt /* VarargKt*/ {
+  public static final /* vararg */ void foo(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String @org.jetbrains.annotations.NotNull() ...);//  foo(@org.jetbrains.annotations.NotNull() java.lang.String @org.jetbrains.annotations.NotNull() [])
 }
