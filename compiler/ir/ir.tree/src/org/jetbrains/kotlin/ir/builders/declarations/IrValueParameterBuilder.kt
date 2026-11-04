@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.ir.types.IrType
 
 const val UNDEFINED_PARAMETER_INDEX = -1
 
-class IrValueParameterBuilder : IrDeclarationBuilder() {
-    var kind: IrParameterKind = IrParameterKind.Regular
+open class IrValueParameterBuilder : IrDeclarationBuilder() {
+    open var kind: IrParameterKind = IrParameterKind.Regular
     lateinit var type: IrType
 
     var varargElementType: IrType? = null
@@ -32,4 +32,17 @@ class IrValueParameterBuilder : IrDeclarationBuilder() {
         isHidden = from.isHidden
         isAssignable = from.isAssignable
     }
+}
+
+class IrRegularValueParameterBuilder : IrValueParameterBuilder() {
+    @set:Deprecated(
+        """addValueParameter always uses Regular; 
+            |use buildValueParameter or buildReceiverParameter to create parameters of another kind""",
+        level = DeprecationLevel.WARNING,
+    )
+    override var kind: IrParameterKind
+        get() = super.kind
+        set(value) {
+            super.kind = value
+        }
 }
