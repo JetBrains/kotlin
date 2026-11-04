@@ -17,6 +17,7 @@ import org.junit.jupiter.api.DisplayName
 @MustRunOnChangesInGradle
 class BuildServiceDeclarationIT : KGPBaseTest() {
 
+    @TestMetadata("kotlinJavaProject")
     @DisplayName("Build services are registered for Kotlin/JVM projects")
     @GradleTest
     @JvmGradlePluginTests
@@ -51,6 +52,7 @@ class BuildServiceDeclarationIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-js-nodejs-project")
     @DisplayName("Build services are registered for Kotlin/JS nodejs projects")
     @GradleTest
     @JsGradlePluginTests
@@ -68,6 +70,7 @@ class BuildServiceDeclarationIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("new-mpp-lib-with-tests")
     @DisplayName("Build services are registered for Kotlin/MPP projects")
     @GradleTest
     @MppGradlePluginTests
@@ -85,6 +88,7 @@ class BuildServiceDeclarationIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kapt/simple")
     @DisplayName("Build services are registered for Kapt projects")
     @GradleTest
     @OtherGradlePluginTests

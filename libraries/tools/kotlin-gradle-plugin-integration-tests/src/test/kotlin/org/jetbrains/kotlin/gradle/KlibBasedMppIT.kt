@@ -10,6 +10,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
@@ -35,6 +36,7 @@ class KlibBasedMppIT : KGPBaseTest() {
         // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
         .disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
 
+    @TestMetadata("common-klib-lib-and-app")
     @DisplayName("Could be compiled with project dependency")
     @GradleTest
     @OptIn(ImpactsAggregatePerformance::class)
@@ -55,6 +57,7 @@ class KlibBasedMppIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("common-klib-lib-and-app")
     @DisplayName("KT-36674: Could be compiled with empty source set")
     @GradleTest
     fun testPublishingAndConsumptionWithEmptySourceSet(
@@ -73,6 +76,7 @@ class KlibBasedMppIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("common-klib-lib-and-app")
     @DisplayName("Compiles with common sources in transitive dependencies")
     @GradleTest
     fun testCommonSourceSetsInTransitiveDependencies(
@@ -178,6 +182,7 @@ class KlibBasedMppIT : KGPBaseTest() {
     }
 
     // Host-specific dependencies are only possible on macOS
+    @TestMetadata("common-klib-lib-and-app")
     @OsCondition(
         supportedOn = [OS.MAC],
         enabledOnCI = [OS.MAC],
@@ -193,6 +198,7 @@ class KlibBasedMppIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("common-klib-lib-and-app")
     @DisplayName("Works with Kotlin native transitive dependencies")
     @GradleTest
     fun testKotlinNativeImplPublishedDeps(
@@ -227,6 +233,7 @@ class KlibBasedMppIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("common-klib-lib-and-app")
     @DisplayName("Works with project dependencies containing Kotlin Native target")
     @GradleTest
     fun testKotlinNativeImplProjectDeps(
@@ -245,6 +252,7 @@ class KlibBasedMppIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("hierarchical-all-native")
     @DisplayName("KT-38746: Should not disable compilation of shared source set")
     @GradleTest
     fun testAvoidSkippingSharedNativeSourceSetKt38746(gradleVersion: GradleVersion) {

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.native
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import java.io.File
@@ -22,6 +23,7 @@ internal class NativeEmbeddableCompilerJarIT : KGPBaseTest() {
     private fun List<String>.includesEmbeddableJar() = any { it.isEmbeddableJar() }
     private val String.withPrefix get() = "native-binaries/$this"
 
+    @TestMetadata("native-binaries/executables")
     @DisplayName("K/N with default config shouldn't contain kotlin-native.jar and should contain kotlin-native-compiler-embeddable.jar")
     @GradleTest
     fun shouldNotUseRegularJarInDefaultConfig(gradleVersion: GradleVersion) {

@@ -932,7 +932,7 @@ class GeneralNativeIT : KGPBaseTest() {
 
     @DisplayName("Checks binary options dsl")
     @GradleTest
-    @TestMetadata("native-binaries")
+    @TestMetadata("native-binaries/executables")
     fun testBinaryOptionsDSL(gradleVersion: GradleVersion) {
         nativeProject("native-binaries/executables", gradleVersion) {
             buildGradleKts.appendText(
@@ -952,7 +952,7 @@ class GeneralNativeIT : KGPBaseTest() {
 
     @DisplayName("Checks binary options property")
     @GradleTest
-    @TestMetadata("native-binaries")
+    @TestMetadata("native-binaries/executables")
     fun testBinaryOptionsProperty(gradleVersion: GradleVersion) {
         nativeProject("native-binaries/executables", gradleVersion) {
             build(
@@ -968,7 +968,7 @@ class GeneralNativeIT : KGPBaseTest() {
 
     @DisplayName("Checks binary options priority")
     @GradleTest
-    @TestMetadata("native-binaries")
+    @TestMetadata("native-binaries/executables")
     fun testBinaryOptionsPriority(gradleVersion: GradleVersion) {
         nativeProject("native-binaries/executables", gradleVersion) {
             buildGradleKts.appendText(
@@ -1061,7 +1061,7 @@ class GeneralNativeIT : KGPBaseTest() {
     // KT-52303
     @DisplayName("Checks that changing build dir applied to binaries")
     @GradleTest
-    @TestMetadata("native-binaries")
+    @TestMetadata("native-binaries/executables")
     fun testBuildDirChangeAppliedToBinaries(gradleVersion: GradleVersion) {
         nativeProject("native-binaries/executables", gradleVersion) {
             buildGradleKts.appendText(
@@ -1117,7 +1117,7 @@ class GeneralNativeIT : KGPBaseTest() {
 
     @DisplayName("Test compiler arguments for K/Native Tasks")
     @GradleTest
-    @TestMetadata("native-binaries")
+    @TestMetadata("native-libraries")
     fun testCompilerArgumentsLogLevel(gradleVersion: GradleVersion) {
         nativeProject("native-libraries", gradleVersion) {
             val updatedBuildOptions = buildOptions.copy(
@@ -1141,7 +1141,6 @@ class GeneralNativeIT : KGPBaseTest() {
     }
 
     @DisplayName("KT-72705: native compile task should not use project's version as an input property")
-    @TestMetadata("emptyKts")
     @OsCondition(enabledOnCI = [OS.MAC])
     @GradleTest
     fun testKotlinNativeCompileTaskDontUseProjectVersionAsAnInput(gradleVersion: GradleVersion) {

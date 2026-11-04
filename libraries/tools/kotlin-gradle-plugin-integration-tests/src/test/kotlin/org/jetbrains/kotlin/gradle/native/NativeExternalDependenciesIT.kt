@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.KOTLIN_VERSION
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInNative
 import org.junit.jupiter.api.DisplayName
 import java.io.File
@@ -20,6 +21,7 @@ import kotlin.test.assertNotNull
 @MustRunOnChangesInNative
 internal class NativeExternalDependenciesIT : KGPBaseTest() {
 
+    @TestMetadata("native-external-dependencies")
     @DisplayName("K/N shouldn't contain any external dependencies by default")
     @GradleTest
     fun shouldNotUseExternalDependencies(gradleVersion: GradleVersion) {
@@ -35,6 +37,7 @@ internal class NativeExternalDependenciesIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-external-dependencies")
     @DisplayName("Should build with ktor 2.3.3 and coroutines 1.7.2")
     @GradleTest
     fun shouldUseOldKtorAndCoroutinesExternalDependencies(gradleVersion: GradleVersion) {
@@ -68,6 +71,7 @@ internal class NativeExternalDependenciesIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-external-dependencies")
     @DisplayName("Should build with ktor 1.6.5 and coroutines 1.5.2-native-mt")
     @GradleTest
     fun shouldUseKtorAndCoroutinesExternalDependencies(gradleVersion: GradleVersion) {

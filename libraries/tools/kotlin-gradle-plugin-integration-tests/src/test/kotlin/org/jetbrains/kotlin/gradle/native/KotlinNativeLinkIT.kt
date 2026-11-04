@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 
@@ -19,6 +20,7 @@ import kotlin.io.path.appendText
 @NativeGradlePluginTests
 internal class KotlinNativeLinkIT : KGPBaseTest() {
 
+    @TestMetadata("native-link-simple")
     @DisplayName("KT-54113: afterEvaluate to sync languageSettings should run out of configuration methods scope")
     @GradleTest
     fun shouldSyncLanguageSettingsSafely(gradleVersion: GradleVersion) {
@@ -27,6 +29,7 @@ internal class KotlinNativeLinkIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-link-simple")
     @DisplayName("KT-56280: should propagate freeCompilerArgs from compilation")
     @GradleTest
     fun shouldUseCompilationFreeCompilerArgs(gradleVersion: GradleVersion) {

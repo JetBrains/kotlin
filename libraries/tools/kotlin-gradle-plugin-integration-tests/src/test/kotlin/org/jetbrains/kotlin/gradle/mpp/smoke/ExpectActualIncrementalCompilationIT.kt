@@ -120,6 +120,7 @@ class ExpectActualIncrementalCompilationIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("lenientMode")
     @DisplayName("Incremental compilation with lenient mode")
     @GradleTest
     fun testLenientModeIncrementalCompilation(gradleVersion: GradleVersion) {
@@ -157,6 +158,7 @@ class ExpectActualIncrementalCompilationIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("lenientMode")
     @DisplayName("Incremental compilation with lenient mode 2")
     @GradleTest
     fun testLenientModeIncrementalCompilation2(gradleVersion: GradleVersion) {

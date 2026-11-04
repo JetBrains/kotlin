@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.idea.testFixtures.utils.*
 import org.jetbrains.kotlin.gradle.plugin.AndroidGradlePluginVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.resolveIdeDependencies
+import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerPlugins
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.io.TempDir
@@ -48,6 +49,7 @@ class ExternalAndroidTargetIT : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.copy(enableLegacyAgpDsl = false)
 
+    @TestMetadata("externalAndroidTarget-simple")
     @GradleAndroidTest
     fun `test - simple project - build`(
         gradleVersion: GradleVersion,
@@ -69,6 +71,7 @@ class ExternalAndroidTargetIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("externalAndroidTarget-simple")
     @GradleAndroidTest
     fun `test - simple project - testOnJvm`(
         gradleVersion: GradleVersion, androidVersion: String, jdkVersion: JdkVersions.ProvidedJdk,
@@ -101,6 +104,7 @@ class ExternalAndroidTargetIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("externalAndroidTarget-simple")
     @GradleAndroidTest
     fun `test - simple project - ide dependency resolution`(
         gradleVersion: GradleVersion, androidVersion: String, jdkVersion: JdkVersions.ProvidedJdk,
@@ -139,6 +143,7 @@ class ExternalAndroidTargetIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("externalAndroidTarget-project2project")
     @GradleAndroidTest
     fun `test - simple project - pom dependencies rewritten`(
         gradleVersion: GradleVersion, androidVersion: String, jdkVersion: JdkVersions.ProvidedJdk, @TempDir localRepoDir: Path,
@@ -182,6 +187,7 @@ class ExternalAndroidTargetIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("android-multiplatorm-library-with-parcelize")
     @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_811)
     @GradleAndroidTest
     @MustRunOnChangesInCompilerPlugins
@@ -216,6 +222,7 @@ class ExternalAndroidTargetIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("android-multiplatorm-library-with-parcelize")
     @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_811)
     @GradleAndroidTest
     @MustRunOnChangesInCompilerPlugins

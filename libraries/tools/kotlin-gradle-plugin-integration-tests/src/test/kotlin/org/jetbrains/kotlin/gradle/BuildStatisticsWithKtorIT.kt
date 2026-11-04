@@ -112,6 +112,7 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
 
     }
 
+    @TestMetadata("incrementalMultiproject")
     @DisplayName("Http build report request problems are logged only ones")
     @GradleTest
     @JvmGradlePluginTests
@@ -153,6 +154,7 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("incrementalMultiproject")
     @DisplayName("Validate mandatory field for http request body")
     @GradleTest
     @JvmGradlePluginTests
@@ -170,6 +172,7 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("incrementalMultiproject")
     @DisplayName("Compiler arguments reporting can be disabled")
     @GradleTest
     @JvmGradlePluginTests
@@ -194,6 +197,7 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("incrementalMultiproject")
     @DisplayName("Validate configuration cache tag")
     @GradleTest
     @JvmGradlePluginTests
@@ -295,6 +299,7 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("k2-native-intermediate-metadata")
     @DisplayName("Build reports for native")
     @GradleTest
     @NativeGradlePluginTests

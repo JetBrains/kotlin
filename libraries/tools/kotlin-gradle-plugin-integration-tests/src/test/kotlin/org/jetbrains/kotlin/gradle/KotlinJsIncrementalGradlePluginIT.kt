@@ -9,6 +9,7 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.tasks.USING_JS_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
@@ -25,6 +26,7 @@ class KotlinJsIncrementalGradlePluginIT : KGPBaseTest() {
             jsOptions = defaultJsOptions,
         ).disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
 
+    @TestMetadata("kotlin2JsICProject")
     @DisplayName("incremental compilation for js works")
     @GradleTest
     fun testIncrementalCompilation(gradleVersion: GradleVersion) {
@@ -54,6 +56,7 @@ class KotlinJsIncrementalGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin2JsICProject")
     @DisplayName("non-incremental compilation works")
     @GradleTest
     fun testIncrementalCompilationDisabled(gradleVersion: GradleVersion) {
@@ -66,6 +69,7 @@ class KotlinJsIncrementalGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-js-ir-ic-multiple-artifacts")
     @DisplayName("incremental compilation with multiple js modules after frontend compilation error works")
     @GradleTest
     fun testIncrementalCompilationWithMultipleModulesAfterCompilationError(gradleVersion: GradleVersion) {

@@ -43,6 +43,7 @@ import kotlin.test.assertTrue
 
 class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
 
+    @TestMetadata("new-mpp-wasm-js")
     @DisplayName("Check js target with browser")
     @GradleTest
     @WasmJsGradlePluginTests
@@ -50,6 +51,7 @@ class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
         jsTargetWithBrowser(gradleVersion, 1)
     }
 
+    @TestMetadata("new-mpp-wasm-js")
     @DisplayName("Check js target with binaryen per-module closed world")
     @GradleTest
     @WasmJsGradlePluginTests
@@ -211,6 +213,7 @@ class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
         }
     }
 
+    @TestMetadata("new-mpp-wasm-js")
     @DisplayName("Check js target with per-module closed world incremental build with rerun tasks")
     @GradleTest
     @WasmJsGradlePluginTests
@@ -264,6 +267,7 @@ class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
         }
     }
 
+    @TestMetadata("new-mpp-wasm-js")
     @DisplayName("Check wasm target compiles when switch compilation mode with IC enabled")
     @GradleTest
     @WasmJsGradlePluginTests
@@ -313,6 +317,7 @@ class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
         }
     }
 
+    @TestMetadata("new-mpp-wasm-js")
     @DisplayName("Check js target with binaryen with custom per-file argument")
     @GradleTest
     @WasmJsGradlePluginTests
@@ -322,6 +327,7 @@ class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
         }
     }
 
+    @TestMetadata("new-mpp-wasm-js")
     @DisplayName("Check js target with binaryen with custom per-file argument per-module closed world")
     @GradleTest
     @WasmJsGradlePluginTests
@@ -392,6 +398,7 @@ class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
         }
     }
 
+    @TestMetadata("new-mpp-wasm-js")
     @DisplayName("Check js target with binaryen with custom argument")
     @GradleTest
     @WasmJsGradlePluginTests
@@ -421,6 +428,7 @@ class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
         }
     }
 
+    @TestMetadata("wasm-js-per-module-closed-world")
     @DisplayName("Check that wasm-js optimizer is executed if a dependent .wasm file is changed")
     @GradleTest
     @WasmJsGradlePluginTests
@@ -456,6 +464,7 @@ class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
         }
     }
 
+    @TestMetadata("wasm-js-per-module-closed-world")
     @GradleTest
     @WasmJsGradlePluginTests
     @DisplayName("Changing lib triggers transitive recompilation through mid to app in per-module closed-world mode")
@@ -519,6 +528,7 @@ class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
         }
     }
 
+    @TestMetadata("wasm-js-per-module-closed-world")
     @GradleTest
     @WasmJsGradlePluginTests
     @DisplayName("Diamond dependency: lib.wasm appears exactly once despite two dependency paths")
@@ -566,6 +576,7 @@ class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
         }
     }
 
+    @TestMetadata("wasm-js-per-module-closed-world")
     @GradleTest
     @WasmJsGradlePluginTests
     @DisplayName("Third-party lib of a dependent module produces a separate .wasm in per-module closed world")
@@ -604,6 +615,7 @@ class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
         }
     }
 
+    @TestMetadata("wasm-browser-several-modules")
     @DisplayName("Change in a dependency should invalidate up-to-date check")
     @GradleTest
     @WasmJsGradlePluginTests
@@ -621,6 +633,7 @@ class KotlinWasmPerModuleGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
     override val compilationModeWarningIds: Set<String>
         get() = setOf(KotlinToolingDiagnostics.ExperimentalFeatureWarning.id)
 
+    @TestMetadata("new-mpp-wasm-js")
     @DisplayName("Check js target with browser")
     @GradleTest
     @WasmJsGradlePluginTests
@@ -628,6 +641,7 @@ class KotlinWasmPerModuleGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
         jsTargetWithBrowser(gradleVersion, 2)
     }
 
+    @TestMetadata("new-mpp-wasm-js")
     @DisplayName("Check that js target all wasm files' size less in production")
     @GradleTest
     @WasmJsGradlePluginTests
@@ -666,6 +680,7 @@ class KotlinWasmPerModuleGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
         }
     }
 
+    @TestMetadata("wasm-browser-several-modules")
     @DisplayName("Change in a dependency should invalidate up-to-date check")
     @GradleTest
     @WasmJsGradlePluginTests
@@ -682,6 +697,7 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
 
     protected open val compilationModeWarningIds: Set<String> = emptySet()
 
+    @TestMetadata("new-mpp-wasm-test")
     @DisplayName("Check js target")
     @GradleTest
     @WasmJsGradlePluginTests
@@ -717,6 +733,7 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("new-mpp-wasm-wasi-js-test")
     @DisplayName("Check wasi and js target")
     @GradleTest
     @WasmGradlePluginTests
@@ -733,6 +750,7 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("new-mpp-wasm-js")
     @DisplayName("Check js target with binaryen")
     @GradleTest
     @WasmJsGradlePluginTests
@@ -783,6 +801,7 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("new-mpp-wasm-js")
     @DisplayName("Check js target without sourcemap does not have warning")
     @GradleTest
     @WasmJsGradlePluginTests
@@ -893,6 +912,7 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("wasm-wasi-js-with-wasi-only-dependency")
     @DisplayName("Check mix project with wasi only dependency works correctly")
     @GradleTest
     @WasmGradlePluginTests
@@ -907,6 +927,7 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kt-63230")
     @DisplayName("Browser print works with null type")
     @GradleTest
     @WasmJsGradlePluginTests
@@ -928,6 +949,7 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("mpp-wasm-js-browser-nodejs")
     @DisplayName("Wasm JS variant does not contain file:// in webpack and works in Node.JS")
     @GradleTest
     @WasmJsGradlePluginTests
@@ -948,6 +970,7 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("mpp-wasm-js-browser-nodejs")
     @DisplayName("Wasm sync task copies main compilation resources to test NPM package")
     @GradleTest
     @WasmJsGradlePluginTests
@@ -964,6 +987,7 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("mpp-wasm-js-browser-nodejs")
     @DisplayName("Test compilation package.json generation depends on main package.json generation")
     @GradleTest
     @WasmJsGradlePluginTests
@@ -978,6 +1002,7 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("mpp-wasm-published-library")
     @DisplayName("Extracting NPM dependencies from transitive dependency")
     @GradleTest
     @WasmJsGradlePluginTests
@@ -1028,6 +1053,7 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("wasm-browser-simple-project")
     @DisplayName("Browser case works correctly with custom formatters")
     @GradleTest
     @WasmJsGradlePluginTests
@@ -1050,6 +1076,7 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("wasm-browser-simple-project")
     @DisplayName("Changed output module name")
     @GradleTest
     @WasmJsGradlePluginTests
@@ -1074,6 +1101,7 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-js-test-webpack-config")
     @DisplayName("webpack configuration is valid")
     @GradleTest
     @WasmJsGradlePluginTests
@@ -1095,6 +1123,7 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
     // It may break some properties with Task source
     // but we need to work in Android Studio,
     // so it is better to be sure that we work in this strange situation
+    @TestMetadata("wasm-browser-simple-project")
     @DisplayName("Touch properties to not break Android studio")
     @GradleTest
     @WasmJsGradlePluginTests
@@ -1114,6 +1143,7 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("wasm-browser-several-modules")
     @DisplayName("Different binaryen versions per project")
     @GradleTest
     @WasmJsGradlePluginTests
@@ -1147,6 +1177,7 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("new-mpp-wasm-js")
     @DisplayName("Check js target test without kotlin-test")
     @GradleTest
     @WasmJsGradlePluginTests
@@ -1182,6 +1213,7 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("new-mpp-wasm-js")
     @DisplayName("Check js target webpack config changes reflected in webpack task properties")
     @GradleTest
     @WasmJsGradlePluginTests
@@ -1252,6 +1284,7 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("wasm-composite-build")
     @DisplayName("wasm js composite build works")
     @GradleTest
     @WasmJsGradlePluginTests
@@ -1324,6 +1357,7 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("wasm-project-repos")
     @DisplayName("when project has FAIL_ON_PROJECT_REPOS, expect Kotlin/Wasm tools are downloaded correctly")
     @GradleTest
     @WasmJsGradlePluginTests
@@ -1402,6 +1436,7 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("wasm-project-repos")
     @OptIn(ExperimentalWasmDsl::class)
     @DisplayName("when project has FAIL_ON_PROJECT_REPOS without downloading tools, expect KGP does not download tools")
     @GradleTest
@@ -1503,6 +1538,7 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("wasm-js-dynamic-webpack-config-d")
     @DisplayName("webpack-config-d directory created during the build is not ignored")
     @GradleTest
     @WasmJsGradlePluginTests

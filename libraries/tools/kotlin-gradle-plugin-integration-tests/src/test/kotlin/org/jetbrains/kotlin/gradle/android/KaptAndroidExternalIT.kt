@@ -9,6 +9,7 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.KaptBaseIT
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerPlugins
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
@@ -20,6 +21,7 @@ import kotlin.io.path.appendText
 @MustRunOnChangesInCompilerPlugins
 open class KaptAndroidExternalIT : KaptBaseIT() {
 
+    @TestMetadata("kapt/android-dagger")
     @DisplayName("kapt works with dagger")
     @GradleAndroidTest
     @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
@@ -48,6 +50,7 @@ open class KaptAndroidExternalIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/android-dbflow")
     @DisplayName("kapt works with DbFlow")
     @GradleAndroidTest
     fun testDbFlow(
@@ -73,6 +76,7 @@ open class KaptAndroidExternalIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/android-realm")
     @DisplayName("kapt works with realm")
     @GradleAndroidTest
     fun testRealm(
@@ -102,6 +106,7 @@ open class KaptAndroidExternalIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/android-databinding")
     @DisplayName("kapt works with databinding")
     @GradleAndroidTest
     @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
@@ -140,6 +145,7 @@ open class KaptAndroidExternalIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/androidx-navigation-safe-args")
     @DisplayName("KT-30735: kapt works with androidx.navigation.safeargs")
     @GradleAndroidTest
     @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
@@ -162,6 +168,7 @@ open class KaptAndroidExternalIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/android-databinding-androidX")
     @DisplayName("kapt works with androidx")
     @GradleAndroidTest
     fun testDatabindingWithAndroidX(
@@ -182,6 +189,7 @@ open class KaptAndroidExternalIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/mpp-android-kapt")
     @DisplayName("KT-61622: common sources are attached in MPP + Android project")
     @GradleAndroidTest
     open fun testMppAndroidKapt(

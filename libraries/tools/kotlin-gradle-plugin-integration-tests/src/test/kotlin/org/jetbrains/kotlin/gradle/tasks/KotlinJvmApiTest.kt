@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 import kotlin.io.path.createDirectories
@@ -15,6 +16,7 @@ import kotlin.io.path.writeText
 
 @DisplayName("JVM API validation")
 class KotlinJvmApiTest : KGPBaseTest() {
+    @TestMetadata("kotlinJavaProject")
     @DisplayName("Kotlin compilation can be set up using APIs")
     @JvmGradlePluginTests
     @GradleTest
@@ -59,6 +61,7 @@ class KotlinJvmApiTest : KGPBaseTest() {
     }
 
 
+    @TestMetadata("jvm-with-common")
     @DisplayName("KT-60541: checks that configuring custom KotlinCompile does not require using internals")
     @JvmGradlePluginTests
     @GradleTest
@@ -97,6 +100,7 @@ class KotlinJvmApiTest : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlinJavaProject")
     @DisplayName("KAPT can be set up using APIs")
     @OtherGradlePluginTests
     @GradleTest

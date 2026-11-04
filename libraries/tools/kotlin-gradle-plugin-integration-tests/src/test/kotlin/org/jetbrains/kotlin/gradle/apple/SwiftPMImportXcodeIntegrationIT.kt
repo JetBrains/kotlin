@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.gradle.util.isTeamCityRun
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.jetbrains.kotlin.konan.target.Xcode
+import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.DisplayName
@@ -42,6 +43,7 @@ import kotlin.test.*
 @MustRunOnChangesInGradle
 class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
 
+    @TestMetadata("emptyxcode")
     @GradleTest
     fun `integrateLinkagePackage task creates synthetic package`(version: GradleVersion) {
         project("emptyxcode", version) {
@@ -89,6 +91,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("emptyxcode")
     @GradleTest
     fun `integrateLinkagePackage sets dynamic synthetic product type for dynamic frameworks to inferred and creates a dynamic package`(version: GradleVersion) {
         project("emptyxcode", version) {
@@ -152,6 +155,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("emptyxcode")
     @GradleTest
     fun `integrateLinkagePackage passes non-default iosDeploymentVersion into synthetic manifest`(version: GradleVersion) {
         project("emptyxcode", version) {
@@ -230,6 +234,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("emptyxcode")
     @GradleTest
     fun `integrateLinkagePackage passes different version types correctly`(version: GradleVersion) {
         project("emptyxcode", version) {
@@ -301,6 +306,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("emptyxcode")
     @GradleTest
     fun `integrateLinkagePackage passes id repository into synthetic manifest`(version: GradleVersion) {
         project("emptyxcode", version) {
@@ -341,6 +347,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("emptyxcode")
     @GradleTest
     fun `integrateLinkagePackage passes product platform constraints into synthetic manifest`(version: GradleVersion) {
         project("emptyxcode", version) {
@@ -409,6 +416,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("emptyxcode")
     @GradleTest
     fun `integrateLinkagePackage task base idempotency check`(version: GradleVersion) {
         project("emptyxcode", version) {
@@ -433,6 +441,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("emptyxcode")
     @GradleTest
     fun `KT-86155 - forEmbedAndSignLinkage prints changed files when linkage package is mutated`(version: GradleVersion) {
         project("emptyxcode", version) {
@@ -490,6 +499,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("emptyxcode")
     @GradleTest
     fun `integrateLinkagePackage reruns synthetic manifest generation when new Package is added`(version: GradleVersion) {
         project("emptyxcode", version) {
@@ -566,6 +576,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("emptyxcode")
     @GradleTest
     fun `integrateLinkagePackage reruns synthetic manifest generation when Package is removed`(version: GradleVersion) {
         project("emptyxcode", version) {
@@ -1177,6 +1188,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("emptyxcode")
     @GradleTest
     fun `integrateLinkagePackage accepts absolute XCODEPROJ_PATH`(version: GradleVersion) {
         project("emptyxcode", version) {
@@ -1198,6 +1210,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("emptyxcode")
     @GradleTest
     fun `integrateLinkagePackage preserves symlink path for local package dependencies`(version: GradleVersion) {
         project("emptyxcode", version) {
@@ -1256,6 +1269,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("emptyxcode")
     @GradleTest
     fun `integrateLinkagePackage with XCODEPROJ_PATH outside of the project with relative path`(version: GradleVersion) {
         project("emptyxcode", version) {
@@ -1320,6 +1334,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("emptyxcode")
     @GradleTest
     fun `integrateLinkagePackage with XCODEPROJ_PATH outside of the project with absolute path`(version: GradleVersion) {
         project("emptyxcode", version) {
@@ -1384,6 +1399,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("emptyxcode")
     @GradleTest
     fun `embedAndSignAppleFrameworkForXcode uses root gradlew for external xcode project`(version: GradleVersion) {
         project("emptyxcode", version) {
@@ -1413,6 +1429,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("emptyxcode-no-embedandsign")
     @GradleTest
     fun `integrateLinkagePackage fails when embed-and-sign phase is absent`(version: GradleVersion) {
         project("emptyxcode-no-embedandsign", version) {
@@ -1429,6 +1446,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("emptyxcode")
     @Ignore("Till the fix https://youtrack.jetbrains.com/issue/KT-84384/")
     @GradleTest
     fun `integrateLinkagePackage handles symlinked DEVELOPER_DIR`(version: GradleVersion) {
@@ -1462,6 +1480,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("emptyxcode")
     @GradleTest
     fun `integrateLinkagePackage without XCODEPROJ_PATH fails with actionable error`(version: GradleVersion) {
         project("emptyxcode", version) {
@@ -1480,6 +1499,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("emptyxcode")
     @GradleTest
     fun `integrateEmbedAndSign without XCODEPROJ_PATH fails with actionable error`(version: GradleVersion) {
         project("emptyxcode", version) {
@@ -1497,6 +1517,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("emptyxcode")
     @GradleTest
     fun `integrateLinkagePackage with invalid XCODEPROJ_PATH fails with actionable error`(version: GradleVersion) {
         project("emptyxcode", version) {

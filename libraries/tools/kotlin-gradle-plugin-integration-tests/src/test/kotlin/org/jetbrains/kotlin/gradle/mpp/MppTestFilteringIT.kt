@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.mpp
 import org.gradle.api.tasks.testing.Test
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 
@@ -106,6 +107,7 @@ class MppTestFilteringIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("base-kotlin-multiplatform-library")
     @DisplayName("CLI --tests filtering: class, method, wildcard, and package patterns")
     @GradleTest
     fun testCliTestsFiltering(gradleVersion: GradleVersion) {
@@ -173,6 +175,7 @@ class MppTestFilteringIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("base-kotlin-multiplatform-library")
     @DisplayName("Task DSL filter configuration: includeTestsMatching")
     @GradleTest
     fun testDslIncludeTestsMatching(gradleVersion: GradleVersion) {
@@ -195,6 +198,7 @@ class MppTestFilteringIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("base-kotlin-multiplatform-library")
     @DisplayName("Task DSL filter configuration: include and exclude patterns")
     @GradleTest
     fun testDslIncludeAndExcludePatterns(gradleVersion: GradleVersion) {
@@ -218,6 +222,7 @@ class MppTestFilteringIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("base-kotlin-multiplatform-library")
     @DisplayName("Task DSL filter configuration: CLI narrowing behavior")
     @GradleTest
     fun testDslCliNarrowing(gradleVersion: GradleVersion) {
@@ -247,6 +252,7 @@ class MppTestFilteringIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("base-kotlin-multiplatform-library")
     @DisplayName("jvmTest fails on non-matching --tests filter, jsNodeTest does not")
     @GradleTest
     fun testTargetBehavioralAsymmetryOnNoMatchingTests(gradleVersion: GradleVersion) {
@@ -272,6 +278,7 @@ class MppTestFilteringIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("base-kotlin-multiplatform-library")
     @DisplayName("Disable failOnNoMatchingTests on JVM test task allows non-matching filter to succeed")
     @GradleTest
     fun testDisableFailOnNoMatchingTests(gradleVersion: GradleVersion) {
@@ -291,6 +298,7 @@ class MppTestFilteringIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("base-kotlin-multiplatform-library")
     @DisplayName("CLI --tests executes all filtered test cases even when tests fail")
     @GradleTest
     fun testCliFilteringWithFailingTests(gradleVersion: GradleVersion) {

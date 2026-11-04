@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.compilerPlugins
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerPlugins
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
@@ -22,6 +23,7 @@ class SandboxPluginIT : KGPBaseTest() {
     private val pluginClasspath: String get() = System.getProperty("sandboxPluginClasspath")
     private val pluginArgument: String get() = "-Xplugin=$pluginClasspath"
 
+    @TestMetadata("sandboxPluginGeneratingTopLevelFunction")
     @DisplayName("Plugin generates top-level function")
     @GradleTest
     fun testTopLevelFunctionGeneration(gradleVersion: GradleVersion) {

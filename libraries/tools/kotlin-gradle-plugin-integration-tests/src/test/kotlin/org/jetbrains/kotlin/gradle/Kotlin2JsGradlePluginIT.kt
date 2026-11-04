@@ -42,6 +42,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
         get() = super.defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
 
+    @TestMetadata("kotlin2JsIrDtsGeneration")
     @MustRunOnChangesInJs
     @DisplayName("TS type declarations are generated")
     @GradleTest
@@ -64,6 +65,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin2JsIrDtsGeneration")
     @MustRunOnChangesInJs
     @DisplayName("TS type declarations are generated using the rich TypeScript schema")
     @GradleTest
@@ -105,6 +107,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin2JsIrDtsGeneration")
     @MustRunOnChangesInJs
     @DisplayName("Rich TS export emit diagnostics")
     @GradleTest
@@ -145,6 +148,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     }
 
 
+    @TestMetadata("kotlin2JsIrDtsGeneration")
     @MustRunOnChangesInJs
     @DisplayName("TS type declarations are generated with the right extension for ES modules")
     @GradleTest
@@ -169,6 +173,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simple-js-executable")
     @MustRunOnChangesInJs
     @DisplayName("es2020 target produces ES modules and compiles Long as bigint by default")
     @GradleTest
@@ -222,6 +227,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-js-nodejs-project")
     @DisplayName("nodejs CLI arguments as main function arguments")
     @GradleTest
     fun testNodeJsMainArguments(gradleVersion: GradleVersion) {
@@ -248,6 +254,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-js-multiplatform-app-project")
     @DisplayName("delegated transpilation works for app project if it's turned on")
     @GradleTest
     fun testAppProjectWorkWithTheDelegatedTranspilation(gradleVersion: GradleVersion) {
@@ -363,6 +370,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-js-multiplatform-library-project")
     @DisplayName("delegated transpilation works for library project if it's turned on")
     @GradleTest
     fun testLibraryProjectWorkWithTheDelegatedTranspilation(gradleVersion: GradleVersion) {
@@ -411,6 +419,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-js-multiplatform-library-project")
     @DisplayName("delegated transpilation configured differently for library project if compiler options are changed")
     @GradleTest
     fun testLibraryProjectWorkWithTheDelegatedTranspilationAndDifferentCompilerConfiguration(gradleVersion: GradleVersion) {
@@ -459,6 +468,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-js-multiplatform-app-project")
     @DisplayName("delegated transpilation configured differently for app project if compiler options are changed")
     @GradleTest
     fun testAppProjectWorkWithTheDelegatedTranspilationAndDifferentCompilerConfiguration(gradleVersion: GradleVersion) {
@@ -518,6 +528,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     }
 
 
+    @TestMetadata("kotlin-js-multiplatform-library-project")
     @DisplayName("delegated transpilation is turned off by default for library")
     @GradleTest
     fun testLibraryProjectWorkWithoutTheDelegatedTranspilation(gradleVersion: GradleVersion) {
@@ -540,6 +551,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-js-multiplatform-app-project")
     @DisplayName("delegated transpilation is turned off by default for app")
     @GradleTest
     fun testAppProjectWorkWithoutTheDelegatedTranspilation(gradleVersion: GradleVersion) {
@@ -572,6 +584,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-js-nodejs-project")
     @DisplayName("nodejs process.argv as main function arguments")
     @GradleTest
     fun testPassingNodeJsProcessArgvToTheMainFunction(gradleVersion: GradleVersion) {
@@ -598,6 +611,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-js-nodejs-project")
     @DisplayName("stale output is cleaned")
     @GradleTest
     fun testCleanOutputWithEmptySources(gradleVersion: GradleVersion) {
@@ -625,6 +639,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("js-composite-build")
     @DisplayName("js composite build works")
     @GradleTest
     fun testJsCompositeBuild(gradleVersion: GradleVersion) {
@@ -802,6 +817,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simple-js-executable")
     @DisplayName("falsify kotlin js compiler args")
     @GradleTest
     fun testFalsifyKotlinJsCompilerArgs(gradleVersion: GradleVersion) {
@@ -834,6 +850,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("js-ir-validate-ts")
     @DisplayName("test TypeScript declarations are not generated if DSL wasn't applied")
     @GradleTest
     fun testNotGeneratedTypeScriptDeclarations(gradleVersion: GradleVersion) {
@@ -884,6 +901,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("js-ir-validate-ts")
     @MustRunOnChangesInJs
     @DisplayName("test TypeScript declarations generated after DSL applied")
     @GradleTest
@@ -941,6 +959,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("js-ir-validate-ts")
     @MustRunOnChangesInJs
     @DisplayName("generated typescript declarations validation")
     @GradleTest
@@ -996,6 +1015,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin2JsProjectWithSourceMap")
     @MustRunOnChangesInJs
     @DisplayName("fully qualified names can be used in the sourcemap")
     @GradleTest
@@ -1023,6 +1043,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin2JsProjectWithSourceMap")
     @MustRunOnChangesInJs
     @DisplayName("simple names can be used in the sourcemap")
     @GradleTest
@@ -1049,6 +1070,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin2JsProjectWithSourceMap")
     @MustRunOnChangesInJs
     @DisplayName("don't generate names in the sourcemap")
     @GradleTest
@@ -1075,6 +1097,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-js-package-module-name")
     @MustRunOnChangesInJs
     @DisplayName("Kotlin/JS project with module name starting with package")
     @GradleTest
@@ -1144,6 +1167,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-js-coroutines")
     @DisplayName("JS IR compiled against automatically added dom-api-compat")
     @GradleTest
     fun testJsIrCompiledAgainstAutomaticallyAddedDomApiCompat(gradleVersion: GradleVersion) {
@@ -1153,6 +1177,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-js-with-friend-paths")
     @DisplayName("Not existed friend dependencies does not affect compileKotlinJs UTD")
     @GradleTest
     fun testFriendDependenciesDoesNotExist(gradleVersion: GradleVersion) {
@@ -1173,6 +1198,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin2JsIrICProject")
     @MustRunOnChangesInJs
     @MustRunOnChangesInCommonBackend
     @DisplayName("klib fingerprints")
@@ -1205,6 +1231,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-js-ir-runtime-dependency")
     @DisplayName("Klib runtime dependency on module which already depends on dependent")
     @GradleTest
     fun testKlibRuntimeDependency(gradleVersion: GradleVersion) {
@@ -1307,6 +1334,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-js-multiple-targets")
     @DisplayName("Multiple targets works without clash")
     @GradleTest
     fun testMultipleJsTargets(gradleVersion: GradleVersion) {
@@ -1318,6 +1346,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("js-library-with-executable")
     @DisplayName("Webpack config block works after task configured")
     @GradleTest
     fun testWebpackConfigWorksAfterTaskConfigured(gradleVersion: GradleVersion) {
@@ -1362,6 +1391,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("js-custom-build-src-plugin")
     @DisplayName("Custom plugin applying Kotlin/JS plugin")
     @GradleTest
     fun customPluginApplyingKotlinJsPlugin(gradleVersion: GradleVersion) {
@@ -1372,6 +1402,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin2JsProjectWithTests")
     @DisplayName("test compilation can access main compilation")
     @GradleTest
     fun testCompileTestCouldAccessProduction(gradleVersion: GradleVersion) {
@@ -1388,6 +1419,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin2JsInternalTest")
     @DisplayName("test compilation can access internal symbols of main compilation")
     @GradleTest
     fun testCompilerTestAccessInternalProduction(gradleVersion: GradleVersion) {
@@ -1396,6 +1428,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin2JsProjectWithSourceMap")
     @MustRunOnChangesInJs
     @DisplayName("source map is generated")
     @GradleTest
@@ -1500,6 +1533,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin2JsProjectWithSourceMap")
     @MustRunOnChangesInJs
     @DisplayName("path in source maps are remapped for custom outputFile in executable")
     @GradleTest
@@ -1528,6 +1562,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-multiplatform-browser-project")
     @MustRunOnChangesInJs
     @DisplayName("path in source maps are remapped for custom outputFile in library")
     @GradleTest
@@ -1556,6 +1591,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-multiplatform-browser-project")
     @MustRunOnChangesInJs
     @DisplayName("path in source maps are remapped for custom outputFile in library with ES modules")
     @GradleTest
@@ -1589,6 +1625,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin2JsProjectWithSourceMap")
     @MustRunOnChangesInJs
     @DisplayName("source map is not generated when disabled")
     @GradleTest
@@ -1612,6 +1649,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin2JsProjectWithSourceMap")
     @MustRunOnChangesInJs
     @DisplayName("sources of all modules are embedded into source map")
     @GradleTest
@@ -1648,6 +1686,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin2JsProjectWithSourceMap")
     @MustRunOnChangesInJs
     @DisplayName("only sources of external modules are embedded into source map")
     @GradleTest
@@ -1755,6 +1794,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("yarn-setup")
     @DisplayName("yarn is set up from local archive")
     @GradleTest
     fun testYarnSetupFromLocalArchive(gradleVersion: GradleVersion) {
@@ -1973,6 +2013,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-js-nodejs-custom-node-module")
     @DisplayName("NodeJs test with custom fork options")
     @GradleTest
     fun testNodeJsForkOptions(gradleVersion: GradleVersion) {
@@ -2006,6 +2047,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-js-npm-overrides")
     @DisplayName("npm overrides works")
     @GradleTest
     fun testNpmOverrides(gradleVersion: GradleVersion) {
@@ -2043,6 +2085,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-js-nodejs-project")
     @DisplayName("directories in dependencies doesn't break NPM resolution")
     @GradleTest
     fun testDirectoryDependencyNotFailProjectResolution(gradleVersion: GradleVersion) {
@@ -2060,6 +2103,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("js-dynamic-webpack-config-d")
     @DisplayName("webpack-config-d directory created during the build is not ignored")
     @GradleTest
     fun testDynamicWebpackConfigD(gradleVersion: GradleVersion) {
@@ -2113,6 +2157,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-js-nodejs-project")
     @DisplayName("mocha fails on module not found")
     @GradleTest
     fun testMochaFailedModuleNotFound(gradleVersion: GradleVersion) {
@@ -2168,6 +2213,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-js-nodejs-project")
     @DisplayName("mocha has no output during dry run")
     @GradleTest
     fun testMochaHasNoDryRunOutput(gradleVersion: GradleVersion) {
@@ -2178,6 +2224,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-js-test-webpack-config")
     @DisplayName("webpack configuration is valid")
     @GradleTest
     fun testWebpackConfig(gradleVersion: GradleVersion) {
@@ -2235,6 +2282,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("nodeJsDownload")
     @DisplayName("Disable download should not download Node.JS and Yarn")
     @GradleTest
     fun testNodeJsAndYarnNotDownloaded(gradleVersion: GradleVersion) {
@@ -2264,6 +2312,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-js-dependency-with-js-files")
     @DisplayName("js files from dependency are installed")
     @GradleTest
     fun testKotlinJsDependencyWithJsFiles(gradleVersion: GradleVersion) {
@@ -2304,6 +2353,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-js-compose-dependency")
     @MustRunOnChangesInJs
     @DisplayName("Cross modules work correctly with compose dependency ('KT60852')")
     @GradleTest
@@ -2315,6 +2365,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-js-browser-library-project")
     @DisplayName("test package.json skipped with main package.json was up-to-date")
     @GradleTest
     fun testPackageJsonSkippedWithUpToDatePackageJsons(gradleVersion: GradleVersion) {
@@ -2350,6 +2401,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("js-project-repos")
     @DisplayName("test FAIL_ON_PROJECT_REPOS using custom repository")
     @GradleTest
     fun testFailOnProjectReposUsingCustomRepo(gradleVersion: GradleVersion) {
@@ -2402,6 +2454,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("js-project-repos")
     @DisplayName("test FAIL_ON_PROJECT_REPOS no download")
     @GradleTest
     fun testFailOnProjectReposNoDownload(gradleVersion: GradleVersion) {
@@ -2431,6 +2484,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-js-project-failed-test")
     @DisplayName("Check that jsNodeTest run tests with commonjs module kind")
     @GradleTest
     fun testFailedJsTestWithCommonJs(gradleVersion: GradleVersion) {
@@ -2462,6 +2516,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-js-project-failed-test")
     @DisplayName("Check that jsNodeTest run tests with ESM module kind")
     @GradleTest
     fun testFailedJsTestWithESM(gradleVersion: GradleVersion) {
@@ -2576,7 +2631,6 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @MustRunOnChangesInJs
     @DisplayName("KT-37105: Project is properly rebuilt when @JsModule name is changed")
     @GradleTest
-    @TestMetadata("empty")
     @GradleTestVersions(minVersion = TestVersions.Gradle.MAX_SUPPORTED) // Gradle version is irrelevant
     fun testKt37105(gradleVersion: GradleVersion) {
         project("empty", gradleVersion) {

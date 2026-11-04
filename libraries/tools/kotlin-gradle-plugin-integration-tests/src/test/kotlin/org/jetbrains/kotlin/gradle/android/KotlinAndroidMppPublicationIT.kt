@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.TestVersions.AgpCompatibilityMatrix
 import org.jetbrains.kotlin.gradle.util.replaceText
+import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.jetbrains.kotlin.testFederation.NightlyTest
 import org.junit.jupiter.api.DisplayName
@@ -36,6 +37,7 @@ import kotlin.test.fail
 @MustRunOnChangesInGradle
 class KotlinAndroidMppPublicationIT : KGPBaseTest() {
 
+    @TestMetadata("new-mpp-android")
     @DisplayName("android mpp lib flavors publication can be configured")
     @GradleAndroidTest
     @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
@@ -261,6 +263,7 @@ class KotlinAndroidMppPublicationIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("new-mpp-android")
     @DisplayName("Sources publication can be disabled")
     @GradleAndroidTest
     @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
@@ -301,6 +304,7 @@ class KotlinAndroidMppPublicationIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("new-mpp-android")
     @DisplayName("android mpp lib dependencies are properly rewritten")
     @GradleAndroidTest
     @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
@@ -417,6 +421,7 @@ class KotlinAndroidMppPublicationIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("new-mpp-android")
     @DisplayName("KT-69585: kmp + android depends on another kmp + android project via included build should not fail on pom rewrite action")
     @GradleAndroidTest
     @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
@@ -462,6 +467,7 @@ class KotlinAndroidMppPublicationIT : KGPBaseTest() {
      * Starting from AGP version 7.1.0-alpha13, a new attribute com.android.build.api.attributes.AgpVersionAttr was added.
      * This attribute is *not intended* to be published.
      */
+    @TestMetadata("new-mpp-android")
     @DisplayName("KT-49798: com.android.build.api.attributes.AgpVersionAttr is not published")
     @GradleAndroidTest
     @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
@@ -501,6 +507,7 @@ class KotlinAndroidMppPublicationIT : KGPBaseTest() {
     /**
      * Publishes with the min and max supported AGP versions and consumes the publication with older AGP versions.
      */
+    @TestMetadata("new-mpp-android-agp-compatibility")
     @DisplayName("produced artifacts are consumable by projects with various AGP versions")
     @TestFactory
     @NightlyTest
@@ -569,6 +576,7 @@ class KotlinAndroidMppPublicationIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("base-kotlin-android-library")
     @DisplayName("KT-70380: KMM App failed to consume android binary lib when published incorrectly")
     @GradleAndroidTest
     fun kotlinAndroidHasBuildTypeAttribute(

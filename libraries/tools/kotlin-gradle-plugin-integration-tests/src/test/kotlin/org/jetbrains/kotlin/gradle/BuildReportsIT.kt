@@ -49,6 +49,7 @@ class BuildReportsIT : KGPBaseTest() {
     private val GradleProject.reportFile: Path
         get() = projectPath.getSingleFileInDir("build/reports/kotlin-build")
 
+    @TestMetadata("simpleProject")
     @DisplayName("Build report is created")
     @GradleTest
     @JvmGradlePluginTests
@@ -64,6 +65,7 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("Build report output property accepts only certain values")
     @GradleTest
     @JvmGradlePluginTests
@@ -75,6 +77,7 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("Build metrics produces valid report")
     @GradleTest
     @JvmGradlePluginTests
@@ -82,6 +85,7 @@ class BuildReportsIT : KGPBaseTest() {
         testBuildReport("simpleProject", "assemble", gradleVersion)
     }
 
+    @TestMetadata("mppJvmWithJava")
     @DisplayName("Build metrics produces valid report for mpp-jvm")
     @GradleTest
     @JvmGradlePluginTests
@@ -89,6 +93,7 @@ class BuildReportsIT : KGPBaseTest() {
         testBuildReport("mppJvmWithJava", "assemble", gradleVersion)
     }
 
+    @TestMetadata("kotlin-js-package-module-name")
     @DisplayName("Build metrics produces valid report for mpp-js")
     @GradleTest
     @JvmGradlePluginTests
@@ -380,6 +385,7 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("Compiler build metrics report is produced")
     @GradleTest
     @JvmGradlePluginTests
@@ -401,6 +407,7 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("with no kotlin task executed")
     @GradleTest
     @JvmGradlePluginTests
@@ -417,6 +424,7 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("validation")
     @GradleTest
     @JvmGradlePluginTests
@@ -431,6 +439,7 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("single build report output")
     @GradleTest
     @JvmGradlePluginTests
@@ -447,6 +456,7 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("deprecated properties")
     @GradleTest
     @JvmGradlePluginTests
@@ -463,6 +473,7 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("smoke")
     @GradleTest
     @JvmGradlePluginTests
@@ -485,6 +496,7 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @Suppress("DEPRECATION")
     @DisplayName("BuildMetricsService unsubscribes from BuildOperationListenerManager on close")
     @GradleTest
@@ -548,6 +560,7 @@ class BuildReportsIT : KGPBaseTest() {
 
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("custom value limit")
     @GradleTest
     @JvmGradlePluginTests
@@ -567,6 +580,7 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("build scan listener lazy initialisation")
     @GradleTest
     @JvmGradlePluginTests
@@ -585,6 +599,7 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("build scan with project isolation")
     @GradleTest
     @JvmGradlePluginTests
@@ -608,6 +623,7 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("Error file is created")
     @GradleTest
     @JvmGradlePluginTests
@@ -664,6 +680,7 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("Error file should not contain compilation exceptions")
     @GradleTest
     @JvmGradlePluginTests
@@ -689,6 +706,7 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @JvmGradlePluginTests
     @DisplayName("Error file is not written into .gradle/kotlin/errors")
     @GradleTest
@@ -740,6 +758,7 @@ class BuildReportsIT : KGPBaseTest() {
     }
 
 
+    @TestMetadata("simpleProject")
     @DisplayName("build scan metrics validation")
     @JvmGradlePluginTests
     @GradleTest
@@ -756,6 +775,7 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("build reports work with init script")
     @JvmGradlePluginTests
     @GradleTest
@@ -806,6 +826,7 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("json report default directory")
     @JvmGradlePluginTests
     @GradleTest
@@ -842,6 +863,7 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("incrementalMultiproject")
     @DisplayName("json report")
     @JvmGradlePluginTests
     @GradleTest
@@ -918,6 +940,7 @@ class BuildReportsIT : KGPBaseTest() {
         return configurationRecords
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("build report should not be overridden")
     @JvmGradlePluginTests
     @GradleTest
@@ -940,6 +963,7 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("incrementalMultiproject")
     @DisplayName("build scan with project isolation")
     @JvmGradlePluginTests
     @GradleTestVersions(
@@ -961,6 +985,7 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("incrementalMultiproject")
     @DisplayName("for build scan with develocity plugin")
     @JvmGradlePluginTests
     @GradleTest
@@ -1008,6 +1033,7 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-incremental-simple")
     @DisplayName("Verify metrics for for 2nd phase native in-process compilation")
     @NativeGradlePluginTests
     @GradleTest
@@ -1037,6 +1063,7 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-incremental-simple")
     @DisplayName("Verify that the metric for native in-process compilation")
     @NativeGradlePluginTests
     @GradleTest
@@ -1070,6 +1097,7 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-incremental-simple")
     @DisplayName("Verify that the metric for native in-process compilation with IR Inliner on 1st phase")
     @NativeGradlePluginTests
     @GradleTest
@@ -1112,6 +1140,7 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("Build metrics on incremental compilation after some change – daemon")
     @GradleTest
     @JvmGradlePluginTests
@@ -1120,6 +1149,7 @@ class BuildReportsIT : KGPBaseTest() {
         doTestMetricsAfterIncrementalChange(gradleVersion, KotlinCompilerExecutionStrategy.DAEMON)
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("Build metrics on incremental compilation after some change – in-process")
     @GradleTest
     @JvmGradlePluginTests

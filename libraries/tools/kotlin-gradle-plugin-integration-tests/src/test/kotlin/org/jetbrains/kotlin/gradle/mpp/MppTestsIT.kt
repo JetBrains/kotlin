@@ -9,6 +9,7 @@ import org.gradle.api.provider.Property
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
+import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.createDirectories
@@ -18,6 +19,7 @@ import kotlin.io.path.writeText
 @MustRunOnChangesInGradle
 @DisplayName("Tests for multiplatform testing")
 class MppTestsIT : KGPBaseTest() {
+    @TestMetadata("new-mpp-lib-with-tests")
     @DisplayName("KT-54634: MPP testing logic is compatible with API changes in Gradle 7.6")
     @GradleTest
     fun testKt54634(gradleVersion: GradleVersion) {
@@ -57,6 +59,7 @@ class MppTestsIT : KGPBaseTest() {
 
     // Android Studio has build service which checks all output files of all tasks in task graph
     // https://cs.android.com/android-studio/platform/tools/base/+/0185d5af71ba51c64681731f99f319bfcaeb0174:build-system/gradle-core/src/main/java/com/android/build/gradle/internal/attribution/BuildAnalyzerConfiguratorService.kt;l=78-84
+    @TestMetadata("new-mpp-lib-with-tests")
     @DisplayName("KTIJ-25757: MPP is compatible with getting all task output files before execution (Android Studio case)")
     @GradleTest
     fun testKtij25757AllTaskOutputFilesBeforeExecution(gradleVersion: GradleVersion) {
@@ -94,6 +97,7 @@ class MppTestsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kt-68638-native-link-self-dependency")
     @DisplayName("KT-68638: Kotlin Native Link Task failed to serialize due to configuration resolution error")
     @GradleTest
     fun testKt68638KotlinNativeLinkApiFilesResolutionError(gradleVersion: GradleVersion) {
@@ -112,6 +116,7 @@ class MppTestsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kt-62911-project-isolation-with-p2p-dependencies")
     @DisplayName("KT-62911: Project Isolation and Project 2 Project Dependencies")
     @GradleTest
     fun testKt62911ProjectIsolationWithP2PDependencies(gradleVersion: GradleVersion) {
@@ -125,6 +130,7 @@ class MppTestsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("base-kotlin-multiplatform-library")
     @DisplayName("KT-49155: works with test-retry-gradle-plugin")
     @GradleTest
     fun worksWithTestRetryPlugin(gradleVersion: GradleVersion) {

@@ -154,6 +154,7 @@ class KaptClassLoadersCacheIT : KaptIT() {
 @MustRunOnChangesInCompilerPlugins
 open class KaptIT : KaptBaseIT() {
 
+    @TestMetadata("kapt/kaptSkipped")
     @MustRunOnChangesInGradle
     @DisplayName("Kapt is skipped when no annotation processors are added")
     @GradleTest
@@ -166,6 +167,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/simple")
     @MustRunOnChangesInGradle
     @DisplayName("KT-63366: Adding kapt AP dependency in afterEvaluate for custom SourceSet")
     @GradleTest
@@ -193,6 +195,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/indirectDependencies")
     @MustRunOnChangesInGradle
     @DisplayName("Kapt is not skipped when all annotation processors are declared as indirect dependencies")
     @GradleTest
@@ -204,6 +207,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/simple")
     @DisplayName("Kapt is working with newer JDKs")
     @JdkVersions(versions = [JavaVersion.VERSION_11, JavaVersion.VERSION_17, JavaVersion.VERSION_21])
     @GradleWithJdkTest
@@ -233,6 +237,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/simple")
     @DisplayName("KT-48402: Kapt worker classpath is using JRE classes from toolchain")
     @JdkVersions(versions = [JavaVersion.VERSION_17])
     @GradleWithJdkTest
@@ -261,6 +266,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/simple")
     @MustRunOnChangesInGradle
     @DisplayName("Additional Kapt jvm arguments are passed to the process")
     @GradleTest
@@ -291,6 +297,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/simple")
     @MustRunOnChangesInGradle
     @DisplayName("Warning is produced on additional Kapt jvm arguments and 'none' workers isolation mode")
     @GradleTest
@@ -324,6 +331,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/annotationProcessorAsFqName")
     @DisplayName("Should find annotation processor via FQName")
     @GradleTest
     open fun testAnnotationProcessorAsFqName(gradleVersion: GradleVersion) {
@@ -344,6 +352,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/simple")
     @MustRunOnChangesInGradle
     @DisplayName("Kapt tasks is up-to-date on the second run")
     @GradleTest
@@ -370,6 +379,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/simple")
     @DisplayName("Kapt direct stub generation mode")
     @GradleTest
     fun testDirectGenerationMode(gradleVersion: GradleVersion) {
@@ -396,6 +406,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/simple")
     @DisplayName("Kapt is working with incremental compilation")
     @GradleTest
     @MustRunOnChangesInBuildToolsApi
@@ -430,6 +441,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/simple")
     @MustRunOnChangesInGradle
     @DisplayName("Disabled incremental compilation should disable it also for generate stubs task")
     @GradleTest
@@ -446,6 +458,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/inheritedAnnotations")
     @DisplayName("Works with inherited annotations")
     @GradleTest
     fun testInheritedAnnotations(gradleVersion: GradleVersion) {
@@ -481,6 +494,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/generatedDirUpToDate")
     @MustRunOnChangesInGradle
     @DisplayName("generated directory is up-to-date on binary annotation remove")
     @GradleTest
@@ -525,6 +539,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/incrementalRebuild")
     @DisplayName("Should incrementally rebuild on java class deletion")
     @GradleTest
     @MustRunOnChangesInBuildToolsApi
@@ -534,6 +549,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/incrementalRebuild")
     @DisplayName("Should incrementally rebuild on classpath change")
     @GradleTest
     @MustRunOnChangesInBuildToolsApi
@@ -615,6 +631,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/simple")
     @DisplayName("Should run processing incrementally on annotation removal")
     @GradleTest
     @MustRunOnChangesInBuildToolsApi
@@ -645,6 +662,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/kt18799")
     @DisplayName("KT18799: generate annotation value for constant values in documented types")
     @GradleTest
     open fun testKt18799(gradleVersion: GradleVersion) {
@@ -664,6 +682,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/simple")
     @MustRunOnChangesInGradle
     @DisplayName("compile arguments are properly copied from compileKotlin to kaptTask")
     @GradleTest
@@ -692,6 +711,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/kaptOutputKotlinCode")
     @DisplayName("generates Kotlin code")
     @GradleTest
     fun testOutputKotlinCode(gradleVersion: GradleVersion) {
@@ -706,6 +726,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/locationMapping")
     @DisplayName("location mapping is working as expected")
     @GradleTest
     fun testLocationMapping(gradleVersion: GradleVersion) {
@@ -740,6 +761,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/nokapt")
     @MustRunOnChangesInGradle
     @DisplayName("should fail to add dependency into 'kapt' configuration when plugin is not applied")
     @GradleTest
@@ -752,6 +774,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/localAnnotationProcessor")
     @MustRunOnChangesInGradle
     @DisplayName("Should re-run kapt on changes in local annotation processor")
     @GradleTest
@@ -877,6 +900,7 @@ open class KaptIT : KaptBaseIT() {
         Regex("""kapt-probe-host (\S+)""").find(output)?.groupValues?.get(1)
             ?: error("The annotation processor did not report the hosting process")
 
+    @TestMetadata("kapt/simple")
     @MustRunOnChangesInGradle
     @DisplayName("should not resolve 'kapt' configuration during build configuration phase")
     @GradleTest
@@ -892,6 +916,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/kaptAvoidance")
     @MustRunOnChangesInGradle
     @DisplayName("Should be possible to disable discovery in compile classpath")
     @GradleTest
@@ -921,6 +946,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/kaptAvoidance")
     @MustRunOnChangesInGradle
     @DisplayName("up-to-date checks are working")
     @GradleTest
@@ -978,6 +1004,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/kt19179")
     @DisplayName("KT19179 and KT37241: kapt is not skipped and does not generate stubs for non-existent entries")
     @GradleTest
     open fun testKt19179andKt37241(gradleVersion: GradleVersion) {
@@ -1041,6 +1068,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/kt33847")
     @DisplayName("KT33847: Kapt does not included Filer-generated class files on compilation classpath")
     @GradleTest
     open fun testKt33847(gradleVersion: GradleVersion) {
@@ -1096,6 +1124,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/mpp-kapt-presence")
     @DisplayName("Kapt with MPP/Jvm")
     @GradleTest
     fun testMPPKaptPresence(gradleVersion: GradleVersion) {
@@ -1122,6 +1151,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kotlinProject")
     @DisplayName("KT-31127: processor using Filer api does not break 'javaCompile' task")
     @GradleTest
     fun testKotlinProcessorUsingFiler(gradleVersion: GradleVersion) {
@@ -1157,6 +1187,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/simple")
     @DisplayName("should do annotation processing when 'sourceCompatibility = 8' and JDK is 11+")
     @JdkVersions(versions = [JavaVersion.VERSION_17])
     @GradleWithJdkTest
@@ -1189,6 +1220,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/jpms-module")
     @DisplayName("Works with JPMS on JDK 9+")
     @GradleTest
     fun testJpmsModule(gradleVersion: GradleVersion) {
@@ -1219,6 +1251,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/incrementalRebuild")
     @MustRunOnChangesInGradle
     @DisplayName("KT-46651: kapt is tracking source files properly with configuration cache enabled")
     @GradleTest
@@ -1241,6 +1274,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/localAnnotationProcessor")
     @MustRunOnChangesInGradle
     @DisplayName("KT-47347: kapt processors should not be an input files for stub generation")
     @GradleTest
@@ -1270,6 +1304,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/simple")
     @MustRunOnChangesInGradle
     @DisplayName("KT-52392: Setup with different windows disks does not fail configuration")
     @GradleTest
@@ -1312,6 +1347,7 @@ open class KaptIT : KaptBaseIT() {
 
     }
 
+    @TestMetadata("kapt/simple")
     @DisplayName("KT-61879: K2 KAPT works with proguarded compiler jars and enum class")
     @GradleTest
     fun testEnumClass(gradleVersion: GradleVersion) {
@@ -1324,6 +1360,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/generatedSources")
     @MustRunOnChangesInGradle
     @DisplayName("Generated sources attached to KotlinSourceSet are also used by generate stubs task")
     @GradleTest
@@ -1333,6 +1370,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/repeatableAnnotations")
     @DisplayName("KT-53135: check that JVM IR backend is enabled by default by verifying that repeatable annotations are supported")
     @GradleTest
     open fun testRepeatableAnnotations(gradleVersion: GradleVersion) {
@@ -1347,6 +1385,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/useGeneratedKotlinSource")
     @DisplayName("Kapt-generated Kotlin sources can be used in Kotlin")
     @GradleTest
     open fun useGeneratedKotlinSource(gradleVersion: GradleVersion) {
@@ -1361,6 +1400,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/simple")
     @DisplayName("KT-58745: compiler plugin options should be passed to KaptGenerateStubs task")
     @GradleTest
     fun kaptGenerateStubsConfiguredWithCompilerPluginOptions(gradleVersion: GradleVersion) {
@@ -1395,6 +1435,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/kapt-in-test-runtime-classpath")
     @MustRunOnChangesInGradle
     @DisplayName("KT-59256: kapt generated files are included into the test runtime classpath")
     @GradleTest
@@ -1406,6 +1447,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/multipass")
     @DisplayName("Application of annotation processors is repeated as long as new source files are generated")
     @GradleTest
     open fun testMultipleProcessingPasses(gradleVersion: GradleVersion) {
@@ -1424,6 +1466,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/simple")
     @DisplayName("KT-64719 KAPT stub generation should fail on files with declaration errors")
     @GradleTest
     open fun testFailOnTopLevelSyntaxError(gradleVersion: GradleVersion) {
@@ -1442,6 +1485,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/simple")
     @DisplayName("KT-64719 KAPT stub generation should not fail on errors in bodies")
     @GradleTest
     fun testNotFailOnBodyLevelSyntaxError(gradleVersion: GradleVersion) {
@@ -1454,6 +1498,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/serialization")
     @DisplayName("KT-65006 Kapt works with the serialization plugin")
     @GradleTest
     fun testSerializationPlugin(gradleVersion: GradleVersion) {
@@ -1468,6 +1513,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/simple")
     @DisplayName("KT-80843 Kapt does not fail on redeclaration in data class")
     @GradleTest
     fun testRedeclarationInDataClass(gradleVersion: GradleVersion) {
