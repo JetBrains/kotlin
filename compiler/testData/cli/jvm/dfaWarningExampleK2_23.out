@@ -1,5 +1,5 @@
 compiler/testData/cli/jvm/dfaWarningExampleK2.kt:3:14: warning: cast is redundant.
-  |
+2 |     if (arg is String) {
 3 |         (arg as String).length
   |              ^^^^^^^^^
 OK

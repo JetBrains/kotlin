@@ -1,9 +1,9 @@
 compiler/testData/cli/jvm/diagnosticTests/kt19628_13.kt:6:15: error: unresolved reference 'CollapsedStringAdapter'.
-  |
+5 | class Data(
 6 |     @get:Anno(CollapsedStringAdapter::class)
   |               ^^^^^^^^^^^^^^^^^^^^^^
 compiler/testData/cli/jvm/diagnosticTests/kt19628_13.kt:9:15: error: unresolved reference 'CollapsedStringAdapter'.
-  |
+8 | ) {
 9 |     @get:Anno(CollapsedStringAdapter::class)
   |               ^^^^^^^^^^^^^^^^^^^^^^
 COMPILATION_ERROR

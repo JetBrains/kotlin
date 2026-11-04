@@ -1,6 +1,6 @@
 warning: the argument '-Xallow-returns-result-of' is redundant for the current language version 2.5.
 compiler/testData/cli/jvm/diagnosticTests/crv/contracts.kt:18:8: warning: unused return value of 'fooS'.
-   |
+17 | fun testFunctions(s: String?) {
 18 |     s?.myLet { fooS() }
    |        ^^^^^
 OK

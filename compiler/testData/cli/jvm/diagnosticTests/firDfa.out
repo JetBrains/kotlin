@@ -1,9 +1,9 @@
 compiler/testData/cli/jvm/diagnosticTests/firDfa.kt:3:10: warning: unnecessary non-null assertion (!!) on a non-null receiver of type 'String'.
-  |
+2 |     if (x != null) {
 3 |         x!!.length
   |          ^^
 compiler/testData/cli/jvm/diagnosticTests/firDfa.kt:3:13: warning: unused return value of 'length'.
-  |
+2 |     if (x != null) {
 3 |         x!!.length
   |             ^^^^^^
 OK

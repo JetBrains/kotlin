@@ -1,5 +1,5 @@
 compiler/testData/cli/jvm/diagnosticTests/crv/full.kt:4:5: warning: unused return value of 'basic'.
-  |
+3 | fun test() {
 4 |     basic()
   |     ^^^^^
 OK

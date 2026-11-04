@@ -26,7 +26,7 @@ In package 'root package' of module '<main>':
 7 | val x: Int
   |
 In source code:
-  |
+1 | val x = 5
 2 | val x = 5
   |     ^
 compiler/testData/cli/jvm/diagnosticTests/diagnosticsOrder1.kt:3:5: error: conflicting declarations:
@@ -42,7 +42,7 @@ In package 'root package' of module '<main>':
 7 | val x: Int
   |
 In source code:
-  |
+2 | val x = 5
 3 | val x = 5
   |     ^
 compiler/testData/cli/jvm/diagnosticTests/diagnosticsOrder1.kt:4:5: error: conflicting declarations:
@@ -58,7 +58,7 @@ In package 'root package' of module '<main>':
 7 | val x: Int
   |
 In source code:
-  |
+3 | val x = 5
 4 | val x = 5
   |     ^
 compiler/testData/cli/jvm/diagnosticTests/diagnosticsOrder1.kt:5:5: error: conflicting declarations:
@@ -74,7 +74,7 @@ In package 'root package' of module '<main>':
 7 | val x: Int
   |
 In source code:
-  |
+4 | val x = 5
 5 | val x = 5
   |     ^
 compiler/testData/cli/jvm/diagnosticTests/diagnosticsOrder1.kt:6:5: error: conflicting declarations:
@@ -90,7 +90,7 @@ In package 'root package' of module '<main>':
 7 | val x: Int
   |
 In source code:
-  |
+5 | val x = 5
 6 | val x = 5
   |     ^
 compiler/testData/cli/jvm/diagnosticTests/diagnosticsOrder1.kt:7:5: error: conflicting declarations:
@@ -105,7 +105,7 @@ In package 'root package' of module '<main>':
 6 | val x: Int
   |
 In source code:
-  |
+6 | val x = 5
 7 | val x = 5
   |     ^
 compiler/testData/cli/jvm/diagnosticTests/diagnosticsOrder2.kt:1:5: error: conflicting declarations:
@@ -125,7 +125,7 @@ In package 'root package' of module '<main>':
 1 | val y: Int
   |
 In source code:
-  |
+1 | val y = 5
 2 | val y = 5
   |     ^
 COMPILATION_ERROR

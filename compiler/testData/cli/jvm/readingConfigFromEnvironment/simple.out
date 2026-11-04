@@ -60,7 +60,7 @@ In package 'kotlin' of module '<regular dependencies of main>':
  |
 reason: Expression '""' of type 'String' does not conform to value parameter 'other' of type 'Double'.
 In source code:
-  |
+1 | fun main() {
 2 |     val x = 1 + ""
   |               ^
 COMPILATION_ERROR

@@ -1,5 +1,5 @@
 compiler/testData/cli/js/illegalJsCode.kt:2:8: error: JavaScript error: Invalid assignment left-hand side.
-  |
+1 | fun Int.foo(x: Int) {
 2 |     js("this = x;")
   |        ^^^^^^^^^^^
 COMPILATION_ERROR

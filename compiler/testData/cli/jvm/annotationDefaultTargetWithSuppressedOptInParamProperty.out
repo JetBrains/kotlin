@@ -3,7 +3,7 @@ compiler/testData/cli/jvm/annotationDefaultTargetWithSuppressedOptIn.kt:4:20: wa
 4 | class My(@Suppress("OPT_IN_MARKER_ON_WRONG_TARGET") @Marker val x: String)
   |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 compiler/testData/cli/jvm/annotationDefaultTargetWithSuppressedOptIn.kt:8:8: warning: this declaration needs opt-in. Its usage should be marked with '@Marker' or '@OptIn(Marker::class)'
-  |
+7 |     val my = My("")
 8 |     my.x
   |        ^
 OK

@@ -1,5 +1,5 @@
 compiler/testData/cli/jvm/Xjsr305/jsr305Usage.kt:2:11: error: null cannot be a value of a non-null type 'String'.
-  |
+1 | fun bar(a: A) {
 2 |     a.foo(null)
   |           ^^^^
 COMPILATION_ERROR

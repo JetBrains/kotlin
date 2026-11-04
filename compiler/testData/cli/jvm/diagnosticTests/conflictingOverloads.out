@@ -15,7 +15,7 @@ In package 'root package' of module '<main>':
 1 | fun a(): List<Int>
   |
 In source code:
-  |
+1 | fun a(): List<Int> = null!!
 2 | fun a(): List<String> = null!!
   | ^^^^^^^^^^^^^^^^^^^^^
 COMPILATION_ERROR

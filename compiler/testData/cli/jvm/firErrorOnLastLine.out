@@ -3,7 +3,7 @@ compiler/testData/cli/jvm/firErrorOnLastLine.kt:1:9: error: 'this' is not define
 1 | val x = this
   |         ^^^^
 compiler/testData/cli/jvm/firErrorOnLastLine.kt:2:9: error: 'this' is not defined in this context.
-  |
+1 | val x = this
 2 | val y = this // EOL AFTER THIS LINE!
   |         ^^^^
 COMPILATION_ERROR

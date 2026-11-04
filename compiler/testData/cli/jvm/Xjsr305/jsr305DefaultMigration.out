@@ -1,5 +1,5 @@
 compiler/testData/cli/jvm/Xjsr305/jsr305DefaultMigration.kt:2:19: error: null cannot be a value of a non-null type 'String'.
-  |
+1 | fun test(annotated: DefaultAnnotated) {
 2 |     annotated.foo(null)
   |                   ^^^^
 COMPILATION_ERROR

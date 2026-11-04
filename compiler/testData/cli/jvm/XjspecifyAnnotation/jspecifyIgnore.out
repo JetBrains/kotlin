@@ -1,5 +1,5 @@
 compiler/testData/cli/jvm/XjspecifyAnnotation/jspecifyUsage.kt:5:13: warning: unused return value of 'length'.
-  |
+4 |     a.foo(null)
 5 |     a.bar().length
   |             ^^^^^^
 OK

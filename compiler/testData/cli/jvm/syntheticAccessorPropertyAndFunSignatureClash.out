@@ -16,7 +16,7 @@ compiler/testData/cli/jvm/syntheticAccessorPropertyAndFunSignatureClash.kt:7:5: 
 fun `access$setFoo$p`(`$this`: A, `<set-?>`: Int): Unit defined in A
 fun `access$setFoo$p`(a: A, d: Int): Unit defined in A
 In source code:
-  |
+6 |     fun `access$getFoo$p`(a: A): Int = 1
 7 |     fun `access$setFoo$p`(a: A, d: Int) {}
   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 compiler/testData/cli/jvm/syntheticAccessorPropertyAndFunSignatureClash.kt:12:5: error: platform declaration clash: The following declarations have the same JVM signature (access$getFoo(LA;)I):
@@ -30,7 +30,7 @@ compiler/testData/cli/jvm/syntheticAccessorPropertyAndFunSignatureClash.kt:13:5:
 fun `access$setFoo`(`$this`: A, i: Int): Unit defined in A
 fun `access$setFoo`(a: A, d: Int): Unit defined in A
 In source code:
-   |
+12 |     fun `access$getFoo`(a: A): Int = 1
 13 |     fun `access$setFoo`(a: A, d: Int) {}
    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 COMPILATION_ERROR

@@ -1,21 +1,21 @@
 compiler/testData/cli/jvm/diagnosticTests/multipleTextRangesInDiagnosticsOrder.kt:6:5: error: modifier 'override' is incompatible with 'private'.
-  |
+5 | interface B: A {
 6 |     override protected private val c: Int
   |     ^^^^^^^^
 compiler/testData/cli/jvm/diagnosticTests/multipleTextRangesInDiagnosticsOrder.kt:6:14: error: cannot weaken access privilege private for 'accessor' in 'A'.
-  |
+5 | interface B: A {
 6 |     override protected private val c: Int
   |              ^^^^^^^^^
 compiler/testData/cli/jvm/diagnosticTests/multipleTextRangesInDiagnosticsOrder.kt:6:14: error: abstract property in interface cannot be private.
-  |
+5 | interface B: A {
 6 |     override protected private val c: Int
   |              ^^^^^^^^^
 compiler/testData/cli/jvm/diagnosticTests/multipleTextRangesInDiagnosticsOrder.kt:6:14: error: modifier 'protected' is not applicable inside 'interface'.
-  |
+5 | interface B: A {
 6 |     override protected private val c: Int
   |              ^^^^^^^^^
 compiler/testData/cli/jvm/diagnosticTests/multipleTextRangesInDiagnosticsOrder.kt:6:24: error: modifier 'private' is incompatible with 'override'.
-  |
+5 | interface B: A {
 6 |     override protected private val c: Int
   |                        ^^^^^^^
 COMPILATION_ERROR

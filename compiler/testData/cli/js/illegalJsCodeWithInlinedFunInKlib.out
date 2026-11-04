@@ -8,7 +8,7 @@ as no stability/compatibility guarantees are given on
 compiler or generated code. Use it at your own risk!
 
 compiler/testData/cli/js/illegalJsCodeWithInlinedFunInKlib.kt:2:8: error: JavaScript error: Invalid assignment left-hand side.
-  |
+1 | fun Int.foo(x: Int) {
 2 |     js("this = x;")
   |        ^^^^^^^^^^^
 COMPILATION_ERROR

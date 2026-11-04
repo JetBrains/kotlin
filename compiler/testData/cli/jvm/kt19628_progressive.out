@@ -3,19 +3,19 @@ compiler/testData/cli/jvm/kt19628_progressive.kt:1:18: error: unresolved referen
 1 | import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter
   |                  ^^^^
 compiler/testData/cli/jvm/kt19628_progressive.kt:5:10: error: unresolved reference 'XmlJavaTypeAdapter'.
-  |
+4 | class Data(
 5 |     @get:XmlJavaTypeAdapter(CollapsedStringAdapter::class)
   |          ^^^^^^^^^^^^^^^^^^
 compiler/testData/cli/jvm/kt19628_progressive.kt:5:29: error: unresolved reference 'CollapsedStringAdapter'.
-  |
+4 | class Data(
 5 |     @get:XmlJavaTypeAdapter(CollapsedStringAdapter::class)
   |                             ^^^^^^^^^^^^^^^^^^^^^^
 compiler/testData/cli/jvm/kt19628_progressive.kt:8:10: error: unresolved reference 'XmlJavaTypeAdapter'.
-  |
+7 | ) {
 8 |     @get:XmlJavaTypeAdapter(CollapsedStringAdapter::class)
   |          ^^^^^^^^^^^^^^^^^^
 compiler/testData/cli/jvm/kt19628_progressive.kt:8:29: error: unresolved reference 'CollapsedStringAdapter'.
-  |
+7 | ) {
 8 |     @get:XmlJavaTypeAdapter(CollapsedStringAdapter::class)
   |                             ^^^^^^^^^^^^^^^^^^^^^^
 COMPILATION_ERROR

@@ -1,5 +1,5 @@
 compiler/testData/cli/jvm/optIn/optInEmptyMessage.kt:8:5: error: this declaration needs opt-in. Its usage must be marked with '@EmptyMarker' or '@OptIn(EmptyMarker::class)'
-  |
+7 | fun bar() {
 8 |     foo()
   |     ^^^
 COMPILATION_ERROR

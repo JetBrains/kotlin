@@ -1,9 +1,9 @@
 compiler/testData/cli/jvm/diagnosticTests/inlineCycle.kt:2:5: error: the 'b' invocation is part of an inline cycle.
-  |
+1 | inline fun a(q: () -> Unit) {
 2 |     b(q)
   |     ^^^^
 compiler/testData/cli/jvm/diagnosticTests/inlineCycle.kt:18:5: error: the 'a' invocation is part of an inline cycle.
-   |
+17 |     p()
 18 |     a(p)
    |     ^^^^
 COMPILATION_ERROR

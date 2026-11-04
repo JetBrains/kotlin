@@ -8,7 +8,7 @@ as no stability/compatibility guarantees are given on
 compiler or generated code. Use it at your own risk!
 
 compiler/testData/cli/jvm/internalArgCommonChecks/languageVersion.kt:3:9: error: the feature "unnamed local variables" is disabled
-  |
+2 |     // FF: UnnamedLocalVariables
 3 |     val _ = minOf(1, 2)
   |         ^
 COMPILATION_ERROR

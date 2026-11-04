@@ -1,9 +1,9 @@
 compiler/testData/cli/jvm/diagnosticTests/suspensionPointInMonitor.kt:26:13: error: the 'suspensionPoint' suspension point is inside a critical section.
-   |
+25 |         synchronized(lock) {
 26 |             suspensionPoint()
    |             ^^^^^^^^^^^^^^^
 compiler/testData/cli/jvm/diagnosticTests/suspensionPointInMonitor.kt:60:17: error: the 'suspensionPoint' suspension point is inside a critical section.
-   |
+59 |             synchronized(lock) {
 60 |                 suspensionPoint()
    |                 ^^^^^^^^^^^^^^^
 COMPILATION_ERROR

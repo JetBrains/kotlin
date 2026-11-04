@@ -1,5 +1,5 @@
 compiler/testData/cli/jvm/compatqualUsage.kt:2:11: error: null cannot be a value of a non-null type 'String'.
-  |
+1 | fun bar(b: B) {
 2 |     b.foo(null)
   |           ^^^^
 COMPILATION_ERROR

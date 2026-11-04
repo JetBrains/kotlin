@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.DecorationPadding
 import org.jetbrains.kotlin.fir.analysis.diagnostics.RenderedLineWithNumber
 import org.jetbrains.kotlin.fir.analysis.diagnostics.renderLocationDecoration
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeAsciiOnly
+import java.io.File
 import java.util.*
 
 // This constructor can be used in a compilation server to still be able to generate colored output, even if stderr is not a TTY.
@@ -91,14 +92,18 @@ abstract class PlainTextMessageRenderer @JvmOverloads constructor(private val co
                 lineEnd == line && columnEnd > column -> "^".repeat(columnEnd - column)
                 else -> "^"
             }
+            val firstLine = File(location.path).readLines().getOrNull(line - 2)?.takeIf { it.isNotBlank() }
+                ?.let { RenderedLineWithNumber(number = line - 1, 0, it) }
+                ?: RenderedLineWithNumber(number = null, 0, "")
             val lines = listOf(
+                firstLine,
                 RenderedLineWithNumber(number = line, 0, lineContent),
                 RenderedLineWithNumber(number = null, 0, " ".repeat(column - 1) + highlighting),
             )
             val render = renderLocationDecoration(
                 header = DecorationHeader.None,
                 renderedLines = lines,
-                padding = DecorationPadding.TOP_ONLY,
+                padding = DecorationPadding.NONE,
             )
             result.append(LINE_SEPARATOR)
             result.append(render)

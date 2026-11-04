@@ -1,5 +1,5 @@
 compiler/testData/cli/jvm/diagnosticTests/requireKotlinCompilerVersion.kt:15:5: error: 'constructor(): Foo' is only available since Kotlin 9.9.90 and cannot be used in Kotlin $VERSION$.
-   |
+14 | fun main() {
 15 |     Foo()
    |     ^^^
 COMPILATION_ERROR

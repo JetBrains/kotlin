@@ -3,7 +3,7 @@ fun `<get-x>`(): Int defined in Foo
 fun getX(): Int defined in Foo
 fun getY(): Int defined in Foo
 In source code:
-  |
+2 |     val x: Int
 3 |         get() = 42
   |         ^^^^^
 compiler/testData/cli/jvm/diagnosticTests/conflictingJvmDeclarations.kt:8:5: error: platform declaration clash: The following declarations have the same JVM signature (getX()I):

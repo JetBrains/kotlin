@@ -1,5 +1,5 @@
 compiler/testData/cli/jvm/Xjsr305/jsr305Usage.kt:2:11: warning: Java type mismatch: inferred type is 'Nothing?', but 'String' was expected.
-  |
+1 | fun bar(a: A) {
 2 |     a.foo(null)
   |           ^^^^
 OK

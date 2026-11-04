@@ -3,7 +3,7 @@ compiler/testData/cli/jvm/diagnosticTests/classAndPartClash.kt:1:1: error: dupli
 1 | package test
   | ^^^^^^^^^^^^
 compiler/testData/cli/jvm/diagnosticTests/classAndPartClash.kt:5:1: error: duplicate JVM class name 'test/ClassAndPartClashKt' generated from: ClassAndPartClashKt, ClassAndPartClashKt
-  |
+4 | class ClassAndPartClash_
 5 | class ClassAndPartClashKt
   | ^^^^^^^^^^^^^^^^^^^^^^^^^
 COMPILATION_ERROR

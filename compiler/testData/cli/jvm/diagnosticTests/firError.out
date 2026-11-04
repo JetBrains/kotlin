@@ -3,7 +3,7 @@ compiler/testData/cli/jvm/diagnosticTests/firError.kt:1:13: error: 'val' on func
 1 | fun println(val x: Int) {}
   |             ^^^
 compiler/testData/cli/jvm/diagnosticTests/firError.kt:5:13: error: variable 'x' must be initialized.
-  |
+4 |     val x: Int
 5 |     println(x)
   |             ^
 compiler/testData/cli/jvm/diagnosticTests/firError.kt:10:16: error: 'public' subclass exposes its 'private-in-file' supertype 'Private'.
@@ -15,11 +15,11 @@ compiler/testData/cli/jvm/diagnosticTests/firError.kt:10:16: error: this type is
 10 | class Public : Private() {
    |                ^^^^^^^
 compiler/testData/cli/jvm/diagnosticTests/firError.kt:11:5: error: property must be initialized or be abstract.
-   |
+10 | class Public : Private() {
 11 |     val x: Private
    |     ^^^^^^^^^^^^^^
 compiler/testData/cli/jvm/diagnosticTests/firError.kt:11:9: error: 'public' property exposes its 'private-in-file' type 'Private'.
-   |
+10 | class Public : Private() {
 11 |     val x: Private
    |         ^
 COMPILATION_ERROR

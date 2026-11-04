@@ -226,7 +226,7 @@ sealed class DecorationHeader {
 
 enum class DecorationPadding(val padTop: Boolean, val padBottom: Boolean) {
     FULL_PADDING(padTop = true, padBottom = true),
-    TOP_ONLY(padTop = true, padBottom = false),
+    NONE(padTop = false, padBottom = false),
 }
 
 private fun renderLocationDecoration(
