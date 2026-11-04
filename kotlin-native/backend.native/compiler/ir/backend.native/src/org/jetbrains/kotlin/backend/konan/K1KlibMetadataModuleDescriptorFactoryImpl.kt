@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.K1Deprecation
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.functions.functionInterfacePackageFragmentProvider
-import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.ContractDeserializerImpl
 import org.jetbrains.kotlin.descriptors.*
@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 @K1Deprecation
 class K1KlibMetadataModuleDescriptorFactoryImpl {
-    val createBuiltIns: (StorageManager) -> KotlinBuiltIns = ::KonanBuiltIns
     private val flexibleTypeDeserializer: FlexibleTypeDeserializer = NullFlexibleTypeDeserializer
 
     private fun createDescriptorOptionalBuiltIns(
@@ -45,10 +44,9 @@ class K1KlibMetadataModuleDescriptorFactoryImpl {
             builtIns: KotlinBuiltIns?,
             lookupTracker: LookupTracker
     ): ModuleDescriptorImpl {
-
         val moduleName = Name.special("<${library.uniqueName}>")
         val moduleOrigin = DeserializedKlibModuleOrigin(library)
-        val builtInsToUse = builtIns ?: createBuiltIns(storageManager)
+        val builtInsToUse = builtIns ?: DefaultBuiltIns(loadBuiltInsFromCurrentClassLoader = false)
 
         val moduleDescriptor = ModuleDescriptorImpl(
                 moduleName,

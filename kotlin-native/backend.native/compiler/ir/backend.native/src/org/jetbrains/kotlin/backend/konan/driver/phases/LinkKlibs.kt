@@ -6,22 +6,14 @@
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
-import org.jetbrains.kotlin.backend.konan.NativeSecondStageCompilationConfig
-import org.jetbrains.kotlin.backend.konan.LinkKlibsContext
-import org.jetbrains.kotlin.backend.konan.LinkKlibsInput
-import org.jetbrains.kotlin.backend.konan.LinkKlibsOutput
+import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.driver.BasicNativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultIrActions
-import org.jetbrains.kotlin.backend.konan.linkKlibs
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIdSignaturer
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
-import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.K1Deprecation
-import org.jetbrains.kotlin.resolve.CleanableBindingContext
 
 internal class LinkKlibsContextImpl(
         config: NativeSecondStageCompilationConfig,
@@ -30,11 +22,6 @@ internal class LinkKlibsContextImpl(
 ) : BasicNativeBackendPhaseContext(config), LinkKlibsContext {
     // TODO: Invalidate properly in dispose method.
     override val symbolTable = SymbolTable(KonanIdSignaturer(KonanManglerDesc), IrFactoryImpl)
-
-    @OptIn(K1Deprecation::class)
-    override val builtIns: KonanBuiltIns by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        moduleDescriptor.builtIns as KonanBuiltIns
-    }
 
     override fun dispose() {
         disposeCallback()

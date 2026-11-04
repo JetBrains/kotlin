@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.library.metadata.impl
 
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.konan.K1KlibMetadataModuleDescriptorFactoryImpl
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
@@ -192,7 +193,7 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
             builtIns: KotlinBuiltIns?,
             moduleOrigin: KlibModuleOrigin
     ): ModuleDescriptorImpl {
-        val builtInsToUse = builtIns ?: moduleDescriptorFactory.createBuiltIns(storageManager)
+        val builtInsToUse = builtIns ?: DefaultBuiltIns(loadBuiltInsFromCurrentClassLoader = false)
         val moduleDescriptor = ModuleDescriptorImpl(
                 name,
                 storageManager,

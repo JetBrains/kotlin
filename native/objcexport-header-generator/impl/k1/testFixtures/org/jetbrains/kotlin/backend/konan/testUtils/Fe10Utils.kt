@@ -9,7 +9,7 @@ import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.analyzer.AnalysisResult
-import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.createPhaseConfig
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -95,7 +95,7 @@ fun createModuleDescriptor(
     val moduleDescriptor = ModuleDescriptorImpl(
         moduleName = Name.special("<test_module>"),
         storageManager = LockBasedStorageManager.NO_LOCKS,
-        builtIns = KonanBuiltIns(LockBasedStorageManager.NO_LOCKS).apply {
+        builtIns = DefaultBuiltIns(loadBuiltInsFromCurrentClassLoader = false).apply {
             builtInsModule = stdlibModuleDescriptor.builtIns.builtInsModule
         },
         platform = NativePlatforms.unspecifiedNativePlatform,

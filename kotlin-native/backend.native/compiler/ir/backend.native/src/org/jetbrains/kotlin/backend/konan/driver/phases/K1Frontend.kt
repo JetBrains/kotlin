@@ -8,14 +8,17 @@ package org.jetbrains.kotlin.backend.konan.driver.phases
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
-import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.K1KlibMetadataModuleDescriptorFactoryImpl
+import org.jetbrains.kotlin.backend.konan.NativeSecondStageCompilationConfig
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
+import org.jetbrains.kotlin.backend.konan.getIncludedLibraryDescriptors
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportLazy
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportLazyImpl
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportProblemCollector
 import org.jetbrains.kotlin.backend.konan.objcexport.StubRenderer
+import org.jetbrains.kotlin.backend.konan.sourcesModules
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.functions.functionInterfacePackageFragmentProvider
-import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -23,9 +26,6 @@ import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
 import org.jetbrains.kotlin.config.nativeBinaryOptions.UnitSuspendFunctionObjCExport
 import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
 import org.jetbrains.kotlin.container.*
-import org.jetbrains.kotlin.container.get
-import org.jetbrains.kotlin.container.useImpl
-import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.context.MutableModuleContextImpl
 import org.jetbrains.kotlin.context.ProjectContext
@@ -47,18 +47,7 @@ import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsF
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
-import org.jetbrains.kotlin.resolve.AnnotationResolverImpl
-import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.BindingTraceContext
-import org.jetbrains.kotlin.resolve.CleanableBindingContext
-import org.jetbrains.kotlin.resolve.CompilerEnvironment
-import org.jetbrains.kotlin.resolve.DefaultImportsProvider
-import org.jetbrains.kotlin.resolve.ImplicitIntegerCoercion
-import org.jetbrains.kotlin.resolve.LazyTopDownAnalyzer
-import org.jetbrains.kotlin.resolve.PlatformConfigurator
-import org.jetbrains.kotlin.resolve.PlatformConfiguratorBase
-import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
-import org.jetbrains.kotlin.resolve.createContainer
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.konan.platform.NativeDefaultImportsProvider
 import org.jetbrains.kotlin.resolve.lazy.BasicAbsentDescriptorHandler
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
@@ -67,7 +56,6 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
-import kotlin.collections.plusAssign
 import kotlin.io.path.Path
 import kotlin.io.path.writeLines
 
@@ -116,7 +104,7 @@ private fun setupModuleDescriptor(context: NativeBackendPhaseContext): FrontendO
 
     val projectContext = ProjectContext(config.project, "TopDownAnalyzer for Konan")
 
-    val builtIns = KonanBuiltIns(projectContext.storageManager)
+    val builtIns = DefaultBuiltIns(loadBuiltInsFromCurrentClassLoader = false)
     val module = ModuleDescriptorImpl(
             moduleName,
             projectContext.storageManager,
