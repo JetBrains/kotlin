@@ -48,6 +48,17 @@ class LocalClaudeAgent private constructor(
             ignoreUnknownKeys = true
         }
 
+        private const val MODEL = "claude-sonnet-4-6"
+
+        /**
+         * The value for `--effort` in when calling `claude`.
+         *
+         * Without an explicit effort, Claude Code runs the model at its per-model default level
+         * (`high` for this model at the moment of writing), which may change with CLI updates or account/organization
+         * configuration. Pin the level to keep it deterministic.
+         */
+        private const val EFFORT = "high"
+
         private suspend fun createCommand(authMethod: AuthMethod): List<String> = buildList {
             val prompt = """
                 The input contains a code rule and the path to a file with a git diff of files subject to the rule.
@@ -75,8 +86,6 @@ class LocalClaudeAgent private constructor(
 
             val jsonSchemaString = Json.encodeToString(jsonSchema)
 
-            val model = "claude-sonnet-4-6"
-
             when (authMethod) {
                 AuthMethod.LocalConfiguration -> {
                     add("claude")
@@ -103,7 +112,9 @@ class LocalClaudeAgent private constructor(
             add(jsonSchemaString)
 
             add("--model")
-            add(model)
+            add(MODEL)
+            add("--effort")
+            add(EFFORT)
 
             // `dontAsk` means "allow only pre-approved tools, **don't ask** for more".
             add("--permission-mode")
