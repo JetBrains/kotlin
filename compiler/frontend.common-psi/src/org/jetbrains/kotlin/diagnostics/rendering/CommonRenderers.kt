@@ -97,7 +97,6 @@ object CommonRenderers {
             renderSignature(data)
             appendLine("):")
             sortedDeclarations.joinToWithBuffer(this, separator = "\n") { descriptor ->
-                append("    ")
                 append(declarationRenderer.render(descriptor, renderingContext))
             }
         }

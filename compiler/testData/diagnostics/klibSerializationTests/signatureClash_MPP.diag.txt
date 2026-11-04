@@ -1,38 +1,110 @@
 Module: common
 /common.kt:9:1: error: Conflicting overloads:
-fun foo(): Int
+In package 'root package' of module '<platform>':
+  --> platform.kt
+   |
+19 | fun foo(): Int
+   |
 
 /common.kt:9:1: error: Platform declaration clash: The following functions have the same IR signature (/foo|foo(){}[0]):
-    fun foo(): Int defined in root package in module <platform>
-    fun foo(): String defined in root package in module <common>
+In package 'root package' of module '<platform>':
+  --> platform.kt
+   |
+19 | fun foo(): Int
+   |
+In package 'root package' of module '<common>':
+ --> common.kt
+  |
+9 | fun foo(): String
+  |
 
 /common.kt:12:1: error: Conflicting overloads:
-fun bar(x: B): Int
+In package 'root package' of module '<platform>':
+  --> platform.kt
+   |
+23 | fun bar(x: B): Int
+   |
 
 /common.kt:12:1: error: Platform declaration clash: The following functions have the same IR signature (/bar|bar(B){}[0]):
-    fun bar(x: A): Int defined in root package in module <common>
-    fun bar(x: B): Int defined in root package in module <platform>
+In package 'root package' of module '<common>':
+  --> common.kt
+   |
+12 | fun bar(x: A): Int
+   |
+In package 'root package' of module '<platform>':
+  --> platform.kt
+   |
+23 | fun bar(x: B): Int
+   |
 
 /common.kt:14:1: error: Platform declaration clash: The following functions have the same IR signature (/param.<get-param>|<get-param>(){}[0]):
-    fun `<get-param>`(): Int defined in root package in module <common>
-    fun `<get-param>`(): Int defined in root package in module <platform>
+In package 'root package' of module '<common>':
+  --> common.kt
+   |
+14 | get(): Int
+   |
+In package 'root package' of module '<platform>':
+  --> platform.kt
+   |
+25 | get(): Int
+   |
 
 /common.kt:14:1: error: Platform declaration clash: The following properties have the same IR signature (/param|{}param[0]):
-    val param: Int defined in root package in module <common>
-    val param: Int defined in root package in module <platform>
+In package 'root package' of module '<common>':
+  --> common.kt
+   |
+14 | val param: Int
+   |
+In package 'root package' of module '<platform>':
+  --> platform.kt
+   |
+25 | val param: Int
+   |
 Module: platform
 /platform.kt:19:1: error: Platform declaration clash: The following functions have the same IR signature (/foo|foo(){}[0]):
-    fun foo(): Int defined in root package in module <platform>
-    fun foo(): String defined in root package in module <common>
+In package 'root package' of module '<platform>':
+  --> platform.kt
+   |
+19 | fun foo(): Int
+   |
+In package 'root package' of module '<common>':
+ --> common.kt
+  |
+9 | fun foo(): String
+  |
 
 /platform.kt:23:1: error: Platform declaration clash: The following functions have the same IR signature (/bar|bar(B){}[0]):
-    fun bar(x: A): Int defined in root package in module <common>
-    fun bar(x: B): Int defined in root package in module <platform>
+In package 'root package' of module '<common>':
+  --> common.kt
+   |
+12 | fun bar(x: A): Int
+   |
+In package 'root package' of module '<platform>':
+  --> platform.kt
+   |
+23 | fun bar(x: B): Int
+   |
 
 /platform.kt:25:1: error: Platform declaration clash: The following functions have the same IR signature (/param.<get-param>|<get-param>(){}[0]):
-    fun `<get-param>`(): Int defined in root package in module <common>
-    fun `<get-param>`(): Int defined in root package in module <platform>
+In package 'root package' of module '<common>':
+  --> common.kt
+   |
+14 | get(): Int
+   |
+In package 'root package' of module '<platform>':
+  --> platform.kt
+   |
+25 | get(): Int
+   |
 
 /platform.kt:25:1: error: Platform declaration clash: The following properties have the same IR signature (/param|{}param[0]):
-    val param: Int defined in root package in module <common>
-    val param: Int defined in root package in module <platform>
+In package 'root package' of module '<common>':
+  --> common.kt
+   |
+14 | val param: Int
+   |
+In package 'root package' of module '<platform>':
+  --> platform.kt
+   |
+25 | val param: Int
+   |
