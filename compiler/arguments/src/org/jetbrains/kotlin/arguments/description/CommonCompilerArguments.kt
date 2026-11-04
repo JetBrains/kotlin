@@ -569,21 +569,6 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
     }
 
     compilerArgument {
-        name = "Xuse-fir-lt"
-        compilerName = "useFirLT"
-        description = "Compile using the LightTree parser with the frontend IR.".asReleaseDependent()
-        valueType = BooleanType.defaultTrue
-        deprecatedMessage =
-            "The light tree mode is enabled by default, and it will become the only available mode in one of the future releases."
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_7_0,
-            deprecatedVersion = KotlinReleaseVersion.v2_4_20,
-        )
-        restrictedToCompilerPhase = KotlinCompilerPhase.KLIB_COMPILATION
-    }
-
-    compilerArgument {
         name = "Xmetadata-klib"
         deprecatedName = "Xexpect-actual-linker"
         description = "Produce a klib that only contains the metadata of declarations.".asReleaseDependent()

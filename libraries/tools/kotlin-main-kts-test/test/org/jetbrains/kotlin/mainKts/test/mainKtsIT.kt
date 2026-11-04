@@ -246,7 +246,6 @@ class MainKtsIT {
                 scriptPath,
                 listOf("hello"),
                 classpath = listOf(mainKtsJar),
-                additionalArgs = listOf("-Xuse-fir-lt=false"),
             )
 
             runWithKotlincAndMainKts(
@@ -257,7 +256,6 @@ class MainKtsIT {
             runWithKotlincAndMainKts(
                 scriptPath,
                 listOf("hello"),
-                additionalArgs = listOf("-Xuse-fir-lt=false"),
             )
         }
     }

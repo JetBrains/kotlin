@@ -86,7 +86,7 @@ fun CompilerConfiguration.setupCommonArguments(
     checkRedundantArguments(arguments)
 
     put(CommonConfigurationKeys.USE_FIR, languageVersionSettings.languageVersion.usesK2)
-    put(CommonConfigurationKeys.PARSER_MODE, @Suppress("DEPRECATION") if (arguments.useFirLT) ParserMode.LightTree else ParserMode.Psi)
+    put(CommonConfigurationKeys.PARSER_MODE, @Suppress("DEPRECATION") ParserMode.LightTree)
 
     buildHmppModuleStructure(arguments)?.let { put(CommonConfigurationKeys.HMPP_MODULE_STRUCTURE, it) }
 
