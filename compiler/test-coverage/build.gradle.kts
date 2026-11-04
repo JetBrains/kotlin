@@ -16,7 +16,6 @@ dependencies {
     // `test-coverage-convention` applies JaCoCo (only with `kotlin.build.coverage.enabled`).
     jacocoAggregation(project(":compiler"))
     jacocoAggregation(project(":compiler:tests-integration"))
-    jacocoAggregation(project(":compiler:fir:analysis-tests"))
     jacocoAggregation(project(":compiler:jvm.tests"))
     jacocoAggregation(project(":compiler:fir:raw-fir:psi2fir"))
     jacocoAggregation(project(":compiler:fir:raw-fir:light-tree2fir"))
