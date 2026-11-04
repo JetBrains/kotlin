@@ -2,7 +2,7 @@
 In package 'root package' of module '<main>':
   --> kt33857.kt
    |
- 1 | class A : Any {
+ 6 | class A : Any {
    |     ...
  8 |     fun component1(): Int
    |     ...
@@ -13,8 +13,7 @@ In package 'root package' of module '<main>':
 In package 'root package' of module '<main>':
   --> kt33857.kt
    |
- 1 | class A : Any {
-   |     ...
+ 6 | class A : Any {
  7 |     fun component1(): Int
    |     ...
 10 | }
@@ -24,8 +23,7 @@ In package 'root package' of module '<main>':
 In package 'root package' of module '<main>':
   --> kt33857.kt
    |
- 1 | class A : Any {
-   |     ...
+ 6 | class A : Any {
  7 |     fun component1(): Int
  8 |     fun component1(): Int
    |     ...

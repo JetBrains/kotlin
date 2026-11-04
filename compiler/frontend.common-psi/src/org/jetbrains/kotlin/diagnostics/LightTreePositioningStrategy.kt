@@ -36,6 +36,20 @@ open class LightTreePositioningStrategy {
     }
 }
 
+/**
+ * The [element]'s `startOffset` and `endOffset` may include the preceding/trailing
+ * filler tokens such as comments. This function "strips" those parts away from the offsets.
+ */
+fun getTightOffsetsFor(element: KtSourceElement): Pair<Int, Int> =
+    markSingleElement(
+        from = element.lighterASTNode,
+        to = element.lighterASTNode,
+        startOffset = element.startOffset,
+        endOffset = element.endOffset,
+        tree = element.treeStructure,
+        originalNode = element.lighterASTNode,
+    ).let { it.startOffset to it.endOffset }
+
 fun markElement(
     node: LighterASTNode,
     startOffset: Int,

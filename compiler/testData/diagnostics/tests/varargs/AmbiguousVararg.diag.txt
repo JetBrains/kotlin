@@ -2,7 +2,6 @@
 In package 'root package' of module '<main>':
  --> AmbiguousVararg.kt
   |
-1 | fun foo(vararg t: String): String
-  | ...
+3 | fun foo(vararg t: String): String
 4 | fun foo(vararg t: Int): String
   |

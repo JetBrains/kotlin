@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.diagnostics
 
+import org.jetbrains.kotlin.diagnostics.getTightOffsetsFor
 import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.session.sourcesToPathsMapper
@@ -41,9 +42,11 @@ internal fun FirBasedSymbol<*>.toPhysicalLocation(): PhysicalLocation? {
     val source = source
     val filePath = source?.let(moduleData.session.sourcesToPathsMapper::getRelativeSourceFilePath) ?: return null
     val linesMapping = source.toLinesMapping()
-    val [line, column] = linesMapping.getLineAndColumnByOffset(source.startOffset)
+    // We don't render surrounding fillers in `FirDiagnosticRenderers.SYMBOL` et al.
+    val [startOffset, endOffset] = getTightOffsetsFor(source)
+    val [line, column] = linesMapping.getLineAndColumnByOffset(startOffset)
         .let { [line, column] -> (line + 1) to (column + 1) }
-    val endLine = linesMapping.getLineAndColumnByOffset(source.endOffset).first + 1
+    val endLine = linesMapping.getLineAndColumnByOffset(endOffset).first + 1
     return PhysicalLocation(filePath, line, column, endLine)
 }
 

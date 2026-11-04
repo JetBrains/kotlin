@@ -2,8 +2,7 @@
 In package 'root package' of module '<main>':
   --> nothingToOverrideMessage.kt
    |
- 1 | interface I : Any {
-   |     ...
+ 3 | interface I : Any {
  4 |     fun foo(s: String): Unit
  5 |     fun bar(a: String): Unit
  6 |     fun bar(a: Boolean): Unit
@@ -18,8 +17,7 @@ In package 'root package' of module '<main>':
 In package 'root package' of module '<main>':
   --> nothingToOverrideMessage.kt
    |
- 1 | interface I : Any {
-   |     ...
+ 3 | interface I : Any {
  4 |     fun foo(s: String): Unit
    |     ...
 11 | }
@@ -31,8 +29,7 @@ In package 'root package' of module '<main>':
 In package 'root package' of module '<main>':
   --> nothingToOverrideMessage.kt
    |
- 1 | interface I : Any {
-   |     ...
+ 3 | interface I : Any {
  4 |     fun foo(s: String): Unit
  5 |     fun bar(a: String): Unit
  6 |     fun bar(a: Boolean): Unit
@@ -47,7 +44,7 @@ In package 'root package' of module '<main>':
 In package 'root package' of module '<main>':
   --> nothingToOverrideMessage.kt
    |
- 1 | interface I : Any {
+ 3 | interface I : Any {
    |     ...
  5 |     fun bar(a: String): Unit
  6 |     fun bar(a: Boolean): Unit
@@ -59,8 +56,7 @@ In package 'root package' of module '<main>':
 In package 'root package' of module '<main>':
   --> nothingToOverrideMessage.kt
    |
- 1 | interface I : Any {
-   |     ...
+ 3 | interface I : Any {
  4 |     fun foo(s: String): Unit
  5 |     fun bar(a: String): Unit
  6 |     fun bar(a: Boolean): Unit
@@ -75,7 +71,7 @@ In package 'root package' of module '<main>':
 In package 'root package' of module '<main>':
   --> nothingToOverrideMessage.kt
    |
- 1 | interface I : Any {
+ 3 | interface I : Any {
    |     ...
  7 |     fun baz(a: Int = ...): Unit
    |     ...
@@ -86,8 +82,7 @@ In package 'root package' of module '<main>':
 In package 'root package' of module '<main>':
   --> nothingToOverrideMessage.kt
    |
- 1 | interface I : Any {
-   |     ...
+ 3 | interface I : Any {
  4 |     fun foo(s: String): Unit
  5 |     fun bar(a: String): Unit
  6 |     fun bar(a: Boolean): Unit
@@ -102,7 +97,7 @@ In package 'root package' of module '<main>':
 In package 'root package' of module '<main>':
   --> nothingToOverrideMessage.kt
    |
- 1 | interface I : Any {
+ 3 | interface I : Any {
    |     ...
  8 |     fun qux(vararg a: String): Unit
    |     ...
@@ -113,8 +108,7 @@ In package 'root package' of module '<main>':
 In package 'root package' of module '<main>':
   --> nothingToOverrideMessage.kt
    |
- 1 | interface I : Any {
-   |     ...
+ 3 | interface I : Any {
  4 |     fun foo(s: String): Unit
  5 |     fun bar(a: String): Unit
  6 |     fun bar(a: Boolean): Unit
@@ -129,7 +123,7 @@ In package 'root package' of module '<main>':
 In package 'root package' of module '<main>':
   --> nothingToOverrideMessage.kt
    |
- 1 | interface I : Any {
+ 3 | interface I : Any {
    |     ...
  9 |     fun quux(a: (String) -> Unit): Unit
    |     ...
@@ -140,8 +134,7 @@ In package 'root package' of module '<main>':
 In package 'root package' of module '<main>':
   --> nothingToOverrideMessage.kt
    |
- 1 | interface I : Any {
-   |     ...
+ 3 | interface I : Any {
  4 |     fun foo(s: String): Unit
  5 |     fun bar(a: String): Unit
  6 |     fun bar(a: Boolean): Unit
@@ -156,7 +149,7 @@ In package 'root package' of module '<main>':
 In package 'root package' of module '<main>':
   --> nothingToOverrideMessage.kt
    |
- 1 | interface I : Any {
+ 3 | interface I : Any {
    |     ...
 10 |     fun String.corge(): Unit
 11 | }
