@@ -135,8 +135,11 @@ internal sealed class MethodGenerationMode {
      * [JvmExposeBoxed.jvmName] takes precedence over [JvmName], and [JvmName] is omitted from the method.
      *
      * @property isRegularMethodRequired whether the [Regular] method is generated in addition to the boxed one
+     * @property hasUnsignedVarargAsArray whether an unsigned `vararg` parameter, as in `vararg xs: UInt`, takes the unsigned array, such as
+     * `UIntArray`, instead of being a Java vararg of boxed elements, such as `UInt...`. The JVM backend generates both boxed methods for a
+     * callable with such a parameter, and the one with the unsigned array overrides nothing.
      */
-    data class Boxed(val isRegularMethodRequired: Boolean) : MethodGenerationMode()
+    data class Boxed(val isRegularMethodRequired: Boolean, val hasUnsignedVarargAsArray: Boolean) : MethodGenerationMode()
 }
 
 /**
@@ -219,7 +222,7 @@ internal fun methodGeneration(
     }
 
     return when {
-        isBoxedMethodRequired -> MethodGenerationMode.Boxed(isRegularMethodRequired)
+        isBoxedMethodRequired -> MethodGenerationMode.Boxed(isRegularMethodRequired, hasUnsignedVarargAsArray = false)
         !isRegularMethodRequired -> null
 
         // Explicit mode without a boxed method -> the regular method retains @JvmExposeBoxed

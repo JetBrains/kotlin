@@ -2,6 +2,9 @@ public class Open /* Open*/ {
   @kotlin.jvm.JvmExposeBoxed()
   public final /* vararg */ void notOverridable(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() kotlin.UShort @org.jetbrains.annotations.NotNull() ...);//  notOverridable(@org.jetbrains.annotations.NotNull() kotlin.UShort @org.jetbrains.annotations.NotNull() [])
 
+  @kotlin.jvm.JvmExposeBoxed()
+  public final void notOverridable(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() kotlin.UShortArray);//  notOverridable(@org.jetbrains.annotations.NotNull() kotlin.UShortArray)
+
   public  Open();//  .ctor()
 }
 
@@ -14,10 +17,16 @@ public final class Stack /* Stack*/ {
   public final @org.jetbrains.annotations.NotNull() kotlin.UIntArray getItems();//  getItems()
 
   @kotlin.jvm.JvmExposeBoxed()
+  public  Stack(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() kotlin.UIntArray);//  .ctor(@org.jetbrains.annotations.NotNull() kotlin.UIntArray)
+
+  @kotlin.jvm.JvmExposeBoxed()
   public /* vararg */  Stack(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() kotlin.UInt @org.jetbrains.annotations.NotNull() ...);//  .ctor(@org.jetbrains.annotations.NotNull() kotlin.UInt @org.jetbrains.annotations.NotNull() [])
 
   @kotlin.jvm.JvmExposeBoxed()
   public final /* vararg */ void push(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() kotlin.UByte @org.jetbrains.annotations.NotNull() ...);//  push(@org.jetbrains.annotations.NotNull() kotlin.UByte @org.jetbrains.annotations.NotNull() [])
+
+  @kotlin.jvm.JvmExposeBoxed()
+  public final void push(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() kotlin.UByteArray);//  push(@org.jetbrains.annotations.NotNull() kotlin.UByteArray)
 
   private /* vararg */  Stack(@org.jetbrains.annotations.NotNull() int...);//  .ctor(int[])
 }
@@ -29,7 +38,14 @@ public final class UnsignedVarargKt /* UnsignedVarargKt*/ {
   public static final /* vararg */ @org.jetbrains.annotations.NotNull() kotlin.UInt sum(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() kotlin.UInt @org.jetbrains.annotations.NotNull() ...);//  sum(@org.jetbrains.annotations.NotNull() kotlin.UInt @org.jetbrains.annotations.NotNull() [])
 
   @kotlin.jvm.JvmExposeBoxed()
+  @org.jetbrains.annotations.NotNull()
+  public static final @org.jetbrains.annotations.NotNull() kotlin.UInt sum(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() kotlin.UIntArray);//  sum(@org.jetbrains.annotations.NotNull() kotlin.UIntArray)
+
+  @kotlin.jvm.JvmExposeBoxed()
   public static final int notLast(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() kotlin.ULong @org.jetbrains.annotations.NotNull() [], @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  notLast(@org.jetbrains.annotations.NotNull() kotlin.ULong @org.jetbrains.annotations.NotNull() [], @org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @kotlin.jvm.JvmExposeBoxed()
+  public static final int notLast(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() kotlin.ULongArray, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  notLast(@org.jetbrains.annotations.NotNull() kotlin.ULongArray, @org.jetbrains.annotations.NotNull() java.lang.String)
 }
 
 @kotlin.jvm.JvmInline()
@@ -41,10 +57,16 @@ public final class Wrapper /* Wrapper*/ {
   public  Wrapper(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(@org.jetbrains.annotations.NotNull() java.lang.String)
 
   @kotlin.jvm.JvmExposeBoxed()
+  public  Wrapper(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() kotlin.UIntArray);//  .ctor(@org.jetbrains.annotations.NotNull() kotlin.UIntArray)
+
+  @kotlin.jvm.JvmExposeBoxed()
   public /* vararg */  Wrapper(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() kotlin.UInt @org.jetbrains.annotations.NotNull() ...);//  .ctor(@org.jetbrains.annotations.NotNull() kotlin.UInt @org.jetbrains.annotations.NotNull() [])
 
   @kotlin.jvm.JvmExposeBoxed()
   public final /* vararg */ void member(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() kotlin.UInt @org.jetbrains.annotations.NotNull() ...);//  member(@org.jetbrains.annotations.NotNull() kotlin.UInt @org.jetbrains.annotations.NotNull() [])
+
+  @kotlin.jvm.JvmExposeBoxed()
+  public final void member(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() kotlin.UIntArray);//  member(@org.jetbrains.annotations.NotNull() kotlin.UIntArray)
 
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()

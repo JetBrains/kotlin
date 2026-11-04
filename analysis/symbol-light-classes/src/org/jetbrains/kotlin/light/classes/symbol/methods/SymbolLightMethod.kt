@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.light.classes.symbol.annotations.suppressWildcardMod
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightParameterList
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightSuspendContinuationParameter
+import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightUnsignedArrayParameter
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightValueParameter
 import org.jetbrains.kotlin.light.classes.symbol.utils.compareSymbolPointers
 import org.jetbrains.kotlin.light.classes.symbol.utils.isOriginEquivalentTo
@@ -71,7 +72,11 @@ internal abstract class SymbolLightMethod<FType : KaFunctionSymbol> private cons
         symbolPointer.withSymbol(useSiteModule, action)
 
     protected open fun createValueParameter(parameterSymbol: KaValueParameterSymbol, parameterIndex: Int): PsiParameter =
-        SymbolLightValueParameter(parameterSymbol = parameterSymbol, containingMethod = this)
+        if (hasUnsignedVarargAsArray && parameterSymbol.isVararg) {
+            SymbolLightUnsignedArrayParameter(parameterSymbol = parameterSymbol, containingMethod = this)
+        } else {
+            SymbolLightValueParameter(parameterSymbol = parameterSymbol, containingMethod = this)
+        }
 
     private val _parametersList by lazyPub {
         SymbolLightParameterList(

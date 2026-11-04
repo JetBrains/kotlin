@@ -130,7 +130,10 @@ internal class SymbolLightConstructor private constructor(
                             !constructor.isEffectivelyPrivate()
 
                     val generationMode = when {
-                        isBoxedConstructorRequired -> MethodGenerationMode.Boxed(isRegularMethodRequired = !destinationClassIsInlineClass)
+                        isBoxedConstructorRequired -> MethodGenerationMode.Boxed(
+                            isRegularMethodRequired = !destinationClassIsInlineClass,
+                            hasUnsignedVarargAsArray = false,
+                        )
 
                         // Only the boxed constructor of an inline class can be generated
                         destinationClassIsInlineClass -> null
@@ -146,6 +149,16 @@ internal class SymbolLightConstructor private constructor(
                         valueParameterPickMask = valueParameterPickMask,
                         generationMode = generationMode,
                     )
+
+                    if (generationMode is MethodGenerationMode.Boxed && constructor.hasUnsignedVararg(valueParameterPickMask)) {
+                        result += SymbolLightConstructor(
+                            constructorSymbol = constructor,
+                            containingClass = lightClass,
+                            methodIndex = methodIndex,
+                            valueParameterPickMask = valueParameterPickMask,
+                            generationMode = generationMode.copy(hasUnsignedVarargAsArray = true),
+                        )
+                    }
 
                     if (generationMode is MethodGenerationMode.Boxed && generationMode.isRegularMethodRequired) {
                         result += SymbolLightConstructor(
@@ -172,7 +185,7 @@ internal class SymbolLightConstructor private constructor(
                     primaryConstructor.jvmExposeBoxedMode() != JvmExposeBoxedMode.NONE && !primaryConstructor.isEffectivelyPrivate() -> {
                         result += lightClass.noArgConstructor(
                             primaryConstructor = primaryConstructor,
-                            generationMode = MethodGenerationMode.Boxed(isRegularMethodRequired = false),
+                            generationMode = MethodGenerationMode.Boxed(isRegularMethodRequired = false, hasUnsignedVarargAsArray = false),
                         )
                     }
                 }

@@ -184,7 +184,7 @@ internal open class SymbolLightSimpleMethod protected constructor(
     override fun isOverride(): Boolean = _isOverride
 
     private val _isOverride: Boolean by lazyPub {
-        withFunctionSymbol { it.isOverride }
+        !hasUnsignedVarargAsArray && withFunctionSymbol { it.isOverride }
     }
 
     context(session: KaSession)
@@ -292,6 +292,19 @@ internal open class SymbolLightSimpleMethod protected constructor(
                     suppressStatic = suppressStatic,
                     generationMode = generationMode,
                 )
+
+                if (generationMode is MethodGenerationMode.Boxed && functionSymbol.hasUnsignedVararg(valueParameterPickMask)) {
+                    result += SymbolLightSimpleMethod(
+                        functionSymbol = functionSymbol,
+                        lightMemberOrigin = lightMemberOrigin,
+                        containingClass = containingClass,
+                        methodIndex = methodIndex,
+                        isTopLevel = isTopLevel,
+                        valueParameterPickMask = valueParameterPickMask,
+                        suppressStatic = suppressStatic,
+                        generationMode = generationMode.copy(hasUnsignedVarargAsArray = true),
+                    )
+                }
 
                 if (generationMode is MethodGenerationMode.Boxed && generationMode.isRegularMethodRequired) {
                     result += SymbolLightSimpleMethod(

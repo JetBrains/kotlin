@@ -56,6 +56,14 @@ internal abstract class SymbolLightMethodBaseImpl<out SType : KaSymbol>(
     val isJvmExposeBoxed: Boolean get() = generationMode is MethodGenerationMode.Boxed
 
     /**
+     * Whether this method is the boxed method that takes the unsigned array for an unsigned `vararg` parameter.
+     *
+     * @see MethodGenerationMode.Boxed.hasUnsignedVarargAsArray
+     */
+    val hasUnsignedVarargAsArray: Boolean
+        get() = generationMode is MethodGenerationMode.Boxed && generationMode.hasUnsignedVarargAsArray
+
+    /**
      * Whether this method is a compatibility delegate to a JVM `default` method of the interface, which `DefaultImpls` holds with JVM
      * default methods enabled. The JVM backend marks such delegates as deprecated with `@java.lang.Deprecated`, see
      * `org.jetbrains.kotlin.backend.jvm.JvmCachedDeclarations.getDefaultImplsFunction`.

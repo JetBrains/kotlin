@@ -836,6 +836,16 @@ context(_: KaSession)
 private val KaValueParameterSymbol.parameterType: KaType
     get() = if (isVararg) typeCreator.varargArrayType(returnType) else returnType
 
+/**
+ * Whether a value parameter of this function picked by [valueParameterPickMask] is an unsigned `vararg`, as in `vararg xs: UInt`, whose type
+ * is an unsigned array, such as `UIntArray`.
+ */
+context(_: KaSession)
+internal fun KaFunctionSymbol.hasUnsignedVararg(valueParameterPickMask: BitSet?): Boolean =
+    valueParameters.withIndex().any { [index, valueParameter] ->
+        valueParameterPickMask?.get(index) != false && valueParameter.isVararg && typeForInlineClass(valueParameter.parameterType)
+    }
+
 context(_: KaSession)
 internal fun hasInlineClassInReturnType(callableSymbol: KaCallableSymbol): Boolean {
     // A declaration without real PSI, e.g., a library or a generated one, always has its type at hand
