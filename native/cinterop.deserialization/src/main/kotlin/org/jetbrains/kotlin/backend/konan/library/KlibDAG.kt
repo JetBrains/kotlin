@@ -354,19 +354,19 @@ private class KlibDAGBuilderImpl(private val parameters: KlibDAGBuilder.Paramete
             usedNodes[dagUnderConstruction.getValue(library)] = State.SCHEDULED_FOR_PROCESSING
         }
 
+        fun KlibDAGNodeImpl.recordDependency(dependencyNode: KlibDAGNodeImpl) {
+            // Make sure that the found node is in the set of used nodes.
+            // If the found node is new, schedule it for processing on next iterations of the loop.
+            usedNodes.putIfAbsent(dependencyNode, State.SCHEDULED_FOR_PROCESSING)
+
+            // Record it as a dependency.
+            nodes += dependencyNode
+        }
+
         outer@ while (true) {
             // Fetch the last "used" node that has not been processed yet.
             // The last node in LinkedHashMap should be the latest added node, so this would help us to prevent O(n^2).
             val node: KlibDAGNodeImpl = usedNodes.entries.lastOrNull { it.value == State.SCHEDULED_FOR_PROCESSING }?.key ?: break@outer
-
-            fun recordDependency(dependencyNode: KlibDAGNodeImpl) {
-                // Make sure that the found node is in the set of used nodes.
-                // If the found node is new, schedule it for processing on next iterations of the loop.
-                usedNodes.putIfAbsent(dependencyNode, State.SCHEDULED_FOR_PROCESSING)
-
-                // Record it as a dependency.
-                node.nodes += dependencyNode
-            }
 
             for (importedSignature in nodeToImportedSignatures.getValue(node)) {
                 when (val dependencyNode: KlibDAGNodeImpl? = declaredSignatureToNode[importedSignature]) {
@@ -388,7 +388,7 @@ private class KlibDAGBuilderImpl(private val parameters: KlibDAGBuilder.Paramete
                                 if (populateSignatureIndicesForLibrary(maybeDependencyNode.library)) {
                                     // If we are here, then the indices just have been populated, and it makes sense to check them.
                                     declaredSignatureToNode[importedSignature]?.let { dependencyNodeV2 ->
-                                        recordDependency(dependencyNodeV2)
+                                        node.recordDependency(dependencyNodeV2)
                                         break@inner
                                     }
                                 }
@@ -398,7 +398,7 @@ private class KlibDAGBuilderImpl(private val parameters: KlibDAGBuilder.Paramete
 
                     else -> {
                         /** A dependency is found. */
-                        recordDependency(dependencyNode)
+                        node.recordDependency(dependencyNode)
                     }
                 }
             }
