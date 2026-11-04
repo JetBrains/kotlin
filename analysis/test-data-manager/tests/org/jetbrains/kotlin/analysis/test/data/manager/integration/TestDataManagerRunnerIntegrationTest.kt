@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.test.data.manager.integration
 
-import org.jetbrains.kotlin.analysis.test.data.manager.TEST_DATA_MANAGER_OPTIONS_MODE
-import org.jetbrains.kotlin.analysis.test.data.manager.TestDataManagerMode
-import org.jetbrains.kotlin.analysis.test.data.manager.TestDataManagerRunner
+import org.jetbrains.kotlin.analysis.test.data.manager.*
 import org.jetbrains.kotlin.analysis.test.data.manager.fakes.conflicts.FakeConflictingTestABGenerated
 import org.jetbrains.kotlin.analysis.test.data.manager.fakes.runner.FakeRunnerScenario
 import org.junit.jupiter.api.AfterEach
@@ -18,12 +16,10 @@ import org.junit.jupiter.api.io.TempDir
 import org.junit.platform.engine.discovery.PackageNameFilter
 import org.junit.platform.launcher.core.LauncherConfig
 import org.junit.platform.launcher.core.LauncherFactory
+import java.io.ByteArrayOutputStream
+import java.io.PrintStream
 import java.nio.file.Path
-import kotlin.io.path.createDirectories
-import kotlin.io.path.listDirectoryEntries
-import kotlin.io.path.name
-import kotlin.io.path.readText
-import kotlin.io.path.writeText
+import kotlin.io.path.*
 
 /**
  * Runs the runner over the suites in the `fakes.runner` package, configured through [FakeRunnerScenario].
@@ -49,6 +45,7 @@ internal class TestDataManagerRunnerIntegrationTest {
     @AfterEach
     fun tearDown() {
         System.clearProperty(TEST_DATA_MANAGER_OPTIONS_MODE)
+        System.clearProperty(TEST_DATA_MANAGER_OPTIONS_ROOT_DIR)
     }
 
     private fun setupFiles(vararg files: Pair<String, String>) {
@@ -237,6 +234,30 @@ internal class TestDataManagerRunnerIntegrationTest {
             """.trimIndent(),
             run(TestDataManagerMode.UPDATE),
         )
+    }
+
+    @Test
+    fun `compact summary lists the first 50 changed files`() {
+        System.setProperty(TEST_DATA_MANAGER_OPTIONS_ROOT_DIR, tempDir.toString())
+        val fileActions = (0 until 120).map { index ->
+            FileAction(testDataDirectory.resolve("first.kt"), testDataDirectory.resolve("%03d.txt".format(index)), FileAction.Kind.UPDATED)
+        }
+
+        val output = ByteArrayOutputStream()
+        val originalOut = System.out
+        System.setOut(PrintStream(output, true))
+        try {
+            TestDataManagerRunner.printSummary(emptySet(), emptySet(), fileActions, totalTests = 120, passedTests = 120, skippedTests = 0)
+        } finally {
+            System.setOut(originalOut)
+        }
+
+        val expected = buildList {
+            add("120 tests completed, 120 passed, 0 failed")
+            (0 until 50).mapTo(this) { "UPDATED runner/%03d.txt".format(it) }
+            add("... and 70 more, see the report")
+        }
+        assertEquals(expected.joinToString("\n"), output.toString().trim().lines().joinToString("\n"))
     }
 
     @Test

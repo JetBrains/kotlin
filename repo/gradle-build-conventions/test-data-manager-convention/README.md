@@ -97,6 +97,7 @@ system properties at execution time.
 | `org.jetbrains.kotlin.testDataManager.options.goldenOnly`       | Run only golden tests (empty variant chain)                                |
 | `org.jetbrains.kotlin.testDataManager.options.incremental`      | Only run variant tests for changed golden paths (effective in update mode) |
 | `org.jetbrains.kotlin.testDataManager.options.runId`            | Id of the run, names the report (a UUIDv7 is generated if not set)         |
+| `org.jetbrains.kotlin.testDataManager.options.output`           | `verbose` prints every group, pass and the timings (default: compact)      |
 
 `testDataPath` entries are relative to the repository root, as in `@TestMetadata`, or absolute paths inside the
 repository. A path matches whole names only (`dir`, `dir/file.kt`, or `dir/file` without the extension), and a path that

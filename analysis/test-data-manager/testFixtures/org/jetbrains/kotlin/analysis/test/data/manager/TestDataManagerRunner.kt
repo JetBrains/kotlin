@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.test.data.manager
 
+import org.jetbrains.kotlin.analysis.test.data.manager.TestDataManagerRunner.COMPACT_LIST_LIMIT
 import org.jetbrains.kotlin.analysis.test.data.manager.TestDataManagerRunner.MAX_CONVERGENCE_PASSES
+import org.jetbrains.kotlin.analysis.test.data.manager.TestDataManagerRunner.verbose
 import org.jetbrains.kotlin.analysis.test.data.manager.filters.*
 import org.jetbrains.kotlin.analysis.test.data.manager.listeners.FileUpdateTrackingListener
 import org.jetbrains.kotlin.analysis.test.data.manager.listeners.IjLogTestListener
@@ -80,6 +82,7 @@ internal fun validateConflicts(tests: List<DiscoveredTest>): List<VariantChainCo
  * - `goldenOnly` - run only golden tests (optional)
  * - `incremental` - run variant tests only for the golden paths that changed (optional, update mode only)
  * - `runId` - the id of the run, naming its report `<runId>.json` (optional, a UUIDv7 by default)
+ * - `output` - `verbose` for the progress of every group and pass (optional, compact by default)
  *
  * The tasks also pass `rootDir` (the repository root), `projectDir`, `projectName` and `reportDir`.
  *
@@ -87,6 +90,9 @@ internal fun validateConflicts(tests: List<DiscoveredTest>): List<VariantChainCo
  */
 internal object TestDataManagerRunner {
     private const val MAX_CONVERGENCE_PASSES = 10
+
+    /** How many lines of each list (problems, errors, changed files) the compact output prints. */
+    private const val COMPACT_LIST_LIMIT = 50
 
     /**
      * Holds timing measurements collected during test data manager execution.
@@ -97,8 +103,20 @@ internal object TestDataManagerRunner {
         var executionTime: Duration = Duration.ZERO
     }
 
+    /**
+     * Whether to print the progress of every group and pass and the timings, as opposed to the compact default:
+     * a header, the counts, one line per problem, error and changed file, and the report path.
+     */
+    private var verbose: Boolean = false
+
+    /** Prints [message] in the [verbose] output only. */
+    private fun detail(message: String) {
+        if (verbose) println(message)
+    }
+
     @JvmStatic
     fun main(args: Array<String>) {
+        verbose = System.getProperty(TEST_DATA_MANAGER_OPTIONS_OUTPUT)?.lowercase() == "verbose"
         val testDataPath = System.getProperty(TEST_DATA_MANAGER_OPTIONS_TEST_DATA_PATH)
         val testClassPattern = System.getProperty(TEST_DATA_MANAGER_OPTIONS_TEST_CLASS_PATTERN)
         val goldenOnly = System.getProperty(TEST_DATA_MANAGER_OPTIONS_GOLDEN_ONLY)?.toBooleanStrictOrNull() ?: false
@@ -119,13 +137,18 @@ internal object TestDataManagerRunner {
         )
 
         val totalTime = measureTime {
-            println("Starting test data manager...")
-            println("  runId: $runId")
-            println("  mode: ${mode ?: "NOT SET"}")
-            println("  testDataPath: ${testDataPath ?: "NOT SET"}")
-            println("  testClassPattern: ${testClassPattern ?: "NOT SET"}")
-            println("  goldenOnly: $goldenOnly")
-            println("  incremental: $incremental")
+            if (verbose) {
+                println("Starting test data manager...")
+                println("  runId: $runId")
+                println("  mode: ${mode ?: "NOT SET"}")
+                println("  testDataPath: ${testDataPath ?: "NOT SET"}")
+                println("  testClassPattern: ${testClassPattern ?: "NOT SET"}")
+                println("  goldenOnly: $goldenOnly")
+                println("  incremental: $incremental")
+            } else {
+                val project = report.project?.let { "$it " }.orEmpty()
+                println("Test data manager: $project${mode ?: "mode not set"}, runId $runId")
+            }
 
             when {
                 runIdError != null -> {
@@ -159,10 +182,10 @@ internal object TestDataManagerRunner {
                 }
             }
 
-            println("\nTest data management complete.")
+            detail("\nTest data management complete.")
         }
 
-        println("Total time: $totalTime")
+        detail("Total time: $totalTime")
         writeReport(report, rootDir)
 
         // The explicit exit is required to ensure the process terminates after completion
@@ -280,7 +303,7 @@ internal object TestDataManagerRunner {
         }
 
         timingStats.discoveryTime = discoveryTime
-        println("Discovered ${discoveredTests.size} tests in $discoveryTime")
+        detail("Discovered ${discoveredTests.size} tests in $discoveryTime")
 
         if (discoveredTests.isEmpty()) {
             println("No tests found matching criteria")
@@ -305,9 +328,9 @@ internal object TestDataManagerRunner {
         }
 
         // Print grouping info
-        println("Grouped into ${groupingResult.groups.size} phases by variant depth in $groupingTime:")
+        detail("Grouped into ${groupingResult.groups.size} phases by variant depth in $groupingTime:")
         for (group in groupingResult.groups) {
-            println("  Depth ${group.variantDepth}: ${group.tests.size} tests, variants: ${group.uniqueVariantChains}")
+            detail("  Depth ${group.variantDepth}: ${group.tests.size} tests, variants: ${group.uniqueVariantChains}")
         }
 
         // Phase 4: Run each group with convergence, aggregate results
@@ -360,13 +383,13 @@ internal object TestDataManagerRunner {
                 }
 
                 if (filtered.isEmpty()) {
-                    println("\n  Skipping group variants: ${group.uniqueVariantChains} (${group.tests.size} tests) — no matching changes")
+                    detail("\n  Skipping group variants: ${group.uniqueVariantChains} (${group.tests.size} tests) — no matching changes")
                     skippedTests += group.tests.size
                     continue
                 }
 
                 if (filtered.size < group.tests.size) {
-                    println("\n  Incremental: running ${filtered.size}/${group.tests.size} tests for variants: ${group.uniqueVariantChains}")
+                    detail("\n  Incremental: running ${filtered.size}/${group.tests.size} tests for variants: ${group.uniqueVariantChains}")
                     skippedTests += group.tests.size - filtered.size
                 }
 
@@ -391,9 +414,9 @@ internal object TestDataManagerRunner {
             if (useIncremental && isFirstGroup) {
                 changedTestDataPaths = groupFileActions.mapTo(HashSet()) { it.testDataPath.toString() }
                 if (changedTestDataPaths.isNotEmpty()) {
-                    println("  Incremental: ${changedTestDataPaths.size} test data path(s) changed in first group")
+                    detail("  Incremental: ${changedTestDataPaths.size} test data path(s) changed in first group")
                 } else {
-                    println("  Incremental: no changes in first group, skipping all subsequent groups")
+                    detail("  Incremental: no changes in first group, skipping all subsequent groups")
                 }
             }
 
@@ -404,7 +427,7 @@ internal object TestDataManagerRunner {
         ManagedTestAssertions.recordFileActions = false
 
         if (skippedTests > 0) {
-            println("  Incremental: skipped $skippedTests variant tests total")
+            detail("  Incremental: skipped $skippedTests variant tests total")
         }
 
         // Calculate test counts based on final pass results
@@ -525,10 +548,10 @@ internal object TestDataManagerRunner {
      */
     private fun runGroupWithConvergence(launcher: Launcher, group: TestGroup): RunResult {
         val depthStr = if (group.variantDepth == 0) "(golden)" else "depth=${group.variantDepth}"
-        println("\n========================================")
-        println("Running group: $depthStr (${group.tests.size} tests)")
-        println("  Variants: ${group.uniqueVariantChains}")
-        println("========================================")
+        detail("\n========================================")
+        detail("Running group: $depthStr (${group.tests.size} tests)")
+        detail("  Variants: ${group.uniqueVariantChains}")
+        detail("========================================")
 
         return runConvergenceLoop(launcher, group)
     }
@@ -548,10 +571,10 @@ internal object TestDataManagerRunner {
         var testExecutions = 0
         var pass = 1
         while (pass <= MAX_CONVERGENCE_PASSES) {
-            println("\n=== Pass $pass ===")
+            detail("\n=== Pass $pass ===")
             val testCount = testIdsToExecute.size
             testExecutions += testCount
-            println("  Tests to execute: $testCount")
+            detail("  Tests to execute: $testCount")
 
             val request = buildGroupRequest(testIdsToExecute)
             val fileTrackingListener = FileUpdateTrackingListener()
@@ -606,10 +629,10 @@ internal object TestDataManagerRunner {
 
             val errorTestCount = errorTests.size
             val mismatchedTestCount = mismatchesByPath.size
-            println("  Tests with errors: $errorTestCount (including $mismatchedTestCount mismatches)")
+            detail("  Tests with errors: $errorTestCount (including $mismatchedTestCount mismatches)")
 
             if (lastErrorTestCount == errorTestCount && lastMismatchedTestCount == mismatchedTestCount) {
-                println("  Convergence reached.")
+                detail("  Convergence reached.")
                 return RunResult(
                     problems = finalProblems.values.flatten().toSet(),
                     errors = finalErrors.values.flatten().toSet(),
@@ -640,7 +663,8 @@ internal object TestDataManagerRunner {
         )
     }
 
-    private fun printSummary(
+    /** Prints the counts and the lists of the run; `internal` for the tests of the compact output. */
+    internal fun printSummary(
         problems: Set<TestDataProblem>,
         errors: Set<TestError>,
         fileActions: List<FileAction>,
@@ -648,42 +672,39 @@ internal object TestDataManagerRunner {
         passedTests: Int,
         skippedTests: Int,
     ) {
-        println("\n========================================")
-        println("SUMMARY")
-        println("========================================")
+        detail("\n========================================")
+        detail("SUMMARY")
+        detail("========================================")
 
         val failedTests = totalTests - passedTests - skippedTests
         val skippedSuffix = if (skippedTests > 0) ", $skippedTests skipped (incremental)" else ""
         println("$totalTests tests completed, $passedTests passed, $failedTests failed$skippedSuffix")
 
         if (fileActions.isNotEmpty()) {
-            println("\n=== Changed files (${fileActions.size}) ===")
-            for (action in fileActions.sortedBy { it.file }) {
-                println("${action.kind} ${action.file.displayPath}")
-            }
+            detail("\n=== Changed files (${fileActions.size}) ===")
+            printCapped(fileActions.sortedBy { it.file }) { action -> "${action.kind} ${action.file.displayPath}" }
         }
 
         if (problems.isNotEmpty()) {
             val files = problems.mapTo(HashSet()) { it.file }
-            println("\n=== Test data problems (${files.size} files) ===")
-            for (problem in problems.sortedWith(compareBy({ it.file }, { it.testName }))) {
-                println("${problem.kind} ${problem.file.displayPath} (${problem.testName})")
+            detail("\n=== Test data problems (${files.size} files) ===")
+            printCapped(problems.sortedWith(compareBy({ it.file }, { it.testName }))) { problem ->
+                "${problem.kind} ${problem.file.displayPath} (${problem.testName})"
             }
             // In UPDATE, mismatches come only from assertions that can't update their files
             if (TestDataManagerMode.currentMode == TestDataManagerMode.CHECK) {
-                println("\nRun updateTestData with the same options to update them.")
+                detail("")
+                println("Run updateTestData with the same options to update them.")
             }
         }
 
         if (errors.isNotEmpty()) {
-            println("\n=== Errors (${errors.size} tests) ===")
-            for (error in errors.sortedBy { it.testName }) {
-                println("${error.testName} - ${error.exception}")
-            }
+            detail("\n=== Errors (${errors.size} tests) ===")
+            printCapped(errors.sortedBy { it.testName }) { error -> "${if (verbose) "" else "ERROR "}${error.testName} - ${error.exception}" }
         }
 
         if (problems.isEmpty() && errors.isEmpty()) {
-            println("\nAll tests passed!")
+            detail("\nAll tests passed!")
         }
     }
 
@@ -693,9 +714,21 @@ internal object TestDataManagerRunner {
      */
     private fun printRecoveredTests(recoveredTests: List<RecoveredTest>) {
         if (recoveredTests.isEmpty()) return
-        println("\n=== Passed only on a re-run (${recoveredTests.size} tests) ===")
-        for (test in recoveredTests.sortedBy { it.testName }) {
-            println("${test.testName} (pass ${test.passedInPass}) - ${test.failureSummary}")
+        detail("\n=== Passed only on a re-run (${recoveredTests.size} tests) ===")
+        printCapped(recoveredTests.sortedBy { it.testName }) { test ->
+            "${if (verbose) "" else "RECOVERED "}${test.testName} (pass ${test.passedInPass}) - ${test.failureSummary}"
+        }
+    }
+
+    /**
+     * Prints a line per element, only the first [COMPACT_LIST_LIMIT] of them in the compact output: a mass change would
+     * flood the console, while the report has them all.
+     */
+    private inline fun <T> printCapped(elements: List<T>, line: (T) -> String) {
+        val shown = if (verbose) elements else elements.take(COMPACT_LIST_LIMIT)
+        shown.forEach { println(line(it)) }
+        if (shown.size < elements.size) {
+            println("... and ${elements.size - shown.size} more, see the report")
         }
     }
 
@@ -707,11 +740,11 @@ internal object TestDataManagerRunner {
         get() = displayPath(System.getProperty(TEST_DATA_MANAGER_OPTIONS_ROOT_DIR)?.let(::Path))
 
     private fun printTimingSummary(timingStats: TimingStats) {
-        println("\n========================================")
-        println("TIMING SUMMARY")
-        println("========================================")
-        println("  Discovery:  ${timingStats.discoveryTime}")
-        println("  Grouping:   ${timingStats.groupingTime}")
-        println("  Execution:  ${timingStats.executionTime}")
+        detail("\n========================================")
+        detail("TIMING SUMMARY")
+        detail("========================================")
+        detail("  Discovery:  ${timingStats.discoveryTime}")
+        detail("  Grouping:   ${timingStats.groupingTime}")
+        detail("  Execution:  ${timingStats.executionTime}")
     }
 }
