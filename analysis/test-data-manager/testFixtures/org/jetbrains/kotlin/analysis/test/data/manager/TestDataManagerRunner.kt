@@ -151,6 +151,7 @@ internal object TestDataManagerRunner {
         val fileActions: List<FileAction>,
         val testExecutions: Int,
         val runErrors: List<String> = emptyList(),
+        val recoveredTests: List<RecoveredTest> = emptyList(),
     ) {
         val failedTests: Int
             get() = totalTests - passedTests - skippedTests
@@ -160,7 +161,7 @@ internal object TestDataManagerRunner {
             get() = problems.isEmpty() && errors.isEmpty() && runErrors.isEmpty()
 
         fun withRunErrors(runErrors: List<String>): RunOutcome =
-            RunOutcome(totalTests, passedTests, skippedTests, problems, errors, fileActions, testExecutions, runErrors)
+            RunOutcome(totalTests, passedTests, skippedTests, problems, errors, fileActions, testExecutions, runErrors, recoveredTests)
 
         companion object {
             val EMPTY = RunOutcome(0, 0, 0, emptySet(), emptySet(), emptyList(), 0)
@@ -179,6 +180,7 @@ internal object TestDataManagerRunner {
         val errors: Set<TestError>,
         val finalPassFailedTestIds: Set<String>,
         val testExecutions: Int,
+        val recoveredTests: Collection<RecoveredTest>,
     )
 
     /**
@@ -269,6 +271,7 @@ internal object TestDataManagerRunner {
         val allErrors = mutableSetOf<TestError>()
         val allFinalFailedTestIds = mutableSetOf<String>()
         var allFileActions = emptyList<FileAction>()
+        val allRecoveredTests = mutableListOf<RecoveredTest>()
         var testExecutions = 0
         ManagedTestAssertions.recordFileActions = true
 
@@ -321,6 +324,7 @@ internal object TestDataManagerRunner {
                 allProblems.addAll(result.problems)
                 allErrors.addAll(result.errors)
                 allFinalFailedTestIds.addAll(result.finalPassFailedTestIds)
+                allRecoveredTests.addAll(result.recoveredTests)
                 testExecutions += result.testExecutions
             }
 
@@ -353,9 +357,13 @@ internal object TestDataManagerRunner {
         val passedTests = totalTests - failedTests - skippedTests
 
         printSummary(allProblems, allErrors, allFileActions, totalTests, passedTests, skippedTests)
+        printRecoveredTests(allRecoveredTests)
         printTimingSummary(timingStats)
 
-        return RunOutcome(totalTests, passedTests, skippedTests, allProblems, allErrors, allFileActions, testExecutions)
+        return RunOutcome(
+            totalTests, passedTests, skippedTests, allProblems, allErrors, allFileActions, testExecutions,
+            recoveredTests = allRecoveredTests,
+        )
     }
 
     internal fun buildDiscoveryRequest(
@@ -470,8 +478,10 @@ internal object TestDataManagerRunner {
     }
 
     private fun runConvergenceLoop(launcher: Launcher, group: TestGroup): RunResult {
-        val aggregatedProblems = mutableSetOf<TestDataProblem>()
-        val aggregatedErrors = mutableSetOf<TestError>()
+        // The results of the last pass each test ran in: a test that passes on a re-run drops its earlier failure
+        val finalProblems = mutableMapOf<String, List<TestDataProblem>>()
+        val finalErrors = mutableMapOf<String, List<TestError>>()
+        val recoveredTests = mutableMapOf<String, RecoveredTest>()
         var lastPassFailedTestIds: Set<String> = emptySet()
         var lastErrorTestCount = 0
         var lastMismatchedTestCount = 0
@@ -521,9 +531,22 @@ internal object TestDataManagerRunner {
             // Capture failed test IDs from this pass (will keep the last pass's value)
             lastPassFailedTestIds = errorTests
 
-            // Aggregate problems and errors from this pass
-            aggregatedProblems.addAll(fileTrackingListener.getTestDataProblems())
-            aggregatedErrors.addAll(fileTrackingListener.getTestErrors())
+            // Replace the results of the tests re-run in this pass
+            val executedTests = fileTrackingListener.getExecutedTests()
+            val passProblems = fileTrackingListener.getTestDataProblems()
+            val passErrors = fileTrackingListener.getTestErrors()
+            for (testId in executedTests) {
+                if (testId in passProblems || testId in passErrors) continue
+                val earlierProblems = finalProblems[testId].orEmpty()
+                val earlierErrors = finalErrors[testId].orEmpty()
+                val testName = earlierProblems.firstOrNull()?.testName ?: earlierErrors.firstOrNull()?.testName ?: continue
+                recoveredTests[testId] = RecoveredTest(testName, pass, earlierProblems, earlierErrors)
+            }
+
+            finalProblems.keys.removeAll(executedTests)
+            finalErrors.keys.removeAll(executedTests)
+            finalProblems.putAll(fileTrackingListener.getTestDataProblems())
+            finalErrors.putAll(fileTrackingListener.getTestErrors())
 
             val errorTestCount = errorTests.size
             val mismatchedTestCount = mismatchesByPath.size
@@ -531,7 +554,13 @@ internal object TestDataManagerRunner {
 
             if (lastErrorTestCount == errorTestCount && lastMismatchedTestCount == mismatchedTestCount) {
                 println("  Convergence reached.")
-                return RunResult(aggregatedProblems, aggregatedErrors, lastPassFailedTestIds, testExecutions)
+                return RunResult(
+                    problems = finalProblems.values.flatten().toSet(),
+                    errors = finalErrors.values.flatten().toSet(),
+                    finalPassFailedTestIds = lastPassFailedTestIds,
+                    testExecutions = testExecutions,
+                    recoveredTests = recoveredTests.values,
+                )
             } else {
                 lastErrorTestCount = errorTestCount
                 lastMismatchedTestCount = mismatchedTestCount
@@ -546,7 +575,13 @@ internal object TestDataManagerRunner {
             testIdsToExecute = lastPassFailedTestIds
         }
 
-        return RunResult(aggregatedProblems, aggregatedErrors, lastPassFailedTestIds, testExecutions)
+        return RunResult(
+            problems = finalProblems.values.flatten().toSet(),
+            errors = finalErrors.values.flatten().toSet(),
+            finalPassFailedTestIds = lastPassFailedTestIds,
+            testExecutions = testExecutions,
+            recoveredTests = recoveredTests.values,
+        )
     }
 
     private fun printSummary(
@@ -595,6 +630,21 @@ internal object TestDataManagerRunner {
             println("\nAll tests passed!")
         }
     }
+
+    /**
+     * Lists the tests that passed only on a re-run, with what they failed with before: they don't fail the run, but may
+     * be flaky.
+     */
+    private fun printRecoveredTests(recoveredTests: List<RecoveredTest>) {
+        if (recoveredTests.isEmpty()) return
+        println("\n=== Passed only on a re-run (${recoveredTests.size} tests) ===")
+        for (test in recoveredTests.sortedBy { it.testName }) {
+            println("${test.testName} (pass ${test.passedInPass}) - ${test.failureSummary}")
+        }
+    }
+
+    private val RecoveredTest.failureSummary: String
+        get() = errors.firstOrNull()?.exception ?: problems.first().let { "${it.kind} ${it.file.displayPath}" }
 
     /** The path relative to the repository root when it is inside, for shorter output. */
     private val Path.displayPath: String
