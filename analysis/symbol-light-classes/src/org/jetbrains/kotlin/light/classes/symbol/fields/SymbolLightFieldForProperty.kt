@@ -111,7 +111,7 @@ internal class SymbolLightFieldForProperty private constructor(
     private val _name: String by lazyPub {
         withPropertySymbol { symbol ->
             val propertyName = symbol.name
-            if (symbol.isJvmField) {
+            if (symbol.hasPublicApiField) {
                 return@withPropertySymbol propertyName.asString()
             }
 
@@ -134,10 +134,10 @@ internal class SymbolLightFieldForProperty private constructor(
      *
      * `RenameFieldsLowering` lets public API fields claim their names first, then static fields, and then instance fields, and it renames a
      * field whose name is already claimed:
-     * - A `@JvmField` field keeps its name, so it isn't checked here.
-     * - The static field of a companion object or companion block property is renamed if a `@JvmField` instance field or an enum
-     *   entry has the same name. Neither of them is delegated, so the `$delegate` field of a delegated property never clashes with
-     *   them.
+     * - A public API field, see [hasPublicApiField], keeps its name, so it isn't checked here.
+     * - The static field of a companion object or companion block property is renamed if a public API instance field, such as a `@JvmField`
+     *   or `lateinit` one, or an enum entry has the same name. Neither of them is delegated, so the `$delegate` field of a delegated
+     *   property never clashes with them.
      * - An instance field is renamed if a static field has the same name, see [hasFieldWithSameName].
      *
      * [isDelegated] tells whether this property is delegated, which gives its field the `$delegate` suffix.
@@ -150,7 +150,7 @@ internal class SymbolLightFieldForProperty private constructor(
                 classSymbol.declaredMemberScope
                     .callables(propertyName)
                     .filterIsInstance<KaPropertySymbol>()
-                    .any(KaPropertySymbol::isJvmField) ||
+                    .any(KaPropertySymbol::hasPublicApiField) ||
                         (containingClass.isEnum &&
                                 classSymbol.staticDeclaredMemberScope
                                     .callables(propertyName)
@@ -316,4 +316,13 @@ private val KaPropertySymbol.fieldVisibility: KaSymbolVisibility
     get() = when {
         visibility == KaSymbolVisibility.PRIVATE || !canHaveNonPrivateField -> KaSymbolVisibility.PRIVATE
         else -> (setter ?: this).visibility
+    }
+
+/**
+ * Whether the field of this property is public API, i.e., public or protected, so the JVM backend keeps its name on a clash.
+ */
+private val KaPropertySymbol.hasPublicApiField: Boolean
+    get() = when (fieldVisibility) {
+        KaSymbolVisibility.PUBLIC, KaSymbolVisibility.PROTECTED -> true
+        else -> false
     }

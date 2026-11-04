@@ -6,19 +6,19 @@ public class Regular /* one.Regular*/ {
 
   private static final int internalSetter = 0 /* initializer type: int */;
 
-  private static final int internalStaticJvmField = 0 /* initializer type: int */;
+  private static final int internalStaticJvmField$1 = 0 /* initializer type: int */;
 
-  private static final int protectedLateinit = 0 /* initializer type: int */;
+  private static final int protectedLateinit$1 = 0 /* initializer type: int */;
 
-  private static final int publicLateinit = 0 /* initializer type: int */;
+  private static final int publicLateinit$1 = 0 /* initializer type: int */;
 
-  protected @org.jetbrains.annotations.NotNull() java.lang.String protectedLateinit$1;
+  protected @org.jetbrains.annotations.NotNull() java.lang.String protectedLateinit;
 
   public @org.jetbrains.annotations.NotNull() java.lang.String internalSetter$1;
 
-  public @org.jetbrains.annotations.NotNull() java.lang.String internalStaticJvmField$1;
+  public @org.jetbrains.annotations.NotNull() java.lang.String internalStaticJvmField;
 
-  public @org.jetbrains.annotations.NotNull() java.lang.String publicLateinit$1;
+  public @org.jetbrains.annotations.NotNull() java.lang.String publicLateinit;
 
   @org.jetbrains.annotations.NotNull()
   protected final @org.jetbrains.annotations.NotNull() java.lang.String getProtectedLateinit();//  getProtectedLateinit()

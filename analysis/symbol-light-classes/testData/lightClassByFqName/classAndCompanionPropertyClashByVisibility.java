@@ -1,29 +1,29 @@
 public class KotlinClass /* fields.KotlinClass*/ {
   @kotlin.jvm.JvmField()
   @org.jetbrains.annotations.NotNull()
-  public final @org.jetbrains.annotations.NotNull() java.lang.String internalJvmField = "4" /* initializer type: java.lang.String */;
+  public final @org.jetbrains.annotations.NotNull() java.lang.String internalJvmField$1 = "4" /* initializer type: java.lang.String */;
 
   @kotlin.jvm.JvmField()
-  public static final int internalStaticJvmField = 0 /* initializer type: int */;
+  public static final int internalStaticJvmField$1 = 0 /* initializer type: int */;
 
   @org.jetbrains.annotations.NotNull()
   public static final @org.jetbrains.annotations.NotNull() fields.KotlinClass.Companion Companion;
 
-  private static final int internalJvmField$1 = 0 /* initializer type: int */;
+  private static final int internalJvmField = 0 /* initializer type: int */;
 
   private static final int internalSetter = 0 /* initializer type: int */;
 
-  private static final int protectedLateinit = 0 /* initializer type: int */;
+  private static final int protectedLateinit$1 = 0 /* initializer type: int */;
 
-  private static final int publicLateinit = 0 /* initializer type: int */;
+  private static final int publicLateinit$1 = 0 /* initializer type: int */;
 
-  protected @org.jetbrains.annotations.NotNull() java.lang.String protectedLateinit$1;
+  protected @org.jetbrains.annotations.NotNull() java.lang.String protectedLateinit;
 
   public @org.jetbrains.annotations.NotNull() java.lang.String internalSetter$1;
 
-  public @org.jetbrains.annotations.NotNull() java.lang.String internalStaticJvmField$1;
+  public @org.jetbrains.annotations.NotNull() java.lang.String internalStaticJvmField;
 
-  public @org.jetbrains.annotations.NotNull() java.lang.String publicLateinit$1;
+  public @org.jetbrains.annotations.NotNull() java.lang.String publicLateinit;
 
   @org.jetbrains.annotations.NotNull()
   protected final @org.jetbrains.annotations.NotNull() java.lang.String getProtectedLateinit();//  getProtectedLateinit()
