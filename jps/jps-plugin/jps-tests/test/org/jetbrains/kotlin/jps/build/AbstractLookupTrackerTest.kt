@@ -86,8 +86,6 @@ abstract class AbstractJvmLookupTrackerTest : AbstractLookupTrackerTest() {
             disableDefaultScriptingPlugin = true
             buildFile = moduleFile.canonicalPath
             reportOutputFiles = true
-            @Suppress("DEPRECATION")
-            useFirLT = false
         }
         val argsArray = ArgumentUtils.convertArgumentsToStringList(args).toTypedArray()
 
