@@ -468,6 +468,10 @@ internal fun createAndAddField(
     result += field
 }
 
+/**
+ * Creates the light field for the backing field of [declaration], or returns `null` if the property has no backing field or its
+ * backing field is `@JvmSynthetic`, which Java code can't access.
+ */
 internal fun createField(
     lightClass: SymbolLightClassBase,
     declaration: KaPropertySymbol,
@@ -477,9 +481,11 @@ internal fun createField(
     ProgressManager.checkCanceled()
 
     if (declaration.name.isSpecial) return null
-    if (!hasBackingField(declaration)) return null
 
     val backingFieldSymbol = declaration.backingFieldSymbol ?: return null
+    if (backingFieldSymbol.hasJvmSyntheticAnnotation()) return null
+    if (!hasBackingField(declaration)) return null
+
     val fieldName = nameGenerator.generateUniqueFieldName(declaration.name.asString())
     return SymbolLightFieldForProperty(
         propertySymbol = declaration,
@@ -491,6 +497,10 @@ internal fun createField(
     )
 }
 
+/**
+ * Whether [property] has a backing field in the class file. A `@JvmSynthetic` backing field counts, although it gets no light field,
+ * see [createField].
+ */
 private fun hasBackingField(property: KaPropertySymbol): Boolean {
     // Backing field for KaSyntheticJavaPropertySymbol is always `null`.
     // Thus, there is no point in proceeding further as `SymbolLightFieldForProperty` expects a non-null backing field pointer.
@@ -512,10 +522,7 @@ private fun hasBackingField(property: KaPropertySymbol): Boolean {
         return hasBackingFieldByPsi
     }
 
-    if (property.isExpect ||
-        property.modality == KaSymbolModality.ABSTRACT ||
-        property.backingFieldSymbol?.hasJvmSyntheticAnnotation() == true
-    ) return false
+    if (property.isExpect || property.modality == KaSymbolModality.ABSTRACT) return false
 
     return hasBackingFieldByPsi ?: property.hasBackingField
 }

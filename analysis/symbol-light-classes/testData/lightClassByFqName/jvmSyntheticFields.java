@@ -1,10 +1,4 @@
 public final class Fields /* one.Fields*/ {
-  @kotlin.jvm.JvmSynthetic()
-  private final int constructorProperty;
-
-  @kotlin.jvm.JvmSynthetic()
-  public @org.jetbrains.annotations.NotNull() java.lang.String lateinitProperty;
-
   @org.jetbrains.annotations.NotNull()
   public final @org.jetbrains.annotations.NotNull() java.lang.String getLateinitProperty();//  getLateinitProperty()
 
