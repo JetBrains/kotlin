@@ -51,6 +51,14 @@ private val cachePlatformLibsSemaphore = gradle.sharedServices.registerIfAbsent(
     }
 }
 
+val runtimeStdlibFiles = configurations.dependencyScope("runtimeStdlibFiles")
+val runtimeStdlibFilesClasspath = configurations.resolvable("runtimeStdlibFilesClasspath") {
+    extendsFrom(runtimeStdlibFiles)
+}
+dependencies {
+    add(runtimeStdlibFiles.name, project(":kotlin-native:runtime", configuration = "nativeStdlib"))
+}
+
 // endregion
 
 if (HostManager.host == KonanTarget.MACOS_ARM64) {
@@ -160,7 +168,7 @@ enabledTargets(platformManager).forEach { target ->
                     inputs.dir(dist.map { it.stdlibCache(targetName, withOptimizations) }) // manually depend on the contents of stdlib cache
 
                     // Explicitly depend on stdlib Sync task to pass the stdlib as the explicit CLI dependency to the compiler.
-                    klibFiles.from(project(":kotlin-native:runtime").tasks.named<Sync>("nativeStdlib").map { it.destinationDir })
+                    klibFiles.from(runtimeStdlibFilesClasspath)
 
                     // Also, all the depended upon platform libs must have installed their klibs and caches into the native distribution above.
                     df.config.depends.forEach { dep ->
