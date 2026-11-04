@@ -32,8 +32,6 @@ dependencies {
     compileOnly(project(":compiler:cli"))
     compileOnly(project(":compiler:backend"))
     compileOnly(project(":compiler:backend.jvm"))
-    compileOnly(project(":compiler:frontend"))
-    compileOnly(project(":compiler:frontend.java"))
     compileOnly(project(":compiler:plugin-api"))
     compileOnly(project(":core:descriptors"))
     compileOnly(project(":compiler:backend.common.jvm"))

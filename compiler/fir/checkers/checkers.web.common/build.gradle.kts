@@ -9,12 +9,7 @@ plugins {
 dependencies {
     api(project(":compiler:fir:checkers:checkers.common"))
     implementation(project(":core:compiler.common.web"))
-
-    /*
-     * We can't remove this dependency until we use
-     *   diagnostics framework from FE 1.0
-     */
-    implementation(project(":compiler:frontend"))
+    implementation(project(":compiler:frontend.common-psi"))
     implementation(project(":compiler:psi:psi-api"))
 
     compileOnly(intellijCore())

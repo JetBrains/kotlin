@@ -52,7 +52,6 @@ dependencies {
     testFixturesApi(testFixtures(project(":kotlin-util-klib")))
     testFixturesApi(testFixtures(project(":compiler:ir.backend.common")))
 
-    testCompileOnly(project(":compiler:frontend"))
     testCompileOnly(project(":compiler:cli"))
     testCompileOnly(project(":compiler:cli-js"))
     testCompileOnly(project(":compiler:util"))
@@ -68,7 +67,6 @@ dependencies {
     testFixturesApi(testFixtures(project(":generators:test-generator")))
 
     testFixturesApi(intellijCore())
-    testFixturesApi(project(":compiler:frontend"))
     testFixturesApi(project(":compiler:cli"))
     testFixturesApi(project(":compiler:util"))
 

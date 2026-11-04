@@ -11,7 +11,6 @@ dependencies {
     compileOnly(project(":core:descriptors"))
 
     compileOnly(project(":compiler:config.jvm"))
-    compileOnly(project(":compiler:frontend"))
     compileOnly(project(":core:deserialization"))
     compileOnly(project(":core:compiler.common.native"))
     compileOnly(project(":compiler:serialization"))

@@ -14,7 +14,6 @@ dependencies {
     api(project(":compiler:ir.serialization.common"))
 
     implementation(project(":compiler:ir.backend.common"))
-    implementation(project(":compiler:frontend"))
     implementation(project(":compiler:frontend.common-psi"))
     implementation(project(":compiler:psi:psi-api"))
     implementation(project(":compiler:serialization"))
