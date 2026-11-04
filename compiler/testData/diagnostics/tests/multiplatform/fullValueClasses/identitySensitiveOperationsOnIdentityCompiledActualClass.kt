@@ -19,7 +19,7 @@ abstract value class IdentityCompiled
 // FILE: common.kt
 expect abstract value class Base()
 
-value class Sub(val x: Int) : Base()
+value class Sub(val x: Int) : <!VALUE_CLASS_EXTENDS_VALUE_CLASS_COMPILED_AS_IDENTITY_CLASS!>Base<!>()
 
 fun commonUse(base: Base, sub: Sub) {
     System.identityHashCode(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE, IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE{METADATA}!>base<!>)

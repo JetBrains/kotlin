@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.load.kotlin.isValueClassCompiledAsIdentityClass
  * A Kotlin value class compiled without Valhalla value classes is an identity class in its class file. A Valhalla value class can't extend
  * it, so a value class extending it is compiled as an identity class too, with a warning.
  */
-object FirJvmValueClassIdentitySupertypeChecker : FirRegularClassChecker(MppCheckerKind.Common) {
+object FirJvmValueClassIdentitySupertypeChecker : FirRegularClassChecker(MppCheckerKind.Platform) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirRegularClass) {
         if (!declaration.symbol.isFullValueClass || !context.languageVersionSettings.isValhallaSupportEnabled()) return

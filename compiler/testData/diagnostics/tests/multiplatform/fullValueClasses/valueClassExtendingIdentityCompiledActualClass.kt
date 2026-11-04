@@ -19,7 +19,7 @@ abstract value class IdentityCompiled
 // FILE: common.kt
 expect abstract value class Base()
 
-value class Sub(val x: Int) : Base()
+value class Sub(val x: Int) : <!VALUE_CLASS_EXTENDS_VALUE_CLASS_COMPILED_AS_IDENTITY_CLASS!>Base<!>()
 
 // MODULE: m2-jvm(lib)()(m1-common)
 // LANGUAGE: +FullValueClasses
