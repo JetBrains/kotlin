@@ -1,7 +1,6 @@
 // ISSUE: KT-91139
 // DONT_TARGET_EXACT_BACKEND: JVM
 // LANGUAGE: -IrRichCallableReferencesInKlibs
-// IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_FIRST_STAGE: ANY:1.9,2.0,2.1,2.2,2.3
 // Compilers up to 2.4.10 which do not write rich callable references to KLIBs store a suspend conversion of a
 // function-typed expression as a block with the legacy SUSPEND_CONVERSION origin, renamed to
 // FUNCTION_TYPE_EXPRESSION_CONVERSION in 2.4.20. A consumer which doesn't recognize the legacy name lowers the block as
