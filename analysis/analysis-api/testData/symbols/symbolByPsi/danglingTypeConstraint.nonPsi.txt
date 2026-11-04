@@ -323,6 +323,44 @@ KaNamedClassSymbol:
   deprecation: null
   importableFqName: Anno
 
+KaNamedClassSymbol:
+  anchorPsi: KtClass
+  annotations: [
+    kotlin/annotation/Target(allowedTargets = [kotlin.annotation.AnnotationTarget.TYPE_PARAMETER])
+      psi: KtAnnotationEntry
+  ]
+  classId: Declared
+  classKind: ANNOTATION_CLASS
+  companionObject: null
+  contextReceivers: []
+  isActual: false
+  isData: false
+  isExpect: false
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: false
+  isValue: false
+  location: TOP_LEVEL
+  modality: FINAL
+  name: Declared
+  origin: SOURCE
+  psi: KtClass
+  realPsi: KtClass
+  superTypes: [
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Annotation
+  ]
+  typeParameters: []
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(danglingTypeConstraint.kt)
+  getContainingModule: KaSourceModule "Sources of main"
+  applicableAnnotationTargets: [TYPE_PARAMETER]
+  deprecation: null
+  importableFqName: Declared
+
 KaTypeParameterSymbol:
   anchorPsi: KtTypeParameter
   annotations: [
@@ -562,3 +600,269 @@ KaNamedFunctionSymbol:
   returnValueStatus: Unspecified
   javaMethodName: annotated
   importableFqName: annotated
+
+KaTypeParameterSymbol:
+  anchorPsi: KtTypeParameter
+  annotations: [
+    Declared()
+      psi: KtAnnotationEntry
+    Anno()
+      psi: KtAnnotationEntry
+  ]
+  isActual: false
+  isExpect: false
+  isExternal: false
+  isReified: false
+  location: LOCAL
+  modality: FINAL
+  name: T
+  origin: SOURCE
+  psi: KtTypeParameter
+  realPsi: KtTypeParameter
+  upperBounds: [
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Any
+  ]
+  variance: INVARIANT
+  visibility: LOCAL
+  getContainingFileSymbol: KaFileSymbol(danglingTypeConstraint.kt)
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecation: null
+  importableFqName: null
+
+KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
+  annotations: []
+  callableId: /annotatedDeclaration
+  contextParameters: []
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isCompanion: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  isTailRec: false
+  location: TOP_LEVEL
+  modality: FINAL
+  name: annotatedDeclaration
+  origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Unit
+  typeParameters: [
+    KaTypeParameterSymbol:
+      anchorPsi: KtTypeParameter
+      annotations: [
+        Declared()
+          psi: KtAnnotationEntry
+        Anno()
+          psi: KtAnnotationEntry
+      ]
+      isActual: false
+      isExpect: false
+      isExternal: false
+      isReified: false
+      location: LOCAL
+      modality: FINAL
+      name: T
+      origin: SOURCE
+      psi: KtTypeParameter
+      realPsi: KtTypeParameter
+      upperBounds: [
+        KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: kotlin/Any
+      ]
+      variance: INVARIANT
+      visibility: LOCAL
+      getContainingFileSymbol: KaFileSymbol(danglingTypeConstraint.kt)
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecation: null
+      importableFqName: null
+  ]
+  valueParameters: [
+    KaValueParameterSymbol:
+      anchorPsi: KtParameter
+      annotations: []
+      callableId: null
+      contextParameters: []
+      contextReceivers: []
+      hasDeclaredDefaultValue: false
+      hasDefaultValue: false
+      isActual: false
+      isCompanion: false
+      isCrossinline: false
+      isDelegated: false
+      isExpect: false
+      isExtension: false
+      isExternal: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVal: true
+      isVararg: false
+      location: LOCAL
+      modality: FINAL
+      name: t
+      origin: SOURCE
+      primaryConstructorProperty: null
+      psi: KtParameter
+      realPsi: KtParameter
+      receiverParameter: null
+      returnType: KaTypeParameterType:
+        annotations: []
+        type: T
+      typeParameters: []
+      visibility: PUBLIC
+      getContainingFileSymbol: KaFileSymbol(danglingTypeConstraint.kt)
+      getContainingJvmClassName: DanglingTypeConstraintKt
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecation: null
+      importableFqName: null
+  ]
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(danglingTypeConstraint.kt)
+  getContainingJvmClassName: DanglingTypeConstraintKt
+  canBeOperator: false
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecation: null
+  returnValueStatus: Unspecified
+  javaMethodName: annotatedDeclaration
+  importableFqName: annotatedDeclaration
+
+KaTypeParameterSymbol:
+  anchorPsi: KtTypeParameter
+  annotations: [
+    Declared()
+      psi: KtAnnotationEntry
+    Anno()
+      psi: KtAnnotationEntry
+  ]
+  isActual: false
+  isExpect: false
+  isExternal: false
+  isReified: false
+  location: CLASS
+  modality: FINAL
+  name: T
+  origin: SOURCE
+  psi: KtTypeParameter
+  realPsi: KtTypeParameter
+  upperBounds: [
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Any
+  ]
+  variance: INVARIANT
+  visibility: LOCAL
+  getContainingFileSymbol: KaFileSymbol(danglingTypeConstraint.kt)
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecation: null
+  importableFqName: null
+
+KaNamedClassSymbol:
+  anchorPsi: KtClass
+  annotations: []
+  classId: AnnotatedClass
+  classKind: CLASS
+  companionObject: null
+  contextReceivers: []
+  isActual: false
+  isData: false
+  isExpect: false
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: false
+  isValue: false
+  location: TOP_LEVEL
+  modality: FINAL
+  name: AnnotatedClass
+  origin: SOURCE
+  psi: KtClass
+  realPsi: KtClass
+  superTypes: [
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Any
+  ]
+  typeParameters: [
+    KaTypeParameterSymbol:
+      anchorPsi: KtTypeParameter
+      annotations: [
+        Declared()
+          psi: KtAnnotationEntry
+        Anno()
+          psi: KtAnnotationEntry
+      ]
+      isActual: false
+      isExpect: false
+      isExternal: false
+      isReified: false
+      location: CLASS
+      modality: FINAL
+      name: T
+      origin: SOURCE
+      psi: KtTypeParameter
+      realPsi: KtTypeParameter
+      upperBounds: [
+        KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: kotlin/Any
+      ]
+      variance: INVARIANT
+      visibility: LOCAL
+      getContainingFileSymbol: KaFileSymbol(danglingTypeConstraint.kt)
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecation: null
+      importableFqName: null
+    KaTypeParameterSymbol:
+      anchorPsi: KtNameReferenceExpression
+      annotations: []
+      isActual: false
+      isExpect: false
+      isExternal: false
+      isReified: false
+      location: CLASS
+      modality: FINAL
+      name: AA
+      origin: SOURCE_MEMBER_GENERATED
+      psi: KtNameReferenceExpression
+      realPsi: null
+      upperBounds: [
+        KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: kotlin/Any
+      ]
+      variance: INVARIANT
+      visibility: LOCAL
+      getContainingFileSymbol: KaFileSymbol(danglingTypeConstraint.kt)
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecation: null
+      importableFqName: null
+  ]
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(danglingTypeConstraint.kt)
+  getContainingModule: KaSourceModule "Sources of main"
+  applicableAnnotationTargets: null
+  deprecation: null
+  importableFqName: AnnotatedClass
