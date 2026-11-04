@@ -1,4 +1,7 @@
 compiler/testData/cli/jvm/Xjsr305/jsr305Usage.kt:2:11: warning: Java type mismatch: inferred type is 'Nothing?', but 'String' was expected.
-    a.foo(null)
-          ^^^^
+In source code:
+ --> $TESTDATA_DIR$/jsr305Usage.kt
+  |
+2 |     a.foo(null)
+  |           ^^^^
 OK

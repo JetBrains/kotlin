@@ -1,7 +1,13 @@
 compiler/testData/cli/jvm/globalWarningSuppression.kt:3:16: error: [REDUNDANT_PROJECTION] Projection is redundant: the corresponding type parameter of 'Out<out Int>' has the same variance.
-fun foo(x: Out<out Int>): Out<String> {
-               ^^^
+In source code:
+ --> $TESTDATA_DIR$/globalWarningSuppression.kt
+  |
+3 | fun foo(x: Out<out Int>): Out<String> {
+  |                ^^^
 compiler/testData/cli/jvm/globalWarningSuppression.kt:7:16: error: [CONFLICTING_PROJECTION] Projection conflicts with variance of the corresponding type parameter of 'Out<in Int>'. Remove the projection or replace it with '*'.
-fun bar(x: Out<in Int>) {}
-               ^^
+In source code:
+ --> $TESTDATA_DIR$/globalWarningSuppression.kt
+  |
+7 | fun bar(x: Out<in Int>) {}
+  |                ^^
 COMPILATION_ERROR

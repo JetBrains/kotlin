@@ -1,41 +1,65 @@
 compiler/testData/cli/jvm/diagnosticTests/signatureClash.kt:6:5: error: accidental override: The following declarations have the same JVM signature (getX()I):
-    fun `<get-x>`(): Int defined in A
-    fun getX(): Int defined in A
-    fun getX() = 1
-    ^^^^^^^^^^
+fun `<get-x>`(): Int defined in A
+fun getX(): Int defined in A
+In source code:
+ --> $TESTDATA_DIR$/signatureClash.kt
+  |
+6 |     fun getX() = 1
+  |     ^^^^^^^^^^
 compiler/testData/cli/jvm/diagnosticTests/signatureClash.kt:8:5: error: platform declaration clash: The following declarations have the same JVM signature (getA()I):
-    fun `<get-a>`(): Int defined in A
-    fun getA(): Int defined in A
-    fun getA(): Int = 1
-    ^^^^^^^^^^^^^^^
+fun `<get-a>`(): Int defined in A
+fun getA(): Int defined in A
+In source code:
+ --> $TESTDATA_DIR$/signatureClash.kt
+  |
+8 |     fun getA(): Int = 1
+  |     ^^^^^^^^^^^^^^^
 compiler/testData/cli/jvm/diagnosticTests/signatureClash.kt:9:5: error: platform declaration clash: The following declarations have the same JVM signature (getA()I):
-    fun `<get-a>`(): Int defined in A
-    fun getA(): Int defined in A
-    val a: Int = 1
-    ^^^^^^^^^^
+fun `<get-a>`(): Int defined in A
+fun getA(): Int defined in A
+In source code:
+ --> $TESTDATA_DIR$/signatureClash.kt
+  |
+9 |     val a: Int = 1
+  |     ^^^^^^^^^^
 compiler/testData/cli/jvm/diagnosticTests/signatureClash.kt:12:1: error: platform declaration clash: The following declarations have the same JVM signature (getB()I):
-    fun `<get-b>`(): Int defined in root package
-    fun getB(): Int defined in root package
-fun getB(): Int = 1
-^^^^^^^^^^^^^^^
+fun `<get-b>`(): Int defined in root package
+fun getB(): Int defined in root package
+In source code:
+  --> $TESTDATA_DIR$/signatureClash.kt
+   |
+12 | fun getB(): Int = 1
+   | ^^^^^^^^^^^^^^^
 compiler/testData/cli/jvm/diagnosticTests/signatureClash.kt:13:1: error: platform declaration clash: The following declarations have the same JVM signature (getB()I):
-    fun `<get-b>`(): Int defined in root package
-    fun getB(): Int defined in root package
-val b: Int = 1
-^^^^^^^^^^
+fun `<get-b>`(): Int defined in root package
+fun getB(): Int defined in root package
+In source code:
+  --> $TESTDATA_DIR$/signatureClash.kt
+   |
+13 | val b: Int = 1
+   | ^^^^^^^^^^
 compiler/testData/cli/jvm/diagnosticTests/signatureClash.kt:20:5: error: accidental override: The following declarations have the same JVM signature (getTr()I):
-    fun `<get-tr>`(): Int defined in SubTr
-    fun getTr(): Int defined in SubTr
-    val tr = 1
-    ^^^^^^
+fun `<get-tr>`(): Int defined in SubTr
+fun getTr(): Int defined in SubTr
+In source code:
+  --> $TESTDATA_DIR$/signatureClash.kt
+   |
+20 |     val tr = 1
+   |     ^^^^^^
 compiler/testData/cli/jvm/diagnosticTests/signatureClash.kt:24:1: error: platform declaration clash: The following declarations have the same JVM signature (access$f(LC;)V):
-    fun `access$f`(`$this`: C): Unit defined in C
-    fun `access$f`(c: C): Unit defined in C
-class C {
-^
+fun `access$f`(`$this`: C): Unit defined in C
+fun `access$f`(c: C): Unit defined in C
+In source code:
+  --> $TESTDATA_DIR$/signatureClash.kt
+   |
+24 | class C {
+   | ^
 compiler/testData/cli/jvm/diagnosticTests/signatureClash.kt:26:5: error: platform declaration clash: The following declarations have the same JVM signature (access$f(LC;)V):
-    fun `access$f`(`$this`: C): Unit defined in C
-    fun `access$f`(c: C): Unit defined in C
-    fun `access$f`(c: C) {}
-    ^^^^^^^^^^^^^^^^^^^^
+fun `access$f`(`$this`: C): Unit defined in C
+fun `access$f`(c: C): Unit defined in C
+In source code:
+  --> $TESTDATA_DIR$/signatureClash.kt
+   |
+26 |     fun `access$f`(c: C) {}
+   |     ^^^^^^^^^^^^^^^^^^^^
 COMPILATION_ERROR

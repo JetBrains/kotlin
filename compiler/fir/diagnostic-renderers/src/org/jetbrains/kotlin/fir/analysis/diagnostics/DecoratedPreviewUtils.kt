@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.partitionNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.popLast
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
-internal data class LogicalLocation(
+data class LogicalLocation(
     val packageName: String,
     val moduleName: Name,
 )
@@ -107,7 +107,7 @@ internal fun Iterable<FirBasedSymbol<*>>.groupIntoLogicalLocations(): List<Logic
         LogicalLocationNode(location, completeSymbols.groupIntoFileNodes(), incompleteSymbols.groupIntoSymbolNodes())
     }
 
-internal data class RenderedLineWithNumber(
+data class RenderedLineWithNumber(
     val number: Int?,
     val indent: Int,
     val renderedLine: String,
@@ -155,10 +155,10 @@ internal inline fun Iterable<FirBasedSymbol<*>>.renderWithLocationInGroups(rende
     groupIntoLogicalLocations()
         .flatMap { location ->
             val blocksForComplete = location.completeSymbols.map {
-                decorateCompleteLocation(location.location, it, render)
+                renderSymbolsWithLocation(location.location, it.filePath, it.symbols, render)
             }
             val blockForIncomplete = runIf(location.incompleteSymbols.isNotEmpty()) {
-                decorateIncompleteLocation(location.location, location.incompleteSymbols, render)
+                renderSymbolsWithLocation(location.location, filePath = null, location.incompleteSymbols, render)
             }
             blocksForComplete + listOfNotNull(blockForIncomplete)
         }
@@ -168,60 +168,45 @@ internal inline fun FirBasedSymbol<*>.renderWithLocation(render: (FirBasedSymbol
     val logicalLocation = toLogicalLocation()
     val node = listOf(this).groupIntoSymbolNodes()
     return when (val physicalLocation = toPhysicalLocation()) {
-        null -> decorateIncompleteLocation(logicalLocation, node, render)
-        else -> decorateCompleteLocation(logicalLocation, FileNode(physicalLocation.filePath, node), render)
+        null -> renderSymbolsWithLocation(logicalLocation, filePath = null, node, render)
+        else -> renderSymbolsWithLocation(logicalLocation, physicalLocation.filePath, node, render)
     }
 }
 
-internal inline fun decorateCompleteLocation(
+internal inline fun renderSymbolsWithLocation(
     logicalLocation: LogicalLocation,
-    fileNode: FileNode,
-    render: (FirBasedSymbol<*>) -> String,
-): String {
-    val renderedLines = fileNode.symbols.flatMap { it.renderToLinesWithNumber(render) }
-
-    val longestNumberString = renderedLines.mapNotNull { it.number?.toString() }.maxByOrNull { it.length } ?: ""
-    val indentString = " ".repeat(longestNumberString.length)
-    val fileLine = "$indentString--> ${fileNode.filePath}"
-
-    return renderLocationDecorationContents(
-        logicalLocation, fileLine,
-        renderedLines = renderedLines,
-    )
-}
-
-internal inline fun decorateIncompleteLocation(
-    logicalLocation: LogicalLocation,
+    filePath: String?,
     symbols: Collection<SymbolNode>,
     render: (FirBasedSymbol<*>) -> String,
-): String = renderLocationDecorationContents(
-    logicalLocation, fileLine = null,
+): String = renderLocationDecoration(
+    header = DecorationHeader.Candidates(logicalLocation, filePath),
     renderedLines = symbols.flatMap { symbol -> symbol.renderToLinesWithNumber(render) }
+        .interleaveWith { previous, next ->
+            when {
+                previous.number != null && previous.number + 1 == next.number -> null
+                else -> RenderedLineWithNumber(number = null, indent = maxOf(previous.indent, next.indent), renderedLine = "...")
+            }
+        },
+    padding = DecorationPadding.FULL_PADDING,
 )
 
-internal fun renderLocationDecorationContents(
-    logicalLocation: LogicalLocation,
-    fileLine: String?,
+fun renderLocationDecoration(
+    header: DecorationHeader,
     renderedLines: List<RenderedLineWithNumber>,
+    padding: DecorationPadding = DecorationPadding.FULL_PADDING,
 ): String {
     val longestNumberString = renderedLines.mapNotNull { it.number?.toString() }.maxByOrNull { it.length } ?: ""
     val indentString = " ".repeat(longestNumberString.length)
 
-    val renderedLinesWithSeparators = renderedLines.interleaveWith { previous, next ->
-        when {
-            previous.number != null && previous.number + 1 == next.number -> null
-            else -> RenderedLineWithNumber(number = null, indent = maxOf(previous.indent, next.indent), renderedLine = "...")
-        }
-    }
-    val paddedRenderedLines = renderedLinesWithSeparators.joinToString("\n") {
+    val paddedRenderedLines = renderedLines.joinToString("\n") {
         val numberString = it.number?.toString()?.padStart(indentString.length, ' ') ?: indentString
         "$numberString | " + "    ".repeat(it.indent) + it.renderedLine
     }
 
-    return renderLocationDecoration(logicalLocation, fileLine, indentString, paddedRenderedLines)
+    return renderLocationDecoration(header, indentString, paddedRenderedLines, padding)
 }
 
-private inline fun <T> List<T>.interleaveWith(produceInterleave: (T, T) -> T?): Collection<T> {
+private inline fun <T> List<T>.interleaveWith(produceInterleave: (T, T) -> T?): List<T> {
     if (size <= 1) return this
 
     return buildList {
@@ -234,15 +219,31 @@ private inline fun <T> List<T>.interleaveWith(produceInterleave: (T, T) -> T?): 
     }
 }
 
+sealed class DecorationHeader {
+    abstract val filePath: String?
+
+    data class Candidates(val logicalLocation: LogicalLocation, override val filePath: String?) : DecorationHeader()
+    data class VerbatimSource(override val filePath: String) : DecorationHeader()
+}
+
+enum class DecorationPadding(val padTop: Boolean, val padBottom: Boolean) {
+    FULL_PADDING(padTop = true, padBottom = true),
+    TOP_ONLY(padTop = true, padBottom = false),
+}
+
 private fun renderLocationDecoration(
-    logicalLocation: LogicalLocation,
-    fileLine: String?,
+    header: DecorationHeader,
     indentString: String,
     content: String,
+    padding: DecorationPadding = DecorationPadding.FULL_PADDING,
 ): String = listOfNotNull(
-    "In package '${logicalLocation.packageName}' of module '${logicalLocation.moduleName}':",
-    fileLine,
-    "$indentString |",
+    when (header) {
+        is DecorationHeader.Candidates -> header.logicalLocation
+            .let { [packageName, moduleName] -> "In package '$packageName' of module '$moduleName':" }
+        is VerbatimSource -> "In source code:"
+    },
+    header.filePath?.let { "$indentString--> $it" },
+    "$indentString |".takeIf { padding.padTop },
     content,
-    "$indentString |",
+    "$indentString |".takeIf { padding.padBottom },
 ).joinToString("\n")

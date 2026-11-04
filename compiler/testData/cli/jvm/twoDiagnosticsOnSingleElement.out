@@ -10,9 +10,15 @@ In package 'test' of module '<main>':
 8 |     fun foo(): Unit
 9 | }
   |
-class C : I1, I2
-^^^^^^^
+In source code:
+  --> $TESTDATA_DIR$/twoDiagnosticsOnSingleElement.kt
+   |
+11 | class C : I1, I2
+   | ^^^^^^^
 compiler/testData/cli/jvm/twoDiagnosticsOnSingleElement.kt:11:1: error: 'C' inherits conflicting members: 'fun <T> foo(): Unit' defined in 'test.I1', 'fun foo(): Unit' defined in 'test.I2'.
-class C : I1, I2
-^^^^^^^
+In source code:
+  --> $TESTDATA_DIR$/twoDiagnosticsOnSingleElement.kt
+   |
+11 | class C : I1, I2
+   | ^^^^^^^
 COMPILATION_ERROR

@@ -1,4 +1,7 @@
 compiler/testData/cli/jvm/Xjsr305/jsr305Migration.kt:3:19: error: null cannot be a value of a non-null type 'String'.
-    annotated.bar(null)
-                  ^^^^
+In source code:
+ --> $TESTDATA_DIR$/jsr305Migration.kt
+  |
+3 |     annotated.bar(null)
+  |                   ^^^^
 COMPILATION_ERROR

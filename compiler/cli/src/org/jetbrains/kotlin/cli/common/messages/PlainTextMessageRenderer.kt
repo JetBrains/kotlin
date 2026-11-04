@@ -20,6 +20,10 @@ import org.fusesource.jansi.AnsiConsole
 import org.fusesource.jansi.internal.CLibrary
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.isWindows
+import org.jetbrains.kotlin.fir.analysis.diagnostics.DecorationHeader
+import org.jetbrains.kotlin.fir.analysis.diagnostics.DecorationPadding
+import org.jetbrains.kotlin.fir.analysis.diagnostics.RenderedLineWithNumber
+import org.jetbrains.kotlin.fir.analysis.diagnostics.renderLocationDecoration
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeAsciiOnly
 import java.util.*
 
@@ -78,17 +82,22 @@ abstract class PlainTextMessageRenderer @JvmOverloads constructor(private val co
         }
 
         if (lineContent != null && 1 <= column && column <= lineContent.length + 1) {
-            result.append(LINE_SEPARATOR)
-            result.append(lineContent)
-            result.append(LINE_SEPARATOR)
-            result.append(" ".repeat(column - 1))
-            if (lineEnd > line) {
-                result.append("^".repeat(lineContent.length - column + 1))
-            } else if (lineEnd == line && columnEnd > column) {
-                result.append("^".repeat(columnEnd - column))
-            } else {
-                result.append("^")
+            val highlighting = when {
+                lineEnd > line -> "^".repeat(lineContent.length - column + 1)
+                lineEnd == line && columnEnd > column -> "^".repeat(columnEnd - column)
+                else -> "^"
             }
+            val lines = listOf(
+                RenderedLineWithNumber(number = line, 0, lineContent),
+                RenderedLineWithNumber(number = null, 0, " ".repeat(column - 1) + highlighting),
+            )
+            val render = renderLocationDecoration(
+                header = DecorationHeader.VerbatimSource(location.path),
+                renderedLines = lines,
+                padding = DecorationPadding.TOP_ONLY,
+            )
+            result.append(LINE_SEPARATOR)
+            result.append(render)
         }
 
         return result.toString()

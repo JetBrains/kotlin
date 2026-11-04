@@ -4,14 +4,20 @@ In package 'root package' of module '<main>':
   |
 2 | fun a(): List<String>
   |
-fun a(): List<Int> = null!!
-^^^^^^^^^^^^^^^^^^
+In source code:
+ --> $TESTDATA_DIR$/conflictingOverloads.kt
+  |
+1 | fun a(): List<Int> = null!!
+  | ^^^^^^^^^^^^^^^^^^
 compiler/testData/cli/jvm/diagnosticTests/conflictingOverloads.kt:2:1: error: conflicting overloads:
 In package 'root package' of module '<main>':
  --> conflictingOverloads.kt
   |
 1 | fun a(): List<Int>
   |
-fun a(): List<String> = null!!
-^^^^^^^^^^^^^^^^^^^^^
+In source code:
+ --> $TESTDATA_DIR$/conflictingOverloads.kt
+  |
+2 | fun a(): List<String> = null!!
+  | ^^^^^^^^^^^^^^^^^^^^^
 COMPILATION_ERROR

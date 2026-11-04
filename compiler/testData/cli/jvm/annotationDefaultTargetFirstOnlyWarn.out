@@ -4,9 +4,15 @@ compiler/testData/cli/jvm/annotationDefaultTarget.kt:3:104: warning: this annota
 - To keep applying to the value parameter only, use the '@param:' annotation target.
 
 See https://youtrack.jetbrains.com/issue/KT-73255 for more details.
-class My(@Deprecated(message = "Please don't use this bad callable", level = DeprecationLevel.WARNING) @Simple val x: String)
-                                                                                                       ^^^^^^^
+In source code:
+ --> $TESTDATA_DIR$/annotationDefaultTarget.kt
+  |
+3 | class My(@Deprecated(message = "Please don't use this bad callable", level = DeprecationLevel.WARNING) @Simple val x: String)
+  |                                                                                                        ^^^^^^^
 compiler/testData/cli/jvm/annotationDefaultTarget.kt:7:8: warning: 'val x: String' is deprecated. Please don't use this bad callable.
-    my.x
-       ^
+In source code:
+ --> $TESTDATA_DIR$/annotationDefaultTarget.kt
+  |
+7 |     my.x
+  |        ^
 OK

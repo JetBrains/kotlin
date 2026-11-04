@@ -1,4 +1,7 @@
 compiler/testData/cli/jvm/diagnosticTests/returnAsWhenKey.kt:4:5: error: 'when' expression must be exhaustive. Add the 'true', 'false' branches or an 'else' branch.
-    when (true) {
-    ^^^^
+In source code:
+ --> $TESTDATA_DIR$/returnAsWhenKey.kt
+  |
+4 |     when (true) {
+  |     ^^^^
 COMPILATION_ERROR

@@ -1,4 +1,7 @@
 compiler/testData/cli/syntaxError.kt:1:10: error: syntax error: Expecting '}'.
-fun a() {
-         ^
+In source code:
+ --> $USER_DIR$/compiler/testData/cli/syntaxError.kt
+  |
+1 | fun a() {
+  |          ^
 COMPILATION_ERROR

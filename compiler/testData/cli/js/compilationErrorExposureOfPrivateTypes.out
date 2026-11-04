@@ -4,6 +4,9 @@ private inline fun privateInlineFun2()
 private inline fun privateInlineFun3()
 
 
-internal inline fun internalInlineFun() = privateInlineFun3()
-                                          ^^^^^^^^^^^^^^^^^^^
+In source code:
+  --> $TESTDATA_DIR$/compilationErrorExposureOfPrivateTypes.kt
+   |
+14 | internal inline fun internalInlineFun() = privateInlineFun3()
+   |                                           ^^^^^^^^^^^^^^^^^^^
 COMPILATION_ERROR
