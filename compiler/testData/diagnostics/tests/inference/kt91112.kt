@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: CODEGEN
 // WITH_STDLIB
 // ISSUE: KT-91112
 
@@ -11,7 +11,7 @@ enum class Animal(val string: String) {
     Dog("dog");
 
     companion object {
-        fun <!IMPLICIT_NOTHING_RETURN_TYPE!>fromString<!>(string: String) = Animal::string.<!REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>find<!>(string)
+        fun fromString(string: String) = Animal::string.find(string)
             ?: throw IllegalArgumentException("Bad animal: '$string'")
     }
 }
@@ -20,8 +20,8 @@ fun <T : Enum<T>> g(f: (T) -> String): T? = null
 fun <T : Enum<T>> gNotNull(f: (T) -> String): T = null!!
 fun <K> sel(x: K, y: K): K = x
 
-fun <!IMPLICIT_NOTHING_RETURN_TYPE!>f1<!>() = g(Animal::string) ?: throw Exception()
-fun <!IMPLICIT_NOTHING_RETURN_TYPE!>f2<!>() = sel(gNotNull(Animal::string), throw Exception())
+fun f1() = g(Animal::string) ?: throw Exception()
+fun f2() = sel(gNotNull(Animal::string), throw Exception())
 
 /* GENERATED_FIR_TAGS: callableReference, checkNotNullCall, companionObject, elvisExpression, enumDeclaration, enumEntry,
 equalityExpression, funWithExtensionReceiver, functionDeclaration, functionalType, inline, lambdaLiteral, nullableType,

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator.commonSuperType
 import org.jetbrains.kotlin.resolve.calls.inference.model.AssertionsOnly
 import org.jetbrains.kotlin.types.model.*
+import org.jetbrains.kotlin.util.OnlyForDefaultLanguageFeatureDisabled
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.util.concurrent.ConcurrentHashMap
@@ -145,6 +146,7 @@ abstract class AbstractTypeApproximator(
         // Approximator depends on a configuration, so cache should take it into account
         // Here, we cache only types for configuration "from incorporation", which is used most intensively
         // More predictable caches are used since capturedTypeApproximationReworked
+        @OptIn(OnlyForDefaultLanguageFeatureDisabled::class) // EliminateSecondKindIncorporation
         if (capturedTypeApproximationReworked || conf !is TypeApproximatorConfiguration.IncorporationConfiguration) return approximate()
 
         val cache = if (toSuper) cacheForIncorporationConfigToSuperDirection else cacheForIncorporationConfigToSubtypeDirection
@@ -816,7 +818,8 @@ abstract class AbstractTypeApproximator(
                         if (!AbstractTypeChecker.equalTypes(
                                 this,
                                 argumentType,
-                                toSubType
+                                toSubType,
+                                stubTypesEqualToAnything = conf.stubTypesEqualToAnything,
                             )
                         ) return type.defaultResult(toSuper)
 
@@ -857,7 +860,10 @@ abstract class AbstractTypeApproximator(
                         isTrivialSuper && approximatedToSubType?.isTrivialSub() == false ->
                             createTypeArgument(approximatedToSubType!!, TypeVariance.IN)
 
-                        AbstractTypeChecker.equalTypes(this, argumentType, approximatedToSuperType) ->
+                        AbstractTypeChecker.equalTypes(
+                            this, argumentType, approximatedToSuperType,
+                            stubTypesEqualToAnything = conf.stubTypesEqualToAnything,
+                        ) ->
                             approximatedToSuperType.asTypeArgument()
 
                         else ->
