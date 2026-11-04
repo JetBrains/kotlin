@@ -74,13 +74,13 @@ internal fun validateConflicts(tests: List<DiscoveredTest>): List<VariantChainCo
  * Main runner for test data management using JUnit Platform Launcher API.
  * See README.md for grouping and conflict rules.
  *
- * Usage: Run via Gradle's `javaexec` with system property
- * `-Dkotlin.test.data.manager.mode=check|update`
- *
- * System properties:
- * - `kotlin.test.data.manager.mode` - Mode: `check` (fail on mismatch) or `update` (update files)
- * - `testDataPath` - Filter tests to only those matching this path (optional)
- * - `testClassPattern` - Regex pattern for test class names (optional, default ".*")
+ * Usage: run by the `checkTestData` and `updateTestData` Gradle tasks, which pass the options below as system properties
+ * with the `org.jetbrains.kotlin.testDataManager.options.` prefix:
+ * - `mode` - `check` (fail on mismatch) or `update` (update files)
+ * - `testDataPath` - comma-separated repository-relative paths to filter tests by (optional)
+ * - `testClassPattern` - regex pattern for test class names (optional)
+ * - `goldenOnly` - run only golden tests (optional)
+ * - `incremental` - run variant tests only for the golden paths that changed (optional, update mode only)
  *
  * @see VariantChainComparator
  */
@@ -281,12 +281,12 @@ internal object TestDataManagerRunner {
         val useIncremental = when {
             !incremental -> false
             TestDataManagerMode.currentMode != TestDataManagerMode.UPDATE -> {
-                System.err.println("WARNING: --incremental is only effective with --mode=update, ignoring")
+                System.err.println("WARNING: incremental is only effective in update mode (updateTestData), ignoring")
                 false
             }
 
             goldenOnly -> {
-                System.err.println("WARNING: --incremental is useless with --golden-only, ignoring")
+                System.err.println("WARNING: incremental has no effect with goldenOnly, ignoring")
                 false
             }
 
@@ -583,7 +583,10 @@ internal object TestDataManagerRunner {
                 val variantSuffix = formatVariantSuffix(failedVariants, allVariantChains)
                 println("$path$variantSuffix")
             }
-            println("\nRun with --mode=update to fix these.")
+            // In UPDATE, mismatches come only from assertions that can't update their files
+            if (TestDataManagerMode.currentMode == TestDataManagerMode.CHECK) {
+                println("\nRun updateTestData with the same options to update them.")
+            }
         }
 
         if (errors.isNotEmpty()) {
