@@ -34,6 +34,16 @@ sealed interface DomainInfo {
      */
     val mustRunAllTestsOnChangesIn: List<DomainInfo>
 
+    /**
+     * @see DeclaredDomain.team
+     */
+    val team: String
+
+    /**
+     * @see DeclaredDomain.firstResponders
+     */
+    val firstResponders: List<String>
+
     companion object
 }
 
