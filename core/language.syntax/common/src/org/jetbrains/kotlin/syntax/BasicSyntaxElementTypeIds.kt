@@ -13,11 +13,11 @@ public object BasicSyntaxElementTypeIds {
     /**
      * The ID of element types that have no associated syntax element ID (e.g., external).
      */
-    public const val NO_ID: Int = 0
+    public const val NO_ID: SyntaxId = 0
 
-    public const val WHITE_SPACE: Int = NO_ID + 1
-    public const val BAD_CHARACTER: Int = WHITE_SPACE + 1
-    public const val ERROR_ELEMENT: Int = BAD_CHARACTER + 1
+    public const val WHITE_SPACE: SyntaxId = NO_ID + 1
+    public const val BAD_CHARACTER: SyntaxId = WHITE_SPACE + 1
+    public const val ERROR_ELEMENT: SyntaxId = BAD_CHARACTER + 1
     /**
      * Remember to update first const in [KotlinSyntaxTokenIds] after adding new IDs here ^^^
      */

@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.fir.analysis
 
 import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
+import org.jetbrains.kotlin.syntax.SyntaxId
 
-
-fun Int.isExpression(): Boolean = when (this) {
+fun SyntaxId.isExpression(): Boolean = when (this) {
     // Stub-based element types that are not `KtExpression`
     KotlinSyntaxNodeTypeIds.CLASS_BODY,
     KotlinSyntaxNodeTypeIds.COMPANION_BLOCK,
