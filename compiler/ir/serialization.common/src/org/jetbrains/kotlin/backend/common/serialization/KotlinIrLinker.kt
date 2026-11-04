@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.util.toIdSignature
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.FqName
@@ -57,20 +58,20 @@ abstract class KotlinIrLinker(
     val fileEntryDeserializer = FileEntryDeserializer(irInterner)
 
     protected val fileLocalSymbolProvider = object : FileLocalSymbolProvider {
-        override fun referenceSimpleFunction(file: IrFile, signature: IdSignature.FileLocalSignature): IrSimpleFunctionSymbol? =
-            referenceCallable(file, signature, BinarySymbolData.SymbolKind.FUNCTION_SYMBOL) as IrSimpleFunctionSymbol?
+        override fun referenceSimpleFunction(file: IrFile, signature: IdSignature.FileLocalSignature): IrSimpleFunctionSymbol =
+            referenceCallable(file, signature, BinarySymbolData.SymbolKind.FUNCTION_SYMBOL) as IrSimpleFunctionSymbol
 
-        override fun referenceProperty(file: IrFile, signature: IdSignature.FileLocalSignature): IrPropertySymbol? =
-            referenceCallable(file, signature, BinarySymbolData.SymbolKind.PROPERTY_SYMBOL) as IrPropertySymbol?
+        override fun referenceProperty(file: IrFile, signature: IdSignature.FileLocalSignature): IrPropertySymbol =
+            referenceCallable(file, signature, BinarySymbolData.SymbolKind.PROPERTY_SYMBOL) as IrPropertySymbol
 
         private fun referenceCallable(
             file: IrFile,
             signature: IdSignature.FileLocalSignature,
             symbolKind: BinarySymbolData.SymbolKind,
-        ): IrSymbol? {
+        ): IrSymbol {
             val moduleDeserializer = firstNotNullOfModuleDeserializersOrNull(file.packageFqName) { moduleDeserializer ->
                 moduleDeserializer.fileDeserializers[file]
-            } ?: return null
+            } ?: error("No file deserializer found for file: ${file.render()}")
 
             return moduleDeserializer.symbolDeserializer.deserializeSymbolWithOwnerInCurrentFile(signature, symbolKind)
         }
