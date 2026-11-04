@@ -51,6 +51,38 @@ internal class TestMetadataFilterTest : AbstractPostDiscoveryFilterTest() {
     }
 
     @Test
+    fun `MethodSource matching path with trailing slash is included`() {
+        assertIncluded(
+            filter = TestMetadataFilter(listOf("testData/analysis/api/")),
+            descriptor = descriptorFromMethod(FakeGoldenAnalysisApiTestGenerated::testSymbols),
+        )
+    }
+
+    @Test
+    fun `MethodSource matching exact file path is included`() {
+        assertIncluded(
+            filter = TestMetadataFilter(listOf("testData/analysis/api/symbols.kt")),
+            descriptor = descriptorFromMethod(FakeGoldenAnalysisApiTestGenerated::testSymbols),
+        )
+    }
+
+    @Test
+    fun `MethodSource with file name prefix is included`() {
+        assertIncluded(
+            filter = TestMetadataFilter(listOf("testData/analysis/api/sym")),
+            descriptor = descriptorFromMethod(FakeGoldenAnalysisApiTestGenerated::testSymbols),
+        )
+    }
+
+    @Test
+    fun `MethodSource with directory name prefix is included`() {
+        assertIncluded(
+            filter = TestMetadataFilter(listOf("testData/analysis/ap")),
+            descriptor = descriptorFromMethod(FakeGoldenAnalysisApiTestGenerated::testSymbols),
+        )
+    }
+
+    @Test
     fun `container type is always included`() {
         assertIncluded(
             filter = TestMetadataFilter(listOf("nonexistent/path")),
