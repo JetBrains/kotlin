@@ -171,12 +171,13 @@ object FirDiagnosticRenderers {
 
     private data class RenderedLineWithNumber(
         val number: Int?,
+        val indent: Int,
         val renderedLine: String,
     )
 
     private inline fun FirBasedSymbol<*>.renderToLinesWithNumber(render: (FirBasedSymbol<*>) -> String): List<RenderedLineWithNumber> =
         render(this).lines().mapIndexed { index, line ->
-            RenderedLineWithNumber(number = if (index == 0) toPhysicalLocation()?.line else null, renderedLine = line)
+            RenderedLineWithNumber(number = if (index == 0) toPhysicalLocation()?.line else null, indent = 0, renderedLine = line)
         }
 
     private inline fun SymbolNode.renderToLinesWithNumber(render: (FirBasedSymbol<*>) -> String): List<RenderedLineWithNumber> {
@@ -186,13 +187,12 @@ object FirDiagnosticRenderers {
         return buildList {
             while (stack.isNotEmpty()) {
                 val [indent, element] = stack.popLast()
-                val indentPadding = "    ".repeat(indent)
 
                 if (indent < previousIndent) {
-                    this += RenderedLineWithNumber(number = null, renderedLine = "$indentPadding}")
+                    this += RenderedLineWithNumber(number = null, indent = indent, renderedLine = "}")
                 }
 
-                val ownLines = element.symbol.renderToLinesWithNumber(render).map { it.copy(renderedLine = indentPadding + it.renderedLine) }
+                val ownLines = element.symbol.renderToLinesWithNumber(render).map { it.copy(indent = indent) }
 
                 if (element.children.isNotEmpty()) {
                     this += ownLines.dropLast(1)
@@ -206,7 +206,7 @@ object FirDiagnosticRenderers {
             }
 
             if (previousIndent != 0) {
-                this += RenderedLineWithNumber(number = null, renderedLine = "}")
+                this += RenderedLineWithNumber(number = null, indent = 0, renderedLine = "}")
             }
         }
     }
@@ -251,12 +251,12 @@ object FirDiagnosticRenderers {
         val renderedLinesWithSeparators = renderedLines.interleaveWith { previous, next ->
             when {
                 previous.number != null && previous.number + 1 == next.number -> null
-                else -> RenderedLineWithNumber(number = null, renderedLine = "...")
+                else -> RenderedLineWithNumber(number = null, indent = maxOf(previous.indent, next.indent), renderedLine = "...")
             }
         }
         val paddedRenderedLines = renderedLinesWithSeparators.joinToString("\n") {
             val numberString = it.number?.toString()?.padStart(indentString.length, ' ') ?: indentString
-            "$numberString | ${it.renderedLine}"
+            "$numberString | " + "    ".repeat(it.indent) + it.renderedLine
         }
 
         return renderLocationDecoration(logicalLocation, fileLine, indentString, paddedRenderedLines)

@@ -2,9 +2,9 @@
 In package 'first' of module '<main>':
  |
  | interface KtNodeTypes : Any {
- | ...
+ |     ...
  |     static field SOME: String
- | ...
+ |     ...
  | }
  |
 In package 'second' of module '<main>':
@@ -12,6 +12,6 @@ In package 'second' of module '<main>':
    |
 16 | enum class SomeEnum : Enum<SomeEnum> {
 17 |     enum entry SOME: SomeEnum
-   | ...
+   |     ...
    | }
    |

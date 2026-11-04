@@ -14,7 +14,7 @@ In package 'root package' of module '<main>':
   |
 3 | actual interface B : Any {
 4 |     fun foo(): Unit
-  | ...
+  |     ...
   | }
   |
 class CommonClass : B
