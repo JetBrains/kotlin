@@ -3,21 +3,24 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.kmp.utils
+package org.jetbrains.kotlin
 
 import com.intellij.psi.tree.IElementType
-import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.lexer.KtToken
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.syntax.NO_ID
 import org.jetbrains.kotlin.syntax.SyntaxNodeTypeIds
 import org.jetbrains.kotlin.syntax.SyntaxTokenIds
 
 /**
- * @receiver Some of Kotlin-based element types
- * @return Same integer ID as the corresponding [com.intellij.platform.syntax.SyntaxElementType] has.
- * If the element type is not Kotlin-based, the result is [org.jetbrains.kotlin.syntax.NO_ID].
+ * @receiver A Kotlin element type
+ * @return The ID from `syntax.common` that is consistent across all frontends (PSI/LightTree and KMP).
+ * Only Kotlin tokens ([SyntaxTokenIds]), node types declared in [SyntaxNodeTypeIds], [org.jetbrains.kotlin.lexer.KtTokens.DOC_COMMENT]
+ * and [org.jetbrains.kotlin.lexer.KtTokens.WHITE_SPACE] are mapped.
+ * For other element types (e.g., KDoc element types or non-Kotlin ones), the result is [NO_ID].
  */
-fun IElementType.kmpId(): Int =
+@KtImplementationDetail
+fun IElementType.syntaxId(): Int =
     when {
         this is KtToken -> tokenId
         index < indexToId.size -> indexToId[index.toInt()]
