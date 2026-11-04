@@ -6,8 +6,8 @@
 package org.jetbrains.kotlinx.atomicfu.compiler.diagnostic
 
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryToRendererMap
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.TO_STRING
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
-import org.jetbrains.kotlin.diagnostics.rendering.Renderers
 
 object AtomicfuErrorMessages : BaseDiagnosticRendererFactory() {
 
@@ -99,13 +99,13 @@ object AtomicfuErrorMessages : BaseDiagnosticRendererFactory() {
 
     override val MAP: KtDiagnosticFactoryToRendererMap by KtDiagnosticFactoryToRendererMap("Atomicfu Plugin") { map ->
         map.put(
-            AtomicfuErrors.PUBLIC_ATOMICS_ARE_FORBIDDEN, PUBLIC_ATOMICS_ARE_FORBIDDEN_MESSAGE, Renderers.TO_STRING
+            AtomicfuErrors.PUBLIC_ATOMICS_ARE_FORBIDDEN, PUBLIC_ATOMICS_ARE_FORBIDDEN_MESSAGE, TO_STRING
         )
         map.put(
-            AtomicfuErrors.PUBLISHED_API_ATOMICS_ARE_FORBIDDEN, PUBLIC_ATOMICS_ARE_FORBIDDEN_MESSAGE, Renderers.TO_STRING
+            AtomicfuErrors.PUBLISHED_API_ATOMICS_ARE_FORBIDDEN, PUBLIC_ATOMICS_ARE_FORBIDDEN_MESSAGE, TO_STRING
         )
         map.put(
-            AtomicfuErrors.ATOMIC_PROPERTIES_SHOULD_BE_VAL, ATOMIC_PROPERTIES_SHOULD_BE_VAL_MESSAGE, Renderers.TO_STRING
+            AtomicfuErrors.ATOMIC_PROPERTIES_SHOULD_BE_VAL, ATOMIC_PROPERTIES_SHOULD_BE_VAL_MESSAGE, TO_STRING
         )
         map.put(
             AtomicfuErrors.NON_PRIVATE_ATOMIC_COMPANIONS_ARE_FORBIDDEN, NON_PRIVATE_ATOMIC_COMPANIONS_ARE_FORBIDDEN_MESSAGE
