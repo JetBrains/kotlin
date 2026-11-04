@@ -7,9 +7,8 @@ package org.jetbrains.kotlin.backend.konan.testUtils
 
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.common.serialization.metadata.DynamicTypeDeserializer
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.functions.functionInterfacePackageFragmentProvider
-import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.ContractDeserializerImpl
 import org.jetbrains.kotlin.descriptors.*
@@ -36,21 +35,19 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 @K1Deprecation
 class K1KlibMetadataModuleDescriptorFactoryImpl {
-    private val createBuiltIns: (StorageManager) -> KotlinBuiltIns = ::KonanBuiltIns
-
     private val flexibleTypeDeserializer: FlexibleTypeDeserializer = DynamicTypeDeserializer
 
     private fun createDescriptorOptionalBuiltIns(
         library: KotlinLibrary,
         languageVersionSettings: LanguageVersionSettings,
         storageManager: StorageManager,
-        builtIns: KotlinBuiltIns?,
+
         lookupTracker: LookupTracker
     ): ModuleDescriptorImpl {
 
         val moduleName = Name.special("<${library.uniqueName}>")
         val moduleOrigin = DeserializedKlibModuleOrigin(library)
-        val builtInsToUse = builtIns ?: createBuiltIns(storageManager)
+        val builtInsToUse = DefaultBuiltIns(loadBuiltInsFromCurrentClassLoader = false)
 
         val moduleDescriptor = ModuleDescriptorImpl(
             moduleName,
@@ -64,9 +61,7 @@ class K1KlibMetadataModuleDescriptorFactoryImpl {
             platform = NativePlatforms.unspecifiedNativePlatform
         )
 
-        if (builtIns == null) {
-            builtInsToUse.builtInsModule = moduleDescriptor
-        }
+        builtInsToUse.builtInsModule = moduleDescriptor
 
         val provider = createPackageFragmentProvider(
             library = library,
@@ -185,7 +180,7 @@ class K1KlibMetadataModuleDescriptorFactoryImpl {
         languageVersionSettings: LanguageVersionSettings,
         storageManager: StorageManager,
     ): ModuleDescriptorImpl = createDescriptorOptionalBuiltIns(
-        library, languageVersionSettings, storageManager, null, LookupTracker.DO_NOTHING
+        library, languageVersionSettings, storageManager, LookupTracker.DO_NOTHING
     )
 }
 

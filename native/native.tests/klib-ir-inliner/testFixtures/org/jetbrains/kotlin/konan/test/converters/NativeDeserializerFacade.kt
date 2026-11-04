@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.backend.konan.serialization.CInteropModuleDeserializ
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
 import org.jetbrains.kotlin.backend.konan.serialization.loadNativeKlibs
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -87,11 +87,10 @@ class NativeDeserializerFacade(
         )
     }
 
-    @OptIn(K1Deprecation::class)
     private fun createModuleDescriptors(loadedKlibs: LoadedNativeKlibs): List<ModuleDescriptorImpl> {
         val moduleDescriptors = mutableListOf<ModuleDescriptorImpl>()
 
-        val builtIns = KonanBuiltIns(LockBasedStorageManager.NO_LOCKS)
+        val builtIns = DefaultBuiltIns(loadBuiltInsFromCurrentClassLoader = false)
         val friendModuleDescriptors = mutableSetOf<ModuleDescriptorImpl>()
         val includedLibraryDescriptors = mutableSetOf<ModuleDescriptorImpl>()
         // Build module descriptors.
