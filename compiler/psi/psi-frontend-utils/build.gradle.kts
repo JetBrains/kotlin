@@ -15,6 +15,7 @@ dependencies {
     compileOnly(libs.intellij.fastutil)
 
     implementation(project(":compiler:psi:psi-api"))
+    implementation(project(":core:language.syntax"))
     runtimeOnly(project(":compiler:psi:psi-impl"))
 
     testFixturesApi(platform(libs.junit.bom))
@@ -26,15 +27,19 @@ dependencies {
     testFixturesImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(testFixtures(project(":compiler:psi:psi-api")))
+    testImplementation(project(":compiler:multiplatform-parsing"))
+    testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect"))
     testFixturesCompileOnly(intellijCore())
     testCompileOnly(intellijCore())
 }
 
 sourceSets {
     "main" { projectDefault() }
-    "test" { none() }
+    "test" { projectDefault() }
 }
 
 projectTests {
+    testTask()
+
     testCodebaseTask()
 }
