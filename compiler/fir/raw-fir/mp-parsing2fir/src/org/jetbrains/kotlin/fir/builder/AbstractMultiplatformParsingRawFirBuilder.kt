@@ -11,9 +11,12 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.NO_ID
+import org.jetbrains.kotlin.SyntaxId
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.isExpression
 import org.jetbrains.kotlin.fir.lightTree.converter.AbstractTreeRawFirBuilder
+import org.jetbrains.kotlin.kmp.lexer.BasicElementTypes
 import org.jetbrains.kotlin.kmp.lexer.KtTokens
 import org.jetbrains.kotlin.kmp.lexer.KtTokens.DOT
 import org.jetbrains.kotlin.kmp.lexer.KtTokens.SAFE_ACCESS
@@ -33,10 +36,12 @@ abstract class AbstractMultiplatformParsingRawFirBuilder(
     override val LightNode.elementType: SyntaxElementType
         get() = tree.getType(this)
 
-    override fun SyntaxElementType.typeToTokenId(): Int {
+    override fun SyntaxElementType.typeToTokenId(): SyntaxId {
         val nodeTypeId = KtNodeTypes.getElementTypeId(this)
-        if (nodeTypeId != 0) return nodeTypeId
-        return KtTokens.getElementTypeId(this)
+        if (nodeTypeId != NO_ID) return nodeTypeId
+        val tokenId = KtTokens.getElementTypeId(this)
+        if (tokenId != NO_ID) return tokenId
+        return BasicElementTypes.getElementTypeId(this)
     }
 
     override fun KtSourceElement.isChildInParentheses(): Boolean =

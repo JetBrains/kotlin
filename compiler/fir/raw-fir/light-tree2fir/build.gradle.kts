@@ -15,7 +15,7 @@ dependencies {
     implementation(project(":compiler:psi:psi-impl"))
     implementation(project(":compiler:psi:psi-frontend-utils"))
     implementation(project(":compiler:psi:parser"))
-    implementation(project(":compiler:multiplatform-parsing"))
+    implementation(project(":compiler:syntax.common"))
 
     compileOnly(intellijCore())
     compileOnly(libs.guava)
