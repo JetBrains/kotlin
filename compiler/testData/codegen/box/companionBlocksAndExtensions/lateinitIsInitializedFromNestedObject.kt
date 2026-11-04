@@ -1,7 +1,5 @@
 // LANGUAGE: +CompanionBlocks
 // ISSUE: KT-89290
-// IGNORE_BACKEND: NATIVE
-// KT-89375: Native misses companion initialization on nested lateinit checks.
 
 private var initLog = ""
 
