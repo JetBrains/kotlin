@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JKLIB
 // TARGET_BACKEND: JVM
 // ISSUE: KT-61362, KT-65722
 // DUMP_EXTERNAL_CLASS: J
@@ -6,6 +5,8 @@
 // DUMP_EXTERNAL_CLASS: J1
 // DUMP_EXTERNAL_CLASS: X1
 // DUMP_IR
+// DUMP_IR_DIFFERENCE: JKLIB
+// ^ JKlib reads Java declarations from compiled classes, not from sources.
 
 // FILE: J.java
 

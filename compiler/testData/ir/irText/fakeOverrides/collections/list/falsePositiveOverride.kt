@@ -1,7 +1,8 @@
-// IGNORE_BACKEND: JKLIB
 // TARGET_BACKEND: JVM
 // SKIP_KT_DUMP
 // FULL_JDK
+// DUMP_IR_DIFFERENCE: JKLIB
+// ^ JKlib reads Java declarations from compiled classes, not from sources.
 // FILE: MyList.java
 public abstract class MyList<E> extends java.util.AbstractCollection<E> implements java.util.List<E> {
     public int length() { return 0; }
