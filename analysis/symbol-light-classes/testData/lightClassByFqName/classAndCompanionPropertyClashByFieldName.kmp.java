@@ -1,18 +1,18 @@
 public final class KotlinClass /* fields.KotlinClass*/ {
   @org.jetbrains.annotations.NotNull()
-  private final @org.jetbrains.annotations.NotNull() java.lang.String jvmField$1 = "5" /* initializer type: java.lang.String */;
+  private final @org.jetbrains.annotations.NotNull() java.lang.String jvmField = "5" /* initializer type: java.lang.String */;
 
   @org.jetbrains.annotations.NotNull()
-  private final @org.jetbrains.annotations.NotNull() java.lang.String noField$1 = "1" /* initializer type: java.lang.String */;
+  private final @org.jetbrains.annotations.NotNull() java.lang.String noField = "1" /* initializer type: java.lang.String */;
 
   @org.jetbrains.annotations.NotNull()
-  private final @org.jetbrains.annotations.NotNull() java.lang.String staticDelegated$1 = "2" /* initializer type: java.lang.String */;
+  private final @org.jetbrains.annotations.NotNull() java.lang.String staticDelegated = "2" /* initializer type: java.lang.String */;
 
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() java.lang.String synthetic$1 = "4" /* initializer type: java.lang.String */;
 
   @org.jetbrains.annotations.NotNull()
-  private final @org.jetbrains.annotations.NotNull() kotlin.Lazy<@org.jetbrains.annotations.NotNull() java.lang.String> instanceDelegated$delegate$1;
+  private final @org.jetbrains.annotations.NotNull() kotlin.Lazy<@org.jetbrains.annotations.NotNull() java.lang.String> instanceDelegated$delegate;
 
   @org.jetbrains.annotations.NotNull()
   private static final @org.jetbrains.annotations.NotNull() kotlin.Lazy<@org.jetbrains.annotations.NotNull() java.lang.Integer> jvmField$delegate;

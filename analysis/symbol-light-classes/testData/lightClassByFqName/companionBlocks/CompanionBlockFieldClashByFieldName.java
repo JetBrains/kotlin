@@ -15,7 +15,7 @@ public final class Regular /* one.Regular*/ {
   private static final @org.jetbrains.annotations.NotNull() kotlin.Lazy<@org.jetbrains.annotations.NotNull() java.lang.String> bothDelegated$delegate;
 
   @org.jetbrains.annotations.NotNull()
-  private static final @org.jetbrains.annotations.NotNull() kotlin.Lazy<@org.jetbrains.annotations.NotNull() java.lang.String> jvmField$delegate$1;
+  private static final @org.jetbrains.annotations.NotNull() kotlin.Lazy<@org.jetbrains.annotations.NotNull() java.lang.String> jvmField$delegate;
 
   @org.jetbrains.annotations.NotNull()
   private static final @org.jetbrains.annotations.NotNull() kotlin.Lazy<@org.jetbrains.annotations.NotNull() java.lang.String> staticDelegated$delegate;

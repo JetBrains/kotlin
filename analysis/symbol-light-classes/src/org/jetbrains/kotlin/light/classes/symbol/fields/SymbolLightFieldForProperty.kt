@@ -136,12 +136,15 @@ internal class SymbolLightFieldForProperty private constructor(
      * field whose name is already claimed:
      * - A `@JvmField` field keeps its name, so it isn't checked here.
      * - The static field of a companion object or companion block property is renamed if a `@JvmField` instance field or an enum
-     *   entry has the same name.
-     * - An instance field is renamed if a static field has the same name.
+     *   entry has the same name. Neither of them is delegated, so the `$delegate` field of a delegated property never clashes with
+     *   them.
+     * - An instance field is renamed if a static field has the same name, see [hasFieldWithSameName].
      *
      * [isDelegated] tells whether this property is delegated, which gives its field the `$delegate` suffix.
      */
     private fun hasClash(propertyName: Name, isDelegated: Boolean, containingClass: SymbolLightClassForNamedClassLike): Boolean {
+        if (isStatic && isDelegated) return false
+
         return containingClass.withClassSymbol { classSymbol ->
             if (isStatic) {
                 classSymbol.declaredMemberScope
@@ -154,16 +157,11 @@ internal class SymbolLightFieldForProperty private constructor(
                                     .filterIsInstance<KaEnumEntrySymbol>()
                                     .any())
             } else {
-                classSymbol.companionObject
-                    ?.declaredMemberScope
-                    ?.callables(propertyName)
-                    ?.filterIsInstance<KaPropertySymbol>()
-                    .orEmpty()
-                    .any() ||
-                        classSymbol.staticDeclaredMemberScope
-                            .callables(propertyName)
-                            .filterIsInstance<KaPropertySymbol>()
-                            .any { it.hasFieldWithSameName(isDelegated) }
+                val companionObjectProperties = classSymbol.companionObject?.declaredMemberScope?.callables(propertyName).orEmpty()
+                val companionBlockProperties = classSymbol.staticDeclaredMemberScope.callables(propertyName)
+                (companionObjectProperties + companionBlockProperties)
+                    .filterIsInstance<KaPropertySymbol>()
+                    .any { it.hasFieldWithSameName(isDelegated) }
             }
         }
     }
