@@ -2,7 +2,7 @@ public enum Foo /* fields.Foo*/ {
   entry;
 
   @org.jetbrains.annotations.NotNull()
-  private static final @org.jetbrains.annotations.NotNull() error.NonExistentClass entry$delegate$1;
+  private static final @org.jetbrains.annotations.NotNull() error.NonExistentClass entry$delegate;
 
   @org.jetbrains.annotations.NotNull()
   public static final @org.jetbrains.annotations.NotNull() fields.Foo.Companion Companion;
