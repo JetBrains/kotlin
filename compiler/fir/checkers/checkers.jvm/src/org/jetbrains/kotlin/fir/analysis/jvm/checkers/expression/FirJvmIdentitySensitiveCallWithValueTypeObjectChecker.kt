@@ -14,14 +14,15 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirCallChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirCallableReferenceAccessChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.finalApproximationOrSelf
+import org.jetbrains.kotlin.fir.analysis.checkers.identityKind
 import org.jetbrains.kotlin.fir.analysis.checkers.reportIdentitySensitiveOperation
-import org.jetbrains.kotlin.fir.analysis.checkers.reportIdentitySensitiveOperationIfWillBecomeValueClass
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE
 import org.jetbrains.kotlin.fir.enableWarningsForIdentitySensitiveOperationsOnValueClassesAndPrimitives
+import org.jetbrains.kotlin.fir.enableWarningsForValueBasedJavaClasses
 import org.jetbrains.kotlin.fir.expressions.FirCall
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
@@ -189,6 +190,7 @@ object FirJvmIdentitySensitiveCallWithValueTypeObjectChecker : FirCallChecker(Mp
                         reporter.reportOn(argument.source, IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE, type)
                     }
                     IdentityKind.VALUE_BASED -> reporter.reportOn(argument.source, SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS, type)
+                    IdentityKind.WILL_BECOME_VALUE -> {}
                 }
             }
         }
@@ -213,17 +215,25 @@ private fun FirCallableReferenceAccess.firstParameterType(): ConeKotlinType? = r
 
 context(context: CheckerContext)
 private fun ConeKotlinType.isIdentityChecked(): Boolean =
-    finalApproximationOrSelf().let { it.isValueObjectAtRuntime() || it.isValueTypeAndWarningsEnabled() }
+    finalApproximationOrSelf().let {
+        it.isValueObjectAtRuntime() || when (it.identityKind()) {
+            IdentityKind.VALUE_TYPE, IdentityKind.FLEXIBLE_PRIMITIVE -> enableWarningsForIdentitySensitiveOperationsOnValueClassesAndPrimitives()
+            IdentityKind.VALUE_BASED -> enableWarningsForValueBasedJavaClasses()
+            IdentityKind.WILL_BECOME_VALUE, null -> false
+        }
+    }
 
 context(context: CheckerContext, reporter: DiagnosticReporter)
 private fun checkType(type: ConeKotlinType, source: KtSourceElement?) {
     val renderedType = type.finalApproximationOrSelf()
     if (renderedType.isValueObjectAtRuntime()) {
         reporter.reportOn(source, FirJvmErrors.IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_OBJECT, renderedType)
-    } else if (renderedType.isValueTypeAndWarningsEnabled()) {
-        reporter.reportOn(source, FirErrors.IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE, renderedType)
     } else {
-        reportIdentitySensitiveOperationIfWillBecomeValueClass(source, type)
+        reportIdentitySensitiveOperation(source, renderedType) { kind ->
+            if (kind == IdentityKind.VALUE_BASED || enableWarningsForIdentitySensitiveOperationsOnValueClassesAndPrimitives()) {
+                reporter.reportOn(source, FirErrors.IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE, renderedType)
+            }
+        }
     }
 }
 

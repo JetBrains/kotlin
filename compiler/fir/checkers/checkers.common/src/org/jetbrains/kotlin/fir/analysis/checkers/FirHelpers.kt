@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
-import org.jetbrains.kotlin.fir.enableWarningsForValueBasedJavaClasses
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
@@ -126,39 +125,6 @@ fun FirClassSymbol<*>.isSupertypeOf(other: FirClassSymbol<*>, session: FirSessio
     }
 
     return isSupertypeOf(other, mutableSetOf())
-}
-
-private fun ConeKotlinType.isKotlinValueClass(session: FirSession): Boolean {
-    // Value classes have `inline` or `value` modifier in FIR
-    return toRegularClassSymbol(session)?.isValue == true
-}
-
-/**
- * Whether this type is a value class type: a Kotlin inline or full value class, or a value class type of the platform
- * (see [isPlatformValueClassType]).
- */
-fun ConeKotlinType.isValueClass(session: FirSession): Boolean =
-    isKotlinValueClass(session) || isPlatformValueClassType(session)
-
-/**
- * Whether this type is a value class type of the platform, like a Java value class. Like javac, this includes type parameters, captured
- * types and intersection types bounded by such a class. A Kotlin class whose platform class is a value class, like `kotlin.Number` for
- * `java.lang.Number` or `kotlin.Int` for `java.lang.Integer`, is one too.
- *
- * Unlike [FirRegularClassSymbol.isPlatformValueClass], which checks only the class itself.
- */
-private fun ConeKotlinType.isPlatformValueClassType(session: FirSession): Boolean =
-    collectUpperBounds(session.typeContext).any { type ->
-        type.toRegularClassSymbol(session)?.let { it.isPlatformValueClass(session) || it.isMappedToPlatformValueClass(session) } == true
-    }
-
-fun ConeKotlinType.isFlexiblePrimitive(): Boolean {
-    return this is ConeFlexibleType && lowerBound.isPrimitiveOrNullablePrimitive && upperBound.isPrimitiveOrNullablePrimitive
-}
-
-fun FirRegularClassSymbol.isMappedToPlatformValueClass(session: FirSession): Boolean {
-    val platformClassId = session.platformClassMapper.getCorrespondingPlatformClass(classId) ?: return false
-    return (platformClassId.toSymbol(session) as? FirRegularClassSymbol)?.isPlatformValueClass(session) == true
 }
 
 fun ConeKotlinType.isInlineClass(session: FirSession): Boolean =
@@ -1099,17 +1065,6 @@ inline fun FirElement.requireFeatureSupport(
 ) {
     source.requireFeatureSupport(feature, positioningStrategy, ifSupported)
 }
-
-context(context: CheckerContext)
-internal val ConeKotlinType.hasStableIdentityForAtomicOperations: Boolean
-    get() = when (fullyExpandedType().identityKind()) {
-        IdentityKind.VALUE_TYPE, IdentityKind.FLEXIBLE_PRIMITIVE -> false
-        IdentityKind.VALUE_BASED -> !enableWarningsForValueBasedJavaClasses()
-        null -> true
-    }
-
-fun ConeKotlinType.isBoundedByPrimitiveOrValueClass(session: FirSession): Boolean =
-    collectUpperBounds(session.typeContext).any { it.isPrimitiveOrNullablePrimitive || it.isValueClass(session) }
 
 context(context: CheckerContext, reporter: DiagnosticReporter)
 fun checkAtomicCallReceiverForStableIdentity(

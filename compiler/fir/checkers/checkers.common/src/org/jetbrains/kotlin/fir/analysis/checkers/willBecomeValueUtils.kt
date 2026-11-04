@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirWillBecomeValueDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -75,17 +76,6 @@ fun FirRegularClassSymbol.willBecomeKotlinOrJdkValueClass(session: FirSession): 
     willBecomeKotlinValueClass(session) || isValueBasedClass(session)
 
 /**
- * Reports an identity-sensitive operation performed on [type] if that type is annotated with '@WillBecomeValue'.
- *
- * Called from both the common and the platform-specific identity checkers so that every identity-sensitive operation they already
- * know about is covered for '@WillBecomeValue' classes as well.
- */
-context(context: CheckerContext, reporter: DiagnosticReporter)
-fun reportIdentitySensitiveOperationIfWillBecomeValueClass(source: KtSourceElement?, type: ConeKotlinType) {
-    reporter.reportOn(source, FirErrors.IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS, willBecomeValueTypeOf(type) ?: return)
-}
-
-/**
  * Reports an identity-sensitive operation on several [types] at once, like 'a === b', if any of them is annotated with
  * '@WillBecomeValue'.
  */
@@ -96,8 +86,16 @@ fun reportIdentitySensitiveOperationIfWillBecomeValueClasses(source: KtSourceEle
 }
 
 // A type parameter or an intersection type is checked by its upper bounds, and the annotated one is reported.
-context(context: CheckerContext)
-private fun willBecomeValueTypeOf(type: ConeKotlinType): ConeKotlinType? =
-    type.collectUpperBounds(context.session.typeContext)
-        .firstOrNull { it.toRegularClassSymbol(context.session)?.hasWillBecomeValueAnnotation(context.session) == true }
-        ?.withNullability(nullable = false, context.session.typeContext)
+context(sessionHolder: SessionHolder)
+internal fun willBecomeValueTypeOf(type: ConeKotlinType): ConeKotlinType? {
+    val session = sessionHolder.session
+    return type.collectUpperBounds(session.typeContext)
+        .firstOrNull { it.toRegularClassSymbol(session)?.hasWillBecomeValueAnnotation(session) == true }
+        ?.withNullability(nullable = false, session.typeContext)
+}
+
+@PublishedApi
+context(context: CheckerContext, reporter: DiagnosticReporter)
+internal fun reportIdentitySensitiveOperationOnWillBecomeValueClass(source: KtSourceElement?, type: ConeKotlinType) {
+    reporter.reportOn(source, FirErrors.IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS, willBecomeValueTypeOf(type) ?: return)
+}
