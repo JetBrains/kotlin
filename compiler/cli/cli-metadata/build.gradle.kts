@@ -8,7 +8,6 @@ plugins {
 dependencies {
     implementation(project(":compiler:util"))
     implementation(project(":compiler:cli"))
-    implementation(project(":compiler:frontend"))
     implementation(project(":compiler:config.jvm"))
     implementation(project(":core:descriptors"))
     implementation(project(":core:descriptors.jvm"))

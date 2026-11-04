@@ -11,7 +11,7 @@ dependencies {
     implementation(project(":compiler:cli"))
     implementation(project(":compiler:cli-metadata"))
     implementation(project(":compiler:container"))
-    implementation(project(":compiler:frontend"))
+    implementation(project(":compiler:psi:psi-frontend-utils"))
     implementation(project(":compiler:frontend.java"))
     implementation(project(":compiler:config.jvm"))
     implementation(project(":compiler:resolution"))
