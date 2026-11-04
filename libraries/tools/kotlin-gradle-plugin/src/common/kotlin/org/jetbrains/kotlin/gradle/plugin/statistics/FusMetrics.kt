@@ -322,6 +322,14 @@ internal object UrlRepoConfigurationMetrics : FusMetrics {
     }
 }
 
+internal object KotlinJsTypeScriptDefinitionsMetrics : FusMetrics {
+    internal fun collectMetrics(project: Project) {
+        project.addConfigurationMetrics {
+            it.put(BooleanMetrics.JS_GENERATE_DTS, true)
+        }
+    }
+}
+
 internal object KotlinJsBinaryTypeMetrics : FusMetrics {
     internal fun collectMetrics(jsTarget: KotlinJsIrTarget, project: Project) {
         project.launchInStage(KotlinPluginLifecycle.Stage.AfterFinaliseCompilations) {
