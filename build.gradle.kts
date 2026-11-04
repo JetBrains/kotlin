@@ -570,6 +570,10 @@ tasks {
         }
     }
 
+    register("publishKotlinDistForIde") {
+        dependsOn(":prepare:ide-plugin-dependencies:kotlin-dist-for-ide:publish")
+    }
+
     fun registerSpecialPublishingTasks(nameSuffix: String, artifactProjectList: List<String>, latch: Project.(() -> Unit) -> Unit) {
         register("publish$nameSuffix") {
             latch {
