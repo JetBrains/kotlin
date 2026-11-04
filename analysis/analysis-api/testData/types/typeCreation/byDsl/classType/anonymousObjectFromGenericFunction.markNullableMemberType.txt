@@ -1,11 +1,19 @@
 KaType
-KaCapturedType:
+KaUsualClassType:
   abbreviation: null
   annotations: []
-  projection: *
+  classId: kotlin/String
+  qualifiers: [
+    KaResolvedClassTypeQualifier:
+      name: String
+      symbol: KaNamedClassSymbol(kotlin/String)
+      typeArguments: []
+  ]
+  symbol: KaNamedClassSymbol(kotlin/String)
+  typeArguments: []
   isMarkedNullable: false
-  isNullable: true
+  isNullable: false
   hasFlexibleNullability: false
 
 Rendered type:
-CapturedType(*)
+kotlin.String

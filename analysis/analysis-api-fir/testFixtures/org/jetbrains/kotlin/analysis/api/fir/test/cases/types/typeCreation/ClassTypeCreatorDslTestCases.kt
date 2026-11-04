@@ -270,12 +270,12 @@ class ClassTypeCreatorDslTestCases(session: KaSession, caretToType: Map<String, 
 
         return session.typeCreator.classType(innerTypeSymbol) {
             invariantTypeArgument(getTypeByCaret("string"))
-            // The type parameter `F` captured from the containing function is star-projected
+            // The type parameter `F` captured from the containing function is used as its own argument
             outerClasses { index, _ ->
                 check(index == 0)
                 invariantTypeArgument(getTypeByCaret("int"))
             }
-        }
+        }.checkSameAsTypeAtCaret()
     }
 
     fun testInnerClassOfLocalClassNoArgs(): KaType {
@@ -291,12 +291,12 @@ class ClassTypeCreatorDslTestCases(session: KaSession, caretToType: Map<String, 
         return session.typeCreator.classType(innerTypeSymbol) {
             invariantTypeArgument(getTypeByCaret("string"))
             // The qualifiers stop at the local class, so `A` is not visited.
-            // The type parameters `F` and `AA` captured from the containing declarations are star-projected
+            // The type parameters `F` and `AA` captured from the containing declarations are used as their own arguments
             outerClasses { index, symbol ->
                 check(index == 0 && symbol.name?.asString() == "Local") { "Unexpected outer class $symbol at $index" }
                 invariantTypeArgument(getTypeByCaret("int"))
             }
-        }
+        }.checkSameAsTypeAtCaret()
     }
 
     fun testNestedClassOfGenericClass(): KaType {

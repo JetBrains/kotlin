@@ -152,11 +152,7 @@ abstract class AbstractTypeModificationDslTest : AbstractTypeModificationDslTest
             "Unexpected type of `v` in the source type: `$sourceMemberType`"
         }
 
-        val copiedType = type.copy {
-            isMarkedNullable = true
-        }
-
-        copiedType.memberType()
+        type.markNullableCheckingRoundTrip().memberType()
     }
 
     @Test
@@ -174,17 +170,13 @@ abstract class AbstractTypeModificationDslTest : AbstractTypeModificationDslTest
     @Test
     @TestMetadata("classType/innerClassOfLocalClass.kt")
     fun `classType innerClassOfLocalClass +markNullable`() = test<KaUsualClassType> { type ->
-        type.copy {
-            isMarkedNullable = true
-        }
+        type.markNullableCheckingRoundTrip()
     }
 
     @Test
     @TestMetadata("classType/innerClassOfLocalClassInGenericMember.kt")
     fun `classType innerClassOfLocalClassInGenericMember +markNullable`() = test<KaUsualClassType> { type ->
-        type.copy {
-            isMarkedNullable = true
-        }
+        type.markNullableCheckingRoundTrip()
     }
 
     @Test
