@@ -1,4 +1,4 @@
-// DUMP_IR_DIFFERENCE: NATIVE
+// DUMP_IR_DIFFERENCE: NATIVE, JS_IR
 // LANGUAGE: +CompanionExtensions +CompanionBlocks
 
 import kotlinx.atomicfu.*
