@@ -22,7 +22,6 @@ import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
-import org.jetbrains.kotlin.KtTokenId;
 import org.jetbrains.kotlin.lexer.KtKeywordToken;
 import org.jetbrains.kotlin.lexer.KtToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
@@ -323,23 +322,23 @@ import static org.jetbrains.kotlin.lexer.KtTokens.*;
                 break;
             }
             switch (getTokenId()) {
-                case KtTokenId.LPAR:
+                case LPAR_Id:
                     openParentheses++;
                     opens.push(LPAR);
                     break;
-                case KtTokenId.LT:
+                case LT_Id:
                     openAngleBrackets++;
                     opens.push(LT);
                     break;
-                case KtTokenId.LBRACE:
+                case LBRACE_Id:
                     openBraces++;
                     opens.push(LBRACE);
                     break;
-                case KtTokenId.LBRACKET:
+                case LBRACKET_Id:
                     openBrackets++;
                     opens.push(LBRACKET);
                     break;
-                case KtTokenId.RPAR:
+                case RPAR_Id:
                     openParentheses--;
                     if (opens.isEmpty() || opens.pop() != LPAR) {
                         if (pattern.handleUnmatchedClosing(RPAR)) {
@@ -347,13 +346,13 @@ import static org.jetbrains.kotlin.lexer.KtTokens.*;
                         }
                     }
                     break;
-                case KtTokenId.GT:
+                case GT_Id:
                     openAngleBrackets--;
                     break;
-                case KtTokenId.RBRACE:
+                case RBRACE_Id:
                     openBraces--;
                     break;
-                case KtTokenId.RBRACKET:
+                case RBRACKET_Id:
                     openBrackets--;
                     break;
             }

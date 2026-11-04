@@ -13,7 +13,6 @@ import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.KtTokenId;
 import org.jetbrains.kotlin.lexer.KtKeywordToken;
 import org.jetbrains.kotlin.lexer.KtSingleValueToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
@@ -523,24 +522,24 @@ public class KotlinParsing extends AbstractKotlinParsing {
             @NotNull DeclarationParsingMode declarationParsingMode
     ) {
         switch (getTokenId()) {
-            case KtTokenId.CLASS_KEYWORD:
-            case KtTokenId.INTERFACE_KEYWORD:
+            case CLASS_KEYWORD_Id:
+            case INTERFACE_KEYWORD_Id:
                 return parseClass(detector.isEnumDetected(), true);
-            case KtTokenId.FUN_MODIFIER:
+            case FUN_KEYWORD_Id:
                 return parseFunction();
-            case KtTokenId.VAL_KEYWORD:
-            case KtTokenId.VAR_KEYWORD:
+            case VAL_KEYWORD_Id:
+            case VAR_KEYWORD_Id:
                 return parseProperty(declarationParsingMode);
-            case KtTokenId.LPAR:
-            case KtTokenId.LBRACKET:
+            case LPAR_Id:
+            case LBRACKET_Id:
                 IElementType lookahead = lookahead(1);
                 return lookahead == VAL_KEYWORD || lookahead == VAR_KEYWORD ? parseProperty(declarationParsingMode) : null;
-            case KtTokenId.TYPE_ALIAS_KEYWORD:
+            case TYPE_ALIAS_KEYWORD_Id:
                 return parseTypeAlias();
-            case KtTokenId.OBJECT_KEYWORD:
+            case OBJECT_KEYWORD_Id:
                 parseObject(nameParsingModeForObject, true);
                 return OBJECT_DECLARATION;
-            case KtTokenId.IDENTIFIER:
+            case IDENTIFIER_Id:
                 if (detector.isEnumDetected() && declarationParsingMode.canBeEnumUsedAsSoftKeyword) {
                     return parseClass(true, false);
                 }

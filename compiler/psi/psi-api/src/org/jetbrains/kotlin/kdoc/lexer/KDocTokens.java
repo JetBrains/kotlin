@@ -26,6 +26,19 @@ import org.jetbrains.kotlin.KotlinElementTypeProvider;
 public interface KDocTokens {
     @NotNull ILazyParseableElementType KDOC = KotlinElementTypeProvider.getInstance().getKdocType();
 
+    int START_Id = KDocTokenId.START;
+    int END_Id = KDocTokenId.END;
+    int LEADING_ASTERISK_Id = KDocTokenId.LEADING_ASTERISK;
+    int TEXT_Id = KDocTokenId.TEXT;
+    int CODE_BLOCK_TEXT_Id = KDocTokenId.CODE_BLOCK_TEXT;
+    int TAG_NAME_Id = KDocTokenId.TAG_NAME;
+    int MARKDOWN_ESCAPED_CHAR_Id = KDocTokenId.MARKDOWN_ESCAPED_CHAR;
+    @Deprecated
+    int MARKDOWN_INLINE_LINK_Id = KDocTokenId.MARKDOWN_LINK;
+    int KDOC_LPAR_Id = KDocTokenId.KDOC_LPAR;
+    int KDOC_RPAR_Id = KDocTokenId.KDOC_RPAR;
+    int CODE_SPAN_TEXT_Id = KDocTokenId.CODE_SPAN_TEXT;
+
     @NotNull KDocToken START                 = new KDocToken("KDOC_START", KDocTokenId.START);
     @NotNull KDocToken END                   = new KDocToken("KDOC_END", KDocTokenId.END);
     @NotNull KDocToken LEADING_ASTERISK      = new KDocToken("KDOC_LEADING_ASTERISK", KDocTokenId.LEADING_ASTERISK);

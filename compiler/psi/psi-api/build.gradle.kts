@@ -14,10 +14,10 @@ dependencies {
     api(project(":core:names"))
     api(project(":core:language.model"))
     implementation(project(":core:error.handling"))
+    implementation(project(":compiler:syntax.common"))
     api(project(":core:deserialization.common"))
 
     compileOnly(project(":kotlin-util-klib"))
-    compileOnly(project(":compiler:syntax.common"))
     compileOnly(intellijCore())
     compileOnly(libs.org.jetbrains.annotations)
 

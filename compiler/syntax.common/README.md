@@ -36,20 +36,13 @@ Syntax checkers, positioning strategies and other utilities should rely on these
 frontend-specific element type classes (`IElementType` for PSI and LightTree, `SyntaxElementType` for KMP). This way the
 same code works for any tree, and the dependency on the IntelliJ platform classes can be dropped.
 
-The identifiers are `const val`s. Java code (e.g., `psi-api`, `psi:parser`) gets their values inlined at compile time,
-so such modules only need a `compileOnly` dependency on this module.
-The identifiers also allow `when` expressions over node types to be compiled into fast table/lookup switches.
+The identifiers are `const val`s, so their values are inlined at compile time. This allows `when` expressions over node
+types to be compiled into fast table/lookup switches.
 
 ### Common tree abstractions
 
 The module is also intended to hold common and abstract classes for syntax trees that don't depend on a specific
 frontend, so that the light tree-based utilities and FIR can work with any tree:
-
-* `KtSourceElement` and related classes (`KtSourceElementKind`, `AbstractKtSourceElement`, ...)
-* A platform-independent replacement for `LighterASTNode`, which exposes the node ID
-  (`tokenId`) instead of an `IElementType`
-* A platform-independent replacement for `FlyweightCapableTreeStructure`
-* Small utilities needed by them (e.g., `Ref`)
 
 ## Rules for identifiers
 

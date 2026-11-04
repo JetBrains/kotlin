@@ -12,6 +12,7 @@ dependencies {
     api(project(":compiler:fir:raw-fir:raw-fir.common"))
     implementation(project(":compiler:fir:raw-fir:light-tree2fir"))
     implementation(project(":compiler:multiplatform-parsing"))
+    implementation(project(":compiler:syntax.common"))
     implementation(libs.org.jetbrains.syntax.api)
 
     compileOnly(intellijCore())

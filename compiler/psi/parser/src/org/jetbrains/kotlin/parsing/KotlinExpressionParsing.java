@@ -16,7 +16,6 @@ import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
-import org.jetbrains.kotlin.KtTokenId;
 import org.jetbrains.kotlin.lang.BinaryOperationPrecedence;
 import org.jetbrains.kotlin.lexer.KtToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
@@ -205,14 +204,14 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
 
             IElementType resultType;
             switch (operation.tokenId) {
-                case KtTokenId.AS_KEYWORD:
-                case KtTokenId.AS_SAFE:
+                case AS_KEYWORD_Id:
+                case AS_SAFE_Id:
                     myKotlinParsing.parseTypeRefWithoutIntersectionsOrUnions();
                     minPrecedence = BinaryOperationPrecedence.AS;
                     resultType = KtNodeTypes.BINARY_WITH_TYPE;
                     break;
-                case KtTokenId.IS_KEYWORD:
-                case KtTokenId.NOT_IS:
+                case IS_KEYWORD_Id:
+                case NOT_IS_Id:
                     myKotlinParsing.parseTypeRefWithoutIntersectionsOrUnions();
                     // The handling of `is`, it doesn't parse RHS recursively and greedily.
                     // To prevent parsing of more prioritized operations next to `is` (for instance, INFIX, RANGE, and others),
@@ -533,52 +532,52 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         boolean ok = true;
 
         switch (getTokenId()) {
-            case KtTokenId.LPAR:
+            case LPAR_Id:
                 parseParenthesizedExpression();
                 break;
-            case KtTokenId.LBRACKET:
+            case LBRACKET_Id:
                 parseCollectionLiteralExpression();
                 break;
-            case KtTokenId.THIS_KEYWORD:
+            case THIS_KEYWORD_Id:
                 parseThisExpression();
                 break;
-            case KtTokenId.SUPER_KEYWORD:
+            case SUPER_KEYWORD_Id:
                 parseSuperExpression();
                 break;
-            case KtTokenId.OBJECT_KEYWORD:
+            case OBJECT_KEYWORD_Id:
                 parseObjectLiteral();
                 break;
-            case KtTokenId.THROW_KEYWORD:
+            case THROW_KEYWORD_Id:
                 parseThrow();
                 break;
-            case KtTokenId.RETURN_KEYWORD:
+            case RETURN_KEYWORD_Id:
                 parseReturn();
                 break;
-            case KtTokenId.CONTINUE_KEYWORD:
+            case CONTINUE_KEYWORD_Id:
                 parseJump(CONTINUE);
                 break;
-            case KtTokenId.BREAK_KEYWORD:
+            case BREAK_KEYWORD_Id:
                 parseJump(BREAK);
                 break;
-            case KtTokenId.IF_KEYWORD:
+            case IF_KEYWORD_Id:
                 parseIf();
                 break;
-            case KtTokenId.WHEN_KEYWORD:
+            case WHEN_KEYWORD_Id:
                 parseWhen();
                 break;
-            case KtTokenId.TRY_KEYWORD:
+            case TRY_KEYWORD_Id:
                 parseTry();
                 break;
-            case KtTokenId.FOR_KEYWORD:
+            case FOR_KEYWORD_Id:
                 parseFor();
                 break;
-            case KtTokenId.WHILE_KEYWORD:
+            case WHILE_KEYWORD_Id:
                 parseWhile();
                 break;
-            case KtTokenId.DO_KEYWORD:
+            case DO_KEYWORD_Id:
                 parseDoWhile();
                 break;
-            case KtTokenId.IDENTIFIER:
+            case IDENTIFIER_Id:
                 // Try to parse anonymous function with context parameters
                 if (at(CONTEXT_KEYWORD) && lookahead(1) == LPAR) {
                     if (parseLocalDeclaration(true, false)) {
@@ -590,11 +589,11 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
 
                 parseSimpleNameExpression();
                 break;
-            case KtTokenId.LBRACE:
+            case LBRACE_Id:
                 parseFunctionLiteral();
                 break;
-            case KtTokenId.INTERPOLATION_PREFIX:
-            case KtTokenId.OPEN_QUOTE:
+            case INTERPOLATION_PREFIX_Id:
+            case OPEN_QUOTE_Id:
                 parseStringTemplate();
                 break;
             /*
@@ -608,28 +607,28 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
              *   : "null"
              *   ;
              */
-            case KtTokenId.TRUE_KEYWORD:
-            case KtTokenId.FALSE_KEYWORD:
+            case TRUE_KEYWORD_Id:
+            case FALSE_KEYWORD_Id:
                 parseOneTokenExpression(BOOLEAN_CONSTANT);
                 break;
-            case KtTokenId.INTEGER_LITERAL:
+            case INTEGER_LITERAL_Id:
                 parseOneTokenExpression(INTEGER_CONSTANT);
                 break;
-            case KtTokenId.CHARACTER_LITERAL:
+            case CHARACTER_LITERAL_Id:
                 parseOneTokenExpression(CHARACTER_CONSTANT);
                 break;
-            case KtTokenId.FLOAT_LITERAL:
+            case FLOAT_LITERAL_Id:
                 parseOneTokenExpression(FLOAT_CONSTANT);
                 break;
-            case KtTokenId.NULL_KEYWORD:
+            case NULL_KEYWORD_Id:
                 parseOneTokenExpression(NULL);
                 break;
-            case KtTokenId.CLASS_KEYWORD:
-            case KtTokenId.INTERFACE_KEYWORD:
-            case KtTokenId.FUN_MODIFIER:
-            case KtTokenId.VAL_KEYWORD:
-            case KtTokenId.VAR_KEYWORD:
-            case KtTokenId.TYPE_ALIAS_KEYWORD:
+            case CLASS_KEYWORD_Id:
+            case INTERFACE_KEYWORD_Id:
+            case FUN_KEYWORD_Id:
+            case VAL_KEYWORD_Id:
+            case VAR_KEYWORD_Id:
+            case TYPE_ALIAS_KEYWORD_Id:
                 if (!parseLocalDeclaration(/* rollbackIfDefinitelyNotExpression = */ myBuilder.newlineBeforeCurrentToken(), false)) {
                     ok = false;
                 }
@@ -892,8 +891,8 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         PsiBuilder.Marker condition = mark();
         myBuilder.disableNewlines();
         switch (getTokenId()) {
-            case KtTokenId.IN_MODIFIER:
-            case KtTokenId.NOT_IN:
+            case IN_KEYWORD_Id:
+            case NOT_IN_Id:
                 PsiBuilder.Marker mark = mark();
                 advance(); // IN_KEYWORD or NOT_IN
                 mark.done(OPERATION_REFERENCE);
@@ -907,8 +906,8 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
                 }
                 condition.done(WHEN_CONDITION_IN_RANGE);
                 break;
-            case KtTokenId.IS_KEYWORD:
-            case KtTokenId.NOT_IS:
+            case IS_KEYWORD_Id:
+            case NOT_IS_Id:
                 advance(); // IS_KEYWORD or NOT_IS
 
                 if (atSet(WHEN_CONDITION_RECOVERY_SET_WITH_ARROW)) {
@@ -919,10 +918,10 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
                 }
                 condition.done(WHEN_CONDITION_IS_PATTERN);
                 break;
-            case KtTokenId.RBRACE:
-            case KtTokenId.ELSE_KEYWORD:
-            case KtTokenId.ARROW:
-            case KtTokenId.DOT:
+            case RBRACE_Id:
+            case ELSE_KEYWORD_Id:
+            case ARROW_Id:
+            case DOT_Id:
                 error("Expecting an expression, is-condition or in-condition");
                 condition.done(WHEN_CONDITION_EXPRESSION);
                 break;
