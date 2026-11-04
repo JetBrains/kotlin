@@ -9,9 +9,10 @@ plugins {
 
 dependencies {
     testImplementation(testFixtures(project(":compiler:tests-common-new")))
+    testRuntimeOnly(testFixtures(project(":compiler:tests-common-new")))
     testImplementation(project(":compiler:tests-common-new", "testsJarConfig"))
-    testImplementation(testFixtures(project(":compiler:fir:fir2ir")))
-    testImplementation(project(":compiler:fir:fir2ir", "testsJarConfig"))
+    testImplementation(testFixtures(project(":compiler:jvm.tests")))
+    testImplementation(project(":compiler:jvm.tests", "testsJarConfig"))
 
     testImplementation(libs.junit.platform.suite)
     testImplementation(kotlinStdlib())
