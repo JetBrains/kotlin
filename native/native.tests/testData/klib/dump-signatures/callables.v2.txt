@@ -8,7 +8,7 @@ callables/funWith2Parameters|funWith2Parameters(kotlin.Pair<*,*>;callables.Foo){
 callables/funWithLocalMembers|funWithLocalMembers(){}[0]
 callables/funWithoutParameters|funWithoutParameters(){}[0]
 
-// Imported signatures: 20
+// Imported signatures: 21
 kotlin.collections/Collection.iterator|iterator(){}[0]
 kotlin.collections/Collection|null[0]
 kotlin.collections/Iterator|null[0]
@@ -21,6 +21,7 @@ kotlin.collections/Map.entries|{}entries[0]
 kotlin.collections/Map|null[0]
 kotlin.collections/Set|null[0]
 kotlin/Any.<init>|<init>(){}[0]
+kotlin/Any.toString|toString(){}[0]
 kotlin/Any|null[0]
 kotlin/Int.plus|plus(kotlin.Int){}[0]
 kotlin/Int|null[0]

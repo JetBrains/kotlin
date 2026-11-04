@@ -8,7 +8,7 @@ callables/funWith2Parameters|253442693142123504[0]
 callables/funWithLocalMembers|-2046106097692888239[0]
 callables/funWithoutParameters|-1655691975229201033[0]
 
-// Imported signatures: 20
+// Imported signatures: 21
 kotlin.collections/Collection.iterator|8062689420742628886[0]
 kotlin.collections/Collection|null[0]
 kotlin.collections/Iterator|null[0]
@@ -21,6 +21,7 @@ kotlin.collections/Map.entries|-586096469347622282[0]
 kotlin.collections/Map|null[0]
 kotlin.collections/Set|null[0]
 kotlin/Any.<init>|-5645683436151566731[0]
+kotlin/Any.toString|-1522858123163872138[0]
 kotlin/Any|null[0]
 kotlin/Int.plus|4955128566171430399[0]
 kotlin/Int|null[0]
