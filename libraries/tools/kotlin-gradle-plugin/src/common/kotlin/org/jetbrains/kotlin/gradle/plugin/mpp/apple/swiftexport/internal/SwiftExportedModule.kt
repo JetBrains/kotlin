@@ -11,6 +11,7 @@ import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedArtifactResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.internal.KotlinProjectSharedDataProvider
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.applySwiftExportCo
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.deserializeSwiftExportMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject
 import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfigurationWithArtifacts
+import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.io.File
 import java.io.Serializable
 
@@ -291,7 +293,7 @@ private fun LazyResolvedConfigurationWithArtifacts.filteredArtifacts(
     }
 }
 
-private val File.isCinteropKlib get() = name.contains("-cinterop-") || name.contains("Cinterop-")
+internal val File.isCinteropKlib get() = name.contains("-cinterop-") || name.contains("Cinterop-")
 
 /**
  * Not every cinterop KLIB, because for swift export we are allowing only cinterop klibs that were smpImported.
@@ -306,8 +308,21 @@ private val File.isCinteropKlib get() = name.contains("-cinterop-") || name.cont
  * For Objective-C export it was achievable through forward declarations. But for Swift there is no analog of forward declarations.
  *
  */
-private val File.isSwiftPMImportCinteropKlib
-    get() = name.contains("-cinterop-${GenerateSyntheticLinkageImportProject.SWIFT_PM_IMPORT_CINTEROP_NAME}")
+internal val File.isSwiftPMImportCinteropKlib: Boolean
+    get() = name.contains("-cinterop-${GenerateSyntheticLinkageImportProject.SWIFT_PM_IMPORT_CINTEROP_NAME}") ||
+            name.contains("$publishedSwiftPMImportCinteropKlibInfix-") ||
+            name.endsWith("$publishedSwiftPMImportCinteropKlibInfix.klib")
+
+/**
+ * A published dependency resolves to the file name from its Gradle module metadata, which is the packed klib
+ * archive name `<project>-<target>Cinterop-<interop>Main[-<version>].klib` (see `maybeCreateKlibPackingTask`).
+ * Only main compilation cinterops are published.
+ */
+private val publishedSwiftPMImportCinteropKlibInfix = lowerCamelCaseName(
+    "Cinterop-${GenerateSyntheticLinkageImportProject.SWIFT_PM_IMPORT_CINTEROP_NAME}",
+    KotlinCompilation.MAIN_COMPILATION_NAME,
+)
+
 private val File.isJavaJar get() = extension == "jar"
 
 private fun findAndCreateSwiftExportedModules(
