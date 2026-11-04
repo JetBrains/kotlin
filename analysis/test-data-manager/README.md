@@ -122,7 +122,46 @@ missing golden file and deletes redundant ones; see the behavior matrix in [AGEN
 
 ## Usage
 
-### Global Execution (Recommended)
+### Wrapper script (recommended for agents and scripts)
+
+[`test-data-manager.py`](test-data-manager.py) is a thin wrapper: it runs `checkTestData` or `updateTestData` in the
+modules with managed test data in one Gradle call with a shared run id, passes the options to the runner as is, and
+aggregates the reports the modules print into one summary:
+
+```bash
+# Check test data under a directory
+analysis/test-data-manager/test-data-manager.py check --path compiler/psi/psi-impl/testData/psi/annotation
+
+# Update it; the summary lists the created, updated and deleted files
+analysis/test-data-manager/test-data-manager.py update --path compiler/psi/psi-impl/testData/psi/annotation
+
+# Limit the modules, print the summary as JSON
+analysis/test-data-manager/test-data-manager.py check --path analysis/analysis-api/testData/components \
+    --module :analysis:analysis-api-fir --json
+```
+
+On top of the module reports, it fails when a module wrote no report for the run (the task didn't run, or its JVM
+crashed) and when no test in any module matches the filters. The Gradle output goes to
+`build/test-data-manager/<runId>.gradle.log`, and the summary to `build/test-data-manager/<runId>.summary.json`, whose
+path is the last line of the output (`--json` prints the file instead of the text). The summary is an index: the status,
+the run errors, the totals, the counts of problems and changed files by kind, and the module reports, which hold the
+entries themselves. The text output lists at most 50 entries of each kind. The 5 most recent runs are kept.
+
+Compared with calling Gradle directly, the command is much shorter, a mistyped option fails instead of being ignored
+(Gradle silently ignores an unknown `-P` property, so a misspelled `testDataPath` would run every test), and the output
+is a few lines however many modules run.
+
+Exit codes: `0` passed, `1` test data problems or test errors, `2` the run itself failed (run errors of a module, a
+missing report, Gradle failing without a failing report).
+
+Its tests use only the standard library and run in temporary git repositories, with a stub `gradlew`; they aren't part
+of the Gradle build, so run them after changing the script:
+
+```bash
+python3 analysis/test-data-manager/test-data-manager-test.py
+```
+
+### Global Execution
 
 Run across all modules with the test-data-manager plugin:
 

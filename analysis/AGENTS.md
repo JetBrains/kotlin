@@ -40,6 +40,28 @@ WHEN working with PSI elements:
 
 When modifying test data files or running generated tests (`*Generated`) that compare output against `.txt` files, use `updateTestData` (to rewrite files) or `checkTestData` (to verify only) instead of standard test commands. Both take their options as `-P` properties, so changing filters between runs stays fast.
 
+### The wrapper script — preferred for agents
+
+```bash
+analysis/test-data-manager/test-data-manager.py update --path analysis/analysis-api/testData/components/resolver/
+analysis/test-data-manager/test-data-manager.py check --path analysis/analysis-api/testData/components/resolver/
+```
+
+Prefer it to calling Gradle directly: the command is short, a mistyped option fails instead of being silently ignored
+(an unknown `-P` property is, so a misspelled `testDataPath` runs every test), and the output stays a few lines.
+It runs the task in all modules with managed test data (`--module` limits them), keeps the Gradle output in a log file,
+and prints one summary of the module reports: the test counts, one line per problem (`MISMATCH`, `MISSING_FILE`,
+`REDUNDANT_FILE`, `UNEXPECTED_FILE` with the file and the test), per test error, per test that passed only on a re-run,
+and per created, updated or deleted file, at most 50 of each. A module that didn't run and filters that match no test
+fail the run (exit code `2`) instead of passing silently. The last line is the path of the summary file
+(`build/test-data-manager/<runId>.summary.json`, also printed by `--json`): read it instead of parsing the output, and
+the module reports it links to for every entry. Each problem's actual output is saved next to the module report
+(`actualFile`) for `diff`.
+See [the script's section in the test data manager README](test-data-manager/README.md#wrapper-script-recommended-for-agents-and-scripts).
+
+Paths are relative to the repository root (as in `@TestMetadata`) or absolute. When calling Gradle directly, add `-q`:
+the task output is then only a few lines per module, ending with the path of the module's JSON report.
+
 ### `updateTestData` — the only recommended way to update test data
 
 ```bash
@@ -63,7 +85,7 @@ When modifying test data files or running generated tests (`*Generated`) that co
 
 ### `checkTestData` — verification only
 
-If you specifically need to verify that existing test data is consistent without modifying anything (e.g., sanity-checking generated files after an `updateTestData` run), use `checkTestData`. It is the exact `-P`-driven counterpart of `updateTestData` but fixed to check mode: it fails on any mismatch and writes nothing.
+If you specifically need to verify that existing test data is consistent without modifying anything (e.g., sanity-checking generated files after an `updateTestData` run), use `checkTestData`. It is the exact `-P`-driven counterpart of `updateTestData` but fixed to check mode: it fails on any mismatch and writes nothing (unlike a plain `test` run, which still creates missing golden files locally).
 
 ```bash
 ./gradlew checkTestData -Porg.jetbrains.kotlin.testDataManager.options.testDataPath=analysis/analysis-api/testData/components/resolver/singleByPsi/

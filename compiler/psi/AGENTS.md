@@ -140,17 +140,20 @@ PSI test data (`compiler/psi/psi-impl/testData/`) is managed by the same test da
 instead of standard test commands.
 
 ```bash
-# Update all PSI test data
-./gradlew :compiler:psi:psi-impl:updateTestData
+# Update by directory in every managed module, one summary (preferred for iteration)
+analysis/test-data-manager/test-data-manager.py update --path compiler/psi/psi-impl/testData/psi/annotation/
 
-# Update by directory (preferred for iteration)
-./gradlew updateTestData -Porg.jetbrains.kotlin.testDataManager.options.testDataPath=compiler/psi/psi-impl/testData/psi/annotation/
+# The same through Gradle directly
+./gradlew -q updateTestData -Porg.jetbrains.kotlin.testDataManager.options.testDataPath=compiler/psi/psi-impl/testData/psi/annotation/
+
+# Update all PSI test data
+./gradlew -q :compiler:psi:psi-impl:updateTestData
 ```
 
 Note that a single `.kt` file under `testData/psi/` feeds several suites across two modules: the PSI tree (`.txt`) from
 `:compiler:psi:psi-impl` (`PsiParsingTest`), plus source stubs (`.stubs.txt`) and compiled stubs (`.compiled.stubs.txt`,
 `.knm.compiled.stubs.txt`) together with the decompiled text (`.decompiledText.txt`, `.knm.decompiledText.txt`) from `:analysis:stubs`.
-Prefer a path-filtered `updateTestData` from the repo root so that every affected module is picked up.
+Prefer the script or a path-filtered `updateTestData` from the repo root so that every affected module is picked up.
 
 → READ [`analysis/AGENTS.md`](../../analysis/AGENTS.md) ("Working with Test Data") for the full set of options and the rationale
 
