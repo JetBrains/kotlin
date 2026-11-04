@@ -27,6 +27,38 @@ class KotlinWasmBuiltinTasksGradlePluginIT : KGPBaseTest() {
         get() = super.defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
 
     @OptIn(ExperimentalWasmDsl::class)
+    @DisplayName("Build succeeds without sources — distribution task is skipped")
+    @GradleTest
+    fun buildSucceedsWithoutSources(gradleVersion: GradleVersion) {
+        project("empty", gradleVersion) {
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "wasm-browser-simple-project"
+            }
+
+            plugins {
+                kotlin("multiplatform")
+            }
+
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    @OptIn(ExperimentalWasmDsl::class)
+                    wasmJs {
+                        binaries.executable()
+                        browser(bundler = KotlinBrowserBundler.NONE)
+                    }
+                    // No sources added — wasmJsMain source set is empty
+                }
+            }
+
+            build("build") {
+                // DistributionWithImportMapTask has @SkipWhenEmpty on mainDirectory,
+                // so it should have NO_SOURCE outcome when there are no compiled outputs
+                assertTasksNoSource(":wasmJsBrowserDistribution")
+            }
+        }
+    }
+
+    @OptIn(ExperimentalWasmDsl::class)
     @DisplayName("Check js target dist")
     @GradleTest
     fun jsTargetDist(gradleVersion: GradleVersion) {
