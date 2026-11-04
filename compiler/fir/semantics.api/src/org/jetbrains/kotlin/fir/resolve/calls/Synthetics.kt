@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.config.LanguageFeature.DontCreateSyntheticPropertiesWithoutBaseJavaGetter
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.caches.FirCache
+import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
@@ -29,7 +31,8 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
  * This symbol is bound to a synthetic property based on Java getter/setter call
  *
  * See details about such properties here: https://kotlinlang.org/docs/java-interop.html#getters-and-setters).
- * Frontend IR creates this kind of symbol each time when x.foo should be resolved to x.getFoo() or x.setFoo().
+ * Frontend IR creates this kind of symbol when x.foo should be resolved to x.getFoo() or x.setFoo(), and keeps it in
+ * [FirSimpleSyntheticPropertyStorage], so all lookups of the same property in a session return the same symbol.
  */
 class FirSimpleSyntheticPropertySymbol(
     propertyId: CallableId,
@@ -147,17 +150,14 @@ class FirSyntheticPropertiesScope private constructor(
             })
         }
 
-        val property = buildSyntheticProperty(propertyName, getter, matchingSetter, getterCompatibility, deprecatedOverrideOfHidden)
-        getter.originalForSubstitutionOverride?.let {
-            property.originalForSubstitutionOverrideAttr = buildSyntheticProperty(
-                propertyName,
-                it,
-                matchingSetter?.originalForSubstitutionOverride ?: matchingSetter,
-                getterCompatibility,
-                deprecatedOverrideOfHidden,
-            )
-        }
-        val syntheticSymbol = property.symbol
+        val propertyKey = SyntheticPropertyKey(
+            propertyName,
+            getterSymbol,
+            matchingSetter?.symbol,
+            noJavaOrigin = getterCompatibility != HasJavaOrigin,
+            deprecatedOverrideOfHidden,
+        )
+        val syntheticSymbol = session.simpleSyntheticPropertyStorage.properties.getValue(propertyKey, this).symbol
         (baseScope as? FirUnstableSmartcastTypeScope)?.apply {
             if (isSymbolFromUnstableSmartcast(getterSymbol)) {
                 markSymbolFromUnstableSmartcast(syntheticSymbol)
@@ -166,11 +166,27 @@ class FirSyntheticPropertiesScope private constructor(
         processor(syntheticSymbol)
     }
 
+    internal fun createSyntheticProperty(key: SyntheticPropertyKey): FirSyntheticProperty {
+        val getter = key.getter.fir
+        val setter = key.setter?.fir
+        val property = buildSyntheticProperty(key.propertyName, getter, setter, key.noJavaOrigin, key.deprecatedOverrideOfHidden)
+        getter.originalForSubstitutionOverride?.let {
+            property.originalForSubstitutionOverrideAttr = buildSyntheticProperty(
+                key.propertyName,
+                it,
+                setter?.originalForSubstitutionOverride ?: setter,
+                key.noJavaOrigin,
+                key.deprecatedOverrideOfHidden,
+            )
+        }
+        return property
+    }
+
     private fun buildSyntheticProperty(
         propertyName: Name,
         getter: FirNamedFunction,
         setter: FirNamedFunction?,
-        getterCompatibility: SyntheticGetterCompatibility,
+        noJavaOrigin: Boolean,
         deprecatedOverrideOfHidden: Boolean,
     ): FirSyntheticProperty {
         val classLookupTag = getter.symbol.originalOrSelf().dispatchReceiverClassLookupTagOrNull()
@@ -188,8 +204,8 @@ class FirSyntheticPropertiesScope private constructor(
             delegateSetter = setter
             deprecationsProvider = getDeprecationsProviderFromAccessors(session, getter, setter)
         }.apply {
-            if (getterCompatibility != HasJavaOrigin) {
-                noJavaOrigin = true
+            if (noJavaOrigin) {
+                this.noJavaOrigin = true
             }
             if (deprecatedOverrideOfHidden) {
                 this.deprecatedOverrideOfHidden = true
@@ -404,3 +420,25 @@ private var FirSyntheticProperty.deprecatedOverrideOfHidden: Boolean? by FirDecl
 
 val FirSimpleSyntheticPropertySymbol.deprecatedOverrideOfHidden: Boolean
     get() = (fir as FirSyntheticProperty).deprecatedOverrideOfHidden == true
+
+/**
+ * Keeps the synthetic properties built by [FirSyntheticPropertiesScope], so that all lookups of the same property in a session return
+ * the same [FirSyntheticProperty].
+ */
+class FirSimpleSyntheticPropertyStorage(session: FirSession) : FirSessionComponent {
+    internal val properties: FirCache<SyntheticPropertyKey, FirSyntheticProperty, FirSyntheticPropertiesScope> =
+        session.firCachesFactory.createCache { key, scope -> scope.createSyntheticProperty(key) }
+}
+
+private val FirSession.simpleSyntheticPropertyStorage: FirSimpleSyntheticPropertyStorage by FirSession.sessionComponentAccessor()
+
+/**
+ * Everything a synthetic property of [FirSyntheticPropertiesScope] is built from.
+ */
+internal data class SyntheticPropertyKey(
+    val propertyName: Name,
+    val getter: FirNamedFunctionSymbol,
+    val setter: FirNamedFunctionSymbol?,
+    val noJavaOrigin: Boolean,
+    val deprecatedOverrideOfHidden: Boolean,
+)

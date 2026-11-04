@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.fir.java.scopes.FirRenamedForOverrideSymbolsStorage
 import org.jetbrains.kotlin.fir.java.scopes.JavaOverridabilityRules
 import org.jetbrains.kotlin.fir.modules.FirJavaModuleResolverProvider
 import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertyStorage
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticNamesProvider
 import org.jetbrains.kotlin.fir.resolve.calls.jvm.JvmCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.calls.overloads.FirDeclarationOverloadabilityHelperImpl
@@ -88,6 +89,7 @@ fun FirSession.registerCommonComponents(languageVersionSettings: LanguageVersion
     register(FirSubstitutionOverrideStorage::class, FirSubstitutionOverrideStorage(this))
     register(FirIntersectionOverrideStorage::class, FirIntersectionOverrideStorage(this))
     register(FirTypealiasConstructorStorage::class, FirTypealiasConstructorStorage(this))
+    register(FirSimpleSyntheticPropertyStorage::class, FirSimpleSyntheticPropertyStorage(this))
     register(FirSynthesizedStorage::class, FirSynthesizedStorage(this))
     register(FirGeneratedMemberDeclarationsStorage::class, FirGeneratedMemberDeclarationsStorage(this))
     register(FirSamConstructorStorage::class, FirSamConstructorStorage(this))
