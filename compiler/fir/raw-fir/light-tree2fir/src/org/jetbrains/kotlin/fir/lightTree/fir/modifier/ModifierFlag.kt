@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.lightTree.fir.modifier
 
+import org.jetbrains.kotlin.syntax.SyntaxId
 import org.jetbrains.kotlin.syntax.SyntaxTokenIds
 
 enum class ModifierFlag(val value: Long) {
@@ -49,7 +50,7 @@ enum class ModifierFlag(val value: Long) {
     ;
 
     companion object {
-        val ElementTypeToModifierFlagMap: Map<Int, ModifierFlag> = hashMapOf(
+        val ElementTypeToModifierFlagMap: Map<SyntaxId, ModifierFlag> = hashMapOf(
             // Class
             SyntaxTokenIds.ENUM_MODIFIER to CLASS_ENUM,
             SyntaxTokenIds.ANNOTATION_MODIFIER to CLASS_ANNOTATION,
