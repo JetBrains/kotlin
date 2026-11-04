@@ -275,7 +275,10 @@ private fun SirMutableDeclarationContainer.removeConflicts(logger: SwiftExportLo
             .indexOfFirst { decl.conflictsWith(it) } // We assume that `conflictsWith` is transitive
             .takeIf { it in 0..<iterator.previousIndex() }
             ?.let { i ->
-                val expelled = decl.takeIf { decl.priority < declarations[i].priority } ?: declarations[i].also { declarations[i] = decl }
+                val earlier = declarations[i]
+                val expelled = decl
+                    .takeIf { conflictOrder.compare(decl, earlier) < 0 }
+                    ?: earlier.also { declarations[i] = decl }
                 iterator.remove()
                 expelled.parent = trashBin
                 logger?.report(
@@ -287,19 +290,10 @@ private fun SirMutableDeclarationContainer.removeConflicts(logger: SwiftExportLo
     declarations.filterIsInstance<SirExtension>().forEach { it.removeConflicts(logger) }
 }
 
-private val SirDeclaration.priority: Int get() = when (this) {
-        is SirVariable -> 10
-        is SirFunction -> 20
-        is SirScopeDefiningDeclaration -> 30
-        else -> 0
-    }.let {
-        if (this.origin is SirOrigin.Trampoline)
-            it - 50
-        else
-            it
-    }.let {
-        if (this.isUnavailable)
-            it - 100
-        else
-            it
-    }
+private val conflictOrder: Comparator<SirDeclaration> = compareBy(
+    { it is SirScopeDefiningDeclaration },
+    { it is SirFunction },
+    { it is SirVariable },
+    { !it.isUnavailable },
+    { it.origin !is SirOrigin.Trampoline },
+)
