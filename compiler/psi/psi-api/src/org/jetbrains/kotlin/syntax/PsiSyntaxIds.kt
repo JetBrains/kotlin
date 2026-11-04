@@ -3,14 +3,14 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin
+package org.jetbrains.kotlin.syntax
 
 import com.intellij.psi.tree.IElementType
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.lexer.KtToken
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtImplementationDetail
-import org.jetbrains.kotlin.syntax.NO_ID
-import org.jetbrains.kotlin.syntax.SyntaxNodeTypeIds
-import org.jetbrains.kotlin.syntax.SyntaxTokenIds
+import java.lang.Deprecated
 
 /**
  * @receiver A Kotlin element type
@@ -33,20 +33,20 @@ private val indexToId: IntArray = run {
     var maxIndex: Short = 0
     var id = SyntaxNodeTypeIds.FILE
     KtNodeTypes::class.java.declaredFields.forEach {
-        if (it.isAnnotationPresent(java.lang.Deprecated::class.java)) return@forEach
+        if (it.isAnnotationPresent(Deprecated::class.java)) return@forEach
         val index = (it.get(null) as IElementType).index
         indexToIdMap[index] = id++
         if (index > maxIndex) {
             maxIndex = index
         }
     }
-    org.jetbrains.kotlin.lexer.KtTokens.DOC_COMMENT.index.let {
+    KtTokens.DOC_COMMENT.index.let {
         indexToIdMap[it] = SyntaxTokenIds.DOC_COMMENT
         if (it > maxIndex) {
             maxIndex = it
         }
     }
-    org.jetbrains.kotlin.lexer.KtTokens.WHITE_SPACE.index.let {
+    KtTokens.WHITE_SPACE.index.let {
         indexToIdMap[it] = SyntaxTokenIds.WHITE_SPACE
         if (it > maxIndex) {
             maxIndex = it

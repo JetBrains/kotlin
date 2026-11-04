@@ -3,14 +3,16 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin
+package org.jetbrains.kotlin.syntax
 
 import com.intellij.platform.syntax.SyntaxElementType
 import com.intellij.psi.tree.IElementType
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.junit.jupiter.api.Test
+import java.lang.Deprecated
 import kotlin.reflect.KProperty
 import kotlin.test.assertEquals
 
@@ -25,7 +27,7 @@ class PsiKmpSyntaxIdsConsistencyTest {
         psiFields.forEach { psiField ->
             val psiNodeType = psiField.get(null) as IElementType
             val psiId = psiNodeType.syntaxId()
-            if (psiField.isAnnotationPresent(java.lang.Deprecated::class.java)) return@forEach
+            if (psiField.isAnnotationPresent(Deprecated::class.java)) return@forEach
 
             val kmpField = kmpFields.find { it.name == psiField.name }
                 ?: error("PSI_NODE_TYPE = $psiNodeType not found in KMP")
@@ -49,7 +51,7 @@ class PsiKmpSyntaxIdsConsistencyTest {
         psiFields.forEach { psiField ->
             val psiNodeType = psiField.get(null) as? KtToken ?: return@forEach
             val psiId = psiNodeType.syntaxId()
-            if (psiField.isAnnotationPresent(java.lang.Deprecated::class.java)) return@forEach
+            if (psiField.isAnnotationPresent(Deprecated::class.java)) return@forEach
 
             val kmpField = kmpFields.find { it.name == psiField.name || it.name.replace("_MODIFIER", "_KEYWORD") == psiField.name }
                 ?: error("PSI_NODE_TYPE = $psiNodeType (${psiField.name}) not found in KMP")
