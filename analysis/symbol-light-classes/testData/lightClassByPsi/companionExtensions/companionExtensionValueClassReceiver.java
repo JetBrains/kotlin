@@ -18,4 +18,16 @@ public final class C /* one.C*/ {
 public final class CompanionExtensionValueClassReceiverKt /* one.CompanionExtensionValueClassReceiverKt*/ {
   @kotlin.jvm.JvmExposeBoxed()
   public static final int exposed();//  exposed()
+
+  @org.jetbrains.annotations.NotNull()
+  public static final @org.jetbrains.annotations.NotNull() java.lang.String getCurrent();//  getCurrent()
+
+  @org.jetbrains.annotations.NotNull()
+  public static final @org.jetbrains.annotations.NotNull() java.lang.String returnsC();//  returnsC()
+
+  public static final int companionExt();//  companionExt()
+
+  public static final int getCompanionExtVar();//  getCompanionExtVar()
+
+  public static final void setCompanionExtVar(int);//  setCompanionExtVar(int)
 }

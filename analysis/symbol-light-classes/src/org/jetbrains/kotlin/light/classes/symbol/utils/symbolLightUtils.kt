@@ -380,6 +380,13 @@ internal val KaPropertySymbol.isConst: Boolean get() = (this as? KaKotlinPropert
 internal val KaPropertySymbol.isLateInit: Boolean get() = (this as? KaKotlinPropertySymbol)?.isLateInit == true
 internal val KaPropertySymbol.canHaveNonPrivateField: Boolean get() = isConstOrJvmField || isLateInit
 
+/**
+ * Whether this callable is a
+ * [companion extension](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0449-companions-block-extension.md#companion-extensions).
+ * Unlike [KaCallableSymbol.isCompanion], it's `false` for the members of companion blocks.
+ */
+internal val KaCallableSymbol.isCompanionExtension: Boolean get() = isCompanion && isExtension && isTopLevel
+
 internal inline fun <reified T> Collection<T>.toArrayIfNotEmptyOrDefault(default: Array<T>): Array<T> {
     return if (isNotEmpty()) toTypedArray() else default
 }
