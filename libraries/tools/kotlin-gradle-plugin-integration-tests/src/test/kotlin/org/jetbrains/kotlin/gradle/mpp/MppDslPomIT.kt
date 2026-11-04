@@ -92,6 +92,7 @@ class MppDslPomIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("base-kotlin-multiplatform-library")
     @GradleTest
     fun `POM dependencies rewriter tracks changes of dependent project coordinates`(
         gradleVersion: GradleVersion
@@ -153,6 +154,7 @@ class MppDslPomIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("base-kotlin-multiplatform-library")
     @GradleTest
     fun `root KMP publication POM is up-to-date and tracks dependency changes`(
         gradleVersion: GradleVersion
@@ -227,6 +229,7 @@ class MppDslPomIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("base-kotlin-multiplatform-library")
     @GradleTest
     fun `KT-75512 user withXml should be invoked after KMP POM rewriter`(
         gradleVersion: GradleVersion

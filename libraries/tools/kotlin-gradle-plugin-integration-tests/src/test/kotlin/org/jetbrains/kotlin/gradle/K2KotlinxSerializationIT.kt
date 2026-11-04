@@ -9,6 +9,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions.ConfigurationCacheValue
 import org.jetbrains.kotlin.gradle.util.resolveRepoPath
+import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerPlugins
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
@@ -21,6 +22,7 @@ import kotlin.test.assertTrue
 @MustRunOnChangesInGradle
 @MustRunOnChangesInCompilerPlugins
 class K2KotlinxSerializationIT : KGPBaseTest() {
+    @TestMetadata("kotlinxSerializationMppK2")
     @DisplayName("Compile common code to metadata with kotlinx.serialization and K2")
     @GradleTest
     fun `test kotlinxSerializationMppK2`(gradleVersion: GradleVersion) {
@@ -36,6 +38,7 @@ class K2KotlinxSerializationIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlinxSerializationK2AgainstK1")
     @DisplayName("Compile code with kotlinx.serialization with K2 against K1. KT-57941")
     @GradleTest
     fun `test kotlinx serialization K2 against K1`(gradleVersion: GradleVersion) {
@@ -95,6 +98,7 @@ class K2KotlinxSerializationIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlinxSerializationK2WithJs")
     @DisplayName("Compile production executable with kotlinx.serialization to JS. KT-57690, KT-57807")
     @GradleTest
     fun `test kotlinx serialization compile to JS`(gradleVersion: GradleVersion) {
@@ -108,6 +112,7 @@ class K2KotlinxSerializationIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlinxSerializationK2WithJs")
     @DisplayName("Compile test sourceset with kotlinx.serialization to JS. KT-57781")
     @GradleTest
     fun `test kotlinx serialization compile test source set to JS`(gradleVersion: GradleVersion) {
@@ -121,6 +126,7 @@ class K2KotlinxSerializationIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlinxSerializationMppK2")
     @DisplayName("Compile MPP project to JS kotlinx.serialization and K2")
     @GradleTest
     fun `test kotlinx serialization mpp to JS`(gradleVersion: GradleVersion) {

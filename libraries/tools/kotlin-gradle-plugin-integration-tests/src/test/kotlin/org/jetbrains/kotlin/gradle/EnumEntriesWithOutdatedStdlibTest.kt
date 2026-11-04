@@ -9,6 +9,7 @@ import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
+import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInFrontend
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
@@ -18,6 +19,7 @@ import org.junit.jupiter.api.DisplayName
 @MustRunOnChangesInGradle
 @MustRunOnChangesInFrontend
 class EnumEntriesWithOutdatedStdlibTest : KGPBaseTest() {
+    @TestMetadata("enumEntriesNotAccessible")
     @DisplayName("EnumEntries should not be accessible without kotlin.enums.EnumEntries")
     @GradleTest
     fun enumEntriesNotAccessible(gradleVersion: GradleVersion) {
@@ -33,6 +35,7 @@ class EnumEntriesWithOutdatedStdlibTest : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("enumEntriesNotAccessible")
     @DisplayName("Code should compile normally if `entries` is never referenced")
     @GradleTest
     fun codeCompilesWithoutReferencingEntries(gradleVersion: GradleVersion) {

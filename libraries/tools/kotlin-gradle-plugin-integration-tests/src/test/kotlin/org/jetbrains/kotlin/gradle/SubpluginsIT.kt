@@ -9,6 +9,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.checkBytecodeContains
+import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerPlugins
 import org.junit.jupiter.api.DisplayName
 
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.DisplayName
 @MustRunOnChangesInCompilerPlugins
 class SubpluginsIT : KGPBaseTest() {
 
+    @TestMetadata("kotlinGradleSubplugin")
     @OtherGradlePluginTests
     @DisplayName("Subplugin example works as expected")
     @GradleTest
@@ -40,6 +42,7 @@ class SubpluginsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlinGradleSubplugin")
     @OtherGradlePluginTests
     @DisplayName("Subplugin example works as expected with configuration cache")
     @GradleTest
@@ -61,6 +64,7 @@ class SubpluginsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("allOpenSimple")
     @OtherGradlePluginTests
     @DisplayName("Allopen plugin opens classes and methods")
     @GradleWithCompilerVersionTest
@@ -88,6 +92,7 @@ class SubpluginsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("allOpenSpring")
     @OtherGradlePluginTests
     @DisplayName("Kotlin Spring plugin opens classes and methods")
     @GradleWithCompilerVersionTest
@@ -117,6 +122,7 @@ class SubpluginsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("noArgJpa")
     @OtherGradlePluginTests
     @DisplayName("Jpa plugin generates no-arg constructor with open class")
     @GradleTest
@@ -138,6 +144,7 @@ class SubpluginsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("noArgKt18668")
     @OtherGradlePluginTests
     @DisplayName("NoArg: Don't invoke initializers by default")
     @GradleWithCompilerVersionTest
@@ -147,6 +154,7 @@ class SubpluginsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("samWithReceiverSimple")
     @OtherGradlePluginTests
     @DisplayName("sam-with-receiver works")
     @GradleWithCompilerVersionTest
@@ -156,6 +164,7 @@ class SubpluginsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("assignmentSimple")
     @OtherGradlePluginTests
     @DisplayName("assignment works")
     @GradleWithCompilerVersionTest
@@ -165,6 +174,7 @@ class SubpluginsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("allOpenFromNestedBuildscript")
     @OtherGradlePluginTests
     @DisplayName("Allopen plugin works when classpath dependency is not declared in current or root project ")
     @GradleWithCompilerVersionTest
@@ -178,6 +188,7 @@ class SubpluginsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("allOpenFromScript")
     @OtherGradlePluginTests
     @DisplayName("Allopen applied from script works")
     @GradleWithCompilerVersionTest
@@ -190,6 +201,7 @@ class SubpluginsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kapt/android-dagger")
     @AndroidGradlePluginTests
     @DisplayName("KT-39809: kapt subplugin legacy loading does not fail the build")
     @GradleAndroidTest
@@ -224,6 +236,7 @@ class SubpluginsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("lombokProject")
     @OtherGradlePluginTests
     @DisplayName("Lombok plugin is working")
     @GradleWithCompilerVersionTest
@@ -254,6 +267,7 @@ class SubpluginsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("buildSrcUsingKotlinCompilationAndKotlinPlugin")
     @OtherGradlePluginTests
     @DisplayName("KT-51378: Using 'kotlin-dsl' with latest plugin version in buildSrc module")
     @GradleWithCompilerVersionTest

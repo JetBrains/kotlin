@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
 import org.jetbrains.kotlin.gradle.tasks.FrameworkLayout
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
@@ -23,6 +24,7 @@ import kotlin.test.assertTrue
 @MustRunOnChangesInGradle
 class FatFrameworkIT : KGPBaseTest() {
 
+    @TestMetadata("native-fat-framework/smoke")
     @DisplayName("Fat framework for iOS smoke test")
     @GradleTest
     fun smokeIos(gradleVersion: GradleVersion) {
@@ -42,6 +44,7 @@ class FatFrameworkIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-fat-framework/smoke")
     @DisplayName("Fat framework for watchOS smoke test")
     @GradleTest
     fun smokeWatchos(gradleVersion: GradleVersion) {
@@ -104,6 +107,7 @@ class FatFrameworkIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-fat-framework/smoke")
     @DisplayName("Fat framework with duplicated iOS Arm 64")
     @GradleTest
     fun testDuplicatedArchitecture(gradleVersion: GradleVersion) {
@@ -124,6 +128,7 @@ class FatFrameworkIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-fat-framework/smoke")
     @DisplayName("Fat framework with incorrect 'osx' family")
     @GradleTest
     fun testIncorrectFamily(gradleVersion: GradleVersion) {
@@ -140,6 +145,7 @@ class FatFrameworkIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-fat-framework/smoke")
     @DisplayName("Fat framework with custom base name")
     @GradleTest
     fun testCustomName(gradleVersion: GradleVersion) {
@@ -158,6 +164,7 @@ class FatFrameworkIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-fat-framework/smoke")
     @DisplayName("Fat framework with different input types")
     @GradleTest
     fun testDifferentTypes(gradleVersion: GradleVersion) {
@@ -173,6 +180,7 @@ class FatFrameworkIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-fat-framework/smoke")
     @DisplayName("Fat framework with all static inputs")
     @GradleTest
     fun testAllStatic(gradleVersion: GradleVersion) {
@@ -186,6 +194,7 @@ class FatFrameworkIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-fat-framework/smoke")
     @DisplayName("Test that the configurations exposing the frameworks don't interfere with variant-aware dependency resolution")
     @GradleTest
     fun testDependencyResolution(gradleVersion: GradleVersion) {
@@ -197,6 +206,7 @@ class FatFrameworkIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-fat-framework/smoke")
     @DisplayName("Test that the configurations exposing fat frameworks with the same baseName are resolved normally")
     @GradleTest
     fun testExposingFrameworksWithSameBaseName(gradleVersion: GradleVersion) {

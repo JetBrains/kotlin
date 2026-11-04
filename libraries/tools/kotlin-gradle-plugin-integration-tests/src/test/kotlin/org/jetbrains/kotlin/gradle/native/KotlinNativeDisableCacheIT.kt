@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInNative
 import org.junit.jupiter.api.DisplayName
@@ -66,6 +67,7 @@ internal class KotlinNativeDisableCacheIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-simple-project")
     @GradleTest
     @OsCondition(supportedOn = [OS.MAC, OS.LINUX], enabledOnCI = [OS.LINUX])
     // KT-83353 DisableNativeCache breaks up-to-date checks for non-cacheable K/N targets
@@ -124,6 +126,7 @@ internal class KotlinNativeDisableCacheIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-simple-project")
     @GradleTest
     @OsCondition(supportedOn = [OS.MAC, OS.LINUX, OS.WINDOWS], enabledOnCI = [OS.LINUX, OS.WINDOWS])
     fun testDisableNativeCacheWithoutOptInShowsActionableError(

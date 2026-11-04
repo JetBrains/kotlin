@@ -23,6 +23,7 @@ import kotlin.test.assertEquals
 @MustRunOnChangesInGradle
 class ConfigurationAvoidanceIT : KGPBaseTest() {
 
+    @TestMetadata("simpleProject")
     @JvmGradlePluginTests
     @DisplayName("JVM unrelated tasks are not configured")
     @GradleTest
@@ -43,6 +44,7 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @JvmGradlePluginTests
     @DisplayName("KGP/Jvm does not eagerly configure any tasks")
     @GradleTest
@@ -55,6 +57,7 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kapt/simple")
     @OtherGradlePluginTests
     @DisplayName("KGP/Kapt does not eagerly configure any tasks")
     @GradleTest
@@ -67,6 +70,7 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("AndroidProject")
     @AndroidGradlePluginTests
     @DisplayName("Android unrelated tasks are not configured")
     @GradleAndroidTest
@@ -102,6 +106,7 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-js-plugin-project")
     @JsGradlePluginTests
     @DisplayName("JS unrelated tasks are not configured")
     @GradleTest
@@ -114,6 +119,7 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("new-mpp-lib-and-app/sample-app")
     @MppGradlePluginTests
     @DisplayName("MPP unrelated tasks are not configured")
     @GradleTest
@@ -181,6 +187,7 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
         return@buildScriptReturn configuredTasks
     }
 
+    @TestMetadata("kotlinProject")
     @JvmGradlePluginTests
     @DisplayName("JVM early configuration resolution")
     @GradleTest

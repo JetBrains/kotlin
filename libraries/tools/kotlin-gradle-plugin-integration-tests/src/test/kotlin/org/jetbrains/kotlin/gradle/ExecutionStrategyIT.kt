@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.checkedReplace
+import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerInfrastructure
 import org.junit.jupiter.api.Disabled
@@ -95,6 +96,7 @@ class ExecutionStrategyJvmIT : ExecutionStrategyIT() {
 
 @MustRunOnChangesInBuildToolsApi
 abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
+    @TestMetadata("kotlinBuiltins")
     @DisplayName("Compilation via Kotlin daemon")
     @GradleTest
     fun testDaemon(gradleVersion: GradleVersion) {
@@ -105,6 +107,7 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
         )
     }
 
+    @TestMetadata("kotlinBuiltins")
     @DisplayName("Compilation via Kotlin daemon with fallback strategy")
     @GradleTest
     fun testDaemonFallbackStrategy(gradleVersion: GradleVersion) {
@@ -116,6 +119,7 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
         )
     }
 
+    @TestMetadata("kotlinBuiltins")
     @DisplayName("Compilation via Kotlin daemon with disabled fallback strategy")
     @GradleTest
     fun testDaemonFallbackStrategyDisabled(gradleVersion: GradleVersion) {
@@ -144,6 +148,7 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
         }
     }
 
+    @TestMetadata("kotlinBuiltins")
     @DisplayName("Compilation via Kotlin daemon with disabled fallback strategy via task property")
     @GradleTest
     fun testDaemonFallbackStrategyDisabledTaskProperty(gradleVersion: GradleVersion) {
@@ -182,6 +187,7 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
         }
     }
 
+    @TestMetadata("kotlinBuiltins")
     @DisplayName("Compilation inside Gradle daemon configured via task property")
     @GradleTest
     fun testInProcessTaskProperty(gradleVersion: GradleVersion) {
@@ -201,6 +207,7 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
         }
     }
 
+    @TestMetadata("kotlinBuiltins")
     @DisplayName("Compilation inside Gradle daemon")
     @GradleTest
     fun testInProcess(gradleVersion: GradleVersion) {
@@ -210,6 +217,7 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
         )
     }
 
+    @TestMetadata("kotlinBuiltins")
     @DisplayName("KT-75820: The legacy in-process mode properly reports compilation warnings/errors")
     @GradleTest
     @MustRunOnChangesInCompilerInfrastructure

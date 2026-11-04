@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.mpp
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import kotlin.io.path.appendText
 
@@ -14,6 +15,7 @@ import kotlin.io.path.appendText
 @MustRunOnChangesInGradle
 class MppJvmRunIT : KGPBaseTest() {
 
+    @TestMetadata("mppRunJvm")
     @GradleTest
     fun `test jvmRun`(version: GradleVersion) {
         project("mppRunJvm", version) {
@@ -54,6 +56,7 @@ class MppJvmRunIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("mppRunJvm")
     @GradleTest
     fun `test - jvmRun - works with Gradle configuration cache`(version: GradleVersion) {
         project("mppRunJvm", version) {

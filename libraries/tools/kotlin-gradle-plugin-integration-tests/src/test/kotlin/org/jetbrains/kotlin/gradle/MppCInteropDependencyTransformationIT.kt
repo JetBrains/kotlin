@@ -80,6 +80,7 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
 
     private val cinteropProjectName = "cinterop-MetadataDependencyTransformation"
 
+    @TestMetadata("cinterop-MetadataDependencyTransformation")
     @DisplayName("Compile project with project mode")
     @GradleTest
     fun compileDependencyModeProject(
@@ -96,6 +97,7 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("cinterop-MetadataDependencyTransformation")
     @DisplayName("Compile project with repository mode")
     @GradleTest
     fun compileDependencyModeRepository(
@@ -160,6 +162,7 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("cinterop-MetadataDependencyTransformation")
     @DisplayName("Source set dependency in project mode")
     @GradleTest
     fun sourceSetDependencyProjectMode(gradleVersion: GradleVersion) {
@@ -190,6 +193,7 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("cinterop-MetadataDependencyTransformation")
     @DisplayName("Source set dependency in repository mode")
     @GradleTest
     fun sourceSetDependencyRepositoryMode(
@@ -345,6 +349,7 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("cinterop-MetadataDependencyTransformation")
     @DisplayName("UP-TO-DATE transformations for P3 subproject")
     @GradleTest
     fun transformationsUpToDateOnP3(
@@ -399,6 +404,7 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("cinterop-MetadataDependencyTransformation")
     @DisplayName("UP-TO-DATE transformations on adding/removing targets in repositories mode")
     @GradleTest
     fun upToDateTransformationsAddingRemovingTargetRepositoriesMode(
@@ -416,6 +422,7 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("cinterop-MetadataDependencyTransformation")
     @DisplayName("UP-TO-DATE transformations on adding/removing targets in project mode")
     @GradleTest
     fun upToDateTransformationsAddingRemovingTargetProjectMode(gradleVersion: GradleVersion) {
@@ -440,6 +447,7 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
 
     private val cinteropProjectNameForKt50952 = "cinterop-MetadataDependencyTransformation-kt-50952"
 
+    @TestMetadata("cinterop-MetadataDependencyTransformation-kt-50952")
     @DisplayName("KT-50952: UP-TO-DATE on changing consumer targets in repository mode")
     @GradleTest
     fun kt50952UpToDateChangingConsumerTargetsRepositoryMode(
@@ -456,6 +464,7 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("cinterop-MetadataDependencyTransformation-kt-50952")
     @DisplayName("KT-50952: UP-TO-DATE on changing consumer targets in project mode")
     @GradleTest
     fun kt50952UpToDateChangingConsumerTargetsProjectMode(gradleVersion: GradleVersion) {

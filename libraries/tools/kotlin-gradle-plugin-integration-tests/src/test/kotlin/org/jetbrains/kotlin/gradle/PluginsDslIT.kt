@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import kotlin.test.assertTrue
@@ -11,6 +12,7 @@ import kotlin.test.assertTrue
 @MustRunOnChangesInGradle
 class PluginsDslIT : KGPBaseTest() {
 
+    @TestMetadata("pluginsDsl/allopenPluginsDsl")
     @DisplayName("Allopen plugin")
     @GradleTest
     fun testAllopenWithPluginsDsl(gradleVersion: GradleVersion) {
@@ -21,6 +23,7 @@ class PluginsDslIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("pluginsDsl/applyToSubprojects")
     @DisplayName("Apply plugin to subproject from root project")
     @GradleTest
     fun testApplyToSubprojects(gradleVersion: GradleVersion) {
@@ -36,6 +39,7 @@ class PluginsDslIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("pluginsDsl/applyAllPlugins")
     @DisplayName("All Kotlin plugins are applied to project")
     @GradleTest
     fun testApplyAllPlugins(gradleVersion: GradleVersion) {

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.incapt.IncrementalBinaryIsolatingProcessor
 import org.jetbrains.kotlin.gradle.incapt.IncrementalProcessor
 import org.jetbrains.kotlin.gradle.incapt.IncrementalProcessorReferencingClasspath
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.DisabledOnOs
 import org.junit.jupiter.api.condition.OS
@@ -47,6 +48,7 @@ class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
         }
     }
 
+    @TestMetadata("kaptIncrementalCompilationProject")
     @DisplayName("Incremental changes")
     @GradleTest
     fun testIncrementalChanges(gradleVersion: GradleVersion) {
@@ -85,6 +87,7 @@ class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
         }
     }
 
+    @TestMetadata("kaptIncrementalCompilationProject")
     @DisplayName("On changing annotation processor classpath")
     @GradleTest
     fun testChangingAnnotationProcessorClasspath(gradleVersion: GradleVersion) {
@@ -106,6 +109,7 @@ class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
         }
     }
 
+    @TestMetadata("kaptIncrementalCompilationProject")
     @DisplayName("On unchanged annotation processor classpath, but processor itself is updated")
     @GradleTest
     fun testUnchangedAnnotationProcessorClasspathButContentChanged(gradleVersion: GradleVersion) {
@@ -138,6 +142,7 @@ class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
         }
     }
 
+    @TestMetadata("kaptIncrementalCompilationProject")
     @DisplayName("Runs non-incrementally on unrecognized inputs")
     @GradleTest
     fun testNonIncrementalWithUnrecognizedInputs(gradleVersion: GradleVersion) {
@@ -163,6 +168,7 @@ class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
         }
     }
 
+    @TestMetadata("kaptIncrementalCompilationProject")
     @DisplayName("KT-33617: sources in compile classpath jars")
     @JdkVersions(versions = [JavaVersion.VERSION_17])
     @GradleWithJdkTest
@@ -205,6 +211,7 @@ class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
         }
     }
 
+    @TestMetadata("kaptIncrementalCompilationProject")
     @DisplayName("KT-42182: generated sources are updated on classpath changes")
     @GradleTest
     fun testGeneratedSourcesImpactedByClasspathChanges(gradleVersion: GradleVersion) {
@@ -295,6 +302,7 @@ class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
         }
     }
 
+    @TestMetadata("kaptIncrementalWithParceler")
     @DisplayName("KT-34340: origins in classpath")
     @GradleAndroidTest
     @DisabledOnOs(OS.WINDOWS, disabledReason = "https://youtrack.jetbrains.com/issue/KTI-405")
@@ -337,6 +345,7 @@ class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
      * Make sure that changes to classpath can cause types to be reprocessed (i.e types in generated .class files that contain annotations
      * claimed by annotation processors).
      */
+    @TestMetadata("kaptIncrementalCompilationProject")
     @DisplayName("Changed types causing incremental compilation")
     @GradleTest
     fun testClasspathChangesCauseTypesToBeReprocessed(gradleVersion: GradleVersion) {
@@ -428,6 +437,7 @@ class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
         }
     }
 
+    @TestMetadata("kaptIncrementalCompilationProject")
     @DisplayName("KT-41456: detect missing kotlin compilation output")
     @GradleTest
     @DisabledOnOs(OS.WINDOWS, disabledReason = "https://youtrack.jetbrains.com/issue/KTI-405")

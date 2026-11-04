@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.native
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.tasks.asValidFrameworkName
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import kotlin.io.path.readText
@@ -21,6 +22,7 @@ class CocoaPodsPodspecIT : KGPBaseTest() {
     private val cocoapodsSingleKtPod = "native-cocoapods-single"
     private val cocoapodsMultipleKtPods = "native-cocoapods-multiple"
 
+    @TestMetadata("native-cocoapods-single")
     @DisplayName("Build project with a single podspec")
     @GradleTest
     fun testPodspecSingle(gradleVersion: GradleVersion) = doTestPodspec(
@@ -30,6 +32,7 @@ class CocoaPodsPodspecIT : KGPBaseTest() {
         mapOf("kotlin-library" to kotlinLibraryPodspecContent())
     )
 
+    @TestMetadata("native-cocoapods-single")
     @DisplayName("Build project with a single podspec with custom framework name")
     @GradleTest
     fun testPodspecCustomFrameworkNameSingle(gradleVersion: GradleVersion) = doTestPodspec(
@@ -39,6 +42,7 @@ class CocoaPodsPodspecIT : KGPBaseTest() {
         mapOf("kotlin-library" to kotlinLibraryPodspecContent("MultiplatformLibrary"))
     )
 
+    @TestMetadata("native-cocoapods-multiple")
     @DisplayName("Build project with two podspecs")
     @GradleTest
     fun testPodspecMultiple(gradleVersion: GradleVersion) = doTestPodspec(
@@ -48,6 +52,7 @@ class CocoaPodsPodspecIT : KGPBaseTest() {
         mapOf("kotlin-library" to kotlinLibraryPodspecContent(), "second-library" to secondLibraryPodspecContent()),
     )
 
+    @TestMetadata("native-cocoapods-multiple")
     @DisplayName("Build project with two podspecs with custom framework name")
     @GradleTest
     fun testPodspecCustomFrameworkNameMultiple(gradleVersion: GradleVersion) = doTestPodspec(

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.CheckXcodeTargetsConfigurati
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.ConvertXcodeProjectFileToJsonTask
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
+import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
@@ -28,6 +29,7 @@ class CheckXcodeTargetsConfigurationIT : KGPBaseTest() {
     private val xcodeCheckTask = ":${CheckXcodeTargetsConfigurationTask.TASK_NAME}"
     private val ideaImportTask = ":prepareKotlinIdeaImport"
 
+    @TestMetadata("emptyxcproj")
     @GradleTest
     fun testXcprojTargetsAndChanges(gradleVersion: GradleVersion) {
         project("emptyxcproj", gradleVersion) {

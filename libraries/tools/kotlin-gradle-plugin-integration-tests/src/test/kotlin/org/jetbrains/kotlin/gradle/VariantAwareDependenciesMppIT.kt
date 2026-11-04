@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.util.checkedReplace
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.testResolveAllConfigurations
+import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
@@ -210,6 +211,7 @@ class VariantAwareDependenciesMppIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("new-mpp-jvm-with-java-multi-module")
     @DisplayName("Multiplatform project with Java plugin applied could be resolved in all configurations")
     @GradleTest
     fun testJvmWithJavaProjectCanBeResolvedInAllConfigurations(gradleVersion: GradleVersion) {
@@ -219,6 +221,7 @@ class VariantAwareDependenciesMppIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("Configurations with no explicit usage could be resolved")
     @GradleTest
     fun testConfigurationsWithNoExplicitUsageResolveRuntime(gradleVersion: GradleVersion) {
@@ -271,6 +274,7 @@ class VariantAwareDependenciesMppIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("Custom configuration with dependency on multiplatform project could be resolved")
     @GradleTest
     fun testResolveDependencyOnMppInCustomConfiguration(gradleVersion: GradleVersion) {

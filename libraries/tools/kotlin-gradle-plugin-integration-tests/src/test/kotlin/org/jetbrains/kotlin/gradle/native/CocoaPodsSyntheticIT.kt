@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.native
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
@@ -37,6 +38,7 @@ class CocoaPodsSyntheticIT : KGPBaseTest() {
         ensureCocoapodsInstalled()
     }
 
+    @TestMetadata("native-cocoapods-single")
     @DisplayName("Synthetic project podfile generation")
     @GradleTest
     fun testSyntheticProjectPodfileGeneration(gradleVersion: GradleVersion) {
@@ -75,6 +77,7 @@ class CocoaPodsSyntheticIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-cocoapods-template")
     @DisplayName("Synthetic project podfile postprocessing")
     @GradleTest
     fun testSyntheticProjectPodfilePostprocessing(gradleVersion: GradleVersion) {
@@ -98,6 +101,7 @@ class CocoaPodsSyntheticIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-cocoapods-template")
     @DisplayName("Reinstalling pod invalidates UTD")
     @GradleTest
     fun testPodInstallInvalidatesUTD(gradleVersion: GradleVersion) {

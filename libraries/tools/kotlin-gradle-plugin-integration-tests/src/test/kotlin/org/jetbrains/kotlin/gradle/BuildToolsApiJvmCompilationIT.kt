@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.internals.asFinishLogMessage
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.tasks.USING_JVM_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
@@ -24,6 +25,7 @@ import kotlin.io.path.writeText
 class BuildToolsApiJvmCompilationIT : KGPBaseTest() {
     override val defaultBuildOptions = super.defaultBuildOptions.copy(runViaBuildToolsApi = true)
 
+    @TestMetadata("incrementalMultiproject")
     @GradleTest
     @DisplayName("Classpath snapshotting works with a compiler older than the snapshotting options known to KGP")
     fun classpathSnapshottingWithOlderCompilerVersion(gradleVersion: GradleVersion) {
@@ -49,6 +51,7 @@ class BuildToolsApiJvmCompilationIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @GradleTest
     @DisplayName("Simple project non-incremental in-process compilation")
     fun compileJvmInProcessNonIncremental(gradleVersion: GradleVersion) = testSimpleProject(
@@ -61,6 +64,7 @@ class BuildToolsApiJvmCompilationIT : KGPBaseTest() {
         assertOutputDoesNotContain(USING_JVM_INCREMENTAL_COMPILATION_MESSAGE)
     }
 
+    @TestMetadata("simpleProject")
     @GradleTest
     @DisplayName("Simple project incremental in-process compilation")
     fun compileJvmInProcessIncremental(gradleVersion: GradleVersion) = testSimpleProject(
@@ -73,6 +77,7 @@ class BuildToolsApiJvmCompilationIT : KGPBaseTest() {
         assertOutputContains(USING_JVM_INCREMENTAL_COMPILATION_MESSAGE)
     }
 
+    @TestMetadata("simpleProject")
     @GradleTest
     @DisplayName("Simple project non-incremental compilation within the daemon")
     fun compileJvmNonIncrementalWithinDaemon(gradleVersion: GradleVersion) = testSimpleProject(
@@ -85,6 +90,7 @@ class BuildToolsApiJvmCompilationIT : KGPBaseTest() {
         assertOutputDoesNotContain(USING_JVM_INCREMENTAL_COMPILATION_MESSAGE)
     }
 
+    @TestMetadata("simpleProject")
     @GradleTest
     @DisplayName("Simple project incremental compilation within the daemon")
     fun compileJvmIncrementalWithinDaemon(gradleVersion: GradleVersion) = testSimpleProject(
@@ -97,6 +103,7 @@ class BuildToolsApiJvmCompilationIT : KGPBaseTest() {
         assertOutputContains(USING_JVM_INCREMENTAL_COMPILATION_MESSAGE)
     }
 
+    @TestMetadata("simpleProject")
     @GradleTest
     @DisplayName("Test logging produces errors with e: prefix and no [KOTLIN] prefix")
     fun compileErrorCorrectPrefix(gradleVersion: GradleVersion) {

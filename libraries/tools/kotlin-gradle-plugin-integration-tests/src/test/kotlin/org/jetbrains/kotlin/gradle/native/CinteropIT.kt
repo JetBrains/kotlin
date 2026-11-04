@@ -10,6 +10,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.runProcess
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import java.nio.file.Path
@@ -22,6 +23,7 @@ import kotlin.test.assertEquals
 @NativeGradlePluginTests
 class CinteropIT : KGPBaseTest() {
 
+    @TestMetadata("cinterop-kt-53191")
     @GradleTest
     fun `rerun cinterop after a header changing`(gradleVersion: GradleVersion) {
         nativeProject("cinterop-kt-53191", gradleVersion = gradleVersion) {
@@ -47,6 +49,7 @@ class CinteropIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("cinterop-fmodules")
     @GradleTest
     @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
     fun `cinterop gives hint about -fmodules`(gradleVersion: GradleVersion) {
@@ -64,6 +67,7 @@ class CinteropIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("cinterop-with-def-creation-task")
     @DisplayName("KT-62795: checking that we can pass def file to cinterop task as a output file property from another task")
     @GradleTest
     fun cinteropWithDefFileFromTaskOutput(gradleVersion: GradleVersion) {
@@ -85,6 +89,7 @@ class CinteropIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("cinterop-with-header")
     @DisplayName("KT-62800: passing header to cinterop instead of passing def file")
     @GradleTest
     fun cinteropWithExplicitPassingHeader(gradleVersion: GradleVersion) {
@@ -102,6 +107,7 @@ class CinteropIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("KT-45559-cinterop-header-UTD-checks")
     @DisplayName("KT-45559: cinterop checks headers content for up-to-date checks")
     @GradleTest
     fun cinteropHeadersContentUTDChecks(gradleVersion: GradleVersion) {
@@ -130,6 +136,7 @@ class CinteropIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("KT-89558-cinterop-static-libraries-UTD-checks")
     @DisplayName("KT-89558: cinterop checks content of embedded static libraries for up-to-date checks")
     @GradleTest
     fun cinteropStaticLibrariesUTDChecks(gradleVersion: GradleVersion) {
@@ -185,6 +192,7 @@ class CinteropIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("KT-89558-cinterop-static-library-UTD-checks")
     @DisplayName("KT-89558: link task re-runs when the static library passed in linkerOpts is rebuilt")
     @OsCondition(supportedOn = [OS.LINUX, OS.MAC], enabledOnCI = [OS.LINUX]) // disabled for Windows because it requires Unix cc and ar
     @GradleTest
@@ -209,6 +217,7 @@ class CinteropIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("KT-89558-cinterop-static-library-UTD-checks")
     @DisplayName("KT-89558: track a static library created after link task initialization")
     @OsCondition(supportedOn = [OS.LINUX, OS.MAC], enabledOnCI = [OS.LINUX]) // requires Unix cc and ar
     @GradleTest
@@ -263,6 +272,7 @@ class CinteropIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("cinterop-with-header")
     @DisplayName("KT-62800: validation fails if neither definitionFile nor packageName was specified")
     @GradleTest
     fun cinteropWithoutDefinitionFileAndPackageName(gradleVersion: GradleVersion) {
@@ -280,6 +290,7 @@ class CinteropIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("cinterop-with-header")
     @DisplayName("KT-62800: check that optional .def file in cinterop works well with configuration cache")
     @GradleTest
     fun cinteropWithOptionalDefFileAndConfigurationCache(gradleVersion: GradleVersion) {
