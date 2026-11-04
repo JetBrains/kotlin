@@ -76,7 +76,7 @@ internal abstract class SymbolLightClassForInterfaceOrAnnotationClass : SymbolLi
         withClassSymbol { classSymbol ->
             buildList {
                 addCompanionObjectFieldIfNeeded(this, classSymbol)
-                addFieldsFromCompanionIfNeeded(this, classSymbol, SymbolLightField.FieldNameGenerator())
+                addFieldsFromCompanionObjectIfNeeded(this, classSymbol, SymbolLightField.FieldNameGenerator())
             }
         }
     }
