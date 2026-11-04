@@ -1,11 +1,10 @@
 KT element: KtTypeReference
-FIR element: null
-FIR source kind: null
+FIR element: FirErrorTypeRefImpl
+FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-null
+<ERROR TYPE REF: Symbol not found for Unresolved>
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] danglingTypeConstraintBoundUnresolved.kt
-    public final [ResolvedTo(BODY_RESOLVE)] [DanglingTypeConstraintsKey=[DanglingTypeConstraint(name=AA, source=KtRealPsiSourceElement(KtNameReferenceExpression, 69..71))]] fun <[ResolvedTo(BODY_RESOLVE)] A> foo(): R|kotlin/Unit| {
-    }
+    public? final? [ResolvedTo(TYPES)] fun <[ResolvedTo(TYPES)] A, [ResolvedTo(TYPES)] AA : <ERROR TYPE REF: Symbol not found for Unresolved>> foo(): R|kotlin/Unit| { LAZY_BLOCK }

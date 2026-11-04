@@ -1,0 +1,63 @@
+FILE: danglingConstraintsWithTypeParameters.kt
+    public? final? fun <T, AA : @Anno(String(function constraint)) List<@Anno(String(nested function constraint)) T>, Comparable<AA>> function(a: AA): AA {
+    }
+    public? final? fun <@Anno(String(declared constraint)) T : Any, @Anno(String(dangling constraint)) AA : Any> annotatedConstraint(): R|kotlin/Unit| {
+    }
+    public? final? val <T, AA : @Anno(String(property constraint)) Number> T.property: AA
+        public? get(): AA {
+            ^ Null(null)!!
+        }
+    public final? class TopLevelClass<T, AA : @Anno(String(class constraint)) Any> : R|kotlin/Any| {
+        public? [ContainingClassKey=TopLevelClass] constructor<T, AA : @Anno(String(class constraint)) Any>(): R|TopLevelClass<T, AA>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? fun <R, BB : @Anno(String(member function constraint)) R> memberFunction(b: BB): R|kotlin/Unit| {
+        }
+
+    }
+    public final? class OuterClass<T, AA : Any> : R|kotlin/Any| {
+        public? [ContainingClassKey=OuterClass] constructor<T, AA : Any>(): R|OuterClass<T, AA>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final? inner class InnerClass<Outer(T), Outer(AA) : Any> : R|kotlin/Any| {
+            public? [ContainingClassKey=InnerClass] OuterClass<T, AA>.constructor([CorrespondingProperty=/OuterClass.InnerClass.a] a: AA): R|OuterClass.InnerClass<T, AA>| {
+                super<R|kotlin/Any|>()
+            }
+
+            public? final? [IsFromPrimaryConstructor=true] val a: AA = R|<local>/a|
+                public? [ContainingClassKey=InnerClass] get(): AA
+
+            public? [ContainingClassKey=InnerClass] OuterClass<T, AA>.constructor(): R|OuterClass.InnerClass<T, AA>| {
+                this<R|OuterClass.InnerClass<T, AA>|>(Null(null)!!)
+            }
+
+        }
+
+    }
+    public final? enum class EnumClass<AA : Any> : R|kotlin/Enum<EnumClass<AA>>| {
+        private [ContainingClassKey=EnumClass] constructor<AA : Any>(): R|EnumClass<AA>| {
+            super<R|kotlin/Enum<EnumClass<AA>>|>()
+        }
+
+        public final static [ContainingClassKey=EnumClass] enum entry ENTRY: R|EnumClass<AA>| = object : R|EnumClass<AA>| {
+            private [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                super<R|EnumClass<AA>|>()
+            }
+
+            public? final? fun member(a: AA): R|kotlin/Unit| {
+            }
+
+        }
+
+        public final static [ContainingClassKey=EnumClass] fun values(): R|kotlin/Array<EnumClass>| {
+        }
+
+        public final static [ContainingClassKey=EnumClass] fun valueOf(value: R|kotlin/String|): R|EnumClass| {
+        }
+
+        public final static [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
+            public static [ContainingClassKey=EnumClass] get(): R|kotlin/enums/EnumEntries<EnumClass>|
+
+    }

@@ -16,8 +16,8 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnWhereSubjectClass.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Foo<@R|Anno|[Types](s = String(str) [evaluated = String(str)]) [ResolvedTo(ANNOTATION_ARGUMENTS)] T, @R|Anno|[Types](s = String(str) [evaluated = String(str)]) [ResolvedTo(ANNOTATION_ARGUMENTS)] U : R|kotlin/Any|> : R|kotlin/Any| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] constructor<@R|Anno|[Types](s = String(str) [evaluated = String(str)]) [ResolvedTo(ANNOTATION_ARGUMENTS)] T, @R|Anno|[Types](s = String(str) [evaluated = String(str)]) [ResolvedTo(ANNOTATION_ARGUMENTS)] U : R|kotlin/Any|>(): R|Foo<T, U>| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Foo<[ResolvedTo(ANNOTATION_ARGUMENTS)] T, @R|Anno|[Types](s = String(str) [evaluated = String(str)]) [ResolvedTo(ANNOTATION_ARGUMENTS)] U : R|kotlin/Any|> : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] constructor<[ResolvedTo(ANNOTATION_ARGUMENTS)] T, @R|Anno|[Types](s = String(str) [evaluated = String(str)]) [ResolvedTo(ANNOTATION_ARGUMENTS)] U : R|kotlin/Any|>(): R|Foo<T, U>| {
             super<R|kotlin/Any|>()
         }
 

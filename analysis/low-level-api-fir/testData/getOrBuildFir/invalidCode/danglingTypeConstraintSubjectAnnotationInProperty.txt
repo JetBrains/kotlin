@@ -16,7 +16,7 @@ FILE: [ResolvedTo(IMPORTS)] danglingTypeConstraintSubjectAnnotationInProperty.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] [DanglingTypeConstraintsKey=[DanglingTypeConstraint(name=AA, source=KtRealPsiSourceElement(KtNameReferenceExpression, 134..136))]] val <@R|Anno|[Types](s = String(str) [evaluated = String(str)]) [ResolvedTo(BODY_RESOLVE)] T> [ResolvedTo(BODY_RESOLVE)] R|kotlin/collections/List<T>|.prop: R|kotlin/Int|
+    public final [ResolvedTo(BODY_RESOLVE)] val <[ResolvedTo(BODY_RESOLVE)] T, @R|Anno|[Types](s = String(str) [evaluated = String(str)]) [ResolvedTo(BODY_RESOLVE)] AA : R|kotlin/Any|> [ResolvedTo(BODY_RESOLVE)] R|kotlin/collections/List<T>|.prop: R|kotlin/Int|
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
             ^ Int(1)
         }

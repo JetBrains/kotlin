@@ -16,5 +16,5 @@ FILE: [ResolvedTo(IMPORTS)] danglingTypeConstraintSubjectAnnotationCallee.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] [DanglingTypeConstraintsKey=[DanglingTypeConstraint(name=AA, source=KtRealPsiSourceElement(KtNameReferenceExpression, 134..136))]] fun <@R|Anno|[Types](s = String(str) [evaluated = String(str)]) [ResolvedTo(BODY_RESOLVE)] T> foo([ResolvedTo(BODY_RESOLVE)] t: R|T|): R|kotlin/Unit| {
+    public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T, @R|Anno|[Types](s = String(str) [evaluated = String(str)]) [ResolvedTo(BODY_RESOLVE)] AA : R|kotlin/Any|> foo([ResolvedTo(BODY_RESOLVE)] t: R|T|): R|kotlin/Unit| {
     }

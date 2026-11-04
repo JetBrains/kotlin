@@ -1,4 +1,3 @@
-// IGNORE_FIR
 fun interface TestInterface {
     fun test()
 }

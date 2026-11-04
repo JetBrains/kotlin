@@ -170,6 +170,10 @@ internal class KaSymbolByFirBuilder(
                 return buildTypeParameterSymbol(unwrappedParameter)
             }
 
+            if (firSymbol.origin == FirDeclarationOrigin.Synthetic.DanglingTypeParameter) {
+                return KaFirDanglingTypeParameterSymbol(firSymbol, analysisSession)
+            }
+
             return KaFirTypeParameterSymbol(firSymbol, analysisSession)
         }
 

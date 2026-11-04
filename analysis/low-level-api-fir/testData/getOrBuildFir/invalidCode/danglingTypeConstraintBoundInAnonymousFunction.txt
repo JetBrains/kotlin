@@ -1,14 +1,14 @@
 KT element: KtTypeReference
-FIR element: null
-FIR source kind: null
+FIR element: FirResolvedTypeRefImpl
+FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-null
+R|kotlin/Number|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] danglingTypeConstraintBoundInAnonymousFunction.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
-        [ResolvedTo(BODY_RESOLVE)] lval anonymous: R|() -> kotlin/Unit| = [ResolvedTo(BODY_RESOLVE)] [DanglingTypeConstraintsKey=[DanglingTypeConstraint(name=AA, source=KtRealPsiSourceElement(KtNameReferenceExpression, 98..100))], MatchingParameterFunctionTypeKey=kotlin/Any] fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        [ResolvedTo(BODY_RESOLVE)] lval anonymous: R|() -> kotlin/Unit| = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Any] fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
         }
 
     }
