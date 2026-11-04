@@ -20,7 +20,9 @@ class GCMResult(val blocks: Map<Node, BlockEntry>) {
         // TODO do better
         var lastControl: Controlling? = null
         for (n in order) {
-            if (n is Controlling) lastControl = n
+            // Don't anchor to dead nodes
+            // FIXME this is a workaround for Lower's GCM problems
+            if (n is Controlling && n.inGraph) lastControl = n
             if (n == node) return lastControl!!
         }
         error("Should not reach here")

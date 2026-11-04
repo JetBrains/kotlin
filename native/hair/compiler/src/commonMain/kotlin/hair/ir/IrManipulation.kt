@@ -56,15 +56,20 @@ class ArgumentUpdaterImpl(val session: SessionImpl) : ArgumentUpdater {
                 .let { session.gvn(it) }
 
             if (replacement != node) {
-                // FIXME introduce common tool
-                (node as? Controlling)?.nextOrNull?.let {
-                    it.control = replacement as Controlling
-                }
                 // DCE replaces ValueNodes with Unreachable
                 val valueReplacement =
                     if (node is ValueNode && (replacement is Unreachable)) context(session.nodeBuilder) { NoValue() }
                     else replacement
-                node.replaceValueUsesAndKill(valueReplacement)
+
+                // FIXME not just replaceWith, because exception edge creates extra mess
+                when (node) {
+                    is Controlling -> node.rewireAndKill(replacement as Controlling, valueReplacement)
+                    else -> {
+                        node.replaceValueUses(valueReplacement)
+                        node.kill()
+                    }
+                }
+
             } else {
                 newValue.addUse(replacement)
             }
@@ -115,27 +120,6 @@ fun <T> Session.modifyControlFlow(
             verify()
         }
     }
-}
-
-// TODO require cfg modificator
-context(_: ArgumentUpdater)
-fun Controlled.eraseControl() {
-    // FIXME use controlIndex or something
-    args.erase(0)
-}
-
-// TODO move into control manipulator
-context(argUpdater: ArgumentUpdater)
-fun BlockBody.removeFromControl() = with(argUpdater) {
-//    for (arg in args) {
-//        arg.removeUse(this)
-//        //updateArg(arg, null) {} // FIXME find a better way
-//    }
-    val prev = control
-    controlOrNull = null
-    next.control = prev
-    //eraseControl()
-    kill()
 }
 
 context(argUpdater: ArgumentUpdater)
@@ -189,9 +173,59 @@ fun Node.kill() {
     unwireFromGraphAndDeregister()
 }
 
-context(_: ArgumentUpdater)
-fun Node.replaceValueUsesAndKill(replacement: Node) {
-    require(this !is Controlling || nextOrNull == null) { "$this is still in the control chain; use removeFromControl()" }
-    replaceValueUses(replacement)
+/**
+ * The core of every replacement: re-points the control-spine successor at [newControl], redirects value uses to
+ * [value], then kills this node.
+ */
+context(argUpdater: ArgumentUpdater)
+private fun Controlling.rewireAndKill(newControl: Controlling, newValue: Node?) {
+    val next = nextOrNull
+    if (next != null) with(argUpdater) {
+        next.control = newControl
+    }
+    if (newValue != null) replaceValueUses(newValue)
+    require(uses.isEmpty()) { "$this still has uses after rewiring; pass a value replacement" }
     kill()
+}
+
+// FIXME can't require ValueNode here, because many builders erase types to Node and it's not easy to refactor
+context(_: ArgumentUpdater)
+fun Node.replaceValueNodeWith(value: Node) {
+    require(this !is ControlFlow) {
+        "$this is part of the control flow; use replaceWith(control, value), spliceOut or replaceThrowing"
+    }
+    replaceValueUses(value)
+    kill()
+}
+
+context(_: ArgumentUpdater)
+fun BlockBody.replaceWith(newControl: Controlling, newValue: Node?) {
+    requireNoExceptionEdge()
+    rewireAndKill(newControl, newValue)
+}
+
+context(_: ArgumentUpdater)
+fun BlockBody.replaceWith(node: BlockBody) = replaceWith(node, node)
+
+/**
+ * Removes this node from the control, joining its predecessor straight to its successor.
+ * Value uses are redirected to [valueReplacement], which may be left out only if there are none.
+ */
+context(_: ArgumentUpdater)
+fun BlockBody.spliceOut(valueReplacement: Node? = null) = replaceWith(control, valueReplacement)
+
+/** Replaces a throwing control flow node with another one, carrying the exception edge over. */
+context(argUpdater: ArgumentUpdater)
+fun BlockBodyWithException.replaceThrowing(replacement: BlockBodyWithException) {
+    unwind?.let { with(argUpdater) { it.thrower = replacement } }
+    rewireAndKill(replacement, replacement)
+}
+
+context(_: NodeBuilder, _: ArgumentUpdater)
+fun BlockEntry.discardAsUnreachable() = rewireAndKill(session.unreachable, NoValue())
+
+private fun BlockBody.requireNoExceptionEdge() {
+    if (this is Throwing) require(unwind == null) {
+        "$this has an exception edge; use replaceThrowing"
+    }
 }

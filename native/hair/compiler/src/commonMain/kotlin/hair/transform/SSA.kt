@@ -44,13 +44,12 @@ fun Session.buildSSA() {
                 when (n) {
                     is AssignVar -> {
                         currentDefs[n.variable] = n.assignedValue
-                        n.removeFromControl()
+                        n.spliceOut()
                     }
 
                     is ReadVar -> {
                         val replacement = currentDefs[n.variable]!!
-                        n.replaceValueUses(replacement)
-                        n.removeFromControl()
+                        n.spliceOut(replacement)
                     }
 
                     is Throwing -> {
@@ -84,7 +83,7 @@ fun Session.buildSSA() {
         for (placeholder in allNodes().filterIsInstance<PhiPlaceholder>().toList()) {
             // TODO use Phi builder
             val phi = Phi(placeholder.block, *placeholder.joinedValues.toTypedArray())
-            placeholder.replaceValueUsesAndKill(phi)
+            placeholder.replaceValueNodeWith(phi)
         }
     }
 

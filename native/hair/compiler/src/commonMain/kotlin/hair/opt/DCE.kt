@@ -21,10 +21,7 @@ fun Session.eliminateDead(): Boolean {
         modifyIR(runDCE = false) {
             for (block in deadBlocks) {
                 if (!block.inGraph) continue
-                block.nextOrNull?.let {
-                    it.control = unreachable
-                }
-                block.replaceValueUsesAndKill(NoValue())
+                block.discardAsUnreachable()
             }
         }
     }
@@ -43,13 +40,13 @@ private fun Session.eliminateDeadFoam(): Boolean {
     if (dead.isEmpty()) return false
 
     // The dead set is closed under uses: every user of a dead node is itself dead.
-    // So we first sever all argument edges leaving the set,
-    // which empties every dead node's use list even across cycles, and only then unwire.
-    for (node in dead) {
-        for (arg in node.args) arg?.removeUse(node)
-    }
-    for (node in dead) {
-        node.unwireFromGraphAndDeregister()
+    modifyIR(runDCE = false) {
+        for (node in dead) {
+            for (arg in node.args) arg?.removeUse(node)
+        }
+        for (node in dead) {
+            node.unwireFromGraphAndDeregister()
+        }
     }
     return true
 }
