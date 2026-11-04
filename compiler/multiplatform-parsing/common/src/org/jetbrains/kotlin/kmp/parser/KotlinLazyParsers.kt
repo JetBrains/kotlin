@@ -14,6 +14,7 @@ import com.intellij.platform.syntax.parser.prepareProduction
 import com.intellij.platform.syntax.tree.SyntaxNode
 import com.intellij.platform.syntax.tree.findFirstChild
 import com.intellij.platform.syntax.util.parser.SyntaxBuilderUtil
+import org.jetbrains.kotlin.kmp.lexer.BasicElementTypes
 import org.jetbrains.kotlin.kmp.lexer.KotlinLexer
 import org.jetbrains.kotlin.kmp.lexer.KtTokens
 import org.jetbrains.kotlin.kmp.parser.utils.KotlinParsing
@@ -64,7 +65,7 @@ internal object KotlinBlockLazyParser : LazyParser {
                 when (currentType()) {
                     null -> return true
                     KtTokens.ARROW -> return true
-                    KtTokens.WHITE_SPACE -> index++
+                    BasicElementTypes.WHITE_SPACE -> index++
                     else -> return false
                 }
             }
@@ -166,10 +167,10 @@ internal object KotlinLambdaLazyParser : LazyParser {
             val newType = newTokens.getTokenType(newIndex) ?: return true // New text was finished before reaching expected token in old text
 
             if (newType != oldType) {
-                if (newType == KtTokens.WHITE_SPACE) {
+                if (newType == BasicElementTypes.WHITE_SPACE) {
                     newIndex++
                     continue
-                } else if (oldType == KtTokens.WHITE_SPACE) {
+                } else if (oldType == BasicElementTypes.WHITE_SPACE) {
                     oldLexer.advance()
                     continue
                 }

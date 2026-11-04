@@ -6,10 +6,8 @@
 package org.jetbrains.kotlin.syntax
 
 public object KotlinSyntaxTokenIds {
-    public const val DOC_COMMENT: Int = NO_ID + 1
-    public const val WHITE_SPACE: Int = DOC_COMMENT + 1
-
-    public const val EOF: Int = WHITE_SPACE + 1
+    public const val DOC_COMMENT: Int = BasicSyntaxElementTypeIds.ERROR_ELEMENT + 1
+    public const val EOF: Int = DOC_COMMENT + 1
     public const val RESERVED: Int = EOF + 1
     public const val BLOCK_COMMENT: Int = RESERVED + 1
     public const val EOL_COMMENT: Int = BLOCK_COMMENT + 1

@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.kmp.lexer.KotlinLexer
 import org.jetbrains.kotlin.kmp.lexer.KtTokens
 import org.jetbrains.kotlin.kmp.parser.KotlinParser
 import org.jetbrains.kotlin.kmp.parser.KtNodeTypes
-import org.jetbrains.kotlin.syntax.NO_ID
+import org.jetbrains.kotlin.syntax.BasicSyntaxElementTypeIds
 import org.jetbrains.kotlin.tooling.core.withClosure
 
 /**
@@ -205,4 +205,4 @@ fun SyntaxNode.toTestParseNode(shift: Int = 0): TestParseNode<SyntaxNode> {
 }
 
 private fun SyntaxNode.isMarker(): Boolean =
-    type == SyntaxTokenTypes.ERROR_ELEMENT || KtNodeTypes.getElementTypeId(type) != NO_ID
+    type == SyntaxTokenTypes.ERROR_ELEMENT || KtNodeTypes.getElementTypeId(type) != BasicSyntaxElementTypeIds.NO_ID

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.syntax
 
+import com.intellij.psi.TokenType
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.lexer.KtToken
@@ -15,16 +16,16 @@ import java.lang.Deprecated
 /**
  * @receiver A Kotlin element type
  * @return The ID from `core:language.syntax` that is consistent across all frontends (PSI/LightTree and KMP).
- * Only Kotlin tokens ([KotlinSyntaxTokenIds]), node types declared in [KotlinSyntaxNodeTypeIds], [KtTokens.DOC_COMMENT]
- * and [KtTokens.WHITE_SPACE] are mapped.
- * For other element types (e.g., KDoc element types or non-Kotlin ones), the result is [NO_ID].
+ * Only Kotlin tokens ([KotlinSyntaxTokenIds]), node types declared in [KotlinSyntaxNodeTypeIds], [KtTokens.DOC_COMMENT],
+ * and the basic element types [TokenType.WHITE_SPACE], [TokenType.BAD_CHARACTER] and [TokenType.ERROR_ELEMENT] are mapped.
+ * For other element types (e.g., KDoc element types or non-Kotlin ones), the result is [BasicSyntaxElementTypeIds.NO_ID].
  */
 @KtImplementationDetail
 fun IElementType.syntaxId(): Int =
     when {
         this is KtToken -> tokenId
         index < indexToId.size -> indexToId[index.toInt()]
-        else -> NO_ID
+        else -> BasicSyntaxElementTypeIds.NO_ID
     }
 
 private val indexToId: IntArray = run {
@@ -46,10 +47,15 @@ private val indexToId: IntArray = run {
             maxIndex = it
         }
     }
-    KtTokens.WHITE_SPACE.index.let {
-        indexToIdMap[it] = KotlinSyntaxTokenIds.WHITE_SPACE
-        if (it > maxIndex) {
-            maxIndex = it
+    listOf(
+        TokenType.WHITE_SPACE to BasicSyntaxElementTypeIds.WHITE_SPACE,
+        TokenType.BAD_CHARACTER to BasicSyntaxElementTypeIds.BAD_CHARACTER,
+        TokenType.ERROR_ELEMENT to BasicSyntaxElementTypeIds.ERROR_ELEMENT,
+    ).forEach { [elementType, basicId] ->
+        val index = elementType.index
+        indexToIdMap[index] = basicId
+        if (index > maxIndex) {
+            maxIndex = index
         }
     }
 

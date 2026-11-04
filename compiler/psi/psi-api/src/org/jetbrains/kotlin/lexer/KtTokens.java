@@ -11,13 +11,13 @@ import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens;
 import org.jetbrains.kotlin.psi.KtPsiUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.syntax.BasicSyntaxElementTypeIds;
 import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds;
 
 import static org.jetbrains.kotlin.KtNodeTypes.*;
-import static org.jetbrains.kotlin.syntax.UtilsKt.NO_ID;
 
 public interface KtTokens {
-    int INVALID_Id = NO_ID;
+    int INVALID_Id = BasicSyntaxElementTypeIds.NO_ID;
     int EOF_Id = KotlinSyntaxTokenIds.EOF;
     int RESERVED_Id = KotlinSyntaxTokenIds.RESERVED;
     int BLOCK_COMMENT_Id = KotlinSyntaxTokenIds.BLOCK_COMMENT;
