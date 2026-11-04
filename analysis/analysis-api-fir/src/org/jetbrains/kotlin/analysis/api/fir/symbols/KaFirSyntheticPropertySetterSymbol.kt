@@ -16,15 +16,23 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertyAccessorSymbol
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
 import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 internal class KaFirSyntheticPropertySetterSymbol(
-    override val firSymbol: FirSyntheticPropertyAccessorSymbol,
-    override val analysisSession: KaFirSession,
+    internal val owningKaProperty: KaFirSyntheticJavaPropertySymbol,
 ) : KaPropertySetterSymbol(), KaFirSymbol<FirSyntheticPropertyAccessorSymbol> {
-    init {
-        require(firSymbol.isSetter)
-    }
+    override val firSymbol: FirSyntheticPropertyAccessorSymbol
+        get() {
+            val propertySymbol = owningKaProperty.firSymbol
+            return propertySymbol.setterSymbol ?: errorWithAttachment("Setter is not found") {
+                withFirSymbolEntry("property", propertySymbol)
+            }
+        }
+
+    override val analysisSession: KaFirSession
+        get() = owningKaProperty.analysisSession
 
     override val isNotDefault: Boolean
         get() = withValidityAssertion { true }
@@ -84,6 +92,13 @@ internal class KaFirSyntheticPropertySetterSymbol(
         KaFirPropertySetterSymbolPointer(propertySymbolPointer = createOwnerPointer(), this)
     }
 
-    override fun equals(other: Any?): Boolean = symbolEquals(other)
-    override fun hashCode(): Int = symbolHashCode()
+    /**
+     * Synthetic property accessors are built anew together with their property, so two symbols of the same setter are compared by their
+     * owning property.
+     */
+    override fun equals(other: Any?): Boolean = this === other ||
+            other is KaFirSyntheticPropertySetterSymbol &&
+            other.owningKaProperty == owningKaProperty
+
+    override fun hashCode(): Int = 31 * owningKaProperty.hashCode() + KaFirKotlinPropertySymbol.HASH_CODE_ADDITION_FOR_SETTER
 }
