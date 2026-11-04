@@ -101,6 +101,8 @@ internal class KaFirSyntheticJavaPropertySymbol(
     /**
      * Synthetic properties are built anew on each scope lookup, so two symbols of the same property usually have different
      * [firSymbol]s. The property is defined by its name and its Java accessors, which are stable.
+     *
+     * This is a workaround for KT-91296: once the compiler reuses synthetic properties, [symbolEquals] is enough.
      */
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
