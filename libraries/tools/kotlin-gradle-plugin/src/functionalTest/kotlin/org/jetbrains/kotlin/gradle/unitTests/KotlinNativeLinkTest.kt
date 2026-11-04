@@ -9,13 +9,18 @@ import org.gradle.api.internal.tasks.DefaultTaskContainer
 import org.gradle.api.tasks.TaskInstantiationException
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRedirector
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.kotlinBuildDeps
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_LINK_MAX_WORKERS
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
+import org.jetbrains.kotlin.gradle.util.isParallelismLimitServiceRegistered
 import org.jetbrains.kotlin.gradle.util.kotlin
+import org.jetbrains.kotlin.gradle.util.maxParallelUsagesOf
+import org.jetbrains.kotlin.gradle.util.propertiesExtension
 import org.jetbrains.kotlin.util.assertThrows
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 
 class KotlinNativeLinkTest {
 
@@ -78,6 +83,36 @@ class KotlinNativeLinkTest {
                 iosSimulatorArm64().binaries.framework { }
             }
         }.evaluate()
+    }
+
+    @Test
+    fun `KotlinNativeLink task configures the parallelism limit service using the KOTLIN_NATIVE_LINK_MAX_WORKERS property, when set`() {
+        val project = buildProjectWithMPP(
+            preApplyCode = { propertiesExtension.set(KOTLIN_NATIVE_LINK_MAX_WORKERS, "3") }
+        ) {
+            // Force all tasks to instantiate eagerly, so the KotlinNativeLink's configureEach actions run
+            tasks.all { }
+            kotlin {
+                iosSimulatorArm64().binaries.framework { }
+            }
+        }
+        project.evaluate()
+
+        assertEquals(3, project.maxParallelUsagesOf<KotlinNativeLink>())
+    }
+
+    @Test
+    fun `KotlinNativeLink task does not register the parallelism limit service when the KOTLIN_NATIVE_LINK_MAX_WORKERS property is not set`() {
+        val project = buildProjectWithMPP {
+            // Force all tasks to instantiate eagerly, so the KotlinNativeLink's configureEach actions run
+            tasks.all { }
+            kotlin {
+                iosSimulatorArm64().binaries.framework { }
+            }
+        }
+        project.evaluate()
+
+        assertFalse(project.isParallelismLimitServiceRegistered<KotlinNativeLink>())
     }
 
 }
