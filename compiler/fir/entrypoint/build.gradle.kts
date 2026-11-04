@@ -30,7 +30,7 @@ dependencies {
     implementation(project(":core:compiler.common.native"))
     implementation(project(":compiler:fir:resolve"))
     implementation(project(":compiler:fir:fir-serialization"))
-    implementation(project(":compiler:frontend"))
+    implementation(project(":compiler:frontend.common-psi"))
     implementation(project(":compiler:ir.backend.common"))
     implementation(project(":compiler:ir.serialization.common"))
     implementation(project(":compiler:ir.tree"))

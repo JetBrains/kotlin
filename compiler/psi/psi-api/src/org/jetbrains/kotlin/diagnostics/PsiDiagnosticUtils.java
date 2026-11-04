@@ -17,6 +17,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 
+import java.util.List;
+
 // TODO: extract PSI-independent parts, specifically coordinate classes
 
 /** Utilities for rendering the source location of PSI elements as human-readable strings for use in diagnostic and log messages. */
@@ -177,5 +179,27 @@ public class PsiDiagnosticUtils {
 
             return start + " - " + end;
         }
+    }
+
+    @NotNull
+    public static LineAndColumn getLineAndColumnInPsiFile(PsiFile file, TextRange range) {
+        Document document = file.getViewProvider().getDocument();
+        return offsetToLineAndColumn(document, range.getStartOffset());
+    }
+
+    @NotNull
+    public static LineAndColumnRange getLineAndColumnRange(PsiFile file, List<TextRange> textRanges) {
+        if (textRanges.isEmpty()) return LineAndColumnRange.NONE;
+        TextRange firstRange = DiagnosticRangeUtils.firstRange(textRanges);
+        return getLineAndColumnRangeInPsiFile(file, firstRange);
+    }
+
+    @NotNull
+    public static LineAndColumnRange getLineAndColumnRangeInPsiFile(PsiFile file, TextRange range) {
+        Document document = file.getViewProvider().getDocument();
+        return new LineAndColumnRange(
+                offsetToLineAndColumn(document, range.getStartOffset()),
+                offsetToLineAndColumn(document, range.getEndOffset())
+        );
     }
 }
