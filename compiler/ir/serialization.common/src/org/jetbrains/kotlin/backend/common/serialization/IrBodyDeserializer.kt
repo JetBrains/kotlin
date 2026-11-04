@@ -1083,7 +1083,8 @@ class IrBodyDeserializer(
          * rich function reference; no JS, Wasm or Native lowering reads it.
          *
          * Keys must not collide with [currentStatementOriginNames]: a current origin takes precedence, so the alias
-         * would be silently lost and legacy KLIBs would resolve to the wrong origin.
+         * would be silently lost and legacy KLIBs would resolve to the wrong origin. This is verified by
+         * `IrStatementOriginDeserializationTest`.
          */
         val legacyStatementOriginNames: Map<String, IrStatementOrigin> = mapOf(
             "SUSPEND_CONVERSION" to IrStatementOrigin.FUNCTION_TYPE_EXPRESSION_CONVERSION,
