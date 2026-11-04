@@ -5,7 +5,11 @@
 
 package org.jetbrains.kotlin.code.review
 
+class AgentInfo(val name: String, val model: String, val effort: String)
+
 interface Agent {
+    val info: AgentInfo
+
     suspend fun checkRule(
         rule: CodeRule,
         changedFiles: List<GitDiff.ChangedFile>,

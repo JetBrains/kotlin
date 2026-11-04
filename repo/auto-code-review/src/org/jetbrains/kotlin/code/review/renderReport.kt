@@ -117,9 +117,13 @@ private fun StringBuilder.appendCollapsed(summary: String, appendContent: String
 
 context(renderingContext: RenderingContext)
 private fun StringBuilder.appendMeta(review: ReviewResult) = appendCollapsed("Meta") {
+    val agentInfo = review.agentInfo
     appendLine(
         """
             # Meta
+            
+            Agent: ${agentInfo.name}, model: `${agentInfo.model}`, effort: `${agentInfo.effort}`.
+            
             | Rule | Comments # | Cost, $ |
             | --- | --- | --- |
         """.trimIndent()

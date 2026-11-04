@@ -56,7 +56,7 @@ private suspend fun runReview(
         }
     }.awaitAll()
 
-    ReviewResult(ruleResults, diff.origin)
+    ReviewResult(ruleResults, diff.origin, agent.info)
 }
 
 /**

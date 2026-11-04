@@ -51,6 +51,10 @@ class RuleReviewResult(
         get() = meta?.costUSD
 }
 
-class ReviewResult(val ruleResults: List<RuleReviewResult>, val diffOrigin: GitDiff.Origin) {
+class ReviewResult(
+    val ruleResults: List<RuleReviewResult>,
+    val diffOrigin: GitDiff.Origin,
+    val agentInfo: AgentInfo,
+) {
     val firstException: Throwable? = ruleResults.firstNotNullOfOrNull { it.failures.firstOrNull()?.exception }
 }
