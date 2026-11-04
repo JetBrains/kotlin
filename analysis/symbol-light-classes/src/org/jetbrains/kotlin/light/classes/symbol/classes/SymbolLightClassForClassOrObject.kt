@@ -303,7 +303,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
             // First, add static fields: companion object and fields from companion object
             addCompanionObjectFieldIfNeeded(result, classSymbol)
             val nameGenerator = SymbolLightField.FieldNameGenerator()
-            addFieldsFromCompanionIfNeeded(result, classSymbol, nameGenerator)
+            addFieldsFromCompanionObjectIfNeeded(result, classSymbol, nameGenerator)
 
             // Then, add instance fields: properties from parameters, and then member properties
             addPropertyBackingFields(this@SymbolLightClassForClassOrObject, result, classSymbol, nameGenerator)
