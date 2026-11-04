@@ -9,6 +9,8 @@ import kotlin.jvm.JvmName
 abstract class SessionBase {
     val forms = mutableListOf<Form>()
 
+    abstract val argUpdater: ArgumentUpdater
+
     fun allNodes() = forms.asSequence().flatMap { it.nodes }
     @JvmName("allNodesOfType")
     inline fun <reified N : Node> allNodes(): Sequence<N> = allNodes().filterIsInstance<N>() // FIXME invalidatable?
@@ -56,8 +58,7 @@ fun Node.unwireFromGraphAndDeregister() {
     session.unwireFromGraphAndDeregister(this)
 }
 
-// TODO
-interface NodeBuilder {
+interface NodeBuilder : ArgumentUpdater {
     val session: Session
     fun onNodeBuilt(node: Node): Node
 }

@@ -7,14 +7,14 @@ import hair.utils.ensuring
 
 // TODO Throw with handler -> Goto
 
-class Normalization(val session: Session, nodeBuilder: NodeBuilder, argsUpdater: ArgumentUpdater) {
+class Normalization(val session: SessionImpl) {
 
     fun normalize(node: Node): Node {
         if (node.args.any { it == null }) return node
         return node.accept(normalizer).ensuring { it.accept(normalizer) == it }
     }
 
-    private val normalizer: NodeVisitor<Node> = context(nodeBuilder, argsUpdater, NoControlFlowBuilder) {
+    private val normalizer: NodeVisitor<Node> = context(session.nodeBuilder, NoControlFlowBuilder) {
         object : NodeVisitor<Node>() {
             override fun visitNode(node: Node): Node = node
 

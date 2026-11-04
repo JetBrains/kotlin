@@ -5,12 +5,18 @@ import hair.ir.nodes.NodeBuilder
 import hair.ir.nodes.*
 import hair.utils.forEachInWorklist
 
-context(_: NodeBuilder, _: ArgumentUpdater)
+context(_: NodeBuilder)
 fun Session.cloneNodes(originals: Sequence<Node>, replacementProvider: (Node) -> Node?): Map<Node, Node> {
     val destinationSession = this
     val clones = mutableMapOf<Node, Node>()
     val replacements = mutableMapOf<Node, Node>()
-    val shallowCloner = ShallowNodeCloner(RawNodeBuilder(this))
+    val rawNodeBuilder: NodeBuilder = object : NodeBuilder {
+        override val session: Session = this@cloneNodes
+        override fun onNodeBuilt(node: Node): Node = node
+        override fun onArgUpdate(node: Node, index: Int, oldValue: Node?, newValue: Node?) =
+            session.argUpdater.onArgUpdate(node, index, oldValue, newValue)
+    }
+    val shallowCloner = ShallowNodeCloner(rawNodeBuilder)
     fun cloneShallow(original: Node): Node = clones.getOrPut(original) {
         val replacement = replacementProvider(original)
         require(replacement == null || replacement.session == destinationSession)
