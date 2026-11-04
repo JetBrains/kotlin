@@ -103,10 +103,23 @@ internal class KaFirTypeCreator(
         val classSymbol = rootModuleSession.symbolProvider.getClassLikeSymbolByClassId(classId)
             ?: return buildUnresolvedClassType(classId, init)
 
-        return buildClassType(classSymbol.toLookupTag(), classSymbol, init)
+        return buildClassType(classSymbol.toLookupTag(), classSymbol, capturedTypeArguments = emptyList(), init)
     }
 
     override fun classType(symbol: KaClassLikeSymbol, init: KaClassTypeBuilder.() -> Unit): KaType = withValidityAssertion {
+        classType(symbol, capturedTypeArguments = emptyList(), init)
+    }
+
+    /**
+     * Same as [classType], but uses [capturedTypeArguments] as the arguments of the type parameters captured by a local class
+     * from its containing declarations, which cannot be provided via [KaClassTypeBuilder].
+     * Missing arguments default to the type parameters themselves.
+     */
+    internal fun classType(
+        symbol: KaClassLikeSymbol,
+        capturedTypeArguments: List<ConeTypeProjection>,
+        init: KaClassTypeBuilder.() -> Unit,
+    ): KaType = withValidityAssertion {
         val lookupTag = symbol.classId?.toLookupTag() ?: symbol.firSymbol.toLookupTag()
 
         // The class ID of `symbol` might not be resolvable from the use-site session, e.g., when `symbol` comes from a module
@@ -116,7 +129,7 @@ internal class KaFirTypeCreator(
         val classSymbol = lookupTag.toSymbol(rootModuleSession)
             ?: return buildUnresolvedClassType(lookupTag.classId, init)
 
-        return buildClassType(lookupTag, classSymbol, init)
+        return buildClassType(lookupTag, classSymbol, capturedTypeArguments, init)
     }
 
     private fun buildUnresolvedClassType(classId: ClassId, init: KaClassTypeBuilder.() -> Unit): KaType {
@@ -131,6 +144,7 @@ internal class KaFirTypeCreator(
     private fun buildClassType(
         lookupTag: ConeClassLikeLookupTag,
         classSymbol: FirClassLikeSymbol<*>,
+        capturedTypeArguments: List<ConeTypeProjection>,
         init: KaClassTypeBuilder.() -> Unit,
     ): KaType {
         val classDeclaration = classSymbol.fir
@@ -165,7 +179,11 @@ internal class KaFirTypeCreator(
                 }
             }
 
-            addTypeArguments(null, expectedNumberOfSyntheticArguments)
+            val defaultTypeSyntheticArguments = classSymbol.defaultType().typeArguments.takeLast(expectedNumberOfSyntheticArguments)
+            repeat(expectedNumberOfSyntheticArguments) { index ->
+                val syntheticArgument = capturedTypeArguments.getOrNull(index) ?: defaultTypeSyntheticArguments[index]
+                add(syntheticArgument)
+            }
         }
 
         val coneType = typeContext.createSimpleType(
