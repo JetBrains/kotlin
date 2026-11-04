@@ -21,7 +21,7 @@ fun Session.eliminateDead(): Boolean {
         modifyIR(runDCE = false) {
             for (block in deadBlocks) {
                 if (!block.inGraph) continue
-                block.discardAsUnreachable()
+                block.replaceWith(unreachable)
             }
         }
     }

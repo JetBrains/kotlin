@@ -5,7 +5,9 @@ import hair.sym.HairClass
 import hair.test.Fun
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertContentEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
 import kotlin.test.assertNull
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
@@ -116,5 +118,71 @@ class ReplaceNodeTest : IrTest {
             failure.message!!.contains("control flow"),
             "the refusal must explain that a spine node needs a control replacement, was: ${failure.message}",
         )
+    }
+
+    /** Builds `if (p0) {} else {}; return`, returning the If and the merge block. */
+    private fun Session.buildDiamond(): Pair<If, BlockEntry> {
+        lateinit var merge: BlockEntry
+        buildInitialIR {
+            branch(Param(0), {}, {})
+            merge = contextOf<ControlFlowBuilder>().lastControl as BlockEntry
+            ReturnVoid()
+        }
+        return allNodes<If>().single() to merge
+    }
+
+    /** Replacing a block exit with [Session.unreachable] cuts the edge into its target block. */
+    @Test
+    fun testBlockExitReplaceWithUnreachable() = withTestSession {
+        val [_, merge] = buildDiamond()
+        val [first, second] = merge.preds.toList()
+
+        modifyIR(runDCE = false) {
+            second.replaceWith(unreachable)
+        }
+
+        assertFalse(second.inGraph, "the replaced exit must be gone")
+        assertContentEquals(listOf(first, unreachable), merge.preds.toList())
+    }
+
+    /** [If.fold] keeps only the taken branch, reached through a Goto from the If's predecessor. */
+    @Test
+    fun testIfFold() = withTestSession {
+        val [ifNode, _] = buildDiamond()
+        val control = ifNode.control
+        val takenBlock = ifNode.trueExit.next
+        val droppedBlock = ifNode.falseExit.next
+
+        modifyIR(runDCE = false) {
+            ifNode.fold(ifNode.trueExit)
+        }
+
+        assertTrue(allNodes<If>().none(), "the If must be gone")
+        val goto = takenBlock.preds.single()
+        assertTrue(goto is Goto)
+        assertSame(control, goto.control, "the Goto must continue from the If's predecessor")
+        assertContentEquals(listOf(unreachable), droppedBlock.preds.toList())
+    }
+
+    /** [BlockEntry.replaceWith] lets the spine of a block continue from another node, e.g. to fuse blocks. */
+    @Test
+    fun testBlockEntryReplaceWith() = withTestSession {
+        lateinit var goto: Goto
+        lateinit var block: BlockEntry
+        lateinit var ret: Return
+        buildInitialIR {
+            goto = Goto() as Goto
+            block = BlockEntry(goto) as BlockEntry
+            ret = Return(Param(0)) as Return
+        }
+
+        modifyIR {
+            val control = goto.control
+            goto.replaceWith(unreachable)
+            block.replaceWith(control)
+        }
+
+        assertFalse(block.inGraph, "the fused block must be gone")
+        assertSame(entry, ret.control, "the block's spine must continue from the predecessor's")
     }
 }

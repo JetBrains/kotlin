@@ -29,7 +29,7 @@ fun Session.simplify(): Boolean {
                     val singleGotoPred = node.preds.singleOrNull() as? Goto
                     if (singleGotoPred != null) {
                         val replacement = singleGotoPred.control
-                        singleGotoPred.control = unreachable
+                        singleGotoPred.replaceWith(unreachable)
                         return replacement
                     }
 
@@ -49,8 +49,7 @@ fun Session.simplify(): Boolean {
 
                 chooseReplacement()?.let { replacement ->
                     changed = true
-                    node.next.control = replacement
-                    node.kill()
+                    node.replaceWith(replacement)
                 }
             }
 
@@ -60,14 +59,7 @@ fun Session.simplify(): Boolean {
                     if (prevGoto != null) {
                         changed = true
                         it.preds[0] = unreachable
-                        val next = node.next
-                        // TODO a tool like node.replaceControlUsesAndKill(prevGoto)
-                        next.preds.withIndex()
-                            .filter { it.value == node }
-                            .forEach { [index, _] ->
-                                next.preds[index] = prevGoto
-                            }
-                        node.kill()
+                        node.replaceWith(prevGoto)
                     }
                 }
             }
@@ -77,31 +69,7 @@ fun Session.simplify(): Boolean {
 
                 changed = true
 
-                val [takenExit, droppedExit] = if (!constCond.value) {
-                    node.falseExit to node.trueExit
-                } else {
-                    node.trueExit to node.falseExit
-                }
-
-                contextOf<ControlFlowBuilder>().at(node.control)
-
-                val goto = Goto()
-
-                // FIXME better tool
-                takenExit.next.preds.withIndex()
-                    .filter { it.value == takenExit }
-                    .forEach { [index, _] ->
-                        takenExit.next.preds[index] = goto
-                    }
-                droppedExit.next.preds.withIndex()
-                    .filter { it.value == droppedExit }
-                    .forEach { [index, _] ->
-                        droppedExit.next.preds[index] = unreachable
-                    }
-
-                takenExit.kill()
-                droppedExit.kill()
-                node.kill()
+                node.fold(taken = if (constCond.value) node.trueExit else node.falseExit)
             }
         }
 

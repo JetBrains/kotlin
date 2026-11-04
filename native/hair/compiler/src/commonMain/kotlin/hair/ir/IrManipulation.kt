@@ -207,6 +207,9 @@ fun BlockBody.replaceWith(newControl: Controlling, newValue: Node?) {
 context(_: ArgumentUpdater)
 fun BlockBody.replaceWith(node: BlockBody) = replaceWith(node, node)
 
+context(_: NodeBuilder, _: ArgumentUpdater)
+fun BlockEntry.replaceWith(newControl: Controlling, newValue: Node = NoValue()) = rewireAndKill(newControl, newValue)
+
 /**
  * Removes this node from the control, joining its predecessor straight to its successor.
  * Value uses are redirected to [valueReplacement], which may be left out only if there are none.
@@ -221,8 +224,28 @@ fun BlockBodyWithException.replaceThrowing(replacement: BlockBodyWithException) 
     rewireAndKill(replacement, replacement)
 }
 
-context(_: NodeBuilder, _: ArgumentUpdater)
-fun BlockEntry.discardAsUnreachable() = rewireAndKill(session.unreachable, NoValue())
+context(argUpdater: ArgumentUpdater)
+fun BlockExit.replaceWith(exit: BlockExit) {
+    val target = next
+    with(argUpdater) {
+        for ([index, pred] in target.preds.withIndex()) {
+            if (pred == this@replaceWith) target.preds[index] = exit
+        }
+    }
+    kill()
+}
+
+context(_: NodeBuilder, argUpdater: ArgumentUpdater)
+fun If.fold(taken: IfProjection) {
+    require(taken.owner == this)
+    val dropped = if (taken == trueExit) falseExit else trueExit
+    val control = control
+    // Detach first, so that the Goto is the only control successor of the predecessor.
+    with(argUpdater) { controlOrNull = null }
+    taken.replaceWith(Goto(control))
+    dropped.replaceWith(session.unreachable)
+    kill()
+}
 
 private fun BlockBody.requireNoExceptionEdge() {
     if (this is Throwing) require(unwind == null) {

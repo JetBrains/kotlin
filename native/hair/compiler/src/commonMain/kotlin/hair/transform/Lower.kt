@@ -12,6 +12,7 @@ import hair.ir.nodes.InvokeStatic
 import hair.ir.nodes.IsInstanceOf
 import hair.ir.nodes.Node
 import hair.ir.nodes.NodeBuilder
+import hair.ir.nodes.replaceValueUses
 import hair.sym.CmpOp
 import hair.sym.HairType
 import hair.sym.RuntimeInterface
@@ -64,8 +65,7 @@ fun Session.lower() {
                         }
 
                         override fun visitCheckCast(node: CheckCast) {
-                            node.replaceValueUses(node.obj)
-                            node.removeFromControl()
+                            node.spliceOut(node.obj)
                         }
 
                         override fun visitArrayIndexCheck(node: ArrayIndexCheck) {
