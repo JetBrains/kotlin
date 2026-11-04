@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.gradle.targets.js.swc.GenerateSwcConfig
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
+import org.jetbrains.kotlin.gradle.util.propertiesExtension
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.js.config.EcmaVersion
 import org.jetbrains.kotlin.js.config.supportsEsModules
@@ -31,6 +32,7 @@ import org.junit.jupiter.api.DynamicTest.dynamicTest
 import org.junit.jupiter.api.TestFactory
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
+import kotlin.io.path.createDirectories
 import kotlin.io.path.writeText
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -50,7 +52,7 @@ class JsModuleKindConsistencyTest {
 
     @TestFactory
     fun `module kind and target as seen by the compiler and the rest of the build`(
-        @TempDir projectDir: Path,
+//        @TempDir projectDir: Path,
     ): List<DynamicNode> =
         Scenario.entries.map { scenario ->
             dynamicContainer(
@@ -61,7 +63,7 @@ class JsModuleKindConsistencyTest {
                         listOf(false, true).map { delegated ->
                             dynamicContainer(
                                 "delegated transpilation $delegated",
-                                outcomeTests(scenario, moduleKind, delegated, projectDir)
+                                outcomeTests(scenario, moduleKind, delegated,  )
                             )
                         }
                     )
@@ -75,7 +77,7 @@ class JsModuleKindConsistencyTest {
         scenario: Scenario,
         moduleKind: JsModuleKind,
         delegated: Boolean,
-        projectDir: Path,
+//        projectDir: Path,
     ): List<DynamicTest> {
         val expected = if (delegated) {
             scenario.expectedWithDelegatedTranspilation(moduleKind.kind)
@@ -87,7 +89,7 @@ class JsModuleKindConsistencyTest {
         } else {
             Scenario.Default.expected(moduleKind.kind)
         }
-        val observed by lazy { observe(projectDir, scenario, moduleKind, delegated) }
+        val observed by lazy { observe( scenario, moduleKind, delegated) }
 
         return buildList {
             add(dynamicTest("binaries") {
@@ -227,13 +229,11 @@ class JsModuleKindConsistencyTest {
                 kotlin { js { compilerOptions.freeCompilerArgs.addAll("-module-kind", moduleKind.kind) } }
             }
 
-            // Inconsistent unless UMD: package.json, mainFileName and webpack expect UMD
             override fun expected(kind: String) =
-                Outcome(kind, "es5", kind, "es5", null, null, "js", "d.ts", "js", false)
+                Outcome(kind, "es5", kind, "es5", null, null, jsExtension(kind), dtsExtension(kind), jsExtension(kind), isEs(kind))
 
-            // Inconsistent unless UMD: SWC transpiles to UMD
             override fun expectedWithDelegatedTranspilation(kind: String) =
-                Outcome(kind, "es2020", kind, "es5", "umd", "es5", "js", "d.ts", "js", false)
+                Outcome(kind, "es2020", kind, "es5", kind, "es5", jsExtension(kind), dtsExtension(kind), jsExtension(kind), isEs(kind))
         },
 
         DslFreeCompilerArgsTarget("DSL freeCompilerArgs -target es2015") {
@@ -241,13 +241,12 @@ class JsModuleKindConsistencyTest {
                 kotlin { js { compilerOptions.freeCompilerArgs.addAll("-target", "es2015") } }
             }
 
-            // Inconsistent: package.json, mainFileName and webpack expect UMD
             override fun expected(kind: String) =
-                Outcome("es", "es2015", "es", "es2015", null, null, "js", "d.ts", "js", false)
+                Outcome("es", "es2015", "es", "es2015", null, null, "mjs", "d.mts", "mjs", true)
 
-            // Inconsistent: the compiler generates UMD and SWC transpiles to ES5
+            // The free compiler arguments come last, so they override the latest target requested by KGP
             override fun expectedWithDelegatedTranspilation(kind: String) =
-                Outcome("umd", "es2015", "es", "es2015", "umd", "es5", "js", "d.ts", "js", false)
+                Outcome("es", "es2015", "es", "es2015", "es", "es2015", "mjs", "d.mts", "mjs", true)
         },
 
         DslModuleKindAndFreeCompilerArgsModuleKind("DSL moduleKind = es, freeCompilerArgs -module-kind umd") {
@@ -260,13 +259,11 @@ class JsModuleKindConsistencyTest {
                 }
             }
 
-            // Inconsistent: package.json, mainFileName and webpack expect ES modules
             override fun expected(kind: String) =
-                Outcome("umd", "es5", "umd", "es5", null, null, "mjs", "d.mts", "mjs", true)
+                Outcome("umd", "es5", "umd", "es5", null, null, "js", "d.ts", "js", false)
 
-            // Inconsistent: SWC transpiles to ES modules
             override fun expectedWithDelegatedTranspilation(kind: String) =
-                Outcome("umd", "es2020", "umd", "es5", "es", "es5", "mjs", "d.mts", "mjs", true)
+                Outcome("umd", "es2020", "umd", "es5", "umd", "es5", "js", "d.ts", "js", false)
         },
 
         LinkModuleKind("link moduleKind =", testedModuleKinds = JsModuleKind.entries) {
@@ -274,13 +271,13 @@ class JsModuleKindConsistencyTest {
                 configureLinkTasks { it.compilerOptions.moduleKind.set(moduleKind) }
             }
 
-            // Inconsistent unless UMD: package.json and mainFileName expect UMD
+            // Inconsistent unless UMD: package.json expects UMD
             override fun expected(kind: String) =
-                Outcome(kind, "es5", kind, "es5", null, null, "js", "d.ts", "js", isEs(kind))
+                Outcome(kind, "es5", kind, "es5", null, null, "js", "d.ts", jsExtension(kind), isEs(kind))
 
-            // Inconsistent unless UMD: package.json and mainFileName expect UMD
+            // Inconsistent unless UMD: package.json expects UMD
             override fun expectedWithDelegatedTranspilation(kind: String) =
-                Outcome(kind, "es2020", kind, "es5", kind, "es5", "js", "d.ts", "js", isEs(kind))
+                Outcome(kind, "es2020", kind, "es5", kind, "es5", "js", "d.ts", jsExtension(kind), isEs(kind))
         },
 
         LinkTarget("link target = es2015") {
@@ -288,13 +285,13 @@ class JsModuleKindConsistencyTest {
                 configureLinkTasks { it.compilerOptions.target.set("es2015") }
             }
 
-            // Inconsistent: package.json and mainFileName expect UMD
+            // Inconsistent: package.json expects UMD
             override fun expected(kind: String) =
-                Outcome("es", "es2015", "es", "es2015", null, null, "js", "d.ts", "js", true)
+                Outcome("es", "es2015", "es", "es2015", null, null, "js", "d.ts", "mjs", true)
 
-            // Inconsistent: package.json and mainFileName expect UMD
+            // Inconsistent: package.json expects UMD
             override fun expectedWithDelegatedTranspilation(kind: String) =
-                Outcome("es", "es2020", "es", "es2015", "es", "es2015", "js", "d.ts", "js", true)
+                Outcome("es", "es2020", "es", "es2015", "es", "es2015", "js", "d.ts", "mjs", true)
         },
 
         LinkFreeCompilerArgsModuleKind("link freeCompilerArgs -module-kind", testedModuleKinds = JsModuleKind.entries) {
@@ -302,13 +299,13 @@ class JsModuleKindConsistencyTest {
                 configureLinkTasks { it.compilerOptions.freeCompilerArgs.addAll("-module-kind", moduleKind.kind) }
             }
 
-            // Inconsistent unless UMD: package.json, mainFileName and webpack expect UMD
+            // Inconsistent unless UMD: package.json expects UMD
             override fun expected(kind: String) =
-                Outcome(kind, "es5", kind, "es5", null, null, "js", "d.ts", "js", false)
+                Outcome(kind, "es5", kind, "es5", null, null, "js", "d.ts", jsExtension(kind), isEs(kind))
 
-            // Inconsistent unless UMD: SWC transpiles to UMD
+            // Inconsistent unless UMD: package.json expects UMD
             override fun expectedWithDelegatedTranspilation(kind: String) =
-                Outcome(kind, "es2020", kind, "es5", "umd", "es5", "js", "d.ts", "js", false)
+                Outcome(kind, "es2020", kind, "es5", kind, "es5", "js", "d.ts", jsExtension(kind), isEs(kind))
         },
 
         LinkFreeCompilerArgsTarget("link freeCompilerArgs -target es2015") {
@@ -316,13 +313,14 @@ class JsModuleKindConsistencyTest {
                 configureLinkTasks { it.compilerOptions.freeCompilerArgs.addAll("-target", "es2015") }
             }
 
-            // Inconsistent: package.json, mainFileName and webpack expect UMD
+            // Inconsistent: package.json expects UMD
             override fun expected(kind: String) =
-                Outcome("es", "es2015", "es", "es2015", null, null, "js", "d.ts", "js", false)
+                Outcome("es", "es2015", "es", "es2015", null, null, "js", "d.ts", "mjs", true)
 
-            // Inconsistent: the compiler generates UMD and SWC transpiles to ES5
+            // Inconsistent: package.json expects UMD.
+            // The free compiler arguments come last, so they override the latest target requested by KGP
             override fun expectedWithDelegatedTranspilation(kind: String) =
-                Outcome("umd", "es2015", "es", "es2015", "umd", "es5", "js", "d.ts", "js", false)
+                Outcome("es", "es2015", "es", "es2015", "es", "es2015", "js", "d.ts", "mjs", true)
         },
 
         DslModuleKindAndLinkModuleKind("DSL moduleKind = es, link moduleKind = umd") {
@@ -331,13 +329,13 @@ class JsModuleKindConsistencyTest {
                 configureLinkTasks { it.compilerOptions.moduleKind.set(JsModuleKind.MODULE_UMD) }
             }
 
-            // Inconsistent: package.json and mainFileName expect ES modules
+            // Inconsistent: package.json expects ES modules
             override fun expected(kind: String) =
-                Outcome("umd", "es5", "umd", "es5", null, null, "mjs", "d.mts", "mjs", false)
+                Outcome("umd", "es5", "umd", "es5", null, null, "mjs", "d.mts", "js", false)
 
-            // Inconsistent: package.json and mainFileName expect ES modules
+            // Inconsistent: package.json expects ES modules
             override fun expectedWithDelegatedTranspilation(kind: String) =
-                Outcome("umd", "es2020", "umd", "es5", "umd", "es5", "mjs", "d.mts", "mjs", false)
+                Outcome("umd", "es2020", "umd", "es5", "umd", "es5", "mjs", "d.mts", "js", false)
         },
 
         CompileTaskModuleKind("compile task moduleKind =", testedModuleKinds = JsModuleKind.entries, affectsTestCompilation = false) {
@@ -349,13 +347,13 @@ class JsModuleKindConsistencyTest {
                 }
             }
 
-            // Inconsistent unless UMD: package.json and mainFileName expect the compile task's module kind
+            // Inconsistent unless UMD: package.json expects the compile task's module kind
             override fun expected(kind: String) =
-                Outcome("umd", "es5", "umd", "es5", null, null, jsExtension(kind), dtsExtension(kind), jsExtension(kind), false)
+                Outcome("umd", "es5", "umd", "es5", null, null, jsExtension(kind), dtsExtension(kind), "js", false)
 
-            // Inconsistent unless UMD: package.json and mainFileName expect the compile task's module kind
+            // Inconsistent unless UMD: package.json expects the compile task's module kind
             override fun expectedWithDelegatedTranspilation(kind: String) =
-                Outcome("umd", "es2020", "umd", "es5", "umd", "es5", jsExtension(kind), dtsExtension(kind), jsExtension(kind), false)
+                Outcome("umd", "es2020", "umd", "es5", "umd", "es5", jsExtension(kind), dtsExtension(kind), "js", false)
         },
         ;
 
@@ -365,16 +363,20 @@ class JsModuleKindConsistencyTest {
     }
 
     private fun observe(
-        projectDir: Path,
+//        tempDir: Path,
         scenario: Scenario,
         moduleKind: JsModuleKind,
         delegatedTranspilation: Boolean,
     ): Map<BinaryId, Outcome> {
-        projectDir.resolve("gradle.properties").apply {
-            writeText("kotlin.js.delegated.transpilation=${delegatedTranspilation}")
-        }
+//        val projectDir = tempDir.resolve(scenario.name).createDirectories()
+//        projectDir.resolve("gradle.properties").apply {
+//            writeText("kotlin.js.delegated.transpilation=${delegatedTranspilation}")
+//        }
         val project = buildProjectWithMPP(
-            projectBuilder = { withProjectDir(projectDir.toFile()) }
+            preApplyCode = {
+                propertiesExtension.set("kotlin.js.delegated.transpilation", delegatedTranspilation)
+            },
+//            projectBuilder = { withProjectDir(projectDir.toFile()) },
         ) {
             kotlin {
                 js {

@@ -36,19 +36,7 @@ class JsTaskCompilerOptionMismatchCheckerTests {
         val project = buildJsProject {
             configureLinkTasks { it.compilerOptions.freeCompilerArgs.addAll("-module-kind", "es") }
         }
-        // The webpack tasks only follow the typed options of the link tasks
-        project.assertMismatches(
-            listOf(
-                mismatch(":compileDevelopmentExecutableKotlinJs", "moduleKind", "es", "umd"),
-                mismatch(":compileProductionExecutableKotlinJs", "moduleKind", "es", "umd"),
-                mismatch(":compileTestDevelopmentExecutableKotlinJs", "moduleKind", "es", "umd"),
-                mismatch(":compileTestProductionExecutableKotlinJs", "moduleKind", "es", "umd"),
-                mismatch(":jsDevelopmentExecutableGenerateTypeScriptDefinitions", "moduleKind", "es", "umd"),
-                mismatch(":jsProductionExecutableGenerateTypeScriptDefinitions", "moduleKind", "es", "umd"),
-                mismatch(":jsTestTestDevelopmentExecutableGenerateTypeScriptDefinitions", "moduleKind", "es", "umd"),
-                mismatch(":jsTestTestProductionExecutableGenerateTypeScriptDefinitions", "moduleKind", "es", "umd"),
-            )
-        )
+        project.assertMismatches(linkTasksModuleKindEsMismatches)
     }
 
     @Test
@@ -159,16 +147,12 @@ class JsTaskCompilerOptionMismatchCheckerTests {
         val project = buildJsProject(delegatedTranspilation = true) {
             tasks.withType(GenerateSwcConfig::class.java).configureEach { it.esTarget.set("es2015") }
         }
-        // Without a module kind, SWC uses the one implied by the target
+        // The module kind set by KGP takes precedence over the one implied by the target
         project.assertMismatches(
             listOf(
-                mismatch(":jsBrowserDevelopmentGenerateSwcConfig", "moduleKind", "es", "umd"),
                 mismatch(":jsBrowserDevelopmentGenerateSwcConfig", "target", "es2015", "es5"),
-                mismatch(":jsBrowserProductionGenerateSwcConfig", "moduleKind", "es", "umd"),
                 mismatch(":jsBrowserProductionGenerateSwcConfig", "target", "es2015", "es5"),
-                mismatch(":jsBrowserTestDevelopmentGenerateSwcConfig", "moduleKind", "es", "umd"),
                 mismatch(":jsBrowserTestDevelopmentGenerateSwcConfig", "target", "es2015", "es5"),
-                mismatch(":jsBrowserTestProductionGenerateSwcConfig", "moduleKind", "es", "umd"),
                 mismatch(":jsBrowserTestProductionGenerateSwcConfig", "target", "es2015", "es5"),
             )
         )
@@ -184,6 +168,22 @@ class JsTaskCompilerOptionMismatchCheckerTests {
     fun `module kind set in the DSL - no diagnostic`() {
         val project = buildJsProject(delegatedTranspilation = true) {
             kotlin { js { compilerOptions.moduleKind.set(JsModuleKind.MODULE_ES) } }
+        }
+        project.assertNoDiagnostics(KotlinToolingDiagnostics.JsTaskCompilerOptionMismatch)
+    }
+
+    @Test
+    fun `module kind set via free compiler args in the DSL - no diagnostic`() {
+        val project = buildJsProject(delegatedTranspilation = true) {
+            kotlin { js { compilerOptions.freeCompilerArgs.addAll("-module-kind", "es") } }
+        }
+        project.assertNoDiagnostics(KotlinToolingDiagnostics.JsTaskCompilerOptionMismatch)
+    }
+
+    @Test
+    fun `target set via free compiler args in the DSL - no diagnostic`() {
+        val project = buildJsProject(delegatedTranspilation = true) {
+            kotlin { js { compilerOptions.freeCompilerArgs.addAll("-target", "es2015") } }
         }
         project.assertNoDiagnostics(KotlinToolingDiagnostics.JsTaskCompilerOptionMismatch)
     }

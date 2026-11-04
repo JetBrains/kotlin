@@ -13,6 +13,9 @@ constructor(name: String) : org.jetbrains.kotlin.gradle.targets.js.webpack.Kotli
 
 kotlin {
     js {
+        compilerOptions {
+            moduleKind.set(org.jetbrains.kotlin.gradle.dsl.JsModuleKind.MODULE_ES)
+        }
         browser {
             webpackTask {
                 cssSupport {
@@ -81,11 +84,5 @@ kotlin {
                 implementation(kotlin("test-js"))
             }
         }
-    }
-}
-
-tasks.withType<org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink>().configureEach {
-    compilerOptions {
-        moduleKind.set(org.jetbrains.kotlin.gradle.dsl.JsModuleKind.MODULE_ES)
     }
 }

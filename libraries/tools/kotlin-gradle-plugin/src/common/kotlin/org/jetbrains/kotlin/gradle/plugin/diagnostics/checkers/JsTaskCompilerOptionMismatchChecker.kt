@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers
 
+import org.gradle.api.Project
 import org.gradle.api.Task
 import org.jetbrains.kotlin.gradle.dsl.JsModuleKind
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions
@@ -40,14 +41,12 @@ internal object JsTaskCompilerOptionMismatchChecker : KotlinGradleProjectChecker
         // The compilation's options are also configured by its compile task, which may be realised after the link task.
         // Once the task graph is ready, all the tasks in it are realised and configured.
         project.gradle.taskGraph.whenReady { taskGraph ->
-            val tasksInGraph = taskGraph.allTasks.filter { it.project == project }
-
             val compilations = jsTargets
-                // Wasm always generates ES modules
+                // ignore Wasm - it always generates ES modules
                 .filter { it.platformType == KotlinPlatformType.js }
                 .flatMap { it.compilations }
 
-            val optionValues = compilations.flatMap { compilation -> optionValues(compilation, tasksInGraph) }
+            val optionValues = compilations.flatMap { compilation -> optionValues(compilation, project) }
 
             val mismatches = optionValues
                 .mapNotNull { (taskPath, optionName, taskValue, compilationValue) ->
@@ -83,7 +82,7 @@ internal object JsTaskCompilerOptionMismatchChecker : KotlinGradleProjectChecker
     /**
      * The `moduleKind` and `target` values of the compilation's tasks in [tasks], next to the compilation's ones.
      */
-    private fun optionValues(compilation: KotlinJsIrCompilation, tasks: List<Task>): List<OptionValue> {
+    private fun optionValues(compilation: KotlinJsIrCompilation, project: Project): List<OptionValue> {
         val compilationModuleKind = compilation.jsModuleKind.map { it.kind }.orNull
         val compilationTarget = compilation.jsTarget.orNull
 
@@ -96,8 +95,9 @@ internal object JsTaskCompilerOptionMismatchChecker : KotlinGradleProjectChecker
             .flatMap { listOf(it.linkTaskName, it.dtsGenerationTaskName) }
             .toSet()
 
-        return tasks.flatMap { task ->
-            when {
+        val values = mutableListOf<OptionValue>()
+        project.tasks.configureEach { task ->
+            values += when {
                 task is KotlinJsIrLink && task.name in binaryTaskNames ->
                     compilerOptionValues(task, task.compilerOptions)
 
@@ -124,5 +124,6 @@ internal object JsTaskCompilerOptionMismatchChecker : KotlinGradleProjectChecker
                 else -> emptyList()
             }
         }
+        return values
     }
 }

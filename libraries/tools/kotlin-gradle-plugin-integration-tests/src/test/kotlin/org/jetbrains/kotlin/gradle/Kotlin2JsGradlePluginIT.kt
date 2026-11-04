@@ -174,6 +174,53 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     }
 
     @MustRunOnChangesInJs
+    @DisplayName("KT-91228: package.json, Node.js run and webpack work when ES modules are set via free compiler args")
+    @GradleTestVersions(
+        // This test tests KGP & compiler interop. Gradle version is irrelevant.
+        minVersion = TestVersions.Gradle.MAX_SUPPORTED
+    )
+    @GradleTest
+    fun jsToolsWorkWithEsModuleKindFromFreeCompilerArgs(gradleVersion: GradleVersion) {
+        project("simple-js-executable", gradleVersion) {
+            kotlinSourcesDir("jsMain").resolve("Exported.kt").writeText(
+                """
+                |@JsExport
+                |fun exported(): String = "exported"
+                """.trimMargin()
+            )
+            buildScriptInjection {
+                kotlinMultiplatform.js {
+                    browser()
+                    generateTypeScriptDefinitions()
+                    compilerOptions.freeCompilerArgs.addAll("-module-kind", "es")
+                }
+            }
+
+            val packageDir = projectPath.resolve("build/js/packages/js-executable/")
+
+            build("assemble", "jsNodeProductionRun", "jsBrowserProductionWebpack") {
+                val packageJson = assertNotNull(fromSrcPackageJson(packageDir.resolve(NpmProject.PACKAGE_JSON).toFile()))
+                assertAll(
+                    // The compiler generated the JS file for ES modules
+                    { assertFileExists(packageDir.resolve("kotlin/js-executable.mjs")) },
+                    // The compiler generated the TypeScript declarations for ES modules
+                    { assertFileExists(packageDir.resolve("kotlin/js-executable.d.mts")) },
+                    // package.json points to the generated JS file
+                    { assertEquals("kotlin/js-executable.mjs", packageJson.main, "package.json main") },
+                    // package.json points to the generated TypeScript declarations
+                    { assertEquals("kotlin/js-executable.d.mts", packageJson.types, "package.json types") },
+                    // Node.js runs the generated JS file
+                    { assertOutputContains("Hello, Yarn") },
+                    // webpack bundles the generated JS file
+                    { assertFileInProjectExists("build/kotlin-webpack/js/productionExecutable/js-executable.js") },
+                    // The module kind is configured consistently, so there's nothing to warn about
+                    { assertNoDiagnostic(KotlinToolingDiagnostics.JsTaskCompilerOptionMismatch) },
+                )
+            }
+        }
+    }
+
+    @MustRunOnChangesInJs
     @DisplayName("KT-91228: module kind set on the link tasks differently from their compilation is deprecated but works with webpack")
     @GradleTestVersions(minVersion = TestVersions.Gradle.MAX_SUPPORTED)
     @GradleTest
