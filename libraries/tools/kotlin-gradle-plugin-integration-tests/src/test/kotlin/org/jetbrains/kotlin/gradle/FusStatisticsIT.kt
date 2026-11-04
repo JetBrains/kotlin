@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.gradle.util.swiftExportEmbedAndSignEnvVariables
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.statistics.metrics.StringAnonymizationPolicy
 import org.jetbrains.kotlin.statistics.metrics.StringListMetrics
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
@@ -1186,6 +1187,119 @@ class FusStatisticsIT : KGPBaseTest() {
                 buildAction = BuildActions.build,
             ) { fusFiles ->
                 assertFilesCombinedContains(fusFiles, "KOTLIN_BTA_USED=true")
+            }
+        }
+    }
+
+    @DisplayName("KT-90751: JVM compiler arguments from freeCompilerArgs")
+    @GradleTest
+    @JvmGradlePluginTests
+    @Disabled
+    fun testJvmFreeCompilerArguments(gradleVersion: GradleVersion) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("jvm")
+            }
+            buildScriptInjection {
+                // typed DSL control: reported even without the KT-90751 fix
+                kotlinJvm.compilerOptions.javaParameters.set(true)
+                kotlinJvm.compilerOptions.freeCompilerArgs.addAll(
+                    "-Xdebug", "-Xlambdas=class", "-Xbackend-threads=4",
+                    "-XXLanguage:+ContextParameters", "-progressive",
+                )
+            }
+            kotlinSourcesDir().source("main.kt") { "fun foo() = 1" }
+
+            validateFusFiles(
+                "compileKotlin",
+                buildAction = BuildActions.build,
+                buildAssertions = { assertTasksExecuted(":compileKotlin") },
+            ) { fusFiles ->
+                assertFilesCombinedContains(
+                    fusFiles,
+                    "CLI_JAVA_PARAMETERS_METADATA_ENABLED=true",
+                    "CLI_JVM_DEBUG_MODE_ENABLED=true",
+                    "CLI_LAMBDAS_CODEGEN_MODE=class",
+                    "CLI_BACKEND_THREADS_COUNT=4",
+                    "CLI_MANUALLY_CONFIGURED_LANGUAGE_FEATURES=+ContextParameters",
+                    "KOTLIN_PROGRESSIVE_MODE=true",
+                )
+            }
+        }
+    }
+
+    @DisplayName("KT-90751: JS compiler arguments from freeCompilerArgs")
+    @GradleTest
+    @JsGradlePluginTests
+    @Disabled
+    fun testJsFreeCompilerArguments(gradleVersion: GradleVersion) {
+        project(
+            "empty",
+            gradleVersion,
+            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
+        ) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    js()
+                    compilerOptions {
+                        freeCompilerArgs.addAll("-XXLanguage:+ContextParameters", "-Xgenerate-polyfills")
+                    }
+                    sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+                }
+            }
+
+            validateFusFiles(
+                "compileKotlinJs",
+                buildAction = BuildActions.build,
+                buildAssertions = { assertTasksExecuted(":compileKotlinJs") },
+            ) { fusFiles ->
+                assertFilesCombinedContains(
+                    fusFiles,
+                    "CLI_MANUALLY_CONFIGURED_LANGUAGE_FEATURES=+ContextParameters",
+                    "CLI_JS_POLYFILLS_GENERATED=true",
+                )
+            }
+        }
+    }
+
+    @DisplayName("KT-90751: Wasm compiler arguments from freeCompilerArgs")
+    @GradleTest
+    @WasmJsGradlePluginTests
+    @Disabled
+    fun testWasmFreeCompilerArguments(gradleVersion: GradleVersion) {
+        project(
+            "empty",
+            gradleVersion,
+            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
+        ) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    wasmJs()
+                    compilerOptions {
+                        freeCompilerArgs.addAll("-XXLanguage:+ContextParameters", "-Xwasm-enable-asserts")
+                    }
+                    sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+                }
+            }
+
+            validateFusFiles(
+                "compileKotlinWasmJs",
+                buildAction = BuildActions.build,
+                buildAssertions = { assertTasksExecuted(":compileKotlinWasmJs") },
+            ) { fusFiles ->
+                assertFilesCombinedContains(
+                    fusFiles,
+                    "CLI_MANUALLY_CONFIGURED_LANGUAGE_FEATURES=+ContextParameters",
+                    "CLI_WASM_ASSERTS_ENABLED=true",
+                )
             }
         }
     }
