@@ -196,7 +196,13 @@ internal open class GradleCompilerRunner(
         val argsArray = compilerArgs.toArgumentStrings(false, addFreeArgsDelimiter = this is GradleBuildToolsApiCompilerRunner).toTypedArray()
 
         fusMetricsConsumer.orNull?.let { metricsConsumer ->
-            CompilerArgumentMetrics.collectMetrics(compilerArgs, argsArray, loggerProvider, metricsConsumer)
+            CompilerArgumentMetrics.collectMetrics(
+                compilerArgs,
+                // -- delimeter is needed for BTA, but not needed for arguments reparsing
+                compilerArgs.toArgumentStrings(addFreeArgsDelimiter = false).toTypedArray(),
+                loggerProvider,
+                metricsConsumer,
+            )
             KotlinCompilerRefIndexMetrics.collectMetrics(compilerExecutionSettings.generateCompilerRefIndex, metricsConsumer)
         }
 

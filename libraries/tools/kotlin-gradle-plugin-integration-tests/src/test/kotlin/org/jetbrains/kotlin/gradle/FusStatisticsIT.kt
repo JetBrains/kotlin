@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.gradle.util.swiftExportEmbedAndSignEnvVariables
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.statistics.metrics.StringAnonymizationPolicy
 import org.jetbrains.kotlin.statistics.metrics.StringListMetrics
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
@@ -1194,7 +1193,6 @@ class FusStatisticsIT : KGPBaseTest() {
     @DisplayName("KT-90751: JVM compiler arguments from freeCompilerArgs")
     @GradleTest
     @JvmGradlePluginTests
-    @Disabled
     fun testJvmFreeCompilerArguments(gradleVersion: GradleVersion) {
         project("empty", gradleVersion) {
             plugins {
@@ -1231,7 +1229,6 @@ class FusStatisticsIT : KGPBaseTest() {
     @DisplayName("KT-90751: JS compiler arguments from freeCompilerArgs")
     @GradleTest
     @JsGradlePluginTests
-    @Disabled
     fun testJsFreeCompilerArguments(gradleVersion: GradleVersion) {
         project(
             "empty",
@@ -1269,7 +1266,6 @@ class FusStatisticsIT : KGPBaseTest() {
     @DisplayName("KT-90751: Wasm compiler arguments from freeCompilerArgs")
     @GradleTest
     @WasmJsGradlePluginTests
-    @Disabled
     fun testWasmFreeCompilerArguments(gradleVersion: GradleVersion) {
         project(
             "empty",
