@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,14 +14,8 @@ import org.jetbrains.kotlin.test.compileJavaFiles
 import org.jetbrains.kotlin.test.java.JavaCompilerFacade
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
-import org.jetbrains.kotlin.test.services.getRealJavaFiles
-import org.jetbrains.kotlin.test.services.isModuleInfoJavaFile
-import org.jetbrains.kotlin.test.services.javaFiles
-import org.jetbrains.kotlin.test.services.jvm.compiledClassesManager
-import org.jetbrains.kotlin.test.services.moduleStructure
-import org.jetbrains.kotlin.test.services.sourceFileProvider
+import org.jetbrains.kotlin.test.services.*
+import org.jetbrains.kotlin.test.services.jvm.compileKotlinToDiskAndGetOutputDir
 import org.jetbrains.kotlin.test.utils.withExtension
 
 /**

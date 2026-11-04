@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,11 +11,7 @@ import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.IrNoExpectSymbolsHandler
 import org.jetbrains.kotlin.test.backend.ir.CodegenCliJvmFacade
 import org.jetbrains.kotlin.test.backend.ir.LoweringCliJvmFacade
-import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.builders.firHandlersStep
-import org.jetbrains.kotlin.test.builders.irHandlersStep
-import org.jetbrains.kotlin.test.builders.jvmArtifactsHandlersStep
-import org.jetbrains.kotlin.test.builders.loweredIrHandlersStep
+import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.configuration.configureCommonHandlersForBoxTest
 import org.jetbrains.kotlin.test.configuration.configureDumpHandlersForCodegenTest
 import org.jetbrains.kotlin.test.configuration.configureJvmBoxCodegenSettings
@@ -36,7 +32,7 @@ import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigu
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfiguratorForSeparateKmpCompilation
 import org.jetbrains.kotlin.test.services.configuration.MetadataEnvironmentConfiguratorForSeparateKmpCompilation
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
-import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider
+import org.jetbrains.kotlin.test.services.sourceProviders.JvmMainFunctionForBlackBoxTestsSourceProvider
 import org.jetbrains.kotlin.utils.bind
 
 abstract class AbstractJvmBlackBoxCodegenWithSeparateKmpCompilationTestBase(val parser: FirParser) : AbstractKotlinCompilerJvmTest() {
@@ -62,7 +58,7 @@ abstract class AbstractJvmBlackBoxCodegenWithSeparateKmpCompilationTestBase(val 
         )
 
         useAdditionalSourceProviders(
-            ::MainFunctionForBlackBoxTestsSourceProvider,
+            ::JvmMainFunctionForBlackBoxTestsSourceProvider,
             ::CoroutineHelpersSourceFilesProvider,
         )
 

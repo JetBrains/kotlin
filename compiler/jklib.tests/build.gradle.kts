@@ -11,6 +11,7 @@ plugins {
 dependencies {
     testFixturesApi(testFixtures(project(":generators:test-generator")))
     testFixturesApi(testFixtures(project(":compiler:tests-integration")))
+    testFixturesApi(testFixtures(project(":compiler:jvm.tests")))
     testFixturesImplementation(project(":compiler:cli-jklib"))
     testFixturesImplementation(project(":compiler:ir.serialization.jklib"))
 

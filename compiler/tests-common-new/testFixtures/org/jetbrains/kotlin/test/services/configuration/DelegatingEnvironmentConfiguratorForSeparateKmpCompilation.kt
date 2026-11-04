@@ -76,11 +76,3 @@ class MetadataEnvironmentConfiguratorForSeparateKmpCompilation(
         return !module.isLeafModuleInMppGraph(testServices)
     }
 }
-
-class JvmEnvironmentConfiguratorForSeparateKmpCompilation(
-    testServices: TestServices
-) : DelegatingEnvironmentConfiguratorForSeparateKmpCompilation(testServices, ::JvmEnvironmentConfigurator) {
-    override fun shouldApply(module: TestModule): Boolean {
-        return module.isLeafModuleInMppGraph(testServices)
-    }
-}

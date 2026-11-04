@@ -25,13 +25,10 @@ import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
-import org.jetbrains.kotlin.test.model.DependencyRelation.DependsOnDependency
-import org.jetbrains.kotlin.test.model.DependencyRelation.FriendDependency
-import org.jetbrains.kotlin.test.model.DependencyRelation.RegularDependency
+import org.jetbrains.kotlin.test.model.DependencyRelation.*
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
-import org.jetbrains.kotlin.test.services.jvm.compiledClassesManager
 
 class CommonEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     override val directiveContainers: List<DirectivesContainer>
