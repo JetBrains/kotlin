@@ -20,7 +20,7 @@ dependencies {
 
     testFixturesApi(testFixtures(project(":compiler:tests-common")))
 
-    testFixturesApi(testFixtures(project(":compiler:fir:analysis-tests:legacy-fir-tests")))
+    testFixturesApi(testFixtures(project(":compiler:fir:analysis-tests")))
     testFixturesApi(project(":compiler:fir:resolve"))
     testFixturesApi(project(":compiler:fir:semantics.api"))
     testFixturesApi(platform(libs.junit.bom))

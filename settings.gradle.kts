@@ -542,7 +542,6 @@ include(
     ":compiler:fir:diagnostic-renderers",
     ":compiler:fir:entrypoint",
     ":compiler:fir:analysis-tests",
-    ":compiler:fir:analysis-tests:legacy-fir-tests"
 )
 
 include(
