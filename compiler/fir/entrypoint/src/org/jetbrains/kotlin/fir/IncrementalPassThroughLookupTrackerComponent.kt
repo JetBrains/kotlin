@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.KtSourceFileLinesMapping
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils.getLineAndColumnInPsiFile
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.getContainingFile
@@ -24,7 +25,8 @@ class IncrementalPassThroughLookupTrackerComponent(
     private val session: FirSession,
     private val lookupTracker: LookupTracker,
     private val fileMappingTracker: ICFileMappingTracker?,
-    private val sourceToFilePath: (KtSourceElement) -> String?
+    private val sourceToFilePath: (KtSourceElement) -> String?,
+    private val sourceToLinesMapping: (KtSourceElement) -> KtSourceFileLinesMapping? = { null },
 ) : FirLookupTrackerComponent() {
 
     private val requiresPosition = lookupTracker.requiresPosition
@@ -40,13 +42,22 @@ class IncrementalPassThroughLookupTrackerComponent(
                 // TODO: the lookup by non-file source mostly doesn't work for the LT, so we cannot afford null file sources here
                 return
         }
-        val position = if (requiresPosition && source != null && source is KtPsiSourceElement) {
-            getLineAndColumnInPsiFile(source.psi.containingFile, source.psi.textRange).let { Position(it.line, it.column) }
-        } else Position.NO_POSITION
+        val position = if (requiresPosition && source != null) computePosition(source) else Position.NO_POSITION
 
         for (scope in inScopes) {
             lookupTracker.record(path, position, scope, ScopeKind.PACKAGE, name)
         }
+    }
+
+    private fun computePosition(source: KtSourceElement): Position {
+        if (source is KtPsiSourceElement) {
+            return getLineAndColumnInPsiFile(source.psi.containingFile, source.psi.textRange).let { Position(it.line, it.column) }
+        }
+        val linesMapping = sourceToLinesMapping(source) ?: return Position.NO_POSITION
+        val [line, column] = linesMapping.getLineAndColumnByOffset(source.startOffset)
+        if (line < 0) return Position.NO_POSITION
+        // KtSourceFileLinesMapping is 0-based, while Position (as computed for PSI) is 1-based
+        return Position(line + 1, column + 1)
     }
 
     override fun recordLookup(name: String, inScope: String, source: KtSourceElement?, fileSource: KtSourceElement?) {

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.session
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.KtSourceFileLinesMapping
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.toKotlinVersion
@@ -217,9 +218,12 @@ fun FirSession.registerResolveComponents(
         val firFileToPath: (KtSourceElement) -> String? = {
             sourcesToPathsMapper.getSourceFilePath(it)
         }
+        val firFileToLinesMapping: (KtSourceElement) -> KtSourceFileLinesMapping? = {
+            sourcesToPathsMapper.getSourceFileLinesMapping(it)
+        }
         register(
             FirLookupTrackerComponent::class,
-            IncrementalPassThroughLookupTrackerComponent(this, lookupTracker, fileMappingTracker, firFileToPath)
+            IncrementalPassThroughLookupTrackerComponent(this, lookupTracker, fileMappingTracker, firFileToPath, firFileToLinesMapping)
         )
     }
     if (enumWhenTracker != null) {
