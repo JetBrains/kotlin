@@ -4,13 +4,11 @@ In package 'test' of module '<main>':
   |
 3 | interface I1 : Any {
 4 |     fun <T> foo(): Unit
-  |     ...
-  | }
+5 | }
   | ...
 7 | interface I2 : Any {
 8 |     fun foo(): Unit
-  |     ...
-  | }
+9 | }
   |
 class C : I1, I2
 ^^^^^^^

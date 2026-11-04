@@ -12,6 +12,5 @@ In package 'second' of module '<main>':
    |
 16 | enum class SomeEnum : Enum<SomeEnum> {
 17 |     enum entry SOME: SomeEnum
-   |     ...
-   | }
+18 | }
    |

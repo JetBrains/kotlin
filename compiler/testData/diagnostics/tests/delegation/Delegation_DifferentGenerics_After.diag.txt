@@ -8,8 +8,7 @@ In package 'root package' of module '<main>':
 60 |     fun <D> baz(): D
    |     ...
 62 |     fun <E, F> bar(): List<F>
-   |     ...
-   | }
+63 | }
    |
 
 /KC.kt:68:5: error: 'foo' overrides nothing. Potential signatures for overriding:
@@ -19,7 +18,7 @@ In package 'root package' of module '<main>':
 57 | interface KI : Any {
 58 |     fun <C> foo(): List<C>
    |     ...
-   | }
+63 | }
    |
 
 /KC.kt:68:14: error: Conflicting overloads:
@@ -29,7 +28,7 @@ In package 'root package' of module '<main>':
 67 | class KC : KI {
 68 |     fun foo(): List<String>
    |     ...
-   | }
+73 | }
    |
 In package 'root package' of module '<main>':
   --> KI.kt
@@ -37,7 +36,7 @@ In package 'root package' of module '<main>':
 57 | interface KI : Any {
 58 |     fun <C> foo(): List<C>
    |     ...
-   | }
+63 | }
    |
 
 /KC.kt:70:5: error: 'baz' overrides nothing. Potential signatures for overriding:
@@ -48,7 +47,7 @@ In package 'root package' of module '<main>':
    |     ...
 60 |     fun <D> baz(): D
    |     ...
-   | }
+63 | }
    |
 
 /KC.kt:70:14: error: Conflicting overloads:
@@ -59,7 +58,7 @@ In package 'root package' of module '<main>':
    |     ...
 70 |     fun baz(): Any
    |     ...
-   | }
+73 | }
    |
 In package 'root package' of module '<main>':
   --> KI.kt
@@ -68,7 +67,7 @@ In package 'root package' of module '<main>':
    |     ...
 60 |     fun <D> baz(): D
    |     ...
-   | }
+63 | }
    |
 
 /KC.kt:72:5: error: 'bar' overrides nothing. Potential signatures for overriding:
@@ -78,8 +77,7 @@ In package 'root package' of module '<main>':
 57 | interface KI : Any {
    |     ...
 62 |     fun <E, F> bar(): List<F>
-   |     ...
-   | }
+63 | }
    |
 
 /KC.kt:72:14: error: Conflicting overloads:
@@ -89,8 +87,7 @@ In package 'root package' of module '<main>':
 67 | class KC : KI {
    |     ...
 72 |     fun bar(): List<Int>
-   |     ...
-   | }
+73 | }
    |
 In package 'root package' of module '<main>':
   --> KI.kt
@@ -98,8 +95,7 @@ In package 'root package' of module '<main>':
 57 | interface KI : Any {
    |     ...
 62 |     fun <E, F> bar(): List<F>
-   |     ...
-   | }
+63 | }
    |
 /KJC.kt:77:1: error: Class 'KJC' is not abstract and does not implement abstract members:
 In package 'root package' of module '<main>':
@@ -132,7 +128,7 @@ In package 'root package' of module '<main>':
 77 | class KJC : JI {
 78 |     fun foo(): List<String>
    |     ...
-   | }
+83 | }
    |
 In package 'root package' of module '<main>':
  |
@@ -161,7 +157,7 @@ In package 'root package' of module '<main>':
    |     ...
 80 |     fun baz(): Any
    |     ...
-   | }
+83 | }
    |
 In package 'root package' of module '<main>':
  |
@@ -189,8 +185,7 @@ In package 'root package' of module '<main>':
 77 | class KJC : JI {
    |     ...
 82 |     fun bar(): List<Int>
-   |     ...
-   | }
+83 | }
    |
 In package 'root package' of module '<main>':
  |

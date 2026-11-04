@@ -117,13 +117,14 @@ object FirDiagnosticRenderers {
     private data class SymbolNode(
         val line: Int?,
         val column: Int?,
+        val endLine: Int?,
         val symbol: FirBasedSymbol<*>,
         var children: MutableCollection<SymbolNode>,
     )
 
     private fun FirBasedSymbol<*>.toSymbolNode(children: MutableCollection<SymbolNode> = mutableListOf()): SymbolNode {
         val physicalLocation = toPhysicalLocation()
-        return SymbolNode(physicalLocation?.line, physicalLocation?.column, this, children)
+        return SymbolNode(physicalLocation?.line, physicalLocation?.column, physicalLocation?.endLine, this, children)
     }
 
     private fun Iterable<FirBasedSymbol<*>>.groupIntoSymbolNodes(): List<SymbolNode> {
@@ -181,15 +182,16 @@ object FirDiagnosticRenderers {
         }
 
     private inline fun SymbolNode.renderToLinesWithNumber(render: (FirBasedSymbol<*>) -> String): List<RenderedLineWithNumber> {
-        val stack = mutableListOf(0 to this)
+        val orderStack = mutableListOf(0 to this)
         var previousIndent = -1
+        val parentStack = mutableListOf<SymbolNode>()
 
         return buildList {
-            while (stack.isNotEmpty()) {
-                val [indent, element] = stack.popLast()
+            while (orderStack.isNotEmpty()) {
+                val [indent, element] = orderStack.popLast()
 
                 if (indent < previousIndent) {
-                    this += RenderedLineWithNumber(number = null, indent = indent, renderedLine = "}")
+                    this += RenderedLineWithNumber(number = parentStack.popLast().endLine, indent = indent, renderedLine = "}")
                 }
 
                 val ownLines = element.symbol.renderToLinesWithNumber(render).map { it.copy(indent = indent) }
@@ -197,7 +199,8 @@ object FirDiagnosticRenderers {
                 if (element.children.isNotEmpty()) {
                     this += ownLines.dropLast(1)
                     this += ownLines.last().copy(renderedLine = ownLines.last().renderedLine + " {")
-                    stack += element.children.map { indent + 1 to it }
+                    orderStack += element.children.map { indent + 1 to it }
+                    parentStack += element
                 } else {
                     this += ownLines
                 }
@@ -206,7 +209,7 @@ object FirDiagnosticRenderers {
             }
 
             if (previousIndent != 0) {
-                this += RenderedLineWithNumber(number = null, indent = 0, renderedLine = "}")
+                this += RenderedLineWithNumber(number = parentStack.popLast().endLine, indent = 0, renderedLine = "}")
             }
         }
     }
@@ -301,17 +304,20 @@ object FirDiagnosticRenderers {
     )
 
     private fun FirBasedSymbol<*>.toPhysicalLocation(): PhysicalLocation? {
+        val source = source
         val filePath = source?.let(moduleData.session.sourcesToPathsMapper::getRelativeSourceFilePath) ?: return null
-        val [line, column] = source?.let { it.toLinesMapping().getLineAndColumnByOffset(it.startOffset) }
-            ?.let { [line, column] -> (line + 1) to (column + 1) }
-            ?: return null
-        return PhysicalLocation(filePath, line, column)
+        val linesMapping = source.toLinesMapping()
+        val [line, column] = linesMapping.getLineAndColumnByOffset(source.startOffset)
+            .let { [line, column] -> (line + 1) to (column + 1) }
+        val endLine = linesMapping.getLineAndColumnByOffset(source.endOffset).first + 1
+        return PhysicalLocation(filePath, line, column, endLine)
     }
 
     private data class PhysicalLocation(
         val filePath: String,
         val line: Int,
         val column: Int,
+        val endLine: Int,
     )
 
     @OptIn(SymbolInternals::class)

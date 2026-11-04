@@ -12,7 +12,7 @@ open class B1 {
 }
 
 class D1 : B1() {
-    <!NOTHING_TO_OVERRIDE("foo;  Potential signatures for overriding:In package 'root package' of module '<main>':  --> cannotOverrideInvisibleMember.kt   | 8 | class B1 : Any {   |     ...10 |     fun foo(): Unit   |     ...   | }   |")!>override<!> fun foo() {}
+    <!NOTHING_TO_OVERRIDE("foo;  Potential signatures for overriding:In package 'root package' of module '<main>':  --> cannotOverrideInvisibleMember.kt   | 8 | class B1 : Any {   |     ...10 |     fun foo(): Unit   |     ...12 | }   |")!>override<!> fun foo() {}
 }
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, override */

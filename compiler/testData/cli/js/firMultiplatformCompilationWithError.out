@@ -14,8 +14,7 @@ In package 'root package' of module '<firMultiplatformCompilationWithError>':
   |
 3 | actual interface B : Any {
 4 |     fun foo(): Unit
-  |     ...
-  | }
+5 | }
   |
 class CommonClass : B
 ^^^^^^^^^^^^^^^^^
