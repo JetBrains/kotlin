@@ -1,4 +1,5 @@
 // CHECK_OPTIMIZED_JS
+// ENABLE_DATA_FLOW_OPTIMIZATIONS
 // WITH_STDLIB
 
 // FILE: keep.kt
@@ -12,8 +13,8 @@ fun interface I {
 
 class Named(val k: KFunction<*>)
 
-// EXPECT_GENERATED_JS: function=readName$ref;dynamicName$ref;equalsRefs$ref;hashCodeRef$ref;typeofCheck$ref;samEquals$ref;samHashCode$ref;exportedRef$ref;externalJs$ref;mixedNameAndInvoke$ref;castFromAny$ref;virtualOverride$ref;dynamicIndex$ref;dynamicPlus$ref;boxStoredName$ref;anyCastName$ref;dynamicCastName$ref;exportedObjectField$ref expect=keep.js TARGET_BACKENDS=JS_IR
-// EXPECT_GENERATED_JS: function=readName$ref;dynamicName$ref;equalsRefs$ref;hashCodeRef$ref;typeofCheck$ref;samEquals$ref;samHashCode$ref;exportedRef$ref;externalJs$ref;mixedNameAndInvoke$ref;castFromAny$ref;virtualOverride$ref;dynamicIndex$ref;dynamicPlus$ref;boxStoredName$ref;anyCastName$ref;dynamicCastName$ref;exportedObjectField$ref expect=keep.es6.js TARGET_BACKENDS=JS_IR_ES6
+// EXPECT_GENERATED_JS: function=readName$ref;dynamicName$ref;equalsRefs$ref;hashCodeRef$ref;typeofCheck$ref;samEquals$ref;samHashCode$ref;exportedRef$ref;externalJs$ref;mixedNameAndInvoke$ref;castFromAny$ref;virtualOverride$ref;dynamicIndex$ref;dynamicPlus$ref;boxStoredName$ref;anyCastName$ref;dynamicCastName$ref;ExportedRegistry$exportedObjectField$ref expect=keep.js TARGET_BACKENDS=JS_IR
+// EXPECT_GENERATED_JS: function=readName$ref;dynamicName$ref;equalsRefs$ref;hashCodeRef$ref;typeofCheck$ref;samEquals$ref;samHashCode$ref;exportedRef$ref;externalJs$ref;mixedNameAndInvoke$ref;castFromAny$ref;virtualOverride$ref;dynamicIndex$ref;dynamicPlus$ref;boxStoredName$ref;anyCastName$ref;dynamicCastName$ref;ExportedRegistry$exportedObjectField$ref expect=keep.es6.js TARGET_BACKENDS=JS_IR_ES6
 
 fun readName() {}
 

@@ -1,31 +1,31 @@
 function readName$ref() {
   return constructCallableReference(function () {
     readName();
-    return Unit_instance;
+    return Unit$instance;
   }, 0, 0, 8, 'readName');
 }
 function dynamicName$ref() {
   return constructCallableReference(function () {
     dynamicName();
-    return Unit_instance;
+    return Unit$instance;
   }, 0, 0, 9, 'dynamicName');
 }
 function equalsRefs$ref() {
   return constructCallableReference(function () {
     equalsRefs();
-    return Unit_instance;
+    return Unit$instance;
   }, 0, 0, 10, 'equalsRefs');
 }
 function hashCodeRef$ref() {
   return constructCallableReference(function () {
     hashCodeRef();
-    return Unit_instance;
+    return Unit$instance;
   }, 0, 0, 11, 'hashCodeRef');
 }
 function typeofCheck$ref() {
   return constructCallableReference(function () {
     typeofCheck();
-    return Unit_instance;
+    return Unit$instance;
   }, 0, 0, 12, 'typeofCheck');
 }
 function samEquals$ref() {
@@ -66,34 +66,34 @@ function virtualOverride$ref() {
 function dynamicIndex$ref() {
   return constructCallableReference(function () {
     dynamicIndex();
-    return Unit_instance;
+    return Unit$instance;
   }, 0, 0, 21, 'dynamicIndex');
 }
 function dynamicPlus$ref() {
   return constructCallableReference(function () {
     dynamicPlus();
-    return Unit_instance;
+    return Unit$instance;
   }, 0, 0, 22, 'dynamicPlus');
 }
 function boxStoredName$ref() {
   return constructCallableReference(function () {
     boxStoredName();
-    return Unit_instance;
+    return Unit$instance;
   }, 0, 0, 17, 'boxStoredName');
 }
 function anyCastName$ref() {
   return constructCallableReference(function () {
     anyCastName();
-    return Unit_instance;
+    return Unit$instance;
   }, 0, 0, 18, 'anyCastName');
 }
 function dynamicCastName$ref() {
   return constructCallableReference(function () {
     dynamicCastName();
-    return Unit_instance;
+    return Unit$instance;
   }, 0, 0, 19, 'dynamicCastName');
 }
-function exportedObjectField$ref() {
+function ExportedRegistry$exportedObjectField$ref() {
   return constructCallableReference(function (p0) {
     return exportedObjectField(p0);
   }, 1, 0, 4, 'exportedObjectField');

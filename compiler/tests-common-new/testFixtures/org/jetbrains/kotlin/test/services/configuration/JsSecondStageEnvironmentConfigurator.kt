@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.SOURCE_MAP_EMBED_SOURCES
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.TS_COMPILATION_STRATEGY
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.ENABLE_UNUSED_PROPERTY_DCE
+import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.ENABLE_DATA_FLOW_OPTIMIZATIONS
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.DependencyRelation
 import org.jetbrains.kotlin.test.model.TestModule
@@ -87,6 +88,7 @@ open class JsSecondStageEnvironmentConfigurator(testServices: TestServices) : Js
         register(JS_DROP_REGION_COMMENTS, JSConfigurationKeys.GENERATE_REGION_COMMENTS, isInverted = true)
         register(EXPORT_WITH_UNKNOWN_TYPE_INSTEAD_ANY, JSConfigurationKeys.EXPORT_UNTYPED_AS_UNKNOWN)
         register(ENABLE_UNUSED_PROPERTY_DCE, JSConfigurationKeys.DCE_UNUSED_PROPERTIES)
+        register(ENABLE_DATA_FLOW_OPTIMIZATIONS, JSConfigurationKeys.DATA_FLOW_OPTIMIZATIONS)
     }
 
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {

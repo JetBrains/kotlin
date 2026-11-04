@@ -116,4 +116,6 @@ object JsConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.js.con
     val EXPORT_UNTYPED_AS_UNKNOWN by key<Boolean>()
 
     val DCE_UNUSED_PROPERTIES by key<Boolean>("Enable DCE for unused properties")
+
+    val DATA_FLOW_OPTIMIZATIONS by key<Boolean>("Enable experimental whole-program optimizations based on the data-flow graph")
 }

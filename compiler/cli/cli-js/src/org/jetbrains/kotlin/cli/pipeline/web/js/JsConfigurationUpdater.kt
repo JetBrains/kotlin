@@ -79,6 +79,7 @@ object JsConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArguments>() {
         configuration.exportUntypedAsUnknown = arguments.useUnknownInsteadAny
 
         configuration.dceUnusedProperties = arguments.enableAdvancedOptimizations
+        configuration.dataFlowOptimizations = arguments.enableAdvancedOptimizations
 
         configuration.targetPlatform = JsPlatforms.defaultJsPlatform
 

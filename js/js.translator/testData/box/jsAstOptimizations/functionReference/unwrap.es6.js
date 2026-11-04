@@ -16,7 +16,7 @@ function identity$ref() {
 function higherOrder$ref() {
   return (p0) => higherOrder(p0);
 }
-function storedField$ref() {
+function Holder$storedField$ref() {
   return (p0) => storedField(p0);
 }
 function localVar$ref() {
@@ -64,10 +64,10 @@ function forwardedVararg$ref() {
 function returnedArray$ref() {
   return (p0) => returnedArray(p0);
 }
-function objectField$ref() {
+function Registry$objectField$ref() {
   return (p0) => objectField(p0);
 }
-function companionField$ref() {
+function WithCompanion$Companion$companionField$ref() {
   return (p0) => companionField(p0);
 }
 function objectVar$ref() {

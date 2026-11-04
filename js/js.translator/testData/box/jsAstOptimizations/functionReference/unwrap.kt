@@ -1,4 +1,5 @@
 // CHECK_OPTIMIZED_JS
+// ENABLE_DATA_FLOW_OPTIMIZATIONS
 // WITH_STDLIB
 
 import kotlin.reflect.KFunction0
@@ -13,8 +14,8 @@ open class Base(val f: (Int) -> Int)
 
 class Sub(f: (Int) -> Int) : Base(f)
 
-// EXPECT_GENERATED_JS: function=invokeOnly$ref;Bound$boundInvoke$ref;dynamicInvoke$ref;kFunctionParam$ref;identity$ref;higherOrder$ref;storedField$ref;localVar$ref;samArgument$ref;samConstructor$ref;boxConstructor$ref;inheritedConstructor$ref;capturedInvoke$ref;nestedCapturedInvoke$ref;capturedAssignmentInvoke$ref;varargInvoke$ref;varargIndexed$ref;arrayOfInvoke$ref;spreadInvoke$ref;mixedSpreadInvoke$ref;forwardedVararg$ref;returnedArray$ref;objectField$ref;companionField$ref;objectVar$ref expect=unwrap.js TARGET_BACKENDS=JS_IR
-// EXPECT_GENERATED_JS: function=invokeOnly$ref;Bound$boundInvoke$ref;dynamicInvoke$ref;kFunctionParam$ref;identity$ref;higherOrder$ref;storedField$ref;localVar$ref;samArgument$ref;samConstructor$ref;boxConstructor$ref;inheritedConstructor$ref;capturedInvoke$ref;nestedCapturedInvoke$ref;capturedAssignmentInvoke$ref;varargInvoke$ref;varargIndexed$ref;arrayOfInvoke$ref;spreadInvoke$ref;mixedSpreadInvoke$ref;forwardedVararg$ref;returnedArray$ref;objectField$ref;companionField$ref;objectVar$ref expect=unwrap.es6.js TARGET_BACKENDS=JS_IR_ES6
+// EXPECT_GENERATED_JS: function=invokeOnly$ref;Bound$boundInvoke$ref;dynamicInvoke$ref;kFunctionParam$ref;identity$ref;higherOrder$ref;Holder$storedField$ref;localVar$ref;samArgument$ref;samConstructor$ref;boxConstructor$ref;inheritedConstructor$ref;capturedInvoke$ref;nestedCapturedInvoke$ref;capturedAssignmentInvoke$ref;varargInvoke$ref;varargIndexed$ref;arrayOfInvoke$ref;spreadInvoke$ref;mixedSpreadInvoke$ref;forwardedVararg$ref;returnedArray$ref;Registry$objectField$ref;WithCompanion$Companion$companionField$ref;objectVar$ref expect=unwrap.js TARGET_BACKENDS=JS_IR
+// EXPECT_GENERATED_JS: function=invokeOnly$ref;Bound$boundInvoke$ref;dynamicInvoke$ref;kFunctionParam$ref;identity$ref;higherOrder$ref;Holder$storedField$ref;localVar$ref;samArgument$ref;samConstructor$ref;boxConstructor$ref;inheritedConstructor$ref;capturedInvoke$ref;nestedCapturedInvoke$ref;capturedAssignmentInvoke$ref;varargInvoke$ref;varargIndexed$ref;arrayOfInvoke$ref;spreadInvoke$ref;mixedSpreadInvoke$ref;forwardedVararg$ref;returnedArray$ref;Registry$objectField$ref;WithCompanion$Companion$companionField$ref;objectVar$ref expect=unwrap.es6.js TARGET_BACKENDS=JS_IR_ES6
 
 fun invokeOnly(x: Int) = x + 1
 

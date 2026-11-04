@@ -201,6 +201,10 @@ object JSConfigurationKeys {
     @JvmField
     val DCE_UNUSED_PROPERTIES = CompilerConfigurationKey.create<Boolean>("DCE_UNUSED_PROPERTIES")
 
+    // Enable experimental whole-program optimizations based on the data-flow graph
+    @JvmField
+    val DATA_FLOW_OPTIMIZATIONS = CompilerConfigurationKey.create<Boolean>("DATA_FLOW_OPTIMIZATIONS")
+
 }
 
 var CompilerConfiguration.wasmCompilation: Boolean
@@ -402,4 +406,8 @@ var CompilerConfiguration.exportUntypedAsUnknown: Boolean
 var CompilerConfiguration.dceUnusedProperties: Boolean
     get() = getBoolean(JSConfigurationKeys.DCE_UNUSED_PROPERTIES)
     set(value) { put(JSConfigurationKeys.DCE_UNUSED_PROPERTIES, value) }
+
+var CompilerConfiguration.dataFlowOptimizations: Boolean
+    get() = getBoolean(JSConfigurationKeys.DATA_FLOW_OPTIMIZATIONS)
+    set(value) { put(JSConfigurationKeys.DATA_FLOW_OPTIMIZATIONS, value) }
 

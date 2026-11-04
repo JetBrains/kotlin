@@ -1,11 +1,12 @@
 // CHECK_OPTIMIZED_JS
+// ENABLE_DATA_FLOW_OPTIMIZATIONS
 // WITH_STDLIB
 
 import kotlin.coroutines.*
 
 // ES5 suspend factories are KFunctionImpl constructors, not constructCallableReference,
 // so invoke-only unwrap is ES6-only today.
-// EXPECT_GENERATED_JS: function=u_susp$ref;k_susp$ref expect=suspend.js TARGET_BACKENDS=JS_IR
+// EXPECT_GENERATED_JS: function=box$slambda$u_susp$ref;k_susp$ref expect=suspend.js TARGET_BACKENDS=JS_IR
 // EXPECT_GENERATED_JS: function=u_susp$ref;k_susp$ref expect=suspend.es6.js TARGET_BACKENDS=JS_IR_ES6
 
 suspend fun u_susp() = 1

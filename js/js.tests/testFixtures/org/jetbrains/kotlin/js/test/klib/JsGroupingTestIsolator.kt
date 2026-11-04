@@ -248,6 +248,7 @@ class JsGroupingTestIsolator(
             JsEnvironmentConfigurationDirectives.SAFE_EXTERNAL_BOOLEAN,
             JsEnvironmentConfigurationDirectives.SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC,
             JsEnvironmentConfigurationDirectives.ENABLE_UNUSED_PROPERTY_DCE,
+            JsEnvironmentConfigurationDirectives.ENABLE_DATA_FLOW_OPTIMIZATIONS,
             JsEnvironmentConfigurationDirectives.JS_DROP_REGION_COMMENTS,
         )
 

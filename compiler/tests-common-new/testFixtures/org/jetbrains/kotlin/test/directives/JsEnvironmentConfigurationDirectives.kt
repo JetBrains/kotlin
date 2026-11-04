@@ -262,6 +262,11 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         applicability = DirectiveApplicability.Any
     )
 
+    val ENABLE_DATA_FLOW_OPTIMIZATIONS by directive(
+        description = "Enables the experimental whole-program optimizations based on the data-flow graph",
+        applicability = DirectiveApplicability.Any
+    )
+
     @OptIn(SensitiveDirectiveAPI::class)
     val JS_DCE_EXPECTED_OUTPUT_SIZE by valueDirective(
         description = "Expected total size (in bytes) of JS output files after DCE compilation. The file extension is inferred from the module system.",

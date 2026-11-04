@@ -28,7 +28,7 @@ function higherOrder$ref() {
     return higherOrder(p0);
   };
 }
-function storedField$ref() {
+function Holder$storedField$ref() {
   return function (p0) {
     return storedField(p0);
   };
@@ -108,12 +108,12 @@ function returnedArray$ref() {
     return returnedArray(p0);
   };
 }
-function objectField$ref() {
+function Registry$objectField$ref() {
   return function (p0) {
     return objectField(p0);
   };
 }
-function companionField$ref() {
+function WithCompanion$Companion$companionField$ref() {
   return function (p0) {
     return companionField(p0);
   };

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.js.backend.ast.JsClass
 import org.jetbrains.kotlin.js.backend.ast.JsFunction
 import org.jetbrains.kotlin.js.backend.ast.RecursiveJsVisitor
 import org.jetbrains.kotlin.js.config.ModuleKind
+import org.jetbrains.kotlin.js.config.dataFlowOptimizations
 import org.jetbrains.kotlin.js.inline.clean.ClassPostProcessor
 import org.jetbrains.kotlin.js.inline.clean.FunctionPostProcessor
 
@@ -26,6 +27,8 @@ import org.jetbrains.kotlin.js.inline.clean.FunctionPostProcessor
  * phases and program-wide DFG phases then execute in list order. Consecutive DFG phases share one
  * lazily built snapshot and are followed by dead code elimination when any of them reports newly
  * unreachable declarations. A final dead code elimination removes what the optimizations orphaned.
+ * DFG phases are skipped, and the snapshot is never built, unless [dataFlowOptimizations] is set;
+ * the JS CLI sets it for `-Xenable-advanced-optimizations`.
  */
 fun optimizeProgramByIr(
     modules: Iterable<IrModuleFragment>,
@@ -55,6 +58,7 @@ fun optimizeProgramByIr(
                 }
             }
             is JsOptimizationPhase.DataFlow -> {
+                if (!context.configuration.dataFlowOptimizations) continue
                 val orphaned = optimization.phase.invoke(
                     context.phaseConfig, phaserState, optimizationContext, input = optimizationContext.dataFlowGraph,
                 )

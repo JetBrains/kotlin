@@ -1,31 +1,31 @@
 function readName$ref() {
   return constructCallableReference(() => {
     readName();
-    return Unit_instance;
+    return Unit$instance;
   }, 0, 0, 8, 'readName');
 }
 function dynamicName$ref() {
   return constructCallableReference(() => {
     dynamicName();
-    return Unit_instance;
+    return Unit$instance;
   }, 0, 0, 9, 'dynamicName');
 }
 function equalsRefs$ref() {
   return constructCallableReference(() => {
     equalsRefs();
-    return Unit_instance;
+    return Unit$instance;
   }, 0, 0, 10, 'equalsRefs');
 }
 function hashCodeRef$ref() {
   return constructCallableReference(() => {
     hashCodeRef();
-    return Unit_instance;
+    return Unit$instance;
   }, 0, 0, 11, 'hashCodeRef');
 }
 function typeofCheck$ref() {
   return constructCallableReference(() => {
     typeofCheck();
-    return Unit_instance;
+    return Unit$instance;
   }, 0, 0, 12, 'typeofCheck');
 }
 function samEquals$ref() {
@@ -52,33 +52,33 @@ function virtualOverride$ref() {
 function dynamicIndex$ref() {
   return constructCallableReference(() => {
     dynamicIndex();
-    return Unit_instance;
+    return Unit$instance;
   }, 0, 0, 21, 'dynamicIndex');
 }
 function dynamicPlus$ref() {
   return constructCallableReference(() => {
     dynamicPlus();
-    return Unit_instance;
+    return Unit$instance;
   }, 0, 0, 22, 'dynamicPlus');
 }
 function boxStoredName$ref() {
   return constructCallableReference(() => {
     boxStoredName();
-    return Unit_instance;
+    return Unit$instance;
   }, 0, 0, 17, 'boxStoredName');
 }
 function anyCastName$ref() {
   return constructCallableReference(() => {
     anyCastName();
-    return Unit_instance;
+    return Unit$instance;
   }, 0, 0, 18, 'anyCastName');
 }
 function dynamicCastName$ref() {
   return constructCallableReference(() => {
     dynamicCastName();
-    return Unit_instance;
+    return Unit$instance;
   }, 0, 0, 19, 'dynamicCastName');
 }
-function exportedObjectField$ref() {
+function ExportedRegistry$exportedObjectField$ref() {
   return constructCallableReference((p0) => exportedObjectField(p0), 1, 0, 4, 'exportedObjectField');
 }
