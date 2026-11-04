@@ -140,7 +140,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun richDtsEmitDiagnostics(gradleVersion: GradleVersion) {
         project("kotlin2JsIrDtsGeneration", gradleVersion) {
-            gradleProperties.appendText("\nkotlin.js.generateRichTypeScriptDeclarations=true\n")
+            gradleProperties.appendText("\nkotlin.js.generateRichTypeScriptDeclarations=false\n")
             buildScriptInjection {
                 kotlinMultiplatform.js {
                     compilerOptions {
@@ -156,9 +156,17 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                 |fun produceSuspendLambda(): suspend (Int) -> Int = { value -> value * 2 }
                 """.trimMargin()
             )
-            buildAndFail("jsProductionExecutableGenerateTypeScriptDefinitions") {
+            buildAndFail("assemble") {
                 assertOutputContains("Suspend lambdas cannot be exported without using generators")
             }
+            buildScriptInjection {
+                kotlinMultiplatform.js {
+                    compilerOptions {
+                        freeCompilerArgs.add("-Xes-generators")
+                    }
+                }
+            }
+            build("assemble")
 
             kotlinSourcesDir("jsMain").resolve("Test.kt").writeText(
                 """
@@ -168,9 +176,17 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                 |fun produceLong(): Long = 42L
                 """.trimMargin()
             )
-            buildAndFail("jsProductionExecutableGenerateTypeScriptDefinitions") {
+            buildAndFail("assemble") {
                 assertOutputContains("Long cannot be exported without using the bigint type.")
             }
+            buildScriptInjection {
+                kotlinMultiplatform.js {
+                    compilerOptions {
+                        freeCompilerArgs.add("-Xes-long-as-bigint")
+                    }
+                }
+            }
+            build("assemble")
         }
     }
 

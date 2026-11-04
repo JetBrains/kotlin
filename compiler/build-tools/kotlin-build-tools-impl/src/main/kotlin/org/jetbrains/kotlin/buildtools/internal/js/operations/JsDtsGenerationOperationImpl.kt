@@ -127,33 +127,36 @@ internal class JsDtsGenerationOperationImpl private constructor(
         check(linkingOperation is JsLinkingOperationImpl) { "Unexpected linking operation: ${linkingOperation::class}." }
         // Resolve the language features the same way the compiler does, so that features enabled via
         // dedicated arguments, `-XXLanguage:` or `-language-version` are all taken into account
-        val languageVersionSettings = linkingOperation.compilerArguments.toCompilerArguments()
+        val compilerArguments = linkingOperation.compilerArguments.toCompilerArguments()
+        val languageVersionSettings = compilerArguments
             .toLanguageVersionSettings(CommonCompilerArgumentsConfigurator.Reporter.DoNothing)
 
-        val target = linkingOperation.compilerArguments.target
-            ?.let { from -> JsEcmaVersion.values().first { it.name == from.name } }
+        val target = compilerArguments.target
+            ?.let { from -> JsEcmaVersion.values().first { it.stringValue == from } }
 
-        this[COMPILE_LONG_AS_BIG_INT] = linkingOperation.compilerArguments.compileLongAsBigInt
+        this[COMPILE_LONG_AS_BIG_INT] = compilerArguments.compileLongAsBigInt
             ?: (target != null && target >= JsEcmaVersion.ES2020)
-
+        this[COMPILE_SUSPEND_AS_JS_GENERATOR] = compilerArguments.useEsGenerators
+            ?: (target != null && target >= JsEcmaVersion.ES2015)
 
         this[IMPLEMENT_INTERFACES] = languageVersionSettings.supportsFeature(LanguageFeature.JsExportInterfacesInImplementableWay)
         this[EXPORT_SUSPEND_LAMBDAS] = languageVersionSettings.supportsFeature(LanguageFeature.JsExportingSuspendLambdas)
         this[DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY] =
             languageVersionSettings.supportsFeature(LanguageFeature.DataClassCopyRespectsConstructorVisibility)
 
-        this[USE_UNKNOWN_INSTEAD_ANY] = linkingOperation.compilerArguments.useUnknownInsteadAny
-        this[OUTPUT_NAME] = linkingOperation.compilerArguments.moduleName
-        this[MAIN_MODULE_NAME] = linkingOperation.compilerArguments.irModuleName
+        this[USE_UNKNOWN_INSTEAD_ANY] = compilerArguments.useUnknownInsteadAny
+        this[OUTPUT_NAME] = compilerArguments.moduleName
+        this[MAIN_MODULE_NAME] = compilerArguments.irModuleName
 
-        this[MODULE_KIND] = linkingOperation.compilerArguments.moduleKind
+        this[MODULE_KIND] = compilerArguments.moduleKind
+            ?.let { module -> JsModuleKind.values().first { it.stringValue == module } }
             ?: JsModuleKind.ES.takeIf { target != null && target >= JsEcmaVersion.ES2015 }
             ?: JsModuleKind.UMD
 
         this[GRANULARITY] = when {
-            linkingOperation.compilerArguments.irPerFile -> JsDtsGranularity.PER_FILE
+            compilerArguments.irPerFile -> JsDtsGranularity.PER_FILE
             // Right now, we don't support per-module d.ts generation for IR. So for the backward compatibility, we use whole-program granularity.
-            linkingOperation.compilerArguments.irPerModule -> JsDtsGranularity.WHOLE_PROGRAM
+            compilerArguments.irPerModule -> JsDtsGranularity.WHOLE_PROGRAM
             else -> JsDtsGranularity.WHOLE_PROGRAM
         }
     }
