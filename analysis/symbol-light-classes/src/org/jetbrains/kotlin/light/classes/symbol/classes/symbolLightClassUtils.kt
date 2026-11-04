@@ -484,7 +484,7 @@ internal fun createField(
 
     val backingFieldSymbol = declaration.backingFieldSymbol ?: return null
     if (backingFieldSymbol.hasJvmSyntheticAnnotation()) return null
-    if (!hasBackingField(declaration)) return null
+    if (!declaration.hasFieldInClassFile) return null
 
     val fieldName = nameGenerator.generateUniqueFieldName(declaration.name.asString())
     return SymbolLightFieldForProperty(
@@ -498,34 +498,35 @@ internal fun createField(
 }
 
 /**
- * Whether [property] has a backing field in the class file. A `@JvmSynthetic` backing field counts, although it gets no light field,
- * see [createField].
+ * Whether this property has a backing field in the class file. A `@JvmSynthetic` backing field counts, although it gets no light
+ * field, see [createField].
  */
-private fun hasBackingField(property: KaPropertySymbol): Boolean {
-    // Backing field for KaSyntheticJavaPropertySymbol is always `null`.
-    // Thus, there is no point in proceeding further as `SymbolLightFieldForProperty` expects a non-null backing field pointer.
-    if (property is KaSyntheticJavaPropertySymbol) return false
+private val KaPropertySymbol.hasFieldInClassFile: Boolean
+    get() {
+        // Backing field for KaSyntheticJavaPropertySymbol is always `null`.
+        // Thus, there is no point in proceeding further as `SymbolLightFieldForProperty` expects a non-null backing field pointer.
+        if (this is KaSyntheticJavaPropertySymbol) return false
 
-    requireWithAttachment(
-        property is KaKotlinPropertySymbol,
-        message = { "Expected ${KaKotlinPropertySymbol::class}" },
-        buildAttachment = {
-            withEntry("actualSymbolClassName", property::class.qualifiedName ?: "<null>")
-            withEntry("symbol", property) { it.toString() }
+        requireWithAttachment(
+            this is KaKotlinPropertySymbol,
+            message = { "Expected ${KaKotlinPropertySymbol::class}" },
+            buildAttachment = {
+                withEntry("actualSymbolClassName", this@hasFieldInClassFile::class.qualifiedName ?: "<null>")
+                withEntry("symbol", this@hasFieldInClassFile) { it.toString() }
+            }
+        )
+
+        if (origin.cannotHaveBackingField() || isStatic) return false
+        if (isLateInit || isDelegated || primaryConstructorParameter != null) return true
+        val hasBackingFieldByPsi: Boolean? = psi?.hasBackingField()
+        if (hasBackingFieldByPsi == false) {
+            return hasBackingFieldByPsi
         }
-    )
 
-    if (property.origin.cannotHaveBackingField() || property.isStatic) return false
-    if (property.isLateInit || property.isDelegated || property.primaryConstructorParameter != null) return true
-    val hasBackingFieldByPsi: Boolean? = property.psi?.hasBackingField()
-    if (hasBackingFieldByPsi == false) {
-        return hasBackingFieldByPsi
+        if (isExpect || modality == KaSymbolModality.ABSTRACT) return false
+
+        return hasBackingFieldByPsi ?: hasBackingField
     }
-
-    if (property.isExpect || property.modality == KaSymbolModality.ABSTRACT) return false
-
-    return hasBackingFieldByPsi ?: property.hasBackingField
-}
 
 private fun KaSymbolOrigin.cannotHaveBackingField(): Boolean =
     this == KaSymbolOrigin.SOURCE_MEMBER_GENERATED ||
