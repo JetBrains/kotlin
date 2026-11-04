@@ -58,6 +58,8 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
     }
 
     override fun getNestedClassifiersNames(classSymbol: FirClassSymbol<*>, context: NestedClassGenerationContext): Set<Name> {
+        if (classSymbol.origin is FirDeclarationOrigin.Java) return emptySet()
+
         val result = mutableSetOf<Name>()
         if (classSymbol.shouldHaveGeneratedMethodsInCompanion(session) && !classSymbol.isSerializableObject(session))
             result += SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
