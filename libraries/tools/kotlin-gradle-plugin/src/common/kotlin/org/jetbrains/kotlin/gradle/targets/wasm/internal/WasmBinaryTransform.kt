@@ -295,7 +295,6 @@ internal abstract class WasmBinaryTransform : TransformAction<WasmBinaryTransfor
  * A no-op version of [WasmBinaryTransform] that can be used when transformation is not needed
  * or when the input is already in the expected format.
  */
-@CacheableTransform
 internal abstract class NoOpWasmBinaryTransform : TransformAction<TransformParameters.None> {
 
     override fun transform(p0: TransformOutputs) {
