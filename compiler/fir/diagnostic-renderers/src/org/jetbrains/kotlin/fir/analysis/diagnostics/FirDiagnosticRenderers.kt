@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.name.render
 import org.jetbrains.kotlin.resolve.ReturnValueStatus
 import org.jetbrains.kotlin.toLinesMapping
 import org.jetbrains.kotlin.utils.addToStdlib.partitionNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.popLast
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.text.MessageFormat
 
@@ -95,25 +96,75 @@ object FirDiagnosticRenderers {
 
     private inline fun FirBasedSymbol<*>.renderWithLocation(render: (FirBasedSymbol<*>) -> String): String {
         val logicalLocation = toLogicalLocation()
+        val node = listOf(this).groupIntoSymbolNodes()
         return when (val physicalLocation = toPhysicalLocation()) {
-            null -> decorateIncompleteLocation(logicalLocation, listOf(this), render)
-            else -> decorateCompleteLocation(logicalLocation, listOf(physicalLocation to this), render)
+            null -> decorateIncompleteLocation(logicalLocation, node, render)
+            else -> decorateCompleteLocation(logicalLocation, FileNode(physicalLocation.filePath, node), render)
         }
     }
 
+    private data class LogicalLocationNode(
+        val location: LogicalLocation,
+        val completeSymbols: List<FileNode>,
+        val incompleteSymbols: List<SymbolNode>,
+    )
+
+    private data class FileNode(
+        val filePath: String,
+        val symbols: List<SymbolNode>,
+    )
+
+    private data class SymbolNode(
+        val line: Int?,
+        val column: Int?,
+        val symbol: FirBasedSymbol<*>,
+        var children: MutableCollection<SymbolNode>,
+    )
+
+    private fun FirBasedSymbol<*>.toSymbolNode(children: MutableCollection<SymbolNode> = mutableListOf()): SymbolNode {
+        val physicalLocation = toPhysicalLocation()
+        return SymbolNode(physicalLocation?.line, physicalLocation?.column, this, children)
+    }
+
+    private fun Iterable<FirBasedSymbol<*>>.groupIntoSymbolNodes(): List<SymbolNode> {
+        val containerToNode = mutableMapOf<FirBasedSymbol<*>, SymbolNode>()
+        val symbolChains = map { symbol ->
+            val chain = symbol.collectContainers() + symbol
+            chain.map { containerToNode.getOrPut(it) { it.toSymbolNode(children = mutableSetOf()) } }
+        }
+        for (chain in symbolChains) {
+            for (index in 1 until chain.size) {
+                chain[index - 1].children.add(chain[index])
+            }
+        }
+        for (chain in symbolChains) {
+            for (node in chain) {
+                node.children = node.children.sortedByDescending { it.line ?: 0 }.toMutableList()
+            }
+        }
+        return symbolChains.mapTo(mutableSetOf()) { it.first() }.sortedBy { it.line }
+    }
+
+    private fun Iterable<Pair<String, FirBasedSymbol<*>>>.groupIntoFileNodes(): List<FileNode> =
+        groupBy({ it.first }, { it.second }).entries.map {
+            FileNode(it.key, it.value.groupIntoSymbolNodes())
+        }
+
+    private fun Iterable<FirBasedSymbol<*>>.groupIntoLogicalLocations(): List<LogicalLocationNode> =
+        groupBy { it.toLogicalLocation() }.map { [location, symbols] ->
+            val [completeSymbols, incompleteSymbols] = symbols.partitionNotNull { it.toPhysicalLocation()?.filePath?.to(it) }
+            LogicalLocationNode(location, completeSymbols.groupIntoFileNodes(), incompleteSymbols.groupIntoSymbolNodes())
+        }
+
     private inline fun Iterable<FirBasedSymbol<*>>.renderWithLocationInGroups(render: (FirBasedSymbol<*>) -> String): String =
-        map { symbol -> symbol.toLogicalLocation() to symbol }
-            .groupBy({ it.first }, { it.second })
-            .flatMap { [logicalLocation, symbols] ->
-                val [completeResults, incompleteResults] = symbols.partitionNotNull { it.toPhysicalLocation()?.to(it) }
-
-                val blocksForComplete = completeResults.groupBy({ it.first.filePath }).map { [_, symbolsInFile] ->
-                    decorateCompleteLocation(logicalLocation, symbolsInFile.sortedBy { it.first.line }, render)
+        groupIntoLogicalLocations()
+            .flatMap { location ->
+                val blocksForComplete = location.completeSymbols.map {
+                    decorateCompleteLocation(location.location, it, render)
                 }
-                val blockForIncomplete = runIf(incompleteResults.isNotEmpty()) {
-                    decorateIncompleteLocation(logicalLocation, incompleteResults, render)
+                val blockForIncomplete = runIf(location.incompleteSymbols.isNotEmpty()) {
+                    decorateIncompleteLocation(location.location, location.incompleteSymbols, render)
                 }
-
                 blocksForComplete + listOfNotNull(blockForIncomplete)
             }
             .joinToString("\n")
@@ -128,39 +179,51 @@ object FirDiagnosticRenderers {
             RenderedLineWithNumber(number = if (index == 0) toPhysicalLocation()?.line else null, renderedLine = line)
         }
 
-    private fun List<RenderedLineWithNumber>.wrapIntoContainersRenderOf(symbol: FirBasedSymbol<*>): List<RenderedLineWithNumber> {
-        val containers = generateSequence(symbol.getContainingClassSymbol()) { it.getContainingClassSymbol() }.toList().reversed()
+    private inline fun SymbolNode.renderToLinesWithNumber(render: (FirBasedSymbol<*>) -> String): List<RenderedLineWithNumber> {
+        val stack = mutableListOf(0 to this)
+        var previousIndent = -1
 
         return buildList {
-            this += containers.flatMapIndexed { index, it ->
-                val lines = it.renderToLinesWithNumber(SYMBOL::render)
-                val indentString = "    ".repeat(index)
+            while (stack.isNotEmpty()) {
+                val [indent, element] = stack.popLast()
+                val indentPadding = "    ".repeat(indent)
 
-                lines.dropLast(1).map { line -> line.copy(renderedLine = indentString + line.renderedLine) } +
-                        lines.last().copy(renderedLine = indentString + lines.last().renderedLine + " {")
+                if (indent < previousIndent) {
+                    this += RenderedLineWithNumber(number = null, renderedLine = "$indentPadding}")
+                }
+
+                val ownLines = element.symbol.renderToLinesWithNumber(render).map { it.copy(renderedLine = indentPadding + it.renderedLine) }
+
+                if (element.children.isNotEmpty()) {
+                    this += ownLines.dropLast(1)
+                    this += ownLines.last().copy(renderedLine = ownLines.last().renderedLine + " {")
+                    stack += element.children.map { indent + 1 to it }
+                } else {
+                    this += ownLines
+                }
+
+                previousIndent = indent
             }
-            this += this@wrapIntoContainersRenderOf.map { line -> line.copy(renderedLine = "    ".repeat(containers.size) + line.renderedLine) }
-            this += List(containers.reversed().size) { indent ->
-                RenderedLineWithNumber(number = null, "    ".repeat(indent) + "}")
+
+            if (previousIndent != 0) {
+                this += RenderedLineWithNumber(number = null, renderedLine = "}")
             }
         }
     }
 
+    private fun FirBasedSymbol<*>.collectContainers(): List<FirClassLikeSymbol<*>> =
+        generateSequence(getContainingClassSymbol()) { it.getContainingClassSymbol() }.toList().reversed()
+
     private inline fun decorateCompleteLocation(
         logicalLocation: LogicalLocation,
-        symbols: Collection<Pair<PhysicalLocation, FirBasedSymbol<*>>>,
+        fileNode: FileNode,
         render: (FirBasedSymbol<*>) -> String,
     ): String {
-        val renderedLines = symbols.flatMap { [_, symbol] ->
-            symbol.renderToLinesWithNumber(render).wrapIntoContainersRenderOf(symbol)
-        }
+        val renderedLines = fileNode.symbols.flatMap { it.renderToLinesWithNumber(render) }
 
         val longestNumberString = renderedLines.mapNotNull { it.number?.toString() }.maxByOrNull { it.length } ?: ""
         val indentString = " ".repeat(longestNumberString.length)
-        val lineAndColumnSuffix = symbols.singleOrNull()?.first?.let { (line, column) -> ":$line:$column" } ?: ""
-
-        val filePath = symbols.firstOrNull()?.first?.filePath ?: return ""
-        val fileLine = "$indentString--> $filePath$lineAndColumnSuffix"
+        val fileLine = "$indentString--> ${fileNode.filePath}"
 
         return renderLocationDecorationContents(
             logicalLocation, fileLine,
@@ -170,13 +233,11 @@ object FirDiagnosticRenderers {
 
     private inline fun decorateIncompleteLocation(
         logicalLocation: LogicalLocation,
-        symbols: Collection<FirBasedSymbol<*>>,
+        symbols: Collection<SymbolNode>,
         render: (FirBasedSymbol<*>) -> String,
     ): String = renderLocationDecorationContents(
         logicalLocation, fileLine = null,
-        renderedLines = symbols.flatMap { symbol ->
-            symbol.renderToLinesWithNumber(render).wrapIntoContainersRenderOf(symbol)
-        }
+        renderedLines = symbols.flatMap { symbol -> symbol.renderToLinesWithNumber(render) }
     )
 
     private fun renderLocationDecorationContents(

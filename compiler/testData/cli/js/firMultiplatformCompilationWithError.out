@@ -10,7 +10,7 @@ compiler or generated code. Use it at your own risk!
 
 compiler/testData/cli/jvm/XXmultiPlatformProject/firMultiplatformCompilationWithError/common.kt:7:1: error: class 'CommonClass' is not abstract and does not implement abstract member:
 In package 'root package' of module '<firMultiplatformCompilationWithError>':
- --> jvm.kt:4:5
+ --> jvm.kt
   |
 3 | actual interface B : Any {
 4 |     fun foo(): Unit

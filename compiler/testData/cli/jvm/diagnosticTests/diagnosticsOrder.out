@@ -96,7 +96,7 @@ val x = 5
     ^
 compiler/testData/cli/jvm/diagnosticTests/diagnosticsOrder2.kt:1:5: error: conflicting declarations:
 In package 'root package' of module '<main>':
- --> diagnosticsOrder2.kt:2:1
+ --> diagnosticsOrder2.kt
   |
 2 | val y: Int
   |
@@ -104,7 +104,7 @@ val y = 5
     ^
 compiler/testData/cli/jvm/diagnosticTests/diagnosticsOrder2.kt:2:5: error: conflicting declarations:
 In package 'root package' of module '<main>':
- --> diagnosticsOrder2.kt:1:1
+ --> diagnosticsOrder2.kt
   |
 1 | val y: Int
   |

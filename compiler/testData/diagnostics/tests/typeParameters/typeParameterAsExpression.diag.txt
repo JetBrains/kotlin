@@ -1,14 +1,14 @@
 /typeParameterAsExpression.kt:6:15: error: None of the following candidates is applicable for expression 'T':
 
 In package 'root package' of module '<main>':
- --> typeParameterAsExpression.kt:5:17
+ --> typeParameterAsExpression.kt
   |
 5 | T
   |
 reason: Type parameter 'T' is not an expression.
 
 In package 'root package' of module '<main>':
- --> typeParameterAsExpression.kt:4:9
+ --> typeParameterAsExpression.kt
   |
 4 | T
   |
@@ -35,14 +35,14 @@ In package 'root package' of module '<main>':
 /typeParameterAsExpression.kt:13:5: error: None of the following candidates is applicable for expression 'T':
 
 In package 'root package' of module '<main>':
-  --> typeParameterAsExpression.kt:12:6
+  --> typeParameterAsExpression.kt
    |
 12 | T
    |
 reason: Type parameter 'T' is not an expression.
 
 In package 'root package' of module '<main>':
-  --> typeParameterAsExpression.kt:12:9
+  --> typeParameterAsExpression.kt
    |
 12 | T
    |

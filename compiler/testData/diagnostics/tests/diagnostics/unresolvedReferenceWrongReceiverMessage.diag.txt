@@ -3,14 +3,14 @@
 /unresolvedReferenceWrongReceiverMessage.kt:12:10: error: None of the following candidates is applicable:
 
 In package 'root package' of module '<main>':
- --> unresolvedReferenceWrongReceiverMessage.kt:7:1
+ --> unresolvedReferenceWrongReceiverMessage.kt
   |
 7 | fun String.bar(): Unit
   |
 reason: Candidate 'fun String.bar(): Unit' is inapplicable because of a receiver type mismatch. Actual receiver type is 'Boolean'.
 
 In package 'root package' of module '<main>':
- --> unresolvedReferenceWrongReceiverMessage.kt:8:1
+ --> unresolvedReferenceWrongReceiverMessage.kt
   |
 8 | fun Int.bar(): Unit
   |

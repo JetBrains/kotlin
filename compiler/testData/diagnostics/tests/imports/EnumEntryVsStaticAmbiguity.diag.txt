@@ -8,7 +8,7 @@ In package 'first' of module '<main>':
  | }
  |
 In package 'second' of module '<main>':
-  --> SomeEnum.kt:17:5
+  --> SomeEnum.kt
    |
 16 | enum class SomeEnum : Enum<SomeEnum> {
 17 |     enum entry SOME: SomeEnum

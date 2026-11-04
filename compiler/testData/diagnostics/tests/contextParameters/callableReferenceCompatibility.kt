@@ -28,7 +28,7 @@ fun foo() {}
 fun baz() {}
 
 context(s: String)
-<!CONTEXTUAL_OVERLOAD_SHADOWED("In package 'root package' of module '<main>':  --> test.kt:28:1   |28 | fun baz(): Unit   |")!>fun baz()<!> {}
+<!CONTEXTUAL_OVERLOAD_SHADOWED("In package 'root package' of module '<main>':  --> test.kt   |28 | fun baz(): Unit   |")!>fun baz()<!> {}
 
 fun test() {
     context(s: String)

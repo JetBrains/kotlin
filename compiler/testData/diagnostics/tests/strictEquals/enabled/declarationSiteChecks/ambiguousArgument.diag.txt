@@ -1,14 +1,14 @@
 /test.kt:25:40: error: None of the following candidates is applicable:
 
 In package 'p' of module '<main>':
- --> p/f1.kt:7:1
+ --> p/f1.kt
   |
 7 | interface A : Any
   |
 reason: Classifier 'interface A : Any' does not have a companion object, so it cannot be used as an expression.
 
 In package 'q' of module '<main>':
-  --> q/f2.kt:13:1
+  --> q/f2.kt
    |
 13 | interface A : Any
    |
@@ -17,14 +17,14 @@ reason: Classifier 'interface A : Any' does not have a companion object, so it c
 /test.kt:29:40: error: None of the following candidates is applicable:
 
 In package 'p' of module '<main>':
- --> p/f1.kt:7:1
+ --> p/f1.kt
   |
 7 | interface A : Any
   |
 reason: Classifier 'interface A : Any' does not have a companion object, so it cannot be used as an expression.
 
 In package 'q' of module '<main>':
-  --> q/f2.kt:13:1
+  --> q/f2.kt
    |
 13 | interface A : Any
    |

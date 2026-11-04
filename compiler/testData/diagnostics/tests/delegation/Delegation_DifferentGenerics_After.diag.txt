@@ -5,15 +5,7 @@ In package 'root package' of module '<main>':
 57 | interface KI : Any {
 58 |     fun <C> foo(): List<C>
    | ...
-   | }
-   | ...
-57 | interface KI : Any {
-   | ...
 60 |     fun <D> baz(): D
-   | ...
-   | }
-   | ...
-57 | interface KI : Any {
    | ...
 62 |     fun <E, F> bar(): List<F>
    | ...
@@ -22,7 +14,7 @@ In package 'root package' of module '<main>':
 
 /KC.kt:68:5: error: 'foo' overrides nothing. Potential signatures for overriding:
 In package 'root package' of module '<main>':
-  --> KI.kt:58:5
+  --> KI.kt
    |
 57 | interface KI : Any {
 58 |     fun <C> foo(): List<C>
@@ -32,7 +24,7 @@ In package 'root package' of module '<main>':
 
 /KC.kt:68:14: error: Conflicting overloads:
 In package 'root package' of module '<main>':
-  --> KC.kt:68:5
+  --> KC.kt
    |
 67 | class KC : KI {
 68 |     fun foo(): List<String>
@@ -40,7 +32,7 @@ In package 'root package' of module '<main>':
    | }
    |
 In package 'root package' of module '<main>':
-  --> KI.kt:58:5
+  --> KI.kt
    |
 57 | interface KI : Any {
 58 |     fun <C> foo(): List<C>
@@ -50,7 +42,7 @@ In package 'root package' of module '<main>':
 
 /KC.kt:70:5: error: 'baz' overrides nothing. Potential signatures for overriding:
 In package 'root package' of module '<main>':
-  --> KI.kt:60:5
+  --> KI.kt
    |
 57 | interface KI : Any {
    | ...
@@ -61,7 +53,7 @@ In package 'root package' of module '<main>':
 
 /KC.kt:70:14: error: Conflicting overloads:
 In package 'root package' of module '<main>':
-  --> KC.kt:70:5
+  --> KC.kt
    |
 67 | class KC : KI {
    | ...
@@ -70,7 +62,7 @@ In package 'root package' of module '<main>':
    | }
    |
 In package 'root package' of module '<main>':
-  --> KI.kt:60:5
+  --> KI.kt
    |
 57 | interface KI : Any {
    | ...
@@ -81,7 +73,7 @@ In package 'root package' of module '<main>':
 
 /KC.kt:72:5: error: 'bar' overrides nothing. Potential signatures for overriding:
 In package 'root package' of module '<main>':
-  --> KI.kt:62:5
+  --> KI.kt
    |
 57 | interface KI : Any {
    | ...
@@ -92,7 +84,7 @@ In package 'root package' of module '<main>':
 
 /KC.kt:72:14: error: Conflicting overloads:
 In package 'root package' of module '<main>':
-  --> KC.kt:72:5
+  --> KC.kt
    |
 67 | class KC : KI {
    | ...
@@ -101,7 +93,7 @@ In package 'root package' of module '<main>':
    | }
    |
 In package 'root package' of module '<main>':
-  --> KI.kt:62:5
+  --> KI.kt
    |
 57 | interface KI : Any {
    | ...
@@ -114,19 +106,11 @@ In package 'root package' of module '<main>':
  |
  | interface JI : Any {
  | ...
- |     fun <C : Any!> foo(): (Mutable)List<C!>!
- | ...
- | }
- | ...
- | interface JI : Any {
+ |     fun <E : Any!, F : Any!> bar(): (Mutable)List<F!>!
  | ...
  |     fun <D : Any!> baz(): D!
  | ...
- | }
- | ...
- | interface JI : Any {
- | ...
- |     fun <E : Any!, F : Any!> bar(): (Mutable)List<F!>!
+ |     fun <C : Any!> foo(): (Mutable)List<C!>!
  | ...
  | }
  |
@@ -143,7 +127,7 @@ In package 'root package' of module '<main>':
 
 /KJC.kt:78:14: error: Conflicting overloads:
 In package 'root package' of module '<main>':
-  --> KJC.kt:78:5
+  --> KJC.kt
    |
 77 | class KJC : JI {
 78 |     fun foo(): List<String>
@@ -171,7 +155,7 @@ In package 'root package' of module '<main>':
 
 /KJC.kt:80:14: error: Conflicting overloads:
 In package 'root package' of module '<main>':
-  --> KJC.kt:80:5
+  --> KJC.kt
    |
 77 | class KJC : JI {
    | ...
@@ -200,7 +184,7 @@ In package 'root package' of module '<main>':
 
 /KJC.kt:82:14: error: Conflicting overloads:
 In package 'root package' of module '<main>':
-  --> KJC.kt:82:5
+  --> KJC.kt
    |
 77 | class KJC : JI {
    | ...

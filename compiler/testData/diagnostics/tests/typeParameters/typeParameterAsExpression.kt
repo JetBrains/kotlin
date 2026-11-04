@@ -3,7 +3,7 @@
 // RENDER_DIAGNOSTICS_FULL_TEXT
 class C<T> {
     inline fun <reified T> f() {
-        when (<!NONE_APPLICABLE("In package 'root package' of module '<main>': --> typeParameterAsExpression.kt:5:17  |5 | T  |reason: Type parameter 'T' is not an expression.In package 'root package' of module '<main>': --> typeParameterAsExpression.kt:4:9  |4 | T  |reason: Type parameter 'T' is not an expression.;  for expression 'T'")!>T<!>) {
+        when (<!NONE_APPLICABLE("In package 'root package' of module '<main>': --> typeParameterAsExpression.kt  |5 | T  |reason: Type parameter 'T' is not an expression.In package 'root package' of module '<main>': --> typeParameterAsExpression.kt  |4 | T  |reason: Type parameter 'T' is not an expression.;  for expression 'T'")!>T<!>) {
         }
         T::class
     }
