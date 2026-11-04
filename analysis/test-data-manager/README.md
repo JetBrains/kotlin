@@ -112,10 +112,12 @@ The runner executes passes until no more updates occur (max 10 passes).
 
 ## Modes
 
-- `CHECK` — fail on mismatch (default, for CI)
-- `UPDATE` — silently update files on mismatch
+- `CHECK` — fail on mismatch, never write (`checkTestData`, CI)
+- `UPDATE` — silently update files on mismatch (`updateTestData`)
 
-Set via `-Dkotlin.test.data.manager.mode=check|update` (managed by Gradle tasks automatically)
+Set via `-Dorg.jetbrains.kotlin.testDataManager.options.mode=check|update` (managed by Gradle tasks automatically).
+A test started without the mode (plain `test` task, IDE gutter) falls back to CHECK, but locally it still creates a
+missing golden file and deletes redundant ones; see the behavior matrix in [AGENTS.md](AGENTS.md).
 
 ## Usage
 

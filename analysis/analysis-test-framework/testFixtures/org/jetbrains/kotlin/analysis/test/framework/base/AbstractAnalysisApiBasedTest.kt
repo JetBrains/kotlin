@@ -385,7 +385,8 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest 
      * Checks whether the [actual] string matches the content of the test output file.
      *
      * If [actual] is `null`, asserts that the corresponding test output file does not exist. If the file exists, it will be deleted
-     * (in UPDATE mode or CHECK mode locally) and an assertion error is raised (in CHECK mode). Only the write-target file is checked —
+     * (in UPDATE mode, or in CHECK mode in a plain local test run) and an assertion error is raised (in CHECK mode).
+     * `checkTestData` and TeamCity runs never modify files. Only the write-target file is checked —
      * fallback files in the variant chain are not affected.
      *
      * If a non-empty [variantChain] is specified, the function will firstly check whether test output files with any of the
@@ -396,7 +397,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest 
      * test output file.
      *
      * If none of the test output files exist, the function creates an output file, writes the content of [actual] to it, and throws
-     * an exception.
+     * an exception. In `checkTestData` and on TeamCity, it only throws.
      *
      * If a [subdirectoryName] is specified, the test output file will be resolved in the given subdirectory, instead of as a sibling of the
      * test data. The purpose of this setting is to allow tests to define multiple sets of output files, e.g. for tests that share the same
@@ -428,7 +429,8 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest 
      * Checks whether the [actual] string matches the content of the test output file.
      *
      * If [actual] is `null`, asserts that the corresponding test output file does not exist. If the file exists, it will be deleted
-     * (in UPDATE mode or CHECK mode locally) and an assertion error is raised (in CHECK mode). Only the write-target file is checked —
+     * (in UPDATE mode, or in CHECK mode in a plain local test run) and an assertion error is raised (in CHECK mode).
+     * `checkTestData` and TeamCity runs never modify files. Only the write-target file is checked —
      * fallback files in the variant chain are not affected.
      *
      * If a non-empty [variantChain] is specified, the function will firstly check whether test output files with any of the
@@ -441,7 +443,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest 
      * Before comparing [actual] against the content of test files, applies [sanitizer] to [actual] and the text of the output files.
      *
      * If none of the test output files exist, the function creates an output file, writes the sanitized content of [actual] to it,
-     * and throws an exception.
+     * and throws an exception. In `checkTestData` and on TeamCity, it only throws.
      *
      * If a [subdirectoryName] is specified, the test output file will be resolved in the given subdirectory, instead of as a sibling of the
      * test data. The purpose of this setting is to allow tests to define multiple sets of output files, e.g. for tests that share the same
