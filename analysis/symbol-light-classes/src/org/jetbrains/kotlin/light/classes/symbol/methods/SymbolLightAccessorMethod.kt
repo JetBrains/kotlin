@@ -310,8 +310,14 @@ internal class SymbolLightAccessorMethod private constructor(
         if (isTopLevel) {
             false
         } else {
-            withAccessorSymbol { accessorSymbol ->
-                accessorSymbol.isOverride
+            val boxedMethodName = if (isJvmExposeBoxed) name else null
+            withPropertySymbol { propertySymbol ->
+                propertySymbol.accessorSymbol.isOverride &&
+                        (boxedMethodName == null || propertySymbol.overriddenDeclarations.any { overridden ->
+                            val overriddenProperty = overridden.fakeOverrideOriginal as? KaPropertySymbol
+                            val overriddenAccessor = if (isGetter) overriddenProperty?.getter else overriddenProperty?.setter
+                            overriddenAccessor?.isOverriddenByBoxedMethod(boxedMethodName) == true
+                        })
             }
         }
     }

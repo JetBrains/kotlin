@@ -11,17 +11,14 @@ public class P /* P*/ {
 public final class Q /* Q*/ extends P {
   private int y = 2 /* initializer type: int */;
 
-  @java.lang.Override()
   @kotlin.jvm.JvmExposeBoxed()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() kotlin.UInt getX();//  getX()
 
-  @java.lang.Override()
   @kotlin.jvm.JvmExposeBoxed()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() kotlin.UInt getY();//  getY()
 
-  @java.lang.Override()
   @kotlin.jvm.JvmExposeBoxed()
   public void setY(@org.jetbrains.annotations.NotNull() kotlin.UInt);//  setY(@org.jetbrains.annotations.NotNull() kotlin.UInt)
 

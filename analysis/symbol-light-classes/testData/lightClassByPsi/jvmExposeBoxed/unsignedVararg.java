@@ -3,7 +3,6 @@ public class Base /* Base*/ {
 }
 
 public final class Derived /* Derived*/ extends Base {
-  @java.lang.Override()
   @kotlin.jvm.JvmExposeBoxed()
   @org.jetbrains.annotations.NotNull()
   public /* vararg */ @org.jetbrains.annotations.NotNull() java.lang.String f(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() kotlin.UInt @org.jetbrains.annotations.NotNull() ...);//  f(@org.jetbrains.annotations.NotNull() kotlin.UInt @org.jetbrains.annotations.NotNull() [])

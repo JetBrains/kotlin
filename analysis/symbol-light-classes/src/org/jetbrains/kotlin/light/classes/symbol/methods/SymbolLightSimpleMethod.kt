@@ -184,7 +184,12 @@ internal open class SymbolLightSimpleMethod protected constructor(
     override fun isOverride(): Boolean = _isOverride
 
     private val _isOverride: Boolean by lazyPub {
-        !hasUnsignedVarargAsArray && withFunctionSymbol { it.isOverride }
+        if (hasUnsignedVarargAsArray) return@lazyPub false
+        val boxedMethodName = if (isJvmExposeBoxed) name else null
+        withFunctionSymbol { functionSymbol ->
+            functionSymbol.isOverride &&
+                    (boxedMethodName == null || functionSymbol.overriddenDeclarations.any { it.isOverriddenByBoxedMethod(boxedMethodName) })
+        }
     }
 
     context(session: KaSession)

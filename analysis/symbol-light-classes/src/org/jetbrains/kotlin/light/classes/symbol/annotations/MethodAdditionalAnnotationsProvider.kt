@@ -42,7 +42,8 @@ internal object MethodAdditionalAnnotationsProvider : AdditionalAnnotationsProvi
  * Whether this element is a light method which overrides a supertype method in Java, so it gets an `@Override` annotation.
  *
  * A light method created for an overriding or delegated Kotlin member overrides the supertype method unless it is static: a static
- * method never overrides anything, even if the declaration it is created for does.
+ * method never overrides anything, even if the declaration it is created for does. A boxed method overrides a supertype method only if
+ * `isOverride` says so, even for a delegated member, as the method of the delegate may have a mangled name.
  */
 private fun PsiElement.isMethodWithOverride(): Boolean =
-    this is SymbolLightMethodBase && (isDelegated || isOverride()) && !hasModifierProperty(PsiModifier.STATIC)
+    this is SymbolLightMethodBase && (isDelegated && !isJvmExposeBoxed || isOverride()) && !hasModifierProperty(PsiModifier.STATIC)

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.light.classes.symbol.methods
 
 import com.intellij.psi.PsiModifier
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.javaInterop.javaMethodName
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
@@ -141,6 +142,28 @@ internal sealed class MethodGenerationMode {
      */
     data class Boxed(val isRegularMethodRequired: Boolean, val hasUnsignedVarargAsArray: Boolean) : MethodGenerationMode()
 }
+
+/**
+ * Whether the boxed method named [boxedMethodName] of an override overrides the Java method of this overridden function or accessor.
+ *
+ * The boxed method has the name of the override, while an overridden declaration with an inline class in its signature has only a method
+ * with a mangled name, as [JvmExposeBoxed] is prohibited on overridable declarations. So the boxed method overrides only the method of a
+ * declaration that keeps its name, such as a generic `invoke(T)` or a Java method. A fake override, such as `add(Id)` of
+ * `MutableCollection<Id>`, has the method of its original declaration.
+ */
+context(_: KaSession)
+internal fun KaCallableSymbol.isOverriddenByBoxedMethod(boxedMethodName: String): Boolean {
+    val declaration = fakeOverrideOriginal
+    return declaration is KaFunctionSymbol && declaration.javaMethodName == boxedMethodName
+}
+
+/**
+ * The declarations that this function or property overrides, including the member that a delegated one delegates to, its
+ * [fakeOverrideOriginal], which [allOverriddenSymbols] may lack.
+ */
+context(_: KaSession)
+internal val KaCallableSymbol.overriddenDeclarations: Sequence<KaCallableSymbol>
+    get() = if (origin == KaSymbolOrigin.DELEGATED) allOverriddenSymbols + fakeOverrideOriginal else allOverriddenSymbols
 
 /**
  * Whether this declaration is effectively private: either it is inaccessible outside its own declaration (e.g., it is `private`, or it is

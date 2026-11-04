@@ -21,7 +21,6 @@ public abstract interface Test /* Test*/ {
 }
 
 public final class TestClass /* TestClass*/ implements Test {
-  @java.lang.Override()
   @kotlin.jvm.JvmExposeBoxed()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() IC test(@org.jetbrains.annotations.NotNull() IC);//  test(@org.jetbrains.annotations.NotNull() IC)
