@@ -10,9 +10,12 @@ import com.google.gson.JsonObject
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.dsl.JsModuleKind
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
 import org.jetbrains.kotlin.gradle.targets.js.ir.JsIrBinary
 import org.jetbrains.kotlin.gradle.targets.js.ir.KLIB_TYPE
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.JsPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.UPGRADE_PACKAGE_LOCK_BASE_NAME
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
@@ -27,6 +30,7 @@ import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCommonBackend
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInJs
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.assertAll
 import java.util.zip.ZipFile
 import kotlin.io.path.*
 import kotlin.test.assertEquals
@@ -165,6 +169,37 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                 assertFileExists(dts)
                 assertEquals("kotlin/kotlin2JsIrDtsGeneration.d.mts", packageJson.types)
                 assertFileContains(dts, "function bar(): string")
+            }
+        }
+    }
+
+    @MustRunOnChangesInJs
+    @DisplayName("KT-91228: module kind set on the link tasks differently from their compilation is deprecated but works with webpack")
+    @GradleTestVersions(minVersion = TestVersions.Gradle.MAX_SUPPORTED)
+    @GradleTest
+    fun linkTaskModuleKindDifferentFromCompilation(gradleVersion: GradleVersion) {
+        project("simple-js-executable", gradleVersion) {
+            buildScriptInjection {
+                kotlinMultiplatform.js {
+                    browser()
+                }
+                project.tasks.withType(KotlinJsIrLink::class.java).configureEach { task ->
+                    task.compilerOptions.moduleKind.set(JsModuleKind.MODULE_ES)
+                }
+            }
+
+            build("jsBrowserProductionWebpack") {
+                assertAll(
+                    // webpack still follows the link task
+                    { assertTasksExecuted(":jsBrowserProductionWebpack") },
+                    { assertFileInProjectExists("build/kotlin-webpack/js/productionExecutable/js-executable.js") },
+                    {
+                        assertHasDiagnostic(
+                            KotlinToolingDiagnostics.JsTaskCompilerOptionMismatch,
+                            withSubstring = "':compileProductionExecutableKotlinJs' uses moduleKind 'es', but its compilation uses 'umd'",
+                        )
+                    },
+                )
             }
         }
     }

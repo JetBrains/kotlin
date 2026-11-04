@@ -2654,6 +2654,33 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    internal object JsTaskCompilerOptionMismatch : ToolingDiagnosticFactory(
+        WARNING,
+        DiagnosticGroup.Kgp.Deprecation,
+    ) {
+        internal data class Mismatch(
+            val taskPath: String,
+            val optionName: String,
+            val taskValue: String,
+            val compilationValue: String,
+        )
+
+        operator fun invoke(mismatches: List<Mismatch>) = build {
+            title { "Setting the JS module kind or target on a task differently from its compilation is deprecated" }
+                .description {
+                    buildString {
+                        appendLine("The following tasks don't use the module kind or target of their compilation:")
+                        mismatches.forEach { mismatch ->
+                            appendLine(" - '${mismatch.taskPath}' uses ${mismatch.optionName} '${mismatch.taskValue}', but its compilation uses '${mismatch.compilationValue}'")
+                        }
+                    }
+                }
+                .solution {
+                    "Set 'moduleKind' and 'target' in the 'kotlin { js { compilerOptions { ... } } }' block, or consistently set the same value in all tasks."
+                }
+        }
+    }
+
     internal object PluginLoadedInMultipleProjectsError : ToolingDiagnosticFactory(
         ERROR,
         DiagnosticGroup.Kgp.Misconfiguration,

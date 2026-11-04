@@ -13,6 +13,8 @@ import org.gradle.api.Action
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
+import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.gradle.dsl.JsModuleKind
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.DeprecatedHasCompilerOptions
@@ -26,6 +28,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
 import org.jetbrains.kotlin.gradle.targets.js.targetVersion
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
+import org.jetbrains.kotlin.js.config.EcmaVersion
 import org.jetbrains.kotlin.js.config.supportsEsModules
 import javax.inject.Inject
 
@@ -56,6 +59,18 @@ open class KotlinJsCompilation @Inject internal constructor(
         .map { targetModuleName ->
             buildNpmProjectName(targetModuleName, compilationName)
         }
+
+    /**
+     * The JS module kind of this compilation, resolved from its compiler options, including the free compiler arguments.
+     */
+    internal val jsModuleKind: Provider<JsModuleKind>
+        get() = compilerOptions.options.effectiveModuleKind
+
+    /**
+     * The JS target of this compilation, resolved from its compiler options, including the free compiler arguments.
+     */
+    internal val jsTarget: Provider<String>
+        get() = compilerOptions.options.effectiveTarget
 
     override val processResourcesTaskName: String
         get() = disambiguateName("processResources")
@@ -123,3 +138,32 @@ internal object JsFileExtensions {
     const val REGULAR = "js"
     const val MODULE = "mjs"
 }
+
+/**
+ * The JS `target` the compiler is invoked with.
+ *
+ * Free compiler arguments are passed to the compiler after the dedicated options, so they take precedence.
+ * (The compiler keeps the last value of a repeated argument.)
+ */
+internal val KotlinJsCompilerOptions.effectiveTarget: Provider<String>
+    get() = parsedFreeCompilerArgs
+        .map<String> { args -> args.target }
+        .orElse(target)
+
+/**
+ * The module kind the compiler generates:
+ * - the explicit one (`-module-kind` from [KotlinJsCompilerOptions.freeCompilerArgs], otherwise [KotlinJsCompilerOptions.moduleKind]),
+ * - or the one implied by [effectiveTarget] the same way the compiler does it: ES modules for an ES2015+ target and UMD otherwise.
+ */
+internal val KotlinJsCompilerOptions.effectiveModuleKind: Provider<JsModuleKind>
+    get() = parsedFreeCompilerArgs
+        .map<JsModuleKind> { args -> JsModuleKind.entries.firstOrNull { it.kind == args.moduleKind } }
+        .orElse(moduleKind)
+        .orElse(
+            effectiveTarget.map { effectiveTarget ->
+                if (EcmaVersion.fromName(effectiveTarget).supportsEsModules) JsModuleKind.MODULE_ES else JsModuleKind.MODULE_UMD
+            }
+        )
+
+private val KotlinJsCompilerOptions.parsedFreeCompilerArgs: Provider<K2JSCompilerArguments>
+    get() = freeCompilerArgs.map { parseCommandLineArguments<K2JSCompilerArguments>(it) }
