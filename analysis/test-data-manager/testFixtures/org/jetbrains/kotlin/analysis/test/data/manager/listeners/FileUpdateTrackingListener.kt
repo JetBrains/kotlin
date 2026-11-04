@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.test.data.manager.filters.formatTestName
 import org.jetbrains.kotlin.analysis.test.data.manager.filters.testDataPath
 import org.jetbrains.kotlin.analysis.test.data.manager.filters.variantChain
 import org.junit.platform.engine.TestExecutionResult
+import org.junit.platform.engine.support.descriptor.MethodSource
 import org.junit.platform.launcher.TestExecutionListener
 import org.junit.platform.launcher.TestIdentifier
 import org.opentest4j.AssertionFailedError
@@ -81,7 +82,11 @@ internal class FileUpdateTrackingListener : TestExecutionListener {
                     // Real error
                     val error = TestError(
                         testName = testIdentifier.formatTestName(),
-                        exception = formatException(failure),
+                        testDataPath = testIdentifier.testDataPath,
+                        variantChain = testIdentifier.variantChain,
+                        exceptionClass = failure.javaClass.name,
+                        message = failure.message,
+                        stackTrace = testIdentifier.topStackFrames(failure),
                     )
                     testErrors.merge(testIdentifier.uniqueId, listOf(error), List<TestError>::plus)
                 }
@@ -94,24 +99,35 @@ internal class FileUpdateTrackingListener : TestExecutionListener {
      * from another assertion helper, which is taken for a mismatch.
      */
     private fun testDataProblemOrNull(testIdentifier: TestIdentifier, throwable: Throwable): TestDataProblem? {
-        val [kind, file] = when {
-            throwable is TestDataAssertionError -> throwable.kind to throwable.file
-            throwable is AssertionFailedError && throwable.expected?.value is FileInfo ->
-                TestDataAssertionError.Kind.MISMATCH to Path((throwable.expected.value as FileInfo).path)
+        val [kind, file, comparedFile] = when {
+            throwable is TestDataAssertionError -> Triple(throwable.kind, throwable.file, throwable.comparedFile)
+            throwable is AssertionFailedError && throwable.expected?.value is FileInfo -> {
+                val file = Path((throwable.expected.value as FileInfo).path)
+                Triple(TestDataAssertionError.Kind.MISMATCH, file, file)
+            }
 
             else -> return null
         }
 
-        return TestDataProblem(testIdentifier.formatTestName(), kind, file)
+        return TestDataProblem(
+            testName = testIdentifier.formatTestName(),
+            testDataPath = testIdentifier.testDataPath,
+            variantChain = testIdentifier.variantChain,
+            kind = kind,
+            file = file,
+            comparedFile = comparedFile,
+            actual = throwable.actual?.value as? String,
+        )
     }
 
-    private fun formatException(throwable: Throwable): String {
-        val name = throwable.javaClass.simpleName
-        val message = throwable.message?.let {
-            if (it.length > 100) it.substring(0, 100) + "..." else it
-        }.orEmpty()
-
-        return if (message.isNotEmpty()) "$name: $message" else name
+    /**
+     * The frames of [throwable] down to the first one in the test class, or the first [MAX_STACK_FRAMES] if none is.
+     */
+    private fun TestIdentifier.topStackFrames(throwable: Throwable): List<String> {
+        val testClassName = (source.orElse(null) as? MethodSource)?.className
+        val frames = throwable.stackTrace.take(MAX_STACK_FRAMES)
+        val testFrameIndex = frames.indexOfFirst { it.className == testClassName }
+        return (if (testFrameIndex >= 0) frames.take(testFrameIndex + 1) else frames).map(StackTraceElement::toString)
     }
 
     /**
@@ -138,4 +154,8 @@ internal class FileUpdateTrackingListener : TestExecutionListener {
      * Returns the other test failures, by test unique ID.
      */
     fun getTestErrors(): Map<String, List<TestError>> = testErrors.toMap()
+
+    private companion object {
+        const val MAX_STACK_FRAMES = 30
+    }
 }

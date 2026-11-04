@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
@@ -53,6 +54,7 @@ import org.gradle.process.CommandLineArgumentProvider
  * | `org.jetbrains.kotlin.testDataManager.options.testClassPattern` | Regex pattern for test class names                                |
  * | `org.jetbrains.kotlin.testDataManager.options.goldenOnly`       | Run only golden tests (empty variant chain)                       |
  * | `org.jetbrains.kotlin.testDataManager.options.incremental`      | Only run variant tests for changed golden paths                   |
+ * | `org.jetbrains.kotlin.testDataManager.options.runId`            | Id of the run, names the report (generated if not set)            |
  *
  * @see CheckTestDataModuleTask
  * @see UpdateTestDataModuleTask
@@ -81,6 +83,20 @@ abstract class AbstractTestDataModuleTask : JavaExec() {
     /** When `true`, only runs variant tests for golden paths that changed (effective in update mode). */
     @get:[Input Optional]
     abstract val incremental: Property<Boolean>
+
+    /**
+     * Id of the run, the name of the report `build/test-data-manager/<runId>.json`. A caller running several modules
+     * passes one id to all of them; without it, the runner generates a UUIDv7 at execution time.
+     */
+    @get:[Input Optional]
+    abstract val runId: Property<String>
+
+    /**
+     * Where the runner writes its reports. `@Internal`: declaring it as an output would let Gradle consider the task
+     * UP-TO-DATE, while it has to run every time.
+     */
+    @get:Internal
+    abstract val reportDirectory: DirectoryProperty
 
     /**
      * Environment variables inherited from the carrier `Test` task.
@@ -121,6 +137,8 @@ abstract class AbstractTestDataModuleTask : JavaExec() {
         forwardOption(TestDataManagerOption.TEST_CLASS_PATTERN, testClassPattern)
         forwardOption(TestDataManagerOption.GOLDEN_ONLY, goldenOnly)
         forwardOption(TestDataManagerOption.INCREMENTAL, incremental)
+        forwardOption(TestDataManagerOption.RUN_ID, runId)
+        systemProperty(TestDataManagerOption.REPORT_DIR, reportDirectory.get().asFile.absolutePath)
         super.exec()
     }
 

@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.analysis.test.data.manager.TestDataManagerRunner.MAX
 import org.jetbrains.kotlin.analysis.test.data.manager.filters.*
 import org.jetbrains.kotlin.analysis.test.data.manager.listeners.FileUpdateTrackingListener
 import org.jetbrains.kotlin.analysis.test.data.manager.listeners.IjLogTestListener
+import org.jetbrains.kotlin.analysis.test.data.manager.report.TestDataManagerReport
+import org.jetbrains.kotlin.analysis.test.data.manager.report.displayPath
 import org.junit.platform.engine.Filter
 import org.junit.platform.engine.discovery.ClassNameFilter
 import org.junit.platform.engine.discovery.DiscoverySelectors
@@ -17,11 +19,11 @@ import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder
 import org.junit.platform.launcher.core.LauncherFactory
 import java.nio.file.Path
 import kotlin.io.path.Path
-import kotlin.io.path.invariantSeparatorsPathString
 import kotlin.system.exitProcess
 import kotlin.time.Duration
 import kotlin.time.measureTime
 import kotlin.time.measureTimedValue
+import kotlin.uuid.Uuid
 
 /**
  * Validates that there are no conflicts within a list of tests.
@@ -77,6 +79,9 @@ internal fun validateConflicts(tests: List<DiscoveredTest>): List<VariantChainCo
  * - `testClassPattern` - regex pattern for test class names (optional)
  * - `goldenOnly` - run only golden tests (optional)
  * - `incremental` - run variant tests only for the golden paths that changed (optional, update mode only)
+ * - `runId` - the id of the run, naming its report `<runId>.json` (optional, a UUIDv7 by default)
+ *
+ * The tasks also pass `rootDir` (the repository root), `projectDir`, `projectName` and `reportDir`.
  *
  * @see VariantChainComparator
  */
@@ -94,47 +99,100 @@ internal object TestDataManagerRunner {
 
     @JvmStatic
     fun main(args: Array<String>) {
-        val outcome: RunOutcome
-        val totalTime = measureTime {
-            val testDataPath = System.getProperty(TEST_DATA_MANAGER_OPTIONS_TEST_DATA_PATH)
-            val testClassPattern = System.getProperty(TEST_DATA_MANAGER_OPTIONS_TEST_CLASS_PATTERN)
-            val goldenOnly = System.getProperty(TEST_DATA_MANAGER_OPTIONS_GOLDEN_ONLY)?.toBooleanStrictOrNull() ?: false
-            val incremental = System.getProperty(TEST_DATA_MANAGER_OPTIONS_INCREMENTAL)?.toBooleanStrictOrNull() ?: false
-            val mode = TestDataManagerMode.currentModeOrNull
+        val testDataPath = System.getProperty(TEST_DATA_MANAGER_OPTIONS_TEST_DATA_PATH)
+        val testClassPattern = System.getProperty(TEST_DATA_MANAGER_OPTIONS_TEST_CLASS_PATTERN)
+        val goldenOnly = System.getProperty(TEST_DATA_MANAGER_OPTIONS_GOLDEN_ONLY)?.toBooleanStrictOrNull() ?: false
+        val incremental = System.getProperty(TEST_DATA_MANAGER_OPTIONS_INCREMENTAL)?.toBooleanStrictOrNull() ?: false
+        val requestedRunId = System.getProperty(TEST_DATA_MANAGER_OPTIONS_RUN_ID)?.takeIf(String::isNotBlank)
+        val runIdError = requestedRunId?.let(TestDataManagerReport::runIdError)
+        val runId = requestedRunId?.takeIf { runIdError == null } ?: Uuid.generateV7().toString()
+        val mode = TestDataManagerMode.currentModeOrNull
+        // Set by the Gradle tasks; without them (a direct launch) the paths are used as given and no report is written
+        val rootDir = System.getProperty(TEST_DATA_MANAGER_OPTIONS_ROOT_DIR)?.let(::Path)
+        val projectDir = System.getProperty(TEST_DATA_MANAGER_OPTIONS_PROJECT_DIR)?.let(::Path)
 
+        val report = TestDataManagerReport(
+            runId = runId,
+            project = System.getProperty(TEST_DATA_MANAGER_OPTIONS_PROJECT_NAME),
+            mode = mode,
+            options = TestDataManagerReport.Options(testDataPath?.let(::splitTestDataPaths), testClassPattern, goldenOnly, incremental),
+        )
+
+        val totalTime = measureTime {
             println("Starting test data manager...")
+            println("  runId: $runId")
             println("  mode: ${mode ?: "NOT SET"}")
             println("  testDataPath: ${testDataPath ?: "NOT SET"}")
             println("  testClassPattern: ${testClassPattern ?: "NOT SET"}")
             println("  goldenOnly: $goldenOnly")
             println("  incremental: $incremental")
 
-            if (mode == null) {
-                System.err.println("WARNING: Mode is not set!")
-                System.err.println("Set -D$TEST_DATA_MANAGER_OPTIONS_MODE=check or -D$TEST_DATA_MANAGER_OPTIONS_MODE=update")
-                exitProcess(1)
-            }
+            when {
+                runIdError != null -> {
+                    System.err.println("ERROR: $runIdError")
+                    report.runErrors += runIdError
+                }
 
-            outcome = LauncherFactory.openSession().use { launcherSession ->
-                discoverAndRunTests(
-                    testClassPattern,
-                    testDataPath,
-                    goldenOnly,
-                    incremental,
-                    // Set by the Gradle tasks; without them (a direct launch) the paths are used as given
-                    rootDir = System.getProperty(TEST_DATA_MANAGER_OPTIONS_ROOT_DIR)?.let(::Path),
-                    projectDir = System.getProperty(TEST_DATA_MANAGER_OPTIONS_PROJECT_DIR)?.let(::Path),
-                    launcherSession = launcherSession,
-                )
+                mode == null -> {
+                    System.err.println("WARNING: Mode is not set!")
+                    System.err.println("Set -D$TEST_DATA_MANAGER_OPTIONS_MODE=check or -D$TEST_DATA_MANAGER_OPTIONS_MODE=update")
+                    report.runErrors += "Mode is not set"
+                }
+
+                else -> try {
+                    val outcome = LauncherFactory.openSession().use { launcherSession ->
+                        discoverAndRunTests(
+                            testClassPattern,
+                            testDataPath,
+                            goldenOnly,
+                            incremental,
+                            rootDir = rootDir,
+                            projectDir = projectDir,
+                            launcherSession = launcherSession,
+                        )
+                    }
+
+                    report.record(outcome)
+                } catch (e: Throwable) {
+                    e.printStackTrace()
+                    report.runErrors += e.toString()
+                }
             }
 
             println("\nTest data management complete.")
         }
 
         println("Total time: $totalTime")
+        writeReport(report, rootDir)
 
         // The explicit exit is required to ensure the process terminates after completion
-        exitProcess(if (outcome.isSuccessful) 0 else 1)
+        exitProcess(if (report.status == TestDataManagerReport.Status.PASSED) 0 else 1)
+    }
+
+    private fun TestDataManagerReport.record(outcome: RunOutcome) {
+        runErrors += outcome.runErrors
+        discoveredTests = outcome.totalTests
+        passedTests = outcome.passedTests
+        failedTests = outcome.failedTests
+        skippedTests = outcome.skippedTests
+        problems += outcome.problems
+        testErrors += outcome.errors
+        fileActions += outcome.fileActions
+        recoveredTests += outcome.recoveredTests
+    }
+
+    /**
+     * Writes [report] into the module's report directory passed by Gradle, if any, and prints its path.
+     * A failure to write it doesn't hide the result of the run itself.
+     */
+    private fun writeReport(report: TestDataManagerReport, rootDir: Path?) {
+        val reportDirectory = System.getProperty(TEST_DATA_MANAGER_OPTIONS_REPORT_DIR)?.let(::Path) ?: return
+        try {
+            val reportFile = report.write(reportDirectory, rootDir)
+            println("Test data manager report: ${reportFile.toAbsolutePath()}")
+        } catch (e: Exception) {
+            System.err.println("WARNING: failed to write the test data manager report into $reportDirectory: $e")
+        }
     }
 
     /**
@@ -238,14 +296,12 @@ internal object TestDataManagerRunner {
 
         // Phase 3: Validate no conflicts
         if (groupingResult.conflicts.isNotEmpty()) {
-            val message = buildString {
-                appendLine("Variant chain conflicts detected:")
-                for (conflict in groupingResult.conflicts) {
-                    appendLine("  ${conflict.format()}")
-                }
+            System.err.println("ERROR: Variant chain conflicts detected:")
+            for (conflict in groupingResult.conflicts) {
+                System.err.println("  ${conflict.format()}")
             }
 
-            throw IllegalStateException(message)
+            return RunOutcome.EMPTY.withRunErrors(groupingResult.conflicts.map { "Variant chain conflict: ${it.format()}" })
         }
 
         // Print grouping info
@@ -648,11 +704,7 @@ internal object TestDataManagerRunner {
 
     /** The path relative to the repository root when it is inside, for shorter output. */
     private val Path.displayPath: String
-        get() {
-            val rootDir = System.getProperty(TEST_DATA_MANAGER_OPTIONS_ROOT_DIR)?.let(::Path)
-            val path = rootDir?.takeIf(::startsWith)?.relativize(this) ?: this
-            return path.invariantSeparatorsPathString
-        }
+        get() = displayPath(System.getProperty(TEST_DATA_MANAGER_OPTIONS_ROOT_DIR)?.let(::Path))
 
     private fun printTimingSummary(timingStats: TimingStats) {
         println("\n========================================")

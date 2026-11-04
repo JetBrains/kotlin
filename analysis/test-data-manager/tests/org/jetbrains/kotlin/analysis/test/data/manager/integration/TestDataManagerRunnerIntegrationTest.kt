@@ -14,7 +14,6 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.io.TempDir
 import org.junit.platform.engine.discovery.PackageNameFilter
 import org.junit.platform.launcher.core.LauncherConfig
@@ -241,32 +240,30 @@ internal class TestDataManagerRunnerIntegrationTest {
     }
 
     @Test
-    fun `variant chain conflicts stop the run`() {
+    fun `variant chain conflicts fail the run`() {
         System.setProperty(TEST_DATA_MANAGER_OPTIONS_MODE, "check")
         val config = LauncherConfig.builder().enablePostDiscoveryFilterAutoRegistration(false).build()
-        val exception = assertThrows<IllegalStateException> {
-            LauncherFactory.openSession(config).use { session ->
-                TestDataManagerRunner.discoverAndRunTests(
-                    testClassPattern = null,
-                    testDataPath = null,
-                    goldenOnly = false,
-                    incremental = false,
-                    PackageNameFilter.includePackageNames(FakeConflictingTestABGenerated::class.java.`package`.name),
-                    launcherSession = session,
-                )
-            }
+        val outcome = LauncherFactory.openSession(config).use { session ->
+            TestDataManagerRunner.discoverAndRunTests(
+                testClassPattern = null,
+                testDataPath = null,
+                goldenOnly = false,
+                incremental = false,
+                PackageNameFilter.includePackageNames(FakeConflictingTestABGenerated::class.java.`package`.name),
+                launcherSession = session,
+            )
         }
 
         // The order of the conflicts follows the discovery order
         assertEquals(
             listOf(
-                "Variant chain conflicts detected:",
-                "[a, b] writes 'b' which [b, a] reads",
-                "[b, a] writes 'a' which [a, b] reads",
-                "[x, b] writes 'b' which [a, b] reads",
-                "[x, b] writes 'b' which [b, a] reads",
+                "Variant chain conflict: [a, b] writes 'b' which [b, a] reads",
+                "Variant chain conflict: [b, a] writes 'a' which [a, b] reads",
+                "Variant chain conflict: [x, b] writes 'b' which [a, b] reads",
+                "Variant chain conflict: [x, b] writes 'b' which [b, a] reads",
+                "successful: false, executions: 0",
             ),
-            exception.message!!.lines().map(String::trim).filter(String::isNotEmpty).sorted(),
+            outcome.runErrors.sorted() + "successful: ${outcome.isSuccessful}, executions: ${outcome.testExecutions}",
         )
     }
 }
