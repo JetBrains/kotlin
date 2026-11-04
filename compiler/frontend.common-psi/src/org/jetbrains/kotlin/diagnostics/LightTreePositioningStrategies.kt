@@ -1744,24 +1744,6 @@ fun FlyweightCapableTreeStructure<LighterASTNode>.lastChildExpression(node: Ligh
     return childrenRef.get()?.lastOrNull { it?.isExpression() == true }
 }
 
-fun FlyweightCapableTreeStructure<LighterASTNode>.findChildByType(node: LighterASTNode, type: IElementType): LighterASTNode? {
-    val childrenRef = Ref<Array<LighterASTNode?>>()
-    getChildren(node, childrenRef)
-    return childrenRef.get()?.firstOrNull { it?.tokenType == type }
-}
-
-fun FlyweightCapableTreeStructure<LighterASTNode>.findChildrenByType(node: LighterASTNode, type: IElementType): List<LighterASTNode> {
-    val childrenRef = Ref<Array<LighterASTNode?>>()
-    getChildren(node, childrenRef)
-    return childrenRef.get()?.filter { it?.tokenType == type }?.filterNotNull().orEmpty()
-}
-
-fun FlyweightCapableTreeStructure<LighterASTNode>.findLastChildByType(node: LighterASTNode, type: IElementType): LighterASTNode? {
-    val childrenRef = Ref<Array<LighterASTNode?>>()
-    getChildren(node, childrenRef)
-    return childrenRef.get()?.lastOrNull { it?.tokenType == type }
-}
-
 fun FlyweightCapableTreeStructure<LighterASTNode>.findDescendantByType(
     node: LighterASTNode,
     type: IElementType,
@@ -1864,12 +1846,6 @@ fun FlyweightCapableTreeStructure<LighterASTNode>.traverseDescendants(
     }
 
     traverse(node)
-}
-
-fun FlyweightCapableTreeStructure<LighterASTNode>.findChildByType(node: LighterASTNode, type: TokenSet): LighterASTNode? {
-    val childrenRef = Ref<Array<LighterASTNode?>>()
-    getChildren(node, childrenRef)
-    return childrenRef.get()?.firstOrNull { it?.tokenType in type }
 }
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.findParentOfType(

@@ -1442,15 +1442,15 @@ class Fir2IrVisitor(
 
     override fun visitWhenExpression(whenExpression: FirWhenExpression, data: Any?): IrElement {
         val subjectVariable = generateWhenSubjectVariable(whenExpression)
-        val origin = when (whenExpression.source?.elementType) {
-            KtNodeTypes.WHEN -> IrStatementOrigin.WHEN
-            KtNodeTypes.IF -> IrStatementOrigin.IF
-            KtNodeTypes.BINARY_EXPRESSION -> when (whenExpression.source?.operationToken) {
+        val origin = when (whenExpression.source?.syntaxId) {
+            KtNodeTypeId.WHEN -> IrStatementOrigin.WHEN
+            KtNodeTypeId.IF -> IrStatementOrigin.IF
+            KtNodeTypeId.BINARY_EXPRESSION -> when (whenExpression.source?.operationToken) {
                 KtTokens.OROR -> IrStatementOrigin.OROR
                 KtTokens.ANDAND -> IrStatementOrigin.ANDAND
                 else -> null
             }
-            KtNodeTypes.POSTFIX_EXPRESSION -> IrStatementOrigin.EXCLEXCL
+            KtNodeTypeId.POSTFIX_EXPRESSION -> IrStatementOrigin.EXCLEXCL
             else -> null
         }
         return conversionScope.withWhenSubject(subjectVariable) {
@@ -1554,7 +1554,7 @@ class Fir2IrVisitor(
     private fun FirWhenBranch.nestedElseIfOrNull(): FirWhenExpression? {
         if (condition is FirElseIfTrueCondition) {
             val elseWhenExpression = (result as? FirSingleExpressionBlock)?.statement as? FirWhenExpression
-            if (elseWhenExpression != null && elseWhenExpression.source?.elementType == KtNodeTypes.IF) {
+            if (elseWhenExpression != null && elseWhenExpression.source?.syntaxId == KtNodeTypeId.IF) {
                 return elseWhenExpression
             }
         }
@@ -1650,7 +1650,7 @@ class Fir2IrVisitor(
 
     override fun visitWhileLoop(whileLoop: FirWhileLoop, data: Any?): IrElement {
         return whileLoop.convertWithOffsets { startOffset, endOffset ->
-            val isForLoop = whileLoop.source?.elementType == KtNodeTypes.FOR
+            val isForLoop = whileLoop.source?.syntaxId == KtNodeTypeId.FOR
             val origin = if (isForLoop) IrStatementOrigin.FOR_LOOP_INNER_WHILE else IrStatementOrigin.WHILE_LOOP
             val firLoopBody = whileLoop.block
             IrWhileLoopImpl(startOffset, endOffset, builtins.unitType, origin).apply {
@@ -2076,7 +2076,7 @@ val KtSourceElement.isChildOfForLoop: Boolean
 
 val KtSourceElement.operationToken: IElementType?
     get() {
-        assert(elementType == KtNodeTypes.BINARY_EXPRESSION)
+        assert(syntaxId == KtNodeTypeId.BINARY_EXPRESSION)
         return if (this is KtPsiSourceElement) (psi as? KtBinaryExpression)?.operationToken
         else treeStructure.findChildByType(lighterASTNode, KtNodeTypes.OPERATION_REFERENCE)?.tokenType
             ?: error("No operation reference for binary expression: $lighterASTNode")

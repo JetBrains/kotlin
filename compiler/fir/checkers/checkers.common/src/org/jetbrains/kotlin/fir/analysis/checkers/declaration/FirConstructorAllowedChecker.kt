@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.KtNodeTypeId
+import org.jetbrains.kotlin.KtTokenId
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -21,15 +22,14 @@ import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.lexer.KtTokens
 
 object FirConstructorAllowedChecker : FirConstructorChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirConstructor) {
         val containingClass = context.containingDeclarations.lastOrNull() as? FirClassSymbol ?: return
         val source = declaration.source
-        val elementType = source?.elementType
-        if (elementType != KtNodeTypes.PRIMARY_CONSTRUCTOR && elementType != KtNodeTypes.SECONDARY_CONSTRUCTOR) {
+        val syntaxId = source?.syntaxId
+        if (syntaxId != KtNodeTypeId.PRIMARY_CONSTRUCTOR && syntaxId != KtNodeTypeId.SECONDARY_CONSTRUCTOR) {
             return
         }
         when (containingClass.classKind) {
@@ -44,8 +44,10 @@ object FirConstructorAllowedChecker : FirConstructorChecker(MppCheckerKind.Commo
                 is FirRegularClassSymbol -> if (containingClass.modality == Modality.SEALED) {
                     val modifierList = source.getModifierList() ?: return
                     val hasIllegalModifier = modifierList.modifiers.any {
-                        val token = it.token
-                        token in KtTokens.VISIBILITY_MODIFIERS && token != KtTokens.PROTECTED_KEYWORD && token != KtTokens.PRIVATE_KEYWORD
+                        val tokenId = it.tokenId
+                        tokenId in KtTokenId.VISIBILITY_MODIFIERS &&
+                                tokenId != KtTokenId.PROTECTED_MODIFIER &&
+                                tokenId != KtTokenId.PRIVATE_MODIFIER
                     }
                     if (hasIllegalModifier) {
                         reporter.reportOn(source, FirErrors.NON_PRIVATE_OR_PROTECTED_CONSTRUCTOR_IN_SEALED)

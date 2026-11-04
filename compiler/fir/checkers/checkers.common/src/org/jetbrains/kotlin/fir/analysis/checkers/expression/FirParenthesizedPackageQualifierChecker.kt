@@ -5,12 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
-import com.intellij.psi.tree.IElementType
-import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.KtLightSourceElement
-import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.KtPsiSourceElement
-import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
@@ -25,12 +20,8 @@ import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeTypeArgumentsForOuterClass
-import org.jetbrains.kotlin.psi.psiUtil.UNWRAPPABLE_TOKEN_TYPES
-import org.jetbrains.kotlin.psi.psiUtil.getExplicitReceiverOfDotQualified
-import org.jetbrains.kotlin.resolve.source.getExplicitReceiverOfDotQualified
+import org.jetbrains.kotlin.fir.syntaxComponent
 import org.jetbrains.kotlin.resolve.source.hasUnwrappableAsExplicitReceiver
-import org.jetbrains.kotlin.toKtLightSourceElement
-import org.jetbrains.kotlin.toKtPsiSourceElement
 
 object FirParenthesizedPackageQualifierChecker : FirResolvedQualifierChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -78,7 +69,7 @@ object FirParenthesizedPackageQualifierChecker : FirResolvedQualifierChecker(Mpp
          */
         context(context: CheckerContext, reporter: DiagnosticReporter)
         private fun checkNestedPackagesParenthesized(source: KtSourceElement) {
-            val sourceOfParenthesized = source.getChild(UNWRAPPABLE_TOKEN_TYPES)
+            val sourceOfParenthesized = source.getChild(UNWRAPPABLE_TOKEN_SET)
             if (sourceOfParenthesized != null) {
                 reportParenthesizedPackageQualifier(sourceOfParenthesized)
             }
@@ -91,7 +82,7 @@ object FirParenthesizedPackageQualifierChecker : FirResolvedQualifierChecker(Mpp
          * report deprecation warnings for type arguments. This property allows us to find parenthesized expression or type arguments
          * via single check.
          */
-        private val UNWRAPPABLE_OR_TYPE_ARGUMENT_LIST: Set<IElementType> = UNWRAPPABLE_TOKEN_TYPES + KtNodeTypes.TYPE_ARGUMENT_LIST
+        private val UNWRAPPABLE_OR_TYPE_ARGUMENT_LIST: SyntaxIdSet = UNWRAPPABLE_TOKEN_SET + KtNodeTypeId.TYPE_ARGUMENT_LIST
 
         context(context: CheckerContext, reporter: DiagnosticReporter)
         fun check(
@@ -116,17 +107,8 @@ object FirParenthesizedPackageQualifierChecker : FirResolvedQualifierChecker(Mpp
                         reportParenthesizedPackageQualifier(source, onReceiver = true)
                         return
                     }
-                    val packageReceiverSource = when (source) {
-                        is KtLightSourceElement -> {
-                            source.lighterASTNode
-                                .getExplicitReceiverOfDotQualified(source.treeStructure)
-                                ?.toKtLightSourceElement(source.treeStructure)
-                        }
-                        is KtPsiSourceElement -> {
-                            source.psi
-                                .getExplicitReceiverOfDotQualified()
-                                ?.toKtPsiSourceElement()
-                        }
+                    val packageReceiverSource = with(context.session.syntaxComponent) {
+                        source.findExplicitReceiverOfDotQualifiedSource()
                     }
                     packageReceiverSource?.let {
                         checkNestedPackages(it)
@@ -143,7 +125,7 @@ object FirParenthesizedPackageQualifierChecker : FirResolvedQualifierChecker(Mpp
         context(context: CheckerContext, reporter: DiagnosticReporter)
         private fun checkNestedPackages(source: KtSourceElement) {
             val parenthesizedOrTypeArgumentList = source.getChild(UNWRAPPABLE_OR_TYPE_ARGUMENT_LIST) ?: return
-            if (parenthesizedOrTypeArgumentList.elementType == KtNodeTypes.TYPE_ARGUMENT_LIST) {
+            if (parenthesizedOrTypeArgumentList.syntaxId == KtNodeTypeId.TYPE_ARGUMENT_LIST) {
                 reporter.reportOn(
                     parenthesizedOrTypeArgumentList,
                     FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED_IN_PACKAGE_QUALIFIER_WARNING
@@ -169,3 +151,6 @@ object FirParenthesizedPackageQualifierChecker : FirResolvedQualifierChecker(Mpp
         )
     }
 }
+
+private val UNWRAPPABLE_TOKEN_SET: SyntaxIdSet =
+    syntaxIdSetOf(KtNodeTypeId.PARENTHESIZED, KtNodeTypeId.LABELED_EXPRESSION, KtNodeTypeId.ANNOTATED_EXPRESSION)

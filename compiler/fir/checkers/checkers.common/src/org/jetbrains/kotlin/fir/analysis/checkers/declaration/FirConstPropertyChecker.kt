@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtTokenId
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -27,7 +28,6 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.lexer.KtTokens
 
 object FirConstPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -35,9 +35,9 @@ object FirConstPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
         if (!declaration.isConst) return
 
         if (declaration.isVar) {
-            val constModifier = declaration.getModifier(KtTokens.CONST_KEYWORD)
+            val constModifier = declaration.getModifier(KtTokenId.CONST_MODIFIER)
             constModifier?.let {
-                reporter.reportOn(it.source, FirErrors.WRONG_MODIFIER_TARGET, it.token, "vars")
+                reporter.reportOn(it.source, FirErrors.WRONG_MODIFIER_TARGET, it.tokenName, "vars")
             }
         }
 

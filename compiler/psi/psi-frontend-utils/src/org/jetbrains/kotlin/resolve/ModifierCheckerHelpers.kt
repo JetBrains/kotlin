@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.KtTokenId
+import org.jetbrains.kotlin.SyntaxId
+import org.jetbrains.kotlin.SyntaxIdSet
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
-import org.jetbrains.kotlin.lexer.KtKeywordToken
-import org.jetbrains.kotlin.lexer.KtTokens.*
+import org.jetbrains.kotlin.syntaxIdSetOf
 import java.util.*
 
 enum class Compatibility {
@@ -41,7 +43,7 @@ enum class Compatibility {
     INLINE_VALUE_ALLOWED,
 }
 
-fun compatibility(first: KtKeywordToken, second: KtKeywordToken): Compatibility {
+fun compatibility(first: SyntaxId, second: SyntaxId): Compatibility {
     return if (first == second) {
         Compatibility.REPEATED
     } else {
@@ -52,74 +54,78 @@ fun compatibility(first: KtKeywordToken, second: KtKeywordToken): Compatibility 
 // First modifier in pair should be also first in declaration
 private val mutualCompatibility = buildCompatibilityMap()
 
-private fun buildCompatibilityMap(): Map<Pair<KtKeywordToken, KtKeywordToken>, Compatibility> {
-    val result = hashMapOf<Pair<KtKeywordToken, KtKeywordToken>, Compatibility>()
+private fun buildCompatibilityMap(): Map<Pair<SyntaxId, SyntaxId>, Compatibility> {
+    val result = hashMapOf<Pair<SyntaxId, SyntaxId>, Compatibility>()
     // Variance: in + out are incompatible
-    result += incompatibilityRegister(IN_KEYWORD, OUT_KEYWORD)
+    result += incompatibilityRegister(KtTokenId.IN_MODIFIER, KtTokenId.OUT_MODIFIER)
     // Visibilities: incompatible
-    result += incompatibilityRegister(PRIVATE_KEYWORD, PROTECTED_KEYWORD, PUBLIC_KEYWORD, INTERNAL_KEYWORD)
+    result += incompatibilityRegister(
+        KtTokenId.PRIVATE_MODIFIER, KtTokenId.PROTECTED_MODIFIER, KtTokenId.PUBLIC_MODIFIER, KtTokenId.INTERNAL_MODIFIER
+    )
     // Abstract + open + final + sealed: incompatible
-    result += incompatibilityRegister(ABSTRACT_KEYWORD, OPEN_KEYWORD, FINAL_KEYWORD, SEALED_KEYWORD)
+    result += incompatibilityRegister(
+        KtTokenId.ABSTRACT_MODIFIER, KtTokenId.OPEN_MODIFIER, KtTokenId.FINAL_MODIFIER, KtTokenId.SEALED_MODIFIER
+    )
     // data + open, data + inner, data + abstract, data + sealed, data + inline, data + value
-    result += incompatibilityRegister(DATA_KEYWORD, OPEN_KEYWORD)
-    result += incompatibilityRegister(DATA_KEYWORD, INNER_KEYWORD)
-    result += incompatibilityRegister(DATA_KEYWORD, ABSTRACT_KEYWORD)
-    result += incompatibilityRegister(DATA_KEYWORD, SEALED_KEYWORD)
-    result += incompatibilityRegister(DATA_KEYWORD, INLINE_KEYWORD)
-    result += incompatibilityRegister(DATA_KEYWORD, VALUE_KEYWORD)
-    result += compatibilityRegister(Compatibility.INLINE_VALUE_ALLOWED, INLINE_KEYWORD, VALUE_KEYWORD)
-    result += incompatibilityRegister(DATA_KEYWORD, OBJECT_KEYWORD, EXPECT_KEYWORD)
+    result += incompatibilityRegister(KtTokenId.DATA_MODIFIER, KtTokenId.OPEN_MODIFIER)
+    result += incompatibilityRegister(KtTokenId.DATA_MODIFIER, KtTokenId.INNER_MODIFIER)
+    result += incompatibilityRegister(KtTokenId.DATA_MODIFIER, KtTokenId.ABSTRACT_MODIFIER)
+    result += incompatibilityRegister(KtTokenId.DATA_MODIFIER, KtTokenId.SEALED_MODIFIER)
+    result += incompatibilityRegister(KtTokenId.DATA_MODIFIER, KtTokenId.INLINE_MODIFIER)
+    result += incompatibilityRegister(KtTokenId.DATA_MODIFIER, KtTokenId.VALUE_MODIFIER)
+    result += compatibilityRegister(Compatibility.INLINE_VALUE_ALLOWED, KtTokenId.INLINE_MODIFIER, KtTokenId.VALUE_MODIFIER)
+    result += incompatibilityRegister(KtTokenId.DATA_MODIFIER, KtTokenId.OBJECT_KEYWORD, KtTokenId.EXPECT_MODIFIER)
     // open is redundant to abstract & override
-    result += redundantRegister(ABSTRACT_KEYWORD, OPEN_KEYWORD)
+    result += redundantRegister(KtTokenId.ABSTRACT_MODIFIER, KtTokenId.OPEN_MODIFIER)
     // abstract is redundant to sealed
-    result += redundantRegister(SEALED_KEYWORD, ABSTRACT_KEYWORD)
+    result += redundantRegister(KtTokenId.SEALED_MODIFIER, KtTokenId.ABSTRACT_MODIFIER)
 
     // const is incompatible with abstract, open, override
-    result += incompatibilityRegister(CONST_KEYWORD, ABSTRACT_KEYWORD)
-    result += incompatibilityRegister(CONST_KEYWORD, OPEN_KEYWORD)
-    result += incompatibilityRegister(CONST_KEYWORD, OVERRIDE_KEYWORD)
+    result += incompatibilityRegister(KtTokenId.CONST_MODIFIER, KtTokenId.ABSTRACT_MODIFIER)
+    result += incompatibilityRegister(KtTokenId.CONST_MODIFIER, KtTokenId.OPEN_MODIFIER)
+    result += incompatibilityRegister(KtTokenId.CONST_MODIFIER, KtTokenId.OVERRIDE_MODIFIER)
 
     // private is incompatible with override
-    result += incompatibilityRegister(PRIVATE_KEYWORD, OVERRIDE_KEYWORD)
+    result += incompatibilityRegister(KtTokenId.PRIVATE_MODIFIER, KtTokenId.OVERRIDE_MODIFIER)
     // private is compatible with open / abstract only for classes
-    result += compatibilityForClassesRegister(PRIVATE_KEYWORD, OPEN_KEYWORD)
-    result += compatibilityForClassesRegister(PRIVATE_KEYWORD, ABSTRACT_KEYWORD)
+    result += compatibilityForClassesRegister(KtTokenId.PRIVATE_MODIFIER, KtTokenId.OPEN_MODIFIER)
+    result += compatibilityForClassesRegister(KtTokenId.PRIVATE_MODIFIER, KtTokenId.ABSTRACT_MODIFIER)
 
-    result += incompatibilityRegister(CROSSINLINE_KEYWORD, NOINLINE_KEYWORD)
+    result += incompatibilityRegister(KtTokenId.CROSSINLINE_MODIFIER, KtTokenId.NOINLINE_MODIFIER)
 
     // 1. subclasses contained inside a sealed class can not be instantiated, because their constructors needs
     // an instance of an outer sealed (effectively abstract) class
     // 2. subclasses of a non-top-level sealed class must be declared inside the class
     // (see the KEEP https://github.com/Kotlin/KEEP/blob/master/proposals/sealed-class-inheritance.md)
-    result += incompatibilityRegister(SEALED_KEYWORD, INNER_KEYWORD)
+    result += incompatibilityRegister(KtTokenId.SEALED_MODIFIER, KtTokenId.INNER_MODIFIER)
 
     // expect / actual are all incompatible
-    result += incompatibilityRegister(EXPECT_KEYWORD, ACTUAL_KEYWORD)
+    result += incompatibilityRegister(KtTokenId.EXPECT_MODIFIER, KtTokenId.ACTUAL_MODIFIER)
 
     return result
 }
 
-private fun incompatibilityRegister(vararg list: KtKeywordToken): Map<Pair<KtKeywordToken, KtKeywordToken>, Compatibility> {
+private fun incompatibilityRegister(vararg list: SyntaxId): Map<Pair<SyntaxId, SyntaxId>, Compatibility> {
     return compatibilityRegister(Compatibility.INCOMPATIBLE, *list)
 }
 
 private fun redundantRegister(
-    sufficient: KtKeywordToken,
-    redundant: KtKeywordToken
-): Map<Pair<KtKeywordToken, KtKeywordToken>, Compatibility> {
+    sufficient: SyntaxId,
+    redundant: SyntaxId
+): Map<Pair<SyntaxId, SyntaxId>, Compatibility> {
     return mapOf(
         Pair(sufficient, redundant) to Compatibility.REDUNDANT,
         Pair(redundant, sufficient) to Compatibility.REVERSE_REDUNDANT
     )
 }
 
-private fun compatibilityForClassesRegister(vararg list: KtKeywordToken) =
+private fun compatibilityForClassesRegister(vararg list: SyntaxId) =
     compatibilityRegister(Compatibility.COMPATIBLE_FOR_CLASSES_ONLY, *list)
 
 private fun compatibilityRegister(
-    compatibility: Compatibility, vararg list: KtKeywordToken
-): Map<Pair<KtKeywordToken, KtKeywordToken>, Compatibility> {
-    val result = hashMapOf<Pair<KtKeywordToken, KtKeywordToken>, Compatibility>()
+    compatibility: Compatibility, vararg list: SyntaxId
+): Map<Pair<SyntaxId, SyntaxId>, Compatibility> {
+    val result = hashMapOf<Pair<SyntaxId, SyntaxId>, Compatibility>()
     for (first in list) {
         for (second in list) {
             if (first != second) {
@@ -131,9 +137,9 @@ private fun compatibilityRegister(
 }
 
 val featureDependencies = mapOf(
-    INLINE_KEYWORD to listOf(LanguageFeature.InlineProperties, LanguageFeature.InlineClasses),
-    EXPECT_KEYWORD to listOf(LanguageFeature.MultiPlatformProjects),
-    ACTUAL_KEYWORD to listOf(LanguageFeature.MultiPlatformProjects),
+    KtTokenId.INLINE_MODIFIER to listOf(LanguageFeature.InlineProperties, LanguageFeature.InlineClasses),
+    KtTokenId.EXPECT_MODIFIER to listOf(LanguageFeature.MultiPlatformProjects),
+    KtTokenId.ACTUAL_MODIFIER to listOf(LanguageFeature.MultiPlatformProjects),
 )
 
 val featureDependenciesTargets = mapOf(
@@ -162,22 +168,22 @@ val defaultVisibilityTargetPredicate = always(
 )
 
 val possibleTargetPredicateMap = mapOf(
-    ENUM_KEYWORD to always(KotlinTarget.ENUM_CLASS),
-    ABSTRACT_KEYWORD to always(
+    KtTokenId.ENUM_MODIFIER to always(KotlinTarget.ENUM_CLASS),
+    KtTokenId.ABSTRACT_MODIFIER to always(
         KotlinTarget.CLASS_ONLY,
         KotlinTarget.LOCAL_CLASS,
         KotlinTarget.INTERFACE,
         KotlinTarget.MEMBER_PROPERTY,
         KotlinTarget.MEMBER_FUNCTION
     ),
-    OPEN_KEYWORD to always(
+    KtTokenId.OPEN_MODIFIER to always(
         KotlinTarget.CLASS_ONLY,
         KotlinTarget.LOCAL_CLASS,
         KotlinTarget.INTERFACE,
         KotlinTarget.MEMBER_PROPERTY,
         KotlinTarget.MEMBER_FUNCTION
     ),
-    FINAL_KEYWORD to always(
+    KtTokenId.FINAL_MODIFIER to always(
         KotlinTarget.CLASS_ONLY,
         KotlinTarget.LOCAL_CLASS,
         KotlinTarget.ENUM_CLASS,
@@ -185,13 +191,13 @@ val possibleTargetPredicateMap = mapOf(
         KotlinTarget.MEMBER_PROPERTY,
         KotlinTarget.MEMBER_FUNCTION
     ),
-    SEALED_KEYWORD to always(KotlinTarget.CLASS_ONLY, KotlinTarget.INTERFACE),
-    INNER_KEYWORD to always(KotlinTarget.CLASS_ONLY),
-    OVERRIDE_KEYWORD to always(KotlinTarget.MEMBER_PROPERTY, KotlinTarget.MEMBER_FUNCTION),
-    PRIVATE_KEYWORD to defaultVisibilityTargetPredicate,
-    PUBLIC_KEYWORD to defaultVisibilityTargetPredicate,
-    INTERNAL_KEYWORD to defaultVisibilityTargetPredicate,
-    PROTECTED_KEYWORD to always(
+    KtTokenId.SEALED_MODIFIER to always(KotlinTarget.CLASS_ONLY, KotlinTarget.INTERFACE),
+    KtTokenId.INNER_MODIFIER to always(KotlinTarget.CLASS_ONLY),
+    KtTokenId.OVERRIDE_MODIFIER to always(KotlinTarget.MEMBER_PROPERTY, KotlinTarget.MEMBER_FUNCTION),
+    KtTokenId.PRIVATE_MODIFIER to defaultVisibilityTargetPredicate,
+    KtTokenId.PUBLIC_MODIFIER to defaultVisibilityTargetPredicate,
+    KtTokenId.INTERNAL_MODIFIER to defaultVisibilityTargetPredicate,
+    KtTokenId.PROTECTED_MODIFIER to always(
         KotlinTarget.CLASS_ONLY,
         KotlinTarget.OBJECT,
         KotlinTarget.INTERFACE,
@@ -206,20 +212,24 @@ val possibleTargetPredicateMap = mapOf(
         KotlinTarget.CONSTRUCTOR,
         KotlinTarget.TYPEALIAS
     ),
-    IN_KEYWORD to always(KotlinTarget.TYPE_PARAMETER, KotlinTarget.TYPE_PROJECTION),
-    OUT_KEYWORD to always(KotlinTarget.TYPE_PARAMETER, KotlinTarget.TYPE_PROJECTION),
-    REIFIED_KEYWORD to always(KotlinTarget.TYPE_PARAMETER),
-    VARARG_KEYWORD to always(KotlinTarget.VALUE_PARAMETER, KotlinTarget.PROPERTY_PARAMETER),
-    COMPANION_KEYWORD to always(KotlinTarget.OBJECT, KotlinTarget.COMPANION_EXTENSION_PROPERTY, KotlinTarget.COMPANION_EXTENSION_FUNCTION),
-    LATEINIT_KEYWORD to always(
+    KtTokenId.IN_MODIFIER to always(KotlinTarget.TYPE_PARAMETER, KotlinTarget.TYPE_PROJECTION),
+    KtTokenId.OUT_MODIFIER to always(KotlinTarget.TYPE_PARAMETER, KotlinTarget.TYPE_PROJECTION),
+    KtTokenId.REIFIED_MODIFIER to always(KotlinTarget.TYPE_PARAMETER),
+    KtTokenId.VARARG_MODIFIER to always(KotlinTarget.VALUE_PARAMETER, KotlinTarget.PROPERTY_PARAMETER),
+    KtTokenId.COMPANION_MODIFIER to always(
+        KotlinTarget.OBJECT,
+        KotlinTarget.COMPANION_EXTENSION_PROPERTY,
+        KotlinTarget.COMPANION_EXTENSION_FUNCTION,
+    ),
+    KtTokenId.LATEINIT_MODIFIER to always(
         KotlinTarget.MEMBER_PROPERTY,
         KotlinTarget.COMPANION_MEMBER_PROPERTY,
         KotlinTarget.COMPANION_EXTENSION_PROPERTY,
         KotlinTarget.TOP_LEVEL_PROPERTY,
         KotlinTarget.LOCAL_VARIABLE,
     ),
-    DATA_KEYWORD to always(KotlinTarget.CLASS_ONLY, KotlinTarget.LOCAL_CLASS, KotlinTarget.STANDALONE_OBJECT),
-    INLINE_KEYWORD to or(
+    KtTokenId.DATA_MODIFIER to always(KotlinTarget.CLASS_ONLY, KotlinTarget.LOCAL_CLASS, KotlinTarget.STANDALONE_OBJECT),
+    KtTokenId.INLINE_MODIFIER to or(
         always(
             KotlinTarget.FUNCTION,
             KotlinTarget.MEMBER_PROPERTY_WITH_DELEGATE,
@@ -239,9 +249,9 @@ val possibleTargetPredicateMap = mapOf(
             KotlinTarget.PROPERTY_PARAMETER
         )
     ),
-    NOINLINE_KEYWORD to always(KotlinTarget.VALUE_PARAMETER),
-    TAILREC_KEYWORD to always(KotlinTarget.FUNCTION),
-    SUSPEND_KEYWORD to always(
+    KtTokenId.NOINLINE_MODIFIER to always(KotlinTarget.VALUE_PARAMETER),
+    KtTokenId.TAILREC_MODIFIER to always(KotlinTarget.FUNCTION),
+    KtTokenId.SUSPEND_MODIFIER to always(
         KotlinTarget.MEMBER_FUNCTION,
         KotlinTarget.COMPANION_MEMBER_FUNCTION,
         KotlinTarget.COMPANION_EXTENSION_FUNCTION,
@@ -249,7 +259,7 @@ val possibleTargetPredicateMap = mapOf(
         KotlinTarget.LOCAL_FUNCTION,
         KotlinTarget.ANONYMOUS_FUNCTION
     ),
-    EXTERNAL_KEYWORD to or(
+    KtTokenId.EXTERNAL_MODIFIER to or(
         always(
             KotlinTarget.FUNCTION,
             KotlinTarget.MEMBER_PROPERTY_WITH_BACKING_FIELD,
@@ -267,17 +277,17 @@ val possibleTargetPredicateMap = mapOf(
             KotlinTarget.PROPERTY_PARAMETER
         )
     ),
-    ANNOTATION_KEYWORD to always(KotlinTarget.ANNOTATION_CLASS),
-    CROSSINLINE_KEYWORD to always(KotlinTarget.VALUE_PARAMETER),
-    CONST_KEYWORD to always(
+    KtTokenId.ANNOTATION_MODIFIER to always(KotlinTarget.ANNOTATION_CLASS),
+    KtTokenId.CROSSINLINE_MODIFIER to always(KotlinTarget.VALUE_PARAMETER),
+    KtTokenId.CONST_MODIFIER to always(
         KotlinTarget.MEMBER_PROPERTY,
         KotlinTarget.COMPANION_MEMBER_PROPERTY,
         KotlinTarget.COMPANION_EXTENSION_PROPERTY,
         KotlinTarget.TOP_LEVEL_PROPERTY
     ),
-    OPERATOR_KEYWORD to always(KotlinTarget.FUNCTION),
-    INFIX_KEYWORD to always(KotlinTarget.FUNCTION),
-    EXPECT_KEYWORD to always(
+    KtTokenId.OPERATOR_MODIFIER to always(KotlinTarget.FUNCTION),
+    KtTokenId.INFIX_MODIFIER to always(KotlinTarget.FUNCTION),
+    KtTokenId.EXPECT_MODIFIER to always(
         KotlinTarget.TOP_LEVEL_FUNCTION,
         KotlinTarget.COMPANION_EXTENSION_FUNCTION,
         KotlinTarget.TOP_LEVEL_PROPERTY,
@@ -288,7 +298,7 @@ val possibleTargetPredicateMap = mapOf(
         KotlinTarget.ENUM_CLASS,
         KotlinTarget.ANNOTATION_CLASS
     ),
-    ACTUAL_KEYWORD to always(
+    KtTokenId.ACTUAL_MODIFIER to always(
         KotlinTarget.TOP_LEVEL_FUNCTION,
         KotlinTarget.COMPANION_EXTENSION_FUNCTION,
         KotlinTarget.MEMBER_FUNCTION,
@@ -305,35 +315,35 @@ val possibleTargetPredicateMap = mapOf(
         KotlinTarget.ANNOTATION_CLASS,
         KotlinTarget.TYPEALIAS
     ),
-    FUN_KEYWORD to always(KotlinTarget.INTERFACE),
-    VALUE_KEYWORD to or(
+    KtTokenId.FUN_MODIFIER to always(KotlinTarget.INTERFACE),
+    KtTokenId.VALUE_MODIFIER to or(
         always(KotlinTarget.CLASS_ONLY),
         ifSupported(LanguageFeature.FullValueClasses, KotlinTarget.STANDALONE_OBJECT)
     ),
-    ERROR_KEYWORD to always(KotlinTarget.CLASS_ONLY, KotlinTarget.OBJECT),
+    KtTokenId.ERROR_MODIFIER to always(KotlinTarget.CLASS_ONLY, KotlinTarget.OBJECT),
 )
 
 // NOTE: deprecated targets must be possible!
 val deprecatedTargetPredicateMap = mapOf(
-    INLINE_KEYWORD to ifUnsupported(
+    KtTokenId.INLINE_MODIFIER to ifUnsupported(
         LanguageFeature.ForbidInlineEnumEntries,
         KotlinTarget.ENUM_ENTRY
     ),
-    EXTERNAL_KEYWORD to ifUnsupported(
+    KtTokenId.EXTERNAL_MODIFIER to ifUnsupported(
         LanguageFeature.ForbidExternalEnumEntriesAndPrimaryConstructorProperties,
         KotlinTarget.ENUM_ENTRY,
         KotlinTarget.PROPERTY_PARAMETER
     ),
 )
 
-val deprecatedParentTargetMap = mapOf<KtKeywordToken, Set<KotlinTarget>>()
+val deprecatedParentTargetMap = mapOf<SyntaxId, Set<KotlinTarget>>()
 
 // NOTE: redundant targets must be possible!
-val redundantTargetMap = mapOf<KtKeywordToken, Set<KotlinTarget>>(
-    OPEN_KEYWORD to EnumSet.of(KotlinTarget.INTERFACE)
+val redundantTargetMap = mapOf<SyntaxId, Set<KotlinTarget>>(
+    KtTokenId.OPEN_MODIFIER to EnumSet.of(KotlinTarget.INTERFACE)
 )
 
-val allowedInContextParameters: Set<KtKeywordToken> = setOf<KtKeywordToken>(NOINLINE_KEYWORD, CROSSINLINE_KEYWORD)
+val allowedInContextParameters: SyntaxIdSet = syntaxIdSetOf(KtTokenId.NOINLINE_MODIFIER, KtTokenId.CROSSINLINE_MODIFIER)
 
 interface TargetAllowedPredicate {
     fun isAllowed(target: KotlinTarget, languageVersionSettings: LanguageVersionSettings): Boolean
@@ -368,13 +378,13 @@ fun or(vararg p: TargetAllowedPredicate): TargetAllowedPredicate = object : Targ
 }
 
 val possibleParentTargetPredicateMap = mapOf(
-    INNER_KEYWORD to always(
+    KtTokenId.INNER_MODIFIER to always(
         KotlinTarget.CLASS_ONLY,
         KotlinTarget.LOCAL_CLASS,
         KotlinTarget.ENUM_CLASS,
         KotlinTarget.ENUM_ENTRY
     ),
-    OVERRIDE_KEYWORD to always(
+    KtTokenId.OVERRIDE_MODIFIER to always(
         KotlinTarget.CLASS_ONLY,
         KotlinTarget.LOCAL_CLASS,
         KotlinTarget.OBJECT,
@@ -383,8 +393,13 @@ val possibleParentTargetPredicateMap = mapOf(
         KotlinTarget.ENUM_CLASS,
         KotlinTarget.ENUM_ENTRY
     ),
-    PROTECTED_KEYWORD to always(KotlinTarget.CLASS_ONLY, KotlinTarget.LOCAL_CLASS, KotlinTarget.ENUM_CLASS, KotlinTarget.COMPANION_OBJECT),
-    INTERNAL_KEYWORD to always(
+    KtTokenId.PROTECTED_MODIFIER to always(
+        KotlinTarget.CLASS_ONLY,
+        KotlinTarget.LOCAL_CLASS,
+        KotlinTarget.ENUM_CLASS,
+        KotlinTarget.COMPANION_OBJECT,
+    ),
+    KtTokenId.INTERNAL_MODIFIER to always(
         KotlinTarget.CLASS_ONLY,
         KotlinTarget.LOCAL_CLASS,
         KotlinTarget.OBJECT,
@@ -394,7 +409,7 @@ val possibleParentTargetPredicateMap = mapOf(
         KotlinTarget.INTERFACE,
         KotlinTarget.FILE
     ),
-    PRIVATE_KEYWORD to always(
+    KtTokenId.PRIVATE_MODIFIER to always(
         KotlinTarget.CLASS_ONLY,
         KotlinTarget.LOCAL_CLASS,
         KotlinTarget.OBJECT,
@@ -404,7 +419,7 @@ val possibleParentTargetPredicateMap = mapOf(
         KotlinTarget.ENUM_ENTRY,
         KotlinTarget.FILE
     ),
-    COMPANION_KEYWORD to or(
+    KtTokenId.COMPANION_MODIFIER to or(
         always(
             KotlinTarget.CLASS_ONLY,
             KotlinTarget.INTERFACE,
@@ -416,7 +431,7 @@ val possibleParentTargetPredicateMap = mapOf(
             KotlinTarget.FILE,
         )
     ),
-    FINAL_KEYWORD to always(
+    KtTokenId.FINAL_MODIFIER to always(
         KotlinTarget.CLASS_ONLY,
         KotlinTarget.LOCAL_CLASS,
         KotlinTarget.OBJECT,
@@ -426,5 +441,5 @@ val possibleParentTargetPredicateMap = mapOf(
         KotlinTarget.ANNOTATION_CLASS,
         KotlinTarget.FILE
     ),
-    VARARG_KEYWORD to always(KotlinTarget.CONSTRUCTOR, KotlinTarget.FUNCTION, KotlinTarget.CLASS)
+    KtTokenId.VARARG_MODIFIER to always(KotlinTarget.CONSTRUCTOR, KotlinTarget.FUNCTION, KotlinTarget.CLASS)
 )

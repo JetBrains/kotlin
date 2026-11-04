@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.fir.analysis.web.common.checkers.declaration
 
-import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.KtNodeTypeId
+import org.jetbrains.kotlin.KtTokenId
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -15,7 +16,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.hasModifier
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
-import org.jetbrains.kotlin.lexer.KtTokens
 
 object FirWebCommonExternalPropertyAccessorChecker : FirPropertyAccessorChecker(MppCheckerKind.Common) {
     override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
@@ -26,13 +26,13 @@ object FirWebCommonExternalPropertyAccessorChecker : FirPropertyAccessorChecker(
         if (
             declaration !is FirDefaultPropertyAccessor &&
             declaration.isDirectlyExternal() &&
-            declaration.source?.elementType == KtNodeTypes.PROPERTY_ACCESSOR
+            declaration.source?.syntaxId == KtNodeTypeId.PROPERTY_ACCESSOR
         ) {
             reporter.reportOn(declaration.source, FirWebCommonErrors.WRONG_EXTERNAL_DECLARATION, "property accessor")
         }
     }
 
     private fun FirPropertyAccessor.isDirectlyExternal(): Boolean {
-        return hasModifier(KtTokens.EXTERNAL_KEYWORD)
+        return hasModifier(KtTokenId.EXTERNAL_MODIFIER)
     }
 }

@@ -5,18 +5,13 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.syntax
 
-import org.jetbrains.kotlin.KtLightSourceElement
-import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.KtPsiSourceElement
-import org.jetbrains.kotlin.KtRealSourceElementKind
-import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.forEachChildOfType
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtConstructor
 import org.jetbrains.kotlin.psi.KtDeclaration
 
@@ -44,7 +39,7 @@ object FirMissingConstructorKeywordSyntaxChecker : FirDeclarationSyntaxChecker<F
         var hasModifiers = false
         var hasConstructorKeyword = false
         source.forEachChildOfType(importantNodeTypes, depth = 1) {
-            if (it.elementType == KtTokens.CONSTRUCTOR_KEYWORD) {
+            if (it.syntaxId == KtTokenId.CONSTRUCTOR_KEYWORD) {
                 hasConstructorKeyword = true
             } else {
                 hasModifiers = true
@@ -55,5 +50,5 @@ object FirMissingConstructorKeywordSyntaxChecker : FirDeclarationSyntaxChecker<F
         }
     }
 
-    private val importantNodeTypes = setOf(KtNodeTypes.MODIFIER_LIST, KtTokens.CONSTRUCTOR_KEYWORD)
+    private val importantNodeTypes = syntaxIdSetOf(KtNodeTypeId.MODIFIER_LIST, KtTokenId.CONSTRUCTOR_KEYWORD)
 }

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtTokenId
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -17,17 +18,16 @@ import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.isEquals
 import org.jetbrains.kotlin.fir.declarations.isHashCode
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.lexer.KtTokens
 
 object FirDataObjectContentChecker : FirNamedFunctionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirNamedFunction) {
-        if (!declaration.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return
+        if (!declaration.hasModifier(KtTokenId.OVERRIDE_MODIFIER)) return
         val source = declaration.source
         if (source == null || source.kind is KtFakeSourceElementKind) return
 
         val containingClass = context.containingDeclarations.lastOrNull() as? FirClassSymbol<*> ?: return
-        if (containingClass.classKind != ClassKind.OBJECT || !containingClass.hasModifier(KtTokens.DATA_KEYWORD)) return
+        if (containingClass.classKind != ClassKind.OBJECT || !containingClass.hasModifier(KtTokenId.DATA_MODIFIER)) return
 
         if (declaration.isEquals(context.session) || declaration.isHashCode()) {
             reporter.reportOn(source, FirErrors.DATA_OBJECT_CUSTOM_EQUALS_OR_HASH_CODE)

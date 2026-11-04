@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.fir.analysis.diagnostics
 
-import com.intellij.lang.LighterASTTokenNode
-import com.intellij.psi.TokenType
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -38,9 +36,7 @@ import org.jetbrains.kotlin.fir.symbols.asCone
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.ApplicabilityDetail
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
@@ -48,7 +44,6 @@ import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.EmptyIntersectionTypeKind
 import org.jetbrains.kotlin.types.model.K2Only
 import org.jetbrains.kotlin.util.ArrayLiteralResolution
-import org.jetbrains.kotlin.util.getPreviousSibling
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
@@ -229,7 +224,7 @@ private fun ConeInapplicableCandidateError.mapInapplicableCandidateError(
             )
 
             is NonVarargSpread -> FirErrors.NON_VARARG_SPREAD.createOn(
-                rootCause.argument.source?.getChild(KtTokens.MUL, depth = 1)!!,
+                rootCause.argument.source?.getChild(KtTokenId.MUL, depth = 1)!!,
                 session
             )
             is ArgumentPassedTwice -> FirErrors.ARGUMENT_PASSED_TWICE.createOn(rootCause.argument.source, session)
@@ -671,7 +666,7 @@ private fun ConeDiagnostic.mapOtherDiagnostic(
     is ConeCannotInferTypeParameterType -> FirErrors.CANNOT_INFER_PARAMETER_TYPE.createOn(source, this.typeParameter, session)
     is ConeCannotInferValueParameterType -> when {
         isTopLevelLambda -> FirErrors.VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE.createOn(source, session)
-        source?.elementType == KtNodeTypes.THIS_EXPRESSION -> FirErrors.CANNOT_INFER_RECEIVER_PARAMETER_TYPE.createOn(source, session)
+        source?.syntaxId == KtNodeTypeId.THIS_EXPRESSION -> FirErrors.CANNOT_INFER_RECEIVER_PARAMETER_TYPE.createOn(source, session)
         else -> (this.valueParameter ?: valueParameter?.symbol)?.takeIf { !it.name.isSpecial }?.let { valueParameterSymbol ->
             FirErrors.CANNOT_INFER_VALUE_PARAMETER_TYPE.createOn(
                 source, valueParameterSymbol, session
@@ -743,18 +738,18 @@ private fun inapplicableNullableReceiver(
     val receiverExpression = candidate.callInfo.explicitReceiver
     val singleArgument = candidate.callInfo.argumentList.arguments.singleOrNull()
     if (receiverExpression != null && singleArgument != null &&
-        (source?.elementType == KtNodeTypes.OPERATION_REFERENCE || source?.elementType == KtNodeTypes.BINARY_EXPRESSION) &&
+        (source?.syntaxId == KtNodeTypeId.OPERATION_REFERENCE || source?.syntaxId == KtNodeTypeId.BINARY_EXPRESSION) &&
         (candidateFunctionSymbol?.isOperator == true || candidateFunctionSymbol?.isInfix == true)
     ) {
         // For augmented assignment operations (e.g., `a += b`), the source is the entire binary expression (BINARY_EXPRESSION).
-        // TODO, KT-59809: No need to check for source.elementType == BINARY_EXPRESSION if we use operator as callee reference source
+        // TODO, KT-59809: No need to check for source.syntaxId == BINARY_EXPRESSION if we use operator as callee reference source
         //  (see FirExpressionsResolveTransformer.transformAssignmentOperatorStatement)
-        val operationSource = if (source.elementType == KtNodeTypes.BINARY_EXPRESSION) {
-            source.getChild(KtNodeTypes.OPERATION_REFERENCE)
+        val operationSource = if (source.syntaxId == KtNodeTypeId.BINARY_EXPRESSION) {
+            source.getChild(KtNodeTypeId.OPERATION_REFERENCE)
         } else {
             source
         }
-        return if (operationSource?.getChild(KtTokens.IDENTIFIER) != null) {
+        return if (operationSource?.getChild(KtTokenId.IDENTIFIER) != null) {
             FirErrors.UNSAFE_INFIX_CALL.createOn(
                 source,
                 rootCause.actualType,
@@ -789,31 +784,10 @@ private fun inapplicableNullableReceiver(
 }
 
 private fun unexpectedTrailingLambdaOnNewLineOrNull(argument: FirExpression, session: FirSession): KtDiagnostic? {
-    fun KtLightSourceElement.isTrailingLambdaOnNewLine(): Boolean {
-        var parent = treeStructure.getParent(this.lighterASTNode) ?: return false
-        if (parent.tokenType == KtNodeTypes.LABELED_EXPRESSION) {
-            parent = treeStructure.getParent(parent) ?: return false
-        }
-        if (parent.tokenType == KtNodeTypes.LAMBDA_ARGUMENT) {
-            // Only trivia separates the lambda from the rest of the call, so the walk stops at the first preceding element
-            var prevSibling = parent.getPreviousSibling(treeStructure)
-            while (prevSibling is LighterASTTokenNode) {
-                if (prevSibling.tokenType == TokenType.WHITE_SPACE && prevSibling.text.contains("\n")) {
-                    return true
-                }
-                prevSibling = prevSibling.getPreviousSibling(treeStructure)
-            }
-        }
-        return false
-    }
-
-    return when (val argumentSource = argument.source) {
-        is KtPsiSourceElement if argumentSource.psi.let { it is KtLambdaExpression && it.isTrailingLambdaOnNewLine }
-            -> FirErrors.UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE.createOn(argumentSource, session)
-        is KtLightSourceElement if argumentSource.isTrailingLambdaOnNewLine()
-            -> FirErrors.UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE.createOn(argumentSource, session)
-        else
-            -> null
+    val argumentSource = argument.source ?: return null
+    val isTrailingLambdaOnNewLine = with(session.syntaxComponent) { argumentSource.isTrailingLambdaOnNewLine() }
+    return runIf(isTrailingLambdaOnNewLine) {
+        FirErrors.UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE.createOn(argumentSource, session)
     }
 }
 
@@ -1108,10 +1082,10 @@ private fun ConeSimpleDiagnostic.getFactory(source: KtSourceElement?): KtDiagnos
         DiagnosticKind.RecursionInImplicitTypes -> FirErrors.RECURSION_IN_IMPLICIT_TYPES
         DiagnosticKind.Java -> FirErrors.ERROR_FROM_JAVA_RESOLUTION
         DiagnosticKind.SuperNotAllowed -> FirErrors.SUPER_IS_NOT_AN_EXPRESSION
-        DiagnosticKind.ExpressionExpected -> when (source?.elementType) {
-            KtNodeTypes.BINARY_EXPRESSION -> FirErrors.ASSIGNMENT_IN_EXPRESSION_CONTEXT
-            KtNodeTypes.FUN -> FirErrors.ANONYMOUS_FUNCTION_WITH_NAME
-            KtNodeTypes.WHEN_CONDITION_IN_RANGE, KtNodeTypes.WHEN_CONDITION_IS_PATTERN, KtNodeTypes.WHEN_CONDITION_EXPRESSION ->
+        DiagnosticKind.ExpressionExpected -> when (source?.syntaxId) {
+            KtNodeTypeId.BINARY_EXPRESSION -> FirErrors.ASSIGNMENT_IN_EXPRESSION_CONTEXT
+            KtNodeTypeId.FUNCTION -> FirErrors.ANONYMOUS_FUNCTION_WITH_NAME
+            KtNodeTypeId.WHEN_CONDITION_IN_RANGE, KtNodeTypeId.WHEN_CONDITION_IS_PATTERN, KtNodeTypeId.WHEN_CONDITION_EXPRESSION ->
                 FirErrors.EXPECTED_CONDITION
             else -> FirErrors.EXPRESSION_EXPECTED
         }

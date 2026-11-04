@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtNodeTypeId
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -14,7 +16,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirNamedReference
-import org.jetbrains.kotlin.psi.psiUtil.UNWRAPPABLE_TOKEN_TYPES
 import org.jetbrains.kotlin.resolve.source.hasUnwrappableAsAssignmentLhs
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -31,7 +32,7 @@ object FirParenthesizedLhsSetOperatorChecker : FirFunctionCallChecker(MppChecker
         if (callee is FirErrorNamedReference) return
 
         if (// For `(a[0]) = ...` where `a: Array<A>`
-            (source.elementType in UNWRAPPABLE_TOKEN_TYPES) && callee.isArrayAccess ||
+            source.isUnwrappable && callee.isArrayAccess ||
             // For `(a[0]) += ""` where `a: Array<A>`
             source.hasUnwrappableAsAssignmentLhs() && callee.isAugmentedAssign ||
             // For `(a[0])++` where `a` has `get`,`set` and `inc` operators
@@ -40,6 +41,12 @@ object FirParenthesizedLhsSetOperatorChecker : FirFunctionCallChecker(MppChecker
             reporter.reportOn(source, FirErrors.WRAPPED_LHS_IN_ASSIGNMENT)
         }
     }
+
+    private val KtSourceElement.isUnwrappable: Boolean
+        get() = when (syntaxId) {
+            KtNodeTypeId.PARENTHESIZED, KtNodeTypeId.LABELED_EXPRESSION, KtNodeTypeId.ANNOTATED_EXPRESSION -> true
+            else -> false
+        }
 
     private val FirNamedReference.isArrayAccess: Boolean
         get() = source?.kind == KtFakeSourceElementKind.ArrayAccessNameReference

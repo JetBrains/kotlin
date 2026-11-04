@@ -5,14 +5,16 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.KtNodeTypeId
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.KtTokenId
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.VAL_VAR_IDS
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaredMemberScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -40,7 +42,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -61,7 +62,7 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
     override fun check(declaration: FirProperty) {
         val source = declaration.source ?: return
         // val (...) = `destructuring_declaration`
-        if (source.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION) {
+        if (source.syntaxId == KtNodeTypeId.DESTRUCTURING_DECLARATION) {
             checkInitializer(source, declaration.initializer)
             checkSquareBracketsLanguageFeature(source)
             return
@@ -72,14 +73,14 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
         }
 
         // val (`destructuring_declaration_entry`, ...) = ...
-        if (source.elementType != KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY) return
+        if (source.syntaxId != KtNodeTypeId.DESTRUCTURING_DECLARATION_ENTRY) return
 
         val initializer = declaration.initializer as? FirQualifiedAccessExpression ?: return
         val originalDestructuringDeclaration = getDestructuringVariableOfEntry(declaration) ?: return
         val originalDestructuringDeclarationOrInitializer =
             when (originalDestructuringDeclaration) {
                 is FirProperty -> {
-                    if (originalDestructuringDeclaration.initializer?.source?.elementType == KtNodeTypes.FOR) {
+                    if (originalDestructuringDeclaration.initializer?.source?.syntaxId == KtNodeTypeId.FOR) {
                         // for ((entry, ...) = `destructuring_declaration`) { ... }
                         // It will be wrapped as `next()` call whose explicit receiver is `iterator()` on the actual source.
                         val iterator = originalDestructuringDeclaration.initializer?.explicitReceiverOfQualifiedAccess
@@ -105,7 +106,7 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
         if (initializer !is FirComponentCall) return
 
         // We check above that initializer is a component call, therefore, we must have positional destructuring.
-        source.getChild(KtTokens.EQ, depth = 1)?.let {
+        source.getChild(KtTokenId.EQ, depth = 1)?.let {
             reporter.reportOn(
                 it,
                 FirErrors.UNSUPPORTED_FEATURE,
@@ -147,7 +148,7 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
     }
 
     fun getDestructuringVariableIfEntry(declaration: FirProperty): FirVariableSymbol<*>? {
-        return runIf(declaration.source?.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY) {
+        return runIf(declaration.source?.syntaxId == KtNodeTypeId.DESTRUCTURING_DECLARATION_ENTRY) {
             getDestructuringVariableOfEntry(declaration)?.symbol
         }
     }
@@ -158,7 +159,7 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
 
     private fun KtSourceElement.syntaxKind(originalDestructuringDeclaration: FirVariable): DestructuringSyntax {
         val hasOpeningSquareBracket = originalDestructuringDeclaration.source?.findSquareBracket() != null
-        val hasValVar = getChild(KtTokens.VAL_VAR, depth = 1) != null
+        val hasValVar = getChild(VAL_VAR_IDS, depth = 1) != null
 
         return when (hasOpeningSquareBracket) {
             true -> when (hasValVar) {
@@ -176,7 +177,7 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
     private fun checkFullFormLanguageFeature(source: KtSourceElement) {
         if (LanguageFeature.NameBasedDestructuring.isEnabled()) return
 
-        source.getChild(KtTokens.VAL_VAR, depth = 1)?.let {
+        source.getChild(VAL_VAR_IDS, depth = 1)?.let {
             reporter.reportOn(
                 it,
                 FirErrors.UNSUPPORTED_FEATURE,
@@ -200,9 +201,9 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
     }
 
     private fun KtSourceElement.findSquareBracket(): KtSourceElement? {
-        return when (elementType) {
-            KtNodeTypes.DESTRUCTURING_DECLARATION -> getChild(KtTokens.LBRACKET, depth = 1)
-            KtNodeTypes.VALUE_PARAMETER -> getChild(KtNodeTypes.DESTRUCTURING_DECLARATION, depth = 1)?.findSquareBracket()
+        return when (syntaxId) {
+            KtNodeTypeId.DESTRUCTURING_DECLARATION -> getChild(KtTokenId.LBRACKET, depth = 1)
+            KtNodeTypeId.VALUE_PARAMETER -> getChild(KtNodeTypeId.DESTRUCTURING_DECLARATION, depth = 1)?.findSquareBracket()
             else -> null
         }
     }

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.extra
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.KtTokenId
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.modalityModifier
@@ -66,5 +67,5 @@ object RedundantModalityModifierSyntaxChecker : FirDeclarationSyntaxChecker<FirD
      * [KtTokens.OPEN_KEYWORD] in interfaces is already reported by [FirErrors.REDUNDANT_OPEN_IN_INTERFACE].
      */
     private val FirDeclaration.declaresOpenModality: Boolean
-        get() = source?.getModifierList()?.modifiers?.any { it.token == KtTokens.OPEN_KEYWORD } == true
+        get() = source?.getModifierList()?.modifiers?.any { it.tokenId == KtTokenId.OPEN_MODIFIER } == true
 }

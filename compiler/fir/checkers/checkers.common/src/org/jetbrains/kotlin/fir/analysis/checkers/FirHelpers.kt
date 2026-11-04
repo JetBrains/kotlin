@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers
 
-import com.intellij.lang.LighterASTNode
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -13,7 +12,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategy
-import org.jetbrains.kotlin.diagnostics.isExpression
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.RecursionType.Plain
@@ -46,9 +44,7 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.resolvedControlFlowGraphReference
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
-import org.jetbrains.kotlin.lexer.KtTokens.VAL_VAR
 import org.jetbrains.kotlin.name.*
-import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.resolve.AnnotationTargetList
 import org.jetbrains.kotlin.resolve.AnnotationTargetListForDeprecation
 import org.jetbrains.kotlin.resolve.AnnotationTargetLists
@@ -60,7 +56,6 @@ import org.jetbrains.kotlin.types.model.TypeCheckerProviderContext
 import org.jetbrains.kotlin.types.model.isNullableType
 import org.jetbrains.kotlin.util.ImplementationStatus
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import org.jetbrains.kotlin.util.getChildren
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -328,10 +323,12 @@ val FirFunctionCall.isIterator: Boolean
 fun ConeKotlinType.isSubtypeOfThrowable(session: FirSession): Boolean =
     session.builtinTypes.throwableType.coneType.isSupertypeOf(session.typeContext, this.fullyExpandedType(session))
 
+internal val VAL_VAR_IDS: SyntaxIdSet = syntaxIdSetOf(KtTokenId.VAL_KEYWORD, KtTokenId.VAR_KEYWORD)
+
 val FirValueParameter.hasValOrVar: Boolean
     get() {
         val source = this.source ?: return false
-        return source.getChild(VAL_VAR) != null
+        return source.getChild(VAL_VAR_IDS) != null
     }
 
 fun KotlinTypeMarker.isSupertypeOf(context: TypeCheckerProviderContext, type: KotlinTypeMarker?): Boolean =
@@ -549,7 +546,7 @@ fun checkTypeMismatch(
             val calleeSource = (rValue as? FirQualifiedAccessExpression)?.calleeReference?.source
             val factory = when {
                 !isInitializer -> FirErrors.ASSIGNMENT_TYPE_MISMATCH
-                source.elementType == KtNodeTypes.BACKING_FIELD -> FirErrors.FIELD_INITIALIZER_TYPE_MISMATCH
+                source.syntaxId == KtNodeTypeId.BACKING_FIELD -> FirErrors.FIELD_INITIALIZER_TYPE_MISMATCH
                 calleeSource?.kind is KtFakeSourceElementKind.DesugaredForLoop -> FirErrors.TYPE_MISMATCH
                 else -> FirErrors.INITIALIZER_TYPE_MISMATCH
             }
@@ -840,33 +837,9 @@ fun FirQualifiedAccessExpression.explicitReceiverIsNotSuperReference(): Boolean 
 }
 
 
+context(context: CheckerContext)
 internal val KtSourceElement.defaultValueForParameter: KtSourceElement?
-    get() = when (this) {
-        is KtPsiSourceElement -> (psi as? KtParameter)?.defaultValue?.toKtPsiSourceElement()
-        is KtLightSourceElement -> findDefaultValue(this)
-    }
-
-private fun findDefaultValue(source: KtLightSourceElement): KtLightSourceElement? {
-    var defaultValue: LighterASTNode? = null
-    var defaultValueOffset = source.startOffset
-
-    val nodes = source.lighterASTNode.getChildren(source.treeStructure)
-    for (node in nodes) {
-        if (node.isExpression()) {
-            defaultValue = node
-            break
-        } else {
-            defaultValueOffset += node.endOffset - node.startOffset
-        }
-    }
-    if (defaultValue == null) return null
-
-    return defaultValue.toKtLightSourceElement(
-        source.treeStructure,
-        startOffset = defaultValueOffset,
-        endOffset = defaultValueOffset + defaultValue.textLength,
-    )
-}
+    get() = with(context.session.syntaxComponent) { findDefaultValueSource() }
 
 context(context: CheckerContext)
 @OptIn(ScopeFunctionRequiresPrewarm::class)

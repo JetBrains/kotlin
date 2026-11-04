@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.KtTokenId
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
@@ -19,7 +20,6 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.types.abbreviatedTypeOrSelf
 import org.jetbrains.kotlin.fir.types.classLikeLookupTagIfAny
 import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.StandardClassIds
 
 object FirSuspendLimitationsChecker : FirFunctionChecker(MppCheckerKind.Common) {
@@ -30,7 +30,7 @@ object FirSuspendLimitationsChecker : FirFunctionChecker(MppCheckerKind.Common) 
         }
 
         if (declaration.annotations.any { it.isKotlinTestAnnotation(context.session) }) {
-            declaration.getModifier(KtTokens.SUSPEND_KEYWORD)?.let {
+            declaration.getModifier(KtTokenId.SUSPEND_MODIFIER)?.let {
                 reporter.reportOn(it.source, FirErrors.UNSUPPORTED_SUSPEND_TEST)
             }
         }

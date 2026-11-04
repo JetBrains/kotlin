@@ -244,31 +244,20 @@ public class org/jetbrains/kotlin/kdoc/lexer/KDocToken : org/jetbrains/kotlin/le
 
 public abstract interface class org/jetbrains/kotlin/kdoc/lexer/KDocTokens {
 	public static final field CODE_BLOCK_TEXT Lorg/jetbrains/kotlin/kdoc/lexer/KDocToken;
-	public static final field CODE_BLOCK_TEXT_Id I
 	public static final field CODE_SPAN_TEXT Lorg/jetbrains/kotlin/kdoc/lexer/KDocToken;
-	public static final field CODE_SPAN_TEXT_Id I
 	public static final field CONTENT_TOKENS Lcom/intellij/psi/tree/TokenSet;
 	public static final field END Lorg/jetbrains/kotlin/kdoc/lexer/KDocToken;
-	public static final field END_Id I
 	public static final field KDOC Lcom/intellij/psi/tree/ILazyParseableElementType;
 	public static final field KDOC_HIGHLIGHT_TOKENS Lcom/intellij/psi/tree/TokenSet;
 	public static final field KDOC_LPAR Lorg/jetbrains/kotlin/kdoc/lexer/KDocToken;
-	public static final field KDOC_LPAR_Id I
 	public static final field KDOC_RPAR Lorg/jetbrains/kotlin/kdoc/lexer/KDocToken;
-	public static final field KDOC_RPAR_Id I
 	public static final field LEADING_ASTERISK Lorg/jetbrains/kotlin/kdoc/lexer/KDocToken;
-	public static final field LEADING_ASTERISK_Id I
 	public static final field MARKDOWN_ESCAPED_CHAR Lorg/jetbrains/kotlin/kdoc/lexer/KDocToken;
-	public static final field MARKDOWN_ESCAPED_CHAR_Id I
 	public static final field MARKDOWN_INLINE_LINK Lorg/jetbrains/kotlin/kdoc/lexer/KDocToken;
-	public static final field MARKDOWN_INLINE_LINK_Id I
 	public static final field MARKDOWN_LINK Lcom/intellij/psi/tree/ILazyParseableElementType;
 	public static final field START Lorg/jetbrains/kotlin/kdoc/lexer/KDocToken;
-	public static final field START_Id I
 	public static final field TAG_NAME Lorg/jetbrains/kotlin/kdoc/lexer/KDocToken;
-	public static final field TAG_NAME_Id I
 	public static final field TEXT Lorg/jetbrains/kotlin/kdoc/lexer/KDocToken;
-	public static final field TEXT_Id I
 }
 
 public class org/jetbrains/kotlin/kdoc/parser/KDocElementType : com/intellij/psi/tree/IElementType {
@@ -428,328 +417,176 @@ public class org/jetbrains/kotlin/lexer/KtToken : com/intellij/psi/tree/IElement
 
 public abstract interface class org/jetbrains/kotlin/lexer/KtTokens {
 	public static final field ABSTRACT_KEYWORD Lorg/jetbrains/kotlin/lexer/KtModifierKeywordToken;
-	public static final field ABSTRACT_KEYWORD_Id I
 	public static final field ACTUAL_KEYWORD Lorg/jetbrains/kotlin/lexer/KtModifierKeywordToken;
-	public static final field ACTUAL_KEYWORD_Id I
 	public static final field ALL_ASSIGNMENTS Lcom/intellij/psi/tree/TokenSet;
 	public static final field ALL_KEYWORD Lorg/jetbrains/kotlin/lexer/KtKeywordToken;
-	public static final field ALL_KEYWORD_Id I
 	public static final field ALL_SAFE_ACCESSES Lcom/intellij/psi/tree/TokenSet;
 	public static final field AND Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;
 	public static final field ANDAND Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;
-	public static final field ANDAND_Id I
-	public static final field AND_Id I
 	public static final field ANNOTATION_KEYWORD Lorg/jetbrains/kotlin/lexer/KtModifierKeywordToken;
-	public static final field ANNOTATION_KEYWORD_Id I
 	public static final field ARROW Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;
-	public static final field ARROW_Id I
 	public static final field AS_KEYWORD Lorg/jetbrains/kotlin/lexer/KtKeywordToken;
-	public static final field AS_KEYWORD_Id I
 	public static final field AS_SAFE Lorg/jetbrains/kotlin/lexer/KtToken;
-	public static final field AS_SAFE_Id I
 	public static final field AT Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;
-	public static final field AT_Id I
 	public static final field AUGMENTED_ASSIGNMENTS Lcom/intellij/psi/tree/TokenSet;
 	public static final field BLOCK_COMMENT Lorg/jetbrains/kotlin/lexer/KtToken;
-	public static final field BLOCK_COMMENT_Id I
 	public static final field BREAK_KEYWORD Lorg/jetbrains/kotlin/lexer/KtKeywordToken;
-	public static final field BREAK_KEYWORD_Id I
 	public static final field BY_KEYWORD Lorg/jetbrains/kotlin/lexer/KtKeywordToken;
-	public static final field BY_KEYWORD_Id I
 	public static final field CATCH_KEYWORD Lorg/jetbrains/kotlin/lexer/KtKeywordToken;
-	public static final field CATCH_KEYWORD_Id I
 	public static final field CHARACTER_LITERAL Lorg/jetbrains/kotlin/lexer/KtToken;
-	public static final field CHARACTER_LITERAL_Id I
 	public static final field CLASS_KEYWORD Lorg/jetbrains/kotlin/lexer/KtKeywordToken;
-	public static final field CLASS_KEYWORD_Id I
 	public static final field CLOSING_QUOTE Lorg/jetbrains/kotlin/lexer/KtToken;
-	public static final field CLOSING_QUOTE_Id I
 	public static final field COLON Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;
 	public static final field COLONCOLON Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;
-	public static final field COLONCOLON_Id I
-	public static final field COLON_Id I
 	public static final field COMMA Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;
-	public static final field COMMA_Id I
 	public static final field COMMENTS Lcom/intellij/psi/tree/TokenSet;
 	public static final field COMPANION_KEYWORD Lorg/jetbrains/kotlin/lexer/KtModifierKeywordToken;
-	public static final field COMPANION_KEYWORD_Id I
 	public static final field CONSTRUCTOR_KEYWORD Lorg/jetbrains/kotlin/lexer/KtKeywordToken;
-	public static final field CONSTRUCTOR_KEYWORD_Id I
 	public static final field CONST_KEYWORD Lorg/jetbrains/kotlin/lexer/KtModifierKeywordToken;
-	public static final field CONST_KEYWORD_Id I
 	public static final field CONTEXT_KEYWORD Lorg/jetbrains/kotlin/lexer/KtKeywordToken;
-	public static final field CONTEXT_KEYWORD_Id I
 	public static final field CONTINUE_KEYWORD Lorg/jetbrains/kotlin/lexer/KtKeywordToken;
-	public static final field CONTINUE_KEYWORD_Id I
 	public static final field CONTRACT_KEYWORD Lorg/jetbrains/kotlin/lexer/KtModifierKeywordToken;
-	public static final field CONTRACT_KEYWORD_Id I
 	public static final field CROSSINLINE_KEYWORD Lorg/jetbrains/kotlin/lexer/KtModifierKeywordToken;
-	public static final field CROSSINLINE_KEYWORD_Id I
 	public static final field DANGLING_NEWLINE Lorg/jetbrains/kotlin/lexer/KtToken;
-	public static final field DANGLING_NEWLINE_Id I
 	public static final field DATA_KEYWORD Lorg/jetbrains/kotlin/lexer/KtModifierKeywordToken;
-	public static final field DATA_KEYWORD_Id I
 	public static final field DEFAULT_VISIBILITY_KEYWORD Lorg/jetbrains/kotlin/lexer/KtModifierKeywordToken;
 	public static final field DELEGATE_KEYWORD Lorg/jetbrains/kotlin/lexer/KtKeywordToken;
-	public static final field DELEGATE_KEYWORD_Id I
 	public static final field DIV Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;
 	public static final field DIVEQ Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;
-	public static final field DIVEQ_Id I
-	public static final field DIV_Id I
 	public static final field DOC_COMMENT Lcom/intellij/psi/tree/IElementType;
 	public static final field DOT Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;
-	public static final field DOT_Id I
 	public static final field DOUBLE_ARROW Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;
-	public static final field DOUBLE_ARROW_Id I
 	public static final field DOUBLE_SEMICOLON Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;
-	public static final field DOUBLE_SEMICOLON_Id I
 	public static final field DO_KEYWORD Lorg/jetbrains/kotlin/lexer/KtKeywordToken;
-	public static final field DO_KEYWORD_Id I
 	public static final field DYNAMIC_KEYWORD Lorg/jetbrains/kotlin/lexer/KtKeywordToken;
-	public static final field DYNAMIC_KEYWORD_Id I
 	public static final field ELSE_KEYWORD Lorg/jetbrains/kotlin/lexer/KtKeywordToken;
-	public static final field ELSE_KEYWORD_Id I
 	public static final field ELVIS Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;
-	public static final field ELVIS_Id I
 	public static final field ENUM_KEYWORD Lorg/jetbrains/kotlin/lexer/KtModifierKeywordToken;
-	public static final field ENUM_KEYWORD_Id I
 	public static final field EOF Lorg/jetbrains/kotlin/lexer/KtToken;
-	public static final field EOF_Id I
 	public static final field EOL_COMMENT Lorg/jetbrains/kotlin/lexer/KtToken;
-	public static final field EOL_COMMENT_Id I
 	public static final field EOL_OR_SEMICOLON Lorg/jetbrains/kotlin/lexer/KtToken;
-	public static final field EOL_OR_SEMICOLON_Id I
 	public static final field EQ Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;
 	public static final field EQEQ Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;
 	public static final field EQEQEQ Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;
-	public static final field EQEQEQ_Id I
-	public static final field EQEQ_Id I
-	public static final field EQ_Id I
 	public static final field ERROR_KEYWORD Lorg/jetbrains/kotlin/lexer/KtModifierKeywordToken;
-	public static final field ERROR_KEYWORD_Id I
 	public static final field ERROR_SAFE_ACCESS Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;
-	public static final field ERROR_SAFE_ACCESS_Id I
 	public static final field ESCAPE_SEQUENCE Lorg/jetbrains/kotlin/lexer/KtToken;
-	public static final field ESCAPE_SEQUENCE_Id I
 	public static final field EXCL Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;
 	public static final field EXCLEQ Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;
 	public static final field EXCLEQEQEQ Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;
-	public static final field EXCLEQEQEQ_Id I
-	public static final field EXCLEQ_Id I
 	public static final field EXCLEXCL Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;
-	public static final field EXCLEXCL_Id I
-	public static final field EXCL_Id I
 	public static final field EXPECT_KEYWORD Lorg/jetbrains/kotlin/lexer/KtModifierKeywordToken;
-	public static final field EXPECT_KEYWORD_Id I
 	public static final field EXTERNAL_KEYWORD Lorg/jetbrains/kotlin/lexer/KtModifierKeywordToken;
-	public static final field EXTERNAL_KEYWORD_Id I
 	public static final field FALSE_KEYWORD Lorg/jetbrains/kotlin/lexer/KtKeywordToken;
-	public static final field FALSE_KEYWORD_Id I
 	public static final field FIELD_IDENTIFIER Lorg/jetbrains/kotlin/lexer/KtToken;
-	public static final field FIELD_IDENTIFIER_Id I
 	public static final field FIELD_KEYWORD Lorg/jetbrains/kotlin/lexer/KtKeywordToken;
-	public static final field FIELD_KEYWORD_Id I
 	public static final field FILE_KEYWORD Lorg/jetbrains/kotlin/lexer/KtKeywordToken;
-	public static final field FILE_KEYWORD_Id I
 	public static final field FINALLY_KEYWORD Lorg/jetbrains/kotlin/lexer/KtKeywordToken;
-	public static final field FINALLY_KEYWORD_Id I
 	public static final field FINAL_KEYWORD Lorg/jetbrains/kotlin/lexer/KtModifierKeywordToken;
-	public static final field FINAL_KEYWORD_Id I
 	public static final field FLOAT_LITERAL Lorg/jetbrains/kotlin/lexer/KtToken;
-	public static final field FLOAT_LITERAL_Id I
 	public static final field FOR_KEYWORD Lorg/jetbrains/kotlin/lexer/KtKeywordToken;
-	public static final field FOR_KEYWORD_Id I
 	public static final field FUN_KEYWORD Lorg/jetbrains/kotlin/lexer/KtModifierKeywordToken;
-	public static final field FUN_KEYWORD_Id I
 	public static final field GET_KEYWORD Lorg/jetbrains/kotlin/lexer/KtKeywordToken;
-	public static final field GET_KEYWORD_Id I
 	public static final field GT Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;
 	public static final field GTEQ Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;
-	public static final field GTEQ_Id I
-	public static final field GT_Id I
 	public static final field HASH Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;
-	public static final field HASH_Id I
 	public static final field IDENTIFIER Lorg/jetbrains/kotlin/lexer/KtToken;
-	public static final field IDENTIFIER_Id I
 	public static final field IF_KEYWORD Lorg/jetbrains/kotlin/lexer/KtKeywordToken;
-	public static final field IF_KEYWORD_Id I
 	public static final field IMPORT_KEYWORD Lorg/jetbrains/kotlin/lexer/KtKeywordToken;
-	public static final field IMPORT_KEYWORD_Id I
 	public static final field INCREMENT_AND_DECREMENT Lcom/intellij/psi/tree/TokenSet;
 	public static final field INFIX_KEYWORD Lorg/jetbrains/kotlin/lexer/KtModifierKeywordToken;
-	public static final field INFIX_KEYWORD_Id I
 	public static final field INIT_KEYWORD Lorg/jetbrains/kotlin/lexer/KtKeywordToken;
-	public static final field INIT_KEYWORD_Id I
 	public static final field INLINE_KEYWORD Lorg/jetbrains/kotlin/lexer/KtModifierKeywordToken;
-	public static final field INLINE_KEYWORD_Id I
 	public static final field INNER_KEYWORD Lorg/jetbrains/kotlin/lexer/KtModifierKeywordToken;
-	public static final field INNER_KEYWORD_Id I
 	public static final field INTEGER_LITERAL Lorg/jetbrains/kotlin/lexer/KtToken;
-	public static final field INTEGER_LITERAL_Id I
 	public static final field INTERFACE_KEYWORD Lorg/jetbrains/kotlin/lexer/KtKeywordToken;
-	public static final field INTERFACE_KEYWORD_Id I
 	public static final field INTERNAL_KEYWORD Lorg/jetbrains/kotlin/lexer/KtModifierKeywordToken;
-	public static final field INTERNAL_KEYWORD_Id I
 	public static final field INTERPOLATION_PREFIX Lorg/jetbrains/kotlin/lexer/KtToken;
-	public static final field INTERPOLATION_PREFIX_Id I
-	public static final field INVALID_Id I
 	public static final field IN_KEYWORD Lorg/jetbrains/kotlin/lexer/KtModifierKeywordToken;
-	public static final field IN_KEYWORD_Id I
 	public static final field IS_KEYWORD Lorg/jetbrains/kotlin/lexer/KtKeywordToken;
-	public static final field IS_KEYWORD_Id I
 	public static final field KEYWORDS Lcom/intellij/psi/tree/TokenSet;
 	public static final field LATEINIT_KEYWORD Lorg/jetbrains/kotlin/lexer/KtModifierKeywordToken;
-	public static final field LATEINIT_KEYWORD_Id I
 	public static final field LBRACE Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;
-	public static final field LBRACE_Id I
 	public static final field LBRACKET Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;
-	public static final field LBRACKET_Id I
 	public static final field LONG_TEMPLATE_ENTRY_END Lorg/jetbrains/kotlin/lexer/KtToken;
-	public static final field LONG_TEMPLATE_ENTRY_END_Id I
 	public static final field LONG_TEMPLATE_ENTRY_START Lorg/jetbrains/kotlin/lexer/KtToken;
-	public static final field LONG_TEMPLATE_ENTRY_START_Id I
 	public static final field LPAR Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;
-	public static final field LPAR_Id I
 	public static final field LT Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;
 	public static final field LTEQ Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;
-	public static final field LTEQ_Id I
-	public static final field LT_Id I
 	public static final field MINUS Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;
 	public static final field MINUSEQ Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;
-	public static final field MINUSEQ_Id I
 	public static final field MINUSMINUS Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;
-	public static final field MINUSMINUS_Id I
-	public static final field MINUS_Id I
 	public static final field MODALITY_MODIFIERS Lcom/intellij/psi/tree/TokenSet;
 	public static final field MODIFIER_KEYWORDS Lcom/intellij/psi/tree/TokenSet;
 	public static final field MODIFIER_KEYWORDS_ARRAY [Lorg/jetbrains/kotlin/lexer/KtModifierKeywordToken;
 	public static final field MUL Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;
 	public static final field MULTEQ Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;
-	public static final field MULTEQ_Id I
-	public static final field MUL_Id I
 	public static final field NOINLINE_KEYWORD Lorg/jetbrains/kotlin/lexer/KtModifierKeywordToken;
-	public static final field NOINLINE_KEYWORD_Id I
 	public static final field NOT_IN Lorg/jetbrains/kotlin/lexer/KtKeywordToken;
-	public static final field NOT_IN_Id I
 	public static final field NOT_IS Lorg/jetbrains/kotlin/lexer/KtKeywordToken;
-	public static final field NOT_IS_Id I
 	public static final field NULL_KEYWORD Lorg/jetbrains/kotlin/lexer/KtKeywordToken;
-	public static final field NULL_KEYWORD_Id I
 	public static final field OBJECT_KEYWORD Lorg/jetbrains/kotlin/lexer/KtKeywordToken;
-	public static final field OBJECT_KEYWORD_Id I
 	public static final field OPEN_KEYWORD Lorg/jetbrains/kotlin/lexer/KtModifierKeywordToken;
-	public static final field OPEN_KEYWORD_Id I
 	public static final field OPEN_QUOTE Lorg/jetbrains/kotlin/lexer/KtToken;
-	public static final field OPEN_QUOTE_Id I
 	public static final field OPERATIONS Lcom/intellij/psi/tree/TokenSet;
 	public static final field OPERATOR_KEYWORD Lorg/jetbrains/kotlin/lexer/KtModifierKeywordToken;
-	public static final field OPERATOR_KEYWORD_Id I
 	public static final field OR Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;
 	public static final field OROR Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;
-	public static final field OROR_Id I
-	public static final field OR_Id I
 	public static final field OUT_KEYWORD Lorg/jetbrains/kotlin/lexer/KtModifierKeywordToken;
-	public static final field OUT_KEYWORD_Id I
 	public static final field OVERRIDE_KEYWORD Lorg/jetbrains/kotlin/lexer/KtModifierKeywordToken;
-	public static final field OVERRIDE_KEYWORD_Id I
 	public static final field PACKAGE_KEYWORD Lorg/jetbrains/kotlin/lexer/KtKeywordToken;
-	public static final field PACKAGE_KEYWORD_Id I
 	public static final field PARAM_KEYWORD Lorg/jetbrains/kotlin/lexer/KtKeywordToken;
-	public static final field PARAM_KEYWORD_Id I
 	public static final field PERC Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;
 	public static final field PERCEQ Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;
-	public static final field PERCEQ_Id I
-	public static final field PERC_Id I
 	public static final field PLUS Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;
 	public static final field PLUSEQ Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;
-	public static final field PLUSEQ_Id I
 	public static final field PLUSPLUS Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;
-	public static final field PLUSPLUS_Id I
-	public static final field PLUS_Id I
 	public static final field PRIVATE_KEYWORD Lorg/jetbrains/kotlin/lexer/KtModifierKeywordToken;
-	public static final field PRIVATE_KEYWORD_Id I
 	public static final field PROPERTY_KEYWORD Lorg/jetbrains/kotlin/lexer/KtKeywordToken;
-	public static final field PROPERTY_KEYWORD_Id I
 	public static final field PROTECTED_KEYWORD Lorg/jetbrains/kotlin/lexer/KtModifierKeywordToken;
-	public static final field PROTECTED_KEYWORD_Id I
 	public static final field PUBLIC_KEYWORD Lorg/jetbrains/kotlin/lexer/KtModifierKeywordToken;
-	public static final field PUBLIC_KEYWORD_Id I
 	public static final field QUALIFIED_ACCESS Lcom/intellij/psi/tree/TokenSet;
 	public static final field QUEST Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;
-	public static final field QUEST_Id I
 	public static final field RANGE Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;
-	public static final field RANGE_Id I
 	public static final field RANGE_UNTIL Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;
-	public static final field RANGE_UNTIL_Id I
 	public static final field RBRACE Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;
-	public static final field RBRACE_Id I
 	public static final field RBRACKET Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;
-	public static final field RBRACKET_Id I
 	public static final field RECEIVER_KEYWORD Lorg/jetbrains/kotlin/lexer/KtKeywordToken;
-	public static final field RECEIVER_KEYWORD_Id I
 	public static final field REGULAR_STRING_PART Lorg/jetbrains/kotlin/lexer/KtToken;
-	public static final field REGULAR_STRING_PART_Id I
 	public static final field REIFIED_KEYWORD Lorg/jetbrains/kotlin/lexer/KtModifierKeywordToken;
-	public static final field REIFIED_KEYWORD_Id I
 	public static final field RESERVED Lorg/jetbrains/kotlin/lexer/KtToken;
-	public static final field RESERVED_Id I
 	public static final field RESERVED_VALUE_PARAMETER_MODIFIER_KEYWORDS Lcom/intellij/psi/tree/TokenSet;
 	public static final field RETURN_KEYWORD Lorg/jetbrains/kotlin/lexer/KtKeywordToken;
-	public static final field RETURN_KEYWORD_Id I
 	public static final field RPAR Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;
-	public static final field RPAR_Id I
 	public static final field SAFE_ACCESS Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;
-	public static final field SAFE_ACCESS_Id I
 	public static final field SEALED_KEYWORD Lorg/jetbrains/kotlin/lexer/KtModifierKeywordToken;
-	public static final field SEALED_KEYWORD_Id I
 	public static final field SEMICOLON Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;
-	public static final field SEMICOLON_Id I
 	public static final field SETPARAM_KEYWORD Lorg/jetbrains/kotlin/lexer/KtKeywordToken;
-	public static final field SETPARAM_KEYWORD_Id I
 	public static final field SET_KEYWORD Lorg/jetbrains/kotlin/lexer/KtKeywordToken;
-	public static final field SET_KEYWORD_Id I
 	public static final field SHEBANG_COMMENT Lorg/jetbrains/kotlin/lexer/KtToken;
-	public static final field SHEBANG_COMMENT_Id I
 	public static final field SHORT_TEMPLATE_ENTRY_START Lorg/jetbrains/kotlin/lexer/KtToken;
-	public static final field SHORT_TEMPLATE_ENTRY_START_Id I
 	public static final field SOFT_KEYWORDS Lcom/intellij/psi/tree/TokenSet;
 	public static final field STRINGS Lcom/intellij/psi/tree/TokenSet;
 	public static final field SUPER_KEYWORD Lorg/jetbrains/kotlin/lexer/KtKeywordToken;
-	public static final field SUPER_KEYWORD_Id I
 	public static final field SUSPEND_KEYWORD Lorg/jetbrains/kotlin/lexer/KtModifierKeywordToken;
-	public static final field SUSPEND_KEYWORD_Id I
 	public static final field TAILREC_KEYWORD Lorg/jetbrains/kotlin/lexer/KtModifierKeywordToken;
-	public static final field TAILREC_KEYWORD_Id I
 	public static final field THIS_KEYWORD Lorg/jetbrains/kotlin/lexer/KtKeywordToken;
-	public static final field THIS_KEYWORD_Id I
 	public static final field THROW_KEYWORD Lorg/jetbrains/kotlin/lexer/KtKeywordToken;
-	public static final field THROW_KEYWORD_Id I
 	public static final field TRUE_KEYWORD Lorg/jetbrains/kotlin/lexer/KtKeywordToken;
-	public static final field TRUE_KEYWORD_Id I
 	public static final field TRY_KEYWORD Lorg/jetbrains/kotlin/lexer/KtKeywordToken;
-	public static final field TRY_KEYWORD_Id I
 	public static final field TYPEOF_KEYWORD Lorg/jetbrains/kotlin/lexer/KtKeywordToken;
-	public static final field TYPEOF_KEYWORD_Id I
 	public static final field TYPE_ALIAS_KEYWORD Lorg/jetbrains/kotlin/lexer/KtKeywordToken;
-	public static final field TYPE_ALIAS_KEYWORD_Id I
 	public static final field TYPE_ARGUMENT_MODIFIER_KEYWORDS Lcom/intellij/psi/tree/TokenSet;
 	public static final field TYPE_MODIFIER_KEYWORDS Lcom/intellij/psi/tree/TokenSet;
 	public static final field VALUE_KEYWORD Lorg/jetbrains/kotlin/lexer/KtModifierKeywordToken;
-	public static final field VALUE_KEYWORD_Id I
 	public static final field VAL_KEYWORD Lorg/jetbrains/kotlin/lexer/KtKeywordToken;
-	public static final field VAL_KEYWORD_Id I
 	public static final field VAL_VAR Lcom/intellij/psi/tree/TokenSet;
 	public static final field VARARG_KEYWORD Lorg/jetbrains/kotlin/lexer/KtModifierKeywordToken;
-	public static final field VARARG_KEYWORD_Id I
 	public static final field VAR_KEYWORD Lorg/jetbrains/kotlin/lexer/KtKeywordToken;
-	public static final field VAR_KEYWORD_Id I
 	public static final field VISIBILITY_MODIFIERS Lcom/intellij/psi/tree/TokenSet;
 	public static final field WHEN_KEYWORD Lorg/jetbrains/kotlin/lexer/KtKeywordToken;
-	public static final field WHEN_KEYWORD_Id I
 	public static final field WHERE_KEYWORD Lorg/jetbrains/kotlin/lexer/KtKeywordToken;
-	public static final field WHERE_KEYWORD_Id I
 	public static final field WHILE_KEYWORD Lorg/jetbrains/kotlin/lexer/KtKeywordToken;
-	public static final field WHILE_KEYWORD_Id I
 	public static final field WHITESPACES Lcom/intellij/psi/tree/TokenSet;
 	public static final field WHITE_SPACE Lcom/intellij/psi/tree/IElementType;
 	public static final field WHITE_SPACE_OR_COMMENT_BIT_SET Lcom/intellij/psi/tree/TokenSet;

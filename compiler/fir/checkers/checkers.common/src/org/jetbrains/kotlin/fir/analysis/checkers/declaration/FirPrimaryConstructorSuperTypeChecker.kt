@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.KtNodeTypeId
 import org.jetbrains.kotlin.descriptors.isEnumEntry
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -93,7 +93,7 @@ object FirPrimaryConstructorSuperTypeChecker : FirClassChecker(MppCheckerKind.Co
         if (superClassSymbol.classId in supertypesToSkip) return
 
 
-        if (delegatedCallSource.elementType != KtNodeTypes.SUPER_TYPE_CALL_ENTRY) {
+        if (delegatedCallSource.syntaxId != KtNodeTypeId.SUPER_TYPE_CALL_ENTRY) {
             /**
              * This is a special case for actualizing an `expect` interface into `Any` type.
              * Here, we allow using such an actualized `Any` type without calling directly it's constructor
