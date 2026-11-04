@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.test.data.manager.integration
 import org.jetbrains.kotlin.analysis.test.data.manager.DiscoveredTest
 import org.jetbrains.kotlin.analysis.test.data.manager.TestDataManagerRunner
 import org.jetbrains.kotlin.analysis.test.data.manager.fakes.FakeManagedTest
+import org.jetbrains.kotlin.analysis.test.data.manager.fakes.runner.FakeRunnerScenario
 import org.junit.platform.engine.Filter
 import org.junit.platform.engine.discovery.PackageNameFilter
 import org.junit.platform.launcher.LauncherDiscoveryRequest
@@ -32,6 +33,8 @@ internal abstract class AbstractFakeTestIntegrationTest {
         testDataPath,
         goldenOnly,
         PackageNameFilter.includePackageNames(FakeManagedTest::class.java.`package`.name),
+        // Executed by `TestDataManagerRunnerIntegrationTest` only
+        PackageNameFilter.excludePackageNames(FakeRunnerScenario::class.java.`package`.name),
         *additionalFilters,
     )
 
