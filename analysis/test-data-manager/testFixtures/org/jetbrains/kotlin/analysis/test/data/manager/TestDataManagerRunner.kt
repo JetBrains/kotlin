@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.analysis.test.data.manager
 import org.jetbrains.kotlin.analysis.test.data.manager.TestDataManagerRunner.MAX_CONVERGENCE_PASSES
 import org.jetbrains.kotlin.analysis.test.data.manager.filters.ManagedTestFilter
 import org.jetbrains.kotlin.analysis.test.data.manager.filters.TestMetadataFilter
+import org.jetbrains.kotlin.analysis.test.data.manager.filters.resolveTestDataPaths
+import org.jetbrains.kotlin.analysis.test.data.manager.filters.splitTestDataPaths
 import org.jetbrains.kotlin.analysis.test.data.manager.filters.testDataPath
 import org.jetbrains.kotlin.analysis.test.data.manager.filters.variantChain
 import org.jetbrains.kotlin.analysis.test.data.manager.listeners.FileUpdateTrackingListener
@@ -18,6 +20,7 @@ import org.junit.platform.engine.discovery.DiscoverySelectors
 import org.junit.platform.launcher.*
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder
 import org.junit.platform.launcher.core.LauncherFactory
+import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.system.exitProcess
 import kotlin.time.Duration
@@ -117,7 +120,16 @@ internal object TestDataManagerRunner {
             }
 
             outcome = LauncherFactory.openSession().use { launcherSession ->
-                discoverAndRunTests(testClassPattern, testDataPath, goldenOnly, incremental, launcherSession = launcherSession)
+                discoverAndRunTests(
+                    testClassPattern,
+                    testDataPath,
+                    goldenOnly,
+                    incremental,
+                    // Set by the Gradle tasks; without them (a direct launch) the paths are used as given
+                    rootDir = System.getProperty(TEST_DATA_MANAGER_OPTIONS_ROOT_DIR)?.let(::Path),
+                    projectDir = System.getProperty(TEST_DATA_MANAGER_OPTIONS_PROJECT_DIR)?.let(::Path),
+                    launcherSession = launcherSession,
+                )
             }
 
             println("\nTest data management complete.")
@@ -140,13 +152,17 @@ internal object TestDataManagerRunner {
         val mismatchesByPath: Map<String, Set<TestVariantChain>>,
         val errors: Set<TestError>,
         val testExecutions: Int,
+        val runErrors: List<String> = emptyList(),
     ) {
         val failedTests: Int
             get() = totalTests - passedTests
 
         /** Whether the run passes; otherwise the runner exits with 1. */
         val isSuccessful: Boolean
-            get() = mismatchesByPath.isEmpty() && errors.isEmpty()
+            get() = mismatchesByPath.isEmpty() && errors.isEmpty() && runErrors.isEmpty()
+
+        fun withRunErrors(runErrors: List<String>): RunOutcome =
+            RunOutcome(totalTests, passedTests, mismatchesByPath, errors, testExecutions, runErrors)
 
         companion object {
             val EMPTY = RunOutcome(0, 0, emptyMap(), emptySet(), 0)
@@ -170,6 +186,9 @@ internal object TestDataManagerRunner {
     /**
      * Discovers the managed tests matching the filters and runs them group by group.
      *
+     * @param testDataPath the comma-separated `testDataPath` option, resolved against [rootDir] if it is set:
+     *                     a path that doesn't exist fails the run, see [resolveTestDataPaths]
+     * @param projectDir the module directory, to suggest the repository-relative form of a module-relative path
      * @param additionalFilters discovery filters on top of the options, e.g., to restrict the run to some packages in tests
      */
     context(launcherSession: LauncherSession)
@@ -179,10 +198,22 @@ internal object TestDataManagerRunner {
         goldenOnly: Boolean = false,
         incremental: Boolean = false,
         vararg additionalFilters: Filter<*>,
+        rootDir: Path? = null,
+        projectDir: Path? = null,
     ): RunOutcome {
+        val testDataPaths = testDataPath?.let { option ->
+            val resolved = rootDir?.let { resolveTestDataPaths(option, it, projectDir) } ?: return@let splitTestDataPaths(option)
+            if (resolved.errors.isNotEmpty()) {
+                resolved.errors.forEach { System.err.println("ERROR: $it") }
+                return RunOutcome.EMPTY.withRunErrors(resolved.errors)
+            }
+
+            resolved.paths
+        }
+
         val timingStats = TimingStats()
         val launcher = launcherSession.launcher
-        val request = buildDiscoveryRequest(testClassPattern, testDataPath, goldenOnly, *additionalFilters)
+        val request = buildDiscoveryRequest(testClassPattern, testDataPaths, goldenOnly, *additionalFilters)
 
         // Phase 1: Discover tests with variant chains
         (
@@ -340,7 +371,7 @@ internal object TestDataManagerRunner {
 
     internal fun buildDiscoveryRequest(
         testClassPattern: String? = null,
-        testDataPath: String? = null,
+        testDataPaths: List<String>? = null,
         goldenOnly: Boolean = false,
         vararg additionalFilters: Filter<*>,
     ): LauncherDiscoveryRequest {
@@ -354,9 +385,8 @@ internal object TestDataManagerRunner {
                 ManagedTestFilter(goldenOnly),
             )
 
-        if (testDataPath != null) {
-            val includePaths = testDataPath.split(",").map(String::trim).filter(String::isNotEmpty)
-            builder.filters(TestMetadataFilter(includePaths))
+        if (testDataPaths != null) {
+            builder.filters(TestMetadataFilter(testDataPaths))
         }
 
         if (testClassPattern != null) {
