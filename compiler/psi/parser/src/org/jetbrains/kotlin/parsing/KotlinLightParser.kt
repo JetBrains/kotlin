@@ -26,11 +26,17 @@ object KotlinLightParser {
         val builder = PsiBuilderFactory.getInstance().createBuilder(KotlinParserDefinition(), KotlinLexer(), code)
         return parse(
             builder,
-            isScript = sourceFile?.let { FileUtilRt.getExtension(it.name) != KotlinFileType.EXTENSION } ?: false
+            isScript = sourceFile?.let(::isScript) ?: false
         ).also {
             if (errorListener != null) checkOrReportSyntaxErrors(it.root, it, errorListener)
         }
     }
+
+    /**
+     * Whether [sourceFile] is parsed as a script by the light tree parser: any file without the `.kt` extension is.
+     */
+    fun isScript(sourceFile: KtSourceFile): Boolean =
+        FileUtilRt.getExtension(sourceFile.name) != KotlinFileType.EXTENSION
 
     fun parse(builder: PsiBuilder, isScript: Boolean): FlyweightCapableTreeStructure<LighterASTNode> {
         val ktParsing = KotlinParsing.createForTopLevelNonLazy(SemanticWhitespaceAwarePsiBuilderImpl(builder))
