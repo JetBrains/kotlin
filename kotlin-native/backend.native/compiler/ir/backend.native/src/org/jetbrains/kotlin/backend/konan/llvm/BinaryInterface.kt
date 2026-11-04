@@ -40,6 +40,7 @@ object KonanBinaryInterface {
     internal const val MANGLE_FUN_PREFIX = "kfun"
     internal const val MANGLE_CLASS_PREFIX = "kclass"
     internal const val MANGLE_FIELD_PREFIX = "kfield"
+    internal const val MANGLE_CLASS_BODY_PREFIX = "kclassbody"
 
     private val mangler = object : AbstractKonanIrMangler(withReturnType = true, allowOutOfScopeTypeParameters = true) {}
 
@@ -61,6 +62,8 @@ object KonanBinaryInterface {
     fun IrFunction.privateSymbolName(containerName: String): String = funSymbolNameImpl(containerName)
 
     fun IrClass.privateTypeInfoSymbolName(containerName: String): String = typeInfoSymbolNameImpl(containerName)
+
+    fun IrClass.privateClassBodyTypeName(containerName: String): String = classBodyTypeNameImpl(containerName)
 
     fun isExported(declaration: IrDeclaration) = exportChecker.run {
         check(declaration, SpecialDeclarationType.REGULAR) || declaration.isPlatformSpecificExported()
@@ -99,6 +102,11 @@ object KonanBinaryInterface {
     private fun IrClass.typeInfoSymbolNameImpl(containerName: String?): String {
         val fqName = fqNameForIrSerialization.toString()
         return withPrefix(MANGLE_CLASS_PREFIX, containerName?.plus(".$fqName") ?: fqName)
+    }
+
+    private fun IrClass.classBodyTypeNameImpl(containerName: String?): String {
+        val fqName = fqNameForIrSerialization.toString()
+        return withPrefix(MANGLE_CLASS_BODY_PREFIX, containerName?.plus(".$fqName") ?: fqName)
     }
 }
 
@@ -147,6 +155,8 @@ fun IrField.computeSymbolName() = with(KonanBinaryInterface) { symbolName }.repl
 fun IrClass.computeTypeInfoSymbolName() = with(KonanBinaryInterface) { typeInfoSymbolName }.replaceSpecialSymbols()
 
 fun IrClass.computePrivateTypeInfoSymbolName(containerName: String) = with(KonanBinaryInterface) { privateTypeInfoSymbolName(containerName) }.replaceSpecialSymbols()
+
+fun IrClass.computePrivateClassBodyTypeName(containerName: String) = with(KonanBinaryInterface) { privateClassBodyTypeName(containerName) }.replaceSpecialSymbols()
 
 /**
  * Delegates to different naming strategies depending on whether the function is exported or not.

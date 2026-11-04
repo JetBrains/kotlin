@@ -102,19 +102,6 @@ internal class KotlinStaticData(override val generationState: NativeGenerationSt
         return global.pointer
     }
 
-    fun unique(kind: UniqueKind): ConstPointer {
-        val descriptor = when (kind) {
-            UniqueKind.UNIT -> context.irBuiltIns.unitClass.owner
-            UniqueKind.EMPTY_ARRAY -> context.irBuiltIns.arrayClass.owner
-        }
-        return if (isExternal(descriptor)) {
-            generationState.dependenciesTracker.add(descriptor)
-            constPointer(importGlobal(kind.llvmName, runtime.objHeaderType))
-        } else {
-            generationState.llvmDeclarations.forUnique(kind).pointer
-        }
-    }
-
     /**
      * Creates static instance of `konan.ImmutableByteArray` with given values of elements.
      *
@@ -128,4 +115,4 @@ internal class KotlinStaticData(override val generationState: NativeGenerationSt
 }
 
 internal val ContextUtils.theUnitInstanceRef: ConstPointer
-    get() = staticData.unique(UniqueKind.UNIT)
+    get() = generationState.llvmDeclarations.forUnique(UniqueKind.UNIT).pointer

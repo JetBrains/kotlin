@@ -186,20 +186,7 @@ internal interface ContextUtils : RuntimeAware {
         get() = llvmFunctionOrNull ?: error("$name in ${file.name}/${parent.fqNameForIrSerialization}")
 
     val IrSimpleFunction.llvmFunctionOrNull: LlvmFunction?
-        get() {
-            assert(this.isReal) {
-                this.computeFullName()
-            }
-            return if (isExternal(this)) {
-                runtime.addedLLVMExternalFunctions.getOrPut(this) {
-                    val symbolName = this.computeSymbolName(context, forImplementation = true)
-                    val proto = LlvmFunctionProto(this, symbolName, this@ContextUtils, LLVMLinkage.LLVMExternalLinkage)
-                    llvm.externalFunction(proto)
-                }
-            } else {
-                generationState.llvmDeclarations.forFunctionOrNull(this)
-            }
-        }
+        get() = generationState.llvmDeclarations.forFunctionOrNull(this)
 
     /**
      * Address of entry point of [llvmFunction].
@@ -208,20 +195,7 @@ internal interface ContextUtils : RuntimeAware {
         get() = llvmFunction.toConstPointer()
 
     val IrClass.typeInfoPtr: ConstPointer
-        get() {
-            return if (isExternal(this)) {
-                val typeInfoSymbolName = if (KonanBinaryInterface.isExported(this)) {
-                    this.computeTypeInfoSymbolName()
-                } else {
-                    this.computePrivateTypeInfoSymbolName(file.path)
-                }
-
-                generationState.dependenciesTracker.add(this)
-                constPointer(importGlobal(typeInfoSymbolName, runtime.typeInfoType))
-            } else {
-                generationState.llvmDeclarations.forClass(this).typeInfo
-            }
-        }
+        get() = generationState.llvmDeclarations.forClass(this).typeInfo
 
     /**
      * Pointer to type info for given class.
