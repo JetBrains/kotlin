@@ -7,6 +7,15 @@ plugins {
 }
 
 dependencies {
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(testFixtures("org.jetbrains.kotlin:repo-test-fixtures"))
+    implementation("org.jetbrains.kotlin:test-federation-convention")
+    implementation(gradleApi())
+    implementation("org.jetbrains.kotlin:buildsrc-compat") {
+        isTransitive = false
+    }
+    runtimeOnly(libs.log4j2.slf4j.impl)
+
     testImplementation(intellijCore())
     testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(kotlin("test-junit5", libs.versions.kotlin.`for`.gradle.plugins.compilation.get()))
@@ -23,9 +32,6 @@ dependencies {
     testImplementation(testFixtures("org.jetbrains.kotlin:repo-test-fixtures"))
     testImplementation("org.jetbrains.kotlin:test-federation-convention")
     testImplementation(project(":repo:test-runtime"))
-    testImplementation("org.jetbrains.kotlin:buildsrc-compat") {
-        isTransitive = false
-    }
     testImplementation(gradleTestKit())
     testImplementation(libs.intellij.asm)
     testImplementation(libs.icu4j)
@@ -37,7 +43,7 @@ jvmToolchains {
 }
 
 sourceSets {
-    "main" {}
+    "main" { projectDefault() }
     "test" {
         projectDefault()
     }
@@ -102,31 +108,33 @@ projectTests {
 
 
 tasks.register<JavaExec>("updateTestLifecycleTaskDump") {
-    dependsOn(":compileAll")
+    doNotTrackState("Should always run")
     description = "Updates the 'testLifecycleTask.dump.txt' file"
-    classpath = project.files(sourceSets.test.map { it.runtimeClasspath })
-    mainClass.set($$"org.jetbrains.kotlin.code.TestLifecycleTaskTest$Update")
+    classpath = project.files(sourceSets.main.map { it.runtimeClasspath })
     workingDir = rootDir
+    mainClass = "org.jetbrains.kotlin.code.UpdateTestLifecycleTaskDump"
 }
 
 tasks.register<JavaExec>("updateDomainsDump") {
     doNotTrackState("Should always run")
     description = "Updates the 'domains.dump.txt' and 'domains.ignore.dump.txt' files"
-    classpath = files(sourceSets.test.map { it.runtimeClasspath })
+    classpath = files(sourceSets.main.map { it.runtimeClasspath })
     workingDir = rootDir
-    mainClass = $$"org.jetbrains.kotlin.code.DomainsDumpTest$Update"
+    mainClass = "org.jetbrains.kotlin.code.UpdateDomainsDump"
 }
 
 tasks.configureEach {
     if (this !is JavaForkOptions) return@configureEach
 
     /* The dump includes tests from Kotlin/Native, updating it requires those parts of the build to be enabled */
-    val isKotlinNativeEnabled = kotlinBuildProperties.isKotlinNativeEnabled
-    val projectPath = project.path
-    doFirst {
-        if (!isKotlinNativeEnabled.get()) error(
-            "Running '$projectPath' requires Kotlin/Native to be enabled (-Pkotlin.native.enabled=true)"
-        )
+    if (this is Test) {
+        val isKotlinNativeEnabled = kotlinBuildProperties.isKotlinNativeEnabled
+        val projectPath = project.path
+        doFirst {
+            if (!isKotlinNativeEnabled.get()) error(
+                "Running '$projectPath' requires Kotlin/Native to be enabled (-Pkotlin.native.enabled=true)"
+            )
+        }
     }
 
     /* Nested/Deep debugging support */
