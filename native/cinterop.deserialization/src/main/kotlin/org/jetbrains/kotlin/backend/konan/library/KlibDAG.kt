@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.library.packageFqName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 import org.jetbrains.kotlin.utils.newHashSetWithExpectedSize
+import org.jetbrains.kotlin.utils.softRefCached
 import java.nio.file.Path
 import java.util.PriorityQueue
 import java.util.concurrent.ConcurrentHashMap
@@ -489,12 +490,13 @@ private class KlibDAGBuilderImpl(private val parameters: KlibDAGBuilder.Paramete
 private class KlibDAGNodeImpl(override val library: KotlinLibrary) : KlibDAGNode {
     val nodes = hashSetOf<KlibDAGNodeImpl>()
 
-    override val directDependencies: Set<KotlinLibrary> by lazy {
+    override val directDependencies: Set<KotlinLibrary> by softRefCached {
         nodes.mapTo(newHashSetWithExpectedSize(nodes.size)) { it.library }
     }
 
-    override val allDependencies: Set<KotlinLibrary>
-        get() = buildSet { for (node in nodes) node.collectDependencies(collector = this@buildSet) }
+    override val allDependencies: Set<KotlinLibrary> by softRefCached {
+        buildSet { for (node in nodes) node.collectDependencies(collector = this@buildSet) }
+    }
 
     private fun collectDependencies(collector: MutableSet<KotlinLibrary>) {
         if (collector.add(library)) {
