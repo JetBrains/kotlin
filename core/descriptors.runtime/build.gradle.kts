@@ -17,6 +17,7 @@ dependencies {
 
     testFixturesApi(testFixtures(project(":compiler:tests-common")))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
+    testFixturesApi(testFixtures(project(":compiler:jvm.tests")))
     testFixturesApi(testFixtures(project(":generators:test-generator")))
     testFixturesImplementation(project(":core:reflection.common.jvm"))
     testFixturesApi(intellijCore())

@@ -16,13 +16,13 @@ import org.jetbrains.kotlin.ir.PsiIrFileEntry
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.DISABLE_JAVA_FACADE
+import org.jetbrains.kotlin.test.directives.JvmCodegenDirectives
+import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.java.JavaCompilerFacade
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
-import org.jetbrains.kotlin.test.checkTestInfrastructure
 import org.jetbrains.kotlin.test.testInfraError
 
 abstract class AbstractJvmIrBackendFacade(testServices: TestServices) : IrBackendFacade<BinaryArtifacts.Jvm>(testServices, ArtifactKinds.Jvm) {
@@ -31,6 +31,9 @@ abstract class AbstractJvmIrBackendFacade(testServices: TestServices) : IrBacken
     protected abstract fun produceGenerationState(inputArtifact: IrBackendInput): GenerationState?
     protected abstract val IrBackendInput.sourceFiles: Collection<KtSourceFile>
 
+    override val directiveContainers: List<DirectivesContainer>
+        get() = listOf(JvmCodegenDirectives)
+
     override fun transform(
         module: TestModule,
         inputArtifact: IrBackendInput
@@ -38,7 +41,7 @@ abstract class AbstractJvmIrBackendFacade(testServices: TestServices) : IrBacken
         val state = try {
             produceGenerationState(inputArtifact)
         } catch (e: BackendException) {
-            if (CodegenTestDirectives.IGNORE_ERRORS in module.directives) {
+            if (JvmCodegenDirectives.IGNORE_ERRORS in module.directives) {
                 return null
             }
             throw e

@@ -13,25 +13,22 @@ import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.TestStepBuilder
 import org.jetbrains.kotlin.test.backend.handlers.*
 import org.jetbrains.kotlin.test.backend.ir.CodegenCliJvmFacade
-import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.backend.ir.LoweringCliJvmFacade
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.builders.CompilerStepsNames.JVM_ARTIFACTS_HANDLERS_STEP_NAME
 import org.jetbrains.kotlin.test.directives.*
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_SMAP
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.RUN_DEX_CHECKER
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
 import org.jetbrains.kotlin.test.directives.ForeignAnnotationsDirectives.ENABLE_FOREIGN_ANNOTATIONS
+import org.jetbrains.kotlin.test.directives.JvmCodegenDirectives.DUMP_SMAP
+import org.jetbrains.kotlin.test.directives.JvmCodegenDirectives.RUN_DEX_CHECKER
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.ENABLE_DEBUG_MODE
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_PSI_CLASS_FILES_READING
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrCliJvmFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirCliJvmFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
-import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.ArtifactKinds
-import org.jetbrains.kotlin.test.model.BackendKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
@@ -185,27 +182,6 @@ fun TestConfigurationBuilder.commonHandlersForCodegenTest() {
 }
 
 /**
- * Adds a handler which checks that there are no compilation errors reported at the K2 frontend step
- */
-fun TestStepBuilder.HandlersStepBuilder.NonGroupingStage<FirOutputArtifact, FrontendKinds.FIR>.commonFirHandlersForCodegenTest() {
-    useHandlers(
-        ::NoFirCompilationErrorsHandler,
-    )
-}
-
-fun TestStepBuilder.HandlersStepBuilder.NonGroupingStage<IrBackendInput, BackendKinds.IrBackend>.commonIrHandlersForCodegenTest() {
-    useHandlers(
-        ::NoIrCompilationErrorsHandler,
-    )
-}
-
-fun TestStepBuilder.HandlersStepBuilder.NonGroupingStage<IrBackendInput, BackendKinds.IrBackend>.commonLoweredIrHandlersForCodegenTest() {
-    useHandlers(
-        ::NoIrCompilationErrorsHandler,
-    )
-}
-
-/**
  * Add JVM artifact handlers usually used in codegen tests
  */
 fun TestStepBuilder.HandlersStepBuilder.NonGroupingStage<BinaryArtifacts.Jvm, ArtifactKinds.Jvm>.commonBackendHandlersForCodegenTest(includeNoCompilationErrorsHandler: Boolean = true) {
@@ -253,7 +229,7 @@ fun TestConfigurationBuilder.baseFirBlackBoxCodegenTestDirectivesConfiguration()
 fun TestConfigurationBuilder.configureJvmBoxCodegenSettings(includeAllDumpHandlers: Boolean, includeBytecodeTextHandler: Boolean = true) {
     configureJvmArtifactsHandlersStep {
         if (includeAllDumpHandlers) {
-            useHandlers(::BytecodeListingHandler,)
+            useHandlers(::BytecodeListingHandler)
         }
         if (includeBytecodeTextHandler) {
             useHandlers(::BytecodeTextHandler.bind(true))
@@ -325,6 +301,6 @@ fun TestConfigurationBuilder.configureModernJavaTest(jdkKind: TestJdkKind, jvmTa
         JvmEnvironmentConfigurationDirectives.JDK_KIND with jdkKind
         JvmEnvironmentConfigurationDirectives.JVM_TARGET with jvmTarget
         +WITH_STDLIB
-        +CodegenTestDirectives.IGNORE_DEXING
+        +JvmCodegenDirectives.IGNORE_DEXING
     }
 }

@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.test.backend.handlers
 
 import org.jetbrains.kotlin.codegen.BytecodeListingTextCollectingVisitor
 import org.jetbrains.kotlin.codegen.getClassFiles
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.CHECK_BYTECODE_LISTING
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DONT_SORT_DECLARATIONS
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_ANNOTATIONS
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.WITH_SIGNATURES
+import org.jetbrains.kotlin.test.directives.JvmCodegenDirectives
+import org.jetbrains.kotlin.test.directives.JvmCodegenDirectives.CHECK_BYTECODE_LISTING
+import org.jetbrains.kotlin.test.directives.JvmCodegenDirectives.DONT_SORT_DECLARATIONS
+import org.jetbrains.kotlin.test.directives.JvmCodegenDirectives.IGNORE_ANNOTATIONS
+import org.jetbrains.kotlin.test.directives.JvmCodegenDirectives.WITH_SIGNATURES
 import org.jetbrains.kotlin.test.directives.TestDumpDirectives
 import org.jetbrains.kotlin.test.directives.assertEqualsToDump
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
@@ -25,7 +25,7 @@ import org.jetbrains.org.objectweb.asm.tree.ClassNode
 
 class BytecodeListingHandler(testServices: TestServices) : JvmBinaryArtifactHandler(testServices) {
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(TestDumpDirectives, CodegenTestDirectives)
+        get() = listOf(TestDumpDirectives, JvmCodegenDirectives)
 
     private val multiModuleInfoDumper = MultiModuleInfoDumper()
 

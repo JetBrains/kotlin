@@ -336,7 +336,7 @@ tasks {
     }
 
     testLifecycleTask("testsForBootstrapBuildTest", QualityGate.Master) {
-        dependsOn(":compiler:tests-common-new:test")
+        dependsOn(":compiler:jvm.tests:test")
     }
 
     val jvmCompilerIntegrationTest = testLifecycleTask("jvmCompilerIntegrationTest", QualityGate.Master) {
