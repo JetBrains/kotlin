@@ -76,7 +76,9 @@ internal class KaFirSyntheticJavaPropertySymbol(
 
     override val setter: KaPropertySetterSymbol?
         get() = withValidityAssertion {
-            if (firSymbol.setterSymbol != null) KaFirSyntheticPropertySetterSymbol(this) else null
+            firSymbol.setterSymbol?.let {
+                KaFirSyntheticPropertySetterSymbol(this)
+            }
         }
 
     override val isOverride: Boolean get() = withValidityAssertion { firSymbol.isOverride }
