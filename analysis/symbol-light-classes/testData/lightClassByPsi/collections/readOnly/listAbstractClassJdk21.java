@@ -42,6 +42,15 @@ public abstract class CList /* test.CList*/<Elem>  implements java.util.List<Ele
   public java.lang.Object[] toArray();//  toArray()
 
   @java.lang.Override()
+  public java.util.List<Elem> subList(int, int);//  subList(int, int)
+
+  @java.lang.Override()
+  public java.util.ListIterator<Elem> listIterator();//  listIterator()
+
+  @java.lang.Override()
+  public java.util.ListIterator<Elem> listIterator(int);//  listIterator(int)
+
+  @java.lang.Override()
   public void add(int, Elem);//  add(int, Elem)
 
   @java.lang.Override()
@@ -122,6 +131,15 @@ public abstract class SList /* test.SList*/ implements java.util.List<@org.jetbr
 
   @java.lang.Override()
   public java.lang.Object[] toArray();//  toArray()
+
+  @java.lang.Override()
+  public java.util.List<@org.jetbrains.annotations.NotNull() java.lang.Integer> subList(int, int);//  subList(int, int)
+
+  @java.lang.Override()
+  public java.util.ListIterator<@org.jetbrains.annotations.NotNull() java.lang.Integer> listIterator();//  listIterator()
+
+  @java.lang.Override()
+  public java.util.ListIterator<@org.jetbrains.annotations.NotNull() java.lang.Integer> listIterator(int);//  listIterator(int)
 
   @java.lang.Override()
   public void add(int, int);//  add(int, int)

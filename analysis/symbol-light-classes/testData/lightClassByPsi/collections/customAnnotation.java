@@ -39,6 +39,9 @@ public abstract class CCollection /* test.CCollection*/<Elem>  implements java.u
   public java.lang.Object[] toArray();//  toArray()
 
   @java.lang.Override()
+  public java.util.Iterator<Elem> iterator();//  iterator()
+
+  @java.lang.Override()
   public void clear();//  clear()
 
   @test.Ann(x = 2)

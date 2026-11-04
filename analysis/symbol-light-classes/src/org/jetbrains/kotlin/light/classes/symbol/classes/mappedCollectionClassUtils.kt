@@ -10,6 +10,8 @@ import com.intellij.psi.util.ClassUtil
 import com.intellij.psi.util.TypeConversionUtil
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.javaInterop.mapToJvmTypeDescriptor
+import org.jetbrains.kotlin.analysis.api.scopes.KaScope
+import org.jetbrains.kotlin.analysis.api.scopes.declaredMemberScope
 import org.jetbrains.kotlin.analysis.api.scopes.memberScope
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.*
@@ -228,6 +230,8 @@ internal fun processPossiblyMappedCollectionMethod(
  * - Methods not in the Kotlin interface: generates open bridge methods.
  *   Java default methods get them only if the Kotlin interface is read-only and only its mutable counterpart has them
  *   (e.g., `removeIf`)
+ * - Methods in a read-only Kotlin interface that its mutable counterpart redeclares (e.g., `iterator`): generates open bridge methods,
+ *   see [functionNamesDeclaredByMutableCounterpart]
  * - Methods in the Kotlin interface with special signatures: generates appropriate bridge methods with type substitution
  *
  * Generated stubs are added to the result list only if their signatures don't already exist.
@@ -329,12 +333,8 @@ private fun generateJavaCollectionMethodStubs(
     substitutor: PsiSubstitutor,
     result: MutableList<PsiMethod>,
 ) {
-    val kotlinNames = kotlinCollectionSymbol.memberScope.callables
-        .filter { it is KaNamedFunctionSymbol }
-        // skip default methods in Java collection
-        .filter { it.origin != KaSymbolOrigin.JAVA_SOURCE && it.origin != KaSymbolOrigin.JAVA_LIBRARY }
-        .mapNotNull { it.name?.asString() }
-        .toSet()
+    val kotlinNames = kotlinCollectionSymbol.memberScope.kotlinFunctionNames
+    val mutableCounterpartNames = kotlinCollectionSymbol.functionNamesDeclaredByMutableCounterpart
 
     val isReadOnlyCollection = JavaToKotlinClassMap.isReadOnly(kotlinCollectionSymbol.classId)
     val javaMethods = javaCollectionPsiClass.methods.filter { method ->
@@ -347,7 +347,14 @@ private fun generateJavaCollectionMethodStubs(
     }
 
     val candidateMethods = javaMethods.flatMap { method ->
-        createWrappersForJavaCollectionMethod(containingClass, method, javaCollectionPsiClass, kotlinNames, substitutor)
+        createWrappersForJavaCollectionMethod(
+            containingClass,
+            method,
+            javaCollectionPsiClass,
+            kotlinNames,
+            mutableCounterpartNames,
+            substitutor,
+        )
     }
     val existingSignatures = result.mapTo(HashSet()) { it.getSignature(substitutor) }
     result += candidateMethods.filter { candidateMethod ->
@@ -366,11 +373,38 @@ private fun PsiMethod.isMutableOnlyJdkMethod(javaClassId: ClassId): Boolean {
     return SignatureBuildingComponents.signature(javaClassId, jvmDescriptor) in JvmBuiltInsSignatures.MUTABLE_METHOD_SIGNATURES
 }
 
+/**
+ * Names of the functions that the mutable counterpart of this read-only Kotlin collection declares itself rather than inherits,
+ * e.g., `iterator` of `kotlin.collections.MutableCollection`, which overrides `iterator` of `kotlin.collections.Collection`.
+ * Empty if this collection is not read-only.
+ *
+ * The JVM backend generates a throwing stub for each such function that a class implementing the read-only collection doesn't implement,
+ * even if the read-only collection declares the function too, like `iterator` (`CollectionStubComputer`, see KT-36724).
+ */
+context(_: KaSession)
+private val KaClassSymbol.functionNamesDeclaredByMutableCounterpart: Set<String>
+    get() {
+        val mutableClassId = classId?.let { JavaToKotlinClassMap.readOnlyToMutable(it) } ?: return emptySet()
+        val mutableCollectionSymbol = findClass(mutableClassId) ?: return emptySet()
+        return mutableCollectionSymbol.declaredMemberScope.kotlinFunctionNames
+    }
+
+/**
+ * Names of the Kotlin functions in this scope, without the JDK methods that the scope of a mapped collection includes,
+ * like the default method `stream` of `java.util.Collection` in the member scope of `kotlin.collections.Collection`.
+ */
+private val KaScope.kotlinFunctionNames: Set<String>
+    get() = callables
+        .filter { it is KaNamedFunctionSymbol && it.origin != KaSymbolOrigin.JAVA_SOURCE && it.origin != KaSymbolOrigin.JAVA_LIBRARY }
+        .mapNotNull { it.name?.asString() }
+        .toSet()
+
 private fun createWrappersForJavaCollectionMethod(
     containingClass: SymbolLightClassForClassOrObject,
     method: PsiMethod,
     javaCollectionPsiClass: PsiClass,
     kotlinNames: Set<String>,
+    mutableCounterpartNames: Set<String>,
     substitutor: PsiSubstitutor,
 ): List<PsiMethod> {
     val methodName = method.name
@@ -392,12 +426,10 @@ private fun createWrappersForJavaCollectionMethod(
             listOf(finalBridgeForJava, abstractKotlinGetter)
         }
 
-        hasCorrespondingKotlinDeclaration -> {
-            if (isSpecialNotErasedSignature) {
-                createMethodsWithSpecialSignature(containingClass, method, javaCollectionPsiClass, substitutor)
-            } else {
-                emptyList()
-            }
+        hasCorrespondingKotlinDeclaration -> when {
+            isSpecialNotErasedSignature -> createMethodsWithSpecialSignature(containingClass, method, javaCollectionPsiClass, substitutor)
+            methodName in mutableCounterpartNames -> listOf(method.openBridge(containingClass, substitutor))
+            else -> emptyList()
         }
 
         else -> {

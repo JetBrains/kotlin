@@ -27,6 +27,9 @@ public abstract class CSet /* test.CSet*/<Elem>  implements test.ISet<Elem> {
   public java.lang.Object[] toArray();//  toArray()
 
   @java.lang.Override()
+  public java.util.Iterator<Elem> iterator();//  iterator()
+
+  @java.lang.Override()
   public void clear();//  clear()
 
   public  CSet();//  .ctor()

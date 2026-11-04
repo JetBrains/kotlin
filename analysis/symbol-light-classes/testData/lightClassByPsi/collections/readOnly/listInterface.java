@@ -36,6 +36,15 @@ public abstract class CList /* test.CList*/<Elem>  implements test.IList<Elem> {
   public java.lang.Object[] toArray();//  toArray()
 
   @java.lang.Override()
+  public java.util.List<Elem> subList(int, int);//  subList(int, int)
+
+  @java.lang.Override()
+  public java.util.ListIterator<Elem> listIterator();//  listIterator()
+
+  @java.lang.Override()
+  public java.util.ListIterator<Elem> listIterator(int);//  listIterator(int)
+
+  @java.lang.Override()
   public void add(int, Elem);//  add(int, Elem)
 
   @java.lang.Override()
