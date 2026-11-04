@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds;
 
 import static org.jetbrains.kotlin.KtNodeTypes.*;
-import static org.jetbrains.kotlin.syntax.UtilsKt.NO_ID;
+import static org.jetbrains.kotlin.syntax.SyntaxIdKt.NO_ID;
 
 public interface KtTokens {
     int INVALID_Id = NO_ID;

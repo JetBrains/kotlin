@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.lightTree.fir.modifier
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.syntax.SyntaxId
 import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
 import org.jetbrains.kotlin.types.Variance
 
@@ -15,7 +16,7 @@ open class ModifierList<Node : Any>(var modifiers: Long = ModifierFlag.NONE.valu
     val annotations: MutableList<Node> = mutableListOf()
     var contextLists: MutableList<Node> = mutableListOf()
 
-    fun addModifier(tokenType: Int, isInClass: Boolean = false) {
+    fun addModifier(tokenType: SyntaxId, isInClass: Boolean = false) {
         when (tokenType) {
             KotlinSyntaxTokenIds.CONST_MODIFIER -> {
                 // Specific case because CONST may exist both on parameter and property

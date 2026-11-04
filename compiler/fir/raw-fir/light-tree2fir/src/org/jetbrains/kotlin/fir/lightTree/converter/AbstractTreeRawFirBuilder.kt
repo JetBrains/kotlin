@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.FirReplSnippetBuilder
 import org.jetbrains.kotlin.fir.expressions.builder.FirBlockBuilder
 import org.jetbrains.kotlin.syntax.BasicSyntaxElementTypeIds
 import org.jetbrains.kotlin.syntax.NO_ID
+import org.jetbrains.kotlin.syntax.SyntaxId
 import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
 import org.jetbrains.kotlin.types.ConstantValueKind
@@ -114,11 +115,11 @@ abstract class AbstractTreeRawFirBuilder<Node : Any, Type : Any>(
         return container
     }
 
-    fun Node.toTokenId(): Int = elementType.typeToTokenId()
+    fun Node.toTokenId(): SyntaxId = elementType.typeToTokenId()
 
-    abstract fun Type.typeToTokenId(): Int
+    abstract fun Type.typeToTokenId(): SyntaxId
 
-    fun Node.getOperationTokenId(): Int {
+    fun Node.getOperationTokenId(): SyntaxId {
         return getChildren().first().toTokenId()
     }
 
@@ -176,11 +177,11 @@ abstract class AbstractTreeRawFirBuilder<Node : Any, Type : Any>(
     override val Node.arrayExpression: Node?
         get() = getFirstChildExpression()
 
-    fun Node.getChildNodeByTokenId(tokenId: Int): Node? {
+    fun Node.getChildNodeByTokenId(tokenId: SyntaxId): Node? {
         return getChildrenAsArray().firstOrNull { it?.toTokenId() == tokenId }
     }
 
-    fun Node?.getChildNodesByTokenId(tokenId: Int): List<Node> {
+    fun Node?.getChildNodesByTokenId(tokenId: SyntaxId): List<Node> {
         return this?.forEachChildrenReturnList { node, container ->
             when (node.toTokenId()) {
                 tokenId -> container += node
@@ -200,7 +201,7 @@ abstract class AbstractTreeRawFirBuilder<Node : Any, Type : Any>(
     }
 
     companion object {
-        val ignoredTokensId: HashSet<Int> = hashSetOf(
+        val ignoredTokensId: HashSet<SyntaxId> = hashSetOf(
             KotlinSyntaxTokenIds.EOL_COMMENT, KotlinSyntaxTokenIds.BLOCK_COMMENT, KotlinSyntaxTokenIds.DOC_COMMENT, KotlinSyntaxTokenIds.SHEBANG_COMMENT,
             BasicSyntaxElementTypeIds.WHITE_SPACE, BasicSyntaxElementTypeIds.BAD_CHARACTER, BasicSyntaxElementTypeIds.ERROR_ELEMENT,
             KotlinSyntaxTokenIds.SEMICOLON,

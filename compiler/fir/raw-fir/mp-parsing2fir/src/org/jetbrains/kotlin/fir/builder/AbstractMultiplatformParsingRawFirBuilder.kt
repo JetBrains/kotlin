@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.kmp.parser.KtNodeTypes
 import org.jetbrains.kotlin.kmp.tree.LightNode
 import org.jetbrains.kotlin.kmp.tree.LightSyntaxTree
 import org.jetbrains.kotlin.syntax.NO_ID
+import org.jetbrains.kotlin.syntax.SyntaxId
 
 @Suppress("UnstableApiUsage")
 abstract class AbstractMultiplatformParsingRawFirBuilder(
@@ -35,7 +36,7 @@ abstract class AbstractMultiplatformParsingRawFirBuilder(
     override val LightNode.elementType: SyntaxElementType
         get() = tree.getType(this)
 
-    override fun SyntaxElementType.typeToTokenId(): Int {
+    override fun SyntaxElementType.typeToTokenId(): SyntaxId {
         val nodeTypeId = KtNodeTypes.getElementTypeId(this)
         if (nodeTypeId != NO_ID) return nodeTypeId
         val tokenId = KtTokens.getElementTypeId(this)

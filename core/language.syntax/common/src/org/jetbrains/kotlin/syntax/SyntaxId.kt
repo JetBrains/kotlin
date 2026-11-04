@@ -5,4 +5,6 @@
 
 package org.jetbrains.kotlin.syntax
 
-public const val NO_ID: Int = 0
+public typealias SyntaxId = Int
+
+public const val NO_ID: SyntaxId = 0

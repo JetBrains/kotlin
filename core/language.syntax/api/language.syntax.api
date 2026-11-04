@@ -311,7 +311,7 @@ public final class org/jetbrains/kotlin/syntax/KotlinSyntaxTokenIds {
 	public static final field WHILE_KEYWORD I
 }
 
-public final class org/jetbrains/kotlin/syntax/UtilsKt {
+public final class org/jetbrains/kotlin/syntax/SyntaxIdKt {
 	public static final field NO_ID I
 }
 

@@ -28,7 +28,7 @@ class SyntaxIdsTest {
                 for (property in properties) {
                     val name = "${holder.simpleName}.${property.name}"
                     assertConst(property.isConst, name)
-                    put(name, property.getter.call() as Int)
+                    put(name, property.getter.call() as SyntaxId)
                 }
             }
         }

@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.syntax.BasicSyntaxElementTypeIds
 import org.jetbrains.kotlin.syntax.NO_ID
 import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
+import org.jetbrains.kotlin.syntax.SyntaxId
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -460,7 +461,7 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
     }
 
     companion object {
-        private val unwrappableTokenTypes: Set<Int> = setOf(
+        private val unwrappableTokenTypes: Set<SyntaxId> = setOf(
             KotlinSyntaxNodeTypeIds.PARENTHESIZED, KotlinSyntaxNodeTypeIds.LABELED_EXPRESSION, KotlinSyntaxNodeTypeIds.ANNOTATED_EXPRESSION
         )
 
@@ -508,12 +509,12 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
             KotlinSyntaxTokenIds.AS_SAFE to FirOperation.SAFE_AS,
         )
 
-        private val incrementOperations: Set<Int> = setOf(
+        private val incrementOperations: Set<SyntaxId> = setOf(
             KotlinSyntaxTokenIds.PLUSPLUS,
             KotlinSyntaxTokenIds.MINUSMINUS,
         )
 
-        private val comparisonOperationsId: Set<Int> = hashSetOf(
+        private val comparisonOperationsId: Set<SyntaxId> = hashSetOf(
             KotlinSyntaxTokenIds.LT,
             KotlinSyntaxTokenIds.LTEQ,
             KotlinSyntaxTokenIds.GTEQ,
@@ -1827,7 +1828,7 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
     override val Node.selectorExpression: Node?
         get() = with(rootBuilder) { selectorExpression }
 
-    override fun Type.typeToTokenId(): Int {
+    override fun Type.typeToTokenId(): SyntaxId {
         return with(rootBuilder) { typeToTokenId() }
     }
 
