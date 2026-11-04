@@ -42,7 +42,7 @@
     },
     {
       "parentPhaseType": IrPreLowering,
-      "name": "AvoidLocalFOsInInlineFunctionsLowering",
+      "name": "AvoidLocalFakeOverridesLowering",
       "time": {
         "nanos": $UINT$
       }
