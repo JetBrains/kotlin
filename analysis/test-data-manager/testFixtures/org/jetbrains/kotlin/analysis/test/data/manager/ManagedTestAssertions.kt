@@ -142,7 +142,7 @@ object ManagedTestAssertions {
         val normalizedExpected = normalizeContent(expectedContent)
 
         if (normalizedActual != normalizedExpected) {
-            handleMismatch(normalizedActual, expectedContent)
+            handleMismatch(normalizedActual, expectedFile, expectedContent)
         }
 
         checkAndHandleRedundantFile()
@@ -190,11 +190,12 @@ object ManagedTestAssertions {
     }
 
     context(context: TestDataContext)
-    private fun handleMismatch(normalizedActual: String, expectedContent: String) {
+    private fun handleMismatch(normalizedActual: String, expectedFile: Path, expectedContent: String) {
         val contentToWrite = preserveEofNewline(normalizedActual, expectedContent)
         when (context.mode) {
             TestDataManagerMode.UPDATE -> writeFile(contentToWrite)
             TestDataManagerMode.CHECK -> throw createMismatchAssertion(
+                expectedFile = expectedFile,
                 expectedContent = expectedContent,
                 normalizedActual = contentToWrite,
             )
@@ -226,7 +227,7 @@ object ManagedTestAssertions {
             append(writeTargetFile)
         }
 
-        return AssertionFailedError(message)
+        return TestDataAssertionError(message, TestDataAssertionError.Kind.UNEXPECTED_FILE, writeTargetFile, comparedFile = null)
     }
 
     context(context: TestDataContext)
@@ -250,8 +251,11 @@ object ManagedTestAssertions {
                     "Run golden test first to generate base file, or run 'updateTestData' to auto-generate."
         }
 
-        return AssertionFailedError(
+        return TestDataAssertionError(
             message,
+            TestDataAssertionError.Kind.MISSING_FILE,
+            writeTargetFile,
+            comparedFile = null,
             FileInfo(writeTargetFile.absolutePathString(), byteArrayOf()),
             normalizedActual,
         )
@@ -269,17 +273,26 @@ object ManagedTestAssertions {
             "Delete the prefixed file."
         }
 
-        return AssertionFailedError(prefix + postfix)
+        return TestDataAssertionError(
+            prefix + postfix,
+            TestDataAssertionError.Kind.REDUNDANT_FILE,
+            writeTargetFile,
+            comparedFile = nextExistingFile,
+        )
     }
 
     context(context: TestDataContext)
     private fun createMismatchAssertion(
+        expectedFile: Path,
         expectedContent: String,
         normalizedActual: String,
     ): AssertionFailedError {
         val writeTargetFile = context.writeTargetFile
-        return AssertionFailedError(
+        return TestDataAssertionError(
             "Actual data differs from file content: ${writeTargetFile.name}",
+            TestDataAssertionError.Kind.MISMATCH,
+            writeTargetFile,
+            comparedFile = expectedFile,
             FileInfo(
                 writeTargetFile.absolutePathString(),
                 expectedContent.toByteArray(StandardCharsets.UTF_8),
