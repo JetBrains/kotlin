@@ -30,6 +30,9 @@ public abstract class CCollection /* test.CCollection*/<Elem>  implements test.I
   public java.lang.Object[] toArray();//  toArray()
 
   @java.lang.Override()
+  public java.util.Iterator<Elem> iterator();//  iterator()
+
+  @java.lang.Override()
   public void clear();//  clear()
 
   public  CCollection();//  .ctor()

@@ -30,6 +30,9 @@ public abstract class CCollection /* test.CCollection*/<Elem>  implements test.I
   public java.lang.Object[] toArray();//  toArray()
 
   @java.lang.Override()
+  public java.util.Iterator<Elem> iterator();//  iterator()
+
+  @java.lang.Override()
   public void clear();//  clear()
 
   public  CCollection();//  .ctor()
@@ -77,6 +80,9 @@ public abstract class CCollection3 /* test.CCollection3*/ extends test.Foo imple
   public java.lang.Object[] toArray();//  toArray()
 
   @java.lang.Override()
+  public java.util.Iterator<@org.jetbrains.annotations.NotNull() java.lang.String> iterator();//  iterator()
+
+  @java.lang.Override()
   public void clear();//  clear()
 
   public  CCollection3();//  .ctor()
@@ -118,6 +124,9 @@ public abstract class CCollection4 /* test.CCollection4*/ extends test.Foo imple
 
   @java.lang.Override()
   public java.lang.Object[] toArray();//  toArray()
+
+  @java.lang.Override()
+  public java.util.Iterator<@org.jetbrains.annotations.NotNull() java.lang.String> iterator();//  iterator()
 
   @java.lang.Override()
   public void clear();//  clear()
@@ -186,6 +195,9 @@ public final class CCollection6 /* test.CCollection6*/ implements java.util.Coll
 }
 
 public abstract class CIterable /* test.CIterable*/ implements test.IIterable {
+  @java.lang.Override()
+  public java.util.Iterator<@org.jetbrains.annotations.NotNull() java.lang.String> iterator();//  iterator()
+
   public  CIterable();//  .ctor()
 }
 
@@ -249,6 +261,15 @@ public abstract class CList /* test.CList*/ implements test.IList {
   public java.lang.Object[] toArray();//  toArray()
 
   @java.lang.Override()
+  public java.util.List<@org.jetbrains.annotations.NotNull() java.lang.String> subList(int, int);//  subList(int, int)
+
+  @java.lang.Override()
+  public java.util.ListIterator<@org.jetbrains.annotations.NotNull() java.lang.String> listIterator();//  listIterator()
+
+  @java.lang.Override()
+  public java.util.ListIterator<@org.jetbrains.annotations.NotNull() java.lang.String> listIterator(int);//  listIterator(int)
+
+  @java.lang.Override()
   public void add(int, @org.jetbrains.annotations.NotNull() java.lang.String);//  add(int, @org.jetbrains.annotations.NotNull() java.lang.String)
 
   @java.lang.Override()
@@ -264,6 +285,12 @@ public abstract class CList /* test.CList*/ implements test.IList {
 }
 
 public abstract class CListIterator /* test.CListIterator*/ implements test.IListIterator {
+  @java.lang.Override()
+  public @org.jetbrains.annotations.NotNull() java.lang.String next();//  next()
+
+  @java.lang.Override()
+  public boolean hasNext();//  hasNext()
+
   @java.lang.Override()
   public void add(@org.jetbrains.annotations.NotNull() java.lang.String);//  add(@org.jetbrains.annotations.NotNull() java.lang.String)
 

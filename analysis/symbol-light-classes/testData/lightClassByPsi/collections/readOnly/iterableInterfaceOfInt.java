@@ -1,4 +1,7 @@
 public abstract class CIterable /* test.CIterable*/ implements test.IIterable {
+  @java.lang.Override()
+  public java.util.Iterator<@org.jetbrains.annotations.NotNull() java.lang.Integer> iterator();//  iterator()
+
   public  CIterable();//  .ctor()
 }
 

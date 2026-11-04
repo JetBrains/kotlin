@@ -36,6 +36,9 @@ public abstract class CCollection /* test.CCollection*/ implements test.ICollect
   public java.lang.Object[] toArray();//  toArray()
 
   @java.lang.Override()
+  public java.util.Iterator<@org.jetbrains.annotations.NotNull() java.lang.Integer> iterator();//  iterator()
+
+  @java.lang.Override()
   public void clear();//  clear()
 
   public  CCollection();//  .ctor()

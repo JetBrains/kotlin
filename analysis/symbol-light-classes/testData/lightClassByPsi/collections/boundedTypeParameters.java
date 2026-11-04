@@ -36,6 +36,15 @@ public abstract class AnyBoundedList /* test.AnyBoundedList*/<E>  implements jav
   public java.lang.Object[] toArray();//  toArray()
 
   @java.lang.Override()
+  public java.util.List<@org.jetbrains.annotations.NotNull() E> subList(int, int);//  subList(int, int)
+
+  @java.lang.Override()
+  public java.util.ListIterator<@org.jetbrains.annotations.NotNull() E> listIterator();//  listIterator()
+
+  @java.lang.Override()
+  public java.util.ListIterator<@org.jetbrains.annotations.NotNull() E> listIterator(int);//  listIterator(int)
+
+  @java.lang.Override()
   public void add(int, @org.jetbrains.annotations.NotNull() E);//  add(int, @org.jetbrains.annotations.NotNull() E)
 
   @java.lang.Override()
@@ -86,6 +95,9 @@ public abstract class BoundedCollection /* test.BoundedCollection*/<E extends ja
 
   @java.lang.Override()
   public java.lang.Object[] toArray();//  toArray()
+
+  @java.lang.Override()
+  public java.util.Iterator<@org.jetbrains.annotations.NotNull() E> iterator();//  iterator()
 
   @java.lang.Override()
   public void clear();//  clear()
@@ -147,6 +159,15 @@ public abstract class BoundedList /* test.BoundedList*/<E extends java.lang.Char
 
   @java.lang.Override()
   public java.lang.Object[] toArray();//  toArray()
+
+  @java.lang.Override()
+  public java.util.List<@org.jetbrains.annotations.NotNull() E> subList(int, int);//  subList(int, int)
+
+  @java.lang.Override()
+  public java.util.ListIterator<@org.jetbrains.annotations.NotNull() E> listIterator();//  listIterator()
+
+  @java.lang.Override()
+  public java.util.ListIterator<@org.jetbrains.annotations.NotNull() E> listIterator(int);//  listIterator(int)
 
   @java.lang.Override()
   public void add(int, @org.jetbrains.annotations.NotNull() E);//  add(int, @org.jetbrains.annotations.NotNull() E)
@@ -217,6 +238,15 @@ public abstract class BoundedListOverrides /* test.BoundedListOverrides*/<E exte
 
   @java.lang.Override()
   public java.lang.Object[] toArray();//  toArray()
+
+  @java.lang.Override()
+  public java.util.List<@org.jetbrains.annotations.NotNull() E> subList(int, int);//  subList(int, int)
+
+  @java.lang.Override()
+  public java.util.ListIterator<@org.jetbrains.annotations.NotNull() E> listIterator();//  listIterator()
+
+  @java.lang.Override()
+  public java.util.ListIterator<@org.jetbrains.annotations.NotNull() E> listIterator(int);//  listIterator(int)
 
   @java.lang.Override()
   public void add(int, @org.jetbrains.annotations.NotNull() E);//  add(int, @org.jetbrains.annotations.NotNull() E)
@@ -482,6 +512,15 @@ public abstract class TransitivelyBoundedList /* test.TransitivelyBoundedList*/<
 
   @java.lang.Override()
   public java.lang.Object[] toArray();//  toArray()
+
+  @java.lang.Override()
+  public java.util.List<@org.jetbrains.annotations.NotNull() E> subList(int, int);//  subList(int, int)
+
+  @java.lang.Override()
+  public java.util.ListIterator<@org.jetbrains.annotations.NotNull() E> listIterator();//  listIterator()
+
+  @java.lang.Override()
+  public java.util.ListIterator<@org.jetbrains.annotations.NotNull() E> listIterator(int);//  listIterator(int)
 
   @java.lang.Override()
   public void add(int, @org.jetbrains.annotations.NotNull() E);//  add(int, @org.jetbrains.annotations.NotNull() E)
