@@ -103,10 +103,6 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
             try {
                 val module = fragment.irModule
                 newEngine(generationState) { generationStateEngine ->
-                    if (context.config.produce.isCache) {
-                        generationStateEngine.runAndMeasurePhase(BuildAdditionalCacheInfoPhase, module)
-                        if (context.config.produce.isHeaderCache) return@newEngine
-                    }
                     if (context.config.produce == CompilerOutputKind.PROGRAM) {
                         generationStateEngine.runAndMeasurePhase(EntryPointPhase, module)
                     }
@@ -149,6 +145,10 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
                 forEach { [fragment, state] ->
                     state.runEngineForLowerings {
                         val module = fragment.irModule
+                        if (context.config.produce.isCache) {
+                            // Build cache information after all the lowerings were run.
+                            runAndMeasurePhase(BuildAdditionalCacheInfoPhase, module)
+                        }
                         val dependenciesToCompile = findDependenciesToCompile()
                         mergeDependencies(module, dependenciesToCompile)
                     }

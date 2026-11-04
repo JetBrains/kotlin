@@ -42,6 +42,8 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
+internal val OBJC_BLOCK_FUNCTION_IMPL by IrDeclarationOriginImpl.Regular
+
 internal interface KotlinStubs {
     val irBuiltIns: IrBuiltIns
     val typeSystem: IrTypeSystemContext
@@ -1394,10 +1396,6 @@ private class ObjCBlockPointerValuePassing(
                         }
                 )
             }
-
-    private companion object {
-        private val OBJC_BLOCK_FUNCTION_IMPL by IrDeclarationOriginImpl.Regular
-    }
 
     private fun IrBuilderWithScope.createKotlinFunctionObject(blockPointer: IrExpression): IrExpression {
         val constructor = generateKotlinFunctionClass()

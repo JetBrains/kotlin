@@ -5,10 +5,13 @@
 
 package org.jetbrains.kotlin.backend.konan.lower
 
+import org.jetbrains.kotlin.backend.common.lower.ANNOTATION_IMPLEMENTATION
+import org.jetbrains.kotlin.backend.common.lower.AbstractSuspendFunctionsLowering
 import org.jetbrains.kotlin.backend.common.serialization.SerializedIrFileFingerprint
 import org.jetbrains.kotlin.backend.common.serialization.SerializedKlibFingerprint
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
+import org.jetbrains.kotlin.backend.konan.cgen.OBJC_BLOCK_FUNCTION_IMPL
 import org.jetbrains.kotlin.backend.konan.serialization.InlineFunctionSerializer
 import org.jetbrains.kotlin.backend.konan.isCalledFromExportedInlineFunction
 import org.jetbrains.kotlin.backend.konan.isConstructedFromExportedInlineFunctions
@@ -47,8 +50,16 @@ internal class CacheInfoBuilder(
                 override fun visitClass(declaration: IrClass) {
                     declaration.acceptChildrenVoid(this)
 
+                    // TODO: just filter out private declarations (exported allow private)
+                    val ignoredOrigins = setOf(
+                            IrAbstractFunctionFactory.classOrigin,
+                            ANNOTATION_IMPLEMENTATION,
+                            OBJC_BLOCK_FUNCTION_IMPL,
+                            AbstractSuspendFunctionsLowering.DECLARATION_ORIGIN_COROUTINE_IMPL,
+                            IrDeclarationOrigin.GENERATED_SAM_IMPLEMENTATION,
+                    )
                     if (!declaration.isInterface && !declaration.isOriginallyLocal
-                            && declaration.isExported && declaration.origin != IrAbstractFunctionFactory.classOrigin
+                            && declaration.isExported && declaration.origin !in ignoredOrigins
                     ) {
                         val declaredFields = generationState.context.getLayoutBuilder(declaration).getDeclaredFields(generationState.llvm)
                         generationState.classFields.add(buildSerializedClassFields(declaration, declaredFields, moduleDeserializer))
@@ -59,7 +70,21 @@ internal class CacheInfoBuilder(
                     // Don't need to visit the children here: classes would be all local and wouldn't be handled anyway,
                     // as for functions - both their callees will be handled and inline bodies will be built for the top function.
 
-                    if (!declaration.isFakeOverride && declaration.isInline && declaration.isExported) {
+                    // TODO: just filter out private declarations(exported allow private)
+                    val ignoredOrigins = setOf(
+                            IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER,
+                            IrDeclarationOrigin.LOWERED_SUSPEND_FUNCTION,
+                            IrDeclarationOrigin.LOCAL_FUNCTION,
+                    )
+                    if (!declaration.isFakeOverride && declaration.isInline && declaration.isExported && declaration.origin !in ignoredOrigins) {
+                        // TODO: Why are we having to deal with lowered private stuff here?
+                        if (declaration.name.asString().endsWith($$"$kTypeOf") && !declaration.visibility.isPublicAPI) {
+                            return
+                        }
+                        // TODO: How did that happen?
+                        if (declaration.symbol.signature == null) {
+                            return
+                        }
                         val inlineFunctionSerializer = InlineFunctionSerializer(moduleDeserializer)
                         generationState.inlineFunctionBodies.add(inlineFunctionSerializer.buildInlineFunctionReference(declaration))
                         trackCallees(declaration)
