@@ -1,6 +1,8 @@
 // SKIP_KT_DUMP
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
+// IGNORE_BACKEND: JKLIB
+// ^ The JKlib test infrastructure fails to compile the Java sources: @NotNull is not applicable in this type context.
 // FULL_JDK
 // DISABLE_JAVA_FACADE
 

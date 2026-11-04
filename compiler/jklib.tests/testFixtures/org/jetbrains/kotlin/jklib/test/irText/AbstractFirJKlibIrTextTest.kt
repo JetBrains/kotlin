@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.test.backend.handlers.IrTextDumpHandler
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.configuration.*
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
-import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.ArtifactKinds
@@ -51,7 +50,7 @@ abstract class AbstractFirJKlibIrTextTest : AbstractKotlinCompilerJKlibTest() {
             ::CoroutineHelpersSourceFilesProvider,
         )
 
-        useMetaTestConfigurators(::FirSpecificParserSuppressor, ::WithStdlibSkipper, ::WithReflectSkipper)
+        useMetaTestConfigurators(::FirSpecificParserSuppressor, ::WithReflectSkipper)
 
         facadeStep(::FirCliJKlibFacade)
         firHandlersStep {
@@ -96,15 +95,6 @@ abstract class AbstractFirJKlibIrTextTest : AbstractKotlinCompilerJKlibTest() {
         )
         enableMetaInfoHandler()
         additionalK2ConfigurationForIrTextTest(FirParser.LightTree)
-    }
-}
-
-class WithStdlibSkipper(testServices: TestServices) : MetaTestConfigurator(testServices) {
-    override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(ConfigurationDirectives)
-
-    override fun shouldSkipTest(): Boolean {
-        return testServices.moduleStructure.allDirectives.contains(ConfigurationDirectives.WITH_STDLIB)
     }
 }
 

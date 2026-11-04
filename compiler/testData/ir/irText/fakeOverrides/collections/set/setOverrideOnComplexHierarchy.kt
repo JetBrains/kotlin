@@ -2,6 +2,8 @@
 // TARGET_BACKEND: JVM
 // FULL_JDK
 // WITH_STDLIB
+// IGNORE_BACKEND: JKLIB
+// ^ KT-91300: JKlib resolves members of Java subclasses of AbstractMutableList/Set/Map incorrectly.
 
 // KT-49472
 // SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK

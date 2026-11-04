@@ -2,6 +2,8 @@
 // TARGET_BACKEND: JVM
 // FULL_JDK
 // WITH_STDLIB
+// IGNORE_BACKEND: JKLIB
+// ^ The JKlib test infrastructure doesn't support modules with only Java sources.
 
 // MODULE: separate
 

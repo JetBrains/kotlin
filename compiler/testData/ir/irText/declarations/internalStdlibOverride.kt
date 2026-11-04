@@ -1,8 +1,9 @@
 // WITH_STDLIB
 // KT-64692
 
-// DUMP_IR_DIFFERENCE: JS_IR
+// DUMP_IR_DIFFERENCE: JS_IR, JKLIB
 // test data differs - JS stdlib has extra `asJsReadonlyMapView` fakeoverride from `public actual interface Map`.
+// ^ JKlib tests compile against JDK 17 instead of the mock JDK.
 
 class MyMap : AbstractMap<Int, Int>() {
     override val entries = emptySet<Map.Entry<Int, Int>>()

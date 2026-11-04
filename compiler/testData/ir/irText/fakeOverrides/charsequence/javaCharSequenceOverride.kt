@@ -2,6 +2,8 @@
 // TARGET_BACKEND: JVM
 // FULL_JDK
 // WITH_STDLIB
+// IGNORE_BACKEND: JKLIB
+// ^ The JKlib test infrastructure compiles Java sources before Kotlin ones, so Java can't reference Kotlin declarations of the same module.
 
 // KT-85832 Reflection: KClass.members for interface with explicit toString contains abstract toString
 // KOTLIN_REFLECT_DUMP_MISMATCH
