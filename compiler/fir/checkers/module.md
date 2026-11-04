@@ -39,8 +39,8 @@ These contracts imply the following:
    Therefore, checkers should not rely on any syntax implementation details. 
    Instead, checkers should use [positioning strategies](../../frontend.common-psi/src/org/jetbrains/kotlin/diagnostics/SourceElementPositioningStrategies.kt)
    for more precise positioning of diagnostics for specific elements (e.g., this allows diagnostics to be rendered on a class name while using the source of the entire class).
-   Inheritors of [FirSyntaxChecker](./checkers.common/src/org/jetbrains/kotlin/fir/analysis/checkers/syntax/FirSyntaxChecker.kt) 
-   implement traversals for each parse tree.
+   Checkers that need to inspect the syntax tree do so only through [FirSyntaxComponent](../tree/src/org/jetbrains/kotlin/fir/syntax/FirSyntaxComponent.kt) (see `withSyntax`),
+   which has an implementation for each parse tree.
 
 ## Checkers pipeline
 

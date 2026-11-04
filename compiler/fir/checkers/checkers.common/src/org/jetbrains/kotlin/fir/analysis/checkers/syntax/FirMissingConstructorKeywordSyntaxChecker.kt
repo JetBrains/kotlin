@@ -6,10 +6,11 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.syntax
 
 import org.jetbrains.kotlin.KtRealSourceElementKind
-import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirConstructorChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.forEachChildOfType
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
@@ -18,12 +19,10 @@ import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
 import org.jetbrains.kotlin.syntax.SyntaxIdSet
 
-object FirMissingConstructorKeywordSyntaxChecker : FirDeclarationSyntaxChecker<FirConstructor>() {
+object FirMissingConstructorKeywordSyntaxChecker : FirConstructorChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    override fun check(
-        element: FirConstructor,
-        source: KtSourceElement,
-    ) {
+    override fun check(declaration: FirConstructor) {
+        val source = declaration.source ?: return
         if (source.kind !is KtRealSourceElementKind) return
 
         var hasModifiers = false

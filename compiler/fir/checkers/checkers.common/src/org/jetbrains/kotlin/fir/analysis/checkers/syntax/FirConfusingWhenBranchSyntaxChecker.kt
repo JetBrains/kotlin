@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.syntax
 
-import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirWhenExpressionChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.syntax.withSyntax
@@ -19,7 +20,7 @@ import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
 import org.jetbrains.kotlin.syntax.SyntaxIdSet
 
-object FirConfusingWhenBranchSyntaxChecker : FirExpressionSyntaxChecker<FirWhenExpression>() {
+object FirConfusingWhenBranchSyntaxChecker : FirWhenExpressionChecker(MppCheckerKind.Common) {
     private val PROHIBITED_OPERATIONS = SyntaxIdSet.of(
         KotlinSyntaxNodeTypeIds.IS_EXPRESSION,
         KotlinSyntaxTokenIds.IN_MODIFIER, KotlinSyntaxTokenIds.NOT_IN,
@@ -29,11 +30,9 @@ object FirConfusingWhenBranchSyntaxChecker : FirExpressionSyntaxChecker<FirWhenE
     )
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    override fun check(
-        element: FirWhenExpression,
-        source: KtSourceElement,
-    ) {
-        val subjectType = element.subjectVariable?.initializer?.resolvedType ?: element.subjectVariable?.returnTypeRef?.coneType ?: return
+    override fun check(expression: FirWhenExpression) {
+        val source = expression.source ?: return
+        val subjectType = expression.subjectVariable?.initializer?.resolvedType ?: expression.subjectVariable?.returnTypeRef?.coneType ?: return
         val booleanSubject = subjectType.isBooleanOrNullableBoolean
         withSyntax {
             source.forEachWhenConditionOperation { expression, operation ->

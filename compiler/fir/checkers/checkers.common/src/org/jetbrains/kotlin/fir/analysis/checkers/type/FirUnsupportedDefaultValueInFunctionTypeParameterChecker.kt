@@ -16,10 +16,7 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnsupportedDefaultValueI
 
 object FirUnsupportedDefaultValueInFunctionTypeParameterChecker : FirFunctionalTypeParameterSyntaxChecker() {
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    override fun check(
-        element: FirFunctionTypeParameter,
-        source: KtSourceElement,
-    ) {
+    override fun checkParameter(parameter: FirFunctionTypeParameter, source: KtSourceElement) {
         val defaultValue = source.defaultValueForParameter ?: return
         report(defaultValue)
     }
