@@ -35,6 +35,12 @@ abstract class FirTypeParameter : FirDeclaration(), FirTypeParameterRef {
     abstract val isReified: Boolean
     abstract val bounds: List<FirTypeRef>
     abstract override val annotations: List<FirAnnotation>
+    /**
+     * Annotations written on the `where` constraints of this type parameter (`where @A T : Any`).
+     * Annotations are not allowed there, and they don't annotate the type parameter, so they are not in [annotations].
+     * They are kept as error annotation calls, so they are resolved and ANNOTATION_IN_WHERE_CLAUSE_ERROR is reported.
+     */
+    abstract val constraintAnnotations: List<FirAnnotation>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitTypeParameter(this, data)
@@ -47,7 +53,11 @@ abstract class FirTypeParameter : FirDeclaration(), FirTypeParameterRef {
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
+    abstract fun replaceConstraintAnnotations(newConstraintAnnotations: List<FirAnnotation>)
+
     abstract fun <D> transformBounds(transformer: FirTransformer<D>, data: D): FirTypeParameter
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirTypeParameter
+
+    abstract fun <D> transformConstraintAnnotations(transformer: FirTransformer<D>, data: D): FirTypeParameter
 }
