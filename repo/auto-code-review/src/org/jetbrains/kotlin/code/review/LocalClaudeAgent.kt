@@ -48,16 +48,30 @@ class LocalClaudeAgent private constructor(
             ignoreUnknownKeys = true
         }
 
-        private const val MODEL = "claude-sonnet-4-6"
+        /**
+         * The value for `--model` when calling `claude`.
+         *
+         * The current mid-tier model. Per Anthropic's model documentation, Sonnet is
+         * "the best combination of speed and intelligence" — the stronger tiers are
+         * positioned for demanding or long-running work, and the cheaper tier for
+         * high-volume, latency-sensitive tasks. See
+         * https://platform.claude.com/docs/en/models/overview
+         */
+        private const val MODEL = "claude-sonnet-5-5"
 
         /**
          * The value for `--effort` in when calling `claude`.
          *
-         * Without an explicit effort, Claude Code runs the model at its per-model default level
-         * (`high` for this model at the moment of writing), which may change with CLI updates or account/organization
-         * configuration. Pin the level to keep it deterministic.
+         * `medium` is the effort level recommended for this model for well-specified
+         * agentic coding and multistep tool use, and a per-rule review invocation is
+         * exactly that: one rule, one diff, a fixed output schema. `high` is recommended
+         * only for harder or longer tasks, which these invocations are not. See
+         * https://platform.claude.com/docs/en/build-with-claude/effort#recommended-effort-levels-for-claude-sonnet-5-5
+         *
+         * Coincidentally, `medium` is the default effort level in Claude Code for this model at the moment of writing.
+         * But it may change with CLI updates or account/organization configuration. Pin the level to keep it deterministic.
          */
-        private const val EFFORT = "high"
+        private const val EFFORT = "medium"
 
         private suspend fun createCommand(authMethod: AuthMethod): List<String> = buildList {
             val prompt = """
