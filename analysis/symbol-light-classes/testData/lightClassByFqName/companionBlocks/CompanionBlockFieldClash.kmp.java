@@ -13,13 +13,13 @@ public final class Regular /* one.Regular*/ {
 
   private final int noField = 4 /* initializer type: int */;
 
-  private final int w = 3 /* initializer type: int */;
+  private final int w$1 = 3 /* initializer type: int */;
 
-  private final int x;
+  private final int x$1;
 
-  private final int y = 1 /* initializer type: int */;
+  private final int y$1 = 1 /* initializer type: int */;
 
-  private final int z = 2 /* initializer type: int */;
+  private final int z$1 = 2 /* initializer type: int */;
 
   @org.jetbrains.annotations.NotNull()
   public static final @org.jetbrains.annotations.NotNull() java.lang.String getNoField();//  getNoField()
