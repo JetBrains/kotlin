@@ -13,8 +13,8 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.io.TempDir
 import org.opentest4j.AssertionFailedError
 import java.nio.file.Path
-import kotlin.io.path.Path
 import kotlin.io.path.exists
+import kotlin.io.path.name
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
 
@@ -32,8 +32,8 @@ class ManagedTestAssertionsTest {
     fun tearDown() {
         TestDataManagerMode.isUnderTeamCityOverride = null
         TestDataManagerMode.isExplicitCheckOverride = null
-        ManagedTestAssertions.trackUpdatedPaths = false
-        ManagedTestAssertions.drainUpdatedTestDataPaths()
+        ManagedTestAssertions.recordFileActions = false
+        ManagedTestAssertions.drainFileActions()
     }
 
     /**
@@ -60,17 +60,21 @@ class ManagedTestAssertionsTest {
         assertEquals(expected.trimIndent(), actual)
     }
 
-    private fun assertTrackedPaths(expected: String) {
-        val actual = ManagedTestAssertions.drainUpdatedTestDataPaths()
-            .map { Path(it).fileName.toString() }
+    /**
+     * Asserts the file actions recorded since the last drain.
+     * Format: "testDataFileName KIND fileName"
+     */
+    private fun assertFileActions(expected: String) {
+        val actual = ManagedTestAssertions.drainFileActions()
+            .map { "${it.testDataPath.name} ${it.kind} ${it.file.name}" }
             .sorted()
             .joinToString("\n")
 
         assertEquals(expected.trimIndent(), actual)
     }
 
-    private fun assertTrackedPathsAndFileState(expectedTrackedPaths: String, expectedFileState: String) {
-        assertTrackedPaths(expectedTrackedPaths)
+    private fun assertFileActionsAndFileState(expectedFileActions: String, expectedFileState: String) {
+        assertFileActions(expectedFileActions)
         assertFileState(expectedFileState)
     }
 
@@ -1028,79 +1032,79 @@ class ManagedTestAssertionsTest {
         assertFalse(ex.message!!.contains("deleted"))
     }
 
-    // --- Path tracking with null actual ---
+    // --- File actions with null actual ---
 
     @Test
-    fun `UPDATE mode - null actual tracking records path on deletion`() {
+    fun `UPDATE mode - null actual records deletion`() {
         setupFiles("test.txt" to "old")
-        ManagedTestAssertions.trackUpdatedPaths = true
+        ManagedTestAssertions.recordFileActions = true
 
         runAssertion(variantChain = emptyList(), actual = null, mode = TestDataManagerMode.UPDATE)
 
-        assertTrackedPathsAndFileState(
-            expectedTrackedPaths = "test.kt",
+        assertFileActionsAndFileState(
+            expectedFileActions = "test.kt DELETED test.txt",
             expectedFileState = "",
         )
     }
 
     @Test
-    fun `UPDATE mode - null actual tracking does not record when file already missing`() {
+    fun `UPDATE mode - null actual records nothing when file already missing`() {
         setupFiles()  // No expected files
-        ManagedTestAssertions.trackUpdatedPaths = true
+        ManagedTestAssertions.recordFileActions = true
 
         runAssertion(variantChain = emptyList(), actual = null, mode = TestDataManagerMode.UPDATE)
 
-        assertTrackedPathsAndFileState(
-            expectedTrackedPaths = "",
+        assertFileActionsAndFileState(
+            expectedFileActions = "",
             expectedFileState = "",
         )
     }
 
-    // ========== Path tracking tests ==========
+    // ========== File action tests ==========
 
     @Test
-    fun `UPDATE mode - tracking records path on file create`() {
+    fun `UPDATE mode - records file creation`() {
         setupFiles()  // No expected files
-        ManagedTestAssertions.trackUpdatedPaths = true
+        ManagedTestAssertions.recordFileActions = true
 
         runAssertion(variantChain = emptyList(), actual = "new content", mode = TestDataManagerMode.UPDATE)
 
-        assertTrackedPathsAndFileState(
-            expectedTrackedPaths = "test.kt",
+        assertFileActionsAndFileState(
+            expectedFileActions = "test.kt CREATED test.txt",
             expectedFileState = "test.txt: new content",
         )
     }
 
     @Test
-    fun `UPDATE mode - tracking records path on secondary file create`() {
+    fun `UPDATE mode - records secondary file creation`() {
         setupFiles()  // No expected files
-        ManagedTestAssertions.trackUpdatedPaths = true
+        ManagedTestAssertions.recordFileActions = true
 
         runAssertion(variantChain = listOf("js"), actual = "new content", mode = TestDataManagerMode.UPDATE)
 
-        assertTrackedPathsAndFileState(
-            expectedTrackedPaths = "test.kt",
+        assertFileActionsAndFileState(
+            expectedFileActions = "test.kt CREATED test.js.txt",
             expectedFileState = "test.js.txt: new content",
         )
     }
 
     @Test
-    fun `UPDATE mode - tracking records path on mismatch update`() {
+    fun `UPDATE mode - records mismatch update`() {
         setupFiles("test.txt" to "old")
-        ManagedTestAssertions.trackUpdatedPaths = true
+        ManagedTestAssertions.recordFileActions = true
 
         runAssertion(variantChain = emptyList(), actual = "new", mode = TestDataManagerMode.UPDATE)
 
-        assertTrackedPathsAndFileState(
-            expectedTrackedPaths = "test.kt",
+        assertFileActionsAndFileState(
+            expectedFileActions = "test.kt UPDATED test.txt",
             expectedFileState = "test.txt: new",
         )
     }
 
     @Test
-    fun `UPDATE mode - tracking records multiple test data paths`() {
+    fun `UPDATE mode - records actions of multiple test data paths`() {
         setupFiles("other.kt" to "// other")
-        ManagedTestAssertions.trackUpdatedPaths = true
+        ManagedTestAssertions.recordFileActions = true
 
         runAssertion(
             testDataFileName = "test.kt",
@@ -1123,10 +1127,11 @@ class ManagedTestAssertionsTest {
             mode = TestDataManagerMode.UPDATE,
         )
 
-        assertTrackedPaths(
+        assertFileActions(
             """
-                other.kt
-                test.kt
+                other.kt CREATED other.txt
+                test.kt CREATED test.txt
+                test.kt CREATED test.variant.txt
             """
         )
 
@@ -1141,75 +1146,75 @@ class ManagedTestAssertionsTest {
     }
 
     @Test
-    fun `UPDATE mode - tracking records path on redundant delete`() {
+    fun `UPDATE mode - records redundant deletion`() {
         setupFiles(
             "test.txt" to "same",
             "test.js.txt" to "same"
         )
-        ManagedTestAssertions.trackUpdatedPaths = true
+        ManagedTestAssertions.recordFileActions = true
 
         runAssertion(variantChain = listOf("js"), actual = "same", mode = TestDataManagerMode.UPDATE)
 
-        assertTrackedPathsAndFileState(
-            expectedTrackedPaths = "test.kt",
+        assertFileActionsAndFileState(
+            expectedFileActions = "test.kt DELETED test.js.txt",
             expectedFileState = "test.txt: same",
         )
     }
 
     @Test
-    fun `UPDATE mode - tracking records path when mismatch deletes redundant write-target`() {
+    fun `UPDATE mode - records update then redundant deletion as deletion`() {
         setupFiles(
             "test.txt" to "golden",
             "test.js.txt" to "old"
         )
-        ManagedTestAssertions.trackUpdatedPaths = true
+        ManagedTestAssertions.recordFileActions = true
 
         runAssertion(variantChain = listOf("js"), actual = "golden", mode = TestDataManagerMode.UPDATE)
 
-        assertTrackedPathsAndFileState(
-            expectedTrackedPaths = "test.kt",
+        assertFileActionsAndFileState(
+            expectedFileActions = "test.kt DELETED test.js.txt",
             expectedFileState = "test.txt: golden",
         )
     }
 
     @Test
-    fun `UPDATE mode - tracking does not record when disabled`() {
+    fun `UPDATE mode - records nothing when disabled`() {
         setupFiles()  // No expected files
-        ManagedTestAssertions.trackUpdatedPaths = false
+        ManagedTestAssertions.recordFileActions = false
 
         runAssertion(variantChain = emptyList(), actual = "new content", mode = TestDataManagerMode.UPDATE)
 
-        assertTrackedPathsAndFileState(
-            expectedTrackedPaths = "",
+        assertFileActionsAndFileState(
+            expectedFileActions = "",
             expectedFileState = "test.txt: new content",
         )
     }
 
     @Test
-    fun `UPDATE mode - tracking does not record when content matches`() {
+    fun `UPDATE mode - records nothing when content matches`() {
         setupFiles("test.txt" to "content")
-        ManagedTestAssertions.trackUpdatedPaths = true
+        ManagedTestAssertions.recordFileActions = true
 
         runAssertion(variantChain = emptyList(), actual = "content", mode = TestDataManagerMode.UPDATE)
 
-        assertTrackedPathsAndFileState(
-            expectedTrackedPaths = "",
+        assertFileActionsAndFileState(
+            expectedFileActions = "",
             expectedFileState = "test.txt: content",
         )
     }
 
     @Test
-    fun `drainUpdatedTestDataPaths clears set after drain`() {
+    fun `drainFileActions clears actions after drain`() {
         setupFiles()  // No expected files
-        ManagedTestAssertions.trackUpdatedPaths = true
+        ManagedTestAssertions.recordFileActions = true
 
         runAssertion(variantChain = emptyList(), actual = "content", mode = TestDataManagerMode.UPDATE)
 
-        assertTrackedPaths("test.kt")
+        assertFileActions("test.kt CREATED test.txt")
 
         // Second drain is expected to have nothing
-        assertTrackedPathsAndFileState(
-            expectedTrackedPaths = "",
+        assertFileActionsAndFileState(
+            expectedFileActions = "",
             expectedFileState = "test.txt: content",
         )
     }
