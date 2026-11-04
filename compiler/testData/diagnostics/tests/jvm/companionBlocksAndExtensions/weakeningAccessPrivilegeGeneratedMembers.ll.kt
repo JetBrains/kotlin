@@ -29,6 +29,16 @@ class HidesGenerated : BaseWithGenerated() {
     }
 }
 
+open class ChildOfBaseWithGenerated : BaseWithGenerated()
+
+class HidesGeneratedInGrandparent : ChildOfBaseWithGenerated() {
+    companion {
+        protected fun jvmStatic() {}
+        protected fun jvmStaticOverloads() {}
+        protected fun jvmOverloads() {}
+    }
+}
+
 open class Base {
     companion {
         protected fun jvmStatic() {}

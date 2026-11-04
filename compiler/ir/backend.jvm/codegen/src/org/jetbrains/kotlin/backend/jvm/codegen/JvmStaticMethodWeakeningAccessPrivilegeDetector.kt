@@ -11,12 +11,10 @@ import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.coroutines.CONTINUATION_ASM_TYPE
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithVisibility
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.util.fileOrNull
-import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.ir.util.packageFqName
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.resolveFakeOverrideOrSelf
@@ -43,7 +41,7 @@ class JvmStaticMethodWeakeningAccessPrivilegeDetector(private val classCodegen: 
     }
 
     fun trackDeclaration(irFunction: IrFunction, signature: JvmMemberSignature.Method) {
-        if (irFunction !is IrSimpleFunction || !irFunction.isDefinedCompanionBlockMember) return
+        if (irFunction !is IrSimpleFunction || !irFunction.isStatic) return
         val hidden = superClassStaticMethodsBySignature[signature] ?: return
         if (hidden.jvmVisibilityRank > irFunction.jvmVisibilityRank) {
             errorCases.add(ErrorCase(irFunction, hidden))
@@ -75,29 +73,8 @@ private fun IrClass.getInheritedStaticFunctions(): List<IrSimpleFunction> {
 }
 
 private fun IrClass.getInheritableStaticFunctions(): List<IrSimpleFunction> {
-    val fromParentForJava = if (origin == IR_EXTERNAL_JAVA_DECLARATION_STUB) {
-        // Java classes do not have static fake overrides
-        getInheritedStaticFunctions()
-    } else {
-        emptyList()
-    }
-
-    return fromParentForJava + simpleFunctions()
-        .filter {
-            it.isStatic &&
-                    !it.isJvmPrivate &&
-                    (it.isFakeOverride || it.isDefinedOrigin || it.isExternalDeclarationStub) // Skip @JvmStatic (and other generated functions not in metadata) for consistency with cross-module case
-        }
+    return getInheritedStaticFunctions() + simpleFunctions().filter { it.isStatic && !it.isJvmPrivate && !it.isFakeOverride }
 }
-
-private val IrDeclaration.isExternalDeclarationStub: Boolean
-    get() = origin == IR_EXTERNAL_DECLARATION_STUB || origin == IR_EXTERNAL_JAVA_DECLARATION_STUB
-
-private val IrSimpleFunction.isDefinedCompanionBlockMember: Boolean
-    get() = isStatic &&
-            isDefinedOrigin &&
-            parent is IrClass &&
-            !parentAsClass.isObject // companion blocks in objects are not allowed
 
 private val IrDeclarationWithVisibility.isJvmPrivate: Boolean
     get() = getVisibilityAccessFlag() == Opcodes.ACC_PRIVATE
@@ -132,8 +109,3 @@ private fun IrSimpleFunction.computeJvmSignature(classCodegen: ClassCodegen): Me
     }
     return method
 }
-
-private val IrDeclaration.isDefinedOrigin: Boolean
-    get() = origin == DEFINED ||
-            origin == DEFAULT_PROPERTY_ACCESSOR ||
-            origin == DELEGATED_PROPERTY_ACCESSOR

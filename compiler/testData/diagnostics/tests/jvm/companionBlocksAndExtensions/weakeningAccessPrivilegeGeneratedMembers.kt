@@ -2,11 +2,6 @@
 // LANGUAGE: +CompanionBlocks
 // ISSUE: KT-90567
 
-/*
- * Weakening access privelege by @JvmStatic/etc. members is not checked (they are reported as accidental overrides).
- * Weakening access privelege of @JvmStatic/etc. is allowed to be consistent with cross-module case.
- */
-
 open class BaseWithGenerated {
     companion object {
         @JvmStatic fun jvmStatic() {}
@@ -20,9 +15,19 @@ open class BaseWithGenerated {
 
 class HidesGenerated : BaseWithGenerated() {
     companion {
-        protected fun jvmStatic() {}
-        protected fun jvmStaticOverloads() {}
-        protected fun jvmOverloads() {}
+        <!CANNOT_WEAKEN_ACCESS_PRIVILEGE_FOR_STATIC_MEMBER!>protected<!> fun jvmStatic() {}
+        <!CANNOT_WEAKEN_ACCESS_PRIVILEGE_FOR_STATIC_MEMBER!>protected<!> fun jvmStaticOverloads() {}
+        <!CANNOT_WEAKEN_ACCESS_PRIVILEGE_FOR_STATIC_MEMBER!>protected<!> fun jvmOverloads() {}
+    }
+}
+
+open class ChildOfBaseWithGenerated : BaseWithGenerated()
+
+class HidesGeneratedInGrandparent : ChildOfBaseWithGenerated() {
+    companion {
+        <!CANNOT_WEAKEN_ACCESS_PRIVILEGE_FOR_STATIC_MEMBER!>protected<!> fun jvmStatic() {}
+        <!CANNOT_WEAKEN_ACCESS_PRIVILEGE_FOR_STATIC_MEMBER!>protected<!> fun jvmStaticOverloads() {}
+        <!CANNOT_WEAKEN_ACCESS_PRIVILEGE_FOR_STATIC_MEMBER!>protected<!> fun jvmOverloads() {}
     }
 }
 
