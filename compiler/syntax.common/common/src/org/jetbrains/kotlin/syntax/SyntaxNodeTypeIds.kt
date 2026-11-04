@@ -3,10 +3,10 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin
+package org.jetbrains.kotlin.syntax
 
-object KtNodeTypeId {
-    const val FILE: Int = KtTokenId.ERROR_SAFE_ACCESS + 1
+object SyntaxNodeTypeIds {
+    const val FILE: Int = SyntaxTokenIds.ERROR_SAFE_ACCESS + 1
 
     const val CLASS: Int = FILE + 1
     const val FUNCTION: Int = CLASS + 1
@@ -154,6 +154,6 @@ object KtNodeTypeId {
     const val EXPRESSION_CODE_FRAGMENT: Int = TYPE_CODE_FRAGMENT + 1
     const val BLOCK_CODE_FRAGMENT: Int = EXPRESSION_CODE_FRAGMENT + 1
     /**
-     * Remember to update first const in [KDocTokenId] after adding new tokens here ^^^
+     * Remember to update first const in [SyntaxKDocTokenIds] after adding new tokens here ^^^
      */
 }

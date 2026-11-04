@@ -3,10 +3,10 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin
+package org.jetbrains.kotlin.syntax
 
-object KDocTokenId {
-    const val START: Int = KtNodeTypeId.BLOCK_CODE_FRAGMENT + 1
+object SyntaxKDocTokenIds {
+    const val START: Int = SyntaxNodeTypeIds.BLOCK_CODE_FRAGMENT + 1
     const val END: Int = START + 1
     const val LEADING_ASTERISK: Int = END + 1
     const val TEXT: Int = LEADING_ASTERISK + 1
@@ -18,6 +18,6 @@ object KDocTokenId {
     const val KDOC_RPAR: Int = KDOC_LPAR + 1
     const val CODE_SPAN_TEXT: Int = KDOC_RPAR + 1
     /**
-     * Remember to update first const in [KDocNodeTypeId] after adding new tokens here ^^^
+     * Remember to update first const in [SyntaxKDocNodeTypeIds] after adding new tokens here ^^^
      */
 }

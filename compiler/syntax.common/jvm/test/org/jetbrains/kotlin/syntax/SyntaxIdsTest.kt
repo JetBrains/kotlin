@@ -5,11 +5,6 @@
 
 package org.jetbrains.kotlin.syntax
 
-import org.jetbrains.kotlin.KDocNodeTypeId
-import org.jetbrains.kotlin.KDocTokenId
-import org.jetbrains.kotlin.KtNodeTypeId
-import org.jetbrains.kotlin.KtTokenId
-import org.jetbrains.kotlin.NO_ID
 import org.junit.jupiter.api.Test
 import java.lang.reflect.Modifier
 import kotlin.test.assertEquals
@@ -20,7 +15,7 @@ class SyntaxIdsTest {
     fun testIdsAreUniqueAndContiguous() {
         val ids = buildMap {
             put("NO_ID", NO_ID)
-            for (holder in listOf(KtTokenId::class, KtNodeTypeId::class, KDocTokenId::class, KDocNodeTypeId::class)) {
+            for (holder in listOf(SyntaxTokenIds::class, SyntaxNodeTypeIds::class, SyntaxKDocTokenIds::class, SyntaxKDocNodeTypeIds::class)) {
                 val fields = holder.java.declaredFields.filter { Modifier.isStatic(it.modifiers) && it.type == Int::class.javaPrimitiveType }
                 assertTrue(fields.isNotEmpty(), "No IDs found in ${holder.simpleName}")
                 for (field in fields) {

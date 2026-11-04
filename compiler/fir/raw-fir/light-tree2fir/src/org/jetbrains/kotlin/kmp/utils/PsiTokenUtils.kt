@@ -6,16 +6,16 @@
 package org.jetbrains.kotlin.kmp.utils
 
 import com.intellij.psi.tree.IElementType
-import org.jetbrains.kotlin.KtNodeTypeId
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.lexer.KtToken
-import org.jetbrains.kotlin.KtTokenId
-import org.jetbrains.kotlin.NO_ID
+import org.jetbrains.kotlin.syntax.NO_ID
+import org.jetbrains.kotlin.syntax.SyntaxNodeTypeIds
+import org.jetbrains.kotlin.syntax.SyntaxTokenIds
 
 /**
  * @receiver Some of Kotlin-based element types
  * @return Same integer ID as the corresponding [com.intellij.platform.syntax.SyntaxElementType] has.
- * If the element type is not Kotlin-based, the result is [org.jetbrains.kotlin.NO_ID].
+ * If the element type is not Kotlin-based, the result is [org.jetbrains.kotlin.syntax.NO_ID].
  */
 fun IElementType.kmpId(): Int =
     when {
@@ -28,7 +28,7 @@ private val indexToId: IntArray = run {
     val indexToIdMap = mutableMapOf<Short, Int>()
 
     var maxIndex: Short = 0
-    var id = KtNodeTypeId.FILE
+    var id = SyntaxNodeTypeIds.FILE
     KtNodeTypes::class.java.declaredFields.forEach {
         if (it.isAnnotationPresent(java.lang.Deprecated::class.java)) return@forEach
         val index = (it.get(null) as IElementType).index
@@ -38,13 +38,13 @@ private val indexToId: IntArray = run {
         }
     }
     org.jetbrains.kotlin.lexer.KtTokens.DOC_COMMENT.index.let {
-        indexToIdMap[it] = KtTokenId.DOC_COMMENT
+        indexToIdMap[it] = SyntaxTokenIds.DOC_COMMENT
         if (it > maxIndex) {
             maxIndex = it
         }
     }
     org.jetbrains.kotlin.lexer.KtTokens.WHITE_SPACE.index.let {
-        indexToIdMap[it] = KtTokenId.WHITE_SPACE
+        indexToIdMap[it] = SyntaxTokenIds.WHITE_SPACE
         if (it > maxIndex) {
             maxIndex = it
         }

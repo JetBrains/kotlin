@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.kmp.parser.utils
 import com.intellij.platform.syntax.SyntaxElementType
 import com.intellij.platform.syntax.SyntaxElementTypeSet
 import com.intellij.platform.syntax.parser.SyntaxTreeBuilder
-import org.jetbrains.kotlin.KtTokenId
 import org.jetbrains.kotlin.kmp.lexer.KtTokens
 import org.jetbrains.kotlin.kmp.utils.Stack
+import org.jetbrains.kotlin.syntax.SyntaxTokenIds
 
 internal abstract class AbstractKotlinParsing(
     protected val builder: SemanticWhitespaceAwareSyntaxBuilder,
@@ -296,23 +296,23 @@ internal abstract class AbstractKotlinParsing(
                 break
             }
             when (this.tokenId) {
-                KtTokenId.LPAR -> {
+                SyntaxTokenIds.LPAR -> {
                     openParentheses++
                     opens.push(KtTokens.LPAR)
                 }
-                KtTokenId.LT -> {
+                SyntaxTokenIds.LT -> {
                     openAngleBrackets++
                     opens.push(KtTokens.LT)
                 }
-                KtTokenId.LBRACE -> {
+                SyntaxTokenIds.LBRACE -> {
                     openBraces++
                     opens.push(KtTokens.LBRACE)
                 }
-                KtTokenId.LBRACKET -> {
+                SyntaxTokenIds.LBRACKET -> {
                     openBrackets++
                     opens.push(KtTokens.LBRACKET)
                 }
-                KtTokenId.RPAR -> {
+                SyntaxTokenIds.RPAR -> {
                     openParentheses--
                     if (opens.isEmpty() || opens.pop() !== KtTokens.LPAR) {
                         if (pattern.handleUnmatchedClosing(KtTokens.RPAR)) {
@@ -320,9 +320,9 @@ internal abstract class AbstractKotlinParsing(
                         }
                     }
                 }
-                KtTokenId.GT -> openAngleBrackets--
-                KtTokenId.RBRACE -> openBraces--
-                KtTokenId.RBRACKET -> openBrackets--
+                SyntaxTokenIds.GT -> openAngleBrackets--
+                SyntaxTokenIds.RBRACE -> openBraces--
+                SyntaxTokenIds.RBRACKET -> openBrackets--
             }
 
             advance() // skip token

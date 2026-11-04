@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.kmp.utils
 
 import com.intellij.platform.syntax.SyntaxElementType
-import org.jetbrains.kotlin.NO_ID
+import org.jetbrains.kotlin.syntax.NO_ID
 
 @Suppress("DEPRECATION")
 typealias Int2IntOpenHashMap = fleet.com.intellij.multiplatform.util.fastutil.ints.Int2IntOpenHashMap

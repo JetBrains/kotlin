@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.lightTree.fir.modifier
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.KtTokenId
+import org.jetbrains.kotlin.syntax.SyntaxTokenIds
 import org.jetbrains.kotlin.types.Variance
 
 open class ModifierList<Node : Any>(var modifiers: Long = ModifierFlag.NONE.value) {
@@ -17,15 +17,15 @@ open class ModifierList<Node : Any>(var modifiers: Long = ModifierFlag.NONE.valu
 
     fun addModifier(tokenType: Int, isInClass: Boolean = false) {
         when (tokenType) {
-            KtTokenId.CONST_MODIFIER -> {
+            SyntaxTokenIds.CONST_MODIFIER -> {
                 // Specific case because CONST may exist both on parameter and property
                 setFlag(ModifierFlag.PROPERTY_CONST)
                 setFlag(ModifierFlag.PARAMETER_CONST)
             }
-            KtTokenId.INLINE_MODIFIER -> {
+            SyntaxTokenIds.INLINE_MODIFIER -> {
                 setFlag(if (isInClass) ModifierFlag.CLASS_INLINE else ModifierFlag.FUNCTION_INLINE)
             }
-            KtTokenId.VALUE_MODIFIER -> {
+            SyntaxTokenIds.VALUE_MODIFIER -> {
                 setFlag(ModifierFlag.CLASS_VALUE)
             }
             else -> {

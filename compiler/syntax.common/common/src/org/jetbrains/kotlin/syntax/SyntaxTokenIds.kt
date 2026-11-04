@@ -3,9 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin
+package org.jetbrains.kotlin.syntax
 
-object KtTokenId {
+object SyntaxTokenIds {
     const val DOC_COMMENT: Int = NO_ID + 1
     const val WHITE_SPACE: Int = DOC_COMMENT + 1
 
@@ -168,6 +168,6 @@ object KtTokenId {
     const val OR: Int = ERROR_MODIFIER + 1
     const val ERROR_SAFE_ACCESS: Int = OR + 1
     /**
-     * Remember to update first const in [KtNodeTypeId] after adding new tokens here ^^^
+     * Remember to update first const in [SyntaxNodeTypeIds] after adding new tokens here ^^^
      */
 }

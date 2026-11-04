@@ -7,12 +7,12 @@ package org.jetbrains.kotlin.kmp.parser
 
 import com.intellij.platform.syntax.SyntaxElementType
 import org.jetbrains.annotations.ApiStatus
-import org.jetbrains.kotlin.KDocNodeTypeId
 import org.jetbrains.kotlin.kmp.utils.SyntaxElementTypesWithIds
+import org.jetbrains.kotlin.syntax.SyntaxKDocNodeTypeIds
 
 @ApiStatus.Experimental
 object KDocParseNodes : SyntaxElementTypesWithIds() {
-    val KDOC_SECTION: SyntaxElementType = register(KDocNodeTypeId.KDOC_SECTION, "KDOC_SECTION")
-    val KDOC_TAG: SyntaxElementType = register(KDocNodeTypeId.KDOC_TAG, "KDOC_TAG")
-    val KDOC_NAME: SyntaxElementType = register(KDocNodeTypeId.KDOC_NAME, "KDOC_NAME")
+    val KDOC_SECTION: SyntaxElementType = register(SyntaxKDocNodeTypeIds.KDOC_SECTION, "KDOC_SECTION")
+    val KDOC_TAG: SyntaxElementType = register(SyntaxKDocNodeTypeIds.KDOC_TAG, "KDOC_TAG")
+    val KDOC_NAME: SyntaxElementType = register(SyntaxKDocNodeTypeIds.KDOC_NAME, "KDOC_NAME")
 }

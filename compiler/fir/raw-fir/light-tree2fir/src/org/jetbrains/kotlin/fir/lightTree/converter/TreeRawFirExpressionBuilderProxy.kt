@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.lightTree.converter
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.NO_ID
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -45,8 +44,9 @@ import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.KtNodeTypeId
-import org.jetbrains.kotlin.KtTokenId
+import org.jetbrains.kotlin.syntax.NO_ID
+import org.jetbrains.kotlin.syntax.SyntaxNodeTypeIds
+import org.jetbrains.kotlin.syntax.SyntaxTokenIds
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -113,58 +113,58 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
     fun getAsFirStatement(node: Node, errorReason: String = ""): FirStatement {
         return when (node.toTokenId()) {
             // Always FirExpression
-            KtNodeTypeId.LAMBDA_EXPRESSION -> convertLambdaExpression(node)
-            KtNodeTypeId.BINARY_WITH_TYPE, KtNodeTypeId.IS_EXPRESSION -> convertBinaryWithTypeRHSExpression(node)
-            KtNodeTypeId.PREFIX_EXPRESSION, KtNodeTypeId.POSTFIX_EXPRESSION -> convertUnaryExpression(node)
-            KtNodeTypeId.CLASS_LITERAL_EXPRESSION -> convertClassLiteralExpression(node)
-            KtNodeTypeId.CALLABLE_REFERENCE_EXPRESSION -> convertCallableReferenceExpression(node)
-            KtNodeTypeId.DOT_QUALIFIED_EXPRESSION,
-            KtNodeTypeId.SAFE_ACCESS_EXPRESSION,
-            KtNodeTypeId.ERROR_SAFE_ACCESS_EXPRESSION,
+            SyntaxNodeTypeIds.LAMBDA_EXPRESSION -> convertLambdaExpression(node)
+            SyntaxNodeTypeIds.BINARY_WITH_TYPE, SyntaxNodeTypeIds.IS_EXPRESSION -> convertBinaryWithTypeRHSExpression(node)
+            SyntaxNodeTypeIds.PREFIX_EXPRESSION, SyntaxNodeTypeIds.POSTFIX_EXPRESSION -> convertUnaryExpression(node)
+            SyntaxNodeTypeIds.CLASS_LITERAL_EXPRESSION -> convertClassLiteralExpression(node)
+            SyntaxNodeTypeIds.CALLABLE_REFERENCE_EXPRESSION -> convertCallableReferenceExpression(node)
+            SyntaxNodeTypeIds.DOT_QUALIFIED_EXPRESSION,
+            SyntaxNodeTypeIds.SAFE_ACCESS_EXPRESSION,
+            SyntaxNodeTypeIds.ERROR_SAFE_ACCESS_EXPRESSION,
                 -> convertQualifiedExpression(node)
-            KtNodeTypeId.CALL_EXPRESSION -> convertCallExpression(node)
-            KtNodeTypeId.WHEN -> convertWhenExpression(node)
-            KtNodeTypeId.ARRAY_ACCESS_EXPRESSION -> convertArrayAccessExpression(node)
-            KtNodeTypeId.COLLECTION_LITERAL_EXPRESSION -> convertCollectionLiteralExpression(node)
-            KtNodeTypeId.STRING_TEMPLATE -> convertStringTemplate(node)
-            KtNodeTypeId.NULL,
-            KtNodeTypeId.BOOLEAN_CONSTANT,
-            KtNodeTypeId.FLOAT_CONSTANT,
-            KtNodeTypeId.CHARACTER_CONSTANT,
-            KtNodeTypeId.INTEGER_CONSTANT,
+            SyntaxNodeTypeIds.CALL_EXPRESSION -> convertCallExpression(node)
+            SyntaxNodeTypeIds.WHEN -> convertWhenExpression(node)
+            SyntaxNodeTypeIds.ARRAY_ACCESS_EXPRESSION -> convertArrayAccessExpression(node)
+            SyntaxNodeTypeIds.COLLECTION_LITERAL_EXPRESSION -> convertCollectionLiteralExpression(node)
+            SyntaxNodeTypeIds.STRING_TEMPLATE -> convertStringTemplate(node)
+            SyntaxNodeTypeIds.NULL,
+            SyntaxNodeTypeIds.BOOLEAN_CONSTANT,
+            SyntaxNodeTypeIds.FLOAT_CONSTANT,
+            SyntaxNodeTypeIds.CHARACTER_CONSTANT,
+            SyntaxNodeTypeIds.INTEGER_CONSTANT,
                 -> convertConstantExpression(node)
-            KtNodeTypeId.REFERENCE_EXPRESSION -> convertSimpleNameExpression(node)
-            KtNodeTypeId.FOR -> convertFor(node) // FirBlock
-            KtNodeTypeId.TRY -> convertTryExpression(node)
-            KtNodeTypeId.IF -> convertIfExpression(node)
-            KtNodeTypeId.BREAK, KtNodeTypeId.CONTINUE -> convertLoopJump(node)
-            KtNodeTypeId.RETURN -> convertReturn(node)
-            KtNodeTypeId.THROW -> convertThrow(node)
-            KtNodeTypeId.PARENTHESIZED -> {
+            SyntaxNodeTypeIds.REFERENCE_EXPRESSION -> convertSimpleNameExpression(node)
+            SyntaxNodeTypeIds.FOR -> convertFor(node) // FirBlock
+            SyntaxNodeTypeIds.TRY -> convertTryExpression(node)
+            SyntaxNodeTypeIds.IF -> convertIfExpression(node)
+            SyntaxNodeTypeIds.BREAK, SyntaxNodeTypeIds.CONTINUE -> convertLoopJump(node)
+            SyntaxNodeTypeIds.RETURN -> convertReturn(node)
+            SyntaxNodeTypeIds.THROW -> convertThrow(node)
+            SyntaxNodeTypeIds.PARENTHESIZED -> {
                 val content = node.getExpressionInParentheses()
                 context.forwardLabelUsagePermission(node, content)
                 getAsFirExpression(content, "Empty parentheses", sourceWhenInvalidExpression = node)
             }
-            KtNodeTypeId.PROPERTY_DELEGATE, KtNodeTypeId.INDICES, KtNodeTypeId.CONDITION, KtNodeTypeId.LOOP_RANGE ->
+            SyntaxNodeTypeIds.PROPERTY_DELEGATE, SyntaxNodeTypeIds.INDICES, SyntaxNodeTypeIds.CONDITION, SyntaxNodeTypeIds.LOOP_RANGE ->
                 getAsFirExpression(node.getFirstChildExpression(), errorReason, sourceWhenInvalidExpression = node)
-            KtNodeTypeId.THIS_EXPRESSION -> convertThisExpression(node)
-            KtNodeTypeId.SUPER_EXPRESSION -> convertSuperExpression(node)
-            KtNodeTypeId.OBJECT_LITERAL -> declarationBuilder.convertObjectLiteral(node)
-            KtNodeTypeId.DESTRUCTURING_DECLARATION -> declarationBuilder.convertDestructingDeclaration(node)
+            SyntaxNodeTypeIds.THIS_EXPRESSION -> convertThisExpression(node)
+            SyntaxNodeTypeIds.SUPER_EXPRESSION -> convertSuperExpression(node)
+            SyntaxNodeTypeIds.OBJECT_LITERAL -> declarationBuilder.convertObjectLiteral(node)
+            SyntaxNodeTypeIds.DESTRUCTURING_DECLARATION -> declarationBuilder.convertDestructingDeclaration(node)
                 .toFirDestructingDeclaration(this, context, baseModuleData) // FirBlock
 
             // Sometimes non-expression FirStatement
-            KtNodeTypeId.BINARY_EXPRESSION -> convertBinaryExpression(node)
-            KtNodeTypeId.LABELED_EXPRESSION -> convertLabeledExpression(node)
-            KtNodeTypeId.ANNOTATED_EXPRESSION -> convertAnnotatedExpression(node)
-            KtNodeTypeId.FUNCTION -> declarationBuilder.convertFunctionDeclaration(node)
+            SyntaxNodeTypeIds.BINARY_EXPRESSION -> convertBinaryExpression(node)
+            SyntaxNodeTypeIds.LABELED_EXPRESSION -> convertLabeledExpression(node)
+            SyntaxNodeTypeIds.ANNOTATED_EXPRESSION -> convertAnnotatedExpression(node)
+            SyntaxNodeTypeIds.FUNCTION -> declarationBuilder.convertFunctionDeclaration(node)
 
             // Always non-expression FirStatement
-            KtNodeTypeId.DO_WHILE -> convertDoWhile(node)
-            KtNodeTypeId.WHILE -> convertWhile(node)
-            KtNodeTypeId.PROPERTY -> declarationBuilder.convertPropertyDeclaration(node)
-            KtNodeTypeId.CLASS, KtNodeTypeId.OBJECT_DECLARATION -> declarationBuilder.convertClass(node)
-            KtNodeTypeId.TYPEALIAS -> declarationBuilder.convertTypeAlias(node)
+            SyntaxNodeTypeIds.DO_WHILE -> convertDoWhile(node)
+            SyntaxNodeTypeIds.WHILE -> convertWhile(node)
+            SyntaxNodeTypeIds.PROPERTY -> declarationBuilder.convertPropertyDeclaration(node)
+            SyntaxNodeTypeIds.CLASS, SyntaxNodeTypeIds.OBJECT_DECLARATION -> declarationBuilder.convertClass(node)
+            SyntaxNodeTypeIds.TYPEALIAS -> declarationBuilder.convertTypeAlias(node)
 
             else -> buildErrorExpression(
                 node.toFirSourceElement(KtFakeSourceElementKind.ErrorTypeRef),
@@ -183,15 +183,15 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
         var hasArrow = false
 
         val functionSymbol = FirAnonymousFunctionSymbol()
-        lambdaExpression.getChildNodesByTokenId(KtNodeTypeId.FUNCTION_LITERAL).first().forEachChildren {
+        lambdaExpression.getChildNodesByTokenId(SyntaxNodeTypeIds.FUNCTION_LITERAL).first().forEachChildren {
             when (it.toTokenId()) {
-                KtNodeTypeId.VALUE_PARAMETER_LIST -> valueParameterList += declarationBuilder.convertValueParameters(
+                SyntaxNodeTypeIds.VALUE_PARAMETER_LIST -> valueParameterList += declarationBuilder.convertValueParameters(
                     valueParameters = it,
                     functionSymbol,
                     ValueParameterDeclaration.LAMBDA
                 )
-                KtNodeTypeId.BLOCK -> block = it
-                KtTokenId.ARROW -> hasArrow = true
+                SyntaxNodeTypeIds.BLOCK -> block = it
+                SyntaxTokenIds.ARROW -> hasArrow = true
             }
         }
 
@@ -308,10 +308,10 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
         while (input.isNotEmpty()) {
             val node = input.pop()
             when (node?.toTokenId()) {
-                KtNodeTypeId.BINARY_EXPRESSION -> {
+                SyntaxNodeTypeIds.BINARY_EXPRESSION -> {
                     val [leftNode, operationReference, rightNode] = extractBinaryExpression(node)
 
-                    if (operationReference.getOperationTokenId() != KtTokenId.PLUS) {
+                    if (operationReference.getOperationTokenId() != SyntaxTokenIds.PLUS) {
                         return null
                     }
 
@@ -319,7 +319,7 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
                     input.add(rightNode)
                 }
                 else -> {
-                    if (node?.toTokenId() != KtNodeTypeId.STRING_TEMPLATE) {
+                    if (node?.toTokenId() != SyntaxNodeTypeIds.STRING_TEMPLATE) {
                         return null
                     } else {
                         output.add(node)
@@ -356,7 +356,7 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
         var right: Node? = null
         binaryExpression.forEachChildren {
             when (it.toTokenId()) {
-                KtNodeTypeId.OPERATION_REFERENCE -> {
+                SyntaxNodeTypeIds.OPERATION_REFERENCE -> {
                     op = it
                 }
                 else -> if (it.isExpression()) {
@@ -377,7 +377,7 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
         val operationTokenName = operationReference.asText
         val operationToken = operationReference.getOperationTokenId()
         val baseSource = binaryExpression.toFirSourceElement()
-        if (operationToken == KtTokenId.IDENTIFIER) {
+        if (operationToken == SyntaxTokenIds.IDENTIFIER) {
             context.calleeNamesForLambda += operationTokenName.nameAsSafeName()
         } else {
             context.calleeNamesForLambda += null
@@ -394,13 +394,13 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
         context.calleeNamesForLambda.removeLast()
 
         when (operationToken) {
-            KtTokenId.ELVIS ->
+            SyntaxTokenIds.ELVIS ->
                 return leftArgAsFir.generateNotNullOrOther(rightArgAsFir, baseSource)
-            KtTokenId.ANDAND, KtTokenId.OROR ->
-                return leftArgAsFir.generateLazyLogicalOperation(rightArgAsFir, operationToken == KtTokenId.ANDAND, baseSource)
+            SyntaxTokenIds.ANDAND, SyntaxTokenIds.OROR ->
+                return leftArgAsFir.generateLazyLogicalOperation(rightArgAsFir, operationToken == SyntaxTokenIds.ANDAND, baseSource)
             in inOperationsId ->
                 return rightArgAsFir.generateContainsOperation(
-                    leftArgAsFir, operationToken == KtTokenId.NOT_IN, baseSource, operationReferenceSource
+                    leftArgAsFir, operationToken == SyntaxTokenIds.NOT_IN, baseSource, operationReferenceSource
                 )
             in comparisonOperationsId ->
                 return leftArgAsFir.generateComparisonExpression(
@@ -408,7 +408,7 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
                 )
         }
         val conventionCallName = ktTokenToBinaryOperationNameMap[operationToken]
-        return if (conventionCallName != null || operationToken == KtTokenId.IDENTIFIER) {
+        return if (conventionCallName != null || operationToken == SyntaxTokenIds.IDENTIFIER) {
             buildFunctionCall {
                 source = binaryExpression.toFirSourceElement()
                 calleeReference = buildSimpleNamedReference {
@@ -450,73 +450,73 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
 
     private fun Int.toFirComparisonOperation(): FirOperation {
         return when (this) {
-            KtTokenId.LT -> FirOperation.LT
-            KtTokenId.GT -> FirOperation.GT
-            KtTokenId.LTEQ -> FirOperation.LT_EQ
-            KtTokenId.GTEQ -> FirOperation.GT_EQ
+            SyntaxTokenIds.LT -> FirOperation.LT
+            SyntaxTokenIds.GT -> FirOperation.GT
+            SyntaxTokenIds.LTEQ -> FirOperation.LT_EQ
+            SyntaxTokenIds.GTEQ -> FirOperation.GT_EQ
             else -> error("Unknown comparison operation ID: $this")
         }
     }
 
     companion object {
         private val unwrappableTokenTypes: Set<Int> = setOf(
-            KtNodeTypeId.PARENTHESIZED, KtNodeTypeId.LABELED_EXPRESSION, KtNodeTypeId.ANNOTATED_EXPRESSION
+            SyntaxNodeTypeIds.PARENTHESIZED, SyntaxNodeTypeIds.LABELED_EXPRESSION, SyntaxNodeTypeIds.ANNOTATED_EXPRESSION
         )
 
-        private val inOperationsId = setOf(KtTokenId.IN_MODIFIER, KtTokenId.NOT_IN)
+        private val inOperationsId = setOf(SyntaxTokenIds.IN_MODIFIER, SyntaxTokenIds.NOT_IN)
 
         private val ktTokenToBinaryOperationNameMap: Map<Int, Name> = hashMapOf(
-            KtTokenId.MUL to OperatorNameConventions.TIMES,
-            KtTokenId.PLUS to OperatorNameConventions.PLUS,
-            KtTokenId.MINUS to OperatorNameConventions.MINUS,
-            KtTokenId.DIV to OperatorNameConventions.DIV,
-            KtTokenId.PERC to OperatorNameConventions.REM,
-            KtTokenId.RANGE to OperatorNameConventions.RANGE_TO,
-            KtTokenId.RANGE_UNTIL to OperatorNameConventions.RANGE_UNTIL,
+            SyntaxTokenIds.MUL to OperatorNameConventions.TIMES,
+            SyntaxTokenIds.PLUS to OperatorNameConventions.PLUS,
+            SyntaxTokenIds.MINUS to OperatorNameConventions.MINUS,
+            SyntaxTokenIds.DIV to OperatorNameConventions.DIV,
+            SyntaxTokenIds.PERC to OperatorNameConventions.REM,
+            SyntaxTokenIds.RANGE to OperatorNameConventions.RANGE_TO,
+            SyntaxTokenIds.RANGE_UNTIL to OperatorNameConventions.RANGE_UNTIL,
         )
 
         private val ktTokenToUnaryOperationNameMap: Map<Int, Name> = hashMapOf(
-            KtTokenId.PLUSPLUS to OperatorNameConventions.INC,
-            KtTokenId.MINUSMINUS to OperatorNameConventions.DEC,
-            KtTokenId.PLUS to OperatorNameConventions.UNARY_PLUS,
-            KtTokenId.MINUS to OperatorNameConventions.UNARY_MINUS,
-            KtTokenId.EXCL to OperatorNameConventions.NOT,
+            SyntaxTokenIds.PLUSPLUS to OperatorNameConventions.INC,
+            SyntaxTokenIds.MINUSMINUS to OperatorNameConventions.DEC,
+            SyntaxTokenIds.PLUS to OperatorNameConventions.UNARY_PLUS,
+            SyntaxTokenIds.MINUS to OperatorNameConventions.UNARY_MINUS,
+            SyntaxTokenIds.EXCL to OperatorNameConventions.NOT,
         )
 
         private val ktTokenToFirOperationMap = hashMapOf(
-            KtTokenId.LT to FirOperation.LT,
-            KtTokenId.GT to FirOperation.GT,
-            KtTokenId.LTEQ to FirOperation.LT_EQ,
-            KtTokenId.GTEQ to FirOperation.GT_EQ,
-            KtTokenId.EQEQ to FirOperation.EQ,
-            KtTokenId.EXCLEQ to FirOperation.NOT_EQ,
-            KtTokenId.EQEQEQ to FirOperation.IDENTITY,
-            KtTokenId.EXCLEQEQEQ to FirOperation.NOT_IDENTITY,
+            SyntaxTokenIds.LT to FirOperation.LT,
+            SyntaxTokenIds.GT to FirOperation.GT,
+            SyntaxTokenIds.LTEQ to FirOperation.LT_EQ,
+            SyntaxTokenIds.GTEQ to FirOperation.GT_EQ,
+            SyntaxTokenIds.EQEQ to FirOperation.EQ,
+            SyntaxTokenIds.EXCLEQ to FirOperation.NOT_EQ,
+            SyntaxTokenIds.EQEQEQ to FirOperation.IDENTITY,
+            SyntaxTokenIds.EXCLEQEQEQ to FirOperation.NOT_IDENTITY,
 
-            KtTokenId.EQ to FirOperation.ASSIGN,
-            KtTokenId.PLUSEQ to FirOperation.PLUS_ASSIGN,
-            KtTokenId.MINUSEQ to FirOperation.MINUS_ASSIGN,
-            KtTokenId.MULTEQ to FirOperation.TIMES_ASSIGN,
-            KtTokenId.DIVEQ to FirOperation.DIV_ASSIGN,
-            KtTokenId.PERCEQ to FirOperation.REM_ASSIGN,
+            SyntaxTokenIds.EQ to FirOperation.ASSIGN,
+            SyntaxTokenIds.PLUSEQ to FirOperation.PLUS_ASSIGN,
+            SyntaxTokenIds.MINUSEQ to FirOperation.MINUS_ASSIGN,
+            SyntaxTokenIds.MULTEQ to FirOperation.TIMES_ASSIGN,
+            SyntaxTokenIds.DIVEQ to FirOperation.DIV_ASSIGN,
+            SyntaxTokenIds.PERCEQ to FirOperation.REM_ASSIGN,
 
-            KtTokenId.IS_KEYWORD to FirOperation.IS,
-            KtTokenId.NOT_IS to FirOperation.NOT_IS,
+            SyntaxTokenIds.IS_KEYWORD to FirOperation.IS,
+            SyntaxTokenIds.NOT_IS to FirOperation.NOT_IS,
 
-            KtTokenId.AS_KEYWORD to FirOperation.AS,
-            KtTokenId.AS_SAFE to FirOperation.SAFE_AS,
+            SyntaxTokenIds.AS_KEYWORD to FirOperation.AS,
+            SyntaxTokenIds.AS_SAFE to FirOperation.SAFE_AS,
         )
 
         private val incrementOperations: Set<Int> = setOf(
-            KtTokenId.PLUSPLUS,
-            KtTokenId.MINUSMINUS,
+            SyntaxTokenIds.PLUSPLUS,
+            SyntaxTokenIds.MINUSMINUS,
         )
 
         private val comparisonOperationsId: Set<Int> = hashSetOf(
-            KtTokenId.LT,
-            KtTokenId.LTEQ,
-            KtTokenId.GTEQ,
-            KtTokenId.GT
+            SyntaxTokenIds.LT,
+            SyntaxTokenIds.LTEQ,
+            SyntaxTokenIds.GTEQ,
+            SyntaxTokenIds.GT
         )
     }
 
@@ -531,8 +531,8 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
         lateinit var firType: FirTypeRef
         binaryExpression.forEachChildren {
             when (it.toTokenId()) {
-                KtNodeTypeId.OPERATION_REFERENCE -> operationReference = it
-                KtNodeTypeId.TYPE_REFERENCE -> firType = declarationBuilder.convertType(it)
+                SyntaxNodeTypeIds.OPERATION_REFERENCE -> operationReference = it
+                SyntaxNodeTypeIds.TYPE_REFERENCE -> firType = declarationBuilder.convertType(it)
                 else -> if (it.isExpression()) leftArgAsFir = getAsFirExpression(it, "No left operand")
             }
         }
@@ -556,19 +556,19 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
         var labelSource: KtSourceElement? = null
         var forbiddenLabelKind: ForbiddenLabelKind? = null
 
-        val isRepetitiveLabel = labeledExpression.getLabeledExpression()?.toTokenId() == KtNodeTypeId.LABELED_EXPRESSION
+        val isRepetitiveLabel = labeledExpression.getLabeledExpression()?.toTokenId() == SyntaxNodeTypeIds.LABELED_EXPRESSION
 
         labeledExpression.forEachChildren {
             context.setNewLabelUserNode(it)
             when (it.toTokenId()) {
-                KtNodeTypeId.LABEL_QUALIFIER -> {
+                SyntaxNodeTypeIds.LABEL_QUALIFIER -> {
                     val name = it.asText.dropLast(1)
-                    labelSource = it.getChildNodesByTokenId(KtNodeTypeId.LABEL).single().toFirSourceElement()
+                    labelSource = it.getChildNodesByTokenId(SyntaxNodeTypeIds.LABEL).single().toFirSourceElement()
                     context.addNewLabel(buildLabel(name, labelSource))
                     forbiddenLabelKind = getForbiddenLabelKind(name, isRepetitiveLabel)
                 }
-                KtNodeTypeId.BLOCK -> firExpression = declarationBuilder.convertBlock(it)
-                KtNodeTypeId.PROPERTY -> firExpression = declarationBuilder.convertPropertyDeclaration(it)
+                SyntaxNodeTypeIds.BLOCK -> firExpression = declarationBuilder.convertBlock(it)
+                SyntaxNodeTypeIds.PROPERTY -> firExpression = declarationBuilder.convertPropertyDeclaration(it)
                 else -> if (it.isExpression()) firExpression = getAsFirStatement(it)
             }
         }
@@ -594,7 +594,7 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
         lateinit var operationReference: Node
         unaryExpression.forEachChildren {
             when (it.toTokenId()) {
-                KtNodeTypeId.OPERATION_REFERENCE -> {
+                SyntaxNodeTypeIds.OPERATION_REFERENCE -> {
                     operationReference = it
                 }
                 else -> if (it.isExpression()) argument = it
@@ -604,7 +604,7 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
         val operationToken = operationReference.getOperationTokenId()
         val conventionCallName = ktTokenToUnaryOperationNameMap[operationToken]
         return when {
-            operationToken == KtTokenId.EXCLEXCL -> {
+            operationToken == SyntaxTokenIds.EXCLEXCL -> {
                 buildCheckNotNullCall {
                     source = unaryExpression.toFirSourceElement()
                     argumentList = buildUnaryArgumentList(
@@ -624,7 +624,7 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
                         operationReference,
                         argument,
                         callName = conventionCallName,
-                        prefix = unaryExpression.toTokenId() == KtNodeTypeId.PREFIX_EXPRESSION
+                        prefix = unaryExpression.toTokenId() == SyntaxNodeTypeIds.PREFIX_EXPRESSION
                     ) { getAsFirExpression(this) }
                 }
                 val receiver = getAsFirExpression<FirExpression>(argument, "No operand", sourceWhenInvalidExpression = unaryExpression)
@@ -652,9 +652,9 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
         val firAnnotationList = mutableListOf<FirAnnotation>()
         annotatedExpression.forEachChildren {
             when (it.toTokenId()) {
-                KtNodeTypeId.ANNOTATION -> declarationBuilder.convertAnnotationTo(it, firAnnotationList)
-                KtNodeTypeId.ANNOTATION_ENTRY -> firAnnotationList += declarationBuilder.convertAnnotationEntry(it)
-                KtNodeTypeId.BLOCK -> firExpression = declarationBuilder.convertBlockExpression(it)
+                SyntaxNodeTypeIds.ANNOTATION -> declarationBuilder.convertAnnotationTo(it, firAnnotationList)
+                SyntaxNodeTypeIds.ANNOTATION_ENTRY -> firAnnotationList += declarationBuilder.convertAnnotationEntry(it)
+                SyntaxNodeTypeIds.BLOCK -> firExpression = declarationBuilder.convertBlockExpression(it)
                 else -> if (it.isExpression()) {
                     context.forwardLabelUsagePermission(annotatedExpression, it)
                     firExpression = getAsFirStatement(it)
@@ -701,14 +701,14 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
 
         for (child in callableReferenceExpression.getChildren()) {
             when (child.toTokenId()) {
-                KtTokenId.COLONCOLON -> isReceiver = false
-                KtTokenId.QUEST -> hasQuestionMarkAtLhs = true
+                SyntaxTokenIds.COLONCOLON -> isReceiver = false
+                SyntaxTokenIds.QUEST -> hasQuestionMarkAtLhs = true
 
                 // In invalid code like `::foo(args)`, the argument list is parsed
                 // inside an ERROR_ELEMENT child of the callable reference expression
                 NO_ID -> {
                     for (errorChild in child.getChildren()) {
-                        if (errorChild.toTokenId() == KtNodeTypeId.VALUE_ARGUMENT_LIST) {
+                        if (errorChild.toTokenId() == SyntaxNodeTypeIds.VALUE_ARGUMENT_LIST) {
                             errorArgumentListNode = errorChild
                             break
                         }
@@ -750,12 +750,12 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
         var firReceiver: FirExpression? = null //before dot
         dotQualifiedExpression.forEachChildren {
             when (val tokenType = it.toTokenId()) {
-                KtTokenId.DOT -> isSelector = true
-                KtTokenId.SAFE_ACCESS -> {
+                SyntaxTokenIds.DOT -> isSelector = true
+                SyntaxTokenIds.SAFE_ACCESS -> {
                     kind = FirSafeCallKind.NullSafe
                     isSelector = true
                 }
-                KtTokenId.ERROR_SAFE_ACCESS -> {
+                SyntaxTokenIds.ERROR_SAFE_ACCESS -> {
                     kind = FirSafeCallKind.ErrorSafe
                     isSelector = true
                 }
@@ -764,10 +764,10 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
                     val firExpression =
                         getAsFirExpression<FirExpression>(it, "Incorrect ${if (isEffectiveSelector) "selector" else "receiver"} expression")
                     if (isEffectiveSelector) {
-                        val callExpressionCallee = if (tokenType == KtNodeTypeId.CALL_EXPRESSION) it.getFirstChildExpressionUnwrapped() else null
+                        val callExpressionCallee = if (tokenType == SyntaxNodeTypeIds.CALL_EXPRESSION) it.getFirstChildExpressionUnwrapped() else null
                         firSelector =
-                            if (tokenType == KtNodeTypeId.REFERENCE_EXPRESSION ||
-                                (tokenType == KtNodeTypeId.CALL_EXPRESSION && callExpressionCallee?.toTokenId() != KtNodeTypeId.LAMBDA_EXPRESSION)
+                            if (tokenType == SyntaxNodeTypeIds.REFERENCE_EXPRESSION ||
+                                (tokenType == SyntaxNodeTypeIds.CALL_EXPRESSION && callExpressionCallee?.toTokenId() != SyntaxNodeTypeIds.LAMBDA_EXPRESSION)
                             ) {
                                 firExpression
                             } else {
@@ -833,23 +833,23 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
         callSuffix.forEachChildren { child ->
             fun process(node: Node) {
                 when (node.toTokenId()) {
-                    KtNodeTypeId.REFERENCE_EXPRESSION -> {
+                    SyntaxNodeTypeIds.REFERENCE_EXPRESSION -> {
                         name = node.asText
                     }
-                    KtNodeTypeId.SUPER_EXPRESSION -> {
+                    SyntaxNodeTypeIds.SUPER_EXPRESSION -> {
                         superNode = node
                     }
-                    KtNodeTypeId.PARENTHESIZED -> if (node.toTokenId() != NO_ID) {
+                    SyntaxNodeTypeIds.PARENTHESIZED -> if (node.toTokenId() != NO_ID) {
                         additionalArgument = getAsFirExpression(
                             node.getExpressionInParentheses(),
                             "Incorrect invoke receiver",
                             sourceWhenInvalidExpression = node
                         )
                     }
-                    KtNodeTypeId.TYPE_ARGUMENT_LIST -> {
+                    SyntaxNodeTypeIds.TYPE_ARGUMENT_LIST -> {
                         firTypeArguments += declarationBuilder.convertTypeArguments(node, allowedUnderscoredTypeArgument = true)
                     }
-                    KtNodeTypeId.VALUE_ARGUMENT_LIST, KtNodeTypeId.LAMBDA_ARGUMENT -> {
+                    SyntaxNodeTypeIds.VALUE_ARGUMENT_LIST, SyntaxNodeTypeIds.LAMBDA_ARGUMENT -> {
                         hasArguments = true
                         valueArguments += node
                     }
@@ -868,7 +868,7 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
         if (imitateLambdaSuspendModifier &&
             name == StandardClassIds.Callables.suspend.callableName.identifier &&
             !callSuffix.getParent().let { it != null && it.selectorExpression == callSuffix && it.receiverExpression != null } &&
-            valueArguments.singleOrNull()?.toTokenId() == KtNodeTypeId.LAMBDA_ARGUMENT &&
+            valueArguments.singleOrNull()?.toTokenId() == SyntaxNodeTypeIds.LAMBDA_ARGUMENT &&
             firTypeArguments.isEmpty()
         ) {
             valueArguments.single().getFirstChild()?.let {
@@ -943,7 +943,7 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
         return children.toInterpolatingCall(
             stringTemplate,
             convertTemplateEntry = { convertShortOrLongStringTemplate(it) },
-            prefix = { children.firstOrNull { it.toTokenId() == KtNodeTypeId.STRING_INTERPOLATION_PREFIX }?.asText ?: "" }
+            prefix = { children.firstOrNull { it.toTokenId() == SyntaxNodeTypeIds.STRING_INTERPOLATION_PREFIX }?.asText ?: "" }
         )
     }
 
@@ -951,7 +951,7 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
         val firExpressions = mutableListOf<FirExpression>()
         this?.forEachChildren {
             when (it.toTokenId()) {
-                KtTokenId.LONG_TEMPLATE_ENTRY_START, KtTokenId.LONG_TEMPLATE_ENTRY_END, KtTokenId.SHORT_TEMPLATE_ENTRY_START -> return@forEachChildren
+                SyntaxTokenIds.LONG_TEMPLATE_ENTRY_START, SyntaxTokenIds.LONG_TEMPLATE_ENTRY_END, SyntaxTokenIds.SHORT_TEMPLATE_ENTRY_START -> return@forEachChildren
                 else -> firExpressions.add(getAsFirExpression(it, errorReason))
             }
         }
@@ -976,7 +976,7 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
         val whenEntries = mutableListOf<WhenEntry<Node>>()
         whenExpression.forEachChildren {
             when (it.toTokenId()) {
-                KtNodeTypeId.PROPERTY -> {
+                SyntaxNodeTypeIds.PROPERTY -> {
                     subjectVariable = (declarationBuilder.convertPropertyDeclaration(it) as FirVariable).let { variable ->
                         buildProperty {
                             source = it.toFirSourceElement()
@@ -999,9 +999,9 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
                         }
                     }
                 }
-                KtNodeTypeId.DESTRUCTURING_DECLARATION -> subjectExpression =
+                SyntaxNodeTypeIds.DESTRUCTURING_DECLARATION -> subjectExpression =
                     getAsFirExpression(it, "Incorrect when subject expression: ${whenExpression.asText}")
-                KtNodeTypeId.WHEN_ENTRY -> whenEntryNodes += it
+                SyntaxNodeTypeIds.WHEN_ENTRY -> whenEntryNodes += it
                 else -> if (it.isExpression()) subjectExpression =
                     getAsFirExpression(it, "Incorrect when subject expression: ${whenExpression.asText}")
             }
@@ -1085,24 +1085,24 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
         var shouldBindSubject = false
         whenEntry.forEachChildren {
             when (it.toTokenId()) {
-                KtNodeTypeId.WHEN_CONDITION_EXPRESSION -> conditions += convertWhenConditionExpression(it, subjectVariable)
-                KtNodeTypeId.WHEN_CONDITION_IN_RANGE -> {
+                SyntaxNodeTypeIds.WHEN_CONDITION_EXPRESSION -> conditions += convertWhenConditionExpression(it, subjectVariable)
+                SyntaxNodeTypeIds.WHEN_CONDITION_IN_RANGE -> {
                     (val condition = expression, val shouldBind = shouldBindSubject) = convertWhenConditionInRange(it, subjectVariable)
                     conditions += condition
                     shouldBindSubject = shouldBindSubject || shouldBind
                 }
-                KtNodeTypeId.WHEN_CONDITION_IS_PATTERN -> {
+                SyntaxNodeTypeIds.WHEN_CONDITION_IS_PATTERN -> {
                     (val condition = expression, val shouldBind = shouldBindSubject) = convertWhenConditionIsPattern(it, subjectVariable)
                     conditions += condition
                     shouldBindSubject = shouldBindSubject || shouldBind
                 }
-                KtNodeTypeId.WHEN_ENTRY_GUARD -> guard = getAsFirExpression(
+                SyntaxNodeTypeIds.WHEN_ENTRY_GUARD -> guard = getAsFirExpression(
                     it.getFirstChildExpressionUnwrapped(),
                     "No expression in guard",
                     sourceWhenInvalidExpression = it
                 )
-                KtTokenId.ELSE_KEYWORD -> isElse = true
-                KtNodeTypeId.BLOCK -> firBlock = declarationBuilder.convertBlock(it)
+                SyntaxTokenIds.ELSE_KEYWORD -> isElse = true
+                SyntaxNodeTypeIds.BLOCK -> firBlock = declarationBuilder.convertBlock(it)
                 else -> if (it.isExpression()) firBlock = declarationBuilder.convertBlock(it)
             }
         }
@@ -1153,11 +1153,11 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
         var conditionSource: KtLightSourceElement? = null
         whenCondition.forEachChildren {
             when (it.toTokenId()) {
-                KtNodeTypeId.OPERATION_REFERENCE if it.getOperationTokenId() == KtTokenId.NOT_IN -> {
+                SyntaxNodeTypeIds.OPERATION_REFERENCE if it.getOperationTokenId() == SyntaxTokenIds.NOT_IN -> {
                     conditionSource = it.toFirSourceElement() as KtLightSourceElement
                     isNegate = true
                 }
-                KtNodeTypeId.OPERATION_REFERENCE -> {
+                SyntaxNodeTypeIds.OPERATION_REFERENCE -> {
                     conditionSource = it.toFirSourceElement() as KtLightSourceElement
                 }
                 else -> if (it.isExpression()) firExpression = getAsFirExpression(it, "No range in condition with range")
@@ -1188,9 +1188,9 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
         var firType: FirTypeRef? = null
         whenCondition.forEachChildren {
             when (it.toTokenId()) {
-                KtNodeTypeId.TYPE_REFERENCE -> firType = declarationBuilder.convertType(it)
-                KtTokenId.IS_KEYWORD -> firOperation = FirOperation.IS
-                KtTokenId.NOT_IS -> firOperation = FirOperation.NOT_IS
+                SyntaxNodeTypeIds.TYPE_REFERENCE -> firType = declarationBuilder.convertType(it)
+                SyntaxTokenIds.IS_KEYWORD -> firOperation = FirOperation.IS
+                SyntaxTokenIds.NOT_IS -> firOperation = FirOperation.NOT_IS
             }
         }
 
@@ -1240,7 +1240,7 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
         val indices: MutableList<FirExpression> = mutableListOf()
         arrayAccess.forEachChildren {
             when (it.toTokenId()) {
-                KtNodeTypeId.INDICES -> indices += convertIndices(it)
+                SyntaxNodeTypeIds.INDICES -> indices += convertIndices(it)
                 else -> if (it.isExpression()) firExpression = getAsFirExpression(it, "No array expression")
             }
         }
@@ -1334,8 +1334,8 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
             target = prepareTarget(doWhileLoop)
             doWhileLoop.forEachChildren {
                 when (it.toTokenId()) {
-                    KtNodeTypeId.BODY -> block = it
-                    KtNodeTypeId.CONDITION -> firCondition = getAsFirExpression(it, "No condition in do-while loop")
+                    SyntaxNodeTypeIds.BODY -> block = it
+                    SyntaxNodeTypeIds.CONDITION -> firCondition = getAsFirExpression(it, "No condition in do-while loop")
                 }
             }
             condition = firCondition ?: buildErrorExpression(
@@ -1354,8 +1354,8 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
         var firCondition: FirExpression? = null
         whileLoop.forEachChildren {
             when (it.toTokenId()) {
-                KtNodeTypeId.BODY -> block = it
-                KtNodeTypeId.CONDITION -> firCondition = getAsFirExpression(it, "No condition in while loop")
+                SyntaxNodeTypeIds.BODY -> block = it
+                SyntaxNodeTypeIds.CONDITION -> firCondition = getAsFirExpression(it, "No condition in while loop")
             }
         }
 
@@ -1380,9 +1380,9 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
         var blockNode: Node? = null
         forLoop.forEachChildren {
             when (it.toTokenId()) {
-                KtNodeTypeId.VALUE_PARAMETER -> parameter = declarationBuilder.convertValueParameter(it, null, ValueParameterDeclaration.FOR_LOOP)
-                KtNodeTypeId.LOOP_RANGE -> rangeExpression = getAsFirExpression(it, "No range in for loop")
-                KtNodeTypeId.BODY -> blockNode = it
+                SyntaxNodeTypeIds.VALUE_PARAMETER -> parameter = declarationBuilder.convertValueParameter(it, null, ValueParameterDeclaration.FOR_LOOP)
+                SyntaxNodeTypeIds.LOOP_RANGE -> rangeExpression = getAsFirExpression(it, "No range in for loop")
+                SyntaxNodeTypeIds.BODY -> blockNode = it
             }
         }
 
@@ -1428,7 +1428,7 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
                     source = blockNode?.toFirSourceElement()
                     val valueParameter = parameter ?: return@block
                     val multiDeclaration = valueParameter.destructuringDeclaration
-                    val quotedName = valueParameter.source.toNode().getChildNodeByTokenId(KtTokenId.IDENTIFIER)?.asText
+                    val quotedName = valueParameter.source.toNode().getChildNodeByTokenId(SyntaxTokenIds.IDENTIFIER)?.asText
                     val firLoopParameter = generateTemporaryVariable(
                         baseModuleData,
                         valueParameter.source,
@@ -1483,9 +1483,9 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
         var firStatement: FirStatement? = null
         body?.forEachChildren {
             when (it.toTokenId()) {
-                KtNodeTypeId.BLOCK -> firBlock = declarationBuilder.convertBlockExpression(it)
-                KtNodeTypeId.ANNOTATED_EXPRESSION -> {
-                    if (it.getChildNodeByTokenId(KtNodeTypeId.BLOCK) != null) {
+                SyntaxNodeTypeIds.BLOCK -> firBlock = declarationBuilder.convertBlockExpression(it)
+                SyntaxNodeTypeIds.ANNOTATED_EXPRESSION -> {
+                    if (it.getChildNodeByTokenId(SyntaxNodeTypeIds.BLOCK) != null) {
                         firBlock = getAsFirExpression(it)
                     } else {
                         firStatement = getAsFirStatement(it)
@@ -1508,9 +1508,9 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
         var finallyBlock: FirBlock? = null
         tryExpression.forEachChildren {
             when (it.toTokenId()) {
-                KtNodeTypeId.BLOCK -> tryBlock = declarationBuilder.convertBlock(it)
-                KtNodeTypeId.CATCH -> convertCatchClause(it)?.also { oneClause -> catchClauses += oneClause }
-                KtNodeTypeId.FINALLY -> finallyBlock = convertFinally(it)
+                SyntaxNodeTypeIds.BLOCK -> tryBlock = declarationBuilder.convertBlock(it)
+                SyntaxNodeTypeIds.CATCH -> convertCatchClause(it)?.also { oneClause -> catchClauses += oneClause }
+                SyntaxNodeTypeIds.FINALLY -> finallyBlock = convertFinally(it)
             }
         }
         return buildTryExpression {
@@ -1550,13 +1550,13 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
         var emptyValueParameterList = false
         catchClause.forEachChildren {
             when (it.toTokenId()) {
-                KtNodeTypeId.VALUE_PARAMETER_LIST -> valueParameter = declarationBuilder.convertValueParameters(
+                SyntaxNodeTypeIds.VALUE_PARAMETER_LIST -> valueParameter = declarationBuilder.convertValueParameters(
                     valueParameters = it,
                     FirAnonymousFunctionSymbol(),
                     ValueParameterDeclaration.CATCH
                 ).firstOrNull() ?: run { emptyValueParameterList = true; null }
 
-                KtNodeTypeId.BLOCK -> blockNode = it
+                SyntaxNodeTypeIds.BLOCK -> blockNode = it
             }
         }
 
@@ -1571,7 +1571,7 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
         var blockNode: Node? = null
         finallyExpression.forEachChildren {
             when (it.toTokenId()) {
-                KtNodeTypeId.BLOCK -> blockNode = it
+                SyntaxNodeTypeIds.BLOCK -> blockNode = it
             }
         }
 
@@ -1619,9 +1619,9 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
         var elseBlock: Node? = null
         ifExpression.forEachChildren {
             when (it.toTokenId()) {
-                KtNodeTypeId.CONDITION -> firCondition = getAsFirExpression(it, "If statement should have condition")
-                KtNodeTypeId.THEN -> thenBlock = it
-                KtNodeTypeId.ELSE -> elseBlock = it
+                SyntaxNodeTypeIds.CONDITION -> firCondition = getAsFirExpression(it, "If statement should have condition")
+                SyntaxNodeTypeIds.THEN -> thenBlock = it
+                SyntaxNodeTypeIds.ELSE -> elseBlock = it
             }
         }
         return IfNodeComponents(firCondition, thenBlock, elseBlock)
@@ -1630,21 +1630,21 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
     private val Node.usedAsExpression: Boolean
         get() {
             var parent = getParent() ?: return true
-            while (parent.toTokenId() == KtNodeTypeId.ANNOTATED_EXPRESSION ||
-                parent.toTokenId() == KtNodeTypeId.LABELED_EXPRESSION
+            while (parent.toTokenId() == SyntaxNodeTypeIds.ANNOTATED_EXPRESSION ||
+                parent.toTokenId() == SyntaxNodeTypeIds.LABELED_EXPRESSION
             ) {
                 parent = parent.getParent() ?: return true
             }
             val parentTokenType = parent.toTokenId()
             return when (parentTokenType) {
-                KtNodeTypeId.BLOCK -> parent.getLastChildExpression() == this && parent.usedAsExpression
-                KtNodeTypeId.TRY, KtNodeTypeId.CATCH -> parent.usedAsExpression
-                KtNodeTypeId.THEN, KtNodeTypeId.ELSE, KtNodeTypeId.WHEN_ENTRY -> parent.getParent()?.usedAsExpression ?: true
-                KtNodeTypeId.CLASS_INITIALIZER, KtNodeTypeId.SCRIPT_INITIALIZER, KtNodeTypeId.SECONDARY_CONSTRUCTOR, KtNodeTypeId.FUNCTION_LITERAL, KtNodeTypeId.FINALLY -> false
-                KtNodeTypeId.FUNCTION, KtNodeTypeId.PROPERTY_ACCESSOR -> parent.getChildren().any { it.toTokenId() == KtTokenId.EQ }
-                KtNodeTypeId.DOT_QUALIFIED_EXPRESSION -> parent.getFirstChild() == this
-                KtNodeTypeId.BODY -> when (parent.getParent()?.toTokenId()) {
-                    KtNodeTypeId.FOR, KtNodeTypeId.WHILE, KtNodeTypeId.DO_WHILE -> false
+                SyntaxNodeTypeIds.BLOCK -> parent.getLastChildExpression() == this && parent.usedAsExpression
+                SyntaxNodeTypeIds.TRY, SyntaxNodeTypeIds.CATCH -> parent.usedAsExpression
+                SyntaxNodeTypeIds.THEN, SyntaxNodeTypeIds.ELSE, SyntaxNodeTypeIds.WHEN_ENTRY -> parent.getParent()?.usedAsExpression ?: true
+                SyntaxNodeTypeIds.CLASS_INITIALIZER, SyntaxNodeTypeIds.SCRIPT_INITIALIZER, SyntaxNodeTypeIds.SECONDARY_CONSTRUCTOR, SyntaxNodeTypeIds.FUNCTION_LITERAL, SyntaxNodeTypeIds.FINALLY -> false
+                SyntaxNodeTypeIds.FUNCTION, SyntaxNodeTypeIds.PROPERTY_ACCESSOR -> parent.getChildren().any { it.toTokenId() == SyntaxTokenIds.EQ }
+                SyntaxNodeTypeIds.DOT_QUALIFIED_EXPRESSION -> parent.getFirstChild() == this
+                SyntaxNodeTypeIds.BODY -> when (parent.getParent()?.toTokenId()) {
+                    SyntaxNodeTypeIds.FOR, SyntaxNodeTypeIds.WHILE, SyntaxNodeTypeIds.DO_WHILE -> false
                     else -> true
                 }
                 else -> true
@@ -1660,7 +1660,7 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
         var isBreak = true
         jump.forEachChildren {
             when (it.toTokenId()) {
-                KtTokenId.CONTINUE_KEYWORD -> isBreak = false
+                SyntaxTokenIds.CONTINUE_KEYWORD -> isBreak = false
                 //BREAK -> isBreak = true
             }
         }
@@ -1681,7 +1681,7 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
         var firExpression: FirExpression? = null
         returnExpression.forEachChildren {
             when (it.toTokenId()) {
-                KtNodeTypeId.LABEL_QUALIFIER -> labelName = it.getAsStringWithoutBacktick().replace("@", "")
+                SyntaxNodeTypeIds.LABEL_QUALIFIER -> labelName = it.getAsStringWithoutBacktick().replace("@", "")
                 else -> if (it.isExpression()) firExpression = getAsFirExpression(it, "Incorrect return expression")
             }
         }
@@ -1740,7 +1740,7 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
         var superTypeRef: FirTypeRef = implicitType
         superExpression.forEachChildren {
             when (it.toTokenId()) {
-                KtNodeTypeId.TYPE_REFERENCE -> superTypeRef = declarationBuilder.convertType(it)
+                SyntaxNodeTypeIds.TYPE_REFERENCE -> superTypeRef = declarationBuilder.convertType(it)
             }
         }
 
@@ -1762,10 +1762,10 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
         return valueArguments.forEachChildrenReturnList { node, container ->
             @Suppress("IncorrectFormatting")
             when (node.toTokenId()) {
-                KtNodeTypeId.VALUE_ARGUMENT -> container += convertValueArgument(node)
-                KtNodeTypeId.LAMBDA_EXPRESSION,
-                KtNodeTypeId.LABELED_EXPRESSION,
-                KtNodeTypeId.ANNOTATED_EXPRESSION -> container += getAsFirExpression<FirAnonymousFunctionExpression>(node).apply {
+                SyntaxNodeTypeIds.VALUE_ARGUMENT -> container += convertValueArgument(node)
+                SyntaxNodeTypeIds.LAMBDA_EXPRESSION,
+                SyntaxNodeTypeIds.LABELED_EXPRESSION,
+                SyntaxNodeTypeIds.ANNOTATED_EXPRESSION -> container += getAsFirExpression<FirAnonymousFunctionExpression>(node).apply {
                     // TODO(KT-66553) remove and set in builder
                     @OptIn(RawFirApi::class)
                     replaceIsTrailingLambda(newIsTrailingLambda = true)
@@ -1784,8 +1784,8 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
         var firExpression: FirExpression? = null
         valueArgument.forEachChildren {
             when (it.toTokenId()) {
-                KtNodeTypeId.VALUE_ARGUMENT_NAME -> identifier = it.asText
-                KtTokenId.MUL -> isSpread = true
+                SyntaxNodeTypeIds.VALUE_ARGUMENT_NAME -> identifier = it.asText
+                SyntaxTokenIds.MUL -> isSpread = true
                 else -> if (it.isExpression()) firExpression = getAsFirExpression(it, "Argument is absent")
             }
         }

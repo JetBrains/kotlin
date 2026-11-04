@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.lightTree.fir.modifier
 
-import org.jetbrains.kotlin.KtTokenId
+import org.jetbrains.kotlin.syntax.SyntaxTokenIds
 
 enum class ModifierFlag(val value: Long) {
     NONE(0L),
@@ -51,52 +51,52 @@ enum class ModifierFlag(val value: Long) {
     companion object {
         val ElementTypeToModifierFlagMap: Map<Int, ModifierFlag> = hashMapOf(
             // Class
-            KtTokenId.ENUM_MODIFIER to CLASS_ENUM,
-            KtTokenId.ANNOTATION_MODIFIER to CLASS_ANNOTATION,
-            KtTokenId.DATA_MODIFIER to CLASS_DATA,
-            KtTokenId.INNER_MODIFIER to CLASS_INNER,
-            KtTokenId.COMPANION_MODIFIER to CLASS_COMPANION,
-            KtTokenId.FUN_MODIFIER to CLASS_FUN,
-            KtTokenId.ERROR_MODIFIER to CLASS_ERROR,
+            SyntaxTokenIds.ENUM_MODIFIER to CLASS_ENUM,
+            SyntaxTokenIds.ANNOTATION_MODIFIER to CLASS_ANNOTATION,
+            SyntaxTokenIds.DATA_MODIFIER to CLASS_DATA,
+            SyntaxTokenIds.INNER_MODIFIER to CLASS_INNER,
+            SyntaxTokenIds.COMPANION_MODIFIER to CLASS_COMPANION,
+            SyntaxTokenIds.FUN_MODIFIER to CLASS_FUN,
+            SyntaxTokenIds.ERROR_MODIFIER to CLASS_ERROR,
 
             // Member
-            KtTokenId.OVERRIDE_MODIFIER to MEMBER_OVERRIDE,
-            KtTokenId.LATEINIT_MODIFIER to MEMBER_LATEINIT,
+            SyntaxTokenIds.OVERRIDE_MODIFIER to MEMBER_OVERRIDE,
+            SyntaxTokenIds.LATEINIT_MODIFIER to MEMBER_LATEINIT,
 
             // Visibility
-            KtTokenId.PUBLIC_MODIFIER to VISIBILITY_PUBLIC,
-            KtTokenId.PRIVATE_MODIFIER to VISIBILITY_PRIVATE,
-            KtTokenId.INTERNAL_MODIFIER to VISIBILITY_INTERNAL,
-            KtTokenId.PROTECTED_MODIFIER to VISIBILITY_PROTECTED,
+            SyntaxTokenIds.PUBLIC_MODIFIER to VISIBILITY_PUBLIC,
+            SyntaxTokenIds.PRIVATE_MODIFIER to VISIBILITY_PRIVATE,
+            SyntaxTokenIds.INTERNAL_MODIFIER to VISIBILITY_INTERNAL,
+            SyntaxTokenIds.PROTECTED_MODIFIER to VISIBILITY_PROTECTED,
 
             // Function
-            KtTokenId.TAILREC_MODIFIER to FUNCTION_TAILREC,
-            KtTokenId.OPERATOR_MODIFIER to FUNCTION_OPERATOR,
-            KtTokenId.INFIX_MODIFIER to FUNCTION_INFIX,
-            KtTokenId.EXTERNAL_MODIFIER to FUNCTION_EXTERNAL,
-            KtTokenId.SUSPEND_MODIFIER to FUNCTION_SUSPEND,
+            SyntaxTokenIds.TAILREC_MODIFIER to FUNCTION_TAILREC,
+            SyntaxTokenIds.OPERATOR_MODIFIER to FUNCTION_OPERATOR,
+            SyntaxTokenIds.INFIX_MODIFIER to FUNCTION_INFIX,
+            SyntaxTokenIds.EXTERNAL_MODIFIER to FUNCTION_EXTERNAL,
+            SyntaxTokenIds.SUSPEND_MODIFIER to FUNCTION_SUSPEND,
 
             // Inheritance
-            KtTokenId.ABSTRACT_MODIFIER to INHERITANCE_ABSTRACT,
-            KtTokenId.FINAL_MODIFIER to INHERITANCE_FINAL,
-            KtTokenId.OPEN_MODIFIER to INHERITANCE_OPEN,
-            KtTokenId.SEALED_MODIFIER to INHERITANCE_SEALED,
+            SyntaxTokenIds.ABSTRACT_MODIFIER to INHERITANCE_ABSTRACT,
+            SyntaxTokenIds.FINAL_MODIFIER to INHERITANCE_FINAL,
+            SyntaxTokenIds.OPEN_MODIFIER to INHERITANCE_OPEN,
+            SyntaxTokenIds.SEALED_MODIFIER to INHERITANCE_SEALED,
 
             // Parameter
-            KtTokenId.VARARG_MODIFIER to PARAMETER_VARARG,
-            KtTokenId.NOINLINE_MODIFIER to PARAMETER_NOINLINE,
-            KtTokenId.CROSSINLINE_MODIFIER to PARAMETER_CROSSINLINE,
+            SyntaxTokenIds.VARARG_MODIFIER to PARAMETER_VARARG,
+            SyntaxTokenIds.NOINLINE_MODIFIER to PARAMETER_NOINLINE,
+            SyntaxTokenIds.CROSSINLINE_MODIFIER to PARAMETER_CROSSINLINE,
 
             // Platform
-            KtTokenId.EXPECT_MODIFIER to PLATFORM_EXPECT,
-            KtTokenId.ACTUAL_MODIFIER to PLATFORM_ACTUAL,
+            SyntaxTokenIds.EXPECT_MODIFIER to PLATFORM_EXPECT,
+            SyntaxTokenIds.ACTUAL_MODIFIER to PLATFORM_ACTUAL,
 
             // Variance
-            KtTokenId.IN_MODIFIER to VARIANCE_IN,
-            KtTokenId.OUT_MODIFIER to VARIANCE_OUT,
+            SyntaxTokenIds.IN_MODIFIER to VARIANCE_IN,
+            SyntaxTokenIds.OUT_MODIFIER to VARIANCE_OUT,
 
             // Reification
-            KtTokenId.REIFIED_MODIFIER to REIFICATION_REIFIED,
+            SyntaxTokenIds.REIFIED_MODIFIER to REIFICATION_REIFIED,
         )
     }
 }

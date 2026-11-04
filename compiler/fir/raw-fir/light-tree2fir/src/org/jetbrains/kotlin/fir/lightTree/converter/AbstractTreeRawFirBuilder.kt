@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.lightTree.converter
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.NO_ID
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.isExpression
@@ -15,8 +14,9 @@ import org.jetbrains.kotlin.fir.builder.Context
 import org.jetbrains.kotlin.fir.declarations.FirReplSnippet
 import org.jetbrains.kotlin.fir.declarations.builder.FirReplSnippetBuilder
 import org.jetbrains.kotlin.fir.expressions.builder.FirBlockBuilder
-import org.jetbrains.kotlin.KtNodeTypeId
-import org.jetbrains.kotlin.KtTokenId
+import org.jetbrains.kotlin.syntax.NO_ID
+import org.jetbrains.kotlin.syntax.SyntaxNodeTypeIds
+import org.jetbrains.kotlin.syntax.SyntaxTokenIds
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
@@ -30,40 +30,40 @@ abstract class AbstractTreeRawFirBuilder<Node : Any, Type : Any>(
 
     abstract fun Node.getParent(): Node?
 
-    private fun Node.getModifierList(): Node? = getChildNodeByTokenId(KtNodeTypeId.MODIFIER_LIST)
+    private fun Node.getModifierList(): Node? = getChildNodeByTokenId(SyntaxNodeTypeIds.MODIFIER_LIST)
 
-    private fun Node.getVarargKeyword(): Node? = getChildNodeByTokenId(KtTokenId.VARARG_MODIFIER)
+    private fun Node.getVarargKeyword(): Node? = getChildNodeByTokenId(SyntaxTokenIds.VARARG_MODIFIER)
 
     override val Node.isVararg: Boolean
         get() = getModifierList()?.getVarargKeyword() != null
 
-    override fun Node.isArrayAccessExpression(): Boolean = toTokenId() == KtNodeTypeId.ARRAY_ACCESS_EXPRESSION
+    override fun Node.isArrayAccessExpression(): Boolean = toTokenId() == SyntaxNodeTypeIds.ARRAY_ACCESS_EXPRESSION
 
-    override fun Node.isSafeAccessExpression(): Boolean = toTokenId() == KtNodeTypeId.SAFE_ACCESS_EXPRESSION
+    override fun Node.isSafeAccessExpression(): Boolean = toTokenId() == SyntaxNodeTypeIds.SAFE_ACCESS_EXPRESSION
 
     override fun Node.isStringInterpolationPrefixOrQuote(): Boolean = when (toTokenId()) {
-        KtNodeTypeId.STRING_INTERPOLATION_PREFIX, KtTokenId.OPEN_QUOTE, KtTokenId.CLOSING_QUOTE -> true
+        SyntaxNodeTypeIds.STRING_INTERPOLATION_PREFIX, SyntaxTokenIds.OPEN_QUOTE, SyntaxTokenIds.CLOSING_QUOTE -> true
         else -> false
     }
 
     override fun Node.isLiteralStringTemplateEntry(): Boolean =
-        toTokenId() == KtNodeTypeId.LITERAL_STRING_TEMPLATE_ENTRY
+        toTokenId() == SyntaxNodeTypeIds.LITERAL_STRING_TEMPLATE_ENTRY
 
     override fun Node.isEscapeStringTemplateEntry(): Boolean =
-        toTokenId() == KtNodeTypeId.ESCAPE_STRING_TEMPLATE_ENTRY
+        toTokenId() == SyntaxNodeTypeIds.ESCAPE_STRING_TEMPLATE_ENTRY
 
     override fun Node.isShortOrLongStringTemplateEntry(): Boolean = when (toTokenId()) {
-        KtNodeTypeId.SHORT_STRING_TEMPLATE_ENTRY, KtNodeTypeId.LONG_STRING_TEMPLATE_ENTRY -> true
+        SyntaxNodeTypeIds.SHORT_STRING_TEMPLATE_ENTRY, SyntaxNodeTypeIds.LONG_STRING_TEMPLATE_ENTRY -> true
         else -> false
     }
 
     override fun Type.toConstantValueKind(): ConstantValueKind? {
         return when (typeToTokenId()) {
-            KtNodeTypeId.INTEGER_CONSTANT -> ConstantValueKind.Int
-            KtNodeTypeId.FLOAT_CONSTANT -> ConstantValueKind.Float
-            KtNodeTypeId.BOOLEAN_CONSTANT -> ConstantValueKind.Boolean
-            KtNodeTypeId.CHARACTER_CONSTANT -> ConstantValueKind.Char
-            KtNodeTypeId.NULL -> ConstantValueKind.Null
+            SyntaxNodeTypeIds.INTEGER_CONSTANT -> ConstantValueKind.Int
+            SyntaxNodeTypeIds.FLOAT_CONSTANT -> ConstantValueKind.Float
+            SyntaxNodeTypeIds.BOOLEAN_CONSTANT -> ConstantValueKind.Boolean
+            SyntaxNodeTypeIds.CHARACTER_CONSTANT -> ConstantValueKind.Char
+            SyntaxNodeTypeIds.NULL -> ConstantValueKind.Null
             else -> null
         }
     }
@@ -78,9 +78,9 @@ abstract class AbstractTreeRawFirBuilder<Node : Any, Type : Any>(
         while (true) {
             val tokenId = unwrapped?.toTokenId()
             unwrapped = when (tokenId) {
-                KtNodeTypeId.PARENTHESIZED -> unwrapped.getExpressionInParentheses()
-                KtNodeTypeId.LABELED_EXPRESSION -> unwrapped.getLabeledExpression()
-                KtNodeTypeId.ANNOTATED_EXPRESSION -> unwrapped.getAnnotatedExpression()
+                SyntaxNodeTypeIds.PARENTHESIZED -> unwrapped.getExpressionInParentheses()
+                SyntaxNodeTypeIds.LABELED_EXPRESSION -> unwrapped.getLabeledExpression()
+                SyntaxNodeTypeIds.ANNOTATED_EXPRESSION -> unwrapped.getAnnotatedExpression()
                 else -> return unwrapped
             }
         }
@@ -125,7 +125,7 @@ abstract class AbstractTreeRawFirBuilder<Node : Any, Type : Any>(
 
     fun Node.getFirstChildExpressionUnwrapped(): Node? {
         val expression = getFirstChildExpression() ?: return null
-        return if (expression.toTokenId() == KtNodeTypeId.PARENTHESIZED) {
+        return if (expression.toTokenId() == SyntaxNodeTypeIds.PARENTHESIZED) {
             expression.getFirstChildExpressionUnwrapped()
         } else {
             expression
@@ -149,12 +149,12 @@ abstract class AbstractTreeRawFirBuilder<Node : Any, Type : Any>(
     override fun Node.getLabeledExpression(): Node? = getLastChildExpression()
 
     override fun Node.getLabelName(): String? {
-        if (toTokenId() == KtNodeTypeId.FUNCTION) {
+        if (toTokenId() == SyntaxNodeTypeIds.FUNCTION) {
             return getParent()?.getLabelName()
         }
         this.forEachChildren {
             when (it.toTokenId()) {
-                KtNodeTypeId.LABEL_QUALIFIER -> return it.asText.replaceFirst("@", "").let(::unquoteIdentifier)
+                SyntaxNodeTypeIds.LABEL_QUALIFIER -> return it.asText.replaceFirst("@", "").let(::unquoteIdentifier)
             }
         }
         return null
@@ -200,8 +200,8 @@ abstract class AbstractTreeRawFirBuilder<Node : Any, Type : Any>(
 
     companion object {
         val ignoredTokensId: HashSet<Int> = hashSetOf(
-            KtTokenId.EOL_COMMENT, KtTokenId.BLOCK_COMMENT, KtTokenId.DOC_COMMENT, KtTokenId.SHEBANG_COMMENT,
-            KtTokenId.WHITE_SPACE, KtTokenId.SEMICOLON, NO_ID,
+            SyntaxTokenIds.EOL_COMMENT, SyntaxTokenIds.BLOCK_COMMENT, SyntaxTokenIds.DOC_COMMENT, SyntaxTokenIds.SHEBANG_COMMENT,
+            SyntaxTokenIds.WHITE_SPACE, SyntaxTokenIds.SEMICOLON, NO_ID,
         )
     }
 }
