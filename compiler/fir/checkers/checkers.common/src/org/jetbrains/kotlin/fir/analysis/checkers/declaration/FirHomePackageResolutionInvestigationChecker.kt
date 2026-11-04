@@ -39,12 +39,15 @@ object FirHomePackageResolutionInvestigationChecker : FirFileChecker(MppCheckerK
             imports[ImportKind.Rest]?.size ?: 0,
             imports[ImportKind.Problematic]?.size ?: 0,
         )
-        for (info in extensionsNotHPR.keys) {
-            reporter.reportOn(
-                declaration.source,
-                FirErrors.HOME_PACKAGE_RESOLUTION_NON_HPR_EXTENSION,
-                (info as ExtensionNotHPR).type,
-            )
+        for ([key, values] in extensionsNotHPR) {
+            if (key !is ExtensionNotHPR) continue
+            for (value in values) {
+                reporter.reportOn(
+                    value.source,
+                    FirErrors.HOME_PACKAGE_RESOLUTION_NON_HPR_EXTENSION,
+                    key.type,
+                )
+            }
         }
     }
 

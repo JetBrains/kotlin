@@ -4001,17 +4001,17 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             HOME_PACKAGE_RESOLUTION_INVESTIGATION_1,
-            "HPR1 / {0} / {1} / {2}",
+            "HPR1 - {0} - {1} - {2}",
             TO_STRING, TO_STRING, TO_STRING
         )
         map.put(
             HOME_PACKAGE_RESOLUTION_INVESTIGATION_2,
-            "HPR2 / {0} / {1} / {2}",
+            "HPR2 - {0} - {1} - {2}",
             TO_STRING, TO_STRING, TO_STRING
         )
         map.put(
             HOME_PACKAGE_RESOLUTION_NON_HPR_EXTENSION,
-            "HPR3 / {0}",
+            "HPR3 - {0}",
             DECLARATION_FQ_NAME
         )
 
