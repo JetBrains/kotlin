@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
 import org.jetbrains.kotlin.commonizer.*
 import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeToolRunner
+import org.jetbrains.kotlin.internal.compilerRunner.native.UsesKotlinNativeToolParallelismProbe
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.internal.UsesClassLoadersCachingBuildService
@@ -54,7 +55,8 @@ internal abstract class CInteropCommonizerTask
     providerFactory: ProviderFactory,
 ) : AbstractCInteropCommonizerTask(),
     UsesClassLoadersCachingBuildService,
-    UsesKotlinNativeBundleBuildService {
+    UsesKotlinNativeBundleBuildService,
+    UsesKotlinNativeToolParallelismProbe {
 
     internal class CInteropGist(
         @get:Input val identifier: CInteropIdentifier,
@@ -250,6 +252,7 @@ internal abstract class CInteropCommonizerTask
                     arguments = arguments,
                 ),
                 taskPath = path,
+                parallelismProbe = kotlinNativeToolParallelismProbe,
             )
         }.commonizeLibraries(
             konanHome = konanHome.get(),

@@ -59,6 +59,7 @@ import org.jetbrains.kotlin.gradle.targets.native.tasks.readHeaderHashes
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeCompilerRunner
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeToolRunner
+import org.jetbrains.kotlin.internal.compilerRunner.native.UsesKotlinNativeToolParallelismProbe
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind.*
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -262,6 +263,7 @@ internal constructor(
     UsesBuildMetricsService,
     UsesBuildFusService,
     UsesKotlinNativeBundleBuildService,
+    UsesKotlinNativeToolParallelismProbe,
     UsesClassLoadersCachingBuildService,
     UsesKonanPropertiesBuildService,
     UsesKotlinToolingDiagnostics {
@@ -503,6 +505,7 @@ internal constructor(
                     arguments = buildArguments,
                 ),
                 taskPath = path,
+                parallelismProbe = kotlinNativeToolParallelismProbe,
             )
         }
 
