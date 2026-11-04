@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightAccessorMeth
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightSimpleMethod.Companion.createSimpleMethods
 import org.jetbrains.kotlin.light.classes.symbol.utils.analyzeForLightClasses
 import org.jetbrains.kotlin.light.classes.symbol.utils.copy
+import org.jetbrains.kotlin.light.classes.symbol.utils.isCompanionExtension
 import org.jetbrains.kotlin.light.classes.symbol.utils.isJvmField
 import org.jetbrains.kotlin.light.classes.symbol.utils.mapType
 import org.jetbrains.kotlin.name.ClassId
@@ -778,7 +779,7 @@ internal fun hasInlineClassInSignature(
 
 /**
  * Whether the name of the [callableSymbol] is mangled because of an inline class in a parameter position: a value parameter,
- * an extension receiver, or a context parameter.
+ * an extension receiver of a non-companion extension, or a context parameter.
  *
  * @param valueParameterPickMask a bit mask specifying which value parameters of the callable symbol should be picked during the check
  */
@@ -792,14 +793,19 @@ internal fun hasManglingInlineClassInParameterPosition(
     valueParameterPickMask = valueParameterPickMask,
 ) { parameterTypeRequiresMangling(it) }
 
-context(_: KaSession)
+/**
+ * Whether [predicate] holds for the type of a parameter of the JVM method of [callableSymbol]: a context parameter, the extension receiver,
+ * or a value parameter picked by [valueParameterPickMask], unless [skipValueParametersCheck] is `true`. A companion extension has no
+ * receiver parameter on the JVM, see `SymbolLightParameterForReceiver`.
+ */
 private inline fun hasInlineClassInParameterPosition(
     callableSymbol: KaCallableSymbol,
     skipValueParametersCheck: Boolean,
     valueParameterPickMask: BitSet?,
     predicate: (KaType) -> Boolean,
 ): Boolean {
-    if (callableSymbol.receiverType?.let { predicate(it) } == true) return true
+    val receiverType = callableSymbol.receiverType
+    if (receiverType != null && !callableSymbol.isCompanionExtension && predicate(receiverType)) return true
     if (callableSymbol.contextParameters.any { predicate(it.returnType) }) return true
     if (!skipValueParametersCheck && callableSymbol is KaFunctionSymbol) {
         return callableSymbol.valueParameters.withIndex().any { [index, valueParameter] ->
@@ -957,7 +963,6 @@ private fun jvmMethodOwner(symbol: KaCallableSymbol): KaDeclarationSymbol? {
  * For a property accessor, the caller must pass its property as [declaration]: none of the exceptions above recognizes an accessor,
  * so it would always be reported as replaced.
  */
-context(_: KaSession)
 private fun isNonMaterializedInlineClassMember(declaration: KaCallableSymbol, owner: KaDeclarationSymbol?): Boolean {
     fun isOverride(): Boolean = when (declaration) {
         is KaNamedFunctionSymbol -> declaration.isOverride

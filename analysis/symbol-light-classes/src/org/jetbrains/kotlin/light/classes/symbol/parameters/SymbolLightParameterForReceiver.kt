@@ -28,6 +28,15 @@ import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassM
 import org.jetbrains.kotlin.light.classes.symbol.utils.*
 import org.jetbrains.kotlin.psi.KtParameter
 
+/**
+ * The light parameter for the extension receiver of a callable. The JVM backend passes the receiver as a value parameter, which follows
+ * the context parameters and precedes the regular value parameters of the method, e.g., `foo(String $this$foo)` for `fun String.foo()`.
+ *
+ * The parameter is named as in the class file: `$this$` followed by the name of the callable, or `$receiver` if that name isn't a valid
+ * identifier.
+ *
+ * A companion extension has no such parameter, as it compiles to a static method without the receiver, see [tryGet].
+ */
 internal class SymbolLightParameterForReceiver private constructor(
     override val symbolPointer: KaSymbolPointer<KaReceiverParameterSymbol>,
     methodName: String,
@@ -37,6 +46,10 @@ internal class SymbolLightParameterForReceiver private constructor(
         symbolPointer.withSymbol(useSiteModule, action)
 
     companion object {
+        /**
+         * Creates the receiver parameter of the callable behind [callableSymbolPointer] for its light [method], or returns `null` if the
+         * method has no receiver parameter, as the callable isn't an extension or is a companion extension.
+         */
         fun tryGet(
             callableSymbolPointer: KaSymbolPointer<KaCallableSymbol>,
             method: SymbolLightMethodBase
@@ -45,7 +58,7 @@ internal class SymbolLightParameterForReceiver private constructor(
             if (!callableSymbol.isExtension) return@withSymbol null
             // Companion extensions hide their receiver from the JVM signature (KEEP-0449 §1.3.6, §4.1.3),
             // so the light class must not expose a leading receiver value parameter.
-            if (callableSymbol.isCompanion) return@withSymbol null
+            if (callableSymbol.isCompanionExtension) return@withSymbol null
             val receiverSymbol = callableSymbol.receiverParameter ?: return@withSymbol null
 
             SymbolLightParameterForReceiver(
