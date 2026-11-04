@@ -89,10 +89,6 @@ internal class KaFirSyntheticPropertyGetterSymbol(
         KaFirPropertyGetterSymbolPointer(propertySymbolPointer = createOwnerPointer(), originalSymbol = this)
     }
 
-    /**
-     * Synthetic property accessors are built anew together with their property, so two symbols of the same getter are compared by their
-     * owning property.
-     */
     override fun equals(other: Any?): Boolean = this === other ||
             other is KaFirSyntheticPropertyGetterSymbol &&
             other.owningKaProperty == owningKaProperty
