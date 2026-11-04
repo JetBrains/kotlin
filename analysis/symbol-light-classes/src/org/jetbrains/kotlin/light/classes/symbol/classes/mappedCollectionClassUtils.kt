@@ -224,7 +224,8 @@ internal fun processPossiblyMappedCollectionMethod(
  *
  * ## What gets generated
  *
- * For each method from the Java collection interface that isn't already present:
+ * For each method from the Java collection interfaces of the closest mapped supertypes (see [findClosestMappedCollectionSupertypes])
+ * that isn't already present:
  * - Methods that map to Kotlin properties (e.g., `size()` → `size` property): generates both
  *   a final bridge method with the Java name and an abstract/concrete method with the Kotlin name (`getSize`)
  * - Methods not in the Kotlin interface: generates open bridge methods.
@@ -248,7 +249,7 @@ internal fun processPossiblyMappedCollectionMethod(
  * @param containingClass The containing light class
  * @param result Mutable list where generated stub methods are added
  * @param classSymbol The class symbol being processed
- * @param allSupertypes All supertypes of the class, used to find the closest mapped collection type
+ * @param allSupertypes All supertypes of the class, used to find the closest mapped collection types
  *
  * @see generateJavaCollectionMethodStubs
  * @see mapKotlinCollectionClassToJava
@@ -260,29 +261,32 @@ internal fun generateJavaCollectionMethodStubsIfNeeded(
     allSupertypes: List<KaClassType>,
     result: MutableList<PsiMethod>,
 ) {
-    val closestMappedSupertype = findClosestMappedCollectionSupertype(allSupertypes) ?: return
-    if (!isFirstNonInterfaceSubtypeOfCollection(classSymbol)) return
+    val closestMappedSupertypes = findClosestMappedCollectionSupertypes(allSupertypes)
+    if (closestMappedSupertypes.isEmpty() || !isFirstNonInterfaceSubtypeOfCollection(classSymbol)) return
 
-    val javaClassId = mapKotlinCollectionClassToJava(closestMappedSupertype.classId) ?: return
-    val kotlinCollectionSymbol = closestMappedSupertype.symbol as? KaClassSymbol ?: return
-    val javaCollectionSymbol = findClass(javaClassId) ?: return
-    val javaCollectionPsiClass = javaCollectionSymbol.psi as? PsiClass ?: return
-    val substitutor = createPsiSubstitutor(javaCollectionPsiClass, closestMappedSupertype, containingClass)
+    for (closestMappedSupertype in closestMappedSupertypes) {
+        val javaClassId = mapKotlinCollectionClassToJava(closestMappedSupertype.classId) ?: continue
+        val kotlinCollectionSymbol = closestMappedSupertype.symbol as? KaClassSymbol ?: continue
+        val javaCollectionSymbol = findClass(javaClassId) ?: continue
+        val javaCollectionPsiClass = javaCollectionSymbol.psi as? PsiClass ?: continue
+        val substitutor = createPsiSubstitutor(javaCollectionPsiClass, closestMappedSupertype, containingClass)
 
-    generateJavaCollectionMethodStubs(containingClass, javaCollectionPsiClass, javaClassId, kotlinCollectionSymbol, substitutor, result)
+        generateJavaCollectionMethodStubs(containingClass, javaCollectionPsiClass, javaClassId, kotlinCollectionSymbol, substitutor, result)
+    }
 }
 
 /**
- * Chooses the first mapped collection supertype that is not shadowed by a more specific mapped one.
+ * Chooses the mapped collection supertypes that are not shadowed by more specific mapped ones.
  *
- * This avoids stopping at `Collection` when the same class also inherits from ex. `List`, so light classes
- * can generate the richer `List` stub set.
+ * This skips `Collection` when the same class also inherits from, e.g., `List`, so light classes generate only the richer `List` stub set.
+ * Unrelated supertypes, like `Map` and `List` in `abstract class C : Map<String, Int>, List<String>`, are all chosen,
+ * as the JVM backend generates the stubs of each of them (`CollectionStubComputer`).
  */
 context(session: KaSession)
-private fun findClosestMappedCollectionSupertype(allSupertypes: List<KaClassType>): KaClassType? {
+private fun findClosestMappedCollectionSupertypes(allSupertypes: List<KaClassType>): List<KaClassType> {
     val mappedSupertypes = allSupertypes.filter { mapKotlinCollectionClassToJava(it.classId) != null }
 
-    return mappedSupertypes.firstOrNull { candidate ->
+    return mappedSupertypes.filter { candidate ->
         mappedSupertypes.none { other ->
             other !== candidate && other.isSubtypeOf(candidate) && !candidate.isSubtypeOf(other)
         }
