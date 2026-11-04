@@ -60,7 +60,7 @@ private val operationsToCheckFirstArgCallableIds = setOf(
     CallableId(FqName("java.lang.ref"), FqName("Reference"), Name.identifier("refersTo")),
 )
 
-object FirJvmIdentitySensitiveCallWithValueTypeObjectChecker : FirCallChecker(MppCheckerKind.Common) {
+object FirJvmIdentitySensitiveCallWithValueTypeObjectChecker : FirCallChecker(MppCheckerKind.Platform) {
     private val synchronizedCallableId = CallableId(FqName("kotlin"), Name.identifier("synchronized"))
     private val lockParameterName = Name.identifier("lock")
 
@@ -198,7 +198,7 @@ object FirJvmIdentitySensitiveCallWithValueTypeObjectChecker : FirCallChecker(Mp
 }
 
 // A reference to an identity-sensitive function, like `::WeakReference`, takes instances of the type of its first parameter.
-object FirJvmIdentitySensitiveCallableReferenceChecker : FirCallableReferenceAccessChecker(MppCheckerKind.Common) {
+object FirJvmIdentitySensitiveCallableReferenceChecker : FirCallableReferenceAccessChecker(MppCheckerKind.Platform) {
     override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
         get() = true
 
