@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.java.direct.util.MemberResolutionResult
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -36,7 +37,8 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
  * initializer to its compile-time constant value. When [qualifierClassId] is null, it looks for a
  * top-level property exposed through a JVM facade class (`MainKt.FOO`); otherwise it looks for a
  * class member property and then a companion-object property. Returns `null` if no case resolves
- * to a const value.
+ * to a const value. For class members, a declared non-constant property is reported as
+ * [MemberResolutionResult.NonConstantField] so it still shadows outer scopes.
  *
  * [qualifierClassId] is the class [classQualifier] resolves to, if any. A qualified name like
  * `p.X.Y` is classified left to right (JLS 6.5.4.2), so it may denote the nested class `p.X.Y`,
@@ -48,7 +50,7 @@ internal fun FirSession.resolveExternalFieldValue(
     qualifierClassId: ClassId?,
     fieldName: String,
     currentPackage: FqName,
-): Any? {
+): MemberResolutionResult? {
     if (nullableSymbolProvider == null) return null
     val propertyName = Name.identifier(fieldName)
     if (qualifierClassId == null) {
@@ -56,10 +58,15 @@ internal fun FirSession.resolveExternalFieldValue(
         val qualifierPackage = if (lastDotIndex == -1) currentPackage else FqName(classQualifier.substring(0, lastDotIndex))
         val qualifierClassName = classQualifier.substring(lastDotIndex + 1)
         return tryResolveAsTopLevelPropertyValue(qualifierPackage, qualifierClassName, propertyName)
+            ?.let(MemberResolutionResult::Constant)
     }
 
-    return tryResolveAsClassMember(qualifierClassId, propertyName)
-        ?: tryResolveAsCompanionMember(qualifierClassId, propertyName)
+    tryResolveAsClassMember(qualifierClassId, propertyName)?.let { return MemberResolutionResult.Constant(it) }
+    tryResolveAsCompanionMember(qualifierClassId, propertyName)?.let { return MemberResolutionResult.Constant(it) }
+    if (getClassDeclaredPropertySymbols(qualifierClassId, propertyName).any()) {
+        return MemberResolutionResult.NonConstantField
+    }
+    return null
 }
 
 /**

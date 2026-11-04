@@ -236,7 +236,7 @@ Java or binary annotations. Expressions only use constants.
 
 1. A qualified reference resolves its qualifier as a type (Scenario D), then looks the member up
    in that class and its supertypes; a simple name is looked up in the containing classes with
-   their supertypes, then single-static and static-on-demand imports (JLS 6.4.1).
+   their supertypes, then single-static and static star imports (JLS 6.4.1).
 2. Source Java classes are read from the AST. Other classes go through FIR: enum entries
    (`hasEnumEntry`), then `JavaExternalConstResolver.resolveExternalFieldValue` — class member,
    then companion-object member; a qualifier that is not a class can only be a JVM facade
