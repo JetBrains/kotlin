@@ -8,9 +8,10 @@
 package org.jetbrains.kotlin.buildtools.tests.arguments.model.js
 
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
+import org.jetbrains.kotlin.buildtools.api.arguments.JsCompilerArguments
+import org.jetbrains.kotlin.buildtools.api.arguments.JsCompilerArguments.Companion.X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT
 import org.jetbrains.kotlin.buildtools.api.arguments.JsCompilerKlibArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.JsCompilerKlibArguments.Companion.X_ENABLE_EXTENSION_FUNCTIONS_IN_EXTERNALS
-import org.jetbrains.kotlin.buildtools.api.arguments.JsCompilerKlibArguments.Companion.X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT
 import org.jetbrains.kotlin.buildtools.api.arguments.JsCompilerKlibArguments.Companion.X_ENABLE_SUSPEND_FUNCTION_EXPORTING
 import org.jetbrains.kotlin.buildtools.api.arguments.JsCompilerLinkingArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.JsCompilerLinkingArguments.Companion.MODULE_KIND
@@ -151,8 +152,21 @@ private val jsCompilerArguments: List<JsArgumentTestDescriptor<*>> = listOf(
         argumentRawValues = listOf("true"),
         valueString = { value -> value?.toString() },
         expectedArgumentStringsFor = { _ -> listOf("-Xenable-implementing-interfaces-from-typescript") },
-        setArgumentValue = { value -> (this as JsCompilerKlibArguments.Builder)[X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT] = value },
-        getArgumentValue = { (this as JsCompilerKlibArguments)[X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT] },
+        setArgumentValue = { value -> (this as JsCompilerArguments.Builder)[X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT] = value },
+        getArgumentValue = { (this as JsCompilerArguments)[X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT] },
+    ),
+
+    JsArgumentTestDescriptor(
+        argumentName = "Xenable-implementing-interfaces-from-typescript",
+        argument = X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT,
+        availableSinceVersion = X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT.availableSinceVersion,
+        operationKind = LINKING,
+        argumentValues = listOf(true),
+        argumentRawValues = listOf("true"),
+        valueString = { value -> value?.toString() },
+        expectedArgumentStringsFor = { _ -> listOf("-Xenable-implementing-interfaces-from-typescript") },
+        setArgumentValue = { value -> (this as JsCompilerArguments.Builder)[X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT] = value },
+        getArgumentValue = { (this as JsCompilerArguments)[X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT] },
     ),
 
     JsArgumentTestDescriptor(
