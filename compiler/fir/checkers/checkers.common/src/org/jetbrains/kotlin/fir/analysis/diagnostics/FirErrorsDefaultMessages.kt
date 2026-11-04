@@ -1025,7 +1025,7 @@ import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErr
 object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
     private const val EXPECT_ACTUAL_INCOMPATIBILITY_MSG =
-        "The ''expect'' and the ''actual'' declarations are incompatible.\n  expect: {0}\n  actual: {1}\n  reason: {2}"
+        "The ''expect'' and the ''actual'' declarations are incompatible.\n{0}\n{1}\nreason: {2}"
 
     // * - The old FE reports these diagnostics with additional parameters
     // & - New diagnostic that has no analogues in the old FE
