@@ -44,7 +44,6 @@ internal object DataFlowIR {
             val isFinal: Boolean,
             val isAbstract: Boolean,
             val module: Module?,
-            val symbolTableIndex: Int,
             val irClass: IrClass?,
             val name: String?
     ) {
@@ -53,11 +52,11 @@ internal object DataFlowIR {
         val itable = mutableMapOf<Int, List<FunctionSymbol>>()
 
         // Special marker type forbidding devirtualization on its instances.
-        object Virtual : Type(0, false, true, null, -1, null, "\$VIRTUAL")
+        object Virtual : Type(0, false, true, null, null, "\$VIRTUAL")
 
         class Public(val hash: Long, index: Int, isFinal: Boolean, isAbstract: Boolean,
-                     module: Module, symbolTableIndex: Int, irClass: IrClass?, name: String? = null)
-            : Type(index, isFinal, isAbstract, module, symbolTableIndex, irClass, name) {
+                     module: Module, irClass: IrClass?, name: String? = null)
+            : Type(index, isFinal, isAbstract, module, irClass, name) {
             override fun equals(other: Any?): Boolean {
                 if (this === other) return true
                 if (other !is Public) return false
@@ -70,13 +69,13 @@ internal object DataFlowIR {
             }
 
             override fun toString(): String {
-                return "PublicType(hash='$hash', symbolTableIndex='$symbolTableIndex', name='$name')"
+                return "PublicType(hash='$hash', index='$index', name='$name')"
             }
         }
 
         class Private(index: Int, isFinal: Boolean, isAbstract: Boolean,
-                      module: Module, symbolTableIndex: Int, irClass: IrClass?, name: String? = null)
-            : Type(index, isFinal, isAbstract, module, symbolTableIndex, irClass, name) {
+                      module: Module, irClass: IrClass?, name: String? = null)
+            : Type(index, isFinal, isAbstract, module, irClass, name) {
             override fun equals(other: Any?): Boolean {
                 if (this === other) return true
                 if (other !is Private) return false
@@ -89,15 +88,12 @@ internal object DataFlowIR {
             }
 
             override fun toString(): String {
-                return "PrivateType(index=$index, symbolTableIndex='$symbolTableIndex', name='$name')"
+                return "PrivateType(index=$index, name='$name')"
             }
         }
     }
 
-    class Module {
-        var numberOfFunctions = 0
-        var numberOfClasses = 0
-    }
+    class Module
 
     object FunctionAttributes {
         val IS_STATIC_FIELD_INITIALIZER = 1
@@ -153,13 +149,13 @@ internal object DataFlowIR {
             }
         }
 
-        abstract class Declared(val module: Module, val symbolTableIndex: Int,
-                                attributes: Int, irDeclaration: IrDeclaration?, var bridgeTarget: FunctionSymbol?, name: String?)
-            : FunctionSymbol(attributes, irDeclaration, name)
+        abstract class Declared(
+                val module: Module, attributes: Int, irDeclaration: IrDeclaration?, var bridgeTarget: FunctionSymbol?, name: String?
+        ) : FunctionSymbol(attributes, irDeclaration, name)
 
-        class Public(val hash: Long, module: Module, symbolTableIndex: Int,
+        class Public(val hash: Long, module: Module,
                      attributes: Int, irDeclaration: IrDeclaration?, bridgeTarget: FunctionSymbol?, name: String? = null)
-            : Declared(module, symbolTableIndex, attributes, irDeclaration, bridgeTarget, name) {
+            : Declared(module, attributes, irDeclaration, bridgeTarget, name) {
 
             override fun equals(other: Any?): Boolean {
                 if (this === other) return true
@@ -173,13 +169,13 @@ internal object DataFlowIR {
             }
 
             override fun toString(): String {
-                return "PublicFunction(hash='$hash', name='$name', symbolTableIndex='$symbolTableIndex')"
+                return "PublicFunction(hash='$hash', name='$name')"
             }
         }
 
-        class Private(val index: Int, module: Module, symbolTableIndex: Int,
+        class Private(val index: Int, module: Module,
                       attributes: Int, irDeclaration: IrDeclaration?, bridgeTarget: FunctionSymbol?, name: String? = null)
-            : Declared(module, symbolTableIndex, attributes, irDeclaration, bridgeTarget, name) {
+            : Declared(module, attributes, irDeclaration, bridgeTarget, name) {
 
             override fun equals(other: Any?): Boolean {
                 if (this === other) return true
@@ -193,7 +189,7 @@ internal object DataFlowIR {
             }
 
             override fun toString(): String {
-                return "PrivateFunction(index=$index, symbolTableIndex='$symbolTableIndex', name='$name')"
+                return "PrivateFunction(index=$index, name='$name')"
             }
         }
     }
@@ -534,14 +530,12 @@ internal object DataFlowIR {
             val name = irClass.fqNameForIrSerialization.asString()
 
             require(!sealed) { "The symbol table has been sealed. irClass = ${irClass.render()}" }
-            val placeToClassTable = true
-            val symbolTableIndex = if (placeToClassTable) module.numberOfClasses++ else -1
             val type = if (irClass.isExported)
                 Type.Public(localHash(name.toByteArray()), privateTypeIndex++, isFinal, isAbstract,
-                        module, symbolTableIndex, irClass, takeName { name })
+                        module, irClass, takeName { name })
             else
                 Type.Private(privateTypeIndex++, isFinal, isAbstract,
-                        module, symbolTableIndex, irClass, takeName { name })
+                        module, irClass, takeName { name })
 
             classMap[irClass] = type
 
@@ -600,7 +594,6 @@ internal object DataFlowIR {
                             true,
                             false,
                             module,
-                            -1,
                             null,
                             takeName { primitiveBinaryType.name }
                     )
@@ -665,20 +658,15 @@ internal object DataFlowIR {
                 )
 
                 else -> {
-                    val isAbstract = it.modality == Modality.ABSTRACT
-                    val irClass = it.parent as? IrClass
                     val bridgeTarget = it.bridgeTarget
                     val isSpecialBridge = bridgeTarget.let {
                         it != null && it.getDefaultValueForOverriddenBuiltinFunction() != null
                     }
                     val bridgeTargetSymbol = if (isSpecialBridge || bridgeTarget == null) null else mapFunction(bridgeTarget)
-                    val placeToFunctionsTable = !isAbstract && irClass != null
-                            && (it.isOverridableOrOverrides || bridgeTarget != null || function.isSpecial || !irClass.isFinalClass)
-                    val symbolTableIndex = if (placeToFunctionsTable) module.numberOfFunctions++ else -1
                     val functionSymbol = if (it.isExported)
-                        FunctionSymbol.Public(localHash(name.toByteArray()), module, symbolTableIndex, attributes, it, bridgeTargetSymbol, takeName { name })
+                        FunctionSymbol.Public(localHash(name.toByteArray()), module, attributes, it, bridgeTargetSymbol, takeName { name })
                     else
-                        FunctionSymbol.Private(privateFunIndex++, module, symbolTableIndex, attributes, it, bridgeTargetSymbol, takeName { name })
+                        FunctionSymbol.Private(privateFunIndex++, module, attributes, it, bridgeTargetSymbol, takeName { name })
                     functionSymbol
                 }
             }
@@ -692,16 +680,12 @@ internal object DataFlowIR {
             return symbol
         }
 
-        private val IrSimpleFunction.isSpecial get() =
-            origin == DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION
-                    || origin is DECLARATION_ORIGIN_BRIDGE_METHOD
-
         private fun mapPropertyInitializer(irField: IrField): FunctionSymbol {
             functionMap[irField]?.let { return it }
 
             assert(irField.isStatic) { "All local properties initializers should've been lowered" }
             val attributes = FunctionAttributes.IS_STATIC_FIELD_INITIALIZER or FunctionAttributes.RETURNS_UNIT
-            val symbol = FunctionSymbol.Private(privateFunIndex++, module, -1, attributes, irField, null, takeName { "${irField.computeSymbolName()}_init" })
+            val symbol = FunctionSymbol.Private(privateFunIndex++, module, attributes, irField, null, takeName { "${irField.computeSymbolName()}_init" })
 
             functionMap[irField] = symbol
 

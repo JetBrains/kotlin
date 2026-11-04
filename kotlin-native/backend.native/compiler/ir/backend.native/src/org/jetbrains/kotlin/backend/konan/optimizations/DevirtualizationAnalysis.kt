@@ -1009,9 +1009,6 @@ internal object DevirtualizationAnalysis {
                     val devirtualizedCallSite = DevirtualizedCallSite(virtualCall.callee,
                             possibleReceivers.map { possibleReceiverType ->
                                 val callee = possibleReceiverType.calleeAt(virtualCall)
-                                if (callee is DataFlowIR.FunctionSymbol.Declared && callee.symbolTableIndex < 0)
-                                    error("Function ${possibleReceiverType}.$callee cannot be called virtually," +
-                                            " but actually is at call site: ${virtualCall.debugString()}")
                                 DevirtualizedCallee(possibleReceiverType, callee)
                             })
                     result[virtualCall] = devirtualizedCallSite to function.symbol
