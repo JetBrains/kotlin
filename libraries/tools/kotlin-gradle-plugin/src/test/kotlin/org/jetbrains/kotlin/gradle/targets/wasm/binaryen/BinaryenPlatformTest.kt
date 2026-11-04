@@ -77,14 +77,24 @@ class BinaryenPlatformTest {
             parseBinaryenPlatformOrNull("Mac OS X", "aarch64"),
             parseBinaryenPlatformOrNull("Linux", "amd64"),
             parseBinaryenPlatformOrNull("Linux", "aarch64"),
-        ).mapNotNull { it?.platform }.toSet()
+        ).mapNotNull { it?.platform }.sorted()
 
-        assertEquals(BinaryenPlatform.SUPPORTED_PLATFORMS.toSet(), parsedPlatforms)
+        assertEquals(BinaryenPlatform.SUPPORTED_PLATFORMS.sorted(), parsedPlatforms)
     }
 
     @Test
     fun `windows is detected`() {
-        assertEquals(true, parseBinaryenPlatformOrNull("Windows 11", "amd64")?.isWindows())
-        assertEquals(false, parseBinaryenPlatformOrNull("Linux", "amd64")?.isWindows())
+        val windowsPlatformCandidate = parseBinaryenPlatformOrNull("Windows 11", "amd64")
+        assertEquals(
+            true,
+            windowsPlatformCandidate?.isWindows(),
+            "Windows platform should be detected, but ${windowsPlatformCandidate?.platform} is not detected as Windows"
+        )
+        val linuxPlatformCandidate = parseBinaryenPlatformOrNull("Linux", "amd64")
+        assertEquals(
+            false,
+            linuxPlatformCandidate?.isWindows(),
+            "Windows platform should not be detected, but ${linuxPlatformCandidate?.platform} is detected as Windows"
+        )
     }
 }

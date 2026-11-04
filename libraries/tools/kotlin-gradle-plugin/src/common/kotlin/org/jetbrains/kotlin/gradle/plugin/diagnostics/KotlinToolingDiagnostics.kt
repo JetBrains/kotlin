@@ -2666,9 +2666,9 @@ internal object KotlinToolingDiagnostics {
                 }
                 .solutions(
                     "Run the build on a platform supported by Binaryen.",
-                    "Disable Binaryen downloading and configure a locally installed 'wasm-opt' executable."
+                    "Disable Binaryen downloading and configure a locally installed 'wasm-opt' executable. " +
+                            "Binaryen releases are available at https://github.com/WebAssembly/binaryen/releases"
                 )
-                .documentationLink(URI("https://github.com/WebAssembly/binaryen/releases"))
         }
     }
 
