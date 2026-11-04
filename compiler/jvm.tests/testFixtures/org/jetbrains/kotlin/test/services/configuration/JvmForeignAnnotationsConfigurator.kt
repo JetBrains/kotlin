@@ -29,8 +29,8 @@ import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.standardLibrariesPathProvider
-import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.test.util.CompiledLibraryCache
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 import java.net.URI
 import java.util.zip.ZipFile

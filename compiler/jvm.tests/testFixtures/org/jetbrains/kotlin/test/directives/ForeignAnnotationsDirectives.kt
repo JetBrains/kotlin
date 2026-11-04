@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.test.directives
 
 import org.jetbrains.kotlin.cli.common.arguments.JavaTypeEnhancementStateParser
 import org.jetbrains.kotlin.codegen.forTestCompile.JavaForeignAnnotationType
-import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.load.java.ReportLevel
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.services.configuration.JvmForeignAnnotationsConfigurator
 
 object ForeignAnnotationsDirectives : SimpleDirectivesContainer() {

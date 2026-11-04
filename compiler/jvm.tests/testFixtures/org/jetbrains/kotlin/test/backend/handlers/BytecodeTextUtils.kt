@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.test.backend.handlers
 
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.test.Assertions
-import java.util.ArrayList
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
