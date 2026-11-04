@@ -2640,11 +2640,12 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
     /**
      * Adds the bounds and the annotations of [constraints] on this type parameter.
      * Annotations are not allowed in `where` clauses, so they are error annotation calls, see [convertTypeConstraint].
+     * They go to [constraintAnnotations][FirTypeParameterBuilder.constraintAnnotations].
      */
     private fun FirTypeParameterBuilder.addTypeConstraints(constraints: List<TypeConstraint>) {
         for (typeConstraint in constraints) {
             bounds += typeConstraint.firTypeRef
-            annotations += typeConstraint.annotations
+            constraintAnnotations += typeConstraint.annotations
         }
     }
 
