@@ -15,9 +15,8 @@ class SyntaxIdsTest {
     @Test
     fun testIdsAreUniqueAndContiguous() {
         val ids = buildMap {
-            assertConst(::NO_ID.isConst, "NO_ID")
-            put("NO_ID", NO_ID)
             for (holder in listOf(
+                BasicSyntaxElementTypeIds::class,
                 KotlinSyntaxTokenIds::class,
                 KotlinSyntaxNodeTypeIds::class,
                 KDocSyntaxTokenIds::class,
@@ -37,7 +36,7 @@ class SyntaxIdsTest {
         assertTrue(duplicates.isEmpty(), "Duplicate IDs: $duplicates")
 
         val sortedIds = ids.values.sorted()
-        assertEquals((NO_ID..sortedIds.last()).toList(), sortedIds, "IDs must form a contiguous range starting from NO_ID")
+        assertEquals((BasicSyntaxElementTypeIds.NO_ID..sortedIds.last()).toList(), sortedIds, "IDs must form a contiguous range starting from NO_ID")
     }
 
     /**
