@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.analysis.api.fir.test
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiClass
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
+import org.jetbrains.kotlin.analysis.api.fir.components.KaFirIllegalPsiException
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPsiJavaClassSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPsiJavaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirPrimaryConstructorSymbolPointer
@@ -32,6 +34,8 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.test.services.TestServices
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
@@ -136,6 +140,42 @@ class AnalysisApiSurfaceTest : AbstractAnalysisApiExecutionTest("testData/surfac
 
             // It has to be analyzable
             assertTrue(constructorPsi.canBeAnalysed())
+        }
+    }
+
+    @Test
+    fun substitutedNestedAnnotation(testServices: TestServices) {
+        val allFiles = testServices.ktTestModuleStructure.allSourceFiles
+        val commonFile = allFiles.single { it.name == "myFacade.kt" } as KtFile
+        val jvmFile = allFiles.single { it.name == "main.kt" } as KtFile
+
+        val project = commonFile.project
+        val facadeClass = JavaPsiFacade.getInstance(project).findClass(
+            "mypack.MyFacadeKt",
+            GlobalSearchScope.projectScope(project),
+        )
+
+        assertNotNull(facadeClass, "'mypack.MyFacadeKt' light class is not found")
+
+        val psiAnnotation = facadeClass.methods.single().annotations.single { it.qualifiedName == "kotlin.Deprecated" }
+
+        // BUG! The nested annotation has to be converted
+        assertFailsWith<KaFirIllegalPsiException> { psiAnnotation.findDeclaredAttributeValue("replaceWith") }
+
+        analyze(jvmFile) {
+            val function = commonFile.declarations.single() as KtNamedFunction
+            val annotation = function.symbol.annotations.single()
+            val replaceWith = annotation.arguments.single { it.name.asString() == "replaceWith" }.expression
+            val nestedAnnotation = assertIs<KaAnnotationValue.NestedAnnotationValue>(replaceWith).annotation
+            val constructorSymbol = nestedAnnotation.constructorSymbol ?: error("The constructor symbol is absent")
+
+            // BUG! It has to point to the JVM Stdlib. JVM session cannot depend on classes from klib
+            assertEquals("Library kotlin-stdlib-metadata", constructorSymbol.containingModule.moduleDescription)
+            val constructorPsi = constructorSymbol.realPsi ?: error("The real psi is not found")
+
+            // BUG! It has to be analyzable
+            assertFalse(constructorPsi.canBeAnalysed())
+            assertFailsWith<KaFirIllegalPsiException> { constructorSymbol.valueParameters }
         }
     }
 }
