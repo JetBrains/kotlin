@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.konan.test.handlers
 
+import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunParameter
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunners.createProperTestRunner
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeHome
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.TCTestOutputFilter
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.TestOutputFilter
@@ -31,6 +33,7 @@ import org.jetbrains.kotlin.test.services.sourceProviders.AbstractLauncherAdditi
 import org.jetbrains.kotlin.test.testInfraError
 import java.io.File
 import kotlin.test.assertIs
+import kotlin.time.Duration
 
 class NativeBoxRunnerGroupingStage(testServices: TestServices) : GroupingStageHandler<BinaryArtifacts.Native>(
     testServices,
@@ -48,6 +51,16 @@ class NativeBoxRunnerGroupingStage(testServices: TestServices) : GroupingStageHa
         testRunner.run()
     }
 }
+
+private val dummyCompilerCall = LoggedData.CompilationToolCall(
+    toolName = "Compiler",
+    input = null,
+    parameters = LoggedData.CompilerParameters(KotlinNativeHome(dir = File("DummyFile")), arrayOf()),
+    exitCode = ExitCode.OK,
+    toolOutput = "",
+    toolOutputHasErrors = false,
+    duration = Duration.ZERO
+)
 
 private fun createTestRun(executable: File, testServices: TestServices): TestRun {
     val testKind = testServices.testRunSettings.testKind(testServices.moduleStructure.modules.firstOrNull()?.directives)
@@ -68,7 +81,7 @@ private fun createTestRun(executable: File, testServices: TestServices): TestRun
             fileCheckStage = null,
             hasSyntheticAccessorsDump = false,
         ),
-        LoggedData.dummyCompilerCall, // TODO: populate at least real compiler invocation arguments
+        dummyCompilerCall, // TODO: populate at least real compiler invocation arguments
     )
     val runParameters = getTestRunParameters(testKind, checks)
     val testRun = TestRun(
