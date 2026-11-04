@@ -169,3 +169,24 @@ store the collected profile using `-XX:ProfilesDumpFile=file.iprof` option, be d
 
 You can also collect multiple profiles and merge them into a single file using `native-image-utils`, see [GraalVM documentation](https://www.graalvm.org/latest/reference-manual/native-image/optimizations-and-performance/PGO/merging-profiles/)
 for more details.
+
+## Kotlin Compiler Daemon Native Image
+
+We also provide an option to include the Kotlin Compiler Daemon native image in the distribution, `-Pkotlin.build.native-image.kotlin-daemon=true`.
+Daemon native image is not yet production ready and is not integrated with the Build Tools API. The main purpose of it is to ensure that the
+daemon native image can be compiled and correctly responds to compilation requests.
+
+You can run the native image tests using the native image daemon (instead of CLI native image):
+```bash
+./gradlew -Pkotlin.build.native-image.kotlin-daemon=true :kotlin-compiler-native-image:nativeImageDaemonBoxTest
+```
+
+And update reachability metadata for the daemon:
+```bash
+./gradlew -Pkotlin.build.native-image.kotlin-daemon=true :kotlin-compiler-native-image:generateReachabilityMetadataDaemonBox
+```
+
+Currently, we're using the same `reachability-metadata.json` for both daemon and CLI native image. Ideally, they would be separate and each one
+would include only the classes and methods that are used by the respective native image. However, using the single merged metadata JSON does
+not significantly affect the size of the native image (<1MB change), so it is not worth the effort for now. This is a place to look into 
+when optimizing the native image size in the future.
