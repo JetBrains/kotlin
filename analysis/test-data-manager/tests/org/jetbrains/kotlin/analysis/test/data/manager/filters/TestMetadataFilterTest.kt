@@ -67,16 +67,16 @@ internal class TestMetadataFilterTest : AbstractPostDiscoveryFilterTest() {
     }
 
     @Test
-    fun `MethodSource with file name prefix is included`() {
-        assertIncluded(
+    fun `MethodSource with file name prefix is excluded`() {
+        assertExcluded(
             filter = TestMetadataFilter(listOf("testData/analysis/api/sym")),
             descriptor = descriptorFromMethod(FakeGoldenAnalysisApiTestGenerated::testSymbols),
         )
     }
 
     @Test
-    fun `MethodSource with directory name prefix is included`() {
-        assertIncluded(
+    fun `MethodSource with directory name prefix is excluded`() {
+        assertExcluded(
             filter = TestMetadataFilter(listOf("testData/analysis/ap")),
             descriptor = descriptorFromMethod(FakeGoldenAnalysisApiTestGenerated::testSymbols),
         )
