@@ -148,6 +148,7 @@ internal object TestDataManagerRunner {
         val skippedTests: Int,
         val problems: Set<TestDataProblem>,
         val errors: Set<TestError>,
+        val fileActions: List<FileAction>,
         val testExecutions: Int,
         val runErrors: List<String> = emptyList(),
     ) {
@@ -159,10 +160,10 @@ internal object TestDataManagerRunner {
             get() = problems.isEmpty() && errors.isEmpty() && runErrors.isEmpty()
 
         fun withRunErrors(runErrors: List<String>): RunOutcome =
-            RunOutcome(totalTests, passedTests, skippedTests, problems, errors, testExecutions, runErrors)
+            RunOutcome(totalTests, passedTests, skippedTests, problems, errors, fileActions, testExecutions, runErrors)
 
         companion object {
-            val EMPTY = RunOutcome(0, 0, 0, emptySet(), emptySet(), 0)
+            val EMPTY = RunOutcome(0, 0, 0, emptySet(), emptySet(), emptyList(), 0)
         }
     }
 
@@ -267,7 +268,9 @@ internal object TestDataManagerRunner {
         val allProblems = mutableSetOf<TestDataProblem>()
         val allErrors = mutableSetOf<TestError>()
         val allFinalFailedTestIds = mutableSetOf<String>()
+        var allFileActions = emptyList<FileAction>()
         var testExecutions = 0
+        ManagedTestAssertions.recordFileActions = true
 
         val useIncremental = when {
             !incremental -> false
@@ -289,10 +292,6 @@ internal object TestDataManagerRunner {
 
         for ([index, group] in groupingResult.groups.withIndex()) {
             val isFirstGroup = index == 0
-
-            if (useIncremental && isFirstGroup) {
-                ManagedTestAssertions.trackUpdatedPaths = true
-            }
 
             val effectiveGroup = if (useIncremental && !isFirstGroup) {
                 val filtered = group.tests.filter { test ->
@@ -325,9 +324,12 @@ internal object TestDataManagerRunner {
                 testExecutions += result.testExecutions
             }
 
+            val groupFileActions = ManagedTestAssertions.drainFileActions()
+            // Groups of different depths can write the same file, e.g., `[js]` and `[knm, js]`
+            allFileActions = allFileActions.mergedWith(groupFileActions)
+
             if (useIncremental && isFirstGroup) {
-                ManagedTestAssertions.trackUpdatedPaths = false
-                changedTestDataPaths = ManagedTestAssertions.drainUpdatedTestDataPaths()
+                changedTestDataPaths = groupFileActions.mapTo(HashSet()) { it.testDataPath.toString() }
                 if (changedTestDataPaths.isNotEmpty()) {
                     println("  Incremental: ${changedTestDataPaths.size} test data path(s) changed in first group")
                 } else {
@@ -338,6 +340,9 @@ internal object TestDataManagerRunner {
             timingStats.executionTime += groupTime
         }
 
+        // Plain test runs in the same JVM, like this module's own tests, must not keep recording
+        ManagedTestAssertions.recordFileActions = false
+
         if (skippedTests > 0) {
             println("  Incremental: skipped $skippedTests variant tests total")
         }
@@ -347,10 +352,10 @@ internal object TestDataManagerRunner {
         val failedTests = allFinalFailedTestIds.size
         val passedTests = totalTests - failedTests - skippedTests
 
-        printSummary(allProblems, allErrors, totalTests, passedTests, skippedTests)
+        printSummary(allProblems, allErrors, allFileActions, totalTests, passedTests, skippedTests)
         printTimingSummary(timingStats)
 
-        return RunOutcome(totalTests, passedTests, skippedTests, allProblems, allErrors, testExecutions)
+        return RunOutcome(totalTests, passedTests, skippedTests, allProblems, allErrors, allFileActions, testExecutions)
     }
 
     internal fun buildDiscoveryRequest(
@@ -547,6 +552,7 @@ internal object TestDataManagerRunner {
     private fun printSummary(
         problems: Set<TestDataProblem>,
         errors: Set<TestError>,
+        fileActions: List<FileAction>,
         totalTests: Int,
         passedTests: Int,
         skippedTests: Int,
@@ -559,13 +565,18 @@ internal object TestDataManagerRunner {
         val skippedSuffix = if (skippedTests > 0) ", $skippedTests skipped (incremental)" else ""
         println("$totalTests tests completed, $passedTests passed, $failedTests failed$skippedSuffix")
 
+        if (fileActions.isNotEmpty()) {
+            println("\n=== Changed files (${fileActions.size}) ===")
+            for (action in fileActions.sortedBy { it.file }) {
+                println("${action.kind} ${action.file.displayPath}")
+            }
+        }
+
         if (problems.isNotEmpty()) {
-            val rootDir = System.getProperty(TEST_DATA_MANAGER_OPTIONS_ROOT_DIR)?.let(::Path)
             val files = problems.mapTo(HashSet()) { it.file }
             println("\n=== Test data problems (${files.size} files) ===")
             for (problem in problems.sortedWith(compareBy({ it.file }, { it.testName }))) {
-                val file = rootDir?.takeIf(problem.file::startsWith)?.relativize(problem.file) ?: problem.file
-                println("${problem.kind} ${file.invariantSeparatorsPathString} (${problem.testName})")
+                println("${problem.kind} ${problem.file.displayPath} (${problem.testName})")
             }
             // In UPDATE, mismatches come only from assertions that can't update their files
             if (TestDataManagerMode.currentMode == TestDataManagerMode.CHECK) {
@@ -584,6 +595,14 @@ internal object TestDataManagerRunner {
             println("\nAll tests passed!")
         }
     }
+
+    /** The path relative to the repository root when it is inside, for shorter output. */
+    private val Path.displayPath: String
+        get() {
+            val rootDir = System.getProperty(TEST_DATA_MANAGER_OPTIONS_ROOT_DIR)?.let(::Path)
+            val path = rootDir?.takeIf(::startsWith)?.relativize(this) ?: this
+            return path.invariantSeparatorsPathString
+        }
 
     private fun printTimingSummary(timingStats: TimingStats) {
         println("\n========================================")
