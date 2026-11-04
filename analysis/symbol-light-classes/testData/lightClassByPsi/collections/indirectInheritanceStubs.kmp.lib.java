@@ -36,9 +36,65 @@ public final class CCollection6 /* test.CCollection6*/ implements java.util.Coll
   public int getSize();//  getSize()
 }
 
+public abstract class CIterable /* test.CIterable*/ implements test.IIterable {
+  public  CIterable();//  .ctor()
+}
+
+public abstract class CIterator /* test.CIterator*/ implements test.IIterator {
+  public  CIterator();//  .ctor()
+}
+
+public abstract class CList /* test.CList*/ implements test.IList {
+  public  CList();//  .ctor()
+}
+
+public abstract class CListIterator /* test.CListIterator*/ implements test.IListIterator {
+  public  CListIterator();//  .ctor()
+}
+
 public abstract class Foo /* test.Foo*/ {
   public  Foo();//  .ctor()
 }
 
 public abstract interface ICollection /* test.ICollection*/<Elem>  extends java.util.Collection<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
+}
+
+public abstract interface IIterable /* test.IIterable*/ extends java.lang.Iterable<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMappedMarker {
+  @org.jetbrains.annotations.NotNull()
+  public default @org.jetbrains.annotations.NotNull() java.util.Iterator<@org.jetbrains.annotations.NotNull() java.lang.String> iterator();//  iterator()
+
+  public static final class DefaultImpls /* test.IIterable.DefaultImpls*/ {
+    @java.lang.Deprecated()
+    @org.jetbrains.annotations.NotNull()
+    public static @org.jetbrains.annotations.NotNull() java.util.Iterator<@org.jetbrains.annotations.NotNull() java.lang.String> iterator(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.IIterable);//  iterator(@org.jetbrains.annotations.NotNull() test.IIterable)
+  }
+}
+
+public abstract interface IIterator /* test.IIterator*/ extends java.util.Iterator<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMappedMarker {
+  public default void remove();//  remove()
+
+  public static final class DefaultImpls /* test.IIterator.DefaultImpls*/ {
+    @java.lang.Deprecated()
+    public static void remove(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.IIterator);//  remove(@org.jetbrains.annotations.NotNull() test.IIterator)
+  }
+}
+
+public abstract interface IList /* test.IList*/ extends java.util.List<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMappedMarker {
+  @org.jetbrains.annotations.NotNull()
+  public default @org.jetbrains.annotations.NotNull() java.util.List<@org.jetbrains.annotations.NotNull() java.lang.String> subList(int, int);//  subList(int, int)
+
+  public static final class DefaultImpls /* test.IList.DefaultImpls*/ {
+    @java.lang.Deprecated()
+    @org.jetbrains.annotations.NotNull()
+    public static @org.jetbrains.annotations.NotNull() java.util.List<@org.jetbrains.annotations.NotNull() java.lang.String> subList(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.IList, int, int);//  subList(@org.jetbrains.annotations.NotNull() test.IList, int, int)
+  }
+}
+
+public abstract interface IListIterator /* test.IListIterator*/ extends java.util.ListIterator<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMappedMarker {
+  public default boolean hasNext();//  hasNext()
+
+  public static final class DefaultImpls /* test.IListIterator.DefaultImpls*/ {
+    @java.lang.Deprecated()
+    public static boolean hasNext(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.IListIterator);//  hasNext(@org.jetbrains.annotations.NotNull() test.IListIterator)
+  }
 }
