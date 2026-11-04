@@ -28,6 +28,7 @@ import kotlin.io.path.createDirectories
 import kotlin.io.path.writeText
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
+import org.jetbrains.kotlin.gradle.targets.wasm.wasmtime.WasmtimePlugin.Companion.WASMTIME_VERSION
 
 @WasmWasiGradlePluginTests
 class KotlinWasmWasiGradlePluginIT : KGPBaseTest() {
@@ -108,10 +109,10 @@ class KotlinWasmWasiGradlePluginIT : KGPBaseTest() {
         val realTempDir = tempDir.toRealPath()
         val fakeRepoDir = realTempDir.resolve("mirror").toFile()
         val fakeInstallDir = realTempDir.resolve("install").toFile()
-        val fakeReactorAdapterFile = fakeRepoDir.resolve("v49.0.1/wasi_snapshot_preview1.reactor.wasm")
+        val fakeReactorAdapterFile = fakeRepoDir.resolve("v${WASMTIME_VERSION}/wasi_snapshot_preview1.reactor.wasm")
         copyMockWasiAdapter(fakeReactorAdapterFile)
 
-        val expectedInstalledAdapter = fakeInstallDir.resolve("v49.0.1/wasi_snapshot_preview1.reactor.wasm")
+        val expectedInstalledAdapter = fakeInstallDir.resolve("v${WASMTIME_VERSION}/wasi_snapshot_preview1.reactor.wasm")
 
         project("wasm-wasmtime-test", gradleVersion) {
             addKgpToBuildScriptCompilationClasspath()
@@ -136,8 +137,8 @@ class KotlinWasmWasiGradlePluginIT : KGPBaseTest() {
 
             build(":compileProductionExecutableKotlinWasmWasiComponentize") {
                 assertTasksExecuted(":compileProductionExecutableKotlinWasmWasiComponentize")
-                val downloadUrl = fakeRepoDir.toURI().toString().trimEnd('/') + "/v49.0.1/wasi_snapshot_preview1.reactor.wasm"
-                assertOutputContains("Downloading WASI preview1 adapter REACTOR for Wasmtime 49.0.1 from $downloadUrl")
+                val downloadUrl = fakeRepoDir.toURI().toString().trimEnd('/') + "/v${WASMTIME_VERSION}/wasi_snapshot_preview1.reactor.wasm"
+                assertOutputContains("Downloading WASI preview1 adapter REACTOR for Wasmtime ${WASMTIME_VERSION} from $downloadUrl")
                 assertTrue(expectedInstalledAdapter.exists(), "Expected installed adapter to exist at $expectedInstalledAdapter")
 
                 val componentFile =
@@ -161,10 +162,10 @@ class KotlinWasmWasiGradlePluginIT : KGPBaseTest() {
         val realTempDir = tempDir.toRealPath()
         val fakeRepoDir = realTempDir.resolve("mirror").toFile()
         val fakeInstallDir = realTempDir.resolve("install").toFile()
-        val fakeAdapterFile = fakeRepoDir.resolve("v49.0.1/wasi_snapshot_preview1.command.wasm")
+        val fakeAdapterFile = fakeRepoDir.resolve("v${WASMTIME_VERSION}/wasi_snapshot_preview1.command.wasm")
         copyMockWasiAdapter(fakeAdapterFile)
 
-        val expectedInstalledAdapter = fakeInstallDir.resolve("v49.0.1/wasi_snapshot_preview1.command.wasm")
+        val expectedInstalledAdapter = fakeInstallDir.resolve("v${WASMTIME_VERSION}/wasi_snapshot_preview1.command.wasm")
 
         project("wasm-wasmtime-test", gradleVersion) {
             addKgpToBuildScriptCompilationClasspath()
@@ -183,8 +184,8 @@ class KotlinWasmWasiGradlePluginIT : KGPBaseTest() {
 
             build(":compileProductionExecutableKotlinWasmWasiComponentize") {
                 assertTasksExecuted(":compileProductionExecutableKotlinWasmWasiComponentize")
-                val downloadUrl = fakeRepoDir.toURI().toString().trimEnd('/') + "/v49.0.1/wasi_snapshot_preview1.command.wasm"
-                assertOutputContains("Downloading WASI preview1 adapter COMMAND for Wasmtime 49.0.1 from $downloadUrl")
+                val downloadUrl = fakeRepoDir.toURI().toString().trimEnd('/') + "/v${WASMTIME_VERSION}/wasi_snapshot_preview1.command.wasm"
+                assertOutputContains("Downloading WASI preview1 adapter COMMAND for Wasmtime ${WASMTIME_VERSION} from $downloadUrl")
                 assertTrue(expectedInstalledAdapter.exists(), "Expected installed adapter to exist at $expectedInstalledAdapter")
 
                 val componentFile =
