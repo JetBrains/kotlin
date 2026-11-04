@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.kmp.utils
 
 import com.intellij.platform.syntax.LazyParser
 import com.intellij.platform.syntax.SyntaxElementType
-import org.jetbrains.kotlin.syntax.NO_ID
+import org.jetbrains.kotlin.syntax.BasicSyntaxElementTypeIds
 
 @Suppress("DEPRECATION")
 typealias Int2IntOpenHashMap = fleet.com.intellij.multiplatform.util.fastutil.ints.Int2IntOpenHashMap
@@ -17,15 +17,22 @@ abstract class SyntaxElementTypesWithIds {
     private val indexToIdMap: Int2IntOpenHashMap = Int2IntOpenHashMap()
 
     /**
-     * Returns [NO_ID] (`0`) if an element has no associated ID.
+     * Returns [BasicSyntaxElementTypeIds.NO_ID] (`0`) if an element has no associated ID.
      * It's returned when calling on an incorrect element types holder.
      * For instance, if call [org.jetbrains.kotlin.kmp.parser.KtNodeTypes.getElementTypeId] on an element from [org.jetbrains.kotlin.kmp.lexer.KtTokens].
-     * Also, it returns [NO_ID] for external syntax elements or when [syntaxElementType] is null.
+     * Also, it returns [BasicSyntaxElementTypeIds.NO_ID] for external syntax elements or when [syntaxElementType] is null.
      */
-    fun getElementTypeId(syntaxElementType: SyntaxElementType?): Int = syntaxElementType?.index?.let { indexToIdMap[it] } ?: NO_ID
+    fun getElementTypeId(syntaxElementType: SyntaxElementType?): Int = syntaxElementType?.index?.let { indexToIdMap[it] } ?: BasicSyntaxElementTypeIds.NO_ID
 
     fun register(id: Int, name: String, lazyParser: LazyParser? = null): SyntaxElementType {
-        return SyntaxElementType(name, lazyParser).also {
+        return register(id, SyntaxElementType(name, lazyParser))
+    }
+
+    /**
+     * Associates [id] with an already existing [syntaxElementType], e.g., a platform one such as `SyntaxTokenTypes.WHITE_SPACE`.
+     */
+    fun register(id: Int, syntaxElementType: SyntaxElementType): SyntaxElementType {
+        return syntaxElementType.also {
             if (indexToIdMap.containsValue(id)) {
                 error("The element with id $id is already registered. Please fix the constant.")
             }
