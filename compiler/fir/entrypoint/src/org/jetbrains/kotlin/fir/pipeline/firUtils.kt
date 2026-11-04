@@ -47,7 +47,7 @@ fun FirSession.buildFirViaLightTree(
         }
         builder.buildFirFile(code, file, linesMapping).also { firFile ->
             firProvider.recordFile(firFile)
-            sourcesToPathsMapper.registerFileSource(firFile.source!!, file.path ?: file.name)
+            sourcesToPathsMapper.registerFileSource(firFile.source!!, file.path ?: file.name, linesMapping)
         }
     }
     reportFilesAndLines?.invoke(files.count(), linesCount)
