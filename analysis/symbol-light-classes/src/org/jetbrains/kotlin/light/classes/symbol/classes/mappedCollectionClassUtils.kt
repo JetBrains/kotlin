@@ -229,7 +229,7 @@ internal fun processPossiblyMappedCollectionMethod(
  *   a final bridge method with the Java name and an abstract/concrete method with the Kotlin name (`getSize`)
  * - Methods not in the Kotlin interface: generates open bridge methods.
  *   Java default methods get them only if the Kotlin interface is read-only and only its mutable counterpart has them
- *   (e.g., `removeIf`)
+ *   (e.g., `removeIf`, or `remove` of `java.util.Iterator`, which `kotlin.collections.MutableIterator` declares)
  * - Methods in a read-only Kotlin interface that its mutable counterpart redeclares (e.g., `iterator`): generates open bridge methods,
  *   see [functionNamesDeclaredByMutableCounterpart]
  * - Methods in the Kotlin interface with special signatures: generates appropriate bridge methods with type substitution
@@ -341,7 +341,8 @@ private fun generateJavaCollectionMethodStubs(
         when {
             method.hasModifierProperty(PsiModifier.STATIC) -> false
             // The JVM backend generates stubs only for the default methods that read-only Kotlin collections don't have
-            method.hasModifierProperty(PsiModifier.DEFAULT) -> isReadOnlyCollection && method.isMutableOnlyJdkMethod(javaClassId)
+            method.hasModifierProperty(PsiModifier.DEFAULT) ->
+                isReadOnlyCollection && (method.name in mutableCounterpartNames || method.isMutableOnlyJdkMethod(javaClassId))
             else -> true
         }
     }
