@@ -1,3 +1,10 @@
+public final class org/jetbrains/kotlin/syntax/BasicSyntaxElementTypeIds {
+	public static final field BAD_CHARACTER I
+	public static final field ERROR_ELEMENT I
+	public static final field INSTANCE Lorg/jetbrains/kotlin/syntax/BasicSyntaxElementTypeIds;
+	public static final field WHITE_SPACE I
+}
+
 public final class org/jetbrains/kotlin/syntax/KDocSyntaxNodeTypeIds {
 	public static final field INSTANCE Lorg/jetbrains/kotlin/syntax/KDocSyntaxNodeTypeIds;
 	public static final field KDOC_NAME I
@@ -302,7 +309,6 @@ public final class org/jetbrains/kotlin/syntax/KotlinSyntaxTokenIds {
 	public static final field WHEN_KEYWORD I
 	public static final field WHERE_KEYWORD I
 	public static final field WHILE_KEYWORD I
-	public static final field WHITE_SPACE I
 }
 
 public final class org/jetbrains/kotlin/syntax/UtilsKt {

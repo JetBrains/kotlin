@@ -14,12 +14,14 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.isExpression
 import org.jetbrains.kotlin.fir.lightTree.converter.AbstractTreeRawFirBuilder
+import org.jetbrains.kotlin.kmp.lexer.BasicElementTypes
 import org.jetbrains.kotlin.kmp.lexer.KtTokens
 import org.jetbrains.kotlin.kmp.lexer.KtTokens.DOT
 import org.jetbrains.kotlin.kmp.lexer.KtTokens.SAFE_ACCESS
 import org.jetbrains.kotlin.kmp.parser.KtNodeTypes
 import org.jetbrains.kotlin.kmp.tree.LightNode
 import org.jetbrains.kotlin.kmp.tree.LightSyntaxTree
+import org.jetbrains.kotlin.syntax.NO_ID
 
 @Suppress("UnstableApiUsage")
 abstract class AbstractMultiplatformParsingRawFirBuilder(
@@ -35,8 +37,10 @@ abstract class AbstractMultiplatformParsingRawFirBuilder(
 
     override fun SyntaxElementType.typeToTokenId(): Int {
         val nodeTypeId = KtNodeTypes.getElementTypeId(this)
-        if (nodeTypeId != 0) return nodeTypeId
-        return KtTokens.getElementTypeId(this)
+        if (nodeTypeId != NO_ID) return nodeTypeId
+        val tokenId = KtTokens.getElementTypeId(this)
+        if (tokenId != NO_ID) return tokenId
+        return BasicElementTypes.getElementTypeId(this)
     }
 
     override fun KtSourceElement.isChildInParentheses(): Boolean =

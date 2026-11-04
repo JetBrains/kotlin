@@ -6,6 +6,15 @@
 // - Show declarations: true
 
 // Library unique name: <org.jetbrains.kotlin:language.syntax>
+final object org.jetbrains.kotlin.syntax/BasicSyntaxElementTypeIds { // org.jetbrains.kotlin.syntax/BasicSyntaxElementTypeIds|null[0]
+    final const val BAD_CHARACTER // org.jetbrains.kotlin.syntax/BasicSyntaxElementTypeIds.BAD_CHARACTER|{}BAD_CHARACTER[0]
+        final fun <get-BAD_CHARACTER>(): kotlin/Int // org.jetbrains.kotlin.syntax/BasicSyntaxElementTypeIds.BAD_CHARACTER.<get-BAD_CHARACTER>|<get-BAD_CHARACTER>(){}[0]
+    final const val ERROR_ELEMENT // org.jetbrains.kotlin.syntax/BasicSyntaxElementTypeIds.ERROR_ELEMENT|{}ERROR_ELEMENT[0]
+        final fun <get-ERROR_ELEMENT>(): kotlin/Int // org.jetbrains.kotlin.syntax/BasicSyntaxElementTypeIds.ERROR_ELEMENT.<get-ERROR_ELEMENT>|<get-ERROR_ELEMENT>(){}[0]
+    final const val WHITE_SPACE // org.jetbrains.kotlin.syntax/BasicSyntaxElementTypeIds.WHITE_SPACE|{}WHITE_SPACE[0]
+        final fun <get-WHITE_SPACE>(): kotlin/Int // org.jetbrains.kotlin.syntax/BasicSyntaxElementTypeIds.WHITE_SPACE.<get-WHITE_SPACE>|<get-WHITE_SPACE>(){}[0]
+}
+
 final object org.jetbrains.kotlin.syntax/KDocSyntaxNodeTypeIds { // org.jetbrains.kotlin.syntax/KDocSyntaxNodeTypeIds|null[0]
     final const val KDOC_NAME // org.jetbrains.kotlin.syntax/KDocSyntaxNodeTypeIds.KDOC_NAME|{}KDOC_NAME[0]
         final fun <get-KDOC_NAME>(): kotlin/Int // org.jetbrains.kotlin.syntax/KDocSyntaxNodeTypeIds.KDOC_NAME.<get-KDOC_NAME>|<get-KDOC_NAME>(){}[0]
@@ -596,8 +605,6 @@ final object org.jetbrains.kotlin.syntax/KotlinSyntaxTokenIds { // org.jetbrains
         final fun <get-WHERE_KEYWORD>(): kotlin/Int // org.jetbrains.kotlin.syntax/KotlinSyntaxTokenIds.WHERE_KEYWORD.<get-WHERE_KEYWORD>|<get-WHERE_KEYWORD>(){}[0]
     final const val WHILE_KEYWORD // org.jetbrains.kotlin.syntax/KotlinSyntaxTokenIds.WHILE_KEYWORD|{}WHILE_KEYWORD[0]
         final fun <get-WHILE_KEYWORD>(): kotlin/Int // org.jetbrains.kotlin.syntax/KotlinSyntaxTokenIds.WHILE_KEYWORD.<get-WHILE_KEYWORD>|<get-WHILE_KEYWORD>(){}[0]
-    final const val WHITE_SPACE // org.jetbrains.kotlin.syntax/KotlinSyntaxTokenIds.WHITE_SPACE|{}WHITE_SPACE[0]
-        final fun <get-WHITE_SPACE>(): kotlin/Int // org.jetbrains.kotlin.syntax/KotlinSyntaxTokenIds.WHITE_SPACE.<get-WHITE_SPACE>|<get-WHITE_SPACE>(){}[0]
 }
 
 final const val org.jetbrains.kotlin.syntax/NO_ID // org.jetbrains.kotlin.syntax/NO_ID|{}NO_ID[0]

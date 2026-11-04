@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.kmp.parser.utils
 
 import com.intellij.platform.syntax.SyntaxElementType
 import com.intellij.platform.syntax.parser.WhitespacesAndCommentsBinder
+import org.jetbrains.kotlin.kmp.lexer.BasicElementTypes
 import org.jetbrains.kotlin.kmp.lexer.KtTokens
 import org.jetbrains.kotlin.kmp.utils.StringUtil
 
@@ -26,10 +27,10 @@ internal object PrecedingCommentsBinder : WhitespacesAndCommentsBinder {
         tokens@ for (idx in tokens.indices.reversed()) {
             val tokenType = tokens[idx]
             when (tokenType) {
-                KtTokens.WHITE_SPACE -> if (StringUtil.getLineBreakCount(getter.get(idx)) > 1) break@tokens
+                BasicElementTypes.WHITE_SPACE -> if (StringUtil.getLineBreakCount(getter.get(idx)) > 1) break@tokens
 
                 in KtTokens.COMMENTS -> {
-                    if (idx == 0 || tokens[idx - 1] == KtTokens.WHITE_SPACE && StringUtil.containsLineBreak(getter.get(idx - 1))) {
+                    if (idx == 0 || tokens[idx - 1] == BasicElementTypes.WHITE_SPACE && StringUtil.containsLineBreak(getter.get(idx - 1))) {
                         result = idx
                     }
                 }
@@ -67,7 +68,7 @@ internal object TrailingCommentsBinder : WhitespacesAndCommentsBinder {
         tokens@ for (idx in tokens.indices) {
             val tokenType = tokens[idx]
             when (tokenType) {
-                KtTokens.WHITE_SPACE -> if (StringUtil.containsLineBreak(getter.get(idx))) break@tokens
+                BasicElementTypes.WHITE_SPACE -> if (StringUtil.containsLineBreak(getter.get(idx))) break@tokens
 
                 KtTokens.EOL_COMMENT, KtTokens.BLOCK_COMMENT -> result = idx + 1
 
@@ -89,7 +90,7 @@ private class AllCommentsBinder(val isTrailing: Boolean) : WhitespacesAndComment
 
         // Skip one whitespace if needed. Expect that there can't be several consecutive whitespaces
         val endToken = tokens[if (isTrailing) size - 1 else 0]
-        val shift = if (endToken == KtTokens.WHITE_SPACE) 1 else 0
+        val shift = if (endToken == BasicElementTypes.WHITE_SPACE) 1 else 0
 
         return if (isTrailing) size - shift else shift
     }
@@ -112,7 +113,7 @@ internal object BindFirstShebangWithWhitespaceOnly : WhitespacesAndCommentsBinde
         tokens: List<SyntaxElementType>, atStreamEdge: Boolean, getter: WhitespacesAndCommentsBinder.TokenTextGetter
     ): Int {
         if (tokens.firstOrNull() == KtTokens.SHEBANG_COMMENT) {
-            return if (tokens.getOrNull(1) == KtTokens.WHITE_SPACE) 2 else 1
+            return if (tokens.getOrNull(1) == BasicElementTypes.WHITE_SPACE) 2 else 1
         }
 
         return 0

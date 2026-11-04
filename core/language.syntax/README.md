@@ -15,6 +15,7 @@ The module is part of getting rid of the IntelliJ platform dependency in the com
 
 The module holds the list of all syntax element identifiers, which are consistent across all three frontends:
 
+* `BasicSyntaxElementTypeIds`
 * `KotlinSyntaxTokenIds`
 * `KotlinSyntaxNodeTypeIds`
 * `KDocSyntaxTokenIds`
@@ -29,8 +30,10 @@ The element types of every frontend take their IDs from here:
 
 * PSI tokens (`org.jetbrains.kotlin.lexer.KtTokens`, `org.jetbrains.kotlin.kdoc.lexer.KDocTokens`) pass them to their
   constructors.
-* KMP element types (`org.jetbrains.kotlin.kmp.lexer.KtTokens`, `org.jetbrains.kotlin.kmp.parser.KtNodeTypes`, ...) are
-  registered with them.
+* Other PSI element types (`org.jetbrains.kotlin.KtNodeTypes` and the language-independent `com.intellij.psi.TokenType`
+  ones) don't take an ID in their constructors, so they are mapped to it by `IElementType.syntaxId()` in `compiler:psi:psi-frontend-utils`.
+* KMP element types (`org.jetbrains.kotlin.kmp.lexer.BasicElementTypes`, `org.jetbrains.kotlin.kmp.lexer.KtTokens`,
+  `org.jetbrains.kotlin.kmp.parser.KtNodeTypes`, ...) are registered with them.
 
 Syntax checkers, positioning strategies and other utilities should rely on these identifiers rather than on
 frontend-specific element type classes (`IElementType` for PSI and LightTree, `SyntaxElementType` for KMP). This way the
@@ -42,8 +45,8 @@ types to be compiled into fast table/lookup switches.
 ## Rules for identifiers
 
 * IDs are contiguous and start from `NO_ID` (`0`). The first ID of each object continues the last ID of the previous
-  one (`KotlinSyntaxTokenIds` → `KotlinSyntaxNodeTypeIds` → `KDocSyntaxTokenIds` → `KDocSyntaxNodeTypeIds`).
-  Remember to update the first constant of the next object after adding a new identifier.
+  one (`BasicSyntaxElementTypeIds` → `KotlinSyntaxTokenIds` → `KotlinSyntaxNodeTypeIds` → `KDocSyntaxTokenIds` →
+  `KDocSyntaxNodeTypeIds`). Remember to update the first constant of the next object after adding a new identifier.
 * Keep the IDs compact, without gaps or reserved ranges: the upcoming `SyntaxIdSet` is supposed to store IDs as bits
   indexed by their values, so its size and efficiency depend on the maximum ID.
 * All identifiers are compile-time constants (`const val`): the compiler computes their values and inlines them at

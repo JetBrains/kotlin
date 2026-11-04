@@ -17,6 +17,7 @@ class SyntaxIdsTest {
             assertConst(::NO_ID.isConst, "NO_ID")
             put("NO_ID", NO_ID)
             for (holder in listOf(
+                BasicSyntaxElementTypeIds::class,
                 KotlinSyntaxTokenIds::class,
                 KotlinSyntaxNodeTypeIds::class,
                 KDocSyntaxTokenIds::class,

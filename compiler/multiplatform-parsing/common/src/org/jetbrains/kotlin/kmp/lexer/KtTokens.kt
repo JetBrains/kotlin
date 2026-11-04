@@ -30,8 +30,6 @@ object KtTokens : SyntaxElementTypesWithIds() {
 
     val DOC_COMMENT: SyntaxElementType = register(KotlinSyntaxTokenIds.DOC_COMMENT, "KDoc")
 
-    val WHITE_SPACE: SyntaxElementType = SyntaxTokenTypes.WHITE_SPACE
-
     val INTEGER_LITERAL: SyntaxElementType = register(KotlinSyntaxTokenIds.INTEGER_LITERAL, "INTEGER_LITERAL")
     val FLOAT_LITERAL: SyntaxElementType = register(KotlinSyntaxTokenIds.FLOAT_LITERAL, "FLOAT_CONSTANT")
     val CHARACTER_LITERAL: SyntaxElementType = register(KotlinSyntaxTokenIds.CHARACTER_LITERAL, "CHARACTER_LITERAL")
