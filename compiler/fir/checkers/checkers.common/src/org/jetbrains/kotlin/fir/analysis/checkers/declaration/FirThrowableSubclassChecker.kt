@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isDangling
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
@@ -27,7 +28,8 @@ object FirThrowableSubclassChecker : FirClassChecker(MppCheckerKind.Common) {
             return
 
         if (declaration.typeParameters.isNotEmpty()) {
-            declaration.typeParameters.firstOrNull()?.source?.let {
+            // The diagnostic is reported on a KtTypeParameter, and a dangling type parameter has only the constraint subject
+            declaration.typeParameters.firstOrNull { !it.isDangling }?.source?.let {
                 reporter.reportOn(it, FirErrors.GENERIC_THROWABLE_SUBCLASS)
             }
 

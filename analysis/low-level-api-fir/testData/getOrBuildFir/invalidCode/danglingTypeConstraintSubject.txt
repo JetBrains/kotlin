@@ -1,11 +1,11 @@
 KT element: KtNameReferenceExpression
-FIR element: null
-FIR source kind: null
+FIR element: FirTypeParameterImpl
+FIR source kind: DanglingTypeParameter
 
 FIR element rendered:
-null
+[ResolvedTo(BODY_RESOLVE)] AA : R|kotlin/Number|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] danglingTypeConstraintSubject.kt
-    public final [ResolvedTo(BODY_RESOLVE)] [DanglingTypeConstraintsKey=[DanglingTypeConstraint(name=AA, source=KtRealPsiSourceElement(KtNameReferenceExpression, 79..81))]] fun <[ResolvedTo(BODY_RESOLVE)] A> foo(): R|kotlin/Unit| {
+    public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] A, [ResolvedTo(BODY_RESOLVE)] AA : R|kotlin/Number|> foo(): R|kotlin/Unit| {
     }

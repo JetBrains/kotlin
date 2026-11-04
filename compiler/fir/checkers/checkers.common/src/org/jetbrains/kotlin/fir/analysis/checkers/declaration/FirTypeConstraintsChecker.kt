@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
-import org.jetbrains.kotlin.fir.declarations.utils.getDanglingTypeConstraintsOrEmpty
+import org.jetbrains.kotlin.fir.declarations.utils.isDangling
 
 object FirTypeConstraintsChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
 
@@ -20,12 +20,12 @@ object FirTypeConstraintsChecker : FirBasicDeclarationChecker(MppCheckerKind.Com
     override fun check(declaration: FirDeclaration) {
         if (declaration !is FirTypeParameterRefsOwner) return
 
-        //basically we transfer errors, which were discovered in ast parsers
-        declaration.getDanglingTypeConstraintsOrEmpty().forEach { constraint ->
+        for (typeParameter in declaration.typeParameters) {
+            if (!typeParameter.isDangling) continue
             reporter.reportOn(
-                constraint.source,
+                typeParameter.source,
                 FirErrors.NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER,
-                constraint.name,
+                typeParameter.symbol.name,
                 declaration.symbol
             )
         }

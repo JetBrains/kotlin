@@ -63,6 +63,7 @@ private val FirDeclarationOrigin.isFakeDeclarationOrigin: Boolean
         is FirDeclarationOrigin.Synthetic.DestructuringDeclarationContainer,
         is FirDeclarationOrigin.Synthetic.FakeHiddenInPreparationForNewJdk,
         is FirDeclarationOrigin.Synthetic.ImplicitWhenSubject,
+        is FirDeclarationOrigin.Synthetic.DanglingTypeParameter,
         is FirDeclarationOrigin.Synthetic.ReplContainerClass,
         is FirDeclarationOrigin.Synthetic.ReplEvalFunction,
         is FirDeclarationOrigin.DynamicScope,

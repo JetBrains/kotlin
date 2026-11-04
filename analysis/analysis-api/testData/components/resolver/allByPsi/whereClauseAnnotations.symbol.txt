@@ -415,19 +415,31 @@ KtNameReferenceExpression(253,255): 'AA'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      AA
+    ]
 
 KtTypeReference(258,261): 'Any'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
 
 KtUserType(258,261): 'Any'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
 
 KtNameReferenceExpression(258,261): 'Any'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
 
 KtTypeConstraint(263,293): '@Anno("declared $prop") T : AA'
   null
@@ -497,22 +509,25 @@ KtNameReferenceExpression(287,288): 'T'
     ]
 
 KtTypeReference(291,293): 'AA'
-  KaSimpleSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'AA'.>
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      AA
+    ]
 
 KtUserType(291,293): 'AA'
-  KaSimpleSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'AA'.>
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      AA
+    ]
 
 KtNameReferenceExpression(291,293): 'AA'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSimpleSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'AA'.>
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      AA
+    ]
 
 KtBlockExpression(294,296): '{}'
   null
@@ -754,19 +769,31 @@ KtNameReferenceExpression(462,464): 'AA'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      AA
+    ]
 
 KtTypeReference(467,470): 'Any'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
 
 KtUserType(467,470): 'Any'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
 
 KtNameReferenceExpression(467,470): 'Any'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
 
 KtProperty(472,590): 'val <T, U> Map<T, U>.property: Int where @Anno("declared $prop") U : Any, @Anno("undeclared $prop") AA : Any get() = 1'
   null
@@ -1026,19 +1053,31 @@ KtNameReferenceExpression(572,574): 'AA'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      AA
+    ]
 
 KtTypeReference(577,580): 'Any'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
 
 KtUserType(577,580): 'Any'
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
 
 KtNameReferenceExpression(577,580): 'Any'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
 
 KtPropertyAccessor(581,590): 'get() = 1'
   null
