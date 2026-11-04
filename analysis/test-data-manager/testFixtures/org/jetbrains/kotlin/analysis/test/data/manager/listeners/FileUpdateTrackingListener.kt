@@ -26,8 +26,15 @@ import kotlin.io.path.Path
  *
  * Used by [org.jetbrains.kotlin.analysis.test.data.manager.TestDataManagerRunner] to determine which tests need re-running
  * in the convergence loop (UPDATE mode) or to report mismatches (CHECK mode).
+ *
+ * The results are keyed by the test unique ID, so the runner can replace the results of a test re-run in a later pass.
  */
 internal class FileUpdateTrackingListener : TestExecutionListener {
+    /**
+     * Unique IDs of all tests that finished, successfully or not.
+     */
+    private val executedTests = ConcurrentHashMap.newKeySet<String>()
+
     /**
      * Test unique IDs that failed with real errors (not file updates).
      */
@@ -40,17 +47,18 @@ internal class FileUpdateTrackingListener : TestExecutionListener {
     private val mismatchesByPath = ConcurrentHashMap<String, MutableSet<TestVariantChain>>()
 
     /**
-     * Test data files that didn't match, for the CHECK mode summary.
+     * Test data files that didn't match, by test unique ID.
      */
-    private val testDataProblems = ConcurrentHashMap.newKeySet<TestDataProblem>()
+    private val testDataProblems = ConcurrentHashMap<String, List<TestDataProblem>>()
 
     /**
-     * Test errors with formatted names for CHECK mode summary.
+     * Other test failures, by test unique ID.
      */
-    private val testErrors = ConcurrentHashMap.newKeySet<TestError>()
+    private val testErrors = ConcurrentHashMap<String, List<TestError>>()
 
     override fun executionFinished(testIdentifier: TestIdentifier, testExecutionResult: TestExecutionResult) {
         if (!testIdentifier.isTest) return
+        executedTests.add(testIdentifier.uniqueId)
 
         // Track failures
         if (testExecutionResult.status == TestExecutionResult.Status.FAILED) {
@@ -62,7 +70,7 @@ internal class FileUpdateTrackingListener : TestExecutionListener {
             for (failure in failures) {
                 val problem = testDataProblemOrNull(testIdentifier, failure)
                 if (problem != null) {
-                    testDataProblems.add(problem)
+                    testDataProblems.merge(testIdentifier.uniqueId, listOf(problem), List<TestDataProblem>::plus)
                     val testDataPath = testIdentifier.testDataPath
                     if (testDataPath != null) {
                         mismatchesByPath
@@ -71,12 +79,11 @@ internal class FileUpdateTrackingListener : TestExecutionListener {
                     }
                 } else {
                     // Real error
-                    testErrors.add(
-                        TestError(
-                            testName = testIdentifier.formatTestName(),
-                            exception = formatException(failure),
-                        )
+                    val error = TestError(
+                        testName = testIdentifier.formatTestName(),
+                        exception = formatException(failure),
                     )
+                    testErrors.merge(testIdentifier.uniqueId, listOf(error), List<TestError>::plus)
                 }
             }
         }
@@ -108,6 +115,11 @@ internal class FileUpdateTrackingListener : TestExecutionListener {
     }
 
     /**
+     * Returns the unique IDs of all tests that finished in this pass.
+     */
+    fun getExecutedTests(): Set<String> = executedTests.toSet()
+
+    /**
      * Returns the set of test unique IDs that failed with real errors.
      */
     fun getTestsWithErrors(): Set<String> = testsWithErrors.toSet()
@@ -118,12 +130,12 @@ internal class FileUpdateTrackingListener : TestExecutionListener {
     fun getMismatchesByPath(): Map<String, Set<TestVariantChain>> = mismatchesByPath.mapValues { it.value.toSet() }
 
     /**
-     * Returns the test data files that didn't match.
+     * Returns the test data files that didn't match, by test unique ID.
      */
-    fun getTestDataProblems(): Set<TestDataProblem> = testDataProblems.toSet()
+    fun getTestDataProblems(): Map<String, List<TestDataProblem>> = testDataProblems.toMap()
 
     /**
-     * Returns the set of test errors with formatted names.
+     * Returns the other test failures, by test unique ID.
      */
-    fun getTestErrors(): Set<TestError> = testErrors.toSet()
+    fun getTestErrors(): Map<String, List<TestError>> = testErrors.toMap()
 }

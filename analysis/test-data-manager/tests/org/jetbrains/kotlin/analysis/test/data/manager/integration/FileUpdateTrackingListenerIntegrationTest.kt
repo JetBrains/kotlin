@@ -78,8 +78,8 @@ internal class FileUpdateTrackingListenerIntegrationTest : AbstractFakeTestInteg
 
         val actual = buildList {
             listener.getMismatchesByPath().forEach { [path, chains] -> add("mismatch: $path $chains") }
-            listener.getTestDataProblems().map { "problem: ${it.testName} ${it.kind} ${tempDir.relativize(it.file)}" }.sorted().forEach(::add)
-            listener.getTestErrors().forEach { add("error: ${it.testName} - ${it.exception}") }
+            listener.getTestDataProblems().values.flatten().map { "problem: ${it.testName} ${it.kind} ${tempDir.relativize(it.file)}" }.sorted().forEach(::add)
+            listener.getTestErrors().values.flatten().forEach { add("error: ${it.testName} - ${it.exception}") }
             listener.getTestsWithErrors().forEach { _ -> add("failed test") }
         }.joinToString("\n")
 
