@@ -3,21 +3,24 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.kmp.utils
+package org.jetbrains.kotlin.syntax
 
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.lexer.KtToken
-import org.jetbrains.kotlin.syntax.NO_ID
-import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
-import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtImplementationDetail
+import java.lang.Deprecated
 
 /**
- * @receiver Some of Kotlin-based element types
- * @return Same integer ID as the corresponding [com.intellij.platform.syntax.SyntaxElementType] has.
- * If the element type is not Kotlin-based, the result is [org.jetbrains.kotlin.syntax.NO_ID].
+ * @receiver A Kotlin element type
+ * @return The ID from `core:language.syntax` that is consistent across all frontends (PSI/LightTree and KMP).
+ * Only Kotlin tokens ([KotlinSyntaxTokenIds]), node types declared in [KotlinSyntaxNodeTypeIds], [KtTokens.DOC_COMMENT]
+ * and [KtTokens.WHITE_SPACE] are mapped.
+ * For other element types (e.g., KDoc element types or non-Kotlin ones), the result is [NO_ID].
  */
-fun IElementType.kmpId(): Int =
+@KtImplementationDetail
+fun IElementType.syntaxId(): Int =
     when {
         this is KtToken -> tokenId
         index < indexToId.size -> indexToId[index.toInt()]
@@ -30,20 +33,20 @@ private val indexToId: IntArray = run {
     var maxIndex: Short = 0
     var id = KotlinSyntaxNodeTypeIds.FILE
     KtNodeTypes::class.java.declaredFields.forEach {
-        if (it.isAnnotationPresent(java.lang.Deprecated::class.java)) return@forEach
+        if (it.isAnnotationPresent(Deprecated::class.java)) return@forEach
         val index = (it.get(null) as IElementType).index
         indexToIdMap[index] = id++
         if (index > maxIndex) {
             maxIndex = index
         }
     }
-    org.jetbrains.kotlin.lexer.KtTokens.DOC_COMMENT.index.let {
+    KtTokens.DOC_COMMENT.index.let {
         indexToIdMap[it] = KotlinSyntaxTokenIds.DOC_COMMENT
         if (it > maxIndex) {
             maxIndex = it
         }
     }
-    org.jetbrains.kotlin.lexer.KtTokens.WHITE_SPACE.index.let {
+    KtTokens.WHITE_SPACE.index.let {
         indexToIdMap[it] = KotlinSyntaxTokenIds.WHITE_SPACE
         if (it > maxIndex) {
             maxIndex = it
