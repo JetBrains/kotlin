@@ -58,6 +58,9 @@ dependencies {
     testFixturesImplementation(project(":native:native.config"))
     testImplementation(testFixtures(project(":compiler:test-infrastructure-utils")))
     testImplementation(testFixtures(project(":compiler:tests-compiler-utils")))
+    testFixturesImplementation(project(":core:compiler.common.native"))
+    testFixturesImplementation(project(":compiler:container"))
+    testFixturesImplementation(project(":compiler:resolution"))
 }
 
 optInTo("org.jetbrains.kotlin.backend.konan.InternalKotlinNativeApi")
