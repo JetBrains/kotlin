@@ -150,6 +150,7 @@ import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.syntax.NO_ID
+import org.jetbrains.kotlin.syntax.SyntaxBasicElementTypeIds
 import org.jetbrains.kotlin.syntax.SyntaxNodeTypeIds
 import org.jetbrains.kotlin.syntax.SyntaxTokenIds
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -1836,7 +1837,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
         // which `forEachChildren` skips
         if (entries.isEmpty()) {
             for (child in node.getChildren()) {
-                if (child.toTokenId() != NO_ID) continue
+                if (child.toTokenId() != SyntaxBasicElementTypeIds.ERROR_ELEMENT) continue
                 for (errorChild in child.getChildren()) {
                     when (errorChild.toTokenId()) {
                         SyntaxTokenIds.LBRACKET -> hasSquareBrackets = true

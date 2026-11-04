@@ -15,7 +15,7 @@ class SyntaxIdsTest {
     fun testIdsAreUniqueAndContiguous() {
         val ids = buildMap {
             put("NO_ID", NO_ID)
-            for (holder in listOf(SyntaxTokenIds::class, SyntaxNodeTypeIds::class, SyntaxKDocTokenIds::class, SyntaxKDocNodeTypeIds::class)) {
+            for (holder in listOf(SyntaxBasicElementTypeIds::class, SyntaxTokenIds::class, SyntaxNodeTypeIds::class, SyntaxKDocTokenIds::class, SyntaxKDocNodeTypeIds::class)) {
                 val fields = holder.java.declaredFields.filter { Modifier.isStatic(it.modifiers) && it.type == Int::class.javaPrimitiveType }
                 assertTrue(fields.isNotEmpty(), "No IDs found in ${holder.simpleName}")
                 for (field in fields) {

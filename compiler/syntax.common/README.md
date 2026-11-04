@@ -15,6 +15,7 @@ The module is part of getting rid of the IntelliJ platform dependency in the com
 
 The module holds the list of all syntax element identifiers, which are consistent across all three frontends:
 
+* `SyntaxBasicElementTypeIds`
 * `SyntaxTokenIds`
 * `SyntaxNodeTypeIds`
 * `SyntaxKDocTokenIds`
@@ -42,7 +43,7 @@ types to be compiled into fast table/lookup switches.
 ## Rules for identifiers
 
 * IDs are contiguous and start from `NO_ID` (`0`). The first ID of each object continues the last ID of the previous
-  one (`SyntaxTokenIds` → `SyntaxNodeTypeIds` → `SyntaxKDocTokenIds` → `SyntaxKDocNodeTypeIds`). Remember to update the first constant of the next
+  one (`SyntaxBasicElementTypeIds` → `SyntaxTokenIds` → `SyntaxNodeTypeIds` → `SyntaxKDocTokenIds` → `SyntaxKDocNodeTypeIds`). Remember to update the first constant of the next
   object after adding a new identifier.
 * Every identifier must be unique.
 * Element types with the same identifier must represent the same syntax element in all frontends.

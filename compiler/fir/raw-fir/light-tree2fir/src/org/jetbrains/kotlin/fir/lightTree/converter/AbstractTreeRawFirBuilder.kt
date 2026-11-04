@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.lightTree.converter
 
+import org.jetbrains.kotlin.syntax.SyntaxBasicElementTypeIds
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
@@ -201,7 +202,9 @@ abstract class AbstractTreeRawFirBuilder<Node : Any, Type : Any>(
     companion object {
         val ignoredTokensId: HashSet<Int> = hashSetOf(
             SyntaxTokenIds.EOL_COMMENT, SyntaxTokenIds.BLOCK_COMMENT, SyntaxTokenIds.DOC_COMMENT, SyntaxTokenIds.SHEBANG_COMMENT,
-            SyntaxTokenIds.WHITE_SPACE, SyntaxTokenIds.SEMICOLON, NO_ID,
+            SyntaxBasicElementTypeIds.WHITE_SPACE, SyntaxBasicElementTypeIds.BAD_CHARACTER, SyntaxBasicElementTypeIds.ERROR_ELEMENT,
+            SyntaxTokenIds.SEMICOLON,
+            NO_ID, // TODO: preserved for safety but should be removed in future because `NO_ID` should never occur during kotlin files parsing
         )
     }
 }
