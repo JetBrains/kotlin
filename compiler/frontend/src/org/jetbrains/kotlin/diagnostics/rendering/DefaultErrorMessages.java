@@ -41,8 +41,7 @@ public class DefaultErrorMessages {
     private static final DiagnosticFactoryToRendererMap MAP = new DiagnosticFactoryToRendererMap("Default");
 
     private static final List<String> RENDERER_PLATFORM_EXTENSIONS = CollectionsKt.listOf(
-            "org.jetbrains.kotlin.resolve.jvm.diagnostics.DefaultErrorMessagesJvm",
-            "org.jetbrains.kotlin.resolve.konan.diagnostics.DefaultErrorMessagesNative"
+            "org.jetbrains.kotlin.resolve.jvm.diagnostics.DefaultErrorMessagesJvm"
     );
 
     private static final List<DiagnosticFactoryToRendererMap> RENDERER_MAPS;
