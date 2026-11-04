@@ -41,6 +41,11 @@ import kotlin.io.path.pathString
  * where we need to have the correct information about library dependencies even before the first launch
  * of IR linker. This class may not be needed in the future if we decide to move the caches orchestration
  * from the compiler to the BTA.
+ *
+ * @property dag The (library -> node) mapping of all libraries in this DAG.
+ *  Important: The order of elements in this map matters! It is taken into account when computing
+ *  [librariesReverseTopoSorted] with Kahn's algorithm: among the libraries whose dependencies have all
+ *  been emitted, the one that comes first in this order is emitted next.
  */
 class KlibDAG internal constructor(private val dag: Map<KotlinLibrary, KlibDAGNode>) {
     init {
@@ -201,7 +206,7 @@ class KlibDAG internal constructor(private val dag: Map<KotlinLibrary, KlibDAGNo
  * Which means that all libraries from [librariesUsedInCurrentCompilation] should be represented in
  * the deserialized [SerializedKlibDAG].
  */
-fun SerializedKlibDAG.deserialize(librariesUsedInCurrentCompilation: Collection<KotlinLibrary>): KlibDAG {
+fun SerializedKlibDAG.deserialize(librariesUsedInCurrentCompilation: List<KotlinLibrary>): KlibDAG {
     val pathToLibrary: Map<Path, KotlinLibrary> = librariesUsedInCurrentCompilation.associateByCanonicalPathPreventingDuplicates()
 
     val librariesMissingInSerializedDag = pathToLibrary.keys - dag.keys
@@ -209,7 +214,8 @@ fun SerializedKlibDAG.deserialize(librariesUsedInCurrentCompilation: Collection<
         "There are libraries that are used in the current compilation but are missing in the deserialized DAG: ${librariesMissingInSerializedDag.joinToString()}"
     }
 
-    val dagUnderConstruction: Map<KotlinLibrary, KlibDAGNodeImpl> = librariesUsedInCurrentCompilation.associateWith(::KlibDAGNodeImpl)
+    /** Note: This map contains entries in the same order as [librariesUsedInCurrentCompilation]. */
+    val dagUnderConstruction: Map<KotlinLibrary, KlibDAGNodeImpl> = librariesUsedInCurrentCompilation.associateWithKlibDAGNode()
 
     for ([libraryPath: Path, directDependencyPaths: Set<Path>] in dag.entries) {
         val library = pathToLibrary[libraryPath] ?: run {
@@ -262,7 +268,7 @@ annotation class InternalKlibDAGApi
  */
 class KlibDAGBuilder(parameters: Parameters) {
     class Parameters(
-        val libraries: Collection<KotlinLibrary>,
+        val libraries: List<KotlinLibrary>,
         val isRoot: (KotlinLibrary) -> Boolean,
     ) {
         @InternalKlibDAGApi
@@ -296,7 +302,8 @@ private class KlibDAGBuilderImpl(private val parameters: KlibDAGBuilder.Paramete
         }
     }
 
-    private val dagUnderConstruction: Map<KotlinLibrary, KlibDAGNodeImpl> = parameters.libraries.associateWith(::KlibDAGNodeImpl)
+    /** Note: This map contains entries in the same order as [KlibDAGBuilder.Parameters.libraries]. */
+    private val dagUnderConstruction: Map<KotlinLibrary, KlibDAGNodeImpl> = parameters.libraries.associateWithKlibDAGNode()
 
     // Optimization: Stdlib is a dependency for each library. We don't need to extract signatures from it.
     private val stdlibNode: KlibDAGNodeImpl? = stdlib?.let(dagUnderConstruction::get)
@@ -407,7 +414,10 @@ private class KlibDAGBuilderImpl(private val parameters: KlibDAGBuilder.Paramete
             usedNodes[node] = State.ALREADY_PROCESSED
         }
 
-        // Select only the subset of actually used nodes.
+        /**
+         * Select only the subset of actually used nodes.
+         * Note that the entries in [KlibDAG.dag] in the returned object follow the order of [KlibDAGBuilder.Parameters.libraries].
+         */
         return KlibDAG(dagUnderConstruction.filterValues { it in usedNodes })
     }
 
@@ -527,6 +537,16 @@ private fun Collection<KotlinLibrary>.associateByCanonicalPathPreventingDuplicat
 
     return librariesByCanonicalPath
 }
+
+/**
+ * Associate each [KotlinLibrary] with a fresh instance of [KlibDAGNodeImpl].
+ *
+ * Important:
+ * - The order of libraries in this list is preserved in the resulting map.
+ * - The declared return type is [Map], which by itself does not imply any specific order of elements.
+ *   [Map] is used only because it is read-only and thus guards the returned collection from unintentional modification.
+ */
+private fun List<KotlinLibrary>.associateWithKlibDAGNode(): Map<KotlinLibrary, KlibDAGNodeImpl> = associateWith(::KlibDAGNodeImpl)
 
 /**
  * A library's position in the load order, i.e. its index in the load-ordered list of a [KlibDAG]'s libraries.
