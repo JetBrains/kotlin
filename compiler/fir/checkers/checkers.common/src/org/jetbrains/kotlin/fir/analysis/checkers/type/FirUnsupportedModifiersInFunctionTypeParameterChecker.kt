@@ -16,10 +16,7 @@ import org.jetbrains.kotlin.fir.syntax.withSyntax
 
 object FirUnsupportedModifiersInFunctionTypeParameterChecker : FirFunctionalTypeParameterSyntaxChecker() {
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    override fun check(
-        element: FirFunctionTypeParameter,
-        source: KtSourceElement,
-    ) {
+    override fun checkParameter(parameter: FirFunctionTypeParameter, source: KtSourceElement) {
         val modifiersList = source.extractModifierList()
 
         if (modifiersList != null) {

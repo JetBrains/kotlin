@@ -6,10 +6,11 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.syntax
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirPropertyChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.declarations.FirProperty
@@ -17,13 +18,11 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.fir.syntax.withSyntax
 import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 
-object FirLocalVariableTypeParametersSyntaxChecker : FirDeclarationSyntaxChecker<FirProperty>() {
+object FirLocalVariableTypeParametersSyntaxChecker : FirPropertyChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    override fun check(
-        element: FirProperty,
-        source: KtSourceElement,
-    ) {
-        if (source.kind is KtFakeSourceElementKind || element.symbol !is FirLocalPropertySymbol) return
+    override fun check(declaration: FirProperty) {
+        val source = declaration.source ?: return
+        if (source.kind is KtFakeSourceElementKind || declaration.symbol !is FirLocalPropertySymbol) return
         // Local variables are also used in increments/decrements of dot-qualified expressions, whose source isn't a property.
         if (source.syntaxId != KotlinSyntaxNodeTypeIds.PROPERTY) return
 

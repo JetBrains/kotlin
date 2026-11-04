@@ -12,7 +12,9 @@ import org.jetbrains.kotlin.config.ExplicitApiMode
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isLocalDeclaredInBlock
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.getChild
@@ -31,17 +33,15 @@ import org.jetbrains.kotlin.fir.syntax.withSyntax
 import org.jetbrains.kotlin.syntax.KotlinSyntaxIdSets
 import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 
-object FirExplicitApiDeclarationChecker : FirDeclarationSyntaxChecker<FirDeclaration>() {
+object FirExplicitApiDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    override fun check(
-        element: FirDeclaration,
-        source: KtSourceElement,
-    ) {
+    override fun check(declaration: FirDeclaration) {
+        val source = declaration.source ?: return
         val sourceKindIsReal = source.kind is KtRealSourceElementKind
         if (!sourceKindIsReal &&
             source.kind != KtFakeSourceElementKind.PropertyFromParameter || // Fake properties from parameter should be checked for visibility
-            element.origin == FirDeclarationOrigin.ScriptCustomization.ResultProperty ||
-            element !is FirMemberDeclaration
+            declaration.origin == FirDeclarationOrigin.ScriptCustomization.ResultProperty ||
+            declaration !is FirMemberDeclaration
         ) {
             return
         }
@@ -54,21 +54,21 @@ object FirExplicitApiDeclarationChecker : FirDeclarationSyntaxChecker<FirDeclara
         val explicitReturnTypesState = extractState(AnalysisFlags.explicitReturnTypes)
         if (explicitApiState == null && explicitReturnTypesState == null) return
         // Enum entries do not have visibilities
-        if (element is FirEnumEntry) return
+        if (declaration is FirEnumEntry) return
 
-        val shouldReportExplicitApi = isPublicApi(element)
-        val shouldReportNonLocalFunction = explicitReturnTypesState != null && element is FirNamedFunction && !element.isLocal
+        val shouldReportExplicitApi = isPublicApi(declaration)
+        val shouldReportNonLocalFunction = explicitReturnTypesState != null && declaration is FirNamedFunction && !declaration.isLocal
         if (!shouldReportExplicitApi && !shouldReportNonLocalFunction) {
             return
         }
 
         if (explicitApiState != null && shouldReportExplicitApi) {
-            checkVisibilityModifier(explicitApiState, element, source)
+            checkVisibilityModifier(explicitApiState, declaration, source)
         }
 
-        if (sourceKindIsReal && element is FirCallableDeclaration) {
+        if (sourceKindIsReal && declaration is FirCallableDeclaration) {
             // Don't check fake property from parameter because they always have an explicit type (otherwise it's a compiler error)
-            checkExplicitReturnType(explicitApiState ?: explicitReturnTypesState!!, element, source)
+            checkExplicitReturnType(explicitApiState ?: explicitReturnTypesState!!, declaration, source)
         }
     }
 

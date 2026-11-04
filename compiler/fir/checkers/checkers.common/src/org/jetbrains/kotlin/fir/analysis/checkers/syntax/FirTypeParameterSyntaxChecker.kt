@@ -5,26 +5,26 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.syntax
 
-import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirTypeParameterChecker
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.utils.isDangling
 import org.jetbrains.kotlin.fir.syntax.withSyntax
 
-object FirTypeParameterSyntaxChecker : FirDeclarationSyntaxChecker<FirTypeParameter>() {
+object FirTypeParameterSyntaxChecker : FirTypeParameterChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    override fun check(
-        element: FirTypeParameter,
-        source: KtSourceElement,
-    ) {
+    override fun check(declaration: FirTypeParameter) {
+        val source = declaration.source ?: return
+
         // A dangling type parameter has no KtTypeParameter, and all its bounds come from constraints
-        if (element.bounds.size < 2 || element.isDangling) return
+        if (declaration.bounds.size < 2 || declaration.isDangling) return
 
         val [constraint, params] = withSyntax {
-            element.bounds.partition { it.source?.isInTypeConstraint() == true }
+            declaration.bounds.partition { it.source?.isInTypeConstraint() == true }
         }
         if (params.isNotEmpty() && constraint.isNotEmpty()) {
             reporter.reportOn(source, FirErrors.MISPLACED_TYPE_PARAMETER_CONSTRAINTS)
