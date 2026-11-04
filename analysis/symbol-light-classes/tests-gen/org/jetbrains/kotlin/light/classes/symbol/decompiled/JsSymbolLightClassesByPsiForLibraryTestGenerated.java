@@ -533,6 +533,12 @@ public class JsSymbolLightClassesByPsiForLibraryTestGenerated extends AbstractJs
   }
 
   @Test
+  @TestMetadata("varargMangling.kt")
+  public void testVarargMangling() {
+    run("varargMangling.kt");
+  }
+
+  @Test
   @TestMetadata("varargParameterWithIncompletedTypeInAnnotationPrimaryConstructor.kt")
   public void testVarargParameterWithIncompletedTypeInAnnotationPrimaryConstructor() {
     run("varargParameterWithIncompletedTypeInAnnotationPrimaryConstructor.kt");
@@ -554,6 +560,12 @@ public class JsSymbolLightClassesByPsiForLibraryTestGenerated extends AbstractJs
   @TestMetadata("varargParameterWithoutTypeInPrimaryConstructor.kt")
   public void testVarargParameterWithoutTypeInPrimaryConstructor() {
     run("varargParameterWithoutTypeInPrimaryConstructor.kt");
+  }
+
+  @Test
+  @TestMetadata("varargParameters.kt")
+  public void testVarargParameters() {
+    run("varargParameters.kt");
   }
 
   @Test
@@ -1952,6 +1964,12 @@ public class JsSymbolLightClassesByPsiForLibraryTestGenerated extends AbstractJs
     }
 
     @Test
+    @TestMetadata("unsignedVararg.kt")
+    public void testUnsignedVararg() {
+      run("unsignedVararg.kt");
+    }
+
+    @Test
     @TestMetadata("valueClassSecondaryConstructor.kt")
     public void testValueClassSecondaryConstructor() {
       run("valueClassSecondaryConstructor.kt");
@@ -2232,6 +2250,12 @@ public class JsSymbolLightClassesByPsiForLibraryTestGenerated extends AbstractJs
       @TestMetadata("uintReceiver.kt")
       public void testUintReceiver() {
         run("uintReceiver.kt");
+      }
+
+      @Test
+      @TestMetadata("unsignedVararg.kt")
+      public void testUnsignedVararg() {
+        run("unsignedVararg.kt");
       }
 
       @Test
@@ -2639,6 +2663,18 @@ public class JsSymbolLightClassesByPsiForLibraryTestGenerated extends AbstractJs
         @TestMetadata("openFun.kt")
         public void testOpenFun() {
           run("openFun.kt");
+        }
+
+        @Test
+        @TestMetadata("overrideProperty.kt")
+        public void testOverrideProperty() {
+          run("overrideProperty.kt");
+        }
+
+        @Test
+        @TestMetadata("overrideUnmangled.kt")
+        public void testOverrideUnmangled() {
+          run("overrideUnmangled.kt");
         }
       }
     }

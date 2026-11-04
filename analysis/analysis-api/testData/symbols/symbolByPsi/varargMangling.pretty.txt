@@ -1,0 +1,10 @@
+fun nullableUnsigned(vararg a: kotlin.UInt?)
+
+fun unsigned(vararg b: kotlin.UInt)
+
+fun <T : Wrapper> boundedByValueClass(vararg c: T)
+
+@kotlin.jvm.JvmInline
+inline class Wrapper(s: kotlin.String) {
+  val s: kotlin.String
+}

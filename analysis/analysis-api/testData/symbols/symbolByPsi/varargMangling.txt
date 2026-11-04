@@ -1,0 +1,410 @@
+KaConstructorSymbol:
+  anchorPsi: KtPrimaryConstructor
+  annotations: []
+  callableId: null
+  containingClassId: Wrapper
+  contextParameters: []
+  contextReceivers: []
+  hasStableParameterNames: true
+  isActual: false
+  isCompanion: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isPrimary: true
+  location: CLASS
+  modality: FINAL
+  origin: SOURCE
+  psi: KtPrimaryConstructor
+  realPsi: KtPrimaryConstructor
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: Wrapper
+  typeParameters: []
+  valueParameters: [
+    KaValueParameterSymbol:
+      anchorPsi: KtParameter
+      annotations: []
+      callableId: null
+      contextParameters: []
+      contextReceivers: []
+      hasDeclaredDefaultValue: false
+      hasDefaultValue: false
+      isActual: false
+      isCompanion: false
+      isCrossinline: false
+      isDelegated: false
+      isExpect: false
+      isExtension: false
+      isExternal: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVal: true
+      isVararg: false
+      location: LOCAL
+      modality: FINAL
+      name: s
+      origin: SOURCE
+      primaryConstructorProperty: KaKotlinPropertySymbol(/Wrapper.s)
+      psi: KtParameter
+      realPsi: KtParameter
+      receiverParameter: null
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/String
+      typeParameters: []
+      visibility: PUBLIC
+      getContainingFileSymbol: KaFileSymbol(varargMangling.kt)
+      getContainingJvmClassName: Wrapper
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecation: null
+      importableFqName: null
+  ]
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(varargMangling.kt)
+  getContainingJvmClassName: Wrapper
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecation: null
+  javaMethodName: null
+  importableFqName: Wrapper
+
+KaNamedClassSymbol:
+  anchorPsi: KtClass
+  annotations: [
+    kotlin/jvm/JvmInline()
+      psi: KtAnnotationEntry
+  ]
+  classId: Wrapper
+  classKind: CLASS
+  companionObject: null
+  contextReceivers: []
+  isActual: false
+  isData: false
+  isExpect: false
+  isExternal: false
+  isFun: false
+  isInline: true
+  isInner: false
+  isValue: true
+  location: TOP_LEVEL
+  modality: FINAL
+  name: Wrapper
+  origin: SOURCE
+  psi: KtClass
+  realPsi: KtClass
+  superTypes: [
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Any
+  ]
+  typeParameters: []
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(varargMangling.kt)
+  getContainingModule: KaSourceModule "Sources of main"
+  applicableAnnotationTargets: null
+  deprecation: null
+  importableFqName: Wrapper
+
+KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
+  annotations: []
+  callableId: /nullableUnsigned
+  contextParameters: []
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isCompanion: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  isTailRec: false
+  location: TOP_LEVEL
+  modality: FINAL
+  name: nullableUnsigned
+  origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Unit
+  typeParameters: []
+  valueParameters: [
+    KaValueParameterSymbol:
+      anchorPsi: KtParameter
+      annotations: []
+      callableId: null
+      contextParameters: []
+      contextReceivers: []
+      hasDeclaredDefaultValue: false
+      hasDefaultValue: false
+      isActual: false
+      isCompanion: false
+      isCrossinline: false
+      isDelegated: false
+      isExpect: false
+      isExtension: false
+      isExternal: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVal: true
+      isVararg: true
+      location: LOCAL
+      modality: FINAL
+      name: a
+      origin: SOURCE
+      primaryConstructorProperty: null
+      psi: KtParameter
+      realPsi: KtParameter
+      receiverParameter: null
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/UInt?
+      typeParameters: []
+      visibility: PUBLIC
+      getContainingFileSymbol: KaFileSymbol(varargMangling.kt)
+      getContainingJvmClassName: VarargManglingKt
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecation: null
+      importableFqName: null
+  ]
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(varargMangling.kt)
+  getContainingJvmClassName: VarargManglingKt
+  canBeOperator: false
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecation: null
+  returnValueStatus: Unspecified
+  javaMethodName: null
+  importableFqName: nullableUnsigned
+
+KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
+  annotations: []
+  callableId: /unsigned
+  contextParameters: []
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isCompanion: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  isTailRec: false
+  location: TOP_LEVEL
+  modality: FINAL
+  name: unsigned
+  origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Unit
+  typeParameters: []
+  valueParameters: [
+    KaValueParameterSymbol:
+      anchorPsi: KtParameter
+      annotations: []
+      callableId: null
+      contextParameters: []
+      contextReceivers: []
+      hasDeclaredDefaultValue: false
+      hasDefaultValue: false
+      isActual: false
+      isCompanion: false
+      isCrossinline: false
+      isDelegated: false
+      isExpect: false
+      isExtension: false
+      isExternal: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVal: true
+      isVararg: true
+      location: LOCAL
+      modality: FINAL
+      name: b
+      origin: SOURCE
+      primaryConstructorProperty: null
+      psi: KtParameter
+      realPsi: KtParameter
+      receiverParameter: null
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/UInt
+      typeParameters: []
+      visibility: PUBLIC
+      getContainingFileSymbol: KaFileSymbol(varargMangling.kt)
+      getContainingJvmClassName: VarargManglingKt
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecation: null
+      importableFqName: null
+  ]
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(varargMangling.kt)
+  getContainingJvmClassName: VarargManglingKt
+  canBeOperator: false
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecation: null
+  returnValueStatus: Unspecified
+  javaMethodName: null
+  importableFqName: unsigned
+
+KaTypeParameterSymbol:
+  anchorPsi: KtTypeParameter
+  annotations: []
+  isActual: false
+  isExpect: false
+  isExternal: false
+  isReified: false
+  location: LOCAL
+  modality: FINAL
+  name: T
+  origin: SOURCE
+  psi: KtTypeParameter
+  realPsi: KtTypeParameter
+  upperBounds: [
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: Wrapper
+  ]
+  variance: INVARIANT
+  visibility: LOCAL
+  getContainingFileSymbol: KaFileSymbol(varargMangling.kt)
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecation: null
+  importableFqName: null
+
+KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
+  annotations: []
+  callableId: /boundedByValueClass
+  contextParameters: []
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isCompanion: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  isTailRec: false
+  location: TOP_LEVEL
+  modality: FINAL
+  name: boundedByValueClass
+  origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Unit
+  typeParameters: [
+    KaTypeParameterSymbol:
+      anchorPsi: KtTypeParameter
+      annotations: []
+      isActual: false
+      isExpect: false
+      isExternal: false
+      isReified: false
+      location: LOCAL
+      modality: FINAL
+      name: T
+      origin: SOURCE
+      psi: KtTypeParameter
+      realPsi: KtTypeParameter
+      upperBounds: [
+        KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: Wrapper
+      ]
+      variance: INVARIANT
+      visibility: LOCAL
+      getContainingFileSymbol: KaFileSymbol(varargMangling.kt)
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecation: null
+      importableFqName: null
+  ]
+  valueParameters: [
+    KaValueParameterSymbol:
+      anchorPsi: KtParameter
+      annotations: []
+      callableId: null
+      contextParameters: []
+      contextReceivers: []
+      hasDeclaredDefaultValue: false
+      hasDefaultValue: false
+      isActual: false
+      isCompanion: false
+      isCrossinline: false
+      isDelegated: false
+      isExpect: false
+      isExtension: false
+      isExternal: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVal: true
+      isVararg: true
+      location: LOCAL
+      modality: FINAL
+      name: c
+      origin: SOURCE
+      primaryConstructorProperty: null
+      psi: KtParameter
+      realPsi: KtParameter
+      receiverParameter: null
+      returnType: KaTypeParameterType:
+        annotations: []
+        type: T
+      typeParameters: []
+      visibility: PUBLIC
+      getContainingFileSymbol: KaFileSymbol(varargMangling.kt)
+      getContainingJvmClassName: VarargManglingKt
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecation: null
+      importableFqName: null
+  ]
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(varargMangling.kt)
+  getContainingJvmClassName: VarargManglingKt
+  canBeOperator: false
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecation: null
+  returnValueStatus: Unspecified
+  javaMethodName: null
+  importableFqName: boundedByValueClass

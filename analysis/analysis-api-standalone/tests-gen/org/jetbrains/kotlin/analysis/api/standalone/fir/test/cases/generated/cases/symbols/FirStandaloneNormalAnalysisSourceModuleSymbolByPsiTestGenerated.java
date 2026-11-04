@@ -692,6 +692,12 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByPsiTestGenerated ext
     run("varargFunctions.kt");
   }
 
+  @Test
+  @TestMetadata("varargMangling.kt")
+  public void testVarargMangling() {
+    run("varargMangling.kt");
+  }
+
   @Nested
   @TestMetadata("analysis/analysis-api/testData/symbols/symbolByPsi/contextReceivers")
   @TestDataPath("$PROJECT_ROOT")
