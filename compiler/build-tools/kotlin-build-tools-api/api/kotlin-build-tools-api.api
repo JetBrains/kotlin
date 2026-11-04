@@ -786,6 +786,7 @@ public abstract interface annotation class org/jetbrains/kotlin/buildtools/api/a
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/JsCompilerArguments : org/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmArguments {
 	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/arguments/JsCompilerArguments$Companion;
+	public static final field X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT Lorg/jetbrains/kotlin/buildtools/api/arguments/JsCompilerArguments$JsCompilerArgument;
 	public static final field X_EXPORT_KDOC Lorg/jetbrains/kotlin/buildtools/api/arguments/JsCompilerArguments$JsCompilerArgument;
 	public static final field X_SUSPEND_LAMBDA_EXPORTING Lorg/jetbrains/kotlin/buildtools/api/arguments/JsCompilerArguments$JsCompilerArgument;
 	public static final field X_TYPED_ARRAYS Lorg/jetbrains/kotlin/buildtools/api/arguments/JsCompilerArguments$JsCompilerArgument;
@@ -810,7 +811,6 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/JsCompilerArgum
 public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/JsCompilerKlibArguments : org/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmCompilerKlibArguments, org/jetbrains/kotlin/buildtools/api/arguments/JsCompilerArguments {
 	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/arguments/JsCompilerKlibArguments$Companion;
 	public static final field X_ENABLE_EXTENSION_FUNCTIONS_IN_EXTERNALS Lorg/jetbrains/kotlin/buildtools/api/arguments/JsCompilerKlibArguments$JsCompilerKlibArgument;
-	public static final field X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT Lorg/jetbrains/kotlin/buildtools/api/arguments/JsCompilerKlibArguments$JsCompilerKlibArgument;
 	public static final field X_ENABLE_SUSPEND_FUNCTION_EXPORTING Lorg/jetbrains/kotlin/buildtools/api/arguments/JsCompilerKlibArguments$JsCompilerKlibArgument;
 	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/arguments/JsCompilerKlibArguments$JsCompilerKlibArgument;)Ljava/lang/Object;
 }

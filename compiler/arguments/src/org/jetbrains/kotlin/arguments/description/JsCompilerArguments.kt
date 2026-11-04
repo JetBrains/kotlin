@@ -320,7 +320,6 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_3_20,
         )
-        restrictedToCompilerPhase = KotlinCompilerPhase.KLIB_COMPILATION
     }
 
     compilerArgument {
