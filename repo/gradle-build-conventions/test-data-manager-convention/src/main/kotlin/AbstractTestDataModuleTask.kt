@@ -47,12 +47,12 @@ import org.gradle.process.CommandLineArgumentProvider
  * All options are passed as Gradle properties; they are forwarded to the test runner as `-D<key>`
  * system properties at execution time.
  *
- * | Property                                                              | Effect                                          |
- * |-----------------------------------------------------------------------|-------------------------------------------------|
- * | `org.jetbrains.kotlin.testDataManager.options.testDataPath`           | Comma-separated test data paths (dir or file)   |
- * | `org.jetbrains.kotlin.testDataManager.options.testClassPattern`       | Regex pattern for test class names              |
- * | `org.jetbrains.kotlin.testDataManager.options.goldenOnly`             | Run only golden tests (empty variant chain)     |
- * | `org.jetbrains.kotlin.testDataManager.options.incremental`            | Only run variant tests for changed golden paths |
+ * | Property                                                        | Effect                                                            |
+ * |-----------------------------------------------------------------|-------------------------------------------------------------------|
+ * | `org.jetbrains.kotlin.testDataManager.options.testDataPath`     | Comma-separated repository-relative test data paths (dir or file) |
+ * | `org.jetbrains.kotlin.testDataManager.options.testClassPattern` | Regex pattern for test class names                                |
+ * | `org.jetbrains.kotlin.testDataManager.options.goldenOnly`       | Run only golden tests (empty variant chain)                       |
+ * | `org.jetbrains.kotlin.testDataManager.options.incremental`      | Only run variant tests for changed golden paths                   |
  *
  * @see CheckTestDataModuleTask
  * @see UpdateTestDataModuleTask
@@ -66,7 +66,7 @@ abstract class AbstractTestDataModuleTask : JavaExec() {
     @get:Internal
     protected abstract val mode: Mode
 
-    /** Comma-separated test data paths (directory or file) to filter tests. */
+    /** Comma-separated repository-relative test data paths (directory or file) to filter tests. */
     @get:[Input Optional]
     abstract val testDataPath: Property<String>
 

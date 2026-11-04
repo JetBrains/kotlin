@@ -73,6 +73,7 @@ internal class TestDataManagerRunnerIntegrationTest {
                 goldenOnly = false,
                 incremental = incremental,
                 PackageNameFilter.includePackageNames(FakeRunnerScenario::class.java.`package`.name),
+                rootDir = tempDir,
                 launcherSession = session,
             )
         }
@@ -80,6 +81,7 @@ internal class TestDataManagerRunnerIntegrationTest {
         return buildList {
             add("tests: ${outcome.totalTests}, passed: ${outcome.passedTests}, failed: ${outcome.failedTests}")
             add("executions: ${outcome.testExecutions}, successful: ${outcome.isSuccessful}")
+            outcome.runErrors.forEach { add("run error: ${it.replace(tempDir.toString(), "<root>")}") }
             outcome.mismatchesByPath.toSortedMap().forEach { [path, chains] -> add("mismatch: $path $chains") }
             outcome.errors.map { "error: ${it.testName} - ${it.exception}" }.sorted().forEach(::add)
             testDataDirectory.listDirectoryEntries("*.txt").sortedBy { it.name }.forEach { add("${it.name}: ${it.readText().trim()}") }
@@ -118,11 +120,12 @@ internal class TestDataManagerRunnerIntegrationTest {
     }
 
     @Test
-    fun `nonexistent test data path discovers nothing and passes`() {
+    fun `nonexistent test data path fails the run`() {
         assertEquals(
             """
                 tests: 0, passed: 0, failed: 0
-                executions: 0, successful: true
+                executions: 0, successful: false
+                run error: testDataPath 'runner/nope' does not exist; paths are relative to the repository root <root>
             """.trimIndent(),
             run(TestDataManagerMode.CHECK, testDataPath = "runner/nope"),
         )

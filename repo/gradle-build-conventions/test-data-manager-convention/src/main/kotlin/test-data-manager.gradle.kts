@@ -141,4 +141,10 @@ private fun AbstractTestDataModuleTask.wireOptions(extension: TestDataManagerExt
 
     // Pass project name for unique test IDs when running multiple modules in parallel
     systemProperty(TestDataManagerOption.PROJECT_NAME, project.path)
+
+    // `testDataPath` is relative to the root project directory, like `@TestMetadata` and the test data roots of
+    // `ProjectTestsExtension`, while tests run in the module directory. The project directory lets the runner suggest
+    // the repository-relative form of a module-relative path. `rootDir` is allowed with Isolated Projects.
+    systemProperty(TestDataManagerOption.ROOT_DIR, project.rootDir.absolutePath)
+    systemProperty(TestDataManagerOption.PROJECT_DIR, project.projectDir.absolutePath)
 }
