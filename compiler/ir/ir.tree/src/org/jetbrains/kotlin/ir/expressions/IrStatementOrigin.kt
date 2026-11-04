@@ -34,6 +34,16 @@ class IrStatementOriginImpl(override val debugName: String) : IrStatementOrigin,
 interface IrStatementOrigin {
     val debugName: String
 
+    /**
+     * The members are serialized to KLIBs by [debugName], which is the member name unless set explicitly, so adding,
+     * removing or renaming one affects KLIB compatibility. Their set is pinned by `IrStatementOriginDeserializationTest`;
+     * update it only after consulting the Kotlin Common Backend team. A renamed member must keep resolving under its old
+     * name: alias it in `IrBodyDeserializer.legacyStatementOriginNames`. Avoid renaming nevertheless: the alias only lets
+     * this and later compilers read older KLIBs, while the compilers released earlier do not know the new name.
+     *
+     * Origins declared elsewhere, such as [COMPONENT_N] or those of compiler plugins, are serialized by [debugName] as
+     * well, but are not pinned.
+     */
     companion object {
         val SAFE_CALL by IrStatementOriginImpl
         val ERROR_SAFE_CALL by IrStatementOriginImpl
