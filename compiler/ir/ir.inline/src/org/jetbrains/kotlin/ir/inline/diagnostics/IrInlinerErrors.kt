@@ -19,7 +19,22 @@ import org.jetbrains.kotlin.ir.util.KotlinLikeDumpOptions
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import kotlin.getValue
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.*
+import org.jetbrains.kotlin.fir.analysis.diagnostics.DecorationHeader
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers
+import org.jetbrains.kotlin.fir.analysis.diagnostics.LogicalLocation
+import org.jetbrains.kotlin.fir.analysis.diagnostics.RenderedLineWithNumber
+import org.jetbrains.kotlin.fir.analysis.diagnostics.renderLocationDecoration
+import org.jetbrains.kotlin.fir.analysis.diagnostics.renderWithLocation
+import org.jetbrains.kotlin.fir.backend.FirMetadataSource
+import org.jetbrains.kotlin.ir.declarations.path
+import org.jetbrains.kotlin.ir.util.file
+import org.jetbrains.kotlin.ir.util.getPackageFragment
+import org.jetbrains.kotlin.ir.util.getSourceFile
+import org.jetbrains.kotlin.ir.util.parentClassOrNull
+import org.jetbrains.kotlin.ir.util.sourceElement
+import java.nio.file.Files.lines
 
 object IrInlinerErrors : KtDiagnosticsContainer() {
     val IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION by
@@ -60,7 +75,7 @@ internal object KtDefaultSerializationErrorMessages : BaseDiagnosticRendererFact
         )
         map.put(
             IrInlinerErrors.IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_CASCADING,
-            "Public-API {0} inline {1} accesses a non Public-API {2}. This can happen as a result of cascaded inlining of the following functions:\n{3}\n",
+            "Public-API {0} inline {1} accesses a non Public-API {2}. This can happen as a result of cascaded inlining of the following functions:\n{3}",
             KtDiagnosticRenderers.VISIBILITY,
             IrDiagnosticRenderers.DECLARATION_KIND,
             IrDiagnosticRenderers.DECLARATION_KIND_AND_NAME,
@@ -85,17 +100,37 @@ internal object KtDefaultSerializationErrorMessages : BaseDiagnosticRendererFact
     }
 
     private fun renderCascadingInlining(inlinedFunctionBlocks: List<IrInlinedFunctionBlock>) =
-        buildString {
-            inlinedFunctionBlocks.reversed().forEach { inlinedFunctionBlock ->
-                val renderedFunction = inlinedFunctionBlock.inlinedFunctionSymbol?.owner
+        inlinedFunctionBlocks.reversed().map { inlinedFunctionBlock ->
+            val owner = inlinedFunctionBlock.inlinedFunctionSymbol?.owner
+            val metadata = owner?.metadata
+            when (metadata) {
+                is FirMetadataSource -> metadata.fir.symbol.renderWithLocation(FirDiagnosticRenderers.SYMBOL_WITH_ALL_MODIFIERS::render)
+                else -> inlinedFunctionBlock.inlinedFunctionSymbol?.owner
                     ?.dumpKotlinLike(
                         KotlinLikeDumpOptions(
                             bodyPrintingStrategy = BodyPrintingStrategy.NO_BODIES
                         )
                     )
                     ?.trim()
+                    ?.let {
+                        val location = owner?.getPackageFragment()
+                            ?.let { LogicalLocation(it.packageFqName.asString(), it.module.name) }
+                        // Likely `KtOffsetsOnlySourceElement`, so it's redundant?
+                        val sourceElement = owner?.sourceElement() as? KtSourceElement
+                        val startOffset = sourceElement?.let { getTightOffsetsFor(sourceElement).first }
+                        val line = when {
+                            owner != null && startOffset != null -> owner.getSourceFile()?.getLineNumber(startOffset)
+                            else -> null
+                        }
+                        val indent = generateSequence(owner?.parentClassOrNull) { it.parentClassOrNull }.count()
+                        renderLocationDecoration(
+                            header = location?.let { DecorationHeader.Candidates(it, owner.file.path) }
+                                ?: DecorationHeader.None,
+                            renderedLines = it.lines().map { RenderedLineWithNumber(number = null, indent, renderedLine = it) }
+                                .let { it.first().copy(number = line).let(::listOf) + it.drop(1) }
+                        )
+                    }
                     ?: "<unknown>"
-                appendLine(renderedFunction)
             }
-        }
+        }.joinToString("\n")
 }

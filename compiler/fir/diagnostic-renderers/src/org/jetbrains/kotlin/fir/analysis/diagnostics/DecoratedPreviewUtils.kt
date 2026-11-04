@@ -24,21 +24,21 @@ data class LogicalLocation(
     val moduleName: Name,
 )
 
-private fun FirBasedSymbol<*>.toLogicalLocation(): LogicalLocation {
+fun FirBasedSymbol<*>.toLogicalLocation(): LogicalLocation {
     if (this is FirTypeParameterSymbol) return containingDeclarationSymbol.toLogicalLocation()
     val packageName = if (packageFqName().isRoot) "root package" else packageFqName().render()
     val moduleName = moduleData.name
     return LogicalLocation(packageName, moduleName)
 }
 
-internal data class PhysicalLocation(
+data class PhysicalLocation(
     val filePath: String,
     val line: Int,
     val column: Int,
     val endLine: Int,
 )
 
-internal fun FirBasedSymbol<*>.toPhysicalLocation(): PhysicalLocation? {
+fun FirBasedSymbol<*>.toPhysicalLocation(): PhysicalLocation? {
     val source = source
     val filePath = source?.let(moduleData.session.sourcesToPathsMapper::getRelativeSourceFilePath) ?: return null
     val linesMapping = source.toLinesMapping()
@@ -61,7 +61,7 @@ internal data class FileNode(
     val symbols: List<SymbolNode>,
 )
 
-internal data class SymbolNode(
+data class SymbolNode(
     val line: Int?,
     val column: Int?,
     val endLine: Int?,
@@ -77,7 +77,7 @@ private fun FirBasedSymbol<*>.toSymbolNode(children: MutableCollection<SymbolNod
 private fun FirBasedSymbol<*>.collectContainers(): List<FirClassLikeSymbol<*>> =
     generateSequence(getContainingClassSymbol()) { it.getContainingClassSymbol() }.toList().reversed()
 
-private fun Iterable<FirBasedSymbol<*>>.groupIntoSymbolNodes(): List<SymbolNode> {
+fun Iterable<FirBasedSymbol<*>>.groupIntoSymbolNodes(): List<SymbolNode> {
     val containerToNode = mutableMapOf<FirBasedSymbol<*>, SymbolNode>()
     val symbolChains = map { symbol ->
         val chain = symbol.collectContainers() + symbol
@@ -113,12 +113,12 @@ data class RenderedLineWithNumber(
     val renderedLine: String,
 )
 
-private inline fun FirBasedSymbol<*>.renderToLinesWithNumber(render: (FirBasedSymbol<*>) -> String): List<RenderedLineWithNumber> =
+inline fun FirBasedSymbol<*>.renderToLinesWithNumber(render: (FirBasedSymbol<*>) -> String): List<RenderedLineWithNumber> =
     render(this).lines().mapIndexed { index, line ->
         RenderedLineWithNumber(number = if (index == 0) toPhysicalLocation()?.line else null, indent = 0, renderedLine = line)
     }
 
-private inline fun SymbolNode.renderToLinesWithNumber(render: (FirBasedSymbol<*>) -> String): List<RenderedLineWithNumber> {
+inline fun SymbolNode.renderToLinesWithNumber(render: (FirBasedSymbol<*>) -> String): List<RenderedLineWithNumber> {
     val orderStack = mutableListOf(0 to this)
     var previousIndent = -1
     val parentStack = mutableListOf<SymbolNode>()
@@ -164,7 +164,7 @@ internal inline fun Iterable<FirBasedSymbol<*>>.renderWithLocationInGroups(rende
         }
         .joinToString("\n")
 
-internal inline fun FirBasedSymbol<*>.renderWithLocation(render: (FirBasedSymbol<*>) -> String): String {
+inline fun FirBasedSymbol<*>.renderWithLocation(render: (FirBasedSymbol<*>) -> String): String {
     val logicalLocation = toLogicalLocation()
     val node = listOf(this).groupIntoSymbolNodes()
     return when (val physicalLocation = toPhysicalLocation()) {
@@ -173,7 +173,7 @@ internal inline fun FirBasedSymbol<*>.renderWithLocation(render: (FirBasedSymbol
     }
 }
 
-internal inline fun renderSymbolsWithLocation(
+inline fun renderSymbolsWithLocation(
     logicalLocation: LogicalLocation,
     filePath: String?,
     symbols: Collection<SymbolNode>,
@@ -206,7 +206,7 @@ fun renderLocationDecoration(
     return renderLocationDecoration(header, indentString, paddedRenderedLines, padding)
 }
 
-private inline fun <T> List<T>.interleaveWith(produceInterleave: (T, T) -> T?): List<T> {
+inline fun <T> List<T>.interleaveWith(produceInterleave: (T, T) -> T?): List<T> {
     if (size <= 1) return this
 
     return buildList {

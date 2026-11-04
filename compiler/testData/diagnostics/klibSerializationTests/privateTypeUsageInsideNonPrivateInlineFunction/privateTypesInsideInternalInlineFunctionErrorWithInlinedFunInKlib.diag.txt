@@ -21,31 +21,41 @@
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:51:5: error: The signature of 'fun makeEffectivelyPrivateLocal(): <anonymous>.Inner' contains 'local' type '<anonymous>.Inner', but is accessed from 'internal' inline declaration.
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:53:5: error: Public-API internal inline function accesses a non Public-API class 'A'. This can happen as a result of cascaded inlining of the following functions:
-private inline fun privateInline(): Any
-
-
+In package 'root package' of module '<main>':
+  --> privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt
+   |
+28 | private final inline fun privateInline(): Any
+   |
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:54:5: error: Public-API internal inline function accesses a non Public-API object 'O'. This can happen as a result of cascaded inlining of the following functions:
-private inline fun privateInlineO(): Any
-
-
+In package 'root package' of module '<main>':
+  --> privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt
+   |
+30 | private final inline fun privateInlineO(): Any
+   |
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:55:5: error: Public-API internal inline function accesses a non Public-API interface 'I'. This can happen as a result of cascaded inlining of the following functions:
-private inline fun privateInlineI(): I
-
-
+In package 'root package' of module '<main>':
+  --> privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt
+   |
+32 | private final inline fun privateInlineI(): I
+   |
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:55:5: error: The signature of 'fun privateInlineI(): I' contains 'private-in-file' type 'I', but is accessed from 'internal' inline declaration.
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:56:5: error: Public-API internal inline function accesses a non Public-API annotation class 'AC'. This can happen as a result of cascaded inlining of the following functions:
-private inline fun privateInlineAC(): Any
-
-
+In package 'root package' of module '<main>':
+  --> privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt
+   |
+34 | private final inline fun privateInlineAC(): Any
+   |
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:57:5: error: Public-API internal inline function accesses a non Public-API enum class 'EC'. This can happen as a result of cascaded inlining of the following functions:
-private inline fun privateInlineEC(): Any
-
-
+In package 'root package' of module '<main>':
+  --> privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt
+   |
+36 | private final inline fun privateInlineEC(): Any
+   |
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:58:5: error: Local classes are not yet supported in inline functions.
 
@@ -92,9 +102,11 @@ private inline fun privateInlineEC(): Any
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:72:13: error: The signature of 'fun makeEffectivelyPrivateLocal(): <anonymous>.Inner' contains 'local' type '<anonymous>.Inner', but is accessed from 'internal' inline declaration.
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:73:13: error: Public-API internal inline function accesses a non Public-API class 'A'. This can happen as a result of cascaded inlining of the following functions:
-private inline fun privateInline(): Any
-
-
+In package 'root package' of module '<main>':
+  --> privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt
+   |
+28 | private final inline fun privateInline(): Any
+   |
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:74:13: error: Public-API internal inline function accesses a non Public-API class.
 

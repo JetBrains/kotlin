@@ -11,6 +11,9 @@ dependencies {
 
     implementation(project(":core:descriptors"))
     implementation(project(":compiler:frontend.common-psi"))
+    implementation(project(":compiler:fir:tree"))
+    implementation(project(":compiler:fir:fir2ir"))
+    implementation(project(":compiler:fir:diagnostic-renderers"))
     compileOnly(intellijCore())
 }
 
