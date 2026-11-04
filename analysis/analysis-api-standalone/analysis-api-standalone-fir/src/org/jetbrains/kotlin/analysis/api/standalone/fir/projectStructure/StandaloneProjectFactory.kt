@@ -17,6 +17,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.PackageIndex
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.impl.ZipHandler
@@ -359,7 +360,8 @@ object StandaloneProjectFactory {
 
         val rootFiles = result.mapTo(HashSet()) { it.virtualFile }
         return result.filter { root ->
-            generateSequence(root.virtualFile.parent) { it.parent }.none { it in rootFiles }
+            val parent = root.virtualFile.parent
+            parent == null || !VfsUtilCore.isUnder(parent, rootFiles)
         }
     }
 
