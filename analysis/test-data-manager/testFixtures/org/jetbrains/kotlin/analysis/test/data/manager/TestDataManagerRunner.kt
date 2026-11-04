@@ -95,6 +95,7 @@ internal object TestDataManagerRunner {
 
     @JvmStatic
     fun main(args: Array<String>) {
+        val outcome: RunOutcome
         val totalTime = measureTime {
             val testDataPath = System.getProperty(TEST_DATA_MANAGER_OPTIONS_TEST_DATA_PATH)
             val testClassPattern = System.getProperty(TEST_DATA_MANAGER_OPTIONS_TEST_CLASS_PATTERN)
@@ -115,7 +116,7 @@ internal object TestDataManagerRunner {
                 exitProcess(1)
             }
 
-            LauncherFactory.openSession().use { launcherSession ->
+            outcome = LauncherFactory.openSession().use { launcherSession ->
                 discoverAndRunTests(testClassPattern, testDataPath, goldenOnly, incremental, launcherSession = launcherSession)
             }
 
@@ -125,7 +126,31 @@ internal object TestDataManagerRunner {
         println("Total time: $totalTime")
 
         // The explicit exit is required to ensure the process terminates after completion
-        exitProcess(0)
+        exitProcess(if (outcome.isSuccessful) 0 else 1)
+    }
+
+    /**
+     * The result of [discoverAndRunTests].
+     *
+     * @property testExecutions how many times tests were executed, counting each re-run of the convergence loop
+     */
+    internal class RunOutcome(
+        val totalTests: Int,
+        val passedTests: Int,
+        val mismatchesByPath: Map<String, Set<TestVariantChain>>,
+        val errors: Set<TestError>,
+        val testExecutions: Int,
+    ) {
+        val failedTests: Int
+            get() = totalTests - passedTests
+
+        /** Whether the run passes; otherwise the runner exits with 1. */
+        val isSuccessful: Boolean
+            get() = mismatchesByPath.isEmpty() && errors.isEmpty()
+
+        companion object {
+            val EMPTY = RunOutcome(0, 0, emptyMap(), emptySet(), 0)
+        }
     }
 
     /**
@@ -139,18 +164,25 @@ internal object TestDataManagerRunner {
         val mismatchesByPath: Map<String, Set<TestVariantChain>>,
         val errors: Set<TestError>,
         val finalPassFailedTestIds: Set<String>,
+        val testExecutions: Int,
     )
 
+    /**
+     * Discovers the managed tests matching the filters and runs them group by group.
+     *
+     * @param additionalFilters discovery filters on top of the options, e.g., to restrict the run to some packages in tests
+     */
     context(launcherSession: LauncherSession)
-    private fun discoverAndRunTests(
+    internal fun discoverAndRunTests(
         testClassPattern: String?,
         testDataPath: String?,
         goldenOnly: Boolean = false,
         incremental: Boolean = false,
-    ) {
+        vararg additionalFilters: Filter<*>,
+    ): RunOutcome {
         val timingStats = TimingStats()
         val launcher = launcherSession.launcher
-        val request = buildDiscoveryRequest(testClassPattern, testDataPath, goldenOnly)
+        val request = buildDiscoveryRequest(testClassPattern, testDataPath, goldenOnly, *additionalFilters)
 
         // Phase 1: Discover tests with variant chains
         (
@@ -166,7 +198,7 @@ internal object TestDataManagerRunner {
 
         if (discoveredTests.isEmpty()) {
             println("No tests found matching criteria")
-            return
+            return RunOutcome.EMPTY
         }
 
         // Phase 2: Group by variant chain depth
@@ -198,7 +230,7 @@ internal object TestDataManagerRunner {
         }
 
         // Phase 4: Run each group with convergence, aggregate results
-        executeTestGroups(incremental, goldenOnly, groupingResult, launcher, timingStats, discoveredTests)
+        return executeTestGroups(incremental, goldenOnly, groupingResult, launcher, timingStats, discoveredTests)
     }
 
     context(_: LauncherSession)
@@ -209,10 +241,11 @@ internal object TestDataManagerRunner {
         launcher: Launcher,
         timingStats: TimingStats,
         discoveredTests: List<DiscoveredTest>,
-    ) {
+    ): RunOutcome {
         val allMismatches = mutableMapOf<String, MutableSet<TestVariantChain>>()
         val allErrors = mutableSetOf<TestError>()
         val allFinalFailedTestIds = mutableSetOf<String>()
+        var testExecutions = 0
 
         val useIncremental = when {
             !incremental -> false
@@ -269,6 +302,7 @@ internal object TestDataManagerRunner {
 
                 allErrors.addAll(result.errors)
                 allFinalFailedTestIds.addAll(result.finalPassFailedTestIds)
+                testExecutions += result.testExecutions
             }
 
             if (useIncremental && isFirstGroup) {
@@ -298,13 +332,10 @@ internal object TestDataManagerRunner {
             .flatMap { it.uniqueVariantChains }
             .toSet()
 
-        // Print summary and exit with appropriate code
         printSummary(allMismatches, allVariantChains, allErrors, totalTests, passedTests)
         printTimingSummary(timingStats)
 
-        if (allMismatches.isNotEmpty() || allErrors.isNotEmpty()) {
-            exitProcess(1)
-        }
+        return RunOutcome(totalTests, passedTests, allMismatches, allErrors, testExecutions)
     }
 
     internal fun buildDiscoveryRequest(
@@ -429,10 +460,12 @@ internal object TestDataManagerRunner {
 
         val projectName: String? = System.getProperty(TEST_DATA_MANAGER_OPTIONS_PROJECT_NAME)
 
+        var testExecutions = 0
         var pass = 1
         while (pass <= MAX_CONVERGENCE_PASSES) {
             println("\n=== Pass $pass ===")
             val testCount = testIdsToExecute.size
+            testExecutions += testCount
             println("  Tests to execute: $testCount")
 
             val request = buildGroupRequest(testIdsToExecute)
@@ -482,7 +515,7 @@ internal object TestDataManagerRunner {
 
             if (lastErrorTestCount == errorTestCount && lastMismatchedTestCount == mismatchedTestCount) {
                 println("  Convergence reached.")
-                return RunResult(aggregatedMismatches, aggregatedErrors, lastPassFailedTestIds)
+                return RunResult(aggregatedMismatches, aggregatedErrors, lastPassFailedTestIds, testExecutions)
             } else {
                 lastErrorTestCount = errorTestCount
                 lastMismatchedTestCount = mismatchedTestCount
@@ -497,7 +530,7 @@ internal object TestDataManagerRunner {
             testIdsToExecute = lastPassFailedTestIds
         }
 
-        return RunResult(aggregatedMismatches, aggregatedErrors, lastPassFailedTestIds)
+        return RunResult(aggregatedMismatches, aggregatedErrors, lastPassFailedTestIds, testExecutions)
     }
 
     private fun printSummary(
