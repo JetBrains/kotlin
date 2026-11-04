@@ -7852,6 +7852,18 @@ public class SourceLikeResolveCandidatesFirTreeConsistencyTestGenerated extends 
     }
 
     @Test
+    @TestMetadata("whereClauseAnnotation.kt")
+    public void testWhereClauseAnnotation() {
+      run("whereClauseAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("whereClauseAnnotationOnUndeclaredName.kt")
+    public void testWhereClauseAnnotationOnUndeclaredName() {
+      run("whereClauseAnnotationOnUndeclaredName.kt");
+    }
+
+    @Test
     @TestMetadata("WrongNumberOfTypeArguments.kt")
     public void testWrongNumberOfTypeArguments() {
       run("WrongNumberOfTypeArguments.kt");

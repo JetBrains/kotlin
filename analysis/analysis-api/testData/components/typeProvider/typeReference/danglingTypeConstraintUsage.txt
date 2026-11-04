@@ -1,0 +1,2 @@
+KtTypeReference: AA
+KaType: AA: Symbol not found for AA

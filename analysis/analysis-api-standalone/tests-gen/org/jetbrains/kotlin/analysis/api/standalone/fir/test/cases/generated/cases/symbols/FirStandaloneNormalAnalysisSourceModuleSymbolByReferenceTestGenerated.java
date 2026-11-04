@@ -195,6 +195,24 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByReferenceTestGenerat
   }
 
   @Test
+  @TestMetadata("danglingTypeConstraintInClass.kt")
+  public void testDanglingTypeConstraintInClass() {
+    run("danglingTypeConstraintInClass.kt");
+  }
+
+  @Test
+  @TestMetadata("danglingTypeConstraintSubject.kt")
+  public void testDanglingTypeConstraintSubject() {
+    run("danglingTypeConstraintSubject.kt");
+  }
+
+  @Test
+  @TestMetadata("danglingTypeConstraintUsage.kt")
+  public void testDanglingTypeConstraintUsage() {
+    run("danglingTypeConstraintUsage.kt");
+  }
+
+  @Test
   @TestMetadata("enumEntries.kt")
   public void testEnumEntries() {
     run("enumEntries.kt");

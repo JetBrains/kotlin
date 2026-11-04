@@ -165,6 +165,12 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByPsiTestGenerated ext
   }
 
   @Test
+  @TestMetadata("danglingTypeConstraint.kt")
+  public void testDanglingTypeConstraint() {
+    run("danglingTypeConstraint.kt");
+  }
+
+  @Test
   @TestMetadata("delegateField.kt")
   public void testDelegateField() {
     run("delegateField.kt");

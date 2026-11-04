@@ -1,0 +1,16 @@
+KT element: KtTypeReference
+FIR element: null
+FIR source kind: null
+
+FIR element rendered:
+null
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] danglingTypeConstraintBound.kt
+    public final? fun [ResolvedTo(RAW_FIR)] interface TestInterface : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun test(): R|kotlin/Unit|
+
+    }
+    public final inline [ResolvedTo(BODY_RESOLVE)] [DanglingTypeConstraintsKey=[DanglingTypeConstraint(name=AA, source=KtRealPsiSourceElement(KtNameReferenceExpression, 145..147))]] fun <reified [ResolvedTo(BODY_RESOLVE)] A> [ResolvedTo(BODY_RESOLVE)] R|A|.unusedReceiver(): R|kotlin/Unit| {
+        <Unresolved name: println>#(<getClass>(R|A|).R|SubstitutionOverride<kotlin/reflect/KClass.simpleName: R|kotlin/String?|>|)
+    }

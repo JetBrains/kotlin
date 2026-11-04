@@ -1,0 +1,15 @@
+KT element: KtTypeReference
+FIR element: null
+FIR source kind: null
+
+FIR element rendered:
+null
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] danglingTypeConstraintBoundInClass.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [DanglingTypeConstraintsKey=[DanglingTypeConstraint(name=AA, source=KtRealPsiSourceElement(KtNameReferenceExpression, 68..70))]] class Foo<[ResolvedTo(ANNOTATION_ARGUMENTS)] A> : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] constructor<[ResolvedTo(ANNOTATION_ARGUMENTS)] A>(): R|Foo<A>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
