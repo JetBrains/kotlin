@@ -163,5 +163,8 @@ public abstract class MyClass2 /* test.MyClass2*/ implements java.util.Collectio
 }
 
 public abstract class MyClass3 /* test.MyClass3*/ implements java.lang.Iterable<@org.jetbrains.annotations.NotNull() java.lang.String>, java.util.Iterator<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMappedMarker, kotlin.jvm.internal.markers.KMappedMarker {
+  @java.lang.Override()
+  public void remove();//  remove()
+
   public  MyClass3();//  .ctor()
 }

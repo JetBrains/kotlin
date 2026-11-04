@@ -202,6 +202,9 @@ public abstract class CIterable /* test.CIterable*/ implements test.IIterable {
 }
 
 public abstract class CIterator /* test.CIterator*/ implements test.IIterator {
+  @java.lang.Override()
+  public void remove();//  remove()
+
   public  CIterator();//  .ctor()
 }
 
