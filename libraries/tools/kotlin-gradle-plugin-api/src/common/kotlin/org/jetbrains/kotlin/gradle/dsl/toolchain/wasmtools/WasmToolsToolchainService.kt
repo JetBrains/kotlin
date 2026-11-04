@@ -124,13 +124,15 @@ abstract class WasmToolsExecutable @Inject internal constructor() {
  * @param version the version string. Must not be blank.
  */
 @ExperimentalWasmDsl
-class WasmToolsVersion(
+data class WasmToolsVersion(
     @get:Input
     val version: String,
 ) : Serializable {
     init {
         require(version.isNotBlank()) { "wasm-tools version must not be blank" }
     }
+
+    override fun toString(): String = version
 }
 
 /**
@@ -141,7 +143,7 @@ class WasmToolsVersion(
  * @property arch the CPU architecture, for example `x64` or `arm64`.
  */
 @ExperimentalWasmDsl
-class WasmToolsBuildPlatform(
+data class WasmToolsBuildPlatform(
     @get:Input
     val os: String,
     @get:Input
