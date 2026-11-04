@@ -5,7 +5,6 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":compiler:resolution"))
     implementation(project(":core:descriptors"))
     implementation(project(":core:deserialization"))
     implementation(project(":native:frontend.native"))
