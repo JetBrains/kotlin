@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.builder.Context
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.syntax.syntaxId
+import org.jetbrains.kotlin.syntax.SyntaxId
 import org.jetbrains.kotlin.util.getChildren
 
 abstract class AbstractLightTreeRawFirBuilder(
@@ -39,7 +40,7 @@ abstract class AbstractLightTreeRawFirBuilder(
         get() = this.tokenType
 
     @OptIn(KtImplementationDetail::class)
-    override fun IElementType.typeToTokenId(): Int = syntaxId()
+    override fun IElementType.typeToTokenId(): SyntaxId = syntaxId()
 
     override val LighterASTNode.asText: String
         get() = this.toString()
