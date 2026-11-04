@@ -179,19 +179,10 @@ internal class SymbolLightFieldForProperty private constructor(
 
     private fun computeModifiers(modifier: String): Map<String, Boolean>? = when (modifier) {
         in GranularModifiersBox.VISIBILITY_MODIFIERS -> {
-            val visibility = withPropertySymbol { propertySymbol ->
-                when {
-                    propertySymbol.visibility == KaSymbolVisibility.PRIVATE -> PsiModifier.PRIVATE
-                    propertySymbol.canHaveNonPrivateField -> {
-                        val declaration = propertySymbol.setter ?: propertySymbol
-                        declaration.toPsiVisibilityForMember()
-                    }
-                    else -> PsiModifier.PRIVATE
-                }
-            }
-
+            val visibility = withPropertySymbol { it.fieldVisibility.toPsiVisibilityForMember() }
             GranularModifiersBox.VISIBILITY_MODIFIERS_MAP.with(visibility)
         }
+
         in GranularModifiersBox.MODALITY_MODIFIERS -> {
             val modality = withPropertySymbol { propertySymbol ->
                 if (propertySymbol.isVal || propertySymbol.isDelegated) {
@@ -317,3 +308,12 @@ internal class SymbolLightFieldForProperty private constructor(
 
     override fun isValid(): Boolean = super.isValid() && kotlinOrigin?.isValid ?: propertySymbolPointer.isValid(useSiteModule)
 }
+
+/**
+ * The Kotlin visibility of the field of this property.
+ */
+private val KaPropertySymbol.fieldVisibility: KaSymbolVisibility
+    get() = when {
+        visibility == KaSymbolVisibility.PRIVATE || !canHaveNonPrivateField -> KaSymbolVisibility.PRIVATE
+        else -> (setter ?: this).visibility
+    }
