@@ -1,5 +1,6 @@
-// IGNORE_BACKEND: JKLIB
 // TARGET_BACKEND: JVM
+// DUMP_IR_DIFFERENCE: JKLIB
+// ^ JKlib reads Java declarations from compiled classes, not from sources.
 
 // FILE: kt43217.kt
 class A {
