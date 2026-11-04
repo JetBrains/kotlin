@@ -18,7 +18,7 @@ val thirdPartyAnnotationsClasspathResolver = configurations.create("thirdPartyAn
     extendsFrom(thirdPartyAnnotationsClasspath)
 }
 
-tasks.named<Test>("test") {
+tasks.withType<Test>().configureEach {
     val annotationsFiles: FileCollection =
         thirdPartyAnnotationsClasspathResolver
 
