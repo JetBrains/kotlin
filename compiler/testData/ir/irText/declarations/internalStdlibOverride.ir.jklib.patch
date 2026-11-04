@@ -1,0 +1,28 @@
+--- a/internalStdlibOverride.ir.txt
++++ b/internalStdlibOverride.ir.jklib.txt
+@@ -38,11 +38,25 @@
+       VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+       overridden:
+         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.collections.AbstractMap
++    FUN FAKE_OVERRIDE name:forEach visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
++      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Map<kotlin.Int, kotlin.Int>
++      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] java.util.function.BiConsumer<in @[EnhancedNullability] kotlin.Int, in @[EnhancedNullability] kotlin.Int>
++      overridden:
++        public open fun forEach (p0: @[EnhancedNullability] java.util.function.BiConsumer<in @[EnhancedNullability] K of kotlin.collections.AbstractMap, in @[EnhancedNullability] V of kotlin.collections.AbstractMap>): kotlin.Unit declared in kotlin.collections.AbstractMap
+     FUN FAKE_OVERRIDE name:get visibility:public modality:OPEN returnType:kotlin.Int? [fake_override,operator]
+       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.AbstractMap<kotlin.Int, kotlin.Int>
+       VALUE_PARAMETER kind:Regular name:key index:1 type:kotlin.Int
+       overridden:
+         public open fun get (key: K of kotlin.collections.AbstractMap): V of kotlin.collections.AbstractMap? declared in kotlin.collections.AbstractMap
++    FUN FAKE_OVERRIDE name:getOrDefault visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
++      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Map<kotlin.Int, kotlin.Int>
++      VALUE_PARAMETER kind:Regular name:key index:1 type:kotlin.Int
++      VALUE_PARAMETER kind:Regular name:defaultValue index:2 type:kotlin.Int
++      annotations:
++        SinceKotlin(version = "1.1")
++        PlatformDependent
++      overridden:
++        public open fun getOrDefault (key: K of kotlin.collections.AbstractMap, defaultValue: V of kotlin.collections.AbstractMap): V of kotlin.collections.AbstractMap declared in kotlin.collections.AbstractMap
+     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.AbstractMap<kotlin.Int, kotlin.Int>
+       overridden:
