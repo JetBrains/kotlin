@@ -1077,10 +1077,40 @@ class IrBodyDeserializer(
     ): S? = if (condition) deserializeTypedSymbol(code(), fallbackSymbolKind) else null
 
     private companion object {
-        private val statementOriginIndex = IrStatementOrigin.Companion::class
-            .declaredMemberProperties
-            .mapNotNull { it.get(IrStatementOrigin.Companion) as? IrStatementOrigin }
-            .associateBy { it.debugName }
+        /**
+         * Legacy names of renamed statement origins. KLIBs store origins by name, so a renamed origin must keep
+         * resolving under its old name.
+         *
+         * FUNCTION_TYPE_EXPRESSION_CONVERSION was named SUSPEND_CONVERSION before 2.4.20. Compilers up to 2.4.10 which
+         * do not write rich callable references to KLIBs serialize a suspend conversion of a function-typed expression
+         * as a block with the old name. Not writing them is the default up to 2.2.21; from 2.3.0 on it takes
+         * -language-version 2.2 or older, or -XXLanguage:-IrRichCallableReferencesInKlibs. `UpgradeCallableReferences`
+         * recognizes the block by its origin, so the old name must resolve to the renamed origin (KT-91139).
+         * With rich callable references, compilers 2.3.0 to 2.4.10 write the old name as well, as the origin of a
+         * rich function reference; no JS, Wasm or Native lowering reads it.
+         *
+         * Keys must not collide with [currentStatementOriginNames]: a current origin takes precedence, so the alias
+         * would be silently lost and legacy KLIBs would resolve to the wrong origin.
+         */
+        private val legacyStatementOriginNames: Map<String, IrStatementOrigin> = mapOf(
+            "SUSPEND_CONVERSION" to IrStatementOrigin.FUNCTION_TYPE_EXPRESSION_CONVERSION,
+        )
+
+        /**
+         * All [IrStatementOrigin]s declared in [IrStatementOrigin.Companion], indexed by [IrStatementOrigin.debugName],
+         * which is the name written to KLIBs.
+         */
+        private val currentStatementOriginNames: Map<String, IrStatementOrigin> by lazy {
+            IrStatementOrigin.Companion::class
+                .declaredMemberProperties
+                .mapNotNull { it.get(IrStatementOrigin.Companion) as? IrStatementOrigin }
+                .associateBy { it.debugName }
+        }
+
+        private val statementOriginIndex: Map<String, IrStatementOrigin> by lazy {
+            legacyStatementOriginNames + currentStatementOriginNames
+        }
+
         private val unknownStatementOriginCache = mutableMapOf<String, IrStatementOrigin>()
     }
 }
