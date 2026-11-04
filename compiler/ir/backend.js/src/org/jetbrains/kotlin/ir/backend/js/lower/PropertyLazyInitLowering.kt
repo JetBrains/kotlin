@@ -248,4 +248,5 @@ private val compatibleOrigins = listOf(
     IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR,
     IrDeclarationOrigin.PROPERTY_BACKING_FIELD,
     IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER,
+    IrDeclarationOrigin.SYNTHETIC_ACCESSOR,
 )
