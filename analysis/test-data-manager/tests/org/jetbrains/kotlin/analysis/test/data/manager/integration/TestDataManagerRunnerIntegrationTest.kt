@@ -79,7 +79,7 @@ internal class TestDataManagerRunnerIntegrationTest {
         }
 
         return buildList {
-            add("tests: ${outcome.totalTests}, passed: ${outcome.passedTests}, failed: ${outcome.failedTests}")
+            add("tests: ${outcome.totalTests}, passed: ${outcome.passedTests}, failed: ${outcome.failedTests}, skipped: ${outcome.skippedTests}")
             add("executions: ${outcome.testExecutions}, successful: ${outcome.isSuccessful}")
             outcome.runErrors.forEach { add("run error: ${it.replace(tempDir.toString(), "<root>")}") }
             outcome.mismatchesByPath.toSortedMap().forEach { [path, chains] -> add("mismatch: $path $chains") }
@@ -95,7 +95,7 @@ internal class TestDataManagerRunnerIntegrationTest {
 
         assertEquals(
             """
-                tests: 7, passed: 7, failed: 0
+                tests: 7, passed: 7, failed: 0, skipped: 0
                 executions: 7, successful: true
                 first.txt: first
             """.trimIndent(),
@@ -110,7 +110,7 @@ internal class TestDataManagerRunnerIntegrationTest {
 
         assertEquals(
             """
-                tests: 7, passed: 4, failed: 3
+                tests: 7, passed: 4, failed: 3, skipped: 0
                 executions: 10, successful: false
                 mismatch: runner/first.kt [[], [js], [knm, js]]
                 first.txt: expected
@@ -123,7 +123,7 @@ internal class TestDataManagerRunnerIntegrationTest {
     fun `nonexistent test data path fails the run`() {
         assertEquals(
             """
-                tests: 0, passed: 0, failed: 0
+                tests: 0, passed: 0, failed: 0, skipped: 0
                 executions: 0, successful: false
                 run error: testDataPath 'runner/nope' does not exist; paths are relative to the repository root <root>
             """.trimIndent(),
@@ -138,7 +138,7 @@ internal class TestDataManagerRunnerIntegrationTest {
 
         assertEquals(
             """
-                tests: 7, passed: 6, failed: 1
+                tests: 7, passed: 6, failed: 1, skipped: 0
                 executions: 8, successful: true
                 noMetadata.txt: expected
             """.trimIndent(),
@@ -152,7 +152,7 @@ internal class TestDataManagerRunnerIntegrationTest {
 
         assertEquals(
             """
-                tests: 7, passed: 7, failed: 0
+                tests: 7, passed: 7, failed: 0, skipped: 0
                 executions: 8, successful: false
                 error: FakeRunnerGoldenTestGenerated.testFlaky - IllegalStateException: Flaky failure
             """.trimIndent(),
@@ -168,7 +168,7 @@ internal class TestDataManagerRunnerIntegrationTest {
 
         assertEquals(
             """
-                tests: 7, passed: 7, failed: 0
+                tests: 7, passed: 7, failed: 0, skipped: 0
                 executions: 7, successful: true
                 first.txt: new
                 second.js.txt: js second
@@ -178,14 +178,14 @@ internal class TestDataManagerRunnerIntegrationTest {
     }
 
     @Test
-    fun `incremental update runs variants only for changed golden paths and counts skipped tests as passed`() {
+    fun `incremental update runs variants only for changed golden paths`() {
         setupFiles("first.txt" to "old", "second.txt" to "second")
         FakeRunnerScenario.outputs["first"] = "new"
         FakeRunnerScenario.outputs["second"] = "second"
 
         assertEquals(
             """
-                tests: 7, passed: 7, failed: 0
+                tests: 7, passed: 6, failed: 0, skipped: 1
                 executions: 6, successful: true
                 first.txt: new
                 second.txt: second
