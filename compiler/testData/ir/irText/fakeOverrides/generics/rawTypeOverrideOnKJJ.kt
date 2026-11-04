@@ -1,6 +1,8 @@
 // SKIP_KT_DUMP
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
+// DUMP_IR_DIFFERENCE: JKLIB
+// ^ JKlib reads Java declarations from compiled classes, not from sources.
 
 // K1 reflect enhances the type of the Java field `Java3.a` (`List<Object>`) from the same-named field `Java1.a` (raw `List`), as if
 // fields could override each other. New reflect doesn't do that, which matches the K2 behavior (see `Java3.a` in the IR dump).

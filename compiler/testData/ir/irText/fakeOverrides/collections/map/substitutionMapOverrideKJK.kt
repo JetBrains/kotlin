@@ -2,6 +2,8 @@
 // TARGET_BACKEND: JVM
 // FULL_JDK
 // WITH_STDLIB
+// IGNORE_BACKEND: JKLIB
+// ^ KT-91300: JKlib resolves members of Java subclasses of AbstractMutableList/Set/Map incorrectly.
 
 // FILE: Java1.java
 import kotlin.collections.AbstractMutableMap;

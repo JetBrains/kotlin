@@ -1,0 +1,157 @@
+--- a/ArrayMap.ir.txt
++++ b/ArrayMap.ir.jklib.txt
+@@ -15,6 +15,11 @@
+       VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+       overridden:
+         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.collections.Iterable
++    FUN FAKE_OVERRIDE name:forEach visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
++      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Iterable<T of <root>.ArrayMap>
++      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] java.util.function.Consumer<in @[FlexibleNullability] T of <root>.ArrayMap?>?
++      overridden:
++        public open fun forEach (p0: @[FlexibleNullability] java.util.function.Consumer<in @[FlexibleNullability] T of kotlin.collections.Iterable?>?): kotlin.Unit declared in kotlin.collections.Iterable
+     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+       overridden:
+@@ -23,6 +28,10 @@
+       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Iterable<T of <root>.ArrayMap>
+       overridden:
+         public abstract fun iterator (): kotlin.collections.Iterator<T of kotlin.collections.Iterable> declared in kotlin.collections.Iterable
++    FUN FAKE_OVERRIDE name:spliterator visibility:public modality:OPEN returnType:@[EnhancedNullability] java.util.Spliterator<@[EnhancedNullability] T of <root>.ArrayMap> [fake_override]
++      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Iterable<T of <root>.ArrayMap>
++      overridden:
++        public open fun spliterator (): @[EnhancedNullability] java.util.Spliterator<@[EnhancedNullability] T of kotlin.collections.Iterable> declared in kotlin.collections.Iterable
+     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+       overridden:
+@@ -299,10 +308,19 @@
+       VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+       overridden:
+         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.ArrayMap
++    FUN FAKE_OVERRIDE name:forEach visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
++      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Iterable<T of <root>.ArrayMapImpl>
++      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] java.util.function.Consumer<in @[FlexibleNullability] T of <root>.ArrayMapImpl?>?
++      overridden:
++        public open fun forEach (p0: @[FlexibleNullability] java.util.function.Consumer<in @[FlexibleNullability] T of <root>.ArrayMap?>?): kotlin.Unit declared in <root>.ArrayMap
+     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+       overridden:
+         public open fun hashCode (): kotlin.Int declared in <root>.ArrayMap
++    FUN FAKE_OVERRIDE name:spliterator visibility:public modality:OPEN returnType:@[EnhancedNullability] java.util.Spliterator<@[EnhancedNullability] T of <root>.ArrayMapImpl> [fake_override]
++      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Iterable<T of <root>.ArrayMapImpl>
++      overridden:
++        public open fun spliterator (): @[EnhancedNullability] java.util.Spliterator<@[EnhancedNullability] T of <root>.ArrayMap> declared in <root>.ArrayMap
+     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+       overridden:
+@@ -427,6 +445,11 @@
+                 VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+                 overridden:
+                   public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.collections.AbstractIterator
++              FUN FAKE_OVERRIDE name:forEachRemaining visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
++                VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Iterator<T of <root>.ArrayMapImpl>
++                VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] java.util.function.Consumer<in @[EnhancedNullability] T of <root>.ArrayMapImpl>
++                overridden:
++                  public open fun forEachRemaining (p0: @[EnhancedNullability] java.util.function.Consumer<in @[EnhancedNullability] T of kotlin.collections.AbstractIterator>): kotlin.Unit declared in kotlin.collections.AbstractIterator
+               FUN FAKE_OVERRIDE name:hasNext visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+                 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.AbstractIterator<T of <root>.ArrayMapImpl>
+                 overridden:
+@@ -605,10 +628,19 @@
+       VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+       overridden:
+         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.ArrayMap
++    FUN FAKE_OVERRIDE name:forEach visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
++      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Iterable<T of <root>.OneElementArrayMap>
++      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] java.util.function.Consumer<in @[FlexibleNullability] T of <root>.OneElementArrayMap?>?
++      overridden:
++        public open fun forEach (p0: @[FlexibleNullability] java.util.function.Consumer<in @[FlexibleNullability] T of <root>.ArrayMap?>?): kotlin.Unit declared in <root>.ArrayMap
+     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+       overridden:
+         public open fun hashCode (): kotlin.Int declared in <root>.ArrayMap
++    FUN FAKE_OVERRIDE name:spliterator visibility:public modality:OPEN returnType:@[EnhancedNullability] java.util.Spliterator<@[EnhancedNullability] T of <root>.OneElementArrayMap> [fake_override]
++      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Iterable<T of <root>.OneElementArrayMap>
++      overridden:
++        public open fun spliterator (): @[EnhancedNullability] java.util.Spliterator<@[EnhancedNullability] T of <root>.ArrayMap> declared in <root>.ArrayMap
+     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+       overridden:
+@@ -680,6 +712,11 @@
+                 VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+                 overridden:
+                   public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.collections.Iterator
++              FUN FAKE_OVERRIDE name:forEachRemaining visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
++                VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Iterator<T of <root>.OneElementArrayMap>
++                VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] java.util.function.Consumer<in @[EnhancedNullability] T of <root>.OneElementArrayMap>
++                overridden:
++                  public open fun forEachRemaining (p0: @[EnhancedNullability] java.util.function.Consumer<in @[EnhancedNullability] T of kotlin.collections.Iterator>): kotlin.Unit declared in kotlin.collections.Iterator
+               FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+                 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+                 overridden:
+@@ -716,7 +753,7 @@
+                       if: CONST Boolean type=kotlin.Boolean value=true
+                       then: BLOCK type=kotlin.Nothing origin=null
+                         THROW type=kotlin.Nothing
+-                          CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.NoSuchElementException' type=kotlin.NoSuchElementException origin=null
++                          CONSTRUCTOR_CALL 'public constructor <init> () declared in java.util.NoSuchElementException' type=java.util.NoSuchElementException origin=null
+             CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.OneElementArrayMap.iterator.<no name provided>' type=<root>.OneElementArrayMap.iterator.<no name provided><T of <root>.OneElementArrayMap> origin=OBJECT_LITERAL
+     FUN name:set visibility:public modality:OPEN returnType:kotlin.Unit [operator]
+       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.OneElementArrayMap<T of <root>.OneElementArrayMap>
+@@ -726,7 +763,7 @@
+         public abstract fun set (index: kotlin.Int, value: T of <root>.ArrayMap): kotlin.Unit declared in <root>.ArrayMap
+       BLOCK_BODY
+         THROW type=kotlin.Nothing
+-          CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.IllegalStateException' type=kotlin.IllegalStateException origin=null
++          CONSTRUCTOR_CALL 'public constructor <init> () declared in java.lang.IllegalStateException' type=java.lang.IllegalStateException origin=null
+     PROPERTY name:size visibility:public modality:OPEN [val]
+       overridden:
+         public abstract size: kotlin.Int declared in <root>.ArrayMap
+@@ -750,10 +787,19 @@
+       VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+       overridden:
+         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.ArrayMap
++    FUN FAKE_OVERRIDE name:forEach visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
++      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Iterable<kotlin.Nothing>
++      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] java.util.function.Consumer<in @[FlexibleNullability] kotlin.Nothing?>?
++      overridden:
++        public open fun forEach (p0: @[FlexibleNullability] java.util.function.Consumer<in @[FlexibleNullability] T of <root>.ArrayMap?>?): kotlin.Unit declared in <root>.ArrayMap
+     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+       overridden:
+         public open fun hashCode (): kotlin.Int declared in <root>.ArrayMap
++    FUN FAKE_OVERRIDE name:spliterator visibility:public modality:OPEN returnType:@[EnhancedNullability] java.util.Spliterator<@[EnhancedNullability] kotlin.Nothing> [fake_override]
++      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Iterable<kotlin.Nothing>
++      overridden:
++        public open fun spliterator (): @[EnhancedNullability] java.util.Spliterator<@[EnhancedNullability] T of <root>.ArrayMap> declared in <root>.ArrayMap
+     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+       overridden:
+@@ -791,6 +837,11 @@
+                 VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+                 overridden:
+                   public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.collections.Iterator
++              FUN FAKE_OVERRIDE name:forEachRemaining visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
++                VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Iterator<kotlin.Nothing>
++                VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] java.util.function.Consumer<in @[EnhancedNullability] kotlin.Nothing>
++                overridden:
++                  public open fun forEachRemaining (p0: @[EnhancedNullability] java.util.function.Consumer<in @[EnhancedNullability] T of kotlin.collections.Iterator>): kotlin.Unit declared in kotlin.collections.Iterator
+               FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+                 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+                 overridden:
+@@ -812,7 +863,7 @@
+                   public abstract fun next (): T of kotlin.collections.Iterator declared in kotlin.collections.Iterator
+                 BLOCK_BODY
+                   THROW type=kotlin.Nothing
+-                    CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.NoSuchElementException' type=kotlin.NoSuchElementException origin=null
++                    CONSTRUCTOR_CALL 'public constructor <init> () declared in java.util.NoSuchElementException' type=java.util.NoSuchElementException origin=null
+             CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.EmptyArrayMap.iterator.<no name provided>' type=<root>.EmptyArrayMap.iterator.<no name provided> origin=OBJECT_LITERAL
+     FUN name:set visibility:public modality:OPEN returnType:kotlin.Unit [operator]
+       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.EmptyArrayMap
+@@ -822,7 +873,7 @@
+         public abstract fun set (index: kotlin.Int, value: T of <root>.ArrayMap): kotlin.Unit declared in <root>.ArrayMap
+       BLOCK_BODY
+         THROW type=kotlin.Nothing
+-          CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.IllegalStateException' type=kotlin.IllegalStateException origin=null
++          CONSTRUCTOR_CALL 'public constructor <init> () declared in java.lang.IllegalStateException' type=java.lang.IllegalStateException origin=null
+     PROPERTY name:size visibility:public modality:OPEN [val]
+       overridden:
+         public abstract size: kotlin.Int declared in <root>.ArrayMap

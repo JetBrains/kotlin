@@ -1,4 +1,6 @@
 // WITH_STDLIB
+// IGNORE_BACKEND: JKLIB
+// ^ KT-91301: JKlib can't mangle properties without accessors or backing field.
 // TARGET_BACKEND: JVM
 // SKIP_KT_DUMP
 
