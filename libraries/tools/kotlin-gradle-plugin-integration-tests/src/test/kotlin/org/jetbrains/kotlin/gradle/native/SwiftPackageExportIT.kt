@@ -25,8 +25,11 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.PackageResolvedS
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMDependency
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMImportExtension
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.uklibs.PublisherConfiguration
+import org.jetbrains.kotlin.gradle.uklibs.addPublishedProjectToRepositories
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.include
+import org.jetbrains.kotlin.gradle.uklibs.publish
 import org.jetbrains.kotlin.gradle.util.ProcessRunResult
 import org.jetbrains.kotlin.gradle.util.assertProcessRunResult
 import org.jetbrains.kotlin.gradle.util.runProcess
@@ -39,6 +42,7 @@ import kotlin.io.path.isDirectory
 import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.name
 import kotlin.io.path.readLines
+import kotlin.io.path.readText
 import kotlin.io.path.writeText
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
@@ -590,6 +594,79 @@ class SwiftPackageExportIT : KGPBaseTest() {
             )
             val build = consumer.swiftBuild(SwiftDestination.IOS_SIMULATOR)
             assertTrue(build.isSuccessful, "The consumer of the exported package failed to build:\n$build\n${build.output}")
+        }
+    }
+
+    @DisplayName("KT-90972: SwiftPM-import types in the API of a published dependency are exported")
+    @GradleTest
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    fun testSwiftPMImportTypesOfPublishedDependency(
+        gradleVersion: GradleVersion,
+    ) {
+        val producer = project("empty", gradleVersion) {
+            createLocalSwiftPackage(projectPath.resolve("../localSwiftPackage"), packageName = "LocalSwiftPackage")
+
+            plugins {
+                kotlin("multiplatform")
+            }
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "producer"
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosSimulatorArm64()
+                    sourceSets.appleMain.get().compileSource(
+                        """
+                            @file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+                            package producer
+                            import swiftPMImport.org.test.producer.LocalHelper
+                            fun roundTrip(helper: LocalHelper): LocalHelper = helper
+                        """.trimIndent()
+                    )
+                    with(swiftImport) {
+                        localSwiftPackage(
+                            directory = project.layout.projectDirectory.dir("../localSwiftPackage"),
+                            products = listOf("LocalSwiftPackage"),
+                        )
+                    }
+                }
+            }
+        }.publish(publisherConfiguration = PublisherConfiguration(group = "org.test"))
+
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "shared"
+            }
+            addPublishedProjectToRepositories(producer)
+            // The published cinterop klib is named <project>-<target>Cinterop-swiftPMImportMain-<version>.klib,
+            // unlike the -cinterop-swiftPMImport file of a project dependency.
+            val producerCoordinate = producer.rootCoordinate
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosSimulatorArm64()
+                    sourceSets.commonMain.get().dependencies {
+                        api(producerCoordinate)
+                    }
+                }
+                export.swift {
+                    moduleName.set("Shared")
+                    swiftPackageIntegration()
+                }
+            }
+
+            build(":iosSimulatorArm64SwiftPackageExport")
+
+            // A declaration with an untranslatable type fails the export, so it only shows up when the type is reexported.
+            val producerSwift = projectPath
+                .resolve("build/SwiftPackageExport/iosSimulatorArm64/files/OrgTestProducer/OrgTestProducer.swift")
+            val roundTripSignature = Regex("""func roundTrip\(\s*helper: (\S+)\s*\)\s*->\s*(\S+)""")
+            assertEquals(
+                listOf(listOf("LocalHelper", "LocalHelper")),
+                roundTripSignature.findAll(producerSwift.readText()).map { it.groupValues.drop(1) }.toList(),
+            )
         }
     }
 
