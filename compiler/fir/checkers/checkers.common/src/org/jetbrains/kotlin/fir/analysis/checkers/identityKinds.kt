@@ -75,29 +75,15 @@ inline fun reportIdentitySensitiveOperation(source: KtSourceElement?, type: Cone
     }
 }
 
-private fun ConeKotlinType.isKotlinValueClass(session: FirSession): Boolean {
-    // Value classes have `inline` or `value` modifier in FIR
-    return toRegularClassSymbol(session)?.isValue == true
+/**
+ * Whether the class of this type is a value class: a Kotlin inline or full value class, a value class of the platform, like a Java value
+ * class, or a Kotlin class whose platform class is one, like `kotlin.Number` for `java.lang.Number` or `kotlin.Int` for
+ * `java.lang.Integer`. Type parameters, captured and intersection types are checked by their bounds in [isBoundedByPrimitiveOrValueClass].
+ */
+fun ConeKotlinType.isValueClass(session: FirSession): Boolean {
+    val symbol = toRegularClassSymbol(session) ?: return false
+    return symbol.isValue || symbol.isPlatformValueClass(session) || symbol.isMappedToPlatformValueClass(session)
 }
-
-/**
- * Whether this type is a value class type: a Kotlin inline or full value class, or a value class type of the platform
- * (see [isPlatformValueClassType]).
- */
-fun ConeKotlinType.isValueClass(session: FirSession): Boolean =
-    isKotlinValueClass(session) || isPlatformValueClassType(session)
-
-/**
- * Whether this type is a value class type of the platform, like a Java value class. Like javac, this includes type parameters, captured
- * types and intersection types bounded by such a class. A Kotlin class whose platform class is a value class, like `kotlin.Number` for
- * `java.lang.Number` or `kotlin.Int` for `java.lang.Integer`, is one too.
- *
- * Unlike [FirRegularClassSymbol.isPlatformValueClass], which checks only the class itself.
- */
-private fun ConeKotlinType.isPlatformValueClassType(session: FirSession): Boolean =
-    collectUpperBounds(session.typeContext).any { type ->
-        type.toRegularClassSymbol(session)?.let { it.isPlatformValueClass(session) || it.isMappedToPlatformValueClass(session) } == true
-    }
 
 fun ConeKotlinType.isFlexiblePrimitive(): Boolean {
     return this is ConeFlexibleType && lowerBound.isPrimitiveOrNullablePrimitive && upperBound.isPrimitiveOrNullablePrimitive
