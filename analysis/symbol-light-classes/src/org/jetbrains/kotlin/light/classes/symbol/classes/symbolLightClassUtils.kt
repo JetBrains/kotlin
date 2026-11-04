@@ -501,7 +501,7 @@ internal fun createField(
  * Whether this property has a backing field in the class file. A `@JvmSynthetic` backing field counts, although it gets no light
  * field, see [createField].
  */
-private val KaPropertySymbol.hasFieldInClassFile: Boolean
+internal val KaPropertySymbol.hasFieldInClassFile: Boolean
     get() {
         // Backing field for KaSyntheticJavaPropertySymbol is always `null`.
         // Thus, there is no point in proceeding further as `SymbolLightFieldForProperty` expects a non-null backing field pointer.

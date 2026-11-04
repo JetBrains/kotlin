@@ -1,6 +1,6 @@
 public final class Regular /* one.Regular*/ {
   @org.jetbrains.annotations.NotNull()
-  private final @org.jetbrains.annotations.NotNull() kotlin.Lazy<@org.jetbrains.annotations.NotNull() java.lang.Integer> bothDelegated$delegate;
+  private final @org.jetbrains.annotations.NotNull() kotlin.Lazy<@org.jetbrains.annotations.NotNull() java.lang.Integer> bothDelegated$delegate$1;
 
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() kotlin.Lazy<@org.jetbrains.annotations.NotNull() java.lang.Integer> instanceDelegated$delegate;
@@ -24,7 +24,7 @@ public final class Regular /* one.Regular*/ {
 
   private final int staticDelegated = 1 /* initializer type: int */;
 
-  private final int synthetic = 4 /* initializer type: int */;
+  private final int synthetic$1 = 4 /* initializer type: int */;
 
   @org.jetbrains.annotations.NotNull()
   public static final @org.jetbrains.annotations.NotNull() java.lang.String getBothDelegated();//  getBothDelegated()

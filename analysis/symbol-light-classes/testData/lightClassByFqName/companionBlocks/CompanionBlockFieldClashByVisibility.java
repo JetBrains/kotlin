@@ -14,13 +14,13 @@ public class Regular /* one.Regular*/ {
 
   private static final int publicLateinit = 0 /* initializer type: int */;
 
-  protected @org.jetbrains.annotations.NotNull() java.lang.String protectedLateinit;
+  protected @org.jetbrains.annotations.NotNull() java.lang.String protectedLateinit$1;
 
-  public @org.jetbrains.annotations.NotNull() java.lang.String internalSetter;
+  public @org.jetbrains.annotations.NotNull() java.lang.String internalSetter$1;
 
-  public @org.jetbrains.annotations.NotNull() java.lang.String internalStaticJvmField;
+  public @org.jetbrains.annotations.NotNull() java.lang.String internalStaticJvmField$1;
 
-  public @org.jetbrains.annotations.NotNull() java.lang.String publicLateinit;
+  public @org.jetbrains.annotations.NotNull() java.lang.String publicLateinit$1;
 
   @org.jetbrains.annotations.NotNull()
   protected final @org.jetbrains.annotations.NotNull() java.lang.String getProtectedLateinit();//  getProtectedLateinit()
