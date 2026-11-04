@@ -25,7 +25,6 @@ dependencies {
     testFixturesImplementation(project(":compiler:container"))
     testFixturesImplementation(project(":compiler:resolution"))
     testFixturesImplementation(project(":native:native.config"))
-    testFixturesImplementation(project(":native:frontend.native"))
     testFixturesApi(project(":compiler:serialization"))
     testFixturesApi(project(":compiler:fir:entrypoint"))
     testFixturesApi(project(":compiler:fir:fir2ir:jvm-backend"))

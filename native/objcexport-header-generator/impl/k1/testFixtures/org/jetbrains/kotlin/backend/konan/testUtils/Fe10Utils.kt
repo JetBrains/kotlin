@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.konan.testUtils
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.K1Deprecation
+import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.createPhaseConfig
@@ -15,20 +16,32 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.container.StorageComponentContainer
+import org.jetbrains.kotlin.container.get
+import org.jetbrains.kotlin.container.useInstance
+import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.context.withModule
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDependenciesImpl
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.frontend.di.configureModule
+import org.jetbrains.kotlin.frontend.di.configureStandardResolveComponents
+import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.loader.reportLoadingProblemsIfAny
 import org.jetbrains.kotlin.library.metadata.CurrentKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.native.FakeTopDownAnalyzerFacadeForNative
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.konan.platform.NativeDefaultImportsProvider
+import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
+import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
+import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.util.KtTestUtil
@@ -143,4 +156,64 @@ private fun KlibLoader.loadOrFail(): KotlinLibrary {
     val result = load()
     result.reportLoadingProblemsIfAny { _, message -> error(message) }
     return result.librariesStdlibFirst.single()
+}
+
+@K1Deprecation
+private object FakeTopDownAnalyzerFacadeForNative {
+    fun analyzeFilesWithGivenTrace(
+        files: Collection<KtFile>,
+        trace: BindingTrace,
+        moduleContext: ModuleContext,
+        languageVersionSettings: LanguageVersionSettings,
+        compilerEnvironment: TargetEnvironment = CompilerEnvironment
+    ): AnalysisResult {
+
+        val analyzerForNative = createFakeTopDownAnalyzerForNative(
+            moduleContext, trace,
+            FileBasedDeclarationProviderFactory(moduleContext.storageManager, files),
+            languageVersionSettings,
+            compilerEnvironment
+        )
+
+        @Suppress("DEPRECATION_ERROR")
+        analyzerForNative.analyzeDeclarations(TopDownAnalysisMode.TopLevelDeclarations, files as Collection<com.intellij.psi.PsiElement>)
+        return AnalysisResult.success(trace.bindingContext, moduleContext.module)
+    }
+
+    private fun createFakeTopDownAnalyzerForNative(
+        moduleContext: ModuleContext,
+        bindingTrace: BindingTrace,
+        declarationProviderFactory: DeclarationProviderFactory,
+        languageVersionSettings: LanguageVersionSettings,
+        compilerEnvironment: TargetEnvironment = CompilerEnvironment
+    ): LazyTopDownAnalyzer = createContainer("FakeTopDownAnalyzerForNative", FakeNativePlatformAnalyzerServices) {
+        configureModule(
+            moduleContext,
+            NativePlatforms.unspecifiedNativePlatform,
+            FakeNativePlatformAnalyzerServices,
+            bindingTrace,
+            languageVersionSettings,
+            optimizingOptions = null,
+            absentDescriptorHandlerClass = null
+        )
+
+        configureStandardResolveComponents()
+
+        useInstance(declarationProviderFactory)
+        useInstance(InlineConstTracker.DoNothing)
+        compilerEnvironment.configure(this)
+    }.apply {
+        val moduleDescriptor = get<ModuleDescriptorImpl>()
+        moduleDescriptor.initialize(get<KotlinCodeAnalyzer>().packageFragmentProvider)
+    }.get<LazyTopDownAnalyzer>()
+}
+
+@K1Deprecation
+private object FakeNativePlatformAnalyzerServices : PlatformDependentAnalyzerServices() {
+    override val platformConfigurator: PlatformConfigurator = NativePlatformConfigurator
+    override val defaultImportsProvider: DefaultImportsProvider = NativeDefaultImportsProvider
+
+    private object NativePlatformConfigurator : PlatformConfiguratorBase() {
+        override fun configureModuleComponents(container: StorageComponentContainer) {}
+    }
 }

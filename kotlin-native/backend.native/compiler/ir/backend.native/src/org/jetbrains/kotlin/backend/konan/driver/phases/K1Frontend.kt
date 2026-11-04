@@ -52,10 +52,14 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.CleanableBindingContext
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
+import org.jetbrains.kotlin.resolve.DefaultImportsProvider
 import org.jetbrains.kotlin.resolve.ImplicitIntegerCoercion
 import org.jetbrains.kotlin.resolve.LazyTopDownAnalyzer
+import org.jetbrains.kotlin.resolve.PlatformConfigurator
+import org.jetbrains.kotlin.resolve.PlatformConfiguratorBase
+import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.resolve.createContainer
-import org.jetbrains.kotlin.resolve.konan.platform.NativePlatformAnalyzerServices
+import org.jetbrains.kotlin.resolve.konan.platform.NativeDefaultImportsProvider
 import org.jetbrains.kotlin.resolve.lazy.BasicAbsentDescriptorHandler
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
@@ -263,4 +267,14 @@ private fun ObjCExportLazy.dumpObjCHeader(outputFile: String, shouldExportKDoc: 
     }
 
     Path(outputFile).writeLines(lines)
+}
+
+@K1Deprecation
+object NativePlatformAnalyzerServices : PlatformDependentAnalyzerServices() {
+    override val platformConfigurator: PlatformConfigurator = NativePlatformConfigurator
+    override val defaultImportsProvider: DefaultImportsProvider = NativeDefaultImportsProvider
+
+    private object NativePlatformConfigurator : PlatformConfiguratorBase() {
+        override fun configureModuleComponents(container: StorageComponentContainer) {}
+    }
 }
