@@ -21,6 +21,23 @@ class MutableCollectionTest {
     fun <T> testOperation(before: List<T>, after: List<T>, expectedModified: Boolean) =
         testOperation(before, after, expectedModified, { it.toMutableList() })
 
+    private class ListBackedMutableIterable<T>(list: List<T>) : MutableIterable<T> {
+        private val backingList = list.toMutableList()
+
+        override fun iterator(): MutableIterator<T> = backingList.iterator()
+    }
+
+    private fun <T> testOperationOnMutableIterable(
+        before: List<T>,
+        after: List<T>,
+        expectedModified: Boolean,
+    ) = fun(operation: ListBackedMutableIterable<T>.() -> Boolean) {
+        val iterable = ListBackedMutableIterable(before)
+
+        assertEquals(expectedModified, iterable.operation())
+        assertEquals(after, iterable.toList())
+    }
+
 
     @Test fun addAll() {
         val data = listOf("foo", "bar")
@@ -116,6 +133,17 @@ class MutableCollectionTest {
             assertRemove { removeAll { false } }
             assertRemove { (this as MutableIterable<String>).removeAll { false } }
         }
+    }
+
+    @Test fun removeAllFromMutableIterable() {
+        val content = listOf("foo", "bar", "bar")
+        val contentWithoutBars = listOf("foo")
+
+        val assertRemove = testOperationOnMutableIterable(content, contentWithoutBars, true)
+        assertRemove { removeAll { it == "bar" } }
+
+        val assertRemoveNothing = testOperationOnMutableIterable(content, content, false)
+        assertRemoveNothing { removeAll { false } }
     }
 
     @Test fun retainAll() {

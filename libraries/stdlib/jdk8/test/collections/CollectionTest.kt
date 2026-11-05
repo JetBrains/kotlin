@@ -44,5 +44,35 @@ class CollectionTest {
         assertFalse(coll.removeIf(Predicate { it.length > 4 }))
     }
 
+    private class RemoveIfRecordingCollection(elements: List<String>) : AbstractMutableCollection<String>() {
+        private val backingList = elements.toMutableList()
 
+        var removeIfInvocationCount = 0
+            private set
+
+        override val size: Int
+            get() = backingList.size
+
+        override fun add(element: String): Boolean = backingList.add(element)
+
+        override fun iterator(): MutableIterator<String> = backingList.iterator()
+
+        override fun removeIf(filter: Predicate<in String>): Boolean {
+            removeIfInvocationCount++
+            return backingList.removeIf(filter)
+        }
+    }
+
+    @Test fun removeAllDelegatesToCollectionRemoveIf() {
+        val collection = RemoveIfRecordingCollection(listOf("foo", "bar", "bar"))
+        val iterable: MutableIterable<String> = collection
+
+        assertTrue(iterable.removeAll { it == "bar" })
+        assertEquals(1, collection.removeIfInvocationCount)
+        assertEquals(listOf("foo"), collection.toList())
+
+        assertFalse(iterable.removeAll { it == "bar" })
+        assertEquals(2, collection.removeIfInvocationCount)
+        assertEquals(listOf("foo"), collection.toList())
+    }
 }

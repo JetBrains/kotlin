@@ -58,6 +58,14 @@ internal open class PlatformImplementations {
     public open fun <K, V, NewV : V & Any> computeIfAbsent(map: ConcurrentMap<K, V>, key: K, newValue: NewV): V {
         throw UnsupportedOperationException("computeIfAbsent should not be called on the base PlatformImplementations.")
     }
+
+    open fun <T> removeIf(
+        collection: MutableCollection<T>,
+        predicate: (T) -> Boolean,
+        fallback: () -> Boolean,
+    ): Boolean {
+        throw UnsupportedOperationException("removeIf should not be called on the base PlatformImplementations.")
+    }
 }
 
 
