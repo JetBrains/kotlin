@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.web.npm
 
+import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.internal.project.ProjectInternal
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.gradle.util.kotlin
 import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 class SharedNpmManagerProjectTest {
 
@@ -81,15 +83,18 @@ class SharedNpmManagerProjectTest {
     }
 
     @Test
-    fun `invalid npm dependency reports are skipped`() {
-        val (valid, unparsable, unnamed) = reportFiles(jsBrowser, jsNodejs)
-        NpmDependencyReport("js", "valid").writeTo(valid)
-        unparsable.parentFile.mkdirs()
-        unparsable.writeText("{ not json")
-        NpmDependencyReport("js", "").writeTo(unnamed)
+    fun `an unparsable npm dependency report fails the setup task`() {
+        val report = reportFiles(jsBrowser).first()
+        report.parentFile.mkdirs()
+        report.writeText("{ not json")
 
-        val outputDirectory = assembleJsSharedNpmProject()
+        assertFailsWith<GradleException> { assembleJsSharedNpmProject() }
+    }
 
-        assertEquals(listOf("packages/valid"), fromSrcPackageJson(outputDirectory.resolve("package.json"))!!.workspaces?.toList())
+    @Test
+    fun `an npm dependency report without a compilation name fails the setup task`() {
+        NpmDependencyReport("js", "").writeTo(reportFiles(jsBrowser).first())
+
+        assertFailsWith<GradleException> { assembleJsSharedNpmProject() }
     }
 }
