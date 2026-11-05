@@ -463,8 +463,8 @@ internal object DataFlowIR {
 
         private inline fun takeName(block: () -> String) = if (TAKE_NAMES) block() else null
 
-        private var privateTypeIndex = 1 // 0 for [Virtual]
-        private var privateFunIndex = 0
+        var privateTypeIndex = 1 // 0 for [Virtual]
+        var privateFunIndex = 0
 
         val primitiveTypes: List<Type> = PrimitiveBinaryType.entries.map { mapPrimitiveBinaryType(it) }
 

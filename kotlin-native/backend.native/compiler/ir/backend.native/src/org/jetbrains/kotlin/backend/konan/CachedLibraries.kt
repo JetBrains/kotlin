@@ -351,5 +351,6 @@ class CachedLibraries(
         const val TRIVIAL_GETTERS_FILE_NAME = "trivial_getters"
         const val OBJC_ADAPTERS_FILE_NAME = "objc_adapters"
         const val PARTIAL_LINKAGE_ISSUES_FILE_NAME = "pl_issues"
+        const val DATA_FLOW_IR_FILE_NAME = "data_flow_ir"
     }
 }

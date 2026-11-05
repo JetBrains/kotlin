@@ -44,7 +44,7 @@ value class PointsToKind private constructor(private val value: Int) {
  * A representation of `@PointsTo` annotation.
  */
 @JvmInline
-value class PointsTo private constructor(private val elements: IntArray) {
+value class PointsTo private constructor(val elements: IntArray) {
     constructor(elements: List<Int>, signatureSize: Int) : this(elements.toIntArray()) {
         assertIsValidFor(signatureSize)
     }

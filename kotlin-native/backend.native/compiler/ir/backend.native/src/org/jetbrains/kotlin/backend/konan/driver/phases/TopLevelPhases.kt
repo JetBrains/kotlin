@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.backend.konan.driver.utilities.CExportFiles
 import org.jetbrains.kotlin.backend.konan.driver.utilities.createTempFiles
 import org.jetbrains.kotlin.backend.konan.ir.FunctionsWithoutBoundCheckGenerator
 import org.jetbrains.kotlin.backend.konan.lower.*
+import org.jetbrains.kotlin.backend.konan.optimizations.DataFlowIR
 import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStrategy
 import org.jetbrains.kotlin.backend.konan.serialization.PartialCacheInfo
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
@@ -565,7 +566,10 @@ private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragme
             ),
             module,
     )
-    val moduleDFG = runAndMeasurePhase(BuildDFGPhase, module, disable = !runGlobalOptimizations)
+    val symbolTable = DataFlowIR.SymbolTable(context.context, DataFlowIR.Module())
+    val externalFunctionDFGs = runAndMeasurePhase(DeserializeDFGPhase, symbolTable, disable = !runGlobalOptimizations)
+    val moduleDFG = runAndMeasurePhase(BuildDFGPhase, BuildDFGInput(module, symbolTable, externalFunctionDFGs), disable = !runGlobalOptimizations)
+    runAndMeasurePhase(SerializeDFGPhase, moduleDFG, disable = !runGlobalOptimizations)
     runAndMeasurePhase(RemoveRedundantCallsToStaticInitializersPhase, RedundantCallsInput(moduleDFG, module), disable = !enablePreCodegenInliner)
     runAndMeasurePhase(PreCodegenInlinerPhase, PreCodegenInlinerInput(module, moduleDFG), disable = !enablePreCodegenInliner)
     runAndMeasurePhase(DevirtualizationAnalysisPhase, DevirtualizationAnalysisInput(module, moduleDFG), disable = !runGlobalOptimizations)

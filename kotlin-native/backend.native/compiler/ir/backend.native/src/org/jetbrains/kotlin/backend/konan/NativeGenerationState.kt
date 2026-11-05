@@ -79,6 +79,7 @@ internal class NativeGenerationState(
     val trivialGetters = mutableListOf<SerializedTrivialGetter>()
     // KT-89121: `@BindClassToObjCName` adapters of the library being cached, for the final binary to use them.
     val objCAdapters = mutableListOf<SerializedObjCAdapter>()
+    var serializedDFG: ByteArray? = null
 
     var coroutinesLivenessAnalysisPhasePerformed = false
 

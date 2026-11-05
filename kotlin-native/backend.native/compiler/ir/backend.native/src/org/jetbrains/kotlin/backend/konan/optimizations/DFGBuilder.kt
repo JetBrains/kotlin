@@ -792,15 +792,19 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
 internal class ModuleDFG(val functions: MutableMap<DataFlowIR.FunctionSymbol, DataFlowIR.Function>,
                          val symbolTable: DataFlowIR.SymbolTable)
 
-internal class ModuleDFGBuilder(val generationState: NativeGenerationState, val irModule: IrModuleFragment) {
+internal class ModuleDFGBuilder(
+        val generationState: NativeGenerationState,
+        val irModule: IrModuleFragment,
+        val symbolTable: DataFlowIR.SymbolTable,
+        val externalFunctionDFGs: Map<DataFlowIR.FunctionSymbol, DataFlowIR.Function>,
+) {
     private val context = generationState.context
-    private val module = DataFlowIR.Module()
-    private val symbolTable = DataFlowIR.SymbolTable(context, module)
 
     fun build(): ModuleDFG {
         symbolTable.populateWith(irModule)
 
         val functions = mutableMapOf<DataFlowIR.FunctionSymbol, DataFlowIR.Function>()
+        functions += externalFunctionDFGs
         irModule.accept(object : IrVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
