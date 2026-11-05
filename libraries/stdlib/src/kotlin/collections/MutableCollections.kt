@@ -215,14 +215,6 @@ private fun MutableCollection<*>.retainNothing(): Boolean {
     return result
 }
 
-/**
- * Retains only elements of this [MutableIterable] that match the given [predicate].
- *
- * @return `true` if any element was removed from this collection, or `false` when all elements were retained and collection was not modified.
- */
-@IgnorableReturnValue
-public fun <T> MutableIterable<T>.retainAll(predicate: (T) -> Boolean): Boolean = filterInPlace(predicate, false)
-
 internal fun <T> MutableIterable<T>.filterInPlace(predicate: (T) -> Boolean, predicateResultToRemove: Boolean): Boolean {
     var result = false
     with(iterator()) {
