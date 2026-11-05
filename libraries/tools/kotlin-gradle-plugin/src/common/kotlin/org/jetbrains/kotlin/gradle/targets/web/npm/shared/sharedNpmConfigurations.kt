@@ -7,9 +7,8 @@ package org.jetbrains.kotlin.gradle.targets.web.npm.shared
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.artifacts.Dependency
-import org.gradle.api.artifacts.FileCollectionDependency
 import org.gradle.api.artifacts.type.ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE
+import org.gradle.api.artifacts.type.ArtifactTypeDefinition.DIRECTORY_TYPE
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
@@ -89,6 +88,10 @@ internal fun Project.createNpmDependenciesReportResolver(platform: HasPlatformDi
 
 internal const val NPM_DEPENDENCY_REPORT_ARTIFACT_TYPE = "kotlin-npm-dependency-report"
 
+private const val JSON_TYPE = "json"
+
+private const val FILE_DEPENDENCY_USAGE = "kotlinNpmFileDependency"
+
 /** Offers the main compilation's report to projects that depend on this one, next to its klib. */
 internal fun Project.createNpmRuntimeDependenciesVariant(
     target: KotlinJsIrTarget,
@@ -102,47 +105,49 @@ internal fun Project.createNpmRuntimeDependenciesVariant(
     }
 }
 
-internal fun Project.registerOnceKlibToNpmDependencyReportTransform(target: KotlinJsIrTarget, platform: HasPlatformDisambiguator) {
-    val registeredKey = "KlibToNpmDependencyReportTransform.${platform.platformName}"
+internal fun Project.registerOncePackageJsonToNpmDependencyReportTransform(target: KotlinJsIrTarget, platform: HasPlatformDisambiguator) {
+    val registeredKey = "PackageJsonToNpmDependencyReportTransform.${platform.platformName}"
     if (!extensions.extraProperties.has(registeredKey)) {
-        registerKlibToNpmDependencyReportTransform(target, platform)
+        registerPackageJsonToNpmDependencyReportTransform(target, platform)
         extensions.extraProperties[registeredKey] = true
     }
 }
 
-/** Covers Maven and `files(...)` klibs, which come without a report. */
-private fun Project.registerKlibToNpmDependencyReportTransform(target: KotlinJsIrTarget, platform: HasPlatformDisambiguator) {
-    dependencies.registerTransform(KlibToNpmDependencyReportTransform::class.java) { transform ->
-        transform.from.attribute(ARTIFACT_TYPE_ATTRIBUTE, KLIB_TYPE)
-        transform.from.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.consumerRuntimeUsage(target))
-        transform.to.attribute(ARTIFACT_TYPE_ATTRIBUTE, NPM_DEPENDENCY_REPORT_ARTIFACT_TYPE)
-        transform.to.attribute(Usage.USAGE_ATTRIBUTE, usageByName(platform.npmRuntimeDependenciesUsageName))
-        transform.parameters.target.set(platform.platformName)
+/** Covers Maven klibs and `files(...)` klibs, unpacked klibs and `package.json` files, which come without a report. */
+private fun Project.registerPackageJsonToNpmDependencyReportTransform(target: KotlinJsIrTarget, platform: HasPlatformDisambiguator) {
+    val fileDependencyUsage = usageByName(FILE_DEPENDENCY_USAGE)
+    // KMP root variants have no artifactType, so they would match all three transforms.
+    // Fake usage keeps them off the file transforms: `files(...)` deps have no usage, so still match.
+    val sources = listOf(
+        KLIB_TYPE to KotlinUsages.consumerRuntimeUsage(target),
+        DIRECTORY_TYPE to fileDependencyUsage,
+        JSON_TYPE to fileDependencyUsage,
+    )
+    for ((fromArtifactType, fromUsage) in sources) {
+        dependencies.registerTransform(PackageJsonToNpmDependencyReportTransform::class.java) { transform ->
+            transform.from.attribute(ARTIFACT_TYPE_ATTRIBUTE, fromArtifactType)
+            transform.from.attribute(Usage.USAGE_ATTRIBUTE, fromUsage)
+            transform.to.attribute(ARTIFACT_TYPE_ATTRIBUTE, NPM_DEPENDENCY_REPORT_ARTIFACT_TYPE)
+            transform.to.attribute(Usage.USAGE_ATTRIBUTE, usageByName(platform.npmRuntimeDependenciesUsageName))
+            transform.parameters.target.set(platform.platformName)
+        }
     }
 }
 
-internal fun Project.createNpmRuntimeDependenciesResolver(compilation: KotlinJsIrCompilation): Configuration {
-    val runtimeDependencies = declaredRuntimeDependencies(compilation)
-    return configurations.createResolvable(compilation.npmRuntimeDependenciesResolverConfigurationName) {
+internal fun Project.createNpmRuntimeDependenciesResolver(compilation: KotlinJsIrCompilation): Configuration =
+    configurations.createResolvable(compilation.npmRuntimeDependenciesResolverConfigurationName) {
         setInvisibleIfSupported()
         description = "Resolves the runtime dependencies of $compilation to collect their npm dependencies."
         usesPlatformOf(compilation.target)
         attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.consumerRuntimeUsage(compilation.target))
         attributes.attribute(Category.CATEGORY_ATTRIBUTE, categoryByName(Category.LIBRARY))
-        // Not extendsFrom: it takes every dependency and can't drop main output in tests.
-        dependencies.addAllLater(runtimeDependencies)
+        listOf(API_SCOPE, IMPLEMENTATION_SCOPE, RUNTIME_ONLY_SCOPE).forEach { scope ->
+            // TODO(KT-91337): for associated compilations, this holds main output and triggers main compile.
+            extendsFrom(compilationDependencyConfigurationByScope(compilation, scope))
+        }
     }
-}
 
-// Drops file deps that are not all klibs: only a klib can carry package.json.
-// Tests get main output as one; Gradle would compile main just to resolve it.
-private fun Project.declaredRuntimeDependencies(compilation: KotlinJsIrCompilation): Provider<List<Dependency>> = provider {
-    listOf(API_SCOPE, IMPLEMENTATION_SCOPE, RUNTIME_ONLY_SCOPE)
-        .flatMap { scope -> compilationDependencyConfigurationByScope(compilation, scope).allDependencies }
-        .filter { it !is FileCollectionDependency || it.files.all { file -> file.extension == KLIB_TYPE } }
-}
-
-/** Projects offer their report; klibs are turned into one by [KlibToNpmDependencyReportTransform]. */
+/** Projects offer their report; klibs are turned into one by [PackageJsonToNpmDependencyReportTransform]. */
 internal fun Project.npmRuntimeDependenciesReports(resolver: Configuration, platform: HasPlatformDisambiguator): FileCollection =
     resolver.incoming.artifactView { view ->
         view.attributes { attributes ->

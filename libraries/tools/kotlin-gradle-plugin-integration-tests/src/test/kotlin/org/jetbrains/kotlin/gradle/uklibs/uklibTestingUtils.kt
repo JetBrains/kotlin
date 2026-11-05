@@ -89,6 +89,12 @@ data class PublishedProject(
             "${name}-android-${version}",
         )
 
+    val jsComponent: Component
+        get() = Component(
+            repository.resolve(group).resolve("${name}-js").resolve(version),
+            "${name}-js-${version}",
+        )
+
     val wasmWasiComponent: Component
         get() = Component(
             repository.resolve(group).resolve("${name}-wasm-wasi").resolve(version),

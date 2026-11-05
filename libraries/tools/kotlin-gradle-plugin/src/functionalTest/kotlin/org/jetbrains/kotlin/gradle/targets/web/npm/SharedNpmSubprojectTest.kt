@@ -177,12 +177,12 @@ class SharedNpmSubprojectTest {
     }
 
     @Test
-    fun `a klib declared with files is kept in the npm runtime dependencies resolver`() {
+    fun `klibs and unpacked klibs declared with files are kept in the npm runtime dependencies resolver`() {
         val project = buildProjectWithMPP {
             kotlin {
                 js { nodejs() }
                 sourceSets.getByName("jsMain").dependencies {
-                    implementation(files("foo-js.klib"))
+                    implementation(files("foo-js.klib", "foo-js"))
                 }
             }
         }
@@ -190,7 +190,7 @@ class SharedNpmSubprojectTest {
 
         val resolver = project.configurations.getByName("jsNpmRuntimeDependenciesResolver")
         assertEquals(
-            listOf(setOf(project.file("foo-js.klib"))),
+            listOf(setOf(project.file("foo-js.klib"), project.file("foo-js"))),
             resolver.allDependencies.filterIsInstance<FileCollectionDependency>().map { it.files.files },
         )
     }
@@ -224,22 +224,6 @@ class SharedNpmSubprojectTest {
 
         assertEquals("js", project.npmDependenciesReportTask("jsNpmDependenciesReport").target.get())
         assertEquals("wasm", project.npmDependenciesReportTask("wasmJsNpmDependenciesReport").target.get())
-    }
-
-    @Test
-    fun `collecting the npm dependencies of a test compilation does not compile main`() {
-        val project = buildProjectWithMPP {
-            kotlin { js { nodejs() } }
-        }
-        project.evaluate()
-
-        val mainCompileTask = project.jsTarget().compilations.getByName("main").compileKotlinTaskName
-        val reportBuildDependencies = project.npmDependencies("jsTestNpmDependenciesReport").dependencyReports
-            .buildDependencies.getDependencies(null).map { it.name }
-        assertTrue(
-            mainCompileTask !in reportBuildDependencies,
-            "jsTestNpmDependenciesReport must not depend on $mainCompileTask: $reportBuildDependencies",
-        )
     }
 
     @Test

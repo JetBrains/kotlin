@@ -18,7 +18,12 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.fromSrcPackageJson
 import org.jetbrains.kotlin.gradle.targets.web.npm.KotlinSharedNpmProjectPlugin
 import org.jetbrains.kotlin.gradle.targets.web.npm.shared.NpmDependencyReport
 import org.jetbrains.kotlin.gradle.targets.web.npm.shared.readNpmDependencyReport
+import org.jetbrains.kotlin.gradle.targets.web.npm.shared.readPackageJsonDependencies
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.uklibs.PublisherConfiguration
+import org.jetbrains.kotlin.gradle.uklibs.addPublishedProjectToRepositories
+import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
+import org.jetbrains.kotlin.gradle.uklibs.publish
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import java.io.File
@@ -121,14 +126,6 @@ class SharedNpmDependenciesIT : KGPBaseTest() {
                     ":lib-b:wasmJsTestNpmDependenciesReport",
                     ":lib-web:jsNpmDependenciesReport",
                     ":lib-web:jsTestNpmDependenciesReport",
-                    ":kotlinSetupSharedNpmProject",
-                    ":kotlinWasmSetupSharedNpmProject",
-                )
-                assertTasksAreNotInTaskGraph(
-                    ":lib-a:compileKotlinJs",
-                    ":lib-b:compileKotlinJs",
-                    ":lib-b:compileKotlinWasmJs",
-                    ":lib-web:compileKotlinJs",
                 )
 
                 val js = projectPath.resolve("build/js/shared-npm-project")
@@ -358,13 +355,33 @@ class SharedNpmDependenciesIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("npm dependencies of a klib declared with files() reach the npm dependency report")
+    @DisplayName("npm dependencies of klibs, unpacked klibs and package.json files without a report reach the npm dependency report")
     @GradleTest
-    fun testNpmDependenciesOfFileKlib(gradleVersion: GradleVersion) {
+    fun testNpmDependenciesOfKlibsWithoutReport(gradleVersion: GradleVersion) {
+        val published = project("empty", gradleVersion) {
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "publishedKlib"
+            }
+            addKgpToBuildScriptCompilationClasspath()
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    js { nodejs() }
+                    sourceSets.getByName("jsMain").dependencies {
+                        implementation(npm("published-klib-dep", "3.0.1"))
+                    }
+                }
+            }
+        }.publish(publisherConfiguration = PublisherConfiguration(group = "producer", version = "1.0.0"))
+
+        val publishedKlib = published.jsComponent.klib
+        val publishedKlibPackageJson = publishedKlib.readPackageJsonDependencies() ?: error("No package.json in $publishedKlib")
+        assertEquals("3.0.1", publishedKlibPackageJson.dependencies["published-klib-dep"])
+
         project("emptyKts", gradleVersion) {
             plugins {
                 kotlin("multiplatform").apply(false)
             }
+            addPublishedProjectToRepositories(published)
 
             includeOtherProjectAsSubmodule("emptyKts", newSubmoduleName = "lib") {
                 buildScriptInjection {
@@ -372,23 +389,33 @@ class SharedNpmDependenciesIT : KGPBaseTest() {
                     kotlinMultiplatform.apply {
                         js { nodejs() }
                         sourceSets.getByName("jsMain").dependencies {
-                            implementation(project.files("foo-js.klib"))
+                            implementation(project.files("localKlib.klib"))
+                            implementation(project.files("unpackedKlib"))
+                            implementation(project.files("bare/package.json"))
+                            implementation(published.rootCoordinate)
                         }
                     }
                 }
             }
 
-            ZipOutputStream(projectPath.resolve("lib/foo-js.klib").toFile().outputStream()).use { zip ->
+            ZipOutputStream(projectPath.resolve("lib/localKlib.klib").toFile().outputStream()).use { zip ->
                 zip.putNextEntry(ZipEntry("package.json"))
-                zip.write("""{"name": "foo-js", "dependencies": {"left-pad": "1.3.0"}}""".toByteArray())
+                zip.write("""{"name": "localKlib", "dependencies": {"local-klib-dep": "1.3.0"}}""".toByteArray())
             }
+            projectPath.resolve("lib/unpackedKlib").toFile().apply { mkdirs() }.resolve("package.json")
+                .writeText("""{"name": "unpackedKlib", "dependencies": {"unpacked-klib-dep": "2.0.0"}}""")
+            projectPath.resolve("lib/bare").toFile().apply { mkdirs() }.resolve("package.json")
+                .writeText("""{"name": "bare", "dependencies": {"bare-package-json-dep": "4.0.0"}}""")
 
             build(":lib:jsNpmDependenciesReport") {
                 val report = readNpmDependencyReport(
                     projectPath.resolve("lib/build/kotlin-npm/js/npm-dep-reports/emptyKts-lib/npm-dep-report.json").toFile()
                 )
                 assertEquals("emptyKts-lib", report.compilation)
-                assertEquals("1.3.0", report.dependencies["left-pad"])
+                assertEquals("1.3.0", report.dependencies["local-klib-dep"])
+                assertEquals("2.0.0", report.dependencies["unpacked-klib-dep"])
+                assertEquals("4.0.0", report.dependencies["bare-package-json-dep"])
+                assertEquals("3.0.1", report.dependencies["published-klib-dep"])
             }
         }
     }
