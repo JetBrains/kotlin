@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
+import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.NativeLoweringContext
 import org.jetbrains.kotlin.backend.konan.getUnboxFunction
 import org.jetbrains.kotlin.backend.konan.ir.isUnbox
@@ -47,21 +48,13 @@ private class AccessorInliner(private val context: NativeLoweringContext) : IrEl
 
     private fun tryInlineUnbox(call: IrCall): IrExpression? {
         val returnClass = call.type.getClass()!!
-        val singleStatement = context.getUnboxFunction(returnClass).body?.statements?.singleOrNull()
-        return if (singleStatement is IrReturn) {
-            val retVal = singleStatement.value
-            if (retVal is IrGetField) {
-                // Boxed primitive types (Int, Short,..) have `value` field
-                // Inline unsigned classes (UInt, UShort,..) have `data` field
-                val field = retVal.symbol.owner
-                context.createIrBuilder(call.symbol, call.startOffset, call.endOffset).irGetField(call.arguments[0], field)
-            } else {
-                context.log { "Cannot inline unbox function ${call.symbol} with body `IrReturn(expression)`, where `expression` is not IrGetField(...)" }
-                null
-            }
-        } else {
-            context.log { "Cannot inline unbox function ${call.symbol} with body which is not IrReturn(IrGetField(...))" }
-            null
+        val unbox = context.getUnboxFunction(returnClass)
+        if (unbox.parameters.single().type.isNullable()) {
+            context.log { "Cannot inline unbox function ${call.symbol} with nullable parameter" }
+            return null
         }
+        val generationState = (context as NativeGenerationState)
+        val field = generationState.context.getLayoutBuilder(returnClass).getFields(generationState.llvm).single().irField!!
+        return context.createIrBuilder(call.symbol, call.startOffset, call.endOffset).irGetField(call.arguments[0], field)
     }
 }
