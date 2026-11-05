@@ -38,74 +38,31 @@ WHEN working with PSI elements:
 
 ## Working with Test Data
 
-When modifying test data files or running generated tests (`*Generated`) that compare output against `.txt` files, use `updateTestData` (to rewrite files) or `checkTestData` (to verify only) instead of standard test commands. Both take their options as `-P` properties, so changing filters between runs stays fast.
-
-### The wrapper script — preferred for agents
-
-```bash
-python3 analysis/test-data-manager/test-data-manager.py update --path analysis/analysis-api/testData/components/resolver/
-python3 analysis/test-data-manager/test-data-manager.py check --path analysis/analysis-api/testData/components/resolver/
-
-# Several paths: one --path, separated by commas
-python3 analysis/test-data-manager/test-data-manager.py update --path analysis/analysis-api/testData/components/resolver/,analysis/analysis-api/testData/components/symbolInfoProvider/
-```
-
-Prefer it to calling Gradle directly: the command is short, a mistyped option fails instead of being silently ignored
-(an unknown `-P` property is, so a misspelled `testDataPath` runs every test), and the output stays a few lines.
-It runs the task in the modules with managed test data, with `--path` only in those whose generated tests have test
-data under the paths, so the others aren't even built (`--module` picks the modules explicitly). It keeps the Gradle
-output in a log file and prints one summary of the module reports: the test counts, one line per problem (`MISMATCH`,
-`MISSING_FILE`, `REDUNDANT_FILE`, `UNEXPECTED_FILE` with the file and the test), per test error, per test that passed
-only on a re-run, and per created, updated or deleted file, at most 50 of each. A module that didn't run, filters that
-match no test and paths that don't exist fail the run (exit code `2`) instead of passing silently. The last line is
-the path of the summary file (`build/test-data-manager/<runId>.summary.json`, also printed by `--json`): read it
-instead of parsing the output, and the module reports it links to for every entry. For a long run, start it in the
-background: the path of the Gradle log is printed to stderr right away (`--run-id` fixes it in advance), and when
-Gradle itself fails (e.g., compilation), the summary shows its failures and the compiler errors, so the log rarely
-needs reading. Each problem's actual output is saved next to the module report (`actualFile`) for `diff`.
-See [the script's section in the test data manager README](test-data-manager/README.md#wrapper-script-recommended-for-agents-and-scripts).
-
-Paths are relative to the repository root (as in `@TestMetadata`) or absolute. When calling Gradle directly, add `-q`:
-the task output is then only a few lines per module, ending with the path of the module's JSON report.
-
-### `updateTestData` — the only recommended way to update test data
+Golden files of the `*Generated` tests implementing `ManagedTest`, in the modules applying `id("test-data-manager")`
+(most of `analysis/`, and `compiler/psi/psi-impl`), variants (`.knm.*`, `.js.*`, …) included, are checked and updated
+with one command. Don't use `:test`, `-Pkotlin.test.update.test.data=true` or the Gradle tasks directly for them: a
+plain test run doesn't order the variant chains and never writes a variant file.
 
 ```bash
-# Update test data by directory (preferred for iteration)
-./gradlew updateTestData -Porg.jetbrains.kotlin.testDataManager.options.testDataPath=analysis/analysis-api/testData/components/resolver/
-
-# Update test data by test class pattern
-./gradlew updateTestData -Porg.jetbrains.kotlin.testDataManager.options.testClassPattern=.*ResolveTest.*
-
-# Run only golden tests (useful for quick baseline updates)
-./gradlew updateTestData -Porg.jetbrains.kotlin.testDataManager.options.goldenOnly=true
-
-# Incremental update — only re-run variant tests for changed paths
-./gradlew updateTestData -Porg.jetbrains.kotlin.testDataManager.options.incremental=true
-
-# Limit to a subset of modules using task paths (Gradle task-name matching)
-./gradlew :analysis:analysis-api-fir:updateTestData :analysis:stubs:updateTestData
+python3 analysis/test-data-manager/test-data-manager.py update --path <dir-or-file>[,<dir-or-file>...]
+python3 analysis/test-data-manager/test-data-manager.py check --path <dir-or-file>[,<dir-or-file>...]
 ```
 
-`updateTestData` is fixed to update mode. There is no `updateTestDataGlobally` — Gradle's task-name matching runs the task in every applicable subproject when invoked from the repo root.
+- `--path` is repository-relative, as in `@TestMetadata`; one test is its test data file (`.../foo.kt`).
+- The script picks the modules: don't add `--module`, don't split the run per module.
+- The output is a few lines: read it as is, don't pipe it into `tail`/`grep` (the pipe hides the exit code).
+- A run longer than your tool timeout goes to the background; the Gradle log path is printed first.
 
-### `checkTestData` — verification only
+| Exit | Output                                                          | Next step                                                                                                                                          |
+|------|-----------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
+| 0    | `PASSED`; after `update`, `CREATED`/`UPDATED`/`DELETED` lines   | Done; no `check` after a passed `update`. Review the change with `git diff`.                                                                       |
+| 1    | `MISMATCH`, `MISSING_FILE`                                      | Intended change: `update` with the same `--path`. Otherwise diff `actualFile` with `comparedFile` (in the module report, linked from the summary JSON; a missing file has only `actualFile`). |
+| 1    | `REDUNDANT_FILE`, `UNEXPECTED_FILE`                             | The file has to go, `update` deletes it: it equals the file it falls back to, or the test produces nothing for it. There is no output to diff.     |
+| 1    | `TEST ERROR`                                                    | The test crashed; `update` won't fix it. Fix the code or the test.                                                                                 |
+| 2    | `ERROR …`, `GRADLE FAILURE`, `e: …`                             | Fix what the line names (a path, a compilation error) and rerun. `matches no managed test`: these files aren't managed, use the area's own runner. |
 
-If you specifically need to verify that existing test data is consistent without modifying anything (e.g., sanity-checking generated files after an `updateTestData` run), use `checkTestData`. It is the exact `-P`-driven counterpart of `updateTestData` but fixed to check mode: it fails on any mismatch and writes nothing (unlike a plain `test` run, which still creates missing golden files locally).
-
-```bash
-./gradlew checkTestData -Porg.jetbrains.kotlin.testDataManager.options.testDataPath=analysis/analysis-api/testData/components/resolver/singleByPsi/
-```
-
-Use this only for verification. For any workflow that writes test data, use `updateTestData`.
-
-**Why use these tasks instead of plain `:test`?**
-- Run only relevant tests (filtered by path or class pattern)
-- Handle variant chains correctly (golden `.txt` files run before variant-specific `.js.txt`, `.wasm.txt`, etc.)
-- Automatically discover all modules that use managed test data
-- Detect and remove redundant variant files
-
-For full options, see [test-data-manager-convention](../repo/gradle-build-conventions/test-data-manager-convention/README.md).
+Options, the JSON summary and direct Gradle calls: [test-data-manager/README.md](test-data-manager/README.md#wrapper-script-recommended-for-agents-and-scripts)
+and [test-data-manager-convention](../repo/gradle-build-conventions/test-data-manager-convention/README.md).
 
 ## Key Components
 

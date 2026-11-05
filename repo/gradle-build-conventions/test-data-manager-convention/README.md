@@ -108,7 +108,8 @@ run.
 ## Reports
 
 Every run writes a machine-readable report into the module's build directory, `build/test-data-manager/<runId>.json`,
-and prints its path as `Test data manager report: <path>`. The report holds:
+and prints its path as `Test data manager report: <path>`. With `-q`, the task output is only a few lines per module,
+ending with that line. The report holds:
 
 - `status`: `PASSED`, `FAILED` (test data problems or test errors) or `ERROR` (the run itself failed: an invalid
   `testDataPath`, variant chain conflicts, a crash of the runner; see `runErrors`);
