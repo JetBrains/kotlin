@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.moduleStructure
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import java.util.*
 
 /**
@@ -39,7 +40,7 @@ abstract class AbstractLLAnnotationArgumentsCalculatorTest : AbstractLLStubBased
 
     context(facade: LLResolutionFacade)
     override fun doStubBasedTest(stubBasedFile: KtFile, mainModule: KtTestModule, testServices: TestServices): List<AnnotationResult> {
-        return collectStubBasedAndAssertAstBasedAnnotations(stubBasedFile, testServices)
+        return collectStubBasedAndAssertAstBasedAnnotations(stubBasedFile)
     }
 
     context(facade: LLResolutionFacade)
@@ -74,12 +75,8 @@ abstract class AbstractLLAnnotationArgumentsCalculatorTest : AbstractLLStubBased
             }
         }
 
-        val expectedFile = getTestOutputFile(".stubBasedAnnotations.txt").toFile()
         if (!stubDifferenceExpected) {
-            assertions.assertFileDoesntExist(expectedFile) {
-                "No failed annotations, but ${expectedFile.name} exists"
-            }
-
+            assertEqualsToTestOutputFile(actual = null, extension = STUB_BASED_ANNOTATIONS_EXTENSION)
             return
         }
 
@@ -104,7 +101,7 @@ abstract class AbstractLLAnnotationArgumentsCalculatorTest : AbstractLLStubBased
             }
         }
 
-        assertions.assertEqualsToFile(expectedFile, actualText)
+        assertEqualsToTestOutputFile(actualText, extension = STUB_BASED_ANNOTATIONS_EXTENSION)
     }
 
     class AnnotationResult(
@@ -148,43 +145,39 @@ abstract class AbstractLLAnnotationArgumentsCalculatorTest : AbstractLLStubBased
     }
 
     context(facade: LLResolutionFacade)
-    private fun collectStubBasedAndAssertAstBasedAnnotations(stubBasedFile: KtFile, testServices: TestServices): List<AnnotationResult> {
+    private fun collectStubBasedAndAssertAstBasedAnnotations(stubBasedFile: KtFile): List<AnnotationResult> {
         // We analyze the stub-based file, so all failed annotations represent annotations which
         // weren't able to calculate arguments via stubs
         val [stubBasedAnnotations, astBasedAnnotations] = collectAnnotations(stubBasedFile).partition {
             it.isCalculatedSuccessfully
         }
 
-        testServices.assertAstBasedAnnotations(astBasedAnnotations)
+        assertAstBasedAnnotations(astBasedAnnotations)
         return stubBasedAnnotations
     }
 
-    private fun TestServices.assertAstBasedAnnotations(annotations: List<AnnotationResult>) {
-        val expectedFile = getTestOutputFile(".astBasedAnnotations.txt").toFile()
-        if (annotations.isEmpty()) {
-            assertions.assertFileDoesntExist(expectedFile) {
-                "No failed annotations, but ${expectedFile.name} exists"
+    private fun assertAstBasedAnnotations(annotations: List<AnnotationResult>) {
+        val actualText = annotations.ifNotEmpty {
+            buildString {
+                appendLine(
+                    """
+                    Annotations from the list below require AST loading to calculate arguments.
+                    It is expected for invalid code, but valid arguments should be calculated via stubs for performance reasons.
+                    See KT-71787 for reference.
+                    
+                    """.trimIndent(),
+                )
+
+                joinTo(this, separator = "\n\n")
             }
-
-            return
         }
 
-        val actualText = buildString {
-            appendLine(
-                """
-                Annotations from the list below require AST loading to calculate arguments.
-                It is expected for invalid code, but valid arguments should be calculated via stubs for performance reasons.
-                See KT-71787 for reference.
-                
-                """.trimIndent(),
-            )
-
-            annotations.joinTo(this, separator = "\n\n")
-        }
-
-        assertions.assertEqualsToFile(expectedFile, actualText)
+        assertEqualsToTestOutputFile(actualText, extension = AST_BASED_ANNOTATIONS_EXTENSION)
     }
 }
+
+private const val STUB_BASED_ANNOTATIONS_EXTENSION = ".stubBasedAnnotations.txt"
+private const val AST_BASED_ANNOTATIONS_EXTENSION = ".astBasedAnnotations.txt"
 
 abstract class AbstractLLSourceAnnotationArgumentsCalculatorTest : AbstractLLAnnotationArgumentsCalculatorTest() {
     override val configurator = LLSourceLikeTestConfigurator()
