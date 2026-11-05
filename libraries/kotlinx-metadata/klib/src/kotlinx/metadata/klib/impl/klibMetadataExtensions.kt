@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.serialization.StringTableImpl
+import org.jetbrains.kotlin.serialization.SerializableStringTable
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import kotlin.metadata.*
 import kotlin.metadata.internal.*
@@ -243,7 +243,7 @@ internal class KlibMetadataExtensions : MetadataExtensions {
         }
 
         for (className in kmModuleFragment.className) {
-            val classNameIdx = (c.strings as StringTableImpl).getQualifiedClassNameIndex(ClassId.fromString(className))
+            val classNameIdx = (c.strings as SerializableStringTable).getClassIdIndex(ClassId.fromString(className))
             proto.addExtension(KlibMetadataProtoBuf.className, classNameIdx)
         }
     }
