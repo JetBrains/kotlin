@@ -13,8 +13,6 @@ open class Base(val baseProp: Int) {
     override fun hashCode(): Int = baseProp
 }
 
-// Currently `super.equals(other)` resolves to the generic overload above (without type arguments),
-// so `box` fails with a `ClassCastException`.
 @EqualsAndHashCode(callSuper = true)
 class Derived(val ownProp: String, baseProp: Int) : Base(baseProp)
 
