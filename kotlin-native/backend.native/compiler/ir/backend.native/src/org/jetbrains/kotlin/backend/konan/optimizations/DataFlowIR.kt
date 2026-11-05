@@ -461,24 +461,25 @@ internal object DataFlowIR {
 
         private inline fun takeName(block: () -> String) = if (TAKE_NAMES) block() else null
 
+        private var privateTypeIndex = 1 // 0 for [Virtual]
+        private var privateFunIndex = 0
+
+        val primitiveTypes: List<Type> = PrimitiveBinaryType.entries.map { mapPrimitiveBinaryType(it) }
+
         private var sealed = false
         val classMap = mutableMapOf<IrClass, Type>()
-        val primitiveMap = mutableMapOf<PrimitiveBinaryType, Type>()
         val functionMap = mutableMapOf<IrDeclaration, FunctionSymbol>()
         val fieldMap = mutableMapOf<IrField, Field>()
         val typeHierarchy by lazy {
             require(sealed) { "The symbol table has been sealed" }
 
-            val allDeclaredTypes = listOf(Type.Virtual) + classMap.values + primitiveMap.values
+            val allDeclaredTypes = listOf(Type.Virtual) + classMap.values + primitiveTypes
             val allTypes = Array<Type>(allDeclaredTypes.size) { Type.Virtual }
             for (type in allDeclaredTypes)
                 allTypes[type.index] = type
 
             TypeHierarchy(allTypes)
         }
-
-        private var privateTypeIndex = 1 // 0 for [Virtual]
-        private var privateFunIndex = 0
 
         fun populateWith(irModule: IrModuleFragment) {
             irModule.accept(object : IrVisitorVoid() {
@@ -584,25 +585,19 @@ internal object DataFlowIR {
         }
 
         private fun mapPrimitiveBinaryType(primitiveBinaryType: PrimitiveBinaryType): Type =
-                primitiveMap.getOrPut(primitiveBinaryType) {
-                    require(!sealed) { "The symbol table has been sealed. primitiveBinaryType = $primitiveBinaryType" }
-                    Type.Public(
-                            primitiveBinaryType.ordinal.toLong(),
-                            privateTypeIndex++,
-                            true,
-                            false,
-                            module,
-                            null,
-                            takeName { primitiveBinaryType.name }
-                    )
-                }
+                Type.Public(
+                        primitiveBinaryType.ordinal.toLong(),
+                        privateTypeIndex++,
+                        true,
+                        false,
+                        module,
+                        null,
+                        takeName { primitiveBinaryType.name }
+                )
 
-        fun mapType(type: IrType): Type {
-            val binaryType = type.computeBinaryType()
-            return when (binaryType) {
-                is BinaryType.Primitive -> mapPrimitiveBinaryType(binaryType.type)
-                is BinaryType.Reference -> mapClassReferenceType(choosePrimary(binaryType.types.toList()))
-            }
+        fun mapType(type: IrType) = when (val binaryType = type.computeBinaryType()) {
+            is BinaryType.Primitive -> primitiveTypes[binaryType.type.ordinal]
+            is BinaryType.Reference -> mapClassReferenceType(choosePrimary(binaryType.types.toList()))
         }
 
         private fun mapTypeToFunctionParameter(type: IrType) =
