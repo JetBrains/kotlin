@@ -271,12 +271,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @DisplayName("with instance execution")
     @GradleTest
     fun testInstantExecution(gradleVersion: GradleVersion) {
-        project(
-            "instantExecution",
-            gradleVersion,
-            // we can remove this line, when the min version of Gradle be at least 8.1
-            dependencyManagement = DependencyManagement.DisabledDependencyManagement
-        ) {
+        project("instantExecution", gradleVersion) {
             testConfigurationCacheOf(
                 "assemble",
                 executedTaskNames = listOf(":lib-project:compileKotlin")
