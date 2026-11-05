@@ -363,6 +363,24 @@ public fun KaCallableSymbol.implementationState(implementerClassSymbol: KaClassS
  * Such a situation can also happen for intersection symbols (in case of multiple supertypes containing symbols with an identical
  * signature after specialization) and delegation.
  *
+ * [fakeOverrideOriginal] is a single declared symbol: the declarations that it overrides in turn are not unwrapped. For example:
+ *
+ * ```
+ * public interface A {
+ *   public fun foo(): Any
+ * }
+ *
+ * public interface B : A {
+ *   override fun foo(): String
+ * }
+ *
+ * public class C(b: B) : B by b
+ * ```
+ *
+ * For `C.foo`, which is implemented by delegation, [fakeOverrideOriginal] is `B.foo`, while [allOverriddenSymbols] contains both
+ * `B.foo` and `A.foo`.
+ *
+ * @see allOverriddenSymbols
  * @see KaSymbolOrigin.INTERSECTION_OVERRIDE
  * @see KaSymbolOrigin.SUBSTITUTION_OVERRIDE
  * @see KaSymbolOrigin.DELEGATED
