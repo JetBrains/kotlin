@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.ir.isPure
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
@@ -17,13 +18,19 @@ import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.prependFunctionCall
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
+import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrGetField
 import org.jetbrains.kotlin.ir.expressions.IrSetField
 import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.suspendFunction
+import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isTopLevel
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.Name
 
 private var IrFile.initializationFunction: IrSimpleFunction? by irAttribute(copyByDefault = false)
@@ -43,30 +50,63 @@ abstract class PropertyLazyInitLowering(
             return
         }
 
-        if (container !is IrField && container !is IrSimpleFunction && container !is IrProperty)
-            return
-
-        if (!container.isCompatibleDeclaration(context)) return
-
-        val file = container.parent as? IrFile
-            ?: return
-
-        val initFun = file.initializationFunction ?: when {
-            file.isPureForInitialization == true -> null
-            else -> {
-                createInitializationFunction(file).also {
-                    file.initializationFunction = it
+        when (val parent = container.parent) {
+            // Supported top level functions always trigger file property initializers.
+            is IrFile -> {
+                if (container !is IrSimpleFunction || !container.isCompatibleDeclaration(context)) return
+                val initializationCall = getOrCreateInitializationFunctionCall(parent) ?: return
+                irBody.prependFunctionCall(initializationCall)
+            }
+            // Class methods can contain ::isInitialized calls, that should trigger file property initializers.
+            // See KT-91246.
+            is IrClass -> {
+                if (container !is IrFunction) return
+                if (irBody.hasTopLevelLateinitIsInitializedCall()) {
+                    val initializationCall = getOrCreateInitializationFunctionCall(container.file) ?: return
+                    irBody.prependFunctionCall(initializationCall)
                 }
             }
-        } ?: return
+        }
+    }
 
-        val initializationCall = JsIrBuilder.buildCall(
+    private fun IrBody.hasTopLevelLateinitIsInitializedCall(): Boolean {
+        var found = false
+
+        acceptVoid(object : IrVisitorVoid() {
+            override fun visitElement(element: IrElement) {
+                if (!found) {
+                    element.acceptChildrenVoid(this)
+                }
+            }
+
+            override fun visitGetField(expression: IrGetField) {
+                val property = expression.symbol.owner.correspondingPropertySymbol?.owner
+                if (property != null && property.isLateinit && property.isTopLevel) {
+                    found = true
+                    return
+                }
+                super.visitGetField(expression)
+            }
+        })
+
+        return found
+    }
+
+    private fun getOrCreateInitializationFunctionCall(irFile: IrFile): IrCall? {
+        val initFun = irFile.initializationFunction ?: when {
+            irFile.isPureForInitialization == true -> null
+            else -> {
+                createInitializationFunction(irFile).also {
+                    irFile.initializationFunction = it
+                }
+            }
+        } ?: return null
+
+        return JsIrBuilder.buildCall(
             target = initFun.symbol,
             type = initFun.returnType,
             origin = PROPERTY_INIT_FUN_CALL
         )
-
-        if (container is IrSimpleFunction) irBody.prependFunctionCall(initializationCall)
     }
 
     private fun createInitializationFunction(
