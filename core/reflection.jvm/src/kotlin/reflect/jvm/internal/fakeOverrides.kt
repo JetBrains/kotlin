@@ -69,6 +69,7 @@ internal fun computeFakeOverrideMembersForName(kClass: KClassImpl<*>, name: Stri
     val declaredKotlinSignatures =
         if (kClass.isKotlin) declaredMembers.mapTo(HashSet()) { it.toEquatableCallableSignature(EqualityMode.KotlinSignature) }
         else emptySet()
+    val javaSignatureMode = EqualityMode.JavaSignature(isKotlinClass = kClass.isKotlin)
     val result: MutableMembersJavaSignatureMap = HashMap()
     for (supertype in kClass.supertypes) {
         val supertypeKClass = supertype.classifier as? KClassImpl<*>
@@ -81,14 +82,14 @@ internal fun computeFakeOverrideMembersForName(kClass: KClassImpl<*>, name: Stri
             val member = supertypeMember.createFakeOverride(kClass, substitutor)
             val kotlinSignature = member.toEquatableCallableSignature(EqualityMode.KotlinSignature)
             if (kotlinSignature in declaredKotlinSignatures) continue
-            // Inherited signatures are always compared by the JvmSignatures. Even for kotlin classes.
-            val javaSignature = kotlinSignature.withEqualityMode(EqualityMode.JavaSignature)
+            // Inherited signatures are always compared by the Java signatures. Even for Kotlin classes.
+            val javaSignature = kotlinSignature.withEqualityMode(javaSignatureMode)
             val existingMember = result[javaSignature]
             result[javaSignature] = if (existingMember == null) member else createIntersectionOverride(existingMember, member)
         }
     }
     for (member in declaredMembers) {
-        result[member.toEquatableCallableSignature(EqualityMode.JavaSignature)] = member
+        result[member.toEquatableCallableSignature(javaSignatureMode)] = member
     }
     return result
 }
@@ -300,9 +301,12 @@ internal sealed class EqualityMode {
      * There is also the third kind of signatures: JVM signatures
      * JVM signature is a plain triple: (jvmName: String, parameters: List<Class<*>>, returnType: Class<*>)
      * Contrary to JVM signature, Java signature doesn't include `returnType`,
-     * and Java signatures respect non-raw generic parameter types (but not method generic bounds).
+     * and Java signatures respect non-raw generic parameter types and method type parameters (including their bounds, see JLS 8.4.4).
+     *
+     * @param isKotlinClass whether the members belong to a Kotlin class. In Java, a generic method can be overridden by a method whose
+     *   signature is the erasure of the generic one (JLS 8.4.2).
      */
-    data object JavaSignature : EqualityMode()
+    data class JavaSignature(val isKotlinClass: Boolean) : EqualityMode()
 }
 
 // Signatures that you can test for equality
@@ -329,7 +333,7 @@ internal class EquatableCallableSignature<T : EqualityMode>(
     }
 
     private val isJavaFunctionSignature: Boolean
-        get() = equalityMode == EqualityMode.JavaSignature && kind == SignatureKind.FUNCTION
+        get() = equalityMode is EqualityMode.JavaSignature && kind == SignatureKind.FUNCTION
 
     init {
         check(
@@ -375,29 +379,46 @@ internal class EquatableCallableSignature<T : EqualityMode>(
         return if (isJavaFunctionSignature) equalsByJavaSignature(other) else equalsByKotlinSignature(other)
     }
 
-    private fun equalsByJavaSignature(other: EquatableCallableSignature<*>): Boolean =
-        jvmNameIfFunction == other.jvmNameIfFunction &&
-                javaErasedParameterTypes.indices.all { i -> areEqualJavaParameterTypes(i, other) }
+    private fun equalsByJavaSignature(other: EquatableCallableSignature<*>): Boolean {
+        if (jvmNameIfFunction != other.jvmNameIfFunction) return false
+        val substitutor = typeParameters.substitutedWith(other.typeParameters)
+            ?: return isOverrideEquivalentByErasure(other)
+        // Per JLS 8.4.4, methods have the same type parameters only if their bounds are equal after renaming.
+        return areEqualTypeParameterBounds(substitutor, other) &&
+                javaErasedParameterTypes.indices.all { i -> areEqualJavaParameterTypes(i, other, substitutor) }
+    }
 
-    private fun areEqualJavaParameterTypes(i: Int, other: EquatableCallableSignature<*>): Boolean =
-        if (javaGenericParameterTypes[i].isClassTypeParameter || other.javaGenericParameterTypes[i].isClassTypeParameter) {
-            javaErasedParameterTypes[i].isPrimitive == other.javaErasedParameterTypes[i].isPrimitive &&
-                    // Since we don't have type substitutors for Java types, here we abuse KTypes for this purpose
-                    areEqualKTypes(kotlinParameterTypes[i], other.kotlinParameterTypes[i])
-        } else {
-            javaErasedParameterTypes[i] == other.javaErasedParameterTypes[i] &&
-                    areEqualGenericArgumentsIfBothParameterized(i, other)
-        }
+    // Per JLS 8.4.2, methods with different type parameters are override-equivalent only if the signature of one of them is the erasure
+    // of the signature of the other. This is only possible in Java, see `EqualityMode.JavaSignature`.
+    private fun isOverrideEquivalentByErasure(other: EquatableCallableSignature<*>): Boolean =
+        !(equalityMode as EqualityMode.JavaSignature).isKotlinClass &&
+                (isErasedSignature || other.isErasedSignature) &&
+                javaErasedParameterTypes.indices.all { i -> areEqualErasedJavaParameterTypes(i, other) }
 
-    private fun areEqualGenericArgumentsIfBothParameterized(i: Int, other: EquatableCallableSignature<*>): Boolean {
-        // If one of parameter types is raw, they are considered equal, because in Java, it's possible to override generic with raw.
+    private val isErasedSignature: Boolean
+        get() = typeParameters.isEmpty() && javaGenericParameterTypes.all { it is Class<*> }
+
+    private fun areEqualJavaParameterTypes(i: Int, other: EquatableCallableSignature<*>, substitutor: KTypeSubstitutor): Boolean {
+        if (!areEqualErasedJavaParameterTypes(i, other)) return false
+        // Non-generic types are compared only by erasure. If one of parameter types is raw, they are considered equal,
+        // because in Java, it's possible to override generic with raw.
         if (javaGenericParameterTypes[i] !is ParameterizedType || other.javaGenericParameterTypes[i] !is ParameterizedType) return true
-        val substitutor = typeParameters.substitutedWith(other.typeParameters) ?: return true
         return areEqualKTypes(
             substitutor.substituteTopLevelType(kotlinParameterTypes[i], name),
             other.kotlinParameterTypes[i],
         )
     }
+
+    private fun areEqualErasedJavaParameterTypes(i: Int, other: EquatableCallableSignature<*>): Boolean =
+        if (javaGenericParameterTypes[i].isClassTypeParameter || other.javaGenericParameterTypes[i].isClassTypeParameter) {
+            // The erasure of a class type parameter is its bound, which is useless after the substitution in a subclass,
+            // so we compare the substituted Kotlin types instead.
+            // Since we don't have type substitutors for Java types, here we abuse KTypes for this purpose
+            javaErasedParameterTypes[i].isPrimitive == other.javaErasedParameterTypes[i].isPrimitive &&
+                    areEqualKTypes(kotlinParameterTypes[i], other.kotlinParameterTypes[i])
+        } else {
+            javaErasedParameterTypes[i] == other.javaErasedParameterTypes[i]
+        }
 
     private fun equalsByKotlinSignature(other: EquatableCallableSignature<*>): Boolean {
         if (name != other.name) return false
