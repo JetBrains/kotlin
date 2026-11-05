@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.native
 
 import org.gradle.api.Task
-import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeSettingsDsl
@@ -19,12 +18,9 @@ import org.jetbrains.kotlin.gradle.testbase.KGPBaseTest
 import org.jetbrains.kotlin.gradle.testbase.NativeGradlePluginTests
 import org.jetbrains.kotlin.gradle.testbase.TestProject
 import org.jetbrains.kotlin.gradle.testbase.addEcosystemPluginToBuildScriptCompilationClasspath
-import org.jetbrains.kotlin.gradle.testbase.buildScriptInjection
 import org.jetbrains.kotlin.gradle.testbase.buildScriptReturn
-import org.jetbrains.kotlin.gradle.testbase.plugins
 import org.jetbrains.kotlin.gradle.testbase.project
 import org.jetbrains.kotlin.gradle.testbase.settingsBuildScriptInjection
-import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.internal.compilerRunner.native.parallelismLimitServiceName
 import org.junit.jupiter.api.DisplayName
 import kotlin.test.assertEquals
@@ -40,14 +36,6 @@ class KotlinNativeSettingsDslIT : KGPBaseTest() {
         project("empty", gradleVersion) {
             applySettingsDsl {
                 compileMaxWorkers.set(4)
-            }
-            plugins {
-                kotlin("multiplatform")
-            }
-            buildScriptInjection {
-                project.applyMultiplatform {
-                    linuxX64()
-                }
             }
 
             assertEquals(
