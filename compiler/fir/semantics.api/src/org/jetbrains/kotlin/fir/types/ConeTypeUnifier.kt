@@ -35,7 +35,7 @@ object ConeTypeUnifier {
             return unify(flexiblePrimaryType, lowerBound.richErrorTypes, attributes, typeContext)
         }
 
-        return unifyWithoutFlatteningPrimary(primaryType, attributes, richErrorTypes, typeContext)
+        return unifyWithoutFlatteningPrimary(primaryType, attributes, richErrorTypes)
     }
 
     private fun unify(
@@ -50,7 +50,7 @@ object ConeTypeUnifier {
             return unify(primaryType.primaryType, primaryType.richErrorTypes + richErrorTypes, attributes, typeContext)
         }
 
-        return unifyWithoutFlatteningPrimary(primaryType, attributes, richErrorTypes, typeContext)
+        return unifyWithoutFlatteningPrimary(primaryType, attributes, richErrorTypes)
     }
 
     @OptIn(DelicateUnionConstructor::class)
@@ -58,14 +58,13 @@ object ConeTypeUnifier {
         primaryType: ConeKotlinType,
         attributes: ConeAttributes,
         richErrorTypes: List<ConeKotlinType>,
-        typeContext: ConeTypeContext,
     ): ConeKotlinType {
         require(primaryType !is ConeUnionType) { "Primary type must not be a union type" }
 
         val flattenedErrorTypes = richErrorTypes.flatMap { it.flattenRecursively() }
 
         if (flattenedErrorTypes.size == 1 && primaryType.isNothing) {
-            return flattenedErrorTypes.single()
+            return flattenedErrorTypes.single().withAttributes(attributes)
         }
 
         val unionType = ConeUnionType(primaryType, flattenedErrorTypes.distinctBy { it.lookupTagIfAny }, attributes)
