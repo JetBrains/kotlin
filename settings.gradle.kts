@@ -37,7 +37,7 @@ pluginManagement {
 
     plugins {
         id("de.undercouch.download") version "5.1.0"
-        id("com.autonomousapps.dependency-analysis") version "3.6.1"
+        id("com.autonomousapps.dependency-analysis") version "3.19.2"
     }
 }
 
