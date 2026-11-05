@@ -1,5 +1,5 @@
 public abstract interface class org/jetbrains/kotlin/gradle/ecosystem/KotlinEcosystemExtension {
-	public abstract fun getNative ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinNativeSettingsDsl;
+	public abstract fun native (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun native (Lorg/gradle/api/Action;)V
 	public abstract fun toolchainManagement (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun toolchainManagement (Lorg/gradle/api/Action;)V

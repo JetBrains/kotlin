@@ -46,21 +46,23 @@ import javax.inject.Inject
 interface KotlinEcosystemExtension {
 
     /**
-     * Build-wide Kotlin/Native settings. See [KotlinNativeSettingsDsl].
+     * Configures build-wide Kotlin/Native settings. See [KotlinNativeSettingsDsl].
      *
      * @since 2.5.20
      */
     @ExperimentalKotlinGradlePluginApi
-    val native: KotlinNativeSettingsDsl
+    fun native(configure: KotlinNativeSettingsDsl.() -> Unit)
 
     /**
-     * Configures [native].
+     * [Action] based version of [native] above.
      *
      * @since 2.5.20
      */
     @ExperimentalKotlinGradlePluginApi
     fun native(configure: Action<KotlinNativeSettingsDsl>) {
-        configure.execute(native)
+        native {
+            configure.execute(this)
+        }
     }
 
     /**
@@ -356,9 +358,13 @@ internal open class KotlinEcosystemExtensionImpl @Inject constructor(
     objects: ObjectFactory,
 ) : KotlinEcosystemExtension {
 
-    @OptIn(InternalKotlinGradlePluginApi::class)
+    @OptIn(InternalKotlinGradlePluginApi::class, ExperimentalKotlinGradlePluginApi::class)
+    private val nativeDsl: KotlinNativeSettingsDsl = KotlinNativeSettingsDslImpl(objects, settings.providers, settings.gradle)
+
     @ExperimentalKotlinGradlePluginApi
-    override val native: KotlinNativeSettingsDsl = KotlinNativeSettingsDslImpl(objects, settings.providers, settings.gradle)
+    override fun native(configure: KotlinNativeSettingsDsl.() -> Unit) {
+        nativeDsl.configure()
+    }
 
     @OptIn(InternalKotlinGradlePluginApi::class, ExperimentalWasmDsl::class)
     @ExperimentalNodeJsToolchainDsl
