@@ -91,6 +91,49 @@ sealed class KotlinWebpackUpToDateIT(
         }
     }
 
+    // KT-90574
+    @GradleTest
+    @JsGradlePluginTests
+    fun `test file npm dependency declared with npm DSL is tracked as an input - js`(gradleVersion: GradleVersion) {
+        val buildTaskPath = ":sp3:jsBrowserDevelopmentWebpack"
+
+        createTestProject(gradleVersion, useYarn = useYarn) {
+            enableLocalBuildCache(workingDir.resolve("local-build-cache"))
+
+            val buildOptions = buildOptions.copy(buildCacheEnabled = true)
+
+            /**
+             * Delete the installed npm dependencies, so they are re-installed with the latest content,
+             * and the webpack output, so the webpack task can't be up-to-date.
+             */
+            fun deleteNpmInstallAndWebpackOutput() {
+                projectPath.resolve("build/js").deleteRecursively()
+                subProject("sp3").projectPath.resolve("build/kotlin-webpack").deleteRecursively()
+            }
+
+            build(buildTaskPath, buildOptions = buildOptions) {
+                assertTasksExecuted(buildTaskPath)
+            }
+
+            // Changing the content of the npm dependency must invalidate the task.
+            subProject("sp3").projectPath.resolve("npm-dep-3/index.js").writeText(
+                """
+                |console.log('Hello again from npm-dep-3');
+                |""".trimMargin()
+            )
+            deleteNpmInstallAndWebpackOutput()
+            build(buildTaskPath, buildOptions = buildOptions) {
+                assertTasksExecuted(buildTaskPath)
+            }
+
+            // The task must still be cacheable.
+            deleteNpmInstallAndWebpackOutput()
+            build(buildTaskPath, buildOptions = buildOptions) {
+                assertTasksFromCache(buildTaskPath)
+            }
+        }
+    }
+
     @GradleTest
     @JsGradlePluginTests
     fun `test file npm dependency disables caching - js`(gradleVersion: GradleVersion) {
@@ -122,7 +165,7 @@ sealed class KotlinWebpackUpToDateIT(
                             .trim()
                     }
 
-                val expectedFileBasedDepPath = projectPath.toRealPath().resolve("sp2/foo-npm-dep").pathString
+                val expectedFileBasedDepPath = projectPath.toRealPath().resolve("sp2/npm-dep-2").pathString
                 assertEquals(
                     "$buildTaskPath doNotCacheIf=true. Task depends on file-based NPM dependencies: [$expectedFileBasedDepPath]. See KT-86309.",
                     fileBasedNpmDepsLogLines,
@@ -138,7 +181,8 @@ sealed class KotlinWebpackUpToDateIT(
  *
  * Two subprojects:
  * - `sp1` depends on `cowsay` with a configurable version.
- * - `sp2` depends on a file-based npm dependency.
+ * - `sp2` depends on a file-based npm dependency, declared with the legacy `implementation(npm(...))`.
+ * - `sp3` depends on a file-based npm dependency, declared with the npm DSL `npm(...)`.
  *
  * Why use a single build with subprojects for this test, instead of separate builds?
  * Unfortunately, KGP uses cross-project configuration KT-80311.
@@ -231,72 +275,91 @@ private fun KGPBaseTest.createTestProject(
             }
         }
 
-        createSubproject("sp2") {
-            val fooNpmDepName = "foo-npm-dep"
+        createFileNpmDepSubproject("sp2", npmDepName = "npm-dep-2", useNpmDsl = false)
+        createFileNpmDepSubproject("sp3", npmDepName = "npm-dep-3", useNpmDsl = true)
 
-            projectPath.resolve(fooNpmDepName).apply {
-                createDirectories()
-                resolve("package.json").writeText(
-                    """
-                    |{
-                    |  "name": "$fooNpmDepName",
-                    |  "version": "1.0.0",
-                    |  "main": "index.js",
-                    |  "private": true
-                    |}
-                    |""".trimMargin()
-                )
-                resolve("index.js").writeText(
-                    """
-                    |console.log('Hello from $fooNpmDepName');
-                    |""".trimMargin()
-                )
-            }
+        runTest()
+    }
+}
 
-            projectPath.resolve("src/commonMain/kotlin/main.kt")
-                .apply { parent.createDirectories() }
-                .createFile()
-                .writeText(
-                    """
-                    |package com.example
-                    |
-                    |fun main() {
-                    |  println("Hello, world!")
-                    |}
-                    |""".trimMargin()
-                )
+/**
+ * Create a subproject that depends on a file-based npm dependency, located in the subproject's [npmDepName] directory.
+ *
+ * Each subproject must use a unique [npmDepName], because npm fails to install two different file-based dependencies with the same name.
+ *
+ * @param useNpmDsl If `true`, declare the dependency with the npm DSL `npm(...)`,
+ * otherwise with the legacy `implementation(npm(...))`.
+ */
+private fun TestProject.createFileNpmDepSubproject(
+    name: String,
+    npmDepName: String,
+    useNpmDsl: Boolean,
+) {
+    createSubproject(name) {
+        projectPath.resolve(npmDepName).apply {
+            createDirectories()
+            resolve("package.json").writeText(
+                """
+                |{
+                |  "name": "$npmDepName",
+                |  "version": "1.0.0",
+                |  "main": "index.js",
+                |  "private": true
+                |}
+                |""".trimMargin()
+            )
+            resolve("index.js").writeText(
+                """
+                |console.log('Hello from $npmDepName');
+                |""".trimMargin()
+            )
+        }
 
-            buildScriptInjection {
-                project.plugins.apply("org.jetbrains.kotlin.multiplatform")
+        projectPath.resolve("src/commonMain/kotlin/main.kt")
+            .apply { parent.createDirectories() }
+            .createFile()
+            .writeText(
+                """
+                |package com.example
+                |
+                |fun main() {
+                |  println("Hello, world!")
+                |}
+                |""".trimMargin()
+            )
 
-                kotlinMultiplatform.apply {
-                    js {
-                        browser()
-                        binaries.executable()
-                    }
-                    wasmJs {
-                        browser()
-                        binaries.executable()
-                    }
+        buildScriptInjection {
+            project.plugins.apply("org.jetbrains.kotlin.multiplatform")
 
-                    sourceSets.commonMain.dependencies {
-                        implementation(npm(fooNpmDepName, project.projectDir.resolve(fooNpmDepName)))
-                    }
+            kotlinMultiplatform.apply {
+                js {
+                    browser()
+                    binaries.executable()
+                }
+                wasmJs {
+                    browser()
+                    binaries.executable()
                 }
 
-                project.tasks.withType<RequiresNpmDependenciesTask>().configureEach { task ->
-                    task.doFirst { _ ->
-                        // Log extra information for debugging purposes, in case of test failure on CI
-                        task.logger.lifecycle(
-                            "${task.path} npmDependenciesLockFiles:\n" +
-                                    task.npmDependenciesLockFiles.files.joinToString("\n") { f -> f.invariantSeparatorsPath }
-                        )
+                sourceSets.commonMain.dependencies {
+                    if (useNpmDsl) {
+                        npm(npmDepName, project.projectDir.resolve(npmDepName))
+                    } else {
+                        implementation(npm(npmDepName, project.projectDir.resolve(npmDepName)))
                     }
+                }
+            }
+
+            project.tasks.withType<RequiresNpmDependenciesTask>().configureEach { task ->
+                task.doFirst { _ ->
+                    // Log extra information for debugging purposes, in case of test failure on CI
+                    task.logger.lifecycle(
+                        "${task.path} npmDependenciesLockFiles:\n" +
+                                task.npmDependenciesLockFiles.files.joinToString("\n") { f -> f.invariantSeparatorsPath }
+                    )
                 }
             }
         }
-
-        runTest()
     }
 }
 

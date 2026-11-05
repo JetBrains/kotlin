@@ -10,6 +10,7 @@ import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.work.NormalizeLineEndings
@@ -64,4 +65,13 @@ interface RequiresNpmDependenciesTask : RequiresNpmDependencies, Task {
     @InternalKotlinGradlePluginApi
     @get:Internal
     val fileBasedNpmDependencyLocations: ListProperty<String>
+
+    /**
+     * _This is an internal KGP utility and should not be used in user buildscripts._
+     */
+    @InternalKotlinGradlePluginApi
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    @get:Optional
+    val fileBasedDependencyDirectories: ConfigurableFileCollection
 }
