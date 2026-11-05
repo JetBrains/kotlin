@@ -19,11 +19,13 @@ reports. The text output lists at most the first 50 entries of each kind.
 With `--path`, only the modules whose generated tests may have test data under the paths run, so the others aren't even
 built; see `TestDataIndex`. A path that doesn't exist fails the run before Gradle starts.
 
-The path of the Gradle log is printed to stderr before Gradle starts, so a long run can be followed; `--run-id` names the
-log and the module reports in advance. When Gradle fails for another reason than a failing module report, the summary
-lists its failures and the compiler errors from the log.
+The paths of the Gradle log and of the summary are printed to stderr before Gradle starts, so a long run can be followed;
+`--run-id` names them and the module reports in advance. The summary is written at once when the run ends, interrupted
+runs included, so it is never read half-written. When Gradle fails for another reason than a failing module report,
+the summary lists its failures and the compiler errors from the log.
 
-Exit codes: 0 when everything passed, 1 when there are test data problems or test errors, 2 when the run itself failed.
+Exit codes: 0 when everything passed, 1 when there are test data problems or test errors, 2 when the run itself failed,
+130 when it was interrupted (Ctrl+C): Gradle is stopped, and the summary has the reports of the modules that finished.
 
 See README.md next to this script.
 """
@@ -36,6 +38,7 @@ import functools
 import json
 import os
 import re
+import signal
 import subprocess
 import sys
 import uuid
@@ -64,7 +67,7 @@ CLASS_TEST_METADATA = re.compile(
 )
 BUILD_GENERATED_TESTS = re.compile(r"generateTestsInBuildDirectory\s*=\s*true")
 
-EXIT_PASSED, EXIT_FAILED, EXIT_ERROR = 0, 1, 2
+EXIT_PASSED, EXIT_FAILED, EXIT_ERROR, EXIT_INTERRUPTED = 0, 1, 2, 130
 
 # How many entries of each list the text output prints, how many runs `build/test-data-manager` keeps
 LIST_LIMIT = 50
@@ -362,14 +365,17 @@ def merge(modules: List[str], reports: Dict[str, dict]) -> Dict[str, list]:
 
 def summarize(mode: str, run_id: str, modules: List[str], reports: Dict[str, dict], merged: Dict[str, list],
               has_filters: bool, gradle_exit_code: int, gradle_log: Optional[Path], summary_file: Path,
-              skipped: List[str], selection_errors: List[str], gradle_output: str = "") -> dict:
+              skipped: List[str], selection_errors: List[str], gradle_output: str = "", interrupted: bool = False) -> dict:
     """The index of the run: its status, the totals and counts, and the module reports holding the details."""
     run_errors = list(selection_errors)
+    if interrupted:
+        run_errors.append("Interrupted before Gradle finished; the modules without a report didn't finish")
     totals = {"discovered": 0, "passed": 0, "failed": 0, "skipped": 0}
     for module in modules:
         report = reports.get(module)
         if report is None:
-            run_errors.append(f"{module}: no report for this run; the task didn't run or its JVM crashed, see the Gradle log")
+            if not interrupted:
+                run_errors.append(f"{module}: no report for this run; the task didn't run or its JVM crashed, see the Gradle log")
             continue
         for key in totals:
             totals[key] += report["tests"][key]
@@ -384,11 +390,13 @@ def summarize(mode: str, run_id: str, modules: List[str], reports: Dict[str, dic
         return {kind: sum(1 for entry in entries if entry["kind"] == kind) for kind in sorted({entry["kind"] for entry in entries})}
 
     status = "ERROR" if run_errors else "FAILED" if merged["problems"] or merged["testErrors"] else "PASSED"
-    failed_gradle = gradle_exit_code != 0
+    # An interrupted Gradle reports the cancellation as its failure
+    failed_gradle = gradle_exit_code != 0 and not interrupted
     return {
         "runId": run_id,
         "mode": mode,
         "status": status,
+        "interrupted": interrupted,
         "runErrors": run_errors,
         "gradleFailures": gradle_failures(gradle_output, set(reports), task_name(mode.lower())) if failed_gradle else [],
         "compilerErrors": compiler_errors(gradle_output) if failed_gradle else [],
@@ -455,6 +463,36 @@ def delete_old_runs(directory: Path) -> None:
             (directory / f"{run_id}{suffix}").unlink(missing_ok=True)
 
 
+def run_gradle(command: List[str], root: Path, log) -> Tuple[int, bool]:
+    """
+    Runs [command] with its output in [log]; returns its exit code and whether the run was interrupted. On Ctrl+C,
+    Gradle gets SIGINT too (the terminal sends it to the whole process group; it is forwarded for a signal sent to this
+    process alone) and cancels the build, which this waits for; a second Ctrl+C kills it.
+    """
+    process = subprocess.Popen(
+        windows_command_line(command) if os.name == "nt" else command,
+        cwd=root, stdout=log, stderr=subprocess.STDOUT,
+    )
+    try:
+        return process.wait(), False
+    except KeyboardInterrupt:
+        print("Interrupted, waiting for Gradle to stop; Ctrl+C again kills it", file=sys.stderr, flush=True)
+        try:
+            if os.name != "nt":
+                process.send_signal(signal.SIGINT)
+            return process.wait(), True
+        except KeyboardInterrupt:
+            process.kill()
+            return process.wait(), True
+
+
+def write_atomically(file: Path, text: str) -> None:
+    """Writes [file] so that it exists only complete: whoever waits for it never reads a part."""
+    temporary = file.with_name(file.name + ".tmp")
+    temporary.write_text(text, encoding="utf-8")
+    os.replace(temporary, file)
+
+
 def main(argv: Optional[List[str]] = None, root: Optional[Path] = None) -> int:
     """Runs the wrapper with [argv] (the command line by default) in the repository at [root] (the script's one)."""
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -495,19 +533,19 @@ def main(argv: Optional[List[str]] = None, root: Optional[Path] = None) -> int:
 
     gradle_log: Optional[Path] = None
     gradle_exit_code = 0
+    interrupted = False
     gradle_output = ""
     reports: Dict[str, dict] = {}
     if modules:
         gradle_log = output_directory / f"{run_id}.gradle.log"
         command = gradle_command(root, args, modules, run_id)
-        print(f"Running {task_name(args.mode)} in {', '.join(modules)}; Gradle log: {gradle_log}", file=sys.stderr, flush=True)
+        print(f"Running {task_name(args.mode)} in {', '.join(modules)}", file=sys.stderr)
+        print(f"Gradle log: {gradle_log}", file=sys.stderr)
+        print(f"Summary, written when the run ends: {summary_file}", file=sys.stderr, flush=True)
         with gradle_log.open("w", encoding="utf-8") as log:
             log.write("$ " + " ".join(command) + "\n")
             log.flush()
-            gradle_exit_code = subprocess.run(
-                windows_command_line(command) if os.name == "nt" else command,
-                cwd=root, stdout=log, stderr=subprocess.STDOUT,
-            ).returncode
+            gradle_exit_code, interrupted = run_gradle(command, root, log)
         # Gradle may write in the console code page on Windows
         gradle_output = gradle_log.read_text(encoding="utf-8", errors="replace")
         reports = load_reports(gradle_output, run_id)
@@ -515,8 +553,8 @@ def main(argv: Optional[List[str]] = None, root: Optional[Path] = None) -> int:
     merged = merge(modules, reports)
     has_filters = bool(args.paths or args.class_pattern)
     summary = summarize(args.mode.upper(), run_id, modules, reports, merged, has_filters, gradle_exit_code, gradle_log,
-                        summary_file, skipped, selection_errors, gradle_output)
-    summary_file.write_text(json.dumps(summary, indent=2) + "\n")
+                        summary_file, skipped, selection_errors, gradle_output, interrupted)
+    write_atomically(summary_file, json.dumps(summary, indent=2) + "\n")
     delete_old_runs(output_directory)
 
     if args.json:
@@ -524,6 +562,8 @@ def main(argv: Optional[List[str]] = None, root: Optional[Path] = None) -> int:
     else:
         print_summary(summary, merged)
 
+    if interrupted:
+        return EXIT_INTERRUPTED
     return {"PASSED": EXIT_PASSED, "FAILED": EXIT_FAILED}.get(summary["status"], EXIT_ERROR)
 
 
@@ -534,6 +574,9 @@ if __name__ == "__main__":
             stream.reconfigure(errors="backslashreplace")
     try:
         sys.exit(main())
+    except KeyboardInterrupt:  # before Gradle started or after it finished: nothing to wait for
+        print("Interrupted", file=sys.stderr)
+        sys.exit(EXIT_INTERRUPTED)
     except Exception as error:  # an unexpected failure is a failed run, not test data problems
         import traceback
         traceback.print_exc()

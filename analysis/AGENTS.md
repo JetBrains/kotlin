@@ -51,7 +51,9 @@ python3 analysis/test-data-manager/test-data-manager.py check --path <dir-or-fil
 - `--path` is repository-relative, as in `@TestMetadata`; one test is its test data file (`.../foo.kt`).
 - The script picks the modules: don't add `--module`, don't split the run per module.
 - The output is a few lines: read it as is, don't pipe it into `tail`/`grep` (the pipe hides the exit code).
-- A run longer than your tool timeout goes to the background; the Gradle log path is printed first.
+- Wait for the command to exit and read its exit code; the output and the summary are its result. A run may outlast
+  the tool timeout, which kills it: raise the timeout or use a tracked background task. The Gradle log, whose path is
+  printed first, shows the progress.
 
 | Exit | Output                                                          | Next step                                                                                                                                          |
 |------|-----------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|

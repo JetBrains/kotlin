@@ -205,9 +205,44 @@ class WrapperTest(unittest.TestCase):
                 tdm.main(["check", "--run-id", invalid], root=self.root)
             self.assertEqual(2, exit.exception.code, invalid)
 
-    def test_the_log_is_announced_before_gradle_runs(self) -> None:
+    def test_the_log_and_the_summary_are_announced_before_gradle_runs(self) -> None:
         _, summary = self.run_wrapper({":mod-a": {}, ":mod-b": {}}, "check", "--module", ":mod-a", "--module", ":mod-b")
-        self.assertEqual(f"Running checkTestData in :mod-a, :mod-b; Gradle log: {summary['gradleLog']}\n", self.stderr)
+        self.assertEqual(
+            f"Running checkTestData in :mod-a, :mod-b\nGradle log: {summary['gradleLog']}\n"
+            f"Summary, written when the run ends: {summary['summary']}\n",
+            self.stderr,
+        )
+
+    def test_interrupted_runs_wait_for_gradle_and_keep_the_finished_reports(self) -> None:
+        signals = []
+
+        class InterruptedPopen(subprocess.Popen):
+            """Gradle that finishes the reports it got to, with Ctrl+C pressed while the wrapper waits for it."""
+            interrupted = False
+
+            def wait(self, timeout=None):
+                code = super().wait(timeout)
+                if not InterruptedPopen.interrupted:
+                    InterruptedPopen.interrupted = True
+                    raise KeyboardInterrupt
+                return code
+
+            def send_signal(self, sig):
+                signals.append(sig)
+
+        original = tdm.subprocess.Popen
+        tdm.subprocess.Popen = InterruptedPopen
+        try:
+            exit_code, summary = self.run_wrapper({":mod-a": {}, "exitCode": 1}, "check", "--module", ":mod-a", "--module", ":mod-b")
+        finally:
+            tdm.subprocess.Popen = original
+        self.assertEqual((130, "ERROR", True), (exit_code, summary["status"], summary["interrupted"]))
+        self.assertEqual([] if os.name == "nt" else [tdm.signal.SIGINT], signals)
+        self.assertEqual(["Interrupted before Gradle finished; the modules without a report didn't finish"], summary["runErrors"])
+        self.assertEqual(([], []), (summary["gradleFailures"], summary["compilerErrors"]))
+        self.assertEqual(["PASSED", "MISSING"], [module["status"] for module in summary["modules"]])
+        self.assertEqual(summary, json.loads(Path(summary["summary"]).read_text()))
+        self.assertIn("Interrupted, waiting for Gradle to stop", self.stderr)
 
     def test_gradle_failures_and_compiler_errors_are_reported(self) -> None:
         output = textwrap.dedent('''\

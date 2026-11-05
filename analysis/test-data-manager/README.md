@@ -146,9 +146,11 @@ python3 analysis/test-data-manager/test-data-manager.py check --path analysis/an
 
 On top of the module reports, it fails when a module wrote no report for the run (the task didn't run, or its JVM
 crashed) and when no test in any module matches the filters. The Gradle output goes to
-`build/test-data-manager/<runId>.gradle.log`, whose path is printed to stderr before Gradle starts, so a long run can be
-followed, and the summary to `build/test-data-manager/<runId>.summary.json`, whose path is the last line of the output
-(`--json` prints the file instead of the text). The summary is an index: the status, the run errors, the totals, the
+`build/test-data-manager/<runId>.gradle.log` and the summary to `build/test-data-manager/<runId>.summary.json`. Both
+paths are printed to stderr, each on its own line, before Gradle starts, so a long run can be followed. The summary path
+is also the last line of the output (`--json` prints the file instead of the text). The summary is written at once
+when the run ends, so it is never read half-written. Whether the run is over is told by the process exit, not by the
+file: a killed wrapper writes none. The summary is an index: the status, the run errors, the totals, the
 counts of problems and changed files by kind, and the module reports, which hold the entries themselves. The text output
 lists at most 50 entries of each kind. The 5 most recent runs are kept. `--run-id` sets the id, and so the paths of the
 log, the summary and the module reports, in advance. When Gradle fails for another reason than a failing module report
@@ -169,7 +171,9 @@ The summary lists the skipped modules. `--module` runs the given modules as is.
 It takes a project path, with or without the leading `:`, or the module directory (`analysis/stubs`).
 
 Exit codes: `0` passed, `1` test data problems or test errors, `2` the run itself failed (run errors of a module, a
-missing report, Gradle failing without a failing report).
+missing report, Gradle failing without a failing report), `130` interrupted with Ctrl+C. An interrupt stops Gradle,
+waiting for it to cancel the build (a second Ctrl+C kills it). The summary is still written, with `"interrupted": true`
+and the reports of the modules that finished.
 
 Its tests use only the standard library and run in temporary git repositories, with a stub `gradlew`; they aren't part
 of the Gradle build, so run them after changing the script:
