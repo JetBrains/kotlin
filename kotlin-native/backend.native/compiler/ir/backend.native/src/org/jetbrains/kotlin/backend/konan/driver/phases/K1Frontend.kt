@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
 import org.jetbrains.kotlin.K1Deprecation
-import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.konan.K1KlibMetadataModuleDescriptorFactoryImpl
 import org.jetbrains.kotlin.backend.konan.NativeSecondStageCompilationConfig
@@ -55,7 +54,6 @@ import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
-import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import kotlin.io.path.Path
 import kotlin.io.path.writeLines
 
@@ -218,12 +216,6 @@ private fun StorageComponentContainer.initObjCServicesInContainer(config: Native
     useInstance(object : ObjCExportLazy.Configuration {
         override val frameworkName: String
             get() = config.fullExportedNamePrefix
-
-        override fun isIncluded(moduleInfo: ModuleInfo): Boolean = true
-
-        override fun getCompilerModuleName(moduleInfo: ModuleInfo): String {
-            shouldNotBeCalled()
-        }
 
         override val objcGenerics: Boolean
             get() = config.configuration.objcGenerics

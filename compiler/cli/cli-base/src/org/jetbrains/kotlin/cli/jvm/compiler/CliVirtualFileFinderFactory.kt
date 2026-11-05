@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.cli.jvm.compiler
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndex
 import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
@@ -38,6 +37,6 @@ class CliVirtualFileFinderFactory(
     fun create(classpath: JvmClasspath): VirtualFileFinder =
         CliVirtualFileFinder(index, classpath, enableSearchInCtSym, perfManager)
 
-    override fun create(project: Project, module: ModuleInfo): VirtualFileFinder =
+    override fun create(project: Project): VirtualFileFinder =
         create(GlobalSearchScope.allScope(project))
 }

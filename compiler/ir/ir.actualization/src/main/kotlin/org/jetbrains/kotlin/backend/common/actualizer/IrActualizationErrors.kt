@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.common.actualizer
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.Renderer
@@ -175,7 +174,7 @@ internal fun IrSymbol.moduleInfoForDiagnostic(): ModuleInfoForDiagnostic {
 
 internal fun IrModuleFragment.toModuleInfoForDiagnostic(): ModuleInfoForDiagnostic {
     return ModuleInfoForDiagnostic(
-        name = descriptor.getCapability(ModuleInfo.Capability)?.name ?: name,
+        name = name,
         platform = descriptor.platform,
     )
 }
