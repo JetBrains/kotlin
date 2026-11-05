@@ -1,3 +1,11 @@
+/FooValueClass.kt:9:1: warning: Value classes will no longer be inline by default in a future release.
+ - To preserve the inline behavior, mark it as 'inline value class'.
+ - To migrate to a full value class, enable the experimental
+   'full value classes' feature by supplying the '-Xfull-value-classes'
+   compiler argument, but note that no stability guarantees are provided for it.
+
+For more information, see the corresponding https://kotl.in/inline-value-classes and
+https://kotl.in/full-value-classes language proposals. This will become an error in language version 2.6. See: https://youtrack.jetbrains.com/issue/KT-89772
 /K.kt:20:26: warning: This call may have inconsistent results because the type of this argument, 'Foo', does not have a consistent identity.
 
 /K.kt:20:31: warning: This call may have inconsistent results because the type of this argument, 'Foo', does not have a consistent identity.

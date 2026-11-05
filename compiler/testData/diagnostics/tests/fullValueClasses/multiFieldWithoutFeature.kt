@@ -6,7 +6,7 @@
 //  ^^^ KT-88389
 
 <!UNSUPPORTED_FEATURE!>value<!> class Final constructor(val value1: String, val value2: String)
-<!VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION!>value<!> class Final2 constructor(val value1: String)
+<!INLINE_VALUE_CLASS_WITHOUT_EXPLICIT_INLINE_ERROR!>value<!> class Final2 constructor(val value1: String)
 value class Final4 <!INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE!>constructor()<!>
 <!ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS!>value<!> class Final6
 

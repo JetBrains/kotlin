@@ -6534,6 +6534,12 @@ private fun KaDiagnosticConverterBuilder.addConversions135() {
             token,
         )
     }
+    add(FirErrors.INLINE_VALUE_CLASS_WITHOUT_EXPLICIT_INLINE.warningFactory) { firDiagnostic ->
+        InlineValueClassWithoutExplicitInlineWarningImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirErrors.DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE) { firDiagnostic ->
         DelegatedMemberHidesSupertypeOverrideImpl(
             firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.a),
@@ -9136,6 +9142,12 @@ private fun KaDiagnosticConverterBuilder.addConversions195() {
         EqualityBoundNotSupertypeOfContainingClassImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
+    add(FirErrors.INLINE_VALUE_CLASS_WITHOUT_EXPLICIT_INLINE.errorFactory) { firDiagnostic ->
+        InlineValueClassWithoutExplicitInlineErrorImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
