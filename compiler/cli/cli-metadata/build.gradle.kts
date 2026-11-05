@@ -11,7 +11,6 @@ dependencies {
     implementation(project(":compiler:config.jvm"))
     implementation(project(":core:descriptors"))
     implementation(project(":core:descriptors.jvm"))
-    implementation(project(":core:deserialization"))
     implementation(project(":compiler:ir.backend.common"))
     implementation(project(":compiler:backend"))
     implementation(project(":compiler:fir:semantics.api"))

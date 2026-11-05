@@ -7,7 +7,6 @@ plugins {
 dependencies {
     implementation(project(":core:descriptors"))
     implementation(project(":core:descriptors.jvm"))
-    implementation(project(":core:deserialization"))
     implementation(project(":compiler:config.jvm"))
     implementation(project(":kotlin-util-klib-metadata"))
     implementation(project(":compiler:cli"))

@@ -10,7 +10,6 @@ plugins {
 dependencies {
     implementation(project(":core:descriptors"))
     implementation(project(":core:descriptors.jvm"))
-    runtimeOnly(project(":core:deserialization"))
     implementation(project(":kotlin-util-klib-metadata"))
     implementation(libs.intellij.asm)
     implementation(libs.guava)
