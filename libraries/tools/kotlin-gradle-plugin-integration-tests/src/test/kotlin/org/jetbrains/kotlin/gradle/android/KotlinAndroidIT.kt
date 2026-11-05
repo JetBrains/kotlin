@@ -456,6 +456,94 @@ class KotlinAndroidIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("KT-88622: KMP with 'com.android.library' plugin deprecation warning on AGP <9.0")
+    @GradleAndroidTest
+    @AndroidTestVersions(
+        minVersion = TestVersions.AGP.MIN_SUPPORTED,
+        maxVersion = TestVersions.AGP.AGP_813,
+    )
+    fun testKmpWithAndroidLibraryAGP8DeprecationDiagnostic(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdkVersion: JdkVersions.ProvidedJdk,
+    ) {
+        project(
+            "empty",
+            gradleVersion,
+            buildJdk = jdkVersion.location,
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+        ) {
+            plugins {
+                kotlin("multiplatform")
+                id("com.android.library")
+            }
+
+            buildScriptInjection {
+                @Suppress("DEPRECATION")
+                kotlinMultiplatform.androidTarget()
+
+                with(androidLibrary) {
+                    compileSdk = 36
+                    namespace = "com.example"
+                }
+            }
+
+            build("help") {
+                assertHasDiagnostic(
+                    KotlinToolingDiagnostics.NonKmpAgpIsDeprecated,
+                    withSubstring = "Please update your project to AGP 9.0 or newer (see https://kotl.in/agp9-blog) and " +
+                            "use the 'com.android.kotlin.multiplatform.library' plugin instead of 'com.android.library'.",
+                )
+                assertNoDiagnostic(KotlinToolingDiagnostics.KMPIsIncompatibleWithTheNewAgpDsl)
+                assertNoDiagnostic(KotlinToolingDiagnostics.DeprecatedKotlinAndroidPlugin)
+            }
+        }
+    }
+
+    @DisplayName("KT-88622: KMP with 'com.android.application' plugin deprecation warning on AGP <9.0")
+    @GradleAndroidTest
+    @AndroidTestVersions(
+        minVersion = TestVersions.AGP.MIN_SUPPORTED,
+        maxVersion = TestVersions.AGP.AGP_813,
+    )
+    fun testKmpWithAndroidApplicationAGP8DeprecationDiagnostic(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdkVersion: JdkVersions.ProvidedJdk,
+    ) {
+        project(
+            "empty",
+            gradleVersion,
+            buildJdk = jdkVersion.location,
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+        ) {
+            plugins {
+                kotlin("multiplatform")
+                id("com.android.application")
+            }
+
+            buildScriptInjection {
+                @Suppress("DEPRECATION")
+                kotlinMultiplatform.androidTarget()
+
+                with(androidApp) {
+                    compileSdkVersion(36)
+                    namespace = "com.example"
+                }
+            }
+
+            build("help") {
+                assertHasDiagnostic(
+                    KotlinToolingDiagnostics.NonKmpAgpIsDeprecated,
+                    withSubstring = "Please update your project to AGP 9.0 or newer (see https://kotl.in/agp9-blog), change the " +
+                            "structure of your project and move the usage of 'com.android.application' into a separate subproject.",
+                )
+                assertNoDiagnostic(KotlinToolingDiagnostics.KMPIsIncompatibleWithTheNewAgpDsl)
+                assertNoDiagnostic(KotlinToolingDiagnostics.DeprecatedKotlinAndroidPlugin)
+            }
+        }
+    }
+
     @DisplayName("KT-81601: KMP plus AGP 9.0 with disabled built-in Kotlin fails with actionable diagnostic because of the new AGP DSL ")
     @GradleAndroidTest
     @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_90)
