@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.targets.wasm.binaryen
 
-import org.gradle.api.provider.Provider
-
 /**
  * Provides platform and architecture names that is used to download Binaryen.
  */
@@ -27,41 +25,41 @@ internal data class BinaryenPlatform(
         const val DARWIN = "macos"
 
         const val X64 = "x86_64"
-        const val X86 = "x86_86"
+        const val ARM64 = "arm64"
+        const val AARCH64 = "aarch64"
 
-        internal fun parseBinaryenPlatform(name: String, arch: String, uname: Provider<String>): BinaryenPlatform {
-            val osName = parseOsName(name.lowercase())
-            return BinaryenPlatform(
-                osName,
-                parseOsArch(
-                    osName,
-                    arch.lowercase(),
-                    uname
-                )
-            )
+        internal val SUPPORTED_PLATFORMS = listOf(
+            "$X64-$WIN",
+            "$ARM64-$WIN",
+            "$X64-$DARWIN",
+            "$ARM64-$DARWIN",
+            "$X64-$LINUX",
+            "$AARCH64-$LINUX",
+        )
+
+        internal fun parseBinaryenPlatformOrNull(name: String, arch: String): BinaryenPlatform? {
+            val osName = parseOsName(name.lowercase()) ?: return null
+            val osArch = parseOsArch(osName, arch.lowercase()) ?: return null
+            return BinaryenPlatform(osName, osArch)
         }
 
-        private fun parseOsName(name: String): String {
+        private fun parseOsName(name: String): String? {
             return when {
                 name.contains("windows") -> WIN
                 name.contains("mac") -> DARWIN
                 name.contains("linux") -> LINUX
                 name.contains("freebsd") -> LINUX
-                else -> throw IllegalArgumentException("Unsupported OS: $name")
+                else -> null
             }
         }
 
-        private fun parseOsArch(osName: String, arch: String, uname: Provider<String>): String {
+        private fun parseOsArch(osName: String, arch: String): String? {
             return when {
-                arch == "arm" || arch.startsWith("aarch") -> {
-                    if (osName == WIN) {
-                        arch
-                    } else {
-                        uname.get()
-                    }
-                }
+                // Binaryen names 64-bit ARM archives 'aarch64' on Linux, but 'arm64' on Windows and macOS
+                arch == "arm" || arch.startsWith("aarch") -> if (osName == LINUX) AARCH64 else ARM64
                 arch.contains("64") -> X64
-                else -> X86
+                // Binaryen does not publish 32-bit x86 archives
+                else -> null
             }
         }
     }
