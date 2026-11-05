@@ -121,6 +121,11 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.INLINE_OR_VALUE_MODIFIER
     )
 
+    val VALUE_MODIFIER = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.VALUE_MODIFIER,
+        PositioningStrategies.VALUE_MODIFIER
+    )
+
     val INNER_MODIFIER = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.INNER_MODIFIER,
         PositioningStrategies.INNER_MODIFIER

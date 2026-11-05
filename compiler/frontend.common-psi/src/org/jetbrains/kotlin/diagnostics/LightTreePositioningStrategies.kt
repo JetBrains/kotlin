@@ -549,6 +549,9 @@ object LightTreePositioningStrategies {
     val INLINE_OR_VALUE_MODIFIER: LightTreePositioningStrategy =
         ModifierSetBasedLightTreePositioningStrategy(INLINE_KEYWORD, VALUE_KEYWORD)
 
+    val VALUE_MODIFIER: LightTreePositioningStrategy =
+        ModifierSetBasedLightTreePositioningStrategy(VALUE_KEYWORD)
+
     val INNER_MODIFIER: LightTreePositioningStrategy =
         ModifierSetBasedLightTreePositioningStrategy(INNER_KEYWORD)
 
