@@ -3,6 +3,7 @@
  * that can be found in the LICENSE file.
  */
 // IGNORE_NATIVE: optimizationMode=OPT && cacheMode=NO
+// IGNORE_NATIVE: optimizationMode=OPT && cacheMode=STATIC_EVERYWHERE
 
 import kotlin.test.*
 import kotlin.native.internal.*
