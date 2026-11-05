@@ -81,8 +81,7 @@ object FirDiagnosticRenderers {
 
     val SYMBOL_WITH_LOCATION = Renderer { symbol: DeclarationSymbolMarker ->
         when (symbol) {
-            is FirClassLikeSymbol<*>, is FirCallableSymbol<*> -> symbol.renderWithLocation(SYMBOL::render)
-            is FirTypeParameterSymbol -> symbol.renderWithLocation { symbol.name.asString() }
+            is FirClassLikeSymbol<*>, is FirCallableSymbol<*>, is FirTypeParameterSymbol -> symbol.renderWithLocation(SYMBOL::render)
             else -> ""
         }
     }
