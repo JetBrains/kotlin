@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.backend.common.linkage.issues.SignatureClashDetector
 import org.jetbrains.kotlin.backend.common.lower.ANNOTATION_IMPLEMENTATION
 import org.jetbrains.kotlin.backend.jvm.JvmBackendErrors
@@ -13,21 +14,37 @@ import org.jetbrains.kotlin.backend.jvm.overrides.IrJavaIncompatibilityRulesOver
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
+import org.jetbrains.kotlin.diagnostics.getTightOffsetsFor
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers
 import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticParameterRenderer
 import org.jetbrains.kotlin.diagnostics.rendering.RenderingContext
+import org.jetbrains.kotlin.fir.analysis.diagnostics.DecorationHeader
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers
+import org.jetbrains.kotlin.fir.analysis.diagnostics.LogicalLocation
+import org.jetbrains.kotlin.fir.analysis.diagnostics.RenderedLineWithNumber
+import org.jetbrains.kotlin.fir.analysis.diagnostics.renderLocationDecoration
+import org.jetbrains.kotlin.fir.analysis.diagnostics.renderWithLocation
+import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrMetadataSourceOwner
 import org.jetbrains.kotlin.ir.declarations.IrOverridableMember
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.path
+import org.jetbrains.kotlin.ir.descriptors.IrBasedDeclarationDescriptor
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.overrides.IrOverrideChecker
 import org.jetbrains.kotlin.ir.overrides.MemberWithOriginal
+import org.jetbrains.kotlin.ir.util.file
+import org.jetbrains.kotlin.ir.util.getPackageFragment
+import org.jetbrains.kotlin.ir.util.getSourceFile
 import org.jetbrains.kotlin.ir.util.isFakeOverride
 import org.jetbrains.kotlin.ir.util.isFromJava
+import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.ir.util.resolveFakeOverride
+import org.jetbrains.kotlin.ir.util.sourceElement
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMemberSignature
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.MemberComparator
@@ -195,10 +212,34 @@ internal class JvmIrConflictingDeclarationsData(
             signatureKind = "JVM",
             sortUsing = { a, b -> MemberComparator.INSTANCE.compare(a, b) },
             declarationRenderer = object : DiagnosticParameterRenderer<DeclarationDescriptor> {
-                override fun render(obj: DeclarationDescriptor, renderingContext: RenderingContext): String =
-                    DescriptorRenderer.WITHOUT_MODIFIERS.withOptions {
-                        classifierNamePolicy = renderingContext.adaptiveClassifierPolicy
-                    }.render(obj)
+                override fun render(obj: DeclarationDescriptor, renderingContext: RenderingContext): String {
+                    val owner = (obj as? IrBasedDeclarationDescriptor<*>)?.owner as? IrMetadataSourceOwner
+                    val metadata = owner?.metadata as? FirMetadataSource
+                    return when (metadata) {
+                        is FirMetadataSource -> metadata.fir.symbol.renderWithLocation(FirDiagnosticRenderers.SYMBOL::render)
+                        else -> DescriptorRenderer.WITHOUT_MODIFIERS.withOptions {
+                            classifierNamePolicy = renderingContext.adaptiveClassifierPolicy
+                        }.render(obj)
+                            .let {
+                                val location = owner?.getPackageFragment()
+                                    ?.let { LogicalLocation(it.packageFqName.asString(), it.module.name) }
+                                // Likely `KtOffsetsOnlySourceElement`, so it's redundant?
+                                val sourceElement = owner?.sourceElement() as? KtSourceElement
+                                val startOffset = sourceElement?.let { getTightOffsetsFor(sourceElement).first }
+                                val line = when {
+                                    owner is IrDeclaration && startOffset != null -> owner.getSourceFile()?.getLineNumber(startOffset)
+                                    else -> null
+                                }
+                                val indent = generateSequence((owner as? IrDeclaration)?.parentClassOrNull) { it.parentClassOrNull }.count()
+                                renderLocationDecoration(
+                                    header = location?.let { DecorationHeader.Candidates(it, (owner as? IrDeclaration)?.file?.path) }
+                                        ?: DecorationHeader.None,
+                                    renderedLines = it.lines().map { RenderedLineWithNumber(number = null, indent, renderedLine = it) }
+                                        .let { it.first().copy(number = line).let(::listOf) + it.drop(1) }
+                                )
+                            }
+                    }
+                }
             },
             renderSignature = {
                 append(it.signature.name)

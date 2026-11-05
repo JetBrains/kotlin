@@ -1,55 +1,146 @@
 compiler/testData/cli/jvm/diagnosticTests/signatureClash.kt:6:5: error: accidental override: The following declarations have the same JVM signature (getX()I):
-fun `<get-x>`(): Int defined in A
-fun getX(): Int defined in A
+In package '' of module '<main>':
+--> $TESTDATA_DIR$/signatureClash.kt
+ |
+ |     fun `<get-x>`(): Int defined in A
+ |
+In package 'root package' of module '<main>':
+  --> signatureClash.kt
+   |
+ 5 | class A : B {
+ 6 |     fun getX(): Int
+   |     ...
+10 | }
+   |
 In source code:
 5 | class A : B() {
 6 |     fun getX() = 1
   |     ^^^^^^^^^^
 compiler/testData/cli/jvm/diagnosticTests/signatureClash.kt:8:5: error: platform declaration clash: The following declarations have the same JVM signature (getA()I):
-fun `<get-a>`(): Int defined in A
-fun getA(): Int defined in A
+In package 'root package' of module '<main>':
+  --> signatureClash.kt
+   |
+ 5 | class A : B {
+   |     ...
+ 9 |     get(): Int
+10 | }
+   |
+In package 'root package' of module '<main>':
+  --> signatureClash.kt
+   |
+ 5 | class A : B {
+   |     ...
+ 8 |     fun getA(): Int
+   |     ...
+10 | }
+   |
 In source code:
   |
 8 |     fun getA(): Int = 1
   |     ^^^^^^^^^^^^^^^
 compiler/testData/cli/jvm/diagnosticTests/signatureClash.kt:9:5: error: platform declaration clash: The following declarations have the same JVM signature (getA()I):
-fun `<get-a>`(): Int defined in A
-fun getA(): Int defined in A
+In package 'root package' of module '<main>':
+  --> signatureClash.kt
+   |
+ 5 | class A : B {
+   |     ...
+ 9 |     get(): Int
+10 | }
+   |
+In package 'root package' of module '<main>':
+  --> signatureClash.kt
+   |
+ 5 | class A : B {
+   |     ...
+ 8 |     fun getA(): Int
+   |     ...
+10 | }
+   |
 In source code:
 8 |     fun getA(): Int = 1
 9 |     val a: Int = 1
   |     ^^^^^^^^^^
 compiler/testData/cli/jvm/diagnosticTests/signatureClash.kt:12:1: error: platform declaration clash: The following declarations have the same JVM signature (getB()I):
-fun `<get-b>`(): Int defined in root package
-fun getB(): Int defined in root package
+In package 'root package' of module '<main>':
+  --> signatureClash.kt
+   |
+13 | get(): Int
+   |
+In package 'root package' of module '<main>':
+  --> signatureClash.kt
+   |
+12 | fun getB(): Int
+   |
 In source code:
    |
 12 | fun getB(): Int = 1
    | ^^^^^^^^^^^^^^^
 compiler/testData/cli/jvm/diagnosticTests/signatureClash.kt:13:1: error: platform declaration clash: The following declarations have the same JVM signature (getB()I):
-fun `<get-b>`(): Int defined in root package
-fun getB(): Int defined in root package
+In package 'root package' of module '<main>':
+  --> signatureClash.kt
+   |
+13 | get(): Int
+   |
+In package 'root package' of module '<main>':
+  --> signatureClash.kt
+   |
+12 | fun getB(): Int
+   |
 In source code:
 12 | fun getB(): Int = 1
 13 | val b: Int = 1
    | ^^^^^^^^^^
 compiler/testData/cli/jvm/diagnosticTests/signatureClash.kt:20:5: error: accidental override: The following declarations have the same JVM signature (getTr()I):
-fun `<get-tr>`(): Int defined in SubTr
-fun getTr(): Int defined in SubTr
+In package 'root package' of module '<main>':
+  --> signatureClash.kt
+   |
+19 | class SubTr : Tr {
+20 |     get(): Int
+21 | }
+   |
+In package '' of module '<main>':
+--> $TESTDATA_DIR$/signatureClash.kt
+ |
+ |     fun getTr(): Int defined in SubTr
+ |
 In source code:
 19 | class SubTr : Tr {
 20 |     val tr = 1
    |     ^^^^^^
 compiler/testData/cli/jvm/diagnosticTests/signatureClash.kt:24:1: error: platform declaration clash: The following declarations have the same JVM signature (access$f(LC;)V):
-fun `access$f`(`$this`: C): Unit defined in C
-fun `access$f`(c: C): Unit defined in C
+In package '' of module '<main>':
+--> $TESTDATA_DIR$/signatureClash.kt
+ |
+ |     fun `access$f`(`$this`: C): Unit defined in C
+ |
+In package 'root package' of module '<main>':
+  --> signatureClash.kt
+   |
+24 | class C : Any {
+   |     ...
+26 |     fun access$f(c: C): Unit
+   |     ...
+34 | }
+   |
 In source code:
 23 | // Clashing synthetic accessors are only reported in compiler, IDE doesn't see them
 24 | class C {
    | ^
 compiler/testData/cli/jvm/diagnosticTests/signatureClash.kt:26:5: error: platform declaration clash: The following declarations have the same JVM signature (access$f(LC;)V):
-fun `access$f`(`$this`: C): Unit defined in C
-fun `access$f`(c: C): Unit defined in C
+In package '' of module '<main>':
+--> $TESTDATA_DIR$/signatureClash.kt
+ |
+ |     fun `access$f`(`$this`: C): Unit defined in C
+ |
+In package 'root package' of module '<main>':
+  --> signatureClash.kt
+   |
+24 | class C : Any {
+   |     ...
+26 |     fun access$f(c: C): Unit
+   |     ...
+34 | }
+   |
 In source code:
 25 |     private fun f() {}
 26 |     fun `access$f`(c: C) {}

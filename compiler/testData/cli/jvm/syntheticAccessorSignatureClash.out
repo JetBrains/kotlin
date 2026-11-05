@@ -1,6 +1,14 @@
 compiler/testData/cli/jvm/syntheticAccessorSignatureClash.kt:14:1: error: accidental override: The following declarations have the same JVM signature (access$foo(LDerived;)V):
-fun `access$foo`(d: Derived): Unit defined in Derived
-fun `access$foo`(`$this`: Derived): Unit defined in Derived
+In package '' of module '<main>':
+--> $TESTDATA_DIR$/syntheticAccessorSignatureClash.kt
+ |
+ |     fun `access$foo`(d: Derived): Unit defined in Derived
+ |
+In package '' of module '<main>':
+--> $TESTDATA_DIR$/syntheticAccessorSignatureClash.kt
+ |
+ |     fun `access$foo`(`$this`: Derived): Unit defined in Derived
+ |
 In source code:
    |
 14 | class Derived : Base() {

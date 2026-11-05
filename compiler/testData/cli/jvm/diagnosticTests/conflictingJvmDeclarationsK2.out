@@ -1,15 +1,63 @@
 compiler/testData/cli/jvm/diagnosticTests/conflictingJvmDeclarations.kt:3:9: error: platform declaration clash: The following declarations have the same JVM signature (getX()I):
-fun `<get-x>`(): Int defined in Foo
-fun getX(): Int defined in Foo
-fun getY(): Int defined in Foo
+In package 'root package' of module '<main>':
+  --> conflictingJvmDeclarations.kt
+   |
+ 1 | class Foo : Any {
+   |     ...
+ 3 |     get(): Int
+   |     ...
+10 | }
+   |
+In package 'root package' of module '<main>':
+  --> conflictingJvmDeclarations.kt
+   |
+ 1 | class Foo : Any {
+   |     ...
+ 5 |     fun getX(): Int
+   |     ...
+10 | }
+   |
+In package 'root package' of module '<main>':
+  --> conflictingJvmDeclarations.kt
+   |
+ 1 | class Foo : Any {
+   |     ...
+ 8 |     fun getY(): Int
+   |     ...
+10 | }
+   |
 In source code:
 2 |     val x: Int
 3 |         get() = 42
   |         ^^^^^
 compiler/testData/cli/jvm/diagnosticTests/conflictingJvmDeclarations.kt:8:5: error: platform declaration clash: The following declarations have the same JVM signature (getX()I):
-fun `<get-x>`(): Int defined in Foo
-fun getX(): Int defined in Foo
-fun getY(): Int defined in Foo
+In package 'root package' of module '<main>':
+  --> conflictingJvmDeclarations.kt
+   |
+ 1 | class Foo : Any {
+   |     ...
+ 3 |     get(): Int
+   |     ...
+10 | }
+   |
+In package 'root package' of module '<main>':
+  --> conflictingJvmDeclarations.kt
+   |
+ 1 | class Foo : Any {
+   |     ...
+ 5 |     fun getX(): Int
+   |     ...
+10 | }
+   |
+In package 'root package' of module '<main>':
+  --> conflictingJvmDeclarations.kt
+   |
+ 1 | class Foo : Any {
+   |     ...
+ 8 |     fun getY(): Int
+   |     ...
+10 | }
+   |
 In source code:
   |
 8 |     @JvmName("getX")
