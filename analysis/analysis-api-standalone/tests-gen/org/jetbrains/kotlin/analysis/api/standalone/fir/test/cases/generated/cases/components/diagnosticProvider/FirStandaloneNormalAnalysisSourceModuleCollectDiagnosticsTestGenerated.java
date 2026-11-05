@@ -883,4 +883,36 @@ public class FirStandaloneNormalAnalysisSourceModuleCollectDiagnosticsTestGenera
       run("sealedInterfaceSameModuleMissingCase.kt");
     }
   }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/willBecomeValue")
+  @TestDataPath("$PROJECT_ROOT")
+  public class WillBecomeValue {
+    private void run(String fileName) {
+      runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/willBecomeValue/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInWillBecomeValue() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/willBecomeValue"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("identityOperationsOnLibraryClass.kt")
+    public void testIdentityOperationsOnLibraryClass() {
+      run("identityOperationsOnLibraryClass.kt");
+    }
+
+    @Test
+    @TestMetadata("identityOperationsOnLibraryClassJs.kt")
+    public void testIdentityOperationsOnLibraryClassJs() {
+      run("identityOperationsOnLibraryClassJs.kt");
+    }
+
+    @Test
+    @TestMetadata("supertypesFromLibrary.kt")
+    public void testSupertypesFromLibrary() {
+      run("supertypesFromLibrary.kt");
+    }
+  }
 }

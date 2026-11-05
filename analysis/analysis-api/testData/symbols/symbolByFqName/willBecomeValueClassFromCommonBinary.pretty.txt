@@ -1,0 +1,2 @@
+@kotlin.WillBecomeValue
+class WillBecomeValueClassFromCommonBinary(value: kotlin.Int)

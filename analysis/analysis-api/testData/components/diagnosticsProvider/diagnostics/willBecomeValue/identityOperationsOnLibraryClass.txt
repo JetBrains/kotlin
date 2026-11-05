@@ -1,0 +1,19 @@
+Diagnostics from file:
+  for PSI element of type KtTypeReference at (29,10-15)
+    FINAL_UPPER_BOUND      text ranges: [(220,225)]
+      PSI: KtTypeReference at (29,10-15)
+  for PSI element of type KtBinaryExpression at (21,5-12)
+    IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS      text ranges: [(108,115)]
+      PSI: KtBinaryExpression at (21,5-12)
+  for PSI element of type KtBinaryExpression at (22,5-12)
+    IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS      text ranges: [(120,127)]
+      PSI: KtBinaryExpression at (22,5-12)
+  for PSI element of type KtBinaryExpression at (30,5-12)
+    IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS      text ranges: [(264,271)]
+      PSI: KtBinaryExpression at (30,5-12)
+  for PSI element of type KtNameReferenceExpression at (25,18-19)
+    IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS      text ranges: [(171,172)]
+      PSI: KtNameReferenceExpression at (25,18-19)
+  for PSI element of type KtNameReferenceExpression at (26,29-30)
+    IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS      text ranges: [(205,206)]
+      PSI: KtNameReferenceExpression at (26,29-30)

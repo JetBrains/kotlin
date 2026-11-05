@@ -1,0 +1,13 @@
+Diagnostics from file:
+  for PSI element of type KtClass at (32,1) - (33,60)
+    IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS      text ranges: [(276,301)]
+      PSI: KtClass at (32,1) - (33,60)
+  for PSI element of type KtClass at (32,1) - (33,60)
+    IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS      text ranges: [(276,301)]
+      PSI: KtClass at (32,1) - (33,60)
+  for PSI element of type KtClass at (32,1) - (33,60)
+    IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS      text ranges: [(276,301)]
+      PSI: KtClass at (32,1) - (33,60)
+  for PSI element of type KtTypeReference at (36,36-48)
+    WILL_BECOME_VALUE_CLASS_CANNOT_EXTEND_IDENTITY_CLASSES      text ranges: [(389,401)]
+      PSI: KtTypeReference at (36,36-48)

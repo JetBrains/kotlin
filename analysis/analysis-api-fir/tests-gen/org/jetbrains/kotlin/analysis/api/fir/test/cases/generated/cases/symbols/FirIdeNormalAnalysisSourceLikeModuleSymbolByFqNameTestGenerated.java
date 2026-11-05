@@ -308,6 +308,30 @@ public class FirIdeNormalAnalysisSourceLikeModuleSymbolByFqNameTestGenerated ext
     run("typealias.kt");
   }
 
+  @Test
+  @TestMetadata("willBecomeValueClassFromBinary.kt")
+  public void testWillBecomeValueClassFromBinary() {
+    run("willBecomeValueClassFromBinary.kt");
+  }
+
+  @Test
+  @TestMetadata("willBecomeValueClassFromCommonBinary.kt")
+  public void testWillBecomeValueClassFromCommonBinary() {
+    run("willBecomeValueClassFromCommonBinary.kt");
+  }
+
+  @Test
+  @TestMetadata("willBecomeValueClassFromJsBinary.kt")
+  public void testWillBecomeValueClassFromJsBinary() {
+    run("willBecomeValueClassFromJsBinary.kt");
+  }
+
+  @Test
+  @TestMetadata("willBecomeValueObjectFromBinary.kt")
+  public void testWillBecomeValueObjectFromBinary() {
+    run("willBecomeValueObjectFromBinary.kt");
+  }
+
   @Nested
   @TestMetadata("analysis/analysis-api/testData/symbols/symbolByFqName/withTestCompilerPluginEnabled")
   @TestDataPath("$PROJECT_ROOT")

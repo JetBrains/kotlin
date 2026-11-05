@@ -2066,6 +2066,18 @@ public class FirIdeNormalAnalysisSourceLikeModuleSingleSymbolByPsiTestGenerated 
     public void testInlineClassUnderlyingPropertyWithInlineClassType() {
       run("inlineClassUnderlyingPropertyWithInlineClassType.kt");
     }
+
+    @Test
+    @TestMetadata("willBecomeValueClass.kt")
+    public void testWillBecomeValueClass() {
+      run("willBecomeValueClass.kt");
+    }
+
+    @Test
+    @TestMetadata("willBecomeValueObject.kt")
+    public void testWillBecomeValueObject() {
+      run("willBecomeValueObject.kt");
+    }
   }
 
   @Nested

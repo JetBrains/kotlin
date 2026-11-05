@@ -1,0 +1,7 @@
+Diagnostics from file:
+  for PSI element of type KtBinaryExpression at (22,5-12)
+    IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS      text ranges: [(109,116)]
+      PSI: KtBinaryExpression at (22,5-12)
+  for PSI element of type KtBinaryExpression at (23,5-12)
+    IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS      text ranges: [(121,128)]
+      PSI: KtBinaryExpression at (23,5-12)
