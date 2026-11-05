@@ -11,7 +11,7 @@ import org.gradle.api.tasks.TaskProvider
 /**
  * Delay execution of the TaskProvider.map to execution with CC
  */
-internal fun <T> TaskProvider<*>.lazyMapWithCC(map: () -> T): Provider<T> = flatMap {
+internal fun <T : Any> TaskProvider<*>.lazyMapWithCC(map: () -> T): Provider<T> = flatMap {
     it.outputs.files.elements
 }.map {
     map()

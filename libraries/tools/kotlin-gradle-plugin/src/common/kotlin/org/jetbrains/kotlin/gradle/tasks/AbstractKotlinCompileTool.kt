@@ -84,7 +84,7 @@ abstract class AbstractKotlinCompileTool<T : CommonToolArguments> @Inject constr
         sourceFileFilter.setExcludes(excludes)
     }
 
-    final override fun include(vararg includes: String?): PatternFilterable = also {
+    final override fun include(vararg includes: String): PatternFilterable = also {
         sourceFileFilter.include(*includes)
     }
 
@@ -100,7 +100,7 @@ abstract class AbstractKotlinCompileTool<T : CommonToolArguments> @Inject constr
         sourceFileFilter.include(includeSpec)
     }
 
-    final override fun exclude(vararg excludes: String?): PatternFilterable = also {
+    final override fun exclude(vararg excludes: String): PatternFilterable = also {
         sourceFileFilter.exclude(*excludes)
     }
 

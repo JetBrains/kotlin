@@ -160,6 +160,7 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Spec : EnvSpec<Env>>(
         val upToDate = isUpToDate(
             destinationHashFile = destinationHashFile,
             destination = destination,
+            dist = dist,
         )
 
         if (upToDate) return
@@ -184,6 +185,7 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Spec : EnvSpec<Env>>(
     private fun isUpToDate(
         destinationHashFile: File,
         destination: File,
+        dist: File,
     ): Boolean {
         fun notUpToDate(reason: String): Boolean {
             logger.info("[$path] ${destination.name} Not up-to-date: $reason")

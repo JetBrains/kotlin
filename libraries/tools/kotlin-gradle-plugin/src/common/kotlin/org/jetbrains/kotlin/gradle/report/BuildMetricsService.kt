@@ -57,7 +57,7 @@ import java.util.concurrent.CopyOnWriteArrayList
 
 internal interface UsesBuildMetricsService : Task {
     @get:Internal
-    val buildMetricsService: Property<BuildMetricsService?>
+    val buildMetricsService: Property<BuildMetricsService>
 }
 
 abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters>, AutoCloseable, OperationCompletionListener,
@@ -70,7 +70,7 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
         val httpParameters: Property<HttpReportParameters>
 
         val projectDir: DirectoryProperty
-        val label: Property<String?>
+        val label: Property<String>
         val projectName: Property<String>
         val kotlinVersion: Property<String>
         val buildConfigurationTags: ListProperty<StatTag>
@@ -179,38 +179,39 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
     }
 
     override fun finished(
-        operationDescriptor: BuildOperationDescriptor?,
-        event: OperationFinishEvent?,
+        operationDescriptor: BuildOperationDescriptor,
+        event: OperationFinishEvent,
     ) {
-        val details = operationDescriptor?.details
+        val details = operationDescriptor.details
         if (details is ConfigureProjectBuildOperationType.Details) {
-            if (processedMessages.putIfAbsent(operationDescriptor.id.id, true) != null) {
-                log.debug("Skipping duplicate message with id ${operationDescriptor.id.id}")
+            val operationId = operationDescriptor.id?.id ?: return
+            if (processedMessages.putIfAbsent(operationId, true) != null) {
+                log.debug("Skipping duplicate message with id $operationId")
                 return
             }
 
             val buildMetrics: BuildMetrics<BuildTimeMetric, BuildPerformanceMetric> = BuildMetrics()
-            buildMetrics.buildTimes.addTimeMs(GRADLE_CONFIGURATION_TIME, ((event?.endTime ?: 0) - (event?.startTime ?: 0)))
+            buildMetrics.buildTimes.addTimeMs(GRADLE_CONFIGURATION_TIME, event.endTime - event.startTime)
             addConfigurationRecord(
                 getPath(details),
                 OperationFinishEvent::class.java,
-                event?.startTime ?: 0,
-                (event?.endTime ?: 0) - (event?.startTime ?: 0),
+                event.startTime,
+                event.endTime - event.startTime,
                 buildMetrics
             )
         }
     }
 
     override fun progress(
-        operationIdentifier: OperationIdentifier?,
-        operationProgressEvent: OperationProgressEvent?,
+        operationIdentifier: OperationIdentifier,
+        operationProgressEvent: OperationProgressEvent,
     ) {
         //ignore
     }
 
     override fun started(
-        operationDescriptor: BuildOperationDescriptor?,
-        operationStartEvent: OperationStartEvent?,
+        operationDescriptor: BuildOperationDescriptor,
+        operationStartEvent: OperationStartEvent,
     ) {
         //ignore
     }

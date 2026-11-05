@@ -42,7 +42,7 @@ import javax.inject.Inject
 
 internal suspend fun Project.cInteropCommonizationEnabled(): Boolean {
     KotlinPluginLifecycle.Stage.AfterEvaluateBuildscript.await()
-    return (kotlinPropertiesProvider.separateKmpCompilation.orNull ||
+    return (kotlinPropertiesProvider.separateKmpCompilation.getOrElse(false) ||
             kotlinPropertiesProvider.enableCInteropCommonization
             ?: kotlinPropertiesProvider.enableCInteropCommonizationSetByExternalPlugin
             ?: false)

@@ -9,7 +9,6 @@ import org.gradle.api.Project
 import org.gradle.api.flow.FlowAction
 import org.gradle.api.flow.FlowParameters
 import org.gradle.api.flow.FlowScope
-import org.gradle.api.logging.Logging
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -31,7 +30,7 @@ internal abstract class FusBuildFinishFlowManager @Inject constructor(
         flowScope.always(
             BuildFinishFlowAction::class.java
         ) {
-            it.parameters.configurationTimeMetrics.addAll(fusService.flatMap { it.getConfigurationReportedMetrics()})
+            it.parameters.configurationTimeMetrics.addAll(fusService.flatMap { it.getConfigurationReportedMetrics() })
         }
     }
 }
@@ -39,7 +38,7 @@ internal abstract class FusBuildFinishFlowManager @Inject constructor(
 class BuildFinishFlowAction : FlowAction<BuildFinishFlowAction.Parameters> {
     interface Parameters : FlowParameters {
         @get:ServiceReference
-        val customFusServiceProperty: Property<BuildFlowFusStatisticsBuildService?>
+        val customFusServiceProperty: Property<BuildFlowFusStatisticsBuildService>
 
         @get:Input
         val configurationTimeMetrics: ListProperty<Metric>
