@@ -22,7 +22,7 @@ class KotlinNativeToolParallelismLimitServiceTest {
     fun `registerKotlinNativeParallelismLimitService sets maxParallelUsages`() {
         val project = buildProject()
 
-        project.registerKotlinNativeParallelismLimitService(FirstTask::class.java, maxParallelUsages = 3)
+        project.gradle.registerKotlinNativeParallelismLimitService(FirstTask::class.java, maxParallelUsages = 3)
 
         assertEquals(3, project.maxParallelUsagesOf<FirstTask>())
     }
@@ -31,8 +31,8 @@ class KotlinNativeToolParallelismLimitServiceTest {
     fun `registerKotlinNativeParallelismLimitService reuses the same service instance for the same task type`() {
         val project = buildProject()
 
-        val first = project.registerKotlinNativeParallelismLimitService(FirstTask::class.java, maxParallelUsages = 2)
-        val second = project.registerKotlinNativeParallelismLimitService(FirstTask::class.java, maxParallelUsages = 2)
+        val first = project.gradle.registerKotlinNativeParallelismLimitService(FirstTask::class.java, maxParallelUsages = 2)
+        val second = project.gradle.registerKotlinNativeParallelismLimitService(FirstTask::class.java, maxParallelUsages = 2)
 
         assertSame(first.get(), second.get())
     }
@@ -41,8 +41,8 @@ class KotlinNativeToolParallelismLimitServiceTest {
     fun `registerKotlinNativeParallelismLimitService uses independent services for different task types`() {
         val project = buildProject()
 
-        project.registerKotlinNativeParallelismLimitService(FirstTask::class.java, maxParallelUsages = 2)
-        project.registerKotlinNativeParallelismLimitService(SecondTask::class.java, maxParallelUsages = 6)
+        project.gradle.registerKotlinNativeParallelismLimitService(FirstTask::class.java, maxParallelUsages = 2)
+        project.gradle.registerKotlinNativeParallelismLimitService(SecondTask::class.java, maxParallelUsages = 6)
 
         assertEquals(2, project.maxParallelUsagesOf<FirstTask>())
         assertEquals(6, project.maxParallelUsagesOf<SecondTask>())
