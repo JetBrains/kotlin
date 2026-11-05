@@ -6,7 +6,6 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
-@OptIn(org.jetbrains.kotlin.utils.IDEAPluginsCompatibilityAPI::class)
 fun copyCommonToolArguments(from: CommonToolArguments, to: CommonToolArguments): CommonToolArguments {
     to.allWarningsAsErrors = from.allWarningsAsErrors
     to.extraHelp = from.extraHelp

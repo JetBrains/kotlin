@@ -4,7 +4,6 @@
  */
 package org.jetbrains.kotlin.cli.common.arguments
 
-import com.intellij.util.xmlb.annotations.Transient
 import org.jetbrains.kotlin.config.LanguageFeature
 
 // This file was generated automatically. See generator in :compiler:cli:cli-arguments-generator
@@ -802,10 +801,6 @@ The default value is 'indy' if the JVM target version is 21 or greater, and 'inl
             checkFrozen()
             field = value
         }
-
-    @get:Transient
-    @field:kotlin.jvm.Transient
-    override val configurator: CommonCompilerArgumentsConfigurator = K2JVMCompilerArgumentsConfigurator()
 
     override fun copyOf(): Freezable = copyK2JVMCompilerArguments(this, K2JVMCompilerArguments())
 }

@@ -81,9 +81,6 @@ class CliDiagnosticTest {
     }
 
     private class CommonCompilerArgumentsStub : CommonCompilerArguments() {
-        override val configurator: CommonCompilerArgumentsConfigurator
-            get() = TODO("Not yet implemented")
-
         override fun copyOf(): Freezable {
             TODO("Not yet implemented")
         }

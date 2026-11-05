@@ -209,6 +209,7 @@ include(
     ":compiler:plugin-api",
     ":compiler:java-direct",
     ":compiler:cli:cli-arguments-generator",
+    ":compiler:cli-arguments",
     ":compiler:cli-base",
     ":compiler:cli",
     ":compiler:cli-jvm",
@@ -648,6 +649,7 @@ include(
     ":prepare:analysis-api:kotlin-analysis-api-standalone-surface",
     ":prepare:analysis-api:kotlin-analysis-api-standalone-implementation",
     ":prepare:analysis-api:kotlin-analysis-api-scripting-support",
+    ":prepare:analysis-api:kotlin-analysis-api-implementation-cli-options",
     ":prepare:analysis-api:kotlin-analysis-api-intellij-api-surface-components",
     ":prepare:analysis-api:kotlin-analysis-api-intellij-implementation-components",
     ":prepare:analysis-api:kotlin-analysis-api-internal-test-framework",
@@ -813,6 +815,7 @@ project(":kotlin-compiler-plugin-api").projectDir = File("$rootDir/prepare/compi
 project(":kotlin-klib-abi-reader").projectDir = File("$rootDir/libraries/tools/klib-abi-reader")
 project(":kotlin-preloader").projectDir = File("$rootDir/compiler/preloader")
 project(":kotlin-build-common").projectDir = File("$rootDir/build-common")
+project(":compiler:cli-arguments").projectDir = File("$rootDir/compiler/cli/cli-arguments")
 project(":compiler:cli-base").projectDir = File("$rootDir/compiler/cli/cli-base")
 project(":compiler:cli-jvm").projectDir = File("$rootDir/compiler/cli/cli-jvm")
 project(":compiler:cli-js").projectDir = File("$rootDir/compiler/cli/cli-js")

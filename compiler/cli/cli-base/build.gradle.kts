@@ -9,7 +9,7 @@ plugins {
 
 dependencies {
     api(project(":core:util.runtime"))
-    api(project(":compiler:arguments.common"))
+    api(project(":compiler:cli-arguments"))
     api(project(":core:language.targets.common"))
     api(project(":compiler:plugin-api"))
     implementation(project(":compiler:psi:parser"))
@@ -64,12 +64,6 @@ jvmToolchains {
     }
 }
 
-kotlin {
-    compilerOptions {
-        freeCompilerArgs.add("-Xannotation-target-all")
-    }
-}
-
 projectTests {
     testTask()
 }
@@ -90,24 +84,3 @@ tasks.jar.configure {
 }
 
 generatedConfigurationKeys("CLIConfigurationKeys")
-
-generatedSourcesTask(
-    taskName = "generateCliArguments",
-    generatorProject = ":compiler:cli:cli-arguments-generator",
-    generatorMainClass = "org.jetbrains.kotlin.cli.arguments.generator.MainKt",
-    argsProvider = { generationRoot ->
-        listOf(
-            generationRoot.toString(),
-            "commonToolArguments",
-            "commonCompilerArguments",
-            "jvmCompilerArguments",
-            "commonKlibBasedArguments",
-            "wasmArguments",
-            "jsArguments",
-            "nativeArguments",
-            "metadataArguments",
-            "commonJsAndWasmArguments",
-            "legacyWasmArguments",
-        )
-    }
-)

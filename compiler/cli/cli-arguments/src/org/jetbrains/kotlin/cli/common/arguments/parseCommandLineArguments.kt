@@ -16,9 +16,6 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
-import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
-import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
 import java.lang.reflect.Constructor
 import java.lang.reflect.Method
@@ -106,6 +103,19 @@ val Argument.isAlreadyRemoved: Boolean
         it != null && parseKotlinVersion(removedVersion) <= KotlinVersion.CURRENT
     }
 
+/**
+ * It's a helper function to parse version strings strictly from a `KotlinReleaseVersion.releaseName` value.
+ * Since those values are always correct version strings, the function should never fail.
+ */
+private fun parseKotlinVersion(kotlinReleaseVersion: String): KotlinVersion {
+    val components = kotlinReleaseVersion.split('.')
+    return KotlinVersion(
+        major = components[0].toInt(),
+        minor = components[1].toInt(),
+        patch = components[2].toInt(),
+    )
+}
+
 private const val ADVANCED_ARGUMENT_PREFIX = "-X"
 internal const val INTERNAL_ARGUMENT_PREFIX = "-XX"
 private const val FREE_ARGS_DELIMITER = "--"
@@ -126,14 +136,6 @@ fun <T : CommonToolArguments> parseCommandLineArguments(clazz: KClass<T>, args: 
 fun <A : CommonToolArguments> parseCommandLineArguments(args: List<String>, result: A, overrideArguments: Boolean = false) {
     val preprocessed = preprocessCommandLineArguments(args, result.diagnostics)
     parsePreprocessedCommandLineArguments(preprocessed, result, overrideArguments)
-}
-
-fun <A : CommonToolArguments> parseCommandLineArgumentsFromEnvironment(arguments: A) {
-    val settingsFromEnvironment = CompilerSystemProperties.LANGUAGE_VERSION_SETTINGS.value?.takeIf { it.isNotEmpty() }
-        ?.split(Regex("""\s"""))
-        ?.filterNot { it.isBlank() }
-        ?: return
-    parseCommandLineArguments(settingsFromEnvironment, arguments, overrideArguments = true)
 }
 
 private val argumentsCache = ConcurrentHashMap<Class<*>, ArgumentsInfo>()
@@ -219,8 +221,8 @@ private fun extractArgumentsInfo(klass: Class<*>): ArgumentsInfo = ArgumentsInfo
             val argument = field.getAnnotation(Argument::class.java) ?: continue
             val enablesAnnotations = field.getAnnotationsByType(Enables::class.java).toList()
             val disablesAnnotations = field.getAnnotationsByType(Disables::class.java).toList()
-            val getter = klass.getMethod(JvmAbi.getterName(field.name))
-            val setter = klass.getMethod(JvmAbi.setterName(field.name), field.type)
+            val getter = klass.getMethod(getterName(field.name))
+            val setter = klass.getMethod(setterName(field.name), field.type)
             val deprecatedAnnotation =
                 getter.getAnnotation(Deprecated::class.java) // Check the getter because `@Deprecated` doesn't have `FIELD` target
             val argumentField =
@@ -236,6 +238,15 @@ private fun extractArgumentsInfo(klass: Class<*>): ArgumentsInfo = ArgumentsInfo
     },
     defaultArgsConstructor = klass.constructors.find { it.parameters.isEmpty() },
 )
+
+// The accessor names follow 'JvmAbi.getterName' and 'JvmAbi.setterName', which this module cannot depend on
+private fun getterName(propertyName: String): String =
+    if (startsWithIsPrefix(propertyName)) propertyName else "get" + propertyName.replaceFirstChar(Char::uppercaseChar)
+
+private fun setterName(propertyName: String): String =
+    "set" + if (startsWithIsPrefix(propertyName)) propertyName.removePrefix("is") else propertyName.replaceFirstChar(Char::uppercaseChar)
+
+private fun startsWithIsPrefix(name: String): Boolean = name.length > 2 && name.startsWith("is") && name[2] !in 'a'..'z'
 
 private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
     args: List<String>,
@@ -415,7 +426,7 @@ private fun convertArrayOfStrings(
     }
 
     val oldValue: MutableList<String>? = if (!overrideArguments) {
-        existingValues.firstIsInstanceOrNull<MutableList<String>>()
+        existingValues.filterIsInstance<MutableList<String>>().firstOrNull()
     } else {
         null
     }

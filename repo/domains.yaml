@@ -10,6 +10,7 @@ CompilerInfrastructure:
     - "compiler/cli/bin"
     - "compiler/arguments.common"
     - "compiler/cli/cli-arguments-generator"
+    - "compiler/cli/cli-arguments"
     - "compiler/cli/cli-base"
     - "compiler/cli/cli-js"
     - "compiler/cli/cli-jvm"

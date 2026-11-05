@@ -13,6 +13,7 @@ val analysisApiSyntaxImplementationModules: Array<String> = CompilerModules.anal
 val analysisApiPlatformInterfaceModules: Array<String> = CompilerModules.analysisApiPlatformInterfaceModules
 val analysisApiStandaloneModules: Array<String> = CompilerModules.analysisApiStandaloneModules
 val analysisApiScriptingSupportModules: Array<String> = CompilerModules.analysisApiScriptingSupportModules
+val analysisApiImplementationCliOptionsModules: Array<String> = CompilerModules.analysisApiImplementationCliOptionsModules
 val analysisApiModules: Array<String> = CompilerModules.analysisApiModules
 
 val additionalCompilerProjects = listOf(
@@ -58,6 +59,7 @@ val excludedCompilerProjects = listOf(
 dependencies {
     api(project(":prepare:analysis-api:kotlin-analysis-api-surface"))
     api(project(":prepare:analysis-api:kotlin-analysis-api-platform-interface"))
+    api(project(":prepare:analysis-api:kotlin-analysis-api-implementation-cli-options"))
 
     implementation(project(":prepare:analysis-api:kotlin-analysis-api-intellij-implementation-components"))
     implementation(project(":prepare:analysis-api:kotlin-analysis-api-syntax-implementation"))
@@ -99,6 +101,9 @@ analysisApiArtifact {
 
             // Scripting support is shipped by the dedicated artifact
             removeAll(analysisApiScriptingSupportModules)
+
+            // The compiler arguments are shipped by the dedicated artifact
+            removeAll(analysisApiImplementationCliOptionsModules)
 
             // Avoid copying content of 'kotlin-analysis-api-fir-diagnostics'
             remove(":analysis:analysis-api-fir-diagnostics")

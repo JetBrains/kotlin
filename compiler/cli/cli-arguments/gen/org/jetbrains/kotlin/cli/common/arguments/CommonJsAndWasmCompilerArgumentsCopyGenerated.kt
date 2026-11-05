@@ -6,7 +6,6 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
-@OptIn(org.jetbrains.kotlin.utils.IDEAPluginsCompatibilityAPI::class)
 fun copyCommonJsAndWasmCompilerArguments(from: CommonJsAndWasmCompilerArguments, to: CommonJsAndWasmCompilerArguments): CommonJsAndWasmCompilerArguments {
     copyCommonKlibBasedCompilerArguments(from, to)
 

@@ -1130,15 +1130,8 @@ progressive mode enabled may cause compilation errors in progressive mode.""",
             field = value
         }
 
-    @get:Transient
-    abstract val configurator: CommonCompilerArgumentsConfigurator
-
     // Used only for serialize and deserialize settings. Don't use in other places!
     class DummyImpl : CommonCompilerArguments() {
         override fun copyOf(): Freezable = copyCommonCompilerArguments(this, DummyImpl())
-
-        @get:Transient
-        @field:kotlin.jvm.Transient
-        override val configurator: CommonCompilerArgumentsConfigurator = CommonCompilerArgumentsConfigurator()
     }
 }

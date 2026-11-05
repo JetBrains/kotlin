@@ -63,7 +63,6 @@ class ArgumentsInfo(
     val levelName: String,
     val className: String,
     val classPackage: String = "org.jetbrains.kotlin.cli.common.arguments.",
-    val configuratorName: String? = "${className}Configurator",
     val levelIsFinal: Boolean,
     val originFileName: String = className,
     val additionalSyntheticArguments: List<String> = emptyList(),
@@ -85,7 +84,6 @@ val levelToClassNameMap = listOf(
     ArgumentsInfo(
         levelName = CompilerArgumentsLevelNames.commonToolArguments,
         className = "CommonToolArguments",
-        configuratorName = null,
         levelIsFinal = false,
         additionalGenerator = SmartPrinter::generateFreeArgsAndErrors,
     ),
@@ -237,7 +235,6 @@ private fun SmartPrinter.generateArgumentsClass(
             println()
         }
         if (!generateAlreadyRemovedArguments) {
-            generateConfigurator(info)
             generateCopyOf(info)
         }
         info.additionalGenerator.invoke(this)
@@ -247,8 +244,7 @@ private fun SmartPrinter.generateArgumentsClass(
 
 private fun KotlinCompilerArgumentsLevel.collectImports(info: ArgumentsInfo): List<String> {
     val rawImports = buildSet {
-        add("org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArgumentsConfigurator")
-        if ((info.levelIsFinal || info.isCommonCompilerArgs) && info.levelName != removedCompilerArgumentsSpecialLevelName) {
+        if (info.isCommonCompilerArgs) {
             add("com.intellij.util.xmlb.annotations.Transient")
         }
         if (info.isCommonToolsArgs) {
@@ -571,26 +567,6 @@ private fun SmartPrinter.generateSetter(type: String, argument: KotlinCompilerAr
     }
 }
 
-private fun SmartPrinter.generateConfigurator(info: ArgumentsInfo) {
-    if (info.isCommonToolsArgs || !(info.isCommonCompilerArgs || info.levelIsFinal)) return
-    println("@get:Transient")
-    if (info.levelIsFinal) {
-        println("@field:kotlin.jvm.Transient")
-    }
-    if (info.isCommonCompilerArgs) {
-        print("abstract ")
-    } else {
-        print("override ")
-    }
-    print("val configurator: CommonCompilerArgumentsConfigurator")
-    if (info.levelIsFinal) {
-        println(" = ${info.configuratorName}()")
-    } else {
-        println()
-    }
-    println()
-}
-
 private fun SmartPrinter.generateCopyOf(info: ArgumentsInfo) {
     if (!info.levelIsFinal) return
     val className = info.className
@@ -602,10 +578,6 @@ private fun SmartPrinter.generateDummyImpl() {
     println("class DummyImpl : CommonCompilerArguments() {")
     withIndent {
         println("override fun copyOf(): Freezable = copyCommonCompilerArguments(this, DummyImpl())")
-        println()
-        println("@get:Transient")
-        println("@field:kotlin.jvm.Transient")
-        println("override val configurator: CommonCompilerArgumentsConfigurator = CommonCompilerArgumentsConfigurator()")
     }
     println("}")
 }

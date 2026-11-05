@@ -4,8 +4,6 @@
  */
 package org.jetbrains.kotlin.cli.common.arguments
 
-import com.intellij.util.xmlb.annotations.Transient
-
 // This file was generated automatically. See generator in :compiler:cli:cli-arguments-generator
 // Please declare arguments in compiler/arguments/src/org/jetbrains/kotlin/arguments/description/KotlinWasmCompilerArguments.kt
 // DO NOT MODIFY IT MANUALLY.
@@ -245,10 +243,6 @@ class KotlinWasmCompilerArguments : CommonJsAndWasmCompilerArguments() {
             checkFrozen()
             field = value
         }
-
-    @get:Transient
-    @field:kotlin.jvm.Transient
-    override val configurator: CommonCompilerArgumentsConfigurator = KotlinWasmCompilerArgumentsConfigurator()
 
     override fun copyOf(): Freezable = copyKotlinWasmCompilerArguments(this, KotlinWasmCompilerArguments())
 }
