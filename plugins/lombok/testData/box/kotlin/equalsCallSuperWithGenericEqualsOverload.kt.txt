@@ -1,0 +1,78 @@
+open class Base {
+  val baseProp: Int
+    field = baseProp
+    get
+
+  constructor(baseProp: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun <T : CharSequence> equals(other: T): Boolean {
+    return false
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    return when {
+      other is Base -> EQEQ(arg0 = other /*as Base */.<get-baseProp>(), arg1 = <this>.<get-baseProp>())
+      else -> false
+    }
+  }
+
+  override fun hashCode(): Int {
+    return <this>.<get-baseProp>()
+  }
+
+}
+
+@EqualsAndHashCode(callSuper = true)
+class Derived : Base {
+  val ownProp: String
+    field = ownProp
+    get
+
+  constructor(ownProp: String, baseProp: Int) /* primary */ {
+    super/*Base*/(baseProp = baseProp)
+    /* <init>() */
+
+  }
+
+  protected open fun canEqual(other: Any?): Boolean {
+    return other is Derived
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is Derived -> return false
+    }
+    val tmp_0: Derived = other /*as Derived */
+    when {
+      tmp_0.canEqual(other = <this>).not() -> return false
+    }
+    when {
+      super<Base>.equals(other = other).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.<get-ownProp>(), arg1 = tmp_0.<get-ownProp>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_1: Int = super<Base>.hashCode()
+    tmp_1 = tmp_1.times(other = 59).plus(other = <this>.<get-ownProp>().hashCode())
+    return tmp_1
+  }
+
+}
+
+fun box(): String {
+  val derived: Derived = Derived(ownProp = "same", baseProp = 1)
+  assertEquals<Derived>(expected = Derived(ownProp = "same", baseProp = 1), actual = derived, message = "chained equals rejects an equal instance")
+  assertNotEquals<Derived>(illegal = Derived(ownProp = "same", baseProp = 2), actual = derived, message = "equals did not chain to Base")
+  return "OK"
+}
