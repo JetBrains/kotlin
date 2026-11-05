@@ -140,7 +140,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun richDtsEmitDiagnostics(gradleVersion: GradleVersion) {
         project("kotlin2JsIrDtsGeneration", gradleVersion) {
-            gradleProperties.appendText("\nkotlin.js.generateRichTypeScriptDeclarations=false\n")
+            gradleProperties.appendText("\nkotlin.js.generateRichTypeScriptDeclarations=true\n")
             buildScriptInjection {
                 kotlinMultiplatform.js {
                     compilerOptions {
