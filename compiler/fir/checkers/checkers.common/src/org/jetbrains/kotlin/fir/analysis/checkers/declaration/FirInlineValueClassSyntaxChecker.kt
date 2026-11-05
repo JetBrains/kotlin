@@ -55,8 +55,12 @@ object FirInlineValueClassSyntaxChecker : FirRegularClassChecker(Common) {
 
         when {
             annotation != null && hasValueModifier -> when {
-                // Value objects are full value classes rather than inline single-field classes.
-                declaration.classKind == OBJECT && LanguageFeature.FullValueClasses.isEnabled() ->
+                // This is a case that is not covered by `WRONG_MODIFIER_TARGET` and so we need a separate diagnostic for it:
+                //   - `inline value object` is WRONG_MODIFIER_TARGET on `inline`
+                //   - `@JvmInline value interface` is wrong modifier target on `value`
+                //   - `@JvmInline object`: see below (JVM_INLINE_WITHOUT_VALUE_CLASS)
+                //   - `@JvmInline value object` is neither (value object is allowed with FVC)
+                declaration.classKind == OBJECT && LanguageFeature.FullValueClasses.isEnabled() && !hasInlineModifier ->
                     reporter.reportOn(annotation.source, FirErrors.JVM_INLINE_ON_VALUE_OBJECT)
                 hasInlineModifier && LanguageFeature.ExplicitInlineValueClassesSyntax.isEnabled() ->
                     reporter.reportOn(annotation.source, FirErrors.REDUNDANT_JVM_INLINE)
