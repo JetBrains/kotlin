@@ -201,8 +201,8 @@ internal object EscapeAnalysis {
                 for (i in path.indices) {
                     if (i >= other.path.size)
                         return 1
-                    if (path[i].index != other.path[i].index)
-                        return path[i].index.compareTo(other.path[i].index)
+                    if (path[i].hash != other.path[i].hash)
+                        return path[i].hash.compareTo(other.path[i].hash)
                 }
                 if (path.size < other.path.size) return -1
                 return 0
@@ -225,7 +225,7 @@ internal object EscapeAnalysis {
                 append(root ?: kind.toString())
                 path.forEach {
                     append('.')
-                    append(it.name ?: "<no_name@${it.index}>")
+                    append(it.name ?: "<no_name@${it.hash}>")
                 }
             }
 

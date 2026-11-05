@@ -192,8 +192,8 @@ internal object DataFlowIR {
         }
     }
 
-    class Field(val type: Type, val index: Int, val name: String? = null) {
-        override fun toString() = "Field(type=$type, index=$index, name=$name)"
+    class Field(val type: Type, val hash: Long, val name: String? = null) {
+        override fun toString() = "Field(type=$type, hash=$hash, name=$name)"
     }
 
     class Edge(val castToType: Type?) {
@@ -512,7 +512,7 @@ internal object DataFlowIR {
             val name = field.name.asString()
             Field(
                     mapType(field.type),
-                    1 + fieldMap.size,
+                    localHash("${field.fqNameForIrSerialization}.$name".toByteArray()),
                     takeName { name }
             )
         }
