@@ -5,8 +5,13 @@
 
 package org.jetbrains.kotlin.backend.konan.optimizations
 
+import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.konan.PrimitiveBinaryType
+import org.jetbrains.kotlin.backend.konan.ir.annotations.Escapes
+import org.jetbrains.kotlin.backend.konan.ir.annotations.PointsTo
+import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
+import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.backend.konan.serialization.ByteArrayStream
 import kotlin.enums.enumEntries
 
@@ -905,7 +910,378 @@ internal object DFGSerializer {
         return writer.toByteArray()
     }
 
-    fun deserialize(context: NativeBackendContext, symbolTable: DataFlowIR.SymbolTable): MutableMap<DataFlowIR.FunctionSymbol, DataFlowIR.Function> {
-        return mutableMapOf()
+    /**
+     * Deserializes the DFGs of all the cached libraries into [symbolTable], publishing the public
+     * types into [DataFlowIR.SymbolTable.externalPublicTypes], public functions into
+     * [DataFlowIR.SymbolTable.externalPublicFunctions], and returns the deserialized function DFGs.
+     */
+    fun deserialize(
+            context: NativeBackendContext,
+            symbolTable: DataFlowIR.SymbolTable,
+    ): MutableMap<DataFlowIR.FunctionSymbol, DataFlowIR.Function> {
+        val publicTypesMap = symbolTable.externalPublicTypes
+        val allTypes = mutableListOf<DataFlowIR.Type>()
+        val publicFunctionsMap = symbolTable.externalPublicFunctions
+        val functions = mutableMapOf<DataFlowIR.FunctionSymbol, DataFlowIR.Function>()
+        // Relies on irModules being in reverse topo-order (see KT-61096): external references in a library's DFG
+        // can only be resolved if all its dependencies have already been deserialized and have published their symbols.
+        val libraries = context.irModules.map { it.kotlinLibrary!! }
+        libraries.forEach { library ->
+            // A cinterop library's cache carries no DFG by design - its declarations are mapped
+            // locally by every module referencing them (see TopLevelPhases.runCodegen).
+            if (library.isCInteropLibrary()) return@forEach
+            val cache = context.config.cachedLibraries.getLibraryCache(library)
+            val libraryDataFlowGraph = cache?.serializedDataFlowGraph
+
+            // For a Kotlin library a missing DFG means the cache was built by an older compiler
+            // or without optimizations - the whole-world analyses cannot soundly proceed without
+            // the library's part of the graph.
+            if (cache != null && libraryDataFlowGraph == null) {
+                error("The cache for '${library.uniqueName}' at ${cache.rootDirectory} carries no serialized data flow graph. " +
+                        "It was likely built by an older compiler or without optimizations enabled - delete it to force a rebuild.")
+            }
+
+            DEBUG_OUTPUT(0) {
+                println("Data flow graph size for lib '${library.uniqueName}': ${libraryDataFlowGraph?.size ?: 0}")
+            }
+
+            if (libraryDataFlowGraph != null) {
+                val module = DataFlowIR.Module()
+                val reader = ByteArrayStream(libraryDataFlowGraph)
+                val moduleDataFlowGraph = Module(reader)
+
+                val moduleSymbolTable = moduleDataFlowGraph.symbolTable
+                val types = moduleSymbolTable.types.map { serializedType ->
+                    val primitiveBinaryType = serializedType.primitiveBinaryType
+                    val external = serializedType.external
+                    val public = serializedType.public
+                    val private = serializedType.private
+                    when {
+                        serializedType.virtual -> DataFlowIR.Type.Virtual
+                        primitiveBinaryType != null -> symbolTable.primitiveTypes[primitiveBinaryType.ordinal]
+                        external != null ->
+                            publicTypesMap[external.hash] ?: error("External type ${external.base.name} : ${external.hash} is not found")
+                        public != null -> {
+                            DataFlowIR.Type.Public(public.hash, symbolTable.typeIndex++, public.intestines.base.isFinal,
+                                    public.intestines.base.isAbstract, public.intestines.base.hasFinalizer, module, null, public.intestines.base.name).also {
+                                val prevType = publicTypesMap[it.hash]
+                                if (prevType != null)
+                                    error("Exported types name clash ${it.hash}: ${prevType.name} and ${it.name}")
+                                publicTypesMap[it.hash] = it
+                                allTypes += it
+                                symbolTable.typesList += it
+                            }
+                        }
+                        else -> {
+                            DataFlowIR.Type.Private(symbolTable.typeIndex++, private!!.intestines.base.isFinal,
+                                    private.intestines.base.isAbstract, private.intestines.base.hasFinalizer,
+                                    module, null, private.intestines.base.name).also {
+                                allTypes += it
+                                symbolTable.typesList += it
+                            }
+                        }
+                    }
+                }
+
+                val functionSymbols = moduleSymbolTable.functionSymbols.map { serializedSymbol ->
+                    val attributes = serializedSymbol.base.attributes
+                    val external = serializedSymbol.external
+                    val public = serializedSymbol.public
+                    val private = serializedSymbol.private
+                    when {
+                        external != null -> when {
+                            external.isNative -> {
+                                DataFlowIR.FunctionSymbol.External(
+                                        external.hash, attributes, null, external.name,
+                                        external.isExported,
+                                        external.escapes?.let { Escapes(it) },
+                                        external.pointsTo?.let { PointsTo(it) }
+                                ).also {
+                                    symbolTable.functionsList += it
+                                }
+                            }
+                            else -> {
+                                publicFunctionsMap[external.hash] ?: error("External function ${external.name} : ${external.hash} is not found")
+                            }
+                        }
+                        public != null -> {
+                            DataFlowIR.FunctionSymbol.Public(public.hash,
+                                    module, attributes, null, null, public.name).also {
+                                val prevSymbol = publicFunctionsMap[it.hash]
+                                if (prevSymbol != null)
+                                    error("Exported functions name clash ${it.hash}: ${prevSymbol.name} and ${it.name}")
+                                publicFunctionsMap[it.hash] = it
+                                symbolTable.functionsList += it
+                            }
+                        }
+                        else -> {
+                            DataFlowIR.FunctionSymbol.Private(symbolTable.privateFunIndex++,
+                                    module, attributes, null, null, private!!.name).also {
+                                symbolTable.functionsList += it
+                            }
+                        }
+                    }
+                }
+
+                DEBUG_OUTPUT(0) {
+                    println("Lib: ${library.uniqueName}, types: ${types.size}, functions: ${functionSymbols.size}")
+                }
+
+                moduleSymbolTable.types.forEachIndexed { index, type ->
+                    val intestines = type.public?.intestines ?: type.private?.intestines ?: return@forEachIndexed
+                    val deserializedType = types[index]
+                    deserializedType.superTypes += intestines.superTypes.map { types[it] }
+                    deserializedType.vtable += intestines.vtable.map { functionSymbols[it] }
+                    intestines.itable.forEach { itableSlot ->
+                        deserializedType.itable[itableSlot.interfaceId] = itableSlot.vtable.map { functionSymbols[it] }
+                    }
+                }
+
+                moduleSymbolTable.functionSymbols.forEachIndexed { index, symbol ->
+                    // A reference to another module's Kotlin function resolves to the symbol published
+                    // by its defining module - its parameters and bridge target are already set.
+                    if (symbol.external?.isNative == false) return@forEachIndexed
+                    val deserializedSymbol = functionSymbols[index]
+                    deserializedSymbol.parameters = symbol.base.parameters.map { DataFlowIR.FunctionParameter(types[it.type]) }.toTypedArray()
+                    deserializedSymbol.returnParameter = DataFlowIR.FunctionParameter(types[symbol.base.returnParameter.type])
+                    deserializedSymbol as? DataFlowIR.FunctionSymbol.Declared ?: return@forEachIndexed
+                    val bridgeTarget = if (deserializedSymbol is DataFlowIR.FunctionSymbol.Public)
+                        symbol.public!!.bridgeTarget
+                    else
+                        symbol.private!!.bridgeTarget
+                    deserializedSymbol.bridgeTarget = bridgeTarget?.let { functionSymbols[it] }
+                }
+
+                fun deserializeEdge(edge: Edge) =
+                        DataFlowIR.Edge(edge.castToType?.let { types[it] })
+
+                fun deserializeCall(call: Call) =
+                        DataFlowIR.Node.Call(
+                                functionSymbols[call.callee],
+                                call.arguments.map { deserializeEdge(it) },
+                                types[call.returnType],
+                                irCallSite = null
+                        )
+
+                fun deserializeField(field: Field) = DataFlowIR.Field(types[field.type], field.hash, field.name)
+
+                fun deserializeBody(body: FunctionBody): DataFlowIR.FunctionBody {
+                    val nodes = body.nodes.map { node ->
+                        when (node.type) {
+                            NodeType.PARAMETER -> {
+                                DataFlowIR.Node.Parameter(node.parameter!!.index)
+                            }
+                            NodeType.CONST -> {
+                                DataFlowIR.Node.Const(types[node.const!!.type])
+                            }
+                            NodeType.NULL -> {
+                                DataFlowIR.Node.Null
+                            }
+                            NodeType.STATIC_CALL -> {
+                                val staticCall = node.staticCall!!
+                                val call = deserializeCall(staticCall.call)
+                                DataFlowIR.Node.StaticCall(call.callee, call.arguments, call.returnType, irCallSite = null)
+                            }
+                            NodeType.VTABLE_CALL -> {
+                                val vtableCall = node.vtableCall!!
+                                val call = deserializeCall(vtableCall.virtualCall.call)
+                                DataFlowIR.Node.VtableCall(
+                                        call.callee,
+                                        types[vtableCall.virtualCall.receiverType],
+                                        vtableCall.calleeVtableIndex,
+                                        call.arguments,
+                                        types[vtableCall.virtualCall.call.returnType],
+                                        irCallSite = null,
+                                )
+                            }
+                            NodeType.ITABLE_CALL -> {
+                                val itableCall = node.itableCall!!
+                                val call = deserializeCall(itableCall.virtualCall.call)
+                                DataFlowIR.Node.ItableCall(
+                                        call.callee,
+                                        types[itableCall.virtualCall.receiverType],
+                                        itableCall.interfaceId,
+                                        itableCall.calleeVtableIndex,
+                                        call.arguments,
+                                        types[itableCall.virtualCall.call.returnType],
+                                        irCallSite = null,
+                                )
+                            }
+                            NodeType.SINGLETON -> {
+                                val singleton = node.singleton!!
+                                DataFlowIR.Node.Singleton(
+                                        types[singleton.type],
+                                        singleton.constructor?.let { functionSymbols[it] },
+                                        singleton.arguments?.map { deserializeEdge(it) },
+                                )
+                            }
+                            NodeType.ALLOC_INSTANCE -> {
+                                DataFlowIR.Node.AllocInstance(types[node.allocInstance!!.type], irCallSite = null)
+                            }
+                            NodeType.ALLOC_ARRAY -> {
+                                val allocArray = node.allocArray!!
+                                DataFlowIR.Node.AllocArray(types[allocArray.type], deserializeEdge(allocArray.size), irCallSite = null)
+                            }
+                            NodeType.FUNCTION_REFERENCE -> {
+                                val functionReference = node.functionReference!!
+                                DataFlowIR.Node.FunctionReference(
+                                        functionSymbols[functionReference.symbol],
+                                        types[functionReference.type],
+                                        types[functionReference.returnType],
+                                )
+                            }
+                            NodeType.FIELD_READ -> {
+                                val fieldRead = node.fieldRead!!
+                                val receiver = fieldRead.receiver?.let { deserializeEdge(it) }
+                                DataFlowIR.Node.FieldRead(
+                                        receiver,
+                                        deserializeField(fieldRead.field),
+                                        types[fieldRead.type],
+                                        ir = null,
+                                )
+                            }
+                            NodeType.FIELD_WRITE -> {
+                                val fieldWrite = node.fieldWrite!!
+                                val receiver = fieldWrite.receiver?.let { deserializeEdge(it) }
+                                DataFlowIR.Node.FieldWrite(
+                                        receiver,
+                                        deserializeField(fieldWrite.field),
+                                        deserializeEdge(fieldWrite.value),
+                                )
+                            }
+                            NodeType.ARRAY_READ -> {
+                                val arrayRead = node.arrayRead!!
+                                DataFlowIR.Node.ArrayRead(
+                                        functionSymbols[arrayRead.callee],
+                                        deserializeEdge(arrayRead.array),
+                                        deserializeEdge(arrayRead.index),
+                                        types[arrayRead.type],
+                                        irCallSite = null,
+                                )
+                            }
+                            NodeType.ARRAY_WRITE -> {
+                                val arrayWrite = node.arrayWrite!!
+                                DataFlowIR.Node.ArrayWrite(
+                                        functionSymbols[arrayWrite.callee],
+                                        deserializeEdge(arrayWrite.array),
+                                        deserializeEdge(arrayWrite.index),
+                                        deserializeEdge(arrayWrite.value),
+                                        types[arrayWrite.type],
+                                )
+                            }
+                            NodeType.VARIABLE -> {
+                                val variable = node.variable!!
+                                DataFlowIR.Node.Variable(variable.values.map { deserializeEdge(it) },
+                                        types[variable.type], enumEntries<DataFlowIR.VariableKind>()[variable.kind.toInt()])
+                            }
+                            NodeType.SAVE_COROUTINE_STATE -> {
+                                DataFlowIR.Node.SaveCoroutineState(emptyList())
+                            }
+                            NodeType.SCOPE -> {
+                                val scope = node.scope!!
+                                DataFlowIR.Node.Scope(scope.depth, emptyList())
+                            }
+                            NodeType.UNKNOWN -> error("Unknown node: $node")
+                        }
+                    }
+
+                    lateinit var rootScope: DataFlowIR.Node.Scope
+                    val allScopes = mutableListOf<DataFlowIR.Node.Scope>()
+                    body.nodes.forEachIndexed { index, node ->
+                        val deserializedNode = nodes[index]
+                        when (node.type) {
+                            NodeType.STATIC_CALL ->
+                                node.staticCall!!.call.arguments.forEachIndexed { i, arg ->
+                                    (deserializedNode as DataFlowIR.Node.StaticCall).arguments[i].node = nodes[arg.node]
+                                }
+                            NodeType.VTABLE_CALL ->
+                                node.vtableCall!!.virtualCall.call.arguments.forEachIndexed { i, arg ->
+                                    (deserializedNode as DataFlowIR.Node.VtableCall).arguments[i].node = nodes[arg.node]
+                                }
+                            NodeType.ITABLE_CALL ->
+                                node.itableCall!!.virtualCall.call.arguments.forEachIndexed { i, arg ->
+                                    (deserializedNode as DataFlowIR.Node.ItableCall).arguments[i].node = nodes[arg.node]
+                                }
+                            NodeType.SINGLETON -> (deserializedNode as DataFlowIR.Node.Singleton).arguments?.let { arguments ->
+                                node.singleton!!.arguments!!.forEachIndexed { i, arg ->
+                                    arguments[i].node = nodes[arg.node]
+                                }
+                            }
+                            NodeType.ALLOC_ARRAY -> {
+                                (deserializedNode as DataFlowIR.Node.AllocArray).size.node = nodes[node.allocArray!!.size.node]
+                            }
+                            NodeType.FIELD_READ ->
+                                node.fieldRead!!.receiver?.let {
+                                    (deserializedNode as DataFlowIR.Node.FieldRead).receiver!!.node = nodes[it.node]
+                                }
+                            NodeType.FIELD_WRITE -> {
+                                val deserializedFieldWrite = deserializedNode as DataFlowIR.Node.FieldWrite
+                                val fieldWrite = node.fieldWrite!!
+                                fieldWrite.receiver?.let { deserializedFieldWrite.receiver!!.node = nodes[it.node] }
+                                deserializedFieldWrite.value.node = nodes[fieldWrite.value.node]
+                            }
+                            NodeType.ARRAY_READ -> {
+                                val deserializedArrayRead = deserializedNode as DataFlowIR.Node.ArrayRead
+                                val arrayRead = node.arrayRead!!
+                                deserializedArrayRead.array.node = nodes[arrayRead.array.node]
+                                deserializedArrayRead.index.node = nodes[arrayRead.index.node]
+                            }
+                            NodeType.ARRAY_WRITE -> {
+                                val deserializedArrayWrite = deserializedNode as DataFlowIR.Node.ArrayWrite
+                                val arrayWrite = node.arrayWrite!!
+                                deserializedArrayWrite.array.node = nodes[arrayWrite.array.node]
+                                deserializedArrayWrite.index.node = nodes[arrayWrite.index.node]
+                                deserializedArrayWrite.value.node = nodes[arrayWrite.value.node]
+                            }
+                            NodeType.VARIABLE ->
+                                node.variable!!.values.forEachIndexed { i, value ->
+                                    (deserializedNode as DataFlowIR.Node.Variable).values[i].node = nodes[value.node]
+                                }
+                            NodeType.SAVE_COROUTINE_STATE ->
+                                node.saveCoroutineState!!.liveVariables.mapTo((deserializedNode as DataFlowIR.Node.SaveCoroutineState).liveVariables) {
+                                    nodes[it] as DataFlowIR.Node.Variable
+                                }
+                            NodeType.SCOPE -> {
+                                val scope = deserializedNode as DataFlowIR.Node.Scope
+                                node.scope!!.nodes.mapTo(scope.nodes) { nodes[it] }
+                                if (scope.depth == 0)
+                                    rootScope = scope
+                                allScopes += scope
+                            }
+                            else -> {}
+                        }
+                    }
+
+                    return DataFlowIR.FunctionBody(rootScope, allScopes, nodes[body.returns] as DataFlowIR.Node.Variable, nodes[body.throws] as DataFlowIR.Node.Variable)
+                }
+
+                moduleDataFlowGraph.functions.forEach {
+                    val symbol = functionSymbols[it.symbol]
+                    val function = DataFlowIR.Function(
+                            symbol = symbol,
+                            body = deserializeBody(it.body)
+                    )
+                    functions[symbol] = function
+                }
+            }
+        }
+
+        DEBUG_OUTPUT(1) {
+            allTypes.forEach {
+                println(it)
+                println("    SUPER TYPES:")
+                it.superTypes.forEach { println("        $it") }
+                println("    VTABLE:")
+                it.vtable.forEach { println("        $it") }
+                println("    ITABLE:")
+                it.itable.forEach { t, u -> println("        $t: $u") }
+            }
+
+            functions.forEach {
+                println(it.key)
+            }
+        }
+
+        return functions
     }
 }

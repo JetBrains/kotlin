@@ -566,7 +566,7 @@ private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragme
             ),
             module,
     )
-    val symbolTable = DataFlowIR.SymbolTable(context.context, DataFlowIR.Module())
+    val symbolTable = DataFlowIR.SymbolTable(context.context, context.llvmModuleSpecification, DataFlowIR.Module())
     val externalFunctionDFGs = runAndMeasurePhase(DeserializeDFGPhase, symbolTable, disable = !runGlobalOptimizations)
     val moduleDFG = runAndMeasurePhase(BuildDFGPhase, BuildDFGInput(module, symbolTable, externalFunctionDFGs), disable = !runGlobalOptimizations)
     runAndMeasurePhase(SerializeDFGPhase, moduleDFG, disable = !runGlobalOptimizations)

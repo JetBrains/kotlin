@@ -65,6 +65,7 @@ class CachedLibraries(
         val serializedEagerInitializedFiles by lazy { computeSerializedEagerInitializedFiles() }
         val serializedTrivialGetters by lazy { computeSerializedTrivialGetters() }
         val serializedObjCAdapters by lazy { computeSerializedObjCAdapters() }
+        val serializedDataFlowGraph by lazy { readDataFlowGraph() }
 
         protected abstract fun computeBitcodeDependencies(): List<DependenciesTracker.UnresolvedDependency>
         protected abstract fun computeBinariesPaths(): List<String>
@@ -73,6 +74,7 @@ class CachedLibraries(
         protected abstract fun computeSerializedEagerInitializedFiles(): List<SerializedEagerInitializedFile>
         protected abstract fun computeSerializedTrivialGetters(): List<SerializedTrivialGetter>
         protected abstract fun computeSerializedObjCAdapters(): List<SerializedObjCAdapter>
+        protected abstract fun readDataFlowGraph(): ByteArray?
 
         protected fun Kind.toCompilerOutputKind(): CompilerOutputKind = when (this) {
             Kind.DYNAMIC -> CompilerOutputKind.DYNAMIC_CACHE
@@ -147,6 +149,15 @@ class CachedLibraries(
                 val file = directory.resolve(PER_FILE_CACHE_IR_LEVEL_DIR_NAME).resolve(OBJC_ADAPTERS_FILE_NAME)
                 ObjCAdapterSerializer.deserializeTo(file.readBytes(), it)
             }
+
+            override fun readDataFlowGraph(): ByteArray? {
+                val directory = Path(path).absolute().parent.parent
+                // The file is absent when the cache build didn't serialize the DFG: a cinterop
+                // library's cache (by design, see TopLevelPhases.runCodegen), a non-optimized
+                // cache build, or a cache built by an older compiler.
+                return directory.resolve(PER_FILE_CACHE_IR_LEVEL_DIR_NAME).resolve(DATA_FLOW_IR_FILE_NAME)
+                        .takeIf { it.exists() }?.readBytes()
+            }
         }
 
         class PerFile(target: KonanTarget, kind: Kind, path: String, fileDirs: List<Path>, val complete: Boolean)
@@ -214,6 +225,8 @@ class CachedLibraries(
                     ObjCAdapterSerializer.deserializeTo(file.readBytes(), it)
                 }
             }
+
+            override fun readDataFlowGraph(): ByteArray? = null
         }
     }
 

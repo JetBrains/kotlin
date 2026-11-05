@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.backend.konan.ir.isAbstract
 import org.jetbrains.kotlin.backend.konan.ir.isBuiltInOperator
 import org.jetbrains.kotlin.backend.konan.llvm.computeFunctionName
 import org.jetbrains.kotlin.backend.konan.llvm.computeSymbolName
+import org.jetbrains.kotlin.backend.konan.llvm.computeTypeInfoSymbolName
 import org.jetbrains.kotlin.backend.konan.llvm.isExported
 import org.jetbrains.kotlin.backend.konan.llvm.localHash
 import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
@@ -258,7 +259,9 @@ internal object DataFlowIR {
 
         class ArrayWrite(val callee: FunctionSymbol, val array: Edge, val index: Edge, val value: Edge, val type: Type) : Node()
 
-        class SaveCoroutineState(val liveVariables: List<Variable>) : Node()
+        class SaveCoroutineState(liveVariables: List<Variable>) : Node() {
+            val liveVariables = mutableListOf<Variable>().also { it += liveVariables }
+        }
 
         class Variable(values: List<Edge>, val type: Type, val kind: VariableKind) : Node() {
             val values = mutableListOf<Edge>().also { it += values }
@@ -458,24 +461,34 @@ internal object DataFlowIR {
         }
     }
 
-    class SymbolTable(val context: NativeBackendContext, val module: Module) {
+    class SymbolTable(
+            val context: NativeBackendContext,
+            val llvmModuleSpecification: LlvmModuleSpecification,
+            val module: Module,
+    ) {
         private val TAKE_NAMES = true // Take fqNames for all functions and types (for debug purposes).
 
         private inline fun takeName(block: () -> String) = if (TAKE_NAMES) block() else null
 
-        var privateTypeIndex = 1 // 0 for [Virtual]
+        var typeIndex = 1 // 0 for [Virtual]
         var privateFunIndex = 0
 
         val primitiveTypes: List<Type> = PrimitiveBinaryType.entries.map { mapPrimitiveBinaryType(it) }
 
+        // Public types and functions of the other modules, deserialized from their caches' DFGs and published by hash.
+        val externalPublicTypes = mutableMapOf<Long, Type.Public>()
+        val externalPublicFunctions = mutableMapOf<Long, FunctionSymbol.Public>()
+
         private var sealed = false
+        val typesList = mutableListOf<Type>()
+        val functionsList = mutableListOf<FunctionSymbol>()
         val classMap = mutableMapOf<IrClass, Type>()
         val functionMap = mutableMapOf<IrDeclaration, FunctionSymbol>()
         val fieldMap = mutableMapOf<IrField, Field>()
         val typeHierarchy by lazy {
             require(sealed) { "The symbol table has been sealed" }
 
-            val allDeclaredTypes = listOf(Type.Virtual) + classMap.values + primitiveTypes
+            val allDeclaredTypes = listOf(Type.Virtual) + primitiveTypes + typesList
             val allTypes = Array<Type>(allDeclaredTypes.size) { Type.Virtual }
             for (type in allDeclaredTypes)
                 allTypes[type.index] = type
@@ -529,16 +542,31 @@ internal object DataFlowIR {
             val isFinal = irClass.isFinalClass
             val isAbstract = irClass.isAbstract()
             val name = irClass.fqNameForIrSerialization.asString()
+            // A public type is identified across modules by the hash of its binary name - the very name
+            // the modules get linked together by, so it is unique and is computed the same way by all of them.
+            fun computeHash() = localHash(irClass.computeTypeInfoSymbolName().toByteArray())
+
+            if (!llvmModuleSpecification.containsDeclaration(irClass)) {
+                // A non-exported class of another module isn't published by that module's DFG. It can't be
+                // legitimately used from here, but still can be mentioned in a signature: partial linkage
+                // replaces the usages of a no longer accessible class with linkage errors but leaves the types.
+                // Nothing is known about such a class.
+                if (!irClass.isExported) return Type.Virtual
+
+                return externalPublicTypes[computeHash()]
+                        ?: error("Class ${irClass.render()} is not found")
+            }
 
             require(!sealed) { "The symbol table has been sealed. irClass = ${irClass.render()}" }
             val type = if (irClass.isExported)
-                Type.Public(localHash(name.toByteArray()), privateTypeIndex++, isFinal, isAbstract, irClass.hasFinalizer,
+                Type.Public(computeHash(), typeIndex++, isFinal, isAbstract, irClass.hasFinalizer,
                         module, irClass, takeName { name })
             else
-                Type.Private(privateTypeIndex++, isFinal, isAbstract, irClass.hasFinalizer,
+                Type.Private(typeIndex++, isFinal, isAbstract, irClass.hasFinalizer,
                         module, irClass, takeName { name })
 
             classMap[irClass] = type
+            typesList.add(type)
 
             type.superTypes += irClass.superTypes.map { mapClassReferenceType(it.getClass()!!) }
             if (!isAbstract) {
@@ -589,7 +617,7 @@ internal object DataFlowIR {
         private fun mapPrimitiveBinaryType(primitiveBinaryType: PrimitiveBinaryType): Type =
                 Type.Public(
                         primitiveBinaryType.ordinal.toLong(),
-                        privateTypeIndex++,
+                        typeIndex++,
                         true,
                         false,
                         false,
@@ -610,14 +638,26 @@ internal object DataFlowIR {
         }
 
         private fun mapFunction(function: IrSimpleFunction): FunctionSymbol = function.target.let {
-            functionMap[it]?.let { return it }
-
             val parent = it.parent
 
             val containingDeclarationPart = parent.fqNameForIrSerialization.let {
                 if (it.isRoot) "" else "$it."
             }
             val name = "kfun:$containingDeclarationPart${it.computeFunctionName()}"
+            // A public function is identified across modules by the hash of its binary name - the very name
+            // the modules get linked together by, so it is unique and is computed the same way by all of them.
+            // This doesn't apply to [FunctionSymbol.External]: several Kotlin declarations (each with
+            // its own signature and escape analysis annotations) can be bound to the same native symbol.
+            fun computePublicHash() = localHash((if (it.isExported) it.computeSymbolName() else name).toByteArray())
+
+            // External functions and built-in operators don't belong to any of the compiled modules (built-in operators aren't
+            // even declared in any klib) - they are always mapped locally to [FunctionSymbol.External], which is deduplicated by hash.
+            if (!it.isExternal && !it.isBuiltInOperator && !llvmModuleSpecification.containsDeclaration(function)) {
+                return externalPublicFunctions[computePublicHash()]
+                        ?: error("Function ${function.render()} is not found")
+            }
+
+            functionMap[it]?.let { return it }
 
             val returnsUnit = it.returnType.isUnit()
             val returnsNothing = it.returnType.isNothing()
@@ -654,13 +694,14 @@ internal object DataFlowIR {
                     }
                     val bridgeTargetSymbol = if (isSpecialBridge || bridgeTarget == null) null else mapFunction(bridgeTarget)
                     val functionSymbol = if (it.isExported)
-                        FunctionSymbol.Public(localHash(name.toByteArray()), module, attributes, it, bridgeTargetSymbol, takeName { name })
+                        FunctionSymbol.Public(computePublicHash(), module, attributes, it, bridgeTargetSymbol, takeName { name })
                     else
                         FunctionSymbol.Private(privateFunIndex++, module, attributes, it, bridgeTargetSymbol, takeName { name })
                     functionSymbol
                 }
             }
             functionMap[it] = symbol
+            functionsList += symbol
 
             symbol.parameters = function.parameters.map { it.type }
                     .map { FunctionParameter(mapType(it)) }
