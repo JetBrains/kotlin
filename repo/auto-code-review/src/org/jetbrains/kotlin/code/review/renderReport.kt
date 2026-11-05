@@ -134,8 +134,6 @@ private fun StringBuilder.appendMeta(review: ReviewResult) {
     val agentInfo = review.agentInfo
     appendLine(
         """
-            # Meta
-            
             Agent: ${agentInfo.name}, model: `${agentInfo.model}`, effort: `${agentInfo.effort}`.
             
             | Rule | Comments # | Cost, $ |
@@ -181,8 +179,15 @@ private fun commentsCell(result: RuleReviewResult): String {
 
 context(renderingContext: RenderingContext)
 private fun StringBuilder.appendFooter(review: ReviewResult) {
+    if (review.ruleResults.all { it.comments.isEmpty() && it.failures.isEmpty() }) {
+        // This is generated right after the summary. No separate section needed.
+    } else {
+        appendLine("# Review details")
+        appendLine()
+    }
+
     if (review.ruleResults.isNotEmpty()) {
-        appendCollapsed("Meta") {
+        appendCollapsed("🔍Checked ${review.ruleResults.size} rules") {
             appendMeta(review)
         }
     }
