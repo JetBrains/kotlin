@@ -71,7 +71,7 @@ class SharedNpmManagerProjectTest {
 
         val rootPackageJson = fromSrcPackageJson(outputDirectory.resolve("package.json"))!!
         assertEquals("root-project", rootPackageJson.name)
-        assertEquals("unspecified", rootPackageJson.version)
+        assertEquals("0.0.0-unspecified", rootPackageJson.version)
         assertEquals(true, rootPackageJson.private)
         assertEquals(listOf("packages/lib-0", "packages/lib-1", "packages/lib-2", "packages/lib-3"), rootPackageJson.workspaces?.toList())
         inputs.indices.forEach { index ->

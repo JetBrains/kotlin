@@ -496,7 +496,7 @@ class SharedNpmDependenciesIT : KGPBaseTest() {
     private fun assertRootPackageJson(file: Path, workspaces: List<String>) {
         val packageJson = readPackageJson(file)
         assertEquals("emptyKts", packageJson.name, "name of $file")
-        assertEquals("unspecified", packageJson.version, "version of $file")
+        assertEquals("0.0.0-unspecified", packageJson.version, "version of $file")
         assertEquals(true, packageJson.private, "private of $file")
         assertEquals(workspaces, packageJson.workspaces?.toList(), "workspaces of $file")
     }

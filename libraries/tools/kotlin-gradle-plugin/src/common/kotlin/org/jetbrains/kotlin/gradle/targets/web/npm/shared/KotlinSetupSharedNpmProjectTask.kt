@@ -67,7 +67,7 @@ internal abstract class KotlinSetupSharedNpmProjectTask : DefaultTask(), UsesKot
             }
             .sorted()
 
-        PackageJson(rootPackageName.get(), rootPackageVersion.get()).apply {
+        PackageJson(rootPackageName.get(), workspaceVersion).apply {
             private = true
             workspaces = workspaceNames.map { "packages/$it" }
         }.saveTo(outputDirectory.resolve(NpmProject.PACKAGE_JSON))
