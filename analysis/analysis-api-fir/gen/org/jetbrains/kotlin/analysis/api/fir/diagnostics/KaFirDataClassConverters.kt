@@ -1971,6 +1971,13 @@ private fun KaDiagnosticConverterBuilder.addConversions38() {
             token,
         )
     }
+    add(FirErrors.INLINE_CLASS_DEPRECATED_ERROR) { firDiagnostic ->
+        InlineClassDeprecatedErrorImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirErrors.COMPANION_EXTENSION_RECEIVER_ANNOTATED) { firDiagnostic ->
         CompanionExtensionReceiverAnnotatedImpl(
             firDiagnostic as KtDiagnosticWithSource,

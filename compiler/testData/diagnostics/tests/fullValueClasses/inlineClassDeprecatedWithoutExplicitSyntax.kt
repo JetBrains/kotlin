@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: CODEGEN
-// LANGUAGE: +FullValueClasses -ExplicitInlineValueClassesSyntax
+// LANGUAGE: +FullValueClasses -ExplicitInlineValueClassesSyntax -ExplicitInlineValueClassesSyntaxRequiredOnAllPlatforms
 // RENDER_DIAGNOSTICS_FULL_TEXT
 // WITH_STDLIB
 

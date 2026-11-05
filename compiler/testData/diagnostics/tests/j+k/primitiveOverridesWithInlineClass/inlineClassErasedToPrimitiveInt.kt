@@ -1,7 +1,8 @@
 // RUN_PIPELINE_TILL: CODEGEN
-// LANGUAGE: +InlineClasses
-// DIAGNOSTICS: -INLINE_CLASS_DEPRECATED
 // FILE: kt1.kt
+
+@file:Suppress("INLINE_CLASS_DEPRECATED", <!ERROR_SUPPRESSION!>"INLINE_CLASS_DEPRECATED_ERROR"<!>)
+
 package kt
 
 inline class Z(val value: Int)

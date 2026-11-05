@@ -1,4 +1,5 @@
 // LANGUAGE: +FullValueClasses +NameBasedDestructuring -EnableNameBasedDestructuringShortForm
+// LANGUAGE: +ExplicitInlineValueClassesSyntaxRequiredOnAllPlatforms
 // RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 
@@ -39,8 +40,8 @@ sealed value class C_
 value class NothingWrapper(val x: Nothing)
 value class UnitWrapper(val x: Unit)
 
-<!INLINE_CLASS_DEPRECATED!>inline<!> class Inline1(val x: <!VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE!>Unit<!>)
-<!INLINE_CLASS_DEPRECATED!>inline<!> class Inline2<!INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE!>(val x: Unit, val y: Unit)<!>
+<!INLINE_CLASS_DEPRECATED_ERROR!>inline<!> class Inline1(val x: <!VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE!>Unit<!>)
+<!INLINE_CLASS_DEPRECATED_ERROR!>inline<!> class Inline2<!INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE!>(val x: Unit, val y: Unit)<!>
 
 
 @JvmInline
