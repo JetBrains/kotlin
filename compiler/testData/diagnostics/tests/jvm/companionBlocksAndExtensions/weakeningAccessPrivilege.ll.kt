@@ -2,7 +2,7 @@
 // LL FIR diagnostics tests don't run the JVM backend, so its diagnostics are not reported: `CANNOT_WEAKEN_ACCESS_PRIVILEGE_FOR_STATIC_MEMBER` and `ACCIDENTAL_OVERRIDE`.
 // LL_FIR_DIVERGENCE
 // RUN_PIPELINE_TILL: CODEGEN
-// LANGUAGE: +CompanionBlocks
+// LANGUAGE: +CompanionBlocks +JvmProhibitWeakeningAccessPrivilegeForStatics
 // ISSUE: KT-90567
 
 @JvmInline
@@ -33,6 +33,10 @@ open class A {
         internal var internalVar = ""
         private var privateVar = ""
         @PublishedApi internal var publishedApiVar = ""
+    }
+
+    companion object {
+        @JvmStatic fun publicJvmStatic() {}
     }
 }
 
@@ -117,6 +121,16 @@ class B4 : A() {
             get() = ""
             private set(value) {}
     }
+}
+
+object InObject1 : A() {
+    @JvmStatic fun publicFoo() {}
+    @JvmStatic fun publicJvmStatic() {}
+}
+
+object InObject2 : A() {
+    @JvmStatic private fun publicFoo() {}
+    @JvmStatic private fun publicJvmStatic() {}
 }
 
 open class A2 : A()

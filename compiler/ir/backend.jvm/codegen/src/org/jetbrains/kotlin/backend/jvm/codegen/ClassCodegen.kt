@@ -61,6 +61,7 @@ import org.jetbrains.kotlin.resolve.jvm.JvmConstants
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmClassSignature
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.commons.Method
 import java.io.File
@@ -109,7 +110,9 @@ class ClassCodegen private constructor(
 
     private val jvmMethodSignatureClashDetector = JvmMethodSignatureClashDetector(this)
     private val jvmFieldSignatureClashDetector = JvmFieldSignatureClashDetector(this)
-    private val jvmStaticMethodWeakeningAccessPrivilegeDetector = JvmStaticMethodWeakeningAccessPrivilegeDetector(this)
+
+    private val jvmStaticMethodWeakeningAccessPrivilegeDetector =
+        runIf(config.prohibitWeakeningAccessPrivilegeForStatics) { JvmStaticMethodWeakeningAccessPrivilegeDetector(this) }
 
     private val visitor = state.factory.newVisitor(irClass, type, irClass.fileParent.loadSourceFilesInfo()).apply {
         val signature = typeMapper.mapClassSignature(irClass, type, state.classBuilderMode.generateBodies)
@@ -202,7 +205,7 @@ class ClassCodegen private constructor(
         visitor.done(config.generateSmapCopyToAnnotation)
         jvmMethodSignatureClashDetector.reportErrorsTo(context.diagnosticReporter)
         jvmFieldSignatureClashDetector.reportErrorsTo(context.diagnosticReporter)
-        jvmStaticMethodWeakeningAccessPrivilegeDetector.reportErrorsTo(context.diagnosticReporter)
+        jvmStaticMethodWeakeningAccessPrivilegeDetector?.reportErrorsTo(context.diagnosticReporter)
     }
 
     private fun generatePermittedSubclasses() {
@@ -537,7 +540,7 @@ class ClassCodegen private constructor(
         }
         val signature = JvmMemberSignature.Method(node.name, node.desc)
         jvmMethodSignatureClashDetector.trackDeclaration(method, signature)
-        jvmStaticMethodWeakeningAccessPrivilegeDetector.trackDeclaration(method, signature)
+        jvmStaticMethodWeakeningAccessPrivilegeDetector?.trackDeclaration(method, signature)
 
         when (val metadata = method.metadata) {
             is MetadataSource.Property -> metadataSerializer.bindPropertyMetadata(metadata, Method(node.name, node.desc), method.origin)

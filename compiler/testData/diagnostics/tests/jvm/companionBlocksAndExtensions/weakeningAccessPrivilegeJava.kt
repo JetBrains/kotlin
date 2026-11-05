@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: CODEGEN
-// LANGUAGE: +CompanionBlocks
+// LANGUAGE: +CompanionBlocks +JvmProhibitWeakeningAccessPrivilegeForStatics
 // ISSUE: KT-90567
 
 // FILE: J.java

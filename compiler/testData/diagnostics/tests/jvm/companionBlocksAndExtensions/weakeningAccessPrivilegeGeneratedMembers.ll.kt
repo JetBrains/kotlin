@@ -1,14 +1,9 @@
 // LL_FIR_DIVERGENCE
-// LL FIR diagnostics tests don't run the JVM backend, so its diagnostics are not reported: `ACCIDENTAL_OVERRIDE`.
+// LL FIR diagnostics tests don't run the JVM backend, so its diagnostics are not reported: `ACCIDENTAL_OVERRIDE` and `CANNOT_WEAKEN_ACCESS_PRIVILEGE_FOR_STATIC_MEMBER`.
 // LL_FIR_DIVERGENCE
 // RUN_PIPELINE_TILL: CODEGEN
-// LANGUAGE: +CompanionBlocks
+// LANGUAGE: +CompanionBlocks +JvmProhibitWeakeningAccessPrivilegeForStatics
 // ISSUE: KT-90567
-
-/*
- * Weakening access privelege by @JvmStatic/etc. members is not checked (they are reported as accidental overrides).
- * Weakening access privelege of @JvmStatic/etc. is allowed to be consistent with cross-module case.
- */
 
 open class BaseWithGenerated {
     companion object {
@@ -22,6 +17,16 @@ open class BaseWithGenerated {
 }
 
 class HidesGenerated : BaseWithGenerated() {
+    companion {
+        protected fun jvmStatic() {}
+        protected fun jvmStaticOverloads() {}
+        protected fun jvmOverloads() {}
+    }
+}
+
+open class ChildOfBaseWithGenerated : BaseWithGenerated()
+
+class HidesGeneratedInGrandparent : ChildOfBaseWithGenerated() {
     companion {
         protected fun jvmStatic() {}
         protected fun jvmStaticOverloads() {}
