@@ -414,7 +414,7 @@ class KotlinPlaywrightTestFrameworkWiringTest {
             framework.createTestExecutionSpec(
                 task = testTask,
                 launchOpts = project.objects.processLaunchOptions(),
-                nodeJsArgs = mutableListOf(),
+                toolArgs = mutableListOf(),
                 debug = false,
             )
         )
