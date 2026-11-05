@@ -42,6 +42,7 @@ import re
 import signal
 import subprocess
 import sys
+import time
 import uuid
 from collections import defaultdict
 from pathlib import Path
@@ -76,12 +77,15 @@ EXIT_PASSED, EXIT_FAILED, EXIT_ERROR, EXIT_INTERRUPTED = 0, 1, 2, 130
 # How many entries of each list the text output prints, how many runs `build/test-data-manager` keeps
 LIST_LIMIT = 50
 KEPT_RUNS = 5
+# A run with a log but no summary may still be running; older than this, it was killed
+UNFINISHED_RUN_AGE = 24 * 60 * 60
 LISTS = ["problems", "testErrors", "recoveredTests", "fileActions"]
+EMPTY_PATH_ERROR = "--path is empty: give a test data file or directory"
 
 
 def project_path(module: str) -> str:
     """[module] as the project path the module reports use: `analysis:stubs` and `analysis/stubs/` are `:analysis:stubs`."""
-    path = module.strip().replace("\\", ":").replace("/", ":").strip(":")
+    path = ":".join(name for name in module.strip().replace("\\", "/").replace(":", "/").split("/") if name not in ("", "."))
     if not path:
         raise argparse.ArgumentTypeError(f"'{module}' is not a module path")
     return ":" + path
@@ -318,9 +322,12 @@ def resolve_path(raw_path: str, root: Path, cwd: Path, modules: List[str]) -> Tu
     """
     [raw_path] relative to [root], as `@TestMetadata` paths are, or the error the runner would report for it; for a path
     that exists relative to [cwd] or to the directory of one of [modules] instead, the error suggests its
-    repository-relative form, as the runner does for its module.
+    repository-relative form, as the runner does for its module. An absolute path into the repository through a symbolic
+    link counts as inside it.
     """
     path = Path(os.path.normpath(root / raw_path))
+    if not is_inside(path, root) and Path(raw_path).is_absolute() and is_inside(Path(os.path.realpath(raw_path)), root):
+        path = Path(os.path.realpath(raw_path))
     if not is_inside(path, root):
         return None, f"testDataPath '{raw_path}' is outside the repository root {root}"
     if not exists_as_test_data_path(path):
@@ -337,6 +344,22 @@ def resolve_path(raw_path: str, root: Path, cwd: Path, modules: List[str]) -> Tu
     return ("" if path == root else path.relative_to(root).as_posix()), None
 
 
+def split_entries(paths: List[str]) -> List[str]:
+    """The `testDataPath` entries of the `--path` values: separated by commas, without the blank ones."""
+    return [entry.strip() for path in paths for entry in path.split(",") if entry.strip()]
+
+
+def runner_entry(entry: str, root: Path, cwd: Path) -> str:
+    """
+    [entry] as the runner gets it: repository-relative when it resolves, so that one through a symbolic link to the
+    checkout works there too, with its trailing `/` kept; as given otherwise, for the runner to report.
+    """
+    path, error = resolve_path(entry, root, cwd, [])
+    if error is not None or not path:
+        return entry
+    return path + "/" if entry.endswith("/") else path
+
+
 def select_modules(root: Path, modules: List[str], paths: List[str], cwd: Path) -> Tuple[List[str], List[str]]:
     """
     The modules of [modules] that may have tests of the `testDataPath` entries [paths] ([TestDataIndex]), and the errors
@@ -344,7 +367,9 @@ def select_modules(root: Path, modules: List[str], paths: List[str], cwd: Path) 
     has tests of fails the run, but the modules of the other entries still run. Such an entry is usually an output file
     passed instead of its test data file, or a new test data file the generated tests don't have yet.
     """
-    entries = [entry.strip() for path in paths for entry in path.split(",") if entry.strip()]
+    entries = split_entries(paths)
+    if not entries:
+        return [], [EMPTY_PATH_ERROR]
     resolved = [(entry, *resolve_path(entry, root, cwd, modules)) for entry in entries]
     errors = [error for _, _, error in resolved if error is not None]
     if errors:
@@ -406,19 +431,32 @@ def load_reports(gradle_output: str, run_id: str) -> Dict[str, dict]:
 def gradle_failures(gradle_output: str, reported_modules: Set[str], task: str) -> List[str]:
     """
     The failures Gradle reported in [gradle_output] (its `* What went wrong:` sections), without the tasks of
-    [reported_modules]: they fail when their report does, which the summary already shows.
+    [reported_modules]: they fail when their report does, which the summary already shows. A failure of a script also
+    names its location, from the `* Where:` section before it.
     """
     expected = {f"{module}:{task}" for module in reported_modules}
     lines = gradle_output.splitlines()
+
+    def section(start: int) -> List[str]:
+        content = []
+        for line in lines[start:]:
+            if not line.strip():
+                break
+            content.append(line)
+        return content
+
     failures = []
+    where: List[str] = []
     for index, line in enumerate(lines):
+        if line == "* Where:":
+            where = section(index + 1)
+            continue
         if line != "* What went wrong:":
             continue
-        failure = []
-        for failure_line in lines[index + 1:]:
-            if not failure_line.strip():
-                break
-            failure.append(failure_line)
+        failure = section(index + 1)
+        if failure and where:
+            failure.insert(1, "Where: " + " ".join(where))
+        where = []
         task_failure = TASK_FAILURE.match(failure[0]) if failure else None
         if failure and not (task_failure and task_failure.group(1) in expected):
             if len(failure) > MAX_REPORTED_LINES:
@@ -454,16 +492,24 @@ def summarize(mode: str, run_id: str, modules: List[str], reports: Dict[str, dic
     run_errors = list(selection_errors)
     if interrupted:
         run_errors.append("Interrupted before Gradle finished; the modules without a report didn't finish")
+    # An interrupted Gradle reports the cancellation as its failure
+    failed_gradle = gradle_exit_code != 0 and not interrupted
+    failures = gradle_failures(gradle_output, set(reports), task_name(mode.lower())) if failed_gradle else []
     totals = {"discovered": 0, "passed": 0, "failed": 0, "skipped": 0}
+    missing = []
     for module in modules:
         report = reports.get(module)
         if report is None:
-            if not interrupted:
-                run_errors.append(f"{module}: no report for this run; the task didn't run or its JVM crashed, see the Gradle log")
+            missing.append(module)
             continue
         for key in totals:
             totals[key] += report["tests"][key]
         run_errors += [f"{module}: {error}" for error in report["runErrors"]]
+    if missing and failures:
+        run_errors.append(f"No report from {', '.join(missing)}, see the Gradle failures")
+    elif not interrupted:
+        run_errors += [f"{module}: no report for this run; the task didn't run or its JVM crashed, see the Gradle log"
+                       for module in missing]
 
     if has_filters and totals["discovered"] == 0 and not run_errors:
         run_errors.append("No managed test in any module matches the filters")
@@ -474,15 +520,13 @@ def summarize(mode: str, run_id: str, modules: List[str], reports: Dict[str, dic
         return {kind: sum(1 for entry in entries if entry["kind"] == kind) for kind in sorted({entry["kind"] for entry in entries})}
 
     status = "ERROR" if run_errors else "FAILED" if merged["problems"] or merged["testErrors"] else "PASSED"
-    # An interrupted Gradle reports the cancellation as its failure
-    failed_gradle = gradle_exit_code != 0 and not interrupted
     return {
         "runId": run_id,
         "mode": mode,
         "status": status,
         "interrupted": interrupted,
         "runErrors": run_errors,
-        "gradleFailures": gradle_failures(gradle_output, set(reports), task_name(mode.lower())) if failed_gradle else [],
+        "gradleFailures": failures,
         "compilerErrors": compiler_errors(gradle_output) if failed_gradle else [],
         "tests": totals,
         "counts": {
@@ -575,14 +619,23 @@ def failed_test_data_paths(output_directory: Path, run_id: str) -> Tuple[List[st
 
 
 def delete_old_runs(directory: Path, kept_run: Optional[str] = None) -> None:
-    """Keeps the files of the [KEPT_RUNS] most recent runs in [directory], and of [kept_run]."""
+    """
+    Keeps the files of the [KEPT_RUNS] most recent runs in [directory], and of [kept_run]. A run with only a log is
+    still running, or was killed before its summary: it counts only when older than [UNFINISHED_RUN_AGE].
+    """
+    suffixes = (".summary.json", ".gradle.log")
     runs: Dict[str, float] = {}
-    for file in directory.glob("*.summary.json"):
-        runs[file.name[:-len(".summary.json")]] = file.stat().st_mtime
+    for summary in directory.glob("*.summary.json"):
+        runs[summary.name[:-len(".summary.json")]] = summary.stat().st_mtime
+    unfinished_before = time.time() - UNFINISHED_RUN_AGE
+    for log in directory.glob("*.gradle.log"):
+        run_id, modified = log.name[:-len(".gradle.log")], log.stat().st_mtime
+        if run_id in runs or modified < unfinished_before:
+            runs[run_id] = max(runs.get(run_id, 0.0), modified)
     for run_id in sorted(runs, key=runs.get, reverse=True)[KEPT_RUNS:]:
         if run_id == kept_run:
             continue
-        for suffix in (".summary.json", ".gradle.log"):
+        for suffix in suffixes:
             (directory / f"{run_id}{suffix}").unlink(missing_ok=True)
 
 
@@ -637,7 +690,8 @@ def main(argv: Optional[List[str]] = None, root: Optional[Path] = None) -> int:
                              "problem or a test error; this run has its own id")
     parser.add_argument("--verbose", action="store_true", help="verbose output of the modules, in the Gradle log")
     parser.add_argument("--json", action="store_true", help="print the summary file instead of the text output")
-    parser.add_argument("--gradle-arg", action="append", default=[], dest="gradle_args", help="extra Gradle argument")
+    parser.add_argument("--gradle-arg", action="append", default=[], dest="gradle_args",
+                        help="extra Gradle argument (repeatable); one starting with '-' needs '=': --gradle-arg=--offline")
     args = parser.parse_args(argv)
     if args.rerun and args.paths:
         parser.error("--rerun takes the paths of the failed tests, so it can't be combined with --path")
@@ -658,6 +712,12 @@ def main(argv: Optional[List[str]] = None, root: Optional[Path] = None) -> int:
             modules = []
         print(f"Rerunning {len(args.paths)} test data file{'' if len(args.paths) == 1 else 's'} of the run {args.rerun}",
               file=sys.stderr)
+    if args.paths:
+        entries = split_entries(args.paths)
+        if not entries:
+            selection_errors.append(EMPTY_PATH_ERROR)
+            modules = []
+        args.paths = [runner_entry(entry, root, Path.cwd()) for entry in entries]
     if args.paths and not args.modules:
         selected, path_errors = select_modules(root, modules, args.paths, Path.cwd())
         selection_errors += path_errors

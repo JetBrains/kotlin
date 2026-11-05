@@ -25,6 +25,7 @@ import subprocess
 import sys
 import tempfile
 import textwrap
+import time
 import unittest
 from pathlib import Path
 from typing import Dict, List, Tuple
@@ -184,10 +185,13 @@ class WrapperTest(unittest.TestCase):
         self.assertEqual([":mod-b", ":mod-a:nested"], [module["project"] for module in summary["modules"]])
         self.assertEqual(["-q", "--continue", ":mod-b:checkTestData", ":mod-a:nested:checkTestData"],
                          self.gradle_args()[:4])
+        self.assertEqual([":mod-b", ":mod-a:nested", ":mod-b"],
+                         [tdm.project_path(path) for path in ["./mod-b", "mod-a\\nested", "::mod-b"]])
 
-        with contextlib.redirect_stderr(io.StringIO()), self.assertRaises(SystemExit) as exit:
-            tdm.main(["check", "--module", ":"], root=self.root)
-        self.assertEqual(2, exit.exception.code)
+        for invalid in [":", "./"]:
+            with contextlib.redirect_stderr(io.StringIO()), self.assertRaises(SystemExit) as exit:
+                tdm.main(["check", "--module", invalid], root=self.root)
+            self.assertEqual(2, exit.exception.code, invalid)
 
     def test_run_id_names_the_reports_and_the_log(self) -> None:
         exit_code, summary = self.run_wrapper({":mod-b": {}}, "check", "--module", ":mod-b", "--run-id", "my-run.1")
@@ -287,7 +291,7 @@ class WrapperTest(unittest.TestCase):
 
         exit_code, text = self.run_text(stub, "check", "--module", ":mod-a", "--module", ":mod-b")
         self.assertIn(textwrap.dedent('''\
-            ERROR :mod-b: no report for this run; the task didn't run or its JVM crashed, see the Gradle log
+            ERROR No report from :mod-b, see the Gradle failures
             GRADLE FAILURE Execution failed for task ':mod-b:compileTestKotlin'.
               > A failure occurred while executing GradleKotlinCompilerWorkAction
                  > Compilation error. See log for more details
@@ -305,6 +309,29 @@ class WrapperTest(unittest.TestCase):
         plain = only_report_failure.replace(" (registered by plugin 'test-data-manager').", ".")
         self.assertEqual([], tdm.gradle_failures(plain, {":mod-a"}, "checkTestData"))
         self.assertEqual(1, len(tdm.gradle_failures(plain, {":mod-a:nested"}, "checkTestData")))
+
+    def test_script_failures_name_their_location(self) -> None:
+        output = textwrap.dedent('''\
+            FAILURE: Build failed with an exception.
+
+            * Where:
+            Build file '/repo/mod-b/build.gradle.kts' line: 82
+
+            * What went wrong:
+            Script compilation error:
+              Line 82: nope()
+
+            * Try:
+            > Run with --stacktrace option to get the stack trace.
+
+            * What went wrong:
+            Another failure without a location
+        ''')
+        self.assertEqual(
+            ["Script compilation error:\nWhere: Build file '/repo/mod-b/build.gradle.kts' line: 82\n  Line 82: nope()",
+             "Another failure without a location"],
+            tdm.gradle_failures(output, set(), "checkTestData"),
+        )
 
     def test_long_gradle_failures_are_cut(self) -> None:
         failure = "\n".join(["* What went wrong:", "Could not resolve all files."] + [f"> line {n}" for n in range(30)])
@@ -415,10 +442,14 @@ class WrapperTest(unittest.TestCase):
             for suffix in (".summary.json", ".gradle.log"):
                 file = self.write(f"build/test-data-manager/old-{index}{suffix}", "{}")
                 os.utime(file, (index, index))
+        # A run killed before its summary
+        os.utime(self.write("build/test-data-manager/killed.gradle.log", ""), (0, 0))
+        # A run still going, with only a log yet: kept however many runs are newer
+        os.utime(self.write("build/test-data-manager/running.gradle.log", ""), (time.time() - 60, time.time() - 60))
         _, summary = self.run_wrapper({":mod-b": {}}, "check", "--module", ":mod-b")
         self.assertEqual(
             sorted([f"old-{index}{suffix}" for index in range(2, 6) for suffix in (".gradle.log", ".summary.json")] +
-                   [f"{summary['runId']}.gradle.log", f"{summary['runId']}.summary.json"]),
+                   [f"{summary['runId']}.gradle.log", f"{summary['runId']}.summary.json", "running.gradle.log"]),
             sorted(file.name for file in directory.iterdir() if file.name != "stub-gradle-args.txt"),
         )
 
@@ -578,6 +609,26 @@ class WrapperTest(unittest.TestCase):
             self.select("testData/"),
         )
         self.assertEqual(([], [f"testDataPath '../x' is outside the repository root {self.root}"]), self.select("../x"))
+        self.assertEqual(([], ["--path is empty: give a test data file or directory"]), self.select(" , "))
+        # With explicit modules too, which skip the selection
+        exit_code, summary = self.run_wrapper({":mod-a": {}}, "check", "--path", "", "--module", ":mod-a")
+        self.assertEqual((2, ["--path is empty: give a test data file or directory"], None),
+                         (exit_code, summary["runErrors"], summary["gradleLog"]))
+
+    def test_absolute_paths_through_a_symbolic_link_are_inside(self) -> None:
+        self.write("mod-a/testData/file.kt", "")
+        with tempfile.TemporaryDirectory() as directory:
+            link = Path(directory) / "checkout"
+            link.symlink_to(self.root, target_is_directory=True)
+            self.assertEqual((ALL_MODULES, []), self.select(str(link / "mod-a" / "testData" / "file.kt")))
+            # The runner, which doesn't resolve the link, gets the path relative to the repository
+            for module in ["--module", ":mod-a"], []:
+                self.run_wrapper({":mod-a": {}}, "check", "--path", f"{link}/mod-a/testData/", *module)
+                self.assertIn(f"-P{tdm.OPTION_PREFIX}.testDataPath=mod-a/testData/", self.gradle_args())
+            outside = Path(directory) / "file.kt"
+            outside.write_text("")
+            self.assertEqual(([], [f"testDataPath '{outside}' is outside the repository root {self.root}"]),
+                             self.select(str(outside)))
 
     def test_modules_without_generated_tests_may_have_any_test_data(self) -> None:
         self.generated_tests("mod-a", "mod-a/testData")
