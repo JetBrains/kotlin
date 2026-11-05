@@ -6,11 +6,16 @@
 package org.jetbrains.kotlin.gradle.unitTests.compilerArguments
 
 import org.gradle.api.internal.project.ProjectInternal
+import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.ReturnValueCheckerMode
+import org.jetbrains.kotlin.gradle.dsl.kotlinJvmExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.util.buildProjectWithJvm
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import kotlin.test.Test
+import kotlin.test.assertContains
+import kotlin.test.assertEquals
 
 class ReturnValueCheckerModeKmpTest : ReturnValueCheckerTestBase() {
     @Test
@@ -67,6 +72,27 @@ class ReturnValueCheckerModeKmpTest : ReturnValueCheckerTestBase() {
 
         project.assertMainMode(null)
         project.assertTestMode(ReturnValueCheckerMode.Disabled)
+    }
+
+    @Test // KT-90962
+    fun `override cli arg`() {
+        val project = buildProjectWithMPP {
+            with(multiplatformExtension) {
+                setupTargets()
+                returnValueCheckerMode.set(ReturnValueCheckerMode.Full)
+                compilerOptions {
+                    freeCompilerArgs.add("-Xreturn-value-checker=disable")
+                }
+            }
+        }
+        project.evaluate()
+
+        mainCompilations.forEach { compilation ->
+            val allArgs = project.compileArguments(compilation)
+            // TODO: order of arguments is quite arbitrary. All compilations, but metadata has full after disable.
+            assertContains(allArgs, "-Xreturn-value-checker=full")
+            assertContains(allArgs, "-Xreturn-value-checker=disable")
+        }
     }
 
     private val mainCompilations = listOf(

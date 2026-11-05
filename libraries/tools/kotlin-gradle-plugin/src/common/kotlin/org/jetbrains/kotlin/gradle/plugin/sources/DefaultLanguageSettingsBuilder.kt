@@ -184,6 +184,27 @@ internal open class DefaultLanguageSettingsBuilder @Inject constructor(
             }
         }
 
+    // See comment for explicitApi
+    internal var returnValueCheckerMode: Provider<String>? = null
+        get() = if (compilationCompilerOptions.isCompleted) {
+            val freeArgs = compilationCompilerOptions.getOrThrow()
+                .freeCompilerArgs
+                .get()
+            freeArgs.find { it.startsWith("-Xreturn-value-checker") }?.let { project.providers.provider { it } }
+        } else {
+            field
+        }
+        set(value) {
+            field = value
+            if (value != null && value.isPresent) {
+                project.launch {
+                    compilationCompilerOptions.await()
+                        .freeCompilerArgs
+                        .add(value)
+                }
+            }
+        }
+
     val freeCompilerArgs: List<String>
         get() = if (compilationCompilerOptions.isCompleted) {
             compilationCompilerOptions.getOrThrow().freeCompilerArgs.get()
