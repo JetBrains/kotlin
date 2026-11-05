@@ -26,7 +26,10 @@ import org.jetbrains.kotlin.codegen.pseudoInsns.fakeAlwaysFalseIfeq
 import org.jetbrains.kotlin.codegen.pseudoInsns.fixStackAndJump
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -52,8 +55,6 @@ import org.jetbrains.kotlin.resolve.jvm.AsmTypes.JAVA_STRING_TYPE
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.computeExpandedTypeForInlineClass
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker
-import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -679,7 +680,7 @@ class ExpressionCodegen(
         for (typeArg in expression.typeArguments) {
             val classifier = typeArg?.classifierOrNull
             if (classifier is IrTypeParameterSymbol && classifier.owner.isReified) {
-                consumeReifiedOperationMarker(classifier)
+                consumeReifiedOperationMarker(classifier.owner)
             }
         }
 
@@ -1121,7 +1122,7 @@ class ExpressionCodegen(
         }
     }
 
-    fun putReifiedOperationMarkerIfTypeIsReifiedParameter(type: KotlinTypeMarker, operationKind: OperationKind): Boolean {
+    fun putReifiedOperationMarkerIfTypeIsReifiedParameter(type: IrType, operationKind: OperationKind): Boolean {
         val [typeParameter, second] = typeMapper.typeSystem.extractReificationArgument(type) ?: return false
         consumeReifiedOperationMarker(typeParameter)
         putReifiedOperationMarker(operationKind, second, visitor)
@@ -1609,12 +1610,11 @@ class ExpressionCodegen(
                     typeMapper.mapType(callee.parameters[index].type) == typeMapper.mapType(irFunction.parameters[index].type)
                 }
 
-    private fun consumeReifiedOperationMarker(typeParameter: TypeParameterMarker) {
-        require(typeParameter is IrTypeParameterSymbol)
+    private fun consumeReifiedOperationMarker(typeParameter: IrTypeParameter) {
         // For type parameter captured in code fragment, IR of method declaring it might be not built.
         // Thus, we first check if we are inside the evaluator-generated method and avoid accessing non-existing typeParameter.owner.parent
-        if (context.evaluatorData?.evaluatorGeneratedFunction == irFunction || irFunction != typeParameter.owner.parent) {
-            reifiedTypeParametersUsages.addUsedReifiedParameter(typeParameter.owner.name.asString())
+        if (context.evaluatorData?.evaluatorGeneratedFunction == irFunction || irFunction != typeParameter.parent) {
+            reifiedTypeParametersUsages.addUsedReifiedParameter(typeParameter.name.asString())
         }
     }
 
