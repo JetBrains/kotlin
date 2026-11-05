@@ -102,8 +102,16 @@ internal fun Project.createNpmRuntimeDependenciesVariant(
     }
 }
 
+internal fun Project.registerOnceKlibToNpmDependencyReportTransform(target: KotlinJsIrTarget, platform: HasPlatformDisambiguator) {
+    val registeredKey = "KlibToNpmDependencyReportTransform.${platform.platformName}"
+    if (!extensions.extraProperties.has(registeredKey)) {
+        registerKlibToNpmDependencyReportTransform(target, platform)
+        extensions.extraProperties[registeredKey] = true
+    }
+}
+
 /** Covers Maven and `files(...)` klibs, which come without a report. */
-internal fun Project.registerKlibToNpmDependencyReportTransform(target: KotlinJsIrTarget, platform: HasPlatformDisambiguator) {
+private fun Project.registerKlibToNpmDependencyReportTransform(target: KotlinJsIrTarget, platform: HasPlatformDisambiguator) {
     dependencies.registerTransform(KlibToNpmDependencyReportTransform::class.java) { transform ->
         transform.from.attribute(ARTIFACT_TYPE_ATTRIBUTE, KLIB_TYPE)
         transform.from.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.consumerRuntimeUsage(target))
