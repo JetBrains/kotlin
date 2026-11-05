@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.backend.konan.llvm
 
+import kotlinx.cinterop.allocArray
+import kotlinx.cinterop.get
+import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.toCValues
 import kotlinx.cinterop.toKString
 import llvm.*
@@ -342,20 +345,18 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
 
         val attributesCopier = LlvmFunctionAttributeProvider.copyFromExternal(externalFunction)
 
-        val rawFunctionType = getGlobalFunctionType(externalFunction)
-        val paramCount = LLVMCountParams(externalFunction)
-
-        val paramTypes = (0 until paramCount).map { i ->
-            if (i in objectParams) kotlinObjectPtrType else LLVMTypeOf(LLVMGetParam(externalFunction, i)!!)!!
-        }
-        val returnType = if (objectReturnType) kotlinObjectPtrType else LLVMGetReturnType(rawFunctionType)!!
-        val functionType = functionType(returnType, LLVMIsFunctionVarArg(rawFunctionType) != 0, paramTypes)
+        // Import with the true runtime signature: a call to an addrspace(1)-rewritten declaration
+        // never inlines, because LLVM requires call and definition types to match. The
+        // addrspace(1) bridge for object params/result happens at the call site (see
+        // FunctionGenerationContext.call and concealRef/publishRef).
+        val functionType = getGlobalFunctionType(externalFunction)
 
         val function = LLVMAddFunction(module, name, functionType)!!
 
         attributesCopier.addFunctionAttributes(function)
 
-        return LlvmFunction.Declaration(functionType, returnsObjectType, function, attributesCopier)
+        return LlvmFunction.Declaration(functionType, returnsObjectType, function, attributesCopier,
+                objectParams, objectReturnType)
     }
 
     private fun importMemset(addrSpace: Int): LlvmCallable {
@@ -375,15 +376,56 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
         return LlvmFunction.Declaration(type, false, result, LlvmFunctionAttributeProvider.copyFromExternal(result))
     }
 
+    private fun isObjectPointerType(type: LLVMTypeRef): Boolean =
+            LLVMGetTypeKind(type) == LLVMTypeKind.LLVMPointerTypeKind &&
+                    LLVMGetPointerAddressSpace(type) == runtime.kotlinObjectAddressSpace
+
+    // Param indices whose type is addrspace(1) in the expected signature but plain in the found
+    // runtime signature; such params are bridged with concealRef at call sites.
+    private fun bridgedObjectParams(foundType: LLVMTypeRef, signature: LlvmFunctionSignature): List<Int> {
+        val expectedParams = signature.parameterTypes
+        val paramCount = LLVMCountParamTypes(foundType)
+        require(paramCount == expectedParams.size) {
+            "Inconsistent function type: ${expectedParams.size} params expected, but the runtime declaration has $paramCount"
+        }
+        val foundParams = memScoped {
+            val buffer = allocArray<LLVMTypeRefVar>(paramCount.toLong())
+            LLVMGetParamTypes(foundType, buffer)
+            (0 until paramCount).map { buffer[it]!! }
+        }
+        val objectParams = mutableListOf<Int>()
+        expectedParams.zip(foundParams).forEachIndexed { index, params ->
+            val expected = params.first.llvmType
+            val found = params.second
+            if (expected != found) {
+                require(isObjectPointerType(expected) &&
+                        LLVMGetTypeKind(found) == LLVMTypeKind.LLVMPointerTypeKind) {
+                    "Inconsistent function type of param $index"
+                }
+                objectParams += index
+            }
+        }
+        return objectParams
+    }
+
     internal fun externalFunction(llvmFunctionProto: LlvmFunctionProto): LlvmFunction {
         if (llvmFunctionProto.origin != null) {
             this.dependenciesTracker.add(llvmFunctionProto.origin, onlyBitcode = llvmFunctionProto.independent)
         }
         val found = LLVMGetNamedFunction(module, llvmFunctionProto.name)
         if (found != null) {
-            require(getGlobalFunctionType(found) == llvmFunctionProto.signature.llvmFunctionType) {
-                "Inconsistent function type of ${llvmFunctionProto.name}. Expected: ${llvmFunctionProto.signature.llvmFunctionType.toTypeString()}, " +
-                        "found: ${getGlobalFunctionType(found).toTypeString()}"
+            val foundType = getGlobalFunctionType(found)
+            if (foundType != llvmFunctionProto.signature.llvmFunctionType) {
+                // The function is already imported from the runtime with its true plain-pointer
+                // signature (importFunction). Declare it with the found type and record the
+                // addrspace(1) bridge for object params/result, so calls match the runtime
+                // definition and can be inlined.
+                require(LLVMGetLinkage(found) == llvmFunctionProto.linkage)
+                val objectParams = bridgedObjectParams(foundType, llvmFunctionProto.signature)
+                val objectReturnType = isObjectPointerType(llvmFunctionProto.signature.returnType.llvmType) &&
+                        !isObjectPointerType(LLVMGetReturnType(foundType)!!)
+                return LlvmFunction.Declaration(foundType, llvmFunctionProto.signature.returnsObjectType, found,
+                        llvmFunctionProto.signature, objectParams, objectReturnType)
             }
             require(LLVMGetLinkage(found) == llvmFunctionProto.linkage)
             return LlvmFunction.Declaration(found, llvmFunctionProto.signature)
@@ -615,6 +657,19 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
             1 to importMemset(1)
     )
 
+    // conceal_ref/publish_ref: intrinsics bridging addrspace(1) and plain pointers at
+    // runtime-call boundaries, so the conversion cannot be moved across safepoints.
+    val concealRef = llvmIntrinsic(
+            "llvm.kn.conceal",
+            functionType(pointerType, false, kotlinObjectPtrType),
+            "nounwind"
+    )
+
+    val publishRef = llvmIntrinsic(
+            "llvm.kn.publish",
+            functionType(kotlinObjectPtrType, false, pointerType),
+            "nounwind"
+    )
     val llvmTrap = llvmIntrinsic(
             "llvm.trap",
             functionType(voidType, false),

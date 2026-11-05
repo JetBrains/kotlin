@@ -77,6 +77,8 @@ sealed class LlvmFunction(
             returnsObjectType: Boolean,
             llvmValue: LLVMValueRef,
             attributeProvider: LlvmFunctionAttributeProvider,
+            val objectParams: List<Int> = emptyList(),
+            val objectReturnType: Boolean = false,
     ) : LlvmFunction(functionType, returnsObjectType, llvmValue, attributeProvider) {
         internal constructor(llvmValue: LLVMValueRef, signature: LlvmFunctionSignature) :
                 this(signature.llvmFunctionType, signature.returnsObjectType, llvmValue, signature)
