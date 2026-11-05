@@ -1,0 +1,25 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+            Import name:contracts
+                Qualified name: kotlin.contracts
+                Is all under: true
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+FILE: [ResolvedTo(IMPORTS)] contractSyntaxV2Parameter.kt
+    @R|kotlin/OptIn|[Types](markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|)) [evaluated = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))]) public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] x: R|kotlin/Any?|): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            Returns(WILDCARD) -> x is kotlin/String
+        >
+     {
+    }
