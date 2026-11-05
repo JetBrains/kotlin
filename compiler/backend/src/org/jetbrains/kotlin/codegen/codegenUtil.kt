@@ -8,15 +8,16 @@ package org.jetbrains.kotlin.codegen
 import org.jetbrains.kotlin.codegen.inline.ReificationArgument
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeParametersUsages
 import org.jetbrains.kotlin.codegen.intrinsics.TypeIntrinsics
-import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.arguments
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker
-import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
@@ -74,37 +75,38 @@ private fun generateNullCheckForNonSafeAs(v: InstructionAdapter, type: IrType, u
     }
 }
 
-class JvmKotlinType(val type: Type, val kotlinType: KotlinTypeMarker? = null)
+class JvmKotlinType(val type: Type, val irType: IrType? = null)
 
 fun FqName.topLevelClassInternalName() = JvmClassName.internalNameByClassId(ClassId(parent(), shortName()))
 fun FqName.topLevelClassAsmType(): Type = Type.getObjectType(topLevelClassInternalName())
 
-fun TypeSystemCommonBackendContext.extractReificationArgument(initialType: KotlinTypeMarker): Pair<TypeParameterMarker, ReificationArgument>? {
+fun TypeSystemCommonBackendContext.extractReificationArgument(initialType: IrType): Pair<IrTypeParameter, ReificationArgument>? {
     var type = initialType
     var arrayDepth = 0
+    // JvmIrTypeSystemContext.isMarkedNullable also handles flexible types.
     val isNullable = type.isMarkedNullable()
-    while (type.isArrayOrNullableArray()) {
+    while (type.isArray() || type.isNullableArray()) {
         arrayDepth++
         // TODO: warn that nullability info on argument will be lost?
-        val argument = type.getArgument(0)
-        type = argument.getType() ?: return null
+        val argument = type.arguments?.singleOrNull()
+        type = (argument as? IrTypeProjection)?.type ?: return null
     }
 
-    val typeParameter = type.typeConstructor().getTypeParameterClassifier() ?: return null
-    if (!typeParameter.isReified()) return null
-    return Pair(typeParameter, ReificationArgument(typeParameter.getName().asString(), isNullable, arrayDepth))
+    val typeParameter = type.classifierOrNull as? IrTypeParameterSymbol ?: return null
+    if (!typeParameter.owner.isReified) return null
+    return Pair(typeParameter.owner, ReificationArgument(typeParameter.owner.name.asString(), isNullable, arrayDepth))
 }
 
-fun TypeSystemCommonBackendContext.extractUsedReifiedParameters(type: KotlinTypeMarker): ReifiedTypeParametersUsages =
+fun extractUsedReifiedParameters(type: IrType): ReifiedTypeParametersUsages =
     ReifiedTypeParametersUsages().apply {
-        fun KotlinTypeMarker.visit() {
-            val typeParameter = typeConstructor().getTypeParameterClassifier()
+        fun IrType.visit() {
+            val typeParameter = classifierOrNull as? IrTypeParameterSymbol
             if (typeParameter == null) {
-                for (argument in getArguments()) {
-                    argument.getType()?.visit()
+                for (argument in arguments.orEmpty()) {
+                    (argument as? IrTypeProjection)?.type?.visit()
                 }
-            } else if (typeParameter.isReified()) {
-                addUsedReifiedParameter(typeParameter.getName().asString())
+            } else if (typeParameter.owner.isReified) {
+                addUsedReifiedParameter(typeParameter.owner.name.asString())
             }
         }
 

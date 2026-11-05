@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.codegen.inline
 
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.coroutines.isCoroutineSuperClass
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.load.java.JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.*
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -24,9 +24,9 @@ abstract class LambdaInfo : FunctionalArgument {
 
     abstract val invokeMethod: Method
 
-    abstract val invokeMethodParameters: List<KotlinTypeMarker?>
+    abstract val invokeMethodParameters: List<IrType?>
 
-    abstract val invokeMethodReturnType: KotlinTypeMarker?
+    abstract val invokeMethodReturnType: IrType?
 
     abstract val capturedVars: List<CapturedParamDesc>
 
@@ -81,7 +81,7 @@ class DefaultLambda(
     info: ExtractedDefaultLambda,
     sourceCompiler: SourceCompilerForInline,
     private val functionName: String,
-    private val nullableAnyType: KotlinTypeMarker,
+    private val nullableAnyType: IrType,
 ) :
     LambdaInfo() {
     val isBoundCallableReference: Boolean
@@ -92,10 +92,10 @@ class DefaultLambda(
     override val invokeMethod: Method
         get() = Method(node.node.name, node.node.desc)
 
-    override val invokeMethodParameters: List<KotlinTypeMarker>
+    override val invokeMethodParameters: List<IrType>
         get() = List(invokeMethod.argumentTypes.size) { nullableAnyType }
 
-    override val invokeMethodReturnType: KotlinTypeMarker
+    override val invokeMethodReturnType: IrType
         get() = nullableAnyType
 
     val originalBoundReceiverType: Type?

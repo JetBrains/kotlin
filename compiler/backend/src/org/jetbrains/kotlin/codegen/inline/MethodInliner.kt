@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.codegen.optimization.temporaryVals.TemporaryVariable
 import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsn
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.utils.SmartList
@@ -264,7 +265,7 @@ class MethodInliner(
                         return
                     }
 
-                    val nullableAnyType = inliningContext.typeMapper.typeSystem.nullableAnyType()
+                    val nullableAnyType = inliningContext.typeMapper.typeSystem.nullableAnyType() as IrType
                     val expectedParameters = info.invokeMethod.argumentTypes
                     val expectedKotlinParameters = info.invokeMethodParameters
                     val argumentCount = Type.getArgumentTypes(desc).size

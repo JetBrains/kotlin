@@ -44,9 +44,6 @@ open class IrTypeMapper(val context: JvmBackendContext) : KotlinTypeMapperBase()
     override val typeSystem: IrTypeSystemContext = context.typeSystem
     override val typeContext: TypeSystemCommonBackendContextForTypeMapping = IrTypeCheckerContextForTypeMapping(context)
 
-    override fun mapTypeCommon(type: KotlinTypeMarker, mode: TypeMappingMode): Type =
-        mapType(type as IrType, mode)
-
     private fun computeClassLikeDeclarationInternalNameAsString(irClassLikeDeclaration: IrDeclarationBase): String {
         irClassLikeDeclaration.localClassType?.internalName?.let {
             return it
@@ -134,12 +131,8 @@ open class IrTypeMapper(val context: JvmBackendContext) : KotlinTypeMapperBase()
         return AsmUtil.boxPrimitiveType(type) ?: type
     }
 
-    open fun mapType(
-        type: IrType,
-        mode: TypeMappingMode = TypeMappingMode.DEFAULT,
-        sw: JvmSignatureWriter? = null,
-        materialized: Boolean = true
-    ): Type = AbstractTypeMapper.mapType(this, type, mode, sw, materialized)
+    override fun mapType(type: IrType, mode: TypeMappingMode, sw: JvmSignatureWriter?, materialized: Boolean): Type =
+        AbstractTypeMapper.mapType(this, type, mode, sw, materialized)
 
     override fun JvmSignatureWriter.writeGenericType(type: KotlinTypeMarker, asmType: Type, mode: TypeMappingMode) {
         if (type is IrErrorType) {
