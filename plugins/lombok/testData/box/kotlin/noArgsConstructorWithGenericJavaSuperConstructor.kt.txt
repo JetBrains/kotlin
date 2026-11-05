@@ -1,0 +1,63 @@
+@NoArgsConstructor
+class Derived : JavaBase<String> {
+  var x: Int
+    field = x
+    get
+    set
+
+  constructor() {
+    super/*JavaBase*/<String, Any?>()
+  }
+
+  constructor(x: Int) /* primary */ {
+    super/*JavaBase*/<String, /* null */>(u = "")
+    /* <init>() */
+
+  }
+
+}
+
+@NoArgsConstructor
+class DerivedComparable : JavaComparableBase<String> {
+  var x: Int
+    field = x
+    get
+    set
+
+  constructor() {
+    super/*JavaComparableBase*/<String, Comparable<*>?>()
+  }
+
+  constructor(x: Int) /* primary */ {
+    super/*JavaComparableBase*/<String, /* null */>(u = 1)
+    /* <init>() */
+
+  }
+
+}
+
+@NoArgsConstructor
+class DerivedNumber : JavaNumberBase<String> {
+  var x: Int
+    field = x
+    get
+    set
+
+  constructor() {
+    super/*JavaNumberBase*/<String, Number?>()
+  }
+
+  constructor(x: Int) /* primary */ {
+    super/*JavaNumberBase*/<String, /* null */>(u = 1)
+    /* <init>() */
+
+  }
+
+}
+
+fun box(): String {
+  assertEquals<Int>(expected = 0, actual = Derived().<get-x>())
+  assertEquals<Int>(expected = 0, actual = DerivedNumber().<get-x>())
+  assertEquals<Int>(expected = 0, actual = DerivedComparable().<get-x>())
+  return "OK"
+}
