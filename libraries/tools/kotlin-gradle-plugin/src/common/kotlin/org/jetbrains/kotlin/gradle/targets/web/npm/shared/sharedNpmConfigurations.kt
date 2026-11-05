@@ -147,7 +147,7 @@ internal fun Project.createNpmRuntimeDependenciesResolver(compilation: KotlinJsI
         }
     }
 
-/** Projects offer their report; klibs are turned into one by [PackageJsonToNpmDependencyReportTransform]. */
+/** Projects offer their report; other dependencies are turned into one by [PackageJsonToNpmDependencyReportTransform]. */
 internal fun Project.npmRuntimeDependenciesReports(resolver: Configuration, platform: HasPlatformDisambiguator): FileCollection =
     resolver.incoming.artifactView { view ->
         view.attributes { attributes ->

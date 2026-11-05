@@ -34,15 +34,15 @@ internal abstract class PackageJsonToNpmDependencyReportTransform : TransformAct
 
     @get:InputArtifact
     @get:PathSensitive(PathSensitivity.NONE)
-    abstract val klib: Provider<FileSystemLocation>
+    abstract val input: Provider<FileSystemLocation>
 
     override fun transform(outputs: TransformOutputs) {
-        val klib = klib.get().asFile
-        val dependencies = klib.readPackageJsonDependencies() ?: return
+        val file = input.get().asFile
+        val dependencies = file.readPackageJsonDependencies() ?: return
 
         NpmDependencyReport(
             target = parameters.target.get(),
-            compilation = klib.nameWithoutExtension,
+            compilation = file.nameWithoutExtension,
             dependencies = dependencies.dependencies,
             peerDependencies = dependencies.peerDependencies,
             optionalDependencies = dependencies.optionalDependencies,
