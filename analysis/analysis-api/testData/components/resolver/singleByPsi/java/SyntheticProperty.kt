@@ -1,5 +1,3 @@
-// IGNORE_STABILITY: candidates
-
 // FILE: main.kt
 fun JavaClass.foo(javaClass: JavaClass) {
     print(javaClass.<caret_1>something)

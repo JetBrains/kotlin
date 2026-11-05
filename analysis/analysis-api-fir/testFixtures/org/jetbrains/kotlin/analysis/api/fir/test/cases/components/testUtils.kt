@@ -348,7 +348,7 @@ internal fun assertStableResult(
     assertions.assertEquals(firstSymbols.size, secondSymbols.size)
 
     for ([firstSymbol, secondSymbol] in firstSymbols.zip(secondSymbols)) {
-        assertions.assertEquals(firstSymbol, secondSymbol)
+        assertStableSymbol(testServices, firstSymbol, secondSymbol)
     }
 }
 
@@ -537,7 +537,20 @@ internal fun assertStableResult(testServices: TestServices, firstCall: KaSimpleO
     val symbolsFromSecondCall = sortedSymbols(secondCall.symbols)
     assertions.assertEquals(symbolsFromFirstCall.size, symbolsFromSecondCall.size)
     for ((first, second) in symbolsFromFirstCall.zip(symbolsFromSecondCall)) {
-        assertions.assertEquals(first, second)
+        assertStableSymbol(testServices, first, second)
+    }
+}
+
+/**
+ * Asserts that [first] and [second] are equal. For properties, their accessors must be equal as well.
+ */
+private fun assertStableSymbol(testServices: TestServices, first: KaSymbol, second: KaSymbol) {
+    val assertions = testServices.assertions
+    assertions.assertEquals(first, second)
+
+    if (first is KaPropertySymbol && second is KaPropertySymbol) {
+        assertions.assertEquals(first.getter, second.getter)
+        assertions.assertEquals(first.setter, second.setter)
     }
 }
 

@@ -11,6 +11,3 @@ public enum JavaEnum {
 fun foo(enum: JavaEnum) {
     enum.na<caret>me
 }
-
-// IGNORE_STABILITY: candidates
-// ^KT-69962
