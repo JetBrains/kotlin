@@ -767,6 +767,44 @@ private class ContextCollectorVisitor(
         }
     }
 
+    /**
+     * Processes [whenExpression] with its subject variable in a separate local scope, as
+     * [FirControlFlowStatementsResolveTransformer][org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirControlFlowStatementsResolveTransformer]
+     * does, so that the variable isn't visible after the `when`.
+     */
+    override fun visitWhenExpression(whenExpression: FirWhenExpression) {
+        withProcessor(whenExpression) {
+            dumpContext(whenExpression, ContextKind.SELF)
+
+            onActive {
+                processList(whenExpression.annotations)
+
+                context.withWhenExpression(whenExpression, bodyHolder.session) {
+                    dumpContext(whenExpression, ContextKind.BODY)
+                    processChildren(whenExpression)
+                }
+            }
+        }
+    }
+
+    /**
+     * Processes [catch] with its parameter in a separate local scope, as
+     * [FirControlFlowStatementsResolveTransformer][org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirControlFlowStatementsResolveTransformer]
+     * does, so that the parameter isn't visible after the `try` expression.
+     */
+    override fun visitCatch(catch: FirCatch) {
+        withProcessor(catch) {
+            dumpContext(catch, ContextKind.SELF)
+
+            onActive {
+                context.forBlock(bodyHolder.session) {
+                    dumpContext(catch, ContextKind.BODY)
+                    processChildren(catch)
+                }
+            }
+        }
+    }
+
     override fun visitVariableAssignment(variableAssignment: FirVariableAssignment) {
         withLocalVariableHolder(
             onEnter = { /* empty */ },
