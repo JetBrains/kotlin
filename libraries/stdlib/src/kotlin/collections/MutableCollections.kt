@@ -264,14 +264,6 @@ public fun <T> MutableList<T>.removeLast(): T = if (isEmpty()) throw NoSuchEleme
 @IgnorableReturnValue
 public fun <T> MutableList<T>.removeLastOrNull(): T? = if (isEmpty()) null else removeAt(lastIndex)
 
-/**
- * Retains only elements of this [MutableList] that match the given [predicate].
- *
- * @return `true` if any element was removed from this collection, or `false` when all elements were retained and collection was not modified.
- */
-@IgnorableReturnValue
-public fun <T> MutableList<T>.retainAll(predicate: (T) -> Boolean): Boolean = filterInPlace(predicate, false)
-
 internal fun <T> MutableList<T>.filterInPlace(predicate: (T) -> Boolean, predicateResultToRemove: Boolean): Boolean {
     if (this !is RandomAccess)
         return (this as MutableIterable<T>).filterInPlace(predicate, predicateResultToRemove)
