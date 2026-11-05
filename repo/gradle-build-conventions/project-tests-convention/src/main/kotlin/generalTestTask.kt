@@ -188,6 +188,11 @@ internal fun Project.createGeneralTestTask(
         if (retryFailedGroupingTests.isPresent) {
             systemProperty("kotlin.test.grouping.engine.retry.failed.tests.isolated", retryFailedGroupingTests.get())
         }
+        // `-Pkotlin.test.grouping.engine.all.tests.isolated=true` makes every two-stage test run alone (see `AllTestsIsolator`).
+        val allGroupingTestsIsolated = project.providers.gradleProperty("kotlin.test.grouping.engine.all.tests.isolated")
+        if (allGroupingTestsIsolated.isPresent) {
+            systemProperty("kotlin.test.grouping.engine.all.tests.isolated", allGroupingTestsIsolated.get())
+        }
         project.kotlinBuildProperties.junit5NumberOfThreadsForParallelExecution?.let { n ->
             systemProperty("junit.jupiter.execution.parallel.config.strategy", "fixed")
             systemProperty("junit.jupiter.execution.parallel.config.fixed.parallelism", n)

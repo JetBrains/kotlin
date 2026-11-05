@@ -37,3 +37,5 @@ and runs alone.
   `-Pkotlin.test.grouping.engine.retry.failed.tests.isolated=false` turns the reruns off, to see such failures.
 - Running a single test does not reproduce a failure of its batch: the batches are made of the selected tests only,
   so a single test is a batch of its own. Run the whole test class with the reruns turned off instead.
+- `-Pkotlin.test.grouping.engine.all.tests.isolated=true` runs every test alone, without batches: use it to tell
+  whether a failure is caused by grouping, or to get the artifacts of every test separately.
