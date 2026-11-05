@@ -9,6 +9,7 @@ plugins {
 val beforePluginClasspath: Configuration = configurations.create("beforePluginClasspath")
 val middlePluginClasspath: Configuration = configurations.create("middlePluginClasspath")
 val afterPluginClasspath: Configuration = configurations.create("afterPluginClasspath")
+val dataframeRuntimeClasspath: Configuration = configurations.create("dataframeRuntimeClasspath")
 
 dependencies {
     testFixturesApi(testFixtures(project(":kotlin-allopen-compiler-plugin")))
@@ -17,6 +18,7 @@ dependencies {
     testFixturesApi(testFixtures(project(":kotlin-lombok-compiler-plugin")))
     testFixturesApi(testFixtures(project(":kotlin-noarg-compiler-plugin")))
     testFixturesApi(testFixtures(project(":kotlin-power-assert-compiler-plugin")))
+    testFixturesApi(testFixtures(project(":kotlin-dataframe-compiler-plugin")))
     testFixturesApi(testFixtures(project(":plugins:parcelize:parcelize-compiler")))
     testFixturesApi(testFixtures(project(":plugins:plugin-sandbox")))
 
@@ -33,6 +35,9 @@ dependencies {
     beforePluginClasspath(project(":plugins:test-plugins:before"))
     middlePluginClasspath(project(":plugins:test-plugins:middle"))
     afterPluginClasspath(project(":plugins:test-plugins:after"))
+
+    dataframeRuntimeClasspath(libs.dataframe.core.dev)
+    dataframeRuntimeClasspath(libs.dataframe.csv.dev)
 }
 
 optInToExperimentalCompilerApi()
@@ -63,6 +68,7 @@ projectTests {
         addClasspathProperty(beforePluginClasspath, "plugin.classpath.before")
         addClasspathProperty(middlePluginClasspath, "plugin.classpath.middle")
         addClasspathProperty(afterPluginClasspath, "plugin.classpath.after")
+        addClasspathProperty(dataframeRuntimeClasspath, "kotlin.dataframe.plugin.test.classpath")
     }
 
     testGenerator("org.jetbrains.kotlin.compiler.plugins.TestGeneratorKt")
