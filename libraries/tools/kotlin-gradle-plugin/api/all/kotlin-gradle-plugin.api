@@ -6400,10 +6400,6 @@ public final class org/jetbrains/kotlin/gradle/utils/ComponentIdentifiersKt {
 	public static final fun is (Ljava/lang/Object;Ljava/lang/Class;)Z
 }
 
-public final class org/jetbrains/kotlin/gradle/utils/ConfigurationCacheKt {
-	public static final fun notCompatibleWithConfigurationCacheCompat (Lorg/gradle/api/Task;Ljava/lang/String;)V
-}
-
 public final class org/jetbrains/kotlin/gradle/utils/ConfigurationsKt {
 	public static final field API Ljava/lang/String;
 	public static final field COMPILE Ljava/lang/String;
