@@ -16,6 +16,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
+import org.jetbrains.kotlin.gradle.npm.encodedVersionSpec
 import org.jetbrains.kotlin.gradle.npm.npmDependenciesCollector
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
@@ -184,7 +185,7 @@ abstract class KotlinPackageJsonTask :
                 compilation.allKotlinSourceSets.forAll { sourceSet ->
                     task.declaredNpmDependencies.addAll(
                         sourceSet.npmDependenciesCollector.npmDependencies.map { dependencies ->
-                            dependencies.map { "${it.scope} ${it.name}:${it.version}" }
+                            dependencies.map { "${it.scope} ${it.name}:${it.encodedVersionSpec().get()}" }
                         }
                     )
                 }
@@ -257,10 +258,12 @@ abstract class KotlinPackageJsonTask :
                     findDependentTasks(
                         rootResolver = nodeJsRoot.resolver,
                         compilationNpmResolution = getCompilationResolver().compilationNpmResolution,
-                        rootPackageJsonTaskName = ":${nodeJsRoot.extensionName(
-                            RootPackageJsonTask.NAME,
-                            prefix = null,
-                        )}",
+                        rootPackageJsonTaskName = ":${
+                            nodeJsRoot.extensionName(
+                                RootPackageJsonTask.NAME,
+                                prefix = null,
+                            )
+                        }",
                     )
                 }
             )

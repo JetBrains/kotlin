@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
  * Represents a dependency declaration on an npm package.
  */
 @ExperimentalKotlinGradlePluginApi
+@Deprecated("This interface is unnecessary. $DEPRECATION_MSG")
 interface KotlinNpmDependency {
 
     val name: String
@@ -20,11 +21,12 @@ interface KotlinNpmDependency {
      */
     val version: String
 
-    val scope: Scope
+    val scope: @Suppress("DEPRECATION") Scope
 
     /**
      * The `package.json` section an npm dependency belongs to.
      */
+    @Deprecated("This enum is unnecessary. $DEPRECATION_MSG")
     enum class Scope {
         NORMAL,
         DEV,
@@ -32,3 +34,8 @@ interface KotlinNpmDependency {
         PEER
     }
 }
+
+private const val DEPRECATION_MSG =
+    "Npm dependencies should not be created manually, instead use the npm()/npmDev()/npmOptional()/npmPeer() DSL functions in Kotlin source sets. " +
+            "Example: `kotlin { sourceSets { webMain { dependencies { npm(...) } } }`. " +
+            "Scheduled for removal in Kotlin 2.5.20."
