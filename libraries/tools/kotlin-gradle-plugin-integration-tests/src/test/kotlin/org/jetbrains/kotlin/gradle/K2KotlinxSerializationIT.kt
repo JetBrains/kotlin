@@ -42,18 +42,16 @@ class K2KotlinxSerializationIT : KGPBaseTest() {
         project(
             "kotlinxSerializationK2AgainstK1",
             gradleVersion,
-            buildOptions = defaultBuildOptions.suppressDeprecationWarningsSinceGradleVersion(
-                TestVersions.Gradle.G_8_14,
-                gradleVersion,
-                "KGP 1.9.25 produces deprecation warning"
-            ).run {
-                if (gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_9_0)) {
-                    copy(
-                        configurationCache = ConfigurationCacheValue.DISABLED,
-                        isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED
-                    )
-                } else this
-            }
+            buildOptions = defaultBuildOptions
+                .suppressDeprecationWarnings("KGP 1.9.25 produces deprecation warning")
+                .run {
+                    if (gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_9_0)) {
+                        copy(
+                            configurationCache = ConfigurationCacheValue.DISABLED,
+                            isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED
+                        )
+                    } else this
+                }
         ) {
             projectPath.resolve("lib").addDefaultSettingsToSettingsGradle()
             subprojects("app", "lib").buildScriptInjection {
@@ -74,11 +72,8 @@ class K2KotlinxSerializationIT : KGPBaseTest() {
             projectName = "kotlinxSerializationK2AgainstK1Lib/lib",
             gradleVersion = gradleVersion,
             localRepoDir = tempDir,
-            buildOptions = defaultBuildOptions.suppressDeprecationWarningsSinceGradleVersion(
-                TestVersions.Gradle.G_8_14,
-                gradleVersion,
-                "KGP 1.7.20 produces deprecation warning in Gradle 8.7"
-            )
+            buildOptions = defaultBuildOptions
+                .suppressDeprecationWarnings("KGP 1.7.20 produces deprecation warning in Gradle 8.7")
                 // KGP 1.7.20 is not compatible with configuration cache in Gradle 8
                 .copy(
                     configurationCache = ConfigurationCacheValue.DISABLED,

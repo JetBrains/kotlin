@@ -449,6 +449,10 @@ fun BuildOptions.suppressDeprecationWarningsOn(
     this
 }
 
+fun BuildOptions.suppressDeprecationWarnings(
+    @Suppress("UNUSED_PARAMETER") reason: String, // just to require specifying a reason for suppressing
+) = copy(warningMode = WarningMode.Summary)
+
 fun BuildOptions.suppressDeprecationWarningsSinceGradleVersion(
     gradleVersion: String,
     currentGradleVersion: GradleVersion,
@@ -484,17 +488,6 @@ fun BuildOptions.suppressingGradlePluginErrors(vararg diagnosticIds: String) =
 
 // KT-75899: Support Gradle Project Isolation in KGP JS & Wasm
 fun BuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899() = disableIsolatedProjects()
-
-fun BuildOptions.suppressWarningForOldKotlinVersion(
-    currentGradleVersion: GradleVersion,
-) = suppressDeprecationWarningsSinceGradleVersion(
-    gradleVersion = TestVersions.Gradle.G_8_14,
-    currentGradleVersion = currentGradleVersion,
-    reason =
-        """
-        Old Kotlin versions produces deprecation warnings with latest Gradle release.
-        """.trimIndent()
-)
 
 fun BuildOptions.suppressDeprecatedJdkWarningWithGradle814(
     currentGradleVersion: GradleVersion,

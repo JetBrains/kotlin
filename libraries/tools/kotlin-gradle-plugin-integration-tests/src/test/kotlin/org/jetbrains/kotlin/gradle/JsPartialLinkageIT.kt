@@ -28,11 +28,7 @@ class JsPartialLinkageIT : KGPBaseTest() {
             gradleVersion = gradleVersion,
             buildOptions = defaultBuildOptions
                 .copy(kotlinVersion = KOTLIN_VERSION_WITH_OLD_SHAPE_OF_SUBCLASS_OPT_IN_REQUIRED)
-                .suppressDeprecationWarningsSinceGradleVersion(
-                    gradleVersion = TestVersions.Gradle.G_8_14,
-                    currentGradleVersion = gradleVersion,
-                    reason = "Kotlin versions before 2.1.21 produces 'is*' property deprecation warning"
-                ),
+                .suppressDeprecationWarnings("Kotlin versions before 2.1.21 produces 'is*' property deprecation warning"),
         ) {
             build("publish") {
                 assertTasksExecuted(":publish")
@@ -60,11 +56,7 @@ class JsPartialLinkageIT : KGPBaseTest() {
             gradleVersion = gradleVersion,
             buildOptions = defaultBuildOptions
                 .copy(kotlinVersion = KOTLIN_VERSION_WITH_OLD_SHAPE_OF_SUBCLASS_OPT_IN_REQUIRED)
-                .suppressDeprecationWarningsSinceGradleVersion(
-                    gradleVersion = TestVersions.Gradle.G_8_14,
-                    currentGradleVersion = gradleVersion,
-                    reason = "Kotlin versions before 2.1.21 produces 'is*' property deprecation warning"
-                ),
+                .suppressDeprecationWarnings("Kotlin versions before 2.1.21 produces 'is*' property deprecation warning"),
         ) {
             build("publish") {
                 assertTasksExecuted(":publish")

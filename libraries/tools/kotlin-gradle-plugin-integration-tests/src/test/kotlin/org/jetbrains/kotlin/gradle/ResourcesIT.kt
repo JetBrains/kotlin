@@ -131,9 +131,8 @@ class ResourcesIT : KGPBaseTest() {
         project(
             "kt-62490",
             gradleVersion,
-            buildOptions = defaultBuildOptions.suppressDeprecationWarningsOn(
-                reason = "KT-64462: Gradle complains about already created configurations",
-                predicate = { gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_14) }
+            buildOptions = defaultBuildOptions.suppressDeprecationWarnings(
+                "KT-64462: Gradle complains about already created configurations"
             )
         ) {
             buildGradleKts.appendText(
