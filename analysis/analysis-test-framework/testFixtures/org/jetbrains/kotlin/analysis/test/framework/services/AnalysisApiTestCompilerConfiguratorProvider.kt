@@ -58,6 +58,16 @@ class AnalysisApiTestCompilerConfiguratorProvider(
         }
     }
 
+    override fun getPackagePartProviderFactory(module: TestModule): (JvmClasspath) -> JvmPackagePartProvider {
+        val configuration = getCompilerConfiguration(module, CompilationStage.FIRST)
+
+        return { classpath ->
+            JvmPackagePartProvider(configuration.languageVersionSettings, classpath).apply {
+                addRoots(allProjectBinaryRoots, configuration)
+            }
+        }
+    }
+
     override fun getKotlinCoreEnvironment(module: TestModule): KotlinCoreEnvironment {
         error("Should not be called")
     }
