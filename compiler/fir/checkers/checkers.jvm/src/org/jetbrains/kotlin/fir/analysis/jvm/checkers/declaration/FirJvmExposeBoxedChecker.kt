@@ -85,11 +85,12 @@ object FirJvmExposeBoxedChecker : FirBasicDeclarationChecker(MppCheckerKind.Comm
 
         if (declaration is FirCallableDeclaration) {
             if (!declaration.isWithInlineClass(context.session)) {
-                reporter.reportOn(
-                    jvmExposeBoxedAnnotation.source,
-                    if (name == null || declaration.cannotRename()) FirJvmErrors.USELESS_JVM_EXPOSE_BOXED
-                    else FirJvmErrors.JVM_EXPOSE_BOXED_CAN_BE_REPLACED_WITH_JVM_NAME
-                )
+                if (name == null || declaration.cannotRename()) {
+                    reporter.reportOn(jvmExposeBoxedAnnotation.source, FirJvmErrors.USELESS_JVM_EXPOSE_BOXED)
+                } else if (FirJvmNameChecker.isApplicableTo(declaration)) {
+                    // Do not suggest `@JvmName` where it is not applicable, for example, on an override.
+                    reporter.reportOn(jvmExposeBoxedAnnotation.source, FirJvmErrors.JVM_EXPOSE_BOXED_CAN_BE_REPLACED_WITH_JVM_NAME)
+                }
             } else if (name == null && !declaration.isMangledOrWithResult(context.session)) {
                 if (declaration is FirFunction) {
                     reporter.reportOn(jvmExposeBoxedAnnotation.source, FirJvmErrors.JVM_EXPOSE_BOXED_REQUIRES_NAME)

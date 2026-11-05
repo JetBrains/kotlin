@@ -46,19 +46,21 @@ object FirJvmNameChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
             reporter.reportOn(jvmName.source, FirJvmErrors.ILLEGAL_JVM_NAME)
         }
 
-        if (declaration is FirFunction && !isRenamableFunction(declaration)) {
+        if (declaration is FirCallableDeclaration && !isApplicableTo(declaration)) {
             reporter.reportOn(jvmName.source, FirJvmErrors.INAPPLICABLE_JVM_NAME)
-        } else if (declaration is FirCallableDeclaration) {
-            val containingClass = declaration.getContainingClass()
-
-            if (
-                declaration.isOverride ||
-                containingClass != null && containingClass.modality != Modality.FINAL && declaration.isOverridable ||
-                containingClass?.symbol?.isInlineClassThatRequiresMangling() == true
-            ) {
-                reporter.reportOn(jvmName.source, FirJvmErrors.INAPPLICABLE_JVM_NAME)
-            }
         }
+    }
+
+    /**
+     * Returns `true` when `@JvmName` on [declaration] does not cause [FirJvmErrors.INAPPLICABLE_JVM_NAME].
+     */
+    fun isApplicableTo(declaration: FirCallableDeclaration): Boolean {
+        if (declaration is FirFunction && !isRenamableFunction(declaration)) return false
+
+        val containingClass = declaration.getContainingClass()
+        return !declaration.isOverride &&
+                !(containingClass != null && containingClass.modality != Modality.FINAL && declaration.isOverridable) &&
+                containingClass?.symbol?.isInlineClassThatRequiresMangling() != true
     }
 
     private fun isRenamableFunction(function: FirFunction): Boolean {

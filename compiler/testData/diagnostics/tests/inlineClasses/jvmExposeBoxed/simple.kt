@@ -171,6 +171,20 @@ fun withLocal() {
 <!JVM_EXPOSE_BOXED_CAN_BE_REPLACED_WITH_JVM_NAME!>@JvmExposeBoxed("jvmName")<!>
 fun canBeReplacedWithJvmName() {}
 
+interface InterfaceWithoutIC {
+    fun run(x: Int): Int
+}
+
+class OverrideWithoutIC : InterfaceWithoutIC {
+    @JvmExposeBoxed("runJvm")
+    override fun run(x: Int): Int = x
+}
+
+open class OpenWithoutIC {
+    <!JVM_EXPOSE_BOXED_CANNOT_EXPOSE_OPEN_ABSTRACT!>@JvmExposeBoxed("openJvm")<!>
+    open fun open(x: Int): Int = x
+}
+
 @JvmInline
 value class ICInt(val i: Int) {
     fun toInt(): Int = i
