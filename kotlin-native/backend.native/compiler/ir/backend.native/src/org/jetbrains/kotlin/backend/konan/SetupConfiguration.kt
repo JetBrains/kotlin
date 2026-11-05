@@ -153,7 +153,11 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     put(IN_PROCESS_OBJ_EMISSION, arguments.inProcessObjEmission)
     if (arguments.inProcessObjEmission) {
         report(KONAN_ARGUMENT_WARNING, "${K2NativeCompilerArguments::inProcessObjEmission.cliArgument} is an experimental feature. " +
-                "The clang flags defined in konan.properties will be ignored when emitting object files.")
+                "The clang flags defined in konan.properties, as well as ${K2NativeCompilerArguments::clangOptions.cliArgument} will be ignored when emitting object files.")
+    }
+    if (arguments.inProcessObjEmission && this@setupFromArguments[BinaryOptions.compileBitcodeWithXcodeLlvm] == true) {
+        report(KONAN_ARGUMENT_ERROR, "${K2NativeCompilerArguments::inProcessObjEmission.cliArgument} is an experimental feature and " +
+                "it is not currently compatible with -Xbinary=${BinaryOptions.compileBitcodeWithXcodeLlvm} option.")
     }
     val nThreadsRaw = parseBackendThreads(arguments.backendThreads)
     val availableProcessors = Runtime.getRuntime().availableProcessors()
