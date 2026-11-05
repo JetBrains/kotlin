@@ -533,13 +533,13 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
 
     val Kotlin_mm_switchThreadStateNative by lazy {
         importRtFunction(
-                if (generationState.shouldOptimize()) "Kotlin_mm_switchThreadStateNative" else "Kotlin_mm_switchThreadStateNative_debug",
+                if (generationState.shouldOptimize() && !context.config.stackwalkShadowStack) "Kotlin_mm_switchThreadStateNative" else "Kotlin_mm_switchThreadStateNative_debug",
                 false
         )
     }
     val Kotlin_mm_switchThreadStateRunnable by lazy {
         importRtFunction(
-                if (generationState.shouldOptimize()) "Kotlin_mm_switchThreadStateRunnable" else "Kotlin_mm_switchThreadStateRunnable_debug",
+                if (generationState.shouldOptimize() && !context.config.stackwalkShadowStack) "Kotlin_mm_switchThreadStateRunnable" else "Kotlin_mm_switchThreadStateRunnable_debug",
                 false
         )
     }

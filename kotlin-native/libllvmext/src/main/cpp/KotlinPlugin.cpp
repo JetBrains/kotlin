@@ -48,6 +48,19 @@ static Expected<bool> ParseShouldInlineSafepoints(StringRef Params) {
       inconvertibleErrorCode());
 }
 
+static Expected<bool> ParseBuildShadowStackPassOptions(StringRef Params) {
+  if (Params.empty()) {
+    return false;
+  }
+  if (Params == "stackwalk") {
+    return true;
+  }
+  return make_error<StringError>(
+      formatv("invalid kotlin-build-shadow-stack pass parameter '{0}'", Params)
+          .str(),
+      inconvertibleErrorCode());
+}
+
 static bool parsePass(StringRef Name, StringRef PassName) {
   return Name == PassName;
 }
@@ -80,8 +93,10 @@ PassPluginLibraryInfo getKotlinPluginInfo() {
                     PM.addPass(ModuleCallsCheckerPass());
                     return true;
                   }
-                  if (parsePass(Name, "kotlin-build-shadow-stack")) {
-                    PM.addPass(BuildShadowStackPass());
+                  if (auto Param =
+                          parsePass(Name, "kotlin-build-shadow-stack",
+                                    ParseBuildShadowStackPassOptions)) {
+                    PM.addPass(BuildShadowStackPass(*Param));
                     return true;
                   }
                   return false;

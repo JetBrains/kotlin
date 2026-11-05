@@ -49,7 +49,14 @@ public:
 
     ThreadState state() noexcept { return suspensionData_.state(); }
 
-    ThreadState setState(ThreadState state) noexcept { return suspensionData_.setState(state); }
+    ThreadState setState(
+            ThreadState state,
+            uintptr_t callerFp = 0,
+            uintptr_t callerPc = 0,
+            bool includeEntryFp = false,
+            bool popSegment = false) noexcept {
+        return suspensionData_.setState(state, callerFp, callerPc, includeEntryFp, popSegment);
+    }
 
     ShadowStack& shadowStack() noexcept { return shadowStack_; }
 

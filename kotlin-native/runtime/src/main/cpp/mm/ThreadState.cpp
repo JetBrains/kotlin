@@ -28,9 +28,16 @@ std::string kotlin::internal::statesToString(std::initializer_list<ThreadState> 
     return result;
 }
 
-PERFORMANCE_INLINE ThreadState kotlin::SwitchThreadState(MemoryState* thread, ThreadState newState, bool reentrant) noexcept {
+PERFORMANCE_INLINE ThreadState kotlin::SwitchThreadState(
+        MemoryState* thread,
+        ThreadState newState,
+        bool reentrant,
+        uintptr_t callerFp,
+        uintptr_t callerPc,
+        bool includeEntryFp,
+        bool popSegment) noexcept {
     RuntimeAssert(thread != nullptr, "thread must not be nullptr");
-    return SwitchThreadState(thread->GetThreadData(), newState, reentrant);
+    return SwitchThreadState(thread->GetThreadData(), newState, reentrant, callerFp, callerPc, includeEntryFp, popSegment);
 }
 
 ALWAYS_INLINE void kotlin::AssertThreadState(MemoryState* thread, ThreadState expected) noexcept {

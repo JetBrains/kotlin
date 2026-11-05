@@ -1388,7 +1388,8 @@ static bool hasGCAddressSpaceValue(const Function &F) {
   return false;
 }
 
-static bool buildShadowStack(Function &F, DominatorTree *DT = nullptr) {
+static bool buildShadowStack(Function &F, bool Stackwalk = false,
+                             DominatorTree *DT = nullptr) {
   if (F.isDeclaration() || F.empty())
     return false;
 
@@ -1663,15 +1664,100 @@ static bool buildShadowStack(Function &F, DominatorTree *DT = nullptr) {
     }
   }
 
-  if (LiveRoots.empty() && ReturnSlotMarkers.empty() &&
-      StackObjectMarkers.empty() && FrameSetCurrentMarkers.empty()) {
-    eraseFrameMarkers();
-    Bases.eraseUnused();
-    lowerAddressSpaces(F);
-    return false;
+  BasicBlock &EntryBB = F.getEntryBlock();
+  Module *Mod = F.getParent();
+  auto &Ctx = F.getContext();
+  const DataLayout &DL = Mod->getDataLayout();
+  Type *Ptr0Ty = PointerType::getUnqual(Ctx);
+  Type *Int32Ty = Type::getInt32Ty(Ctx);
+  Type *Int64Ty = Type::getInt64Ty(Ctx);
+
+  DebugLoc FallbackDL;
+  if (DISubprogram *SP = F.getSubprogram())
+    FallbackDL = DILocation::get(Ctx, 0, 0, SP);
+  auto withDebugLoc = [&](Instruction *I) {
+    if (!I->getDebugLoc())
+      I->setDebugLoc(FallbackDL);
+    return I;
+  };
+
+  if (Stackwalk) {
+    SmallPtrSet<const Instruction *, 4> LeaveMarkerSet(
+        FrameLeaveMarkers.begin(), FrameLeaveMarkers.end());
+    if (!FrameLeaveMarkers.empty()) {
+      if (const Instruction *Exit = findReachableInst(
+              &EntryBB.front(),
+              [](const Instruction *I) {
+                return isa<ReturnInst>(I) || isa<ResumeInst>(I);
+              },
+              [&](const Instruction *I) {
+                return LeaveMarkerSet.contains(I);
+              })) {
+        fail("exit '" + Exit->getParent()->getName() + "' of function '" +
+             F.getName() + "' is reachable without passing a " +
+             FrameLeaveMarkerName + " marker");
+      }
+
+      Function *StackMapFunc = Intrinsic::getOrInsertDeclaration(
+          Mod, Intrinsic::experimental_stackmap);
+      for (CallInst *CI : FrameLeaveMarkers) {
+        if (auto *NextCall = dyn_cast_or_null<CallInst>(CI->getNextNode())) {
+          if (Function *Callee = NextCall->getCalledFunction();
+              Callee && Callee->getName().starts_with(
+                            "Kotlin_mm_switchThreadStateNative")) {
+            NextCall->setTailCallKind(CallInst::TCK_None);
+            IRBuilder<> Builder(NextCall->getNextNode());
+            withDebugLoc(Builder.CreateCall(
+                StackMapFunc,
+                {ConstantInt::get(Int64Ty, static_cast<uint64_t>(-1)),
+                 ConstantInt::get(Int32Ty, 0)}));
+          }
+        }
+      }
+    }
+
+    SmallPtrSet<const Instruction *, 4> SetCurrentMarkerSet(
+        FrameSetCurrentMarkers.begin(), FrameSetCurrentMarkers.end());
+    for (BasicBlock &BB : F) {
+      auto *LP = BB.getLandingPadInst();
+      if (!LP || !DT->isReachableFromEntry(&BB) ||
+          !LP->getMetadata(KotlinLandingPadMetadataName))
+        continue;
+
+      if (const Instruction *Call = findReachableInst(
+              LP->getNextNode(),
+              [](const Instruction *I) {
+                auto *CB = dyn_cast<CallBase>(I);
+                const Function *Callee = CB ? CB->getCalledFunction() : nullptr;
+                return Callee && Callee->hasFnAttribute(KotlinGcFrameAttrName);
+              },
+              [&](const Instruction *I) {
+                return SetCurrentMarkerSet.contains(I);
+              })) {
+        fail("landing pad '" + BB.getName() + "' of function '" + F.getName() +
+             "' reaches a call to '" +
+             cast<CallBase>(Call)->getCalledFunction()->getName() +
+             "' without passing a " + FrameSetCurrentMarkerName + " marker");
+      }
+    }
+
+    if (LiveRoots.empty() && ReturnSlotMarkers.empty() &&
+        StackObjectMarkers.empty()) {
+      eraseFrameMarkers();
+      Bases.eraseUnused();
+      lowerAddressSpaces(F);
+      return !FrameLeaveMarkers.empty();
+    }
+  } else {
+    if (LiveRoots.empty() && ReturnSlotMarkers.empty() &&
+        StackObjectMarkers.empty() && FrameSetCurrentMarkers.empty()) {
+      eraseFrameMarkers();
+      Bases.eraseUnused();
+      lowerAddressSpaces(F);
+      return false;
+    }
   }
 
-  BasicBlock &EntryBB = F.getEntryBlock();
   DenseMap<Value *, unsigned> SlotAssignment;
   unsigned NumRootSlots =
       assignRootSlots(F, LiveRoots, SafepointsForRoot, *DT, SlotAssignment);
@@ -1699,23 +1785,15 @@ static bool buildShadowStack(Function &F, DominatorTree *DT = nullptr) {
     ++NumSlots;
   }
 
-  Module *Mod = F.getParent();
-  unsigned OverlaySlots = getFrameOverlaySlots(*Mod);
+  unsigned OverlaySlots = Stackwalk ? 0 : getFrameOverlaySlots(*Mod);
   unsigned TotalSlots = OverlaySlots + NumSlots;
 
-  auto &Ctx = F.getContext();
-  const DataLayout &DL = Mod->getDataLayout();
-  Type *Ptr0Ty = PointerType::getUnqual(Ctx);
-  Type *Int32Ty = Type::getInt32Ty(Ctx);
-
-  DebugLoc FallbackDL;
-  if (DISubprogram *SP = F.getSubprogram())
-    FallbackDL = DILocation::get(Ctx, 0, 0, SP);
-  auto withDebugLoc = [&](Instruction *I) {
-    if (!I->getDebugLoc())
-      I->setDebugLoc(FallbackDL);
-    return I;
-  };
+  if (Stackwalk) {
+    if (!F.hasUWTable())
+      F.setUWTableKind(UWTableKind::Default);
+    F.addFnAttr("frame-pointer", "all");
+    F.addFnAttr("no-realign-stack");
+  }
 
   IRBuilder<> EntryBuilder(getFirstNonAlloca(EntryBB));
 
@@ -1735,13 +1813,22 @@ static bool buildShadowStack(Function &F, DominatorTree *DT = nullptr) {
       FrameAlloca, ConstantInt::get(Type::getInt8Ty(Ctx), 0), FrameBytes,
       Align(8)));
 
-  FunctionCallee EnterFrameFunc = getOrCreateFrameFunc(*Mod, "EnterFrame");
-  IRBuilder<> EnterBuilder(FrameEnterMarkers.empty()
-                               ? &*EntryBuilder.GetInsertPoint()
-                               : FrameEnterMarkers.front());
-  withDebugLoc(EnterBuilder.CreateCall(
-      EnterFrameFunc, {FrameAlloca, ConstantInt::get(Int32Ty, 0),
-                       ConstantInt::get(Int32Ty, TotalSlots)}));
+  if (Stackwalk) {
+    Function *StackMapFunc = Intrinsic::getOrInsertDeclaration(
+        Mod, Intrinsic::experimental_stackmap);
+    withDebugLoc(EntryBuilder.CreateCall(
+        StackMapFunc,
+        {ConstantInt::get(Int64Ty, TotalSlots), ConstantInt::get(Int32Ty, 0),
+         FrameAlloca}));
+  } else {
+    FunctionCallee EnterFrameFunc = getOrCreateFrameFunc(*Mod, "EnterFrame");
+    IRBuilder<> EnterBuilder(FrameEnterMarkers.empty()
+                                 ? &*EntryBuilder.GetInsertPoint()
+                                 : FrameEnterMarkers.front());
+    withDebugLoc(EnterBuilder.CreateCall(
+        EnterFrameFunc, {FrameAlloca, ConstantInt::get(Int32Ty, 0),
+                         ConstantInt::get(Int32Ty, TotalSlots)}));
+  }
 
   auto getSlotPtr = [&](IRBuilder<> &B, unsigned SlotIdx) -> Value * {
     return B.CreateConstInBoundsGEP2_32(FrameArrayTy, FrameAlloca, 0,
@@ -1808,92 +1895,115 @@ static bool buildShadowStack(Function &F, DominatorTree *DT = nullptr) {
                    SlotAssignment, SlotWrites, ReturnSlotIdx + 1, getSlotPtr);
   }
 
-  FunctionCallee LeaveFrameFunc = getOrCreateFrameFunc(*Mod, "LeaveFrame");
-  auto emitLeaveFrame = [&](Instruction *InsertBefore) {
-    IRBuilder<> Builder(InsertBefore);
-    withDebugLoc(Builder.CreateCall(LeaveFrameFunc,
-                                    {FrameAlloca, ConstantInt::get(Int32Ty, 0),
-                                     ConstantInt::get(Int32Ty, TotalSlots)}));
-  };
-
-  if (FrameLeaveMarkers.empty()) {
-    for (BasicBlock &BB : F) {
-      Instruction *Terminator = BB.getTerminator();
-      if (isa<ReturnInst>(Terminator) || isa<ResumeInst>(Terminator))
-        emitLeaveFrame(Terminator);
-    }
-  } else {
-    for (CallInst *CI : FrameLeaveMarkers)
-      emitLeaveFrame(CI);
-
-    SmallPtrSet<const Instruction *, 4> LeaveMarkerSet(
-        FrameLeaveMarkers.begin(), FrameLeaveMarkers.end());
-    if (const Instruction *Exit = findReachableInst(
-            &EntryBB.front(),
-            [](const Instruction *I) {
-              return isa<ReturnInst>(I) || isa<ResumeInst>(I);
-            },
-            [&](const Instruction *I) { return LeaveMarkerSet.contains(I); })) {
-      fail("exit '" + Exit->getParent()->getName() + "' of function '" +
-           F.getName() + "' is reachable without passing a " +
-           FrameLeaveMarkerName + " marker");
-    }
-  }
-
   auto passesStackMemory = [](const CallInst *CI) {
     return llvm::any_of(CI->args(), [](const Use &Arg) {
       return Arg->getType()->isPointerTy() &&
              isa<AllocaInst>(getUnderlyingObject(Arg.get()));
     });
   };
-  for (BasicBlock &BB : F) {
-    bool FramePopped = false;
-    for (Instruction &I : BB) {
-      auto *CI = dyn_cast<CallInst>(&I);
-      if (!CI)
-        continue;
-      if (CI->getCalledOperand() == LeaveFrameFunc.getCallee()) {
-        FramePopped = true;
-        continue;
+
+  if (Stackwalk) {
+    SmallPtrSet<const Instruction *, 4> LeaveMarkerSet(
+        FrameLeaveMarkers.begin(), FrameLeaveMarkers.end());
+    for (BasicBlock &BB : F) {
+      bool FramePopped = false;
+      for (Instruction &I : BB) {
+        auto *CI = dyn_cast<CallInst>(&I);
+        if (!CI)
+          continue;
+        if (LeaveMarkerSet.contains(CI)) {
+          FramePopped = true;
+          continue;
+        }
+        if (!FramePopped || passesStackMemory(CI))
+          CI->setTailCallKind(CallInst::TCK_None);
       }
-      if (!FramePopped || passesStackMemory(CI))
-        CI->setTailCallKind(CallInst::TCK_None);
     }
-  }
+  } else {
+    FunctionCallee LeaveFrameFunc = getOrCreateFrameFunc(*Mod, "LeaveFrame");
+    auto emitLeaveFrame = [&](Instruction *InsertBefore) {
+      IRBuilder<> Builder(InsertBefore);
+      withDebugLoc(Builder.CreateCall(
+          LeaveFrameFunc, {FrameAlloca, ConstantInt::get(Int32Ty, 0),
+                           ConstantInt::get(Int32Ty, TotalSlots)}));
+    };
 
-  FunctionCallee SetCurrentFrameFunc = getOrCreateSetCurrentFrame(*Mod);
-  SmallPtrSet<const Instruction *, 4> SetCurrentMarkerSet(
-      FrameSetCurrentMarkers.begin(), FrameSetCurrentMarkers.end());
-  for (CallInst *CI : FrameSetCurrentMarkers) {
-    IRBuilder<> MarkerBuilder(CI);
-    withDebugLoc(MarkerBuilder.CreateCall(SetCurrentFrameFunc, {FrameAlloca}));
-  }
+    if (FrameLeaveMarkers.empty()) {
+      for (BasicBlock &BB : F) {
+        Instruction *Terminator = BB.getTerminator();
+        if (isa<ReturnInst>(Terminator) || isa<ResumeInst>(Terminator))
+          emitLeaveFrame(Terminator);
+      }
+    } else {
+      for (CallInst *CI : FrameLeaveMarkers)
+        emitLeaveFrame(CI);
 
-  for (BasicBlock &BB : F) {
-    auto *LP = BB.getLandingPadInst();
-    if (!LP)
-      continue;
-    if (!LP->isCleanup())
-      LP->setCleanup(true);
+      SmallPtrSet<const Instruction *, 4> LeaveMarkerSet(
+          FrameLeaveMarkers.begin(), FrameLeaveMarkers.end());
+      if (const Instruction *Exit = findReachableInst(
+              &EntryBB.front(),
+              [](const Instruction *I) {
+                return isa<ReturnInst>(I) || isa<ResumeInst>(I);
+              },
+              [&](const Instruction *I) {
+                return LeaveMarkerSet.contains(I);
+              })) {
+        fail("exit '" + Exit->getParent()->getName() + "' of function '" +
+             F.getName() + "' is reachable without passing a " +
+             FrameLeaveMarkerName + " marker");
+      }
+    }
 
-    if (!DT->isReachableFromEntry(&BB) ||
-        !LP->getMetadata(KotlinLandingPadMetadataName))
-      continue;
+    for (BasicBlock &BB : F) {
+      bool FramePopped = false;
+      for (Instruction &I : BB) {
+        auto *CI = dyn_cast<CallInst>(&I);
+        if (!CI)
+          continue;
+        if (CI->getCalledOperand() == LeaveFrameFunc.getCallee()) {
+          FramePopped = true;
+          continue;
+        }
+        if (!FramePopped || passesStackMemory(CI))
+          CI->setTailCallKind(CallInst::TCK_None);
+      }
+    }
 
-    if (const Instruction *Call = findReachableInst(
-            LP->getNextNode(),
-            [](const Instruction *I) {
-              auto *CB = dyn_cast<CallBase>(I);
-              const Function *Callee = CB ? CB->getCalledFunction() : nullptr;
-              return Callee && Callee->hasFnAttribute(KotlinGcFrameAttrName);
-            },
-            [&](const Instruction *I) {
-              return SetCurrentMarkerSet.contains(I);
-            })) {
-      fail("landing pad '" + BB.getName() + "' of function '" + F.getName() +
-           "' reaches a call to '" +
-           cast<CallBase>(Call)->getCalledFunction()->getName() +
-           "' without passing a " + FrameSetCurrentMarkerName + " marker");
+    FunctionCallee SetCurrentFrameFunc = getOrCreateSetCurrentFrame(*Mod);
+    SmallPtrSet<const Instruction *, 4> SetCurrentMarkerSet(
+        FrameSetCurrentMarkers.begin(), FrameSetCurrentMarkers.end());
+    for (CallInst *CI : FrameSetCurrentMarkers) {
+      IRBuilder<> MarkerBuilder(CI);
+      withDebugLoc(
+          MarkerBuilder.CreateCall(SetCurrentFrameFunc, {FrameAlloca}));
+    }
+
+    for (BasicBlock &BB : F) {
+      auto *LP = BB.getLandingPadInst();
+      if (!LP)
+        continue;
+      if (!LP->isCleanup())
+        LP->setCleanup(true);
+
+      if (!DT->isReachableFromEntry(&BB) ||
+          !LP->getMetadata(KotlinLandingPadMetadataName))
+        continue;
+
+      if (const Instruction *Call = findReachableInst(
+              LP->getNextNode(),
+              [](const Instruction *I) {
+                auto *CB = dyn_cast<CallBase>(I);
+                const Function *Callee = CB ? CB->getCalledFunction() : nullptr;
+                return Callee && Callee->hasFnAttribute(KotlinGcFrameAttrName);
+              },
+              [&](const Instruction *I) {
+                return SetCurrentMarkerSet.contains(I);
+              })) {
+        fail("landing pad '" + BB.getName() + "' of function '" + F.getName() +
+             "' reaches a call to '" +
+             cast<CallBase>(Call)->getCalledFunction()->getName() +
+             "' without passing a " + FrameSetCurrentMarkerName + " marker");
+      }
     }
   }
 
@@ -1986,7 +2096,15 @@ static void inlineFrameHelpers(Module &M) {
   }
 }
 
-static bool buildShadowStackOnModule(Module &M) {
+static void eraseUnusedFrameHelpers(Module &M) {
+  for (const char *Name : {"EnterFrame", "LeaveFrame", "SetCurrentFrame"}) {
+    Function *Helper = M.getFunction(Name);
+    if (Helper && Helper->hasLocalLinkage() && Helper->use_empty())
+      Helper->eraseFromParent();
+  }
+}
+
+static bool buildShadowStackOnModule(Module &M, bool Stackwalk = false) {
   SmallVector<Function *, 32> Definitions;
   for (Function &F : M) {
     if (!F.isDeclaration())
@@ -1995,10 +2113,13 @@ static bool buildShadowStackOnModule(Module &M) {
 
   bool Changed = false;
   for (Function *F : Definitions)
-    Changed |= buildShadowStack(*F);
+    Changed |= buildShadowStack(*F, Stackwalk);
 
   lowerModuleDeclarations(M);
-  inlineFrameHelpers(M);
+  if (Stackwalk)
+    eraseUnusedFrameHelpers(M);
+  else
+    inlineFrameHelpers(M);
 
   for (const char *Name : MarkerNames) {
     Function *Marker = M.getFunction(Name);
@@ -2017,12 +2138,13 @@ static bool buildShadowStackOnModule(Module &M) {
   return Changed;
 }
 
-extern "C" void LLVMKotlinBuildShadowStack(LLVMModuleRef M) {
-  buildShadowStackOnModule(*unwrap(M));
+extern "C" void LLVMKotlinBuildShadowStack(LLVMModuleRef M,
+                                           LLVMBool Stackwalk) {
+  buildShadowStackOnModule(*unwrap(M), Stackwalk != 0);
 }
 
 PreservedAnalyses BuildShadowStackPass::run(Module &M,
                                             ModuleAnalysisManager &) {
-  buildShadowStackOnModule(M);
+  buildShadowStackOnModule(M, Stackwalk);
   return PreservedAnalyses::none();
 }

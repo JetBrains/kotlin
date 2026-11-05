@@ -251,9 +251,9 @@ RUNTIME_NOTHROW bool Kotlin_native_runtime_Debugging_dumpMemory(ObjHeader*, int 
 void PerformFullGC(MemoryState* memory) RUNTIME_NOTHROW;
 
 // Sets state of the current thread to NATIVE (used by the new MM).
-RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateNative();
+PERFORMANCE_INLINE RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateNative();
 // Sets state of the current thread to RUNNABLE (used by the new MM).
-RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateRunnable();
+PERFORMANCE_INLINE RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateRunnable();
 // No-inline versions of the functions above are used in debug mode to workaround KT-67567 
 // by outlining certain CAS instructions from user code:
 NO_INLINE RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateNative_debug();
@@ -347,7 +347,14 @@ inline ThreadState GetThreadState() noexcept {
 }
 
 // Switches the state of the given thread to `newState` and returns the previous thread state.
-ThreadState SwitchThreadState(MemoryState* thread, ThreadState newState, bool reentrant = false) noexcept;
+ThreadState SwitchThreadState(
+        MemoryState* thread,
+        ThreadState newState,
+        bool reentrant = false,
+        uintptr_t callerFp = compiler::stackwalkShadowStack() ? reinterpret_cast<uintptr_t>(__builtin_frame_address(0)) : 0,
+        uintptr_t callerPc = 0,
+        bool includeEntryFp = false,
+        bool popSegment = true) noexcept;
 
 // Asserts that the given thread is in the given state.
 void AssertThreadState(MemoryState* thread, ThreadState expected) noexcept;
@@ -372,29 +379,38 @@ ALWAYS_INLINE inline void AssertThreadState(std::initializer_list<ThreadState> e
 class ThreadStateGuard final : private MoveOnly {
 public:
     // Do not set any state. Useful to create a variable to move another guard into.
-    ThreadStateGuard() : thread_(nullptr), oldState_(ThreadState::kNative), reentrant_(false) {}
+    ALWAYS_INLINE ThreadStateGuard() noexcept : thread_(nullptr), oldState_(ThreadState::kNative), reentrant_(false) {}
 
     // Set the state for the given thread.
-    ThreadStateGuard(MemoryState* thread, ThreadState state, bool reentrant = false) noexcept : thread_(thread), reentrant_(reentrant) {
-        oldState_ = SwitchThreadState(thread_, state, reentrant_);
+    ALWAYS_INLINE ThreadStateGuard(
+            MemoryState* thread,
+            ThreadState state,
+            bool reentrant = false,
+            uintptr_t callerFp = compiler::stackwalkShadowStack() ? reinterpret_cast<uintptr_t>(__builtin_frame_address(0)) : 0) noexcept :
+        thread_(thread), reentrant_(reentrant) {
+        oldState_ = SwitchThreadState(thread_, state, reentrant_, callerFp, 0, false, false);
     }
 
     // Sets the state for the current thread.
-    explicit ThreadStateGuard(ThreadState state, bool reentrant = false) noexcept
-        : ThreadStateGuard(mm::GetMemoryState(), state, reentrant) {};
+    ALWAYS_INLINE explicit ThreadStateGuard(
+            ThreadState state,
+            bool reentrant = false,
+            uintptr_t callerFp = compiler::stackwalkShadowStack() ? reinterpret_cast<uintptr_t>(__builtin_frame_address(0)) : 0) noexcept
+        : ThreadStateGuard(mm::GetMemoryState(), state, reentrant, callerFp) {};
 
-    ThreadStateGuard(ThreadStateGuard&& other) noexcept
+    ALWAYS_INLINE ThreadStateGuard(ThreadStateGuard&& other) noexcept
         : thread_(other.thread_), oldState_(other.oldState_), reentrant_(other.reentrant_) {
         other.thread_ = nullptr;
     }
 
-    ~ThreadStateGuard() noexcept {
+    ALWAYS_INLINE ~ThreadStateGuard() noexcept {
         if (thread_ != nullptr) {
-            SwitchThreadState(thread_, oldState_, reentrant_);
+            uintptr_t callerFp = compiler::stackwalkShadowStack() ? reinterpret_cast<uintptr_t>(__builtin_frame_address(0)) : 0;
+            SwitchThreadState(thread_, oldState_, reentrant_, callerFp, 0, false, /* popSegment = */ oldState_ == ThreadState::kNative);
         }
     }
 
-    ThreadStateGuard& operator=(ThreadStateGuard&& other) noexcept {
+    ALWAYS_INLINE ThreadStateGuard& operator=(ThreadStateGuard&& other) noexcept {
         thread_ = other.thread_;
         oldState_ = other.oldState_;
         reentrant_ = other.reentrant_;
@@ -413,10 +429,13 @@ private:
 // No-op for old GC.
 class CalledFromNativeGuard final : private Pinned {
 public:
-    CalledFromNativeGuard(bool reentrant = false) noexcept;
+    CalledFromNativeGuard(
+            bool reentrant = false,
+            uintptr_t callerFp = compiler::stackwalkShadowStack() ? reinterpret_cast<uintptr_t>(__builtin_frame_address(0)) : 0) noexcept;
 
-    ~CalledFromNativeGuard() noexcept {
-        SwitchThreadState(thread_, oldState_, reentrant_);
+    ALWAYS_INLINE ~CalledFromNativeGuard() noexcept {
+        uintptr_t callerFp = compiler::stackwalkShadowStack() ? reinterpret_cast<uintptr_t>(__builtin_frame_address(0)) : 0;
+        SwitchThreadState(thread_, oldState_, reentrant_, callerFp, 0, false, /* popSegment = */ oldState_ == ThreadState::kNative);
     }
 private:
     MemoryState* thread_;
@@ -440,11 +459,13 @@ ALWAYS_INLINE inline R CallWithThreadState(R(*function)(Args...), Args... args) 
 
 class NativeOrUnregisteredThreadGuard final : private MoveOnly {
 public:
-    explicit NativeOrUnregisteredThreadGuard(bool reentrant = false) noexcept {
+    ALWAYS_INLINE explicit NativeOrUnregisteredThreadGuard(
+            bool reentrant = false,
+            uintptr_t callerFp = compiler::stackwalkShadowStack() ? reinterpret_cast<uintptr_t>(__builtin_frame_address(0)) : 0) noexcept {
         // The default ctor of ThreadStateGuard doesn't set the state.
         // So the actual state switching is performed only if the thread is registered.
         if (kotlin::mm::IsCurrentThreadRegistered()) {
-            backingGuard_ = kotlin::ThreadStateGuard(kotlin::ThreadState::kNative, reentrant);
+            backingGuard_ = kotlin::ThreadStateGuard(kotlin::ThreadState::kNative, reentrant, callerFp);
         }
     }
 

@@ -276,6 +276,7 @@ internal fun CompilerConfiguration.setupCommonOptionsForCaches(config: NativeSec
     put(BinaryOptions.runtimeAssertionsMode, config.runtimeAssertsMode)
     put(BinaryOptions.swiftExport, config.swiftExport)
     put(BinaryOptions.lateShadowStack, config.lateShadowStack)
+    put(BinaryOptions.stackwalkShadowStack, config.stackwalkShadowStack)
     put(CommonConfigurationKeys.PARALLEL_BACKEND_THREADS, config.threadsCount)
     putIfNotNull(KONAN_DATA_DIR, config.distribution.localKonanDir.absolutePath)
     putIfNotNull(BinaryOptions.minidumpLocation, config.minidumpLocation)

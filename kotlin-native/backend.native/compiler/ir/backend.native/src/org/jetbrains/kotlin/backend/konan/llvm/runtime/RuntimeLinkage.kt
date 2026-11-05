@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.backend.konan.llvm.runtime
 
+import llvm.LLVMAddTargetDependentFunctionAttr
+import llvm.LLVMIsDeclaration
 import llvm.LLVMModuleCreateWithNameInContext
 import llvm.LLVMModuleRef
 import org.jetbrains.kotlin.backend.konan.MandatoryOptimizationPipeline
@@ -13,6 +15,7 @@ import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.config.nativeBinaryOptions.RuntimeLinkageStrategy
 import org.jetbrains.kotlin.backend.konan.createLTOPipelineConfigForRuntime
 import org.jetbrains.kotlin.backend.konan.llvm.BasicLlvmHelpers
+import org.jetbrains.kotlin.backend.konan.llvm.getFunctions
 import org.jetbrains.kotlin.backend.konan.llvm.getName
 import org.jetbrains.kotlin.backend.konan.llvm.llvmLinkModules2
 import org.jetbrains.kotlin.backend.konan.optimizations.handlePerformanceInlineAnnotation
@@ -55,4 +58,9 @@ internal fun linkRuntimeModules(generationState: NativeGenerationState, runtimeN
  */
 private fun prepareRuntimeModule(generationState: NativeGenerationState, module: LLVMModuleRef) {
     handlePerformanceInlineAnnotation(generationState.config, BasicLlvmHelpers(generationState, module))
+    if (generationState.config.stackwalkShadowStack) {
+        getFunctions(module)
+                .filter { LLVMIsDeclaration(it) == 0 }
+                .forEach { LLVMAddTargetDependentFunctionAttr(it, "frame-pointer", "all") }
+    }
 }

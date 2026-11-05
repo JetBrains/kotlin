@@ -389,20 +389,34 @@ extern "C" RUNTIME_NOTHROW PERFORMANCE_INLINE void Kotlin_mm_safePointWhileLoopB
 }
 
 extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateNative() {
-    SwitchThreadState(mm::ThreadRegistry::Instance().CurrentThreadData(), ThreadState::kNative);
+    SwitchThreadState(mm::ThreadRegistry::Instance().CurrentThreadData(), ThreadState::kNative, false,
+                      compiler::stackwalkShadowStack() ? reinterpret_cast<uintptr_t>(__builtin_frame_address(0)) : 0,
+                      compiler::stackwalkShadowStack() ? reinterpret_cast<uintptr_t>(__builtin_return_address(0)) : 0,
+                      false, false);
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wframe-address"
 extern "C" NO_INLINE RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateNative_debug() {
-    SwitchThreadState(mm::ThreadRegistry::Instance().CurrentThreadData(), ThreadState::kNative);
+    uintptr_t callerFp = compiler::stackwalkShadowStack() ? reinterpret_cast<uintptr_t>(__builtin_frame_address(1)) : 0;
+    uintptr_t callerPc = compiler::stackwalkShadowStack() ? reinterpret_cast<uintptr_t>(__builtin_return_address(0)) : 0;
+    SwitchThreadState(mm::ThreadRegistry::Instance().CurrentThreadData(), ThreadState::kNative, false, callerFp, callerPc, false, false);
 }
+#pragma clang diagnostic pop
 
 extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateRunnable() {
-    SwitchThreadState(mm::ThreadRegistry::Instance().CurrentThreadData(), ThreadState::kRunnable);
+    SwitchThreadState(mm::ThreadRegistry::Instance().CurrentThreadData(), ThreadState::kRunnable, false,
+                      compiler::stackwalkShadowStack() ? reinterpret_cast<uintptr_t>(__builtin_frame_address(0)) : 0,
+                      0, true, false);
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wframe-address"
 extern "C" NO_INLINE RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateRunnable_debug() {
-    SwitchThreadState(mm::ThreadRegistry::Instance().CurrentThreadData(), ThreadState::kRunnable);
+    uintptr_t callerFp = compiler::stackwalkShadowStack() ? reinterpret_cast<uintptr_t>(__builtin_frame_address(1)) : 0;
+    SwitchThreadState(mm::ThreadRegistry::Instance().CurrentThreadData(), ThreadState::kRunnable, false, callerFp, 0, true, false);
 }
+#pragma clang diagnostic pop
 
 MemoryState* kotlin::mm::GetMemoryState() noexcept {
     return ToMemoryState(ThreadRegistry::Instance().CurrentThreadDataNode());
@@ -412,10 +426,11 @@ bool kotlin::mm::IsCurrentThreadRegistered() noexcept {
     return ThreadRegistry::IsCurrentThreadRegistered();
 }
 
-PERFORMANCE_INLINE kotlin::CalledFromNativeGuard::CalledFromNativeGuard(bool reentrant) noexcept : reentrant_(reentrant) {
+PERFORMANCE_INLINE kotlin::CalledFromNativeGuard::CalledFromNativeGuard(bool reentrant, uintptr_t callerFp) noexcept :
+    reentrant_(reentrant) {
     Kotlin_initRuntimeIfNeeded();
     thread_ = mm::GetMemoryState();
-    oldState_ = SwitchThreadState(thread_, ThreadState::kRunnable, reentrant_);
+    oldState_ = SwitchThreadState(thread_, ThreadState::kRunnable, reentrant_, callerFp, 0, false, false);
 }
 
 RUNTIME_NOTHROW extern "C" void Kotlin_processObjectInMark(void* state, ObjHeader* object) {

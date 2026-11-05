@@ -25,9 +25,12 @@ namespace {
 
 std::atomic<mm::internal::SuspensionReason> mm::internal::gSuspensionRequestReason = nullptr;
 
-PERFORMANCE_INLINE mm::ThreadSuspensionData::MutatorPauseHandle::MutatorPauseHandle(const char* reason, mm::ThreadData& threadData) noexcept
-    :
-    reason_(reason), threadData_(threadData), pauseStartTimeMicros_(konan::getTimeMicros()) {
+PERFORMANCE_INLINE mm::ThreadSuspensionData::MutatorPauseHandle::MutatorPauseHandle(
+        const char* reason, mm::ThreadData& threadData, uintptr_t callerFp) noexcept :
+    reason_(reason), threadData_(threadData), pauseStartTimeMicros_(konan::getTimeMicros()), callerFp_(callerFp) {
+    if (compiler::stackwalkShadowStack()) {
+        setExitFp_ = threadData_.shadowStack().onLeaveRunnable(callerFp_, 0, false);
+    }
     auto prevState = threadData_.suspensionData().setStateNoSafePoint(ThreadState::kNative);
     // no special reason, fill free to implement pause from native if needed
     RuntimeAssert(prevState == ThreadState::kRunnable, "Expected runnable state");
@@ -42,12 +45,21 @@ PERFORMANCE_INLINE void mm::ThreadSuspensionData::MutatorPauseHandle::resume() n
     RuntimeAssert(!resumed, "Must not be resumed yet");
     auto prevState = threadData_.suspensionData().setStateNoSafePoint(ThreadState::kRunnable);
     RuntimeAssert(prevState == ThreadState::kNative, "Expected native state");
+    if (compiler::stackwalkShadowStack() && setExitFp_) {
+        threadData_.shadowStack().onEnterRunnable(callerFp_, false);
+    }
     auto pauseTimeMicros = konan::getTimeMicros() - pauseStartTimeMicros_;
     RuntimeLogInfo({logging::Tag::kPause}, "Resuming mutation after %" PRIu64 " microseconds of suspension (%s)", pauseTimeMicros, reason_);
     resumed = true;
 }
 
-kotlin::ThreadState kotlin::mm::ThreadSuspensionData::setState(kotlin::ThreadState newState) noexcept {
+kotlin::ThreadState kotlin::mm::ThreadSuspensionData::setState(
+        kotlin::ThreadState newState, uintptr_t callerFp, uintptr_t callerPc, bool includeEntryFp, bool popSegment) noexcept {
+    if (compiler::stackwalkShadowStack() && newState == ThreadState::kNative) {
+        if (state_.load(std::memory_order_relaxed) == ThreadState::kRunnable) {
+            threadData_.shadowStack().onLeaveRunnable(callerFp, callerPc, popSegment);
+        }
+    }
     ThreadState oldState = state_.exchange(newState);
     if (oldState == ThreadState::kNative && newState == ThreadState::kRunnable) {
         // Must use already acquired `ThreadData` because TLS may be in invalid state e.g. during thread detach.
@@ -59,6 +71,9 @@ kotlin::ThreadState kotlin::mm::ThreadSuspensionData::setState(kotlin::ThreadSta
         // so, loading SP here, or checking `internal::gSuspensionRequested` in
         // `suspendIfRequested` is enough.
         safePoint(threadData_, std::memory_order_seq_cst);
+        if (compiler::stackwalkShadowStack()) {
+            threadData_.shadowStack().onEnterRunnable(callerFp, includeEntryFp);
+        }
     }
     return oldState;
 }
@@ -85,8 +100,8 @@ void mm::ThreadSuspensionData::requestThreadsSuspension(const char* reason) noex
 }
 
 PERFORMANCE_INLINE mm::ThreadSuspensionData::MutatorPauseHandle mm::ThreadSuspensionData::pauseMutationInScope(
-        const char* reason) noexcept {
-    return MutatorPauseHandle(reason, threadData_);
+        const char* reason, uintptr_t callerFp) noexcept {
+    return MutatorPauseHandle(reason, threadData_, callerFp);
 }
 
 void kotlin::mm::RequestThreadsSuspension(internal::SuspensionReason reason) noexcept {

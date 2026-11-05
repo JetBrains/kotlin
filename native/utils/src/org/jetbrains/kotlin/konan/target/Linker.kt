@@ -457,12 +457,28 @@ class GccBasedLinker(targetProperties: GccConfigurables)
         val crtPrefix = "$absoluteTargetSysRoot/$crtFilesLocation"
         val staticLibrariesArgs = staticLibraries.asGccSpreadArgument("static", tempFiles)
         val dynamicLibrariesArgs = dynamicLibraries.asGccSpreadArgument("dynamic", tempFiles)
+        val stackMapsLinkerScript = tempFiles.create("stackmaps", ".lds").apply {
+            writeLines(listOf(
+                    "SECTIONS {",
+                    "  .llvm_stackmaps : {",
+                    "    PROVIDE_HIDDEN(__start_llvm_stackmaps = .);",
+                    "    KEEP(*(.llvm_stackmaps))",
+                    "    PROVIDE_HIDDEN(__stop_llvm_stackmaps = .);",
+                    "  }",
+                    "}",
+                    "INSERT AFTER .text;"
+            ))
+        }
         // TODO: Can we extract more to the konan.configurables?
         return listOf(Command(absoluteLinker).apply {
             +"--sysroot=${absoluteTargetSysRoot}"
             +"-export-dynamic"
             +"-z"
             +"relro"
+            +"-z"
+            +"notext"
+            +"-T"
+            +stackMapsLinkerScript.toString()
             +"--build-id"
             +"--eh-frame-hdr"
             +"-dynamic-linker"

@@ -43,6 +43,9 @@ internal fun addKotlinGcFrameAttribute(context: NativeBackendContext, llvmFuncti
 }
 
 private fun shouldEnforceFramePointer(context: NativeBackendContext): Boolean {
+    if (context.config.stackwalkShadowStack) {
+        return true
+    }
     // TODO: do we still need it?
     if (!context.shouldOptimize()) {
         return true

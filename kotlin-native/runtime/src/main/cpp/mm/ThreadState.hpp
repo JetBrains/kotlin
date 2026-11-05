@@ -27,9 +27,16 @@ std::string statesToString(std::initializer_list<ThreadState> states) noexcept;
 const char* ThreadStateName(ThreadState state) noexcept;
 
 // Switches the state of the given thread to `newState` and returns the previous thread state.
-PERFORMANCE_INLINE inline ThreadState SwitchThreadState(mm::ThreadData* threadData, ThreadState newState, bool reentrant = false) noexcept {
+PERFORMANCE_INLINE inline ThreadState SwitchThreadState(
+        mm::ThreadData* threadData,
+        ThreadState newState,
+        bool reentrant = false,
+        uintptr_t callerFp = compiler::stackwalkShadowStack() ? reinterpret_cast<uintptr_t>(__builtin_frame_address(0)) : 0,
+        uintptr_t callerPc = 0,
+        bool includeEntryFp = false,
+        bool popSegment = true) noexcept {
     RuntimeAssert(threadData != nullptr, "threadData must not be nullptr");
-    auto oldState = threadData->setState(newState);
+    auto oldState = threadData->setState(newState, callerFp, callerPc, includeEntryFp, popSegment);
     // TODO(perf): Mesaure the impact of this assert in debug and opt modes.
     RuntimeAssert(
             internal::isStateSwitchAllowed(oldState, newState, reentrant), "Illegal thread state switch. Old state: %s. New state: %s.",

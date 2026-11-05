@@ -137,6 +137,8 @@ object BinaryOptions : BinaryOptionRegistry() {
     val enableReleaseBinaryCache by booleanOption()
 
     val lateShadowStack by booleanOption()
+
+    val stackwalkShadowStack by booleanOption()
 }
 
 open class BinaryOption<T : Any>(

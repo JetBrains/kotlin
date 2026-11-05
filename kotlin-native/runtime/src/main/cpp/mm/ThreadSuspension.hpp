@@ -33,7 +33,10 @@ class ThreadSuspensionData : private Pinned {
 private:
     class MutatorPauseHandle : private Pinned {
     public:
-        explicit MutatorPauseHandle(const char* reason, ThreadData& threadData) noexcept;
+        explicit MutatorPauseHandle(
+                const char* reason,
+                ThreadData& threadData,
+                uintptr_t callerFp = compiler::stackwalkShadowStack() ? reinterpret_cast<uintptr_t>(__builtin_frame_address(0)) : 0) noexcept;
         ~MutatorPauseHandle() noexcept;
         void resume() noexcept;
 
@@ -41,6 +44,8 @@ private:
         const char* reason_;
         ThreadData& threadData_;
         uint64_t pauseStartTimeMicros_;
+        uintptr_t callerFp_;
+        bool setExitFp_ = false;
         bool resumed = false;
     };
 
@@ -52,7 +57,12 @@ public:
 
     ThreadState state() noexcept { return state_; }
 
-    ThreadState setState(ThreadState newState) noexcept;
+    ThreadState setState(
+            ThreadState newState,
+            uintptr_t callerFp = 0,
+            uintptr_t callerPc = 0,
+            bool includeEntryFp = false,
+            bool popSegment = false) noexcept;
     ThreadState setStateNoSafePoint(ThreadState newState) noexcept { return state_.exchange(newState, std::memory_order_acq_rel); }
 
     bool suspendedOrNative() noexcept { return state() == kotlin::ThreadState::kNative; }
@@ -70,7 +80,9 @@ public:
      *
      * NOTE: the safe point actions will NOT be automatically executed after the pause.
      */
-    [[nodiscard]] MutatorPauseHandle pauseMutationInScope(const char* reason) noexcept;
+    [[nodiscard]] MutatorPauseHandle pauseMutationInScope(
+            const char* reason,
+            uintptr_t callerFp = compiler::stackwalkShadowStack() ? reinterpret_cast<uintptr_t>(__builtin_frame_address(0)) : 0) noexcept;
 
 private:
     std::atomic<ThreadState> state_;

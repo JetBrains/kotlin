@@ -54,6 +54,7 @@ data class LlvmPipelineConfig(
         val saveIrDirectory: java.io.File? = null,
         val runLLVMPassesInCompiler: Boolean,
         val shouldInlineSafepoints: Boolean = false,
+        val stackwalkShadowStack: Boolean = false,
 ) {
     /**
      * Create a copy of [LlvmPipelineConfig] setting up options to dump IR
@@ -217,6 +218,7 @@ internal fun createLTOFinalPipelineConfig(
             sspMode = config.stackProtectorMode,
             runLLVMPassesInCompiler = config.runLLVMPassesInCompiler,
             shouldInlineSafepoints = context.shouldInlineSafepoints(),
+            stackwalkShadowStack = config.stackwalkShadowStack,
     )
 }
 
@@ -399,7 +401,10 @@ class RemoveRedundantSafepointsPipeline(config: LlvmPipelineConfig, performanceM
 class BuildShadowStackPipeline(config: LlvmPipelineConfig, performanceManager: PerformanceManager?, logger: LoggingContext? = null) :
         LlvmOptimizationPipeline(config, performanceManager, logger) {
     override val pipelineName = "llvm-build-shadow-stack"
-    override val passes = listOf("kotlin-build-shadow-stack")
+    override val passes = buildList {
+        val arg = if (config.stackwalkShadowStack) "<stackwalk>" else ""
+        add("kotlin-build-shadow-stack$arg")
+    }
 }
 
 class ModuleCallsCheckerPipeline(config: LlvmPipelineConfig, performanceManager: PerformanceManager?, logger: LoggingContext? = null) :
