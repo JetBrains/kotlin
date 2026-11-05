@@ -95,6 +95,14 @@ public expect fun <T> MutableIterable<T>.removeAll(predicate: (T) -> Boolean): B
 @IgnorableReturnValue
 public expect fun <T> MutableIterable<T>.retainAll(predicate: (T) -> Boolean): Boolean
 
+/**
+ * Removes all elements from this [MutableList] that match the given [predicate].
+ *
+ * @return `true` if any element was removed from this collection, or `false` when no elements were removed and collection was not modified.
+ */
+@IgnorableReturnValue
+public expect fun <T> MutableList<T>.removeAll(predicate: (T) -> Boolean): Boolean
+
 internal expect fun collectionToArray(collection: Collection<*>): Array<Any?>
 
 internal expect fun <T> collectionToArray(collection: Collection<*>, array: Array<T>): Array<T>
