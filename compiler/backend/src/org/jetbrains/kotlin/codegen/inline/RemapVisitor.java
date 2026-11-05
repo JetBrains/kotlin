@@ -71,10 +71,10 @@ public class RemapVisitor extends SkipMaxAndEndVisitor {
             StackValue inline = nodeRemapper.getFieldForInline(fin, null);
             assert inline != null : "Captured field should have not null stackValue " + fin;
             if (Opcodes.PUTSTATIC == opcode) {
-                inline.store(inline.type, inline.kotlinType, this, typeMapper);
+                inline.store(inline.type, inline.irType, this, typeMapper);
             }
             else {
-                inline.put(inline.type, inline.kotlinType, this, typeMapper);
+                inline.put(inline.type, inline.irType, this, typeMapper);
             }
             return;
         }

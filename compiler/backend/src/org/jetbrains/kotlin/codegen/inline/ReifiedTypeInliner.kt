@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -437,7 +436,7 @@ class TypeParameterMappings(
     allReified: Boolean,
     mapType: (IrType, BothSignatureWriter) -> Type
 ) {
-    private val mappingsByName = hashMapOf<String, TypeParameterMapping<IrType>>()
+    private val mappingsByName = hashMapOf<String, TypeParameterMapping>()
 
     init {
         with(typeSystem) {
@@ -446,23 +445,23 @@ class TypeParameterMappings(
                 val sw = BothSignatureWriter(BothSignatureWriter.Mode.TYPE)
                 mappingsByName[name] = TypeParameterMapping(
                     type, mapType(type, sw), sw.toString(), allReified || parameter.isReified(),
-                    typeSystem.extractReificationArgument(type)?.second,
-                    typeSystem.extractUsedReifiedParameters(type)
+                    extractReificationArgument(type)?.second,
+                    extractUsedReifiedParameters(type),
                 )
             }
         }
     }
 
-    operator fun get(name: String): TypeParameterMapping<IrType>? = mappingsByName[name]
+    operator fun get(name: String): TypeParameterMapping? = mappingsByName[name]
 
     fun hasReifiedParameters() = mappingsByName.values.any { it.isReified }
 
-    internal inline fun forEach(block: (String, TypeParameterMapping<IrType>) -> Unit) =
+    internal inline fun forEach(block: (String, TypeParameterMapping) -> Unit) =
         mappingsByName.entries.forEach { [name, mapping] -> block(name, mapping) }
 }
 
-class TypeParameterMapping<KT : KotlinTypeMarker>(
-    val type: KT,
+class TypeParameterMapping(
+    val type: IrType,
     val asmType: Type,
     val signature: String,
     val isReified: Boolean,
