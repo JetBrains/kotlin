@@ -97,21 +97,35 @@ internal val String.normalizedSwiftExportModuleName: String
             .joinToString("") { it.capitalizeAsciiOnly() }
     }
 
-internal fun Project.validateSwiftExportModuleName(moduleName: String) =
-    kotlinToolingDiagnosticsCollector.validateSwiftExportModuleName(this, moduleName)
+/**
+ * @param module the project path or coordinates of the module the name is for
+ * @param dsl where to provide a name instead of the one generated from [module], `null` if the name was provided
+ */
+internal fun Project.validateSwiftExportModuleName(moduleName: String, module: String, dsl: String? = null) =
+    kotlinToolingDiagnosticsCollector.validateSwiftExportModuleName(this, moduleName, module, dsl)
 
 /**
- * Validates a module name derived while the Swift Export task runs. Reported as FATAL: at that point an ERROR would
+ * Validates a module name while the Swift Export task runs. Reported as FATAL: at that point an ERROR would
  * only be logged and the build would go on with an invalid name.
  */
-internal fun validateSwiftExportModuleName(moduleName: String, reportDiagnostic: (ToolingDiagnostic) -> Unit) {
+internal fun validateSwiftExportModuleName(
+    moduleName: String,
+    module: String,
+    dsl: String? = null,
+    reportDiagnostic: (ToolingDiagnostic) -> Unit,
+) {
     if (!moduleName.matches(Regex(SWIFT_EXPORT_MODULE_NAME_VALIDATION_PATTERN))) {
-        reportDiagnostic(KotlinToolingDiagnostics.SwiftExportInvalidModuleName(moduleName, FATAL))
+        reportDiagnostic(KotlinToolingDiagnostics.SwiftExportInvalidModuleName(moduleName, module, dsl, FATAL))
     }
 }
 
-internal fun KotlinToolingDiagnosticsCollector.validateSwiftExportModuleName(project: Project, moduleName: String) {
+internal fun KotlinToolingDiagnosticsCollector.validateSwiftExportModuleName(
+    project: Project,
+    moduleName: String,
+    module: String,
+    dsl: String? = null,
+) {
     if (!moduleName.matches(Regex(SWIFT_EXPORT_MODULE_NAME_VALIDATION_PATTERN))) {
-        report(project.toolingDiagnosticsContext, KotlinToolingDiagnostics.SwiftExportInvalidModuleName(moduleName))
+        report(project.toolingDiagnosticsContext, KotlinToolingDiagnostics.SwiftExportInvalidModuleName(moduleName, module, dsl))
     }
 }

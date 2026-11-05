@@ -26,7 +26,7 @@ internal object SwiftExportModuleNameChecker : KotlinGradleProjectChecker {
         multiplatformExtension?.getExtension<ExportExtension>(EXPORT_EXTENSION_NAME)
             ?.swiftExportConfiguration
             ?.moduleName?.orNull?.let {
-                collector.validateSwiftExportModuleName(project, it)
+                collector.validateSwiftExportModuleName(project, it, project.path)
             }
 
         val legacyExtension = multiplatformExtension?.getExtension<SwiftExportExtension>(
@@ -34,12 +34,12 @@ internal object SwiftExportModuleNameChecker : KotlinGradleProjectChecker {
         ) ?: return
 
         legacyExtension.moduleName.orNull?.let {
-            collector.validateSwiftExportModuleName(project, it)
+            collector.validateSwiftExportModuleName(project, it, project.path)
         }
 
         legacyExtension.exportedModules.orNull?.forEach { module ->
             module.moduleName.orNull?.let {
-                collector.validateSwiftExportModuleName(project, it)
+                collector.validateSwiftExportModuleName(project, it, module.name)
             }
         }
     }

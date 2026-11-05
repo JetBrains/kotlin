@@ -1889,18 +1889,25 @@ internal object KotlinToolingDiagnostics {
 
     object SwiftExportInvalidModuleName : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
         /**
+         * @param module the project path or coordinates of the module the name is for
+         * @param dsl where to provide a name instead of the one generated from [module], `null` if the name was provided
          * @param severity FATAL when reported while the Swift Export task runs, where an ERROR is only logged
          */
         operator fun invoke(
             moduleName: String,
+            module: String,
+            dsl: String? = null,
             severity: KotlinToolingDiagnosticsSeverity = ERROR,
         ) = build(severity = severity) {
             title("Invalid Swift Module Name")
                 .description {
-                    "The Swift module name '$moduleName' is invalid"
+                    if (dsl == null) "The provided Swift module name '$moduleName' for module '$module' is invalid."
+                    else "The Swift module name '$moduleName' generated for module '$module' is invalid."
                 }
                 .solution {
-                    "The module name should be a valid Swift identifier, see https://kotl.in/swift-identifiers"
+                    val requirement = "The module name should be a valid Swift identifier, see https://kotl.in/swift-identifiers."
+                    if (dsl == null) "$requirement Please change the module name to a valid one."
+                    else "$requirement Please rename the module, or provide a valid module name using the $dsl DSL."
                 }
         }
     }
