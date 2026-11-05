@@ -28,6 +28,24 @@ public class OutOfContentRootPartialRawFirBuilderTestCaseGenerated extends Abstr
   }
 
   @Test
+  @TestMetadata("companionBlockDelegatedProperty.kt")
+  public void testCompanionBlockDelegatedProperty() {
+    run("companionBlockDelegatedProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("companionBlockFunction.kt")
+  public void testCompanionBlockFunction() {
+    run("companionBlockFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("companionBlockProperty.kt")
+  public void testCompanionBlockProperty() {
+    run("companionBlockProperty.kt");
+  }
+
+  @Test
   @TestMetadata("localFunction.kt")
   public void testLocalFunction() {
     run("localFunction.kt");

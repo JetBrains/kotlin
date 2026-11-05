@@ -99,6 +99,12 @@ public class FirStandaloneNormalAnalysisSourceModuleCollectDiagnosticsTestGenera
   }
 
   @Test
+  @TestMetadata("companionBlockDelegatedProperty.kt")
+  public void testCompanionBlockDelegatedProperty() {
+    run("companionBlockDelegatedProperty.kt");
+  }
+
+  @Test
   @TestMetadata("contextParameters.kt")
   public void testContextParameters() {
     run("contextParameters.kt");

@@ -1,0 +1,4 @@
+public? final? val test/classes/Owner.foo: Int
+    public? get(): Int {
+        ^ bar#()
+    }

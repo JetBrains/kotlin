@@ -1,0 +1,7 @@
+public? final? var test/classes/Owner.foo: Intby Delegate#()
+    public? get(): <implicit> {
+        ^ this@R|test/classes/Owner|.D|test/classes/Owner.foo|.getValue#(this@R|test/classes/Owner|, ::R|test/classes/Owner.foo|)
+    }
+    public? set(<set-?>: <implicit>): R|kotlin/Unit| {
+        ^ this@R|test/classes/Owner|.D|test/classes/Owner.foo|.setValue#(this@R|test/classes/Owner|, ::R|test/classes/Owner.foo|, R|<local>/<set-?>|)
+    }

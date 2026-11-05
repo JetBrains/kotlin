@@ -1,0 +1,4 @@
+Diagnostics from file:
+  for PSI element of type KtCallExpression at (10,39-59)
+    DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE      text ranges: [(257,259)]
+      PSI: KtCallExpression at (10,39-59)
