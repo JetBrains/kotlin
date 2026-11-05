@@ -2670,7 +2670,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(INNER_CLASS_INSIDE_VALUE_CLASS, "{0} class cannot have inner classes.", STRING)
         map.put(VALUE_CLASS_CANNOT_BE_CLONEABLE, "Value class cannot be 'Cloneable'.")
 
-        map.put(VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION, "Value classes without '@JvmInline' annotation are not yet supported.")
+        map.put(VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION, "Value classes without '@JvmInline' annotation are not supported.")
         map.put(
             INLINE_VALUE_CLASS_WITHOUT_EXPLICIT_INLINE,
             """
