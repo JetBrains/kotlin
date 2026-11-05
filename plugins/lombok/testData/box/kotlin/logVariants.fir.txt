@@ -21,7 +21,7 @@ FILE: logVariants.kt
         }
 
         public final companion object Companion : R|kotlin/Any| {
-            @R|kotlin/jvm/JvmStatic|() private final val log: R|org/slf4j/Logger| = Q|org/slf4j/LoggerFactory|.R|org/slf4j/LoggerFactory.getLogger*s|(<getClass>(Q|Slf4jExample|).R|kotlin/jvm/java|)
+            @R|kotlin/jvm/JvmStatic|() private final val log: R|org/slf4j/Logger| = Q|org/slf4j/LoggerFactory|.R|org/slf4j/LoggerFactory.getLogger*s|(<getClass>(Q|Slf4jExample|).R|kotlin/jvm/java|<R|Slf4jExample|>)
                 private get(): R|org/slf4j/Logger|
 
             private constructor(): R|Slf4jExample.Companion| {
@@ -61,7 +61,7 @@ FILE: logVariants.kt
         }
 
         public final companion object Companion : R|kotlin/Any| {
-            @R|kotlin/jvm/JvmStatic|() private final val log: R|org/apache/log4j/Logger| = Q|org/apache/log4j/Logger|.R|org/apache/log4j/Logger.getLogger*s|(<getClass>(Q|Log4jExample|).R|kotlin/jvm/java|)
+            @R|kotlin/jvm/JvmStatic|() private final val log: R|org/apache/log4j/Logger| = Q|org/apache/log4j/Logger|.R|org/apache/log4j/Logger.getLogger*s|(<getClass>(Q|Log4jExample|).R|kotlin/jvm/java|<R|Log4jExample|>)
                 private get(): R|org/apache/log4j/Logger|
 
             private constructor(): R|Log4jExample.Companion| {
@@ -101,7 +101,7 @@ FILE: logVariants.kt
         }
 
         public final companion object Companion : R|kotlin/Any| {
-            @R|kotlin/jvm/JvmStatic|() private final val log: R|org/apache/commons/logging/Log| = Q|org/apache/commons/logging/LogFactory|.R|org/apache/commons/logging/LogFactory.getLog*s|(<getClass>(Q|CommonsLogExample|).R|kotlin/jvm/java|)
+            @R|kotlin/jvm/JvmStatic|() private final val log: R|org/apache/commons/logging/Log| = Q|org/apache/commons/logging/LogFactory|.R|org/apache/commons/logging/LogFactory.getLog*s|(<getClass>(Q|CommonsLogExample|).R|kotlin/jvm/java|<R|CommonsLogExample|>)
                 private get(): R|org/apache/commons/logging/Log|
 
             private constructor(): R|CommonsLogExample.Companion| {
@@ -161,7 +161,7 @@ FILE: logVariants.kt
         }
 
         public final companion object Companion : R|kotlin/Any| {
-            @R|kotlin/jvm/JvmStatic|() private final val log: R|org/jboss/logging/Logger| = Q|org/jboss/logging/Logger|.R|org/jboss/logging/Logger.getLogger*s|(<getClass>(Q|JBossLogExample|).R|kotlin/jvm/java|)
+            @R|kotlin/jvm/JvmStatic|() private final val log: R|org/jboss/logging/Logger| = Q|org/jboss/logging/Logger|.R|org/jboss/logging/Logger.getLogger*s|(<getClass>(Q|JBossLogExample|).R|kotlin/jvm/java|<R|JBossLogExample|>)
                 private get(): R|org/jboss/logging/Logger|
 
             private constructor(): R|JBossLogExample.Companion| {
@@ -201,7 +201,7 @@ FILE: logVariants.kt
         }
 
         public final companion object Companion : R|kotlin/Any| {
-            @R|kotlin/jvm/JvmStatic|() private final val log: R|org/apache/logging/log4j/Logger| = Q|org/apache/logging/log4j/LogManager|.R|org/apache/logging/log4j/LogManager.getLogger*s|(<getClass>(Q|Log4j2Example|).R|kotlin/jvm/java|)
+            @R|kotlin/jvm/JvmStatic|() private final val log: R|org/apache/logging/log4j/Logger| = Q|org/apache/logging/log4j/LogManager|.R|org/apache/logging/log4j/LogManager.getLogger*s|(<getClass>(Q|Log4j2Example|).R|kotlin/jvm/java|<R|Log4j2Example|>)
                 private get(): R|org/apache/logging/log4j/Logger|
 
             private constructor(): R|Log4j2Example.Companion| {
@@ -241,7 +241,7 @@ FILE: logVariants.kt
         }
 
         public final companion object Companion : R|kotlin/Any| {
-            @R|kotlin/jvm/JvmStatic|() private final val log: R|org/slf4j/ext/XLogger| = Q|org/slf4j/ext/XLoggerFactory|.R|org/slf4j/ext/XLoggerFactory.getXLogger*s|(<getClass>(Q|XSlf4jExample|).R|kotlin/jvm/java|)
+            @R|kotlin/jvm/JvmStatic|() private final val log: R|org/slf4j/ext/XLogger| = Q|org/slf4j/ext/XLoggerFactory|.R|org/slf4j/ext/XLoggerFactory.getXLogger*s|(<getClass>(Q|XSlf4jExample|).R|kotlin/jvm/java|<R|XSlf4jExample|>)
                 private get(): R|org/slf4j/ext/XLogger|
 
             private constructor(): R|XSlf4jExample.Companion| {
