@@ -1411,10 +1411,12 @@ fun IrFunction.hasShape(
 }
 
 fun IrFunction.isToString(): Boolean =
-    name == OperatorNameConventions.TO_STRING && nonDispatchParameters.isEmpty()
+    name == OperatorNameConventions.TO_STRING &&
+            hasShape(dispatchReceiver = true, regularParameters = 0)
 
 fun IrFunction.isHashCode() =
-    name == OperatorNameConventions.HASH_CODE && nonDispatchParameters.isEmpty()
+    name == OperatorNameConventions.HASH_CODE &&
+            hasShape(dispatchReceiver = true, regularParameters = 0)
 
 fun IrFunction.isEquals(): Boolean =
     name == OperatorNameConventions.EQUALS &&
