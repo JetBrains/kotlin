@@ -841,7 +841,7 @@ open class SupertypeComputationSession {
                 }
 
                 // A type alias may expand to a union type, and each of its components is a separate edge
-                supertypeRef.coneType.forEachUnionComponentOrSelf { supertypeComponent->
+                supertypeRef.coneType.forEachUnionComponentOrSelf { supertypeComponent ->
                     val componentType = supertypeComponent.lowerBoundIfFlexible() as? ConeClassLikeType ?: return@forEachUnionComponentOrSelf
                     // rhs value is required only for the Analysis API, as in the CLI mode there are no invisible dependencies
                     val supertypeFir = componentType.lookupTag.toSymbol(session)?.fir
