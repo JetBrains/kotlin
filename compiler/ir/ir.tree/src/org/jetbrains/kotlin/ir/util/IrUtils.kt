@@ -1419,6 +1419,11 @@ fun IrFunction.isHashCode() =
 fun IrFunction.isEquals() =
     name == OperatorNameConventions.EQUALS && nonDispatchParameters.singleOrNull()?.type?.isNullableAny() == true
 
+fun IrFunction.isEqualsInheritedFromAny(): Boolean =
+    name == OperatorNameConventions.EQUALS &&
+            hasShape(dispatchReceiver = true, regularParameters = 1) &&
+            parameters[1].type.isNullableAny()
+
 val IrFunction.isValueClassTypedEquals: Boolean
     get() {
         val parentClass = parent as? IrClass ?: return false
