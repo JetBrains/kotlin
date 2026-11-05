@@ -115,7 +115,7 @@ internal class SirSealedTypeEnum(
                 ?: error("Failed to get declaration for sealed type ($ktSymbol)")
             if (declaration.isUnavailable) return@map classId to null
 
-            val name = names.getValue(ktSymbol).enumCaseName
+            val name = names.getValue(ktSymbol)
             val sealedType = declaration.sealedType ?: error("Leaf declaration ($declaration) must have a SealedType")
             val case = SirSealedTypeEnumCase(ktSymbol, sirSession, declaration, sealedType, name).apply { parent = this@SirSealedTypeEnum }
             classId to case
@@ -303,6 +303,12 @@ private val KaClassSymbol?.isSealed: Boolean
 private val SirDeclaration.propagatedAttributes: List<SirAttribute>
     get() = attributes.filter { it is SirAttribute.Available || it is SirAttribute.SPI || it is SirAttribute.Documentation }
 
+/**
+ * Returns a unique Swift enum case name for each symbol: the `camelCase` form of the shortest
+ * unique suffix of its qualified name. Uniqueness is checked on the converted names, because
+ * the conversion drops separators (`Foo_Bar` and `FooBar` both become `fooBar`). When even the
+ * full qualified names convert to the same name, the separators are kept (`foo_Bar`).
+ */
 context(_: SirSession, _: KaSession)
 private fun createUniqueCaseNames(
     symbols: List<KaNamedClassSymbol>
@@ -321,12 +327,16 @@ private fun createUniqueCaseNames(
     do {
         val conflicts = names.filter { it.key.isEmpty() || it.value.size > 1 }
         for (conflict in conflicts) {
-            for (symbol in conflict.value) {
-                val fqName = fqNames.getValue(symbol).takeLast(index).joinToString(".")
-                if (fqName == conflict.key) error("Failed to create unique SealedType enum case name for $symbol")
-                names.getOrPut(fqName) { mutableListOf() }.add(symbol)
+            val renamed = conflict.value.associateWith { symbol ->
+                val path = fqNames.getValue(symbol)
+                if (index <= path.size) path.takeLast(index).joinToString(".").enumCaseName
+                else path.joinToString("_").replaceFirstChar { it.lowercase() }
+            }
+            if (renamed.values.all { it == conflict.key }) {
+                error("Failed to create unique SealedType enum case name for ${conflict.value}")
             }
             names.remove(conflict.key)
+            renamed.forEach { names.getOrPut(it.value) { mutableListOf() }.add(it.key) }
         }
         index++
     } while (conflicts.isNotEmpty())
