@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JKLIB
 // LANGUAGE: -NameBasedDestructuring -DeprecateNameMismatchInShortDestructuringWithParentheses -EnableNameBasedDestructuringShortForm
 // TARGET_BACKEND: JVM
 // WITH_JDK

@@ -1,8 +1,6 @@
 // SKIP_KT_DUMP
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
-// IGNORE_BACKEND: JKLIB
-// ^ The JKlib test infrastructure compiles Java sources before Kotlin ones, so Java can't reference Kotlin declarations of the same module.
 
 // Mute the check because the code is sort of invalid. It's not possible to implement abstract class D,
 // because different bar's collide
