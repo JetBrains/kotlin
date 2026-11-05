@@ -25,6 +25,7 @@ import subprocess
 import sys
 import tempfile
 import textwrap
+import time
 import unittest
 from pathlib import Path
 from typing import Dict, List, Tuple
@@ -105,6 +106,27 @@ class WrapperTest(unittest.TestCase):
         file.write_text(content)
         return file
 
+    def generated_tests(self, module_path: str, *directories: str, into: str = "tests-gen") -> Path:
+        """A generated test class per test data directory in [into] of the module, each with a test of `file.kt`."""
+        classes = "".join(textwrap.indent(textwrap.dedent(f'''\
+            @Nested
+            @TestMetadata("{directory}")
+            @TestDataPath("$PROJECT_ROOT")
+            public static class Directory{index} {{
+              @Test
+              @TestMetadata("file.kt")
+              public void testFile() {{
+              }}
+            }}
+        '''), "  ") for index, directory in enumerate(directories))
+        return self.write(
+            f"{module_path}/{into}/org/example/FooTestGenerated.java",
+            f'@SuppressWarnings("all")\npublic class FooTestGenerated {{\n{classes}}}\n',
+        )
+
+    def select(self, *paths: str, cwd: str = "") -> Tuple[List[str], List[str]]:
+        return tdm.select_modules(self.root, ALL_MODULES, list(paths), self.root / cwd)
+
     def run_wrapper(self, stub: Dict[str, object], *args: str) -> Tuple[int, dict]:
         self.write("stub-gradle.json", json.dumps(stub))
         with contextlib.redirect_stdout(io.StringIO()) as stdout:
@@ -123,6 +145,8 @@ class WrapperTest(unittest.TestCase):
         return (self.root / "build" / "stub-gradle-args.txt").read_text().split("\n")
 
     def test_runs_every_managed_module_with_the_options(self) -> None:
+        self.write("mod-a/testData/file.kt", "")
+        self.write("other/file.kt", "")
         exit_code, summary = self.run_wrapper(
             {module: {} for module in ALL_MODULES},
             "update", "--path", "mod-a/testData", "--path", "other/", "--incremental", "--verbose",
@@ -227,10 +251,124 @@ class WrapperTest(unittest.TestCase):
         )
 
     def test_module_run_errors_fail_the_run(self) -> None:
-        invalid = {"report": {"status": "ERROR", "runErrors": ["testDataPath 'nope' does not exist"]}}
-        exit_code, summary = self.run_wrapper({module: invalid for module in ALL_MODULES}, "check", "--path", "nope")
+        invalid = {"report": {"status": "ERROR", "runErrors": ["Variant chain conflicts"]}}
+        exit_code, summary = self.run_wrapper({module: invalid for module in ALL_MODULES}, "check")
         self.assertEqual(2, exit_code)
-        self.assertEqual([f"{module}: testDataPath 'nope' does not exist" for module in ALL_MODULES], summary["runErrors"])
+        self.assertEqual([f"{module}: Variant chain conflicts" for module in ALL_MODULES], summary["runErrors"])
+
+    def test_paths_select_the_modules_with_tests_under_them(self) -> None:
+        self.generated_tests("mod-a", "mod-a/testData", "mod-a/testData/nested")
+        self.generated_tests("mod-a/nested", "shared/testData/name.ext")
+        self.generated_tests("mod-b", "shared/testData/b")
+        for file in ["mod-a/testData/nested/file.kt", "shared/testData/name.ext/file.kt", "shared/testData/b/file.kt"]:
+            self.write(file, "")
+
+        self.assertEqual(([":mod-a:nested", ":mod-b"], []), self.select("shared/testData"))
+        self.assertEqual(([":mod-b"], []), self.select("shared/testData/b/file.kt"))
+        self.assertEqual(([":mod-b"], []), self.select("shared/testData/b/file"))
+        self.assertEqual(([":mod-a:nested"], []), self.select("shared/testData/name"))
+        self.assertEqual(([":mod-a"], []), self.select("mod-a/testData/nested/"))
+        self.assertEqual(([":mod-a", ":mod-b"], []), self.select("mod-a/testData/nested,shared/testData/b"))
+        self.assertEqual((ALL_MODULES, []), self.select(str(self.root)))
+
+        exit_code, summary = self.run_wrapper({":mod-b": {}}, "check", "--path", "shared/testData/b")
+        self.assertEqual((0, "PASSED"), (exit_code, summary["status"]))
+        self.assertEqual(
+            [(":mod-b", "PASSED"), (":mod-a", "SKIPPED"), (":mod-a:nested", "SKIPPED")],
+            [(module["project"], module["status"]) for module in summary["modules"]],
+        )
+        self.assertEqual(["-q", "--continue", ":mod-b:checkTestData"], self.gradle_args()[:3])
+
+        with contextlib.redirect_stdout(io.StringIO()) as stdout:
+            tdm.main(["check", "--path", "shared/testData/b"], root=self.root)
+        self.assertIn("\nSkipped 2 modules without tests under the paths, see the summary\n", stdout.getvalue())
+
+        # Explicit modules run as requested
+        exit_code, summary = self.run_wrapper({":mod-a": {}}, "check", "--path", "shared/testData/b", "--module", ":mod-a")
+        self.assertEqual((0, [":mod-a"]), (exit_code, [module["project"] for module in summary["modules"]]))
+
+    def test_paths_no_module_has_tests_of_fail_the_run(self) -> None:
+        self.generated_tests("mod-a", "mod-a/testData")
+        self.generated_tests("mod-a/nested", "mod-a/testData")
+        self.generated_tests("mod-b", "mod-b/testData")
+        for file in ["mod-a/testData/file.kt", "mod-b/testData/file.kt", "shared/testData/file.kt", "file.kt"]:
+            self.write(file, "")
+
+        # `file.kt` is the file of a test method, not a test data directory
+        self.assertEqual(([], ["testDataPath 'file.kt' matches no managed test in any module"]), self.select("file.kt"))
+
+        exit_code, summary = self.run_wrapper({":mod-b": {}}, "check", "--path", "mod-b/testData", "--path", "shared/")
+        self.assertEqual((2, ["testDataPath 'shared/' matches no managed test in any module"]),
+                         (exit_code, summary["runErrors"]))
+        self.assertEqual(["-q", "--continue", ":mod-b:checkTestData"], self.gradle_args()[:3])
+
+        (self.root / "build" / "stub-gradle-args.txt").unlink()
+        exit_code, summary = self.run_wrapper({}, "check", "--path", "shared/testData")
+        self.assertEqual((2, ["testDataPath 'shared/testData' matches no managed test in any module"], None),
+                         (exit_code, summary["runErrors"], summary["gradleLog"]))
+        self.assertEqual([], summary["modules"])
+        self.assertFalse((self.root / "build" / "stub-gradle-args.txt").exists())
+
+    def test_paths_that_do_not_exist_fail_before_gradle(self) -> None:
+        self.write("mod-a/testData/file.kt", "")
+        exit_code, summary = self.run_wrapper({}, "check", "--path", "nope", "--path", "mod-a/testData/file")
+        self.assertEqual(
+            (2, [f"testDataPath 'nope' does not exist; paths are relative to the repository root {self.root}"], None),
+            (exit_code, summary["runErrors"], summary["gradleLog"]),
+        )
+        self.assertEqual([], summary["modules"])
+        self.assertNotIn("Skipped", self.run_text({}, "check", "--path", "nope")[1])
+        self.assertFalse((self.root / "build" / "stub-gradle-args.txt").exists())
+
+        self.assertEqual(
+            ([], [f"testDataPath 'testData' does not exist; paths are relative to the repository root {self.root}. "
+                  "Did you mean 'mod-a/testData'?"]),
+            self.select("testData", cwd="mod-a"),
+        )
+        # Relative to a module, as the runner suggests for its own module
+        self.write("mod-b/testData/other.kt", "")
+        self.assertEqual(
+            ([], [f"testDataPath 'testData/other.kt' does not exist; paths are relative to the repository root {self.root}. "
+                  "Did you mean 'mod-b/testData/other.kt'?"]),
+            self.select("testData/other.kt"),
+        )
+        self.assertEqual(
+            ([], [f"testDataPath 'testData/' does not exist; paths are relative to the repository root {self.root}. "
+                  "Did you mean 'mod-a/testData' or 'mod-b/testData'?"]),
+            self.select("testData/"),
+        )
+        self.assertEqual(([], [f"testDataPath '../x' is outside the repository root {self.root}"]), self.select("../x"))
+
+    def test_modules_without_generated_tests_may_have_any_test_data(self) -> None:
+        self.generated_tests("mod-a", "mod-a/testData")
+        self.write("mod-b/testData/file.kt", "")
+        self.assertEqual(([":mod-a:nested", ":mod-b"], []), self.select("mod-b/testData"))
+
+    def test_tests_generated_into_build_are_used_while_newer_than_the_sources(self) -> None:
+        self.generated_tests("mod-a", "mod-a/testData")
+        self.generated_tests("mod-a/nested", "mod-a/testData")
+        self.write("mod-a/testData/file.kt", "")
+        self.write("mod-b/build.gradle.kts", 'testGenerator("Generator", generateTestsInBuildDirectory = true)\n')
+        self.write("mod-b/testData/file.kt", "")
+        generator = self.write("mod-b/testFixtures/Generator.kt", "")
+        git(self.root, "add", "-A")
+
+        # Not generated yet
+        self.assertEqual(([":mod-a", ":mod-a:nested", ":mod-b"], []), self.select("mod-a/testData"))
+
+        generated = self.generated_tests("mod-b", "mod-b/testData", into="build/tests-gen")
+        later = time.time() + 100
+        os.utime(generated, (later, later))
+        self.assertEqual(([":mod-a", ":mod-a:nested"], []), self.select("mod-a/testData"))
+        self.assertEqual(([":mod-b"], []), self.select("mod-b/testData"))
+
+        # Test data doesn't change what the generator writes for known directories
+        os.utime(self.root / "mod-b/testData/file.kt", (later + 1, later + 1))
+        self.assertEqual(([":mod-a", ":mod-a:nested"], []), self.select("mod-a/testData"))
+
+        # The generator may have changed
+        os.utime(generator, (later + 1, later + 1))
+        self.assertEqual(([":mod-a", ":mod-a:nested", ":mod-b"], []), self.select("mod-a/testData"))
 
     def test_missing_unreadable_and_stray_reports(self) -> None:
         exit_code, summary = self.run_wrapper({

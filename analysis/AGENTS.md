@@ -49,14 +49,15 @@ analysis/test-data-manager/test-data-manager.py check --path analysis/analysis-a
 
 Prefer it to calling Gradle directly: the command is short, a mistyped option fails instead of being silently ignored
 (an unknown `-P` property is, so a misspelled `testDataPath` runs every test), and the output stays a few lines.
-It runs the task in all modules with managed test data (`--module` limits them), keeps the Gradle output in a log file,
-and prints one summary of the module reports: the test counts, one line per problem (`MISMATCH`, `MISSING_FILE`,
-`REDUNDANT_FILE`, `UNEXPECTED_FILE` with the file and the test), per test error, per test that passed only on a re-run,
-and per created, updated or deleted file, at most 50 of each. A module that didn't run and filters that match no test
-fail the run (exit code `2`) instead of passing silently. The last line is the path of the summary file
-(`build/test-data-manager/<runId>.summary.json`, also printed by `--json`): read it instead of parsing the output, and
-the module reports it links to for every entry. Each problem's actual output is saved next to the module report
-(`actualFile`) for `diff`.
+It runs the task in the modules with managed test data, with `--path` only in those whose generated tests have test
+data under the paths, so the others aren't even built (`--module` picks the modules explicitly). It keeps the Gradle
+output in a log file and prints one summary of the module reports: the test counts, one line per problem (`MISMATCH`,
+`MISSING_FILE`, `REDUNDANT_FILE`, `UNEXPECTED_FILE` with the file and the test), per test error, per test that passed
+only on a re-run, and per created, updated or deleted file, at most 50 of each. A module that didn't run, filters that
+match no test and paths that don't exist fail the run (exit code `2`) instead of passing silently. The last line is
+the path of the summary file (`build/test-data-manager/<runId>.summary.json`, also printed by `--json`): read it
+instead of parsing the output, and the module reports it links to for every entry. Each problem's actual output is
+saved next to the module report (`actualFile`) for `diff`.
 See [the script's section in the test data manager README](test-data-manager/README.md#wrapper-script-recommended-for-agents-and-scripts).
 
 Paths are relative to the repository root (as in `@TestMetadata`) or absolute. When calling Gradle directly, add `-q`:
