@@ -44,6 +44,7 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -397,7 +398,7 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
 
             List<Path> allSources = new ArrayList<>();
             for (File sourceRoot : sourceRoots) {
-                try (Stream<Path> files = Files.walk(sourceRoot.toPath())) {
+                try (Stream<Path> files = Files.walk(sourceRoot.toPath(), FileVisitOption.FOLLOW_LINKS)) {
                     allSources.addAll(
                             files
                                     .filter(file -> allExtensions.contains(getFileExtension(file).toLowerCase(Locale.ROOT)))
