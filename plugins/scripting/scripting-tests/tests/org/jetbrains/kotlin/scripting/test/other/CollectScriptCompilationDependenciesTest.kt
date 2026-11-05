@@ -127,15 +127,6 @@ class CollectScriptCompilationDependenciesTest {
         }
 
         val expectedSources = (expectedDependencies + scriptFile).sorted()
-
-        // the legacy (PSI-based) pipeline collects the sources via the `CollectAdditionalSourcesExtension` during the environment creation
-        val legacySources = environment.getSourceFiles().map { it.name }.sorted()
-        assertContentEquals(expectedSources, legacySources)
-        if (classPath.isNotEmpty()) {
-            val legacyClasspath = environment.configuration.jvmClasspathRoots
-            assertTrue(legacyClasspath.containsAll(classPath), "expect that $legacyClasspath contains $classPath")
-        }
-
         val actualSources = collectSources(configuration, projectEnvironment).allFiles.map { it.name }.sorted()
 
         assertContentEquals(expectedSources, actualSources)

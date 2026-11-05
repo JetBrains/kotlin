@@ -16,27 +16,21 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.config.scriptingHostConfiguration
-import org.jetbrains.kotlin.extensions.CollectAdditionalSourcesExtension
 import org.jetbrains.kotlin.extensions.CompilerConfigurationExtension
 import org.jetbrains.kotlin.extensions.ProcessSourcesBeforeCompilingExtension
 import org.jetbrains.kotlin.fir.extensions.CollectAdditionalSourceFilesExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.resolve.extensions.ExtraImportsProviderExtension
-import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.CliScriptConfigurationsProvider
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.CliScriptDefinitionProvider
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.CliScriptReportSink
 import org.jetbrains.kotlin.scripting.compiler.plugin.extensions.ReplLoweringExtension
 import org.jetbrains.kotlin.scripting.compiler.plugin.extensions.ScriptLoweringExtension
-import org.jetbrains.kotlin.scripting.compiler.plugin.extensions.ScriptingCollectAdditionalSourcesExtension
 import org.jetbrains.kotlin.scripting.compiler.plugin.extensions.ScriptingIrExplainGenerationExtension
 import org.jetbrains.kotlin.scripting.compiler.plugin.extensions.ScriptingProcessSourcesBeforeCompilingExtension
 import org.jetbrains.kotlin.scripting.compiler.plugin.fir.CollectAdditionalScriptSourcesExtension
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys.ENABLE_SCRIPT_EXPLANATION_OPTION
 import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
-import org.jetbrains.kotlin.scripting.extensions.ScriptExtraImportsProviderExtension
-import org.jetbrains.kotlin.scripting.extensions.ScriptingResolveExtension
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 
@@ -61,10 +55,7 @@ class ScriptingK2CompilerPluginRegistrar : CompilerPluginRegistrar() {
         registerComponents(this, configuration)
 
         CollectAdditionalSourceFilesExtension.registerExtension(CollectAdditionalScriptSourcesExtension())
-        CollectAdditionalSourcesExtension.registerExtension(ScriptingCollectAdditionalSourcesExtension())
         ScriptEvaluationExtension.registerExtension(JvmCliScriptEvaluationExtension())
-        SyntheticResolveExtension.registerExtension(ScriptingResolveExtension())
-        ExtraImportsProviderExtension.registerExtension(ScriptExtraImportsProviderExtension())
         ProcessSourcesBeforeCompilingExtension.registerExtension(ScriptingProcessSourcesBeforeCompilingExtension())
 
         val hostConfiguration = configuration.scriptingHostConfiguration as? ScriptingHostConfiguration
