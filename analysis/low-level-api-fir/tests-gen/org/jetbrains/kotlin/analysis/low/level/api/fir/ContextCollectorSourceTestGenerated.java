@@ -35,6 +35,18 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
   }
 
   @Test
+  @TestMetadata("anonymousObjectCompanionBlockFunction.kt")
+  public void testAnonymousObjectCompanionBlockFunction() {
+    run("anonymousObjectCompanionBlockFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("anonymousObjectCompanionBlockProperty.kt")
+  public void testAnonymousObjectCompanionBlockProperty() {
+    run("anonymousObjectCompanionBlockProperty.kt");
+  }
+
+  @Test
   @TestMetadata("class.kt")
   public void testClass() {
     run("class.kt");

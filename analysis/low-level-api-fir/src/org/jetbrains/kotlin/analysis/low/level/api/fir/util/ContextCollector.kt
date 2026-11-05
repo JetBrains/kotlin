@@ -1153,12 +1153,14 @@ private class ContextCollectorVisitor(
         processAnnotations(anonymousObject)
 
         onActive {
-            processAnonymousObjectHeader(anonymousObject)
+            context.withContainingClass(anonymousObject) {
+                processAnonymousObjectHeader(anonymousObject)
 
-            context.withAnonymousObject(anonymousObject, holder = bodyHolder) {
-                dumpContext(anonymousObject, ContextKind.BODY)
-                withLocalVariableHolder(onEnter = { enterClass(anonymousObject) }, onExit = { exitClass() }) {
-                    processChildren(anonymousObject)
+                context.withAnonymousObject(anonymousObject, holder = bodyHolder) {
+                    dumpContext(anonymousObject, ContextKind.BODY)
+                    withLocalVariableHolder(onEnter = { enterClass(anonymousObject) }, onExit = { exitClass() }) {
+                        processChildren(anonymousObject)
+                    }
                 }
             }
         }

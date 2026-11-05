@@ -87,6 +87,12 @@ public class FirStandaloneNormalAnalysisSourceModuleScopeContextForPositionTestG
   }
 
   @Test
+  @TestMetadata("companionBlockInAnonymousObject.kt")
+  public void testCompanionBlockInAnonymousObject() {
+    run("companionBlockInAnonymousObject.kt");
+  }
+
+  @Test
   @TestMetadata("contextReceiver.kt")
   public void testContextReceiver() {
     run("contextReceiver.kt");
