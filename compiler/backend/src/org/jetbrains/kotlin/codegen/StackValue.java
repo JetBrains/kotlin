@@ -9,10 +9,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase;
+import org.jetbrains.kotlin.ir.declarations.IrClass;
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationsKt;
 import org.jetbrains.kotlin.ir.types.IrType;
+import org.jetbrains.kotlin.ir.types.IrTypesKt;
+import org.jetbrains.kotlin.ir.util.IrTypeUtilsKt;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode;
-import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.Opcodes;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -201,9 +204,8 @@ public abstract class StackValue {
 
         if (fromIrType == null || toIrType == null) return false;
 
-        TypeSystemCommonBackendContext typeSystem = typeMapper.getTypeSystem();
-        boolean isFromTypeInlineClass = typeSystem.isInlineClass(typeSystem.typeConstructor(fromIrType));
-        boolean isToTypeInlineClass = typeSystem.isInlineClass(typeSystem.typeConstructor(toIrType));
+        boolean isFromTypeInlineClass = isTypeOfInlineClass(fromIrType);
+        boolean isToTypeInlineClass = isTypeOfInlineClass(toIrType);
 
         if (!isFromTypeInlineClass && !isToTypeInlineClass) return false;
 
@@ -231,9 +233,8 @@ public abstract class StackValue {
 
         if (fromIrType == null || toIrType == null) return false;
 
-        TypeSystemCommonBackendContext typeSystem = typeMapper.getTypeSystem();
-        boolean isFromTypeInlineClass = typeSystem.isInlineClass(typeSystem.typeConstructor(fromIrType));
-        boolean isToTypeInlineClass = typeSystem.isInlineClass(typeSystem.typeConstructor(toIrType));
+        boolean isFromTypeInlineClass = isTypeOfInlineClass(fromIrType);
+        boolean isToTypeInlineClass = isTypeOfInlineClass(toIrType);
 
         if (!isFromTypeInlineClass && !isToTypeInlineClass) return false;
 
@@ -275,6 +276,11 @@ public abstract class StackValue {
         }
 
         return false;
+    }
+
+    private static boolean isTypeOfInlineClass(@NotNull IrType type) {
+        IrClass irClass = IrTypesKt.getClass(type);
+        return irClass != null && IrDeclarationsKt.isInlineClass(irClass, false);
     }
 
     private static boolean isUnboxedInlineClass(

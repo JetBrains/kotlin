@@ -119,17 +119,11 @@ class ReifiedTypeInliner(
         }
 
         fun putReifiedOperationMarkerIfNeeded(
-            typeParameter: TypeParameterMarker,
-            isNullable: Boolean,
-            operationKind: OperationKind,
-            v: InstructionAdapter,
-            typeSystem: TypeSystemCommonBackendContext
+            typeParameter: IrTypeParameter, isNullable: Boolean, operationKind: OperationKind, v: InstructionAdapter,
         ) {
-            with(typeSystem) {
-                if (typeParameter.isReified()) {
-                    val argument = ReificationArgument(typeParameter.getName().asString(), isNullable, 0)
-                    putReifiedOperationMarker(operationKind, argument, v)
-                }
+            if (typeParameter.isReified) {
+                val argument = ReificationArgument(typeParameter.name.asString(), isNullable, 0)
+                putReifiedOperationMarker(operationKind, argument, v)
             }
         }
     }
