@@ -1,0 +1,80 @@
+diff --git a/libraries/stdlib/src/kotlin/collections/MutableCollections.kt b/libraries/stdlib/src/kotlin/collections/MutableCollections.kt
+index 93d709865..51bff8283 100644
+--- a/libraries/stdlib/src/kotlin/collections/MutableCollections.kt
++++ b/libraries/stdlib/src/kotlin/collections/MutableCollections.kt
+@@ -221,6 +221,14 @@ private fun MutableCollection<*>.retainNothing(): Boolean {
+  *
+  * @return `true` if any element was removed from this collection, or `false` when no elements were removed and collection was not modified.
+  */
++@Suppress("CONFLICTING_OVERLOADS")
++@kotlin.jvm.JvmName("removeAllInline")
++@kotlin.internal.InlineOnly
++@IgnorableReturnValue
++public inline fun <T> MutableIterable<T>.removeAll(predicate: (T) -> Boolean): Boolean = filterInPlace(predicate, true)
++
++@Deprecated("Binary compatibility", level = DeprecationLevel.HIDDEN)
++@Suppress("CONFLICTING_OVERLOADS")
+ @IgnorableReturnValue
+ public fun <T> MutableIterable<T>.removeAll(predicate: (T) -> Boolean): Boolean = filterInPlace(predicate, true)
+ 
+@@ -232,7 +240,8 @@ public fun <T> MutableIterable<T>.removeAll(predicate: (T) -> Boolean): Boolean
+ @IgnorableReturnValue
+ public fun <T> MutableIterable<T>.retainAll(predicate: (T) -> Boolean): Boolean = filterInPlace(predicate, false)
+ 
+-private fun <T> MutableIterable<T>.filterInPlace(predicate: (T) -> Boolean, predicateResultToRemove: Boolean): Boolean {
++@PublishedApi
++internal inline fun <T> MutableIterable<T>.filterInPlace(predicate: (T) -> Boolean, predicateResultToRemove: Boolean): Boolean {
+     var result = false
+     with(iterator()) {
+         while (hasNext())
+@@ -286,6 +295,14 @@ public fun <T> MutableList<T>.removeLastOrNull(): T? = if (isEmpty()) null else
+  *
+  * @return `true` if any element was removed from this collection, or `false` when no elements were removed and collection was not modified.
+  */
++@Suppress("CONFLICTING_OVERLOADS")
++@kotlin.jvm.JvmName("removeAllInline")
++@kotlin.internal.InlineOnly
++@IgnorableReturnValue
++public inline fun <T> MutableList<T>.removeAll(predicate: (T) -> Boolean): Boolean = filterInPlace(predicate, true)
++
++@Deprecated("Binary compatibility", level = DeprecationLevel.HIDDEN)
++@Suppress("CONFLICTING_OVERLOADS")
+ @IgnorableReturnValue
+ public fun <T> MutableList<T>.removeAll(predicate: (T) -> Boolean): Boolean = filterInPlace(predicate, true)
+ 
+@@ -297,7 +314,8 @@ public fun <T> MutableList<T>.removeAll(predicate: (T) -> Boolean): Boolean = fi
+ @IgnorableReturnValue
+ public fun <T> MutableList<T>.retainAll(predicate: (T) -> Boolean): Boolean = filterInPlace(predicate, false)
+ 
+-private fun <T> MutableList<T>.filterInPlace(predicate: (T) -> Boolean, predicateResultToRemove: Boolean): Boolean {
++@PublishedApi
++internal inline fun <T> MutableList<T>.filterInPlace(predicate: (T) -> Boolean, predicateResultToRemove: Boolean): Boolean {
+     if (this !is RandomAccess)
+         return (this as MutableIterable<T>).filterInPlace(predicate, predicateResultToRemove)
+ 
+diff --git a/libraries/stdlib/test/collections/MutableCollectionsTest.kt b/libraries/stdlib/test/collections/MutableCollectionsTest.kt
+index 761fe506f..901f67966 100644
+--- a/libraries/stdlib/test/collections/MutableCollectionsTest.kt
++++ b/libraries/stdlib/test/collections/MutableCollectionsTest.kt
+@@ -93,6 +93,21 @@ class MutableCollectionTest {
+         }
+     }
+ 
++    @Test fun removeAllNonLocalReturn() {
++        fun fromIterable(): Int {
++            val values: MutableIterable<Int> = mutableListOf(1, 2, 3)
++            values.removeAll { if (it == 2) return it else false }
++            return -1
++        }
++        fun fromList(): Int {
++            val values = mutableListOf(1, 2, 3)
++            values.removeAll { if (it == 2) return it else false }
++            return -1
++        }
++        assertEquals(2, fromIterable())
++        assertEquals(2, fromList())
++    }
++
+     @Test fun removeAll() {
+         val content = listOf("foo", "bar", "bar")
+         val data = listOf("bar")
