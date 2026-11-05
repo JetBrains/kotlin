@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.gradle.js
 
+import org.gradle.api.attributes.Attribute
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
@@ -388,6 +389,101 @@ class SharedNpmDependenciesIT : KGPBaseTest() {
                 )
                 assertEquals("emptyKts-lib", report.compilation)
                 assertEquals("1.3.0", report.dependencies["left-pad"])
+            }
+        }
+    }
+
+    @DisplayName("Shared npm projects support several JS targets in one project")
+    @GradleTest
+    fun testSharedNpmProjectWithSeveralJsTargets(gradleVersion: GradleVersion) {
+        project("emptyKts", gradleVersion) {
+            plugins {
+                kotlin("multiplatform").apply(false)
+            }
+            buildScriptInjection {
+                project.plugins.apply(KotlinSharedNpmProjectPlugin::class.java)
+                project.dependencies.add("kotlinNpmSharedDependencies", project.dependencies.project(mapOf("path" to ":lib-a")))
+                project.dependencies.add("kotlinNpmSharedDependencies", project.dependencies.project(mapOf("path" to ":lib-b")))
+            }
+
+            includeOtherProjectAsSubmodule("emptyKts", newSubmoduleName = "lib-a") {
+                buildScriptInjection {
+                    project.plugins.apply("org.jetbrains.kotlin.multiplatform")
+                    kotlinMultiplatform.apply {
+                        val targetAttr = Attribute.of("test.attribute", String::class.java)
+                        js("first") {
+                            attributes.attribute(targetAttr, "first")
+                            nodejs()
+                        }
+                        js("second") {
+                            attributes.attribute(targetAttr, "second")
+                            browser()
+                        }
+                        sourceSets.getByName("firstMain").dependencies {
+                            implementation(npm("is-even", "1.0.0"))
+                        }
+                        sourceSets.getByName("secondMain").dependencies {
+                            implementation(npm("is-odd", "3.0.1"))
+                        }
+                    }
+                }
+            }
+
+            includeOtherProjectAsSubmodule("emptyKts", newSubmoduleName = "lib-b") {
+                buildScriptInjection {
+                    project.plugins.apply("org.jetbrains.kotlin.multiplatform")
+                    kotlinMultiplatform.apply {
+                        val targetAttr = Attribute.of("test.attribute", String::class.java)
+                        js("first") {
+                            attributes.attribute(targetAttr, "first")
+                            nodejs()
+                        }
+                        js("second") {
+                            attributes.attribute(targetAttr, "second")
+                            browser()
+                        }
+                        sourceSets.getByName("commonMain").dependencies {
+                            implementation(project(":lib-a"))
+                        }
+                    }
+                }
+            }
+
+            val firstDependencies = mapOf("is-even" to "1.0.0")
+            val secondDependencies = mapOf("is-odd" to "3.0.1")
+
+            build("kotlinSetupSharedNpmProject") {
+                assertTasksExecuted(
+                    ":lib-a:firstNpmDependenciesReport",
+                    ":lib-a:secondNpmDependenciesReport",
+                    ":lib-b:firstNpmDependenciesReport",
+                    ":lib-b:secondNpmDependenciesReport",
+                )
+
+                val js = projectPath.resolve("build/js/shared-npm-project")
+                assertRootPackageJson(
+                    js.resolve("package.json"),
+                    workspaces = listOf(
+                        "packages/emptyKts-lib-a-first",
+                        "packages/emptyKts-lib-a-first-test",
+                        "packages/emptyKts-lib-a-second",
+                        "packages/emptyKts-lib-a-second-test",
+                        "packages/emptyKts-lib-b-first",
+                        "packages/emptyKts-lib-b-first-test",
+                        "packages/emptyKts-lib-b-second",
+                        "packages/emptyKts-lib-b-second-test",
+                    ),
+                )
+                assertWorkspacePackageJson(
+                    js.resolve("packages/emptyKts-lib-b-first/package.json"),
+                    name = "emptyKts-lib-b-first",
+                    dependencies = firstDependencies,
+                )
+                assertWorkspacePackageJson(
+                    js.resolve("packages/emptyKts-lib-b-second/package.json"),
+                    name = "emptyKts-lib-b-second",
+                    dependencies = secondDependencies,
+                )
             }
         }
     }

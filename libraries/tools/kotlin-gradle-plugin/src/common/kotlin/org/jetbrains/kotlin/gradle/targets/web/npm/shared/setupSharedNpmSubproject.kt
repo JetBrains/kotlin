@@ -37,7 +37,7 @@ internal val SetupNpmDependencyReportSideEffect = KotlinTargetSideEffect { targe
     )
     val platformDirectoryName = platform.platformDisambiguator ?: JsPlatformDisambiguator.jsPlatform
 
-    project.registerKlibToNpmDependencyReportTransform(target, platform)
+    project.registerOnceKlibToNpmDependencyReportTransform(target, platform)
     val npmDependenciesReport = project.maybeCreateNpmDependenciesReport(platform)
 
     target.compilations.all { compilation ->
