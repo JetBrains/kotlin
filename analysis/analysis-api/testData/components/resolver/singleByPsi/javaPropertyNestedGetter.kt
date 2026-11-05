@@ -16,6 +16,3 @@ class JavaSubClass {
     int getFoo() { return foo; }
     void setFoo(int v) { foo = v; }
 }
-
-// IGNORE_STABILITY: candidates
-// ^KT-69962
