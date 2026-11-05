@@ -178,6 +178,7 @@ protobuf-java = { module = "com.google.protobuf:protobuf-java", version.ref = "p
 protobuf-java-compose-test = { module = "com.google.protobuf:protobuf-java", version.ref = "protobufComposeTest" }
 protobuf-java-lite = { module = "com.google.protobuf:protobuf-javalite", version.ref = "protobuf" }
 protobuf-kotlin = { module = "com.google.protobuf:protobuf-kotlin", version.ref = "protobuf" }
+protobuf-java-util = { module = "com.google.protobuf:protobuf-java-util", version.ref = "protobuf" }
 protoc = { module = "com.google.protobuf:protoc", version.ref = "protobuf" }
 
 android-gradle-plugin-gradle-api = { module = "com.android.tools.build:gradle-api", version.ref = "android-gradle-plugin" }

@@ -19,8 +19,13 @@ configurations.testImplementation { extendsFrom(configurations.embedded) }
 dependencies {
     val coreDepsVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
 
-    embedded(libs.protobuf.java)
-    embedded(libs.protobuf.kotlin)
+    // JsonFormat from protobuf-java-util reads guava and gson at runtime, so they are bundled too
+    embedded(libs.protobuf.java) { isTransitive = false }
+    embedded(libs.protobuf.kotlin) { isTransitive = false }
+    embedded(libs.protobuf.java.util) { isTransitive = false }
+    embedded(libs.guava) { isTransitive = false }
+    embedded(libs.guava.failureaccess) { isTransitive = false }
+    embedded(libs.gson) { isTransitive = false }
 
     api(kotlin("stdlib", coreDepsVersion))
 
@@ -48,6 +53,10 @@ val embeddableJar = runtimeJar(tasks.register<ShadowJar>("embeddable")) {
         "com.google.protobuf",
         "org.jetbrains.kotlin.importmodels.internal.protobuf.com.google.protobuf",
     )
+    relocate("com.google.common", "org.jetbrains.kotlin.importmodels.internal.guava.com.google.common")
+    // Bundled with guava: InternetDomainName reads its lists from this package
+    relocate("com.google.thirdparty", "org.jetbrains.kotlin.importmodels.internal.guava.com.google.thirdparty")
+    relocate("com.google.gson", "org.jetbrains.kotlin.importmodels.internal.gson.com.google.gson")
 }
 
 projectTests {

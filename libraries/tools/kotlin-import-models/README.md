@@ -11,7 +11,8 @@ and serialized parameters) and receives a `KotlinGradleModel` that holds a seria
 The public API is the `org.jetbrains.kotlin.importmodels` package and its `proto` subpackage, which holds the classes generated
 from [kotlin_import_models.proto](src/main/proto/kotlin_import_models.proto).
 The bundled Protobuf runtime is relocated to `org.jetbrains.kotlin.importmodels.internal.protobuf`.
-It is an implementation detail that can change in any release, so use it only through the generated classes.
+The guava and gson libraries that its ProtoJSON support reads are relocated beside it, to `internal.guava` and `internal.gson`.
+They are implementation details that can change in any release.
 
 ## Schema rules
 
