@@ -68,8 +68,10 @@ abstract class AbstractModule<O : BaseCompilationOperation, B : BaseCompilationO
     override val defaultStrategyConfig: ExecutionPolicy,
     final override val moduleCompilationConfigAction: (B) -> Unit,
 ) : Module<O, B, IC> {
-    override val sourcesDirectory: Path
-        get() = moduleDirectory.resolve("src")
+    /**
+     * Settable to allow tests to relocate the sources while keeping the [buildDirectory] (and thus the IC caches) in place
+     */
+    override var sourcesDirectory: Path = moduleDirectory.resolve("src")
 
     override val buildDirectory: Path
         get() = moduleDirectory.resolve("build")
