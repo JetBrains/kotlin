@@ -172,7 +172,7 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
         val function = call.symbol.owner
         return when {
             // Nothing special
-            !function.isEqualsInheritedFromAny() -> call
+            !function.isEquals() -> call
 
             // `Any.equals` works as identity operator
             call.isSuperToAny() ->
@@ -193,7 +193,7 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
         if (klass.isEnumClass && klass.isExternal) return null
         return klass.declarations.asSequence()
             .filterIsInstance<IrSimpleFunction>()
-            .filter { it.isEqualsInheritedFromAny() && !it.isFakeOverriddenFromAny() }
+            .filter { it.isEquals() && !it.isFakeOverriddenFromAny() }
             .atMostOne()
     }
 
