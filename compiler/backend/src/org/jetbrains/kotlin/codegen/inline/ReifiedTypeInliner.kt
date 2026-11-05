@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.codegen.optimization.common.intConstant
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.types.typeWith
@@ -60,7 +61,7 @@ class ReifiedTypeInliner(
 
         fun putClassInstance(v: InstructionAdapter, type: IrType)
 
-        fun generateTypeParameterContainer(v: InstructionAdapter, typeParameter: TypeParameterMarker)
+        fun generateTypeParameterContainer(v: InstructionAdapter, typeParameter: IrTypeParameter)
 
         fun isMutableCollectionType(type: IrType): Boolean
 
