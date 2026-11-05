@@ -234,7 +234,7 @@ KaKotlinPropertySymbol:
       typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(overriddenPropertyWithoutOverriddenSetter_param.kt)
-      getContainingJvmClassName: null
+      getContainingJvmClassName: pack.Impl
       getContainingModule: KaSourceModule "Sources of main"
       deprecation: null
       importableFqName: null
@@ -281,7 +281,7 @@ KaKotlinPropertySymbol:
         typeParameters: []
         visibility: PUBLIC
         getContainingFileSymbol: KaFileSymbol(overriddenPropertyWithoutOverriddenSetter_param.kt)
-        getContainingJvmClassName: null
+        getContainingJvmClassName: pack.Impl
         getContainingModule: KaSourceModule "Sources of main"
         deprecation: null
         importableFqName: null

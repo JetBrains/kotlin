@@ -261,7 +261,7 @@ KaKotlinPropertySymbol:
       typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(valueClassInSignature.kt)
-      getContainingJvmClassName: null
+      getContainingJvmClassName: ValueClassInSignatureKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecation: null
       importableFqName: null
@@ -308,7 +308,7 @@ KaKotlinPropertySymbol:
         typeParameters: []
         visibility: PUBLIC
         getContainingFileSymbol: KaFileSymbol(valueClassInSignature.kt)
-        getContainingJvmClassName: null
+        getContainingJvmClassName: ValueClassInSignatureKt
         getContainingModule: KaSourceModule "Sources of main"
         deprecation: null
         importableFqName: null
@@ -543,7 +543,7 @@ KaKotlinPropertySymbol:
       typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(valueClassInSignature.kt)
-      getContainingJvmClassName: null
+      getContainingJvmClassName: ValueClassInSignatureKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecation: null
       importableFqName: null
@@ -621,7 +621,7 @@ KaKotlinPropertySymbol:
         typeParameters: []
         visibility: PUBLIC
         getContainingFileSymbol: KaFileSymbol(valueClassInSignature.kt)
-        getContainingJvmClassName: null
+        getContainingJvmClassName: ValueClassInSignatureKt
         getContainingModule: KaSourceModule "Sources of main"
         deprecation: null
         importableFqName: null
@@ -1304,7 +1304,7 @@ KaKotlinPropertySymbol:
       typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(valueClassInSignature.kt)
-      getContainingJvmClassName: null
+      getContainingJvmClassName: ValueClassInSignatureKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecation: null
       importableFqName: null
@@ -1351,7 +1351,7 @@ KaKotlinPropertySymbol:
         typeParameters: []
         visibility: PUBLIC
         getContainingFileSymbol: KaFileSymbol(valueClassInSignature.kt)
-        getContainingJvmClassName: null
+        getContainingJvmClassName: ValueClassInSignatureKt
         getContainingModule: KaSourceModule "Sources of main"
         deprecation: null
         importableFqName: null
@@ -1576,7 +1576,7 @@ KaKotlinPropertySymbol:
       typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(valueClassInSignature.kt)
-      getContainingJvmClassName: null
+      getContainingJvmClassName: RegularClass
       getContainingModule: KaSourceModule "Sources of main"
       deprecation: null
       importableFqName: null
@@ -1623,7 +1623,7 @@ KaKotlinPropertySymbol:
         typeParameters: []
         visibility: PUBLIC
         getContainingFileSymbol: KaFileSymbol(valueClassInSignature.kt)
-        getContainingJvmClassName: null
+        getContainingJvmClassName: RegularClass
         getContainingModule: KaSourceModule "Sources of main"
         deprecation: null
         importableFqName: null
@@ -1870,7 +1870,7 @@ KaKotlinPropertySymbol:
       typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(valueClassInSignature.kt)
-      getContainingJvmClassName: null
+      getContainingJvmClassName: RegularClass
       getContainingModule: KaSourceModule "Sources of main"
       deprecation: null
       importableFqName: null
@@ -1948,7 +1948,7 @@ KaKotlinPropertySymbol:
         typeParameters: []
         visibility: PUBLIC
         getContainingFileSymbol: KaFileSymbol(valueClassInSignature.kt)
-        getContainingJvmClassName: null
+        getContainingJvmClassName: RegularClass
         getContainingModule: KaSourceModule "Sources of main"
         deprecation: null
         importableFqName: null
@@ -2153,7 +2153,7 @@ KaKotlinPropertySymbol:
       typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(valueClassInSignature.kt)
-      getContainingJvmClassName: null
+      getContainingJvmClassName: RegularClass
       getContainingModule: KaSourceModule "Sources of main"
       deprecation: null
       importableFqName: null
@@ -2205,7 +2205,7 @@ KaKotlinPropertySymbol:
         typeParameters: []
         visibility: PUBLIC
         getContainingFileSymbol: KaFileSymbol(valueClassInSignature.kt)
-        getContainingJvmClassName: null
+        getContainingJvmClassName: RegularClass
         getContainingModule: KaSourceModule "Sources of main"
         deprecation: null
         importableFqName: null
@@ -2838,7 +2838,7 @@ KaKotlinPropertySymbol:
       typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(valueClassInSignature.kt)
-      getContainingJvmClassName: null
+      getContainingJvmClassName: RegularClass
       getContainingModule: KaSourceModule "Sources of main"
       deprecation: null
       importableFqName: null
@@ -2885,7 +2885,7 @@ KaKotlinPropertySymbol:
         typeParameters: []
         visibility: PUBLIC
         getContainingFileSymbol: KaFileSymbol(valueClassInSignature.kt)
-        getContainingJvmClassName: null
+        getContainingJvmClassName: RegularClass
         getContainingModule: KaSourceModule "Sources of main"
         deprecation: null
         importableFqName: null

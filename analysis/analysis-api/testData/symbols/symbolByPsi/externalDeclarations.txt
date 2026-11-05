@@ -562,7 +562,7 @@ KaKotlinPropertySymbol:
       typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(externalDeclarations.kt)
-      getContainingJvmClassName: null
+      getContainingJvmClassName: ClassC
       getContainingModule: KaSourceModule "Sources of main"
       deprecation: null
       importableFqName: null
@@ -609,7 +609,7 @@ KaKotlinPropertySymbol:
         typeParameters: []
         visibility: PUBLIC
         getContainingFileSymbol: KaFileSymbol(externalDeclarations.kt)
-        getContainingJvmClassName: null
+        getContainingJvmClassName: ClassC
         getContainingModule: KaSourceModule "Sources of main"
         deprecation: null
         importableFqName: null
@@ -1519,7 +1519,7 @@ KaKotlinPropertySymbol:
       typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(externalDeclarations.kt)
-      getContainingJvmClassName: null
+      getContainingJvmClassName: ExternalDeclarationsKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecation: null
       importableFqName: null
@@ -1566,7 +1566,7 @@ KaKotlinPropertySymbol:
         typeParameters: []
         visibility: PUBLIC
         getContainingFileSymbol: KaFileSymbol(externalDeclarations.kt)
-        getContainingJvmClassName: null
+        getContainingJvmClassName: ExternalDeclarationsKt
         getContainingModule: KaSourceModule "Sources of main"
         deprecation: null
         importableFqName: null

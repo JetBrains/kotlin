@@ -170,6 +170,12 @@ public class FirStandaloneNormalAnalysisSourceModuleContainingDeclarationProvide
   }
 
   @Test
+  @TestMetadata("setterParameter.kt")
+  public void testSetterParameter() {
+    run("setterParameter.kt");
+  }
+
+  @Test
   @TestMetadata("typeAliases.kt")
   public void testTypeAliases() {
     run("typeAliases.kt");
