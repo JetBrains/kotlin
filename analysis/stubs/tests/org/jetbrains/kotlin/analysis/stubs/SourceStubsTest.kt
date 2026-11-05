@@ -77,8 +77,9 @@ class SourceStubsTest : AbstractAnalysisApiExecutionTest("testData/source/custom
         // The local class has to be stubbed
         testServices.assertions.assertTrue(isParsed(bodyOf("withLocalClass")))
 
-        // The first statement has to be checked for a contract
-        testServices.assertions.assertTrue(isParsed(bodyOf("withContract")))
+        // The first statement is checked for a contract in the light tree, and binding the stubs to the AST skips the body as it has no
+        // stubbed declarations
+        testServices.assertions.assertFalse(isParsed(bodyOf("withContract")))
 
         val lambda = PsiTreeUtil.findChildOfType(freshFile, KtLambdaExpression::class.java, /* strict = */ true)
         testServices.assertions.assertFalse(isParsed(lambda?.node))

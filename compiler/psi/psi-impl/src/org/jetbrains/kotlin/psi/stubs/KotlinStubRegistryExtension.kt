@@ -27,7 +27,10 @@ internal class KotlinStubRegistryExtension : StubRegistryExtension {
         registry.registerStubSerializer(KtFileElementType, KtFileStubSerializer)
 
         for ((key, value) in KtStubElementFactories.factories) {
-            registry.registerStubSerializingFactory(key, value)
+            // A light factory may not go through `registerStubSerializingFactory`, which rejects light factories;
+            // registering the light factory also registers it as a regular one
+            registry.registerLightStubFactory(key, value)
+            registry.registerStubSerializer(key, value)
         }
     }
 }
@@ -420,9 +423,21 @@ internal object KtStubElementFactories {
     }
 
     /**
+     * [factories] indexed by [IElementType.getIndex], as a map lookup is noticeable on hot paths.
+     */
+    private val factoriesByIndex: Array<KtStubSerializingElementFactory<*, *>?> =
+        arrayOfNulls<KtStubSerializingElementFactory<*, *>>(factories.keys.maxOf { it.index.toInt() } + 1).also { array ->
+            for ([type, factory] in factories) {
+                array[type.index.toInt()] = factory
+            }
+        }
+
+    /**
      * Returns the factory registered for [type], or `null` if the element type is not stubbed.
      */
-    operator fun get(type: IElementType): KtStubSerializingElementFactory<*, *>? = factories[type]
+    operator fun get(type: IElementType): KtStubSerializingElementFactory<*, *>? =
+        // Indices of registered element types are unique, and unregistered ones have a negative index
+        factoriesByIndex.getOrNull(type.index.toInt())
 }
 
 /**

@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.psi.stubs.factories
 
+import com.intellij.lang.LighterAST
+import com.intellij.lang.LighterASTNode
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
@@ -24,6 +26,12 @@ internal object KtFunctionTypeStubSerializingElementFactory :
     override fun createStub(
         psi: KtFunctionType,
         parentStub: StubElement<*>?,
+    ): KotlinFunctionTypeStubImpl = KotlinFunctionTypeStubImpl(parent = parentStub, abbreviatedType = null)
+
+    override fun createStub(
+        tree: LighterAST,
+        node: LighterASTNode,
+        parentStub: StubElement<*>,
     ): KotlinFunctionTypeStubImpl = KotlinFunctionTypeStubImpl(parent = parentStub, abbreviatedType = null)
 
     override fun serialize(stub: KotlinFunctionTypeStubImpl, dataStream: StubOutputStream) {

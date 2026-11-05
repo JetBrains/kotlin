@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.psi.stubs.factories
 
+import com.intellij.lang.LighterAST
+import com.intellij.lang.LighterASTNode
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
@@ -12,6 +14,7 @@ import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.psi.KtElementImplStub
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderWithTextStub
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinPlaceHolderWithTextStubImpl
+import org.jetbrains.kotlin.psi.stubs.light.nodeText
 
 /**
  * A factory for elements whose stub carries only their source text.
@@ -30,6 +33,16 @@ internal class KtPlaceHolderWithTextStubSerializingElementFactory<Psi : KtElemen
         parent = parentStub,
         elementType = type,
         text = psi.text,
+    )
+
+    override fun createStub(
+        tree: LighterAST,
+        node: LighterASTNode,
+        parentStub: StubElement<*>,
+    ): KotlinPlaceHolderWithTextStubImpl<Psi> = KotlinPlaceHolderWithTextStubImpl(
+        parent = parentStub,
+        elementType = type,
+        text = tree.nodeText(node),
     )
 
     override fun serialize(stub: KotlinPlaceHolderWithTextStubImpl<Psi>, dataStream: StubOutputStream) {

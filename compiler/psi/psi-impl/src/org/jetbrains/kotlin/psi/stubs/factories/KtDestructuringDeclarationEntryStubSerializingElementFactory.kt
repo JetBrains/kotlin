@@ -6,14 +6,21 @@
 package org.jetbrains.kotlin.psi.stubs.factories
 
 import com.intellij.lang.ASTNode
+import com.intellij.lang.LighterAST
+import com.intellij.lang.LighterASTNode
 import com.intellij.psi.TokenType
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinDestructuringDeclarationEntryStubImpl
+import org.jetbrains.kotlin.psi.stubs.light.declarationName
+import org.jetbrains.kotlin.psi.stubs.light.firstChildOfType
+import org.jetbrains.kotlin.psi.stubs.light.nameIdentifier
+import org.jetbrains.kotlin.psi.stubs.light.nodeText
 
 internal object KtDestructuringDeclarationEntryStubSerializingElementFactory :
     KtStubSerializingElementFactory<KotlinDestructuringDeclarationEntryStubImpl, KtDestructuringDeclarationEntry>(
@@ -48,6 +55,41 @@ internal object KtDestructuringDeclarationEntryStubSerializingElementFactory :
         isVar = psi.isVar,
         isSingleUnderscore = psi.nameIdentifier?.textMatches("_") == true,
     )
+
+    override fun shouldCreateStub(tree: LighterAST, node: LighterASTNode, parentStub: StubElement<*>): Boolean {
+        var parent = tree.getParent(node) ?: return false
+        if (parent.tokenType == TokenType.ERROR_ELEMENT) {
+            parent = tree.getParent(parent) ?: return false
+        }
+
+        return parent.tokenType == KtNodeTypes.DESTRUCTURING_DECLARATION &&
+                KtDestructuringDeclarationStubSerializingElementFactory.shouldCreateStub(tree, parent, parentStub)
+    }
+
+    override fun createStub(
+        tree: LighterAST,
+        node: LighterASTNode,
+        parentStub: StubElement<*>,
+    ): KotlinDestructuringDeclarationEntryStubImpl = KotlinDestructuringDeclarationEntryStubImpl(
+        parent = parentStub,
+        name = StringRef.fromString(tree.declarationName(node)),
+        isVar = tree.firstChildOfType(node, KtTokens.VAR_KEYWORD) != null ||
+                parentDeclaration(tree, node)?.let { tree.firstChildOfType(it, KtTokens.VAR_KEYWORD) } != null,
+        isSingleUnderscore = tree.nameIdentifier(node)?.let(tree::nodeText) == "_",
+    )
+
+
+    /**
+     * Mirrors `KtDestructuringDeclarationEntry.getParentNode`: entries of top-level destructuring declarations are
+     * wrapped in an error element (KT-58563).
+     */
+    private fun parentDeclaration(tree: LighterAST, node: LighterASTNode): LighterASTNode? {
+        val parent = tree.getParent(node) ?: return null
+        if (parent.tokenType == TokenType.ERROR_ELEMENT) {
+            return tree.getParent(parent)
+        }
+        return parent
+    }
 
     override fun serialize(stub: KotlinDestructuringDeclarationEntryStubImpl, dataStream: StubOutputStream) {
         dataStream.writeName(stub.getName())

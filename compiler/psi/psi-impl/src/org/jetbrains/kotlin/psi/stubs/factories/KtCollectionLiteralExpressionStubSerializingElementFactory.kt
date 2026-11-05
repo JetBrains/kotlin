@@ -5,12 +5,15 @@
 
 package org.jetbrains.kotlin.psi.stubs.factories
 
+import com.intellij.lang.LighterAST
+import com.intellij.lang.LighterASTNode
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.KtCollectionLiteralExpression
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinCollectionLiteralExpressionStubImpl
+import org.jetbrains.kotlin.psi.stubs.light.expressionChildren
 
 internal object KtCollectionLiteralExpressionStubSerializingElementFactory :
     KtStubSerializingElementFactory<KotlinCollectionLiteralExpressionStubImpl, KtCollectionLiteralExpression>(
@@ -27,6 +30,15 @@ internal object KtCollectionLiteralExpressionStubSerializingElementFactory :
     ): KotlinCollectionLiteralExpressionStubImpl = KotlinCollectionLiteralExpressionStubImpl(
         parent = parentStub,
         innerExpressionCount = psi.innerExpressions.size,
+    )
+
+    override fun createStub(
+        tree: LighterAST,
+        node: LighterASTNode,
+        parentStub: StubElement<*>,
+    ): KotlinCollectionLiteralExpressionStubImpl = KotlinCollectionLiteralExpressionStubImpl(
+        parent = parentStub,
+        innerExpressionCount = tree.expressionChildren(node).size,
     )
 
     override fun serialize(stub: KotlinCollectionLiteralExpressionStubImpl, dataStream: StubOutputStream) {

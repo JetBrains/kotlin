@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.psi.stubs.factories
 
+import com.intellij.lang.LighterAST
+import com.intellij.lang.LighterASTNode
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
@@ -13,6 +15,8 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.KtBlockStringTemplateEntry
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinBlockStringTemplateEntryStubImpl
+import org.jetbrains.kotlin.psi.stubs.light.expressionChildren
+import org.jetbrains.kotlin.psi.stubs.light.nodeText
 
 internal object KtBlockStringTemplateEntryStubSerializingElementFactory :
     KtStubSerializingElementFactory<KotlinBlockStringTemplateEntryStubImpl, KtBlockStringTemplateEntry>(
@@ -30,6 +34,16 @@ internal object KtBlockStringTemplateEntryStubSerializingElementFactory :
         parent = parentStub,
         hasMultipleExpressions = psi.childrenOfType<KtExpression>().size > 1,
         text = psi.text,
+    )
+
+    override fun createStub(
+        tree: LighterAST,
+        node: LighterASTNode,
+        parentStub: StubElement<*>,
+    ): KotlinBlockStringTemplateEntryStubImpl = KotlinBlockStringTemplateEntryStubImpl(
+        parent = parentStub,
+        hasMultipleExpressions = tree.expressionChildren(node).size > 1,
+        text = tree.nodeText(node),
     )
 
     override fun serialize(stub: KotlinBlockStringTemplateEntryStubImpl, dataStream: StubOutputStream) {
