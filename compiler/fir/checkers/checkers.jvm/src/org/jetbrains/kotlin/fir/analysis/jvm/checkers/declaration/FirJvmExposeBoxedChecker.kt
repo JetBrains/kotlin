@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -84,9 +85,17 @@ object FirJvmExposeBoxedChecker : FirBasicDeclarationChecker(MppCheckerKind.Comm
         }
 
         if (declaration is FirCallableDeclaration) {
+            val cannotExposeErrors = cannotExposeErrors(declaration)
+            for (error in cannotExposeErrors) {
+                reporter.reportOn(jvmExposeBoxedAnnotation.source, error)
+            }
+
             if (!declaration.isWithInlineClass(context.session)) {
                 if (name == null || declaration.cannotRename()) {
-                    reporter.reportOn(jvmExposeBoxedAnnotation.source, FirJvmErrors.USELESS_JVM_EXPOSE_BOXED)
+                    // An error above already rejects the annotation, so the warning only repeats it.
+                    if (cannotExposeErrors.isEmpty()) {
+                        reporter.reportOn(jvmExposeBoxedAnnotation.source, FirJvmErrors.USELESS_JVM_EXPOSE_BOXED)
+                    }
                 } else if (FirJvmNameChecker.isApplicableTo(declaration)) {
                     // Do not suggest `@JvmName` where it is not applicable, for example, on an override.
                     reporter.reportOn(jvmExposeBoxedAnnotation.source, FirJvmErrors.JVM_EXPOSE_BOXED_CAN_BE_REPLACED_WITH_JVM_NAME)
@@ -97,40 +106,43 @@ object FirJvmExposeBoxedChecker : FirBasicDeclarationChecker(MppCheckerKind.Comm
                 }
             }
 
-            if (declaration.hasAnnotation(JvmStandardClassIds.JVM_SYNTHETIC_ANNOTATION_CLASS_ID, context.session)) {
-                reporter.reportOn(jvmExposeBoxedAnnotation.source, FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_EXPOSE_SYNTHETIC)
-            }
-
-            if (!declaration.isFinal && declaration.containingClassLookupTag()?.toRegularClassSymbol()?.isFinal == false) {
-                reporter.reportOn(jvmExposeBoxedAnnotation.source, FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_EXPOSE_OPEN_ABSTRACT)
-            }
-
             if (!declaration.canBeOverloadedByExposed(context.session)) {
                 checkJvmNameHasDifferentName(name, declaration)
             }
+        }
+    }
 
-            if (declaration.propertyIfAccessor.typeParameters.any { it.symbol.isReified }) {
-                reporter.reportOn(jvmExposeBoxedAnnotation.source, FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_EXPOSE_REIFIED)
-            }
+    /**
+     * Returns the `JVM_EXPOSE_BOXED_CANNOT_EXPOSE_*` errors for `@JvmExposeBoxed` on [declaration].
+     */
+    context(context: CheckerContext)
+    private fun cannotExposeErrors(declaration: FirCallableDeclaration): List<KtDiagnosticFactory0> = buildList {
+        if (declaration.hasAnnotation(JvmStandardClassIds.JVM_SYNTHETIC_ANNOTATION_CLASS_ID, context.session)) {
+            add(FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_EXPOSE_SYNTHETIC)
+        }
 
-            if (declaration is FirFunction && declaration.isSuspend) {
-                reporter.reportOn(jvmExposeBoxedAnnotation.source, FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_EXPOSE_SUSPEND)
-            }
+        if (!declaration.isFinal && declaration.containingClassLookupTag()?.toRegularClassSymbol()?.isFinal == false) {
+            add(FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_EXPOSE_OPEN_ABSTRACT)
+        }
 
-            if (declaration.isLocalDeclaredInBlock) {
-                reporter.reportOn(jvmExposeBoxedAnnotation.source, FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_EXPOSE_LOCALS)
-            }
+        if (declaration.propertyIfAccessor.typeParameters.any { it.symbol.isReified }) {
+            add(FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_EXPOSE_REIFIED)
+        }
 
-            if (declaration.effectiveVisibility.privateApi) {
-                reporter.reportOn(jvmExposeBoxedAnnotation.source, FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_EXPOSE_PRIVATE)
-            }
+        if (declaration is FirFunction && declaration.isSuspend) {
+            add(FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_EXPOSE_SUSPEND)
+        }
 
-            if (declaration is FirConstructor && declaration.isFromSealedClass) {
-                reporter.reportOn(
-                    jvmExposeBoxedAnnotation.source,
-                    FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_EXPOSE_SEALED_CONSTRUCTOR
-                )
-            }
+        if (declaration.isLocalDeclaredInBlock) {
+            add(FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_EXPOSE_LOCALS)
+        }
+
+        if (declaration.effectiveVisibility.privateApi) {
+            add(FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_EXPOSE_PRIVATE)
+        }
+
+        if (declaration is FirConstructor && declaration.isFromSealedClass) {
+            add(FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_EXPOSE_SEALED_CONSTRUCTOR)
         }
     }
 

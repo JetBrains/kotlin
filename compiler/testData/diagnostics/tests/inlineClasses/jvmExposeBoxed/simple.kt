@@ -164,9 +164,12 @@ class Class: Interface {
 fun syntheticFun(ic: IC) {}
 
 fun withLocal() {
-    <!JVM_EXPOSE_BOXED_CANNOT_EXPOSE_LOCALS, USELESS_JVM_EXPOSE_BOXED!>@JvmExposeBoxed<!>
+    <!JVM_EXPOSE_BOXED_CANNOT_EXPOSE_LOCALS!>@JvmExposeBoxed<!>
     fun local() {}
 }
+
+<!JVM_EXPOSE_BOXED_CANNOT_EXPOSE_PRIVATE!>@JvmExposeBoxed<!>
+private fun privateWithoutIC(x: Int): Int = x
 
 <!JVM_EXPOSE_BOXED_CAN_BE_REPLACED_WITH_JVM_NAME!>@JvmExposeBoxed("jvmName")<!>
 fun canBeReplacedWithJvmName() {}
