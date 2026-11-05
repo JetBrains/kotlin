@@ -42,7 +42,7 @@ class Test1 : Base<String> {
   @Deprecated(message = "No-arg constructor is hidden from direct usage", level = DeprecationLevel.HIDDEN)
   @Deprecated
   constructor() {
-    super/*Base*/()
+    super/*Base*/<String>()
   }
 
   constructor(b: String) /* primary */ {
@@ -62,7 +62,7 @@ class Test2 : Base2<Int, String> {
   @Deprecated(message = "No-arg constructor is hidden from direct usage", level = DeprecationLevel.HIDDEN)
   @Deprecated
   constructor() {
-    super/*Base2*/()
+    super/*Base2*/<Int, String>()
   }
 
   constructor(b: String) /* primary */ {
@@ -82,7 +82,7 @@ class Test3<E : Any?> : Base<List<E>> {
   @Deprecated(message = "No-arg constructor is hidden from direct usage", level = DeprecationLevel.HIDDEN)
   @Deprecated
   constructor() {
-    super/*Base*/()
+    super/*Base*/<List<E>>()
   }
 
   constructor(e: E) /* primary */ {
@@ -102,11 +102,51 @@ class Test4 : JavaBase<String> {
   @Deprecated(message = "No-arg constructor is hidden from direct usage", level = DeprecationLevel.HIDDEN)
   @Deprecated
   constructor() {
-    super/*JavaBase*/()
+    super/*JavaBase*/<String, Any?>()
   }
 
   constructor(b: String) /* primary */ {
     super/*JavaBase*/<String, /* null */>(u = "")
+    /* <init>() */
+
+  }
+
+}
+
+@NoArg
+class Test5 : JavaNumberBase<String> {
+  val b: String
+    field = b
+    get
+
+  @Deprecated(message = "No-arg constructor is hidden from direct usage", level = DeprecationLevel.HIDDEN)
+  @Deprecated
+  constructor() {
+    super/*JavaNumberBase*/<String, Number?>()
+  }
+
+  constructor(b: String) /* primary */ {
+    super/*JavaNumberBase*/<String, /* null */>(u = 1)
+    /* <init>() */
+
+  }
+
+}
+
+@NoArg
+class Test6 : JavaComparableBase<String> {
+  val b: String
+    field = b
+    get
+
+  @Deprecated(message = "No-arg constructor is hidden from direct usage", level = DeprecationLevel.HIDDEN)
+  @Deprecated
+  constructor() {
+    super/*JavaComparableBase*/<String, Comparable<*>?>()
+  }
+
+  constructor(b: String) /* primary */ {
+    super/*JavaComparableBase*/<String, /* null */>(u = 1)
     /* <init>() */
 
   }
@@ -124,5 +164,7 @@ fun box(): String {
   }
   <get-java><Test3<*>>(/* <this> = Test3<*>::class */).newInstance() /*~> Unit */
   <get-java><Test4>(/* <this> = Test4::class */).newInstance() /*~> Unit */
+  <get-java><Test5>(/* <this> = Test5::class */).newInstance() /*~> Unit */
+  <get-java><Test6>(/* <this> = Test6::class */).newInstance() /*~> Unit */
   return "OK"
 }
