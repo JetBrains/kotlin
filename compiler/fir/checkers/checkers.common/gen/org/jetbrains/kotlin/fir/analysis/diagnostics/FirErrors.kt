@@ -1056,6 +1056,7 @@ object FirErrors : KtDiagnosticsContainer() {
     val TYPEALIAS_EXPANSION_CAPTURES_OUTER_TYPE_PARAMETERS: KtDiagnosticFactory1<Set<FirTypeParameterSymbol>> = KtDiagnosticFactory1("TYPEALIAS_EXPANSION_CAPTURES_OUTER_TYPE_PARAMETERS", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val TYPEALIAS_EXPANDS_TO_COMPILER_REQUIRED_ANNOTATION: KtDiagnosticFactoryForDeprecation1<FirRegularClassSymbol> = KtDiagnosticFactoryForDeprecation1("TYPEALIAS_EXPANDS_TO_COMPILER_REQUIRED_ANNOTATION", ForbidTypeAliasToCompilerRequiredAnnotation, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val EXPECTED_TYPEALIAS: KtDiagnosticFactory0 = KtDiagnosticFactory0("EXPECTED_TYPEALIAS", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
+    val UNUSED_TYPEALIAS_PARAMETER: KtDiagnosticFactory2<FirTypeParameterSymbol, ConeKotlinType> = KtDiagnosticFactory2("UNUSED_TYPEALIAS_PARAMETER", WARNING, SourceElementPositioningStrategies.DEFAULT, KtTypeParameter::class, getRendererFactory())
 
     // Extra checkers
     val REDUNDANT_VISIBILITY_MODIFIER: KtDiagnosticFactory0 = KtDiagnosticFactory0("REDUNDANT_VISIBILITY_MODIFIER", WARNING, SourceElementPositioningStrategies.VISIBILITY_MODIFIER, KtModifierListOwner::class, getRendererFactory())

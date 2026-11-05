@@ -2238,6 +2238,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<FirRegularClassSymbol>("annotation")
         }
         val EXPECTED_TYPEALIAS by error<KtElement>()
+        val UNUSED_TYPEALIAS_PARAMETER by warning<KtTypeParameter> {
+            parameter<FirTypeParameterSymbol>("typeParameter")
+            parameter<ConeKotlinType>("expandedType")
+        }
     }
 
     val EXTRA_CHECKERS by object : DiagnosticGroup("Extra checkers") {

@@ -1,3 +1,5 @@
+/typealiasInArgument.kt:15:20: warning: Type alias parameter 'K' is not used in the expanded type 'StarGeneric2<*>' and does not affect type checking.
+
 /typealiasInArgument.kt:26:40: error: Equality bound argument must be a star-projected type, but expands to 'BadGeneric<String>'.
 
 /typealiasInArgument.kt:31:40: error: Equality bound argument must be a star-projected type, but expands to 'BadGeneric2<String>'.

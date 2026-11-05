@@ -5411,6 +5411,13 @@ internal class ExpectedTypealiasImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.ExpectedTypealias
 
+internal class UnusedTypealiasParameterImpl(
+    override val typeParameter: KaTypeParameterSymbol,
+    override val expandedType: KaType,
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtTypeParameter>(firDiagnostic, token), KaFirDiagnostic.UnusedTypealiasParameter
+
 internal class RedundantVisibilityModifierImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,

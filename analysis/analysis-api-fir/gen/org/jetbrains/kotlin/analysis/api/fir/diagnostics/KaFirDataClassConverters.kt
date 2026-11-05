@@ -3384,6 +3384,14 @@ private fun KaDiagnosticConverterBuilder.addConversions71() {
             token,
         )
     }
+    add(FirErrors.UNUSED_TYPEALIAS_PARAMETER) { firDiagnostic ->
+        UnusedTypealiasParameterImpl(
+            firSymbolBuilder.classifierBuilder.buildTypeParameterSymbol(firDiagnostic.a),
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirJvmErrors.REDUNDANT_REPEATABLE_ANNOTATION) { firDiagnostic ->
         RedundantRepeatableAnnotationImpl(
             firDiagnostic.a,
