@@ -1,0 +1,128 @@
+open annotation class NoArg : Annotation {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+open class Base<T : Any?> {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+open class Base2<K : Any?, V : Any?> {
+  val k: K?
+    field = k
+    get
+
+  val v: V?
+    field = v
+    get
+
+  constructor(k: K? = null, v: V? = null) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@NoArg
+class Test1 : Base<String> {
+  val b: String
+    field = b
+    get
+
+  @Deprecated(message = "No-arg constructor is hidden from direct usage", level = DeprecationLevel.HIDDEN)
+  @Deprecated
+  constructor() {
+    super/*Base*/()
+  }
+
+  constructor(b: String) /* primary */ {
+    super/*Base*/<String>()
+    /* <init>() */
+
+  }
+
+}
+
+@NoArg
+class Test2 : Base2<Int, String> {
+  val b: String
+    field = b
+    get
+
+  @Deprecated(message = "No-arg constructor is hidden from direct usage", level = DeprecationLevel.HIDDEN)
+  @Deprecated
+  constructor() {
+    super/*Base2*/()
+  }
+
+  constructor(b: String) /* primary */ {
+    super/*Base2*/<Int, String>()
+    /* <init>() */
+
+  }
+
+}
+
+@NoArg
+class Test3<E : Any?> : Base<List<E>> {
+  val e: E
+    field = e
+    get
+
+  @Deprecated(message = "No-arg constructor is hidden from direct usage", level = DeprecationLevel.HIDDEN)
+  @Deprecated
+  constructor() {
+    super/*Base*/()
+  }
+
+  constructor(e: E) /* primary */ {
+    super/*Base*/<List<E>>()
+    /* <init>() */
+
+  }
+
+}
+
+@NoArg
+class Test4 : JavaBase<String> {
+  val b: String
+    field = b
+    get
+
+  @Deprecated(message = "No-arg constructor is hidden from direct usage", level = DeprecationLevel.HIDDEN)
+  @Deprecated
+  constructor() {
+    super/*JavaBase*/()
+  }
+
+  constructor(b: String) /* primary */ {
+    super/*JavaBase*/<String, /* null */>(u = "")
+    /* <init>() */
+
+  }
+
+}
+
+fun box(): String {
+  <get-java><Test1>(/* <this> = Test1::class */).newInstance() /*~> Unit */
+  val test2: @FlexibleNullability Test2? = <get-java><Test2>(/* <this> = Test2::class */).newInstance()
+  when {
+    when {
+      EQEQ(arg0 = test2 /*!! Test2 */.<get-k>(), arg1 = null).not() -> true
+      else -> EQEQ(arg0 = test2 /*!! Test2 */.<get-v>(), arg1 = null).not()
+    } -> return "fail@test2"
+  }
+  <get-java><Test3<*>>(/* <this> = Test3<*>::class */).newInstance() /*~> Unit */
+  <get-java><Test4>(/* <this> = Test4::class */).newInstance() /*~> Unit */
+  return "OK"
+}
