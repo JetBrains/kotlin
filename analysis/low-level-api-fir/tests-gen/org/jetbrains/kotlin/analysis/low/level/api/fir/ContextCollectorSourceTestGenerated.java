@@ -35,6 +35,12 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
   }
 
   @Test
+  @TestMetadata("catchParameterScope.kt")
+  public void testCatchParameterScope() {
+    run("catchParameterScope.kt");
+  }
+
+  @Test
   @TestMetadata("class.kt")
   public void testClass() {
     run("class.kt");
@@ -62,6 +68,12 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
   @TestMetadata("contextReceiversClass.kt")
   public void testContextReceiversClass() {
     run("contextReceiversClass.kt");
+  }
+
+  @Test
+  @TestMetadata("contractSyntaxV2Parameter.kt")
+  public void testContractSyntaxV2Parameter() {
+    run("contractSyntaxV2Parameter.kt");
   }
 
   @Test
@@ -167,6 +179,12 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
   }
 
   @Test
+  @TestMetadata("implicitTypeGetterField.kt")
+  public void testImplicitTypeGetterField() {
+    run("implicitTypeGetterField.kt");
+  }
+
+  @Test
   @TestMetadata("innerClasses.kt")
   public void testInnerClasses() {
     run("innerClasses.kt");
@@ -194,6 +212,12 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
   @TestMetadata("localClassFunction.kt")
   public void testLocalClassFunction() {
     run("localClassFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("localClassHeaderSelfReference.kt")
+  public void testLocalClassHeaderSelfReference() {
+    run("localClassHeaderSelfReference.kt");
   }
 
   @Test
@@ -368,6 +392,12 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
   @TestMetadata("typeParameter.kt")
   public void testTypeParameter() {
     run("typeParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("whenSubjectVariableScope.kt")
+  public void testWhenSubjectVariableScope() {
+    run("whenSubjectVariableScope.kt");
   }
 
   @Test

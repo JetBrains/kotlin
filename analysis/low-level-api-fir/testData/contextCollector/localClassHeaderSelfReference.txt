@@ -1,0 +1,32 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+
+FILE: [ResolvedTo(IMPORTS)] localClassHeaderSelfReference.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
+        local final [ResolvedTo(BODY_RESOLVE)] class Local : R|kotlin/Comparable<<local>/Local>| {
+            public [ResolvedTo(BODY_RESOLVE)] constructor(): R|<local>/Local| {
+                super<R|kotlin/Any|>()
+            }
+
+            public open override operator [ResolvedTo(BODY_RESOLVE)] fun compareTo([ResolvedTo(BODY_RESOLVE)] other: R|<local>/Local|): R|kotlin/Int| {
+                ^compareTo Int(0)
+            }
+
+        }
+
+    }
