@@ -3006,13 +3006,13 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             INLINE_CLASS_DEPRECATED,
-            "''inline'' modifier is deprecated. Use {0} instead."
+            "Standalone ''inline'' modifier for classes is deprecated. Use {0} instead."
                 .toDeprecationWarningMessage(LanguageFeature.ExplicitInlineValueClassesSyntaxRequiredOnAllPlatforms),
             STRING,
         )
         map.put(
             INLINE_CLASS_DEPRECATED_ERROR,
-            "''inline'' modifier is deprecated. Use {0} instead.",
+            "Standalone ''inline'' modifier for classes is deprecated. Use {0} instead.",
             STRING,
         )
         map.put(
