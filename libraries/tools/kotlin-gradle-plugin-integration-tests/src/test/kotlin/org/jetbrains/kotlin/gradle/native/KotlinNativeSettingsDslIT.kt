@@ -91,7 +91,9 @@ class KotlinNativeSettingsDslIT : KGPBaseTest() {
         addEcosystemPluginToBuildScriptCompilationClasspath()
         settingsBuildScriptInjection {
             settings.plugins.apply("org.jetbrains.kotlin.ecosystem")
-            settings.extensions.getByType(KotlinEcosystemExtension::class.java).native.linkMaxWorkers.set(linkMaxWorkers)
+            settings.extensions.getByType(KotlinEcosystemExtension::class.java).native {
+                this.linkMaxWorkers.set(linkMaxWorkers)
+            }
         }
     }
 
