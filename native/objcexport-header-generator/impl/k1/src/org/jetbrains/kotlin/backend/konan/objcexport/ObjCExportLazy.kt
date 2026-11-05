@@ -6,11 +6,10 @@
 package org.jetbrains.kotlin.backend.konan.objcexport
 
 import org.jetbrains.kotlin.K1Deprecation
-import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.backend.konan.InternalKotlinNativeApi
-import org.jetbrains.kotlin.config.nativeBinaryOptions.UnitSuspendFunctionObjCExport
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.nativeBinaryOptions.UnitSuspendFunctionObjCExport
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
@@ -44,8 +43,6 @@ import org.jetbrains.kotlin.types.error.ErrorUtils
 interface ObjCExportLazy {
     interface Configuration {
         val frameworkName: String
-        fun isIncluded(moduleInfo: ModuleInfo): Boolean
-        fun getCompilerModuleName(moduleInfo: ModuleInfo): String
         val objcGenerics: Boolean
         val objcExportBlockExplicitParameterNames: Boolean
             get() = false
@@ -445,11 +442,7 @@ internal fun createNamerConfiguration(configuration: ObjCExportLazy.Configuratio
         override fun getAdditionalPrefix(module: ModuleDescriptor): String? {
             @OptIn(K1Deprecation::class)
             if (module.isNativeStdlib() || module.isCommonStdlibCheckSpecificallyForIDE()) return "Kotlin"
-
-            // Note: incorrect for compiler since it doesn't store ModuleInfo to ModuleDescriptor.
-            val moduleInfo = module.getCapability(ModuleInfo.Capability) ?: return null
-            if (configuration.isIncluded(moduleInfo)) return null
-            return abbreviate(configuration.getCompilerModuleName(moduleInfo))
+            return null
         }
 
         override val objcGenerics = configuration.objcGenerics

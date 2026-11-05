@@ -16,15 +16,8 @@
 
 package org.jetbrains.kotlin.resolve.jvm.extensions
 
-import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.K1Deprecation
-import org.jetbrains.kotlin.analyzer.ModuleInfo
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
-import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.storage.StorageManager
 
 @K1Deprecation
 interface PackageFragmentProviderExtension {
@@ -32,13 +25,4 @@ interface PackageFragmentProviderExtension {
             "org.jetbrains.kotlin.packageFragmentProviderExtension",
             PackageFragmentProviderExtension::class.java
     )
-
-    fun getPackageFragmentProvider(
-            project: Project,
-            module: ModuleDescriptor,
-            storageManager: StorageManager,
-            trace: BindingTrace,
-            moduleInfo: ModuleInfo?,
-            lookupTracker: LookupTracker
-    ): PackageFragmentProvider?
 }
