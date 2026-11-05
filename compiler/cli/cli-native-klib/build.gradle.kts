@@ -25,7 +25,6 @@ dependencies {
     implementation(project(":compiler:psi:psi-api"))
     implementation(project(":core:compiler.common"))
     implementation(project(":core:descriptors"))
-    runtimeOnly(project(":core:deserialization"))
     implementation(project(":core:metadata"))
     implementation(project(":kotlin-util-io"))
     implementation(project(":kotlin-util-klib"))

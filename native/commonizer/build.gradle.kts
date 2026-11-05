@@ -38,7 +38,6 @@ dependencies {
     compileOnly(libs.intellij.fastutil)
 
     compileOnly(project(":core:descriptors"))
-    compileOnly(project(":core:deserialization"))
     compileOnly(project(":core:deserialization.common"))
 
     // This dependency is necessary to keep the right dependency record inside of POM file:
