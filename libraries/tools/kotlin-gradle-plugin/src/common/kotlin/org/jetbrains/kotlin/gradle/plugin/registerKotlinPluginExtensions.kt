@@ -59,6 +59,7 @@ import org.jetbrains.kotlin.gradle.targets.wasm.WasmBinaryTransformRegisteringSe
 import org.jetbrains.kotlin.gradle.targets.wasm.component.internal.WitPreparationSetupAction
 import org.jetbrains.kotlin.gradle.targets.wasm.component.internal.WitTransformRegisteringSetupAction
 import org.jetbrains.kotlin.gradle.targets.web.npm.shared.PublishSharedPackageJsonSideEffect
+import org.jetbrains.kotlin.gradle.toolchains.BinaryenToolchainExtension
 import org.jetbrains.kotlin.gradle.tooling.RegisterBuildKotlinToolingMetadataTask
 import org.jetbrains.kotlin.gradle.utils.RegisterIsAllGradleProjectsEvaluatedListener
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeToolParallelismLimitSetupAction
@@ -81,6 +82,7 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, FinalizeConfigurationFusMetricAction)
 
         register(project, AbiValidationSetupAction)
+        register(project, BinaryenToolchainExtension)
 
         if (isJvm || isMultiplatform) {
             register(project, ScriptingGradleSubpluginSetupAction)

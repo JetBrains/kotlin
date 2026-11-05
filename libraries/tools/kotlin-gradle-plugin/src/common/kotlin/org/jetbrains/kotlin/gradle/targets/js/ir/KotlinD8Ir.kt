@@ -6,12 +6,14 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Action
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinToolchainDsl
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmD8Dsl
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinWasmD8
 import org.jetbrains.kotlin.gradle.targets.wasm.d8.D8Exec
 import org.jetbrains.kotlin.gradle.targets.wasm.d8.D8Plugin
+import org.jetbrains.kotlin.gradle.toolchains.d8Toolchain
 import org.jetbrains.kotlin.gradle.utils.withType
 import javax.inject.Inject
 
@@ -41,7 +43,12 @@ internal constructor(
         test.testFramework = KotlinWasmD8(test)
     }
 
+    @OptIn(ExperimentalKotlinToolchainDsl::class)
     override fun configureTestDependencies(test: KotlinJsTest, binary: JsIrBinary) {
+        val d8ToolchainService = d8Toolchain.registerIfAbsent(project)
+        test.usesService(d8ToolchainService)
+        if (!d8Toolchain.isDisabled(project)) return
+
         with(d8) {
             test.dependsOn(project.d8SetupTaskProvider)
         }

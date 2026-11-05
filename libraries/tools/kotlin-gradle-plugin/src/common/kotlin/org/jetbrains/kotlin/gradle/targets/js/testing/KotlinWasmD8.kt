@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.testing
 
 import org.gradle.api.file.Directory
 import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinToolchainDsl
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
@@ -15,8 +16,10 @@ import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJv
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.writeWasmUnitTestRunner
 import org.jetbrains.kotlin.gradle.targets.wasm.d8.D8Plugin
+import org.jetbrains.kotlin.gradle.toolchains.d8Toolchain
 import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions
 
+@OptIn(ExperimentalKotlinToolchainDsl::class)
 @ExperimentalWasmDsl
 internal class KotlinWasmD8(
     kotlinJsTest: KotlinJsTest,
@@ -30,10 +33,15 @@ internal class KotlinWasmD8(
 
     private val projectLayout = kotlinJsTest.project.layout
     private val d8 = D8Plugin.applyWithEnvSpec(kotlinJsTest.project)
+    private val d8ToolchainService = d8Toolchain.registerIfAbsent(kotlinJsTest.project)
+    private val d8Request = d8Toolchain.defaultRequest(kotlinJsTest.project)
 
     override val workingDir: Provider<Directory> = projectLayout.dir(kotlinJsTest.inputFileProperty.asFile.map { it.parentFile })
 
-    override val executable: Provider<String> = d8.executable
+    // Resolved lazily, because the D8 toolchain provisions D8 only when the executable is actually needed.
+    override val executable: Provider<String> = d8ToolchainService.map {
+        d8Toolchain.resolveExecutable(it, d8.executable, d8Request)
+    }
 
     override fun createTestExecutionSpec(
         task: KotlinJsTest,
