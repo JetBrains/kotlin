@@ -1,0 +1,10 @@
+/valueClassWithoutInlineDeprecated.kt:5:1: error: Value classes will no longer be inline by default in a future release.
+ - To preserve the inline behavior, mark it as 'inline value class'.
+ - To migrate to a full value class, enable the experimental
+   'full value classes' feature by supplying the '-Xfull-value-classes'
+   compiler argument, but note that no stability guarantees are provided for it.
+
+For more information, see the corresponding https://kotl.in/inline-value-classes and
+https://kotl.in/full-value-classes language proposals.
+
+/valueClassWithoutInlineDeprecated.kt:7:1: error: The feature "full value classes" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xfull-value-classes', but note that no stability guarantees are provided.

@@ -6,7 +6,7 @@
 interface I
 
 expect class A
-expect value class B(val x: Int)
+expect inline value class B(val x: Int)
 expect fun interface C1 { fun foo() }
 expect fun interface C2 { fun foo() }
 expect class D1 : I

@@ -79,7 +79,7 @@ fun fooWithContext() {
 interface UserDefinedInterface
 external interface ExternalInterface : JsAny
 enum class UserDefinedEnum { A }
-value class IntValueClass(val x: Int)
+<!INLINE_VALUE_CLASS_WITHOUT_EXPLICIT_INLINE_WARNING!>value<!> class IntValueClass(val x: Int)
 typealias AliasedChar = Char
 typealias AliasedNullableInt = Int?
 

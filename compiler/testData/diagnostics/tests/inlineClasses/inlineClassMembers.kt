@@ -2,7 +2,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +CustomEqualsInValueClasses
 
-<!VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION!>value<!> class BackingFields(val x: Int) {
+<!INLINE_VALUE_CLASS_WITHOUT_EXPLICIT_INLINE_ERROR!>value<!> class BackingFields(val x: Int) {
     <!PROPERTY_WITH_BACKING_FIELD_INSIDE_VALUE_CLASS!>val y<!> = 0
     var z: String
         get() = ""
@@ -31,7 +31,7 @@ class Val {
     }
 }
 
-<!VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION!>value<!> class WithInner(val x: String) {
+<!INLINE_VALUE_CLASS_WITHOUT_EXPLICIT_INLINE_ERROR!>value<!> class WithInner(val x: String) {
     <!INNER_CLASS_INSIDE_VALUE_CLASS!>inner<!> class Inner
 }
 

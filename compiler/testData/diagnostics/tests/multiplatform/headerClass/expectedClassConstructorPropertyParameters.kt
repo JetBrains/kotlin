@@ -1,6 +1,7 @@
 // IGNORE_FIR_DIAGNOSTICS
 // RUN_PIPELINE_TILL: CODEGEN
 // DIAGNOSTICS: -NO_ACTUAL_FOR_EXPECT
+// LANGUAGE: +ExplicitInlineValueClassesSyntaxRequiredOnAllPlatforms -FullValueClasses
 // MODULE: m1-common
 // FILE: common.kt
 expect class Foo(
@@ -13,7 +14,7 @@ expect class Foo(
 
 expect annotation class Ann(val s: String)
 
-expect value class ValueClass(val s: String)
+expect <!INLINE_VALUE_CLASS_WITHOUT_EXPLICIT_INLINE_ERROR!>value<!> class ValueClass(val s: String)
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, expect, primaryConstructor, propertyDeclaration,
 secondaryConstructor, value */

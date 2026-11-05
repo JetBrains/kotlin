@@ -5,7 +5,7 @@
 import lombok.NoArgsConstructor
 
 <!ANNOTATION_IS_NOT_SUPPORTED_ON_CLASS!>@NoArgsConstructor(force = true)<!>
-<!VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION!>value<!> class OnValueClassWithoutJvmInline(val value: Int)
+<!INLINE_VALUE_CLASS_WITHOUT_EXPLICIT_INLINE_ERROR!>value<!> class OnValueClassWithoutJvmInline(val value: Int)
 
 <!ANNOTATION_IS_NOT_SUPPORTED_ON_CLASS!>@NoArgsConstructor(force = true)<!>
 @JvmInline
