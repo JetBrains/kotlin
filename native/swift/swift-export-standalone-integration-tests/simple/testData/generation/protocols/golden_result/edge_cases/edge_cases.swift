@@ -74,8 +74,22 @@ open class ClassC: KotlinRuntime.KotlinBase, edge_cases.InterfaceB, edge_cases._
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
+    open func bar() -> Swift.Void {
+        if Self.self == edge_cases.ClassC.self {
+            return { ClassC_bar(self.__externalRCRef()); return () }()
+        } else {
+            fatalError("Cannot invoke the inherited implementation of abstract member 'edge_cases.ClassC.bar': a Swift subclass must override it and must not call super.")
+        }
+    }
     public final func baz() -> Swift.Void {
         return { ClassC_baz(self.__externalRCRef()); return () }()
+    }
+    open func foo() -> Swift.Void {
+        if Self.self == edge_cases.ClassC.self {
+            return { ClassC_foo(self.__externalRCRef()); return () }()
+        } else {
+            fatalError("Cannot invoke the inherited implementation of abstract member 'edge_cases.ClassC.foo': a Swift subclass must override it and must not call super.")
+        }
     }
 }
 public final class _ExportedKotlinPackages_conflictingTypealiases_Bar_Conflict: KotlinRuntime.KotlinBase {
@@ -281,6 +295,20 @@ extension ExportedKotlinPackages.org.jetbrains.kotlin.`internal`.u2764_️s_u20_
 package func Baz_foo__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ result: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: edge_cases.Baz.Type.self) as! any edge_cases.Baz
     let _result: Swift.Void = _self.foo(result: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: result))
+    return { _result; return true }()
+}
+
+@_cdecl("ClassC_bar__reverse_swift")
+package func ClassC_bar__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = edge_cases.ClassC.__createClassWrapper(externalRCRef: `self`)
+    let _result: Swift.Void = _self.bar()
+    return { _result; return true }()
+}
+
+@_cdecl("ClassC_foo__reverse_swift")
+package func ClassC_foo__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = edge_cases.ClassC.__createClassWrapper(externalRCRef: `self`)
+    let _result: Swift.Void = _self.foo()
     return { _result; return true }()
 }
 

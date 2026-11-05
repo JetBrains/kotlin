@@ -5,6 +5,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 _Bool Baz_foo__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable____reverse_swift(void * self, void * result);
 
+_Bool ClassC_bar__reverse_swift(void * self);
+
+_Bool ClassC_foo__reverse_swift(void * self);
+
 _Bool InterfaceA_foo__reverse_swift(void * self);
 
 _Bool InterfaceB_bar__reverse_swift(void * self);
@@ -23,7 +27,11 @@ _Bool SomeInterface_something_set__TypesOfArgumentsE__Swift_String_Swift_Int32__
 
 _Bool Baz_foo__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(void * self, void * result);
 
+_Bool ClassC_bar(void * self);
+
 _Bool ClassC_baz(void * self);
+
+_Bool ClassC_foo(void * self);
 
 _Bool InterfaceA_foo(void * self);
 

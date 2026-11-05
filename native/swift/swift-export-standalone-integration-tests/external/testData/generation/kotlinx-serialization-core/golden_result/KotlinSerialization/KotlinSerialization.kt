@@ -356,6 +356,17 @@ public fun kotlinx_serialization_encoding_AbstractDecoder_decodeChar__reverse(se
     return _result
 }
 
+@ImportedBridge("kotlinx_serialization_encoding_AbstractDecoder_decodeCollectionSize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift")
+internal external fun kotlinx_serialization_encoding_AbstractDecoder_decodeCollectionSize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift(self: kotlin.native.internal.NativePtr, descriptor: kotlin.native.internal.NativePtr): Int
+
+@BindReverseBridgeToMethod(kotlinx.serialization.encoding.AbstractDecoder::class, "decodeCollectionSize")
+public fun kotlinx_serialization_encoding_AbstractDecoder_decodeCollectionSize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse(self: kotlinx.serialization.encoding.AbstractDecoder, descriptor: kotlinx.serialization.descriptors.SerialDescriptor): Int {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __descriptor = kotlin.native.internal.ref.createRetainedExternalRCRef(descriptor)
+    val _result = kotlinx_serialization_encoding_AbstractDecoder_decodeCollectionSize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift(__self, __descriptor)
+    return _result
+}
+
 @ImportedBridge("kotlinx_serialization_encoding_AbstractDecoder_decodeDouble__reverse_swift")
 internal external fun kotlinx_serialization_encoding_AbstractDecoder_decodeDouble__reverse_swift(self: kotlin.native.internal.NativePtr): Double
 
@@ -363,6 +374,17 @@ internal external fun kotlinx_serialization_encoding_AbstractDecoder_decodeDoubl
 public fun kotlinx_serialization_encoding_AbstractDecoder_decodeDouble__reverse(self: kotlinx.serialization.encoding.AbstractDecoder): Double {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val _result = kotlinx_serialization_encoding_AbstractDecoder_decodeDouble__reverse_swift(__self)
+    return _result
+}
+
+@ImportedBridge("kotlinx_serialization_encoding_AbstractDecoder_decodeElementIndex__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift")
+internal external fun kotlinx_serialization_encoding_AbstractDecoder_decodeElementIndex__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift(self: kotlin.native.internal.NativePtr, descriptor: kotlin.native.internal.NativePtr): Int
+
+@BindReverseBridgeToMethod(kotlinx.serialization.encoding.AbstractDecoder::class, "decodeElementIndex")
+public fun kotlinx_serialization_encoding_AbstractDecoder_decodeElementIndex__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse(self: kotlinx.serialization.encoding.AbstractDecoder, descriptor: kotlinx.serialization.descriptors.SerialDescriptor): Int {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __descriptor = kotlin.native.internal.ref.createRetainedExternalRCRef(descriptor)
+    val _result = kotlinx_serialization_encoding_AbstractDecoder_decodeElementIndex__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift(__self, __descriptor)
     return _result
 }
 
@@ -449,6 +471,27 @@ public fun kotlinx_serialization_encoding_AbstractDecoder_decodeNull__reverse(se
     return run { _result; null }
 }
 
+@ImportedBridge("kotlinx_serialization_encoding_AbstractDecoder_decodeNullableSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_DeserializationStrategy____reverse_swift")
+internal external fun kotlinx_serialization_encoding_AbstractDecoder_decodeNullableSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_DeserializationStrategy____reverse_swift(self: kotlin.native.internal.NativePtr, deserializer: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(kotlinx.serialization.encoding.AbstractDecoder::class, "decodeNullableSerializableValue")
+public fun kotlinx_serialization_encoding_AbstractDecoder_decodeNullableSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_DeserializationStrategy____reverse(self: kotlinx.serialization.encoding.AbstractDecoder, deserializer: kotlinx.serialization.DeserializationStrategy<kotlin.Any?>): kotlin.Any? {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __deserializer = kotlin.native.internal.ref.createRetainedExternalRCRef(deserializer)
+    val _result = kotlinx_serialization_encoding_AbstractDecoder_decodeNullableSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_DeserializationStrategy____reverse_swift(__self, __deserializer)
+    return if (_result == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any
+}
+
+@ImportedBridge("kotlinx_serialization_encoding_AbstractDecoder_decodeSequentially__reverse_swift")
+internal external fun kotlinx_serialization_encoding_AbstractDecoder_decodeSequentially__reverse_swift(self: kotlin.native.internal.NativePtr): Boolean
+
+@BindReverseBridgeToMethod(kotlinx.serialization.encoding.AbstractDecoder::class, "decodeSequentially")
+public fun kotlinx_serialization_encoding_AbstractDecoder_decodeSequentially__reverse(self: kotlinx.serialization.encoding.AbstractDecoder): Boolean {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = kotlinx_serialization_encoding_AbstractDecoder_decodeSequentially__reverse_swift(__self)
+    return _result
+}
+
 @ImportedBridge("kotlinx_serialization_encoding_AbstractDecoder_decodeSerializableElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32_anyU20ExportedKotlinPackages_kotlinx_serialization_DeserializationStrategy_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
 internal external fun kotlinx_serialization_encoding_AbstractDecoder_decodeSerializableElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32_anyU20ExportedKotlinPackages_kotlinx_serialization_DeserializationStrategy_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(self: kotlin.native.internal.NativePtr, descriptor: kotlin.native.internal.NativePtr, index: Int, deserializer: kotlin.native.internal.NativePtr, previousValue: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
 
@@ -471,6 +514,17 @@ public fun kotlinx_serialization_encoding_AbstractDecoder_decodeSerializableValu
     val __deserializer = kotlin.native.internal.ref.createRetainedExternalRCRef(deserializer)
     val __previousValue = if (previousValue == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(previousValue)
     val _result = kotlinx_serialization_encoding_AbstractDecoder_decodeSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_DeserializationStrategy_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(__self, __deserializer, __previousValue)
+    return if (_result == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any
+}
+
+@ImportedBridge("kotlinx_serialization_encoding_AbstractDecoder_decodeSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_DeserializationStrategy____reverse_swift")
+internal external fun kotlinx_serialization_encoding_AbstractDecoder_decodeSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_DeserializationStrategy____reverse_swift(self: kotlin.native.internal.NativePtr, deserializer: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(kotlinx.serialization.encoding.AbstractDecoder::class, "decodeSerializableValue")
+public fun kotlinx_serialization_encoding_AbstractDecoder_decodeSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_DeserializationStrategy____reverse(self: kotlinx.serialization.encoding.AbstractDecoder, deserializer: kotlinx.serialization.DeserializationStrategy<kotlin.Any?>): kotlin.Any? {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __deserializer = kotlin.native.internal.ref.createRetainedExternalRCRef(deserializer)
+    val _result = kotlinx_serialization_encoding_AbstractDecoder_decodeSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_DeserializationStrategy____reverse_swift(__self, __deserializer)
     return if (_result == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any
 }
 
@@ -523,6 +577,17 @@ public fun kotlinx_serialization_encoding_AbstractDecoder_serializersModule_get_
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val _result = kotlinx_serialization_encoding_AbstractDecoder_serializersModule_get__reverse_swift(__self)
     return kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlinx.serialization.modules.SerializersModule
+}
+
+@ImportedBridge("kotlinx_serialization_encoding_AbstractEncoder_beginCollection__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32____reverse_swift")
+internal external fun kotlinx_serialization_encoding_AbstractEncoder_beginCollection__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32____reverse_swift(self: kotlin.native.internal.NativePtr, descriptor: kotlin.native.internal.NativePtr, collectionSize: Int): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(kotlinx.serialization.encoding.AbstractEncoder::class, "beginCollection")
+public fun kotlinx_serialization_encoding_AbstractEncoder_beginCollection__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32____reverse(self: kotlinx.serialization.encoding.AbstractEncoder, descriptor: kotlinx.serialization.descriptors.SerialDescriptor, collectionSize: Int): kotlinx.serialization.encoding.CompositeEncoder {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __descriptor = kotlin.native.internal.ref.createRetainedExternalRCRef(descriptor)
+    val _result = kotlinx_serialization_encoding_AbstractEncoder_beginCollection__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32____reverse_swift(__self, __descriptor, collectionSize)
+    return kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlinx.serialization.encoding.CompositeEncoder
 }
 
 @ImportedBridge("kotlinx_serialization_encoding_AbstractEncoder_beginStructure__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift")
@@ -639,6 +704,16 @@ public fun kotlinx_serialization_encoding_AbstractEncoder_encodeLong__TypesOfArg
     return run<Unit> { _result }
 }
 
+@ImportedBridge("kotlinx_serialization_encoding_AbstractEncoder_encodeNotNullMark__reverse_swift")
+internal external fun kotlinx_serialization_encoding_AbstractEncoder_encodeNotNullMark__reverse_swift(self: kotlin.native.internal.NativePtr): Boolean
+
+@BindReverseBridgeToMethod(kotlinx.serialization.encoding.AbstractEncoder::class, "encodeNotNullMark")
+public fun kotlinx_serialization_encoding_AbstractEncoder_encodeNotNullMark__reverse(self: kotlinx.serialization.encoding.AbstractEncoder): Unit {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = kotlinx_serialization_encoding_AbstractEncoder_encodeNotNullMark__reverse_swift(__self)
+    return run<Unit> { _result }
+}
+
 @ImportedBridge("kotlinx_serialization_encoding_AbstractEncoder_encodeNull__reverse_swift")
 internal external fun kotlinx_serialization_encoding_AbstractEncoder_encodeNull__reverse_swift(self: kotlin.native.internal.NativePtr): Boolean
 
@@ -662,6 +737,18 @@ public fun kotlinx_serialization_encoding_AbstractEncoder_encodeNullableSerializ
     return run<Unit> { _result }
 }
 
+@ImportedBridge("kotlinx_serialization_encoding_AbstractEncoder_encodeNullableSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_SerializationStrategy_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
+internal external fun kotlinx_serialization_encoding_AbstractEncoder_encodeNullableSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_SerializationStrategy_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(self: kotlin.native.internal.NativePtr, serializer: kotlin.native.internal.NativePtr, value: kotlin.native.internal.NativePtr): Boolean
+
+@BindReverseBridgeToMethod(kotlinx.serialization.encoding.AbstractEncoder::class, "encodeNullableSerializableValue")
+public fun kotlinx_serialization_encoding_AbstractEncoder_encodeNullableSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_SerializationStrategy_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse(self: kotlinx.serialization.encoding.AbstractEncoder, serializer: kotlinx.serialization.SerializationStrategy<kotlin.Any?>, value: kotlin.Any?): Unit {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __serializer = kotlin.native.internal.ref.createRetainedExternalRCRef(serializer)
+    val __value = if (value == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(value)
+    val _result = kotlinx_serialization_encoding_AbstractEncoder_encodeNullableSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_SerializationStrategy_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(__self, __serializer, __value)
+    return run<Unit> { _result }
+}
+
 @ImportedBridge("kotlinx_serialization_encoding_AbstractEncoder_encodeSerializableElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32_anyU20ExportedKotlinPackages_kotlinx_serialization_SerializationStrategy_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
 internal external fun kotlinx_serialization_encoding_AbstractEncoder_encodeSerializableElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32_anyU20ExportedKotlinPackages_kotlinx_serialization_SerializationStrategy_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(self: kotlin.native.internal.NativePtr, descriptor: kotlin.native.internal.NativePtr, index: Int, serializer: kotlin.native.internal.NativePtr, value: kotlin.native.internal.NativePtr): Boolean
 
@@ -672,6 +759,18 @@ public fun kotlinx_serialization_encoding_AbstractEncoder_encodeSerializableElem
     val __serializer = kotlin.native.internal.ref.createRetainedExternalRCRef(serializer)
     val __value = if (value == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(value)
     val _result = kotlinx_serialization_encoding_AbstractEncoder_encodeSerializableElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32_anyU20ExportedKotlinPackages_kotlinx_serialization_SerializationStrategy_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(__self, __descriptor, index, __serializer, __value)
+    return run<Unit> { _result }
+}
+
+@ImportedBridge("kotlinx_serialization_encoding_AbstractEncoder_encodeSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_SerializationStrategy_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
+internal external fun kotlinx_serialization_encoding_AbstractEncoder_encodeSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_SerializationStrategy_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(self: kotlin.native.internal.NativePtr, serializer: kotlin.native.internal.NativePtr, value: kotlin.native.internal.NativePtr): Boolean
+
+@BindReverseBridgeToMethod(kotlinx.serialization.encoding.AbstractEncoder::class, "encodeSerializableValue")
+public fun kotlinx_serialization_encoding_AbstractEncoder_encodeSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_SerializationStrategy_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse(self: kotlinx.serialization.encoding.AbstractEncoder, serializer: kotlinx.serialization.SerializationStrategy<kotlin.Any?>, value: kotlin.Any?): Unit {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __serializer = kotlin.native.internal.ref.createRetainedExternalRCRef(serializer)
+    val __value = if (value == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(value)
+    val _result = kotlinx_serialization_encoding_AbstractEncoder_encodeSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_SerializationStrategy_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(__self, __serializer, __value)
     return run<Unit> { _result }
 }
 
@@ -726,6 +825,17 @@ public fun kotlinx_serialization_encoding_AbstractEncoder_serializersModule_get_
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val _result = kotlinx_serialization_encoding_AbstractEncoder_serializersModule_get__reverse_swift(__self)
     return kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlinx.serialization.modules.SerializersModule
+}
+
+@ImportedBridge("kotlinx_serialization_encoding_AbstractEncoder_shouldEncodeElementDefault__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32____reverse_swift")
+internal external fun kotlinx_serialization_encoding_AbstractEncoder_shouldEncodeElementDefault__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32____reverse_swift(self: kotlin.native.internal.NativePtr, descriptor: kotlin.native.internal.NativePtr, index: Int): Boolean
+
+@BindReverseBridgeToMethod(kotlinx.serialization.encoding.AbstractEncoder::class, "shouldEncodeElementDefault")
+public fun kotlinx_serialization_encoding_AbstractEncoder_shouldEncodeElementDefault__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32____reverse(self: kotlinx.serialization.encoding.AbstractEncoder, descriptor: kotlinx.serialization.descriptors.SerialDescriptor, index: Int): Boolean {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __descriptor = kotlin.native.internal.ref.createRetainedExternalRCRef(descriptor)
+    val _result = kotlinx_serialization_encoding_AbstractEncoder_shouldEncodeElementDefault__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32____reverse_swift(__self, __descriptor, index)
+    return _result
 }
 
 @ImportedBridge("kotlinx_serialization_encoding_ChunkedDecoder_decodeStringChunked__TypesOfArguments__U28Swift_StringU29202D_U20Swift_Void____reverse_swift")
@@ -1561,6 +1671,28 @@ public fun kotlinx_serialization_internal_TaggedDecoder_beginStructure__TypesOfA
     return kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlinx.serialization.encoding.CompositeDecoder
 }
 
+@ImportedBridge("kotlinx_serialization_internal_TaggedDecoder_decodeCollectionSize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift")
+internal external fun kotlinx_serialization_internal_TaggedDecoder_decodeCollectionSize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift(self: kotlin.native.internal.NativePtr, descriptor: kotlin.native.internal.NativePtr): Int
+
+@BindReverseBridgeToMethod(kotlinx.serialization.internal.TaggedDecoder::class, "decodeCollectionSize")
+public fun kotlinx_serialization_internal_TaggedDecoder_decodeCollectionSize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse(self: kotlinx.serialization.internal.TaggedDecoder<kotlin.Any?>, descriptor: kotlinx.serialization.descriptors.SerialDescriptor): Int {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __descriptor = kotlin.native.internal.ref.createRetainedExternalRCRef(descriptor)
+    val _result = kotlinx_serialization_internal_TaggedDecoder_decodeCollectionSize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift(__self, __descriptor)
+    return _result
+}
+
+@ImportedBridge("kotlinx_serialization_internal_TaggedDecoder_decodeElementIndex__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift")
+internal external fun kotlinx_serialization_internal_TaggedDecoder_decodeElementIndex__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift(self: kotlin.native.internal.NativePtr, descriptor: kotlin.native.internal.NativePtr): Int
+
+@BindReverseBridgeToMethod(kotlinx.serialization.internal.TaggedDecoder::class, "decodeElementIndex")
+public fun kotlinx_serialization_internal_TaggedDecoder_decodeElementIndex__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse(self: kotlinx.serialization.internal.TaggedDecoder<kotlin.Any?>, descriptor: kotlinx.serialization.descriptors.SerialDescriptor): Int {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __descriptor = kotlin.native.internal.ref.createRetainedExternalRCRef(descriptor)
+    val _result = kotlinx_serialization_internal_TaggedDecoder_decodeElementIndex__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift(__self, __descriptor)
+    return _result
+}
+
 @ImportedBridge("kotlinx_serialization_internal_TaggedDecoder_decodeInline__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift")
 internal external fun kotlinx_serialization_internal_TaggedDecoder_decodeInline__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift(self: kotlin.native.internal.NativePtr, descriptor: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
 
@@ -1582,6 +1714,38 @@ public fun kotlinx_serialization_internal_TaggedDecoder_decodeNotNullMark__rever
     return _result
 }
 
+@ImportedBridge("kotlinx_serialization_internal_TaggedDecoder_decodeNullableSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_DeserializationStrategy____reverse_swift")
+internal external fun kotlinx_serialization_internal_TaggedDecoder_decodeNullableSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_DeserializationStrategy____reverse_swift(self: kotlin.native.internal.NativePtr, deserializer: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(kotlinx.serialization.internal.TaggedDecoder::class, "decodeNullableSerializableValue")
+public fun kotlinx_serialization_internal_TaggedDecoder_decodeNullableSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_DeserializationStrategy____reverse(self: kotlinx.serialization.internal.TaggedDecoder<kotlin.Any?>, deserializer: kotlinx.serialization.DeserializationStrategy<kotlin.Any?>): kotlin.Any? {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __deserializer = kotlin.native.internal.ref.createRetainedExternalRCRef(deserializer)
+    val _result = kotlinx_serialization_internal_TaggedDecoder_decodeNullableSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_DeserializationStrategy____reverse_swift(__self, __deserializer)
+    return if (_result == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any
+}
+
+@ImportedBridge("kotlinx_serialization_internal_TaggedDecoder_decodeSequentially__reverse_swift")
+internal external fun kotlinx_serialization_internal_TaggedDecoder_decodeSequentially__reverse_swift(self: kotlin.native.internal.NativePtr): Boolean
+
+@BindReverseBridgeToMethod(kotlinx.serialization.internal.TaggedDecoder::class, "decodeSequentially")
+public fun kotlinx_serialization_internal_TaggedDecoder_decodeSequentially__reverse(self: kotlinx.serialization.internal.TaggedDecoder<kotlin.Any?>): Boolean {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = kotlinx_serialization_internal_TaggedDecoder_decodeSequentially__reverse_swift(__self)
+    return _result
+}
+
+@ImportedBridge("kotlinx_serialization_internal_TaggedDecoder_decodeSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_DeserializationStrategy____reverse_swift")
+internal external fun kotlinx_serialization_internal_TaggedDecoder_decodeSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_DeserializationStrategy____reverse_swift(self: kotlin.native.internal.NativePtr, deserializer: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(kotlinx.serialization.internal.TaggedDecoder::class, "decodeSerializableValue")
+public fun kotlinx_serialization_internal_TaggedDecoder_decodeSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_DeserializationStrategy____reverse(self: kotlinx.serialization.internal.TaggedDecoder<kotlin.Any?>, deserializer: kotlinx.serialization.DeserializationStrategy<kotlin.Any?>): kotlin.Any? {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __deserializer = kotlin.native.internal.ref.createRetainedExternalRCRef(deserializer)
+    val _result = kotlinx_serialization_internal_TaggedDecoder_decodeSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_DeserializationStrategy____reverse_swift(__self, __deserializer)
+    return if (_result == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any
+}
+
 @ImportedBridge("kotlinx_serialization_internal_TaggedDecoder_endStructure__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift")
 internal external fun kotlinx_serialization_internal_TaggedDecoder_endStructure__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift(self: kotlin.native.internal.NativePtr, descriptor: kotlin.native.internal.NativePtr): Boolean
 
@@ -1601,6 +1765,17 @@ public fun kotlinx_serialization_internal_TaggedDecoder_serializersModule_get__r
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val _result = kotlinx_serialization_internal_TaggedDecoder_serializersModule_get__reverse_swift(__self)
     return kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlinx.serialization.modules.SerializersModule
+}
+
+@ImportedBridge("kotlinx_serialization_internal_TaggedEncoder_beginCollection__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32____reverse_swift")
+internal external fun kotlinx_serialization_internal_TaggedEncoder_beginCollection__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32____reverse_swift(self: kotlin.native.internal.NativePtr, descriptor: kotlin.native.internal.NativePtr, collectionSize: Int): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(kotlinx.serialization.internal.TaggedEncoder::class, "beginCollection")
+public fun kotlinx_serialization_internal_TaggedEncoder_beginCollection__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32____reverse(self: kotlinx.serialization.internal.TaggedEncoder<kotlin.Any?>, descriptor: kotlinx.serialization.descriptors.SerialDescriptor, collectionSize: Int): kotlinx.serialization.encoding.CompositeEncoder {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __descriptor = kotlin.native.internal.ref.createRetainedExternalRCRef(descriptor)
+    val _result = kotlinx_serialization_internal_TaggedEncoder_beginCollection__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32____reverse_swift(__self, __descriptor, collectionSize)
+    return kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlinx.serialization.encoding.CompositeEncoder
 }
 
 @ImportedBridge("kotlinx_serialization_internal_TaggedEncoder_beginStructure__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift")
@@ -1658,6 +1833,18 @@ public fun kotlinx_serialization_internal_TaggedEncoder_encodeNullableSerializab
     return run<Unit> { _result }
 }
 
+@ImportedBridge("kotlinx_serialization_internal_TaggedEncoder_encodeNullableSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_SerializationStrategy_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
+internal external fun kotlinx_serialization_internal_TaggedEncoder_encodeNullableSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_SerializationStrategy_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(self: kotlin.native.internal.NativePtr, serializer: kotlin.native.internal.NativePtr, value: kotlin.native.internal.NativePtr): Boolean
+
+@BindReverseBridgeToMethod(kotlinx.serialization.internal.TaggedEncoder::class, "encodeNullableSerializableValue")
+public fun kotlinx_serialization_internal_TaggedEncoder_encodeNullableSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_SerializationStrategy_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse(self: kotlinx.serialization.internal.TaggedEncoder<kotlin.Any?>, serializer: kotlinx.serialization.SerializationStrategy<kotlin.Any?>, value: kotlin.Any?): Unit {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __serializer = kotlin.native.internal.ref.createRetainedExternalRCRef(serializer)
+    val __value = if (value == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(value)
+    val _result = kotlinx_serialization_internal_TaggedEncoder_encodeNullableSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_SerializationStrategy_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(__self, __serializer, __value)
+    return run<Unit> { _result }
+}
+
 @ImportedBridge("kotlinx_serialization_internal_TaggedEncoder_encodeSerializableElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32_anyU20ExportedKotlinPackages_kotlinx_serialization_SerializationStrategy_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
 internal external fun kotlinx_serialization_internal_TaggedEncoder_encodeSerializableElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32_anyU20ExportedKotlinPackages_kotlinx_serialization_SerializationStrategy_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(self: kotlin.native.internal.NativePtr, descriptor: kotlin.native.internal.NativePtr, index: Int, serializer: kotlin.native.internal.NativePtr, value: kotlin.native.internal.NativePtr): Boolean
 
@@ -1671,6 +1858,18 @@ public fun kotlinx_serialization_internal_TaggedEncoder_encodeSerializableElemen
     return run<Unit> { _result }
 }
 
+@ImportedBridge("kotlinx_serialization_internal_TaggedEncoder_encodeSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_SerializationStrategy_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
+internal external fun kotlinx_serialization_internal_TaggedEncoder_encodeSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_SerializationStrategy_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(self: kotlin.native.internal.NativePtr, serializer: kotlin.native.internal.NativePtr, value: kotlin.native.internal.NativePtr): Boolean
+
+@BindReverseBridgeToMethod(kotlinx.serialization.internal.TaggedEncoder::class, "encodeSerializableValue")
+public fun kotlinx_serialization_internal_TaggedEncoder_encodeSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_SerializationStrategy_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse(self: kotlinx.serialization.internal.TaggedEncoder<kotlin.Any?>, serializer: kotlinx.serialization.SerializationStrategy<kotlin.Any?>, value: kotlin.Any?): Unit {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __serializer = kotlin.native.internal.ref.createRetainedExternalRCRef(serializer)
+    val __value = if (value == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(value)
+    val _result = kotlinx_serialization_internal_TaggedEncoder_encodeSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_SerializationStrategy_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(__self, __serializer, __value)
+    return run<Unit> { _result }
+}
+
 @ImportedBridge("kotlinx_serialization_internal_TaggedEncoder_serializersModule_get__reverse_swift")
 internal external fun kotlinx_serialization_internal_TaggedEncoder_serializersModule_get__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
 
@@ -1679,6 +1878,17 @@ public fun kotlinx_serialization_internal_TaggedEncoder_serializersModule_get__r
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val _result = kotlinx_serialization_internal_TaggedEncoder_serializersModule_get__reverse_swift(__self)
     return kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlinx.serialization.modules.SerializersModule
+}
+
+@ImportedBridge("kotlinx_serialization_internal_TaggedEncoder_shouldEncodeElementDefault__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32____reverse_swift")
+internal external fun kotlinx_serialization_internal_TaggedEncoder_shouldEncodeElementDefault__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32____reverse_swift(self: kotlin.native.internal.NativePtr, descriptor: kotlin.native.internal.NativePtr, index: Int): Boolean
+
+@BindReverseBridgeToMethod(kotlinx.serialization.internal.TaggedEncoder::class, "shouldEncodeElementDefault")
+public fun kotlinx_serialization_internal_TaggedEncoder_shouldEncodeElementDefault__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32____reverse(self: kotlinx.serialization.internal.TaggedEncoder<kotlin.Any?>, descriptor: kotlinx.serialization.descriptors.SerialDescriptor, index: Int): Boolean {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __descriptor = kotlin.native.internal.ref.createRetainedExternalRCRef(descriptor)
+    val _result = kotlinx_serialization_internal_TaggedEncoder_shouldEncodeElementDefault__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32____reverse_swift(__self, __descriptor, index)
+    return _result
 }
 
 @ImportedBridge("kotlinx_serialization_modules_SerializersModule_dumpTo__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_modules_SerializersModuleCollector____reverse_swift")
@@ -2679,6 +2889,22 @@ public fun kotlinx_serialization_encoding_AbstractDecoder_decodeChar_direct(self
     return _result
 }
 
+@ExportedBridge("kotlinx_serialization_encoding_AbstractDecoder_decodeCollectionSize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor__")
+public fun kotlinx_serialization_encoding_AbstractDecoder_decodeCollectionSize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor__(self: kotlin.native.internal.NativePtr, descriptor: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.serialization.encoding.AbstractDecoder
+    val __descriptor = kotlin.native.internal.ref.dereferenceExternalRCRef(descriptor) as kotlinx.serialization.descriptors.SerialDescriptor
+    val _result = __self.decodeCollectionSize(__descriptor)
+    return _result
+}
+
+@ExportedBridge("kotlinx_serialization_encoding_AbstractDecoder_decodeCollectionSize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor___direct", nonVirtualTargetMethod = "decodeCollectionSize")
+public fun kotlinx_serialization_encoding_AbstractDecoder_decodeCollectionSize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor___direct(self: kotlin.native.internal.NativePtr, descriptor: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.serialization.encoding.AbstractDecoder
+    val __descriptor = kotlin.native.internal.ref.dereferenceExternalRCRef(descriptor) as kotlinx.serialization.descriptors.SerialDescriptor
+    val _result = __self.decodeCollectionSize(__descriptor)
+    return _result
+}
+
 @ExportedBridge("kotlinx_serialization_encoding_AbstractDecoder_decodeDouble")
 @OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
 public fun kotlinx_serialization_encoding_AbstractDecoder_decodeDouble(self: kotlin.native.internal.NativePtr): Double {
@@ -2702,6 +2928,14 @@ public fun kotlinx_serialization_encoding_AbstractDecoder_decodeDoubleElement__T
 public fun kotlinx_serialization_encoding_AbstractDecoder_decodeDouble_direct(self: kotlin.native.internal.NativePtr): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.serialization.encoding.AbstractDecoder
     val _result = __self.decodeDouble()
+    return _result
+}
+
+@ExportedBridge("kotlinx_serialization_encoding_AbstractDecoder_decodeElementIndex__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor__")
+public fun kotlinx_serialization_encoding_AbstractDecoder_decodeElementIndex__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor__(self: kotlin.native.internal.NativePtr, descriptor: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.serialization.encoding.AbstractDecoder
+    val __descriptor = kotlin.native.internal.ref.dereferenceExternalRCRef(descriptor) as kotlinx.serialization.descriptors.SerialDescriptor
+    val _result = __self.decodeElementIndex(__descriptor)
     return _result
 }
 
@@ -2883,6 +3117,40 @@ public fun kotlinx_serialization_encoding_AbstractDecoder_decodeNullableSerializ
     return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
+@ExportedBridge("kotlinx_serialization_encoding_AbstractDecoder_decodeNullableSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_DeserializationStrategy__")
+@OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
+public fun kotlinx_serialization_encoding_AbstractDecoder_decodeNullableSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_DeserializationStrategy__(self: kotlin.native.internal.NativePtr, deserializer: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.serialization.encoding.AbstractDecoder
+    val __deserializer = kotlin.native.internal.ref.dereferenceExternalRCRef(deserializer) as kotlinx.serialization.DeserializationStrategy<kotlin.Any?>
+    val _result = __self.decodeNullableSerializableValue<kotlin.Any>(__deserializer)
+    return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("kotlinx_serialization_encoding_AbstractDecoder_decodeNullableSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_DeserializationStrategy___direct", nonVirtualTargetMethod = "decodeNullableSerializableValue")
+@OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
+public fun kotlinx_serialization_encoding_AbstractDecoder_decodeNullableSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_DeserializationStrategy___direct(self: kotlin.native.internal.NativePtr, deserializer: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.serialization.encoding.AbstractDecoder
+    val __deserializer = kotlin.native.internal.ref.dereferenceExternalRCRef(deserializer) as kotlinx.serialization.DeserializationStrategy<kotlin.Any?>
+    val _result = __self.decodeNullableSerializableValue<kotlin.Any>(__deserializer)
+    return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("kotlinx_serialization_encoding_AbstractDecoder_decodeSequentially")
+@OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
+public fun kotlinx_serialization_encoding_AbstractDecoder_decodeSequentially(self: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.serialization.encoding.AbstractDecoder
+    val _result = __self.decodeSequentially()
+    return _result
+}
+
+@ExportedBridge("kotlinx_serialization_encoding_AbstractDecoder_decodeSequentially_direct", nonVirtualTargetMethod = "decodeSequentially")
+@OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
+public fun kotlinx_serialization_encoding_AbstractDecoder_decodeSequentially_direct(self: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.serialization.encoding.AbstractDecoder
+    val _result = __self.decodeSequentially()
+    return _result
+}
+
 @ExportedBridge("kotlinx_serialization_encoding_AbstractDecoder_decodeSerializableElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32_anyU20ExportedKotlinPackages_kotlinx_serialization_DeserializationStrategy_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
 @OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
 public fun kotlinx_serialization_encoding_AbstractDecoder_decodeSerializableElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32_anyU20ExportedKotlinPackages_kotlinx_serialization_DeserializationStrategy_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, descriptor: kotlin.native.internal.NativePtr, index: Int, deserializer: kotlin.native.internal.NativePtr, previousValue: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
@@ -2917,6 +3185,14 @@ public fun kotlinx_serialization_encoding_AbstractDecoder_decodeSerializableValu
     return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
+@ExportedBridge("kotlinx_serialization_encoding_AbstractDecoder_decodeSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_DeserializationStrategy__")
+public fun kotlinx_serialization_encoding_AbstractDecoder_decodeSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_DeserializationStrategy__(self: kotlin.native.internal.NativePtr, deserializer: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.serialization.encoding.AbstractDecoder
+    val __deserializer = kotlin.native.internal.ref.dereferenceExternalRCRef(deserializer) as kotlinx.serialization.DeserializationStrategy<kotlin.Any?>
+    val _result = __self.decodeSerializableValue<kotlin.Any?>(__deserializer)
+    return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
 @ExportedBridge("kotlinx_serialization_encoding_AbstractDecoder_decodeSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_DeserializationStrategy_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____direct", nonVirtualTargetMethod = "decodeSerializableValue")
 @OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
 public fun kotlinx_serialization_encoding_AbstractDecoder_decodeSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_DeserializationStrategy_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____direct(self: kotlin.native.internal.NativePtr, deserializer: kotlin.native.internal.NativePtr, previousValue: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
@@ -2924,6 +3200,14 @@ public fun kotlinx_serialization_encoding_AbstractDecoder_decodeSerializableValu
     val __deserializer = kotlin.native.internal.ref.dereferenceExternalRCRef(deserializer) as kotlinx.serialization.DeserializationStrategy<kotlin.Any?>
     val __previousValue = if (previousValue == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(previousValue) as kotlin.Any
     val _result = __self.decodeSerializableValue<kotlin.Any?>(__deserializer, __previousValue)
+    return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("kotlinx_serialization_encoding_AbstractDecoder_decodeSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_DeserializationStrategy___direct", nonVirtualTargetMethod = "decodeSerializableValue")
+public fun kotlinx_serialization_encoding_AbstractDecoder_decodeSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_DeserializationStrategy___direct(self: kotlin.native.internal.NativePtr, deserializer: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.serialization.encoding.AbstractDecoder
+    val __deserializer = kotlin.native.internal.ref.dereferenceExternalRCRef(deserializer) as kotlinx.serialization.DeserializationStrategy<kotlin.Any?>
+    val _result = __self.decodeSerializableValue<kotlin.Any?>(__deserializer)
     return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -3026,6 +3310,24 @@ public fun kotlinx_serialization_encoding_AbstractDecoder_init_initialize__Types
 public fun kotlinx_serialization_encoding_AbstractDecoder_serializersModule_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.serialization.encoding.AbstractDecoder
     val _result = __self.serializersModule
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("kotlinx_serialization_encoding_AbstractEncoder_beginCollection__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32__")
+public fun kotlinx_serialization_encoding_AbstractEncoder_beginCollection__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32__(self: kotlin.native.internal.NativePtr, descriptor: kotlin.native.internal.NativePtr, collectionSize: Int): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.serialization.encoding.AbstractEncoder
+    val __descriptor = kotlin.native.internal.ref.dereferenceExternalRCRef(descriptor) as kotlinx.serialization.descriptors.SerialDescriptor
+    val __collectionSize = collectionSize
+    val _result = __self.beginCollection(__descriptor, __collectionSize)
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("kotlinx_serialization_encoding_AbstractEncoder_beginCollection__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32___direct", nonVirtualTargetMethod = "beginCollection")
+public fun kotlinx_serialization_encoding_AbstractEncoder_beginCollection__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32___direct(self: kotlin.native.internal.NativePtr, descriptor: kotlin.native.internal.NativePtr, collectionSize: Int): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.serialization.encoding.AbstractEncoder
+    val __descriptor = kotlin.native.internal.ref.dereferenceExternalRCRef(descriptor) as kotlinx.serialization.descriptors.SerialDescriptor
+    val __collectionSize = collectionSize
+    val _result = __self.beginCollection(__descriptor, __collectionSize)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -3318,6 +3620,22 @@ public fun kotlinx_serialization_encoding_AbstractEncoder_encodeLong__TypesOfArg
     return true
 }
 
+@ExportedBridge("kotlinx_serialization_encoding_AbstractEncoder_encodeNotNullMark")
+@OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
+public fun kotlinx_serialization_encoding_AbstractEncoder_encodeNotNullMark(self: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.serialization.encoding.AbstractEncoder
+    __self.encodeNotNullMark()
+    return true
+}
+
+@ExportedBridge("kotlinx_serialization_encoding_AbstractEncoder_encodeNotNullMark_direct", nonVirtualTargetMethod = "encodeNotNullMark")
+@OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
+public fun kotlinx_serialization_encoding_AbstractEncoder_encodeNotNullMark_direct(self: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.serialization.encoding.AbstractEncoder
+    __self.encodeNotNullMark()
+    return true
+}
+
 @ExportedBridge("kotlinx_serialization_encoding_AbstractEncoder_encodeNull")
 @OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
 public fun kotlinx_serialization_encoding_AbstractEncoder_encodeNull(self: kotlin.native.internal.NativePtr): Boolean {
@@ -3358,6 +3676,26 @@ public fun kotlinx_serialization_encoding_AbstractEncoder_encodeNullableSerializ
     return true
 }
 
+@ExportedBridge("kotlinx_serialization_encoding_AbstractEncoder_encodeNullableSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_SerializationStrategy_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
+@OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
+public fun kotlinx_serialization_encoding_AbstractEncoder_encodeNullableSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_SerializationStrategy_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, serializer: kotlin.native.internal.NativePtr, value: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.serialization.encoding.AbstractEncoder
+    val __serializer = kotlin.native.internal.ref.dereferenceExternalRCRef(serializer) as kotlinx.serialization.SerializationStrategy<kotlin.Any?>
+    val __value = if (value == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(value) as kotlin.Any
+    __self.encodeNullableSerializableValue<kotlin.Any>(__serializer, __value)
+    return true
+}
+
+@ExportedBridge("kotlinx_serialization_encoding_AbstractEncoder_encodeNullableSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_SerializationStrategy_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____direct", nonVirtualTargetMethod = "encodeNullableSerializableValue")
+@OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
+public fun kotlinx_serialization_encoding_AbstractEncoder_encodeNullableSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_SerializationStrategy_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____direct(self: kotlin.native.internal.NativePtr, serializer: kotlin.native.internal.NativePtr, value: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.serialization.encoding.AbstractEncoder
+    val __serializer = kotlin.native.internal.ref.dereferenceExternalRCRef(serializer) as kotlinx.serialization.SerializationStrategy<kotlin.Any?>
+    val __value = if (value == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(value) as kotlin.Any
+    __self.encodeNullableSerializableValue<kotlin.Any>(__serializer, __value)
+    return true
+}
+
 @ExportedBridge("kotlinx_serialization_encoding_AbstractEncoder_encodeSerializableElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32_anyU20ExportedKotlinPackages_kotlinx_serialization_SerializationStrategy_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
 @OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
 public fun kotlinx_serialization_encoding_AbstractEncoder_encodeSerializableElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32_anyU20ExportedKotlinPackages_kotlinx_serialization_SerializationStrategy_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, descriptor: kotlin.native.internal.NativePtr, index: Int, serializer: kotlin.native.internal.NativePtr, value: kotlin.native.internal.NativePtr): Boolean {
@@ -3379,6 +3717,24 @@ public fun kotlinx_serialization_encoding_AbstractEncoder_encodeSerializableElem
     val __serializer = kotlin.native.internal.ref.dereferenceExternalRCRef(serializer) as kotlinx.serialization.SerializationStrategy<kotlin.Any?>
     val __value = if (value == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(value) as kotlin.Any
     __self.encodeSerializableElement<kotlin.Any?>(__descriptor, __index, __serializer, __value)
+    return true
+}
+
+@ExportedBridge("kotlinx_serialization_encoding_AbstractEncoder_encodeSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_SerializationStrategy_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
+public fun kotlinx_serialization_encoding_AbstractEncoder_encodeSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_SerializationStrategy_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, serializer: kotlin.native.internal.NativePtr, value: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.serialization.encoding.AbstractEncoder
+    val __serializer = kotlin.native.internal.ref.dereferenceExternalRCRef(serializer) as kotlinx.serialization.SerializationStrategy<kotlin.Any?>
+    val __value = if (value == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(value) as kotlin.Any
+    __self.encodeSerializableValue<kotlin.Any?>(__serializer, __value)
+    return true
+}
+
+@ExportedBridge("kotlinx_serialization_encoding_AbstractEncoder_encodeSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_SerializationStrategy_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____direct", nonVirtualTargetMethod = "encodeSerializableValue")
+public fun kotlinx_serialization_encoding_AbstractEncoder_encodeSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_SerializationStrategy_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____direct(self: kotlin.native.internal.NativePtr, serializer: kotlin.native.internal.NativePtr, value: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.serialization.encoding.AbstractEncoder
+    val __serializer = kotlin.native.internal.ref.dereferenceExternalRCRef(serializer) as kotlinx.serialization.SerializationStrategy<kotlin.Any?>
+    val __value = if (value == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(value) as kotlin.Any
+    __self.encodeSerializableValue<kotlin.Any?>(__serializer, __value)
     return true
 }
 
@@ -3490,6 +3846,26 @@ public fun kotlinx_serialization_encoding_AbstractEncoder_serializersModule_get(
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.serialization.encoding.AbstractEncoder
     val _result = __self.serializersModule
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("kotlinx_serialization_encoding_AbstractEncoder_shouldEncodeElementDefault__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32__")
+@OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
+public fun kotlinx_serialization_encoding_AbstractEncoder_shouldEncodeElementDefault__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32__(self: kotlin.native.internal.NativePtr, descriptor: kotlin.native.internal.NativePtr, index: Int): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.serialization.encoding.AbstractEncoder
+    val __descriptor = kotlin.native.internal.ref.dereferenceExternalRCRef(descriptor) as kotlinx.serialization.descriptors.SerialDescriptor
+    val __index = index
+    val _result = __self.shouldEncodeElementDefault(__descriptor, __index)
+    return _result
+}
+
+@ExportedBridge("kotlinx_serialization_encoding_AbstractEncoder_shouldEncodeElementDefault__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32___direct", nonVirtualTargetMethod = "shouldEncodeElementDefault")
+@OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
+public fun kotlinx_serialization_encoding_AbstractEncoder_shouldEncodeElementDefault__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32___direct(self: kotlin.native.internal.NativePtr, descriptor: kotlin.native.internal.NativePtr, index: Int): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.serialization.encoding.AbstractEncoder
+    val __descriptor = kotlin.native.internal.ref.dereferenceExternalRCRef(descriptor) as kotlinx.serialization.descriptors.SerialDescriptor
+    val __index = index
+    val _result = __self.shouldEncodeElementDefault(__descriptor, __index)
+    return _result
 }
 
 @ExportedBridge("kotlinx_serialization_encoding_ChunkedDecoder_decodeStringChunked__TypesOfArguments__U28Swift_StringU29202D_U20Swift_Void__")
@@ -4536,6 +4912,22 @@ public fun kotlinx_serialization_internal_TaggedDecoder_decodeCharElement__Types
     return _result
 }
 
+@ExportedBridge("kotlinx_serialization_internal_TaggedDecoder_decodeCollectionSize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor__")
+public fun kotlinx_serialization_internal_TaggedDecoder_decodeCollectionSize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor__(self: kotlin.native.internal.NativePtr, descriptor: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.serialization.internal.TaggedDecoder<kotlin.Any?>
+    val __descriptor = kotlin.native.internal.ref.dereferenceExternalRCRef(descriptor) as kotlinx.serialization.descriptors.SerialDescriptor
+    val _result = __self.decodeCollectionSize(__descriptor)
+    return _result
+}
+
+@ExportedBridge("kotlinx_serialization_internal_TaggedDecoder_decodeCollectionSize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor___direct", nonVirtualTargetMethod = "decodeCollectionSize")
+public fun kotlinx_serialization_internal_TaggedDecoder_decodeCollectionSize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor___direct(self: kotlin.native.internal.NativePtr, descriptor: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.serialization.internal.TaggedDecoder<kotlin.Any?>
+    val __descriptor = kotlin.native.internal.ref.dereferenceExternalRCRef(descriptor) as kotlinx.serialization.descriptors.SerialDescriptor
+    val _result = __self.decodeCollectionSize(__descriptor)
+    return _result
+}
+
 @ExportedBridge("kotlinx_serialization_internal_TaggedDecoder_decodeDouble")
 @OptIn(kotlinx.serialization.InternalSerializationApi::class)
 public fun kotlinx_serialization_internal_TaggedDecoder_decodeDouble(self: kotlin.native.internal.NativePtr): Double {
@@ -4551,6 +4943,14 @@ public fun kotlinx_serialization_internal_TaggedDecoder_decodeDoubleElement__Typ
     val __descriptor = kotlin.native.internal.ref.dereferenceExternalRCRef(descriptor) as kotlinx.serialization.descriptors.SerialDescriptor
     val __index = index
     val _result = __self.decodeDoubleElement(__descriptor, __index)
+    return _result
+}
+
+@ExportedBridge("kotlinx_serialization_internal_TaggedDecoder_decodeElementIndex__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor__")
+public fun kotlinx_serialization_internal_TaggedDecoder_decodeElementIndex__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor__(self: kotlin.native.internal.NativePtr, descriptor: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.serialization.internal.TaggedDecoder<kotlin.Any?>
+    val __descriptor = kotlin.native.internal.ref.dereferenceExternalRCRef(descriptor) as kotlinx.serialization.descriptors.SerialDescriptor
+    val _result = __self.decodeElementIndex(__descriptor)
     return _result
 }
 
@@ -4681,6 +5081,40 @@ public fun kotlinx_serialization_internal_TaggedDecoder_decodeNullableSerializab
     return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
+@ExportedBridge("kotlinx_serialization_internal_TaggedDecoder_decodeNullableSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_DeserializationStrategy__")
+@OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
+public fun kotlinx_serialization_internal_TaggedDecoder_decodeNullableSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_DeserializationStrategy__(self: kotlin.native.internal.NativePtr, deserializer: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.serialization.internal.TaggedDecoder<kotlin.Any?>
+    val __deserializer = kotlin.native.internal.ref.dereferenceExternalRCRef(deserializer) as kotlinx.serialization.DeserializationStrategy<kotlin.Any?>
+    val _result = __self.decodeNullableSerializableValue<kotlin.Any>(__deserializer)
+    return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("kotlinx_serialization_internal_TaggedDecoder_decodeNullableSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_DeserializationStrategy___direct", nonVirtualTargetMethod = "decodeNullableSerializableValue")
+@OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
+public fun kotlinx_serialization_internal_TaggedDecoder_decodeNullableSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_DeserializationStrategy___direct(self: kotlin.native.internal.NativePtr, deserializer: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.serialization.internal.TaggedDecoder<kotlin.Any?>
+    val __deserializer = kotlin.native.internal.ref.dereferenceExternalRCRef(deserializer) as kotlinx.serialization.DeserializationStrategy<kotlin.Any?>
+    val _result = __self.decodeNullableSerializableValue<kotlin.Any>(__deserializer)
+    return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("kotlinx_serialization_internal_TaggedDecoder_decodeSequentially")
+@OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
+public fun kotlinx_serialization_internal_TaggedDecoder_decodeSequentially(self: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.serialization.internal.TaggedDecoder<kotlin.Any?>
+    val _result = __self.decodeSequentially()
+    return _result
+}
+
+@ExportedBridge("kotlinx_serialization_internal_TaggedDecoder_decodeSequentially_direct", nonVirtualTargetMethod = "decodeSequentially")
+@OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
+public fun kotlinx_serialization_internal_TaggedDecoder_decodeSequentially_direct(self: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.serialization.internal.TaggedDecoder<kotlin.Any?>
+    val _result = __self.decodeSequentially()
+    return _result
+}
+
 @ExportedBridge("kotlinx_serialization_internal_TaggedDecoder_decodeSerializableElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32_anyU20ExportedKotlinPackages_kotlinx_serialization_DeserializationStrategy_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
 @OptIn(kotlinx.serialization.InternalSerializationApi::class)
 public fun kotlinx_serialization_internal_TaggedDecoder_decodeSerializableElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32_anyU20ExportedKotlinPackages_kotlinx_serialization_DeserializationStrategy_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, descriptor: kotlin.native.internal.NativePtr, index: Int, deserializer: kotlin.native.internal.NativePtr, previousValue: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
@@ -4690,6 +5124,22 @@ public fun kotlinx_serialization_internal_TaggedDecoder_decodeSerializableElemen
     val __deserializer = kotlin.native.internal.ref.dereferenceExternalRCRef(deserializer) as kotlinx.serialization.DeserializationStrategy<kotlin.Any?>
     val __previousValue = if (previousValue == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(previousValue) as kotlin.Any
     val _result = __self.decodeSerializableElement<kotlin.Any?>(__descriptor, __index, __deserializer, __previousValue)
+    return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("kotlinx_serialization_internal_TaggedDecoder_decodeSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_DeserializationStrategy__")
+public fun kotlinx_serialization_internal_TaggedDecoder_decodeSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_DeserializationStrategy__(self: kotlin.native.internal.NativePtr, deserializer: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.serialization.internal.TaggedDecoder<kotlin.Any?>
+    val __deserializer = kotlin.native.internal.ref.dereferenceExternalRCRef(deserializer) as kotlinx.serialization.DeserializationStrategy<kotlin.Any?>
+    val _result = __self.decodeSerializableValue<kotlin.Any?>(__deserializer)
+    return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("kotlinx_serialization_internal_TaggedDecoder_decodeSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_DeserializationStrategy___direct", nonVirtualTargetMethod = "decodeSerializableValue")
+public fun kotlinx_serialization_internal_TaggedDecoder_decodeSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_DeserializationStrategy___direct(self: kotlin.native.internal.NativePtr, deserializer: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.serialization.internal.TaggedDecoder<kotlin.Any?>
+    val __deserializer = kotlin.native.internal.ref.dereferenceExternalRCRef(deserializer) as kotlinx.serialization.DeserializationStrategy<kotlin.Any?>
+    val _result = __self.decodeSerializableValue<kotlin.Any?>(__deserializer)
     return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -4768,6 +5218,24 @@ public fun kotlinx_serialization_internal_TaggedDecoder_serializersModule_get(se
 public fun kotlinx_serialization_internal_TaggedDecoder_serializersModule_get_direct(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.serialization.internal.TaggedDecoder<kotlin.Any?>
     val _result = __self.serializersModule
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("kotlinx_serialization_internal_TaggedEncoder_beginCollection__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32__")
+public fun kotlinx_serialization_internal_TaggedEncoder_beginCollection__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32__(self: kotlin.native.internal.NativePtr, descriptor: kotlin.native.internal.NativePtr, collectionSize: Int): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.serialization.internal.TaggedEncoder<kotlin.Any?>
+    val __descriptor = kotlin.native.internal.ref.dereferenceExternalRCRef(descriptor) as kotlinx.serialization.descriptors.SerialDescriptor
+    val __collectionSize = collectionSize
+    val _result = __self.beginCollection(__descriptor, __collectionSize)
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("kotlinx_serialization_internal_TaggedEncoder_beginCollection__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32___direct", nonVirtualTargetMethod = "beginCollection")
+public fun kotlinx_serialization_internal_TaggedEncoder_beginCollection__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32___direct(self: kotlin.native.internal.NativePtr, descriptor: kotlin.native.internal.NativePtr, collectionSize: Int): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.serialization.internal.TaggedEncoder<kotlin.Any?>
+    val __descriptor = kotlin.native.internal.ref.dereferenceExternalRCRef(descriptor) as kotlinx.serialization.descriptors.SerialDescriptor
+    val __collectionSize = collectionSize
+    val _result = __self.beginCollection(__descriptor, __collectionSize)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -5023,6 +5491,26 @@ public fun kotlinx_serialization_internal_TaggedEncoder_encodeNullableSerializab
     return true
 }
 
+@ExportedBridge("kotlinx_serialization_internal_TaggedEncoder_encodeNullableSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_SerializationStrategy_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
+@OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
+public fun kotlinx_serialization_internal_TaggedEncoder_encodeNullableSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_SerializationStrategy_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, serializer: kotlin.native.internal.NativePtr, value: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.serialization.internal.TaggedEncoder<kotlin.Any?>
+    val __serializer = kotlin.native.internal.ref.dereferenceExternalRCRef(serializer) as kotlinx.serialization.SerializationStrategy<kotlin.Any?>
+    val __value = if (value == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(value) as kotlin.Any
+    __self.encodeNullableSerializableValue<kotlin.Any>(__serializer, __value)
+    return true
+}
+
+@ExportedBridge("kotlinx_serialization_internal_TaggedEncoder_encodeNullableSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_SerializationStrategy_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____direct", nonVirtualTargetMethod = "encodeNullableSerializableValue")
+@OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
+public fun kotlinx_serialization_internal_TaggedEncoder_encodeNullableSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_SerializationStrategy_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____direct(self: kotlin.native.internal.NativePtr, serializer: kotlin.native.internal.NativePtr, value: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.serialization.internal.TaggedEncoder<kotlin.Any?>
+    val __serializer = kotlin.native.internal.ref.dereferenceExternalRCRef(serializer) as kotlinx.serialization.SerializationStrategy<kotlin.Any?>
+    val __value = if (value == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(value) as kotlin.Any
+    __self.encodeNullableSerializableValue<kotlin.Any>(__serializer, __value)
+    return true
+}
+
 @ExportedBridge("kotlinx_serialization_internal_TaggedEncoder_encodeSerializableElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32_anyU20ExportedKotlinPackages_kotlinx_serialization_SerializationStrategy_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
 @OptIn(kotlinx.serialization.InternalSerializationApi::class)
 public fun kotlinx_serialization_internal_TaggedEncoder_encodeSerializableElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32_anyU20ExportedKotlinPackages_kotlinx_serialization_SerializationStrategy_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, descriptor: kotlin.native.internal.NativePtr, index: Int, serializer: kotlin.native.internal.NativePtr, value: kotlin.native.internal.NativePtr): Boolean {
@@ -5044,6 +5532,24 @@ public fun kotlinx_serialization_internal_TaggedEncoder_encodeSerializableElemen
     val __serializer = kotlin.native.internal.ref.dereferenceExternalRCRef(serializer) as kotlinx.serialization.SerializationStrategy<kotlin.Any?>
     val __value = if (value == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(value) as kotlin.Any
     __self.encodeSerializableElement<kotlin.Any?>(__descriptor, __index, __serializer, __value)
+    return true
+}
+
+@ExportedBridge("kotlinx_serialization_internal_TaggedEncoder_encodeSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_SerializationStrategy_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
+public fun kotlinx_serialization_internal_TaggedEncoder_encodeSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_SerializationStrategy_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, serializer: kotlin.native.internal.NativePtr, value: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.serialization.internal.TaggedEncoder<kotlin.Any?>
+    val __serializer = kotlin.native.internal.ref.dereferenceExternalRCRef(serializer) as kotlinx.serialization.SerializationStrategy<kotlin.Any?>
+    val __value = if (value == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(value) as kotlin.Any
+    __self.encodeSerializableValue<kotlin.Any?>(__serializer, __value)
+    return true
+}
+
+@ExportedBridge("kotlinx_serialization_internal_TaggedEncoder_encodeSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_SerializationStrategy_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____direct", nonVirtualTargetMethod = "encodeSerializableValue")
+public fun kotlinx_serialization_internal_TaggedEncoder_encodeSerializableValue__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_SerializationStrategy_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____direct(self: kotlin.native.internal.NativePtr, serializer: kotlin.native.internal.NativePtr, value: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.serialization.internal.TaggedEncoder<kotlin.Any?>
+    val __serializer = kotlin.native.internal.ref.dereferenceExternalRCRef(serializer) as kotlinx.serialization.SerializationStrategy<kotlin.Any?>
+    val __value = if (value == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(value) as kotlin.Any
+    __self.encodeSerializableValue<kotlin.Any?>(__serializer, __value)
     return true
 }
 
@@ -5118,6 +5624,26 @@ public fun kotlinx_serialization_internal_TaggedEncoder_serializersModule_get_di
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.serialization.internal.TaggedEncoder<kotlin.Any?>
     val _result = __self.serializersModule
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("kotlinx_serialization_internal_TaggedEncoder_shouldEncodeElementDefault__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32__")
+@OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
+public fun kotlinx_serialization_internal_TaggedEncoder_shouldEncodeElementDefault__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32__(self: kotlin.native.internal.NativePtr, descriptor: kotlin.native.internal.NativePtr, index: Int): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.serialization.internal.TaggedEncoder<kotlin.Any?>
+    val __descriptor = kotlin.native.internal.ref.dereferenceExternalRCRef(descriptor) as kotlinx.serialization.descriptors.SerialDescriptor
+    val __index = index
+    val _result = __self.shouldEncodeElementDefault(__descriptor, __index)
+    return _result
+}
+
+@ExportedBridge("kotlinx_serialization_internal_TaggedEncoder_shouldEncodeElementDefault__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32___direct", nonVirtualTargetMethod = "shouldEncodeElementDefault")
+@OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
+public fun kotlinx_serialization_internal_TaggedEncoder_shouldEncodeElementDefault__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32___direct(self: kotlin.native.internal.NativePtr, descriptor: kotlin.native.internal.NativePtr, index: Int): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.serialization.internal.TaggedEncoder<kotlin.Any?>
+    val __descriptor = kotlin.native.internal.ref.dereferenceExternalRCRef(descriptor) as kotlinx.serialization.descriptors.SerialDescriptor
+    val __index = index
+    val _result = __self.shouldEncodeElementDefault(__descriptor, __index)
+    return _result
 }
 
 @ExportedBridge("kotlinx_serialization_internal_throwArrayMissingFieldException__TypesOfArguments__ExportedKotlinPackages_kotlin_IntArray_ExportedKotlinPackages_kotlin_IntArray_anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor__")
