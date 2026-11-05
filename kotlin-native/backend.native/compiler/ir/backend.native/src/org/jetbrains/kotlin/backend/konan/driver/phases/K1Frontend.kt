@@ -41,10 +41,13 @@ import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.konan.config.emitLazyObjcHeaderFile
 import org.jetbrains.kotlin.konan.config.objcGenerics
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.CurrentKlibModuleOrigin
+import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsFactoryImpl
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
+import org.jetbrains.kotlin.library.metadata.klibModuleOrigin
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.resolve.*
@@ -59,7 +62,12 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import kotlin.io.path.Path
 import kotlin.io.path.writeLines
 
-data class K1FrontendPhaseOutput(val moduleDescriptor: ModuleDescriptor, val disposeCallback: () -> Unit)
+data class K1FrontendPhaseOutput(
+        val moduleDescriptor: ModuleDescriptor,
+        val klibModuleDescriptors: Map<KotlinLibrary, ModuleDescriptor>,
+        val forwardDeclarationsModule: ModuleDescriptor?,
+        val disposeCallback: () -> Unit,
+)
 
 @OptIn(K1Deprecation::class)
 internal val K1FrontendPhase: NamedCompilerPhase<NativeBackendPhaseContext, KotlinCoreEnvironment, K1FrontendPhaseOutput?> = createSimpleNamedCompilerPhase(
@@ -81,9 +89,9 @@ internal val K1FrontendPhase: NamedCompilerPhase<NativeBackendPhaseContext, Kotl
     val frontendOutputs = setupModuleDescriptor(context)
     setupContainerAndDumpObjcHeader(context, frontendOutputs)
     val moduleDescriptor = frontendOutputs.moduleDescriptor
-    context.config.configuration.sourcesModules = moduleDescriptor.getIncludedLibraryDescriptors(context.config).toSet() + moduleDescriptor
+    context.config.configuration.sourcesModules = frontendOutputs.klibModuleDescriptors.getIncludedLibraryDescriptors(context.config).toSet() + moduleDescriptor
 
-    K1FrontendPhaseOutput(moduleDescriptor) {
+    K1FrontendPhaseOutput(moduleDescriptor, frontendOutputs.klibModuleDescriptors, frontendOutputs.forwardDeclarationsModule) {
         val bindingContext = frontendOutputs.trace.bindingContext as CleanableBindingContext
         bindingContext.clear()
     }
@@ -92,6 +100,8 @@ internal val K1FrontendPhase: NamedCompilerPhase<NativeBackendPhaseContext, Kotl
 @OptIn(K1Deprecation::class)
 private data class FrontendOutputs(
         val moduleDescriptor: ModuleDescriptor,
+        val klibModuleDescriptors: Map<KotlinLibrary, ModuleDescriptor>,
+        val forwardDeclarationsModule: ModuleDescriptor?,
         val trace: BindingTraceContext,
         val moduleContext: ModuleContext,
         val additionalPackages: List<PackageFragmentProvider>,
@@ -132,8 +142,12 @@ private fun setupModuleDescriptor(context: NativeBackendPhaseContext): FrontendO
             isForMetadataCompilation = config.metadataKlib
     )
 
+    val klibModuleDescriptors: Map<KotlinLibrary, ModuleDescriptor> = resolvedModuleDescriptors.resolvedDescriptors
+            .associateBy { (it.klibModuleOrigin as DeserializedKlibModuleOrigin).library }
+
     val additionalPackages = mutableListOf<PackageFragmentProvider>()
-    if (!module.isNativeStdlib()) {
+    val isStdlib = module.isNativeStdlib()
+    if (!isStdlib) {
         module.setDependencies(ModuleDependenciesImpl(
                 allDependencies =
                         listOf(module) + resolvedModuleDescriptors.resolvedDescriptors + resolvedModuleDescriptors.forwardDeclarationsModule,
@@ -147,7 +161,14 @@ private fun setupModuleDescriptor(context: NativeBackendPhaseContext): FrontendO
         // [K][Suspend]FunctionN belong to stdlib.
         additionalPackages += functionInterfacePackageFragmentProvider(projectContext.storageManager, module)
     }
-    return FrontendOutputs(module, BindingTraceContext(projectContext.project), moduleContext, additionalPackages)
+    return FrontendOutputs(
+            moduleDescriptor = module,
+            klibModuleDescriptors = klibModuleDescriptors,
+            forwardDeclarationsModule = resolvedModuleDescriptors.forwardDeclarationsModule.takeIf { !isStdlib },
+            trace = BindingTraceContext(projectContext.project),
+            moduleContext = moduleContext,
+            additionalPackages = additionalPackages,
+    )
 }
 
 @OptIn(K1Deprecation::class)

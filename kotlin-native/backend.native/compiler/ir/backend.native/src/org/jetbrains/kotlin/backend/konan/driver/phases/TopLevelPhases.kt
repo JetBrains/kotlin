@@ -76,7 +76,11 @@ internal fun <T> PhaseEngine<NativeBackendPhaseContext>.linkKlibs(
     val psiToIrContext = LinkKlibsContextImpl(config, frontendOutput.moduleDescriptor, frontendOutput.disposeCallback)
     val [linkKlibsOutput, additionalOutput] = useContext(psiToIrContext) { psiToIrEngine ->
         val additionalOutput = produceAdditionalOutput(psiToIrEngine)
-        val linkKlibsInput = LinkKlibsInput(frontendOutput.moduleDescriptor)
+        val linkKlibsInput = LinkKlibsInput(
+                frontendOutput.moduleDescriptor,
+                frontendOutput.klibModuleDescriptors,
+                frontendOutput.forwardDeclarationsModule,
+        )
         val output = psiToIrEngine.runAndMeasurePhase(LinkKlibsPhase, linkKlibsInput)
         output.irModulesToCompile.forEach { module ->
             psiToIrEngine.runSpecialBackendChecks(module, output.irBuiltIns, output.symbols)
