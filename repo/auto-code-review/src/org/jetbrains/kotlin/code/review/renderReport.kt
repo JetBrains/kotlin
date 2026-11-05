@@ -37,9 +37,10 @@ fun render(review: ReviewResult): String = buildString {
     appendFooter(review)
 }
 
+private val readme = ProjectFilePath("repo/auto-code-review/README.md")
+
 context(renderingContext: RenderingContext)
 fun StringBuilder.appendOrigin(review: ReviewResult) {
-    val readme = ProjectFilePath("repo/auto-code-review/README.md")
     val readmeLink = renderingContext.markdownLink(readme, "Auto Code Review")
     val diffDescription = renderingContext.describeDiff(review.diffOrigin)
     appendLine("🤖$readmeLink for $diffDescription.")
@@ -127,6 +128,7 @@ private fun StringBuilder.appendCollapsed(summary: String, appendContent: String
     appendContent()
     appendLine()
     appendLine("</details>")
+    appendLine()
 }
 
 context(renderingContext: RenderingContext)
@@ -191,6 +193,10 @@ private fun StringBuilder.appendFooter(review: ReviewResult) {
             appendMeta(review)
         }
     }
+
+    val ruleFilesLink = renderingContext.markdownLink(readme, "Rule files", linkText = "Add or update rules!")
+    appendLine("💡Miss something? $ruleFilesLink")
+    appendLine()
 }
 
 fun slugifyMarkdownTitle(title: String): String =
