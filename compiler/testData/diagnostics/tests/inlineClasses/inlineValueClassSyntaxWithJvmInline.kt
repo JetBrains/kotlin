@@ -1,9 +1,9 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE_FEATURE_TOGGLED: ExplicitInlineValueClassesSyntax
+// LANGUAGE_FEATURE_TOGGLED: ExplicitInlineValueClassesSyntax ExplicitInlineValueClassesSyntaxRequiredOnAllPlatforms
 // WITH_STDLIB
 
 <!JVM_INLINE_WITHOUT_VALUE_CLASS!>@JvmInline<!>
-<!INLINE_CLASS_DEPRECATED!>inline<!> class Old(val x: Int)
+<!INLINE_CLASS_DEPRECATED_ERROR!>inline<!> class Old(val x: Int)
 
 @JvmInline
 inline value class New(val x: Int)

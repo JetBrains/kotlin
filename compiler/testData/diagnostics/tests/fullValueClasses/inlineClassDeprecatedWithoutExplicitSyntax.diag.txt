@@ -1,1 +1,1 @@
-/inlineClassDeprecatedWithoutExplicitSyntax.kt:6:1: warning: 'inline' modifier is deprecated. Use '@JvmInline value' instead.
+/inlineClassDeprecatedWithoutExplicitSyntax.kt:6:1: warning: 'inline' modifier is deprecated. Use '@JvmInline value' instead. This will become an error in language version 2.6. See: https://youtrack.jetbrains.com/issue/KT-89772

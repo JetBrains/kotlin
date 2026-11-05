@@ -8058,6 +8058,15 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface InlineClassDeprecatedError : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<InlineClassDeprecatedError>
+            get() = InlineClassDeprecatedError::class
+
+        public val replacement: String
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface LessVisibleTypeAccessInInlineError : KaFirDiagnostic<KtElement> {
         override val diagnosticClass: KClass<LessVisibleTypeAccessInInlineError>
             get() = LessVisibleTypeAccessInInlineError::class

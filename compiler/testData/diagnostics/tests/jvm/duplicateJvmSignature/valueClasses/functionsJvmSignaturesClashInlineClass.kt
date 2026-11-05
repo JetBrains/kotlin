@@ -1,11 +1,11 @@
 // RUN_PIPELINE_TILL: CODEGEN
-// LANGUAGE: +InlineClasses
-// DIAGNOSTICS: -UNUSED_PARAMETER, -INLINE_CLASS_DEPRECATED
+
+@file:Suppress("INLINE_CLASS_DEPRECATED", <!ERROR_SUPPRESSION!>"INLINE_CLASS_DEPRECATED_ERROR"<!>)
 
 inline class X(val x: Int)
 inline class Z(val x: Int)
-inline class Str(val str: String)
-inline class Name(val name: String)
+inline value class Str(val str: String)
+inline value class Name(val name: String)
 inline class NStr(val str: String?)
 
 fun testSimple(x: X) {}
