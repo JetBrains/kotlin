@@ -3,7 +3,6 @@ CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB ENUM_CLASS name:JEnum modality:FINAL vis
   ENUM_ENTRY IR_EXTERNAL_JAVA_DECLARATION_STUB name:ONE
   ENUM_ENTRY IR_EXTERNAL_JAVA_DECLARATION_STUB name:TWO
   ENUM_ENTRY IR_EXTERNAL_JAVA_DECLARATION_STUB name:THREE
-  CONSTRUCTOR IR_EXTERNAL_JAVA_DECLARATION_STUB visibility:private returnType:<root>.JEnum
   FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL returnType:kotlin.Any [fake_override]
     VALUE_PARAMETER FAKE_OVERRIDE kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<@[FlexibleNullability] <root>.JEnum?>
     overridden:

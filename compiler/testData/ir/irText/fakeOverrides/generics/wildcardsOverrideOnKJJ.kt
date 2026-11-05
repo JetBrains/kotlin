@@ -2,8 +2,6 @@
 // TARGET_BACKEND: JVM
 // FULL_JDK
 // WITH_STDLIB
-// DUMP_IR_DIFFERENCE: JKLIB
-// ^ JKlib reads Java declarations from compiled classes, not from sources.
 
 // FILE: Java1.java
 import java.util.*;
