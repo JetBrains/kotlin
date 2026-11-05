@@ -93,6 +93,21 @@ class MutableCollectionTest {
         }
     }
 
+    @Test fun removeAllNonLocalReturn() {
+        fun fromIterable(): Int {
+            val values: MutableIterable<Int> = mutableListOf(1, 2, 3)
+            values.removeAll { if (it == 2) return it else false }
+            return -1
+        }
+        fun fromList(): Int {
+            val values = mutableListOf(1, 2, 3)
+            values.removeAll { if (it == 2) return it else false }
+            return -1
+        }
+        assertEquals(2, fromIterable())
+        assertEquals(2, fromList())
+    }
+
     @Test fun removeAll() {
         val content = listOf("foo", "bar", "bar")
         val data = listOf("bar")

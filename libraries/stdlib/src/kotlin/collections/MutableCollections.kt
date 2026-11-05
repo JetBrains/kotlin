@@ -221,6 +221,14 @@ private fun MutableCollection<*>.retainNothing(): Boolean {
  *
  * @return `true` if any element was removed from this collection, or `false` when no elements were removed and collection was not modified.
  */
+@Suppress("CONFLICTING_OVERLOADS")
+@kotlin.jvm.JvmName("removeAllInline")
+@kotlin.internal.InlineOnly
+@IgnorableReturnValue
+public inline fun <T> MutableIterable<T>.removeAll(predicate: (T) -> Boolean): Boolean = filterInPlace(predicate, true)
+
+@Deprecated("Binary compatibility", level = DeprecationLevel.HIDDEN)
+@Suppress("CONFLICTING_OVERLOADS")
 @IgnorableReturnValue
 public fun <T> MutableIterable<T>.removeAll(predicate: (T) -> Boolean): Boolean = filterInPlace(predicate, true)
 
@@ -232,7 +240,7 @@ public fun <T> MutableIterable<T>.removeAll(predicate: (T) -> Boolean): Boolean 
 @IgnorableReturnValue
 public fun <T> MutableIterable<T>.retainAll(predicate: (T) -> Boolean): Boolean = filterInPlace(predicate, false)
 
-private fun <T> MutableIterable<T>.filterInPlace(predicate: (T) -> Boolean, predicateResultToRemove: Boolean): Boolean {
+private inline fun <T> MutableIterable<T>.filterInPlace(predicate: (T) -> Boolean, predicateResultToRemove: Boolean): Boolean {
     var result = false
     with(iterator()) {
         while (hasNext())
@@ -286,6 +294,14 @@ public fun <T> MutableList<T>.removeLastOrNull(): T? = if (isEmpty()) null else 
  *
  * @return `true` if any element was removed from this collection, or `false` when no elements were removed and collection was not modified.
  */
+@Suppress("CONFLICTING_OVERLOADS")
+@kotlin.jvm.JvmName("removeAllInline")
+@kotlin.internal.InlineOnly
+@IgnorableReturnValue
+public inline fun <T> MutableList<T>.removeAll(predicate: (T) -> Boolean): Boolean = filterInPlace(predicate, true)
+
+@Deprecated("Binary compatibility", level = DeprecationLevel.HIDDEN)
+@Suppress("CONFLICTING_OVERLOADS")
 @IgnorableReturnValue
 public fun <T> MutableList<T>.removeAll(predicate: (T) -> Boolean): Boolean = filterInPlace(predicate, true)
 
@@ -297,7 +313,7 @@ public fun <T> MutableList<T>.removeAll(predicate: (T) -> Boolean): Boolean = fi
 @IgnorableReturnValue
 public fun <T> MutableList<T>.retainAll(predicate: (T) -> Boolean): Boolean = filterInPlace(predicate, false)
 
-private fun <T> MutableList<T>.filterInPlace(predicate: (T) -> Boolean, predicateResultToRemove: Boolean): Boolean {
+private inline fun <T> MutableList<T>.filterInPlace(predicate: (T) -> Boolean, predicateResultToRemove: Boolean): Boolean {
     if (this !is RandomAccess)
         return (this as MutableIterable<T>).filterInPlace(predicate, predicateResultToRemove)
 
