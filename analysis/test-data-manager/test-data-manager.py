@@ -676,7 +676,8 @@ def main(argv: Optional[List[str]] = None, root: Optional[Path] = None) -> int:
     parser.add_argument("--path", action="append", default=[], dest="paths", metavar="PATH[,PATH...]",
                         help="testDataPath: test data paths relative to the repository root or absolute, separated by "
                              "commas as in the task option (repeating --path adds more)")
-    parser.add_argument("--class-pattern", help="testClassPattern")
+    parser.add_argument("--class-pattern", help="testClassPattern: a regex the fully qualified name of a test class must "
+                                                "match in full, like '.*PsiParsingTestGenerated'")
     parser.add_argument("--golden-only", action="store_true", help="goldenOnly")
     parser.add_argument("--incremental", action="store_true", help="incremental")
     parser.add_argument("--module", action="append", default=[], dest="modules",

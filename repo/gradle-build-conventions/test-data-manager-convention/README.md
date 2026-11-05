@@ -93,7 +93,7 @@ system properties at execution time.
 | Gradle property                                                 | Effect                                                                     |
 |-----------------------------------------------------------------|----------------------------------------------------------------------------|
 | `org.jetbrains.kotlin.testDataManager.options.testDataPath`     | Comma-separated repository-relative test data paths (dir or file)          |
-| `org.jetbrains.kotlin.testDataManager.options.testClassPattern` | Regex pattern for test class names                                         |
+| `org.jetbrains.kotlin.testDataManager.options.testClassPattern` | Regex the fully qualified test class name must match in full (`.*Fir.*`)   |
 | `org.jetbrains.kotlin.testDataManager.options.goldenOnly`       | Run only golden tests (empty variant chain)                                |
 | `org.jetbrains.kotlin.testDataManager.options.incremental`      | Only run variant tests for changed golden paths (effective in update mode) |
 | `org.jetbrains.kotlin.testDataManager.options.runId`            | Id of the run, names the report (a UUIDv7 is generated if not set)         |
