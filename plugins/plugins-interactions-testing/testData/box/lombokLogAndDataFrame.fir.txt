@@ -1,0 +1,21 @@
+FILE: lombokLogAndDataFrame.kt
+    @R|lombok/extern/java/Log|() public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            @R|kotlin/jvm/JvmStatic|() private final val log: R|java/util/logging/Logger| = Q|java/util/logging/Logger|.R|java/util/logging/Logger.getLogger*s|(<getClass>(Q|A|).R|kotlin/jvm/java|.R|java/lang/Class.getName|())
+                private get(): R|java/util/logging/Logger|
+
+            private constructor(): R|A.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        R|/A.A|()
+        ^box String(OK)
+    }
