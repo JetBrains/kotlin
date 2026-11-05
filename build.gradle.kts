@@ -343,7 +343,7 @@ tasks {
     }
 
     // === Used by Native Image builds (in a separate TC project) ===
-    testLifecycleTask("nativeImageCompilerTest", QualityGate.None) {
+    testLifecycleTask("nativeImageCompilerTest", QualityGate.Nightly) {
         dependsOn(":kotlin-compiler-native-image:nativeImageBoxTest")
         dependsOn(":kotlin-compiler-native-image:nativeImageSmokeTest")
     }
