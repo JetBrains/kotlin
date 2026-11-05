@@ -1487,4 +1487,30 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
       run("inheritedEqualityBound.kt");
     }
   }
+
+  @Nested
+  @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFirBinary/willBecomeValue")
+  @TestDataPath("$PROJECT_ROOT")
+  public class WillBecomeValue {
+    private void run(String fileName) {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/willBecomeValue/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInWillBecomeValue() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/getOrBuildFirBinary/willBecomeValue"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("willBecomeValueClass.kt")
+    public void testWillBecomeValueClass() {
+      run("willBecomeValueClass.kt");
+    }
+
+    @Test
+    @TestMetadata("willBecomeValueObject.kt")
+    public void testWillBecomeValueObject() {
+      run("willBecomeValueObject.kt");
+    }
+  }
 }
