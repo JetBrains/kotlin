@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.gradle.native.KotlinNativeToolParallelismTestProbeSe
 import org.jetbrains.kotlin.gradle.native.KotlinNativeToolParallelismTestProbeService.Companion.registerParallelismProbeServiceIfAbsent
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
-import org.jetbrains.kotlin.gradle.testbase.BuildOptions.ConfigurationCacheValue
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions.IsolatedProjectsMode
 import org.jetbrains.kotlin.gradle.testbase.GradleTest
 import org.jetbrains.kotlin.gradle.testbase.KGPBaseTest
@@ -39,12 +38,10 @@ import kotlin.test.assertEquals
 @NativeGradlePluginTests
 class KotlinNativeSettingsDslIT : KGPBaseTest() {
 
-    private val configurationCacheBuildOptions = defaultBuildOptions.copy(configurationCache = ConfigurationCacheValue.ENABLED)
-
     @DisplayName("Settings DSL values override Gradle properties, and Gradle properties apply to values the DSL does not set")
     @GradleTest
     fun testSettingsDslOverridesGradlePropertiesAndFallsBackForUnsetValues(gradleVersion: GradleVersion) {
-        project("empty", gradleVersion, configurationCacheBuildOptions) {
+        project("empty", gradleVersion) {
             applySettingsDsl(linkMaxWorkers = 4)
             applyLinuxExecutable()
 
@@ -60,7 +57,7 @@ class KotlinNativeSettingsDslIT : KGPBaseTest() {
     @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
     fun testLinkTasksRespectSettingsDslLimitAtExecution(gradleVersion: GradleVersion) {
         val linkMaxWorkers = 2
-        val buildOptions = configurationCacheBuildOptions.copy(
+        val buildOptions = defaultBuildOptions.copy(
             isolatedProjects = IsolatedProjectsMode.DISABLED,
             maxWorkers = linkMaxWorkers + 1,
         )
