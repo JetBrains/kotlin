@@ -338,7 +338,7 @@ KaKotlinPropertySymbol:
       typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(accessorsAllowed.kt)
-      getContainingJvmClassName: null
+      getContainingJvmClassName: AccessorsAllowedKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecation: null
       importableFqName: null
@@ -416,7 +416,7 @@ KaKotlinPropertySymbol:
         typeParameters: []
         visibility: PUBLIC
         getContainingFileSymbol: KaFileSymbol(accessorsAllowed.kt)
-        getContainingJvmClassName: null
+        getContainingJvmClassName: AccessorsAllowedKt
         getContainingModule: KaSourceModule "Sources of main"
         deprecation: null
         importableFqName: null

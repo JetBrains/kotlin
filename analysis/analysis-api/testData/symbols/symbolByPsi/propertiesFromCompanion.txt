@@ -652,7 +652,7 @@ KaKotlinPropertySymbol:
       typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(propertiesFromCompanion.kt)
-      getContainingJvmClassName: null
+      getContainingJvmClassName: MyClass.Companion
       getContainingModule: KaSourceModule "Sources of main"
       deprecation: null
       importableFqName: null
@@ -699,7 +699,7 @@ KaKotlinPropertySymbol:
         typeParameters: []
         visibility: PUBLIC
         getContainingFileSymbol: KaFileSymbol(propertiesFromCompanion.kt)
-        getContainingJvmClassName: null
+        getContainingJvmClassName: MyClass.Companion
         getContainingModule: KaSourceModule "Sources of main"
         deprecation: null
         importableFqName: null
@@ -891,7 +891,7 @@ KaKotlinPropertySymbol:
       typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(propertiesFromCompanion.kt)
-      getContainingJvmClassName: null
+      getContainingJvmClassName: MyClass.Companion
       getContainingModule: KaSourceModule "Sources of main"
       deprecation: null
       importableFqName: null
@@ -938,7 +938,7 @@ KaKotlinPropertySymbol:
         typeParameters: []
         visibility: PUBLIC
         getContainingFileSymbol: KaFileSymbol(propertiesFromCompanion.kt)
-        getContainingJvmClassName: null
+        getContainingJvmClassName: MyClass.Companion
         getContainingModule: KaSourceModule "Sources of main"
         deprecation: null
         importableFqName: null
@@ -1130,7 +1130,7 @@ KaKotlinPropertySymbol:
       typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(propertiesFromCompanion.kt)
-      getContainingJvmClassName: null
+      getContainingJvmClassName: MyClass.Companion
       getContainingModule: KaSourceModule "Sources of main"
       deprecation: null
       importableFqName: null
@@ -1177,7 +1177,7 @@ KaKotlinPropertySymbol:
         typeParameters: []
         visibility: PUBLIC
         getContainingFileSymbol: KaFileSymbol(propertiesFromCompanion.kt)
-        getContainingJvmClassName: null
+        getContainingJvmClassName: MyClass.Companion
         getContainingModule: KaSourceModule "Sources of main"
         deprecation: null
         importableFqName: null
