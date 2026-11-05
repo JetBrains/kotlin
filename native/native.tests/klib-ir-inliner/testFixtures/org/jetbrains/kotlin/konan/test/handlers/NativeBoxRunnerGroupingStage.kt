@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.konan.test.handlers
 
-import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult
@@ -16,11 +15,11 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunParameter
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunners.createProperTestRunner
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeHome
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.TCTestOutputFilter
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.TestOutputFilter
 import org.jetbrains.kotlin.konan.test.blackbox.testRunSettings
+import org.jetbrains.kotlin.konan.test.klib.NativeExecutableWithCompilerCall
 import org.jetbrains.kotlin.native.executors.Executor
 import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.checkTestInfrastructure
@@ -33,7 +32,6 @@ import org.jetbrains.kotlin.test.services.sourceProviders.AbstractLauncherAdditi
 import org.jetbrains.kotlin.test.testInfraError
 import java.io.File
 import kotlin.test.assertIs
-import kotlin.time.Duration
 
 class NativeBoxRunnerGroupingStage(testServices: TestServices) : GroupingStageHandler<BinaryArtifacts.Native>(
     testServices,
@@ -44,7 +42,9 @@ class NativeBoxRunnerGroupingStage(testServices: TestServices) : GroupingStageHa
         get() = ArtifactKinds.Native
 
     override fun processArtifact(artifact: BinaryArtifacts.Native) {
-        val testRun = createTestRun(artifact.executable, testServices)
+        val loggedCompilerCall = (artifact as? NativeExecutableWithCompilerCall)?.loggedCompilerCall
+            ?: LoggedData.NoopCompilerCall(artifact.executable)
+        val testRun = createTestRun(artifact.executable, loggedCompilerCall, testServices)
         val testRunner = createProperTestRunner(testRun, testServices.testRunSettings) { executor, testRun ->
             RunnerWithExecutorAndPrettyHandler(executor, testRun, testServices) { e -> WrappedException.FromGroupingHandler(e, this) }
         }
@@ -52,17 +52,7 @@ class NativeBoxRunnerGroupingStage(testServices: TestServices) : GroupingStageHa
     }
 }
 
-private val dummyCompilerCall = LoggedData.CompilationToolCall(
-    toolName = "Compiler",
-    input = null,
-    parameters = LoggedData.CompilerParameters(KotlinNativeHome(dir = File("DummyFile")), arrayOf()),
-    exitCode = ExitCode.OK,
-    toolOutput = "",
-    toolOutputHasErrors = false,
-    duration = Duration.ZERO
-)
-
-private fun createTestRun(executable: File, testServices: TestServices): TestRun {
+private fun createTestRun(executable: File, loggedCompilerCall: LoggedData.CompilerCall, testServices: TestServices): TestRun {
     val testKind = testServices.testRunSettings.testKind(testServices.moduleStructure.modules.firstOrNull()?.directives)
     val checks = TestRunChecks(
         executionTimeoutCheck = TestRunCheck.ExecutionTimeout.ShouldNotExceed(testServices.testRunSettings.get<Timeouts>().executionTimeout),
@@ -81,7 +71,7 @@ private fun createTestRun(executable: File, testServices: TestServices): TestRun
             fileCheckStage = null,
             hasSyntheticAccessorsDump = false,
         ),
-        dummyCompilerCall, // TODO: populate at least real compiler invocation arguments
+        loggedCompilerCall,
     )
     val runParameters = getTestRunParameters(testKind, checks)
     val testRun = TestRun(
@@ -198,14 +188,13 @@ class PrettyResultsHandler(
     }
 
     override fun processNonExpectedFailure(failedResults: List<TestRunCheck.Result.Failed>) {
-        val output = getLoggedRun().toString()
         // The batch always runs with the TeamCity logger (see `getTestRunParameters`).
         val failedTests = failedResults.flatMap { findFailedTestsWithTCLogger(it.reason) }
         val phaseInputs = testServices.groupingStageInputs
 
         checkTestInfrastructure(failedResults.isEmpty() || failedTests.isNotEmpty()) {
             "There should be at least one failed test, but none detected:\n" +
-                    failedResults.joinToString("\n") + "\n\n" + output
+                    failedResults.joinToString("\n") + "\n\n" + getLoggedRun()
         }
         if (phaseInputs.size == 1) {
             // This is a test-infrastructure invariant violation, not a failure of the code under test. Throw a
