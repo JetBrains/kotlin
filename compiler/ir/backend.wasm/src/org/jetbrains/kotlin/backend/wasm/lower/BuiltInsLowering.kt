@@ -40,7 +40,7 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
 
     private fun IrType.findEqualsMethod(): IrSimpleFunction {
         val klass = getClass() ?: irBuiltins.anyClass.owner
-        return klass.functions.single { it.isEqualsInheritedFromAny() }
+        return klass.functions.single { it.isEquals() }
     }
 
     private fun transformCall(

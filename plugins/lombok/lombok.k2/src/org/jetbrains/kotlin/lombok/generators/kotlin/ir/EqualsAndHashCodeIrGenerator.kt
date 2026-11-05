@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.ir.util.findDeclaration
 import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.ir.util.isEqualsInheritedFromAny
+import org.jetbrains.kotlin.ir.util.isEquals
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.lombok.LombokNames
@@ -277,7 +277,7 @@ object EqualsAndHashCodeIrBodyBuilder : IrBodyBuilder<EqualsAndHashCodeGenerator
         // merely shares the name and must never be called here.
         @OptIn(UnsafeDuringIrConstructionAPI::class)
         val superEquals = superClass.functions.firstOrNull {
-            it.isEqualsInheritedFromAny()
+            it.isEquals()
         } ?: return null
 
         return IrCallImpl(

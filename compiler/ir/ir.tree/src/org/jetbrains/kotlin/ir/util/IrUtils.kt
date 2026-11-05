@@ -1416,10 +1416,7 @@ fun IrFunction.isToString(): Boolean =
 fun IrFunction.isHashCode() =
     name == OperatorNameConventions.HASH_CODE && nonDispatchParameters.isEmpty()
 
-fun IrFunction.isEquals() =
-    name == OperatorNameConventions.EQUALS && nonDispatchParameters.singleOrNull()?.type?.isNullableAny() == true
-
-fun IrFunction.isEqualsInheritedFromAny(): Boolean =
+fun IrFunction.isEquals(): Boolean =
     name == OperatorNameConventions.EQUALS &&
             hasShape(dispatchReceiver = true, regularParameters = 1) &&
             parameters[1].type.isNullableAny()
