@@ -57,6 +57,6 @@ class KotlinNativeSettingsDslImpl(
 
     private fun ObjectFactory.maxWorkersProperty(providers: ProviderFactory, gradlePropertyName: String): Property<Int> =
         propertyWithConvention(
-            providers.gradleProperty(gradlePropertyName).filter { it.toIntOrNull() != null }.map { it.toInt() }
+            providers.gradleProperty(gradlePropertyName).map { it.toIntOrNull() }
         )
 }
