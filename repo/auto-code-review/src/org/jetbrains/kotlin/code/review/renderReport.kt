@@ -34,7 +34,7 @@ fun render(review: ReviewResult): String = buildString {
     appendSummary(review)
     appendFailures(review)
     appendReview(review)
-    appendMeta(review)
+    appendFooter(review)
 }
 
 context(renderingContext: RenderingContext)
@@ -130,7 +130,7 @@ private fun StringBuilder.appendCollapsed(summary: String, appendContent: String
 }
 
 context(renderingContext: RenderingContext)
-private fun StringBuilder.appendMeta(review: ReviewResult) = appendCollapsed("Meta") {
+private fun StringBuilder.appendMeta(review: ReviewResult) {
     val agentInfo = review.agentInfo
     appendLine(
         """
@@ -177,6 +177,15 @@ private fun commentsCell(result: RuleReviewResult): String {
     val countString = count.toString()
     val linkedCount = renderingContext.localLink(countString, result.rule.name) ?: countString
     return if (result.failures.isEmpty()) linkedCount else "$linkedCount $WARNING_EMOJI"
+}
+
+context(renderingContext: RenderingContext)
+private fun StringBuilder.appendFooter(review: ReviewResult) {
+    if (review.ruleResults.isNotEmpty()) {
+        appendCollapsed("Meta") {
+            appendMeta(review)
+        }
+    }
 }
 
 fun slugifyMarkdownTitle(title: String): String =
