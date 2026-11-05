@@ -7,8 +7,18 @@ package org.jetbrains.kotlin.code.review
 
 import java.io.File
 
-open class GitRevision(val rev: String)
-class GitSHA1(val sha1: String) : GitRevision(sha1)
+open class GitRevision(val rev: String) {
+    open val shortRev: String
+        get() = rev
+}
+
+class GitSHA1(val sha1: String) : GitRevision(sha1) {
+    val shortSha1: String
+        get() = sha1.take(7)
+
+    override val shortRev: String
+        get() = shortSha1
+}
 
 class GitDiff(val changedFiles: List<ChangedFile>, val origin: Origin) {
     sealed class Origin {
