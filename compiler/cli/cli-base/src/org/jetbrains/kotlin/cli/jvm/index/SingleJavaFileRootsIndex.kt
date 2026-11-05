@@ -26,6 +26,8 @@ import com.intellij.pom.java.LanguageLevel
 import com.intellij.psi.PsiPackage
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileHandle
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.VirtualFileBasedApi
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -39,13 +41,14 @@ class SingleJavaFileRootsIndex(private val roots: List<JavaRoot>) {
     }
 
     private var nextRootIndex = 0
-    private val classes: MutableMap<ClassId, IndexedClassFile> = Object2ObjectOpenHashMap()
+    private val classes: MutableMap<ClassId, BinaryClassFileHandle> = Object2ObjectOpenHashMap()
     private val classesByPackage: MutableMap<FqName, MutableList<ClassId>> = Object2ObjectOpenHashMap()
     private val allPackages: MutableSet<FqName> = ObjectOpenHashSet()
 
-    fun findJavaSourceClass(classId: ClassId): VirtualFile? = findJavaSourceClassFile(classId)?.file
+    @VirtualFileBasedApi
+    fun findJavaSourceClass(classId: ClassId): VirtualFile? = findJavaSourceClassFile(classId)?.virtualFile
 
-    fun findJavaSourceClassFile(classId: ClassId): IndexedClassFile? {
+    fun findJavaSourceClassFile(classId: ClassId): BinaryClassFileHandle? {
         if (classId.isNestedClass) return null
         classes[classId]?.let { return it }
         while (nextRootIndex < roots.size) {
@@ -75,7 +78,7 @@ class SingleJavaFileRootsIndex(private val roots: List<JavaRoot>) {
     private fun indexNextRoot() {
         val root = roots[nextRootIndex++]
         for (classId in JavaSourceClassIdReader(root.file).readClassIds()) {
-            classes.putIfAbsent(classId, IndexedClassFile(root.file, root))
+            classes.putIfAbsent(classId, VfsClassFileHandle(root.file, root))
             classesByPackage.getOrPut(classId.packageFqName) { SmartList() }.add(classId)
             var pkg = classId.packageFqName
             while (!pkg.isRoot && allPackages.add(pkg)) {

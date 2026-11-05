@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.cli.jvm.index.JavaFileExtensions
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.index.JvmClasspathRootFilter
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndex
-import org.jetbrains.kotlin.cli.jvm.index.asBinaryClassFileHandle
 import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileHandle
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileIndex
@@ -34,30 +33,24 @@ class CliBinaryClassFileIndex(
         get() = index.version
 
     override fun findTopLevelClassFiles(topLevelClassId: ClassId): Collection<BinaryClassFileHandle> =
-        index.findClassFiles(topLevelClassId, extensions).map { it.asBinaryClassFileHandle() }
+        index.findClassFiles(topLevelClassId, extensions)
 
     override fun findTopLevelClassFiles(topLevelClassId: ClassId, classpath: JvmClasspath): Collection<BinaryClassFileHandle> {
         val rootFilter = rootFilters.computeIfAbsent(classpath, ::JvmClasspathRootFilter)
-        return index.findClassFiles(topLevelClassId, extensions, rootFilter).map { it.asBinaryClassFileHandle() }
+        return index.findClassFiles(topLevelClassId, extensions, rootFilter)
     }
 
     override fun classFileNamesInPackage(packageFqName: FqName): Set<String> {
         val result = LinkedHashSet<String>()
-        index.traverseClassVirtualFilesInPackage(packageFqName, extensions) { file ->
+        index.traverseFilesInPackage(packageFqName, extensions) { file ->
             result.add(file.nameWithoutExtension)
             true
         }
         return result
     }
 
-    override fun containsPackageDirectory(packageFqName: FqName): Boolean {
-        var found = false
-        index.traverseDirectoriesInPackage(packageFqName, JavaRoot.OnlyBinary) { _, _ ->
-            found = true
-            false // stop at the first hit
-        }
-        return found
-    }
+    override fun containsPackageDirectory(packageFqName: FqName): Boolean =
+        index.hasPackage(packageFqName, JavaRoot.OnlyBinary)
 
     private companion object {
         private val BINARY_CLASS_EXTENSIONS = JavaFileExtensions(JavaFileExtension.CLASS)

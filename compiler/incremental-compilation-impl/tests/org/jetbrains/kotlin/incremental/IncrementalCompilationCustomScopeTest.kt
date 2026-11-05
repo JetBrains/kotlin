@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.IncrementalCompilationComponentsWithCustomScope
 import org.jetbrains.kotlin.cli.jvm.compiler.prepareIncrementalCompilationContextAndLibrariesClasspath
 import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
-import org.jetbrains.kotlin.cli.jvm.index.IndexedClassFile
+import org.jetbrains.kotlin.cli.jvm.index.VfsClassFileHandle
 import org.jetbrains.kotlin.cli.jvm.index.JavaFileExtensions
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndex
@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.fir.session.IncrementalCompilationContext
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileHandle
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryJavaClassCache
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.VirtualFileBasedApi
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
@@ -372,9 +373,9 @@ class IncrementalCompilationCustomScopeTest {
         override val indexedRoots: Sequence<JavaRoot> = emptySequence(),
     ) : JvmDependenciesIndex {
 
-        override fun findClassFiles(classId: ClassId, acceptedExtensions: JavaFileExtensions): Collection<IndexedClassFile> =
+        override fun findClassFiles(classId: ClassId, acceptedExtensions: JavaFileExtensions): Collection<BinaryClassFileHandle> =
             classFiles.filter { it.nameWithoutExtension == classId.relativeClassName.asString() }
-                .map { IndexedClassFile(it, rootOf(it)) }
+                .map { VfsClassFileHandle(it, rootOf(it)) }
 
         /** The listed root containing the file, or else the root of its file system, as `JvmDependenciesIndexImpl` would attribute it. */
         private fun rootOf(file: VirtualFile): JavaRoot {
@@ -383,26 +384,16 @@ class IncrementalCompilationCustomScopeTest {
                 ?: JavaRoot(ancestors.last(), JavaRoot.RootType.BINARY)
         }
 
-        override fun traverseClassVirtualFilesInPackage(
+        override fun traverseFilesInPackage(
             packageFqName: FqName,
             acceptedExtensions: JavaFileExtensions,
-            continueSearch: (VirtualFile) -> Boolean,
+            continueSearch: (BinaryClassFileHandle) -> Boolean,
         ) {
         }
 
-        override fun traverseDirectoriesInPackage(
-            packageFqName: FqName,
-            acceptedRootTypes: Set<JavaRoot.RootType>,
-            continueSearch: (VirtualFile, JavaRoot.RootType) -> Boolean,
-        ) {
-        }
+        override fun hasPackage(packageFqName: FqName, acceptedRootTypes: Set<JavaRoot.RootType>): Boolean = false
 
-        override fun traverseVirtualFilesInPackage(
-            packageFqName: FqName,
-            acceptedRootTypes: Set<JavaRoot.RootType>,
-            continueSearch: (VirtualFile, JavaRoot.RootType) -> Boolean,
-        ) {
-        }
+        override fun findBuiltInsFile(packageFqName: FqName): BinaryClassFileHandle? = null
     }
 
     private object EmptyIncrementalCache : IncrementalCache {
