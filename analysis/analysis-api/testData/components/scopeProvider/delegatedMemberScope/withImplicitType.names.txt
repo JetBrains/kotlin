@@ -6,5 +6,4 @@ Callable names:
   equals
   foo
   hashCode
-  p
   toString

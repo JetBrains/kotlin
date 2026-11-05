@@ -1,6 +1,4 @@
 fun foo() fromClass B
 
-class InnerInB fromClass B
-
 constructor(a: A) fromClass B
   a: A from <constructor> B

@@ -186,8 +186,6 @@ public val KaConstructorSymbol.originalConstructorIfTypeAliased: KaConstructorSy
  * (see [INTERSECTION_OVERRIDE][org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin.INTERSECTION_OVERRIDE]
  * and [SUBSTITUTION_OVERRIDE][org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin.SUBSTITUTION_OVERRIDE]).
  *
- * The sequence doesn't include the original overridden declaration of a delegated symbol (for that, use [fakeOverrideOriginal]).
- *
  * Depending on this callable symbol, the sequence contains:
  *
  * - Regular [KaNamedFunctionSymbol] that is not a Java accessor method of a synthetic Java property: overridden function symbols.
@@ -236,8 +234,6 @@ public val KaCallableSymbol.allOverriddenSymbols: Sequence<KaCallableSymbol>
  * The sequence implicitly unwraps substituted and intersection override symbols
  * (see [INTERSECTION_OVERRIDE][org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin.INTERSECTION_OVERRIDE]
  * and [SUBSTITUTION_OVERRIDE][org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin.SUBSTITUTION_OVERRIDE]).
- *
- * The sequence doesn't include the original overridden declaration of a delegated symbol (for that, use [fakeOverrideOriginal]).
  *
  * Symbol kinds follow the same mapping as [allOverriddenSymbols]. In particular, property accessor symbols and Java accessor methods of
  * synthetic Java properties are represented by property symbols rather than accessor or Java method symbols.
