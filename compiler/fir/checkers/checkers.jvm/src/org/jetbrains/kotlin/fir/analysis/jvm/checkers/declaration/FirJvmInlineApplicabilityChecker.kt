@@ -44,6 +44,13 @@ object FirJvmInlineApplicabilityChecker : FirRegularClassChecker(MppCheckerKind.
         ) {
             // Value objects are full value classes rather than inline single-field classes.
             reporter.reportOn(annotation.source, FirJvmErrors.JVM_INLINE_ON_VALUE_OBJECT)
+        } else if (
+            annotation != null &&
+            valueModifier != null &&
+            hasInlineModifier &&
+            LanguageFeature.ExplicitInlineValueClassesSyntax.isEnabled()
+        ) {
+            reporter.reportOn(annotation.source, FirJvmErrors.REDUNDANT_JVM_INLINE)
         } else if (annotation != null && valueModifier == null) {
             // '@JvmInline' is only applicable to value *classes*, not to non-value declarations (this includes the
             // deprecated inline class syntax). For other wrong targets 'WRONG_MODIFIER_TARGET' is reported instead.

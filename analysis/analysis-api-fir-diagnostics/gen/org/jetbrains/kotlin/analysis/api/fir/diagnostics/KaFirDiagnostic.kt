@@ -8742,6 +8742,13 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface RedundantJvmInline : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<RedundantJvmInline>
+            get() = RedundantJvmInline::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface JvmInlineOnValueObject : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass: KClass<JvmInlineOnValueObject>
             get() = JvmInlineOnValueObject::class

@@ -2194,6 +2194,12 @@ private fun KaDiagnosticConverterBuilder.addConversions43() {
             token,
         )
     }
+    add(FirJvmErrors.REDUNDANT_JVM_INLINE) { firDiagnostic ->
+        RedundantJvmInlineImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions44() {

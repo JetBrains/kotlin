@@ -6172,6 +6172,11 @@ internal class JvmInlineWithoutValueClassImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.JvmInlineWithoutValueClass
 
+internal class RedundantJvmInlineImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.RedundantJvmInline
+
 internal class JvmInlineOnValueObjectImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
