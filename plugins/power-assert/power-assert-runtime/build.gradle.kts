@@ -109,10 +109,6 @@ kotlin {
         tvosArm64()
 
         // Tier 3
-        @Suppress("DEPRECATION") androidNativeArm32()
-        @Suppress("DEPRECATION") androidNativeArm64()
-        @Suppress("DEPRECATION") androidNativeX86()
-        @Suppress("DEPRECATION") androidNativeX64()
         mingwX64()
         watchosDeviceArm64()
         @Suppress("DEPRECATION", "DEPRECATION_ERROR") iosX64()

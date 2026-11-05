@@ -769,7 +769,7 @@ interface KotlinMultiplatformSourceSetConventions {
      *
      * @since 2.0.20
      */
-    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
+    @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
     val NamedDomainObjectContainer<KotlinSourceSet>.androidNativeArm32Main: NamedDomainObjectProvider<KotlinSourceSet>
 
     /**
@@ -793,7 +793,7 @@ interface KotlinMultiplatformSourceSetConventions {
      *
      * @since 2.0.20
      */
-    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
+    @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
     val NamedDomainObjectContainer<KotlinSourceSet>.androidNativeArm32Test: NamedDomainObjectProvider<KotlinSourceSet>
 
     /**
@@ -817,7 +817,7 @@ interface KotlinMultiplatformSourceSetConventions {
      *
      * @since 2.0.20
      */
-    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
+    @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
     val NamedDomainObjectContainer<KotlinSourceSet>.androidNativeArm64Main: NamedDomainObjectProvider<KotlinSourceSet>
 
     /**
@@ -841,7 +841,7 @@ interface KotlinMultiplatformSourceSetConventions {
      *
      * @since 2.0.20
      */
-    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
+    @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
     val NamedDomainObjectContainer<KotlinSourceSet>.androidNativeArm64Test: NamedDomainObjectProvider<KotlinSourceSet>
 
     /**
@@ -865,7 +865,7 @@ interface KotlinMultiplatformSourceSetConventions {
      *
      * @since 2.0.20
      */
-    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
+    @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
     val NamedDomainObjectContainer<KotlinSourceSet>.androidNativeX64Main: NamedDomainObjectProvider<KotlinSourceSet>
 
     /**
@@ -889,7 +889,7 @@ interface KotlinMultiplatformSourceSetConventions {
      *
      * @since 2.0.20
      */
-    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
+    @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
     val NamedDomainObjectContainer<KotlinSourceSet>.androidNativeX64Test: NamedDomainObjectProvider<KotlinSourceSet>
 
     /**
@@ -913,7 +913,7 @@ interface KotlinMultiplatformSourceSetConventions {
      *
      * @since 2.0.20
      */
-    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
+    @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
     val NamedDomainObjectContainer<KotlinSourceSet>.androidNativeX86Main: NamedDomainObjectProvider<KotlinSourceSet>
 
     /**
@@ -937,7 +937,7 @@ interface KotlinMultiplatformSourceSetConventions {
      *
      * @since 2.0.20
      */
-    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
+    @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
     val NamedDomainObjectContainer<KotlinSourceSet>.androidNativeX86Test: NamedDomainObjectProvider<KotlinSourceSet>
 
     /**
