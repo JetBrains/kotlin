@@ -23,7 +23,7 @@ interface RenderingContext {
 }
 
 val GitDiff.Origin.GitHub.compareMarkdownLink: String
-    get() = "[${base.rev}...${to.sha1}](https://github.com/${repository}/compare/${base.rev}...${to.rev})"
+    get() = "[${base.shortRev}...${to.shortSha1}](https://github.com/${repository}/compare/${base.rev}...${to.sha1})"
 
 private const val WARNING_EMOJI = "⚠\uFE0F"
 
