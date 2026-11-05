@@ -1,9 +1,14 @@
 test/C.foo(): String
   ALL:
+    test/B.foo(): String
+    test/A.foo(): Any
   DIRECT:
+    test/B.foo(): String
   INTERSECTION:
 
 test/C.bar(): Unit
   ALL:
+    test/A.bar(): Unit
   DIRECT:
+    test/A.bar(): Unit
   INTERSECTION:

@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.fir.resolve.scopeSessionKey
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseWithCallableMembers
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.isSubtypeOf
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
@@ -205,8 +204,6 @@ internal class KaFirScopeProvider(
 
     override fun delegatedMemberScope(symbol: KaDeclarationContainerSymbol): KaScope =
         withValidityAssertion {
-            val declaredScope = (declaredMemberScope(symbol) as? KaFirDelegatingNamesAwareScope)?.firScope ?: return createEmptyScope()
-
             val fir = symbol.getFirForScope()
 
             @OptIn(DirectDeclarationsAccess::class)
@@ -216,16 +213,28 @@ internal class KaFirScopeProvider(
                 return createEmptyScope()
             }
 
-            fir.lazyResolveToPhaseWithCallableMembers(FirResolvePhase.STATUS)
-
-            val firScope = FirDelegatedMemberScope(
-                analysisSession.firSession,
-                getScopeSession(),
-                fir,
-                declaredScope,
-                delegateFields
+            val firSession = analysisSession.firSession
+            val scopeSession = getScopeSession()
+            val firScope = fir.unsubstitutedScope(
+                firSession,
+                scopeSession,
+                withForcedTypeCalculator = false,
+                memberRequiredPhase = FirResolvePhase.STATUS,
             )
-            return KaFirDelegatedMemberScope(firScope, analysisSession.firSymbolBuilder)
+
+            val delegateCallableNames = delegateFields.flatMapTo(mutableSetOf()) { delegateField ->
+                delegateField.symbol.resolvedReturnType
+                    .scope(firSession, scopeSession, CallableCopyTypeCalculator.DoNothing, requiredMembersPhase = null)
+                    ?.getCallableNames()
+                    .orEmpty()
+            }
+
+            return KaFirDelegatedMemberScope(
+                FirNoClassifiersScope(firScope),
+                analysisSession.firSymbolBuilder,
+                fir.symbol.toLookupTag(),
+                delegateCallableNames,
+            )
         }
 
     override fun fileScope(symbol: KaFileSymbol): KaScope =

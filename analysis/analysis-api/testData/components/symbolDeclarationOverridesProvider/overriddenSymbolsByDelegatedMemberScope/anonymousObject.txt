@@ -1,4 +1,6 @@
 test/usage.<no name>.foo(): Int
   ALL:
+    test/I.foo(): Int
   DIRECT:
+    test/I.foo(): Int
   INTERSECTION:

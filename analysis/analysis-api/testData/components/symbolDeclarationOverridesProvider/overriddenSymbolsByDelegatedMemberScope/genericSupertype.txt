@@ -1,9 +1,13 @@
 test/C.get(): Int
   ALL:
+    test/Base.get(): T
   DIRECT:
+    test/Base.get(): T
   INTERSECTION:
 
 test/C.value: Int
   ALL:
+    test/Base.value: T
   DIRECT:
+    test/Base.value: T
   INTERSECTION:

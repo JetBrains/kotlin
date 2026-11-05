@@ -7,9 +7,6 @@ Callable names:
   equals
   foo
   hashCode
-  p
-  regularFunction
-  regularProperty
   smth
   toString
   zoo

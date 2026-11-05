@@ -1,4 +1,8 @@
 test/C.foo(): Unit
   ALL:
+    test/X.foo(): Unit
+    test/Y.foo(): Unit
   DIRECT:
+    test/X.foo(): Unit
+    test/Y.foo(): Unit
   INTERSECTION:
