@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolD
 import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature as ProtoIdSignature
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.ClassLayoutBuilder
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.library.impl.IrArrayReader
 import org.jetbrains.kotlin.library.impl.IrArrayWriter
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import java.io.Reader
 import java.io.Writer
 import java.util.Properties
@@ -268,14 +270,24 @@ internal class ClassFieldsDeserializer(
                     PrimitiveBinaryType.VECTOR128 -> getByClassId(KonanPrimitiveType.VECTOR128.classId).defaultType
                 }
                 // TODO: this should compare signatures of corresponding properties.
-                val irFieldSymbol = knownFields[name]?.let {
+                val irField = knownFields[name]?.let {
                     check(binaryType == it.type.computePrimitiveBinaryTypeOrNull())
-                    it.symbol
-                } ?: IrFieldSymbolImpl()
+                    it
+                } ?: builtIns.irFactory.createField(
+                        irClass.startOffset,
+                        irClass.endOffset,
+                        IrDeclarationOrigin.DEFINED,
+                        Name.identifier(name),
+                        DescriptorVisibilities.PRIVATE,
+                        IrFieldSymbolImpl(),
+                        type,
+                        isFinal = true,
+                        isStatic = false,
+                )
                 ClassLayoutBuilder.FieldInfo(
                         name, type,
                         isConst = (field.flags and SerializedClassFieldInfo.FLAG_IS_CONST) != 0,
-                        irFieldSymbol = irFieldSymbol,
+                        irFieldSymbol = irField.symbol,
                         alignment = field.alignment,
                 )
             }
