@@ -26,10 +26,12 @@ val GitDiff.Origin.GitHub.compareMarkdownLink: String
     get() = "[${base.shortRev}...${to.shortSha1}](https://github.com/${repository}/compare/${base.rev}...${to.sha1})"
 
 private const val WARNING_EMOJI = "⚠\uFE0F"
+private const val INFO_EMOJI = "ℹ\uFE0F"
 
 context(renderingContext: RenderingContext)
 fun render(review: ReviewResult): String = buildString {
     appendOrigin(review)
+    appendSummary(review)
     appendFailures(review)
     appendReview(review)
     appendMeta(review)
@@ -41,6 +43,25 @@ fun StringBuilder.appendOrigin(review: ReviewResult) {
     val readmeLink = renderingContext.markdownLink(readme, "Auto Code Review")
     val diffDescription = renderingContext.describeDiff(review.diffOrigin)
     appendLine("🤖$readmeLink for $diffDescription.")
+    appendLine()
+}
+
+fun StringBuilder.appendSummary(review: ReviewResult) {
+    val violations = review.ruleResults.sumOf { it.comments.size }
+
+    val summary = when {
+        review.ruleResults.isEmpty() -> "${INFO_EMOJI}Found no rules applicable to the changed files."
+        violations == 0 -> {
+            val prefix = if (review.ruleResults.any { it.failures.isNotEmpty() }) {
+                INFO_EMOJI
+            } else {
+                "✅"
+            }
+            "${prefix}Found no violations of the checked rules."
+        }
+        else -> "Found $violations violations of the checked rules."
+    }
+    appendLine(summary)
     appendLine()
 }
 
@@ -87,10 +108,6 @@ private fun StringBuilder.appendCodeBlock(language: String, text: String) {
 
 context(renderingContext: RenderingContext)
 private fun StringBuilder.appendReview(review: ReviewResult) {
-    if (review.ruleResults.all { it.comments.isEmpty() }) {
-        appendLine("# No rule violations found")
-    }
-
     for (result in review.ruleResults) {
         if (result.comments.isEmpty()) continue
         appendLine("# ${renderingContext.ruleLink(result.rule)}")
