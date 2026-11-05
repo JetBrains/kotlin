@@ -192,12 +192,8 @@ internal abstract class SymbolLightMethodBaseImpl<out SType : KaSymbol>(
             isJvmExposeBoxed && typeForInlineClass(returnType) -> true
 
             returnType.isPrimitiveBacked -> {
-                if (symbol.origin == KaSymbolOrigin.DELEGATED) {
-                    !symbol.fakeOverrideOriginal.returnType.isPrimitiveBacked
-                } else {
-                    symbol.allOverriddenSymbols.any { overriddenSymbol ->
-                        !overriddenSymbol.returnType.isPrimitiveBacked
-                    }
+                symbol.allOverriddenSymbols.any { overriddenSymbol ->
+                    !overriddenSymbol.returnType.isPrimitiveBacked
                 }
             }
 
