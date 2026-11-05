@@ -9,13 +9,11 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiJavaModule
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet
 import org.jetbrains.kotlin.cli.jvm.index.ClassFileFilter
-import org.jetbrains.kotlin.cli.jvm.index.IndexedClassFile
 import org.jetbrains.kotlin.cli.jvm.index.JavaFileExtension
 import org.jetbrains.kotlin.cli.jvm.index.JavaFileExtensions
-import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.index.JvmClasspathRootFilter
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndex
-import org.jetbrains.kotlin.cli.jvm.index.asBinaryClassFileHandle
+import org.jetbrains.kotlin.cli.jvm.index.virtualFile
 import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileHandle
@@ -27,7 +25,6 @@ import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.util.PerformanceManager
 import java.io.InputStream
 
@@ -59,7 +56,7 @@ class CliVirtualFileFinder private constructor(
         accepts: (VirtualFile) -> Boolean,
         enableSearchInCtSym: Boolean,
         perfManager: PerformanceManager?,
-    ) : this(index, ClassFileFilter { _, file -> accepts(file) }, enableSearchInCtSym, kotlinClassesFromHandles = false, perfManager)
+    ) : this(index, ClassFileFilter { accepts(it.virtualFile) }, enableSearchInCtSym, kotlinClassesFromHandles = false, perfManager)
 
     constructor(
         index: JvmDependenciesIndex,
@@ -69,24 +66,26 @@ class CliVirtualFileFinder private constructor(
     ) : this(index, JvmClasspathRootFilter(classpath), enableSearchInCtSym, kotlinClassesFromHandles = true, perfManager)
 
     // The two `VirtualFile` lookups stay for the backend (`inlineCodegenUtils.findVirtualFile`) and the IDE.
+    @OptIn(VirtualFileBasedApi::class)
     override fun findVirtualFileWithHeader(classId: ClassId): VirtualFile? =
-        findBinaryOrSigClass(classId)?.file
+        findBinaryOrSigClass(classId)?.virtualFile
 
+    @OptIn(VirtualFileBasedApi::class)
     override fun findSourceOrBinaryVirtualFile(classId: ClassId): VirtualFile? =
-        findSourceOrBinaryClass(classId)?.file
+        findSourceOrBinaryClass(classId)?.virtualFile
 
     /** The `.class`/`.sig` file declaring [classId], if the classpath has one. */
     fun findBinaryClassFile(classId: ClassId): BinaryClassFileHandle? =
-        findBinaryOrSigClass(classId)?.asBinaryClassFileHandle()
+        findBinaryOrSigClass(classId)
 
     /** [findBinaryClassFile], or else the `.java` file declaring [classId] in a Java source root. */
     fun findSourceOrBinaryClassFile(classId: ClassId): BinaryClassFileHandle? =
-        findSourceOrBinaryClass(classId)?.asBinaryClassFileHandle()
+        findSourceOrBinaryClass(classId)
 
     override fun findKotlinClassOrContent(classId: ClassId, metadataVersion: MetadataVersion): KotlinClassFinder.Result? {
         if (!kotlinClassesFromHandles) return super.findKotlinClassOrContent(classId, metadataVersion)
         val classFile = findBinaryOrSigClass(classId) ?: return null
-        return readKotlinClass(classFile.asBinaryClassFileHandle(), metadataVersion)
+        return readKotlinClass(classFile, metadataVersion)
     }
 
     override fun findKotlinClassOrContent(javaClass: JavaClass, metadataVersion: MetadataVersion): KotlinClassFinder.Result? {
@@ -105,13 +104,13 @@ class CliVirtualFileFinder private constructor(
     override fun findMetadata(classId: ClassId): InputStream? {
         assert(!classId.isNestedClass) { "Nested classes are not supported here: $classId" }
 
-        return findClass(classId, KOTLIN_METADATA_EXTENSIONS)?.asBinaryClassFileHandle()?.readBytes()?.inputStream()
+        return findClass(classId, KOTLIN_METADATA_EXTENSIONS)?.readBytes()?.inputStream()
     }
 
     /** Not restricted by the class-file filter: this lookup covers all indexed roots. */
     override fun findMetadataTopLevelClassesInPackage(packageFqName: FqName): Set<String> {
         val result = ObjectOpenHashSet<String>()
-        index.traverseClassVirtualFilesInPackage(packageFqName, KOTLIN_METADATA_EXTENSIONS) { file ->
+        index.traverseFilesInPackage(packageFqName, KOTLIN_METADATA_EXTENSIONS) { file ->
             result.add(file.nameWithoutExtension)
             true
         }
@@ -121,7 +120,7 @@ class CliVirtualFileFinder private constructor(
     /** Not restricted by the class-file filter: this lookup covers all indexed roots. */
     override fun hasMetadataPackage(fqName: FqName): Boolean {
         var found = false
-        index.traverseClassVirtualFilesInPackage(fqName, KOTLIN_METADATA_EXTENSIONS) { _ ->
+        index.traverseFilesInPackage(fqName, KOTLIN_METADATA_EXTENSIONS) { _ ->
             found = true
             false
         }
@@ -129,31 +128,17 @@ class CliVirtualFileFinder private constructor(
     }
 
     /** Not restricted by the class-file filter: this lookup covers all indexed roots. */
-    override fun findBuiltInsData(packageFqName: FqName): InputStream? {
-        // `.kotlin_builtins` files exist for a specific package and not for each class. As such, they don't have a class name. Because of
-        // this, we use `traverseDirectoriesInPackage` and look for the file directly instead of using `findClassVirtualFiles`.
-        val builtInsFileName = BuiltInSerializerProtocol.getBuiltInsFileName(packageFqName)
-        var result: VirtualFile? = null
-        index.traverseDirectoriesInPackage(packageFqName, acceptedRootTypes = JavaRoot.OnlyBinary) { directory, _ ->
-            val file = directory.findChild(builtInsFileName)
-            if (file != null && file.isValid) {
-                result = file
-                false // stop
-            } else {
-                true // continue
-            }
-        }
-        return result?.inputStream
-    }
+    override fun findBuiltInsData(packageFqName: FqName): InputStream? =
+        index.findBuiltInsFile(packageFqName)?.readBytes()?.inputStream()
 
-    private fun findBinaryOrSigClass(classId: ClassId): IndexedClassFile? {
+    private fun findBinaryOrSigClass(classId: ClassId): BinaryClassFileHandle? {
         val extensions = if (enableSearchInCtSym) BINARY_CLASS_AND_SIG_EXTENSIONS else BINARY_CLASS_EXTENSIONS
         return findClass(classId, extensions)
     }
 
-    private fun findSourceOrBinaryClass(classId: ClassId): IndexedClassFile? =
+    private fun findSourceOrBinaryClass(classId: ClassId): BinaryClassFileHandle? =
         findBinaryOrSigClass(classId) ?: findClass(classId, JAVA_SOURCE_EXTENSIONS)
 
-    private fun findClass(classId: ClassId, extensions: JavaFileExtensions): IndexedClassFile? =
+    private fun findClass(classId: ClassId, extensions: JavaFileExtensions): BinaryClassFileHandle? =
         index.findClassFiles(classId, extensions, filter).firstOrNull()
 }
