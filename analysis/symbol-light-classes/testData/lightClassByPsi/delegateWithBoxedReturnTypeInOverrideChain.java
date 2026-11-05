@@ -18,10 +18,12 @@ public abstract interface BaseInt /* BaseInt*/ extends BaseAny {
 
 public final class DelegatingInt /* DelegatingInt*/ implements BaseInt {
   @java.lang.Override()
-  public int getIntProperty();//  getIntProperty()
+  @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() java.lang.Integer getIntProperty();//  getIntProperty()
 
   @java.lang.Override()
-  public int int();//  int()
+  @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() java.lang.Integer int();//  int()
 
   public  DelegatingInt(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() BaseInt);//  .ctor(@org.jetbrains.annotations.NotNull() BaseInt)
 }
