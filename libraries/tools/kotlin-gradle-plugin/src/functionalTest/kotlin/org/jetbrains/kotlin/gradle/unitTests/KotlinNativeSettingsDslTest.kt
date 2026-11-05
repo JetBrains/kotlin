@@ -10,6 +10,7 @@ import org.gradle.api.internal.project.ProjectInternal
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeSettingsDsl
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_COMPILE_MAX_WORKERS
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_LINK_MAX_WORKERS
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
@@ -30,6 +31,18 @@ class KotlinNativeSettingsDslTest {
     fun `settings DSL value overrides the Gradle property`() {
         val project = nativeProject(gradleProperties = mapOf(KOTLIN_NATIVE_LINK_MAX_WORKERS to "2")) { linkMaxWorkers.set(4) }
 
+        assertEquals(4, project.maxParallelUsagesOf<KotlinNativeLink>())
+    }
+
+    @Test
+    fun `Gradle property applies to a value the settings DSL does not set`() {
+        val project = nativeProject(
+            gradleProperties = mapOf(KOTLIN_NATIVE_COMPILE_MAX_WORKERS to "1", KOTLIN_NATIVE_LINK_MAX_WORKERS to "2"),
+        ) {
+            linkMaxWorkers.set(4)
+        }
+
+        assertEquals(1, project.maxParallelUsagesOf<KotlinNativeCompile>())
         assertEquals(4, project.maxParallelUsagesOf<KotlinNativeLink>())
     }
 
