@@ -2182,6 +2182,12 @@ private fun KaDiagnosticConverterBuilder.addConversions43() {
             token,
         )
     }
+    add(FirErrors.REDUNDANT_JVM_INLINE) { firDiagnostic ->
+        RedundantJvmInlineImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirErrors.EXPECTED_LATEINIT_PROPERTY) { firDiagnostic ->
         ExpectedLateinitPropertyImpl(
             firDiagnostic as KtDiagnosticWithSource,
@@ -2190,12 +2196,6 @@ private fun KaDiagnosticConverterBuilder.addConversions43() {
     }
     add(FirErrors.COMPANION_EXTENSION_NULLABLE_RECEIVER) { firDiagnostic ->
         CompanionExtensionNullableReceiverImpl(
-            firDiagnostic as KtDiagnosticWithSource,
-            token,
-        )
-    }
-    add(FirJvmErrors.REDUNDANT_JVM_INLINE) { firDiagnostic ->
-        RedundantJvmInlineImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -4337,15 +4337,15 @@ private fun KaDiagnosticConverterBuilder.addConversions91() {
             token,
         )
     }
-    add(FirErrors.NON_LOCAL_RETURN_NOT_ALLOWED) { firDiagnostic ->
-        NonLocalReturnNotAllowedImpl(
-            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+    add(FirErrors.JVM_INLINE_WITHOUT_VALUE_CLASS) { firDiagnostic ->
+        JvmInlineWithoutValueClassImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
     }
-    add(FirJvmErrors.JVM_INLINE_WITHOUT_VALUE_CLASS) { firDiagnostic ->
-        JvmInlineWithoutValueClassImpl(
+    add(FirErrors.NON_LOCAL_RETURN_NOT_ALLOWED) { firDiagnostic ->
+        NonLocalReturnNotAllowedImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -4551,6 +4551,12 @@ private fun KaDiagnosticConverterBuilder.addConversions97() {
         EqualityBoundMismatchOnInheritanceImpl(
             firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.a),
             firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.b),
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
+    add(FirErrors.JVM_INLINE_WITHOUT_VALUE_CLASS_WARNING) { firDiagnostic ->
+        JvmInlineWithoutValueClassWarningImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -4967,6 +4973,12 @@ private fun KaDiagnosticConverterBuilder.addConversions104() {
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions105() {
+    add(FirErrors.JVM_INLINE_ON_VALUE_OBJECT) { firDiagnostic ->
+        JvmInlineOnValueObjectImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS) { firDiagnostic ->
         WrongNumberOfTypeArgumentsImpl(
             firDiagnostic.a,
@@ -4984,12 +4996,6 @@ private fun KaDiagnosticConverterBuilder.addConversions105() {
     add(FirErrors.EXPRESSION_OF_NULLABLE_TYPE_IN_CLASS_LITERAL_LHS) { firDiagnostic ->
         ExpressionOfNullableTypeInClassLiteralLhsImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
-            firDiagnostic as KtDiagnosticWithSource,
-            token,
-        )
-    }
-    add(FirJvmErrors.JVM_INLINE_ON_VALUE_OBJECT) { firDiagnostic ->
-        JvmInlineOnValueObjectImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -7881,6 +7887,12 @@ private fun KaDiagnosticConverterBuilder.addConversions168() {
             token,
         )
     }
+    add(FirErrors.VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION) { firDiagnostic ->
+        ValueClassWithoutJvmInlineAnnotationImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirErrors.DYNAMIC_RECEIVER_EXPECTED_BUT_WAS_NON_DYNAMIC) { firDiagnostic ->
         DynamicReceiverExpectedButWasNonDynamicImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
@@ -7890,12 +7902,6 @@ private fun KaDiagnosticConverterBuilder.addConversions168() {
     }
     add(FirErrors.INC_DEC_SHOULD_NOT_RETURN_UNIT) { firDiagnostic ->
         IncDecShouldNotReturnUnitImpl(
-            firDiagnostic as KtDiagnosticWithSource,
-            token,
-        )
-    }
-    add(FirJvmErrors.VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION) { firDiagnostic ->
-        ValueClassWithoutJvmInlineAnnotationImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )

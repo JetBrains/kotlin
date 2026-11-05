@@ -2044,6 +2044,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleSingleSymbolByPsiTestGenerated 
     }
 
     @Test
+    @TestMetadata("inlineClassFeatureEnabledJsWasm.kt")
+    public void testInlineClassFeatureEnabledJsWasm() {
+      run("inlineClassFeatureEnabledJsWasm.kt");
+    }
+
+    @Test
     @TestMetadata("inlineClassJs.kt")
     public void testInlineClassJs() {
       run("inlineClassJs.kt");
