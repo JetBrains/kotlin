@@ -71,7 +71,7 @@ internal class KotlinToolchainsImpl : KotlinToolchains {
         override val projectId: ProjectId,
         val classloadersCache: LruClassLoadersCache,
     ) : KotlinToolchains.BuildSession {
-        private val closeableGuard = CloseableGuard(this)
+        private val closeableGuard = CloseableGuard(this::class)
         private val sessionIsAliveFlagFile = lazy { createSessionIsAliveFlagFile() }
         private val executorDelegate = lazy {
             Executors.newCachedThreadPool()
@@ -102,25 +102,25 @@ internal class KotlinToolchainsImpl : KotlinToolchains {
         ): R {
             closeableGuard.requireNotClosed()
             check(operation is BuildOperationImpl<R>) { "Unknown operation type: ${operation::class.qualifiedName}" }
-            val operationBody: Callable<R> = {
-                val classloadersCacheWithLogger =
-                    classloadersCache.takeIf { operation.enableClassloaderCache }?.withLogger(logger)
-                operation.execute(
-                    projectId,
-                    executionPolicy,
-                    logger,
-                    ExecutionContext(classloadersCacheWithLogger, daemonConnectionRegistry)
-                )
-            }
-            return if (executionPolicy is ExecutionPolicy.InProcess) {
-                // For an operation that uses the shared application environment, pin it just before, so that it is kept
-                // alive for reuse by subsequent operations and only disposed when the session ends.
-                if (operation.usesApplicationEnvironment) {
-                    val _ = applicationEnvironmentPin.value
+            classloadersCache.takeIf { operation.enableClassloaderCache }?.toOperationScoped(logger).use { classloadersCacheWithLogger ->
+                val operationBody: Callable<R> = {
+                    operation.execute(
+                        projectId,
+                        executionPolicy,
+                        logger,
+                        ExecutionContext(classloadersCacheWithLogger, daemonConnectionRegistry)
+                    )
                 }
-                unwrapExecutionException(executor.submit(operationBody))
-            } else {
-                operationBody.call()
+                return if (executionPolicy is ExecutionPolicy.InProcess) {
+                    // For an operation that uses the shared application environment, pin it just before, so that it is kept
+                    // alive for reuse by subsequent operations and only disposed when the session ends.
+                    if (operation.usesApplicationEnvironment) {
+                        val _ = applicationEnvironmentPin.value
+                    }
+                    unwrapExecutionException(executor.submit(operationBody))
+                } else {
+                    operationBody.call()
+                }
             }
         }
 

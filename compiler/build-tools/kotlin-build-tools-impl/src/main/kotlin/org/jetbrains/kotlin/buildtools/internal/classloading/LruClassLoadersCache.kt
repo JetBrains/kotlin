@@ -27,8 +27,10 @@ import java.time.Duration
 internal class LruClassLoadersCache private constructor(
     private val parentClassLoader: ClassLoader = ClassLoader.getSystemClassLoader(),
     private val logger: KotlinLogger? = null,
-    private val cache: Cache<CacheKey, URLClassLoader>,
-    closeableGuard: CloseableGuard? = null
+    private val cache: Cache<CacheKey, ClassLoaderHolder>,
+    private val rootGuard: CloseableGuard? = null,
+    private val closeableGuard: CloseableGuard = CloseableGuard(LruClassLoadersCache::class),
+    private val isRootCache: Boolean,
 ) : ClassLoadersCache, AutoCloseable {
     constructor(
         size: Int,
@@ -39,77 +41,118 @@ internal class LruClassLoadersCache private constructor(
         parentClassLoader,
         logger,
         cache = CacheBuilder.newBuilder().maximumSize(size.toLong()).expireAfterAccess(ttl)
-            .removalListener<CacheKey, URLClassLoader> { [key, cl] ->
+            .removalListener<CacheKey, ClassLoaderHolder> { [key, cl] ->
                 check(key != null && cl != null)
-                logger?.info("Removing classloader from cache: ${key.entries.map { it.path }}")
+                logger?.info("Removing classloader from cache: ${key.entries.map { it.file }}")
                 cl.close() // TODO: KT-91193 this causes problems when the classloader is still in use
-            }.build()
-    )
-
-    private val closeableGuard = closeableGuard ?: CloseableGuard(this)
-
-    fun withLogger(logger: KotlinLogger?): LruClassLoadersCache {
-        closeableGuard.requireNotClosed()
-        return LruClassLoadersCache(parentClassLoader, logger, cache, closeableGuard)
+            }.build(),
+        rootGuard = null,
+        isRootCache = true,
+    ) {
+        require(size > 0) { "Cache size must be greater than 0" }
     }
 
+    private val accessedClassLoaders = mutableSetOf<ClassLoaderHolder>()
+
+    @Synchronized
+    fun toOperationScoped(logger: KotlinLogger?): LruClassLoadersCache {
+        requireNotClosed()
+        return LruClassLoadersCache(
+            parentClassLoader,
+            logger,
+            cache,
+            rootGuard = rootGuard ?: closeableGuard,
+            isRootCache = false,
+        )
+    }
+
+    @Synchronized
     override fun getForClassPath(files: List<File>): URLClassLoader {
-        closeableGuard.requireNotClosed()
+        requireNotClosed()
         return getForClassPathInternal(files, parentClassLoader)
     }
 
-    private fun getForClassPathInternal(files: List<File>, parent: ClassLoader): URLClassLoader {
-        val key = makeKey(files)
-        return cache.get(key) {
-            makeClassLoader(key, parent)
-        }
+    @Suppress("NOTHING_TO_INLINE") // inline to make our AutoCloseablesTest pass
+    private inline fun requireNotClosed() {
+        rootGuard?.requireNotClosed()
+        closeableGuard.requireNotClosed()
     }
 
-    /**
-     * Gets or creates [ClassLoader] from [bottom] + [top] files.
-     * When creating new [ClassLoader] it tries to get [top] from cache first and then create new ClassLoader from [bottom] files,
-     * providing [top] [ClassLoader] as parent.
-     * Useful when you have internal and external artifacts and internal ones can be references from other internal artefacts only.
-     * So you can safely cache [ClassLoader] from external artifacts and use it for internal ones.
-     */
-    fun getForSplitPaths(bottom: List<File>, top: List<File>): ClassLoader {
-        closeableGuard.requireNotClosed()
-        return if (bottom.isEmpty() || top.isEmpty()) {
-            getForClassPath(bottom + top)
-        } else {
-            val key = makeKey(bottom + top)
-            cache.get(key) {
-                val parent = getForClassPath(top)
-                makeClassLoader(makeKey(bottom), parent)
+    @Synchronized
+    private fun getForClassPathInternal(files: List<File>, parent: ClassLoader): URLClassLoader {
+        val key = makeKey(files)
+        while (true) {
+            val holder = cache.get(key) {
+                ClassLoaderHolder(makeClassLoader(key, parent))
+            }
+            val cl = synchronized(holder) {
+                if (accessedClassLoaders.contains(holder)) {
+                    holder.classLoader
+                } else {
+                    val acquired = holder.tryAcquire()
+                    if (acquired != null) {
+                        accessedClassLoaders.add(holder)
+                        acquired
+                    } else {
+                        null
+                    }
+                }
+            }
+            if (cl != null) {
+                return cl
             }
         }
     }
 
+//    /**
+//     * Gets or creates [ClassLoader] from [bottom] + [top] files.
+//     * When creating new [ClassLoader] it tries to get [top] from cache first and then create new ClassLoader from [bottom] files,
+//     * providing [top] [ClassLoader] as parent.
+//     * Useful when you have internal and external artifacts and internal ones can be references from other internal artefacts only.
+//     * So you can safely cache [ClassLoader] from external artifacts and use it for internal ones.
+//     */
+//    fun getForSplitPaths(bottom: List<File>, top: List<File>): ClassLoader {
+//        closeableGuard.requireNotClosed()
+//        return if (bottom.isEmpty() || top.isEmpty()) {
+//            getForClassPath(bottom + top)
+//        } else {
+//            val key = makeKey(bottom + top)
+//            cache.get(key) {
+//                val parent = getForClassPath(top)
+//                makeClassLoader(makeKey(bottom), parent)
+//            }
+//        }
+//    }
+
+    @Synchronized
     override fun close() {
         closeableGuard.close {
-            cache.invalidateAll()
+            if (isRootCache) {
+                cache.invalidateAll()
+            }
+            accessedClassLoaders.forEach { it.release() }
         }
     }
 
     private fun makeClassLoader(key: CacheKey, parent: ClassLoader): URLClassLoader {
-        val cp = key.entries.map { it.path }
-        logger?.info("Creating new classloader for classpath: $cp")
-        return URLClassLoader(cp.toTypedArray(), parent)
+        val urls = key.entries.map { it.file.toURI().toURL() }
+        logger?.info("Creating new classloader for classpath: $urls")
+        return URLClassLoader(urls.toTypedArray(), parent)
     }
 
     private fun makeKey(files: List<File>): CacheKey {
         //probably should walk dirs content for actual last modified
-        val entries = files.map { f -> ClasspathEntry(f.toURI().toURL(), f.lastModified()) }
+        val entries = files.map { f -> ClasspathEntry(f, f.lastModified()) }
         return CacheKey(entries)
     }
 
-    private data class ClasspathEntry(val path: URL, val modificationTimestamp: Long)
+    private data class ClasspathEntry(val file: File, val modificationTimestamp: Long)
 
     private data class CacheKey(val entries: List<ClasspathEntry>)
 
     @OptIn(ExperimentalCompilerApi::class)
     fun asPluginsLoader(): PluginsLoader {
-        closeableGuard.requireNotClosed()
+        requireNotClosed()
         return object : PluginsLoader {
             override fun loadCompilerPluginRegistrars(
                 pluginClasspath: Collection<String>,
@@ -127,6 +170,43 @@ internal class LruClassLoadersCache private constructor(
                 return ServiceLoaderLite.loadImplementations(
                     CommandLineProcessor::class.java, getForClassPath(pluginClasspath.map { File(it) })
                 )
+            }
+        }
+    }
+
+    private class ClassLoaderHolder(val classLoader: URLClassLoader) {
+        private var referenceCount = 0
+        private var closing = false
+        private var closed = false
+
+        @Synchronized
+        fun tryAcquire(): URLClassLoader? {
+            if (closed || closing) return null
+            referenceCount++
+            return classLoader
+        }
+
+        @Synchronized
+        fun release() {
+            referenceCount--
+            check(referenceCount >= 0) { "Reference count cannot be negative" }
+            if (closing) {
+                maybeCloseClassLoader()
+            }
+        }
+
+        @Synchronized
+        fun close() {
+            if (!closed) {
+                closing = true
+                maybeCloseClassLoader()
+            }
+        }
+
+        private fun maybeCloseClassLoader() {
+            if (referenceCount == 0) {
+                classLoader.close()
+                closed = true
             }
         }
     }
