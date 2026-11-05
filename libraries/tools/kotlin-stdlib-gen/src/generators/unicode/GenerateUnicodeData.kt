@@ -44,21 +44,11 @@ fun main(args: Array<String>) {
 
     fun String.isEmptyOrComment(): Boolean = isEmpty() || startsWith("#")
 
-    val specialCasingLines = readLines(specialCasingUrl).filterNot(String::isEmptyOrComment).map { line ->
-        SpecialCasingLine(line.split("; "))
-    }
+    val specialCasingLines = readLines(specialCasingUrl).filterNot(String::isEmptyOrComment).map(SpecialCasingLine::parse)
 
-    val propListLines = readLines(propListUrl).filterNot(String::isEmptyOrComment).map { line ->
-        PropertyLine(line.split("; ").map { it.trim() })
-    }
-
-    val wordBreakPropertyLines = readLines(wordBreakPropertyUrl).filterNot(String::isEmptyOrComment).map { line ->
-        PropertyLine(line.split("; ").map { it.trim() })
-    }
-
-    val derivedCorePropertiesLines = readLines(derivedCorePropertiesUrl).filterNot(String::isEmptyOrComment).map { line ->
-        PropertyLine(line.split("; ").map { it.trim() })
-    }
+    val propListLines = readLines(propListUrl).filterNot(String::isEmptyOrComment).map(PropertyLine::parse)
+    val wordBreakPropertyLines = readLines(wordBreakPropertyUrl).filterNot(String::isEmptyOrComment).map(PropertyLine::parse)
+    val derivedCorePropertiesLines = readLines(derivedCorePropertiesUrl).filterNot(String::isEmptyOrComment).map(PropertyLine::parse)
 
     val categoryRangesGenerators = mutableListOf<RangesGenerator>()
     val otherLowercaseGenerators = mutableListOf<OtherLowercaseRangesGenerator>()
