@@ -11,9 +11,9 @@ dependencies {
     compileOnly(project(":core:descriptors"))
 
     compileOnly(project(":compiler:config.jvm"))
-    compileOnly(project(":core:deserialization"))
+    compileOnly(project(":core:deserialization.common"))
     compileOnly(project(":core:compiler.common.native"))
-    compileOnly(project(":compiler:serialization"))
+    compileOnly(project(":compiler:serialization.common"))
     compileOnly(project(":native:kotlin-native-utils"))
     compileOnly(project(":native:native.config"))
 
