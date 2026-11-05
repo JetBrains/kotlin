@@ -14,9 +14,7 @@ projectTests {
 dependencies {
     api(project(":compiler:ir.tree"))
     api(project(":kotlin-util-klib"))
-    implementation(project(":compiler:serialization"))
     implementation(project(":core:descriptors"))
-    implementation(project(":core:deserialization"))
     implementation(project(":core:deserialization.common"))
     implementation(project(":kotlin-util-klib-metadata"))
     implementation(project(":kotlin-tooling-core"))
