@@ -3,33 +3,33 @@
 In package 'root package' of module '<main>':
  --> typeParameterAsExpression.kt
   |
-5 | T
+5 | T (of 'fun <T> f')
   |
-reason: Type parameter 'T' is not an expression.
+reason: Type parameter 'T (of 'fun <T> f')' is not an expression.
 
 In package 'root package' of module '<main>':
  --> typeParameterAsExpression.kt
   |
-4 | T
+4 | T (of 'class C<T>')
   |
-reason: Type parameter 'T' is not an expression.
+reason: Type parameter 'T (of 'class C<T>')' is not an expression.
 
 /typeParameterAsExpression.kt:12:6: error: Conflicting declarations:
 In package 'root package' of module '<main>':
   --> typeParameterAsExpression.kt
    |
-12 | T
+12 | T (of 'fun <T, T> f')
    | ...
-12 | T
+12 | T (of 'fun <T, T> f')
    |
 
 /typeParameterAsExpression.kt:12:9: error: Conflicting declarations:
 In package 'root package' of module '<main>':
   --> typeParameterAsExpression.kt
    |
-12 | T
+12 | T (of 'fun <T, T> f')
    | ...
-12 | T
+12 | T (of 'fun <T, T> f')
    |
 
 /typeParameterAsExpression.kt:13:5: error: None of the following candidates is applicable for expression 'T':
@@ -37,13 +37,13 @@ In package 'root package' of module '<main>':
 In package 'root package' of module '<main>':
   --> typeParameterAsExpression.kt
    |
-12 | T
+12 | T (of 'fun <T, T> f')
    |
-reason: Type parameter 'T' is not an expression.
+reason: Type parameter 'T (of 'fun <T, T> f')' is not an expression.
 
 In package 'root package' of module '<main>':
   --> typeParameterAsExpression.kt
    |
-12 | T
+12 | T (of 'fun <T, T> f')
    |
-reason: Type parameter 'T' is not an expression.
+reason: Type parameter 'T (of 'fun <T, T> f')' is not an expression.

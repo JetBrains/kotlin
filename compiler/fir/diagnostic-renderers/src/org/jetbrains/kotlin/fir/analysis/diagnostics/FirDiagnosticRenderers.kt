@@ -74,7 +74,7 @@ object FirDiagnosticRenderers {
                 lineBreakAfterContextParameters = false,
                 renderFieldAnnotationSeparately = false,
             ).renderElementAsString(symbol.fir, trim = true)
-            is FirTypeParameterSymbol -> symbol.name.asString()
+            is FirTypeParameterSymbol -> symbol.name.asString() + buildString { renderTypeParameterOrigin(symbol) }
             else -> "???"
         }
     }
