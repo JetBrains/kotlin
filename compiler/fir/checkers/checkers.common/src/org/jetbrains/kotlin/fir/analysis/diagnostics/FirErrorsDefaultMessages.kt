@@ -916,6 +916,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSIGNED_LITERAL_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_ERROR_GET_CLASS_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_ERROR_SUPERTYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_FINAL_RICH_ERROR_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_JVM_INLINE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_ARRAY_OF_NOTHING_IN_CLASS_LITERAL_LHS
@@ -4276,5 +4277,6 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(NON_ERROR_SUPERTYPE, "'NonError' cannot be used as explicit supertype.")
         map.put(NON_ERROR_GET_CLASS_CALL, "Class literal on 'NonError' is not supported.")
         map.put(ACTUAL_TYPEALIAS_TO_NON_ERROR, "'actual typealias' cannot expand to 'NonError'.")
+        map.put(NON_FINAL_RICH_ERROR_CLASS, "Error class must be final.")
     }
 }

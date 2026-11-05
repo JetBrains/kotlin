@@ -5579,6 +5579,12 @@ private fun KaDiagnosticConverterBuilder.addConversions117() {
             token,
         )
     }
+    add(FirErrors.NON_FINAL_RICH_ERROR_CLASS) { firDiagnostic ->
+        NonFinalRichErrorClassImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions118() {

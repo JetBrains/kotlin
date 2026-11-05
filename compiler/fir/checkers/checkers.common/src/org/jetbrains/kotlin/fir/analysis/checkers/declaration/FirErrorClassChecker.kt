@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getModifier
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.declarations.utils.isRichError
 import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
@@ -43,6 +44,10 @@ object FirErrorClassChecker : FirRegularClassChecker(MppCheckerKind.Common) {
 
         for (typeParameterRef in declaration.typeParameters) {
             reporter.reportOn(typeParameterRef.source, FirErrors.ERROR_CLASS_HAS_TYPE_PARAMETER)
+        }
+
+        if (!declaration.isFinal) {
+            reporter.reportOn(declaration.source, FirErrors.NON_FINAL_RICH_ERROR_CLASS)
         }
     }
 }

@@ -10,7 +10,7 @@ error class C {
         <!WRONG_MODIFIER_TARGET!>error<!> set(v) {}
 }
 error object O
-<!WRONG_MODIFIER_TARGET!>error<!> interface I
+<!WRONG_MODIFIER_TARGET!>error<!> interface <!NON_FINAL_RICH_ERROR_CLASS!>I<!>
 <!WRONG_MODIFIER_TARGET!>error<!> annotation class A
 <!ERROR_CLASS_HAS_SUPERTYPE!><!WRONG_MODIFIER_TARGET!>error<!> enum class E<!>
 
