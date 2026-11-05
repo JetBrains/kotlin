@@ -31,3 +31,12 @@ public actual fun <T> MutableList<T>.sortWith(comparator: Comparator<in T>): Uni
         }
     }
 }
+
+/**
+ * Removes all elements of this [MutableIterable] that match the given [predicate].
+ *
+ * @return `true` if any element was removed from this collection, or `false` when no elements were removed and collection was not modified.
+ */
+@IgnorableReturnValue
+public actual fun <T> MutableIterable<T>.removeAll(predicate: (T) -> Boolean): Boolean =
+    filterInPlace(predicate, predicateResultToRemove = true)

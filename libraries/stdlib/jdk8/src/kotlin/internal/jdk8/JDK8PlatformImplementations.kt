@@ -71,6 +71,17 @@ internal open class JDK8PlatformImplementations : JDK7PlatformImplementations() 
             map.putIfAbsent(key, newValue) ?: newValue
         }
 
+    override fun <T> removeIf(
+        collection: MutableCollection<T>,
+        predicate: (T) -> Boolean,
+    ): Boolean =
+        if (sdkIsNullOrAtLeast(24)) {
+            // removeIf is available since Android SDK 24
+            collection.removeIf(predicate)
+        } else {
+            collection.filterInPlace(predicate, predicateResultToRemove = true)
+        }
+
     override fun defaultPlatformRandom(): Random =
         // while ThreadLocalRandom is available since SDK 21 (as documented), it has bugs in the implementation,
         // so we don't use it for the same reasons as why we don't use it in JDK7. ThreadLocalRandom worked on
