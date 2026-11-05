@@ -10,8 +10,10 @@ import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileHandle
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import java.util.*
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
@@ -22,6 +24,17 @@ import kotlin.concurrent.withLock
  * Speeds up finding files/classes in the classpath/Java source roots.
  *
  * The main idea of this class is for each package to store all roots that contain the package to avoid excessive file system traversal.
+ *
+ * ### Locking
+ *
+ * The caches are filled lazily and are not thread-safe. Since they could be used concurrently, e.g. from the Analysis API calls, the
+ * access is guarded by the [lock], including across file-system access.
+ *
+ * Caller code runs under the lock: the callback of [traverseFilesInPackage] and [ClassFileFilter.accepts] in `findClassFiles`.
+ * It must not call back into the index or do slow work. The lock is re-entrant, but operations could extend the caches while
+ * they are being iterated.
+ *
+ * Lock order: the read lock of [JvmDependenciesDynamicCompoundIndex] is taken before the lock of a child index.
  */
 abstract class JvmDependenciesIndexBase(protected val roots: List<JavaRoot>) : JvmDependenciesIndex {
     protected val lock = ReentrantLock()
@@ -58,26 +71,31 @@ abstract class JvmDependenciesIndexBase(protected val roots: List<JavaRoot>) : J
         Array(roots.size) { Object2ObjectOpenHashMap<String, VirtualFile?>() }
     }
 
-    final override fun traverseDirectoriesInPackage(
-        packageFqName: FqName,
-        acceptedRootTypes: Set<JavaRoot.RootType>,
-        continueSearch: (VirtualFile, JavaRoot.RootType) -> Boolean
-    ) {
+    final override fun hasPackage(packageFqName: FqName, acceptedRootTypes: Set<JavaRoot.RootType>): Boolean {
+        var found = false
         lock.withLock {
-            traverseIndex(packageFqName, acceptedRootTypes) { dir, root -> continueSearch(dir, root.type) }
+            traverseIndex(packageFqName, acceptedRootTypes) { _, _ ->
+                found = true
+                false // stop at the first hit
+            }
         }
+        return found
     }
 
-    final override fun traverseVirtualFilesInPackage(
-        packageFqName: FqName,
-        acceptedRootTypes: Set<JavaRoot.RootType>,
-        continueSearch: (VirtualFile, JavaRoot.RootType) -> Boolean
-    ) {
-        traverseFilesInPackage(packageFqName, acceptedRootTypes) { file, root -> continueSearch(file, root.type) }
+    final override fun findBuiltInsFile(packageFqName: FqName): BinaryClassFileHandle? {
+        val fileName = BuiltInSerializerProtocol.getBuiltInsFileName(packageFqName)
+        var result: BinaryClassFileHandle? = null
+        lock.withLock {
+            traverseIndex(packageFqName, JavaRoot.OnlyBinary) { directory, root ->
+                val file = directory.findChild(fileName)?.takeIf { it.isValid }
+                if (file != null) result = VfsClassFileHandle(file, root)
+                file == null
+            }
+        }
+        return result
     }
 
-    /** [traverseVirtualFilesInPackage] handing out the [JavaRoot] of each file instead of only its type. */
-    protected fun traverseFilesInPackage(
+    protected fun traverseVirtualFilesInPackage(
         packageFqName: FqName,
         acceptedRootTypes: Set<JavaRoot.RootType>,
         continueSearch: (VirtualFile, JavaRoot) -> Boolean
@@ -96,18 +114,18 @@ abstract class JvmDependenciesIndexBase(protected val roots: List<JavaRoot>) : J
     abstract override fun findClassFiles(
         classId: ClassId,
         acceptedExtensions: JavaFileExtensions,
-    ): Collection<IndexedClassFile>
+    ): Collection<BinaryClassFileHandle>
 
-    override fun traverseClassVirtualFilesInPackage(
+    override fun traverseFilesInPackage(
         packageFqName: FqName,
         acceptedExtensions: JavaFileExtensions,
-        continueSearch: (VirtualFile) -> Boolean,
+        continueSearch: (BinaryClassFileHandle) -> Boolean,
     ) {
-        traverseVirtualFilesInPackage(packageFqName, acceptedExtensions.rootTypes) { file, _ ->
+        traverseVirtualFilesInPackage(packageFqName, acceptedExtensions.rootTypes) { file, root ->
             val extension = file.extension ?: return@traverseVirtualFilesInPackage true
 
             if (extension in acceptedExtensions) {
-                continueSearch(file)
+                continueSearch(VfsClassFileHandle(file, root))
             } else {
                 true
             }
