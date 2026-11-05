@@ -221,19 +221,13 @@ private class AnnotationResolutionProjectEnvironment(
 private class ClassNamesOnlyJavaClassFinder(private val index: JvmDependenciesIndex) : JavaClassFinder {
     override fun findClass(request: JavaClassFinder.Request): JavaClass? = null
     override fun findClasses(request: JavaClassFinder.Request): List<JavaClass> = emptyList()
-    override fun findPackage(fqName: FqName, mayHaveAnnotations: Boolean): JavaPackage? {
-        var found = false
-        index.traverseDirectoriesInPackage(fqName) { _, _ ->
-            found = true
-            false
-        }
-        return if (found) ClassNamesOnlyJavaPackage(fqName) else null
-    }
+    override fun findPackage(fqName: FqName, mayHaveAnnotations: Boolean): JavaPackage? =
+        if (index.hasPackage(fqName)) ClassNamesOnlyJavaPackage(fqName) else null
 
     override fun canComputeKnownClassNamesInPackage(): Boolean = true
     override fun knownClassNamesInPackage(packageFqName: FqName): Set<String> {
         val result = HashSet<String>()
-        index.traverseClassVirtualFilesInPackage(packageFqName, JavaFileExtensions(JavaFileExtension.CLASS)) { file ->
+        index.traverseFilesInPackage(packageFqName, JavaFileExtensions(JavaFileExtension.CLASS)) { file ->
             result.add(file.nameWithoutExtension)
             true
         }

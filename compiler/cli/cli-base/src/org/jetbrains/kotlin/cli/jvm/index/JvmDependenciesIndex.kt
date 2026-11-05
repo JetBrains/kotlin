@@ -22,6 +22,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.io.URLUtil.JAR_SEPARATOR
 import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
 import org.jetbrains.kotlin.jvm.environment.asJvmClasspathRootId
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileHandle
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.deserialization.METADATA_FILE_EXTENSION
@@ -40,7 +41,7 @@ interface JvmDependenciesIndex {
     val version: Int get() = 0
 
     /**
-     * Returns the files that correspond to a class called [classId] in the index, each together with the [JavaRoot] it was found in.
+     * Returns the file handles that correspond to a class called [classId] in the index.
      *
      * For each package directory in the index, the implementation derives the relative class name from [classId] and looks up files
      * matching each extension in [acceptedExtensions]. Only extensions whose [JavaFileExtension.rootType] matches the root's type are tried
@@ -51,7 +52,7 @@ interface JvmDependenciesIndex {
      * [findClassFiles] may return multiple results for the same [classId]. This is because a [JvmDependenciesIndex] is shared
      * between all modules and thus takes a global view on the project. A project may have two libraries which contain a class with the same
      * name. When we have two independent modules which each depend on one library, there is no classpath issue as the libraries do not
-     * overlap. In such a case, the global index must provide virtual files for both classes.
+     * overlap. In such a case, the global index must provide files for both classes.
      *
      * The [JvmDependenciesIndex] implementation may choose to find only the first result instead of all results if it's operated under a
      * single-module view. This avoids the possible negative performance impact of looking for multiple results.
@@ -61,13 +62,7 @@ interface JvmDependenciesIndex {
     fun findClassFiles(
         classId: ClassId,
         acceptedExtensions: JavaFileExtensions,
-    ): Collection<IndexedClassFile>
-
-    /** The files of [findClassFiles], for callers which do not need the root a file was found in. */
-    fun findClassVirtualFiles(
-        classId: ClassId,
-        acceptedExtensions: JavaFileExtensions,
-    ): Collection<VirtualFile> = findClassFiles(classId, acceptedExtensions).map { it.file }
+    ): Collection<BinaryClassFileHandle>
 
     /**
      * Like [findClassFiles], but only considers results accepted by [filter].
@@ -79,63 +74,30 @@ interface JvmDependenciesIndex {
         classId: ClassId,
         acceptedExtensions: JavaFileExtensions,
         filter: ClassFileFilter,
-    ): Collection<IndexedClassFile> =
-        findClassFiles(classId, acceptedExtensions).filter { filter.accepts(it.root.file, it.file) }
-
-    /** The files of the filtered [findClassFiles], for callers which do not need the root a file was found in. */
-    fun findClassVirtualFiles(
-        classId: ClassId,
-        acceptedExtensions: JavaFileExtensions,
-        filter: ClassFileFilter,
-    ): Collection<VirtualFile> = findClassFiles(classId, acceptedExtensions, filter).map { it.file }
+    ): Collection<BinaryClassFileHandle> =
+        findClassFiles(classId, acceptedExtensions).filter(filter::accepts)
 
     /**
-     * Traverses the index for all *class* [VirtualFile]s contained in directories corresponding to the [packageFqName], and calls
-     * [continueSearch] for each class [VirtualFile].
+     * Traverses the index for all files filtered by [acceptedExtensions] contained in directories corresponding to the [packageFqName].
+     * and calls [continueSearch] for each file. The traversal stops than the [continueSearch] returns false.
      *
-     * Only files that match the [acceptedExtensions] are considered.
-     *
-     * In contrast to [traverseVirtualFilesInPackage], this function may rely on the same caches as [findClassVirtualFiles], and might thus
-     * perform better. This depends on whether the index implementation caches results.
-     *
-     * @param continueSearch This function is called for each class [VirtualFile] found in the index. It should return `true` to continue
-     *  the traversal and `false` to stop it.
+     * [continueSearch] may be called while the index holds its lock (see [JvmDependenciesIndexBase]), so it must not call back into
+     * the index or do slow work.
      */
-    fun traverseClassVirtualFilesInPackage(
+    fun traverseFilesInPackage(
         packageFqName: FqName,
         acceptedExtensions: JavaFileExtensions,
-        continueSearch: (VirtualFile) -> Boolean,
+        continueSearch: (BinaryClassFileHandle) -> Boolean,
     )
 
     /**
-     * Traverses the index for all [VirtualFile] directories corresponding to the [packageFqName], and calls [continueSearch] for each
-     * directory with its [JavaRoot.RootType].
-     *
-     * [acceptedRootTypes] can be used to filter the kind of roots that are considered while traversing the index.
-     *
-     * @param continueSearch This function is called for each [VirtualFile] directory found in the index. It should return `true` to
-     *  continue the traversal and `false` to stop it.
+     * Returns true if a root of one of the [acceptedRootTypes] has a directory corresponding to [packageFqName]. A directory next to a
+     * file of the same name which declares a class, and which holds no such files itself, does not count as a package.
      */
-    fun traverseDirectoriesInPackage(
-        packageFqName: FqName,
-        acceptedRootTypes: Set<JavaRoot.RootType> = JavaRoot.SourceAndBinary,
-        continueSearch: (VirtualFile, JavaRoot.RootType) -> Boolean
-    )
+    fun hasPackage(packageFqName: FqName, acceptedRootTypes: Set<JavaRoot.RootType> = JavaRoot.SourceAndBinary): Boolean
 
-    /**
-     * Traverses the index for all [VirtualFile]s contained in directories corresponding to the [packageFqName], and calls [continueSearch]
-     * for each [VirtualFile] with its [JavaRoot.RootType].
-     *
-     * [acceptedRootTypes] can be used to filter the kind of roots that are considered while traversing the index.
-     *
-     * @param continueSearch This function is called for each [VirtualFile] found in the index. It should return `true` to continue the
-     *  traversal and `false` to stop it.
-     */
-    fun traverseVirtualFilesInPackage(
-        packageFqName: FqName,
-        acceptedRootTypes: Set<JavaRoot.RootType> = JavaRoot.SourceAndBinary,
-        continueSearch: (VirtualFile, JavaRoot.RootType) -> Boolean
-    )
+    /** Finds the first `.kotlin_builtins` file of [packageFqName], if any. */
+    fun findBuiltInsFile(packageFqName: FqName): BinaryClassFileHandle?
 }
 
 /**
@@ -144,20 +106,11 @@ interface JvmDependenciesIndex {
  * Filtering during traversal, rather than on the first found file, ensures that a candidate in a rejected root or file does not hide
  * a later accepted copy of the class.
  *
- * Compiler code restricts lookups by [org.jetbrains.kotlin.jvm.environment.JvmClasspath], which is decided per indexed `root`
- * (see [JvmClasspathRootFilter]) and ignores `file`.
- *
- * The `file` parameter exists for finders created from a `GlobalSearchScope`. Within the compiler such scopes accept whole roots
- * (e.g. `allScope`), so the per-file check is needed mostly for the Analysis API, whose library scopes may accept individual files.
- * KT-91449 tracks removing the scope-based path from the CLI finder, after which this becomes a root-only filter.
+ * [accepts] may be called while the index holds its lock (see [JvmDependenciesIndexBase]), so it must not call back into the index
+ * or do slow work.
  */
 fun interface ClassFileFilter {
-    fun accepts(root: VirtualFile, file: VirtualFile): Boolean
-}
-
-/** A file found by [JvmDependenciesIndex.findClassFiles] together with the root it belongs to. */
-class IndexedClassFile(val file: VirtualFile, val root: JavaRoot) {
-    override fun toString(): String = file.toString()
+    fun accepts(file: BinaryClassFileHandle): Boolean
 }
 
 /**

@@ -61,6 +61,8 @@ fun readBinaryJavaClass(
  * The classes read from binary class files, indexed by the class file they were read from *and* by the
  * [ClassId] inside it: a class file declares its top-level class together with every class nested in it,
  * and the same [ClassId] may be declared by several classpath roots.
+ *
+ * Valid only as long as the index which produced the class file handles: it does not check the files for changes.
  */
 class BinaryJavaClasses {
     private val classesByFile: MutableMap<BinaryClassFileHandle, MutableMap<ClassId, JavaClass?>> = Object2ObjectOpenHashMap()

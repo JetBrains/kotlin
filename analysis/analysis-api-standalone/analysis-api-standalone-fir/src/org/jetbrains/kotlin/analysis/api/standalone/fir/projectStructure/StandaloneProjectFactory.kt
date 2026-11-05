@@ -262,7 +262,7 @@ object StandaloneProjectFactory {
         /**
          * We set `shouldOnlyFindFirstClass` to `false` for the following reason: In Standalone, we have a global view on the project, and
          * thus the index may contain multiple relevant classes with the same name which later (after the index access) need to be filtered
-         * with a scope. See [org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndex.findClassVirtualFiles] for a more detailed explanation.
+         * with a scope. See [org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndex.findClassFiles] for a more detailed explanation.
          */
         val rootsIndex = JvmDependenciesDynamicCompoundIndex(shouldOnlyFindFirstClass = false).apply {
             addIndex(KotlinStandaloneJvmDependenciesIndex(roots))

@@ -41,7 +41,8 @@ interface BinaryClassFileIndex {
 /**
  * One class file of a [BinaryClassFileIndex], and the key of everything read from it.
  *
- * Implementations must provide [equals] and [hashCode] identifying the file together with its content *version*.
+ * Implementations must provide [equals] and [hashCode] identifying the classpath entry: the file together with its root.
+ * The content of the entry is considered stable while the index which produced the handle is alive.
  */
 interface BinaryClassFileHandle {
     val nameWithoutExtension: String
