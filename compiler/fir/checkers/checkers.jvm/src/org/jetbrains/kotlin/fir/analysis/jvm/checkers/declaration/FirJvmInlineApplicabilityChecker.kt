@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.name.JvmStandardClassIds
+import org.jetbrains.kotlin.name.StandardClassIds
 
 object FirJvmInlineApplicabilityChecker : FirRegularClassChecker(MppCheckerKind.Common) {
     override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
@@ -33,7 +33,7 @@ object FirJvmInlineApplicabilityChecker : FirRegularClassChecker(MppCheckerKind.
     override fun check(declaration: FirRegularClass) {
         if (declaration.source?.kind !is KtRealSourceElementKind) return
 
-        val annotation = declaration.getAnnotationByClassId(JvmStandardClassIds.Annotations.JvmInline, context.session)
+        val annotation = declaration.getAnnotationByClassId(StandardClassIds.Annotations.JvmInline, context.session)
 
         val valueModifier = declaration.getModifier(KtTokens.VALUE_KEYWORD)
         val hasInlineModifier = declaration.hasModifier(KtTokens.INLINE_KEYWORD)

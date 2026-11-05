@@ -23,8 +23,8 @@ import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.ClassIdBasedLocality
-import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.psi.KtSuperTypeEntry
 import org.jetbrains.kotlin.psi.KtSuperTypeList
@@ -254,7 +254,7 @@ private class ClassClsStubBuilder(
     }
 
     private fun hasJvmInlineAnnotation(): Boolean = classProto.annotationList.any { annotationProto ->
-        c.nameResolver.getClassId(annotationProto.id) == JvmStandardClassIds.Annotations.JvmInline
+        c.nameResolver.getClassId(annotationProto.id) == StandardClassIds.Annotations.JvmInline
     }
 
     private fun createValueClassUnderlyingTypeBean(typeProto: ProtoBuf.Type): KotlinRigidTypeBean? =
