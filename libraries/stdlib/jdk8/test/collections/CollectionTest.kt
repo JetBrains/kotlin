@@ -66,6 +66,31 @@ class CollectionTest {
         }
     }
 
+    private class RemoveIfRecordingList(elements: List<String>) : AbstractMutableList<String>() {
+        private val backingList = elements.toMutableList()
+
+        var removeIfInvocationCount = 0
+            private set
+
+        override val size: Int
+            get() = backingList.size
+
+        override fun get(index: Int): String = backingList[index]
+
+        override fun set(index: Int, element: String): String = backingList.set(index, element)
+
+        override fun add(index: Int, element: String) {
+            backingList.add(index, element)
+        }
+
+        override fun removeAt(index: Int): String = backingList.removeAt(index)
+
+        override fun removeIf(filter: Predicate<in String>): Boolean {
+            removeIfInvocationCount++
+            return backingList.removeIf(filter)
+        }
+    }
+
     @Test fun removeAllDelegatesToCollectionRemoveIf() {
         val collection = RemoveIfRecordingCollection(listOf("foo", "bar", "bar"))
         val iterable: MutableIterable<String> = collection
@@ -98,5 +123,18 @@ class CollectionTest {
             assertFalse(predicate.test("foo"))
             assertTrue(predicate.test("whatever"))
         }
+    }
+
+    @Test fun removeAllFromMutableListDelegatesToCollectionRemoveIf() {
+        val list = RemoveIfRecordingList(listOf("foo", "bar", "bar"))
+        val mutableList: MutableList<String> = list
+
+        assertTrue(mutableList.removeAll { it == "bar" })
+        assertEquals(1, list.removeIfInvocationCount)
+        assertEquals(listOf("foo"), list)
+
+        assertFalse(mutableList.removeAll { it == "bar" })
+        assertEquals(2, list.removeIfInvocationCount)
+        assertEquals(listOf("foo"), list)
     }
 }

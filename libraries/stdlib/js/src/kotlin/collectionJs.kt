@@ -266,3 +266,12 @@ public actual fun <T> MutableIterable<T>.removeAll(predicate: (T) -> Boolean): B
 @IgnorableReturnValue
 public actual fun <T> MutableIterable<T>.retainAll(predicate: (T) -> Boolean): Boolean =
     filterInPlace(predicate, predicateResultToRemove = false)
+
+/**
+ * Removes all elements of this [MutableList] that match the given [predicate].
+ *
+ * @return `true` if any element was removed from this collection, or `false` when no elements were removed and collection was not modified.
+ */
+@IgnorableReturnValue
+public actual fun <T> MutableList<T>.removeAll(predicate: (T) -> Boolean): Boolean =
+    filterInPlace(predicate, predicateResultToRemove = true)
