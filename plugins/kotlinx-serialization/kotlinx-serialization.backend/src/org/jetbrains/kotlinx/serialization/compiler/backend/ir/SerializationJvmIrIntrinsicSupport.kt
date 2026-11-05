@@ -236,30 +236,24 @@ class SerializationJvmIrIntrinsicSupport(
      *
      * Operation detection in new compilers performed by voidMagicApiCall.
      */
-    private fun InstructionAdapter.putReifyMarkerIfNeeded(type: IrType, intrinsicType: IntrinsicType): Boolean =
-        with(typeSystemContext) {
-            val typeDescriptor = type.typeConstructor().getTypeParameterClassifier()
-            if (typeDescriptor != null) { // need further reification
-                ReifiedTypeInliner.putReifiedOperationMarkerIfNeeded(
-                    typeDescriptor,
-                    type.isMarkedNullable(),
-                    ReifiedTypeInliner.OperationKind.TYPE_OF,
-                    this@putReifyMarkerIfNeeded,
-                    typeSystemContext
-                )
-                aconst(null)
-                aconst(intrinsicType.magicMarkerString())
-                invokestatic(pluginIntrinsicsMarkerOwner, pluginIntrinsicsMarkerMethod, pluginIntrinsicsMarkerSignature, false)
-                if (intrinsicType is IntrinsicType.WithModule) {
-                    // Force emit load instruction so we can retrieve var index later
-                    load(intrinsicType.storedIndex, serializersModuleType)
-                    swap()
-                }
-                invokestatic(serializersKtInternalName, callMethodName, intrinsicType.methodDescriptor, false)
-                return true
+    private fun InstructionAdapter.putReifyMarkerIfNeeded(type: IrType, intrinsicType: IntrinsicType): Boolean {
+        val typeParameter = (type.classifierOrNull as? IrTypeParameterSymbol)?.owner
+        if (typeParameter != null) { // need further reification
+            val isNullable = with(typeSystemContext) { type.isMarkedNullable() }
+            ReifiedTypeInliner.putReifiedOperationMarkerIfNeeded(typeParameter, isNullable, ReifiedTypeInliner.OperationKind.TYPE_OF, this)
+            aconst(null)
+            aconst(intrinsicType.magicMarkerString())
+            invokestatic(pluginIntrinsicsMarkerOwner, pluginIntrinsicsMarkerMethod, pluginIntrinsicsMarkerSignature, false)
+            if (intrinsicType is IntrinsicType.WithModule) {
+                // Force emit load instruction so we can retrieve var index later
+                load(intrinsicType.storedIndex, serializersModuleType)
+                swap()
             }
-            return false
+            invokestatic(serializersKtInternalName, callMethodName, intrinsicType.methodDescriptor, false)
+            return true
         }
+        return false
+    }
 
     private val iaeName = "java/lang/IllegalArgumentException"
 
