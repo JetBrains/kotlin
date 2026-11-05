@@ -44,6 +44,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.toEffectiveVisibility
 import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.fir.types.constructType
@@ -55,6 +57,7 @@ import org.jetbrains.kotlin.lombok.generators.kotlin.buildJvmStaticAnnotationCal
 import org.jetbrains.kotlin.lombok.LombokNames
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.types.ConstantValueKind
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class LoggerGeneratorKey(val logAnnotation: FirAnnotation) : LombokDeclarationKey()
@@ -365,6 +368,12 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
                 } ?: buildErrorNamedReference {
                     name = JAVA_PROPERTY_NAME
                     diagnostic = ConeUnresolvedReferenceError(JAVA_PROPERTY_NAME)
+                }
+                typeArguments += buildTypeProjectionWithVariance {
+                    variance = Variance.INVARIANT
+                    typeRef = buildResolvedTypeRef {
+                        coneType = targetClassType
+                    }
                 }
                 coneTypeOrNull = javaClassType
             }
