@@ -237,7 +237,7 @@ context(relationProvider: KaFirSymbolRelationProvider)
 internal fun computeContainingModule(symbol: KaSymbol): KaModule = when (symbol) {
     is KaFirSymbol<*> -> symbol.firSymbol.getContainingKtModule(resolutionFacade)
     is KaPackageSymbol -> analysisSession.useSiteModule
-    else -> errorWithAttachment("Unsupported symbol type: ${relationProvider::class.simpleName}") {
+    else -> errorWithAttachment("Unsupported symbol type: ${symbol::class.simpleName}") {
         withSymbolAttachment("symbol", analysisSession, symbol)
     }
 }
