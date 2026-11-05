@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.LoadedKlibs
 import org.jetbrains.kotlin.backend.common.eliminateLibrariesWithDuplicatedUniqueNames
 import org.jetbrains.kotlin.backend.common.selectLibrariesByPaths
 import org.jetbrains.kotlin.backend.common.reportLoadingProblemsIfAny
+import org.jetbrains.kotlin.backend.common.warnAboutSoftDeprecatedAbiVersions
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.ir.backend.js.checkers.JsLibrarySpecialCompatibilityChecker
 import org.jetbrains.kotlin.ir.backend.js.checkers.WasmLibrarySpecialCompatibilityChecker
@@ -41,6 +42,7 @@ fun loadWebKlibs(
         .apply { reportLoadingProblemsIfAny(configuration) }
         // TODO (KT-76785): Handling of duplicated names is a workaround that needs to be removed in the future.
         .eliminateLibrariesWithDuplicatedUniqueNames(configuration)
+        .warnAboutSoftDeprecatedAbiVersions(configuration)
 
     return LoadedKlibs(
         all = result.librariesStdlibFirst,
