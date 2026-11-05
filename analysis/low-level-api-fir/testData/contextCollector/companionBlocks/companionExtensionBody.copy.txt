@@ -1,0 +1,38 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirNameAwareOnlyCallablesScope
+            Properties:
+                FirRegularPropertySymbol public final static val companionProperty: R|kotlin/Int|
+                    public static get(): R|kotlin/Int|
+        Static scope owner symbol: FirRegularClassSymbol public final class Owner : R|kotlin/Any|
+    Element 8
+        Scope: FirLocalScope
+Expression Stability: STABLE_VALUE
+
+FILE: [ResolvedTo(IMPORTS)] companionExtensionBody.kt
+    public final? [ResolvedTo(RAW_FIR)] class Owner : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] constructor(): R|Owner| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? static [ResolvedTo(RAW_FIR)] val companionProperty: Int = LAZY_EXPRESSION
+            public? static [ResolvedTo(RAW_FIR)] get(): Int
+
+    }
+    public final static [ResolvedTo(BODY_RESOLVE)] fun [ResolvedTo(BODY_RESOLVE)] R|Owner|.foo(): R|kotlin/Int| {
+        ^foo Q|Owner|.R|/Owner.companionProperty|
+    }

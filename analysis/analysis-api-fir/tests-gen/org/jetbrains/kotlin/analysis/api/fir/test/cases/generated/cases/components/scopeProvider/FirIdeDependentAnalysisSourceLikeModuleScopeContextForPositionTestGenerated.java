@@ -87,6 +87,12 @@ public class FirIdeDependentAnalysisSourceLikeModuleScopeContextForPositionTestG
   }
 
   @Test
+  @TestMetadata("companionBlockFunction.kt")
+  public void testCompanionBlockFunction() {
+    run("companionBlockFunction.kt");
+  }
+
+  @Test
   @TestMetadata("contextReceiver.kt")
   public void testContextReceiver() {
     run("contextReceiver.kt");

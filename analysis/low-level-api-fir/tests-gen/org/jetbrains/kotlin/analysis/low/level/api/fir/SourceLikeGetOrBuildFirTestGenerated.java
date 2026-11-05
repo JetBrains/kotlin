@@ -1585,6 +1585,50 @@ public class SourceLikeGetOrBuildFirTestGenerated extends AbstractSourceLikeGetO
   }
 
   @Nested
+  @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFir/companionBlocks")
+  @TestDataPath("$PROJECT_ROOT")
+  public class CompanionBlocks {
+    private void run(String fileName) {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/companionBlocks/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInCompanionBlocks() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/getOrBuildFir/companionBlocks"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("companionBlock.kt")
+    public void testCompanionBlock() {
+      run("companionBlock.kt");
+    }
+
+    @Test
+    @TestMetadata("companionBlockFunction.kt")
+    public void testCompanionBlockFunction() {
+      run("companionBlockFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("companionBlockFunctionCall.kt")
+    public void testCompanionBlockFunctionCall() {
+      run("companionBlockFunctionCall.kt");
+    }
+
+    @Test
+    @TestMetadata("companionExtensionCall.kt")
+    public void testCompanionExtensionCall() {
+      run("companionExtensionCall.kt");
+    }
+
+    @Test
+    @TestMetadata("qualifiedCompanionBlockCall.kt")
+    public void testQualifiedCompanionBlockCall() {
+      run("qualifiedCompanionBlockCall.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFir/declarations")
   @TestDataPath("$PROJECT_ROOT")
   public class Declarations {

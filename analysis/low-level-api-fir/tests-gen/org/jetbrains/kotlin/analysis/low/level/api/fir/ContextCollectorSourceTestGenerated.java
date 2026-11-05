@@ -895,6 +895,62 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
   }
 
   @Nested
+  @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/companionBlocks")
+  @TestDataPath("$PROJECT_ROOT")
+  public class CompanionBlocks {
+    private void run(String fileName) {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/companionBlocks/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInCompanionBlocks() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/contextCollector/companionBlocks"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("companionBlockFunctionWithContract.kt")
+    public void testCompanionBlockFunctionWithContract() {
+      run("companionBlockFunctionWithContract.kt");
+    }
+
+    @Test
+    @TestMetadata("companionExtensionBody.kt")
+    public void testCompanionExtensionBody() {
+      run("companionExtensionBody.kt");
+    }
+
+    @Test
+    @TestMetadata("enumEntryCompanionBlock.kt")
+    public void testEnumEntryCompanionBlock() {
+      run("enumEntryCompanionBlock.kt");
+    }
+
+    @Test
+    @TestMetadata("functionBody.kt")
+    public void testFunctionBody() {
+      run("functionBody.kt");
+    }
+
+    @Test
+    @TestMetadata("memberAnnotationArgument.kt")
+    public void testMemberAnnotationArgument() {
+      run("memberAnnotationArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyGetter.kt")
+    public void testPropertyGetter() {
+      run("propertyGetter.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyInitializer.kt")
+    public void testPropertyInitializer() {
+      run("propertyInitializer.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/contextParameters")
   @TestDataPath("$PROJECT_ROOT")
   public class ContextParameters {

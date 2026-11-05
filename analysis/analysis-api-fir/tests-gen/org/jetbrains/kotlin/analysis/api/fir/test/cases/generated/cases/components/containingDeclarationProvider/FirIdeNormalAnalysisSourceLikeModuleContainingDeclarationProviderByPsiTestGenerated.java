@@ -68,6 +68,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleContainingDeclarationProviderBy
   }
 
   @Test
+  @TestMetadata("companionBlocks.kt")
+  public void testCompanionBlocks() {
+    run("companionBlocks.kt");
+  }
+
+  @Test
   @TestMetadata("danglingAnnotationOnMemberAnonymousFunction.kt")
   public void testDanglingAnnotationOnMemberAnonymousFunction() {
     run("danglingAnnotationOnMemberAnonymousFunction.kt");

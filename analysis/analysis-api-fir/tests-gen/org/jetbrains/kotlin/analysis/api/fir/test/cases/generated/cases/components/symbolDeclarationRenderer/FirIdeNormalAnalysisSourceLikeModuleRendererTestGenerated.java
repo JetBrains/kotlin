@@ -108,6 +108,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleRendererTestGenerated extends A
     }
 
     @Test
+    @TestMetadata("companionBlocks.kt")
+    public void testCompanionBlocks() {
+      run("companionBlocks.kt");
+    }
+
+    @Test
     @TestMetadata("constructorVisibility.kt")
     public void testConstructorVisibility() {
       run("constructorVisibility.kt");

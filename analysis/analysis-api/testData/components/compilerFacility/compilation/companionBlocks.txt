@@ -1,0 +1,14 @@
+public final class MainKt {
+    // source: 'main.kt'
+    public final static method ext(): int
+    public final static method test(): int
+}
+
+public final class Owner {
+    // source: 'main.kt'
+    private final static field prop: int
+    static method <clinit>(): void
+    public method <init>(): void
+    public final static method foo(): int
+    public final static method getProp(): int
+}

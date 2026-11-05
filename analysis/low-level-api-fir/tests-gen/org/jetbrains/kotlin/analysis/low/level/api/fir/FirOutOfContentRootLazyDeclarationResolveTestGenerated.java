@@ -1648,6 +1648,12 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("staticFunctionWithContract.kt")
+    public void testStaticFunctionWithContract() {
+      run("staticFunctionWithContract.kt");
+    }
+
+    @Test
     @TestMetadata("staticProperty.kt")
     public void testStaticProperty() {
       run("staticProperty.kt");
