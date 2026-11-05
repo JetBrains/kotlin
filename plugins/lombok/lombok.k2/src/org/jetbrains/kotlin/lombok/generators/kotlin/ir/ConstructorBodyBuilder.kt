@@ -18,11 +18,16 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.createBlockBody
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
-import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.getClass
+import org.jetbrains.kotlin.ir.types.makeNullable
+import org.jetbrains.kotlin.ir.types.starProjectedType
+import org.jetbrains.kotlin.ir.types.typeOrFail
+import org.jetbrains.kotlin.ir.util.allTypeParameters
 import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.lombok.generators.ConstructorGeneratorKey
@@ -85,19 +90,32 @@ object ConstructorBodyBuilder : IrBodyBuilder<ConstructorGeneratorKey>() {
     fun buildConstructorBody(context: IrPluginContext, constructor: IrConstructor) {
         val ownerClass = constructor.parent as? IrClass ?: return
 
-        val superClass = ownerClass.superTypes.mapNotNull(IrType::getClass).singleOrNull { it.kind == ClassKind.CLASS }
-            ?: context.irBuiltIns.anyClass.owner
+        val superType = ownerClass.superTypes.singleOrNull { it.getClass()?.kind == ClassKind.CLASS }
+        val superClass = superType?.getClass() ?: context.irBuiltIns.anyClass.owner
 
         val superConstructor = superClass.constructors.firstOrNull(IrConstructor::takesNoArguments)
             ?: error("No no-args superclass constructor for ${ownerClass.render()}")
+
+        // The class's type arguments come from the supertype (`Base<String>` gives `<String>`);
+        // a generic Java constructor's own type parameters like U in `public <U> constructor(...)`
+        // can't be inferred from no arguments, so they get their erased upper bound, as javac infers them
+        // (`Number?` for `<U extends Number>`, `Any?` for an unbounded one).
+        val superTypeArguments = (superType as? IrSimpleType)?.arguments.orEmpty()
+            .take(superClass.typeParameters.size)
+            .map { it.typeOrFail }
+        val constructorTypeArguments = superConstructor.typeParameters.map {
+            it.erasedUpperBound.symbol.starProjectedType.makeNullable()
+        }
 
         constructor.body = context.irFactory.createBlockBody(
             constructor.startOffset, constructor.endOffset,
             listOf(
                 IrDelegatingConstructorCallImpl(
                     constructor.startOffset, constructor.endOffset, context.irBuiltIns.unitType,
-                    superConstructor.symbol, typeArgumentsCount = 0,
-                )
+                    superConstructor.symbol, typeArgumentsCount = superConstructor.allTypeParameters.size,
+                ).apply {
+                    (superTypeArguments + constructorTypeArguments).forEachIndexed { index, type -> typeArguments[index] = type }
+                }
             )
         )
     }
