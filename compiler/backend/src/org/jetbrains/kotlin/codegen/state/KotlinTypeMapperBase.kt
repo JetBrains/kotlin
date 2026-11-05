@@ -7,12 +7,12 @@ package org.jetbrains.kotlin.codegen.state
 
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
-import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.org.objectweb.asm.Type
 
 abstract class KotlinTypeMapperBase {
-    abstract val typeSystem: TypeSystemCommonBackendContext
+    abstract val typeSystem: IrTypeSystemContext
 
     abstract fun mapType(
         type: IrType,
