@@ -6,19 +6,18 @@
 package kotlinx.metadata.klib
 
 import kotlinx.metadata.klib.impl.*
-import kotlinx.metadata.klib.impl.KlibMetadataVersionWriteExtension
-import org.jetbrains.kotlin.library.components.KlibMetadataComponent
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
-import kotlin.metadata.internal.common.KmModuleFragment
-import kotlin.metadata.internal.*
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import org.jetbrains.kotlin.library.metadata.parsePackageFragment
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
-import org.jetbrains.kotlin.serialization.ApproximatingStringTable
+import org.jetbrains.kotlin.serialization.SerializableStringTable
 import kotlin.metadata.KmAnnotation
 import kotlin.metadata.KmType
+import kotlin.metadata.internal.WriteContext
+import kotlin.metadata.internal.common.KmModuleFragment
+import kotlin.metadata.internal.toKmModuleFragment
 
 /**
  * The strategy that allows customizing the already read Km* entities.
@@ -210,8 +209,8 @@ class KlibModuleMetadata(
 
         val groupedProtos = groupedFragments.mapValues { [_, fragments] ->
             fragments.map { mf ->
-                val c = WriteContext(ApproximatingStringTable(), writeExtensions)
-                KlibModuleFragmentWriter(c.strings as ApproximatingStringTable, c.contextExtensions).also { it.writeModuleFragment(mf) }.write()
+                val c = WriteContext(SerializableStringTable(), writeExtensions)
+                KlibModuleFragmentWriter(c.strings as SerializableStringTable, c.contextExtensions).also { it.writeModuleFragment(mf) }.write()
             }
         }
 

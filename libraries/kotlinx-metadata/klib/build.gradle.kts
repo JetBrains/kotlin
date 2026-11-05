@@ -30,12 +30,12 @@ dependencies {
     embedded(project(":core:names"))
     embedded(project(":core:deserialization.common"))
     embedded(project(":compiler:serialization.common"))
-    embedded(project(":compiler:serialization"))
     embedded(project(":kotlin-util-klib-metadata"))
     embedded(project(":kotlin-util-klib"))
     embedded(project(":kotlin-util-io"))
     embedded(protobufLite())
     testImplementation(kotlinTest("junit5"))
+    testImplementation(project(":compiler:util"))
 }
 
 if (deployVersion != null) {
