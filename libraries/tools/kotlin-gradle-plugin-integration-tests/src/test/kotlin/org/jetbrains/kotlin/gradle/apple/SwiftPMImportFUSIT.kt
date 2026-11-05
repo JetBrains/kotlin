@@ -58,7 +58,6 @@ class SwiftPMImportFUSIT : KGPBaseTest() {
                 emptyList(),
                 collectFusEvents(
                     ":help",
-                    buildAction = BuildActions.build
                 ).filter { event ->
                     listOf(booleanFusEventName, numericFusEventName).any { eventName -> event.startsWith(eventName) }
                 },
@@ -76,7 +75,6 @@ class SwiftPMImportFUSIT : KGPBaseTest() {
                 setOf("${booleanFusEventName}=true", "${numericFusEventName}=1"),
                 collectFusEvents(
                     ":help",
-                    buildAction = BuildActions.build
                 ).filter { event ->
                     listOf(booleanFusEventName, numericFusEventName).any { eventName -> event.startsWith(eventName) }
                 }.toSet(),
@@ -104,7 +102,6 @@ class SwiftPMImportFUSIT : KGPBaseTest() {
                 setOf("${booleanFusEventName}=true", "${numericFusEventName}=2"),
                 collectFusEvents(
                     ":help",
-                    buildAction = BuildActions.build
                 ).filter { event ->
                     listOf(booleanFusEventName, numericFusEventName).any { eventName -> event.startsWith(eventName) }
                 }.toSet(),
@@ -156,7 +153,6 @@ class SwiftPMImportFUSIT : KGPBaseTest() {
                 listOf("${booleanFusEventName}=false"),
                 collectFusEvents(
                     ":generateSyntheticLinkageSwiftPMImportProjectForCinteropsAndLdDump",
-                    buildAction = BuildActions.build
                 ).filter { event ->
                     listOf(booleanFusEventName).any { eventName -> event.startsWith(eventName) }
                 },
@@ -195,7 +191,6 @@ class SwiftPMImportFUSIT : KGPBaseTest() {
                 listOf("${booleanFusEventName}=true"),
                 collectFusEvents(
                     ":generateSyntheticLinkageSwiftPMImportProjectForCinteropsAndLdDump",
-                    buildAction = BuildActions.build
                 ).filter { event ->
                     listOf(booleanFusEventName).any { eventName -> event.startsWith(eventName) }
                 },
@@ -223,7 +218,6 @@ class SwiftPMImportFUSIT : KGPBaseTest() {
                 emptyList(),
                 collectFusEvents(
                     ":help",
-                    buildAction = BuildActions.build
                 ).filter { event ->
                     listOf(booleanFusEventName, numericFusEventName).any { eventName -> event.startsWith(eventName) }
                 },
@@ -239,7 +233,6 @@ class SwiftPMImportFUSIT : KGPBaseTest() {
                 setOf("${booleanFusEventName}=true", "${numericFusEventName}=1"),
                 collectFusEvents(
                     ":help",
-                    buildAction = BuildActions.build
                 ).filter { event ->
                     listOf(booleanFusEventName, numericFusEventName).any { eventName -> event.startsWith(eventName) }
                 }.toSet(),
@@ -265,7 +258,6 @@ class SwiftPMImportFUSIT : KGPBaseTest() {
                 setOf("${booleanFusEventName}=true", "${numericFusEventName}=2"),
                 collectFusEvents(
                     ":help",
-                    buildAction = BuildActions.build
                 ).filter { event ->
                     listOf(booleanFusEventName, numericFusEventName).any { eventName -> event.startsWith(eventName) }
                 }.toSet(),

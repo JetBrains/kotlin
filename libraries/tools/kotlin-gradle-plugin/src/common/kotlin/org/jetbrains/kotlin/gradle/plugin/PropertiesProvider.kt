@@ -10,7 +10,6 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.Project
 import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
-import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.compilerRunner.KotlinCompilerArgumentsLogLevel
 import org.jetbrains.kotlin.gradle.ExperimentalNodeJsToolchainDsl
 import org.jetbrains.kotlin.gradle.dsl.jvm.JvmTargetValidationMode
@@ -463,10 +462,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = booleanProperty(PropertyNames.KOTLIN_OPTIONS_SUPPRESS_FREEARGS_MODIFICATION_WARNING) ?: false
 
     val jvmTargetValidationMode: JvmTargetValidationMode
-        get() = enumProperty(
-            "kotlin.jvm.target.validation.mode",
-            if (GradleVersion.current().baseVersion >= GradleVersion.version("8.0")) JvmTargetValidationMode.ERROR else JvmTargetValidationMode.WARNING
-        )
+        get() = enumProperty("kotlin.jvm.target.validation.mode", JvmTargetValidationMode.ERROR)
 
     val kotlinDaemonJvmArgs: String?
         get() = property("kotlin.daemon.jvmargs").orNull

@@ -33,7 +33,6 @@ import org.gradle.tooling.events.task.TaskExecutionResult
 import org.gradle.tooling.events.task.TaskFailureResult
 import org.gradle.tooling.events.task.TaskFinishEvent
 import org.gradle.tooling.events.task.TaskSkippedResult
-import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.statistics.BuildStartParameters
 import org.jetbrains.kotlin.build.report.statistics.HttpReportParameters
@@ -292,15 +291,10 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
         private fun subscribeForTaskEvents(project: Project, buildMetricServiceProvider: Provider<BuildMetricsService>) {
             val buildScanAdapter = initBuildScanAdapter(project, buildMetricServiceProvider)
             if (buildScanAdapter != null) {
-                subscribeForTaskEventsForBuildScan(project, buildMetricServiceProvider, buildScanAdapter)
+                StatisticsBuildFlowManager.getInstance(project).subscribeForBuildScan(buildScanAdapter)
             }
 
-            val gradle80withBuildScanReport =
-                GradleVersion.current().baseVersion == GradleVersion.version("8.0") && buildScanAdapter != null
-
-            if (!gradle80withBuildScanReport) {
-                BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(buildMetricServiceProvider)
-            }
+            BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(buildMetricServiceProvider)
         }
 
         private fun initBuildScanAdapter(
@@ -333,39 +327,6 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
             }
 
             return buildScan
-        }
-
-        private fun subscribeForTaskEventsForBuildScan(
-            project: Project,
-            buildMetricServiceProvider: Provider<BuildMetricsService>,
-            buildScanAdapter: BuildScanAdapter,
-        ) {
-            when {
-                GradleVersion.current().baseVersion < GradleVersion.version("8.0") -> {
-                    buildScanAdapter.buildFinished {
-                        buildMetricServiceProvider.map { it.addBuildScanReport(buildScanAdapter) }.get()
-                    }
-                }
-                GradleVersion.current().baseVersion < GradleVersion.version("8.1") -> {
-                    val buildMetricService = buildMetricServiceProvider.get()
-                    buildMetricService.buildReportService.initBuildScanTags(buildScanAdapter, buildMetricService.parameters.label.orNull)
-                    BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(project.provider {
-                        OperationCompletionListener { event ->
-                            if (event is TaskFinishEvent) {
-                                val buildOperation = buildMetricService.updateBuildOperationRecord(event)
-                                val buildParameters = buildMetricService.parameters.toBuildReportParameters()
-                                val buildReportService = buildMetricServiceProvider.map { it.buildReportService }.get()
-                                buildReportService.addBuildScanReport(event, buildOperation, buildParameters, buildScanAdapter)
-                                buildReportService.onFinish(event, buildOperation, buildParameters)
-                            }
-                        }
-
-                    })
-                }
-                else -> {
-                    StatisticsBuildFlowManager.getInstance(project).subscribeForBuildScan(buildScanAdapter)
-                }
-            }
         }
 
         fun registerIfAbsent(project: Project, buildOperationListenerManager: BuildOperationListenerManager) =

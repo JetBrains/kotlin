@@ -1733,30 +1733,22 @@ internal object KotlinToolingDiagnostics {
 
         operator fun invoke(
             pluginId: String,
-        ): ToolingDiagnostic {
-            val severity = if (GradleVersion.current() >= GradleVersion.version("8.7")) ERROR else WARNING
-            return when (pluginId) {
-                "application" -> buildDiagnosticForApplicationPlugin(severity)
-                "java-library" -> buildDiagnosticForJavaPlugin(
-                    severity = severity,
-                    pluginId = pluginId,
-                    pluginString = "'$pluginId' (also applies 'java' plugin)",
-                )
-                else -> buildDiagnosticForJavaPlugin(
-                    severity = severity,
-                    pluginId = pluginId,
-                    pluginString = "'$pluginId'",
-                )
-            }
+        ): ToolingDiagnostic = when (pluginId) {
+            "application" -> buildDiagnosticForApplicationPlugin()
+            "java-library" -> buildDiagnosticForJavaPlugin(
+                pluginId = pluginId,
+                pluginString = "'$pluginId' (also applies 'java' plugin)",
+            )
+            else -> buildDiagnosticForJavaPlugin(
+                pluginId = pluginId,
+                pluginString = "'$pluginId'",
+            )
         }
 
         private fun buildDiagnosticForJavaPlugin(
-            severity: KotlinToolingDiagnosticsSeverity,
             pluginId: String,
             pluginString: String,
-        ) = build(
-            severity = severity
-        ) {
+        ) = build {
             title(diagnosticTitle(pluginId))
                 .description(diagnosticDescription(pluginString))
                 .solution {
@@ -1764,9 +1756,7 @@ internal object KotlinToolingDiagnostics {
                 }
         }
 
-        private fun buildDiagnosticForApplicationPlugin(
-            severity: KotlinToolingDiagnosticsSeverity,
-        ) = build(severity = severity) {
+        private fun buildDiagnosticForApplicationPlugin() = build {
             title(diagnosticTitle("application"))
                 .description(diagnosticDescription("'application' (also applies 'java' plugin)"))
                 .solution {
@@ -1854,20 +1844,6 @@ internal object KotlinToolingDiagnostics {
                 .documentationLink(URI("https://kotl.in/gradle/internal-compiler-symbols"))
         }
     }
-
-    object KotlinTopLevelDependenciesUsedInIncompatibleGradleVersion :
-        ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
-        operator fun invoke(
-            currentGradleVersion: GradleVersion,
-            minimumSupportedGradleVersion: GradleVersion,
-        ) = build {
-            title("Kotlin Top Level Dependencies Used With Incompatible Gradle Version")
-                .description("Kotlin top-level dependencies is not available in $currentGradleVersion. Minimum supported version is $minimumSupportedGradleVersion.")
-                .solution("Please upgrade your Gradle version or keep using source set dependencies block (https://kotl.in/source-set-dependencies)")
-                .documentationLink(URI("https://kotl.in/kmp-top-level-dependencies"))
-        }
-    }
-
 
     internal object KotlinScriptingMisconfiguration : ToolingDiagnosticFactory(
         predefinedSeverity = WARNING,
