@@ -31,7 +31,6 @@ private abstract class KotlinNativeToolParallelismLimitService : BuildService<Bu
 
 /**
  * Registers (or reuses) the service that caps parallel tasks of [taskType] at [maxParallelUsages].
- * Tasks of [taskType] must declare [Task.usesService] with the returned provider. First registration wins.
  */
 internal fun Gradle.registerKotlinNativeParallelismLimitService(
     taskType: Class<out Task>,
