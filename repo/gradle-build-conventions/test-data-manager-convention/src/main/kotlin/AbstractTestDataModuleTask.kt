@@ -55,6 +55,7 @@ import org.gradle.process.CommandLineArgumentProvider
  * | `org.jetbrains.kotlin.testDataManager.options.goldenOnly`       | Run only golden tests (empty variant chain)                       |
  * | `org.jetbrains.kotlin.testDataManager.options.incremental`      | Only run variant tests for changed golden paths                   |
  * | `org.jetbrains.kotlin.testDataManager.options.runId`            | Id of the run, names the report (generated if not set)            |
+ * | `org.jetbrains.kotlin.testDataManager.options.rerunId`          | Id of the run this one reruns; its report is kept                 |
  * | `org.jetbrains.kotlin.testDataManager.options.output`           | `verbose` prints every group, pass and timing                     |
  *
  * @see CheckTestDataModuleTask
@@ -91,6 +92,10 @@ abstract class AbstractTestDataModuleTask : JavaExec() {
      */
     @get:[Input Optional]
     abstract val runId: Property<String>
+
+    /** Id of the earlier run this one reruns: its report survives the rotation of old reports. */
+    @get:[Input Optional]
+    abstract val rerunId: Property<String>
 
     /** `verbose` prints the progress of every group and pass and the timings; the default output is compact. */
     @get:[Input Optional]
@@ -143,6 +148,7 @@ abstract class AbstractTestDataModuleTask : JavaExec() {
         forwardOption(TestDataManagerOption.GOLDEN_ONLY, goldenOnly)
         forwardOption(TestDataManagerOption.INCREMENTAL, incremental)
         forwardOption(TestDataManagerOption.RUN_ID, runId)
+        forwardOption(TestDataManagerOption.RERUN_ID, rerunId)
         forwardOption(TestDataManagerOption.OUTPUT, output)
         systemProperty(TestDataManagerOption.REPORT_DIR, reportDirectory.get().asFile.absolutePath)
         super.exec()

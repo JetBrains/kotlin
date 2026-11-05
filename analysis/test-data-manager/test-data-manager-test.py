@@ -422,6 +422,71 @@ class WrapperTest(unittest.TestCase):
             sorted(file.name for file in directory.iterdir() if file.name != "stub-gradle-args.txt"),
         )
 
+    def test_rerun_runs_the_test_data_files_of_the_failed_tests(self) -> None:
+        self.generated_tests("mod-a", "mod-a/testData", "mod-a/testData/sub")
+        self.generated_tests("mod-a/nested", "mod-a/nested/testData")
+        self.generated_tests("mod-b", "mod-b/testData")
+        for file in ["mod-a/testData/file.kt", "mod-a/testData/sub/file.kt", "mod-b/testData/file.kt"]:
+            self.write(file, "")
+        failed = {
+            ":mod-a": {"report": {"status": "FAILED", "problems": [
+                {"kind": "MISMATCH", "file": "mod-a/testData/file.txt", "test": "A.testFile", "testDataPath": "mod-a/testData/file.kt"},
+                {"kind": "MISMATCH", "file": "mod-a/testData/file.js.txt", "test": "B.testFile", "testDataPath": "mod-a/testData/file.kt"},
+            ], "testErrors": [
+                {"test": "A.testBroken", "exception": "E", "message": None, "testDataPath": "mod-a/testData/sub/file.kt"},
+            ]}},
+            ":mod-a:nested": {},
+            ":mod-b": {},
+        }
+        self.assertEqual(1, self.run_wrapper(failed, "check", "--run-id", "first")[0])
+
+        exit_code, summary = self.run_wrapper({":mod-a": {}}, "update", "--rerun", "first")
+        self.assertEqual((0, [":mod-a"]), (exit_code, [module["project"] for module in summary["modules"] if module["status"] != "SKIPPED"]))
+        self.assertIn(f"-P{tdm.OPTION_PREFIX}.testDataPath=mod-a/testData/file.kt,mod-a/testData/sub/file.kt", self.gradle_args())
+        self.assertIn("Rerunning 2 test data files of the run first\n", self.stderr)
+        # The module reports of the run being rerun survive their rotation too
+        self.assertIn(f"-P{tdm.OPTION_PREFIX}.rerunId=first", self.gradle_args())
+        self.assertNotEqual("first", summary["runId"])
+
+        # A test data file deleted since fails the run before Gradle
+        (self.root / "mod-a/testData/sub/file.kt").unlink()
+        (self.root / "build" / "stub-gradle-args.txt").unlink()
+        exit_code, summary = self.run_wrapper({":mod-a": {}}, "update", "--rerun", "first")
+        self.assertEqual((2, None), (exit_code, summary["gradleLog"]))
+        self.assertIn("testDataPath 'mod-a/testData/sub/file.kt' does not exist", summary["runErrors"][0])
+        self.assertFalse((self.root / "build" / "stub-gradle-args.txt").exists())
+
+        # The run being rerun is kept however many runs follow
+        for _ in range(tdm.KEPT_RUNS + 1):
+            self.run_wrapper({":mod-a": {}}, "check", "--rerun", "first")
+        self.assertTrue((self.root / "build" / "test-data-manager" / "first.summary.json").exists())
+
+    def test_rerun_fails_when_the_failures_are_unknown(self) -> None:
+        def errors(stub: Dict[str, object]) -> Tuple[int, List[str]]:
+            self.run_wrapper(stub, "check", "--module", ":mod-a", "--module", ":mod-b", "--run-id", "first")
+            exit_code, summary = self.run_wrapper({}, "check", "--rerun", "first")
+            return exit_code, summary["runErrors"]
+
+        self.assertEqual((2, ["The run 'first' has no failed tests to rerun"]), errors({":mod-a": {}, ":mod-b": {}}))
+        conflicts = {"report": {"status": "ERROR", "runErrors": ["Variant chain conflicts"],
+                                "tests": {"discovered": 0, "passed": 0, "failed": 0, "skipped": 0}}}
+        self.assertEqual(
+            (2, [":mod-a: the run 'first' failed there with run errors, so its failures are unknown: Variant chain conflicts"]),
+            errors({":mod-a": conflicts, ":mod-b": {}}),
+        )
+        self.assertEqual((2, [":mod-b: no report in the run 'first', so its failures are unknown"]), errors({":mod-a": {}}))
+        failed_without_path = {"report": {"status": "FAILED", "testErrors": [{"test": "A.testInit", "exception": "E", "message": None}]}}
+        self.assertEqual((2, [":mod-a: A.testInit failed without a test data path, so it can't be rerun"]),
+                         errors({":mod-a": failed_without_path, ":mod-b": {}}))
+
+        exit_code, summary = self.run_wrapper({}, "check", "--rerun", "nope")
+        self.assertEqual(2, exit_code)
+        self.assertTrue(summary["runErrors"][0].startswith("No summary of the run 'nope' to rerun: "))
+
+        with contextlib.redirect_stderr(io.StringIO()), self.assertRaises(SystemExit) as exit:
+            tdm.main(["check", "--rerun", "first", "--path", "mod-a"], root=self.root)
+        self.assertEqual(2, exit.exception.code)
+
     def test_module_run_errors_fail_the_run(self) -> None:
         invalid = {"report": {"status": "ERROR", "runErrors": ["Variant chain conflicts"]}}
         exit_code, summary = self.run_wrapper({module: invalid for module in ALL_MODULES}, "check")

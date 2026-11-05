@@ -83,11 +83,11 @@ internal class TestDataManagerReport(
      * A file outside [rootDir] goes to `<runId>/actual/outside/<hash of its directory>/<name>`. The actual outputs of further
      * problems on the same file go to `<runId>/actual/<n>/`.
      *
-     * Keeps the [keptRuns] most recent reports of the directory and deletes the older ones.
+     * Keeps the [keptRuns] most recent reports of the directory, and the one of [keptRunId], and deletes the older ones.
      *
      * @return the written report file
      */
-    fun write(reportDirectory: Path, rootDir: Path?, keptRuns: Int = DEFAULT_KEPT_RUNS): Path {
+    fun write(reportDirectory: Path, rootDir: Path?, keptRuns: Int = DEFAULT_KEPT_RUNS, keptRunId: String? = null): Path {
         reportDirectory.createDirectories()
         val runDirectory = reportDirectory.resolve(runId)
         if (runDirectory.exists()) {
@@ -110,7 +110,7 @@ internal class TestDataManagerReport(
 
         val reportFile = reportDirectory.resolve("$runId.json")
         reportFile.writeText(toJson(rootDir, actualFiles))
-        deleteOldRuns(reportDirectory, keptRuns)
+        deleteOldRuns(reportDirectory, keptRuns, keptRunId)
         return reportFile
     }
 
@@ -193,10 +193,13 @@ internal class TestDataManagerReport(
         const val DEFAULT_KEPT_RUNS = 5
         private const val MAX_MESSAGE_LENGTH = 4000
 
-        /** Keeps the [keptRuns] most recently written reports in [reportDirectory], with their run directories. */
-        private fun deleteOldRuns(reportDirectory: Path, keptRuns: Int) {
+        /**
+         * Keeps the [keptRuns] most recently written reports in [reportDirectory], and the one of [keptRunId], with their
+         * run directories.
+         */
+        private fun deleteOldRuns(reportDirectory: Path, keptRuns: Int, keptRunId: String?) {
             val reports = reportDirectory.listDirectoryEntries("*.json").sortedByDescending { it.getLastModifiedTime() }
-            for (report in reports.drop(keptRuns)) {
+            for (report in reports.drop(keptRuns).filter { it.nameWithoutExtension != keptRunId }) {
                 val runDirectory = reportDirectory.resolve(report.nameWithoutExtension)
                 if (runDirectory.exists()) {
                     @OptIn(kotlin.io.path.ExperimentalPathApi::class)

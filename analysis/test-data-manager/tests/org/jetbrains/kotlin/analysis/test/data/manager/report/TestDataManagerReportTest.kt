@@ -251,6 +251,24 @@ class TestDataManagerReportTest {
     }
 
     @Test
+    fun `write keeps the report of the kept run`() {
+        val reportDirectory = tempDir.resolve("build/test-data-manager").createDirectories()
+        for (index in 1..3) {
+            val oldReport = reportDirectory.resolve("old$index.json")
+            oldReport.writeText("{}")
+            oldReport.setLastModifiedTime(FileTime.fromMillis(index * 1000L))
+            reportDirectory.resolve("old$index/actual").createDirectories()
+        }
+
+        report(runId = "new").write(reportDirectory, rootDir, keptRuns = 2, keptRunId = "old1")
+
+        assertEquals(
+            listOf("new.json", "old1", "old1.json", "old3", "old3.json"),
+            reportDirectory.listDirectoryEntries().map { it.name }.sorted(),
+        )
+    }
+
+    @Test
     fun `actual output of a file outside the root never goes to the file itself`() {
         val reportDirectory = tempDir.resolve("build/test-data-manager")
         val outsideFile = tempDir.resolve("elsewhere/foo.txt").createParentDirectoriesAndWrite("expected\n")
