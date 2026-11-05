@@ -11,7 +11,7 @@ It supports only tests which implement `ManagedTest` interface and are generated
 Tests declare `TestVariantChain` via `ManagedTest.variantChain`:
 - `[]` (empty) — golden configuration, writes to `.txt` files
 - `["js"]` — writes to `.js.txt` files
-- `["knm", "wasm"]` — writes to `.js.txt` files (only the **last** variant determines the output file)
+- `["knm", "wasm"]` — writes to `.wasm.txt` files (only the **last** variant determines the output file)
 
 **Priority rule**: Tests are grouped by variant chain **depth**. Fewer variants = higher priority.
 - Depth 0 (golden) runs first
