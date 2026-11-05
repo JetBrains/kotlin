@@ -153,7 +153,7 @@ open class PurifyObjectInstanceGettersLowering(val context: JsCommonBackendConte
         this::hasPureInitialization.getOrSetIfNull {
             if (superClass != null) return@getOrSetIfNull false
             val constructor = primaryConstructorReplacement ?: primaryConstructor
-            val staticInitImpure = isCompanion && staticInitFunction?.body?.isPureStaticInitFunctionBody() == false
+            val staticInitImpure = staticInitFunction?.body?.isPureStaticInitFunctionBody() == false
             if (context.configuration.enableEffectAnalysis) {
                 val constructorPure = constructor?.let {
                     it.effects?.compute() == EffectsKind.PURE
