@@ -382,8 +382,8 @@ class AvailableSinceTest : BaseCompilationTest() {
                     trySet(JsDtsGenerationOperation.DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY.availableSinceVersion) {
                         this[JsDtsGenerationOperation.DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY] = true
                     }
-                    trySet(JsDtsGenerationOperation.EXPORT_UNTYPED_AS_UNKNOWN.availableSinceVersion) {
-                        this[JsDtsGenerationOperation.EXPORT_UNTYPED_AS_UNKNOWN] = true
+                    trySet(JsDtsGenerationOperation.USE_UNKNOWN_INSTEAD_ANY.availableSinceVersion) {
+                        this[JsDtsGenerationOperation.USE_UNKNOWN_INSTEAD_ANY] = true
                     }
                 }
             }
