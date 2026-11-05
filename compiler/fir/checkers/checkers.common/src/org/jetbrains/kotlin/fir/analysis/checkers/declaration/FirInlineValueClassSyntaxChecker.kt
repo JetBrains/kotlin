@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.getModifier
 import org.jetbrains.kotlin.fir.analysis.checkers.hasModifier
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
@@ -34,13 +33,13 @@ object FirInlineValueClassSyntaxChecker : FirRegularClassChecker(Common) {
         val source = declaration.source?.takeIf { it.kind is KtRealSourceElementKind } ?: return
 
         val hasInlineModifier = declaration.hasModifier(KtTokens.INLINE_KEYWORD)
-        val valueModifier = declaration.getModifier(KtTokens.VALUE_KEYWORD)
+        val hasValueModifier = declaration.hasModifier(KtTokens.VALUE_KEYWORD)
         val annotation = declaration.getAnnotationByClassId(StandardClassIds.Annotations.JvmInline, context.session)
 
         @OptIn(LegacyJvmInlineHandling::class)
         val platformRequiresJvmInline = context.session.annotationPlatformSupport.hasJvmInlineAnnotation
 
-        if (hasInlineModifier && (LanguageFeature.ExplicitInlineValueClassesSyntax.isDisabled() || valueModifier == null)) {
+        if (hasInlineModifier && (LanguageFeature.ExplicitInlineValueClassesSyntax.isDisabled() || !hasValueModifier)) {
             val replacement = when {
                 LanguageFeature.ExplicitInlineValueClassesSyntax.isEnabled() -> "'inline value'"
                 platformRequiresJvmInline && !declaration.isExpect -> "'@JvmInline value'"
@@ -55,19 +54,19 @@ object FirInlineValueClassSyntaxChecker : FirRegularClassChecker(Common) {
         }
 
         if (
-            annotation != null && valueModifier != null && declaration.classKind == OBJECT &&
+            annotation != null && hasValueModifier && declaration.classKind == OBJECT &&
             LanguageFeature.FullValueClasses.isEnabled()
         ) {
             // Value objects are full value classes rather than inline single-field classes.
             reporter.reportOn(annotation.source, FirErrors.JVM_INLINE_ON_VALUE_OBJECT)
         } else if (
             annotation != null &&
-            valueModifier != null &&
+            hasValueModifier &&
             hasInlineModifier &&
             LanguageFeature.ExplicitInlineValueClassesSyntax.isEnabled()
         ) {
             reporter.reportOn(annotation.source, FirErrors.REDUNDANT_JVM_INLINE)
-        } else if (annotation != null && valueModifier == null) {
+        } else if (annotation != null && !hasValueModifier) {
             @OptIn(LegacyJvmInlineHandling::class)
             val diagnostic =
                 if (
@@ -81,7 +80,7 @@ object FirInlineValueClassSyntaxChecker : FirRegularClassChecker(Common) {
             reporter.reportOn(annotation.source, diagnostic)
         } else if (
             annotation == null &&
-            valueModifier != null &&
+            hasValueModifier &&
             !(hasInlineModifier && LanguageFeature.ExplicitInlineValueClassesSyntax.isEnabled()) &&
             declaration.classKind == CLASS &&
             LanguageFeature.FullValueClasses.isDisabled() &&
@@ -105,7 +104,7 @@ object FirInlineValueClassSyntaxChecker : FirRegularClassChecker(Common) {
                 else -> null // no syntax pre-ExplicitInlineValueClassesSyntax
             }
             diagnostic?.let {
-                reporter.reportOn(valueModifier.source, it)
+                reporter.reportOn(source, it)
             }
         }
     }

@@ -584,6 +584,10 @@ object PositioningStrategies {
         ModifierSetBasedPositioningStrategy(KtTokens.INLINE_KEYWORD, KtTokens.VALUE_KEYWORD)
 
     @JvmField
+    val VALUE_MODIFIER: PositioningStrategy<KtModifierListOwner> =
+        ModifierSetBasedPositioningStrategy(KtTokens.VALUE_KEYWORD)
+
+    @JvmField
     val INNER_MODIFIER: PositioningStrategy<KtModifierListOwner> =
         ModifierSetBasedPositioningStrategy(KtTokens.INNER_KEYWORD)
 

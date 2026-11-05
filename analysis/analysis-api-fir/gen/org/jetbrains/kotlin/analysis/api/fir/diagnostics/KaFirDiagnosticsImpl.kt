@@ -2260,17 +2260,17 @@ internal class WillBecomeValueClassCannotBeCloneableImpl(
 internal class ValueClassWithoutJvmInlineAnnotationImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ValueClassWithoutJvmInlineAnnotation
+) : KaAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KaFirDiagnostic.ValueClassWithoutJvmInlineAnnotation
 
 internal class InlineValueClassWithoutExplicitInlineErrorImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.InlineValueClassWithoutExplicitInlineError
+) : KaAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KaFirDiagnostic.InlineValueClassWithoutExplicitInlineError
 
 internal class InlineValueClassWithoutExplicitInlineWarningImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.InlineValueClassWithoutExplicitInlineWarning
+) : KaAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KaFirDiagnostic.InlineValueClassWithoutExplicitInlineWarning
 
 internal class JvmInlineWithoutValueClassImpl(
     firDiagnostic: KtDiagnosticWithSource,

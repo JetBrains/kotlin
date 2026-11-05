@@ -3177,21 +3177,21 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
-    public interface ValueClassWithoutJvmInlineAnnotation : KaFirDiagnostic<PsiElement> {
+    public interface ValueClassWithoutJvmInlineAnnotation : KaFirDiagnostic<KtDeclaration> {
         override val diagnosticClass: KClass<ValueClassWithoutJvmInlineAnnotation>
             get() = ValueClassWithoutJvmInlineAnnotation::class
     }
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
-    public interface InlineValueClassWithoutExplicitInlineError : KaFirDiagnostic<PsiElement> {
+    public interface InlineValueClassWithoutExplicitInlineError : KaFirDiagnostic<KtDeclaration> {
         override val diagnosticClass: KClass<InlineValueClassWithoutExplicitInlineError>
             get() = InlineValueClassWithoutExplicitInlineError::class
     }
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
-    public interface InlineValueClassWithoutExplicitInlineWarning : KaFirDiagnostic<PsiElement> {
+    public interface InlineValueClassWithoutExplicitInlineWarning : KaFirDiagnostic<KtDeclaration> {
         override val diagnosticClass: KClass<InlineValueClassWithoutExplicitInlineWarning>
             get() = InlineValueClassWithoutExplicitInlineWarning::class
     }
