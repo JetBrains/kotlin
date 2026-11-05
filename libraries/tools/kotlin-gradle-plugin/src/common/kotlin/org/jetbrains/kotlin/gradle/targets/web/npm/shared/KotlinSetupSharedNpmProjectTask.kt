@@ -51,9 +51,15 @@ internal abstract class KotlinSetupSharedNpmProjectTask : DefaultTask(), UsesKot
         val packagesDirectory = outputDirectory.resolve("packages")
         packagesDirectory.deleteRecursively()
 
+        val reports = reportFiles.files.associateWith { file -> file.npmDependencyReportOrNull() }
+        val invalidFiles = reports.filterValues { it == null }.keys.sorted()
+        if (invalidFiles.isNotEmpty()) {
+            reportDiagnostic(KotlinToolingDiagnostics.SharedNpmProjectInvalidNpmDependencyReport(invalidFiles))
+            return
+        }
+
         val workspaceVersion = fixSemver(rootPackageVersion.get())
-        val workspaceNames = reportFiles.files
-            .mapNotNull { file -> file.npmDependencyReport() }
+        val workspaceNames = reports.values.filterNotNull()
             .map { report ->
                 val name = report.compilation
                 report.toPackageJson(workspaceVersion).saveTo(packagesDirectory.resolve(name).resolve(NpmProject.PACKAGE_JSON))
@@ -67,14 +73,8 @@ internal abstract class KotlinSetupSharedNpmProjectTask : DefaultTask(), UsesKot
         }.saveTo(outputDirectory.resolve(NpmProject.PACKAGE_JSON))
     }
 
-    private fun File.npmDependencyReport(): NpmDependencyReport? {
-        val report = runCatching { readNpmDependencyReport(this) }.getOrNull()
-        if (report == null || report.compilation.isBlank()) {
-            reportDiagnostic(KotlinToolingDiagnostics.SharedNpmProjectInvalidNpmDependencyReport(this))
-            return null
-        }
-        return report
-    }
+    private fun File.npmDependencyReportOrNull(): NpmDependencyReport? =
+        runCatching { readNpmDependencyReport(this) }.getOrNull()?.takeIf { it.compilation.isNotBlank() }
 }
 
 private fun NpmDependencyReport.toPackageJson(version: String) = PackageJson(compilation, version).also {
