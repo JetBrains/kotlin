@@ -34,19 +34,7 @@ abstract class AbstractOverriddenDeclarationProviderTest : AbstractAnalysisApiBa
                 danglingFileResolutionMode = KaDanglingFileResolutionMode.PREFER_SELF,
             ) { contextFile ->
                 val symbol = getCallableSymbol(contextFile, mainModule, testServices)
-                val allOverriddenSymbols = symbol.allOverriddenSymbols.map { renderSignature(it) }
-                val directlyOverriddenSymbols = symbol.directlyOverriddenSymbols.map { renderSignature(it) }
-
-                val intersectionOverriddenSymbols = symbol.intersectionOverriddenSymbols.map { renderSignature(it) }
-
-                buildString {
-                    appendLine("ALL:")
-                    allOverriddenSymbols.forEach { appendLine("  $it") }
-                    appendLine("DIRECT:")
-                    directlyOverriddenSymbols.forEach { appendLine("  $it") }
-                    appendLine("INTERSECTION:")
-                    intersectionOverriddenSymbols.forEach { appendLine("  $it") }
-                }
+                renderOverriddenSymbols(symbol)
             }
         }
         testServices.assertions.assertEqualsToTestOutputFile(actual)
@@ -70,52 +58,72 @@ abstract class AbstractOverriddenDeclarationProviderTest : AbstractAnalysisApiBa
 
         return getSingleTestTargetSymbolOfType<KaCallableSymbol>(testDataPath, mainFile)
     }
+}
 
-    context(_: KaSession)
-    private fun renderSignature(symbol: KaCallableSymbol): String = buildString {
-        append(renderDeclarationQualifiedName(symbol))
-        if (symbol is KaNamedFunctionSymbol) {
-            append("(")
-            symbol.valueParameters.forEachIndexed { index, parameter ->
-                append(parameter.name.identifier)
-                append(": ")
-                append(parameter.returnType.render(KaTypeRendererForSource.WITH_SHORT_NAMES, position = Variance.INVARIANT))
-                if (index != symbol.valueParameters.lastIndex) {
-                    append(", ")
-                }
+/**
+ * Renders the signatures of all, directly, and intersection overridden symbols of [symbol].
+ */
+context(_: KaSession)
+internal fun renderOverriddenSymbols(symbol: KaCallableSymbol): String {
+    val allOverriddenSymbols = symbol.allOverriddenSymbols.map { renderSignature(it) }
+    val directlyOverriddenSymbols = symbol.directlyOverriddenSymbols.map { renderSignature(it) }
+
+    val intersectionOverriddenSymbols = symbol.intersectionOverriddenSymbols.map { renderSignature(it) }
+
+    return buildString {
+        appendLine("ALL:")
+        allOverriddenSymbols.forEach { appendLine("  $it") }
+        appendLine("DIRECT:")
+        directlyOverriddenSymbols.forEach { appendLine("  $it") }
+        appendLine("INTERSECTION:")
+        intersectionOverriddenSymbols.forEach { appendLine("  $it") }
+    }
+}
+
+context(_: KaSession)
+internal fun renderSignature(symbol: KaCallableSymbol): String = buildString {
+    append(renderDeclarationQualifiedName(symbol))
+    if (symbol is KaNamedFunctionSymbol) {
+        append("(")
+        symbol.valueParameters.forEachIndexed { index, parameter ->
+            append(parameter.name.identifier)
+            append(": ")
+            append(parameter.returnType.render(KaTypeRendererForSource.WITH_SHORT_NAMES, position = Variance.INVARIANT))
+            if (index != symbol.valueParameters.lastIndex) {
+                append(", ")
             }
-            append(")")
         }
-        append(": ")
-        append(symbol.returnType.render(KaTypeRendererForSource.WITH_SHORT_NAMES, position = Variance.INVARIANT))
+        append(")")
+    }
+    append(": ")
+    append(symbol.returnType.render(KaTypeRendererForSource.WITH_SHORT_NAMES, position = Variance.INVARIANT))
+}
+
+context(_: KaSession)
+private fun renderDeclarationQualifiedName(symbol: KaCallableSymbol): String {
+    val parentsWithSelf = generateSequence<KaSymbol>(symbol) { it.containingDeclaration }
+        .toList()
+        .asReversed()
+
+    val chunks = mutableListOf<String>()
+
+    for ([index, parent] in parentsWithSelf.withIndex()) {
+        // Render qualified names for top-level declarations
+        if (index == 0) {
+            val qualifiedName = when (parent) {
+                is KaClassLikeSymbol -> parent.classId?.toString()
+                is KaCallableSymbol -> parent.callableId?.toString()
+                else -> null
+            }
+
+            if (qualifiedName != null) {
+                chunks += qualifiedName
+                continue
+            }
+        }
+
+        chunks += parent.name?.asString() ?: "<no name>"
     }
 
-    context(_: KaSession)
-    private fun renderDeclarationQualifiedName(symbol: KaCallableSymbol): String {
-        val parentsWithSelf = generateSequence<KaSymbol>(symbol) { it.containingDeclaration }
-            .toList()
-            .asReversed()
-
-        val chunks = mutableListOf<String>()
-
-        for ([index, parent] in parentsWithSelf.withIndex()) {
-            // Render qualified names for top-level declarations
-            if (index == 0) {
-                val qualifiedName = when (parent) {
-                    is KaClassLikeSymbol -> parent.classId?.toString()
-                    is KaCallableSymbol -> parent.callableId?.toString()
-                    else -> null
-                }
-
-                if (qualifiedName != null) {
-                    chunks += qualifiedName
-                    continue
-                }
-            }
-
-            chunks += parent.name?.asString() ?: "<no name>"
-        }
-
-        return chunks.joinToString(".")
-    }
+    return chunks.joinToString(".")
 }
