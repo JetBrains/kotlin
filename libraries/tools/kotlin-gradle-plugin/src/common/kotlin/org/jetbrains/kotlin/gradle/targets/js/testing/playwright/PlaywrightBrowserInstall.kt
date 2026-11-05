@@ -101,7 +101,6 @@ internal abstract class PlaywrightBrowserInstall @Inject constructor(
                     }
                     OsType.MAC -> File(userHome).resolve("Library/Caches/ms-playwright")
                     OsType.LINUX, OsType.FREEBSD -> File(userHome).resolve(".cache/ms-playwright")
-                    else -> throw IllegalStateException("Unsupported OS")
                 }
             }
         }

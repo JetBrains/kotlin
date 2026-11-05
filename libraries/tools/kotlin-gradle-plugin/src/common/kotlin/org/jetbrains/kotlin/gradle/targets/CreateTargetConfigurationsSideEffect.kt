@@ -63,7 +63,7 @@ internal val CreateTargetConfigurationsSideEffect = KotlinTargetSideEffect { tar
             attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
             val runtimeConfiguration = mainCompilation.internal.configurations.deprecatedRuntimeConfiguration
             extendsFrom(implementationConfiguration)
-            extendsFrom(runtimeOnlyConfiguration)
+            runtimeOnlyConfiguration?.let { extendsFrom(it) }
             runtimeConfiguration?.let { extendsFrom(it) }
             usesPlatformOf(target)
         }
@@ -107,7 +107,7 @@ internal val CreateTargetConfigurationsSideEffect = KotlinTargetSideEffect { tar
 
         compileConfiguration?.let { compileTestsConfiguration?.extendsFrom(it) }
         testImplementationConfiguration.extendsFrom(implementationConfiguration)
-        testRuntimeOnlyConfiguration?.extendsFrom(runtimeOnlyConfiguration)
+        runtimeOnlyConfiguration?.let { testRuntimeOnlyConfiguration?.extendsFrom(it) }
 
         @Suppress("TYPEALIAS_EXPANSION_DEPRECATION_ERROR")
         if (mainCompilation is DeprecatedKotlinCompilationToRunnableFiles &&

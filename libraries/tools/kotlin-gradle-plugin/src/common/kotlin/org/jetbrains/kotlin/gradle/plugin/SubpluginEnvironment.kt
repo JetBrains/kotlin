@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.gradle.internal.kaptGenerateStubsTaskName
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.sources.defaultImpl
-import org.jetbrains.kotlin.gradle.targets.js.ir.JsIrBinary
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.whenKaptEnabled
@@ -77,9 +76,7 @@ class SubpluginEnvironment private constructor(
 
             if (kotlinCompilation is KotlinJsIrCompilation) {
                 kotlinCompilation.binaries.all {
-                    if (it is JsIrBinary) {
-                        it.linkTask.configure(configureKotlinTask)
-                    }
+                    it.linkTask.configure(configureKotlinTask)
                 }
             }
 

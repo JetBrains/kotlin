@@ -215,7 +215,7 @@ internal constructor() :
             configuration: WasmComponentizeTask.() -> Unit = {},
         ): TaskProvider<WasmComponentizeTask> {
             val project = compilation.target.project
-            val witDirectories = project.configurations.findByName(compilation.runtimeDependencyConfigurationName).incoming
+            val witDirectories = project.configurations.getByName(compilation.runtimeDependencyConfigurationName).incoming
                 .artifactView {
                     it.attributes {
                         it.attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, KOTLIN_WASM_WIT_ARTIFACT_TYPE)

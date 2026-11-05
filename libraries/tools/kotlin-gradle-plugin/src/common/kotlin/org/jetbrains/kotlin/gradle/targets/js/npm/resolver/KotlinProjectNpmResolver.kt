@@ -67,10 +67,7 @@ class KotlinProjectNpmResolver(
         if (target.platformType == resolver.platform && target.wasmTargetType != KotlinWasmTargetType.WASI
         ) {
             target.compilations.all { compilation ->
-                if (compilation is KotlinJsIrCompilation) {
-                    // compilation may be KotlinWithJavaTarget for old Kotlin2JsPlugin
-                    addCompilation(compilation)
-                }
+                addCompilation(compilation)
             }
         }
     }

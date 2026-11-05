@@ -273,7 +273,7 @@ abstract class KaptTask @Inject constructor(
             return project
                 .providers
                 .gradleProperty(KAPT_VERBOSE_OPTION_NAME)
-                .map { it.toString().toBoolean() }
+                .map { it.toBoolean() }
                 .orElse(false)
         }
     }
