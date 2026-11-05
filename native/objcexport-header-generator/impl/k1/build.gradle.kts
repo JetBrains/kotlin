@@ -53,6 +53,7 @@ dependencies {
     testFixturesImplementation(project(":native:native.config"))
     testFixturesImplementation(project(":compiler:resolution"))
     testFixturesImplementation(project(":compiler:frontend"))
+    testFixturesImplementation(project(":core:deserialization"))
 
     testImplementation(project(":compiler:compiler.version"))
     testImplementation(project(":compiler:config"))

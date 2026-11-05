@@ -25,7 +25,6 @@ dependencies {
 
     implementation(project(":compiler:backend.common.jvm"))
     implementation(project(":core:descriptors"))
-    implementation(project(":core:deserialization"))
     implementation(project(":core:language.targets.jvm"))
     implementation(project(":kotlinx-serialization-compiler-plugin.common"))
 

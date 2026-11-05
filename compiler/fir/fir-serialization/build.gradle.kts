@@ -7,10 +7,8 @@ plugins {
 
 dependencies {
     implementation(project(":core:compiler.common"))
-    implementation(project(":core:descriptors"))
-    implementation(project(":core:deserialization"))
     implementation(project(":compiler:fir:fir-deserialization"))
-    implementation(project(":compiler:serialization"))
+    implementation(project(":compiler:serialization.common"))
     implementation(project(":compiler:psi:psi-api"))
     implementation(project(":kotlin-util-klib-metadata"))
 
