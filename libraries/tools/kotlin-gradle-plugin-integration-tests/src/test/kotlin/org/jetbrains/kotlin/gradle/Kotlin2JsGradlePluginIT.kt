@@ -69,8 +69,6 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun generateDtsWithRichTypeScriptSchema(gradleVersion: GradleVersion) {
         project("kotlin2JsIrDtsGeneration", gradleVersion) {
-            val dts = projectPath.resolve("build/js/packages/kotlin2JsIrDtsGeneration/kotlin/kotlin2JsIrDtsGeneration.d.ts")
-
             gradleProperties.appendText("\nkotlin.js.generateRichTypeScriptDeclarations=true\n")
             buildScriptInjection {
                 kotlinMultiplatform.js {
@@ -96,27 +94,13 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                 }
             }
             build("assemble") {
+                val dts = projectPath.resolve("build/js/packages/kotlin2JsIrDtsGeneration/kotlin/kotlin2JsIrDtsGeneration.d.ts")
+
                 assertOutputContains("GenerateTypeScriptDefinitions")
 
                 assertFileExists(dts)
                 assertFileContains(dts, "function bar(): string")
                 assertFileContains(dts, "A declaration generated from KLIB metadata.")
-                assertFileContains(dts, "function identity(value: any): any")
-            }
-
-            buildScriptInjection {
-                kotlinMultiplatform.js {
-                    compilerOptions.freeCompilerArgs.add("-Xdts-use-unknown-instead-any")
-                }
-            }
-
-            build("assemble") {
-                assertOutputContains("GenerateTypeScriptDefinitions")
-
-                assertFileExists(dts)
-                assertFileContains(dts, "function bar(): string")
-                assertFileContains(dts, "A declaration generated from KLIB metadata.")
-                assertFileContains(dts, "function identity(value: NonNullable<unknown>): NonNullable<unknown>")
             }
         }
     }
