@@ -121,19 +121,28 @@ abstract class WasmToolsExecutable @Inject internal constructor() {
 /**
  * A wasm-tools version, for example `1.0.0`.
  *
- * @param version the version string. Must not be blank.
+ * @property version the version string. Must not be blank.
  */
 @ExperimentalWasmDsl
-data class WasmToolsVersion(
+sealed interface WasmToolsVersion : Serializable {
     @get:Input
-    val version: String,
-) : Serializable {
+    val version: String
+}
+
+@ExperimentalWasmDsl
+private data class WasmToolsVersionImpl(
+    override val version: String
+) : WasmToolsVersion {
     init {
         require(version.isNotBlank()) { "wasm-tools version must not be blank" }
     }
 
     override fun toString(): String = version
 }
+
+@ExperimentalWasmDsl
+fun WasmToolsVersion(version: String): WasmToolsVersion =
+    WasmToolsVersionImpl(version)
 
 /**
  * An operating system and architecture pair, using the wasm-tools distribution naming,
@@ -143,15 +152,26 @@ data class WasmToolsVersion(
  * @property arch the CPU architecture, for example `x64` or `arm64`.
  */
 @ExperimentalWasmDsl
-data class WasmToolsBuildPlatform(
-    @get:Input
-    val os: String,
-    @get:Input
-    val arch: String,
-) : Serializable {
+sealed interface WasmToolsBuildPlatform : Serializable {
 
+    @get:Input
+    val os: String
+
+    @get:Input
+    val arch: String
+}
+
+@ExperimentalWasmDsl
+private data class WasmToolsBuildPlatformImpl(
+    override val os: String,
+    override val arch: String,
+) : WasmToolsBuildPlatform {
     /**
      * Returns the platform in the wasm-tools distribution naming format `<os>-<arch>`, for example `linux-x64`.
      */
     override fun toString(): String = "$os-$arch"
 }
+
+@ExperimentalWasmDsl
+fun WasmToolsBuildPlatform(os: String, arch: String): WasmToolsBuildPlatform =
+    WasmToolsBuildPlatformImpl(os, arch)
