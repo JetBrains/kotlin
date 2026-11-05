@@ -398,7 +398,6 @@ internal open class TCServiceMessagesClient(
     inner class RootNode : GroupNode(null, settings.rootNodeName) {
         override val descriptor: TestDescriptorInternal =
             object : DefaultTestSuiteDescriptor(settings.rootNodeName, localId) {
-                override fun getParent(): TestDescriptorInternal? = null
                 override fun toString(): String = name
             }
 
@@ -444,7 +443,7 @@ internal open class TCServiceMessagesClient(
 
             descriptor = object : DefaultTestSuiteDescriptor(id, fullName) {
                 override fun getDisplayName(): String = fullNameWithoutRoot
-                override fun getClassName(): String? = fullNameWithoutRoot
+                override fun getClassName(): String = fullNameWithoutRoot
                 override fun getParent(): TestDescriptorInternal = reportingParent.descriptor
                 override fun toString(): String = displayName
             }

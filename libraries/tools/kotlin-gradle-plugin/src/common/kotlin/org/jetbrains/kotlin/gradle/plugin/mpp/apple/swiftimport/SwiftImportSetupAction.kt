@@ -242,8 +242,10 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
                         isMacOSHost = isMacOSHost,
                     )
 
-                    fetchSyntheticImportProjectPackages.configure {
-                        it.dependsOn(actualFetchClaimer)
+                    if (actualFetchClaimer != null) {
+                        fetchSyntheticImportProjectPackages.configure {
+                            it.dependsOn(actualFetchClaimer)
+                        }
                     }
                 }
             }
@@ -512,7 +514,7 @@ private fun Project.getIdentifierLockFilesMetadataProvider(): Provider<List<Swif
         }
 }
 
-private fun Project.getKonanTargetsForUmbrellaPackageProvider(): Provider<Set<KonanTarget>>? =
+private fun Project.getKonanTargetsForUmbrellaPackageProvider(): Provider<Set<KonanTarget>> =
     getIdentifierLockFilesMetadataProvider().map {
         it.flatMap { metadata -> metadata.konanTargets.orEmpty() }
             .distinct()
@@ -646,7 +648,7 @@ private fun Project.locateOrRegisterUmbrellaFetchTask(
 
     locateOrRegisterTask<FetchSyntheticImportProjectPackages>(candidateFetchTaskName) {
         it.syntheticImportProjectRoot.set(provideIdentifierPackageRoot(identifier))
-        it.dependsOn(actualGeneratedClaimer)
+        if (actualGeneratedClaimer != null) it.dependsOn(actualGeneratedClaimer)
         it.onlyIf("SwiftPM import is only supported on macOS hosts") { isMacOSHost }
         it.onlyIf { aggregatedTransitiveDependencies.get().metadataByDependencyIdentifier.values.any { it.dependencies.isNotEmpty() } }
         it.ideaSyncEnabled.set(project.isInIdeaSync)

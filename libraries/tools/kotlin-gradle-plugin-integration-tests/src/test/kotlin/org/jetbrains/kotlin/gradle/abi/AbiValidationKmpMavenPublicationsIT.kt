@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.abi.utils.referenceJvmDumpFile
 import org.jetbrains.kotlin.gradle.abi.utils.referenceKlibDumpFile
 import org.jetbrains.kotlin.gradle.dsl.abi.BinariesSource
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
@@ -36,7 +37,9 @@ class AbiValidationKmpMavenPublicationsIT : KGPBaseTest() {
             abiValidation {
                 binariesSource.set(BinariesSource.MAVEN_PUBLICATIONS)
             }
-            buildAndFail("updateKotlinAbi")
+            build("updateKotlinAbi") {
+                assertHasDiagnostic(KotlinToolingDiagnostics.AbiValidationNoPublishPlugin)
+            }
         }
     }
 

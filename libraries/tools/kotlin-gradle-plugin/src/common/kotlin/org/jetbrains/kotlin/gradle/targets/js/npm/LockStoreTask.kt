@@ -51,13 +51,12 @@ abstract class LockStoreTask : LockCopyTask() {
 
         if (shouldReportMismatch) {
             logger.info("[$path] Detected mismatch for inputFile:${inputFile.get().asFile}, outputFile:${outputFile}, lockFileMismatchReport:${lockFileMismatchReport.get()}")
-            when (val lockFileMismatchReport = lockFileMismatchReport.get()) {
+            when (lockFileMismatchReport.get()) {
                 LockFileMismatchReport.NONE -> {}
                 LockFileMismatchReport.WARNING -> {
                     logger.warn(mismatchMessage.get())
                 }
                 LockFileMismatchReport.FAIL -> throw GradleException(mismatchMessage.get())
-                else -> error("Unknown mismatch report kind $lockFileMismatchReport")
             }
         }
     }

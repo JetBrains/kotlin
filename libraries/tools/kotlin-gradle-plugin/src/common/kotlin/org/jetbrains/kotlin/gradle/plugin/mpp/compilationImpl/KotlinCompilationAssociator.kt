@@ -79,7 +79,7 @@ internal object KotlinNativeCompilationAssociator : KotlinCompilationAssociator 
         }
 
         target.project.configurations.named(auxiliary.legacyImplementationConfigurationName).configure { configuration ->
-            configuration.extendsFrom(target.project.configurations.findByName(main.legacyImplementationConfigurationName))
+            target.project.configurations.findByName(main.legacyImplementationConfigurationName)?.let { configuration.extendsFrom(it) }
         }
     }
 }

@@ -296,7 +296,7 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
         // instead of failing loudly, so mutating it inside the worker would never reach the task's live reporter.
         // KotlinNativeToolWorkAction builds its own fresh reporter instead and reports back via [taskPath].
         val classLoadersCachingService: Property<ClassLoadersCachingBuildService>
-        val fusService: Property<BuildFusService<out BuildFusService.Parameters>?>
+        val fusService: Property<BuildFusService<out BuildFusService.Parameters>>
 
         val toolSpec: Property<ToolSpec>
 

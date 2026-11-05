@@ -208,7 +208,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
                                     buildFinishedListenerService,
                                     buildIdService,
                                     buildSessionService,
-                                    buildFusService.map { it?.getFusMetricsConsumer() },
+                                    buildFusService.map { it.getFusMetricsConsumer() },
                                     this
                                 )
                             }
@@ -349,7 +349,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
                     when (it.changeType) {
                         ChangeType.ADDED, ChangeType.MODIFIED -> modified.add(it.file)
                         ChangeType.REMOVED -> removed.add(it.file)
-                        else -> Unit
                     }
                 }
                 modified to removed

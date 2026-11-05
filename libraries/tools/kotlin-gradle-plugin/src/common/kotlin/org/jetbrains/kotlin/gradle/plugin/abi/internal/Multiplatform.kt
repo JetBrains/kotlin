@@ -225,6 +225,7 @@ internal fun Project.analyzeMavenPublicationForKlib(target: KlibTargetId, taskSe
     val publishingExtension = extensions.findByType(PublishingExtension::class.java)
     if (publishingExtension == null) {
         reportDiagnostic(KotlinToolingDiagnostics.AbiValidationNoPublishPlugin())
+        return
     }
 
     publishingExtension.publications.configureEach { publication ->
