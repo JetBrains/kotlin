@@ -53,58 +53,54 @@ object FirInlineValueClassSyntaxChecker : FirRegularClassChecker(Common) {
             reporter.reportOn(source, diagnostic, replacement)
         }
 
-        if (
-            annotation != null && hasValueModifier && declaration.classKind == OBJECT &&
-            LanguageFeature.FullValueClasses.isEnabled()
-        ) {
-            // Value objects are full value classes rather than inline single-field classes.
-            reporter.reportOn(annotation.source, FirErrors.JVM_INLINE_ON_VALUE_OBJECT)
-        } else if (
-            annotation != null &&
-            hasValueModifier &&
-            hasInlineModifier &&
-            LanguageFeature.ExplicitInlineValueClassesSyntax.isEnabled()
-        ) {
-            reporter.reportOn(annotation.source, FirErrors.REDUNDANT_JVM_INLINE)
-        } else if (annotation != null && !hasValueModifier) {
-            @OptIn(LegacyJvmInlineHandling::class)
-            val diagnostic =
-                if (
-                    context.session.annotationPlatformSupport.hasJvmInlineAnnotation ||
-                    LanguageFeature.ExplicitInlineValueClassesSyntaxRequiredOnAllPlatforms.isEnabled()
-                ) {
-                    FirErrors.JVM_INLINE_WITHOUT_VALUE_CLASS
-                } else {
-                    FirErrors.JVM_INLINE_WITHOUT_VALUE_CLASS_WARNING
-                }
-            reporter.reportOn(annotation.source, diagnostic)
-        } else if (
-            annotation == null &&
-            hasValueModifier &&
-            !(hasInlineModifier && LanguageFeature.ExplicitInlineValueClassesSyntax.isEnabled()) &&
-            declaration.classKind == CLASS &&
-            LanguageFeature.FullValueClasses.isDisabled() &&
-            declaration.canBeInlineByNumberOfParameters
-        ) {
-            // If FVCs are disabled (otherwise, such a class would be considered full) and a class
-            //   - has explicit 'value' modifier (because deprecated 'inline class' syntax does not require '@JvmInline' anyway)
-            //   - has no '@JvmInline' annotation
-            //   - is not 'inline value class' syntax in >= 2.5
-            // it is an inline class that requires '@JvmInline' / 'inline'.
-            // Other conditions are just to filter out cases when we know other diagnostics will be reported.
-            // TODO: hint to use FVCs if class has > 1 parameters
-            val diagnostic = when {
-                LanguageFeature.ExplicitInlineValueClassesSyntax.isEnabled() &&
-                        (LanguageFeature.ExplicitInlineValueClassesSyntaxRequiredOnAllPlatforms.isEnabled() || platformRequiresJvmInline && !declaration.isExpect) ->
-                    FirErrors.INLINE_VALUE_CLASS_WITHOUT_EXPLICIT_INLINE.errorFactory
-                LanguageFeature.ExplicitInlineValueClassesSyntax.isEnabled() ->
-                    FirErrors.INLINE_VALUE_CLASS_WITHOUT_EXPLICIT_INLINE.warningFactory
-                platformRequiresJvmInline && !declaration.isExpect ->
-                    FirErrors.VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION
-                else -> null // no syntax pre-ExplicitInlineValueClassesSyntax
+        when {
+            annotation != null && hasValueModifier -> when {
+                // Value objects are full value classes rather than inline single-field classes.
+                declaration.classKind == OBJECT && LanguageFeature.FullValueClasses.isEnabled() ->
+                    reporter.reportOn(annotation.source, FirErrors.JVM_INLINE_ON_VALUE_OBJECT)
+                hasInlineModifier && LanguageFeature.ExplicitInlineValueClassesSyntax.isEnabled() ->
+                    reporter.reportOn(annotation.source, FirErrors.REDUNDANT_JVM_INLINE)
             }
-            diagnostic?.let {
-                reporter.reportOn(source, it)
+
+            annotation != null && !hasValueModifier -> {
+                @OptIn(LegacyJvmInlineHandling::class)
+                val diagnostic =
+                    if (
+                        context.session.annotationPlatformSupport.hasJvmInlineAnnotation ||
+                        LanguageFeature.ExplicitInlineValueClassesSyntaxRequiredOnAllPlatforms.isEnabled()
+                    ) {
+                        FirErrors.JVM_INLINE_WITHOUT_VALUE_CLASS
+                    } else {
+                        FirErrors.JVM_INLINE_WITHOUT_VALUE_CLASS_WARNING
+                    }
+                reporter.reportOn(annotation.source, diagnostic)
+            }
+
+            // Only an explicit 'value' modifier needs '@JvmInline' / 'inline': deprecated 'inline class' syntax does not.
+            annotation == null && hasValueModifier -> {
+                // 'inline value class' syntax (since 2.5) already states that the class is inline.
+                if (hasInlineModifier && LanguageFeature.ExplicitInlineValueClassesSyntax.isEnabled()) return
+                // Value objects are never inline single-field classes.
+                if (declaration.classKind != CLASS) return
+                // With FVCs enabled, a 'value class' without '@JvmInline' / 'inline' is a full value class, not an inline one.
+                if (LanguageFeature.FullValueClasses.isEnabled()) return
+                // A wrong number of primary constructor parameters is reported separately, no need to suggest syntax here.
+                // TODO: hint to use FVCs if class has > 1 parameters
+                if (!declaration.canBeInlineByNumberOfParameters) return
+
+                val diagnostic = when {
+                    LanguageFeature.ExplicitInlineValueClassesSyntax.isEnabled() &&
+                            (LanguageFeature.ExplicitInlineValueClassesSyntaxRequiredOnAllPlatforms.isEnabled() || platformRequiresJvmInline && !declaration.isExpect) ->
+                        FirErrors.INLINE_VALUE_CLASS_WITHOUT_EXPLICIT_INLINE.errorFactory
+                    LanguageFeature.ExplicitInlineValueClassesSyntax.isEnabled() ->
+                        FirErrors.INLINE_VALUE_CLASS_WITHOUT_EXPLICIT_INLINE.warningFactory
+                    platformRequiresJvmInline && !declaration.isExpect ->
+                        FirErrors.VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION
+                    else -> null // no syntax pre-ExplicitInlineValueClassesSyntax
+                }
+                diagnostic?.let {
+                    reporter.reportOn(source, it)
+                }
             }
         }
     }
