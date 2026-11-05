@@ -326,8 +326,8 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                     return false
                 }
             } else if (primaryConstructorParametersByName.size != 1) {
-                val jvmInlineAnnotation = context.session.annotationPlatformSupport.jvmInlineAnnotationClassId
-                val hasJvmInlineAnnotation = jvmInlineAnnotation != null && declaration.hasAnnotation(jvmInlineAnnotation, context.session)
+                val jvmInlineAnnotation = StandardClassIds.Annotations.JvmInline
+                val hasJvmInlineAnnotation = declaration.hasAnnotation(jvmInlineAnnotation, context.session)
                 val valueModifier = declaration.getModifier(VALUE_KEYWORD)
                 val hasInlineModifier = declaration.hasModifier(INLINE_KEYWORD)
                 if (
