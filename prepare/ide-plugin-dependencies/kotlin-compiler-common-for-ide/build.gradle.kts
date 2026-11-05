@@ -18,6 +18,7 @@ val otherAnalysisApiModules = listOf(
 
 val projects = commonCompilerModules.asList() + descriptorsCompilerModules + otherAnalysisApiModules + listOf(
     ":compiler:arguments.common",
+    ":compiler:cli-arguments",
     ":compiler:cli-base",
     ":kotlin-build-common",
     ":kotlin-compiler-runner-unshaded",

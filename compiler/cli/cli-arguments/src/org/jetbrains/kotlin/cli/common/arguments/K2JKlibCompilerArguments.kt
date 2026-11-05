@@ -1,7 +1,5 @@
 package org.jetbrains.kotlin.cli.common.arguments
 
-import com.intellij.util.xmlb.annotations.Transient
-
 // TODO(KT-84879): Autogenerate this class similar to other backend arguments.
 // TODO(KT-84897): Remove flags that are not needed for J2CL
 class K2JKlibCompilerArguments : CommonCompilerArguments() {
@@ -287,9 +285,4 @@ The default value is 'indy'.""",
         }
 
     override fun copyOf(): Freezable = TODO() // copyK2JKlibCompilerArguments(this, K2JKlibCompilerArguments())
-
-    @get:Transient
-    @field:kotlin.jvm.Transient
-    override val configurator: CommonCompilerArgumentsConfigurator = K2JKlibCompilerArgumentsConfigurator()
-
 }

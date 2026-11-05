@@ -33,6 +33,7 @@ ignored:
  - compiler/build-tools/kotlin-build-tools-compat/README.md
  - compiler/build-tools/kotlin-build-tools-impl/README.md
  - compiler/build-tools/kotlin-build-tools-jdk-utils/README.md
+ - compiler/cli/cli-arguments/README.md
  - compiler/cli/cli-jklib/README.md
  - compiler/cli/cli-native-klib/README.md
  - compiler/fir/ReadMe.md

@@ -9,6 +9,24 @@ import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.KtSourcelessDiagnosticFactory
 
+/**
+ * The configurator which turns the arguments into the analysis flags and the language feature settings.
+ *
+ * The argument classes are published without the compiler, so the configurator is chosen here by the class of the arguments
+ * instead of being a member of the arguments. Every argument class has to be listed: a configurator of a wrong platform
+ * would silently drop the platform-specific flags.
+ */
+val CommonCompilerArguments.configurator: CommonCompilerArgumentsConfigurator
+    get() = when (this) {
+        is K2JVMCompilerArguments -> K2JVMCompilerArgumentsConfigurator()
+        is K2JSCompilerArguments -> K2JSCompilerArgumentsConfigurator()
+        is KotlinWasmCompilerArguments -> KotlinWasmCompilerArgumentsConfigurator()
+        is K2NativeCompilerArguments -> K2NativeCompilerArgumentsConfigurator()
+        is K2MetadataCompilerArguments -> K2MetadataCompilerArgumentsConfigurator()
+        is K2JKlibCompilerArguments -> K2JKlibCompilerArgumentsConfigurator()
+        else -> CommonCompilerArgumentsConfigurator()
+    }
+
 open class CommonCompilerArgumentsConfigurator {
     interface Reporter {
         fun reportError(message: String)

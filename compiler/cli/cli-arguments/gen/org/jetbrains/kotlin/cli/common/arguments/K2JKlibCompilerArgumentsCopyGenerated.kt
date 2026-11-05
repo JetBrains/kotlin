@@ -6,7 +6,6 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
-@OptIn(org.jetbrains.kotlin.utils.IDEAPluginsCompatibilityAPI::class)
 fun copyK2JKlibCompilerArguments(from: K2JKlibCompilerArguments, to: K2JKlibCompilerArguments): K2JKlibCompilerArguments {
     copyCommonCompilerArguments(from, to)
 

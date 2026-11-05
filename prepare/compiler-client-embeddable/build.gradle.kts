@@ -16,6 +16,7 @@ val testCompilerClasspath = configurations.create("testCompilerClasspath") {
 val testCompilationClasspath = configurations.create("testCompilationClasspath")
 
 dependencies {
+    embedded(project(":compiler:cli-arguments")) { isTransitive = false }
     embedded(project(":compiler:cli-base")) { isTransitive = false }
     embedded(project(":daemon-common")) { isTransitive = false }
     embedded(project(":kotlin-daemon-client")) { isTransitive = false }

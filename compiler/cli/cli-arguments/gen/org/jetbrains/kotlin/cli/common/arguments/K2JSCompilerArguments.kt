@@ -4,7 +4,6 @@
  */
 package org.jetbrains.kotlin.cli.common.arguments
 
-import com.intellij.util.xmlb.annotations.Transient
 import org.jetbrains.kotlin.config.LanguageFeature
 
 // This file was generated automatically. See generator in :compiler:cli:cli-arguments-generator
@@ -271,10 +270,6 @@ class K2JSCompilerArguments : K2WasmCompilerArguments() {
             checkFrozen()
             field = if (value.isNullOrEmpty()) null else value
         }
-
-    @get:Transient
-    @field:kotlin.jvm.Transient
-    override val configurator: CommonCompilerArgumentsConfigurator = K2JSCompilerArgumentsConfigurator()
 
     override fun copyOf(): Freezable = copyK2JSCompilerArguments(this, K2JSCompilerArguments())
 }

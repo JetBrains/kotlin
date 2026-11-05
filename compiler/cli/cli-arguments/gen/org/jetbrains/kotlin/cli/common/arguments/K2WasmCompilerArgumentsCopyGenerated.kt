@@ -6,7 +6,6 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
-@OptIn(org.jetbrains.kotlin.utils.IDEAPluginsCompatibilityAPI::class)
 @Suppress("DEPRECATION")
 fun copyK2WasmCompilerArguments(from: K2WasmCompilerArguments, to: K2WasmCompilerArguments): K2WasmCompilerArguments {
     copyCommonJsAndWasmCompilerArguments(from, to)

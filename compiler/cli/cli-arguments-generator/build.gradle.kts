@@ -7,7 +7,7 @@ plugins {
 
 dependencies {
     implementation(project(":generators"))
-    implementation(project(":compiler:config"))
+    implementation(project(":core:language.version-settings"))
     implementation(project(":compiler:arguments"))
 
     runtimeOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect"))

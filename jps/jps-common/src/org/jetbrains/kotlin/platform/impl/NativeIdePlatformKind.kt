@@ -63,8 +63,6 @@ object NativeIdePlatformKind : IdePlatformKind() {
 )
 @Suppress("DEPRECATION")
 class FakeK2NativeCompilerArguments : CommonCompilerArguments() {
-    override val configurator: CommonCompilerArgumentsConfigurator = CommonCompilerArgumentsConfigurator()
-
     override fun copyOf(): Freezable = copyCommonCompilerArguments(this, FakeK2NativeCompilerArguments())
 }
 

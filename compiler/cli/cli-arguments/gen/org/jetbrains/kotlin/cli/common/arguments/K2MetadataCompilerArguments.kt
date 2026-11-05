@@ -4,8 +4,6 @@
  */
 package org.jetbrains.kotlin.cli.common.arguments
 
-import com.intellij.util.xmlb.annotations.Transient
-
 // This file was generated automatically. See generator in :compiler:cli:cli-arguments-generator
 // Please declare arguments in compiler/arguments/src/org/jetbrains/kotlin/arguments/description/MetadataCompilerArguments.kt
 // DO NOT MODIFY IT MANUALLY.
@@ -96,10 +94,6 @@ class K2MetadataCompilerArguments : CommonCompilerArguments() {
             checkFrozen()
             field = if (value.isNullOrEmpty()) null else value
         }
-
-    @get:Transient
-    @field:kotlin.jvm.Transient
-    override val configurator: CommonCompilerArgumentsConfigurator = K2MetadataCompilerArgumentsConfigurator()
 
     override fun copyOf(): Freezable = copyK2MetadataCompilerArguments(this, K2MetadataCompilerArguments())
 }

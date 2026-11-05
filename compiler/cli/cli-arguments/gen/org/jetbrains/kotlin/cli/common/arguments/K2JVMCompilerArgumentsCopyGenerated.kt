@@ -6,7 +6,6 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
-@OptIn(org.jetbrains.kotlin.utils.IDEAPluginsCompatibilityAPI::class)
 fun copyK2JVMCompilerArguments(from: K2JVMCompilerArguments, to: K2JVMCompilerArguments): K2JVMCompilerArguments {
     copyCommonCompilerArguments(from, to)
 

@@ -226,6 +226,7 @@ object CompilerModules {
 
     val cliCompilerModules = arrayOf(
         ":compiler:arguments.common",
+        ":compiler:cli-arguments",
         ":compiler:cli-base",
         ":compiler:cli",
         ":compiler:cli-jvm",
@@ -253,6 +254,14 @@ object CompilerModules {
     val analysisApiStandaloneModules = arrayOf(
         *analysisApiStandaloneSurfaceModules,
         ":analysis:analysis-api-standalone:analysis-api-standalone-fir",
+    )
+
+    /**
+     * The array of modules shipped in the 'kotlin-analysis-api-implementation-cli-options' artifact.
+     */
+    val analysisApiImplementationCliOptionsModules = arrayOf(
+        ":compiler:arguments.common",
+        ":compiler:cli-arguments",
     )
 
     /**
@@ -299,6 +308,7 @@ object CompilerModules {
         ":prepare:analysis-api:kotlin-analysis-api-platform-interface",
         ":prepare:analysis-api:kotlin-analysis-api-implementation",
         ":prepare:analysis-api:kotlin-analysis-api-scripting-support",
+        ":prepare:analysis-api:kotlin-analysis-api-implementation-cli-options",
         ":prepare:analysis-api:kotlin-analysis-api-syntax-implementation",
         ":prepare:analysis-api:kotlin-analysis-api-fir-diagnostics",
         ":prepare:analysis-api:kotlin-analysis-api-standalone-surface",
@@ -448,6 +458,7 @@ object CompilerModules {
     ":compiler:build-tools:kotlin-build-statistics",
     ":kotlin-build-common",
     ":compiler:arguments.common",
+    ":compiler:cli-arguments",
     )
 
     val kotlinJpsPluginMavenDependencies = listOf(

@@ -84,6 +84,7 @@ val unpublishedCompilerRuntimeDependencies = listOf(
     // TODO: remove in KT-70247
     ":compiler:cli", // for MessageRenderer, related to MessageCollector usage
     ":compiler:cli-base", // for compiler arguments setup, for logging via MessageCollector, CompilerSystemProperties, ExitCode
+    ":compiler:cli-arguments", // for the compiler arguments classes and their parser
     ":compiler:arguments.common", // for compiler arguments parser setup (using `@Enables`, `@Disables` and other annotations)
     ":compiler:compiler.version", // for user projects buildscripts, `loadCompilerVersion`
     ":compiler:config", // for CommonCompilerArguments initialization

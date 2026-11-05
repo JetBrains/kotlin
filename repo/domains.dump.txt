@@ -8,6 +8,7 @@ CompilerInfrastructure:
  - compiler/build.gradle.kts
  - compiler/cli/bin
  - compiler/cli/build.gradle.kts
+ - compiler/cli/cli-arguments
  - compiler/cli/cli-arguments-generator
  - compiler/cli/cli-base
  - compiler/cli/cli-js

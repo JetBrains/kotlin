@@ -64,41 +64,6 @@ fun MutableCollection<String>.appendFatalErrors(arguments: CommonToolArguments) 
     StringCollectionReporterWrapper(this).reportDiagnostics(arguments, fatal = true)
 }
 
-sealed class ArgumentParseDiagnostic(val isFatal: Boolean = false) {
-    class ArgfileError(val message: String) :
-        ArgumentParseDiagnostic(isFatal = true)
-
-    class ArgumentWithoutValue(val argument: String) :
-        ArgumentParseDiagnostic(isFatal = true)
-
-    class BooleanArgumentWithIncorrectValue(val argument: String) :
-        ArgumentParseDiagnostic(isFatal = true)
-
-    class BooleanLanguageFeatureArgumentWithValue(val argument: String) :
-        ArgumentParseDiagnostic(isFatal = true)
-
-    class StringLanguageFeatureArgumentWithIncorrectValue(val argument: String, val value: String, val allowedValues: Collection<String>) :
-        ArgumentParseDiagnostic(isFatal = true)
-
-    class InvalidArgument(val argument: String) :
-        ArgumentParseDiagnostic(isFatal = true)
-
-    class UnknownExtraFlag(val argument: String) :
-        ArgumentParseDiagnostic()
-
-    class ExtraArgumentInObsoleteForm(val argument: String) :
-        ArgumentParseDiagnostic()
-
-    class ArgumentWithDeprecatedName(val deprecatedName: String, val newName: String) :
-        ArgumentParseDiagnostic()
-
-    class InternalArgumentError(val message: String) :
-        ArgumentParseDiagnostic()
-
-    class InternalArgumentWarning(val message: String) :
-        ArgumentParseDiagnostic()
-}
-
 private sealed class CliDiagnosticReporterWrapper<T> {
     /**
      * The flag [fatal] could be dropped entirely (reporting all diagnostics whenever a fatal error is encountered),

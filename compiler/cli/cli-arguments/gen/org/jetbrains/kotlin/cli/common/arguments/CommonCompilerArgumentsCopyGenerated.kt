@@ -6,7 +6,6 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
-@OptIn(org.jetbrains.kotlin.utils.IDEAPluginsCompatibilityAPI::class)
 fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompilerArguments): CommonCompilerArguments {
     copyCommonToolArguments(from, to)
 
