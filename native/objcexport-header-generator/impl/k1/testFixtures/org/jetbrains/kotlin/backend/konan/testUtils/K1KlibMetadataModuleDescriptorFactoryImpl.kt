@@ -192,6 +192,7 @@ class K1KlibMetadataModuleDescriptorFactoryImpl {
 }
 
 
+@OptIn(K1Deprecation::class)
 private fun createDeserializedPackageFragments(
     library: KotlinLibrary,
     moduleDescriptor: ModuleDescriptor,

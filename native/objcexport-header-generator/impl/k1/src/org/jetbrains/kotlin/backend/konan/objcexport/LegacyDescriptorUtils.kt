@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.*
 @Deprecated("Moved to the ':core:descriptors' module", level = HIDDEN)
 fun DeclarationDescriptor.findPackage(): PackageFragmentDescriptor = findPackage()
 
+@OptIn(K1Deprecation::class)
 private fun sourceByIndex(descriptor: CallableMemberDescriptor, index: Int): SourceFile {
     val fragment = descriptor.findPackage() as KlibMetadataDeserializedPackageFragment
     val fileName = fragment.proto.strings.stringList[index]
