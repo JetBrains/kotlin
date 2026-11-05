@@ -10,6 +10,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinBrowserBundler
 import org.jetbrains.kotlin.gradle.js.AbstractWebContinuousBuildIT
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinWasmDevServerTaskImpl.Companion.DEFAULT_PORT
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.util.replaceText
@@ -29,7 +30,6 @@ import kotlin.io.path.readText
 import kotlin.io.path.writeText
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.TimeSource
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinWasmDevServerTaskImpl.Companion.DEFAULT_PORT
 
 @MustRunOnChangesInGradle
 class WasmJsContinuousBuildIT : AbstractWebContinuousBuildIT() {
