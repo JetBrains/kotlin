@@ -135,6 +135,10 @@ python3 analysis/test-data-manager/test-data-manager.py check --path compiler/ps
 # Update it; the summary lists the created, updated and deleted files
 python3 analysis/test-data-manager/test-data-manager.py update --path compiler/psi/psi-impl/testData/psi/annotation
 
+# Several paths go into one --path, separated by commas, as in the testDataPath option of the tasks
+python3 analysis/test-data-manager/test-data-manager.py check \
+    --path compiler/psi/psi-impl/testData/psi/annotation,compiler/psi/psi-impl/testData/psi/examples
+
 # Limit the modules, print the summary as JSON
 python3 analysis/test-data-manager/test-data-manager.py check --path analysis/analysis-api/testData/components \
     --module :analysis:analysis-api-fir --json

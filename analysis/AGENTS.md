@@ -45,6 +45,9 @@ When modifying test data files or running generated tests (`*Generated`) that co
 ```bash
 python3 analysis/test-data-manager/test-data-manager.py update --path analysis/analysis-api/testData/components/resolver/
 python3 analysis/test-data-manager/test-data-manager.py check --path analysis/analysis-api/testData/components/resolver/
+
+# Several paths: one --path, separated by commas
+python3 analysis/test-data-manager/test-data-manager.py update --path analysis/analysis-api/testData/components/resolver/,analysis/analysis-api/testData/components/symbolInfoProvider/
 ```
 
 Prefer it to calling Gradle directly: the command is short, a mistyped option fails instead of being silently ignored

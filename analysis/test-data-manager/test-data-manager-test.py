@@ -153,10 +153,8 @@ class WrapperTest(unittest.TestCase):
     def test_runs_every_managed_module_with_the_options(self) -> None:
         self.write("mod-a/testData/file.kt", "")
         self.write("other/file.kt", "")
-        exit_code, summary = self.run_wrapper(
-            {module: {} for module in ALL_MODULES},
-            "update", "--path", "mod-a/testData", "--path", "other/", "--incremental", "--verbose",
-        )
+        stub = {module: {} for module in ALL_MODULES}
+        exit_code, summary = self.run_wrapper(stub, "update", "--path", "mod-a/testData,other/", "--incremental", "--verbose")
         self.assertEqual((0, "PASSED"), (exit_code, summary["status"]))
         self.assertEqual({"discovered": 3, "passed": 3, "failed": 0, "skipped": 0}, summary["tests"])
         prefix = "-Porg.jetbrains.kotlin.testDataManager.options."
@@ -166,6 +164,11 @@ class WrapperTest(unittest.TestCase):
              f"{prefix}incremental=true", f"{prefix}output=verbose"],
             self.gradle_args(),
         )
+
+        # A repeated `--path` is the same as one with commas
+        comma_args = [arg.replace(summary["runId"], "<id>") for arg in self.gradle_args()]
+        _, summary = self.run_wrapper(stub, "update", "--path", "mod-a/testData", "--path", "other/", "--incremental", "--verbose")
+        self.assertEqual(comma_args, [arg.replace(summary["runId"], "<id>") for arg in self.gradle_args()])
 
     def test_requested_modules_only(self) -> None:
         exit_code, summary = self.run_wrapper({":mod-b": {}}, "check", "--module", ":mod-b", "--gradle-arg=--offline")

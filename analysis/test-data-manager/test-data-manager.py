@@ -459,7 +459,9 @@ def main(argv: Optional[List[str]] = None, root: Optional[Path] = None) -> int:
     """Runs the wrapper with [argv] (the command line by default) in the repository at [root] (the script's one)."""
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("mode", choices=["check", "update"], help="checkTestData (read-only) or updateTestData")
-    parser.add_argument("--path", action="append", default=[], dest="paths", help="testDataPath entry (repeatable)")
+    parser.add_argument("--path", action="append", default=[], dest="paths", metavar="PATH[,PATH...]",
+                        help="testDataPath: test data paths relative to the repository root or absolute, separated by "
+                             "commas as in the task option (repeating --path adds more)")
     parser.add_argument("--class-pattern", help="testClassPattern")
     parser.add_argument("--golden-only", action="store_true", help="goldenOnly")
     parser.add_argument("--incremental", action="store_true", help="incremental")
