@@ -13,6 +13,7 @@ tasks.register("sirAllTests") {
         ":native:swift:swift-export-ide:test",
         ":native:swift:sir-printer:test",
         ":native:swift:kir-printer:test",
+        ":native:swift:kir-light-classes:test",
         ":native:swift:sir-light-classes:check",
     )
 }
