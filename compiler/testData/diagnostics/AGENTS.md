@@ -1,6 +1,4 @@
-# FIR Analysis Tests
-
-Location: `compiler/testData/diagnostics`
+# Diagnostic Tests
 
 ## Test File Format (`.kt` files)
 
@@ -71,12 +69,12 @@ Run with `-Pkotlin.test.update.test.data=true` to auto-generate/update `.latestL
 
 1. **Create the `.kt` test file** with appropriate directives and test code.
 2. **Regenerating diagnostic test runners is not required**: They are regenerated on demand when running tests.
-3. **Run the test once** (it will fail):
+3. **Run the test once while updating test data** (it will fail):
    ```bash
-   ./gradlew :compiler:fir:analysis-tests:test --tests "org.jetbrains.kotlin.test.runners.PhasedJvmDiagnosticLightTreeTestGenerated\$Resolve\$Problems.testMyTest"
+   ./gradlew :compiler:jvm.tests:test --tests "org.jetbrains.kotlin.test.runners.PhasedJvmDiagnosticLightTreeTestGenerated\$Resolve\$Problems.testMyTest" -Pkotlin.test.update.test.data=true
    ```
-   This first run auto-generates the `GENERATED_FIR_TAGS` footer in the `.kt` file. No special flags are needed — tags are written automatically on first run.
-4. **Run the test again** — it should now pass.
+   This first run auto-generates the `GENERATED_FIR_TAGS` footer in the `.kt` file.
+4. **Run the test again while updating test data** — it should now pass or generate other markers like diagnostics.
 
 ### Important notes
 
@@ -86,7 +84,7 @@ Run with `-Pkotlin.test.update.test.data=true` to auto-generate/update `.latestL
 - **stdlib is not available by default.** Functions like `println` will produce `UNRESOLVED_REFERENCE` without the `// WITH_STDLIB` directive.
 - **`-Pkotlin.test.update.test.data=true`** updates handler-generated files (like `.fir.txt`) but does NOT update the `.kt` source file itself (tags, diagnostic markers). The `.kt` file is updated by the test framework's own `TagsGeneratorChecker` on a normal test run.
 
-## Directory Structure at `testData/resolve/`
+## Directory Structure at `testData/diagnostics/tests`
 
 Root level contains individual `.kt` test files with their `.fir.txt` dumps. Subdirectories group tests by topic:
 
