@@ -8,9 +8,17 @@ package org.jetbrains.kotlin.commonizer
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.commonizer.AbstractInlineSourcesCommonizationTest.DependencyAwareInlineSourceTestFactory
 import org.jetbrains.kotlin.commonizer.AbstractInlineSourcesCommonizationTest.Parameters
+import org.jetbrains.kotlin.commonizer.core.toModulesProvider
+import org.jetbrains.kotlin.commonizer.konan.DefaultModulesProvider
 import org.jetbrains.kotlin.commonizer.konan.NativeManifestDataProvider
+import org.jetbrains.kotlin.commonizer.repository.CommonizerSupportLibraryRepository
 import org.jetbrains.kotlin.commonizer.utils.*
+import org.jetbrains.kotlin.ir.backend.js.moduleName
+import org.jetbrains.kotlin.util.DummyLogger
 import org.junit.jupiter.api.Assertions.assertEquals
+import kotlin.collections.component1
+import kotlin.collections.component2
+import kotlin.io.path.pathString
 import kotlin.test.assertIs
 import kotlin.test.fail
 
@@ -26,6 +34,7 @@ abstract class AbstractInlineSourcesCommonizationTest : KtInlineSourceCommonizer
     data class Parameters(
         val outputTargets: Set<SharedCommonizerTarget>,
         val dependencies: TargetDependent<List<InlineSourceBuilder.Module>>,
+        val supportLibrary: SupportLibraryVariant?,
         val targets: List<Target>,
         val settings: CommonizerSettings,
     )
@@ -34,6 +43,11 @@ abstract class AbstractInlineSourcesCommonizationTest : KtInlineSourceCommonizer
         val target: CommonizerTarget,
         val modules: List<InlineSourceBuilder.Module>
     )
+
+    sealed class SupportLibraryVariant {
+        data class MockSources(val sources: Map<CommonizerTarget, InlineSourceBuilder.Module>) : SupportLibraryVariant()
+        internal data class Real(val repositry: CommonizerSupportLibraryRepository) : SupportLibraryVariant()
+    }
 
 
     @DslMarker
@@ -46,6 +60,8 @@ abstract class AbstractInlineSourcesCommonizationTest : KtInlineSourceCommonizer
         private val dependencies: MutableMap<CommonizerTarget, MutableList<InlineSourceBuilder.Module>> = LinkedHashMap()
 
         private var targets: List<Target> = emptyList()
+
+        private var supportLibrary: SupportLibraryVariant? = null
 
         private val inlineSourceBuilderFactory
             get() = DependencyAwareInlineSourceTestFactory(parentInlineSourceBuilder, dependencies.toTargetDependent())
@@ -67,19 +83,83 @@ abstract class AbstractInlineSourcesCommonizationTest : KtInlineSourceCommonizer
             return target(parseCommonizerTarget(target), builder)
         }
 
+        private inline fun registerDependencyFor(
+            target: CommonizerTarget,
+            dependency: (List<InlineSourceBuilder.Module>) -> InlineSourceBuilder.Module,
+        ) {
+            val dependenciesList = dependencies.getOrPut(target) { mutableListOf() }
+            dependency(dependenciesList).let { dependenciesList.add(it) }
+        }
+
         fun registerDependency(vararg targets: CommonizerTarget, builder: InlineSourceBuilder.ModuleBuilder.() -> Unit) {
             targets.forEach { target ->
-                val dependenciesList = dependencies.getOrPut(target) { mutableListOf() }
-                val dependency = inlineSourceBuilderFactory[target].createModule {
-                    builder()
-                    name = "$target-dependency-${dependenciesList.size}-$name"
+                registerDependencyFor(target) { dependenciesList ->
+                    inlineSourceBuilderFactory[target].createModule {
+                        builder()
+                        name = "$target-dependency-${dependenciesList.size}-$name"
+                    }
                 }
-                dependenciesList.add(dependency)
             }
         }
 
         fun registerDependency(vararg targets: String, builder: InlineSourceBuilder.ModuleBuilder.() -> Unit) {
             registerDependency(targets = targets.map(::parseCommonizerTarget).withAllLeaves().toTypedArray(), builder)
+        }
+
+        fun registerRealSupportLibrary() {
+            val nativeDistribution = KonanDistribution(nativeDistributionPath())
+            val supportLibraryRepository = CommonizerSupportLibraryRepository(nativeDistribution, DummyLogger)
+
+            supportLibrary = SupportLibraryVariant.Real(supportLibraryRepository)
+
+            val modulesProvider = DefaultModulesProvider.forDependencies(supportLibraryRepository.libraries.values, DummyLogger)
+            val targetToPrecompiledSupportModule = supportLibraryRepository.libraries.entries.associateBy(
+                keySelector = { it.key },
+                valueTransform = {
+                    val serializedMetadata = modulesProvider.loadModuleMetadata(it.value.library.moduleName)
+                    val namedMetadata = NamedMetadata(it.value.library.moduleName, serializedMetadata)
+                    val compiledArtifact = CompiledDependency(namedMetadata, destination = it.value.library.path.pathString)
+
+                    parentInlineSourceBuilder.createModule {
+                        name = it.value.library.moduleName
+                        precompiledArtifact = compiledArtifact
+                    }
+                }
+            )
+
+            configureSupportLibraryDependency(targetToPrecompiledSupportModule)
+        }
+
+        fun registerSupportLibrary(library: Map<String, InlineSourceBuilder.Module>) {
+            val withParsedKeys = library.mapKeys { parseCommonizerTarget(it.key) }
+                .also { supportLibrary = SupportLibraryVariant.MockSources(it) }
+
+            configureSupportLibraryDependency(withParsedKeys)
+        }
+
+        private fun configureSupportLibraryDependency(targetToSupportModule: Map<CommonizerTarget, InlineSourceBuilder.Module>) {
+            fun CommonizerTarget.getAllContainingSharedModules() = targetToSupportModule
+                .filter { [target] -> allLeaves().isSubsetOf(target.allLeaves()) }
+
+            // To properly compile sample code for output targets (written in `assertEquals()`),
+            // we must be able to resolve the resulting types in the dependencies.
+            for (it in outputTargets.orEmpty()) {
+                val [_, closestSharedSourceSet] = it.getAllContainingSharedModules().minBy { it.key.allLeaves().size }
+                registerDependencyFor(it) { closestSharedSourceSet }
+            }
+
+            // The commonizer only commonizes `fun foo(Long)` and `fun foo(Int)` if there's at least
+            // some typealias in the dependencies that is either `Long` or `Int` specifically, and if
+            // it's defined for each target.
+            // Unlike the frontend, the commonizer doesn't "see" further `dependsOn` dependencies, so
+            // we must add all the common source sets manually.
+            for (it in targetToSupportModule.keys.allLeaves()) {
+                val closestSharedSourceSets = it.getAllContainingSharedModules().values
+
+                for (sourceSet in closestSharedSourceSets) {
+                    registerDependencyFor(it) { sourceSet }
+                }
+            }
         }
 
         fun simpleSingleSourceTarget(target: CommonizerTarget, @Language("kotlin") sourceContent: String) {
@@ -113,6 +193,7 @@ abstract class AbstractInlineSourcesCommonizationTest : KtInlineSourceCommonizer
         fun build(): Parameters = Parameters(
             outputTargets = outputTargets ?: setOf(SharedCommonizerTarget(targets.map { it.target }.allLeaves())),
             dependencies = dependencies.toTargetDependent(),
+            supportLibrary = supportLibrary,
             targets = targets.toList(),
             settings = MapBasedCommonizerSettings(*settings.toTypedArray()),
         )
@@ -175,8 +256,18 @@ abstract class AbstractInlineSourcesCommonizationTest : KtInlineSourceCommonizer
             dependenciesProvider = TargetDependent(outputTargets.withAllLeaves()) { target ->
                 val dependenciesMetadata = dependencies.getOrNull(target).orEmpty()
                     .map { module -> createMetadata(module) }
-                    .plus(loadStdlibMetadata())
+                    .let { listOf(loadStdlibMetadata()) + it }
                 MockModulesProvider.create(dependenciesMetadata)
+            },
+            supportLibraryModulesProvider = when (supportLibrary) {
+                is SupportLibraryVariant.MockSources -> TargetDependent(outputTargets.withAllLeaves()) { target ->
+                    val modules = supportLibrary.sources
+                        .filterKeys { supportTarget -> target.allLeaves().isSubsetOf(supportTarget.allLeaves()) }
+                        .values.map { createMetadata(it) }
+                    MockModulesProvider.create(modules)
+                }
+                is SupportLibraryVariant.Real -> supportLibrary.repositry.toModulesProvider(outputTargets)
+                null -> buildDummySupportLibraryModulesProvider(outputTargets, testRootDisposable)
             },
             targetProviders = TargetDependent(outputTargets.allLeaves()) { commonizerTarget ->
                 val target = targets.singleOrNull { it.target == commonizerTarget } ?: return@TargetDependent null

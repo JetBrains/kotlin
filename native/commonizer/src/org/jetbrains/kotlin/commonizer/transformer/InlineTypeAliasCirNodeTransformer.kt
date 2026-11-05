@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.commonizer.transformer
 
 import org.jetbrains.kotlin.commonizer.CommonizerSettings
 import org.jetbrains.kotlin.commonizer.cir.*
+import org.jetbrains.kotlin.commonizer.core.SupportExpectClassSupplier
 import org.jetbrains.kotlin.commonizer.mergedtree.*
 import org.jetbrains.kotlin.commonizer.mergedtree.CirNodeRelationship.Composite.Companion.plus
 import org.jetbrains.kotlin.commonizer.mergedtree.CirNodeRelationship.ParentNode
@@ -19,6 +20,7 @@ internal class InlineTypeAliasCirNodeTransformer(
     private val storageManager: StorageManager,
     private val classifiers: CirKnownClassifiers,
     private val settings: CommonizerSettings,
+    private val supportExpectClassSupplier: SupportExpectClassSupplier,
 ) : CirNodeTransformer {
     override fun invoke(root: CirRootNode) {
         root.modules.values.forEach(::invoke)
