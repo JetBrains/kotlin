@@ -19,3 +19,17 @@ src/**/*.kt
 ```
 
 Changes should follow conventions defined in `@docs/build-tools/gradle/conventions/*.md`.
+
+# Kotlin Build Tools libraries stay off the buildscript classpath when they have dependencies
+
+Applies to:
+```
+build.gradle.kts
+```
+
+KGP may depend on a `:build-tools:libraries:*` project with `commonImplementation`, `commonApi` or
+`embedded` only if its runtime dependencies are stdlib, the BTA API and other libraries that meet the same
+condition. A library that brings kotlinx-coroutines, kotlinx-serialization, Ktor or any other third-party
+artifact must be split into an API and an implementation module, and KGP must load the implementation in an
+isolated worker from a resolvable configuration instead. See "Loading an implementation in KGP" in
+`build-tools/libraries/AGENTS.md`.
