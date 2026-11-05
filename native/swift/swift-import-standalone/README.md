@@ -40,7 +40,7 @@ The checksums of swiftextract are not committed, because every locally built jar
 On the first build after enabling the module, generate them once:
 
 ```bash
-./gradlew --write-verification-metadata sha256 :native:swift:swift-import-standalone:compileTestKotlin
+./gradlew --write-verification-metadata sha256 :native:swift:swift-import-standalone-integration-tests:simple:compileTestKotlin
 ```
 
 This adds the `org.swift.swiftkit` entries (and possibly entries for other artifacts resolved by the build)
@@ -49,8 +49,4 @@ Rerun the command whenever you rebuild or republish swiftextract.
 
 ## Testing
 
-### How to run the tests
-
-```bash
-./gradlew :native:swift:swift-import-standalone:test
-```
+The module is tested by [swift-import-standalone-integration-tests](../swift-import-standalone-integration-tests/README.md).
