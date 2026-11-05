@@ -10,7 +10,9 @@ import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.session.sourcesToPathsMapper
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.render
@@ -74,8 +76,13 @@ private fun FirBasedSymbol<*>.toSymbolNode(children: MutableCollection<SymbolNod
     return SymbolNode(physicalLocation?.line, physicalLocation?.column, physicalLocation?.endLine, this, children)
 }
 
-private fun FirBasedSymbol<*>.collectContainers(): List<FirClassLikeSymbol<*>> =
-    generateSequence(getContainingClassSymbol()) { it.getContainingClassSymbol() }.toList().reversed()
+private fun FirBasedSymbol<*>.collectContainers(): List<FirBasedSymbol<*>> =
+    generateSequence(getContainer()) { it.getContainer() }.toList().reversed()
+
+private fun FirBasedSymbol<*>.getContainer(): FirBasedSymbol<*>? =
+    (this as? FirPropertyAccessorSymbol)?.propertySymbol
+        ?: (this as? FirBackingFieldSymbol)?.propertySymbol
+        ?: getContainingClassSymbol()
 
 fun Iterable<FirBasedSymbol<*>>.groupIntoSymbolNodes(): List<SymbolNode> {
     val containerToNode = mutableMapOf<FirBasedSymbol<*>, SymbolNode>()
@@ -128,14 +135,20 @@ inline fun SymbolNode.renderToLinesWithNumber(render: (FirBasedSymbol<*>) -> Str
             val [indent, element] = orderStack.popLast()
 
             if (indent < previousIndent) {
-                this += RenderedLineWithNumber(number = parentStack.popLast().endLine, indent = indent, renderedLine = "}")
+                parentStack.popLast().takeIf { it.symbol !is FirPropertySymbol }?.let { parent ->
+                    this += RenderedLineWithNumber(number = parent.endLine, indent = indent, renderedLine = "}")
+                }
             }
 
             val ownLines = element.symbol.renderToLinesWithNumber(render).map { it.copy(indent = indent) }
 
             if (element.children.isNotEmpty()) {
-                this += ownLines.dropLast(1)
-                this += ownLines.last().copy(renderedLine = ownLines.last().renderedLine + " {")
+                if (element.symbol !is FirPropertySymbol) {
+                    this += ownLines.dropLast(1)
+                    this += ownLines.last().copy(renderedLine = ownLines.last().renderedLine + " {")
+                } else {
+                    this += ownLines
+                }
                 orderStack += element.children.map { indent + 1 to it }
                 parentStack += element
             } else {
@@ -145,8 +158,10 @@ inline fun SymbolNode.renderToLinesWithNumber(render: (FirBasedSymbol<*>) -> Str
             previousIndent = indent
         }
 
-        if (previousIndent != 0) {
-            this += RenderedLineWithNumber(number = parentStack.popLast().endLine, indent = 0, renderedLine = "}")
+        while (parentStack.isNotEmpty()) {
+            parentStack.popLast().takeIf { it.symbol !is FirPropertySymbol }?.let { parent ->
+                this += RenderedLineWithNumber(number = parent.endLine, indent = parentStack.size, renderedLine = "}")
+            }
         }
     }
 }
@@ -182,8 +197,10 @@ inline fun renderSymbolsWithLocation(
     header = DecorationHeader.Candidates(logicalLocation, filePath),
     renderedLines = symbols.flatMap { symbol -> symbol.renderToLinesWithNumber(render) }
         .interleaveWith { previous, next ->
+            val areSiblings = previous.number != null && previous.number + 1 == next.number
+            val arePartsOfSingleRealSource = previous.number != null && previous.number == next.number
             when {
-                previous.number != null && previous.number + 1 == next.number -> null
+                areSiblings || arePartsOfSingleRealSource -> null
                 else -> RenderedLineWithNumber(number = null, indent = maxOf(previous.indent, next.indent), renderedLine = "...")
             }
         },
@@ -197,9 +214,11 @@ fun renderLocationDecoration(
 ): String {
     val longestNumberString = renderedLines.mapNotNull { it.number?.toString() }.maxByOrNull { it.length } ?: ""
     val indentString = " ".repeat(longestNumberString.length)
+    var previousNumber: Int? = null
 
     val paddedRenderedLines = renderedLines.joinToString("\n") {
-        val numberString = it.number?.toString()?.padStart(indentString.length, ' ') ?: indentString
+        val numberString = it.number?.takeIf { it != previousNumber }?.toString()?.padStart(indentString.length, ' ') ?: indentString
+        previousNumber = it.number
         "$numberString | " + "    ".repeat(it.indent) + it.renderedLine
     }
 

@@ -169,8 +169,7 @@ In package 'root package' of module '<main>':
   --> nothingToOverrideMessage.kt
    |
 46 | class GenericOverride<R> : Generic<R> {
-   |     ...
-46 |     fun foo(t: R): Unit
+   |     fun foo(t: R): Unit
    |     ...
 48 | }
    |
@@ -189,8 +188,7 @@ In package 'root package' of module '<main>':
   --> nothingToOverrideMessage.kt
    |
 50 | class NonGenericOverride : Generic<String> {
-   |     ...
-50 |     fun foo(t: String): Unit
+   |     fun foo(t: String): Unit
    |     ...
 52 | }
    |

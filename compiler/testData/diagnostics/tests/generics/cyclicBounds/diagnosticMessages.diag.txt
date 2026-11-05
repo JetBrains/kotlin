@@ -3,8 +3,7 @@ In package 'root package' of module '<main>':
  --> diagnosticMessages.kt
   |
 4 | F0 (of 'class A1<T0 : F0?, F0 : ??? (Type parameter F0 has cyclic bounds), E0 : F0>')
-  | ...
-4 | E0 (of 'class A1<T0 : F0?, F0 : ??? (Type parameter F0 has cyclic bounds), E0 : F0>')
+  | E0 (of 'class A1<T0 : F0?, F0 : ??? (Type parameter F0 has cyclic bounds), E0 : F0>')
   |.
 
 /diagnosticMessages.kt:4:52: error: Type parameter has cyclic upper bounds:
@@ -12,8 +11,7 @@ In package 'root package' of module '<main>':
  --> diagnosticMessages.kt
   |
 4 | F0 (of 'class A1<T0 : F0?, F0 : ??? (Type parameter F0 has cyclic bounds), E0 : F0>')
-  | ...
-4 | E0 (of 'class A1<T0 : F0?, F0 : ??? (Type parameter F0 has cyclic bounds), E0 : F0>')
+  | E0 (of 'class A1<T0 : F0?, F0 : ??? (Type parameter F0 has cyclic bounds), E0 : F0>')
   |.
 
 /diagnosticMessages.kt:6:47: error: Type parameter has cyclic upper bounds:
@@ -21,8 +19,7 @@ In package 'root package' of module '<main>':
  --> diagnosticMessages.kt
   |
 6 | F1 (of 'class A2<T1 : F1?, F1 : ??? (Type parameter F1 has cyclic bounds), E1 : ??? (Type parameter E1 has cyclic bounds), K1 : E1>')
-  | ...
-6 | E1 (of 'class A2<T1 : F1?, F1 : ??? (Type parameter F1 has cyclic bounds), E1 : ??? (Type parameter E1 has cyclic bounds), K1 : E1>')
+  | E1 (of 'class A2<T1 : F1?, F1 : ??? (Type parameter F1 has cyclic bounds), E1 : ??? (Type parameter E1 has cyclic bounds), K1 : E1>')
   |.
 
 /diagnosticMessages.kt:6:56: error: Type parameter has cyclic upper bounds:
@@ -30,8 +27,7 @@ In package 'root package' of module '<main>':
  --> diagnosticMessages.kt
   |
 6 | F1 (of 'class A2<T1 : F1?, F1 : ??? (Type parameter F1 has cyclic bounds), E1 : ??? (Type parameter E1 has cyclic bounds), K1 : E1>')
-  | ...
-6 | E1 (of 'class A2<T1 : F1?, F1 : ??? (Type parameter F1 has cyclic bounds), E1 : ??? (Type parameter E1 has cyclic bounds), K1 : E1>')
+  | E1 (of 'class A2<T1 : F1?, F1 : ??? (Type parameter F1 has cyclic bounds), E1 : ??? (Type parameter E1 has cyclic bounds), K1 : E1>')
   |.
 
 /diagnosticMessages.kt:6:65: error: Type parameter has cyclic upper bounds:
@@ -39,8 +35,7 @@ In package 'root package' of module '<main>':
  --> diagnosticMessages.kt
   |
 6 | E1 (of 'class A2<T1 : F1?, F1 : ??? (Type parameter F1 has cyclic bounds), E1 : ??? (Type parameter E1 has cyclic bounds), K1 : E1>')
-  | ...
-6 | K1 (of 'class A2<T1 : F1?, F1 : ??? (Type parameter F1 has cyclic bounds), E1 : ??? (Type parameter E1 has cyclic bounds), K1 : E1>')
+  | K1 (of 'class A2<T1 : F1?, F1 : ??? (Type parameter F1 has cyclic bounds), E1 : ??? (Type parameter E1 has cyclic bounds), K1 : E1>')
   |.
 
 /diagnosticMessages.kt:6:74: error: Type parameter has cyclic upper bounds:
@@ -48,6 +43,5 @@ In package 'root package' of module '<main>':
  --> diagnosticMessages.kt
   |
 6 | E1 (of 'class A2<T1 : F1?, F1 : ??? (Type parameter F1 has cyclic bounds), E1 : ??? (Type parameter E1 has cyclic bounds), K1 : E1>')
-  | ...
-6 | K1 (of 'class A2<T1 : F1?, F1 : ??? (Type parameter F1 has cyclic bounds), E1 : ??? (Type parameter E1 has cyclic bounds), K1 : E1>')
+  | K1 (of 'class A2<T1 : F1?, F1 : ??? (Type parameter F1 has cyclic bounds), E1 : ??? (Type parameter E1 has cyclic bounds), K1 : E1>')
   |.

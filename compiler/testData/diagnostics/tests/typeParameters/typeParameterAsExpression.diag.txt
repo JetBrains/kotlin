@@ -19,8 +19,7 @@ In package 'root package' of module '<main>':
   --> typeParameterAsExpression.kt
    |
 12 | T (of 'fun <T, T> f')
-   | ...
-12 | T (of 'fun <T, T> f')
+   | T (of 'fun <T, T> f')
    |
 
 /typeParameterAsExpression.kt:12:9: error: Conflicting declarations:
@@ -28,8 +27,7 @@ In package 'root package' of module '<main>':
   --> typeParameterAsExpression.kt
    |
 12 | T (of 'fun <T, T> f')
-   | ...
-12 | T (of 'fun <T, T> f')
+   | T (of 'fun <T, T> f')
    |
 
 /typeParameterAsExpression.kt:13:5: error: None of the following candidates is applicable for expression 'T':
