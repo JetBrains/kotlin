@@ -365,7 +365,7 @@ private fun findAndCreateSwiftExportedModules(
                 createFullyExportedSwiftExportedModule(
                     // Validate the derived name only if it is used, an unused invalid name must not fail the build.
                     explicitModule.moduleName.orNull
-                        ?: normalizedAndValidatedModuleName(explicitModule.inheritedName, reportDiagnostic),
+                        ?: normalizedAndValidatedModuleName(explicitModule, reportDiagnostic),
                     explicitModule.flattenPackage.orNull,
                     matchingArtifact.artifact.file
                 )
@@ -423,5 +423,7 @@ private data class SwiftExportedModuleImp(
     override val exportMode: SwiftExportedModuleMode,
 ) : SwiftExportedModule
 
-private fun normalizedAndValidatedModuleName(moduleName: String, reportDiagnostic: (ToolingDiagnostic) -> Unit) =
-    moduleName.normalizedSwiftExportModuleName.also { validateSwiftExportModuleName(it, reportDiagnostic) }
+private fun normalizedAndValidatedModuleName(module: SwiftExportedDependency, reportDiagnostic: (ToolingDiagnostic) -> Unit) =
+    module.inheritedName.normalizedSwiftExportModuleName.also {
+        validateSwiftExportModuleName(it, module.name, "swiftExport { export(...) { moduleName = ... } }", reportDiagnostic)
+    }

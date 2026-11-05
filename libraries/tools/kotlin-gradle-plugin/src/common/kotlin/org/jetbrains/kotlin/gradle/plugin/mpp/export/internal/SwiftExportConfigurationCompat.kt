@@ -32,6 +32,11 @@ internal interface SwiftExportConfigurationCompat {
     val moduleName: Property<String>
 
     /**
+     * The DSL snippet that sets [moduleName], for diagnostics.
+     */
+    val moduleNameDsl: String
+
+    /**
      * This module's root package.
      */
     val rootPackage: Property<String>
@@ -87,6 +92,7 @@ internal interface SwiftExportConfigurationCompat {
         ): SwiftExportConfigurationCompat =
             object : SwiftExportConfigurationCompat {
                 override val moduleName: Property<String> get() = configuration.moduleName
+                override val moduleNameDsl: String get() = "export { swift { moduleName = ... } }"
                 override val rootPackage: Property<String> get() = configuration.rootPackage
 
                 override val apiConfiguration: Provider<Configuration?>
@@ -128,6 +134,7 @@ internal interface SwiftExportConfigurationCompat {
         ): SwiftExportConfigurationCompat =
             object : SwiftExportConfigurationCompat {
                 override val moduleName: Property<String> get() = extension.moduleName
+                override val moduleNameDsl: String get() = "swiftExport { moduleName = ... }"
                 override val rootPackage: Property<String> get() = extension.flattenPackage
                 override val exportedModules: Provider<Set<SwiftExportedDependency>> get() = extension.exportedModules
 

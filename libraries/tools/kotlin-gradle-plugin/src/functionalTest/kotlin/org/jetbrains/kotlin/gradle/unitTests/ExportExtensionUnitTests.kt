@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsSeverity.FATAL
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticFactory
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
@@ -799,7 +800,9 @@ class ExportExtensionSwiftExportTests {
         project.evaluate()
 
         project.realizeSwiftModules()
-        project.assertContainsDiagnostic(KotlinToolingDiagnostics.SwiftExportInvalidModuleName)
+        project.assertContainsDiagnostic(
+            KotlinToolingDiagnostics.SwiftExportInvalidModuleName("Shared-S", project.path)
+        )
     }
 
     @Test
@@ -1511,7 +1514,13 @@ class ExportExtensionSwiftExportTests {
 
         project.evaluate()
 
-        project.assertRealizingSwiftModulesFailsWith(KotlinToolingDiagnostics.SwiftExportInvalidModuleName)
+        project.assertRealizingSwiftModulesFailsWith(
+            KotlinToolingDiagnostics.SwiftExportInvalidModuleName(
+                moduleName = "not-a-valid-swift-module",
+                module = "org.jetbrains.kotlinx:kotlinx-io-bytestring-iossimulatorarm64:0.7.0",
+                severity = FATAL,
+            )
+        )
     }
 
     @Test

@@ -52,7 +52,9 @@ internal fun applySwiftExportConsumerOverrides(
     val componentByArtifact = componentByArtifact(exportConfiguration, apiConfiguration)
     val exported = modules.map { module ->
         val component = componentByArtifact[module.artifact] ?: return@map module to null
-        val declaredName = sources.declaredModuleName(component)?.also { validateSwiftExportModuleName(it, reportDiagnostic) }
+        val declaredName = sources.declaredModuleName(component)?.also {
+            validateSwiftExportModuleName(it, component.displayName, reportDiagnostic = reportDiagnostic)
+        }
         val visibility = sources.declaredVisibility(component)
         val mode = when (visibility) {
             SwiftExportVisibility.EXPOSED -> SwiftExportedModuleMode.FULL

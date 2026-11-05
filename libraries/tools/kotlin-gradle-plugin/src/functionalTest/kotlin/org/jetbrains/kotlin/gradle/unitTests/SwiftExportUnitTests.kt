@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsSeverity.FATAL
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticFactory
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
@@ -750,7 +752,9 @@ class SwiftExportUnitTests {
         }
         project.evaluate()
 
-        project.assertContainsDiagnostic(KotlinToolingDiagnostics.SwiftExportInvalidModuleName)
+        project.assertContainsDiagnostic(
+            KotlinToolingDiagnostics.SwiftExportInvalidModuleName("Shared.Module", project.path)
+        )
     }
 
     @Test
@@ -762,7 +766,9 @@ class SwiftExportUnitTests {
         }
         project.evaluate()
 
-        project.assertContainsDiagnostic(KotlinToolingDiagnostics.SwiftExportInvalidModuleName)
+        project.assertContainsDiagnostic(
+            KotlinToolingDiagnostics.SwiftExportInvalidModuleName("Custom.DateTime", "org.jetbrains.kotlinx:kotlinx-datetime:0.6.2")
+        )
     }
 
     @Test
@@ -804,7 +810,9 @@ class SwiftExportUnitTests {
         val name = swiftExportTask.mainModuleInput.moduleName.get()
         assertEquals(invalidName.capitalizeFirstChar(), name)
 
-        project.assertContainsDiagnostic(KotlinToolingDiagnostics.SwiftExportInvalidModuleName)
+        project.assertContainsDiagnostic(
+            KotlinToolingDiagnostics.SwiftExportInvalidModuleName(name, project.path, "swiftExport { moduleName = ... }")
+        )
     }
 
     @Test
@@ -978,7 +986,14 @@ class SwiftExportUnitTests {
         project.evaluate()
         projectDependency.evaluate()
 
-        project.assertResolvingSwiftModulesFailsWith(KotlinToolingDiagnostics.SwiftExportInvalidModuleName)
+        project.assertResolvingSwiftModulesFailsWith(
+            KotlinToolingDiagnostics.SwiftExportInvalidModuleName(
+                "1subproject",
+                ":1subproject",
+                "swiftExport { export(...) { moduleName = ... } }",
+                FATAL,
+            )
+        )
     }
 
     @Test
@@ -1595,13 +1610,19 @@ private fun ProjectInternal.subProject(
  * Module resolution diagnostics are reported while the Swift Export task runs, so they must be FATAL to fail the build.
  * They are routed into the project collector here to stay observable after the throw.
  */
-private fun ProjectInternal.assertResolvingSwiftModulesFailsWith(diagnostic: ToolingDiagnosticFactory) {
+private fun ProjectInternal.assertResolvingSwiftModulesFailsWith(diagnostic: ToolingDiagnosticFactory) =
+    assertResolvingSwiftModulesFails { assertContainsDiagnostic(diagnostic) }
+
+private fun ProjectInternal.assertResolvingSwiftModulesFailsWith(diagnostic: ToolingDiagnostic) =
+    assertResolvingSwiftModulesFails { assertContainsDiagnostic(diagnostic) }
+
+private fun ProjectInternal.assertResolvingSwiftModulesFails(assertDiagnostic: ProjectInternal.() -> Unit) {
     val swiftExportTask = tasks.withType(SwiftExportTask::class.java).single()
     val thrown = assertFails { swiftExportTask.resolveSwiftExportedModules { reportDiagnostic(it) } }
     if (thrown.allCauses.none { it is InvalidUserCodeException }) {
         fail("Expected an InvalidUserCodeException in the cause chain, but got:\n${thrown.stackTraceToString()}")
     }
-    assertContainsDiagnostic(diagnostic)
+    assertDiagnostic()
 }
 
 private fun List<SwiftExportedModule>.toModulesForAssertion() = mapToSetOrEmpty { module ->
