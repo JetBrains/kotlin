@@ -83,20 +83,11 @@ class TagsGeneratorChecker(testServices: TestServices) : FirAnalysisHandler(test
             val testDataFileContent = testDataFile.readText()
             if (testDataFileContent.contains(TAG_PREFIX)) return
 
-            if (isTeamCityBuild) {
-                testServices.assertions.fail {
-                    """GENERATED_FIR_TAGS are missing for file ${testDataFile.name}.
-                        |Please rerun the test locally to generate tags.""".trimMargin()
-                }
-            }
-
-            val wrappedTagComment = formatTagsAsMultilineComment()
-
-            testDataFile.writer().use {
-                it.append(testDataFileContent.trim())
-                it.append("\n\n")
-                it.appendLine(wrappedTagComment)
-            }
+            testServices.assertions.assertEqualsToFile(testDataFile, buildString {
+                append(testDataFileContent.trim())
+                append("\n\n")
+                appendLine(formatTagsAsMultilineComment())
+            })
         }
     }
 
