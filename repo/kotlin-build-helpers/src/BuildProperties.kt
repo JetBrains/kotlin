@@ -140,6 +140,8 @@ class KotlinBuildProperties internal constructor(
 
     val isKotlinNativeEnabled: Provider<Boolean> = booleanProperty("kotlin.native.enabled")
 
+    val isSwiftImportEnabled: Provider<Boolean> = booleanProperty("swiftimport.enabled")
+
     val renderDiagnosticNames: Provider<Boolean> = booleanProperty("kotlin.build.render.diagnostic.names")
 
     val isCacheRedirectorEnabled: Provider<Boolean> = booleanProperty("cacheRedirectorEnabled")
