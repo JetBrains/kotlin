@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.code.review
 
 interface RenderingContext {
     fun codeLink(path: ProjectFilePath, line: Int): String
-    fun markdownLink(path: ProjectFilePath, title: String): String
+    fun markdownLink(path: ProjectFilePath, heading: String, linkText: String = heading): String
 
     /**
      * Returns a Markdown link to [title] in the report, or `null` if unsupported.
