@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.Project
-import org.gradle.api.internal.project.ProjectInternal
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeSettingsDsl
@@ -16,7 +15,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.isParallelismLimitServiceRegistered
-import org.jetbrains.kotlin.gradle.util.kotlin
 import org.jetbrains.kotlin.gradle.util.maxParallelUsagesOf
 import org.jetbrains.kotlin.gradle.util.propertiesExtension
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeSettingsDslImpl
@@ -75,21 +73,9 @@ class KotlinNativeSettingsDslTest {
                 dsl.configureDsl(this)
                 dsl.registerParallelismLimitServices()
             }
-        ) {
-            kotlin {
-                linuxX64 {
-                    binaries.executable()
-                }
-            }
-        }
-        return project.evaluateWithNativeTasks()
-    }
-
-    private fun ProjectInternal.evaluateWithNativeTasks(): Project {
-        evaluate()
-        tasks.withType(KotlinNativeCompile::class.java).toList()
-        tasks.withType(KotlinNativeLink::class.java).toList()
-        return this
+        )
+        project.evaluate()
+        return project
     }
 
     private companion object {
