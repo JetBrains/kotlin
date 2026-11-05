@@ -170,7 +170,7 @@ KaKotlinPropertySymbol:
       typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(delegatedPropertyWithAccessors.kt)
-      getContainingJvmClassName: null
+      getContainingJvmClassName: DelegatedPropertyWithAccessorsKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecation: null
       importableFqName: null
@@ -222,7 +222,7 @@ KaKotlinPropertySymbol:
         typeParameters: []
         visibility: PUBLIC
         getContainingFileSymbol: KaFileSymbol(delegatedPropertyWithAccessors.kt)
-        getContainingJvmClassName: null
+        getContainingJvmClassName: DelegatedPropertyWithAccessorsKt
         getContainingModule: KaSourceModule "Sources of main"
         deprecation: null
         importableFqName: null

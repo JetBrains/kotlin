@@ -159,7 +159,7 @@ KaKotlinPropertySymbol:
       typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(custom_variable_param_property.kt)
-      getContainingJvmClassName: null
+      getContainingJvmClassName: Custom_variable_param_propertyKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecation: null
       importableFqName: null
@@ -206,7 +206,7 @@ KaKotlinPropertySymbol:
         typeParameters: []
         visibility: PUBLIC
         getContainingFileSymbol: KaFileSymbol(custom_variable_param_property.kt)
-        getContainingJvmClassName: null
+        getContainingJvmClassName: Custom_variable_param_propertyKt
         getContainingModule: KaSourceModule "Sources of main"
         deprecation: null
         importableFqName: null

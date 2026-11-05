@@ -160,7 +160,7 @@ KaKotlinPropertySymbol:
       typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
-      getContainingJvmClassName: null
+      getContainingJvmClassName: lib.LibKt
       getContainingModule: KaLibraryModule "Library lib"
       deprecation: null
       importableFqName: null
@@ -207,7 +207,7 @@ KaKotlinPropertySymbol:
         typeParameters: []
         visibility: PUBLIC
         getContainingFileSymbol: null
-        getContainingJvmClassName: null
+        getContainingJvmClassName: lib.LibKt
         getContainingModule: KaLibraryModule "Library lib"
         deprecation: null
         importableFqName: null

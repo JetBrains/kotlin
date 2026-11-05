@@ -280,7 +280,7 @@ KaKotlinPropertySymbol:
       typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(I.class)
-      getContainingJvmClassName: null
+      getContainingJvmClassName: I
       getContainingModule: KaLibraryModule "Library main"
       deprecation: null
       importableFqName: null
@@ -327,7 +327,7 @@ KaKotlinPropertySymbol:
         typeParameters: []
         visibility: PUBLIC
         getContainingFileSymbol: KaFileSymbol(I.class)
-        getContainingJvmClassName: null
+        getContainingJvmClassName: I
         getContainingModule: KaLibraryModule "Library main"
         deprecation: null
         importableFqName: null
@@ -932,7 +932,7 @@ KaKotlinPropertySymbol:
       typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(I.class)
-      getContainingJvmClassName: null
+      getContainingJvmClassName: I
       getContainingModule: KaLibraryModule "Library main"
       deprecation: null
       importableFqName: null
@@ -1010,7 +1010,7 @@ KaKotlinPropertySymbol:
         typeParameters: []
         visibility: PUBLIC
         getContainingFileSymbol: KaFileSymbol(I.class)
-        getContainingJvmClassName: null
+        getContainingJvmClassName: I
         getContainingModule: KaLibraryModule "Library main"
         deprecation: null
         importableFqName: null
