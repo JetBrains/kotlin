@@ -1,0 +1,103 @@
+open class Base<T : Any?> {
+  var t: T?
+    field = null
+    get
+    set
+
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+open class Base2<K : Any?, V : Any?> {
+  var k: K?
+    field = null
+    get
+    set
+
+  var v: V?
+    field = null
+    get
+    set
+
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@NoArgsConstructor
+class Derived : Base<String> {
+  var x: Int
+    field = x
+    get
+    set
+
+  constructor() {
+    super/*Base*/()
+  }
+
+  constructor(x: Int) /* primary */ {
+    super/*Base*/<String>()
+    /* <init>() */
+
+  }
+
+}
+
+@NoArgsConstructor
+class Derived2 : Base2<Int, String> {
+  var x: Int
+    field = x
+    get
+    set
+
+  constructor() {
+    super/*Base2*/()
+  }
+
+  constructor(x: Int) /* primary */ {
+    super/*Base2*/<Int, String>()
+    /* <init>() */
+
+  }
+
+}
+
+@NoArgsConstructor
+class DerivedGeneric<E : Any?> : Base<List<E>> {
+  var e: E
+    field = e
+    get
+    set
+
+  constructor() {
+    super/*Base*/()
+  }
+
+  constructor(e: E) /* primary */ {
+    super/*Base*/<List<E>>()
+    /* <init>() */
+
+  }
+
+}
+
+fun box(): String {
+  val derived: Derived = Derived()
+  assertEquals<Int>(expected = 0, actual = derived.<get-x>())
+  assertNull(actual = derived.<get-t>())
+  derived.<set-t>(<set-?> = "O")
+  val derived2: Derived2 = Derived2()
+  assertNull(actual = derived2.<get-k>())
+  derived2.<set-v>(<set-?> = "K")
+  val derivedGeneric: DerivedGeneric<Int> = DerivedGeneric<Int>()
+  assertNull(actual = derivedGeneric.<get-e>())
+  derivedGeneric.<set-t>(<set-?> = listOf<Int>(element = 1))
+  return plus(/* <this> = derived.<get-t>(), */ other = derived2.<get-v>())
+}
