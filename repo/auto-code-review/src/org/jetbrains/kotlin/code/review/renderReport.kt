@@ -38,13 +38,10 @@ fun render(review: ReviewResult): String = buildString {
 context(renderingContext: RenderingContext)
 fun StringBuilder.appendOrigin(review: ReviewResult) {
     val readme = ProjectFilePath("repo/auto-code-review/README.md")
-    appendLine(
-        """
-            ${renderingContext.markdownLink(readme, "Auto Code Review")} for
-            ${renderingContext.describeDiff(review.diffOrigin)}
-            
-        """.trimIndent()
-    )
+    val readmeLink = renderingContext.markdownLink(readme, "Auto Code Review")
+    val diffDescription = renderingContext.describeDiff(review.diffOrigin)
+    appendLine("🤖$readmeLink for $diffDescription.")
+    appendLine()
 }
 
 context(renderingContext: RenderingContext)
