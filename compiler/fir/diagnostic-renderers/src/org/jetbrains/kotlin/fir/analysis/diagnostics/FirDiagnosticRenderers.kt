@@ -39,6 +39,10 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.ReturnValueStatus
 import java.text.MessageFormat
+import kotlin.Pair
+import kotlin.collections.Collection
+import kotlin.collections.List
+import kotlin.collections.Map
 
 @Suppress("NO_EXPLICIT_RETURN_TYPE_IN_API_MODE_WARNING")
 object FirDiagnosticRenderers {

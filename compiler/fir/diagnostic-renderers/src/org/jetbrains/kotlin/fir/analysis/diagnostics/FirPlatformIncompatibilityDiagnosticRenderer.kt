@@ -68,16 +68,13 @@ open class MultiplatformDiagnosticRenderingMode {
     }
 
     open fun renderList(sb: StringBuilder, elements: List<() -> Unit>) {
-        sb.appendLine()
         for (element in elements) {
             element()
         }
     }
 
     open fun renderSymbol(sb: StringBuilder, symbol: FirBasedSymbol<*>, indent: String) {
-        sb.append(indent)
-        sb.append(INDENTATION_UNIT)
-        sb.appendLine(FirDiagnosticRenderers.SYMBOL.render(symbol))
+        sb.append(FirDiagnosticRenderers.SYMBOL_WITH_LOCATION.render(symbol))
     }
 }
 
