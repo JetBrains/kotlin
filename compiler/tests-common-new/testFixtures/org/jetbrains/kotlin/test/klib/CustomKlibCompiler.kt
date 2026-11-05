@@ -9,9 +9,9 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.test.KtAssert.fail
+import org.jetbrains.kotlin.utils.softRefCached
 import java.io.File
 import java.io.PrintStream
-import java.lang.ref.SoftReference
 import java.net.URL
 import java.net.URLClassLoader
 
@@ -19,21 +19,16 @@ import java.net.URLClassLoader
  * An entry point to call a custom Klib-targeted Kotlin compiler inside an isolated class loader.
  *
  * Note: The class loader is cached to be easily reused in all later calls without reloading the class path.
- * Yet it is cached as a [SoftReference] to allow GC in the case of a need.
+ * Yet it is cached as a [softRefCached] to allow GC in the case of a need.
  */
 class CustomKlibCompiler(
     private val compilerClassPath: List<URL>,
     private val className: String,
     private val methodName: String,
 ) {
-    private var isolatedClassLoaderSoftRef: SoftReference<URLClassLoader>? = null
-
-    fun getIsolatedClassLoader(): URLClassLoader = isolatedClassLoaderSoftRef?.get() ?: synchronized(this) {
-        isolatedClassLoaderSoftRef?.get() ?: run {
-            val isolatedClassLoader = URLClassLoader(compilerClassPath.toTypedArray(), null)
-            isolatedClassLoader.setDefaultAssertionStatus(true)
-            isolatedClassLoaderSoftRef = SoftReference(isolatedClassLoader)
-            isolatedClassLoader
+    val isolatedClassLoader: URLClassLoader by softRefCached {
+        URLClassLoader(compilerClassPath.toTypedArray(), null).apply {
+            setDefaultAssertionStatus(true)
         }
     }
 
@@ -43,8 +38,6 @@ class CustomKlibCompiler(
     }
 
     fun callCompiler(output: PrintStream, vararg args: String): ExitCode {
-        val isolatedClassLoader = getIsolatedClassLoader()
-
         val [compilerClass, fixedArgs] = try {
             Class.forName(className, true, isolatedClassLoader) to args
         } catch (e: ClassNotFoundException) {
