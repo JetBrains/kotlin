@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.expressions.IrBody
-import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.render
@@ -52,14 +51,13 @@ private class NoArgConstructorBodyIrGenerationTransformer(
 
         val klass = declaration.parent as? IrClass ?: return
 
-        val superClass =
-            klass.superTypes.mapNotNull(IrType::getClass).singleOrNull { it.kind == ClassKind.CLASS }
-                ?: context.irBuiltIns.anyClass.owner
+        val superType = klass.superTypes.singleOrNull { it.getClass()?.kind == ClassKind.CLASS }
+        val superClass = superType?.getClass() ?: context.irBuiltIns.anyClass.owner
 
         val superConstructor = superClass.constructors.singleOrNull { it.isZeroParameterConstructor() }
             ?: error("No noarg super constructor for ${klass.render()}:\n" + superClass.constructors.joinToString("\n") { it.render() })
 
-        context.generateNoArgConstructorBody(declaration, klass, superConstructor, invokeInitializers)
+        context.generateNoArgConstructorBody(declaration, klass, superType, superConstructor, invokeInitializers)
     }
 
     override fun visitBody(body: IrBody) {
