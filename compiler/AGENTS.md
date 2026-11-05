@@ -43,4 +43,4 @@ When adding or changing diagnostic messages, follow the [Diagnostic Message Styl
 
 ## Testing
 
-For FIR analysis test data format (directives, diagnostic markers, file structure), see [analysis-tests/AGENTS.md](fir/analysis-tests/AGENTS.md).
+For FIR diagnostic test data format (directives, diagnostic markers, file structure), see [testData/diagnostics/AGENTS.md](testData/diagnostics/AGENTS.md).
