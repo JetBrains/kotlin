@@ -1,11 +1,53 @@
-/diagnosticMessages.kt:4:43: error: Type parameter has cyclic upper bounds: F0, E0.
+/diagnosticMessages.kt:4:43: error: Type parameter has cyclic upper bounds:
+In package 'root package' of module '<main>':
+ --> diagnosticMessages.kt
+  |
+4 | F0
+  | ...
+4 | E0
+  |.
 
-/diagnosticMessages.kt:4:52: error: Type parameter has cyclic upper bounds: F0, E0.
+/diagnosticMessages.kt:4:52: error: Type parameter has cyclic upper bounds:
+In package 'root package' of module '<main>':
+ --> diagnosticMessages.kt
+  |
+4 | F0
+  | ...
+4 | E0
+  |.
 
-/diagnosticMessages.kt:6:47: error: Type parameter has cyclic upper bounds: F1, E1.
+/diagnosticMessages.kt:6:47: error: Type parameter has cyclic upper bounds:
+In package 'root package' of module '<main>':
+ --> diagnosticMessages.kt
+  |
+6 | F1
+  | ...
+6 | E1
+  |.
 
-/diagnosticMessages.kt:6:56: error: Type parameter has cyclic upper bounds: F1, E1.
+/diagnosticMessages.kt:6:56: error: Type parameter has cyclic upper bounds:
+In package 'root package' of module '<main>':
+ --> diagnosticMessages.kt
+  |
+6 | F1
+  | ...
+6 | E1
+  |.
 
-/diagnosticMessages.kt:6:65: error: Type parameter has cyclic upper bounds: E1, K1.
+/diagnosticMessages.kt:6:65: error: Type parameter has cyclic upper bounds:
+In package 'root package' of module '<main>':
+ --> diagnosticMessages.kt
+  |
+6 | E1
+  | ...
+6 | K1
+  |.
 
-/diagnosticMessages.kt:6:74: error: Type parameter has cyclic upper bounds: E1, K1.
+/diagnosticMessages.kt:6:74: error: Type parameter has cyclic upper bounds:
+In package 'root package' of module '<main>':
+ --> diagnosticMessages.kt
+  |
+6 | E1
+  | ...
+6 | K1
+  |.
