@@ -130,22 +130,26 @@ aggregates the reports the modules print into one summary:
 
 ```bash
 # Check test data under a directory
-analysis/test-data-manager/test-data-manager.py check --path compiler/psi/psi-impl/testData/psi/annotation
+python3 analysis/test-data-manager/test-data-manager.py check --path compiler/psi/psi-impl/testData/psi/annotation
 
 # Update it; the summary lists the created, updated and deleted files
-analysis/test-data-manager/test-data-manager.py update --path compiler/psi/psi-impl/testData/psi/annotation
+python3 analysis/test-data-manager/test-data-manager.py update --path compiler/psi/psi-impl/testData/psi/annotation
 
 # Limit the modules, print the summary as JSON
-analysis/test-data-manager/test-data-manager.py check --path analysis/analysis-api/testData/components \
+python3 analysis/test-data-manager/test-data-manager.py check --path analysis/analysis-api/testData/components \
     --module :analysis:analysis-api-fir --json
 ```
 
 On top of the module reports, it fails when a module wrote no report for the run (the task didn't run, or its JVM
 crashed) and when no test in any module matches the filters. The Gradle output goes to
-`build/test-data-manager/<runId>.gradle.log`, and the summary to `build/test-data-manager/<runId>.summary.json`, whose
-path is the last line of the output (`--json` prints the file instead of the text). The summary is an index: the status,
-the run errors, the totals, the counts of problems and changed files by kind, and the module reports, which hold the
-entries themselves. The text output lists at most 50 entries of each kind. The 5 most recent runs are kept.
+`build/test-data-manager/<runId>.gradle.log`, whose path is printed to stderr before Gradle starts, so a long run can be
+followed, and the summary to `build/test-data-manager/<runId>.summary.json`, whose path is the last line of the output
+(`--json` prints the file instead of the text). The summary is an index: the status, the run errors, the totals, the
+counts of problems and changed files by kind, and the module reports, which hold the entries themselves. The text output
+lists at most 50 entries of each kind. The 5 most recent runs are kept. `--run-id` sets the id, and so the paths of the
+log, the summary and the module reports, in advance. When Gradle fails for another reason than a failing module report
+(a compilation error, a configuration failure, an unknown module), the summary lists its `* What went wrong:` sections
+and the compiler errors from the log (`gradleFailures` and `compilerErrors`).
 
 Compared with calling Gradle directly, the command is much shorter, a mistyped option fails instead of being ignored
 (Gradle silently ignores an unknown `-P` property, so a misspelled `testDataPath` would run every test), and the output
@@ -158,6 +162,7 @@ outside `testData` (the generator may have changed otherwise). A module without 
 runs. The lookup is linear in the number of paths, so thousands of files are fine. A path that doesn't exist fails the
 run before Gradle starts; a path no module has tests of fails it too, while the modules of the other paths still run.
 The summary lists the skipped modules. `--module` runs the given modules as is.
+It takes a project path, with or without the leading `:`, or the module directory (`analysis/stubs`).
 
 Exit codes: `0` passed, `1` test data problems or test errors, `2` the run itself failed (run errors of a module, a
 missing report, Gradle failing without a failing report).

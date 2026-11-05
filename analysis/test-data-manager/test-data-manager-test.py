@@ -39,7 +39,7 @@ _spec.loader.exec_module(tdm)
 
 # Writes and prints the report of each `<project>:<task>` from `stub-gradle.json`: {project: report fields}, a project
 # without an entry writes none, `"raw"` replaces the report text; `"stray"` also prints a report of another run,
-# `"exitCode"` overrides the exit code.
+# `"output"` is printed after the reports, `"exitCode"` overrides the exit code.
 STUB_GRADLEW = textwrap.dedent('''\
     #!/usr/bin/env python3
     import json, sys
@@ -72,6 +72,8 @@ STUB_GRADLEW = textwrap.dedent('''\
         stray = root / "build" / "other.json"
         stray.write_text(json.dumps(dict(config["stray"], runId="other-run")))
         print("Test data manager report: " + str(stray))
+    if "output" in config:
+        print(config["output"])
     sys.exit(config.get("exitCode", 1 if failed else 0))
 ''')
 
@@ -92,6 +94,8 @@ class WrapperTest(unittest.TestCase):
             self.write(f"{module[1:].replace(':', '/')}/build.gradle.kts", 'plugins { id("test-data-manager") }\n')
         self.write("unmanaged/build.gradle.kts", 'plugins { kotlin("jvm") }\n')
         self.write("gradlew", STUB_GRADLEW).chmod(0o755)
+        # Windows runs `gradlew.bat`
+        self.write("gradlew.bat", f'@"{sys.executable}" "%~dp0gradlew" %*\n')
         git(self.root, "init", "-q")
         git(self.root, "add", "-A")
         git(self.root, "-c", "user.name=Test", "-c", "user.email=test@example.com", "-c", "commit.gpgsign=false",
@@ -128,15 +132,17 @@ class WrapperTest(unittest.TestCase):
         return tdm.select_modules(self.root, ALL_MODULES, list(paths), self.root / cwd)
 
     def run_wrapper(self, stub: Dict[str, object], *args: str) -> Tuple[int, dict]:
+        """Runs the wrapper with [args]; returns its exit code and the JSON summary, keeps its stderr in [stderr]."""
         self.write("stub-gradle.json", json.dumps(stub))
-        with contextlib.redirect_stdout(io.StringIO()) as stdout:
+        with contextlib.redirect_stdout(io.StringIO()) as stdout, contextlib.redirect_stderr(io.StringIO()) as stderr:
             exit_code = tdm.main([*args, "--json"], root=self.root)
+        self.stderr = stderr.getvalue()
         return exit_code, json.loads(stdout.getvalue())
 
     def run_text(self, stub: Dict[str, object], *args: str) -> Tuple[int, str]:
         """The text output, with the run id and the file paths replaced."""
         self.write("stub-gradle.json", json.dumps(stub))
-        with contextlib.redirect_stdout(io.StringIO()) as stdout:
+        with contextlib.redirect_stdout(io.StringIO()) as stdout, contextlib.redirect_stderr(io.StringIO()):
             exit_code = tdm.main(list(args), root=self.root)
         output = re.sub(r"(Gradle log|Summary): .*", r"\1: <path>", stdout.getvalue())
         return exit_code, re.sub(r"runId \S+", "runId <id>", output)
@@ -166,6 +172,122 @@ class WrapperTest(unittest.TestCase):
         self.assertEqual((0, [":mod-b"]), (exit_code, [module["project"] for module in summary["modules"]]))
         self.assertEqual(["-q", "--continue", ":mod-b:checkTestData"], self.gradle_args()[:3])
         self.assertEqual("--offline", self.gradle_args()[-1])
+
+    def test_requested_modules_are_project_paths(self) -> None:
+        stub = {":mod-a:nested": {}, ":mod-b": {}}
+        exit_code, summary = self.run_wrapper(
+            stub, "check", "--module", "mod-b", "--module", "mod-a/nested/", "--module", ":mod-b:",
+        )
+        self.assertEqual((0, "PASSED"), (exit_code, summary["status"]))
+        self.assertEqual([":mod-b", ":mod-a:nested"], [module["project"] for module in summary["modules"]])
+        self.assertEqual(["-q", "--continue", ":mod-b:checkTestData", ":mod-a:nested:checkTestData"],
+                         self.gradle_args()[:4])
+
+        with contextlib.redirect_stderr(io.StringIO()), self.assertRaises(SystemExit) as exit:
+            tdm.main(["check", "--module", ":"], root=self.root)
+        self.assertEqual(2, exit.exception.code)
+
+    def test_run_id_names_the_reports_and_the_log(self) -> None:
+        exit_code, summary = self.run_wrapper({":mod-b": {}}, "check", "--module", ":mod-b", "--run-id", "my-run.1")
+        self.assertEqual((0, "my-run.1"), (exit_code, summary["runId"]))
+        self.assertEqual(self.root / "build" / "test-data-manager" / "my-run.1.gradle.log", Path(summary["gradleLog"]))
+        self.assertEqual(self.root / "build" / "test-data-manager" / "my-run.1.summary.json", Path(summary["summary"]))
+        self.assertEqual(
+            str(self.root / "mod-b" / "build" / "test-data-manager" / "my-run.1.json"),
+            summary["modules"][0]["report"],
+        )
+
+        for invalid in ["..", "../x", "a b", ""]:
+            with contextlib.redirect_stderr(io.StringIO()), self.assertRaises(SystemExit) as exit:
+                tdm.main(["check", "--run-id", invalid], root=self.root)
+            self.assertEqual(2, exit.exception.code, invalid)
+
+    def test_the_log_is_announced_before_gradle_runs(self) -> None:
+        _, summary = self.run_wrapper({":mod-a": {}, ":mod-b": {}}, "check", "--module", ":mod-a", "--module", ":mod-b")
+        self.assertEqual(f"Running checkTestData in :mod-a, :mod-b; Gradle log: {summary['gradleLog']}\n", self.stderr)
+
+    def test_gradle_failures_and_compiler_errors_are_reported(self) -> None:
+        output = textwrap.dedent('''\
+            e: file:///mod-b/src/Foo.kt:1:1 Unresolved reference 'x'.
+            mod-b/src/Bar.java:3: error: cannot find symbol
+
+            FAILURE: Build completed with 2 failures.
+
+            1: Task failed with an exception.
+            -----------
+            * What went wrong:
+            Execution failed for task ':mod-a:checkTestData' (registered by plugin 'test-data-manager').
+            > Process 'command 'java'' finished with non-zero exit value 1
+
+            * Try:
+            > Run with --stacktrace option to get the stack trace.
+            ==============================================================================
+
+            2: Task failed with an exception.
+            -----------
+            * What went wrong:
+            Execution failed for task ':mod-b:compileTestKotlin'.
+            > A failure occurred while executing GradleKotlinCompilerWorkAction
+               > Compilation error. See log for more details
+
+            * Try:
+            > Run with --stacktrace option to get the stack trace.
+        ''')
+        problem = {"kind": "MISMATCH", "file": "mod-a/testData/file.txt", "test": "FooTestGenerated.testFile"}
+        stub = {":mod-a": {"report": {"status": "FAILED", "problems": [problem]}}, "output": output, "exitCode": 1}
+        exit_code, summary = self.run_wrapper(stub, "check", "--module", ":mod-a", "--module", ":mod-b")
+        self.assertEqual((2, "ERROR"), (exit_code, summary["status"]))
+        self.assertEqual(
+            ["Execution failed for task ':mod-b:compileTestKotlin'.\n"
+             "> A failure occurred while executing GradleKotlinCompilerWorkAction\n"
+             "   > Compilation error. See log for more details"],
+            summary["gradleFailures"],
+        )
+        self.assertEqual(
+            ["e: file:///mod-b/src/Foo.kt:1:1 Unresolved reference 'x'.", "mod-b/src/Bar.java:3: error: cannot find symbol"],
+            summary["compilerErrors"],
+        )
+
+        exit_code, text = self.run_text(stub, "check", "--module", ":mod-a", "--module", ":mod-b")
+        self.assertIn(textwrap.dedent('''\
+            ERROR :mod-b: no report for this run; the task didn't run or its JVM crashed, see the Gradle log
+            GRADLE FAILURE Execution failed for task ':mod-b:compileTestKotlin'.
+              > A failure occurred while executing GradleKotlinCompilerWorkAction
+                 > Compilation error. See log for more details
+            e: file:///mod-b/src/Foo.kt:1:1 Unresolved reference 'x'.
+            mod-b/src/Bar.java:3: error: cannot find symbol
+            MISMATCH mod-a/testData/file.txt (FooTestGenerated.testFile)
+        '''), text)
+
+        # Only the failure of a task whose report failed: nothing to add
+        only_report_failure = output.split("\n\n", 1)[1].split("2: ")[0]
+        stub = {":mod-a": {"report": {"status": "FAILED", "problems": [problem]}}, "output": only_report_failure}
+        exit_code, summary = self.run_wrapper(stub, "check", "--module", ":mod-a")
+        self.assertEqual((1, [], []), (exit_code, summary["gradleFailures"], summary["compilerErrors"]))
+        # Without the plugin suffix, as Gradle prints the task of a build script
+        plain = only_report_failure.replace(" (registered by plugin 'test-data-manager').", ".")
+        self.assertEqual([], tdm.gradle_failures(plain, {":mod-a"}, "checkTestData"))
+        self.assertEqual(1, len(tdm.gradle_failures(plain, {":mod-a:nested"}, "checkTestData")))
+
+    def test_long_gradle_failures_are_cut(self) -> None:
+        failure = "\n".join(["* What went wrong:", "Could not resolve all files."] + [f"> line {n}" for n in range(30)])
+        errors = "\n".join(f"e: file:///Foo.kt:{n}:1 Error" for n in range(25))
+        failures = tdm.gradle_failures(f"{failure}\n\n* Try:\n", set(), "checkTestData")
+        self.assertEqual(21, len(failures[0].split("\n")))
+        self.assertEqual("... 11 more lines", failures[0].split("\n")[-1])
+        self.assertEqual(["e: file:///Foo.kt:19:1 Error", "... 5 more compiler errors"], tdm.compiler_errors(errors)[19:])
+
+    def test_windows_command_line(self) -> None:
+        self.assertEqual("gradlew.bat", tdm.gradle_wrapper(self.root, windows=True).name)
+        self.assertEqual("gradlew", tdm.gradle_wrapper(self.root, windows=False).name)
+        self.assertEqual(
+            r'C:\repo\gradlew.bat -q -Pp.testDataPath=a\b,c/ "-Pp.testClassPattern=.*(Foo|Bar).*" '
+            r'"-Pp.testDataPath=C:\my dir\\" "say \"hi\"" "a\\\"b" "x&y" "^" ""',
+            tdm.windows_command_line([
+                r"C:\repo\gradlew.bat", "-q", r"-Pp.testDataPath=a\b,c/", "-Pp.testClassPattern=.*(Foo|Bar).*",
+                "-Pp.testDataPath=C:\\my dir\\", 'say "hi"', 'a\\"b', "x&y", "^", "",
+            ]),
+        )
 
     def test_problems_errors_and_recovered_tests_are_merged(self) -> None:
         stub = {
@@ -227,6 +349,19 @@ class WrapperTest(unittest.TestCase):
             lines[-4:-2],
         )
 
+        # Run errors, one per path that doesn't exist; the summary keeps them all
+        paths = ",".join(f"nope/{index:02}" for index in range(60))
+        _, summary = self.run_wrapper({}, "check", "--path", paths)
+        self.assertEqual(60, len(summary["runErrors"]))
+        _, output = self.run_text({}, "check", "--path", paths)
+        lines = output.splitlines()
+        self.assertEqual(50, sum(1 for line in lines if line.startswith("ERROR")))
+        self.assertEqual(
+            [f"ERROR testDataPath 'nope/49' does not exist; paths are relative to the repository root {self.root}",
+             "... and 10 more, see the summary"],
+            lines[-3:-1],
+        )
+
     def test_summary_file_is_the_json_output_and_its_path_is_the_last_line(self) -> None:
         exit_code, summary = self.run_wrapper({":mod-b": {}}, "check", "--module", ":mod-b")
         summary_file = Path(summary["summary"])
@@ -279,9 +414,8 @@ class WrapperTest(unittest.TestCase):
         )
         self.assertEqual(["-q", "--continue", ":mod-b:checkTestData"], self.gradle_args()[:3])
 
-        with contextlib.redirect_stdout(io.StringIO()) as stdout:
-            tdm.main(["check", "--path", "shared/testData/b"], root=self.root)
-        self.assertIn("\nSkipped 2 modules without tests under the paths, see the summary\n", stdout.getvalue())
+        _, text = self.run_text({":mod-b": {}}, "check", "--path", "shared/testData/b")
+        self.assertIn("\nSkipped 2 modules without tests under the paths, see the summary\n", text)
 
         # Explicit modules run as requested
         exit_code, summary = self.run_wrapper({":mod-a": {}}, "check", "--path", "shared/testData/b", "--module", ":mod-a")
@@ -400,7 +534,7 @@ class WrapperTest(unittest.TestCase):
     def test_gradle_output_goes_to_the_log(self) -> None:
         _, summary = self.run_wrapper({":mod-b": {}}, "check", "--module", ":mod-b")
         log = Path(summary["gradleLog"]).read_text()
-        self.assertTrue(log.startswith(f"$ {self.root / 'gradlew'} -q --continue :mod-b:checkTestData"))
+        self.assertTrue(log.startswith(f"$ {tdm.gradle_wrapper(self.root)} -q --continue :mod-b:checkTestData"))
         self.assertIn("Test data manager report: ", log)
 
 

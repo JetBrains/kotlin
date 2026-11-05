@@ -141,7 +141,7 @@ instead of standard test commands.
 
 ```bash
 # Update by directory in every managed module, one summary (preferred for iteration)
-analysis/test-data-manager/test-data-manager.py update --path compiler/psi/psi-impl/testData/psi/annotation/
+python3 analysis/test-data-manager/test-data-manager.py update --path compiler/psi/psi-impl/testData/psi/annotation/
 
 # The same through Gradle directly
 ./gradlew -q updateTestData -Porg.jetbrains.kotlin.testDataManager.options.testDataPath=compiler/psi/psi-impl/testData/psi/annotation/

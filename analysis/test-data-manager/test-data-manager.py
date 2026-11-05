@@ -19,6 +19,10 @@ reports. The text output lists at most the first 50 entries of each kind.
 With `--path`, only the modules whose generated tests may have test data under the paths run, so the others aren't even
 built; see `TestDataIndex`. A path that doesn't exist fails the run before Gradle starts.
 
+The path of the Gradle log is printed to stderr before Gradle starts, so a long run can be followed; `--run-id` names the
+log and the module reports in advance. When Gradle fails for another reason than a failing module report, the summary
+lists its failures and the compiler errors from the log.
+
 Exit codes: 0 when everything passed, 1 when there are test data problems or test errors, 2 when the run itself failed.
 
 See README.md next to this script.
@@ -41,6 +45,17 @@ from typing import Dict, Iterator, List, Optional, Set, Tuple
 
 OPTION_PREFIX = "org.jetbrains.kotlin.testDataManager.options"
 REPORT_LINE = re.compile(r"^Test data manager report: (.+\.json)$", re.MULTILINE)
+# The runner's rule for `runId`: it names a report file and a directory next to it
+RUN_ID = re.compile(r"[A-Za-z0-9._-]+")
+# A Kotlin (`e: ...`) or Java (`File.java:12: error: ...`) compiler error in the Gradle output
+COMPILER_ERROR = re.compile(r"^(?:e: .*|.*\.java:\d+: error: .*)$", re.MULTILINE)
+# The first line of a Gradle failure of a task; Gradle may add `(registered by plugin '...')` after the task path
+TASK_FAILURE = re.compile(r"Execution failed for task '([^']+)'")
+# The most lines of each Gradle failure and the most compiler errors in the summary; the rest is in the Gradle log
+MAX_REPORTED_LINES = 20
+# What `cmd.exe`, which runs `gradlew.bat`, takes for its own syntax outside double quotes, besides the whitespace
+# `subprocess.list2cmdline` quotes; `|` and the parentheses are common in a class pattern
+CMD_SPECIAL = re.compile(r'[\s"&|<>^()]')
 
 # The `@TestMetadata` of a generated test class, the test data directory of its tests; the annotations and modifiers
 # between it and `class` rule out the ones of methods, which name a file in that directory
@@ -55,6 +70,48 @@ EXIT_PASSED, EXIT_FAILED, EXIT_ERROR = 0, 1, 2
 LIST_LIMIT = 50
 KEPT_RUNS = 5
 LISTS = ["problems", "testErrors", "recoveredTests", "fileActions"]
+
+
+def project_path(module: str) -> str:
+    """[module] as the project path the module reports use: `analysis:stubs` and `analysis/stubs/` are `:analysis:stubs`."""
+    path = module.strip().replace("\\", ":").replace("/", ":").strip(":")
+    if not path:
+        raise argparse.ArgumentTypeError(f"'{module}' is not a module path")
+    return ":" + path
+
+
+def valid_run_id(value: str) -> str:
+    """[value] if the runner accepts it as `runId`."""
+    if not RUN_ID.fullmatch(value) or value in (".", ".."):
+        raise argparse.ArgumentTypeError(
+            f"'{value}' must consist of letters, digits, '.', '_' and '-', and not be '.' or '..'"
+        )
+    return value
+
+
+def gradle_wrapper(root: Path, windows: bool = os.name == "nt") -> Path:
+    return root / ("gradlew.bat" if windows else "gradlew")
+
+
+def windows_command_line(command: List[str]) -> str:
+    """
+    [command] as a command line for `gradlew.bat`. Unlike `subprocess.list2cmdline`, it also quotes the arguments with
+    characters `cmd.exe` would interpret, like the `|` of a class pattern. Inside the quotes, backslashes before a quote
+    and at the end are doubled, as the Windows argument parser expects.
+    """
+    def quote(argument: str) -> str:
+        if argument and not CMD_SPECIAL.search(argument):
+            return argument
+        quoted, backslashes = [], 0
+        for char in argument:
+            if char == "\\":
+                backslashes += 1
+                continue
+            quoted.append("\\" * (2 * backslashes + 1) + '"' if char == '"' else "\\" * backslashes + char)
+            backslashes = 0
+        return '"' + "".join(quoted) + "\\" * (2 * backslashes) + '"'
+
+    return " ".join(quote(argument) for argument in command)
 
 
 def managed_modules(root: Path) -> List[str]:
@@ -106,7 +163,7 @@ def generated_after_sources(root: Path, directory: Path, generated: Path) -> boo
         return False
     generated_at = min(file.stat().st_mtime for file in generated_files)
     tracked = subprocess.run(
-        ["git", "ls-files", "-z", "--", str(directory.relative_to(root))],
+        ["git", "ls-files", "-z", "--", directory.relative_to(root).as_posix()],
         cwd=root, check=True, capture_output=True, text=True,
     ).stdout.split("\0")
     sources = (root / file for file in tracked if file and "testData" not in file.split("/"))
@@ -229,7 +286,7 @@ def select_modules(root: Path, modules: List[str], paths: List[str], cwd: Path) 
 
 
 def gradle_command(root: Path, args: argparse.Namespace, modules: List[str], run_id: str) -> List[str]:
-    task = "checkTestData" if args.mode == "check" else "updateTestData"
+    task = task_name(args.mode)
     options = {
         "runId": run_id,
         "testDataPath": ",".join(args.paths) or None,
@@ -239,7 +296,7 @@ def gradle_command(root: Path, args: argparse.Namespace, modules: List[str], run
         "output": "verbose" if args.verbose else None,
     }
     return [
-        str(root / "gradlew"), "-q", "--continue",
+        str(gradle_wrapper(root)), "-q", "--continue",
         *(f"{module}:{task}" for module in modules),
         *(f"-P{OPTION_PREFIX}.{key}={value}" for key, value in options.items() if value is not None),
         *args.gradle_args,
@@ -251,12 +308,48 @@ def load_reports(gradle_output: str, run_id: str) -> Dict[str, dict]:
     reports = {}
     for path in REPORT_LINE.findall(gradle_output):
         try:
-            report = json.loads(Path(path).read_text())
+            report = json.loads(Path(path).read_text(encoding="utf-8"))
         except (OSError, ValueError):
             continue
         if report.get("runId") == run_id:
             reports[report["project"]] = dict(report, reportFile=path)
     return reports
+
+
+def gradle_failures(gradle_output: str, reported_modules: Set[str], task: str) -> List[str]:
+    """
+    The failures Gradle reported in [gradle_output] (its `* What went wrong:` sections), without the tasks of
+    [reported_modules]: they fail when their report does, which the summary already shows.
+    """
+    expected = {f"{module}:{task}" for module in reported_modules}
+    lines = gradle_output.splitlines()
+    failures = []
+    for index, line in enumerate(lines):
+        if line != "* What went wrong:":
+            continue
+        failure = []
+        for failure_line in lines[index + 1:]:
+            if not failure_line.strip():
+                break
+            failure.append(failure_line)
+        task_failure = TASK_FAILURE.match(failure[0]) if failure else None
+        if failure and not (task_failure and task_failure.group(1) in expected):
+            if len(failure) > MAX_REPORTED_LINES:
+                failure = failure[:MAX_REPORTED_LINES] + [f"... {len(failure) - MAX_REPORTED_LINES} more lines"]
+            failures.append("\n".join(failure))
+    return failures
+
+
+def compiler_errors(gradle_output: str) -> List[str]:
+    """The compiler errors in [gradle_output], the first [MAX_REPORTED_LINES] of them."""
+    errors = COMPILER_ERROR.findall(gradle_output)
+    if len(errors) > MAX_REPORTED_LINES:
+        return errors[:MAX_REPORTED_LINES] + [f"... {len(errors) - MAX_REPORTED_LINES} more compiler errors"]
+    return errors
+
+
+def task_name(mode: str) -> str:
+    return "checkTestData" if mode == "check" else "updateTestData"
 
 
 def merge(modules: List[str], reports: Dict[str, dict]) -> Dict[str, list]:
@@ -269,7 +362,7 @@ def merge(modules: List[str], reports: Dict[str, dict]) -> Dict[str, list]:
 
 def summarize(mode: str, run_id: str, modules: List[str], reports: Dict[str, dict], merged: Dict[str, list],
               has_filters: bool, gradle_exit_code: int, gradle_log: Optional[Path], summary_file: Path,
-              skipped: List[str], selection_errors: List[str]) -> dict:
+              skipped: List[str], selection_errors: List[str], gradle_output: str = "") -> dict:
     """The index of the run: its status, the totals and counts, and the module reports holding the details."""
     run_errors = list(selection_errors)
     totals = {"discovered": 0, "passed": 0, "failed": 0, "skipped": 0}
@@ -291,11 +384,14 @@ def summarize(mode: str, run_id: str, modules: List[str], reports: Dict[str, dic
         return {kind: sum(1 for entry in entries if entry["kind"] == kind) for kind in sorted({entry["kind"] for entry in entries})}
 
     status = "ERROR" if run_errors else "FAILED" if merged["problems"] or merged["testErrors"] else "PASSED"
+    failed_gradle = gradle_exit_code != 0
     return {
         "runId": run_id,
         "mode": mode,
         "status": status,
         "runErrors": run_errors,
+        "gradleFailures": gradle_failures(gradle_output, set(reports), task_name(mode.lower())) if failed_gradle else [],
+        "compilerErrors": compiler_errors(gradle_output) if failed_gradle else [],
         "tests": totals,
         "counts": {
             "problems": by_kind(merged["problems"]),
@@ -318,14 +414,22 @@ def print_summary(summary: dict, merged: Dict[str, list]) -> None:
     tests = summary["tests"]
     print(f"Test data manager {summary['mode']}: {summary['status']}, runId {summary['runId']}")
     print(f"{tests['discovered']} tests: {tests['passed']} passed, {tests['failed']} failed, {tests['skipped']} skipped")
-    for error in summary["runErrors"]:
-        print(f"ERROR {error}")
 
-    def print_capped(entries: list, line) -> None:
+    def print_capped(entries: list, line, where: str = "the module reports") -> None:
         for entry in entries[:LIST_LIMIT]:
             print(line(entry))
         if len(entries) > LIST_LIMIT:
-            print(f"... and {len(entries) - LIST_LIMIT} more, see the module reports")
+            print(f"... and {len(entries) - LIST_LIMIT} more, see {where}")
+
+    # One per path that doesn't exist, so a mistyped common prefix of many paths gives as many
+    print_capped(summary["runErrors"], lambda error: f"ERROR {error}", where="the summary")
+    for failure in summary["gradleFailures"]:
+        first, *rest = failure.split("\n")
+        print(f"GRADLE FAILURE {first}")
+        for line in rest:
+            print(f"  {line}")
+    for error in summary["compilerErrors"]:
+        print(error)
 
     print_capped(merged["problems"], lambda problem: f"{problem['kind']} {problem['file']} ({problem['test']})")
     print_capped(merged["testErrors"], lambda error: f"TEST ERROR {error['test']}: {error['exception']}" +
@@ -360,8 +464,11 @@ def main(argv: Optional[List[str]] = None, root: Optional[Path] = None) -> int:
     parser.add_argument("--golden-only", action="store_true", help="goldenOnly")
     parser.add_argument("--incremental", action="store_true", help="incremental")
     parser.add_argument("--module", action="append", default=[], dest="modules",
+                        type=project_path,
                         help="project path of a module to run (repeatable); default: the modules with managed test data, "
                              "with --path only those whose generated tests may have test data under the paths")
+    parser.add_argument("--run-id", type=valid_run_id,
+                        help="id of the run, naming the module reports and the Gradle log (default: a new UUID)")
     parser.add_argument("--verbose", action="store_true", help="verbose output of the modules, in the Gradle log")
     parser.add_argument("--json", action="store_true", help="print the summary file instead of the text output")
     parser.add_argument("--gradle-arg", action="append", default=[], dest="gradle_args", help="extra Gradle argument")
@@ -369,8 +476,9 @@ def main(argv: Optional[List[str]] = None, root: Optional[Path] = None) -> int:
 
     root = root or Path(__file__).resolve().parents[2]
     # UUIDv7 (Python 3.14+) only sorts better; any unique id names the reports of one run
-    run_id = str(getattr(uuid, "uuid7", uuid.uuid4)())
-    modules = args.modules or managed_modules(root)
+    run_id = args.run_id or str(getattr(uuid, "uuid7", uuid.uuid4)())
+    # The same module given twice would run once but be reported twice
+    modules = list(dict.fromkeys(args.modules)) or managed_modules(root)
     output_directory = root / "build" / "test-data-manager"
     summary_file = output_directory / f"{run_id}.summary.json"
     output_directory.mkdir(parents=True, exist_ok=True)
@@ -385,20 +493,27 @@ def main(argv: Optional[List[str]] = None, root: Optional[Path] = None) -> int:
 
     gradle_log: Optional[Path] = None
     gradle_exit_code = 0
+    gradle_output = ""
     reports: Dict[str, dict] = {}
     if modules:
         gradle_log = output_directory / f"{run_id}.gradle.log"
         command = gradle_command(root, args, modules, run_id)
-        with gradle_log.open("w") as log:
+        print(f"Running {task_name(args.mode)} in {', '.join(modules)}; Gradle log: {gradle_log}", file=sys.stderr, flush=True)
+        with gradle_log.open("w", encoding="utf-8") as log:
             log.write("$ " + " ".join(command) + "\n")
             log.flush()
-            gradle_exit_code = subprocess.run(command, cwd=root, stdout=log, stderr=subprocess.STDOUT).returncode
-        reports = load_reports(gradle_log.read_text(), run_id)
+            gradle_exit_code = subprocess.run(
+                windows_command_line(command) if os.name == "nt" else command,
+                cwd=root, stdout=log, stderr=subprocess.STDOUT,
+            ).returncode
+        # Gradle may write in the console code page on Windows
+        gradle_output = gradle_log.read_text(encoding="utf-8", errors="replace")
+        reports = load_reports(gradle_output, run_id)
 
     merged = merge(modules, reports)
     has_filters = bool(args.paths or args.class_pattern)
     summary = summarize(args.mode.upper(), run_id, modules, reports, merged, has_filters, gradle_exit_code, gradle_log,
-                        summary_file, skipped, selection_errors)
+                        summary_file, skipped, selection_errors, gradle_output)
     summary_file.write_text(json.dumps(summary, indent=2) + "\n")
     delete_old_runs(output_directory)
 
@@ -411,6 +526,10 @@ def main(argv: Optional[List[str]] = None, root: Optional[Path] = None) -> int:
 
 
 if __name__ == "__main__":
+    # A Windows console may not encode every character of a test name or message
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(errors="backslashreplace")
     try:
         sys.exit(main())
     except Exception as error:  # an unexpected failure is a failed run, not test data problems

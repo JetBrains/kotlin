@@ -43,8 +43,8 @@ When modifying test data files or running generated tests (`*Generated`) that co
 ### The wrapper script — preferred for agents
 
 ```bash
-analysis/test-data-manager/test-data-manager.py update --path analysis/analysis-api/testData/components/resolver/
-analysis/test-data-manager/test-data-manager.py check --path analysis/analysis-api/testData/components/resolver/
+python3 analysis/test-data-manager/test-data-manager.py update --path analysis/analysis-api/testData/components/resolver/
+python3 analysis/test-data-manager/test-data-manager.py check --path analysis/analysis-api/testData/components/resolver/
 ```
 
 Prefer it to calling Gradle directly: the command is short, a mistyped option fails instead of being silently ignored
@@ -56,8 +56,10 @@ output in a log file and prints one summary of the module reports: the test coun
 only on a re-run, and per created, updated or deleted file, at most 50 of each. A module that didn't run, filters that
 match no test and paths that don't exist fail the run (exit code `2`) instead of passing silently. The last line is
 the path of the summary file (`build/test-data-manager/<runId>.summary.json`, also printed by `--json`): read it
-instead of parsing the output, and the module reports it links to for every entry. Each problem's actual output is
-saved next to the module report (`actualFile`) for `diff`.
+instead of parsing the output, and the module reports it links to for every entry. For a long run, start it in the
+background: the path of the Gradle log is printed to stderr right away (`--run-id` fixes it in advance), and when
+Gradle itself fails (e.g., compilation), the summary shows its failures and the compiler errors, so the log rarely
+needs reading. Each problem's actual output is saved next to the module report (`actualFile`) for `diff`.
 See [the script's section in the test data manager README](test-data-manager/README.md#wrapper-script-recommended-for-agents-and-scripts).
 
 Paths are relative to the repository root (as in `@TestMetadata`) or absolute. When calling Gradle directly, add `-q`:
