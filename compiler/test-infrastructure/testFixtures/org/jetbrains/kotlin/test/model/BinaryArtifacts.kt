@@ -23,7 +23,7 @@ object BinaryArtifacts {
         open fun unwrap(): Js = this
     }
 
-    class Native(val executable: File) : ResultingArtifact.Binary<Native>() {
+    open class Native(val executable: File) : ResultingArtifact.Binary<Native>() {
         override val kind: ArtifactKind<Native>
             get() = ArtifactKinds.Native
     }
