@@ -341,6 +341,7 @@ public final class org/jetbrains/kotlin/name/StandardClassIds$Annotations {
 	public final fun getJsNoDispatchReceiver ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getJsNoRuntime ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getJvmBuiltin ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getJvmInline ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getJvmName ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getJvmStatic ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getKotlinActual ()Lorg/jetbrains/kotlin/name/ClassId;
