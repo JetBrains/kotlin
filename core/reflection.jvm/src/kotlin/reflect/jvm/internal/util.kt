@@ -104,6 +104,11 @@ internal fun ClassLoader.loadClass(kotlinClassId: ClassId, arrayDimensions: Int 
 internal val stdlibClassLoader: ClassLoader
     get() = Unit::class.java.safeClassLoader
 
+// JDK and kotlin-stdlib can be loaded by different class loaders. In this case, trying to resolve `kotlin/Unit` reference in a builtin
+// class will use the JDK class loader which cannot load `kotlin/Unit`. Same for `kotlin/ranges/IntRange` reference in `kotlin/Int`.
+internal fun ClassLoader.tryLoadClassOrFallbackToStdlib(fqName: String): Class<*>? =
+    tryLoadClass(fqName) ?: stdlibClassLoader.tryLoadClass(fqName)
+
 private fun loadClass(classLoader: ClassLoader, packageName: String, className: String, arrayDimensions: Int): Class<*>? {
     if (packageName == "kotlin") {
         when (className) {
@@ -116,12 +121,6 @@ private fun loadClass(classLoader: ClassLoader, packageName: String, className: 
             "IntArray" -> return IntArray::class.java
             "LongArray" -> return LongArray::class.java
             "ShortArray" -> return ShortArray::class.java
-            "Unit" -> {
-                // JDK and kotlin-stdlib can be loaded by different class loaders. In this case, trying to resolve `kotlin/Unit` reference
-                // in a builtin class will use the JDK class loader which cannot load `kotlin/Unit`. This should happen for all non-mapped
-                // builtin classes referenced from builtins, but right now Unit seems to be the only one.
-                return Unit::class.java
-            }
         }
     }
 
@@ -141,7 +140,7 @@ private fun loadClass(classLoader: ClassLoader, packageName: String, className: 
         }
     }
 
-    return classLoader.tryLoadClass(fqName)
+    return classLoader.tryLoadClassOrFallbackToStdlib(fqName)
 }
 
 internal fun Class<*>.createArrayType(): Class<*> =
@@ -514,7 +513,10 @@ internal fun ClassLoader.parseAndLoadDescriptor(desc: String, loadReturnType: Bo
 
 private fun ClassLoader.parseAndLoadType(desc: String, begin: Int = 0, end: Int = desc.length): Class<*> =
     when (desc[begin]) {
-        'L' -> loadClass(desc.substring(begin + 1, end - 1).replace('/', '.'))
+        'L' -> {
+            val fqName = desc.substring(begin + 1, end - 1).replace('/', '.')
+            tryLoadClassOrFallbackToStdlib(fqName) ?: throw ClassNotFoundException(fqName)
+        }
         '[' -> parseAndLoadType(desc, begin + 1, end).createArrayType()
         'V' -> Void.TYPE
         'Z' -> Boolean::class.java
