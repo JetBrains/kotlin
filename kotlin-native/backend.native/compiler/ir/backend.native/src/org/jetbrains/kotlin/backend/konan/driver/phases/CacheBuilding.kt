@@ -17,6 +17,22 @@ import org.jetbrains.kotlin.backend.konan.lower.CacheInfoBuilder
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 
+internal val BuildInlineFunctionsCacheInfoPhase = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(
+        name = "BuildAdditionalCacheInfo",
+        preactions = getDefaultIrActions(),
+        postactions = getDefaultIrActions(),
+) { context, module ->
+    // TODO: Use explicit parameter
+    val parent = context.context
+
+    val klib = module.kotlinLibrary ?: error("No Kotlin library for module ${module.name}")
+    val moduleDeserializer = parent.moduleDeserializerProvider.getDeserializerOrNull(klib)
+
+    if (moduleDeserializer != null) {
+        CacheInfoBuilder(context, moduleDeserializer, module).buildInlineFunctionBodies()
+    }
+}
+
 /**
  * Builds additional cache info (inline functions bodies and fields of classes).
  */

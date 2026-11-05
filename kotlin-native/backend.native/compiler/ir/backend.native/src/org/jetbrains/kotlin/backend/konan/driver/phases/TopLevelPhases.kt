@@ -103,6 +103,10 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
             try {
                 val module = fragment.irModule
                 newEngine(generationState) { generationStateEngine ->
+                    if (context.config.produce.isCache) {
+                        // Build cache information after all the lowerings were run.
+                        generationStateEngine.runAndMeasurePhase(BuildInlineFunctionsCacheInfoPhase, module)
+                    }
                     if (context.config.produce == CompilerOutputKind.PROGRAM) {
                         generationStateEngine.runAndMeasurePhase(EntryPointPhase, module)
                     }

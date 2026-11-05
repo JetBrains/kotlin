@@ -66,30 +66,6 @@ internal class CacheInfoBuilder(
                     }
                 }
 
-                override fun visitFunction(declaration: IrFunction) {
-                    // Don't need to visit the children here: classes would be all local and wouldn't be handled anyway,
-                    // as for functions - both their callees will be handled and inline bodies will be built for the top function.
-
-                    // TODO: just filter out private declarations(exported allow private)
-                    val ignoredOrigins = setOf(
-                            IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER,
-                            IrDeclarationOrigin.LOWERED_SUSPEND_FUNCTION,
-                            IrDeclarationOrigin.LOCAL_FUNCTION,
-                    )
-                    if (!declaration.isFakeOverride && declaration.isInline && declaration.isExported && declaration.origin !in ignoredOrigins) {
-                        // TODO: Why are we having to deal with lowered private stuff here?
-                        if (declaration.name.asString().endsWith($$"$kTypeOf") && !declaration.visibility.isPublicAPI) {
-                            return
-                        }
-                        // TODO: How did that happen?
-                        if (declaration.symbol.signature == null) {
-                            return
-                        }
-                        val inlineFunctionSerializer = InlineFunctionSerializer(moduleDeserializer)
-                        generationState.inlineFunctionBodies.add(inlineFunctionSerializer.buildInlineFunctionReference(declaration))
-                        trackCallees(declaration)
-                    }
-                }
 
                 override fun visitProperty(declaration: IrProperty) {
                     declaration.acceptChildrenVoid(this)
@@ -135,6 +111,27 @@ internal class CacheInfoBuilder(
 
             if (generationState.config.producePerFileCache && !irFile.isFunctionInterfaceFile)
                 generationState.klibHash = SerializedIrFileFingerprint(moduleDeserializer.klib, moduleDeserializer.getKlibFileIndexOf(irFile)).fileFingerprint
+        }
+    }
+
+    fun buildInlineFunctionBodies() {
+        irModule.files.forEach { irFile ->
+            irFile.acceptChildrenVoid(object : IrVisitorVoid() {
+                override fun visitElement(element: IrElement) {
+                    element.acceptChildrenVoid(this)
+                }
+
+                override fun visitFunction(declaration: IrFunction) {
+                    // Don't need to visit the children here: classes would be all local and wouldn't be handled anyway,
+                    // as for functions - both their callees will be handled and inline bodies will be built for the top function.
+
+                    if (!declaration.isFakeOverride && declaration.isInline && declaration.isExported) {
+                        val inlineFunctionSerializer = InlineFunctionSerializer(moduleDeserializer)
+                        generationState.inlineFunctionBodies.add(inlineFunctionSerializer.buildInlineFunctionReference(declaration))
+                        trackCallees(declaration)
+                    }
+                }
+            })
         }
     }
 
