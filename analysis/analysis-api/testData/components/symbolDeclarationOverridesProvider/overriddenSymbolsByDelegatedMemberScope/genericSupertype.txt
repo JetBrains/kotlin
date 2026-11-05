@@ -1,0 +1,9 @@
+test/C.get(): Int
+  ALL:
+  DIRECT:
+  INTERSECTION:
+
+test/C.value: Int
+  ALL:
+  DIRECT:
+  INTERSECTION:

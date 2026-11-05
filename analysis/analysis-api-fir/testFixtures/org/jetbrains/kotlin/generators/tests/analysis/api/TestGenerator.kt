@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.substitutorPr
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.substitutorProvider.AbstractCreateSubtypingUnificationSubstitutorTest
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.substututorFactory.AbstractSubstitutorBuilderTest
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.symbolDeclarationOverridesProvider.AbstractIsSubclassOfTest
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.symbolDeclarationOverridesProvider.AbstractOverriddenDeclarationProviderByDelegatedMemberScopeTest
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.symbolDeclarationOverridesProvider.AbstractOverriddenDeclarationProviderTest
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.symbolDeclarationRenderer.AbstractLegacyRenderingTest
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.symbolDeclarationRenderer.AbstractRendererTest
@@ -504,6 +505,10 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTestsForSourceLike
     component("symbolDeclarationOverridesProvider") {
         test<AbstractOverriddenDeclarationProviderTest> {
             model(it, "overriddenSymbols")
+        }
+
+        test<AbstractOverriddenDeclarationProviderByDelegatedMemberScopeTest> {
+            model(it, "overriddenSymbolsByDelegatedMemberScope")
         }
 
         test<AbstractIsSubclassOfTest> {

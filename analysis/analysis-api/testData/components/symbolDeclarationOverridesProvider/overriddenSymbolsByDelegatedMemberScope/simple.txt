@@ -1,0 +1,14 @@
+test/C.foo(text: String): Unit
+  ALL:
+  DIRECT:
+  INTERSECTION:
+
+test/C.bar: Int
+  ALL:
+  DIRECT:
+  INTERSECTION:
+
+test/C.baz: String
+  ALL:
+  DIRECT:
+  INTERSECTION:
