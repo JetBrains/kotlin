@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name.special
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScript
-import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptCompilerProxy
 import org.jetbrains.kotlin.scripting.compiler.plugin.configureFirSession
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.ScriptsCompilationDependencies
@@ -194,34 +193,7 @@ private fun compileImpl(
         return failure(messageCollector)
     }
 
-    registerPackageFragmentProvidersIfNeeded(getScriptConfiguration(sourceFiles.first()), context.environment)
-
     return doCompileWithK2(context, mainKtSource, ktFiles, sourceDependencies, definition, messageCollector, getScriptConfiguration)
-}
-
-internal fun registerPackageFragmentProvidersIfNeeded(
-    scriptCompilationConfiguration: ScriptCompilationConfiguration,
-    environment: KotlinCoreEnvironment
-) {
-    val scriptDependencies = scriptCompilationConfiguration[ScriptCompilationConfiguration.dependencies] ?: return
-    val scriptDependenciesFromClassLoader = scriptDependencies.filterIsInstance<JvmDependencyFromClassLoader>().takeIf { it.isNotEmpty() }
-        ?: return
-    // TODO: consider implementing deduplication/diff processing
-    val alreadyRegistered =
-        environment.project.extensionArea.getExtensionPoint(PackageFragmentProviderExtension.extensionPointName).extensions.any {
-            (it is PackageFragmentFromClassLoaderProviderExtension) &&
-                    it.scriptCompilationConfiguration[ScriptCompilationConfiguration.dependencies] == scriptDependencies
-        }
-    if (!alreadyRegistered) {
-        scriptDependenciesFromClassLoader.forEach { dependency ->
-            PackageFragmentProviderExtension.registerExtension(
-                environment.project,
-                PackageFragmentFromClassLoaderProviderExtension(
-                    scriptCompilationConfiguration, environment.configuration
-                )
-            )
-        }
-    }
 }
 
 @OptIn(LegacyK2CliPipeline::class, K1SpecificScriptingServiceAccessor::class)
