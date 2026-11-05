@@ -25,7 +25,6 @@ import subprocess
 import sys
 import tempfile
 import textwrap
-import time
 import unittest
 from pathlib import Path
 from typing import Dict, List, Tuple
@@ -466,17 +465,21 @@ class WrapperTest(unittest.TestCase):
         for file in ["mod-a/testData/file.kt", "mod-b/testData/file.kt", "shared/testData/file.kt", "file.kt"]:
             self.write(file, "")
 
+        def unmatched(entry: str) -> str:
+            return (f"testDataPath '{entry}' matches no managed test in any module: its files aren't managed, "
+                    "or a new test data file isn't in the generated tests yet (run `./gradlew generateTests`; the tests "
+                    "a module generates into `build` are updated by its build)")
+
         # `file.kt` is the file of a test method, not a test data directory
-        self.assertEqual(([], ["testDataPath 'file.kt' matches no managed test in any module"]), self.select("file.kt"))
+        self.assertEqual(([], [unmatched("file.kt")]), self.select("file.kt"))
 
         exit_code, summary = self.run_wrapper({":mod-b": {}}, "check", "--path", "mod-b/testData", "--path", "shared/")
-        self.assertEqual((2, ["testDataPath 'shared/' matches no managed test in any module"]),
-                         (exit_code, summary["runErrors"]))
+        self.assertEqual((2, [unmatched("shared/")]), (exit_code, summary["runErrors"]))
         self.assertEqual(["-q", "--continue", ":mod-b:checkTestData"], self.gradle_args()[:3])
 
         (self.root / "build" / "stub-gradle-args.txt").unlink()
         exit_code, summary = self.run_wrapper({}, "check", "--path", "shared/testData")
-        self.assertEqual((2, ["testDataPath 'shared/testData' matches no managed test in any module"], None),
+        self.assertEqual((2, [unmatched("shared/testData")], None),
                          (exit_code, summary["runErrors"], summary["gradleLog"]))
         self.assertEqual([], summary["modules"])
         self.assertFalse((self.root / "build" / "stub-gradle-args.txt").exists())
@@ -516,31 +519,93 @@ class WrapperTest(unittest.TestCase):
         self.write("mod-b/testData/file.kt", "")
         self.assertEqual(([":mod-a:nested", ":mod-b"], []), self.select("mod-b/testData"))
 
-    def test_tests_generated_into_build_are_used_while_newer_than_the_sources(self) -> None:
+    def test_tests_generated_into_build_select_by_their_outermost_directories(self) -> None:
         self.generated_tests("mod-a", "mod-a/testData")
         self.generated_tests("mod-a/nested", "mod-a/testData")
         self.write("mod-a/testData/file.kt", "")
         self.write("mod-b/build.gradle.kts", 'testGenerator("Generator", generateTestsInBuildDirectory = true)\n')
         self.write("mod-b/testData/file.kt", "")
-        generator = self.write("mod-b/testFixtures/Generator.kt", "")
-        git(self.root, "add", "-A")
 
         # Not generated yet
         self.assertEqual(([":mod-a", ":mod-a:nested", ":mod-b"], []), self.select("mod-a/testData"))
 
-        generated = self.generated_tests("mod-b", "mod-b/testData", into="build/tests-gen")
-        later = time.time() + 100
-        os.utime(generated, (later, later))
+        self.generated_tests("mod-b", "mod-b/testData", into="build/tests-gen")
         self.assertEqual(([":mod-a", ":mod-a:nested"], []), self.select("mod-a/testData"))
         self.assertEqual(([":mod-b"], []), self.select("mod-b/testData"))
 
-        # Test data doesn't change what the generator writes for known directories
-        os.utime(self.root / "mod-b/testData/file.kt", (later + 1, later + 1))
-        self.assertEqual(([":mod-a", ":mod-a:nested"], []), self.select("mod-a/testData"))
+        # The tests in `build` may be older than the test data: the run generates them anew
+        for file in ["mod-b/testData/new.kt", "mod-b/testData/new/file.kt"]:
+            self.write(file, "")
+            self.assertEqual(([":mod-b"], []), self.select(file))
 
-        # The generator may have changed
-        os.utime(generator, (later + 1, later + 1))
-        self.assertEqual(([":mod-a", ":mod-a:nested", ":mod-b"], []), self.select("mod-a/testData"))
+    def test_new_test_data_files_and_output_files_match_no_test(self) -> None:
+        self.generated_tests("mod-a", "mod-a/testData")
+        self.generated_tests("mod-a/nested", "mod-a/nested/testData")
+        self.generated_tests("mod-b", "mod-b/testData")
+        for file in ["mod-a/testData/file.kt", "mod-a/testData/file.txt", "mod-a/testData/file.knm.txt",
+                     "mod-a/testData/new.kt", "mod-b/testData/file.kt"]:
+            self.write(file, "")
+
+        new = ("testDataPath 'mod-a/testData/new.kt' matches no managed test in any module: its files aren't managed, "
+               "or a new test data file isn't in the generated tests yet (run `./gradlew generateTests`; the tests a "
+               "module generates into `build` are updated by its build)")
+        self.assertEqual(([], [new]), self.select("mod-a/testData/new.kt"))
+        for output in ["mod-a/testData/file.txt", "mod-a/testData/file.knm.txt"]:
+            self.assertEqual(([], [f"testDataPath '{output}' is an output file, not a test data file; "
+                                   "pass its test data file 'mod-a/testData/file.kt'"]), self.select(output))
+
+        # In a list, the other entries still select their modules, and the run fails
+        exit_code, summary = self.run_wrapper({":mod-b": {}}, "update", "--path", "mod-b/testData/file.kt,mod-a/testData/file.txt")
+        self.assertEqual((2, [":mod-b"]), (exit_code, [module["project"] for module in summary["modules"] if module["status"] != "SKIPPED"]))
+        self.assertEqual(1, len(summary["runErrors"]))
+
+    def test_generated_tests_are_parsed_with_their_nesting(self) -> None:
+        text = textwrap.dedent('''\
+            /** This class is generated by {@link Generator}. Not a {class} */
+            @SuppressWarnings("all")
+            @TestMetadata("root")
+            @TestDataPath("$PROJECT_ROOT")
+            public class RootTestGenerated extends AbstractTest {
+              private void run(String fileName) {
+                runTest("root/" + fileName, "{", '}', Foo.class);
+              }
+
+              @Test
+              @TestMetadata("top.kt")
+              public void testTop() {
+                run("top.kt"); // }
+              }
+
+              @Nested
+              @TestMetadata("root/sub")
+              @TestDataPath("$PROJECT_ROOT")
+              public class Sub {
+                @Test
+                @TestMetadata("inner.kt")
+                public void testInner() {
+                  run("inner.kt");
+                }
+
+                @Nested
+                @TestMetadata("root/sub/deeper")
+                public class Deeper {
+                  @Test
+                  @TestMetadata("deepest.kt")
+                  public void testDeepest() {
+                  }
+                }
+              }
+
+              @Test
+              @TestMetadata("after.kt")
+              public void testAfter() {
+              }
+            }
+        ''')
+        self.assertEqual(
+            (["root"], ["root/top.kt", "root/sub/inner.kt", "root/sub/deeper/deepest.kt", "root/after.kt"]),
+            tdm.parse_generated_tests(text),
+        )
 
     def test_missing_unreadable_and_stray_reports(self) -> None:
         exit_code, summary = self.run_wrapper({

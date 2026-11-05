@@ -162,11 +162,13 @@ Compared with calling Gradle directly, the command is much shorter, a mistyped o
 is a few lines however many modules run.
 
 With `--path`, it runs only the modules whose generated tests may have test data under the paths, so the others aren't
-even built. It reads the class-level `@TestMetadata` of the generated tests: the committed ones in `tests-gen` and, for
-`generateTestsInBuildDirectory`, the ones in `build/tests-gen` while they are newer than the module's tracked files
-outside `testData` (the generator may have changed otherwise). A module without such tests, or with stale ones, always
-runs. The lookup is linear in the number of paths, so thousands of files are fine. A path that doesn't exist fails the
-run before Gradle starts; a path no module has tests of fails it too, while the modules of the other paths still run.
+even built. It reads the `@TestMetadata` of the generated tests. The committed ones in `tests-gen` give the path of
+every test, matched as the runner matches them. For `generateTestsInBuildDirectory`, the ones in `build/tests-gen` may be
+older than the test data, so only the directories of their outermost classes count: a new file or directory of a suite
+is inside one. A module without generated tests always runs. Each path is a binary search, so thousands of files are
+fine. A path that doesn't exist fails the run before Gradle starts. A path no module has tests of fails it too, while
+the modules of the other paths still run: an output file (`foo.txt`; the error names its test data file `foo.kt`), an
+unmanaged file, or a new test data file before `./gradlew generateTests`.
 The summary lists the skipped modules. `--module` runs the given modules as is.
 It takes a project path, with or without the leading `:`, or the module directory (`analysis/stubs`).
 

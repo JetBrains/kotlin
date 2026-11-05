@@ -17,7 +17,8 @@ of the run (status, counts, the module reports), while the problems and file cha
 reports. The text output lists at most the first 50 entries of each kind.
 
 With `--path`, only the modules whose generated tests may have test data under the paths run, so the others aren't even
-built; see `TestDataIndex`. A path that doesn't exist fails the run before Gradle starts.
+built; see `TestDataIndex`. A path that doesn't exist fails the run before Gradle starts, and so does one no generated test
+has, like an output file.
 
 The paths of the Gradle log and of the summary are printed to stderr before Gradle starts, so a long run can be followed;
 `--run-id` names them and the module reports in advance. The summary is written at once when the run ends, interrupted
@@ -44,7 +45,7 @@ import sys
 import uuid
 from collections import defaultdict
 from pathlib import Path
-from typing import Dict, Iterator, List, Optional, Set, Tuple
+from typing import Dict, Iterator, List, NamedTuple, Optional, Set, Tuple
 
 OPTION_PREFIX = "org.jetbrains.kotlin.testDataManager.options"
 REPORT_LINE = re.compile(r"^Test data manager report: (.+\.json)$", re.MULTILINE)
@@ -60,10 +61,13 @@ MAX_REPORTED_LINES = 20
 # `subprocess.list2cmdline` quotes; `|` and the parentheses are common in a class pattern
 CMD_SPECIAL = re.compile(r'[\s"&|<>^()]')
 
-# The `@TestMetadata` of a generated test class, the test data directory of its tests; the annotations and modifiers
-# between it and `class` rule out the ones of methods, which name a file in that directory
-CLASS_TEST_METADATA = re.compile(
-    r'@TestMetadata\("([^"]*)"\)\s*(?:@[\w.]+(?:\([^)]*\))?\s*)*(?:(?:public|static|abstract|final)\s+)*class\s'
+# What gives a generated test class its structure: the `@TestMetadata` of classes (their test data directory) and of
+# methods (a file in it), the `class` keyword and the braces. Comments and literals are matched as well, so that the
+# braces and words inside them don't count; `Foo.class` is no declaration.
+JAVA_TOKEN = re.compile(
+    r'@TestMetadata\("(?P<metadata>[^"]*)"\)|(?<![\w.])(?P<declaration>class)\b|(?P<open>\{)|(?P<close>\})'
+    r'|/\*.*?\*/|//[^\n]*|"(?:\\.|[^"\\\n])*"|\'(?:\\.|[^\'\\\n])*\'',
+    re.DOTALL,
 )
 BUILD_GENERATED_TESTS = re.compile(r"generateTestsInBuildDirectory\s*=\s*true")
 
@@ -130,47 +134,90 @@ def module_directory(root: Path, module: str) -> Path:
     return root / module[1:].replace(":", "/")
 
 
-def generated_test_directories(root: Path, module: str) -> Optional[Set[str]]:
+class GeneratedTests(NamedTuple):
     """
-    The test data directories of the generated test classes of [module], from their class-level `@TestMetadata`, or
-    `None` when they are unknown: no generated tests found, or tests generated into `build` that may be stale.
+    The generated tests of a module: [directories], the test data directories of its outermost test classes, and
+    [files], the sorted test data paths of all its tests as the runner sees them (the class directory and the method's
+    file), or `None` when they may be stale.
+    """
+    directories: List[str]
+    files: Optional[List[str]]
+
+
+def parse_generated_tests(text: str) -> Tuple[List[str], List[str]]:
+    """The test data directories of the outermost test classes in [text], a generated test, and the paths of its tests."""
+    directories, files = [], []
+    depth = 0
+    # The depth of the body and the directory of each enclosing class with `@TestMetadata`
+    classes: List[Tuple[int, str]] = []
+    metadata: Optional[str] = None
+    declaration = False
+    for token in JAVA_TOKEN.finditer(text):
+        kind = token.lastgroup
+        if kind == "metadata":
+            metadata, declaration = token.group("metadata"), False
+        elif kind == "declaration":
+            declaration = True
+        elif kind == "open":
+            depth += 1
+            if metadata is not None:
+                if declaration:
+                    if not classes:
+                        directories.append(metadata)
+                    classes.append((depth, metadata))
+                elif classes:
+                    files.append(f"{classes[-1][1]}/{metadata}")
+            metadata, declaration = None, False
+        elif kind == "close":
+            if classes and classes[-1][0] == depth:
+                classes.pop()
+            depth -= 1
+    return directories, files
+
+
+def generated_tests(root: Path, module: str) -> Optional[GeneratedTests]:
+    """
+    The generated tests of [module], or `None` when it has none: then it may have tests of any test data.
 
     Generated tests are committed in `tests-gen`, or, with `generateTestsInBuildDirectory`, written to `build/tests-gen`
-    each time the module is built. The latter are used only when they are newer than every tracked file of the module
-    outside `testData`, where its generator lives: a new test data file in a known directory is found by its ancestor
-    anyway, but a suite added to the generator is not in `build/tests-gen` until the module is built again.
+    each time the module is built. The latter may be stale: a new test data file isn't there until the next build, which
+    the run itself does. So only their outermost class directories are used, which a new file or directory of a suite
+    is inside of; a suite added to the generator since is missed, a rare case.
     """
     directory = module_directory(root, module)
     sources = [directory / "tests-gen"]
     build_script = directory / "build.gradle.kts"
-    if build_script.is_file() and BUILD_GENERATED_TESTS.search(build_script.read_text(encoding="utf-8")):
-        generated = directory / "build" / "tests-gen"
-        if not generated_after_sources(root, directory, generated):
-            return None
-        sources.append(generated)
+    generated_in_build = build_script.is_file() and bool(BUILD_GENERATED_TESTS.search(build_script.read_text(encoding="utf-8")))
+    if generated_in_build:
+        sources.append(directory / "build" / "tests-gen")
 
-    files = [file for source in sources for file in source.rglob("*Generated.java")]
-    if not files:
+    parsed = [
+        parse_generated_tests(file.read_text(encoding="utf-8", errors="replace"))
+        for source in sources
+        for file in source.rglob("*Generated.java")
+    ]
+    if not parsed:
         return None
-    return {
-        test_data_directory
-        for file in files
-        for test_data_directory in CLASS_TEST_METADATA.findall(file.read_text(encoding="utf-8", errors="replace"))
-    }
+    return GeneratedTests(
+        directories=sorted({test_directory for test_directories, _ in parsed for test_directory in test_directories}),
+        files=None if generated_in_build else sorted({file for _, test_files in parsed for file in test_files}),
+    )
 
 
-def generated_after_sources(root: Path, directory: Path, generated: Path) -> bool:
-    """Whether the files in [generated] exist and are newer than the tracked files of [directory] outside `testData`."""
-    generated_files = [file for file in generated.rglob("*") if file.is_file()]
-    if not generated_files:
-        return False
-    generated_at = min(file.stat().st_mtime for file in generated_files)
-    tracked = subprocess.run(
-        ["git", "ls-files", "-z", "--", directory.relative_to(root).as_posix()],
-        cwd=root, check=True, capture_output=True, text=True,
-    ).stdout.split("\0")
-    sources = (root / file for file in tracked if file and "testData" not in file.split("/"))
-    return all(source.stat().st_mtime <= generated_at for source in sources if source.is_file())
+def has_test_of(files: List[str], path: str, directory_only: bool) -> bool:
+    """
+    Whether a test of [files], sorted test data paths, is one the runner includes for the `testDataPath` entry [path]:
+    one that starts with it at a name boundary (`TestMetadataFilter`), inside it if it is [directory_only].
+    """
+    prefix = path + "/" if directory_only else path
+    # `.` and `/` sort before the letters and digits, so the files at a name boundary come first
+    for index in range(bisect.bisect_left(files, prefix), len(files)):
+        file = files[index]
+        if not file.startswith(prefix):
+            return False
+        if directory_only or len(file) == len(prefix) or file[len(prefix)] in "./":
+            return True
+    return False
 
 
 def name_prefixes(directory: str) -> Iterator[str]:
@@ -188,39 +235,63 @@ def name_prefixes(directory: str) -> Iterator[str]:
 
 class TestDataIndex:
     """
-    Which modules may have tests of a `testDataPath` entry, from the test data directories of their generated test
-    classes ([generated_test_directories]).
+    Which modules may have tests of a `testDataPath` entry, from their generated tests ([generated_tests]).
 
     The runner includes a test when its path, the class directory and the file name, starts with an entry at a name
-    boundary (`TestMetadataFilter`). So a module may have tests of an entry that is a class directory, its ancestor, or a
-    path inside it: the first two are looked up among the [name_prefixes] of all class directories, the last one among
-    the ancestors of the entry. The cost is linear in the number of entries and of class directories, times the depth.
-    The answer may include a module without such tests, but never misses one. A module whose directories are unknown
-    may have tests of any entry.
+    boundary (`TestMetadataFilter`). A module whose test paths are known has tests of an entry when one of them does
+    ([has_test_of], a binary search). Otherwise, it may have tests of an entry that is one of its class directories, their
+    ancestor, or a path inside one: the first two are looked up among the [name_prefixes] of the class directories, the
+    last one among the ancestors of the entry; the answer may include a module without such tests, but never misses one.
+    A module without generated tests may have tests of any entry.
     """
 
-    def __init__(self, directories: Dict[str, Optional[Set[str]]]) -> None:
-        self.modules = set(directories)
-        self.unknown = {module for module, module_directories in directories.items() if module_directories is None}
+    def __init__(self, tests: Dict[str, Optional[GeneratedTests]]) -> None:
+        self.modules = set(tests)
+        self.unknown = {module for module, module_tests in tests.items() if module_tests is None}
+        self.files = {
+            module: module_tests.files
+            for module, module_tests in tests.items()
+            if module_tests is not None and module_tests.files is not None
+        }
+        self.all_files = sorted(file for files in self.files.values() for file in files)
         self.by_directory: Dict[str, Set[str]] = defaultdict(set)
         self.by_prefix: Dict[str, Set[str]] = defaultdict(set)
-        for module, module_directories in directories.items():
-            for directory in module_directories or ():
+        for module, module_tests in tests.items():
+            if module_tests is None or module_tests.files is not None:
+                continue
+            for directory in module_tests.directories:
                 self.by_directory[directory].add(module)
                 for prefix in name_prefixes(directory):
                     self.by_prefix[prefix].add(module)
 
-    def modules_for(self, path: str) -> Set[str]:
-        """The modules that may have tests of [path], a repository-relative path; the empty one is the whole repository."""
+    def modules_for(self, path: str, directory_only: bool = False) -> Set[str]:
+        """
+        The modules that may have tests of [path], a repository-relative path, only inside it if it is [directory_only];
+        the empty one is the whole repository.
+        """
         path = path.rstrip("/")
         if not path:
             return set(self.modules)
         found = self.unknown | self.by_prefix.get(path, set())
+        found |= {module for module, files in self.files.items() if has_test_of(files, path, directory_only)}
         ancestor = ""
         for name in path.split("/")[:-1]:
             ancestor = f"{ancestor}/{name}" if ancestor else name
             found |= self.by_directory.get(ancestor, set())
         return found
+
+    def tests_named_like(self, path: str) -> List[str]:
+        """The known test data files next to [path] named like it up to the first `.`: the test of an output file."""
+        directory, _, name = path.rpartition("/")
+        prefix = (f"{directory}/" if directory else "") + name.split(".", 1)[0] + "."
+        tests = []
+        for index in range(bisect.bisect_left(self.all_files, prefix), len(self.all_files)):
+            test = self.all_files[index]
+            if not test.startswith(prefix):
+                break
+            if "/" not in test[len(prefix):] and test not in tests:
+                tests.append(test)
+        return tests
 
 
 @functools.lru_cache(maxsize=None)
@@ -270,7 +341,8 @@ def select_modules(root: Path, modules: List[str], paths: List[str], cwd: Path) 
     """
     The modules of [modules] that may have tests of the `testDataPath` entries [paths] ([TestDataIndex]), and the errors
     of the entries. An entry that doesn't exist fails the whole run, as it would fail every module; an entry no module
-    has tests of fails the run, but the modules of the other entries still run.
+    has tests of fails the run, but the modules of the other entries still run. Such an entry is usually an output file
+    passed instead of its test data file, or a new test data file the generated tests don't have yet.
     """
     entries = [entry.strip() for path in paths for entry in path.split(",") if entry.strip()]
     resolved = [(entry, *resolve_path(entry, root, cwd, modules)) for entry in entries]
@@ -278,14 +350,25 @@ def select_modules(root: Path, modules: List[str], paths: List[str], cwd: Path) 
     if errors:
         return [], errors
 
-    index = TestDataIndex({module: generated_test_directories(root, module) for module in modules})
+    index = TestDataIndex({module: generated_tests(root, module) for module in modules})
     selected: Set[str] = set()
     for entry, path, _ in resolved:
-        found = index.modules_for(path)
+        found = index.modules_for(path, directory_only=entry.endswith("/"))
         if not found:
-            errors.append(f"testDataPath '{entry}' matches no managed test in any module")
+            errors.append(unmatched_entry_error(entry, path, index, root))
         selected |= found
     return [module for module in modules if module in selected], errors
+
+
+def unmatched_entry_error(entry: str, path: str, index: TestDataIndex, root: Path) -> str:
+    """The error for the `testDataPath` entry [entry], resolved to [path], that no module has tests of."""
+    tests = index.tests_named_like(path) if (root / path).is_file() else []
+    if tests:
+        return (f"testDataPath '{entry}' is an output file, not a test data file; pass its test data file "
+                + " or ".join(f"'{test}'" for test in tests))
+    return (f"testDataPath '{entry}' matches no managed test in any module: its files aren't managed, "
+            f"or a new test data file isn't in the generated tests yet (run `./gradlew generateTests`; the tests a module "
+            f"generates into `build` are updated by its build)")
 
 
 def gradle_command(root: Path, args: argparse.Namespace, modules: List[str], run_id: str) -> List[str]:
