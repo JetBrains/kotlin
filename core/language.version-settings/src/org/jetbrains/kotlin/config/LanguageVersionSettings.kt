@@ -581,6 +581,12 @@ enum class LanguageFeature(
     ReportSubclassCantCallCompanionProtectedNonStaticWithGenerics(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KTLC-412"),
     AvoidStarProjectingSupertypeOfRecursiveCapturedTypes(sinceVersion = KOTLIN_2_6, "KT-88674"),
     ConsiderUseSiteRecursiveBoundsOnCapturedTypes(sinceVersion = KOTLIN_2_6, "KT-90176"),
+    ExplicitInlineValueClassesSyntaxRequiredOnAllPlatforms(KOTLIN_2_6, enabledInProgressiveMode = true, issue = "KT-89772") {
+        context(context: CrossFeatureChecksResultsCollector)
+        override fun crossFeatureChecks() {
+            checkEnabledLaterThan(ExplicitInlineValueClassesSyntax)
+        }
+    },
     ConcurrentMapPurelyImplemented(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KTLC-416"),
     ForbidUselessTypeArgumentsIn26(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KTLC-390"),
     EnforceMissingNamedArgumentsOnJavaAnnotation(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KTLC-418"),
