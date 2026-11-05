@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: CODEGEN
 // WITH_STDLIB
 // ISSUE: KT-68688
+// LANGUAGE: -FullValueClasses
 // LANGUAGE: -StrictEquals
 //  ^^^ KT-88389
 
