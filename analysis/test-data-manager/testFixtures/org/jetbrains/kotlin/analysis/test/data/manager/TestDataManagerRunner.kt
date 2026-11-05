@@ -82,6 +82,7 @@ internal fun validateConflicts(tests: List<DiscoveredTest>): List<VariantChainCo
  * - `goldenOnly` - run only golden tests (optional)
  * - `incremental` - run variant tests only for the golden paths that changed (optional, update mode only)
  * - `runId` - the id of the run, naming its report `<runId>.json` (optional, a UUIDv7 by default)
+ * - `rerunId` - the id of the earlier run this one reruns; the rotation of old reports keeps its report (optional)
  * - `output` - `verbose` for the progress of every group and pass (optional, compact by default)
  *
  * The tasks also pass `rootDir` (the repository root), `projectDir`, `projectName` and `reportDir`.
@@ -211,7 +212,8 @@ internal object TestDataManagerRunner {
     private fun writeReport(report: TestDataManagerReport, rootDir: Path?) {
         val reportDirectory = System.getProperty(TEST_DATA_MANAGER_OPTIONS_REPORT_DIR)?.let(::Path) ?: return
         try {
-            val reportFile = report.write(reportDirectory, rootDir)
+            val rerunId = System.getProperty(TEST_DATA_MANAGER_OPTIONS_RERUN_ID)?.takeIf(String::isNotBlank)
+            val reportFile = report.write(reportDirectory, rootDir, keptRunId = rerunId)
             println("Test data manager report: ${reportFile.toAbsolutePath()}")
         } catch (e: Exception) {
             System.err.println("WARNING: failed to write the test data manager report into $reportDirectory: $e")

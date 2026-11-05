@@ -157,6 +157,13 @@ log, the summary and the module reports, in advance. When Gradle fails for anoth
 (a compilation error, a configuration failure, an unknown module), the summary lists its `* What went wrong:` sections
 and the compiler errors from the log (`gradleFailures` and `compilerErrors`).
 
+`--rerun <runId>` runs, instead of `--path`, the test data files of the tests that failed in that run with a problem or
+a test error, so `update --rerun <runId>` after a `check` updates just what failed. All the variants of these files run
+again, as they depend on each other. The rerun is a run of its own, with its own id; the run it reruns is kept as long
+as it runs, its module reports included (the `rerunId` option). It fails before Gradle when a test data file is gone
+since, and it fails when the failures of the run aren't all known: a module without a report, a failure without a test
+data path.
+
 Compared with calling Gradle directly, the command is much shorter, a mistyped option fails instead of being ignored
 (Gradle silently ignores an unknown `-P` property, so a misspelled `testDataPath` would run every test), and the output
 is a few lines however many modules run.
