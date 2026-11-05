@@ -6,6 +6,7 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
 import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.cli.common.*
+import org.jetbrains.kotlin.cli.common.messages.SyntaxErrorReporter
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.prepareIncrementalCompilationContextAndLibrariesClasspath
@@ -38,7 +39,6 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.configureFirSession
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.ScriptsCompilationDependencies
 import org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings.ScriptResultFieldData
 import org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings.scriptResultFieldDataAttr
-import org.jetbrains.kotlin.scripting.compiler.plugin.legacy.k1.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.scriptDefinitionProviderService
 import org.jetbrains.kotlin.scripting.definitions.K1SpecificScriptingServiceAccessor
 import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
@@ -186,7 +186,7 @@ private fun compileImpl(
     val ktFiles = sourceFiles.map { it.getKtFile(definition, project) }
 
     val syntaxErrors = ktFiles.fold(false) { errorsFound, ktFile ->
-        AnalyzerWithCompilerReport.reportSyntaxErrors(ktFile, messageCollector).isHasErrors or errorsFound
+        SyntaxErrorReporter.reportSyntaxErrors(ktFile, compilerConfiguration.diagnosticsCollector).isHasErrors or errorsFound
     }
 
     if (syntaxErrors || CheckCompilationErrors.CheckDiagnosticCollector.checkHasErrorsAndReportToMessageCollector(compilerConfiguration)) {
