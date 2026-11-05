@@ -65,6 +65,25 @@ class MppPublicationTest {
     }
 
     @Test
+    fun `mavenPublication and configureEach are executed in build script order`() {
+        kotlin.wasmJs {
+            browser()
+            mavenPublication { artifactId = "target-dsl-$name" }
+        }
+        val publications = project.extensions.getByType(PublishingExtension::class.java).publications
+            .withType(MavenPublication::class.java)
+        publications.configureEach { it.artifactId = "configure-each-${it.name}" }
+        kotlin.js {
+            browser()
+            mavenPublication { artifactId = "target-dsl-$name" }
+        }
+        project.evaluate()
+
+        assertEquals("configure-each-wasmJs", publications.getByName("wasmJs").artifactId)
+        assertEquals("target-dsl-js", publications.getByName("js").artifactId)
+    }
+
+    @Test
     fun `all publication contains sourcesJar`() {
         project.evaluate()
         val publishing = project.extensions.getByType(PublishingExtension::class.java)

@@ -5,6 +5,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Action
+import org.gradle.api.DomainObjectCollection
 import org.gradle.api.DomainObjectSet
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ConfigurablePublishArtifact
@@ -184,8 +185,10 @@ abstract class AbstractKotlinTarget(
     }
 
     @InternalKotlinGradlePluginApi
-    override fun onPublicationCreated(publication: MavenPublication) {
-        publicationConfigureActions.all { action -> action.execute(publication) }
+    override fun onPublicationRegistered(publications: DomainObjectCollection<MavenPublication>) {
+        publicationConfigureActions.all { action ->
+            publications.configureEach { action.execute(it) }
+        }
     }
 
     override var targetPreset: InternalKotlinTargetPreset<KotlinTarget>? = null
