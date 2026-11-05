@@ -87,6 +87,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleCompilerFacilityTestGenerate
   }
 
   @Test
+  @TestMetadata("companionBlockDelegatedProperty.kt")
+  public void testCompanionBlockDelegatedProperty() {
+    run("companionBlockDelegatedProperty.kt");
+  }
+
+  @Test
   @TestMetadata("defaultImpls.kt")
   public void testDefaultImpls() {
     run("defaultImpls.kt");

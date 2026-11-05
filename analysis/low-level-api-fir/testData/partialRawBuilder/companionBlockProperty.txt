@@ -1,4 +1,4 @@
-public? final? val test/classes/Owner.foo: Int
-    public? get(): Int {
+public? final? static val test/classes/Owner.foo: Int
+    public? static get(): Int {
         ^ bar#()
     }

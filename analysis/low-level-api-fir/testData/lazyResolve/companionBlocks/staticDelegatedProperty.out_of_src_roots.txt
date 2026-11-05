@@ -154,7 +154,7 @@ FILE: [ResolvedTo(IMPORTS)] staticDelegatedProperty.kt
         }
         )
             public static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] get(): R|kotlin/Int| {
-                ^ this@R|/Foo|.D|/Foo.staticDelegatedProperty|.<Unresolved name: getValue>#(this@R|/Foo|, ::R|/Foo.staticDelegatedProperty|)
+                ^ D|/Foo.staticDelegatedProperty|.<Unresolved name: getValue>#(Null(null), ::R|/Foo.staticDelegatedProperty|)
             }
 
     }
@@ -171,7 +171,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] staticDelegatedProperty.kt
         }
         )
             public static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] get(): R|kotlin/Int| {
-                ^ this@R|/Foo|.D|/Foo.staticDelegatedProperty|.<Unresolved name: getValue>#(this@R|/Foo|, ::R|/Foo.staticDelegatedProperty|)
+                ^ D|/Foo.staticDelegatedProperty|.<Unresolved name: getValue>#(Null(null), ::R|/Foo.staticDelegatedProperty|)
             }
 
     }

@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.psi.psiUtil.isFromCompanionBlock
 import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.utils.addToStdlib.requireIsInstance
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
@@ -92,6 +93,20 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
             return builder.moveNext(designation.path.iterator(), containingDeclaration = null)
         }
     }
+
+    /**
+     * Whether the declaration being converted is a direct member of a companion block.
+     *
+     * The builder starts from [declarationToBuild] itself and never enters the companion block around it,
+     * so for [declarationToBuild] the answer comes from its PSI. Its container symbol isn't pushed yet at that point.
+     */
+    @OptIn(KtExperimentalApi::class)
+    override val isDirectlyInsideCompanionBlock: Boolean
+        get() = if (context.containerSymbolIfAny == null) {
+            (declarationToBuild as? KtDeclaration)?.isFromCompanionBlock == true
+        } else {
+            super.isDirectlyInsideCompanionBlock
+        }
 
     override fun bindFunctionTarget(target: FirFunctionTarget, function: FirFunction) {
         super.bindFunctionTarget(target, computeRebindTarget(function) as? FirFunction ?: function)
@@ -342,4 +357,3 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
         val allSuperTypeCallEntries: List<KtSuperTypeCallEntry>,
     )
 }
-

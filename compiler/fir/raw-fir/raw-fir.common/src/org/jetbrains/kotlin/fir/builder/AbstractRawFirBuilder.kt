@@ -86,7 +86,7 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
     private val nameBasedDestructuringShortFormEnabled: Boolean =
         baseSession.languageVersionSettings.supportsFeature(LanguageFeature.EnableNameBasedDestructuringShortForm)
 
-    protected val isDirectlyInsideCompanionBlock: Boolean
+    protected open val isDirectlyInsideCompanionBlock: Boolean
         get() = context.currentCompanionBlockOwnerOrNull.let { it != null && it == context.containerSymbolIfAny }
 
     abstract fun Node.toFirSourceElement(kind: KtFakeSourceElementKind? = null): KtSourceElement

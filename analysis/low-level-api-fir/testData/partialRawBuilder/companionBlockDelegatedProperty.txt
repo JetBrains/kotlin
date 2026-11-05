@@ -1,7 +1,7 @@
-public? final? var test/classes/Owner.foo: Intby Delegate#()
-    public? get(): <implicit> {
-        ^ this@R|test/classes/Owner|.D|test/classes/Owner.foo|.getValue#(this@R|test/classes/Owner|, ::R|test/classes/Owner.foo|)
+public? final? static var test/classes/Owner.foo: Intby Delegate#()
+    public? static get(): <implicit> {
+        ^ D|test/classes/Owner.foo|.getValue#(Null(null), ::R|test/classes/Owner.foo|)
     }
-    public? set(<set-?>: <implicit>): R|kotlin/Unit| {
-        ^ this@R|test/classes/Owner|.D|test/classes/Owner.foo|.setValue#(this@R|test/classes/Owner|, ::R|test/classes/Owner.foo|, R|<local>/<set-?>|)
+    public? static set(<set-?>: <implicit>): R|kotlin/Unit| {
+        ^ D|test/classes/Owner.foo|.setValue#(Null(null), ::R|test/classes/Owner.foo|, R|<local>/<set-?>|)
     }
