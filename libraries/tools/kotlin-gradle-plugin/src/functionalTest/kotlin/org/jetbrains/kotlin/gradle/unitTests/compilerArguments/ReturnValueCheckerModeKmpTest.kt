@@ -6,16 +6,12 @@
 package org.jetbrains.kotlin.gradle.unitTests.compilerArguments
 
 import org.gradle.api.internal.project.ProjectInternal
-import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.ReturnValueCheckerMode
-import org.jetbrains.kotlin.gradle.dsl.kotlinJvmExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.util.buildProjectWithJvm
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import kotlin.test.Test
 import kotlin.test.assertContains
-import kotlin.test.assertEquals
 
 class ReturnValueCheckerModeKmpTest : ReturnValueCheckerTestBase() {
     @Test
