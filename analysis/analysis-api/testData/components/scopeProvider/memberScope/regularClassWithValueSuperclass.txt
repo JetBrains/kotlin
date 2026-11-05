@@ -195,7 +195,7 @@ KaKotlinPropertySymbol:
       typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(regularClassWithValueSuperclass.kt)
-      getContainingJvmClassName: null
+      getContainingJvmClassName: test.RegularClass
       getContainingModule: KaSourceModule "Sources of main"
       deprecation: null
       importableFqName: null
@@ -242,7 +242,7 @@ KaKotlinPropertySymbol:
         typeParameters: []
         visibility: PUBLIC
         getContainingFileSymbol: KaFileSymbol(regularClassWithValueSuperclass.kt)
-        getContainingJvmClassName: null
+        getContainingJvmClassName: test.RegularClass
         getContainingModule: KaSourceModule "Sources of main"
         deprecation: null
         importableFqName: null

@@ -60,7 +60,7 @@ KaPropertySetterSymbol:
     typeParameters: []
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(setterWithAnnotations.kt)
-    getContainingJvmClassName: null
+    getContainingJvmClassName: SetterWithAnnotationsKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
     importableFqName: null
@@ -112,7 +112,7 @@ KaPropertySetterSymbol:
       typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(setterWithAnnotations.kt)
-      getContainingJvmClassName: null
+      getContainingJvmClassName: SetterWithAnnotationsKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecation: null
       importableFqName: null
