@@ -23,8 +23,6 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.K1Deprecation
-import org.jetbrains.kotlin.analyzer.moduleInfo
-import org.jetbrains.kotlin.analyzer.unwrapPlatform
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
@@ -56,7 +54,6 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.utils.IDEAPlatforms
 import org.jetbrains.kotlin.utils.IDEAPluginsCompatibilityAPI
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import org.jetbrains.kotlin.utils.addToStdlib.joinToWithBuffer
 
 @K1Deprecation
 object Renderers {
@@ -95,7 +92,7 @@ object Renderers {
 
     @JvmField
     val MODULE = Renderer<ModuleDescriptor> { module ->
-        module.moduleInfo?.unwrapPlatform()?.displayedName ?: module.name.asString()
+        module.name.asString()
     }
     
     @JvmField

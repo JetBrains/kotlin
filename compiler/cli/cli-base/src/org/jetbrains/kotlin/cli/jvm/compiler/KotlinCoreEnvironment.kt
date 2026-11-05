@@ -80,8 +80,6 @@ import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
 import org.jetbrains.kotlin.resolve.jvm.extensions.SyntheticJavaResolveExtension
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
-import org.jetbrains.kotlin.resolve.lazy.declarations.CliDeclarationProviderFactoryService
-import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
 import org.jetbrains.kotlin.serialization.DescriptorSerializerPlugin
 import java.io.File
 
@@ -212,7 +210,6 @@ class KotlinCoreEnvironment private constructor(
     init {
         projectEnvironment.configureProjectEnvironment(configuration, configFiles)
         val project = projectEnvironment.project
-        project.registerService(DeclarationProviderFactoryService::class.java, CliDeclarationProviderFactoryService(sourceFiles))
 
         sourceFiles += createSourceFilesFromSourceRoots(
             configuration, project,

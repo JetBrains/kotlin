@@ -43,7 +43,7 @@ class CliJavaModuleResolver(
         }
     }
 
-    private val virtualFileFinder by lazy { VirtualFileFinder.getInstance(project, module = null) }
+    private val virtualFileFinder by lazy { VirtualFileFinder.getInstance(project) }
 
     override fun getAnnotationsForModuleOwnerOfClass(classId: ClassId): List<JavaAnnotation>? {
         val virtualFile = virtualFileFinder.findSourceOrBinaryVirtualFile(classId) ?: return null
