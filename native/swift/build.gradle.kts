@@ -12,6 +12,7 @@ tasks.register("sirAllTests") {
         ":native:swift:swift-export-standalone-integration-tests:coroutines:test",
         ":native:swift:swift-export-ide:test",
         ":native:swift:sir-printer:test",
+        ":native:swift:kir-printer:test",
         ":native:swift:sir-light-classes:check",
     )
 }
