@@ -87,6 +87,14 @@ public expect fun <T, K> Grouping<T, K>.eachCount(): Map<K, Int>
 @IgnorableReturnValue
 public expect fun <T> MutableIterable<T>.removeAll(predicate: (T) -> Boolean): Boolean
 
+/**
+ * Retains only elements of this [MutableIterable] that match the given [predicate].
+ *
+ * @return `true` if any element was removed from this collection, or `false` when all elements were retained and collection was not modified.
+ */
+@IgnorableReturnValue
+public expect fun <T> MutableIterable<T>.retainAll(predicate: (T) -> Boolean): Boolean
+
 internal expect fun collectionToArray(collection: Collection<*>): Array<Any?>
 
 internal expect fun <T> collectionToArray(collection: Collection<*>, array: Array<T>): Array<T>

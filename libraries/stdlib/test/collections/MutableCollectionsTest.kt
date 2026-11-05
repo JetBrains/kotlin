@@ -182,6 +182,17 @@ class MutableCollectionTest {
         }
     }
 
+    @Test fun retainAllFromMutableIterable() {
+        val content = listOf("foo", "bar", "bar")
+        val bars = listOf("bar", "bar")
+
+        val assertRetain = testOperationOnMutableIterable(content, bars, true)
+        assertRetain { retainAll { it == "bar" } }
+
+        val assertRetainEverything = testOperationOnMutableIterable(bars, bars, false)
+        assertRetainEverything { retainAll { true } }
+    }
+
     @Test fun listFill() {
         forAllStandardMutableLists(List(3) { it }) { list ->
             list.fill(42)

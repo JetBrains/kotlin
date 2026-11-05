@@ -88,3 +88,18 @@ public actual fun <T> MutableIterable<T>.removeAll(predicate: (T) -> Boolean): B
 
     return filterInPlace(predicate, predicateResultToRemove = true)
 }
+
+/**
+ * Retains only elements of this [MutableIterable] that match the given [predicate].
+ * Delegates to [java.util.Collection.removeIf] with the negated predicate whenever possible.
+ *
+ * @return `true` if any element was removed from this collection, or `false` when all elements were retained and collection was not modified.
+ */
+@IgnorableReturnValue
+public actual fun <T> MutableIterable<T>.retainAll(predicate: (T) -> Boolean): Boolean {
+    if (this is MutableCollection<T>) {
+        return IMPLEMENTATIONS.retainAll(this, predicate)
+    }
+
+    return filterInPlace(predicate, predicateResultToRemove = false)
+}
