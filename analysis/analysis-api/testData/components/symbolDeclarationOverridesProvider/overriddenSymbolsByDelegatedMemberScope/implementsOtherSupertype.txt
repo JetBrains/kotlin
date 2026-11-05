@@ -1,0 +1,4 @@
+test/C.foo(): Unit
+  ALL:
+  DIRECT:
+  INTERSECTION:

@@ -143,6 +143,12 @@ public class SymbolLightClassesByPsiForLibraryTestGenerated extends AbstractSymb
   }
 
   @Test
+  @TestMetadata("delegateWithBoxedReturnTypeInOverrideChain.kt")
+  public void testDelegateWithBoxedReturnTypeInOverrideChain() {
+    run("delegateWithBoxedReturnTypeInOverrideChain.kt");
+  }
+
+  @Test
   @TestMetadata("DelegatedProperty.kt")
   public void testDelegatedProperty() {
     run("DelegatedProperty.kt");

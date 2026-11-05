@@ -54,4 +54,10 @@ public class FirIdeNormalAnalysisSourceLikeModuleContainingDeclarationProviderBy
   public void testDelegation() {
     run("delegation.kt");
   }
+
+  @Test
+  @TestMetadata("nestedClassifiers.kt")
+  public void testNestedClassifiers() {
+    run("nestedClassifiers.kt");
+  }
 }

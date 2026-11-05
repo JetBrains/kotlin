@@ -1,0 +1,4 @@
+test/usage.<no name>.foo(): Int
+  ALL:
+  DIRECT:
+  INTERSECTION:

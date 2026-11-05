@@ -1,0 +1,9 @@
+test/C.foo(): String
+  ALL:
+  DIRECT:
+  INTERSECTION:
+
+test/C.bar(): Unit
+  ALL:
+  DIRECT:
+  INTERSECTION:
