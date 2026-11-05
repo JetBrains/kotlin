@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.ClassLayoutBuilder
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.builders.declarations.addField
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -273,17 +274,9 @@ internal class ClassFieldsDeserializer(
                 val irField = knownFields[name]?.let {
                     check(binaryType == it.type.computePrimitiveBinaryTypeOrNull())
                     it
-                } ?: builtIns.irFactory.createField(
-                        irClass.startOffset,
-                        irClass.endOffset,
-                        IrDeclarationOrigin.DEFINED,
-                        Name.identifier(name),
-                        DescriptorVisibilities.PRIVATE,
-                        IrFieldSymbolImpl(),
-                        type,
-                        isFinal = true,
-                        isStatic = false,
-                )
+                } ?: irClass.addField(name, type).apply {
+                    isFinal = true
+                } // TODO: that's a race; but we need the field attached to IrClass for `LlvmModuleSpecification.containsDeclaration`
                 ClassLayoutBuilder.FieldInfo(
                         name, type,
                         isConst = (field.flags and SerializedClassFieldInfo.FLAG_IS_CONST) != 0,
