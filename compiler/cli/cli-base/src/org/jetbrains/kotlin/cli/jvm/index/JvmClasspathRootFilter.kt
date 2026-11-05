@@ -11,6 +11,7 @@ import com.intellij.util.io.URLUtil.JAR_SEPARATOR
 import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
 import org.jetbrains.kotlin.jvm.environment.asJvmClasspathRootId
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileHandle
 import java.nio.file.InvalidPathException
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -26,8 +27,8 @@ class JvmClasspathRootFilter(classpath: JvmClasspath) : ClassFileFilter {
     private val matcher = JvmClasspathRootMatcher(classpath)
     private val acceptedRoots = ConcurrentHashMap<VirtualFile, Boolean>()
 
-    override fun accepts(root: VirtualFile, file: VirtualFile): Boolean =
-        acceptedRoots.computeIfAbsent(root, matcher::accepts)
+    override fun accepts(file: BinaryClassFileHandle): Boolean =
+        acceptedRoots.computeIfAbsent((file as VfsClassFileHandle).root.file, matcher::accepts)
 }
 
 /**

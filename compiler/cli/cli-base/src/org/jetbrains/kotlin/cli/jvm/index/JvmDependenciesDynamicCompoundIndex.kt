@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.cli.jvm.index
 
-import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileHandle
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import java.util.concurrent.locks.ReentrantReadWriteLock
@@ -53,7 +53,7 @@ class JvmDependenciesDynamicCompoundIndex(private val shouldOnlyFindFirstClass: 
     override fun findClassFiles(
         classId: ClassId,
         acceptedExtensions: JavaFileExtensions,
-    ): Collection<IndexedClassFile> = lock.read {
+    ): Collection<BinaryClassFileHandle> = lock.read {
         if (shouldOnlyFindFirstClass) {
             listOfNotNull(
                 indices.firstNotNullOfOrNull { it.findClassFiles(classId, acceptedExtensions).firstOrNull() }
@@ -67,7 +67,7 @@ class JvmDependenciesDynamicCompoundIndex(private val shouldOnlyFindFirstClass: 
         classId: ClassId,
         acceptedExtensions: JavaFileExtensions,
         filter: ClassFileFilter,
-    ): Collection<IndexedClassFile> = lock.read {
+    ): Collection<BinaryClassFileHandle> = lock.read {
         if (shouldOnlyFindFirstClass) {
             listOfNotNull(
                 indices.firstNotNullOfOrNull { it.findClassFiles(classId, acceptedExtensions, filter).firstOrNull() }
@@ -77,27 +77,25 @@ class JvmDependenciesDynamicCompoundIndex(private val shouldOnlyFindFirstClass: 
         }
     }
 
-    override fun traverseClassVirtualFilesInPackage(
+    override fun traverseFilesInPackage(
         packageFqName: FqName,
         acceptedExtensions: JavaFileExtensions,
-        continueSearch: (VirtualFile) -> Boolean
+        continueSearch: (BinaryClassFileHandle) -> Boolean
     ) = lock.read {
-        indices.forEach { it.traverseClassVirtualFilesInPackage(packageFqName, acceptedExtensions, continueSearch) }
+        var stopped = false
+        for (index in indices) {
+            index.traverseFilesInPackage(packageFqName, acceptedExtensions) { file ->
+                continueSearch(file).also { stopped = !it }
+            }
+            if (stopped) break
+        }
     }
 
-    override fun traverseDirectoriesInPackage(
-        packageFqName: FqName,
-        acceptedRootTypes: Set<JavaRoot.RootType>,
-        continueSearch: (VirtualFile, JavaRoot.RootType) -> Boolean
-    ) = lock.read {
-        indices.forEach { it.traverseDirectoriesInPackage(packageFqName, acceptedRootTypes, continueSearch) }
+    override fun hasPackage(packageFqName: FqName, acceptedRootTypes: Set<JavaRoot.RootType>): Boolean = lock.read {
+        indices.any { it.hasPackage(packageFqName, acceptedRootTypes) }
     }
 
-    override fun traverseVirtualFilesInPackage(
-        packageFqName: FqName,
-        acceptedRootTypes: Set<JavaRoot.RootType>,
-        continueSearch: (VirtualFile, JavaRoot.RootType) -> Boolean
-    ) = lock.read {
-        indices.forEach { it.traverseVirtualFilesInPackage(packageFqName, acceptedRootTypes, continueSearch) }
+    override fun findBuiltInsFile(packageFqName: FqName): BinaryClassFileHandle? = lock.read {
+        indices.firstNotNullOfOrNull { it.findBuiltInsFile(packageFqName) }
     }
 }

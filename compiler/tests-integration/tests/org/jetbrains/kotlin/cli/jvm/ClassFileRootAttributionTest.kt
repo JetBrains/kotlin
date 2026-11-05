@@ -19,9 +19,10 @@ import org.jetbrains.kotlin.cli.jvm.index.JavaFileExtension
 import org.jetbrains.kotlin.cli.jvm.index.JavaFileExtensions
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndexImpl
-import org.jetbrains.kotlin.cli.jvm.index.asBinaryClassFileHandle
+import org.jetbrains.kotlin.cli.jvm.index.VfsClassFileHandle
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.VirtualFileBasedApi
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.test.ConfigurationKind
@@ -46,6 +47,7 @@ import kotlin.io.path.writeBytes
  * A class file found through the CLI index carries the identity of the root it was found in, assigned by the index
  * rather than inferred from the file's path, and the handle built over it answers in terms of that root.
  */
+@OptIn(VirtualFileBasedApi::class)
 class ClassFileRootAttributionTest {
     private val testRootDisposable: Disposable = Disposer.newDisposable()
 
@@ -68,20 +70,20 @@ class ClassFileRootAttributionTest {
         val jarRoot = JavaRoot(jar.asJarRootVirtualFile(), JavaRoot.RootType.BINARY)
         val index = JvmDependenciesIndexImpl(listOf(dirRoot, jarRoot))
 
-        val a = index.findClassFiles(ClassId.fromString("pkg/A"), CLASS_FILES).single()
+        val a = index.findClassFiles(ClassId.fromString("pkg/A"), CLASS_FILES).single() as VfsClassFileHandle
         assertEquals(dirRoot, a.root, "the first root on the classpath wins")
         assertEquals(JvmClasspathRootId.of(outDir), a.root.id)
         assertEquals(outDir, a.root.libraryPath())
 
-        val c = index.findClassFiles(ClassId.fromString("pkg/C"), CLASS_FILES).single()
+        val c = index.findClassFiles(ClassId.fromString("pkg/C"), CLASS_FILES).single() as VfsClassFileHandle
         assertEquals(jarRoot, c.root)
         assertEquals(JvmClasspathRootId.of(jar), c.root.id, "the archive is the root of its entries")
         assertEquals(jar, c.root.libraryPath())
 
-        val handle = a.asBinaryClassFileHandle()
+        val handle = a
         assertEquals(dirRoot.id, handle.rootId)
         assertEquals(outDir, handle.rootPath)
-        assertEquals(a.file.path, handle.pathForDiagnostics)
+        assertEquals(a.virtualFile.path, handle.pathForDiagnostics)
         assertEquals("A", handle.nameWithoutExtension)
         assertEquals("class", handle.extension)
 
@@ -91,7 +93,7 @@ class ClassFileRootAttributionTest {
         assertNotNull(handle.sibling("A\$1.class")) { "a literal `$` in a file name is a sibling like any other" }
         assertNull(handle.sibling("A\$Missing.class"))
 
-        val inJar = c.asBinaryClassFileHandle()
+        val inJar = c
         assertEquals(jar.pathForVfs() + JAR_SEPARATOR + "pkg/C.class", inJar.pathForDiagnostics)
         assertEquals(jarRoot.id, checkNotNull(inJar.sibling("A.class")).rootId)
     }
@@ -114,7 +116,7 @@ class ClassFileRootAttributionTest {
         assertEquals(signatureRoots.size, signatureRoots.mapTo(HashSet()) { it.id }.size, "every ct.sym root has its own id")
         assertEquals(1, signatureRoots.mapTo(HashSet()) { it.file.path }.size, "...although they all share one path")
 
-        val objectClass = index.findClassFiles(ClassId.fromString("java/lang/Object"), SIG_FILES).single()
+        val objectClass = index.findClassFiles(ClassId.fromString("java/lang/Object"), SIG_FILES).single() as VfsClassFileHandle
         val javaBase = signatureRoots.single { it.id.id.endsWith("/java.base") }
         assertEquals(javaBase, objectClass.root)
     }

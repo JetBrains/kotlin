@@ -12,14 +12,11 @@ import org.jetbrains.kotlin.load.java.structure.impl.classFiles.VirtualFileBacke
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.VirtualFileBasedApi
 import java.nio.file.Path
 
-/** The [BinaryClassFileHandle] of the CLI: a file of a [JvmDependenciesIndex] together with the [JavaRoot] it was found in. */
+/** The [BinaryClassFileHandle] of the VFS-based [JvmDependenciesIndex]es: a file together with the [JavaRoot] it was found in. */
 class VfsClassFileHandle(private val file: VirtualFile, val root: JavaRoot) : VirtualFileBackedClassFileHandle {
     @VirtualFileBasedApi
     override val virtualFile: VirtualFile
         get() = file
-
-    /** The content version of [file] at the time of the creation of this handle. */
-    private val modificationStamp: Long = file.modificationStamp
 
     override val nameWithoutExtension: String
         get() = file.nameWithoutExtension
@@ -45,11 +42,17 @@ class VfsClassFileHandle(private val file: VirtualFile, val root: JavaRoot) : Vi
         this === other ||
                 other is VfsClassFileHandle &&
                 file == other.file &&
-                modificationStamp == other.modificationStamp
+                root == other.root
 
     override fun hashCode(): Int = file.hashCode()
 
     override fun toString(): String = file.toString()
 }
 
-fun IndexedClassFile.asBinaryClassFileHandle(): BinaryClassFileHandle = VfsClassFileHandle(file, root)
+/**
+ * The [VirtualFile] of a file found in a VFS-based [JvmDependenciesIndex]. Only for code which still works on [VirtualFile]s:
+ * the PSI Java view, the Analysis API and the backend's inline lookup.
+ */
+@VirtualFileBasedApi
+val BinaryClassFileHandle.virtualFile: VirtualFile
+    get() = (this as VirtualFileBackedClassFileHandle).virtualFile

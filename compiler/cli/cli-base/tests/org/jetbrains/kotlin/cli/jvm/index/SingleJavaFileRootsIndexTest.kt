@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.cli.jvm.index
 
 import com.intellij.testFramework.LightVirtualFile
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.VirtualFileBasedApi
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
+@OptIn(VirtualFileBasedApi::class)
 class SingleJavaFileRootsIndexTest {
 
     private class TestJavaFile(name: String, private val content: String) : LightVirtualFile(name, content) {

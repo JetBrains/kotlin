@@ -6,12 +6,12 @@
 package org.jetbrains.kotlin.analysis.api.standalone.fir.declarations
 
 import com.github.benmanes.caffeine.cache.Caffeine
-import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.cli.jvm.index.IndexedClassFile
 import org.jetbrains.kotlin.cli.jvm.index.JavaFileExtension
 import org.jetbrains.kotlin.cli.jvm.index.JavaFileExtensions
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndexBase
+import org.jetbrains.kotlin.cli.jvm.index.VfsClassFileHandle
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileHandle
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.SmartList
@@ -73,7 +73,7 @@ internal class KotlinStandaloneJvmDependenciesIndex(roots: List<JavaRoot>) : Jvm
      * almost never need to fall back to the `$` -> `.` replacement. An exception here is the compiler facility: It calls into the backend
      * which has many reasons to load local classes from binaries.
      */
-    private typealias ClassFilesByName = Map<String, List<IndexedClassFile>>
+    private typealias ClassFilesByName = Map<String, List<BinaryClassFileHandle>>
 
     /**
      * For each package [FqName], caches the [ClassFilesByName] for the package.
@@ -83,6 +83,9 @@ internal class KotlinStandaloneJvmDependenciesIndex(roots: List<JavaRoot>) : Jvm
      *
      * In the vast majority of use cases, the cache will function as if it were unlimited. The maximum size has been chosen to limit the
      * memory footprint in pathological cases.
+     *
+     * An entry is computed under the base index lock, which is taken inside the cache's computation and never the other way around.
+     * The callbacks of [findClassFiles] and [traverseFilesInPackage] run on the computed map, outside both.
      */
     private val classFilesByPackage =
         Caffeine.newBuilder()
@@ -92,7 +95,7 @@ internal class KotlinStandaloneJvmDependenciesIndex(roots: List<JavaRoot>) : Jvm
     override fun findClassFiles(
         classId: ClassId,
         acceptedExtensions: JavaFileExtensions,
-    ): Collection<IndexedClassFile> {
+    ): Collection<BinaryClassFileHandle> {
         val classFilesByName = getClassFilesInPackage(classId.packageFqName)
 
         val files = getClassFiles(classId, classFilesByName)
@@ -103,16 +106,13 @@ internal class KotlinStandaloneJvmDependenciesIndex(roots: List<JavaRoot>) : Jvm
             return files
         }
 
-        return files.filter { classFile ->
-            val extension = classFile.file.extension ?: return@filter false
-            extension in acceptedExtensions
-        }
+        return files.filter { classFile -> classFile.extension in acceptedExtensions }
     }
 
     /**
      * See [classFilesByPackage] for an explanation of the handling of relative class names.
      */
-    private fun getClassFiles(classId: ClassId, classFilesByName: ClassFilesByName): List<IndexedClassFile> {
+    private fun getClassFiles(classId: ClassId, classFilesByName: ClassFilesByName): List<BinaryClassFileHandle> {
         // Happy path: We can find the dot-separated relative class name in the map of class virtual files.
         val relativeClassName = classId.relativeClassName.asString()
         classFilesByName[relativeClassName]?.let { return it }
@@ -127,16 +127,15 @@ internal class KotlinStandaloneJvmDependenciesIndex(roots: List<JavaRoot>) : Jvm
         return classFilesByName[relativeClassNameWithDots] ?: emptyList()
     }
 
-    override fun traverseClassVirtualFilesInPackage(
+    override fun traverseFilesInPackage(
         packageFqName: FqName,
         acceptedExtensions: JavaFileExtensions,
-        continueSearch: (VirtualFile) -> Boolean,
+        continueSearch: (BinaryClassFileHandle) -> Boolean,
     ) {
         getClassFilesInPackage(packageFqName).forEach { [_, files] ->
             files.forEach { classFile ->
-                val extension = classFile.file.extension
-                if (extension != null && extension in acceptedExtensions) {
-                    val shouldContinueSearch = continueSearch(classFile.file)
+                if (classFile.extension in acceptedExtensions) {
+                    val shouldContinueSearch = continueSearch(classFile)
                     if (!shouldContinueSearch) return
                 }
             }
@@ -151,11 +150,11 @@ internal class KotlinStandaloneJvmDependenciesIndex(roots: List<JavaRoot>) : Jvm
     }
 
     private fun computeClassFilesInPackage(packageFqName: FqName): ClassFilesByName {
-        val result = HashMap<String, SmartList<IndexedClassFile>>()
-        traverseFilesInPackage(packageFqName, ALL_ROOT_TYPES) { virtualFile, root ->
+        val result = HashMap<String, SmartList<BinaryClassFileHandle>>()
+        traverseVirtualFilesInPackage(packageFqName, ALL_ROOT_TYPES) { virtualFile, root ->
             if (!virtualFile.isDirectory && virtualFile.extension in CACHED_EXTENSIONS) {
                 val relativeClassName = virtualFile.nameWithoutExtension.replace('$', '.')
-                result.getOrPut(relativeClassName, ::SmartList).add(IndexedClassFile(virtualFile, root))
+                result.getOrPut(relativeClassName, ::SmartList).add(VfsClassFileHandle(virtualFile, root))
             }
             true // continue
         }
