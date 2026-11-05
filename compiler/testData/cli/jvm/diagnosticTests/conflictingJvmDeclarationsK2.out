@@ -3,9 +3,9 @@ In package 'root package' of module '<main>':
   --> conflictingJvmDeclarations.kt
    |
  1 | class Foo : Any {
-   |     ...
- 3 |     get(): Int
-   |     ...
+ 2 |     val x: Int
+ 3 |         get(): Int
+   |         ...
 10 | }
    |
 In package 'root package' of module '<main>':
@@ -35,9 +35,9 @@ In package 'root package' of module '<main>':
   --> conflictingJvmDeclarations.kt
    |
  1 | class Foo : Any {
-   |     ...
- 3 |     get(): Int
-   |     ...
+ 2 |     val x: Int
+ 3 |         get(): Int
+   |         ...
 10 | }
    |
 In package 'root package' of module '<main>':

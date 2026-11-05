@@ -168,10 +168,9 @@ In package 'root package' of module '<main>':
 In package 'root package' of module '<main>':
   --> nothingToOverrideMessage.kt
    |
-46 | class GenericOverride<R> : Generic<R> {
-   |     fun foo(t: R): Unit
-   |     ...
-48 | }
+42 | interface Generic<T> : Any {
+43 |     fun foo(t: T): Unit
+44 | }
    |
 
 /nothingToOverrideMessage.kt:50:1: error: Class 'NonGenericOverride' is not abstract and does not implement abstract member:
@@ -187,10 +186,9 @@ In package 'root package' of module '<main>':
 In package 'root package' of module '<main>':
   --> nothingToOverrideMessage.kt
    |
-50 | class NonGenericOverride : Generic<String> {
-   |     fun foo(t: String): Unit
-   |     ...
-52 | }
+42 | interface Generic<T> : Any {
+43 |     fun foo(t: T): Unit
+44 | }
    |
 
 /nothingToOverrideMessage.kt:59:5: error: 'foo' overrides nothing.

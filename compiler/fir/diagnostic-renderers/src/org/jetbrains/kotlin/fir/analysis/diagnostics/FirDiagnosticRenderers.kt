@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement
 import org.jetbrains.kotlin.mpp.DeclarationSymbolMarker
 import org.jetbrains.kotlin.name.CallableId
@@ -81,9 +82,14 @@ object FirDiagnosticRenderers {
 
     val SYMBOL_WITH_LOCATION = Renderer { symbol: DeclarationSymbolMarker ->
         when (symbol) {
-            is FirClassLikeSymbol<*>, is FirCallableSymbol<*>, is FirTypeParameterSymbol -> symbol.renderWithLocation(SYMBOL::render)
+            is FirClassLikeSymbol<*>, is FirCallableSymbol<*>, is FirTypeParameterSymbol -> symbol.unwrapFakeOverridesIfNecessary().renderWithLocation(SYMBOL::render)
             else -> ""
         }
+    }
+
+    private fun FirBasedSymbol<*>.unwrapFakeOverridesIfNecessary() = when (this) {
+        is FirCallableSymbol<*> -> unwrapFakeOverrides()
+        else -> this
     }
 
     @OptIn(SymbolInternals::class)
@@ -114,7 +120,7 @@ object FirDiagnosticRenderers {
      * Adds a line break before the list, then prints one symbol per line.
      */
     val SYMBOLS_ON_NEXT_LINES = Renderer { symbols: Collection<FirBasedSymbol<*>> ->
-        "\n" + symbols.renderWithLocationInGroups(SYMBOL::render)
+        "\n" + symbols.map { it.unwrapFakeOverridesIfNecessary() }.renderWithLocationInGroups(SYMBOL::render)
     }
 
     /**

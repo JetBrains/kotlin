@@ -44,10 +44,10 @@ fun test2(d: D) {
 }
 
 fun test3(a: Array<A>, b: Array<B>, c: Array<C>) {
-    a[0] <!ASSIGN_OPERATOR_AMBIGUITY("In package 'root package' of module '<main>': --> augmentedAssignment.kt  |5 | class A : Any {  |     ...7 |     fun plusAssign(other: Set<Int>): Unit8 | }  |In package 'kotlin' of module '<main>': | | class Array<T> : Any, Cloneable, Serializable { |     ... |     fun set(index: Int, value: A): Unit |     ... | } |")!>+=<!> [1, 2, 3]
+    a[0] <!ASSIGN_OPERATOR_AMBIGUITY("In package 'root package' of module '<main>': --> augmentedAssignment.kt  |5 | class A : Any {  |     ...7 |     fun plusAssign(other: Set<Int>): Unit8 | }  |In package 'kotlin' of module '<regular dependencies of main>': | | class Array<T> : Any, Cloneable, Serializable { |     ... |     fun set(index: Int, value: T): Unit |     ... | } |")!>+=<!> [1, 2, 3]
     b[0] += [1, 2, 3]
     b[0] += ["!"]
-    c[0] <!ASSIGN_OPERATOR_AMBIGUITY("In package 'root package' of module '<main>':  --> augmentedAssignment.kt   |15 | class C : Any {   |     ...17 |     fun plusAssign(other: Set<Long>): Unit18 | }   |In package 'kotlin' of module '<main>': | | class Array<T> : Any, Cloneable, Serializable { |     ... |     fun set(index: Int, value: C): Unit |     ... | } |")!>+=<!> [1, 2, 3]
+    c[0] <!ASSIGN_OPERATOR_AMBIGUITY("In package 'root package' of module '<main>':  --> augmentedAssignment.kt   |15 | class C : Any {   |     ...17 |     fun plusAssign(other: Set<Long>): Unit18 | }   |In package 'kotlin' of module '<regular dependencies of main>': | | class Array<T> : Any, Cloneable, Serializable { |     ... |     fun set(index: Int, value: T): Unit |     ... | } |")!>+=<!> [1, 2, 3]
     c[0] += [1, 2, 3L]
 }
 

@@ -22,7 +22,8 @@ In package 'root package' of module '<main>':
    |
  5 | class A : B {
    |     ...
- 9 |     get(): Int
+ 9 |     val a: Int
+   |         get(): Int
 10 | }
    |
 In package 'root package' of module '<main>':
@@ -44,7 +45,8 @@ In package 'root package' of module '<main>':
    |
  5 | class A : B {
    |     ...
- 9 |     get(): Int
+ 9 |     val a: Int
+   |         get(): Int
 10 | }
    |
 In package 'root package' of module '<main>':
@@ -64,7 +66,8 @@ compiler/testData/cli/jvm/diagnosticTests/signatureClash.kt:12:1: error: platfor
 In package 'root package' of module '<main>':
   --> signatureClash.kt
    |
-13 | get(): Int
+13 | val b: Int
+   |     get(): Int
    |
 In package 'root package' of module '<main>':
   --> signatureClash.kt
@@ -79,7 +82,8 @@ compiler/testData/cli/jvm/diagnosticTests/signatureClash.kt:13:1: error: platfor
 In package 'root package' of module '<main>':
   --> signatureClash.kt
    |
-13 | get(): Int
+13 | val b: Int
+   |     get(): Int
    |
 In package 'root package' of module '<main>':
   --> signatureClash.kt
@@ -95,7 +99,8 @@ In package 'root package' of module '<main>':
   --> signatureClash.kt
    |
 19 | class SubTr : Tr {
-20 |     get(): Int
+20 |     val tr: Int
+   |         get(): Int
 21 | }
    |
 In package '' of module '<main>':
