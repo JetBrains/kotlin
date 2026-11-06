@@ -47,7 +47,7 @@ dependencies {
     implementation(project(":kotlin-util-klib-metadata"))
 
     testFixturesImplementation(project(":compiler:cli"))
-    testFixturesImplementation(project(":compiler:container"))
+    testFixturesImplementation(project(":compiler:cli:cli-native-klib"))
     testFixturesImplementation(project(":compiler:ir.psi2ir"))
     testFixturesImplementation(project(":kotlin-util-klib-metadata"))
     testFixturesImplementation(project(":native:native.config"))
@@ -66,7 +66,6 @@ dependencies {
     testImplementation(testFixtures(project(":compiler:test-infrastructure-utils")))
     testImplementation(testFixtures(project(":compiler:tests-compiler-utils")))
     testFixturesImplementation(project(":core:compiler.common.native"))
-    testFixturesImplementation(project(":compiler:container"))
     testFixturesImplementation(project(":compiler:resolution"))
 }
 

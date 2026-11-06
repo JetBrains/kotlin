@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol Foo
 @required
-- (void)annotatedMethodAndReceiverReceiverObjCName:(int32_t)receiver __attribute__((swift_name("annotatedMethodAndReceiver(ReceiverObjCName:)")));
+- (void)MethodObjCNameReceiverObjCName:(int32_t)receiver __attribute__((swift_name("MethodObjCName(ReceiverObjCName:)")));
 - (void)barWithObjCNameObjCName:(int32_t)receiver __attribute__((swift_name("barWithObjCName(ObjCName:)")));
 - (void)barWithObjCNameAndSwiftNameObjCName:(int32_t)receiver __attribute__((swift_name("barWithObjCNameAndSwiftName(SwiftName:)")));
 - (void)barWithSwiftName:(int32_t)receiver __attribute__((swift_name("barWithSwiftName(ObjCName:)")));

@@ -73,7 +73,6 @@ class GetClassIfCategoryTest : InlineSourceTestEnvironment {
     fun `test - null when extension type is inlined`() {
         val module = createModuleDescriptor(
             """
-            @JvmInline
             value class Foo(val i: Int)
             fun Foo.foo() = Unit
         """.trimMargin()
@@ -126,4 +125,3 @@ class GetClassIfCategoryTest : InlineSourceTestEnvironment {
         disposeRootInWriteAction(testDisposable)
     }
 }
-

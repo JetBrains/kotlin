@@ -129,6 +129,7 @@ class ObjCExportNamerTest : InlineSourceTestEnvironment {
     fun `test - class with ObjCName annotation`() {
         val module = createModuleDescriptor(
             """
+            @OptIn(kotlin.experimental.ExperimentalObjCName::class)
             @kotlin.native.ObjCName("ObjCFoo", "SwiftFoo")
             class Foo
         """.trimIndent()
@@ -143,7 +144,7 @@ class ObjCExportNamerTest : InlineSourceTestEnvironment {
 
     @Test
     fun `test - simple parameter`() {
-        val module = createModuleDescriptor("fun foo(a: Int)")
+        val module = createModuleDescriptor("fun foo(a: Int) {}")
 
         @OptIn(K1Deprecation::class)
         val foo = module.getPackage(FqName.ROOT).memberScope.findSingleFunction(Name.identifier("foo"))
@@ -155,8 +156,11 @@ class ObjCExportNamerTest : InlineSourceTestEnvironment {
     fun `test - parameter with ObjCName annotation`() {
         val module = createModuleDescriptor(
             """
+            import kotlin.experimental.ExperimentalObjCName
             import kotlin.native.ObjCName
-            fun foo(@ObjCName("aObjC", "aSwift") a: Int)
+
+            @OptIn(ExperimentalObjCName::class)
+            fun foo(@ObjCName("aObjC", "aSwift") a: Int) {}
         """.trimIndent()
         )
 
