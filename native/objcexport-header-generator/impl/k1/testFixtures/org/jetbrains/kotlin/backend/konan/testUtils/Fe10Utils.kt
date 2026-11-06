@@ -5,17 +5,12 @@
 
 package org.jetbrains.kotlin.backend.konan.testUtils
 
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.createPerformanceManagerFor
-import org.jetbrains.kotlin.cli.common.createPhaseConfig
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDependenciesImpl
@@ -26,15 +21,10 @@ import org.jetbrains.kotlin.library.nativeTargets
 import org.jetbrains.kotlin.native.pipeline.NativeKlibCliPipeline
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 import java.nio.file.Path
 
-fun createModuleDescriptor(
-    environment: KotlinCoreEnvironment,
-    tempDir: File,
-    kotlinSources: List<String>,
-): ModuleDescriptor {
+fun createModuleDescriptor(tempDir: File, kotlinSources: List<String>): ModuleDescriptor {
     val testModuleRoot = tempDir.resolve("testModule")
     testModuleRoot.mkdirs()
     val testSourcesFiles = kotlinSources.mapIndexed { index, kotlinSource ->
@@ -42,22 +32,12 @@ fun createModuleDescriptor(
             writeText(kotlinSource)
         }
     }
-    return createModuleDescriptor(environment, testSourcesFiles)
+    return createModuleDescriptor(testSourcesFiles)
 }
 
-/*
- * TODO(KT-87386): `environment` is not used anymore: the test module is now compiled
- *   to a klib with the K2 Native compiler and then deserialized, like the sources of a
- *   real framework. Drop the parameter together with `createKotlinCoreEnvironment` and
- *   `InlineSourceTestEnvironment.kotlinCoreEnvironment` once all the callers are updated.
- */
 @Suppress("UNUSED_PARAMETER")
 @OptIn(K1Deprecation::class)
-fun createModuleDescriptor(
-    environment: KotlinCoreEnvironment,
-    kotlinFiles: List<File>,
-    dependencyKlibs: List<Path> = emptyList(),
-): ModuleDescriptor {
+fun createModuleDescriptor(kotlinFiles: List<File>, dependencyKlibs: List<Path> = emptyList()): ModuleDescriptor {
     val moduleDescriptorFactory = K1KlibMetadataModuleDescriptorFactoryImpl()
 
     val stdlibModuleDescriptor = moduleDescriptorFactory.createDescriptorAndNewBuiltIns(
@@ -146,30 +126,6 @@ private fun compileTestModuleKlib(
     }
 
     return outputKlib
-}
-
-/*
- * TODO(KT-87386): not needed by the ObjC Export tests anymore: the test module is
- *   compiled by `NativeKlibCliPipeline` which creates its own environment. Remove it
- *   together with the `environment` parameters of `createModuleDescriptor` and
- *   `InlineSourceTestEnvironment.kotlinCoreEnvironment` once all the callers are updated.
- */
-fun createKotlinCoreEnvironment(
-    disposable: Disposable, compilerConfiguration: CompilerConfiguration = createCompilerConfiguration(),
-): KotlinCoreEnvironment {
-    @OptIn(CoreEnvironmentDeprecation::class)
-    return KotlinCoreEnvironment.createForTests(
-        parentDisposable = disposable,
-        initialConfiguration = compilerConfiguration,
-        extensionConfigs = EnvironmentConfigFiles.METADATA_CONFIG_FILES
-    )
-}
-
-private fun createCompilerConfiguration(): CompilerConfiguration {
-    val configuration = KotlinTestUtils.newConfiguration()
-    configuration.put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, createLanguageVersionSettings())
-    configuration.phaseConfig = createPhaseConfig(K2NativeCompilerArguments())
-    return configuration
 }
 
 internal fun createLanguageVersionSettings() = LanguageVersionSettingsImpl(

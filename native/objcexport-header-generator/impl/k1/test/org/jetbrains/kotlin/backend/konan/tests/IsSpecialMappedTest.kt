@@ -2,11 +2,13 @@ package org.jetbrains.kotlin.backend.konan.tests
 
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.backend.konan.objcexport.isSpecialMapped
-import org.jetbrains.kotlin.backend.konan.testUtils.*
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.backend.konan.testUtils.InlineSourceTestEnvironment
+import org.jetbrains.kotlin.backend.konan.testUtils.createModuleDescriptor
+import org.jetbrains.kotlin.backend.konan.testUtils.getClass
+import org.jetbrains.kotlin.backend.konan.testUtils.getTopLevelFunExtensionType
+import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertFalse
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
-import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -80,8 +82,6 @@ class IsSpecialMappedTest : InlineSourceTestEnvironment {
     }
 
     override val testDisposable = Disposer.newDisposable("${this::class.simpleName}.testDisposable")
-
-    override val kotlinCoreEnvironment: KotlinCoreEnvironment = createKotlinCoreEnvironment(testDisposable)
 
     @TempDir
     override lateinit var testTempDir: File

@@ -8,11 +8,13 @@ package org.jetbrains.kotlin.backend.konan.tests
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.konan.objcexport.*
-import org.jetbrains.kotlin.backend.konan.testUtils.*
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.backend.konan.testUtils.InlineSourceTestEnvironment
+import org.jetbrains.kotlin.backend.konan.testUtils.createModuleDescriptor
+import org.jetbrains.kotlin.backend.konan.testUtils.createObjCExportMapper
+import org.jetbrains.kotlin.backend.konan.testUtils.createObjCExportNamer
+import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.types.KotlinTypeFactory
 import org.jetbrains.kotlin.types.TypeAttributes
 import org.jetbrains.kotlin.types.TypeProjectionImpl
@@ -34,7 +36,6 @@ import kotlin.test.assertNull
  */
 class ObjCExportMapperTest : InlineSourceTestEnvironment {
     override val testDisposable = Disposer.newDisposable("${ObjCExportMapperTest::class.simpleName}.testDisposable")
-    override val kotlinCoreEnvironment: KotlinCoreEnvironment = createKotlinCoreEnvironment(testDisposable)
 
     @TempDir
     override lateinit var testTempDir: File
