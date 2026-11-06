@@ -27,5 +27,10 @@ fun box(): String {
         dfGroup.select { "name".colsInGroups() },
         dfGroup.select { pathOf("name").colsInGroups() },
     )
+
+    compareSchemas(
+        df.select { name },
+        df.select { name() },
+    )
     return "OK"
 }

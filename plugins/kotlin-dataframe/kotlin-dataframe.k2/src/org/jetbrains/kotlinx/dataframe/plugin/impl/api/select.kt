@@ -772,6 +772,15 @@ internal class ColumnPathInvokeTyped : AbstractInterpreter<SingleColumnApproxima
     }
 }
 
+// myGroup()
+internal class ColumnReferenceInvokeGroup : AbstractInterpreter<SingleColumnApproximation>() {
+    val Arguments.receiver: SingleColumnApproximation by arg()
+
+    override fun Arguments.interpret(): SingleColumnApproximation {
+        return receiver
+    }
+}
+
 // "group"["myCol"]
 internal class StringGetColumn : AbstractInterpreter<ColumnPathApproximation>() {
     val Arguments.receiver: String by arg()

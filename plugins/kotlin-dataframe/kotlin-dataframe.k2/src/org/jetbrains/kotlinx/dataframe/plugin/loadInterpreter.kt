@@ -175,6 +175,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DslColsColumnPath
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SingleColumnColsColumnPath
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.StringColsColumnPath
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnPathColsColumnPath
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnReferenceInvokeGroup
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnOfPairs
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnPathCol
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnPathColUntyped
@@ -873,6 +874,7 @@ private fun String.loadImpl(isTest: Boolean): Interpreter<*>? {
         "StringInvokeUntyped" -> StringInvokeUntyped()
         "StringInvokeTyped" -> StringInvokeTyped()
         "ColumnPathInvokeTyped" -> ColumnPathInvokeTyped()
+        "ColumnReferenceInvokeGroup" -> ColumnReferenceInvokeGroup()
         "StringGetColumn" -> StringGetColumn()
         "ColumnPathGetColumn" -> ColumnPathGetColumn()
         "ColByIndex" -> ColByIndex()
