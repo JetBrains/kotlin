@@ -48,10 +48,10 @@ import org.jetbrains.kotlin.buildtools.internal.jvm.KaptConfigurationImpl.Compan
 import org.jetbrains.kotlin.buildtools.internal.jvm.toOptions
 import org.jetbrains.kotlin.buildtools.internal.serializability.BtaSerializable
 import org.jetbrains.kotlin.buildtools.internal.serializability.CompilationResultSerializer
+import org.jetbrains.kotlin.buildtools.internal.serializability.LookupMessageVisitor
 import org.jetbrains.kotlin.buildtools.internal.serializability.Message
 import org.jetbrains.kotlin.buildtools.internal.serializability.MessageVisitor
 import org.jetbrains.kotlin.buildtools.internal.serializability.PathAsStringSerializer
-import org.jetbrains.kotlin.buildtools.internal.serializability.SupportsNewDaemonMode
 import org.jetbrains.kotlin.buildtools.internal.serializability.cast
 import org.jetbrains.kotlin.buildtools.internal.serializability.throwPropertyNotFound
 import org.jetbrains.kotlin.buildtools.internal.trackers.getMetricsReporter
@@ -71,8 +71,7 @@ import java.nio.file.Path
 internal class JvmCompilationOperationImpl : BaseCompilationOperationImpl<JvmCompilerArgumentsImpl, @Contextual K2JVMCompilerArguments>,
     JvmCompilationOperation,
     JvmCompilationOperation.Builder,
-    DeepCopyable<JvmCompilationOperationImpl>,
-    SupportsNewDaemonMode<CompilationResult> {
+    DeepCopyable<JvmCompilationOperationImpl> {
 
     override val sources: List<Path>
     override val destinationDirectory: Path
@@ -115,14 +114,17 @@ internal class JvmCompilationOperationImpl : BaseCompilationOperationImpl<JvmCom
     override fun toBuilder(): JvmCompilationOperation.Builder = deepCopy()
 
     override fun beforeSerialization(logger: KotlinLogger): List<MessageVisitor> = buildList {
-        addAll(super<BaseCompilationOperationImpl>.beforeSerialization(logger))
+        addAll(super.beforeSerialization(logger))
         (incrementalCompilation as? BtaSerializable)?.let { incrementalCompilation ->
             addAll(incrementalCompilation.beforeSerialization(logger))
+            // special case for JPS duplicating lookupTracker in its IC configuration
+            val lookupVisitorsToIgnore = filterIsInstance<LookupMessageVisitor>().dropLast(1)
+            removeAll(lookupVisitorsToIgnore)
         }
     }
 
     override fun afterDeserialization(messageReporter: (Message) -> Unit, compilerFacade: CompilerServicesFacadeBase?) {
-        super<BaseCompilationOperationImpl>.afterDeserialization(messageReporter, compilerFacade)
+        super.afterDeserialization(messageReporter, compilerFacade)
         (incrementalCompilation as? BtaSerializable)?.afterDeserialization(messageReporter, compilerFacade)
     }
 

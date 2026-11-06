@@ -23,11 +23,13 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogDoe
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.AbstractProject
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAndPlatformAgnosticCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.JvmProject
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.MetadataProject
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.ProjectCreator
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.junit.jupiter.api.Assumptions.assumeFalse
 import org.junit.jupiter.api.DisplayName
 
@@ -536,7 +538,9 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
     }
 
     private fun AbstractProject<*, *, *>.expectedLogLevel(): LogLevel =
-        if (defaultStrategyConfig is ExecutionPolicy.WithDaemon) LogLevel.DEBUG else LogLevel.INFO // TODO: KT-85024
+        if (defaultStrategyConfig is ExecutionPolicy.WithDaemon &&
+            KotlinToolingVersion(kotlinToolchain.getCompilerVersion()) < KotlinToolingVersion("2.5.20-SNAPSHOT")
+        ) LogLevel.DEBUG else LogLevel.INFO
 
     private fun AbstractProject<*, *, *>.assumeNotMetadata() {
         assumeFalse(this is MetadataProject)
