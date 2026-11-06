@@ -304,8 +304,8 @@ class JvmTargetValidationTest : KGPBaseTest() {
             gradleVersion = gradleVersion,
             buildOptions = defaultBuildOptions.withConfigurationCache
         ) {
-            // Validation mode should be 'warning' because of https://github.com/gradle/gradle/issues/9339
-            // which is fixed in Gradle 7.2
+            // Validation mode should be 'warning' so the build succeeds and the configuration cache
+            // is stored and then reused by the second build below
             //language=properties
             gradleProperties.append(
                 """

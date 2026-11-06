@@ -8,32 +8,14 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.dsl.DependencyCollector
-import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinDependencies
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonMain
 import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonTest
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
-import org.jetbrains.kotlin.gradle.plugin.mpp.resources.gradleVersion
 import org.jetbrains.kotlin.gradle.utils.extrasStoredProperty
 import javax.inject.Inject
-
-/**
- * - [org.gradle.api.artifacts.dsl.Dependencies] is accessible since 7.6
- * - [org.gradle.api.artifacts.dsl.DependencyCollector] is accessible since 8.6
- * - [org.gradle.api.artifacts.Configuration.fromDependencyCollector] is accessible since 8.7
- * - [org.jetbrains.kotlin.gradle.dsl.KotlinDependencies] can't be instantiated with [org.gradle.api.artifacts.dsl.DependencyCollector] before 8.8
- *
- * Keep in sync with [org.jetbrains.kotlin.gradle.dsl.MinSupportedGradleVersionWithDependencyCollectorsConst]
- */
-internal const val MinSupportedGradleVersionWithDependencyCollectorsConst = "8.8"
-internal val MinSupportedGradleVersionWithDependencyCollectors = GradleVersion.version(MinSupportedGradleVersionWithDependencyCollectorsConst)
-
-internal sealed class KotlinTopLevelDependenciesBlock {
-    class Dependencies(val block: KotlinDependencies) : KotlinTopLevelDependenciesBlock()
-    object UnavailableInCurrentGradleVersion : KotlinTopLevelDependenciesBlock()
-}
 
 internal abstract class KotlinDependenciesImpl @Inject constructor(
     private val ownProject: Project
@@ -45,21 +27,12 @@ internal abstract class KotlinDependenciesImpl @Inject constructor(
         .create("org.jetbrains.kotlin", "kotlin-$module", version)
 }
 
-internal val KotlinMultiplatformExtension.dependencies: KotlinTopLevelDependenciesBlock by extrasStoredProperty {
-    if (project.gradleVersion < MinSupportedGradleVersionWithDependencyCollectors) {
-        KotlinTopLevelDependenciesBlock.UnavailableInCurrentGradleVersion
-    } else {
-        KotlinTopLevelDependenciesBlock.Dependencies(
-            project.objects.newInstance(KotlinDependenciesImpl::class.java, project)
-        )
-    }
+internal val KotlinMultiplatformExtension.dependencies: KotlinDependencies by extrasStoredProperty {
+    project.objects.newInstance(KotlinDependenciesImpl::class.java, project)
 }
 
 internal val ConfigureKotlinTopLevelDependenciesDSL = KotlinProjectSetupAction {
-    val topLevelDependencies = when (val dependencies = project.multiplatformExtension.dependencies) {
-        KotlinTopLevelDependenciesBlock.UnavailableInCurrentGradleVersion -> return@KotlinProjectSetupAction
-        is KotlinTopLevelDependenciesBlock.Dependencies -> dependencies.block
-    }
+    val topLevelDependencies = project.multiplatformExtension.dependencies
 
     val commonMain = project.multiplatformExtension.sourceSets.commonMain.get()
     val commonTest = project.multiplatformExtension.sourceSets.commonTest.get()

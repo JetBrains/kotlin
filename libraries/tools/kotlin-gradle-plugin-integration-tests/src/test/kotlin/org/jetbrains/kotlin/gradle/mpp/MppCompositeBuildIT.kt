@@ -232,9 +232,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
             "mpp-composite-build/sample1",
             gradleVersion,
             buildOptions = defaultBuildOptions
-                .suppressDeprecationWarningsOn(
-                    reason = "KGP 1.7.21 produces deprecation warnings"
-                ) { gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_14) }
+                .suppressDeprecationWarnings("KGP 1.7.21 produces deprecation warnings")
                 .copy(
                     configurationCache = ConfigurationCacheValue.DISABLED,
                     isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
@@ -657,7 +655,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
             "mpp-composite-build/kt65315_with_resources_in_metadata_klib/consumer",
             gradleVersion,
             buildOptions = buildOptions
-                .suppressWarningForOldKotlinVersion(gradleVersion),
+                .suppressDeprecationWarnings("Old Kotlin versions produces deprecation warnings with latest Gradle release"),
         ) {
             settingsGradleKts.toFile().replaceText("<producer_path>", producer.projectPath.toUri().path)
             defaultKotlinNativeVersion?.let { gradleProperties.appendText("\nkotlin.native.version=$it") }

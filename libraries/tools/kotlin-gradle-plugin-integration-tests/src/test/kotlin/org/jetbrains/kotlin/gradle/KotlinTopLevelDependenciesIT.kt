@@ -10,10 +10,8 @@ import org.gradle.kotlin.dsl.*
 import org.gradle.util.GradleVersion
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.publish
-import org.jetbrains.kotlin.gradle.plugin.mpp.MinSupportedGradleVersionWithDependencyCollectorsConst
 import org.jetbrains.kotlin.gradle.testing.PrettyPrint
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.uklibs.PublisherConfiguration
@@ -58,22 +56,15 @@ class KotlinTopLevelDependenciesIT : KGPBaseTest() {
                 emptyList(),
                 collectFusEvents(
                     "assemble",
-                    buildAction = BuildActions.build
                 ).filter { it.startsWith(fusEventName) },
             )
             buildScriptInjection {
                 kotlinMultiplatform.dependencies {  }
             }
-            val action = if (gradleVersion < GradleVersion.version(MinSupportedGradleVersionWithDependencyCollectorsConst)) {
-                BuildActions.buildAndFail
-            } else {
-                BuildActions.build
-            }
             assertEquals(
                 listOf("${fusEventName}=true"),
                 collectFusEvents(
                     "assemble",
-                    buildAction = action
                 ).filter { it.startsWith(fusEventName) },
             )
         }
@@ -218,22 +209,12 @@ class KotlinTopLevelDependenciesIT : KGPBaseTest() {
 
             targetScript.appendText(consumerDependenciesBlock)
 
-            if (gradleVersion < GradleVersion.version(MinSupportedGradleVersionWithDependencyCollectorsConst)) {
-                buildAndFail(":assemble") {
-                    assertHasDiagnostic(KotlinToolingDiagnostics.KotlinTopLevelDependenciesUsedInIncompatibleGradleVersion)
-                    // Make sure we went through the configuration phase
-                    assertTasksFailed(":checkKotlinGradlePluginConfigurationErrors")
-                }
-            } else {
-                testKotlinTopLevelDependenciesCompilationAndPublication(gradleVersion)
-            }
+            testKotlinTopLevelDependenciesCompilationAndPublication()
         }
     }
 
-    private fun TestProject.testKotlinTopLevelDependenciesCompilationAndPublication(gradleVersion: GradleVersion) {
-        build(":assemble", ":compileTestKotlinJvm") {
-            assertNoDiagnostic(KotlinToolingDiagnostics.KotlinTopLevelDependenciesUsedInIncompatibleGradleVersion)
-        }
+    private fun TestProject.testKotlinTopLevelDependenciesCompilationAndPublication() {
+        build(":assemble", ":compileTestKotlinJvm")
 
         // Verify that the published jvm POM contains the kotlinx-coroutines dependency
         val pomFile = parsePom(

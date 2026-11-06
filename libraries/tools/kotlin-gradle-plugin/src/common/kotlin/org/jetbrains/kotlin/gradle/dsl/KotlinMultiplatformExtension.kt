@@ -11,7 +11,6 @@ import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.Project
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.plugins.ExtensionContainer
-import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
@@ -21,7 +20,6 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterFinaliseDsl
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerBuild
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.KotlinHierarchyDslImpl
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.redundantDependsOnEdgesTracker
@@ -133,19 +131,7 @@ internal constructor(
         project.addConfigurationMetrics {
             it.put(BooleanMetrics.KMP_TOP_LEVEL_DEPENDENCIES_BLOCK, true)
         }
-        when (val dependencies = dependencies) {
-            KotlinTopLevelDependenciesBlock.UnavailableInCurrentGradleVersion -> {
-                project.reportDiagnostic(
-                    KotlinToolingDiagnostics.KotlinTopLevelDependenciesUsedInIncompatibleGradleVersion(
-                        currentGradleVersion = GradleVersion.current(),
-                        minimumSupportedGradleVersion = MinSupportedGradleVersionWithDependencyCollectors,
-                    )
-                )
-            }
-            is KotlinTopLevelDependenciesBlock.Dependencies -> {
-                dependencies.block.configure()
-            }
-        }
+        dependencies.configure()
     }
 
     internal suspend fun awaitTargets(): NamedDomainObjectCollection<KotlinTarget> {

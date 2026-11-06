@@ -15,7 +15,6 @@ import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import org.gradle.tooling.events.FinishEvent
 import org.gradle.tooling.events.OperationCompletionListener
-import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.fus.BuildUidService
 import org.jetbrains.kotlin.gradle.logging.Errors
 import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
@@ -45,7 +44,6 @@ internal abstract class BuildFinishBuildService : BuildService<BuildFinishBuildS
         val fusReportDirectory: Property<File>
         val kotlinVersion: Property<String>
         val errorDirs: ListProperty<File>
-        val collectAllFusReportsIntoOne: Property<Boolean>
         val failBuildOnFusError: Property<Boolean>
     }
 
@@ -68,7 +66,6 @@ internal abstract class BuildFinishBuildService : BuildService<BuildFinishBuildS
             }
 
             val reportDir = project.getFusDirectoryFromPropertyService()
-            val collectAllFusReportsIntoOne = GradleVersion.current().baseVersion >= GradleVersion.version("8.1")
 
             val service = project.gradle.sharedServices.registerIfAbsent(serviceName, BuildFinishBuildService::class.java) { spec ->
                 spec.parameters.buildId.value(buildUidService.map { it.buildId }).disallowChanges()
@@ -79,11 +76,9 @@ internal abstract class BuildFinishBuildService : BuildService<BuildFinishBuildS
                 }
                 spec.parameters.errorDirs.disallowChanges()
                 spec.parameters.kotlinVersion.value(kotlinPluginVersion).disallowChanges()
-                spec.parameters.collectAllFusReportsIntoOne.value(collectAllFusReportsIntoOne).disallowChanges()
                 spec.parameters.failBuildOnFusError.value(project.isCustomLoggerRootPathProvided).disallowChanges()
             }
 
-            // Gradle < 8.1: ensure BuildFinishBuildService is created at the same time as BuildFusService to ensure the same buildId is used
             BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(service)
 
             return service
@@ -149,9 +144,7 @@ internal abstract class BuildFinishBuildService : BuildService<BuildFinishBuildS
 
     override fun close() {
         log.kotlinDebug("Close build service $serviceName: class \"${this.javaClass.simpleName}\", build \"$buildId\"")
-        if (parameters.collectAllFusReportsIntoOne.get()) {
-            collectAllFusReportsIntoOne()
-        }
+        collectAllFusReportsIntoOne()
     }
 
     private fun File.errorFile() = resolve("errors-$buildId-${System.currentTimeMillis()}.log")

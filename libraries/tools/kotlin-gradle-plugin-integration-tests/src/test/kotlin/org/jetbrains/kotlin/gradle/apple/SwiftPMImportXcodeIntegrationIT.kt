@@ -19,12 +19,10 @@ import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.include
 import org.jetbrains.kotlin.gradle.uklibs.includeBuild
 import org.jetbrains.kotlin.gradle.uklibs.publish
-import org.jetbrains.kotlin.gradle.util.isTeamCityRun
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.jetbrains.kotlin.konan.target.Xcode
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
-import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import java.nio.file.Path
@@ -1432,10 +1430,6 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
     @Ignore("Till the fix https://youtrack.jetbrains.com/issue/KT-84384/")
     @GradleTest
     fun `integrateLinkagePackage handles symlinked DEVELOPER_DIR`(version: GradleVersion) {
-        if (!isTeamCityRun) {
-            Assumptions.assumeTrue(version >= GradleVersion.version("8.0"))
-        }
-
         project("emptyxcode", version) {
             initDefaultKmpWithLocalSPM()
 
