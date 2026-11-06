@@ -222,8 +222,11 @@ object NewCommonSuperTypeCalculator {
 
         val nonTypeVariables = types.filter { !it.isStubTypeForVariableInSubtypingOrCaptured() }
 
-        assert(nonTypeVariables.isNotEmpty()) {
-            "There should be at least one non-stub type to compute common supertype but there are: $types"
+        if (nonTypeVariables.isEmpty()) {
+            check(c.supportsSyntheticCstTypeVariables()) {
+                "CST over not-fixed type variables only is only defined with synthetic type variables"
+            }
+            return c.createSyntheticCstTypeVariable(lowerBounds = types)
         }
 
         val [builderInferenceStubTypes, nonStubTypes] = nonTypeVariables.partition { it.isStubTypeForBuilderInference() }
@@ -351,6 +354,7 @@ object NewCommonSuperTypeCalculator {
         for (index in 0 until constructor.parametersCount()) {
             val parameter = constructor.getParameter(index)
             var thereIsStar = false
+            val stubTypeProjections = mutableListOf<TypeArgumentMarker>()
             val typeProjections = correspondingSuperTypes.mapNotNull {
                 val typeArgumentFromSupertype = it.getArgumentOrNull(index) ?: return@mapNotNull null
 
@@ -366,7 +370,10 @@ object NewCommonSuperTypeCalculator {
                         null
                     }
 
-                    type.lowerBoundIfFlexible().isStubTypeForVariableInSubtyping() -> null
+                    type.lowerBoundIfFlexible().isStubTypeForVariableInSubtyping() -> {
+                        stubTypeProjections.add(typeArgument)
+                        null
+                    }
 
                     else -> typeArgument
                 }
@@ -384,7 +391,14 @@ object NewCommonSuperTypeCalculator {
             }
 
             val argument =
-                if (thereIsStar || typeProjections.isEmpty() || checkRecursion(types, typeProjections, parameter)) {
+                if (!thereIsStar && typeProjections.isEmpty() && stubTypeProjections.isNotEmpty() &&
+                    c.supportsSyntheticCstTypeVariables()
+                ) {
+                    // All the arguments at this position are not-fixed type variables: instead of losing them behind
+                    // a star projection, compute their common supertype, representing it with a synthetic type variable
+                    // (see TypeSystemCommonSuperTypesContext.createSyntheticCstTypeVariable)
+                    calculateArgument(parameter, stubTypeProjections, depth)
+                } else if (thereIsStar || typeProjections.isEmpty() || checkRecursion(types, typeProjections, parameter)) {
                     c.createStarProjection(parameter)
                 } else {
                     collapseRecursiveArgumentIfPossible(calculateArgument(parameter, typeProjections, depth))

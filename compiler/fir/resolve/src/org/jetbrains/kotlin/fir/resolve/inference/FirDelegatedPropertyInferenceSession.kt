@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
+import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
 
@@ -60,7 +61,7 @@ class FirDelegatedPropertyInferenceSession(
             ?: (resolutionContext.bodyResolveContext.inferenceSession as? FirPCLAInferenceSession)?.currentCommonSystem
             ?: components.session.inferenceComponents.createConstraintSystem()
 
-    private val currentConstraintSystem =
+    val currentConstraintSystem: NewConstraintSystemImpl =
         prepareSharedBaseSystem(parentConstraintSystem, components.session.inferenceComponents)
 
     val currentConstraintStorage: ConstraintStorage get() = currentConstraintSystem.currentStorage()
