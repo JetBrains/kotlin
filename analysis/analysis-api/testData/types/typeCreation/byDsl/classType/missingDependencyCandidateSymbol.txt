@@ -13,8 +13,8 @@ KaClassErrorType:
       name: Foo
       typeArguments: []
   ]
-  isMarkedNullable: false
-  isNullable: false
+  isMarkedNullable: true
+  isNullable: true
   hasFlexibleNullability: false
 
 Rendered type:

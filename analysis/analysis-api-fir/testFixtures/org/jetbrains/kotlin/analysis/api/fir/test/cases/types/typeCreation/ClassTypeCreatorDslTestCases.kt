@@ -72,7 +72,14 @@ class ClassTypeCreatorDslTestCases(session: KaSession, caretToType: Map<String, 
     }
 
     fun testNonExistingClassId(): KaType {
-        return session.typeCreator.classType(ClassId(FqName.ROOT, Name.identifier("MyClass")))
+        return session.typeCreator.classType(ClassId(FqName.ROOT, Name.identifier("MyClass"))) {
+            isMarkedNullable = true
+            annotation(ClassId.fromString("Anno"))
+            invariantTypeArgument(session.builtinTypes.int)
+            outerClasses { index, symbol ->
+                invariantTypeArgument(session.builtinTypes.string)
+            }
+        }
     }
 
     fun testUserGenericTypeWithStarProjection(): KaType {
@@ -232,7 +239,14 @@ class ClassTypeCreatorDslTestCases(session: KaSession, caretToType: Map<String, 
     fun testMissingDependencyCandidateSymbol(): KaType {
         val errorType = getTypeByCaret("type") as KaClassErrorType
         val symbol = errorType.candidateSymbols.single()
-        return session.typeCreator.classType(symbol)
+        return session.typeCreator.classType(symbol) {
+            isMarkedNullable = true
+            annotation(ClassId.fromString("Anno"))
+            invariantTypeArgument(session.builtinTypes.int)
+            outerClasses { index, symbol ->
+                invariantTypeArgument(session.builtinTypes.string)
+            }
+        }
     }
 
     fun testInnerClassOfGenericClass(): KaType {
