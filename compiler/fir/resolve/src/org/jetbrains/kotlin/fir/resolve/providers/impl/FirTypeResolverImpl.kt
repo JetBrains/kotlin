@@ -648,7 +648,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             }
             is FirUnionTypeRef -> {
                 val coneTypes = typeRef.types.mapTo(mutableListOf()) {
-                    if (expandTypeAliases) it.coneType.fullyExpandedWith(supertypeSupplier) else it.coneType
+                    if (expandTypeAliases) it.coneType.fullyExpandedType(session) else it.coneType
                 }
 
                 val firstType = coneTypes.first()
