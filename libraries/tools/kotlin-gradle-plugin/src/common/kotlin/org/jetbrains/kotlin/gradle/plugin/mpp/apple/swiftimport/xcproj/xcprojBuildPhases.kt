@@ -37,7 +37,12 @@ internal data class XcprojFrameworkBuildPhase(
     @Transient
     val isLiteral: Boolean = false,
 ) : XcprojBuildPhase() {
-    val reference = id?.let { "id:$it" } ?: name ?: kind
+    val reference: XcprojTargetBuildPhaseReference
+        get() = when {
+            id != null -> XcprojTargetBuildPhaseReference.Literal("id:$id")
+            name != null -> XcprojTargetBuildPhaseReference.Structured(kind, name)
+            else -> XcprojTargetBuildPhaseReference.Literal(kind)
+        }
 
     fun encodeAsLiteral() = isLiteral && name == null && id == null
 }
