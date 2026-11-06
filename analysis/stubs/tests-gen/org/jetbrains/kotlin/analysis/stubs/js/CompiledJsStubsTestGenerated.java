@@ -4216,6 +4216,18 @@ public class CompiledJsStubsTestGenerated extends AbstractCompiledJsStubsTest {
     }
 
     @Test
+    @TestMetadata("localClassFollowedByCallNamedLikeModifier.kt")
+    public void testLocalClassFollowedByCallNamedLikeModifier() {
+      run("localClassFollowedByCallNamedLikeModifier.kt");
+    }
+
+    @Test
+    @TestMetadata("localClassFollowedByCallNamedLikeModifierWithErrors.kt")
+    public void testLocalClassFollowedByCallNamedLikeModifierWithErrors() {
+      run("localClassFollowedByCallNamedLikeModifierWithErrors.kt");
+    }
+
+    @Test
     @TestMetadata("nestedClassAmbiguity.kt")
     public void testNestedClassAmbiguity() {
       run("nestedClassAmbiguity.kt");
