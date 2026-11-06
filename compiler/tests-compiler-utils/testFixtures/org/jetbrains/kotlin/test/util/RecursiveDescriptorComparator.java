@@ -10,7 +10,6 @@ import com.google.common.collect.Lists;
 import kotlin.Unit;
 import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.contracts.description.*;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.SubpackagesScope;
 import org.jetbrains.kotlin.jvm.compiler.ExpectedLoadErrorsUtil;
@@ -188,28 +187,6 @@ public class RecursiveDescriptorComparator {
         }
 
         printer.print(prefix.toString(), conf.renderer.render(descriptor));
-
-        if (descriptor instanceof FunctionDescriptor && conf.checkFunctionContracts) {
-            printEffectsIfAny((FunctionDescriptor) descriptor, printer);
-        }
-    }
-
-    private static void printEffectsIfAny(FunctionDescriptor functionDescriptor, Printer printer) {
-        AbstractContractProvider contractProvider = functionDescriptor.getUserData(ContractProviderKey.INSTANCE);
-        if (contractProvider == null) return;
-
-        ContractDescription contractDescription = contractProvider.getContractDescription();
-        if (contractDescription == null || contractDescription.getEffects().isEmpty()) return;
-
-        printer.println();
-        printer.pushIndent();
-        for (EffectDeclaration effect : contractDescription.getEffects()) {
-            StringBuilder sb = new StringBuilder();
-            ContractDescriptionRenderer renderer = new ContractDescriptionRenderer(sb);
-            effect.accept(renderer, Unit.INSTANCE);
-            printer.println(sb.toString());
-        }
-        printer.popIndent();
     }
 
     @NotNull

@@ -23,6 +23,7 @@ dependencies {
     testFixturesApi(testFixtures(project(":compiler:tests-common")))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
     testFixturesApi(testFixtures(project(":analysis:analysis-test-framework")))
+    testFixturesApi(project(":compiler:psi:parser"))
     testFixturesApi(libs.junit.jupiter.api)
 
     testRuntimeOnly(libs.junit.jupiter.engine)

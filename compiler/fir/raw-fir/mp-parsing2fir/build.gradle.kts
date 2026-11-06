@@ -25,6 +25,7 @@ dependencies {
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
     testFixturesApi(testFixtures(project(":compiler:fir:raw-fir:psi2fir")))
     testFixturesApi(testFixtures(project(":compiler:fir:raw-fir:raw-fir.common")))
+    testFixturesApi(project(":compiler:psi:parser"))
 
     testCompileOnly(kotlinTest("junit"))
 }

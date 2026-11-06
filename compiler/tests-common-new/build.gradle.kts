@@ -15,6 +15,10 @@ dependencies {
     testFixturesApi(project(":compiler:fir:fir2ir:jvm-backend"))
     testFixturesApi(project(":compiler:cli"))
     testFixturesApi(project(":compiler:ir.backend.native"))
+
+    testFixturesImplementation(project(":core:language.targets.jvm"))
+    testFixturesImplementation(project(":compiler:config.jvm"))
+    testFixturesImplementation(project(":compiler:frontend.common-psi"))
     testFixturesImplementation(project(":compiler:ir.tree"))
     testFixturesImplementation(project(":compiler:ir.serialization.native"))
     testFixturesImplementation(project(":compiler:backend.jvm.entrypoint"))
@@ -53,6 +57,8 @@ dependencies {
 
     testFixturesCompileOnly(toolsJarApi())
     testRuntimeOnly(toolsJar())
+
+    testImplementation(project(":compiler:config.jvm"))
 
     thirdPartyAnnotationsClasspath(commonDependency("jakarta.annotation", "jakarta.annotation-api"))
     thirdPartyAnnotationsClasspath(commonDependency("io.vertx", "vertx-codegen"))

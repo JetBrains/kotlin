@@ -76,6 +76,8 @@ dependencies {
     testFixturesApi(project(":plugins:plugin-sandbox"))
     testFixturesApi(testFixtures(project(":plugins:plugin-sandbox")))
 
+    testFixturesImplementation(project(":compiler:frontend"))
+
     testImplementation(testFixtures(project(":compiler:psi:psi-api")))
     testImplementation(libs.lincheck)
     testImplementation(libs.junit.jupiter.params)
