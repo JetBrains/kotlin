@@ -84,7 +84,7 @@ sealed class ExpectActualIncompatibility<out D>(open val reason: String) {
     object ClassKind :
         ExpectActualIncompatibility<Nothing>("the class kinds are different (class, interface, object, enum, annotation)")
 
-    object ClassModifiers : ExpectActualIncompatibility<Nothing>("the modifiers are different (companion, inner, inline, value)")
+    object ClassModifiers : ExpectActualIncompatibility<Nothing>("the modifiers are different (companion, inner, inline, value, error)")
     object FunInterfaceModifier :
         ExpectActualIncompatibility<Nothing>("the 'actual' declaration for 'fun expect interface' is not a functional interface")
 

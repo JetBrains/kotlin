@@ -89,6 +89,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACTUAL_IGNORABILI
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACTUAL_MISSING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACTUAL_TYPEALIAS_TO_NON_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACTUAL_TYPEALIAS_TO_SPECIAL_ANNOTATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACTUAL_TYPEALIAS_WITH_EXPECT_RICH_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACTUAL_TYPE_ALIAS_NOT_TO_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACTUAL_TYPE_ALIAS_TO_CLASS_WITH_DECLARATION_SITE_VARIANCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACTUAL_TYPE_ALIAS_TO_NOTHING
@@ -4276,5 +4277,6 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(NON_ERROR_SUPERTYPE, "'NonError' cannot be used as explicit supertype.")
         map.put(NON_ERROR_GET_CLASS_CALL, "Class literal on 'NonError' is not supported.")
         map.put(ACTUAL_TYPEALIAS_TO_NON_ERROR, "'actual typealias' cannot expand to 'NonError'.")
+        map.put(ACTUAL_TYPEALIAS_WITH_EXPECT_RICH_ERROR, "'actual typealias' cannot be used for 'expect error class/object'.")
     }
 }
