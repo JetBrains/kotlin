@@ -202,14 +202,7 @@ internal object CompilationServiceImpl : CompilationService {
                         icFeatures = icFeatures
                     )
                 } else {
-                    IncrementalJvmCompilerRunner(
-                        aggregatedIcConfiguration.workingDir,
-                        buildReporter,
-                        outputDirs = options.outputDirs,
-                        classpathChanges = classpathChanges,
-                        kotlinSourceFilesExtensions = kotlinFilenameExtensions,
-                        icFeatures = icFeatures,
-                    )
+                    error("K1 is not supported")
                 }
 
                 val rootProjectDir = options.rootProjectDir

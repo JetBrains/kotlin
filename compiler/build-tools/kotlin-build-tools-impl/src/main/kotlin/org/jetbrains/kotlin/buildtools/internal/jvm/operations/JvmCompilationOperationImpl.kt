@@ -368,15 +368,7 @@ internal class JvmCompilationOperationImpl : BaseCompilationOperationImpl<JvmCom
                 icFeatures
             )
         } else {
-            getNonFirRunner(
-                snapshotBasedIcOptionsAccessor.workingDirectory,
-                buildReporter,
-                snapshotBasedIcOptionsAccessor,
-                classpathChanges,
-                getKotlinFilenameExtensions(),
-                icFeatures,
-                executionContext,
-            )
+            error("K1 is not supported")
         }
 
         logCompilerArguments(logger, arguments, compilerArgumentsLogLevel)
@@ -477,28 +469,6 @@ internal class JvmCompilationOperationImpl : BaseCompilationOperationImpl<JvmCom
             null
         }
     }
-
-    private fun JvmCompilationOperationImpl.getNonFirRunner(
-        workingDirectory: Path,
-        buildReporter: BuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
-        aggregatedIcConfigurationOptions: HasSnapshotBasedIcOptionsAccessor,
-        classpathChanges: ClasspathChanges.ClasspathSnapshotEnabled,
-        kotlinFilenameExtensions: Set<String>,
-        icFeatures: IncrementalCompilationFeatures,
-        executionContext: ExecutionContext,
-    ): IncrementalJvmCompilerRunner =
-        IncrementalJvmCompilerRunner(
-            workingDirectory.toFile(),
-            buildReporter,
-            outputDirs = aggregatedIcConfigurationOptions[OUTPUT_DIRS]?.map { it.toFile() },
-            classpathChanges = classpathChanges,
-            kotlinSourceFilesExtensions = kotlinFilenameExtensions,
-            icFeatures = icFeatures,
-            compilationCanceledStatus = cancellationHandle,
-            compilerRefIndexDirectory = compilerRefIndexDirectory(workingDirectory)?.toFile(),
-            lookupTrackerDelegate = getLookupTrackerAdapter(),
-            pluginsLoader = executionContext.classloadersCache?.asPluginsLoader()
-        )
 
     private fun JvmCompilationOperationImpl.getFirRunner(
         workingDirectory: Path,

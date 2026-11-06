@@ -99,18 +99,7 @@ abstract class AbstractIncrementalJvmCompilerRunnerTest : AbstractIncrementalCom
                         lookupTrackerDelegate = testLookupTracker
                     )
                 } else {
-                    val verifiedPreciseJavaTracking = args.disablePreciseJavaTrackingIfK2(usePreciseJavaTrackingByDefault = true)
-                    IncrementalJvmCompilerTestRunner(
-                        cachesDir,
-                        buildReporter,
-                        classpathChanges,
-                        outputDirs = null,
-                        kotlinSourceFilesExtensions = kotlinExtensions,
-                        icFeatures = IncrementalCompilationFeatures(
-                            usePreciseJavaTracking = verifiedPreciseJavaTracking
-                        ),
-                        lookupTrackerDelegate = testLookupTracker
-                    )
+                    error("K1 is not supported")
                 }
             //TODO by @Ilya.Chernikov: set properly
             compiler.compile(

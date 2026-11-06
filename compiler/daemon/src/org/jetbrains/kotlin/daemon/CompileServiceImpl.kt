@@ -789,19 +789,7 @@ abstract class CompileServiceImplBase(
                 lookupTrackerDelegate = lookupTracker ?: LookupTracker.DO_NOTHING,
             )
         } else {
-            IncrementalJvmCompilerRunner(
-                workingDir,
-                reporter,
-                outputDirs = incrementalCompilationOptions.outputFiles,
-                classpathChanges = incrementalCompilationOptions.classpathChanges,
-                kotlinSourceFilesExtensions = allKotlinJvmExtensions,
-                icFeatures = incrementalCompilationOptions.icFeatures.copy(
-                    usePreciseJavaTracking = verifiedPreciseJavaTracking
-                ),
-                compilationCanceledStatus = compilationCanceledStatus,
-                compilerRefIndexDirectory = incrementalCompilationOptions.compilerRefIndexDirectory,
-                lookupTrackerDelegate = lookupTracker ?: LookupTracker.DO_NOTHING,
-            )
+            error("K1 is not supported")
         }
         return try {
             compiler.compile(
