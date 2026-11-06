@@ -81,6 +81,13 @@ class JvmMethodSignatureClashDetector(
         declarations: Collection<IrFunction>,
         diagnosticReporter: IrDiagnosticReporter
     ) {
+        val overrideChecker =
+            IrOverrideChecker(classCodegen.context.typeSystem, listOf(IrJavaIncompatibilityRulesOverridabilityCondition()))
+        val declarations =
+            declarations
+                .filter { a -> !declarations.all { b -> overrideChecker.canIgnoreConflict(a, b) } }
+        if (declarations.isEmpty()) return
+
         val fakeOverridesCount = declarations.count { it.isFakeOverride }
         val specialOverridesCount = declarations.count { it.isSpecialOverride() }
         val realMethodsCount = declarations.size - fakeOverridesCount - specialOverridesCount
@@ -120,18 +127,12 @@ class JvmMethodSignatureClashDetector(
             }
 
             else -> {
-                val overrideChecker = IrOverrideChecker(
-                    classCodegen.context.typeSystem, listOf(IrJavaIncompatibilityRulesOverridabilityCondition())
+                reportJvmSignatureClash(
+                    diagnosticReporter,
+                    JvmBackendErrors.ACCIDENTAL_OVERRIDE,
+                    declarations.filter { !it.isFakeOverride && !it.isSpecialOverride() },
+                    conflictingJvmDeclarationsData
                 )
-                val canIgnoreConflict = declarations.all { a -> declarations.all { b -> overrideChecker.canIgnoreConflict(a, b) } }
-                if (!canIgnoreConflict) {
-                    reportJvmSignatureClash(
-                        diagnosticReporter,
-                        JvmBackendErrors.ACCIDENTAL_OVERRIDE,
-                        declarations.filter { !it.isFakeOverride && !it.isSpecialOverride() },
-                        conflictingJvmDeclarationsData
-                    )
-                }
             }
         }
     }
