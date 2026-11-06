@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.toResolvedEnumEntrySymbol
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedClassLikeType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -34,7 +35,7 @@ import org.jetbrains.kotlin.util.PrivateForInline
 
 fun FirAnnotation.toAnnotationClassLikeType(session: FirSession): ConeClassLikeType? =
     // this cast fails when we have generic-typed annotations @T
-    (annotationTypeRef.coneType as? ConeClassLikeType)?.fullyExpandedType(session) as? ConeClassLikeType
+    (annotationTypeRef.coneType as? ConeClassLikeType)?.fullyExpandedClassLikeType(session)
 
 private fun FirAnnotation.toAnnotationLookupTag(session: FirSession): ConeClassLikeLookupTag? =
     toAnnotationClassLikeType(session)?.lookupTag

@@ -209,7 +209,7 @@ object FirParcelizePropertyChecker : FirPropertyChecker(MppCheckerKind.Platform)
     private fun ConeKotlinType.getErasedUpperBound(session: FirSession): ConeClassLikeType? =
         when (this) {
             is ConeClassLikeType ->
-                fullyExpandedType(session) as? ConeClassLikeType
+                fullyExpandedClassLikeType(session)
 
             is ConeTypeParameterType -> {
                 val bounds = lookupTag.typeParameterSymbol.resolvedBounds

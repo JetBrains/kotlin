@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.findClosestClassOrObject
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedClassLikeType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.resolve.getSuperTypes
@@ -36,7 +37,7 @@ import org.jetbrains.kotlin.parcelize.fir.parcelizeService
 object FirParcelizeAnnotationChecker : FirAnnotationCallChecker(MppCheckerKind.Platform) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirAnnotationCall) {
-        val annotationType = expression.annotationTypeRef.coneType.fullyExpandedType() as? ConeClassLikeType ?: return
+        val annotationType = expression.annotationTypeRef.coneType.fullyExpandedClassLikeType() ?: return
         val resolvedAnnotationSymbol = annotationType.lookupTag.toRegularClassSymbol() ?: return
         val parcelizeAnnotationClassIds = context.session.parcelizeService.parcelizeAnnotations
         when (val annotationClassId = resolvedAnnotationSymbol.classId) {
