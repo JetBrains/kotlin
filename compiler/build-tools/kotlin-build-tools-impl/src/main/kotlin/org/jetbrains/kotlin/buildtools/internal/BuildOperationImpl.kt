@@ -7,15 +7,21 @@ package org.jetbrains.kotlin.buildtools.internal
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
+import org.jetbrains.kotlin.build.report.metrics.DAEMON_INCREASED_MEMORY
+import org.jetbrains.kotlin.build.report.metrics.DAEMON_MEMORY_USAGE
 import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.trackers.BuildMetricsCollector
 import org.jetbrains.kotlin.buildtools.internal.serializability.*
+import org.jetbrains.kotlin.buildtools.internal.trackers.getMetricsReporter
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorWithDiagnosticId
+import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.CompilerServicesFacadeBase
 import kotlin.concurrent.atomics.AtomicBoolean
+import kotlin.concurrent.atomics.AtomicInt
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
+import kotlin.concurrent.atomics.incrementAndFetch
 
 @OptIn(ExperimentalAtomicApi::class)
 @Serializable
@@ -27,6 +33,9 @@ internal abstract class BuildOperationImpl<R> : BuildOperation<R>, BuildOperatio
         kgpMetricsCollectorOut = other.kgpMetricsCollectorOut
         enableClassloaderCache = other.enableClassloaderCache
     }
+    
+    @Transient
+    protected val compilationId: Int = compilationIdCounter.incrementAndFetch()
 
     protected open val options: Options get() = Options(this::class) // to be removed when subclasses are also converted to serializable
 
@@ -105,6 +114,65 @@ internal abstract class BuildOperationImpl<R> : BuildOperation<R>, BuildOperatio
         executionContext: ExecutionContext,
     ): R
 
+    internal open fun executeInDaemon(
+        projectId: ProjectId,
+        executionPolicy: DaemonExecutionPolicyImpl,
+        logger: KotlinLogger,
+        executionContext: ExecutionContext,
+    ): R {
+        @Suppress("UNCHECKED_CAST")
+        this as SupportsNewDaemonMode<R>
+        @Suppress("UNCHECKED_CAST")
+        this as DeepCopyable<BuildOperationImpl<R>>
+
+        deepCopy().let { operationCopy -> // do not modify the original operation object
+            val messageVisitors: List<MessageVisitor> = operationCopy.beforeSerialization(logger) + LogLineVisitor(logger)
+
+            val loggerAdapter =
+                KotlinLoggerMessageCollectorAdapter(logger, operationCopy.compilerMessageRenderer, operationCopy.warningsAsError)
+            val daemon = executionContext.daemonConnectionRegistry.getCompileServiceSession(executionPolicy, logger, loggerAdapter)
+                ?: error("Unable to get daemon connection")
+            val memoryUsageBeforeBuild = daemon.compileService.getUsedMemory(withGC = false).takeIf { it.isGood }?.get()
+
+            val serializedOperation = KotlinToolchainsImpl.serializer.serialize<BtaSerializable>(operationCopy)
+            val callbackChannel = BtaCallbackChannel(KotlinToolchainsImpl.serializer, messageVisitors)
+
+            if (this is CancellableBuildOperationImpl<*>) {
+                onCancel {
+                    logger.info("Sending cancel request for operation ${operationCopy.compilationId}")
+                    daemon.compileService.cancelCompilation(daemon.sessionId, operationCopy.compilationId)
+                }
+            }
+
+            val result = try {
+                val callResult = daemon.compileService.execute(
+                    daemon.sessionId,
+                    operationCopy.compilationId,
+                    serializedOperation,
+                    callbackChannel,
+                    createCompilerServicesFacade(logger, createMessageCollector(logger)),
+                    loggerDebugEnabled = logger.isDebugEnabled,
+                )
+                if (callResult is CompileService.CallResult.Error) {
+                    callResult.cause?.let { throw it }
+                }
+                callResult.get()
+            } finally {
+                val memoryUsageAfterBuild =
+                    operationCopy.runCatching { daemon.compileService.getUsedMemory(withGC = false).takeIf { it.isGood }?.get() }.getOrNull()
+                operationCopy.getMetricsReporter().let { metricsReporter ->
+                    if (memoryUsageAfterBuild == null || memoryUsageBeforeBuild == null) {
+                        logger.debug("Unable to calculate memory usage")
+                    } else {
+                        metricsReporter.addMetric(DAEMON_INCREASED_MEMORY, memoryUsageAfterBuild - memoryUsageBeforeBuild)
+                        metricsReporter.addMetric(DAEMON_MEMORY_USAGE, memoryUsageAfterBuild)
+                    }
+                }
+            }
+            return deserializeResult(result)
+        }
+    }
+
     /**
      * `true` if this operation uses [org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironment], so the [org.jetbrains.kotlin.buildtools.api.KotlinToolchains.BuildSession] can reuse it across operations.
      *
@@ -112,6 +180,10 @@ internal abstract class BuildOperationImpl<R> : BuildOperation<R>, BuildOperatio
      * lifetime of the daemon.
      */
     internal abstract val usesApplicationEnvironment: Boolean
+
+    internal companion object {
+        private val compilationIdCounter = AtomicInt(0)
+    }
 
     protected open fun createMessageCollector(logger: KotlinLogger): MessageCollectorWithDiagnosticId =
         DoNothingMessageCollector()

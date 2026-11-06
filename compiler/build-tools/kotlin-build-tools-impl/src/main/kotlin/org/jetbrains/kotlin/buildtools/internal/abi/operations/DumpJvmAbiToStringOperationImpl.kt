@@ -67,7 +67,7 @@ internal class DumpJvmAbiToStringOperationImpl private constructor(
         return AbiFiltersImpl()
     }
 
-    override fun deepCopy(): DumpJvmAbiToStringOperation {
+    override fun deepCopy(): DumpJvmAbiToStringOperationImpl {
         return DumpJvmAbiToStringOperationImpl(appendable, inputFiles, abiTools, options.deepCopy())
     }
 

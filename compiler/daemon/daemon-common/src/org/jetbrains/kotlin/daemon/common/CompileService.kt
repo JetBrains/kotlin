@@ -188,4 +188,24 @@ interface CompileService : Remote {
             replStateId: Int,
             codeLine: ReplCodeLine
     ): CallResult<ReplCompileResult>
+
+    @Throws(RemoteException::class)
+    fun execute(
+        sessionId: Int,
+        compilationId: Int,
+        operation: SerializedDataContainer,
+        callbackChannel: DaemonCallbackChannel,
+        servicesFacade: CompilerServicesFacadeBase?,
+        loggerDebugEnabled: Boolean = false,
+    ): CallResult<SerializedDataContainer>
 }
+
+interface DaemonCallbackChannel : Remote {
+    /**
+     * Reports different kind of diagnostic messages from compile daemon to compile daemon clients (jps, gradle, ...)
+     */
+    @Throws(RemoteException::class)
+    fun report(message: SerializedDataContainer)
+}
+
+interface SerializedDataContainer
