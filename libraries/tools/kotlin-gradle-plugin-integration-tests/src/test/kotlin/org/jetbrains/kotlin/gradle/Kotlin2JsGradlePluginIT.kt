@@ -2641,4 +2641,16 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
             }
         }
     }
+
+    @DisplayName("Rich TS type declarations are generated without running the JS link task")
+    @GradleTest
+    fun generateRichDtsWithoutLinkTask(gradleVersion: GradleVersion) {
+        project("kotlin2JsIrDtsGeneration", gradleVersion) {
+            gradleProperties.appendText("\nkotlin.js.generateRichTypeScriptDeclarations=true\n")
+            build(":jsProductionExecutableGenerateTypeScriptDefinitions") {
+                assertTasksExecuted(":compileKotlinJs", ":jsProductionExecutableGenerateTypeScriptDefinitions")
+                assertTasksAreNotInTaskGraph(":compileProductionExecutableKotlinJs")
+            }
+        }
+    }
 }
