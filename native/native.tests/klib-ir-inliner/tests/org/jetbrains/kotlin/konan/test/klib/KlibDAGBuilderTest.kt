@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotEquals
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
@@ -427,7 +428,7 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
 
             val a2Manifest = moduleNameToLibraryPath.getValue("A2").resolve("default/manifest").readProperties()
             assertEquals("A2", a2Manifest[KLIB_PROPERTY_UNIQUE_NAME])
-            assertTrue("A2" in a2Manifest.getProperty(KLIB_PROPERTY_DEPENDS).split(" "))
+            assertNull(a2Manifest.getProperty(KLIB_PROPERTY_DEPENDS))
 
             run {
                 val libraries = loadLibraries(others = listOf(moduleNameToLibraryPath.getValue("A2")))
@@ -509,7 +510,7 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
             assertEquals(3, moduleNameToLibraryPath.size)
 
             val bManifest = moduleNameToLibraryPath.getValue("B").resolve("default/manifest").readProperties()
-            assertTrue("A" in bManifest.getProperty(KLIB_PROPERTY_DEPENDS).split(" "))
+            assertNull(bManifest.getProperty(KLIB_PROPERTY_DEPENDS))
 
             val libraries = loadLibraries(others = listOf(moduleNameToLibraryPath.getValue("B"), moduleNameToLibraryPath.getValue("C")))
             assertEquals(3, libraries.size)
