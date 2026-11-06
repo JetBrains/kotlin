@@ -42,6 +42,7 @@ dependencies {
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
     testFixturesImplementation(testFixtures(project(":compiler:tests-common-new")))
+    testFixturesImplementation(project(":compiler:psi:psi-utils"))
     testFixturesImplementation(project(":analysis:decompiled:light-classes-for-decompiled"))
 
     testFixturesImplementation(kotlinTest("junit5"))

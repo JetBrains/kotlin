@@ -119,7 +119,6 @@ projectTests {
     testData(project(":compiler").isolated, "testData/compileKotlinAgainstCustomBinaries")
     testData(project(":compiler").isolated, "testData/ir/klibLayout/multiFiles.kt")
     testData(project(":compiler").isolated, "testData/kotlinClassFinder/nestedClass.kt")
-    testData(project(":compiler").isolated, "testData/loadJavaPackageAnnotations")
 
     withJvmStdlibAndReflect()
     withTestJar()

@@ -6,8 +6,9 @@
 package org.jetbrains.kotlin.test.frontend.fir.handlers
 
 import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiErrorElement
 import org.jetbrains.kotlin.*
-import org.jetbrains.kotlin.checkers.utils.TypeOfCall
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.common.fir.SequentialPositionFinder
 import org.jetbrains.kotlin.cli.pipeline.metadata.MetadataFrontendPipelineArtifact
@@ -19,7 +20,6 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.TO_STRING
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
-import org.jetbrains.kotlin.diagnostics.rendering.Renderers
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -55,7 +55,7 @@ import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtQualifiedExpression
-import org.jetbrains.kotlin.resolve.AnalyzingUtils
+import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.backend.handlers.assertFileDoesntExist
 import org.jetbrains.kotlin.test.directives.*
@@ -345,7 +345,10 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
         report(KtDebugInfoDiagnostics.CALL, element) {
             val resolvedSymbol = (reference as? FirResolvedNamedReference)?.resolvedSymbol
             val fqName = resolvedSymbol?.fqNameUnsafe()
-            Renderers.renderCallInfo(fqName, getTypeOfCall(reference, resolvedSymbol))
+            buildString {
+                append("fqName: ${fqName?.asString() ?: "fqName is unknown"}; ")
+                append("typeCall: ${getTypeOfCall(reference, resolvedSymbol)}")
+            }
         }
     }
 
@@ -680,9 +683,6 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
         val result = listMultimapOf<FirFile, DiagnosticWithKmpCompilationMode>()
 
         lazyDeclarationResolver.disableLazyResolveContractChecksInside {
-            val configuration =
-                testServices.compilerConfigurationProvider.getCompilerConfiguration(platformPart.module, CompilationStage.FIRST)
-
             fun processDiagnosticsFromCliPhase(diagnosticsCollector: BaseDiagnosticsCollector, mode: KmpCompilationMode) {
                 val diagnosticsPerFirFile = buildMap {
                     for ([sourceFile, diagnostics] in diagnosticsCollector.diagnosticsByFile) {
@@ -780,7 +780,7 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
     ) {
         for ([_, firFile] in part.firFilesByTestFile) {
             val syntaxErrors = if (firFile.psi != null) {
-                AnalyzingUtils.getSyntaxErrorRanges(firFile.psi!!).map {
+                getSyntaxErrorRanges(firFile.psi!!).map {
                     @OptIn(InternalDiagnosticFactoryMethod::class)
                     FirSyntaxErrors.SYNTAX.on(
                         KtRealPsiSourceElement(it),
@@ -799,6 +799,16 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
                 syntaxErrors.map { DiagnosticWithKmpCompilationMode(it, KmpCompilationMode.PLATFORM) }
             )
         }
+    }
+
+    private fun getSyntaxErrorRanges(root: PsiElement): List<PsiErrorElement> {
+        val r: MutableList<PsiErrorElement> = ArrayList()
+        root.acceptChildren(object : KtTreeVisitorVoid() {
+            override fun visitErrorElement(element: PsiErrorElement) {
+                r.add(element)
+            }
+        })
+        return r
     }
 }
 
@@ -876,4 +886,12 @@ private object KtDebugInfoDiagnostics : KtDiagnosticsContainer() {
             )
         }
     }
+}
+
+private enum class TypeOfCall(val nameToRender: String) {
+    VARIABLE_THROUGH_INVOKE("variable&invoke"),
+    PROPERTY_GETTER("variable"),
+    FUNCTION("function"),
+    UNRESOLVED("unresolved"),
+    OTHER("other")
 }
