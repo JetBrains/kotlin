@@ -11,19 +11,12 @@ import generators.unicode.writeHeader
 import java.io.File
 import java.io.FileWriter
 
-internal class StringCasingTestGenerator(private val outputDir: File) {
-    private val casedRanges = mutableListOf<PropertyLine>()
-    private val caseIgnorableRanges = mutableListOf<PropertyLine>()
+internal class StringCasingTestGenerator(private val outputDir: File, derivedCorePropertiesLines: List<PropertyLine>) {
+    private val casedRanges = derivedCorePropertiesLines.filter { it.property == "Cased" }
+    private val caseIgnorableRanges = derivedCorePropertiesLines.filter { it.property == "Case_Ignorable" }
 
     init {
         outputDir.requireExistingDir()
-    }
-
-    fun appendDerivedCorePropertiesLine(line: PropertyLine) {
-        when (line.property) {
-            "Cased" -> casedRanges.add(line)
-            "Case_Ignorable" -> caseIgnorableRanges.add(line)
-        }
     }
 
     fun generate() {

@@ -5,14 +5,11 @@
 
 package generators.unicode
 
-internal class PropertyLine(properties: List<String>) {
-    init {
-        require(properties.size == 2)
-    }
-
-    val rangeStart: String = properties[0].split("..").first()
-    val rangeEnd: String = properties[0].split("..").last()
-    val property: String = properties[1].takeWhile { it != ' ' }
+internal data class PropertyLine(
+    val rangeStart: String,
+    val rangeEnd: String,
+    val property: String,
+) {
 
     fun intRange(): IntRange {
         return rangeStart.hexToInt()..rangeEnd.hexToInt()
@@ -22,10 +19,12 @@ internal class PropertyLine(properties: List<String>) {
         return "${rangeStart.hexToInt().toHexIntLiteral()}..${rangeEnd.hexToInt().toHexIntLiteral()}"
     }
 
-    override fun toString(): String {
-        return "PropertyLine{rangeStart=$rangeStart" +
-                ", rangeEnd=$rangeEnd" +
-                ", property=$property" +
-                "}"
+    companion object {
+        fun parse(line: String): PropertyLine {
+            val properties = line.substringBefore('#').split(";").map { it.trim() }
+            require(properties.size in 2..3) { "Invalid property line: $line" }
+            val range = properties[0].split("..")
+            return PropertyLine(range.first(), range.last(), properties[1])
+        }
     }
 }
