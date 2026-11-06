@@ -35,7 +35,8 @@ class CliJavaModuleResolver(
     private val moduleGraph: JavaModuleGraph,
     private val userModules: List<JavaModule>,
     private val systemModules: List<JavaModule.Explicit>,
-    private val project: Project
+    private val project: Project,
+    sourceModuleByFile: ((VirtualFile) -> JavaModule?)? = null
 ) : JavaModuleResolver {
     init {
         assert(userModules.count(JavaModule::isSourceModule) <= 1) {
@@ -52,6 +53,7 @@ class CliJavaModuleResolver(
     }
 
     private val sourceModule: JavaModule? = userModules.firstOrNull(JavaModule::isSourceModule)
+    private val sourceModuleByFile: (VirtualFile) -> JavaModule? = sourceModuleByFile ?: { sourceModule }
 
     private fun findJavaModule(file: VirtualFile): JavaModule? {
         if (file.fileSystem.protocol == StandardFileSystems.JRT_PROTOCOL || file.extension == "sig") {
@@ -59,7 +61,7 @@ class CliJavaModuleResolver(
         }
 
         return when (file.fileType) {
-            KotlinFileType.INSTANCE, JavaFileType.INSTANCE -> sourceModule
+            KotlinFileType.INSTANCE, JavaFileType.INSTANCE -> sourceModuleByFile(file)
             JavaClassFileType.INSTANCE -> userModules.firstOrNull { module -> file in module }
             else -> null
         }
