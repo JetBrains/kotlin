@@ -5,74 +5,142 @@
 
 package org.jetbrains.kotlin.test.frontend.fir
 
-import org.jetbrains.kotlin.backend.common.IrSpecialAnnotationsProvider
-import org.jetbrains.kotlin.backend.common.actualizer.IrExtraActualDeclarationExtractor
+import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.backend.jvm.JvmIrSpecialAnnotationSymbolProvider
 import org.jetbrains.kotlin.backend.jvm.JvmIrTypeSystemContext
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
+import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
-import org.jetbrains.kotlin.fir.backend.Fir2IrVisibilityConverter
 import org.jetbrains.kotlin.fir.backend.jvm.*
 import org.jetbrains.kotlin.fir.backend.utils.extractFirDeclarations
+import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
+import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
 import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
 import org.jetbrains.kotlin.fir.pipeline.Fir2KlibMetadataSerializer
-import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.fir.pipeline.SingleModuleFrontendOutput
+import org.jetbrains.kotlin.fir.pipeline.convertToIrAndActualize
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
-import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.isAnyPlatformStdlib
+import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
+import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
+import org.jetbrains.kotlin.library.uniqueName
+import org.jetbrains.kotlin.name.Name.special
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendInput
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
+import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticCollectorService
+import org.jetbrains.kotlin.test.frontend.fir.handlers.firDiagnosticCollectorService
+import org.jetbrains.kotlin.test.model.BackendKinds
+import org.jetbrains.kotlin.test.model.Frontend2BackendConverter
+import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
+import org.jetbrains.kotlin.test.services.*
 
-class Fir2IrJvmResultsConverter(testServices: TestServices) : AbstractFir2IrResultsConverter(testServices) {
-    override fun createIrMangler(): KotlinMangler.IrMangler = JvmIrMangler
+class Fir2IrJvmResultsConverter(testServices: TestServices) : Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>(
+    testServices,
+    FrontendKinds.FIR,
+    BackendKinds.IrBackend
+) {
 
-    override fun createFir2IrExtensions(compilerConfiguration: CompilerConfiguration): JvmFir2IrExtensions {
-        return JvmFir2IrExtensions()
-    }
-
-    override fun createFir2IrVisibilityConverter(): Fir2IrVisibilityConverter {
-        return FirJvmVisibilityConverter
-    }
-
-    override fun createTypeSystemContextProvider(): (IrBuiltIns) -> IrTypeSystemContext {
-        return ::JvmIrTypeSystemContext
-    }
-
-    override fun createSpecialAnnotationsProvider(): (IrModuleFragment) -> IrSpecialAnnotationsProvider {
-        return ::JvmIrSpecialAnnotationSymbolProvider
-    }
-
-    override fun createExtraActualDeclarationExtractorInitializer(): (Fir2IrComponents) -> List<IrExtraActualDeclarationExtractor> {
-        return {
-            listOfNotNull(FirDirectJavaActualDeclarationExtractor.initializeIfNeeded(it))
-        }
-    }
-
-    override fun resolveLibraries(module: TestModule, compilerConfiguration: CompilerConfiguration): List<KotlinLibrary> {
+    private fun resolveLibraries(module: TestModule): List<KotlinLibrary> {
         val compilerConfigurationProvider = testServices.compilerConfigurationProvider
         // Create and initialize the module and its dependencies
         compilerConfigurationProvider.getProject(module)
         return emptyList()
     }
 
-    override fun createFir2IrConfiguration(
-        compilerConfiguration: CompilerConfiguration,
-        diagnosticReporter: BaseDiagnosticsCollector,
-    ): Fir2IrConfiguration {
-        return Fir2IrConfiguration.forJvmCompilation(compilerConfiguration, diagnosticReporter)
+    override val additionalServices: List<ServiceRegistrationData>
+        get() = listOf(
+            service(::FirDiagnosticCollectorService),
+        )
+
+    override fun transform(module: TestModule, inputArtifact: FirOutputArtifact): IrBackendInput? =
+        try {
+            transformInternal(module, inputArtifact)
+        } catch (e: Throwable) {
+            if (
+                CodegenTestDirectives.IGNORE_FIR2IR_EXCEPTIONS_IF_FIR_CONTAINS_ERRORS in module.directives &&
+                testServices.firDiagnosticCollectorService.containsErrors(inputArtifact)
+            ) {
+                null
+            } else {
+                throw e
+            }
+        }
+
+    private fun transformInternal(
+        module: TestModule,
+        inputArtifact: FirOutputArtifact
+    ): IrBackendInput {
+        val compilerConfiguration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
+
+        val irMangler = JvmIrMangler
+        val diagnosticReporter = DiagnosticsCollectorImpl()
+
+        val fir2IrExtensions = JvmFir2IrExtensions()
+
+        val libraries: List<KotlinLibrary> = resolveLibraries(module)
+        val [dependencies: List<ModuleDescriptor>, builtIns: KotlinBuiltIns?] = loadModuleDescriptors(
+            libraries,
+            testServices.targetPlatformProvider.getTargetPlatform(module),
+        )
+
+        val fir2IrConfiguration = createFir2IrConfiguration(compilerConfiguration, diagnosticReporter)
+
+        val outputs = inputArtifact.partsForDependsOnModules.map {
+            SingleModuleFrontendOutput(it.session, it.scopeSession, it.firFilesByTestFile.values.toList())
+        }
+        val firResult = AllModulesFrontendOutput(outputs)
+        val fir2irResult = firResult.convertToIrAndActualize(
+            fir2IrExtensions,
+            fir2IrConfiguration,
+            compilerConfiguration.getCompilerExtensions(IrGenerationExtension),
+            irMangler,
+            FirJvmVisibilityConverter,
+            builtIns ?: DefaultBuiltIns.Instance, // TODO: consider passing externally,
+            ::JvmIrTypeSystemContext,
+            createSpecialAnnotationsProvider = ::JvmIrSpecialAnnotationSymbolProvider,
+            extraActualDeclarationExtractorsInitializer = { it: Fir2IrComponents ->
+                listOfNotNull(FirDirectJavaActualDeclarationExtractor.initializeIfNeeded(it))
+            },
+        ).also {
+            (it.irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = dependencies }
+        }
+
+        return createBackendInput(
+            module,
+            compilerConfiguration,
+            diagnosticReporter,
+            inputArtifact,
+            fir2irResult,
+            Fir2KlibMetadataSerializer(
+                compilerConfiguration,
+                firResult.outputs,
+                fir2irResult,
+                produceHeaderKlib = false,
+            ),
+        )
     }
 
-    override fun createBackendInput(
+    private  fun createFir2IrConfiguration(
+        compilerConfiguration: CompilerConfiguration,
+        diagnosticReporter: BaseDiagnosticsCollector,
+    ): Fir2IrConfiguration = Fir2IrConfiguration.forJvmCompilation(compilerConfiguration, diagnosticReporter)
+
+    private fun createBackendInput(
         module: TestModule,
         compilerConfiguration: CompilerConfiguration,
         diagnosticReporter: BaseDiagnosticsCollector,
@@ -109,5 +177,51 @@ class Fir2IrJvmResultsConverter(testServices: TestServices) : AbstractFir2IrResu
             sourceFiles,
             irMangler = fir2IrResult.components.irMangler,
         )
+    }
+
+    private fun loadModuleDescriptors(
+        libraries: List<KotlinLibrary>,
+        targetPlatform: TargetPlatform,
+    ): Pair<List<ModuleDescriptor>, KotlinBuiltIns?> {
+        val stdlib: KotlinLibrary? = libraries.firstOrNull { it.isAnyPlatformStdlib }
+
+        var builtIns: KotlinBuiltIns? = null
+        val dependencies = mutableListOf<ModuleDescriptorImpl>()
+
+        fun loadDescriptor(library: KotlinLibrary): ModuleDescriptorImpl {
+            val moduleName = special("<${library.uniqueName}>")
+            val moduleOrigin = DeserializedKlibModuleOrigin(library)
+            val builtInsToUse = builtIns ?: object : KotlinBuiltIns(LockBasedStorageManager.NO_LOCKS) {}
+            val moduleDescriptor = ModuleDescriptorImpl(
+                moduleName,
+                LockBasedStorageManager.NO_LOCKS,
+                builtInsToUse,
+                capabilities = mapOf(KlibModuleOrigin.CAPABILITY to moduleOrigin),
+                platform = targetPlatform
+            )
+
+            if (builtIns == null) {
+                builtInsToUse.builtInsModule = moduleDescriptor
+            }
+
+            dependencies += moduleDescriptor
+            moduleDescriptor.setDependencies(dependencies.toList())
+
+            return moduleDescriptor
+        }
+
+        val moduleDescriptors = mutableListOf<ModuleDescriptorImpl>()
+        if (stdlib != null) {
+            val stdlibModuleDescriptor = loadDescriptor(stdlib)
+            moduleDescriptors += stdlibModuleDescriptor
+            builtIns = stdlibModuleDescriptor.builtIns
+        }
+
+        libraries.forEach { library ->
+            if (library == stdlib) return@forEach
+            moduleDescriptors += loadDescriptor(library)
+        }
+
+        return moduleDescriptors to builtIns
     }
 }
