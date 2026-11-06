@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -260,7 +259,7 @@ class FirSamResolver(
     }
 
     fun buildSamConstructorForTypeAlias(typeAliasSymbol: FirTypeAliasSymbol): FirNamedFunctionSymbol? {
-        val type = typeAliasSymbol.resolvedExpandedTypeRef.coneTypeSafe<ConeClassLikeType>()?.fullyExpandedType() as? ConeClassLikeType
+        val type = typeAliasSymbol.resolvedExpandedTypeRef.coneTypeSafe<ConeClassLikeType>()?.fullyExpandedClassLikeType()
             ?: return null
         val expansionRegularClass = type.lookupTag.toRegularClassSymbol()?.fir ?: return null
         val samConstructorForClass = getSamConstructor(expansionRegularClass) ?: return null

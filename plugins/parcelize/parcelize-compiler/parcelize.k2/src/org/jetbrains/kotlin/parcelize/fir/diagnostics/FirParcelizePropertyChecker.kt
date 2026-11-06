@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.isVisible
 import org.jetbrains.kotlin.fir.java.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.fir.resolve.fqName
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedClassLikeType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
@@ -188,7 +189,7 @@ object FirParcelizePropertyChecker : FirPropertyChecker(MppCheckerKind.Platform)
     private fun ConeKotlinType.getErasedUpperBound(session: FirSession): ConeClassLikeType? =
         when (this) {
             is ConeClassLikeType ->
-                fullyExpandedType(session) as? ConeClassLikeType
+                fullyExpandedClassLikeType(session)
 
             is ConeTypeParameterType -> {
                 val bounds = lookupTag.typeParameterSymbol.resolvedBounds
