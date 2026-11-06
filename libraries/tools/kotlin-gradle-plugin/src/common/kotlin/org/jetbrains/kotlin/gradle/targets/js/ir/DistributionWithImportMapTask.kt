@@ -37,6 +37,7 @@ internal abstract class DistributionWithImportMapTask : DefaultTask() {
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:InputDirectory
     @get:NormalizeLineEndings
+    @get:SkipWhenEmpty
     abstract val mainDirectory: DirectoryProperty
 
     /**
