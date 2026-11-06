@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStrategy
 import org.jetbrains.kotlin.backend.konan.serialization.PartialCacheInfo
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedClassFields
+import org.jetbrains.kotlin.backend.konan.serialization.SerializedClassHierarchy
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedEagerInitializedFile
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedInlineFunctionReference
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedObjCAdapter
@@ -79,7 +80,7 @@ internal class NativeGenerationState(
     val trivialGetters = mutableListOf<SerializedTrivialGetter>()
     // KT-89121: `@BindClassToObjCName` adapters of the library being cached, for the final binary to use them.
     val objCAdapters = mutableListOf<SerializedObjCAdapter>()
-
+    var classHierarchy: List<SerializedClassHierarchy> = emptyList()
     var coroutinesLivenessAnalysisPhasePerformed = false
 
     lateinit var fileLowerState: FileLowerState
