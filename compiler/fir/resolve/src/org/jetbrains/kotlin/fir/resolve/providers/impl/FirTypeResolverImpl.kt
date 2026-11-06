@@ -733,8 +733,9 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             is FirRegularClassSymbol -> isRichError || classId == StandardClassIds.RichError
             is FirTypeAliasSymbol -> {
                 val expansionSession = sessionForExpansionOrNull(expandNonLibraryTypeAlias = true)!!
-                // During the SUPER_TYPES phase, the expanded type of the alias is only available through the supplier,
-                // which resolves the type alias on demand if necessary
+                // supertypeSupplier.expansionForTypeAlias returns null for recursive type aliases.
+                // We want to return `true` in this case, so that we don't report bogus
+                // NON_ERROR_COMPONENT_WRONG_POSITION_IN_UNION_TYPE.
                 supertypeSupplier.expansionForTypeAlias(fir, expansionSession)?.isNonRichError(supertypeSupplier) != false
             }
             // It's safe to access fir because own type parameters and containing class type parameter bounds are guaranteed to be resolved
