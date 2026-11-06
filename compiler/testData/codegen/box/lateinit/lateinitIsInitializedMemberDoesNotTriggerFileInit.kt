@@ -1,5 +1,8 @@
 // ISSUE: KT-91246
 
+// FILE: state.kt
+var fileInitTriggered = false
+
 // FILE: lib.kt
 private val sideEffect = run {
     fileInitTriggered = true
@@ -12,8 +15,6 @@ class MemberLateinitObserver {
 }
 
 // FILE: main.kt
-var fileInitTriggered = false
-
 fun box(): String {
     val observer = MemberLateinitObserver()
     if (observer.check()) return "FAIL 1"
