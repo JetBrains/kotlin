@@ -162,11 +162,11 @@ object FirWebCommonErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             JS_QUALIFIER_PROHIBITED_ON_NON_EXTERNAL,
-            "'@JsQualifier' annotation is prohibited for non-external declarations."
+            "'@JsQualifier' annotation can only be applied to external declarations."
         )
         map.put(
             JS_QUALIFIER_PROHIBITED_ON_NON_TOP_LEVEL,
-            "'@JsQualifier' cannot be applied to a member. Apply it to the top-level declaration or to the file instead."
+            "'@JsQualifier' annotation can only be applied to top-level declarations or to files."
         )
         map.put(
             NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE,
