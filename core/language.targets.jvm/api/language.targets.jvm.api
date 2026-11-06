@@ -52,7 +52,7 @@ public final class org/jetbrains/kotlin/platform/jvm/JdkPlatform : org/jetbrains
 	public fun toString ()Ljava/lang/String;
 }
 
-public abstract class org/jetbrains/kotlin/platform/jvm/JvmPlatform : org/jetbrains/kotlin/platform/SimplePlatform {
+public abstract class org/jetbrains/kotlin/platform/jvm/JvmPlatform : org/jetbrains/kotlin/platform/JvmPlatform {
 	public fun <init> ()V
 	public fun getOldFashionedDescription ()Ljava/lang/String;
 }
