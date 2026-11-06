@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
 import org.jetbrains.kotlin.fir.types.jvm.buildJavaTypeRef
 import org.jetbrains.kotlin.load.java.structure.*
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.classifierClassId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -117,14 +118,19 @@ private fun JavaType?.toConeTypeProjection(
 
     return when (this) {
         is JavaClassifierType -> {
-            val lowerBound = toConeKotlinTypeForFlexibleBound(session, javaTypeParameterStack, mode, attributes, source)
+            val isRaw = isRawIn(session, mode)
+            val lowerBound = toConeKotlinTypeForFlexibleBound(
+                session, javaTypeParameterStack, mode, attributes, source, isRaw = isRaw
+            )
             if (mode.insideAnnotation) {
                 return lowerBound
             }
             if (!isRaw && classifier?.isTriviallyFlexible() == true) {
                 lowerBound.toTrivialFlexibleType(session.typeContext)
             } else {
-                val upperBound = toConeKotlinTypeForFlexibleBound(session, javaTypeParameterStack, mode, attributes, source, lowerBound)
+                val upperBound = toConeKotlinTypeForFlexibleBound(
+                    session, javaTypeParameterStack, mode, attributes, source, lowerBound, isRaw
+                )
 
                 if (isRaw) {
                     ConeRawType.create(lowerBound, upperBound)
@@ -180,6 +186,14 @@ private fun JavaType?.toConeTypeProjection(
 
 private val javaReadOnlyFqNames = JavaToKotlinClassMap.getReadOnlyAsJava()
 
+private fun JavaClassifierType.unresolvedClassId(): ClassId =
+    classifierClassId ?: ClassId.topLevel(FqName(classifierQualifiedName))
+
+private fun JavaClassifierType.isRawIn(session: FirSession, mode: FirJavaTypeConversionMode): Boolean =
+    isRaw || (classifier == null && typeArguments.isEmpty() && !mode.insideAnnotation &&
+            mode != FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND_FIRST_ROUND &&
+            unresolvedClassId().toLookupTag().toRegularClassSymbol(session)?.typeParameterSymbols?.isNotEmpty() == true)
+
 private fun JavaClassifier.isTriviallyFlexible(): Boolean {
     return this is JavaClass && fqName !in javaReadOnlyFqNames || this is JavaTypeParameter
 }
@@ -190,7 +204,8 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
     mode: FirJavaTypeConversionMode,
     attributes: ConeAttributes,
     source: KtSourceElement?,
-    lowerBound: ConeLookupTagBasedType? = null
+    lowerBound: ConeLookupTagBasedType? = null,
+    isRaw: Boolean = this.isRaw
 ): ConeLookupTagBasedType {
     fun buildTypeProjections(lookupTag: ConeClassLikeLookupTagImpl): Array<ConeTypeProjection> {
         val typeParameterSymbols =
@@ -241,7 +256,11 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
                 else -> lowerBound?.typeArguments
             }
 
-            lookupTag.constructClassType(mappedTypeArguments ?: ConeTypeProjection.EMPTY_ARRAY, isMarkedNullable = lowerBound != null, attributes)
+            lookupTag.constructClassType(
+                mappedTypeArguments ?: ConeTypeProjection.EMPTY_ARRAY,
+                isMarkedNullable = lowerBound != null,
+                attributes
+            )
         }
 
         is JavaTypeParameter -> {
@@ -254,8 +273,25 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
         }
 
         null -> {
-            val classId = ClassId.topLevel(FqName(this.classifierQualifiedName))
-            classId.constructClassLikeType(isMarkedNullable = lowerBound != null, attributes = attributes)
+            val lookupTag = unresolvedClassId().toLookupTag()
+            val mappedTypeArguments = when {
+                isRaw -> {
+                    if (lowerBound == null) {
+                        lookupTag.toRegularClassSymbol(session)?.typeParameterSymbols
+                            ?.getProjectionsForRawType(session, nullabilities = null)
+                            ?: ConeTypeProjection.EMPTY_ARRAY
+                    } else {
+                        Array(lowerBound.typeArguments.size) { ConeStarProjection }
+                    }
+                }
+                lookupTag != lowerBound?.lookupTag && typeArguments.isNotEmpty() -> buildTypeProjections(lookupTag)
+                else -> lowerBound?.typeArguments
+            }
+            lookupTag.constructClassType(
+                mappedTypeArguments ?: ConeTypeProjection.EMPTY_ARRAY,
+                isMarkedNullable = lowerBound != null,
+                attributes = attributes
+            )
         }
 
         else -> ConeErrorType(ConeSimpleDiagnostic("Unexpected classifier: $classifier", DiagnosticKind.Java))

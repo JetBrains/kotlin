@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.test.MockLibraryUtilExt
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -128,8 +127,18 @@ class JKlibJavaInteropIntegrationTest {
         }
     }
 
+    /**
+     * `libB.jar`'s `JavaClass.class` names its supertype `test.Outer$Inner`, and that nested class has no class
+     * file on the compilation's classpath: it comes from `libA.klib`. The nesting is only known from the
+     * `InnerClasses` attribute of the referring class file, so resolving the supertype relies on the recorded
+     * `ClassId` being carried through to FIR rather than the dotted qualified name being re-split.
+     *
+     * The same shape with a nested *Java* class, whose declaration is a `.java` source of the compilation, is
+     * covered by `CompileKotlinAgainstCustomBinariesTest.testBinarySignatureReferencesNestedJavaClassFromSource`.
+     *
+     * ISSUE: KT-87507
+     */
     @Test
-    @Disabled("The fix is reverted due to KT-87507")
     fun testJavaExtendingNestedKotlinClassFromKlib(@TempDir tempDir: File) {
         val stdlibKlib = ForTestCompileRuntime.jklibStdlibForTests().path
         val stdlibJar = ForTestCompileRuntime.runtimeJarForTests().path
