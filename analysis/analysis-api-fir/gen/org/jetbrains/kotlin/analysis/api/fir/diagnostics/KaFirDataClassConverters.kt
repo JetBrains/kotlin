@@ -3630,6 +3630,12 @@ private fun KaDiagnosticConverterBuilder.addConversions75() {
             token,
         )
     }
+    add(FirErrors.ACTUAL_TYPEALIAS_WITH_EXPECT_RICH_ERROR) { firDiagnostic ->
+        ActualTypealiasWithExpectRichErrorImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions76() {

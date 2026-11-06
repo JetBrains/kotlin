@@ -53,6 +53,7 @@ interface ExpectActualMatchingContext<T : DeclarationSymbolMarker> : TypeSystemC
     val RegularClassSymbolMarker.isValue: Boolean
     val RegularClassSymbolMarker.isInline: Boolean
     val RegularClassSymbolMarker.isFun: Boolean
+    val RegularClassSymbolMarker.isRichError: Boolean
 
     val RegularClassSymbolMarker.containingClass: ClassLikeSymbolMarker?
 
