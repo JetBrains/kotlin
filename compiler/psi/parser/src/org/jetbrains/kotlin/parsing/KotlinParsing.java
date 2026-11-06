@@ -524,7 +524,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
         switch (getTokenId()) {
             case CLASS_KEYWORD_Id:
             case INTERFACE_KEYWORD_Id:
-                return parseClass(detector.isEnumDetected(), true);
+                return parseClass(detector.isEnumDetected(), true, declarationParsingMode);
             case FUN_KEYWORD_Id:
                 return parseFunction();
             case VAL_KEYWORD_Id:
@@ -537,11 +537,11 @@ public class KotlinParsing extends AbstractKotlinParsing {
             case TYPE_ALIAS_KEYWORD_Id:
                 return parseTypeAlias();
             case OBJECT_KEYWORD_Id:
-                parseObject(nameParsingModeForObject, true);
+                parseObject(nameParsingModeForObject, true, declarationParsingMode);
                 return OBJECT_DECLARATION;
             case IDENTIFIER_Id:
                 if (detector.isEnumDetected() && declarationParsingMode.canBeEnumUsedAsSoftKeyword) {
-                    return parseClass(true, false);
+                    return parseClass(true, false, declarationParsingMode);
                 }
         }
 
@@ -1028,7 +1028,8 @@ public class KotlinParsing extends AbstractKotlinParsing {
             NameParsingMode nameParsingMode,
             boolean optionalBody,
             boolean enumClass,
-            boolean expectKindKeyword
+            boolean expectKindKeyword,
+            @NotNull DeclarationParsingMode declarationParsingMode
     ) {
         if (expectKindKeyword) {
             if (object) {
@@ -1064,10 +1065,18 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
         PsiBuilder.Marker beforeConstructorModifiers = mark();
         PsiBuilder.Marker primaryConstructorMarker = mark();
+        boolean statementWithNewlineBeforeConstructorModifiers =
+                declarationParsingMode != DeclarationParsingMode.MEMBER_OR_TOPLEVEL && myBuilder.newlineBeforeCurrentToken();
         boolean hasConstructorModifiers = parseModifierList(TokenSet.EMPTY);
 
-        // Some modifiers found, but no parentheses following: class has already ended, and we are looking at something else
-        if (hasConstructorModifiers && !atSet(LPAR_LBRACE_COLON_CONSTRUCTOR_KEYWORD_SET)) {
+        // Some modifiers found, but no parentheses following: class has already ended, and we are looking at something else.
+        // The same applies to local and script top-level classes if the modifiers start on a new line and aren't followed by
+        // the `constructor` keyword because they likely belong to the next statement, e.g.
+        //    class A
+        //    error("")
+        if (hasConstructorModifiers &&
+            (!atSet(LPAR_LBRACE_COLON_CONSTRUCTOR_KEYWORD_SET) || statementWithNewlineBeforeConstructorModifiers && !at(CONSTRUCTOR_KEYWORD))
+        ) {
             beforeConstructorModifiers.rollbackTo();
             return object ? OBJECT_DECLARATION : CLASS;
         }
@@ -1127,12 +1136,12 @@ public class KotlinParsing extends AbstractKotlinParsing {
         return object ? OBJECT_DECLARATION : CLASS;
     }
 
-    private IElementType parseClass(boolean enumClass, boolean expectKindKeyword) {
-        return parseClassOrObject(false, NameParsingMode.REQUIRED, true, enumClass, expectKindKeyword);
+    private IElementType parseClass(boolean enumClass, boolean expectKindKeyword, @NotNull DeclarationParsingMode declarationParsingMode) {
+        return parseClassOrObject(false, NameParsingMode.REQUIRED, true, enumClass, expectKindKeyword, declarationParsingMode);
     }
 
-    void parseObject(NameParsingMode nameParsingMode, boolean optionalBody) {
-        parseClassOrObject(true, nameParsingMode, optionalBody, false, true);
+    void parseObject(NameParsingMode nameParsingMode, boolean optionalBody, @NotNull DeclarationParsingMode declarationParsingMode) {
+        parseClassOrObject(true, nameParsingMode, optionalBody, false, true, declarationParsingMode);
     }
 
     /*

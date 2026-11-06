@@ -48,10 +48,6 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=LocalClassFollowedByCallName
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Int]
     CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=C, superNames=[]]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=C]
-        MODIFIER_LIST[error]
-        VALUE_PARAMETER_LIST
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
   FUNCTION[fqName=localGenericClass, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=localGenericClass]
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE
@@ -60,17 +56,10 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=LocalClassFollowedByCallName
     CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=C, superNames=[]]
       TYPE_PARAMETER_LIST
         TYPE_PARAMETER[fqName=null, name=T]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=C]
-        MODIFIER_LIST[inline]
-        VALUE_PARAMETER_LIST
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
   FUNCTION[fqName=localAbstractClass, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=localAbstractClass]
     VALUE_PARAMETER_LIST
     CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=C, superNames=[]]
       MODIFIER_LIST[abstract]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=C]
-        MODIFIER_LIST[value]
-      CLASS_BODY
   FUNCTION[fqName=localDataClassWithParameters, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=localDataClassWithParameters]
     VALUE_PARAMETER_LIST
     CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=C, superNames=[]]
@@ -103,33 +92,12 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=LocalClassFollowedByCallName
   FUNCTION[fqName=localClassFollowedByCallWithArgumentsAndTrailingLambda, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=localClassFollowedByCallWithArgumentsAndTrailingLambda]
     VALUE_PARAMETER_LIST
     CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=C, superNames=[]]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=C]
-        MODIFIER_LIST[private]
-        VALUE_PARAMETER_LIST
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
   FUNCTION[fqName=localClassFollowedByAnnotatedCall, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=localClassFollowedByAnnotatedCall]
     VALUE_PARAMETER_LIST
     CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=C, superNames=[]]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=C]
-        MODIFIER_LIST[private]
-          ANNOTATION_ENTRY[hasValueArguments=true, shortName=Suppress]
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION[referencedName=Suppress]
-            VALUE_ARGUMENT_LIST
-              VALUE_ARGUMENT[isSpread=false]
-                STRING_TEMPLATE
-                  LITERAL_STRING_TEMPLATE_ENTRY[text=UNUSED]
-        VALUE_PARAMETER_LIST
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
   FUNCTION[fqName=localClassInLambda, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=localClassInLambda]
     VALUE_PARAMETER_LIST
     CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=C, superNames=[]]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=C]
-        MODIFIER_LIST[inline]
-        VALUE_PARAMETER_LIST
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
   FUNCTION[fqName=localClassWithConstructorOnNextLine, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=localClassWithConstructorOnNextLine]
     VALUE_PARAMETER_LIST
     CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=C1, superNames=[]]

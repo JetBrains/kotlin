@@ -15,10 +15,10 @@ fun foo() {
     class C1 <!MISSING_CONSTRUCTOR_KEYWORD!>private (x: Int)<!>
 
     class C2
-    <!MISSING_CONSTRUCTOR_KEYWORD!>private (x: Int)<!>
+    <!UNRESOLVED_REFERENCE!>private<!> (<!UNRESOLVED_REFERENCE!>x<!><!SYNTAX!>: Int<!>)
 
     class C3
-    <!MISSING_CONSTRUCTOR_KEYWORD!>@Ann private (x: Int)<!>
+    <!WRONG_ANNOTATION_TARGET!>@Ann<!> <!UNRESOLVED_REFERENCE!>private<!> (<!UNRESOLVED_REFERENCE!>x<!><!SYNTAX!>: Int<!>)
 }
 
 class Outer {

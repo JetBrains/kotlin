@@ -1,4 +1,3 @@
-// COMPILATION_ERRORS
 // ISSUE: KT-90782
 
 annotation class Ann

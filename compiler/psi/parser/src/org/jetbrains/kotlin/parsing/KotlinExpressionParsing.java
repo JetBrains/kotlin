@@ -1862,7 +1862,9 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
     public void parseObjectLiteral() {
         PsiBuilder.Marker literal = mark();
         PsiBuilder.Marker declaration = mark();
-        myKotlinParsing.parseObject(NameParsingMode.PROHIBITED, false); // Body is not optional because of foo(object : A, B)
+        // Body is not optional because of foo(object : A, B).
+        // Object expressions keep the regular parsing of primary constructor modifiers on the next line.
+        myKotlinParsing.parseObject(NameParsingMode.PROHIBITED, false, KotlinParsing.DeclarationParsingMode.MEMBER_OR_TOPLEVEL);
         declaration.done(OBJECT_DECLARATION);
         literal.done(OBJECT_LITERAL);
     }
