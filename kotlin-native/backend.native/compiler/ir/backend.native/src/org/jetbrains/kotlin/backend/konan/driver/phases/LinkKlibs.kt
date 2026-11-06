@@ -11,21 +11,14 @@ import org.jetbrains.kotlin.backend.konan.driver.BasicNativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultIrActions
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIdSignaturer
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
 
-internal class LinkKlibsContextImpl(
-        config: NativeSecondStageCompilationConfig,
-        private val moduleDescriptor: ModuleDescriptor,
-        private val disposeCallback: () -> Unit,
-) : BasicNativeBackendPhaseContext(config), LinkKlibsContext {
+internal class LinkKlibsContextImpl(config: NativeSecondStageCompilationConfig) : BasicNativeBackendPhaseContext(config), LinkKlibsContext {
     // TODO: Invalidate properly in dispose method.
     override val symbolTable = SymbolTable(KonanIdSignaturer(KonanManglerDesc), IrFactoryImpl)
 
-    override fun dispose() {
-        disposeCallback()
-    }
+    override fun dispose() {}
 }
 
 internal val LinkKlibsPhase = createSimpleNamedCompilerPhase<LinkKlibsContext, LinkKlibsInput, LinkKlibsOutput>(

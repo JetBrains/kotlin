@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
+import com.intellij.openapi.progress.ProcessCanceledException
+import com.intellij.openapi.progress.ProgressManager
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.konan.K1KlibMetadataModuleDescriptorFactoryImpl
@@ -17,17 +19,12 @@ import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportProblemCollector
 import org.jetbrains.kotlin.backend.konan.objcexport.StubRenderer
 import org.jetbrains.kotlin.backend.konan.sourcesModules
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.functions.functionInterfacePackageFragmentProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
 import org.jetbrains.kotlin.config.nativeBinaryOptions.UnitSuspendFunctionObjCExport
 import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
-import org.jetbrains.kotlin.container.*
-import org.jetbrains.kotlin.context.ModuleContext
-import org.jetbrains.kotlin.context.MutableModuleContextImpl
-import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
@@ -35,31 +32,21 @@ import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDependenciesImpl
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
-import org.jetbrains.kotlin.frontend.di.configureModule
-import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.konan.config.emitLazyObjcHeaderFile
 import org.jetbrains.kotlin.konan.config.objcGenerics
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.library.metadata.CurrentKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsFactoryImpl
-import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
-import org.jetbrains.kotlin.resolve.*
-import org.jetbrains.kotlin.resolve.konan.platform.NativeDefaultImportsProvider
-import org.jetbrains.kotlin.resolve.lazy.BasicAbsentDescriptorHandler
-import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
-import org.jetbrains.kotlin.resolve.lazy.ResolveSession
-import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
-import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import kotlin.io.path.Path
 import kotlin.io.path.writeLines
 
-data class K1FrontendPhaseOutput(val moduleDescriptor: ModuleDescriptor, val disposeCallback: () -> Unit)
+data class K1FrontendPhaseOutput(val moduleDescriptor: ModuleDescriptor)
 
-@OptIn(K1Deprecation::class)
 internal val K1FrontendPhase: NamedCompilerPhase<NativeBackendPhaseContext, KotlinCoreEnvironment, K1FrontendPhaseOutput?> = createSimpleNamedCompilerPhase(
         "Frontend",
         outputIfNotEnabled = { _, _, _, _ -> null }
@@ -76,51 +63,40 @@ internal val K1FrontendPhase: NamedCompilerPhase<NativeBackendPhaseContext, Kotl
                 "KonanDriver.kt::splitOntoTwoStages() must transform such compilation into two-stage compilation. Please report this here: https://kotl.in/issue"
     }
 
-    val frontendOutputs = setupModuleDescriptor(context)
-    setupContainerAndDumpObjcHeader(context, frontendOutputs)
-    val moduleDescriptor = frontendOutputs.moduleDescriptor
+    val moduleDescriptor = setupModuleDescriptor(context)
+    dumpObjcHeader(context, moduleDescriptor)
     context.config.configuration.sourcesModules = moduleDescriptor.getIncludedLibraryDescriptors(context.config).toSet() + moduleDescriptor
 
-    K1FrontendPhaseOutput(moduleDescriptor) {
-        val bindingContext = frontendOutputs.trace.bindingContext as CleanableBindingContext
-        bindingContext.clear()
-    }
+    K1FrontendPhaseOutput(moduleDescriptor)
 }
 
 @OptIn(K1Deprecation::class)
-private data class FrontendOutputs(
-        val moduleDescriptor: ModuleDescriptor,
-        val trace: BindingTraceContext,
-        val moduleContext: ModuleContext,
-        val additionalPackages: List<PackageFragmentProvider>,
-)
-
-@OptIn(K1Deprecation::class)
-private fun setupModuleDescriptor(context: NativeBackendPhaseContext): FrontendOutputs {
+private fun setupModuleDescriptor(context: NativeBackendPhaseContext): ModuleDescriptor {
     val config = context.config
     val moduleName = Name.special("<${config.moduleId}>")
 
-    val projectContext = ProjectContext(config.project, "TopDownAnalyzer for Konan")
+    val storageManager = LockBasedStorageManager.createWithExceptionHandling(
+            "Manger for ObjC export at native second stage",
+            LockBasedStorageManager.ExceptionHandlingStrategy.THROW,
+            { ProgressManager.checkCanceled() },
+            { throw ProcessCanceledException(it) }
+    )
 
     val builtIns = DefaultBuiltIns(loadBuiltInsFromCurrentClassLoader = false)
     val module = ModuleDescriptorImpl(
             moduleName,
-            projectContext.storageManager,
+            storageManager,
             builtIns,
-            capabilities = mapOf(
-                    KlibModuleOrigin.CAPABILITY to CurrentKlibModuleOrigin,
-                    ImplicitIntegerCoercion.MODULE_CAPABILITY to CurrentKlibModuleOrigin.isCInteropLibrary()
-            ),
+            capabilities = mapOf(KlibModuleOrigin.CAPABILITY to CurrentKlibModuleOrigin),
             platform = NativePlatforms.unspecifiedNativePlatform
     )
     builtIns.builtInsModule = module
-    val moduleContext = MutableModuleContextImpl(module, projectContext)
 
     val moduleDescriptorFactory = K1KlibMetadataModuleDescriptorFactoryImpl()
     val resolvedModuleDescriptors = KlibResolvedModuleDescriptorsFactoryImpl(moduleDescriptorFactory).createResolved2(
             // Note: The order of libraries is not important except for stdlib, which should go the first.
             libraries = config.loadedKlibs.all,
-            storageManager = projectContext.storageManager,
+            storageManager = storageManager,
             builtIns = module.builtIns,
             languageVersionSettings = config.languageVersionSettings,
             friendModuleFiles = config.loadedKlibs.friends.map { it.path }.toSet(),
@@ -141,79 +117,36 @@ private fun setupModuleDescriptor(context: NativeBackendPhaseContext): FrontendO
         ))
     } else {
         assert(resolvedModuleDescriptors.resolvedDescriptors.isEmpty())
-        moduleContext.setDependencies(module)
         // [K][Suspend]FunctionN belong to stdlib.
-        additionalPackages += functionInterfacePackageFragmentProvider(projectContext.storageManager, module)
+        additionalPackages += functionInterfacePackageFragmentProvider(storageManager, module)
     }
-    return FrontendOutputs(module, BindingTraceContext(projectContext.project), moduleContext, additionalPackages)
+    module.initialize(
+            CompositePackageFragmentProvider(
+                    additionalPackages,
+                    "CompositeProvider@createTopDownAnalyzerProviderForKonan for module $module"
+            )
+    )
+
+    return module
 }
 
-@OptIn(K1Deprecation::class)
-private fun setupContainerAndDumpObjcHeader(context: NativeBackendPhaseContext, outputs: FrontendOutputs) {
-    val moduleContext = outputs.moduleContext
-    val container = createTopDownAnalyzerProviderForKonan(
-            moduleContext, outputs.trace,
-            FileBasedDeclarationProviderFactory(moduleContext.storageManager, emptyList()),
-            context.config.configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS)!!,
-            outputs.additionalPackages
-    ) {
-        initObjCServicesInContainer(context.config)
-    }
-    container.postprocessComponents(context)
+private fun dumpObjcHeader(context: NativeBackendPhaseContext, moduleDescriptor: ModuleDescriptor) {
+    val file = context.config.configuration.emitLazyObjcHeaderFile ?: return
+    val translator = initObjCExportTranslator(context.config, moduleDescriptor.builtIns) ?: return
+    translator.dumpObjCHeader(file, context.shouldExportKDoc())
 }
 
-@OptIn(K1Deprecation::class)
-private fun createTopDownAnalyzerProviderForKonan(
-        moduleContext: ModuleContext,
-        bindingTrace: BindingTrace,
-        declarationProviderFactory: DeclarationProviderFactory,
-        languageVersionSettings: LanguageVersionSettings,
-        additionalPackages: List<PackageFragmentProvider>,
-        initContainer: StorageComponentContainer.() -> Unit
-): ComponentProvider {
-    return createContainer("TopDownAnalyzerForKonan", NativePlatformAnalyzerServices) {
-        configureModule(moduleContext, NativePlatforms.unspecifiedNativePlatform, NativePlatformAnalyzerServices, bindingTrace,
-                languageVersionSettings,
-                optimizingOptions = null,
-                absentDescriptorHandlerClass = BasicAbsentDescriptorHandler::class.java)
+private fun initObjCExportTranslator(config: NativeSecondStageCompilationConfig, builtIns: KotlinBuiltIns): ObjCExportLazy? {
+    if (config.configuration.emitLazyObjcHeaderFile.isNullOrEmpty()) return null
 
-        useInstance(declarationProviderFactory)
-        useImpl<AnnotationResolverImpl>()
-
-        CompilerEnvironment.configure(this)
-
-        useImpl<ResolveSession>()
-        useImpl<LazyTopDownAnalyzer>()
-        useInstance(InlineConstTracker.DoNothing)
-
-        initContainer()
-    }.apply {
-        val packagePartProviders = mutableListOf(get<KotlinCodeAnalyzer>().packageFragmentProvider)
-        val moduleDescriptor = get<ModuleDescriptorImpl>()
-        packagePartProviders += additionalPackages
-        moduleDescriptor.initialize(
-                CompositePackageFragmentProvider(
-                        packagePartProviders,
-                        "CompositeProvider@createTopDownAnalyzerProviderForKonan for module ${moduleContext.module}"
-                )
-        )
-    }
-}
-
-@OptIn(K1Deprecation::class)
-private fun StorageComponentContainer.initObjCServicesInContainer(config: NativeSecondStageCompilationConfig) {
-    if (config.configuration.emitLazyObjcHeaderFile.isNullOrEmpty()) return
-
-    useImpl<ObjCExportLazyImpl>()
-    useInstance(object : ObjCExportProblemCollector {
+    val problemsCollector = object : ObjCExportProblemCollector {
         override fun reportWarning(text: String) {}
         override fun reportWarning(declaration: DeclarationDescriptor, text: String) {}
         override fun reportError(text: String) {}
         override fun reportError(declaration: DeclarationDescriptor, text: String) {}
         override fun reportException(throwable: Throwable) = throw throwable
-    })
-
-    useInstance(object : ObjCExportLazy.Configuration {
+    }
+    val configuration = object : ObjCExportLazy.Configuration {
         override val frameworkName: String
             get() = config.fullExportedNamePrefix
 
@@ -231,14 +164,15 @@ private fun StorageComponentContainer.initObjCServicesInContainer(config: Native
 
         override val ignoreInterfaceMethodCollisions: Boolean
             get() = config.configuration.getBoolean(BinaryOptions.objcExportIgnoreInterfaceMethodCollisions)
-    })
-}
-
-@OptIn(K1Deprecation::class)
-private fun ComponentProvider.postprocessComponents(context: NativeBackendPhaseContext) {
-    context.config.configuration.emitLazyObjcHeaderFile?.takeIf { it.isNotEmpty() }?.let {
-        this.get<ObjCExportLazy>().dumpObjCHeader(it, context.shouldExportKDoc())
     }
+
+    val objCExportLazy = ObjCExportLazyImpl(
+            languageVersionSettings = config.languageVersionSettings,
+            configuration = configuration,
+            problemCollector = problemsCollector,
+            builtIns = builtIns,
+    )
+    return objCExportLazy
 }
 
 private fun ObjCExportLazy.dumpObjCHeader(outputFile: String, shouldExportKDoc: Boolean) {
@@ -247,14 +181,4 @@ private fun ObjCExportLazy.dumpObjCHeader(outputFile: String, shouldExportKDoc: 
     }
 
     Path(outputFile).writeLines(lines)
-}
-
-@K1Deprecation
-object NativePlatformAnalyzerServices : PlatformDependentAnalyzerServices() {
-    override val platformConfigurator: PlatformConfigurator = NativePlatformConfigurator
-    override val defaultImportsProvider: DefaultImportsProvider = NativeDefaultImportsProvider
-
-    private object NativePlatformConfigurator : PlatformConfiguratorBase() {
-        override fun configureModuleComponents(container: StorageComponentContainer) {}
-    }
 }
