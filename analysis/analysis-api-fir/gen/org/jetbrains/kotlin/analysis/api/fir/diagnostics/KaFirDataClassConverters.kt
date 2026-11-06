@@ -2276,6 +2276,12 @@ private fun KaDiagnosticConverterBuilder.addConversions46() {
             token,
         )
     }
+    add(FirWebCommonErrors.JS_QUALIFIER_PROHIBITED_ON_NON_TOP_LEVEL.warningFactory) { firDiagnostic ->
+        JsQualifierProhibitedOnNonTopLevelWarningImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirErrors.REIFIED_TYPE_PARAMETER_ON_ALIAS.warningFactory) { firDiagnostic ->
         ReifiedTypeParameterOnAliasWarningImpl(
             firDiagnostic as KtDiagnosticWithSource,
@@ -3701,6 +3707,12 @@ private fun KaDiagnosticConverterBuilder.addConversions78() {
             token,
         )
     }
+    add(FirWebCommonErrors.JS_QUALIFIER_PROHIBITED_ON_NON_EXTERNAL.warningFactory) { firDiagnostic ->
+        JsQualifierProhibitedOnNonExternalWarningImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirErrors.NO_TAIL_CALLS_FOUND) { firDiagnostic ->
         NoTailCallsFoundImpl(
             firDiagnostic as KtDiagnosticWithSource,
@@ -3831,12 +3843,6 @@ private fun KaDiagnosticConverterBuilder.addConversions82() {
     }
     add(FirErrors.DEPRECATED_SINCE_KOTLIN_WITHOUT_ARGUMENTS) { firDiagnostic ->
         DeprecatedSinceKotlinWithoutArgumentsImpl(
-            firDiagnostic as KtDiagnosticWithSource,
-            token,
-        )
-    }
-    add(FirWebCommonErrors.JS_QUALIFIER_PROHIBITED_ON_NON_EXTERNAL) { firDiagnostic ->
-        JsQualifierProhibitedOnNonExternalImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -4443,12 +4449,6 @@ private fun KaDiagnosticConverterBuilder.addConversions94() {
     }
     add(FirErrors.IGNORABILITY_ANNOTATIONS_WITH_CHECKER_DISABLED) { firDiagnostic ->
         IgnorabilityAnnotationsWithCheckerDisabledImpl(
-            firDiagnostic as KtDiagnosticWithSource,
-            token,
-        )
-    }
-    add(FirWebCommonErrors.JS_QUALIFIER_PROHIBITED_ON_NON_TOP_LEVEL) { firDiagnostic ->
-        JsQualifierProhibitedOnNonTopLevelImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -5390,6 +5390,12 @@ private fun KaDiagnosticConverterBuilder.addConversions114() {
     add(FirErrors.INAPPLICABLE_ALL_TARGET) { firDiagnostic ->
         InapplicableAllTargetImpl(
             firDiagnostic.a,
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
+    add(FirWebCommonErrors.JS_QUALIFIER_PROHIBITED_ON_NON_TOP_LEVEL.errorFactory) { firDiagnostic ->
+        JsQualifierProhibitedOnNonTopLevelErrorImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -6640,6 +6646,12 @@ private fun KaDiagnosticConverterBuilder.addConversions137() {
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions138() {
+    add(FirWebCommonErrors.JS_QUALIFIER_PROHIBITED_ON_NON_EXTERNAL.errorFactory) { firDiagnostic ->
+        JsQualifierProhibitedOnNonExternalErrorImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirErrors.NAMED_CONTEXT_PARAMETER_IN_FUNCTION_TYPE) { firDiagnostic ->
         NamedContextParameterInFunctionTypeImpl(
             firDiagnostic as KtDiagnosticWithSource,

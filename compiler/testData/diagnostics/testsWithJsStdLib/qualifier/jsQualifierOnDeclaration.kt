@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LATEST_LV_DIFFERENCE
 // RENDER_DIAGNOSTICS_FULL_TEXT
 
 // FILE: topLevelExternal.kt
@@ -15,78 +16,78 @@ external var y: Int
 
 @JsQualifier("a")
 external class C {
-    <!JS_QUALIFIER_PROHIBITED_ON_NON_TOP_LEVEL!>@JsQualifier("b")<!>
+    <!JS_QUALIFIER_PROHIBITED_ON_NON_TOP_LEVEL_WARNING!>@JsQualifier("b")<!>
     fun member(): Int
 
-    <!JS_QUALIFIER_PROHIBITED_ON_NON_TOP_LEVEL!>@JsQualifier("b")<!>
+    <!JS_QUALIFIER_PROHIBITED_ON_NON_TOP_LEVEL_WARNING!>@JsQualifier("b")<!>
     val memberProperty: Int
 
-    <!JS_QUALIFIER_PROHIBITED_ON_NON_TOP_LEVEL!>@JsQualifier("b")<!>
+    <!JS_QUALIFIER_PROHIBITED_ON_NON_TOP_LEVEL_WARNING!>@JsQualifier("b")<!>
     class Nested
 
-    <!JS_QUALIFIER_PROHIBITED_ON_NON_TOP_LEVEL!>@JsQualifier("b")<!>
+    <!JS_QUALIFIER_PROHIBITED_ON_NON_TOP_LEVEL_WARNING!>@JsQualifier("b")<!>
     inner class <!WRONG_EXTERNAL_DECLARATION!>Inner<!>
 
-    <!JS_QUALIFIER_PROHIBITED_ON_NON_TOP_LEVEL!>@JsQualifier("b")<!>
+    <!JS_QUALIFIER_PROHIBITED_ON_NON_TOP_LEVEL_WARNING!>@JsQualifier("b")<!>
     interface NestedInterface
 
-    <!JS_QUALIFIER_PROHIBITED_ON_NON_TOP_LEVEL!>@JsQualifier("b")<!>
+    <!JS_QUALIFIER_PROHIBITED_ON_NON_TOP_LEVEL_WARNING!>@JsQualifier("b")<!>
     companion object {
-        <!JS_QUALIFIER_PROHIBITED_ON_NON_TOP_LEVEL!>@JsQualifier("c")<!>
+        <!JS_QUALIFIER_PROHIBITED_ON_NON_TOP_LEVEL_WARNING!>@JsQualifier("c")<!>
         fun companionMember(): Int
     }
 }
 
 @JsQualifier("a")
 external object O {
-    <!JS_QUALIFIER_PROHIBITED_ON_NON_TOP_LEVEL!>@JsQualifier("b")<!>
+    <!JS_QUALIFIER_PROHIBITED_ON_NON_TOP_LEVEL_WARNING!>@JsQualifier("b")<!>
     fun member(): Int
 
-    <!JS_QUALIFIER_PROHIBITED_ON_NON_TOP_LEVEL!>@JsQualifier("b")<!>
+    <!JS_QUALIFIER_PROHIBITED_ON_NON_TOP_LEVEL_WARNING!>@JsQualifier("b")<!>
     interface NestedInterface
 }
 
 @JsQualifier("a")
 external interface I {
-    <!JS_QUALIFIER_PROHIBITED_ON_NON_TOP_LEVEL!>@JsQualifier("b")<!>
+    <!JS_QUALIFIER_PROHIBITED_ON_NON_TOP_LEVEL_WARNING!>@JsQualifier("b")<!>
     fun member(): Int
 }
 
 // FILE: nonExternal.kt
 package nonExternal
 
-<!JS_QUALIFIER_PROHIBITED_ON_NON_EXTERNAL!>@JsQualifier("a")<!>
+<!JS_QUALIFIER_PROHIBITED_ON_NON_EXTERNAL_WARNING!>@JsQualifier("a")<!>
 fun f(): Int = 1
 
-<!JS_QUALIFIER_PROHIBITED_ON_NON_EXTERNAL!>@JsQualifier("a")<!>
+<!JS_QUALIFIER_PROHIBITED_ON_NON_EXTERNAL_WARNING!>@JsQualifier("a")<!>
 val x: Int = 1
 
-<!JS_QUALIFIER_PROHIBITED_ON_NON_EXTERNAL!>@JsQualifier("a")<!>
-class C(<!JS_QUALIFIER_PROHIBITED_ON_NON_EXTERNAL!>@property:JsQualifier("b")<!> val p: Int) {
-    <!JS_QUALIFIER_PROHIBITED_ON_NON_EXTERNAL!>@JsQualifier("b")<!>
+<!JS_QUALIFIER_PROHIBITED_ON_NON_EXTERNAL_WARNING!>@JsQualifier("a")<!>
+class C(<!JS_QUALIFIER_PROHIBITED_ON_NON_EXTERNAL_WARNING!>@property:JsQualifier("b")<!> val p: Int) {
+    <!JS_QUALIFIER_PROHIBITED_ON_NON_EXTERNAL_WARNING!>@JsQualifier("b")<!>
     fun member(): Int = 1
 
-    <!JS_QUALIFIER_PROHIBITED_ON_NON_EXTERNAL!>@JsQualifier("b")<!>
+    <!JS_QUALIFIER_PROHIBITED_ON_NON_EXTERNAL_WARNING!>@JsQualifier("b")<!>
     inner class Inner
 
-    <!JS_QUALIFIER_PROHIBITED_ON_NON_EXTERNAL!>@JsQualifier("b")<!>
+    <!JS_QUALIFIER_PROHIBITED_ON_NON_EXTERNAL_WARNING!>@JsQualifier("b")<!>
     interface NestedInterface
 }
 
-<!JS_QUALIFIER_PROHIBITED_ON_NON_EXTERNAL!>@JsQualifier("a")<!>
+<!JS_QUALIFIER_PROHIBITED_ON_NON_EXTERNAL_WARNING!>@JsQualifier("a")<!>
 object O
 
-<!JS_QUALIFIER_PROHIBITED_ON_NON_EXTERNAL!>@JsQualifier("a")<!>
+<!JS_QUALIFIER_PROHIBITED_ON_NON_EXTERNAL_WARNING!>@JsQualifier("a")<!>
 interface I {
-    <!JS_QUALIFIER_PROHIBITED_ON_NON_EXTERNAL!>@JsQualifier("b")<!>
+    <!JS_QUALIFIER_PROHIBITED_ON_NON_EXTERNAL_WARNING!>@JsQualifier("b")<!>
     interface NestedInterface
 }
 
 fun local() {
-    <!JS_QUALIFIER_PROHIBITED_ON_NON_EXTERNAL!>@JsQualifier("a")<!>
+    <!JS_QUALIFIER_PROHIBITED_ON_NON_EXTERNAL_WARNING!>@JsQualifier("a")<!>
     fun localFun(): Int = 1
 
-    <!JS_QUALIFIER_PROHIBITED_ON_NON_EXTERNAL!>@JsQualifier("a")<!>
+    <!JS_QUALIFIER_PROHIBITED_ON_NON_EXTERNAL_WARNING!>@JsQualifier("a")<!>
     class LocalClass
 }
 
@@ -106,14 +107,14 @@ external val x: Int
 external fun wrongQualifier(): Int
 
 external class C {
-    <!JS_QUALIFIER_PROHIBITED_ON_NON_TOP_LEVEL!>@JsQ("b")<!>
+    <!JS_QUALIFIER_PROHIBITED_ON_NON_TOP_LEVEL_WARNING!>@JsQ("b")<!>
     fun member(): Int
 }
 
-<!JS_QUALIFIER_PROHIBITED_ON_NON_EXTERNAL!>@JsQ("a")<!>
+<!JS_QUALIFIER_PROHIBITED_ON_NON_EXTERNAL_WARNING!>@JsQ("a")<!>
 fun nonExternal(): Int = 1
 
-<!JS_QUALIFIER_PROHIBITED_ON_NON_EXTERNAL!>@JsQ2("a")<!>
+<!JS_QUALIFIER_PROHIBITED_ON_NON_EXTERNAL_WARNING!>@JsQ2("a")<!>
 class NonExternal
 
 // FILE: typealiasOnFile.kt
