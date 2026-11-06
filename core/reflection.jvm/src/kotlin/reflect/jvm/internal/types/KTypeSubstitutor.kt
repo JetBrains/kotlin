@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.RigidTypeMarker
 import kotlin.reflect.*
 import kotlin.reflect.full.createTypeImpl
+import kotlin.reflect.jvm.internal.computeArrayClassifier
 import kotlin.reflect.jvm.internal.types.ReflectTypeSystemContext.isFlexible
 import kotlin.reflect.jvm.internal.types.ReflectTypeSystemContext.withNullability as withNullabilityFromTypeSystem
 
@@ -225,6 +226,10 @@ private fun KType.eraseToUpperBoundsAndMakeItRawRecursively(
     with(type as AbstractKType) {
         val arguments = arguments
         if (arguments.isEmpty()) return type
+        val klass = type.classifier
+        if (klass is KClass<*> && klass.java.isArray) {
+            return eraseArrayElementTypeRecursively(klass, seedTypeOfTheRecursionForDebug, replaceArgumentsWithStarProjections)
+        }
         val parameters = with(ReflectTypeSystemContext) {
             val classifier = type.typeConstructor()
             List(classifier.parametersCount()) { classifier.getParameter(it) as KTypeParameter }
@@ -262,6 +267,37 @@ private fun KType.eraseToUpperBoundsAndMakeItRawRecursively(
             computeJavaType = if (isRawType) (classifier as? KClass<*>)?.let { lazyOf(it.java) } else null,
         )
     }
+}
+
+/**
+ * Arrays are never converted to raw types, as there's no "raw array" in Java. But its element type is erased recursively.
+ *
+ * The respective places in the compiler:
+ * - K1: RawSubstitution.eraseInflexibleBasedOnClassDescriptor
+ * - K2: ConeRawScopeSubstitutor.substituteType
+ */
+private fun AbstractKType.eraseArrayElementTypeRecursively(
+    arrayClass: KClass<*>, seedTypeOfTheRecursionForDebug: KType, replaceArgumentsWithStarProjections: Boolean,
+): KType {
+    val lowerBound = lowerBoundIfFlexible()
+    val upperBound = upperBoundIfFlexible()
+    if (lowerBound != null && upperBound != null) {
+        return createPlatformKType(
+            lowerBound.eraseToUpperBoundsAndMakeItRawRecursively(seedTypeOfTheRecursionForDebug, replaceArgumentsWithStarProjections),
+            upperBound.eraseToUpperBoundsAndMakeItRawRecursively(seedTypeOfTheRecursionForDebug, replaceArgumentsWithStarProjections),
+            isRawType = false,
+        )
+    }
+
+    val argument = arguments.single()
+    val newArgument = if (argument == KTypeProjection.STAR) argument else KTypeProjection(
+        argument.variance,
+        argument.type!!.eraseToUpperBoundsAndMakeItRawRecursively(seedTypeOfTheRecursionForDebug, replaceArgumentsWithStarProjections),
+    )
+    val newArguments = listOf(newArgument)
+    return arrayClass.createTypeImpl(
+        newArguments, isMarkedNullable, computeJavaType = lazyOf(computeArrayClassifier(newArguments).java),
+    )
 }
 
 /**

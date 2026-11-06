@@ -30,7 +30,6 @@ import kotlin.reflect.jvm.internal.types.AbstractKType
 import kotlin.reflect.jvm.internal.types.FlexibleKType
 import kotlin.reflect.jvm.internal.types.MutableCollectionKClass
 import kotlin.reflect.jvm.internal.types.SimpleKType
-import kotlin.reflect.jvm.jvmErasure
 
 internal fun ClassName.toClassId(): ClassId {
     val isLocal = startsWith(".")
@@ -211,7 +210,7 @@ private fun KmClassifier.toClassifier(
 ): KClassifier = when (this) {
     is KmClassifier.Class ->
         if (name == "kotlin/Array")
-            (typeArguments.single().type ?: StandardKTypes.ANY).jvmErasure.java.createArrayType().kotlin
+            computeArrayClassifier(typeArguments)
         else
             classLoader.loadKClass(name, forceWrapperClass)
                 ?: throw KotlinReflectionInternalError("Class not found: $name")
