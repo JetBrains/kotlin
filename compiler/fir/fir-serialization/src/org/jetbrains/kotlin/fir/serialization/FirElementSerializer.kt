@@ -1005,7 +1005,7 @@ class FirElementSerializer private constructor(
         // Note that in case of an `expect typealias`, the second expansion will
         // erase `AbbreviatedTypeAttribute` of `type`.
         // In case of a union type, we do have a separate attribute, so we proceed.
-        if (abbreviation != mainType && (type is ConeUnionType || !mainTypeProto.hasAbbreviatedType()) && !abbreviation.containsCapturedTypes) {
+        if (abbreviation != mainType && (mainType is ConeUnionType || !mainTypeProto.hasAbbreviatedType()) && !abbreviation.containsCapturedTypes) {
             val abbreviationProto = typeOrTypealiasProto(
                 abbreviation, toSuper, correspondingTypeRef, isDefinitelyNotNullType,
                 abbreviationOnly = false,
