@@ -14,7 +14,6 @@ dependencies {
     implementation(project(":compiler:psi:psi-frontend-utils"))
     implementation(project(":compiler:frontend.java"))
     implementation(project(":compiler:config.jvm"))
-    implementation(project(":compiler:resolution"))
     implementation(project(":core:descriptors"))
     implementation(project(":core:descriptors.jvm"))
     implementation(project(":core:deserialization"))
