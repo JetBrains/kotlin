@@ -7,6 +7,9 @@ package org.jetbrains.kotlin.maven
 
 import org.jetbrains.kotlin.maven.test.*
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.condition.DisabledOnOs
+import org.junit.jupiter.api.condition.OS
+import kotlin.io.path.createSymbolicLinkPointingTo
 
 @DisplayName("Basic compilation")
 class BasicCompilationIT : KotlinMavenTestBase() {
@@ -145,6 +148,42 @@ class BasicCompilationIT : KotlinMavenTestBase() {
                     kotlinVersion,
                     scope = "test"
                 )
+            }
+        }
+    }
+
+    @MavenTest
+    @DisabledOnOs(OS.WINDOWS, disabledReason = "Windows requires SeSymbolicLink privilege and we can't grant it")
+    @DisplayName("KT-91305: Sources in a symlinked source directory are compiled")
+    fun testSymlinkedSourceDir(mavenVersion: TestVersions.Maven) {
+        testProject("test-symlinked-source-dir", mavenVersion) {
+            workDir.resolve("link").createSymbolicLinkPointingTo(workDir.resolve("symlink-target"))
+            build(
+                "compile",
+                expectedToFail = false
+            ) {
+                assertFileExists("target/classes/test/Main.class")
+                assertFileExists("target/classes/test/Linked.class") {
+                    "Kotlin sources in the symlinked source directory 'link' were not compiled"
+                }
+            }
+        }
+    }
+
+    @MavenTest
+    @DisabledOnOs(OS.WINDOWS, disabledReason = "Windows requires SeSymbolicLink privilege and we can't grant it")
+    @DisplayName("KT-91305: Sources in a symlinked directory inside a source directory are compiled")
+    fun testSymlinkedDirectoryInsideSourceDir(mavenVersion: TestVersions.Maven) {
+        testProject("test-symlinked-source-dir", mavenVersion) {
+            workDir.resolve("src/main/kotlin/test/nested").createSymbolicLinkPointingTo(workDir.resolve("nested-symlink-target"))
+            build(
+                "compile",
+                expectedToFail = false
+            ) {
+                assertFileExists("target/classes/test/Main.class")
+                assertFileExists("target/classes/test/nested/Nested.class") {
+                    "Kotlin sources in the symlinked directory 'src/main/kotlin/test/nested' were not compiled"
+                }
             }
         }
     }
