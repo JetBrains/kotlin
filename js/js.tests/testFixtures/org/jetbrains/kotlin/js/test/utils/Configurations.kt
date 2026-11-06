@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.js.test.utils
 import org.jetbrains.kotlin.js.config.TsCompilationStrategy
 import org.jetbrains.kotlin.js.test.JsSteppingTestAdditionalSourceProvider
 import org.jetbrains.kotlin.js.test.handlers.JsDebugRunner
+import org.jetbrains.kotlin.js.test.handlers.JsLocalVariableDebugRunner
 import org.jetbrains.kotlin.js.test.handlers.JsDtsHandler
 import org.jetbrains.kotlin.js.test.handlers.JsExportSourcePreprocessor
 import org.jetbrains.kotlin.js.test.handlers.JsSourceMapValidator
@@ -39,6 +40,19 @@ fun TestConfigurationBuilder.configureSteppingTests() {
     jsArtifactsHandlersStep {
         useHandlers(
             ::JsDebugRunner,
+            ::JsSourceMapValidator,
+        )
+    }
+}
+
+fun TestConfigurationBuilder.configureLocalVariablesTests() {
+    defaultDirectives {
+        +JsEnvironmentConfigurationDirectives.NO_COMMON_FILES
+    }
+    useAdditionalSourceProviders(::JsSteppingTestAdditionalSourceProvider)
+    jsArtifactsHandlersStep {
+        useHandlers(
+            ::JsLocalVariableDebugRunner,
             ::JsSourceMapValidator,
         )
     }

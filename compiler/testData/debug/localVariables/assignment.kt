@@ -21,8 +21,8 @@ fun box(): String {
 
 // EXPECTATIONS JS_IR
 // test.kt:8 box:
-// test.kt:11 box: o="O":kotlin.String
-// test.kt:13 box: o="O":kotlin.String, k="K":kotlin.String
+// test.kt:11 box: o:kotlin.String="O":kotlin.String
+// test.kt:13 box: o:kotlin.String="O":kotlin.String, k:kotlin.String="K":kotlin.String
 
 // EXPECTATIONS WASM
 // test.kt:8 $box: $o:(ref null $kotlin.String)=null, $k:(ref null $kotlin.String)=null (8, 8, 8, 8)

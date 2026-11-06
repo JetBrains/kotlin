@@ -252,6 +252,10 @@ fun main(args: Array<String>) {
             testClass<AbstractJsSteppingSplitTest> {
                 model("stepping")
             }
+
+            testClass<AbstractJsLocalVariableTest> {
+                model("localVariables")
+            }
         }
 
         testGroup(testsRoot, "compiler/testData/diagnostics", testRunnerMethodName = "runTest0") {
