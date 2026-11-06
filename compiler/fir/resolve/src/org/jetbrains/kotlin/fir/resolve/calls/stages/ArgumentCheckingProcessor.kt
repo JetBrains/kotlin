@@ -349,7 +349,7 @@ internal object ArgumentCheckingProcessor {
                 val nullableExpectedType = expectedType.withNullability(nullable = true, session.typeContext)
 
                 if (csBuilder.addSubtypeConstraintIfCompatible(
-                        argumentType.fullyExpandedType().applyIf(argumentType is ConeUnionType) { argumentType.primaryType },
+                        argumentType.fullyExpandedType().let { if (it is ConeUnionType) it.primaryType else it },
                         nullableExpectedType,
                         position,
                     )
