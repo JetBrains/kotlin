@@ -11,7 +11,6 @@ import kotlin.test.assertTrue
 value class DataValue(val x: Int)
 
 @JvmInline
-@EqualsAndHashCode
 value class EqualsAndHashCodeValue(val x: Int)
 
 @JvmInline

@@ -3,14 +3,14 @@
 
 import lombok.*
 
-// Kotlin reserves `equals`/`hashCode` in a value class, so neither annotation implying them should generate anything,
-// and they should be reported like `@NoArgsConstructor` is (`ANNOTATION_IS_NOT_SUPPORTED_ON_CLASS`).
+// Kotlin reserves `equals`/`hashCode` in a value class, so neither annotation implying them should generate anything;
+// however we shouldn't report anything on @Data, as e.g. toString can be generated.
 @JvmInline
 @Data
 value class DataValue(val x: Int)
 
 @JvmInline
-@EqualsAndHashCode
+<!ANNOTATION_IS_NOT_SUPPORTED_ON_CLASS!>@EqualsAndHashCode<!>
 value class EqualsAndHashCodeValue(val x: Int)
 
 // `toString` is allowed in a value class.
