@@ -163,6 +163,9 @@ internal class GranularMetadataTransformation(
         val computeTransformedLibraryChecksum: Boolean,
 
         @get:Input
+        val computeTransformedLibraryVersionChecksum: Boolean,
+
+        @get:Input
         val kmpResolutionStrategy: KmpResolutionStrategy,
 
         @get:Input
@@ -188,6 +191,7 @@ internal class GranularMetadataTransformation(
             transformProjectDependenciesWithSourceSetMetadataOutputs = transformProjectDependenciesWithSourceSetMetadataOutputs,
             uklibFragmentAttributes = kotlinSourceSet.metadataFragmentAttributes.map { it.convertToStringForConsumption() }.toSet(),
             computeTransformedLibraryChecksum = project.kotlinPropertiesProvider.computeTransformedLibraryChecksum,
+            computeTransformedLibraryVersionChecksum = project.kotlinPropertiesProvider.computeTransformedLibraryVersionChecksum,
             kmpResolutionStrategy = project.kotlinPropertiesProvider.kmpResolutionStrategy,
             allowMatchingByRequestedCoordinates = project.kotlinPropertiesProvider.allowMatchingByRequestedCoordinatesInGMDT.get(),
             cache = project.kotlinGradleTaskExecutionCache
@@ -374,6 +378,7 @@ internal class GranularMetadataTransformation(
                     ),
                     uklibDependency.module.fragments.toList(),
                     params.computeTransformedLibraryChecksum,
+                    params.computeTransformedLibraryVersionChecksum,
                 )
             )
         }
@@ -503,6 +508,7 @@ internal class GranularMetadataTransformation(
                     primaryArtifactFile = compositeMetadataArtifact.file,
                     hostSpecificArtifactFilesBySourceSetName = hostSpecificMetadataArtifactBySourceSet,
                     computeChecksum = params.computeTransformedLibraryChecksum,
+                    computeVersionChecksum = params.computeTransformedLibraryVersionChecksum,
                     archiveRelativePath = if (isKotlinArchive) KarLayout.METADATA_DIRECTORY_NAME else null,
                 )
             )
