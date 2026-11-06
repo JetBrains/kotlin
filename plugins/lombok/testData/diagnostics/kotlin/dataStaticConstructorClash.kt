@@ -45,13 +45,13 @@ class DataWithVararg(vararg val items: String) {
 }
 
 // An object has no constructor to call, so nothing is generated and no warning is expected.
-<!STATIC_CONSTRUCTOR_ALREADY_EXISTS!>@Data(staticConstructor = "of")<!>
+@Data(staticConstructor = "of")
 object DataObject {
     fun of() {}
 }
 
 class WithDataCompanion {
-    <!STATIC_CONSTRUCTOR_ALREADY_EXISTS!>@Data(staticConstructor = "of")<!>
+    @Data(staticConstructor = "of")
     companion object {
         fun of() {}
     }
