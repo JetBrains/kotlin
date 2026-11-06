@@ -4234,6 +4234,24 @@ public class SourceStubsTestGenerated extends AbstractSourceStubsTest {
     }
 
     @Test
+    @TestMetadata("localClassFollowedByCallNamedLikeModifier.kt")
+    public void testLocalClassFollowedByCallNamedLikeModifier() {
+      run("localClassFollowedByCallNamedLikeModifier.kt");
+    }
+
+    @Test
+    @TestMetadata("localClassFollowedByCallNamedLikeModifierScript.kts")
+    public void testLocalClassFollowedByCallNamedLikeModifierScript() {
+      run("localClassFollowedByCallNamedLikeModifierScript.kts");
+    }
+
+    @Test
+    @TestMetadata("localClassFollowedByCallNamedLikeModifierWithErrors.kt")
+    public void testLocalClassFollowedByCallNamedLikeModifierWithErrors() {
+      run("localClassFollowedByCallNamedLikeModifierWithErrors.kt");
+    }
+
+    @Test
     @TestMetadata("nestedClassAmbiguity.kt")
     public void testNestedClassAmbiguity() {
       run("nestedClassAmbiguity.kt");
