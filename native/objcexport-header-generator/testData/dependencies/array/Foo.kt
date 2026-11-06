@@ -1,1 +1,1 @@
-val a: Array<Int>
+val a: Array<Int> = error("stub")

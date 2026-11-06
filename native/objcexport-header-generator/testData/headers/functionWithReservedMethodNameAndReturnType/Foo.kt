@@ -1,18 +1,11 @@
-import java.lang.Class
-
 class Foo {
-    fun superclass(): Foo {
-    }
+    fun superclass(): Foo = error("stub")
 
-    fun `class`(): Foo {
-    }
+    fun `class`(): Foo = error("stub")
 
-    fun autorelease(): Foo {
-    }
+    fun autorelease(): Foo = error("stub")
 
-    fun release(): Foo {
-    }
+    fun release(): Foo = error("stub")
 
-    fun retain(): Foo {
-    }
+    fun retain(): Foo = error("stub")
 }

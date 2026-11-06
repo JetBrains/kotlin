@@ -1,3 +1,5 @@
+import kotlin.experimental.ExperimentalObjCName
+
 class Foo2 {
     companion object {
         const val constant = 42

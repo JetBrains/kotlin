@@ -1,7 +1,7 @@
+@file:OptIn(ExperimentalObjCEnum::class)
+
 import kotlin.native.ObjCEnum
 import kotlin.experimental.ExperimentalObjCEnum
-
-@file:OptIn(ExperimentalObjCEnum::class)
 
 @ObjCEnum(name = "Foo") enum class A {
     BAR_BAZ
