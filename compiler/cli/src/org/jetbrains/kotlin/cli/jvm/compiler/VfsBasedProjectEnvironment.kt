@@ -16,6 +16,7 @@ import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.ProjectScope
 import com.intellij.util.io.URLUtil.JAR_SEPARATOR
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
@@ -90,6 +91,7 @@ open class VfsBasedProjectEnvironment(
     open fun updateClasspath(classpath: List<File>) {}
 
     /** Search scope for the PSI Java view; K2 Kotlin lookups use [JvmClasspath] directly. */
+    @K1Deprecation
     fun psiSearchScope(classpath: JvmClasspath): GlobalSearchScope = when (classpath) {
         is JvmClasspath.Roots -> classPathScope(classpath.roots)
         is JvmClasspath.ProjectLibraries -> {
@@ -196,6 +198,7 @@ open class VfsBasedProjectEnvironment(
 fun VfsBasedProjectEnvironment.psiJavaInterop(
     withJavaSources: Boolean = true,
 ): FirJavaInterop = object : FirJavaInterop {
+    @OptIn(K1Deprecation::class)
     override fun createBinaryJavaFacade(
         session: FirSession,
         moduleData: FirModuleData,

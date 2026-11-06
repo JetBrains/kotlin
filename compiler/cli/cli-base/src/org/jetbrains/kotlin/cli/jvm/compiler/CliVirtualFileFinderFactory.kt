@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.util.PerformanceManager
 
-// TODO: create different JvmDependenciesIndex instances for different sets of source roots to improve performance
+// TODO(KT-90203): create different JvmDependenciesIndex instances for different sets of source roots to improve performance
 class CliVirtualFileFinderFactory(
     val index: JvmDependenciesIndex,
     val enableSearchInCtSym: Boolean,

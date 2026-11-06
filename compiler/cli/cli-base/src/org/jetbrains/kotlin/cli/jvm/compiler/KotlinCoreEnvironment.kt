@@ -328,6 +328,7 @@ class KotlinCoreEnvironment private constructor(
     }
 
     /** Scope-based factory for the K1 analysis entry points only; K2 code uses the [JvmClasspath] overload. */
+    @K1Deprecation
     fun createPackagePartProvider(scope: GlobalSearchScope): JvmPackagePartProvider {
         return JvmPackagePartProvider(configuration.languageVersionSettings) { it in scope }.apply {
             addRoots(initialRoots, configuration)

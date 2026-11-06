@@ -19,6 +19,7 @@ import com.intellij.openapi.vfs.impl.ZipHandler
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import com.intellij.util.io.URLUtil.JAR_SEPARATOR
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
@@ -108,13 +109,14 @@ class IncrementalCompilationCustomScopeTest {
     }
 
     @Test
+    @OptIn(K1Deprecation::class)
     fun testTheInMemoryRootRestrictsTheLookupToItself(@TempDir tempDir: File) {
         val outputFileSystem = InMemoryOutputFileSystem()
         val previousOutputClass = outputFileSystem.addFile("p/Ref.class")
         val localOutputClass = localClassFile(tempDir)
         val [_, context] = prepareClasspaths(tempDir, ComponentsWithCustomScope(outputFileSystem.root))
 
-        val classpath = context!!.precompiledBinaries!!
+        val classpath = requireNotNull(context?.precompiledBinaries)
         val scope = projectEnvironment.psiSearchScope(classpath)
         assertTrue(scope.contains(previousOutputClass), "the class file of the previous build lies under the root the components named")
         assertFalse(
