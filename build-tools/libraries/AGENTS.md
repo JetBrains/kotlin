@@ -27,7 +27,8 @@ Allowed:
 - BTA: `api(project(":compiler:build-tools:kotlin-build-tools-api"))`. The only way to reach the compiler.
 - Other Kotlin Build Tools libraries, with no cycles.
 - Kotlin libraries such as kotlinx-coroutines, kotlinx-serialization and Ktor, at the versions in
-  the version catalog (`libs`).
+  the version catalog (`libs`), but only in an implementation module (see
+  [API and implementation split](#api-and-implementation-split)).
 
 Never:
 - Gradle (`gradleApi()`, `gradleKotlinDsl()`, `org.gradle:*`) or any `kotlin-gradle-plugin*` project.
@@ -35,10 +36,13 @@ Never:
   back to KGP instead.
 - Compiler internals, Maven, JPS or IDE APIs.
 
-Every dependency ships with every integration, and Bazel rules have to vendor it. Inside Gradle,
-another plugin may already have loaded coroutines or serialization at a different version. So when
-an implementation needs third-party dependencies, split API from implementation (see below) and
-mention the new dependency in the commit message.
+Every dependency ships with every integration, and Bazel rules have to vendor it. KGP must not add
+third-party libraries to the buildscript classpath: another plugin may already have loaded
+coroutines or serialization at a different version, and relocating them into the KGP jar still
+loads them in the plugin class loader. The BTA API is already on that classpath through
+`kotlin-gradle-plugin-api`, so it costs nothing. So when an implementation needs anything beyond
+stdlib and the BTA API, split API from implementation and mention the new dependency in the
+commit message.
 
 ## Adding a library
 
@@ -133,7 +137,10 @@ tests is incomplete. The only exception is a module that holds nothing but decla
    in separate commits.
 3. In KGP, depend on the library from the source set that uses it, usually
    `commonImplementation(project(":build-tools:libraries:<tool>"))` in
-   `libraries/tools/kotlin-gradle-plugin/build.gradle.kts`.
+   `libraries/tools/kotlin-gradle-plugin/build.gradle.kts`. This is allowed only when the library's
+   runtime dependencies are stdlib, the BTA API and other libraries that meet the same condition.
+   Otherwise depend on `<tool>-api` only and load `<tool>` in an isolated worker (see
+   [Loading an implementation in KGP](#loading-an-implementation-in-kgp)).
 4. Add the library to `kotlinGradlePluginAndItsRequired` in
    `repo/gradle-build-conventions/buildsrc-compat/src/main/kotlin/tasks.kt`, so KGP integration tests install it.
 5. Keep the KGP functional and integration tests that cover the Gradle wiring, and run them
@@ -141,11 +148,30 @@ tests is incomplete. The only exception is a module that holds nothing but decla
 
 ## API and implementation split
 
-A library is a single module by default. Split it when the implementation has third-party
-dependencies or must be loaded in an isolated class loader: the API module
+A library is a single module by default. Split it when the implementation has dependencies beyond
+stdlib and the BTA API, or must be loaded in an isolated class loader: the API module
 (`build-tools/libraries/<tool>-api/`, project `:build-tools:libraries:<tool>-api`, artifact `build-tools-<tool>-api`)
 holds interfaces, data classes and a loader entry point and has no third-party dependencies; the
 implementation stays in `<tool>/` and depends on it. Both apply the convention plugin.
+
+## Loading an implementation in KGP
+
+KGP never declares an implementation module with third-party dependencies as its own dependency,
+neither `commonImplementation` nor `embedded`. Instead:
+
+1. KGP depends on `<tool>-api` only, if it needs the API types outside the worker at all.
+2. KGP creates a resolvable configuration for `org.jetbrains.kotlin:build-tools-<tool>` at the
+   plugin version, the way it resolves `kotlin-build-tools-impl` for
+   `BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME` in `KotlinPluginWrapper.kt`.
+3. The task takes that configuration as a `@Classpath` input and runs the work with
+   `workerExecutor.classLoaderIsolation { classpath.from(...) }`, or `processIsolation` when it
+   needs its own JVM. `CheckSigningTask` loads Bouncy Castle this way.
+4. Work parameters use plain types (strings, files, primitives), so no class from the
+   implementation leaks into the plugin class loader.
+
+KGP's expected POM (`repo/artifacts-tests/src/test/resources/org/jetbrains/kotlin/kotlin-gradle-plugin/kotlin-gradle-plugin.pom`)
+lists everything KGP puts on the buildscript classpath. A new library or third-party artifact in
+its diff needs a reason.
 
 ## Commits
 
