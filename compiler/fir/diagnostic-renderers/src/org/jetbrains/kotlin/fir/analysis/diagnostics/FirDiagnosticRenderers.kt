@@ -435,6 +435,7 @@ object FirDiagnosticRenderers {
     val CANDIDATES_WITH_DIAGNOSTIC_MESSAGES = Renderer { list: Collection<Pair<FirBasedSymbol<*>, List<String>>> ->
         buildString {
             for ([symbol, diagnostics] in list) {
+                if (diagnostics.isEmpty()) continue
                 append(SYMBOL_WITH_LOCATION.render(symbol))
                 appendLine()
 
@@ -450,6 +451,12 @@ object FirDiagnosticRenderers {
                         }
                     }
                 }
+            }
+
+            val candidatesWithoutDiagnostics = list.mapNotNull { if (it.second.isEmpty()) it.first else null }
+
+            if (candidatesWithoutDiagnostics.isNotEmpty()) {
+                append(SYMBOLS_ON_NEXT_LINES.render(candidatesWithoutDiagnostics))
             }
         }.trim()
     }

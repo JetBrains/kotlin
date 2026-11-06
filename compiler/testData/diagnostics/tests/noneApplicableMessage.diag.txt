@@ -2,41 +2,23 @@
 In package 'kotlin.io' of module '<regular dependencies of main>':
  |
  | fun println(message: Any?): Unit
- |
-In package 'kotlin.io' of module '<regular dependencies of main>':
- |
+ | ...
  | fun println(message: Int): Unit
- |
-In package 'kotlin.io' of module '<regular dependencies of main>':
- |
+ | ...
  | fun println(message: Long): Unit
- |
-In package 'kotlin.io' of module '<regular dependencies of main>':
- |
+ | ...
  | fun println(message: Byte): Unit
- |
-In package 'kotlin.io' of module '<regular dependencies of main>':
- |
+ | ...
  | fun println(message: Short): Unit
- |
-In package 'kotlin.io' of module '<regular dependencies of main>':
- |
+ | ...
  | fun println(message: Char): Unit
- |
-In package 'kotlin.io' of module '<regular dependencies of main>':
- |
+ | ...
  | fun println(message: Boolean): Unit
- |
-In package 'kotlin.io' of module '<regular dependencies of main>':
- |
+ | ...
  | fun println(message: Float): Unit
- |
-In package 'kotlin.io' of module '<regular dependencies of main>':
- |
+ | ...
  | fun println(message: Double): Unit
- |
-In package 'kotlin.io' of module '<regular dependencies of main>':
- |
+ | ...
  | fun println(message: CharArray): Unit
  |
 
