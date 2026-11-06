@@ -3,10 +3,13 @@ FILE[kind=Script[packageFqName=<root>]]
   IMPORT_LIST
   SCRIPT[fqName=LocalClassFollowedByCallNamedLikeModifierScript, fqName=LocalClassFollowedByCallNamedLikeModifierScript, name=LocalClassFollowedByCallNamedLikeModifierScript]
     CLASS[classId=/TopLevel, fqName=LocalClassFollowedByCallNamedLikeModifierScript.TopLevel, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=TopLevel, superNames=[]]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=TopLevel]
-        MODIFIER_LIST[error]
-        VALUE_PARAMETER_LIST
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+    SCRIPT_INITIALIZER
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=error]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            STRING_TEMPLATE
+              LITERAL_STRING_TEMPLATE_ENTRY[text=boom]
     CLASS[classId=/TopLevelWithConstructorOnNextLine, fqName=LocalClassFollowedByCallNamedLikeModifierScript.TopLevelWithConstructorOnNextLine, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=TopLevelWithConstructorOnNextLine, superNames=[]]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=TopLevelWithConstructorOnNextLine]
         MODIFIER_LIST[private]
@@ -14,19 +17,11 @@ FILE[kind=Script[packageFqName=<root>]]
     FUNCTION[fqName=LocalClassFollowedByCallNamedLikeModifierScript.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
       VALUE_PARAMETER_LIST
       CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Local, superNames=[]]
-        PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Local]
-          MODIFIER_LIST[error]
-          VALUE_PARAMETER_LIST
-            VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
     SCRIPT_INITIALIZER
       CALL_EXPRESSION
         REFERENCE_EXPRESSION[referencedName=run]
         LAMBDA_ARGUMENT[isSpread=false]
           CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=LocalInLambda, superNames=[]]
-            PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=LocalInLambda]
-              MODIFIER_LIST[error]
-              VALUE_PARAMETER_LIST
-                VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
     CLASS[classId=/Outer, fqName=LocalClassFollowedByCallNamedLikeModifierScript.Outer, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Outer, superNames=[]]
       CLASS_BODY
         CLASS[classId=/Outer.Nested, fqName=LocalClassFollowedByCallNamedLikeModifierScript.Outer.Nested, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Nested, superNames=[]]

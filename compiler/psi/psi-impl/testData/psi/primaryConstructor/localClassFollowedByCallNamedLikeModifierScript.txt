@@ -13,23 +13,20 @@ KtFile: localClassFollowedByCallNamedLikeModifierScript.kts
         PsiElement(class)('class')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('TopLevel')
-        PsiWhiteSpace('\n')
-        PRIMARY_CONSTRUCTOR
-          MODIFIER_LIST
-            PsiElement(error)('error')
-          VALUE_PARAMETER_LIST
+      PsiWhiteSpace('\n')
+      SCRIPT_INITIALIZER
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('error')
+          VALUE_ARGUMENT_LIST
             PsiElement(LPAR)('(')
-            VALUE_PARAMETER
-              PsiErrorElement:Parameter name expected
+            VALUE_ARGUMENT
+              STRING_TEMPLATE
                 PsiElement(OPEN_QUOTE)('"')
-              PsiErrorElement:Parameters must have type annotation
-                PsiElement(REGULAR_STRING_PART)('boom')
-            PsiErrorElement:Expecting comma or ')'
-              <empty list>
-            PsiErrorElement:Expecting ')'
-              PsiElement(CLOSING_QUOTE)('"')
-      PsiErrorElement:Expecting an element
-        PsiElement(RPAR)(')')
+                LITERAL_STRING_TEMPLATE_ENTRY
+                  PsiElement(REGULAR_STRING_PART)('boom')
+                PsiElement(CLOSING_QUOTE)('"')
+            PsiElement(RPAR)(')')
       PsiWhiteSpace('\n\n')
       CLASS
         PsiElement(class)('class')
@@ -60,23 +57,19 @@ KtFile: localClassFollowedByCallNamedLikeModifierScript.kts
             PsiElement(class)('class')
             PsiWhiteSpace(' ')
             PsiElement(IDENTIFIER)('Local')
-            PsiWhiteSpace('\n    ')
-            PRIMARY_CONSTRUCTOR
-              MODIFIER_LIST
-                PsiElement(error)('error')
-              VALUE_PARAMETER_LIST
-                PsiElement(LPAR)('(')
-                VALUE_PARAMETER
-                  PsiErrorElement:Parameter name expected
-                    PsiElement(OPEN_QUOTE)('"')
-                  PsiErrorElement:Parameters must have type annotation
+          PsiWhiteSpace('\n    ')
+          CALL_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('error')
+            VALUE_ARGUMENT_LIST
+              PsiElement(LPAR)('(')
+              VALUE_ARGUMENT
+                STRING_TEMPLATE
+                  PsiElement(OPEN_QUOTE)('"')
+                  LITERAL_STRING_TEMPLATE_ENTRY
                     PsiElement(REGULAR_STRING_PART)('boom')
-                PsiErrorElement:Expecting comma or ')'
-                  <empty list>
-                PsiErrorElement:Expecting ')'
                   PsiElement(CLOSING_QUOTE)('"')
-          PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
-            PsiElement(RPAR)(')')
+              PsiElement(RPAR)(')')
           PsiWhiteSpace('\n')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n')
@@ -95,23 +88,19 @@ KtFile: localClassFollowedByCallNamedLikeModifierScript.kts
                     PsiElement(class)('class')
                     PsiWhiteSpace(' ')
                     PsiElement(IDENTIFIER)('LocalInLambda')
-                    PsiWhiteSpace('\n    ')
-                    PRIMARY_CONSTRUCTOR
-                      MODIFIER_LIST
-                        PsiElement(error)('error')
-                      VALUE_PARAMETER_LIST
-                        PsiElement(LPAR)('(')
-                        VALUE_PARAMETER
-                          PsiErrorElement:Parameter name expected
-                            PsiElement(OPEN_QUOTE)('"')
-                          PsiErrorElement:Parameters must have type annotation
+                  PsiWhiteSpace('\n    ')
+                  CALL_EXPRESSION
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('error')
+                    VALUE_ARGUMENT_LIST
+                      PsiElement(LPAR)('(')
+                      VALUE_ARGUMENT
+                        STRING_TEMPLATE
+                          PsiElement(OPEN_QUOTE)('"')
+                          LITERAL_STRING_TEMPLATE_ENTRY
                             PsiElement(REGULAR_STRING_PART)('boom')
-                        PsiErrorElement:Expecting comma or ')'
-                          <empty list>
-                        PsiErrorElement:Expecting ')'
                           PsiElement(CLOSING_QUOTE)('"')
-                  PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
-                    PsiElement(RPAR)(')')
+                      PsiElement(RPAR)(')')
                 PsiWhiteSpace('\n')
                 PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n')

@@ -1866,7 +1866,11 @@ internal open class KotlinExpressionParsing(
     fun parseObjectLiteral() {
         val literal = mark()
         val declaration = mark()
-        kotlinParsing.parseObject(KotlinParsing.NameParsingMode.PROHIBITED, false) // Body is not optional because of foo(object : A, B)
+        // Body is not optional because of foo(object : A, B).
+        // Object expressions keep the regular parsing of primary constructor modifiers on the next line.
+        kotlinParsing.parseObject(
+            KotlinParsing.NameParsingMode.PROHIBITED, optionalBody = false, KotlinParsing.DeclarationParsingMode.MEMBER_OR_TOPLEVEL
+        )
         declaration.done(KtNodeTypes.OBJECT_DECLARATION)
         literal.done(KtNodeTypes.OBJECT_LITERAL)
     }

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: CODEGEN
 // WITH_STDLIB
 // ISSUE: KT-90782
 
@@ -14,17 +14,17 @@ fun context(s: String) {}
 
 fun localClass(): Int {
     class C
-    <!WRONG_MODIFIER_TARGET!>error<!>(<!SYNTAX!>"<!><!SYNTAX!>boom<!><!SYNTAX!><!SYNTAX!><!>"<!><!SYNTAX!>)<!>
+    error("boom")
 }
 
 fun localGenericClass(): Int {
     class C<T>
-    <!WRONG_MODIFIER_TARGET!>inline<!>(<!SYNTAX!>"<!><!SYNTAX!>boom<!><!SYNTAX!><!SYNTAX!><!>"<!><!SYNTAX!>)<!>
+    inline("boom")
 }
 
 fun localAbstractClass() {
     abstract class C
-    <!MISSING_CONSTRUCTOR_KEYWORD, WRONG_MODIFIER_TARGET!>value<!><!SYNTAX!><!> {}
+    value {}
 }
 
 fun localDataClassWithParameters() {
@@ -39,13 +39,13 @@ fun localClassFollowedByCallNamedContext() {
 
 fun localClassFollowedByCallWithArgumentsAndTrailingLambda() {
     class C
-    private(<!SYNTAX!>"<!><!SYNTAX!>boom<!><!SYNTAX!><!SYNTAX!><!>"<!><!SYNTAX!>)<!> {}
+    private("boom") {}
 }
 
 fun localClassInLambda() {
     run {
         class C
-        <!WRONG_MODIFIER_TARGET!>inline<!>(<!SYNTAX!>"<!><!SYNTAX!>boom<!><!SYNTAX!><!SYNTAX!><!>"<!><!SYNTAX!>)<!>
+        inline("boom")
     }
 }
 
