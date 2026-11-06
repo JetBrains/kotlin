@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.buildtools.api.internal.wrappers
 import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.cri.CompilerRefIndexConfiguration
 import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain
+import org.jetbrains.kotlin.buildtools.api.js.operations.JsDtsGenerationOperation
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsKlibCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsLinkingOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
@@ -99,6 +100,9 @@ internal class KotlinWrapperPre2_5_20(
 
         override fun jsLinkingOperationBuilder(klib: Path, destination: Path): JsLinkingOperation.Builder =
             JsLinkingOperationBuilderWrapper(base.jsLinkingOperationBuilder(klib, destination))
+
+        override fun jsDtsGenerationOperationBuilder(klibs: List<Path>, outputDirectory: Path): JsDtsGenerationOperation.Builder =
+            JsDtsGenerationOperationBuilderWrapper(base.jsDtsGenerationOperationBuilder(klibs, outputDirectory))
     }
 
     private class JsKlibCompilationOperationBuilderWrapper(private val base: JsKlibCompilationOperation.Builder) :
@@ -112,10 +116,29 @@ internal class KotlinWrapperPre2_5_20(
         override fun toBuilder(): JsKlibCompilationOperation.Builder = JsKlibCompilationOperationBuilderWrapper(base.toBuilder())
     }
 
-    // The built operation stays unwrapped: [org.jetbrains.kotlin.buildtools.api.js.operations.JsDtsGenerationOperation.configureFrom]
-    // checks its implementation class, so a 2.5.0 implementation rejects a wrapped operation
     private class JsLinkingOperationBuilderWrapper(private val base: JsLinkingOperation.Builder) : JsLinkingOperation.Builder by base {
         override fun compilerRefIndexConfigurationBuilder(outputDirectory: Path) = compilerRefIndexConfigurationIsUnsupported()
+        override fun build(): JsLinkingOperation = JsLinkingOperationWrapper(base.build())
+    }
+
+    private class JsLinkingOperationWrapper(val base: JsLinkingOperation) :
+        JsLinkingOperation by base, BuildOperationWrapper<CompilationResult>(base) {
+        override fun toBuilder(): JsLinkingOperation.Builder = JsLinkingOperationBuilderWrapper(base.toBuilder())
+    }
+
+    private class JsDtsGenerationOperationBuilderWrapper(private val base: JsDtsGenerationOperation.Builder) :
+        JsDtsGenerationOperation.Builder by base {
+        // A 2.5.0 implementation class-checks the linking operation, so pass it the wrapped-away implementation operation
+        override fun configureFrom(linkingOperation: JsLinkingOperation) {
+            base.configureFrom((linkingOperation as? JsLinkingOperationWrapper)?.base ?: linkingOperation)
+        }
+
+        override fun build(): JsDtsGenerationOperation = JsDtsGenerationOperationWrapper(base.build())
+    }
+
+    private class JsDtsGenerationOperationWrapper(private val base: JsDtsGenerationOperation) :
+        JsDtsGenerationOperation by base, BuildOperationWrapper<CompilationResult>(base) {
+        override fun toBuilder(): JsDtsGenerationOperation.Builder = JsDtsGenerationOperationBuilderWrapper(base.toBuilder())
     }
 
     private class WasmPlatformToolchainWrapper(private val base: WasmPlatformToolchain) : WasmPlatformToolchain by base {
@@ -137,10 +160,15 @@ internal class KotlinWrapperPre2_5_20(
         override fun toBuilder(): WasmKlibCompilationOperation.Builder = WasmKlibCompilationOperationBuilderWrapper(base.toBuilder())
     }
 
-    // The built operation stays unwrapped, matching the JS linking operation above
     private class WasmLinkingOperationBuilderWrapper(private val base: WasmLinkingOperation.Builder) :
         WasmLinkingOperation.Builder by base {
         override fun compilerRefIndexConfigurationBuilder(outputDirectory: Path) = compilerRefIndexConfigurationIsUnsupported()
+        override fun build(): WasmLinkingOperation = WasmLinkingOperationWrapper(base.build())
+    }
+
+    private class WasmLinkingOperationWrapper(private val base: WasmLinkingOperation) :
+        WasmLinkingOperation by base, BuildOperationWrapper<CompilationResult>(base) {
+        override fun toBuilder(): WasmLinkingOperation.Builder = WasmLinkingOperationBuilderWrapper(base.toBuilder())
     }
 
     private class KotlinMetadataPlatformToolchainWrapper(private val base: KotlinMetadataPlatformToolchain) :

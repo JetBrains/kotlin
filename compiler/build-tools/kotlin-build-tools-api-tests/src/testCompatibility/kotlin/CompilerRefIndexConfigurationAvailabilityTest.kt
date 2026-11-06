@@ -50,17 +50,15 @@ class CompilerRefIndexConfigurationAvailabilityTest : BaseCompilationTest() {
     private fun KotlinToolchains.compilationOperationBuilders(
         compilerVersion: KotlinToolingVersion,
     ): List<BaseCompilationOperation.Builder> {
-        // Each builder is checked as created and, except the linking operations, after a round trip through its operation
+        // Each builder is checked as created and after a round trip through its operation
         val builders = jvm.jvmCompilationOperationBuilder(emptyList(), Path(".")).let { listOf(it, it.build().toBuilder()) }
         // Other platforms are supported since 2.4.20
         if (compilerVersion < KotlinToolingVersion(2, 4, 20, "snapshot")) return builders
         return builders + listOf(
             js.jsKlibCompilationOperationBuilder(emptyList(), Path(".")).let { listOf(it, it.build().toBuilder()) },
-            // The linking builders skip the round trip: their built operations are not wrapped, because
-            // implementations class-check the operations they receive back (configureFrom)
-            listOf(js.jsLinkingOperationBuilder(Path("."), Path("."))),
+            js.jsLinkingOperationBuilder(Path("."), Path(".")).let { listOf(it, it.build().toBuilder()) },
             wasm.wasmKlibCompilationOperationBuilder(emptyList(), Path(".")).let { listOf(it, it.build().toBuilder()) },
-            listOf(wasm.wasmLinkingOperationBuilder(Path("."), Path("."))),
+            wasm.wasmLinkingOperationBuilder(Path("."), Path(".")).let { listOf(it, it.build().toBuilder()) },
             metadata.metadataKlibCompilationOperationBuilder(emptyList(), Path(".")).let { listOf(it, it.build().toBuilder()) },
         ).flatten()
     }
