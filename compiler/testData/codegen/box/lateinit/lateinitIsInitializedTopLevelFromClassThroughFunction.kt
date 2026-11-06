@@ -1,6 +1,4 @@
 // ISSUE: KT-91246
-// IGNORE_BACKEND: NATIVE
-// ^ KT-89375 Native: companion block members are not initialized when observed from a nested class
 
 // FILE: state.kt
 var libFileInitTriggered = false
