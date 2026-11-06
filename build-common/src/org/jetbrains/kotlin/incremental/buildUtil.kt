@@ -108,7 +108,6 @@ fun updateIncrementalCache(
     generatedFiles: Iterable<GeneratedFile>,
     cache: IncrementalJvmCache,
     changesCollector: ChangesCollector,
-    javaChangesTracker: JavaClassesTrackerImpl?,
     jvmMetadataTracker: ICJvmMetadataTrackerImpl?,
 ) {
     // Store common-fragment metadata before class files: an `expect` declaration and its `actual` share an FqName,
@@ -125,10 +124,6 @@ fun updateIncrementalCache(
                 generatedFile.outputFile
             )
         }
-    }
-
-    javaChangesTracker?.javaClassesUpdates?.forEach { (val source, val serializedJavaClass = proto) ->
-        cache.saveJavaClassProto(source, serializedJavaClass, changesCollector)
     }
 
     cache.clearCacheForRemovedClasses(changesCollector)

@@ -79,7 +79,6 @@ abstract class IncrementalJvmCompilerRunnerBase(
 
     protected val messageCollector = MessageCollectorImpl()
     internal val javaInteropCoordinator = JavaInteropCoordinator.getImplementation(
-        icFeatures.usePreciseJavaTracking,
         reporter,
         messageCollector,
     )
@@ -102,8 +101,6 @@ abstract class IncrementalJvmCompilerRunnerBase(
     ) {
         updateIncrementalCache(
             generatedFiles, caches.platformCache, changesCollector,
-            @OptIn(K1Deprecation::class)
-            services[JavaClassesTracker::class.java] as? JavaClassesTrackerImpl,
             services[ICJvmMetadataTracker::class.java] as? ICJvmMetadataTrackerImpl
         )
     }
