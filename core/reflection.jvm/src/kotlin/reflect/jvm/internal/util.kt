@@ -64,6 +64,7 @@ import kotlin.reflect.*
 import kotlin.reflect.full.IllegalCallableAccessException
 import kotlin.reflect.jvm.internal.calls.createAnnotationInstance
 import kotlin.reflect.jvm.internal.types.AbstractKType
+import kotlin.reflect.jvm.jvmErasure
 import kotlin.reflect.jvm.jvmName
 
 internal val JVM_STATIC = FqName("kotlin.jvm.JvmStatic")
@@ -145,6 +146,11 @@ private fun loadClass(classLoader: ClassLoader, packageName: String, className: 
 
 internal fun Class<*>.createArrayType(): Class<*> =
     java.lang.reflect.Array.newInstance(this, 0)::class.java
+
+internal fun computeArrayClassifier(arguments: List<KTypeProjection>): KClass<*> {
+    val elementType = arguments.singleOrNull()?.takeUnless { it.variance == KVariance.IN }?.type ?: StandardKTypes.ANY
+    return elementType.jvmErasure.javaObjectType.createArrayType().kotlin
+}
 
 internal fun DescriptorVisibility.toKVisibility(): KVisibility? =
     when (this) {

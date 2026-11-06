@@ -47,7 +47,8 @@ internal class DescriptorKType(
             is ClassDescriptor -> {
                 val jClass = descriptor.toJavaClass() ?: return null
                 if (KotlinBuiltIns.isArray(type)) {
-                    val argument = type.arguments.singleOrNull()?.type ?: return jClass.kotlin
+                    val argument = type.arguments.singleOrNull()?.takeUnless { it.projectionKind == Variance.IN_VARIANCE }?.type
+                        ?: return jClass.kotlin
                     // Make the array element type nullable to make sure that `kotlin.Array<Int>` is mapped to `[Ljava/lang/Integer;`
                     // instead of `[I`. Also, `kotlin.Array<T>`, where `T` is a type parameter and `T : Int`, should be mapped to
                     // `[Ljava/lang/Integer;`.
