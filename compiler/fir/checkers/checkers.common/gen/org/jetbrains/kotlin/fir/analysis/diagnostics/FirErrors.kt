@@ -1202,6 +1202,7 @@ object FirErrors : KtDiagnosticsContainer() {
     val NON_ERROR_SUPERTYPE: KtDiagnosticFactory0 = KtDiagnosticFactory0("NON_ERROR_SUPERTYPE", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val NON_ERROR_GET_CLASS_CALL: KtDiagnosticFactory0 = KtDiagnosticFactory0("NON_ERROR_GET_CLASS_CALL", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val ACTUAL_TYPEALIAS_TO_NON_ERROR: KtDiagnosticFactory0 = KtDiagnosticFactory0("ACTUAL_TYPEALIAS_TO_NON_ERROR", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val TYPEALIAS_TO_UNION_TYPE_AS_QUALIFIER: KtDiagnosticFactory0 = KtDiagnosticFactory0("TYPEALIAS_TO_UNION_TYPE_AS_QUALIFIER", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = FirErrorsDefaultMessages
 }

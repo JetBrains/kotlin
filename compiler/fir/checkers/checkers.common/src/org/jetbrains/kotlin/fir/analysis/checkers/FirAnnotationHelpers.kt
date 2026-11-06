@@ -39,7 +39,7 @@ private val defaultAnnotationTargetsWithExpression = KotlinTarget.DEFAULT_TARGET
 fun FirAnnotation.getAllowedAnnotationTargets(session: FirSession): Set<KotlinTarget> {
     if (annotationTypeRef is FirErrorTypeRef) return KotlinTarget.ALL_TARGET_SET
     val annotationClassSymbol = (this.annotationTypeRef.coneType as? ConeClassLikeType)
-        ?.fullyExpandedType(session)?.lookupTag?.toSymbol(session) ?: return defaultAnnotationTargets
+        ?.fullyExpandedType(session)?.classLikeLookupTagIfAny?.toSymbol(session) ?: return defaultAnnotationTargets
     annotationClassSymbol.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
     return annotationClassSymbol.getAllowedAnnotationTargets(session)
 }

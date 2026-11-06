@@ -1004,7 +1004,8 @@ class FirElementSerializer private constructor(
         // So, the abbreviated type may have been set already by an inner call.
         // Note that in case of an `expect typealias`, the second expansion will
         // erase `AbbreviatedTypeAttribute` of `type`.
-        if (abbreviation != mainType && !mainTypeProto.hasAbbreviatedType() && !abbreviation.containsCapturedTypes) {
+        // In case of a union type, we do have a separate attribute, so we proceed.
+        if (abbreviation != mainType && (type is ConeUnionType || !mainTypeProto.hasAbbreviatedType()) && !abbreviation.containsCapturedTypes) {
             val abbreviationProto = typeOrTypealiasProto(
                 abbreviation, toSuper, correspondingTypeRef, isDefinitelyNotNullType,
                 abbreviationOnly = false,
@@ -1012,9 +1013,17 @@ class FirElementSerializer private constructor(
             )
 
             if (useTypeTable()) {
-                mainTypeProto.abbreviatedTypeId = typeTable[abbreviationProto]
+                if (type is ConeUnionType) {
+                    mainTypeProto.unionAbbreviatedTypeId = typeTable[abbreviationProto]
+                } else {
+                    mainTypeProto.abbreviatedTypeId = typeTable[abbreviationProto]
+                }
             } else {
-                mainTypeProto.setAbbreviatedType(abbreviationProto)
+                if (type is ConeUnionType) {
+                    mainTypeProto.setUnionAbbreviatedType(abbreviationProto)
+                } else {
+                    mainTypeProto.setAbbreviatedType(abbreviationProto)
+                }
             }
         }
 

@@ -20,7 +20,7 @@ private fun ConeKotlinType.classId(session: FirSession): ClassId? {
         returnsNotNull() implies (this@classId is ConeClassLikeType)
     }
     if (this !is ConeClassLikeType) return null
-    return fullyExpandedType(session).lookupTag.classId
+    return fullyExpandedType(session).classId
 }
 
 fun ConeKotlinType.isKProperty(session: FirSession): Boolean {

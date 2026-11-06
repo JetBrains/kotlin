@@ -230,8 +230,10 @@ abstract class FirDataFlowAnalyzer(
                             if (this.isNullableNothing) return false
                             return when (this) {
                                 is ConeClassLikeType -> {
-                                    val symbol =
-                                        fullyExpandedType().lookupTag.toSymbol() ?: return false
+                                    val expandedType = fullyExpandedType()
+                                    // A type alias may expand to a union type
+                                    if (expandedType is ConeUnionType) return expandedType.isAcceptableForSmartcast()
+                                    val symbol = expandedType.classLikeLookupTagIfAny?.toSymbol() ?: return false
                                     val declaration = symbol.fir as? FirRegularClass ?: return true
                                     visibilityChecker.isClassLikeVisible(
                                         declaration,

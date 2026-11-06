@@ -89,7 +89,11 @@ fun ConeKotlinType.findClassRepresentation(
     session: FirSession
 ): ConeClassLikeLookupTag? =
     when (this) {
-        is ConeClassLikeType -> this.fullyExpandedType(session).lookupTag
+        is ConeClassLikeType -> this.fullyExpandedType(session).let { expandedType ->
+            if (expandedType is ConeClassLikeType) expandedType.lookupTag
+            // A type alias may expand to a union type
+            else expandedType.findClassRepresentation(dispatchReceiverParameterType, session)
+        }
         is ConeDynamicType -> upperBound.findClassRepresentation(dispatchReceiverParameterType, session)
         is ConeFlexibleType -> lowerBound.findClassRepresentation(dispatchReceiverParameterType, session)
         is ConeCapturedType -> constructor.supertypes.orEmpty()

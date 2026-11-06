@@ -2573,6 +2573,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val NON_ERROR_SUPERTYPE by error<PsiElement>()
         val NON_ERROR_GET_CLASS_CALL by error<PsiElement>()
         val ACTUAL_TYPEALIAS_TO_NON_ERROR by error<PsiElement>()
+        val TYPEALIAS_TO_UNION_TYPE_AS_QUALIFIER by error<PsiElement>()
     }
 }
 

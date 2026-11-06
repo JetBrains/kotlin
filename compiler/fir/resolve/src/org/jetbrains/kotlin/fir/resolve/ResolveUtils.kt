@@ -668,14 +668,15 @@ fun FirSafeCallExpression.propagateTypeFromQualifiedAccessAfterNullCheck(
 }
 
 internal fun ConeKotlinType.unionSuperTypeOrNull(session: FirSession): ConeUnionType? {
-    if (this is ConeUnionType) return this
+    val expandedType = fullyExpandedType(session)
+    if (expandedType is ConeUnionType) return expandedType
 
     session.typeContext.newTypeCheckerState(
         errorTypesEqualToAnything = false,
         stubTypesEqualToAnything = true,
         dnnTypesEqualToFlexible = false
     ).anySupertype(
-        this.lowerBoundIfFlexible(),
+        expandedType.lowerBoundIfFlexible(),
         predicate = {
             if (it is ConeUnionType) return it
             false

@@ -591,8 +591,8 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                     superReference.transformChildren(transformer, ContextIndependent)
                 }
 
-                val actualSuperType = (superReference.superTypeRef.coneType as? ConeClassLikeType)
-                    ?.fullyExpandedType()?.let { superType ->
+                val actualSuperType =
+                    ((superReference.superTypeRef.coneType as? ConeClassLikeType)?.fullyExpandedType() as? ConeClassLikeType)?.let { superType ->
                         val classId = superType.lookupTag.classId
                         val correspondingDeclaredSuperType = superTypeRefs.firstOrNull {
                             it.coneType.fullyExpandedType().classId == classId
@@ -1365,7 +1365,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
     }
 
     private fun FirTypeRef.withTypeArgumentsForBareType(argument: FirExpression, operation: FirOperation): FirTypeRef {
-        val type = coneTypeSafe<ConeClassLikeType>()?.fullyExpandedType() ?: return this
+        val type = coneTypeSafe<ConeClassLikeType>()?.fullyExpandedType() as? ConeClassLikeType ?: return this
         if (type.typeArguments.isNotEmpty()) return this // TODO: Incorrect for local classes, KT-59686
         // TODO: Check equality of size of arguments and parameters?
 
@@ -2074,7 +2074,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             is FirSuperReference -> reference.superTypeRef
                 .coneTypeSafe<ConeClassLikeType>()
                 ?.takeIf { it !is ConeErrorType }
-                ?.fullyExpandedType()
+                ?.fullyExpandedType() as? ConeClassLikeType
             else -> null
         }
 

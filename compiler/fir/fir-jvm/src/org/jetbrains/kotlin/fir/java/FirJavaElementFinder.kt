@@ -411,7 +411,11 @@ private fun ConeClassLikeType.mapToCanonicalString(session: FirSession): String 
     @Suppress("SuspiciousWhenOverConeKotlinType")
     return when (this) {
         is ConeErrorType -> ERROR_TYPE_STUB
-        else -> fullyExpandedType(session).mapToCanonicalNoExpansionString(session)
+        else -> fullyExpandedType(session).let { expandedType ->
+            if (expandedType is ConeClassLikeType) expandedType.mapToCanonicalNoExpansionString(session)
+            // A type alias may expand to a union type, which is erased to `Object` on the JVM
+            else ERROR_TYPE_STUB
+        }
     }
 }
 
