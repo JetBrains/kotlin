@@ -22,6 +22,7 @@ import kotlin.test.Test
 import kotlin.time.Clock
 
 @OptIn(ExperimentalAtomicApi::class)
+@MustRunAlways
 class TestMetadataTest {
 
     private val absoluteRoot = Path("").absolute()

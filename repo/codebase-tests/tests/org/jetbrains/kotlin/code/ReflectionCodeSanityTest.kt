@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.code
 
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.testFederation.MustRunAlways
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -14,6 +15,7 @@ import java.lang.reflect.Modifier
 import kotlin.reflect.jvm.javaField
 import kotlin.test.fail
 
+@MustRunAlways
 class ReflectionCodeSanityTest {
     private lateinit var classLoader: ClassLoader
 

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.code
 
+import org.jetbrains.kotlin.testFederation.MustRunAlways
 import java.nio.file.Path
 import kotlin.io.path.readText
 import kotlin.test.ExperimentalKotlinTestApi
@@ -20,6 +21,7 @@ import kotlin.test.fail
  * Both of these objects should contain the same list of properties with the same values. This test ensures
  * that they are indeed the same.
  */
+@MustRunAlways
 class TestPropertiesTest {
     companion object {
         const val GRADLE_PATH = "repo/gradle-build-conventions/project-tests-convention/src/main/kotlin/TestCompilePaths.kt"

@@ -9,6 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
+import org.jetbrains.kotlin.testFederation.MustRunAlways
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
 
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.fail
  * Classes, which contain methods annotated with `@org.junit.Test` will be reported as failure,
  * ensuring that no junit4 tests are present.
  */
+@MustRunAlways
 class Junit5RequirementTest {
 
     private val junit4TestAnnotationDesc = "Lorg/junit/Test;"
