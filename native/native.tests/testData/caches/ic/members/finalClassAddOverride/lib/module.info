@@ -9,5 +9,5 @@ STEP 0:
 STEP 1:
     modifications:
         U : sub.1.kt -> sub.kt
-    modified cache: sub.kt, call.kt
-    unchanged cache: base.kt
+    modified cache: sub.kt
+    unchanged cache: base.kt, call.kt

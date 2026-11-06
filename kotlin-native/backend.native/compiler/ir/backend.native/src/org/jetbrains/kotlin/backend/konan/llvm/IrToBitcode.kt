@@ -2459,10 +2459,15 @@ internal class CodeGeneratorVisitor(
             function: IrSimpleFunction, args: List<LLVMValueRef>,
             resultLifetime: Lifetime, superClass: IrClass? = null, resultSlot: LLVMValueRef? = null): LLVMValueRef {
         //context.log{"evaluateSimpleFunctionCall : $tmpVariableName = ${ir2string(value)}"}
-        if (superClass == null && function.isOverridable)
-            return callVirtual(function, args, resultLifetime, resultSlot)
-        else
-            return callDirect(function, args, resultLifetime, resultSlot)
+        val throughCacheEntryPoint = context(context.config) { function.needsCacheEntryPointForFinalFakeOverride }
+        return when {
+            superClass == null && function.isOverridable ->
+                callVirtual(function, args, resultLifetime, resultSlot)
+            superClass == null && throughCacheEntryPoint && function.target.isOverridable ->
+                // A cached caller must not bind to the inherited implementation: the class may override it later (KT-91377).
+                callVirtual(function.target, args, resultLifetime, resultSlot)
+            else -> callDirect(function, args, resultLifetime, resultSlot)
+        }
     }
 
     //-------------------------------------------------------------------------//
