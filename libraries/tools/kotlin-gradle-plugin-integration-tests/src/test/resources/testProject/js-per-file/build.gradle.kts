@@ -16,10 +16,12 @@ kotlin {
         browser {
 
         }
+        compilerOptions {
+            moduleKind.set(JsModuleKind.MODULE_ES)
+        }
     }
 }
 
 tasks.withType(KotlinJsIrLink::class.java) {
     this.compilerOptions.freeCompilerArgs.add("-Xir-per-file")
-    this.compilerOptions.moduleKind.set(JsModuleKind.MODULE_ES)
 }
