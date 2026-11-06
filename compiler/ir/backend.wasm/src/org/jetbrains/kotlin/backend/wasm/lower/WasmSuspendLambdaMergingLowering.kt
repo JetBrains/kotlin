@@ -330,7 +330,8 @@ internal class WasmSuspendLambdaMergingLowering(val context: WasmBackendContext)
         return context.irFactory.addFunction(irFile) {
             startOffset = originalDoResume.startOffset
             endOffset = originalDoResume.endOffset
-            origin = IrDeclarationOrigin.DEFINED
+            // Not DEFINED: file-level functions with that origin trigger initialization of the file's top-level properties.
+            origin = DECLARATION_ORIGIN_COROUTINE_IMPL_INVOKE
             name = Name.identifier(bridgedName)
             returnType = anyNType
         }.apply bridgedFunction@{
