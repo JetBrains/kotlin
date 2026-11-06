@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.cli.jvm.compiler
+package org.jetbrains.kotlin.resolve.lazy
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.K1_DEPRECATION_WARNING
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsPackageFragmentProvider
+import org.jetbrains.kotlin.cli.jvm.compiler.AllJavaSourcesInProjectScope
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.container.get
@@ -50,16 +51,15 @@ import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
 import org.jetbrains.kotlin.resolve.jvm.multiplatform.OptionalAnnotationPackageFragmentProvider
-import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 import org.jetbrains.kotlin.storage.StorageManager
 
 @K1Deprecation
-object TopDownAnalyzerFacadeForJVM {
+internal object TopDownAnalyzerFacadeForJVM {
     @JvmStatic
     @JvmOverloads
-    @Deprecated(K1_DEPRECATION_WARNING, level = DeprecationLevel.ERROR)
+    @Deprecated(K1_DEPRECATION_WARNING, level = ERROR)
     fun analyzeFilesWithJavaIntegration(
         project: Project,
         files: Collection<KtFile>,
@@ -103,15 +103,15 @@ object TopDownAnalyzerFacadeForJVM {
         }
 
         @Suppress("DEPRECATION_ERROR")
-        container.get<LazyTopDownAnalyzer>().analyzeDeclarations(TopDownAnalysisMode.TopLevelDeclarations, files)
+        container.get<LazyTopDownAnalyzer>().analyzeDeclarations(TopLevelDeclarations, files)
 
         invokeExtensionsOnAnalysisComplete()?.let { return it }
 
         return AnalysisResult.success(trace.bindingContext, module)
     }
 
-    @Deprecated(K1_DEPRECATION_WARNING, level = DeprecationLevel.ERROR)
-    fun createContainer(
+    @Deprecated(K1_DEPRECATION_WARNING, level = ERROR)
+    private fun createContainer(
         project: Project,
         files: Collection<KtFile>,
         trace: BindingTrace,
@@ -144,7 +144,7 @@ object TopDownAnalyzerFacadeForJVM {
 
         val moduleClassResolver = SourceOrBinaryModuleClassResolver(sourceModuleSearchScope)
 
-        val fallbackBuiltIns = JvmBuiltIns(storageManager, JvmBuiltIns.Kind.FALLBACK).apply {
+        val fallbackBuiltIns = JvmBuiltIns(storageManager, FALLBACK).apply {
             initialize(builtInsModule, languageVersionSettings)
         }.builtInsModule
 
@@ -159,7 +159,7 @@ object TopDownAnalyzerFacadeForJVM {
 
             val dependenciesContainer = createContainerForLazyResolveWithJava(
                 jvmPlatform,
-                dependenciesContext, trace, DeclarationProviderFactory.EMPTY, dependencyScope, moduleClassResolver,
+                dependenciesContext, trace, EMPTY, dependencyScope, moduleClassResolver,
                 targetEnvironment, lookupTracker, expectActualTracker, inlineConstTracker, enumWhenTracker,
                 packagePartProvider(dependencyScope), languageVersionSettings,
                 useBuiltInsProvider = true,
@@ -239,7 +239,7 @@ object TopDownAnalyzerFacadeForJVM {
         return container
     }
 
-    fun newModuleSearchScope(project: Project, files: Collection<KtFile>): GlobalSearchScope {
+    private fun newModuleSearchScope(project: Project, files: Collection<KtFile>): GlobalSearchScope {
         // In case of separate modules, the source module scope generally consists of the following scopes:
         // 1) scope which only contains passed Kotlin source files (.kt and .kts)
         // 2) scope which contains all Java source files (.java) in the project
@@ -266,7 +266,7 @@ object TopDownAnalyzerFacadeForJVM {
         capabilities: Map<ModuleCapability<*>, Any?> = emptyMap()
     ): MutableModuleContext {
         val projectContext = ProjectContext(project, "TopDownAnalyzer for JVM")
-        val builtIns = JvmBuiltIns(projectContext.storageManager, JvmBuiltIns.Kind.FROM_DEPENDENCIES)
+        val builtIns = JvmBuiltIns(projectContext.storageManager, FROM_DEPENDENCIES)
         return ContextForNewModule(
             projectContext, Name.special("<${configuration.getNotNull(CommonConfigurationKeys.MODULE_NAME)}>"),
             builtIns, platform, capabilities
