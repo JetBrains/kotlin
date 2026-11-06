@@ -1,6 +1,4 @@
 // ISSUE: KT-91371
-// IGNORE_BACKEND: JS_IR, JS_IR_ES6
-// ^ Fails with "FAIL: undefined"
 
 @JsExport
 interface A {
