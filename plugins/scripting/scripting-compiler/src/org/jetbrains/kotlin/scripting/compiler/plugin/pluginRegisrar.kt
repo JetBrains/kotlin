@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.config.scriptingHostConfiguration
 import org.jetbrains.kotlin.extensions.CompilerConfigurationExtension
-import org.jetbrains.kotlin.extensions.ProcessSourcesBeforeCompilingExtension
 import org.jetbrains.kotlin.fir.extensions.CollectAdditionalSourceFilesExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.CliScriptConfigurationsProvider
@@ -26,7 +25,6 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.CliScriptRepor
 import org.jetbrains.kotlin.scripting.compiler.plugin.extensions.ReplLoweringExtension
 import org.jetbrains.kotlin.scripting.compiler.plugin.extensions.ScriptLoweringExtension
 import org.jetbrains.kotlin.scripting.compiler.plugin.extensions.ScriptingIrExplainGenerationExtension
-import org.jetbrains.kotlin.scripting.compiler.plugin.extensions.ScriptingProcessSourcesBeforeCompilingExtension
 import org.jetbrains.kotlin.scripting.compiler.plugin.fir.CollectAdditionalScriptSourcesExtension
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys.ENABLE_SCRIPT_EXPLANATION_OPTION
 import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
@@ -56,7 +54,6 @@ class ScriptingK2CompilerPluginRegistrar : CompilerPluginRegistrar() {
 
         CollectAdditionalSourceFilesExtension.registerExtension(CollectAdditionalScriptSourcesExtension())
         ScriptEvaluationExtension.registerExtension(JvmCliScriptEvaluationExtension())
-        ProcessSourcesBeforeCompilingExtension.registerExtension(ScriptingProcessSourcesBeforeCompilingExtension())
 
         val hostConfiguration = configuration.scriptingHostConfiguration as? ScriptingHostConfiguration
             ?: defaultJvmScriptingHostConfiguration
