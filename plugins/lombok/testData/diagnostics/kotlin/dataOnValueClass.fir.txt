@@ -9,10 +9,6 @@ FILE: dataOnValueClass.kt
 
         public open override fun toString(): R|kotlin/String|
 
-        public open override operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
-
-        public open override fun hashCode(): R|kotlin/Int|
-
     }
     @R|kotlin/jvm/JvmInline|() @R|lombok/EqualsAndHashCode|() public final inline value class EqualsAndHashCodeValue : R|kotlin/Any| {
         public constructor(x: R|kotlin/Int|): R|EqualsAndHashCodeValue| {
@@ -21,10 +17,6 @@ FILE: dataOnValueClass.kt
 
         public final val x: R|kotlin/Int| = R|<local>/x|
             public get(): R|kotlin/Int|
-
-        public open override operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
-
-        public open override fun hashCode(): R|kotlin/Int|
 
     }
     @R|kotlin/jvm/JvmInline|() @R|lombok/ToString|() public final inline value class ToStringValue : R|kotlin/Any| {

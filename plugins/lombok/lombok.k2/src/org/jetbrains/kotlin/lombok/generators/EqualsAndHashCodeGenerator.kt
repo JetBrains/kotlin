@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
+import org.jetbrains.kotlin.fir.declarations.utils.isValue
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
@@ -143,6 +144,9 @@ class EqualsAndHashCodeGenerator(session: FirSession) : FirDeclarationGeneration
         // Skip-both rule: if the user has explicitly declared either `equals` or `hashCode`, generate neither.
         // The checker reports the partial-override error or the "both already exist" warning.
         if (hasUserDeclaredEqualsOrHashCode(declaredScope)) return null
+
+        // The same is true for value classes, as equals/hashCode are reserved for them
+        if (classSymbol.isValue) return null
 
         // A user-declared `canEqual` is called by `equals` as is: generating one on top would clash with it on the JVM.
         val hasUserDeclaredCanEqual = hasUserDeclaredCanEqual(declaredScope)

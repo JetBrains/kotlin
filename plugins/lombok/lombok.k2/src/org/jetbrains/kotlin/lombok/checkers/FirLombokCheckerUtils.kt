@@ -184,7 +184,7 @@ private val implementedAnnotationInfos: Map<ClassId, ImplementedAnnotationsInfo>
             CACHE_STRATEGY, // Not yet supported
             ON_PARAM, // Not yet supported
         ),
-        unsupportedClassModifiers = EnumSet.of(ClassModifier.INNER),
+        unsupportedClassModifiers = EnumSet.of(ClassModifier.INNER, ClassModifier.VALUE),
     )
     this[LombokNames.EQUALS_AND_HASH_CODE_INCLUDE_ID] = ImplementedAnnotationsInfo(
         allowedTargetsMap = setOf(
