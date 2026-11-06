@@ -27,12 +27,10 @@ data class DataClassWithExclude(
 @Data
 data class PlainDataClass(val a: String, val b: Int)
 
-// Nothing is generated for an object either: it is a single instance, so the identity comparison it already has
-// is exactly what a generated `equals` would amount to, KT-88507.
-<!ANNOTATION_HAS_NO_EFFECT!>@Data<!>
+@Data
 object SingletonObject
 
-<!ANNOTATION_HAS_NO_EFFECT!>@Data<!>
+@Data
 object ObjectWithProperties {
     val version = "2.0"
     val label = "release"

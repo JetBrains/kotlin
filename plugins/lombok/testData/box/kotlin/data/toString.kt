@@ -69,10 +69,10 @@ class WithNonConflictingExtensionFunction(val a: Int) {
 @Data
 data class DataClassDefault(val name: String, val age: Int)
 
-<!ANNOTATION_HAS_NO_EFFECT!>@Data<!>
+@Data
 object EmptyObject
 
-<!ANNOTATION_HAS_NO_EFFECT!>@Data<!>
+@Data
 object ObjectWithProperties {
     val version = "2.0"
     val label = "release"
