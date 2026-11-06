@@ -12,6 +12,7 @@ import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.TasksRequirements
 import org.jetbrains.kotlin.gradle.targets.js.npm.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.PreparedKotlinCompilationNpmResolution
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.Serializable
 
@@ -22,6 +23,7 @@ import java.io.Serializable
  *
  * The resolution is produced by [KotlinCompilationNpmResolver].
  */
+@ObsoleteNpmDependencyModel
 class KotlinCompilationNpmResolution(
     var internalDependencies: Collection<InternalDependency>,
     var internalCompositeDependencies: Collection<CompositeDependency>,

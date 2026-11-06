@@ -257,10 +257,12 @@ abstract class KotlinPackageJsonTask :
                     findDependentTasks(
                         rootResolver = nodeJsRoot.resolver,
                         compilationNpmResolution = getCompilationResolver().compilationNpmResolution,
-                        rootPackageJsonTaskName = ":${nodeJsRoot.extensionName(
-                            RootPackageJsonTask.NAME,
-                            prefix = null,
-                        )}",
+                        rootPackageJsonTaskName = ":${
+                            nodeJsRoot.extensionName(
+                                RootPackageJsonTask.NAME,
+                                prefix = null,
+                            )
+                        }",
                     )
                 }
             )

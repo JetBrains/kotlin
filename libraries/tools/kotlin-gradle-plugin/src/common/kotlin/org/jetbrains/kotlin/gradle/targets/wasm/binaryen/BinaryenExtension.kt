@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.targets.js.AbstractSettings
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
+import org.jetbrains.kotlin.gradle.targets.web.ObsoleteJsAndWasmToolingProvisioning
 import org.jetbrains.kotlin.gradle.utils.property
 
 @Deprecated(
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.gradle.utils.property
     ),
     level = DeprecationLevel.ERROR
 )
+@ObsoleteJsAndWasmToolingProvisioning
 open class BinaryenExtension(
     @Transient val project: Project,
     private val binaryenSpec: BinaryenEnvSpec,
@@ -60,6 +62,7 @@ open class BinaryenExtension(
         return binaryenSpec.env.get()
     }
 
+    @ObsoleteJsAndWasmToolingProvisioning
     companion object : HasPlatformDisambiguator by WasmPlatformDisambiguator {
         val EXTENSION_NAME: String
             get() = extensionName("binaryen")

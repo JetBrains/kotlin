@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.
 import org.jetbrains.kotlin.gradle.targets.js.npm.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
 import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.*
 import java.io.Serializable
@@ -58,6 +59,7 @@ import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin.Comp
  *
  * See [KotlinNpmResolutionManager] for details about resolution process.
  */
+@ObsoleteNpmDependencyModel
 class KotlinCompilationNpmResolver(
     val projectResolver: KotlinProjectNpmResolver,
     val compilation: KotlinJsIrCompilation,
@@ -376,6 +378,7 @@ class KotlinCompilationNpmResolver(
     private fun ProjectComponentIdentifier.isCompositeBuildId(): Boolean =
         this !in project.currentBuild
 
+    @ObsoleteNpmDependencyModel
     companion object {
         val publicPackageJsonAttribute: Attribute<String> = Attribute.of(
             "org.jetbrains.kotlin.js.public.package.json",

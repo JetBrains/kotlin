@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.gradle.targets.wasm.binaryen
 
 import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.gradle.targets.web.ObsoleteJsAndWasmToolingProvisioning
 
 /**
  * Provides platform and architecture names that is used to download Binaryen.
  */
+@ObsoleteJsAndWasmToolingProvisioning
 internal data class BinaryenPlatform(
     val name: String,
     val arch: String,
@@ -21,6 +23,7 @@ internal data class BinaryenPlatform(
         return name == WIN
     }
 
+    @ObsoleteJsAndWasmToolingProvisioning
     companion object {
         const val WIN = "windows"
         const val LINUX = "linux"

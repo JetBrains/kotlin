@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.internal
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import org.jetbrains.kotlin.gradle.utils.isProjectIsolationEnabled
 import org.jetbrains.kotlin.gradle.utils.isRootProject
 
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.gradle.utils.isRootProject
  * It will definitely break things!
  * Only intended for internal use, to prototype Isolated Projects support.
  */
+@ObsoleteNpmDependencyModel
 internal fun Project.jsToolingProject(): Project {
     return when {
         // The root project's tooling project is always itself, so skip reading its properties.
@@ -37,6 +39,7 @@ private val Project.npmSharedProjectsPerProject: Boolean
  *
  * Does nothing if [Project.npmSharedProjectsPerProject] is enabled.
  */
+@ObsoleteNpmDependencyModel
 internal fun checkIsJsToolingProject(
     project: Project,
     message: () -> String,

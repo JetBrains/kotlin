@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.nodejs
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.targets.web.ObsoleteJsAndWasmToolingProvisioning
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.CommonNodeJsPlugin
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.NodeJsPluginApplier
 import org.jetbrains.kotlin.gradle.utils.castIsolatedKotlinPluginClassLoaderAware
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.gradle.utils.castIsolatedKotlinPluginClassLoaderAwar
  * - Integrating the `NodeJsEnvSpec` extension for managing Node.js environment configurations.
  * - Automatically setting up tasks like downloading and installing a local Node.js/npm version.
  */
+@ObsoleteJsAndWasmToolingProvisioning
 abstract class NodeJsPlugin internal constructor() : CommonNodeJsPlugin {
     override fun apply(target: Project) {
         NodeJsPluginApplier(
@@ -30,6 +32,7 @@ abstract class NodeJsPlugin internal constructor() : CommonNodeJsPlugin {
         ).apply(target)
     }
 
+    @ObsoleteJsAndWasmToolingProvisioning
     companion object {
         fun apply(project: Project): NodeJsEnvSpec {
             project.plugins.apply(NodeJsPlugin::class.java)

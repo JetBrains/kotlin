@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.gradle.targets.js.internal.jsToolingProject
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnv
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NpmApiExtension
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsRootExtension
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 
 /**
  * Abstract base class for configuring and managing NPM-related tasks and environment within a Kotlin/Gradle project.
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsRootExtension
  * @property project The root Gradle project associated with this extension.
  * @property nodeJsRoot The root Node.js extension providing configuration and context for managing Node.js tooling.
  */
+@ObsoleteNpmDependencyModel
 abstract class BaseNpmExtension internal constructor(
     val project: Project,
     val nodeJsRoot: BaseNodeJsRootExtension,

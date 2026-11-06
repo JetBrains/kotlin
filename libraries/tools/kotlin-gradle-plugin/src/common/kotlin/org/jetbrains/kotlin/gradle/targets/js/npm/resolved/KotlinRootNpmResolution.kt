@@ -9,8 +9,10 @@ import org.gradle.api.logging.Logger
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.PackageManagerEnvironment
 import org.jetbrains.kotlin.gradle.targets.js.npm.KotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.targets.js.npm.NodeJsEnvironment
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import java.io.Serializable
 
+@ObsoleteNpmDependencyModel
 class KotlinRootNpmResolution(
     val projects: Map<String, KotlinProjectNpmResolution>,
     val rootProjectName: String,
