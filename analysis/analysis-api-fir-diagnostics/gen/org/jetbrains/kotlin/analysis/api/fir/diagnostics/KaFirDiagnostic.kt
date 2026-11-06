@@ -8721,6 +8721,13 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface ActualTypealiasWithExpectRichError : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<ActualTypealiasWithExpectRichError>
+            get() = ActualTypealiasWithExpectRichError::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface OverrideCannotBeStatic : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass: KClass<OverrideCannotBeStatic>
             get() = OverrideCannotBeStatic::class

@@ -62,30 +62,30 @@ compiler/tests-integration/testData/multiplatform/incompatibleNestedClasses/jvm.
 compiler/tests-integration/testData/multiplatform/incompatibleNestedClasses/jvm.kt:8:24: error: the 'expect' and the 'actual' declarations are incompatible.
   expect: public final expect class N2 : Any
   actual: public final actual inner class N2 : Any
-  reason: the modifiers are different (companion, inner, inline, value)
+  reason: the modifiers are different (companion, inner, inline, value, error)
     actual inner class N2
                        ^^
 compiler/tests-integration/testData/multiplatform/incompatibleNestedClasses/jvm.kt:9:18: error: the 'expect' and the 'actual' declarations are incompatible.
   expect: public final expect inner class I2 : Any
   actual: public final actual class I2 : Any
-  reason: the modifiers are different (companion, inner, inline, value)
+  reason: the modifiers are different (companion, inner, inline, value, error)
     actual class I2
                  ^^
 compiler/tests-integration/testData/multiplatform/incompatibleNestedClasses/jvm.kt:13:22: error: the 'expect' and the 'actual' declarations are incompatible.
   expect: public final expect object Companion : Any
   actual: public final actual companion object Companion : Any
-  reason: the modifiers are different (companion, inner, inline, value)
+  reason: the modifiers are different (companion, inner, inline, value, error)
     actual companion object {}
                      ^^^^^^
 compiler/tests-integration/testData/multiplatform/incompatibleNestedClasses/jvm.kt:14:19: error: the 'expect' and the 'actual' declarations are incompatible.
   expect: public final expect companion object Factory : Any
   actual: public final actual object Factory : Any
-  reason: the modifiers are different (companion, inner, inline, value)
+  reason: the modifiers are different (companion, inner, inline, value, error)
     actual object Factory
                   ^^^^^^^
 compiler/tests-integration/testData/multiplatform/incompatibleNestedClasses/jvm.kt:18:19: error: the 'expect' and the 'actual' declarations are incompatible.
   expect: public final expect companion object Companion : Any
   actual: public final actual object Companion : Any
-  reason: the modifiers are different (companion, inner, inline, value)
+  reason: the modifiers are different (companion, inner, inline, value, error)
     actual object Companion
                   ^^^^^^^^^

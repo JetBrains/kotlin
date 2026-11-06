@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.getSingleMatchedExpectForActualOrNull
 import org.jetbrains.kotlin.fir.declarations.utils.isActual
+import org.jetbrains.kotlin.fir.declarations.utils.isRichError
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.typeParameterSymbol
 import org.jetbrains.kotlin.fir.scopes.collectAllFunctions
@@ -32,7 +33,7 @@ object FirActualTypeAliasChecker : FirTypeAliasChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirTypeAlias) {
         if (!declaration.isActual) return
 
-        declaration.checkDefaultArgumentsInExpectWithActualTypeAlias()
+        declaration.checkDependingOnExpect()
 
         val expandedType = declaration.expandedTypeRef.coneType.abbreviatedTypeOrSelf as? ConeClassLikeType ?: return
         val expandedTypeSymbol = expandedType.toSymbol() ?: return
@@ -67,21 +68,28 @@ object FirActualTypeAliasChecker : FirTypeAliasChecker(MppCheckerKind.Common) {
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    private fun FirTypeAlias.checkDefaultArgumentsInExpectWithActualTypeAlias() {
+    private fun FirTypeAlias.checkDependingOnExpect() {
         val actualTypealiasSymbol = symbol
         // We want to report errors even if a candidate is incompatible, but it's single
         val expectedSingleCandidate = actualTypealiasSymbol.getSingleMatchedExpectForActualOrNull() ?: return
         val expectClassSymbol = expectedSingleCandidate as FirRegularClassSymbol
 
         val membersWithDefaultValueParameters = getMembersWithDefaultValueParametersUnlessAnnotation(expectClassSymbol)
-        if (membersWithDefaultValueParameters.isEmpty()) return
+        if (membersWithDefaultValueParameters.isNotEmpty()) {
+            reporter.reportOn(
+                source,
+                FirErrors.DEFAULT_ARGUMENTS_IN_EXPECT_WITH_ACTUAL_TYPEALIAS,
+                expectClassSymbol,
+                membersWithDefaultValueParameters,
+            )
+        }
 
-        reporter.reportOn(
-            source,
-            FirErrors.DEFAULT_ARGUMENTS_IN_EXPECT_WITH_ACTUAL_TYPEALIAS,
-            expectClassSymbol,
-            membersWithDefaultValueParameters,
-        )
+        if (expectClassSymbol.isRichError) {
+            reporter.reportOn(
+                source,
+                FirErrors.ACTUAL_TYPEALIAS_WITH_EXPECT_RICH_ERROR,
+            )
+        }
     }
 
     private fun getMembersWithDefaultValueParametersUnlessAnnotation(classSymbol: FirClassSymbol<*>): List<FirFunctionSymbol<*>> {

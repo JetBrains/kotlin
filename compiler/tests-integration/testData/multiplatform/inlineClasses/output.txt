@@ -23,7 +23,7 @@ Output:
 compiler/tests-integration/testData/multiplatform/inlineClasses/jvm.kt:5:14: error: the 'expect' and the 'actual' declarations are incompatible.
   expect: public final expect inline value class Foo2 : Any
   actual: public final actual class Foo2 : Any
-  reason: the modifiers are different (companion, inner, inline, value)
+  reason: the modifiers are different (companion, inner, inline, value, error)
 actual class Foo2 actual constructor(actual val y: String)
              ^^^^
 
@@ -34,6 +34,6 @@ warning: the argument '-Xir-produce-klib-dir' is deprecated since Kotlin 2.4.20.
 compiler/tests-integration/testData/multiplatform/inlineClasses/js.kt:5:14: error: the 'expect' and the 'actual' declarations are incompatible.
   expect: public final expect inline value class Foo2 : Any
   actual: public final actual class Foo2 : Any
-  reason: the modifiers are different (companion, inner, inline, value)
+  reason: the modifiers are different (companion, inner, inline, value, error)
 actual class Foo2 actual constructor(actual val y: String)
              ^^^^
