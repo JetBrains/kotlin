@@ -28,7 +28,7 @@ internal abstract class BuildOperationImpl<R> : BuildOperation<R>, BuildOperatio
         enableClassloaderCache = other.enableClassloaderCache
     }
 
-    protected abstract val options: Options // to be removed when subclasses are also converted to serializable
+    protected open val options: Options get() = Options(this::class) // to be removed when subclasses are also converted to serializable
 
     @Transient
     internal var metricsCollector: BuildMetricsCollector? = null
