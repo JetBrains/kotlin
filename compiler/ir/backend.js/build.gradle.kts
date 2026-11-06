@@ -9,7 +9,6 @@ dependencies {
     api(project(":compiler:util"))
     implementation(project(":core:compiler.common.js"))
     implementation(project(":core:descriptors"))
-    implementation(project(":compiler:frontend"))
     api(project(":compiler:ir.tree"))
     api(project(":compiler:ir.backend.common"))
     api(project(":compiler:ir.inline"))

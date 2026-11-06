@@ -6,8 +6,6 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":core:descriptors.jvm"))
-    implementation(project(":compiler:frontend.java"))
     implementation(project(":core:compiler.common.wasm"))
     api(project(":compiler:fir:fir-jvm"))
     api(project(":compiler:frontend.common.jvm"))
@@ -28,15 +26,17 @@ dependencies {
     api(project(":compiler:ir.actualization"))
 
     implementation(project(":core:compiler.common.native"))
+    implementation(project(":core:language.targets.jvm"))
+    implementation(project(":compiler:config.jvm"))
     implementation(project(":compiler:fir:resolve"))
     implementation(project(":compiler:fir:fir-serialization"))
     implementation(project(":compiler:frontend"))
     implementation(project(":compiler:ir.backend.common"))
     implementation(project(":compiler:ir.serialization.common"))
     implementation(project(":compiler:ir.tree"))
+    implementation(project(":compiler:resolution.common.jvm"))
     implementation(project(":compiler:resolution.common.js"))
     implementation(project(":core:descriptors"))
-    implementation(project(":core:deserialization"))
     implementation(project(":js:js.config"))
     implementation(project(":kotlin-util-klib-metadata"))
 
