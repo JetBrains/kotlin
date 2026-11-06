@@ -13,9 +13,9 @@ KaClassErrorType:
       name: MyClass
       typeArguments: []
   ]
-  isMarkedNullable: false
+  isMarkedNullable: true
   isNullable: true
-  hasFlexibleNullability: true
+  hasFlexibleNullability: false
 
 Rendered type:
 @Anno MyClass

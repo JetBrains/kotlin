@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.getPrimaryConstructorSymbol
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedSymbolError
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.withParameterNameAnnotation
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.types.*
@@ -99,18 +100,31 @@ internal class KaFirTypeCreator(
     override fun classType(classId: ClassId, init: KaClassTypeBuilder.() -> Unit): KaType = withValidityAssertion {
         val builder = KaFirClassTypeBuilder(this).apply(init)
         val classSymbol = rootModuleSession.symbolProvider.getClassLikeSymbolByClassId(classId)
-            ?: return ConeErrorType(
-                ConeUnresolvedSymbolError(classId)
-            ).withAnnotationAttributes(builder.annotations).asKaType()
+            ?: return buildUnresolvedClassType(classId, builder)
         val lookupTag = classSymbol.toLookupTag()
 
         return buildClassType(lookupTag, builder)
     }
 
     override fun classType(symbol: KaClassLikeSymbol, init: KaClassTypeBuilder.() -> Unit): KaType = withValidityAssertion {
-        val symbol = symbol
+        val builder = KaFirClassTypeBuilder(this).apply(init)
         val lookupTag = symbol.classId?.toLookupTag() ?: symbol.firSymbol.toLookupTag()
-        return buildClassType(lookupTag, KaFirClassTypeBuilder(this).apply(init))
+
+        // The class ID of `symbol` might not be resolvable from the use-site session, e.g., when `symbol` comes from a module
+        // which the use-site module does not depend on
+        if (lookupTag.toSymbol(rootModuleSession) == null) {
+            return buildUnresolvedClassType(lookupTag.classId, builder)
+        }
+
+        return buildClassType(lookupTag, builder)
+    }
+
+    private fun buildUnresolvedClassType(classId: ClassId, builder: KaFirClassTypeBuilder): KaType {
+        return ConeErrorType(
+            diagnostic = ConeUnresolvedSymbolError(classId),
+            attributes = constructAnnotationAttributes(builder.annotations, allowExtensionFunctionType = false),
+            nullable = builder.isMarkedNullable
+        ).asKaType()
     }
 
     private fun buildClassType(lookupTag: ConeClassLikeLookupTag, builder: KaFirClassTypeBuilder): KaType {
