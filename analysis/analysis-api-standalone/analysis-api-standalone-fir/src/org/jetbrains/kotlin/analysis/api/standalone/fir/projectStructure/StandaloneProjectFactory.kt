@@ -40,7 +40,9 @@ import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProject
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.allDirectDependencies
+import org.jetbrains.kotlin.analysis.api.projectStructure.baseContextModuleOrSelf
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider
 import org.jetbrains.kotlin.analysis.api.standalone.StandaloneWorkaroundApi
 import org.jetbrains.kotlin.analysis.api.standalone.fir.declarations.KotlinStandaloneIndexCache
@@ -66,6 +68,8 @@ import org.jetbrains.kotlin.library.KlibConstants.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.psi.KtPlatformInterface
+import org.jetbrains.kotlin.resolve.jvm.modules.JavaModule
+import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleInfo
 import org.jetbrains.kotlin.utils.topologicalSort
 import org.picocontainer.PicoContainer
 import java.nio.file.Path
@@ -205,7 +209,7 @@ object StandaloneProjectFactory {
         initialiseVirtualFileFinderServices(
             environment,
             modules,
-            projectStructureProvider.allSourceFiles,
+            projectStructureProvider,
             languageVersionSettings,
             jdkHome,
         )
@@ -214,14 +218,27 @@ object StandaloneProjectFactory {
     private fun initialiseVirtualFileFinderServices(
         environment: KotlinCoreProjectEnvironment,
         modules: List<KaModule>,
-        sourceFiles: List<PsiFileSystemItem>,
+        projectStructureProvider: KotlinStaticProjectStructureProvider,
         languageVersionSettings: LanguageVersionSettings,
         jdkHome: Path?,
     ) {
         val project = environment.project
+        val sourceFiles = projectStructureProvider.allSourceFiles
         val javaFileManager = project.getService(JavaFileManager::class.java) as KotlinCliJavaFileManagerImpl
         val javaModuleFinder = CliJavaModuleFinder(jdkHome?.toFile(), createStubConfigurationForReporting(), javaFileManager, project, null)
+
+        val javaModulesByKaSourceModule = createJavaModulesByKaSourceModule(sourceFiles, projectStructureProvider)
+        javaModulesByKaSourceModule.values.forEach(javaModuleFinder::addUserModule)
+
         val javaModuleGraph = JavaModuleGraph(javaModuleFinder)
+
+        val psiManager = PsiManager.getInstance(project)
+        val sourceJavaModuleByFile: (VirtualFile) -> JavaModule.Explicit? = { file ->
+            val sourceModule = psiManager.findFile(file)
+                ?.let { projectStructureProvider.getModule(it, null) }
+                ?.baseContextModuleOrSelf as? KaSourceModule
+            javaModulesByKaSourceModule[sourceModule]
+        }
 
         val allSourceFileRoots = sourceFiles.map { JavaRoot(it.virtualFile, JavaRoot.RootType.SOURCE) }
         val jdkRoots = getDefaultJdkModuleRoots(javaModuleFinder, javaModuleGraph)
@@ -238,6 +255,7 @@ object StandaloneProjectFactory {
             emptyList(),
             javaModuleFinder.systemModules.toList(),
             project,
+            sourceJavaModuleByFile
         )
         project.registerService(
             KotlinJavaModuleAccessibilityChecker::class.java,
@@ -304,6 +322,23 @@ object StandaloneProjectFactory {
         val fileFinderFactory = CliVirtualFileFinderFactory(rootsIndex, false, perfManager = null)
         project.registerService(VirtualFileFinderFactory::class.java, fileFinderFactory)
         project.registerService(MetadataFinderFactory::class.java, CliMetadataFinderFactory(fileFinderFactory))
+    }
+
+    private fun createJavaModulesByKaSourceModule(
+        sourceFiles: List<PsiFileSystemItem>,
+        projectStructureProvider: KotlinStaticProjectStructureProvider
+    ): Map<KaSourceModule, JavaModule.Explicit> {
+        return sourceFiles.filterIsInstance<PsiJavaFile>().mapNotNull { javaFile ->
+            val moduleDeclaration = javaFile.moduleDeclaration ?: return@mapNotNull null
+            val module = projectStructureProvider.getModule(javaFile, null) as? KaSourceModule ?: return@mapNotNull null
+            val moduleInfoFile = moduleDeclaration.containingFile.virtualFile
+
+            module to JavaModule.Explicit(
+                JavaModuleInfo.create(moduleDeclaration),
+                listOf(JavaModule.Root(moduleInfoFile.parent, isBinary = false)),
+                moduleInfoFile
+            )
+        }.toMap()
     }
 
     fun getDefaultJdkModulePaths(
