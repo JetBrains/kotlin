@@ -75,6 +75,20 @@ FILE: constructorWithStaticName.kt
 
         }
 
+        @R|lombok/EqualsAndHashCode|() public final inner class InnerEqualsAndHashCode : R|kotlin/Any| {
+            public Outer.constructor(): R|Outer.InnerEqualsAndHashCode| {
+                super<R|kotlin/Any|>()
+            }
+
+            private final val value: R|kotlin/Int| = Int(0)
+                private get(): R|kotlin/Int|
+
+            public open override operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+            public open override fun hashCode(): R|kotlin/Int|
+
+        }
+
     }
     public final class GenericOuter<T> : R|kotlin/Any| {
         public constructor<T>(): R|GenericOuter<T>| {

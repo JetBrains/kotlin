@@ -15,8 +15,13 @@ class Outer {
         var value: Int = 0
     }
 
-    @Data(staticConstructor = "of")
+    <!ANNOTATION_IS_NOT_SUPPORTED_ON_CLASS!>@Data(staticConstructor = "of")<!>
     inner class InnerData {
+        private val value = 0
+    }
+
+    <!ANNOTATION_IS_NOT_SUPPORTED_ON_CLASS!>@EqualsAndHashCode<!>
+    inner class InnerEqualsAndHashCode {
         private val value = 0
     }
 }
@@ -27,7 +32,7 @@ class GenericOuter<T> {
         var value: T? = null
     }
 
-    @Data(staticConstructor = "of")
+    <!ANNOTATION_IS_NOT_SUPPORTED_ON_CLASS!>@Data(staticConstructor = "of")<!>
     inner class InnerData {
         var value: T? = null
     }
