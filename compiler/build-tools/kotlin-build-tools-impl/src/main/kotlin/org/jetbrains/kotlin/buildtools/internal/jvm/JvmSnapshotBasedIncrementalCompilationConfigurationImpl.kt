@@ -2,25 +2,28 @@
  * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:UseSerializers(PathAsStringSerializer::class)
 
 package org.jetbrains.kotlin.buildtools.internal.jvm
 
+import kotlinx.serialization.UseSerializers
 import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions
 import org.jetbrains.kotlin.buildtools.internal.*
+import org.jetbrains.kotlin.buildtools.internal.serializability.PathAsStringSerializer
+import org.jetbrains.kotlin.buildtools.internal.serializability.cast
+import org.jetbrains.kotlin.buildtools.internal.serializability.throwPropertyNotFound
 import java.nio.file.Path
 
 @Suppress("DEPRECATION_ERROR")
-internal class JvmSnapshotBasedIncrementalCompilationConfigurationImpl private constructor(
+internal class JvmSnapshotBasedIncrementalCompilationConfigurationImpl(
     workingDirectory: Path,
     sourcesChanges: SourcesChanges,
     dependenciesSnapshotFiles: List<Path>,
     shrunkClasspathSnapshot: Path,
-    // this can be renamed to options after we get rid of the superclass `options: JvmSnapshotBasedIncrementalCompilationOptions`
-    private val options2: Options = Options(JvmSnapshotBasedIncrementalCompilationConfiguration::class),
 ) : JvmSnapshotBasedIncrementalCompilationConfiguration(
     workingDirectory,
     sourcesChanges,
@@ -34,23 +37,6 @@ internal class JvmSnapshotBasedIncrementalCompilationConfigurationImpl private c
     DeepCopyable<JvmSnapshotBasedIncrementalCompilationConfigurationImpl>,
     HasSnapshotBasedIcOptionsAccessor {
 
-    constructor(
-        workingDirectory: Path,
-        sourcesChanges: SourcesChanges,
-        dependenciesSnapshotFiles: List<Path>,
-        shrunkClasspathSnapshot: Path,
-    ) : this(
-        workingDirectory,
-        sourcesChanges,
-        dependenciesSnapshotFiles,
-        shrunkClasspathSnapshot,
-        Options(
-            JvmSnapshotBasedIncrementalCompilationConfiguration::class,
-        )
-    ) {
-        initializeOptions(this::class, options2)
-    }
-
     override fun build(): JvmSnapshotBasedIncrementalCompilationConfiguration = deepCopy()
 
     override fun toBuilder(): Builder = deepCopy()
@@ -59,82 +45,101 @@ internal class JvmSnapshotBasedIncrementalCompilationConfigurationImpl private c
         JvmSnapshotBasedIncrementalCompilationConfigurationImpl(
             workingDirectory,
             sourcesChanges,
-            dependenciesSnapshotFiles,
+            dependenciesSnapshotFiles.toList(),
             shrunkClasspathSnapshot,
-            options2.deepCopy()
-        )
+        ).also {
+            it.preciseJavaTracking = preciseJavaTracking
+            it.assuredNoClasspathSnapshotChanges = assuredNoClasspathSnapshotChanges
+            it.useFirRunner = useFirRunner
+            it.rootProjectDir = rootProjectDir
+            it.moduleBuildDir = moduleBuildDir
+            it.backupClasses = backupClasses
+            it.keepIcCachesInMemory = keepIcCachesInMemory
+            it.forceRecompilation = forceRecompilation
+            it.outputDirs = outputDirs
+            it.unsafeIncrementalCompilationForMultiplatform = unsafeIncrementalCompilationForMultiplatform
+            it.monotonousIncrementalCompileSetExpansion = monotonousIncrementalCompileSetExpansion
+            it.trackConfigurationInputs = trackConfigurationInputs
+        }
 
+    var preciseJavaTracking: Boolean = false
 
-    @UseFromImplModuleRestricted
-    override fun <V> get(key: JvmSnapshotBasedIncrementalCompilationConfiguration.Option<V>): V {
-        return options2[key]
+    var assuredNoClasspathSnapshotChanges: Boolean = false
+
+    var useFirRunner: Boolean = false
+
+    var rootProjectDir: Path? = null
+
+    var moduleBuildDir: Path? = null
+
+    var backupClasses: Boolean = false
+
+    var keepIcCachesInMemory: Boolean = false
+
+    var forceRecompilation: Boolean = false
+
+    var outputDirs: Set<Path>? = null
+
+    var unsafeIncrementalCompilationForMultiplatform: Boolean = false
+
+    var monotonousIncrementalCompileSetExpansion: Boolean = true
+
+    var trackConfigurationInputs: Boolean = false
+
+    @Suppress("UNCHECKED_CAST")
+    private fun <V> get(key: String): V = when (key) {
+        "PRECISE_JAVA_TRACKING" -> preciseJavaTracking
+        "ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES" -> assuredNoClasspathSnapshotChanges
+        "USE_FIR_RUNNER" -> useFirRunner
+        "ROOT_PROJECT_DIR" -> rootProjectDir
+        "MODULE_BUILD_DIR" -> moduleBuildDir
+        "BACKUP_CLASSES" -> backupClasses
+        "KEEP_IC_CACHES_IN_MEMORY" -> keepIcCachesInMemory
+        "FORCE_RECOMPILATION" -> forceRecompilation
+        "OUTPUT_DIRS" -> outputDirs
+        "UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM" -> unsafeIncrementalCompilationForMultiplatform
+        "MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION" -> monotonousIncrementalCompileSetExpansion
+        "TRACK_CONFIGURATION_INPUTS" -> trackConfigurationInputs
+        else -> throwPropertyNotFound(key)
+    } as V
+
+    private fun <V> set(key: String, value: V) {
+        when (key) {
+            "PRECISE_JAVA_TRACKING" -> preciseJavaTracking = value.cast()
+            "ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES" -> assuredNoClasspathSnapshotChanges = value.cast()
+            "USE_FIR_RUNNER" -> useFirRunner = value.cast()
+            "ROOT_PROJECT_DIR" -> rootProjectDir = value.cast()
+            "MODULE_BUILD_DIR" -> moduleBuildDir = value.cast()
+            "BACKUP_CLASSES" -> backupClasses = value.cast()
+            "KEEP_IC_CACHES_IN_MEMORY" -> keepIcCachesInMemory = value.cast()
+            "FORCE_RECOMPILATION" -> forceRecompilation = value.cast()
+            "OUTPUT_DIRS" -> outputDirs = value.cast()
+            "UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM" -> unsafeIncrementalCompilationForMultiplatform = value.cast()
+            "MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION" -> monotonousIncrementalCompileSetExpansion = value.cast()
+            "TRACK_CONFIGURATION_INPUTS" -> trackConfigurationInputs = value.cast()
+            else -> throwPropertyNotFound(key)
+        }
     }
 
     @UseFromImplModuleRestricted
-    override fun <V> set(key: JvmSnapshotBasedIncrementalCompilationConfiguration.Option<V>, value: V) {
+    override fun <V> get(key: Option<V>): V = get(key.id)
+
+    @UseFromImplModuleRestricted
+    override fun <V> set(key: Option<V>, value: V) {
         checkOptionIsAvailableForVersion(key)
-        options2[key] = value
-    }
-
-    operator fun <V> get(key: Option<V>): V {
-        return options2[key]
-    }
-
-    operator fun <V> set(key: Option<V>, value: V) {
-        options2[key] = value
+        set(key.id, value)
     }
 
     @UseFromImplModuleRestricted
-    override fun <V> get(key: BaseIncrementalCompilationConfiguration.Option<V>): V = options2[key]
+    override fun <V> get(key: BaseIncrementalCompilationConfiguration.Option<V>): V = get(key.id)
 
     @UseFromImplModuleRestricted
     override fun <V> set(key: BaseIncrementalCompilationConfiguration.Option<V>, value: V) {
         checkOptionIsAvailableForVersion(key)
-        options2[key] = value
+        set(key.id, value)
     }
 
-    operator fun <V> get(key: BaseIncrementalCompilationConfigurationImpl.Option<V>): V = options2[key]
-    override fun <V> get(key: BaseOptionWithDefault<V>): V {
-        return options2[key]
-    }
-
-    @OptIn(UseFromImplModuleRestricted::class)
-    operator fun <V> set(key: BaseIncrementalCompilationConfigurationImpl.Option<V>, value: V) {
-        options2[key] = value
-    }
-
-    open class Option<V>(id: String, default: V) : BaseOptionWithDefault<V>(id, defaultValue = default)
-
-    companion object {
-
-        val PRECISE_JAVA_TRACKING: Option<Boolean> = Option("PRECISE_JAVA_TRACKING", false)
-
-        val ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES: Option<Boolean> =
-            Option("ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES", false)
-
-        val USE_FIR_RUNNER: Option<Boolean> = Option("USE_FIR_RUNNER", false)
-
-        // copied from BaseCompilationConfigurationImpl so initializeOptions works
-
-        val ROOT_PROJECT_DIR: Option<Path?> = Option("ROOT_PROJECT_DIR", null)
-
-        val MODULE_BUILD_DIR: Option<Path?> = Option("MODULE_BUILD_DIR", null)
-
-        val BACKUP_CLASSES: Option<Boolean> = Option("BACKUP_CLASSES", false)
-
-        val KEEP_IC_CACHES_IN_MEMORY: Option<Boolean> = Option("KEEP_IC_CACHES_IN_MEMORY", false)
-
-        val FORCE_RECOMPILATION: Option<Boolean> = Option("FORCE_RECOMPILATION", false)
-
-        val OUTPUT_DIRS: Option<Set<Path>?> = Option("OUTPUT_DIRS", null)
-
-        val UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM: Option<Boolean> =
-            Option("UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM", false)
-
-        val MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION: Option<Boolean> = Option("MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION", true)
-
-        val TRACK_CONFIGURATION_INPUTS: Option<Boolean> = Option("TRACK_CONFIGURATION_INPUTS", false)
-    }
+    override fun <V> get(key: BaseOptionWithDefault<V>): V = get(key.id)
 }
 
 /**
