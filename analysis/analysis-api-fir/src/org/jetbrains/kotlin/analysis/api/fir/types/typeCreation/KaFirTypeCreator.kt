@@ -103,8 +103,10 @@ internal class KaFirTypeCreator(
         if (classSymbol == null) {
             val builder = KaFirClassTypeBuilder(this, outerClassSymbolsProvider = ::emptyList).apply(init)
             return ConeErrorType(
-                ConeUnresolvedSymbolError(classId)
-            ).withAnnotationAttributes(builder.annotations).asKaType()
+                diagnostic = ConeUnresolvedSymbolError(classId),
+                attributes = constructAnnotationAttributes(builder.annotations, allowExtensionFunctionType = false),
+                nullable = builder.isMarkedNullable
+            ).asKaType()
         }
 
         return buildClassType(classSymbol.toLookupTag(), classSymbol, capturedTypeArguments = emptyList(), init)
