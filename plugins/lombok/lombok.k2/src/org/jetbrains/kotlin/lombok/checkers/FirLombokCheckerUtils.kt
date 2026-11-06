@@ -423,13 +423,18 @@ fun checkCallSuper(
     annotationInfo: ConeLombokAnnotations.ConeLombokAnnotation,
     declaration: FirRegularClass,
     functionNames: Set<Name>,
+    appliedAnnotationName: Name,
 ) {
     if (callSuperMode == CallSuperMode.Warn && declaration.symbol.hasNonTrivialSuperclass(context.session)) {
+        val annotationName = annotationInfo.annotation.resolvedType.lookupTagIfAny?.name!!.takeIf {
+            it != LombokNames.DATA.shortName()
+        } ?: appliedAnnotationName
+
         reporter.reportOn(
             annotationInfo.annotation.source,
             LombokFirDiagnostics.CALL_SUPER_NOT_CALLED,
             functionNames.joinToString("/"),
-            annotationInfo.annotation.resolvedType.lookupTagIfAny?.name!!,
+            annotationName,
             context,
         )
     }

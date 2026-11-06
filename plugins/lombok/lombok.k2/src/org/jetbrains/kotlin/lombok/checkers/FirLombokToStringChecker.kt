@@ -59,6 +59,7 @@ object FirLombokToStringChecker : FirRegularClassChecker(MppCheckerKind.Platform
             toStringAnnInfo,
             declaration,
             functionNames,
+            LombokNames.TO_STRING.shortName(),
         )
 
         checkIncludeAndExcludeAnnotations(
