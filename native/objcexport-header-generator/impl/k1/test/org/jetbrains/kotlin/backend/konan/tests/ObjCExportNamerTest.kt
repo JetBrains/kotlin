@@ -15,12 +15,12 @@ import org.jetbrains.kotlin.backend.konan.testUtils.InlineSourceTestEnvironment
 import org.jetbrains.kotlin.backend.konan.testUtils.compileAndDeserializeSources
 import org.jetbrains.kotlin.backend.konan.testUtils.createObjCExportNamer
 import org.jetbrains.kotlin.backend.konan.testUtils.createObjCExportNamerConfiguration
+import org.jetbrains.kotlin.backend.konan.testUtils.findSingleFunction
 import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi2ir.findSingleFunction
 import org.jetbrains.kotlin.resolve.scopes.findFirstVariable
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
