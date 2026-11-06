@@ -1,0 +1,3 @@
+module base {
+    exports base;
+}

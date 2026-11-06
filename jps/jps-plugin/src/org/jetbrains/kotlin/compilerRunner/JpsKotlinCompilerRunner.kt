@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.compilerRunner
 
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.xmlb.XmlSerializerUtil
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.jps.api.GlobalOptions
@@ -114,11 +115,20 @@ class JpsKotlinCompilerRunner {
         compilerSettings: CompilerSettings,
         environment: JpsCompilerEnvironment,
         moduleFile: File,
+        modulePath: List<File>,
         buildMetricReporter: JpsBuilderMetricReporter?,
     ) {
         val arguments = mergeBeans(commonArguments, XmlSerializerUtil.createCopy(k2jvmArguments))
         setupK2JvmArguments(moduleFile, arguments)
-        withCompilerSettings(compilerSettings) {
+        val settings = if (modulePath.isEmpty()) compilerSettings else {
+            arguments.javaModulePath = modulePath.joinToString(File.pathSeparator)
+            // The module path includes the user's `-Xmodule-path`, which would replace it if passed again
+            arguments.freeArgs = arguments.freeArgs.filterModulePath()
+            compilerSettings.copyOf().apply {
+                additionalArguments = StringUtil.splitHonorQuotes(additionalArguments, ' ').filterModulePath().joinToString(" ")
+            }
+        }
+        withCompilerSettings(settings) {
             try {
                 compileWithDaemonOrFallback(arguments, environment, buildMetricReporter)
             } catch (e: Throwable) {
@@ -357,4 +367,21 @@ class JpsKotlinCompilerRunner {
 
     @TestOnly
     fun List<String>.filterDuplicatedWarningLevelForTest(): List<String> = filterDuplicatedWarningLevel()
+}
+
+/**
+ * Removes `-Xmodule-path` arguments, with the value given after `=` or as the next argument
+ */
+internal fun List<String>.filterModulePath(): List<String> {
+    val result = mutableListOf<String>()
+    var isValue = false
+    for (token in this) {
+        val argument = StringUtil.unquoteString(token)
+        when {
+            isValue -> isValue = false
+            argument == "-Xmodule-path" -> isValue = true
+            !argument.startsWith("-Xmodule-path=") -> result.add(token)
+        }
+    }
+    return result
 }
