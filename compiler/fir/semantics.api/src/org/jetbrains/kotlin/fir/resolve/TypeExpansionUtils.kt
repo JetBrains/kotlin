@@ -238,17 +238,7 @@ fun createParametersSubstitutor(
     typeAliasMap: Map<FirTypeParameterSymbol, ConeTypeProjection>,
 ): ConeSubstitutor = object : AbstractConeSubstitutor(useSiteSession.typeContext) {
     override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
-        // The components of a union type are not type arguments, so a type parameter of the alias used directly as a component
-        // (`typealias Res<T> = T | E`) has to be substituted here. Type parameters in arguments are handled by `substituteArgument`.
-        val symbol = (type as? ConeTypeParameterType)?.lookupTag?.symbol ?: return null
-        val mappedProjection = typeAliasMap[symbol] ?: return null
-        val mappedType = when (mappedProjection) {
-            is ConeKotlinTypeProjection -> mappedProjection.type
-            is ConeStarProjection -> StandardTypes.NullableAny
-        }
-        return mappedType
-            .updateNullabilityIfNeeded(type)
-            .let { it.withAttributes(type.attributes.add(it.attributes)) }
+        return null
     }
 
     override fun substituteArgument(projection: ConeTypeProjection, index: Int): ConeTypeProjection? {
