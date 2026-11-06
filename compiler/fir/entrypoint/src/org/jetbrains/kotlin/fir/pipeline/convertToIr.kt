@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.validation.*
 import org.jetbrains.kotlin.ir.validation.checkers.IrNestedOffsetRangeChecker
+import org.jetbrains.kotlin.ir.validation.checkers.declaration.IrAnnotationUsageChecker
 import org.jetbrains.kotlin.ir.validation.checkers.declaration.IrClassSuperTypesChecker
 import org.jetbrains.kotlin.ir.validation.checkers.declaration.IrExpressionBodyInFunctionChecker
 import org.jetbrains.kotlin.ir.validation.checkers.declaration.IrFieldVisibilityChecker
@@ -528,6 +529,9 @@ private class Fir2IrPipeline(
                     IrVisibilityChecker.Strict,
                     IrClassSuperTypesChecker,
                 )
+                // Annotations nested in annotation arguments are serialized as ordinary constructor calls,
+                // and are deserialized back as IrAnnotation only if they were IrAnnotation in the first place.
+                .withCheckers(IrAnnotationUsageChecker)
                 .applyIf(extension == null) {
                     // KT-80065: This checker is known to trigger on a lot of internal and external compiler plugins,
                     //  while most of them, somehow, work. It is disabled for now, not to cause too much breakage.
@@ -561,6 +565,7 @@ private class Fir2IrPipeline(
                         is IrValidationError.Cause.UnboundSymbol -> IrValidationSeverity.ERROR
                         is IrExpressionBodyInFunctionChecker -> IrValidationSeverity.ERROR
                         is IrFieldVisibilityChecker -> IrValidationSeverity.ERROR
+                        is IrAnnotationUsageChecker -> IrValidationSeverity.ERROR
                         is IrLegacyCallableReferenceChecker -> IrValidationSeverity.ERROR
                         is IrCrossFileFieldUsageChecker ->
                             if (languageVersionSettings.supportsFeature(LanguageFeature.ForbidCrossFileIrFieldAccessInKlibs))

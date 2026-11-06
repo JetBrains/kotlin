@@ -28,17 +28,22 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementContainer
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrDynamicType
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.SimpleTypeNullability
 import org.jetbrains.kotlin.ir.types.createType
 import org.jetbrains.kotlin.ir.types.impl.IrDynamicTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.validation.checkers.declaration.IrAnnotationUsageChecker
 import org.jetbrains.kotlin.ir.validation.checkers.expression.IrLegacyCallableReferenceChecker
 import org.jetbrains.kotlin.ir.validation.checkers.expression.IrTypeOperatorRedundancyChecker
 import org.jetbrains.kotlin.name.FqName
@@ -3397,6 +3402,104 @@ class IrValidatorTest {
                 ),
             ),
             config = IrValidatorConfig().withCheckers(IrLegacyCallableReferenceChecker),
+        )
+    }
+
+    private fun IrFile.addClass(name: String, kind: ClassKind = ClassKind.ANNOTATION_CLASS): IrClass {
+        val klass = IrFactoryImpl.buildClass {
+            this.name = Name.identifier(name)
+            this.kind = kind
+        }.apply {
+            createThisReceiverParameter()
+        }
+        addChild(klass)
+        return klass
+    }
+
+    private fun IrClass.addPrimaryConstructor(vararg parameterTypes: IrType): IrConstructor = addConstructor {
+        isPrimary = true
+    }.apply {
+        parameterTypes.forEachIndexed { index, type -> addValueParameter("p$index", type) }
+    }
+
+    private fun IrConstructor.annotationCall(vararg arguments: IrExpression?): IrAnnotation =
+        IrAnnotationImpl(
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+            type = constructedClass.defaultType,
+            symbol = symbol,
+            typeArgumentsCount = 0,
+            constructorTypeArgumentsCount = 0,
+        ).apply { arguments.forEachIndexed { index, argument -> this.arguments[index] = argument } }
+
+    private fun IrConstructor.plainConstructorCall(): IrConstructorCall =
+        IrConstructorCallImpl(
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+            type = constructedClass.defaultType,
+            symbol = symbol,
+            typeArgumentsCount = 0,
+            constructorTypeArgumentsCount = 0,
+        )
+
+    private fun buildFunctionAnnotatedWith(file: IrFile, annotation: IrAnnotation): IrSimpleFunction {
+        val function = IrFactoryImpl.buildFun {
+            name = Name.identifier("foo")
+            returnType = TestIrBuiltins.unitType
+        }
+        function.annotations = listOf(annotation)
+        file.addChild(function)
+        return function
+    }
+
+    private fun annotationUsageCheckerMessage(annotation: String, declaration: String, constructorCall: String) = Message(
+        ERROR,
+        """
+        [IR VALIDATION] IrValidatorTest: Annotation must be represented by IrAnnotation, not by a plain IrConstructorCall: $constructorCall
+        $annotation
+          inside $declaration
+            inside FILE fqName:org.sample fileName:test.kt
+        """.trimIndent(),
+        CompilerMessageLocation.create("test.kt", 0, 0, null),
+    )
+
+    @Test
+    fun `nested annotations represented by IrAnnotation are not reported`() {
+        val file = createIrFile()
+        val innerConstructor = file.addClass("Inner").addPrimaryConstructor()
+        val innerType = innerConstructor.constructedClass.defaultType
+        val outerConstructor = file.addClass("Outer").addPrimaryConstructor(innerType, TestIrBuiltins.anyType).apply {
+            parameters[0].defaultValue = IrFactoryImpl.createExpressionBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET, innerConstructor.annotationCall())
+        }
+        val vararg = IrVarargImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, TestIrBuiltins.anyType, innerType, listOf(innerConstructor.annotationCall()))
+        buildFunctionAnnotatedWith(file, outerConstructor.annotationCall(innerConstructor.annotationCall(), vararg))
+        testValidation(
+            IrVerificationMode.WARNING,
+            file,
+            emptyList(),
+            config = IrValidatorConfig().withCheckers(IrAnnotationUsageChecker),
+        )
+    }
+
+    @Test
+    fun `nested annotations represented by plain IrConstructorCall are reported`() {
+        val file = createIrFile()
+        val innerConstructor = file.addClass("Inner").addPrimaryConstructor()
+        val innerType = innerConstructor.constructedClass.defaultType
+        val outerConstructor = file.addClass("Outer").addPrimaryConstructor(innerType, TestIrBuiltins.anyType)
+        val vararg = IrVarargImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, TestIrBuiltins.anyType, innerType, listOf(innerConstructor.plainConstructorCall()))
+        buildFunctionAnnotatedWith(file, outerConstructor.annotationCall(innerConstructor.plainConstructorCall(), vararg))
+        val annotation = "CONSTRUCTOR_CALL 'public constructor <init> (p0: org.sample.Inner, p1: kotlin.Any) [primary] declared in org.sample.Outer' type=org.sample.Outer origin=null"
+        val declaration = "FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit"
+        val constructorCall = "CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in org.sample.Inner' type=org.sample.Inner origin=null"
+        testValidation(
+            IrVerificationMode.ERROR,
+            file,
+            listOf(
+                annotationUsageCheckerMessage(annotation, declaration, constructorCall),
+                annotationUsageCheckerMessage(annotation, declaration, constructorCall),
+            ),
+            config = IrValidatorConfig().withCheckers(IrAnnotationUsageChecker),
         )
     }
 }
