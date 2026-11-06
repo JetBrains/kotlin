@@ -10,6 +10,7 @@ import org.gradle.api.internal.project.ProjectInternal
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KaptStubGenerationScheme
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin
+import org.jetbrains.kotlin.gradle.internal.KaptDetectMemoryLeaksMode
 import org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
 import org.jetbrains.kotlin.gradle.internal.KaptWithoutKotlincTask
 import org.jetbrains.kotlin.gradle.plugin.KaptExtension
@@ -25,6 +26,7 @@ import org.junit.jupiter.api.io.TempDir
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
+import kotlin.test.assertTrue
 import java.io.File
 
 class KaptApiTest {
@@ -143,11 +145,13 @@ class KaptApiTest {
         plugin.kaptExtension.useBuildCache = false
         plugin.kaptExtension.includeCompileClasspath = false
         plugin.kaptExtension.stubGenerationScheme.set(KaptStubGenerationScheme.DIRECT)
+        plugin.kaptExtension.detectMemoryLeaks = "paranoid"
 
         val task = configureKapt {}
         assertEquals(false, task.useBuildCache)
         assertEquals(false, task.includeCompileClasspath.get())
         assertEquals(KaptStubGenerationScheme.DIRECT, task.stubGenerationScheme.get())
+        assertEquals(KaptDetectMemoryLeaksMode.PARANOID, task.detectMemoryLeaks.get())
     }
 
     @Test
@@ -156,6 +160,14 @@ class KaptApiTest {
         assertEquals(true, task.useBuildCache)
         assertEquals(true, task.includeCompileClasspath.get())
         assertEquals(KaptStubGenerationScheme.JTREE, task.stubGenerationScheme.get())
+        assertEquals(KaptDetectMemoryLeaksMode.STANDARD, task.detectMemoryLeaks.get())
+    }
+
+    @Test
+    fun testToolingDiagnosticsWithoutKotlinPlugin() {
+        val task = configureKapt {}
+        assertTrue(task.toolingDiagnosticsCollector.isPresent)
+        assertTrue(task.toolingDiagnosticsContext.isPresent)
     }
 
     @Test
