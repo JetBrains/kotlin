@@ -10,6 +10,7 @@ import com.google.gson.JsonObject
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution.Companion.DIST
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.reader
 import kotlin.test.assertNotNull
@@ -21,6 +22,7 @@ class KotlinJsLibraryGradlePluginIT : KGPBaseTest() {
         jsOptions = BuildOptions.JsOptions(),
     ).disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
 
+    @TestMetadata("simple-js-library")
     @DisplayName("simple binary library")
     @GradleTest
     fun testSimpleJsBinaryLibrary(gradleVersion: GradleVersion) {
@@ -41,6 +43,7 @@ class KotlinJsLibraryGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("js-library-with-executable")
     @DisplayName("binary library and executable")
     @GradleTest
     fun testJsBinaryLibraryAndExecutable(gradleVersion: GradleVersion) {
@@ -53,6 +56,7 @@ class KotlinJsLibraryGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("js-library-with-executable-browser-nodejs")
     @DisplayName("binary library and executable both for browser and nodejs")
     @GradleTest
     fun testJsBinaryLibraryAndExecutableForBrowserAndNodejs(gradleVersion: GradleVersion) {

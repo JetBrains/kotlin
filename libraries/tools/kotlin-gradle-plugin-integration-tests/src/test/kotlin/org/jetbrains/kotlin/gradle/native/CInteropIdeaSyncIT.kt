@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.native
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.writeText
@@ -18,6 +19,7 @@ class CInteropIdeaSyncIT : KGPBaseTest() {
 
     private val ideaSyncBuildOptions = defaultBuildOptions.copy(freeArgs = listOf("-Didea.sync.active=true"))
 
+    @TestMetadata("cinterop-failing")
     @DisplayName("Idea sync warning failing cinterop warning")
     @GradleTest
     fun shouldPrintWarningForCInteroperability(gradleVersion: GradleVersion) {

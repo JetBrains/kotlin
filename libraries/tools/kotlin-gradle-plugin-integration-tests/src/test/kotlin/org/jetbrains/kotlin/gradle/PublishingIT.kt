@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.util.parsePom
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.uklibs.*
+import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import kotlin.test.assertEquals
@@ -313,6 +314,7 @@ class PublishingIT : KGPBaseTest() {
         )
     }
 
+    @TestMetadata("base-kotlin-jvm-library")
     @GradleTest
     fun testAdhocSoftwareComponentInKotlinJvm(gradleVersion: GradleVersion) = testAdhocSoftwareComponent(
         gradleVersion = gradleVersion,
@@ -330,6 +332,7 @@ class PublishingIT : KGPBaseTest() {
         configureConsumerProject = {}
     )
 
+    @TestMetadata("base-kotlin-multiplatform-library")
     @GradleTest
     fun testAdhocSoftwareComponentInKotlinMultiplatform(gradleVersion: GradleVersion) = testAdhocSoftwareComponent(
         gradleVersion = gradleVersion,

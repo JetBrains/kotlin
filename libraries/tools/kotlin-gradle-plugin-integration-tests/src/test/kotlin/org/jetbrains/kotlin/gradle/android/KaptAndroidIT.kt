@@ -13,6 +13,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.KaptBaseIT
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.checkBytecodeContains
+import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerPlugins
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
@@ -25,6 +26,7 @@ import kotlin.io.path.writeText
 @MustRunOnChangesInGradle
 @MustRunOnChangesInCompilerPlugins
 class KaptAndroidIT : KaptBaseIT() {
+    @TestMetadata("kapt/kt15001")
     @DisplayName("KT-15001")
     @GradleAndroidTest
     @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
@@ -45,6 +47,7 @@ class KaptAndroidIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/icAnonymousTypes")
     @DisplayName("KT-25374: kapt doesn't fail with anonymous classes with IC")
     @GradleAndroidTest
     @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
@@ -79,6 +82,7 @@ class KaptAndroidIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/android-dagger")
     @DisplayName("static dsl options are passed to kapt")
     @GradleAndroidTest
     @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
@@ -116,6 +120,7 @@ class KaptAndroidIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/android-dagger")
     @DisplayName("KT-45532: kapt tasks shouldn't create outputs at configuration time")
     @GradleAndroidTest
     @MustRunOnChangesInGradle
@@ -138,6 +143,7 @@ class KaptAndroidIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("AndroidLibraryKotlinProject")
     @DisplayName("KT-31127: kapt doesn't break JavaCompile when using Filer API")
     @GradleAndroidTest
     @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
@@ -196,6 +202,7 @@ class KaptAndroidIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("AndroidProject")
     @DisplayName("kapt uses AGP annotation processor option providers as nested inputs")
     @GradleAndroidTest
     fun testKaptUsingApOptionProvidersAsNestedInputOutput(
@@ -264,6 +271,7 @@ class KaptAndroidIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("AndroidProject")
     @MustRunOnChangesInGradle
     @DisplayName("agp annotation processor nested arguments are not evaluated at configuration time")
     @GradleAndroidTest
@@ -310,6 +318,7 @@ class KaptAndroidIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/android-dagger")
     @MustRunOnChangesInGradle
     @DisplayName("KT-55334: Kapt generate stubs and related KotlinCompile tasks are using similar -module-name value")
     @GradleAndroidTest
@@ -348,6 +357,7 @@ class KaptAndroidIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/noProcessors")
     @MustRunOnChangesInGradle
     @DisplayName("KT-71233 Kapt does not cause build to fail if no annotation processors are defined")
     @GradleAndroidTest

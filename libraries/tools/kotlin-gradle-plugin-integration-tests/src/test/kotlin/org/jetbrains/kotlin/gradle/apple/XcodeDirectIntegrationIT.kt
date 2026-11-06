@@ -9,6 +9,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.runProcess
+import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
@@ -28,6 +29,7 @@ import kotlin.test.assertEquals
 @MustRunOnChangesInGradle
 class XcodeDirectIntegrationIT : KGPBaseTest() {
 
+    @TestMetadata("xcodeDirectIntegration")
     @DisplayName("Xcode direct integration")
     @ParameterizedTest(name = "{displayName} with {1}, {0} and isStatic={2}")
     @ArgumentsSource(DirectIntegrationTestArgumentsProvider::class)
@@ -59,6 +61,7 @@ class XcodeDirectIntegrationIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("xcodeDirectIntegration")
     @DisplayName("Xcode archiving")
     @ParameterizedTest(name = "{displayName} with {0} and isStatic={1}")
     @ArgumentsSource(ArchivingTestArgumentsProvider::class)

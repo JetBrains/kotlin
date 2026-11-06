@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceFirst
 import org.jetbrains.kotlin.gradle.util.replaceText
+import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
@@ -24,6 +25,7 @@ import kotlin.test.assertTrue
 @MustRunOnChangesInGradle
 class XCFrameworkIT : KGPBaseTest() {
 
+    @TestMetadata("appleXCFramework")
     @DisplayName("Assembling shared debug XCFramework for all available ios and watchos targets ")
     @GradleTest
     fun shouldAssembleXCFrameworkForAllAvailableTargets(gradleVersion: GradleVersion) {
@@ -57,6 +59,7 @@ class XCFrameworkIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("appleXCFramework")
     @DisplayName("Assembling other XCFramework for ios targets")
     @GradleTest
     fun shouldAssembleOtherXCFrameworkForIosTargets(gradleVersion: GradleVersion) {
@@ -77,6 +80,7 @@ class XCFrameworkIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("appleXCFramework")
     @DisplayName("XCFramework doesn't contain any framework's tasks without declaration in build script")
     @GradleAndroidTest
     fun shouldNotContainNotDeclaredTasks(gradleVersion: GradleVersion) {
@@ -94,6 +98,7 @@ class XCFrameworkIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("appleXCFramework")
     @DisplayName("Two XCFrameworks were registered with same name")
     @GradleTest
     fun shouldCheckConfigurationErrorWithTwoRegisteredXCFrameworks(gradleVersion: GradleVersion) {
@@ -108,6 +113,7 @@ class XCFrameworkIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("appleXCFramework")
     @DisplayName("K/N project with XCFramework, that contains frameworks with different names")
     @GradleTest
     fun shouldCheckConfigurationErrorForXCFrameworkWithDifferentFrameworksNames(gradleVersion: GradleVersion) {
@@ -122,6 +128,7 @@ class XCFrameworkIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("appleXCFramework")
     @DisplayName("Assembling framework does not produce an error or fail when there are no sources to assemble")
     @GradleTest
     fun shouldNotProduceErrorsWithoutSources(gradleVersion: GradleVersion) {
@@ -136,6 +143,7 @@ class XCFrameworkIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("appleXCFramework")
     @DisplayName("XCFramework handles dashes in its name correctly")
     @GradleTest
     fun shouldCheckDashesHandlingWithXCFramework(gradleVersion: GradleVersion) {
@@ -162,6 +170,7 @@ class XCFrameworkIT : KGPBaseTest() {
      * the debug map. Removing non-global symbols needs `strip -x`, as Xcode does for its own frameworks by
      * default; a user can already opt into that today by overriding `stripFlags` via `-Xoverride-konan-properties`.
      */
+    @TestMetadata("appleXCFramework")
     @DisplayName("Release XCFramework binary keeps mangled Kotlin names in its symbol table, unless stripFlags is overridden")
     @GradleTest
     fun shouldKeepKotlinSymbolsInReleaseXCFrameworkBinaryUnlessStripFlagsOverridden(gradleVersion: GradleVersion) {

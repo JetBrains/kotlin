@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsSe
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyJvm
 import org.jetbrains.kotlin.gradle.util.useCompilerVersion
+import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
@@ -195,6 +196,7 @@ class TaskExecutionDiagnosticsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-simple-project")
     @GradleTest
     @OtherGradlePluginTests
     fun `karOrKarXZFilesInCompileClasspathAreReported - native`(gradleVersion: GradleVersion) {
@@ -220,6 +222,7 @@ class TaskExecutionDiagnosticsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-js-plugin-project")
     @GradleTest
     @OtherGradlePluginTests
     fun `karOrKarXZFilesInCompileClasspathAreReported - js`(gradleVersion: GradleVersion) {

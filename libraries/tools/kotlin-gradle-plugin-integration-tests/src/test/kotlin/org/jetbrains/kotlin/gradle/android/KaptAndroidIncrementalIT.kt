@@ -10,6 +10,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.KaptBaseIT
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.checkedReplace
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Path
 import kotlin.io.path.appendText
@@ -19,6 +20,7 @@ import kotlin.io.path.writeText
 @DisplayName("Android with kapt incremental build tests")
 @AndroidGradlePluginTests
 open class KaptAndroidIncrementalIT : KaptBaseIT() {
+    @TestMetadata("kapt/android-dagger")
     @DisplayName("stubs generation is incremental on changes in android variant java sources")
     @GradleAndroidTest
     @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
@@ -77,6 +79,7 @@ open class KaptAndroidIncrementalIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("AndroidDaggerProject")
     @DisplayName("incremental compilation works with dagger")
     @GradleAndroidTest
     open fun testAndroidDaggerIC(
@@ -116,6 +119,7 @@ open class KaptAndroidIncrementalIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("AndroidIncrementalMultiModule")
     @DisplayName("incremental compilation with android and kapt")
     @GradleAndroidTest
     fun testAndroidWithKaptIncremental(
@@ -157,6 +161,7 @@ open class KaptAndroidIncrementalIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/android-inter-project-ic")
     @DisplayName("inter-project IC works with kapt")
     @GradleAndroidTest
     fun testInterProjectIC(

@@ -160,6 +160,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("mpp-composite-build/sample1")
     @GradleTest
     fun `test - sample1 - ide dependencies`(gradleVersion: GradleVersion) {
         project("mpp-composite-build/sample1", gradleVersion) {
@@ -187,6 +188,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("mpp-composite-build/sample1")
     @GradleTest
     fun `test - sample1 - assemble and execute`(gradleVersion: GradleVersion) {
         var buildOptions = defaultBuildOptions
@@ -225,6 +227,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("mpp-composite-build/sample1")
     @GradleTestVersions(maxVersion = TestVersions.Gradle.G_8_14) // Used old Kotlin version is not compatible with Gradle 9.+
     @GradleTest
     fun `test - sample1 - assemble and execute - included build using older version of Kotlin`(gradleVersion: GradleVersion) {

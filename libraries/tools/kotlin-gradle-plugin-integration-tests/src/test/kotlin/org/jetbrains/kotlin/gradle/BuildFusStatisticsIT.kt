@@ -8,10 +8,12 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 
 @DisplayName("Build FUS statistics")
 class BuildFusStatisticsIT : KGPDaemonsBaseTest() {
+    @TestMetadata("buildSrcUsingKotlinCompilationAndKotlinPlugin")
     @DisplayName("works for project with buildSrc and kotlinDsl plugin")
     @GradleTest
     fun testCompatibilityBuildSrcWithKotlinDsl(gradleVersion: GradleVersion) {

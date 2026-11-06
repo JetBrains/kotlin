@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.useCompilerVersion
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.DisplayName
 import java.io.File
@@ -52,6 +53,7 @@ class AbiValidationKmpIT : KGPBaseTest() {
         abiValidation()
     }
 
+    @TestMetadata("base-kotlin-multiplatform-library")
     @OptIn(ExperimentalBuildToolsApi::class, ExperimentalKotlinGradlePluginApi::class)
     @GradleTest
     @DisplayName("Test abiValidation compatibility with compilerVersion prior 2.4.0")
@@ -76,6 +78,7 @@ class AbiValidationKmpIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("base-kotlin-multiplatform-library")
     @GradleTest
     @DisplayName("Test check task with ABI validation enabled")
     fun testForEnabledAbiValidation(
@@ -97,6 +100,7 @@ class AbiValidationKmpIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("base-kotlin-multiplatform-library")
     @GradleTest
     @DisplayName("updateKotlinAbi and checkKotlinAbi for native targets")
     fun testSimple(gradleVersion: GradleVersion) {
@@ -121,6 +125,7 @@ class AbiValidationKmpIT : KGPBaseTest() {
      * This test is not testing all cases of filtering it just checks that the filters are passed to ABI tools correctly.
      * All the other tests on filtering should be placed in ABI Tools separately.
      */
+    @TestMetadata("base-kotlin-multiplatform-library")
     @GradleTest
     @DisplayName("Test passing filters to ABI tools")
     fun testFiltering(gradleVersion: GradleVersion) {
@@ -150,6 +155,7 @@ class AbiValidationKmpIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("base-kotlin-multiplatform-library")
     @GradleTest
     @DisplayName("checkKotlinAbi should fail when a class is not in a dump")
     fun testCheckFailsWhenClassNotInDump(gradleVersion: GradleVersion) {
@@ -165,6 +171,7 @@ class AbiValidationKmpIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("base-kotlin-multiplatform-library")
     @GradleTest
     @DisplayName("updateKotlinAbi should include target-specific sources")
     fun testUpdateIncludesTargetSpecificSources(gradleVersion: GradleVersion) {
@@ -182,6 +189,7 @@ class AbiValidationKmpIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("base-kotlin-multiplatform-library")
     @GradleTest
     @DisplayName("updateKotlinAbi should succeed if a class listed in ignoredClasses is not found")
     fun testUpdateSucceedsIfIgnoredClassNotFound(gradleVersion: GradleVersion) {
@@ -204,6 +212,7 @@ class AbiValidationKmpIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("base-kotlin-multiplatform-library")
     @GradleTest
     @DisplayName("updateKotlinAbi and checkKotlinAbi should work for Apple targets")
     fun testAppleTargets(gradleVersion: GradleVersion) {
@@ -238,6 +247,7 @@ class AbiValidationKmpIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("base-kotlin-multiplatform-library")
     @GradleTest
     @DisplayName("Test simple project with JVM target only")
     fun testSimpleJvmOnly(
@@ -271,6 +281,7 @@ class AbiValidationKmpIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("base-kotlin-multiplatform-library")
     @GradleTest
     @DisplayName("Test empty project with JVM target only")
     fun testEmptyJvmOnly(
@@ -298,6 +309,7 @@ class AbiValidationKmpIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("base-kotlin-multiplatform-library")
     @GradleTest
     @DisplayName("Test updateKotlinAbi and checkKotlinAbi with an unsupported target")
     fun testUnsupportedTarget(gradleVersion: GradleVersion) {
@@ -319,6 +331,7 @@ class AbiValidationKmpIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("base-kotlin-multiplatform-library")
     @GradleTest
     @DisplayName("internalDumpKotlinAbi should fail for unsupported targets with strict mode")
     fun testUnsupportedTargetProhibited(gradleVersion: GradleVersion) {
@@ -340,6 +353,7 @@ class AbiValidationKmpIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("base-kotlin-multiplatform-library")
     @GradleTest
     @DisplayName("klibDump should infer a dump for unsupported target from similar enough target")
     fun testInfers(gradleVersion: GradleVersion) {
@@ -362,6 +376,7 @@ class AbiValidationKmpIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("base-kotlin-multiplatform-library")
     @GradleTest
     @DisplayName("infer a dump for a target with custom name")
     fun testInferForTargetWithCustomName(gradleVersion: GradleVersion) {
@@ -393,6 +408,7 @@ class AbiValidationKmpIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("base-kotlin-multiplatform-library")
     @GradleTest
     @DisplayName("klibDump should fail when the only target in the project is disabled")
     fun testKlibDumpFailsWhenOnlyTargetDisabled(gradleVersion: GradleVersion) {
@@ -417,6 +433,7 @@ class AbiValidationKmpIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("base-kotlin-multiplatform-library")
     @GradleTest
     @DisplayName("updateKotlinAbi and checkKotlinAbi if all klib-targets are unavailable")
     fun testAllKlibTargetsUnavailable(gradleVersion: GradleVersion) {
@@ -446,6 +463,7 @@ class AbiValidationKmpIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("base-kotlin-multiplatform-library")
     @GradleTest
     @DisplayName("checkKotlinAbi should fail with strict validation if all klib-targets are unavailable")
     fun testFailIfAllKlibTargetsUnavailable(gradleVersion: GradleVersion) {
@@ -470,6 +488,7 @@ class AbiValidationKmpIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("base-kotlin-multiplatform-library")
     @OptIn(ExperimentalWasmDsl::class)
     @GradleTest
     @DisplayName("updateKotlinAbi and checkKotlinAbi should work with web targets")
@@ -498,6 +517,7 @@ class AbiValidationKmpIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("base-kotlin-multiplatform-library")
     @GradleTest
     @DisplayName("check dump is updated on added declaration")
     fun testUpdateDump(gradleVersion: GradleVersion) {
@@ -520,6 +540,7 @@ class AbiValidationKmpIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("base-kotlin-multiplatform-library")
     @GradleTest
     @DisplayName("check dump is updated on a declaration added to some source sets")
     fun testUpdateDumpTargetSpecific(gradleVersion: GradleVersion) {
@@ -538,6 +559,7 @@ class AbiValidationKmpIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("base-kotlin-multiplatform-library")
     @GradleTest
     @DisplayName("validation should fail on target rename")
     fun testValidationFailsOnTargetRename(gradleVersion: GradleVersion) {
@@ -554,6 +576,7 @@ class AbiValidationKmpIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("base-kotlin-multiplatform-library")
     @GradleTest
     @DisplayName("updateKotlinAbi should not fail for empty project and should dump empty file")
     fun testUpdateForEmptyProject(gradleVersion: GradleVersion) {
@@ -579,6 +602,7 @@ class AbiValidationKmpIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("base-kotlin-multiplatform-library")
     @GradleTest
     @DisplayName("updateKotlinAbi should not fail if there is only one target")
     fun testUpdateWithSingleTarget(gradleVersion: GradleVersion) {
@@ -595,6 +619,7 @@ class AbiValidationKmpIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("base-kotlin-multiplatform-library")
     @GradleTest
     @DisplayName("checkKotlinAbi should fail for empty project without a dump file")
     fun testUpdateFailsForEmptyProjectWithoutDump(gradleVersion: GradleVersion) {
@@ -611,6 +636,7 @@ class AbiValidationKmpIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("base-kotlin-multiplatform-library")
     @GradleTest
     @DisplayName("updateKotlinAbi and checkKotlinAbi for a project with generated sources only")
     fun testGeneratedSources(gradleVersion: GradleVersion) {
@@ -652,6 +678,7 @@ class AbiValidationKmpIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("base-kotlin-multiplatform-library")
     @GradleTest
     @DisplayName("checkKotlinAbi should fail after target removal")
     fun testFailAfterTargetRemoval(gradleVersion: GradleVersion) {

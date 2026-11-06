@@ -69,6 +69,7 @@ open class CommonizerIT : KGPBaseTest() {
         private const val commonizerOutput = "Preparing commonized Kotlin/Native libraries"
     }
 
+    @TestMetadata("commonizeNativeDistributionWithIosLinuxWindows")
     @DisplayName("Commonize native distribution with Ios Linux and Windows")
     @GradleTest
     fun testCommonizeNativeDistributionWithIosLinuxWindows(gradleVersion: GradleVersion) {
@@ -98,6 +99,7 @@ open class CommonizerIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("commonizeNativeDistributionWithIosLinuxWindows")
     @DisplayName("Clean commonized native distribution")
     @GradleTest
     fun testCleanNativeDistributionCommonization(gradleVersion: GradleVersion, @TempDir konanData: Path) {
@@ -126,6 +128,7 @@ open class CommonizerIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("commonizeCurlInterop")
     @DisplayName("Commonize Curl Interop UP-TO-DATE check")
     @GradleTest
     fun testCommonizeCurlInteropUTDCheck(gradleVersion: GradleVersion) {
@@ -171,6 +174,7 @@ open class CommonizerIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("commonizeCurlInterop")
     @DisplayName("Commonize Curl Interop feature flag")
     @GradleTest
     fun testCommonizeCurlInteropFeatureFlag(gradleVersion: GradleVersion) {
@@ -210,6 +214,7 @@ open class CommonizerIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("commonizeCurlInterop")
     @DisplayName("Commonize Curl Interop copy CommonizeCInterop for Ide")
     @GradleTest
     fun testCommonizeCurlInteropcopyCommonizeCInteropForIde(
@@ -239,6 +244,7 @@ open class CommonizerIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("commonizeCurlInterop")
     @DisplayName("Commonize Curl Interop compilation")
     @GradleTest
     fun testCommonizeCurlInteropCopyCompilation(gradleVersion: GradleVersion) {
@@ -261,6 +267,7 @@ open class CommonizerIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("commonizeSQLiteInterop")
     @DisplayName("Commonize SQL Lite Interop")
     @GradleTest
     fun testCommonizeSQLiteInterop(gradleVersion: GradleVersion) {
@@ -276,6 +283,7 @@ open class CommonizerIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("commonizeSQLiteAndCurlInterop")
     @DisplayName("Commonize SQL Lite and Curl Interop")
     @GradleTest
     fun testCommonizeSQLiteAndCurlInterop(gradleVersion: GradleVersion) {
@@ -301,6 +309,7 @@ open class CommonizerIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("commonizeInteropUsingPosixApis")
     @DisplayName("Commonize Interop using posix APIs")
     @GradleTest
     fun testCommonizeInteropUsingPosixAPIs(gradleVersion: GradleVersion) {
@@ -324,6 +333,7 @@ open class CommonizerIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("commonizeInteropUsingPosixApis")
     @DisplayName("KT-76147 - commonized cinterops are wired without reading Task.project at execution time")
     @GradleTest
     // pinned to the newest Gradle: on 8.5 `CInteropProcess` separately reads `Task.project` at execution
@@ -362,7 +372,6 @@ open class CommonizerIT : KGPBaseTest() {
     }
 
     @DisplayName("KT-46142 standalone native source set")
-    @TestMetadata("commonize-kt-46142-singleNativeTarget")
     @GradleTest
     fun testStandaloneNativeSourceSet(gradleVersion: GradleVersion) {
         val project = project("empty", gradleVersion) {
@@ -450,6 +459,7 @@ open class CommonizerIT : KGPBaseTest() {
     }
 
 
+    @TestMetadata("commonize-kt-48856-singleNativeTargetPropagation-testSourceSet")
     @DisplayName("KT-48856 single native target dependency propagation - test source set - cinterop")
     @GradleTest
     fun testSingleSupportedNativeTargetDependencyPropagationTestSourceSetCInterop(gradleVersion: GradleVersion) {
@@ -471,6 +481,7 @@ open class CommonizerIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("commonize-kt-46856-all-targets")
     @DisplayName("KT-46856 filename too long - all native targets configured")
     @GradleTest
     fun testFilenameTooLongAllNativeTargetsConfigured(gradleVersion: GradleVersion) {
@@ -479,18 +490,21 @@ open class CommonizerIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("commonizeMultipleCInteropsWithTests")
     @DisplayName("Multiple cinterops with test source sets and compilations - test source sets depending on main")
     @GradleTest
     fun testMultipleCinteropsWithTestSourceSetsAndCompilationsTestSourceSetsDependingOnMain(gradleVersion: GradleVersion) {
         `test multiple cinterops with test source sets and compilations`(gradleVersion, true)
     }
 
+    @TestMetadata("commonizeMultipleCInteropsWithTests")
     @DisplayName("Multiple cinterops with test source sets and compilations")
     @GradleTest
     fun testMultipleCinteropsWithTestSourceSetsAndCompilations(gradleVersion: GradleVersion) {
         `test multiple cinterops with test source sets and compilations`(gradleVersion, false)
     }
 
+    @TestMetadata("commonize-kt-47641-cinterops-compilation-dependency")
     @DisplayName("KT-47641 commonizing c-interops does not depend on any source compilation")
     @GradleTest
     fun testCInteropsDoesNotDependOnAnySourceCompilation(gradleVersion: GradleVersion) {
@@ -519,6 +533,7 @@ open class CommonizerIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("commonize-kt-48138-nativeMain-nativeTest-different-targets")
     @DisplayName("KT-48138 commonizing c-interops when nativeTest and nativeMain have different targets")
     @GradleTest
     fun testCommonizingCInteropsWhenNativeTestAndNativeMainHaveDifferentTargets(gradleVersion: GradleVersion) {
@@ -539,6 +554,7 @@ open class CommonizerIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("commonize-kt-50847-cinterop-missing-in-supported-target")
     @DisplayName("KT-50847 missing cinterop in supported target")
     @GradleTest
     fun testMissingCinteropInSupportedTarget(gradleVersion: GradleVersion) {
@@ -625,6 +641,7 @@ open class CommonizerIT : KGPBaseTest() {
     }
 
 
+    @TestMetadata("commonize-kt-51517-transitive-cinterop")
     @DisplayName("KT-51517 commonization with transitive cinterop")
     @GradleTest
     fun testCommonizationWithTransitiveCinterop(gradleVersion: GradleVersion) {
@@ -642,6 +659,7 @@ open class CommonizerIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("commonize-kt-57796-twoCInteropCommonizerGroups")
     @DisplayName("KT-57796 commonization with two cinterop commonizer groups`")
     @GradleTest
     fun testCommonizationWithTwoCInteropCommonizerGroups(gradleVersion: GradleVersion) {
@@ -659,6 +677,7 @@ open class CommonizerIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("commonize-kt-56729-consume-library-with-two-roots")
     @DisplayName("KT-57796 commonization with two cinterop commonizer groups`")
     @GradleTest
     fun testCommonizationWithLibraryContainingTwoRoots(gradleVersion: GradleVersion) {
@@ -677,6 +696,7 @@ open class CommonizerIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("commonizeCurlInterop")
     @DisplayName("KT-58223 test commonized libraries for IDE can be stored in different data dir")
     @GradleTest
     fun testCommonizedLibrariesForIDECanBeStoredInDifferentDir(
@@ -739,7 +759,6 @@ open class CommonizerIT : KGPBaseTest() {
     }
 
     @DisplayName("KT-74442: commonization should work for all known targets despite `kotlin.native.enableKlibsCrossCompilation` state")
-    @TestMetadata("emptyKts")
     @GradleTest
     fun testCommonizationWorksForAllTargetsDespiteCrossCompilationFlagState(gradleVersion: GradleVersion) {
         nativeProject("emptyKts", gradleVersion) {
@@ -776,7 +795,6 @@ open class CommonizerIT : KGPBaseTest() {
     }
 
     @DisplayName("KT-74442: commonization of non-platform CInterop should work only for suppoted targets")
-    @TestMetadata("emptyKts")
     @OsCondition(enabledOnCI = [OS.LINUX, OS.WINDOWS, OS.MAC])
     @GradleTest
     fun testCommonizationOfNonPlatformShouldWorkOnlyForSupportedTargets(gradleVersion: GradleVersion) {

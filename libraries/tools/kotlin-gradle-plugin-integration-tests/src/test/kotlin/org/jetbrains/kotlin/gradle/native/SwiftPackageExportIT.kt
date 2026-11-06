@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.gradle.uklibs.publish
 import org.jetbrains.kotlin.gradle.util.ProcessRunResult
 import org.jetbrains.kotlin.gradle.util.assertProcessRunResult
 import org.jetbrains.kotlin.gradle.util.runProcess
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import java.nio.file.Path
@@ -501,6 +502,7 @@ class SwiftPackageExportIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("emptyxcode")
     @DisplayName("The packages of the SwiftPM import are dependencies of the exported package")
     @GradleTest
     @OptIn(ExperimentalKotlinGradlePluginApi::class)

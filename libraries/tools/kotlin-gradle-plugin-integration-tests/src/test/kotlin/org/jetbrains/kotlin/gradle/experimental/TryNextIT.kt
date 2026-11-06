@@ -22,6 +22,7 @@ import kotlin.io.path.appendText
 @DisplayName("'kotlin.experimental.tryNext' option")
 class TryNextIT : KGPBaseTest() {
 
+    @TestMetadata("multiprojectWithDependency")
     @DisplayName("Produces single warning message in multi-project when enabled")
     @JvmGradlePluginTests
     @GradleTest
@@ -40,6 +41,7 @@ class TryNextIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("JVM: language version default is changed to next")
     @JvmGradlePluginTests
     @GradleTest
@@ -59,6 +61,7 @@ class TryNextIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("incrementalMultiproject")
     @DisplayName("JVM: build report is not printed")
     @JvmGradlePluginTests
     @GradleTest
@@ -76,6 +79,7 @@ class TryNextIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("incrementalMultiproject")
     @DisplayName("JVM: report is printed at the end of the build")
     @JvmGradlePluginTests
     @GradleTest
@@ -100,6 +104,7 @@ class TryNextIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("k2-native-intermediate-metadata")
     @DisplayName("Native: report is printed at the end of the build")
     @MppGradlePluginTests
     @GradleTest
@@ -127,6 +132,7 @@ class TryNextIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("incrementalMultiproject")
     @DisplayName("JVM: report is printed at the end of the build in case of compilation error")
     @JvmGradlePluginTests
     @GradleTest
@@ -158,6 +164,7 @@ class TryNextIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("new-mpp-published")
     @DisplayName("MPP: language version default is changed to next")
     @MppGradlePluginTests
     @GradleTest
@@ -212,6 +219,7 @@ class TryNextIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("commonizeHierarchically")
     @DisplayName("MPP: language version default is changed to next for metadata compilations")
     @MppGradlePluginTests
     @GradleTest
@@ -242,6 +250,7 @@ class TryNextIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("JVM: explicit user setting for languageVersion is not overridden")
     @JvmGradlePluginTests
     @GradleTest
@@ -269,6 +278,7 @@ class TryNextIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-js-nodejs-project")
     @DisplayName("JS: language version default is changed to next")
     @JsGradlePluginTests
     @GradleTest
@@ -290,6 +300,7 @@ class TryNextIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-js-nodejs-project")
     @DisplayName("JS: tryNext report is produced")
     @JsGradlePluginTests
     @GradleTest

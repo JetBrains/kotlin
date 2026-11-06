@@ -10,6 +10,7 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import kotlin.test.assertEquals
 
@@ -28,18 +29,21 @@ class WasmTestsRunOnceIT : KGPBaseTest() {
         // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
         get() = super.defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
 
+    @TestMetadata("base-kotlin-multiplatform-library")
     @DisplayName("wasmJs Node.js tests are executed exactly once")
     @GradleTest
     fun testWasmJsNode(gradleVersion: GradleVersion) {
         testTestsRunOnce(gradleVersion, ":wasmJsNodeTest")
     }
 
+    @TestMetadata("base-kotlin-multiplatform-library")
     @DisplayName("wasmJs D8 tests are executed exactly once")
     @GradleTest
     fun testWasmJsD8(gradleVersion: GradleVersion) {
         testTestsRunOnce(gradleVersion, ":wasmJsD8Test")
     }
 
+    @TestMetadata("base-kotlin-multiplatform-library")
     @DisplayName("wasmWasi Wasmtime tests are executed exactly once")
     @GradleTest
     fun testWasmWasiWasmtime(gradleVersion: GradleVersion) {

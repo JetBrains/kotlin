@@ -16,6 +16,7 @@ import kotlin.io.path.readText
 @DisplayName("Broken task configuration avoidance doesn't lead to build failures at least with simple setups")
 @MustRunOnChangesInGradle
 class BrokenLazyConfigurationIT : KGPBaseTest() {
+    @TestMetadata("kotlinJavaProject")
     @JvmGradlePluginTests
     @GradleTest
     @DisplayName("works in JVM")
@@ -62,6 +63,7 @@ class BrokenLazyConfigurationIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("new-mpp-lib-with-tests")
     @MppGradlePluginTests
     @GradleTest
     @DisplayName("works in MPP") // aka KT-56131
@@ -85,6 +87,7 @@ class BrokenLazyConfigurationIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("new-mpp-lib-with-tests")
     @MppGradlePluginTests
     @GradleTest
     @DisplayName("Changing build directory after task configuration doesn't lead to failures")

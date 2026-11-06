@@ -18,6 +18,7 @@ class ProjectIsolationIT : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.enableIsolatedProjects()
 
+    @TestMetadata("instantExecution")
     @DisplayName("JVM project should be compatible with project isolation")
     @JvmGradlePluginTests
     @GradleTest
@@ -32,6 +33,7 @@ class ProjectIsolationIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kt-63990-buildSrcWithKotlinJvmPlugin")
     @DisplayName("project with buildSrc should be compatible with project isolation")
     @JvmGradlePluginTests
     @GradleTestVersions
@@ -45,6 +47,7 @@ class ProjectIsolationIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("AndroidIncrementalMultiModule")
     @DisplayName("Multi-module Android project")
     @GradleAndroidTest
     @AndroidGradlePluginTests

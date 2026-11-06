@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.DisplayName
 @OtherGradlePluginTests
 @MustRunOnChangesInGradle
 class CompilerClassesDeprecatedIT : KGPBaseTest() {
+    @TestMetadata("sourceSetsKotlinDsl")
     @DisplayName("KT-70251: compiler class bundled into KGP is deprecated and reported by Gradle")
     @GradleTestVersions(minVersion = TestVersions.Gradle.MAX_SUPPORTED, maxVersion = TestVersions.Gradle.MAX_SUPPORTED)
     @GradleTest

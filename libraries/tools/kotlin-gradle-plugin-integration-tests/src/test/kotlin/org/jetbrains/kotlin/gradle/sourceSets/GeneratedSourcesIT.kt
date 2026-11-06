@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.gradle.testbase.build
 import org.jetbrains.kotlin.gradle.testbase.buildScriptInjection
 import org.jetbrains.kotlin.gradle.testbase.project
 import org.jetbrains.kotlin.gradle.testbase.source
+import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 
@@ -31,6 +32,7 @@ import org.junit.jupiter.api.DisplayName
 @MustRunOnChangesInGradle
 class GeneratedSourcesIT : KGPBaseTest() {
 
+    @TestMetadata("base-kotlin-jvm-library")
     @JvmGradlePluginTests
     @GradleTest
     @DisplayName("JVM: sources are added into compilation")
@@ -73,6 +75,7 @@ class GeneratedSourcesIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("base-kotlin-jvm-library")
     @JvmGradlePluginTests
     @GradleTest
     @DisplayName("JVM: generator task could analyze non-generated sources")
@@ -128,6 +131,7 @@ class GeneratedSourcesIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("base-kotlin-multiplatform-library")
     @MppGradlePluginTests
     @GradleTest
     @DisplayName("KMP: generator task could analyze non-generated common sources")

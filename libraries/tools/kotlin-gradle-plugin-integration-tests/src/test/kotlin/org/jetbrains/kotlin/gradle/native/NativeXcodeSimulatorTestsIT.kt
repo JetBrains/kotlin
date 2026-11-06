@@ -9,6 +9,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
@@ -18,6 +19,7 @@ import org.junit.jupiter.api.condition.OS
 @MustRunOnChangesInGradle
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
 class NativeXcodeSimulatorTestsIT : KGPBaseTest() {
+    @TestMetadata("native-test-ios-https-request")
     @DisplayName("A user-friendly error message is produced when the standalone mode is disabled and no simulator has booted")
     @GradleTest
     fun checkNoSimulatorErrorMessage(gradleVersion: GradleVersion) {
@@ -39,6 +41,7 @@ class NativeXcodeSimulatorTestsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-test-ios-https-request")
     @DisplayName("iOS simulator test with an https request fails with default settings")
     @GradleTest
     fun checkSimulatorTestFailsInStandaloneMode(gradleVersion: GradleVersion) {
@@ -50,6 +53,7 @@ class NativeXcodeSimulatorTestsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-test-ios-https-request")
     @DisplayName("iOS simulator test with an https request doesn't fail with the standalone mode disabled")
     @GradleTest
     fun checkSimulatorTestDoesNotFailInNonStandaloneMode(gradleVersion: GradleVersion) {

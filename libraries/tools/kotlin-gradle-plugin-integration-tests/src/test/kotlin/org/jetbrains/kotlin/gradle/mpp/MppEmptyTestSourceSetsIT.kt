@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.mpp
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.DisplayName
 @DisplayName("Tests for empty MPP test source sets")
 class MppEmptyTestSourceSetsIT : KGPBaseTest() {
 
+    @TestMetadata("base-kotlin-multiplatform-library")
     @DisplayName("No test sources in commonTest or jvmTest")
     @GradleTest
     fun testNoTestSources(gradleVersion: GradleVersion) {
@@ -39,6 +41,7 @@ class MppEmptyTestSourceSetsIT : KGPBaseTest() {
 
     // In Gradle 9.0+, executing a test task fails by default when test compilation outputs exist but 0 tests are discovered.
     // Older Gradle versions succeeded silently.
+    @TestMetadata("base-kotlin-multiplatform-library")
     @DisplayName("Sources in jvmTest without test cases fail on Gradle 9.0+")
     @GradleTestVersions(minVersion = TestVersions.Gradle.G_9_0)
     @GradleTest
@@ -65,6 +68,7 @@ class MppEmptyTestSourceSetsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("base-kotlin-multiplatform-library")
     @DisplayName("Common test discovery and inheritance in jvmTest")
     @GradleTest
     fun testCommonTestDiscoveryAndInheritance(gradleVersion: GradleVersion) {

@@ -9,6 +9,7 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 import kotlin.io.path.writeText
@@ -16,6 +17,7 @@ import kotlin.io.path.writeText
 @DisplayName("kotlin-android incremental compilation tests")
 @AndroidGradlePluginTests
 open class KotlinAndroidIncrementalIT : KGPBaseTest() {
+    @TestMetadata("AndroidIncrementalSingleModuleProject")
     @DisplayName("incremental compilation works with single-module android projects")
     @GradleAndroidTest
     fun testIncrementalCompilation(
@@ -55,6 +57,7 @@ open class KotlinAndroidIncrementalIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("AndroidIncrementalMultiModule")
     @DisplayName("incremental compilation works with multi-module android projects")
     @GradleAndroidTest
     fun testMultiModuleIC(
@@ -112,6 +115,7 @@ open class KotlinAndroidIncrementalIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("AndroidIncrementalSingleModuleProject")
     @DisplayName("incremental compilation does nothing without changes")
     @GradleAndroidTest
     fun testIncrementalBuildWithNoChanges(
@@ -140,6 +144,7 @@ open class KotlinAndroidIncrementalIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("AndroidIncrementalMultiModule")
     @DisplayName("KT-49066: incremental compilation with custom module name")
     @GradleAndroidTest
     fun testCustomModuleName(

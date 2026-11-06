@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.D
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.PluginLoadedInMultipleProjectsError
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.checkedReplace
+import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
@@ -20,6 +21,7 @@ import kotlin.io.path.appendText
 @MppGradlePluginTests
 class DifferentClassloadersIT : KGPBaseTest() {
 
+    @TestMetadata("differentClassloaders")
     @DisplayName("Different classloaders error is not thrown")
     @GradleTest
     fun testDifferentClassloadersNotThrown(gradleVersion: GradleVersion) {
@@ -34,6 +36,7 @@ class DifferentClassloadersIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("differentClassloaders")
     @DisplayName("Different classloader error is thrown on different plugin versions")
     @GradleTest
     fun testDetectingDifferentClassLoadersError(gradleVersion: GradleVersion) {
@@ -50,6 +53,7 @@ class DifferentClassloadersIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("differentClassloaders")
     @DisplayName("KT-50598: Different classloaders error can be disabled")
     @GradleTest
     fun differentClassloadersErrorCanBeDisabled(gradleVersion: GradleVersion) {
@@ -88,6 +92,7 @@ class DifferentClassloadersIT : KGPBaseTest() {
 
     // Included builds have their own classpaths, completely independent of the main build,
     // so multiple plugin detection between main build and included builds is not possible.
+    @TestMetadata("differentClassloaders")
     @DisplayName("Different classloader detection does not reach into included builds")
     @GradleTest
     fun noDetectionInIncludedBuilds(gradleVersion: GradleVersion) {

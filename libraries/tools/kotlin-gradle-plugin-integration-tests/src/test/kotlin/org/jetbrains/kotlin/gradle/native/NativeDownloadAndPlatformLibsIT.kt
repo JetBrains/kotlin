@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
@@ -79,6 +80,7 @@ class NativeDownloadAndPlatformLibsIT : KGPBaseTest() {
         Paths.get("$userHomeDir/.konan").toFile().deleteRecursively()
     }
 
+    @TestMetadata("native-with-maven-dependencies")
     @OptIn(EnvironmentalVariablesOverride::class)
     @DisplayName("K/N Gradle project build (on Linux or Mac) with a dependency from a Maven")
     @GradleTest
@@ -99,6 +101,7 @@ class NativeDownloadAndPlatformLibsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-platform-libraries")
     @DisplayName("Downloading K/N with custom konanDataDir property")
     @GradleTest
     fun testLibrariesGenerationInCustomKonanDir(gradleVersion: GradleVersion) {
@@ -118,6 +121,7 @@ class NativeDownloadAndPlatformLibsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-platform-libraries")
     @DisplayName("K/N distribution without platform libraries generation")
     @GradleTest
     fun testNoGenerationByDefault(gradleVersion: GradleVersion) {
@@ -129,6 +133,7 @@ class NativeDownloadAndPlatformLibsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-platform-libraries")
     @DisplayName("Toolchain leaves a distribution installed by the legacy downloader alone (KT-86251)")
     @GradleTest
     fun testToolchainDoesNotReinstallOverLegacyInstallation(gradleVersion: GradleVersion) {
@@ -153,6 +158,7 @@ class NativeDownloadAndPlatformLibsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-platform-libraries")
     @DisplayName("K/N distribution with platform libraries generation")
     @GradleTest
     fun testLibrariesGeneration(gradleVersion: GradleVersion) {
@@ -187,6 +193,7 @@ class NativeDownloadAndPlatformLibsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-platform-libraries")
     @DisplayName("Link with args via gradle properties")
     @GradleTest
     fun testLinkerArgsViaGradleProperties(gradleVersion: GradleVersion) {
@@ -225,6 +232,7 @@ class NativeDownloadAndPlatformLibsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-platform-libraries")
     @OsCondition(supportedOn = [OS.LINUX], enabledOnCI = [OS.LINUX])
     @DisplayName("Assembling project generates no platform libraries for unsupported host")
     @GradleTest
@@ -236,6 +244,7 @@ class NativeDownloadAndPlatformLibsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-platform-libraries")
     @DisplayName("Build K/N project with prebuild type")
     @GradleTest
     fun testCanUsePrebuiltDistribution(gradleVersion: GradleVersion) {
@@ -253,6 +262,7 @@ class NativeDownloadAndPlatformLibsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-platform-libraries")
     @DisplayName("Build K/N project with compiler reinstallation")
     @GradleTest
     fun testCompilerReinstallation(gradleVersion: GradleVersion) {
@@ -283,6 +293,7 @@ class NativeDownloadAndPlatformLibsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-download-maven")
     @DisplayName("Download prebuilt Native bundle with maven")
     @GradleTest
     fun shouldDownloadPrebuiltNativeBundleWithMaven(gradleVersion: GradleVersion) {
@@ -302,6 +313,7 @@ class NativeDownloadAndPlatformLibsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-simple-project")
     @DisplayName("Test downloadKotlinNativeDistribution task")
     @GradleTest
     fun downloadPrebuiltNativeBundleWithTask(gradleVersion: GradleVersion, @TempDir localBuildCacheDir: Path) {
@@ -344,6 +356,7 @@ class NativeDownloadAndPlatformLibsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-download-maven")
     @DisplayName("Download light Native bundle with maven")
     @RequiredXCodeVersion(minSupportedMajor = 26, minSupportedMinor = 0)
     @GradleTest
@@ -365,6 +378,7 @@ class NativeDownloadAndPlatformLibsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-download-maven")
     @DisplayName("Download from maven should fail if there is no such build in the default repos")
     @GradleTest
     fun shouldFailDownloadWithNoBuildInDefaultRepos(gradleVersion: GradleVersion) {
@@ -382,6 +396,7 @@ class NativeDownloadAndPlatformLibsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("jvm-and-js-hmpp")
     @DisplayName("The plugin shouldn't download the K/N compiler if there are no corresponding targets in the project.")
     @GradleTest
     fun shouldNotDownloadKonanWithoutCorrespondingTargets(gradleVersion: GradleVersion) {
@@ -392,6 +407,7 @@ class NativeDownloadAndPlatformLibsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-libraries")
     @DisplayName("The plugin shouldn't download the K/N compiler if there is konan home property override and no konan.data.dir property override.")
     @GradleTest
     fun testNativeCompilerDownloadingWithDifferentKNHomeOptions(gradleVersion: GradleVersion) {
@@ -420,6 +436,7 @@ class NativeDownloadAndPlatformLibsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-libraries")
     @DisplayName("Checks downloading K/N compiler with different version options")
     @GradleTest
     fun testNativeCompilerDownloadingWithDifferentVersionOptions(gradleVersion: GradleVersion) {

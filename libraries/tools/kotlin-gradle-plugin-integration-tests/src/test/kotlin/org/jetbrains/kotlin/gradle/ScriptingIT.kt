@@ -9,6 +9,7 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerInfrastructure
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerPlugins
@@ -28,6 +29,7 @@ import kotlin.io.path.relativeTo
 @OtherGradlePluginTests
 class ScriptingIT : KGPBaseTest() {
 
+    @TestMetadata("scripting")
     @DisplayName("basic script is working")
     @GradleTest
     fun testScripting(gradleVersion: GradleVersion) {
@@ -49,6 +51,7 @@ class ScriptingIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("scriptingCustomExtension")
     @Disabled("Gradle synchronization bug: https://github.com/gradle/gradle/issues/23450")
     @DisplayName("With custom file extension compiled non-incremental")
     @GradleTest
@@ -56,6 +59,7 @@ class ScriptingIT : KGPBaseTest() {
         testScriptingCustomExtensionImpl(gradleVersion, withIC = false)
     }
 
+    @TestMetadata("scriptingCustomExtension")
     @Disabled("Gradle synchronization bug: https://github.com/gradle/gradle/issues/23450")
     @DisplayName("With custom file extension compiled incremental")
     @GradleTest
@@ -109,6 +113,7 @@ class ScriptingIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("KT-31124: No scripting warning")
     @GradleTest
     fun testNoScriptingWarning(gradleVersion: GradleVersion) {
@@ -120,6 +125,7 @@ class ScriptingIT : KGPBaseTest() {
     }
 
     // Compose only works on JDK 11+
+    @TestMetadata("scriptingComposeInterop")
     @DisplayName("Compose compiler plugin should work with scripting")
     @GradleTest
     fun testComposeInterop(gradleVersion: GradleVersion) {

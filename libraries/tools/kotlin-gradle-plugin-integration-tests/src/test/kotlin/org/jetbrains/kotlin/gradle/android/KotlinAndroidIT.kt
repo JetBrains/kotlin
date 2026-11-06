@@ -11,6 +11,7 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerPlugins
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInJvm
@@ -28,6 +29,7 @@ import kotlin.test.assertContains
 @MustRunOnChangesInGradle
 class KotlinAndroidIT : KGPBaseTest() {
 
+    @TestMetadata("AndroidProject")
     @DisplayName("android project compilation smoke test")
     @MustRunOnChangesInJvm
     @GradleAndroidTest
@@ -80,6 +82,7 @@ class KotlinAndroidIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("AndroidProject")
     @DisplayName("KT-16897: the `assembleAndroidTest` task builds fine without the `build` task")
     @GradleAndroidTest
     fun testAssembleAndroidTest(
@@ -97,6 +100,7 @@ class KotlinAndroidIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("AndroidIcepickProject")
     @DisplayName("KT-12303: compilation works fine with icepick")
     @GradleAndroidTest
     @MustRunOnChangesInCompilerPlugins
@@ -118,6 +122,7 @@ class KotlinAndroidIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("AndroidParcelizeProject")
     @DisplayName("compilation works fine with parcelize")
     @GradleAndroidTest
     @MustRunOnChangesInCompilerPlugins
@@ -136,6 +141,7 @@ class KotlinAndroidIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("KT-46626: kotlin-android produces clear error message when no android plugin is applied")
     @GradleAndroidTest
     fun shouldAllowToApplyPluginWhenAndroidPluginIsMissing(
@@ -176,6 +182,7 @@ class KotlinAndroidIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("AndroidProject")
     @DisplayName("KT-49483: lint dependencies are resolved properly")
     @GradleAndroidTest
     fun testLintDependencyResolutionKt49483(
@@ -241,6 +248,7 @@ class KotlinAndroidIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("AndroidProject")
     @DisplayName("publish with omitted stdlib version sets proper version")
     @GradleAndroidTest
     fun testOmittedStdlibVersion(
@@ -301,6 +309,7 @@ class KotlinAndroidIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("AndroidSimpleApp")
     @DisplayName("KT-77288: android.kotlinOptions should not cause generated accessors compilation error")
     @GradleAndroidTest
     // Precompiled plugin in buildSrc; AGP 9+ stub compilation refuses kotlin-android + com.android.library.

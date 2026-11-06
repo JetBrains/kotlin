@@ -11,6 +11,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 
 @MppGradlePluginTests
@@ -40,6 +41,7 @@ class WasmTestFilteringIT : KGPBaseTest() {
         wasmTestTasks.forEach { assertExecutedTestCases(it, *expectedIds) }
     }
 
+    @TestMetadata("base-kotlin-multiplatform-library")
     @DisplayName("CLI --tests filtering: class, method, wildcard, and package patterns")
     @GradleTest
     fun testCliTestsFiltering(gradleVersion: GradleVersion) {
@@ -89,6 +91,7 @@ class WasmTestFilteringIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("base-kotlin-multiplatform-library")
     @DisplayName("CLI --tests filtering: no matching tests")
     @GradleTest
     fun testCliTestsNoMatches(gradleVersion: GradleVersion) {
@@ -101,6 +104,7 @@ class WasmTestFilteringIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("base-kotlin-multiplatform-library")
     @DisplayName("Task DSL filter configuration: exclude patterns")
     @GradleTest
     fun testDslExcludePatterns(gradleVersion: GradleVersion) {
@@ -121,6 +125,7 @@ class WasmTestFilteringIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("base-kotlin-multiplatform-library")
     @DisplayName("Task DSL filter configuration: include and exclude patterns")
     @GradleTest
     fun testDslIncludeAndExcludePatterns(gradleVersion: GradleVersion) {
@@ -141,6 +146,7 @@ class WasmTestFilteringIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("base-kotlin-multiplatform-library")
     @DisplayName("CLI --tests filtering combined with task DSL exclude patterns")
     @GradleTest
     fun testCliIncludeWithDslExclude(gradleVersion: GradleVersion) {

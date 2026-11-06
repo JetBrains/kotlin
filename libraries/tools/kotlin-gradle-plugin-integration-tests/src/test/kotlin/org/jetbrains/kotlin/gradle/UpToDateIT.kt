@@ -5,6 +5,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.firstSupported
+import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.DisabledOnOs
@@ -21,6 +22,7 @@ import kotlin.test.assertTrue
 @MustRunOnChangesInGradle
 class UpToDateIT : KGPBaseTest() {
 
+    @TestMetadata("kotlinProject")
     @DisplayName("Language version change")
     @GradleTest
     fun testLanguageVersionChange(gradleVersion: GradleVersion) {
@@ -37,6 +39,7 @@ class UpToDateIT : KGPBaseTest() {
         )
     }
 
+    @TestMetadata("kotlinProject")
     @DisplayName("Api version change")
     @GradleTest
     fun testApiVersionChange(gradleVersion: GradleVersion) {
@@ -53,6 +56,7 @@ class UpToDateIT : KGPBaseTest() {
         )
     }
 
+    @TestMetadata("kotlinProject")
     @DisplayName("Misc changes")
     @DisabledOnOs(OS.WINDOWS, disabledReason = "Failed to delete project directory")
     @GradleTest

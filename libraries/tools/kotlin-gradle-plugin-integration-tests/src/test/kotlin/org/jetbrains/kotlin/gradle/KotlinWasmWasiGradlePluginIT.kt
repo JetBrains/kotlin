@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.targets.wasm.wasiadapter.toolchain.WasiAdapte
 import org.jetbrains.kotlin.gradle.targets.wasm.component.WasmComponentizeTask
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.*
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -34,6 +35,7 @@ class KotlinWasmWasiGradlePluginIT : KGPBaseTest() {
         // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
         get() = super.defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
 
+    @TestMetadata("wasm-wasmtime-test")
     @DisplayName("Check wasi target with wasmtime")
     @GradleTest
     fun wasiWasmtimeTarget(gradleVersion: GradleVersion) {
@@ -42,6 +44,7 @@ class KotlinWasmWasiGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("wasm-wasmtime-test")
     @DisplayName("Check wasi target with wasi adapter in disabled mode fails")
     @GradleTest
     fun wasiAdapterDisabledMode(gradleVersion: GradleVersion) {
@@ -64,6 +67,7 @@ class KotlinWasmWasiGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("wasm-wasmtime-test")
     @DisplayName("Check wasi target with wasi adapter in preinstalled mode")
     @GradleTest
     fun wasiAdapterPreInstalledMode(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
@@ -96,6 +100,7 @@ class KotlinWasmWasiGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("wasm-wasmtime-test")
     @OptIn(ExperimentalWasmDsl::class, ExperimentalNodeJsToolchainDsl::class)
     @DisplayName("Check wasi target with reactor flavor requests reactor adapter")
     @GradleTest
@@ -148,6 +153,7 @@ class KotlinWasmWasiGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("wasm-wasmtime-test")
     @OptIn(ExperimentalWasmDsl::class, ExperimentalNodeJsToolchainDsl::class)
     @DisplayName("Check wasi target with wasi adapter custom download base url from settings")
     @GradleTest
@@ -246,6 +252,7 @@ class KotlinWasmWasiGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("wasm-wasmtime-test")
     @DisplayName("Check wasi target with wasmtime and component model basic hello world")
     @GradleTest
     fun wasiWasmtimeBasicComponentModel(gradleVersion: GradleVersion) {
@@ -287,6 +294,7 @@ class KotlinWasmWasiGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("wasm-wasmtime-test")
     @DisplayName("Check wasi target with wasmtime and wit declarations in the project")
     @GradleTest
     fun wasiWasmtimeWithProjectWitDeclarations(gradleVersion: GradleVersion) {
@@ -606,6 +614,7 @@ class KotlinWasmWasiGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("wasm-wasmtime-test")
     @DisplayName("Explicitly imported WASI component model function")
     @GradleTest
     fun wasiWasmtimeWithExplicitlyImportedWasiFunction(gradleVersion: GradleVersion) {
@@ -849,6 +858,7 @@ class KotlinWasmWasiGradlePluginIT : KGPBaseTest() {
         )
     }
 
+    @TestMetadata("new-mpp-wasm-wasi-test")
     @DisplayName("Check wasi target run")
     @GradleTest
     fun wasiRun(gradleVersion: GradleVersion) {
@@ -859,6 +869,7 @@ class KotlinWasmWasiGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("new-mpp-wasm-wasi-test")
     @DisplayName("Check wasi target with binaryen")
     @GradleTest
     fun wasiTargetWithBinaryen(gradleVersion: GradleVersion) {
@@ -882,6 +893,7 @@ class KotlinWasmWasiGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("wasm-wasi-library")
     @DisplayName("Wasi library")
     @GradleTest
     fun wasiLibrary(gradleVersion: GradleVersion) {

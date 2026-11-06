@@ -21,6 +21,7 @@ class JsIrConfigurationCacheIT : KGPBaseTest() {
         // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
         get() = super.defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
 
+    @TestMetadata("instantExecutionToJs")
     @DisplayName("configuration cache is working for kotlin2js plugin")
     @GradleTest
     fun testKotlin2JsCompilation(gradleVersion: GradleVersion) {
@@ -52,6 +53,7 @@ class JsIrConfigurationCacheIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-js-browser-project")
     @DisplayName("configuration cache is reused when idea.version system property is changed in browser project")
     @GradleTest
     fun testBrowserDistributionOnIdeaPropertyChange(gradleVersion: GradleVersion) {
@@ -72,6 +74,7 @@ class JsIrConfigurationCacheIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-js-nodejs-project")
     @DisplayName("configuration cache is working for kotlin/js node project")
     @GradleTest
     fun testNodeJs(gradleVersion: GradleVersion) {
@@ -90,6 +93,7 @@ class JsIrConfigurationCacheIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-js-nodejs-project")
     @DisplayName("configuration cache is reused when idea.version system property is changed in node project")
     @GradleTest
     fun testNodeJsOnIdeaPropertyChange(gradleVersion: GradleVersion) {
@@ -112,6 +116,7 @@ class JsIrConfigurationCacheIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-js-project-with-test-dependencies")
     @DisplayName("KT-48241: configuration cache works with test dependencies")
     @GradleTest
     fun testTestDependencies(gradleVersion: GradleVersion) {
@@ -128,6 +133,7 @@ class JsIrConfigurationCacheIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-js-project-with-test-dependencies")
     @DisplayName("KT-48241: configuration cache works with test dependencies for yarn.lock")
     @GradleTest
     fun testTestDependenciesYarnLock(gradleVersion: GradleVersion) {
@@ -144,6 +150,7 @@ class JsIrConfigurationCacheIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-js-nodejs-project")
     @DisplayName("Node.js run correctly works with configuration cache")
     @GradleTest
     fun testNodeJsRun(gradleVersion: GradleVersion) {
@@ -167,6 +174,7 @@ class JsIrConfigurationCacheIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-js-build-logic")
     @DisplayName("Test with custom build logic plugin")
     @GradleTest
     fun testWithCustomBuildLogic(gradleVersion: GradleVersion) {

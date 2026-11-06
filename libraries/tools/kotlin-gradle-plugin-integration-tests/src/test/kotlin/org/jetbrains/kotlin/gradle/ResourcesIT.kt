@@ -7,12 +7,14 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.*
 
 @DisplayName("Handles resources correctly")
 class ResourcesIT : KGPBaseTest() {
 
+    @TestMetadata("simpleProject")
     @JvmGradlePluginTests
     @DisplayName("KT-36904: Adding resources to Kotlin source set should work")
     @GradleTest
@@ -47,6 +49,7 @@ class ResourcesIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @JvmGradlePluginTests
     @DisplayName("KT-53402: ignore non project source changes")
     @GradleTest
@@ -61,6 +64,7 @@ class ResourcesIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @GradleTest
     @DisplayName("KT-60459: should not overwrite custom resource directories")
     @JvmGradlePluginTests
@@ -108,6 +112,7 @@ class ResourcesIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kt-62490")
     @GradleTest
     @DisplayName("KT-62490: should not drop reference to task producing resources")
     @JvmGradlePluginTests
@@ -120,6 +125,7 @@ class ResourcesIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kt-62490")
     @GradleTest
     @GradleTestVersions(
         // Gradle 9.0 does not allow creating configuration with the same name which is triggered by 'sourceSets.create("x")'

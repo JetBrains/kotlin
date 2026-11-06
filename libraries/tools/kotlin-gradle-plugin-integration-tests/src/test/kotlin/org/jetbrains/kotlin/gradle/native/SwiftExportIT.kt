@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
 import org.jetbrains.kotlin.gradle.uklibs.addPublishedProjectToRepositories
 import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
@@ -266,6 +267,7 @@ class SwiftExportIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("emptyxcode")
     @DisplayName("KT-89354: what xcodebuild writes into its products directory keeps the Swift Export pipeline up-to-date")
     @GradleTest
     fun testXcodebuildKeepsSwiftExportUpToDate(
@@ -888,6 +890,7 @@ class SwiftExportIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("emptyxcode")
     @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalSwiftExportDsl::class)
     @DisplayName("KT-86015: swiftPMDependencies cinterop klib is visible to Swift Export binary link task")
     @GradleTest
@@ -967,6 +970,7 @@ class SwiftExportIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("emptyxcode")
     @OptIn(ExperimentalKotlinGradlePluginApi::class, EnvironmentalVariablesOverride::class)
     @DisplayName("KT-84852: embedSwiftExportForXcode fails when linkage package is not integrated")
     @GradleTest
@@ -1029,6 +1033,7 @@ class SwiftExportIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("emptyxcode")
     @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalSwiftExportDsl::class)
     @DisplayName("KT-80632: a SwiftPM-import cinterop klib is reexported through Swift Export")
     @GradleTest
@@ -1382,6 +1387,7 @@ class SwiftExportIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("emptyxcode")
     @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalSwiftExportDsl::class)
     @DisplayName("KT-80632: Swift Export without swiftPMDependencies emits no cinterop package dependency")
     @GradleTest

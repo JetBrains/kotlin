@@ -97,7 +97,7 @@ class NodeJsGradlePluginIT : KGPBaseTest() {
 
     @DisplayName("Node.js setup test with downloadBaseUrl = null")
     @GradleTest
-    @TestMetadata("subprojects-nodejs-setup")
+    @TestMetadata("nodejs-setup-with-user-repositories")
     fun testSetupWithoutDownloadBaseUrl(gradleVersion: GradleVersion) {
         project(
             "nodejs-setup-with-user-repositories",

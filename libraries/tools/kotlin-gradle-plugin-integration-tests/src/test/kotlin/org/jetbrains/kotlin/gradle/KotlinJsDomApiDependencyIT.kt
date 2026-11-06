@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
+import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 
@@ -23,6 +24,7 @@ class KotlinJsDomApiDependencyIT : KGPBaseTest() {
             jsOptions = defaultJsOptions,
         ).disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
 
+    @TestMetadata("kotlin-js-dom-api-compat")
     @DisplayName("Kotlin/JS DOM API automatically added as dependency")
     @GradleTest
     fun testJsDomApiCompat(gradleVersion: GradleVersion) {
@@ -33,6 +35,7 @@ class KotlinJsDomApiDependencyIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-js-dom-api-compat")
     @DisplayName("Kotlin/JS DOM API automatically not added as dependency with disabled adding of stdlib")
     @GradleTest
     fun testJsDomApiCompatWithDisabledAddingStdlib(gradleVersion: GradleVersion) {
@@ -78,6 +81,7 @@ class KotlinJsDomApiDependencyIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-js-dom-api-compat")
     @DisplayName("Kotlin/JS DOM API automatically not added as dependency with disabled adding of DOM API")
     @GradleTest
     fun testJsDomApiCompatWithDisabledAddingDomApi(gradleVersion: GradleVersion) {

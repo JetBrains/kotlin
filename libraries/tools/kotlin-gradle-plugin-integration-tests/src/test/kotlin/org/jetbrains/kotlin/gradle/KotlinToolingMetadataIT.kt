@@ -37,6 +37,7 @@ class KotlinToolingMetadataMppIT : KGPBaseTest() {
         // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
         get() = super.defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
 
+    @TestMetadata("new-mpp-published")
     @GradleTest
     @DisplayName("Check published metadata contains right data")
     fun checkPublishedMetadata(

@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions.JsOptions
 import org.jetbrains.kotlin.gradle.util.checkedReplace
 import org.jetbrains.kotlin.gradle.util.replaceText
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import java.io.File
@@ -73,6 +74,7 @@ class IncrementalCompilationJsMultiProjectIT : BaseIncrementalCompilationMultiPr
     override fun testFailureHandling_ToolError(gradleVersion: GradleVersion) {
     }
 
+    @TestMetadata("incrementalMultiproject")
     @DisplayName("Add new dependency in lib project causes recompilation in JS")
     @GradleTest
     override fun testAddExternalDependencyInLib(gradleVersion: GradleVersion) {
@@ -89,6 +91,7 @@ class IncrementalCompilationJsMultiProjectIT : BaseIncrementalCompilationMultiPr
         }
     }
 
+    @TestMetadata("incrementalMultiproject")
     @DisplayName("Add project dependency in lib subproject causes recompilation in JS")
     @GradleTest
     override fun testAddProjectDependencyInLib(gradleVersion: GradleVersion) {
@@ -105,6 +108,7 @@ class IncrementalCompilationJsMultiProjectIT : BaseIncrementalCompilationMultiPr
         }
     }
 
+    @TestMetadata("incrementalMultiproject")
     @DisplayName("ABI change in lib after lib clean")
     @GradleTest
     override fun testAbiChangeInLib_afterLibClean(gradleVersion: GradleVersion) {
@@ -132,6 +136,7 @@ class IncrementalCompilationJsMultiProjectIT : BaseIncrementalCompilationMultiPr
         }
     }
 
+    @TestMetadata("incrementalMultiproject")
     @DisplayName("Lib: change method body with non-ABI change")
     @GradleTest
     override fun testNonAbiChangeInLib_changeMethodBody(gradleVersion: GradleVersion) {
@@ -151,6 +156,7 @@ class IncrementalCompilationJsMultiProjectIT : BaseIncrementalCompilationMultiPr
         }
     }
 
+    @TestMetadata("incrementalMultiproject")
     @DisplayName("Lib: after cleaning lib project")
     @GradleTest
     override fun testAbiChangeInLib_afterLibClean_withAbiSnapshot(gradleVersion: GradleVersion) {
@@ -178,6 +184,7 @@ class IncrementalCompilationJsMultiProjectIT : BaseIncrementalCompilationMultiPr
         }
     }
 
+    @TestMetadata("incrementalMultiproject")
     @DisplayName("Remove project library from classpath")
     @GradleTest
     override fun testRemoveLibFromClasspath(gradleVersion: GradleVersion) {
@@ -210,6 +217,7 @@ class IncrementalCompilationJsMultiProjectIT : BaseIncrementalCompilationMultiPr
         }
     }
 
+    @TestMetadata("incrementalMultiproject")
     @DisplayName("Remove external library from classpath")
     @GradleTest
     override fun testRemoveExternalDependencyFromClasspath(gradleVersion: GradleVersion) {
@@ -228,6 +236,7 @@ class IncrementalCompilationJsMultiProjectIT : BaseIncrementalCompilationMultiPr
         }
     }
 
+    @TestMetadata("incrementalMultiproject")
     @DisplayName("Lib project classes became final")
     @GradleTest
     override fun testLibClassBecameFinal(gradleVersion: GradleVersion) {
@@ -258,6 +267,7 @@ open class IncrementalCompilationJvmMultiProjectIT : BaseIncrementalCompilationM
 
     override val defaultProjectName: String = "incrementalMultiproject"
 
+    @TestMetadata("duplicatedClass")
     // todo: do the same for js backend
     @DisplayName("Duplicated class")
     @GradleTest
@@ -279,6 +289,7 @@ open class IncrementalCompilationJvmMultiProjectIT : BaseIncrementalCompilationM
         }
     }
 
+    @TestMetadata("incrementalMultiproject")
     @DisplayName("Compile lib with Groovy")
     @GradleTest
     open fun testCompileLibWithGroovy(gradleVersion: GradleVersion) {
@@ -293,6 +304,7 @@ open class IncrementalCompilationJvmMultiProjectIT : BaseIncrementalCompilationM
         }
     }
 
+    @TestMetadata("incrementalMultiproject")
     //KT-55905
     @DisplayName("Imncremental compilation with source set update")
     @GradleTest
@@ -353,6 +365,7 @@ open class IncrementalCompilationJvmMultiProjectIT : BaseIncrementalCompilationM
         }
     }
 
+    @TestMetadata("incrementalMultiproject")
     @DisplayName("KT-43489: Make sure build history mapping is not initialized too early")
     @GradleTest
     fun testBuildHistoryMappingLazilyComputedWithWorkers(gradleVersion: GradleVersion) {
@@ -390,6 +403,7 @@ open class IncrementalCompilationJvmMultiProjectIT : BaseIncrementalCompilationM
         }
     }
 
+    @TestMetadata("lenientMode")
     @DisplayName("Incremental compilation with lenient mode")
     @GradleTest
     fun testLenientModeIncrementalCompilation(gradleVersion: GradleVersion) {

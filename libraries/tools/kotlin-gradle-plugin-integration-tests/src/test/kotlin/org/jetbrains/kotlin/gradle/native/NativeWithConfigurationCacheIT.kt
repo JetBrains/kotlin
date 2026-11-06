@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.native
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.DisplayName
 @MustRunOnChangesInGradle
 class NativeWithConfigurationCacheIT : KGPBaseTest() {
 
+    @TestMetadata("native-with-configuration-cache")
     @DisplayName(
         "Configuration phase should be reused from configuration cache for the second build " +
                 "(downloading konan does not affect cache inputs)"

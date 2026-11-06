@@ -9,6 +9,7 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.tooling.internal.consumer.ConnectorServices
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.DisplayName
@@ -23,6 +24,7 @@ class GradleDaemonMemoryIT : KGPDaemonsBaseTest() {
     // For corresponding documentation, see https://docs.gradle.org/current/userguide/gradle_daemon.html
     // Setting user.variant to different value implies a new daemon process will be created.
     // In order to stop daemon process, special exit task is used ( System.exit(0) ).
+    @TestMetadata("gradleDaemonMemory")
     @DisplayName("No small memory leak in plugin")
     @GradleTest
     fun testGradleDaemonMemory(gradleVersion: GradleVersion) {

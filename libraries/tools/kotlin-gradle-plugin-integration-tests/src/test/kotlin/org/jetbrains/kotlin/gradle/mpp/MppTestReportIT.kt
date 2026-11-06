@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.mpp
 import com.intellij.openapi.util.JDOMUtil
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import kotlin.test.assertEquals
@@ -19,6 +20,7 @@ import kotlin.test.assertTrue
 @DisplayName("Tests for KMP test reporting")
 class MppTestReportIT : KGPBaseTest() {
 
+    @TestMetadata("base-kotlin-multiplatform-library")
     @DisplayName("Aggregated test report contains results from multiple targets (:allTests)")
     @GradleTest
     fun testAllTestsReportAggregation(gradleVersion: GradleVersion) {
@@ -76,6 +78,7 @@ class MppTestReportIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("base-kotlin-multiplatform-library")
     @DisplayName("Test failure details, stack trace anti-drift, and HTML report (:jvmTest)")
     @GradleTest
     fun testTestFailureReportingAndStackTrace(gradleVersion: GradleVersion) {
@@ -133,6 +136,7 @@ class MppTestReportIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("base-kotlin-multiplatform-library")
     @DisplayName("TestReporter.publishEntry metadata is included in JVM XML and HTML reports")
     @GradleTest
     @GradleTestVersions(minVersion = TestVersions.Gradle.G_9_4)

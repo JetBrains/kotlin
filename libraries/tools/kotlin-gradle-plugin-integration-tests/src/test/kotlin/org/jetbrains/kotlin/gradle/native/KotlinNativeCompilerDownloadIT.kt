@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.util.capitalize
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.presetName
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
@@ -49,6 +50,7 @@ class KotlinNativeCompilerDownloadIT : KGPBaseTest() {
             )
         )
 
+    @TestMetadata("native-simple-project")
     @DisplayName("KT-58303: Kotlin Native must not be downloaded during configuration phase")
     @GradleTest
     fun shouldNotDownloadKotlinNativeOnConfigurationPhase(gradleVersion: GradleVersion, @TempDir konanTemp: Path) {
@@ -67,6 +69,7 @@ class KotlinNativeCompilerDownloadIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-simple-project")
     @DisplayName("KT-58303: Kotlin Native must not be downloaded when konan home is overridden")
     @GradleTest
     fun shouldNotDownloadKotlinNativeWithCustomKonanHome(gradleVersion: GradleVersion) {
@@ -94,6 +97,7 @@ class KotlinNativeCompilerDownloadIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-simple-project")
     @DisplayName("KT-58303: Kotlin Native must be downloaded during execution phase")
     @GradleTest
     fun shouldDownloadKotlinNativeOnExecutionPhase(gradleVersion: GradleVersion, @TempDir konanTemp: Path) {
@@ -113,6 +117,7 @@ class KotlinNativeCompilerDownloadIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("commonize-native-distribution")
     @DisplayName(
         "KT-65222, KT-65347: check that commonize native distribution depends on downloaded k/n bundle " +
                 "and downloaded bundle does not erase installed caches"
@@ -133,6 +138,7 @@ class KotlinNativeCompilerDownloadIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("commonize-native-distribution")
     @DisplayName("KT-65617: check that `addKotlinNativeBundleConfiguration` does not configure dependencies after configuration has been resolved")
     @GradleTest
     fun checkThatKonanConfigurationCouldBeConfiguredOnlyOnce(gradleVersion: GradleVersion, @TempDir konanTemp: Path) {
@@ -167,6 +173,7 @@ class KotlinNativeCompilerDownloadIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-simple-project")
     @DisplayName("KT-58303: Downloading Kotlin Native on configuration phase(deprecated version)")
     @GradleTest
     fun shouldDownloadKotlinNativeOnConfigurationPhaseWithToolchainDisabled(gradleVersion: GradleVersion, @TempDir konanTemp: Path) {
@@ -185,6 +192,7 @@ class KotlinNativeCompilerDownloadIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-multi-module-project")
     @DisplayName("Checking multi-module native project with different path to kotlin native compiler in each module")
     @GradleTest
     fun multiModuleProjectWithDifferentKotlinNativeCompilers(gradleVersion: GradleVersion, @TempDir customNativeHomePath: Path) {
@@ -218,6 +226,7 @@ class KotlinNativeCompilerDownloadIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-multi-module-project")
     @DisplayName("KT-71051: Kotlin Native should be download only ones for multi-module project")
     @GradleTest
     fun shouldDownloadKotlinNativeOnlyOnes(gradleVersion: GradleVersion, @TempDir konanTemp: Path) {

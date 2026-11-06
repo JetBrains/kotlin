@@ -23,6 +23,7 @@ import org.gradle.tooling.internal.consumer.ConnectorServices
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
@@ -41,6 +42,7 @@ class KotlinDaemonIT : KGPDaemonsBaseTest() {
             logLevel = LogLevel.DEBUG
         )
 
+    @TestMetadata("multiprojectWithDependency")
     @DisplayName("Kotlin daemon is reused in multiproject")
     @GradleTest
     fun testDaemonMultiproject(gradleVersion: GradleVersion) {
@@ -79,6 +81,7 @@ class KotlinDaemonIT : KGPDaemonsBaseTest() {
         }
     }
 
+    @TestMetadata("kotlinProject")
     @DisplayName("Client file is deleted on exit")
     @GradleTest
     fun testClientFileIsDeletedOnExit(gradleVersion: GradleVersion) {
@@ -102,6 +105,7 @@ class KotlinDaemonIT : KGPDaemonsBaseTest() {
         }
     }
 
+    @TestMetadata("kotlinProject")
     @DisplayName("Gradle build classpath should not leak into Kotlin daemon")
     @GradleTest
     fun testGradleBuildClasspathShouldNotBeLeakedIntoDaemonClasspath(gradleVersion: GradleVersion) {
@@ -112,6 +116,7 @@ class KotlinDaemonIT : KGPDaemonsBaseTest() {
         }
     }
 
+    @TestMetadata("kotlinProject")
     @DisplayName("On Kotlin daemon OOM helpful message is displayed")
     @GradleTest
     @Disabled("KTI-2127 Flaky test displaySpecialMessageOnOOM")
@@ -133,6 +138,7 @@ class KotlinDaemonIT : KGPDaemonsBaseTest() {
         }
     }
 
+    @TestMetadata("jvmAndJsProject")
     @DisplayName("Kotlin daemon should be reused in mixed Kotlin JVM/JS project")
     @JdkVersions(versions = [JavaVersion.VERSION_17])
     @GradleWithJdkTest
@@ -152,6 +158,7 @@ class KotlinDaemonIT : KGPDaemonsBaseTest() {
         }
     }
 
+    @TestMetadata("daemonJvmResourceLimits")
     @DisplayName("KT-56789: Kotlin daemon does not triggers OOM in Metaspace on multiple invocations")
     @JdkVersions(versions = [JavaVersion.VERSION_17])
     @GradleWithJdkTest
@@ -170,6 +177,7 @@ class KotlinDaemonIT : KGPDaemonsBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-java-toolchain/onlyJdk11Compatible")
     @DisplayName("KT-57154: Compiler should use specified toolchain regardless of Gradle Runtime JDK")
     @Disabled("KT-58894: re-enable once fixed")
     @JdkVersions(versions = [JavaVersion.VERSION_1_8, JavaVersion.VERSION_11, JavaVersion.VERSION_17])

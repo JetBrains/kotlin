@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.gradle.util.swiftExportEmbedAndSignEnvVariables
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.statistics.metrics.StringAnonymizationPolicy
 import org.jetbrains.kotlin.statistics.metrics.StringListMetrics
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
@@ -68,6 +69,7 @@ class FusStatisticsIT : KGPBaseTest() {
         "KOTLIN_COMPILER_EXECUTION_POLICY",
     )
 
+    @TestMetadata("simpleProject")
     @JvmGradlePluginTests
     @DisplayName("for dokka")
     @GradleTest
@@ -95,6 +97,7 @@ class FusStatisticsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @JvmGradlePluginTests
     @DisplayName("for dokka v2 html doc")
     @GradleTest
@@ -108,6 +111,7 @@ class FusStatisticsIT : KGPBaseTest() {
         testDokkaPlugin(gradleVersion, "org.jetbrains.dokka", expectedDokkaFusMetrics)
     }
 
+    @TestMetadata("simpleProject")
     @JvmGradlePluginTests
     @DisplayName("for dokka v2 javadoc")
     @GradleTest
@@ -177,6 +181,7 @@ class FusStatisticsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-cocoapods-template")
     @NativeGradlePluginTests
     @DisplayName("Verify that the metric for applying the Cocoapods plugin is being collected")
     @GradleTest
@@ -191,6 +196,7 @@ class FusStatisticsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-incremental-simple")
     @NativeGradlePluginTests
     @DisplayName("Verify that the metric for native incremental compilation")
     @GradleTest
@@ -212,6 +218,7 @@ class FusStatisticsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @JvmGradlePluginTests
     @DisplayName("Ensure that the metric are not collected if plugins were not applied to simple project")
     @GradleTest
@@ -228,6 +235,7 @@ class FusStatisticsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("instantExecutionWithBuildSrc")
     @JvmGradlePluginTests
     @DisplayName("for project with buildSrc")
     @GradleTest
@@ -250,6 +258,7 @@ class FusStatisticsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @JvmGradlePluginTests
     @DisplayName("for failed build")
     @GradleTest
@@ -279,6 +288,7 @@ class FusStatisticsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("incrementalMultiproject")
     @JvmGradlePluginTests
     @DisplayName("fus metric for multiproject")
     @GradleTest
@@ -327,6 +337,7 @@ class FusStatisticsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("incrementalMultiproject")
     @JvmGradlePluginTests
     @DisplayName("fus metric for jvm feature flags")
     @GradleTest
@@ -355,6 +366,7 @@ class FusStatisticsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("jvm-with-common")
     @MppGradlePluginTests
     @DisplayName("fus metrics for KMP JVM incremental compilation flags")
     @GradleTest
@@ -392,6 +404,7 @@ class FusStatisticsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @JvmGradlePluginTests
     @DisplayName("general fields with configuration cache")
     @GradleTest
@@ -399,6 +412,7 @@ class FusStatisticsIT : KGPBaseTest() {
         testFusStatisticsWithConfigurationCache(gradleVersion, IsolatedProjectsMode.DISABLED)
     }
 
+    @TestMetadata("simpleProject")
     @JvmGradlePluginTests
     @DisplayName("general fields with configuration cache and project isolation")
     @GradleTest
@@ -456,6 +470,7 @@ class FusStatisticsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @JvmGradlePluginTests
     @DisplayName("configuration type metrics")
     @GradleTest
@@ -476,6 +491,7 @@ class FusStatisticsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @JvmGradlePluginTests
     @GradleTest
     fun testFusMetricsCanBeDisabled(gradleVersion: GradleVersion) {
@@ -489,6 +505,7 @@ class FusStatisticsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @JvmGradlePluginTests
     @GradleTest
     @GradleTestVersions(
@@ -524,6 +541,7 @@ class FusStatisticsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("new-mpp-wasm-test")
     @MppGradlePluginTests
     @GradleTest
     fun testWasmIncrementalStatisticCollection(gradleVersion: GradleVersion) {
@@ -812,6 +830,7 @@ class FusStatisticsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-incremental-simple")
     @DisplayName("native compiler arguments")
     @GradleTest
     @NativeGradlePluginTests
@@ -1104,6 +1123,7 @@ class FusStatisticsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("multiplatformFlowAction")
     @DisplayName("add configuration metrics after build was finish")
     @GradleTest
     @MppGradlePluginTests
@@ -1122,6 +1142,7 @@ class FusStatisticsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("multiClassloaderProject")
     @DisplayName("add configuration metrics after build was finish")
     @GradleTest
     @JvmGradlePluginTests
@@ -1158,6 +1179,7 @@ class FusStatisticsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("disable FUS on TC")
     @GradleTest
     @JvmGradlePluginTests
@@ -1300,6 +1322,7 @@ class FusStatisticsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("various compiler execution settings")
     @GradleTest
     @JvmGradlePluginTests

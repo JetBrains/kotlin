@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.capitalize
+import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInFrontend
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
@@ -27,6 +28,7 @@ import kotlin.streams.asStream
 @MustRunOnChangesInFrontend
 internal class MppHighlightingTestDataWithGradleIT : KGPBaseTest() {
 
+    @TestMetadata("mpp-source-set-hierarchy-analysis")
     @GradleWithMppHighlightingTest
     fun runTest(
         gradleVersion: GradleVersion,

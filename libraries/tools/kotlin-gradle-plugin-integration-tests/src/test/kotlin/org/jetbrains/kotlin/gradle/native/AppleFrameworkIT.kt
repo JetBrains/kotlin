@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.util.replaceText
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
@@ -24,6 +25,7 @@ import kotlin.io.path.*
 @NativeGradlePluginTests
 class AppleFrameworkIT : KGPBaseTest() {
 
+    @TestMetadata("sharedAppleFramework")
     @DisplayName("Assembling AppleFrameworkForXcode tasks for IosArm64")
     @OptIn(EnvironmentalVariablesOverride::class)
     @GradleTest
@@ -92,6 +94,7 @@ class AppleFrameworkIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("sharedAppleFramework")
     @DisplayName("Assembling fat AppleFrameworkForXcode tasks for Arm64 and X64 simulators")
     @OptIn(EnvironmentalVariablesOverride::class)
     @GradleTest
@@ -126,6 +129,7 @@ class AppleFrameworkIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("sharedAppleFramework")
     @DisplayName("MacOS framework has symlinks")
     @OptIn(EnvironmentalVariablesOverride::class)
     @GradleTest
@@ -155,6 +159,7 @@ class AppleFrameworkIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("sharedAppleFramework")
     @DisplayName("embedAndSign executes normally when signing is disabled")
     @OptIn(EnvironmentalVariablesOverride::class)
     @GradleTest
@@ -180,6 +185,7 @@ class AppleFrameworkIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("sharedAppleFramework")
     @DisplayName("embedAndSign builds only requested iOS simulator framework")
     @OptIn(EnvironmentalVariablesOverride::class)
     @GradleTest
@@ -218,6 +224,7 @@ class AppleFrameworkIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("sharedAppleFramework")
     @DisplayName("embedAndSign task does not copy dSYM to Xcode frameworks folder")
     @OptIn(EnvironmentalVariablesOverride::class)
     @GradleTest
@@ -245,6 +252,7 @@ class AppleFrameworkIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("sharedAppleFramework")
     @DisplayName("embedAndSignAppleFrameworkForXcode fail")
     @GradleTest
     fun shouldFailWithExecutingEmbedAndSignAppleFrameworkForXcode(
@@ -294,6 +302,7 @@ class AppleFrameworkIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("sharedAppleFramework")
     @DisplayName("Registered tasks with Xcode environment for Debug IosArm64 configuration")
     @OptIn(EnvironmentalVariablesOverride::class)
     @GradleTest
@@ -332,6 +341,7 @@ class AppleFrameworkIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("sharedAppleFramework")
     @DisplayName("embedAndSignAppleFrameworkForXcode was registered with ENABLE_USER_SCRIPT_SANDBOXING=YES")
     @OptIn(EnvironmentalVariablesOverride::class)
     @GradleTest
@@ -362,6 +372,7 @@ class AppleFrameworkIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("sharedAppleFramework")
     @DisplayName("embedAndSignAppleFrameworkForXcode was registered with missing BUILT_PRODUCTS_DIR directory")
     @OptIn(EnvironmentalVariablesOverride::class)
     @GradleTest
@@ -391,6 +402,7 @@ class AppleFrameworkIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("sharedAppleFramework")
     @DisplayName("embedAndSignAppleFrameworkForXcode was registered without required Xcode environments")
     @OptIn(EnvironmentalVariablesOverride::class)
     @GradleTest
@@ -435,6 +447,7 @@ class AppleFrameworkIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("sharedAppleFramework")
     @DisplayName("Static framework for Arm64 is built but is not embedded")
     @OptIn(EnvironmentalVariablesOverride::class)
     @GradleTest
@@ -472,6 +485,7 @@ class AppleFrameworkIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("sharedAppleFramework")
     @DisplayName("Configuration errors reported to Xcode when embedAndSign task requested")
     @OptIn(EnvironmentalVariablesOverride::class)
     @GradleTest
@@ -507,6 +521,7 @@ class AppleFrameworkIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("sharedAppleFramework")
     @DisplayName("Compilation errors reported to Xcode when embedAndSign task requested")
     @OptIn(EnvironmentalVariablesOverride::class)
     @GradleTest
@@ -536,6 +551,7 @@ class AppleFrameworkIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("sharedAppleFramework")
     @DisplayName("Compilation errors printed with Gradle-style when any other task requested")
     @OptIn(EnvironmentalVariablesOverride::class)
     @GradleTest
@@ -565,6 +581,7 @@ class AppleFrameworkIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("sharedAppleFramework")
     @DisplayName("Compilation errors printed with Xcode-style with explicit option")
     @OptIn(EnvironmentalVariablesOverride::class)
     @GradleTest
@@ -598,6 +615,7 @@ class AppleFrameworkIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("sharedAppleFramework")
     @DisplayName("Compilation errors reported to Xcode when embedAndSign task requested and compiler runs in a separate process")
     @OptIn(EnvironmentalVariablesOverride::class)
     @GradleTest
@@ -630,6 +648,7 @@ class AppleFrameworkIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("sharedAppleFramework")
     @OptIn(EnvironmentalVariablesOverride::class)
     @DisplayName("Framework contains Kdoc documentation")
     @GradleTest
@@ -698,6 +717,7 @@ class AppleFrameworkIT : KGPBaseTest() {
     }
 
     // Should always be green because the CI Xcode version must be supported
+    @TestMetadata("sharedAppleFramework")
     @DisplayName("Xcode version too high diagnostic isn't emitted")
     @GradleTest
     fun testXcodeVersionTooHighDiagnosticNotEmitted(gradleVersion: GradleVersion) {

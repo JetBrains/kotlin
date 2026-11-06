@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.apple
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.KOTLIN_VERSION
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
@@ -31,6 +32,7 @@ class XcodeDirectIntegrationUpgradeSequenceIT : KGPBaseTest() {
      *
      * Initially it tested a fix for KT-68257 regression specifically, but now it just tests a generic version upgrade
      */
+    @TestMetadata("xcodeDirectIntegrationVersionSequence")
     @DisplayName("KT-68257: Test embedAndSign integration Kotlin version upgrade sequence doesn't result in incorrect binaries reuse")
     @ParameterizedTest(name = "{displayName} with Gradle: {0}, Kotlin versions: {1}")
     @ArgumentsSource(VersionSequenceProvider::class)

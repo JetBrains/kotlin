@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
@@ -66,6 +67,7 @@ class CompilerReferenceIndexIT : KGPDaemonsBaseTest() {
         compilerExecutionStrategy = KotlinCompilerExecutionStrategy.DAEMON,
     )
 
+    @TestMetadata("kotlinProject")
     @GradleTest
     @DisplayName("Smoke test for Gradle / CRI data generation and deserialization")
     @GradleTestExtraStringArguments("in-process", "daemon")
@@ -100,6 +102,7 @@ class CompilerReferenceIndexIT : KGPDaemonsBaseTest() {
         }
     }
 
+    @TestMetadata("kotlinProject")
     @GradleTest
     @DisplayName("Incremental CRI data generation appends new entries without invalidation, rebuild removes stale entries")
     fun testIncrementalCriDataGeneration(gradleVersion: GradleVersion) {
@@ -198,6 +201,7 @@ class CompilerReferenceIndexIT : KGPDaemonsBaseTest() {
         }
     }
 
+    @TestMetadata("kotlinProject")
     @GradleTest
     @DisplayName("CI disables implicit CRI generation, but explicit CRI enables it")
     fun testCiEnvironmentDisablesImplicitCriGeneration(gradleVersion: GradleVersion) {
@@ -221,6 +225,7 @@ class CompilerReferenceIndexIT : KGPDaemonsBaseTest() {
         }
     }
 
+    @TestMetadata("kotlinProject")
     @GradleTest
     @DisplayName("TeamCity system property disables implicit CRI generation")
     fun testTeamCitySystemPropertyCriDefault(gradleVersion: GradleVersion) {
@@ -232,6 +237,7 @@ class CompilerReferenceIndexIT : KGPDaemonsBaseTest() {
         }
     }
 
+    @TestMetadata("kotlinProject")
     @GradleTest
     @DisplayName("Explicitly disabled CRI is not generated outside CI")
     fun testExplicitlyDisabledCriOutsideCi(gradleVersion: GradleVersion) {
@@ -245,6 +251,7 @@ class CompilerReferenceIndexIT : KGPDaemonsBaseTest() {
         }
     }
 
+    @TestMetadata("jvm-and-js-hmpp")
     @GradleTest
     @DisplayName("Default CRI generation outside CI works for KMP project with JVM and JS targets")
     fun testDefaultCriOutsideCiInKmpWithJvmAndJs(gradleVersion: GradleVersion) {
@@ -262,6 +269,7 @@ class CompilerReferenceIndexIT : KGPDaemonsBaseTest() {
         }
     }
 
+    @TestMetadata("kotlinProject")
     @GradleTest
     @DisplayName("Enabling CRI invalidates compileKotlin UP-TO-DATE state. KT-86118")
     fun testEnablingCriInvalidatesCompileKotlinUpToDate(gradleVersion: GradleVersion) {
@@ -280,6 +288,7 @@ class CompilerReferenceIndexIT : KGPDaemonsBaseTest() {
         }
     }
 
+    @TestMetadata("native-simple-project")
     @GradleTest
     @DisplayName("Enabling CRI does not fail Kotlin/Native compile tasks. KT-86118")
     fun testEnablingCriDoesNotFailNativeCompile(gradleVersion: GradleVersion) {
@@ -290,6 +299,7 @@ class CompilerReferenceIndexIT : KGPDaemonsBaseTest() {
         }
     }
 
+    @TestMetadata("jvm-and-js-hmpp")
     @GradleTest
     @DisplayName("CRI warning without BTA is only emitted for JVM targets in KMP")
     fun testCriWarningWithoutBtaOnlyForJvmInKmp(gradleVersion: GradleVersion) {

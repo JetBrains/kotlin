@@ -11,6 +11,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.kotlinAndroidExtensionOrNull
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
@@ -24,6 +25,7 @@ import kotlin.io.path.appendText
 @MustRunOnChangesInGradle
 class CompilerOptionsProjectIT : KGPBaseTest() {
 
+    @TestMetadata("AndroidSimpleApp")
     @DisplayName("Project level DSL is available in android project")
     @AndroidGradlePluginTests
     @GradleAndroidTest
@@ -66,6 +68,7 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("AndroidSimpleApp")
     @DisplayName("Android target compiler options override project level compiler options")
     @AndroidGradlePluginTests
     @GradleAndroidTest
@@ -116,6 +119,7 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("AndroidIncrementalMultiModule")
     @DisplayName("KT-59056: freeCompilerArgs are combined with android.kotlinOptions.freeCompilerArgs")
     @AndroidGradlePluginTests
     @GradleAndroidTest
@@ -158,6 +162,7 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("multiplatformAndroidSourceSetLayout2")
     @DisplayName("KT-57959: should be possible to configure module name in MPP/android")
     @GradleAndroidTest
     @AndroidGradlePluginTests
@@ -199,6 +204,7 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("multiplatformAndroidSourceSetLayout2")
     @DisplayName("KT-61303: Multiplatform/Android module name is changed")
     @AndroidGradlePluginTests
     @GradleAndroidTest

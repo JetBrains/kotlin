@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.util.assertProcessRunResult
 import org.jetbrains.kotlin.gradle.util.runProcess
+import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.condition.OS
 import java.nio.file.Path
@@ -43,6 +44,7 @@ class SwiftPMImportDynamicLinkageTests : KGPBaseTest() {
      * In this test whether or not duplication will happen depends on alphabetic ordering of Shared and FrameworkTarget because both get
      * autolinked and autolinking seems to add instructions happen alphabetically.
      */
+    @TestMetadata("emptyxcode")
     @GradleTest
     fun `dynamic linkage with SwiftPM import - duplicates static binary during application linkage`(version: GradleVersion) {
         project("emptyxcode", version) {
@@ -226,6 +228,7 @@ class SwiftPMImportDynamicLinkageTests : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("emptyxcode")
     @GradleTest
     fun `dynamic linkage with SwiftPM import - exposes sources-based transitive SwiftPM dependencies through Kotlin dynamic library`(version: GradleVersion) {
         project("emptyxcode", version) {

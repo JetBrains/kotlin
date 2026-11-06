@@ -157,6 +157,7 @@ class MppMetadataResolutionIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("base-kotlin-multiplatform-library")
     @GradleTest
     @GradleTestVersions
     fun testCustomGroupForMppPublicationInTransitiveDependencies(

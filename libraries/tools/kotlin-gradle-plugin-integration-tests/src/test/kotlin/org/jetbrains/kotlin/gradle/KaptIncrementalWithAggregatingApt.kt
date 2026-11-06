@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.incapt.IncrementalBinaryIsolatingProcessor
 import org.jetbrains.kotlin.gradle.incapt.IncrementalIsolatingProcessor
 import org.jetbrains.kotlin.gradle.incapt.IncrementalProcessor
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerPlugins
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
@@ -51,6 +52,7 @@ class KaptIncrementalWithAggregatingApt : KaptIncrementalIT() {
             test(this)
         }
 
+    @TestMetadata("kaptIncrementalCompilationProject")
     @DisplayName("On incremental changes")
     @GradleTest
     fun testIncrementalChanges(gradleVersion: GradleVersion) {
@@ -96,6 +98,7 @@ class KaptIncrementalWithAggregatingApt : KaptIncrementalIT() {
         }
     }
 
+    @TestMetadata("kaptIncrementalCompilationProject")
     @DisplayName("Incremental changes in JDK9+")
     @JdkVersions(versions = [JavaVersion.VERSION_17])
     @GradleWithJdkTest
@@ -124,6 +127,7 @@ class KaptIncrementalWithAggregatingApt : KaptIncrementalIT() {
         }
     }
 
+    @TestMetadata("incrementalMultiproject")
     @DisplayName("Changes in classpath triggers incremental compilation")
     @GradleTest
     fun testClasspathChanges(gradleVersion: GradleVersion) {
@@ -187,6 +191,7 @@ class KaptIncrementalWithAggregatingApt : KaptIncrementalIT() {
         }
     }
 
+    @TestMetadata("kaptIncrementalCompilationProject")
     @DisplayName("Should clean previously generated files on incompatible classpath changes")
     @GradleTest
     fun testIncompatibleClasspathChanges(gradleVersion: GradleVersion) {
@@ -221,6 +226,7 @@ class KaptIncrementalWithAggregatingApt : KaptIncrementalIT() {
         }
     }
 
+    @TestMetadata("kaptIncrementalAggregatingProcessorProject")
     @DisplayName("Incremental aggregating changes")
     @JdkVersions(versions = [JavaVersion.VERSION_17])
     @GradleWithJdkTest
@@ -228,6 +234,7 @@ class KaptIncrementalWithAggregatingApt : KaptIncrementalIT() {
         doIncrementalAggregatingChanges(gradleVersion, jdk)
     }
 
+    @TestMetadata("kaptIncrementalAggregatingProcessorProject")
     @DisplayName("Incremental binary aggregating changes")
     @JdkVersions(versions = [JavaVersion.VERSION_17, JavaVersion.VERSION_21])
     @GradleWithJdkTest
