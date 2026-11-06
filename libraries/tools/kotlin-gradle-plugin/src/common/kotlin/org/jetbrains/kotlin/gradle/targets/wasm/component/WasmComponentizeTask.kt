@@ -13,11 +13,13 @@ import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.dsl.toolchain.wasiadapter.WasiAdapterFlavor
 import org.jetbrains.kotlin.gradle.dsl.toolchain.wasiadapter.WasiAdapterRequest
 import org.jetbrains.kotlin.gradle.dsl.toolchain.wasmtools.WasmToolsRequest
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
@@ -58,6 +60,9 @@ internal constructor() :
     UsesWasiAdapterToolchainService {
     @get:Inject
     internal abstract val execOperations: ExecOperations
+
+    @get:Inject
+    internal abstract val providerFactory: ProviderFactory
 
     @get:Inject
     internal abstract val fs: FileSystemOperations
@@ -127,11 +132,10 @@ internal constructor() :
             .executable
             .get()
 
-        val adaptFile = wasiAdapterToolchainService.get()
+        val adapter = wasiAdapterToolchainService.get()
             .requestAdapter(wasiAdapterRequest.get())
             .get()
-            .adapterFile
-            .getFile()
+        val adaptFile = adapter.adapterFile.getFile()
 
         val inputModule = inputFile.getFile()
 
@@ -171,7 +175,7 @@ internal constructor() :
         val componentDirectory = outputDirectory.getFile()
         componentDirectory.mkdirs()
         val component = componentDirectory.resolve(inputModule.name)
-        execOperations.exec {
+        val result = execOperations.exec {
             it.executable = wasmTools
             it.args = listOf(
                 "component",
@@ -182,8 +186,31 @@ internal constructor() :
             ) +
                     componentNewArguments.get() +
                     listOf("-o", component.absolutePath)
+            it.isIgnoreExitValue = true
         }
+
+        // if `wasm-tools component new` failed, sanity check that there is a _start export
+        if (result.exitValue != 0 &&
+            adapter.flavor.get() == WasiAdapterFlavor.COMMAND &&
+            !hasStartExport(wasmTools, inputModule)
+        ) {
+            logger.error(MISSING_MAIN_FUNCTION_MESSAGE)
+        }
+        result.assertNormalExitValue()
     }
+
+    /**
+     * Returns whether the [module] exports _start.
+     * The command flavor of the WASI preview1 adapter ([WasiAdapterFlavor.COMMAND]) requires this export.
+     */
+    private fun hasStartExport(wasmTools: String, module: File): Boolean =
+        providerFactory.exec {
+            it.executable = wasmTools
+            it.args = listOf("print", "--skeleton", module.absolutePath)
+            it.isIgnoreExitValue = true // -> also returns false if the command failed, because stdout won't contain what we're looking for
+        }.standardOutput.asText.get()
+            .lineSequence()
+            .any { it.trimStart().startsWith(START_EXPORT_PREFIX) }
 
     /**
      * WIT projects of [witProjects] which can be passed to `wasm-tools component embed`,
@@ -208,6 +235,24 @@ internal constructor() :
 
     internal companion object {
         private const val EMBED_DIRECTORY_NAME = "embed"
+
+        private const val START_EXPORT_PREFIX = "(export \"_start\""
+
+        // NOTE: leading newline is intentional
+        private val MISSING_MAIN_FUNCTION_MESSAGE = """
+            
+            It seems like the Wasm module has no main function, so `wasm-tools` can't make a WASI command component from it.
+            
+            You probably want to add a main function. 
+            
+            Otherwise, if you either don't want to run the program,
+            or want to export a custom entry point, change the WASI preview 1 adapter flavor
+            to the reactor adapter (which does not require a main function) in the build script, like this:
+            
+                tasks.withType<WasmComponentizeTask>().configureEach {
+                    wasiAdapterRequest.get().flavor.set(WasiAdapterFlavor.REACTOR)
+                }
+        """.trimIndent()
 
         internal fun register(
             compilation: KotlinJsIrCompilation,
