@@ -33,6 +33,6 @@ abstract class UpdateTestDataModuleTask : AbstractTestDataModuleTask() {
 
     init {
         description = "Updates test data files in this module. " +
-                "Options via -P${testDataManagerOptionsPrefix}.{testDataPath,testClassPattern,goldenOnly,incremental}."
+                "Options via -P${testDataManagerOptionsPrefix}.{testDataPath,testClassPattern,goldenOnly,incremental,runId,rerunId,output}."
     }
 }

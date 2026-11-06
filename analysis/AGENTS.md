@@ -38,46 +38,45 @@ WHEN working with PSI elements:
 
 ## Working with Test Data
 
-When modifying test data files or running generated tests (`*Generated`) that compare output against `.txt` files, use `updateTestData` (to rewrite files) or `checkTestData` (to verify only) instead of standard test commands. Both take their options as `-P` properties, so changing filters between runs stays fast.
-
-### `updateTestData` — the only recommended way to update test data
-
-```bash
-# Update test data by directory (preferred for iteration)
-./gradlew updateTestData -Porg.jetbrains.kotlin.testDataManager.options.testDataPath=analysis/analysis-api/testData/components/resolver/
-
-# Update test data by test class pattern
-./gradlew updateTestData -Porg.jetbrains.kotlin.testDataManager.options.testClassPattern=.*ResolveTest.*
-
-# Run only golden tests (useful for quick baseline updates)
-./gradlew updateTestData -Porg.jetbrains.kotlin.testDataManager.options.goldenOnly=true
-
-# Incremental update — only re-run variant tests for changed paths
-./gradlew updateTestData -Porg.jetbrains.kotlin.testDataManager.options.incremental=true
-
-# Limit to a subset of modules using task paths (Gradle task-name matching)
-./gradlew :analysis:analysis-api-fir:updateTestData :analysis:stubs:updateTestData
-```
-
-`updateTestData` is fixed to update mode. There is no `updateTestDataGlobally` — Gradle's task-name matching runs the task in every applicable subproject when invoked from the repo root.
-
-### `checkTestData` — verification only
-
-If you specifically need to verify that existing test data is consistent without modifying anything (e.g., sanity-checking generated files after an `updateTestData` run), use `checkTestData`. It is the exact `-P`-driven counterpart of `updateTestData` but fixed to check mode: it fails on any mismatch and writes nothing.
+Golden files of the `*Generated` tests implementing `ManagedTest`, in the modules applying `id("test-data-manager")`
+(most of `analysis/`, and `compiler/psi/psi-impl`), variants (`.knm.*`, `.js.*`, …) included, are checked and updated
+with one command. Don't use `:test`, `-Pkotlin.test.update.test.data=true` or the Gradle tasks directly for them: a
+plain test run doesn't order the variant chains and never writes a variant file.
 
 ```bash
-./gradlew checkTestData -Porg.jetbrains.kotlin.testDataManager.options.testDataPath=analysis/analysis-api/testData/components/resolver/singleByPsi/
+python3 analysis/test-data-manager/test-data-manager.py update --path <dir-or-file>[,<dir-or-file>...]
+python3 analysis/test-data-manager/test-data-manager.py check --path <dir-or-file>[,<dir-or-file>...]
 ```
 
-Use this only for verification. For any workflow that writes test data, use `updateTestData`.
+- `--path` is repository-relative, as in `@TestMetadata`; one test is its test data file (`.../foo.kt`), not its
+  output (`foo.txt`). A new test data file needs `./gradlew generateTests` first.
+- The script picks the modules: don't add `--module`, don't split the run per module. Don't add `--incremental` or
+  `--golden-only` unless the user asks: they skip tests.
+- The output is a few lines: read it as is, don't pipe it into `tail`/`grep` (the pipe hides the exit code).
+- Wait for the command to exit and read its exit code; the output and the summary are its result. A run may outlast
+  the tool timeout, which may kill it: raise the timeout or use a tracked background task. The Gradle log, whose path
+  is printed first, shows the progress.
+- `--rerun <runId>` instead of `--path` runs again the test data files of the tests that failed in that run, in all
+  their suites and variants; that run's `--class-pattern` and `--golden-only` don't carry over. Its id is in the first
+  line of its result (`… FAILED, runId <id>`).
 
-**Why use these tasks instead of plain `:test`?**
-- Run only relevant tests (filtered by path or class pattern)
-- Handle variant chains correctly (golden `.txt` files run before variant-specific `.js.txt`, `.wasm.txt`, etc.)
-- Automatically discover all modules that use managed test data
-- Detect and remove redundant variant files
+| Exit | Output                                                          | Next step                                                                                                                                          |
+|------|-----------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
+| 0    | `PASSED`; after `update`, `CREATED`/`UPDATED`/`DELETED` lines   | Done; no `check` after a passed `update`. Review the change with `git diff`.                                                                       |
+| 0    | `RECOVERED`                                                     | The test failed and then passed on a rerun within the run: nothing to do.                                                                          |
+| 1    | `MISMATCH`, `MISSING_FILE`                                      | Intended change: `update --rerun <runId>`. Otherwise diff `actualFile` with `comparedFile` (in the module report, linked from the summary JSON; a missing file has only `actualFile`). After a golden file changes, its variants may be listed too, as `REDUNDANT_FILE` or `MISSING_FILE`: the same `update` settles them. |
+| 1    | `REDUNDANT_FILE`, `UNEXPECTED_FILE`                             | The file has to go, `update` deletes it: it equals the file it falls back to, or the test produces nothing for it. There is no output to diff.     |
+| 1    | `TEST ERROR`                                                    | The test crashed; `update` won't fix it. A known problem (below): `check --rerun <runId>`. Otherwise fix the code or the test; the stack trace is in the module report (`testErrors[].stackTrace`). |
+| 2    | `ERROR …`, `GRADLE FAILURE`, `e: …`                             | Fix what the line names (a path, a compilation error) and rerun. `is an output file`: pass the test data file it names. `matches no managed test`: a new test data file needs `./gradlew generateTests`; otherwise the files aren't managed, use the area's own runner. |
+| 130  | `Interrupted …`                                                 | The run was interrupted; run it again.                                                                                                             |
 
-For full options, see [test-data-manager-convention](../repo/gradle-build-conventions/test-data-manager-convention/README.md).
+Known problems, not caused by your change:
+
+- `TEST ERROR` with `BuiltinsVirtualFileProvider duplicated` in a random `:analysis:stubs` test: a flake that `update`
+  retries by itself and `check` doesn't.
+
+Options, the JSON summary and direct Gradle calls: [test-data-manager/README.md](test-data-manager/README.md#wrapper-script-recommended-for-agents-and-scripts)
+and [test-data-manager-convention](../repo/gradle-build-conventions/test-data-manager-convention/README.md).
 
 ## Key Components
 
