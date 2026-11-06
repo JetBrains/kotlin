@@ -294,6 +294,7 @@ internal class JsKlibCompilationOperationImpl : BaseCompilationOperationImpl<JsA
             keepIncrementalCompilationCachesInMemory = this[KEEP_IC_CACHES_IN_MEMORY],
             enableUnsafeIncrementalCompilationForMultiplatform = this[UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM],
             enableMonotonousIncrementalCompileSetExpansion = this[MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION],
+            enableErrorRecoveryRound = false,
         )
     }
 
