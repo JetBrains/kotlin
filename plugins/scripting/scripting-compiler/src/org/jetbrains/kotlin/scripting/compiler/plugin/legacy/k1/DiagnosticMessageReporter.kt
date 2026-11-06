@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.cli.common.messages
+package org.jetbrains.kotlin.scripting.compiler.plugin.legacy.k1
 
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.K1Deprecation
