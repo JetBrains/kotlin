@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.konan.testUtils
 
 import com.intellij.openapi.Disposable
 import org.intellij.lang.annotations.Language
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import java.io.File
 
@@ -47,7 +46,6 @@ import java.io.File
  * ```
  */
 interface InlineSourceTestEnvironment {
-    val kotlinCoreEnvironment: KotlinCoreEnvironment
     val testDisposable: Disposable
     val testTempDir: File
 }
@@ -57,7 +55,7 @@ interface InlineSourceCodeCollector {
 }
 
 fun InlineSourceTestEnvironment.createModuleDescriptor(@Language("kotlin") sourceCode: String): ModuleDescriptor =
-    createModuleDescriptor(kotlinCoreEnvironment, testTempDir, listOf(sourceCode))
+    createModuleDescriptor(testTempDir, listOf(sourceCode))
 
 fun InlineSourceTestEnvironment.createModuleDescriptor(build: InlineSourceCodeCollector.() -> Unit): ModuleDescriptor {
     val sources = mutableListOf<String>()
@@ -67,5 +65,5 @@ fun InlineSourceTestEnvironment.createModuleDescriptor(build: InlineSourceCodeCo
         }
     }.build()
 
-    return createModuleDescriptor(kotlinCoreEnvironment, testTempDir, sources.toList())
+    return createModuleDescriptor(testTempDir, sources.toList())
 }

@@ -11,14 +11,17 @@ import org.jetbrains.kotlin.backend.konan.descriptors.enumEntries
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamer
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamer.ClassOrProtocolName
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamer.PropertyName
-import org.jetbrains.kotlin.backend.konan.testUtils.*
+import org.jetbrains.kotlin.backend.konan.testUtils.InlineSourceTestEnvironment
+import org.jetbrains.kotlin.backend.konan.testUtils.createModuleDescriptor
+import org.jetbrains.kotlin.backend.konan.testUtils.createObjCExportNamer
+import org.jetbrains.kotlin.backend.konan.testUtils.createObjCExportNamerConfiguration
+import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi2ir.findSingleFunction
 import org.jetbrains.kotlin.resolve.scopes.findFirstVariable
-import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -38,8 +41,6 @@ import kotlin.test.assertEquals
 class ObjCExportNamerTest : InlineSourceTestEnvironment {
 
     override val testDisposable = Disposer.newDisposable("${ObjCExportNamerTest::class.simpleName}.testDisposable")
-
-    override val kotlinCoreEnvironment = createKotlinCoreEnvironment(testDisposable)
 
     @TempDir
     override lateinit var testTempDir: File
