@@ -18,6 +18,7 @@ class FirParcelizeExtensionRegistrar(
     override fun ExtensionRegistrarContext.configurePlugin() {
         +FirParcelizeService.getFactory(parcelizeAnnotationFqNames, experimentalCodeGeneration)
         +::FirParcelizeDeclarationGenerator.bind(parcelizeAnnotationFqNames)
+        +::FirParcelizeSupertypeGenerator
         +::FirParcelizeCheckersExtension
 
         registerDiagnosticContainers(KtErrorsParcelize)

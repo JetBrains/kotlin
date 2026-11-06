@@ -35,6 +35,7 @@ object ParcelizeNames {
     val PARCEL_TAG_CLASS_IDS = createClassIds("ParcelTag")
     val RAW_VALUE_ANNOTATION_CLASS_IDS = createClassIds("RawValue")
     val DATA_CLASS_ANNOTATION_CLASS_ID = ClassId(RUNTIME_PACKAGE, Name.identifier("DataClass"))
+    val ADD_PARCELABLE_SUPERTYPE_CLASS_ID = ClassId(RUNTIME_PACKAGE, Name.identifier("AddParcelableSupertype"))
 
     val DIRECT_INITIALIZER_MARKER = ClassId(RUNTIME_PACKAGE, Name.identifier("DirectInitializerMarker"))
 
@@ -51,6 +52,7 @@ object ParcelizeNames {
     val PARCEL_TAG_CLASS_FQ_NAMES: List<FqName> = PARCEL_TAG_CLASS_IDS.fqNames()
     val RAW_VALUE_ANNOTATION_FQ_NAMES = RAW_VALUE_ANNOTATION_CLASS_IDS.fqNames()
     val DATA_CLASS_ANNOTATION_FQ_NAME = DATA_CLASS_ANNOTATION_CLASS_ID.asSingleFqName()
+    val ADD_PARCELABLE_SUPERTYPE_FQ_NAME = ADD_PARCELABLE_SUPERTYPE_CLASS_ID.asSingleFqName()
 
     val PARCELER_FQN = PARCELER_ID.asSingleFqName()
     val OLD_PARCELER_FQN = OLD_PARCELER_ID.asSingleFqName()
