@@ -5,7 +5,7 @@ FILE fqName:<root> fileName:/lib.kt lineStartOffsets: [0, 34, 137, 161, 176, 177
     VALUE_PARAMETER[228, 234] kind:Regular name:arg index:0 type:T of <root>.foo
     VALUE_PARAMETER[236, 254] kind:Regular name:block index:1 type:kotlin.Function1<T of <root>.foo, kotlin.Unit>
     BLOCK_BODY[256, 274]
-      CALL[262, 272] 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Unit origin=INVOKE
+      CALL[262, 272] 'kotlin/Function1.invoke|invoke(1:0){}[0]' type=kotlin.Unit origin=INVOKE
         ARG <this>: GET_VAR[262, 267] 'block: kotlin.Function1<T of <root>.foo, kotlin.Unit> declared in <root>.foo' type=kotlin.Function1<T of <root>.foo, kotlin.Unit> origin=VARIABLE_AS_FUNCTION
         ARG p1: GET_VAR[268, 271] 'arg: T of <root>.foo declared in <root>.foo' type=T of <root>.foo origin=null
 Module: main
@@ -20,7 +20,7 @@ FILE fqName:<root> fileName:/main.kt lineStartOffsets: [0, 1, 2, 3, 4, 5, 6, 7, 
             CONST[248, 252] String type=kotlin.String value="OK"
         RETURNABLE_BLOCK[243, 308] type=kotlin.Unit origin=null
           INLINED_BLOCK[243, 308]->[132, 198] type=kotlin.Unit origin=null
-            inlinedFunctionSymbol: public final fun wrap <T> (arg: T of <root>.wrap, block: kotlin.Function1<T of <root>.wrap, kotlin.Unit>): kotlin.Unit declared in <root>
+            inlinedFunctionSymbol: /wrap|wrap(0:0;kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}[0]
             inlinedFunctionFileEntry: FILE_ENTRY path:/main.kt
             VAR[-1, -1] IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:arg type:kotlin.Any? [val]
               GET_VAR[-1, -1] 'val tmp_0: kotlin.Any? declared in <root>.box' type=kotlin.Any? origin=null
@@ -29,40 +29,40 @@ FILE fqName:<root> fileName:/main.kt lineStartOffsets: [0, 1, 2, 3, 4, 5, 6, 7, 
                 GET_VAR[185, 188] 'val arg: kotlin.Any? declared in <root>.box' type=kotlin.Any? origin=null
               RETURNABLE_BLOCK[179, 196] type=kotlin.Unit origin=null
                 INLINED_BLOCK[179, 196]->[58, 123] type=kotlin.Unit origin=null
-                  inlinedFunctionSymbol: public final fun inner <T> (arg: T of <root>.inner, block: kotlin.Function1<T of <root>.inner, kotlin.Unit>): kotlin.Unit declared in <root>
+                  inlinedFunctionSymbol: /inner|inner(0:0;kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}[0]
                   inlinedFunctionFileEntry: FILE_ENTRY path:/main.kt
                   VAR[-1, -1] IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:arg type:kotlin.Any? [val]
                     GET_VAR[-1, -1] 'val tmp_1: kotlin.Any? declared in <root>.box' type=kotlin.Any? origin=null
-                  CALL[106, 121] 'public final fun foo <T> (arg: T of <root>.foo, block: kotlin.Function1<T of <root>.foo, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                  CALL[106, 121] '/foo|foo(0:0;kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}[0]' type=kotlin.Unit origin=null
                     TYPE_ARG T: kotlin.Any?
                     ARG arg: GET_VAR[110, 113] 'val arg: kotlin.Any? declared in <root>.box' type=kotlin.Any? origin=null
                     ARG block: RICH_FUNCTION_REFERENCE[254, 308] type=kotlin.Function1<kotlin.String, kotlin.Unit> origin=LAMBDA reflectionTarget='null'
-                      overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1
+                      overriddenFunctionSymbol: kotlin/Function1.invoke|invoke(1:0){}[0]
                       invoke: FUN[254, 308] LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
                         VALUE_PARAMETER[254, 308] kind:Regular name:it index:0 type:kotlin.String
                         BLOCK_BODY[264, 302]
-                          CALL[264, 302] 'public final fun foo <T> (arg: T of <root>.foo, block: kotlin.Function1<T of <root>.foo, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                          CALL[264, 302] '/foo|foo(0:0;kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}[0]' type=kotlin.Unit origin=null
                             TYPE_ARG T: kotlin.String
                             ARG arg: GET_VAR[268, 270] 'it: kotlin.String declared in <root>.box.<anonymous>' type=kotlin.String origin=null
                             ARG block: RICH_FUNCTION_REFERENCE[272, 302] type=kotlin.Function1<kotlin.String, kotlin.Unit> origin=LAMBDA reflectionTarget='null'
-                              overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1
+                              overriddenFunctionSymbol: kotlin/Function1.invoke|invoke(1:0){}[0]
                               invoke: FUN[272, 302] LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
                                 VALUE_PARAMETER[272, 302] kind:Regular name:it index:0 type:kotlin.String
                                 BLOCK_BODY[286, 292]
                                   SET_VAR[286, 292] 'var x: kotlin.String declared in <root>.box' type=kotlin.Unit origin=EQ
                                     GET_VAR[290, 292] 'it: kotlin.String declared in <root>.box.<anonymous>.<anonymous>' type=kotlin.String origin=null
                   RETURN[123, 123] type=kotlin.Nothing from='{IrReturnableBlockImpl}'
-                    GET_OBJECT[123, 123] 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+                    GET_OBJECT[123, 123] 'kotlin/Unit|null[0]' type=kotlin.Unit
             RETURN[198, 198] type=kotlin.Nothing from='{IrReturnableBlockImpl}'
-              GET_OBJECT[198, 198] 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-      RETURN[314, 322] type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+              GET_OBJECT[198, 198] 'kotlin/Unit|null[0]' type=kotlin.Unit
+      RETURN[314, 322] type=kotlin.Nothing from='/box|box(){}[0]'
         GET_VAR[321, 322] 'var x: kotlin.String declared in <root>.box' type=kotlin.String origin=null
   FUN[58, 123] name:inner visibility:public modality:FINAL returnType:kotlin.Unit [inline]
     TYPE_PARAMETER[63, 64] name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     VALUE_PARAMETER[72, 78] kind:Regular name:arg index:0 type:T of <root>.inner
     VALUE_PARAMETER[80, 98] kind:Regular name:block index:1 type:kotlin.Function1<T of <root>.inner, kotlin.Unit>
     BLOCK_BODY[100, 123]
-      CALL[106, 121] 'public final fun foo <T> (arg: T of <root>.foo, block: kotlin.Function1<T of <root>.foo, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+      CALL[106, 121] '/foo|foo(0:0;kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}[0]' type=kotlin.Unit origin=null
         TYPE_ARG T: T of <root>.inner
         ARG arg: GET_VAR[110, 113] 'arg: T of <root>.inner declared in <root>.inner' type=T of <root>.inner origin=null
         ARG block: GET_VAR[115, 120] 'block: kotlin.Function1<T of <root>.inner, kotlin.Unit> declared in <root>.inner' type=kotlin.Function1<T of <root>.inner, kotlin.Unit> origin=null
@@ -77,13 +77,13 @@ FILE fqName:<root> fileName:/main.kt lineStartOffsets: [0, 1, 2, 3, 4, 5, 6, 7, 
             GET_VAR[185, 188] 'arg: T of <root>.wrap declared in <root>.wrap' type=T of <root>.wrap origin=null
         RETURNABLE_BLOCK[179, 196] type=kotlin.Unit origin=null
           INLINED_BLOCK[179, 196]->[58, 123] type=kotlin.Unit origin=null
-            inlinedFunctionSymbol: public final fun inner <T> (arg: T of <root>.inner, block: kotlin.Function1<T of <root>.inner, kotlin.Unit>): kotlin.Unit declared in <root>
+            inlinedFunctionSymbol: /inner|inner(0:0;kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}[0]
             inlinedFunctionFileEntry: FILE_ENTRY path:/main.kt
             VAR[-1, -1] IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:arg type:kotlin.Any? [val]
               GET_VAR[-1, -1] 'val tmp_2: kotlin.Any? declared in <root>.wrap' type=kotlin.Any? origin=null
-            CALL[106, 121] 'public final fun foo <T> (arg: T of <root>.foo, block: kotlin.Function1<T of <root>.foo, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+            CALL[106, 121] '/foo|foo(0:0;kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}[0]' type=kotlin.Unit origin=null
               TYPE_ARG T: kotlin.Any?
               ARG arg: GET_VAR[110, 113] 'val arg: kotlin.Any? declared in <root>.wrap' type=kotlin.Any? origin=null
               ARG block: GET_VAR[115, 120] 'block: kotlin.Function1<T of <root>.wrap, kotlin.Unit> declared in <root>.wrap' type=kotlin.Function1<T of <root>.wrap, kotlin.Unit> origin=null
             RETURN[123, 123] type=kotlin.Nothing from='{IrReturnableBlockImpl}'
-              GET_OBJECT[123, 123] 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+              GET_OBJECT[123, 123] 'kotlin/Unit|null[0]' type=kotlin.Unit

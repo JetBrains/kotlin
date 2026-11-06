@@ -56,6 +56,7 @@ fun TestConfigurationBuilder.configureLoweredIrDumpHandlers() {
                     directive = CodegenTestDirectives.DUMP_IR_AFTER_INLINE,
                     directiveForIrDifference = CodegenTestDirectives.DUMP_IR_AFTER_INLINE_DIFFERENCE,
                     showOffsets = true,
+                    renderReferencesAsSignatures = true,
                 )
             },
             ::IrPreprocessedInlineFunctionDumpHandler,

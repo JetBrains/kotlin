@@ -1,31 +1,31 @@
 FILE fqName:<root> fileName:/lazyDelegateInObject.kt lineStartOffsets: [0, 15, 26, 50, 51, 89, 129, 130, 207, 209, 210, 230, 275, 277]
   FUN[210, 276] name:box visibility:public modality:FINAL returnType:kotlin.String
     BLOCK_BODY[228, 276]
-      RETURN[234, 274] type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
-        CALL[264, 274] 'public open fun toString (): kotlin.String declared in kotlin.Any' type=kotlin.String origin=null
-          ARG <this>: CALL[241, 263] 'public final fun lazyDelegateInObject (): kotlin.Any declared in <root>' type=kotlin.Any origin=null
+      RETURN[234, 274] type=kotlin.Nothing from='/box|box(){}[0]'
+        CALL[264, 274] 'kotlin/Any.toString|toString(){}[0]' type=kotlin.String origin=null
+          ARG <this>: CALL[241, 263] '/lazyDelegateInObject|lazyDelegateInObject(){}[0]' type=kotlin.Any origin=null
   FUN[51, 208] name:lazyDelegateInObject visibility:public modality:FINAL returnType:kotlin.Any
     BLOCK_BODY[80, 208]
-      RETURN[208, 208] type=kotlin.Nothing from='public final fun lazyDelegateInObject (): kotlin.Any declared in <root>'
+      RETURN[208, 208] type=kotlin.Nothing from='/lazyDelegateInObject|lazyDelegateInObject(){}[0]'
         BLOCK[80, 208] type=<root>.lazyDelegateInObject.<no name provided> origin=OBJECT_LITERAL
           CLASS[80, 208] CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]
             thisReceiver: VALUE_PARAMETER[80, 208] INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.lazyDelegateInObject.<no name provided>
             PROPERTY[93, 128] name:original visibility:public modality:FINAL [delegated,val]
               FIELD[115, 128] PROPERTY_DELEGATE name:original$delegate type:kotlin.Lazy<kotlin.Any?> visibility:private [final]
                 EXPRESSION_BODY[115, 128]
-                  CALL[115, 128] 'public final fun lazy <T> (initializer: kotlin.Function0<T of kotlin.lazy>): kotlin.Lazy<T of kotlin.lazy> declared in kotlin' type=kotlin.Lazy<kotlin.Any?> origin=null
+                  CALL[115, 128] 'kotlin/lazy|lazy(kotlin.Function0<0:0>){0§<kotlin.Any?>}[0]' type=kotlin.Lazy<kotlin.Any?> origin=null
                     TYPE_ARG T: kotlin.Any?
                     ARG initializer: RICH_FUNCTION_REFERENCE[120, 128] type=kotlin.Function0<kotlin.Any?> origin=LAMBDA reflectionTarget='null'
-                      overriddenFunctionSymbol: public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0
+                      overriddenFunctionSymbol: kotlin/Function0.invoke|invoke(){}[0]
                       invoke: FUN[120, 128] LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Any?
                         BLOCK_BODY[122, 126]
-                          RETURN[126, 126] type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Any? declared in <root>.lazyDelegateInObject.<no name provided>.original$delegate'
+                          RETURN[126, 126] type=kotlin.Nothing from='[ /lazyDelegateInObject.<no name provided>.original|lazyDelegateInObject(){}{}original[0] <- Local[<BF>.<anonymous>,8458633327592897912] ]'
                             CONST[122, 126] Null type=kotlin.Nothing? value=null
               FUN[93, 128] DELEGATED_PROPERTY_ACCESSOR name:<get-original> visibility:public modality:FINAL returnType:kotlin.Any?
                 VALUE_PARAMETER[93, 128] kind:DispatchReceiver name:<this> index:0 type:<root>.lazyDelegateInObject.<no name provided>
                 correspondingProperty: PROPERTY[93, 128] name:original visibility:public modality:FINAL [delegated,val]
                 BLOCK_BODY[115, 128]
-                  RETURN[115, 128] type=kotlin.Nothing from='public final fun <get-original> (): kotlin.Any? declared in <root>.lazyDelegateInObject.<no name provided>'
+                  RETURN[115, 128] type=kotlin.Nothing from='/lazyDelegateInObject.<no name provided>.original.<get-original>|lazyDelegateInObject(){}<get-original>(){}[0]'
                     BLOCK[115, 128] type=kotlin.Any? origin=INLINE_ARGS_CONTAINER
                       VAR[-1, -1] IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Lazy<kotlin.Any?> [val]
                         GET_FIELD[115, 128] 'FIELD PROPERTY_DELEGATE name:original$delegate type:kotlin.Lazy<kotlin.Any?> visibility:private [final] declared in <root>.lazyDelegateInObject.<no name provided>' type=kotlin.Lazy<kotlin.Any?> origin=null
@@ -35,16 +35,16 @@ FILE fqName:<root> fileName:/lazyDelegateInObject.kt lineStartOffsets: [0, 15, 2
                           GET_VAR[115, 128] '<this>: <root>.lazyDelegateInObject.<no name provided> declared in <root>.lazyDelegateInObject.<no name provided>.<get-original>' type=<root>.lazyDelegateInObject.<no name provided> origin=null
                       VAR[-1, -1] IR_TEMPORARY_VARIABLE name:tmp_2 type:kotlin.reflect.KProperty<*> [val]
                         TYPE_OP[115, 128] type=kotlin.reflect.KProperty<*> origin=IMPLICIT_CAST typeOperand=kotlin.reflect.KProperty<*>
-                          RICH_PROPERTY_REFERENCE[115, 128] type=kotlin.reflect.KProperty1<<root>.lazyDelegateInObject.<no name provided>, kotlin.Any?> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='public final original: kotlin.Any? declared in <root>.lazyDelegateInObject.<no name provided>'
+                          RICH_PROPERTY_REFERENCE[115, 128] type=kotlin.reflect.KProperty1<<root>.lazyDelegateInObject.<no name provided>, kotlin.Any?> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='/lazyDelegateInObject.<no name provided>.original|lazyDelegateInObject(){}{}original[0]'
                             getter: FUN[115, 128] LOCAL_FUNCTION_FOR_LAMBDA name:original visibility:local modality:FINAL returnType:kotlin.Any?
                               VALUE_PARAMETER[115, 128] ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.lazyDelegateInObject.<no name provided>
                               BLOCK_BODY[-1, -1]
-                                RETURN[-1, -1] type=kotlin.Nothing from='local final fun original (p0: <root>.lazyDelegateInObject.<no name provided>): kotlin.Any? declared in <root>.lazyDelegateInObject.<no name provided>.<get-original>'
-                                  CALL[115, 128] 'public final fun <get-original> (): kotlin.Any? declared in <root>.lazyDelegateInObject.<no name provided>' type=kotlin.Any? origin=null
+                                RETURN[-1, -1] type=kotlin.Nothing from='/lazyDelegateInObject.<no name provided>.original.<get-original>.original|lazyDelegateInObject(){}<get-original>(){}[0]'
+                                  CALL[115, 128] '/lazyDelegateInObject.<no name provided>.original.<get-original>|lazyDelegateInObject(){}<get-original>(){}[0]' type=kotlin.Any? origin=null
                                     ARG <this>: GET_VAR[115, 128] 'p0: <root>.lazyDelegateInObject.<no name provided> declared in <root>.lazyDelegateInObject.<no name provided>.<get-original>.original' type=<root>.lazyDelegateInObject.<no name provided> origin=null
                       RETURNABLE_BLOCK[115, 128] type=kotlin.Any? origin=null
                         INLINED_BLOCK[115, 128]->[1699, 1773] type=kotlin.Any? origin=null
-                          inlinedFunctionSymbol: public final fun getValue <T> (<this>: kotlin.Lazy<T of kotlin.getValue>, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T of kotlin.getValue declared in kotlin
+                          inlinedFunctionSymbol: kotlin/getValue|getValue@kotlin.Lazy<0:0>(kotlin.Any?;kotlin.reflect.KProperty<*>){0§<kotlin.Any?>}[0]
                           inlinedFunctionFileEntry: FILE_ENTRY path:src/kotlin/util/Lazy.kt
                           VAR[-1, -1] IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:this type:kotlin.Lazy<kotlin.Any?> [val]
                             GET_VAR[-1, -1] 'val tmp_0: kotlin.Lazy<kotlin.Any?> declared in <root>.lazyDelegateInObject.<no name provided>.<get-original>' type=kotlin.Lazy<kotlin.Any?> origin=null
@@ -53,35 +53,35 @@ FILE fqName:<root> fileName:/lazyDelegateInObject.kt lineStartOffsets: [0, 15, 2
                           VAR[-1, -1] IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:property type:kotlin.reflect.KProperty<*> [val]
                             GET_VAR[-1, -1] 'val tmp_2: kotlin.reflect.KProperty<*> declared in <root>.lazyDelegateInObject.<no name provided>.<get-original>' type=kotlin.reflect.KProperty<*> origin=null
                           RETURN[1773, 1773] type=kotlin.Nothing from='{IrReturnableBlockImpl}'
-                            CALL[1768, 1773] 'UNBOUND IrSimpleFunctionSymbolImpl' type=kotlin.Any? origin=GET_PROPERTY
+                            CALL[1768, 1773] 'kotlin/Lazy.value.<get-value>|<get-value>(){}[0]' type=kotlin.Any? origin=GET_PROPERTY
                               ARG 1: GET_VAR[1768, 1773] 'val this: kotlin.Lazy<kotlin.Any?> declared in <root>.lazyDelegateInObject.<no name provided>.<get-original>' type=kotlin.Lazy<kotlin.Any?> origin=IMPLICIT_ARGUMENT
             CONSTRUCTOR[80, 208] visibility:public returnType:<root>.lazyDelegateInObject.<no name provided> [primary]
               BLOCK_BODY[80, 208]
-                DELEGATING_CONSTRUCTOR_CALL[80, 208] 'public constructor <init> () declared in kotlin.Any'
-                INSTANCE_INITIALIZER_CALL[80, 208] classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]' type=kotlin.Unit
+                DELEGATING_CONSTRUCTOR_CALL[80, 208] 'kotlin/Any.<init>|<init>(){}[0]'
+                INSTANCE_INITIALIZER_CALL[80, 208] classDescriptor='/lazyDelegateInObject.<no name provided>|lazyDelegateInObject(){}[0]' type=kotlin.Unit
             FUN[-2, -2] FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
               VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
               VALUE_PARAMETER[-2, -2] kind:Regular name:other index:1 type:kotlin.Any?
               overridden:
-                public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+                kotlin/Any.equals|equals(kotlin.Any?){}[0]
             FUN[-2, -2] FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
               VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
               overridden:
-                public open fun hashCode (): kotlin.Int declared in kotlin.Any
+                kotlin/Any.hashCode|hashCode(){}[0]
             FUN[143, 206] name:toString visibility:public modality:OPEN returnType:kotlin.String
               VALUE_PARAMETER[143, 206] kind:DispatchReceiver name:<this> index:0 type:<root>.lazyDelegateInObject.<no name provided>
               overridden:
-                public open fun toString (): kotlin.String declared in kotlin.Any
+                kotlin/Any.toString|toString(){}[0]
               BLOCK_BODY[168, 206]
-                RETURN[206, 206] type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.lazyDelegateInObject.<no name provided>'
+                RETURN[206, 206] type=kotlin.Nothing from='/lazyDelegateInObject.<no name provided>.toString|lazyDelegateInObject(){}toString(){}[0]'
                   WHEN[168, 206] type=kotlin.String origin=IF
                     BRANCH[172, 194]
-                      if: CALL[172, 188] 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                        ARG arg0: CALL[172, 180] 'public final fun <get-original> (): kotlin.Any? declared in <root>.lazyDelegateInObject.<no name provided>' type=kotlin.Any? origin=GET_PROPERTY
+                      if: CALL[172, 188] 'kotlin.internal.ir/EQEQ|EQEQ(kotlin.Any?;kotlin.Any?){}[0]' type=kotlin.Boolean origin=EQEQ
+                        ARG arg0: CALL[172, 180] '/lazyDelegateInObject.<no name provided>.original.<get-original>|lazyDelegateInObject(){}<get-original>(){}[0]' type=kotlin.Any? origin=GET_PROPERTY
                           ARG <this>: GET_VAR[172, 180] '<this>: <root>.lazyDelegateInObject.<no name provided> declared in <root>.lazyDelegateInObject.<no name provided>.toString' type=<root>.lazyDelegateInObject.<no name provided> origin=IMPLICIT_ARGUMENT
                         ARG arg1: CONST[184, 188] Null type=kotlin.Nothing? value=null
                       then: CONST[190, 194] String type=kotlin.String value="OK"
                     BRANCH[200, 206]
                       if: CONST[200, 206] Boolean type=kotlin.Boolean value=true
                       then: CONST[200, 206] String type=kotlin.String value="FAIL"
-          CONSTRUCTOR_CALL[80, 208] 'public constructor <init> () declared in <root>.lazyDelegateInObject.<no name provided>' type=<root>.lazyDelegateInObject.<no name provided> origin=OBJECT_LITERAL
+          CONSTRUCTOR_CALL[80, 208] '/lazyDelegateInObject.<no name provided>.<init>|lazyDelegateInObject(){}<init>(){}[0]' type=<root>.lazyDelegateInObject.<no name provided> origin=OBJECT_LITERAL
