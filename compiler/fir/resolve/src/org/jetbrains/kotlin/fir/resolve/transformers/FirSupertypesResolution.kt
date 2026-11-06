@@ -948,6 +948,8 @@ open class SupertypeComputationSession {
                         source = typeRef.source
                         diagnostic = ConeUnionTypeInSupertype
                     }
+                    // When expandTypeAliasesInTypeResolution is disabled, we can have a valid union type `String | R` before expansion
+                    // which expands to `String | Int | E1`. In that case, we need to apply the expanded type to not lose the error.
                     expanded is ConeErrorType && typeRef.coneType !is ConeErrorType ||
                             session.languageVersionSettings.getFlag(AnalysisFlags.expandTypeAliasesInTypeResolution) -> {
                         typeRef.withReplacedConeType(expanded)
