@@ -1,0 +1,25 @@
+open class Base<T : Any?> {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun foo(): T? {
+    return null
+  }
+
+}
+
+fun test(): Int? {
+  local class Local<T : Any?> : Base<T> {
+    constructor() /* primary */ {
+      super/*Base*/<T>()
+      /* <init>() */
+
+    }
+
+  }
+
+  return Local<Int>().foo()
+}
