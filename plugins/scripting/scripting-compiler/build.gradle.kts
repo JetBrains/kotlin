@@ -10,21 +10,17 @@ plugins {
 }
 
 dependencies {
-    compileOnly(project(":compiler:frontend"))
-    compileOnly(project(":compiler:frontend.java"))
     compileOnly(project(":compiler:psi:psi-api"))
     compileOnly(project(":compiler:plugin-api"))
     compileOnly(project(":compiler:fir:plugin.api"))
     compileOnly(project(":compiler:fir:fir2ir:jvm-backend"))
     compileOnly(project(":compiler:cli"))
     compileOnly(project(":compiler:cli-jvm"))
-    compileOnly(project(":core:descriptors.runtime"))
     compileOnly(project(":core:reflection.common.jvm"))
     compileOnly(project(":compiler:ir.tree"))
     compileOnly(project(":compiler:backend.jvm.entrypoint"))
     compileOnly(project(":compiler:backend.common.jvm"))
     compileOnly(project(":compiler:serialization.common"))
-    compileOnly(project(":compiler:serialization"))
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     api(project(":kotlin-scripting-common"))
     api(project(":kotlin-scripting-jvm"))
@@ -35,11 +31,6 @@ dependencies {
     compileOnly(libs.intellij.asm)
 
     compileOnly(project(":core:descriptors"))
-    compileOnly(project(":core:descriptors.jvm"))
-    compileOnly(project(":core:deserialization"))
-    compileOnly(project(":compiler:container"))
-    compileOnly(project(":compiler:ir.psi2ir"))
-    compileOnly(project(":compiler:resolution"))
     compileOnly(project(":kotlin-util-klib-metadata"))
     implementation(project(":kotlin-power-assert-compiler-plugin")) // TODO: KT-74787
     implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }

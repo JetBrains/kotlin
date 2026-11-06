@@ -5,17 +5,11 @@
 
 package org.jetbrains.kotlin.scripting.compiler.plugin.extensions
 
-import com.intellij.ide.highlighter.JavaFileType
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irComposite
-import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.extensions.ProcessSourcesBeforeCompilingExtension
-import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.declarations.buildVariable
@@ -33,10 +27,7 @@ import org.jetbrains.kotlin.ir.util.transformInPlace
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.powerassert.diagram.SourceFile
 import org.jetbrains.kotlin.powerassert.diagram.irExplain
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings.scriptCompilationConfiguration
-import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
-import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.explainField
@@ -208,32 +199,6 @@ class ScriptingIrExplainGenerationExtension : IrGenerationExtension {
                 scriptCompilationConfiguration?.get(ScriptCompilationConfiguration.explainField) ?: return
             val source = SourceFile.findSource(file) ?: return
             KotlinScriptExpressionExplainTransformer(source, pluginContext, explainFieldName).visitFile(file)
-        }
-    }
-}
-
-class ScriptingProcessSourcesBeforeCompilingExtension : ProcessSourcesBeforeCompilingExtension {
-
-    override fun processSources(sources: Collection<KtFile>, configuration: CompilerConfiguration): Collection<KtFile> {
-        val definitionProvider by lazy(LazyThreadSafetyMode.NONE) { configuration.getCompilerExtensions(ScriptDefinitionProvider).firstOrNull() }
-
-        fun KtFile.isStandaloneScript(): Boolean {
-            val scriptDefinition = definitionProvider?.findDefinition(KtFileScriptSource(this))
-            return scriptDefinition?.compilationConfiguration?.get(ScriptCompilationConfiguration.isStandalone) ?: true
-        }
-
-        if (configuration.getBoolean(CommonConfigurationKeys.ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS)) {
-            return sources
-        }
-        // TODO: see comment at LazyScriptDefinitionProvider.Companion.getNonScriptFilenameSuffixes
-        val nonScriptFilenameSuffixes = arrayOf(".${KotlinFileType.EXTENSION}", ".${JavaFileType.DEFAULT_EXTENSION}")
-        // filter out scripts that are not suitable for source roots, according to the compiler configuration and script definitions
-        return sources.filter { ktFile ->
-            when {
-                nonScriptFilenameSuffixes.any { ktFile.virtualFilePath.endsWith(it) } -> true
-                !ktFile.isStandaloneScript() -> true
-                else -> false
-            }
         }
     }
 }
