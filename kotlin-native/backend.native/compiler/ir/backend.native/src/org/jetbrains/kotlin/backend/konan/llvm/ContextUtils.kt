@@ -668,3 +668,15 @@ internal fun UByte.toLlvmConstUInt8(): ConstUInt8 =
 context(llvm: CodegenLlvmHelpers)
 internal fun String?.toCStringLiteral(): ConstPointer =
         if (this != null) llvm.staticData.cStringLiteral(this) else llvm.nullPointer
+
+/**
+ * Whether the produced binary contains classes whose interface lookup tables are laid out by the
+ * compilation producing the final binary (KT-87320): the tables of the classes coming from compiler
+ * caches are bound through `TypeInfo.interfaceTable_`, so every TypeInfo of such a binary refers to
+ * its table indirectly. Otherwise the tables are stored plainly in the TypeInfos, and the lookups
+ * pay no indirection. The compilation knows which of the two holds, so this is not decided at run time.
+ */
+internal val NativeBackendContext.hierarchyWillBeLaidOutByFinalLink: Boolean
+    get() = shouldOptimize() && with(config.cachedLibraries) {
+        config.produce.isCache || hasStaticCaches || hasDynamicCaches
+    }

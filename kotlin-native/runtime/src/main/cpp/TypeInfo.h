@@ -81,6 +81,17 @@ struct InterfaceTableRecord {
     VTableElement const* vtable;
 };
 
+// The interface lookup table of a class.
+struct InterfaceTable {
+    // The number of records minus one (mask: `records_[interfaceId & size_]`) if they form a perfect hash table keyed by the interface id,
+    // or the negated number of records if they are sorted by the interface id instead.
+    int32_t size_;
+    // The records follow the header in the same global, so the size and the probed record are read from one cache line.
+    // Not const-qualified: the type must stay default-constructible for the clang importer (see touchType),
+    // and the runtime fills the records through the non-const pointer while building the table.
+    InterfaceTableRecord records_[];
+};
+
 // This struct represents runtime type information and by itself is the compile time
 // constant.
 // When adding a field here do not forget to adjust:
@@ -105,8 +116,16 @@ struct TypeInfo {
     int32_t objOffsetsCount_;
     const TypeInfo* const* implementedInterfaces_;
     int32_t implementedInterfacesCount_;
+    // The interface lookup table of a class, used when this compilation lays the interface hierarchy
+    // out itself, so the table's ids are the ones its probes use. Populated unless the table is bound
+    // through `interfaceTable_` below.
     int32_t interfaceTableSize_;
-    InterfaceTableRecord const* interfaceTable_;
+    InterfaceTableRecord const* interfaceTableRecords_;
+    // The interface lookup table for TypeInfos whose table is laid out by the compilation producing
+    // the final binary (KT-87320, the caches in play): the field is a reference the native linker
+    // binds to the `kifacetable:<class>` definition, so both the size and the records can be chosen
+    // there. Null when the plain fields above are populated instead.
+    InterfaceTable const* interfaceTable_;
 
     // String for the fully qualified dot-separated name of the package containing class.
     ObjHeader* packageName_;

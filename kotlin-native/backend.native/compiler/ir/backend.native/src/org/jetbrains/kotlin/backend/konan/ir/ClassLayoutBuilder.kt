@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.ir
 
 import llvm.LLVMABIAlignmentOfType
+import org.jetbrains.kotlin.backend.konan.llvm.alignTo
 import llvm.LLVMABISizeOfType
 import llvm.LLVMStoreSizeOfType
 import org.jetbrains.kotlin.backend.common.getCompilerMessageLocation

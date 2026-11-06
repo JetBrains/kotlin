@@ -653,9 +653,17 @@ static void buildITable(TypeInfo* result, const std::map<ClassId, std::vector<VT
   if (!useFastITable)
     itableSize = interfaceVTables.size();
 
-  auto itable_ = konanAllocArray<InterfaceTableRecord>(itableSize);
-  result->interfaceTable_ = itable_;
-  result->interfaceTableSize_ = useFastITable ? itableSize - 1 : -itableSize;
+  // The table is a header with the records following it in the same allocation. It is stored
+  // both plainly and behind the pointer: the probes of the binaries without caches read the
+  // plain fields, and the ones of the binaries with caches read the pointer (KT-87320).
+  // The runtime has no way to know which of the two a binary uses.
+  auto table = reinterpret_cast<InterfaceTable*>(
+          std::calloc(1, sizeof(InterfaceTable) + itableSize * sizeof(InterfaceTableRecord)));
+  table->size_ = useFastITable ? itableSize - 1 : -itableSize;
+  auto itable_ = table->records_;
+  result->interfaceTableSize_ = table->size_;
+  result->interfaceTableRecords_ = itable_;
+  result->interfaceTable_ = table;
 
   if (useFastITable) {
     for (auto& pair : interfaceVTables) {
@@ -745,8 +753,15 @@ static const TypeInfo* createTypeInfo(
   result->implementedInterfacesCount_ = implementedInterfaces.size();
   if (superItable != nullptr) {
     if (itableEqualsSuper) {
-      result->interfaceTableSize_ = superItableSize;
-      result->interfaceTable_ = superItable;
+      // The subclass has the same interface set as its super. Share the super's table when it has
+      // the pointer shape; otherwise rebuild the identical one (both representations get filled).
+      if (auto superTable = superType->interfaceTable_) {
+        result->interfaceTable_ = superTable;
+        result->interfaceTableSize_ = superTable->size_;
+        result->interfaceTableRecords_ = superTable->records_;
+      } else {
+        buildITable(result, interfaceVTables);
+      }
     } else {
       buildITable(result, interfaceVTables);
     }
@@ -870,8 +885,13 @@ static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType, co
   );
 
   if (superITable == nullptr) {
-    superITable = superType->interfaceTable_;
-    superITableSize = superType->interfaceTableSize_;
+    if (superType->interfaceTable_ != nullptr) {
+      superITable = superType->interfaceTable_->records_;
+      superITableSize = superType->interfaceTable_->size_;
+    } else {
+      superITable = superType->interfaceTableRecords_;
+      superITableSize = superType->interfaceTableSize_;
+    }
   }
   std::map<ClassId, std::vector<VTableElement>> interfaceVTables;
   if (superITable != nullptr) {

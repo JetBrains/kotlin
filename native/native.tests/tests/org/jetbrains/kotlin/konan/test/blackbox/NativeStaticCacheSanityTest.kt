@@ -178,6 +178,128 @@ class NativeStaticCacheSanityTest : AbstractNativeSimpleTest() {
         )
     }
 
+    // KT-87320: the final compilation lays out the interface tables of the cached classes and the
+    // cached TypeInfos bind to them through the native linker, so interface calls and casts must
+    // keep working against them.
+    @Test
+    fun interfaceCallsAndCastsWorkWithCaches() {
+        assumeExecutableIsRun()
+        val workDir = createDir("itableFinalization")
+        val cacheDir = workDir.resolve("cache").apply { mkdirs() }
+        val klibFiles = mutableMapOf<String, File>()
+
+        fun buildCachedLibrary(name: String, dependencyArgs: Array<out String>, source: String) {
+            val klibFile = workDir.resolve("$name.klib")
+            callNativeCompiler(
+                workDir.resolve("$name.kt").apply { writeText(source) }.absolutePath,
+                "-p", "library",
+                *dependencyArgs,
+                "-o", klibFile.absolutePath,
+            )
+            callNativeCompiler(
+                "-g",
+                "-p", "static_cache",
+                *dependencyArgs,
+                "-Xcache-directory=${cacheDir.absolutePath}",
+                "-Xcache-directory=${systemCacheDir.absolutePath}",
+                "-Xadd-cache=${klibFile.absolutePath}",
+            )
+            klibFiles.put(name, klibFile)
+        }
+
+        buildCachedLibrary(
+            "greeter", emptyArray(),
+            """
+                package greeter
+
+                interface Greeter {
+                    fun greet(): String
+                }
+            """.trimIndent(),
+        )
+        buildCachedLibrary(
+            "impl", arrayOf("-l", klibFiles.getValue("greeter").absolutePath),
+            """
+                package impl
+
+                import greeter.Greeter
+
+                interface Named {
+                    val name: String
+                }
+
+                open class Base : Greeter {
+                    override fun greet() = "base"
+                }
+
+                class Impl : Base(), Named {
+                    override val name = "impl"
+                }
+            """.trimIndent(),
+        )
+
+        val appFile = workDir.resolve("app.kexe")
+        callNativeCompiler(
+            workDir.resolve("main.kt").apply {
+                writeText(
+                    """
+                        import greeter.Greeter
+                        import impl.Impl
+                        import impl.Named
+
+                        class Local : Greeter {
+                            override fun greet() = "local"
+                        }
+
+                        fun describe(obj: Any) = when (obj) {
+                            is Named -> (obj as Greeter).greet() + ":" + obj.name
+                            is Greeter -> obj.greet()
+                            else -> "unknown"
+                        }
+
+                        fun main() {
+                            val obj: Any = Impl()
+                            check(obj is Greeter)
+                            check(obj is Named)
+                            check(obj !is CharSequence)
+                            println(describe(obj))
+                            println(describe("string"))
+                            println(describe(Local()))
+                            println((obj as Named).name)
+                        }
+                    """.trimIndent()
+                )
+            }.absolutePath,
+            "-p", "program",
+            "-Xcache-directory=${cacheDir.absolutePath}",
+            "-Xcache-directory=${systemCacheDir.absolutePath}",
+            *klibFiles.values.reversed().flatMap { listOf("-l", it.absolutePath) }.toTypedArray(),
+            "-o", appFile.absolutePath,
+        )
+
+        runExecutableAndVerify(
+            testCase = TestCase(
+                id = TestCaseId.Named("main"),
+                kind = TestKind.STANDALONE_NO_TR,
+                modules = emptySet(),
+                freeCompilerArgs = TestCompilerArgs.EMPTY,
+                nominalPackageName = PackageName.EMPTY,
+                checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout).copy(
+                    outputMatcher = TestRunCheck.OutputMatcher { output ->
+                        assertEquals("base:impl\nunknown\nlocal\nimpl", output.trim())
+                        true
+                    }
+                ),
+                extras = TestCase.NoTestRunnerExtras(entryPoint = "main")
+            ),
+            executable = TestExecutable(
+                executable = TestCompilationArtifact.Executable(appFile),
+                loggedCompilationToolCall = LoggedData.NoopCompilerCall(appFile),
+                testNames = listOf(TestName("main"))
+            ),
+        )
+    }
+
     @Test
     fun eagerInitializationOrderIsCorrectWithoutCaches() {
         assumeExecutableIsRun()
