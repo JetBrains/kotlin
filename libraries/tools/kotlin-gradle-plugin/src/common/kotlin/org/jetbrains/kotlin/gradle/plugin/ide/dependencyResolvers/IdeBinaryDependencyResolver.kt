@@ -16,7 +16,6 @@ import org.gradle.internal.component.local.model.OpaqueComponentArtifactIdentifi
 import org.gradle.internal.component.local.model.OpaqueComponentIdentifier
 import org.gradle.internal.resolve.ModuleVersionResolveException
 import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
-import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.uklibViewAttribute
 import org.jetbrains.kotlin.gradle.idea.tcs.*
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.artifactsClasspath
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.isOpaqueFileDependency
@@ -29,6 +28,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.isFromUklib
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.uklibViewAttribute
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.InternalKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
@@ -134,7 +134,7 @@ class IdeBinaryDependencyResolver @JvmOverloads internal constructor(
             override val componentFilter: ((ComponentIdentifier) -> Boolean)? = null,
             internal val dependencySubstitution: ((DependencySubstitutions) -> Unit)? = null,
             override val dependencyFilter: ((Dependency) -> Boolean)? = null,
-            internal val withDependencies: (DependencySet.(DependencyHandler) -> Unit)? = null
+            internal val withDependencies: (DependencySet.(DependencyHandler) -> Unit)? = null,
         ) : ArtifactResolutionStrategy()
     }
 
@@ -224,7 +224,11 @@ class IdeBinaryDependencyResolver @JvmOverloads internal constructor(
                         )
                     } else {
                         IdeaKotlinResolvedBinaryDependency(
-                            coordinates = IdeaKotlinBinaryCoordinates(componentId, artifact.variant.capabilities, artifact.variant.attributes),
+                            coordinates = IdeaKotlinBinaryCoordinates(
+                                componentId,
+                                artifact.variant.capabilities,
+                                artifact.variant.attributes
+                            ),
                             binaryType = binaryType,
                             classpath = IdeaKotlinClasspath(artifact.file),
                         )
@@ -333,15 +337,24 @@ class IdeBinaryDependencyResolver @JvmOverloads internal constructor(
     }
 
     private fun ArtifactResolutionStrategy.createArtifactViewFromConfiguration(
-        sourceSet: KotlinSourceSet, configuration: Configuration,
-    ): ArtifactView = (if (dependencyFilter != null) configuration.copyRecursive(dependencyFilter) else configuration).incoming
-        .artifactView { view ->
+        sourceSet: KotlinSourceSet,
+        configuration: Configuration,
+    ): ArtifactView {
+        val dependencyFilter = dependencyFilter
+        val componentFilter = componentFilter
+        val configuration = if (dependencyFilter != null) {
+            configuration.copyRecursive(dependencyFilter)
+        } else {
+            configuration
+        }
+        return configuration.incoming.artifactView { view ->
             view.isLenient = true
             view.attributes.setupArtifactViewAttributes(sourceSet)
             if (componentFilter != null) {
                 view.componentFilter(componentFilter)
             }
         }
+    }
 
     private companion object {
         val logger: Logger = Logging.getLogger(IdeBinaryDependencyResolver::class.java)

@@ -27,10 +27,7 @@ import java.io.File
 
 internal sealed class KotlinNativeProvider(project: Project) {
     @get:Internal
-    val konanDataDir: Provider<String?> = project.nativeProperties.konanDataDir.map {
-        @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
-        it!!.absolutePath
-    }
+    val konanDataDir: Provider<String> = project.nativeProperties.konanDataDir.map { it.absolutePath }
 
     @get:Internal
     val toolchainEnabled: Provider<Boolean> = project.nativeProperties.isToolchainEnabled

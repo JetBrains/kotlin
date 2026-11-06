@@ -248,7 +248,7 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
                         binaryTarget = binaryTarget,
                     )
                 }
-                SyntheticProductType.INFERRED, null -> {
+                SyntheticProductType.INFERRED -> {
                     generatePackageManifest(
                         identifier = packageIdentifier.get(),
                         packageRoot = packageRoot,

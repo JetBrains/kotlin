@@ -55,6 +55,6 @@ internal fun HasAttributes.copyAttributesTo(
     }
 }
 
-internal inline fun <reified T> attributeOf(
+internal inline fun <reified T : Any> attributeOf(
     name: String
 ): Attribute<T> = Attribute.of(name, T::class.java)

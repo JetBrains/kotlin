@@ -7,6 +7,6 @@ package org.jetbrains.kotlin.gradle.utils
 
 import org.gradle.api.plugins.ExtensionContainer
 
-internal inline fun <reified T> ExtensionContainer.findByType(): T? = findByType(T::class.java)
+internal inline fun <reified T : Any> ExtensionContainer.findByType(): T? = findByType(T::class.java)
 
-internal inline fun <reified T> ExtensionContainer.getByType(): T = getByType(T::class.java)
+internal inline fun <reified T : Any> ExtensionContainer.getByType(): T = getByType(T::class.java)

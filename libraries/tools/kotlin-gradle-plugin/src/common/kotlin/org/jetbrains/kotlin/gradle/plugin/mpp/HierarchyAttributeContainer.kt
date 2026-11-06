@@ -58,7 +58,7 @@ class HierarchyAttributeContainer(
             otherContainerAttributes.fold(mutableSetOf()) { acc, container -> acc.apply { addAll(container.keySet()) }} +
             parent?.keySet().orEmpty().toSet().filter(filterParentAttributes)
 
-    override fun <T : Named?> named(type: Class<T>, name: String): T {
+    override fun <T : Named> named(type: Class<T>, name: String): T {
         return objectFactory.named(type, name)
     }
 

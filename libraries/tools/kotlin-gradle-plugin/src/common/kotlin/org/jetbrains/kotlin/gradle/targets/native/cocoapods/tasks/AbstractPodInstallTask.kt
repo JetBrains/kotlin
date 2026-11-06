@@ -31,7 +31,7 @@ abstract class AbstractPodInstallTask : CocoapodsTask() {
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:InputFile
     @get:NormalizeLineEndings
-    abstract val podfile: Property<File?>
+    abstract val podfile: Property<File>
 
     @get:Optional
     @get:PathSensitive(PathSensitivity.ABSOLUTE)

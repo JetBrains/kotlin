@@ -48,7 +48,7 @@ internal class PlatformLibrariesGenerator(
     val classpath: FileCollection,
     val jvmArgs: ListProperty<String>,
     val actualNativeHomeDirectory: Provider<File>,
-    val konanDataDir: Provider<String?>,
+    val konanDataDir: Provider<String>,
     nativeCacheKind: Provider<NativeCacheKind>,
 ) {
 
