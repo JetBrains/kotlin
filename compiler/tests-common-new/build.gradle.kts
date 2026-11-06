@@ -28,6 +28,8 @@ dependencies {
     testFixturesImplementation(project(":wasm:wasm.frontend"))
     testFixturesImplementation(project(":kotlin-tooling-core"))
     testFixturesImplementation(project(":compiler:ir.backend.native"))
+    testFixturesImplementation(project(":compiler:fir:fir2ir"))
+    testFixturesImplementation(project(":core:error.handling"))
     testFixturesImplementation(intellijCore())
     testFixturesImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 

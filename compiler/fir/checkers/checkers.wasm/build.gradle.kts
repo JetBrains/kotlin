@@ -11,6 +11,7 @@ dependencies {
     implementation(project(":core:compiler.common.wasm"))
     implementation(project(":core:compiler.common.js"))
     implementation(project(":core:compiler.common.web"))
+    implementation(project(":core:error.handling"))
 
     // Needed for JS identifier utils
     implementation(project(":js:js.ast"))

@@ -63,7 +63,7 @@ dependencies {
     testFixturesApi(project(":compiler:incremental-compilation-impl"))
     testFixturesImplementation(project(":kotlin-util-klib-metadata"))
     testFixturesImplementation(project(":compiler:psi:psi-frontend-utils"))
-    testFixturesApi(project(":compiler:psi:parser"))
+    testFixturesImplementation(project(":compiler:psi:parser"))
     testFixturesImplementation(project(":wasm:wasm.frontend"))
     testFixturesApi(testFixtures(project(":kotlin-build-common")))
     testFixturesApi(testFixtures(project(":generators:test-generator")))

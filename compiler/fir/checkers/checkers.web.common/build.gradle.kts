@@ -11,6 +11,7 @@ dependencies {
     implementation(project(":core:compiler.common.web"))
     implementation(project(":compiler:frontend.common-psi"))
     implementation(project(":compiler:psi:psi-api"))
+    implementation(project(":core:error.handling"))
 
     compileOnly(intellijCore())
 }

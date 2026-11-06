@@ -14,6 +14,7 @@ dependencies {
     implementation(project(":compiler:serialization"))
     implementation(project(":compiler:resolution"))
     implementation(project(":compiler:psi:parser"))
+    implementation(project(":core:error.handling"))
     implementation(project(":core:descriptors"))
     implementation(project(":core:descriptors.jvm"))
     implementation(project(":core:deserialization"))

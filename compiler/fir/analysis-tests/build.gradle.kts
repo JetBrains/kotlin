@@ -26,6 +26,7 @@ dependencies {
     testFixturesApi(project(":compiler:fir:checkers:checkers.native"))
     testFixturesApi(project(":compiler:fir:checkers:checkers.wasm"))
     testFixturesApi(project(":compiler:fir:entrypoint"))
+    testImplementation(project(":core:language.targets.jvm"))
 
     testFixturesApi(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 

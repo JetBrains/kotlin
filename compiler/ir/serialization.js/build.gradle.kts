@@ -26,6 +26,7 @@ dependencies {
     implementation(project(":core:compiler.common.js"))
     implementation(project(":js:js.parser"))
     implementation(project(":kotlin-util-klib-metadata"))
+    implementation(project(":core:error.handling"))
 
     compileOnly(intellijCore())
 

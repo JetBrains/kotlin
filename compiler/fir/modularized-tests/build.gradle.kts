@@ -23,12 +23,15 @@ dependencies {
     testFixturesApi(testFixtures(project(":compiler:fir:analysis-tests")))
     testFixturesApi(project(":compiler:fir:resolve"))
     testFixturesApi(project(":compiler:fir:semantics.api"))
+    testFixturesImplementation(project(":compiler:config.jvm"))
+    testImplementation(testFixtures(project(":compiler:test-infrastructure-utils.common")))
+    testImplementation(project(":compiler:fir:plugin.api"))
+
     testFixturesApi(platform(libs.junit.bom))
     testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.platform.launcher)
 
-    testRuntimeOnly(project(":compiler:fir:plugin.api"))
 
     composeCompilerPlugin(project(":plugins:compose-compiler-plugin:compiler-hosted")) { isTransitive = false }
 

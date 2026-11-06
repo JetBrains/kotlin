@@ -14,6 +14,7 @@ dependencies {
     implementation(project(":js:js.config"))
     implementation(project(":compiler:frontend.common-psi"))
     implementation(project(":compiler:psi:psi-api"))
+    implementation(project(":core:error.handling"))
 
     compileOnly(intellijCore())
 }

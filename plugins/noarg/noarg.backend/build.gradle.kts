@@ -10,7 +10,6 @@ dependencies {
     api(project(":compiler:ir.backend.common"))
     implementation(project(":core:descriptors"))
     implementation(project(":core:compiler.common.jvm"))
-    implementation(project(":compiler:frontend.common-psi"))
     compileOnly(project(":kotlin-noarg-compiler-plugin.common"))
     compileOnly(intellijCore())
     compileOnly(libs.intellij.asm)
