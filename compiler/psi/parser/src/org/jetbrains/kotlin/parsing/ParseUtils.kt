@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.psi.utils.hasLongNumericLiteralSuffix
 import org.jetbrains.kotlin.psi.utils.hasUnsignedLongNumericLiteralSuffix
 import org.jetbrains.kotlin.psi.utils.hasUnsignedNumericLiteralSuffix
 import org.jetbrains.kotlin.psi.utils.parseBooleanLiteral
-import org.jetbrains.kotlin.psi.utils.parseNumericLiteral
 
 fun hasIllegalUnderscore(text: String, elementType: IElementType): Boolean {
     return when {
@@ -25,12 +24,12 @@ fun hasLongSuffix(text: String) = hasLongNumericLiteralSuffix(text)
 fun hasUnsignedSuffix(text: String) = hasUnsignedNumericLiteralSuffix(text)
 fun hasUnsignedLongSuffix(text: String) = hasUnsignedLongNumericLiteralSuffix(text)
 
+@Deprecated(
+    "Use 'org.jetbrains.kotlin.psi.utils.parseNumericLiteral' instead.",
+    ReplaceWith("parseNumericLiteral(text, type)", "org.jetbrains.kotlin.psi.utils.parseNumericLiteral"),
+)
 fun parseNumericLiteral(text: String, type: IElementType): Number? {
-    return when (type) {
-        KtNodeTypes.INTEGER_CONSTANT -> parseNumericLiteral(text, isFloatingPointLiteral = false)
-        KtNodeTypes.FLOAT_CONSTANT -> parseNumericLiteral(text, isFloatingPointLiteral = true)
-        else -> null
-    }
+    return org.jetbrains.kotlin.psi.utils.parseNumericLiteral(text, type)
 }
 
 fun parseBoolean(text: String): Boolean = parseBooleanLiteral(text)

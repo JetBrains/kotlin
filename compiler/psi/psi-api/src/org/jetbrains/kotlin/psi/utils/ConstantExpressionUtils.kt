@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.psi.utils
 
+import com.intellij.psi.tree.IElementType
 import com.intellij.util.text.LiteralFormatUtil
 import org.jetbrains.kotlin.KtNodeType
 import org.jetbrains.kotlin.KtStubBasedElementTypes.BOOLEAN_CONSTANT
@@ -59,6 +60,19 @@ fun hasFloatNumericLiteralSuffix(text: String): Boolean {
 fun parseNumericLiteral(text: String, isFloatingPointLiteral: Boolean): Number? {
     val canonicalText = LiteralFormatUtil.removeUnderscores(text)
     return if (isFloatingPointLiteral) parseDecimalNumberLiteral(canonicalText) else parseLongNumericLiteral(canonicalText)
+}
+
+/**
+ * Parses the [text] representation of a number literal with the given constant expression element [type] into a [Number] instance.
+ *
+ * Returns `null` if the [type] is neither [INTEGER_CONSTANT] nor [FLOAT_CONSTANT], or if the text is not a valid number literal.
+ */
+fun parseNumericLiteral(text: String, type: IElementType): Number? {
+    return when (type) {
+        INTEGER_CONSTANT -> parseNumericLiteral(text, isFloatingPointLiteral = false)
+        FLOAT_CONSTANT -> parseNumericLiteral(text, isFloatingPointLiteral = true)
+        else -> null
+    }
 }
 
 private fun parseLongNumericLiteral(text: String): Long? {
