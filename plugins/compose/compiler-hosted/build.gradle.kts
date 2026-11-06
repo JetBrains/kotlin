@@ -43,7 +43,7 @@ dependencies {
     compileOnly(project(":core:descriptors.jvm"))
     compileOnly(project(":core:language.targets.jvm"))
     compileOnly(project(":kotlin-util-klib-metadata"))
-    compileOnly(project(":compiler:frontend"))
+    compileOnly(project(":compiler:frontend.common-psi"))
     compileOnly(project(":compiler:backend.jvm"))
     compileOnly(project(":compiler:cli-base"))
     compileOnly(project(":compiler:ir.serialization.js"))

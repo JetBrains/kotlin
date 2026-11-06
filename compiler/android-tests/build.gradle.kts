@@ -14,7 +14,6 @@ dependencies {
     testImplementation(project(":compiler:util"))
     testImplementation(project(":compiler:cli"))
     testImplementation(project(":compiler:cli-jvm"))
-    testImplementation(project(":compiler:frontend"))
     testImplementation(project(":compiler:backend"))
 
     testImplementation(testFixtures(project(":compiler:tests-common")))
