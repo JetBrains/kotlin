@@ -96,9 +96,12 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlinx.dataframe.plugin.impl.StringApiOverloadInterpreter
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AddDslAddGroup
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AddDslAddGroupInto
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AddDslExpr
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AddDslFromString
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AddDslNamedGroup
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AddDslReferencePlus
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AddDslStringInvoke
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AddDslStringPlus
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AddId
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Aggregate
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AggregateRow
@@ -379,6 +382,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.TakeLast0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.TakeLast1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.TakeLast2
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToDataFrameDslAdd
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToDataFrameDslExpr
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToDataFrameDslIntoPath
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToDataFrameDslIntoString
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToSpecificType
@@ -671,6 +675,7 @@ private fun String.loadImpl(isTest: Boolean): Interpreter<*>? {
         "ToDataFrameDslIntoString" -> ToDataFrameDslIntoString()
         "ToDataFrameDslIntoPath" -> ToDataFrameDslIntoPath()
         "ToDataFrameDslAdd" -> ToDataFrameDslAdd()
+        "ToDataFrameDslExpr" -> ToDataFrameDslExpr()
         "DataFrameOf0" -> DataFrameOf0()
         "DataFrameOfPairs" -> DataFrameOfPairs()
         "DataFrameGenerator" -> DataFrameGenerator()
@@ -702,6 +707,9 @@ private fun String.loadImpl(isTest: Boolean): Interpreter<*>? {
         "FlattenDefault" -> FlattenDefault()
         "AddId" -> AddId()
         "AddDslStringInvoke" -> AddDslStringInvoke()
+        "AddDslStringPlus" -> AddDslStringPlus()
+        "AddDslExpr" -> AddDslExpr()
+        "AddDslFromString" -> AddDslFromString()
         "AddDslNamedGroup" -> AddDslNamedGroup()
         "AddDslAddGroup" -> AddDslAddGroup()
         "AddDslAddGroupInto" -> AddDslAddGroupInto()
