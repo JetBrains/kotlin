@@ -24,8 +24,6 @@ declare namespace JS_TESTS {
     namespace foo {
         interface SomeExternalInterface {
         }
-    }
-    namespace foo {
         function sum(x: number, y: number): number;
         function varargByte(x: Int8Array): number;
         function varargShort(x: Int16Array): number;
