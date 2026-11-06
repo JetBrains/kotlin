@@ -48,25 +48,19 @@ dependencies {
 
     testFixturesImplementation(project(":compiler:cli"))
     testFixturesImplementation(project(":compiler:cli:cli-native-klib"))
-    testFixturesImplementation(project(":compiler:ir.psi2ir"))
     testFixturesImplementation(project(":kotlin-util-klib-metadata"))
     testFixturesImplementation(project(":native:native.config"))
-    testFixturesImplementation(project(":compiler:resolution"))
-    testFixturesImplementation(project(":compiler:frontend"))
     testFixturesImplementation(project(":core:deserialization"))
+    testFixturesImplementation(project(":core:compiler.common.native"))
 
     testImplementation(project(":compiler:compiler.version"))
     testImplementation(project(":compiler:config"))
     testImplementation(project(":compiler:config.jvm"))
-    testImplementation(project(":compiler:frontend.java"))
-    testImplementation(project(":compiler:ir.psi2ir"))
     testImplementation(project(":compiler:util"))
     testImplementation(project(":core:deserialization"))
     testImplementation(project(":kotlin-test"))
     testImplementation(testFixtures(project(":compiler:test-infrastructure-utils")))
     testImplementation(testFixtures(project(":compiler:tests-compiler-utils")))
-    testFixturesImplementation(project(":core:compiler.common.native"))
-    testFixturesImplementation(project(":compiler:resolution"))
 }
 
 optInTo("org.jetbrains.kotlin.backend.konan.InternalKotlinNativeApi")
