@@ -1,4 +1,13 @@
+// FIR_DUMP
 import lombok.*
 
-@Data(staticConstructor = "of")
+@<!MISSING_DEPENDENCY_CLASS("kotlin.jvm.JvmStatic")!>Data<!>(staticConstructor = "of")
 class DataWithStatic(val name: String)
+
+// Nothing is generated for the following declarations, so `MISSING_DEPENDENCY_CLASS` is not expected.
+@Data(staticConstructor = "of")
+object DataObjectWithStatic
+
+@Data(staticConstructor = "of")
+<!NO_ARGS_CONSTRUCTOR_FORCE_REQUIRED!>@NoArgsConstructor<!>
+class DataWithNoArgsConstructor(val name: String)

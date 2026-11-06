@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.lombok.checkers
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealSourceElementKind
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
@@ -37,9 +38,11 @@ import org.jetbrains.kotlin.name.Name
 object FirLombokConstructorsChecker : FirRegularClassChecker(MppCheckerKind.Platform) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirRegularClass) {
-        val noArgsConstructor = context.session.lombokService.getNoArgsConstructor(declaration.symbol) ?: return
+        val noArgsConstructor = context.session.lombokService.getNoArgsConstructor(declaration.symbol)
+        val data = context.session.lombokService.getData(declaration.symbol)?.takeIf { it.staticConstructor != null }
+        if (noArgsConstructor == null && data == null) return
 
-        val source = noArgsConstructor.annotation.source ?: declaration.source ?: return
+        val source = noArgsConstructor?.annotation?.source ?: data?.annotation?.source ?: declaration.source ?: return
 
         var staticNameIsTaken = false
 
@@ -48,23 +51,23 @@ object FirLombokConstructorsChecker : FirRegularClassChecker(MppCheckerKind.Plat
         // annotation does nothing here; piling the others on top would describe members that never appear.
         if (!declaration.symbol.supportsGeneratedConstructor) return
 
-        if (!noArgsConstructor.force) {
+        var hasNoArgsWithUninitializedValProperty = false
+        if (noArgsConstructor != null && !noArgsConstructor.force) {
             val declaredMemberScope = context.session.declaredMemberScope(declaration.symbol, memberRequiredPhase = null)
-            var hasUninitializedValProperty = false
             declaredMemberScope.processAllProperties { varSymbol ->
-                hasUninitializedValProperty = hasUninitializedValProperty ||
+                hasNoArgsWithUninitializedValProperty = hasNoArgsWithUninitializedValProperty ||
                         (varSymbol.isVal &&
                                 varSymbol.resolvedInitializer.let { it == null || it.source?.kind is KtFakeSourceElementKind } &&
                                 (varSymbol as? FirPropertySymbol)?.hasBackingField == true)
             }
 
-            if (hasUninitializedValProperty) {
+            if (hasNoArgsWithUninitializedValProperty) {
                 reporter.reportOn(source, LombokFirDiagnostics.NO_ARGS_CONSTRUCTOR_FORCE_REQUIRED)
             }
         }
 
-        val staticName = noArgsConstructor.staticName?.let { Name.identifier(it) }
-        if (staticName != null) {
+        val staticName = (noArgsConstructor?.staticName ?: data?.staticConstructor)?.let { Name.identifier(it) }
+        if (staticName != null && declaration.classKind == ClassKind.CLASS && !hasNoArgsWithUninitializedValProperty) {
             // If `staticName` is provided, we generate a companion object with a constructor function marked with `@JvmStatic`.
             // So, we need to check if it's resolved to prevent crashing on codegen.
             if (context.session.symbolProvider.getClassLikeSymbolByClassId(JvmStandardClassIds.Annotations.JvmStatic) == null) {
@@ -82,6 +85,7 @@ object FirLombokConstructorsChecker : FirRegularClassChecker(MppCheckerKind.Plat
             }
         }
 
+        if (noArgsConstructor == null) return
         val declaresNoArgsConstructor = declaresNoArgsConstructor(context.session, declaration)
         if (declaresNoArgsConstructor) {
             reporter.reportOn(source, LombokFirDiagnostics.NO_ARGS_CONSTRUCTOR_ALREADY_EXISTS)
