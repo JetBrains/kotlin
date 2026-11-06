@@ -5,11 +5,10 @@
 
 package org.jetbrains.kotlin.backend.konan.objcexport
 
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtPrimaryConstructor
-import org.jetbrains.kotlin.resolve.source.PsiSourceElement
-import org.jetbrains.kotlin.resolve.source.getPsi
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
+import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 
 fun ObjCExportStubOrigin(descriptor: DeclarationDescriptor?): ObjCExportStubOrigin? {
     if (descriptor == null) return null
@@ -19,7 +18,7 @@ fun ObjCExportStubOrigin(descriptor: DeclarationDescriptor?): ObjCExportStubOrig
     }
 
     if (descriptor is DeclarationDescriptorWithSource) {
-        return ObjCExportStubOrigin.Source(descriptor.name, descriptor.findKDocString(), (descriptor.source as? PsiSourceElement)?.psi)
+        error("All descriptors should be deserialized, but got: $descriptor")
     }
 
     /*
@@ -29,21 +28,6 @@ fun ObjCExportStubOrigin(descriptor: DeclarationDescriptor?): ObjCExportStubOrig
      */
     return ObjCExportStubOrigin.Binary(descriptor.name, kdoc = null)
 }
-
-private fun DeclarationDescriptorWithSource.findKDocString(): String? {
-    val psi = source.getPsi()
-    if (psi is KtDeclaration) {
-        if (psi is KtPrimaryConstructor)
-            return null  // to be rendered with class itself
-        val kdoc = psi.docComment
-        if (kdoc != null) {
-            return kdoc.getDefaultSection().parent.text
-        }
-    }
-    return null
-}
-
-
 
 fun ObjCProtocolImpl(
     name: String,
