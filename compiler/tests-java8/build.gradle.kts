@@ -8,14 +8,15 @@ plugins {
 
 dependencies {
     testImplementation(project(":kotlin-scripting-compiler"))
-    testImplementation(project(":core:descriptors"))
-    testImplementation(project(":core:descriptors.jvm"))
     testImplementation(project(":core:compiler.common.jvm"))
-    testImplementation(project(":compiler:container"))
-    testImplementation(project(":compiler:resolution"))
-    testImplementation(project(":compiler:frontend"))
-    testImplementation(project(":compiler:frontend.java"))
-    testImplementation(testFixtures(project(":compiler:tests-compiler-utils")))
+    testImplementation(project(":compiler:cli"))
+    testImplementation(project(":compiler:cli-base"))
+    testImplementation(project(":compiler:cli-jvm"))
+    testImplementation(project(":compiler:config"))
+    testImplementation(project(":compiler:fir:entrypoint"))
+    testImplementation(project(":compiler:fir:fir-jvm"))
+    testImplementation(project(":compiler:fir:semantics.api"))
+    testImplementation(project(":compiler:fir:tree"))
     testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(intellijCore())
 
@@ -51,7 +52,3 @@ projectTests {
         systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
     }
 }
-
-
-optInToK1Deprecation()
-
