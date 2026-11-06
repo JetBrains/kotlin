@@ -332,9 +332,10 @@ private object PackageInfoImpact : Impact {
 /**
  * Describes the impact of a module's `module-info.class` on the classes it governs. The compiler consults the descriptor of the module
  * owning a referenced class (`exports`/`opens`, module annotations) and the readability graph built from `requires` directives, so:
- *   - Forward ([getResolver]): if `m.module-info` has changed, every class in the packages of `m` is impacted, and so is the descriptor
- *     of every module `m` `requires transitive` (whose classes are then impacted transitively via [BreadthFirstSearch]), because the
- *     consumer may read those modules only through `m`.
+ *   - Forward ([getResolver]): if `m.module-info` has changed, every class in the packages of `m` is impacted (including package facades,
+ *     whose package members are then impacted, see [ClasspathChangesComputer]), and so is the descriptor of every module `m`
+ *     `requires transitive` (whose classes are then impacted transitively via [BreadthFirstSearch]), because the consumer may read those
+ *     modules only through `m`.
  *   - Reverse ([getReverseResolver]): when a class of `m` is retained during classpath shrinking, `m.module-info` must be retained too;
  *     when `m.module-info` is retained, the descriptors of all modules that `requires transitive m` must be retained as well.
  */

@@ -1,0 +1,3 @@
+module dep {
+    requires kotlin.stdlib;
+}

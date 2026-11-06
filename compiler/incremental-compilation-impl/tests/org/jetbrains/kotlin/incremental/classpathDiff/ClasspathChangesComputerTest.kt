@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommo
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.ClassFileUtil.snapshot
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.CompileUtil.compileAll
 import org.jetbrains.kotlin.incremental.classpathDiff.impl.ClassFile
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.sam.SAM_LOOKUP_NAME
 import org.junit.jupiter.api.Test
@@ -707,6 +709,45 @@ class KotlinAndJavaClasspathChangesComputerTest : ClasspathSnapshotTestCommon() 
                 "mpkg.M",
                 "base.module-info",
                 "apkg.A",
+            )
+        ).assertEquals(changes)
+    }
+
+    @Test
+    fun testModuleInfoChange_impactsPackageMembers() {
+        val packageFacade = PackageFacadeKotlinClassSnapshot(
+            classId = ClassId.topLevel(FqName("apkg.UtilKt")),
+            classAbiHash = 0,
+            classMemberLevelSnapshot = null,
+            packageMemberNames = setOf("aFunction"),
+            typeAliases = null,
+        )
+
+        fun moduleInfo(classAbiHash: Long) = ModuleInfoClassSnapshot(
+            classId = ModuleInfoClassSnapshot.moduleInfoClassId("dep"),
+            classAbiHash = classAbiHash,
+            packages = setOf(FqName("apkg")),
+            transitiveRequires = emptyList(),
+        )
+
+        val changes = ClasspathChangesComputer.computeChangedAndImpactedSet(
+            currentClassSnapshots = listOf(packageFacade, moduleInfo(classAbiHash = 2)),
+            previousClassSnapshots = listOf(packageFacade, moduleInfo(classAbiHash = 1)),
+            ClasspathSnapshotBuildReporter(DoNothingBuildReporter)
+        ).normalize()
+
+        Changes(
+            lookupSymbols = setOf(
+                // Changed
+                LookupSymbol(name = "module-info", scope = "dep"),
+                // Impacted: a package facade is only looked up by its package members
+                LookupSymbol(name = "UtilKt", scope = "apkg"),
+                LookupSymbol(name = "aFunction", scope = "apkg"),
+            ),
+            fqNames = setOf(
+                "dep.module-info",
+                "apkg.UtilKt",
+                "apkg",
             )
         ).assertEquals(changes)
     }

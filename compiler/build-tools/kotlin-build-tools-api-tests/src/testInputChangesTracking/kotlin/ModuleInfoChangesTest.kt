@@ -319,6 +319,54 @@ class ModuleInfoChangesTest : BaseCompilationTest() {
         }
     }
 
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("Removing an 'exports' from a dependency's module-info.java recompiles and fails the consumer's user of a top-level function")
+    @TestMetadata("ic-scenarios/dependency-module-info-top-level-function")
+    fun testDependencyModuleInfoExportsRemovalFailsTopLevelFunctionUser(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmScenario(strategyConfig) {
+            val dependency = module(
+                moduleName = "ic-scenarios/dependency-module-info-top-level-function/module-a",
+                compilationConfigAction = jpmsSupportConfigAction,
+            )
+            val consumer = module(
+                moduleName = "ic-scenarios/dependency-module-info-top-level-function/module-b",
+                dependencies = listOf(dependency),
+                compilationConfigAction = jpmsSupportConfigAction,
+            )
+            dependency.replaceFileWithVersion("module-info.java", "remove-exports")
+            dependency.compile()
+            consumer.compile {
+                expectFail()
+                assertLogContainsPatterns(LogLevel.ERROR, ".*/UseA\\.kt:\\d+:\\d+ .*does not export.*".toRegex())
+                assertCompiledSources("bpkg/UseA.kt")
+            }
+        }
+    }
+
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("A full rebuild against a dependency without the 'exports' rejects the user of a top-level function")
+    @TestMetadata("ic-scenarios/dependency-module-info-top-level-function")
+    fun testFullRebuildAfterDependencyExportsRemovalFailsTopLevelFunctionUser(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmScenario(strategyConfig) {
+            val dependency = module(
+                moduleName = "ic-scenarios/dependency-module-info-top-level-function/module-a",
+                compilationConfigAction = jpmsSupportConfigAction,
+            )
+            val consumer = module(
+                moduleName = "ic-scenarios/dependency-module-info-top-level-function/module-b",
+                dependencies = listOf(dependency),
+                compilationConfigAction = jpmsSupportConfigAction,
+            )
+            dependency.replaceFileWithVersion("module-info.java", "remove-exports")
+            dependency.compile()
+            consumer.replaceFileWithVersion("module-info.java", "force-rebuild")
+            consumer.compile {
+                expectFail()
+                assertLogContainsPatterns(LogLevel.ERROR, ".*/UseA\\.kt:\\d+:\\d+ .*does not export.*".toRegex())
+            }
+        }
+    }
+
     companion object {
         private val jpmsSupportConfigAction: (JvmCompilationOperation.Builder) -> Unit = {
             it.compilerArguments[JvmCompilerArguments.JVM_TARGET] = JvmTarget.JVM_9

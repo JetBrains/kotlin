@@ -1,0 +1,5 @@
+// A comment-only change: any change of module-info.java forces a non-incremental rebuild.
+module app {
+    requires kotlin.stdlib;
+    requires dep;
+}
