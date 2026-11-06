@@ -43,7 +43,7 @@ open class IncrementalFirJvmCompilerRunner(
     compilerRefIndexDirectory: File? = null,
     val compilationCanceledStatus: CompilationCanceledStatus? = null,
     override val lookupTrackerDelegate: LookupTracker = LookupTracker.DO_NOTHING,
-) : IncrementalJvmCompilerRunner(
+) : IncrementalJvmCompilerRunnerBase(
     workingDir,
     reporter,
     outputDirs,

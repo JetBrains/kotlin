@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.K1Deprecation
+import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.build.GeneratedJvmClass
 import org.jetbrains.kotlin.build.report.BuildReporter
@@ -14,6 +15,8 @@ import org.jetbrains.kotlin.build.report.events.ScopeExpansionReason
 import org.jetbrains.kotlin.build.report.info
 import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
+import org.jetbrains.kotlin.build.report.metrics.SHRINK_AND_SAVE_CURRENT_CLASSPATH_SNAPSHOT_AFTER_COMPILATION
+import org.jetbrains.kotlin.build.report.metrics.measure
 import org.jetbrains.kotlin.build.report.reportMarkDirty
 import org.jetbrains.kotlin.build.report.reportPerformanceData
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
@@ -28,13 +31,18 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginsLoader
 import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.incremental.ChangedFiles.DeterminableFiles
 import org.jetbrains.kotlin.incremental.DifferenceCalculatorForPackageFacade.Companion.getVisibleTypeAliasFqNames
+import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotBuildReporter
+import org.jetbrains.kotlin.incremental.classpathDiff.shrinkAndSaveClasspathSnapshot
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.ICFileMappingTracker
 import org.jetbrains.kotlin.incremental.components.ICJvmCommonMetadataTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.components.SubtypeTracker
+import org.jetbrains.kotlin.incremental.dirtyFiles.JvmSourcesToCompileCalculator
 import org.jetbrains.kotlin.incremental.javaInterop.JavaInteropCoordinator
+import org.jetbrains.kotlin.incremental.snapshots.LazyClasspathSnapshot
 import org.jetbrains.kotlin.incremental.storage.FileToPathConverter
 import org.jetbrains.kotlin.load.java.JavaClassesTracker
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
@@ -56,24 +64,28 @@ import java.io.File
 abstract class IncrementalJvmCompilerRunnerBase(
     workingDir: File,
     reporter: BuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
-    buildHistoryFile: File?, // part of build history implementation is in abstract runner, so this stays
     outputDirs: Collection<File>?,
-    kotlinSourceFilesExtensions: Set<String>,
-    icFeatures: IncrementalCompilationFeatures,
+    private val classpathChanges: ClasspathChanges,
+    kotlinSourceFilesExtensions: Set<String> = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS,
+    icFeatures: IncrementalCompilationFeatures = IncrementalCompilationFeatures.DEFAULT_CONFIGURATION,
     private val compilerRefIndexDirectory: File? = null,
     compilationCanceledStatus: CompilationCanceledStatus? = null,
-    pluginsLoader: PluginsLoader?,
+    override val lookupTrackerDelegate: LookupTracker = LookupTracker.DO_NOTHING,
+    pluginsLoader: PluginsLoader? = null,
 ) : IncrementalCompilerRunner<K2JVMCompilerArguments, IncrementalJvmCachesManager>(
     workingDir,
     "caches-jvm",
     reporter,
-    buildHistoryFile = buildHistoryFile,
+    buildHistoryFile = null,
     outputDirs = outputDirs,
     kotlinSourceFilesExtensions = kotlinSourceFilesExtensions,
     icFeatures = icFeatures,
     compilationCanceledStatus = compilationCanceledStatus,
     pluginsLoader = pluginsLoader,
 ) {
+    override val shouldTrackChangesInLookupCache
+        get() = classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun
+
     override val shouldStoreFullFqNamesInLookupCache = true
 
     protected val messageCollector = MessageCollectorImpl()
@@ -82,6 +94,7 @@ abstract class IncrementalJvmCompilerRunnerBase(
         messageCollector,
     )
 
+    private val lazyClasspathSnapshot = LazyClasspathSnapshot(classpathChanges, ClasspathSnapshotBuildReporter(reporter))
     private val subtypeTracker = if (compilerRefIndexDirectory != null) SubtypeTrackerImpl() else null
 
     override fun createCacheManager(icContext: IncrementalCompilationContext, args: K2JVMCompilerArguments) =
@@ -91,6 +104,32 @@ abstract class IncrementalJvmCompilerRunnerBase(
             cachesRootDir = cacheDirectory,
             subtypeTracker = subtypeTracker ?: SubtypeTracker.DoNothing,
         )
+
+    override fun calculateSourcesToCompile(
+        caches: IncrementalJvmCachesManager,
+        changedFiles: DeterminableFiles.Known,
+        args: K2JVMCompilerArguments,
+        messageCollector: MessageCollector,
+    ): CompilationMode {
+        return try {
+            val sourcesToCompileCalculator = JvmSourcesToCompileCalculator(
+                caches,
+                changedFiles,
+                kotlinSourceFilesExtensions,
+                javaInteropCoordinator,
+                dirtyFilesProvider,
+                reporter
+            )
+
+            sourcesToCompileCalculator.calculateWithClasspathSnapshot(
+                classpathChanges,
+                lazyClasspathSnapshot
+            )
+        } finally {
+            this.messageCollector.forward(messageCollector)
+            this.messageCollector.clear()
+        }
+    }
 
     override fun updateCaches(
         services: Services,
@@ -234,6 +273,20 @@ abstract class IncrementalJvmCompilerRunnerBase(
         args.freeArgs = freeArgsBackup
         reporter.reportPerformanceData(compiler.defaultPerformanceManager.unitStats)
         return exitCode to sourcesToCompile
+    }
+
+    override fun performWorkAfterCompilation(compilationMode: CompilationMode, exitCode: ExitCode, caches: IncrementalJvmCachesManager) {
+        super.performWorkAfterCompilation(compilationMode, exitCode, caches)
+
+        // No need to shrink and save classpath snapshot if exitCode != ExitCode.OK as the task will fail anyway
+        if (classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled && exitCode == ExitCode.OK) {
+            reporter.measure(SHRINK_AND_SAVE_CURRENT_CLASSPATH_SNAPSHOT_AFTER_COMPILATION) {
+                shrinkAndSaveClasspathSnapshot(
+                    compilationWasIncremental = compilationMode is CompilationMode.Incremental, classpathChanges, caches.lookupCache,
+                    lazyClasspathSnapshot, ClasspathSnapshotBuildReporter(reporter)
+                )
+            }
+        }
     }
 
     @OptIn(ExperimentalBuildToolsApi::class)

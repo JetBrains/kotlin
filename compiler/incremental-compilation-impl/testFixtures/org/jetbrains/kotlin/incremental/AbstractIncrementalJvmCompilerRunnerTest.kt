@@ -85,22 +85,14 @@ abstract class AbstractIncrementalJvmCompilerRunnerTest : AbstractIncrementalCom
         val buildReporter = TestBuildReporter(testICReporter = reporter, buildMetricsReporter = DoNothingBuildMetricsReporter)
 
         withIncrementalCompilation(args) {
-            val k2Mode = (args.languageVersion ?: LanguageVersion.LATEST_STABLE.versionString) >= LanguageVersion.KOTLIN_2_0.versionString
-
-            val compiler =
-                @Suppress("DEPRECATION")
-                if (k2Mode && args.useFirIC) {
-                    IncrementalFirJvmCompilerTestRunner(
-                        cachesDir,
-                        buildReporter,
-                        outputDirs = null,
-                        classpathChanges,
-                        kotlinExtensions,
-                        lookupTrackerDelegate = testLookupTracker
-                    )
-                } else {
-                    error("K1 is not supported")
-                }
+            val compiler = IncrementalFirJvmCompilerTestRunner(
+                cachesDir,
+                buildReporter,
+                outputDirs = null,
+                classpathChanges,
+                kotlinExtensions,
+                lookupTrackerDelegate = testLookupTracker
+            )
             //TODO by @Ilya.Chernikov: set properly
             compiler.compile(
                 sourceFiles, args, messageCollector,
