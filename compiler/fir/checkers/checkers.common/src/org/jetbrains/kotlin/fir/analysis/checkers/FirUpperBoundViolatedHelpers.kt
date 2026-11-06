@@ -29,25 +29,10 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import kotlin.reflect.KClass
 
-/**
- * Recursively analyzes type parameters and reports the diagnostic on the given source calculated using typeRef
- */
-context(context: CheckerContext, reporter: DiagnosticReporter)
-fun checkUpperBoundViolated(
-    typeRef: FirTypeRef?,
-    isIgnoreTypeParameters: Boolean = false,
-    isInsideTypeOperatorOrParameterBounds: Boolean = false,
-) {
-    val coneType = typeRef?.coneType?.lowerBoundIfFlexible() ?: return
-    // For a type alias expanding to a union type, the bounds in the expansion are checked through the abbreviation
-    val type = coneType as? ConeClassLikeType ?: (coneType as? ConeUnionType)?.abbreviatedType as? ConeClassLikeType ?: return
-    checkUpperBoundViolated(typeRef, type, isIgnoreTypeParameters, typeRef.source, isInsideTypeOperatorOrParameterBounds)
-}
-
 context(context: CheckerContext, reporter: DiagnosticReporter)
 internal fun checkUpperBoundViolated(
     typeRef: FirTypeRef?,
-    notExpandedType: ConeClassLikeType,
+    notExpandedType: ConeRigidType,
     isIgnoreTypeParameters: Boolean = false,
     fallbackSource: KtSourceElement?,
     isInsideTypeOperatorOrParameterBounds: Boolean = false,
@@ -55,6 +40,7 @@ internal fun checkUpperBoundViolated(
 ) {
     // If we have FirTypeRef information, add KtSourceElement information to each argument of the type and fully expand.
     val expandedType = if (typeRef != null) {
+        // If the type is an unabbreviated union type, we'll check it through FirUpperBoundViolatedTypeChecker.
         (notExpandedType.abbreviatedTypeOrSelf as? ConeClassLikeType)?.fullyExpandedTypeWithSource(typeRef, context.session) ?: return
     } else {
         notExpandedType.fullyExpandedType()
@@ -233,11 +219,9 @@ fun checkUpperBoundViolated(
                 }
             }
 
-            // For a type alias expanding to a union type, the bounds in the expansion are checked through the abbreviation
-            val argumentClassLikeType = argumentType as? ConeClassLikeType
-                ?: (argumentType as? ConeUnionType)?.abbreviatedType as? ConeClassLikeType
-            if (argumentClassLikeType != null) {
-                checkUpperBoundViolated(argumentTypeRef, argumentClassLikeType, isIgnoreTypeParameters, fallbackSource)
+            val argumentTypeAbbreviated = argumentType.abbreviatedTypeOrSelf
+            if (argumentTypeAbbreviated is ConeRigidType) {
+                checkUpperBoundViolated(argumentTypeRef, argumentTypeAbbreviated, isIgnoreTypeParameters, fallbackSource)
             }
         }
     }
