@@ -127,6 +127,39 @@ class CInteropDeserializationTest : AbstractNativeSimpleTest() {
         generateExecutable(includedLibrary = mainKlibDir, firstKlibDir, secondKlibDir)
     }
 
+    @Test
+    fun `Same C enum in two C-interop libraries (KT-89825)`() {
+        val firstKlibDir = compileToCInteropLibrary("first", ["-pkg", "cinterop"]) {
+            """
+                language = C
+                ---
+                enum Color { RED, GREEN };
+                static int first_color_ordinal(enum Color color) { return (int)color; }
+            """.trimIndent()
+        }
+        val secondKlibDir = compileToCInteropLibrary("second", ["-pkg", "cinterop"]) {
+            """
+                language = C
+                ---
+                enum Color { RED, GREEN };
+                static int second_color_ordinal(enum Color color) { return (int)color; }
+            """.trimIndent()
+        }
+
+        val mainKlibDir = compileToRegularLibrary(firstKlibDir, secondKlibDir) {
+            """
+                @file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+
+                fun main() {
+                    cinterop.first_color_ordinal(cinterop.Color.RED)
+                    cinterop.second_color_ordinal(cinterop.Color.GREEN)
+                }
+            """.trimIndent()
+        }
+
+        generateExecutable(includedLibrary = mainKlibDir, firstKlibDir, secondKlibDir)
+    }
+
     private inline fun compileToCInteropLibrary(
         name: String = "cinterop_lib",
         cinteropArgs: List<String> = [],
