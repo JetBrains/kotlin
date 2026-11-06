@@ -3,7 +3,7 @@ package org.jetbrains.kotlin.backend.konan.tests
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.backend.konan.objcexport.isMappedFunctionClass
 import org.jetbrains.kotlin.backend.konan.testUtils.InlineSourceTestEnvironment
-import org.jetbrains.kotlin.backend.konan.testUtils.createModuleDescriptor
+import org.jetbrains.kotlin.backend.konan.testUtils.compileAndDeserializeSources
 import org.jetbrains.kotlin.backend.konan.testUtils.getTopLevelFunExtensionType
 import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.junit.jupiter.api.AfterEach
@@ -16,7 +16,7 @@ import kotlin.test.assertTrue
 class IsMappedFunctionClassTests : InlineSourceTestEnvironment {
     @Test
     fun `test - isMappedFunctionClass`() {
-        val module = createModuleDescriptor(
+        val module = compileAndDeserializeSources(
             """
             fun Function1<Any, Any>.mappedFooTrue() = Unit
             fun Function<Any>.mappedFooFalse() = Unit

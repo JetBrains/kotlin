@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import java.io.File
 import java.nio.file.Path
 
-fun createModuleDescriptor(tempDir: File, kotlinSources: List<String>): ModuleDescriptor {
+fun compileAndDeserializeSources(tempDir: File, kotlinSources: List<String>): ModuleDescriptor {
     val testModuleRoot = tempDir.resolve("testModule")
     testModuleRoot.mkdirs()
     val testSourcesFiles = kotlinSources.mapIndexed { index, kotlinSource ->
@@ -32,12 +32,12 @@ fun createModuleDescriptor(tempDir: File, kotlinSources: List<String>): ModuleDe
             writeText(kotlinSource)
         }
     }
-    return createModuleDescriptor(testSourcesFiles)
+    return compileAndDeserializeSources(testSourcesFiles)
 }
 
 @Suppress("UNUSED_PARAMETER")
 @OptIn(K1Deprecation::class)
-fun createModuleDescriptor(kotlinFiles: List<File>, dependencyKlibs: List<Path> = emptyList()): ModuleDescriptor {
+fun compileAndDeserializeSources(kotlinFiles: List<File>, dependencyKlibs: List<Path> = emptyList()): ModuleDescriptor {
     val moduleDescriptorFactory = K1KlibMetadataModuleDescriptorFactoryImpl()
 
     val stdlibModuleDescriptor = moduleDescriptorFactory.createDescriptorAndNewBuiltIns(
