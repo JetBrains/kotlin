@@ -4,14 +4,14 @@
 import lombok.Data
 
 class A {
-    <!ANNOTATION_HAS_NO_EFFECT!>@Data<!>
+    @Data
     companion object {
         val count: Int = 1
         val name: String = "object"
     }
 }
 
-<!ANNOTATION_HAS_NO_EFFECT!>@Data<!>
+@Data
 object B {
     val x: Int = 2
     val z: Boolean = true

@@ -204,6 +204,7 @@ private val implementedAnnotationInfos: Map<ClassId, ImplementedAnnotationsInfo>
     this[LombokNames.DATA_ID] = ImplementedAnnotationsInfo(
         allowedTargetsMap = setOf(
             KotlinTarget.CLASS_ONLY,
+            KotlinTarget.OBJECT,
             KotlinTarget.LOCAL_CLASS,
         ),
         unsupportedClassModifiers = EnumSet.of(ClassModifier.INNER),
