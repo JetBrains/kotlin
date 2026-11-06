@@ -54,10 +54,10 @@ interface InlineSourceCodeCollector {
     fun source(@Language("kotlin") sourceCode: String)
 }
 
-fun InlineSourceTestEnvironment.createModuleDescriptor(@Language("kotlin") sourceCode: String): ModuleDescriptor =
-    createModuleDescriptor(testTempDir, listOf(sourceCode))
+fun InlineSourceTestEnvironment.compileAndDeserializeSources(@Language("kotlin") sourceCode: String): ModuleDescriptor =
+    compileAndDeserializeSources(testTempDir, listOf(sourceCode))
 
-fun InlineSourceTestEnvironment.createModuleDescriptor(build: InlineSourceCodeCollector.() -> Unit): ModuleDescriptor {
+fun InlineSourceTestEnvironment.compileAndDeserializeSources(build: InlineSourceCodeCollector.() -> Unit): ModuleDescriptor {
     val sources = mutableListOf<String>()
     object : InlineSourceCodeCollector {
         override fun source(sourceCode: String) {
@@ -65,5 +65,5 @@ fun InlineSourceTestEnvironment.createModuleDescriptor(build: InlineSourceCodeCo
         }
     }.build()
 
-    return createModuleDescriptor(testTempDir, sources.toList())
+    return compileAndDeserializeSources(testTempDir, sources.toList())
 }
