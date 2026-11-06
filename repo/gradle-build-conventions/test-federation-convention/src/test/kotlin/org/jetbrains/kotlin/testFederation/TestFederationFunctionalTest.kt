@@ -299,6 +299,25 @@ class TestFederationFunctionalTest {
     }
 
     @Test
+    fun `test - explicit empty subsets - test federation enabled - fails`() {
+        val result = runTestBuild(
+            additionalCliArgs = listOf("-P$TEST_FEDERATION_SUBSETS_KEY="),
+            testFederationEnabled = true,
+            expectFailure = true
+        )
+        assertContains(result.buildResult.output, "Test subsets may not be empty when Test Federation is enabled!")
+    }
+
+    @Test
+    fun `test - explicit empty subsets - test federation disabled - runs AllTests`() {
+        val result = runTestBuild(
+            additionalCliArgs = listOf("-P$TEST_FEDERATION_SUBSETS_KEY="),
+            testFederationEnabled = false,
+        )
+        assertEquals(allTests, result.executedTests)
+    }
+
+    @Test
     fun `test - SmokeTests - disabled test federation forces AllTests`() {
         val result = runTestBuild(SmokeTests, testFederationEnabled = false)
         assertEquals(allTests, result.executedTests)
