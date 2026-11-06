@@ -134,6 +134,7 @@ val Test.testFederationSubsets: Provider<Set<TestSubset>> by extensionProperty p
         )
         .map { subsets ->
             when {
+                subsets.isEmpty() -> error("Test subsets may not be empty when Test Federation is enabled!")
                 SmokeTests in subsets && testFederationExtension.smokeTests.includeAll.get() -> setOf(AllTests)
                 else -> subsets
             }
