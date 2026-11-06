@@ -1,5 +1,4 @@
 /noneApplicableMessage.kt:6:5: error: None of the following candidates is applicable:
-
 In package 'kotlin.io' of module '<regular dependencies of main>':
  |
  | fun println(message: Any?): Unit

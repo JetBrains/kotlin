@@ -1,5 +1,4 @@
 compiler/testData/cli/jvm/readingConfigFromEnvironment/simple.kt:2:15: error: [NONE_APPLICABLE] None of the following candidates is applicable for expression '1 + ""':
-
 In package 'kotlin' of module '<regular dependencies of main>':
  |
  | class Int : Number, Comparable<Int>, Serializable {
@@ -9,7 +8,6 @@ In package 'kotlin' of module '<regular dependencies of main>':
  | }
  |
 reason: Expression '""' of type 'String' does not conform to value parameter 'other' of type 'Int'.
-
 In package 'kotlin' of module '<regular dependencies of main>':
  |
  | class Int : Number, Comparable<Int>, Serializable {
@@ -19,7 +17,6 @@ In package 'kotlin' of module '<regular dependencies of main>':
  | }
  |
 reason: Expression '""' of type 'String' does not conform to value parameter 'other' of type 'Byte'.
-
 In package 'kotlin' of module '<regular dependencies of main>':
  |
  | class Int : Number, Comparable<Int>, Serializable {
@@ -29,7 +26,6 @@ In package 'kotlin' of module '<regular dependencies of main>':
  | }
  |
 reason: Expression '""' of type 'String' does not conform to value parameter 'other' of type 'Short'.
-
 In package 'kotlin' of module '<regular dependencies of main>':
  |
  | class Int : Number, Comparable<Int>, Serializable {
@@ -39,7 +35,6 @@ In package 'kotlin' of module '<regular dependencies of main>':
  | }
  |
 reason: Expression '""' of type 'String' does not conform to value parameter 'other' of type 'Long'.
-
 In package 'kotlin' of module '<regular dependencies of main>':
  |
  | class Int : Number, Comparable<Int>, Serializable {
@@ -49,7 +44,6 @@ In package 'kotlin' of module '<regular dependencies of main>':
  | }
  |
 reason: Expression '""' of type 'String' does not conform to value parameter 'other' of type 'Float'.
-
 In package 'kotlin' of module '<regular dependencies of main>':
  |
  | class Int : Number, Comparable<Int>, Serializable {

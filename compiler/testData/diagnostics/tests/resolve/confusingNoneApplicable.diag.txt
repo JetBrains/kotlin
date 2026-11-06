@@ -1,5 +1,4 @@
 /test.kt:11:10: error: None of the following candidates is applicable:
-
 In package 'root package' of module '<main>':
  |
  | class Wrap : Any {

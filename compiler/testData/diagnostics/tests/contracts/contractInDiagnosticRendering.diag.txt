@@ -1,12 +1,10 @@
 /contractInDiagnosticRendering.kt:23:5: error: None of the following candidates is applicable for expression 'foo(Any()) {}':
-
 In package 'root package' of module '<main>':
  --> contractInDiagnosticRendering.kt
   |
 6 | fun foo(s: String, f: () -> Unit): Unit
   |
 reason: Expression 'Any()' of type 'Any' does not conform to value parameter 's' of type 'String'.
-
 In package 'root package' of module '<main>':
   --> contractInDiagnosticRendering.kt
    |

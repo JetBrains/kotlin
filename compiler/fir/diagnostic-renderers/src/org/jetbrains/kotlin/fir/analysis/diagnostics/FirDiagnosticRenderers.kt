@@ -436,21 +436,20 @@ object FirDiagnosticRenderers {
         buildString {
             for ([symbol, diagnostics] in list) {
                 append(SYMBOL_WITH_LOCATION.render(symbol))
+                appendLine()
 
                 if (diagnostics.isNotEmpty()) {
                     if (diagnostics.size == 1) {
-                        append("\nreason: ")
+                        append("reason: ")
                         appendLine(diagnostics.single())
                     } else {
-                        appendLine("\nreasons:")
+                        appendLine("reasons:")
                         diagnostics.forEach {
                             append("  - ")
                             appendLine(it)
                         }
                     }
                 }
-
-                appendLine()
             }
         }.trim()
     }
