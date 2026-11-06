@@ -1,0 +1,70 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+open class /Base { // /Base|null[0]
+    final val bar // /Base.bar|{}bar[0]
+        final fun <get-bar>(): kotlin/String // /Base.bar.<get-bar>|<get-bar>(){}[0]
+    final var baz // /Base.baz|{}baz[0]
+        final fun <get-baz>(): kotlin/String // /Base.baz.<get-baz>|<get-baz>(){}[0]
+        final fun <set-baz>(kotlin/String) // /Base.baz.<set-baz>|<set-baz>(kotlin.String){}[0]
+    constructor <init>() // /Base.<init>|<init>(){}[0]
+    final fun foo(): kotlin/String // /Base.foo|foo(){}[0]
+}
+final class /Container : /WithParam { // /Container|null[0]
+    final val memberProperty // /Container.memberProperty|{}memberProperty[0]
+        final fun <get-memberProperty>(): kotlin/String // /Container.memberProperty.<get-memberProperty>|<get-memberProperty>(){}[0]
+    final val memberPropertyWithGetter // /Container.memberPropertyWithGetter|{}memberPropertyWithGetter[0]
+        final fun <get-memberPropertyWithGetter>(): kotlin/String // /Container.memberPropertyWithGetter.<get-memberPropertyWithGetter>|<get-memberPropertyWithGetter>(){}[0]
+    constructor <init>(kotlin/Int) // /Container.<init>|<init>(kotlin.Int){}[0]
+    constructor <init>(kotlin/String = ...) // /Container.<init>|<init>(kotlin.String){}[0]
+    final fun memberFunction(): kotlin/String // /Container.memberFunction|memberFunction(){}[0]
+}
+final enum class /E : kotlin/Enum</E> { // /E|null[0]
+    final val entries // /E.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries</E> // /E.entries.<get-entries>|<get-entries>#static(){}[0]
+    final val s // /E.s|{}s[0]
+        final fun <get-s>(): kotlin/String // /E.s.<get-s>|<get-s>(){}[0]
+    final fun valueOf(kotlin/String): /E // /E.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array</E> // /E.values|values#static(){}[0]
+    enum entry A // /E.A|null[0]
+}
+open class <#A: kotlin/Any?> /GenericBase { // /GenericBase|null[0]
+    final val value // /GenericBase.value|{}value[0]
+        final fun <get-value>(): #A // /GenericBase.value.<get-value>|<get-value>(){}[0]
+    constructor <init>(#A) // /GenericBase.<init>|<init>(1:0){}[0]
+    final fun get(): #A // /GenericBase.get|get(){}[0]
+}
+abstract interface /I { // /I|null[0]
+    open fun qux(): kotlin/String // /I.qux|qux(){}[0]
+}
+final object /Obj { // /Obj|null[0]
+    final val objProperty // /Obj.objProperty|{}objProperty[0]
+        final fun <get-objProperty>(): kotlin/String // /Obj.objProperty.<get-objProperty>|<get-objProperty>(){}[0]
+}
+open class /OtherBase { // /OtherBase|null[0]
+    constructor <init>() // /OtherBase.<init>|<init>(){}[0]
+    final fun other(): kotlin/String // /OtherBase.other|other(){}[0]
+}
+open class /WithParam { // /WithParam|null[0]
+    final val s // /WithParam.s|{}s[0]
+        final fun <get-s>(): kotlin/String // /WithParam.s.<get-s>|<get-s>(){}[0]
+    constructor <init>(kotlin/String) // /WithParam.<init>|<init>(kotlin.String){}[0]
+}
+final val /anonymousValue // /anonymousValue|{}anonymousValue[0]
+    final fun <get-anonymousValue>(): kotlin/String // /anonymousValue.<get-anonymousValue>|<get-anonymousValue>(){}[0]
+final val /lazyProperty // /lazyProperty|{}lazyProperty[0]
+    final fun <get-lazyProperty>(): kotlin/String // /lazyProperty.<get-lazyProperty>|<get-lazyProperty>(){}[0]
+final val /outerValue // /outerValue|{}outerValue[0]
+    final fun <get-outerValue>(): kotlin/String // /outerValue.<get-outerValue>|<get-outerValue>(){}[0]
+final val /topLevelProperty // /topLevelProperty|{}topLevelProperty[0]
+    final fun <get-topLevelProperty>(): kotlin/String // /topLevelProperty.<get-topLevelProperty>|<get-topLevelProperty>(){}[0]
+final var /topLevelPropertyWithAccessors // /topLevelPropertyWithAccessors|{}topLevelPropertyWithAccessors[0]
+    final fun <get-topLevelPropertyWithAccessors>(): kotlin/String // /topLevelPropertyWithAccessors.<get-topLevelPropertyWithAccessors>|<get-topLevelPropertyWithAccessors>(){}[0]
+    final fun <set-topLevelPropertyWithAccessors>(kotlin/String) // /topLevelPropertyWithAccessors.<set-topLevelPropertyWithAccessors>|<set-topLevelPropertyWithAccessors>(kotlin.String){}[0]
+final inline fun /inlineFunction(): kotlin/String // /inlineFunction|inlineFunction(){}[0]
+final fun /localDeclarations(): kotlin/String // /localDeclarations|localDeclarations(){}[0]
+final fun /otherShapes(): kotlin/String // /otherShapes|otherShapes(){}[0]
+final fun /topLevelFunction(kotlin/String = ...): kotlin/String // /topLevelFunction|topLevelFunction(kotlin.String){}[0]

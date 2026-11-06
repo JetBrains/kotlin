@@ -1,0 +1,626 @@
+val topLevelProperty: String
+  field = { // BLOCK
+    local class <no name provided> : Base, I {
+      constructor() /* primary */ {
+        super/*Base*/()
+        /* <init>() */
+
+      }
+
+    }
+
+    <no name provided>()
+  }.foo()
+  get
+
+val lazyProperty: String /* by */
+  field = lazy<String>(initializer = local fun <anonymous>(): String {
+    return { // BLOCK
+      local class <no name provided> : Base {
+        constructor() /* primary */ {
+          super/*Base*/()
+          /* <init>() */
+
+        }
+
+      }
+
+      <no name provided>()
+    }.foo()
+  }
+)
+  get(): String {
+    return getValue<String>(/* <this> = #lazyProperty$delegate, */ thisRef = null, property = KProperty0<String>(
+      /* bound = */ [],
+      /* getter = */      local fun(): String {
+        return <get-lazyProperty>()
+      }
+    )
+)
+  }
+
+private val anonymous: <no name provided>
+  field = { // BLOCK
+    local class <no name provided> : Base, I {
+      val a: String
+        field = <this>.foo()
+        get
+
+      init {
+        <this>.<set-baz>(<set-?> = <this>.<get-bar>())
+      }
+
+      constructor() /* primary */ {
+        super/*Base*/()
+        /* <init>() */
+
+      }
+
+      fun b(): String {
+        return <this>.qux().plus(other = <this>.<get-a>())
+      }
+
+      val c: String
+        get(): String {
+          return <this>.foo().plus(other = <this>.<get-bar>())
+        }
+
+    }
+
+    <no name provided>()
+  }
+  private get
+
+private val outer: <no name provided>
+  field = { // BLOCK
+    local class <no name provided> : Base, I {
+      private val inner: <no name provided>
+        field = { // BLOCK
+          local class <no name provided> : OtherBase {
+            val x: String
+              field = <this>.other().plus(other = <this>.foo()).plus(other = <this>.<get-bar>())
+              get
+
+            init {
+              <this>.<set-baz>(<set-?> = <this>.other().plus(other = <this>.qux()))
+            }
+
+            constructor() /* primary */ {
+              super/*OtherBase*/()
+              /* <init>() */
+
+            }
+
+            fun y(): String {
+              return <this>.other().plus(other = <this>.foo())
+            }
+
+          }
+
+          <no name provided>()
+        }
+        private get
+
+      val a: String
+        field = <this>.<get-inner>().other().plus(other = <this>.<get-inner>().<get-x>())
+        get
+
+      init {
+        <this>.<set-baz>(<set-?> = <this>.<get-inner>().other().plus(other = <this>.<get-inner>().y()))
+      }
+
+      constructor() /* primary */ {
+        super/*Base*/()
+        /* <init>() */
+
+      }
+
+      fun b(): String {
+        val local: <no name provided> = { // BLOCK
+          local class <no name provided> : OtherBase, I {
+            constructor() /* primary */ {
+              super/*OtherBase*/()
+              /* <init>() */
+
+            }
+
+            fun z(): String {
+              return <this>.other().plus(other = <this>.qux()).plus(other = <this>.foo())
+            }
+
+          }
+
+          <no name provided>()
+        }
+        return local.other().plus(other = local.qux()).plus(other = local.z())
+      }
+
+      val c: String
+        get(): String {
+          return { // BLOCK
+            local class <no name provided> : OtherBase {
+              constructor() /* primary */ {
+                super/*OtherBase*/()
+                /* <init>() */
+
+              }
+
+            }
+
+            <no name provided>()
+          }.other().plus(other = <this>.<get-inner>().other())
+        }
+
+    }
+
+    <no name provided>()
+  }
+  private get
+
+open class Base {
+  var baz: String
+    field = "baz"
+    get
+    set
+
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun foo(): String {
+    return "foo"
+  }
+
+  val bar: String
+    get(): String {
+      return "bar"
+    }
+
+}
+
+class Container : WithParam {
+  val memberProperty: String
+    field = { // BLOCK
+      local class <no name provided> : Base {
+        constructor() /* primary */ {
+          super/*Base*/()
+          /* <init>() */
+
+        }
+
+      }
+
+      <no name provided>()
+    }.foo()
+    get
+
+  init {
+    { // BLOCK
+      local class <no name provided> : Base {
+        constructor() /* primary */ {
+          super/*Base*/()
+          /* <init>() */
+
+        }
+
+      }
+
+      <no name provided>()
+    }.<set-baz>(<set-?> = p)
+  }
+
+  constructor(p: String = { // BLOCK
+    local class <no name provided> : Base {
+      constructor() /* primary */ {
+        super/*Base*/()
+        /* <init>() */
+
+      }
+
+    }
+
+    <no name provided>()
+  }.foo()) /* primary */ {
+    super/*WithParam*/(s = { // BLOCK
+      local class <no name provided> : Base {
+        constructor() /* primary */ {
+          super/*Base*/()
+          /* <init>() */
+
+        }
+
+      }
+
+      <no name provided>()
+    }.<get-bar>())
+    /* <init>() */
+
+  }
+
+  constructor(x: Int) {
+    this/*Container*/(p = { // BLOCK
+      local class <no name provided> : Base {
+        constructor() /* primary */ {
+          super/*Base*/()
+          /* <init>() */
+
+        }
+
+      }
+
+      <no name provided>()
+    }.foo().plus(other = x))
+    { // BLOCK
+      local class <no name provided> : Base, I {
+        constructor() /* primary */ {
+          super/*Base*/()
+          /* <init>() */
+
+        }
+
+      }
+
+      <no name provided>()
+    }.qux() /*~> Unit */
+  }
+
+  fun memberFunction(): String {
+    return { // BLOCK
+      local class <no name provided> : Base, I {
+        constructor() /* primary */ {
+          super/*Base*/()
+          /* <init>() */
+
+        }
+
+      }
+
+      <no name provided>()
+    }.qux()
+  }
+
+  val memberPropertyWithGetter: String
+    get(): String {
+      return { // BLOCK
+        local class <no name provided> : Base {
+          constructor() /* primary */ {
+            super/*Base*/()
+            /* <init>() */
+
+          }
+
+        }
+
+        <no name provided>()
+      }.<get-bar>()
+    }
+
+}
+
+open class GenericBase<T : Any?> {
+  val value: T
+    field = value
+    get
+
+  constructor(value: T) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun get(): T {
+    return <this>.<get-value>()
+  }
+
+}
+
+open class OtherBase {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun other(): String {
+    return "other"
+  }
+
+}
+
+open class WithParam {
+  val s: String
+    field = s
+    get
+
+  constructor(s: String) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+enum class E : Enum<E> {
+  val s: String
+    field = s
+    get
+
+  A = E(s = { // BLOCK
+    local class <no name provided> : Base {
+      constructor() /* primary */ {
+        super/*Base*/()
+        /* <init>() */
+
+      }
+
+    }
+
+    <no name provided>()
+  }.foo())
+
+  private constructor(s: String) /* primary */ {
+    super/*Enum*/<E>()
+    /* <init>() */
+
+  }
+
+  companion fun valueOf(value: String): E /* Synthetic body for ENUM_VALUEOF */
+
+  companion fun values(): Array<E> /* Synthetic body for ENUM_VALUES */
+
+  companion val entries: EnumEntries<E>
+    companion get(): EnumEntries<E> /* Synthetic body for ENUM_ENTRIES */
+
+}
+
+interface I {
+  fun qux(): String {
+    return "qux"
+  }
+
+}
+
+object Obj {
+  val objProperty: String
+    field = { // BLOCK
+      local class <no name provided> : Base {
+        constructor() /* primary */ {
+          super/*Base*/()
+          /* <init>() */
+
+        }
+
+      }
+
+      <no name provided>()
+    }.<get-bar>()
+    get
+
+  init {
+    { // BLOCK
+      local class <no name provided> : Base {
+        constructor() /* primary */ {
+          super/*Base*/()
+          /* <init>() */
+
+        }
+
+      }
+
+      <no name provided>()
+    }.<set-baz>(<set-?> = "obj")
+  }
+
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+inline fun inlineFunction(): String {
+  return { // BLOCK
+    local class <no name provided> : Base, I {
+      constructor() /* primary */ {
+        super/*Base*/()
+        /* <init>() */
+
+      }
+
+    }
+
+    <no name provided>()
+  }.qux()
+}
+
+fun localDeclarations(): String {
+  local fun local(): String {
+    return { // BLOCK
+      local class <no name provided> : Base {
+        constructor() /* primary */ {
+          super/*Base*/()
+          /* <init>() */
+
+        }
+
+      }
+
+      <no name provided>()
+    }.foo()
+  }
+
+  val lambda: Function0<String> = local fun <anonymous>(): String {
+    return { // BLOCK
+      local class <no name provided> : Base {
+        constructor() /* primary */ {
+          super/*Base*/()
+          /* <init>() */
+
+        }
+
+      }
+
+      <no name provided>()
+    }.<get-bar>()
+  }
+
+  val ref: KFunction0<String> = KFunction0<String>(
+    /* bound = */ [{ // BLOCK
+      local class <no name provided> : Base {
+        constructor() /* primary */ {
+          super/*Base*/()
+          /* <init>() */
+
+        }
+
+      }
+
+      <no name provided>()
+    }],
+    /* invoke = */    local fun(receiver: <no name provided>): String {
+      return receiver.foo()
+    }
+  )
+
+  return local().plus(other = lambda.invoke()).plus(other = ref.invoke())
+}
+
+fun otherShapes(): String {
+  val propertyRef: KProperty0<String> = KProperty0<String>(
+    /* bound = */ [{ // BLOCK
+      local class <no name provided> : Base {
+        constructor() /* primary */ {
+          super/*Base*/()
+          /* <init>() */
+
+        }
+
+      }
+
+      <no name provided>()
+    }],
+    /* getter = */    local fun(receiver: <no name provided>): String {
+      return receiver.<get-bar>()
+    }
+  )
+
+  val generic: String = { // BLOCK
+    local class <no name provided> : GenericBase<String> {
+      constructor() /* primary */ {
+        super/*GenericBase*/<String>(value = "generic")
+        /* <init>() */
+
+      }
+
+    }
+
+    <no name provided>()
+  }.get()
+  val string: String = { // BLOCK
+    local class <no name provided> : Base, I {
+      constructor() /* primary */ {
+        super/*Base*/()
+        /* <init>() */
+
+      }
+
+    }
+
+    <no name provided>()
+  }.toString()
+  local class Local : Base, I {
+    constructor() /* primary */ {
+      super/*Base*/()
+      /* <init>() */
+
+    }
+
+  }
+
+  val local: String = Local().foo().plus(other = Local().qux())
+  val onlyInterface: String = { // BLOCK
+    local class <no name provided> : I {
+      constructor() /* primary */ {
+        super/*Any*/()
+        /* <init>() */
+
+      }
+
+    }
+
+    <no name provided>()
+  }.qux()
+  return propertyRef.get().plus(other = generic).plus(other = string).plus(other = local).plus(other = onlyInterface)
+}
+
+fun topLevelFunction(p: String = { // BLOCK
+  local class <no name provided> : Base {
+    constructor() /* primary */ {
+      super/*Base*/()
+      /* <init>() */
+
+    }
+
+  }
+
+  <no name provided>()
+}.foo()): String {
+  val o: <no name provided> = { // BLOCK
+    local class <no name provided> : Base, I {
+      constructor() /* primary */ {
+        super/*Base*/()
+        /* <init>() */
+
+      }
+
+    }
+
+    <no name provided>()
+  }
+  o.<set-baz>(<set-?> = o.foo().plus(other = o.<get-bar>()).plus(other = o.qux()).plus(other = p))
+  return o.<get-baz>()
+}
+
+val anonymousValue: String
+  get(): String {
+    return <get-anonymous>().foo().plus(other = <get-anonymous>().<get-bar>()).plus(other = <get-anonymous>().qux()).plus(other = <get-anonymous>().b()).plus(other = <get-anonymous>().<get-c>())
+  }
+
+val outerValue: String
+  get(): String {
+    return <get-outer>().foo().plus(other = <get-outer>().qux()).plus(other = <get-outer>().<get-a>()).plus(other = <get-outer>().b()).plus(other = <get-outer>().<get-c>())
+  }
+
+var topLevelPropertyWithAccessors: String
+  get(): String {
+    return { // BLOCK
+      local class <no name provided> : Base {
+        constructor() /* primary */ {
+          super/*Base*/()
+          /* <init>() */
+
+        }
+
+      }
+
+      <no name provided>()
+    }.<get-bar>()
+  }
+  set(value: String) {
+    { // BLOCK
+      local class <no name provided> : Base {
+        constructor() /* primary */ {
+          super/*Base*/()
+          /* <init>() */
+
+        }
+
+      }
+
+      <no name provided>()
+    }.<set-baz>(<set-?> = value)
+  }
+
