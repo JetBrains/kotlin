@@ -22,6 +22,25 @@ internal val sampleXcprojProject = """
           "Base",
         ],
       },
+      "packages": [
+        {
+          "kind": "local",
+          "path": "../samplePackage",
+          "future-package-field": true,
+        },
+        {
+          "kind": "remote",
+          "repository": "https://github.com/apple/swift-algorithms.git",
+          "version": {
+            "up-to-next-major-version": "1.2.1",
+          },
+          "future-package-field": {"values": [null, false]},
+        },
+        {
+          "kind": "future-package",
+          "location": {"values": [null, {"enabled": true}]},
+        },
+      ],
       "files": [
         { "kind": "folder", "path": "MyApp", "target-membership": [ "MyApp" ] },
         {
@@ -47,6 +66,14 @@ internal val sampleXcprojProject = """
           ],
           "dependencies": [
             "ExistingDependencyLiteral",
+            {
+              "target": "OtherTarget",
+              "platforms": ["ios"],
+            },
+            {
+              "kind": "localTarget",
+              "target": "YetAnotherTarget",
+            },
             {
               "kind": "opaque",
               "foo": "bar",

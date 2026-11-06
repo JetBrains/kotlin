@@ -68,7 +68,7 @@ class XcprojProjectSerializationTests {
     }
 
     @Test
-    fun `integrateLinkagePackage - preserves existing package-product-members and dependencies`() {
+    fun `integrateLinkagePackage - preserves existing packages, package-product-members and dependencies`() {
         val project =
             deserializeXcprojProject(sampleXcprojProject)
         project.integrateEmbedAndSign("./gradlew embedAndSignAppleFrameworkForXcode")
@@ -78,15 +78,15 @@ class XcprojProjectSerializationTests {
         val targets = before.getValue("targets").jsonArray
         val target = targets[0].jsonObject
         val expected = before.replacing(
-            "packages" to json.parseToJson5Element(
-                """
-                    [
-                      {
+            "packages" to JsonArray(
+                before.getValue("packages").jsonArray + json.parseToJson5Element(
+                    """
+                    {
                         "kind": "local",
                         "path": "$name"
-                      }
-                    ]
-                   """.trimMargin()
+                    }
+                    """
+                )
             ),
             "targets" to JsonArray(
                 listOf(
@@ -95,6 +95,14 @@ class XcprojProjectSerializationTests {
                             """
                              [
                                 "ExistingDependencyLiteral",
+                                {
+                                  "target": "OtherTarget",
+                                  "platforms": ["ios"]
+                                },
+                                {
+                                  "kind": "localTarget",
+                                  "target": "YetAnotherTarget"
+                                },
                                 {
                                   "kind": "opaque",
                                   "foo": "bar",
