@@ -11,14 +11,14 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvedDeclarationStatus
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
-import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolIdEntry
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolIdentifierEntry
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import kotlin.reflect.KClass
 
 internal fun FirBasedSymbol<*>.errorInLazyResolve(name: String, actualClass: KClass<*>, expected: KClass<*>): Nothing {
     errorWithAttachment("Unexpected $name. Expected is ${expected.simpleName}, but was ${actualClass.simpleName}") {
         withFirEntry("firElement", fir)
-        withFirSymbolIdEntry("firSymbol", this@errorInLazyResolve)
+        withFirSymbolIdentifierEntry("firSymbol", this@errorInLazyResolve)
     }
 }
 

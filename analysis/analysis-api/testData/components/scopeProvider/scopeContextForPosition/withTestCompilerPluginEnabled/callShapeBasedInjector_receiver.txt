@@ -17,7 +17,7 @@ scopes:
     classifiers: 0
     callables: 4
       KaKotlinPropertySymbol:
-        anchorPsi: null
+        anchorPsi: KtDotQualifiedExpression
         annotations: []
         backingFieldSymbol: KaBackingFieldSymbol:
           anchorPsi: null
@@ -311,7 +311,7 @@ scopes:
         visibility: PUBLIC
     constructors: 1
       KaConstructorSymbol:
-        anchorPsi: null
+        anchorPsi: KtDotQualifiedExpression
         annotations: []
         callableId: null
         containingClassId: null

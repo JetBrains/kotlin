@@ -18,10 +18,13 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.copyOrigin
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.containingDeclaration
+import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.isAutonomousElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirFileBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
@@ -30,6 +33,8 @@ import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
+import org.jetbrains.kotlin.fir.resolve.providers.firProvider
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
@@ -41,6 +46,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
 internal fun KtDeclaration.findSourceNonLocalFirDeclaration(
     firFileBuilder: LLFirFileBuilder,
@@ -103,6 +109,35 @@ internal fun KtDeclaration.findSourceNonLocalFirDeclaration(firFile: FirFile, pr
         fir = firFile,
         additionalInfos = { withEntry("isPhysical", isPhysical.toString()) }
     )
+}
+
+/**
+ * The non-local container of this declaration which is used to find its FIR declaration, or the declaration itself if it is non-local.
+ * All elements inside a code fragment are local, so their container is the code fragment.
+ */
+internal val KtDeclaration.nonLocalContainerForFirLookup: KtElement?
+    get() = containingKtFile as? KtCodeFragment ?: getNonLocalContainingOrThisElement()
+
+/**
+ * Finds the symbol of the non-local source [declaration] in this session.
+ *
+ * @see nonLocalContainerForFirLookup
+ */
+internal fun LLFirResolvableModuleSession.findSourceNonLocalFirSymbol(declaration: KtDeclaration): FirBasedSymbol<*> =
+    declaration.findSourceNonLocalFirDeclaration(moduleComponents.firFileBuilder, firProvider).symbol
+
+/**
+ * Finds the symbol of the non-local compiled [declaration] in this session.
+ */
+internal fun LLFirSession.findCompiledFirSymbol(declaration: KtDeclaration): FirBasedSymbol<*> {
+    requireWithAttachment(
+        declaration.containingKtFile.isCompiled,
+        { "`findCompiledFirSymbol` only works on compiled declarations, but the given declaration is not compiled." },
+    ) {
+        withPsiEntry("declaration", declaration, ktModule)
+    }
+
+    return FirDeclarationForCompiledElementSearcher(this).findNonLocalDeclaration(declaration).symbol
 }
 
 @KaImplementationDetail

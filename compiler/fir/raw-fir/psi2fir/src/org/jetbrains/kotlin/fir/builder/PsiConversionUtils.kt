@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildBlock
 import org.jetbrains.kotlin.fir.expressions.builder.buildEqualityOperatorCall
 import org.jetbrains.kotlin.fir.expressions.builder.buildTypeOperatorCall
+import org.jetbrains.kotlin.fir.symbols.id.symbolIdFactory
 import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
@@ -88,7 +89,7 @@ internal fun Array<KtWhenCondition>.toFirWhenCondition(
 
 internal fun generateTemporaryVariable(
     moduleData: FirModuleData,
-    source: KtSourceElement?,
+    source: KtSourceElement,
     name: Name,
     initializer: FirExpression,
     typeRef: FirTypeRef? = null,
@@ -102,7 +103,7 @@ internal fun generateTemporaryVariable(
         returnTypeRef = typeRef ?: FirImplicitTypeRefImplWithoutSource
         this.name = name
         this.initializer = initializer
-        symbol = FirLocalPropertySymbol()
+        symbol = FirLocalPropertySymbol(moduleData.session.symbolIdFactory.sourceBased(source))
         isVar = false
         status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
         isLocal = true
@@ -111,7 +112,7 @@ internal fun generateTemporaryVariable(
 
 internal fun generateDestructuringContainerVariable(
     moduleData: FirModuleData,
-    source: KtSourceElement?,
+    source: KtSourceElement,
     initializer: FirExpression,
     origin: FirDeclarationOrigin = FirDeclarationOrigin.Source,
     extractAnnotationsTo: (KtAnnotated.(FirAnnotationContainerBuilder) -> Unit),

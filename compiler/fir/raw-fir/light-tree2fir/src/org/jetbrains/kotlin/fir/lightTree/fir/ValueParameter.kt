@@ -36,6 +36,8 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpressio
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierList
 import org.jetbrains.kotlin.fir.references.builder.buildPropertyFromParameterResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
@@ -175,6 +177,7 @@ class ValueParameter<Node : Any>(
                 }.toMutableList(),
                 returnTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor.BackingField),
                 isVar = isVar,
+                symbol = FirBackingFieldSymbol(),
                 propertySymbol = symbol,
                 status = status.copy(isLateInit = false),
             ).also {
@@ -190,6 +193,7 @@ class ValueParameter<Node : Any>(
                 origin = FirDeclarationOrigin.Source,
                 propertyTypeRef = type.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor.Getter),
                 visibility = status.visibility,
+                symbol = FirPropertyAccessorSymbol(),
                 propertySymbol = symbol,
                 modality = status.modality,
                 isInline = modifiers.hasInline(),
@@ -205,6 +209,7 @@ class ValueParameter<Node : Any>(
                 origin = FirDeclarationOrigin.Source,
                 propertyTypeRef = type.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor.Setter),
                 visibility = status.visibility,
+                propertyAccessorSymbol = FirPropertyAccessorSymbol(),
                 propertySymbol = symbol,
                 modality = status.modality,
                 parameterAnnotations = remappedAnnotations.filterUseSiteTarget(SETTER_PARAMETER),
