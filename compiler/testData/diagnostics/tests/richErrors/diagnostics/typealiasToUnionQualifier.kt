@@ -33,6 +33,7 @@ fun test(x: CR) {
     <!TYPEALIAS_TO_UNION_TYPE_AS_QUALIFIER!>JR<!>.<!UNRESOLVED_REFERENCE!>FIELD<!>
     x.ext()
     x.extProp
+    val f: (CR) -> Unit = CR::ext
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, companionObject, funWithExtensionReceiver, functionDeclaration, getter,

@@ -9,7 +9,9 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.secondToLastContainer
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
@@ -25,6 +27,8 @@ object FirTypeAliasToUnionTypeQualifierChecker : FirResolvedQualifierChecker(Mpp
         if (!expression.isTypeAliasToUnionType()) return
         // `TA::class` is reported by `FirClassLiteralChecker`
         if (context.getClassCalls.lastOrNull()?.argument == expression) return
+        // `TA::foo` is legal.
+        if (context.secondToLastContainer.let { it is FirCallableReferenceAccess && it.explicitReceiver == expression }) return
         reporter.reportOn(expression.source, FirErrors.TYPEALIAS_TO_UNION_TYPE_AS_QUALIFIER)
     }
 }
