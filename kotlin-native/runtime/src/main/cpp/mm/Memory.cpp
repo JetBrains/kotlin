@@ -6,6 +6,15 @@
 #include "Memory.h"
 #include "mm/MemoryPrivate.hpp"
 
+// tvOS/watchOS sysroots mark fork(2) unavailable; those targets write in-process like Windows.
+#if !KONAN_WINDOWS && !KONAN_TVOS && !KONAN_WATCHOS
+#define KONAN_DUMP_MAY_FORK 1
+#include <errno.h>
+#include <stdlib.h>
+#include <sys/wait.h>
+#include <unistd.h>
+#endif
+
 #include "alloc/Allocator.hpp"
 #include "CallsChecker.hpp"
 #include "Exceptions.h"
@@ -24,6 +33,7 @@
 #include "mm/ThreadRegistry.hpp"
 #include "mm/ThreadState.hpp"
 #include "mm/MemoryDump.hpp"
+#include "concurrent/ScopedThread.hpp"
 
 using namespace kotlin;
 
@@ -242,6 +252,42 @@ extern "C" RUNTIME_NOTHROW bool Kotlin_native_runtime_Debugging_dumpMemoryWithOp
     mm::WaitForThreadsSuspension();
 
     bool success = mm::DumpMemory(fd, omitPrimitiveArrayPayloads);
+    mm::ResumeThreads();
+    return success;
+}
+
+extern "C" RUNTIME_NOTHROW bool Kotlin_native_runtime_Debugging_dumpMemoryAsyncWithOptions(
+        ObjHeader*, int fd, bool omitPrimitiveArrayPayloads) {
+    auto mainGCLock = mm::GlobalData::Instance().gc().gcLock();
+
+    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
+    threadData->suspensionData().requestThreadsSuspension("Memory dump");
+    CallsCheckerIgnoreGuard ignoreGuard;
+    mm::WaitForThreadsSuspension();
+
+    // Publish before fork so the child walks a consistent snapshot and does not touch live threads.
+    mm::PrepareForMemoryDump();
+
+#if KONAN_DUMP_MAY_FORK
+    pid_t pid = fork();
+    if (pid == 0) {
+        bool ok = mm::WriteMemoryDump(fd, omitPrimitiveArrayPayloads);
+        _exit(ok ? 0 : 1);
+    }
+    if (pid > 0) {
+        mm::ResumeThreads();
+        // Reap the writer so it cannot linger as a zombie. The caller still must not close the
+        // dump fd until the write finishes; this thread does not signal completion.
+        ScopedThread(ScopedThread::attributes().name("Memory dump waitpid"), [pid]() {
+            int status = 0;
+            while (waitpid(pid, &status, 0) < 0 && errno == EINTR) {
+            }
+        }).detach();
+        return true;
+    }
+    // fork failed: keep the STW write so the caller still gets a dump.
+#endif
+    bool success = mm::WriteMemoryDump(fd, omitPrimitiveArrayPayloads);
     mm::ResumeThreads();
     return success;
 }

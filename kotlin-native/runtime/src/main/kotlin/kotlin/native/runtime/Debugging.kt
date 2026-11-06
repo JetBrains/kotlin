@@ -50,6 +50,8 @@ public object Debugging {
      * The default [options] write a dump with full object and array payloads.
      * Mutators stay suspended until the write finishes, then this function returns
      * so the caller may close [fd].
+     *
+     * To resume mutators after the snapshot is taken and write in the background, see [dumpMemoryAsync].
      */
     // Keep dumpMemory(Long) in the klib ABI: options did not exist in 1.9.
     @SinceKotlin("2.5")
@@ -59,9 +61,38 @@ public object Debugging {
     ): Boolean =
             dumpMemoryWithOptions(fd, options.omitPrimitiveArrayPayloads)
 
+    /**
+     * Opt-in dump for production diagnostics that cannot keep mutators stopped for the write
+     * (for example a dump triggered from a running service). This is not a replacement for
+     * [dumpMemory] when the process is already near out-of-memory.
+     *
+     * On POSIX except tvOS and watchOS, this forks during the stop-the-world pause after the
+     * snapshot is published. The parent resumes mutators and returns; the child writes the
+     * copy-on-write snapshot. The dump contents are the heap at fork, not a live view.
+     * Copy-on-write can raise parent RSS by about 2× while the child writes, if mutators
+     * dirty those pages. The caller must keep [fd] open until the write completes (for
+     * example until the file size is stable). If the process or device runs out of memory
+     * before the write finishes, the dump may still be lost.
+     *
+     * On Windows, tvOS, and watchOS there is no fork: this matches [dumpMemory] and returns
+     * only after the write finishes, so the caller may close [fd] immediately.
+     *
+     * Returns `false` only if the snapshot could not be started, or if the in-process fallback write failed.
+     */
+    @SinceKotlin("2.5")
+    public fun dumpMemoryAsync(
+            fd: Long,
+            options: MemoryDumpOptions = MemoryDumpOptions(),
+    ): Boolean =
+            dumpMemoryAsyncWithOptions(fd, options.omitPrimitiveArrayPayloads)
+
     @GCUnsafeCall("Kotlin_native_runtime_Debugging_dumpMemoryWithOptions")
     @Escapes.Nothing
     private external fun dumpMemoryWithOptions(fd: Long, omitPrimitiveArrayPayloads: Boolean): Boolean
+
+    @GCUnsafeCall("Kotlin_native_runtime_Debugging_dumpMemoryAsyncWithOptions")
+    @Escapes.Nothing
+    private external fun dumpMemoryAsyncWithOptions(fd: Long, omitPrimitiveArrayPayloads: Boolean): Boolean
 }
 
 @GCUnsafeCall("Kotlin_Debugging_isThreadStateRunnable")
