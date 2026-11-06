@@ -1,9 +1,12 @@
 public abstract interface class org/jetbrains/kotlin/gradle/ecosystem/KotlinEcosystemExtension {
+	public abstract fun native (Lkotlin/jvm/functions/Function1;)V
+	public abstract fun native (Lorg/gradle/api/Action;)V
 	public abstract fun toolchainManagement (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun toolchainManagement (Lorg/gradle/api/Action;)V
 }
 
 public final class org/jetbrains/kotlin/gradle/ecosystem/KotlinEcosystemExtension$DefaultImpls {
+	public static fun native (Lorg/jetbrains/kotlin/gradle/ecosystem/KotlinEcosystemExtension;Lorg/gradle/api/Action;)V
 	public static fun toolchainManagement (Lorg/jetbrains/kotlin/gradle/ecosystem/KotlinEcosystemExtension;Lorg/gradle/api/Action;)V
 }
 

@@ -540,6 +540,12 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinNativeComp
 	public abstract fun getModuleName ()Lorg/gradle/api/provider/Property;
 }
 
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinNativeSettingsDsl {
+	public abstract fun getCommonizeCInteropMaxWorkers ()Lorg/gradle/api/provider/Property;
+	public abstract fun getCompileMaxWorkers ()Lorg/gradle/api/provider/Property;
+	public abstract fun getLinkMaxWorkers ()Lorg/gradle/api/provider/Property;
+}
+
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinPublishingDsl {
 	public abstract fun getPublishing ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinPublishing;
 	public abstract fun publishing (Lkotlin/jvm/functions/Function1;)V

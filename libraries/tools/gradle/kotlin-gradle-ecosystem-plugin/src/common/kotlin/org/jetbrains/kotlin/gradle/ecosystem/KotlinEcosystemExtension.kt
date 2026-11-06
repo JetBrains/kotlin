@@ -9,15 +9,20 @@ package org.jetbrains.kotlin.gradle.ecosystem
 
 import org.gradle.api.Action
 import org.gradle.api.initialization.Settings
+import org.gradle.api.model.ObjectFactory
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalNodeJsToolchainDsl
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.KotlinNativeSettingsDsl
 import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.NodeJsToolchainManagementDsl
 import org.jetbrains.kotlin.gradle.dsl.toolchain.wasiadapter.WasiAdapterToolchainManagementDsl
 import org.jetbrains.kotlin.gradle.targets.wasm.wasiadapter.toolchain.WasiAdapterToolchainManagementDslImpl
 import org.jetbrains.kotlin.gradle.dsl.toolchain.wasmtools.WasmToolsToolchainManagementDsl
 import org.jetbrains.kotlin.gradle.targets.wasm.wasmtools.toolchain.WasmToolsToolchainManagementDslImpl
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.NodeJsToolchainManagementDslImpl
+import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeSettingsDslImpl
+import javax.inject.Inject
 
 /**
  * Entry point of the `org.jetbrains.kotlin.ecosystem` settings plugin DSL, exposed as `kotlin { ... }`
@@ -30,12 +35,35 @@ import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.NodeJsToolchainM
  *             toolchainService { ... }
  *         }
  *     }
+ *     native {
+ *         linkMaxWorkers = 2
+ *     }
  * }
  * ```
  *
  * @since 2.5.0
  */
 interface KotlinEcosystemExtension {
+
+    /**
+     * Configures build-wide Kotlin/Native settings. See [KotlinNativeSettingsDsl].
+     *
+     * @since 2.5.20
+     */
+    @ExperimentalKotlinGradlePluginApi
+    fun native(configure: KotlinNativeSettingsDsl.() -> Unit)
+
+    /**
+     * [Action] based version of [native] above.
+     *
+     * @since 2.5.20
+     */
+    @ExperimentalKotlinGradlePluginApi
+    fun native(configure: Action<KotlinNativeSettingsDsl>) {
+        native {
+            configure.execute(this)
+        }
+    }
 
     /**
      * Configures toolchains provisioned for the whole build.
@@ -325,7 +353,18 @@ interface KotlinToolchainManagementDsl {
 }
 
 // Open, as Gradle generates a decorated subclass when registering the extension.
-internal open class KotlinEcosystemExtensionImpl(settings: Settings) : KotlinEcosystemExtension {
+internal open class KotlinEcosystemExtensionImpl @Inject constructor(
+    settings: Settings,
+    objects: ObjectFactory,
+) : KotlinEcosystemExtension {
+
+    @OptIn(InternalKotlinGradlePluginApi::class, ExperimentalKotlinGradlePluginApi::class)
+    private val nativeDsl: KotlinNativeSettingsDsl = KotlinNativeSettingsDslImpl(objects, settings.providers, settings.gradle)
+
+    @ExperimentalKotlinGradlePluginApi
+    override fun native(configure: KotlinNativeSettingsDsl.() -> Unit) {
+        nativeDsl.configure()
+    }
 
     @OptIn(InternalKotlinGradlePluginApi::class, ExperimentalWasmDsl::class)
     @ExperimentalNodeJsToolchainDsl
