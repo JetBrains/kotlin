@@ -124,6 +124,12 @@ class XcprojProjectSerializationTests {
                                 }
                               },
                               {
+                                "product-name": "ExistingProduct",
+                                "build-phase": {
+                                  "build-phase": ["frameworks", {"name": "Special/Phase"}]
+                                }
+                              },
+                              {
                                 "product-name": "$name",
                                 "build-phase": {
                                   "build-phase": "frameworks"
@@ -201,9 +207,14 @@ class XcprojProjectSerializationTests {
               {
                 "product-name": "$name",
                 "build-phase": {
-                  "build-phase": "Special/Phase"
+                  "build-phase": [
+                    "frameworks",
+                    {
+                      "name": "Special/Phase"
+                    }
+                  ]
                 }
-              }
+              },
             ]
           """
             ).prettyPrinted, output.getValue("targets").jsonArray.single().jsonObject["package-product-members"]!!.prettyPrinted

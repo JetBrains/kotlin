@@ -61,7 +61,7 @@ internal val sampleXcprojProject = """
             "compile-sources",
             "frameworks",
             "resources",
-            {"kind": "frameworks", "id": "222222222222222222222222", "future-phase-field": [1, null]},
+            {"kind": "frameworks", "id": "222222222222222222222222", "name": "Special/Phase", "future-phase-field": [1, null]},
             {"kind": "script", "name": "Other script", "shell": "/bin/sh", "script": ["echo hello", "echo world"], "future-script-field": true},
           ],
           "dependencies": [
@@ -84,6 +84,12 @@ internal val sampleXcprojProject = """
                 "product-name": "Something",
                 "build-phase": {
                   "build-phase": "frameworks"
+                }
+            },
+            {
+                "product-name": "ExistingProduct",
+                "build-phase": {
+                  "build-phase": ["frameworks", {"name": "Special/Phase"}]
                 }
             },
           ],
