@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.gradle.testbase.KGPBaseTest
 import org.jetbrains.kotlin.gradle.testbase.NativeGradlePluginTests
 import org.jetbrains.kotlin.gradle.testbase.TestProject
 import org.jetbrains.kotlin.gradle.testbase.addEcosystemPluginToBuildScriptCompilationClasspath
+import org.jetbrains.kotlin.gradle.testbase.assertOutputContains
+import org.jetbrains.kotlin.gradle.testbase.assertOutputDoesNotContain
 import org.jetbrains.kotlin.gradle.testbase.buildScriptReturn
 import org.jetbrains.kotlin.gradle.testbase.project
 import org.jetbrains.kotlin.gradle.testbase.settingsBuildScriptInjection
@@ -63,5 +65,8 @@ class KotlinNativeSettingsDslIT : KGPBaseTest() {
                 limit(KotlinNativeLink::class.java),
                 limit(CInteropCommonizerTask::class.java),
             )
-        }.buildAndReturn("tasks", *gradleProperties)
+        }.buildAndReturn("tasks", *gradleProperties) {
+            assertOutputContains("Kotlin/Native settings DSL value 4 overrides Gradle property kotlin.native.compileMaxWorkers=2")
+            assertOutputDoesNotContain("overrides Gradle property kotlin.native.linkMaxWorkers")
+        }
 }

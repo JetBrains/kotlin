@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.internal.compilerRunner.native
 
 import org.gradle.api.Task
 import org.gradle.api.invocation.Gradle
+import org.gradle.api.logging.Logging
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
@@ -32,31 +34,39 @@ import org.jetbrains.kotlin.gradle.utils.propertyWithConvention
 @InternalKotlinGradlePluginApi
 class KotlinNativeSettingsDslImpl(
     objects: ObjectFactory,
-    providers: ProviderFactory,
+    private val providers: ProviderFactory,
     private val gradle: Gradle,
 ) : KotlinNativeSettingsDsl {
 
-    override val compileMaxWorkers: Property<Int> = objects.maxWorkersProperty(providers, KOTLIN_NATIVE_COMPILE_MAX_WORKERS)
-    override val linkMaxWorkers: Property<Int> = objects.maxWorkersProperty(providers, KOTLIN_NATIVE_LINK_MAX_WORKERS)
-    override val commonizeCInteropMaxWorkers: Property<Int> =
-        objects.maxWorkersProperty(providers, KOTLIN_NATIVE_COMMONIZE_CINTEROP_MAX_WORKERS)
+    private val logger = Logging.getLogger(KotlinNativeSettingsDslImpl::class.java)
+
+    override val compileMaxWorkers: Property<Int> = objects.maxWorkersProperty(KOTLIN_NATIVE_COMPILE_MAX_WORKERS)
+    override val linkMaxWorkers: Property<Int> = objects.maxWorkersProperty(KOTLIN_NATIVE_LINK_MAX_WORKERS)
+    override val commonizeCInteropMaxWorkers: Property<Int> = objects.maxWorkersProperty(KOTLIN_NATIVE_COMMONIZE_CINTEROP_MAX_WORKERS)
 
     init {
         gradle.settingsEvaluated { registerParallelismLimitServices() }
     }
 
     internal fun registerParallelismLimitServices() {
-        registerIfSet(KotlinNativeCompile::class.java, compileMaxWorkers)
-        registerIfSet(KotlinNativeLink::class.java, linkMaxWorkers)
-        registerIfSet(CInteropCommonizerTask::class.java, commonizeCInteropMaxWorkers)
+        registerIfSet(KotlinNativeCompile::class.java, compileMaxWorkers, KOTLIN_NATIVE_COMPILE_MAX_WORKERS)
+        registerIfSet(KotlinNativeLink::class.java, linkMaxWorkers, KOTLIN_NATIVE_LINK_MAX_WORKERS)
+        registerIfSet(CInteropCommonizerTask::class.java, commonizeCInteropMaxWorkers, KOTLIN_NATIVE_COMMONIZE_CINTEROP_MAX_WORKERS)
     }
 
-    private fun registerIfSet(taskType: Class<out Task>, maxWorkers: Property<Int>) {
-        maxWorkers.orNull?.let { gradle.registerKotlinNativeParallelismLimitService(taskType, it) }
+    private fun registerIfSet(taskType: Class<out Task>, maxWorkers: Property<Int>, gradlePropertyName: String) {
+        if (!maxWorkers.isPresent) return
+        val value = maxWorkers.get()
+        val overridden = gradlePropertyValue(gradlePropertyName)
+        if (overridden.isPresent && overridden.get() != value) {
+            logger.lifecycle("Kotlin/Native settings DSL value $value overrides Gradle property $gradlePropertyName=${overridden.get()}")
+        }
+        gradle.registerKotlinNativeParallelismLimitService(taskType, value)
     }
 
-    private fun ObjectFactory.maxWorkersProperty(providers: ProviderFactory, gradlePropertyName: String): Property<Int> =
-        propertyWithConvention(
-            providers.gradleProperty(gradlePropertyName).map { it.toIntOrNull() }
-        )
+    private fun ObjectFactory.maxWorkersProperty(gradlePropertyName: String): Property<Int> =
+        propertyWithConvention(gradlePropertyValue(gradlePropertyName))
+
+    private fun gradlePropertyValue(gradlePropertyName: String): Provider<Int> =
+        providers.gradleProperty(gradlePropertyName).map { it.toIntOrNull() }
 }
