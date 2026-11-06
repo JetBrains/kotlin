@@ -12,9 +12,6 @@ import org.jetbrains.kotlin.codegen.coroutines.isCoroutineSuperClass
 import org.jetbrains.kotlin.codegen.inline.coroutines.CoroutineTransformer
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.isKotlinValhallaValueClass
-import org.jetbrains.kotlin.config.isValhallaSupportEnabled
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.FileBasedKotlinClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
@@ -155,6 +152,7 @@ class AnonymousObjectTransformer(
 
         generateConstructorAndFields(classBuilder, constructorParamBuilder, parentRemapper)
         val signatureTypes = fieldsToTransform.map { Type.getType(it.desc) } +
+                Type.getArgumentTypes(transformationInfo.newConstructorDescriptor) +
                 methodsToTransform.flatMap { Type.getArgumentTypes(it.desc).asList() + Type.getReturnType(it.desc) }
         signatureTypes.filter { it.isRecompiledKotlinValueClass() }.mapTo(loadableDescriptors) { it.descriptor }
         if (loadableDescriptors.isNotEmpty()) {
@@ -400,16 +398,6 @@ class AnonymousObjectTransformer(
         reifiedTypeParametersUsages?.let(result.reifiedTypeParametersUsages::mergeAll)
         deferringVisitor.visitMaxs(-1, -1)
         return result
-    }
-
-    // Like the classes of this compilation, a regenerated object lists the Kotlin value classes of a library compiled without Valhalla
-    // value classes, which is expected to be recompiled with them like this compilation.
-    private fun Type.isRecompiledKotlinValueClass(): Boolean {
-        val languageVersionSettings = state.config.languageVersionSettings
-        if (sort != Type.OBJECT || !languageVersionSettings.isValhallaSupportEnabled()) return false
-        return state.jvmBackendClassResolver.resolveToClasses(this).any { irClass ->
-            irClass.modality == Modality.FINAL && irClass.valueClassRepresentation.isKotlinValhallaValueClass(languageVersionSettings)
-        }
     }
 
     private fun generateConstructorAndFields(

@@ -16,9 +16,13 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
+import org.jetbrains.org.objectweb.asm.Attribute
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
+import org.jetbrains.org.objectweb.asm.FieldVisitor
+import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
+import org.jetbrains.org.objectweb.asm.Type
 
 class SamWrapperTransformationInfo(
     override val oldClassName: String,
@@ -61,6 +65,11 @@ class SamWrapperTransformer(transformationInfo: SamWrapperTransformationInfo, pr
 
         classReader.accept(object : ClassVisitor(Opcodes.API_VERSION, classBuilder.visitor) {
             private var originalVersion = 0
+            private val loadableDescriptors = LinkedHashSet<String>()
+
+            private fun addIfRecompiledKotlinValueClass(type: Type) {
+                if (type.isRecompiledKotlinValueClass()) loadableDescriptors.add(type.descriptor)
+            }
 
             override fun visit(version: Int, access: Int, name: String, signature: String?, superName: String, interfaces: Array<String>) {
                 originalVersion = version
@@ -71,6 +80,31 @@ class SamWrapperTransformer(transformationInfo: SamWrapperTransformationInfo, pr
 
             override fun visitInnerClass(name: String, outerName: String?, innerName: String?, access: Int) {
                 super.visitInnerClass(name, outerName, innerName, regeneratedInnerClassAccess(access, originalVersion, state.config.classFileVersion))
+            }
+
+            override fun visitAttribute(attribute: Attribute) {
+                if (attribute is LoadableDescriptorsAttribute) loadableDescriptors.addAll(attribute.descriptors)
+                else super.visitAttribute(attribute)
+            }
+
+            override fun visitField(access: Int, name: String, descriptor: String, signature: String?, value: Any?): FieldVisitor? {
+                addIfRecompiledKotlinValueClass(Type.getType(descriptor))
+                return super.visitField(access, name, descriptor, signature, value)
+            }
+
+            override fun visitMethod(
+                access: Int, name: String, descriptor: String, signature: String?, exceptions: Array<out String>?,
+            ): MethodVisitor? {
+                Type.getArgumentTypes(descriptor).forEach(::addIfRecompiledKotlinValueClass)
+                addIfRecompiledKotlinValueClass(Type.getReturnType(descriptor))
+                return super.visitMethod(access, name, descriptor, signature, exceptions)
+            }
+
+            override fun visitEnd() {
+                if (loadableDescriptors.isNotEmpty()) {
+                    super.visitAttribute(LoadableDescriptorsAttribute(loadableDescriptors.toList()))
+                }
+                super.visitEnd()
             }
 
         }, LOADABLE_DESCRIPTORS_ATTRIBUTE_PROTOTYPES, ClassReader.SKIP_FRAMES)
