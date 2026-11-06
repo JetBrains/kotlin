@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.functions.functionInterfacePackageFragmentProvider
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.contracts.ContractDeserializerImpl
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.deserialization.AdditionalClassPartsProvider
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
@@ -27,7 +26,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.parentOrNull
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.resolve.CommonCompilerDeserializationConfiguration
-import org.jetbrains.kotlin.resolve.ImplicitIntegerCoercion
 import org.jetbrains.kotlin.resolve.sam.SamConversionResolverImpl
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.storage.StorageManager
@@ -60,11 +58,7 @@ class K1KlibMetadataModuleDescriptorFactoryImpl {
             moduleName,
             storageManager,
             builtInsToUse,
-            capabilities = mapOf(
-                KlibModuleOrigin.CAPABILITY to moduleOrigin,
-                @OptIn(K1Deprecation::class)
-                ImplicitIntegerCoercion.MODULE_CAPABILITY to moduleOrigin.isCInteropLibrary()
-            ),
+            capabilities = mapOf(KlibModuleOrigin.CAPABILITY to moduleOrigin),
             platform = NativePlatforms.unspecifiedNativePlatform
         )
 
@@ -162,7 +156,7 @@ class K1KlibMetadataModuleDescriptorFactoryImpl {
             flexibleTypeDeserializer,
             emptyList(),
             notFoundClasses,
-            ContractDeserializerImpl(configuration, storageManager),
+            ContractDeserializer.DEFAULT,
             additionalClassPartsProvider = AdditionalClassPartsProvider.None,
             extensionRegistryLite = KlibMetadataSerializerProtocol.extensionRegistry,
             samConversionResolver = SamConversionResolverImpl(storageManager, samWithReceiverResolvers = emptyList()),

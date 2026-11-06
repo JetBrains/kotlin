@@ -1,1 +1,1 @@
-val a: StringBuilder
+val a: StringBuilder = error("stub")

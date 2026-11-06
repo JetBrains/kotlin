@@ -6,23 +6,23 @@
 package org.jetbrains.kotlin.backend.konan.tests
 
 import com.intellij.openapi.util.Disposer
-import org.jetbrains.kotlin.backend.konan.objcexport.*
-import org.jetbrains.kotlin.backend.konan.testUtils.*
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCEntryPoints
+import org.jetbrains.kotlin.backend.konan.objcexport.computeDownwardClosure
+import org.jetbrains.kotlin.backend.konan.testUtils.InlineSourceTestEnvironment
+import org.jetbrains.kotlin.backend.konan.testUtils.compileAndDeserializeSources
+import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
-import kotlin.test.assertTrue
 import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class ObjCExportEntryPointsClosureTest : InlineSourceTestEnvironment {
     override val testDisposable = Disposer.newDisposable("${ObjCExportEntryPointsClosureTest::class.simpleName}.testDisposable")
-    override val kotlinCoreEnvironment: KotlinCoreEnvironment = createKotlinCoreEnvironment(testDisposable)
 
     @TempDir
     override lateinit var testTempDir: File
@@ -46,7 +46,7 @@ class ObjCExportEntryPointsClosureTest : InlineSourceTestEnvironment {
             }
         """.trimIndent()
 
-        val module = createModuleDescriptor(source)
+        val module = compileAndDeserializeSources(source)
 
         val myRunnable = module.findClassAcrossModuleDependencies(ClassId.fromString("MyRunnable"))!!
         val a = module.findClassAcrossModuleDependencies(ClassId.fromString("A"))!!
@@ -88,7 +88,7 @@ class ObjCExportEntryPointsClosureTest : InlineSourceTestEnvironment {
             }
         """.trimIndent()
 
-        val module = createModuleDescriptor(source)
+        val module = compileAndDeserializeSources(source)
 
         val myRunnable = module.findClassAcrossModuleDependencies(ClassId.fromString("MyRunnable"))!!
         val a = module.findClassAcrossModuleDependencies(ClassId.fromString("A"))!!

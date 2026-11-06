@@ -10,7 +10,6 @@ import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.nativeBinaryOptions.UnitSuspendFunctionObjCExport
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
@@ -64,11 +63,9 @@ class Fe10HeaderGeneratorImpl(private val disposable: Disposable) : HeaderGenera
     private fun createObjCExportHeaderGenerator(
         disposable: Disposable, root: File, configuration: HeaderGenerator.Configuration,
     ): ObjCExportHeaderGenerator {
-        val environment: KotlinCoreEnvironment = createKotlinCoreEnvironment(disposable)
-
         val kotlinFiles = root.walkTopDown().filter { it.isFile }.filter { it.extension == "kt" }.toList()
         val dependencyKlibs = configuration.dependencies.flatMap { it.klibs }
-        val moduleDescriptors = setOf(createModuleDescriptor(environment, kotlinFiles, dependencyKlibs))
+        val moduleDescriptors = setOf(compileAndDeserializeSources(kotlinFiles, dependencyKlibs))
 
         // Parse objc-entry-points file if present
         val entryPoints = File(root, "objc-entry-points")

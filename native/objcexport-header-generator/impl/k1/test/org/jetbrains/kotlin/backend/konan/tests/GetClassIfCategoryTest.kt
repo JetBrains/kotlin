@@ -3,9 +3,8 @@ package org.jetbrains.kotlin.backend.konan.tests
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.backend.konan.objcexport.getClassIfCategory
 import org.jetbrains.kotlin.backend.konan.testUtils.*
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
 import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
+import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -16,7 +15,7 @@ class GetClassIfCategoryTest : InlineSourceTestEnvironment {
 
     @Test
     fun `test - null when there is receiver`() {
-        val module = createModuleDescriptor(
+        val module = compileAndDeserializeSources(
             """
             class Bar
             class Foo {
@@ -37,7 +36,7 @@ class GetClassIfCategoryTest : InlineSourceTestEnvironment {
 
     @Test
     fun `test - null when there is no extension and no receiver`() {
-        val module = createModuleDescriptor(
+        val module = compileAndDeserializeSources(
             """
             fun topLevelFoo() = Unit
             val prop = 42
@@ -49,7 +48,7 @@ class GetClassIfCategoryTest : InlineSourceTestEnvironment {
 
     @Test
     fun `test - null when extension isObjCObjectType == true`() {
-        val module = createModuleDescriptor(
+        val module = compileAndDeserializeSources(
             """
             import kotlinx.cinterop.ObjCObject
             fun ObjCObject.foo() = Unit
@@ -60,7 +59,7 @@ class GetClassIfCategoryTest : InlineSourceTestEnvironment {
 
     @Test
     fun `test - null when extension is interface`() {
-        val module = createModuleDescriptor(
+        val module = compileAndDeserializeSources(
             """
             interface Foo
             fun Foo.foo() = Unit
@@ -71,9 +70,8 @@ class GetClassIfCategoryTest : InlineSourceTestEnvironment {
 
     @Test
     fun `test - null when extension type is inlined`() {
-        val module = createModuleDescriptor(
+        val module = compileAndDeserializeSources(
             """
-            @JvmInline
             value class Foo(val i: Int)
             fun Foo.foo() = Unit
         """.trimMargin()
@@ -83,7 +81,7 @@ class GetClassIfCategoryTest : InlineSourceTestEnvironment {
 
     @Test
     fun `test - null when extension type isSpecialMapped == true`() {
-        val module = createModuleDescriptor(
+        val module = compileAndDeserializeSources(
             """
             fun Any.anyFoo() = Unit
             fun List<String>.listFoo() = Unit
@@ -100,7 +98,7 @@ class GetClassIfCategoryTest : InlineSourceTestEnvironment {
     @Test
     fun `test - not inline class && not any && not mapped`() {
 
-        val module = createModuleDescriptor(
+        val module = compileAndDeserializeSources(
             """
             class Foo(val i: Int)
             fun Foo.bar() = Unit
@@ -116,8 +114,6 @@ class GetClassIfCategoryTest : InlineSourceTestEnvironment {
 
     override val testDisposable = Disposer.newDisposable("${this::class.simpleName}.testDisposable")
 
-    override val kotlinCoreEnvironment: KotlinCoreEnvironment = createKotlinCoreEnvironment(testDisposable)
-
     @TempDir
     override lateinit var testTempDir: File
 
@@ -126,4 +122,3 @@ class GetClassIfCategoryTest : InlineSourceTestEnvironment {
         disposeRootInWriteAction(testDisposable)
     }
 }
-
