@@ -35,10 +35,16 @@ class UsedLibrariesComputationTest : AbstractNativeSimpleTest() {
         }
         checkNotNull(additionalUnusedModulePath)
 
+        fun TestCompilationResult.Success<out KLIB>.readManifestProperties(): Properties =
+            resultingArtifact.klibFile.resolve("default").resolve("manifest").toPath().readProperties()
+
+        fun TestCompilationResult.Success<out KLIB>.assertNoDependsInManifest() {
+            assertNull(readManifestProperties().getProperty(KLIB_PROPERTY_DEPENDS))
+        }
+
         fun TestCompilationResult.Success<out KLIB>.assertDependencyNames(vararg expectedDependencyNamesInManifest: String) {
             val expectedDependencyNames = expectedDependencyNamesInManifest.toSet()
-            val actualDependencyNames = resultingArtifact.klibFile.resolve("default").resolve("manifest").toPath()
-                .readProperties().propertyList(KLIB_PROPERTY_DEPENDS, escapeInQuotes = true).toSet()
+            val actualDependencyNames = readManifestProperties().propertyList(KLIB_PROPERTY_DEPENDS, escapeInQuotes = true).toSet()
 
             assertEquals(expectedDependencyNames, actualDependencyNames) {
                 "Dependency mismatch for module ${resultingArtifact.klibFile}: expected $expectedDependencyNames, got $actualDependencyNames"
@@ -49,12 +55,16 @@ class UsedLibrariesComputationTest : AbstractNativeSimpleTest() {
         newSourceModules {
             addRegularModule("test")
         }.compileToKlibsViaCli { _, successKlib ->
-            val manifestProperties = successKlib.resultingArtifact.klibFile.resolve("default").resolve("manifest").toPath().readProperties()
-            assertNull(manifestProperties.getProperty(KLIB_PROPERTY_DEPENDS))
+            successKlib.assertNoDependsInManifest()
         }
 
-        // When exporting to an older ABI version (< LATEST_STABLE), depends= is emitted in manifest for backward compatibility
-        val olderAbiArgs = listOf("-Xklib-abi-compatibility-level", "2.4")
+        // When exporting to an older ABI version (< LATEST_STABLE), depends= is emitted in manifest for backward compatibility.
+        // Skip library special compatibility checks because distribution KLIBs (stdlib/posix) use the current ABI/metadata version.
+        val olderAbiArgs = listOf(
+            "-language-version", "2.4",
+            "-XXLanguage:+ExportKlibToOlderAbiVersion",
+            "-Xskip-library-special-compatibility-checks",
+        )
 
         newSourceModules {
             addRegularModule("test")
@@ -95,6 +105,7 @@ class UsedLibrariesComputationTest : AbstractNativeSimpleTest() {
             )
         }
     }
+
     @Test
     fun `Used libraries are computed correctly (low-level)`() {
         val usedPackages = setOf(
