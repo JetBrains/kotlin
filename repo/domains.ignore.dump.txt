@@ -19,6 +19,7 @@ ignored:
  - analysis/stubs/README.md
  - analysis/symbol-light-classes/README.md
  - analysis/test-data-manager/README.md
+ - benchmarks/jvm/kapt/README.md
  - build-common/src/org/jetbrains/kotlin/incremental/impl/README.md
  - build-tools/libraries/README.md
  - compiler/android-tests/ReadMe.md

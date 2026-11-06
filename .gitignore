@@ -73,3 +73,6 @@ kotlin-ide/
 .claude/settings.local.json
 **/xcuserdata
 .test-federation.*
+gradle-user-home/
+__pycache__/
+*.pyc
