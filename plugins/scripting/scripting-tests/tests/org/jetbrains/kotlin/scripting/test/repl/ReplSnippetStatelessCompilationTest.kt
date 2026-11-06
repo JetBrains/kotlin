@@ -5,24 +5,23 @@
 
 package org.jetbrains.kotlin.scripting.compiler.test
 
+import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
+import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
+import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.ScriptNames
-import org.jetbrains.kotlin.scripting.compiler.plugin.KOTLIN_SCRIPTING_PLUGIN_ID
-import org.jetbrains.kotlin.scripting.compiler.plugin.ReplSnippetConfigurationCodec
-import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY
-import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SnippetArtifactMetadata
-import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SnippetArtifactMetadataCodec
-import org.jetbrains.kotlin.scripting.compiler.plugin.impl.readRefinedCompilationConfiguration
-import org.jetbrains.kotlin.scripting.compiler.plugin.impl.readSnippetArtifactMetadata
-import org.jetbrains.kotlin.scripting.compiler.plugin.withRefinedFromCompiler
-import org.jetbrains.kotlin.scripting.compiler.test.TestScriptWithRequire
+import org.jetbrains.kotlin.scripting.compiler.plugin.*
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.*
 import org.jetbrains.kotlin.scripting.test.SCRIPT_TEST_BASE_COMPILER_ARGUMENTS_PROPERTY
+import org.jetbrains.kotlin.scripting.test.getBaseCompilerArgumentsFromProperty
 import org.jetbrains.kotlin.scripting.test.runWithK2JVMCompiler
 import org.jetbrains.kotlin.scripting.test.withTempDir
 import org.jetbrains.kotlin.utils.PathUtil
@@ -31,6 +30,8 @@ import java.io.File
 import java.nio.file.Files
 import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
+import kotlin.script.experimental.dependencies.CompoundDependenciesResolver
+import kotlin.script.experimental.dependencies.maven.MavenDependenciesResolver
 import kotlin.script.experimental.host.createCompilationConfigurationFromTemplate
 import kotlin.script.experimental.impl.internalScriptingRunSuspend
 import kotlin.script.experimental.jvm.JvmDependency
@@ -76,6 +77,166 @@ class ReplSnippetStatelessCompilationTest {
             assertTrue(
                 classFiles2.any { it == "${compiler.lastClassId.shortClassName.asString()}.class" },
                 "snippet 2 wrapper class `${compiler.lastClassId}` must be among classfiles $classFiles2"
+            )
+        }
+    }
+
+    @Test
+    fun testStatelessReplReportsAndLoadsRequestedCompilerPlugin() {
+        if (!isK2) return
+
+        withTempDir { workRoot ->
+            val pluginArguments = serializationPluginClasspath().map { "-Xplugin=${it.absolutePath}" }
+            val plainCompiler = StatelessReplCompiler(
+                workRoot = workRoot,
+                compilerPluginArguments = pluginArguments,
+                additionalClasspath = serializationRuntimeClasspath(),
+            )
+            plainCompiler.compile(
+                "import kotlinx.serialization.Serializable\n@Serializable data class User(val name: String)",
+                "plain-serialization.kts",
+            )
+            val serializerClassSuffix = buildString {
+                append("User")
+                repeat(2) { append('$') }
+                append("serializer.class")
+            }
+            assertTrue(plainCompiler.lastOutputDir.classFileNames().any { it.endsWith(serializerClassSuffix) })
+
+            val source = """
+                import kotlinx.serialization.Serializable
+
+                @Serializable
+                data class User(val name: String)
+            """.trimIndent()
+            val firstCompiler = StatelessReplCompiler(
+                workRoot = workRoot,
+                snippetConfiguration = serializationPluginConfiguration(),
+                additionalClasspath = serializationRuntimeClasspath(),
+            )
+            val errors = firstCompiler.compileCollectingErrors(source, "plugin-request.repl.kts")
+            val missingPluginsErrors = errors.filter { it.startsWith("Compilation requires compiler plugin ") }
+            assertEquals(1, missingPluginsErrors.size, "Expected a single missing plugins diagnostic, got: $errors")
+
+            val [requestKey, requestPluginId, requestClasspath, requestOptions] =
+                assertNotNull(StatelessReplPluginRequestsCodec.extractMissingPluginRequests(missingPluginsErrors.single())).single()
+            assertEquals(serializationPluginRequestKey(), requestKey)
+            assertTrue(requestClasspath.single().isFile)
+            assertTrue(requestOptions.isEmpty())
+
+            val forwardedPluginArguments = requestClasspath.map { "-Xplugin=${it.absolutePath}" }
+            val forwardedCompiler = StatelessReplCompiler(
+                workRoot = workRoot,
+                snippetConfiguration = serializationPluginConfiguration(),
+                loadedPlugins = listOf(StatelessReplLoadedPlugin(requestKey, requestPluginId, requestOptions)),
+                compilerPluginArguments = forwardedPluginArguments,
+                additionalClasspath = serializationRuntimeClasspath(),
+            )
+            forwardedCompiler.compile(source, "plugin-forwarded.repl.kts")
+            assertTrue(
+                forwardedCompiler.lastOutputDir.classFileNames().any { it.endsWith(serializerClassSuffix) },
+                "the serialization plugin must generate the serializer class",
+            )
+            forwardedCompiler.compile("User.serializer().descriptor.serialName", "plugin-usage.repl.kts")
+        }
+    }
+
+    @Test
+    fun testStatelessReplReportsAndLoadsSeveralCompilerPluginsRequestedBySingleSnippet() {
+        if (!isK2) return
+
+        withTempDir { workRoot ->
+            val snippetConfiguration = ScriptCompilationConfiguration {
+                compilerPlugins(
+                    ScriptCompilerPlugin.fromClasspath(serializationPluginClasspath()),
+                    ScriptCompilerPlugin.fromClasspath(allOpenPluginClasspath(), listOf(ALL_OPEN_SERIALIZABLE_OPTION)),
+                )
+            }
+            val source = """
+                import kotlinx.serialization.Serializable
+
+                @Serializable
+                class User(val name: String)
+            """.trimIndent()
+            val errors = StatelessReplCompiler(
+                workRoot = workRoot,
+                snippetConfiguration = snippetConfiguration,
+                additionalClasspath = serializationRuntimeClasspath(),
+            ).compileCollectingErrors(source, "plugins-request.repl.kts")
+            val missingPluginsErrors = errors.filter { it.startsWith("Compilation requires compiler plugin ") }
+            assertEquals(2, missingPluginsErrors.size, "Expected a diagnostic per missing plugin, got: $errors")
+
+            val requests = missingPluginsErrors.flatMap { assertNotNull(StatelessReplPluginRequestsCodec.extractMissingPluginRequests(it)) }
+            assertEquals(
+                listOf(serializationPluginRequestKey(), allOpenPluginRequestKey()),
+                requests.map { it.key },
+            )
+            assertEquals(listOf(emptyList(), listOf(ALL_OPEN_SERIALIZABLE_OPTION)), requests.map { it.options })
+            assertEquals(2, requests.map { it.pluginId }.toSet().size, "Expected distinct plugin ids, got: $requests")
+
+            val plugins = StatelessReplCompilerPlugins.EMPTY.merge(requests).valueOrThrow()
+            val forwardedCompiler = StatelessReplCompiler(
+                workRoot = workRoot,
+                snippetConfiguration = snippetConfiguration,
+                loadedPlugins = requests.map { StatelessReplLoadedPlugin(it.key, it.pluginId, it.options) },
+                compilerPluginArguments = plugins.cliArguments(),
+                additionalClasspath = serializationRuntimeClasspath(),
+            )
+            forwardedCompiler.compile(source, "plugins-forwarded.repl.kts")
+            assertTrue(
+                forwardedCompiler.lastOutputDir.classFileNames().any { it.endsWith("User\$\$serializer.class") },
+                "the serialization plugin must generate the serializer class",
+            )
+            // The all-open plugin makes the serializable class open, so it can be subclassed in a later snippet.
+            forwardedCompiler.compile("class Admin(name: String) : User(name)", "plugins-usage.repl.kts")
+        }
+    }
+
+    @Test
+    fun testStatelessReplRejectsConflictingRequestsOfSamePluginInSingleSnippet() {
+        if (!isK2) return
+
+        withTempDir { workRoot ->
+            val compiler = StatelessReplCompiler(
+                workRoot = workRoot,
+                snippetConfiguration = ScriptCompilationConfiguration {
+                    compilerPlugins(
+                        ScriptCompilerPlugin.fromClasspath(allOpenPluginClasspath(), listOf("annotation=test.First")),
+                        ScriptCompilerPlugin.fromClasspath(allOpenPluginClasspath(), listOf("annotation=test.Second")),
+                    )
+                },
+            )
+            val errors = compiler.compileCollectingErrors("1", "plugins-conflict.repl.kts")
+            assertTrue(
+                errors.any { it.contains("conflicting options for compiler plugin", ignoreCase = true) },
+                "Expected a conflict diagnostic, got: $errors",
+            )
+            val requests = errors.mapNotNull(StatelessReplPluginRequestsCodec::extractMissingPluginRequests).flatten()
+            assertEquals(listOf(listOf("annotation=test.First")), requests.map { it.options })
+        }
+    }
+
+    @Test
+    fun testStatelessReplRejectsChangedOptionsForLoadedCompilerPlugin() {
+        if (!isK2) return
+
+        withTempDir { workRoot ->
+            val compiler = StatelessReplCompiler(
+                workRoot = workRoot,
+                snippetConfiguration = serializationPluginConfiguration(listOf("different=true")),
+                loadedPlugins = listOf(
+                    StatelessReplLoadedPlugin(
+                        serializationPluginRequestKey(),
+                        "org.jetbrains.kotlinx.serialization",
+                        emptyList(),
+                    )
+                ),
+                compilerPluginArguments = serializationPluginClasspath().map { "-Xplugin=${it.absolutePath}" },
+            )
+            compiler.compileExpectingFailure(
+                "1",
+                "plugin-conflict.repl.kts",
+                listOf("conflicting options for compiler plugin"),
             )
         }
     }
@@ -541,6 +702,9 @@ private class StatelessReplCompiler(
      * classpath exactly as the hosts do; `null` leaves the transported configuration as the only source.
      */
     private val definitionClass: KClass<*>? = null,
+    private val loadedPlugins: List<StatelessReplLoadedPlugin> = emptyList(),
+    private val compilerPluginArguments: List<String> = emptyList(),
+    private val additionalClasspath: List<File> = emptyList(),
 ) {
     private val snippetConfigurationFile: File? by lazy {
         snippetConfiguration?.let { File(workRoot, "snippet-configuration.bin").also { f -> ReplSnippetConfigurationCodec.writeTo(it, f) } }
@@ -594,6 +758,18 @@ private class StatelessReplCompiler(
         }
     }
 
+    /** Compiles expecting a compilation error and returns the reported error messages; the session is left untouched. */
+    fun compileCollectingErrors(source: String, name: String): List<String> {
+        val outputDir = File(workRoot, "out-failing-${counter++}").also { it.mkdirs() }
+        val messageCollector = MessageCollectorImpl()
+        val exitCode = withSourceFile(source, name) { scriptFile ->
+            val arguments = getBaseCompilerArgumentsFromProperty().orEmpty() + buildArguments(scriptFile, outputDir)
+            K2JVMCompiler().exec(messageCollector, Services.EMPTY, parseCommandLineArguments<K2JVMCompilerArguments>(arguments))
+        }
+        assertEquals(ExitCode.COMPILATION_ERROR, exitCode, "Unexpected exit code, messages: ${messageCollector.messages}")
+        return messageCollector.errors.map { it.message }
+    }
+
     private fun <R> withSourceFile(source: String, name: String, body: (File) -> R): R {
         val sourceDir = Files.createTempDirectory("k2-repl-cli-src-").toFile()
         try {
@@ -604,8 +780,13 @@ private class StatelessReplCompiler(
     }
 
     private fun buildArguments(scriptFile: File, outputDir: File): List<String> {
-        val classpathEntries = listOf(ForTestCompileRuntime.runtimeJarForTests()) + priorOutputDirs
+        val classpathEntries = mutableListOf<File>()
+        classpathEntries.add(ForTestCompileRuntime.runtimeJarForTests())
+        classpathEntries.add(ForTestCompileRuntime.scriptingTestsRuntimeClasspathForTests())
+        classpathEntries.addAll(additionalClasspath)
+        classpathEntries.addAll(priorOutputDirs)
         return buildList {
+            addAll(compilerPluginArguments)
             add(K2JVMCompilerArguments::classpath.cliArgument)
             add(classpathEntries.joinToString(File.pathSeparator) { it.absolutePath })
             add(K2JVMCompilerArguments::allowAnyScriptsInSourceRoots.cliArgument)
@@ -615,6 +796,13 @@ private class StatelessReplCompiler(
             snippetConfigurationFile?.let {
                 add("-P")
                 add("plugin:$KOTLIN_SCRIPTING_PLUGIN_ID:repl-snippet-configuration=${it.absolutePath}")
+            }
+            loadedPlugins.forEach { [key, pluginId, options] ->
+                add("-P")
+                add(
+                    "plugin:$KOTLIN_SCRIPTING_PLUGIN_ID:repl-snippet-loaded-plugin=" +
+                            StatelessReplPluginRequestsCodec.encodeLoadedPluginOption(key, pluginId, options)
+                )
             }
             definitionClass?.let {
                 add("-P")
@@ -636,6 +824,38 @@ private class StatelessReplCompiler(
         }
     }
 }
+
+private fun serializationRuntimeClasspath(): List<File> =
+    runBlocking {
+        CompoundDependenciesResolver(MavenDependenciesResolver())
+            .resolve("org.jetbrains.kotlinx:kotlinx-serialization-core:1.8.1")
+            .valueOrThrow()
+    }
+
+private fun serializationPluginConfiguration(options: List<String> = emptyList()): ScriptCompilationConfiguration =
+    ScriptCompilationConfiguration {
+        compilerPlugins(ScriptCompilerPlugin.fromClasspath(serializationPluginClasspath(), options))
+    }
+
+private fun serializationPluginClasspath(): List<File> =
+    System.getProperty("kotlin.script.test.kotlinx.serialization.plugin.classpath")
+        ?.split(File.pathSeparator)
+        ?.map(::File)
+        .orEmpty()
+
+private fun serializationPluginRequestKey(): String =
+    serializationPluginClasspath().joinToString(File.pathSeparator) { it.absoluteFile.normalize().path }
+
+private const val ALL_OPEN_SERIALIZABLE_OPTION = "annotation=kotlinx.serialization.Serializable"
+
+private fun allOpenPluginClasspath(): List<File> =
+    System.getProperty("kotlin.script.test.allopen.plugin.classpath")
+        ?.split(File.pathSeparator)
+        ?.map(::File)
+        .orEmpty()
+
+private fun allOpenPluginRequestKey(): String =
+    allOpenPluginClasspath().joinToString(File.pathSeparator) { it.absoluteFile.normalize().path }
 
 private fun File.classFileNames(): List<String> =
     walkTopDown().filter { it.isFile && it.extension == "class" }.map { it.name }.toList()

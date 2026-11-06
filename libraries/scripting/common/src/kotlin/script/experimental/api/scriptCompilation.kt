@@ -15,6 +15,32 @@ import kotlin.script.experimental.impl.refineOnAnnotationsWithLazyDataCollection
 import kotlin.script.experimental.impl.simpleRefineImpl
 import kotlin.script.experimental.util.PropertiesCollection
 
+/** A script compilation plugin request; use [byId] or [fromClasspath] so exactly one plugin identity is specified. */
+class ScriptCompilerPlugin private constructor(
+    val id: String?,
+    val classpath: List<File>,
+    val options: List<String>,
+) : Serializable {
+    companion object {
+        fun byId(id: String, options: List<String> = emptyList()): ScriptCompilerPlugin {
+            require(id.isNotBlank()) { "A compiler plugin id must not be blank." }
+            return ScriptCompilerPlugin(id, emptyList(), options)
+        }
+
+        fun fromClasspath(classpath: List<File>, options: List<String> = emptyList()): ScriptCompilerPlugin {
+            require(classpath.isNotEmpty()) { "A compiler plugin classpath must not be empty." }
+            return ScriptCompilerPlugin(null, classpath, options)
+        }
+    }
+
+    override fun equals(other: Any?): Boolean = other is ScriptCompilerPlugin &&
+            id == other.id && classpath == other.classpath && options == other.options
+
+    override fun hashCode(): Int = 31 * (31 * id.hashCode() + classpath.hashCode()) + options.hashCode()
+
+    override fun toString(): String = "ScriptCompilerPlugin(id=$id, classpath=$classpath, options=$options)"
+}
+
 interface ScriptCompilationConfigurationKeys
 
 /**
@@ -159,6 +185,9 @@ val ScriptCompilationConfigurationKeys.dependencyRepositories by PropertiesColle
  * The list of compiler options that will be applied on script compilation, the syntax is the same as for CLI compiler
  */
 val ScriptCompilationConfigurationKeys.compilerOptions by PropertiesCollection.key<List<String>>() // Q: CommonCompilerOptions instead?
+
+/** The list of compiler plugins requested for script compilation. */
+val ScriptCompilationConfigurationKeys.compilerPlugins by PropertiesCollection.key<List<ScriptCompilerPlugin>>()
 
 /**
  * The callback that will be called on the script compilation before parsing the script

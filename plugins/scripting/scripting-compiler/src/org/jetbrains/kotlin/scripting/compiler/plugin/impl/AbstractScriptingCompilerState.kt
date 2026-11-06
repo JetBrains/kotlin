@@ -84,6 +84,7 @@ abstract class AbstractScriptingCompilerState<P : ModuleDataProvider> internal c
             sources,
             messageCollector,
             getRefinedConfiguration,
+            pluginArgumentsHandled = true,
         )
         sessionFactoryContext = sessionFactoryContext.updatedFor(configuration)
     }

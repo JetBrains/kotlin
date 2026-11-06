@@ -201,6 +201,7 @@ internal fun configureLibrarySessionIfNeeded(
     state: ScriptCompilerState,
     compilerConfiguration: CompilerConfiguration,
     classpath: List<File>,
+    extensionRegistrars: List<FirExtensionRegistrar> = state.extensionRegistrars,
 ): FirSession? {
     // needed for class finders for now anyway
     compilerConfiguration.addJvmClasspathRoots(classpath)
@@ -212,7 +213,7 @@ internal fun configureLibrarySessionIfNeeded(
             state.sessionFactoryContext,
             state.moduleDataProvider,
             state.sharedLibrarySession,
-            state.extensionRegistrars,
+            extensionRegistrars,
             compilerConfiguration,
         )
     }
