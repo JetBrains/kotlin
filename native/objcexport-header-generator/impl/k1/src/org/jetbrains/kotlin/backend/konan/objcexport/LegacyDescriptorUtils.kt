@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.backend.common.serialization
+package org.jetbrains.kotlin.backend.konan.objcexport
 
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.*
@@ -15,9 +15,10 @@ import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.*
 
-@Deprecated("Moved to the ':core:descriptors' module", level = DeprecationLevel.HIDDEN)
+@Deprecated("Moved to the ':core:descriptors' module", level = HIDDEN)
 fun DeclarationDescriptor.findPackage(): PackageFragmentDescriptor = findPackage()
 
+@OptIn(K1Deprecation::class)
 private fun sourceByIndex(descriptor: CallableMemberDescriptor, index: Int): SourceFile {
     val fragment = descriptor.findPackage() as KlibMetadataDeserializedPackageFragment
     val fileName = fragment.proto.strings.stringList[index]
@@ -27,7 +28,7 @@ private fun sourceByIndex(descriptor: CallableMemberDescriptor, index: Int): Sou
 @OptIn(K1Deprecation::class)
 fun CallableMemberDescriptor.findSourceFile(): SourceFile {
     val source = this.source.containingFile
-    if (source != SourceFile.NO_SOURCE_FILE)
+    if (source != NO_SOURCE_FILE)
         return source
     return when {
         this is DeserializedSimpleFunctionDescriptor && proto.hasExtension(KlibMetadataProtoBuf.functionFile) ->

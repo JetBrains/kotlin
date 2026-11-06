@@ -19,6 +19,7 @@ dependencies {
     implementation(project(":compiler:ir.objcinterop"))
     implementation(project(":compiler:ir.serialization.native"))
     implementation(project(":core:descriptors"))
+    implementation(project(":core:deserialization"))
     implementation(project(":native:frontend.native"))
     testFixturesImplementation(testFixtures(project(":native:objcexport-header-generator")))
     testFixturesApi(testFixtures(project(":compiler:tests-common")))
@@ -52,6 +53,7 @@ dependencies {
     testFixturesImplementation(project(":native:native.config"))
     testFixturesImplementation(project(":compiler:resolution"))
     testFixturesImplementation(project(":compiler:frontend"))
+    testFixturesImplementation(project(":core:deserialization"))
 
     testImplementation(project(":compiler:compiler.version"))
     testImplementation(project(":compiler:config"))

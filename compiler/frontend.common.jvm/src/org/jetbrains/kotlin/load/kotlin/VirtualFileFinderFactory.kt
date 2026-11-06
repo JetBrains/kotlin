@@ -18,12 +18,11 @@ package org.jetbrains.kotlin.load.kotlin
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analyzer.ModuleInfo
 
 interface VirtualFileFinderFactory {
     fun create(scope: GlobalSearchScope): VirtualFileFinder
 
-    fun create(project: Project, module: ModuleInfo): VirtualFileFinder
+    fun create(project: Project): VirtualFileFinder
 
     companion object SERVICE {
         fun getInstance(project: Project): VirtualFileFinderFactory =

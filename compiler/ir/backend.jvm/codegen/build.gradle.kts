@@ -14,7 +14,6 @@ dependencies {
     implementation(project(":compiler:psi:psi-frontend-utils"))
     implementation(project(":core:descriptors"))
     implementation(project(":core:descriptors.jvm"))
-    implementation(project(":core:deserialization"))
     implementation(libs.intellij.asm)
     compileOnly(intellijCore())
 }

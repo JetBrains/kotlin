@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.storage.StorageManager
 import java.lang.ref.SoftReference
 
+@K1Deprecation
 open class KlibMetadataDeserializedPackageFragment(
     fqName: FqName,
     private val metadata: KlibMetadataComponent,
@@ -51,6 +52,7 @@ open class KlibMetadataDeserializedPackageFragment(
         get() = protoForNames
 }
 
+@K1Deprecation
 class BuiltInKlibMetadataDeserializedPackageFragment(
     fqName: FqName,
     metadata: KlibMetadataComponent,
@@ -71,15 +73,7 @@ class BuiltInKlibMetadataDeserializedPackageFragment(
         get() = false
 }
 
-class KlibMetadataCachedPackageFragment(
-    byteArray: ByteArray,
-    storageManager: StorageManager,
-    module: ModuleDescriptor,
-    override val protoForNames: ProtoBuf.PackageFragment = parsePackageFragment(byteArray),
-    fqName: FqName = FqName(protoForNames.getExtension(KlibMetadataProtoBuf.fqName))
-) : KlibMetadataPackageFragment(fqName, storageManager, module, containerSource = null)
-
-@OptIn(K1Deprecation::class)
+@K1Deprecation
 abstract class KlibMetadataPackageFragment(
     fqName: FqName,
     storageManager: StorageManager,

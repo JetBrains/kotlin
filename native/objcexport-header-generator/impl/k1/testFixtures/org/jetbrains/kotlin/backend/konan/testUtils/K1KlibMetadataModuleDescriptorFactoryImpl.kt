@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.konan.testUtils
 
 import org.jetbrains.kotlin.K1Deprecation
-import org.jetbrains.kotlin.backend.common.serialization.metadata.DynamicTypeDeserializer
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.functions.functionInterfacePackageFragmentProvider
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -22,6 +21,7 @@ import org.jetbrains.kotlin.library.components.metadata
 import org.jetbrains.kotlin.library.isAnyPlatformStdlib
 import org.jetbrains.kotlin.library.metadata.*
 import org.jetbrains.kotlin.library.uniqueName
+import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.parentOrNull
@@ -31,6 +31,13 @@ import org.jetbrains.kotlin.resolve.ImplicitIntegerCoercion
 import org.jetbrains.kotlin.resolve.sam.SamConversionResolverImpl
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.SimpleType
+import org.jetbrains.kotlin.types.checker.StrictEqualityTypeChecker
+import org.jetbrains.kotlin.types.createDynamicType
+import org.jetbrains.kotlin.types.error.ErrorTypeKind
+import org.jetbrains.kotlin.types.error.ErrorUtils
+import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 @K1Deprecation
@@ -185,6 +192,7 @@ class K1KlibMetadataModuleDescriptorFactoryImpl {
 }
 
 
+@OptIn(K1Deprecation::class)
 private fun createDeserializedPackageFragments(
     library: KotlinLibrary,
     moduleDescriptor: ModuleDescriptor,
@@ -222,6 +230,27 @@ private fun createDeserializedPackageFragments(
                     partName = partName,
                     containerSource = containerSource,
                 )
+        }
+    }
+}
+
+@OptIn(K1Deprecation::class)
+private object DynamicTypeDeserializer : FlexibleTypeDeserializer {
+    const val id = DYNAMIC_TYPE_DESERIALIZER_ID
+
+    override fun create(proto: ProtoBuf.Type, flexibleId: String, lowerBound: SimpleType, upperBound: SimpleType): KotlinType {
+        if (flexibleId != id) {
+            return ErrorUtils.createErrorType(
+                ErrorTypeKind.UNEXPECTED_FLEXIBLE_TYPE_ID, flexibleId, lowerBound.toString(), upperBound.toString()
+            )
+        }
+
+        return if (StrictEqualityTypeChecker.strictEqualTypes(lowerBound, lowerBound.builtIns.nothingType) &&
+            StrictEqualityTypeChecker.strictEqualTypes(upperBound, upperBound.builtIns.nullableAnyType)
+        ) {
+            createDynamicType(lowerBound.builtIns)
+        } else {
+            ErrorUtils.createErrorType(ErrorTypeKind.ILLEGAL_TYPE_RANGE_FOR_DYNAMIC, lowerBound.toString(), upperBound.toString())
         }
     }
 }
