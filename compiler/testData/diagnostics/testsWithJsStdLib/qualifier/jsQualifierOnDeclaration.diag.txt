@@ -1,0 +1,3 @@
+/topLevelExternal.kt:28:17: error: Declaration of such kind (inner class) cannot be external.
+/typealiases.kt:105:6: error: Qualifier contains illegal characters.
+/typealiasOnFile.kt:125:1: error: Only external declarations are allowed in files marked with 'JsQualifier' annotation.
