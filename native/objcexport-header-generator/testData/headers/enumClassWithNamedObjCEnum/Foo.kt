@@ -1,9 +1,9 @@
+@file:OptIn(ExperimentalObjCEnum::class)
+
 import kotlin.native.ObjCEnum
 import kotlin.native.ObjCName
 import kotlin.experimental.ExperimentalObjCEnum
 import kotlin.experimental.ExperimentalObjCName
-
-@file:OptIn(ExperimentalObjCEnum::class)
 
 // Note that the literal order is not alphabetic on purpose, ensuring that tests fail if we can't rely on the
 // order to be preserved for the ordinal value.

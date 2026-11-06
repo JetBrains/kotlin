@@ -172,11 +172,17 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     }
 
     @Test
+    // Error types cannot be serialized into a klib, so the test module cannot be compiled
+    // in the K1 test pipeline; the source-based Analysis API pipeline still covers it.
+    @IgnoreK1(expectCrash = true)
     fun `test - functionWithErrorType`() {
         doTest(headersTestDataDir.resolve("functionWithErrorType"))
     }
 
     @Test
+    // Error types cannot be serialized into a klib, so the test module cannot be compiled
+    // in the K1 test pipeline; the source-based Analysis API pipeline still covers it.
+    @IgnoreK1(expectCrash = true)
     fun `test - functionWithErrorTypeAndFrameworkName`() {
         doTest(headersTestDataDir.resolve("functionWithErrorTypeAndFrameworkName"), Configuration(frameworkName = "shared"))
     }
@@ -217,11 +223,17 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     }
 
     @Test
+    // Error types cannot be serialized into a klib, so the test module cannot be compiled
+    // in the K1 test pipeline; the source-based Analysis API pipeline still covers it.
+    @IgnoreK1(expectCrash = true)
     fun `test - classWithUnresolvedSuperType`() {
         doTest(headersTestDataDir.resolve("classWithUnresolvedSuperType"))
     }
 
     @Test
+    // Error types cannot be serialized into a klib, so the test module cannot be compiled
+    // in the K1 test pipeline; the source-based Analysis API pipeline still covers it.
+    @IgnoreK1(expectCrash = true)
     fun `test - classWithUnresolvedSuperTypeGenerics`() {
         doTest(headersTestDataDir.resolve("classWithUnresolvedSuperTypeGenerics"))
     }
@@ -288,6 +300,10 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     }
 
     @Test
+    // The test data declares conflicting constructor overloads that are only disambiguated
+    // by @ObjCName in the generated header; such code is not compilable Kotlin, so the test
+    // module cannot be compiled in the K1 test pipeline; the Analysis API pipeline still covers it.
+    @IgnoreK1(expectCrash = true)
     fun `test - constructors`() {
         doTest(headersTestDataDir.resolve("constructors"))
     }
@@ -298,7 +314,6 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     }
 
     @Test
-    @IgnoreK1 // The corresponding checks work only for descriptors built from klibs, not from the sources. See KT-87794
     fun `test - companion blocks and extensions`() {
         doTest(headersTestDataDir.resolve("companionBlocksAndExtensions"))
     }
@@ -471,6 +486,9 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     }
 
     @Test
+    // A public property of a private type is not compilable Kotlin, so the test module
+    // cannot be compiled in the K1 test pipeline; the Analysis API pipeline still covers it.
+    @IgnoreK1(expectCrash = true)
     fun `test - privateTopLevelClassProperty`() {
         doTest(headersTestDataDir.resolve("privateTopLevelClassProperty"))
     }
