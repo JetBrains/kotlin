@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.buildtools.internal.serializability
 
 import org.jetbrains.kotlin.buildtools.api.trackers.BuildMetricsCollector
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
+import org.jetbrains.kotlin.buildtools.api.trackers.IcEventCollector
 import org.jetbrains.kotlin.buildtools.internal.KotlinLoggerMessageCollectorAdapter
 
 internal class MetricsCollectorVisitor(private val metricsCollector: BuildMetricsCollector) : MessageVisitor {
@@ -44,6 +45,16 @@ internal class LookupMessageVisitor(private val lookupTracker: CompilerLookupTra
         }
         is Message.LookupTracker.Clear -> {
             lookupTracker.clear()
+            true
+        }
+        else -> false
+    }
+}
+
+internal class IcEventVisitor(private val icEventCollector: IcEventCollector) : MessageVisitor {
+    override fun accept(message: Message): Boolean = when (message) {
+        is Message.IcEventCollector.CollectEvents -> {
+            icEventCollector.collectEvents(message.events)
             true
         }
         else -> false
