@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.incremental
 
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.incremental.ProtoCompareGenerated.ProtoBufClassKind
 import org.jetbrains.kotlin.incremental.ProtoCompareGenerated.ProtoBufPackageKind
 import org.jetbrains.kotlin.incremental.storage.ProtoMapValue
@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
-import org.jetbrains.kotlin.serialization.deserialization.descriptorVisibility
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 
 data class Difference(
@@ -54,7 +53,7 @@ internal val MessageLite.isPrivate: Boolean
             is ProtoBuf.EnumEntry -> return false // EnumEntry doesn't have a visibility flag
             else -> error("Unknown message: $this")
         }
-        return DescriptorVisibilities.isPrivate(ProtoEnumFlags.descriptorVisibility(visibility))
+        return Visibilities.isPrivate(ProtoEnumFlags.visibility(visibility))
     }
 
 private fun MessageLite.name(nameResolver: NameResolver): String {

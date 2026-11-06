@@ -67,81 +67,6 @@ private class CoarseJavaInteropCoordinator(
     }
 }
 
-private class PreciseJavaInteropCoordinator(
-    private val reporter: BuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
-    messageCollector: MessageCollector,
-) : JavaInteropCoordinator(messageCollector) {
-    private val changedUntrackedJavaClasses = mutableSetOf<ClassId>()
-
-    override fun hasChangedUntrackedJavaClasses(): Boolean = changedUntrackedJavaClasses.isNotEmpty()
-
-    @OptIn(K1Deprecation::class)
-    override fun makeJavaClassesTracker(platformCache: IncrementalJvmCache): JavaClassesTracker? {
-        val changesTracker = JavaClassesTrackerImpl(
-            platformCache, changedUntrackedJavaClasses.toSet(),
-            compilerConfiguration.languageVersionSettings,
-        )
-        changedUntrackedJavaClasses.clear()
-        return changesTracker
-    }
-
-    override fun doAnalyzeChangesInJavaSources(
-        caches: IncrementalJvmCachesManager,
-        changedFiles: DeterminableFiles.Known,
-        mutableDirtyFiles: DirtyFilesContainer,
-        psiFilesHolder: PsiFilesHolder
-    ): CompilationMode.Rebuild? {
-        val rebuildReason = processChangedJava(changedFiles, caches, psiFilesHolder)
-        if (rebuildReason != null) return CompilationMode.Rebuild(rebuildReason)
-        return null
-    }
-
-    private fun processChangedJava(
-        changedFiles: DeterminableFiles.Known,
-        caches: IncrementalJvmCachesManager,
-        psiFilesHolder: PsiFilesHolder,
-    ): BuildAttribute? {
-        val javaFiles = (changedFiles.modified + changedFiles.removed).filter(File::isJavaFile)
-
-        for (javaFile in javaFiles) {
-            if (!caches.platformCache.isTrackedFile(javaFile)) {
-                if (!javaFile.exists()) {
-                    // todo: can we do this more optimal?
-                    reporter.info { "Could not get changed for untracked removed java file $javaFile" }
-                    return BuildAttribute.JAVA_CHANGE_UNTRACKED_FILE_IS_REMOVED
-                }
-
-                val psiFile = psiFilesHolder.get(javaFile)
-                if (psiFile !is PsiJavaFile) {
-                    reporter.info { "[Precise Java tracking] Expected PsiJavaFile, got ${psiFile?.javaClass}" }
-                    return BuildAttribute.JAVA_CHANGE_UNEXPECTED_PSI
-                }
-
-                for (psiClass in psiFile.classes) {
-                    val qualifiedName = psiClass.qualifiedName
-                    if (qualifiedName == null) {
-                        reporter.info { "[Precise Java tracking] Class with unknown qualified name in $javaFile" }
-                        return BuildAttribute.JAVA_CHANGE_UNKNOWN_QUALIFIER
-                    }
-
-                    processChangedUntrackedJavaClass(psiClass, ClassId.topLevel(FqName(qualifiedName)))
-                }
-            }
-        }
-
-        caches.platformCache.markDirty(javaFiles)
-        return null
-    }
-
-    private fun processChangedUntrackedJavaClass(psiClass: PsiClass, classId: ClassId) {
-        changedUntrackedJavaClasses.add(classId)
-        for (innerClass in psiClass.innerClasses) {
-            val name = innerClass.name ?: continue
-            processChangedUntrackedJavaClass(innerClass, classId.createNestedClassId(Name.identifier(name)))
-        }
-    }
-}
-
 /**
  * Common logic of IncrementalCompilerRunner related to kotlin+java interop
  */
@@ -192,15 +117,10 @@ internal sealed class JavaInteropCoordinator(
 
     companion object {
         fun getImplementation(
-            usePreciseJavaTracking: Boolean,
             reporter: BuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
             messageCollector: MessageCollector,
         ): JavaInteropCoordinator {
-            return if (usePreciseJavaTracking) {
-                PreciseJavaInteropCoordinator(reporter, messageCollector)
-            } else {
-                CoarseJavaInteropCoordinator(reporter, messageCollector)
-            }
+            return CoarseJavaInteropCoordinator(reporter, messageCollector)
         }
     }
 }
