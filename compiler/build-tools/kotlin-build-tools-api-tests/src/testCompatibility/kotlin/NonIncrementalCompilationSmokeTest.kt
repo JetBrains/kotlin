@@ -172,7 +172,7 @@ class NonIncrementalCompilationSmokeTest : BaseCompilationTest() {
         }
     }
 
-    @DisplayName("Rich d.ts generation exports Any and dynamic as unknown when EXPORT_UNTYPED_AS_UNKNOWN is set")
+    @DisplayName("Rich d.ts generation exports Any and dynamic as unknown when USE_UNKNOWN_INSTEAD_ANY is set")
     @BtaV2StrategyAgnosticCompilationTest
     @TestMetadata("js-only-ic-basic-app")
     fun richDtsUseUnknownInsteadAny(strategyConfig: CompilerExecutionStrategyConfiguration) {
