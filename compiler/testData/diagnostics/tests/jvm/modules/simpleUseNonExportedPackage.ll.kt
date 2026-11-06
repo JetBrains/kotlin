@@ -1,7 +1,5 @@
 // LL_FIR_DIVERGENCE
-// `JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE` is not reported for declarations of a dependency module analyzed from sources:
-// `FirJvmModuleAccessibilityQualifiedAccessChecker` skips source symbols (KT-90960), and the LL test platform's
-// `CliJavaModuleResolver` has no user modules, so source files don't belong to their `module-info.java` module.
+// `JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE` is not reported for Kotlin source declarations (KT-91196).
 // LL_FIR_DIVERGENCE
 // RUN_PIPELINE_TILL: FRONTEND
 // JDK_KIND: FULL_JDK_11
@@ -79,9 +77,9 @@ import a.impl.*
 
 val a1: A = A()
 val a2: A = A.getInstance()
-val a3: AImpl = A.getInstance()
-val a4: String = AImpl.method()
-val a5: String = AImpl.field
+val a3: <!JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE!>AImpl<!> = A.getInstance()
+val a4: String = <!JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE!>AImpl<!>.<!JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE!>method<!>()
+val a5: String = <!JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE!>AImpl<!>.<!JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE!>field<!>
 
 val k1: K = K()
 val k2: K = K.getInstance()

@@ -508,6 +508,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleCompilerFacilityTestGenerate
     }
 
     @Test
+    @TestMetadata("javaModuleDoesNotReadSourceModule.kt")
+    public void testJavaModuleDoesNotReadSourceModule() {
+      run("javaModuleDoesNotReadSourceModule.kt");
+    }
+
+    @Test
     @TestMetadata("jvmName.kt")
     public void testJvmName() {
       run("jvmName.kt");
