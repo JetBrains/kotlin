@@ -263,4 +263,85 @@ class WasmJsContinuousBuildIT : AbstractWebContinuousBuildIT() {
         // org.gradle.internal.build.BuildLayoutValidator$BuildLayoutException: Directory '...' does not contain a Gradle build.
         Thread.sleep(5000)
     }
+
+    // KT-91230
+    @GradleTest
+    @Timeout(value = 10, unit = TimeUnit.MINUTES)
+    fun testWasmJsWithExplicitPortAndOccupiedDefaultPortRange(
+        gradleVersion: GradleVersion,
+    ) {
+
+        project("empty", gradleVersion) {
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "wasm-browser-simple-project"
+            }
+
+            plugins {
+                kotlin("multiplatform")
+            }
+
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    @OptIn(ExperimentalWasmDsl::class)
+                    wasmJs {
+                        binaries.executable()
+                        browser(bundler = KotlinBrowserBundler.NONE)
+                    }
+                }
+            }
+
+            projectPath.resolve("src/wasmJsMain/kotlin/A.kt")
+                .also {
+                    it.createParentDirectories()
+                }
+                .writeText(
+                    """
+                    fun main() {
+                        println("Hello, world")
+                    }
+                    """.trimIndent()
+                )
+
+            val explicitPort = ServerSocket(0).use { it.localPort }
+            val localhost = InetAddress.getByName("localhost")
+            val occupiedPorts = (DEFAULT_PORT until DEFAULT_PORT + 1_000).mapNotNull { port ->
+                try {
+                    ServerSocket(port, 0, localhost)
+                } catch (_: IOException) {
+                    null
+                }
+            }
+
+            val daemonRelease = PipedOutputStream()
+            val daemonStdin = PipedInputStream(daemonRelease)
+
+            val closer = thread(name = "testWasmJsWithExplicitPortAndOccupiedDefaultPortRange closer", isDaemon = true) {
+                daemonRelease.close()
+            }
+
+            try {
+                build(
+                    "wasmJsBrowserDevelopmentRun",
+                    "--port=$explicitPort",
+                    buildOptions = defaultBuildOptions.copy(
+                        continuousBuild = true,
+                    ),
+                    inputStream = daemonStdin,
+                    forwardBuildOutput = true,
+                ) {
+                    closer.join()
+
+                    assertOutputContains("Development server started at http://localhost:$explicitPort")
+                }
+            } finally {
+                occupiedPorts.forEach { it.close() }
+            }
+        }
+
+        // @GradleTest automatically deletes the project directory.
+        // However, sometimes it does this too quickly.
+        // So, give some time to allow the Gradle daemon to close successfully, avoiding the error:
+        // org.gradle.internal.build.BuildLayoutValidator$BuildLayoutException: Directory '...' does not contain a Gradle build.
+        Thread.sleep(5000)
+    }
 }
