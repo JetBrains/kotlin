@@ -5,7 +5,7 @@ import lombok.Data
 import lombok.ToString
 import lombok.EqualsAndHashCode
 
-<!TO_STRING_FUNCTION_ALREADY_EXISTS!>@Data<!>
+@Data
 class DataWithExistingToString(val x: Int) {
     override fun toString(): String = "custom"
 }
