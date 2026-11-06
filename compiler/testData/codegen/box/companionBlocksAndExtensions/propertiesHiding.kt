@@ -15,7 +15,6 @@ open class Base {
 class HideSameTypeVal : Base() {
     companion {
         val valProp: Int = 11
-        val varProp: Int = 22
         val propWithPrivateSetter: Int = 33
     }
 }
@@ -31,7 +30,6 @@ class HideSameTypeVar : Base() {
 class HideDifferentTypeVal : Base() {
     companion {
         val valProp: String = "a"
-        val varProp: String = "b"
         val propWithPrivateSetter: String = "c"
     }
 }
@@ -50,7 +48,6 @@ fun box(): String {
     assertEquals(3, Base.propWithPrivateSetter)
 
     assertEquals(11, HideSameTypeVal.valProp)
-    assertEquals(22, HideSameTypeVal.varProp)
     assertEquals(33, HideSameTypeVal.propWithPrivateSetter)
 
     assertEquals(11, HideSameTypeVar.valProp)

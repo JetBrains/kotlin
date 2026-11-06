@@ -212,6 +212,7 @@ class IrFakeOverrideBuilder(
                 MemberWithOriginal(fromSupertype),
                 MemberWithOriginal(fromCurrent),
                 checkIsInlineFlag = true,
+                checkProperties = true,
             )
             if (overridability.overridable) {
                 overridden += fromSupertype
