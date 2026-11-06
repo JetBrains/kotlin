@@ -89,6 +89,16 @@ internal fun KotlinBaseExtension.explicitApiModeAsCompilerArg(): String? {
     return cliOption?.let { "-Xexplicit-api=$it" }
 }
 
+internal fun KotlinBaseExtension.returnValueCheckerModeAsCompilerArg(isMainSourceSet: Boolean): String? {
+    val mode = if (isMainSourceSet) {
+        returnValueCheckerMode
+    } else {
+        returnValueCheckerModeForTests.orElse(returnValueCheckerMode)
+    }
+
+    return mode.orNull?.let { "-Xreturn-value-checker=${it.toCompilerValue()}" }
+}
+
 internal fun ReturnValueCheckerMode.toCompilerValue() = when (this) {
     // "disable" is the compiler default for 'CommonCompilerArguments.returnValueChecker'. The argument serializer
     // compares each field to a fresh default instance and omits matches, so setting this value emits no
