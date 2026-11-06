@@ -148,6 +148,25 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColsOf0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColsOf1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColsOf2
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnOfFrames
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AllAfterColumnPath
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AllAfterString
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AllBeforeColumnPath
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AllBeforeString
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AllFromColumnPath
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AllFromDslString
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AllFromString
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AllUpToColumnPath
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AllUpToString
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DslColsInGroups
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SingleColumnColsInGroups
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.StringColsInGroups
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnPathColsInGroups
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnSetColsInGroups
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DslColsOfKind
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SingleColumnColsOfKind
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.StringColsOfKind
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnPathColsOfKind
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnSetColsOfKind
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DslColsString
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SingleColumnColsString
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.StringColsString
@@ -598,6 +617,25 @@ private fun String.loadImpl(isTest: Boolean): Interpreter<*>? {
         "SingleColumnColsColumnPath" -> SingleColumnColsColumnPath()
         "StringColsColumnPath" -> StringColsColumnPath()
         "ColumnPathColsColumnPath" -> ColumnPathColsColumnPath()
+        "DslColsOfKind" -> DslColsOfKind()
+        "SingleColumnColsOfKind" -> SingleColumnColsOfKind()
+        "StringColsOfKind" -> StringColsOfKind()
+        "ColumnPathColsOfKind" -> ColumnPathColsOfKind()
+        "ColumnSetColsOfKind" -> ColumnSetColsOfKind()
+        "DslColsInGroups" -> DslColsInGroups()
+        "SingleColumnColsInGroups" -> SingleColumnColsInGroups()
+        "StringColsInGroups" -> StringColsInGroups()
+        "ColumnPathColsInGroups" -> ColumnPathColsInGroups()
+        "ColumnSetColsInGroups" -> ColumnSetColsInGroups()
+        "AllAfterString" -> AllAfterString()
+        "AllBeforeString" -> AllBeforeString()
+        "AllUpToString" -> AllUpToString()
+        "AllFromString" -> AllFromString()
+        "AllAfterColumnPath" -> AllAfterColumnPath()
+        "AllFromColumnPath" -> AllFromColumnPath()
+        "AllFromDslString" -> AllFromDslString()
+        "AllBeforeColumnPath" -> AllBeforeColumnPath()
+        "AllUpToColumnPath" -> AllUpToColumnPath()
         "AllAfter0" -> AllAfter0()
         "AllAfter1" -> AllAfter1()
         "AllAfter2" -> AllAfter2()

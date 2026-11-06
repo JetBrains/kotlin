@@ -21,9 +21,18 @@ fun <T, E : Enum<E>> AbstractInterpreter<T>.enum(
     name: ArgumentName? = null,
     defaultValue: DefaultValue<E> = Absent,
 ): ExpectedArgumentProvider<E> = argConvert(name = name, defaultValue = defaultValue) { it: DataFrameCallableId ->
-    val forName: Class<*> = Class.forName("${it.packageName}.${it.className}")
     @Suppress("UNCHECKED_CAST")
-    java.lang.Enum.valueOf(forName as Class<out Enum<*>>, it.callableName) as E
+    it.toEnumValue() as E
+}
+
+/**
+ * Resolves an enum entry reference, such as `ColumnKind.Value`, to the actual enum value
+ * of the class available in the plugin classpath.
+ */
+internal fun DataFrameCallableId.toEnumValue(): Enum<*> {
+    val forName: Class<*> = Class.forName("$packageName.$className")
+    @Suppress("UNCHECKED_CAST")
+    return java.lang.Enum.valueOf(forName as Class<out Enum<*>>, callableName)
 }
 
 internal fun <T> AbstractInterpreter<T>.dsl(
@@ -39,4 +48,3 @@ internal fun <T> AbstractInterpreter<T>.ignore(
 internal fun <T> AbstractInterpreter<T>.groupBy(
     name: ArgumentName? = null,
 ): ExpectedArgumentProvider<GroupBy> = arg(name, lens = Interpreter.GroupBy)
-
