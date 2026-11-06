@@ -12,6 +12,10 @@ import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import org.jetbrains.kotlin.buildtools.api.trackers.IcEvent
+import org.jetbrains.kotlin.buildtools.internal.CompilationStartedEvent
+import org.jetbrains.kotlin.buildtools.internal.CompileIterationEvent
+import org.jetbrains.kotlin.buildtools.internal.FileCompilationReasonBasic
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocationWithRange
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
@@ -122,3 +126,95 @@ internal sealed interface CompilerMessageSourceLocationSurrogate {
         )
     }
 }
+
+internal object IcEventSerializer : KSerializer<IcEvent> {
+    override val descriptor: SerialDescriptor = IcEventSurrogate.serializer().descriptor
+
+    override fun serialize(
+        encoder: Encoder,
+        value: IcEvent,
+    ) {
+        val surrogate = when (value) {
+            is IcEvent.CompilationStarted -> IcEventSurrogate.CompilationStartedSurrogate(
+                iteration = value.iteration,
+                timestamp = value.timestamp,
+                type = value.type,
+                isIncremental = value.isIncremental,
+                reason = value.reason,
+            )
+            is IcEvent.CompileIteration -> IcEventSurrogate.CompileIterationSurrogate(
+                iteration = value.iteration,
+                timestamp = value.timestamp,
+                type = value.type,
+                reasons = value.reasons.mapValues { entry -> entry.value.map { it.readableString } },
+                exitCode = value.exitCode,
+            )
+            else -> error("Unexpected IC event type: $value")
+        }
+        encoder.encodeSerializableValue(IcEventSurrogate.serializer(), surrogate)
+    }
+
+    override fun deserialize(decoder: Decoder): IcEvent {
+        return when (val surrogate = decoder.decodeSerializableValue(IcEventSurrogate.serializer())) {
+            is IcEventSurrogate.CompilationStartedSurrogate -> CompilationStartedEvent(
+                isIncremental = surrogate.isIncremental,
+                reason = surrogate.reason,
+                type = surrogate.type,
+                timestamp = surrogate.timestamp,
+                iteration = surrogate.iteration,
+            )
+            is IcEventSurrogate.CompileIterationSurrogate -> CompileIterationEvent(
+                reasons = surrogate.reasons.mapValues { entry ->
+                    entry.value.map { FileCompilationReasonBasic(it) }
+                },
+                exitCode = surrogate.exitCode,
+                type = surrogate.type,
+                timestamp = surrogate.timestamp,
+                iteration = surrogate.iteration,
+            )
+        }
+    }
+}
+
+@Serializable
+internal sealed interface IcEventSurrogate {
+
+    val iteration: Int
+    val timestamp: Long
+    val type: String
+
+    @Serializable
+    data class CompilationStartedSurrogate(
+        override val iteration: Int,
+        override val timestamp: Long,
+        override val type: String = "CompilationStarted",
+        val isIncremental: Boolean,
+        val reason: String?,
+    ) : IcEventSurrogate {
+        constructor(from: IcEvent.CompilationStarted) : this(
+            from.iteration,
+            from.timestamp,
+            from.type,
+            from.isIncremental,
+            from.reason,
+        )
+    }
+
+    @Serializable
+    data class CompileIterationSurrogate(
+        override val iteration: Int,
+        override val timestamp: Long,
+        override val type: String = "CompileIteration",
+        val reasons: Map<String, List<String>>,
+        val exitCode: String,
+    ) : IcEventSurrogate {
+        constructor(from: IcEvent.CompileIteration) : this(
+            from.iteration,
+            from.timestamp,
+            from.type,
+            from.reasons.mapValues { entry -> entry.value.map { it.readableString } },
+            from.exitCode,
+        )
+    }
+}
+

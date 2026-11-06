@@ -1,14 +1,21 @@
 @file:OptIn(ExperimentalSerializationApi::class)
 
 import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.protobuf.ProtoBuf
 import kotlinx.serialization.serializer
+import org.jetbrains.kotlin.buildtools.api.trackers.IcEvent
+import org.jetbrains.kotlin.buildtools.internal.CompilationStartedEvent
+import org.jetbrains.kotlin.buildtools.internal.CompileIterationEvent
 import org.jetbrains.kotlin.buildtools.internal.DaemonExecutionPolicyImpl
+import org.jetbrains.kotlin.buildtools.internal.FileCompilationReasonBasic
 import org.jetbrains.kotlin.buildtools.internal.InProcessExecutionPolicyImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.*
 import org.jetbrains.kotlin.buildtools.internal.arguments.enums.JsModuleKind
 import org.jetbrains.kotlin.buildtools.internal.arguments.enums.JvmDefaultMode
 import org.jetbrains.kotlin.buildtools.internal.arguments.enums.WasmTarget
+import org.jetbrains.kotlin.buildtools.internal.serializability.IcEventSerializer
+import org.jetbrains.kotlin.buildtools.internal.serializability.Message
 import org.jetbrains.kotlin.buildtools.internal.serializability.PathAsStringSerializer
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.Path
@@ -24,18 +31,18 @@ import kotlin.test.assertEquals
 class SerializationTest {
 
     interface Serializer {
-        fun <T : Any> serializeAndDeserialize(value: T, clazz: KClass<T>): T
+        fun <T : Any> serializeAndDeserialize(value: T, serializer: KSerializer<T>): T
 
         object Protobuf : Serializer {
-            override fun <T : Any> serializeAndDeserialize(value: T, clazz: KClass<T>): T {
-                val byteArray = ProtoBuf.encodeToByteArray(serializer(clazz.java), value)
+            override fun <T : Any> serializeAndDeserialize(value: T, serializer: KSerializer<T>): T {
+                val byteArray = ProtoBuf.encodeToByteArray(serializer, value)
                 @Suppress("UNCHECKED_CAST")
-                return ProtoBuf.decodeFromByteArray(serializer(clazz.java), byteArray) as T
+                return ProtoBuf.decodeFromByteArray(serializer, byteArray)
             }
         }
     }
 
-    inline fun <reified T : Any> Serializer.serializeAndDeserialize(value: T): T = serializeAndDeserialize(value, T::class)
+    inline fun <reified T : Any> Serializer.serializeAndDeserialize(value: T): T = serializeAndDeserialize(value, serializer<T>())
 
     val serializer = Serializer.Protobuf
 
@@ -192,5 +199,77 @@ class SerializationTest {
         withDaemon.jvmArguments = listOf("abc")
         val withDaemon2 = serializer.serializeAndDeserialize<DaemonExecutionPolicyImpl>(withDaemon)
         assertEquals(withDaemon, withDaemon2)
+    }
+
+    @Test
+    @DisplayName("IcEventSerializer serializes IcEvent correctly")
+    fun icEventsSerialization() {
+        val startedEvent: IcEvent = CompilationStartedEvent(
+            isIncremental = true,
+            reason = "Some change",
+            type = "CompilationStarted",
+            timestamp = 123456789L,
+            iteration = 2,
+        )
+        assertEquals(startedEvent, serializer.serializeAndDeserialize(startedEvent, IcEventSerializer))
+
+        val compileIterationEvent: IcEvent = CompileIterationEvent(
+            reasons = mapOf(
+                "/path/to/File.kt" to listOf(FileCompilationReasonBasic("Reason 1"), FileCompilationReasonBasic("Reason 2")),
+                "/path/to/Other.kt" to listOf(FileCompilationReasonBasic("Reason 3")),
+            ),
+            exitCode = "OK",
+            type = "CompileIteration",
+            timestamp = 987654321L,
+            iteration = 2,
+        )
+        assertEquals(compileIterationEvent, serializer.serializeAndDeserialize(compileIterationEvent, IcEventSerializer))
+
+        val customStarted: IcEvent.CompilationStarted = object : IcEvent.CompilationStarted {
+            override val isIncremental = false
+            override val reason = "Rebuild"
+            override val type = "CompilationStarted"
+            override val timestamp = 11111L
+            override val iteration = 0
+        }
+        val deserializedCustom = serializer.serializeAndDeserialize(customStarted, IcEventSerializer) as CompilationStartedEvent
+        assertEquals(customStarted.iteration, deserializedCustom.iteration)
+        assertEquals(customStarted.timestamp, deserializedCustom.timestamp)
+        assertEquals(customStarted.type, deserializedCustom.type)
+        assertEquals(customStarted.isIncremental, deserializedCustom.isIncremental)
+        assertEquals(customStarted.reason, deserializedCustom.reason)
+    }
+
+    @Test
+    @DisplayName("Message.IcEventCollector.CollectEvents serialization")
+    fun collectEventsMessageSerialization() {
+        val startedEvent = CompilationStartedEvent(
+            isIncremental = true,
+            reason = "Some change",
+            type = "CompilationStarted",
+            timestamp = 123456789L,
+            iteration = 2,
+        )
+        val compileIterationEvent = CompileIterationEvent(
+            reasons = mapOf(
+                "/path/to/File.kt" to listOf(FileCompilationReasonBasic("Reason 1"), FileCompilationReasonBasic("Reason 2")),
+                "/path/to/Other.kt" to listOf(FileCompilationReasonBasic("Reason 3")),
+            ),
+            exitCode = "OK",
+            type = "CompileIteration",
+            timestamp = 987654321L,
+            iteration = 2,
+        )
+        val message = Message.IcEventCollector.CollectEvents(listOf(startedEvent, compileIterationEvent))
+
+        val deserialized = serializer.serializeAndDeserialize(message)
+        assertEquals(message, deserialized)
+
+        val deserializedAsMessage = serializer.serializeAndDeserialize<Message>(message)
+        assertEquals(message, deserializedAsMessage)
+
+        val emptyMessage = Message.IcEventCollector.CollectEvents(emptyList())
+        val deserializedEmpty = serializer.serializeAndDeserialize<Message>(emptyMessage)
+        assertEquals(emptyMessage, deserializedEmpty)
     }
 }

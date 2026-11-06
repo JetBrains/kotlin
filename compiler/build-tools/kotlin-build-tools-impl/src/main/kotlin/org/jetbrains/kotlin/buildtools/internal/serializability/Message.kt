@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.buildtools.internal.serializability
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.buildtools.api.trackers.BuildMetricsCollector
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
+import org.jetbrains.kotlin.buildtools.api.trackers.IcEvent
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 
@@ -45,5 +46,12 @@ public sealed class Message {
 
         @Serializable
         public object Clear : Message()
+    }
+
+    public object IcEventCollector {
+        @Serializable
+        public data class CollectEvents(
+            public val events: List<@Serializable(with = IcEventSerializer::class) IcEvent>,
+        ) : Message()
     }
 }

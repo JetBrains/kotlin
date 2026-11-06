@@ -11,9 +11,11 @@ import org.jetbrains.kotlin.build.report.reportPerformanceData
 import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation.CompilerArgumentsLogLevel
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
+import org.jetbrains.kotlin.buildtools.api.trackers.IcEvent
 import org.jetbrains.kotlin.buildtools.api.trackers.IcEventCollector
 import org.jetbrains.kotlin.buildtools.internal.arguments.*
 import org.jetbrains.kotlin.buildtools.internal.serializability.CompilerMessageVisitor
+import org.jetbrains.kotlin.buildtools.internal.serializability.IcEventVisitor
 import org.jetbrains.kotlin.buildtools.internal.serializability.LookupMessageVisitor
 import org.jetbrains.kotlin.buildtools.internal.serializability.Message
 import org.jetbrains.kotlin.buildtools.internal.serializability.MessageReportingMessageCollectorWithDiagnosticId
@@ -59,12 +61,16 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         if (hasLookupTracker) {
             lookupTracker = MessageReportingCompilerLookupTracker(messageReporter)
         }
+        if (hasIcEventCollector) {
+            icEventCollector = MessageReportingIcEventCollector(messageReporter)
+        }
         compilerMessageCollector = MessageReportingMessageCollectorWithDiagnosticId(messageReporter)
     }
 
     override fun beforeSerialization(logger: KotlinLogger): List<MessageVisitor> = buildList {
         addAll(super.beforeSerialization(logger))
         lookupTracker?.let { add(LookupMessageVisitor(it)) }
+        icEventCollector?.let { add(IcEventVisitor(it)) }
         add(
             CompilerMessageVisitor(
                 KotlinLoggerMessageCollectorAdapter(
@@ -92,6 +98,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
 
     internal var generateCompilerRefIndex: Boolean = false
 
+    @Transient
     var icEventCollector: IcEventCollector? = null
         set(value) {
             hasIcEventCollector = value != null
@@ -401,6 +408,13 @@ internal class MessageReportingCompilerLookupTracker(private val messageReporter
         )
     }
 }
+
+internal class MessageReportingIcEventCollector(private val messageReporter: (Message) -> Unit) : IcEventCollector {
+    override fun collectEvents(eventsFromBta: List<IcEvent>) {
+        messageReporter(Message.IcEventCollector.CollectEvents(eventsFromBta))
+    }
+}
+
 
 private class BaseCompilerServicesWithResultsFacade(
     messageCollector: MessageCollectorWithDiagnosticId,
