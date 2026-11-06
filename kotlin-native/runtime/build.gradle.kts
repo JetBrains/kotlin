@@ -754,7 +754,6 @@ cacheableTargetNames.forEach { targetName ->
             val cacheFlavor = cacheFlavor(targetName, withOptimizations)
             this.cacheDirectory.set(layout.buildDirectory.dir("cache/$targetName/$cacheFlavor"))
             this.cacheName.set(KOTLIN_NATIVE_STDLIB_NAME)
-            this.kt89897workaround.set(true)
             dependsOn(
                     project.extensions.getByType<NativeDependenciesExtension>()
                             .targetDependency(platformManager.targetByName(targetName)))
