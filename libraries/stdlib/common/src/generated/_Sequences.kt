@@ -1640,7 +1640,7 @@ public inline fun <T, R> Sequence<T>.foldIndexed(initial: R, operation: (index: 
 }
 
 /**
- * Performs the given [action] on each element.
+ * Performs the given [action] on each element in iteration order.
  *
  * The operation is _terminal_.
  */
@@ -1649,7 +1649,7 @@ public inline fun <T> Sequence<T>.forEach(action: (T) -> Unit): Unit {
 }
 
 /**
- * Performs the given [action] on each element, providing sequential index with the element.
+ * Performs the given [action] on each element in iteration order, providing sequential index with the element.
  * @param [action] function that takes the index of an element and the element itself
  * and performs the action on the element.
  *
@@ -2604,7 +2604,7 @@ public inline fun <T> Sequence<T>.none(predicate: (T) -> Boolean): Boolean {
 }
 
 /**
- * Returns a sequence which performs the given [action] on each element of the original sequence as they pass through it.
+ * Returns a sequence which performs the given [action] on each element of the original sequence in iteration order as they pass through it.
  *
  * The operation is _intermediate_ and _stateless_.
  */
@@ -2617,7 +2617,7 @@ public fun <T> Sequence<T>.onEach(action: (T) -> Unit): Sequence<T> {
 }
 
 /**
- * Returns a sequence which performs the given [action] on each element of the original sequence as they pass through it.
+ * Returns a sequence which performs the given [action] on each element of the original sequence in iteration order as they pass through it.
  * @param [action] function that takes the index of an element and the element itself
  * and performs the action on the element.
  *
@@ -3548,4 +3548,3 @@ public fun Sequence<Double>.sum(): Double {
     }
     return sum
 }
-
