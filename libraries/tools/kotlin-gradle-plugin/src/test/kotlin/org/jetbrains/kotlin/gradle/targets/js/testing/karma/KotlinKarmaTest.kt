@@ -62,8 +62,8 @@ class KotlinKarmaTest {
         checkDebugConfig(KotlinPlatformType.wasm) { content, testDir ->
             assertContains(
                 content, "\"webpackCopy\": [\n" +
-                        "    ${testDir.resolve("inputFile.wasm.map").normalize().absolutePathString().jsQuoted()}\n" +
-                        "  ]"
+                        "        ${testDir.resolve("inputFile.wasm.map").normalize().absolutePathString().jsQuoted()}\n" +
+                        "    ]"
             )
         }
 

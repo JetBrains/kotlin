@@ -90,11 +90,9 @@ private fun fileVersion(directory: File): String =
 internal fun moduleName(directory: File): String {
     val packageJson = directory.resolve(PACKAGE_JSON)
 
-    if (packageJson.isFile) {
-        return fromSrcPackageJson(packageJson)!!.name
-    }
-
-    return directory.name
+    if (!packageJson.isFile) return directory.name
+    // a private package may declare no "name": fall back to the directory name, as when there is no package.json
+    return parsePackageJsonOrWarn(packageJson, defaultName = directory.name)?.name ?: directory.name
 }
 
 /**

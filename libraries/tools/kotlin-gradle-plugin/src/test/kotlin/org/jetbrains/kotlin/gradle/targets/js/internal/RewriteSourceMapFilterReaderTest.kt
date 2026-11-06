@@ -35,6 +35,23 @@ class RewriteSourceMapFilterReaderTest {
         doTest(1, addToProlog = "-".repeat(1024 - prolog.length - "],\"sourc".length))
     }
 
+    @Test
+    fun testNamesBeforeSourcesContent() {
+        // other tools order the keys differently; "sources" still ends at the first of the two markers
+        val filter = RewriteSourceMapFilterReaderMock(
+            //language=JSON
+            StringReader("""{"version":3,"file":"lib.js","sources":["SOURCE"],"names":["a"],"mappings":"AAAA","sourcesContent":[null]}"""),
+            "",
+            "",
+        )
+
+        assertEquals(
+            //language=JSON
+            """{"version":3,"file":"lib.js","sources":["TRANSFORMED(SOURCE)"],"names":["a"],"mappings":"AAAA","sourcesContent":[null]}""",
+            filter.readText()
+        )
+    }
+
     private fun sample(mappings: String, addToProlog: String): String {
         //language=JSON
         return """{"version":3,"file":"single-platform${addToProlog}.js","sources":["SOURCE"],"sourcesContent":[null],"names":[],"mappings":"$mappings"}"""
@@ -134,7 +151,7 @@ class RewriteSourceMapFilterReaderTest {
             filter.readText()
         )
         assertEquals(
-            "Unsupported format. Contents should starts with `{\"version\":3,\"file\":\"...\",\"sources\":[...],\"sourcesContent\":...`. Unknown key \"version1\" at line 1 column 40 path \$.version1 in `{\"file\":\"single-platform.js\",\"version1\":3,\"sources\":[\"../../../../src/main/kotlin/main.kt\"],\"sourcesContent\":[null],\"names\":[],\"mappings\":\"\"}",
+            "Unsupported format. Contents should starts with `{\"version\":3,\"file\":\"...\",\"sources\":[...],\"sourcesContent\":...`. Encountered an unknown key 'version1' at offset 30 at path: $ in `{\"file\":\"single-platform.js\",\"version1\":3,\"sources\":[\"../../../../src/main/kotlin/main.kt\"],\"sourcesContent\":[null],\"names\":[],\"mappings\":\"\"}",
             filter.warning
         )
     }
@@ -150,7 +167,8 @@ class RewriteSourceMapFilterReaderTest {
 
         assertEquals("{:)],\"sourcesContent\":[null]}", filter.readText())
         assertEquals(
-            "Unsupported format. Contents should starts with `{\"version\":3,\"file\":\"...\",\"sources\":[...],\"sourcesContent\":...`. Malformed JSON at line 1 column 3 path \$. in `{:)],\"sourcesContent\":[null]}",
+            "Unsupported format. Contents should starts with `{\"version\":3,\"file\":\"...\",\"sources\":[...],\"sourcesContent\":...`. " +
+                    "Unexpected JSON token at offset 1: Expected end of the object '}', but had ':' instead at path: \$ in `{:)],\"sourcesContent\":[null]}",
             filter.warning
         )
     }

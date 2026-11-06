@@ -20,7 +20,7 @@ import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
-import org.jetbrains.kotlin.gradle.targets.js.npm.fromSrcPackageJson
+import org.jetbrains.kotlin.gradle.targets.js.npm.parsePackageJson
 import java.io.File
 
 /**
@@ -65,7 +65,8 @@ internal abstract class KotlinSetupSharedNpmProjectTask : DefaultTask(), UsesKot
     }
 
     private fun File.packageName(): String? {
-        val name = runCatching { fromSrcPackageJson(this)?.name }.getOrNull()
+        // the diagnostic below is the report: don't let the parser log the same problem
+        val name = runCatching { parsePackageJson(this)?.name }.getOrNull()
         if (name.isNullOrBlank()) {
             reportDiagnostic(KotlinToolingDiagnostics.SharedNpmProjectInvalidPackageJson(this))
             return null

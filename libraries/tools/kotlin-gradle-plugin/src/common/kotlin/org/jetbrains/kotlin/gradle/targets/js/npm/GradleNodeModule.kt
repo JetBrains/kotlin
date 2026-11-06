@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
-import com.google.gson.Gson
-import com.google.gson.JsonObject
 import java.io.File
 import java.io.Serializable
 
@@ -20,22 +18,15 @@ data class GradleNodeModule(val name: String, val version: String, val path: Fil
     @get:Synchronized
     @Suppress("DEPRECATION")
     val dependencies: Set<NpmDependencyDeclaration> by lazy {
-        val pJson = path.resolve("package.json").reader().use {
-            Gson().fromJson(it, JsonObject::class.java)
-        }
-        val normal = pJson.getAsJsonObject("dependencies")
-        val peer = pJson.getAsJsonObject("peerDependencies")
-        val optional = pJson.getAsJsonObject("optionalDependencies")
-        val dev = pJson.getAsJsonObject("devDependencies")
+        // only the four maps are read: a third-party package.json may shape its other keys however it likes
+        val packageJson = parsePackageJsonObject(path.resolve("package.json"))
         mapOf(
-            NpmDependency.Scope.NORMAL to normal,
-            NpmDependency.Scope.PEER to peer,
-            NpmDependency.Scope.OPTIONAL to optional,
-            NpmDependency.Scope.DEV to dev
-        ).mapValues { (_, deps) ->
-            deps?.entrySet()?.associate { (k, v) -> k to v.asString }
-        }.mapNotNull { (scope, deps) ->
-            deps?.map { (k, v) -> NpmDependencyDeclaration(scope, k, v) }
-        }.flatten().toSet()
+            NpmDependency.Scope.NORMAL to "dependencies",
+            NpmDependency.Scope.PEER to "peerDependencies",
+            NpmDependency.Scope.OPTIONAL to "optionalDependencies",
+            NpmDependency.Scope.DEV to "devDependencies",
+        ).flatMap { (scope, key) ->
+            packageJson.stringMap(key).map { (name, version) -> NpmDependencyDeclaration(scope, name, version) }
+        }.toSet()
     }
 }
