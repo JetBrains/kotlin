@@ -14724,9 +14724,6 @@ final fun kotlin.wasm.unsafe/componentModelRealloc(kotlin/Int, kotlin/Int, kotli
 final fun kotlin.wasm.unsafe/createAllocatorInTheNewScope(): kotlin.wasm.unsafe/ScopedMemoryAllocator // kotlin.wasm.unsafe/createAllocatorInTheNewScope|createAllocatorInTheNewScope(){}[0]
 
 // Targets: [wasmJs, wasmWasi]
-final fun kotlin.wasm.unsafe/freeAllComponentModelReallocAllocatedMemory() // kotlin.wasm.unsafe/freeAllComponentModelReallocAllocatedMemory|freeAllComponentModelReallocAllocatedMemory(){}[0]
-
-// Targets: [wasmJs, wasmWasi]
 final fun kotlin/floatToUInt(kotlin/Float): kotlin/UInt // kotlin/floatToUInt|floatToUInt(kotlin.Float){}[0]
 
 // Targets: [wasmJs, wasmWasi]
