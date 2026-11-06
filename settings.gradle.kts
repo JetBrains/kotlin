@@ -550,10 +550,6 @@ include(
 )
 
 include(
-    ":kotlin-scripting-ide-common"
-)
-
-include(
     ":compiler:test-coverage",
     ":compiler:test-infrastructure",
     ":compiler:test-infrastructure:grouping-test-engine",
@@ -1037,7 +1033,6 @@ if (buildProperties.isInIdeaSync.get()) {
         file("$rootDir/plugins/compose/compiler-hosted/runtime-tests")
 }
 
-project(":kotlin-scripting-ide-common").projectDir = File("$rootDir/plugins/scripting/scripting-ide-common")
 project(":kotlin-scripting-compiler").projectDir = File("$rootDir/plugins/scripting/scripting-compiler")
 project(":kotlin-scripting-compiler-impl").projectDir = File("$rootDir/plugins/scripting/scripting-compiler-impl")
 
