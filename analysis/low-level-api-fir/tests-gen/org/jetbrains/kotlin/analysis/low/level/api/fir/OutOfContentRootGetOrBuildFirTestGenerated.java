@@ -2132,6 +2132,210 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     }
 
     @Test
+    @TestMetadata("danglingContextInFunctionType.kt")
+    public void testDanglingContextInFunctionType() {
+      run("danglingContextInFunctionType.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeAnnotatedContextType.kt")
+    public void testDanglingContextInFunctionTypeAnnotatedContextType() {
+      run("danglingContextInFunctionTypeAnnotatedContextType.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeAnnotatedEntryType.kt")
+    public void testDanglingContextInFunctionTypeAnnotatedEntryType() {
+      run("danglingContextInFunctionTypeAnnotatedEntryType.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeAnnotatedTypeElement.kt")
+    public void testDanglingContextInFunctionTypeAnnotatedTypeElement() {
+      run("danglingContextInFunctionTypeAnnotatedTypeElement.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeAnnotatedWholeType.kt")
+    public void testDanglingContextInFunctionTypeAnnotatedWholeType() {
+      run("danglingContextInFunctionTypeAnnotatedWholeType.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeAnnotation.kt")
+    public void testDanglingContextInFunctionTypeAnnotation() {
+      run("danglingContextInFunctionTypeAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeAnnotationType.kt")
+    public void testDanglingContextInFunctionTypeAnnotationType() {
+      run("danglingContextInFunctionTypeAnnotationType.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeFunctionTypeParameter.kt")
+    public void testDanglingContextInFunctionTypeFunctionTypeParameter() {
+      run("danglingContextInFunctionTypeFunctionTypeParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeLambdaParameter.kt")
+    public void testDanglingContextInFunctionTypeLambdaParameter() {
+      run("danglingContextInFunctionTypeLambdaParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeLocal.kt")
+    public void testDanglingContextInFunctionTypeLocal() {
+      run("danglingContextInFunctionTypeLocal.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeNamed.kt")
+    public void testDanglingContextInFunctionTypeNamed() {
+      run("danglingContextInFunctionTypeNamed.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeNullable.kt")
+    public void testDanglingContextInFunctionTypeNullable() {
+      run("danglingContextInFunctionTypeNullable.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeNullableAnnotatedEntryType.kt")
+    public void testDanglingContextInFunctionTypeNullableAnnotatedEntryType() {
+      run("danglingContextInFunctionTypeNullableAnnotatedEntryType.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeNullableAnnotation.kt")
+    public void testDanglingContextInFunctionTypeNullableAnnotation() {
+      run("danglingContextInFunctionTypeNullableAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeNullableLambdaParameter.kt")
+    public void testDanglingContextInFunctionTypeNullableLambdaParameter() {
+      run("danglingContextInFunctionTypeNullableLambdaParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeNullableNullableTypeElement.kt")
+    public void testDanglingContextInFunctionTypeNullableNullableTypeElement() {
+      run("danglingContextInFunctionTypeNullableNullableTypeElement.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeNullableReceiverType.kt")
+    public void testDanglingContextInFunctionTypeNullableReceiverType() {
+      run("danglingContextInFunctionTypeNullableReceiverType.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeNullableTypeElement.kt")
+    public void testDanglingContextInFunctionTypeNullableTypeElement() {
+      run("danglingContextInFunctionTypeNullableTypeElement.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeNullableVararg.kt")
+    public void testDanglingContextInFunctionTypeNullableVararg() {
+      run("danglingContextInFunctionTypeNullableVararg.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeNullableWholeType.kt")
+    public void testDanglingContextInFunctionTypeNullableWholeType() {
+      run("danglingContextInFunctionTypeNullableWholeType.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeOuterAnnotation.kt")
+    public void testDanglingContextInFunctionTypeOuterAnnotation() {
+      run("danglingContextInFunctionTypeOuterAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeTypeArgument.kt")
+    public void testDanglingContextInFunctionTypeTypeArgument() {
+      run("danglingContextInFunctionTypeTypeArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeVararg.kt")
+    public void testDanglingContextInFunctionTypeVararg() {
+      run("danglingContextInFunctionTypeVararg.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeVarargAnnotated.kt")
+    public void testDanglingContextInFunctionTypeVarargAnnotated() {
+      run("danglingContextInFunctionTypeVarargAnnotated.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeVarargTypeElement.kt")
+    public void testDanglingContextInFunctionTypeVarargTypeElement() {
+      run("danglingContextInFunctionTypeVarargTypeElement.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeVarargWholeType.kt")
+    public void testDanglingContextInFunctionTypeVarargWholeType() {
+      run("danglingContextInFunctionTypeVarargWholeType.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeWholeType.kt")
+    public void testDanglingContextInFunctionTypeWholeType() {
+      run("danglingContextInFunctionTypeWholeType.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeWithIncompleteArrow.kt")
+    public void testDanglingContextInFunctionTypeWithIncompleteArrow() {
+      run("danglingContextInFunctionTypeWithIncompleteArrow.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeWithIncompleteType.kt")
+    public void testDanglingContextInFunctionTypeWithIncompleteType() {
+      run("danglingContextInFunctionTypeWithIncompleteType.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeWithParentheses.kt")
+    public void testDanglingContextInFunctionTypeWithParentheses() {
+      run("danglingContextInFunctionTypeWithParentheses.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeWithReceiver.kt")
+    public void testDanglingContextInFunctionTypeWithReceiver() {
+      run("danglingContextInFunctionTypeWithReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeWithReceiverType.kt")
+    public void testDanglingContextInFunctionTypeWithReceiverType() {
+      run("danglingContextInFunctionTypeWithReceiverType.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeWithType.kt")
+    public void testDanglingContextInFunctionTypeWithType() {
+      run("danglingContextInFunctionTypeWithType.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeWithTypeElement.kt")
+    public void testDanglingContextInFunctionTypeWithTypeElement() {
+      run("danglingContextInFunctionTypeWithTypeElement.kt");
+    }
+
+    @Test
     @TestMetadata("danglingTypeConstraintBound.kt")
     public void testDanglingTypeConstraintBound() {
       run("danglingTypeConstraintBound.kt");

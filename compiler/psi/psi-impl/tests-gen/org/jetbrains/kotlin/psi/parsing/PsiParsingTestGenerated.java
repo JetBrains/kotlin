@@ -2434,6 +2434,18 @@ public class PsiParsingTestGenerated extends AbstractPsiParsingTest {
     }
 
     @Test
+    @TestMetadata("danglingContextInFunctionType.kt")
+    public void testDanglingContextInFunctionType() {
+      run("danglingContextInFunctionType.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeAnnotated.kt")
+    public void testDanglingContextInFunctionTypeAnnotated() {
+      run("danglingContextInFunctionTypeAnnotated.kt");
+    }
+
+    @Test
     @TestMetadata("danglingContextParameter.kt")
     public void testDanglingContextParameter() {
       run("danglingContextParameter.kt");

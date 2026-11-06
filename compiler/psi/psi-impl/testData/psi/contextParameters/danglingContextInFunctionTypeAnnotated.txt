@@ -1,0 +1,1635 @@
+KtFile: danglingContextInFunctionTypeAnnotated.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    MODIFIER_LIST
+      ANNOTATION_ENTRY
+        PsiElement(AT)('@')
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Target')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            DOT_QUALIFIED_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('AnnotationTarget')
+              PsiElement(DOT)('.')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('TYPE')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n')
+      PsiElement(annotation)('annotation')
+    PsiWhiteSpace(' ')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('Anno')
+    PRIMARY_CONSTRUCTOR
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('value')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('String')
+          PsiWhiteSpace(' ')
+          PsiElement(EQ)('=')
+          PsiWhiteSpace(' ')
+          STRING_TEMPLATE
+            PsiElement(OPEN_QUOTE)('"')
+            PsiElement(CLOSING_QUOTE)('"')
+        PsiElement(RPAR)(')')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    MODIFIER_LIST
+      ANNOTATION_ENTRY
+        PsiElement(AT)('@')
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Target')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            DOT_QUALIFIED_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('AnnotationTarget')
+              PsiElement(DOT)('.')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('TYPE')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n')
+      PsiElement(annotation)('annotation')
+    PsiWhiteSpace(' ')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('Other')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiElement(interface)('interface')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('Forms')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('simple')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          MODIFIER_LIST
+            ANNOTATION_ENTRY
+              PsiElement(AT)('@')
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Anno')
+          PsiWhiteSpace(' ')
+          CONTEXT_PARAMETER_LIST
+            PsiElement(context)('context')
+            PsiElement(LPAR)('(')
+            CONTEXT_RECEIVER
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Int')
+            PsiElement(RPAR)(')')
+          PsiErrorElement:Type expected
+            <empty list>
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('withArguments')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          MODIFIER_LIST
+            ANNOTATION_ENTRY
+              PsiElement(AT)('@')
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Anno')
+              VALUE_ARGUMENT_LIST
+                PsiElement(LPAR)('(')
+                VALUE_ARGUMENT
+                  BINARY_EXPRESSION
+                    STRING_TEMPLATE
+                      PsiElement(OPEN_QUOTE)('"')
+                      LITERAL_STRING_TEMPLATE_ENTRY
+                        PsiElement(REGULAR_STRING_PART)('1')
+                      PsiElement(CLOSING_QUOTE)('"')
+                    PsiWhiteSpace(' ')
+                    OPERATION_REFERENCE
+                      PsiElement(PLUS)('+')
+                    PsiWhiteSpace(' ')
+                    STRING_TEMPLATE
+                      PsiElement(OPEN_QUOTE)('"')
+                      LITERAL_STRING_TEMPLATE_ENTRY
+                        PsiElement(REGULAR_STRING_PART)('2')
+                      PsiElement(CLOSING_QUOTE)('"')
+                PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          CONTEXT_PARAMETER_LIST
+            PsiElement(context)('context')
+            PsiElement(LPAR)('(')
+            CONTEXT_RECEIVER
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Int')
+            PsiElement(RPAR)(')')
+          PsiErrorElement:Type expected
+            <empty list>
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('several')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          MODIFIER_LIST
+            ANNOTATION_ENTRY
+              PsiElement(AT)('@')
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Anno')
+            PsiWhiteSpace(' ')
+            ANNOTATION_ENTRY
+              PsiElement(AT)('@')
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Other')
+          PsiWhiteSpace(' ')
+          CONTEXT_PARAMETER_LIST
+            PsiElement(context)('context')
+            PsiElement(LPAR)('(')
+            CONTEXT_RECEIVER
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Int')
+            PsiElement(RPAR)(')')
+          PsiErrorElement:Type expected
+            <empty list>
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('bracketed')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          MODIFIER_LIST
+            ANNOTATION
+              PsiElement(AT)('@')
+              PsiElement(LBRACKET)('[')
+              ANNOTATION_ENTRY
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('Anno')
+              PsiWhiteSpace(' ')
+              ANNOTATION_ENTRY
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('Other')
+              PsiElement(RBRACKET)(']')
+          PsiWhiteSpace(' ')
+          CONTEXT_PARAMETER_LIST
+            PsiElement(context)('context')
+            PsiElement(LPAR)('(')
+            CONTEXT_RECEIVER
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Int')
+            PsiElement(RPAR)(')')
+          PsiErrorElement:Type expected
+            <empty list>
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('useSiteTarget')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          MODIFIER_LIST
+            ANNOTATION_ENTRY
+              PsiElement(AT)('@')
+              ANNOTATION_TARGET
+                PsiElement(receiver)('receiver')
+              PsiElement(COLON)(':')
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Anno')
+          PsiWhiteSpace(' ')
+          CONTEXT_PARAMETER_LIST
+            PsiElement(context)('context')
+            PsiElement(LPAR)('(')
+            CONTEXT_RECEIVER
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Int')
+            PsiElement(RPAR)(')')
+          PsiErrorElement:Type expected
+            <empty list>
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('suspendAfter')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          MODIFIER_LIST
+            ANNOTATION_ENTRY
+              PsiElement(AT)('@')
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Anno')
+            PsiWhiteSpace(' ')
+            PsiElement(suspend)('suspend')
+          PsiWhiteSpace(' ')
+          CONTEXT_PARAMETER_LIST
+            PsiElement(context)('context')
+            PsiElement(LPAR)('(')
+            CONTEXT_RECEIVER
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Int')
+            PsiElement(RPAR)(')')
+          PsiErrorElement:Type expected
+            <empty list>
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('suspendBefore')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          MODIFIER_LIST
+            PsiElement(suspend)('suspend')
+            PsiWhiteSpace(' ')
+            ANNOTATION_ENTRY
+              PsiElement(AT)('@')
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Anno')
+          PsiWhiteSpace(' ')
+          CONTEXT_PARAMETER_LIST
+            PsiElement(context)('context')
+            PsiElement(LPAR)('(')
+            CONTEXT_RECEIVER
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Int')
+            PsiElement(RPAR)(')')
+          PsiErrorElement:Type expected
+            <empty list>
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiElement(interface)('interface')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('InsideList')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('inside')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          CONTEXT_PARAMETER_LIST
+            PsiElement(context)('context')
+            PsiElement(LPAR)('(')
+            CONTEXT_RECEIVER
+              TYPE_REFERENCE
+                MODIFIER_LIST
+                  ANNOTATION_ENTRY
+                    PsiElement(AT)('@')
+                    CONSTRUCTOR_CALLEE
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('Anno')
+                PsiWhiteSpace(' ')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Int')
+            PsiElement(RPAR)(')')
+          PsiErrorElement:Type expected
+            <empty list>
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('insideUnresolved')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          CONTEXT_PARAMETER_LIST
+            PsiElement(context)('context')
+            PsiElement(LPAR)('(')
+            CONTEXT_RECEIVER
+              TYPE_REFERENCE
+                MODIFIER_LIST
+                  ANNOTATION_ENTRY
+                    PsiElement(AT)('@')
+                    CONSTRUCTOR_CALLEE
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('Anno')
+                PsiWhiteSpace(' ')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Unresolved')
+            PsiElement(RPAR)(')')
+          PsiErrorElement:Type expected
+            <empty list>
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('bothSides')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          MODIFIER_LIST
+            ANNOTATION_ENTRY
+              PsiElement(AT)('@')
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Anno')
+          PsiWhiteSpace(' ')
+          CONTEXT_PARAMETER_LIST
+            PsiElement(context)('context')
+            PsiElement(LPAR)('(')
+            CONTEXT_RECEIVER
+              TYPE_REFERENCE
+                MODIFIER_LIST
+                  ANNOTATION_ENTRY
+                    PsiElement(AT)('@')
+                    CONSTRUCTOR_CALLEE
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('Other')
+                PsiWhiteSpace(' ')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Int')
+            PsiElement(COMMA)(',')
+            PsiWhiteSpace(' ')
+            CONTEXT_RECEIVER
+              TYPE_REFERENCE
+                MODIFIER_LIST
+                  ANNOTATION_ENTRY
+                    PsiElement(AT)('@')
+                    CONSTRUCTOR_CALLEE
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('Anno')
+                    VALUE_ARGUMENT_LIST
+                      PsiElement(LPAR)('(')
+                      VALUE_ARGUMENT
+                        STRING_TEMPLATE
+                          PsiElement(OPEN_QUOTE)('"')
+                          LITERAL_STRING_TEMPLATE_ENTRY
+                            PsiElement(REGULAR_STRING_PART)('x')
+                          PsiElement(CLOSING_QUOTE)('"')
+                      PsiElement(RPAR)(')')
+                PsiWhiteSpace(' ')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('String')
+            PsiElement(RPAR)(')')
+          PsiErrorElement:Type expected
+            <empty list>
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('named')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          MODIFIER_LIST
+            ANNOTATION_ENTRY
+              PsiElement(AT)('@')
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Anno')
+          PsiWhiteSpace(' ')
+          CONTEXT_PARAMETER_LIST
+            PsiElement(context)('context')
+            PsiElement(LPAR)('(')
+            VALUE_PARAMETER
+              PsiElement(IDENTIFIER)('a')
+              PsiElement(COLON)(':')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                MODIFIER_LIST
+                  ANNOTATION_ENTRY
+                    PsiElement(AT)('@')
+                    CONSTRUCTOR_CALLEE
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('Other')
+                PsiWhiteSpace(' ')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Int')
+            PsiElement(RPAR)(')')
+          PsiErrorElement:Type expected
+            <empty list>
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiElement(interface)('interface')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('TypeAfterList')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('type')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          MODIFIER_LIST
+            ANNOTATION_ENTRY
+              PsiElement(AT)('@')
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Anno')
+          PsiWhiteSpace(' ')
+          CONTEXT_PARAMETER_LIST
+            PsiElement(context)('context')
+            PsiElement(LPAR)('(')
+            CONTEXT_RECEIVER
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Int')
+            PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('String')
+          PsiErrorElement:Function type expected expected
+            <empty list>
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('unresolvedType')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          MODIFIER_LIST
+            ANNOTATION_ENTRY
+              PsiElement(AT)('@')
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Anno')
+          PsiWhiteSpace(' ')
+          CONTEXT_PARAMETER_LIST
+            PsiElement(context)('context')
+            PsiElement(LPAR)('(')
+            CONTEXT_RECEIVER
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Int')
+            PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Unresolved')
+          PsiErrorElement:Function type expected expected
+            <empty list>
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('nullableType')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          MODIFIER_LIST
+            ANNOTATION_ENTRY
+              PsiElement(AT)('@')
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Anno')
+          PsiWhiteSpace(' ')
+          CONTEXT_PARAMETER_LIST
+            PsiElement(context)('context')
+            PsiElement(LPAR)('(')
+            CONTEXT_RECEIVER
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Int')
+            PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          NULLABLE_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('String')
+            PsiElement(QUEST)('?')
+          PsiErrorElement:Function type expected expected
+            <empty list>
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiElement(interface)('interface')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('NullableAndParenthesized')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('nullable')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          NULLABLE_TYPE
+            PsiElement(LPAR)('(')
+            MODIFIER_LIST
+              ANNOTATION_ENTRY
+                PsiElement(AT)('@')
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('Anno')
+            PsiWhiteSpace(' ')
+            CONTEXT_PARAMETER_LIST
+              PsiElement(context)('context')
+              PsiElement(LPAR)('(')
+              CONTEXT_RECEIVER
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Int')
+              PsiElement(RPAR)(')')
+            PsiErrorElement:Type expected
+              <empty list>
+            PsiElement(RPAR)(')')
+            PsiElement(QUEST)('?')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('nullableWithoutAnnotation')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          NULLABLE_TYPE
+            PsiElement(LPAR)('(')
+            CONTEXT_PARAMETER_LIST
+              PsiElement(context)('context')
+              PsiElement(LPAR)('(')
+              CONTEXT_RECEIVER
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Int')
+              PsiElement(RPAR)(')')
+            PsiErrorElement:Type expected
+              <empty list>
+            PsiElement(RPAR)(')')
+            PsiElement(QUEST)('?')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('nullableWithType')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          NULLABLE_TYPE
+            PsiElement(LPAR)('(')
+            MODIFIER_LIST
+              ANNOTATION_ENTRY
+                PsiElement(AT)('@')
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('Anno')
+            PsiWhiteSpace(' ')
+            CONTEXT_PARAMETER_LIST
+              PsiElement(context)('context')
+              PsiElement(LPAR)('(')
+              CONTEXT_RECEIVER
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Int')
+              PsiElement(RPAR)(')')
+            PsiWhiteSpace(' ')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('String')
+            PsiErrorElement:Function type expected expected
+              <empty list>
+            PsiElement(RPAR)(')')
+            PsiElement(QUEST)('?')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('nullableWithReceiver')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          NULLABLE_TYPE
+            PsiElement(LPAR)('(')
+            MODIFIER_LIST
+              ANNOTATION_ENTRY
+                PsiElement(AT)('@')
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('Anno')
+            PsiWhiteSpace(' ')
+            CONTEXT_PARAMETER_LIST
+              PsiElement(context)('context')
+              PsiElement(LPAR)('(')
+              CONTEXT_RECEIVER
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Int')
+              PsiElement(RPAR)(')')
+            PsiWhiteSpace(' ')
+            FUNCTION_TYPE_RECEIVER
+              TYPE_REFERENCE
+                PsiElement(LPAR)('(')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('String')
+                PsiElement(RPAR)(')')
+            PsiElement(DOT)('.')
+            PsiErrorElement:Expecting function type
+              <empty list>
+            PsiElement(RPAR)(')')
+            PsiElement(QUEST)('?')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('doubleNullable')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          NULLABLE_TYPE
+            PsiElement(LPAR)('(')
+            NULLABLE_TYPE
+              PsiElement(LPAR)('(')
+              MODIFIER_LIST
+                ANNOTATION_ENTRY
+                  PsiElement(AT)('@')
+                  CONSTRUCTOR_CALLEE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('Anno')
+              PsiWhiteSpace(' ')
+              CONTEXT_PARAMETER_LIST
+                PsiElement(context)('context')
+                PsiElement(LPAR)('(')
+                CONTEXT_RECEIVER
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('Int')
+                PsiElement(RPAR)(')')
+              PsiErrorElement:Type expected
+                <empty list>
+              PsiElement(RPAR)(')')
+              PsiElement(QUEST)('?')
+            PsiElement(RPAR)(')')
+            PsiElement(QUEST)('?')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('nullableInsideDangling')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          MODIFIER_LIST
+            ANNOTATION_ENTRY
+              PsiElement(AT)('@')
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Anno')
+          PsiWhiteSpace(' ')
+          CONTEXT_PARAMETER_LIST
+            PsiElement(context)('context')
+            PsiElement(LPAR)('(')
+            CONTEXT_RECEIVER
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Int')
+            PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          NULLABLE_TYPE
+            PsiElement(LPAR)('(')
+            MODIFIER_LIST
+              ANNOTATION_ENTRY
+                PsiElement(AT)('@')
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('Other')
+            PsiWhiteSpace(' ')
+            CONTEXT_PARAMETER_LIST
+              PsiElement(context)('context')
+              PsiElement(LPAR)('(')
+              CONTEXT_RECEIVER
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Long')
+              PsiElement(RPAR)(')')
+            PsiErrorElement:Type expected
+              <empty list>
+            PsiElement(RPAR)(')')
+            PsiElement(QUEST)('?')
+          PsiErrorElement:Function type expected expected
+            <empty list>
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('nullableWithoutType')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          NULLABLE_TYPE
+            PsiElement(LPAR)('(')
+            PsiErrorElement:Type expected
+              <empty list>
+            PsiElement(RPAR)(')')
+            PsiElement(QUEST)('?')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('parenthesized')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          PsiElement(LPAR)('(')
+          MODIFIER_LIST
+            ANNOTATION_ENTRY
+              PsiElement(AT)('@')
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Anno')
+          PsiWhiteSpace(' ')
+          CONTEXT_PARAMETER_LIST
+            PsiElement(context)('context')
+            PsiElement(LPAR)('(')
+            CONTEXT_RECEIVER
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Int')
+            PsiElement(RPAR)(')')
+          PsiErrorElement:Type expected
+            <empty list>
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiElement(interface)('interface')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('Nested')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('typeArgument')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('List')
+            TYPE_ARGUMENT_LIST
+              PsiElement(LT)('<')
+              TYPE_PROJECTION
+                TYPE_REFERENCE
+                  MODIFIER_LIST
+                    ANNOTATION_ENTRY
+                      PsiElement(AT)('@')
+                      CONSTRUCTOR_CALLEE
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('Anno')
+                  PsiWhiteSpace(' ')
+                  CONTEXT_PARAMETER_LIST
+                    PsiElement(context)('context')
+                    PsiElement(LPAR)('(')
+                    CONTEXT_RECEIVER
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('Int')
+                    PsiElement(RPAR)(')')
+                  PsiErrorElement:Type expected
+                    <empty list>
+              PsiElement(GT)('>')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('functionTypeParameter')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          FUNCTION_TYPE
+            VALUE_PARAMETER_LIST
+              PsiElement(LPAR)('(')
+              VALUE_PARAMETER
+                TYPE_REFERENCE
+                  MODIFIER_LIST
+                    ANNOTATION_ENTRY
+                      PsiElement(AT)('@')
+                      CONSTRUCTOR_CALLEE
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('Anno')
+                  PsiWhiteSpace(' ')
+                  CONTEXT_PARAMETER_LIST
+                    PsiElement(context)('context')
+                    PsiElement(LPAR)('(')
+                    CONTEXT_RECEIVER
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('Int')
+                    PsiElement(RPAR)(')')
+                  PsiErrorElement:Type expected
+                    <empty list>
+              PsiElement(RPAR)(')')
+            PsiWhiteSpace(' ')
+            PsiElement(ARROW)('->')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Unit')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('functionTypeReturn')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          FUNCTION_TYPE
+            VALUE_PARAMETER_LIST
+              PsiElement(LPAR)('(')
+              PsiElement(RPAR)(')')
+            PsiWhiteSpace(' ')
+            PsiElement(ARROW)('->')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              MODIFIER_LIST
+                ANNOTATION_ENTRY
+                  PsiElement(AT)('@')
+                  CONSTRUCTOR_CALLEE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('Anno')
+              PsiWhiteSpace(' ')
+              CONTEXT_PARAMETER_LIST
+                PsiElement(context)('context')
+                PsiElement(LPAR)('(')
+                CONTEXT_RECEIVER
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('Int')
+                PsiElement(RPAR)(')')
+              PsiErrorElement:Type expected
+                <empty list>
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  FUNCTION
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      PsiElement(LPAR)('(')
+      MODIFIER_LIST
+        ANNOTATION_ENTRY
+          PsiElement(AT)('@')
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Anno')
+      PsiWhiteSpace(' ')
+      CONTEXT_PARAMETER_LIST
+        PsiElement(context)('context')
+        PsiElement(LPAR)('(')
+        CONTEXT_RECEIVER
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
+        PsiElement(RPAR)(')')
+      PsiErrorElement:Type expected
+        <empty list>
+      PsiElement(RPAR)(')')
+    PsiElement(DOT)('.')
+    PsiElement(IDENTIFIER)('receiver')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  FUNCTION
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('parameter')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('p')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          MODIFIER_LIST
+            ANNOTATION_ENTRY
+              PsiElement(AT)('@')
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Anno')
+          PsiWhiteSpace(' ')
+          CONTEXT_PARAMETER_LIST
+            PsiElement(context)('context')
+            PsiElement(LPAR)('(')
+            CONTEXT_RECEIVER
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Int')
+            PsiElement(RPAR)(')')
+          PsiErrorElement:Type expected
+            <empty list>
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  FUNCTION
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('returnType')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      MODIFIER_LIST
+        ANNOTATION_ENTRY
+          PsiElement(AT)('@')
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Anno')
+      PsiWhiteSpace(' ')
+      CONTEXT_PARAMETER_LIST
+        PsiElement(context)('context')
+        PsiElement(LPAR)('(')
+        CONTEXT_RECEIVER
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
+        PsiElement(RPAR)(')')
+      PsiErrorElement:Type expected
+        <empty list>
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    CALL_EXPRESSION
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('TODO')
+      VALUE_ARGUMENT_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
+  PsiWhiteSpace('\n\n')
+  FUNCTION
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    TYPE_PARAMETER_LIST
+      PsiElement(LT)('<')
+      TYPE_PARAMETER
+        PsiElement(IDENTIFIER)('T')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          MODIFIER_LIST
+            ANNOTATION_ENTRY
+              PsiElement(AT)('@')
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Anno')
+          PsiWhiteSpace(' ')
+          CONTEXT_PARAMETER_LIST
+            PsiElement(context)('context')
+            PsiElement(LPAR)('(')
+            CONTEXT_RECEIVER
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Int')
+            PsiElement(RPAR)(')')
+          PsiErrorElement:Type expected
+            <empty list>
+      PsiElement(GT)('>')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('bound')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  FUNCTION
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    TYPE_PARAMETER_LIST
+      PsiElement(LT)('<')
+      TYPE_PARAMETER
+        PsiElement(IDENTIFIER)('T')
+      PsiElement(GT)('>')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('whereConstraint')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    PsiElement(where)('where')
+    PsiWhiteSpace(' ')
+    TYPE_CONSTRAINT_LIST
+      TYPE_CONSTRAINT
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('T')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          MODIFIER_LIST
+            ANNOTATION_ENTRY
+              PsiElement(AT)('@')
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Anno')
+          PsiWhiteSpace(' ')
+          CONTEXT_PARAMETER_LIST
+            PsiElement(context)('context')
+            PsiElement(LPAR)('(')
+            CONTEXT_RECEIVER
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Int')
+            PsiElement(RPAR)(')')
+          PsiErrorElement:Type expected
+            <empty list>
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  TYPEALIAS
+    PsiElement(typealias)('typealias')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('Alias')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      MODIFIER_LIST
+        ANNOTATION_ENTRY
+          PsiElement(AT)('@')
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Anno')
+      PsiWhiteSpace(' ')
+      CONTEXT_PARAMETER_LIST
+        PsiElement(context)('context')
+        PsiElement(LPAR)('(')
+        CONTEXT_RECEIVER
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
+        PsiElement(RPAR)(')')
+      PsiErrorElement:Type expected
+        <empty list>
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiElement(interface)('interface')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('Supertype')
+    PsiWhiteSpace(' ')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    SUPER_TYPE_LIST
+      SUPER_TYPE_ENTRY
+        TYPE_REFERENCE
+          MODIFIER_LIST
+            ANNOTATION_ENTRY
+              PsiElement(AT)('@')
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Anno')
+          PsiWhiteSpace(' ')
+          CONTEXT_PARAMETER_LIST
+            PsiElement(context)('context')
+            PsiElement(LPAR)('(')
+            CONTEXT_RECEIVER
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Int')
+            PsiElement(RPAR)(')')
+          PsiErrorElement:Type expected
+            <empty list>
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    MODIFIER_LIST
+      PsiElement(data)('data')
+    PsiWhiteSpace(' ')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('Data')
+    PRIMARY_CONSTRUCTOR
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('p')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            MODIFIER_LIST
+              ANNOTATION_ENTRY
+                PsiElement(AT)('@')
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('Anno')
+            PsiWhiteSpace(' ')
+            CONTEXT_PARAMETER_LIST
+              PsiElement(context)('context')
+              PsiElement(LPAR)('(')
+              CONTEXT_RECEIVER
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Int')
+              PsiElement(RPAR)(')')
+            PsiErrorElement:Type expected
+              <empty list>
+        PsiElement(RPAR)(')')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('Setter')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(var)('var')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('p')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Int')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('0')
+        PsiWhiteSpace('\n        ')
+        PROPERTY_ACCESSOR
+          PsiElement(set)('set')
+          VALUE_PARAMETER_LIST
+            PsiElement(LPAR)('(')
+            VALUE_PARAMETER
+              PsiElement(IDENTIFIER)('value')
+              PsiElement(COLON)(':')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                MODIFIER_LIST
+                  ANNOTATION_ENTRY
+                    PsiElement(AT)('@')
+                    CONSTRUCTOR_CALLEE
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('Anno')
+                PsiWhiteSpace(' ')
+                CONTEXT_PARAMETER_LIST
+                  PsiElement(context)('context')
+                  PsiElement(LPAR)('(')
+                  CONTEXT_RECEIVER
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('Int')
+                  PsiElement(RPAR)(')')
+                PsiErrorElement:Type expected
+                  <empty list>
+            PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          BLOCK
+            PsiElement(LBRACE)('{')
+            PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  FUNCTION
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('body')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('a')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Any')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('local')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          MODIFIER_LIST
+            ANNOTATION_ENTRY
+              PsiElement(AT)('@')
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Anno')
+          PsiWhiteSpace(' ')
+          CONTEXT_PARAMETER_LIST
+            PsiElement(context)('context')
+            PsiElement(LPAR)('(')
+            CONTEXT_RECEIVER
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Int')
+            PsiElement(RPAR)(')')
+          PsiErrorElement:Type expected
+            <empty list>
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('TODO')
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('lambda')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        LAMBDA_EXPRESSION
+          FUNCTION_LITERAL
+            PsiElement(LBRACE)('{')
+            PsiWhiteSpace(' ')
+            VALUE_PARAMETER_LIST
+              VALUE_PARAMETER
+                PsiElement(IDENTIFIER)('p')
+                PsiElement(COLON)(':')
+                PsiWhiteSpace(' ')
+                TYPE_REFERENCE
+                  MODIFIER_LIST
+                    ANNOTATION_ENTRY
+                      PsiElement(AT)('@')
+                      CONSTRUCTOR_CALLEE
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('Anno')
+                  PsiWhiteSpace(' ')
+                  CONTEXT_PARAMETER_LIST
+                    PsiElement(context)('context')
+                    PsiElement(LPAR)('(')
+                    CONTEXT_RECEIVER
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('Int')
+                    PsiElement(RPAR)(')')
+                  PsiErrorElement:Type expected
+                    <empty list>
+            PsiWhiteSpace(' ')
+            PsiElement(ARROW)('->')
+            PsiWhiteSpace(' ')
+            BLOCK
+              <empty list>
+            PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('anonymousFunction')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        FUNCTION
+          PsiElement(fun)('fun')
+          VALUE_PARAMETER_LIST
+            PsiElement(LPAR)('(')
+            VALUE_PARAMETER
+              PsiElement(IDENTIFIER)('p')
+              PsiElement(COLON)(':')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                MODIFIER_LIST
+                  ANNOTATION_ENTRY
+                    PsiElement(AT)('@')
+                    CONSTRUCTOR_CALLEE
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('Anno')
+                PsiWhiteSpace(' ')
+                CONTEXT_PARAMETER_LIST
+                  PsiElement(context)('context')
+                  PsiElement(LPAR)('(')
+                  CONTEXT_RECEIVER
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('Int')
+                  PsiElement(RPAR)(')')
+                PsiErrorElement:Type expected
+                  <empty list>
+            PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          BLOCK
+            PsiElement(LBRACE)('{')
+            PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('asTarget')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        PARENTHESIZED
+          PsiElement(LPAR)('(')
+          BINARY_WITH_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('a')
+            PsiWhiteSpace(' ')
+            OPERATION_REFERENCE
+              PsiElement(as)('as')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              MODIFIER_LIST
+                ANNOTATION_ENTRY
+                  PsiElement(AT)('@')
+                  CONSTRUCTOR_CALLEE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('Anno')
+              PsiWhiteSpace(' ')
+              CONTEXT_PARAMETER_LIST
+                PsiElement(context)('context')
+                PsiElement(LPAR)('(')
+                CONTEXT_RECEIVER
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('Int')
+                PsiElement(RPAR)(')')
+              PsiErrorElement:Type expected
+                <empty list>
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('isTarget')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        PARENTHESIZED
+          PsiElement(LPAR)('(')
+          IS_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('a')
+            PsiWhiteSpace(' ')
+            OPERATION_REFERENCE
+              PsiElement(is)('is')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              MODIFIER_LIST
+                ANNOTATION_ENTRY
+                  PsiElement(AT)('@')
+                  CONSTRUCTOR_CALLEE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('Anno')
+              PsiWhiteSpace(' ')
+              CONTEXT_PARAMETER_LIST
+                PsiElement(context)('context')
+                PsiElement(LPAR)('(')
+                CONTEXT_RECEIVER
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('Int')
+                PsiElement(RPAR)(')')
+              PsiErrorElement:Type expected
+                <empty list>
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n    ')
+      TRY
+        PsiElement(try)('try')
+        PsiWhiteSpace(' ')
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiElement(RBRACE)('}')
+        PsiWhiteSpace(' ')
+        CATCH
+          PsiElement(catch)('catch')
+          PsiWhiteSpace(' ')
+          VALUE_PARAMETER_LIST
+            PsiElement(LPAR)('(')
+            VALUE_PARAMETER
+              PsiElement(IDENTIFIER)('e')
+              PsiElement(COLON)(':')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                MODIFIER_LIST
+                  ANNOTATION_ENTRY
+                    PsiElement(AT)('@')
+                    CONSTRUCTOR_CALLEE
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('Anno')
+                PsiWhiteSpace(' ')
+                CONTEXT_PARAMETER_LIST
+                  PsiElement(context)('context')
+                  PsiElement(LPAR)('(')
+                  CONTEXT_RECEIVER
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('Int')
+                  PsiElement(RPAR)(')')
+                PsiErrorElement:Type expected
+                  <empty list>
+            PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          BLOCK
+            PsiElement(LBRACE)('{')
+            PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

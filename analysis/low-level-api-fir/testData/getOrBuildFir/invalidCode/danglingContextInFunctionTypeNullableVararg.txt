@@ -1,0 +1,10 @@
+KT element: KtTypeReference
+FIR element: FirResolvedTypeRefImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+R|kotlin/Int|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] danglingContextInFunctionTypeNullableVararg.kt
+    public? final? [ResolvedTo(TYPES)] fun foo([ResolvedTo(TYPES)] vararg p: R|kotlin/Array<out ERROR CLASS: Incomplete code>|): R|kotlin/Unit| { LAZY_BLOCK }

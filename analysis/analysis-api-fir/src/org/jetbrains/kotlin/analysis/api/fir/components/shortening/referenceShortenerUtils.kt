@@ -109,6 +109,9 @@ internal val FirTypeOperatorCall.isResolvableByContextSensitiveResolution: Boole
  * (see [KtFakeSourceElementKind.ArrayTypeFromVarargParameter]).
  * - if FIR reference points to the type with generic parameters (like `Foo<Bar>`), its source is not [KtTypeReference], but
  * [KtNameReferenceExpression].
+ * - in an incomplete function type like `context(A) B`, the type ref of `B` has the top-level [KtTypeElement] as its source,
+ * because the [KtTypeReference] is the source of the whole error type. In `(context(A) B)?`, the type element of `B` is under the
+ * [KtNullableType] with the dangling context parameter list.
  */
 internal val FirResolvedTypeRef.correspondingTypePsi: KtUserType?
     get() {
@@ -125,6 +128,10 @@ internal val FirResolvedTypeRef.correspondingTypePsi: KtUserType?
         val outerTypeElement = when (sourcePsi) {
             is KtTypeReference -> sourcePsi.typeElement
             is KtNameReferenceExpression -> sourcePsi.parent as? KtTypeElement
+            is KtTypeElement -> sourcePsi.takeIf {
+                val parent = it.parent
+                parent is KtTypeReference || parent is KtNullableType && parent.danglingContextParameterList != null
+            }
             else -> null
         }
 
