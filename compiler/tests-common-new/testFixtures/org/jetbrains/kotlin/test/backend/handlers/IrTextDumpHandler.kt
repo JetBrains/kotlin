@@ -5,16 +5,28 @@
 
 package org.jetbrains.kotlin.test.backend.handlers
 
+import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
 import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
+import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.DumpIrTreeOptions
 import org.jetbrains.kotlin.ir.util.DumpIrTreeOptions.FlagsFilter
+import org.jetbrains.kotlin.ir.util.DumpIrTreeOptions.ReferenceRenderingStrategy
+import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.allOverridden
 import org.jetbrains.kotlin.ir.util.dumpOrFail
 import org.jetbrains.kotlin.ir.util.dumpTreesFromLineNumber
+import org.jetbrains.kotlin.ir.util.fileOrNull
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.test.TargetBackend
@@ -49,6 +61,7 @@ class IrTextDumpHandler(
     val directive: SimpleDirective = DUMP_IR,
     val directiveForIrDifference: ValueDirective<TargetBackend> = DUMP_IR_DIFFERENCE,
     val showOffsets: Boolean = false,
+    val renderReferencesAsSignatures: Boolean = false,
 ) : AbstractIrHandler(testServices, artifactKind) {
     companion object {
         const val DUMP_EXTENSION = "ir.txt"
@@ -128,7 +141,12 @@ class IrTextDumpHandler(
                 pathRelativizer.getRelativePath(fullPath)
             },
             printSourceOffsets = showOffsets,
+            referenceRenderingStrategy = if (renderReferencesAsSignatures)
+                ClassAndCallableReferenceRenderingStrategy(info.irMangler, pathRelativizer)
+            else
+                ReferenceRenderingStrategy.Default,
         )
+
         val builder = baseDumper.builderForModule(module.name)
 
         for ([moduleAndFile, irFile] in info.irModuleFragment.files.groupWithTestFiles(testServices, ordered = true)) {
@@ -208,5 +226,70 @@ private class IrFileEntryPathRelativizer(private val testServices: TestServices)
         absolutePathPrefixes.firstNotNullOfOrNull { absolutePathPrefix ->
             runIf(fullPath.startsWith(absolutePathPrefix)) { fullPath.removePrefix(absolutePathPrefix) }
         } ?: fullPath
+    }
+}
+
+private class ClassAndCallableReferenceRenderingStrategy(
+    mangler: KotlinMangler.IrMangler,
+    private val pathRelativizer: IrFileEntryPathRelativizer,
+) : ReferenceRenderingStrategy.Custom {
+    private val signatureComputer = PublicIdSignatureComputer(mangler)
+
+    override fun renderReference(symbol: IrSymbol): String? {
+        if (!symbol.isClassOrCallable()) {
+            // This might be a symbol of a value parameter, type parameter, variable, etc.
+            // I.e. the kind of a symbol that normally can't be unbound after IR inliner.
+            return null // Render it in a usual way.
+        }
+
+        // Otherwise: extract the signature (if it's there) or compute the signature on the fly.
+        val signature: IdSignature = symbol.signature ?: symbol.computeSignature() ?: return null
+
+        return signature.relativizeFilePaths().render()
+    }
+
+    private fun IrSymbol.isClassOrCallable(): Boolean =
+        this is IrClassSymbol || this is IrEnumEntrySymbol || this is IrFunctionSymbol || this is IrPropertySymbol
+
+    private fun IrSymbol.computeSignature(): IdSignature? {
+        if (!isBound) return null
+        val declaration = owner as? IrDeclaration ?: return null
+        return when (val fileSymbol = declaration.fileOrNull?.symbol) {
+            null -> signatureComputer.computeSignature(declaration)
+            else -> signatureComputer.inFile(fileSymbol) { signatureComputer.computeSignature(declaration) }
+        }
+    }
+
+    private fun IdSignature.relativizeFilePaths(): IdSignature {
+        return when (this) {
+            is IdSignature.CommonSignature, is IdSignature.LocalSignature, is IdSignature.ScopeLocalDeclaration -> this
+
+            is IdSignature.FileSignature -> IdSignature.FileSignature(
+                id = Any(), // does not matter
+                fqName = packageFqName(),
+                fileName = pathRelativizer.getRelativePath(fileName), // keep the path relative (and thus stable)
+            )
+
+            is IdSignature.AccessorSignature -> IdSignature.AccessorSignature(
+                propertySignature = propertySignature.relativizeFilePaths(),
+                accessorSignature = accessorSignature,
+            )
+
+            is IdSignature.CompositeSignature -> IdSignature.CompositeSignature(
+                container = container.relativizeFilePaths(),
+                inner = inner.relativizeFilePaths(),
+            )
+
+            is IdSignature.FileLocalSignature -> IdSignature.FileLocalSignature(
+                container = container.relativizeFilePaths(),
+                id = id,
+            )
+
+            is IdSignature.SpecialFakeOverrideSignature, is IdSignature.LoweredDeclarationSignature -> {
+                // There are the special types of signatures that should not happen on 1st stage
+                // of compilation in KLIB-based compilers.
+                error("Should not happen: ${this::class.java}, ${this.render()}")
+            }
+        }
     }
 }
