@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +ProhibitInapplicableJsQualifier
+// LANGUAGE: +ProhibitJsQualifierOnMembersAndNonExternals
 // OPT_IN: kotlin.js.ExperimentalWasmJsInterop
 // RENDER_DIAGNOSTICS_FULL_TEXT
 

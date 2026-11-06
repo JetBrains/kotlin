@@ -1,4 +1,4 @@
-// LANGUAGE: -ProhibitInapplicableJsQualifier
+// LANGUAGE: -ProhibitJsQualifierOnMembersAndNonExternals
 // ^^^ Pre-KT-82785 behavior is not broken.
 // MODULE: main
 // FILE: main.kt

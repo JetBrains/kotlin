@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +ProhibitInapplicableJsQualifier
+// LANGUAGE: +ProhibitJsQualifierOnMembersAndNonExternals
 // RENDER_DIAGNOSTICS_FULL_TEXT
 
 // FILE: topLevelExternal.kt

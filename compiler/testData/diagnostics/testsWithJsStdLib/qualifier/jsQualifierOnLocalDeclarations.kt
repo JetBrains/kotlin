@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +ProhibitInapplicableJsQualifier
+// LANGUAGE: +ProhibitJsQualifierOnMembersAndNonExternals
 // ISSUE: KT-82785
 external class C {
     <!JS_QUALIFIER_PROHIBITED_ON_NON_TOP_LEVEL_ERROR!>@JsQualifier("a")<!>
