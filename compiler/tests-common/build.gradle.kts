@@ -33,7 +33,6 @@ dependencies {
     testFixturesApi(project(":compiler:fir:checkers:checkers.wasm"))
     testFixturesApi(project(":compiler:fir:fir-jvm"))
     testFixturesApi(project(":compiler:fir:entrypoint"))
-    testFixturesApi(project(":compiler:config.jvm"))
     testFixturesApi(project(":compiler:util"))
     testFixturesApi(project(":compiler:cli"))
     testFixturesApi(project(":compiler:cli-jvm"))
@@ -43,8 +42,11 @@ dependencies {
     testFixturesApi(project(":kotlin-preloader"))
     testFixturesApi(project(":daemon-common"))
     testFixturesApi(project(":native:frontend.native"))
+
+    testFixturesImplementation(project(":compiler:config.jvm"))
     testFixturesImplementation(project(":native:native.config"))
     testFixturesImplementation(project(":kotlin-util-klib-metadata"))
+
     testFixturesApi(testFixtures(project(":generators:test-generator")))
     testFixturesApi(testFixtures(project(":compiler:tests-compiler-utils")))
     testFixturesApi(kotlinTest())

@@ -13,6 +13,7 @@ dependencies {
     implementation(project(":compiler:psi:psi-frontend-utils"))
     implementation(project(":compiler:config.jvm"))
     implementation(project(":core:descriptors"))
+    implementation(project(":core:error.handling"))
     implementation(project(":compiler:ir.backend.common"))
     implementation(project(":compiler:ir.psi2ir"))
     implementation(project(":compiler:backend"))

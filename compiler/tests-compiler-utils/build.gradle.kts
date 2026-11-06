@@ -22,6 +22,7 @@ dependencies {
     testFixturesApi(project(":compiler:cli-metadata"))
     testFixturesImplementation(project(":compiler:config.jvm"))
     testFixturesImplementation(project(":native:native.config"))
+    testFixturesImplementation(project(":compiler:cli-base"))
     testFixturesApi(project(":compiler:fir:entrypoint"))
     testFixturesApi(project(":compiler:fir:fir2ir:jvm-backend"))
     testFixturesApi(project(":compiler:backend.jvm.entrypoint"))

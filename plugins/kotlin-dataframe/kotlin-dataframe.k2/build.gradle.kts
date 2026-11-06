@@ -11,6 +11,7 @@ dependencies {
     implementation(project(":kotlin-dataframe-compiler-plugin.common"))
     implementation(project(":compiler:frontend.common-psi"))
     implementation(project(":compiler:psi:psi-api"))
+    implementation(project(":core:error.handling"))
 
     compileOnly(project(":compiler:fir:plugin.api"))
     // Required for 'FirFunctionCallRefinementExtension' internal FIR extension.

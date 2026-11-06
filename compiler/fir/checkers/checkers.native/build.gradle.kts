@@ -17,6 +17,7 @@ dependencies {
 
     implementation(project(":compiler:psi:psi-api"))
     implementation(project(":compiler:fir:fir-native"))
+    implementation(project(":core:error.handling"))
 
     compileOnly(project(":core:compiler.common.native"))
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }

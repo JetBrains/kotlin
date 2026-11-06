@@ -17,6 +17,7 @@ dependencies {
     testFixturesApi(project(":core:language.targets.jvm"))
     testFixturesImplementation(testFixtures(project(":generators:test-generator")))
     testFixturesImplementation(testFixtures(project(":compiler:tests-spec")))
+    testFixturesImplementation(project(":compiler:fir:fir2ir"))
     testFixturesImplementation(project(":compiler:backend.jvm.entrypoint"))
     testFixturesImplementation(project(":compiler:backend.jvm.lower"))
     testFixturesImplementation(project(":kotlin-util-klib-metadata"))

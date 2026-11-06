@@ -11,10 +11,11 @@ plugins {
 dependencies {
     implementation(project(":compiler:arguments.common"))
     implementation(project(":compiler:config.jvm"))
-    implementation(project(":compiler:frontend.common.jvm"))
+    api(project(":compiler:frontend.common.jvm"))
+    api(project(":core:deserialization.common"))
     implementation(project(":core:descriptors"))
-    implementation(project(":core:deserialization.common"))
     compileOnly(project(":core:util.runtime"))
+    implementation(project(":core:language.version-settings"))
     compileOnly(project(":compiler:backend.common.jvm"))
     compileOnly(project(":compiler:util"))
     compileOnly(project(":compiler:cli-base"))

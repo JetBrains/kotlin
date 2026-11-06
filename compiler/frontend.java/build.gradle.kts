@@ -16,6 +16,7 @@ dependencies {
     implementation(project(":compiler:frontend"))
     api(project(":compiler:resolution.common.jvm"))
     api(project(":compiler:frontend.common.jvm"))
+    implementation(project(":core:error.handling"))
 
     compileOnly(intellijCore())
     compileOnly(libs.intellij.asm)

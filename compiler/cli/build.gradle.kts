@@ -25,6 +25,7 @@ dependencies {
     api(project(":compiler:fir:fir2ir"))
     api(project(":compiler:fir:checkers:checkers.common"))
     api(project(":kotlin-util-io"))
+    implementation(project(":core:error.handling"))
     implementation(project(":js:js.config"))
     implementation(project(":native:native.config"))
     implementation(project(":wasm:wasm.config"))
