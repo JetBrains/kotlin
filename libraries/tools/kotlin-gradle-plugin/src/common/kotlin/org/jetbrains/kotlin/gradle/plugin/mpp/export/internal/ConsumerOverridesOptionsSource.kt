@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.export.internal
 
 /**
- * The highest precedence layer: overrides from `xcodeIntegration { configure(dependency) { } }`.
+ * The highest precedence layer: overrides from `configure(dependency) { }` of the integration being exported.
  */
 internal class ConsumerOverridesOptionsSource(
     private val overrides: Map<SwiftExportDependencySelector, SwiftExportDeclaredModuleOptions>,

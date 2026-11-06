@@ -80,10 +80,16 @@ internal class SwiftExportBuildOutputs(
 
 /**
  * The names an integration gives to its Swift Export [run], its bridge [compilation] and its static library
- * [binary], and how the integration is called in task descriptions. Two integrations with different names
- * have nothing in common.
+ * [binary], how the integration is called in task descriptions, and its [integrationDsl] block for diagnostics.
+ * Two integrations with different names have nothing in common.
  */
-internal class SwiftExportNames(val run: String, val compilation: String, val binary: String, val integration: String) {
+internal class SwiftExportNames(
+    val run: String,
+    val compilation: String,
+    val binary: String,
+    val integration: String,
+    val integrationDsl: String,
+) {
     /** The directory under `build` that holds the output of the run, one subdirectory per target. */
     val outputDirectory: String get() = run.capitalizeAsciiOnly()
 
@@ -93,12 +99,14 @@ internal class SwiftExportNames(val run: String, val compilation: String, val bi
             compilation = SwiftExportConstants.SWIFT_EXPORT_COMPILATION,
             binary = SwiftExportConstants.SWIFT_EXPORT_BINARY,
             integration = "the Xcode integration",
+            integrationDsl = "xcodeIntegration",
         )
         val SWIFT_PACKAGE = SwiftExportNames(
             run = SwiftExportConstants.SWIFT_PACKAGE_EXPORT_RUN,
             compilation = SwiftExportConstants.SWIFT_PACKAGE_COMPILATION,
             binary = SwiftExportConstants.SWIFT_PACKAGE_BINARY,
             integration = "the Swift package integration",
+            integrationDsl = "swiftPackageIntegration",
         )
     }
 }
@@ -311,6 +319,7 @@ private fun Project.registerSwiftExportRun(
         }
         task.exportedModules.set(exportedModules)
         task.dependencyOptionsOverrides.set(dependencyOptionsOverrides)
+        task.integrationDsl.set(names.integrationDsl)
 
         task.customJvmArgs.set(kotlinPropertiesProvider.swiftExportJvmArgs)
         task.mainModuleInput.moduleName.set(swiftApiModuleName)
