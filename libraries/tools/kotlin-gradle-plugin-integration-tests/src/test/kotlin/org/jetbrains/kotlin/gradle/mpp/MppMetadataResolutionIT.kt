@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.METADATA_CONFIGURATION_NAME_SU
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.uklibs.PublishedProject
+import org.jetbrains.kotlin.gradle.uklibs.PublisherConfiguration
 import org.jetbrains.kotlin.gradle.uklibs.addPublishedProjectToRepositories
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.computeTransformedLibraryChecksum
@@ -502,6 +503,45 @@ class MppMetadataResolutionIT : KGPBaseTest() {
                 ).prettyPrinted,
                 metadataTransformationOutputClasspath("nativeMain")
                     .relativeTransformationPathComponents().prettyPrinted
+            )
+        }
+    }
+
+    @GradleTest
+    fun `KT-91297 - metadata compilation with dependency version containing plus`(gradleVersion: GradleVersion) {
+        val producer = project("empty", gradleVersion) {
+            addKgpToBuildScriptCompilationClasspath()
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    linuxArm64()
+                    linuxX64()
+                    sourceSets.commonMain.get().compileSource("class PublishedLibrary")
+                }
+            }
+        }.publish(publisherConfiguration = PublisherConfiguration(version = "1.13.0-beta02+dev5078"))
+
+        project("empty", gradleVersion) {
+            addKgpToBuildScriptCompilationClasspath()
+            addPublishedProjectToRepositories(producer)
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    linuxArm64()
+                    linuxX64()
+                    sourceSets.commonMain.dependencies {
+                        implementation(producer.rootCoordinate)
+                    }
+                    sourceSets.commonMain.get().compileSource("fun consume() = PublishedLibrary()")
+                }
+            }
+
+            val failure = catchBuildFailures<IllegalArgumentException>().buildAndReturn(
+                "compileCommonMainKotlinMetadata",
+            ).unwrap().single()
+
+            assertEquals(
+                "String '1.13.0-beta02+dev5078' is not safe for path component. " +
+                        "Only Latin characters, numbers, '-', '_' and '.' (not as the first character) are allowed. Check origin of this string.",
+                failure.message,
             )
         }
     }
