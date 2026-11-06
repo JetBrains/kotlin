@@ -293,10 +293,27 @@ abstract class KotlinAndroidProjectExtension @Inject constructor(
         // Report the diagnostic inside this block directly: isCalledOutsideKotlinOrAndroidPlugins inside
         // sourceSets's getter will return false, since it's accessed from this method, and the diagnostic
         // won't be reported.
-        project.reportDiagnosticOncePerProject(
-            KotlinToolingDiagnostics.SourceSetsAccessInAndroidExtension(Throwable())
-        )
+        if (isCalledOutsideKotlinOrAndroidPlugins) {
+            project.reportDiagnosticOncePerProject(
+                KotlinToolingDiagnostics.SourceSetsAccessInAndroidExtension(Throwable())
+            )
+        }
         configure(sourceSets)
+    }
+
+    @Suppress("DEPRECATION_ERROR")
+    @Deprecated("Use source sets provided by Android Gradle Plugin instead.", level = DeprecationLevel.ERROR)
+    // Workaround for https://github.com/gradle/gradle/issues/37652.
+    fun sourceSets(configure: Action<NamedDomainObjectContainer<KotlinSourceSet>>) {
+        // Report the diagnostic inside this block directly: isCalledOutsideKotlinOrAndroidPlugins inside
+        // sourceSets's getter will return false, since it's accessed from this method, and the diagnostic
+        // won't be reported.
+        if (isCalledOutsideKotlinOrAndroidPlugins) {
+            project.reportDiagnosticOncePerProject(
+                KotlinToolingDiagnostics.SourceSetsAccessInAndroidExtension(Throwable())
+            )
+        }
+        configure.execute(sourceSets)
     }
 }
 

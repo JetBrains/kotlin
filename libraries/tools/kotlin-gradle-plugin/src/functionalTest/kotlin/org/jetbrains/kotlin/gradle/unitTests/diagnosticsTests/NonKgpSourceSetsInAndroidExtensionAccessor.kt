@@ -1,4 +1,6 @@
+import org.gradle.api.Action
 import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
 
 /*
  * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
@@ -10,4 +12,10 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidExtension
 object NonKgpSourceSetsInAndroidExtensionAccessor {
     @Suppress("DEPRECATION_ERROR")
     fun KotlinAndroidExtension.accessSourceSets() = sourceSets
+
+    @Suppress("DEPRECATION_ERROR")
+    fun KotlinAndroidProjectExtension.accessSourceSetsKotlinBlock() = sourceSets {}
+
+    @Suppress("DEPRECATION_ERROR")
+    fun KotlinAndroidProjectExtension.accessSourceSetsGroovyBlock() = sourceSets(Action {})
 }
