@@ -414,10 +414,24 @@ private object ImpactedSymbolsComputer {
      */
     fun computeImpactedSymbols(changes: ProgramSymbolSet, allClasses: Iterable<AccessibleClassSnapshot>): ProgramSymbolSet {
         val impactedSymbolsResolver = AllImpacts.getResolver(allClasses)
+        val facades: Map<ClassId, List<AccessibleClassSnapshot>> =
+            allClasses.filter { it is PackageFacadeKotlinClassSnapshot || it is MultifileClassKotlinClassSnapshot }.groupBy { it.classId }
         return ProgramSymbolSet.Collector().apply {
             // Add impacted classes
             val impactedClasses = findReachableNodes(changes.classes, impactedSymbolsResolver::getImpactedClasses)
             addClasses(impactedClasses)
+
+            // A package facade is never looked up by its own name, only by the names of its package members. Therefore, an impacted
+            // package facade (e.g., one in a package of a module whose `module-info` has changed) impacts its package members.
+            impactedClasses.forEach { impactedClass ->
+                facades[impactedClass]?.forEach { packageFacade ->
+                    val packageMemberNames = when (packageFacade) {
+                        is PackageFacadeKotlinClassSnapshot -> packageFacade.packageMemberNames
+                        else -> (packageFacade as MultifileClassKotlinClassSnapshot).constantNames
+                    }
+                    addPackageMembers(packageFacade.classId.packageFqName, packageMemberNames)
+                }
+            }
 
             // Add impacted class members
             val classMembers = changes.classMembers.map { ClassMembers(it.key, it.value) }
@@ -426,7 +440,7 @@ private object ImpactedSymbolsComputer {
                 addClassMembers(it.classId, it.memberNames)
             }
 
-            // Package members are currently not impacted, so we just copy the original set over
+            // Changed package members do not impact other symbols, so we just copy the original set over
             changes.packageMembers.forEach { [packageFqName, memberNames] ->
                 addPackageMembers(packageFqName, memberNames)
             }
