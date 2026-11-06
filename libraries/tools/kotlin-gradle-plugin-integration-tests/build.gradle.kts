@@ -32,6 +32,9 @@ jvmToolchains {
 }
 
 kotlin {
+    sourceSets.test.configure {
+        kotlin.srcDir("src/integrationTestingVersions")
+    }
     compilerOptions {
         optIn.addAll(
             "org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi",
@@ -277,20 +280,9 @@ val memoryPerGradleTestWorkerMb = 6000
 val maxParallelTestForks =
     (totalMaxMemoryForTestsMb / memoryPerGradleTestWorkerMb).coerceIn(1, Runtime.getRuntime().availableProcessors())
 
-// Must be in sync with TestVersions.kt KTI-1612
-val gradleVersions = listOf(
-    "8.13", // check org.jetbrains.kotlin.gradle.GradleCompatibilityIT.testIncompatibleGradleVersion
-    "8.14.5",
-    "9.0.0",
-    "9.1.0",
-    "9.2.1",
-    "9.3.1",
-    "9.4.1",
-    "9.5.1",
-    "9.6.1",
-    "9.7.0",
-    "9.8.1",
-)
+val gradleVersions = if (kotlinBuildProperties.booleanProperty("kotlin.gradle.onlyMaxGradleVersion", false).get()) {
+    listOf(org.jetbrains.kotlin.gradle.testbase.TestGradleVersion.MAX_SUPPORTED)
+} else org.jetbrains.kotlin.gradle.testbase.TestGradleVersion.all
 
 // Keep in sync with testTags.kt
 enum class JunitTag(

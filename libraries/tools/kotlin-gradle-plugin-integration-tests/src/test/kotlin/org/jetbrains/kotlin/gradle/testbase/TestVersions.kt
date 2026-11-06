@@ -10,32 +10,9 @@ import org.gradle.util.GradleVersion
 
 // Must be in sync with gradleVersions in libraries/tools/kotlin-gradle-plugin-integration-tests/build.gradle.kts KTI-1612
 interface TestVersions {
-
-    // https://gradle.org/nightly/
-    // Gradle nightly releases retention policy is 3 months
-    object Gradle {
-        const val G_8_13 = "8.13"
-        const val G_8_14 = "8.14.5"
-        const val G_9_0 = "9.0.0"
-        const val G_9_1 = "9.1.0"
-        const val G_9_2 = "9.2.1"
-        const val G_9_3 = "9.3.1"
-        const val G_9_4 = "9.4.1"
-        const val G_9_5 = "9.5.1"
-        const val G_9_6 = "9.6.1"
-        const val G_9_7 = "9.7.0"
-        const val G_9_8 = "9.8.1"
-
-        /**
-         * Check [org.jetbrains.kotlin.gradle.GradleCompatibilityIT.testIncompatibleGradleVersion]
-         */
-        const val MIN_UNSUPPORTED_VERSION_TO_CHECK = G_8_13
-
-        // Should be the same minor release as GradleCompatibilityCheck.minSupportedGradleVersion
-        // Check [org.jetbrains.kotlin.gradle.GradleTestVersionsSanityTest]
-        const val MIN_SUPPORTED = G_8_14
-        const val MAX_SUPPORTED = G_9_8
-    }
+    // FIXME: Find a way to unhack this?
+    @Suppress("UNSUPPORTED_FEATURE")
+    typealias Gradle = TestGradleVersion
 
     object Kotlin {
         const val STABLE_RELEASE = "2.4.20"
@@ -69,17 +46,17 @@ interface TestVersions {
         val maxSupportedGradleVersion: GradleVersion,
         val requiredJdkVersion: JavaVersion,
     ) {
-        AGP_88(AGP.AGP_88, GradleVersion.version(Gradle.G_8_14), GradleVersion.version(Gradle.G_8_14), JavaVersion.VERSION_17),
-        AGP_89(AGP.AGP_89, GradleVersion.version(Gradle.G_8_14), GradleVersion.version(Gradle.G_8_14), JavaVersion.VERSION_17),
-        AGP_810(AGP.AGP_810, GradleVersion.version(Gradle.G_8_14), GradleVersion.version(Gradle.G_8_14), JavaVersion.VERSION_17),
-        AGP_811(AGP.AGP_811, GradleVersion.version(Gradle.G_8_14), GradleVersion.version(Gradle.G_9_1), JavaVersion.VERSION_17),
-        AGP_812(AGP.AGP_812, GradleVersion.version(Gradle.G_8_14), GradleVersion.version(Gradle.G_9_1), JavaVersion.VERSION_17),
-        AGP_813(AGP.AGP_813, GradleVersion.version(Gradle.G_8_14), GradleVersion.version(Gradle.G_9_1), JavaVersion.VERSION_17),
-        AGP_90(AGP.AGP_90, GradleVersion.version(Gradle.G_9_1), GradleVersion.version(Gradle.G_9_4), JavaVersion.VERSION_17),
-        AGP_91(AGP.AGP_91, GradleVersion.version(Gradle.G_9_3), GradleVersion.version(Gradle.G_9_5), JavaVersion.VERSION_17),
-        AGP_92(AGP.AGP_92, GradleVersion.version(Gradle.G_9_4), GradleVersion.version(Gradle.G_9_5), JavaVersion.VERSION_17),
-        AGP_93(AGP.AGP_93, GradleVersion.version(Gradle.G_9_5), GradleVersion.version(Gradle.G_9_7), JavaVersion.VERSION_17),
-        AGP_94(AGP.AGP_94, GradleVersion.version(Gradle.G_9_6), GradleVersion.version(Gradle.G_9_8), JavaVersion.VERSION_17),
+        AGP_88(AGP.AGP_88, GradleVersion.version(TestGradleVersion.G_8_14), GradleVersion.version(TestGradleVersion.G_8_14), JavaVersion.VERSION_17),
+        AGP_89(AGP.AGP_89, GradleVersion.version(TestGradleVersion.G_8_14), GradleVersion.version(TestGradleVersion.G_8_14), JavaVersion.VERSION_17),
+        AGP_810(AGP.AGP_810, GradleVersion.version(TestGradleVersion.G_8_14), GradleVersion.version(TestGradleVersion.G_8_14), JavaVersion.VERSION_17),
+        AGP_811(AGP.AGP_811, GradleVersion.version(TestGradleVersion.G_8_14), GradleVersion.version(TestGradleVersion.G_9_1), JavaVersion.VERSION_17),
+        AGP_812(AGP.AGP_812, GradleVersion.version(TestGradleVersion.G_8_14), GradleVersion.version(TestGradleVersion.G_9_1), JavaVersion.VERSION_17),
+        AGP_813(AGP.AGP_813, GradleVersion.version(TestGradleVersion.G_8_14), GradleVersion.version(TestGradleVersion.G_9_1), JavaVersion.VERSION_17),
+        AGP_90(AGP.AGP_90, GradleVersion.version(TestGradleVersion.G_9_1), GradleVersion.version(TestGradleVersion.G_9_4), JavaVersion.VERSION_17),
+        AGP_91(AGP.AGP_91, GradleVersion.version(TestGradleVersion.G_9_3), GradleVersion.version(TestGradleVersion.G_9_5), JavaVersion.VERSION_17),
+        AGP_92(AGP.AGP_92, GradleVersion.version(TestGradleVersion.G_9_4), GradleVersion.version(TestGradleVersion.G_9_5), JavaVersion.VERSION_17),
+        AGP_93(AGP.AGP_93, GradleVersion.version(TestGradleVersion.G_9_5), GradleVersion.version(TestGradleVersion.G_9_7), JavaVersion.VERSION_17),
+        AGP_94(AGP.AGP_94, GradleVersion.version(TestGradleVersion.G_9_6), GradleVersion.version(TestGradleVersion.G_9_8), JavaVersion.VERSION_17),
         ;
 
         companion object {

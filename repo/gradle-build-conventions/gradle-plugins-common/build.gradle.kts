@@ -19,6 +19,12 @@ kotlin {
         allWarningsAsErrors = true
         freeCompilerArgs.add("-Xsuppress-version-warnings")
     }
+
+    sourceSets.main.configure {
+        kotlin.srcDir(
+            layout.projectDirectory.dir("../../../libraries/tools/kotlin-gradle-plugin-integration-tests/src/integrationTestingVersions")
+        )
+    }
 }
 
 gradlePlugin {
