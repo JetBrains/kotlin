@@ -85,7 +85,7 @@ private class TypeOfBuilder(
             }
             arrayOf(JAVA_CLASS_TYPE, *arguments)
         } else if (!isTypeParameterBound && typeParameter.isReified) {
-            val argument = ReificationArgument(typeParameter.name.asString(), type.isMarkedNullable(), 0)
+            val argument = ReificationArgument(typeParameter.name.asString(), type.isMarkedNullableWithContext(), 0)
             ReifiedTypeInliner.putReifiedOperationMarker(ReifiedTypeInliner.OperationKind.TYPE_OF, argument, v)
             v.aconst(null)
             return
@@ -104,7 +104,7 @@ private class TypeOfBuilder(
             arrayOf(K_CLASSIFIER_TYPE)
         }
 
-        val methodName = if (type.isMarkedNullable()) "nullableTypeOf" else "typeOf"
+        val methodName = if (type.isMarkedNullableWithContext()) "nullableTypeOf" else "typeOf"
         val signature = Type.getMethodDescriptor(K_TYPE, *methodArguments)
         v.invokestatic(REFLECTION, methodName, signature, false)
 
@@ -184,9 +184,9 @@ private class TypeOfBuilder(
         generateSetUpperBounds(typeParameter)
     }
 
-    private fun IrType.isMarkedNullable(): Boolean = with(typeSystemContext) {
+    private fun IrType.isMarkedNullableWithContext(): Boolean = with(typeSystemContext) {
         // JvmIrTypeSystemContext.isMarkedNullable also handles flexible types.
-        this@isMarkedNullable.isMarkedNullable()
+        this@isMarkedNullableWithContext.isMarkedNullable()
     }
 }
 
