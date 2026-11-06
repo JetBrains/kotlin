@@ -15,7 +15,7 @@ class GetClassIfCategoryTest : InlineSourceTestEnvironment {
 
     @Test
     fun `test - null when there is receiver`() {
-        val module = createModuleDescriptor(
+        val module = compileAndDeserializeSources(
             """
             class Bar
             class Foo {
@@ -36,7 +36,7 @@ class GetClassIfCategoryTest : InlineSourceTestEnvironment {
 
     @Test
     fun `test - null when there is no extension and no receiver`() {
-        val module = createModuleDescriptor(
+        val module = compileAndDeserializeSources(
             """
             fun topLevelFoo() = Unit
             val prop = 42
@@ -48,7 +48,7 @@ class GetClassIfCategoryTest : InlineSourceTestEnvironment {
 
     @Test
     fun `test - null when extension isObjCObjectType == true`() {
-        val module = createModuleDescriptor(
+        val module = compileAndDeserializeSources(
             """
             import kotlinx.cinterop.ObjCObject
             fun ObjCObject.foo() = Unit
@@ -59,7 +59,7 @@ class GetClassIfCategoryTest : InlineSourceTestEnvironment {
 
     @Test
     fun `test - null when extension is interface`() {
-        val module = createModuleDescriptor(
+        val module = compileAndDeserializeSources(
             """
             interface Foo
             fun Foo.foo() = Unit
@@ -70,7 +70,7 @@ class GetClassIfCategoryTest : InlineSourceTestEnvironment {
 
     @Test
     fun `test - null when extension type is inlined`() {
-        val module = createModuleDescriptor(
+        val module = compileAndDeserializeSources(
             """
             value class Foo(val i: Int)
             fun Foo.foo() = Unit
@@ -81,7 +81,7 @@ class GetClassIfCategoryTest : InlineSourceTestEnvironment {
 
     @Test
     fun `test - null when extension type isSpecialMapped == true`() {
-        val module = createModuleDescriptor(
+        val module = compileAndDeserializeSources(
             """
             fun Any.anyFoo() = Unit
             fun List<String>.listFoo() = Unit
@@ -98,7 +98,7 @@ class GetClassIfCategoryTest : InlineSourceTestEnvironment {
     @Test
     fun `test - not inline class && not any && not mapped`() {
 
-        val module = createModuleDescriptor(
+        val module = compileAndDeserializeSources(
             """
             class Foo(val i: Int)
             fun Foo.bar() = Unit

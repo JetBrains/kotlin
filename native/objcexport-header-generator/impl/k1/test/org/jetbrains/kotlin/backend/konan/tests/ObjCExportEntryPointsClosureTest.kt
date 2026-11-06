@@ -9,7 +9,7 @@ import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCEntryPoints
 import org.jetbrains.kotlin.backend.konan.objcexport.computeDownwardClosure
 import org.jetbrains.kotlin.backend.konan.testUtils.InlineSourceTestEnvironment
-import org.jetbrains.kotlin.backend.konan.testUtils.createModuleDescriptor
+import org.jetbrains.kotlin.backend.konan.testUtils.compileAndDeserializeSources
 import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
@@ -46,7 +46,7 @@ class ObjCExportEntryPointsClosureTest : InlineSourceTestEnvironment {
             }
         """.trimIndent()
 
-        val module = createModuleDescriptor(source)
+        val module = compileAndDeserializeSources(source)
 
         val myRunnable = module.findClassAcrossModuleDependencies(ClassId.fromString("MyRunnable"))!!
         val a = module.findClassAcrossModuleDependencies(ClassId.fromString("A"))!!
@@ -88,7 +88,7 @@ class ObjCExportEntryPointsClosureTest : InlineSourceTestEnvironment {
             }
         """.trimIndent()
 
-        val module = createModuleDescriptor(source)
+        val module = compileAndDeserializeSources(source)
 
         val myRunnable = module.findClassAcrossModuleDependencies(ClassId.fromString("MyRunnable"))!!
         val a = module.findClassAcrossModuleDependencies(ClassId.fromString("A"))!!
