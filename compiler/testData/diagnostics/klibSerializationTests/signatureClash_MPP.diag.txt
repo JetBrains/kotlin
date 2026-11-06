@@ -41,12 +41,14 @@ In package 'root package' of module '<platform>':
 In package 'root package' of module '<common>':
   --> common.kt
    |
-14 | get(): Int
+14 | val param: Int
+   |     get(): Int
    |
 In package 'root package' of module '<platform>':
   --> platform.kt
    |
-25 | get(): Int
+25 | val param: Int
+   |     get(): Int
    |
 
 /common.kt:14:1: error: Platform declaration clash: The following properties have the same IR signature (/param|{}param[0]):
@@ -89,12 +91,14 @@ In package 'root package' of module '<platform>':
 In package 'root package' of module '<common>':
   --> common.kt
    |
-14 | get(): Int
+14 | val param: Int
+   |     get(): Int
    |
 In package 'root package' of module '<platform>':
   --> platform.kt
    |
-25 | get(): Int
+25 | val param: Int
+   |     get(): Int
    |
 
 /platform.kt:25:1: error: Platform declaration clash: The following properties have the same IR signature (/param|{}param[0]):
