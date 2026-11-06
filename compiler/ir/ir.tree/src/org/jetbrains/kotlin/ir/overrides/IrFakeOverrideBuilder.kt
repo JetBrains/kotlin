@@ -49,7 +49,10 @@ class IrFakeOverrideBuilder(
                         getter.overriddenSymbols = overriddenProperties.memoryOptimizedMapNotNull { it.owner.getter?.symbol }
                     }
                     this.setter?.let { setter ->
-                        setter.overriddenSymbols = overriddenProperties.memoryOptimizedMapNotNull { it.owner.setter?.symbol }
+                        setter.overriddenSymbols = overriddenProperties.memoryOptimizedMapNotNull {
+                            // Filter out private setters (KT-91399)
+                            it.owner.setter?.takeUnless { setter -> setter.visibility == DescriptorVisibilities.PRIVATE }?.symbol
+                        }
                     }
                     this.overriddenSymbols = overriddenProperties
                 }
