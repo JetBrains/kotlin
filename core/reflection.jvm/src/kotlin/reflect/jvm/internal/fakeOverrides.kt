@@ -193,13 +193,14 @@ internal fun <T : EqualityMode> ReflectKCallable<*>.toEquatableCallableSignature
     val functionJvmSignature = (this as? ReflectKFunction)?.signature
     val jvmNameIfFunction = functionJvmSignature?.substringBeforeLast('(')
     val functionJvmDescriptor = functionJvmSignature?.substring(jvmNameIfFunction!!.length)
-    // JVM signature of an inline class function is the signature of the static "-impl" method, whose first parameter is the receiver.
-    val hasReceiverInJvmSignature = functionJvmSignature != null &&
-            (originalContainer as? KClassImpl<*>)?.isJvmInlineValue == true &&
-            parameters.any { it.kind == KParameter.Kind.INSTANCE }
     val jvmParameterTypes = functionJvmDescriptor?.let {
         container.jClass.safeClassLoader.parseAndLoadDescriptor(it, loadReturnType = false).parameters
     }.orEmpty()
+    // JVM signature of an inline class function is the signature of the static "-impl" method, whose first parameter is the receiver.
+    val hasReceiverInJvmSignature = functionJvmSignature != null &&
+            (originalContainer as? KClassImpl<*>)?.isJvmInlineValue == true &&
+            parameters.any { it.kind == KParameter.Kind.INSTANCE } &&
+            jvmParameterTypes.size == kotlinParameterTypes.size + (if (isSuspend) 1 else 0) + 1
     val javaParameterTypes = jvmParameterTypes.alignWithKotlinParameters(isSuspend, hasReceiverInJvmSignature)
     return EquatableCallableSignature(
         kind,
