@@ -340,6 +340,8 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Single2
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Split0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SplitAnyFrameIntoColumns
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SplitAnyFrameRows
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SplitDataFrameInto
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SplitDataFrameInward
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SplitDefault
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SplitInplace
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SplitIntoRows
@@ -648,6 +650,8 @@ private fun String.loadImpl(isTest: Boolean): Interpreter<*>? {
         "SplitAnyFrameIntoColumns" -> SplitAnyFrameIntoColumns()
         "SplitIterableInto" -> SplitIterableInto()
         "SplitIterableInward" -> SplitIterableInward()
+        "SplitDataFrameInto" -> SplitDataFrameInto()
+        "SplitDataFrameInward" -> SplitDataFrameInward()
         "SplitWithTransformDefault" -> SplitWithTransformDefault()
         "SplitWithTransformIntoRows" -> SplitWithTransformIntoRows()
         "Named0" -> Named0()
