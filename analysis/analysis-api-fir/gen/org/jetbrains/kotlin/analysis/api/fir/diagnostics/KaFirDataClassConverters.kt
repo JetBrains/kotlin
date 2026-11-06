@@ -3835,6 +3835,12 @@ private fun KaDiagnosticConverterBuilder.addConversions82() {
             token,
         )
     }
+    add(FirWebCommonErrors.JS_QUALIFIER_PROHIBITED_ON_NON_EXTERNAL) { firDiagnostic ->
+        JsQualifierProhibitedOnNonExternalImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirErrors.ABSTRACT_DELEGATED_PROPERTY) { firDiagnostic ->
         AbstractDelegatedPropertyImpl(
             firDiagnostic as KtDiagnosticWithSource,
@@ -4437,6 +4443,12 @@ private fun KaDiagnosticConverterBuilder.addConversions94() {
     }
     add(FirErrors.IGNORABILITY_ANNOTATIONS_WITH_CHECKER_DISABLED) { firDiagnostic ->
         IgnorabilityAnnotationsWithCheckerDisabledImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
+    add(FirWebCommonErrors.JS_QUALIFIER_PROHIBITED_ON_NON_TOP_LEVEL) { firDiagnostic ->
+        JsQualifierProhibitedOnNonTopLevelImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )

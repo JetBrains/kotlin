@@ -1,10 +1,10 @@
-// RUN_PIPELINE_TILL: CODEGEN
-// Diagnostic should be added when KT-82785 is fixed
+// RUN_PIPELINE_TILL: FRONTEND
+// ISSUE: KT-82785
 external class C {
-    @JsQualifier("a")
+    <!JS_QUALIFIER_PROHIBITED_ON_NON_TOP_LEVEL!>@JsQualifier("a")<!>
     fun o(): String
 
-    @JsQualifier("b")
+    <!JS_QUALIFIER_PROHIBITED_ON_NON_TOP_LEVEL!>@JsQualifier("b")<!>
     class D {
         fun k(): String
     }

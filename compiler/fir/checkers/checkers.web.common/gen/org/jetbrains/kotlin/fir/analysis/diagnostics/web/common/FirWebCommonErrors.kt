@@ -38,6 +38,8 @@ object FirWebCommonErrors : KtDiagnosticsContainer() {
     val JS_MODULE_PROHIBITED_ON_MEMBER: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("JS_MODULE_PROHIBITED_ON_MEMBER", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val JS_MODULE_PROHIBITED_ON_EXTERNAL_INTERFACE: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("JS_MODULE_PROHIBITED_ON_EXTERNAL_INTERFACE", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val JS_MODULE_PROHIBITED_IN_FILE_WITH_JS_QUALIFIER: KtDiagnosticFactory0 = KtDiagnosticFactory0("JS_MODULE_PROHIBITED_IN_FILE_WITH_JS_QUALIFIER", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
+    val JS_QUALIFIER_PROHIBITED_ON_NON_EXTERNAL: KtDiagnosticFactory0 = KtDiagnosticFactory0("JS_QUALIFIER_PROHIBITED_ON_NON_EXTERNAL", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
+    val JS_QUALIFIER_PROHIBITED_ON_NON_TOP_LEVEL: KtDiagnosticFactory0 = KtDiagnosticFactory0("JS_QUALIFIER_PROHIBITED_ON_NON_TOP_LEVEL", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val INAPPLICABLE_EAGER_INITIALIZATION: KtDiagnosticFactoryForDeprecation0 = KtDiagnosticFactoryForDeprecation0("INAPPLICABLE_EAGER_INITIALIZATION", ForbidNonTopLevelEagerInitialization, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_FUN: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_FUN", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
 

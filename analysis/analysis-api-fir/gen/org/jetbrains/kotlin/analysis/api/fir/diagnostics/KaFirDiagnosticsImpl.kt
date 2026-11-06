@@ -1549,6 +1549,16 @@ internal class JsModuleProhibitedInFileWithJsQualifierImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.JsModuleProhibitedInFileWithJsQualifier
 
+internal class JsQualifierProhibitedOnNonExternalImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.JsQualifierProhibitedOnNonExternal
+
+internal class JsQualifierProhibitedOnNonTopLevelImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.JsQualifierProhibitedOnNonTopLevel
+
 internal class InapplicableEagerInitializationErrorImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
