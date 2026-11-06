@@ -64,11 +64,11 @@ MODULE_FRAGMENT name:<lib2>
         CONSTRUCTOR signature:lib2/Object.PrivateObject.<init>|<init>(){}[0] visibility:private returnType:lib2.Object.PrivateObject [primary]
           BLOCK_BODY
             DELEGATING_CONSTRUCTOR_CALL 'kotlin/Any.<init>|<init>(){}[0]'
-            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:PrivateObject signature:lib2/Object.PrivateObject|null[0] modality:FINAL visibility:private superTypes:[kotlin.Any]' type=kotlin.Unit
+            INSTANCE_INITIALIZER_CALL classDescriptor='lib2/Object.PrivateObject|null[0]' type=kotlin.Unit
         FUN name:foo signature:lib2/Object.PrivateObject.foo|foo(){}[0] visibility:public modality:FINAL returnType:kotlin.Nothing
           VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:lib2.Object.PrivateObject
           BLOCK_BODY
-            RETURN type=kotlin.Nothing from='public final fun foo (): kotlin.Nothing declared in lib2.Object.PrivateObject'
+            RETURN type=kotlin.Nothing from='lib2/Object.PrivateObject.foo|foo(){}[0]'
               BLOCK type=kotlin.Nothing origin=INLINE_ARGS_CONTAINER
                 VAR IR_TEMPORARY_VARIABLE name:tmp0 type:kotlin.Any [val]
                   TYPE_OP type=kotlin.Any origin=IMPLICIT_CAST typeOperand=kotlin.Any
@@ -98,10 +98,10 @@ MODULE_FRAGMENT name:<lib2>
             INSTANCE_INITIALIZER_CALL classDescriptor='lib2/SealedInterface.Enum|null[0]' type=kotlin.Unit
         ENUM_ENTRY name:FOO signature:lib2/SealedInterface.Enum.FOO|null[0]
           init: EXPRESSION_BODY
-            ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in lib2.SealedInterface.Enum'
+            ENUM_CONSTRUCTOR_CALL 'lib2/SealedInterface.Enum.<init>|<init>(){}[0]'
         ENUM_ENTRY name:BAR signature:lib2/SealedInterface.Enum.BAR|null[0]
           init: EXPRESSION_BODY
-            ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in lib2.SealedInterface.Enum'
+            ENUM_CONSTRUCTOR_CALL 'lib2/SealedInterface.Enum.<init>|<init>(){}[0]'
         PROPERTY name:v signature:lib2/SealedInterface.Enum.v|{}v[0] visibility:public modality:OPEN [val]
           FUN name:<get-v> signature:lib2/SealedInterface.Enum.v.<get-v>|<get-v>(){}[0] visibility:public modality:OPEN returnType:kotlin.collections.HashSet<kotlin.Pair<kotlin.String, kotlin.Number>>
             VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:lib2.SealedInterface.Enum
