@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.gradle.testing.PrettyPrint
 import org.jetbrains.kotlin.gradle.testing.ResolvedComponentWithArtifacts
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.testing.resolveProjectDependencyComponentsWithArtifacts
+import org.jetbrains.kotlin.gradle.util.computeTransformedLibraryVersionChecksum
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import java.io.File
@@ -663,6 +664,7 @@ class BuildScriptInjectionIT : KGPBaseTest() {
             addKgpToBuildScriptCompilationClasspath()
             addPublishedProjectToRepositories(publishedProject)
             buildScriptInjection {
+                project.computeTransformedLibraryVersionChecksum(enable = false)
                 project.applyMultiplatform {
                     linuxArm64()
                     linuxX64()

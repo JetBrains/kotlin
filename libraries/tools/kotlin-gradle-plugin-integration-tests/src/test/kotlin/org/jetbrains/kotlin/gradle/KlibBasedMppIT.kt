@@ -146,18 +146,18 @@ class KlibBasedMppIT : KGPBaseTest() {
             )
 
             val commonModules = listOf(
-                "published-producer-1.0-commonMain-[\\w-]+.klib",
-                "published-dependency-1.0-commonMain-[\\w-]+.klib",
+                "published-producer-0P9ZdL-commonMain-[\\w-]+.klib",
+                "published-dependency-0P9ZdL-commonMain-[\\w-]+.klib",
             ).map(::Regex)
 
             val hostSpecificModules = listOf(
-                "published-producer-1.0-iosMain-[\\w-]+.klib",
-                "published-dependency-1.0-iosMain-[\\w-]+.klib",
+                "published-producer-0P9ZdL-iosMain-[\\w-]+.klib",
+                "published-dependency-0P9ZdL-iosMain-[\\w-]+.klib",
             ).map(::Regex)
 
             val windowsAndLinuxModules = listOf(
-                "published-producer-1.0-windowsAndLinuxMain-[\\w-]+.klib",
-                "published-dependency-1.0-windowsAndLinuxMain-[\\w-]+.klib",
+                "published-producer-0P9ZdL-windowsAndLinuxMain-[\\w-]+.klib",
+                "published-dependency-0P9ZdL-windowsAndLinuxMain-[\\w-]+.klib",
             ).map(::Regex)
 
             checkTaskCompileClasspath(

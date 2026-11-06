@@ -505,7 +505,7 @@ class HierarchicalMppIT : KGPBaseTest() {
             shouldNotInclude = listOf(
                 "my-lib-foo" to "jvmAndJsMain",
                 "my-lib-foo" to "linuxAndJsMain",
-                "third-party-lib-1.0" to "commonMain"
+                "third-party-lib-0P9ZdL" to "commonMain"
             )
         )
 
@@ -514,7 +514,7 @@ class HierarchicalMppIT : KGPBaseTest() {
             shouldInclude = listOf(
                 "my-lib-foo" to "main",
                 "my-lib-foo" to "jvmAndJsMain",
-                "third-party-lib-1.0" to "commonMain"
+                "third-party-lib-0P9ZdL" to "commonMain"
             ),
             shouldNotInclude = listOf(
                 "my-lib-foo" to "linuxAndJsMain"
@@ -529,7 +529,7 @@ class HierarchicalMppIT : KGPBaseTest() {
             ),
             shouldNotInclude = listOf(
                 "my-lib-foo" to "jvmAndJsMain",
-                "third-party-lib-1.0" to "commonMain"
+                "third-party-lib-0P9ZdL" to "commonMain"
             )
         )
     }
@@ -549,7 +549,7 @@ class HierarchicalMppIT : KGPBaseTest() {
                 "my-lib-bar" to "linuxAndJsMain",
                 "my-lib-foo" to "jvmAndJsMain",
                 "my-lib-foo" to "linuxAndJsMain",
-                "third-party-lib-1.0" to "commonMain"
+                "third-party-lib-0P9ZdL" to "commonMain"
             )
         )
 
@@ -560,7 +560,7 @@ class HierarchicalMppIT : KGPBaseTest() {
                 "my-lib-bar" to "jvmAndJsMain",
                 "my-lib-foo" to "main",
                 "my-lib-foo" to "jvmAndJsMain",
-                "third-party-lib-1.0" to "commonMain"
+                "third-party-lib-0P9ZdL" to "commonMain"
             ),
             shouldNotInclude = listOf(
                 "my-lib-bar" to "linuxAndJsMain",
@@ -579,7 +579,7 @@ class HierarchicalMppIT : KGPBaseTest() {
             shouldNotInclude = listOf(
                 "my-lib-bar" to "jvmAndJsMain",
                 "my-lib-foo" to "jvmAndJsMain",
-                "third-party-lib-1.0" to "commonMain"
+                "third-party-lib-0P9ZdL" to "commonMain"
             )
         )
 

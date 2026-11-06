@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.UklibFragment
 import org.jetbrains.kotlin.gradle.utils.ensurePathComponentSafeString
+import org.jetbrains.kotlin.gradle.utils.sha256ChecksumString
 import org.jetbrains.kotlin.utils.keysToMap
 import java.io.File
 import java.security.MessageDigest
@@ -18,6 +19,7 @@ internal class UklibCompositeMetadataArtifact(
     val moduleId: ModuleId,
     val allVisibleFragments: List<UklibFragment>,
     val computeChecksum: Boolean,
+    val computeVersionChecksum: Boolean = true,
 ) : CompositeMetadataArtifact {
     data class ModuleId(val group: String, val name: String, val version: String)
 
@@ -32,6 +34,7 @@ internal class UklibCompositeMetadataArtifact(
             moduleId,
             allVisibleFragments,
             computeChecksum,
+            computeVersionChecksum,
         )
     }
 
@@ -43,6 +46,7 @@ private class UklibCompositeMetadataArtifactContent(
     val moduleId: UklibCompositeMetadataArtifact.ModuleId,
     allVisibleFragments: List<UklibFragment>,
     computeChecksum: Boolean,
+    computeVersionChecksum: Boolean,
 ) : CompositeMetadataArtifactContent {
 
     private val fragmentSourceSets: Map<String, CompositeMetadataArtifactContent.SourceSetContent> =
@@ -51,7 +55,8 @@ private class UklibCompositeMetadataArtifactContent(
                 this,
                 moduleId,
                 fragment,
-                computeChecksum
+                computeChecksum,
+                computeVersionChecksum,
             )
         }.mapKeys { it.key.identifier }
 
@@ -78,12 +83,13 @@ private class UklibCompositeMetadataArtifactSourceSetContent(
     val moduleId: UklibCompositeMetadataArtifact.ModuleId,
     val fragment: UklibFragment,
     val computeChecksum: Boolean,
+    val computeVersionChecksum: Boolean,
 ) : CompositeMetadataArtifactContent.SourceSetContent {
     override val sourceSetName: String
         get() = fragment.identifier
 
     override val metadataBinary: CompositeMetadataArtifactContent.MetadataBinary
-        get() = UklibCompositeMetadataBinary(this, moduleId, fragment, computeChecksum)
+        get() = UklibCompositeMetadataBinary(this, moduleId, fragment, computeChecksum, computeVersionChecksum)
 
     override val cinteropMetadataBinaries: List<CompositeMetadataArtifactContent.CInteropMetadataBinary>
         get() = emptyList()
@@ -94,11 +100,14 @@ private class UklibCompositeMetadataBinary(
     val moduleId: UklibCompositeMetadataArtifact.ModuleId,
     val fragment: UklibFragment,
     val computeChecksum: Boolean,
+    computeVersionChecksum: Boolean,
 ) : CompositeMetadataArtifactContent.MetadataBinary {
+    private val versionForPath = if (computeVersionChecksum) moduleId.version.sha256ChecksumString() else moduleId.version
+
     override val archiveExtension: String
         get() = ""
     override val relativeFile: File
-        get() = File(ensurePathComponentSafeString("uklib-${moduleId.group}-${moduleId.name}-${moduleId.version}-${fragment.identifier}-${checksum}"))
+        get() = File(ensurePathComponentSafeString("uklib-${moduleId.group}-${moduleId.name}-${versionForPath}-${fragment.identifier}-${checksum}"))
 
     // Rely on unique transform path
     override val checksum: String
