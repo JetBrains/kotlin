@@ -21,7 +21,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.diagnostics.DiagnosticUtils;
 import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils;
 
 import static com.intellij.openapi.util.io.FileUtil.toSystemDependentName;
@@ -33,7 +32,7 @@ public class MessageUtil {
     public static CompilerMessageSourceLocation psiElementToMessageLocation(@Nullable PsiElement element) {
         if (element == null) return null;
         PsiFile file = element.getContainingFile();
-        return psiFileToMessageLocation(file, "<no path>", DiagnosticUtils.getLineAndColumnRangeInPsiFile(file, element.getTextRange()));
+        return psiFileToMessageLocation(file, "<no path>", PsiDiagnosticUtils.getLineAndColumnRangeInPsiFile(file, element.getTextRange()));
     }
 
     @Nullable

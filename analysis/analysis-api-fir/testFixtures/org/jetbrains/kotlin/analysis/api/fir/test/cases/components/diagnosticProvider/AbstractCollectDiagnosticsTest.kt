@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostics
 import org.jetbrains.kotlin.analysis.api.diagnostics.diagnostics
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
-import org.jetbrains.kotlin.diagnostics.DiagnosticUtils.getLineAndColumnRangeInPsiFile
+import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils.getLineAndColumnRangeInPsiFile
 import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils.offsetToLineAndColumn
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile

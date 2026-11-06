@@ -1,3 +1,9 @@
+public final class org/jetbrains/kotlin/diagnostics/DiagnosticRangeUtils {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/diagnostics/DiagnosticRangeUtils;
+	public static final field TEXT_RANGE_COMPARATOR Ljava/util/Comparator;
+	public static final fun firstRange (Ljava/util/List;)Lcom/intellij/openapi/util/TextRange;
+}
+
 public class org/jetbrains/kotlin/utils/KotlinExceptionWithAttachments : java/lang/RuntimeException, org/jetbrains/kotlin/utils/exceptions/KotlinExceptionWithAttachments {
 	public fun <init> (Ljava/lang/String;)V
 	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V
