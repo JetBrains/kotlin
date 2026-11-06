@@ -94,7 +94,8 @@ def construct_cmake_flags(
         runtimes: List[str] = None,
         targets: List[str] = None,
         distribution_components: List[str] = None,
-        enable_assertions: bool = False
+        enable_assertions: bool = False,
+        pgo_instrument: bool = False
 ) -> List[str]:
     building_bootstrap = bootstrap_llvm_path is None
 
@@ -161,6 +162,10 @@ def construct_cmake_flags(
                 '-DCOMPILER_RT_ENABLE_WATCHOS=OFF',
                 '-DCOMPILER_RT_ENABLE_TVOS=OFF',
             ])
+
+    if pgo_instrument:
+        c_flags = (c_flags or []) + ["-fprofile-update=atomic"]
+        cxx_flags = (cxx_flags or []) + ["-fprofile-update=atomic"]
 
     if install_path is not None:
         cmake_args.append('-DCMAKE_INSTALL_PREFIX=' + install_path)
@@ -245,9 +250,13 @@ def force_create_directory(parent, name) -> Path:
 
 
 def llvm_build_commands(
-        install_path, bootstrap_path, llvm_src, targets, build_targets, projects, runtimes, distribution_components, debug_cmake, enable_assertions, lto=None
+        install_path, bootstrap_path, llvm_src, targets, build_targets, projects, runtimes, distribution_components, debug_cmake, enable_assertions, lto=None, pgo_instrument=False, pgo_profile=None
 ) -> List[List[str]]:
-    cmake_flags = construct_cmake_flags(bootstrap_path, install_path, projects, runtimes, targets, distribution_components, enable_assertions)
+    cmake_flags = construct_cmake_flags(bootstrap_path, install_path, projects, runtimes, targets, distribution_components, enable_assertions, pgo_instrument)
+    if pgo_instrument:
+        cmake_flags.append("-DLLVM_BUILD_INSTRUMENTED=IR")
+    if pgo_profile is not None:
+        cmake_flags.append(f"-DLLVM_PROFDATA_FILE={pgo_profile}")
 
     if lto is not None:
         cmake_flags.append(f"-DLLVM_ENABLE_LTO={lto.title()}")
@@ -301,6 +310,11 @@ def build_parser() -> argparse.ArgumentParser:
                         nargs="+",
                         help="What components should be installed with `install-distribution` target")
     # Build configuration
+    pgo = parser.add_mutually_exclusive_group()
+    pgo.add_argument("--pgo-instrument", action="store_true",
+                     help="Instrument the final stage for IR PGO training")
+    pgo.add_argument("--pgo-profile", type=str, default=None,
+                     help="Indexed LLVM profile used to optimize the final stage")
     parser.add_argument("--lto", choices=["thin", "full"], default=None,
                         help="Enable LTO in the final stage only; omit to keep the original build")
     parser.add_argument("--stage0", type=str, default=None,
@@ -388,6 +402,8 @@ def build_distribution(args):
             debug_cmake=args.debug_cmake,
             enable_assertions=args.enable_assertions,
             lto=args.lto if building_final else None,
+            pgo_instrument=args.pgo_instrument if building_final else False,
+            pgo_profile=args.pgo_profile if building_final else None,
         )
 
         os.chdir(build_dir)
@@ -453,6 +469,10 @@ def setup_environment(args):
 def main():
     parser = build_parser()
     args = parser.parse_args()
+    if args.pgo_profile is not None:
+        args.pgo_profile = absolute_path(args.pgo_profile)
+        if not os.path.isfile(args.pgo_profile):
+            parser.error("--pgo-profile must name an existing indexed LLVM profile")
     setup_environment(args)
     temporary_llvm_repo = None
     if args.llvm_src is None:

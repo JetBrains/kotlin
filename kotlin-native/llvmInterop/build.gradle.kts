@@ -31,6 +31,10 @@ nativeInteropPlugin {
     selfHeaders.set(emptyList<String>())
     systemIncludeDirs.set(listOf("${nativeDependencies.llvmPath}/include"))
     linkerArgs.set(buildList {
+        if (providers.gradleProperty("kotlin.internal.native.llvm.pgoInstrument").orNull == "true") {
+            // Link the profile runtime for the instrumented LLVM static libraries.
+            add("-fprofile-generate")
+        }
         add("-fvisibility-inlines-hidden")
         addAll(listOf("-Wall", "-W", "-Wno-unused-parameter", "-Wwrite-strings", "-Wcast-qual", "-Wmissing-field-initializers"))
         addAll(listOf("-pedantic", "-Wno-long-long", "-Wcovered-switch-default", "-Wnon-virtual-dtor", "-Wdelete-non-virtual-dtor"))
