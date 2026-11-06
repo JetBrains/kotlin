@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.utils.copyPartially
 import org.jetbrains.kotlin.gradle.utils.ensureValidZipDirectoryPath
 import org.jetbrains.kotlin.gradle.utils.listDescendants
 import org.jetbrains.kotlin.gradle.utils.ensurePathComponentSafeString
+import org.jetbrains.kotlin.gradle.utils.sha256ChecksumString
 import java.io.Closeable
 import java.io.File
 import java.io.IOException
@@ -25,7 +26,11 @@ internal class CompositeMetadataArtifactImpl(
     private val hostSpecificArtifactFilesBySourceSetName: Map<String, File>,
     private val archiveRelativePath: String? = null,
     private val computeChecksum: Boolean = true,
+    computeVersionChecksum: Boolean = true,
 ) : CompositeMetadataArtifact {
+
+    private val moduleDependencyVersionForPath =
+        if (computeVersionChecksum) moduleDependencyVersion.sha256ChecksumString() else moduleDependencyVersion
 
     override fun exists(): Boolean {
         return primaryArtifactFile.exists() && hostSpecificArtifactFilesBySourceSetName.values.all { it.exists() }
@@ -126,13 +131,13 @@ internal class CompositeMetadataArtifactImpl(
 
         /**
          * Example:
-         * org.jetbrains.sample-sampleLibrary-1.0.0-SNAPSHOT-appleAndLinuxMain-Vk5pxQ.klib
+         * org.jetbrains.sample-sampleLibrary-<version-checksum>-appleAndLinuxMain-Vk5pxQ.klib
          */
         override val relativeFile: File = File(buildString {
             fun safeAppend(str: String) = append(ensurePathComponentSafeString(str))
             safeAppend(containingSourceSetContent.containingArtifactContent.containingArtifact.moduleDependencyIdentifier.toString())
             append("-")
-            safeAppend(containingSourceSetContent.containingArtifactContent.containingArtifact.moduleDependencyVersion)
+            safeAppend(moduleDependencyVersionForPath)
             append("-")
             safeAppend(containingSourceSetContent.sourceSetName)
             append("-")
@@ -172,14 +177,14 @@ internal class CompositeMetadataArtifactImpl(
 
         /**
          * Example:
-         * org.jetbrains.sample-sampleLibrary-1.0.0-SNAPSHOT-appleAndLinuxMain-cinterop/
+         * org.jetbrains.sample-sampleLibrary-<version-checksum>-appleAndLinuxMain-cinterop/
          *     org.jetbrains.sample_sampleLibrary-cinterop-simple-Vk5pxQ.klib
          */
         override val relativeFile: File = File(buildString {
             fun safeAppend(str: String) = append(ensurePathComponentSafeString(str))
             safeAppend(containingSourceSetContent.containingArtifactContent.containingArtifact.moduleDependencyIdentifier.toString())
             append("-")
-            safeAppend(containingSourceSetContent.containingArtifactContent.containingArtifact.moduleDependencyVersion)
+            safeAppend(moduleDependencyVersionForPath)
             append("-")
             safeAppend(containingSourceSetContent.sourceSetName)
             append("-cinterop")

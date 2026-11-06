@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.utils
 import java.io.BufferedInputStream
 import java.io.File
 import java.nio.ByteBuffer
+import java.security.MessageDigest
 import java.util.*
 import java.util.zip.CRC32
 
@@ -28,6 +29,12 @@ internal fun File.crc32Checksum(): Int {
 
 internal fun File.crc32ChecksumString(): String {
     return checksumString(crc32Checksum())
+}
+
+internal fun String.sha256ChecksumString(): String {
+    return checksumString(MessageDigest.getInstance("SHA-256").digest(toByteArray(Charsets.UTF_8)))
+        // match the length of crc checksum
+        .take(6)
 }
 
 internal fun checksumString(checksum: Int): String {

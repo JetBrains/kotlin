@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
+import org.jetbrains.kotlin.gradle.util.computeTransformedLibraryVersionChecksum
 import org.junit.jupiter.api.DisplayName
 import kotlin.test.assertEquals
 
@@ -51,6 +52,7 @@ class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
             addPublishedProjectToRepositories(subsetProducer)
             buildScriptInjection {
                 project.computeTransformedLibraryChecksum(false)
+                project.computeTransformedLibraryVersionChecksum(enable = false)
                 project.setUklibResolutionStrategy()
                 project.applyMultiplatform {
                     targetSubset()
@@ -197,6 +199,7 @@ class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
             addPublishedProjectToRepositories(transitivePublisher)
             buildScriptInjection {
                 project.computeTransformedLibraryChecksum(false)
+                project.computeTransformedLibraryVersionChecksum(enable = false)
                 project.setUklibResolutionStrategy()
                 project.applyMultiplatform {
                     iosArm64()
@@ -306,6 +309,7 @@ class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
             addPublishedProjectToRepositories(publishedProject)
             buildScriptInjection {
                 project.computeTransformedLibraryChecksum(false)
+                project.computeTransformedLibraryVersionChecksum(enable = false)
                 project.setUklibResolutionStrategy()
                 project.applyMultiplatform {
                     jvm()
@@ -359,6 +363,7 @@ class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
             addPublishedProjectToRepositories(publisher)
             buildScriptInjection {
                 project.computeTransformedLibraryChecksum(false)
+                project.computeTransformedLibraryVersionChecksum(enable = false)
                 project.setUklibResolutionStrategy()
                 project.applyMultiplatform {
                     linuxArm64()
