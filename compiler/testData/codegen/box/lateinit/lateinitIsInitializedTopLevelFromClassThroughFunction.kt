@@ -18,7 +18,12 @@ fun isLateInitialized(): Boolean = ::late.isInitialized
 
 class TopLevelLateinitIndirectObserver {
     val check: Boolean
-        get() = isLateInitialized()
+        get() {
+            if (libFileInitTriggered) return false
+            val result = isLateInitialized()
+            if (!libFileInitTriggered) return false
+            return result
+        }
 }
 
 // FILE: main.kt
