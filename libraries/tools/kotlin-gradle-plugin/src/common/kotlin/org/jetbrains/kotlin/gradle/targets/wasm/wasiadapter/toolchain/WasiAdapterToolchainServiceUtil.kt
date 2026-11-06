@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.toolchain.wasiadapter.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.statistics.WasiAdapterToolchainServiceMetrics
+import org.jetbrains.kotlin.gradle.targets.wasm.wasmtime.WasmtimePlugin.Companion.WASMTIME_VERSION
 import org.jetbrains.kotlin.gradle.tasks.wasiadapter.UsesWasiAdapterToolchainService
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
@@ -95,11 +96,8 @@ internal enum class WasiAdapterToolchainMode {
     DISABLE,
 }
 
-// Keep in sync with WasmtimePlugin's version.convention("49.0.1")
-internal const val DEFAULT_WASI_ADAPTER_VERSION = "49.0.1"
-
 internal fun Project.requestDefaultWasiAdapter(): WasiAdapterRequest =
     objects.newInstance<WasiAdapterRequest>().also {
-        it.version.convention(WasiAdapterVersion(DEFAULT_WASI_ADAPTER_VERSION))
+        it.version.convention(WasiAdapterVersion(WASMTIME_VERSION))
         it.flavor.convention(WasiAdapterFlavor.COMMAND)
     }
