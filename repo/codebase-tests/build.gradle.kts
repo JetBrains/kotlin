@@ -63,6 +63,10 @@ open class TestSystemPropertiesProvider @Inject constructor(
     val qualityGateNightlyTasks = objectFactory.property<String>()
 
     @get:Input
+    @get:Optional
+    val qualityGateDomainsPerTask = objectFactory.property<String>()
+
+    @get:Input
     val teamcity = objectFactory.property<Boolean>()
 
     override fun asArguments(): Iterable<String> = listOfNotNull(
@@ -71,6 +75,7 @@ open class TestSystemPropertiesProvider @Inject constructor(
         "-Dteamcity=${teamcity.get()}",
         qualityGateMasterTasks.orNull?.let { "-Dquality.gate.master.tasks=$it" },
         qualityGateNightlyTasks.orNull?.let { "-Dquality.gate.nightly.tasks=$it" },
+        qualityGateDomainsPerTask.orNull?.let { "-Dquality.gate.domains.per.task=$it" },
     )
 }
 
@@ -87,6 +92,7 @@ projectTests {
             teamcity = kotlinBuildProperties.isTeamcityBuild
             qualityGateMasterTasks.set(providers.gradleProperty("quality.gate.master.tasks"))
             qualityGateNightlyTasks.set(providers.gradleProperty("quality.gate.nightly.tasks"))
+            qualityGateDomainsPerTask.set(providers.gradleProperty("quality.gate.domains.per.task"))
         })
 
         testFederation {
