@@ -17,9 +17,9 @@
 package org.jetbrains.kotlin.cli.common.messages
 
 import com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.K1Deprecation
-import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
+import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils.getLineAndColumnRange
 
 /**
  * This class behaviour is the same as [MessageCollector.report] in [AnalyzerWithCompilerReport.reportDiagnostic].
@@ -34,7 +34,7 @@ interface MessageCollectorBasedReporter : DiagnosticMessageReporter {
     override fun report(diagnostic: Diagnostic, file: PsiFile, render: String) = messageCollector.report(
         diagnostic.severity.toCompilerMessageSeverity(),
         render,
-        MessageUtil.psiFileToMessageLocation(file, file.name, DiagnosticUtils.getLineAndColumnRange(diagnostic)),
+        MessageUtil.psiFileToMessageLocation(file, file.name, getLineAndColumnRange(diagnostic.psiFile, diagnostic.textRanges)),
         diagnostic.factoryNameOrNull()
     )
 }

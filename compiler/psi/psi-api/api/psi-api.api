@@ -166,6 +166,9 @@ public class org/jetbrains/kotlin/diagnostics/PsiDiagnosticUtils {
 	public static fun atLocation (Lcom/intellij/psi/PsiFile;Lcom/intellij/openapi/util/TextRange;)Ljava/lang/String;
 	public static fun atLocation (Lcom/intellij/psi/PsiFile;Lcom/intellij/openapi/util/TextRange;Lcom/intellij/openapi/editor/Document;)Ljava/lang/String;
 	public static fun atLocation (Lorg/jetbrains/kotlin/psi/KtExpression;)Ljava/lang/String;
+	public static fun getLineAndColumnInPsiFile (Lcom/intellij/psi/PsiFile;Lcom/intellij/openapi/util/TextRange;)Lorg/jetbrains/kotlin/diagnostics/PsiDiagnosticUtils$LineAndColumn;
+	public static fun getLineAndColumnRange (Lcom/intellij/psi/PsiFile;Ljava/util/List;)Lorg/jetbrains/kotlin/diagnostics/PsiDiagnosticUtils$LineAndColumnRange;
+	public static fun getLineAndColumnRangeInPsiFile (Lcom/intellij/psi/PsiFile;Lcom/intellij/openapi/util/TextRange;)Lorg/jetbrains/kotlin/diagnostics/PsiDiagnosticUtils$LineAndColumnRange;
 	public static fun offsetToLineAndColumn (Lcom/intellij/openapi/editor/Document;I)Lorg/jetbrains/kotlin/diagnostics/PsiDiagnosticUtils$LineAndColumn;
 }
 

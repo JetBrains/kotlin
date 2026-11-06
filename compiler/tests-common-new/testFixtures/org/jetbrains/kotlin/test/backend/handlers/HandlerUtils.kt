@@ -9,7 +9,7 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.cli.common.fir.SequentialPositionFinder
 import org.jetbrains.kotlin.codeMetaInfo.model.CodeMetaInfo
 import org.jetbrains.kotlin.codeMetaInfo.model.DiagnosticCodeMetaInfo
-import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
+import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
@@ -80,7 +80,7 @@ fun BinaryArtifactHandler<*>.checkFullDiagnosticRender() {
                     val rendered = when (metaInfo) {
                         is DiagnosticCodeMetaInfo -> metaInfo.diagnostic.let {
                             val message = DefaultErrorMessages.render(it)
-                            val position = DiagnosticUtils.getLineAndColumnRange(it.psiFile, it.textRanges).start
+                            val position = PsiDiagnosticUtils.getLineAndColumnRange(it.psiFile, it.textRanges).start
                             renderDiagnosticMessage(it.psiFile.name, it.severity, message, position.line, position.column)
                         }
                         is FirDiagnosticCodeMetaInfo -> metaInfo.diagnostic.let {

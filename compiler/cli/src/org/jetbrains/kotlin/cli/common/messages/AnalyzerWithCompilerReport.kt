@@ -20,8 +20,10 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cli.common.messages.SyntaxErrorReporter.SyntaxErrorReport
-import org.jetbrains.kotlin.diagnostics.*
-import org.jetbrains.kotlin.diagnostics.DiagnosticUtils.sortedDiagnostics
+import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0
+import org.jetbrains.kotlin.diagnostics.Severity
+import org.jetbrains.kotlin.diagnostics.SimpleDiagnostic
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 
 @K1Deprecation
@@ -52,19 +54,6 @@ object AnalyzerWithCompilerReport {
         )
 
         return diagnostic.severity == Severity.ERROR
-    }
-
-    fun reportDiagnostics(
-        unsortedDiagnostics: GenericDiagnostics<*>,
-        reporter: DiagnosticMessageReporter,
-        renderDiagnosticName: Boolean,
-    ): Boolean {
-        var hasErrors = false
-        val diagnostics = sortedDiagnostics(unsortedDiagnostics.all().filterIsInstance<Diagnostic>())
-        for (diagnostic in diagnostics) {
-            hasErrors = hasErrors or reportDiagnostic(diagnostic, reporter, renderDiagnosticName)
-        }
-        return hasErrors
     }
 
     // Reports K1 diagnostics ([org.jetbrains.kotlin.diagnostics.SimpleDiagnostic])

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir
 import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.KtSourceFileLinesMapping
-import org.jetbrains.kotlin.diagnostics.DiagnosticUtils.getLineAndColumnInPsiFile
+import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils.getLineAndColumnInPsiFile
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.getContainingFile
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
