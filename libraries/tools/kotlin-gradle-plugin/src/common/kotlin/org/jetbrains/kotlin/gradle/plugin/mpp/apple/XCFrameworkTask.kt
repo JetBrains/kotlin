@@ -35,7 +35,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.transitiveSwiftP
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.buildtools.nativehost.KotlinNativeHost
+import org.jetbrains.kotlin.gradle.plugin.mpp.isSupportedMacOs
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 import java.io.Serializable
@@ -249,7 +250,7 @@ internal constructor(
     private val objectsFactory: ObjectFactory,
 ) : DefaultTask(), UsesKotlinToolingDiagnostics {
     init {
-        onlyIf { HostManager.hostIsMac }
+        onlyIf { KotlinNativeHost.current().isSupportedMacOs }
     }
 
     private val projectBuildDir: File get() = projectLayout.buildDirectory.asFile.get()

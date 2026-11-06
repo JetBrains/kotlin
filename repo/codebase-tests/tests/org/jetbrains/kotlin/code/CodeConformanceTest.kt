@@ -374,6 +374,37 @@ class CodeConformanceTest {
         }
     }
 
+    /**
+     * KGP asks the host through `KotlinNativeHost`, so that `HostManager` can be deprecated for build scripts (KT-74608).
+     * Tests may still use `HostManager` to check that both agree.
+     */
+    @Test
+    fun testNoHostManagerInKgpMainSources() {
+        val qualifiedReference = Regex("""\borg\.jetbrains\.kotlin\.konan\.target\.HostManager\b""")
+        val starImport = Regex("""^import org\.jetbrains\.kotlin\.konan\.target\.\*""", RegexOption.MULTILINE)
+        // A use in code, not in a comment or KDoc line
+        val simpleReference = Regex("""^(?!\s*(//|\*|/\*)).*\bHostManager\b""", RegexOption.MULTILINE)
+
+        val kgpSourceSets = File("libraries/tools/kotlin-gradle-plugin/src")
+            .listFiles { dir -> dir.isDirectory && (dir.name == "common" || dir.name == "main" || dir.name.startsWith("gradle")) }
+            .orEmpty()
+            .toList()
+        val mainSourceDirs = kgpSourceSets + File("libraries/tools/kotlin-gradle-plugin-api/src/common")
+
+        val files = mainSourceDirs
+            .flatMap { FileUtil.findFilesByMask(KOTLIN_FILE_PATTERN, it) }
+            .filter { file ->
+                val text = file.readText()
+                qualifiedReference.containsMatchIn(text) || starImport.containsMatchIn(text) && simpleReference.containsMatchIn(text)
+            }
+            .map { it.invariantSeparatorsPath }
+            .sorted()
+
+        if (files.isNotEmpty()) {
+            fail("Use KotlinNativeHost instead of HostManager in KGP main sources (KT-74608):\n" + files.joinToString("\n"))
+        }
+    }
+
     private fun loadKnownThirdPartyCodeList(): List<String> {
         File("license/README.md").useLines { lineSequence ->
             return lineSequence

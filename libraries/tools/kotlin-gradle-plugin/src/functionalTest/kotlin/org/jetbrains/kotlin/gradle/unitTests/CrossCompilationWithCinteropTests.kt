@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
+import org.jetbrains.kotlin.buildtools.nativehost.KotlinNativeHost
+import org.jetbrains.kotlin.gradle.plugin.mpp.isSupportedMacOs
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION
@@ -16,7 +18,6 @@ import org.jetbrains.kotlin.gradle.plugin.tcs
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.util.*
-import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -66,7 +67,7 @@ class CrossCompilationWithCinteropTests {
             "MingwX64 compilation should support cross-compilation"
         }
 
-        if (HostManager.hostIsMac) {
+        if (KotlinNativeHost.current().isSupportedMacOs) {
             project.assertNoDiagnostics(KotlinToolingDiagnostics.CrossCompilationWithCinterops)
             assert(cinteropDummyMacosArm64.enabled) {
                 "cinteropDummyMacosArm64 task should be enabled on macOS"
@@ -117,7 +118,7 @@ class CrossCompilationWithCinteropTests {
 
         project.assertNoDiagnostics(KotlinToolingDiagnostics.CrossCompilationWithCinterops)
 
-        if (HostManager.hostIsMac) {
+        if (KotlinNativeHost.current().isSupportedMacOs) {
             assertEquals(
                 true,
                 compileKotlinMacosArm64.onlyIf.isSatisfiedBy(compileKotlinMacosArm64),

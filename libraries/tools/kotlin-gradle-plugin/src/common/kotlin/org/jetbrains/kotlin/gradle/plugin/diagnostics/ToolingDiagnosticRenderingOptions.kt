@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsSeverity.*
 import org.jetbrains.kotlin.gradle.utils.ConfigurationCacheOpaqueValueSource
-import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.buildtools.nativehost.KotlinNativeHost
 import java.io.Serializable
 
 internal class ToolingDiagnosticRenderingOptions(
@@ -58,7 +58,7 @@ internal class ToolingDiagnosticRenderingOptions(
                 suppressedWarningIds = propertiesProvider.suppressedGradlePluginWarnings,
                 suppressedErrorIds = propertiesProvider.suppressedGradlePluginErrors,
                 showStacktrace = showStacktrace,
-                showSeverityEmoji = !isInIdeaEnvironment && !HostManager.hostIsMingw,
+                showSeverityEmoji = !isInIdeaEnvironment && !KotlinNativeHost.current().isWindows,
                 coloredOutput = showColoredDiagnostics(startParameter.consoleOutput, providerFactory.isAttachedToTerminal().get()),
                 ignoreWarningMode = propertiesProvider.internalDiagnosticsIgnoreWarningMode == true,
                 warningMode = startParameter.warningMode,

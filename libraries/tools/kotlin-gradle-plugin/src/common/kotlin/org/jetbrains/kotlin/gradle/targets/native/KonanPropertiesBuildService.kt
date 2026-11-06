@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
 import org.jetbrains.kotlin.gradle.utils.registerClassLoaderScopedBuildService
 import org.jetbrains.kotlin.io.resolvablePropertyList
 import org.jetbrains.kotlin.konan.target.Distribution
-import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.buildtools.nativehost.KotlinNativeHost
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.util.*
 
@@ -45,16 +45,14 @@ abstract class KonanPropertiesBuildService : BuildService<KonanPropertiesBuildSe
         Distribution(parameters.konanHome.get().asFile.absolutePath).properties
     }
 
-    private val cacheableTargets: List<KonanTarget> by lazy {
-        properties
-            .resolvablePropertyList("cacheableTargets", suffix = HostManager.hostName)
-            .map { KonanTarget.predefinedTargets.getValue(it) }
-    }
+    // Both keys are suffixed with the host target; an unsupported host has no caches.
+    private val cacheableTargets: List<KonanTarget> by lazy { targetsFromProperty("cacheableTargets") }
 
-    private val targetsWithOptInStaticCaches: List<KonanTarget> by lazy {
-        properties
-            .resolvablePropertyList("optInCacheableTargets", suffix = HostManager.hostName)
-            .map { KonanTarget.predefinedTargets.getValue(it) }
+    private val targetsWithOptInStaticCaches: List<KonanTarget> by lazy { targetsFromProperty("optInCacheableTargets") }
+
+    private fun targetsFromProperty(key: String): List<KonanTarget> {
+        val host = KotlinNativeHost.current().targetName ?: return emptyList()
+        return properties.resolvablePropertyList(key, suffix = host).map { KonanTarget.predefinedTargets.getValue(it) }
     }
 
     internal fun defaultCacheKindForTarget(target: KonanTarget): NativeCacheKind =

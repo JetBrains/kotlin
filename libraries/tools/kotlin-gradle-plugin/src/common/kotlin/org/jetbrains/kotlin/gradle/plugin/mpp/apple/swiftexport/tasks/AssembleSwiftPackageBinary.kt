@@ -23,7 +23,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.LibraryTools
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportConstants
-import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.buildtools.nativehost.KotlinNativeHost
+import org.jetbrains.kotlin.gradle.plugin.mpp.isSupportedMacOs
 import java.io.File
 import javax.inject.Inject
 
@@ -36,7 +37,7 @@ internal abstract class AssembleSwiftPackageBinary @Inject constructor(
     private val fileSystemOperations: FileSystemOperations,
 ) : DefaultTask() {
     init {
-        onlyIf(SwiftExportConstants.MACOS_HOST_REQUIRED) { HostManager.hostIsMac }
+        onlyIf(SwiftExportConstants.MACOS_HOST_REQUIRED) { KotlinNativeHost.current().isSupportedMacOs }
     }
 
     /** File name of the library inside every slice, `lib<Module>Kotlin.a`. */

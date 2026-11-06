@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.gradle.report.TaskExecutionResult
 import org.jetbrains.kotlin.gradle.utils.escapeStringCharacters
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import org.jetbrains.kotlin.gradle.utils.property
-import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.buildtools.nativehost.KotlinNativeHost
 import org.jetbrains.kotlin.statistics.FusMetricRetrievalException
 import java.io.File
 import java.io.IOException
@@ -232,7 +232,7 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
     private fun Properties.snapshot(): Properties = clone() as Properties
 
     private fun Sequence<Pair<String, String>>.escapeQuotesForWindows() =
-        if (HostManager.hostIsMingw) map { (key, value) -> key.escapeQuotes() to value.escapeQuotes() } else this
+        if (KotlinNativeHost.current().isWindows) map { (key, value) -> key.escapeQuotes() to value.escapeQuotes() } else this
 
     private fun String.escapeQuotes() = replace("\"", "\\\"")
 

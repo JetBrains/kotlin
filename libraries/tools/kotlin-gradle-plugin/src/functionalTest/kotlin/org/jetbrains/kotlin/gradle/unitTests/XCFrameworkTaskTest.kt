@@ -7,6 +7,8 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
+import org.jetbrains.kotlin.buildtools.nativehost.KotlinNativeHost
+import org.jetbrains.kotlin.gradle.plugin.mpp.isSupportedMacOs
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
@@ -16,7 +18,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFrameworkTask
 import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.konan.target.Family
-import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.util.assertThrows
 import org.junit.jupiter.api.Assumptions
 import java.io.File
@@ -26,7 +27,7 @@ class XCFrameworkTaskTest {
 
     @BeforeTest
     fun runOnMacOSOnly() {
-        Assumptions.assumeTrue(HostManager.hostIsMac)
+        Assumptions.assumeTrue(KotlinNativeHost.current().isSupportedMacOs)
     }
 
     @Test

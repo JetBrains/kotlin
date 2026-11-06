@@ -18,7 +18,10 @@ import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.testing.internal.configureConventions
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.testing.testTaskName
-import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.buildtools.nativehost.KotlinNativeHost
+import org.jetbrains.kotlin.gradle.dsl.konanTarget
+import org.jetbrains.kotlin.gradle.dsl.canRunBinaries
+import org.jetbrains.kotlin.gradle.plugin.mpp.isSupportedMacOs
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 internal class KotlinNativeHostTestRunFactory(private val target: KotlinNativeTarget) : KotlinTestRunFactory<KotlinNativeHostTestRun> {
@@ -33,7 +36,7 @@ internal class KotlinNativeHostTestRunFactory(private val target: KotlinNativeTa
                 isEnabledOnCurrentHost = isCurrentHost,
                 taskName = testTaskName,
                 targetName = konanTarget.name,
-                currentHost = HostManager.hostOrNull?.name ?: "unsupported",
+                currentHost = KotlinNativeHost.current().konanTarget?.name ?: "unsupported",
                 reason = "tests can only run on ${konanTarget.name}",
             )
             executionTask = this@KotlinNativeHostTestRunFactory.target.registerNativeTestTask(testTaskName, isCurrentHost)
@@ -49,18 +52,21 @@ internal class KotlinNativeSimulatorTestRunFactory(private val target: KotlinNat
         val thisTarget = target
         return DefaultSimulatorTestRun(name, target).apply {
             val project = target.project
-            val isCompatibleHost = HostManager.hostIsMac && HostManager.host.architecture == thisTarget.konanTarget.architecture
+            val host = KotlinNativeHost.current()
+            val isCompatibleHost = host.canRunBinaries(thisTarget.konanTarget)
             // Report diagnostic during test run creation (not in task configuration) to ensure it's emitted
             // even with configuration avoidance when the task is not realized
             val reason = when {
-                !HostManager.hostIsMac -> "simulator tests require macOS"
-                else -> "architecture mismatch - target requires ${thisTarget.konanTarget.architecture.name}, current host is ${HostManager.host.architecture.name}"
+                !host.isSupportedMacOs -> "simulator tests require a macOS host supported by Kotlin/Native"
+                thisTarget.konanTarget.architecture != host.konanTarget?.architecture ->
+                    "architecture mismatch - target requires ${thisTarget.konanTarget.architecture.name}, current host is ${host.architecture.name}"
+                else -> "${thisTarget.konanTarget.name} binaries cannot run on this host"
             }
             project.reportDisabledNativeTargetTaskWarningIfNeeded(
                 isEnabledOnCurrentHost = isCompatibleHost,
                 taskName = testTaskName,
                 targetName = thisTarget.konanTarget.name,
-                currentHost = HostManager.platformName(),
+                currentHost = host.name,
                 reason = reason,
             )
             executionTask = thisTarget.registerNativeTestTask<KotlinNativeSimulatorTest>(testTaskName, isCompatibleHost) { testTask ->

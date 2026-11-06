@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.archive.KotlinTargetWithKotlinArch
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.tooling.buildKotlinToolingMetadataTask
 import org.jetbrains.kotlin.gradle.utils.*
-import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.buildtools.nativehost.KotlinNativeHost
 
 private val Project.kotlinMultiplatformRootPublicationImpl: CompletableFuture<MavenPublication?>
         by projectStoredProperty { CompletableFuture() }
@@ -72,7 +72,8 @@ private suspend fun Project.shouldDisablePublishingDueToIncompatibleHost(): Bool
     if (project.kotlinPropertiesProvider.allowMultiplatformPublicationsOnUnsupportedHost) return false
 
     // 2. Check if the current host is supported
-    if (HostManager.hostIsSupported) return false
+    val host = KotlinNativeHost.current()
+    if (host.isSupported) return false
 
     // 3. Host is unsupported. Check if the project actually uses any Native targets.
     // If the project is pure JVM/JS/Wasm, we shouldn't block publishing just because the OS is exotic (e.g., FreeBSD).
@@ -82,8 +83,8 @@ private suspend fun Project.shouldDisablePublishingDueToIncompatibleHost(): Bool
         project.reportDiagnostic(
             KotlinToolingDiagnostics.PublishingDisabledOnUnsupportedHost(
                 name,
-                HostManager.platformName(),
-                HostManager().supportedHosts
+                host.name,
+                supportedNativeHosts
             )
         )
         return true

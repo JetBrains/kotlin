@@ -1,0 +1,25 @@
+import org.jetbrains.kotlin.buildtools.nativehost.KotlinNativeHost
+
+plugins {
+    id("org.jetbrains.kotlin.multiplatform")
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+def host = KotlinNativeHost.current()
+
+kotlin {
+    hostNativeTarget("native") {
+        binaries {
+            executable()
+        }
+    }
+    if (nativeHost.macOs) {
+        iosArm64()
+    }
+    logger.quiet("nativeHost.name=" + nativeHost.name)
+    logger.quiet("host.supported=" + host.supported)
+}

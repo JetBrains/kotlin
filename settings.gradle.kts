@@ -485,6 +485,8 @@ include(
     ":libraries:tools:abi-validation:kgp-integration-tests"
 )
 
+include(":build-tools:libraries:native-host")
+
 include(
     ":libraries:tools:analysis-api-based-klib-reader",
     ":libraries:tools:analysis-api-based-klib-reader:testProject"

@@ -36,7 +36,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.xcproj.XcprojNat
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.konan.target.Family
-import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.buildtools.nativehost.KotlinNativeHost
+import org.jetbrains.kotlin.gradle.plugin.mpp.isSupportedMacOs
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 import java.io.Serializable
@@ -138,7 +139,7 @@ private fun Project.registerCheckXcodeTargetsConfigurationTask(
 @CacheableTask
 internal abstract class ConvertXcodeProjectFileToJsonTask : DefaultTask() {
     init {
-        onlyIf("Task can only run on macOS") { HostManager.hostIsMac }
+        onlyIf("Task can only run on macOS") { KotlinNativeHost.current().isSupportedMacOs }
     }
 
     companion object {
@@ -192,7 +193,7 @@ internal abstract class ConvertXcodeProjectFileToJsonTask : DefaultTask() {
 @DisableCachingByDefault(because = "This task's output is a diagnostic, which should be re-evaluated on each build.")
 internal abstract class CheckXcodeTargetsConfigurationTask : DefaultTask(), UsesKotlinToolingDiagnostics {
     init {
-        onlyIf("Task can only run on macOS") { HostManager.hostIsMac }
+        onlyIf("Task can only run on macOS") { KotlinNativeHost.current().isSupportedMacOs }
     }
 
     companion object {
