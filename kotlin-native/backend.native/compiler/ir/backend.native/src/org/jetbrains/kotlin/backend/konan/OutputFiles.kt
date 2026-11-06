@@ -83,6 +83,8 @@ class OutputFiles(val outputName: String, target: KonanTarget, val produce: Comp
 
     val partialLinkageIssuesFile = tempCacheDirectory?.cacheIrPart()?.resolve(CachedLibraries.PARTIAL_LINKAGE_ISSUES_FILE_NAME)
 
+    val classHierarchyFile = tempCacheDirectory?.cacheIrPart()?.resolve(CachedLibraries.CLASS_HIERARCHY_FILE_NAME)
+
     private fun String.fullOutputName() = prefixBaseNameIfNeeded(prefix).suffixIfNeeded(suffix)
 
     private fun String.prefixBaseNameIfNeeded(prefix: String) =
