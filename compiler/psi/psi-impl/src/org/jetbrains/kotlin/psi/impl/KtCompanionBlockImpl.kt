@@ -14,9 +14,9 @@ import org.jetbrains.kotlin.psi.KtElementImplStub
 import org.jetbrains.kotlin.psi.KtVisitor
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
 
-internal class KtCompanionBlockImpl : KtElementImplStub<KotlinPlaceHolderStub<KtCompanionBlockImpl>>, KtCompanionBlock {
+internal class KtCompanionBlockImpl : KtElementImplStub<KotlinPlaceHolderStub<KtCompanionBlock>>, KtCompanionBlock {
     constructor(node: ASTNode) : super(node)
-    constructor(stub: KotlinPlaceHolderStub<KtCompanionBlockImpl>) : super(stub, KtNodeTypes.COMPANION_BLOCK)
+    constructor(stub: KotlinPlaceHolderStub<KtCompanionBlock>) : super(stub, KtNodeTypes.COMPANION_BLOCK)
 
     override val body: KtClassBody
         get() = getRequiredStubOrPsiChild(KtNodeTypes.CLASS_BODY, KtClassBody::class.java)

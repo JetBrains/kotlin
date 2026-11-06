@@ -11,6 +11,7 @@ dependencies {
     implementation(project(":compiler:psi:psi-api"))
     implementation(project(":analysis:decompiled:decompiler"))
     implementation(project(":analysis:decompiled:light-classes-for-decompiled"))
+    implementation(project(":analysis:stubs"))
     implementation(project(":compiler:psi:psi-utils"))
     implementation(project(":compiler:psi:parser"))
     implementation(project(":core:descriptors"))

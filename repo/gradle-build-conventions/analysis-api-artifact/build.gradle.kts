@@ -19,6 +19,7 @@ dependencies {
     implementation(project(":buildsrc-compat"))
     implementation(kotlinBuildHelpers())
     implementation(libs.spdx.gradlePlugin)
+    implementation(libs.proguard.gradlePlugin)
     compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}")
 }
 

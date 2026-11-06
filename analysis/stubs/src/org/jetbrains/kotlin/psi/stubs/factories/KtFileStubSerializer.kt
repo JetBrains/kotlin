@@ -6,13 +6,16 @@
 package org.jetbrains.kotlin.psi.stubs.factories
 
 import com.intellij.psi.stubs.*
-import org.jetbrains.kotlin.psi.stubs.elements.KtFileElementType
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.stubs.elements.StubIndexService
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubKindImpl
 
 internal object KtFileStubSerializer : StubSerializer<KotlinFileStubImpl> {
-    override fun getExternalId(): String = KtFileElementType.NAME
+    override fun getExternalId(): String {
+        @Suppress("UnstableApiUsage")
+        return KtNodeTypes.FILE.debugName
+    }
 
     override fun serialize(stub: KotlinFileStubImpl, dataStream: StubOutputStream) {
         KotlinFileStubKindImpl.serialize(stub.kind, dataStream)
