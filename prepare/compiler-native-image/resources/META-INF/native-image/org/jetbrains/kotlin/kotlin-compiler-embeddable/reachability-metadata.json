@@ -19,13 +19,31 @@
       ]
     },
     {
+      "type": "byte[]",
+      "serializable": true
+    },
+    {
       "type": "gnu.trove.TObjectHashingStrategy"
+    },
+    {
+      "type": "java.io.IOException",
+      "allDeclaredFields": true,
+      "serializable": true
+    },
+    {
+      "type": "java.io.InvalidClassException",
+      "serializable": true
+    },
+    {
+      "type": "java.io.ObjectStreamException",
+      "serializable": true
     },
     {
       "type": "java.io.Serializable"
     },
     {
       "type": "java.lang.Boolean",
+      "serializable": true,
       "jniAccessible": true,
       "methods": [
         {
@@ -80,22 +98,51 @@
       "type": "java.lang.Double"
     },
     {
-      "type": "java.lang.Enum"
+      "type": "java.lang.Enum",
+      "serializable": true
+    },
+    {
+      "type": "java.lang.Error",
+      "serializable": true
+    },
+    {
+      "type": "java.lang.Exception",
+      "allDeclaredFields": true,
+      "serializable": true
+    },
+    {
+      "type": "java.lang.ExceptionInInitializerError",
+      "serializable": true
     },
     {
       "type": "java.lang.Float"
     },
     {
-      "type": "java.lang.Integer"
+      "type": "java.lang.Integer",
+      "serializable": true
+    },
+    {
+      "type": "java.lang.Integer[]",
+      "serializable": true
     },
     {
       "type": "java.lang.Iterable"
     },
     {
-      "type": "java.lang.Long"
+      "type": "java.lang.LinkageError",
+      "serializable": true
     },
     {
-      "type": "java.lang.Number"
+      "type": "java.lang.Long",
+      "serializable": true
+    },
+    {
+      "type": "java.lang.NoClassDefFoundError",
+      "serializable": true
+    },
+    {
+      "type": "java.lang.Number",
+      "serializable": true
     },
     {
       "type": "java.lang.Object"
@@ -141,10 +188,27 @@
       "type": "java.lang.Short"
     },
     {
-      "type": "java.lang.String"
+      "type": "java.lang.StackTraceElement",
+      "serializable": true
     },
     {
-      "type": "java.lang.Throwable"
+      "type": "java.lang.StackTraceElement[]",
+      "serializable": true
+    },
+    {
+      "type": "java.lang.String",
+      "allDeclaredFields": true,
+      "serializable": true
+    },
+    {
+      "type": "java.lang.String[]",
+      "serializable": true
+    },
+    {
+      "type": "java.lang.Throwable",
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true,
+      "serializable": true
     },
     {
       "type": "java.lang.Void"
@@ -153,7 +217,73 @@
       "type": "java.lang.annotation.Annotation"
     },
     {
+      "type": "java.lang.reflect.Proxy",
+      "serializable": true
+    },
+    {
+      "type": "java.rmi.MarshalException",
+      "serializable": true
+    },
+    {
+      "type": "java.rmi.Remote"
+    },
+    {
+      "type": "java.rmi.RemoteException",
+      "serializable": true
+    },
+    {
+      "type": "java.rmi.ServerError",
+      "serializable": true
+    },
+    {
+      "type": "java.rmi.ServerException",
+      "serializable": true
+    },
+    {
+      "type": "java.rmi.UnmarshalException",
+      "serializable": true
+    },
+    {
+      "type": "java.rmi.dgc.Lease",
+      "serializable": true
+    },
+    {
+      "type": "java.rmi.dgc.VMID",
+      "serializable": true
+    },
+    {
+      "type": "java.rmi.registry.Registry"
+    },
+    {
+      "type": "java.rmi.server.ObjID",
+      "serializable": true
+    },
+    {
+      "type": "java.rmi.server.ObjID[]",
+      "serializable": true
+    },
+    {
+      "type": "java.rmi.server.RemoteObject",
+      "serializable": true
+    },
+    {
+      "type": "java.rmi.server.RemoteObjectInvocationHandler",
+      "serializable": true
+    },
+    {
+      "type": "java.rmi.server.UID",
+      "serializable": true
+    },
+    {
+      "type": "java.util.ArrayList",
+      "serializable": true
+    },
+    {
       "type": "java.util.Collection"
+    },
+    {
+      "type": "java.util.Collections$EmptyList",
+      "serializable": true
     },
     {
       "type": "java.util.Iterator"
@@ -187,6 +317,15 @@
     },
     {
       "type": "java.util.Set"
+    },
+    {
+      "type": "java.util.logging.FileHandler",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
     },
     {
       "type": "java.util.zip.Inflater",
@@ -881,6 +1020,14 @@
       "allDeclaredMethods": true
     },
     {
+      "type": "org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocationWithRange",
+      "serializable": true
+    },
+    {
       "type": "org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings",
       "fields": [
         {
@@ -1110,6 +1257,65 @@
       ]
     },
     {
+      "type": "org.jetbrains.kotlin.daemon.CompileServiceImpl_Stub"
+    },
+    {
+      "type": "org.jetbrains.kotlin.daemon.common.CompilationOptions",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.daemon.common.CompileService",
+      "allPublicMethods": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.daemon.common.CompileService$CallResult",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.daemon.common.CompileService$CallResult$Dying",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.daemon.common.CompileService$CallResult$Error",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.daemon.common.CompileService$CallResult$Good",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.daemon.common.CompileService$CallResult$Ok",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.daemon.common.CompileService$TargetPlatform",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.daemon.common.CompilerMessageAttachment",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.daemon.common.CompilerMode",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.daemon.common.CompilerServicesFacadeBase",
+      "allPublicMethods": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.daemon.common.DaemonJVMOptions",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.daemon.common.LoopbackNetworkInterface$AbstractClientLoopbackSocketFactory",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.daemon.common.LoopbackNetworkInterface$ClientLoopbackSocketFactory",
+      "serializable": true
+    },
+    {
       "type": "org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryDslKt",
       "methods": [
         {
@@ -1206,6 +1412,9 @@
           "parameterTypes": []
         }
       ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.io.opentelemetry.api.incubator.trace.ExtendedDefaultTracerProvider"
     },
     {
       "type": "org.jetbrains.kotlin.load.java.ErasedOverridabilityCondition"
@@ -2259,6 +2468,64 @@
       ]
     },
     {
+      "type": "sun.rmi.registry.RegistryImpl_Skel",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "sun.rmi.registry.RegistryImpl_Stub",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.rmi.server.RemoteRef"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "sun.rmi.server.UnicastRef",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "sun.rmi.server.UnicastRef2",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "sun.rmi.transport.DGCImpl_Skel",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "sun.rmi.transport.DGCImpl_Stub",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.rmi.server.RemoteRef"
+          ]
+        }
+      ]
+    },
+    {
       "type": "sun.security.provider.MD5",
       "methods": [
         {
@@ -2266,6 +2533,61 @@
           "parameterTypes": []
         }
       ]
+    },
+    {
+      "type": "sun.security.provider.NativePRNG",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.security.SecureRandomParameters"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "sun.security.provider.SHA",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "sun.text.resources.cldr.FormatData"
+    },
+    {
+      "type": "sun.text.resources.cldr.FormatData_en"
+    },
+    {
+      "type": "sun.util.resources.cldr.CalendarData"
+    },
+    {
+      "type": {
+        "proxy": [
+          "java.rmi.Remote",
+          "java.rmi.registry.Registry"
+        ]
+      }
+    },
+    {
+      "type": {
+        "proxy": [
+          "java.rmi.Remote",
+          "org.jetbrains.kotlin.daemon.common.CompilationResults"
+        ]
+      },
+      "serializable": true
+    },
+    {
+      "type": {
+        "proxy": [
+          "java.rmi.Remote",
+          "org.jetbrains.kotlin.daemon.common.CompilerServicesFacadeBase"
+        ]
+      },
+      "serializable": true
     },
     {
       "type": {
@@ -2287,9 +2609,28 @@
           "org.jetbrains.kotlin.com.intellij.psi.util.PsiModificationTracker$Listener"
         ]
       }
+    },
+    {
+      "type": {
+        "proxy": [
+          "org.jetbrains.kotlin.daemon.common.CompileService"
+        ]
+      },
+      "serializable": true
+    },
+    {
+      "type": {
+        "proxy": [
+          "org.jetbrains.kotlin.daemon.common.CompilerServicesFacadeBase"
+        ]
+      },
+      "serializable": true
     }
   ],
   "resources": [
+    {
+      "glob": "META-INF/MANIFEST.MF"
+    },
     {
       "glob": "META-INF/allow-configuring-from-environment"
     },
@@ -2298,6 +2639,12 @@
     },
     {
       "glob": "META-INF/services/java.nio.file.spi.FileSystemProvider"
+    },
+    {
+      "glob": "META-INF/services/java.rmi.server.RMIClassLoaderSpi"
+    },
+    {
+      "glob": "META-INF/services/java.time.zone.ZoneRulesProvider"
     },
     {
       "glob": "META-INF/services/kotlin.reflect.jvm.internal.impl.resolve.ExternalOverridabilityCondition"
@@ -2342,6 +2689,9 @@
       "glob": "kotlin/reflect/reflect.kotlin_builtins"
     },
     {
+      "glob": "kotlin/script/experimental/templates/ScriptWithArgs.class"
+    },
+    {
       "glob": "kotlin/script/templates/standard/standard.kotlin_builtins"
     },
     {
@@ -2358,6 +2708,17 @@
     },
     {
       "glob": "org/jetbrains/kotlin/scripting/definitions/AutoloadedScriptDefinitions.class"
+    },
+    {
+      "module": "java.logging",
+      "glob": "sun/util/logging/resources/logging_en.properties"
+    },
+    {
+      "module": "java.logging",
+      "glob": "sun/util/logging/resources/logging_en_NL.properties"
+    },
+    {
+      "bundle": "sun.util.logging.resources.logging"
     }
   ]
 }

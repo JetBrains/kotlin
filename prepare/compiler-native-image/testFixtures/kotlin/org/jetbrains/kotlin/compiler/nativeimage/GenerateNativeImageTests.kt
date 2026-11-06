@@ -18,6 +18,12 @@ fun main(args: Array<String>) {
             testClass<AbstractReachabilityMetadataBoxTest> {
                 model("box")
             }
+            testClass<AbstractNativeImageDaemonBoxTest> {
+                model("box")
+            }
+            testClass<AbstractReachabilityMetadataDaemonBoxTest> {
+                model("box")
+            }
         }
         testGroup(testsRoot = args[0], testDataRoot = "prepare/compiler-native-image/testData/projects/box") {
             testClass<AbstractNativeImagePluginBoxTest> {
@@ -32,12 +38,30 @@ fun main(args: Array<String>) {
             testClass<AbstractReachabilityMetadataLegacyPluginBoxTest> {
                 model("")
             }
+            testClass<AbstractNativeImageDaemonPluginBoxTest> {
+                model("")
+            }
+            testClass<AbstractNativeImageDaemonLegacyPluginBoxTest> {
+                model("")
+            }
+            testClass<AbstractReachabilityMetadataDaemonPluginBoxTest> {
+                model("")
+            }
+            testClass<AbstractReachabilityMetadataDaemonLegacyPluginBoxTest> {
+                model("")
+            }
         }
         testGroup(testsRoot = args[0], testDataRoot = "prepare/compiler-native-image/testData/projects/dynamicPlugins") {
             testClass<AbstractNativeImageDynamicPluginBoxTest> {
                 model("")
             }
             testClass<AbstractNativeImageDynamicLegacyPluginBoxTest> {
+                model("")
+            }
+            testClass<AbstractNativeImageDaemonDynamicPluginBoxTest> {
+                model("")
+            }
+            testClass<AbstractNativeImageDaemonDynamicLegacyPluginBoxTest> {
                 model("")
             }
         }
