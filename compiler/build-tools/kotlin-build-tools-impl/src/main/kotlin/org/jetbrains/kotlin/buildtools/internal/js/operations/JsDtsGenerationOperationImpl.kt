@@ -103,6 +103,7 @@ internal class JsDtsGenerationOperationImpl private constructor(
         check(linkingOperation is JsLinkingOperationImpl) { "Unexpected linking operation: ${linkingOperation::class}." }
 
         this[COMPILE_LONG_AS_BIG_INT] = linkingOperation.compilerArguments[JsArgumentsImpl.X_ES_LONG_AS_BIGINT] ?: false
+        this[COMPILE_SUSPEND_AS_JS_GENERATOR] = linkingOperation.compilerArguments[JsArgumentsImpl.X_ES_GENERATORS] ?: false
         this[IMPLEMENT_INTERFACES] = linkingOperation.compilerArguments[JsArgumentsImpl.X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT]
         this[EXPORT_SUSPEND_LAMBDAS] = linkingOperation.compilerArguments[JsArgumentsImpl.X_SUSPEND_LAMBDA_EXPORTING]
         this[DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY] =
@@ -171,6 +172,7 @@ internal class JsDtsGenerationOperationImpl private constructor(
                 } ?: JsModuleKind.UMD
         )
         val COMPILE_LONG_AS_BIG_INT: Option<Boolean> = Option("COMPILE_LONG_AS_BIG_INT", defaultArgsReference.compileLongAsBigInt ?: false)
+        val COMPILE_SUSPEND_AS_JS_GENERATOR: Option<Boolean> = Option("COMPILE_SUSPEND_AS_JS_GENERATOR", defaultArgsReference.useEsGenerators ?: false)
         val IMPLEMENT_INTERFACES: Option<Boolean> =
             Option("IMPLEMENT_INTERFACES", defaultArgsReference.allowImplementableInterfacesExporting)
         val EXPORT_SUSPEND_LAMBDAS: Option<Boolean> = Option("EXPORT_SUSPEND_LAMBDAS", defaultArgsReference.allowExportingSuspendLambdas)
