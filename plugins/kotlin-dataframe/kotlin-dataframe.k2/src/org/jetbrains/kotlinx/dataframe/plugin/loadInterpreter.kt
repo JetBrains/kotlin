@@ -137,6 +137,10 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Cols0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColsAtAnyDepth0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColsAtAnyDepth1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColsAtAnyDepth2
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Corr0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.CorrWith
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.CorrWithItself
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameCorr
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColsOf0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColsOf1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColsOf2
@@ -539,6 +543,10 @@ private fun String.loadImpl(isTest: Boolean): Interpreter<*>? {
         "Select0" -> Select0()
         "SelectString" -> SelectString()
         "DataFrameGetColumns" -> DataFrameGetColumns()
+        "Corr0" -> Corr0()
+        "CorrWith" -> CorrWith()
+        "CorrWithItself" -> CorrWithItself()
+        "DataFrameCorr" -> DataFrameCorr()
         "Distinct0" -> Select0()
         "NestedSelect" -> NestedSelect()
         "Expr0" -> Expr0()
