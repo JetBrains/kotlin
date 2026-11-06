@@ -15,14 +15,12 @@ import org.jetbrains.kotlin.parsing.parseBoolean
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
-import org.jetbrains.kotlin.test.backend.handlers.IrPreprocessedInlineFunctionDumpHandler
 import org.jetbrains.kotlin.test.backend.handlers.IrTextDumpHandler
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
 import org.jetbrains.kotlin.test.configuration.commonIrHandlersForCodegenTest
+import org.jetbrains.kotlin.test.configuration.configureLoweredIrDumpHandlers
 import org.jetbrains.kotlin.test.configuration.setupIrTextDumpHandlers
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR_AFTER_INLINE
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR_AFTER_INLINE_DIFFERENCE
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR_AFTER_SPLITTING
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR_AFTER_SPLITTING_DIFFERENCE
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_BACKEND_MULTI_MODULE
@@ -323,22 +321,4 @@ fun TestConfigurationBuilder.setUpDefaultDirectivesForJsBoxTest(parser: FirParse
 
 private fun getBoolean(s: String, default: Boolean): Boolean {
     return System.getProperty(s)?.let { parseBoolean(it) } ?: default
-}
-
-fun TestConfigurationBuilder.configureLoweredIrDumpHandlers() {
-    configureLoweredIrHandlersStep {
-        useHandlers(
-            { testServices, artifactKind ->
-                IrTextDumpHandler(
-                    testServices = testServices,
-                    artifactKind = artifactKind,
-                    customExtension = "inlined.ir",
-                    directive = DUMP_IR_AFTER_INLINE,
-                    directiveForIrDifference = DUMP_IR_AFTER_INLINE_DIFFERENCE,
-                    showOffsets = true,
-                )
-            },
-            ::IrPreprocessedInlineFunctionDumpHandler,
-        )
-    }
 }
