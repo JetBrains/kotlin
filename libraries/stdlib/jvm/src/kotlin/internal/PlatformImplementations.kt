@@ -66,6 +66,14 @@ internal open class PlatformImplementations {
     ): Boolean {
         throw UnsupportedOperationException("removeIf should not be called on the base PlatformImplementations.")
     }
+
+    open fun <T> retainAll(
+        collection: MutableCollection<T>,
+        predicate: (T) -> Boolean,
+        fallback: () -> Boolean,
+    ): Boolean {
+        throw UnsupportedOperationException("retainAll should not be called on the base PlatformImplementations.")
+    }
 }
 
 

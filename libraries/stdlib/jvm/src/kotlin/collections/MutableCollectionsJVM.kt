@@ -100,7 +100,7 @@ public actual fun <T> MutableIterable<T>.removeAll(predicate: (T) -> Boolean): B
 @IgnorableReturnValue
 public actual fun <T> MutableIterable<T>.retainAll(predicate: (T) -> Boolean): Boolean {
     if (this is MutableCollection<T>) {
-        return IMPLEMENTATIONS.removeIf(this, { !predicate(it) }) {
+        return IMPLEMENTATIONS.retainAll(this, predicate) {
             this@retainAll.filterInPlace(predicate, predicateResultToRemove = false)
         }
     }
