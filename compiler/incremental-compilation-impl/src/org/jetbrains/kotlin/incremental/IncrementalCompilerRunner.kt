@@ -600,6 +600,7 @@ abstract class IncrementalCompilerRunner<
             is CompilationMode.Incremental -> compilationMode.dirtyFiles.toMutableLinkedSet()
             is CompilationMode.Rebuild -> LinkedHashSet(allKotlinSources)
         }
+        val allKotlinSourcesSet = allKotlinSources.toHashSet()
 
         val currentBuildInfo = BuildInfo(startTS = System.currentTimeMillis())
         val buildDirtyLookupSymbols = HashSet<LookupSymbol>()
@@ -645,7 +646,7 @@ abstract class IncrementalCompilerRunner<
             val transactionOutputsRegistrar = TransactionOutputsRegistrar(transaction, forwardingOutputItemsCollector)
             val fileMappingTracker = ICFileMappingTrackerImpl(transactionOutputsRegistrar)
 
-            val [sourcesToCompile, removedKotlinSources] = dirtySources.partition { it.exists() && allKotlinSources.contains(it) }
+            val [sourcesToCompile, removedKotlinSources] = dirtySources.partition { it.exists() && it in allKotlinSourcesSet }
 
             icContext.fragmentContext?.let {
                 if (it.dirtySetTouchesNonLeafFragments(sourcesToCompile)) {
