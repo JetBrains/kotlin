@@ -207,8 +207,6 @@ private class JvmSnapshotBasedIncrementalCompilationConfigurationImplSurrogate(
     val preciseJavaTracking: Boolean = false,
     @SerialName("ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES")
     val assuredNoClasspathSnapshotChanges: Boolean = false,
-    @SerialName("USE_FIR_RUNNER")
-    val useFirRunner: Boolean = false,
     @SerialName("ENABLE_ERROR_RECOVERY_ROUND")
     val enableErrorRecoveryRound: Boolean = true,
     @SerialName("ROOT_PROJECT_DIR")
@@ -245,7 +243,6 @@ internal object JvmSnapshotBasedIncrementalCompilationConfigurationImplSerialize
             shrunkClasspathSnapshot = value.shrunkClasspathSnapshot,
             preciseJavaTracking = value.preciseJavaTracking,
             assuredNoClasspathSnapshotChanges = value.assuredNoClasspathSnapshotChanges,
-            useFirRunner = value.useFirRunner,
             enableErrorRecoveryRound = value.enableErrorRecoveryRound,
             rootProjectDir = value.rootProjectDir,
             moduleBuildDir = value.moduleBuildDir,
@@ -270,7 +267,6 @@ internal object JvmSnapshotBasedIncrementalCompilationConfigurationImplSerialize
         ).apply {
             preciseJavaTracking = surrogate.preciseJavaTracking
             assuredNoClasspathSnapshotChanges = surrogate.assuredNoClasspathSnapshotChanges
-            useFirRunner = surrogate.useFirRunner
             enableErrorRecoveryRound = surrogate.enableErrorRecoveryRound
             rootProjectDir = surrogate.rootProjectDir
             moduleBuildDir = surrogate.moduleBuildDir

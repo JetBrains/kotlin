@@ -130,34 +130,7 @@ internal class JsKlibCompilationOperationImpl : BaseCompilationOperationImpl<JsA
         arguments: K2JSCompilerArguments,
     ): IncrementalCompilationOptions? {
         return when (val aggregatedIcConfiguration: JsIncrementalCompilationConfiguration? = get(INCREMENTAL_COMPILATION)) {
-            is JsHistoryBasedIncrementalCompilationConfigurationImpl -> {
-                val sourcesChanges = aggregatedIcConfiguration.sourcesChanges
-                val classpathChanges = ClasspathChanges.NotAvailableForJSCompiler
-
-                IncrementalCompilationOptions(
-                    sourcesChanges,
-                    classpathChanges = classpathChanges,
-                    workingDir = aggregatedIcConfiguration.workingDirectory.toFile(),
-                    compilerMode = CompilerMode.INCREMENTAL_COMPILER,
-                    targetPlatform = targetPlatform,
-                    reportCategories = reportCategories,
-                    reportSeverity = reportSeverity,
-                    requestedCompilationResults = requestedCompilationResults,
-                    outputFiles = aggregatedIcConfiguration[OUTPUT_DIRS]?.map { it.toFile() },
-                    multiModuleICSettings = MultiModuleICSettings(
-                        aggregatedIcConfiguration.historyFile.toFile(),
-                        false
-                    ),
-                    modulesInfo = aggregatedIcConfiguration.modulesInformation.toIncrementalModuleInfo(
-                        aggregatedIcConfiguration[ROOT_PROJECT_BUILD_DIR]
-                    ),
-                    rootProjectDir = aggregatedIcConfiguration[ROOT_PROJECT_DIR]?.toFile(),
-                    buildDir = aggregatedIcConfiguration[MODULE_BUILD_DIR]?.toFile(),
-                    icFeatures = aggregatedIcConfiguration.extractIncrementalCompilationFeatures(),
-                    useJvmFirRunner = false,
-                    configurationInputs = makeConfigurationInputs(aggregatedIcConfiguration)
-                )
-            }
+            is JsHistoryBasedIncrementalCompilationConfigurationImpl -> error("K1 is not supported")
             null -> null
             else -> {
                 error(

@@ -20,7 +20,6 @@ internal class IncrementalCompilationEnvironment(
     val buildDir: File,
     val multiModuleICSettings: MultiModuleICSettings,
     val icFeatures: IncrementalCompilationFeatures = IncrementalCompilationFeatures.DEFAULT_CONFIGURATION,
-    val useJvmFirRunner: Boolean = false,
 ) : Serializable {
     companion object {
         const val serialVersionUID: Long = 6L

@@ -64,8 +64,6 @@ class IncrementalCompilationOptions(
     reportSeverity: Int,
     /** @See [CompilationResultCategory]] */
     requestedCompilationResults: Array<Int>,
-    /** Use new JvmBaseFirRunner */
-    val useJvmFirRunner: Boolean,
     /**
      * Directories that should be cleared when IC decides to rebuild
      */

@@ -42,9 +42,6 @@ class JvmSnapshotBasedIncrementalCompilationConfigurationDefaultsTest {
         assertEquals(null, icConfiguration[BaseIncrementalCompilationConfiguration.OUTPUT_DIRS])
         assertEquals(false, icConfiguration[JvmSnapshotBasedIncrementalCompilationConfiguration.ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES])
         @OptIn(ExperimentalCompilerArgument::class)
-        @Suppress("DEPRECATION_ERROR")
-        assertEquals(false, icConfiguration[JvmSnapshotBasedIncrementalCompilationConfiguration.USE_FIR_RUNNER])
-        @OptIn(ExperimentalCompilerArgument::class)
         assertEquals(
             false,
             icConfiguration[BaseIncrementalCompilationConfiguration.UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM]

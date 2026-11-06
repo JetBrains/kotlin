@@ -5,9 +5,7 @@
 package org.jetbrains.kotlin.buildtools.forward.tests.compilation
 
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.LANGUAGE_VERSION
-import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.KotlinVersion
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration.Companion.USE_FIR_RUNNER
 import org.jetbrains.kotlin.buildtools.forward.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.forward.tests.compilation.assertions.assertCompiledSources
 import org.jetbrains.kotlin.buildtools.forward.tests.compilation.assertions.assertNoCompiledSources
@@ -78,7 +76,6 @@ class SingleModuleFirRunnerIncrementalTest : BaseCompilationTest() {
         }
     }
 
-    @OptIn(ExperimentalCompilerArgument::class)
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Throws an exception on missing -Xuse-fir-ic")
     @TestMetadata("basic-multimodule-project/module-1")
@@ -90,10 +87,7 @@ class SingleModuleFirRunnerIncrementalTest : BaseCompilationTest() {
                 // Throws on initial compilation
                 module(
                     moduleName = "basic-multimodule-project/module-1",
-                    icOptionsConfigAction = {
-                        @Suppress("DEPRECATION_ERROR")
-                        it[USE_FIR_RUNNER] = true
-                    },
+                    icOptionsConfigAction = {},
                 )
             }
         }

@@ -774,23 +774,19 @@ abstract class CompileServiceImplBase(
             usePreciseJavaTrackingByDefault = incrementalCompilationOptions.icFeatures.usePreciseJavaTracking
         )
 
-        val compiler = if (incrementalCompilationOptions.useJvmFirRunner) {
-            IncrementalFirJvmCompilerRunner(
-                workingDir,
-                reporter,
-                kotlinSourceFilesExtensions = allKotlinJvmExtensions,
-                outputDirs = incrementalCompilationOptions.outputFiles,
-                classpathChanges = incrementalCompilationOptions.classpathChanges,
-                icFeatures = incrementalCompilationOptions.icFeatures.copy(
-                    usePreciseJavaTracking = verifiedPreciseJavaTracking
-                ),
-                compilationCanceledStatus = compilationCanceledStatus,
-                compilerRefIndexDirectory = incrementalCompilationOptions.compilerRefIndexDirectory,
-                lookupTrackerDelegate = lookupTracker ?: LookupTracker.DO_NOTHING,
-            )
-        } else {
-            error("K1 is not supported")
-        }
+        val compiler = IncrementalFirJvmCompilerRunner(
+            workingDir,
+            reporter,
+            kotlinSourceFilesExtensions = allKotlinJvmExtensions,
+            outputDirs = incrementalCompilationOptions.outputFiles,
+            classpathChanges = incrementalCompilationOptions.classpathChanges,
+            icFeatures = incrementalCompilationOptions.icFeatures.copy(
+                usePreciseJavaTracking = verifiedPreciseJavaTracking
+            ),
+            compilationCanceledStatus = compilationCanceledStatus,
+            compilerRefIndexDirectory = incrementalCompilationOptions.compilerRefIndexDirectory,
+            lookupTrackerDelegate = lookupTracker ?: LookupTracker.DO_NOTHING,
+        )
         return try {
             compiler.compile(
                 allSourceFiles, k2jvmArgs, compilerMessageCollector, incrementalCompilationOptions.sourceChanges.toChangedFiles(),

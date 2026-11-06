@@ -66,8 +66,6 @@ internal class JvmSnapshotBasedIncrementalCompilationOptionsImpl internal constr
         val ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES: Option<Boolean> =
             Option("ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES", false)
 
-        val USE_FIR_RUNNER: Option<Boolean> = Option("USE_FIR_RUNNER", false)
-
         val ENABLE_ERROR_RECOVERY_ROUND: Option<Boolean> = Option("ENABLE_ERROR_RECOVERY_ROUND", true)
     }
 }

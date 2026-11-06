@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.buildtools.tests.compilation
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.LANGUAGE_VERSION
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.KotlinVersion
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration.Companion.USE_FIR_RUNNER
 import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertCompiledSources
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertNoCompiledSources
@@ -90,10 +89,7 @@ class SingleModuleFirRunnerIncrementalTest : BaseCompilationTest() {
                 // Throws on initial compilation
                 module(
                     moduleName = "basic-multimodule-project/module-1",
-                    icOptionsConfigAction = {
-                        @Suppress("DEPRECATION_ERROR")
-                        it[USE_FIR_RUNNER] = true
-                    },
+                    icOptionsConfigAction = {},
                 )
             }
         }

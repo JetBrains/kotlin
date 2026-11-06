@@ -296,7 +296,7 @@ internal object CompilationServiceImpl : CompilationService {
         val daemonCompileOptions = compilationConfiguration.asDaemonCompilationOptions
         val isIncrementalCompilation = daemonCompileOptions is IncrementalCompilationOptions
 
-        if (isIncrementalCompilation && daemonCompileOptions.useJvmFirRunner) {
+        if (isIncrementalCompilation) {
             checkJvmFirRequirements(arguments)
         }
 

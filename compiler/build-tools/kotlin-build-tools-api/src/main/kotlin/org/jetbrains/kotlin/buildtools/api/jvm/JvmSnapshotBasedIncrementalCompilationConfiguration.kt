@@ -314,15 +314,6 @@ constructor(
         public val ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES: Option<Boolean> = Option("ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES", KotlinReleaseVersion(2, 3, 0))
 
         /**
-         * Controls whether the *experimental* incremental runner based on Kotlin compiler FIR is used.
-         * This runner only works with Kotlin Language Version 2.0+ and is disabled by default.
-         */
-        @JvmField
-        @ExperimentalCompilerArgument
-        @Deprecated("The FIR runner is deprecated and will be removed in Kotlin 2.5.0.", level = DeprecationLevel.ERROR)
-        public val USE_FIR_RUNNER: Option<Boolean> = Option("USE_FIR_RUNNER", KotlinReleaseVersion(2, 3, 0))
-
-        /**
          * When this option is enabled and a round of incremental compilation fails with compilation errors, the round is repeated once
          * with a widened set of dirty source files before the errors are reported.
          * This recovers from errors caused by unchanged sources that were not recompiled although they depend on the changes,
@@ -442,15 +433,6 @@ public interface JvmSnapshotBasedIncrementalCompilationOptions : BaseIncremental
          */
         @JvmField
         public val ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES: Option<Boolean> = Option("ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES")
-
-        /**
-         * Controls whether the *experimental* incremental runner based on Kotlin compiler FIR is used.
-         * This runner only works with Kotlin Language Version 2.0+ and is disabled by default.
-         */
-        @JvmField
-        @ExperimentalCompilerArgument
-        @Deprecated("The FIR runner is deprecated and will be removed in Kotlin 2.5.0.", level = DeprecationLevel.ERROR)
-        public val USE_FIR_RUNNER: Option<Boolean> = Option("USE_FIR_RUNNER")
 
         /**
          * By default, with the K2 compiler and KMP, we recompile the whole module if any common sources are recompiled.

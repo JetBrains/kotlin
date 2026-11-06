@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.buildtools.internal.jvm.HasSnapshotBasedIcOptionsAcc
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationConfigurationImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl.Companion.PRECISE_JAVA_TRACKING
-import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl.Companion.USE_FIR_RUNNER
 import org.jetbrains.kotlin.buildtools.internal.jvm.KaptConfigurationImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.KaptConfigurationImpl.Companion.SOURCE_OUTPUT_DIR
 import org.jetbrains.kotlin.buildtools.internal.jvm.toOptions
@@ -264,9 +263,7 @@ internal class JvmCompilationOperationImpl : BaseCompilationOperationImpl<JvmCom
 
         val sourcesChanges = aggregatedIcConfigurationOptions.sourcesChanges
         val classpathChanges = aggregatedIcConfigurationOptions.classpathChanges
-        if (aggregatedIcConfigurationOptions[USE_FIR_RUNNER]) {
-            checkJvmFirRequirements(compilerArguments)
-        }
+        checkJvmFirRequirements(compilerArguments)
         return IncrementalCompilationOptions(
             sourcesChanges,
             classpathChanges = classpathChanges,
@@ -283,7 +280,6 @@ internal class JvmCompilationOperationImpl : BaseCompilationOperationImpl<JvmCom
             buildDir = aggregatedIcConfigurationOptions[MODULE_BUILD_DIR]?.toFile(),
             kotlinScriptExtensions = kotlinScriptExtensions,
             icFeatures = aggregatedIcConfigurationOptions.extractIncrementalCompilationFeatures(),
-            useJvmFirRunner = aggregatedIcConfigurationOptions[USE_FIR_RUNNER],
             compilerRefIndexDirectory = compilerRefIndexDirectory(aggregatedIcConfigurationOptions.workingDirectory)?.toFile(),
             configurationInputs = makeConfigurationInputs(
                 aggregatedIcConfigurationOptions,
@@ -358,7 +354,7 @@ internal class JvmCompilationOperationImpl : BaseCompilationOperationImpl<JvmCom
         val icFeatures = snapshotBasedIcOptionsAccessor.extractIncrementalCompilationFeatures().copy(
             usePreciseJavaTracking = verifiedPreciseJavaTracking
         )
-        val incrementalCompiler = if (snapshotBasedIcOptionsAccessor[USE_FIR_RUNNER] && checkJvmFirRequirements(compilerArguments)) {
+        val incrementalCompiler = if (checkJvmFirRequirements(compilerArguments)) {
             getFirRunner(
                 snapshotBasedIcOptionsAccessor.workingDirectory,
                 buildReporter,
@@ -456,7 +452,6 @@ internal class JvmCompilationOperationImpl : BaseCompilationOperationImpl<JvmCom
                     "rootProjectDir" to "${icConfiguration[ROOT_PROJECT_DIR]}",
                     "moduleBuildDir" to "${icConfiguration[MODULE_BUILD_DIR]}",
                     "outputDirs" to "${icConfiguration[OUTPUT_DIRS]}",
-                    "useFirRunner" to "${icConfiguration[USE_FIR_RUNNER]}",
                     "unsafeIncrementalCompilationForMultiplatform" to "${icConfiguration[UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM]}",
                     "monotonousIncrementalCompileSetExpansion" to "${icConfiguration[MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION]}",
                     "usePreciseJavaTracking" to "$verifiedPreciseJavaTracking",

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.buildtools.forward.tests.compilation.util
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration.Companion.USE_FIR_RUNNER
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.forward.tests.compilation.scenario.Scenario
 import org.jetbrains.kotlin.buildtools.forward.tests.compilation.scenario.ScenarioModule
@@ -25,8 +24,5 @@ fun Scenario<JvmCompilationOperation.Builder, JvmSnapshotBasedIncrementalCompila
         it.compilerArguments[CommonCompilerArguments.X_USE_FIR_IC] = true
         compilationOperationConfig(it)
     },
-    icOptionsConfigAction = {
-        @Suppress("DEPRECATION_ERROR")
-        it[USE_FIR_RUNNER] = true
-    }
+    icOptionsConfigAction = {}
 )

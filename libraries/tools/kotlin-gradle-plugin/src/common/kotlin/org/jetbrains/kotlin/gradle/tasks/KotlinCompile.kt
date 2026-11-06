@@ -90,9 +90,6 @@ abstract class KotlinCompile @Inject constructor(
     abstract override val libraries: ConfigurableFileCollection
 
     @get:Input
-    internal val useFirRunner: Property<Boolean> = objectFactory.propertyWithConvention(false)
-
-    @get:Input
     internal val enableJvmClasspathMetadata: Property<Boolean> = objectFactory.propertyWithConvention(false)
 
     @get:Nested
@@ -223,20 +220,18 @@ abstract class KotlinCompile @Inject constructor(
             explicitApiMode.orNull?.run { args.explicitApi = toCompilerValue() }
             returnValueCheckerMode.orNull?.run { args.returnValueChecker = toCompilerValue() }
 
-            if (useFirRunner.get()) {
-                @Suppress("DEPRECATION_ERROR")
-                if (compilerOptions.languageVersion.orElse(KotlinVersion.DEFAULT).get() < KotlinVersion.KOTLIN_2_0) {
-                    reportDiagnostic(
-                        KotlinToolingDiagnostics.IcFirMisconfigurationLV(
-                            taskPath = path,
-                            languageVersion = compilerOptions.languageVersion.get()
-                        )
+            @Suppress("DEPRECATION_ERROR")
+            if (compilerOptions.languageVersion.orElse(KotlinVersion.DEFAULT).get() < KotlinVersion.KOTLIN_2_0) {
+                reportDiagnostic(
+                    KotlinToolingDiagnostics.IcFirMisconfigurationLV(
+                        taskPath = path,
+                        languageVersion = compilerOptions.languageVersion.get()
                     )
-                }
-
-                @Suppress("DEPRECATION")
-                args.useFirIC = true
+                )
             }
+
+            @Suppress("DEPRECATION")
+            args.useFirIC = true
 
             args.separateKmpCompilationScheme = separateKmpCompilation.get()
         }
@@ -413,7 +408,6 @@ abstract class KotlinCompile @Inject constructor(
                 buildDir = projectLayout.buildDirectory.getFile(),
                 multiModuleICSettings = multiModuleICSettings,
                 icFeatures = makeIncrementalCompilationFeatures(),
-                useJvmFirRunner = useFirRunner.get(),
             )
         } else null
 

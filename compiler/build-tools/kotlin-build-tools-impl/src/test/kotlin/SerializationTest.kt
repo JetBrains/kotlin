@@ -300,7 +300,6 @@ class SerializationTest {
         ).apply {
             preciseJavaTracking = true
             assuredNoClasspathSnapshotChanges = true
-            useFirRunner = true
             rootProjectDir = Path("/root")
             moduleBuildDir = Path("/build")
         }
@@ -314,7 +313,6 @@ class SerializationTest {
         assertEquals(jvmSnapshotIc.shrunkClasspathSnapshot, deserializedJvmSnapshotIc.shrunkClasspathSnapshot)
         assertEquals(jvmSnapshotIc.preciseJavaTracking, deserializedJvmSnapshotIc.preciseJavaTracking)
         assertEquals(jvmSnapshotIc.assuredNoClasspathSnapshotChanges, deserializedJvmSnapshotIc.assuredNoClasspathSnapshotChanges)
-        assertEquals(jvmSnapshotIc.useFirRunner, deserializedJvmSnapshotIc.useFirRunner)
         assertEquals(jvmSnapshotIc.rootProjectDir, deserializedJvmSnapshotIc.rootProjectDir)
         assertEquals(jvmSnapshotIc.moduleBuildDir, deserializedJvmSnapshotIc.moduleBuildDir)
     }
