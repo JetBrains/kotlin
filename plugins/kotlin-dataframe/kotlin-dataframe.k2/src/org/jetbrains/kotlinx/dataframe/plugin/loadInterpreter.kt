@@ -325,6 +325,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToDataFrameFrom
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToTop
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.TrimMargin
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Update0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.UpdateAsFrame
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.UpdateWith0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ValueCounts
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.RenameToCamelCase
@@ -688,6 +689,7 @@ private fun String.loadImpl(isTest: Boolean): Interpreter<*>? {
         "UpdateNotNullDefault" -> UpdateNotNull()
         "UpdateWithNull" -> UpdateWithNull()
         "UpdateWithZero" -> UpdateWithZero()
+        "UpdateAsFrame" -> UpdateAsFrame()
         "Flatten0" -> Flatten0()
         "FlattenDefault" -> FlattenDefault()
         "AddId" -> AddId()

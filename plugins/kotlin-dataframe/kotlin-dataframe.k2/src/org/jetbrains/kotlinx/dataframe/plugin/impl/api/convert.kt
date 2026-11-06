@@ -215,8 +215,19 @@ class ConvertAsFrame : AbstractSchemaModificationInterpreter() {
     val Arguments.expression by type()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        return receiver.schema.convertAsColumn(receiver.columns) {
-            SimpleColumnGroup("", (expression.coneType.findSchemaArgument(isTest)?.getSchema()?.columns() ?: emptyList()))
-        }
+        return asFrameImpl(receiver.schema, receiver.columns, expression)
+    }
+}
+
+/**
+ * Replaces the selected [columns] with column groups that have the schema of the DataFrame returned by [expression].
+ */
+internal fun Arguments.asFrameImpl(
+    schema: PluginDataFrameSchema,
+    columns: ColumnsResolver,
+    expression: ColumnType,
+): PluginDataFrameSchema {
+    return schema.convertAsColumn(columns) {
+        SimpleColumnGroup("", (expression.coneType.findSchemaArgument(isTest)?.getSchema()?.columns() ?: emptyList()))
     }
 }

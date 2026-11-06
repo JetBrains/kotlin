@@ -149,3 +149,20 @@ class UpdateWithZero : AbstractSchemaModificationInterpreter() {
         return updateWithImpl(receiver, targetMarkedNullable = false, typeArg1.wrap())
     }
 }
+
+class UpdateAsFrame : AbstractSchemaModificationInterpreter() {
+    val Arguments.receiver: UpdateApproximation by arg()
+    val Arguments.expression by type()
+
+    override fun Arguments.interpret(): PluginDataFrameSchema {
+        return when (val receiver = receiver) {
+            is UpdateApproximationImpl -> {
+                // with `where`, only the matching rows get the new frame, so the resulting group schema is
+                // a mix of the original and the new one, which isn't known at compile time
+                require(!receiver.where) { "update.where.asFrame can't be interpreted" }
+                asFrameImpl(receiver.schema, receiver.columns, expression)
+            }
+            is FillNullsApproximation, is FillNaNsApproximation -> error("asFrame is not supported after fillNulls/fillNaNs")
+        }
+    }
+}
