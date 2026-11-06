@@ -61,7 +61,7 @@ dependencies {
 
     compileOnly(project(":compiler:plugin-api"))
     compileOnly(project(":compiler:cli-base"))
-    compileOnly(project(":compiler:frontend"))
+    compileOnly(project(":compiler:frontend.common-psi"))
     compileOnly(project(":compiler:backend"))
     compileOnly(project(":compiler:ir.backend.common"))
 
