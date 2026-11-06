@@ -1,0 +1,175 @@
+FILE: dataStaticConstructorClash.kt
+    @R|lombok/Data|(staticConstructor = String(of) [evaluated = String(of)]) public final class ClashBySameArity : R|kotlin/Any| {
+        public constructor(name: R|kotlin/String|): R|ClashBySameArity| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val name: R|kotlin/String| = R|<local>/name|
+            public get(): R|kotlin/String|
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|ClashBySameArity.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun of(name: R|kotlin/String|): R|ClashBySameArity| {
+                ^of R|/ClashBySameArity.ClashBySameArity|(R|<local>/name|.R|kotlin/String.plus|(String(!)))
+            }
+
+        }
+
+        public open override fun toString(): R|kotlin/String|
+
+        public open override operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+        public open override fun hashCode(): R|kotlin/Int|
+
+    }
+    @R|lombok/Data|(staticConstructor = String(of) [evaluated = String(of)]) public final class NoClashByDifferentArity : R|kotlin/Any| {
+        private constructor(name: R|kotlin/String|): R|NoClashByDifferentArity| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val name: R|kotlin/String| = R|<local>/name|
+            public get(): R|kotlin/String|
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|NoClashByDifferentArity.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun of(): R|NoClashByDifferentArity| {
+                ^of R|/NoClashByDifferentArity.NoClashByDifferentArity|(String(default))
+            }
+
+            @R|kotlin/jvm/JvmStatic|() public final fun of(name: R|kotlin/String|): R|NoClashByDifferentArity|
+
+        }
+
+        public open override fun toString(): R|kotlin/String|
+
+        public open override operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+        public open override fun hashCode(): R|kotlin/Int|
+
+    }
+    @R|lombok/Data|(staticConstructor = String(of) [evaluated = String(of)]) public final class NoClashByDifferentArityInClass : R|kotlin/Any| {
+        private constructor(name: R|kotlin/String|): R|NoClashByDifferentArityInClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val name: R|kotlin/String| = R|<local>/name|
+            public get(): R|kotlin/String|
+
+        public final fun of(): R|kotlin/Unit| {
+        }
+
+        public open override fun toString(): R|kotlin/String|
+
+        public open override operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+        public open override fun hashCode(): R|kotlin/Int|
+
+        public final companion object Companion : R|kotlin/Any| {
+            @R|kotlin/jvm/JvmStatic|() public final fun of(name: R|kotlin/String|): R|NoClashByDifferentArityInClass|
+
+            private constructor(): R|NoClashByDifferentArityInClass.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    @R|lombok/Data|(staticConstructor = String(of) [evaluated = String(of)]) @R|lombok/NoArgsConstructor|(force = Boolean(true) [evaluated = Boolean(true)]) public final class DataWithNoArgs : R|kotlin/Any| {
+        public constructor(x: R|kotlin/Int|): R|DataWithNoArgs| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/Int| = R|<local>/x|
+            public get(): R|kotlin/Int|
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|DataWithNoArgs.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun of(): R|DataWithNoArgs| {
+                ^of R|/DataWithNoArgs.DataWithNoArgs|(Int(1))
+            }
+
+        }
+
+        public open override fun toString(): R|kotlin/String|
+
+        public open override operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+        public open override fun hashCode(): R|kotlin/Int|
+
+        public constructor(): R|DataWithNoArgs|
+
+    }
+    @R|lombok/Data|(staticConstructor = String(of) [evaluated = String(of)]) public final class DataWithVararg : R|kotlin/Any| {
+        public constructor(vararg items: R|kotlin/Array<out kotlin/String>|): R|DataWithVararg| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val items: R|kotlin/Array<out kotlin/String>| = R|<local>/items|
+            public get(): R|kotlin/Array<out kotlin/String>|
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|DataWithVararg.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun of(): R|DataWithVararg| {
+                ^of R|/DataWithVararg.DataWithVararg|()
+            }
+
+        }
+
+        public open override fun toString(): R|kotlin/String|
+
+        public open override operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+        public open override fun hashCode(): R|kotlin/Int|
+
+    }
+    @R|lombok/Data|(staticConstructor = String(of) [evaluated = String(of)]) public final object DataObject : R|kotlin/Any| {
+        private constructor(): R|DataObject| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun of(): R|kotlin/Unit| {
+        }
+
+        public open override fun toString(): R|kotlin/String|
+
+    }
+    public final class WithDataCompanion : R|kotlin/Any| {
+        public constructor(): R|WithDataCompanion| {
+            super<R|kotlin/Any|>()
+        }
+
+        @R|lombok/Data|(staticConstructor = String(of) [evaluated = String(of)]) public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|WithDataCompanion.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun of(): R|kotlin/Unit| {
+            }
+
+            public open override fun toString(): R|kotlin/String|
+
+        }
+
+    }
+    public final fun test(): R|kotlin/Unit| {
+        Q|ClashBySameArity|.R|/ClashBySameArity.Companion.of|(String(name))
+        Q|NoClashByDifferentArity|.R|/NoClashByDifferentArity.of|(String(name))
+        Q|NoClashByDifferentArity|.R|/NoClashByDifferentArity.Companion.of|()
+        Q|NoClashByDifferentArityInClass|.R|/NoClashByDifferentArityInClass.of|(String(name))
+        Q|DataWithNoArgs|.R|/DataWithNoArgs.Companion.of|()
+        Q|DataWithVararg|.R|/DataWithVararg.Companion.of|()
+        Q|DataObject|.R|/DataObject.of|()
+        Q|WithDataCompanion|.R|/WithDataCompanion.Companion.of|()
+    }
