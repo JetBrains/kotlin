@@ -1,0 +1,126 @@
+FILE: constructorWithStaticName.kt
+    @R|lombok/Data|(staticConstructor = String(of) [evaluated = String(of)]) public final class DataWithStatic : R|kotlin/Any| {
+        private constructor(name: R|kotlin/String|): R|DataWithStatic| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val name: R|kotlin/String| = R|<local>/name|
+            public get(): R|kotlin/String|
+
+        public open override fun toString(): R|kotlin/String|
+
+        public open override operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+        public open override fun hashCode(): R|kotlin/Int|
+
+        public final companion object Companion : R|kotlin/Any| {
+            @R|kotlin/jvm/JvmStatic|() public final fun of(name: R|kotlin/String|): R|DataWithStatic|
+
+            private constructor(): R|DataWithStatic.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    @R|lombok/NoArgsConstructor|(staticName = String(of) [evaluated = String(of)], force = Boolean(true) [evaluated = Boolean(true)]) public final class NoArgsWithStatic : R|kotlin/Any| {
+        public constructor(name: R|kotlin/String|): R|NoArgsWithStatic| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val name: R|kotlin/String| = R|<local>/name|
+            public get(): R|kotlin/String|
+
+        private constructor(): R|NoArgsWithStatic|
+
+        public final companion object Companion : R|kotlin/Any| {
+            @R|kotlin/jvm/JvmStatic|() public final fun of(): R|NoArgsWithStatic|
+
+            private constructor(): R|NoArgsWithStatic.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final class Outer : R|kotlin/Any| {
+        public constructor(): R|Outer| {
+            super<R|kotlin/Any|>()
+        }
+
+        @R|lombok/NoArgsConstructor|(staticName = String(of) [evaluated = String(of)], force = Boolean(true) [evaluated = Boolean(true)]) public final inner class InnerNoArgs : R|kotlin/Any| {
+            public Outer.constructor(): R|Outer.InnerNoArgs| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final var value: R|kotlin/Int| = Int(0)
+                public get(): R|kotlin/Int|
+                public set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+        }
+
+        @R|lombok/Data|(staticConstructor = String(of) [evaluated = String(of)]) public final inner class InnerData : R|kotlin/Any| {
+            public Outer.constructor(): R|Outer.InnerData| {
+                super<R|kotlin/Any|>()
+            }
+
+            private final val value: R|kotlin/Int| = Int(0)
+                private get(): R|kotlin/Int|
+
+            public open override fun toString(): R|kotlin/String|
+
+            public open override operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+            public open override fun hashCode(): R|kotlin/Int|
+
+        }
+
+    }
+    public final class GenericOuter<T> : R|kotlin/Any| {
+        public constructor<T>(): R|GenericOuter<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        @R|lombok/NoArgsConstructor|(staticName = String(of) [evaluated = String(of)], force = Boolean(true) [evaluated = Boolean(true)]) public final inner class InnerNoArgs<Outer(T)> : R|kotlin/Any| {
+            public GenericOuter<T>.constructor(): R|GenericOuter.InnerNoArgs<T>| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final var value: R|T?| = Null(null)
+                public get(): R|T?|
+                public set(value: R|T?|): R|kotlin/Unit|
+
+        }
+
+        @R|lombok/Data|(staticConstructor = String(of) [evaluated = String(of)]) public final inner class InnerData<Outer(T)> : R|kotlin/Any| {
+            public GenericOuter<T>.constructor(): R|GenericOuter.InnerData<T>| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final var value: R|T?| = Null(null)
+                public get(): R|T?|
+                public set(value: R|T?|): R|kotlin/Unit|
+
+            public open override fun toString(): R|kotlin/String|
+
+            public open override operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+            public open override fun hashCode(): R|kotlin/Int|
+
+        }
+
+    }
+    public final fun test(outer: R|Outer|, genericOuter: R|GenericOuter<kotlin/String>|): R|kotlin/Unit| {
+        R|/DataWithStatic.DataWithStatic<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /DataWithStatic.DataWithStatic>#|()
+        Q|DataWithStatic|.R|/DataWithStatic.of|(String(name))
+        R|/NoArgsWithStatic<HIDDEN: /NoArgsWithStatic is invisible>#|()
+        Q|NoArgsWithStatic|.R|/NoArgsWithStatic.of|()
+        Q|Outer.InnerNoArgs|.<Unresolved name: of>#()
+        Q|Outer.InnerData|.<Unresolved name: of>#(Int(1))
+        Q|GenericOuter.InnerNoArgs|.<Unresolved name: of>#()
+        Q|GenericOuter.InnerData|.<Unresolved name: of>#(String(name))
+        R|<local>/outer|.R|/Outer.InnerNoArgs.InnerNoArgs|()
+        R|<local>/genericOuter|.R|SubstitutionOverride</GenericOuter.InnerNoArgs.InnerNoArgs>|()
+        R|<local>/outer|.R|/Outer.InnerData.InnerData<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /Outer.InnerData.InnerData>#|(Int(1))
+        R|<local>/genericOuter|.R|SubstitutionOverride</GenericOuter.InnerData.InnerData><Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /GenericOuter.InnerData.InnerData>#|(String(name))
+    }
