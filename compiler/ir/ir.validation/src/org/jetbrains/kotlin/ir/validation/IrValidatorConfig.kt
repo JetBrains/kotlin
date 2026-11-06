@@ -87,4 +87,5 @@ fun IrValidatorConfig.withAllChecks() = withBasicChecks()
         IrExpressionBodyInFunctionChecker,
         IrNestedOffsetRangeChecker,
         IrClassSuperTypesChecker,
+        IrAnnotationUsageChecker,
     )

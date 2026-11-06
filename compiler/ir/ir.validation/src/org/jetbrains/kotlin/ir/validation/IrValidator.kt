@@ -11,14 +11,16 @@ import org.jetbrains.kotlin.diagnostics.KtSourcelessDiagnosticFactory
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrReplSnippet
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.util.IrTreeSymbolsVisitor
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.render
@@ -93,7 +95,12 @@ private class IrFileValidator(
     override fun visitElement(element: IrElement) {
         // We use all context updaters for the `IrElement`, not only those required for `IrElementChecker`.
         // This is because the children of a given element may have their own properties that need context-specific validation.
-        contextUpdaters.runWithContextUpdaters(element) { element.acceptChildrenVoid(this) }
+        contextUpdaters.runWithContextUpdaters(element) {
+            if (element is IrAnnotationContainer) {
+                element.annotations.forEach { visitAnnotationUsage(it) }
+            }
+            element.acceptChildrenVoid(this)
+        }
 
         for (checker in getCheckersFor(element.javaClass)) {
             @Suppress("UNCHECKED_CAST")
@@ -113,6 +120,29 @@ private class IrFileValidator(
         }
     }
 
+    override fun visitDeclaration(declaration: IrDeclarationBase) {
+        // Annotations are visited in visitElement().
+        visitElement(declaration)
+    }
+
+    override fun visitFile(declaration: IrFile) {
+        // Annotations are visited in visitElement().
+        visitDeclaredFile(declaration, declaration.symbol)
+        visitPackageFragment(declaration)
+    }
+
+    override fun visitTypeRecursively(container: IrElement, type: IrType) {
+        // Annotations are visited in visitType().
+        visitType(container, type)
+        if (type is IrSimpleType) {
+            type.arguments.forEach {
+                if (it is IrTypeProjection) {
+                    visitTypeRecursively(container, it.type)
+                }
+            }
+        }
+    }
+
     override fun visitType(container: IrElement, type: IrType) {
         // Types might be visited before their containing element's `visitElement` function is called and the type is added to the context.
         // This is an expected outcome because the type, even though introduced by the element, is its property, not its child.
@@ -120,6 +150,7 @@ private class IrFileValidator(
         // otherwise the type would be seen as out-of-scope.
         typeContextUpdaters.runWithContextUpdaters(container) {
             super.visitType(container, type)
+            type.annotations.forEach { visitAnnotationUsage(it) }
             for (checker in typeCheckers) {
                 checker.check(type, container, context)
             }
