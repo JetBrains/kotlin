@@ -90,5 +90,65 @@ declare namespace JS_TESTS {
             const constructor: abstract new () => User3;
         }
     }
+    class AccessorDocumentationPrecedence {
+        constructor();
+        get owned(): number;
+        get fallback(): number;
+    }
+    namespace AccessorDocumentationPrecedence {
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace $metadata$ {
+            const constructor: abstract new () => AccessorDocumentationPrecedence;
+        }
+    }
+    interface DocumentedInterface {
+        value(): string;
+        readonly __doNotUseOrImplementIt: {
+            readonly DocumentedInterface: unique symbol;
+        };
+    }
+    class InheritedDocumentation implements DocumentedInterface {
+        constructor();
+        value(): string;
+        readonly __doNotUseOrImplementIt: DocumentedInterface["__doNotUseOrImplementIt"];
+    }
+    namespace InheritedDocumentation {
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace $metadata$ {
+            const constructor: abstract new () => InheritedDocumentation;
+        }
+    }
+    class OwnedDocumentation implements DocumentedInterface {
+        constructor();
+        value(): string;
+        readonly __doNotUseOrImplementIt: DocumentedInterface["__doNotUseOrImplementIt"];
+    }
+    namespace OwnedDocumentation {
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace $metadata$ {
+            const constructor: abstract new () => OwnedDocumentation;
+        }
+    }
+    abstract class DocumentedEnum {
+        private constructor();
+        static get DOCUMENTED(): DocumentedEnum & {
+            get name(): "DOCUMENTED";
+            get ordinal(): 0;
+        };
+        static get UNDOCUMENTED(): DocumentedEnum & {
+            get name(): "UNDOCUMENTED";
+            get ordinal(): 1;
+        };
+        static values(): [typeof DocumentedEnum.DOCUMENTED, typeof DocumentedEnum.UNDOCUMENTED];
+        static valueOf(value: string): DocumentedEnum;
+        get name(): "DOCUMENTED" | "UNDOCUMENTED";
+        get ordinal(): 0 | 1;
+    }
+    namespace DocumentedEnum {
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace $metadata$ {
+            const constructor: abstract new () => DocumentedEnum;
+        }
+    }
     function box(): string;
 }
