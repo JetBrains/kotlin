@@ -8,6 +8,8 @@
 
 package kotlin.collections
 
+import kotlin.internal.IMPLEMENTATIONS
+
 
 @Deprecated("Use sortWith(comparator) instead.", ReplaceWith("this.sortWith(comparator)"), level = DeprecationLevel.ERROR)
 @kotlin.internal.InlineOnly
@@ -71,3 +73,61 @@ public actual inline fun <T> MutableList<T>.shuffle() {
 public inline fun <T> MutableList<T>.shuffle(random: java.util.Random) {
     java.util.Collections.shuffle(this, random)
 }
+
+/**
+ * Removes all elements of this [MutableIterable] that match the given [predicate].
+ * Delegates to [java.util.Collection.removeIf] whenever possible.
+ *
+ * @return `true` if any element was removed from this collection, or `false` when no elements were removed and collection was not modified.
+ */
+@IgnorableReturnValue
+public actual fun <T> MutableIterable<T>.removeAll(predicate: (T) -> Boolean): Boolean {
+    if (this is MutableCollection<T>) {
+        return IMPLEMENTATIONS.removeIf(this, predicate) {
+            this@removeAll.filterInPlace(predicate, predicateResultToRemove = true)
+        }
+    }
+
+    return filterInPlace(predicate, predicateResultToRemove = true)
+}
+
+/**
+ * Retains only elements of this [MutableIterable] that match the given [predicate].
+ * Delegates to [java.util.Collection.removeIf] with the negated predicate whenever possible.
+ *
+ * @return `true` if any element was removed from this collection, or `false` when all elements were retained and collection was not modified.
+ */
+@IgnorableReturnValue
+public actual fun <T> MutableIterable<T>.retainAll(predicate: (T) -> Boolean): Boolean {
+    if (this is MutableCollection<T>) {
+        return IMPLEMENTATIONS.retainAll(this, predicate) {
+            this@retainAll.filterInPlace(predicate, predicateResultToRemove = false)
+        }
+    }
+
+    return filterInPlace(predicate, predicateResultToRemove = false)
+}
+
+/**
+ * Removes all elements of this [MutableList] that match the given [predicate].
+ * Delegates to [java.util.Collection.removeIf] whenever possible.
+ *
+ * @return `true` if any element was removed from this collection, or `false` when no elements were removed and collection was not modified.
+ */
+@IgnorableReturnValue
+public actual fun <T> MutableList<T>.removeAll(predicate: (T) -> Boolean): Boolean =
+    IMPLEMENTATIONS.removeIf(this, predicate) {
+        this@removeAll.filterInPlace(predicate, predicateResultToRemove = true)
+    }
+
+/**
+ * Retains only elements of this [MutableList] that match the given [predicate].
+ * Delegates to [java.util.Collection.removeIf] with the negated predicate whenever possible.
+ *
+ * @return `true` if any element was removed from this collection, or `false` when all elements were retained and collection was not modified.
+ */
+@IgnorableReturnValue
+public actual fun <T> MutableList<T>.retainAll(predicate: (T) -> Boolean): Boolean =
+    IMPLEMENTATIONS.retainAll(this, predicate) {
+        this@retainAll.filterInPlace(predicate, predicateResultToRemove = false)
+    }

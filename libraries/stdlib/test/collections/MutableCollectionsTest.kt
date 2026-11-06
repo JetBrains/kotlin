@@ -21,6 +21,23 @@ class MutableCollectionTest {
     fun <T> testOperation(before: List<T>, after: List<T>, expectedModified: Boolean) =
         testOperation(before, after, expectedModified, { it.toMutableList() })
 
+    private class ListBackedMutableIterable<T>(list: List<T>) : MutableIterable<T> {
+        private val backingList = list.toMutableList()
+
+        override fun iterator(): MutableIterator<T> = backingList.iterator()
+    }
+
+    private fun <T> testOperationOnMutableIterable(
+        before: List<T>,
+        after: List<T>,
+        expectedModified: Boolean,
+    ) = fun(operation: ListBackedMutableIterable<T>.() -> Boolean) {
+        val iterable = ListBackedMutableIterable(before)
+
+        assertEquals(expectedModified, iterable.operation())
+        assertEquals(after, iterable.toList())
+    }
+
 
     @Test fun addAll() {
         val data = listOf("foo", "bar")
@@ -118,6 +135,17 @@ class MutableCollectionTest {
         }
     }
 
+    @Test fun removeAllFromMutableIterable() {
+        val content = listOf("foo", "bar", "bar")
+        val contentWithoutBars = listOf("foo")
+
+        val assertRemove = testOperationOnMutableIterable(content, contentWithoutBars, true)
+        assertRemove { removeAll { it == "bar" } }
+
+        val assertRemoveNothing = testOperationOnMutableIterable(content, content, false)
+        assertRemoveNothing { removeAll { false } }
+    }
+
     @Test fun retainAll() {
         val content = listOf("foo", "bar", "bar")
         val expected = listOf("bar", "bar")
@@ -152,6 +180,17 @@ class MutableCollectionTest {
             assertRetain { retainAll { it in data } }
             assertRetain { (this as MutableIterable<String>).retainAll { it in data } }
         }
+    }
+
+    @Test fun retainAllFromMutableIterable() {
+        val content = listOf("foo", "bar", "bar")
+        val bars = listOf("bar", "bar")
+
+        val assertRetain = testOperationOnMutableIterable(content, bars, true)
+        assertRetain { retainAll { it == "bar" } }
+
+        val assertRetainEverything = testOperationOnMutableIterable(bars, bars, false)
+        assertRetainEverything { retainAll { true } }
     }
 
     @Test fun listFill() {
