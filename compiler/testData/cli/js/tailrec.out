@@ -1,9 +1,7 @@
 compiler/testData/cli/tailrec.kt:8:1: warning: a function is marked as tail-recursive but no tail calls are found.
-  |
 8 | tailrec fun noTailRecCalls() {}
   | ^^^^^^^
 compiler/testData/cli/tailrec.kt:10:1: warning: a function is marked as tail-recursive but no tail calls are found.
-   |
 10 | tailrec fun nonTailRecCall() {
    | ^^^^^^^
 compiler/testData/cli/tailrec.kt:11:5: warning: recursive call is not a tail call.
@@ -11,7 +9,6 @@ compiler/testData/cli/tailrec.kt:11:5: warning: recursive call is not a tail cal
 11 |     nonTailRecCall()
    |     ^^^^^^^^^^^^^^
 compiler/testData/cli/tailrec.kt:15:1: warning: a function is marked as tail-recursive but no tail calls are found.
-   |
 15 | tailrec fun tailRecInTry() {
    | ^^^^^^^
 compiler/testData/cli/tailrec.kt:17:9: warning: tail recursion optimization inside try/catch/finally is not supported.

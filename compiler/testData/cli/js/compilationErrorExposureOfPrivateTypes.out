@@ -15,7 +15,6 @@ In package 'root package' of module '<out>':
 12 | private final inline fun privateInlineFun3(): Unit
    |
 In source code:
-   |
 14 | internal inline fun internalInlineFun() = privateInlineFun3()
    |                                           ^^^^^^^^^^^^^^^^^^^
 COMPILATION_ERROR

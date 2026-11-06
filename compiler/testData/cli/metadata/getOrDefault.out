@@ -1,13 +1,10 @@
 compiler/testData/cli/metadata/getOrDefault.kt:2:38: error: cannot infer type for type parameter 'R'. Specify it explicitly.
-1 | // This should not compile: only JVM 1.8+ contains getOrDefault
 2 | fun foo(map: Map<String, Int>) = map.getOrDefault("", 0)
   |                                      ^^^^^^^^^^^^
 compiler/testData/cli/metadata/getOrDefault.kt:2:38: error: cannot infer type for type parameter 'T'. Specify it explicitly.
-1 | // This should not compile: only JVM 1.8+ contains getOrDefault
 2 | fun foo(map: Map<String, Int>) = map.getOrDefault("", 0)
   |                                      ^^^^^^^^^^^^
 compiler/testData/cli/metadata/getOrDefault.kt:2:38: error: candidate 'fun <R, T : R> Result<T>.getOrDefault(defaultValue: R): R' is inapplicable because of a receiver type mismatch. Actual receiver type is 'Map<String, Int>'.
-1 | // This should not compile: only JVM 1.8+ contains getOrDefault
 2 | fun foo(map: Map<String, Int>) = map.getOrDefault("", 0)
   |                                      ^^^^^^^^^^^^
 COMPILATION_ERROR

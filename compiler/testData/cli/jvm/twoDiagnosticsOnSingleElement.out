@@ -11,11 +11,9 @@ In package 'test' of module '<main>':
 9 | }
   |
 In source code:
-   |
 11 | class C : I1, I2
    | ^^^^^^^
 compiler/testData/cli/jvm/twoDiagnosticsOnSingleElement.kt:11:1: error: 'C' inherits conflicting members: 'fun <T> foo(): Unit' defined in 'test.I1', 'fun foo(): Unit' defined in 'test.I2'.
-   |
 11 | class C : I1, I2
    | ^^^^^^^
 COMPILATION_ERROR

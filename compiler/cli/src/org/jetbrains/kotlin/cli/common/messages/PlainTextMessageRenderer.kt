@@ -92,10 +92,10 @@ abstract class PlainTextMessageRenderer @JvmOverloads constructor(private val co
                 lineEnd == line && columnEnd > column -> "^".repeat(columnEnd - column)
                 else -> "^"
             }
-            val firstLine = File(location.path).readLines().getOrNull(line - 2)?.takeIf { it.isNotBlank() }
+            val firstLine = File(location.path).readLines().getOrNull(line - 2)
+                ?.takeIf { it.isNotBlank() && it.indentLength < lineContent.indentLength }
                 ?.let { RenderedLineWithNumber(number = line - 1, 0, it) }
-                ?: RenderedLineWithNumber(number = null, 0, "")
-            val lines = listOf(
+            val lines = listOfNotNull(
                 firstLine,
                 RenderedLineWithNumber(number = line, 0, lineContent),
                 RenderedLineWithNumber(number = null, 0, " ".repeat(column - 1) + highlighting),
@@ -111,6 +111,9 @@ abstract class PlainTextMessageRenderer @JvmOverloads constructor(private val co
 
         return result.toString()
     }
+
+    private val String.indentLength: Int
+        get() = replace("""(^\s*).*""".toRegex(), "$1").length
 
     protected abstract fun getPath(location: CompilerMessageSourceLocation): String?
 

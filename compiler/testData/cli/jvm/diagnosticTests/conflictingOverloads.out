@@ -5,7 +5,6 @@ In package 'root package' of module '<main>':
 2 | fun a(): List<String>
   |
 In source code:
-  |
 1 | fun a(): List<Int> = null!!
   | ^^^^^^^^^^^^^^^^^^
 compiler/testData/cli/jvm/diagnosticTests/conflictingOverloads.kt:2:1: error: conflicting overloads:
@@ -15,7 +14,6 @@ In package 'root package' of module '<main>':
 1 | fun a(): List<Int>
   |
 In source code:
-1 | fun a(): List<Int> = null!!
 2 | fun a(): List<String> = null!!
   | ^^^^^^^^^^^^^^^^^^^^^
 COMPILATION_ERROR

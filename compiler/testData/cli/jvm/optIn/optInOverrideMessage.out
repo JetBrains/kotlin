@@ -3,7 +3,6 @@ compiler/testData/cli/jvm/optIn/optInOverrideMessage.kt:16:18: error: base decla
 16 |     override fun foo() {}
    |                  ^^^
 compiler/testData/cli/jvm/optIn/optInOverrideMessage.kt:18:18: error: base declaration of supertype 'Base' needs opt-in. The declaration override must be annotated with '@EmptyMarker' or '@OptIn(EmptyMarker::class)'
-   |
 18 |     override fun bar() {}
    |                  ^^^
 COMPILATION_ERROR

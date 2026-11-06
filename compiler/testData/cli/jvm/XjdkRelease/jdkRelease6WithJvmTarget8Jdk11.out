@@ -1,9 +1,7 @@
 compiler/testData/cli/jvm/XjdkRelease/jdkRelease.kt:3:22: error: unresolved reference 'file'.
-  |
 3 | fun path(): java.nio.file.Path? = null
   |                      ^^^^
 compiler/testData/cli/jvm/XjdkRelease/jdkRelease.kt:5:26: error: unresolved reference 'stream'.
-  |
 5 | fun stream() = java.util.stream.Stream.of(42)
   |                          ^^^^^^
 COMPILATION_ERROR

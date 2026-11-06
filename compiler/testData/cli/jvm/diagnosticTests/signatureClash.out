@@ -36,7 +36,6 @@ In package 'root package' of module '<main>':
 10 | }
    |
 In source code:
-  |
 8 |     fun getA(): Int = 1
   |     ^^^^^^^^^^^^^^^
 compiler/testData/cli/jvm/diagnosticTests/signatureClash.kt:9:5: error: platform declaration clash: The following declarations have the same JVM signature (getA()I):
@@ -59,7 +58,6 @@ In package 'root package' of module '<main>':
 10 | }
    |
 In source code:
-8 |     fun getA(): Int = 1
 9 |     val a: Int = 1
   |     ^^^^^^^^^^
 compiler/testData/cli/jvm/diagnosticTests/signatureClash.kt:12:1: error: platform declaration clash: The following declarations have the same JVM signature (getB()I):
@@ -75,7 +73,6 @@ In package 'root package' of module '<main>':
 12 | fun getB(): Int
    |
 In source code:
-   |
 12 | fun getB(): Int = 1
    | ^^^^^^^^^^^^^^^
 compiler/testData/cli/jvm/diagnosticTests/signatureClash.kt:13:1: error: platform declaration clash: The following declarations have the same JVM signature (getB()I):
@@ -91,7 +88,6 @@ In package 'root package' of module '<main>':
 12 | fun getB(): Int
    |
 In source code:
-12 | fun getB(): Int = 1
 13 | val b: Int = 1
    | ^^^^^^^^^^
 compiler/testData/cli/jvm/diagnosticTests/signatureClash.kt:20:5: error: accidental override: The following declarations have the same JVM signature (getTr()I):
@@ -128,7 +124,6 @@ In package 'root package' of module '<main>':
 34 | }
    |
 In source code:
-23 | // Clashing synthetic accessors are only reported in compiler, IDE doesn't see them
 24 | class C {
    | ^
 compiler/testData/cli/jvm/diagnosticTests/signatureClash.kt:26:5: error: platform declaration clash: The following declarations have the same JVM signature (access$f(LC;)V):
@@ -147,7 +142,6 @@ In package 'root package' of module '<main>':
 34 | }
    |
 In source code:
-25 |     private fun f() {}
 26 |     fun `access$f`(c: C) {}
    |     ^^^^^^^^^^^^^^^^^^^^
 COMPILATION_ERROR

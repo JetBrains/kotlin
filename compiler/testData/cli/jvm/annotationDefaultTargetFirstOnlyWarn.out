@@ -5,11 +5,9 @@ compiler/testData/cli/jvm/annotationDefaultTarget.kt:3:104: warning: this annota
 
 See https://youtrack.jetbrains.com/issue/KT-73255 for more details.
 In source code:
-  |
 3 | class My(@Deprecated(message = "Please don't use this bad callable", level = DeprecationLevel.WARNING) @Simple val x: String)
   |                                                                                                        ^^^^^^^
 compiler/testData/cli/jvm/annotationDefaultTarget.kt:7:8: warning: 'val x: String' is deprecated. Please don't use this bad callable.
-6 |     val my = My("")
 7 |     my.x
   |        ^
 OK

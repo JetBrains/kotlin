@@ -1,5 +1,4 @@
 compiler/testData/cli/jvm/kt19628_progressive.kt:1:18: error: unresolved reference 'bind'.
-  |
 1 | import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter
   |                  ^^^^
 compiler/testData/cli/jvm/kt19628_progressive.kt:5:10: error: unresolved reference 'XmlJavaTypeAdapter'.

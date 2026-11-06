@@ -1,5 +1,4 @@
 compiler/testData/cli/jvm/XeagerLambdaAnalysis/unitConversion.kt:7:13: error: argument type mismatch: actual type is '() -> String', but '() -> Unit' was expected.
-6 |     // enabled by -Xeager-lambda-analysis, so this fails to compile even with the flag.
 7 |     runUnit(produce)
   |             ^^^^^^^
 COMPILATION_ERROR

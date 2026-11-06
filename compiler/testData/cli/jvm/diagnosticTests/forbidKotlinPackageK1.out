@@ -1,5 +1,4 @@
 compiler/testData/cli/jvm/diagnosticTests/forbidKotlinPackage.kt:3:1: error: only the Kotlin standard library is allowed to use the 'kotlin' package.
-  |
 3 | package kotlin.internal
   | ^^^^^^^^^^^^^^^^^^^^^^^
 COMPILATION_ERROR

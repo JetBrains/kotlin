@@ -10,7 +10,6 @@ In package '' of module '<main>':
  |     fun `access$foo`(`$this`: Derived): Unit defined in Derived
  |
 In source code:
-   |
 14 | class Derived : Base() {
    | ^
 COMPILATION_ERROR

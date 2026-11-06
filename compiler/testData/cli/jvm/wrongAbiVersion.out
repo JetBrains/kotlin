@@ -3,7 +3,6 @@ compiler/testData/cli/jvm/wrongAbiVersionLib/bin/META-INF/main.kotlin_module: er
 compiler/testData/cli/jvm/wrongAbiVersion.kt:3:12: error: class 'ClassWithWrongAbiVersion' was compiled with an incompatible version of Kotlin. The actual metadata version is 0.30.0, but the compiler version $ABI_VERSION$ can read versions up to $ABI_VERSION_NEXT$.
 The class is loaded from $TESTDATA_DIR$/wrongAbiVersionLib/bin/ClassWithWrongAbiVersion.class
 In source code:
-  |
 3 | fun foo(x: ClassWithWrongAbiVersion) {
   |            ^^^^^^^^^^^^^^^^^^^^^^^^
 compiler/testData/cli/jvm/wrongAbiVersion.kt:4:5: error: unresolved reference 'bar'.
@@ -11,7 +10,6 @@ compiler/testData/cli/jvm/wrongAbiVersion.kt:4:5: error: unresolved reference 'b
 4 |     bar()
   |     ^^^
 compiler/testData/cli/jvm/wrongAbiVersion.kt:6:7: error: candidate 'fun String.replaceIndent(newIndent: String = ...): String' is inapplicable because of a receiver type mismatch. Actual receiver type is 'Int'.
-  |
 6 |     1.replaceIndent(2, 3)
   |       ^^^^^^^^^^^^^
 COMPILATION_ERROR

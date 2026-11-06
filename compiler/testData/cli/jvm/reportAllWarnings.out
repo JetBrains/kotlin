@@ -1,5 +1,4 @@
 compiler/testData/cli/jvm/reportAllWarnings.kt:1:26: error: unresolved reference 'g'.
-  |
 1 | fun foo(a: Int, b: Int) {g
   |                          ^
 compiler/testData/cli/jvm/reportAllWarnings.kt:2:13: warning: division by zero.
@@ -7,7 +6,6 @@ compiler/testData/cli/jvm/reportAllWarnings.kt:2:13: warning: division by zero.
 2 |     println(a / 0)
   |             ^^^^^
 compiler/testData/cli/jvm/reportAllWarnings.kt:3:13: warning: division by zero.
-2 |     println(a / 0)
 3 |     println(b / 0)
   |             ^^^^^
 COMPILATION_ERROR

@@ -1,21 +1,16 @@
 compiler/testData/cli/jvm/diagnosticTests/conflictingProjection.kt:10:19: error: projection conflicts with variance of the corresponding type parameter of 'Out<in Int>'. Remove the projection or replace it with '*'.
- 9 | fun a7(value: Out<Int>) {}
 10 | fun a8(value: Out<in Int>) {}
    |                   ^^
 compiler/testData/cli/jvm/diagnosticTests/conflictingProjection.kt:17:15: error: variance annotations are only allowed for type parameters of classes and interfaces.
-   |
 17 | typealias A13<in K> = In<K>
    |               ^^
 compiler/testData/cli/jvm/diagnosticTests/conflictingProjection.kt:18:15: error: variance annotations are only allowed for type parameters of classes and interfaces.
-17 | typealias A13<in K> = In<K>
 18 | typealias A14<in K> = In<in K>
    |               ^^
 compiler/testData/cli/jvm/diagnosticTests/conflictingProjection.kt:19:15: error: variance annotations are only allowed for type parameters of classes and interfaces.
-18 | typealias A14<in K> = In<in K>
 19 | typealias A15<in K> = In<out K>
    |               ^^
 compiler/testData/cli/jvm/diagnosticTests/conflictingProjection.kt:19:26: error: projection conflicts with variance of the corresponding type parameter of 'In<out K (of typealias A15<in K>)>'. Remove the projection or replace it with '*'.
-18 | typealias A14<in K> = In<in K>
 19 | typealias A15<in K> = In<out K>
    |                          ^^^
 COMPILATION_ERROR

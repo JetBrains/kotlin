@@ -14,7 +14,6 @@ In package 'root package' of module '<main>':
 25 | }
    |
 In source code:
-  |
 3 | class A {
   | ^
 compiler/testData/cli/jvm/syntheticAccessorPropertyAndFunSignatureClash.kt:6:5: error: platform declaration clash: The following declarations have the same JVM signature (access$getFoo$p(LA;)I):
@@ -33,7 +32,6 @@ In package 'root package' of module '<main>':
 25 | }
    |
 In source code:
-  |
 6 |     fun `access$getFoo$p`(a: A): Int = 1
   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 compiler/testData/cli/jvm/syntheticAccessorPropertyAndFunSignatureClash.kt:7:5: error: platform declaration clash: The following declarations have the same JVM signature (access$setFoo$p(LA;I)V):
@@ -52,7 +50,6 @@ In package 'root package' of module '<main>':
 25 | }
    |
 In source code:
-6 |     fun `access$getFoo$p`(a: A): Int = 1
 7 |     fun `access$setFoo$p`(a: A, d: Int) {}
   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 compiler/testData/cli/jvm/syntheticAccessorPropertyAndFunSignatureClash.kt:12:5: error: platform declaration clash: The following declarations have the same JVM signature (access$getFoo(LA;)I):
@@ -71,7 +68,6 @@ In package 'root package' of module '<main>':
 25 | }
    |
 In source code:
-   |
 12 |     fun `access$getFoo`(a: A): Int = 1
    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 compiler/testData/cli/jvm/syntheticAccessorPropertyAndFunSignatureClash.kt:13:5: error: platform declaration clash: The following declarations have the same JVM signature (access$setFoo(LA;I)V):
@@ -90,7 +86,6 @@ In package 'root package' of module '<main>':
 25 | }
    |
 In source code:
-12 |     fun `access$getFoo`(a: A): Int = 1
 13 |     fun `access$setFoo`(a: A, d: Int) {}
    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 COMPILATION_ERROR

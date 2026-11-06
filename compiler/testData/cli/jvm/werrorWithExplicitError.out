@@ -1,5 +1,4 @@
 compiler/testData/cli/jvm/werrorWithExplicitError.kt:4:6: error: unsafe call on receiver of nullable type 'String?'. Consider using a safe call '?.' or non-null asserted call '!!.'.
-3 |     t?.toString()
 4 |     t.length
   |      ^
 COMPILATION_ERROR

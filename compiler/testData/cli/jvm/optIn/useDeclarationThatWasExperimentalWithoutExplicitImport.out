@@ -3,7 +3,6 @@ compiler/testData/cli/jvm/optIn/useDeclarationThatWasExperimentalWithoutExplicit
 3 |     "".lowercase()
   |        ^^^^^^^^^
 compiler/testData/cli/jvm/optIn/useDeclarationThatWasExperimentalWithoutExplicitImport.kt:4:7: warning: unused return value of 'digitToChar'.
-3 |     "".lowercase()
 4 |     1.digitToChar()
   |       ^^^^^^^^^^^
 OK

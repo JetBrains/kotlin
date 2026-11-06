@@ -3,11 +3,9 @@ compiler/testData/cli/jvm/XjspecifyAnnotation/jspecifyUsage.kt:4:11: warning: Ja
 4 |     a.foo(null)
   |           ^^^^
 compiler/testData/cli/jvm/XjspecifyAnnotation/jspecifyUsage.kt:5:5: warning: unsafe call on receiver of nullable type 'String?'. Consider using a safe call '?.' or non-null asserted call '!!.'.
-4 |     a.foo(null)
 5 |     a.bar().length
   |     ^^^^^^^
 compiler/testData/cli/jvm/XjspecifyAnnotation/jspecifyUsage.kt:5:13: warning: unused return value of 'length'.
-4 |     a.foo(null)
 5 |     a.bar().length
   |             ^^^^^^
 OK

@@ -59,7 +59,6 @@ In package 'root package' of module '<main>':
 10 | }
    |
 In source code:
-  |
 8 |     @JvmName("getX")
   |     ^^^^^^^^^^^^^^^^
 COMPILATION_ERROR

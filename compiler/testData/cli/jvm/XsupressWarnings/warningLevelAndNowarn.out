@@ -1,5 +1,4 @@
 compiler/testData/cli/jvm/XsupressWarnings/warningLevelAndNowarn.kt:3:16: warning: [REDUNDANT_PROJECTION] Projection is redundant: the corresponding type parameter of 'Out<out Int>' has the same variance.
-  |
 3 | fun foo(x: Out<out Int>): Out<String> {
   |                ^^^
 OK
