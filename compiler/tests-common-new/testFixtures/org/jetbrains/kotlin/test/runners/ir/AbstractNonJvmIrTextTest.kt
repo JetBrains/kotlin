@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.test.backend.ir.KlibFacades
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
 import org.jetbrains.kotlin.test.configuration.commonIrHandlersForCodegenTest
+import org.jetbrains.kotlin.test.configuration.configureLoweredIrDumpHandlers
 import org.jetbrains.kotlin.test.configuration.setupDefaultDirectivesForIrTextTest
 import org.jetbrains.kotlin.test.configuration.setupIrTextDumpHandlers
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
@@ -96,6 +97,7 @@ abstract class AbstractNonJvmIrTextTest<FrontendOutput : ResultingArtifact.Front
         loweredIrHandlersStep {
             useHandlers(::IrDiagnosticsHandler, { SerializedIrDumpHandler(it, isAfterDeserialization = false) })
         }
+        configureLoweredIrDumpHandlers()
 
         facadeStep(klibFacades.serializerFacade)
         klibArtifactsHandlersStep {
