@@ -218,7 +218,7 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         map.put(
             ACCIDENTAL_OVERRIDE_CLASH_BY_JVM_SIGNATURE,
-            "This function accidentally overrides both {0} and {1} {2} from JVM point of view because of mixed Java/Kotlin hierarchy.\n" +
+            "This function overrides both {0} and {1} {2} because of mixed Java/Kotlin hierarchy.\n" +
                     "This situation provokes a JVM clash and is forbidden. To fix it, delete either this or one of the overridden functions.",
             SYMBOL_WITH_CONTAINING_DECLARATION,
             STRING,
@@ -337,7 +337,7 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             JAVA_MODULE_DOES_NOT_READ_UNNAMED_MODULE,
-            "Symbol is declared in an unnamed module which is not read by current module."
+            "Symbol is declared in an unnamed module which is not read by the current module."
         )
         map.put(
             JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE,
@@ -394,7 +394,7 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             JVM_EXPOSE_BOXED_CANNOT_EXPOSE_OPEN_ABSTRACT,
-            "'@JvmExposeBoxed' cannot expose functions which are open or abstract, or member of an interface."
+            "'@JvmExposeBoxed' cannot expose functions which are open, abstract, or members of an interface."
         )
         map.put(
             JVM_EXPOSE_BOXED_CANNOT_EXPOSE_SYNTHETIC,
@@ -499,7 +499,7 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             REPEATABLE_ANNOTATION_HAS_NESTED_CLASS_NAMED_CONTAINER_ERROR,
-            "Repeatable annotation cannot have a nested class named 'Container'. This name is reserved for auto-generated container class."
+            "Repeatable annotation cannot have a nested class named 'Container'. This name is reserved for the auto-generated container class."
         )
         map.put(
             SUSPENSION_POINT_INSIDE_CRITICAL_SECTION,
@@ -560,7 +560,7 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             NO_REFLECTION_IN_CLASS_PATH,
-            "Call uses reflection API which is not found in compilation classpath. " +
+            "Call uses reflection API which is not found in the compilation classpath. " +
                     "Make sure you have kotlin-reflect.jar in the classpath."
         )
 

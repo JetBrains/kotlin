@@ -75,7 +75,7 @@ object FirWasmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Declaration of such kind ({0}) cannot be exported with ''@WasmExport''.",
             TO_STRING,
         )
-        map.put(JS_AND_WASM_EXPORTS_ON_SAME_DECLARATION, "Cannot use '@WasmExport' and '@JsExport' for same function.")
+        map.put(JS_AND_WASM_EXPORTS_ON_SAME_DECLARATION, "Cannot use '@WasmExport' and '@JsExport' on the same function.")
         map.put(NESTED_WASM_IMPORT, "Only top-level functions can be imported with '@WasmImport'.")
         map.put(WASM_IMPORT_ON_NON_EXTERNAL_DECLARATION, "Functions annotated with '@WasmImport' must be external.")
         map.put(
