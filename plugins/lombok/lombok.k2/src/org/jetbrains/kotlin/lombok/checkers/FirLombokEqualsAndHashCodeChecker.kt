@@ -118,6 +118,7 @@ object FirLombokEqualsAndHashCodeChecker : FirRegularClassChecker(MppCheckerKind
                 annotationInfo,
                 declaration,
                 functionNames,
+                LombokNames.EQUALS_AND_HASH_CODE.shortName(),
             )
         }
 
