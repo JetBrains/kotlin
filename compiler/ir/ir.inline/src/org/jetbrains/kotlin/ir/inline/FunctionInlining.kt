@@ -84,11 +84,14 @@ abstract class FunctionInlining(
         if (actualCallee.body == null) {
             return expression
         }
-        actualCallee.body?.transformChildren(this, actualCallee)
-        actualCallee.parameters.forEachIndexed { index, param ->
-            if (expression.arguments[index] == null) {
-                // Default values can recursively reference [callee] - transform only needed.
-                param.defaultValue = param.defaultValue?.transform(this@FunctionInlining, actualCallee)
+        // The shared callee body must be inlined in its definition's source context.
+        withFileEntry(actualCallee.fileEntry) {
+            actualCallee.body?.transformChildren(this, actualCallee)
+            actualCallee.parameters.forEachIndexed { index, param ->
+                if (expression.arguments[index] == null) {
+                    // Default values can recursively reference [callee] - transform only needed.
+                    param.defaultValue = param.defaultValue?.transform(this@FunctionInlining, actualCallee)
+                }
             }
         }
 
@@ -113,6 +116,8 @@ private class CallInlining(
     private val parent: IrDeclarationParent
 ) {
     private val parents = (parent as? IrDeclaration)?.parentsWithSelf?.toSet() ?: setOf(parent)
+
+    private class InlineLambdaArgument(val reference: IrRichCallableReference<*>, val fileEntry: IrFileEntry)
 
     // Callee can be different from callSite.symbol if resolver returned a non-trivial result.
     // For example, if it is a call of function from another module, callSite.symbol can be equal to lazy function,
@@ -158,7 +163,7 @@ private class CallInlining(
         val outerIrBuilder = context.createIrBuilder(copiedCallee.symbol, callSite.startOffset, callSite.endOffset)
 
         val parameterToTempVariable = mutableMapOf<IrValueParameterSymbol, IrValueSymbol>()
-        val parameterToLambda = mutableMapOf<IrValueParameterSymbol, IrRichCallableReference<*>>()
+        val parameterToLambda = mutableMapOf<IrValueParameterSymbol, InlineLambdaArgument>()
         val functionStatements = (copiedCallee.body as? IrBlockBody)?.statements
             ?: error("Body not found for function ${callee.render()}")
 
@@ -213,7 +218,7 @@ private class CallInlining(
      */
     private inner class InlinePostprocessor(
         val parameterToTempVariable: Map<IrValueParameterSymbol, IrValueSymbol>,
-        val parameterToLambda: Map<IrValueParameterSymbol, IrRichCallableReference<*>>,
+        val parameterToLambda: Map<IrValueParameterSymbol, InlineLambdaArgument>,
         val returnType: IrType,
         val inlinedFunctionSymbol: IrFunctionSymbol,
         val returnableBlockSymbol: IrReturnableBlockSymbol,
@@ -245,7 +250,7 @@ private class CallInlining(
             }
 
             parameterToLambda[newExpression.symbol]?.let {
-                val copy = it.deepCopyWithSymbols()
+                val copy = it.reference.deepCopyWithSymbols()
                 copy.transformChildrenVoid()
                 return copy
             }
@@ -282,14 +287,14 @@ private class CallInlining(
             val dispatchReceiver = expression.arguments.firstOrNull()?.unwrapAdditionalImplicitCastsIfNeeded() as? IrGetValue
             val parameterSymbolToInline = dispatchReceiver?.symbol ?: return super.visitCall(expression)
             val lambdaToInline = parameterToLambda[parameterSymbolToInline] ?: return super.visitCall(expression)
-            val callToInline = expression.bindInlineReference(lambdaToInline)
+            val callToInline = expression.bindInlineReference(lambdaToInline.reference)
 
             // Inline the lambda. Lambda parameters will be substituted with lambda arguments.
             val newExpression = inlineFunction(
                 callSite = callToInline,
                 callee = callToInline.symbol.owner,
                 inlinedFunctionSymbol = null,
-                currentFileEntry,
+                lambdaToInline.fileEntry,
             )
 
             // Substitute lambda arguments with target function arguments.
@@ -374,7 +379,7 @@ private class CallInlining(
         callSite: IrFunctionAccessExpression,
         callee: IrFunction,
         parameterToTempVariable: MutableMap<IrValueParameterSymbol, IrValueSymbol>,
-        parameterToLambda: MutableMap<IrValueParameterSymbol, IrRichCallableReference<*>>,
+        parameterToLambda: MutableMap<IrValueParameterSymbol, InlineLambdaArgument>,
     ) {
         for ([parameter, argument] in callee.parameters.zip(callSite.arguments)) {
             val isDefaultArg = argument == null && parameter.defaultValue != null
@@ -394,7 +399,9 @@ private class CallInlining(
                 val evaluationBuilder = if (isDefaultArg) inlinedBlockBuilder else callSiteBuilder
                 // If function reference has bound values, they need to be computed in advance, not at call-site
                 // So, we store them to local variables, if they are untrivial
-                parameterToLambda[parameter.symbol] = argumentValue
+                parameterToLambda[parameter.symbol] = InlineLambdaArgument(
+                    argumentValue, if (isDefaultArg) callee.fileEntry else currentFileEntry
+                )
                 for (index in argumentValue.boundValues.indices) {
                     val irExpression = argumentValue.boundValues[index]
                     val boundParameter = argumentValue.invokeFunction.parameters[index]
