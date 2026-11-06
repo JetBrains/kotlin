@@ -64,7 +64,11 @@ class ClassTypeCreatorDslTestCases(session: KaSession, caretToType: Map<String, 
     }
 
     fun testNonExistingClassId(): KaType {
-        return session.typeCreator.classType(ClassId(FqName.ROOT, Name.identifier("MyClass")))
+        return session.typeCreator.classType(ClassId(FqName.ROOT, Name.identifier("MyClass"))) {
+            isMarkedNullable = true
+            annotation(ClassId.fromString("Anno"))
+            invariantTypeArgument(session.builtinTypes.int)
+        }
     }
 
     fun testUserGenericTypeWithStarProjection(): KaType {
@@ -210,6 +214,20 @@ class ClassTypeCreatorDslTestCases(session: KaSession, caretToType: Map<String, 
     }
 
     fun testMissingDependencyCandidateSymbol(): KaType {
+        val errorType = getTypeByCaret("type") as KaClassErrorType
+        val symbol = errorType.candidateSymbols.single()
+        return session.typeCreator.classType(symbol) {
+            isMarkedNullable = true
+            annotation(ClassId.fromString("main/Anno"))
+            invariantTypeArgument(session.builtinTypes.int)
+        }
+    }
+
+    /**
+     * The candidate symbol is `base.Foo` from the `base` module, which has no type parameters.
+     * Its class ID resolves to a different `base.Foo<T>` from the use-site module, which has one type parameter.
+     */
+    fun testMissingDependencyCandidateSymbolWithClashingUseSiteClass(): KaType {
         val errorType = getTypeByCaret("type") as KaClassErrorType
         val symbol = errorType.candidateSymbols.single()
         return session.typeCreator.classType(symbol)

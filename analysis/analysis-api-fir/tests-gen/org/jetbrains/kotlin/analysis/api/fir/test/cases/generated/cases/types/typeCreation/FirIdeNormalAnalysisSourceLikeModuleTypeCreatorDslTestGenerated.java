@@ -314,6 +314,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleTypeCreatorDslTestGenerated ext
     }
 
     @Test
+    @TestMetadata("missingDependencyCandidateSymbolWithClashingUseSiteClass.kt")
+    public void testMissingDependencyCandidateSymbolWithClashingUseSiteClass() {
+      run("missingDependencyCandidateSymbolWithClashingUseSiteClass.kt");
+    }
+
+    @Test
     @TestMetadata("moreTypeArgumentsThanExpected.kt")
     public void testMoreTypeArgumentsThanExpected() {
       run("moreTypeArgumentsThanExpected.kt");
