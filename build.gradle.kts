@@ -693,6 +693,10 @@ tasks {
         dependsOn(":repo:test-runtime:test")
     }
 
+    testLifecycleTask("codebaseTestsNightly", QualityGate.Undefined) {
+        dependsOn(":repo:codebase-tests:nightlyTests")
+    }
+
     testLifecycleTask("artifactsTest", QualityGate.Master) {
         dependsOn(":repo:artifacts-tests:test")
     }
