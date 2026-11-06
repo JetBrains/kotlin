@@ -156,16 +156,26 @@ internal class KotlinNativeDisableCacheIT : KGPBaseTest() {
 @MustRunOnChangesInNative
 internal class KotlinNativeDisableCacheUnsupportedHostIT : KGPDaemonsBaseTest() {
 
-    /**
-     * Defines the parameters for a Linux Arm64 host environment.
-     * These parameters are used to specify the operating system name and architecture.
-     */
-    private val linuxArm64HostParameters = listOf("-Dos.name=Linux", "-Dos.arch=aarch64")
+    private val unsupportedHostParameters = listOf("-Dos.name=Linux", "-Dos.arch=riscv64")
 
     @GradleTest
     @OsCondition(supportedOn = [OS.MAC, OS.LINUX], enabledOnCI = [OS.LINUX])
     fun testNoNativeCacheDiagnosticsOnUnsupportedHost(
         gradleVersion: GradleVersion,
+    ) = testNoNativeCacheDiagnosticsOnUnsupportedHost(gradleVersion, unsupportedHostParameters)
+
+    @GradleTest
+    @OsCondition(supportedOn = [OS.MAC, OS.LINUX], enabledOnCI = [OS.LINUX])
+    fun testNoNativeCacheDiagnosticsOnDisabledLinuxArm64Host(
+        gradleVersion: GradleVersion,
+    ) = testNoNativeCacheDiagnosticsOnUnsupportedHost(
+        gradleVersion,
+        listOf("-Dos.name=Linux", "-Dos.arch=aarch64", "-Dkotlin.native.experimental.linuxArm64Host=false"),
+    )
+
+    private fun testNoNativeCacheDiagnosticsOnUnsupportedHost(
+        gradleVersion: GradleVersion,
+        hostParameters: List<String>,
     ) {
         val isMac = HostManager.hostIsMac
         setupNativeCacheTest(
@@ -174,9 +184,9 @@ internal class KotlinNativeDisableCacheUnsupportedHostIT : KGPDaemonsBaseTest() 
         ) {
             val taskName = getDebugStaticTaskName(if (isMac) "macosArm64" else "linuxX64")
 
-            // Simulate a host (Linux Arm64) that cannot build the defined target.
+            // Simulate an unsupported or recognized-but-disabled host.
             // result: The link task is NOT registered.
-            val args = listOf(taskName) + linuxArm64HostParameters
+            val args = listOf(taskName) + hostParameters
 
             build(*args.toTypedArray()) {
                 // Confirm that the host mismatch was detected

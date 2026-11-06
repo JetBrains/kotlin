@@ -17,10 +17,20 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
 }
 
+val externalPrebuiltSources = providers.gradleProperty("kotlin.native.libclangInterop.prebuiltSources")
+
 nativeInteropPlugin {
     defFileName.set("clang.def")
     usePrebuiltSources.set(false)
     useBootstrapNativeDistribution.set(true)
+    externalPrebuiltSources.orNull?.let { path ->
+        val directory = rootProject.layout.projectDirectory.dir(path)
+        require(listOf("kotlin", "c").all { directory.dir(it).asFile.isDirectory }) {
+            "kotlin.native.libclangInterop.prebuiltSources must contain kotlin/ and c/ directories: ${directory.asFile}"
+        }
+        prebuiltSourcesDirectory.set(directory)
+        usePrebuiltSources.set(true)
+    }
     commonCompilerArgs.set(emptyList<String>())
     cCompilerArgs.set(listOf("-std=c99"))
     cppCompilerArgs.set(listOf("-std=c++11"))
@@ -106,6 +116,13 @@ nativeInteropPlugin {
             ).mapTo(this) { "${nativeDependencies.llvmPath}/lib/${lib(it)}" }
         }
     })
+}
+
+tasks.named("updatePrebuilt") {
+    val usesExternalBindings = externalPrebuiltSources.isPresent
+    onlyIf("Externally supplied libclang bindings are read-only") {
+        !usesExternalBindings
+    }
 }
 
 projectTests {

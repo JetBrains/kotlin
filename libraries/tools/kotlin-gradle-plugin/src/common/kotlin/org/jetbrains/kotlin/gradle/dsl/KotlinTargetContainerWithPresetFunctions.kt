@@ -779,7 +779,7 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
     ): KotlinNativeTarget =
         configureOrCreate(
             name,
-            presets.getByName("linuxArm64") as KotlinNativeTargetPreset,
+            presets.getByName("linuxArm64") as KotlinNativeTargetWithHostTestsPreset,
             project,
             configure
         )

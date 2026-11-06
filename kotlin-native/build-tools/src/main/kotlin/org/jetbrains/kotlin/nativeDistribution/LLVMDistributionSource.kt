@@ -87,6 +87,10 @@ private fun Project.getRemoteLLVMDistributions(source: String): List<RemoteLLVMD
 val Project.llvmDistributionSource: LLVMDistributionSource
     get() {
         val llvmProperty = providers.gradleProperty(ROOT_PROPERTY_NAME).get()
+        check(HostManager.hostOrNull != KonanTarget.LINUX_ARM64 || llvmProperty !in listOf("default", "next")) {
+            "No LLVM distribution is published for the Linux ARM64 host. " +
+                    "Set '$ROOT_PROPERTY_NAME' to the absolute path of a local AArch64 LLVM distribution."
+        }
         return when (llvmProperty) {
             "default" -> LLVMDistributionSource.Default(getRemoteLLVMDistributions("default"))
             "next" -> LLVMDistributionSource.Next(getRemoteLLVMDistributions("next"))

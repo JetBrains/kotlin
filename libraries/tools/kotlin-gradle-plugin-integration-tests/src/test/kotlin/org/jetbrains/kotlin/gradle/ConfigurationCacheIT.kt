@@ -77,7 +77,9 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @GradleTest
     fun testMppWithMavenPublish(gradleVersion: GradleVersion) {
         project("new-mpp-lib-and-app/sample-lib", gradleVersion) {
-            val publishedTargets = mutableListOf("kotlinMultiplatform", "jvm6", "nodeJs", "linux64", "mingw64")
+            val publishedTargets = mutableListOf("kotlinMultiplatform", "jvm6", "nodeJs").apply {
+                addAll(listOf("linux64", "mingw64", MPPNativeTargets.current).distinct().filter { it in MPPNativeTargets.publishable })
+            }
             patchKmpSampleLibForIsolatedProjects()
             publishedTargets.remove("nodeJs")
             testConfigurationCacheOf(
