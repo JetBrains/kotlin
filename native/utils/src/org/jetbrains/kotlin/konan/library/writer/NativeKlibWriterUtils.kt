@@ -51,12 +51,14 @@ fun KlibManifestWriterSpec.legacyNativeShortNameInManifest(shortName: String?) {
 
 /**
  * A [KlibWriter] DSL extension to include bitcode files to the created library.
+ * With [arm64e], the files are the bitcode compiled for arm64e, which arm64e binaries of [target] link.
  */
 fun KlibWriterSpec.includeBitcode(
     target: KonanTarget,
     bitcodeFilePaths: Collection<Path>,
+    arm64e: Boolean = false,
 ) {
-    include(KlibBitcodeComponentWriterImpl(target, bitcodeFilePaths))
+    include(KlibBitcodeComponentWriterImpl(target, bitcodeFilePaths, arm64e))
 }
 
 /**

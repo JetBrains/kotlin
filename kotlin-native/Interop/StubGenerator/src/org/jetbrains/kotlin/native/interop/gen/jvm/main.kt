@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.konan.library.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.arm64ePropertyOverrides
 import org.jetbrains.kotlin.konan.util.DefFile
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.KotlinAbiVersion.Companion.FIRST_SUPPORTED_COMPILER_VERSION
@@ -446,6 +447,16 @@ private fun processCLib(
     }
 
     val compilerArgs = stubIrContext.libraryForCStubs.compilerArgs.toTypedArray()
+
+    fun compileStubsToBitcode(compilerArgs: Array<String>, outLib: File): String {
+        // Note that the output bitcode contains the source file path, which can lead to non-deterministc builds (see KT-54284).
+        // The source file is passed in via stdin to ensure the output library is deterministic.
+        val compilerCmd = arrayOf(compiler, *compilerArgs,
+                "-emit-llvm", "-x", library.language.clangLanguageName, "-c", "-", "-o", outLib.absolutePath, "-Xclang", "-detailed-preprocessing-record")
+        runCmd(compilerCmd, verbose, redirectInputFile = outCFile.absolute().toFile())
+        return outLib.absolutePath
+    }
+
     val nativeOutputPath: String? = if (cinteropArguments.headerMode) null else {
         when (flavor) {
             KotlinPlatform.JVM -> {
@@ -470,20 +481,42 @@ private fun processCLib(
                 // We could introduce another flag to control that, but let's keep things simple for now.
                 null
             }
-            KotlinPlatform.NATIVE -> {
-                val outLib = File(nativeLibsDir, "$libName.bc")
-                // Note that the output bitcode contains the source file path, which can lead to non-deterministc builds (see KT-54284).
-                // The source file is passed in via stdin to ensure the output library is deterministic.
-                val compilerCmd = arrayOf(compiler, *compilerArgs,
-                        "-emit-llvm", "-x", library.language.clangLanguageName, "-c", "-", "-o", outLib.absolutePath, "-Xclang", "-detailed-preprocessing-record")
-                runCmd(compilerCmd, verbose, redirectInputFile = outCFile.absolute().toFile())
-                outLib.absolutePath
-            }
+            KotlinPlatform.NATIVE -> compileStubsToBitcode(compilerArgs, File(nativeLibsDir, "$libName.bc"))
         }
     }
 
     val compiledFiles = if (cinteropArguments.headerMode) emptyList() else {
         compileSources(nativeLibsDir, tool, cinteropArguments)
+    }
+
+    val arm64eBitcodeFiles = when {
+        !cinteropArguments.arm64eBitcode -> emptyList()
+        !tool.hasArm64eVariant -> {
+            warn("'-Xarm64e-bitcode' is supported only for the iosArm64 target and is ignored.")
+            emptyList()
+        }
+        // Without stubs, the library has no bitcode.
+        nativeOutputPath == null -> emptyList()
+        else -> {
+            // The same sources and stubs, compiled with the arm64e variant of the target.
+            val arm64eTool = ToolConfig(
+                    tool.target.name,
+                    flavor,
+                    // As in the compiler, overrides from the command line take precedence.
+                    arm64ePropertyOverrides(tool.target.name) + parseKeyValuePairs(cinteropArguments.overrideKonanProperties),
+                    cinteropArguments.konanDataDir,
+                    cinteropArguments.konanHome,
+            )
+            val arm64eLibsDir = File(nativeLibsDir, "arm64e").apply { mkdirs() }
+            // The stubs get their declarations from precompiled headers, which have to be compiled for arm64e too:
+            // first the library's, then the ones the stubs add, as for the ordinary stubs.
+            val arm64eStubsCompilation = buildNativeLibrary(arm64eTool, def, cinteropArguments, imports)
+                    .precompileHeaders()
+                    .forCStubs(flavor)
+                    .precompileHeaders()
+            compileSources(arm64eLibsDir.absolutePath, arm64eTool, cinteropArguments) +
+                    compileStubsToBitcode(arm64eStubsCompilation.compilerArgs.toTypedArray(), File(arm64eLibsDir, "$libName.bc"))
+        }
     }
 
     return when (stubIrOutput) {
@@ -524,6 +557,7 @@ private fun processCLib(
             createInteropLibrary(
                     serializedMetadata = serializedMetadata,
                     nativeBitcodeFiles = (compiledFiles + listOfNotNull(nativeOutputPath)).map(::Path),
+                    arm64eBitcodeFiles = arm64eBitcodeFiles.map(::Path),
                     target = tool.target,
                     moduleName = moduleName,
                     outputPath = Path(outputPath),

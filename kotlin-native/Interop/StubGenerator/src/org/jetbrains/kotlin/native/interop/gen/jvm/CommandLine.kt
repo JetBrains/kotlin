@@ -179,6 +179,9 @@ open class CInteropArguments(argParser: ArgParser =
 
     val headerMode by argParser.option(ArgType.Boolean, "Xheader-mode",
             description = "Generate only metadata, skip bridge validation and bitcode compilation. Declarations with non-compilable C bridges will not be deprecated or excluded in this mode, deferring errors to link-time.").default(false)
+
+    val arm64eBitcode by argParser.option(ArgType.Boolean, "Xarm64e-bitcode",
+            description = "For iosArm64, also store bitcode compiled for arm64e, which binaries compiled with -Xbinary=arm64e=true link").default(false)
 }
 
 internal fun warn(msg: String) {

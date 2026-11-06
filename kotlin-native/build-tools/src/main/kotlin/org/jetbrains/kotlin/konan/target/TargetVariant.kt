@@ -14,14 +14,16 @@ import java.io.Serializable
 
 /**
  * [Target][KonanTarget] with optional [sanitizer][SanitizerKind].
+ * With [arm64e], the arm64e variant of the target, which `-Xbinary=arm64e=true` selects, see [arm64eTargetTriple].
  *
- * Can be used as a gradle attribute: `attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, target.withSanitizer())`
+ * Can be used as a gradle attribute: `attribute(TargetVariant.TARGET_ATTRIBUTE, target.withSanitizer())`
  */
-class TargetWithSanitizer(
+class TargetVariant @JvmOverloads constructor(
         val target: KonanTarget,
         val sanitizer: SanitizerKind?,
+        val arm64e: Boolean = false,
 ) : Named, Serializable {
-    override fun getName(): String = "$target${sanitizer.targetSuffix}"
+    override fun getName(): String = "$target${sanitizer.targetSuffix}${if (arm64e) "_arm64e" else ""}"
 
     override fun toString(): String = name
 
@@ -30,23 +32,28 @@ class TargetWithSanitizer(
     }
 
     override fun equals(other: Any?): Boolean {
-        val otherTarget = other as? TargetWithSanitizer ?: return false
+        val otherTarget = other as? TargetVariant ?: return false
         return name == otherTarget.name
     }
 
     companion object {
         @JvmField
-        val TARGET_ATTRIBUTE = Attribute.of("org.jetbrains.kotlin.target", TargetWithSanitizer::class.java)
+        val TARGET_ATTRIBUTE = Attribute.of("org.jetbrains.kotlin.target", TargetVariant::class.java)
 
         @JvmField
-        val host = TargetWithSanitizer(HostManager.host, null)
+        val host = TargetVariant(HostManager.host, null)
     }
 }
 
 /**
- * Construct [TargetWithSanitizer] from [target][KonanTarget] and optional [sanitizer][SanitizerKind].
+ * Construct [TargetVariant] from [target][KonanTarget] and optional [sanitizer][SanitizerKind].
  */
-fun KonanTarget.withSanitizer(sanitizer: SanitizerKind? = null) = TargetWithSanitizer(this, sanitizer)
+fun KonanTarget.withSanitizer(sanitizer: SanitizerKind? = null) = TargetVariant(this, sanitizer)
+
+/**
+ * Construct the arm64e variant of [target][KonanTarget], see [TargetVariant].
+ */
+fun KonanTarget.arm64eVariant() = TargetVariant(this, sanitizer = null, arm64e = true)
 
 /**
  * All known targets with their sanitizers.
@@ -58,11 +65,11 @@ val PlatformManager.allTargetsWithSanitizers
         }
     }
 
-private class TargetDisambiguationRule : AttributeDisambiguationRule<TargetWithSanitizer> {
-    override fun execute(details: MultipleCandidatesDetails<TargetWithSanitizer>) = details.run {
+private class TargetDisambiguationRule : AttributeDisambiguationRule<TargetVariant> {
+    override fun execute(details: MultipleCandidatesDetails<TargetVariant>) = details.run {
         if (consumerValue == null) {
             // If the consumer didn't want a specific target, provide host target if it's available.
-            val default = TargetWithSanitizer.host
+            val default = TargetVariant.host
             if (candidateValues.contains(default)) {
                 closestMatch(default)
             }
@@ -71,10 +78,10 @@ private class TargetDisambiguationRule : AttributeDisambiguationRule<TargetWithS
 }
 
 /**
- * Register [TargetWithSanitizer] attribute with [AttributesSchema].
+ * Register [TargetVariant] attribute with [AttributesSchema].
  */
-fun AttributesSchema.registerTargetWithSanitizerAttribute() {
-    attribute(TargetWithSanitizer.TARGET_ATTRIBUTE) {
+fun AttributesSchema.registerTargetVariantAttribute() {
+    attribute(TargetVariant.TARGET_ATTRIBUTE) {
         disambiguationRules.add(TargetDisambiguationRule::class.java)
     }
 }

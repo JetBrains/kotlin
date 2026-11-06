@@ -26,7 +26,8 @@ internal class ObjCToKotlinMethodAdapter private constructor(type: LLVMTypeRef, 
                 type = llvm.runtime.objCToKotlinMethodAdapter,
                 staticData.cStringLiteral(selector),
                 staticData.cStringLiteral(encoding),
-                imp.toConstPointer(),
+                // The runtime adds this implementation to the class with class_addMethod.
+                llvm.cFunctionPointer(imp.toConstPointer()),
         )
     }
 }
@@ -45,7 +46,8 @@ internal class KotlinToObjCMethodAdapter private constructor(type: LLVMTypeRef, 
                 llvm.constInt32(itablePlace.itableSize),
                 llvm.constInt32(itablePlace.methodIndex),
                 llvm.constInt32(vtableIndex),
-                kotlinImpl,
+                // The runtime stores reverse adapters into vtables and itables.
+                llvm.cFunctionPointer(kotlinImpl),
         )
     }
 }

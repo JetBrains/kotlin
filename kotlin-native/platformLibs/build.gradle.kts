@@ -132,6 +132,10 @@ enabledTargets(platformManager).forEach { target ->
                 val fmodulesCache = project.layout.buildDirectory.dir("clangModulesCache").get().asFile.toRelativeString(project.layout.projectDirectory.asFile)
                 this.extraOpts.addAll("-compiler-option", "-fmodules-cache-path=$fmodulesCache")
             }
+            // The bitcode that binaries compiled with -Xbinary=arm64e=true link. Bootstrap cinterop doesn't support the option yet.
+            if (platformManager.hasArm64eVariant(target) && !kotlinBuildProperties.buildPlatformLibsByBootstrapCompiler) {
+                this.extraOpts.add("-Xarm64e-bitcode")
+            }
 
             dependsOn(nativeDependenciesExtension.targetDependency(target))
 

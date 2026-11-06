@@ -4,17 +4,22 @@
  */
 package org.jetbrains.kotlin.backend.konan
 
+import kotlinx.cinterop.toKString
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.objc.patchObjCRuntimeModule
 import org.jetbrains.kotlin.backend.konan.llvm.runtime.RuntimeModule
 import org.jetbrains.kotlin.backend.konan.llvm.runtime.linkRuntimeModules
 import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStrategy
+import org.jetbrains.kotlin.backend.konan.util.reportCompilationErrorAndThrow
 import org.jetbrains.kotlin.config.nativeBinaryOptions.CCallMode
 import org.jetbrains.kotlin.config.nativeBinaryOptions.CInterfaceGenerationMode
 import org.jetbrains.kotlin.config.nativeBinaryOptions.GC
 import org.jetbrains.kotlin.config.nativeBinaryOptions.GCSchedulerType
+import org.jetbrains.kotlin.io.propertyList
 import org.jetbrains.kotlin.konan.file.isBitcode
+import org.jetbrains.kotlin.konan.library.components.KlibBitcodeConstants.KLIB_ARM64E_FOLDER_NAME
+import org.jetbrains.kotlin.konan.library.components.KlibBitcodeConstants.KLIB_PROPERTY_NATIVE_BITCODE_VARIANTS
 import org.jetbrains.kotlin.konan.library.components.bitcode
 import org.jetbrains.kotlin.konan.library.linkerOpts
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
@@ -23,6 +28,7 @@ import org.jetbrains.kotlin.konan.target.supportsCoreSymbolication
 import org.jetbrains.kotlin.konan.target.supportsLibBacktrace
 import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
+import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import java.io.File
 import kotlin.io.path.absolutePathString
@@ -101,12 +107,20 @@ private fun collectLlvmModules(generationState: NativeGenerationState, generated
     val config = generationState.config
     val runtimeModulesConfig = generationState.runtimeModulesConfig
 
+    // The libraries that bitcode files come from, for diagnostics.
+    val libraryNamesOfBitcode = mutableMapOf<String, String>()
     val [bitcodePartOfStdlib, bitcodeLibraries] = generationState.dependenciesTracker.bitcodeToLink
             .filterNot { it.isCInteropLibrary() && config.cCallMode == CCallMode.Direct }
             .partition { it.isNativeStdlib && generationState.producedLlvmModuleContainsStdlib }
             .toList()
             .map { libraries ->
-                libraries.flatMap { it.bitcode(config.target)?.bitcodeFilePaths.orEmpty() }.filter { it.isBitcode }
+                libraries.flatMap { library ->
+                    // arm64e binaries link the bitcode compiled for arm64e, if the library has it.
+                    val arm64e = config.arm64e &&
+                            KLIB_ARM64E_FOLDER_NAME in library.manifestProperties.propertyList(KLIB_PROPERTY_NATIVE_BITCODE_VARIANTS)
+                    library.bitcode(config.target, arm64e)?.bitcodeFilePaths.orEmpty().filter { it.isBitcode }
+                            .onEach { libraryNamesOfBitcode[it.pathString] = library.uniqueName }
+                }
             }
 
     fun MutableList<String>.add(module: RuntimeModule) = add(runtimeModulesConfig.absolutePathFor(module))
@@ -182,6 +196,9 @@ private fun collectLlvmModules(generationState: NativeGenerationState, generated
 
     fun parseBitcodeFiles(files: List<String>): List<LLVMModuleRef> = files.map { bitcodeFile ->
         val parsedModule = parseBitcodeFile(generationState, generationState.diagnosticReporter, generationState.llvmContext, bitcodeFile)
+        if (config.arm64e) {
+            checkArm64eBitcode(config, parsedModule, bitcodeFile, libraryNamesOfBitcode[bitcodeFile])
+        }
         if (!generationState.shouldUseDebugInfoFromNativeLibs()) {
             LLVMStripModuleDebugInfo(parsedModule)
         }
@@ -195,6 +212,21 @@ private fun collectLlvmModules(generationState: NativeGenerationState, generated
     return LlvmModules(
             runtimeModules.ifNotEmpty { this + generationState.generateRuntimeConstantsModule() } ?: emptyList(),
             additionalModules + listOfNotNull(patchObjCRuntimeModule(generationState))
+    )
+}
+
+/**
+ * Reports [module] parsed from [bitcodeFile] if it isn't compiled for arm64e: code without pointer authentication must
+ * not be linked into an arm64e binary.
+ */
+private fun checkArm64eBitcode(config: NativeSecondStageCompilationConfig, module: LLVMModuleRef, bitcodeFile: String, library: String?) {
+    val triple = LLVMGetTarget(module)!!.toKString()
+    if (triple.substringBefore('-') == "arm64e") return
+    val bitcode = if (library == null) "Bitcode '$bitcodeFile'" else "Bitcode '${File(bitcodeFile).name}' of library '$library'"
+    config.configuration.reportCompilationErrorAndThrow(
+            "$bitcode is compiled for '$triple', so it cannot be linked into an arm64e binary. " +
+                    "To compile the bitcode of a C interop library for arm64e, use the cinterop option '-Xarm64e-bitcode'. " +
+                    "To use a C interop library that supports direct calls without its bitcode, use '-Xbinary=cCallMode=direct'."
     )
 }
 

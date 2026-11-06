@@ -15,7 +15,7 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.konan.target.TargetDomainObjectContainer
-import org.jetbrains.kotlin.konan.target.TargetWithSanitizer
+import org.jetbrains.kotlin.konan.target.TargetVariant
 import org.jetbrains.kotlin.utils.capitalized
 import javax.inject.Inject
 
@@ -90,7 +90,7 @@ abstract class CompilationDatabaseExtension @Inject constructor(private val proj
      * @property sanitizer optional sanitizer for [target].
      */
     abstract class Entry @Inject constructor(
-            private val _target: TargetWithSanitizer,
+            private val _target: TargetVariant,
     ) {
         val target by _target::target
         val sanitizer by _target::sanitizer
@@ -137,7 +137,7 @@ abstract class CompilationDatabaseExtension @Inject constructor(private val proj
      */
     abstract class Target @Inject constructor(
             private val owner: CompilationDatabaseExtension,
-            private val _target: TargetWithSanitizer,
+            private val _target: TargetVariant,
     ) {
         val target by _target::target
         val sanitizer by _target::sanitizer
@@ -174,7 +174,7 @@ abstract class CompilationDatabaseExtension @Inject constructor(private val proj
             mergeFiles.from(
                     owner.compilationDatabaseJSON.incoming.artifactView {
                         attributes {
-                            attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, _target)
+                            attribute(TargetVariant.TARGET_ATTRIBUTE, _target)
                         }
                     }.files)
             entries.set(this@Target.entries)
@@ -186,7 +186,7 @@ abstract class CompilationDatabaseExtension @Inject constructor(private val proj
                 variants {
                     create("$_target") {
                         attributes {
-                            attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, _target)
+                            attribute(TargetVariant.TARGET_ATTRIBUTE, _target)
                         }
                         artifact(task)
                     }

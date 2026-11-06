@@ -57,8 +57,9 @@ class NativeSecondStageCompilationConfig(
         } else macabi
     }
 
-    internal val distribution = run {
+    private fun createDistribution(arm64eTarget: String?): Distribution {
         val overridenProperties = mutableMapOf<String, String>().apply {
+            arm64eTarget?.let { putAll(arm64ePropertyOverrides(it)) }
             if (macabi) {
                 val target = configuration.konanTarget
                 // Overriding properties is a bit better alternative than
@@ -82,13 +83,39 @@ class NativeSecondStageCompilationConfig(
             }
         }
 
-        Distribution(
+        return Distribution(
                 configuration.konanHome ?: KotlinNativePaths.homePath.absolutePath,
                 false,
                 configuration.runtimeFile,
                 overridenProperties,
                 configuration.konanDataDir,
         )
+    }
+
+    /**
+     * Determine if we compile for arm64e, the iOS ABI with pointer authentication.
+     */
+    val arm64e: Boolean
+
+    internal val distribution: Distribution
+
+    init {
+        val arm64e = configuration.getBoolean(BinaryOptions.arm64e)
+        // We can't access `target` property, as it depends on the distribution.
+        val target = configuration.konanTarget
+        val distribution = createDistribution(arm64eTarget = target?.takeIf { arm64e })
+        // The arm64e overrides don't change the properties that `hasArm64eVariant` checks.
+        if (arm64e && (target == null || !distribution.hasArm64eVariant(target))) {
+            configuration.report(
+                    CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING,
+                    "Binary option 'arm64e' is supported only for the iosArm64 target and is ignored."
+            )
+            this.arm64e = false
+            this.distribution = createDistribution(arm64eTarget = null)
+        } else {
+            this.arm64e = arm64e
+            this.distribution = distribution
+        }
     }
 
     private val platformManager = PlatformManager(distribution)
@@ -531,6 +558,9 @@ class NativeSecondStageCompilationConfig(
         // Ideally, we would like to use targetTriple instead, but this requires a lot of changes in our test infrastructure.
         if (macabi) {
             append("-macabi")
+        }
+        if (arm64e) {
+            append("-arm64e")
         }
         if (cCallMode != defaultCCallMode)
             append("-ccall_mode${cCallMode.name}")
