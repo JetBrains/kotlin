@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
+import org.gradle.api.tasks.bundling.Jar
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
@@ -581,6 +582,67 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
             }
         }
     }
+
+    @GradleTest
+    fun `KT-90957 test resolve sources from the sources variant in source sets shared between targets`(
+        gradleVersion: GradleVersion,
+    ) {
+        val producer = project("empty", gradleVersion) {
+            plugins { kotlin("multiplatform") }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    jvm()
+                    linuxX64()
+                    sourceSets.commonMain.get().compileSource("fun common() {}")
+                }
+
+                /* An additional sources artifact that only the sources variants carry: resolving the sources of the
+                module by the '-sources' classifier instead does not see it */
+                val samplesSourcesJar = project.tasks.register("samplesSourcesJar", Jar::class.java) { jar ->
+                    jar.archiveClassifier.set("samples-sources")
+                }
+                project.configurations
+                    .matching { configuration -> configuration.name.endsWith("SourcesElements") }
+                    .configureEach { configuration -> configuration.outgoing.artifact(samplesSourcesJar) }
+            }
+        }.publish(publisherConfiguration = PublisherConfiguration(group = "test"))
+
+        project("empty", gradleVersion) {
+            addPublishedProjectToRepositories(producer)
+            plugins { kotlin("multiplatform") }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    jvm()
+                    linuxX64()
+                    sourceSets.commonMain.get().dependencies {
+                        implementation(producer.rootCoordinate)
+                    }
+                }
+            }
+        }.resolveIdeDependencies { dependencies ->
+            assertEquals(
+                setOf(
+                    "${producer.name}-1.0-samples-sources.jar",
+                    // The sources jar of the metadata variant is published under a name of its own
+                    "${producer.name}-kotlin-1.0-sources.jar",
+                    // The same file, resolved once more by IdeArtifactResolutionQuerySourcesResolver
+                    "${producer.name}-1.0-sources.jar",
+                ),
+                dependencies["commonMain"].resolvedSourcesFileNames("test:${producer.name}:commonMain:1.0"),
+            )
+            assertEquals(
+                setOf("${producer.name}-1.0-samples-sources.jar", "${producer.name}-jvm-1.0-sources.jar"),
+                dependencies["jvmMain"].resolvedSourcesFileNames("test:${producer.name}-jvm:1.0"),
+            )
+        }
+    }
+
+    private fun Iterable<IdeaKotlinDependency>.resolvedSourcesFileNames(coordinates: String): Set<String> =
+        filterIsInstance<IdeaKotlinBinaryDependency>()
+            .getOrFail(binaryCoordinates(coordinates))
+            .sourcesClasspath
+            .map { it.name }
+            .toSet()
 
     @GradleTest
     fun `KT-71074 jvmMain depends on kotlin jvm project`(gradleVersion: GradleVersion) {

@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver.Companion.gr
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeaKotlinBinaryCapability
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.configureSourcesPublicationAttributes
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
+import org.jetbrains.kotlin.tooling.core.extrasKeyOf
+import org.jetbrains.kotlin.tooling.core.readWriteProperty
 
 internal object IdeSourcesVariantsResolver : IdeAdditionalArtifactResolver {
     override fun resolve(sourceSet: KotlinSourceSet, dependencies: Set<IdeaKotlinDependency>) {
@@ -35,8 +37,12 @@ internal object IdeSourcesVariantsResolver : IdeAdditionalArtifactResolver {
         val binaryDependenciesByCoordinates = dependencies
             .filterIsInstance<IdeaKotlinResolvedBinaryDependency>()
             .filter { dependency -> dependency.isKotlinCompileBinaryType }
-            // try to resolve sources only if gradleArtifact is present, otherwise it useless and can be slow
-            .filter { dependency -> dependency.gradleArtifact != null }
+            /*
+            Sources are requested from the repositories by the coordinates of the dependency, so only dependencies that
+            actually come from a module there can be resolved. For the rest, such as the Kotlin/Native distribution
+            libraries, the resolution is useless and can be slow.
+             */
+            .filter { dependency -> dependency.gradleArtifact != null || dependency.isResolvedFromExternalModule }
             .groupBy { Coordinates(it.coordinates) }
 
         val gradleDependencies = binaryDependenciesByCoordinates
@@ -104,7 +110,7 @@ private fun Coordinates(coordinates: IdeaKotlinBinaryCoordinates?): Coordinates?
         group = coordinates.group,
         module = coordinates.module,
         version = coordinates.version,
-        capabilities = coordinates.capabilities
+        capabilities = coordinates.capabilities.withoutImplicitCapabilityOf(coordinates.group, coordinates.module)
     )
 }
 
@@ -115,5 +121,28 @@ private fun Coordinates(variant: ResolvedVariantResult): Coordinates? {
         module = id.module,
         version = id.version,
         capabilities = variant.capabilities.map(::IdeaKotlinBinaryCapability).toSet()
+            .withoutImplicitCapabilityOf(id.group, id.module)
     )
 }
+
+/**
+ * Gradle reports the implicit capability of a module, i.e. the one named after the module itself, as if it was declared.
+ * It carries no information and is not reported consistently by all the dependency resolvers, so it is dropped to make
+ * the coordinates of a dependency and the coordinates of its sources variant comparable.
+ */
+private fun Set<IdeaKotlinBinaryCapability>.withoutImplicitCapabilityOf(group: String, module: String) =
+    filterNotTo(mutableSetOf()) { capability -> capability.group == group && capability.name == module }
+
+private val isResolvedFromExternalModuleKey = extrasKeyOf<Boolean>("isResolvedFromExternalModule")
+
+/**
+ * Marks a dependency that was resolved from a module in one of the project's repositories, even though no
+ * [gradleArtifact] was attached to it.
+ *
+ * Dependencies of source sets that are shared between targets are built from the metadata artifact of the module they
+ * belong to, see [IdeTransformedMetadataDependencyResolver], rather than from a Gradle artifact of the dependency
+ * itself. Their coordinates still point at a published module, so additional artifacts such as sources can be requested
+ * for them.
+ */
+internal var IdeaKotlinDependency.isResolvedFromExternalModule
+        by isResolvedFromExternalModuleKey.readWriteProperty.notNull(false)

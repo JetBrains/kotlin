@@ -86,7 +86,7 @@ class IdeSourcesAndDocumentationResolutionTest {
 
             val resolvedDependencies = resolveDependencySources(nativeMain)
             resolvedDependencies.assertMatches(expectedDependencies)
-            resolveDependencySources(nativeTest).assertMatches(resolvedDependencies)
+            resolveDependencySources(nativeTest).withSanitisedExtras().assertMatches(resolvedDependencies.withSanitisedExtras())
             resolvedDependencies.assertSourcesFilesEndWith("-sources.jar", "-sources.zip")
         }
 
