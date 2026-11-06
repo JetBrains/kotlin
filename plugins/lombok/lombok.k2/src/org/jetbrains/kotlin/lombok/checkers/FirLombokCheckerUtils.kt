@@ -183,7 +183,8 @@ private val implementedAnnotationInfos: Map<ClassId, ImplementedAnnotationsInfo>
             DO_NOT_USE_GETTERS, // Irrelevant in Kotlin
             CACHE_STRATEGY, // Not yet supported
             ON_PARAM, // Not yet supported
-        )
+        ),
+        unsupportedClassModifiers = EnumSet.of(ClassModifier.INNER),
     )
     this[LombokNames.EQUALS_AND_HASH_CODE_INCLUDE_ID] = ImplementedAnnotationsInfo(
         allowedTargetsMap = setOf(
@@ -204,7 +205,8 @@ private val implementedAnnotationInfos: Map<ClassId, ImplementedAnnotationsInfo>
         allowedTargetsMap = setOf(
             KotlinTarget.CLASS_ONLY,
             KotlinTarget.LOCAL_CLASS,
-        )
+        ),
+        unsupportedClassModifiers = EnumSet.of(ClassModifier.INNER),
     )
     this[LombokNames.BUILDER_ID] = ImplementedAnnotationsInfo(
         allowedTargetsMap = setOf(
