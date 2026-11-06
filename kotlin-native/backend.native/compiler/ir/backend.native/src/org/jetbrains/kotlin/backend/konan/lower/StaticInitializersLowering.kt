@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.ExpressionBodyTransformer
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.backend.common.lower.irComposite
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.backend.konan.*
@@ -17,7 +18,6 @@ import org.jetbrains.kotlin.backend.konan.llvm.FieldStorageKind
 import org.jetbrains.kotlin.backend.konan.llvm.storageKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.irCall
@@ -32,9 +32,7 @@ import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.classOrFail
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.library.newCompanionInitializationEnabled
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
@@ -90,23 +88,44 @@ internal var IrSimpleFunction.initializedGlobals: List<IrFieldSymbol>? by irAttr
 
 @PhasePrerequisites(ExpressionBodyTransformer::class)
 internal class StaticInitializersLowering(val context: NativeLoweringContext) : FileLoweringPass {
+    /**
+     * Prepends calls to the container's lazy initializers to every direct read of a static `lateinit` backing field
+     * (e.g. lowered `::prop.isInitialized`) made outside that container, since such a read bypasses the container's prologue.
+     * A single walk suffices: the container is always an outer scope of the read, so it is registered before the read
+     * is reached (inlined copies go through accessors that carry the prologue). See KT-89375.
+     */
     override fun lower(irFile: IrFile) {
-        irFile.acceptVoid(object : IrVisitorVoid() {
-            override fun visitElement(element: IrElement) {
-                element.acceptChildrenVoid(this)
-            }
-            override fun visitFile(declaration: IrFile) {
-                processDeclarationContainter(declaration)
-                declaration.acceptChildrenVoid(this)
-            }
-            override fun visitClass(declaration: IrClass) {
+        val lazyInitializers = mutableMapOf<IrDeclarationContainer, List<IrSimpleFunction>>()
+        // The file is the outer scope of everything in it, so it registers before the walk starts.
+        lazyInitializers[irFile] = processDeclarationContainter(irFile)
+        irFile.transformChildren(object : IrTransformer<IrDeclarationContainer>() {
+            override fun visitClass(declaration: IrClass, data: IrDeclarationContainer): IrStatement {
                 declaration.addChild(declaration.getClinitTriggerFunction().owner.apply {
                     body = context.irFactory.createBlockBody(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET)
                 })
-                processDeclarationContainter(declaration)
-                declaration.acceptChildrenVoid(this)
+                lazyInitializers[declaration] = processDeclarationContainter(declaration)
+                return super.visitClass(declaration, declaration)
             }
-        })
+
+            override fun visitGetField(expression: IrGetField, data: IrDeclarationContainer): IrExpression {
+                super.visitGetField(expression, data)
+
+                val field = expression.symbol.owner
+                if (!field.isStatic) return expression
+                if (field.correspondingPropertySymbol?.owner?.isLateinit != true) return expression
+                val fieldContainer = field.parent as? IrDeclarationContainer ?: return expression
+                // Static functions of the container initialize it in their prologue, instance ones run after a constructor.
+                if (fieldContainer == data) return expression
+                val initializers = lazyInitializers[fieldContainer]?.takeIfNotEmpty() ?: return expression
+
+                return context.irBuiltIns.createIrBuilder((data as IrSymbolOwner).symbol, expression.startOffset, expression.endOffset).run {
+                    irComposite(expression) {
+                        initializers.forEach { +irCall(it.symbol) }
+                        +expression
+                    }
+                }
+            }
+        }, irFile)
     }
 
     // An internal static method to trigger class initialization:
@@ -136,7 +155,10 @@ internal class StaticInitializersLowering(val context: NativeLoweringContext) : 
         else -> false
     }
 
-    fun processDeclarationContainter(container: IrDeclarationContainer) {
+    /**
+     * Returns the lazy initializers of the [container] in the order they must be called.
+     */
+    fun processDeclarationContainter(container: IrDeclarationContainer): List<IrSimpleFunction> {
         // Each list is a pair of an optional `IrField` and an optional `IrExpression`. `null to null` is invalid, other combinations:
         // * `field to expr`: initializing a `field` with an `expr`
         // * `field to null`: the `field` does not have an initializer, but it belongs to the current scope (skipped for primitive fields as an optimization)
@@ -280,8 +302,8 @@ internal class StaticInitializersLowering(val context: NativeLoweringContext) : 
             )
         }
 
-        if (globalInitFunction == null && threadLocalInitFunction == null) return
-        
+        if (globalInitFunction == null && threadLocalInitFunction == null) return emptyList()
+
         fun IrFunction.addInitializersCall() {
             val body = body ?: return
             val statements = (body as IrBlockBody).statements
@@ -304,6 +326,8 @@ internal class StaticInitializersLowering(val context: NativeLoweringContext) : 
                 constructor.addInitializersCall()
             }
         }
+        // The order of calling initializers: first global, then thread-local (see `addInitializersCall`).
+        return listOfNotNull(globalInitFunction, threadLocalInitFunction)
     }
 
     private fun buildInitFunction(
