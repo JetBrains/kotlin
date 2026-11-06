@@ -340,6 +340,97 @@ class CompositeMetadataArtifactTest: WithTemporaryFolder {
     }
 
     @Test
+    fun `KT-91297 - version containing plus requires a version checksum`() {
+        val primaryArtifactFile = createZip(
+            "sourceSetA/$KLIB_MANIFEST_PATH" to "sourceSetA",
+            "sourceSetA-cinterop/interopA/$KLIB_MANIFEST_PATH" to "interopA",
+        )
+
+        fun test(computeVersionChecksum: Boolean, assertions: (CompositeMetadataArtifactContent.SourceSetContent) -> Unit) {
+            val metadataArtifact = createCompositeMetadataArtifact(
+                primaryArtifactFile = primaryArtifactFile,
+                moduleDependencyVersion = "1.13.0-beta02+dev5078",
+                computeVersionChecksum = computeVersionChecksum,
+                kotlinProjectStructureMetadata = createProjectStructureMetadata(
+                    sourceSetBinaryLayout = mapOf("sourceSetA" to SourceSetMetadataLayout.KLIB),
+                    sourceSetCInteropMetadataDirectory = mapOf("sourceSetA" to "sourceSetA-cinterop"),
+                ),
+            )
+
+            metadataArtifact.read { artifactContent ->
+                assertions(artifactContent.getSourceSet("sourceSetA"))
+            }
+        }
+
+        test(computeVersionChecksum = false) { sourceSet ->
+            val expectedMessage = "String '1.13.0-beta02+dev5078' is not safe for path component. " +
+                    "Only Latin characters, numbers, '-', '_' and '.' (not as the first character) are allowed. " +
+                    "Check origin of this string."
+            assertEquals(
+                expectedMessage,
+                assertFailsWith<IllegalArgumentException> { sourceSet.metadataBinary }.message,
+            )
+            assertEquals(
+                expectedMessage,
+                assertFailsWith<IllegalArgumentException> { sourceSet.cinteropMetadataBinaries }.message,
+            )
+        }
+        test(computeVersionChecksum = true) { sourceSet ->
+            assertEquals(
+                File("test-group-test-module-LmOBc7-sourceSetA-uOFzhg.klib"),
+                assertNotNull(sourceSet.metadataBinary).relativeFile,
+            )
+            assertEquals(
+                File("test-group-test-module-LmOBc7-sourceSetA-cinterop/interopA-uOFzhg.klib"),
+                sourceSet.cinteropMetadataBinaries.single().relativeFile,
+            )
+        }
+    }
+
+    @Test
+    fun `version checksums can be enabled and disabled in metadata paths`() {
+        val primaryArtifactFile = createZip(
+            "sourceSetA/$KLIB_MANIFEST_PATH" to "sourceSetA",
+            "sourceSetA-cinterop/interopA/$KLIB_MANIFEST_PATH" to "interopA",
+        )
+
+        fun test(computeVersionChecksum: Boolean, assertions: (CompositeMetadataArtifactContent.SourceSetContent) -> Unit) {
+            val metadataArtifact = createCompositeMetadataArtifact(
+                primaryArtifactFile = primaryArtifactFile,
+                computeVersionChecksum = computeVersionChecksum,
+                kotlinProjectStructureMetadata = createProjectStructureMetadata(
+                    sourceSetBinaryLayout = mapOf("sourceSetA" to SourceSetMetadataLayout.KLIB),
+                    sourceSetCInteropMetadataDirectory = mapOf("sourceSetA" to "sourceSetA-cinterop"),
+                ),
+            )
+            metadataArtifact.read { artifactContent ->
+                assertions(artifactContent.getSourceSet("sourceSetA"))
+            }
+        }
+
+        test(computeVersionChecksum = false) { sourceSet ->
+            assertEquals(
+                File("test-group-test-module-1.0.0-sourceSetA-uOFzhg.klib"),
+                assertNotNull(sourceSet.metadataBinary).relativeFile,
+            )
+            assertEquals(
+                File("test-group-test-module-1.0.0-sourceSetA-cinterop/interopA-uOFzhg.klib"),
+                sourceSet.cinteropMetadataBinaries.single().relativeFile,
+            )
+        }
+        test(computeVersionChecksum = true) { sourceSet ->
+            assertEquals(
+                File("test-group-test-module-klIfw8-sourceSetA-uOFzhg.klib"),
+                assertNotNull(sourceSet.metadataBinary).relativeFile,
+            )
+            assertEquals(
+                File("test-group-test-module-klIfw8-sourceSetA-cinterop/interopA-uOFzhg.klib"),
+                sourceSet.cinteropMetadataBinaries.single().relativeFile,
+            )
+        }
+    }
+
+    @Test
     fun `path traversal - malicious module coordinates are rejected`() {
         val primaryArtifactFile = createZip(
             "sourceSetA/$KLIB_MANIFEST_PATH" to "sourceSetA",
@@ -347,8 +438,6 @@ class CompositeMetadataArtifactTest: WithTemporaryFolder {
         )
 
         listOf(
-            ModuleDependencyIdentifier("test-group", "test-module") to "../../pwned",
-            ModuleDependencyIdentifier("test-group", "test-module") to "/pwned",
             ModuleDependencyIdentifier("test-group", "../../pwned") to "1.0.0",
             ModuleDependencyIdentifier("../../pwned", "test-module") to "1.0.0",
             ModuleDependencyIdentifier("..\\..\\pwned", "test-module") to "1.0.0",
@@ -403,12 +492,14 @@ class CompositeMetadataArtifactTest: WithTemporaryFolder {
         kotlinProjectStructureMetadata: KotlinProjectStructureMetadata,
         moduleDependencyIdentifier: ModuleDependencyIdentifier = ModuleDependencyIdentifier("test-group", "test-module"),
         moduleDependencyVersion: String = "1.0.0",
+        computeVersionChecksum: Boolean = true,
     ) = CompositeMetadataArtifactImpl(
         moduleDependencyIdentifier = moduleDependencyIdentifier,
         moduleDependencyVersion = moduleDependencyVersion,
         kotlinProjectStructureMetadata = kotlinProjectStructureMetadata,
         primaryArtifactFile = primaryArtifactFile,
         hostSpecificArtifactFilesBySourceSetName = emptyMap(),
+        computeVersionChecksum = computeVersionChecksum,
     )
 
     /**

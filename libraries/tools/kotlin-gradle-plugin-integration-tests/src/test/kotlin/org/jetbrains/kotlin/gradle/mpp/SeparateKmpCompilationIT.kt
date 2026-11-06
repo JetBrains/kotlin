@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.uklibs.*
 import org.jetbrains.kotlin.gradle.util.capitalize
+import org.jetbrains.kotlin.gradle.util.computeTransformedLibraryVersionChecksum
 import org.jetbrains.kotlin.gradle.util.resolveRepoArtifactPath
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
@@ -886,6 +887,7 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
         }
         buildScriptInjection {
             with(project) {
+                computeTransformedLibraryVersionChecksum(enable = false)
                 applyMultiplatform {
                     if ("jvm" in targetsToInclude) {
                         jvm()
