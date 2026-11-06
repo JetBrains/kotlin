@@ -18,24 +18,28 @@ package org.jetbrains.kotlin.cli.jvm.modules
 
 import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.ide.highlighter.JavaFileType
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
-import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileHandle
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModule
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 
 
+/**
+ * @param findSourceOrBinaryClassFile Finds the `.class`/`.sig` or `.java` file declaring a class anywhere on the classpath, to tell
+ *  which module owns the class (see `CliVirtualFileFinder.findSourceOrBinaryClassFile`).
+ */
 class CliJavaModuleResolver(
     private val moduleGraph: JavaModuleGraph,
     private val userModules: List<JavaModule>,
     private val systemModules: List<JavaModule.Explicit>,
-    private val project: Project
+    private val findSourceOrBinaryClassFile: (ClassId) -> BinaryClassFileHandle?,
 ) : JavaModuleResolver {
     init {
         assert(userModules.count(JavaModule::isSourceModule) <= 1) {
@@ -43,12 +47,12 @@ class CliJavaModuleResolver(
         }
     }
 
-    private val virtualFileFinder by lazy { VirtualFileFinder.getInstance(project, module = null) }
-
     override fun getAnnotationsForModuleOwnerOfClass(classId: ClassId): List<JavaAnnotation>? {
-        val virtualFile = virtualFileFinder.findSourceOrBinaryVirtualFile(classId) ?: return null
+        val classFile = findSourceOrBinaryClassFile(classId) ?: return null
+        // Every Java source root being compiled belongs to the source module, whichever of them holds `module-info.java`.
+        val module = if (classFile.extension == JavaFileType.DEFAULT_EXTENSION) sourceModule else findJavaModule(classFile.rootId)
 
-        return (findJavaModule(virtualFile) as? JavaModule.Explicit)?.moduleInfo?.annotations
+        return (module as? JavaModule.Explicit)?.moduleInfo?.annotations
     }
 
     private val sourceModule: JavaModule? = userModules.firstOrNull(JavaModule::isSourceModule)
@@ -68,12 +72,26 @@ class CliJavaModuleResolver(
     private operator fun JavaModule.contains(file: VirtualFile): Boolean =
         moduleRoots.any { (val root = file, val isBinary) -> isBinary && VfsUtilCore.isAncestor(root, file, false) }
 
+    /** The module owning the binary classpath root [rootId]; a system module and a user module never share a root. */
+    private fun findJavaModule(rootId: JvmClasspathRootId): JavaModule? =
+        systemModules.firstOrNull { module -> rootId in module } ?: userModules.firstOrNull { module -> rootId in module }
+
+    private operator fun JavaModule.contains(rootId: JvmClasspathRootId): Boolean =
+        moduleRoots.any { root -> root.isBinary && root.id == rootId }
+
     override fun checkAccessibility(
         fileFromOurModule: VirtualFile?, referencedFile: VirtualFile, referencedPackage: FqName?
-    ): JavaModuleResolver.AccessError? {
-        val ourModule = fileFromOurModule?.let(this::findJavaModule)
-        val theirModule = this.findJavaModule(referencedFile)
+    ): JavaModuleResolver.AccessError? =
+        checkAccessibility(fileFromOurModule?.let(this::findJavaModule), findJavaModule(referencedFile), referencedPackage)
 
+    override fun checkAccessibility(
+        fileFromOurModule: VirtualFile?, referencedClassFile: BinaryClassFileHandle, referencedPackage: FqName?,
+    ): JavaModuleResolver.AccessError? =
+        checkAccessibility(fileFromOurModule?.let(this::findJavaModule), findJavaModule(referencedClassFile.rootId), referencedPackage)
+
+    private fun checkAccessibility(
+        ourModule: JavaModule?, theirModule: JavaModule?, referencedPackage: FqName?,
+    ): JavaModuleResolver.AccessError? {
         if (ourModule?.name == theirModule?.name) return null
 
         if (theirModule == null) {

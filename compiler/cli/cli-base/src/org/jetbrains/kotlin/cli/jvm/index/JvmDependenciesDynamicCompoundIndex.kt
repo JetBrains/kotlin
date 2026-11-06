@@ -24,7 +24,7 @@ import kotlin.concurrent.read
 import kotlin.concurrent.write
 
 /**
- * @param shouldOnlyFindFirstClass The index will stop the search in [findClassVirtualFiles] once it finds one result.
+ * @param shouldOnlyFindFirstClass The index will stop the search in [findClassFiles] once it finds one result.
  */
 class JvmDependenciesDynamicCompoundIndex(private val shouldOnlyFindFirstClass: Boolean) : JvmDependenciesIndex {
     private val indices = arrayListOf<JvmDependenciesIndex>()
@@ -50,16 +50,16 @@ class JvmDependenciesDynamicCompoundIndex(private val shouldOnlyFindFirstClass: 
 
     override val version: Int get() = currentVersion
 
-    override fun findClassVirtualFiles(
+    override fun findClassFiles(
         classId: ClassId,
         acceptedExtensions: JavaFileExtensions,
-    ): Collection<VirtualFile> = lock.read {
+    ): Collection<IndexedClassFile> = lock.read {
         if (shouldOnlyFindFirstClass) {
             listOfNotNull(
-                indices.firstNotNullOfOrNull { it.findClassVirtualFiles(classId, acceptedExtensions).firstOrNull() }
+                indices.firstNotNullOfOrNull { it.findClassFiles(classId, acceptedExtensions).firstOrNull() }
             )
         } else {
-            indices.flatMap { it.findClassVirtualFiles(classId, acceptedExtensions) }
+            indices.flatMap { it.findClassFiles(classId, acceptedExtensions) }
         }
     }
 

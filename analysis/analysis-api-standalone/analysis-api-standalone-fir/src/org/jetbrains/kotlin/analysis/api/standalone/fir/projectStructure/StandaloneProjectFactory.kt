@@ -63,6 +63,7 @@ import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
 import org.jetbrains.kotlin.cli.jvm.modules.JavaModuleGraph
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
+import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.library.KlibConstants.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
@@ -221,7 +222,7 @@ object StandaloneProjectFactory {
     ) {
         val project = environment.project
         val javaFileManager = project.getService(JavaFileManager::class.java) as KotlinCliJavaFileManagerImpl
-        val javaModuleFinder = CliJavaModuleFinder(jdkHome?.toFile(), createStubConfigurationForReporting(), javaFileManager, project, null)
+        val javaModuleFinder = CliJavaModuleFinder(jdkHome?.toFile(), createStubConfigurationForReporting(), javaFileManager::findClassOnClasspath, null)
         val javaModuleGraph = JavaModuleGraph(javaModuleFinder)
 
         val allSourceFileRoots = sourceFiles.map { JavaRoot(it.virtualFile, JavaRoot.RootType.SOURCE) }
@@ -234,11 +235,13 @@ object StandaloneProjectFactory {
         //
         // Note that the registered `JavaModuleResolver` will still be the `KaFirJavaModuleResolver` registered by the Analysis API engine,
         // not `CliJavaModuleResolver`.
+        // The file finder factory is registered below, once the index is built; the resolver only looks classes up afterwards.
+        val classpathFinder by lazy { (VirtualFileFinderFactory.getInstance(project) as CliVirtualFileFinderFactory).create(JvmClasspath.ProjectLibraries()) }
         val delegateJavaModuleResolver = CliJavaModuleResolver(
             javaModuleGraph,
             emptyList(),
             javaModuleFinder.systemModules.toList(),
-            project,
+            findSourceOrBinaryClassFile = { classpathFinder.findSourceOrBinaryClassFile(it) },
         )
         project.registerService(
             KotlinJavaModuleAccessibilityChecker::class.java,
@@ -312,7 +315,7 @@ object StandaloneProjectFactory {
         jdkHome: Path?,
     ): List<Path> {
         val javaFileManager = project.getService(JavaFileManager::class.java) as KotlinCliJavaFileManagerImpl
-        val javaModuleFinder = CliJavaModuleFinder(jdkHome?.toFile(), createStubConfigurationForReporting(), javaFileManager, project, null)
+        val javaModuleFinder = CliJavaModuleFinder(jdkHome?.toFile(), createStubConfigurationForReporting(), javaFileManager::findClassOnClasspath, null)
         val javaModuleGraph = JavaModuleGraph(javaModuleFinder)
 
         val javaRoots = getDefaultJdkModuleRoots(javaModuleFinder, javaModuleGraph)
@@ -506,7 +509,7 @@ object StandaloneProjectFactory {
         libraryRoots: List<JavaRoot>,
         languageVersionSettings: LanguageVersionSettings = latestLanguageVersionSettings,
     ): (GlobalSearchScope) -> JvmPackagePartProvider = { scope ->
-        JvmPackagePartProvider(languageVersionSettings, scope).apply {
+        JvmPackagePartProvider(languageVersionSettings) { it in scope }.apply {
             addRoots(libraryRoots, createStubConfigurationForReporting())
         }
     }

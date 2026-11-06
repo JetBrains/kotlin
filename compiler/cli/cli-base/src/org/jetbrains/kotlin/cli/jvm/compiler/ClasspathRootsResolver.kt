@@ -20,9 +20,7 @@ import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiJavaModule
-import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.light.LightJavaModule
-import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.common.config.ContentRoot
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
@@ -34,14 +32,15 @@ import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleFinder
 import org.jetbrains.kotlin.cli.jvm.modules.JavaModuleGraph
+import org.jetbrains.kotlin.cli.jvm.modules.readJavaModuleInfo
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.cli.reportLog
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.diagnostics.KtSourcelessDiagnosticFactory
-import org.jetbrains.kotlin.load.java.JavaClassFinder
+import org.jetbrains.kotlin.java.direct.modules.readJavaModuleInfoSource
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.ClassIdToJavaClass
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isValidJavaFqName
-import org.jetbrains.kotlin.resolve.jvm.KotlinCliJavaFileManager
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModule
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleInfo
 import org.jetbrains.kotlin.resolve.jvm.modules.KOTLIN_STDLIB_MODULE_NAME
@@ -50,21 +49,22 @@ import java.util.jar.Attributes
 import java.util.jar.Manifest
 import kotlin.LazyThreadSafetyMode.NONE
 
+/**
+ * @param findClassOnClasspath Resolves the annotation classes of a `module-info` anywhere on the classpath, lazily: the
+ *  classpath index is built from the roots computed here, so the lookup must not run while the roots are computed.
+ */
 class ClasspathRootsResolver(
-    private val psiManager: PsiManager,
     private val configuration: CompilerConfiguration,
     private val additionalModules: List<String>,
     private val contentRootToVirtualFile: (JvmContentRootBase) -> VirtualFile?,
     private val javaModuleFinder: CliJavaModuleFinder,
     private val requireStdlibModule: Boolean,
     private val outputDirectory: VirtualFile?,
-    private val javaFileManager: KotlinCliJavaFileManager,
+    private val findClassOnClasspath: ClassIdToJavaClass,
     private val jdkRelease: Int?,
     hasKotlinSources: Boolean,
 ) {
     val javaModuleGraph = JavaModuleGraph(javaModuleFinder)
-
-    private val searchScope = GlobalSearchScope.allScope(psiManager.project)
 
     // Only report Java module-related errors if there's at least one Kotlin source file in the module. Otherwise the compiler would only
     // report those errors and not the more important "no source files" error which is handled later, after the roots have been computed.
@@ -137,13 +137,14 @@ class ClasspathRootsResolver(
             addModularRoots(modules, result)
         } else {
             //TODO: see also `addJvmSdkRoots` usages, some refactoring is required with moving such logic into one place
-            result += JavaRoot(javaModuleFinder.nonModuleRoot.file, JavaRoot.RootType.BINARY_SIG)
+            val nonModuleRoot = javaModuleFinder.nonModuleRoot
+            result += JavaRoot(nonModuleRoot.file, JavaRoot.RootType.BINARY_SIG, id = nonModuleRoot.id)
         }
 
         return RootsAndModules(result, modules)
     }
 
-    private fun findSourceModuleInfo(root: VirtualFile): Pair<VirtualFile, PsiJavaModule>? {
+    private fun findSourceModuleInfo(root: VirtualFile): Pair<VirtualFile, JavaModuleInfo>? {
         val moduleInfoFile =
             when {
                 root.isDirectory -> root.findChild(PsiJavaModule.MODULE_INFO_FILE)
@@ -151,20 +152,25 @@ class ClasspathRootsResolver(
                 else -> null
             } ?: return null
 
-        val psiFile = psiManager.findFile(moduleInfoFile) ?: return null
-        val psiJavaModule = psiFile.children.singleOrNull { it is PsiJavaModule } as? PsiJavaModule ?: return null
+        // Java sources are read as UTF-8 throughout java-direct.
+        val text = try {
+            String(moduleInfoFile.contentsToByteArray(), Charsets.UTF_8)
+        } catch (_: IOException) {
+            return null
+        }
+        val moduleInfo = readJavaModuleInfoSource(text, findClassOnClasspath) ?: return null
 
-        return moduleInfoFile to psiJavaModule
+        return moduleInfoFile to moduleInfo
     }
 
     private fun modularSourceRoot(root: VirtualFile, hasOutputDirectoryInClasspath: Boolean): JavaModule.Explicit? {
-        val [moduleInfoFile, psiJavaModule] = findSourceModuleInfo(root) ?: return null
+        val [moduleInfoFile, moduleInfo] = findSourceModuleInfo(root) ?: return null
         val sourceRoot = JavaModule.Root(root, isBinary = false)
         val roots =
             if (hasOutputDirectoryInClasspath)
                 listOf(sourceRoot, JavaModule.Root(outputDirectory!!, isBinary = true))
             else listOf(sourceRoot)
-        return JavaModule.Explicit(JavaModuleInfo.create(psiJavaModule), roots, moduleInfoFile)
+        return JavaModule.Explicit(moduleInfo, roots, moduleInfoFile)
     }
 
     private fun modularBinaryRoot(root: VirtualFile): JavaModule? {
@@ -176,9 +182,7 @@ class ClasspathRootsResolver(
                 ?: if (isJar) tryLoadVersionSpecificModuleInfo(root, manifest) else null
 
         if (moduleInfoFile != null) {
-            val moduleInfo = JavaModuleInfo.read(moduleInfoFile) {
-                javaFileManager.findClass(JavaClassFinder.Request(it), searchScope)
-            } ?: return null
+            val moduleInfo = readJavaModuleInfo(moduleInfoFile, findClassOnClasspath) ?: return null
             return JavaModule.Explicit(moduleInfo, listOf(JavaModule.Root(root, isBinary = true)), moduleInfoFile)
         }
 

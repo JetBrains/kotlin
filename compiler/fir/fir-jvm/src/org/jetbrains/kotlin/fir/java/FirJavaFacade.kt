@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.load.java.structure.impl.JavaElementImpl
 import org.jetbrains.kotlin.load.java.structure.impl.VirtualFileBoundJavaClass
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryJavaClass
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -213,8 +214,9 @@ abstract class FirJavaFacade(session: FirSession, private val classFinder: JavaC
                 this.isJavaValueClass = true
             }
 
-            if (javaClass is VirtualFileBoundJavaClass) {
-                javaClass.virtualFile?.let {
+            when (javaClass) {
+                is BinaryJavaClass -> sourceElement = BinaryClassSourceElement(javaClass.classFile)
+                is VirtualFileBoundJavaClass -> javaClass.virtualFile?.let {
                     sourceElement = VirtualFileBasedSourceElement(it)
                 }
             }
