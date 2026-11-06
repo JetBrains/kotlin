@@ -128,6 +128,6 @@ public actual fun <T> MutableList<T>.removeAll(predicate: (T) -> Boolean): Boole
  */
 @IgnorableReturnValue
 public actual fun <T> MutableList<T>.retainAll(predicate: (T) -> Boolean): Boolean =
-    IMPLEMENTATIONS.removeIf(this, { !predicate(it) }) {
+    IMPLEMENTATIONS.retainAll(this, predicate) {
         this@retainAll.filterInPlace(predicate, predicateResultToRemove = false)
     }
