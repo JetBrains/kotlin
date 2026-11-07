@@ -73,14 +73,15 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
             buildScriptInjection {
                 kotlinMultiplatform.js {
                     compilerOptions {
+                        outputModuleName.set("MyCustomLib")
                         freeCompilerArgs.set(listOf("-Xexport-kdoc"))
                     }
                 }
             }
             build("assemble") {
-                val dts = projectPath.resolve("build/js/packages/kotlin2JsIrDtsGeneration/kotlin/kotlin2JsIrDtsGeneration.d.ts")
+                val dts = projectPath.resolve("build/js/packages/MyCustomLib/kotlin/MyCustomLib.d.ts")
 
-                assertOutputContains("GenerateTypeScriptDefinitions")
+                assertTasksExecuted(":jsProductionExecutableGenerateTypeScriptDefinitions")
 
                 assertFileExists(dts)
                 assertFileContains(dts, "function bar(): string")
@@ -89,16 +90,18 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
             buildScriptInjection {
                 kotlinMultiplatform.js {
                     compilerOptions {
+                        outputModuleName.set("MyCustomLib2")
                         freeCompilerArgs.set(listOf("-XXLanguage:+ExportKDocDocumentationToKlib"))
                     }
                 }
             }
             build("assemble") {
-                val dts = projectPath.resolve("build/js/packages/kotlin2JsIrDtsGeneration/kotlin/kotlin2JsIrDtsGeneration.d.ts")
+                val dts = projectPath.resolve("build/js/packages/MyCustomLib2/kotlin/MyCustomLib2.d.ts")
 
-                assertOutputContains("GenerateTypeScriptDefinitions")
+                assertTasksExecuted(":jsProductionExecutableGenerateTypeScriptDefinitions")
 
                 assertFileExists(dts)
+                assertFileNotExists( projectPath.resolve("build/js/packages/MyCustomLib2/kotlin/MyCustomLib.d.ts"))
                 assertFileContains(dts, "function bar(): string")
                 assertFileContains(dts, "A declaration generated from KLIB metadata.")
             }
