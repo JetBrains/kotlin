@@ -1,0 +1,12 @@
+STEP 0:
+    modifications:
+        U : a.kt -> a.kt
+        U : sub.kt -> sub.kt
+    added cache: a.kt, sub.kt
+
+// sub.1.kt: the final class B gets its own override of foo().
+// The cache of a.kt must be rebuilt too: the devirtualized b.foo() now goes to B.foo().
+STEP 1:
+    modifications:
+        U : sub.1.kt -> sub.kt
+    modified cache: sub.kt, a.kt

@@ -1,0 +1,17 @@
+// DISABLE_NATIVE: targetFamily=MINGW
+
+
+// A sibling of members/finalClassAddsOverride with the caller in the file of the base class.
+// B is final and has no own override of foo, so b.foo() in a.kt is devirtualized into a direct
+// call of A.foo, which is declared in a.kt itself. The per-file cache of a.kt therefore records
+// no dependency at all on sub.kt, the file declaring B, whose member set decided the
+// devirtualization target. When the final class B gets its own override of foo(), the IR of a.kt
+// stays the same, but its cache must be rebuilt to call B.foo() instead of A.foo().
+
+MODULES: lib, main
+
+STEP 0:
+    libs: lib, main
+
+STEP 1:
+    libs: lib, main
