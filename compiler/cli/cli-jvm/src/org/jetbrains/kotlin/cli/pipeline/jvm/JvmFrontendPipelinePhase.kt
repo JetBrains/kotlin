@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.parsing.KotlinLightParser
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImplementationDetail
@@ -156,7 +157,12 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             librariesClasspath = librariesClasspath,
             libraryList = libraryList,
             isCommonSource = sources.isCommonSourceForLt,
-            isScript = { ((it as? KtPsiSourceFile)?.psiFile as? KtFile)?.isScript() == true },
+            isScript = {
+                when (it) {
+                    is KtPsiSourceFile -> (it.psiFile as? KtFile)?.isScript() == true
+                    else -> KotlinLightParser.isScript(it)
+                }
+            },
             fileBelongsToModule = sources.fileBelongsToModuleForLt,
             incrementalCompilationContext,
         )

@@ -44,9 +44,6 @@ val KotlinBuildProperties.isNativeRuntimeDebugInfoEnabled: Boolean
 val KotlinBuildProperties.junit5NumberOfThreadsForParallelExecution: Int?
     get() = intProperty("kotlin.test.junit5.maxParallelForks").orNull
 
-val KotlinBuildProperties.useFirWithLightTree: Boolean
-    get() = booleanProperty("kotlin.build.useFirLT").get()
-
 val KotlinBuildProperties.useFirTightIC: Boolean
     get() = booleanProperty("kotlin.build.useFirIC").get()
 
