@@ -1,0 +1,50 @@
+--- a/delegationInSealed.ir.txt
++++ b/delegationInSealed.ir.jklib.txt
+@@ -47,6 +47,21 @@
+                 receiver: GET_VAR '<this>: <root>.A.B declared in <root>.A.B.subSequence' type=<root>.A.B origin=null
+               ARG startIndex: GET_VAR 'startIndex: kotlin.Int declared in <root>.A.B.subSequence' type=kotlin.Int origin=null
+               ARG endIndex: GET_VAR 'endIndex: kotlin.Int declared in <root>.A.B.subSequence' type=kotlin.Int origin=null
++      FUN FAKE_OVERRIDE name:chars visibility:public modality:OPEN returnType:@[FlexibleNullability] java.util.stream.IntStream? [fake_override]
++        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.CharSequence
++        overridden:
++          public open fun chars (): @[FlexibleNullability] java.util.stream.IntStream? declared in <root>.A
++          public open fun chars (): @[FlexibleNullability] java.util.stream.IntStream? declared in kotlin.CharSequence
++      FUN FAKE_OVERRIDE name:codePoints visibility:public modality:OPEN returnType:@[FlexibleNullability] java.util.stream.IntStream? [fake_override]
++        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.CharSequence
++        overridden:
++          public open fun codePoints (): @[FlexibleNullability] java.util.stream.IntStream? declared in <root>.A
++          public open fun codePoints (): @[FlexibleNullability] java.util.stream.IntStream? declared in kotlin.CharSequence
++      FUN FAKE_OVERRIDE name:isEmpty visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
++        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.CharSequence
++        overridden:
++          public open fun isEmpty (): kotlin.Boolean declared in <root>.A
++          public open fun isEmpty (): kotlin.Boolean declared in kotlin.CharSequence
+       FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL returnType:kotlin.CharSequence [operator]
+         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A.B
+         BLOCK_BODY
+@@ -140,6 +155,14 @@
+       BLOCK_BODY
+         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:SEALED visibility:public superTypes:[kotlin.CharSequence]' type=kotlin.Unit
++    FUN FAKE_OVERRIDE name:chars visibility:public modality:OPEN returnType:@[FlexibleNullability] java.util.stream.IntStream? [fake_override]
++      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.CharSequence
++      overridden:
++        public open fun chars (): @[FlexibleNullability] java.util.stream.IntStream? declared in kotlin.CharSequence
++    FUN FAKE_OVERRIDE name:codePoints visibility:public modality:OPEN returnType:@[FlexibleNullability] java.util.stream.IntStream? [fake_override]
++      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.CharSequence
++      overridden:
++        public open fun codePoints (): @[FlexibleNullability] java.util.stream.IntStream? declared in kotlin.CharSequence
+     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+       VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+@@ -154,6 +177,10 @@
+       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+       overridden:
+         public open fun hashCode (): kotlin.Int declared in kotlin.CharSequence
++    FUN FAKE_OVERRIDE name:isEmpty visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
++      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.CharSequence
++      overridden:
++        public open fun isEmpty (): kotlin.Boolean declared in kotlin.CharSequence
+     FUN FAKE_OVERRIDE name:subSequence visibility:public modality:ABSTRACT returnType:kotlin.CharSequence [fake_override]
+       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.CharSequence
+       VALUE_PARAMETER kind:Regular name:startIndex index:1 type:kotlin.Int

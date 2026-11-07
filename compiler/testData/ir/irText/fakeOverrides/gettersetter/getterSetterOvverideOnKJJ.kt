@@ -1,6 +1,7 @@
-// IGNORE_BACKEND: JKLIB
 // SKIP_KT_DUMP
 // TARGET_BACKEND: JVM
+// DUMP_IR_DIFFERENCE: JKLIB
+// ^ JKlib reads Java declarations from compiled classes, not from sources.
 
 // FILE: Java1.java
 public class Java1 extends Java2  { }
