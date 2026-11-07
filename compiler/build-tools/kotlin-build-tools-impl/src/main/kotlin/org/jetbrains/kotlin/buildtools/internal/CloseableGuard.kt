@@ -9,8 +9,9 @@ package org.jetbrains.kotlin.buildtools.internal
 
 import kotlin.concurrent.atomics.AtomicBoolean
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
+import kotlin.reflect.KClass
 
-internal class CloseableGuard(private val owner: Any) {
+internal class CloseableGuard(private val ownerClass: KClass<*>) {
     private val isClosed: AtomicBoolean = AtomicBoolean(false)
 
     internal fun close(cleanup: () -> Unit) {
@@ -21,7 +22,7 @@ internal class CloseableGuard(private val owner: Any) {
 
     @Suppress("NOTHING_TO_INLINE")
     internal inline fun requireNotClosed() {
-        check(!isClosed.load()) { "Cannot perform operation: Resource ${owner::class} was already closed." }
+        check(!isClosed.load()) { "Cannot perform operation: Resource $ownerClass was already closed." }
     }
 }
 

@@ -103,11 +103,9 @@ class AutoCloseablesTest : BaseCompilationTest() {
 
                 fun collectClasses(classSymbol: KaClassSymbol): List<KaClassSymbol> {
                     val result = mutableListOf(classSymbol)
-                    with(currentSession) {
-                        for (member in classSymbol.combinedDeclaredMemberScope.classifiers) {
-                            if (member is KaClassSymbol) {
-                                result.addAll(collectClasses(member))
-                            }
+                    for (member in classSymbol.combinedDeclaredMemberScope.classifiers) {
+                        if (member is KaClassSymbol) {
+                            result.addAll(collectClasses(member))
                         }
                     }
                     return result

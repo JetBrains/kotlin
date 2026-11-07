@@ -12,7 +12,7 @@ import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 
 internal class DaemonConnectionRegistry(private val sessionIsAliveFlagFile: Lazy<File>) : AutoCloseable {
-    private val closeableGuard = CloseableGuard(this)
+    private val closeableGuard = CloseableGuard(this::class)
     private val connections = ConcurrentHashMap<DaemonExecutionPolicyImpl, CompileServiceSession>()
 
     fun getCompileServiceSession(

@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test
 class CloseableGuardTest {
 
     private class TestCloseable : AutoCloseable {
-        private val closeableGuard = CloseableGuard(this)
+        private val closeableGuard = CloseableGuard(this::class)
         var closedTimes = 0
         var guardedFunctionCalledTimes = 0
 
