@@ -101,7 +101,7 @@ internal object AnalysisApiDomainInfo : DomainInfo {
 
 internal object BuildToolsApiDomainInfo : DomainInfo {
     override val domain = Domain.BuildToolsApi
-    override val include: List<String> = listOf("build-common", "compiler/build-tools", "compiler/incremental-compilation-*", "compiler/daemon", "compiler/compiler-runner", "compiler/compiler-runner-unshaded")
+    override val include: List<String> = listOf("build-common", "compiler/build-tools", "compiler/incremental-compilation-*", "compiler/daemon", "compiler/compiler-runner", "compiler/compiler-runner-unshaded", "libraries/tools/kotlin-ic-event-report")
     override val exclude: List<String> = listOf()
     override val mustRunAllTestsOnChangesIn: List<DomainInfo> by lazy { listOf(CompilerInfrastructureDomainInfo) }
     override val team: String = "Build Tools API"
