@@ -7,9 +7,3 @@ typealias ExportedAlias = String
 /** A declaration generated from KLIB metadata. */
 @JsExport
 fun richDts(value: ExportedAlias): ExportedAlias = value
-
-@JsExport
-fun takeAny(x: Any): Any = x
-
-@JsExport
-fun takeDynamic(x: dynamic): dynamic = x
