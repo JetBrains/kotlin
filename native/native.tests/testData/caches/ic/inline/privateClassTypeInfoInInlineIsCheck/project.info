@@ -1,0 +1,39 @@
+// DISABLE_NATIVE: targetFamily=MINGW
+
+
+// KT-54330 window, sibling of the corpus case inline/privateClassDefaultCtorStubLinkage:
+// the private class is never constructed. It is reachable from main (a friend module) only
+// through an `is` check inside a private inline body, which the internal inline g inlines.
+//
+// main's inlined code evaluates `x is Hidden`, so its per-file object references the private
+// class Hidden's `kclass:` typeinfo global as an external symbol. But
+// CacheInfoBuilder.trackCallees (CacheInfoBuilder.kt) walks the exported inline bodies with
+// a visitor that handles only calls, constructor calls, object singletons, enum getters and
+// function/property references - it has no visitor for IrTypeOperatorCall (or IrGetClass,
+// or IrCatch), and it sets isConstructedFromExportedInlineFunctions only from constructor
+// calls. Hidden is therefore never marked, and LlvmDeclarations.createClassDeclarations
+// (LlvmDeclarations.kt) emits Hidden's typeinfo+vtable global with LLVM internal linkage
+// in lib1's per-file object (external only when the class is exported, or
+// producePerFileCache && isConstructedFromExportedInlineFunctions - the KT-54330 fix,
+// which this gap bypasses). Internal definition in lib1's object + undefined extern
+// reference in main's object = undefined symbol at the IC link. Without per-file caches
+// everything is one LLVM module, the internal symbol resolves, and the program answers
+// false.
+//
+// The same campaign reduced two more windows of the same gap with distinct fix surfaces:
+// a REIFIED type argument (checkC -> probeC -> isT<C>: call type arguments are IrTypes,
+// invisible to acceptChildrenVoid, so a body-scanning fix would miss it) and a CATCH
+// clause filter (IrToBitcode's CatchScope.genHandler emits genInstanceOfImpl on the catch
+// parameter type; trackCallees has no IrCatch visitor). See
+// r2t5-r2-reified-private-class-typeinf/reduce/manual and
+// r3t6-r3t6-catch-clause-typeinfo/reduce/manual under this campaign's output.
+//
+// Harness note: the "clean" reference link also enables incremental compilation (with a
+// fresh cache), so this from-scratch IC-only defect fails both of the harness's links and
+// the run is reported as INVALID. The bug is the IC-only link failure: the same klibs link
+// and answer false without -Xenable-incremental-compilation.
+
+MODULES: lib1, main
+
+STEP 0:
+    libs: lib1, main

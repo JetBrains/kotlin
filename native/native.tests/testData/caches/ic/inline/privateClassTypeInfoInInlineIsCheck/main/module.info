@@ -1,0 +1,5 @@
+STEP 0:
+    dependencies: lib1
+    friends: lib1
+    modifications:
+        U : main.kt -> main.kt
