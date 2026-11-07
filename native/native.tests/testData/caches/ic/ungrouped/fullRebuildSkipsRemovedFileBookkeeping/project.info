@@ -1,0 +1,29 @@
+// DISABLE_NATIVE: targetFamily=MINGW
+
+
+// A full rebuild of a library skips the bookkeeping of the dirty-file path. The loop that
+// collects removedFiles and deletes their per-file cache directories is skipped for a
+// library in needFullRebuild ("if (library in needFullRebuild) continue" in CacheBuilder),
+// and the full-rebuild path itself never deletes the old directories.
+//
+// Here lib1 toggles -Xcompanion-blocks (a library-wide codegen change, KT-89390, which forces
+// a full rebuild) in the same step as a rename of q.kt to a1.kt with identical content. The
+// rename is real: the old q.kt leaves a new file id behind. The flag flip is detected, and
+// lib1 fully rebuilds, but the rename never enters removedFiles, so lib1's old q.kt cache
+// directory survives the step. The removed cache: expectation of step 1 fails.
+//
+// The leftover directory is not harmless: staleCacheReason decides the staleness of the
+// whole per-file cache from the metadata of one arbitrary directory
+// (listDirectoryEntries().firstOrNull()), so a later step can read the metadata of an era
+// that does not represent the cache and wrongly reuse or rebuild the library. Which
+// directory enumerates first depends on the build layout (the directory names hash the
+// absolute source paths), so that output-level manifestation is documented here instead of
+// being asserted.
+
+MODULES: lib1, main
+
+STEP 0:
+    libs: lib1, main
+
+STEP 1:
+    libs: lib1, main

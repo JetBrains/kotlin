@@ -1,0 +1,16 @@
+STEP 0:
+    modifications:
+        U : q.kt -> q.kt
+    added cache: q.kt
+
+// -Xcompanion-blocks is turned on, forcing a full rebuild of lib1, and q.kt is renamed to
+// a1.kt (identical content, a new file id). The full rebuild skips the dirty-file walk, so
+// the rename never enters removedFiles. The old q.kt cache directory must still be deleted
+// here, by the full rebuild itself.
+STEP 1:
+    arguments: -Xcompanion-blocks
+    modifications:
+        D : q.kt
+        U : a1.kt -> a1.kt
+    removed cache: q.kt
+    added cache: a1.kt
