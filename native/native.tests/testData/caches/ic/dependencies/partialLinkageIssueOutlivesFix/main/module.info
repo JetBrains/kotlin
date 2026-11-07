@@ -1,0 +1,18 @@
+// Step 1 links with partial linkage warnings allowed: the broken world must link, and its
+// cache build must record the issue.
+
+STEP 0:
+    dependencies: user
+    modifications:
+        U : main.kt -> main.kt
+
+STEP 1:
+    dependencies: user
+    modifications:
+        U : main.1.kt -> main.kt
+    arguments: -Xpartial-linkage-loglevel=warning
+
+STEP 2:
+    dependencies: user
+    modifications:
+        U : main.kt -> main.kt

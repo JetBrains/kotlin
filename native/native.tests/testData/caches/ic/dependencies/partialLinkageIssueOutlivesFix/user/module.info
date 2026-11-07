@@ -1,0 +1,18 @@
+STEP 0:
+    dependencies: base
+    modifications:
+        U : g.kt -> g.kt
+    added cache: g.kt
+
+// user is not recompiled at step 1, but the dirty-file analysis rebuilds g.kt's cache through
+// the bitcode edge recorded at step 0. That rebuild runs while Target is an unlinked stub:
+// the detected issue is stored in g.kt's cache, and the bitcode edge on base.kt is lost.
+STEP 1:
+    dependencies: base
+    modified cache: g.kt
+
+// Target is back. A correct IC rebuilds g.kt again - the change of base.kt must reach it -
+// which drops the stored issue. Reusing the cache replays the obsolete issue instead.
+STEP 2:
+    dependencies: base
+    modified cache: g.kt

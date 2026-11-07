@@ -1,0 +1,30 @@
+// DISABLE_NATIVE: targetFamily=MINGW
+
+
+// A partial linkage issue stored in a per-file cache outlives the change that resolved it.
+// base <- user <- main. g.kt calls base.Target's constructor, so its per-file cache records a
+// bitcode dependency edge on base.kt.
+//
+// STEP 1 removes Target from base while user is not recompiled (its source would not compile
+// against the new base). The recorded bitcode edge still marks g.kt dirty, so its cache is
+// rebuilt while Target is an unlinked stub: partial linkage stubs the constructor call before
+// the bitcode dependencies tracker runs, so the rebuilt cache stores the detected issue in
+// ir/pl_issues (KT-78253) but records no bitcode edge on base.kt anymore. This step links with
+// partial linkage warnings allowed, so both links succeed.
+//
+// STEP 2 restores Target. Nothing marks g.kt dirty anymore - its only recorded edge on base
+// was lost at step 1, and per-file-cached dependencies are excluded from the dependencies
+// fingerprint on the assumption that the dirty-file analysis tracks them - so its cache is
+// reused as is and the obsolete issue is replayed as a hard error: the IC link fails while the
+// clean link of the same klibs succeeds.
+
+MODULES: base, user, main
+
+STEP 0:
+    libs: base, user, main
+
+STEP 1:
+    libs: base, main
+
+STEP 2:
+    libs: base, main
