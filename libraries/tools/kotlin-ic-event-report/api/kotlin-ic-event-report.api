@@ -1,0 +1,5 @@
+public final class org/jetbrains/kotlin/buildtools/icevents/IcEventJsonKt {
+	public static final fun decodeIcEvents (Ljava/lang/String;)Ljava/util/List;
+	public static final fun encodeIcEvents (Ljava/util/List;)Ljava/lang/String;
+}
+
