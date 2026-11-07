@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.arguments
 import org.jetbrains.kotlin.ir.util.isSuspendFunction
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.*
-import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
@@ -42,7 +41,7 @@ private inline fun InstructionAdapter.unrollArrayIfFewerThan(n: Int, limit: Int,
 /**
  * Returns the number of local slots used by the emitted bytecode.
  */
-fun TypeSystemCommonBackendContext.generateTypeOf(
+fun IrTypeSystemContext.generateTypeOf(
     v: InstructionAdapter,
     type: IrType,
     intrinsicsSupport: ReifiedTypeInliner.IntrinsicsSupport,
@@ -60,7 +59,7 @@ private class TypeOfBuilder(
     val repeatedNonReifiedTypeParameters: List<IrTypeParameter>,
     val localsOffset: Int,
     val intrinsicsSupport: ReifiedTypeInliner.IntrinsicsSupport,
-    val typeSystemContext: TypeSystemCommonBackendContext,
+    val typeSystemContext: IrTypeSystemContext,
 ) {
     fun generateRepeatedNonReifiedTypeParameters() {
         for ([i, typeParameter] in repeatedNonReifiedTypeParameters.withIndex()) {

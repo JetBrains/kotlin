@@ -17,11 +17,11 @@ import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
-import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -47,7 +47,7 @@ class ReificationArgument(
 class ReifiedTypeInliner(
     private val parametersMapping: TypeParameterMappings?,
     private val intrinsicsSupport: IntrinsicsSupport,
-    private val typeSystem: TypeSystemCommonBackendContext,
+    private val typeSystem: IrTypeSystemContext,
     private val irBuiltIns: IrBuiltIns,
 ) {
     enum class OperationKind {
@@ -426,7 +426,7 @@ val MethodInsnNode.operationKind: ReifiedTypeInliner.OperationKind?
         }
 
 class TypeParameterMappings(
-    typeSystem: TypeSystemCommonBackendContext,
+    typeSystem: IrTypeSystemContext,
     typeArguments: Map<out TypeParameterMarker, IrType>,
     allReified: Boolean,
     mapType: (IrType, BothSignatureWriter) -> Type
