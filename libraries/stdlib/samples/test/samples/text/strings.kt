@@ -1173,4 +1173,30 @@ class Strings {
         assertPrints(emptyString.indexOfLast { it == 'z' }, "-1")
     }
 
+    @Sample
+    fun asSequence() {
+        val string = "kotlin knowledge"
+        assertPrints(string.asSequence().toList(), "[k, o, t, l, i, n,  , k, n, o, w, l, e, d, g, e]")
+
+        // lazily take chars from sequence and convert them to upper case, so that space char is not reached
+        val upperCaseFirstWord = string.asSequence()
+            .map { char -> if (char != ' ') char.uppercaseChar() else error("Space char is reached") }
+            .take(6).joinToString("")
+        assertPrints(upperCaseFirstWord, "KOTLIN")
+
+        val emptyString = ""
+        assertPrints(emptyString.asSequence().toList(), "[]")
+    }
+
+    @Sample
+    fun asIterable() {
+        val uniqChars = mutableSetOf<Char>()
+        val string = "kotlin knowledge"
+
+        // Passing a String/CharSequence directly to addAll results in a compilation error.
+        uniqChars.addAll(string.asIterable())
+
+        assertPrints(uniqChars.size, "11")
+    }
+
 }
