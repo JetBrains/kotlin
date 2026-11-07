@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSetti
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
+import org.jetbrains.kotlin.gradle.targets.js.WASM_JS_START_UNIT_TESTS_EXPORT
+import org.jetbrains.kotlin.gradle.targets.js.WASM_WASI_START_UNIT_TESTS_EXPORT
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin.Companion.kotlinNodeJsEnvSpec
@@ -46,6 +48,12 @@ internal class KotlinWasmNode(
             projectLayout.dir(kotlinJsTest.inputFileProperty.asFile.map { it.parentFile })
         }
 
+    private val startUnitTestsExport: String = when (compilation.target.wasmTargetType) {
+        KotlinWasmTargetType.WASI -> WASM_WASI_START_UNIT_TESTS_EXPORT
+        KotlinWasmTargetType.JS -> WASM_JS_START_UNIT_TESTS_EXPORT
+        null -> throw IllegalStateException("Wasm target type is not set")
+    }
+
     override val executable: Provider<String> = nodeJsEnvSpec.executable
 
     override fun createTestExecutionSpec(
@@ -57,6 +65,7 @@ internal class KotlinWasmNode(
         val testRunnerFile = writeWasmUnitTestRunner(
             workingDir = launchOpts.workingDir.getFile(),
             compiledFile = task.inputFileProperty.get().asFile,
+            startUnitTestsExport = startUnitTestsExport,
         )
 
         val clientSettings = TCServiceMessagesClientSettings(
