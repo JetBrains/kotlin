@@ -1,0 +1,2 @@
+Greeter.java:15:13:compiler.err.cant.resolve.location
+Greeter.java:15:20:compiler.err.enum.annotation.must.be.enum.constant
