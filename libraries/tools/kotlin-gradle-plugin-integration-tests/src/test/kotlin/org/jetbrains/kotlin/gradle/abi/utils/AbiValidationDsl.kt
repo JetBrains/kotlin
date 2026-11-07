@@ -5,9 +5,12 @@
 
 package org.jetbrains.kotlin.gradle.abi.utils
 
+import org.jetbrains.kotlin.gradle.DelicateKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinBaseExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationExtension
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
+import org.jetbrains.kotlin.gradle.plugin.abi.internal.AbiValidationConfiguration
 import org.jetbrains.kotlin.gradle.testbase.GradleProject
 import org.jetbrains.kotlin.gradle.testbase.buildScriptInjection
 import java.io.File
@@ -31,6 +34,17 @@ internal fun GradleProject.abiValidation() {
     buildScriptInjection {
         @Suppress("UNCHECKED_CAST")
         (project.extensions.getByName("kotlin") as KotlinBaseExtension).abiValidation()
+    }
+}
+
+/**
+ * Manually configure ABI validation.
+ */
+@OptIn(DelicateKotlinGradlePluginApi::class)
+internal fun GradleProject.abiValidationConfig(action: AbiValidationConfiguration.() -> Unit) {
+    buildScriptInjection {
+        @Suppress("UNCHECKED_CAST")
+        (project.extensions.getByName("kotlin") as KotlinProjectExtension).abiValidationConfiguration.action()
     }
 }
 

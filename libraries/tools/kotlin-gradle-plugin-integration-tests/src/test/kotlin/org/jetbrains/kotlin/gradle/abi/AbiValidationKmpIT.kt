@@ -14,6 +14,9 @@ import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
+import org.jetbrains.kotlin.buildtools.api.abi.KlibTargetId
+import org.jetbrains.kotlin.buildtools.api.abi.KlibTargetType
+import org.jetbrains.kotlin.gradle.DelicateKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.abi.utils.*
@@ -22,13 +25,12 @@ import org.jetbrains.kotlin.gradle.abi.utils.AbiValidationTestDumps.SIMPLE_CLASS
 import org.jetbrains.kotlin.gradle.abi.utils.AbiValidationTestDumps.assertDumpsEqual
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.gradle.util.useCompilerVersion
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.DisplayName
 import java.io.File
-import kotlin.test.assertTrue
+import kotlin.test.assertFalse
 
 @MppGradlePluginTests
 class AbiValidationKmpIT : KGPBaseTest() {
@@ -673,6 +675,65 @@ class AbiValidationKmpIT : KGPBaseTest() {
                 )
                 assertOutputContains("+// Targets: [linuxArm64]")
             }
+        }
+    }
+
+    @OptIn(DelicateKotlinGradlePluginApi::class)
+    @GradleTest
+    fun testDisableAutoconfigure(
+        gradleVersion: GradleVersion,
+    ) {
+        project("base-kotlin-multiplatform-library", gradleVersion) {
+            // only a single native target
+            buildScriptInjection {
+                kotlinMultiplatform.linuxArm64()
+            }
+            kotlinSourcesDir("commonMain").source("test/classes/SimpleClass.kt") { SIMPLE_CLASS }
+
+            abiValidationConfig {
+                useAutoconfigure.set(false)
+            }
+            // enable abi validation
+            abiValidation()
+            // create the reference dumps to check
+            build("updateKotlinAbi")
+
+            assertFalse(referenceKlibDumpFile().exists())
+        }
+    }
+
+    @OptIn(DelicateKotlinGradlePluginApi::class, ExperimentalBuildToolsApi::class)
+    @GradleTest
+    fun testManualConfig(
+        gradleVersion: GradleVersion,
+    ) {
+        project("base-kotlin-multiplatform-library", gradleVersion) {
+            kotlinSourcesDir("commonMain").source("test/classes/SimpleClass.kt") { SIMPLE_CLASS }
+
+            buildScriptInjection {
+                val targetName = KlibTargetType.LINUX_X64.canonicalName
+
+                kotlinMultiplatform.linuxX64()
+
+                val compilation = kotlinMultiplatform.targets.findByName(targetName)!!.compilations.findByName("main")!!
+
+                val files = compilation.output.classesDirs
+                kotlinMultiplatform.abiValidationConfiguration.useAutoconfigure.set(false)
+                kotlinMultiplatform.abiValidationConfiguration.addKlibTarget(
+                    KlibTargetId(KlibTargetType.LINUX_X64, targetName),
+                    files
+                )
+
+                // enable abi validation and add dependency on the compilation task
+                kotlinMultiplatform.abiValidation.updateTaskProvider.configure {
+                    it.dependsOn(compilation.compileTaskProvider)
+                }
+
+            }
+            // create the reference dumps to check
+            build("updateKotlinAbi")
+
+            assertDumpsEqual(LINUX_ONLY_X64_DUMP_KLIB, referenceKlibDumpFile())
         }
     }
 }
