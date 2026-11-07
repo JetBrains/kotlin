@@ -1,0 +1,52 @@
+/topLevelExternal.kt:20:5: error: '@JsQualifier' cannot be applied to a member. Apply it to the top-level declaration or to the file instead.
+
+/topLevelExternal.kt:23:5: error: '@JsQualifier' cannot be applied to a member. Apply it to the top-level declaration or to the file instead.
+
+/topLevelExternal.kt:26:5: error: '@JsQualifier' cannot be applied to a member. Apply it to the top-level declaration or to the file instead.
+
+/topLevelExternal.kt:29:5: error: '@JsQualifier' cannot be applied to a member. Apply it to the top-level declaration or to the file instead.
+
+/topLevelExternal.kt:30:17: error: Declaration of such kind (inner class) cannot be external.
+
+/topLevelExternal.kt:32:5: error: '@JsQualifier' cannot be applied to a member. Apply it to the top-level declaration or to the file instead.
+
+/topLevelExternal.kt:35:5: error: '@JsQualifier' cannot be applied to a member. Apply it to the top-level declaration or to the file instead.
+
+/topLevelExternal.kt:37:9: error: '@JsQualifier' cannot be applied to a member. Apply it to the top-level declaration or to the file instead.
+
+/topLevelExternal.kt:44:5: error: '@JsQualifier' cannot be applied to a member. Apply it to the top-level declaration or to the file instead.
+
+/topLevelExternal.kt:47:5: error: '@JsQualifier' cannot be applied to a member. Apply it to the top-level declaration or to the file instead.
+
+/topLevelExternal.kt:53:5: error: '@JsQualifier' cannot be applied to a member. Apply it to the top-level declaration or to the file instead.
+/nonExternal.kt:60:1: error: '@JsQualifier' annotation is prohibited for non-external declarations.
+
+/nonExternal.kt:63:1: error: '@JsQualifier' annotation is prohibited for non-external declarations.
+
+/nonExternal.kt:66:1: error: '@JsQualifier' annotation is prohibited for non-external declarations.
+
+/nonExternal.kt:67:9: error: '@JsQualifier' annotation is prohibited for non-external declarations.
+
+/nonExternal.kt:68:5: error: '@JsQualifier' annotation is prohibited for non-external declarations.
+
+/nonExternal.kt:71:5: error: '@JsQualifier' annotation is prohibited for non-external declarations.
+
+/nonExternal.kt:74:5: error: '@JsQualifier' annotation is prohibited for non-external declarations.
+
+/nonExternal.kt:78:1: error: '@JsQualifier' annotation is prohibited for non-external declarations.
+
+/nonExternal.kt:81:1: error: '@JsQualifier' annotation is prohibited for non-external declarations.
+
+/nonExternal.kt:83:5: error: '@JsQualifier' annotation is prohibited for non-external declarations.
+
+/nonExternal.kt:88:5: error: '@JsQualifier' annotation is prohibited for non-external declarations.
+
+/nonExternal.kt:91:5: error: '@JsQualifier' annotation is prohibited for non-external declarations.
+/typealiases.kt:107:6: error: Qualifier contains illegal characters.
+
+/typealiases.kt:111:5: error: '@JsQualifier' cannot be applied to a member. Apply it to the top-level declaration or to the file instead.
+
+/typealiases.kt:115:1: error: '@JsQualifier' annotation is prohibited for non-external declarations.
+
+/typealiases.kt:118:1: error: '@JsQualifier' annotation is prohibited for non-external declarations.
+/typealiasOnFile.kt:127:1: error: Only external declarations are allowed in files marked with 'JsQualifier' annotation.

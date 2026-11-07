@@ -29,6 +29,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErro
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.JS_MODULE_PROHIBITED_ON_MEMBER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.JS_MODULE_PROHIBITED_ON_NON_EXTERNAL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.JS_MODULE_PROHIBITED_ON_VAR
+import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.JS_QUALIFIER_PROHIBITED_ON_NON_EXTERNAL
+import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.JS_QUALIFIER_PROHIBITED_ON_NON_TOP_LEVEL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.MULTIPLE_JS_EXPORT_DEFAULT_IN_ONE_FILE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.NAMED_COMPANION_IN_EXTERNAL_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_FUN
@@ -157,6 +159,14 @@ object FirWebCommonErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             JS_MODULE_PROHIBITED_IN_FILE_WITH_JS_QUALIFIER,
             "'@JsModule' cannot be applied to a declaration in a file marked with '@JsQualifier'."
+        )
+        map.put(
+            JS_QUALIFIER_PROHIBITED_ON_NON_EXTERNAL,
+            "'@JsQualifier' annotation can only be applied to external declarations."
+        )
+        map.put(
+            JS_QUALIFIER_PROHIBITED_ON_NON_TOP_LEVEL,
+            "'@JsQualifier' annotation can only be applied to top-level declarations or to files."
         )
         map.put(
             NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE,

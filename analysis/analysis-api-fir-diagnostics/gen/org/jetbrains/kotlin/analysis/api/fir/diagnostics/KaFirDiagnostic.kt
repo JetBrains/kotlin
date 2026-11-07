@@ -2169,6 +2169,34 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface JsQualifierProhibitedOnNonExternalError : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<JsQualifierProhibitedOnNonExternalError>
+            get() = JsQualifierProhibitedOnNonExternalError::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface JsQualifierProhibitedOnNonExternalWarning : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<JsQualifierProhibitedOnNonExternalWarning>
+            get() = JsQualifierProhibitedOnNonExternalWarning::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface JsQualifierProhibitedOnNonTopLevelError : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<JsQualifierProhibitedOnNonTopLevelError>
+            get() = JsQualifierProhibitedOnNonTopLevelError::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface JsQualifierProhibitedOnNonTopLevelWarning : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<JsQualifierProhibitedOnNonTopLevelWarning>
+            get() = JsQualifierProhibitedOnNonTopLevelWarning::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface InapplicableEagerInitializationError : KaFirDiagnostic<KtElement> {
         override val diagnosticClass: KClass<InapplicableEagerInitializationError>
             get() = InapplicableEagerInitializationError::class
