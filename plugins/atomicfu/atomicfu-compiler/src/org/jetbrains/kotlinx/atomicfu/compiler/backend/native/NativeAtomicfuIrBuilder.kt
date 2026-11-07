@@ -194,7 +194,7 @@ class NativeAtomicfuIrBuilder(
         } else {
             callArraySizeAndInitConstructor(atomicArrayClass, size, valueType, dispatchReceiver)
         }?.let { return it }
-        error("Failed to find a constructor for the the given atomic array type ${atomicArrayClass.defaultType.render()}.")
+        error("Failed to find a constructor for the given atomic array type ${atomicArrayClass.defaultType.render()}.")
     }
 
 }
