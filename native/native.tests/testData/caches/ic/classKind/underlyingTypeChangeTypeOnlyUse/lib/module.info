@@ -1,0 +1,13 @@
+STEP 0:
+    modifications:
+        U : v.kt -> v.kt
+        U : holder.kt -> holder.kt
+    added cache: v.kt, holder.kt
+
+// v.1.kt: the underlying type of V changes from Int to Long. A correct IC must rebuild
+// holder.kt as well: its cached class layout and constructor/getter ABI encode the old
+// underlying type even though its source and serialized IR are unchanged.
+STEP 1:
+    modifications:
+        U : v.1.kt -> v.kt
+    modified cache: v.kt, holder.kt

@@ -1,0 +1,20 @@
+// DISABLE_NATIVE: targetFamily=MINGW
+
+
+// V changes only its underlying representation (Int -> Long), never its name or kind.
+// holder.kt is never edited: it uses V only as a type, so its serialized-IR fingerprint is
+// unchanged (V stays a symbolic type reference in the serialized IR, SerializedIrFileFingerprint)
+// and its generated code references no symbol of v.kt, so no per-file dependency edge on v.kt
+// is recorded. But holder.kt's cached ir/class_fields bakes V's unboxed binary type into
+// Holder's object layout and into the calling convention of its constructor and getter.
+// When v.kt changes, the dirty-file analysis (fingerprint change + reverse walk over the
+// recorded edges) therefore never rebuilds holder.kt. The freshly compiled main then passes a
+// Long-backed V (5000000000) into the stale Int-ABI constructor across identical mangled
+// names, which truncates it to 705032704 (= 5000000000 mod 2^32) instead of 5000000000.
+
+MODULES: lib, main
+
+STEP 0:
+    libs: lib, main
+STEP 1:
+    libs: lib, main
