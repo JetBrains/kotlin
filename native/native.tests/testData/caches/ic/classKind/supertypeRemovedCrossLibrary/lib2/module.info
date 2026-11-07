@@ -1,0 +1,11 @@
+STEP 0:
+    dependencies: lib1
+    modifications:
+        U : g.kt -> g.kt
+    added cache: g.kt
+
+// lib2 is not in the link at step 1 and its klib is not recompiled, but the cache of g.kt
+// must be rebuilt against the new lib1: the folded `x is I` is stale.
+STEP 1:
+    dependencies: lib1
+    modified cache: g.kt

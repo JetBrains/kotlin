@@ -1,0 +1,10 @@
+STEP 0:
+    modifications:
+        U : b.kt -> b.kt
+    added cache: b.kt
+
+// b.1.kt: B does not implement I anymore
+STEP 1:
+    modifications:
+        U : b.1.kt -> b.kt
+    modified cache: b.kt

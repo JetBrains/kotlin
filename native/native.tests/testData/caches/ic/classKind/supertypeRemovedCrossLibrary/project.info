@@ -1,0 +1,16 @@
+// DISABLE_NATIVE: targetFamily=MINGW
+
+
+// A cross-library sibling of classKind/supertypeRemoved. B implements I, so `x is I` in lib2's
+// g.kt is true for every x of type B, and CastsOptimization folds the check to a constant. The
+// cache of g.kt then references no symbol of lib1's b.kt, the file that establishes B <: I, and
+// no dependency is recorded. When B stops implementing I, lib2 is not even recompiled, but its
+// cached g.kt must be rebuilt: the stale bitcode still answers true where the check must fail.
+
+MODULES: lib1, lib2, main
+
+STEP 0:
+    libs: lib1, lib2, main
+
+STEP 1:
+    libs: lib1, main
