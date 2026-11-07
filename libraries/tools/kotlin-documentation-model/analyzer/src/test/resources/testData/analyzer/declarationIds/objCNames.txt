@@ -1,0 +1,26 @@
+kotlinx.cinterop
+kotlinx.cinterop/ObjCMethod
+constructor:kotlinx.cinterop/ObjCMethod#%3Cinit%3E#typeParameters=[]; context=[]; receiver=none; parameters=[];
+kotlinx.cinterop/ObjCConstructor
+constructor:kotlinx.cinterop/ObjCConstructor#%3Cinit%3E#typeParameters=[]; context=[]; receiver=none; parameters=[];
+kotlinx.cinterop/ObjCFactory
+constructor:kotlinx.cinterop/ObjCFactory#%3Cinit%3E#typeParameters=[]; context=[]; receiver=none; parameters=[];
+kotlin.native
+kotlin.native/ObjCName
+constructor:kotlin.native/ObjCName#%3Cinit%3E#typeParameters=[]; context=[]; receiver=none; parameters=[kotlin/String, kotlin/String, kotlin/Boolean];
+property:kotlin.native/ObjCName#name#typeParameters=[]; context=[]; receiver=none; parameters=[];
+property:kotlin.native/ObjCName#swiftName#typeParameters=[]; context=[]; receiver=none; parameters=[];
+property:kotlin.native/ObjCName#exact#typeParameters=[]; context=[]; receiver=none; parameters=[];
+sample
+function:sample#plain#typeParameters=[]; context=[]; receiver=none; parameters=[kotlin/String, kotlin/Int];objcParameterNames=[first, second]
+function:sample#create#typeParameters=[]; context=[]; receiver=none; parameters=[kotlin/Int, kotlin/Int];objcParameterNames=[first, second]
+sample/Base
+function:sample/Base#foo#typeParameters=[]; context=[]; receiver=none; parameters=[kotlin/String, kotlin/String];objcParameterNames=[first, second]
+constructor:sample/Base#%3Cinit%3E#typeParameters=[]; context=[]; receiver=none; parameters=[];
+sample/Derived
+function:sample/Derived#foo#typeParameters=[]; context=[]; receiver=none; parameters=[kotlin/String, kotlin/String];objcParameterNames=[first, second]
+constructor:sample/Derived#%3Cinit%3E#typeParameters=[]; context=[]; receiver=none; parameters=[];
+sample/Constructed
+constructor:sample/Constructed#%3Cinit%3E#typeParameters=[]; context=[]; receiver=none; parameters=[kotlin/Int, kotlin/Int];objcParameterNames=[first, second]
+function:sample#power#typeParameters=[]; context=[]; receiver=none; parameters=[kotlin/Int, kotlin/Int];
+function:sample#control#typeParameters=[]; context=[]; receiver=none; parameters=[kotlin/Int];

@@ -29,6 +29,9 @@ fun main(args: Array<String>) {
             testClass<AbstractKdmJavaSourceRoundTripTest> {
                 model("roundTrip", extension = "java")
             }
+            testClass<AbstractUniqueDeclarationIdGoldenTest> {
+                model("declarationIds")
+            }
         }
     }
 }

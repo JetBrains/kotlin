@@ -1,0 +1,34 @@
+sample
+sample/Outer
+sample/Outer.Nested
+constructor:sample/Outer.Nested#%3Cinit%3E#typeParameters=[]; context=[]; receiver=none; parameters=[];
+sample/Outer.Alias
+property:sample/Outer#value#typeParameters=[]; context=[]; receiver=none; parameters=[];
+getter:sample/Outer#value#typeParameters=[]; context=[]; receiver=none; parameters=[];
+setter:sample/Outer#value#typeParameters=[]; context=[]; receiver=none; parameters=[];
+function:sample/Outer#value#typeParameters=[]; context=[]; receiver=none; parameters=[];
+sample/Outer.Companion
+function:sample/Outer.Companion#member#typeParameters=[]; context=[]; receiver=none; parameters=[];
+constructor:sample/Outer.Companion#%3Cinit%3E#typeParameters=[]; context=[]; receiver=none; parameters=[];
+constructor:sample/Outer#%3Cinit%3E#typeParameters=[]; context=[]; receiver=none; parameters=[];
+sample/Alias
+sample/Choice
+enum-entry:sample/Choice#ENTRY#typeParameters=[]; context=[]; receiver=none; parameters=[]; companion;
+function:sample/Choice#values#typeParameters=[]; context=[]; receiver=none; parameters=[]; companion;
+function:sample/Choice#valueOf#typeParameters=[]; context=[]; receiver=none; parameters=[kotlin/String]; companion;
+property:sample/Choice#entries#typeParameters=[]; context=[]; receiver=none; parameters=[]; companion;
+constructor:sample/Choice#%3Cinit%3E#typeParameters=[]; context=[]; receiver=none; parameters=[];
+function:sample#top#typeParameters=[]; context=[]; receiver=none; parameters=[];
+property:sample#top#typeParameters=[]; context=[]; receiver=none; parameters=[];
+getter:sample#top#typeParameters=[]; context=[]; receiver=none; parameters=[];
+sample/JavaClass
+field:sample/JavaClass#field#typeParameters=[]; context=[]; receiver=none; parameters=[];
+field:sample/JavaClass#staticField#typeParameters=[]; context=[]; receiver=none; parameters=[]; companion;
+constructor:sample/JavaClass#%3Cinit%3E#typeParameters=[]; context=[]; receiver=none; parameters=[];
+function:sample/JavaClass#method#typeParameters=[]; context=[]; receiver=none; parameters=[];
+function:sample/JavaClass#staticMethod#typeParameters=[]; context=[]; receiver=none; parameters=[]; companion;
+function:sample/JavaClass#getText#typeParameters=[]; context=[]; receiver=none; parameters=[];
+synthetic-property:sample/JavaClass#text#typeParameters=[]; context=[]; receiver=none; parameters=[];
+/
+/RootClass
+constructor:/RootClass#%3Cinit%3E#typeParameters=[]; context=[]; receiver=none; parameters=[];

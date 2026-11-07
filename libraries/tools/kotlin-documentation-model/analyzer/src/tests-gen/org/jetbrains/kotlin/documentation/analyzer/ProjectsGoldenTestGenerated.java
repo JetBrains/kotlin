@@ -46,6 +46,12 @@ public class ProjectsGoldenTestGenerated extends AbstractProjectsGoldenTest {
   }
 
   @Test
+  @TestMetadata("objCNames.kt")
+  public void testObjCNames() {
+    run("objCNames.kt");
+  }
+
+  @Test
   @TestMetadata("simpleJvmProject.kt")
   public void testSimpleJvmProject() {
     run("simpleJvmProject.kt");

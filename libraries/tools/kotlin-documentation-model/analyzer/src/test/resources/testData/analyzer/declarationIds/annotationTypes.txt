@@ -1,0 +1,28 @@
+sample
+sample/Marker
+constructor:sample/Marker#%3Cinit%3E#typeParameters=[]; context=[]; receiver=none; parameters=[];
+sample/Levelled
+constructor:sample/Levelled#%3Cinit%3E#typeParameters=[]; context=[]; receiver=none; parameters=[kotlin/Int];
+property:sample/Levelled#level#typeParameters=[]; context=[]; receiver=none; parameters=[];
+sample/Composed
+constructor:sample/Composed#%3Cinit%3E#typeParameters=[]; context=[]; receiver=none; parameters=[sample/Levelled, kotlin/String];
+property:sample/Composed#first#typeParameters=[]; context=[]; receiver=none; parameters=[];
+property:sample/Composed#message#typeParameters=[]; context=[]; receiver=none; parameters=[];
+function:sample#marked#typeParameters=[]; context=[]; receiver=none; parameters=[];
+function:sample#heavilyAnnotated#typeParameters=[]; context=[]; receiver=none; parameters=[kotlin/String];
+function:sample#markerParameter#typeParameters=[]; context=[]; receiver=none; parameters=[sample/Marker];
+function:sample#levelledParameter#typeParameters=[]; context=[]; receiver=none; parameters=[sample/Levelled];
+function:sample#nullableMarkerParameter#typeParameters=[]; context=[]; receiver=none; parameters=[sample/Marker?];
+function:sample#annotationList#typeParameters=[]; context=[]; receiver=none; parameters=[kotlin.collections/List<sample/Levelled>];
+sample/MarkerAlias
+function:sample#viaAlias#typeParameters=[]; context=[]; receiver=none; parameters=[sample/MarkerAlias];
+property:sample#annotatedGetter#typeParameters=[]; context=[]; receiver=none; parameters=[];
+getter:sample#annotatedGetter#typeParameters=[]; context=[]; receiver=none; parameters=[];
+property:sample#annotatedAccessors#typeParameters=[]; context=[]; receiver=none; parameters=[];
+getter:sample#annotatedAccessors#typeParameters=[]; context=[]; receiver=none; parameters=[];
+setter:sample#annotatedAccessors#typeParameters=[]; context=[]; receiver=none; parameters=[];
+function:sample#annotatedReceiver#typeParameters=[]; context=[]; receiver=sample/Marker; parameters=[];
+sample/Carrying
+constructor:sample/Carrying#%3Cinit%3E#typeParameters=[]; context=[]; receiver=none; parameters=[kotlin/Int];
+function:sample/Carrying#method#typeParameters=[]; context=[]; receiver=none; parameters=[];
+property:sample/Carrying#value#typeParameters=[]; context=[]; receiver=none; parameters=[];
