@@ -1,0 +1,13 @@
+STEP 0:
+    modifications:
+        U : base.kt -> base.kt
+        U : call.kt -> call.kt
+        U : sub.kt -> sub.kt
+    added cache: base.kt, call.kt, sub.kt
+
+// sub.1.kt: final class Sub gets its own override of Base.foo
+STEP 1:
+    modifications:
+        U : sub.1.kt -> sub.kt
+    modified cache: sub.kt
+    unchanged cache: base.kt, call.kt
