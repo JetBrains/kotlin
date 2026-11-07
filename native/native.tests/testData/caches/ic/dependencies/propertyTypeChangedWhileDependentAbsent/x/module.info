@@ -1,0 +1,17 @@
+STEP 0:
+    dependencies: y
+    modifications:
+        U : a.kt -> a.kt
+    added cache: a.kt
+
+// x is not in the link, so its cache keeps its step-0 state, with the call to the
+// String-mangled getter baked into a.kt's cached bitcode.
+STEP 1:
+    dependencies: y
+    unchanged cache: a.kt
+
+// a.kt read y's p when its declared type was String; y changed it while x was absent, so
+// x's cache must be rebuilt when x returns to the link.
+STEP 2:
+    dependencies: y
+    modified cache: a.kt

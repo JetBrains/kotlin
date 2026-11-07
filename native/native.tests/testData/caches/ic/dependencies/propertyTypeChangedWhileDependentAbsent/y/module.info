@@ -1,0 +1,13 @@
+STEP 0:
+    modifications:
+        U : p.kt -> p.kt
+    added cache: p.kt
+
+// The declared type changes String -> Any, which renames the getter symbol.
+STEP 1:
+    modifications:
+        U : p.1.kt -> p.kt
+    modified cache: p.kt
+
+STEP 2:
+    unchanged cache: p.kt

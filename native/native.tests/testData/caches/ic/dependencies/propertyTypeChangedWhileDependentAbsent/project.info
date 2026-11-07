@@ -1,0 +1,39 @@
+// DISABLE_NATIVE: targetFamily=MINGW
+
+
+// Leave-and-return staleness, sibling of the open corpus case
+// dependencies/dependentLibraryLeavesAndReturns (which pins an inline-body change). Here the
+// dependency change is a DECLARED TYPE change of a top-level property, which renames the
+// getter symbol itself, and the dependent file needs no inline body at all: x's a.kt just
+// reads y's property p.
+//
+// At the step-0 link, x's per-file cache bitcode is built with a call to the getter mangled
+// with the then-declared type String (_kfun:#<get-p>(){}kotlin.String), and bin/bitcode_deps
+// records the per-file dependency of a.kt on y's p.kt.
+// Step 1: x is out of the link (main no longer depends on it) while y changes the declared
+// type String -> Any, so y's p.kt is re-cached and now provides only the Any-mangled getter.
+// Step 2: x returns with its step-0 klib. CacheBuilder marks a file changed only by comparing
+// the file's own IR hash against its own cache's recorded hash (unchanged), and dirty
+// propagation starts only from files changed in the current link; p.kt was already re-cached
+// at step 1, so the recorded dependency edge is never consulted and nothing marks a.kt dirty.
+// The stale archive is linked and the linker cannot resolve _kfun:#<get-p>(){}kotlin.String,
+// while the clean build recompiles a.kt and links.
+//
+// The initializer keeps the value "s" in both steps on purpose: the clean link then binds the
+// old String-typed access to the new Any-typed getter through partial linkage and the
+// runtime value still satisfies the old type, so the reference links answer "s" and the only
+// reported difference is the IC link failure.
+
+MODULES: y, x, main
+
+STEP 0:
+    libs: y, x, main
+
+// main does not depend on x anymore, so x is not in the link. y changes the declared type of
+// the property that x's cached code reads.
+STEP 1:
+    libs: y, main
+
+// main depends on x again. The klib of x is the one from step 0.
+STEP 2:
+    libs: main
