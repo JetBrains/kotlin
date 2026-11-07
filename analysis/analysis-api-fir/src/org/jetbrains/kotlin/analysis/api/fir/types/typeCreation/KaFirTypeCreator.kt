@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir.types.typeCreation
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirStarTypeProjection
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirTypeArgumentWithVariance
+import org.jetbrains.kotlin.analysis.api.fir.types.qualifiers.UsualClassTypeQualifierBuilder
 import org.jetbrains.kotlin.analysis.api.fir.utils.asKaType
 import org.jetbrains.kotlin.analysis.api.fir.utils.coneType
 import org.jetbrains.kotlin.analysis.api.fir.utils.coneTypeProjection
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedSymbolError
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.withParameterNameAnnotation
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.name.ClassId
@@ -97,33 +99,84 @@ internal class KaFirTypeCreator(
     }
 
     override fun classType(classId: ClassId, init: KaClassTypeBuilder.() -> Unit): KaType = withValidityAssertion {
-        val builder = KaFirClassTypeBuilder(this).apply(init)
         val classSymbol = rootModuleSession.symbolProvider.getClassLikeSymbolByClassId(classId)
-            ?: return ConeErrorType(
-                ConeUnresolvedSymbolError(classId)
-            ).withAnnotationAttributes(builder.annotations).asKaType()
-        val lookupTag = classSymbol.toLookupTag()
+        if (classSymbol == null) {
+            val builder = KaFirClassTypeBuilder(this, outerClassSymbolsProvider = ::emptyList).apply(init)
+            return ConeErrorType(
+                diagnostic = ConeUnresolvedSymbolError(classId),
+                attributes = constructAnnotationAttributes(builder.annotations, allowExtensionFunctionType = false),
+                nullable = builder.isMarkedNullable
+            ).asKaType()
+        }
 
-        return buildClassType(lookupTag, builder)
+        return buildClassType(classSymbol.toLookupTag(), classSymbol, capturedTypeArguments = emptyList(), init)
     }
 
     override fun classType(symbol: KaClassLikeSymbol, init: KaClassTypeBuilder.() -> Unit): KaType = withValidityAssertion {
-        val symbol = symbol
-        val lookupTag = symbol.classId?.toLookupTag() ?: symbol.firSymbol.toLookupTag()
-        return buildClassType(lookupTag, KaFirClassTypeBuilder(this).apply(init))
+        classType(symbol, capturedTypeArguments = emptyList(), init)
     }
 
-    private fun buildClassType(lookupTag: ConeClassLikeLookupTag, builder: KaFirClassTypeBuilder): KaType {
-        val expectedNumberOfParameters = with(analysisSession.firSession.typeContext) { lookupTag.parametersCount() }
-        val builderTypeArguments = builder.typeArguments
-        val arguments = List(expectedNumberOfParameters) { index ->
-            when (val builderArgument = builderTypeArguments.getOrNull(index)) {
-                null -> ConeStarProjection
-                else -> builderArgument.coneTypeProjection
+    /**
+     * Same as [classType], but uses [capturedTypeArguments] as the arguments of the type parameters captured by a local class
+     * from its containing declarations, which cannot be provided via [KaClassTypeBuilder].
+     * Missing arguments default to the type parameters themselves.
+     */
+    internal fun classType(
+        symbol: KaClassLikeSymbol,
+        capturedTypeArguments: List<ConeTypeProjection>,
+        init: KaClassTypeBuilder.() -> Unit,
+    ): KaType = withValidityAssertion {
+        val lookupTag = symbol.classId?.toLookupTag() ?: symbol.firSymbol.toLookupTag()
+        return buildClassType(lookupTag, symbol.firSymbol, capturedTypeArguments, init)
+    }
+
+    private fun buildClassType(
+        lookupTag: ConeClassLikeLookupTag,
+        classSymbol: FirClassLikeSymbol<*>,
+        capturedTypeArguments: List<ConeTypeProjection>,
+        init: KaClassTypeBuilder.() -> Unit,
+    ): KaType {
+        val classDeclaration = classSymbol.fir
+        val designation = UsualClassTypeQualifierBuilder.collectDesignationPath(classDeclaration)
+
+        val builder = KaFirClassTypeBuilder(this) {
+            designation.dropLast(1).map { outerClass ->
+                analysisSession.firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(outerClass.symbol)
+            }
+        }.apply(init)
+
+        val expectedNumberOfArgumentsWithSynthetics = with(typeContext) { lookupTag.parametersCount() }
+        val expectedNumberOfArgumentsByQualifier = UsualClassTypeQualifierBuilder.countOwnTypeParametersByDesignation(designation)
+        val expectedNumberOfOwnArguments = expectedNumberOfArgumentsByQualifier.last()
+        val expectedNumbersOfOuterArguments = expectedNumberOfArgumentsByQualifier.dropLast(1)
+        // In some rare invalid cases, the diff might be negative. To avoid further exceptions, coercion is needed.
+        val expectedNumberOfSyntheticArguments =
+            (expectedNumberOfArgumentsWithSynthetics - expectedNumberOfArgumentsByQualifier.sum()).coerceAtLeast(0)
+
+        val arguments = buildList {
+            fun addTypeArguments(typeArguments: List<KaTypeProjection>?, count: Int) {
+                repeat(count) { index -> add(typeArguments?.getOrNull(index)?.coneTypeProjection ?: ConeStarProjection) }
+            }
+
+            addTypeArguments(builder.typeArguments, expectedNumberOfOwnArguments)
+
+            val builderOuterArgumentsIfInitialized = builder.outerTypeArgumentsIfInitialized
+
+            if (builderOuterArgumentsIfInitialized == null) {
+                addTypeArguments(null, expectedNumbersOfOuterArguments.sum())
+            } else {
+                for (index in expectedNumbersOfOuterArguments.indices.reversed()) {
+                    addTypeArguments(builderOuterArgumentsIfInitialized.getOrNull(index), expectedNumberOfArgumentsByQualifier[index])
+                }
+            }
+
+            val defaultTypeSyntheticArguments = classSymbol.defaultType().typeArguments.takeLast(expectedNumberOfSyntheticArguments)
+            repeat(expectedNumberOfSyntheticArguments) { index ->
+                val syntheticArgument = capturedTypeArguments.getOrNull(index) ?: defaultTypeSyntheticArguments[index]
+                add(syntheticArgument)
             }
         }
 
-        val typeContext = rootModuleSession.typeContext
         val coneType = typeContext.createSimpleType(
             lookupTag,
             arguments,

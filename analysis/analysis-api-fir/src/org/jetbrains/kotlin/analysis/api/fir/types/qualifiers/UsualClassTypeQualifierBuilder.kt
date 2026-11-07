@@ -30,26 +30,8 @@ internal object UsualClassTypeQualifierBuilder {
                 withEntry("useSiteSession", builder.rootSession) { it.toString() }
             }
 
-        val designation = coneTypeClassSymbol.fir.let {
-            if (it.isLocal) collectDesignationPathForLocal(it) else collectDesignationPathForNonLocal(it)
-        }
-
-        /**
-         * Returns a number of own type parameters for [this].
-         * In general, it should only count [FirTypeParameter], i.e., type parameters that are declared right on this class.
-         * [FirOuterClassTypeParameterRef] and [FirConstructedClassTypeParameterRef] should be ignored.
-         */
-        fun FirClassLikeDeclaration.numberOfOwnParameters() = typeParameters.count { it is FirTypeParameter }
-
-        /**
-         * Type arguments are only rendered for the type's own class and for the chain of its `inner` containers,
-         * as only those may have type arguments in a qualified type reference.
-         */
-        val firstDesignationToRegisterTypeArguments = designation.indexOfLast { !it.isInner }
-
-        val ownTypeParametersCountsByDesignation = designation.mapIndexed { index, designationClass ->
-            if (index >= firstDesignationToRegisterTypeArguments) designationClass.numberOfOwnParameters() else 0
-        }
+        val designation = collectDesignationPath(coneTypeClassSymbol.fir)
+        val ownTypeParametersCountsByDesignation = countOwnTypeParametersByDesignation(designation)
 
         /**
          * A local or inner class owns the type parameters of its containers on top of its own ones,
@@ -61,7 +43,7 @@ internal object UsualClassTypeQualifierBuilder {
          *
          * Note that type parameters of outer functions are always properly ignored for local declarations.
          * That's because `ownTypeParametersCountsByDesignation.sum()` is a number of type parameters from the end class itself
-         * as well as from the `inner` class containers, see [firstDesignationToRegisterTypeArguments].
+         * as well as from the `inner` class containers, see [countOwnTypeParametersByDesignation].
          * For local declarations, designation calculation stops at the first class that doesn't have a direct class parent:
          * ```kotlin
          * class A<AA> {
@@ -96,6 +78,35 @@ internal object UsualClassTypeQualifierBuilder {
             )
         }
     }
+
+    /**
+     * Returns the chain of containing classes of [declaration] ordered outermost-first, [declaration] included.
+     * This chain corresponds to the qualifiers of a class type.
+     */
+    fun collectDesignationPath(declaration: FirClassLikeDeclaration): List<FirClassLikeDeclaration> =
+        if (declaration.isLocal) collectDesignationPathForLocal(declaration) else collectDesignationPathForNonLocal(declaration)
+
+    /**
+     * Returns the number of type arguments for each part of [designation], as they appear in the qualifiers of a class type.
+     * [designation] must be the complete one, as returned by [collectDesignationPath], i.e., it must end with the class of the type.
+     *
+     * Type arguments are only counted for the type's own class and for the chain of its `inner` containers,
+     * as only those may have type arguments in a qualified type reference. Other parts have no type arguments.
+     */
+    fun countOwnTypeParametersByDesignation(designation: List<FirClassLikeDeclaration>): List<Int> {
+        val firstDesignationToRegisterTypeArguments = designation.indexOfLast { !it.isInner }
+
+        return designation.mapIndexed { index, designationClass ->
+            if (index >= firstDesignationToRegisterTypeArguments) designationClass.numberOfOwnParameters() else 0
+        }
+    }
+
+    /**
+     * Returns a number of own type parameters for [this].
+     * In general, it should only count [FirTypeParameter], i.e., type parameters that are declared right on this class.
+     * [FirOuterClassTypeParameterRef] and [FirConstructedClassTypeParameterRef] should be ignored.
+     */
+    fun FirClassLikeDeclaration.numberOfOwnParameters(): Int = typeParameters.count { it is FirTypeParameter }
 
     /**
      * Returns the chain of containing classes of the non-local [declaration] ordered outermost-first, [declaration] included.

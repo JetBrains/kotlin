@@ -36,6 +36,9 @@ public interface KaTypeCreator : KaLifetimeOwner {
      * filled with [star projections][KaStarTypeProjection].
      * If there are more type arguments than required, extra arguments are ignored.
      *
+     * Type arguments of outer classes (e.g., `String` in `Outer<String>.Inner<Int>`)
+     * are provided separately via [KaClassTypeBuilder.outerClasses].
+     *
      *  #### Example
      *
      * ```kotlin
@@ -43,6 +46,8 @@ public interface KaTypeCreator : KaLifetimeOwner {
      *     invariantTypeArgument(builtinTypes.string)
      * }
      * ```
+     *
+     * @see KaClassTypeBuilder
      */
     @KaExperimentalApi
     public fun classType(classId: ClassId, init: KaClassTypeBuilder.() -> Unit = {}): KaType
@@ -58,6 +63,9 @@ public interface KaTypeCreator : KaLifetimeOwner {
      * filled with [star projections][KaStarTypeProjection].
      * If there are more type arguments than required, extra arguments are ignored.
      *
+     * Type arguments of outer classes (e.g., `String` in `Outer<String>.Inner<Int>`)
+     * are provided separately via [KaClassTypeBuilder.outerClasses].
+     *
      * For Kotlin built-in types, consider using the overload that accepts a [ClassId] instead:
      * `classType(StandardClassIds.String)`.
      *
@@ -68,6 +76,8 @@ public interface KaTypeCreator : KaLifetimeOwner {
      *     invariantTypeArgument(builtinTypes.string)
      * }
      * ```
+     *
+     * @see KaClassTypeBuilder
      */
     @KaExperimentalApi
     public fun classType(symbol: KaClassLikeSymbol, init: KaClassTypeBuilder.() -> Unit = {}): KaType
@@ -310,13 +320,73 @@ public interface KaTypeBuilderWithAnnotations : KaTypeBuilder {
 }
 
 /**
+ * A builder of type arguments for a single class type qualifier.
+ *
+ * @see KaClassTypeBuilder
+ * @see KaClassTypeBuilder.outerClasses
+ */
+@KaExperimentalApi
+@SubclassOptInRequired(KaImplementationDetail::class)
+public interface KaTypeArgumentsBuilder : KaTypeCreator {
+    /**
+     * List of type arguments that are currently registered in the builder.
+     * A type argument can be added using [typeArgument], [typeArguments] or [invariantTypeArgument].
+     */
+    public val typeArguments: List<KaTypeProjection>
+
+    /**
+     * Adds [type] as an [invariant][Variance.INVARIANT] type argument.
+     */
+    public fun invariantTypeArgument(type: KaType)
+
+    /**
+     * Adds [type] as a type argument with the given [variance].
+     */
+    public fun typeArgument(variance: Variance, type: KaType)
+
+    /**
+     * Adds [type] as an [invariant][Variance.INVARIANT] type argument.
+     */
+    public fun invariantTypeArgument(type: () -> KaType)
+
+    /**
+     * Adds [type] as a type argument with the given [variance].
+     */
+    public fun typeArgument(variance: Variance, type: () -> KaType)
+
+    /**
+     * Adds [argument] as a type argument.
+     */
+    public fun typeArgument(argument: KaTypeProjection)
+
+    /**
+     * Adds [argument] as a type argument.
+     */
+    public fun typeArgument(argument: () -> KaTypeProjection)
+
+    /**
+     * Adds [arguments] as type arguments.
+     */
+    public fun typeArguments(arguments: () -> Iterable<KaTypeProjection>)
+}
+
+/**
  * A builder for [KaClassType].
+ *
+ * Type arguments registered directly in the builder belong to the class itself, i.e., to the last
+ * [qualifier][KaClassType.qualifiers] of the resulting type.
+ * Type arguments of outer classes are registered via [outerClasses].
+ *
+ * The caller is supposed to provide the correct number of type arguments for each qualifier.
+ * If the number of provided type arguments for some qualifier is lower, missing type arguments are
+ * filled with [star projections][KaStarTypeProjection].
+ * If there are more type arguments than required for some qualifier, extra arguments are ignored.
  *
  * @see KaTypeCreator.classType
  */
 @KaExperimentalApi
 @SubclassOptInRequired(KaImplementationDetail::class)
-public interface KaClassTypeBuilder : KaTypeBuilderWithAnnotations {
+public interface KaClassTypeBuilder : KaTypeBuilderWithAnnotations, KaTypeArgumentsBuilder {
     /**
      * Whether the type is marked as nullable, i.e., the type is represented as `T?`.
      *
@@ -327,45 +397,34 @@ public interface KaClassTypeBuilder : KaTypeBuilderWithAnnotations {
     public var isMarkedNullable: Boolean
 
     /**
-     * List of type arguments that are currently registered in the builder.
-     * A type argument can be added using [typeArgument], [typeArguments] or [invariantTypeArgument].
+     * Registers type arguments for the outer classes of the class type.
+     *
+     * [init] is invoked once for every outer qualifier of the class, i.e., for all [qualifiers][KaClassType.qualifiers]
+     * except for the last one, even if some qualifier cannot have type arguments.
+     * The qualifiers are visited from the outermost to the innermost ones.
+     * [init] receives the index of the qualifier in the [qualifier list][KaClassType.qualifiers] and the symbol of the qualifier.
+     *
+     * Type arguments are only taken into account for the outer classes whose type parameters are accessible from the class,
+     * i.e., the chain of containing classes the class is `inner` to (as in `Outer<String>.Inner<Int>`).
+     * For the other outer classes, e.g., containers of a nested class (as `Outer` in `Outer.Nested<Int>`), the type arguments are ignored.
+     * Missing type arguments for each qualifier are filled with [star projections][KaStarTypeProjection], and extra type arguments are ignored.
+     *
+     * #### Example
+     *
+     * For `class Outer { class Middle<T> { inner class Inner<S> } }`, the type `Outer.Middle<String>.Inner<Int>` can be built as follows:
+     *
+     * ```kotlin
+     * classType(innerClassSymbol) {
+     *     invariantTypeArgument(builtinTypes.int)
+     *     outerClasses { index, symbol ->
+     *         if (symbol.name == "Middle") {
+     *             invariantTypeArgument(builtinTypes.string)
+     *         }
+     *     }
+     * }
+     * ```
      */
-    public val typeArguments: List<KaTypeProjection>
-
-    /**
-     * Adds [type] as an [invariant][Variance.INVARIANT] type argument to the class type.
-     */
-    public fun invariantTypeArgument(type: KaType)
-
-    /**
-     * Adds [type] as a type argument to the class type with the given [variance].
-     */
-    public fun typeArgument(variance: Variance, type: KaType)
-
-    /**
-     * Adds [type] as an [invariant][Variance.INVARIANT] type argument to the class type.
-     */
-    public fun invariantTypeArgument(type: () -> KaType)
-
-    /**
-     * Adds [type] as a type argument to the class type with the given [variance].
-     */
-    public fun typeArgument(variance: Variance, type: () -> KaType)
-
-    /**
-     * Adds [argument] as a type argument to the class type.
-     */
-    public fun typeArgument(argument: KaTypeProjection)
-
-    /**
-     * Adds [argument] as a type argument to the class type.
-     */
-    public fun typeArgument(argument: () -> KaTypeProjection)
-
-    /**
-     * Adds [arguments] as type arguments to the class type.
-     */
-    public fun typeArguments(arguments: () -> Iterable<KaTypeProjection>)
+    public fun outerClasses(init: KaTypeArgumentsBuilder.(index: Int, symbol: KaClassLikeSymbol) -> Unit)
 }
 
 /**
