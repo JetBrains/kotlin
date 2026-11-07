@@ -12,8 +12,10 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.CacheableTask
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.TaskProvider
@@ -21,6 +23,7 @@ import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.commonizer.KonanDistribution
 import org.jetbrains.kotlin.commonizer.platformLibsDir
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
+import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeFromToolchainProvider
@@ -41,6 +44,16 @@ abstract class KotlinNativeDownloadTask : DefaultTask(), UsesKotlinNativeBundleB
     internal val kotlinNativeProvider: Property<KotlinNativeProvider> = project.objects.propertyWithConvention<KotlinNativeProvider>(
         NoopKotlinNativeProvider(project)
     )
+
+    /**
+     * Location the Kotlin/Native dependencies are fetched from, see `kotlin.native.dependenciesUrl`.
+     *
+     * The value is consumed by the Kotlin/Native bundle build service, not by this task directly. It is declared here
+     * as an input so that changing the location re-runs the download instead of leaving the task up-to-date.
+     */
+    @get:Input
+    @get:Optional
+    abstract val dependenciesUrl: Property<String>
 
     @get:Internal
     abstract val konanHome: DirectoryProperty
@@ -69,6 +82,7 @@ internal fun Project.getOrRegisterDownloadKotlinNativeDistributionTask(): TaskPr
     return locateOrRegisterTask<KotlinNativeDownloadTask>(
         kotlinNativeDownloadTaskName,
         configureTask = {
+            dependenciesUrl.convention(project.nativeProperties.dependenciesUrl)
             launch {
                 val targets = multiplatformExtensionOrNull?.awaitTargets()?.toSet().orEmpty()
                 kotlinNativeProvider.set(
