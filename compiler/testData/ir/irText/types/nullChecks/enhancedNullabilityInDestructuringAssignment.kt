@@ -1,8 +1,6 @@
 // LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
-// IGNORE_BACKEND: JKLIB
-// ^ The JKlib test infrastructure compiles Java sources before Kotlin ones, so Java can't reference Kotlin declarations of the same module.
 // DISABLE_JAVA_FACADE
 
 // FILE: enhancedNullabilityInDestructuringAssignment.kt

@@ -1,8 +1,6 @@
 // SKIP_KT_DUMP
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
-// IGNORE_BACKEND: JKLIB
-// ^ The JKlib test infrastructure compiles Java sources before Kotlin ones, so Java can't reference Kotlin declarations of the same module.
 
 // FILE: Java1.java
 public class Java1 {

@@ -5,9 +5,10 @@
 
 package org.jetbrains.kotlin.jklib.test.irText
 
+import org.jetbrains.kotlin.cli.jvm.config.addJavaSourceRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
+import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
-import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.codegen.forTestCompile.JavaForeignAnnotationType
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
@@ -19,12 +20,15 @@ import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.configuration.additionalClassPathForJavaCompilationOrAnalysis
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.javaFiles
 import org.jetbrains.kotlin.test.services.sourceFileProvider
+import org.jetbrains.kotlin.test.services.transitiveDependsOnDependencies
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.test.util.CompiledLibraryCache
+import java.io.File
 
 class JKlibJavaSourceConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     companion object {
@@ -51,12 +55,17 @@ class JKlibJavaSourceConfigurator(testServices: TestServices) : EnvironmentConfi
 
         configuration.configureJdkClasspathRoots()
 
-        val javaFiles = module.javaFiles
-        if (javaFiles.isEmpty()) return
+        // Like the Kotlin/JVM tests, analyze the Java sources together with the Kotlin ones instead of compiling them first, so
+        // that Java sources can reference Kotlin declarations of the same module. `addSourcesForDependsOnClosure` compiles the
+        // Kotlin sources of the whole `dependsOn` closure in this configuration, so its Java sources belong here too.
+        val modulesWithJavaFiles = module.transitiveDependsOnDependencies(includeSelf = true, reverseOrder = true)
+            .filter { it.javaFiles.isNotEmpty() }
+        if (modulesWithJavaFiles.isEmpty()) return
 
-        javaFiles.forEach { testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(it) }
-
-        val javaDir = testServices.sourceFileProvider.getJavaSourceDirectoryForModule(module)
+        for (moduleWithJavaFiles in modulesWithJavaFiles) {
+            moduleWithJavaFiles.javaFiles.forEach { testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(it) }
+            configuration.addJavaSourceRoot(testServices.sourceFileProvider.getJavaSourceDirectoryForModule(moduleWithJavaFiles))
+        }
 
         val annotationsJar = if (ForeignAnnotationsDirectives.ENABLE_FOREIGN_ANNOTATIONS in module.directives) {
             libraryCache.getOrCompile("java8-annotations") {
@@ -71,23 +80,8 @@ class JKlibJavaSourceConfigurator(testServices: TestServices) : EnvironmentConfi
             KtTestUtil.getAnnotationsJar()
         }
         configuration.addJvmClasspathRoot(annotationsJar)
-
-        val jvmClasspathRoots = configuration.jvmClasspathRoots.map { it.absolutePath }
-
-        try {
-            val compiledJar = MockLibraryUtil.compileJavaFilesLibraryToJar(
-                javaDir.path,
-                "${module.name}-java-binaries",
-                extraClasspath = jvmClasspathRoots,
-                assertions = testServices.assertions,
-                extraJavacOptions = listOf("-parameters") // Preserve parameter names during Java compilation so IR tests match
-            )
-            configuration.addJvmClasspathRoot(compiledJar)
-        } catch (e: Throwable) {
-            testServices.assertions.fail {
-                "Java Compilation failed. Notice: This might be caused by a circular dependency between Java and Kotlin sources, which is not supported in JKlib since it compiles Java to a JAR independently.\n" +
-                        "Underlying error: ${e.message}"
-            }
-        }
+        configuration.addJvmClasspathRoots(
+            testServices.additionalClassPathForJavaCompilationOrAnalysis?.classPath?.map(::File).orEmpty()
+        )
     }
 }
