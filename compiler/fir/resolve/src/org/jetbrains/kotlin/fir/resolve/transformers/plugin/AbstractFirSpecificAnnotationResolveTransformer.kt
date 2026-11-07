@@ -236,7 +236,7 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
         if (propertyAccess.explicitReceiver != null) return guessEnumEntryByName()
 
         @OptIn(FirImplementationDetail::class)
-        val fromImports = scopes.firstNotNullOfOrNull { scope ->
+        val fromImports = scopes.asReversed().firstNotNullOfOrNull { scope ->
             (scope as? FirAbstractImportingScope)?.findEnumEntryWithoutResolution(name)
                 ?.takeIf { it.containingClassLookupTag()?.classId == expectedEnumClassId }
         }
@@ -253,7 +253,8 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
         // the first segment as a classifier or by appending the pre-imported paths as package segments,
         // but it's non-trivial and we don't have enough motivation for it.
         return when {
-            segments.isEmpty() -> scopes.firstNotNullOfOrNull { it.getSingleClassifier(receiver.calleeReference.name) as? FirClassLikeSymbol<*> }
+            segments.isEmpty() ->
+                scopes.asReversed().firstNotNullOfOrNull { it.getSingleClassifier(receiver.calleeReference.name) as? FirClassLikeSymbol<*> }
             else -> ClassId(FqName.fromSegments(segments.asReversed()), receiver.calleeReference.name).toSymbol() as? FirClassLikeSymbol<*>
         }
     }
