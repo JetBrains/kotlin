@@ -85,6 +85,24 @@ On 2026-11-01 the workflow ran with the defaults on the HEAD dist: 17 agents, ab
 
 Four of the bugs came from targets that the planner chose from the Distill hypotheses. Two more (the first two rows) came from probes that the code-reading agent ran on its own. The verifier agents were right every time. But they could not run the reproducers in the real test fixture, and their logs were confusing in places (the same variant passed twice). So check every finding yourself before you report it.
 
+## The second campaign
+
+On 2026-11-06/07 the workflow ran with three rounds of eight targets on a dist freshly built from HEAD (53 agents, about 5.4M tokens, about 5.2 hours). That dist was the first one to contain the call graph building optimizations, the new Obj-C fake-override entry point rules and the partial linkage early-abort removal, so the campaign aimed part of its focus at those. Every run used both the `default` and the `unbatched` variants.
+
+The 24 targets produced 10 confirmed findings, which group into 5 root causes: two new bugs, and three new windows of the open bugs from the first campaign. Each one now has a failing test in `native/native.tests/testData/caches/ic`, re-verified from scratch outside the workflow:
+
+| Test | What IC misses |
+|---|---|
+| `members/finalClassAddsOverrideCallerInBaseFile` | A devirtualized call whose target lives in the caller's own file records no dependency at all. A sibling of `members/finalClassAddsOverride`. |
+| `classKind/valueClassTypeOnlyUseCrossLibrary` | A type-only use across libraries: class -> value class leaves a not-recompiled dependent library with the boxed ABI, and the first call segfaults. A cross-library sibling of `classKind/valueClassTypeOnlyUse`. |
+| `classKind/supertypeRemovedCrossLibrary` | A folded `is` check in a library that is not even recompiled when the subtype relation is removed. A cross-library sibling of `classKind/supertypeRemoved`. |
+| `dependencies/renamedFileWhileDependentOutOfLink` | A file renamed while the dependent library is out of the link: the removed-file walk sees only linked libraries, the dependent keeps a dangling per-file dependency, and its return crashes the link in `CachedLibraries$Cache$PerFile.getFileDependencies`. KT-89876 fixed the in-link case. |
+| `dependencies/partialLinkageIssueOutlivesFix` | A partial linkage issue stored in a per-file cache outlives the fix: the stubbed reference records no bitcode edge, nothing rebuilds the file when the symbol returns, and the replayed issue fails the IC link. Violates the invariant documented in `CacheStorage.savePartialLinkageIssues`. |
+
+The same mechanisms have more shapes than the five tests pin down: the devirtualized-call bug also shows up through a property with a backing field (a stale field offset) and through a suspend call of an interface default, and the crash bug also triggers through a weak trampoline edge. Those reproducers are reduced under the campaign's `build/kn-ic-fuzz/c2-2026-11-06/` output.
+
+No over-invalidation problems appeared: `NOOP_REBUILD` and `UNSTABLE_FINGERPRINT` never showed up in any run. One latent wart is worth a look: an unbatched link writes `bin/bitcode_deps` in a different order than a batched clean link. The dependencies are the same set, but the order difference makes latent cache comparisons noisy.
+
 ## What is not done yet (good next steps)
 
 1. **Add a clean-rebuild comparison to `AbstractNativeIncrementalCompilationTest`, like the JVM IC tests have.** Then every corpus case checks more than its hand-written expectations.
