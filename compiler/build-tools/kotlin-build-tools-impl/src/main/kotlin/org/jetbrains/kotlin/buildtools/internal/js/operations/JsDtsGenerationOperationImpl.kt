@@ -80,13 +80,19 @@ internal class JsDtsGenerationOperationImpl private constructor(
         val messageCollector =
             KotlinLoggerMessageCollectorAdapter(logger ?: DefaultKotlinLogger, DefaultCompilerMessageRenderer, warningsAsErrors = false)
 
+        // Resolve the names the same way the compiler does during linking:
+        // the output name comes from `-ir-output-name` (falling back to the main KLIB manifest),
+        // and the module name comes from `-Xir-module-name` (falling back to `-ir-output-name`)
+        val outputName = this[OUTPUT_NAME] ?: mainModule.config.outputName ?: mainModule.name
+        val moduleName = this[MAIN_MODULE_NAME] ?: this[OUTPUT_NAME] ?: mainModule.name
+
         val typeScriptExportConfig = TypeScriptExportConfig(
             targetPlatform = JsPlatforms.defaultJsPlatform,
             artifactConfiguration = WebArtifactConfiguration(
                 moduleKind = ModuleKind.fromType(this[MODULE_KIND].stringValue),
-                moduleName = mainModule.name,
+                moduleName = moduleName,
                 outputDirectory = outputDirectory.toFile(),
-                outputName = mainModule.config.outputName ?: mainModule.name,
+                outputName = outputName,
                 granularity = JsGenerationGranularity.valueOf(this[GRANULARITY].name),
                 tsCompilationStrategy = TsCompilationStrategy.valueOf(this[TS_COMPILATION_STRATEGY].name),
                 production = false,
@@ -118,15 +124,16 @@ internal class JsDtsGenerationOperationImpl private constructor(
     @Suppress("EnumValuesSoftDeprecate")
     override fun configureFrom(linkingOperation: JsLinkingOperation) {
         check(linkingOperation is JsLinkingOperationImpl) { "Unexpected linking operation: ${linkingOperation::class}." }
+        val compilerArguments = linkingOperation.compilerArguments.toCompilerArguments()
         // Resolve the language features the same way the compiler does, so that features enabled via
         // dedicated arguments, `-XXLanguage:` or `-language-version` are all taken into account
-        val languageVersionSettings = linkingOperation.compilerArguments.toCompilerArguments()
+        val languageVersionSettings = compilerArguments
             .toLanguageVersionSettings(CommonCompilerArgumentsConfigurator.Reporter.DoNothing)
 
-        val target = linkingOperation.compilerArguments.target
-            ?.let { from -> JsEcmaVersion.values().first { it.name == from.name } }
+        val target = compilerArguments.target
+            ?.let { from -> JsEcmaVersion.values().firstOrNull { it.stringValue == from } }
 
-        this[COMPILE_LONG_AS_BIG_INT] = linkingOperation.compilerArguments.compileLongAsBigInt
+        this[COMPILE_LONG_AS_BIG_INT] = compilerArguments.compileLongAsBigInt
             ?: (target != null && target >= JsEcmaVersion.ES2020)
 
 
@@ -135,16 +142,18 @@ internal class JsDtsGenerationOperationImpl private constructor(
         this[DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY] =
             languageVersionSettings.supportsFeature(LanguageFeature.DataClassCopyRespectsConstructorVisibility)
 
-        this[USE_UNKNOWN_INSTEAD_ANY] = linkingOperation.compilerArguments.useUnknownInsteadAny
+        this[OUTPUT_NAME] = compilerArguments.moduleName
+        this[MAIN_MODULE_NAME] = compilerArguments.irModuleName
+        this[USE_UNKNOWN_INSTEAD_ANY] = compilerArguments.useUnknownInsteadAny
 
         this[MODULE_KIND] = linkingOperation.compilerArguments.moduleKind
             ?: JsModuleKind.ES.takeIf { target != null && target >= JsEcmaVersion.ES2015 }
             ?: JsModuleKind.UMD
 
         this[GRANULARITY] = when {
-            linkingOperation.compilerArguments.irPerFile -> JsDtsGranularity.PER_FILE
+            compilerArguments.irPerFile -> JsDtsGranularity.PER_FILE
             // Right now, we don't support per-module d.ts generation for IR. So for the backward compatibility, we use whole-program granularity.
-            linkingOperation.compilerArguments.irPerModule -> JsDtsGranularity.WHOLE_PROGRAM
+            compilerArguments.irPerModule -> JsDtsGranularity.WHOLE_PROGRAM
             else -> JsDtsGranularity.WHOLE_PROGRAM
         }
     }
@@ -202,5 +211,7 @@ internal class JsDtsGenerationOperationImpl private constructor(
         val USE_UNKNOWN_INSTEAD_ANY: Option<Boolean> = Option("USE_UNKNOWN_INSTEAD_ANY", defaultArgsReference.useUnknownInsteadAny)
         val DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY: Option<Boolean> =
             Option("DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY", defaultArgsReference.consistentDataClassCopyVisibility)
+        val OUTPUT_NAME: Option<String?> = Option("OUTPUT_NAME", defaultArgsReference.moduleName)
+        val MAIN_MODULE_NAME: Option<String?> = Option("MAIN_MODULE_NAME", defaultArgsReference.irModuleName)
     }
 }
