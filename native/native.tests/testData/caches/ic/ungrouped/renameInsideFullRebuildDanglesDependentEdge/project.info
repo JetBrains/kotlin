@@ -1,0 +1,37 @@
+// DISABLE_NATIVE: targetFamily=MINGW
+
+
+// A rename inside a flag-forced full rebuild leaves another library's cached file holding a
+// dependency edge on the removed file id, and the link-time resolution of that stale edge
+// crashes the IC build.
+//
+// The -Xcompanion-blocks flip is recorded in the klib manifest (KT-89390), so lib1's whole
+// per-file cache is stale and lib1 enters needFullRebuild at step 1. The loop that collects
+// removedFiles and the reversed dependency edges skips needFullRebuild libraries
+// ("if (library in needFullRebuild) continue", CacheBuilder.kt), so the q.kt -> a1.kt rename
+// inside that full rebuild is never recorded as a removal. lib2's use.kt keeps a strong
+// per-file bitcode dependency on the old lib1|q.kt file id (recorded at step 0 from its
+// pub() call) and is never marked dirty; the dirty-file dfs starts only from recorded
+// removed/changed files, so it never walks the lib1|q.kt <- lib2|use.kt edge either. main is
+// edited at step 1, so the link rebuilds main's per-file cache, and resolving main.kt ->
+// lib2|use.kt -> lib1|q.kt throws IllegalStateException in
+// CachedLibraries$Cache$PerFile.getFileDependencies (CachedLibraries.kt) - the file id is
+// absent from the cache dirs, which are built from lib1's current klib file list - while
+// the clean link of the same klibs succeeds and answers 7, 7.
+//
+// Same root cause as the open corpus case ungrouped/fullRebuildSkipsRemovedFileBookkeeping
+// (which pins the leftover-directory manifestation) and
+// dependencies/addedExternalDependencyWithInlineChange (the changed-content half of the
+// same skipped bookkeeping): a library taken into needFullRebuild contributes neither
+// changed nor removed files to the dirty analysis, so its dependents stay clean. This test
+// pins the new cross-library crash manifestation. main must keep calling pub() directly:
+// that keeps lib1 on main's per-file dependency path, which is what makes the tracker
+// resolve the stale edge at all.
+
+MODULES: lib1, lib2, main
+
+STEP 0:
+    libs: lib1, lib2, main
+
+STEP 1:
+    libs: lib1, lib2, main

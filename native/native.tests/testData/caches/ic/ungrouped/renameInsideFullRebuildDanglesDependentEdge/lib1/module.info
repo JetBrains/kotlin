@@ -1,0 +1,15 @@
+STEP 0:
+    modifications:
+        U : q.kt -> q.kt
+    added cache: q.kt
+
+// The flag flip forces a full rebuild of lib1's cache. The q.kt -> a1.kt rename (identical
+// content, new file id) removes the old file id, and a correct IC must still record the
+// removal and the dependents of that file id even though the library is fully rebuilt.
+STEP 1:
+    arguments: -Xcompanion-blocks
+    modifications:
+        D : q.kt
+        U : q.kt -> a1.kt
+    removed cache: q.kt
+    added cache: a1.kt

@@ -1,0 +1,13 @@
+// use.kt is never edited. Its cached entry keeps a strong per-file bitcode dependency on
+// lib1|q.kt, recorded at step 0, which dangles after the step-1 rename. A correct IC marks
+// use.kt dirty and rebuilds it against a1.kt.
+
+STEP 0:
+    dependencies: lib1
+    modifications:
+        U : use.kt -> use.kt
+    added cache: use.kt
+
+STEP 1:
+    dependencies: lib1
+    modified cache: use.kt
