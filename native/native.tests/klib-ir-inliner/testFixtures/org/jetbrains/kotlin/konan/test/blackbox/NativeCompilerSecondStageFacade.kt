@@ -14,11 +14,13 @@ import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
 import org.jetbrains.kotlin.config.nativeBinaryOptions.RuntimeAssertsMode
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.AssertionsMode
+import org.jetbrains.kotlin.konan.test.blackbox.support.LoggedData
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.ASSERTIONS_MODE
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FILECHECK_STAGE
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FREE_COMPILER_ARGS
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.collectToggledCheckers
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeHome
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.OptimizationMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.withPlatformLibs
@@ -35,6 +37,17 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
+import kotlin.time.Duration
+import kotlin.time.measureTimedValue
+
+/**
+ * An executable along with the log of the compiler call that has linked it. The log is printed when a run of the executable fails.
+ * The log of a failed compiler call is not kept here: the [CustomKlibCompilerException] thrown instead carries it.
+ */
+class NativeExecutableWithCompilerCall(
+    executable: File,
+    val loggedCompilerCall: LoggedData.CompilerCall,
+) : BinaryArtifacts.Native(executable)
 
 /**
  * The second stage of Native tests: links KLIBs into an executable with the Kotlin/Native compiler CLI.
@@ -88,8 +101,10 @@ class NativeCompilerSecondStageFacade private constructor(
             // limit of 260 characters for executable file path. So we use the hash of the module name
             // instead.
             val moduleNameHash = someModule.name.hashCode().toHexString()
+            // Captured before the compiler call, which runs in this JVM and may change its properties.
+            val environment = LoggedData.JVMEnvironment()
             @OptIn(ExperimentalCompilerArgument::class)
-            val (exitCode, output, executableFile) = facade.runCli(
+            val (exitCode, output, executableFile, compilerArgs, duration) = facade.runCli(
                 dirName = someLibrary!!.resolveSibling(moduleNameHash).absolutePath,
                 executableFileName = "$moduleNameHash.${facade.executableExtension}",
                 fileCheckStage = someModule.fileCheckStage(),
@@ -102,12 +117,23 @@ class NativeCompilerSecondStageFacade private constructor(
                 verifyIrMode = if (isCompatibilityTesting) VerifyIrMode.NONE else VerifyIrMode.ERROR,
             )
 
+            val compilerOutput = output.toString(Charsets.UTF_8.name())
+            // Printed when either the compiler call itself fails, or a run of the linked executable does.
+            val loggedCompilerCall = LoggedData.CompilationToolCall(
+                toolName = "COMPILER",
+                input = null,
+                parameters = LoggedData.CompilerParameters(KotlinNativeHome(facade.nativeHome), compilerArgs.toTypedArray(), environment),
+                exitCode = exitCode,
+                toolOutput = compilerOutput,
+                toolOutputHasErrors = exitCode != ExitCode.OK, // An approximation: the output is not parsed.
+                duration = duration,
+            )
             if (exitCode == ExitCode.OK) {
-                // Successfully compiled. Return the artifact.
-                return BinaryArtifacts.Native(executableFile)
+                // Successfully compiled. Return the artifact along with the log of the compiler call.
+                return NativeExecutableWithCompilerCall(executableFile, loggedCompilerCall)
             } else {
-                // Throw an exception to abort further test execution.
-                throw CustomKlibCompilerException(exitCode, output.toString(Charsets.UTF_8.name()))
+                // Throw an exception to abort further test execution. Its message includes the log of the compiler call.
+                throw CustomKlibCompilerException(exitCode, compilerOutput, loggedCompilerCall.toString())
             }
         }
 
@@ -157,7 +183,13 @@ class NativeCompilerSecondStageFacade private constructor(
         return testServices.temporaryDirectoryManager.getOrCreateTempDirectory(moduleName)
     }
 
-    data class CliRunResult(val exitCode: ExitCode, val output: ByteArrayOutputStream, val executableFile: File)
+    data class CliRunResult(
+        val exitCode: ExitCode,
+        val output: ByteArrayOutputStream,
+        val executableFile: File,
+        val compilerArgs: List<String>,
+        val duration: Duration,
+    )
 
     @OptIn(ExperimentalCompilerArgument::class)
     fun runCli(
@@ -174,54 +206,54 @@ class NativeCompilerSecondStageFacade private constructor(
     ): CliRunResult {
         val executableFile = getNativeArtifactsOutputDir(testServices, dirName).resolve(executableFileName)
 
-        val compilerXmlOutput = ByteArrayOutputStream()
+        val regularAndFriendDependencies = regularDependencies + friendDependencies
+        val friendModules = friendDependencies.joinToString(File.pathSeparator)
+        val compilerArgs: List<String> = listOfNotNull(
+            buildList {
+                addAll(listOf(K2NativeCompilerArguments::kotlinHome.cliArgument, nativeHome.absolutePath))
+                add(optimizationArgument.cliArgument)
+                add(K2NativeCompilerArguments::binaryOptions.cliArgument("${BinaryOptions.runtimeAssertionsMode}=${RuntimeAssertsMode.PANIC}"))
+                add(K2NativeCompilerArguments::verifyIr.cliArgument(verifyIrMode.name))
+                add(K2NativeCompilerArguments::llvmVariant.cliArgument("dev"))
+                addAll(listOf(K2NativeCompilerArguments::produce.cliArgument, "program"))
+                addAll(listOf(K2NativeCompilerArguments::outputName.cliArgument, executableFile.path))
+                add(K2NativeCompilerArguments::generateTestRunner.cliArgument)
+                add(K2NativeCompilerArguments::testDumpOutputPath
+                    .cliArgument(executableFile.resolveSibling("${executableFile.name}.dump").path))
+                addAll(mainLibraries.map { mainLibrary ->
+                    K2NativeCompilerArguments::includes.cliArgument(mainLibrary)
+                })
+                if (cacheMode.useStaticCacheForDistributionLibraries) {
+                    add(K2NativeCompilerArguments::autoCacheableFrom.cliArgument(nativeHome.resolve("klib").absolutePath))
+                    add(K2NativeCompilerArguments::binaryOptions.cliArgument("${BinaryOptions.enableReleaseBinaryCache}=true"))
+                }
+                if (enableAssertions) {
+                    add(K2NativeCompilerArguments::enableAssertions.cliArgument)
+                }
+                addAll(listOf(K2NativeCompilerArguments::target.cliArgument, kotlinNativeTargets.testTarget.name)) // consider getting it from compilerConfiguration
+                if (!(this@NativeCompilerSecondStageFacade.withPlatformLibs || withPlatformLibs)) {
+                    add(K2NativeCompilerArguments::nodefaultlibs.cliArgument)
+                }
+                addAll(customNativeCompilerSettings.provisionedXcodeArgs)
+            },
+            regularAndFriendDependencies.flatMap {
+                listOf(K2NativeCompilerArguments::libraries.cliArgument, it)
+            },
+            listOf(K2NativeCompilerArguments::friendModules.cliArgument, friendModules).takeIf { friendModules.isNotEmpty() },
+            freeArgs,
+            fileCheckStage?.let {
+                listOf(
+                    K2NativeCompilerArguments::saveLlvmIrAfter.cliArgument(it),
+                    K2NativeCompilerArguments::saveLlvmIrDirectory.cliArgument(executableFile.fileCheckDump(fileCheckStage).parent),
+                )
+            },
+        ).flatten()
 
-        val exitCode = PrintStream(compilerXmlOutput).use { printStream ->
-            val regularAndFriendDependencies = regularDependencies + friendDependencies
-            val friendModules = friendDependencies.joinToString(File.pathSeparator)
-            customNativeCompilerSettings.compiler.callCompiler(
-                output = printStream,
-                buildList {
-                    addAll(listOf(K2NativeCompilerArguments::kotlinHome.cliArgument, nativeHome.absolutePath))
-                    add(optimizationArgument.cliArgument)
-                    add(K2NativeCompilerArguments::binaryOptions.cliArgument("${BinaryOptions.runtimeAssertionsMode}=${RuntimeAssertsMode.PANIC}"))
-                    add(K2NativeCompilerArguments::verifyIr.cliArgument(verifyIrMode.name))
-                    add(K2NativeCompilerArguments::llvmVariant.cliArgument("dev"))
-                    addAll(listOf(K2NativeCompilerArguments::produce.cliArgument, "program"))
-                    addAll(listOf(K2NativeCompilerArguments::outputName.cliArgument, executableFile.path))
-                    add(K2NativeCompilerArguments::generateTestRunner.cliArgument)
-                    add(K2NativeCompilerArguments::testDumpOutputPath
-                        .cliArgument(executableFile.resolveSibling("${executableFile.name}.dump").path))
-                    addAll(mainLibraries.map { mainLibrary ->
-                        K2NativeCompilerArguments::includes.cliArgument(mainLibrary)
-                    })
-                    if (cacheMode.useStaticCacheForDistributionLibraries) {
-                        add(K2NativeCompilerArguments::autoCacheableFrom.cliArgument(nativeHome.resolve("klib").absolutePath))
-                        add(K2NativeCompilerArguments::binaryOptions.cliArgument("${BinaryOptions.enableReleaseBinaryCache}=true"))
-                    }
-                    if (enableAssertions) {
-                        add(K2NativeCompilerArguments::enableAssertions.cliArgument)
-                    }
-                    addAll(listOf(K2NativeCompilerArguments::target.cliArgument, kotlinNativeTargets.testTarget.name)) // consider getting it from compilerConfiguration
-                    if (!(this@NativeCompilerSecondStageFacade.withPlatformLibs || withPlatformLibs)) {
-                        add(K2NativeCompilerArguments::nodefaultlibs.cliArgument)
-                    }
-                    addAll(customNativeCompilerSettings.provisionedXcodeArgs)
-                },
-                regularAndFriendDependencies.flatMap {
-                    listOf(K2NativeCompilerArguments::libraries.cliArgument, it)
-                },
-                listOf(K2NativeCompilerArguments::friendModules.cliArgument, friendModules).takeIf { friendModules.isNotEmpty() },
-                freeArgs,
-                fileCheckStage?.let {
-                    listOf(
-                        K2NativeCompilerArguments::saveLlvmIrAfter.cliArgument(it),
-                        K2NativeCompilerArguments::saveLlvmIrDirectory.cliArgument(executableFile.fileCheckDump(fileCheckStage).parent),
-                    )
-                },
-            )
+        val compilerOutput = ByteArrayOutputStream()
+        val [exitCode, duration] = PrintStream(compilerOutput).use { printStream ->
+            measureTimedValue { customNativeCompilerSettings.compiler.callCompiler(printStream, compilerArgs) }
         }
-        return CliRunResult(exitCode, compilerXmlOutput, executableFile)
+        return CliRunResult(exitCode, compilerOutput, executableFile, compilerArgs, duration)
     }
 }
 
