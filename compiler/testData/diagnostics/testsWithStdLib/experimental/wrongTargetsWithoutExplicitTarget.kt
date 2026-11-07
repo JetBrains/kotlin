@@ -5,7 +5,7 @@
 annotation class SomeOptInMarker
 
 @RequiresOptIn
-@Target(AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.PROPERTY, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.LOCAL_VARIABLE)
+<!OPT_IN_MARKER_WITH_WRONG_TARGET!>@Target(AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.PROPERTY, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.LOCAL_VARIABLE)<!>
 annotation class OtherOptInMarker
 
 class IntWrapper(
