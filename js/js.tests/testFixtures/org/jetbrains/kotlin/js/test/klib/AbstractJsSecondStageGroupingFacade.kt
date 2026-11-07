@@ -153,6 +153,17 @@ abstract class AbstractJsSecondStageGroupingFacade(
             appendLine("    if (result != \"OK\") throw AssertionError(\"Test failed with: \$result. Expected <OK>, actual <\$result>.\")")
             appendLine("}")
             appendLine()
+            // The launcher is compiled against the runtime of the batch, which may be the reduced stdlib of the box tests
+            // (see `JsEnvironmentConfigurator.getRuntimePathsForModule`). It has neither `println` nor `String.replace`
+            // the driver calls, so the launcher declares them on top of `js()`, which every stdlib has: the declarations
+            // of its own package take precedence over the default imports of the full stdlib.
+            appendLine("private fun println(message: String) {")
+            appendLine("    js(\"console.log(message)\")")
+            appendLine("}")
+            appendLine()
+            appendLine("private fun String.replace(oldValue: String, newValue: String): String =")
+            appendLine("    asDynamic().split(oldValue).join(newValue)")
+            appendLine()
             append(GroupedTestsResultProtocol.generateResultCollectingRunnerSource(testCalls, ::jsGroupedTestsEntryPointSource))
         }
         val launcherFile = workingDir.resolve("GroupedBatchLauncher.kt")
