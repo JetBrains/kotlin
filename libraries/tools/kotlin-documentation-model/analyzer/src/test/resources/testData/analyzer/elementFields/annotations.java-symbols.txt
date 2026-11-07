@@ -1,0 +1,234 @@
+fragment main
+package <root> [package:////PointingToDeclaration/].annotations:
+[
+    {
+        "classLikeId": "java.lang/Deprecated///PointingToDeclaration/",
+        "arguments": {}
+    },
+    {
+        "classLikeId": "sample/PackageLabel///PointingToDeclaration/",
+        "arguments": {
+            "value": {
+                "kind": "const",
+                "expression": {
+                    "value": {
+                        "kind": "string",
+                        "value": "sample package"
+                    },
+                    "expression": null
+                }
+            }
+        }
+    }
+]
+package sample [sample////PointingToDeclaration/].annotations:
+[
+    {
+        "classLikeId": "java.lang/Deprecated///PointingToDeclaration/",
+        "arguments": {}
+    },
+    {
+        "classLikeId": "sample/PackageLabel///PointingToDeclaration/",
+        "arguments": {
+            "value": {
+                "kind": "const",
+                "expression": {
+                    "value": {
+                        "kind": "string",
+                        "value": "sample package"
+                    },
+                    "expression": null
+                }
+            }
+        }
+    }
+]
+class Annotated [sample/Annotated///PointingToDeclaration/].annotations:
+[
+    {
+        "classLikeId": "sample/Label///PointingToDeclaration/",
+        "arguments": {
+            "text": {
+                "kind": "const",
+                "expression": {
+                    "value": {
+                        "kind": "string",
+                        "value": "class"
+                    },
+                    "expression": null
+                }
+            }
+        }
+    }
+]
+constructor() [sample/Annotated/Annotated/#/PointingToDeclaration/].annotations:
+[
+    {
+        "classLikeId": "sample/Label///PointingToDeclaration/",
+        "arguments": {
+            "text": {
+                "kind": "const",
+                "expression": {
+                    "value": {
+                        "kind": "string",
+                        "value": "constructor"
+                    },
+                    "expression": null
+                }
+            }
+        }
+    }
+]
+fun annotated(): Unit [sample/Annotated/annotated/#/PointingToDeclaration/].annotations:
+[
+    {
+        "classLikeId": "sample/Label///PointingToDeclaration/",
+        "arguments": {
+            "text": {
+                "kind": "const",
+                "expression": {
+                    "value": {
+                        "kind": "string",
+                        "value": "function"
+                    },
+                    "expression": null
+                }
+            },
+            "number": {
+                "kind": "const",
+                "expression": {
+                    "value": {
+                        "kind": "int",
+                        "value": 7
+                    },
+                    "expression": null
+                }
+            }
+        }
+    }
+]
+fun getAccessors(): String [sample/Annotated/getAccessors/#/PointingToDeclaration/].annotations:
+[
+    {
+        "classLikeId": "sample/Label///PointingToDeclaration/",
+        "arguments": {
+            "text": {
+                "kind": "const",
+                "expression": {
+                    "value": {
+                        "kind": "string",
+                        "value": "getter"
+                    },
+                    "expression": null
+                }
+            }
+        }
+    }
+]
+val property: String [sample/Annotated/property/#/PointingToDeclaration/].annotations:
+[
+    {
+        "classLikeId": "sample/Label///PointingToDeclaration/",
+        "arguments": {
+            "text": {
+                "kind": "const",
+                "expression": {
+                    "value": {
+                        "kind": "string",
+                        "value": "property"
+                    },
+                    "expression": null
+                }
+            }
+        }
+    }
+]
+fun setAccessors(value: String): Unit [sample/Annotated/setAccessors/#kotlin.String/PointingToDeclaration/].annotations:
+[
+    {
+        "classLikeId": "sample/Label///PointingToDeclaration/",
+        "arguments": {
+            "text": {
+                "kind": "const",
+                "expression": {
+                    "value": {
+                        "kind": "string",
+                        "value": "setter"
+                    },
+                    "expression": null
+                }
+            }
+        }
+    }
+]
+typealias AnnotatedAlias = String [sample/AnnotatedAlias///PointingToDeclaration/].annotations:
+[
+    {
+        "classLikeId": "sample/Label///PointingToDeclaration/",
+        "arguments": {
+            "text": {
+                "kind": "const",
+                "expression": {
+                    "value": {
+                        "kind": "string",
+                        "value": "alias"
+                    },
+                    "expression": null
+                }
+            }
+        }
+    }
+]
+class AnnotatedJava [sample/AnnotatedJava///PointingToDeclaration/].annotations:
+[
+    {
+        "classLikeId": "java.lang/Deprecated///PointingToDeclaration/",
+        "arguments": {}
+    }
+]
+constructor() [sample/AnnotatedJava/AnnotatedJava/#/PointingToDeclaration/].annotations:
+[
+    {
+        "classLikeId": "java.lang/Deprecated///PointingToDeclaration/",
+        "arguments": {}
+    }
+]
+fun annotated(): Unit [sample/AnnotatedJava/annotated/#/PointingToDeclaration/].annotations:
+[
+    {
+        "classLikeId": "java.lang/Deprecated///PointingToDeclaration/",
+        "arguments": {}
+    }
+]
+annotation class PackageLabel [sample/PackageLabel///PointingToDeclaration/].annotations:
+[
+    {
+        "classLikeId": "java.lang.annotation/Documented///PointingToDeclaration/",
+        "arguments": {}
+    },
+    {
+        "classLikeId": "java.lang.annotation/Target///PointingToDeclaration/",
+        "arguments": {
+            "value": {
+                "kind": "enumEntry",
+                "enumEntryId": "java.lang.annotation/ElementType///PointingToDeclaration/"
+            }
+        }
+    }
+]
+constructor(value: String) [sample/PackageLabel/PackageLabel/#kotlin.String/PointingToDeclaration/].annotations:
+[
+    {
+        "classLikeId": "java.lang.annotation/Documented///PointingToDeclaration/",
+        "arguments": {}
+    },
+    {
+        "classLikeId": "java.lang.annotation/Target///PointingToDeclaration/",
+        "arguments": {
+            "value": {
+                "kind": "enumEntry",
+                "enumEntryId": "java.lang.annotation/ElementType///PointingToDeclaration/"
+            }
+        }
+    }
+]

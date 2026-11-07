@@ -32,7 +32,13 @@ sealed class KdTypeProjection {
 @Serializable
 enum class KdTypeVariance { IN, OUT }
 
-/** A single qualifier of a (possibly nested) class-like type, e.g. `A<X>` in `A<X>.B<Y>`. */
+/**
+ * A class-like name and its type arguments within a [KdClassLikeType].
+ *
+ * Each qualifier represents one class-like declaration, excluding its package and enclosing class names.
+ * For example, `Outer<String>.Inner<Int>` can be represented by two qualifiers: `Outer` with the type argument
+ * `String`, and `Inner` with the type argument `Int`.
+ */
 @Serializable
 data class KdClassTypeQualifier(
     val name: String,
@@ -60,7 +66,7 @@ data class KdClassLikeType(
 @SerialName("functional")
 data class KdFunctionalType(
     val returnType: KdTypeProjection,
-    val receiverType: KdTypeProjection,
+    val receiverType: KdTypeProjection?,
     val valueParameterTypes: List<KdTypeProjection>,
     val contextParameterTypes: List<KdTypeProjection>,
     val isSuspend: Boolean,

@@ -1,0 +1,61 @@
+fragment main
+typealias OldAlias = String [sample/OldAlias///PointingToDeclaration/].deprecated:
+{
+    "since": null,
+    "level": "WARNING",
+    "replaceWith": null
+}
+class OldClass [sample/OldClass///PointingToDeclaration/].deprecated:
+{
+    "since": null,
+    "level": "ERROR",
+    "replaceWith": {
+        "imports": [],
+        "expression": {
+            "text": "NewClass",
+            "links": []
+        }
+    }
+}
+constructor() [sample/OldClass/OldClass/#/PointingToDeclaration/].deprecated:
+{
+    "since": null,
+    "level": "WARNING",
+    "replaceWith": null
+}
+fun getAccessors(): String [sample/OldClass/getAccessors/#/PointingToDeclaration/].deprecated:
+{
+    "since": null,
+    "level": "WARNING",
+    "replaceWith": null
+}
+fun oldFunction(): Unit [sample/OldClass/oldFunction/#/PointingToDeclaration/].deprecated:
+{
+    "since": null,
+    "level": "WARNING",
+    "replaceWith": null
+}
+val oldProperty: String [sample/OldClass/oldProperty/#/PointingToDeclaration/].deprecated:
+{
+    "since": null,
+    "level": "WARNING",
+    "replaceWith": null
+}
+fun setAccessors(value: String): Unit [sample/OldClass/setAccessors/#kotlin.String/PointingToDeclaration/].deprecated:
+{
+    "since": null,
+    "level": "WARNING",
+    "replaceWith": null
+}
+class OldJava [sample/OldJava///PointingToDeclaration/].deprecated:
+{
+    "since": null,
+    "level": "WARNING",
+    "replaceWith": null
+}
+fun oldMethod(): Unit [sample/OldJava/oldMethod/#/PointingToDeclaration/].deprecated:
+{
+    "since": null,
+    "level": "WARNING",
+    "replaceWith": null
+}

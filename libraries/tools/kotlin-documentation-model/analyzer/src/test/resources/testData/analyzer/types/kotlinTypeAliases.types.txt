@@ -1,0 +1,41 @@
+bundle.fragments[0].elements[KdElementId(value=example//alias/#/PointingToDeclaration/)].type:
+KdClassLikeType {
+  annotations = []
+  classLikeId = "example/Names///PointingToDeclaration/"
+  isEnhancedNullability = false
+  isMarkedNullable = false
+  qualifiers = [
+    KdClassTypeQualifier {
+      name = "Names"
+      typeArguments = []
+    }
+  ]
+}
+bundle.fragments[0].elements[KdElementId(value=example/Names///PointingToDeclaration/)].underlyingType:
+KdClassLikeType {
+  annotations = []
+  classLikeId = "kotlin.collections/List///PointingToDeclaration/"
+  isEnhancedNullability = false
+  isMarkedNullable = false
+  qualifiers = [
+    KdClassTypeQualifier {
+      name = "List"
+      typeArguments = [
+        Invariant {
+          type = KdClassLikeType {
+            annotations = []
+            classLikeId = "kotlin/String///PointingToDeclaration/"
+            isEnhancedNullability = false
+            isMarkedNullable = true
+            qualifiers = [
+              KdClassTypeQualifier {
+                name = "String"
+                typeArguments = []
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

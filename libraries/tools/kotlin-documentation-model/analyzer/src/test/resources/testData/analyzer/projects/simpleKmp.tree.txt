@@ -1,0 +1,41 @@
+KdBundle
+├── fragments
+│   ├── KdFragment commonMain
+│   │   └── elements
+│   │       ├── KdModule simpleKmp [////PointingToDeclaration/]
+│   │       │   └── packages: pkg////PointingToDeclaration/
+│   │       ├── KdPackage pkg [pkg////PointingToDeclaration/]
+│   │       │   └── declarations: pkg//platformName/#/PointingToDeclaration/, pkg//platformVersion/#/PointingToDeclaration/, pkg/Platform///PointingToDeclaration/, pkg/Shared///PointingToDeclaration/
+│   │       ├── KdFunction platformName(): String [pkg//platformName/#/PointingToDeclaration/]
+│   │       ├── KdProperty platformVersion: Int [pkg//platformVersion/#/PointingToDeclaration/]
+│   │       ├── KdClass Platform (CLASS) [pkg/Platform///PointingToDeclaration/]
+│   │       ├── KdClass Shared (CLASS) [pkg/Shared///PointingToDeclaration/]
+│   │       │   └── declarations: pkg/Shared/Shared/#kotlin.Int/PointingToDeclaration/, pkg/Shared/id/#/PointingToDeclaration/
+│   │       ├── KdConstructor(id: Int) [pkg/Shared/Shared/#kotlin.Int/PointingToDeclaration/]
+│   │       └── KdProperty id: Int [pkg/Shared/id/#/PointingToDeclaration/]
+│   └── KdFragment jvmMain
+│       └── elements
+│           ├── KdModule simpleKmp [////PointingToDeclaration/]
+│           │   └── packages: pkg////PointingToDeclaration/
+│           ├── KdPackage pkg [pkg////PointingToDeclaration/]
+│           │   └── declarations: pkg//jvmOnly/#/PointingToDeclaration/, pkg//platformName/#/PointingToDeclaration/, pkg//platformVersion/#/PointingToDeclaration/, pkg/Platform///PointingToDeclaration/, pkg/Shared///PointingToDeclaration/
+│           ├── KdFunction jvmOnly(): Int [pkg//jvmOnly/#/PointingToDeclaration/]
+│           ├── KdFunction platformName(): String [pkg//platformName/#/PointingToDeclaration/]
+│           ├── KdProperty platformVersion: Int [pkg//platformVersion/#/PointingToDeclaration/]
+│           ├── KdClass Platform (CLASS) [pkg/Platform///PointingToDeclaration/]
+│           │   └── declarations: pkg/Platform/Platform/#/PointingToDeclaration/
+│           ├── KdConstructor() [pkg/Platform/Platform/#/PointingToDeclaration/]
+│           ├── KdClass Shared (CLASS) [pkg/Shared///PointingToDeclaration/]
+│           │   └── declarations: pkg/Shared/Shared/#kotlin.Int/PointingToDeclaration/, pkg/Shared/id/#/PointingToDeclaration/
+│           ├── KdConstructor(id: Int) [pkg/Shared/Shared/#kotlin.Int/PointingToDeclaration/]
+│           └── KdProperty id: Int [pkg/Shared/id/#/PointingToDeclaration/]
+└── expectActualMappings
+    ├── KdExpectActualMapping
+    │   ├── expectIds: commonMain=pkg//platformName/#/PointingToDeclaration/
+    │   └── actualIds: jvmMain=pkg//platformName/#/PointingToDeclaration/
+    ├── KdExpectActualMapping
+    │   ├── expectIds: commonMain=pkg//platformVersion/#/PointingToDeclaration/
+    │   └── actualIds: jvmMain=pkg//platformVersion/#/PointingToDeclaration/
+    └── KdExpectActualMapping
+        ├── expectIds: commonMain=pkg/Platform///PointingToDeclaration/
+        └── actualIds: jvmMain=pkg/Platform///PointingToDeclaration/

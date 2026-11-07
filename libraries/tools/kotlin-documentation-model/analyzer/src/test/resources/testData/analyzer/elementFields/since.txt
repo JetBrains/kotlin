@@ -1,0 +1,17 @@
+fragment main
+class Introduced [sample/Introduced///PointingToDeclaration/].since:
+"release-one"
+fun getIntroducedProperty(): String [sample/Introduced/getIntroducedProperty/#/PointingToDeclaration/].since:
+"release-three"
+fun introducedFunction(): Unit [sample/Introduced/introducedFunction/#/PointingToDeclaration/].since:
+"1.3"
+val introducedProperty: String [sample/Introduced/introducedProperty/#/PointingToDeclaration/].since:
+"release-three"
+typealias IntroducedAlias = String [sample/IntroducedAlias///PointingToDeclaration/].since:
+"release-four"
+class IntroducedJava [sample/IntroducedJava///PointingToDeclaration/].since:
+"java-one"
+constructor() [sample/IntroducedJava/IntroducedJava/#/PointingToDeclaration/].since:
+"java-two"
+fun introducedMethod(): Unit [sample/IntroducedJava/introducedMethod/#/PointingToDeclaration/].since:
+"java-three"

@@ -44,4 +44,4 @@ data class KdClass(
 
 /** The specific kind of a [KdClass]. */
 @Serializable
-enum class KdClassKind { CLASS, INTERFACE, OBJECT, ENUM_CLASS, ANNOTATION_CLASS, RECORD }
+enum class KdClassKind { CLASS, INTERFACE, OBJECT, ENUM_CLASS, ANNOTATION_CLASS }

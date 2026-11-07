@@ -1,0 +1,13 @@
+bundle.fragments[0].elements[KdElementId(value=example/JavaTypes/annotated/#/PointingToDeclaration/)].type:
+KdClassLikeType {
+  annotations = []
+  classLikeId = "java.lang/String///PointingToDeclaration/"
+  isEnhancedNullability = false
+  isMarkedNullable = false
+  qualifiers = [
+    KdClassTypeQualifier {
+      name = "String"
+      typeArguments = []
+    }
+  ]
+}

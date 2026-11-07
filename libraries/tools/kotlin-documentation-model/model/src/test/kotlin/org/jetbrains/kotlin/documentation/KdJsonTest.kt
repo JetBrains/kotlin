@@ -95,6 +95,7 @@ class KdJsonTest {
             isSuspend = false,
             isMutable = false,
             isFromPrimaryConstructor = false,
+            isLateinit = false,
             constExpression = KdConstExpression(KdConstValue.Int(1), KdExpression("1", emptyList())),
             getter = null,
             setter = null,
@@ -107,6 +108,8 @@ class KdJsonTest {
             visibility = KdVisibility.PUBLIC,
             modality = KdModality.FINAL,
             throws = emptyList(),
+            since = null,
+            deprecated = null,
             annotations = emptyList(),
         )
 

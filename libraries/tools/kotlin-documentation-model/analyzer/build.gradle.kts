@@ -10,6 +10,7 @@ plugins {
     kotlin("jvm")
     `java-test-fixtures`
     id("test-inputs-check")
+    id("test-data-manager")
 }
 
 kotlin {
@@ -20,6 +21,10 @@ kotlin {
             "org.jetbrains.dokka.InternalDokkaApi",
         )
     }
+}
+
+sourceSets.test {
+    java.srcDir("src/tests-gen")
 }
 
 // This module was written against a stable Kotlin release and relies on plain component1()/component2()
@@ -46,6 +51,8 @@ tasks.withType<KotlinCompilationTask<*>>().configureEach {
 val intellijVersion = kotlinBuildProperties.versionsProperty("intellijSdk").get()
 
 dependencies {
+    api(project(":tools:kotlin-documentation-model:model"))
+
     implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.jackson.module.kotlin)
@@ -75,7 +82,12 @@ dependencies {
     implementation(project(":wasm:wasm.config"))
 
     testFixturesImplementation(kotlinStdlib())
-    testImplementation(kotlinTest("junit5"))
+    testFixturesApi(kotlinTest("junit5"))
+    testFixturesImplementation(testFixtures(project(":generators:test-generator")))
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
+    testFixturesImplementation(testFixtures(project(":compiler:test-infrastructure")))
+    testFixturesApi(testFixtures(project(":analysis:test-data-manager")))
+    testImplementation(intellijCore())
     testImplementation(libs.junit.jupiter.params)
 }
 
@@ -86,11 +98,21 @@ tasks.withType<Test>().configureEach {
 }
 //endregion
 
+// Dokka chooses Java analysis globally, so run managed test data separately for each mode.
+tasks.withType<AbstractTestDataModuleTask>().configureEach {
+    systemProperty(
+        "org.jetbrains.dokka.analysis.enableExperimentalSymbolsJavaAnalysis",
+        providers.gradleProperty("kdm.test.javaSymbols").getOrElse("false"),
+    )
+}
+
 
 projectTests {
     // Test code reads these resources directly by file path (not via the classpath), so they must be
     // declared explicitly or `test-inputs-check` flags them as undeclared inputs.
     testData(project.isolated, "src/test/resources")
+
+    testGenerator("org.jetbrains.kotlin.documentation.analyzer.GenerateDocumentationAnalyzerTestsKt")
 
     testing {
         suites {
@@ -143,8 +165,10 @@ projectTests {
                             skipInLocalBuild = false,
                         ) {
                             onlyIf { false }
-                            dependsOn(testSymbolsTarget.map { it.testTask })
-                            dependsOn(testJavaSymbolsTarget.map { it.testTask })
+                            if (name == "test") {
+                                dependsOn(testSymbolsTarget.map { it.testTask })
+                                dependsOn(testJavaSymbolsTarget.map { it.testTask })
+                            }
                         }
                     }
                 }

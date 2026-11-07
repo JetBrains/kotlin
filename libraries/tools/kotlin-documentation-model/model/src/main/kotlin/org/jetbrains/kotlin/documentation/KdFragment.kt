@@ -16,7 +16,8 @@ typealias KdFragmentName = String
 
 /**
  * A per-source-set view of all declarations accessible in that source set. For example, all
- * declarations from `commonMain` are also present in the `jvmMain` fragment.
+ * declarations from `commonMain` are also accessible in the `jvmMain` fragment, possibly through
+ * a [KdRefinedElement] referencing their container.
  *
  * [KdElementId] is unique within a single fragment, but the same declaration may have a
  * different ID in a different fragment, see [KdExpectActualMapping].
@@ -38,6 +39,8 @@ data class KdFragment(
  * A de-duplicated [KdElement]: a declaration identical to the one with the same ID present in
  * [fragmentName], so the full declaration doesn't need to be repeated for every fragment it's
  * accessible from.
+ * If the element is a container, its members can be resolved in [fragmentName] without individual
+ * refinement entries in the current fragment. Members with fragment-specific changes remain in the current fragment.
  */
 @Serializable
 @SerialName("refinedElement")
