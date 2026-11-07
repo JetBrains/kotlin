@@ -103,6 +103,21 @@ The same mechanisms have more shapes than the five tests pin down: the devirtual
 
 No over-invalidation problems appeared: `NOOP_REBUILD` and `UNSTABLE_FINGERPRINT` never showed up in any run. One latent wart is worth a look: an unbatched link writes `bin/bitcode_deps` in a different order than a batched clean link. The dependencies are the same set, but the order difference makes latent cache comparisons noisy.
 
+## The third campaign
+
+On 2026-11-07 the workflow ran with three rounds of eight targets on the same dist (56 agents, about 5.9M tokens, about 3.5 hours). The 24 targets produced 10 confirmed findings, which group into 5 root causes: three new bugs, one independent reproducer of a known open bug, and one reconfirmation of a known open bug. The corpus now has four more failing tests:
+
+| Test | What IC misses |
+|---|---|
+| `inline/privateClassDefaultCtorStubLinkage` | Not a staleness bug: the per-file cache emits the synthetic `$default` constructor stub of a private class with internal LLVM linkage when the class is reachable from an inlined function, so a friend module's from-scratch IC link fails with an undefined symbol. An uncovered window of the open KT-54330. |
+| `classKind/underlyingTypeChangeTypeOnlyUse` | A value class changes its underlying type (Int -> Long). A file that uses it only as a type is never rebuilt, and the stale Int-ABI object layout links under identical mangled names: a silent miscompile. |
+| `dependencies/issueOutlivesFixViaDefaultArgumentBridge` | An independent reproducer of `dependencies/partialLinkageIssueOutlivesFix` through a default-argument bridge: the poisoned per-file cache is written even when the step's link fails. |
+| `ungrouped/fullRebuildSkipsRemovedFileBookkeeping` | A full cache rebuild skips removed-file bookkeeping, so a renamed-away file's cache directory survives. The leftover directory also corrupts the staleness check, which reads the metadata of an arbitrary directory (`firstOrNull()`); those output-level manifestations depend on the build layout, so the test pins the deterministic bookkeeping half. |
+
+The campaign also produced a 5-line reduction of the known `dependencies/renamedFileWhileDependentOutOfLink` crash, and the first perf findings of the three campaigns: seven `NOOP_REBUILD` / `UNSTABLE_FINGERPRINT` notes, all from the leftover-directory family — the arbitrary-dir staleness sampling keeps rebuilding caches that a correct IC would consider up to date. Fixing the bookkeeping and the sampling should remove them too.
+
+One gap in the harness oracle showed up: its clean reference link also enables incremental compilation (with a fresh cache), so a from-scratch IC-only defect — the private-class stub linkage above — fails both of its links and is reported as `INVALID`. The campaign compensated with manual no-IC comparisons. A third, truly non-IC link per step would turn this family into ordinary `BUG` verdicts.
+
 ## What is not done yet (good next steps)
 
 1. **Add a clean-rebuild comparison to `AbstractNativeIncrementalCompilationTest`, like the JVM IC tests have.** Then every corpus case checks more than its hand-written expectations.
