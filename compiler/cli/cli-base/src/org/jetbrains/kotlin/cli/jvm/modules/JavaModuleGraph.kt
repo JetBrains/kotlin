@@ -63,6 +63,42 @@ class JavaModuleGraph(finder: JavaModuleFinder) {
         return visited
     }
 
+    /**
+     * `true` if [moduleName] reads [dependencyName] through one of the reads given with `-Xadd-reads` in [access]. As in javac, a module
+     * made to read `ALL-UNNAMED` reads every module, as the unnamed module does. The [modulesFromClasspath] are read from classpath roots,
+     * which javac puts in the unnamed module.
+     */
+    fun readsAdditionally(
+        access: JavaModuleAccess,
+        moduleName: String,
+        dependencyName: String,
+        modulesFromClasspath: Set<String> = access.modulesFromClasspath,
+    ): Boolean = access.additionalReads[moduleName].orEmpty().any {
+        it == dependencyName || it == ALL_UNNAMED || requiresTransitively(it, dependencyName, modulesFromClasspath)
+    }
+
+    /**
+     * `true` if a module reading [moduleName] also reads [dependencyName] through a chain of `requires transitive` clauses.
+     */
+    private fun requiresTransitively(moduleName: String, dependencyName: String, modulesFromClasspath: Set<String>): Boolean {
+        val visited = hashSetOf<String>()
+
+        fun dfs(name: String): Boolean {
+            if (!visited.add(name)) return false
+            val module = module(name) ?: return false
+            return when (module) {
+                // As in javac, an automatic module requires all other automatic modules transitively.
+                is JavaModule.Automatic -> module(dependencyName) is JavaModule.Automatic && dependencyName !in modulesFromClasspath
+                is JavaModule.Explicit -> module.moduleInfo.requires.any { (val dependencyModuleName = moduleName, val isTransitive) ->
+                    isTransitive && (dependencyModuleName == dependencyName || dfs(dependencyModuleName))
+                }
+                else -> false
+            }
+        }
+
+        return dfs(moduleName)
+    }
+
     fun reads(moduleName: String, dependencyName: String): Boolean {
         if (moduleName == dependencyName || dependencyName == "java.base") return true
 

@@ -30,13 +30,14 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModule
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 
-
 class CliJavaModuleResolver(
     private val moduleGraph: JavaModuleGraph,
     private val userModules: List<JavaModule>,
     private val systemModules: List<JavaModule.Explicit>,
-    private val project: Project
+    private val project: Project,
+    private val access: JavaModuleAccess = JavaModuleAccess.EMPTY,
 ) : JavaModuleResolver {
+
     init {
         assert(userModules.count(JavaModule::isSourceModule) <= 1) {
             "Modules computed by ClasspathRootsResolver cannot have more than one source module: $userModules"
@@ -53,6 +54,11 @@ class CliJavaModuleResolver(
 
     private val sourceModule: JavaModule? = userModules.firstOrNull(JavaModule::isSourceModule)
 
+    // JDK modules with roots given with -Xpatch-module, which are the roots outside the runtime image and ct.sym.
+    private val patchedSystemModules: List<JavaModule> = systemModules.filter { module ->
+        module.moduleRoots.any { root -> !root.isBinarySignature && root.file.fileSystem.protocol != StandardFileSystems.JRT_PROTOCOL }
+    }
+
     private fun findJavaModule(file: VirtualFile): JavaModule? {
         if (file.fileSystem.protocol == StandardFileSystems.JRT_PROTOCOL || file.extension == "sig") {
             return systemModules.firstOrNull { module -> file in module }
@@ -60,7 +66,8 @@ class CliJavaModuleResolver(
 
         return when (file.fileType) {
             KotlinFileType.INSTANCE, JavaFileType.INSTANCE -> sourceModule
-            JavaClassFileType.INSTANCE -> userModules.firstOrNull { module -> file in module }
+            JavaClassFileType.INSTANCE ->
+                userModules.firstOrNull { module -> file in module } ?: patchedSystemModules.firstOrNull { module -> file in module }
             else -> null
         }
     }
@@ -77,15 +84,31 @@ class CliJavaModuleResolver(
         if (ourModule?.name == theirModule?.name) return null
 
         if (theirModule == null) {
+            // An automatic module reads the unnamed module, which matters for an automatic module patched with sources.
+            if (ourModule is JavaModule.Automatic) return null
+            if (ourModule != null && moduleGraph.readsAdditionally(access, ourModule.name, ALL_UNNAMED)) return null
             return JavaModuleResolver.AccessError.ModuleDoesNotReadUnnamedModule
         }
 
-        if (ourModule != null && !moduleGraph.reads(ourModule.name, theirModule.name)) {
+        // For javac, a module read from the classpath is in the unnamed module, which exports all its packages.
+        if (ourModule != null && theirModule.name in access.modulesFromClasspath &&
+            moduleGraph.readsAdditionally(access, ourModule.name, ALL_UNNAMED)
+        ) {
+            return null
+        }
+
+        if (ourModule != null && !moduleGraph.reads(ourModule.name, theirModule.name) &&
+            !moduleGraph.readsAdditionally(access, ourModule.name, theirModule.name)
+        ) {
             return JavaModuleResolver.AccessError.ModuleDoesNotReadModule(theirModule.name)
         }
 
         val fqName = referencedPackage ?: return null
-        if (!theirModule.exports(fqName) && (ourModule == null || !theirModule.exportsTo(fqName, ourModule.name))) {
+        // Without a file from our module, it's unknown whether our module is named, so ALL-UNNAMED is not applied.
+        val ourModuleName = ourModule?.name ?: ALL_UNNAMED.takeIf { fileFromOurModule != null }
+        if (!theirModule.exports(fqName) && (ourModule == null || !theirModule.exportsTo(fqName, ourModule.name)) &&
+            (ourModuleName == null || ourModuleName !in access.additionalExports["${theirModule.name}/${fqName.asString()}"].orEmpty())
+        ) {
             return JavaModuleResolver.AccessError.ModuleDoesNotExportPackage(theirModule.name)
         }
 
