@@ -12119,6 +12119,7 @@ final object kotlin.native.runtime/Debugging { // kotlin.native.runtime/Debuggin
 
     final fun dumpMemory(kotlin/Long): kotlin/Boolean // kotlin.native.runtime/Debugging.dumpMemory|dumpMemory(kotlin.Long){}[0]
     final fun dumpMemory(kotlin/Long, kotlin.native.runtime/MemoryDumpOptions = ...): kotlin/Boolean // kotlin.native.runtime/Debugging.dumpMemory|dumpMemory(kotlin.Long;kotlin.native.runtime.MemoryDumpOptions){}[0]
+    final fun dumpMemoryAsync(kotlin/Long, kotlin.native.runtime/MemoryDumpOptions = ...): kotlin/Boolean // kotlin.native.runtime/Debugging.dumpMemoryAsync|dumpMemoryAsync(kotlin.Long;kotlin.native.runtime.MemoryDumpOptions){}[0]
 }
 
 // Targets: [native]
