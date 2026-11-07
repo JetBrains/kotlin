@@ -10,7 +10,7 @@ FILE fqName:lib fileName:/lib.kt lineStartOffsets: [0, 15, 31, 43, 44, 54, 68, 6
         VALUE_PARAMETER[58, 63] kind:DispatchReceiver name:<this> index:0 type:lib.A
         correspondingProperty: PROPERTY[58, 67] name:x visibility:public modality:FINAL [val]
         BLOCK_BODY[58, 63]
-          RETURN[58, 63] type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in lib.A'
+          RETURN[58, 63] type=kotlin.Nothing from='lib/A.x.<get-x>|<get-x>(){}kotlin.Int[0]'
             GET_FIELD[58, 63] 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR[58, 63] '<this>: lib.A declared in lib.A.<get-x>' type=lib.A origin=null
     CLASS[73, 128] CLASS name:B modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]
@@ -18,72 +18,72 @@ FILE fqName:lib fileName:/lib.kt lineStartOffsets: [0, 15, 31, 43, 44, 54, 68, 6
       CONSTRUCTOR[73, 128] visibility:public returnType:lib.A.B [primary]
         VALUE_PARAMETER[73, 128] kind:DispatchReceiver name:<this> index:0 type:lib.A
         BLOCK_BODY[73, 128]
-          DELEGATING_CONSTRUCTOR_CALL[73, 128] 'public constructor <init> () declared in kotlin.Any'
-          INSTANCE_INITIALIZER_CALL[73, 128] classDescriptor='CLASS CLASS name:B modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]' type=kotlin.Unit
+          DELEGATING_CONSTRUCTOR_CALL[73, 128] 'kotlin/Any.<init>|<init>(){}[0]'
+          INSTANCE_INITIALIZER_CALL[73, 128] classDescriptor='lib/A.B|null[0]' type=kotlin.Unit
       FUN[-2, -2] FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
         VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
         VALUE_PARAMETER[-2, -2] kind:Regular name:other index:1 type:kotlin.Any?
         overridden:
-          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+          kotlin/Any.equals|equals(kotlin.Any?){}kotlin.Boolean[0]
       FUN[-2, -2] FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
         VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
         overridden:
-          public open fun hashCode (): kotlin.Int declared in kotlin.Any
+          kotlin/Any.hashCode|hashCode(){}kotlin.Int[0]
       FUN[-2, -2] FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
         VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
         overridden:
-          public open fun toString (): kotlin.String declared in kotlin.Any
+          kotlin/Any.toString|toString(){}kotlin.String[0]
       FUN[73, 73] SYNTHETIC_ACCESSOR name:<outer-this-0> visibility:private modality:FINAL returnType:lib.A
         VALUE_PARAMETER[73, 128] SYNTHETIC_ACCESSOR kind:DispatchReceiver name:<this> index:0 type:lib.A.B
         BLOCK_BODY[73, 73]
-          RETURN[73, 73] type=kotlin.Nothing from='private final fun <outer-this-0> (): lib.A declared in lib.A.B'
+          RETURN[73, 73] type=kotlin.Nothing from='lib/A.B.<outer-this-0>|<outer-this-0>(){}lib.A[0]'
             GET_VAR[121, 122] '<this>: lib.A declared in lib.A' type=lib.A origin=IMPLICIT_ARGUMENT
       FUN[73, 73] SYNTHETIC_ACCESSOR name:access$<outer-this-0> visibility:public modality:FINAL returnType:lib.A [companion]
         VALUE_PARAMETER[73, 128] SYNTHETIC_ACCESSOR kind:Regular name:$this index:0 type:lib.A.B
         BLOCK_BODY[73, 73]
-          RETURN[73, 73] type=kotlin.Nothing from='public final fun access$<outer-this-0> ($this: lib.A.B): lib.A declared in lib.A.B'
-            CALL[73, 73] 'private final fun <outer-this-0> (): lib.A declared in lib.A.B' type=lib.A origin=null
+          RETURN[73, 73] type=kotlin.Nothing from='lib/A.B.access$<outer-this-0>|access$<outer-this-0>#static(lib.A.B){}lib.A[0]'
+            CALL[73, 73] 'lib/A.B.<outer-this-0>|<outer-this-0>(){}lib.A[0]' type=lib.A origin=null
               ARG <this>: GET_VAR[-1, -1] '$this: lib.A.B declared in lib.A.B.access$<outer-this-0>' type=lib.A.B origin=null
       FUN[104, 122] name:foo visibility:public modality:FINAL returnType:kotlin.Int [inline]
         VALUE_PARAMETER[104, 122] kind:DispatchReceiver name:<this> index:0 type:lib.A.B
         BLOCK_BODY[121, 122]
-          RETURN[122, 122] type=kotlin.Nothing from='public final fun foo (): kotlin.Int declared in lib.A.B'
-            CALL[121, 122] 'public final fun <get-x> (): kotlin.Int declared in lib.A' type=kotlin.Int origin=GET_PROPERTY
-              ARG <this>: CALL[121, 122] 'public final fun access$<outer-this-0> ($this: lib.A.B): lib.A declared in lib.A.B' type=lib.A origin=null
+          RETURN[122, 122] type=kotlin.Nothing from='lib/A.B.foo|foo(){}kotlin.Int[0]'
+            CALL[121, 122] 'lib/A.x.<get-x>|<get-x>(){}kotlin.Int[0]' type=kotlin.Int origin=GET_PROPERTY
+              ARG <this>: CALL[121, 122] 'lib/A.B.access$<outer-this-0>|access$<outer-this-0>#static(lib.A.B){}lib.A[0]' type=lib.A origin=null
                 ARG $this: GET_VAR[121, 122] '<this>: lib.A.B declared in lib.A.B.foo' type=lib.A.B origin=null
     CONSTRUCTOR[44, 130] visibility:public returnType:lib.A [primary]
       BLOCK_BODY[44, 130]
-        DELEGATING_CONSTRUCTOR_CALL[44, 130] 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL[44, 130] classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+        DELEGATING_CONSTRUCTOR_CALL[44, 130] 'kotlin/Any.<init>|<init>(){}[0]'
+        INSTANCE_INITIALIZER_CALL[44, 130] classDescriptor='lib/A|null[0]' type=kotlin.Unit
     FUN[-2, -2] FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
       VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       VALUE_PARAMETER[-2, -2] kind:Regular name:other index:1 type:kotlin.Any?
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+        kotlin/Any.equals|equals(kotlin.Any?){}kotlin.Boolean[0]
     FUN[-2, -2] FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
       VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+        kotlin/Any.hashCode|hashCode(){}kotlin.Int[0]
     FUN[-2, -2] FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
       VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
+        kotlin/Any.toString|toString(){}kotlin.String[0]
 Module: main
 FILE fqName:test fileName:/main.kt lineStartOffsets: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 33, 50, 63, 64, 77, 78, 110]
   FUN[78, 109] name:test visibility:public modality:FINAL returnType:kotlin.Int
     BLOCK_BODY[96, 109]
-      RETURN[109, 109] type=kotlin.Nothing from='public final fun test (): kotlin.Int declared in test'
+      RETURN[109, 109] type=kotlin.Nothing from='test/test|test(){}kotlin.Int[0]'
         BLOCK[104, 109] type=kotlin.Int origin=INLINE_ARGS_CONTAINER
           VAR[-1, -1] IR_TEMPORARY_VARIABLE name:tmp_0 type:lib.A.B [val]
-            CONSTRUCTOR_CALL[100, 103] 'public constructor <init> () declared in lib.A.B' type=lib.A.B origin=null
-              ARG <this>: CONSTRUCTOR_CALL[96, 99] 'public constructor <init> () declared in lib.A' type=lib.A origin=null
+            CONSTRUCTOR_CALL[100, 103] 'lib/A.B.<init>|<init>(){}[0]' type=lib.A.B origin=null
+              ARG <this>: CONSTRUCTOR_CALL[96, 99] 'lib/A.<init>|<init>(){}[0]' type=lib.A origin=null
           RETURNABLE_BLOCK[104, 109] type=kotlin.Int origin=null
             INLINED_BLOCK[104, 109]->[104, 122] type=kotlin.Int origin=null
-              inlinedFunctionSymbol: public final fun foo (): kotlin.Int declared in lib.A.B
+              inlinedFunctionSymbol: lib/A.B.foo|foo(){}kotlin.Int[0]
               inlinedFunctionFileEntry: FILE_ENTRY path:/lib.kt
               VAR[-1, -1] IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:this type:lib.A.B [val]
                 GET_VAR[-1, -1] 'val tmp_0: lib.A.B declared in test.test' type=lib.A.B origin=null
               RETURN[122, 122] type=kotlin.Nothing from='{IrReturnableBlockImpl}'
-                CALL[121, 122] 'public final fun <get-x> (): kotlin.Int declared in lib.A' type=kotlin.Int origin=GET_PROPERTY
-                  ARG <this>: CALL[121, 122] 'public final fun access$<outer-this-0> ($this: lib.A.B): lib.A declared in lib.A.B' type=lib.A origin=null
+                CALL[121, 122] 'lib/A.x.<get-x>|<get-x>(){}kotlin.Int[0]' type=kotlin.Int origin=GET_PROPERTY
+                  ARG <this>: CALL[121, 122] 'lib/A.B.access$<outer-this-0>|access$<outer-this-0>#static(lib.A.B){}lib.A[0]' type=lib.A origin=null
                     ARG $this: GET_VAR[121, 122] 'val this: lib.A.B declared in test.test' type=lib.A.B origin=null

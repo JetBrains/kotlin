@@ -3,8 +3,8 @@ FILE fqName:<root> fileName:/localDelegatedPropertyCall.kt lineStartOffsets: [0,
     thisReceiver: VALUE_PARAMETER[107, 257] INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Delegate
     CONSTRUCTOR[121, 123] visibility:public returnType:<root>.Delegate [primary]
       BLOCK_BODY[121, 123]
-        DELEGATING_CONSTRUCTOR_CALL[107, 257] 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL[107, 257] classDescriptor='CLASS CLASS name:Delegate modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+        DELEGATING_CONSTRUCTOR_CALL[107, 257] 'kotlin/Any.<init>|<init>(){}[0]'
+        INSTANCE_INITIALIZER_CALL[107, 257] classDescriptor='/Delegate|null[0]' type=kotlin.Unit
     FUN[-2, -2] FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
       VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       VALUE_PARAMETER[-2, -2] kind:Regular name:other index:1 type:kotlin.Any?

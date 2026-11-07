@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
 import org.jetbrains.kotlin.backend.common.PreSerializationLoweringContext
 import org.jetbrains.kotlin.backend.common.ir.PreSerializationSymbols
 import org.jetbrains.kotlin.backend.common.ir.SharedVariablesManager
+import org.jetbrains.kotlin.backend.common.lower.AvoidLocalFakeOverridesLowering
 import org.jetbrains.kotlin.backend.common.lower.UpgradeCallableReferences
-import org.jetbrains.kotlin.backend.common.lower.inline.AvoidLocalFOsInInlineFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.InlineCallCycleCheckerLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
@@ -323,7 +323,7 @@ fun jklibLoweringsOfTheFirstPhase(
         if (languageVersionSettings.supportsFeature(LanguageFeature.IrRichCallableReferencesInKlibs)) {
             this += ::createUpgradeCallableReferences
         }
-        this += ::AvoidLocalFOsInInlineFunctionsLowering
+        this += ::AvoidLocalFakeOverridesLowering
         this += ::InlineCallCycleCheckerLowering
         this += ::LocalClassesInInlineLambdasLowering
         this += ::JKlibPrivateFunctionInlining

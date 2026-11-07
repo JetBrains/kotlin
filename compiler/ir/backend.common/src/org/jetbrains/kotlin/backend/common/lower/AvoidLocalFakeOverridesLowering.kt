@@ -3,16 +3,13 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.backend.common.lower.inline
+package org.jetbrains.kotlin.backend.common.lower
 
-import org.jetbrains.kotlin.backend.common.BodyLoweringPass
+import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrOverridableDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
-import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrRichCallableReference
 import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
@@ -49,15 +46,32 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
  *   (x as A).foo() /* A::foo */
  * }
  * ```
+ *
+ * Another problem that is solved by this lowering is the computation of fake overrides of a local class that leaks to another file
+ * during the per-file IC (KT-91111). Example:
+ * ```
+ * // holder.kt
+ * object Holder {
+ *     // The property is private, so its type is the anonymous class itself rather than kotlin.Any.
+ *     private val anonymous = object {
+ *         fun value() = "anonymous"
+ *     }
+ *
+ *     val value: String
+ *         get() = anonymous.value()
+ * }
+ *
+ * // user.kt
+ * fun useHolder(): String = Holder.value
+ * ```
+ *
+ * When a change is made to `user.kt`, it's marked as "dirty". So, `holder.kt` is deserialized on demand while the (Native static) cache
+ * for `user.kt` is being rebuilt. The private property of anonymous object type in `holder.kt` forces its initializer to be deserialized
+ * anyway (KT-40216), so the fake overrides of the anonymous class have to be linked for a file that is not part of the module fragment.
  */
-class AvoidLocalFOsInInlineFunctionsLowering(val context: LoweringContext) : BodyLoweringPass {
-    override fun lower(irBody: IrBody, container: IrDeclaration) {
-        val function = ((container as? IrValueParameter)?.parent ?: container) as? IrFunction ?: return
-        if (!function.isInline) {
-            return
-        }
-
-        irBody.acceptVoid(object : IrVisitorVoid() {
+class AvoidLocalFakeOverridesLowering(val context: LoweringContext) : FileLoweringPass {
+    override fun lower(irFile: IrFile) {
+        irFile.acceptVoid(object : IrVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }
@@ -92,7 +106,7 @@ class AvoidLocalFOsInInlineFunctionsLowering(val context: LoweringContext) : Bod
 
             private fun findOverriddenNonLocalFo(member: IrOverridableDeclaration<*>): IrSymbol? {
                 var properMember: IrOverridableDeclaration<*> = member
-                while (properMember.isLocal && properMember.isFakeOverride) {
+                while (properMember.isFakeOverride && properMember.isLocal) {
                     properMember = properMember.overriddenSymbols.getOrNull(0)?.owner as? IrOverridableDeclaration<*> ?: break
                 }
                 return if (properMember === member) null else properMember.symbol
