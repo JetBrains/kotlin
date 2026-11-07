@@ -50,12 +50,14 @@ class AnonymousObjectTransformer(
         val fieldsToTransform = ArrayList<FieldNode>()
         val metadataReader = ReadKotlinClassHeaderAnnotationVisitor()
         lateinit var superClassName: String
+        var originalVersion = 0
         var debugFileName: String? = null
         var debugInfo: String? = null
         var debugMetadataAnnotation: AnnotationNode? = null
 
         createClassReader().accept(object : ClassVisitor(Opcodes.API_VERSION, classBuilder.visitor) {
             override fun visit(version: Int, access: Int, name: String, signature: String?, superName: String, interfaces: Array<String>) {
+                originalVersion = version
                 classBuilder.defineClass(
                     regeneratedClassVersion(version, state.config.classFileVersion), access, name, signature, superName, interfaces,
                 )
@@ -149,6 +151,10 @@ class AnonymousObjectTransformer(
         val deferringMethods = ArrayList<DeferredMethodVisitor>()
 
         generateConstructorAndFields(classBuilder, constructorParamBuilder, parentRemapper)
+        val signatureTypes = fieldsToTransform.map { Type.getType(it.desc) } +
+                Type.getArgumentTypes(transformationInfo.newConstructorDescriptor) +
+                methodsToTransform.flatMap { Type.getArgumentTypes(it.desc).asList() + Type.getReturnType(it.desc) }
+        signatureTypes.filter { it.isRecompiledKotlinValueClass() }.mapTo(loadableDescriptors) { it.descriptor }
         if (loadableDescriptors.isNotEmpty()) {
             classBuilder.visitor.visitAttribute(LoadableDescriptorsAttribute(loadableDescriptors.toList()))
         }
@@ -219,7 +225,10 @@ class AnonymousObjectTransformer(
         }
 
         innerClassNodes.forEach { node ->
-            classBuilder.visitInnerClass(node.name, node.outerName, node.innerName, node.access)
+            classBuilder.visitInnerClass(
+                node.name, node.outerName, node.innerName,
+                regeneratedInnerClassAccess(node.access, originalVersion, state.config.classFileVersion),
+            )
         }
 
         if (header != null) {
@@ -421,7 +430,7 @@ class AnonymousObjectTransformer(
                 val desc = info.type.descriptor
                 val access = AsmUtil.NO_FLAG_PACKAGE_PRIVATE or Opcodes.ACC_SYNTHETIC or Opcodes.ACC_FINAL
                 classBuilder.newField(null, access, info.newFieldName, desc, null, null)
-                if (info.desc.isLoadable) {
+                if (info.desc.isLoadable || info.type.isRecompiledKotlinValueClass()) {
                     loadableDescriptors.add(desc)
                 }
                 constructorVisitor.visitVarInsn(Opcodes.ALOAD, 0)
