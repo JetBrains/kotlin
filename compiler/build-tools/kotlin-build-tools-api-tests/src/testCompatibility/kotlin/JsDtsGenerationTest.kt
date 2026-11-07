@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgumen
 import org.jetbrains.kotlin.buildtools.api.arguments.JsCompilerArguments.Companion.X_SUSPEND_LAMBDA_EXPORTING
 import org.jetbrains.kotlin.buildtools.api.arguments.JsCompilerLinkingArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.JsCompilerLinkingArguments.Companion.TARGET
+import org.jetbrains.kotlin.buildtools.api.arguments.JsCompilerLinkingArguments.Companion.X_ES_GENERATORS
 import org.jetbrains.kotlin.buildtools.api.arguments.JsCompilerLinkingArguments.Companion.X_ES_LONG_AS_BIGINT
 import org.jetbrains.kotlin.buildtools.api.arguments.JsCompilerLinkingArguments.Companion.X_IR_PER_FILE
 import org.jetbrains.kotlin.buildtools.api.arguments.JsCompilerLinkingArguments.Companion.X_IR_PER_MODULE
@@ -242,6 +243,9 @@ class JsDtsGenerationTest : BaseCompilationTest() {
 
         val dataClassCopy = kotlinToolchain.dtsBuilderConfiguredFrom { this[X_CONSISTENT_DATA_CLASS_COPY_VISIBILITY] = true }
         assertEquals(true, dataClassCopy[JsDtsGenerationOperation.DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY])
+
+        val esGeneratorsUsage = kotlinToolchain.dtsBuilderConfiguredFrom { this[X_ES_GENERATORS] = true }
+        assertEquals(true, esGeneratorsUsage[JsDtsGenerationOperation.COMPILE_SUSPEND_AS_JS_GENERATOR])
     }
 
     @DisplayName("configureFrom derives COMPILE_LONG_AS_BIG_INT from -target unless -Xes-long-as-bigint is set")
@@ -252,18 +256,22 @@ class JsDtsGenerationTest : BaseCompilationTest() {
 
         val es2020 = kotlinToolchain.dtsBuilderConfiguredFrom { this[TARGET] = JsEcmaVersion.ES2020 }
         assertEquals(true, es2020[JsDtsGenerationOperation.COMPILE_LONG_AS_BIG_INT])
+        assertEquals(true, es2020[JsDtsGenerationOperation.COMPILE_SUSPEND_AS_JS_GENERATOR])
 
         val es2020ExplicitFalse = kotlinToolchain.dtsBuilderConfiguredFrom {
             this[TARGET] = JsEcmaVersion.ES2020
             this[X_ES_LONG_AS_BIGINT] = false
         }
         assertEquals(false, es2020ExplicitFalse[JsDtsGenerationOperation.COMPILE_LONG_AS_BIG_INT])
+        assertEquals(true, es2020[JsDtsGenerationOperation.COMPILE_SUSPEND_AS_JS_GENERATOR])
 
         val es2015 = kotlinToolchain.dtsBuilderConfiguredFrom { this[TARGET] = JsEcmaVersion.ES2015 }
         assertEquals(false, es2015[JsDtsGenerationOperation.COMPILE_LONG_AS_BIG_INT])
+        assertEquals(true, es2015[JsDtsGenerationOperation.COMPILE_SUSPEND_AS_JS_GENERATOR])
 
         val noTarget = kotlinToolchain.dtsBuilderConfiguredFrom { }
         assertEquals(false, noTarget[JsDtsGenerationOperation.COMPILE_LONG_AS_BIG_INT])
+        assertEquals(false, noTarget[JsDtsGenerationOperation.COMPILE_SUSPEND_AS_JS_GENERATOR])
     }
 
     @DisplayName("configureFrom takes COMPILE_LONG_AS_BIG_INT from command-line linking arguments")
