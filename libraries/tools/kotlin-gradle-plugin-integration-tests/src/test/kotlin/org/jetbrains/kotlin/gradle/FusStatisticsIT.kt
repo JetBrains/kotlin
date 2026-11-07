@@ -552,6 +552,20 @@ class FusStatisticsIT : KGPBaseTest() {
     }
 
     @JsGradlePluginTests
+    @DisplayName("TypeScript declaration generation is reported")
+    @GradleTest
+    fun testJsGenerateDtsIsReported(gradleVersion: GradleVersion) {
+        project("kotlin2JsIrDtsGeneration", gradleVersion) {
+            validateFusFiles(
+                "assemble",
+                buildAction = BuildActions.build,
+            ) { fusFiles ->
+                assertFilesCombinedContains(fusFiles, "JS_GENERATE_DTS=true")
+            }
+        }
+    }
+
+    @JsGradlePluginTests
     @DisplayName("browser test DSL configured with options changed from defaults")
     @GradleTest
     @OptIn(ExperimentalJsTestDsl::class)
