@@ -132,6 +132,20 @@ No over-invalidation problems appeared. The saturation signal is now clear: this
 
 *Update, same day:* the oracle gap is closed. The harness now links a truly non-IC build per step and reports from-scratch IC-only defects as ordinary bugs (`IC_ONLY_LINK_FAILURE`, `IC_ONLY_OUTPUT_MISMATCH`); the two KT-54330 corpus tests flipped from `INVALID` to `BUG` on it, and the full corpus kept its shape. The second lever stands: a fresh campaign is still best run against fix seams once some families are fixed, or aimed at the newly visible from-scratch class.
 
+## The fifth campaign
+
+On 2026-11-07 the workflow ran again with three rounds of eight targets (69 agents, about 5.4M tokens, about 3.3 hours), this time against the new oracle. The effect was immediate: 19 confirmed findings, 18 of which fail from a completely fresh cache, and 17 of which are windows of the open KT-54330 family that no earlier campaign could see. They group into four root causes; three became failing tests, and the fourth cannot:
+
+| Test | What it pins |
+|---|---|
+| `inline/valueClassDefaultCtorStaticStub` | The `$default` stub window crosses the value-class static constructor: `linkageOf` propagates `isCalledFromExportedInlineFunction` through neither `defaultArgumentsOriginalFunction` nor `Autoboxing`'s static-constructor copy. |
+| `ungrouped/objectLiteralPrivateSuperclass` | A new root cause, no YouTrack issue: `class_fields` of private classes are serialized under an identity-based `FileLocalSignature` that no consumer session can match, so an inlined object literal over a private superclass crashes the IC build in `ClassFieldsDeserializer`. |
+| `dependencies/propertyTypeChangedWhileDependentAbsent` | The leave-and-return family needs no inline body: a declared-type change renames the getter symbol while the dependent is absent, and its stale archive fails the link on return. |
+
+The fourth root cause is the largest: fourteen findings in the `trackCallees` marking gap, of which the smallest was a class literal in an inlined body (one module, two files, no module boundary at all — reduced under `build/kn-ic-fuzz/c5-2026-11-07/promoted/trackCalleesMarking/`). It cannot become a corpus test: the test fixture compiles with IR validation (`-Xphases-to-validate-after=all`), and `IrInlineDeclarationChecker` rejects the class-literal shape with `IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_CASCADING` — while accepting the constructor-call and is-check shapes that the committed tests pin. The validator covers exactly the shapes `trackCallees` misses, and vice versa, so a KT-54330 fix that marks class literals in inlined bodies will not even compile them under CI validation until the checker is reconciled. The other windows of the gap (is/cast operands, reified type arguments, catch filters, reflection KType payloads, object/SAM supertypes, default-value expressions) are reduced under `build/kn-ic-fuzz/c5-2026-11-07/`.
+
+The other staleness families stayed saturated: the only staleness finding of the campaign is the leave-and-return window above, and no perf findings appeared. The KT-54330 family is now the largest vein in the corpus — three committed tests pin three of its fix surfaces (the regular-class `$default` stub, the is-check typeinfo, the value-class static `$default` stub), and the reduced reproducers cover the rest. It is the clearest candidate for the next fix.
+
 ## What is not done yet (good next steps)
 
 1. **Add a clean-rebuild comparison to `AbstractNativeIncrementalCompilationTest`, like the JVM IC tests have.** Then every corpus case checks more than its hand-written expectations.
