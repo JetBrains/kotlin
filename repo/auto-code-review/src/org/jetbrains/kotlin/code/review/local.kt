@@ -85,15 +85,15 @@ private class LocalRenderingContext(output: File, project: LocalProject) : Rende
         return "[$fileName]($url):$line"
     }
 
-    override fun markdownLink(path: ProjectFilePath, title: String): String {
+    override fun markdownLink(path: ProjectFilePath, heading: String, linkText: String): String {
         val fileUrl = path.pathRelativeToOutput
-        val anchor = slugifyMarkdownTitle(title)
-        return "[$title]($fileUrl#$anchor)"
+        val anchor = slugifyMarkdownTitle(heading)
+        return "[$linkText]($fileUrl#$anchor)"
     }
 
     override fun describeDiff(origin: GitDiff.Origin): String {
         return when (origin) {
-            is GitDiff.Origin.Local -> "`git diff ${origin.from.sha1}` at `${origin.to.root}`"
+            is GitDiff.Origin.Local -> "`git diff ${origin.from.shortSha1}` at `${origin.to.root}`"
             is GitDiff.Origin.GitHub -> origin.compareMarkdownLink
         }
     }

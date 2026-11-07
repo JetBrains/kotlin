@@ -106,6 +106,10 @@ As a side effect, this approach also allows estimating the API costs for each ru
 
 ## Rule files
 
+As explained above, the tool checks only the existing rules in the repo.
+So, if the repo doesn't have a rule for a problem, the tool won't report it.
+If you have an idea for a new rule or an improvement to an existing one, please contribute it.
+
 Rules are organized in special Markdown files named `code-rules.md`.
 
 Some sanity checks for all the `code-rules.md` files in the repository are implemented as tests in
