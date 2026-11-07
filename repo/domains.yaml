@@ -185,6 +185,7 @@ BuildToolsApi:
     - "compiler/daemon"
     - "compiler/compiler-runner"
     - "compiler/compiler-runner-unshaded"
+    - "libraries/tools/kotlin-ic-event-report"
   mustRunAllTestsOnChangesIn:
     - CompilerInfrastructure
 

@@ -667,6 +667,7 @@ tasks {
         dependsOn(":compiler:build-tools:kotlin-build-tools-api-tests:check")
         dependsOn(":compiler:build-tools:kotlin-build-tools-api-forward-tests:check")
         dependsOn(":compiler:build-tools:kotlin-build-tools-impl:check")
+        dependsOn(":kotlin-ic-event-report:check")
     }
 
     testLifecycleTask("buildToolsApiKotlinVersionCheck", QualityGate.None) {

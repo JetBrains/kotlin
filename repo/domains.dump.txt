@@ -178,6 +178,7 @@ BuildToolsApi:
  - compiler/daemon
  - compiler/incremental-compilation-impl
  - compiler/incremental-compilation-klib
+ - libraries/tools/kotlin-ic-event-report
 
 BuildToolsLibraries:
  - build-tools/libraries

@@ -387,6 +387,7 @@
 /libraries/tools/kotlin-gradle-plugin-tcs-android/ "Kotlin Build Tools"
 /libraries/tools/kotlin-gradle-plugin-test-coverage/ "Kotlin Build Tools"
 /libraries/tools/kotlin-gradle-statistics/ "Kotlin Build Tools"
+/libraries/tools/kotlin-ic-event-report/ "Build Tools API"
 /libraries/tools/kotlin-lombok/ "Kotlin Build Tools"
 /libraries/tools/kotlin-main-kts/ "Kotlin Frontend"
 /libraries/tools/kotlin-main-kts-test/ "Kotlin Frontend"
