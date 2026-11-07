@@ -9,27 +9,34 @@ Tools to fuzz Kotlin/Native incremental compilation (IC):
 
 An incremental build must behave the same as a clean build of the same sources.
 
-For every step of a scenario, the harness compiles the klibs once and links the program twice:
+For every step of a scenario, the harness compiles the klibs once and links the program three times:
 
 1. **IC link.** It uses an IC cache directory that lives across all steps.
-2. **Clean link.** It uses a new, empty IC cache directory.
+2. **Clean link.** It uses a new, empty IC cache directory. This is the reference for staleness
+   findings — but it still runs the IC pipeline, just from scratch.
+3. **Non-IC link.** No incremental compilation, no caches at all. This is the reference for
+   defects that are already present in a from-scratch IC build, which the clean link cannot
+   expose (before it existed, such defects failed both links and were reported as `INVALID`).
 
-Then it compares the two links:
+Then it compares the links:
 
 | Finding | Severity | Meaning |
 |---|---|---|
 | `OUTPUT_MISMATCH` | bug | Program output or exit code differs. Usually a stale cache: some code was not rebuilt. |
 | `IC_LINK_FAILURE` | bug | The IC link fails (for example, undefined or duplicate symbols), but the clean link works. |
 | `IC_CRASH` | bug | The compiler crashes on the IC link only. |
+| `IC_ONLY_LINK_FAILURE` | bug | Both IC links fail (or crash), but a non-IC build of the same klibs succeeds. A defect of the IC pipeline itself, present even from scratch. |
+| `IC_ONLY_OUTPUT_MISMATCH` | bug | A from-scratch IC build already produces a different program than a non-IC build. |
 | `IC_ACCEPTS_BROKEN` | bug | The clean link fails, but the IC link works. The IC hides an error. |
 | `DIAGNOSTICS_MISMATCH` | bug | Warnings or errors differ, for example partial linkage warnings. |
-| `COMPILER_CRASH` | bug | The clean build crashes too. This is a compiler bug, but not an IC bug. |
+| `COMPILER_CRASH` | bug | The clean build crashes too, and so does the non-IC build. This is a compiler bug, but not an IC bug. |
 | `CACHE_STATE_MISMATCH` | latent | A cached file's `metadata.properties`, `bin/bitcode_deps` or `ir/*` differs from the clean build. The binary is still right, but a later step may break. |
 | `STALE_CACHE_DIR` | latent | The IC directory keeps a per-file cache that a clean build does not create. |
 | `NOOP_REBUILD` | perf | After the last step, a relink with no edits still rebuilds caches. |
 | `UNSTABLE_FINGERPRINT` | perf | After the last step, recompiling the klibs from the same sources makes files dirty. |
 | `DEPS_DRIFT` | info | `bin/bitcode_deps` differs for a file that IC did not rebuild. This is by design: the file keeps its old code, and that code's old dependencies (see `unchanged cache:` in the corpus). It does not change the verdict and is not a signal. |
 | `STALE_LIBRARY_CACHE` | info | The cache of a library that left the project stays on disk. It does not change the verdict. |
+| `NOIC_LINK_FAILURE` | info | The non-IC link fails, which is expected on steps that rely on partial linkage stubbing; the non-IC comparison does not apply there. It does not change the verdict. |
 
 Other verdicts:
 
@@ -107,6 +114,7 @@ python3 .claude/kn-ic-fuzz/harness.py run path/to/scenario --out build/kn-ic-fuz
 - `--variant unbatched`: adds an IC link with `-Xbinary=batchedCacheBuild=false`.
 - `--variant threads4`: adds an IC link with `-Xbackend-threads=4`.
 - `--variant NAME:"FLAGS"`: adds an IC link with your own flags. Each variant gets its own IC directory.
+- `--no-noic`: skips the non-IC link (it is on by default; see the oracle above).
 - `--roundtrip`: adds steps that go back through the earlier states (A, B, C, B, A).
 - `--self-check`: links cleanly twice per step. A difference between the two clean links means harness noise.
 - `--dist DIR`: uses another compiler. Example: an older prebuilt from `~/.konan`, to check that known bugs are found.

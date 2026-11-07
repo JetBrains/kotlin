@@ -6,9 +6,12 @@ A scenario uses the same layout as native/native.tests/testData/caches/ic/*:
 project.info, one directory per module with module.info, and versioned sources (file.kt, file.1.kt, ...).
 Cache expectation directives ("added cache: ...") are accepted and ignored: the oracle here is differential.
 
-For every step the runner compiles the klibs once and links them twice:
+For every step the runner compiles the klibs once and links the program three times:
   * incrementally, into an IC cache directory that persists across steps (one per variant);
-  * cleanly, into a fresh IC cache directory.
+  * cleanly, into a fresh IC cache directory (the reference for staleness findings - it still
+    runs the IC pipeline, just from scratch);
+  * non-incrementally, with no caches at all (the reference for defects that are already
+    present in a from-scratch IC build, which the fresh-cache link cannot expose).
 Then it compares link success, compiler diagnostics, program output and the per-file cache state.
 After the last step it relinks with no edits and expects the IC to rebuild nothing.
 
@@ -65,6 +68,11 @@ SEVERITY = {
     "OUTPUT_MISMATCH": "bug",
     "DIAGNOSTICS_MISMATCH": "bug",
     "COMPILER_CRASH": "bug",  # Crashes the clean build as well: a compiler bug, but not an IC one.
+    # The IC link fails (or crashes) where a non-IC build of the same klibs succeeds: a defect of the
+    # IC pipeline itself, present in a from-scratch IC build too (the fresh-cache link cannot see it).
+    "IC_ONLY_LINK_FAILURE": "bug",
+    # A from-scratch IC build already produces a different program than a non-IC build.
+    "IC_ONLY_OUTPUT_MISMATCH": "bug",
     "CACHE_STATE_MISMATCH": "latent",
     "STALE_CACHE_DIR": "latent",
     "NOOP_REBUILD": "perf",
@@ -73,6 +81,9 @@ SEVERITY = {
     "DEPS_DRIFT": "info",
     # The cache of a library that left the project stays on disk.
     "STALE_LIBRARY_CACHE": "info",
+    # The non-IC link fails, e.g. on a step that relies on partial linkage stubbing; the non-IC
+    # comparison does not apply there. Reported for completeness; does not change the verdict.
+    "NOIC_LINK_FAILURE": "info",
 }
 # "info" findings are reported but do not change the verdict.
 SEVERITY_ORDER = ["bug", "latent", "invalid", "perf", "pass"]
@@ -518,13 +529,14 @@ def compare_cache_state(ic_dir, clean_dir, rebuilt):
 
 class Runner(object):
     def __init__(self, scenario, out_dir, tools, variants, check_cache_state=True, noop_check=True,
-                 stop_at_first_bug=False, keep=False, self_check=False):
+                 stop_at_first_bug=False, keep=False, self_check=False, noic_check=True):
         self.scenario = scenario
         self.out = Path(out_dir).resolve()
         self.tools = tools
         self.variants = variants
         self.check_cache_state = check_cache_state
         self.noop_check = noop_check
+        self.noic_check = noic_check
         self.stop_at_first_bug = stop_at_first_bug
         self.keep = keep
         self.self_check = self_check
@@ -657,6 +669,23 @@ class Runner(object):
         ok = code == 0 and Path(str(executable)).exists()
         return {"ok": ok, "code": code, "output": out, "secs": round(elapsed, 1)}
 
+    def link_noic(self, step_id, executable, log_path):
+        """A truly non-IC link: no incremental compilation, no caches, no auto-cache. Proves that
+        the klibs build and run without the caching machinery, which the fresh-cache clean link
+        cannot (it runs the IC pipeline too, just from scratch)."""
+        main_step = self.module_step(MAIN_MODULE, step_id) or self._last_known_step(MAIN_MODULE, step_id)
+        cmd = [str(self.tools.kotlinc), "-p", "program", "-o", str(executable), "-Xinclude=%s" % self.klib_path(MAIN_MODULE)]
+        for dep in self.dependency_closure(MAIN_MODULE, step_id):
+            cmd += ["-l", str(self.klib_path(dep))]
+        if main_step and main_step.friends:
+            cmd += ["-friend-modules", os.pathsep.join(str(self.klib_path(f)) for f in main_step.friends)]
+        if self.uses_test_runner():
+            cmd.append("-generate-test-runner")
+        cmd += LINK_FLAGS + (main_step.arguments if main_step else [])
+        code, out, elapsed = run_process(cmd, log_path, COMPILE_TIMEOUT)
+        ok = code == 0 and Path(str(executable)).exists()
+        return {"ok": ok, "code": code, "output": out, "secs": round(elapsed, 1)}
+
     def run_binary(self, executable, log_path):
         code, out, elapsed = run_process([str(executable)], log_path, RUN_TIMEOUT)
         return {"code": code, "stdout": normalize_run_output(out, self.out)}
@@ -717,6 +746,27 @@ class Runner(object):
                 return False
             report["clean"]["exit"] = clean_run["code"]
 
+        # A truly non-IC build of the same klibs: the reference for defects that are present in a
+        # from-scratch IC build as well. Steps that rely on partial linkage stubbing (a stale klib
+        # calling a symbol that is gone) legitimately fail this link, so its failure is only an
+        # info note; its success can exonerate the program where the IC links fail.
+        noic = None
+        noic_run = None
+        if self.noic_check:
+            noic = self.link_noic(step_id, log_dir / "noic.kexe", log_dir / "noic.log")
+            report["noic"] = {"ok": noic["ok"], "secs": noic["secs"]}
+            if noic["ok"]:
+                noic_run = self.run_binary(log_dir / "noic.kexe", log_dir / "noic.stdout")
+                report["noic"]["exit"] = noic_run["code"]
+                if clean["ok"] and clean_run != noic_run:
+                    self.add_finding("IC_ONLY_OUTPUT_MISMATCH", step_id, None,
+                                     "a from-scratch IC build differs from a non-IC build:\n" +
+                                     unified_diff(noic_run, clean_run, "noic", "clean IC"))
+            else:
+                self.add_finding("NOIC_LINK_FAILURE", step_id, None,
+                                 "the non-IC link fails (expected on steps that rely on partial linkage): " +
+                                 first_error(noic["output"], self.out))
+
         if self.self_check:
             self.run_self_check(step_id, clean, clean_run, clean_root, log_dir)
 
@@ -739,6 +789,23 @@ class Runner(object):
             report[variant] = vreport
 
             if not clean["ok"] and not ic["ok"]:
+                if not expects_failure and noic is not None and noic["ok"]:
+                    # The program is fine without the caching machinery: a from-scratch IC defect,
+                    # invisible to the fresh-cache clean link, which runs the IC pipeline too.
+                    # Steps that declare an expected compilation failure are exempt: some IC
+                    # features deliberately fail there where a non-IC build silently stubs the
+                    # reference (partial linkage reports issues only when caches are built).
+                    if is_crash(clean["output"]):
+                        sig = crash_signature(clean["output"])
+                        self.add_finding("IC_ONLY_LINK_FAILURE", step_id, variant,
+                                         "the IC link crashes, a non-IC build does not: " + sig,
+                                         "IC_ONLY_LINK_FAILURE " + sig)
+                    else:
+                        err = first_error(clean["output"], self.out)
+                        self.add_finding("IC_ONLY_LINK_FAILURE", step_id, variant,
+                                         "the IC link fails, a non-IC build of the same klibs does not: " + err,
+                                         "IC_ONLY_LINK_FAILURE " + re.sub(r"\d+", "N", err)[:120])
+                    continue
                 if is_crash(clean["output"]):
                     sig = crash_signature(clean["output"])
                     self.add_finding("COMPILER_CRASH", step_id, variant, "the clean link crashes too: " + sig, "COMPILER_CRASH link " + sig)
@@ -843,11 +910,11 @@ class Runner(object):
         return result
 
 
-def unified_diff(clean_run, ic_run):
+def unified_diff(clean_run, ic_run, a_name="clean", b_name="ic"):
     lines = []
     if clean_run["code"] != ic_run["code"]:
-        lines.append("exit code: clean %s, IC %s" % (clean_run["code"], ic_run["code"]))
-    diff = difflib.unified_diff(clean_run["stdout"].splitlines(), ic_run["stdout"].splitlines(), "clean", "ic", lineterm="", n=1)
+        lines.append("exit code: %s %s, %s %s" % (a_name, clean_run["code"], b_name, ic_run["code"]))
+    diff = difflib.unified_diff(clean_run["stdout"].splitlines(), ic_run["stdout"].splitlines(), a_name, b_name, lineterm="", n=1)
     lines += list(diff)[:40]
     return "\n".join(lines)
 
@@ -865,6 +932,8 @@ def format_summary(result):
         if "clean" in step:
             parts.append("clean %s%s" % ("ok" if step["clean"]["ok"] else "FAIL",
                                          "" if step["clean"].get("exit", 0) == 0 else " (exit %s)" % step["clean"].get("exit")))
+        if "noic" in step:
+            parts.append("noic %s" % ("ok" if step["noic"]["ok"] else "FAIL"))
         for v in result["variants"]:
             if v in step:
                 parts.append("%s %s dirty=%d" % (v, "ok" if step[v]["ok"] else "FAIL", len(step[v]["dirty"])))
@@ -880,13 +949,15 @@ def finding_key(finding):
     return (finding["kind"], finding["variant"])
 
 
-def reduce_scenario(scenario_dir, out_dir, tools, variants, max_runs, check_cache_state, with_roundtrip, kind=None):
+def reduce_scenario(scenario_dir, out_dir, tools, variants, max_runs, check_cache_state, with_roundtrip, kind=None,
+                    noic_check=True):
     out_dir = Path(out_dir).resolve()
     work = out_dir / "work"
     original = parse_scenario(scenario_dir)
     if with_roundtrip:
         original = roundtrip(original)
-    base = Runner(original, work / "baseline", tools, variants, check_cache_state=check_cache_state).run()
+    base = Runner(original, work / "baseline", tools, variants, check_cache_state=check_cache_state,
+                  noic_check=noic_check).run()
     targets = [f for f in base["findings"] if f["severity"] in ("bug", "latent") and kind in (None, f["kind"])]
     if not targets:
         print("nothing to reduce: verdict %s" % base["verdict"])
@@ -909,7 +980,7 @@ def reduce_scenario(scenario_dir, out_dir, tools, variants, max_runs, check_cach
         result = Runner(parsed, work / ("cand-%d" % runs[0]), tools,
                         [v for v in variants if v[0] == target["variant"]] or variants,
                         check_cache_state=check_cache_state, noop_check=isinstance(target["step"], str),
-                        stop_at_first_bug=True).run()
+                        stop_at_first_bug=True, noic_check=noic_check).run()
         ok = any(finding_key(f) == finding_key(target) for f in result["findings"])
         print("  [%d] %-40s -> %s" % (runs[0], label, "reproduces" if ok else result["verdict"].lower()))
         return ok
@@ -1093,6 +1164,8 @@ def main():
     def add_run_options(p):
         p.add_argument("--variant", action="append", help="IC variant: %s, or NAME:FLAGS (repeatable)" % ", ".join(VARIANTS))
         p.add_argument("--no-cache-state", action="store_true", help="do not compare IC cache artifacts with a clean build")
+        p.add_argument("--no-noic", action="store_true",
+                       help="skip the non-IC link (the reference for from-scratch IC-only defects)")
         p.add_argument("--roundtrip", action="store_true", help="append steps going back through the earlier states")
 
     p_run = sub.add_parser("run")
@@ -1137,12 +1210,12 @@ def main():
             scenario = roundtrip(scenario)
         result = Runner(scenario, args.out, tools, variants, check_cache_state=not args.no_cache_state,
                         noop_check=not args.no_noop, stop_at_first_bug=args.stop_at_first_bug, keep=args.keep,
-                        self_check=args.self_check).run()
+                        self_check=args.self_check, noic_check=not args.no_noic).run()
         sys.stdout.write(format_summary(result))
         return 0
     if args.command == "reduce":
         return reduce_scenario(args.scenario, args.out, tools, variants, args.max_runs, not args.no_cache_state, args.roundtrip,
-                               args.kind)
+                               args.kind, not args.no_noic)
     if args.command == "corpus":
         verdicts = {}
         for project_info in sorted(CORPUS_DIR.rglob("project.info")):
@@ -1154,7 +1227,8 @@ def main():
             if args.roundtrip:
                 scenario = roundtrip(scenario)
             result = Runner(scenario, Path(args.out) / rel, tools, variants,
-                            check_cache_state=not args.no_cache_state, self_check=args.self_check).run()
+                            check_cache_state=not args.no_cache_state, self_check=args.self_check,
+                            noic_check=not args.no_noic).run()
             verdicts[rel] = result["verdict"]
             kinds = sorted(set(f["kind"] for f in result["findings"]))
             print("%-60s %-8s %s %s" % (rel, result["verdict"], ",".join(kinds), (result["invalid_reason"] or "")[:100]))

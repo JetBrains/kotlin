@@ -130,6 +130,8 @@ On 2026-11-07 the workflow ran a fourth time with three rounds of eight targets 
 
 No over-invalidation problems appeared. The saturation signal is now clear: this campaign's 19 findings contain no new root cause, its round 3 produced no new coverage features, and every construct the planner invented landed on a known family. Two levers remain for a fifth campaign: the harness oracle gap (its clean reference also enables IC, so from-scratch IC-only defects like the KT-54330 windows are reported as `INVALID` unless an agent runs a manual no-IC comparison — a third, truly non-IC link per step would fix that), and feedback that steers by what has already been found: with every family now carrying multiple reproducers, the planner's do-not-re-derive list is long enough that a fresh campaign is best run after some of the families are fixed, against the fix seams.
 
+*Update, same day:* the oracle gap is closed. The harness now links a truly non-IC build per step and reports from-scratch IC-only defects as ordinary bugs (`IC_ONLY_LINK_FAILURE`, `IC_ONLY_OUTPUT_MISMATCH`); the two KT-54330 corpus tests flipped from `INVALID` to `BUG` on it, and the full corpus kept its shape. The second lever stands: a fresh campaign is still best run against fix seams once some families are fixed, or aimed at the newly visible from-scratch class.
+
 ## What is not done yet (good next steps)
 
 1. **Add a clean-rebuild comparison to `AbstractNativeIncrementalCompilationTest`, like the JVM IC tests have.** Then every corpus case checks more than its hand-written expectations.

@@ -13,9 +13,9 @@
 // an undefined symbol while the same klibs link and print 1 without incremental compilation.
 //
 // Harness note: the "clean" reference link also enables incremental compilation (with a fresh
-// cache), so this from-scratch IC-only defect fails both of the harness's links and the run
-// is reported as INVALID. The bug is the IC-only link failure: the same klibs link and print
-// 1 without -Xenable-incremental-compilation.
+// cache), so this from-scratch IC-only defect fails that link too. The harness's non-IC link
+// exonerates the program, and the run is reported as BUG with IC_ONLY_LINK_FAILURE: the same
+// klibs link and print 1 without -Xenable-incremental-compilation.
 
 MODULES: lib1, main
 
