@@ -1,0 +1,1 @@
+error: <lib2> @ src/lib2/u.kt:5:14: Function 'f' can not be called: The function has some value parameters for which neither the call site provides an argument, nor do they have a default value: x

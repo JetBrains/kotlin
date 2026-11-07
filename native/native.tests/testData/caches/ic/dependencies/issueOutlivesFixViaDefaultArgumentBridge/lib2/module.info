@@ -1,0 +1,17 @@
+STEP 0:
+    dependencies: lib1
+    modifications:
+        U : u.kt -> u.kt
+    added cache: u.kt
+
+// lib2 is not rebuilt after step 0; its klib and per-file cache stay on disk. At step 1 its
+// cached u.kt is re-cached through the recorded bitcode edge (against the broken lib1), and
+// at step 2 a correct IC must re-cache it again: the restored default resolves the recorded
+// issue, and only rebuilding u.kt can drop it.
+STEP 1:
+    dependencies: lib1
+    modified cache: u.kt
+
+STEP 2:
+    dependencies: lib1
+    modified cache: u.kt

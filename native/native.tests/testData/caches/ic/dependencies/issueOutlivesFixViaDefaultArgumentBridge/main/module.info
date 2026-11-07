@@ -1,0 +1,11 @@
+STEP 0:
+    dependencies: lib2
+    modifications:
+        U : main.kt -> main.kt
+
+STEP 1:
+    dependencies: lib2
+    expected compilation failure: pl-error.txt
+
+STEP 2:
+    dependencies: lib2

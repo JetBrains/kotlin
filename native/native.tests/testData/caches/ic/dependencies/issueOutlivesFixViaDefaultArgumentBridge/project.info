@@ -1,0 +1,35 @@
+// DISABLE_NATIVE: targetFamily=MINGW
+
+
+// lib1's top-level f has a default argument; lib2's u.kt calls f() through the f$default
+// bridge, so its per-file cache records a bitcode dependency edge on lib1's f.kt.
+//
+// STEP 1 removes the default: the bridge disappears from lib1's klib while lib2's stale klib
+// keeps calling it, and both links fail with the same partial linkage error (declared
+// expected). The IC marks u.kt dirty through the recorded edge and re-caches it against the
+// broken lib1: the stubbed f() call stores the detected issue in the cache of u.kt
+// (ir/pl_issues) but drops the lib1 edge from its bin/bitcode_deps, because the call was
+// stubbed before the bitcode-dependency tracker ran.
+//
+// STEP 2 restores the default. With no recorded edge left, the dirty-file analysis cannot
+// propagate the change of f.kt to u.kt (and per-file-cached dependencies are excluded from
+// the dependencies fingerprint), so the poisoned cache is reused and
+// replayPartialLinkageIssuesFromCaches (KT-78253) re-reports the stale recorded issue as a
+// hard error: the IC link fails while the clean link of the same klibs succeeds and useF()
+// returns 1. This violates the CacheStorage.savePartialLinkageIssues invariant: an issue may
+// only be stored in the cache of a file that is rebuilt by every change which could resolve it.
+//
+// Same root cause as dependencies/partialLinkageIssueOutlivesFix; this is an independent
+// trigger (a default-argument bridge call by a pure caller) and additionally shows that the
+// poisoned cache is written even when the step-1 link fails.
+
+MODULES: lib1, lib2, main
+
+STEP 0:
+    libs: lib1, lib2, main
+
+STEP 1:
+    libs: lib1, main
+
+STEP 2:
+    libs: lib1, main

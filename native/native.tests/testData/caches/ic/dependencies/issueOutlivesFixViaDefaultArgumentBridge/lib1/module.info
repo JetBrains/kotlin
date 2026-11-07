@@ -1,0 +1,16 @@
+STEP 0:
+    modifications:
+        U : f.kt -> f.kt
+    added cache: f.kt
+
+// f.1.kt: the default argument is removed, so the f$default bridge disappears from the klib.
+STEP 1:
+    modifications:
+        U : f.1.kt -> f.kt
+    modified cache: f.kt
+
+// f.kt: the default argument is back.
+STEP 2:
+    modifications:
+        U : f.kt -> f.kt
+    modified cache: f.kt
