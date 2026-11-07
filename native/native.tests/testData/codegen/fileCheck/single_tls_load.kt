@@ -1,5 +1,5 @@
 // TARGET_BACKEND: NATIVE
-// FILECHECK_STAGE: WriteBitcodeFile
+// FILECHECK_STAGE: ObjectFiles
 // The test checks, that in an optimized build TLS access is optimized, no promises for other builds
 // DISABLE_NATIVE: optimizationMode=NO
 // DISABLE_NATIVE: optimizationMode=DEBUG
