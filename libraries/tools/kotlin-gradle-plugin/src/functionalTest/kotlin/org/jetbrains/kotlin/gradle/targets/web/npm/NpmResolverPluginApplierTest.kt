@@ -30,8 +30,6 @@ import org.junit.jupiter.api.DynamicTest.dynamicTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestFactory
 import java.io.File
-import java.util.stream.Stream
-import kotlin.streams.asStream
 import kotlin.test.assertTrue
 
 /**
@@ -53,12 +51,25 @@ sealed class NpmResolverPluginApplierTest(
         }
 
     /**
+     * How npm dependencies are declared in a source set's `dependencies {}` block.
+     */
+    enum class NpmDependencyStyle {
+        /** Legacy declarations added to a Configuration, e.g. `implementation(npm(...))`. */
+        LegacyConfigurations,
+
+        /** Declarations using the npm DSL, e.g. `npm(...)`. */
+        Dsl,
+    }
+
+    /**
      * Create a KMP project with JS, WasmJS, and WasmWASI targets.
      *
-     * Add npm dependencies (both regular and file-based) to `commonMain`.
+     * Add npm dependencies (both regular and file-based) to `commonMain`,
+     * declared using [npmDependencyStyle].
      */
     @Suppress("DEPRECATION") // the deprecated npm(directory) declaration is covered on purpose
     private fun setupProject(
+        npmDependencyStyle: NpmDependencyStyle = NpmDependencyStyle.LegacyConfigurations,
         configure: Project.() -> Unit = {},
     ): Project {
         val project = buildProjectWithMPP(
@@ -101,9 +112,18 @@ sealed class NpmResolverPluginApplierTest(
 
             sourceSets.commonMain {
                 dependencies {
-                    implementation(npm("is-even", "1.0.0"))
-                    implementation(npm(fileBasedNpmDep1))
-                    implementation(npm(fileBasedNpmDep2))
+                    when (npmDependencyStyle) {
+                        NpmDependencyStyle.LegacyConfigurations -> {
+                            implementation(npm("is-even", "1.0.0"))
+                            implementation(npm(fileBasedNpmDep1))
+                            implementation(npm(fileBasedNpmDep2))
+                        }
+                        NpmDependencyStyle.Dsl -> {
+                            npm("is-even", "1.0.0")
+                            npm("fileBasedNpmDep1", fileBasedNpmDep1)
+                            npm("fileBasedNpmDep2", fileBasedNpmDep2)
+                        }
+                    }
                 }
             }
         }
@@ -162,44 +182,45 @@ sealed class NpmResolverPluginApplierTest(
     //endregion
 
     //region test fileBasedNpmDependencyLocations
+    // KT-90574: only the legacy `implementation(npm(...))` declarations disable caching
     @TestFactory
-    fun `verify expected fileBasedNpmDependencyLocations for JS tasks`(): Stream<DynamicNode> {
-        val project = setupProject()
-        return testFileBasedNpmDependencyLocations(
-            target = project.multiplatformExtension.js(),
-            expectedFileBasedNpmDependencyLocations = listOf(
-                "rootProjectDir:fileBasedNpmDep1",
-                "rootProjectDir:nested/blah/fileBasedNpmDep2",
-            ),
-        )
-    }
+    fun `verify expected fileBasedNpmDependencyLocations for JS tasks`(): List<DynamicNode> =
+        forEachNpmDependencyStyle { npmDependencyStyle ->
+            val project = setupProject(npmDependencyStyle = npmDependencyStyle)
+            testFileBasedNpmDependencyLocations(
+                target = project.multiplatformExtension.js(),
+                expectedFileBasedNpmDependencyLocations =
+                    npmDependencyStyle.expectedFileBasedNpmDependencyLocations,
+            )
+        }
+
+    // KT-90574: only the legacy `implementation(npm(...))` declarations disable caching
+    @TestFactory
+    fun `verify expected fileBasedNpmDependencyLocations for WasmJS tasks`(): List<DynamicNode> =
+        forEachNpmDependencyStyle { npmDependencyStyle ->
+            val project = setupProject(npmDependencyStyle = npmDependencyStyle)
+            testFileBasedNpmDependencyLocations(
+                target = project.multiplatformExtension.wasmJs(),
+                expectedFileBasedNpmDependencyLocations =
+                    npmDependencyStyle.expectedFileBasedNpmDependencyLocations,
+            )
+        }
 
     @TestFactory
-    fun `verify expected fileBasedNpmDependencyLocations for WasmJS tasks`(): Stream<DynamicNode> {
-        val project = setupProject()
-        return testFileBasedNpmDependencyLocations(
-            target = project.multiplatformExtension.wasmJs(),
-            expectedFileBasedNpmDependencyLocations = listOf(
-                "rootProjectDir:fileBasedNpmDep1",
-                "rootProjectDir:nested/blah/fileBasedNpmDep2",
-            ),
-        )
-    }
-
-    @TestFactory
-    fun `verify expected fileBasedNpmDependencyLocations for WasmWASI tasks`(): Stream<DynamicNode> {
-        val project = setupProject()
-        // expect no dependencies because WASI does not have npm dependencies
-        return testFileBasedNpmDependencyLocations(
-            target = project.multiplatformExtension.wasmWasi(),
-            expectedFileBasedNpmDependencyLocations = emptyList(),
-        )
-    }
+    fun `verify expected fileBasedNpmDependencyLocations for WasmWASI tasks`(): List<DynamicNode> =
+        forEachNpmDependencyStyle { npmDependencyStyle ->
+            val project = setupProject(npmDependencyStyle = npmDependencyStyle)
+            // expect no dependencies because WASI does not have npm dependencies
+            testFileBasedNpmDependencyLocations(
+                target = project.multiplatformExtension.wasmWasi(),
+                expectedFileBasedNpmDependencyLocations = emptyList(),
+            )
+        }
 
     private fun testFileBasedNpmDependencyLocations(
         target: KotlinTarget,
         expectedFileBasedNpmDependencyLocations: List<String>,
-    ): Stream<DynamicNode> {
+    ): List<DynamicNode> {
         return testEachRequiresNpmDependenciesTask(target, { task ->
             dynamicTest("file based npm dependency locations") {
                 assertEquals(
@@ -212,9 +233,229 @@ sealed class NpmResolverPluginApplierTest(
     }
     //endregion
 
+    //region test fileBasedDependencyDirectories
+    // KT-90574
+    @TestFactory
+    fun `verify expected fileBasedDependencyDirectories for JS tasks`(): List<DynamicNode> =
+        forEachNpmDependencyStyle { npmDependencyStyle ->
+            val project = setupProject(npmDependencyStyle = npmDependencyStyle)
+            testFileBasedDependencyDirectories(
+                target = project.multiplatformExtension.js(),
+                expectedFileBasedDependencyDirectories = defaultFileBasedNpmDeps,
+            )
+        }
+
+    // KT-90574
+    @TestFactory
+    fun `verify expected fileBasedDependencyDirectories for WasmJS tasks`(): List<DynamicNode> =
+        forEachNpmDependencyStyle { npmDependencyStyle ->
+            val project = setupProject(npmDependencyStyle = npmDependencyStyle)
+            testFileBasedDependencyDirectories(
+                target = project.multiplatformExtension.wasmJs(),
+                expectedFileBasedDependencyDirectories = defaultFileBasedNpmDeps,
+            )
+        }
+
+    @TestFactory
+    fun `verify expected fileBasedDependencyDirectories for WasmWASI tasks`(): List<DynamicNode> =
+        forEachNpmDependencyStyle { npmDependencyStyle ->
+            val project = setupProject(npmDependencyStyle = npmDependencyStyle)
+            // expect no directories because WASI does not have npm dependencies
+            testFileBasedDependencyDirectories(
+                target = project.multiplatformExtension.wasmWasi(),
+                expectedFileBasedDependencyDirectories = emptyList(),
+            )
+        }
+
+    // KT-90574
+    @TestFactory
+    fun `verify expected fileBasedDependencyDirectories for JS tasks - all npm scopes`(): List<DynamicNode> =
+        forEachNpmDependencyStyle { npmDependencyStyle ->
+            val project = setupProject(npmDependencyStyle = npmDependencyStyle) {
+                val devDir = layout.projectDirectory.dir("devDep").apply { asFile.mkdirs() }
+                val optionalDir = layout.projectDirectory.dir("optionalDep").apply { asFile.mkdirs() }
+                val devDirectoryDir = layout.projectDirectory.dir("devDirectoryDep").apply { asFile.mkdirs() }
+                val optionalDirectoryDir = layout.projectDirectory.dir("optionalDirectoryDep").apply { asFile.mkdirs() }
+
+                // set after the declaration, to verify the directory is read lazily
+                val lateDir = objects.directoryProperty()
+
+                kotlin {
+                    sourceSets.commonMain {
+                        dependencies {
+                            npmDev("devDep", devDir.asFile)
+                            npmOptional("optionalDep", optionalDir.asFile)
+                            npmDevDirectory("devDirectoryDep", provider { devDirectoryDir })
+                            npmOptionalDirectory("optionalDirectoryDep", provider { optionalDirectoryDir })
+                            npmDevDirectory("lateDep", lateDir)
+                        }
+                    }
+                }
+
+                lateDir.set(layout.projectDirectory.dir("lateDep").apply { asFile.mkdirs() })
+            }
+
+            testFileBasedDependencyDirectories(
+                target = project.multiplatformExtension.js(),
+                expectedFileBasedDependencyDirectories = listOf(
+                    "rootProjectDir:devDep",
+                    "rootProjectDir:devDirectoryDep",
+                    "rootProjectDir:fileBasedNpmDep1",
+                    "rootProjectDir:lateDep",
+                    "rootProjectDir:nested/blah/fileBasedNpmDep2",
+                    "rootProjectDir:optionalDep",
+                    "rootProjectDir:optionalDirectoryDep",
+                ),
+            )
+        }
+
+    // KT-90574
+    @TestFactory
+    fun `verify expected fileBasedDependencyDirectories - target-specific source set`(): List<DynamicNode> =
+        forEachNpmDependencyStyle { npmDependencyStyle ->
+            val project = setupProject(npmDependencyStyle = npmDependencyStyle) {
+                val jsOnlyDir = layout.projectDirectory.dir("jsOnlyDep").apply { asFile.mkdirs() }
+
+                kotlin {
+                    sourceSets.jsMain {
+                        dependencies {
+                            npm("jsOnlyDep", jsOnlyDir.asFile)
+                        }
+                    }
+                }
+            }
+
+            // JS tasks, including jsBrowserTest via the associated main compilation, track the jsMain directory
+            buildList {
+                addAll(
+
+                    testFileBasedDependencyDirectories(
+                        target = project.multiplatformExtension.js(),
+                        expectedFileBasedDependencyDirectories = listOf(
+                            "rootProjectDir:fileBasedNpmDep1",
+                            "rootProjectDir:jsOnlyDep",
+                            "rootProjectDir:nested/blah/fileBasedNpmDep2",
+                        ),
+                    )
+                )
+                addAll(
+                    // WasmJS tasks do not see the jsMain directory
+                    testFileBasedDependencyDirectories(
+                        target = project.multiplatformExtension.wasmJs(),
+                        expectedFileBasedDependencyDirectories = defaultFileBasedNpmDeps,
+                    )
+                )
+            }
+        }
+
+    /**
+     * Records the current behaviour of an npm dependency declared using the npm DSL with a `file:` version string.
+     *
+     * The directory is neither tracked as a task input, nor does it disable caching,
+     * so changes to the directory contents do not invalidate the task.
+     * If this behaviour changes, update this test.
+     */
+    // KT-90574
+    @TestFactory
+    fun `verify file version string npm dependency is not tracked`(): List<DynamicNode> =
+        forEachNpmDependencyStyle { npmDependencyStyle ->
+            val project = setupProject(npmDependencyStyle = npmDependencyStyle) {
+                val fileVersionDir = layout.projectDirectory.dir("fileVersionDep").apply { asFile.mkdirs() }
+
+                kotlin {
+                    sourceSets.commonMain {
+                        dependencies {
+                            npm("fileVersionDep", "file:${fileVersionDir.asFile.absolutePath}")
+                        }
+                    }
+                }
+            }
+
+            // fileVersionDep is not tracked
+            testFileBasedDependencyDirectories(
+                target = project.multiplatformExtension.js(),
+                expectedFileBasedDependencyDirectories = defaultFileBasedNpmDeps,
+            ) +
+                    // fileVersionDep does not disable caching
+                    testFileBasedNpmDependencyLocations(
+                        target = project.multiplatformExtension.js(),
+                        expectedFileBasedNpmDependencyLocations =
+                            npmDependencyStyle.expectedFileBasedNpmDependencyLocations,
+                    )
+        }
+
+    /**
+     * Run [tests] for each [NpmDependencyStyle].
+     *
+     * See [setupProject].
+     */
+    private fun forEachNpmDependencyStyle(
+        tests: (npmDependencyStyle: NpmDependencyStyle) -> List<DynamicNode>,
+    ): List<DynamicNode> =
+        NpmDependencyStyle.entries.map { npmDependencyStyle ->
+            dynamicContainer(
+                "npmDependencyStyle=$npmDependencyStyle",
+                tests(npmDependencyStyle),
+            )
+        }
+
+    /**
+     * The expected [RequiresNpmDependenciesTask.fileBasedNpmDependencyLocations] for projects created by [setupProject].
+     *
+     * Only [NpmDependencyStyle.LegacyConfigurations] declarations disable caching.
+     * [NpmDependencyStyle.Dsl] declarations are tracked as task inputs instead.
+     */
+    private val NpmDependencyStyle.expectedFileBasedNpmDependencyLocations: List<String>
+        get() = when (this) {
+            NpmDependencyStyle.LegacyConfigurations -> defaultFileBasedNpmDeps
+            NpmDependencyStyle.Dsl -> emptyList()
+        }
+
+    /**
+     * Check each [RequiresNpmDependenciesTask] for the given [target]
+     * tracks the [expectedFileBasedDependencyDirectories], and registers them as task inputs.
+     */
+    private fun testFileBasedDependencyDirectories(
+        target: KotlinTarget,
+        expectedFileBasedDependencyDirectories: List<String>,
+    ): List<DynamicNode> {
+        return testEachRequiresNpmDependenciesTask(
+            target,
+            { task ->
+                dynamicTest("file based dependency directories") {
+                    assertEquals(
+                        expectedFileBasedDependencyDirectories.prettyPrinted,
+                        task.normalizedFileBasedDependencyDirectories().prettyPrinted,
+                        "Task ${task.path} has unexpected file-based dependency directories."
+                    )
+                }
+            },
+            { task ->
+                dynamicTest("file based dependency directories registered as task inputs") {
+                    val allTaskInputs = task.inputs.files
+
+                    val notRegisteredAsInputs = task.fileBasedDependencyDirectories
+                        .filter { it !in allTaskInputs }
+                        .files
+                        .map { it.invariantSeparatorsPath }
+
+                    assertTrue(
+                        notRegisteredAsInputs.isEmpty(),
+                        """
+                        |Task ${task.path} has file-based dependency directories not registered as task inputs.
+                        |notRegisteredAsInputs:$notRegisteredAsInputs
+                        |allTaskInputs: $allTaskInputs
+                        """.trimMargin()
+                    )
+                }
+            },
+        )
+    }
+    //endregion
+
     //region test lockfiles
     @TestFactory
-    fun `lockfiles JS`(): Stream<DynamicNode> {
+    fun `lockfiles JS`(): List<DynamicNode> {
         val project = setupProject()
         return testLockFiles(
             target = project.multiplatformExtension.js(),
@@ -231,7 +472,7 @@ sealed class NpmResolverPluginApplierTest(
     }
 
     @TestFactory
-    fun `lockfiles WasmJS`(): Stream<DynamicNode> {
+    fun `lockfiles WasmJS`(): List<DynamicNode> {
         val project = setupProject()
         return testLockFiles(
             target = project.multiplatformExtension.wasmJs(),
@@ -244,7 +485,7 @@ sealed class NpmResolverPluginApplierTest(
     }
 
     @TestFactory
-    fun `lockfiles WasmJS - with custom WasmJS npm tooling dir`(): Stream<DynamicNode> {
+    fun `lockfiles WasmJS - with custom WasmJS npm tooling dir`(): List<DynamicNode> {
         val project = setupProject {
             val wasmJsNpmToolingDir = project.projectDir.resolve("customWasmJsNpmToolingDir").apply { mkdirs() }
 
@@ -266,7 +507,7 @@ sealed class NpmResolverPluginApplierTest(
     }
 
     @TestFactory
-    fun `lockfiles WasmWASI`(): Stream<DynamicNode> {
+    fun `lockfiles WasmWASI`(): List<DynamicNode> {
         val project = setupProject()
         // expect no lock files because WASI does not have npm dependencies
         return testLockFiles(
@@ -283,7 +524,7 @@ sealed class NpmResolverPluginApplierTest(
     private fun testLockFiles(
         target: KotlinTarget,
         expectedNpmDependenciesLockFiles: (task: RequiresNpmDependenciesTask) -> List<String>,
-    ): Stream<DynamicNode> {
+    ): List<DynamicNode> {
         return testEachRequiresNpmDependenciesTask(
             target = target,
             { task ->
@@ -325,12 +566,20 @@ sealed class NpmResolverPluginApplierTest(
     companion object {
 
         /**
+         * The file-based npm dependencies added by [setupProject].
+         */
+        private val defaultFileBasedNpmDeps: List<String> = listOf(
+            "rootProjectDir:fileBasedNpmDep1",
+            "rootProjectDir:nested/blah/fileBasedNpmDep2",
+        )
+
+        /**
          * Run a [DynamicTest] for each [RequiresNpmDependenciesTask] in the given [target].
          */
         private fun testEachRequiresNpmDependenciesTask(
             target: KotlinTarget,
             vararg tests: (task: RequiresNpmDependenciesTask) -> DynamicTest,
-        ): Stream<DynamicNode> {
+        ): List<DynamicNode> {
             val project = target.project
 
             val requiresNpmDependenciesTasks = project.getRequiresNpmDependenciesTasksFor(target)
@@ -340,18 +589,23 @@ sealed class NpmResolverPluginApplierTest(
                 }
                 .toList()
 
-            return requiresNpmDependenciesTasks.asSequence().map { task ->
+            return requiresNpmDependenciesTasks.map { task ->
                 dynamicContainer(
                     "task ${task.path}",
                     tests.map { test -> test(task) }
                 )
-            }.asStream()
+            }
         }
 
 
         private fun RequiresNpmDependenciesTask.normalizedFileBasedNpmDependencyLocations(): List<String>? =
             fileBasedNpmDependencyLocations.orNull
                 ?.map { normalizeFilePath(this, File(it)) }
+
+        private fun RequiresNpmDependenciesTask.normalizedFileBasedDependencyDirectories(): List<String> =
+            fileBasedDependencyDirectories.files
+                .map { normalizeFilePath(this, it) }
+                .sorted()
 
         private fun RequiresNpmDependenciesTask.normalizedNpmDependenciesLockFiles(): List<String> =
             npmDependenciesLockFiles.files.map { normalizeFilePath(this, it) }

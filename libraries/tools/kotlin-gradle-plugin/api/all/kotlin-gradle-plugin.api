@@ -4072,6 +4072,7 @@ public final class org/jetbrains/kotlin/gradle/targets/js/npm/RequiresNpmDepende
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/targets/js/npm/RequiresNpmDependenciesTask : org/gradle/api/Task, org/jetbrains/kotlin/gradle/targets/js/npm/RequiresNpmDependencies {
+	public abstract fun getFileBasedDependencyDirectories ()Lorg/gradle/api/file/ConfigurableFileCollection;
 	public abstract fun getFileBasedNpmDependencyLocations ()Lorg/gradle/api/provider/ListProperty;
 	public abstract fun getNpmDependenciesLockFiles ()Lorg/gradle/api/file/ConfigurableFileCollection;
 	public abstract fun getPath ()Ljava/lang/String;

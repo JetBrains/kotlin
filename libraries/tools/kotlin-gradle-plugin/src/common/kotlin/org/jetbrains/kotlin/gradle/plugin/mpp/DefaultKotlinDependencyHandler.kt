@@ -14,8 +14,8 @@ import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.file.Directory
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.gradle.npm.internal.KotlinNpmDependency
 import org.jetbrains.kotlin.gradle.npm.KotlinNpmDependenciesCollector
-import org.jetbrains.kotlin.gradle.npm.KotlinNpmDependency
 import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.targets.js.npm.*
@@ -74,7 +74,7 @@ internal open class DefaultKotlinDependencyHandler @Inject constructor(
 
     private fun addDependencyByAnyNotation(
         configurationName: String,
-        dependencyNotation: Any
+        dependencyNotation: Any,
     ): Dependency? {
         return project.dependencies.add(configurationName, dependencyNotation)
     }
@@ -82,14 +82,14 @@ internal open class DefaultKotlinDependencyHandler @Inject constructor(
     private fun addDependencyByStringNotation(
         configurationName: String,
         dependencyNotation: Any,
-        configure: ExternalModuleDependency.() -> Unit = { }
+        configure: ExternalModuleDependency.() -> Unit = { },
     ): ExternalModuleDependency =
         addDependency(configurationName, project.dependencies.create(dependencyNotation) as ExternalModuleDependency, configure)
 
     private fun <T : Dependency> addDependency(
         configurationName: String,
         dependency: T,
-        configure: T.() -> Unit
+        configure: T.() -> Unit,
     ): T =
         dependency.also {
             configure(it)
@@ -255,7 +255,7 @@ internal open class DefaultKotlinDependencyHandler @Inject constructor(
     @Suppress("OVERRIDE_DEPRECATION")
     override fun devNpm(
         name: String,
-        version: String
+        version: String,
     ): NpmDependencyDeprecated =
         NpmDependencyDeprecated(
             objectFactory = project.objects,
@@ -273,7 +273,7 @@ internal open class DefaultKotlinDependencyHandler @Inject constructor(
     @Suppress("OVERRIDE_DEPRECATION")
     override fun devNpm(
         name: String,
-        directory: File
+        directory: File,
     ): NpmDependencyDeprecated =
         directoryNpmDependency(
             name = name,
@@ -331,7 +331,7 @@ internal open class DefaultKotlinDependencyHandler @Inject constructor(
     @Suppress("OVERRIDE_DEPRECATION")
     override fun peerNpm(
         name: String,
-        version: String
+        version: String,
     ): NpmDependencyDeprecated =
         NpmDependencyDeprecated(
             objectFactory = project.objects,

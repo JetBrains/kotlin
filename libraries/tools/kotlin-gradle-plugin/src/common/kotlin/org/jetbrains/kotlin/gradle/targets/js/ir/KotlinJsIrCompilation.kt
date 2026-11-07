@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 import org.gradle.api.Task
 import org.gradle.api.file.Directory
 import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.gradle.npm.internal.KotlinNpmDependency
+import org.jetbrains.kotlin.gradle.npm.npmDependenciesCollector
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl
 import org.jetbrains.kotlin.gradle.targets.js.internal.jsToolingProject
@@ -104,5 +106,29 @@ internal fun KotlinJsIrCompilation.hasSharedNpmToolingDir(): Boolean {
         /* JS */ null -> false
         WasmTarget.WASI -> false // WASI does not have npm dependencies
         WasmTarget.JS -> true
+    }
+}
+
+/**
+ * Returns the npm dependencies for this compilation.
+ *
+ * Includes the dependencies from all associated compilations.
+ */
+internal fun KotlinJsIrCompilation.npmDependencies(): Provider<Set<KotlinNpmDependency>> {
+    val providers = project.providers
+    val compilation = this
+
+    val allCompilations = providers.provider {
+        listOf(compilation) + compilation.allAssociatedCompilations
+    }
+
+    return allCompilations.flatMap { compilations ->
+        compilations
+            .flatMap { it.allKotlinSourceSets }
+            .map { it.npmDependenciesCollector.npmDependencies }
+            .fold(providers.provider { emptyList<KotlinNpmDependency>() }) { acc, provider ->
+                acc.zip(provider) { a, b -> a + b }
+            }
+            .map { it.toSet() }
     }
 }
