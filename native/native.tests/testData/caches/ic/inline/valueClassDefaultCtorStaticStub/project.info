@@ -1,0 +1,30 @@
+// DISABLE_NATIVE: targetFamily=MINGW
+
+
+// KT-54330 window, sibling of the corpus case inline/privateClassDefaultCtorStubLinkage (the
+// regular-class $default ctor stub): here the defaulted construction goes through a private
+// VALUE CLASS, so the unmarked chain additionally crosses the value-class static constructor.
+//
+// The internal inline g is inlined into main (a friend module); through the private inline
+// bridge probe (the frontend forbids naming a private-in-file type directly in a non-private
+// inline body) the inlined body constructs V with its defaulted argument. In main's per-file
+// cache the construction is lowered to the synthetic $default static constructor
+// V#<constructor>#static(String?, Int, DefaultConstructorMarker?) and referenced as an
+// external symbol, but lib1's per-file cache emits that stub with LLVM internal linkage:
+// CacheInfoBuilder.trackCallees (CacheInfoBuilder.kt) marks only the real constructor
+// V.<init>(String) with isCalledFromExportedInlineFunction, and ContextUtils.linkageOf
+// propagates the flag only through irFunction.originalConstructor (set solely by
+// ConstructorsLowering), while the stub carries only defaultArgumentsOriginalFunction
+// (DefaultArgumentFunctionFactory) and the value-class static constructor built by
+// Autoboxing's getLoweredInlineClassConstructor copies neither - both fall back to
+// themselves, where the flag is not set. The link fails with an undefined symbol while the
+// same klibs link and answer "V(s=five)" without incremental compilation.
+//
+// Harness note: the "clean" reference link also enables incremental compilation (with a fresh
+// cache), so this from-scratch IC-only defect fails that link too. The harness's non-IC link
+// exonerates the program, and the run is reported as BUG with IC_ONLY_LINK_FAILURE.
+
+MODULES: lib1, main
+
+STEP 0:
+    libs: lib1, main
