@@ -84,7 +84,9 @@ class FirNativeKlibAbiDumpBeforeInliningSavingHandler(
                     )
                 )
                 platformAndTargets(BuiltInsPlatform.NATIVE, testServices.nativeEnvironmentConfigurator.getNativeTarget(module).name)
-                legacyNativeDependenciesInManifest(serializerOutput.neededLibraries.map { it.uniqueName })
+                if (configuration.klibAbiCompatibilityLevel < KlibAbiCompatibilityLevel.LATEST_STABLE) {
+                    legacyNativeDependenciesInManifest(serializerOutput.neededLibraries.map { it.uniqueName })
+                }
             }
             includeMetadata(serializerOutput.serializedMetadata)
             includeIr(serializerOutput.serializedIr)

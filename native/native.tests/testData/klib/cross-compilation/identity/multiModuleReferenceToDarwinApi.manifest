@@ -2,7 +2,6 @@
 abi_version = <value sanitized for test data stability>
 builtins_platform = NATIVE
 compiler_version = <value sanitized for test data stability>
-depends = org.jetbrains.kotlin.native.platform.Foundation org.jetbrains.kotlin.native.platform.darwin stdlib
 ir_signature_versions = <value sanitized for test data stability>
 metadata_flags = <value sanitized for test data stability>
 metadata_version = <value sanitized for test data stability>
@@ -12,7 +11,6 @@ unique_name = lib
 abi_version = <value sanitized for test data stability>
 builtins_platform = NATIVE
 compiler_version = <value sanitized for test data stability>
-depends = lib org.jetbrains.kotlin.native.platform.Foundation org.jetbrains.kotlin.native.platform.darwin stdlib
 ir_signature_versions = <value sanitized for test data stability>
 metadata_flags = <value sanitized for test data stability>
 metadata_version = <value sanitized for test data stability>

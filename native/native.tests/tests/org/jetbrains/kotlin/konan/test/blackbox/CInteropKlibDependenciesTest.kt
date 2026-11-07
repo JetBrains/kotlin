@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.test.blackbox
 
 import org.jetbrains.kotlin.io.propertyList
+import org.jetbrains.kotlin.io.readProperties
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCInteropArgs
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.CompilationToolException
@@ -14,9 +15,9 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilat
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeHome
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_DEPENDS
-import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEqualsToFile
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
@@ -28,11 +29,14 @@ import java.util.Properties
 @Tag("cinterop")
 class CInteropKlibDependenciesTest : AbstractNativeSimpleTest() {
 
+    private val olderAbiArgs = arrayOf("-Xklib-abi-compatibility-level", "2.4")
+
     @Test
     fun testOnlyStdlibInDepends() {
         val testDataDir = testDataDir("onlyStdlib")
-        val singleKlib = cinterop(testDataDir, "single")
-        assertEqualsToFile(testDataDir.resolve("single.depends.txt"), singleKlib.readDepends())
+        verifyManifestDepends(testDataDir.resolve("single.depends.txt")) { outputDir, extraArgs ->
+            cinterop(testDataDir, "single", *extraArgs, outputDir = outputDir)
+        }
     }
 
     @Test
@@ -40,8 +44,9 @@ class CInteropKlibDependenciesTest : AbstractNativeSimpleTest() {
         Assumptions.assumeTrue(targets.testTarget.family == Family.OSX)
 
         val testDataDir = testDataDir("platformLibs")
-        val platformUserKlib = cinterop(testDataDir, "platformUser", noDefaultLibs = false)
-        assertEqualsToFile(testDataDir.resolve("platformUser.depends.txt"), platformUserKlib.readDepends())
+        verifyManifestDepends(testDataDir.resolve("platformUser.depends.txt")) { outputDir, extraArgs ->
+            cinterop(testDataDir, "platformUser", *extraArgs, noDefaultLibs = false, outputDir = outputDir)
+        }
     }
 
     // Only a should be in c's depends.
@@ -49,11 +54,18 @@ class CInteropKlibDependenciesTest : AbstractNativeSimpleTest() {
     @Test
     fun testCliLibrariesInDepends() {
         val testDataDir = testDataDir("cliLibraries")
-        val aKlib = cinterop(testDataDir, "a")
-        val bKlib = cinterop(testDataDir, "b")
-        val cKlib = cinterop(testDataDir, "c", "-l", aKlib.klibFile.canonicalPath, "-l", bKlib.klibFile.canonicalPath)
-
-        assertEqualsToFile(testDataDir.resolve("c.depends.txt"), cKlib.readDepends())
+        verifyManifestDepends(testDataDir.resolve("c.depends.txt")) { outputDir, extraArgs ->
+            val aKlib = cinterop(testDataDir, "a", *extraArgs, outputDir = outputDir)
+            val bKlib = cinterop(testDataDir, "b", *extraArgs, outputDir = outputDir)
+            cinterop(
+                testDataDir,
+                "c",
+                *extraArgs,
+                "-l", aKlib.klibFile.canonicalPath,
+                "-l", bKlib.klibFile.canonicalPath,
+                outputDir = outputDir,
+            )
+        }
     }
 
     // KT-90839: hermetic builds pass the stdlib with -l and have no klib/ in konan.home.
@@ -65,15 +77,15 @@ class CInteropKlibDependenciesTest : AbstractNativeSimpleTest() {
         val posixPath = librariesDir.resolve("platform/${targets.testTarget}/org.jetbrains.kotlin.native.platform.posix").assertExists().path
 
         fun doTest(vararg args: String) {
-            val klib = cinterop(
-                testDataDir("onlyStdlib"),
-                "single",
-                *args,
-            )
-
-            assertEquals("stdlib", klib.readDepends())
-
-            klib.klibFile.deleteRecursively()
+            verifyManifestDepends(testDataDir("onlyStdlib").resolve("single.depends.txt")) { outputDir, extraArgs ->
+                cinterop(
+                    testDataDir("onlyStdlib"),
+                    "single",
+                    *extraArgs,
+                    *args,
+                    outputDir = outputDir,
+                )
+            }
         }
 
         doTest()
@@ -91,23 +103,37 @@ class CInteropKlibDependenciesTest : AbstractNativeSimpleTest() {
     private fun testDataDir(scenario: String): File =
         getAbsoluteFile("native/native.tests/testData/CInterop/klibDependencies/$scenario")
 
+    private fun verifyManifestDepends(
+        expectedOlderAbiDependsFile: File,
+        buildTargetKlib: (outputDir: File, extraArgs: Array<String>) -> KLIB,
+    ) {
+        val defaultAbiKlib = buildTargetKlib(buildDir.resolve("defaultAbi"), emptyArray())
+        assertNull(defaultAbiKlib.readManifestProperties().getProperty(KLIB_PROPERTY_DEPENDS))
+        defaultAbiKlib.klibFile.deleteRecursively()
+
+        val olderAbiKlib = buildTargetKlib(buildDir.resolve("olderAbi"), olderAbiArgs)
+        assertEqualsToFile(expectedOlderAbiDependsFile, olderAbiKlib.readDepends())
+        olderAbiKlib.klibFile.deleteRecursively()
+    }
+
     private fun cinterop(
         testDataDir: File,
         name: String,
         vararg additionalArgs: String,
         noDefaultLibs: Boolean = true,
+        outputDir: File = buildDir,
     ): KLIB = cinteropToLibrary(
         defFile = testDataDir.resolve("$name.def"),
-        outputDir = buildDir,
+        outputDir = outputDir,
         freeCompilerArgs = TestCInteropArgs("-Xmodule-name", name, "-nopack", *additionalArgs),
         noDefaultLibs = noDefaultLibs,
     ).assertSuccess().resultingArtifact
 
-    private fun KLIB.readDepends(): String {
-        val manifestFile = klibFile.resolve("default/manifest")
-        val manifestProperties = manifestFile.bufferedReader().use { reader -> Properties().apply { load(reader) } }
-        return manifestProperties.propertyList(KLIB_PROPERTY_DEPENDS, escapeInQuotes = true).sorted().joinToString(" ")
-    }
+    private fun KLIB.readManifestProperties(): Properties =
+        klibFile.resolve("default/manifest").toPath().readProperties()
+
+    private fun KLIB.readDepends(): String =
+        readManifestProperties().propertyList(KLIB_PROPERTY_DEPENDS, escapeInQuotes = true).sorted().joinToString(" ")
 
     private fun File.assertExists(): File {
         assertTrue(exists()) { "File or directory does not exist: $this" }

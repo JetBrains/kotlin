@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.config.KlibAbiCompatibilityLevel
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.konan.library.AbstractNativeKlibWriterTest
+import org.jetbrains.kotlin.library.KLIB_PROPERTY_DEPENDS
 import org.jetbrains.kotlin.library.KlibMockDSL
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.SerializedIrModule
@@ -82,6 +83,14 @@ class CInteropKlibWritingTest : AbstractNativeKlibWriterTest<CInteropParameters>
     override fun customizeMockKlib(parameters: CInteropParameters) {
         super.customizeMockKlib(parameters)
         KlibSignatureIndexComponentWriterImpl(parameters.signatureIndex.first, parameters.signatureIndex.second).writeTo(dsl.rootDir)
+    }
+
+    context(properties: Properties)
+    override fun customizeManifestForMockKlib(parameters: CInteropParameters) {
+        super.customizeManifestForMockKlib(parameters)
+        if (parameters.abiLevel >= KlibAbiCompatibilityLevel.LATEST_STABLE) {
+            properties.remove(KLIB_PROPERTY_DEPENDS)
+        }
     }
 
     override fun writeKlib(parameters: CInteropParameters): Path {
