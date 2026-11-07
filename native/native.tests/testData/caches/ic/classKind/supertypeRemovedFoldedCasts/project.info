@@ -1,0 +1,26 @@
+// DISABLE_NATIVE: targetFamily=MINGW
+
+
+// S implements Marker, so in check.kt the backend folds both upcasts:
+//   - `x as? Marker` (TypeOperatorLowering.lowerSafeCast) becomes a folded `is` plus a
+//     STATEMENT_ORIGIN_NO_CAST_NEEDED implicit upcast,
+//   - `x as Marker` (CastsLowering, isSuperClassCastTo) becomes the plain argument.
+// Both folds ride on the subtype relation S <: Marker, which is declared in s.kt
+// (CastsOptimization's isSubtypeOf predicate). The lowered check.kt then references no
+// symbol of s.kt, so its per-file cache records no dependency edge on it
+// (DependenciesTracker builds edges from usedBitcode() only), and when S drops Marker the
+// dirty-file walk never rebuilds check.kt. Its stale bitcode keeps both casts erased: the
+// IC binary answers true/cast-ok where the clean build answers false/cce.
+//
+// Same root cause as the open corpus cases classKind/supertypeRemoved and
+// classKind/supertypeRemovedCrossLibrary, which pin the folded `is` check; this test pins
+// the two remaining check kinds (SAFE_CAST and CAST) of the same missed dependency.
+
+MODULES: main
+
+STEP 0:
+    libs: main
+
+// s.1.kt: S does not implement Marker anymore. check.kt is not edited and must be rebuilt.
+STEP 1:
+    libs: main

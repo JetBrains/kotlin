@@ -1,0 +1,12 @@
+STEP 0:
+    modifications:
+        U : s.kt -> s.kt
+        U : check.kt -> check.kt
+        U : main.kt -> main.kt
+
+// s.1.kt: S does not implement Marker anymore. The cache of check.kt must be rebuilt: its
+// cached bitcode still has both upcasts erased.
+STEP 1:
+    modifications:
+        U : s.1.kt -> s.kt
+        U : main.1.kt -> main.kt
