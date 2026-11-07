@@ -1,0 +1,31 @@
+// DISABLE_NATIVE: targetFamily=MINGW
+
+
+// A friend module re-creates, inside an inlined body, an object literal whose superclass is
+// a private-in-file class of lib1. The consumer must then compute the local class's field
+// layout over the private superclass P, which requires P's class_fields from lib1's per-file
+// cache. CacheInfoBuilder does write that entry (the klib ABI checker exports everything but
+// LOCAL visibility), but under a FileLocalSignature whose container IdSignature.FileSignature
+// is compared by identity (IdSignature.kt: "other is FileSignature && id == other.id"), while
+// ClassFieldsSerializer.deserializeTo rebuilds each file's FileSignature with a fresh
+// id = Any() on every deserialization (CacheSerializationSupport.kt). The consumer's lookup
+// can therefore never match the producer's key, and ClassLayoutBuilder.getDeclaredFields ->
+// ClassFieldsDeserializer.deserializeClassFields crashes with
+// "No class fields for CLASS name:P visibility:private".
+//
+// When lib1 and main are compiled in one batched session (the plain fun main form of this
+// scenario) the layout instead falls back to the IR and the run degrades to a KT-54330-style
+// link failure: lib1's per-file object defines P's typeinfo and constructor as LLVM-local
+// symbols while main's re-created object literal references them as external. With the
+// @Test main used here (-generate-test-runner excludes included libraries from the batch)
+// both IC variants take the class_fields crash path. A non-IC build of the same klibs links
+// and answers "ok".
+//
+// Harness note: the "clean" reference link also enables incremental compilation (with a fresh
+// cache), so this from-scratch IC-only defect fails that link too; the harness's non-IC link
+// exonerates the program and the run is reported as BUG.
+
+MODULES: lib1, main
+
+STEP 0:
+    libs: lib1, main
