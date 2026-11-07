@@ -1,0 +1,26 @@
+// DISABLE_NATIVE: targetFamily=MINGW
+
+
+// lib2's cached use.kt records a strong per-file bitcode dependency on lib1's pub.kt file id.
+// At step 1 lib1 renames pub.kt to pub2.kt (identical content, new file id) while lib2 is out of
+// the link: the removed-file walk in CacheBuilder builds reverse edges only from the caches of
+// the linked libraries, so the edge lib1|pub.kt <- lib2|use.kt is invisible, use.kt is not marked
+// dirty, and lib1's old pub.kt cache directory is deleted.
+// At step 2 lib2 returns unrecompiled. The dirty check validates use.kt's recorded dependency
+// only by library presence (lib1 is in the link), and use.kt's own fingerprint is unchanged, so
+// it stays clean. Resolving that dangling edge then crashes the IC link with
+// IllegalStateException in CachedLibraries$Cache$PerFile.getFileDependencies, while the clean
+// link succeeds. KT-89876 fixed the same crash for a rename while the dependent IS in the link.
+
+MODULES: lib1, lib2, main
+
+STEP 0:
+    libs: lib1, lib2, main
+
+// lib2 leaves the link; lib1 renames pub.kt.
+STEP 1:
+    libs: lib1, main
+
+// lib2 returns; its klib and cache are untouched.
+STEP 2:
+    libs: main

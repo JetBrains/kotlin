@@ -1,0 +1,16 @@
+STEP 0:
+    modifications:
+        U : pub.kt -> pub.kt
+    added cache: pub.kt
+
+// pub.kt is renamed to pub2.kt: identical content, new file id. lib2 is out of the link,
+// so no cached dependency on the old file id is walked here.
+STEP 1:
+    modifications:
+        D : pub.kt
+        U : pub2.kt -> pub2.kt
+    removed cache: pub.kt
+    added cache: pub2.kt
+
+STEP 2:
+    unchanged cache: pub2.kt
