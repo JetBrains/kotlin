@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
@@ -80,7 +79,7 @@ class JvmKotlinType(val type: Type, val irType: IrType? = null)
 fun FqName.topLevelClassInternalName() = JvmClassName.internalNameByClassId(ClassId(parent(), shortName()))
 fun FqName.topLevelClassAsmType(): Type = Type.getObjectType(topLevelClassInternalName())
 
-fun TypeSystemCommonBackendContext.extractReificationArgument(initialType: IrType): Pair<IrTypeParameter, ReificationArgument>? {
+fun IrTypeSystemContext.extractReificationArgument(initialType: IrType): Pair<IrTypeParameter, ReificationArgument>? {
     var type = initialType
     var arrayDepth = 0
     // JvmIrTypeSystemContext.isMarkedNullable also handles flexible types.
