@@ -1,0 +1,17 @@
+// DISABLE_NATIVE: targetFamily=MINGW
+
+
+// A cross-library sibling of classKind/valueClassTypeOnlyUse. g.kt in lib2 uses Wrapped only
+// as a parameter and return type. While Wrapped is a plain class, the generated code of g.kt
+// references no symbol of lib1's w.kt, so its per-file cache records no dependency edge on it.
+// But class -> value class changes how Wrapped is passed and returned (an object reference vs an
+// unboxed Int), so the cache of g.kt must be rebuilt. As is, the stale cache keeps the
+// boxed-reference ABI while main is rebuilt for the unboxed ABI, and the first call segfaults.
+
+MODULES: lib1, lib2, main
+
+STEP 0:
+    libs: lib1, lib2, main
+
+STEP 1:
+    libs: lib1, lib2, main

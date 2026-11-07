@@ -1,0 +1,10 @@
+STEP 0:
+    modifications:
+        U : w.kt -> w.kt
+    added cache: w.kt
+
+// w.1.kt: class -> value class
+STEP 1:
+    modifications:
+        U : w.1.kt -> w.kt
+    modified cache: w.kt

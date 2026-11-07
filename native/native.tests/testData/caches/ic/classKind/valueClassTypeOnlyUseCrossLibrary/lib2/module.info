@@ -1,0 +1,12 @@
+STEP 0:
+    dependencies: lib1
+    modifications:
+        U : g.kt -> g.kt
+    added cache: g.kt
+
+// lib2's klib is rebuilt from unchanged sources, but that must not be enough: the cache
+// of g.kt must be rebuilt too, because every signature that mentions Wrapped changed
+// its ABI.
+STEP 1:
+    dependencies: lib1
+    modified cache: g.kt
