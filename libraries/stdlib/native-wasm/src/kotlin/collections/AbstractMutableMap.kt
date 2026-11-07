@@ -1,5 +1,7 @@
 package kotlin.collections
 
+import kotlin.concurrent.Volatile
+
 /**
  * Provides a skeletal implementation of the [MutableMap] interface.
  *
@@ -46,6 +48,7 @@ public actual abstract class AbstractMutableMap<K, V> protected actual construct
         entries.clear()
     }
 
+    @Volatile
     private var _keys: MutableSet<K>? = null
     actual override val keys: MutableSet<K>
         get() {
@@ -81,6 +84,7 @@ public actual abstract class AbstractMutableMap<K, V> protected actual construct
             return _keys!!
         }
 
+    @Volatile
     private var _values: MutableCollection<V>? = null
     actual override val values: MutableCollection<V>
         get() {
