@@ -19,12 +19,13 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
-import org.jetbrains.kotlin.gradle.targets.js.npm.fromSrcPackageJson
+import org.jetbrains.kotlin.gradle.targets.js.npm.fixSemver
 import java.io.File
 
 /**
- * Assembles the shared-npm-project for one platform from the collected package.json files:
+ * Assembles the shared-npm-project for one platform from the collected npm dependency reports:
  * one workspace `package.json` per compilation plus the root `package.json` listing all workspaces.
  */
 @CacheableTask
@@ -33,7 +34,7 @@ internal abstract class KotlinSetupSharedNpmProjectTask : DefaultTask(), UsesKot
     @get:InputFiles
     @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.NONE)
-    abstract val packageJsonFiles: ConfigurableFileCollection
+    abstract val reportFiles: ConfigurableFileCollection
 
     @get:Input
     abstract val rootPackageName: Property<String>
@@ -50,26 +51,35 @@ internal abstract class KotlinSetupSharedNpmProjectTask : DefaultTask(), UsesKot
         val packagesDirectory = outputDirectory.resolve("packages")
         packagesDirectory.deleteRecursively()
 
-        val workspaceNames = packageJsonFiles.files
-            .mapNotNull { file ->
-                file.packageName()?.also { name ->
-                    file.copyTo(packagesDirectory.resolve(name).resolve("package.json"))
-                }
+        val reports = reportFiles.files.associateWith { file -> file.npmDependencyReportOrNull() }
+        val invalidFiles = reports.filterValues { it == null }.keys.sorted()
+        if (invalidFiles.isNotEmpty()) {
+            reportDiagnostic(KotlinToolingDiagnostics.SharedNpmProjectInvalidNpmDependencyReport(invalidFiles))
+            return
+        }
+
+        val workspaceVersion = fixSemver(rootPackageVersion.get())
+        val workspaceNames = reports.values.filterNotNull()
+            .map { report ->
+                val name = report.compilation
+                report.toPackageJson(workspaceVersion).saveTo(packagesDirectory.resolve(name).resolve(NpmProject.PACKAGE_JSON))
+                name
             }
             .sorted()
 
-        PackageJson(rootPackageName.get(), rootPackageVersion.get()).apply {
+        PackageJson(rootPackageName.get(), workspaceVersion).apply {
             private = true
             workspaces = workspaceNames.map { "packages/$it" }
-        }.saveTo(outputDirectory.resolve("package.json"))
+        }.saveTo(outputDirectory.resolve(NpmProject.PACKAGE_JSON))
     }
 
-    private fun File.packageName(): String? {
-        val name = runCatching { fromSrcPackageJson(this)?.name }.getOrNull()
-        if (name.isNullOrBlank()) {
-            reportDiagnostic(KotlinToolingDiagnostics.SharedNpmProjectInvalidPackageJson(this))
-            return null
-        }
-        return name
-    }
+    private fun File.npmDependencyReportOrNull(): NpmDependencyReport? =
+        runCatching { readNpmDependencyReport(this) }.getOrNull()?.takeIf { it.compilation.isNotBlank() }
+}
+
+private fun NpmDependencyReport.toPackageJson(version: String) = PackageJson(compilation, version).also {
+    it.dependencies.putAll(dependencies)
+    it.devDependencies.putAll(devDependencies)
+    it.peerDependencies.putAll(peerDependencies)
+    it.optionalDependencies.putAll(optionalDependencies)
 }

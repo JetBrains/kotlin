@@ -2732,14 +2732,17 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    internal object SharedNpmProjectInvalidPackageJson : ToolingDiagnosticFactory(
-        WARNING,
+    internal object SharedNpmProjectInvalidNpmDependencyReport : ToolingDiagnosticFactory(
+        FATAL,
         DiagnosticGroup.Kgp.Misconfiguration,
     ) {
-        operator fun invoke(file: File) = build {
-            title { "Skipping '$file': not a valid package.json" }
-                .description { "The file could not be parsed or has no 'name', so it is left out of the shared npm project." }
-                .solution { "Check the projects declared on the 'kotlinNpmSharedDependencies' / 'kotlinWasmNpmSharedDependencies' configurations." }
+        operator fun invoke(files: List<File>) = build {
+            title { "Invalid npm dependency reports" }
+                .description {
+                    "These files could not be parsed or have a compilation without a name, so their npm dependencies would be missing from the shared npm project:\n" +
+                            files.joinToString("\n") { "  - $it" }
+                }
+                .solution { "Rebuild the projects that produced them, declared on the 'kotlinNpmSharedDependencies' / 'kotlinWasmNpmSharedDependencies' configurations." }
         }
     }
 
