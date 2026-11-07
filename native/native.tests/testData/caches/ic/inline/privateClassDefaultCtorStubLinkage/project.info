@@ -1,0 +1,23 @@
+// DISABLE_NATIVE: targetFamily=MINGW
+
+
+// The internal inline function h is inlined into main (a friend module); the inlined body
+// constructs the private class C, whose primary constructor has a default value. In main's
+// per-file cache the construction is lowered to the synthetic $default constructor stub
+// C#<init>(Int, Int, DefaultConstructorMarker?) and referenced as an external symbol, but
+// lib1's per-file cache emits that stub with LLVM internal linkage: ContextUtils.linkageOf
+// propagates isCalledFromExportedInlineFunction through irFunction.originalConstructor, while
+// the stub only carries the common attribute defaultArgumentsOriginalFunction
+// (DefaultArgumentFunctionFactory) and falls back to itself, where the flag is not set
+// (CacheInfoBuilder.trackCallees sets it only on the real constructor). The link fails with
+// an undefined symbol while the same klibs link and print 1 without incremental compilation.
+//
+// Harness note: the "clean" reference link also enables incremental compilation (with a fresh
+// cache), so this from-scratch IC-only defect fails both of the harness's links and the run
+// is reported as INVALID. The bug is the IC-only link failure: the same klibs link and print
+// 1 without -Xenable-incremental-compilation.
+
+MODULES: lib1, main
+
+STEP 0:
+    libs: lib1, main
