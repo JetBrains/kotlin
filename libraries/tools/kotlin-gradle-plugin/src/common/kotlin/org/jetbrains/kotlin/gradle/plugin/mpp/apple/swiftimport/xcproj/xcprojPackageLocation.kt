@@ -11,6 +11,7 @@ import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
 import kotlinx.serialization.encoding.Decoder
@@ -34,7 +35,7 @@ internal data class XcprojPackageLocationLocal(
 @Serializable
 internal data class XcprojPackageLocationRemote(
     @EncodeDefault val kind: String = "remote",
-    val repositoryURL: String,
+    @SerialName("repository") val repositoryURL: String,
 ) : XcprojPackageLocation()
 
 @Serializable

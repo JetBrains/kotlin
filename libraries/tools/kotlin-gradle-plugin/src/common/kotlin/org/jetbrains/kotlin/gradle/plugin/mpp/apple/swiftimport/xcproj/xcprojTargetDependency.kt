@@ -65,7 +65,7 @@ internal class XcprojTargetDependencySerializer : KSerializer<XcprojTargetDepend
         return when (val element = decoder.decodeJsonElement()) {
             is JsonPrimitive -> XcprojOpaqueLiteralTargetDependency(element.content)
             else -> {
-                val kind = element.jsonObject["kind"]?.jsonPrimitive?.content ?: error("Missing kind")
+                val kind = element.jsonObject["kind"]?.jsonPrimitive?.content ?: "localTarget"
                 when (kind) {
                     "package" -> decoder.json.decodeFromJsonElement(
                         JsonElementBackedSerializer(XcprojPackageTargetDependency.serializer()),

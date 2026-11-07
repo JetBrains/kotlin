@@ -22,6 +22,25 @@ internal val sampleXcprojProject = """
           "Base",
         ],
       },
+      "packages": [
+        {
+          "kind": "local",
+          "path": "../samplePackage",
+          "future-package-field": true,
+        },
+        {
+          "kind": "remote",
+          "repository": "https://github.com/apple/swift-algorithms.git",
+          "version": {
+            "up-to-next-major-version": "1.2.1",
+          },
+          "future-package-field": {"values": [null, false]},
+        },
+        {
+          "kind": "future-package",
+          "location": {"values": [null, {"enabled": true}]},
+        },
+      ],
       "files": [
         { "kind": "folder", "path": "MyApp", "target-membership": [ "MyApp" ] },
         {
@@ -42,11 +61,19 @@ internal val sampleXcprojProject = """
             "compile-sources",
             "frameworks",
             "resources",
-            {"kind": "frameworks", "id": "222222222222222222222222", "future-phase-field": [1, null]},
+            {"kind": "frameworks", "id": "222222222222222222222222", "name": "Special/Phase", "future-phase-field": [1, null]},
             {"kind": "script", "name": "Other script", "shell": "/bin/sh", "script": ["echo hello", "echo world"], "future-script-field": true},
           ],
           "dependencies": [
             "ExistingDependencyLiteral",
+            {
+              "target": "OtherTarget",
+              "platforms": ["ios"],
+            },
+            {
+              "kind": "localTarget",
+              "target": "YetAnotherTarget",
+            },
             {
               "kind": "opaque",
               "foo": "bar",
@@ -57,6 +84,12 @@ internal val sampleXcprojProject = """
                 "product-name": "Something",
                 "build-phase": {
                   "build-phase": "frameworks"
+                }
+            },
+            {
+                "product-name": "ExistingProduct",
+                "build-phase": {
+                  "build-phase": ["frameworks", {"name": "Special/Phase"}]
                 }
             },
           ],
