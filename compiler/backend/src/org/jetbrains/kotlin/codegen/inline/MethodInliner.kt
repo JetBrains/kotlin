@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.codegen.optimization.fixStack.*
 import org.jetbrains.kotlin.codegen.optimization.nullCheck.isCheckParameterIsNotNull
 import org.jetbrains.kotlin.codegen.optimization.temporaryVals.TemporaryVariablesEliminationTransformer
 import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsn
+import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
@@ -41,6 +43,7 @@ import java.util.*
 import kotlin.math.max
 
 class MethodInliner(
+    private val state: GenerationState,
     private val node: MethodNode,
     private val parameters: Parameters,
     private val inliningContext: InliningContext,
@@ -58,7 +61,7 @@ class MethodInliner(
     // could not be handled because the two disagree on the JVM parameter layout. See KT-89206.
     private val skipParameterLocalVariables: Boolean = false,
 ) {
-    private val languageVersionSettings = inliningContext.state.config.languageVersionSettings
+    private val config: JvmBackendConfig = state.config
     private val invokeCalls = ArrayList<InvokeCall>()
     private val anonymousObjectCapturedFieldsByConstructorArgumentCache = hashMapOf<String, List<String?>>()
 
@@ -82,7 +85,7 @@ class MethodInliner(
 
     private fun recordTransformation(info: TransformationInfo) {
         if (!inliningContext.isInliningLambda) {
-            inliningContext.root.state.globalInlineContext.recordTypeFromInlineFunction(info.oldClassName)
+            state.globalInlineContext.recordTypeFromInlineFunction(info.oldClassName)
         }
         if (info.shouldRegenerate(isSameModule)) {
             inliningContext.recordRegeneratedAnonymousObject(info.oldClassName)
@@ -134,7 +137,7 @@ class MethodInliner(
             val remapValue = remapper.remap(parameters.argsSizeOnStack + 1).value
             InternalFinallyBlockInliner.processInlineFunFinallyBlocks(
                 resultNode, lambdasFinallyBlocks, (remapValue as StackValue.Local).index,
-                languageVersionSettings.supportsFeature(LanguageFeature.ProperFinally)
+                config.languageVersionSettings.supportsFeature(LanguageFeature.ProperFinally)
             )
         }
 
@@ -200,7 +203,7 @@ class MethodInliner(
                         transformationInfo!!
                     )
                     val transformer = transformationInfo!!.createTransformer(
-                        childInliningContext, isSameModule, fakeContinuationName
+                        state, childInliningContext, isSameModule, fakeContinuationName,
                     )
 
                     val transformResult = transformer.doTransform(nodeRemapper)
@@ -222,7 +225,7 @@ class MethodInliner(
                     if (inliningContext.isInliningLambda &&
                         inliningContext.lambdaInfo !is DefaultLambda && //never delete default lambda classes
                         transformationInfo!!.canRemoveAfterTransformation() &&
-                        !inliningContext.root.state.globalInlineContext.isTypeFromInlineFunction(oldClassName)
+                        !state.globalInlineContext.isTypeFromInlineFunction(oldClassName)
                     ) {
                         // this class is transformed and original not used so we should remove original one after inlining
                         result.addClassToRemove(oldClassName)
@@ -234,7 +237,7 @@ class MethodInliner(
                     }
 
                     for (classBuilder in childInliningContext.continuationBuilders.values) {
-                        classBuilder.done(inliningContext.state.config.generateSmapCopyToAnnotation)
+                        classBuilder.done(config.generateSmapCopyToAnnotation)
                     }
                 } else {
                     result.addNotChangedClass(oldClassName)
@@ -263,7 +266,7 @@ class MethodInliner(
                         return
                     }
 
-                    val nullableAnyType = inliningContext.typeMapper.typeSystem.nullableAnyType()
+                    val nullableAnyType = inliningContext.typeMapper.typeSystem.irBuiltIns.anyNType
                     val expectedParameters = info.invokeMethod.argumentTypes
                     val expectedKotlinParameters = info.invokeMethodParameters
                     val argumentCount = Type.getArgumentTypes(desc).size
@@ -317,8 +320,7 @@ class MethodInliner(
 
                     val callSite = sourceMapper.callSite.takeIf { info is DefaultLambda }
                     val inliner = MethodInliner(
-                        info.node.node, lambdaParameters, inliningContext.subInlineLambda(info),
-                        newCapturedRemapper,
+                        state, info.node.node, lambdaParameters, inliningContext.subInlineLambda(info), newCapturedRemapper,
                         if (info is DefaultLambda) isSameModule else true /*cause all nested objects in same module as lambda*/,
                         { "Lambda inlining " + info.lambdaClassType.internalName },
                         SourceMapCopier(sourceMapper.parent, info.node.classSMAP, callSite), inlineCallSiteInfo,
@@ -849,7 +851,7 @@ class MethodInliner(
         }
 
         if (shouldPreprocessApiVersionCalls) {
-            val targetApiVersion = inliningContext.state.config.languageVersionSettings.apiVersion
+            val targetApiVersion = config.languageVersionSettings.apiVersion
             ApiVersionCallsPreprocessingMethodTransformer(targetApiVersion).transform("fake", node)
         }
 
@@ -990,7 +992,7 @@ class MethodInliner(
         require(isAnonymousClass(ownerInternalName)) { "An anonymous object class name is expected, but got $ownerInternalName" }
         return anonymousObjectCapturedFieldsByConstructorArgumentCache.getOrPut(ownerInternalName) {
             inliningContext.root.sourceCompilerForInline.resolveAnonymousObjectCapturedFieldsByConstructorArgument(ownerInternalName)
-                ?: getAnonymousObjectCapturedFieldsByConstructorArgumentFromBytecode(inliningContext.state, ownerInternalName)
+                ?: getAnonymousObjectCapturedFieldsByConstructorArgumentFromBytecode(state, ownerInternalName)
         }
     }
 

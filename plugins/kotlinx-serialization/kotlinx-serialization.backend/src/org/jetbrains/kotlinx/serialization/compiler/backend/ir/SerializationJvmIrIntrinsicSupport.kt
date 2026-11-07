@@ -92,7 +92,7 @@ class SerializationJvmIrIntrinsicSupport(
                     mv,
                     intrinsicType
                 )
-                codegen.propagateChildReifiedTypeParametersUsages(codegen.typeMapper.typeSystem.extractUsedReifiedParameters(argument))
+                codegen.propagateChildReifiedTypeParametersUsages(extractUsedReifiedParameters(argument))
                 if (withModule) {
                     frameMap.leaveTemp(serializersModuleType)
                 }
@@ -236,30 +236,24 @@ class SerializationJvmIrIntrinsicSupport(
      *
      * Operation detection in new compilers performed by voidMagicApiCall.
      */
-    private fun InstructionAdapter.putReifyMarkerIfNeeded(type: IrType, intrinsicType: IntrinsicType): Boolean =
-        with(typeSystemContext) {
-            val typeDescriptor = type.typeConstructor().getTypeParameterClassifier()
-            if (typeDescriptor != null) { // need further reification
-                ReifiedTypeInliner.putReifiedOperationMarkerIfNeeded(
-                    typeDescriptor,
-                    type.isMarkedNullable(),
-                    ReifiedTypeInliner.OperationKind.TYPE_OF,
-                    this@putReifyMarkerIfNeeded,
-                    typeSystemContext
-                )
-                aconst(null)
-                aconst(intrinsicType.magicMarkerString())
-                invokestatic(pluginIntrinsicsMarkerOwner, pluginIntrinsicsMarkerMethod, pluginIntrinsicsMarkerSignature, false)
-                if (intrinsicType is IntrinsicType.WithModule) {
-                    // Force emit load instruction so we can retrieve var index later
-                    load(intrinsicType.storedIndex, serializersModuleType)
-                    swap()
-                }
-                invokestatic(serializersKtInternalName, callMethodName, intrinsicType.methodDescriptor, false)
-                return true
+    private fun InstructionAdapter.putReifyMarkerIfNeeded(type: IrType, intrinsicType: IntrinsicType): Boolean {
+        val typeParameter = (type.classifierOrNull as? IrTypeParameterSymbol)?.owner
+        if (typeParameter != null) { // need further reification
+            val isNullable = with(typeSystemContext) { type.isMarkedNullable() }
+            ReifiedTypeInliner.putReifiedOperationMarkerIfNeeded(typeParameter, isNullable, ReifiedTypeInliner.OperationKind.TYPE_OF, this)
+            aconst(null)
+            aconst(intrinsicType.magicMarkerString())
+            invokestatic(pluginIntrinsicsMarkerOwner, pluginIntrinsicsMarkerMethod, pluginIntrinsicsMarkerSignature, false)
+            if (intrinsicType is IntrinsicType.WithModule) {
+                // Force emit load instruction so we can retrieve var index later
+                load(intrinsicType.storedIndex, serializersModuleType)
+                swap()
             }
-            return false
+            invokestatic(serializersKtInternalName, callMethodName, intrinsicType.methodDescriptor, false)
+            return true
         }
+        return false
+    }
 
     private val iaeName = "java/lang/IllegalArgumentException"
 
@@ -342,7 +336,7 @@ class SerializationJvmIrIntrinsicSupport(
         // SerializersModule
         load(intrinsicType.storedIndex, serializersModuleType)
         // KClass
-        aconst(typeMapper.mapTypeCommon(kType, TypeMappingMode.GENERIC_ARGUMENT))
+        aconst(typeMapper.mapType(kType, TypeMappingMode.GENERIC_ARGUMENT))
         AsmUtil.wrapJavaClassIntoKClass(this)
 
         val descriptor = StringBuilder("(${serializersModuleType.descriptor}${AsmTypes.K_CLASS_TYPE.descriptor}")
@@ -367,7 +361,7 @@ class SerializationJvmIrIntrinsicSupport(
         if (serializer.owner.classId == polymorphicSerializerId && kType.isInterface() && intrinsicType is IntrinsicType.WithModule && useModuleOverContextualForInterfaces) {
             load(intrinsicType.storedIndex, serializersModuleType)
             // KClass
-            aconst(typeMapper.mapTypeCommon(kType, TypeMappingMode.GENERIC_ARGUMENT))
+            aconst(typeMapper.mapType(kType, TypeMappingMode.GENERIC_ARGUMENT))
             AsmUtil.wrapJavaClassIntoKClass(this)
 
             val descriptor = StringBuilder("(${serializersModuleType.descriptor}${AsmTypes.K_CLASS_TYPE.descriptor}")
@@ -517,7 +511,7 @@ class SerializationJvmIrIntrinsicSupport(
                     // support legacy serializer instantiation by constructor for old runtimes
                     aconst(serialName)
                     signature.append("Ljava/lang/String;")
-                    val enumJavaType = typeMapper.mapTypeCommon(kType, TypeMappingMode.GENERIC_ARGUMENT)
+                    val enumJavaType = typeMapper.mapType(kType, TypeMappingMode.GENERIC_ARGUMENT)
                     val javaEnumArray = Type.getType("[Ljava/lang/Enum;")
                     invokestatic(enumJavaType.internalName, "values", "()[${enumJavaType.descriptor}", false)
                     checkcast(javaEnumArray)
@@ -527,7 +521,7 @@ class SerializationJvmIrIntrinsicSupport(
                 contextSerializerId, polymorphicSerializerId -> {
                     // a special way to instantiate enum -- need a enum KClass reference
                     // GENERIC_ARGUMENT forces boxing in order to obtain KClass
-                    aconst(typeMapper.mapTypeCommon(kType, TypeMappingMode.GENERIC_ARGUMENT))
+                    aconst(typeMapper.mapType(kType, TypeMappingMode.GENERIC_ARGUMENT))
                     AsmUtil.wrapJavaClassIntoKClass(this)
                     signature.append(AsmTypes.K_CLASS_TYPE.descriptor)
                     if (serializer.owner.classId == contextSerializerId && hasNewContextSerializerSignature) {
@@ -548,7 +542,7 @@ class SerializationJvmIrIntrinsicSupport(
 
                 referenceArraySerializerId -> {
                     // a special way to instantiate reference array serializer -- need an element KClass reference
-                    aconst(typeMapper.mapTypeCommon(typeArgumentsAsTypes.first(), TypeMappingMode.GENERIC_ARGUMENT))
+                    aconst(typeMapper.mapType(typeArgumentsAsTypes.first(), TypeMappingMode.GENERIC_ARGUMENT))
                     AsmUtil.wrapJavaClassIntoKClass(this)
                     signature.append(AsmTypes.K_CLASS_TYPE.descriptor)
                     // Reference array serializer still needs serializer for its argument type
@@ -559,7 +553,7 @@ class SerializationJvmIrIntrinsicSupport(
                 sealedSerializerId -> {
                     aconst(serialName)
                     signature.append("Ljava/lang/String;")
-                    aconst(typeMapper.mapTypeCommon(kType, TypeMappingMode.GENERIC_ARGUMENT))
+                    aconst(typeMapper.mapType(kType, TypeMappingMode.GENERIC_ARGUMENT))
                     AsmUtil.wrapJavaClassIntoKClass(this)
                     signature.append(AsmTypes.K_CLASS_TYPE.descriptor)
                     val [subClasses, subSerializers] = emptyGenerator.allSealedSerializableSubclassesFor(
@@ -568,7 +562,7 @@ class SerializationJvmIrIntrinsicSupport(
                     )
                     // KClasses vararg
                     fillArray(AsmTypes.K_CLASS_TYPE, subClasses) { _, type ->
-                        aconst(typeMapper.mapTypeCommon(type, TypeMappingMode.GENERIC_ARGUMENT))
+                        aconst(typeMapper.mapType(type, TypeMappingMode.GENERIC_ARGUMENT))
                         AsmUtil.wrapJavaClassIntoKClass(this)
                     }
                     signature.append(AsmTypes.K_CLASS_ARRAY_TYPE.descriptor)
