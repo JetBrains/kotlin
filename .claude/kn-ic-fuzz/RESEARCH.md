@@ -118,6 +118,18 @@ The campaign also produced a 5-line reduction of the known `dependencies/renamed
 
 One gap in the harness oracle showed up: its clean reference link also enables incremental compilation (with a fresh cache), so a from-scratch IC-only defect — the private-class stub linkage above — fails both of its links and is reported as `INVALID`. The campaign compensated with manual no-IC comparisons. A third, truly non-IC link per step would turn this family into ordinary `BUG` verdicts.
 
+## The fourth campaign
+
+On 2026-11-07 the workflow ran a fourth time with three rounds of eight targets on the same dist (70 agents, about 6.1M tokens, about 4.9 hours). The 24 targets produced 19 confirmed findings — every target but five — which group into 8 root causes, and all eight are the families that campaigns 1-3 already pinned. The campaign re-derived every known family through new constructs (class and property delegation, operator conventions, lambda captures, folded casts, lateinit accessors), and the hand reductions showed that the fancier shapes collapse onto the plain ones the corpus already tests — which tells the fixer exactly where the missing edges must be recorded. Three windows still pin observables no test pinned, and each is now a failing test:
+
+| Test | What it pins |
+|---|---|
+| `ungrouped/renameInsideFullRebuildDanglesDependentEdge` | The crash half of the full-rebuild bookkeeping skip: a rename inside a flag-forced full rebuild leaves another library's cached dependency dangling, and the link crashes in `getFileDependencies`. `dependencies/addedExternalDependencyWithInlineChange` documents this crash in prose; `ungrouped/fullRebuildSkipsRemovedFileBookkeeping` pins the leftover-directory half. |
+| `inline/privateClassTypeInfoInInlineIsCheck` | Another KT-54330 window: a private class referenced only as a type inside an inlined `is` check keeps internal typeinfo linkage, so the friend's from-scratch IC link fails. `trackCallees` has no `IrTypeOperatorCall` visitor; the campaign also reduced reified-type-argument and catch-clause windows, each with its own visitor gap. |
+| `classKind/supertypeRemovedFoldedCasts` | The `as?` and `as` kinds of the folded-check family, whose folds go through different lowering paths than the pinned `is` check. |
+
+No over-invalidation problems appeared. The saturation signal is now clear: this campaign's 19 findings contain no new root cause, its round 3 produced no new coverage features, and every construct the planner invented landed on a known family. Two levers remain for a fifth campaign: the harness oracle gap (its clean reference also enables IC, so from-scratch IC-only defects like the KT-54330 windows are reported as `INVALID` unless an agent runs a manual no-IC comparison — a third, truly non-IC link per step would fix that), and feedback that steers by what has already been found: with every family now carrying multiple reproducers, the planner's do-not-re-derive list is long enough that a fresh campaign is best run after some of the families are fixed, against the fix seams.
+
 ## What is not done yet (good next steps)
 
 1. **Add a clean-rebuild comparison to `AbstractNativeIncrementalCompilationTest`, like the JVM IC tests have.** Then every corpus case checks more than its hand-written expectations.
