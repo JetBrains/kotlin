@@ -1,0 +1,32 @@
+// DISABLE_NATIVE: targetFamily=MINGW
+
+
+// A @Test function in a plain -l dependency klib must not run in the consumer's test binary.
+// The two-phase test runner (KT-74223) exists precisely to keep that contract: the
+// first-phase TestProcessor serializes each file's suite registration as a dead private
+// createTestSuites$<file> function annotated @kotlin.native.internal.TestInitializer inside
+// every klib, and only files of the modules being linked (plus -Xinclude'd libraries) may
+// turn that registration into a running initializer. The second-phase lowering
+// TestsInitializer, however, is registered unconditionally in getLoweringsAfterInlining
+// (NativeLoweringPhases.kt:109) - unlike TestsDumper it is not gated on
+// -generate-test-runner, and unlike TestProcessor it does not check the sources modules.
+//
+// The IC CacheBuilder builds a cache for every classpath klib (a per-file cache for a plain
+// -l library, a monolithic auto-cache for an -Xauto-cache-from library) by deserializing and
+// lowering every file of that klib. The unconditional TestsInitializer therefore sees the
+// dependency's serialized @TestInitializer functions and bakes them into
+// eagerly-initialized fields inside the cache bitcode; any binary linking those caches runs
+// the fields at startup and registers the library's suites. A non-IC link deserializes a
+// plain -l dependency as EXPLICITLY_EXPORTED, never materializes the private
+// createTestSuites functions and registers only the program's own tests.
+//
+// The library's test below fails on purpose: a build that (incorrectly) registers it then
+// visibly fails the binary instead of silently gaining a passing test. In real KGP
+// incremental test builds this makes any klib containing @Test functions (a test-fixtures
+// library, say) inject its tests into every consumer's test binary, and a failing library
+// test fails unrelated binaries.
+
+MODULES: lib, main
+
+STEP 0:
+    libs: lib, main
