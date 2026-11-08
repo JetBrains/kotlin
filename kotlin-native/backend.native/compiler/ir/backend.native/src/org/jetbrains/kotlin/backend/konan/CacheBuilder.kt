@@ -45,8 +45,14 @@ import kotlin.io.path.pathString
 import kotlin.io.path.writeText
 import kotlin.time.Duration.Companion.milliseconds
 
-/** Libraries whose per-file caches are fully built by a single batched compilation, mapped from canonical paths to dependency fingerprints. */
+/** Libraries whose per-file caches are built by a single batched compilation, mapped from canonical paths to dependency fingerprints. */
 internal val CACHE_BATCH = CompilerConfigurationKey.create<Map<String, FingerprintHash>>("per-file cache batch")
+
+/**
+ * The files to rebuild the per-file caches of, for the libraries of [CACHE_BATCH] whose caches are rebuilt only partially
+ * (mapped from canonical paths). The caches of the libraries missing here are built from scratch.
+ */
+internal val CACHE_BATCH_FILES = CompilerConfigurationKey.create<Map<String, List<String>>>("per-file cache batch files")
 
 // TODO: deleteRecursively might throw an exception!
 class CacheBuilder(
@@ -369,8 +375,15 @@ class CacheBuilder(
             configuration.reportLog("        $it")
         }
 
+        val dirtyFilePaths = groupedDirtyFiles.mapValues { [library, libraryFiles] ->
+            val filesWithFqNames = libraryFilesWithFqNames[library]!!.associateBy {
+                CacheSupport.cacheFileId(it.fqName, it.filePath)
+            }
+            libraryFiles.map { filesWithFqNames[it.file]!!.filePath }
+        }
+
         if (config.batchedCacheBuild) {
-            tryBuildCacheBatch(icedLibraries, needFullRebuild, groupedDirtyFiles.keys, rebuiltLibraries)
+            tryBuildCacheBatch(icedLibraries, needFullRebuild, dirtyFilePaths, rebuiltLibraries)
                     ?.let { [batchLibraries, builtCachePaths] ->
                         rebuiltLibraries.addAll(batchLibraries)
                         lastRebuiltArchives.addAll(builtCachePaths)
@@ -379,12 +392,7 @@ class CacheBuilder(
 
         for (library in icedLibraries) {
             if (library in rebuiltLibraries) continue
-            val filesToCache = groupedDirtyFiles[library]?.let { libraryFiles ->
-                val filesWithFqNames = libraryFilesWithFqNames[library]!!.associateBy {
-                    CacheSupport.cacheFileId(it.fqName, it.filePath)
-                }
-                libraryFiles.map { filesWithFqNames[it.file]!!.filePath }
-            }.orEmpty()
+            val filesToCache = dirtyFilePaths[library].orEmpty()
 
             val isFirstBuild = caches[library] == null
 
@@ -405,28 +413,34 @@ class CacheBuilder(
     }
 
     /**
-     * Builds in spawned batched compilations the per-file caches of all the libraries that need a full rebuild:
-     * the ones having no cache at all (on a clean build that is every library) and the ones from [needFullRebuild].
+     * Builds in spawned batched compilations the per-file caches of all the libraries that need a rebuild:
+     * the ones having no cache at all (on a clean build that is every library) and the ones from [needFullRebuild]
+     * are built from scratch, while the ones from [dirtyFilePaths] get only their dirty files rebuilt.
      *
      * A batched compilation creates the IR linker once and thus deserializes the common dependencies
-     * (like stdlib) once instead of multiple times (once per library).
+     * (like stdlib) once instead of multiple times (once per library). This also matters for incremental builds,
+     * where an edit typically makes dirty several libraries depending on each other, while each of the compilations
+     * rebuilding only a few files is dominated by such common work.
      *
-     * The linker maps every signature to a single declaration, and all the libraries of a batch are deserialized exhaustively,
-     * so two libraries sharing a top-level signature (e.g. identical `internal` top-level functions in the same package) would clash
-     * with "symbol is already bound". Such libraries are put into separate batches, built one after another in the dependency order.
+     * The linker maps every signature to a single declaration, and the libraries of a batch are deserialized exhaustively
+     * (or the dirty files of them), so two libraries sharing a top-level signature (e.g. identical `internal` top-level
+     * functions in the same package) would clash with "symbol is already bound". Such libraries are put into separate batches,
+     * built one after another in the dependency order.
      *
      * Returns the libraries built together with their binary archives, or null if batching is not applicable.
      */
     private fun tryBuildCacheBatch(
             libraries: List<KotlinLibrary>,
             needFullRebuild: Set<KotlinLibrary>,
-            dirtyLibraries: Set<KotlinLibrary>,
+            dirtyFilePaths: Map<KotlinLibrary, List<String>>,
             rebuiltLibraries: Set<KotlinLibrary>,
     ): Pair<List<KotlinLibrary>, List<Path>>? {
+        fun KotlinLibrary.needsCacheFromScratch() = this !in caches || this in needFullRebuild
+
         // The test runner is generated in a dedicated compilation of each of the [includedLibraries],
         // so these are left to the per-library builds.
         val candidates = libraries.filter {
-            it.isCachedPerFile && (it !in caches || it in needFullRebuild)
+            it.isCachedPerFile && (it.needsCacheFromScratch() || it in dirtyFilePaths)
                     && (generateTestRunner == TestRunnerKind.NONE || it.canonicalPath.pathString !in includedLibraries)
         }
         if (candidates.size < 2) return null // No benefit from batching build.
@@ -437,7 +451,7 @@ class CacheBuilder(
         val batch = candidates.filter { candidate ->
             config.klibDag.getAllDependencies(candidate).all { dependency ->
                 dependency in candidatesSet || dependency in rebuiltLibraries
-                        || (dependency in cacheRootDirectories && dependency !in dirtyLibraries && dependency !in needFullRebuild)
+                        || (dependency in cacheRootDirectories && dependency !in dirtyFilePaths && dependency !in needFullRebuild)
             }
         }
         val batchSet = batch.toSet()
@@ -449,10 +463,12 @@ class CacheBuilder(
         val groups = splitIntoNonConflictingGroups(batch, batchSet)
         if (groups.all { it.size < 2 }) return null // Nothing left to batch.
 
+        // Empty for the libraries to be cached from scratch.
+        val filesToCache = batch.associateWith { if (it.needsCacheFromScratch()) emptyList() else dirtyFilePaths.getValue(it) }
         val builtLibraries = mutableListOf<KotlinLibrary>()
         val builtArchives = mutableListOf<Path>()
         for (group in groups) {
-            val archives = buildCacheBatch(group)
+            val archives = buildCacheBatch(group, filesToCache)
             builtLibraries.addAll(group)
             builtArchives.addAll(archives)
         }
@@ -550,40 +566,53 @@ class CacheBuilder(
                     .extractOnlyTopLevelPublicSignatures() // Internal are also included in the result.
                     .declaredSignatures
 
-    /** Builds the per-file caches of [batch] in a single spawned compilation and returns their binary archives. */
+    /**
+     * Builds the per-file caches of [batch] in a single spawned compilation and returns their binary archives.
+     * Only the caches of the given [filesToCache] are rebuilt, unless the list is empty: then the whole library is cached from scratch.
+     */
     @OptIn(ExperimentalPathApi::class)
-    private fun buildCacheBatch(batch: List<KotlinLibrary>): List<Path> {
+    private fun buildCacheBatch(batch: List<KotlinLibrary>, filesToCache: Map<KotlinLibrary, List<String>>): List<Path> {
         val batchSet = batch.toSet()
         val cacheDirectory = config.incrementalCacheDirectory!!
         val outputs = batch.associateWith { cacheDirectory.resolve(CachedLibraries.getPerFileCachedLibraryName(it)) }
         val dependencies = batch.flatMap { config.klibDag.getAllDependencies(it) }.distinct().filter { it !in batchSet }
-        // The members are built from scratch: drop the stale caches of the [needFullRebuild] ones
+        // The members built from scratch: drop the stale caches of the [needFullRebuild] ones
         // as well as any incomplete leftovers of an interrupted build.
+        // The rest keep their caches, with the per-file caches of the dirty files to be replaced.
         outputs.forEach { [library, output] ->
+            if (filesToCache.getValue(library).isNotEmpty()) return@forEach
             output.deleteRecursively()
             caches.remove(library)
         }
         cacheDirectory.createDirectories()
         configuration.reportLog("CACHING BATCH: ${batch.joinToString { it.uniqueName }}")
-        configuration.reportLog(batch.joinToString("\n") { it.canonicalPath.pathString })
+        batch.forEach { library ->
+            configuration.reportLog(library.canonicalPath.pathString)
+            filesToCache.getValue(library).forEach { configuration.reportLog("    $it") }
+        }
         trySpawningCacheBuild(
                 libraries = batch,
                 dependencies = dependencies,
                 dependencyCaches = dependencies.map { cacheRootDirectories.getValue(it) },
                 cacheDirectory = cacheDirectory,
                 makePerFileCache = true,
+                // A failed build may leave the caches being rebuilt partially updated, so drop them as a whole.
                 outputs = outputs.values.toList(),
         ) {
             put(CACHE_BATCH, batch.associate { it.canonicalPath.pathString to computeDependenciesFingerprint(it) })
+            batch.mapNotNull { library ->
+                filesToCache.getValue(library).takeIf { it.isNotEmpty() }?.let { library.canonicalPath.pathString to it }
+            }.takeIf { it.isNotEmpty() }?.let { put(CACHE_BATCH_FILES, it.toMap()) }
             putIfNotNull(DEBUG_PREFIX_MAP, config.configuration[DEBUG_PREFIX_MAP])
         }
 
         val rebuiltArchives = mutableListOf<Path>()
         outputs.forEach { [library, output] ->
             cacheRootDirectories[library] = output.absolutePathString()
-            rebuiltArchives.addAll(library.getPerFileCachedBinaryFilePaths(output, emptyList()))
+            val libraryFilesToCache = filesToCache.getValue(library)
+            rebuiltArchives.addAll(library.getPerFileCachedBinaryFilePaths(output, libraryFilesToCache))
 
-            recordRebuiltCacheFiles(library, makePerFileCache = true, emptyList())
+            recordRebuiltCacheFiles(library, makePerFileCache = true, libraryFilesToCache)
         }
         return rebuiltArchives
     }

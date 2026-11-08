@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.io.canonicalPathString
 import org.jetbrains.kotlin.io.listDirectoryEntriesIfDirectoryExists
-import org.jetbrains.kotlin.konan.config.filesToCache
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -53,7 +52,8 @@ class CachedLibraries(
         implicitCacheDirectories: List<Path>,
         autoCacheDirectory: Path,
         autoCacheableFrom: List<Path>,
-        private val libraryToCache: KotlinLibrary?,
+        /** See [CacheSupport.filesBeingCached]. */
+        private val filesBeingCached: Map<KotlinLibrary, List<String>>,
 ) {
     enum class Kind { DYNAMIC, STATIC, HEADER }
 
@@ -241,10 +241,11 @@ class CachedLibraries(
                 // during which the main dir does not exist. A sibling fragment iterating existingFileDirs to read
                 // ir/{class_fields,inline_bodies,eager_init} would then throw NoSuchFileException. The cached data
                 // for those files is stale anyway (the dirty file is loaded as IR), so skip them entirely.
-                val filesToCache = configuration.filesToCache
-                val fileIdsToCache = libraryToCache?.takeIf { it == library }?.getFileFqNames(filesToCache)?.let { fqNames ->
-                    filesToCache.zip(fqNames) { filePath, fqName -> cacheFileId(fqName, filePath) }.toSet()
-                } ?: emptySet()
+                // A cache batch may rebuild the dirty files of several libraries at once, so this applies to each of them.
+                val filesToCache = filesBeingCached[library].orEmpty()
+                val fileIdsToCache = if (filesToCache.isEmpty()) emptySet() else {
+                    filesToCache.zip(library.getFileFqNames(filesToCache)) { filePath, fqName -> cacheFileId(fqName, filePath) }.toSet()
+                }
                 val libraryFileDirs = library.getFilesWithFqNames().map { (filePath, fqName) ->
                     resolve(cacheFileId(fqName, filePath))
                 }

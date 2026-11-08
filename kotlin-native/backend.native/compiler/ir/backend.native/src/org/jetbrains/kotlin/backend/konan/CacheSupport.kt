@@ -114,6 +114,15 @@ class CacheSupport(
         return fileCacheDirectory.absolutePathString()
     }
 
+    /**
+     * The files whose per-file caches are rebuilt by this compilation, for the libraries being cached partially:
+     * either the single library to cache, or the libraries of a cache batch having their dirty files rebuilt.
+     */
+    internal val filesBeingCached: Map<KotlinLibrary, List<String>> =
+            configuration[CACHE_BATCH_FILES]?.entries?.associate { getLibrary(Path(it.key)) to it.value }
+                    ?: configuration.konanLibraryToAddToCache?.let { mapOf(getLibrary(Path(it)) to configuration.filesToCache) }
+                    ?: emptyMap()
+
     internal val cachedLibraries: CachedLibraries = run {
         val explicitCacheFiles = configuration[NativeConfigurationKeys.CACHED_LIBRARIES]!!
 
@@ -139,7 +148,7 @@ class CacheSupport(
                 implicitCacheDirectories = if (ignoreCachedLibraries) emptyList() else implicitCacheDirectories,
                 autoCacheDirectory = autoCacheDirectory,
                 autoCacheableFrom = if (ignoreCachedLibraries) emptyList() else autoCacheableFrom,
-                libraryToCache = configuration.konanLibraryToAddToCache?.let { getLibrary(Path(it)) },
+                filesBeingCached = filesBeingCached,
         )
     }
 
@@ -154,12 +163,25 @@ class CacheSupport(
         require(configuration.makePerFileCache) {
             "Batched build is only supported for per-file caches as a part of incremental build"
         }
+        require(batch.keys.containsAll(configuration[CACHE_BATCH_FILES]?.keys.orEmpty())) {
+            "Files to cache are specified for libraries out of the cache batch"
+        }
         batch.keys.associate { path ->
             val library = getLibrary(Path(path))
-            require(cachedLibraries.getLibraryCache(library, allowIncomplete = true) == null) {
-                "Cache batch contains an already cached library: ${library.path}"
+            val cache = cachedLibraries.getLibraryCache(library, allowIncomplete = true)
+            val filesToCache = filesBeingCached[library].orEmpty()
+            val strategy = if (filesToCache.isEmpty()) {
+                require(cache == null) { "Cache batch contains an already cached library: ${library.path}" }
+                CacheDeserializationStrategy.WholeModule
+            } else {
+                // Like for the single library to cache, there might be no cache found at all, e.g. when all the files
+                // the cache of the library had got removed (or renamed), leaving its per-file cache directory empty.
+                require(cache !is CachedLibraries.Cache.Monolithic) {
+                    "Cache batch rebuilds some files of a library having a monolithic cache: ${library.path}"
+                }
+                CacheDeserializationStrategy.MultipleFiles(filesToCache, library.getFileFqNames(filesToCache))
             }
-            library to PartialCacheInfo(library, CacheDeserializationStrategy.WholeModule)
+            library to PartialCacheInfo(library, strategy)
         }
     } ?: configuration.konanLibraryToAddToCache?.let {
         val libraryToAddToCacheFile = Path(it)

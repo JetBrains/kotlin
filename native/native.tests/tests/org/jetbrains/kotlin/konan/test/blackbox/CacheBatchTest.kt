@@ -103,10 +103,14 @@ class CacheBatchTest : AbstractNativeSimpleTest() {
         assertTrue(rebuiltCaches.readText().isBlank())
         verifyOutput(executable, "3")
 
+        // The edit makes dirty the files of several libraries depending on each other (the dependents use the inline
+        // function body and the class layout of the library), and only these files are rebuilt, all in a single batch.
         compileLibrary(2)
-        assertFalse(link().contains("CACHING BATCH:"))
+        val incrementalOutput = link()
+        assertEquals(listOf(setOf("library", "consumer", "main")), incrementalOutput.batches()) { incrementalOutput }
         val changedArchives = rebuiltCaches.readLines().filter { it.isNotBlank() }
         assertTrue(changedArchives.any { "consumer-per-file-cache" in it })
+        assertTrue(changedArchives.size < initialArchives.size) { "Unchanged files are not to be rebuilt: $changedArchives" }
         verifyOutput(executable, "6")
 
         compileLibrary(2, includeUnused = false)
@@ -134,14 +138,17 @@ class CacheBatchTest : AbstractNativeSimpleTest() {
         assertTrue(partialBatchArchives.none { "library-per-file-cache" in it })
         verifyOutput(executable, "6")
 
-        // A dependency with pending per-file rebuilds must be rebuilt before its dependents,
-        // so the dependents cannot be batched and fall back to the per-library builds.
+        // A dependency with dirty files gets them rebuilt in the same batch as its dependents being cached from scratch.
         compileLibrary(3, includeUnused = false)
         deletePerFileCache("consumer")
         deletePerFileCache("main")
-        assertFalse(link().contains("CACHING BATCH:"))
+        val mixedOutput = link()
+        assertEquals(listOf(setOf("library", "consumer", "main")), mixedOutput.batches()) { mixedOutput }
         verifyOutput(executable, "9")
     }
+
+    private fun String.batches(): List<Set<String>> = lines().filter { "CACHING BATCH:" in it }
+        .map { line -> line.substringAfter("CACHING BATCH:").split(",").map { it.trim() }.toSet() }
 
     @Test
     fun batchRebuildWithCachedIntermediateDependency() {
