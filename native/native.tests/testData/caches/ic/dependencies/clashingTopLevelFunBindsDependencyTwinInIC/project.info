@@ -1,0 +1,30 @@
+// DISABLE_NATIVE: targetFamily=MINGW
+
+
+// A dependency (lib) and its dependent (user) both export a top-level fun f() in package p,
+// so both klibs record the same IdSignature (the IC log: "SPLITTING BATCH: user and lib share
+// a top-level signature: p/f|...[0]"), and IdSignature carries no library identity.
+//
+// The IC pipeline deserializes the already-cached dependency lib with
+// DeserializationStrategy.ONLY_DECLARATION_HEADERS before user's own files
+// (linkKlibs.kt:202-206: isFullyCachedLibrary -> ONLY_DECLARATION_HEADERS), so lib's f is
+// bound into the shared SymbolTable first; every reference to p.f in user's klib IR then
+// resolves to lib's declaration, and user's own same-signature f is silently skipped by the
+// isBound check in IrFileDeserializer.deserializeAllFileReachableTopLevel -- no diagnostic.
+// user's per-file cache therefore bakes callF() calling lib's f (20): every IC flavor
+// (clean, default, unbatched) prints 20. A non-IC link deserializes the same klibs lazily in
+// reference order (main pulls user's o.kt first), so user's f wins there and it prints 10 --
+// which is the declaration-site semantics: user's callF() must call user's own f. Same
+// klibs, two different programs, differing only in -Xenable-incremental-compilation.
+//
+// This is the function flavor of KT-91126 ("[K/N] Inconsistent class resolution with and
+// without caches for the same class in two libraries", a duplicate of the KT-81760 clashing
+// declarations family); the KT-81760 fix (c526ca2b4078) only fingerprint-suffixed cached
+// FUNCTION codegen symbols, so the IR-level misbinding still reproduces. The val flavor of
+// the same family -- where the dependent's own cache build crashes outright -- is pinned by
+// the sibling test clashingValTwinCrashesDependentCacheBuild.
+
+MODULES: lib, user, main
+
+STEP 0:
+    libs: lib, user, main
