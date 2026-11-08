@@ -1,0 +1,34 @@
+// DISABLE_NATIVE: targetFamily=MINGW
+
+
+// The external-library half of the TestsInitializer leak: an @Test in an external
+// (-Xauto-cache-from) klib registers and runs in the consumer's IC test binary. The plain
+// -l per-file-cache half is already pinned by the corpus case
+// ungrouped/dependencyKlibTestsRunInConsumerTestBinary (same root cause: the second-phase
+// TestsInitializer lowering is registered unconditionally).
+//
+// getLoweringsAfterInlining (NativeLoweringPhases.kt:109) registers ::TestsInitializer for
+// every compilation -- unlike the adjacent ::TestsDumper.takeIf { generateTestDumper } --
+// and the IC CacheBuilder deserializes and lowers every file of every classpath klib,
+// including the monolithic auto-cache it builds for an -Xauto-cache-from klib. The external
+// library's klib carries the deliberately-dead private createTestSuites registration
+// function annotated @kotlin.native.internal.TestInitializer (serialized by the first-phase
+// TestProcessor per the KT-74223 two-phase design), and TestsInitializer bakes it into an
+// eagerly-initialized @ThreadLocal field inside the cache bitcode (nm shows the
+// createTestSuites$$FUNCTION_REFERENCE_FOR$extTest symbols in libexternalLib-cache.a). The
+// consumer's -generate-test-runner binary then runs that field's initializer at startup and
+// registers the external module's suite.
+//
+// So every IC link -- including from a completely fresh cache (dirty=0: the defect is baked
+// at cache-build time) -- runs 2 tests and the external module's extTest fails the binary
+// (exit 1), while a non-IC build of the same klibs never materializes the private
+// registration function, runs 1 test and passes. Per the KT-74223 contract only files of
+// modules being linked may turn the serialized registration into a running initializer, so
+// a dependency klib's @Test must not run in the consumer's test binary: the assertEquals
+// values below match the correct (non-IC) build, the test fails today and passes after a
+// fix.
+
+MODULES: externalLib, main
+
+STEP 0:
+    libs: externalLib, main
