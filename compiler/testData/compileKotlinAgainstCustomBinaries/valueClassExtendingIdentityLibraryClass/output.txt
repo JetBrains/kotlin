@@ -1,3 +1,4 @@
+info: using preview Java language features
 warning: ATTENTION!
 This build uses unsafe internal compiler arguments:
 
@@ -7,7 +8,6 @@ This mode is not recommended for production use,
 as no stability/compatibility guarantees are given on
 compiler or generated code. Use it at your own risk!
 
-info: using preview Java language features
 warning: following manually enabled features will force generation of pre-release binaries: FullValueClasses
 compiler/testData/compileKotlinAgainstCustomBinaries/valueClassExtendingIdentityLibraryClass/source.kt:5:49: warning: value class 'FromIdentity' extends 'IdentityBase', which is compiled as an identity class, so 'FromIdentity' is compiled as an identity class, too. Recompile 'IdentityBase' with '-Xvalhalla-value-classes', JVM target 28 or later, and '-Xjvm-enable-preview'.
 value class FromIdentity(override val x: Int) : IdentityBase()

@@ -95,7 +95,7 @@ abstract class CommonToolArguments : Freezable(), Serializable {
         }
 
     @Transient
-    var errors: ArgumentParseErrors? = null
+    val diagnostics: MutableList<ArgumentParseDiagnostic> = mutableListOf()
 
     @Transient
     var explicitArguments: Map<ArgumentField, List<Any>> = emptyMap()

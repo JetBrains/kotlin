@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.generators.arguments
 
 import org.jetbrains.kotlin.arguments.collectProperties
-import org.jetbrains.kotlin.cli.common.arguments.ArgumentParseErrors
+import org.jetbrains.kotlin.cli.common.arguments.ArgumentParseDiagnostic
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.copyK2JVMCompilerArguments
@@ -27,15 +27,15 @@ class GenerateCompilerArgumentsCopyTest {
     @Test
     fun testCopyDoesNotCopyTransientFields() {
         val a = K2JVMCompilerArguments()
-        a.errors = ArgumentParseErrors()
+        a.diagnostics.add(ArgumentParseDiagnostic.InvalidArgument("-unknown"))
         a.moduleName = "my module name"
 
         val b = K2JVMCompilerArguments()
-        assertNull(b.errors)
+        assertTrue(b.diagnostics.isEmpty())
         assertNull(b.moduleName)
 
         copyK2JVMCompilerArguments(a, b)
-        assertNull(b.errors)
+        assertTrue(b.diagnostics.isEmpty())
         assertEquals("my module name", b.moduleName)
     }
 
@@ -56,10 +56,10 @@ class GenerateCompilerArgumentsCopyTest {
 
     @Test
     fun testCollectPropertiesDoesNotReturnTransient() {
-        val errorProperty = CommonToolArguments::errors
-        assertTrue(Modifier.isTransient(errorProperty.javaField!!.modifiers))
+        val diagnosticsProperty = CommonToolArguments::diagnostics
+        assertTrue(Modifier.isTransient(diagnosticsProperty.javaField!!.modifiers))
 
         val properties = collectProperties(CommonToolArguments::class, false)
-        assertFalse(properties.any { it.name == errorProperty.name })
+        assertFalse(properties.any { it.name == diagnosticsProperty.name })
     }
 }

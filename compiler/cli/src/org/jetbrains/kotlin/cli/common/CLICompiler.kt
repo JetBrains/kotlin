@@ -107,11 +107,8 @@ abstract class CLICompiler<A : CommonCompilerArguments> {
 
             errStream.print(messageRenderer.renderPreamble())
 
-            val errorMessages = validateArgumentsAllErrors(arguments.errors)
-            if (errorMessages.isNotEmpty()) {
-                errorMessages.forEach {
-                    collector.report(ERROR, it, null)
-                }
+            if (arguments.diagnostics.hasFatalError) {
+                collector.reportCliArgumentFatalDiagnostics(arguments)
                 collector.report(INFO, "Use -help for more information", null)
                 return ExitCode.COMPILATION_ERROR
             }
@@ -142,7 +139,6 @@ abstract class CLICompiler<A : CommonCompilerArguments> {
             messageCollector
         }
 
-        fixedMessageCollector.reportArgumentParseProblems(arguments)
         return doExecutePhased(arguments, services, fixedMessageCollector)
     }
 
@@ -161,9 +157,8 @@ abstract class CLICompiler<A : CommonCompilerArguments> {
     // Used in kotlin-maven-plugin (KotlinCompileMojoBase) and in kotlin-gradle-plugin (KotlinJvmOptionsImpl, KotlinJsOptionsImpl)
     fun parseArguments(args: Array<out String>, arguments: A) {
         parseCommandLineArguments(args.asList(), arguments)
-        val message = validateArguments(arguments.errors)
-        if (message != null) {
-            throw IllegalArgumentException(message)
+        if (arguments.diagnostics.hasFatalError) {
+            throw IllegalArgumentException(arguments.getFatalDiagnosticsMessage())
         }
     }
 
