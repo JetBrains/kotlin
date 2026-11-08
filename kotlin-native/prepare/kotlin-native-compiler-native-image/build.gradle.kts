@@ -59,6 +59,9 @@ val konancNativeImage = tasks.register<Exec>("konancNativeImage") {
         "--add-opens", "java.base/java.io=ALL-UNNAMED",
         "--add-opens", "java.base/java.nio=ALL-UNNAMED",
         "--add-opens", "java.base/sun.nio.ch=ALL-UNNAMED",
+        // The Serial GC starts with a small young generation by default, so it collects several times even during a small compilation.
+        // Not collecting before the first gigabyte makes an edit-and-rebuild cycle 10-15% faster. It can be overridden at run time with `-Xms`.
+        "-R:MinHeapSize=1g",
     )
 
     inputs.files(compilerJarClasspath)
