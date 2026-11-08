@@ -228,7 +228,8 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         if (!compilerType.isK2) {
             PerformanceCounter.setTimeCounterEnabled(true)
         }
-        compilationMXBean = ManagementFactory.getCompilationMXBean()
+        // There is no JIT in a GraalVM native image, and querying its compilation time throws.
+        compilationMXBean = ManagementFactory.getCompilationMXBean()?.takeIf { it.isCompilationTimeMonitoringSupported }
         jitStartTime = compilationMXBean?.totalCompilationTime
         garbageCollectorMXBeans = ManagementFactory.getGarbageCollectorMXBeans()
         garbageCollectorMXBeans.associateTo(gcMeasurements) {
