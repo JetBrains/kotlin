@@ -1,0 +1,13 @@
+STEP 0:
+    modifications:
+        U : e.kt -> e.kt
+    added cache: e.kt
+
+// The enum grows an entry while lib2 is out of the link.
+STEP 1:
+    modifications:
+        U : e.1.kt -> e.kt
+    modified cache: e.kt
+
+STEP 2:
+    unchanged cache: e.kt
