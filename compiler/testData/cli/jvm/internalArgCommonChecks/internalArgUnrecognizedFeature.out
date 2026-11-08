@@ -1,4 +1,4 @@
-warning: unknown language feature 'UnknownFeature' in passed internal argument '-XXLanguage:+UnknownFeature'
+warning: unknown language feature 'UnknownFeature' in internal argument '-XXLanguage:+UnknownFeature'.
 compiler/testData/cli/jvm/legacySmartCastsAfterTry.kt:8:10: warning: unused return value of 'length'.
     some.length
          ^^^^^^

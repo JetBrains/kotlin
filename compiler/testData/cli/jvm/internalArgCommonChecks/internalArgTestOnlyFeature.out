@@ -1,4 +1,4 @@
-error: language feature 'ImplicitSignedToUnsignedIntegerConversion' is test-only and cannot be enabled from command line
+error: language feature 'ImplicitSignedToUnsignedIntegerConversion' is test-only and cannot be enabled from the command line.
 warning: ATTENTION!
 This build uses unsafe internal compiler arguments:
 

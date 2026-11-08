@@ -156,7 +156,7 @@ class BuildToolsApiJvmCompilationIT : KGPBaseTest() {
         project("simpleProject", gradleVersion) {
             buildGradle.append("kotlin { compilerOptions.freeCompilerArgs.add(\"-no-such-flag\") }")
             buildAndFail("compileKotlin") {
-                assertOutputContains("Invalid argument: -no-such-flag")
+                assertOutputContains("Invalid argument: '-no-such-flag'.")
                 assertNoDiagnostic(KotlinToolingDiagnostics.KotlinCompilerArgumentsRejected)
                 assertNoDiagnostic(KotlinToolingDiagnostics.KotlinCompilationInDaemonHasFailed)
             }
