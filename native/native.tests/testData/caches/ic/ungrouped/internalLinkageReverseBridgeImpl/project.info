@@ -1,0 +1,26 @@
+// DISABLE_NATIVE: isAppleTarget=false
+
+// (Uses the Objective-C binding machinery; verified on macOS arm64.)
+
+// An @file:BindClassToObjCName adapter whose reverse bridge's implementation is not
+// exported: the from-scratch IC link fails while a non-IC build of the same klibs links and
+// runs. The defect is in the adapter-replay machinery (KT-89121):
+//
+// The per-file cache build of lib1's q.kt compiles the reverse-bridge impl tagRev with LLVM
+// internal linkage (not exported, not called from an exported inline body) under a private
+// file-path-mangled name; nm shows it as a LOCAL symbol in lib1's per-file archive.
+// buildSerializedObjCAdapter stores that private name in the cache's ir/objc_adapters, and
+// at final-binary codegen emitObjCAdapterFromCache replays the adapter and imports the name
+// via importCachedFunctionAddress as an LLVMExternalLinkage declaration - an import that can
+// never resolve against a local definition in another object. A non-IC build compiles q.kt
+// into the final binary's own LLVM module, where the intra-module reference to the
+// internal-linkage function is legal.
+//
+// The class and the bridged method are deliberately `open`: with a final member the failure
+// would instead turn into a batched-cache-build crash (a different defect, see the campaign
+// report). Only an exported impl (called from an exported inline body) links today.
+
+MODULES: lib1, main
+
+STEP 0:
+    libs: lib1, main

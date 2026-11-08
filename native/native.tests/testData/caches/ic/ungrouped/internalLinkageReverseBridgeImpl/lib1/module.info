@@ -1,0 +1,5 @@
+STEP 0:
+    arguments: -Xopt-in=kotlin.native.internal.InternalForKotlinNative
+    modifications:
+        U : q.kt -> q.kt
+    added cache: q.kt
