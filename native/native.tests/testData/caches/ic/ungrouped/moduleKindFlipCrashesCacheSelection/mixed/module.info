@@ -1,0 +1,14 @@
+// mixed starts as a Kotlin module: IC builds `mixed-per-file-cache`.
+STEP 0:
+    modifications:
+        U : mixed.kt -> mixed.kt
+    added cache: mixed.kt
+
+// The .def file flips mixed to a cinterop module. A correct IC rejects the leftover
+// `mixed-per-file-cache` (wrong kind for a cinterop library) and builds the monolithic
+// `mixed-cache` instead. Today the leftover per-file cache is selected for the cinterop
+// klib and the IC link crashes reading its absent ir component.
+STEP 1:
+    modifications:
+        U : mixed.def -> mixed.def
+    added cache: mixed.def

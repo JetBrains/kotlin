@@ -1,0 +1,36 @@
+// DISABLE_NATIVE: targetFamily=MINGW
+
+
+// A module named `mixed` flips from a Kotlin module to a cinterop module under the same
+// name: step 0 builds `mixed-per-file-cache` for the Kotlin klib; step 1 rebuilds `mixed`
+// as a cinterop klib (a .def file in the module flips its kind; mixed.kt is then ignored).
+//
+// Cache selection is keyed by the library's unique NAME only:
+// CachedLibraries.trySelectCacheAt (CachedLibraries.kt:262-266) probes
+// "<uniqueName>-per-file-cache" before "<uniqueName>-cache", kind-agnostically, and offers
+// the Kotlin-era leftover per-file cache to the cinterop library. trySelectCacheFor's
+// per-file branch (CachedLibraries.kt:248) then calls library.getFilesWithFqNames(), whose
+// irOrFail (compiler/util-klib KlibIrComponent.kt:82; CacheSupport.kt:36) throws
+// IllegalStateException "No 'ir' component in library .../klibs/mixed.klib" because a
+// cinterop klib has no IR component. The crash happens in CachedLibraries.<init> at link
+// startup, before the IC analysis is even printed and before CacheBuilder's staleness
+// checks (staleCacheReason, the KT-87273 fingerprint) could run; the clean link (fresh cache
+// dir) builds the monolithic `mixed-cache` a cinterop library requires
+// (CacheBuilder.kt:128-130: isCachedPerFile = isSubjectOfIC && !isCInteropLibrary()) and
+// succeeds, as does the non-IC link.
+//
+// The reverse flip (cinterop -> Kotlin) is handled correctly: the leftover monolithic cache
+// is selected, judged stale by the content-hash key (CacheBuilder.kt:162-168) and rebuilt
+// (confirmed by the fuzz scenario r3t7-r3t7-module-kind-flip-reverse). Only the
+// Kotlin -> cinterop direction, where the leftover per-file cache is probed first, crashes.
+// A correct IC must make cache selection kind-aware: reject the kind-mismatched leftover
+// (a cinterop library only ever considers the monolithic cache), delete it, and build the
+// monolithic cache -- exactly what the clean link does.
+
+MODULES: mixed, main
+
+STEP 0:
+    libs: mixed, main
+
+STEP 1:
+    libs: mixed, main
