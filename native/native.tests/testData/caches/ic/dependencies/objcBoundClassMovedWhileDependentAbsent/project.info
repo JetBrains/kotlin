@@ -1,0 +1,37 @@
+// DISABLE_NATIVE: isAppleTarget=false
+
+// (Uses the Objective-C binding machinery; verified on macOS arm64.)
+
+// Leave-and-return staleness with the ObjC adapter replay in the loop, sibling of the open
+// corpus cases dependencies/dependentLibraryLeavesAndReturns (inline-body change) and
+// dependencies/propertyTypeChangedWhileDependentAbsent (renamed getter symbol).
+//
+// x.kt binds y.Bound to an ObjC name; y.kt binds its own Local, so replaying y's adapter at
+// the final link marks y.kt's cached bitcode as used per file, not as a whole library.
+// Step 0: every library is cached; x.kt's cache records a per-file dependency on y.kt, which
+//         still declares Bound, and its serialized ObjC adapter stores the typeinfo name
+//         "_kclass:y.Bound".
+// Step 1: x is out of the link (main no longer depends on it) while y moves Bound to the new
+//         file y2.kt. y.kt is re-cached without Bound. CacheBuilder walks only the libraries
+//         in the current link and propagates dirtiness only from files changed there, so
+//         x.kt's recorded dependency edge on y.kt is never consulted and x keeps its step-0
+//         cache entry with the old bin/bitcode_deps (names only, no content fingerprints).
+// Step 2: x returns with its unchanged step-0 klib and nothing is dirty. IC reuses x.kt's
+//         stale cache entry, which still pulls only y.kt - no longer defining Bound - and
+//         never y2.kt, while both the adapter replayed from x's ir/objc_adapters and the
+//         adapter copy inside x's stale archive import _kclass:y.Bound: undefined symbol.
+// The clean link rebuilds x's cache against the new y.klib, records the dependency on y2.kt
+// and links; the non-IC link passes too.
+
+MODULES: y, x, main
+
+STEP 0:
+    libs: y, x, main
+
+// x is out of the link; the bound class moves to y2.kt.
+STEP 1:
+    libs: y, main
+
+// x returns; its klib and per-file cache are untouched, y's klib is the step-1 one.
+STEP 2:
+    libs: main
