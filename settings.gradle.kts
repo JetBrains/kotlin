@@ -1069,6 +1069,7 @@ if (buildProperties.isKotlinNativeEnabled.get()) {
     include(":kotlin-native:backend.native:tests")
     project(":kotlin-native:backend.native:tests").projectDir = File("$rootDir/kotlin-native/backend.native/tests")
     include(":kotlin-native:prepare:kotlin-native-compiler-embeddable")
+    include(":kotlin-native:prepare:kotlin-native-compiler-native-image")
     include(":kotlin-native:tools:compiler-cache-invalidator")
     include(":native:kotlin-test-native-xctest")
     include(":native:cli-native")

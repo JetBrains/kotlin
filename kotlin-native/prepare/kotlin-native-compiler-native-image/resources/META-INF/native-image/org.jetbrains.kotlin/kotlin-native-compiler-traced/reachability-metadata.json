@@ -1,0 +1,6896 @@
+{
+  "reflection": [
+    {
+      "type": "android.os.Build$VERSION"
+    },
+    {
+      "type": "gnu.trove.TObjectHashingStrategy"
+    },
+    {
+      "type": "java.io.Serializable"
+    },
+    {
+      "type": "java.lang.Boolean",
+      "jniAccessible": true,
+      "methods": [
+        {
+          "name": "getBoolean",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "java.lang.Class",
+      "methods": [
+        {
+          "name": "getRecordComponents",
+          "parameterTypes": []
+        },
+        {
+          "name": "isSealed",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "java.lang.ClassValue"
+    },
+    {
+      "type": "java.lang.Iterable"
+    },
+    {
+      "type": "java.lang.Object"
+    },
+    {
+      "type": "java.lang.Object[]"
+    },
+    {
+      "type": "jdk.internal.jrtfs.JrtFileSystemProvider"
+    },
+    {
+      "type": "kotlin.Any"
+    },
+    {
+      "type": "kotlin.Array"
+    },
+    {
+      "type": "kotlin.Boolean"
+    },
+    {
+      "type": "kotlin.Int"
+    },
+    {
+      "type": "kotlin.Long"
+    },
+    {
+      "type": "kotlin.Metadata",
+      "methods": [
+        {
+          "name": "bv",
+          "parameterTypes": []
+        },
+        {
+          "name": "d1",
+          "parameterTypes": []
+        },
+        {
+          "name": "d2",
+          "parameterTypes": []
+        },
+        {
+          "name": "k",
+          "parameterTypes": []
+        },
+        {
+          "name": "mv",
+          "parameterTypes": []
+        },
+        {
+          "name": "pn",
+          "parameterTypes": []
+        },
+        {
+          "name": "xi",
+          "parameterTypes": []
+        },
+        {
+          "name": "xs",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "kotlin.SafePublicationLazyImpl"
+    },
+    {
+      "type": "kotlin.String"
+    },
+    {
+      "type": "kotlin.Unit"
+    },
+    {
+      "type": "kotlin.jvm.functions.Function0"
+    },
+    {
+      "type": "kotlin.jvm.functions.Function1"
+    },
+    {
+      "type": "kotlin.jvm.functions.Function10"
+    },
+    {
+      "type": "kotlin.jvm.functions.Function11"
+    },
+    {
+      "type": "kotlin.jvm.functions.Function12"
+    },
+    {
+      "type": "kotlin.jvm.functions.Function13"
+    },
+    {
+      "type": "kotlin.jvm.functions.Function14"
+    },
+    {
+      "type": "kotlin.jvm.functions.Function15"
+    },
+    {
+      "type": "kotlin.jvm.functions.Function16"
+    },
+    {
+      "type": "kotlin.jvm.functions.Function17"
+    },
+    {
+      "type": "kotlin.jvm.functions.Function18"
+    },
+    {
+      "type": "kotlin.jvm.functions.Function19"
+    },
+    {
+      "type": "kotlin.jvm.functions.Function2"
+    },
+    {
+      "type": "kotlin.jvm.functions.Function20"
+    },
+    {
+      "type": "kotlin.jvm.functions.Function21"
+    },
+    {
+      "type": "kotlin.jvm.functions.Function22"
+    },
+    {
+      "type": "kotlin.jvm.functions.Function3"
+    },
+    {
+      "type": "kotlin.jvm.functions.Function4"
+    },
+    {
+      "type": "kotlin.jvm.functions.Function5"
+    },
+    {
+      "type": "kotlin.jvm.functions.Function6"
+    },
+    {
+      "type": "kotlin.jvm.functions.Function7"
+    },
+    {
+      "type": "kotlin.jvm.functions.Function8"
+    },
+    {
+      "type": "kotlin.jvm.functions.Function9"
+    },
+    {
+      "type": "kotlin.jvm.internal.DefaultConstructorMarker"
+    },
+    {
+      "type": "kotlin.reflect.jvm.internal.ReflectionFactoryImpl",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "kotlin.reflect.jvm.internal.impl.load.java.ErasedOverridabilityCondition"
+    },
+    {
+      "type": "kotlin.reflect.jvm.internal.impl.load.java.FieldOverridabilityCondition"
+    },
+    {
+      "type": "kotlin.reflect.jvm.internal.impl.load.java.JavaIncompatibilityRulesOverridabilityCondition"
+    },
+    {
+      "type": "kotlin.reflect.jvm.internal.impl.resolve.scopes.DescriptorKindFilter",
+      "fields": [
+        {
+          "name": "ALL"
+        },
+        {
+          "name": "CALLABLES"
+        },
+        {
+          "name": "CLASSIFIERS"
+        },
+        {
+          "name": "Companion"
+        },
+        {
+          "name": "FUNCTIONS"
+        },
+        {
+          "name": "NON_SINGLETON_CLASSIFIERS"
+        },
+        {
+          "name": "PACKAGES"
+        },
+        {
+          "name": "SINGLETON_CLASSIFIERS"
+        },
+        {
+          "name": "TYPE_ALIASES"
+        },
+        {
+          "name": "VALUES"
+        },
+        {
+          "name": "VARIABLES"
+        }
+      ]
+    },
+    {
+      "type": "kotlinx.cinterop.ByteVarOf",
+      "unsafeAllocated": true
+    },
+    {
+      "type": "kotlinx.cinterop.CPointed"
+    },
+    {
+      "type": "kotlinx.cinterop.CPointer"
+    },
+    {
+      "type": "kotlinx.cinterop.CPointerVarOf",
+      "unsafeAllocated": true,
+      "fields": [
+        {
+          "name": "Companion"
+        }
+      ]
+    },
+    {
+      "type": "kotlinx.cinterop.CPointerVarOf$Companion"
+    },
+    {
+      "type": "kotlinx.cinterop.CPrimitiveVar"
+    },
+    {
+      "type": "kotlinx.cinterop.CVariable"
+    },
+    {
+      "type": "kotlinx.cinterop.LongVarOf",
+      "unsafeAllocated": true,
+      "fields": [
+        {
+          "name": "Companion"
+        }
+      ]
+    },
+    {
+      "type": "kotlinx.cinterop.LongVarOf$Companion"
+    },
+    {
+      "type": "kotlinx.cinterop.NativePointed",
+      "unsafeAllocated": true
+    },
+    {
+      "type": "kotlinx.cinterop.NativePtr"
+    },
+    {
+      "type": "kotlinx.cinterop.OpaqueNativePointed",
+      "unsafeAllocated": true
+    },
+    {
+      "type": "kotlinx.cinterop.ffi_cif",
+      "unsafeAllocated": true
+    },
+    {
+      "type": "kotlinx.cinterop.ffi_type",
+      "unsafeAllocated": true
+    },
+    {
+      "type": "kotlinx.coroutines.AwaitAll"
+    },
+    {
+      "type": "kotlinx.coroutines.AwaitAll$AwaitAllNode"
+    },
+    {
+      "type": "kotlinx.coroutines.CancellableContinuationImpl"
+    },
+    {
+      "type": "kotlinx.coroutines.CompletedExceptionally"
+    },
+    {
+      "type": "kotlinx.coroutines.EventLoopImplBase"
+    },
+    {
+      "type": "kotlinx.coroutines.JobSupport"
+    },
+    {
+      "type": "kotlinx.coroutines.JobSupport$Finishing"
+    },
+    {
+      "type": "kotlinx.coroutines.channels.BufferedChannel"
+    },
+    {
+      "type": "kotlinx.coroutines.flow.StateFlowImpl"
+    },
+    {
+      "type": "kotlinx.coroutines.internal.AtomicOp"
+    },
+    {
+      "type": "kotlinx.coroutines.internal.ConcurrentLinkedListNode"
+    },
+    {
+      "type": "kotlinx.coroutines.internal.DispatchedContinuation"
+    },
+    {
+      "type": "kotlinx.coroutines.internal.LimitedDispatcher"
+    },
+    {
+      "type": "kotlinx.coroutines.internal.LockFreeLinkedListNode"
+    },
+    {
+      "type": "kotlinx.coroutines.internal.LockFreeTaskQueue"
+    },
+    {
+      "type": "kotlinx.coroutines.internal.LockFreeTaskQueueCore"
+    },
+    {
+      "type": "kotlinx.coroutines.internal.Segment"
+    },
+    {
+      "type": "kotlinx.coroutines.scheduling.CoroutineScheduler"
+    },
+    {
+      "type": "kotlinx.coroutines.scheduling.CoroutineScheduler$Worker"
+    },
+    {
+      "type": "kotlinx.coroutines.scheduling.WorkQueue"
+    },
+    {
+      "type": "llvm.LLVMOpaqueDiagnosticInfo"
+    },
+    {
+      "type": "org.jetbrains.kotlin.KtNodeTypes",
+      "fields": [
+        {
+          "name": "ANNOTATED_EXPRESSION"
+        },
+        {
+          "name": "ANNOTATION"
+        },
+        {
+          "name": "ANNOTATION_ENTRY"
+        },
+        {
+          "name": "ANNOTATION_TARGET"
+        },
+        {
+          "name": "ARRAY_ACCESS_EXPRESSION"
+        },
+        {
+          "name": "BACKING_FIELD"
+        },
+        {
+          "name": "BINARY_EXPRESSION"
+        },
+        {
+          "name": "BINARY_WITH_TYPE"
+        },
+        {
+          "name": "BLOCK"
+        },
+        {
+          "name": "BLOCK_CODE_FRAGMENT"
+        },
+        {
+          "name": "BODY"
+        },
+        {
+          "name": "BOOLEAN_CONSTANT"
+        },
+        {
+          "name": "BREAK"
+        },
+        {
+          "name": "CALLABLE_REFERENCE_EXPRESSION"
+        },
+        {
+          "name": "CALL_EXPRESSION"
+        },
+        {
+          "name": "CATCH"
+        },
+        {
+          "name": "CHARACTER_CONSTANT"
+        },
+        {
+          "name": "CLASS"
+        },
+        {
+          "name": "CLASS_BODY"
+        },
+        {
+          "name": "CLASS_INITIALIZER"
+        },
+        {
+          "name": "CLASS_LITERAL_EXPRESSION"
+        },
+        {
+          "name": "COLLECTION_LITERAL_EXPRESSION"
+        },
+        {
+          "name": "COMPANION_BLOCK"
+        },
+        {
+          "name": "CONDITION"
+        },
+        {
+          "name": "CONSTRUCTOR_CALLEE"
+        },
+        {
+          "name": "CONSTRUCTOR_DELEGATION_CALL"
+        },
+        {
+          "name": "CONSTRUCTOR_DELEGATION_REFERENCE"
+        },
+        {
+          "name": "CONTEXT_PARAMETER_LIST"
+        },
+        {
+          "name": "CONTEXT_RECEIVER"
+        },
+        {
+          "name": "CONTINUE"
+        },
+        {
+          "name": "CONTRACT_EFFECT"
+        },
+        {
+          "name": "CONTRACT_EFFECT_LIST"
+        },
+        {
+          "name": "DELEGATED_SUPER_TYPE_ENTRY"
+        },
+        {
+          "name": "DESTRUCTURING_DECLARATION"
+        },
+        {
+          "name": "DESTRUCTURING_DECLARATION_ENTRY"
+        },
+        {
+          "name": "DOT_QUALIFIED_EXPRESSION"
+        },
+        {
+          "name": "DO_WHILE"
+        },
+        {
+          "name": "DYNAMIC_TYPE"
+        },
+        {
+          "name": "ELSE"
+        },
+        {
+          "name": "ENUM_ENTRY"
+        },
+        {
+          "name": "ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION"
+        },
+        {
+          "name": "ERROR_SAFE_ACCESS_EXPRESSION"
+        },
+        {
+          "name": "ESCAPE_STRING_TEMPLATE_ENTRY"
+        },
+        {
+          "name": "EXPRESSION_CODE_FRAGMENT"
+        },
+        {
+          "name": "FILE"
+        },
+        {
+          "name": "FILE_ANNOTATION_LIST"
+        },
+        {
+          "name": "FINALLY"
+        },
+        {
+          "name": "FLOAT_CONSTANT"
+        },
+        {
+          "name": "FOR"
+        },
+        {
+          "name": "FUN"
+        },
+        {
+          "name": "FUNCTION_LITERAL"
+        },
+        {
+          "name": "FUNCTION_TYPE"
+        },
+        {
+          "name": "FUNCTION_TYPE_RECEIVER"
+        },
+        {
+          "name": "IF"
+        },
+        {
+          "name": "IMPORT_ALIAS"
+        },
+        {
+          "name": "IMPORT_DIRECTIVE"
+        },
+        {
+          "name": "IMPORT_LIST"
+        },
+        {
+          "name": "INDICES"
+        },
+        {
+          "name": "INITIALIZER_LIST"
+        },
+        {
+          "name": "INTEGER_CONSTANT"
+        },
+        {
+          "name": "INTERSECTION_TYPE"
+        },
+        {
+          "name": "IS_EXPRESSION"
+        },
+        {
+          "name": "LABEL"
+        },
+        {
+          "name": "LABELED_EXPRESSION"
+        },
+        {
+          "name": "LABEL_QUALIFIER"
+        },
+        {
+          "name": "LAMBDA_ARGUMENT"
+        },
+        {
+          "name": "LAMBDA_EXPRESSION"
+        },
+        {
+          "name": "LITERAL_STRING_TEMPLATE_ENTRY"
+        },
+        {
+          "name": "LONG_STRING_TEMPLATE_ENTRY"
+        },
+        {
+          "name": "LOOP_RANGE"
+        },
+        {
+          "name": "MODIFIER_LIST"
+        },
+        {
+          "name": "NULL"
+        },
+        {
+          "name": "NULLABLE_TYPE"
+        },
+        {
+          "name": "OBJECT_DECLARATION"
+        },
+        {
+          "name": "OBJECT_LITERAL"
+        },
+        {
+          "name": "OPERATION_REFERENCE"
+        },
+        {
+          "name": "PACKAGE_DIRECTIVE"
+        },
+        {
+          "name": "PARENTHESIZED"
+        },
+        {
+          "name": "POSTFIX_EXPRESSION"
+        },
+        {
+          "name": "PREFIX_EXPRESSION"
+        },
+        {
+          "name": "PRIMARY_CONSTRUCTOR"
+        },
+        {
+          "name": "PROPERTY"
+        },
+        {
+          "name": "PROPERTY_ACCESSOR"
+        },
+        {
+          "name": "PROPERTY_DELEGATE"
+        },
+        {
+          "name": "REFERENCE_EXPRESSION"
+        },
+        {
+          "name": "RETURN"
+        },
+        {
+          "name": "SAFE_ACCESS_EXPRESSION"
+        },
+        {
+          "name": "SCRIPT"
+        },
+        {
+          "name": "SCRIPT_INITIALIZER"
+        },
+        {
+          "name": "SECONDARY_CONSTRUCTOR"
+        },
+        {
+          "name": "SHORT_STRING_TEMPLATE_ENTRY"
+        },
+        {
+          "name": "STRING_INTERPOLATION_PREFIX"
+        },
+        {
+          "name": "STRING_TEMPLATE"
+        },
+        {
+          "name": "SUPER_EXPRESSION"
+        },
+        {
+          "name": "SUPER_TYPE_CALL_ENTRY"
+        },
+        {
+          "name": "SUPER_TYPE_ENTRY"
+        },
+        {
+          "name": "SUPER_TYPE_LIST"
+        },
+        {
+          "name": "THEN"
+        },
+        {
+          "name": "THIS_EXPRESSION"
+        },
+        {
+          "name": "THROW"
+        },
+        {
+          "name": "TRY"
+        },
+        {
+          "name": "TYPEALIAS"
+        },
+        {
+          "name": "TYPE_ARGUMENT_LIST"
+        },
+        {
+          "name": "TYPE_CODE_FRAGMENT"
+        },
+        {
+          "name": "TYPE_CONSTRAINT"
+        },
+        {
+          "name": "TYPE_CONSTRAINT_LIST"
+        },
+        {
+          "name": "TYPE_PARAMETER"
+        },
+        {
+          "name": "TYPE_PARAMETER_LIST"
+        },
+        {
+          "name": "TYPE_PROJECTION"
+        },
+        {
+          "name": "TYPE_REFERENCE"
+        },
+        {
+          "name": "UNION_TYPE"
+        },
+        {
+          "name": "USER_TYPE"
+        },
+        {
+          "name": "VALUE_ARGUMENT"
+        },
+        {
+          "name": "VALUE_ARGUMENT_LIST"
+        },
+        {
+          "name": "VALUE_ARGUMENT_NAME"
+        },
+        {
+          "name": "VALUE_PARAMETER"
+        },
+        {
+          "name": "VALUE_PARAMETER_LIST"
+        },
+        {
+          "name": "WHEN"
+        },
+        {
+          "name": "WHEN_CONDITION_EXPRESSION"
+        },
+        {
+          "name": "WHEN_CONDITION_IN_RANGE"
+        },
+        {
+          "name": "WHEN_CONDITION_IS_PATTERN"
+        },
+        {
+          "name": "WHEN_ENTRY"
+        },
+        {
+          "name": "WHEN_ENTRY_GUARD"
+        },
+        {
+          "name": "WHILE"
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.backend.konan.driver.phases.NativePlatformAnalyzerServices"
+    },
+    {
+      "type": "org.jetbrains.kotlin.backend.konan.llvm.DiagnosticsKt$withLlvmDiagnosticCollector$handler$1",
+      "fields": [
+        {
+          "name": "INSTANCE"
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.builtins.DefaultBuiltIns"
+    },
+    {
+      "type": "org.jetbrains.kotlin.builtins.PlatformSpecificCastChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.builtins.PlatformSpecificCastChecker$Default",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.builtins.PlatformToKotlinClassMapper"
+    },
+    {
+      "type": "org.jetbrains.kotlin.builtins.PlatformToKotlinClassMapper$Default",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.builtins.ReflectionTypes",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.descriptors.ModuleDescriptor",
+            "org.jetbrains.kotlin.descriptors.NotFoundClasses"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.cfg.ControlFlowInformationProviderImpl$Factory"
+    },
+    {
+      "type": "org.jetbrains.kotlin.cli.common.ModuleVisibilityHelperImpl"
+    },
+    {
+      "type": "org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments",
+      "methods": [
+        {
+          "name": "setIncrementalCompilation",
+          "parameterTypes": [
+            "java.lang.Boolean"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.cli.common.arguments.CommonKlibBasedCompilerArguments"
+    },
+    {
+      "type": "org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments"
+    },
+    {
+      "type": "org.jetbrains.kotlin.cli.common.arguments.Freezable"
+    },
+    {
+      "type": "org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments",
+      "methods": [
+        {
+          "name": "setAutoCacheableFrom",
+          "parameterTypes": [
+            "java.lang.String[]"
+          ]
+        },
+        {
+          "name": "setBackendThreads",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setDebug",
+          "parameterTypes": [
+            "boolean"
+          ]
+        },
+        {
+          "name": "setIncludes",
+          "parameterTypes": [
+            "java.lang.String[]"
+          ]
+        },
+        {
+          "name": "setIncrementalCacheDir",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setLibraries",
+          "parameterTypes": [
+            "java.lang.String[]"
+          ]
+        },
+        {
+          "name": "setMainPackage",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setModuleName",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setOutputName",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setProduce",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.cli.common.arguments.RemovedCompilerArguments"
+    },
+    {
+      "type": "org.jetbrains.kotlin.com.intellij.AbstractBundle",
+      "methods": [
+        {
+          "name": "getLazyMessage",
+          "parameterTypes": [
+            "java.lang.String",
+            "java.lang.Object[]"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.com.intellij.DynamicBundle",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Class",
+            "java.lang.String"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.com.intellij.codeInsight.ContainerProvider"
+    },
+    {
+      "type": "org.jetbrains.kotlin.com.intellij.codeInsight.multiverse.CodeInsightContextProvider"
+    },
+    {
+      "type": "org.jetbrains.kotlin.com.intellij.codeInsight.multiverse.MultiverseEnabler"
+    },
+    {
+      "type": "org.jetbrains.kotlin.com.intellij.concurrency.VarHandleWrapperImpl",
+      "methods": [
+        {
+          "name": "useVarHandlesInConcurrentCollections",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.com.intellij.java.syntax.JavaSyntaxBundle"
+    },
+    {
+      "type": "org.jetbrains.kotlin.com.intellij.mock.MockProject"
+    },
+    {
+      "type": "org.jetbrains.kotlin.com.intellij.openapi.extensions.impl.ExtensionPointImpl"
+    },
+    {
+      "type": "org.jetbrains.kotlin.com.intellij.openapi.util.SimpleModificationTracker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.com.intellij.openapi.util.UserDataHolderBase",
+      "fields": [
+        {
+          "name": "value"
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.com.intellij.openapi.vfs.PersistentFSConstants",
+      "fields": [
+        {
+          "name": "ourMaxIntellisenseFileSize"
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.com.intellij.psi.LanguageSubstitutors",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.com.intellij.psi.PsiElementFinder"
+    },
+    {
+      "type": "org.jetbrains.kotlin.com.intellij.psi.SingleRootFileViewProvider"
+    },
+    {
+      "type": "org.jetbrains.kotlin.com.intellij.psi.compiled.ClassFileDecompilers$Decompiler"
+    },
+    {
+      "type": "org.jetbrains.kotlin.com.intellij.psi.impl.java.stubs.JavaStubElementTypePsiElementMappingRegistry",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.com.intellij.psi.stubs.StubRegistryExtension"
+    },
+    {
+      "type": "org.jetbrains.kotlin.com.intellij.util.KeyedLazyInstanceEP"
+    },
+    {
+      "type": "org.jetbrains.kotlin.com.intellij.util.QueryExecutor"
+    },
+    {
+      "type": "org.jetbrains.kotlin.com.intellij.util.containers.ConcurrentLongObjectHashMap",
+      "fields": [
+        {
+          "name": "baseCount"
+        },
+        {
+          "name": "cellsBusy"
+        },
+        {
+          "name": "sizeCtl"
+        },
+        {
+          "name": "transferIndex"
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.com.intellij.util.containers.LockFreeCopyOnWriteArrayList",
+      "fields": [
+        {
+          "name": "array"
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.config.LanguageVersionSettingsImpl"
+    },
+    {
+      "type": "org.jetbrains.kotlin.context.MutableModuleContextImpl"
+    },
+    {
+      "type": "org.jetbrains.kotlin.contracts.ContractDeserializerImpl",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration",
+            "org.jetbrains.kotlin.storage.StorageManager"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.contracts.EffectSystem",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.config.LanguageVersionSettings",
+            "org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory",
+            "org.jetbrains.kotlin.builtins.KotlinBuiltIns"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.contracts.parsing.ContractParsingServices",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.config.LanguageVersionSettings",
+            "org.jetbrains.kotlin.storage.StorageManager"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.descriptors.NotFoundClasses",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.storage.StorageManager",
+            "org.jetbrains.kotlin.descriptors.ModuleDescriptor"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl"
+    },
+    {
+      "type": "org.jetbrains.kotlin.diagnostics.Errors",
+      "fields": [
+        {
+          "name": "ABBREVIATED_NOTHING_PROPERTY_TYPE"
+        },
+        {
+          "name": "ABBREVIATED_NOTHING_RETURN_TYPE"
+        },
+        {
+          "name": "ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS"
+        },
+        {
+          "name": "ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED"
+        },
+        {
+          "name": "ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED_WARNING"
+        },
+        {
+          "name": "ABSTRACT_DELEGATED_PROPERTY"
+        },
+        {
+          "name": "ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS"
+        },
+        {
+          "name": "ABSTRACT_FUNCTION_WITH_BODY"
+        },
+        {
+          "name": "ABSTRACT_MEMBER_NOT_IMPLEMENTED"
+        },
+        {
+          "name": "ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS"
+        },
+        {
+          "name": "ABSTRACT_PROPERTY_IN_PRIMARY_CONSTRUCTOR_PARAMETERS"
+        },
+        {
+          "name": "ABSTRACT_PROPERTY_WITH_GETTER"
+        },
+        {
+          "name": "ABSTRACT_PROPERTY_WITH_INITIALIZER"
+        },
+        {
+          "name": "ABSTRACT_PROPERTY_WITH_SETTER"
+        },
+        {
+          "name": "ABSTRACT_SUPER_CALL"
+        },
+        {
+          "name": "ABSTRACT_SUPER_CALL_WARNING"
+        },
+        {
+          "name": "ACCESSOR_FOR_DELEGATED_PROPERTY"
+        },
+        {
+          "name": "ACCESSOR_PARAMETER_NAME_SHADOWING"
+        },
+        {
+          "name": "ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT"
+        },
+        {
+          "name": "ACTUAL_ANNOTATION_CONFLICTING_DEFAULT_ARGUMENT_VALUE"
+        },
+        {
+          "name": "ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING"
+        },
+        {
+          "name": "ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS"
+        },
+        {
+          "name": "ACTUAL_MISSING"
+        },
+        {
+          "name": "ACTUAL_TYPEALIAS_TO_SPECIAL_ANNOTATION"
+        },
+        {
+          "name": "ACTUAL_TYPE_ALIAS_NOT_TO_CLASS"
+        },
+        {
+          "name": "ACTUAL_TYPE_ALIAS_TO_CLASS_WITH_DECLARATION_SITE_VARIANCE"
+        },
+        {
+          "name": "ACTUAL_TYPE_ALIAS_TO_NOTHING"
+        },
+        {
+          "name": "ACTUAL_TYPE_ALIAS_TO_NULLABLE_TYPE"
+        },
+        {
+          "name": "ACTUAL_TYPE_ALIAS_WITH_COMPLEX_SUBSTITUTION"
+        },
+        {
+          "name": "ACTUAL_TYPE_ALIAS_WITH_USE_SITE_VARIANCE"
+        },
+        {
+          "name": "ACTUAL_WITHOUT_EXPECT"
+        },
+        {
+          "name": "ADAPTED_CALLABLE_REFERENCE_AGAINST_REFLECTION_TYPE"
+        },
+        {
+          "name": "ALWAYS_NULL"
+        },
+        {
+          "name": "AMBIGUOUS_ACTUALS"
+        },
+        {
+          "name": "AMBIGUOUS_ANONYMOUS_TYPE_INFERRED"
+        },
+        {
+          "name": "AMBIGUOUS_CALL_WITH_IMPLICIT_CONTEXT_RECEIVER"
+        },
+        {
+          "name": "AMBIGUOUS_EXPECTS"
+        },
+        {
+          "name": "AMBIGUOUS_LABEL"
+        },
+        {
+          "name": "AMBIGUOUS_SUPER"
+        },
+        {
+          "name": "ANNOTATIONS_ON_BLOCK_LEVEL_EXPRESSION_ON_THE_SAME_LINE"
+        },
+        {
+          "name": "ANNOTATION_ARGUMENT_IS_NON_CONST"
+        },
+        {
+          "name": "ANNOTATION_ARGUMENT_KCLASS_LITERAL_OF_TYPE_PARAMETER"
+        },
+        {
+          "name": "ANNOTATION_ARGUMENT_KCLASS_LITERAL_OF_TYPE_PARAMETER_ERROR"
+        },
+        {
+          "name": "ANNOTATION_ARGUMENT_MUST_BE_CONST"
+        },
+        {
+          "name": "ANNOTATION_ARGUMENT_MUST_BE_ENUM_CONST"
+        },
+        {
+          "name": "ANNOTATION_ARGUMENT_MUST_BE_KCLASS_LITERAL"
+        },
+        {
+          "name": "ANNOTATION_CLASS_CONSTRUCTOR_CALL"
+        },
+        {
+          "name": "ANNOTATION_CLASS_MEMBER"
+        },
+        {
+          "name": "ANNOTATION_IN_WHERE_CLAUSE_WARNING"
+        },
+        {
+          "name": "ANNOTATION_ON_SUPERCLASS"
+        },
+        {
+          "name": "ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT"
+        },
+        {
+          "name": "ANNOTATION_USED_AS_ANNOTATION_ARGUMENT"
+        },
+        {
+          "name": "ANONYMOUS_FUNCTION_PARAMETER_WITH_DEFAULT_VALUE"
+        },
+        {
+          "name": "ANONYMOUS_FUNCTION_WITH_NAME"
+        },
+        {
+          "name": "ANONYMOUS_INITIALIZER_IN_INTERFACE"
+        },
+        {
+          "name": "API_NOT_AVAILABLE"
+        },
+        {
+          "name": "APPROXIMATED_LOCAL_TYPE_WILL_BECOME_FLEXIBLE"
+        },
+        {
+          "name": "APPROXIMATED_LOCAL_TYPE_WILL_BECOME_NULLABLE"
+        },
+        {
+          "name": "ARGUMENT_PASSED_TWICE"
+        },
+        {
+          "name": "ARRAY_CLASS_LITERAL_REQUIRES_ARGUMENT"
+        },
+        {
+          "name": "ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE"
+        },
+        {
+          "name": "ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION"
+        },
+        {
+          "name": "ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION"
+        },
+        {
+          "name": "ASSIGNMENT_IN_EXPRESSION_CONTEXT"
+        },
+        {
+          "name": "ASSIGNMENT_OPERATOR_SHOULD_RETURN_UNIT"
+        },
+        {
+          "name": "ASSIGNMENT_TYPE_MISMATCH"
+        },
+        {
+          "name": "ASSIGN_OPERATOR_AMBIGUITY"
+        },
+        {
+          "name": "BACKING_FIELD_IN_INTERFACE"
+        },
+        {
+          "name": "BOUNDS_NOT_ALLOWED_IF_BOUNDED_BY_TYPE_PARAMETER"
+        },
+        {
+          "name": "BOUND_ON_TYPE_ALIAS_PARAMETER_NOT_ALLOWED"
+        },
+        {
+          "name": "BREAK_OR_CONTINUE_IN_WHEN"
+        },
+        {
+          "name": "BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY"
+        },
+        {
+          "name": "BREAK_OR_CONTINUE_OUTSIDE_A_LOOP"
+        },
+        {
+          "name": "BUILDER_INFERENCE_MULTI_LAMBDA_RESTRICTION"
+        },
+        {
+          "name": "BUILDER_INFERENCE_STUB_PARAMETER_TYPE"
+        },
+        {
+          "name": "BUILDER_INFERENCE_STUB_RECEIVER"
+        },
+        {
+          "name": "CALLABLE_REFERENCE_LHS_NOT_A_CLASS"
+        },
+        {
+          "name": "CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY"
+        },
+        {
+          "name": "CALLABLE_REFERENCE_TO_ANNOTATION_CONSTRUCTOR"
+        },
+        {
+          "name": "CANDIDATE_CHOSEN_USING_OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION"
+        },
+        {
+          "name": "CANNOT_ALL_UNDER_IMPORT_FROM_SINGLETON"
+        },
+        {
+          "name": "CANNOT_BE_IMPORTED"
+        },
+        {
+          "name": "CANNOT_CHANGE_ACCESS_PRIVILEGE"
+        },
+        {
+          "name": "CANNOT_CHECK_FOR_ERASED"
+        },
+        {
+          "name": "CANNOT_COMPLETE_RESOLVE"
+        },
+        {
+          "name": "CANNOT_INFER_PARAMETER_TYPE"
+        },
+        {
+          "name": "CANNOT_INFER_VISIBILITY"
+        },
+        {
+          "name": "CANNOT_OVERRIDE_INVISIBLE_MEMBER"
+        },
+        {
+          "name": "CANNOT_WEAKEN_ACCESS_PRIVILEGE"
+        },
+        {
+          "name": "CAPTURED_MEMBER_VAL_INITIALIZATION"
+        },
+        {
+          "name": "CAPTURED_VAL_INITIALIZATION"
+        },
+        {
+          "name": "CAST_NEVER_SUCCEEDS"
+        },
+        {
+          "name": "CATCH_PARAMETER_WITH_DEFAULT_VALUE"
+        },
+        {
+          "name": "CHANGING_ARGUMENTS_EXECUTION_ORDER_FOR_NAMED_VARARGS"
+        },
+        {
+          "name": "CLASS_CANNOT_BE_EXTENDED_DIRECTLY"
+        },
+        {
+          "name": "CLASS_INHERITS_JAVA_SEALED_CLASS"
+        },
+        {
+          "name": "CLASS_IN_SUPERTYPE_FOR_ENUM"
+        },
+        {
+          "name": "CLASS_LITERAL_LHS_NOT_A_CLASS"
+        },
+        {
+          "name": "COMMA_IN_WHEN_CONDITION_WITHOUT_ARGUMENT"
+        },
+        {
+          "name": "COMPARE_TO_TYPE_MISMATCH"
+        },
+        {
+          "name": "COMPATIBILITY_WARNING"
+        },
+        {
+          "name": "COMPONENT_FUNCTION_AMBIGUITY"
+        },
+        {
+          "name": "COMPONENT_FUNCTION_MISSING"
+        },
+        {
+          "name": "COMPONENT_FUNCTION_ON_NULLABLE"
+        },
+        {
+          "name": "COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH"
+        },
+        {
+          "name": "CONFLICTING_IMPORT"
+        },
+        {
+          "name": "CONFLICTING_INHERITED_MEMBERS"
+        },
+        {
+          "name": "CONFLICTING_INHERITED_MEMBERS_WARNING"
+        },
+        {
+          "name": "CONFLICTING_OVERLOADS"
+        },
+        {
+          "name": "CONFLICTING_PROJECTION"
+        },
+        {
+          "name": "CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION"
+        },
+        {
+          "name": "CONFLICTING_UPPER_BOUNDS"
+        },
+        {
+          "name": "CONFUSING_BRANCH_CONDITION"
+        },
+        {
+          "name": "CONSTANT_EXPECTED_TYPE_MISMATCH"
+        },
+        {
+          "name": "CONSTRUCTOR_IN_INTERFACE"
+        },
+        {
+          "name": "CONSTRUCTOR_IN_OBJECT"
+        },
+        {
+          "name": "CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT"
+        },
+        {
+          "name": "CONST_VAL_WITHOUT_INITIALIZER"
+        },
+        {
+          "name": "CONST_VAL_WITH_DELEGATE"
+        },
+        {
+          "name": "CONST_VAL_WITH_GETTER"
+        },
+        {
+          "name": "CONST_VAL_WITH_NON_CONST_INITIALIZER"
+        },
+        {
+          "name": "CONTEXT_PARAMETERS_UNSUPPORTED"
+        },
+        {
+          "name": "CONTEXT_RECEIVERS_WITH_BACKING_FIELD"
+        },
+        {
+          "name": "CONTRACT_NOT_ALLOWED"
+        },
+        {
+          "name": "COULD_BE_INFERRED_ONLY_WITH_UNRESTRICTED_BUILDER_INFERENCE"
+        },
+        {
+          "name": "CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS"
+        },
+        {
+          "name": "CYCLE_IN_ANNOTATION_PARAMETER"
+        },
+        {
+          "name": "CYCLIC_CONSTRUCTOR_DELEGATION_CALL"
+        },
+        {
+          "name": "CYCLIC_GENERIC_UPPER_BOUND"
+        },
+        {
+          "name": "CYCLIC_INHERITANCE_HIERARCHY"
+        },
+        {
+          "name": "CYCLIC_SCOPES_WITH_COMPANION"
+        },
+        {
+          "name": "DATA_CLASS_CANNOT_HAVE_CLASS_SUPERTYPES"
+        },
+        {
+          "name": "DATA_CLASS_NOT_PROPERTY_PARAMETER"
+        },
+        {
+          "name": "DATA_CLASS_OVERRIDE_CONFLICT"
+        },
+        {
+          "name": "DATA_CLASS_OVERRIDE_DEFAULT_VALUES"
+        },
+        {
+          "name": "DATA_CLASS_VARARG_PARAMETER"
+        },
+        {
+          "name": "DATA_CLASS_WITHOUT_PARAMETERS"
+        },
+        {
+          "name": "DATA_OBJECT_CUSTOM_EQUALS_OR_HASH_CODE"
+        },
+        {
+          "name": "DECLARATION_CANT_BE_INLINED"
+        },
+        {
+          "name": "DECLARATION_CANT_BE_INLINED_WARNING"
+        },
+        {
+          "name": "DECLARATION_IN_ILLEGAL_CONTEXT"
+        },
+        {
+          "name": "DEFAULT_ARGUMENTS_IN_EXPECT_WITH_ACTUAL_TYPEALIAS"
+        },
+        {
+          "name": "DEFAULT_VALUE_NOT_ALLOWED_IN_OVERRIDE"
+        },
+        {
+          "name": "DEFINITELY_NON_NULLABLE_AS_REIFIED"
+        },
+        {
+          "name": "DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE"
+        },
+        {
+          "name": "DELEGATED_PROPERTY_INSIDE_VALUE_CLASS"
+        },
+        {
+          "name": "DELEGATED_PROPERTY_IN_INTERFACE"
+        },
+        {
+          "name": "DELEGATE_PD_METHOD_NONE_APPLICABLE"
+        },
+        {
+          "name": "DELEGATE_SPECIAL_FUNCTION_AMBIGUITY"
+        },
+        {
+          "name": "DELEGATE_SPECIAL_FUNCTION_MISSING"
+        },
+        {
+          "name": "DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE"
+        },
+        {
+          "name": "DELEGATE_SPECIAL_FUNCTION_RETURN_TYPE_MISMATCH"
+        },
+        {
+          "name": "DELEGATE_USES_EXTENSION_PROPERTY_TYPE_PARAMETER"
+        },
+        {
+          "name": "DELEGATION_IN_INTERFACE"
+        },
+        {
+          "name": "DELEGATION_NOT_TO_INTERFACE"
+        },
+        {
+          "name": "DELEGATION_SUPER_CALL_IN_ENUM_CONSTRUCTOR"
+        },
+        {
+          "name": "DEPRECATED_ACCESS_BY_SHORT_NAME"
+        },
+        {
+          "name": "DEPRECATED_ACCESS_TO_ENTRY_PROPERTY_FROM_ENUM"
+        },
+        {
+          "name": "DEPRECATED_ACCESS_TO_ENUM_COMPANION_PROPERTY"
+        },
+        {
+          "name": "DEPRECATED_ACCESS_TO_ENUM_ENTRY_COMPANION_PROPERTY"
+        },
+        {
+          "name": "DEPRECATED_ACCESS_TO_ENUM_ENTRY_PROPERTY_AS_REFERENCE"
+        },
+        {
+          "name": "DEPRECATED_DECLARATION_OF_ENUM_ENTRY"
+        },
+        {
+          "name": "DEPRECATED_IDENTITY_EQUALS"
+        },
+        {
+          "name": "DEPRECATED_IMPLICIT_NON_PUBLIC_API_ACCESS"
+        },
+        {
+          "name": "DEPRECATED_MODIFIER"
+        },
+        {
+          "name": "DEPRECATED_MODIFIER_CONTAINING_DECLARATION"
+        },
+        {
+          "name": "DEPRECATED_MODIFIER_FOR_TARGET"
+        },
+        {
+          "name": "DEPRECATED_MODIFIER_PAIR"
+        },
+        {
+          "name": "DEPRECATED_RESOLVE_WITH_AMBIGUOUS_ENUM_ENTRY"
+        },
+        {
+          "name": "DEPRECATED_SINCE_KOTLIN_OUTSIDE_KOTLIN_SUBPACKAGE"
+        },
+        {
+          "name": "DEPRECATED_SINCE_KOTLIN_WITHOUT_ARGUMENTS"
+        },
+        {
+          "name": "DEPRECATED_SINCE_KOTLIN_WITHOUT_DEPRECATED"
+        },
+        {
+          "name": "DEPRECATED_SINCE_KOTLIN_WITH_DEPRECATED_LEVEL"
+        },
+        {
+          "name": "DEPRECATED_SINCE_KOTLIN_WITH_UNORDERED_VERSIONS"
+        },
+        {
+          "name": "DEPRECATED_SMARTCAST"
+        },
+        {
+          "name": "DEPRECATED_SYNTAX_WITH_DEFINITELY_NOT_NULL"
+        },
+        {
+          "name": "DEPRECATED_TYPE_PARAMETER_SYNTAX"
+        },
+        {
+          "name": "DEPRECATION"
+        },
+        {
+          "name": "DEPRECATION_ERROR"
+        },
+        {
+          "name": "DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES"
+        },
+        {
+          "name": "DIVISION_BY_ZERO"
+        },
+        {
+          "name": "DSL_SCOPE_VIOLATION"
+        },
+        {
+          "name": "DSL_SCOPE_VIOLATION_WARNING"
+        },
+        {
+          "name": "DUPLICATE_LABEL_IN_WHEN"
+        },
+        {
+          "name": "DUPLICATE_PARAMETER_NAME_IN_FUNCTION_TYPE"
+        },
+        {
+          "name": "DYNAMIC_NOT_ALLOWED"
+        },
+        {
+          "name": "DYNAMIC_RECEIVER_NOT_ALLOWED"
+        },
+        {
+          "name": "DYNAMIC_SUPERTYPE"
+        },
+        {
+          "name": "DYNAMIC_UPPER_BOUND"
+        },
+        {
+          "name": "ELSE_MISPLACED_IN_WHEN"
+        },
+        {
+          "name": "EMPTY_CHARACTER_LITERAL"
+        },
+        {
+          "name": "ENUM_CLASS_CONSTRUCTOR_CALL"
+        },
+        {
+          "name": "ENUM_ENTRY_AS_TYPE"
+        },
+        {
+          "name": "ENUM_ENTRY_SHOULD_BE_INITIALIZED"
+        },
+        {
+          "name": "EQUALITY_NOT_APPLICABLE"
+        },
+        {
+          "name": "EQUALITY_NOT_APPLICABLE_WARNING"
+        },
+        {
+          "name": "EQUALS_MISSING"
+        },
+        {
+          "name": "ERROR_IN_CONTRACT_DESCRIPTION"
+        },
+        {
+          "name": "EXCEPTION_FROM_ANALYZER"
+        },
+        {
+          "name": "EXPANDED_TYPE_CANNOT_BE_CONSTRUCTED"
+        },
+        {
+          "name": "EXPANDED_TYPE_CANNOT_BE_INHERITED"
+        },
+        {
+          "name": "EXPANSIVE_INHERITANCE"
+        },
+        {
+          "name": "EXPANSIVE_INHERITANCE_IN_JAVA"
+        },
+        {
+          "name": "EXPECTED_CLASS_CONSTRUCTOR_DELEGATION_CALL"
+        },
+        {
+          "name": "EXPECTED_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER"
+        },
+        {
+          "name": "EXPECTED_CONDITION"
+        },
+        {
+          "name": "EXPECTED_DECLARATION_WITH_BODY"
+        },
+        {
+          "name": "EXPECTED_DELEGATED_PROPERTY"
+        },
+        {
+          "name": "EXPECTED_ENUM_CONSTRUCTOR"
+        },
+        {
+          "name": "EXPECTED_ENUM_ENTRY_WITH_BODY"
+        },
+        {
+          "name": "EXPECTED_EXTERNAL_DECLARATION"
+        },
+        {
+          "name": "EXPECTED_LATEINIT_PROPERTY"
+        },
+        {
+          "name": "EXPECTED_PARAMETERS_NUMBER_MISMATCH"
+        },
+        {
+          "name": "EXPECTED_PARAMETER_TYPE_MISMATCH"
+        },
+        {
+          "name": "EXPECTED_PARAMETER_TYPE_MISMATCH_WARNING"
+        },
+        {
+          "name": "EXPECTED_PRIVATE_DECLARATION"
+        },
+        {
+          "name": "EXPECTED_PROPERTY_INITIALIZER"
+        },
+        {
+          "name": "EXPECTED_TAILREC_FUNCTION"
+        },
+        {
+          "name": "EXPECTED_TYPE_MISMATCH"
+        },
+        {
+          "name": "EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING"
+        },
+        {
+          "name": "EXPECT_ACTUAL_OPT_IN_ANNOTATION"
+        },
+        {
+          "name": "EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE"
+        },
+        {
+          "name": "EXPECT_TYPE_IN_WHEN_WITHOUT_ELSE"
+        },
+        {
+          "name": "EXPERIMENTAL_FEATURE_WARNING"
+        },
+        {
+          "name": "EXPERIMENTAL_UNSIGNED_LITERALS"
+        },
+        {
+          "name": "EXPERIMENTAL_UNSIGNED_LITERALS_ERROR"
+        },
+        {
+          "name": "EXPLICIT_BACKING_FIELDS_UNSUPPORTED"
+        },
+        {
+          "name": "EXPLICIT_DELEGATION_CALL_REQUIRED"
+        },
+        {
+          "name": "EXPOSED_FROM_PRIVATE_IN_FILE"
+        },
+        {
+          "name": "EXPOSED_FUNCTION_RETURN_TYPE"
+        },
+        {
+          "name": "EXPOSED_PARAMETER_TYPE"
+        },
+        {
+          "name": "EXPOSED_PROPERTY_TYPE"
+        },
+        {
+          "name": "EXPOSED_PROPERTY_TYPE_IN_CONSTRUCTOR"
+        },
+        {
+          "name": "EXPOSED_RECEIVER_TYPE"
+        },
+        {
+          "name": "EXPOSED_SUPER_CLASS"
+        },
+        {
+          "name": "EXPOSED_SUPER_INTERFACE"
+        },
+        {
+          "name": "EXPOSED_TYPEALIAS_EXPANDED_TYPE"
+        },
+        {
+          "name": "EXPOSED_TYPE_PARAMETER_BOUND"
+        },
+        {
+          "name": "EXPRESSION_EXPECTED"
+        },
+        {
+          "name": "EXPRESSION_EXPECTED_PACKAGE_FOUND"
+        },
+        {
+          "name": "EXPRESSION_OF_NULLABLE_TYPE_IN_CLASS_LITERAL_LHS"
+        },
+        {
+          "name": "EXTENSION_FUNCTION_SHADOWED_BY_INNER_CLASS_CONSTRUCTOR"
+        },
+        {
+          "name": "EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE"
+        },
+        {
+          "name": "EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED"
+        },
+        {
+          "name": "EXTENSION_PROPERTY_MUST_HAVE_ACCESSORS_OR_BE_ABSTRACT"
+        },
+        {
+          "name": "EXTENSION_PROPERTY_WITH_BACKING_FIELD"
+        },
+        {
+          "name": "EXTENSION_SHADOWED_BY_MEMBER"
+        },
+        {
+          "name": "FINAL_SUPERTYPE"
+        },
+        {
+          "name": "FINAL_UPPER_BOUND"
+        },
+        {
+          "name": "FINITE_BOUNDS_VIOLATION"
+        },
+        {
+          "name": "FINITE_BOUNDS_VIOLATION_IN_JAVA"
+        },
+        {
+          "name": "FIR_COMPILED_CLASS"
+        },
+        {
+          "name": "FLOAT_LITERAL_CONFORMS_INFINITY"
+        },
+        {
+          "name": "FLOAT_LITERAL_CONFORMS_ZERO"
+        },
+        {
+          "name": "FLOAT_LITERAL_OUT_OF_RANGE"
+        },
+        {
+          "name": "FORBIDDEN_IDENTITY_EQUALS"
+        },
+        {
+          "name": "FORBIDDEN_SYNCHRONIZED_BY_VALUE_CLASSES_OR_PRIMITIVES"
+        },
+        {
+          "name": "FORBIDDEN_VARARG_PARAMETER_TYPE"
+        },
+        {
+          "name": "FUNCTION_CALL_EXPECTED"
+        },
+        {
+          "name": "FUNCTION_DECLARATION_WITH_NO_NAME"
+        },
+        {
+          "name": "FUNCTION_EXPECTED"
+        },
+        {
+          "name": "FUN_INTERFACE_ABSTRACT_METHOD_WITH_DEFAULT_VALUE"
+        },
+        {
+          "name": "FUN_INTERFACE_ABSTRACT_METHOD_WITH_TYPE_PARAMETERS"
+        },
+        {
+          "name": "FUN_INTERFACE_CANNOT_HAVE_ABSTRACT_PROPERTIES"
+        },
+        {
+          "name": "FUN_INTERFACE_CONSTRUCTOR_REFERENCE"
+        },
+        {
+          "name": "FUN_INTERFACE_WITH_SUSPEND_FUNCTION"
+        },
+        {
+          "name": "FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS"
+        },
+        {
+          "name": "GENERIC_THROWABLE_SUBCLASS"
+        },
+        {
+          "name": "GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY"
+        },
+        {
+          "name": "HAS_NEXT_FUNCTION_AMBIGUITY"
+        },
+        {
+          "name": "HAS_NEXT_FUNCTION_NONE_APPLICABLE"
+        },
+        {
+          "name": "HAS_NEXT_FUNCTION_TYPE_MISMATCH"
+        },
+        {
+          "name": "HAS_NEXT_MISSING"
+        },
+        {
+          "name": "IGNORABILITY_ANNOTATIONS_WITH_CHECKER_DISABLED"
+        },
+        {
+          "name": "ILLEGAL_DECLARATION_IN_WHEN_SUBJECT"
+        },
+        {
+          "name": "ILLEGAL_ESCAPE"
+        },
+        {
+          "name": "ILLEGAL_ESCAPE_SEQUENCE"
+        },
+        {
+          "name": "ILLEGAL_INLINE_PARAMETER_MODIFIER"
+        },
+        {
+          "name": "ILLEGAL_KOTLIN_VERSION_STRING_VALUE"
+        },
+        {
+          "name": "ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL"
+        },
+        {
+          "name": "ILLEGAL_SELECTOR"
+        },
+        {
+          "name": "ILLEGAL_SUSPEND_FUNCTION_CALL"
+        },
+        {
+          "name": "ILLEGAL_SUSPEND_PROPERTY_ACCESS"
+        },
+        {
+          "name": "ILLEGAL_UNDERSCORE"
+        },
+        {
+          "name": "IMPLEMENTATION_BY_DELEGATION_IN_EXPECT_CLASS"
+        },
+        {
+          "name": "IMPLICIT_BOXING_IN_IDENTITY_EQUALS"
+        },
+        {
+          "name": "IMPLICIT_CAST_TO_ANY"
+        },
+        {
+          "name": "IMPLICIT_INTERSECTION_TYPE"
+        },
+        {
+          "name": "IMPLICIT_JVM_ACTUALIZATION"
+        },
+        {
+          "name": "IMPLICIT_NOTHING_PROPERTY_TYPE"
+        },
+        {
+          "name": "IMPLICIT_NOTHING_RETURN_TYPE"
+        },
+        {
+          "name": "IMPLICIT_NOTHING_TYPE_ARGUMENT_AGAINST_NOT_NOTHING_EXPECTED_TYPE"
+        },
+        {
+          "name": "IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION"
+        },
+        {
+          "name": "INACCESSIBLE_OUTER_CLASS_EXPRESSION"
+        },
+        {
+          "name": "INACCESSIBLE_TYPE"
+        },
+        {
+          "name": "INAPPLICABLE_FILE_TARGET"
+        },
+        {
+          "name": "INAPPLICABLE_INFIX_MODIFIER"
+        },
+        {
+          "name": "INAPPLICABLE_LATEINIT_MODIFIER"
+        },
+        {
+          "name": "INAPPLICABLE_MODIFIER"
+        },
+        {
+          "name": "INAPPLICABLE_OPERATOR_MODIFIER"
+        },
+        {
+          "name": "INAPPLICABLE_PARAM_TARGET"
+        },
+        {
+          "name": "INAPPLICABLE_TARGET_ON_PROPERTY"
+        },
+        {
+          "name": "INAPPLICABLE_TARGET_ON_PROPERTY_WARNING"
+        },
+        {
+          "name": "INAPPLICABLE_TARGET_PROPERTY_HAS_NO_BACKING_FIELD"
+        },
+        {
+          "name": "INAPPLICABLE_TARGET_PROPERTY_HAS_NO_DELEGATE"
+        },
+        {
+          "name": "INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE"
+        },
+        {
+          "name": "INCOMPATIBLE_CLASS"
+        },
+        {
+          "name": "INCOMPATIBLE_ENUM_COMPARISON"
+        },
+        {
+          "name": "INCOMPATIBLE_ENUM_COMPARISON_ERROR"
+        },
+        {
+          "name": "INCOMPATIBLE_MODIFIERS"
+        },
+        {
+          "name": "INCOMPATIBLE_TYPES"
+        },
+        {
+          "name": "INCONSISTENT_TYPE_PARAMETER_BOUNDS"
+        },
+        {
+          "name": "INCONSISTENT_TYPE_PARAMETER_VALUES"
+        },
+        {
+          "name": "INCORRECT_CALLABLE_REFERENCE_RESOLUTION_FOR_COMPANION_LHS"
+        },
+        {
+          "name": "INCORRECT_CHARACTER_LITERAL"
+        },
+        {
+          "name": "INCORRECT_LEFT_COMPONENT_OF_INTERSECTION"
+        },
+        {
+          "name": "INCORRECT_RIGHT_COMPONENT_OF_INTERSECTION"
+        },
+        {
+          "name": "INC_DEC_SHOULD_NOT_RETURN_UNIT"
+        },
+        {
+          "name": "INEFFICIENT_EQUALS_OVERRIDING_IN_VALUE_CLASS"
+        },
+        {
+          "name": "INFERRED_INTO_DECLARED_UPPER_BOUNDS"
+        },
+        {
+          "name": "INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION"
+        },
+        {
+          "name": "INFERRED_TYPE_VARIABLE_INTO_POSSIBLE_EMPTY_INTERSECTION"
+        },
+        {
+          "name": "INFIX_MODIFIER_REQUIRED"
+        },
+        {
+          "name": "INITIALIZATION_BEFORE_DECLARATION"
+        },
+        {
+          "name": "INITIALIZER_REQUIRED_FOR_DESTRUCTURING_DECLARATION"
+        },
+        {
+          "name": "INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE"
+        },
+        {
+          "name": "INLINE_CLASS_DEPRECATED"
+        },
+        {
+          "name": "INLINE_PROPERTY_WITH_BACKING_FIELD"
+        },
+        {
+          "name": "INLINE_SUSPEND_FUNCTION_TYPE_UNSUPPORTED"
+        },
+        {
+          "name": "INNER_CLASS_INSIDE_VALUE_CLASS"
+        },
+        {
+          "name": "INNER_CLASS_OF_GENERIC_THROWABLE_SUBCLASS"
+        },
+        {
+          "name": "INNER_CLASS_OF_GENERIC_THROWABLE_SUBCLASS_WARNING"
+        },
+        {
+          "name": "INSTANCE_ACCESS_BEFORE_SUPER_CALL"
+        },
+        {
+          "name": "INTEGER_OPERATOR_RESOLVE_WILL_CHANGE"
+        },
+        {
+          "name": "INTEGER_OVERFLOW"
+        },
+        {
+          "name": "INTERFACE_WITH_SUPERCLASS"
+        },
+        {
+          "name": "INT_LITERAL_OUT_OF_RANGE"
+        },
+        {
+          "name": "INT_LITERAL_WITH_LEADING_ZEROS"
+        },
+        {
+          "name": "INVALID_CHARACTERS"
+        },
+        {
+          "name": "INVALID_DEFAULT_FUNCTIONAL_PARAMETER_FOR_INLINE"
+        },
+        {
+          "name": "INVALID_IF_AS_EXPRESSION"
+        },
+        {
+          "name": "INVALID_IF_AS_EXPRESSION_WARNING"
+        },
+        {
+          "name": "INVALID_TYPE_OF_ANNOTATION_MEMBER"
+        },
+        {
+          "name": "INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER"
+        },
+        {
+          "name": "INVISIBLE_MEMBER"
+        },
+        {
+          "name": "INVISIBLE_REFERENCE"
+        },
+        {
+          "name": "INVISIBLE_REFERENCE_DIAGNOSTICS"
+        },
+        {
+          "name": "INVISIBLE_SETTER"
+        },
+        {
+          "name": "INVISIBLE_SETTER_FROM_DERIVED"
+        },
+        {
+          "name": "IR_WITH_UNSTABLE_ABI_COMPILED_CLASS"
+        },
+        {
+          "name": "IS_ENUM_ENTRY"
+        },
+        {
+          "name": "ITERATOR_AMBIGUITY"
+        },
+        {
+          "name": "ITERATOR_MISSING"
+        },
+        {
+          "name": "ITERATOR_ON_NULLABLE"
+        },
+        {
+          "name": "KCLASS_WITH_NULLABLE_TYPE_PARAMETER_IN_SIGNATURE"
+        },
+        {
+          "name": "LABEL_NAME_CLASH"
+        },
+        {
+          "name": "LABEL_RESOLVE_WILL_CHANGE"
+        },
+        {
+          "name": "LATEINIT_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION_WARNING"
+        },
+        {
+          "name": "LATEINIT_INTRINSIC_CALL_IN_INLINE_FUNCTION"
+        },
+        {
+          "name": "LATEINIT_INTRINSIC_CALL_IN_INLINE_FUNCTION_WARNING"
+        },
+        {
+          "name": "LATEINIT_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY"
+        },
+        {
+          "name": "LATEINIT_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY_WARNING"
+        },
+        {
+          "name": "LATEINIT_INTRINSIC_CALL_ON_NON_LATEINIT"
+        },
+        {
+          "name": "LATEINIT_INTRINSIC_CALL_ON_NON_LATEINIT_WARNING"
+        },
+        {
+          "name": "LATEINIT_INTRINSIC_CALL_ON_NON_LITERAL"
+        },
+        {
+          "name": "LATEINIT_INTRINSIC_CALL_ON_NON_LITERAL_WARNING"
+        },
+        {
+          "name": "LOCAL_ANNOTATION_CLASS"
+        },
+        {
+          "name": "LOCAL_EXTENSION_PROPERTY"
+        },
+        {
+          "name": "LOCAL_INTERFACE_NOT_ALLOWED"
+        },
+        {
+          "name": "LOCAL_OBJECT_NOT_ALLOWED"
+        },
+        {
+          "name": "LOCAL_VARIABLE_WITH_GETTER"
+        },
+        {
+          "name": "LOCAL_VARIABLE_WITH_SETTER"
+        },
+        {
+          "name": "LOCAL_VARIABLE_WITH_TYPE_PARAMETERS"
+        },
+        {
+          "name": "LOCAL_VARIABLE_WITH_TYPE_PARAMETERS_WARNING"
+        },
+        {
+          "name": "MANY_CLASSES_IN_SUPERTYPE_LIST"
+        },
+        {
+          "name": "MANY_COMPANION_OBJECTS"
+        },
+        {
+          "name": "MANY_IMPL_MEMBER_NOT_IMPLEMENTED"
+        },
+        {
+          "name": "MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED"
+        },
+        {
+          "name": "MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED_WARNING"
+        },
+        {
+          "name": "MANY_LAMBDA_EXPRESSION_ARGUMENTS"
+        },
+        {
+          "name": "MEMBER_PROJECTED_OUT"
+        },
+        {
+          "name": "METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE"
+        },
+        {
+          "name": "MISPLACED_TYPE_PARAMETER_CONSTRAINTS"
+        },
+        {
+          "name": "MISSING_BUILT_IN_DECLARATION"
+        },
+        {
+          "name": "MISSING_CONSTRUCTOR_BRACKETS"
+        },
+        {
+          "name": "MISSING_CONSTRUCTOR_KEYWORD"
+        },
+        {
+          "name": "MISSING_DEPENDENCY_CLASS"
+        },
+        {
+          "name": "MISSING_DEPENDENCY_SUPERCLASS"
+        },
+        {
+          "name": "MISSING_IMPORTED_SCRIPT_FILE"
+        },
+        {
+          "name": "MISSING_IMPORTED_SCRIPT_PSI"
+        },
+        {
+          "name": "MISSING_RECEIVER"
+        },
+        {
+          "name": "MISSING_SCRIPT_BASE_CLASS"
+        },
+        {
+          "name": "MISSING_SCRIPT_PROVIDED_PROPERTY_CLASS"
+        },
+        {
+          "name": "MISSING_SCRIPT_RECEIVER_CLASS"
+        },
+        {
+          "name": "MISSING_SCRIPT_STANDARD_TEMPLATE"
+        },
+        {
+          "name": "MISSING_STDLIB"
+        },
+        {
+          "name": "MISSING_VAL_ON_ANNOTATION_PARAMETER"
+        },
+        {
+          "name": "MIXING_NAMED_AND_POSITIONED_ARGUMENTS"
+        },
+        {
+          "name": "MIXING_SUSPEND_AND_NON_SUSPEND_SUPERTYPES"
+        },
+        {
+          "name": "MODALITY_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION_WARNING"
+        },
+        {
+          "name": "MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND"
+        },
+        {
+          "name": "MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND_FUN"
+        },
+        {
+          "name": "MODIFIER_LIST_NOT_ALLOWED"
+        },
+        {
+          "name": "MULTIPLE_ARGUMENTS_APPLICABLE_FOR_CONTEXT_RECEIVER"
+        },
+        {
+          "name": "MULTIPLE_CONTEXT_LISTS"
+        },
+        {
+          "name": "MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES"
+        },
+        {
+          "name": "MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES_WHEN_NO_EXPLICIT_OVERRIDE"
+        },
+        {
+          "name": "MULTIPLE_VARARG_PARAMETERS"
+        },
+        {
+          "name": "MUST_BE_INITIALIZED"
+        },
+        {
+          "name": "MUST_BE_INITIALIZED_DIAGNOSTICS"
+        },
+        {
+          "name": "MUST_BE_INITIALIZED_OR_BE_ABSTRACT"
+        },
+        {
+          "name": "MUST_BE_INITIALIZED_OR_BE_ABSTRACT_WARNING"
+        },
+        {
+          "name": "MUST_BE_INITIALIZED_OR_BE_FINAL"
+        },
+        {
+          "name": "MUST_BE_INITIALIZED_OR_BE_FINAL_WARNING"
+        },
+        {
+          "name": "MUST_BE_INITIALIZED_OR_FINAL_OR_ABSTRACT"
+        },
+        {
+          "name": "MUST_BE_INITIALIZED_OR_FINAL_OR_ABSTRACT_WARNING"
+        },
+        {
+          "name": "MUST_BE_INITIALIZED_WARNING"
+        },
+        {
+          "name": "NAMED_ARGUMENTS_NOT_ALLOWED"
+        },
+        {
+          "name": "NAMED_PARAMETER_NOT_FOUND"
+        },
+        {
+          "name": "NAME_FOR_AMBIGUOUS_PARAMETER"
+        },
+        {
+          "name": "NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER"
+        },
+        {
+          "name": "NAME_SHADOWING"
+        },
+        {
+          "name": "NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE"
+        },
+        {
+          "name": "NESTED_CLASS_DEPRECATED"
+        },
+        {
+          "name": "NESTED_CLASS_NOT_ALLOWED"
+        },
+        {
+          "name": "NESTED_CLASS_SHOULD_BE_QUALIFIED"
+        },
+        {
+          "name": "NEWER_VERSION_IN_SINCE_KOTLIN"
+        },
+        {
+          "name": "NEW_INFERENCE_DIAGNOSTIC"
+        },
+        {
+          "name": "NEW_INFERENCE_ERROR"
+        },
+        {
+          "name": "NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER"
+        },
+        {
+          "name": "NEW_INFERENCE_UNKNOWN_ERROR"
+        },
+        {
+          "name": "NEXT_AMBIGUITY"
+        },
+        {
+          "name": "NEXT_MISSING"
+        },
+        {
+          "name": "NEXT_NONE_APPLICABLE"
+        },
+        {
+          "name": "NONE_APPLICABLE"
+        },
+        {
+          "name": "NON_ABSTRACT_FUNCTION_WITH_NO_BODY"
+        },
+        {
+          "name": "NON_APPLICABLE_CALL_FOR_BUILDER_INFERENCE"
+        },
+        {
+          "name": "NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION"
+        },
+        {
+          "name": "NON_EXHAUSTIVE_WHEN"
+        },
+        {
+          "name": "NON_EXHAUSTIVE_WHEN_ON_SEALED_CLASS"
+        },
+        {
+          "name": "NON_EXHAUSTIVE_WHEN_STATEMENT"
+        },
+        {
+          "name": "NON_FINAL_MEMBER_IN_FINAL_CLASS"
+        },
+        {
+          "name": "NON_FINAL_MEMBER_IN_OBJECT"
+        },
+        {
+          "name": "NON_INTERNAL_PUBLISHED_API"
+        },
+        {
+          "name": "NON_LOCAL_RETURN_NOT_ALLOWED"
+        },
+        {
+          "name": "NON_LOCAL_SUSPENSION_POINT"
+        },
+        {
+          "name": "NON_MEMBER_FUNCTION_NO_BODY"
+        },
+        {
+          "name": "NON_MODIFIER_FORM_FOR_BUILT_IN_SUSPEND"
+        },
+        {
+          "name": "NON_PARENTHESIZED_ANNOTATIONS_ON_FUNCTIONAL_TYPES"
+        },
+        {
+          "name": "NON_PRIVATE_CONSTRUCTOR_IN_ENUM"
+        },
+        {
+          "name": "NON_PRIVATE_CONSTRUCTOR_IN_SEALED"
+        },
+        {
+          "name": "NON_PRIVATE_OR_PROTECTED_CONSTRUCTOR_IN_SEALED"
+        },
+        {
+          "name": "NON_PUBLIC_CALL_FROM_PUBLIC_INLINE"
+        },
+        {
+          "name": "NON_SOURCE_ANNOTATION_ON_INLINED_LAMBDA_EXPRESSION"
+        },
+        {
+          "name": "NON_TAIL_RECURSIVE_CALL"
+        },
+        {
+          "name": "NON_TRIVIAL_BOOLEAN_CONSTANT"
+        },
+        {
+          "name": "NON_VARARG_SPREAD"
+        },
+        {
+          "name": "NOTHING_TO_INLINE"
+        },
+        {
+          "name": "NOTHING_TO_OVERRIDE"
+        },
+        {
+          "name": "NOT_AN_ANNOTATION_CLASS"
+        },
+        {
+          "name": "NOT_A_CLASS"
+        },
+        {
+          "name": "NOT_A_FUNCTION_LABEL"
+        },
+        {
+          "name": "NOT_A_FUNCTION_LABEL_WARNING"
+        },
+        {
+          "name": "NOT_A_LOOP_LABEL"
+        },
+        {
+          "name": "NOT_A_MULTIPLATFORM_COMPILATION"
+        },
+        {
+          "name": "NOT_A_SUPERTYPE"
+        },
+        {
+          "name": "NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE"
+        },
+        {
+          "name": "NOT_NULL_ASSERTION_ON_LAMBDA_EXPRESSION"
+        },
+        {
+          "name": "NOT_SUPPORTED_INLINE_PARAMETER_IN_INLINE_PARAMETER_DEFAULT_VALUE"
+        },
+        {
+          "name": "NOT_YET_SUPPORTED_IN_INLINE"
+        },
+        {
+          "name": "NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS"
+        },
+        {
+          "name": "NO_ACTUAL_FOR_EXPECT"
+        },
+        {
+          "name": "NO_COMPANION_OBJECT"
+        },
+        {
+          "name": "NO_CONSTRUCTOR"
+        },
+        {
+          "name": "NO_CONSTRUCTOR_WARNING"
+        },
+        {
+          "name": "NO_CONTEXT_RECEIVER"
+        },
+        {
+          "name": "NO_ELSE_IN_WHEN"
+        },
+        {
+          "name": "NO_ELSE_IN_WHEN_WARNING"
+        },
+        {
+          "name": "NO_EXPLICIT_RETURN_TYPE_IN_API_MODE"
+        },
+        {
+          "name": "NO_EXPLICIT_RETURN_TYPE_IN_API_MODE_WARNING"
+        },
+        {
+          "name": "NO_EXPLICIT_VISIBILITY_IN_API_MODE"
+        },
+        {
+          "name": "NO_EXPLICIT_VISIBILITY_IN_API_MODE_WARNING"
+        },
+        {
+          "name": "NO_GET_METHOD"
+        },
+        {
+          "name": "NO_RECEIVER_ALLOWED"
+        },
+        {
+          "name": "NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY"
+        },
+        {
+          "name": "NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY_MIGRATION"
+        },
+        {
+          "name": "NO_SET_METHOD"
+        },
+        {
+          "name": "NO_TAIL_CALLS_FOUND"
+        },
+        {
+          "name": "NO_THIS"
+        },
+        {
+          "name": "NO_TYPE_ARGUMENTS_ON_RHS"
+        },
+        {
+          "name": "NO_VALUE_FOR_PARAMETER"
+        },
+        {
+          "name": "NULLABLE_EXTENSION_OPERATOR_WITH_SAFE_CALL_RECEIVER"
+        },
+        {
+          "name": "NULLABLE_INLINE_PARAMETER"
+        },
+        {
+          "name": "NULLABLE_ON_DEFINITELY_NOT_NULLABLE"
+        },
+        {
+          "name": "NULLABLE_SUPERTYPE"
+        },
+        {
+          "name": "NULLABLE_TYPE_IN_CLASS_LITERAL_LHS"
+        },
+        {
+          "name": "NULLABLE_TYPE_OF_ANNOTATION_MEMBER"
+        },
+        {
+          "name": "NULL_FOR_NONNULL_TYPE"
+        },
+        {
+          "name": "NULL_FOR_NONNULL_TYPE_WARNING"
+        },
+        {
+          "name": "ONLY_ONE_CLASS_BOUND_ALLOWED"
+        },
+        {
+          "name": "OPERATOR_MODIFIER_REQUIRED"
+        },
+        {
+          "name": "OPERATOR_RENAMED_ON_IMPORT"
+        },
+        {
+          "name": "OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY"
+        },
+        {
+          "name": "OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE"
+        },
+        {
+          "name": "OPTIONAL_EXPECTATION_NOT_ON_EXPECTED"
+        },
+        {
+          "name": "OPT_IN_ARGUMENT_IS_NOT_MARKER"
+        },
+        {
+          "name": "OPT_IN_CAN_ONLY_BE_USED_AS_ANNOTATION"
+        },
+        {
+          "name": "OPT_IN_IS_NOT_ENABLED"
+        },
+        {
+          "name": "OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN"
+        },
+        {
+          "name": "OPT_IN_MARKER_ON_OVERRIDE"
+        },
+        {
+          "name": "OPT_IN_MARKER_ON_OVERRIDE_WARNING"
+        },
+        {
+          "name": "OPT_IN_MARKER_ON_WRONG_TARGET"
+        },
+        {
+          "name": "OPT_IN_MARKER_WITH_WRONG_RETENTION"
+        },
+        {
+          "name": "OPT_IN_MARKER_WITH_WRONG_TARGET"
+        },
+        {
+          "name": "OPT_IN_OVERRIDE"
+        },
+        {
+          "name": "OPT_IN_OVERRIDE_ERROR"
+        },
+        {
+          "name": "OPT_IN_TO_INHERITANCE"
+        },
+        {
+          "name": "OPT_IN_TO_INHERITANCE_ERROR"
+        },
+        {
+          "name": "OPT_IN_USAGE"
+        },
+        {
+          "name": "OPT_IN_USAGE_ERROR"
+        },
+        {
+          "name": "OPT_IN_USAGE_FUTURE_ERROR"
+        },
+        {
+          "name": "OPT_IN_WITHOUT_ARGUMENTS"
+        },
+        {
+          "name": "OUTER_CLASS_ARGUMENTS_REQUIRED"
+        },
+        {
+          "name": "OVERLOAD_RESOLUTION_AMBIGUITY"
+        },
+        {
+          "name": "OVERLOAD_RESOLUTION_AMBIGUITY_BECAUSE_OF_STUB_TYPES"
+        },
+        {
+          "name": "OVERRIDE_BY_INLINE"
+        },
+        {
+          "name": "OVERRIDE_DEPRECATION"
+        },
+        {
+          "name": "OVERRIDING_FINAL_MEMBER"
+        },
+        {
+          "name": "OVERRIDING_FINAL_MEMBER_BY_DELEGATION"
+        },
+        {
+          "name": "PACKAGE_CANNOT_BE_IMPORTED"
+        },
+        {
+          "name": "PACKAGE_OR_CLASSIFIER_REDECLARATION"
+        },
+        {
+          "name": "PARAMETER_NAME_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION_WARNING"
+        },
+        {
+          "name": "PARAMETER_NAME_CHANGED_ON_OVERRIDE"
+        },
+        {
+          "name": "PARENTHESIZED_COMPANION_LHS_DEPRECATION"
+        },
+        {
+          "name": "PLATFORM_CLASS_MAPPED_TO_KOTLIN"
+        },
+        {
+          "name": "PLUGIN_ERROR"
+        },
+        {
+          "name": "PLUGIN_INFO"
+        },
+        {
+          "name": "PLUGIN_WARNING"
+        },
+        {
+          "name": "PRE_RELEASE_CLASS"
+        },
+        {
+          "name": "PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED"
+        },
+        {
+          "name": "PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED_IN_ENUM"
+        },
+        {
+          "name": "PRIMARY_CONSTRUCTOR_REQUIRED_FOR_DATA_CLASS"
+        },
+        {
+          "name": "PRIVATE_CLASS_MEMBER_FROM_INLINE"
+        },
+        {
+          "name": "PRIVATE_CLASS_MEMBER_FROM_INLINE_WARNING"
+        },
+        {
+          "name": "PRIVATE_FUNCTION_WITH_NO_BODY"
+        },
+        {
+          "name": "PRIVATE_INLINE_FUNCTIONS_RETURNING_ANONYMOUS_OBJECTS"
+        },
+        {
+          "name": "PRIVATE_PROPERTY_IN_INTERFACE"
+        },
+        {
+          "name": "PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY"
+        },
+        {
+          "name": "PRIVATE_SETTER_FOR_OPEN_PROPERTY"
+        },
+        {
+          "name": "PROGRESSIONS_CHANGING_RESOLVE"
+        },
+        {
+          "name": "PROJECTION_IN_IMMEDIATE_ARGUMENT_TO_SUPERTYPE"
+        },
+        {
+          "name": "PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT"
+        },
+        {
+          "name": "PROPERTY_AS_OPERATOR"
+        },
+        {
+          "name": "PROPERTY_INITIALIZER_IN_INTERFACE"
+        },
+        {
+          "name": "PROPERTY_INITIALIZER_NO_BACKING_FIELD"
+        },
+        {
+          "name": "PROPERTY_KIND_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION_WARNING"
+        },
+        {
+          "name": "PROPERTY_TYPE_MISMATCH_BY_DELEGATION"
+        },
+        {
+          "name": "PROPERTY_TYPE_MISMATCH_ON_INHERITANCE"
+        },
+        {
+          "name": "PROPERTY_TYPE_MISMATCH_ON_OVERRIDE"
+        },
+        {
+          "name": "PROPERTY_WITH_BACKING_FIELD_INSIDE_VALUE_CLASS"
+        },
+        {
+          "name": "PROPERTY_WITH_NO_TYPE_NO_INITIALIZER"
+        },
+        {
+          "name": "PROTECTED_CALL_FROM_PUBLIC_INLINE"
+        },
+        {
+          "name": "PROTECTED_CONSTRUCTOR_CALL_FROM_PUBLIC_INLINE"
+        },
+        {
+          "name": "PROTECTED_CONSTRUCTOR_NOT_IN_SUPER_CALL"
+        },
+        {
+          "name": "QUALIFIED_SUPERTYPE_EXTENDED_BY_OTHER_SUPERTYPE"
+        },
+        {
+          "name": "RECEIVER_TYPE_MISMATCH"
+        },
+        {
+          "name": "RECEIVER_TYPE_MISMATCH_WARNING_FOR_INCORRECT_CAPTURE_APPROXIMATION"
+        },
+        {
+          "name": "RECURSION_IN_INLINE"
+        },
+        {
+          "name": "RECURSIVE_TYPEALIAS_EXPANSION"
+        },
+        {
+          "name": "REDECLARATION"
+        },
+        {
+          "name": "REDUNDANT_ANNOTATION_TARGET"
+        },
+        {
+          "name": "REDUNDANT_ELSE_IN_WHEN"
+        },
+        {
+          "name": "REDUNDANT_INLINE_SUSPEND_FUNCTION_TYPE"
+        },
+        {
+          "name": "REDUNDANT_LABEL_WARNING"
+        },
+        {
+          "name": "REDUNDANT_MODIFIER"
+        },
+        {
+          "name": "REDUNDANT_MODIFIER_FOR_TARGET"
+        },
+        {
+          "name": "REDUNDANT_MODIFIER_IN_GETTER"
+        },
+        {
+          "name": "REDUNDANT_NULLABLE"
+        },
+        {
+          "name": "REDUNDANT_OPEN_IN_INTERFACE"
+        },
+        {
+          "name": "REDUNDANT_PROJECTION"
+        },
+        {
+          "name": "REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_ANNOTATION"
+        },
+        {
+          "name": "REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_FUNCTION"
+        },
+        {
+          "name": "REIFIED_TYPE_FORBIDDEN_SUBSTITUTION"
+        },
+        {
+          "name": "REIFIED_TYPE_IN_CATCH_CLAUSE"
+        },
+        {
+          "name": "REIFIED_TYPE_PARAMETER_IN_OVERRIDE"
+        },
+        {
+          "name": "REIFIED_TYPE_PARAMETER_NO_INLINE"
+        },
+        {
+          "name": "REIFIED_TYPE_UNSAFE_SUBSTITUTION"
+        },
+        {
+          "name": "REPEATED_ANNOTATION"
+        },
+        {
+          "name": "REPEATED_ANNOTATION_WARNING"
+        },
+        {
+          "name": "REPEATED_BOUND"
+        },
+        {
+          "name": "REPEATED_MODIFIER"
+        },
+        {
+          "name": "RESERVED_MEMBER_INSIDE_VALUE_CLASS"
+        },
+        {
+          "name": "RESERVED_SYNTAX_IN_CALLABLE_REFERENCE_LHS"
+        },
+        {
+          "name": "RESOLUTION_TO_CLASSIFIER"
+        },
+        {
+          "name": "RESOLUTION_TO_PRIVATE_CONSTRUCTOR_OF_SEALED_CLASS"
+        },
+        {
+          "name": "RESOLVED_TO_UNDERSCORE_NAMED_CATCH_PARAMETER"
+        },
+        {
+          "name": "RESTRICTED_RETENTION_FOR_EXPRESSION_ANNOTATION"
+        },
+        {
+          "name": "RESULT_CLASS_IN_RETURN_TYPE"
+        },
+        {
+          "name": "RESULT_CLASS_WITH_NULLABLE_OPERATOR"
+        },
+        {
+          "name": "RESULT_TYPE_MISMATCH"
+        },
+        {
+          "name": "RETURN_FOR_BUILT_IN_SUSPEND"
+        },
+        {
+          "name": "RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY"
+        },
+        {
+          "name": "RETURN_NOT_ALLOWED"
+        },
+        {
+          "name": "RETURN_TYPE_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION_WARNING"
+        },
+        {
+          "name": "RETURN_TYPE_MISMATCH"
+        },
+        {
+          "name": "RETURN_TYPE_MISMATCH_BY_DELEGATION"
+        },
+        {
+          "name": "RETURN_TYPE_MISMATCH_ON_INHERITANCE"
+        },
+        {
+          "name": "RETURN_TYPE_MISMATCH_ON_OVERRIDE"
+        },
+        {
+          "name": "SAFE_CALL_WILL_CHANGE_NULLABILITY"
+        },
+        {
+          "name": "SEALED_CLASS_CONSTRUCTOR_CALL"
+        },
+        {
+          "name": "SEALED_INHERITOR_IN_DIFFERENT_MODULE"
+        },
+        {
+          "name": "SEALED_INHERITOR_IN_DIFFERENT_PACKAGE"
+        },
+        {
+          "name": "SEALED_SUPERTYPE"
+        },
+        {
+          "name": "SEALED_SUPERTYPE_IN_LOCAL_CLASS"
+        },
+        {
+          "name": "SELF_CALL_IN_NESTED_OBJECT_CONSTRUCTOR"
+        },
+        {
+          "name": "SENSELESS_COMPARISON"
+        },
+        {
+          "name": "SENSELESS_NULL_IN_WHEN"
+        },
+        {
+          "name": "SETTER_PARAMETER_WITH_DEFAULT_VALUE"
+        },
+        {
+          "name": "SETTER_PROJECTED_OUT"
+        },
+        {
+          "name": "SETTER_VISIBILITY_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION_WARNING"
+        },
+        {
+          "name": "SETTER_VISIBILITY_INCONSISTENT_WITH_PROPERTY_VISIBILITY"
+        },
+        {
+          "name": "SIGNED_CONSTANT_CONVERTED_TO_UNSIGNED"
+        },
+        {
+          "name": "SINGLETON_IN_SUPERTYPE"
+        },
+        {
+          "name": "SMARTCAST_IMPOSSIBLE"
+        },
+        {
+          "name": "SPREAD_OF_LAMBDA_OR_CALLABLE_REFERENCE"
+        },
+        {
+          "name": "SPREAD_OF_NULLABLE"
+        },
+        {
+          "name": "STUB_TYPE_IN_ARGUMENT_CAUSES_AMBIGUITY"
+        },
+        {
+          "name": "STUB_TYPE_IN_RECEIVER_CAUSES_AMBIGUITY"
+        },
+        {
+          "name": "SUBCLASS_OPT_IN_ARGUMENT_IS_NOT_MARKER"
+        },
+        {
+          "name": "SUBCLASS_OPT_IN_INAPPLICABLE"
+        },
+        {
+          "name": "SUBTYPING_BETWEEN_CONTEXT_RECEIVERS"
+        },
+        {
+          "name": "SUPERCLASS_NOT_ACCESSIBLE_FROM_INTERFACE"
+        },
+        {
+          "name": "SUPERTYPES_FOR_ANNOTATION_CLASS"
+        },
+        {
+          "name": "SUPERTYPE_APPEARS_TWICE"
+        },
+        {
+          "name": "SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS"
+        },
+        {
+          "name": "SUPERTYPE_INITIALIZED_IN_INTERFACE"
+        },
+        {
+          "name": "SUPERTYPE_INITIALIZED_WITHOUT_PRIMARY_CONSTRUCTOR"
+        },
+        {
+          "name": "SUPERTYPE_IS_EXTENSION_FUNCTION_TYPE"
+        },
+        {
+          "name": "SUPERTYPE_IS_KSUSPEND_FUNCTION_TYPE"
+        },
+        {
+          "name": "SUPERTYPE_IS_SUSPEND_EXTENSION_FUNCTION_TYPE"
+        },
+        {
+          "name": "SUPERTYPE_IS_SUSPEND_FUNCTION_TYPE"
+        },
+        {
+          "name": "SUPERTYPE_NOT_A_CLASS_OR_INTERFACE"
+        },
+        {
+          "name": "SUPERTYPE_NOT_INITIALIZED"
+        },
+        {
+          "name": "SUPER_CALL_FROM_PUBLIC_INLINE"
+        },
+        {
+          "name": "SUPER_CANT_BE_EXTENSION_RECEIVER"
+        },
+        {
+          "name": "SUPER_IS_NOT_AN_EXPRESSION"
+        },
+        {
+          "name": "SUPER_NOT_AVAILABLE"
+        },
+        {
+          "name": "TAILREC_ON_VIRTUAL_MEMBER"
+        },
+        {
+          "name": "TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED"
+        },
+        {
+          "name": "TOO_MANY_ARGUMENTS"
+        },
+        {
+          "name": "TOO_MANY_CHARACTERS_IN_CHARACTER_LITERAL"
+        },
+        {
+          "name": "TOPLEVEL_TYPEALIASES_ONLY"
+        },
+        {
+          "name": "TYPEALIAS_EXPANDED_TO_MALFORMED_TYPE"
+        },
+        {
+          "name": "TYPEALIAS_EXPANSION_DEPRECATION"
+        },
+        {
+          "name": "TYPEALIAS_EXPANSION_DEPRECATION_ERROR"
+        },
+        {
+          "name": "TYPEALIAS_SHOULD_EXPAND_TO_CLASS"
+        },
+        {
+          "name": "TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM"
+        },
+        {
+          "name": "TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM_IN_AUGMENTED_ASSIGNMENT"
+        },
+        {
+          "name": "TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED"
+        },
+        {
+          "name": "TYPE_ARGUMENTS_NOT_ALLOWED"
+        },
+        {
+          "name": "TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER"
+        },
+        {
+          "name": "TYPE_ARGUMENT_ON_TYPED_VALUE_CLASS_EQUALS"
+        },
+        {
+          "name": "TYPE_CANT_BE_USED_FOR_CONST_VAL"
+        },
+        {
+          "name": "TYPE_INFERENCE_CANDIDATE_WITH_SAM_AND_VARARG"
+        },
+        {
+          "name": "TYPE_INFERENCE_CANNOT_CAPTURE_TYPES"
+        },
+        {
+          "name": "TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS"
+        },
+        {
+          "name": "TYPE_INFERENCE_ERRORS"
+        },
+        {
+          "name": "TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH"
+        },
+        {
+          "name": "TYPE_INFERENCE_FAILED_ON_SPECIAL_CONSTRUCT"
+        },
+        {
+          "name": "TYPE_INFERENCE_INCORPORATION_ERROR"
+        },
+        {
+          "name": "TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER"
+        },
+        {
+          "name": "TYPE_INFERENCE_ONLY_INPUT_TYPES"
+        },
+        {
+          "name": "TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR"
+        },
+        {
+          "name": "TYPE_INFERENCE_POSTPONED_VARIABLE_IN_RECEIVER_TYPE"
+        },
+        {
+          "name": "TYPE_INFERENCE_UPPER_BOUND_VIOLATED"
+        },
+        {
+          "name": "TYPE_MISMATCH"
+        },
+        {
+          "name": "TYPE_MISMATCH_DUE_TO_EQUALS_LAMBDA_IN_FUN"
+        },
+        {
+          "name": "TYPE_MISMATCH_DUE_TO_TYPE_PROJECTIONS"
+        },
+        {
+          "name": "TYPE_MISMATCH_ERRORS"
+        },
+        {
+          "name": "TYPE_MISMATCH_IN_CONSTRAINT"
+        },
+        {
+          "name": "TYPE_MISMATCH_IN_FOR_LOOP"
+        },
+        {
+          "name": "TYPE_MISMATCH_IN_RANGE"
+        },
+        {
+          "name": "TYPE_MISMATCH_WARNING"
+        },
+        {
+          "name": "TYPE_MISMATCH_WARNING_FOR_INCORRECT_CAPTURE_APPROXIMATION"
+        },
+        {
+          "name": "TYPE_PARAMETERS_IN_ANONYMOUS_OBJECT"
+        },
+        {
+          "name": "TYPE_PARAMETERS_IN_ENUM"
+        },
+        {
+          "name": "TYPE_PARAMETERS_IN_OBJECT"
+        },
+        {
+          "name": "TYPE_PARAMETERS_NOT_ALLOWED"
+        },
+        {
+          "name": "TYPE_PARAMETER_AS_REIFIED"
+        },
+        {
+          "name": "TYPE_PARAMETER_AS_REIFIED_ARRAY"
+        },
+        {
+          "name": "TYPE_PARAMETER_IN_CATCH_CLAUSE"
+        },
+        {
+          "name": "TYPE_PARAMETER_IS_NOT_AN_EXPRESSION"
+        },
+        {
+          "name": "TYPE_PARAMETER_NAMES_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION_WARNING"
+        },
+        {
+          "name": "TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER"
+        },
+        {
+          "name": "TYPE_PARAMETER_ON_LHS_OF_DOT"
+        },
+        {
+          "name": "TYPE_VARIANCE_CONFLICT"
+        },
+        {
+          "name": "TYPE_VARIANCE_CONFLICT_IN_EXPANDED_TYPE"
+        },
+        {
+          "name": "UNCHECKED_CAST"
+        },
+        {
+          "name": "UNDERSCORE_IS_RESERVED"
+        },
+        {
+          "name": "UNDERSCORE_USAGE_WITHOUT_BACKTICKS"
+        },
+        {
+          "name": "UNEXPECTED_SAFE_CALL"
+        },
+        {
+          "name": "UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE"
+        },
+        {
+          "name": "UNINITIALIZED_ENUM_COMPANION"
+        },
+        {
+          "name": "UNINITIALIZED_ENUM_COMPANION_WARNING"
+        },
+        {
+          "name": "UNINITIALIZED_ENUM_ENTRY"
+        },
+        {
+          "name": "UNINITIALIZED_PARAMETER"
+        },
+        {
+          "name": "UNINITIALIZED_PARAMETER_WARNING"
+        },
+        {
+          "name": "UNINITIALIZED_VARIABLE"
+        },
+        {
+          "name": "UNKNOWN_PROBLEM_DURING_NON_FINAL_CLASSIFIER_ACTUALIZATION_WARNING"
+        },
+        {
+          "name": "UNNECESSARY_LATEINIT"
+        },
+        {
+          "name": "UNNECESSARY_NOT_NULL_ASSERTION"
+        },
+        {
+          "name": "UNNECESSARY_SAFE_CALL"
+        },
+        {
+          "name": "UNREACHABLE_CODE"
+        },
+        {
+          "name": "UNRESOLVED_REFERENCE"
+        },
+        {
+          "name": "UNRESOLVED_REFERENCE_DIAGNOSTICS"
+        },
+        {
+          "name": "UNRESOLVED_REFERENCE_WRONG_RECEIVER"
+        },
+        {
+          "name": "UNSAFE_CALL"
+        },
+        {
+          "name": "UNSAFE_IMPLICIT_INVOKE_CALL"
+        },
+        {
+          "name": "UNSAFE_INFIX_CALL"
+        },
+        {
+          "name": "UNSAFE_OPERATOR_CALL"
+        },
+        {
+          "name": "UNSIGNED_LITERAL_WITHOUT_DECLARATIONS_ON_CLASSPATH"
+        },
+        {
+          "name": "UNSUPPORTED"
+        },
+        {
+          "name": "UNSUPPORTED_CLASS_LITERALS_WITH_EMPTY_LHS"
+        },
+        {
+          "name": "UNSUPPORTED_CONTEXTUAL_DECLARATION_CALL"
+        },
+        {
+          "name": "UNSUPPORTED_FEATURE"
+        },
+        {
+          "name": "UNSUPPORTED_INHERITANCE_FROM_JAVA_MEMBER_REFERENCING_KOTLIN_FUNCTION"
+        },
+        {
+          "name": "UNSUPPORTED_REFERENCES_TO_VARIABLES_AND_PARAMETERS"
+        },
+        {
+          "name": "UNSUPPORTED_SEALED_FUN_INTERFACE"
+        },
+        {
+          "name": "UNSUPPORTED_SEALED_WHEN"
+        },
+        {
+          "name": "UNSUPPORTED_SUSPEND_TEST"
+        },
+        {
+          "name": "UNSUPPORTED_WARNING"
+        },
+        {
+          "name": "UNUSED_ANONYMOUS_PARAMETER"
+        },
+        {
+          "name": "UNUSED_CHANGED_VALUE"
+        },
+        {
+          "name": "UNUSED_DESTRUCTURED_PARAMETER_ENTRY"
+        },
+        {
+          "name": "UNUSED_ELEMENT_DIAGNOSTICS"
+        },
+        {
+          "name": "UNUSED_EXPRESSION"
+        },
+        {
+          "name": "UNUSED_LAMBDA_EXPRESSION"
+        },
+        {
+          "name": "UNUSED_PARAMETER"
+        },
+        {
+          "name": "UNUSED_TYPEALIAS_PARAMETER"
+        },
+        {
+          "name": "UNUSED_VALUE"
+        },
+        {
+          "name": "UNUSED_VARIABLE"
+        },
+        {
+          "name": "UPPER_BOUND_IS_EXTENSION_FUNCTION_TYPE"
+        },
+        {
+          "name": "UPPER_BOUND_VIOLATED"
+        },
+        {
+          "name": "UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION"
+        },
+        {
+          "name": "UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION_WARNING"
+        },
+        {
+          "name": "UPPER_BOUND_VIOLATED_WARNING"
+        },
+        {
+          "name": "UPPER_BOUND_VIOLATION_IN_CONSTRAINT"
+        },
+        {
+          "name": "USAGE_IS_NOT_INLINABLE"
+        },
+        {
+          "name": "USAGE_IS_NOT_INLINABLE_WARNING"
+        },
+        {
+          "name": "USELESS_CAST"
+        },
+        {
+          "name": "USELESS_ELVIS"
+        },
+        {
+          "name": "USELESS_ELVIS_RIGHT_IS_NULL"
+        },
+        {
+          "name": "USELESS_IS_CHECK"
+        },
+        {
+          "name": "USELESS_NULLABLE_CHECK"
+        },
+        {
+          "name": "USELESS_VARARG_ON_PARAMETER"
+        },
+        {
+          "name": "VALUE_CLASS_CANNOT_BE_CLONEABLE"
+        },
+        {
+          "name": "VALUE_CLASS_CANNOT_BE_RECURSIVE"
+        },
+        {
+          "name": "VALUE_CLASS_CANNOT_EXTEND_CLASSES"
+        },
+        {
+          "name": "VALUE_CLASS_CANNOT_HAVE_CONTEXT_RECEIVERS"
+        },
+        {
+          "name": "VALUE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION"
+        },
+        {
+          "name": "VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER"
+        },
+        {
+          "name": "VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE"
+        },
+        {
+          "name": "VALUE_CLASS_NOT_FINAL"
+        },
+        {
+          "name": "VALUE_CLASS_NOT_TOP_LEVEL"
+        },
+        {
+          "name": "VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION"
+        },
+        {
+          "name": "VAL_OR_VAR_ON_CATCH_PARAMETER"
+        },
+        {
+          "name": "VAL_OR_VAR_ON_FUN_PARAMETER"
+        },
+        {
+          "name": "VAL_OR_VAR_ON_LOOP_PARAMETER"
+        },
+        {
+          "name": "VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER"
+        },
+        {
+          "name": "VAL_REASSIGNMENT"
+        },
+        {
+          "name": "VAL_REASSIGNMENT_VIA_BACKING_FIELD"
+        },
+        {
+          "name": "VAL_WITH_SETTER"
+        },
+        {
+          "name": "VARARG_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION_WARNING"
+        },
+        {
+          "name": "VARARG_OUTSIDE_PARENTHESES"
+        },
+        {
+          "name": "VARIABLE_EXPECTED"
+        },
+        {
+          "name": "VARIABLE_WITH_NO_TYPE_NO_INITIALIZER"
+        },
+        {
+          "name": "VARIABLE_WITH_REDUNDANT_INITIALIZER"
+        },
+        {
+          "name": "VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED"
+        },
+        {
+          "name": "VAR_ANNOTATION_PARAMETER"
+        },
+        {
+          "name": "VAR_OVERRIDDEN_BY_VAL"
+        },
+        {
+          "name": "VAR_OVERRIDDEN_BY_VAL_BY_DELEGATION"
+        },
+        {
+          "name": "VAR_TYPE_MISMATCH_ON_INHERITANCE"
+        },
+        {
+          "name": "VAR_TYPE_MISMATCH_ON_OVERRIDE"
+        },
+        {
+          "name": "VERSION_REQUIREMENT_DEPRECATION"
+        },
+        {
+          "name": "VERSION_REQUIREMENT_DEPRECATION_ERROR"
+        },
+        {
+          "name": "VIRTUAL_MEMBER_HIDDEN"
+        },
+        {
+          "name": "VISIBILITY_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION_WARNING"
+        },
+        {
+          "name": "VOLATILE_ON_DELEGATE"
+        },
+        {
+          "name": "VOLATILE_ON_VALUE"
+        },
+        {
+          "name": "WRONG_ANNOTATION_TARGET"
+        },
+        {
+          "name": "WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET"
+        },
+        {
+          "name": "WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET_ON_TYPE"
+        },
+        {
+          "name": "WRONG_EXTENSION_FUNCTION_TYPE"
+        },
+        {
+          "name": "WRONG_EXTENSION_FUNCTION_TYPE_WARNING"
+        },
+        {
+          "name": "WRONG_GETTER_RETURN_TYPE"
+        },
+        {
+          "name": "WRONG_LONG_SUFFIX"
+        },
+        {
+          "name": "WRONG_MODIFIER_CONTAINING_DECLARATION"
+        },
+        {
+          "name": "WRONG_MODIFIER_TARGET"
+        },
+        {
+          "name": "WRONG_NUMBER_OF_TYPE_ARGUMENTS"
+        },
+        {
+          "name": "WRONG_SETTER_PARAMETER_TYPE"
+        },
+        {
+          "name": "WRONG_SETTER_RETURN_TYPE"
+        },
+        {
+          "name": "YIELD_IS_RESERVED"
+        },
+        {
+          "name": "__initializer"
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.extensions.CollectAdditionalSourcesExtension"
+    },
+    {
+      "type": "org.jetbrains.kotlin.extensions.CollectAdditionalSourcesExtension[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.extensions.PreprocessedVirtualFileFactoryExtension"
+    },
+    {
+      "type": "org.jetbrains.kotlin.extensions.PreprocessedVirtualFileFactoryExtension[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.extensions.ProcessSourcesBeforeCompilingExtension"
+    },
+    {
+      "type": "org.jetbrains.kotlin.extensions.ProcessSourcesBeforeCompilingExtension[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.extensions.StorageComponentContainerContributor"
+    },
+    {
+      "type": "org.jetbrains.kotlin.extensions.StorageComponentContainerContributor[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.extensions.TypeAttributeTranslatorExtension"
+    },
+    {
+      "type": "org.jetbrains.kotlin.extensions.TypeAttributeTranslatorExtension[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.extensions.internal.CallResolutionInterceptorExtension"
+    },
+    {
+      "type": "org.jetbrains.kotlin.extensions.internal.CallResolutionInterceptorExtension[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.extensions.internal.CandidateInterceptor",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.com.intellij.openapi.project.Project"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.extensions.internal.TypeResolutionInterceptor",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.com.intellij.openapi.project.Project"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.extensions.internal.TypeResolutionInterceptorExtension"
+    },
+    {
+      "type": "org.jetbrains.kotlin.extensions.internal.TypeResolutionInterceptorExtension[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.idea.MainFunctionDetector$Factory$Ordinary",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.incremental.components.EnumWhenTracker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.incremental.components.EnumWhenTracker$DoNothing",
+      "fields": [
+        {
+          "name": "INSTANCE"
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.incremental.components.ExpectActualTracker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.incremental.components.ExpectActualTracker$DoNothing",
+      "fields": [
+        {
+          "name": "INSTANCE"
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.incremental.components.InlineConstTracker$DoNothing"
+    },
+    {
+      "type": "org.jetbrains.kotlin.incremental.components.LookupTracker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.incremental.components.LookupTracker$DO_NOTHING",
+      "fields": [
+        {
+          "name": "INSTANCE"
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.io.opentelemetry.api.incubator.trace.ExtendedDefaultTracerProvider"
+    },
+    {
+      "type": "org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin"
+    },
+    {
+      "type": "org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin$Companion",
+      "methods": [
+        {
+          "name": "getADAPTER_FOR_CALLABLE_REFERENCE",
+          "parameterTypes": []
+        },
+        {
+          "name": "getADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR",
+          "parameterTypes": []
+        },
+        {
+          "name": "getADAPTER_FOR_SUSPEND_CONVERSION",
+          "parameterTypes": []
+        },
+        {
+          "name": "getADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE",
+          "parameterTypes": []
+        },
+        {
+          "name": "getADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION",
+          "parameterTypes": []
+        },
+        {
+          "name": "getBRIDGE",
+          "parameterTypes": []
+        },
+        {
+          "name": "getBRIDGE_SPECIAL",
+          "parameterTypes": []
+        },
+        {
+          "name": "getCATCH_PARAMETER",
+          "parameterTypes": []
+        },
+        {
+          "name": "getCONTINUATION",
+          "parameterTypes": []
+        },
+        {
+          "name": "getDEFAULT_CONSTRUCTOR_MARKER",
+          "parameterTypes": []
+        },
+        {
+          "name": "getDEFAULT_PROPERTY_ACCESSOR",
+          "parameterTypes": []
+        },
+        {
+          "name": "getDEFINED",
+          "parameterTypes": []
+        },
+        {
+          "name": "getDELEGATE",
+          "parameterTypes": []
+        },
+        {
+          "name": "getDELEGATED_MEMBER",
+          "parameterTypes": []
+        },
+        {
+          "name": "getDELEGATED_PROPERTY_ACCESSOR",
+          "parameterTypes": []
+        },
+        {
+          "name": "getDESTRUCTURED_OBJECT_PARAMETER",
+          "parameterTypes": []
+        },
+        {
+          "name": "getENUM_CLASS_SPECIAL_MEMBER",
+          "parameterTypes": []
+        },
+        {
+          "name": "getERROR_CLASS",
+          "parameterTypes": []
+        },
+        {
+          "name": "getFAKE_OVERRIDE",
+          "parameterTypes": []
+        },
+        {
+          "name": "getFIELD_FOR_CLASS_CONTEXT_RECEIVER",
+          "parameterTypes": []
+        },
+        {
+          "name": "getFIELD_FOR_ENUM_ENTRIES",
+          "parameterTypes": []
+        },
+        {
+          "name": "getFIELD_FOR_ENUM_ENTRY",
+          "parameterTypes": []
+        },
+        {
+          "name": "getFIELD_FOR_ENUM_VALUES",
+          "parameterTypes": []
+        },
+        {
+          "name": "getFIELD_FOR_OBJECT_INSTANCE",
+          "parameterTypes": []
+        },
+        {
+          "name": "getFIELD_FOR_OUTER_THIS",
+          "parameterTypes": []
+        },
+        {
+          "name": "getFILE_CLASS",
+          "parameterTypes": []
+        },
+        {
+          "name": "getFILLED_FOR_UNBOUND_SYMBOL",
+          "parameterTypes": []
+        },
+        {
+          "name": "getFOR_LOOP_IMPLICIT_VARIABLE",
+          "parameterTypes": []
+        },
+        {
+          "name": "getFOR_LOOP_ITERATOR",
+          "parameterTypes": []
+        },
+        {
+          "name": "getFOR_LOOP_VARIABLE",
+          "parameterTypes": []
+        },
+        {
+          "name": "getFUNCTION_FOR_DEFAULT_PARAMETER",
+          "parameterTypes": []
+        },
+        {
+          "name": "getFUNCTION_INTERFACE_MEMBER",
+          "parameterTypes": []
+        },
+        {
+          "name": "getGENERATED_DATA_CLASS_MEMBER",
+          "parameterTypes": []
+        },
+        {
+          "name": "getGENERATED_FULL_VALUE_CLASS_MEMBER",
+          "parameterTypes": []
+        },
+        {
+          "name": "getGENERATED_INLINE_CLASS_MEMBER",
+          "parameterTypes": []
+        },
+        {
+          "name": "getGENERATED_SAM_IMPLEMENTATION",
+          "parameterTypes": []
+        },
+        {
+          "name": "getGENERATED_SETTER_GETTER",
+          "parameterTypes": []
+        },
+        {
+          "name": "getINLINE_LAMBDA",
+          "parameterTypes": []
+        },
+        {
+          "name": "getINSTANCE_RECEIVER",
+          "parameterTypes": []
+        },
+        {
+          "name": "getIR_BUILTINS_STUB",
+          "parameterTypes": []
+        },
+        {
+          "name": "getIR_DESTRUCTURED_PARAMETER_VARIABLE",
+          "parameterTypes": []
+        },
+        {
+          "name": "getIR_EXTERNAL_DECLARATION_STUB",
+          "parameterTypes": []
+        },
+        {
+          "name": "getIR_EXTERNAL_JAVA_DECLARATION_STUB",
+          "parameterTypes": []
+        },
+        {
+          "name": "getIR_TEMPORARY_VARIABLE",
+          "parameterTypes": []
+        },
+        {
+          "name": "getIR_TEMPORARY_VARIABLE_FOR_INLINED_EXTENSION_RECEIVER",
+          "parameterTypes": []
+        },
+        {
+          "name": "getIR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER",
+          "parameterTypes": []
+        },
+        {
+          "name": "getJVM_MULTIFILE_CLASS",
+          "parameterTypes": []
+        },
+        {
+          "name": "getLAMBDA_EXTENSION_RECEIVER",
+          "parameterTypes": []
+        },
+        {
+          "name": "getLOCAL_FUNCTION",
+          "parameterTypes": []
+        },
+        {
+          "name": "getLOCAL_FUNCTION_FOR_LAMBDA",
+          "parameterTypes": []
+        },
+        {
+          "name": "getLOWERED_SUSPEND_FUNCTION",
+          "parameterTypes": []
+        },
+        {
+          "name": "getMASK_FOR_DEFAULT_FUNCTION",
+          "parameterTypes": []
+        },
+        {
+          "name": "getMETHOD_HANDLER_IN_DEFAULT_FUNCTION",
+          "parameterTypes": []
+        },
+        {
+          "name": "getMOVED_CONTEXT_RECEIVER",
+          "parameterTypes": []
+        },
+        {
+          "name": "getMOVED_DISPATCH_RECEIVER",
+          "parameterTypes": []
+        },
+        {
+          "name": "getMOVED_EXTENSION_RECEIVER",
+          "parameterTypes": []
+        },
+        {
+          "name": "getPRIMARY_CONSTRUCTOR_PARAMETER",
+          "parameterTypes": []
+        },
+        {
+          "name": "getPROPERTY_BACKING_FIELD",
+          "parameterTypes": []
+        },
+        {
+          "name": "getPROPERTY_DELEGATE",
+          "parameterTypes": []
+        },
+        {
+          "name": "getPROPERTY_FOR_ENUM_ENTRIES",
+          "parameterTypes": []
+        },
+        {
+          "name": "getREPL_EVAL_FUNCTION",
+          "parameterTypes": []
+        },
+        {
+          "name": "getREPL_FROM_OTHER_SNIPPET",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSCRIPT_CALL_PARAMETER",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSCRIPT_CLASS",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSCRIPT_EARLIER_SCRIPTS",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSCRIPT_IMPLICIT_RECEIVER",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSCRIPT_PROVIDED_PROPERTY",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSCRIPT_RESULT_PROPERTY",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSCRIPT_STATEMENT",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSCRIPT_THIS_RECEIVER",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSHARED_VARIABLE_IN_EVALUATOR_FRAGMENT",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSTUB_FOR_LENIENT",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSTUB_FOR_TYPE_SWITCH",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSYNTHETIC_ACCESSOR",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSYNTHETIC_ACCESSOR_CAPTURED_TYPE_PARAMETER",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSYNTHETIC_CONSTRUCTOR_MARKER",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSYNTHETIC_FILE_CLASS",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSYNTHETIC_GENERATED_SAM_IMPLEMENTATION",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSYNTHETIC_HELPER_FOR_ENUM_ENTRIES",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSYNTHETIC_HELPER_FOR_ENUM_VALUES",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSYNTHETIC_JAVA_PROPERTY_DELEGATE",
+          "parameterTypes": []
+        },
+        {
+          "name": "getUNDERSCORE_PARAMETER",
+          "parameterTypes": []
+        },
+        {
+          "name": "getVERSION_OVERLOAD_WRAPPER",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.ir.expressions.IrStatementOrigin"
+    },
+    {
+      "type": "org.jetbrains.kotlin.ir.expressions.IrStatementOrigin$Companion",
+      "methods": [
+        {
+          "name": "getADAPTED_FUNCTION_REFERENCE",
+          "parameterTypes": []
+        },
+        {
+          "name": "getANDAND",
+          "parameterTypes": []
+        },
+        {
+          "name": "getANONYMOUS_FUNCTION",
+          "parameterTypes": []
+        },
+        {
+          "name": "getARGUMENTS_REORDERING_FOR_CALL",
+          "parameterTypes": []
+        },
+        {
+          "name": "getBRIDGE_DELEGATION",
+          "parameterTypes": []
+        },
+        {
+          "name": "getCOLLECTION_LITERAL",
+          "parameterTypes": []
+        },
+        {
+          "name": "getDEFAULT_DISPATCH_CALL",
+          "parameterTypes": []
+        },
+        {
+          "name": "getDEFAULT_VALUE",
+          "parameterTypes": []
+        },
+        {
+          "name": "getDESTRUCTURING_DECLARATION",
+          "parameterTypes": []
+        },
+        {
+          "name": "getDIV",
+          "parameterTypes": []
+        },
+        {
+          "name": "getDIVEQ",
+          "parameterTypes": []
+        },
+        {
+          "name": "getDO_WHILE_LOOP",
+          "parameterTypes": []
+        },
+        {
+          "name": "getELVIS",
+          "parameterTypes": []
+        },
+        {
+          "name": "getEQ",
+          "parameterTypes": []
+        },
+        {
+          "name": "getEQEQ",
+          "parameterTypes": []
+        },
+        {
+          "name": "getEQEQEQ",
+          "parameterTypes": []
+        },
+        {
+          "name": "getERROR_SAFE_CALL",
+          "parameterTypes": []
+        },
+        {
+          "name": "getEXCL",
+          "parameterTypes": []
+        },
+        {
+          "name": "getEXCLEQ",
+          "parameterTypes": []
+        },
+        {
+          "name": "getEXCLEQEQ",
+          "parameterTypes": []
+        },
+        {
+          "name": "getEXCLEXCL",
+          "parameterTypes": []
+        },
+        {
+          "name": "getFOR_LOOP",
+          "parameterTypes": []
+        },
+        {
+          "name": "getFOR_LOOP_HAS_NEXT",
+          "parameterTypes": []
+        },
+        {
+          "name": "getFOR_LOOP_INNER_WHILE",
+          "parameterTypes": []
+        },
+        {
+          "name": "getFOR_LOOP_ITERATOR",
+          "parameterTypes": []
+        },
+        {
+          "name": "getFOR_LOOP_NEXT",
+          "parameterTypes": []
+        },
+        {
+          "name": "getFUNCTION_TYPE_EXPRESSION_CONVERSION",
+          "parameterTypes": []
+        },
+        {
+          "name": "getFUN_INTERFACE_CONSTRUCTOR_REFERENCE",
+          "parameterTypes": []
+        },
+        {
+          "name": "getGET_ARRAY_ELEMENT",
+          "parameterTypes": []
+        },
+        {
+          "name": "getGET_LOCAL_PROPERTY",
+          "parameterTypes": []
+        },
+        {
+          "name": "getGET_PROPERTY",
+          "parameterTypes": []
+        },
+        {
+          "name": "getGT",
+          "parameterTypes": []
+        },
+        {
+          "name": "getGTEQ",
+          "parameterTypes": []
+        },
+        {
+          "name": "getIF",
+          "parameterTypes": []
+        },
+        {
+          "name": "getIMPLICIT_ARGUMENT",
+          "parameterTypes": []
+        },
+        {
+          "name": "getIN",
+          "parameterTypes": []
+        },
+        {
+          "name": "getINITIALIZE_FIELD",
+          "parameterTypes": []
+        },
+        {
+          "name": "getINITIALIZE_PROPERTY_FROM_PARAMETER",
+          "parameterTypes": []
+        },
+        {
+          "name": "getINLINED_FUNCTION_REFERENCE",
+          "parameterTypes": []
+        },
+        {
+          "name": "getINLINE_ARGS_CONTAINER",
+          "parameterTypes": []
+        },
+        {
+          "name": "getINLINE_LAMBDA",
+          "parameterTypes": []
+        },
+        {
+          "name": "getINVOKE",
+          "parameterTypes": []
+        },
+        {
+          "name": "getLAMBDA",
+          "parameterTypes": []
+        },
+        {
+          "name": "getLT",
+          "parameterTypes": []
+        },
+        {
+          "name": "getLTEQ",
+          "parameterTypes": []
+        },
+        {
+          "name": "getMINUS",
+          "parameterTypes": []
+        },
+        {
+          "name": "getMINUSEQ",
+          "parameterTypes": []
+        },
+        {
+          "name": "getMUL",
+          "parameterTypes": []
+        },
+        {
+          "name": "getMULTEQ",
+          "parameterTypes": []
+        },
+        {
+          "name": "getNOT_IN",
+          "parameterTypes": []
+        },
+        {
+          "name": "getOBJECT_LITERAL",
+          "parameterTypes": []
+        },
+        {
+          "name": "getOROR",
+          "parameterTypes": []
+        },
+        {
+          "name": "getPARTIAL_LINKAGE_RUNTIME_ERROR",
+          "parameterTypes": []
+        },
+        {
+          "name": "getPERC",
+          "parameterTypes": []
+        },
+        {
+          "name": "getPERCEQ",
+          "parameterTypes": []
+        },
+        {
+          "name": "getPLUS",
+          "parameterTypes": []
+        },
+        {
+          "name": "getPLUSEQ",
+          "parameterTypes": []
+        },
+        {
+          "name": "getPOSTFIX_DECR",
+          "parameterTypes": []
+        },
+        {
+          "name": "getPOSTFIX_INCR",
+          "parameterTypes": []
+        },
+        {
+          "name": "getPREFIX_DECR",
+          "parameterTypes": []
+        },
+        {
+          "name": "getPREFIX_INCR",
+          "parameterTypes": []
+        },
+        {
+          "name": "getPROPERTY_REFERENCE_FOR_DELEGATE",
+          "parameterTypes": []
+        },
+        {
+          "name": "getRANGE",
+          "parameterTypes": []
+        },
+        {
+          "name": "getRANGE_UNTIL",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSAFE_CALL",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSTATEMENT_ORIGIN_INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSYNTHESIZED_INIT_BLOCK",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSYNTHETIC_NOT_AUTOBOXED_CHECK",
+          "parameterTypes": []
+        },
+        {
+          "name": "getUMINUS",
+          "parameterTypes": []
+        },
+        {
+          "name": "getUPLUS",
+          "parameterTypes": []
+        },
+        {
+          "name": "getVARIABLE_AS_FUNCTION",
+          "parameterTypes": []
+        },
+        {
+          "name": "getWHEN",
+          "parameterTypes": []
+        },
+        {
+          "name": "getWHEN_COMMA",
+          "parameterTypes": []
+        },
+        {
+          "name": "getWHILE_LOOP",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl"
+    },
+    {
+      "type": "org.jetbrains.kotlin.load.java.ErasedOverridabilityCondition"
+    },
+    {
+      "type": "org.jetbrains.kotlin.load.java.FieldOverridabilityCondition"
+    },
+    {
+      "type": "org.jetbrains.kotlin.load.java.JavaIncompatibilityRulesOverridabilityCondition"
+    },
+    {
+      "type": "org.jetbrains.kotlin.platform.PlatformSpecificDiagnosticComponents"
+    },
+    {
+      "type": "org.jetbrains.kotlin.platform.PlatformSpecificDiagnosticComponents$Default",
+      "fields": [
+        {
+          "name": "INSTANCE"
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.platform.TargetPlatformVersion$NoVersion"
+    },
+    {
+      "type": "org.jetbrains.kotlin.platform.konan.NativePlatforms$CompatNativePlatform"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.impl.KotlinElementTypeProviderImpl",
+      "fields": [
+        {
+          "name": "INSTANCE"
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.AdditionalClassPartsProvider"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.AdditionalClassPartsProvider$Default",
+      "fields": [
+        {
+          "name": "INSTANCE"
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.AnalyzerExtensions",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.BindingTrace",
+            "java.lang.Iterable",
+            "org.jetbrains.kotlin.config.LanguageVersionSettings"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.AnnotationChecker",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Iterable",
+            "org.jetbrains.kotlin.config.LanguageVersionSettings",
+            "org.jetbrains.kotlin.resolve.PlatformAnnotationFeaturesSupport"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.AnnotationResolverImpl",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.calls.CallResolver",
+            "org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator",
+            "org.jetbrains.kotlin.storage.StorageManager"
+          ]
+        },
+        {
+          "name": "setTypeResolver",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.TypeResolver"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.BindingTraceContext"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.BodyResolveCache$ThrowException"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.BodyResolver",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.com.intellij.openapi.project.Project",
+            "org.jetbrains.kotlin.resolve.AnnotationResolver",
+            "org.jetbrains.kotlin.resolve.BodyResolveCache",
+            "org.jetbrains.kotlin.resolve.calls.CallResolver",
+            "org.jetbrains.kotlin.resolve.ControlFlowAnalyzer",
+            "org.jetbrains.kotlin.resolve.DeclarationsChecker",
+            "org.jetbrains.kotlin.resolve.DelegatedPropertyResolver",
+            "org.jetbrains.kotlin.types.expressions.ExpressionTypingServices",
+            "org.jetbrains.kotlin.resolve.AnalyzerExtensions",
+            "org.jetbrains.kotlin.resolve.BindingTrace",
+            "org.jetbrains.kotlin.types.expressions.ValueParameterResolver",
+            "org.jetbrains.kotlin.resolve.AnnotationChecker",
+            "org.jetbrains.kotlin.builtins.KotlinBuiltIns",
+            "org.jetbrains.kotlin.resolve.OverloadChecker",
+            "org.jetbrains.kotlin.config.LanguageVersionSettings"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.CliSealedClassInheritorsProvider"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.CollectionLiteralResolver",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.descriptors.ModuleDescriptor",
+            "org.jetbrains.kotlin.resolve.calls.CallResolver",
+            "org.jetbrains.kotlin.config.LanguageVersionSettings"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.CommonCompilerDeserializationConfiguration",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.config.LanguageVersionSettings"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.ConflictingOverloadsDispatcher"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.ConflictingOverloadsDispatcher$Default",
+      "fields": [
+        {
+          "name": "INSTANCE"
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.ControlFlowAnalyzer",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.BindingTrace",
+            "org.jetbrains.kotlin.builtins.KotlinBuiltIns",
+            "org.jetbrains.kotlin.config.LanguageVersionSettings",
+            "org.jetbrains.kotlin.resolve.checkers.PlatformDiagnosticSuppressor",
+            "org.jetbrains.kotlin.cfg.ControlFlowInformationProvider$Factory",
+            "org.jetbrains.kotlin.incremental.components.EnumWhenTracker"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.DeclarationResolver",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.AnnotationResolver",
+            "org.jetbrains.kotlin.resolve.BindingTrace"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.DeclarationReturnTypeSanitizer"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.DeclarationReturnTypeSanitizer$Default",
+      "fields": [
+        {
+          "name": "INSTANCE"
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.DeclarationsChecker",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.DescriptorResolver",
+            "org.jetbrains.kotlin.resolve.ModifiersChecker",
+            "org.jetbrains.kotlin.resolve.AnnotationChecker",
+            "org.jetbrains.kotlin.resolve.IdentifierChecker",
+            "org.jetbrains.kotlin.resolve.BindingTrace",
+            "org.jetbrains.kotlin.config.LanguageVersionSettings",
+            "org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator",
+            "org.jetbrains.kotlin.resolve.checkers.PlatformDiagnosticSuppressor",
+            "org.jetbrains.kotlin.resolve.UpperBoundChecker"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.DeclarationsCheckerBuilder",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.DescriptorResolver",
+            "org.jetbrains.kotlin.resolve.ModifiersChecker",
+            "org.jetbrains.kotlin.resolve.AnnotationChecker",
+            "org.jetbrains.kotlin.resolve.IdentifierChecker",
+            "org.jetbrains.kotlin.config.LanguageVersionSettings",
+            "org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator",
+            "org.jetbrains.kotlin.resolve.checkers.PlatformDiagnosticSuppressor",
+            "org.jetbrains.kotlin.resolve.UpperBoundChecker"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.DelegatedPropertyResolver",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.builtins.KotlinBuiltIns",
+            "org.jetbrains.kotlin.types.expressions.FakeCallResolver",
+            "org.jetbrains.kotlin.types.expressions.ExpressionTypingServices",
+            "org.jetbrains.kotlin.config.LanguageVersionSettings",
+            "org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory",
+            "org.jetbrains.kotlin.resolve.calls.tower.PSICallResolver",
+            "org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzer",
+            "org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter",
+            "org.jetbrains.kotlin.resolve.calls.model.KotlinCallComponents"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.DescriptorResolver",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.AnnotationResolver",
+            "org.jetbrains.kotlin.builtins.KotlinBuiltIns",
+            "org.jetbrains.kotlin.storage.StorageManager",
+            "org.jetbrains.kotlin.resolve.TypeResolver",
+            "org.jetbrains.kotlin.descriptors.SupertypeLoopChecker",
+            "org.jetbrains.kotlin.resolve.VariableTypeAndInitializerResolver",
+            "org.jetbrains.kotlin.types.expressions.ExpressionTypingServices",
+            "org.jetbrains.kotlin.resolve.OverloadChecker",
+            "org.jetbrains.kotlin.config.LanguageVersionSettings",
+            "org.jetbrains.kotlin.types.expressions.FunctionsTypingVisitor",
+            "org.jetbrains.kotlin.types.expressions.DestructuringDeclarationResolver",
+            "org.jetbrains.kotlin.resolve.ModifiersChecker",
+            "org.jetbrains.kotlin.types.WrappedTypeFactory",
+            "org.jetbrains.kotlin.com.intellij.openapi.project.Project",
+            "org.jetbrains.kotlin.types.TypeApproximator",
+            "org.jetbrains.kotlin.resolve.DeclarationReturnTypeSanitizer",
+            "org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory",
+            "java.lang.Iterable",
+            "org.jetbrains.kotlin.resolve.AdditionalClassPartsProvider"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.FilePreprocessor",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.BindingTrace",
+            "java.lang.Iterable"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.FunctionDescriptorResolver",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.TypeResolver",
+            "org.jetbrains.kotlin.resolve.DescriptorResolver",
+            "org.jetbrains.kotlin.resolve.AnnotationResolver",
+            "org.jetbrains.kotlin.builtins.KotlinBuiltIns",
+            "org.jetbrains.kotlin.resolve.ModifiersChecker",
+            "org.jetbrains.kotlin.resolve.OverloadChecker",
+            "org.jetbrains.kotlin.contracts.parsing.ContractParsingServices",
+            "org.jetbrains.kotlin.types.expressions.ExpressionTypingServices",
+            "org.jetbrains.kotlin.config.LanguageVersionSettings",
+            "org.jetbrains.kotlin.storage.StorageManager"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.IdentifierChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.IdentifierChecker$Default",
+      "fields": [
+        {
+          "name": "INSTANCE"
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.LazyTopDownAnalyzer",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.BindingTrace",
+            "org.jetbrains.kotlin.resolve.DeclarationResolver",
+            "org.jetbrains.kotlin.resolve.OverrideResolver",
+            "org.jetbrains.kotlin.resolve.OverloadResolver",
+            "org.jetbrains.kotlin.resolve.VarianceChecker",
+            "org.jetbrains.kotlin.descriptors.ModuleDescriptor",
+            "org.jetbrains.kotlin.resolve.lazy.LazyDeclarationResolver",
+            "org.jetbrains.kotlin.resolve.BodyResolver",
+            "org.jetbrains.kotlin.resolve.lazy.TopLevelDescriptorProvider",
+            "org.jetbrains.kotlin.resolve.lazy.FileScopeProvider",
+            "org.jetbrains.kotlin.resolve.lazy.DeclarationScopeProvider",
+            "org.jetbrains.kotlin.resolve.QualifiedExpressionResolver",
+            "org.jetbrains.kotlin.resolve.IdentifierChecker",
+            "org.jetbrains.kotlin.config.LanguageVersionSettings",
+            "org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver",
+            "java.lang.Iterable",
+            "org.jetbrains.kotlin.resolve.FilePreprocessor"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.LocalVariableResolver",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.ModifiersChecker",
+            "org.jetbrains.kotlin.resolve.IdentifierChecker",
+            "org.jetbrains.kotlin.types.expressions.DataFlowAnalyzer",
+            "org.jetbrains.kotlin.resolve.AnnotationResolver",
+            "org.jetbrains.kotlin.resolve.VariableTypeAndInitializerResolver",
+            "org.jetbrains.kotlin.resolve.DelegatedPropertyResolver",
+            "org.jetbrains.kotlin.config.LanguageVersionSettings",
+            "org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.MissingSupertypesResolver",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.storage.StorageManager",
+            "org.jetbrains.kotlin.descriptors.ModuleDescriptor"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.ModifiersChecker",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.AnnotationChecker",
+            "java.lang.Iterable",
+            "org.jetbrains.kotlin.config.LanguageVersionSettings",
+            "org.jetbrains.kotlin.incremental.components.ExpectActualTracker",
+            "org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver",
+            "org.jetbrains.kotlin.descriptors.ModuleDescriptor",
+            "org.jetbrains.kotlin.resolve.MissingSupertypesResolver"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.OverloadChecker",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.OverloadFilter"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.OverloadFilter$Default",
+      "fields": [
+        {
+          "name": "INSTANCE"
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.OverloadResolver",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.BindingTrace",
+            "org.jetbrains.kotlin.resolve.OverloadFilter",
+            "org.jetbrains.kotlin.resolve.OverloadChecker",
+            "org.jetbrains.kotlin.resolve.ConflictingOverloadsDispatcher",
+            "org.jetbrains.kotlin.config.LanguageVersionSettings",
+            "org.jetbrains.kotlin.idea.MainFunctionDetector$Factory"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.OverrideResolver",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.BindingTrace",
+            "org.jetbrains.kotlin.resolve.OverridesBackwardCompatibilityHelper",
+            "org.jetbrains.kotlin.config.LanguageVersionSettings",
+            "org.jetbrains.kotlin.types.checker.KotlinTypeRefiner",
+            "org.jetbrains.kotlin.platform.PlatformSpecificDiagnosticComponents"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.OverridesBackwardCompatibilityHelper"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.OverridesBackwardCompatibilityHelper$Default",
+      "fields": [
+        {
+          "name": "INSTANCE"
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.PlatformAnnotationFeaturesSupport"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.PlatformAnnotationFeaturesSupport$Default",
+      "fields": [
+        {
+          "name": "INSTANCE"
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.QualifiedExpressionResolver",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.config.LanguageVersionSettings"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.StatementFilter",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.SupertypeLoopCheckerImpl",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.TypeResolver",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.AnnotationResolver",
+            "org.jetbrains.kotlin.resolve.QualifiedExpressionResolver",
+            "org.jetbrains.kotlin.descriptors.ModuleDescriptor",
+            "org.jetbrains.kotlin.resolve.TypeResolver$TypeTransformerForTests",
+            "org.jetbrains.kotlin.types.DynamicTypesSettings",
+            "org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallableDescriptors",
+            "org.jetbrains.kotlin.resolve.IdentifierChecker",
+            "org.jetbrains.kotlin.builtins.PlatformToKotlinClassMapper",
+            "org.jetbrains.kotlin.config.LanguageVersionSettings",
+            "org.jetbrains.kotlin.resolve.UpperBoundChecker",
+            "org.jetbrains.kotlin.types.extensions.TypeAttributeTranslators"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.TypeResolver$TypeTransformerForTests",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.UpperBoundChecker",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.types.checker.KotlinTypeChecker"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.VariableTypeAndInitializerResolver",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.storage.StorageManager",
+            "org.jetbrains.kotlin.types.expressions.ExpressionTypingServices",
+            "org.jetbrains.kotlin.resolve.TypeResolver",
+            "org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator",
+            "org.jetbrains.kotlin.resolve.DelegatedPropertyResolver",
+            "org.jetbrains.kotlin.types.WrappedTypeFactory",
+            "org.jetbrains.kotlin.types.TypeApproximator",
+            "org.jetbrains.kotlin.resolve.DeclarationReturnTypeSanitizer",
+            "org.jetbrains.kotlin.config.LanguageVersionSettings",
+            "java.lang.Iterable"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.VarianceChecker",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.BindingTrace",
+            "org.jetbrains.kotlin.config.LanguageVersionSettings"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.TypeResolver",
+            "org.jetbrains.kotlin.builtins.KotlinBuiltIns",
+            "org.jetbrains.kotlin.builtins.ReflectionTypes",
+            "org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator",
+            "org.jetbrains.kotlin.types.FunctionPlaceholders",
+            "org.jetbrains.kotlin.descriptors.ModuleDescriptor",
+            "org.jetbrains.kotlin.types.checker.KotlinTypeChecker"
+          ]
+        },
+        {
+          "name": "setDoubleColonExpressionResolver",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.types.expressions.DoubleColonExpressionResolver"
+          ]
+        },
+        {
+          "name": "setExpressionTypingServices",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.types.expressions.ExpressionTypingServices"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.CallCompleter",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver",
+            "org.jetbrains.kotlin.resolve.calls.CandidateResolver",
+            "org.jetbrains.kotlin.types.expressions.DataFlowAnalyzer",
+            "java.lang.Iterable",
+            "org.jetbrains.kotlin.descriptors.ModuleDescriptor",
+            "org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver",
+            "org.jetbrains.kotlin.contracts.EffectSystem",
+            "org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory",
+            "org.jetbrains.kotlin.resolve.MissingSupertypesResolver",
+            "org.jetbrains.kotlin.resolve.calls.model.KotlinCallComponents"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.CallExpressionResolver",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.calls.CallResolver",
+            "org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator",
+            "org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver",
+            "org.jetbrains.kotlin.types.expressions.DataFlowAnalyzer",
+            "org.jetbrains.kotlin.builtins.KotlinBuiltIns",
+            "org.jetbrains.kotlin.resolve.QualifiedExpressionResolver",
+            "org.jetbrains.kotlin.config.LanguageVersionSettings",
+            "org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory",
+            "org.jetbrains.kotlin.types.checker.KotlinTypeRefiner"
+          ]
+        },
+        {
+          "name": "setExpressionTypingServices",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.types.expressions.ExpressionTypingServices"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.CallResolver",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.builtins.KotlinBuiltIns",
+            "org.jetbrains.kotlin.config.LanguageVersionSettings",
+            "org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory"
+          ]
+        },
+        {
+          "name": "setArgumentTypeResolver",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver"
+          ]
+        },
+        {
+          "name": "setCallCompleter",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.calls.CallCompleter"
+          ]
+        },
+        {
+          "name": "setExpressionTypingServices",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.types.expressions.ExpressionTypingServices"
+          ]
+        },
+        {
+          "name": "setGenericCandidateResolver",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.calls.GenericCandidateResolver"
+          ]
+        },
+        {
+          "name": "setPSICallResolver",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.calls.tower.PSICallResolver"
+          ]
+        },
+        {
+          "name": "setResolutionOldInference",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.calls.tower.NewResolutionOldInference"
+          ]
+        },
+        {
+          "name": "setSyntheticScopes",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.scopes.SyntheticScopes"
+          ]
+        },
+        {
+          "name": "setTypeResolver",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.TypeResolver"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.CandidateResolver",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver",
+            "org.jetbrains.kotlin.resolve.calls.GenericCandidateResolver",
+            "org.jetbrains.kotlin.builtins.ReflectionTypes",
+            "java.lang.Iterable",
+            "org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager",
+            "org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory",
+            "org.jetbrains.kotlin.resolve.UpperBoundChecker"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.GenericCandidateResolver",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver",
+            "org.jetbrains.kotlin.resolve.calls.inference.BuilderInferenceSupport",
+            "org.jetbrains.kotlin.config.LanguageVersionSettings",
+            "org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.KotlinCallResolver",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.calls.tower.TowerResolver",
+            "org.jetbrains.kotlin.resolve.calls.components.KotlinCallCompleter",
+            "org.jetbrains.kotlin.resolve.calls.components.NewOverloadingConflictResolver",
+            "org.jetbrains.kotlin.resolve.calls.components.CallableReferenceArgumentResolver",
+            "org.jetbrains.kotlin.resolve.calls.model.KotlinCallComponents"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.checkers.AbstractClassInstantiationChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.checkers.ApiVersionCallChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.checkers.AssigningNamedArgumentToVarargChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.checkers.BuilderFunctionsCallChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.checkers.BuilderInferenceAssignmentChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.checkers.CallReturnsArrayOfNothingChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.checkers.CallableReferenceCompatibilityChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.checkers.CapturingInClosureChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.checkers.CompanionInParenthesesLHSCallChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.checkers.CompanionIncorrectlyUnboundedWhenUsedAsLHSCallChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.checkers.ConstructorHeaderCallChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.checkers.ContractNotAllowedCallChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.checkers.CoroutineSuspendCallChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.checkers.CustomEnumEntriesMigrationCallChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.checkers.DeprecatedCallChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.checkers.DslScopeViolationCallChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.checkers.EnumEntriesUnsupportedChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.checkers.EnumEntryVsCompanionPriorityCallChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.checkers.EqualityCallChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.checkers.FunInterfaceConstructorReferenceChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.checkers.ImplicitNothingAsTypeParameterCallChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.checkers.IncorrectCapturedApproximationCallChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.checkers.InfixCallChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.checkers.InlineCheckerWrapper"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.checkers.LambdaWithSuspendModifierCallChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.checkers.NamedFunAsExpressionChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.checkers.NewSchemeOfIntegerOperatorResolutionChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.checkers.NullableVarargArgumentCallChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.checkers.OperatorCallChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.checkers.ProtectedConstructorCallChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.checkers.ReferencingToUnderscoreNamedParameterOfCatchBlockChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.checkers.ReifiedTypeParameterSubstitutionChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.checkers.ResolutionToPrivateConstructorOfSealedClassChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.checkers.ResultTypeWithNullableOperatorsChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.checkers.SafeCallChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.checkers.SelfCallInNestedObjectConstructorChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.checkers.SuspendConversionCallChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.checkers.SynchronizedByValueChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.checkers.UnderscoreUsageChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.checkers.UnitConversionCallChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.checkers.UnsupportedUntilOperatorChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.checkers.UnsupportedUntilRangeDeclarationChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.checkers.UselessElvisCallChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.checkers.VarargWrongExecutionOrderChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.components.AdditionalDiagnosticReporter",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.config.LanguageVersionSettings"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.components.ArgumentsToParametersMapper",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.config.LanguageVersionSettings"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.components.CallableReferenceArgumentResolver",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.calls.components.CallableReferenceOverloadConflictResolver"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.components.CallableReferenceOverloadConflictResolver",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.builtins.KotlinBuiltIns",
+            "org.jetbrains.kotlin.descriptors.ModuleDescriptor",
+            "org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator",
+            "org.jetbrains.kotlin.resolve.calls.results.PlatformOverloadsSpecificityComparator",
+            "org.jetbrains.kotlin.util.CancellationChecker",
+            "org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionStatelessCallbacks",
+            "org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintInjector",
+            "org.jetbrains.kotlin.types.checker.KotlinTypeRefiner"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.components.ClassicTypeSystemContextForCS",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.builtins.KotlinBuiltIns",
+            "org.jetbrains.kotlin.types.checker.KotlinTypeRefiner"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.components.KotlinCallCompleter",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzer",
+            "org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter",
+            "org.jetbrains.kotlin.resolve.calls.inference.components.TrivialConstraintTypeInferenceOracle",
+            "org.jetbrains.kotlin.config.LanguageVersionSettings"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.components.NewOverloadingConflictResolver",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.builtins.KotlinBuiltIns",
+            "org.jetbrains.kotlin.descriptors.ModuleDescriptor",
+            "org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator",
+            "org.jetbrains.kotlin.resolve.calls.results.PlatformOverloadsSpecificityComparator",
+            "org.jetbrains.kotlin.util.CancellationChecker",
+            "org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionStatelessCallbacks",
+            "org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintInjector",
+            "org.jetbrains.kotlin.types.checker.KotlinTypeRefiner"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzer",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.calls.components.CallableReferenceArgumentResolver",
+            "org.jetbrains.kotlin.config.LanguageVersionSettings"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.components.TypeArgumentsToParametersMapper",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.inference.BuilderInferenceSupport",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver",
+            "org.jetbrains.kotlin.types.expressions.ExpressionTypingServices"
+          ]
+        },
+        {
+          "name": "setCallCompleter",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.calls.CallCompleter"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.inference.components.ClassicConstraintSystemUtilContext",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.types.checker.KotlinTypeRefiner",
+            "org.jetbrains.kotlin.builtins.KotlinBuiltIns"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintIncorporator",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.types.AbstractTypeApproximator",
+            "org.jetbrains.kotlin.resolve.calls.inference.components.TrivialConstraintTypeInferenceOracle",
+            "org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemUtilContext",
+            "org.jetbrains.kotlin.config.LanguageVersionSettings",
+            "org.jetbrains.kotlin.resolve.calls.inference.components.InferenceLogger"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintInjector",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintIncorporator",
+            "org.jetbrains.kotlin.types.AbstractTypeApproximator",
+            "org.jetbrains.kotlin.config.LanguageVersionSettings",
+            "org.jetbrains.kotlin.resolve.calls.inference.components.InferenceLogger"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.inference.components.InferenceLogger"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.inference.components.InferenceLogger$Dummy",
+      "fields": [
+        {
+          "name": "INSTANCE"
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.calls.inference.components.ResultTypeResolver",
+            "org.jetbrains.kotlin.resolve.calls.inference.components.VariableFixationFinder",
+            "org.jetbrains.kotlin.resolve.calls.inference.components.PostponedArgumentInputTypesResolver",
+            "org.jetbrains.kotlin.config.LanguageVersionSettings"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.inference.components.LegacyVariableReadinessCalculator",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.calls.inference.components.TrivialConstraintTypeInferenceOracle",
+            "org.jetbrains.kotlin.config.LanguageVersionSettings",
+            "org.jetbrains.kotlin.resolve.calls.inference.components.InferenceLogger"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.inference.components.PostponedArgumentInputTypesResolver",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.calls.inference.components.ResultTypeResolver",
+            "org.jetbrains.kotlin.resolve.calls.inference.components.VariableFixationFinder",
+            "org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemUtilContext"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.inference.components.ResultTypeResolver",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.types.AbstractTypeApproximator",
+            "org.jetbrains.kotlin.resolve.calls.inference.components.TrivialConstraintTypeInferenceOracle",
+            "org.jetbrains.kotlin.config.LanguageVersionSettings"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.inference.components.TrivialConstraintTypeInferenceOracle",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContextDelegate"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.inference.components.VariableFixationFinder"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.inference.components.VariableFixationFinder$DefaultForK1DependencyInjection",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.config.LanguageVersionSettings",
+            "org.jetbrains.kotlin.resolve.calls.inference.components.LegacyVariableReadinessCalculator"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.model.KotlinCallComponents",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionStatelessCallbacks",
+            "org.jetbrains.kotlin.resolve.calls.components.ArgumentsToParametersMapper",
+            "org.jetbrains.kotlin.resolve.calls.components.TypeArgumentsToParametersMapper",
+            "org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintInjector",
+            "org.jetbrains.kotlin.builtins.ReflectionTypes",
+            "org.jetbrains.kotlin.builtins.KotlinBuiltIns",
+            "org.jetbrains.kotlin.config.LanguageVersionSettings",
+            "org.jetbrains.kotlin.resolve.sam.SamConversionOracle",
+            "org.jetbrains.kotlin.resolve.sam.SamConversionResolver",
+            "org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker",
+            "org.jetbrains.kotlin.incremental.components.LookupTracker",
+            "org.jetbrains.kotlin.types.checker.KotlinTypeRefiner",
+            "org.jetbrains.kotlin.resolve.calls.components.CallableReferenceArgumentResolver"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.results.PlatformOverloadsSpecificityComparator"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.results.PlatformOverloadsSpecificityComparator$None",
+      "fields": [
+        {
+          "name": "INSTANCE"
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.results.ResolutionResultsHandler",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.builtins.KotlinBuiltIns",
+            "org.jetbrains.kotlin.descriptors.ModuleDescriptor",
+            "org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator",
+            "org.jetbrains.kotlin.resolve.calls.results.PlatformOverloadsSpecificityComparator",
+            "org.jetbrains.kotlin.util.CancellationChecker",
+            "org.jetbrains.kotlin.types.checker.KotlinTypeRefiner"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator$NONE",
+      "fields": [
+        {
+          "name": "INSTANCE"
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactoryImpl",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.config.LanguageVersionSettings"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallableDescriptors",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.storage.StorageManager",
+            "org.jetbrains.kotlin.builtins.KotlinBuiltIns"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.tower.ImplicitsExtensionsResolutionFilter"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.tower.ImplicitsExtensionsResolutionFilter$Default",
+      "fields": [
+        {
+          "name": "INSTANCE"
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.tower.KotlinResolutionStatelessCallbacksImpl",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver",
+            "org.jetbrains.kotlin.config.LanguageVersionSettings",
+            "org.jetbrains.kotlin.types.checker.KotlinTypeRefiner"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.tower.KotlinToResolvedCallTransformer",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Iterable",
+            "java.lang.Iterable",
+            "org.jetbrains.kotlin.types.expressions.DataFlowAnalyzer",
+            "org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver",
+            "org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator",
+            "org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver",
+            "org.jetbrains.kotlin.types.expressions.ExpressionTypingServices",
+            "org.jetbrains.kotlin.types.expressions.DoubleColonExpressionResolver",
+            "org.jetbrains.kotlin.resolve.calls.components.AdditionalDiagnosticReporter",
+            "org.jetbrains.kotlin.descriptors.ModuleDescriptor",
+            "org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory",
+            "org.jetbrains.kotlin.builtins.KotlinBuiltIns",
+            "org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContextDelegate",
+            "org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager",
+            "org.jetbrains.kotlin.types.TypeApproximator",
+            "org.jetbrains.kotlin.resolve.MissingSupertypesResolver",
+            "org.jetbrains.kotlin.extensions.internal.CandidateInterceptor",
+            "org.jetbrains.kotlin.resolve.calls.model.KotlinCallComponents"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.tower.NewResolutionOldInference",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.calls.CandidateResolver",
+            "org.jetbrains.kotlin.resolve.calls.tower.TowerResolver",
+            "org.jetbrains.kotlin.resolve.calls.results.ResolutionResultsHandler",
+            "org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallableDescriptors",
+            "org.jetbrains.kotlin.resolve.scopes.SyntheticScopes",
+            "org.jetbrains.kotlin.config.LanguageVersionSettings",
+            "org.jetbrains.kotlin.resolve.calls.inference.BuilderInferenceSupport",
+            "org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver",
+            "org.jetbrains.kotlin.types.TypeApproximator",
+            "org.jetbrains.kotlin.resolve.calls.tower.ImplicitsExtensionsResolutionFilter",
+            "org.jetbrains.kotlin.resolve.calls.CallResolver",
+            "org.jetbrains.kotlin.extensions.internal.CandidateInterceptor"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.tower.PSICallResolver",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.TypeResolver",
+            "org.jetbrains.kotlin.types.expressions.ExpressionTypingServices",
+            "org.jetbrains.kotlin.types.expressions.DoubleColonExpressionResolver",
+            "org.jetbrains.kotlin.config.LanguageVersionSettings",
+            "org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallableDescriptors",
+            "org.jetbrains.kotlin.resolve.scopes.SyntheticScopes",
+            "org.jetbrains.kotlin.resolve.calls.model.KotlinCallComponents",
+            "org.jetbrains.kotlin.resolve.calls.tower.KotlinToResolvedCallTransformer",
+            "org.jetbrains.kotlin.resolve.calls.KotlinCallResolver",
+            "org.jetbrains.kotlin.types.TypeApproximator",
+            "org.jetbrains.kotlin.resolve.calls.tower.ImplicitsExtensionsResolutionFilter",
+            "org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver",
+            "org.jetbrains.kotlin.contracts.EffectSystem",
+            "org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator",
+            "org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory",
+            "org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzer",
+            "org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter",
+            "org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver",
+            "org.jetbrains.kotlin.descriptors.ModuleDescriptor",
+            "org.jetbrains.kotlin.extensions.internal.CandidateInterceptor",
+            "org.jetbrains.kotlin.resolve.MissingSupertypesResolver",
+            "org.jetbrains.kotlin.resolve.calls.inference.components.ResultTypeResolver"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.calls.tower.TowerResolver",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.ActualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.ActualTypealiasToSpecialAnnotationChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.AnnotationClassTargetAndRetentionChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.ApiVersionClassifierUsageChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.ConstModifierChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.ContextualDeclarationChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.ContractDescriptionBlockChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.CyclicAnnotationsChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.DataClassDeclarationChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.DataObjectContentChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.DelegationChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.DeprecatedClassifierUsageChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.DeprecatedSinceKotlinAnnotationChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.DeprecationInheritanceChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.DynamicReceiverChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.EnumCompanionInEnumConstructorCallChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.EnumEntriesRedeclarationChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.ExpectActualClassifiersAreInBetaChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.ExpectActualInTheSameModuleChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.ExplicitApiDeclarationChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.FunInterfaceDeclarationChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.InfixModifierChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.InlineParameterChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.InnerClassInsideValueClass"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.KClassWithIncorrectTypeArgumentChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.LocalVariableTypeParametersChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.MissingDependencyClassChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.MissingDependencyClassChecker$ClassifierUsage"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.MissingDependencySupertypeChecker$ForCalls"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.MissingDependencySupertypeChecker$ForDeclarations"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.NullableExtensionOperatorWithSafeCallChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.OptInMarkerDeclarationAnnotationChecker",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.descriptors.ModuleDescriptor"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.OptInUsageChecker",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.OptInUsageChecker$ClassifierUsage",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.OptInUsageChecker$Overrides",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.OptionalExpectationUsageChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.PlatformDiagnosticSuppressor"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.PlatformDiagnosticSuppressor$Default",
+      "fields": [
+        {
+          "name": "INSTANCE"
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.PrimitiveNumericComparisonCallChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.PrivateInlineFunctionsReturningAnonymousObjectsChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.PropertiesWithBackingFieldsInsideValueClass"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.ReifiedTypeParameterAnnotationChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.RequireKotlinAnnotationValueChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.ReservedMembersAndConstructsForValueClass"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.ResultClassInReturnTypeChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.ReturnValueAnnotationChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.SealedInheritorInSameModuleChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.SealedInheritorInSamePackageChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.SealedInterfaceAllowedChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.SinceKotlinAnnotationValueChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.StubForBuilderInferenceParameterTypeChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.SubtypingBetweenContextReceiversChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.SuspendFunctionAsSupertypeChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.SuspendLimitationsChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.TailrecFunctionChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.TrailingCommaCallChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.TrailingCommaDeclarationChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.UnderscoreChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.ValueClassDeclarationChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.ValueParameterUsageInDefaultArgumentChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.checkers.VolatileAnnotationChecker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.descriptors.ModuleDescriptor",
+            "org.jetbrains.kotlin.config.LanguageVersionSettings",
+            "org.jetbrains.kotlin.incremental.components.InlineConstTracker"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.storage.StorageManager",
+            "org.jetbrains.kotlin.config.LanguageVersionSettings",
+            "org.jetbrains.kotlin.resolve.deprecation.DeprecationSettings"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.deprecation.DeprecationSettings"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.deprecation.DeprecationSettings$Default",
+      "fields": [
+        {
+          "name": "INSTANCE"
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.diagnostics.DiagnosticSuppressor"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.diagnostics.DiagnosticSuppressor[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.konan.platform.ObjCOverridabilityCondition"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.lazy.BasicAbsentDescriptorHandler",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.lazy.CompilerLocalDescriptorResolver",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.lazy.LazyDeclarationResolver"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.lazy.DeclarationScopeProvider"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.lazy.DeclarationScopeProviderImpl",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.lazy.LazyDeclarationResolver",
+            "org.jetbrains.kotlin.resolve.lazy.FileScopeProvider"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.lazy.DelegationFilter"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.lazy.DelegationFilter$Default",
+      "fields": [
+        {
+          "name": "INSTANCE"
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.lazy.FileScopeFactory",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.lazy.TopLevelDescriptorProvider",
+            "org.jetbrains.kotlin.resolve.BindingTrace",
+            "org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices",
+            "org.jetbrains.kotlin.resolve.lazy.ImportResolutionComponents"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.lazy.FileScopeProvider"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.lazy.FileScopeProviderImpl",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.lazy.FileScopeFactory",
+            "org.jetbrains.kotlin.resolve.BindingTrace",
+            "org.jetbrains.kotlin.storage.StorageManager"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.lazy.ImportResolutionComponents",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.storage.StorageManager",
+            "org.jetbrains.kotlin.resolve.QualifiedExpressionResolver",
+            "org.jetbrains.kotlin.descriptors.ModuleDescriptor",
+            "org.jetbrains.kotlin.builtins.PlatformToKotlinClassMapper",
+            "org.jetbrains.kotlin.config.LanguageVersionSettings",
+            "org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver",
+            "org.jetbrains.kotlin.resolve.scopes.optimization.OptimizingOptions"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.lazy.LazyDeclarationResolver",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.context.GlobalContext",
+            "org.jetbrains.kotlin.resolve.BindingTrace",
+            "org.jetbrains.kotlin.resolve.lazy.TopLevelDescriptorProvider",
+            "org.jetbrains.kotlin.resolve.lazy.AbsentDescriptorHandler"
+          ]
+        },
+        {
+          "name": "setDeclarationScopeProvider",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.lazy.DeclarationScopeProviderImpl"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.lazy.ResolveSession",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.com.intellij.openapi.project.Project",
+            "org.jetbrains.kotlin.context.GlobalContext",
+            "org.jetbrains.kotlin.descriptors.ModuleDescriptor",
+            "org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory",
+            "org.jetbrains.kotlin.resolve.BindingTrace",
+            "org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker"
+          ]
+        },
+        {
+          "name": "setAdditionalClassPartsProvider",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.AdditionalClassPartsProvider"
+          ]
+        },
+        {
+          "name": "setAnnotationResolve",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.AnnotationResolver"
+          ]
+        },
+        {
+          "name": "setDeclarationScopeProvider",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.lazy.DeclarationScopeProviderImpl"
+          ]
+        },
+        {
+          "name": "setDelegationFilter",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.lazy.DelegationFilter"
+          ]
+        },
+        {
+          "name": "setDescriptorResolver",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.DescriptorResolver"
+          ]
+        },
+        {
+          "name": "setFileScopeProvider",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.lazy.FileScopeProvider"
+          ]
+        },
+        {
+          "name": "setFunctionDescriptorResolver",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.FunctionDescriptorResolver"
+          ]
+        },
+        {
+          "name": "setLanguageVersionSettings",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.config.LanguageVersionSettings"
+          ]
+        },
+        {
+          "name": "setLazyDeclarationResolver",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.lazy.LazyDeclarationResolver"
+          ]
+        },
+        {
+          "name": "setLocalDescriptorResolver",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.lazy.LocalDescriptorResolver"
+          ]
+        },
+        {
+          "name": "setLookupTracker",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.incremental.components.LookupTracker"
+          ]
+        },
+        {
+          "name": "setPlatformDiagnosticSuppressor",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.checkers.PlatformDiagnosticSuppressor"
+          ]
+        },
+        {
+          "name": "setSamConversionResolver",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.sam.SamConversionResolver"
+          ]
+        },
+        {
+          "name": "setSealedClassInheritorsProvider",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.SealedClassInheritorsProvider"
+          ]
+        },
+        {
+          "name": "setSupertypeLoopsResolver",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.descriptors.SupertypeLoopChecker"
+          ]
+        },
+        {
+          "name": "setTypeResolver",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.TypeResolver"
+          ]
+        },
+        {
+          "name": "setWrappedTypeFactory",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.types.WrappedTypeFactory"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.sam.SamConversionOracle"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.sam.SamConversionOracleDefault",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.sam.SamConversionResolver"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.sam.SamConversionResolverImpl$SamConversionResolverWithoutReceiverConversion",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.storage.StorageManager"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.scopes.SyntheticScopes"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.scopes.optimization.OptimizingOptions"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.scopes.optimization.OptimizingOptions$Default",
+      "fields": [
+        {
+          "name": "INSTANCE"
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.scopes.synthetic.FunInterfaceConstructorsScopeProvider",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.storage.StorageManager",
+            "org.jetbrains.kotlin.incremental.components.LookupTracker",
+            "org.jetbrains.kotlin.resolve.sam.SamConversionResolver",
+            "org.jetbrains.kotlin.resolve.sam.SamConversionOracle"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInsLoaderImpl"
+    },
+    {
+      "type": "org.jetbrains.kotlin.storage.LockBasedStorageManager"
+    },
+    {
+      "type": "org.jetbrains.kotlin.types.AbstractTypeApproximator"
+    },
+    {
+      "type": "org.jetbrains.kotlin.types.DynamicTypesSettings",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.types.FunctionPlaceholders",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.builtins.KotlinBuiltIns"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.types.TypeApproximator",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.builtins.KotlinBuiltIns",
+            "org.jetbrains.kotlin.config.LanguageVersionSettings"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.types.WrappedTypeFactory",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.storage.StorageManager"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.types.checker.KotlinTypePreparator$Default"
+    },
+    {
+      "type": "org.jetbrains.kotlin.types.checker.KotlinTypeRefiner$Default"
+    },
+    {
+      "type": "org.jetbrains.kotlin.types.checker.NewKotlinTypeCheckerImpl",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.types.checker.KotlinTypeRefiner",
+            "org.jetbrains.kotlin.types.checker.KotlinTypePreparator"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.calls.CallResolver",
+            "org.jetbrains.kotlin.types.expressions.DataFlowAnalyzer",
+            "org.jetbrains.kotlin.descriptors.ModuleDescriptor",
+            "org.jetbrains.kotlin.storage.StorageManager"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.types.expressions.DataFlowAnalyzer",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Iterable",
+            "org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator",
+            "org.jetbrains.kotlin.descriptors.ModuleDescriptor",
+            "org.jetbrains.kotlin.builtins.KotlinBuiltIns",
+            "org.jetbrains.kotlin.types.expressions.ExpressionTypingFacade",
+            "org.jetbrains.kotlin.config.LanguageVersionSettings",
+            "org.jetbrains.kotlin.contracts.EffectSystem",
+            "org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory",
+            "org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager",
+            "org.jetbrains.kotlin.types.checker.KotlinTypeChecker"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.types.expressions.DestructuringDeclarationResolver",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.types.expressions.FakeCallResolver",
+            "org.jetbrains.kotlin.resolve.LocalVariableResolver",
+            "org.jetbrains.kotlin.resolve.TypeResolver"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.types.expressions.DoubleColonExpressionResolver",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.calls.CallResolver",
+            "org.jetbrains.kotlin.resolve.QualifiedExpressionResolver",
+            "org.jetbrains.kotlin.types.expressions.DataFlowAnalyzer",
+            "org.jetbrains.kotlin.builtins.ReflectionTypes",
+            "org.jetbrains.kotlin.resolve.TypeResolver",
+            "org.jetbrains.kotlin.config.LanguageVersionSettings",
+            "java.lang.Iterable",
+            "org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory",
+            "org.jetbrains.kotlin.types.expressions.FunctionWithBigAritySupport",
+            "org.jetbrains.kotlin.types.expressions.GenericArrayClassLiteralSupport",
+            "org.jetbrains.kotlin.types.checker.KotlinTypeRefiner"
+          ]
+        },
+        {
+          "name": "setExpressionTypingServices",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.types.expressions.ExpressionTypingServices"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.types.expressions.ExpressionTypingComponents",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        },
+        {
+          "name": "setAnnotationChecker",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.AnnotationChecker"
+          ]
+        },
+        {
+          "name": "setAnnotationResolver",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.AnnotationResolver"
+          ]
+        },
+        {
+          "name": "setAssignmentCheckers",
+          "parameterTypes": [
+            "java.lang.Iterable"
+          ]
+        },
+        {
+          "name": "setBuiltIns",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.builtins.KotlinBuiltIns"
+          ]
+        },
+        {
+          "name": "setCallCheckers",
+          "parameterTypes": [
+            "java.lang.Iterable"
+          ]
+        },
+        {
+          "name": "setCallComponents",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.calls.model.KotlinCallComponents"
+          ]
+        },
+        {
+          "name": "setCallExpressionResolver",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.calls.CallExpressionResolver"
+          ]
+        },
+        {
+          "name": "setCallResolver",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.calls.CallResolver"
+          ]
+        },
+        {
+          "name": "setCollectionLiteralResolver",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.CollectionLiteralResolver"
+          ]
+        },
+        {
+          "name": "setConstantExpressionEvaluator",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator"
+          ]
+        },
+        {
+          "name": "setContractParsingServices",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.contracts.parsing.ContractParsingServices"
+          ]
+        },
+        {
+          "name": "setControlStructureTypingUtils",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils"
+          ]
+        },
+        {
+          "name": "setDataFlowAnalyzer",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.types.expressions.DataFlowAnalyzer"
+          ]
+        },
+        {
+          "name": "setDataFlowValueFactory",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory"
+          ]
+        },
+        {
+          "name": "setDeclarationsCheckerBuilder",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.DeclarationsCheckerBuilder"
+          ]
+        },
+        {
+          "name": "setDeprecationResolver",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver"
+          ]
+        },
+        {
+          "name": "setDescriptorResolver",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.DescriptorResolver"
+          ]
+        },
+        {
+          "name": "setDestructuringDeclarationResolver",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.types.expressions.DestructuringDeclarationResolver"
+          ]
+        },
+        {
+          "name": "setDoubleColonExpressionResolver",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.types.expressions.DoubleColonExpressionResolver"
+          ]
+        },
+        {
+          "name": "setEffectSystem",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.contracts.EffectSystem"
+          ]
+        },
+        {
+          "name": "setExpressionTypingServices",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.types.expressions.ExpressionTypingServices"
+          ]
+        },
+        {
+          "name": "setFakeCallResolver",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.types.expressions.FakeCallResolver"
+          ]
+        },
+        {
+          "name": "setForLoopConventionsChecker",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.types.expressions.ForLoopConventionsChecker"
+          ]
+        },
+        {
+          "name": "setFunctionDescriptorResolver",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.FunctionDescriptorResolver"
+          ]
+        },
+        {
+          "name": "setGlobalContext",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.context.GlobalContext"
+          ]
+        },
+        {
+          "name": "setIdentifierChecker",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.IdentifierChecker"
+          ]
+        },
+        {
+          "name": "setKotlinTypeChecker",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker"
+          ]
+        },
+        {
+          "name": "setLanguageVersionSettings",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.config.LanguageVersionSettings"
+          ]
+        },
+        {
+          "name": "setLocalClassifierAnalyzer",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.types.expressions.LocalClassifierAnalyzer"
+          ]
+        },
+        {
+          "name": "setLocalVariableResolver",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.LocalVariableResolver"
+          ]
+        },
+        {
+          "name": "setLookupTracker",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.incremental.components.LookupTracker"
+          ]
+        },
+        {
+          "name": "setMissingSupertypesResolver",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.MissingSupertypesResolver"
+          ]
+        },
+        {
+          "name": "setModifiersChecker",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.ModifiersChecker"
+          ]
+        },
+        {
+          "name": "setModuleDescriptor",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.descriptors.ModuleDescriptor"
+          ]
+        },
+        {
+          "name": "setOverloadChecker",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.OverloadChecker"
+          ]
+        },
+        {
+          "name": "setPlatformToKotlinClassMap",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.builtins.PlatformSpecificCastChecker"
+          ]
+        },
+        {
+          "name": "setPlatformToKotlinClassMap",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.builtins.PlatformToKotlinClassMapper"
+          ]
+        },
+        {
+          "name": "setRttiExpressionCheckers",
+          "parameterTypes": [
+            "java.lang.Iterable"
+          ]
+        },
+        {
+          "name": "setTypeResolutionInterceptor",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.extensions.internal.TypeResolutionInterceptor"
+          ]
+        },
+        {
+          "name": "setTypeResolver",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.resolve.TypeResolver"
+          ]
+        },
+        {
+          "name": "setValueParameterResolver",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.types.expressions.ValueParameterResolver"
+          ]
+        },
+        {
+          "name": "setWrappedTypeFactory",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.types.WrappedTypeFactory"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.types.expressions.ExpressionTypingFacade"
+    },
+    {
+      "type": "org.jetbrains.kotlin.types.expressions.ExpressionTypingInternals"
+    },
+    {
+      "type": "org.jetbrains.kotlin.types.expressions.ExpressionTypingServices",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.types.expressions.ExpressionTypingComponents",
+            "org.jetbrains.kotlin.resolve.AnnotationChecker",
+            "org.jetbrains.kotlin.resolve.StatementFilter",
+            "org.jetbrains.kotlin.types.expressions.ExpressionTypingVisitorDispatcher$ForDeclarations"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.types.expressions.ExpressionTypingVisitorDispatcher$ForDeclarations",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.types.expressions.ExpressionTypingComponents",
+            "org.jetbrains.kotlin.resolve.AnnotationChecker"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.types.expressions.FakeCallResolver",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.com.intellij.openapi.project.Project",
+            "org.jetbrains.kotlin.resolve.calls.CallResolver"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.types.expressions.ForLoopConventionsChecker",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.builtins.KotlinBuiltIns",
+            "org.jetbrains.kotlin.types.expressions.FakeCallResolver"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.types.expressions.FunctionWithBigAritySupport"
+    },
+    {
+      "type": "org.jetbrains.kotlin.types.expressions.FunctionWithBigAritySupport$Enabled",
+      "fields": [
+        {
+          "name": "INSTANCE"
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.types.expressions.FunctionsTypingVisitor",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.types.expressions.ExpressionTypingInternals"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.types.expressions.GenericArrayClassLiteralSupport"
+    },
+    {
+      "type": "org.jetbrains.kotlin.types.expressions.GenericArrayClassLiteralSupport$Disabled",
+      "fields": [
+        {
+          "name": "INSTANCE"
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.types.expressions.LocalClassifierAnalyzer",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.context.GlobalContext",
+            "org.jetbrains.kotlin.storage.StorageManager",
+            "org.jetbrains.kotlin.resolve.DescriptorResolver",
+            "org.jetbrains.kotlin.resolve.FunctionDescriptorResolver",
+            "org.jetbrains.kotlin.resolve.TypeResolver",
+            "org.jetbrains.kotlin.resolve.AnnotationResolver",
+            "org.jetbrains.kotlin.platform.TargetPlatform",
+            "org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices",
+            "org.jetbrains.kotlin.incremental.components.LookupTracker",
+            "org.jetbrains.kotlin.descriptors.SupertypeLoopChecker",
+            "org.jetbrains.kotlin.config.LanguageVersionSettings",
+            "org.jetbrains.kotlin.resolve.lazy.DelegationFilter",
+            "org.jetbrains.kotlin.types.WrappedTypeFactory",
+            "org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker",
+            "org.jetbrains.kotlin.resolve.sam.SamConversionResolver",
+            "org.jetbrains.kotlin.resolve.AdditionalClassPartsProvider",
+            "org.jetbrains.kotlin.resolve.SealedClassInheritorsProvider",
+            "org.jetbrains.kotlin.cfg.ControlFlowInformationProvider$Factory",
+            "org.jetbrains.kotlin.resolve.lazy.AbsentDescriptorHandler"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.types.expressions.ValueParameterResolver",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jetbrains.kotlin.types.expressions.ExpressionTypingServices",
+            "org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator",
+            "org.jetbrains.kotlin.config.LanguageVersionSettings",
+            "org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.types.extensions.TypeAttributeTranslators"
+    },
+    {
+      "type": "org.jetbrains.kotlin.util.ProgressManagerBasedCancellationChecker"
+    },
+    {
+      "type": "sun.management.VMManagementImpl",
+      "jniAccessible": true,
+      "fields": [
+        {
+          "name": "compTimeMonitoringSupport"
+        },
+        {
+          "name": "currentThreadCpuTimeSupport"
+        },
+        {
+          "name": "objectMonitorUsageSupport"
+        },
+        {
+          "name": "otherThreadCpuTimeSupport"
+        },
+        {
+          "name": "remoteDiagnosticCommandsSupport"
+        },
+        {
+          "name": "synchronizerUsageSupport"
+        },
+        {
+          "name": "threadAllocatedMemorySupport"
+        },
+        {
+          "name": "threadContentionMonitoringSupport"
+        }
+      ]
+    },
+    {
+      "type": "sun.misc.Unsafe",
+      "fields": [
+        {
+          "name": "theUnsafe"
+        }
+      ]
+    },
+    {
+      "type": "sun.security.provider.NativePRNG",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.security.SecureRandomParameters"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "sun.security.provider.SHA",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "sun.text.resources.cldr.FormatData"
+    },
+    {
+      "type": "sun.text.resources.cldr.FormatData_en"
+    },
+    {
+      "type": "sun.text.resources.cldr.FormatData_en_US"
+    },
+    {
+      "type": "sun.util.resources.cldr.TimeZoneNames"
+    },
+    {
+      "type": "sun.util.resources.cldr.TimeZoneNames_en"
+    },
+    {
+      "type": "sun.util.resources.cldr.TimeZoneNames_en_US"
+    },
+    {
+      "type": {
+        "proxy": [
+          "org.jetbrains.kotlin.com.intellij.openapi.command.CommandListener"
+        ]
+      }
+    },
+    {
+      "type": {
+        "proxy": [
+          "org.jetbrains.kotlin.com.intellij.openapi.vfs.VirtualFileListener"
+        ]
+      }
+    },
+    {
+      "type": {
+        "proxy": [
+          "org.jetbrains.kotlin.com.intellij.psi.util.PsiModificationTracker$Listener"
+        ]
+      }
+    }
+  ],
+  "resources": [
+    {
+      "glob": "META-INF/allow-configuring-from-environment"
+    },
+    {
+      "glob": "META-INF/compiler.version"
+    },
+    {
+      "glob": "META-INF/services/java.net.spi.URLStreamHandlerProvider"
+    },
+    {
+      "glob": "META-INF/services/java.nio.file.spi.FileSystemProvider"
+    },
+    {
+      "glob": "META-INF/services/java.time.zone.ZoneRulesProvider"
+    },
+    {
+      "glob": "META-INF/services/kotlin.reflect.jvm.internal.impl.resolve.ExternalOverridabilityCondition"
+    },
+    {
+      "glob": "META-INF/services/kotlin.reflect.jvm.internal.impl.util.ModuleVisibilityHelper"
+    },
+    {
+      "glob": "META-INF/services/org.jetbrains.kotlin.builtins.BuiltInsLoader"
+    },
+    {
+      "glob": "META-INF/services/org.jetbrains.kotlin.com.intellij.platform.diagnostic.telemetry.TelemetryManager"
+    },
+    {
+      "glob": "META-INF/services/org.jetbrains.kotlin.resolve.ExternalOverridabilityCondition"
+    },
+    {
+      "glob": "META-INF/services/org.jetbrains.kotlin.util.ModuleVisibilityHelper"
+    },
+    {
+      "glob": "kotlin/annotation/annotation.kotlin_builtins"
+    },
+    {
+      "glob": "kotlin/collections/collections.kotlin_builtins"
+    },
+    {
+      "glob": "kotlin/concurrent/atomics/atomics.kotlin_builtins"
+    },
+    {
+      "glob": "kotlin/coroutines/coroutines.kotlin_builtins"
+    },
+    {
+      "glob": "kotlin/internal/internal.kotlin_builtins"
+    },
+    {
+      "glob": "kotlin/kotlin.kotlin_builtins"
+    },
+    {
+      "glob": "kotlin/ranges/ranges.kotlin_builtins"
+    },
+    {
+      "glob": "kotlin/reflect/reflect.kotlin_builtins"
+    },
+    {
+      "glob": "misc/registry.override.properties"
+    },
+    {
+      "glob": "misc/registry.properties"
+    },
+    {
+      "glob": "org/jetbrains/kotlin/org/fusesource/jansi/internal/native/Linux/x86_64/libjansi.so"
+    },
+    {
+      "glob": "org/jetbrains/kotlin/org/fusesource/jansi/jansi.properties"
+    },
+    {
+      "glob": "org/jetbrains/kotlin/utils/PathUtil.class"
+    }
+  ],
+  "foreign": {
+    "downcalls": [
+      {
+        "returnType": "void*",
+        "parameterTypes": [
+          "jlong"
+        ]
+      },
+      {
+        "returnType": "void",
+        "parameterTypes": [
+          "void*"
+        ]
+      }
+    ]
+  }
+}

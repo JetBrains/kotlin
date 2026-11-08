@@ -72,6 +72,37 @@ findJavaVersion() {
     done <<< $("${JAVACMD:=java}" -version 2>&1)
 }
 
+KONAN_HOME="$(findHome)"
+
+# Unset some environment variables which are set by XCode and may potentially affect the tool executed.
+while IFS=$'\r' read -r line || [[ -n "$line" ]]; do
+    unset $line
+done < "${KONAN_HOME}/tools/env_blacklist"
+
+# Opt-in: run the compiler from its GraalVM native image instead of the JVM
+# (see kotlin-native/prepare/kotlin-native-compiler-native-image/README.md).
+# It starts instantly, which matters for the short compilations of an edit-compile loop.
+# Only the compiler is covered: other tools may need reachability metadata the image does not have.
+if [ -n "$KONAN_NATIVE_IMAGE" ] && [ "$TOOL_NAME" = "konanc" ]; then
+    if [ ! -f "$KONAN_NATIVE_IMAGE" ] || [ ! -x "$KONAN_NATIVE_IMAGE" ]; then
+        echo "error: KONAN_NATIVE_IMAGE=$KONAN_NATIVE_IMAGE is not an executable file" >&2
+        exit 1
+    fi
+    # JVM options (`-J...`, `JAVA_OPTS`) are not applicable to the image; system properties (`-D...`) are.
+    image_args=()
+    for arg in "${java_args[@]}"; do
+        case "$arg" in
+          -D*) image_args=("${image_args[@]}" "$arg") ;;
+        esac
+    done
+    # The image has no JAR to locate the Kotlin home from, so it is passed explicitly.
+    LIBCLANG_DISABLE_CRASH_RECOVERY=1 \
+    $TIMECMD "$KONAN_NATIVE_IMAGE" \
+        -Dfile.encoding=UTF-8 -Dkonan.home="$KONAN_HOME" -Dkotlin.home="$KONAN_HOME" \
+        "${image_args[@]}" "$TOOL_NAME" "${konan_args[@]}"
+    exit $?
+fi
+
 java_version="$(findJavaVersion)"
 
 if [[ $java_version -ge 24 ]]; then
@@ -84,8 +115,6 @@ if [[ $java_version -eq 24 ]]; then
     java_args=("${java_args[@]}" "--sun-misc-unsafe-memory-access=allow")
 fi
 
-KONAN_HOME="$(findHome)"
-
 java_opts=(-ea \
             -Xmx3G \
             -XX:TieredStopAtLevel=1 \
@@ -93,14 +122,8 @@ java_opts=(-ea \
             -Dkonan.home="$KONAN_HOME" \
             ${JAVA_OPTS})
 
-# Unset some environment variables which are set by XCode and may potentially affect the tool executed.
-while IFS=$'\r' read -r line || [[ -n "$line" ]]; do
-    unset $line
-done < "${KONAN_HOME}/tools/env_blacklist"
-
 KONAN_JAR="${KONAN_HOME}/konan/lib/kotlin-native-compiler-embeddable.jar"
 KONAN_CLASSPATH="$KONAN_JAR"
 TOOL_CLASS=org.jetbrains.kotlin.cli.utilities.MainKt
 LIBCLANG_DISABLE_CRASH_RECOVERY=1 \
 $TIMECMD "$JAVACMD" "${java_opts[@]}" "${java_args[@]}" -cp "$KONAN_CLASSPATH" "$TOOL_CLASS" "$TOOL_NAME" "${konan_args[@]}"
-
