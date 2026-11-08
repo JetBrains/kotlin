@@ -146,6 +146,21 @@ The fourth root cause is the largest: fourteen findings in the `trackCallees` ma
 
 The other staleness families stayed saturated: the only staleness finding of the campaign is the leave-and-return window above, and no perf findings appeared. The KT-54330 family is now the largest vein in the corpus — three committed tests pin three of its fix surfaces (the regular-class `$default` stub, the is-check typeinfo, the value-class static `$default` stub), and the reduced reproducers cover the rest. It is the clearest candidate for the next fix.
 
+## The sixth campaign
+
+On 2026-11-08 the workflow ran overnight with three rounds of eight targets (52 agents, about 5.6M tokens, about 5.2 hours). It broke the saturation pattern: 8 confirmed findings group into 6 root causes, and 5 of the 6 are new — none has a YouTrack issue today. Five of the six reproduce from a completely fresh cache; only the leave-and-return window is true staleness. Four became failing tests:
+
+| Test | What it pins |
+|---|---|
+| `ungrouped/hashCollidingFileNamesClobberPerFileCache` | The per-file cache id is a bare 32-bit `String.hashCode`: colliding source paths of one module share one cache dir, which the cache build renames over — undefined symbols, or, in the silent window, a dropped `@EagerInitialization` initializer and permanently invisible edits. |
+| `dependencies/objcBoundClassMovedWhileDependentAbsent` | The leave-and-return family with the recorded dependency's file still existing: the class moves to another file while the dependent is away, so an existence check on recorded file ids is not enough — the fix must revalidate content. |
+| `ungrouped/dependencyKlibTestsRunInConsumerTestBinary` | The unconditional `TestsInitializer` lowering runs over fully deserialized dependency klibs during cache builds: a plain `-l` library's `@Test` functions register and run in the consumer's IC test binary, defeating the KT-74223 design. |
+| `ungrouped/internalLinkageReverseBridgeImpl` | ObjC adapter replay (`emitObjCAdapterFromCache`) imports reverse-bridge impls and private-class typeinfo as external symbols while per-file caches emit them with internal linkage — a from-scratch IC link failure. |
+
+Two of the six cannot become corpus tests, each for a different fixture-blind reason. (1) Friend modules are forwarded to a spawned cache build only when a test runner is generated (the incomplete KT-64636 fix), and the fixture unconditionally compiles every executable with `-generate-test-runner` — the exact condition that hides the bug holds in every fixture run. A plain program build (the production case; the reduced reproducer is under `build/kn-ic-fuzz/c6-2026-11-08/promoted/friendModulePropagation/`) loses the fake overrides of inherited internal members and every IC link fails. The existing corpus case `members/internalMethodFakeOverrideInFriendModule` passes only because its `@Test` main opts it into the forwarding path. (2) The flag-eager window needs `-Xir-property-lazy-initialization=disable`, whose strong deprecation warning the fixture promotes to a hard error, so the scenario cannot even compile there; with the flag, files eager only because of it are missing from `ir/eager_init`, and once any file of the library is annotated their constructors are dropped from the link — a silently skipped initializer (reduced under `build/kn-ic-fuzz/c6-2026-11-08/promoted/eagerInitRecording/`). Together with the c5 class-literal window this makes three fixture-blind classes; the fuzzer's KGP-mirrored oracle sees a strictly larger bug space than the regression suite can pin, so these findings live as documented reproducers for their YouTrack issues instead.
+
+Two latent notes from the campaign are worth a look when their areas are touched: a batched clash binding and a cross-library move each left `bin/bitcode_deps` drifted in a file IC did not rebuild (`CACHE_STATE_MISMATCH`, binary still correct).
+
 ## What is not done yet (good next steps)
 
 1. **Add a clean-rebuild comparison to `AbstractNativeIncrementalCompilationTest`, like the JVM IC tests have.** Then every corpus case checks more than its hand-written expectations.
