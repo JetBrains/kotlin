@@ -1,0 +1,37 @@
+// DISABLE_NATIVE: targetFamily=MINGW
+
+
+// lib1 and lib2 both declare a top-level `val vf` in package p. The flat signature of a
+// top-level klib declaration encodes only package+name (p/vf|{}vf[0]), so the two vals share
+// one SymbolTable key: IdSignature carries no library identity.
+//
+// During the IC link, the spawned per-file cache build of lib2's b.kt first binds lib2's own
+// vf in its frontend, then body lowering of callV() inlines lib1's public inline gv(), and
+// the IC-specific InlineFunctionDeserializer (CacheSerializationSupport.kt:133) calls
+// KonanIrLinker.deserializeAllReachableTopLevels(). Deserializing lib1's vf, which is
+// reachable from gv()'s body, goes through IrDeclarationDeserializer.deserializeIrProperty
+// -> SymbolTable.declareProperty -> SymbolTableSlice.declare (ir.tree SymbolTableSlice.kt:36),
+// which finds the existing already-bound symbol (lib2's own val of the same signature) and
+// still invokes the owner factory, so IrPropertyImpl.<init> -> IrSymbolBase.bind throws
+// IllegalStateException "IrPropertySymbolImpl is already bound" -- an internal error
+// ("Please report this problem"). Every IC link fails this way from a completely empty cache
+// (dirty=0; there is no staleness), in the batched and the unbatched cache build alike, while
+// a non-IC build of the same klibs links and runs: the non-IC link never deserializes lib2's
+// unreferenced vf at all (it materializes only the vf pulled in through the inline body), so
+// the two same-signature properties never collide there.
+//
+// The program itself does not need to reference the clashing API: the IC pipeline builds a
+// per-file cache for every klib of the link, and the cache build of lib2 alone crashes. The
+// getter form of both vals (no backing field) is load-bearing: with a backing field the
+// module initializer references the property, the non-IC link deserializes both twins too,
+// and the crash stops being IC-only.
+//
+// KT-89840's batch splitting (splitIntoNonConflictingGroups) logs "SPLITTING BATCH: lib2 and
+// lib1 share a top-level signature: p/vf|..." but cannot help: the clash is between the
+// frontend-bound own declaration and the deserialized dependency declaration inside lib2's
+// own single-file compile, exactly the case that fix disclaims as pre-existing (KT-82172).
+
+MODULES: lib1, lib2, main
+
+STEP 0:
+    libs: lib1, lib2, main

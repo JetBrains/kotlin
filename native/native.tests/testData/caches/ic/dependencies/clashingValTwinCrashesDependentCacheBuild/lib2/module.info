@@ -1,0 +1,5 @@
+STEP 0:
+    dependencies: lib1
+    modifications:
+        U : b.kt -> b.kt
+    added cache: b.kt

@@ -1,0 +1,4 @@
+STEP 0:
+    dependencies: lib1, lib2
+    modifications:
+        U : main.kt -> main.kt
