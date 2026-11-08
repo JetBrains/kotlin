@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.useXcodeMessageStyle
 import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
+import org.jetbrains.kotlin.gradle.targets.native.internal.KotlinInterprocessDirectoryLock
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionTypeProvider
 import org.jetbrains.kotlin.gradle.targets.native.internal.PlatformLibrariesGenerator
 import org.jetbrains.kotlin.gradle.targets.native.konanPropertiesBuildService
@@ -31,7 +32,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import java.io.File
-import java.nio.file.DirectoryNotEmptyException
+import java.nio.file.FileSystemException
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 
@@ -77,9 +78,52 @@ class NativeCompilerDownloader(
             konanDataDir: File,
         ): File = konanDataDir.resolve(getDependencyNameWithOsAndVersion(project))
 
+        /**
+         * Publishes the unpacked Kotlin/Native distribution from [source] to [destination] and reports whether
+         * this caller is the one that installed it.
+         *
+         * @param move performs the actual move; overridable for tests
+         * @return true when this caller published the distribution,
+         *         false when another concurrent installation of [destination] won the race
+         */
+        internal fun publishExtractedDistribution(
+            source: File,
+            destination: File,
+            move: () -> Unit = {
+                // 'source' sits next to 'destination', so this is a rename: the whole distribution, marker
+                // included, appears in one step. REPLACE_EXISTING only ever clears an empty leftover directory.
+                Files.move(source.toPath(), destination.toPath(), StandardCopyOption.REPLACE_EXISTING)
+            },
+        ): Boolean {
+            return try {
+                move()
+                true
+            } catch (e: FileSystemException) {
+                // several projects configured in parallel (for example, with Isolated Projects) may unpack
+                // the same distribution at the same time, and 'Files.move' reports the loser in two shapes:
+                //  - 'DirectoryNotEmptyException' when 'destination' was already occupied when the move
+                //    checked it;
+                //  - a plain 'FileSystemException' with the reason 'Directory not empty' when 'destination'
+                //    appeared between that check and the rename, so the 'rename' itself failed with ENOTEMPTY,
+                //    which the JDK does not translate into 'DirectoryNotEmptyException'.
+                // Both shapes also report 'the move needed copying', which installs nothing, so only read them
+                // as 'another build got here first' when there really is a distribution in place
+                if (!destination.exists()) throw e
+                // writing on top of that one would corrupt what the other build is reading (KT-86251)
+                false
+            }
+        }
+
         internal fun getDependencyNameWithOsAndVersion(project: Project): String {
             return "${getDependencyName(project)}-$simpleOsName-${getCompilerVersion(project)}"
         }
+
+        /**
+         * Checks whether the distribution in [directory] was installed to the end: the marker file is written
+         * only after the unpacked distribution is complete (KT-86251).
+         */
+        internal fun isDistributionProvisioned(directory: File): Boolean =
+            directory.resolve(NativeVersionValueSource.MARKER_FILE).exists()
 
 
         private val simpleOsName = HostManager.platformName()
@@ -196,33 +240,40 @@ class NativeCompilerDownloader(
 
         logger.lifecycle("Unpack Kotlin/Native compiler to $compilerDirectory")
         logger.lifecycleWithDuration("Unpack Kotlin/Native compiler to $compilerDirectory finished,") {
-            val kotlinNativeDir = compilerDirectory.parentFile.also { it.mkdirs() }
-            val tmpDir = Files.createTempDirectory(kotlinNativeDir.toPath(), "compiler-").toFile()
-            try {
-                logger.debug("Unpacking Kotlin/Native compiler to tmp directory $tmpDir")
-                project.copy {
-                    it.from(archiveFileTree(archive))
-                    it.into(tmpDir)
-                }
-                val compilerTmp = tmpDir.resolve(dependencyNameWithOsAndVersion)
-                // the toolchain unpacks the archive over any distribution without this marker (KT-86251), so mark
-                // the tmp tree and let the move below publish the marker together with the distribution
-                NativeVersionValueSource.markAsProvisioned(compilerTmp)
-
-                try {
-                    // 'tmpDir' sits next to 'compilerDirectory', so this is a rename: the whole distribution, marker
-                    // included, appears in one step. REPLACE_EXISTING only ever clears an empty leftover directory.
-                    Files.move(compilerTmp.toPath(), compilerDirectory.toPath(), StandardCopyOption.REPLACE_EXISTING)
-                    logger.debug("Moved Kotlin/Native compiler from $tmpDir to $compilerDirectory")
-                } catch (e: DirectoryNotEmptyException) {
-                    // the same exception also reports 'the move needed copying', which installs nothing, so only
-                    // read it as 'another build got here first' when there really is a distribution in place
-                    if (!compilerDirectory.exists()) throw e
-                    // writing on top of that one would corrupt what the other build is reading (KT-86251)
+            // with parallel project configuration (Isolated Projects), several projects unpack the same
+            // distribution at the same time and race to publish the same compiler directory: the lock
+            // serializes them, and the projects waiting for it observe the winner's finished installation
+            // below and skip the unpack entirely
+            val lock = KotlinInterprocessDirectoryLock(compilerDirectory.parentFile) { message ->
+                logger.info("Kotlin/Native compiler: $message")
+            }
+            lock.withLock {
+                if (isDistributionProvisioned(compilerDirectory)) {
                     logger.debug("Kotlin/Native compiler is already installed in $compilerDirectory")
+                    return@withLock
                 }
-            } finally {
-                tmpDir.deleteRecursively()
+
+                val kotlinNativeDir = compilerDirectory.parentFile.also { it.mkdirs() }
+                val tmpDir = Files.createTempDirectory(kotlinNativeDir.toPath(), "compiler-").toFile()
+                try {
+                    logger.debug("Unpacking Kotlin/Native compiler to tmp directory $tmpDir")
+                    project.copy {
+                        it.from(archiveFileTree(archive))
+                        it.into(tmpDir)
+                    }
+                    val compilerTmp = tmpDir.resolve(dependencyNameWithOsAndVersion)
+                    // the toolchain unpacks the archive over any distribution without this marker (KT-86251), so mark
+                    // the tmp tree and let the move below publish the marker together with the distribution
+                    NativeVersionValueSource.markAsProvisioned(compilerTmp)
+
+                    if (publishExtractedDistribution(compilerTmp, compilerDirectory)) {
+                        logger.debug("Moved Kotlin/Native compiler from $tmpDir to $compilerDirectory")
+                    } else {
+                        logger.debug("Kotlin/Native compiler is already installed in $compilerDirectory")
+                    }
+                } finally {
+                    tmpDir.deleteRecursively()
+                }
             }
         }
     }
