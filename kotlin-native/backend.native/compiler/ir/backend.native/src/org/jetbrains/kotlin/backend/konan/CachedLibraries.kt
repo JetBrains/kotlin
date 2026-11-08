@@ -29,7 +29,6 @@ import kotlin.io.path.bufferedReader
 import kotlin.io.path.exists
 import kotlin.io.path.name
 import kotlin.io.path.readBytes
-import kotlin.io.path.readLines
 
 private class LibraryHashComputer {
     private val hashes = mutableListOf<FingerprintHash>()
@@ -43,6 +42,17 @@ private class LibraryHashComputer {
 
 private fun getArtifactName(target: KonanTarget, baseName: String, kind: CompilerOutputKind) =
         "${kind.prefix(target)}$baseName${kind.suffix(target)}"
+
+/**
+ * Same as [kotlin.io.path.readLines], but reads the whole file at once instead of allocating a buffered reader (with its 8 KB
+ * buffer) and a charset decoder. This matters for the bitcode dependencies of per-file caches: every link reads
+ * such a tiny file for each cached file, e.g. 500+ of them for the standard library alone.
+ */
+private fun Path.readSmallFileLines(): List<String> {
+    val lines = readBytes().decodeToString().lines()
+    // Unlike `readLines()`, `lines()` yields an empty string after the trailing line terminator.
+    return if (lines.last().isEmpty()) lines.dropLast(1) else lines
+}
 
 class CachedLibraries(
         private val configuration: CompilerConfiguration,
@@ -112,7 +122,7 @@ class CachedLibraries(
 
             override fun computeBitcodeDependencies(): List<DependenciesTracker.UnresolvedDependency> {
                 val directory = Path(path).absolute().parent
-                val data = directory.resolve(BITCODE_DEPENDENCIES_FILE_NAME).readLines()
+                val data = directory.resolve(BITCODE_DEPENDENCIES_FILE_NAME).readSmallFileLines()
                 return DependenciesSerializer.deserialize(path, data)
             }
 
@@ -158,7 +168,7 @@ class CachedLibraries(
 
             private val perFileBitcodeDependencies by lazy {
                 existingFileDirs.associate {
-                    val data = it.resolve(PER_FILE_CACHE_BINARY_LEVEL_DIR_NAME).resolve(BITCODE_DEPENDENCIES_FILE_NAME).readLines()
+                    val data = it.resolve(PER_FILE_CACHE_BINARY_LEVEL_DIR_NAME).resolve(BITCODE_DEPENDENCIES_FILE_NAME).readSmallFileLines()
                     it.name to DependenciesSerializer.deserialize(it.absolutePathString(), data)
                 }
             }
