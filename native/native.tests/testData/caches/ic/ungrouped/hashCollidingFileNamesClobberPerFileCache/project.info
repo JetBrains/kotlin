@@ -1,0 +1,30 @@
+// DISABLE_NATIVE: targetFamily=MINGW
+
+
+// "Aa.kt" and "BB.kt" are the classic Java String.hashCode collision: equal length and
+// equal standalone hash (62966231), so the two names collide under any common directory
+// prefix as well. Both files are in the root package of one module, so CacheSupport
+// .cacheFileId ("ROOT." + filePath.hashCode().toString(MAX_RADIX), a bare 32-bit Java
+// String hash with no collision handling) maps them to ONE per-file cache directory.
+//
+// The per-file cache build writes both files' caches into that one directory, and
+// FinalizeCachePhase's renameOutput(overwrite=true) renames the second file's temp cache
+// over the first one's, so only one file's archive survives on disk while the klib still
+// contains both files. The final link then emits the same per-file init id twice (once per
+// file of the klib), LLVM uniquifies the duplicate declaration to a name no archive
+// defines, and the call to the shadowed file's function has no archive to resolve against:
+// every IC link, even from a completely fresh cache, fails with undefined symbols, while a
+// non-IC build of the same klibs links and runs. The change detection is hit as well:
+// CacheBuilder builds its cacheFileId -> file index map with associate, so the shadowed
+// file's entry is overwritten and its later edits are never detected.
+//
+// The same root cause also has a silent wrong-code window (confirmed in the same campaign):
+// when the program happens to reference only the surviving file, the link succeeds but the
+// shadowed file's @EagerInitialization initializer silently never runs. The hash digits in
+// the cache dir name depend on the absolute source path, so an expected-output check must
+// not hard-code them.
+
+MODULES: main
+
+STEP 0:
+    libs: main
