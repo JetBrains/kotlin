@@ -116,6 +116,9 @@ internal sealed class FileSignatureProvider(val irFile: IrFile, val srcFile: Kot
      */
     class DeserializedFromKlib(private val fileDeserializer: IrFileDeserializer, srcFile: KotlinSourceFile) : FileSignatureProvider(fileDeserializer.file, srcFile) {
         override fun getSignatureToIndexMapping(): Map<IdSignature, Int> {
+            // The signatures of the top-level declarations are deserialized lazily. Make sure they are deserialized,
+            // so that they are always reported among the reachable signatures of the file.
+            fileDeserializer.reversedSignatureIndex
             return fileDeserializer.symbolDeserializer.signatureDeserializer.signatureToIndexMapping()
         }
 

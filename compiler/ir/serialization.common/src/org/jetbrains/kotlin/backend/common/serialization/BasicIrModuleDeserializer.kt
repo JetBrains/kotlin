@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.serialization
 
+import org.jetbrains.kotlin.backend.common.linkage.IrDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.IrDeserializationSettings.DeserializeFunctionBodies
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.components.KlibIrComponent
 import org.jetbrains.kotlin.library.components.irOrFail
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
@@ -48,7 +50,21 @@ abstract class BasicIrModuleDeserializer(
     private val _definedPackageNames = mutableSetOf<FqName>()
     override fun getDefinedPackageNames(): Set<FqName>? = _definedPackageNames
 
-    protected val moduleReversedFileIndex = hashMapOf<IdSignature, FileDeserializationState>()
+    private val fileDeserializationStatesByPackage = hashMapOf<FqName, MutableList<FileDeserializationState>>()
+
+    /**
+     * Maps the signature of each top-level declaration of the module to the file declaring it.
+     *
+     * Deserializing the signatures of all top-level declarations of all files takes a noticeable time, while a typical compilation
+     * touches only a part of the files of its dependencies. So the files are indexed lazily, see [findFileDeserializationState].
+     *
+     * This relies on the signature of a top-level declaration having the package of the file declaring it.
+     * [KotlinIrLinker] already relies on that when it looks for the module declaring a signature, see [getDefinedPackageNames].
+     */
+    private val moduleReversedFileIndex = hashMapOf<IdSignature, FileDeserializationState>()
+
+    /** The files that are not yet added to [moduleReversedFileIndex], grouped by package. */
+    private val notIndexedFileDeserializationStatesByPackage = hashMapOf<FqName, ArrayDeque<FileDeserializationState>>()
 
     protected val ir: KlibIrComponent get() = klib.irOrFail
 
@@ -78,12 +94,36 @@ abstract class BasicIrModuleDeserializer(
         }
     }
 
+    /**
+     * Returns the state of the file declaring the top-level declaration with the given signature,
+     * or `null` if there is no such declaration in the module.
+     *
+     * Indexes the files of the package of the signature one by one until the declaration is found.
+     * Top-level signatures are unique within a module, so the rest of the files don't need to be indexed yet.
+     */
+    protected fun findFileDeserializationState(topLevelSignature: IdSignature): FileDeserializationState? {
+        moduleReversedFileIndex[topLevelSignature]?.let { return it }
+        val packageFqName = when (topLevelSignature) {
+            // These don't have a package, and are never top-level declarations of a file.
+            is IdSignature.LocalSignature, is IdSignature.ScopeLocalDeclaration -> return null
+            else -> topLevelSignature.packageFqName()
+        }
+        val notIndexedFileDeserializationStates = notIndexedFileDeserializationStatesByPackage[packageFqName] ?: return null
+        while (notIndexedFileDeserializationStates.isNotEmpty()) {
+            val fileDeserializationState = notIndexedFileDeserializationStates.removeFirst()
+            val fileTopLevelSignatures = fileDeserializationState.fileDeserializer.reversedSignatureIndex.keys
+            fileTopLevelSignatures.forEach { moduleReversedFileIndex[it] = fileDeserializationState }
+            if (topLevelSignature in fileTopLevelSignatures) return fileDeserializationState
+        }
+        return null
+    }
+
     // TODO: fix to topLevel checker
-    override fun contains(idSig: IdSignature): Boolean = idSig.topLevelSignature() in moduleReversedFileIndex
+    override fun contains(idSig: IdSignature): Boolean = findFileDeserializationState(idSig.topLevelSignature()) != null
 
     override fun tryDeserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol? {
         val topLevelSignature = idSig.topLevelSignature()
-        val fileLocalDeserializationState = moduleReversedFileIndex[topLevelSignature] ?: return null
+        val fileLocalDeserializationState = findFileDeserializationState(topLevelSignature) ?: return null
 
         fileLocalDeserializationState.addIdSignature(topLevelSignature)
         moduleDeserializationState.enqueueFile(fileLocalDeserializationState)
@@ -121,11 +161,8 @@ abstract class BasicIrModuleDeserializer(
         )
 
         fileDeserializers[file] = fileDeserializationState.fileDeserializer
-
-        val topLevelDeclarations = fileDeserializationState.fileDeserializer.reversedSignatureIndex.keys
-        topLevelDeclarations.forEach {
-            moduleReversedFileIndex[it] = fileDeserializationState
-        }
+        fileDeserializationStatesByPackage.getOrPut(file.packageFqName) { mutableListOf() } += fileDeserializationState
+        notIndexedFileDeserializationStatesByPackage.getOrPut(file.packageFqName) { ArrayDeque() } += fileDeserializationState
 
         if (fileStrategy.theWholeWorld) {
             fileDeserializationState.enqueueAllDeclarations()
@@ -143,6 +180,12 @@ abstract class BasicIrModuleDeserializer(
     override fun addModuleReachableTopLevel(topLevelDeclarationSignature: IdSignature) {
         moduleDeserializationState.addIdSignature(topLevelDeclarationSignature)
     }
+
+    // Only the files of the package can declare the callable, so don't make the other files deserialize their signatures.
+    override fun getAllMatchingSignatures(callableId: CallableId, signatureKind: IrDeserializer.TopLevelSymbolKind): List<IdSignature> =
+        fileDeserializationStatesByPackage[callableId.packageName].orEmpty().flatMap {
+            it.fileDeserializer.getAllMatchingSignatures(callableId, signatureKind)
+        }
 
     /**
      * Run deserialization of top-level declarations previously scheduled for deserialization in the current module.
@@ -182,7 +225,7 @@ abstract class BasicIrModuleDeserializer(
          * Schedule deserialization of the top-level declaration with the given signature in the given file.
          */
         fun addIdSignature(topLevelDeclarationSignature: IdSignature) {
-            val fileLocalDeserializationState = moduleReversedFileIndex[topLevelDeclarationSignature]
+            val fileLocalDeserializationState = findFileDeserializationState(topLevelDeclarationSignature)
                 ?: error("No IR file found for top-level declaration signature $topLevelDeclarationSignature")
             fileLocalDeserializationState.addIdSignature(topLevelDeclarationSignature)
 

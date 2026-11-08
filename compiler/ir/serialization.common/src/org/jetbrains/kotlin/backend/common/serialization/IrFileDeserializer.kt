@@ -60,14 +60,24 @@ class IrFileDeserializerImpl(
     override val symbolDeserializer: IrSymbolDeserializer,
     override val declarationDeserializer: IrDeclarationDeserializer,
 ) : IrFileDeserializer() {
-    override val reversedSignatureIndex = fileProto.declarationIdList.associateBy { symbolDeserializer.deserializeIdSignature(it) }
+    private val declarationIds: List<Int> = fileProto.declarationIdList
 
-    private val callableIdToSignature = buildMap<CallableId, MutableList<IdSignature>> {
-        reversedSignatureIndex.keys.forEach { idSig ->
-            if (idSig !is IdSignature.CommonSignature) return@forEach
-            if (idSig.isClassSignature()) return@forEach
-            val callableId = CallableId(idSig.packageFqName(), Name.identifier(idSig.declarationFqName))
-            getOrPut(callableId) { mutableListOf() } += idSig
+    /**
+     * Deserialized lazily: a typical compilation touches only a small part of the files of its dependencies,
+     * while deserializing the signatures of all top-level declarations of all files takes a noticeable time.
+     */
+    override val reversedSignatureIndex: Map<IdSignature, Int> by lazy {
+        declarationIds.associateBy { symbolDeserializer.deserializeIdSignature(it) }
+    }
+
+    private val callableIdToSignature by lazy {
+        buildMap<CallableId, MutableList<IdSignature>> {
+            reversedSignatureIndex.keys.forEach { idSig ->
+                if (idSig !is IdSignature.CommonSignature) return@forEach
+                if (idSig.isClassSignature()) return@forEach
+                val callableId = CallableId(idSig.packageFqName(), Name.identifier(idSig.declarationFqName))
+                getOrPut(callableId) { mutableListOf() } += idSig
+            }
         }
     }
 

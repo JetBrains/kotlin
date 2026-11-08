@@ -255,6 +255,6 @@ class IrModuleDeserializerWithBuiltIns(
 
     override fun getAllMatchingSignatures(callableId: CallableId, signatureKind: IrDeserializer.TopLevelSymbolKind): List<IdSignature> {
         irBuiltInsCallableIdMap[callableId]?.let { return it }
-        return super.getAllMatchingSignatures(callableId, signatureKind)
+        return delegate.getAllMatchingSignatures(callableId, signatureKind)
     }
 }

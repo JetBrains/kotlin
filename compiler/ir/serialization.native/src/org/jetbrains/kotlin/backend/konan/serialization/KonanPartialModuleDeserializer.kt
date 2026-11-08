@@ -33,18 +33,8 @@ class KonanPartialModuleDeserializer(
     fun getDeserializationStates(): List<FileDeserializationState> =
         fileDeserializationStates.toList()
 
-    fun getFileDeserializationState(fileSignature: IdSignature) =
-        moduleReversedFileIndex[fileSignature] ?: error("No file deserializer for ${fileSignature.render()}")
-
-    private val idSignatureToFile by lazy {
-        buildMap {
-            fileDeserializationStates.forEach { fileDeserializationState ->
-                fileDeserializationState.fileDeserializer.reversedSignatureIndex.keys.forEach { idSig ->
-                    put(idSig, fileDeserializationState.file)
-                }
-            }
-        }
-    }
+    fun getFileDeserializationState(topLevelSignature: IdSignature) =
+        findFileDeserializationState(topLevelSignature) ?: error("No file deserializer for ${topLevelSignature.render()}")
 
     private val fileReferenceToFileDeserializationState by lazy {
         fileDeserializationStates.associateBy { SerializedFileReference(it.file.packageFqName.asString(), it.file.path) }
@@ -65,7 +55,7 @@ class KonanPartialModuleDeserializer(
             ?: error("Can't find signature of ${declaration.render()}")
         val topLevelIdSig = idSig.topLevelSignature()
         return topLevelIdSig.fileSignature()?.fileName
-            ?: idSignatureToFile[topLevelIdSig]?.path
+            ?: findFileDeserializationState(topLevelIdSig)?.file?.path
             ?: error("No file for $idSig")
     }
 
