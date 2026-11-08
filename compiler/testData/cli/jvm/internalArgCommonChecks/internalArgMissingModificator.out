@@ -1,4 +1,4 @@
-warning: incorrect internal argument syntax, missing modificator: -XXLanguage:SoundSmartCastAfterTry
+warning: incorrect internal argument syntax, missing '+' or '-' modifier: '-XXLanguage:SoundSmartCastAfterTry'.
 compiler/testData/cli/jvm/legacySmartCastsAfterTry.kt:8:10: warning: unused return value of 'length'.
     some.length
          ^^^^^^

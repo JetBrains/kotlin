@@ -149,7 +149,7 @@ class ScriptingWithCliCompilerTest {
             ),
             expectedExitCode = 1,
             expectedSomeErrPatterns = listOf(
-                "error: invalid argument: -abracadabra"
+                "error: invalid argument: '-abracadabra'."
             )
         )
         runWithK2JVMCompiler(
@@ -163,7 +163,7 @@ class ScriptingWithCliCompilerTest {
             ),
             expectedExitCode = 1,
             expectedSomeErrPatterns = listOf(
-                "error: invalid argument: -abracadabra"
+                "error: invalid argument: '-abracadabra'."
             )
         )
     }

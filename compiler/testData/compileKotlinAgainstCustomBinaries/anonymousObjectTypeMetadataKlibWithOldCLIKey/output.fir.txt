@@ -1,4 +1,4 @@
-warning: argument -Xexpect-actual-linker is deprecated. Please use -Xmetadata-klib instead
+warning: argument '-Xexpect-actual-linker' is deprecated. Use '-Xmetadata-klib' instead.
 compiler/testData/compileKotlinAgainstCustomBinaries/anonymousObjectTypeMetadataKlibWithOldCLIKey/anonymousObjectTypeMetadata.kt:11:10: error: cannot access 'val o3: Any': it is private in file.
 val e1 = o3
          ^^

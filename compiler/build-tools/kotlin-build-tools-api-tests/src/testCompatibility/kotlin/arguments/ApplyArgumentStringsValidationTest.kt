@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsLines
+import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputs
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAndPlatformAgnosticCompilationTest
@@ -21,6 +22,9 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.assertThrows
 
 class ApplyArgumentStringsValidationTest : BaseCompilationTest() {
+    // Quoting of the argument was introduced in 2.4.20; older impls under test report it unquoted
+    private val inexistentArgumentError = ".*Invalid argument: '?-inexistent-argument'?\\.?.*".toRegex()
+
     // Old BTA versions throw from applyCommandLineArguments; new versions store the error and report it during executeOperation
     fun KotlinToolchains.isArgumentExceptionDelayedUntilExecution() =
         KotlinToolingVersion(getCompilerVersion()) >= KotlinToolingVersion(2, 4, 20, "snapshot")
@@ -76,13 +80,13 @@ class ApplyArgumentStringsValidationTest : BaseCompilationTest() {
                         val exception = assertThrows<CompilerArgumentsParseException> {
                             it.compilerArguments.applyCommandLineArguments(listOf("-inexistent-argument", "15"))
                         }
-                        assertTrue(exception.message!!.contains("Invalid argument: -inexistent-argument"))
+                        assertTrue(inexistentArgumentError.containsMatchIn(exception.message!!))
                     }
                 },
                 assertions = {
                     if (kotlinToolchain.isArgumentExceptionDelayedUntilExecution()) {
                         expectFail()
-                        assertLogContainsLines(LogLevel.ERROR, "Invalid argument: -inexistent-argument")
+                        assertLogContainsPatterns(LogLevel.ERROR, inexistentArgumentError)
                     }
                 }
             )

@@ -1,2 +1,2 @@
-warning: advanced option value is passed in an obsolete form. Please use the '=' character to specify the value: -Xjsr305=...
+warning: advanced option value is passed in an obsolete form. To specify the value, use the '=' character: '-Xjsr305=...'.
 OK
