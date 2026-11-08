@@ -161,6 +161,22 @@ Two of the six cannot become corpus tests, each for a different fixture-blind re
 
 Two latent notes from the campaign are worth a look when their areas are touched: a batched clash binding and a cross-library move each left `bin/bitcode_deps` drifted in a file IC did not rebuild (`CACHE_STATE_MISMATCH`, binary still correct).
 
+## The seventh campaign
+
+On 2026-11-08 the workflow ran with three rounds of eight targets (60 agents, about 6.4M tokens, about 3.8 hours). 12 findings were confirmed and reduced; they group into 7 root causes (the clashing-declarations family counts once but fails at two different sites). Five became failing tests:
+
+| Test | What it pins |
+|---|---|
+| `dependencies/enumEntryInsertedWhileDependentAbsent` | The leave-and-return family with the change the tracker saw coming: the KT-86110 fix records a strong per-file edge for baked enum ordinals, and no pass ever re-walks it on return. An itable window (returning implementor dispatches through an out-of-bounds slot, SIGBUS) and a vtable window (stale slot constant) are reduced under `build/kn-ic-fuzz/c7-2026-11-08/`. |
+| `ungrouped/moduleKindFlipCrashesCacheSelection` | Cache selection is keyed by library name only: a module flipping from Kotlin to cinterop under one name makes `trySelectCacheAt` offer the per-file leftover to the cinterop library, and `getFilesWithFqNames` throws `No ir component` before the staleness check can run. |
+| `dependencies/clashingValTwinCrashesDependentCacheBuild` | The KT-81760 clashing-declarations family, declare-path window: the per-file cache build deserializing a dependency's inline body re-declares the dependent's already-bound same-signature val and crashes with `IrPropertySymbolImpl is already bound`. |
+| `dependencies/clashingTopLevelFunBindsDependencyTwinInIC` | The same family, reference-path window (KT-91126, still live on HEAD): the IC link binds the dependency's same-signature fun first and silently skips the dependent's own, so the same klibs produce two different programs depending only on `-Xenable-incremental-compilation`. |
+| `ungrouped/externalKlibTestsRunInConsumerTestBinary` | The monolithic auto-cache half of the c6 TestsInitializer leak: an external (`-Xauto-cache-from`) klib's `@Test` functions baked into the auto-cache and run in the consumer's binary — the previously unpinned build path. |
+
+The remaining groups need no new tests: a reconfirmation of the KT-89121 adapter-replay state (its reduction converged exactly to the committed corpus case) and a reconfirmation of the cacheFileId collision (proving the loud face needs no declarations at all — two comment-only colliding files suffice). The friend/runner group stays documented, not pinned: the from-scratch face re-derives the c6 unpinnable window, and the runner-flip face — the campaigns' first `IC_ACCEPTS_BROKEN` verdict, where a friend-built cache is silently reused after the test runner is switched off because neither the cache flavor nor the staleness check records the runner/friends configuration — needs the runner to be *off* at a step, which the fixture's unconditional `-generate-test-runner` makes unreachable. That is now the fourth fixture-blind class.
+
+The discipline is working: every re-derivation converged on a committed test or a documented window, and the fresh veins (spawned-cache-build configuration, identity/hashing, klib deserialization order) produced four of the five new pins. No perf findings appeared for the second campaign in a row.
+
 ## What is not done yet (good next steps)
 
 1. **Add a clean-rebuild comparison to `AbstractNativeIncrementalCompilationTest`, like the JVM IC tests have.** Then every corpus case checks more than its hand-written expectations.
