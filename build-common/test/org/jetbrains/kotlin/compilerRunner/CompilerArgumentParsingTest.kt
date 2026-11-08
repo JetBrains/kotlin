@@ -20,7 +20,7 @@ import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.withNullability
 import kotlin.reflect.jvm.javaField
 import kotlin.test.assertContentEquals
-import kotlin.test.assertNull
+import kotlin.test.assertTrue
 import kotlin.test.fail
 
 class CompilerArgumentParsingTest {
@@ -62,8 +62,7 @@ class CompilerArgumentParsingTest {
         val [_, parsedArguments, _] = runArgFileExpansionTest(type, shortArgumentKeys, compactArgumentValues, true)
         assertEquals(
             true,
-            parsedArguments.errors?.argumentsWithoutValue?.isNotEmpty() == true,
-            "Expected parsedArguments.errors.argumentsWithoutValue to be non-empty."
+            parsedArguments.diagnostics.filterIsInstance<ArgumentParseDiagnostic.ArgumentWithoutValue>().isNotEmpty()
         )
     }
 
@@ -82,10 +81,7 @@ class CompilerArgumentParsingTest {
             compactArgumentValues,
             false
         )
-        assertNull(
-            parsedArguments.errors,
-            "Expected parsedArguments.errors to be null."
-        )
+        assertTrue(parsedArguments.diagnostics.isEmpty())
         assertEqualArguments(arguments, parsedArguments)
         assertEquals(
             argumentsAsStrings,
@@ -219,6 +215,7 @@ fun Random.randomValue(type: KType): Any? {
         type == typeOf<ManualLanguageFeatureSetting>() -> null
         (type.classifier as? KClass<*>)?.isData == true -> null
         type == typeOf<Map<ArgumentField, List<Any>>>() -> null
+        type == typeOf<ArgumentParseDiagnostic>() -> null
         else -> error("Unsupported type '$type'")
     }
 }

@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.*
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.repl.ReplCheckResult
 import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
@@ -380,14 +379,11 @@ abstract class CompileServiceImplBase(
 
         val k2PlatformArgs = compiler.createArguments()
         parseCommandLineArguments(compilerArguments.asList(), k2PlatformArgs)
-        val argumentParseError = validateArgumentsAllErrors(k2PlatformArgs.errors)
 
         val messageCollector = createMessageCollector(servicesFacade, compilationOptions, k2PlatformArgs.allWarningsAsErrors)
 
-        if (argumentParseError.isNotEmpty()) {
-            argumentParseError.forEach {
-                messageCollector.report(CompilerMessageSeverity.ERROR, it)
-            }
+        if (k2PlatformArgs.diagnostics.hasFatalError) {
+            messageCollector.reportCliArgumentFatalDiagnostics(k2PlatformArgs)
             CompileService.CallResult.Good(ExitCode.COMPILATION_ERROR.code)
         } else when (compilationOptions.compilerMode) {
             CompilerMode.JPS_COMPILER -> {

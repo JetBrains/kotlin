@@ -12,35 +12,35 @@ object LanguageSettingsParser {
 
     private val wholePrefix: String = "${INTERNAL_ARGUMENT_PREFIX}Language"
 
-    fun parseInternalArgument(arg: String, errors: ArgumentParseErrors): ManualLanguageFeatureSetting? {
+    fun parseInternalArgument(arg: String, diagnostics: MutableList<ArgumentParseDiagnostic>): ManualLanguageFeatureSetting? {
         if (!arg.startsWith(wholePrefix)) return null
 
         val tail = arg.removePrefix(wholePrefix)
         if (tail.getOrNull(0) != ':') {
-            return errors.reportAndReturnNull("Incorrect internal argument syntax, missing colon: $arg")
+            return diagnostics.addAndReturnNull("Incorrect internal argument syntax, missing colon: $arg")
         }
-        return parseLanguageFeature(tail.substring(1), arg, errors)
+        return parseLanguageFeature(tail.substring(1), arg, diagnostics)
     }
 
     // Expected tail form: ':(+|-)<language feature name>'
-    fun parseLanguageFeature(tail: String, wholeArgument: String, errors: ArgumentParseErrors): ManualLanguageFeatureSetting? {
+    fun parseLanguageFeature(tail: String, wholeArgument: String, diagnostics: MutableList<ArgumentParseDiagnostic>): ManualLanguageFeatureSetting? {
         val modificator = tail.getOrNull(0)
         val languageFeatureState = when (modificator) {
             '+' -> LanguageFeature.State.ENABLED
 
             '-' -> LanguageFeature.State.DISABLED
 
-            else -> return errors.reportAndReturnNull("Incorrect internal argument syntax, missing modificator: $wholeArgument")
+            else -> return diagnostics.addAndReturnNull("Incorrect internal argument syntax, missing modificator: $wholeArgument")
         }
 
         val languageFeatureName = tail.substring(1)
-        if (languageFeatureName.isEmpty()) return errors.reportAndReturnNull("Empty language feature name for internal argument '$wholeArgument'")
+        if (languageFeatureName.isEmpty()) return diagnostics.addAndReturnNull("Empty language feature name for internal argument '$wholeArgument'")
 
         val languageFeature = LanguageFeature.fromString(languageFeatureName)
-            ?: return errors.reportAndReturnNull("Unknown language feature '$languageFeatureName' in passed internal argument '$wholeArgument'")
+            ?: return diagnostics.addAndReturnNull("Unknown language feature '$languageFeatureName' in passed internal argument '$wholeArgument'")
 
         if (languageFeature.testOnly && !areTestOnlyLanguageFeaturesAllowed) {
-            errors.reportAndReturnNull(
+            diagnostics.addAndReturnNull(
                 "Language feature '$languageFeatureName' is test-only and cannot be enabled from command line",
                 isError = true,
             )
@@ -49,12 +49,14 @@ object LanguageSettingsParser {
         return ManualLanguageFeatureSetting(languageFeature, languageFeatureState, wholeArgument)
     }
 
-    private fun ArgumentParseErrors.reportAndReturnNull(
+    private fun MutableList<ArgumentParseDiagnostic>.addAndReturnNull(
         message: String,
         isError: Boolean = false,
     ): Nothing? {
-        val internalArgumentParsingProblems = if (isError) internalArgumentsParsingErrors else internalArgumentsParsingWarnings
-        internalArgumentParsingProblems += message
+        this += if (isError)
+            ArgumentParseDiagnostic.InternalArgumentError(message)
+        else
+            ArgumentParseDiagnostic.InternalArgumentWarning(message)
         return null
     }
 }
