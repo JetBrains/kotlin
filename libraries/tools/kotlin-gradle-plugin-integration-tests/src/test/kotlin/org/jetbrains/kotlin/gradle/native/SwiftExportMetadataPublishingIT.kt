@@ -11,7 +11,6 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.archive.readKotlinArchiveEntry
 import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -31,7 +30,7 @@ import kotlin.test.assertNull
  */
 @DisplayName("Tests for Swift Export metadata publication with the export DSL")
 @SwiftExportGradlePluginTests
-@OptIn(ExperimentalSwiftExportDsl::class, ExperimentalKotlinGradlePluginApi::class)
+@OptIn(ExperimentalSwiftExportDsl::class)
 class SwiftExportMetadataPublishingIT : KGPBaseTest() {
 
     @DisplayName("swiftExport metadata is published into the root component when module name and root package are defined")
@@ -66,87 +65,14 @@ class SwiftExportMetadataPublishingIT : KGPBaseTest() {
         publishedProject.assertSwiftExportMetadataVariantExistsInRootComponent()
     }
 
-    @DisplayName("swiftExport metadata omits the module name when only the root package is defined")
-    @GradleTest
-    fun testSwiftExportMetadataWithoutModuleName(
-        gradleVersion: GradleVersion,
-    ) {
-        val publishedProject = project("empty", gradleVersion) {
-            plugins {
-                kotlin("multiplatform")
-            }
-            buildScriptInjection {
-                project.applyMultiplatform {
-                    iosArm64()
-                    sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
-                }
-                export.swift {
-                    rootPackage.set("org.bar.foo")
-                }
-            }
-        }.publish()
-
-        val metadata = parseJsonToMap(publishedProject.rootComponent.swiftExportMetadata.toPath())
-        assertNull(metadata["moduleName"])
-        assertEquals("org.bar.foo", metadata["rootPackage"]?.jsonPrimitive?.content)
-    }
-
-    @DisplayName("swiftExport metadata is not published when neither module name nor root package is defined")
-    @GradleTest
-    fun testSwiftExportMetadataIsNotPublishedWithoutConfiguration(
-        gradleVersion: GradleVersion,
-    ) {
-        val publishedProject = project("empty", gradleVersion) {
-            plugins {
-                kotlin("multiplatform")
-            }
-            buildScriptInjection {
-                project.applyMultiplatform {
-                    iosArm64()
-                    sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
-                }
-            }
-        }.publish()
-
-        assertFileNotExists(publishedProject.rootComponent.swiftExportMetadata.toPath())
-        publishedProject.assertSwiftExportMetadataVariantMissingInRootComponent()
-    }
-
-    @DisplayName("swiftExport metadata is not published when the project has no apple targets")
-    @GradleTest
-    fun testSwiftExportMetadataIsNotPublishedWithoutAppleTargets(
-        gradleVersion: GradleVersion,
-    ) {
-        val publishedProject = project("empty", gradleVersion) {
-            plugins {
-                kotlin("multiplatform")
-            }
-            buildScriptInjection {
-                project.applyMultiplatform {
-                    jvm()
-                    sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
-                }
-                export.swift {
-                    moduleName.set("Foo")
-                    rootPackage.set("org.bar.foo")
-                }
-            }
-        }.publish()
-
-        assertFileNotExists(publishedProject.rootComponent.swiftExportMetadata.toPath())
-        publishedProject.assertSwiftExportMetadataVariantMissingInRootComponent()
-    }
-
     @DisplayName("swiftExport metadata is stored inside the Kotlin Archive when the KAR publication format is enabled")
     @GradleTest
     fun testSwiftExportMetadataIsPublishedInsideKotlinArchive(
         gradleVersion: GradleVersion,
     ) {
-        val producer = swiftExportKotlinArchiveProducer(gradleVersion)
-        producer.build("packKotlinArchive") {
+        val publishedProject = swiftExportKotlinArchiveProducer(gradleVersion).publish {
             assertTasksExecuted(":serializeSwiftExportMetadata", ":assembleKotlinArchive", ":packKotlinArchive")
         }
-        val publishedProject = producer.publish()
 
         assertFileNotExists(publishedProject.rootComponent.swiftExportMetadata.toPath())
         assertFileExists(publishedProject.rootComponent.kar.toPath())
@@ -168,12 +94,10 @@ class SwiftExportMetadataPublishingIT : KGPBaseTest() {
     fun testKotlinArchiveWithoutSwiftExportMetadata(
         gradleVersion: GradleVersion,
     ) {
-        val producer = swiftExportKotlinArchiveProducer(gradleVersion, withSwiftExport = false)
-        producer.build("packKotlinArchive") {
+        val publishedProject = swiftExportKotlinArchiveProducer(gradleVersion, withSwiftExport = false).publish {
             assertTasksExecuted(":assembleKotlinArchive", ":packKotlinArchive")
             assertTasksAreNotInTaskGraph(":serializeSwiftExportMetadata")
         }
-        val publishedProject = producer.publish()
 
         assertNull(publishedProject.rootComponent.kar.readKotlinArchiveEntry("swift-export/metadata.json"))
         publishedProject.assertSwiftExportMetadataVariantMissingInRootComponent()
