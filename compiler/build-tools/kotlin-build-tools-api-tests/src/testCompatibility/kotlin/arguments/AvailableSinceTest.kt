@@ -385,6 +385,9 @@ class AvailableSinceTest : BaseCompilationTest() {
                     trySet(JsDtsGenerationOperation.EXPORT_SUSPEND_LAMBDAS.availableSinceVersion) {
                         this[JsDtsGenerationOperation.EXPORT_SUSPEND_LAMBDAS] = true
                     }
+                    trySet(JsDtsGenerationOperation.COMPILE_SUSPEND_AS_JS_GENERATOR.availableSinceVersion) {
+                        this[JsDtsGenerationOperation.COMPILE_SUSPEND_AS_JS_GENERATOR] = true
+                    }
                     trySet(JsDtsGenerationOperation.DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY.availableSinceVersion) {
                         this[JsDtsGenerationOperation.DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY] = true
                     }

@@ -129,6 +129,8 @@ internal class JsDtsGenerationOperationImpl private constructor(
         this[COMPILE_LONG_AS_BIG_INT] = linkingOperation.compilerArguments.compileLongAsBigInt
             ?: (target != null && target >= JsEcmaVersion.ES2020)
 
+        this[COMPILE_SUSPEND_AS_JS_GENERATOR] = linkingOperation.compilerArguments.useEsGenerators
+            ?: (target != null && target >= JsEcmaVersion.ES2015)
 
         this[IMPLEMENT_INTERFACES] = languageVersionSettings.supportsFeature(LanguageFeature.JsExportInterfacesInImplementableWay)
         this[EXPORT_SUSPEND_LAMBDAS] = languageVersionSettings.supportsFeature(LanguageFeature.JsExportingSuspendLambdas)
