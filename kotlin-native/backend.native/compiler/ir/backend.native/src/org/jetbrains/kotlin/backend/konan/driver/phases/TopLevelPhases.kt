@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.copyAttributes
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.path
@@ -349,7 +350,7 @@ private fun PhaseEngine<out NativeBackendContext>.splitIntoFragments(
             )
             val dependenciesTracker = DependenciesTrackerImpl(llvmModuleSpecification, config, context, config.librariesToCache.getValue(library))
             val fragment = IrModuleFragmentImpl(input.descriptor)
-            fragment.kotlinLibrary = input.kotlinLibrary
+            fragment.copyAttributes(input)
             fragment.files += file
             if (containsStdlib && cacheDeserializationStrategy.containsKFunctionImpl)
                 fragment.files += files.filter { it.isFunctionInterfaceFile }

@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
+import org.jetbrains.kotlin.ir.declarations.copyAttributes
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.SymbolTable
@@ -98,6 +99,7 @@ class JvmIrCodegenFactory(
         val moduleChunk = sourceFiles.toSet()
         val wholeModule = wholeBackendInput.irModuleFragment
         val moduleCopy = IrModuleFragmentImpl(wholeModule.descriptor)
+        moduleCopy.copyAttributes(wholeModule)
         wholeModule.files.filterTo(moduleCopy.files) { file ->
             file.getKtFile() in moduleChunk
         }

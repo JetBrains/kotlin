@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.backend.utils.extractFirDeclarations
+import org.jetbrains.kotlin.ir.declarations.copyAttributes
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.modules.TargetId
@@ -74,6 +75,7 @@ object JvmLoweringsPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmL
                 configurationForModule.parserMode.treeBased -> {
                     val wholeModule = baseBackendInput.irModuleFragment
                     val moduleCopy = IrModuleFragmentImpl(wholeModule.descriptor)
+                    moduleCopy.copyAttributes(wholeModule)
                     wholeModule.files.filterTo(moduleCopy.files) { file ->
                         file.fileEntry.name in module.getSourceFiles()
                     }
