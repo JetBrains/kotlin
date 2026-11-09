@@ -1,0 +1,8 @@
+main:
+  class JPoint (declared)
+    constructor() (declared)
+    fun getX(): int (declared)
+    var x: int (declared)
+  class KUser (declared)
+    constructor() (declared)
+    fun describe(point: JPoint): Int (declared)

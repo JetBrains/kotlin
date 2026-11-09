@@ -1,0 +1,45 @@
+KdBundle
+├── fragments
+│   └── KdFragment main
+│       └── elements
+│           ├── KdModule mixedJavaKotlin [////PointingToDeclaration/]
+│           │   └── packages: example////PointingToDeclaration/
+│           ├── KdPackage example [example////PointingToDeclaration/]
+│           │   └── declarations: example//toRecord/example.JavaBean#/PointingToDeclaration/, example/JavaBean///PointingToDeclaration/, example/JavaConsumer///PointingToDeclaration/, example/JavaRepository///PointingToDeclaration/, example/KotlinBase///PointingToDeclaration/, example/KotlinBean///PointingToDeclaration/, example/KotlinRecord///PointingToDeclaration/, example/KotlinRepository///PointingToDeclaration/
+│           ├── KdFunction toRecord(): KotlinRecord [example//toRecord/example.JavaBean#/PointingToDeclaration/]
+│           ├── KdClass JavaBean (CLASS) [example/JavaBean///PointingToDeclaration/]
+│           │   └── declarations: example/JavaBean/DEFAULT_COUNT/#/companion/PointingToDeclaration/, example/JavaBean/JavaBean/#kotlin.String/PointingToDeclaration/, example/JavaBean/count/#/PointingToDeclaration/, example/JavaBean/name/#/PointingToDeclaration/
+│           ├── KdProperty DEFAULT_COUNT: int [example/JavaBean/DEFAULT_COUNT/#/companion/PointingToDeclaration/]
+│           ├── KdConstructor(name: String) [example/JavaBean/JavaBean/#kotlin.String/PointingToDeclaration/]
+│           ├── KdProperty count: int [example/JavaBean/count/#/PointingToDeclaration/]
+│           ├── KdProperty name: String [example/JavaBean/name/#/PointingToDeclaration/]
+│           ├── KdClass JavaConsumer (CLASS) [example/JavaConsumer///PointingToDeclaration/]
+│           │   └── declarations: example/JavaConsumer/JavaConsumer/#/PointingToDeclaration/, example/JavaConsumer/convert/#example.JavaBean/PointingToDeclaration/, example/JavaConsumer/describe/#example.KotlinRecord/PointingToDeclaration/, example/JavaConsumer/load/#example.JavaRepository<example.KotlinRecord>/PointingToDeclaration/
+│           ├── KdConstructor() [example/JavaConsumer/JavaConsumer/#/PointingToDeclaration/]
+│           ├── KdFunction convert(bean: JavaBean): KotlinRecord [example/JavaConsumer/convert/#example.JavaBean/PointingToDeclaration/]
+│           ├── KdFunction describe(record: KotlinRecord): String [example/JavaConsumer/describe/#example.KotlinRecord/PointingToDeclaration/]
+│           ├── KdFunction load(repository: JavaRepository<KotlinRecord>): KotlinRecord [example/JavaConsumer/load/#example.JavaRepository<example.KotlinRecord>/PointingToDeclaration/]
+│           ├── KdClass JavaRepository (INTERFACE) [example/JavaRepository///PointingToDeclaration/]
+│           │   └── declarations: example/JavaRepository/find/#java.lang.String/PointingToDeclaration/, example/JavaRepository/save/#T/PointingToDeclaration/
+│           ├── KdFunction find(name: String): T [example/JavaRepository/find/#java.lang.String/PointingToDeclaration/]
+│           ├── KdFunction save(value: T): Unit [example/JavaRepository/save/#T/PointingToDeclaration/]
+│           ├── KdClass KotlinBase (CLASS) [example/KotlinBase///PointingToDeclaration/]
+│           │   └── declarations: example/KotlinBase/KotlinBase/#/PointingToDeclaration/, example/KotlinBase/describe/#example.KotlinRecord/PointingToDeclaration/
+│           ├── KdConstructor() [example/KotlinBase/KotlinBase/#/PointingToDeclaration/]
+│           ├── KdFunction describe(record: KotlinRecord): String [example/KotlinBase/describe/#example.KotlinRecord/PointingToDeclaration/]
+│           ├── KdClass KotlinBean (CLASS) [example/KotlinBean///PointingToDeclaration/]
+│           │   └── declarations: example/KotlinBean/KotlinBean/#kotlin.String/PointingToDeclaration/, example/KotlinBean/count/#/PointingToDeclaration/, example/KotlinBean/name/#/PointingToDeclaration/, example/KotlinBean/rename/#kotlin.String/PointingToDeclaration/
+│           ├── KdConstructor(name: String) [example/KotlinBean/KotlinBean/#kotlin.String/PointingToDeclaration/]
+│           ├── KdInheritedMember originalId=example/JavaBean/count/#/PointingToDeclaration/ [example/KotlinBean/count/#/PointingToDeclaration/]
+│           ├── KdInheritedMember originalId=example/JavaBean/name/#/PointingToDeclaration/ [example/KotlinBean/name/#/PointingToDeclaration/]
+│           ├── KdFunction rename(value: String): String [example/KotlinBean/rename/#kotlin.String/PointingToDeclaration/]
+│           ├── KdClass KotlinRecord (CLASS) [example/KotlinRecord///PointingToDeclaration/]
+│           │   └── declarations: example/KotlinRecord/KotlinRecord/#kotlin.String/PointingToDeclaration/, example/KotlinRecord/name/#/PointingToDeclaration/
+│           ├── KdConstructor(name: String) [example/KotlinRecord/KotlinRecord/#kotlin.String/PointingToDeclaration/]
+│           ├── KdProperty name: String [example/KotlinRecord/name/#/PointingToDeclaration/]
+│           ├── KdClass KotlinRepository (CLASS) [example/KotlinRepository///PointingToDeclaration/]
+│           │   └── declarations: example/KotlinRepository/KotlinRepository/#/PointingToDeclaration/, example/KotlinRepository/find/#kotlin.String/PointingToDeclaration/, example/KotlinRepository/save/#example.KotlinRecord/PointingToDeclaration/
+│           ├── KdConstructor() [example/KotlinRepository/KotlinRepository/#/PointingToDeclaration/]
+│           ├── KdFunction find(name: String): KotlinRecord [example/KotlinRepository/find/#kotlin.String/PointingToDeclaration/]
+│           └── KdFunction save(value: KotlinRecord): Unit [example/KotlinRepository/save/#example.KotlinRecord/PointingToDeclaration/]
+└── expectActualMappings

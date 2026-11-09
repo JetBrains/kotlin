@@ -1,0 +1,18 @@
+bundle.fragments[0].elements[KdElementId(value=example/Types/annotated/#/PointingToDeclaration/)].type:
+KdClassLikeType {
+  annotations = [
+    KdAnnotation {
+      arguments = {}
+      classLikeId = "example/TypeLabel///PointingToDeclaration/"
+    }
+  ]
+  classLikeId = "kotlin/String///PointingToDeclaration/"
+  isEnhancedNullability = false
+  isMarkedNullable = false
+  qualifiers = [
+    KdClassTypeQualifier {
+      name = "String"
+      typeArguments = []
+    }
+  ]
+}
