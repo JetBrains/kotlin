@@ -1,7 +1,6 @@
 /AmbiguousVararg.kt:7:5: error: Overload resolution ambiguity between candidates:
 In package 'root package' of module '<main>':
  --> AmbiguousVararg.kt
-  |
 3 | fun foo(vararg t: String): String
 4 | fun foo(vararg t: Int): String
   |

@@ -1,21 +1,17 @@
 /test.kt:11:10: error: None of the following candidates is applicable:
 In package 'root package' of module '<main>':
- |
  | class Wrap : Any {
  |     ...
  |     static fun createWrap(type: String!, wrapFirstElement: Boolean): Unit
  |     ...
  | }
- |
 reason: Expression '1' of type 'Int' does not conform to value parameter 'type' of type 'String!'.
 
 In package 'root package' of module '<main>':
- |
  | class Wrap : Any {
  |     ...
  |     static fun createWrap(type: Int, wrapFirstElement: Boolean): Unit
  |     ...
  | }
- |
 
 /test.kt:11:24: error: Named arguments are prohibited for non-Kotlin functions.

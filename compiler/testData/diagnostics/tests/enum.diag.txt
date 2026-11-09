@@ -1,21 +1,17 @@
 /enum.kt:31:5: error: Enum entry 'EnumClass.E2' does not implement abstract members:
 In package 'root package' of module '<main>':
   --> enum.kt
-   |
 25 | enum class EnumClass : Enum<EnumClass> {
    |     ...
 37 |     fun foo(): Int
 38 |     val bar: String
 39 | }
-   |
 
 /enum.kt:35:5: error: Enum entry 'EnumClass.E3' does not implement abstract members:
 In package 'root package' of module '<main>':
   --> enum.kt
-   |
 25 | enum class EnumClass : Enum<EnumClass> {
    |     ...
 37 |     fun foo(): Int
 38 |     val bar: String
 39 | }
-   |

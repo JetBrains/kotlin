@@ -40,13 +40,11 @@ In package 'root package' of module '<platform>':
 /common.kt:14:1: error: Platform declaration clash: The following functions have the same IR signature (/param.<get-param>|<get-param>(){}[0]):
 In package 'root package' of module '<common>':
   --> common.kt
-   |
 14 | val param: Int
    |     get(): Int
    |
 In package 'root package' of module '<platform>':
   --> platform.kt
-   |
 25 | val param: Int
    |     get(): Int
    |
@@ -90,13 +88,11 @@ In package 'root package' of module '<platform>':
 /platform.kt:25:1: error: Platform declaration clash: The following functions have the same IR signature (/param.<get-param>|<get-param>(){}[0]):
 In package 'root package' of module '<common>':
   --> common.kt
-   |
 14 | val param: Int
    |     get(): Int
    |
 In package 'root package' of module '<platform>':
   --> platform.kt
-   |
 25 | val param: Int
    |     get(): Int
    |

@@ -1,7 +1,6 @@
 /nothingToOverrideMessage.kt:13:1: error: Class 'Simple' is not abstract and does not implement abstract members:
 In package 'root package' of module '<main>':
   --> nothingToOverrideMessage.kt
-   |
  3 | interface I : Any {
  4 |     fun foo(s: String): Unit
  5 |     fun bar(a: String): Unit
@@ -11,24 +10,20 @@ In package 'root package' of module '<main>':
  9 |     fun quux(a: (String) -> Unit): Unit
 10 |     fun String.corge(): Unit
 11 | }
-   |
 
 /nothingToOverrideMessage.kt:14:5: error: 'foo' overrides nothing. Potential signatures for overriding:
 In package 'root package' of module '<main>':
   --> nothingToOverrideMessage.kt
-   |
  3 | interface I : Any {
  4 |     fun foo(s: String): Unit
    |     ...
 11 | }
-   |
 
 /nothingToOverrideMessage.kt:18:5: error: 'foo' overrides nothing.
 
 /nothingToOverrideMessage.kt:22:1: error: Class 'OverloadedMethods' is not abstract and does not implement abstract members:
 In package 'root package' of module '<main>':
   --> nothingToOverrideMessage.kt
-   |
  3 | interface I : Any {
  4 |     fun foo(s: String): Unit
  5 |     fun bar(a: String): Unit
@@ -38,24 +33,20 @@ In package 'root package' of module '<main>':
  9 |     fun quux(a: (String) -> Unit): Unit
 10 |     fun String.corge(): Unit
 11 | }
-   |
 
 /nothingToOverrideMessage.kt:23:5: error: 'bar' overrides nothing. Potential signatures for overriding:
 In package 'root package' of module '<main>':
   --> nothingToOverrideMessage.kt
-   |
  3 | interface I : Any {
    |     ...
  5 |     fun bar(a: String): Unit
  6 |     fun bar(a: Boolean): Unit
    |     ...
 11 | }
-   |
 
 /nothingToOverrideMessage.kt:26:1: error: Class 'DefaultParameters' is not abstract and does not implement abstract members:
 In package 'root package' of module '<main>':
   --> nothingToOverrideMessage.kt
-   |
  3 | interface I : Any {
  4 |     fun foo(s: String): Unit
  5 |     fun bar(a: String): Unit
@@ -65,23 +56,19 @@ In package 'root package' of module '<main>':
  9 |     fun quux(a: (String) -> Unit): Unit
 10 |     fun String.corge(): Unit
 11 | }
-   |
 
 /nothingToOverrideMessage.kt:27:5: error: 'baz' overrides nothing. Potential signatures for overriding:
 In package 'root package' of module '<main>':
   --> nothingToOverrideMessage.kt
-   |
  3 | interface I : Any {
    |     ...
  7 |     fun baz(a: Int = ...): Unit
    |     ...
 11 | }
-   |
 
 /nothingToOverrideMessage.kt:30:1: error: Class 'VarargParameters' is not abstract and does not implement abstract members:
 In package 'root package' of module '<main>':
   --> nothingToOverrideMessage.kt
-   |
  3 | interface I : Any {
  4 |     fun foo(s: String): Unit
  5 |     fun bar(a: String): Unit
@@ -91,23 +78,19 @@ In package 'root package' of module '<main>':
  9 |     fun quux(a: (String) -> Unit): Unit
 10 |     fun String.corge(): Unit
 11 | }
-   |
 
 /nothingToOverrideMessage.kt:31:5: error: 'qux' overrides nothing. Potential signatures for overriding:
 In package 'root package' of module '<main>':
   --> nothingToOverrideMessage.kt
-   |
  3 | interface I : Any {
    |     ...
  8 |     fun qux(vararg a: String): Unit
    |     ...
 11 | }
-   |
 
 /nothingToOverrideMessage.kt:34:1: error: Class 'FunctionalType' is not abstract and does not implement abstract members:
 In package 'root package' of module '<main>':
   --> nothingToOverrideMessage.kt
-   |
  3 | interface I : Any {
  4 |     fun foo(s: String): Unit
  5 |     fun bar(a: String): Unit
@@ -117,23 +100,19 @@ In package 'root package' of module '<main>':
  9 |     fun quux(a: (String) -> Unit): Unit
 10 |     fun String.corge(): Unit
 11 | }
-   |
 
 /nothingToOverrideMessage.kt:35:5: error: 'quux' overrides nothing. Potential signatures for overriding:
 In package 'root package' of module '<main>':
   --> nothingToOverrideMessage.kt
-   |
  3 | interface I : Any {
    |     ...
  9 |     fun quux(a: (String) -> Unit): Unit
    |     ...
 11 | }
-   |
 
 /nothingToOverrideMessage.kt:38:1: error: Class 'ExtensionFunction' is not abstract and does not implement abstract members:
 In package 'root package' of module '<main>':
   --> nothingToOverrideMessage.kt
-   |
  3 | interface I : Any {
  4 |     fun foo(s: String): Unit
  5 |     fun bar(a: String): Unit
@@ -143,52 +122,41 @@ In package 'root package' of module '<main>':
  9 |     fun quux(a: (String) -> Unit): Unit
 10 |     fun String.corge(): Unit
 11 | }
-   |
 
 /nothingToOverrideMessage.kt:39:5: error: 'corge' overrides nothing. Potential signatures for overriding:
 In package 'root package' of module '<main>':
   --> nothingToOverrideMessage.kt
-   |
  3 | interface I : Any {
    |     ...
 10 |     fun String.corge(): Unit
 11 | }
-   |
 
 /nothingToOverrideMessage.kt:46:1: error: Class 'GenericOverride' is not abstract and does not implement abstract member:
 In package 'root package' of module '<main>':
   --> nothingToOverrideMessage.kt
-   |
 42 | interface Generic<T> : Any {
 43 |     fun foo(t: T): Unit
 44 | }
-   |
 
 /nothingToOverrideMessage.kt:47:5: error: 'foo' overrides nothing. Potential signatures for overriding:
 In package 'root package' of module '<main>':
   --> nothingToOverrideMessage.kt
-   |
 42 | interface Generic<T> : Any {
 43 |     fun foo(t: T): Unit
 44 | }
-   |
 
 /nothingToOverrideMessage.kt:50:1: error: Class 'NonGenericOverride' is not abstract and does not implement abstract member:
 In package 'root package' of module '<main>':
   --> nothingToOverrideMessage.kt
-   |
 42 | interface Generic<T> : Any {
 43 |     fun foo(t: T): Unit
 44 | }
-   |
 
 /nothingToOverrideMessage.kt:51:5: error: 'foo' overrides nothing. Potential signatures for overriding:
 In package 'root package' of module '<main>':
   --> nothingToOverrideMessage.kt
-   |
 42 | interface Generic<T> : Any {
 43 |     fun foo(t: T): Unit
 44 | }
-   |
 
 /nothingToOverrideMessage.kt:59:5: error: 'foo' overrides nothing.

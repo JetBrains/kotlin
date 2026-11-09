@@ -6,13 +6,11 @@ In package '' of module '<main>':
  |
 In package 'root package' of module '<main>':
   --> syntheticAccessorPropertyAndFunSignatureClash.kt
-   |
  3 | class A : Any {
    |     ...
  6 |     fun access$getFoo$p(a: A): Int
    |     ...
 25 | }
-   |
 In source code:
 3 | class A {
   | ^
@@ -24,13 +22,11 @@ In package '' of module '<main>':
  |
 In package 'root package' of module '<main>':
   --> syntheticAccessorPropertyAndFunSignatureClash.kt
-   |
  3 | class A : Any {
    |     ...
  6 |     fun access$getFoo$p(a: A): Int
    |     ...
 25 | }
-   |
 In source code:
 6 |     fun `access$getFoo$p`(a: A): Int = 1
   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -42,13 +38,11 @@ In package '' of module '<main>':
  |
 In package 'root package' of module '<main>':
   --> syntheticAccessorPropertyAndFunSignatureClash.kt
-   |
  3 | class A : Any {
    |     ...
  7 |     fun access$setFoo$p(a: A, d: Int): Unit
    |     ...
 25 | }
-   |
 In source code:
 7 |     fun `access$setFoo$p`(a: A, d: Int) {}
   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -60,13 +54,11 @@ In package '' of module '<main>':
  |
 In package 'root package' of module '<main>':
   --> syntheticAccessorPropertyAndFunSignatureClash.kt
-   |
  3 | class A : Any {
    |     ...
 12 |     fun access$getFoo(a: A): Int
    |     ...
 25 | }
-   |
 In source code:
 12 |     fun `access$getFoo`(a: A): Int = 1
    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -78,13 +70,11 @@ In package '' of module '<main>':
  |
 In package 'root package' of module '<main>':
   --> syntheticAccessorPropertyAndFunSignatureClash.kt
-   |
  3 | class A : Any {
    |     ...
 13 |     fun access$setFoo(a: A, d: Int): Unit
    |     ...
 25 | }
-   |
 In source code:
 13 |     fun `access$setFoo`(a: A, d: Int) {}
    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

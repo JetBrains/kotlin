@@ -1,13 +1,11 @@
 /foo.kt:18:1: error: Platform declaration clash: The following functions have the same IR signature (com.example.klib.serialization.diagnostics/valueSeparateFiles.<get-valueSeparateFiles>|<get-valueSeparateFiles>(){}[0]):
 In package 'com.example.klib.serialization.diagnostics' of module '<main>':
   --> foo.kt
-   |
 18 | val valueSeparateFiles: Int
    |     get(): Int
    |
 In package 'com.example.klib.serialization.diagnostics' of module '<main>':
   --> main.kt
-   |
 32 | val valueSeparateFiles: Int
    |     get(): Int
    |
@@ -27,13 +25,11 @@ In package 'com.example.klib.serialization.diagnostics' of module '<main>':
 /foo.kt:20:1: error: Platform declaration clash: The following functions have the same IR signature (com.example.klib.serialization.diagnostics/myDelegated.<get-myDelegated>|<get-myDelegated>(){}[0]):
 In package 'com.example.klib.serialization.diagnostics' of module '<main>':
   --> main.kt
-   |
 37 | val myDelegated: Int
    |     get(): Int
    |
 In package 'com.example.klib.serialization.diagnostics' of module '<main>':
   --> foo.kt
-   |
 20 | val myDelegated: Long
    |     get(): Long
    |
@@ -65,29 +61,23 @@ In package 'com.example.klib.serialization.diagnostics' of module '<main>':
 /foo.kt:24:1: error: Platform declaration clash: The following functions have the same IR signature (com.example.klib.serialization.diagnostics/extensionValue.<get-extensionValue>|<get-extensionValue>@kotlin.Int(){}[0]):
 In package 'com.example.klib.serialization.diagnostics' of module '<main>':
   --> foo.kt
-   |
 22 | var Int.extensionValue: Int
    |     ...
 24 |     get(): Int
-   |
 In package 'com.example.klib.serialization.diagnostics' of module '<main>':
   --> main.kt
-   |
 39 | val Int.extensionValue: Int
    |     ...
 41 |     get(): Int
-   |
 
 /main.kt:32:1: error: Platform declaration clash: The following functions have the same IR signature (com.example.klib.serialization.diagnostics/valueSeparateFiles.<get-valueSeparateFiles>|<get-valueSeparateFiles>(){}[0]):
 In package 'com.example.klib.serialization.diagnostics' of module '<main>':
   --> foo.kt
-   |
 18 | val valueSeparateFiles: Int
    |     get(): Int
    |
 In package 'com.example.klib.serialization.diagnostics' of module '<main>':
   --> main.kt
-   |
 32 | val valueSeparateFiles: Int
    |     get(): Int
    |
@@ -107,13 +97,11 @@ In package 'com.example.klib.serialization.diagnostics' of module '<main>':
 /main.kt:34:1: error: Platform declaration clash: The following functions have the same IR signature (com.example.klib.serialization.diagnostics/valueSingleFile.<get-valueSingleFile>|<get-valueSingleFile>(){}[0]):
 In package 'com.example.klib.serialization.diagnostics' of module '<main>':
   --> main.kt
-   |
 34 | val valueSingleFile: Int
    |     get(): Int
    |
 In package 'com.example.klib.serialization.diagnostics' of module '<main>':
   --> main.kt
-   |
 35 | val valueSingleFile: String
    |     get(): String
    |
@@ -133,13 +121,11 @@ In package 'com.example.klib.serialization.diagnostics' of module '<main>':
 /main.kt:35:1: error: Platform declaration clash: The following functions have the same IR signature (com.example.klib.serialization.diagnostics/valueSingleFile.<get-valueSingleFile>|<get-valueSingleFile>(){}[0]):
 In package 'com.example.klib.serialization.diagnostics' of module '<main>':
   --> main.kt
-   |
 34 | val valueSingleFile: Int
    |     get(): Int
    |
 In package 'com.example.klib.serialization.diagnostics' of module '<main>':
   --> main.kt
-   |
 35 | val valueSingleFile: String
    |     get(): String
    |
@@ -159,13 +145,11 @@ In package 'com.example.klib.serialization.diagnostics' of module '<main>':
 /main.kt:37:1: error: Platform declaration clash: The following functions have the same IR signature (com.example.klib.serialization.diagnostics/myDelegated.<get-myDelegated>|<get-myDelegated>(){}[0]):
 In package 'com.example.klib.serialization.diagnostics' of module '<main>':
   --> main.kt
-   |
 37 | val myDelegated: Int
    |     get(): Int
    |
 In package 'com.example.klib.serialization.diagnostics' of module '<main>':
   --> foo.kt
-   |
 20 | val myDelegated: Long
    |     get(): Long
    |
@@ -197,103 +181,82 @@ In package 'com.example.klib.serialization.diagnostics' of module '<main>':
 /main.kt:41:1: error: Platform declaration clash: The following functions have the same IR signature (com.example.klib.serialization.diagnostics/extensionValue.<get-extensionValue>|<get-extensionValue>@kotlin.Int(){}[0]):
 In package 'com.example.klib.serialization.diagnostics' of module '<main>':
   --> foo.kt
-   |
 22 | var Int.extensionValue: Int
    |     ...
 24 |     get(): Int
-   |
 In package 'com.example.klib.serialization.diagnostics' of module '<main>':
   --> main.kt
-   |
 39 | val Int.extensionValue: Int
    |     ...
 41 |     get(): Int
-   |
 
 /main.kt:44:5: error: Platform declaration clash: The following functions have the same IR signature (com.example.klib.serialization.diagnostics/Container.valueSameClass.<get-valueSameClass>|<get-valueSameClass>(){}[0]):
 In package 'com.example.klib.serialization.diagnostics' of module '<main>':
   --> main.kt
-   |
 43 | class Container : Any {
 44 |     val valueSameClass: Int
    |         get(): Int
    |         ...
 54 | }
-   |
 In package 'com.example.klib.serialization.diagnostics' of module '<main>':
   --> main.kt
-   |
 43 | class Container : Any {
    |     ...
 45 |     val valueSameClass: Int
    |         get(): Int
    |         ...
 54 | }
-   |
 
 /main.kt:44:5: error: Platform declaration clash: The following properties have the same IR signature (com.example.klib.serialization.diagnostics/Container.valueSameClass|{}valueSameClass[0]):
 In package 'com.example.klib.serialization.diagnostics' of module '<main>':
   --> main.kt
-   |
 43 | class Container : Any {
 44 |     val valueSameClass: Int
    |     ...
 54 | }
-   |
 In package 'com.example.klib.serialization.diagnostics' of module '<main>':
   --> main.kt
-   |
 43 | class Container : Any {
    |     ...
 45 |     val valueSameClass: Int
    |     ...
 54 | }
-   |
 
 /main.kt:45:5: error: Platform declaration clash: The following functions have the same IR signature (com.example.klib.serialization.diagnostics/Container.valueSameClass.<get-valueSameClass>|<get-valueSameClass>(){}[0]):
 In package 'com.example.klib.serialization.diagnostics' of module '<main>':
   --> main.kt
-   |
 43 | class Container : Any {
 44 |     val valueSameClass: Int
    |         get(): Int
    |         ...
 54 | }
-   |
 In package 'com.example.klib.serialization.diagnostics' of module '<main>':
   --> main.kt
-   |
 43 | class Container : Any {
    |     ...
 45 |     val valueSameClass: Int
    |         get(): Int
    |         ...
 54 | }
-   |
 
 /main.kt:45:5: error: Platform declaration clash: The following properties have the same IR signature (com.example.klib.serialization.diagnostics/Container.valueSameClass|{}valueSameClass[0]):
 In package 'com.example.klib.serialization.diagnostics' of module '<main>':
   --> main.kt
-   |
 43 | class Container : Any {
 44 |     val valueSameClass: Int
    |     ...
 54 | }
-   |
 In package 'com.example.klib.serialization.diagnostics' of module '<main>':
   --> main.kt
-   |
 43 | class Container : Any {
    |     ...
 45 |     val valueSameClass: Int
    |     ...
 54 | }
-   |
 
 /main.kt:48:9: error: Platform declaration clash: The following functions have the same IR signature (com.example.klib.serialization.diagnostics/Container.Companion.valueSameClassCompanion.<get-valueSameClassCompanion>|<get-valueSameClassCompanion>(){}[0]):
 In package 'com.example.klib.serialization.diagnostics' of module '<main>':
   --> main.kt
-   |
 43 | class Container : Any {
    |     ...
 47 |     companion object Companion : Any {
@@ -303,10 +266,8 @@ In package 'com.example.klib.serialization.diagnostics' of module '<main>':
 50 |     }
    |     ...
 54 | }
-   |
 In package 'com.example.klib.serialization.diagnostics' of module '<main>':
   --> main.kt
-   |
 43 | class Container : Any {
    |     ...
 47 |     companion object Companion : Any {
@@ -316,12 +277,10 @@ In package 'com.example.klib.serialization.diagnostics' of module '<main>':
 50 |     }
    |     ...
 54 | }
-   |
 
 /main.kt:48:9: error: Platform declaration clash: The following properties have the same IR signature (com.example.klib.serialization.diagnostics/Container.Companion.valueSameClassCompanion|{}valueSameClassCompanion[0]):
 In package 'com.example.klib.serialization.diagnostics' of module '<main>':
   --> main.kt
-   |
 43 | class Container : Any {
    |     ...
 47 |     companion object Companion : Any {
@@ -330,10 +289,8 @@ In package 'com.example.klib.serialization.diagnostics' of module '<main>':
 50 |     }
    |     ...
 54 | }
-   |
 In package 'com.example.klib.serialization.diagnostics' of module '<main>':
   --> main.kt
-   |
 43 | class Container : Any {
    |     ...
 47 |     companion object Companion : Any {
@@ -342,12 +299,10 @@ In package 'com.example.klib.serialization.diagnostics' of module '<main>':
 50 |     }
    |     ...
 54 | }
-   |
 
 /main.kt:49:9: error: Platform declaration clash: The following functions have the same IR signature (com.example.klib.serialization.diagnostics/Container.Companion.valueSameClassCompanion.<get-valueSameClassCompanion>|<get-valueSameClassCompanion>(){}[0]):
 In package 'com.example.klib.serialization.diagnostics' of module '<main>':
   --> main.kt
-   |
 43 | class Container : Any {
    |     ...
 47 |     companion object Companion : Any {
@@ -357,10 +312,8 @@ In package 'com.example.klib.serialization.diagnostics' of module '<main>':
 50 |     }
    |     ...
 54 | }
-   |
 In package 'com.example.klib.serialization.diagnostics' of module '<main>':
   --> main.kt
-   |
 43 | class Container : Any {
    |     ...
 47 |     companion object Companion : Any {
@@ -370,12 +323,10 @@ In package 'com.example.klib.serialization.diagnostics' of module '<main>':
 50 |     }
    |     ...
 54 | }
-   |
 
 /main.kt:49:9: error: Platform declaration clash: The following properties have the same IR signature (com.example.klib.serialization.diagnostics/Container.Companion.valueSameClassCompanion|{}valueSameClassCompanion[0]):
 In package 'com.example.klib.serialization.diagnostics' of module '<main>':
   --> main.kt
-   |
 43 | class Container : Any {
    |     ...
 47 |     companion object Companion : Any {
@@ -384,10 +335,8 @@ In package 'com.example.klib.serialization.diagnostics' of module '<main>':
 50 |     }
    |     ...
 54 | }
-   |
 In package 'com.example.klib.serialization.diagnostics' of module '<main>':
   --> main.kt
-   |
 43 | class Container : Any {
    |     ...
 47 |     companion object Companion : Any {
@@ -396,84 +345,67 @@ In package 'com.example.klib.serialization.diagnostics' of module '<main>':
 50 |     }
    |     ...
 54 | }
-   |
 
 /main.kt:52:5: error: Platform declaration clash: The following properties have the same IR signature (com.example.klib.serialization.diagnostics/Container.valueSameClassExtension|@kotlin.String{}valueSameClassExtension[0]):
 In package 'com.example.klib.serialization.diagnostics' of module '<main>':
   --> main.kt
-   |
 43 | class Container : Any {
    |     ...
 52 |     val String.valueSameClassExtension: String
    |     ...
 54 | }
-   |
 In package 'com.example.klib.serialization.diagnostics' of module '<main>':
   --> main.kt
-   |
 43 | class Container : Any {
    |     ...
 53 |     val String.valueSameClassExtension: String
 54 | }
-   |
 
 /main.kt:52:75: error: Platform declaration clash: The following functions have the same IR signature (com.example.klib.serialization.diagnostics/Container.valueSameClassExtension.<get-valueSameClassExtension>|<get-valueSameClassExtension>@kotlin.String(){}[0]):
 In package 'com.example.klib.serialization.diagnostics' of module '<main>':
   --> main.kt
-   |
 43 | class Container : Any {
    |     ...
 52 |     val String.valueSameClassExtension: String
    |         get(): String
    |         ...
 54 | }
-   |
 In package 'com.example.klib.serialization.diagnostics' of module '<main>':
   --> main.kt
-   |
 43 | class Container : Any {
    |     ...
 53 |     val String.valueSameClassExtension: String
    |         get(): String
 54 | }
-   |
 
 /main.kt:53:5: error: Platform declaration clash: The following properties have the same IR signature (com.example.klib.serialization.diagnostics/Container.valueSameClassExtension|@kotlin.String{}valueSameClassExtension[0]):
 In package 'com.example.klib.serialization.diagnostics' of module '<main>':
   --> main.kt
-   |
 43 | class Container : Any {
    |     ...
 52 |     val String.valueSameClassExtension: String
    |     ...
 54 | }
-   |
 In package 'com.example.klib.serialization.diagnostics' of module '<main>':
   --> main.kt
-   |
 43 | class Container : Any {
    |     ...
 53 |     val String.valueSameClassExtension: String
 54 | }
-   |
 
 /main.kt:53:75: error: Platform declaration clash: The following functions have the same IR signature (com.example.klib.serialization.diagnostics/Container.valueSameClassExtension.<get-valueSameClassExtension>|<get-valueSameClassExtension>@kotlin.String(){}[0]):
 In package 'com.example.klib.serialization.diagnostics' of module '<main>':
   --> main.kt
-   |
 43 | class Container : Any {
    |     ...
 52 |     val String.valueSameClassExtension: String
    |         get(): String
    |         ...
 54 | }
-   |
 In package 'com.example.klib.serialization.diagnostics' of module '<main>':
   --> main.kt
-   |
 43 | class Container : Any {
    |     ...
 53 |     val String.valueSameClassExtension: String
    |         get(): String
 54 | }
-   |

@@ -6,12 +6,10 @@ In package '' of module '<main>':
  |
 In package 'root package' of module '<main>':
   --> signatureClash.kt
-   |
  5 | class A : B {
  6 |     fun getX(): Int
    |     ...
 10 | }
-   |
 In source code:
 5 | class A : B() {
 6 |     fun getX() = 1
@@ -19,51 +17,42 @@ In source code:
 compiler/testData/cli/jvm/diagnosticTests/signatureClash.kt:8:5: error: platform declaration clash: The following declarations have the same JVM signature (getA()I):
 In package 'root package' of module '<main>':
   --> signatureClash.kt
-   |
  5 | class A : B {
    |     ...
  9 |     val a: Int
    |         get(): Int
 10 | }
-   |
 In package 'root package' of module '<main>':
   --> signatureClash.kt
-   |
  5 | class A : B {
    |     ...
  8 |     fun getA(): Int
    |     ...
 10 | }
-   |
 In source code:
 8 |     fun getA(): Int = 1
   |     ^^^^^^^^^^^^^^^
 compiler/testData/cli/jvm/diagnosticTests/signatureClash.kt:9:5: error: platform declaration clash: The following declarations have the same JVM signature (getA()I):
 In package 'root package' of module '<main>':
   --> signatureClash.kt
-   |
  5 | class A : B {
    |     ...
  9 |     val a: Int
    |         get(): Int
 10 | }
-   |
 In package 'root package' of module '<main>':
   --> signatureClash.kt
-   |
  5 | class A : B {
    |     ...
  8 |     fun getA(): Int
    |     ...
 10 | }
-   |
 In source code:
 9 |     val a: Int = 1
   |     ^^^^^^^^^^
 compiler/testData/cli/jvm/diagnosticTests/signatureClash.kt:12:1: error: platform declaration clash: The following declarations have the same JVM signature (getB()I):
 In package 'root package' of module '<main>':
   --> signatureClash.kt
-   |
 13 | val b: Int
    |     get(): Int
    |
@@ -78,7 +67,6 @@ In source code:
 compiler/testData/cli/jvm/diagnosticTests/signatureClash.kt:13:1: error: platform declaration clash: The following declarations have the same JVM signature (getB()I):
 In package 'root package' of module '<main>':
   --> signatureClash.kt
-   |
 13 | val b: Int
    |     get(): Int
    |
@@ -93,12 +81,10 @@ In source code:
 compiler/testData/cli/jvm/diagnosticTests/signatureClash.kt:20:5: error: accidental override: The following declarations have the same JVM signature (getTr()I):
 In package 'root package' of module '<main>':
   --> signatureClash.kt
-   |
 19 | class SubTr : Tr {
 20 |     val tr: Int
    |         get(): Int
 21 | }
-   |
 In package '' of module '<main>':
 --> $TESTDATA_DIR$/signatureClash.kt
  |
@@ -116,13 +102,11 @@ In package '' of module '<main>':
  |
 In package 'root package' of module '<main>':
   --> signatureClash.kt
-   |
 24 | class C : Any {
    |     ...
 26 |     fun access$f(c: C): Unit
    |     ...
 34 | }
-   |
 In source code:
 24 | class C {
    | ^
@@ -134,13 +118,11 @@ In package '' of module '<main>':
  |
 In package 'root package' of module '<main>':
   --> signatureClash.kt
-   |
 24 | class C : Any {
    |     ...
 26 |     fun access$f(c: C): Unit
    |     ...
 34 | }
-   |
 In source code:
 26 |     fun `access$f`(c: C) {}
    |     ^^^^^^^^^^^^^^^^^^^^

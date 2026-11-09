@@ -24,8 +24,8 @@ abstract class D {
     abstract val d: @An Int
 }
 
-<!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED("Class 'E'; member:In package 'root package' of module '<main>':  --> notImplementedMembers.kt   |21 | class D : Any {   |     ...23 |     val d: Int   |     ...25 | }   |"), ABSTRACT_MEMBER_NOT_IMPLEMENTED("Class 'E'; member:In package 'root package' of module '<main>':  --> notImplementedMembers.kt   | 7 | interface A : Any {   |     ... 9 |     fun a(arg: Int): Unit   |     ...11 | }   |")!>class E<!> : D(), A
-<!ABSTRACT_MEMBER_NOT_IMPLEMENTED("Class 'F'; member:In package 'root package' of module '<main>':  --> notImplementedMembers.kt   | 7 | interface A : Any {   |     ... 9 |     fun a(arg: Int): Unit   |     ...11 | }   |")!>class F<!> : A
+<!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED("Class 'E'; member:In package 'root package' of module '<main>':  --> notImplementedMembers.kt21 | class D : Any {   |     ...23 |     val d: Int   |     ...25 | }"), ABSTRACT_MEMBER_NOT_IMPLEMENTED("Class 'E'; member:In package 'root package' of module '<main>':  --> notImplementedMembers.kt 7 | interface A : Any {   |     ... 9 |     fun a(arg: Int): Unit   |     ...11 | }")!>class E<!> : D(), A
+<!ABSTRACT_MEMBER_NOT_IMPLEMENTED("Class 'F'; member:In package 'root package' of module '<main>':  --> notImplementedMembers.kt 7 | interface A : Any {   |     ... 9 |     fun a(arg: Int): Unit   |     ...11 | }")!>class F<!> : A
 
 @An
 interface G {

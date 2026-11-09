@@ -15,7 +15,6 @@ reason: Type parameter 'T (of 'class C<T>')' is not an expression.
 /typeParameterAsExpression.kt:12:6: error: Conflicting declarations:
 In package 'root package' of module '<main>':
   --> typeParameterAsExpression.kt
-   |
 12 | T (of 'fun <T, T> f')
    | T (of 'fun <T, T> f')
    |
@@ -23,7 +22,6 @@ In package 'root package' of module '<main>':
 /typeParameterAsExpression.kt:12:9: error: Conflicting declarations:
 In package 'root package' of module '<main>':
   --> typeParameterAsExpression.kt
-   |
 12 | T (of 'fun <T, T> f')
    | T (of 'fun <T, T> f')
    |

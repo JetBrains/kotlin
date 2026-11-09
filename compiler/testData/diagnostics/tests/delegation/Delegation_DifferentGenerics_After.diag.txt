@@ -1,7 +1,6 @@
 /KC.kt:67:1: error: Class 'KC' is not abstract and does not implement abstract members:
 In package 'root package' of module '<main>':
   --> KI.kt
-   |
 57 | interface KI : Any {
 58 |     fun <C> foo(): List<C>
    |     ...
@@ -9,97 +8,77 @@ In package 'root package' of module '<main>':
    |     ...
 62 |     fun <E, F> bar(): List<F>
 63 | }
-   |
 
 /KC.kt:68:5: error: 'foo' overrides nothing. Potential signatures for overriding:
 In package 'root package' of module '<main>':
   --> KI.kt
-   |
 57 | interface KI : Any {
 58 |     fun <C> foo(): List<C>
    |     ...
 63 | }
-   |
 
 /KC.kt:68:14: error: Conflicting overloads:
 In package 'root package' of module '<main>':
   --> KC.kt
-   |
 67 | class KC : KI {
 68 |     fun foo(): List<String>
    |     ...
 73 | }
-   |
 In package 'root package' of module '<main>':
   --> KI.kt
-   |
 57 | interface KI : Any {
 58 |     fun <C> foo(): List<C>
    |     ...
 63 | }
-   |
 
 /KC.kt:70:5: error: 'baz' overrides nothing. Potential signatures for overriding:
 In package 'root package' of module '<main>':
   --> KI.kt
-   |
 57 | interface KI : Any {
    |     ...
 60 |     fun <D> baz(): D
    |     ...
 63 | }
-   |
 
 /KC.kt:70:14: error: Conflicting overloads:
 In package 'root package' of module '<main>':
   --> KC.kt
-   |
 67 | class KC : KI {
    |     ...
 70 |     fun baz(): Any
    |     ...
 73 | }
-   |
 In package 'root package' of module '<main>':
   --> KI.kt
-   |
 57 | interface KI : Any {
    |     ...
 60 |     fun <D> baz(): D
    |     ...
 63 | }
-   |
 
 /KC.kt:72:5: error: 'bar' overrides nothing. Potential signatures for overriding:
 In package 'root package' of module '<main>':
   --> KI.kt
-   |
 57 | interface KI : Any {
    |     ...
 62 |     fun <E, F> bar(): List<F>
 63 | }
-   |
 
 /KC.kt:72:14: error: Conflicting overloads:
 In package 'root package' of module '<main>':
   --> KC.kt
-   |
 67 | class KC : KI {
    |     ...
 72 |     fun bar(): List<Int>
 73 | }
-   |
 In package 'root package' of module '<main>':
   --> KI.kt
-   |
 57 | interface KI : Any {
    |     ...
 62 |     fun <E, F> bar(): List<F>
 63 | }
-   |
 /KJC.kt:77:1: error: Class 'KJC' is not abstract and does not implement abstract members:
 In package 'root package' of module '<main>':
- |
  | interface JI : Any {
  |     ...
  |     fun <E : Any!, F : Any!> bar(): (Mutable)List<F!>!
@@ -109,92 +88,73 @@ In package 'root package' of module '<main>':
  |     fun <C : Any!> foo(): (Mutable)List<C!>!
  |     ...
  | }
- |
 
 /KJC.kt:78:5: error: 'foo' overrides nothing. Potential signatures for overriding:
 In package 'root package' of module '<main>':
- |
  | interface JI : Any {
  |     ...
  |     fun <C : Any!> foo(): (Mutable)List<C!>!
  |     ...
  | }
- |
 
 /KJC.kt:78:14: error: Conflicting overloads:
 In package 'root package' of module '<main>':
   --> KJC.kt
-   |
 77 | class KJC : JI {
 78 |     fun foo(): List<String>
    |     ...
 83 | }
-   |
 In package 'root package' of module '<main>':
- |
  | interface JI : Any {
  |     ...
  |     fun <C : Any!> foo(): (Mutable)List<C!>!
  |     ...
  | }
- |
 
 /KJC.kt:80:5: error: 'baz' overrides nothing. Potential signatures for overriding:
 In package 'root package' of module '<main>':
- |
  | interface JI : Any {
  |     ...
  |     fun <D : Any!> baz(): D!
  |     ...
  | }
- |
 
 /KJC.kt:80:14: error: Conflicting overloads:
 In package 'root package' of module '<main>':
   --> KJC.kt
-   |
 77 | class KJC : JI {
    |     ...
 80 |     fun baz(): Any
    |     ...
 83 | }
-   |
 In package 'root package' of module '<main>':
- |
  | interface JI : Any {
  |     ...
  |     fun <D : Any!> baz(): D!
  |     ...
  | }
- |
 
 /KJC.kt:82:5: error: 'bar' overrides nothing. Potential signatures for overriding:
 In package 'root package' of module '<main>':
- |
  | interface JI : Any {
  |     ...
  |     fun <E : Any!, F : Any!> bar(): (Mutable)List<F!>!
  |     ...
  | }
- |
 
 /KJC.kt:82:14: error: Conflicting overloads:
 In package 'root package' of module '<main>':
   --> KJC.kt
-   |
 77 | class KJC : JI {
    |     ...
 82 |     fun bar(): List<Int>
 83 | }
-   |
 In package 'root package' of module '<main>':
- |
  | interface JI : Any {
  |     ...
  |     fun <E : Any!, F : Any!> bar(): (Mutable)List<F!>!
  |     ...
  | }
- |
 /test.kt:87:24: error: The function 'fun <C : Any!> foo(): (Mutable)List<C!>!' defined in 'JI' from an interface is generic, but the function 'fun foo(): (Mutable)List<String!>!' defined in 'JC' from a delegate is not.
 Such an implementation can provoke runtime errors.
 

@@ -1,12 +1,10 @@
 /kt59590.kt:5:1: error: Platform declaration clash: The following declarations have the same JVM signature (INSTANCELO;):
 In package 'root package' of module '<main>':
  --> kt59590.kt
-  |
 5 | object O : Any {
 6 |     val INSTANCE: O?
   |     ...
 8 | }
-  |
 In package '' of module '<main>':
 --> /kt59590.kt
  |
@@ -16,12 +14,10 @@ In package '' of module '<main>':
 /kt59590.kt:6:5: error: Platform declaration clash: The following declarations have the same JVM signature (INSTANCELO;):
 In package 'root package' of module '<main>':
  --> kt59590.kt
-  |
 5 | object O : Any {
 6 |     val INSTANCE: O?
   |     ...
 8 | }
-  |
 In package '' of module '<main>':
 --> /kt59590.kt
  |

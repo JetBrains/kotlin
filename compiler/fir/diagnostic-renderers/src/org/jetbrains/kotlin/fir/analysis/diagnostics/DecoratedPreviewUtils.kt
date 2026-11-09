@@ -204,23 +204,28 @@ inline fun renderSymbolsWithLocation(
                 else -> RenderedLineWithNumber(number = null, indent = maxOf(previous.indent, next.indent), renderedLine = "...")
             }
         },
-    padding = DecorationPadding.FULL_PADDING,
+    padding = DecorationPadding.PAD_TO_AT_LEAST_3_LINES,
 )
 
 fun renderLocationDecoration(
     header: DecorationHeader,
     renderedLines: List<RenderedLineWithNumber>,
-    padding: DecorationPadding = DecorationPadding.FULL_PADDING,
+    padding: DecorationPadding = DecorationPadding.PAD_TO_AT_LEAST_3_LINES,
 ): String {
     val longestNumberString = renderedLines.mapNotNull { it.number?.toString() }.maxByOrNull { it.length } ?: ""
     val indentString = " ".repeat(longestNumberString.length)
     var previousNumber: Int? = null
 
-    val paddedRenderedLines = renderedLines.joinToString("\n") {
+    val paddedLines = renderedLines.map {
         val numberString = it.number?.takeIf { it != previousNumber }?.toString()?.padStart(indentString.length, ' ') ?: indentString
         previousNumber = it.number
         "$numberString | " + "    ".repeat(it.indent) + it.renderedLine
     }
+    val paddedRenderedLines = paddedLines.joinToString("\n")
+    val padding = DecorationPadding(
+        padTop = padding != DecorationPadding.NONE && paddedLines.size <= 1,
+        padBottom = padding != DecorationPadding.NONE && paddedLines.size <= 2,
+    )
 
     return renderLocationDecoration(header, indentString, paddedRenderedLines, padding)
 }
@@ -243,16 +248,18 @@ sealed class DecorationHeader {
     data object None : DecorationHeader()
 }
 
-enum class DecorationPadding(val padTop: Boolean, val padBottom: Boolean) {
-    FULL_PADDING(padTop = true, padBottom = true),
-    NONE(padTop = false, padBottom = false),
+class DecorationPadding(val padTop: Boolean, val padBottom: Boolean) {
+    companion object {
+        val PAD_TO_AT_LEAST_3_LINES: DecorationPadding = DecorationPadding(padTop = false, padBottom = true)
+        val NONE: DecorationPadding = DecorationPadding(padTop = false, padBottom = false)
+    }
 }
 
 private fun renderLocationDecoration(
     header: DecorationHeader,
     indentString: String,
     content: String,
-    padding: DecorationPadding = DecorationPadding.FULL_PADDING,
+    padding: DecorationPadding = DecorationPadding.PAD_TO_AT_LEAST_3_LINES,
 ): String = listOfNotNull(
     when (header) {
         is Candidates -> header.logicalLocation.let { [packageName, moduleName] -> "In package '$packageName' of module '$moduleName':" }

@@ -1,57 +1,45 @@
 compiler/testData/cli/jvm/readingConfigFromEnvironment/simple.kt:2:15: error: [NONE_APPLICABLE] None of the following candidates is applicable for expression '1 + ""':
 In package 'kotlin' of module '<regular dependencies of main>':
- |
  | class Int : Number, Comparable<Int>, Serializable {
  |     ...
  |     fun plus(other: Int): Int
  |     ...
  | }
- |
 reason: Expression '""' of type 'String' does not conform to value parameter 'other' of type 'Int'.
 In package 'kotlin' of module '<regular dependencies of main>':
- |
  | class Int : Number, Comparable<Int>, Serializable {
  |     ...
  |     fun plus(other: Byte): Int
  |     ...
  | }
- |
 reason: Expression '""' of type 'String' does not conform to value parameter 'other' of type 'Byte'.
 In package 'kotlin' of module '<regular dependencies of main>':
- |
  | class Int : Number, Comparable<Int>, Serializable {
  |     ...
  |     fun plus(other: Short): Int
  |     ...
  | }
- |
 reason: Expression '""' of type 'String' does not conform to value parameter 'other' of type 'Short'.
 In package 'kotlin' of module '<regular dependencies of main>':
- |
  | class Int : Number, Comparable<Int>, Serializable {
  |     ...
  |     fun plus(other: Long): Long
  |     ...
  | }
- |
 reason: Expression '""' of type 'String' does not conform to value parameter 'other' of type 'Long'.
 In package 'kotlin' of module '<regular dependencies of main>':
- |
  | class Int : Number, Comparable<Int>, Serializable {
  |     ...
  |     fun plus(other: Float): Float
  |     ...
  | }
- |
 reason: Expression '""' of type 'String' does not conform to value parameter 'other' of type 'Float'.
 In package 'kotlin' of module '<regular dependencies of main>':
- |
  | class Int : Number, Comparable<Int>, Serializable {
  |     ...
  |     fun plus(other: Double): Double
  |     ...
  | }
- |
 reason: Expression '""' of type 'String' does not conform to value parameter 'other' of type 'Double'.
 In source code:
 1 | fun main() {
