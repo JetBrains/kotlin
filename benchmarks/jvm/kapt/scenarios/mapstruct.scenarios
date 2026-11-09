@@ -1,0 +1,40 @@
+# mapstruct-sample benchmark scenarios — 3 sizes.
+
+mapstruct_small {
+    title = "mapstruct-sample small (100 classes)"
+    tasks = [":samples:mapstruct-sample:kaptKotlin"]
+    cleanup-tasks = [":samples:mapstruct-sample:clean"]
+    gradle-args = [
+        "-PsampleSize=small",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "-Dorg.gradle.parallel=false"
+    ]
+    warm-ups = 2
+    iterations = 20
+}
+
+mapstruct_medium {
+    title = "mapstruct-sample medium (500 classes)"
+    tasks = [":samples:mapstruct-sample:kaptKotlin"]
+    cleanup-tasks = [":samples:mapstruct-sample:clean"]
+    gradle-args = [
+        "-PsampleSize=medium",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "-Dorg.gradle.parallel=false"
+    ]
+    warm-ups = 2
+    iterations = 20
+}
+
+mapstruct_large {
+    title = "mapstruct-sample large (2000 classes)"
+    tasks = [":samples:mapstruct-sample:kaptKotlin"]
+    cleanup-tasks = [":samples:mapstruct-sample:clean"]
+    gradle-args = [
+        "-PsampleSize=large",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "-Dorg.gradle.parallel=false"
+    ]
+    warm-ups = 2
+    iterations = 20
+}
