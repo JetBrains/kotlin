@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupport
 import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvider
 import org.jetbrains.kotlin.backend.common.serialization.BasicIrModuleDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
+import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategyResolver
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
 import org.jetbrains.kotlin.backend.konan.NativeSecondStageCompilationConfig
@@ -70,8 +71,10 @@ class KlibFactsGeneratorImpl internal constructor(
     override fun generateFactsFrom(kotlinLibrary: KotlinLibrary): FactsTracker {
         val symbolTable = SymbolTable(KonanIdSignaturer(KonanManglerDesc), IrFactoryImpl)
         val linker = FactsIrLinker(symbolTable)
-        val irModule = linker.deserializeFullModule(createFakeModuleDescriptor(kotlinLibrary), kotlinLibrary)
-        linker.modulesWithReachableTopLevels.forEach(IrModuleDeserializer::deserializeReachableDeclarations)
+        val irModule = linker.createAndRegisterModuleDeserializer(
+                createFakeModuleDescriptor(kotlinLibrary), kotlinLibrary, DeserializationStrategy.ALL
+        ).moduleFragment
+        linker.deserializeAllReachableTopLevels()
 
         if (threadsCount == 1) {
             return FactsTrackerImpl().apply {
@@ -115,7 +118,7 @@ private class FactsIrLinker(symbolTable: SymbolTable) : KotlinIrLinker(symbolTab
     override val irMangler: KotlinMangler.IrMangler = KonanManglerIr
 
     override val fakeOverrideBuilder = IrLinkerFakeOverrideProvider(
-            linker = this,
+            fileLocalSymbolProvider = fileLocalSymbolProvider,
             symbolTable = symbolTable,
             mangler = irMangler,
             friendModules = emptyMap(),
@@ -127,7 +130,7 @@ private class FactsIrLinker(symbolTable: SymbolTable) : KotlinIrLinker(symbolTab
     override fun createModuleDeserializer(
             moduleFragment: IrModuleFragment,
             klib: KotlinLibrary?,
-            strategyResolver: (String) -> DeserializationStrategy,
+            strategyResolver: DeserializationStrategyResolver,
     ): IrModuleDeserializer = FactsModuleDeserializer(
             moduleFragment = moduleFragment,
             klib = klib ?: error("Expecting kotlin library for $moduleFragment"),
@@ -139,7 +142,7 @@ private class FactsIrLinker(symbolTable: SymbolTable) : KotlinIrLinker(symbolTab
     private inner class FactsModuleDeserializer(
             moduleFragment: IrModuleFragment,
             klib: KotlinLibrary,
-            strategyResolver: (String) -> DeserializationStrategy,
+            strategyResolver: DeserializationStrategyResolver,
     ) : BasicIrModuleDeserializer(
             linker = this,
             moduleFragment = moduleFragment,
