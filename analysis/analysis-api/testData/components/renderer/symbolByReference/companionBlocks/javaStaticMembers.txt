@@ -1,9 +1,11 @@
 open class JavaClass {
   open fun instanceMethod()
 
-  open fun staticMethod()
-
-  var STATIC_FIELD: kotlin.Int
-
   var instanceField: kotlin.Int
+
+  companion {
+    open fun staticMethod()
+
+    var STATIC_FIELD: kotlin.Int
+  }
 }

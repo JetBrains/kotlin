@@ -2,13 +2,17 @@ enum class E {
   A,
   B;
 
-  fun fromName(name: String): E
-
   fun regular()
+
+  companion {
+    fun fromName(name: String): E
+  }
 }
 
 enum class OnlyEntriesAndCompanionBlock {
   A;
 
-  val default: OnlyEntriesAndCompanionBlock
+  companion {
+    val default: OnlyEntriesAndCompanionBlock
+  }
 }

@@ -3,17 +3,19 @@ class Owner {
     fun bar()
   }
 
-  const val CONST: String
+  companion {
+    const val CONST: String
 
-  fun foo(p: Int): Int
+    fun foo(p: Int): Int
 
-  private fun privateFoo()
+    private fun privateFoo()
 
-  val prop: Int
+    val prop: Int
 
-  var mutableProp: Int
-    get()
-    set(value: Int)
+    var mutableProp: Int
+      get()
+      set(value: Int)
+  }
 }
 
 companion fun Owner.ext(): Int

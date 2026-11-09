@@ -267,7 +267,6 @@ private object SymbolModifiersRenderer : KaPieceRenderer<KaDeclarationSymbol>(Ka
                 addAll(commonModifiers(symbol))
             }
             is KaJavaFieldSymbol -> {
-                // The `static` of a Java field has no Kotlin modifier keyword, so it is rendered by `JavaFieldRenderer` instead.
                 addIfNotNull(visibilityModifier(symbol))
             }
             is KaLocalVariableSymbol -> {
