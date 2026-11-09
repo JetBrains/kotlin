@@ -124,7 +124,7 @@ kotlin {
             api(kotlinStdlib())
         }
         commonTest.dependencies {
-            api(kotlinTest())
+            implementation(kotlinTest())
         }
         jvmTest.dependencies {
             implementation(kotlinTest("junit5"))
