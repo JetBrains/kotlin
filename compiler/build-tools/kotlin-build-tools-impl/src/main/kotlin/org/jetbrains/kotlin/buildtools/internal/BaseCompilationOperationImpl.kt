@@ -58,7 +58,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         compilerArgumentsLogLevel = other.compilerArgumentsLogLevel
         compilerMessageRenderer = other.compilerMessageRenderer
         generateCompilerRefIndex = other.generateCompilerRefIndex
-        compilerRefIndexConfiguration = other.compilerRefIndexConfiguration
+        compilerRefIndexConfiguration = other.compilerRefIndexConfiguration?.deepCopy()
         icEventCollector = other.icEventCollector
     }
 
@@ -106,8 +106,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
 
     internal var generateCompilerRefIndex: Boolean = false
 
-    @Transient
-    internal var compilerRefIndexConfiguration: CompilerRefIndexConfiguration? = null
+    internal var compilerRefIndexConfiguration: CompilerRefIndexConfigurationImpl? = null
 
     @Transient
     var icEventCollector: IcEventCollector? = null
