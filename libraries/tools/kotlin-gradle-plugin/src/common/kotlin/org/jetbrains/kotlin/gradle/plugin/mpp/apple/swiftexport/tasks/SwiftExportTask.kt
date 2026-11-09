@@ -197,7 +197,7 @@ internal abstract class SwiftExportTask @Inject constructor(
             .sorted()
 
     /**
-     * The consumer-side module option overrides declared via the `export { swift { xcodeIntegration { configure(…) } } }` DSL,
+     * The consumer-side module option overrides declared via `configure(…)` of the [integrationDsl] block,
      * keyed by the dependency they apply to (external `group:name` coordinates or a project path).
      *
      * Held as `@Internal` because [SwiftExportDependencySelector] and [SwiftExportDeclaredModuleOptions] wrap plain
@@ -206,6 +206,12 @@ internal abstract class SwiftExportTask @Inject constructor(
      */
     @get:Internal
     abstract val dependencyOptionsOverrides: MapProperty<SwiftExportDependencySelector, SwiftExportDeclaredModuleOptions>
+
+    /**
+     * The DSL block of the integration this run belongs to, such as `xcodeIntegration`. Only diagnostics use it.
+     */
+    @get:Internal
+    abstract val integrationDsl: Property<String>
 
     /**
      * Up-to-date tracking projection of [dependencyOptionsOverrides]. It exposes the plain, output-affecting values of
@@ -313,6 +319,7 @@ internal abstract class SwiftExportTask @Inject constructor(
         exportedModules = exportedModules.get(),
         dependencyOptionsOverrides = dependencyOptionsOverrides.get(),
         rootModuleName = mainModuleInput.moduleName.get(),
+        integrationDsl = integrationDsl.get(),
         reportDiagnostic = reportDiagnostic,
     )
 

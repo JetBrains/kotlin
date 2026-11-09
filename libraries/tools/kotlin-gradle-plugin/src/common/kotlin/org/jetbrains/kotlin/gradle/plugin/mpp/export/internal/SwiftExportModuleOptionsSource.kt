@@ -57,7 +57,7 @@ internal fun SwiftExportDeclaredModuleOptions?.overriddenBy(
  *
  * Layers are consulted in order and the first non-null value wins, per property:
  *
- *  1. consumer overrides from `xcodeIntegration { configure(dependency) { } }` (KT-87990); only they set visibility
+ *  1. consumer overrides from the integration's `configure(dependency) { }` (KT-87990); only they set visibility
  *  2. options published by the dependency itself (KT-87987)
  *
  * The derived default applies when no layer declares a value.

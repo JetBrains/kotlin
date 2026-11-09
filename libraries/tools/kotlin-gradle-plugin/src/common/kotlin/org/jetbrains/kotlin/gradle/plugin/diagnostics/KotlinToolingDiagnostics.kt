@@ -1921,8 +1921,9 @@ internal object KotlinToolingDiagnostics {
     object SwiftExportDuplicateModuleNames : ToolingDiagnosticFactory(FATAL, DiagnosticGroup.Kgp.Misconfiguration) {
         /**
          * @param duplicates final Swift module name to the components that produced it
+         * @param integrationDsl the DSL block of the integration that exports them, such as `xcodeIntegration`
          */
-        operator fun invoke(duplicates: Map<String, List<String>>) = build {
+        operator fun invoke(duplicates: Map<String, List<String>>, integrationDsl: String) = build {
             title("Duplicate Swift Module Names")
                 .description {
                     "The following Swift module names are produced by more than one module (compared ignoring case):\n" +
@@ -1932,7 +1933,7 @@ internal object KotlinToolingDiagnostics {
                 }
                 .solution {
                     "Give each module a distinct name with " +
-                            "export { swift { xcodeIntegration { configure(dependency) { moduleName = \"...\" } } } }. " +
+                            "export { swift { $integrationDsl { configure(dependency) { moduleName = \"...\" } } } }. " +
                             "If the collision is with the root module's own name, rename the root module instead with " +
                             "export { swift { moduleName = \"...\" } }."
                 }
