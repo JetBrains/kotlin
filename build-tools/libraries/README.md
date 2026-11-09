@@ -13,6 +13,12 @@ use the library version released with them. The API can change in any Kotlin rel
 deprecation cycle. Each library has an ABI dump that records every change, so changes are visible
 in review.
 
+Libraries depend only on stdlib and the BTA API unless they are split into an API module and an
+implementation module. KGP must not add third-party libraries to Gradle's buildscript classpath. So
+when an implementation needs kotlinx-coroutines, kotlinx-serialization or similar, KGP uses only the
+API module and runs the implementation in an isolated worker.
+[AGENTS.md](AGENTS.md#loading-an-implementation-in-kgp) has the details.
+
 ## Layout
 
 | What        | Value                                        |
