@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -35,7 +34,7 @@ class BuildStatisticsIT : KGPBaseTest() {
     fun testHttpReportWithUnknownHost(gradleVersion: GradleVersion) {
         project("incrementalMultiproject", gradleVersion) {
             enableStatisticReports(BuildReportType.HTTP, "https://invalid")
-            build("compileKotlin", "-Pkotlin.internal.build.report.http.use.executor=false", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
+            build("compileKotlin", "-Pkotlin.internal.build.report.http.use.executor=false") {
                 assertOutputContainsExactlyTimes("`kotlin.internal.build.report.http.use.executor` property is for test purposes only")
                 assertOutputContainsExactlyTimes("Http report: Unexpected exception happened: ", 6) //twice for every module and at the end of the build
             }

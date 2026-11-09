@@ -247,7 +247,6 @@ class FusStatisticsIT : KGPBaseTest() {
         ) {
             validateFusFiles(
                 "compileKotlin",
-                buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG),
             ) { fusFiles ->
                 assertFilesCombinedContains(
                     fusFiles,

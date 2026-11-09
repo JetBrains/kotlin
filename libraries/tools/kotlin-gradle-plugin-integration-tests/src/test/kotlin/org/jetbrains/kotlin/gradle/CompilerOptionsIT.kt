@@ -259,7 +259,7 @@ internal class CompilerOptionsIT : KGPBaseTest() {
             )
 
             build("compileKotlin") {
-                assertCompilerArgument(":compileKotlin", "-progressive", logLevel = LogLevel.INFO)
+                assertCompilerArgument(":compileKotlin", "-progressive")
             }
         }
     }
@@ -274,7 +274,7 @@ internal class CompilerOptionsIT : KGPBaseTest() {
             gradleVersion = gradleVersion,
         ) {
             build("compileKotlin") {
-                assertNoCompilerArgument(":compileKotlin", "-progressive", logLevel = LogLevel.INFO)
+                assertNoCompilerArgument(":compileKotlin", "-progressive")
             }
         }
     }

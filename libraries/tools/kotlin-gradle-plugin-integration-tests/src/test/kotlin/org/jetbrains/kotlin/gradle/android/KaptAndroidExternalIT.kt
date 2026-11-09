@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.android
 
-import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.KaptBaseIT
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -201,7 +200,7 @@ open class KaptAndroidExternalIT : KaptBaseIT() {
             "mpp-android-kapt".withPrefix,
             gradleVersion,
             buildOptions = defaultBuildOptions
-                .copy(androidVersion = agpVersion, logLevel = LogLevel.DEBUG),
+                .copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location
         ) {
             build(":shared:compileDebugKotlinAndroid") {

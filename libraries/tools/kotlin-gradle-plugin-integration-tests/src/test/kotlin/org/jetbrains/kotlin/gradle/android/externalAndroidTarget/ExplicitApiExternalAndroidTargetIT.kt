@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.android.externalAndroidTarget
 
-import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInFrontend
@@ -53,7 +52,7 @@ class ExplicitApiExternalAndroidTargetIT : KGPBaseTest() {
             }
             build(":compileAndroidMain") {
                 assertTasksExecuted(":compileAndroidMain")
-                assertNoCompilerArgument(":compileAndroidMain", "-Xexplicit-api=", LogLevel.INFO)
+                assertNoCompilerArgument(":compileAndroidMain", "-Xexplicit-api=")
             }
         }
     }
@@ -98,13 +97,13 @@ class ExplicitApiExternalAndroidTargetIT : KGPBaseTest() {
             }
             build(":compileCommonMainKotlinMetadata") {
                 assertTasksExecuted(":compileCommonMainKotlinMetadata")
-                assertCompilerArgument(":compileCommonMainKotlinMetadata", "-Xexplicit-api=strict", LogLevel.INFO)
+                assertCompilerArgument(":compileCommonMainKotlinMetadata", "-Xexplicit-api=strict")
                 assertOutputDoesNotContain("Visibility must be specified in explicit API mode")
                 assertOutputDoesNotContain("Return type must be specified in explicit API mode")
             }
             buildAndFail(":compileAndroidMain") {
                 assertTasksFailed(":compileAndroidMain")
-                assertCompilerArgument(":compileAndroidMain", "-Xexplicit-api=strict", LogLevel.INFO)
+                assertCompilerArgument(":compileAndroidMain", "-Xexplicit-api=strict")
                 assertOutputContains("Visibility must be specified in explicit API mode")
                 // FIXME: KT-89618
                 if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_7)) {
@@ -152,7 +151,7 @@ class ExplicitApiExternalAndroidTargetIT : KGPBaseTest() {
             }
             buildAndFail(":compileCommonMainKotlinMetadata") {
                 assertTasksFailed(":compileCommonMainKotlinMetadata")
-                assertCompilerArgument(":compileCommonMainKotlinMetadata", "-Xexplicit-api=strict", LogLevel.INFO)
+                assertCompilerArgument(":compileCommonMainKotlinMetadata", "-Xexplicit-api=strict")
                 assertOutputContains("Visibility must be specified in explicit API mode")
                 // FIXME: KT-89618
                 if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_7)) {
@@ -161,7 +160,7 @@ class ExplicitApiExternalAndroidTargetIT : KGPBaseTest() {
             }
             buildAndFail(":compileAndroidMain") {
                 assertTasksFailed(":compileAndroidMain")
-                assertCompilerArgument(":compileAndroidMain", "-Xexplicit-api=strict", LogLevel.INFO)
+                assertCompilerArgument(":compileAndroidMain", "-Xexplicit-api=strict")
                 assertOutputContains("Visibility must be specified in explicit API mode")
                 // FIXME: KT-89618
                 if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_7)) {
@@ -211,13 +210,13 @@ class ExplicitApiExternalAndroidTargetIT : KGPBaseTest() {
             }
             build(":compileCommonMainKotlinMetadata") {
                 assertTasksExecuted(":compileCommonMainKotlinMetadata")
-                assertCompilerArgument(":compileCommonMainKotlinMetadata", "-Xexplicit-api=warning", LogLevel.INFO)
+                assertCompilerArgument(":compileCommonMainKotlinMetadata", "-Xexplicit-api=warning")
                 assertOutputDoesNotContain("Visibility must be specified in explicit API mode")
                 assertOutputDoesNotContain("Return type must be specified in explicit API mode")
             }
             build(":compileAndroidMain") {
                 assertTasksExecuted(":compileAndroidMain")
-                assertCompilerArgument(":compileAndroidMain", "-Xexplicit-api=warning", LogLevel.INFO)
+                assertCompilerArgument(":compileAndroidMain", "-Xexplicit-api=warning")
                 assertOutputContains("Visibility must be specified in explicit API mode")
                 assertOutputContains("Return type must be specified in explicit API mode")
             }
@@ -262,13 +261,13 @@ class ExplicitApiExternalAndroidTargetIT : KGPBaseTest() {
             }
             build(":compileCommonMainKotlinMetadata") {
                 assertTasksExecuted(":compileCommonMainKotlinMetadata")
-                assertCompilerArgument(":compileCommonMainKotlinMetadata", "-Xexplicit-api=warning", LogLevel.INFO)
+                assertCompilerArgument(":compileCommonMainKotlinMetadata", "-Xexplicit-api=warning")
                 assertOutputContains("Visibility must be specified in explicit API mode")
                 assertOutputContains("Return type must be specified in explicit API mode")
             }
             build(":compileAndroidMain") {
                 assertTasksExecuted(":compileAndroidMain")
-                assertCompilerArgument(":compileAndroidMain", "-Xexplicit-api=warning", LogLevel.INFO)
+                assertCompilerArgument(":compileAndroidMain", "-Xexplicit-api=warning")
                 assertOutputContains("Visibility must be specified in explicit API mode")
                 assertOutputContains("Return type must be specified in explicit API mode")
             }
@@ -312,13 +311,13 @@ class ExplicitApiExternalAndroidTargetIT : KGPBaseTest() {
             }
             build(":compileCommonMainKotlinMetadata") {
                 assertTasksExecuted(":compileCommonMainKotlinMetadata")
-                assertCompilerArgument(":compileCommonMainKotlinMetadata", "-Xexplicit-api=warning", LogLevel.INFO)
+                assertCompilerArgument(":compileCommonMainKotlinMetadata", "-Xexplicit-api=warning")
                 assertOutputDoesNotContain("Visibility must be specified in explicit API mode")
                 assertOutputDoesNotContain("Return type must be specified in explicit API mode")
             }
             build(":compileAndroidMain") {
                 assertTasksExecuted(":compileAndroidMain")
-                assertCompilerArgument(":compileAndroidMain", "-Xexplicit-api=warning", LogLevel.INFO)
+                assertCompilerArgument(":compileAndroidMain", "-Xexplicit-api=warning")
                 assertOutputDoesNotContain("Visibility must be specified in explicit API mode")
                 assertOutputDoesNotContain("Return type must be specified in explicit API mode")
             }
@@ -362,13 +361,13 @@ class ExplicitApiExternalAndroidTargetIT : KGPBaseTest() {
             }
             build(":compileCommonMainKotlinMetadata") {
                 assertTasksExecuted(":compileCommonMainKotlinMetadata")
-                assertCompilerArgument(":compileCommonMainKotlinMetadata", "-Xexplicit-api=strict", LogLevel.INFO)
+                assertCompilerArgument(":compileCommonMainKotlinMetadata", "-Xexplicit-api=strict")
                 assertOutputDoesNotContain("Visibility must be specified in explicit API mode")
                 assertOutputDoesNotContain("Return type must be specified in explicit API mode")
             }
             build(":compileAndroidMain") {
                 assertTasksExecuted(":compileAndroidMain")
-                assertCompilerArgument(":compileAndroidMain", "-Xexplicit-api=strict", LogLevel.INFO)
+                assertCompilerArgument(":compileAndroidMain", "-Xexplicit-api=strict")
                 assertOutputDoesNotContain("Visibility must be specified in explicit API mode")
                 assertOutputDoesNotContain("Return type must be specified in explicit API mode")
             }

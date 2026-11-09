@@ -690,7 +690,6 @@ open class KaptIT : KaptBaseIT() {
         project(
             "simple".withPrefix,
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
             val arg = "-Xsuppress-version-warnings"
             buildGradle.modify {
@@ -1131,7 +1130,6 @@ open class KaptIT : KaptBaseIT() {
         project(
             "mpp-kapt-presence".withPrefix,
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
             build(":dac:compileKotlinJvm") {
                 assertTasksExecuted(
@@ -1407,7 +1405,6 @@ open class KaptIT : KaptBaseIT() {
         project(
             "simple".withPrefix,
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
 
             buildGradle.modify {
@@ -1429,7 +1426,7 @@ open class KaptIT : KaptBaseIT() {
 
                 assertCompilerArgument(
                     ":kaptGenerateStubsKotlin",
-                    "plugin:org.jetbrains.kotlin.noarg:annotation=my.custom.Annotation"
+                    "plugin:org.jetbrains.kotlin.noarg:annotation=my.custom.Annotation",
                 )
             }
         }

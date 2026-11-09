@@ -607,7 +607,6 @@ class BuildReportsIT : KGPBaseTest() {
         project(
             "simpleProject", gradleVersion,
             buildOptions = defaultBuildOptions.copy(
-                logLevel = LogLevel.DEBUG,
                 isolatedProjects = IsolatedProjectsMode.ENABLED,
                 buildReport = listOf(BuildReportType.FILE, BuildReportType.JSON)
             )
@@ -694,14 +693,12 @@ class BuildReportsIT : KGPBaseTest() {
             validateFusDirectory(
                 "compileKotlin",
                 buildAction = BuildActions.build,
-                buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
             )
             val kotlinFile = kotlinSourcesDir().resolve("helloWorld.kt")
             kotlinFile.modify { it.replace("ArrayList", "skjfghsjk") }
             validateFusDirectory(
                 "compileKotlin",
                 buildAction = BuildActions.buildAndFail,
-                buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
             )
         }
     }
@@ -947,7 +944,6 @@ class BuildReportsIT : KGPBaseTest() {
     fun testMultipleRuns(gradleVersion: GradleVersion) {
         project(
             "simpleProject", gradleVersion, buildOptions = defaultBuildOptions.copy(
-                logLevel = LogLevel.DEBUG,
                 buildReport = listOf(BuildReportType.FILE)
             )
         ) {

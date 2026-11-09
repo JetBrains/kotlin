@@ -49,7 +49,6 @@ class TryNextIT : KGPBaseTest() {
         project(
             "simpleProject",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
             enableTryNext()
 
@@ -176,9 +175,7 @@ class TryNextIT : KGPBaseTest() {
             "new-mpp-published",
             gradleVersion,
             localRepoDir = localRepository,
-            buildOptions = defaultBuildOptions.copy(
-                logLevel = LogLevel.DEBUG,
-            ).disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             enableTryNext()
 
@@ -209,7 +206,7 @@ class TryNextIT : KGPBaseTest() {
             build(":compileKotlinLinuxX64") {
                 assertTasksExecuted(":compileKotlinLinuxX64")
 
-                val compileTaskOutput = getOutputForTask(":compileKotlinLinuxX64")
+                val compileTaskOutput = getOutputForTask(":compileKotlinLinuxX64", LogLevel.INFO)
                 @Suppress("DEPRECATION")
                 val compilerArgs = parseCompilerArgumentsFromBuildOutput(K2NativeCompilerArguments::class, compileTaskOutput)
                 assert(compilerArgs.languageVersion == nextKotlinLanguageVersion) {
@@ -227,7 +224,6 @@ class TryNextIT : KGPBaseTest() {
         project(
             "commonizeHierarchically",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
             enableTryNext()
 
@@ -240,7 +236,7 @@ class TryNextIT : KGPBaseTest() {
 
                 assertCompilerArgument(":p1:compileCommonMainKotlinMetadata", "-language-version $nextKotlinLanguageVersion")
                 assertCompilerArgument(":p1:compileConcurrentMainKotlinMetadata", "-language-version $nextKotlinLanguageVersion")
-                val taskOutput = getOutputForTask(":p1:compileAppleAndLinuxMainKotlinMetadata")
+                val taskOutput = getOutputForTask(":p1:compileAppleAndLinuxMainKotlinMetadata", LogLevel.INFO)
                 @Suppress("DEPRECATION")
                 val appleAndLinuxMetadataArgs = parseCompilerArgumentsFromBuildOutput(K2NativeCompilerArguments::class, taskOutput)
                 assert(appleAndLinuxMetadataArgs.languageVersion == nextKotlinLanguageVersion) {
@@ -258,7 +254,6 @@ class TryNextIT : KGPBaseTest() {
         project(
             "simpleProject",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
             enableTryNext()
             val version = KotlinVersion.firstNonDeprecated
@@ -286,9 +281,7 @@ class TryNextIT : KGPBaseTest() {
         project(
             "kotlin-js-nodejs-project",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(
-                logLevel = LogLevel.DEBUG,
-            ).disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             enableTryNext()
 

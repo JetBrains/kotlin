@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.gradle.api.logging.LogLevel
 import org.gradle.kotlin.dsl.withType
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.kotlinAndroidExtensionOrNull
@@ -61,8 +60,7 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
                 )
                 assertCompilerArguments(
                     ":compileDebugKotlin",
-                    "-java-parameters", "-module-name my_app_debug",
-                    logLevel = LogLevel.INFO
+                    "-java-parameters", "-module-name my_app_debug"
                 )
             }
         }
@@ -112,8 +110,7 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
                 assertCompilerArguments(
                     ":compileDebugKotlin",
                     "-java-parameters",
-                    "-module-name my_app_debug",
-                    logLevel = LogLevel.INFO
+                    "-module-name my_app_debug"
                 )
             }
         }
@@ -150,13 +147,11 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
 
                 assertCompilerArgument(
                     ":libAndroid:compileDebugKotlin",
-                    "-progressive",
-                    logLevel = LogLevel.INFO
+                    "-progressive"
                 )
                 assertCompilerArgument(
                     ":libAndroid:compileDebugKotlin",
-                    "-opt-in=com.example.roo.requiresOpt.FunTests",
-                    logLevel = LogLevel.INFO
+                    "-opt-in=com.example.roo.requiresOpt.FunTests"
                 )
             }
         }
@@ -197,8 +192,7 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
 
                 assertCompilerArgument(
                     ":compileGermanFreeDebugKotlinAndroid",
-                    "-module-name last-chance",
-                    logLevel = LogLevel.INFO
+                    "-module-name last-chance"
                 )
             }
         }
@@ -238,8 +232,7 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
             build(":compileGermanFreeDebugKotlinAndroid") {
                 assertCompilerArguments(
                     ":compileGermanFreeDebugKotlinAndroid",
-                    "-module-name my-custom-module_germanFreeDebug",
-                    logLevel = LogLevel.INFO
+                    "-module-name my-custom-module_germanFreeDebug"
                 )
             }
         }
