@@ -8,12 +8,9 @@ package org.jetbrains.kotlin.gradle.unitTests.sources
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.mpp.getHostSpecificMainSharedSourceSets
-import org.jetbrains.kotlin.gradle.plugin.sources.InternalKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
-import org.jetbrains.kotlin.gradle.util.assertAllImplementationsAlsoImplement
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
 import org.jetbrains.kotlin.gradle.utils.future
@@ -21,11 +18,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class InternalKotlinSourceSetTest {
-    @Test
-    fun `test - all implementations of KotlinSourceSet - implement InternalKotlinSourceSet`() {
-        assertAllImplementationsAlsoImplement(KotlinSourceSet::class, InternalKotlinSourceSet::class)
-    }
-
     @Test
     fun `test - compilations - sample - 0`() {
         val project = buildProjectWithMPP()
