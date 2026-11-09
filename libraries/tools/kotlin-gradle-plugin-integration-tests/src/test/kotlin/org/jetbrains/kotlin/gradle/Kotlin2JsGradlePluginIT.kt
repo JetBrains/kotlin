@@ -68,22 +68,6 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
             buildScriptInjection {
                 kotlinMultiplatform.js {
                     compilerOptions {
-                        freeCompilerArgs.set(listOf("-Xexport-kdoc"))
-                    }
-                }
-            }
-            build("assemble") {
-                val dts = projectPath.resolve("build/js/packages/kotlin2JsIrDtsGeneration/kotlin/kotlin2JsIrDtsGeneration.d.ts")
-
-                assertOutputContains("GenerateTypeScriptDefinitions")
-
-                assertFileExists(dts)
-                assertFileContains(dts, "function bar(): string")
-                assertFileContains(dts, "A declaration generated from KLIB metadata.")
-            }
-            buildScriptInjection {
-                kotlinMultiplatform.js {
-                    compilerOptions {
                         freeCompilerArgs.set(listOf("-XXLanguage:+ExportKDocDocumentationToKlib"))
                     }
                 }
@@ -91,11 +75,62 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
             build("assemble") {
                 val dts = projectPath.resolve("build/js/packages/kotlin2JsIrDtsGeneration/kotlin/kotlin2JsIrDtsGeneration.d.ts")
 
-                assertOutputContains("GenerateTypeScriptDefinitions")
+                assertTasksExecuted(":jsProductionExecutableGenerateTypeScriptDefinitions")
 
                 assertFileExists(dts)
                 assertFileContains(dts, "function bar(): string")
                 assertFileContains(dts, "A declaration generated from KLIB metadata.")
+                assertFileContains(dts, "export as namespace kotlin2JsIrDtsGeneration;")
+            }
+            buildScriptInjection {
+                kotlinMultiplatform.js {
+                    compilerOptions {
+                        outputModuleName.set("MyCustomLib")
+                    }
+                }
+            }
+            build("assemble") {
+                val dts = projectPath.resolve("build/js/packages/MyCustomLib/kotlin/MyCustomLib.d.ts")
+
+                assertTasksExecuted(":jsProductionExecutableGenerateTypeScriptDefinitions")
+
+                assertFileExists(dts)
+                assertFileContains(dts, "function bar(): string")
+                assertFileContains(dts, "A declaration generated from KLIB metadata.")
+                assertFileContains(dts, "export as namespace kotlin2JsIrDtsGeneration;")
+            }
+            buildScriptInjection {
+                kotlinMultiplatform.js {
+                    compilerOptions.freeCompilerArgs.set(listOf("-Xexport-kdoc"))
+                }
+                project.tasks.withType(KotlinJsIrLink::class.java).configureEach {
+                    it.compilerOptions.moduleName.set("CustomModuleName")
+                }
+            }
+            build("assemble") {
+                val dts = projectPath.resolve("build/js/packages/MyCustomLib/kotlin/CustomModuleName.d.ts")
+
+                assertTasksExecuted(":jsProductionExecutableGenerateTypeScriptDefinitions")
+
+                assertFileExists(dts)
+                assertFileContains(dts, "function bar(): string")
+                assertFileContains(dts, "A declaration generated from KLIB metadata.")
+                assertFileContains(dts, "export as namespace kotlin2JsIrDtsGeneration;")
+            }
+            buildScriptInjection {
+                project.tasks.withType(KotlinJsIrLink::class.java).configureEach {
+                    it.compilerOptions.freeCompilerArgs.add("-Xir-module-name=MyLib")
+                }
+            }
+            build("assemble") {
+                val dts = projectPath.resolve("build/js/packages/MyCustomLib/kotlin/CustomModuleName.d.ts")
+
+                assertTasksExecuted(":jsProductionExecutableGenerateTypeScriptDefinitions")
+
+                assertFileExists(dts)
+                assertFileContains(dts, "function bar(): string")
+                assertFileContains(dts, "A declaration generated from KLIB metadata.")
+                assertFileContains(dts, "export as namespace MyLib;")
             }
         }
     }

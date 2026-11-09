@@ -155,5 +155,21 @@ public interface JsDtsGenerationOperation : BuildOperation<CompilationResult> {
         @JvmField
         public val USE_UNKNOWN_INSTEAD_ANY: Option<Boolean> =
             Option("USE_UNKNOWN_INSTEAD_ANY", KotlinReleaseVersion(2, 5, 0))
+
+        /**
+         * Custom main module output name.
+         * Must match the JS linking `-ir-output-name`.
+         */
+        @JvmField
+        public val OUTPUT_NAME: Option<String?> =
+            Option("OUTPUT_NAME", KotlinReleaseVersion(2, 5, 0))
+
+        /**
+         * Custom main module output name.
+         * Must match the JS linking `-Xir-module-name`.
+         */
+        @JvmField
+        public val MAIN_MODULE_NAME: Option<String?> =
+            Option("MAIN_MODULE_NAME", KotlinReleaseVersion(2, 5, 0))
     }
 }
