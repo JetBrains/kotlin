@@ -59,7 +59,7 @@ public object ProjectModelKt {
     @kotlin.OptIn(com.google.protobuf.kotlin.OnlyForUseByGeneratedProtoCode::class)
     public class CompilationUnitIdsProxy private constructor() : com.google.protobuf.kotlin.DslProxy()
     /**
-     * `repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 3;`
+     * `repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 2;`
      */
      public val compilationUnitIds: com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.importmodels.proto.CompilationUnitId, CompilationUnitIdsProxy>
       @kotlin.jvm.JvmSynthetic
@@ -67,7 +67,7 @@ public object ProjectModelKt {
         _builder.compilationUnitIdsList
       )
     /**
-     * `repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 3;`
+     * `repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 2;`
      * @param value The compilationUnitIds to add.
      */
     @kotlin.jvm.JvmSynthetic
@@ -76,7 +76,7 @@ public object ProjectModelKt {
       _builder.addCompilationUnitIds(value)
     }
     /**
-     * `repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 3;`
+     * `repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 2;`
      * @param value The compilationUnitIds to add.
      */
     @kotlin.jvm.JvmSynthetic
@@ -86,7 +86,7 @@ public object ProjectModelKt {
       add(value)
     }
     /**
-     * `repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 3;`
+     * `repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 2;`
      * @param values The compilationUnitIds to add.
      */
     @kotlin.jvm.JvmSynthetic
@@ -95,7 +95,7 @@ public object ProjectModelKt {
       _builder.addAllCompilationUnitIds(values)
     }
     /**
-     * `repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 3;`
+     * `repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 2;`
      * @param values The compilationUnitIds to add.
      */
     @kotlin.jvm.JvmSynthetic
@@ -105,7 +105,7 @@ public object ProjectModelKt {
       addAll(values)
     }
     /**
-     * `repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 3;`
+     * `repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 2;`
      * @param index The index to set the value at.
      * @param value The compilationUnitIds to set.
      */
@@ -115,7 +115,7 @@ public object ProjectModelKt {
       _builder.setCompilationUnitIds(index, value)
     }
     /**
-     * `repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 3;`
+     * `repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 2;`
      */
     @kotlin.jvm.JvmSynthetic
     @kotlin.jvm.JvmName("clearCompilationUnitIds")

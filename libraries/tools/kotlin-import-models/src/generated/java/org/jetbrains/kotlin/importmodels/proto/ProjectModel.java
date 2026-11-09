@@ -92,18 +92,18 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int COMPILATION_UNIT_IDS_FIELD_NUMBER = 3;
+  public static final int COMPILATION_UNIT_IDS_FIELD_NUMBER = 2;
   @SuppressWarnings("serial")
   private java.util.List<org.jetbrains.kotlin.importmodels.proto.CompilationUnitId> compilationUnitIds_;
   /**
-   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 3;</code>
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 2;</code>
    */
   @java.lang.Override
   public java.util.List<org.jetbrains.kotlin.importmodels.proto.CompilationUnitId> getCompilationUnitIdsList() {
     return compilationUnitIds_;
   }
   /**
-   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 3;</code>
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 2;</code>
    */
   @java.lang.Override
   public java.util.List<? extends org.jetbrains.kotlin.importmodels.proto.CompilationUnitIdOrBuilder> 
@@ -111,21 +111,21 @@ private static final long serialVersionUID = 0L;
     return compilationUnitIds_;
   }
   /**
-   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 3;</code>
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 2;</code>
    */
   @java.lang.Override
   public int getCompilationUnitIdsCount() {
     return compilationUnitIds_.size();
   }
   /**
-   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 3;</code>
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 2;</code>
    */
   @java.lang.Override
   public org.jetbrains.kotlin.importmodels.proto.CompilationUnitId getCompilationUnitIds(int index) {
     return compilationUnitIds_.get(index);
   }
   /**
-   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 3;</code>
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 2;</code>
    */
   @java.lang.Override
   public org.jetbrains.kotlin.importmodels.proto.CompilationUnitIdOrBuilder getCompilationUnitIdsOrBuilder(
@@ -151,7 +151,7 @@ private static final long serialVersionUID = 0L;
       com.google.protobuf.GeneratedMessage.writeString(output, 1, id_);
     }
     for (int i = 0; i < compilationUnitIds_.size(); i++) {
-      output.writeMessage(3, compilationUnitIds_.get(i));
+      output.writeMessage(2, compilationUnitIds_.get(i));
     }
     getUnknownFields().writeTo(output);
   }
@@ -167,7 +167,7 @@ private static final long serialVersionUID = 0L;
     }
     for (int i = 0; i < compilationUnitIds_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(3, compilationUnitIds_.get(i));
+        .computeMessageSize(2, compilationUnitIds_.get(i));
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -477,7 +477,7 @@ private static final long serialVersionUID = 0L;
               bitField0_ |= 0x00000001;
               break;
             } // case 10
-            case 26: {
+            case 18: {
               org.jetbrains.kotlin.importmodels.proto.CompilationUnitId m =
                   input.readMessage(
                       org.jetbrains.kotlin.importmodels.proto.CompilationUnitId.parser(),
@@ -489,7 +489,7 @@ private static final long serialVersionUID = 0L;
                 compilationUnitIdsBuilder_.addMessage(m);
               }
               break;
-            } // case 26
+            } // case 18
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -599,7 +599,7 @@ private static final long serialVersionUID = 0L;
         org.jetbrains.kotlin.importmodels.proto.CompilationUnitId, org.jetbrains.kotlin.importmodels.proto.CompilationUnitId.Builder, org.jetbrains.kotlin.importmodels.proto.CompilationUnitIdOrBuilder> compilationUnitIdsBuilder_;
 
     /**
-     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 3;</code>
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 2;</code>
      */
     public java.util.List<org.jetbrains.kotlin.importmodels.proto.CompilationUnitId> getCompilationUnitIdsList() {
       if (compilationUnitIdsBuilder_ == null) {
@@ -609,7 +609,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 3;</code>
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 2;</code>
      */
     public int getCompilationUnitIdsCount() {
       if (compilationUnitIdsBuilder_ == null) {
@@ -619,7 +619,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 3;</code>
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 2;</code>
      */
     public org.jetbrains.kotlin.importmodels.proto.CompilationUnitId getCompilationUnitIds(int index) {
       if (compilationUnitIdsBuilder_ == null) {
@@ -629,7 +629,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 3;</code>
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 2;</code>
      */
     public Builder setCompilationUnitIds(
         int index, org.jetbrains.kotlin.importmodels.proto.CompilationUnitId value) {
@@ -646,7 +646,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 3;</code>
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 2;</code>
      */
     public Builder setCompilationUnitIds(
         int index, org.jetbrains.kotlin.importmodels.proto.CompilationUnitId.Builder builderForValue) {
@@ -660,7 +660,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 3;</code>
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 2;</code>
      */
     public Builder addCompilationUnitIds(org.jetbrains.kotlin.importmodels.proto.CompilationUnitId value) {
       if (compilationUnitIdsBuilder_ == null) {
@@ -676,7 +676,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 3;</code>
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 2;</code>
      */
     public Builder addCompilationUnitIds(
         int index, org.jetbrains.kotlin.importmodels.proto.CompilationUnitId value) {
@@ -693,7 +693,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 3;</code>
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 2;</code>
      */
     public Builder addCompilationUnitIds(
         org.jetbrains.kotlin.importmodels.proto.CompilationUnitId.Builder builderForValue) {
@@ -707,7 +707,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 3;</code>
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 2;</code>
      */
     public Builder addCompilationUnitIds(
         int index, org.jetbrains.kotlin.importmodels.proto.CompilationUnitId.Builder builderForValue) {
@@ -721,7 +721,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 3;</code>
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 2;</code>
      */
     public Builder addAllCompilationUnitIds(
         java.lang.Iterable<? extends org.jetbrains.kotlin.importmodels.proto.CompilationUnitId> values) {
@@ -736,7 +736,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 3;</code>
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 2;</code>
      */
     public Builder clearCompilationUnitIds() {
       if (compilationUnitIdsBuilder_ == null) {
@@ -749,7 +749,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 3;</code>
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 2;</code>
      */
     public Builder removeCompilationUnitIds(int index) {
       if (compilationUnitIdsBuilder_ == null) {
@@ -762,14 +762,14 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 3;</code>
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 2;</code>
      */
     public org.jetbrains.kotlin.importmodels.proto.CompilationUnitId.Builder getCompilationUnitIdsBuilder(
         int index) {
       return getCompilationUnitIdsFieldBuilder().getBuilder(index);
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 3;</code>
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 2;</code>
      */
     public org.jetbrains.kotlin.importmodels.proto.CompilationUnitIdOrBuilder getCompilationUnitIdsOrBuilder(
         int index) {
@@ -779,7 +779,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 3;</code>
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 2;</code>
      */
     public java.util.List<? extends org.jetbrains.kotlin.importmodels.proto.CompilationUnitIdOrBuilder> 
          getCompilationUnitIdsOrBuilderList() {
@@ -790,14 +790,14 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 3;</code>
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 2;</code>
      */
     public org.jetbrains.kotlin.importmodels.proto.CompilationUnitId.Builder addCompilationUnitIdsBuilder() {
       return getCompilationUnitIdsFieldBuilder().addBuilder(
           org.jetbrains.kotlin.importmodels.proto.CompilationUnitId.getDefaultInstance());
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 3;</code>
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 2;</code>
      */
     public org.jetbrains.kotlin.importmodels.proto.CompilationUnitId.Builder addCompilationUnitIdsBuilder(
         int index) {
@@ -805,7 +805,7 @@ private static final long serialVersionUID = 0L;
           index, org.jetbrains.kotlin.importmodels.proto.CompilationUnitId.getDefaultInstance());
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 3;</code>
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 2;</code>
      */
     public java.util.List<org.jetbrains.kotlin.importmodels.proto.CompilationUnitId.Builder> 
          getCompilationUnitIdsBuilderList() {

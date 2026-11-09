@@ -88,7 +88,7 @@ public final class KotlinImportModels {
       "ls.proto.BaseModel.Capability\"C\n\nCapabil" +
       "ity\022\032\n\026CAPABILITY_UNSPECIFIED\020\000\022\031\n\025CAPAB" +
       "ILITY_KOTLIN_JVM\020\001\"t\n\014ProjectModel\022\n\n\002id" +
-      "\030\001 \001(\t\022X\n\024compilation_unit_ids\030\003 \003(\0132:.o" +
+      "\030\001 \001(\t\022X\n\024compilation_unit_ids\030\002 \003(\0132:.o" +
       "rg.jetbrains.kotlin.importmodels.proto.C" +
       "ompilationUnitIdB\002P\001b\010editionsp\350\007"
     };
