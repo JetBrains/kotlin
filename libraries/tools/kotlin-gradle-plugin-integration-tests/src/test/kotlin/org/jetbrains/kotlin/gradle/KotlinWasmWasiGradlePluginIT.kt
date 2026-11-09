@@ -287,6 +287,25 @@ class KotlinWasmWasiGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("Check wasi target without main function reports a hint when componentization fails")
+    @GradleTest
+    fun wasiComponentizeWithoutMainFunction(gradleVersion: GradleVersion) {
+        project("wasm-wasmtime-test", gradleVersion) {
+            projectPath.resolve("src/wasmWasiMain/kotlin/foo.kt").writeText(
+                """
+                package my.pack.name
+
+                fun foo(): Int = 1
+                """.trimIndent()
+            )
+
+            buildAndFail(":compileDevelopmentExecutableKotlinWasmWasiComponentize") {
+                assertOutputContains("main.*function".toRegex(RegexOption.IGNORE_CASE))
+                assertOutputContains("reactor".toRegex(RegexOption.IGNORE_CASE))
+            }
+        }
+    }
+
     @DisplayName("Check wasi target with wasmtime and wit declarations in the project")
     @GradleTest
     fun wasiWasmtimeWithProjectWitDeclarations(gradleVersion: GradleVersion) {
