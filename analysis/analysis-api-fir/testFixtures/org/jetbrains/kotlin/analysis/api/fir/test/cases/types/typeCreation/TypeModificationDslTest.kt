@@ -267,6 +267,22 @@ abstract class AbstractTypeModificationDslTest : AbstractTypeModificationDslTest
         }
     }
 
+    @Test
+    @TestMetadata("functionType/functionWithMaxArity.kt")
+    fun `functionType functionWithMaxArity +makeSuspend`() = test<KaFunctionType> { type ->
+        type.copy {
+            isSuspend = true
+        }
+    }
+
+    @Test
+    @TestMetadata("functionType/functionWithMaxArity.kt")
+    fun `functionType functionWithMaxArity +addReceiver`() = test<KaFunctionType> { type ->
+        type.copy {
+            receiverType = typeCreator.classType(StandardClassIds.String)
+        }
+    }
+
     // endregion
 
     // region KaTypeParameterType modifications
