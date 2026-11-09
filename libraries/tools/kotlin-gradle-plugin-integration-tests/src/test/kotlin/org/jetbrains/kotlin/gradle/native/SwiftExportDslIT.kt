@@ -20,7 +20,7 @@ import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.createParentDirectories
-import kotlin.io.path.readText
+import kotlin.io.path.readLines
 import kotlin.io.path.writeText
 import kotlin.test.assertContains
 import kotlin.test.assertNotNull
@@ -249,13 +249,10 @@ class SwiftExportDslIT : KGPBaseTest() {
                 ":embedSwiftExportForXcode",
                 environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
             ) {
-                val buildProductsDir = this@project.gradleRunner.environment?.get("BUILT_PRODUCTS_DIR")?.let { File(it) }
-                assertNotNull(buildProductsDir)
-
                 val sharedSwiftPath = projectPath.resolve("build/SwiftExport/iosArm64/output/files/Shared/Shared.swift")
                 assertContains(
-                    sharedSwiftPath.readText(),
-                    "public static func iosSuspendFunction() async throws -> Swift.Int32"
+                    sharedSwiftPath.readLines().map { it.trim() },
+                    "public static func iosSuspendFunction() async throws -> Swift.Int32 {",
                 )
             }
         }
