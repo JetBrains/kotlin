@@ -89,7 +89,7 @@ fun loadIr(
 
     val mainModuleLib = modulesStructure.klibs.included
         ?: error("No module with ${modulesStructure.mainModulePath} found")
-    val friendModules = mapOf(mainModuleLib.uniqueName to modulesStructure.klibs.friends.map { it.uniqueName })
+    val friendModules = mapOf(mainModuleLib to modulesStructure.klibs.friends)
 
     return getIrModuleInfoForKlib(
         klibs = modulesStructure.klibs,
@@ -109,7 +109,7 @@ fun loadIrForSingleModule(
 
     val mainModuleLib = modulesStructure.klibs.included
         ?: error("No module with ${modulesStructure.mainModulePath} found")
-    val friendModules = mapOf(mainModuleLib.uniqueName to modulesStructure.klibs.friends.map { it.uniqueName })
+    val friendModules = mapOf(mainModuleLib to modulesStructure.klibs.friends)
     val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
         configuration.diagnosticsCollector,
         configuration.languageVersionSettings,
@@ -186,7 +186,7 @@ fun loadIrForSingleModule(
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 private fun getIrModuleInfoForKlib(
     klibs: LoadedKlibs,
-    friendModules: Map<String, List<String>>,
+    friendModules: Map<KotlinLibrary, Collection<KotlinLibrary>>,
     configuration: CompilerConfiguration,
     symbolTable: SymbolTable,
     mapping: (KotlinLibrary) -> ModuleDescriptor,

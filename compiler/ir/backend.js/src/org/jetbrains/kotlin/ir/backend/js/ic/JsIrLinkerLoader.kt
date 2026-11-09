@@ -136,7 +136,7 @@ internal class JsIrLinkerLoader(
             configuration = compilerConfiguration,
             symbolTable = symbolTable,
             irDiagnosticReporter = irDiagnosticReporter,
-            friendModules = mapOf(mainLibrary.uniqueName to mainModuleFriends.map { it.uniqueName })
+            friendModules = mapOf(mainLibrary to mainModuleFriends)
         )
     }
 

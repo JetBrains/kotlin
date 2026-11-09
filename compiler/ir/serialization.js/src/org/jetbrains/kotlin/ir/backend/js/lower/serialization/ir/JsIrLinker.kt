@@ -27,7 +27,7 @@ class JsIrLinker(
     configuration: CompilerConfiguration,
     symbolTable: SymbolTable,
     irDiagnosticReporter: IrDiagnosticReporter,
-    friendModules: Map<String, Collection<String>> = emptyMap(),
+    friendModules: Map<KotlinLibrary, Collection<KotlinLibrary>> = emptyMap(),
 ) : KotlinIrLinker(
     configuration = configuration,
     symbolTable = symbolTable,
