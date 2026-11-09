@@ -20,6 +20,7 @@ common {
     gradle-args = [
         "-Pkotlin.compiler.execution.strategy=in-process",
         "-Dorg.gradle.parallel=false",
+        "--no-build-cache",
     ]
     warm-ups = 2
     iterations = 20
@@ -28,8 +29,8 @@ common {
 # dagger-sample benchmark scenarios — 3 sizes.
 
 dagger = ${common} {
-    tasks = [":samples:dagger-sample:kaptKotlin"]
-    cleanup-tasks = [":samples:dagger-sample:clean"]
+    tasks = [":benchmarks:jvm:kapt:samples:dagger-sample:kaptKotlin"]
+    cleanup-tasks = [":benchmarks:jvm:kapt:samples:dagger-sample:clean"]
 }
 
 dagger_small = ${dagger} {
@@ -50,8 +51,8 @@ dagger_large = ${dagger} {
 # mapstruct-sample benchmark scenarios — 3 sizes.
 
 mapstruct = ${common} {
-    tasks = [":samples:mapstruct-sample:kaptKotlin"]
-    cleanup-tasks = [":samples:mapstruct-sample:clean"]
+    tasks = [":benchmarks:jvm:kapt:samples:mapstruct-sample:kaptKotlin"]
+    cleanup-tasks = [":benchmarks:jvm:kapt:samples:mapstruct-sample:clean"]
 }
 
 mapstruct_small = ${mapstruct} {
@@ -72,8 +73,8 @@ mapstruct_large = ${mapstruct} {
 # synthetic-noop benchmark scenarios — 3 sizes.
 
 synthetic = ${common} {
-    tasks = [":samples:synthetic-noop:kaptKotlin"]
-    cleanup-tasks = [":samples:synthetic-noop:clean"]
+    tasks = [":benchmarks:jvm:kapt:samples:synthetic-noop:kaptKotlin"]
+    cleanup-tasks = [":benchmarks:jvm:kapt:samples:synthetic-noop:clean"]
 }
 
 synthetic_small = ${synthetic} {
