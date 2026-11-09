@@ -293,6 +293,12 @@ public class AtomicfuNativeKlibSyntheticAccessorTestGenerated extends AbstractAt
     }
 
     @Test
+    @TestMetadata("CompanionLoopingFunctions.kt")
+    public void testCompanionLoopingFunctions() {
+      run("CompanionLoopingFunctions.kt");
+    }
+
+    @Test
     @TestMetadata("DelegatedCompanionProperties.kt")
     public void testDelegatedCompanionProperties() {
       run("DelegatedCompanionProperties.kt");
