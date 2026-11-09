@@ -1505,6 +1505,12 @@ internal class CodeGeneratorVisitor(
         val srcArg = evaluateExpression(value.argument, resultSlot)
         require(srcArg.type == llvm.pointerType) { "Expected ObjHeader but was ${srcArg.type.toTypeString()} for ${value.argument.dump()}" }
         val srcType = value.argument.type
+        srcType.classOrNull?.let {
+            // We are about to optimize the cast away. This decision depends on the type of the argument: if the type is a
+            // user-defined `class`, changing its superclass or superinterfaces must lead to reevaluating the optimization.
+            // This check is duplicated in CastsOptimization.kt for the case, when genericSafeCasts are enabled.
+            generationState.dependenciesTracker.add(it.owner)
+        }
         val isSuperClassCast = srcType.isSuperClassCastTo(dstClass)
 
         if (isSuperClassCast) {

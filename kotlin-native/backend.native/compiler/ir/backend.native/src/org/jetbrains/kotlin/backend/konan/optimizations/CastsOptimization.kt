@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.types.isBoolean
@@ -415,6 +416,13 @@ internal class CastsOptimization(val context: NativeGenerationState) : BodyLower
                     null, TypeCheckResult.UNKNOWN -> return expression
                     TypeCheckResult.ALWAYS_SUCCEEDS -> true
                     TypeCheckResult.NEVER_SUCCEEDS -> false
+                }
+
+                expression.argument.type.classOrNull?.let {
+                    // We are about to optimize the cast away. This decision depends on the type of the argument: if the type is a
+                    // user-defined `class`, changing its superclass or superinterfaces must lead to reevaluating the optimization.
+                    // This check is duplicated in IrToBitcode.kt for the case, when genericSafeCasts are disabled.
+                    context.dependenciesTracker.add(it.owner)
                 }
                 irBuilder.at(expression)
                 return when (expression.operator) {
