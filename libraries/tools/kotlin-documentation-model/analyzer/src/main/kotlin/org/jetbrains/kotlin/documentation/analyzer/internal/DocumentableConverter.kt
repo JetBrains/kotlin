@@ -165,6 +165,7 @@ internal class DocumentableConverter(
          * ```
          * common A has jvm
          * intermediate A has jvm
+         * both A(common) and A(intermediate) have duplicated `actual typealias A` after ExpectActualMerger
          */
         val filteredDocumentables = documentables.filter { (it as? DClasslike)?.let { node -> actualTypealias(node) } == null }
 
