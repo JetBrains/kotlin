@@ -1,0 +1,32 @@
+@kotlin.Metadata
+public final class CompanionLoopingFunctionsKt {
+    // source: 'CompanionLoopingFunctions.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class Host {
+    // source: 'CompanionLoopingFunctions.kt'
+    private synthetic final static field counter: java.util.concurrent.atomic.AtomicInteger
+    private synthetic final static field flag: java.util.concurrent.atomic.AtomicBoolean
+    private synthetic final static field label: java.util.concurrent.atomic.AtomicReference
+    private synthetic final static field rows: java.util.concurrent.atomic.AtomicIntegerArray
+    private synthetic final static field total: java.util.concurrent.atomic.AtomicLong
+    static method <clinit>(): void
+    public method <init>(): void
+    private final static method doubleViaLoop(): int
+    private synthetic final static method getAndUpdate$atomicfu$BOXED_ATOMIC$Int(p0: java.util.concurrent.atomic.AtomicInteger, p1: kotlin.jvm.functions.Function1): int
+    private synthetic final static method getCounter(): java.util.concurrent.atomic.AtomicInteger
+    private synthetic final static method getFlag(): java.util.concurrent.atomic.AtomicBoolean
+    private synthetic final static method getLabel(): java.util.concurrent.atomic.AtomicReference
+    private synthetic final static method getRows(): java.util.concurrent.atomic.AtomicIntegerArray
+    private synthetic final static method getTotal(): java.util.concurrent.atomic.AtomicLong
+    private synthetic final static method loop$atomicfu$BOXED_ATOMIC$Int(p0: java.util.concurrent.atomic.AtomicInteger, p1: kotlin.jvm.functions.Function1): void
+    public final static @org.jetbrains.annotations.NotNull method test(): java.lang.String
+    private synthetic final static method update$atomicfu$BOXED_ATOMIC$Boolean(p0: java.util.concurrent.atomic.AtomicBoolean, p1: kotlin.jvm.functions.Function1): void
+    private synthetic final static method update$atomicfu$BOXED_ATOMIC$Int(p0: java.util.concurrent.atomic.AtomicInteger, p1: kotlin.jvm.functions.Function1): void
+    private synthetic final static method updateAndGet$atomicfu$ATOMIC_ARRAY$Int(p0: java.util.concurrent.atomic.AtomicIntegerArray, p1: int, p2: kotlin.jvm.functions.Function1): int
+    private synthetic final static method updateAndGet$atomicfu$BOXED_ATOMIC$Any(p0: java.util.concurrent.atomic.AtomicReference, p1: kotlin.jvm.functions.Function1): java.lang.Object
+    private synthetic final static method updateAndGet$atomicfu$BOXED_ATOMIC$Int(p0: java.util.concurrent.atomic.AtomicInteger, p1: kotlin.jvm.functions.Function1): int
+    private synthetic final static method updateAndGet$atomicfu$BOXED_ATOMIC$Long(p0: java.util.concurrent.atomic.AtomicLong, p1: kotlin.jvm.functions.Function1): long
+}

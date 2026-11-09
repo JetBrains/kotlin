@@ -1,6 +1,6 @@
 --- a/CompanionLoopingFunctions.ir.txt
 +++ b/CompanionLoopingFunctions.ir.js_ir.txt
-@@ -1,240 +1,61 @@
+@@ -1,232 +1,61 @@
  FILE fqName:<root> fileName:/CompanionLoopingFunctions.kt
    CLASS CLASS name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]
      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Host
@@ -99,10 +99,9 @@
        BLOCK_BODY
          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
--    FUN ATOMICFU_GENERATED_FUNCTION name:getAndUpdate$atomicfu$BOXED_ATOMIC$Int visibility:private modality:FINAL returnType:kotlin.Int [inline]
--      VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.Host
--      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:java.util.concurrent.atomic.AtomicInteger
--      VALUE_PARAMETER kind:Regular name:action$atomicfu index:2 type:kotlin.Function1<kotlin.Int, kotlin.Int>
+-    FUN ATOMICFU_GENERATED_FUNCTION name:getAndUpdate$atomicfu$BOXED_ATOMIC$Int visibility:private modality:FINAL returnType:kotlin.Int [inline,companion]
+-      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:0 type:java.util.concurrent.atomic.AtomicInteger
+-      VALUE_PARAMETER kind:Regular name:action$atomicfu index:1 type:kotlin.Function1<kotlin.Int, kotlin.Int>
 -      BLOCK_BODY
 -        WHILE label=null origin=null
 -          condition: CONST Boolean type=kotlin.Boolean value=true
@@ -122,10 +121,9 @@
 -                  ARG update: GET_VAR 'val tmp_1: kotlin.Int declared in <root>.Host.getAndUpdate$atomicfu$BOXED_ATOMIC$Int' type=kotlin.Int origin=null
 -                then: RETURN type=kotlin.Nothing from='private final fun getAndUpdate$atomicfu$BOXED_ATOMIC$Int (handler$atomicfu: java.util.concurrent.atomic.AtomicInteger, action$atomicfu: kotlin.Function1<kotlin.Int, kotlin.Int>): kotlin.Int declared in <root>.Host'
 -                  GET_VAR 'val tmp_0: kotlin.Int declared in <root>.Host.getAndUpdate$atomicfu$BOXED_ATOMIC$Int' type=kotlin.Int origin=null
--    FUN ATOMICFU_GENERATED_FUNCTION name:loop$atomicfu$BOXED_ATOMIC$Int visibility:private modality:FINAL returnType:kotlin.Unit [inline]
--      VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.Host
--      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:java.util.concurrent.atomic.AtomicInteger
--      VALUE_PARAMETER kind:Regular name:action$atomicfu index:2 type:kotlin.Function1<kotlin.Int, kotlin.Unit>
+-    FUN ATOMICFU_GENERATED_FUNCTION name:loop$atomicfu$BOXED_ATOMIC$Int visibility:private modality:FINAL returnType:kotlin.Unit [inline,companion]
+-      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:0 type:java.util.concurrent.atomic.AtomicInteger
+-      VALUE_PARAMETER kind:Regular name:action$atomicfu index:1 type:kotlin.Function1<kotlin.Int, kotlin.Unit>
 -      BLOCK_BODY
 -        WHILE label=null origin=null
 -          condition: CONST Boolean type=kotlin.Boolean value=true
@@ -136,10 +134,9 @@
 -            CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Unit origin=null
 -              ARG <this>: GET_VAR 'action$atomicfu: kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>.Host.loop$atomicfu$BOXED_ATOMIC$Int' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
 -              ARG p1: GET_VAR 'val tmp_2: kotlin.Int declared in <root>.Host.loop$atomicfu$BOXED_ATOMIC$Int' type=kotlin.Int origin=null
--    FUN ATOMICFU_GENERATED_FUNCTION name:update$atomicfu$BOXED_ATOMIC$Boolean visibility:private modality:FINAL returnType:kotlin.Unit [inline]
--      VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.Host
--      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:java.util.concurrent.atomic.AtomicBoolean
--      VALUE_PARAMETER kind:Regular name:action$atomicfu index:2 type:kotlin.Function1<kotlin.Boolean, kotlin.Boolean>
+-    FUN ATOMICFU_GENERATED_FUNCTION name:update$atomicfu$BOXED_ATOMIC$Boolean visibility:private modality:FINAL returnType:kotlin.Unit [inline,companion]
+-      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:0 type:java.util.concurrent.atomic.AtomicBoolean
+-      VALUE_PARAMETER kind:Regular name:action$atomicfu index:1 type:kotlin.Function1<kotlin.Boolean, kotlin.Boolean>
 -      BLOCK_BODY
 -        WHILE label=null origin=null
 -          condition: CONST Boolean type=kotlin.Boolean value=true
@@ -159,10 +156,9 @@
 -                  ARG update: GET_VAR 'val tmp_4: kotlin.Boolean declared in <root>.Host.update$atomicfu$BOXED_ATOMIC$Boolean' type=kotlin.Boolean origin=null
 -                then: RETURN type=kotlin.Nothing from='private final fun update$atomicfu$BOXED_ATOMIC$Boolean (handler$atomicfu: java.util.concurrent.atomic.AtomicBoolean, action$atomicfu: kotlin.Function1<kotlin.Boolean, kotlin.Boolean>): kotlin.Unit declared in <root>.Host'
 -                  GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
--    FUN ATOMICFU_GENERATED_FUNCTION name:update$atomicfu$BOXED_ATOMIC$Int visibility:private modality:FINAL returnType:kotlin.Unit [inline]
--      VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.Host
--      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:java.util.concurrent.atomic.AtomicInteger
--      VALUE_PARAMETER kind:Regular name:action$atomicfu index:2 type:kotlin.Function1<kotlin.Int, kotlin.Int>
+-    FUN ATOMICFU_GENERATED_FUNCTION name:update$atomicfu$BOXED_ATOMIC$Int visibility:private modality:FINAL returnType:kotlin.Unit [inline,companion]
+-      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:0 type:java.util.concurrent.atomic.AtomicInteger
+-      VALUE_PARAMETER kind:Regular name:action$atomicfu index:1 type:kotlin.Function1<kotlin.Int, kotlin.Int>
 -      BLOCK_BODY
 -        WHILE label=null origin=null
 -          condition: CONST Boolean type=kotlin.Boolean value=true
@@ -182,11 +178,10 @@
 -                  ARG update: GET_VAR 'val tmp_6: kotlin.Int declared in <root>.Host.update$atomicfu$BOXED_ATOMIC$Int' type=kotlin.Int origin=null
 -                then: RETURN type=kotlin.Nothing from='private final fun update$atomicfu$BOXED_ATOMIC$Int (handler$atomicfu: java.util.concurrent.atomic.AtomicInteger, action$atomicfu: kotlin.Function1<kotlin.Int, kotlin.Int>): kotlin.Unit declared in <root>.Host'
 -                  GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
--    FUN ATOMICFU_GENERATED_FUNCTION name:updateAndGet$atomicfu$ATOMIC_ARRAY$Int visibility:private modality:FINAL returnType:kotlin.Int [inline]
--      VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.Host
--      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:java.util.concurrent.atomic.AtomicIntegerArray
--      VALUE_PARAMETER kind:Regular name:index$atomicfu index:2 type:kotlin.Int
--      VALUE_PARAMETER kind:Regular name:action$atomicfu index:3 type:kotlin.Function1<kotlin.Int, kotlin.Int>
+-    FUN ATOMICFU_GENERATED_FUNCTION name:updateAndGet$atomicfu$ATOMIC_ARRAY$Int visibility:private modality:FINAL returnType:kotlin.Int [inline,companion]
+-      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:0 type:java.util.concurrent.atomic.AtomicIntegerArray
+-      VALUE_PARAMETER kind:Regular name:index$atomicfu index:1 type:kotlin.Int
+-      VALUE_PARAMETER kind:Regular name:action$atomicfu index:2 type:kotlin.Function1<kotlin.Int, kotlin.Int>
 -      BLOCK_BODY
 -        WHILE label=null origin=null
 -          condition: CONST Boolean type=kotlin.Boolean value=true
@@ -208,10 +203,9 @@
 -                  ARG update: GET_VAR 'val tmp_8: kotlin.Int declared in <root>.Host.updateAndGet$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.Int origin=null
 -                then: RETURN type=kotlin.Nothing from='private final fun updateAndGet$atomicfu$ATOMIC_ARRAY$Int (handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerArray, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Int, kotlin.Int>): kotlin.Int declared in <root>.Host'
 -                  GET_VAR 'val tmp_8: kotlin.Int declared in <root>.Host.updateAndGet$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.Int origin=null
--    FUN ATOMICFU_GENERATED_FUNCTION name:updateAndGet$atomicfu$BOXED_ATOMIC$Any visibility:private modality:FINAL returnType:kotlin.Any? [inline]
--      VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.Host
--      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:java.util.concurrent.atomic.AtomicReference
--      VALUE_PARAMETER kind:Regular name:action$atomicfu index:2 type:kotlin.Function1<kotlin.Any?, kotlin.Any?>
+-    FUN ATOMICFU_GENERATED_FUNCTION name:updateAndGet$atomicfu$BOXED_ATOMIC$Any visibility:private modality:FINAL returnType:kotlin.Any? [inline,companion]
+-      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:0 type:java.util.concurrent.atomic.AtomicReference
+-      VALUE_PARAMETER kind:Regular name:action$atomicfu index:1 type:kotlin.Function1<kotlin.Any?, kotlin.Any?>
 -      BLOCK_BODY
 -        WHILE label=null origin=null
 -          condition: CONST Boolean type=kotlin.Boolean value=true
@@ -233,10 +227,9 @@
 -                  ARG update: GET_VAR 'val tmp_10: kotlin.Any? declared in <root>.Host.updateAndGet$atomicfu$BOXED_ATOMIC$Any' type=kotlin.Any? origin=null
 -                then: RETURN type=kotlin.Nothing from='private final fun updateAndGet$atomicfu$BOXED_ATOMIC$Any (handler$atomicfu: java.util.concurrent.atomic.AtomicReference, action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Any?>): kotlin.Any? declared in <root>.Host'
 -                  GET_VAR 'val tmp_10: kotlin.Any? declared in <root>.Host.updateAndGet$atomicfu$BOXED_ATOMIC$Any' type=kotlin.Any? origin=null
--    FUN ATOMICFU_GENERATED_FUNCTION name:updateAndGet$atomicfu$BOXED_ATOMIC$Int visibility:private modality:FINAL returnType:kotlin.Int [inline]
--      VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.Host
--      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:java.util.concurrent.atomic.AtomicInteger
--      VALUE_PARAMETER kind:Regular name:action$atomicfu index:2 type:kotlin.Function1<kotlin.Int, kotlin.Int>
+-    FUN ATOMICFU_GENERATED_FUNCTION name:updateAndGet$atomicfu$BOXED_ATOMIC$Int visibility:private modality:FINAL returnType:kotlin.Int [inline,companion]
+-      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:0 type:java.util.concurrent.atomic.AtomicInteger
+-      VALUE_PARAMETER kind:Regular name:action$atomicfu index:1 type:kotlin.Function1<kotlin.Int, kotlin.Int>
 -      BLOCK_BODY
 -        WHILE label=null origin=null
 -          condition: CONST Boolean type=kotlin.Boolean value=true
@@ -256,10 +249,9 @@
 -                  ARG update: GET_VAR 'val tmp_12: kotlin.Int declared in <root>.Host.updateAndGet$atomicfu$BOXED_ATOMIC$Int' type=kotlin.Int origin=null
 -                then: RETURN type=kotlin.Nothing from='private final fun updateAndGet$atomicfu$BOXED_ATOMIC$Int (handler$atomicfu: java.util.concurrent.atomic.AtomicInteger, action$atomicfu: kotlin.Function1<kotlin.Int, kotlin.Int>): kotlin.Int declared in <root>.Host'
 -                  GET_VAR 'val tmp_12: kotlin.Int declared in <root>.Host.updateAndGet$atomicfu$BOXED_ATOMIC$Int' type=kotlin.Int origin=null
--    FUN ATOMICFU_GENERATED_FUNCTION name:updateAndGet$atomicfu$BOXED_ATOMIC$Long visibility:private modality:FINAL returnType:kotlin.Long [inline]
--      VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.Host
--      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:java.util.concurrent.atomic.AtomicLong
--      VALUE_PARAMETER kind:Regular name:action$atomicfu index:2 type:kotlin.Function1<kotlin.Long, kotlin.Long>
+-    FUN ATOMICFU_GENERATED_FUNCTION name:updateAndGet$atomicfu$BOXED_ATOMIC$Long visibility:private modality:FINAL returnType:kotlin.Long [inline,companion]
+-      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:0 type:java.util.concurrent.atomic.AtomicLong
+-      VALUE_PARAMETER kind:Regular name:action$atomicfu index:1 type:kotlin.Function1<kotlin.Long, kotlin.Long>
 -      BLOCK_BODY
 -        WHILE label=null origin=null
 -          condition: CONST Boolean type=kotlin.Boolean value=true
@@ -282,13 +274,13 @@
      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
        VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
-@@ -250,16 +71,16 @@
+@@ -242,16 +71,16 @@
          public open fun toString (): kotlin.String declared in kotlin.Any
      FUN name:doubleViaLoop visibility:private modality:FINAL returnType:kotlin.Int [companion]
        BLOCK_BODY
 -        CALL 'private final fun loop$atomicfu$BOXED_ATOMIC$Int (handler$atomicfu: java.util.concurrent.atomic.AtomicInteger, action$atomicfu: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Unit declared in <root>.Host' type=kotlin.Unit origin=null
--          ARG <this>: CALL 'private final fun <get-counter> (): java.util.concurrent.atomic.AtomicInteger declared in <root>.Host' type=java.util.concurrent.atomic.AtomicInteger origin=null
--          ARG handler$atomicfu: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=LAMBDA
+-          ARG handler$atomicfu: CALL 'private final fun <get-counter> (): java.util.concurrent.atomic.AtomicInteger declared in <root>.Host' type=java.util.concurrent.atomic.AtomicInteger origin=null
+-          ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=LAMBDA
 +        CALL 'public final fun loop (<this>: kotlinx.atomicfu.AtomicInt, action: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Nothing declared in kotlinx.atomicfu' type=kotlin.Nothing origin=null
 +          ARG <this>: CALL 'private final fun <get-counter> (): kotlinx.atomicfu.AtomicInt declared in <root>.Host' type=kotlinx.atomicfu.AtomicInt origin=GET_PROPERTY
 +          ARG action: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=LAMBDA
@@ -304,59 +296,59 @@
                        ARG expect: GET_VAR 'cur: kotlin.Int declared in <root>.Host.doubleViaLoop.<anonymous>' type=kotlin.Int origin=null
                        ARG update: CALL 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=MUL
                          ARG <this>: GET_VAR 'cur: kotlin.Int declared in <root>.Host.doubleViaLoop.<anonymous>' type=kotlin.Int origin=null
-@@ -274,9 +95,9 @@
+@@ -266,9 +95,9 @@
            BRANCH
              if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
                ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
 -                ARG arg0: CALL 'private final fun updateAndGet$atomicfu$BOXED_ATOMIC$Int (handler$atomicfu: java.util.concurrent.atomic.AtomicInteger, action$atomicfu: kotlin.Function1<kotlin.Int, kotlin.Int>): kotlin.Int declared in <root>.Host' type=kotlin.Int origin=null
--                  ARG <this>: CALL 'private final fun <get-counter> (): java.util.concurrent.atomic.AtomicInteger declared in <root>.Host' type=java.util.concurrent.atomic.AtomicInteger origin=null
--                  ARG handler$atomicfu: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Int> origin=LAMBDA
+-                  ARG handler$atomicfu: CALL 'private final fun <get-counter> (): java.util.concurrent.atomic.AtomicInteger declared in <root>.Host' type=java.util.concurrent.atomic.AtomicInteger origin=null
+-                  ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Int> origin=LAMBDA
 +                ARG arg0: CALL 'public final fun updateAndGet (<this>: kotlinx.atomicfu.AtomicInt, function: kotlin.Function1<kotlin.Int, kotlin.Int>): kotlin.Int declared in kotlinx.atomicfu' type=kotlin.Int origin=null
 +                  ARG <this>: CALL 'private final fun <get-counter> (): kotlinx.atomicfu.AtomicInt declared in <root>.Host' type=kotlinx.atomicfu.AtomicInt origin=GET_PROPERTY
 +                  ARG function: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Int> origin=LAMBDA
                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Int
                        VALUE_PARAMETER kind:Regular name:it index:0 type:kotlin.Int
                        BLOCK_BODY
-@@ -291,9 +112,9 @@
+@@ -283,9 +112,9 @@
            BRANCH
              if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
                ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
 -                ARG arg0: CALL 'private final fun getAndUpdate$atomicfu$BOXED_ATOMIC$Int (handler$atomicfu: java.util.concurrent.atomic.AtomicInteger, action$atomicfu: kotlin.Function1<kotlin.Int, kotlin.Int>): kotlin.Int declared in <root>.Host' type=kotlin.Int origin=null
--                  ARG <this>: CALL 'private final fun <get-counter> (): java.util.concurrent.atomic.AtomicInteger declared in <root>.Host' type=java.util.concurrent.atomic.AtomicInteger origin=null
--                  ARG handler$atomicfu: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Int> origin=LAMBDA
+-                  ARG handler$atomicfu: CALL 'private final fun <get-counter> (): java.util.concurrent.atomic.AtomicInteger declared in <root>.Host' type=java.util.concurrent.atomic.AtomicInteger origin=null
+-                  ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Int> origin=LAMBDA
 +                ARG arg0: CALL 'public final fun getAndUpdate (<this>: kotlinx.atomicfu.AtomicInt, function: kotlin.Function1<kotlin.Int, kotlin.Int>): kotlin.Int declared in kotlinx.atomicfu' type=kotlin.Int origin=null
 +                  ARG <this>: CALL 'private final fun <get-counter> (): kotlinx.atomicfu.AtomicInt declared in <root>.Host' type=kotlinx.atomicfu.AtomicInt origin=GET_PROPERTY
 +                  ARG function: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Int> origin=LAMBDA
                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Int
                        VALUE_PARAMETER kind:Regular name:it index:0 type:kotlin.Int
                        BLOCK_BODY
-@@ -304,9 +125,9 @@
+@@ -296,9 +125,9 @@
                  ARG arg1: CONST Int type=kotlin.Int value=1
              then: RETURN type=kotlin.Nothing from='public final fun test (): kotlin.String declared in <root>.Host'
                CONST String type=kotlin.String value="Fail: getAndUpdate"
 -        CALL 'private final fun update$atomicfu$BOXED_ATOMIC$Int (handler$atomicfu: java.util.concurrent.atomic.AtomicInteger, action$atomicfu: kotlin.Function1<kotlin.Int, kotlin.Int>): kotlin.Unit declared in <root>.Host' type=kotlin.Unit origin=null
--          ARG <this>: CALL 'private final fun <get-counter> (): java.util.concurrent.atomic.AtomicInteger declared in <root>.Host' type=java.util.concurrent.atomic.AtomicInteger origin=null
--          ARG handler$atomicfu: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Int> origin=LAMBDA
+-          ARG handler$atomicfu: CALL 'private final fun <get-counter> (): java.util.concurrent.atomic.AtomicInteger declared in <root>.Host' type=java.util.concurrent.atomic.AtomicInteger origin=null
+-          ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Int> origin=LAMBDA
 +        CALL 'public final fun update (<this>: kotlinx.atomicfu.AtomicInt, function: kotlin.Function1<kotlin.Int, kotlin.Int>): kotlin.Unit declared in kotlinx.atomicfu' type=kotlin.Unit origin=null
 +          ARG <this>: CALL 'private final fun <get-counter> (): kotlinx.atomicfu.AtomicInt declared in <root>.Host' type=kotlinx.atomicfu.AtomicInt origin=GET_PROPERTY
 +          ARG function: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Int> origin=LAMBDA
              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Int
                VALUE_PARAMETER kind:Regular name:it index:0 type:kotlin.Int
                BLOCK_BODY
-@@ -322,9 +143,9 @@
+@@ -314,9 +143,9 @@
                  ARG arg1: CONST Int type=kotlin.Int value=8
              then: RETURN type=kotlin.Nothing from='public final fun test (): kotlin.String declared in <root>.Host'
                CONST String type=kotlin.String value="Fail: loop"
 -        CALL 'private final fun update$atomicfu$BOXED_ATOMIC$Boolean (handler$atomicfu: java.util.concurrent.atomic.AtomicBoolean, action$atomicfu: kotlin.Function1<kotlin.Boolean, kotlin.Boolean>): kotlin.Unit declared in <root>.Host' type=kotlin.Unit origin=null
--          ARG <this>: CALL 'private final fun <get-flag> (): java.util.concurrent.atomic.AtomicBoolean declared in <root>.Host' type=java.util.concurrent.atomic.AtomicBoolean origin=null
--          ARG handler$atomicfu: FUN_EXPR type=kotlin.Function1<kotlin.Boolean, kotlin.Boolean> origin=LAMBDA
+-          ARG handler$atomicfu: CALL 'private final fun <get-flag> (): java.util.concurrent.atomic.AtomicBoolean declared in <root>.Host' type=java.util.concurrent.atomic.AtomicBoolean origin=null
+-          ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<kotlin.Boolean, kotlin.Boolean> origin=LAMBDA
 +        CALL 'public final fun update (<this>: kotlinx.atomicfu.AtomicBoolean, function: kotlin.Function1<kotlin.Boolean, kotlin.Boolean>): kotlin.Unit declared in kotlinx.atomicfu' type=kotlin.Unit origin=null
 +          ARG <this>: CALL 'private final fun <get-flag> (): kotlinx.atomicfu.AtomicBoolean declared in <root>.Host' type=kotlinx.atomicfu.AtomicBoolean origin=GET_PROPERTY
 +          ARG function: FUN_EXPR type=kotlin.Function1<kotlin.Boolean, kotlin.Boolean> origin=LAMBDA
              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Boolean
                VALUE_PARAMETER kind:Regular name:it index:0 type:kotlin.Boolean
                BLOCK_BODY
-@@ -334,18 +155,17 @@
+@@ -326,18 +155,17 @@
          WHEN type=kotlin.Unit origin=IF
            BRANCH
              if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=null
@@ -372,21 +364,21 @@
              if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
                ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
 -                ARG arg0: CALL 'private final fun updateAndGet$atomicfu$BOXED_ATOMIC$Long (handler$atomicfu: java.util.concurrent.atomic.AtomicLong, action$atomicfu: kotlin.Function1<kotlin.Long, kotlin.Long>): kotlin.Long declared in <root>.Host' type=kotlin.Long origin=null
--                  ARG <this>: CALL 'private final fun <get-total> (): java.util.concurrent.atomic.AtomicLong declared in <root>.Host' type=java.util.concurrent.atomic.AtomicLong origin=null
--                  ARG handler$atomicfu: FUN_EXPR type=kotlin.Function1<kotlin.Long, kotlin.Long> origin=LAMBDA
+-                  ARG handler$atomicfu: CALL 'private final fun <get-total> (): java.util.concurrent.atomic.AtomicLong declared in <root>.Host' type=java.util.concurrent.atomic.AtomicLong origin=null
+-                  ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<kotlin.Long, kotlin.Long> origin=LAMBDA
 +                ARG arg0: CALL 'public final fun updateAndGet (<this>: kotlinx.atomicfu.AtomicLong, function: kotlin.Function1<kotlin.Long, kotlin.Long>): kotlin.Long declared in kotlinx.atomicfu' type=kotlin.Long origin=null
 +                  ARG <this>: CALL 'private final fun <get-total> (): kotlinx.atomicfu.AtomicLong declared in <root>.Host' type=kotlinx.atomicfu.AtomicLong origin=GET_PROPERTY
 +                  ARG function: FUN_EXPR type=kotlin.Function1<kotlin.Long, kotlin.Long> origin=LAMBDA
                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Long
                        VALUE_PARAMETER kind:Regular name:it index:0 type:kotlin.Long
                        BLOCK_BODY
-@@ -360,9 +180,10 @@
+@@ -352,9 +180,10 @@
            BRANCH
              if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
                ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
 -                ARG arg0: CALL 'private final fun updateAndGet$atomicfu$BOXED_ATOMIC$Any (handler$atomicfu: java.util.concurrent.atomic.AtomicReference, action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Any?>): kotlin.Any? declared in <root>.Host' type=kotlin.Any? origin=null
--                  ARG <this>: CALL 'private final fun <get-label> (): java.util.concurrent.atomic.AtomicReference declared in <root>.Host' type=java.util.concurrent.atomic.AtomicReference origin=null
--                  ARG handler$atomicfu: FUN_EXPR type=kotlin.Function1<kotlin.String?, kotlin.String?> origin=LAMBDA
+-                  ARG handler$atomicfu: CALL 'private final fun <get-label> (): java.util.concurrent.atomic.AtomicReference declared in <root>.Host' type=java.util.concurrent.atomic.AtomicReference origin=null
+-                  ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<kotlin.String?, kotlin.String?> origin=LAMBDA
 +                ARG arg0: CALL 'public final fun updateAndGet <T> (<this>: kotlinx.atomicfu.AtomicRef<T of kotlinx.atomicfu.updateAndGet>, function: kotlin.Function1<T of kotlinx.atomicfu.updateAndGet, T of kotlinx.atomicfu.updateAndGet>): T of kotlinx.atomicfu.updateAndGet declared in kotlinx.atomicfu' type=kotlin.String? origin=null
 +                  TYPE_ARG T: kotlin.String?
 +                  ARG <this>: CALL 'private final fun <get-label> (): kotlinx.atomicfu.AtomicRef<kotlin.String?> declared in <root>.Host' type=kotlinx.atomicfu.AtomicRef<kotlin.String?> origin=GET_PROPERTY
@@ -394,14 +386,14 @@
                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.String?
                        VALUE_PARAMETER kind:Regular name:it index:0 type:kotlin.String?
                        BLOCK_BODY
-@@ -377,10 +198,11 @@
+@@ -369,10 +198,11 @@
            BRANCH
              if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
                ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
 -                ARG arg0: CALL 'private final fun updateAndGet$atomicfu$ATOMIC_ARRAY$Int (handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerArray, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Int, kotlin.Int>): kotlin.Int declared in <root>.Host' type=kotlin.Int origin=null
--                  ARG <this>: CALL 'private final fun <get-rows> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.Host' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
--                  ARG handler$atomicfu: CONST Int type=kotlin.Int value=1
--                  ARG index$atomicfu: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Int> origin=LAMBDA
+-                  ARG handler$atomicfu: CALL 'private final fun <get-rows> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.Host' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+-                  ARG index$atomicfu: CONST Int type=kotlin.Int value=1
+-                  ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Int> origin=LAMBDA
 +                ARG arg0: CALL 'public final fun updateAndGet (<this>: kotlinx.atomicfu.AtomicInt, function: kotlin.Function1<kotlin.Int, kotlin.Int>): kotlin.Int declared in kotlinx.atomicfu' type=kotlin.Int origin=null
 +                  ARG <this>: CALL 'public final fun get (index: kotlin.Int): kotlinx.atomicfu.AtomicInt declared in kotlinx.atomicfu.AtomicIntArray' type=kotlinx.atomicfu.AtomicInt origin=GET_ARRAY_ELEMENT
 +                    ARG <this>: CALL 'private final fun <get-rows> (): kotlinx.atomicfu.AtomicIntArray declared in <root>.Host' type=kotlinx.atomicfu.AtomicIntArray origin=GET_PROPERTY
