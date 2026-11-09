@@ -52,6 +52,7 @@ public interface KaRendererOtherModifiersProvider {
                 if (symbol is KaNamedFunctionSymbol) {
                     if (symbol.isExternal) add(KtTokens.EXTERNAL_KEYWORD)
                     if (symbol.isOverride) add(KtTokens.OVERRIDE_KEYWORD)
+                    if (symbol.isCompanionExtension) add(KtTokens.COMPANION_KEYWORD)
                     if (symbol.isInline) add(KtTokens.INLINE_KEYWORD)
                     if (symbol.isInfix) add(KtTokens.INFIX_KEYWORD)
                     if (symbol.isOperator) add(KtTokens.OPERATOR_KEYWORD)
@@ -62,6 +63,7 @@ public interface KaRendererOtherModifiersProvider {
                 if (symbol is KaPropertySymbol) {
                     if (symbol.isOverride) add(KtTokens.OVERRIDE_KEYWORD)
                     if (symbol.isExternal) add(KtTokens.EXTERNAL_KEYWORD)
+                    if (symbol.isCompanionExtension) add(KtTokens.COMPANION_KEYWORD)
                 }
 
                 if (symbol is KaValueParameterSymbol) {
@@ -103,3 +105,11 @@ public interface KaRendererOtherModifiersProvider {
         }
     }
 }
+
+/**
+ * Whether the callable is a companion extension, the only callable declared with the `companion` modifier. Companion block members
+ * and Java static members are [companion][KaCallableSymbol.isCompanion] too, but they cannot be extensions.
+ */
+@OptIn(KaExperimentalApi::class)
+private val KaCallableSymbol.isCompanionExtension: Boolean
+    get() = isCompanion && isExtension

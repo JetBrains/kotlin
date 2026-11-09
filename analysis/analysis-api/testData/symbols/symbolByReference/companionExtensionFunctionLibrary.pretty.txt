@@ -1,1 +1,1 @@
-fun Foo.static1()
+companion fun Foo.static1()

@@ -16,7 +16,7 @@ class Owner {
     set(value: Int)
 }
 
-fun Owner.ext(): Int
+companion fun Owner.ext(): Int
 
-val Owner.extProp: Int
+companion val Owner.extProp: Int
   get()
