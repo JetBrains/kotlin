@@ -12,21 +12,21 @@ fun String.toDeprecationWarningMessage(deprecatingFeature: LanguageFeature): Str
     return buildString {
         append(this@toDeprecationWarningMessage)
         when {
-            endsWith(".") -> append(" ")
+            endsWith(".") -> {}
             lastOrNull()?.isWhitespace() == true -> {}
-            else -> append(". ")
+            else -> append(".")
         }
         appendDeprecationWarningSuffix(deprecatingFeature)
     }
 }
 
 fun StringBuilder.appendDeprecationWarningSuffix(deprecatingFeature: LanguageFeature) {
-    append("This will become an error ")
+    append("\nnote: This will become an error ")
     appendVersion(deprecatingFeature)
     append(".")
 
     deprecatingFeature.issue.takeUnless { it == NO_ISSUE_SPECIFIED }?.let {
-        append(" See: https://youtrack.jetbrains.com/issue/")
+        append("\nsee: https://youtrack.jetbrains.com/issue/")
         append(it)
     }
 }
