@@ -138,18 +138,12 @@ class CInteropGenerateKlibInOlderAbiVersionTest : AbstractNativeSimpleTest() {
 
     @Test
     fun expectedAbiAndMetadataVersionsWrittenToKlibs() {
-        class TestData(
-            val abiCompatibilityLevel: String,
-            val expectedAbiVersion: String,
-            val expectedMetadataVersion: String,
-            val expectedDepends: String?,
-        )
+        class TestData(val abiCompatibilityLevel: String, val expectedAbiVersion: String, val expectedMetadataVersion: String, val expectedDepends: String?)
 
-        val testDataList = listOf(
+        listOf(
             TestData(abiCompatibilityLevel = "2.4", expectedAbiVersion = "2.4.0", expectedMetadataVersion = "2.4.0", expectedDepends = "stdlib"),
             TestData(abiCompatibilityLevel = "2.5", expectedAbiVersion = "2.5.0", expectedMetadataVersion = "2.5.0", expectedDepends = null),
-        )
-        for (testData in testDataList) {
+        ).forEach { testData ->
             val cinteropArgs = listOf(
                 "-Xklib-abi-compatibility-level", testData.abiCompatibilityLevel,
                 "-Xccall-mode", "DIRECT",
