@@ -16,8 +16,8 @@ import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.utils.projectPathOrNull
 
 /**
- * Selects a dependency in the Swift Export graph for the overrides from
- * `xcodeIntegration { configure(dependency) { } }`.
+ * Selects a dependency in the Swift Export graph for the overrides from `configure(dependency) { }` of an
+ * integration.
  *
  * Matched against the resolved [SwiftExportResolvedComponent], not the requested coordinates, so an override
  * still applies when conflict resolution picks another version.
