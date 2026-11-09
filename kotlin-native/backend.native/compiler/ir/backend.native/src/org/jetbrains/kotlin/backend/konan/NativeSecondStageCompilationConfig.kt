@@ -8,8 +8,10 @@ package org.jetbrains.kotlin.backend.konan
 import com.google.common.base.StandardSystemProperty
 import com.intellij.openapi.project.Project
 import llvm.LLVMRelocMode
+import org.jetbrains.kotlin.backend.common.LoadedNativeKlibs
 import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.backend.konan.ir.BridgesPolicy
+import org.jetbrains.kotlin.backend.konan.library.KlibDAG
 import org.jetbrains.kotlin.backend.konan.library.KlibDAGBuilder
 import org.jetbrains.kotlin.backend.konan.library.KlibDAGBuilder.Parameters
 import org.jetbrains.kotlin.backend.konan.library.deserialize
@@ -46,7 +48,9 @@ private const val GENERIC_TARGET_CPU: String = "generic"
 
 class NativeSecondStageCompilationConfig(
         val project: Project,
-        override val configuration: CompilerConfiguration
+        override val configuration: CompilerConfiguration,
+        /** Another compilation in the same IR, whose libraries this one uses, see [NativeCompilerDriver.runWithCacheBuild]. */
+        internal val sharesIrWith: NativeSecondStageCompilationConfig? = null,
 ) : NativeCompilationConfig {
     /**
      * Determine if we compile for iOS target with Mac ABI (Catalyst).
@@ -460,8 +464,9 @@ class NativeSecondStageCompilationConfig(
 
     internal val produceStaticFramework get() = configuration.staticFramework
 
-    override val loadedKlibs = loadNativeKlibs(configuration, target)
-    internal val klibDag = configuration.serializedKlibDag?.deserialize(loadedKlibs.all)
+    override val loadedKlibs: LoadedNativeKlibs = sharesIrWith?.loadedKlibs ?: loadNativeKlibs(configuration, target)
+    internal val klibDag: KlibDAG = sharesIrWith?.klibDag
+            ?: configuration.serializedKlibDag?.deserialize(loadedKlibs.all)
             ?: KlibDAGBuilder(Parameters(loadedKlibs.all) { it.isExplicitlySpecifiedByUserInCLIArgument }).build()
 
     internal val externalDependenciesFile = configuration.externalDependencies?.let(::Path)
@@ -719,6 +724,13 @@ class NativeSecondStageCompilationConfig(
      */
     internal val inProcessLlvmTools: Boolean
         get() = configuration.get(BinaryOptions.inProcessLlvmTools) ?: true
+
+    /**
+     * Whether the incremental rebuild of the dirty files of a library is compiled in the same IR as the final binary,
+     * instead of in a spawned compilation, see [NativeCompilerDriver.runWithCacheBuild]. A prototype, off by default.
+     */
+    internal val mergesIcCacheBuild: Boolean
+        get() = configuration.get(BinaryOptions.mergedIcCacheBuild) ?: false
 
     /**
      * Whether object files are emitted in-process: everywhere with [inProcessObjEmission], and by default ([inProcessLlvmTools])

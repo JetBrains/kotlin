@@ -57,6 +57,8 @@ internal class LinkKlibsOutput(
         val symbolTable: ReferenceSymbolTable,
         val irLinker: KonanIrLinker,
         val irModulesToCompile: List<IrModuleFragment>,
+        /** All the IR modules in the reverse topological order, including the ones of the libraries being cached. */
+        val allIrModules: List<IrModuleFragment>,
 ) : KotlinBackendIrHolder {
 
     override val kotlinIr: IrElement
@@ -86,7 +88,8 @@ internal fun LinkKlibsContext.linkKlibs(
 
     @OptIn(InternalSymbolFinderAPI::class)
     val irBuiltIns = IrBuiltInsForLinker(irLinker, config.configuration.languageVersionSettings)
-    val symbols = BackendNativeSymbols(this, irBuiltIns, config.configuration)
+    // The symbols include the entry point of the program compiled in the same IR, if any (see [NativeCompilerDriver.runWithCacheBuild]).
+    val symbols = BackendNativeSymbols(this, irBuiltIns, (config.sharesIrWith ?: config).configuration)
 
     ExternalDependenciesGenerator(irLinker.symbolTable, listOf(irLinker)).generateUnboundSymbolsAsDependencies()
     irLinker.postProcess(irBuiltIns, inOrAfterLinkageStep = true)
@@ -130,6 +133,7 @@ internal fun LinkKlibsContext.linkKlibs(
                 symbolTable = symbolTable,
                 irLinker = irLinker,
                 irModulesToCompile = listOf(mainModule),
+                allIrModules = irModulesForLinkKlibsOutput,
         )
     } else {
         val [libraryModules, otherModules] = irModulesForLinkKlibsOutput.partition { it.kotlinLibrary in config.librariesToCache }
@@ -141,6 +145,7 @@ internal fun LinkKlibsContext.linkKlibs(
                 symbolTable = symbolTable,
                 irLinker = irLinker,
                 irModulesToCompile = libraryModules,
+                allIrModules = irModulesForLinkKlibsOutput,
         )
     }
 }

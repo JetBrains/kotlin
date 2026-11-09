@@ -99,7 +99,16 @@ internal fun <T> PhaseEngine<NativeBackendPhaseContext>.linkKlibs(
     return linkKlibsOutput to additionalOutput
 }
 
-internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendContext: NativeBackendContext, irModules: List<IrModuleFragment>, performanceManager: PerformanceManager?) {
+/**
+ * [isSharedIrPrepared]: another backend has already run over the same IR (see [NativeCompilerDriver.runWithCacheBuild]),
+ * so the declarations it adds to the shared built-ins are already there.
+ */
+internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(
+        backendContext: NativeBackendContext,
+        irModules: List<IrModuleFragment>,
+        performanceManager: PerformanceManager?,
+        isSharedIrPrepared: Boolean = false,
+) {
     val config = context.config
     useContext(backendContext) { backendEngine ->
 
@@ -110,7 +119,9 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
         }
 
         // This phase adds declarations to the shared built-ins, independently of the input module.
-        backendEngine.runModuleWisePhase(createModulePhases(::FunctionsWithoutBoundCheckGenerator).first(), listOf(irModules.first()))
+        if (!isSharedIrPrepared) {
+            backendEngine.runModuleWisePhase(createModulePhases(::FunctionsWithoutBoundCheckGenerator).first(), listOf(irModules.first()))
+        }
 
         fun createGenerationState(fragment: BackendJobFragment): NativeGenerationState {
             val outputPath = config.cacheSupport.tryGetImplicitOutput(fragment.cacheInfo) ?: config.outputPath

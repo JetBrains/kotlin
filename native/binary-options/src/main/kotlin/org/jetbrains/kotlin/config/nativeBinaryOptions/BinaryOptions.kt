@@ -150,6 +150,12 @@ object BinaryOptions : BinaryOptionRegistry() {
     val inProcessLlvmTools by booleanOption()
 
     /**
+     * Prototype: compile the incremental rebuild of the dirty files of a library (facts-based IC) in the same IR as the
+     * final binary, instead of in a separate compilation with its own IR linking.
+     */
+    val mergedIcCacheBuild by booleanOption()
+
+    /**
      * When `true`, llvm postprocessing will be done in Kotlin compiler;
      * when `false`, new custom llvm C++ passes will be used.
      * This option exists as a workaround, if new passes introduce regressions.

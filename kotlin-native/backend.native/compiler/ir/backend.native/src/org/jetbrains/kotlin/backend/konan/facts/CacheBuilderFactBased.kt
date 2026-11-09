@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.backend.konan.setupCommonOptionsForCaches
 import org.jetbrains.kotlin.backend.konan.util.reportCompilationErrorAndThrow
 import org.jetbrains.kotlin.cli.reportLog
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.io.canonicalPathString
 import org.jetbrains.kotlin.konan.config.*
 import org.jetbrains.kotlin.konan.config.NativeConfigurationKeys.DEBUG_PREFIX_MAP
@@ -280,10 +281,10 @@ class CacheBuilderFactBased(
     }
 
     /**
-     * Spawns the compilation of the per-file cache of [library] into [layout] and writes the facts it tracked,
-     * merged into [previousManifest] for an incremental build, to the cache manifest.
+     * Compiles the per-file cache of [library] into [layout], in a spawned compilation, or later with the final binary
+     * (see [takeDeferredBuild]), and writes the facts it tracked, merged into [previousManifest] for an incremental build,
+     * to the cache manifest.
      */
-    @OptIn(ExperimentalPathApi::class)
     private fun spawnCacheBuild(
             library: KotlinLibrary,
             dependencies: List<KotlinLibrary>,
@@ -293,68 +294,105 @@ class CacheBuilderFactBased(
             previousManifest: CacheManifest?,
             layout: LibraryCacheLayout,
     ) {
-        // The files of the cache folder are atomically renamed from temp ones by the spawned compilation, so dump the facts aside.
+        // The files of the cache folder are atomically renamed from temp ones by the cache compilation, so dump the facts aside.
         val factsDump = Files.createTempFile(cacheDirectory, layout.root.name, ".facts.csv")
-        try {
-            val buildStart = System.nanoTime()
-            compilationSpawner.spawn(config.additionalCacheFlags) {
-                config.configuration.konanHome?.let { konanHome = it }
-                setupCommonOptionsForCaches(config)
-                konanProducedArtifactKind = CompilerOutputKind.STATIC_CACHE
-                checkDependencies = true
-                konanNoDefaultLibs = true
-                konanNoStdlib = true
-                konanLibraries = (dependencies + library).map { it.canonicalPath.pathString }
-                cachedLibraries = dependencies.zip(dependencyCaches).associate { [dependency, dependencyCache] ->
-                    dependency.canonicalPath.pathString to dependencyCache
-                }
-                cacheDirectories = listOf(cacheDirectory.absolutePathString())
-                makePerFileCache = true
-                filesToCache?.let { this.filesToCache = it }
-                serializedKlibDag = config.klibDag.serialize()
-                val libraryPath = library.canonicalPath.pathString
-                konanLibraryToAddToCache = libraryPath
-                // Same as [CacheBuilder]: the fingerprints checked by [CacheBuilder.staleCacheReason] on the next compilation.
-                cachedLibraryDependenciesFingerprint = cacheBuilder.computeDependenciesFingerprint(library).toString()
-                putIfNotNull(DEBUG_PREFIX_MAP, config.configuration[DEBUG_PREFIX_MAP])
-                // Same as [CacheBuilder]: the test runner of an included library is generated when building its cache.
-                val generateTestRunner = this@CacheBuilderFactBased.generateTestRunner
-                if (generateTestRunner != TestRunnerKind.NONE && libraryPath in includedLibraries) {
-                    konanFriendLibraries = config.loadedKlibs.friends.map { it.canonicalPath.pathString }
-                    this.generateTestRunner = generateTestRunner
-                    konanIncludedLibraries = listOf(libraryPath)
-                    configuration.testDumpOutputPath?.let { testDumpOutputPath = it }
-                }
-                dumpFactsTo = factsDump.absolutePathString()
+        val libraryPath = library.canonicalPath.pathString
+        // Same as [CacheBuilder]: the test runner of an included library is generated when building its cache.
+        val generatesTestRunner = generateTestRunner != TestRunnerKind.NONE && libraryPath in includedLibraries
+        val build = CacheBuild(library, filesToCache, previousManifest, layout, factsDump) {
+            config.configuration.konanHome?.let { konanHome = it }
+            setupCommonOptionsForCaches(config)
+            konanProducedArtifactKind = CompilerOutputKind.STATIC_CACHE
+            checkDependencies = true
+            konanNoDefaultLibs = true
+            konanNoStdlib = true
+            konanLibraries = (dependencies + library).map { it.canonicalPath.pathString }
+            cachedLibraries = dependencies.zip(dependencyCaches).associate { [dependency, dependencyCache] ->
+                dependency.canonicalPath.pathString to dependencyCache
             }
-            reportTiming("cache-build", library, buildStart)
+            cacheDirectories = listOf(cacheDirectory.absolutePathString())
+            makePerFileCache = true
+            filesToCache?.let { this.filesToCache = it }
+            serializedKlibDag = config.klibDag.serialize()
+            konanLibraryToAddToCache = libraryPath
+            // Same as [CacheBuilder]: the fingerprints checked by [CacheBuilder.staleCacheReason] on the next compilation.
+            cachedLibraryDependenciesFingerprint = cacheBuilder.computeDependenciesFingerprint(library).toString()
+            putIfNotNull(DEBUG_PREFIX_MAP, config.configuration[DEBUG_PREFIX_MAP])
+            if (generatesTestRunner) {
+                konanFriendLibraries = config.loadedKlibs.friends.map { it.canonicalPath.pathString }
+                this.generateTestRunner = this@CacheBuilderFactBased.generateTestRunner
+                konanIncludedLibraries = listOf(libraryPath)
+                configuration.testDumpOutputPath?.let { testDumpOutputPath = it }
+            }
+            dumpFactsTo = factsDump.absolutePathString()
+        }
 
-            timed("manifest-write", library) {
-                val [defs, uses] = DebugFactsDeserializer.deserializeFrom(factsDump)
-                val manifest = if (filesToCache == null) {
-                    CacheManifest(defs, uses)
-                } else {
-                    // Only the facts of the rebuilt files are up to date in the dump, the other ones are kept from the previous compilation.
-                    val rebuiltFiles = filesToCache.toSet()
-                    val previous = previousManifest?.withoutFiles(rebuiltFiles)
-                    CacheManifest(
-                            previous?.defs.orEmpty() + defs.filterKeys { it in rebuiltFiles },
-                            previous?.uses.orEmpty() + uses.filterKeys { it in rebuiltFiles },
-                    )
-                }
-                layout.writeManifest(manifest)
-            }
-        } catch (t: Throwable) {
+        // The caches of the libraries processed later may depend on the deferred one, so it can't stay deferred.
+        deferredBuild?.let {
+            deferredBuild = null
+            it.spawn()
+        }
+        val canBeDeferred = config.mergesIcCacheBuild && config.produce == CompilerOutputKind.PROGRAM
+                && filesToCache != null && !generatesTestRunner
+        if (canBeDeferred) deferredBuild = build else build.spawn()
+    }
+
+    private var deferredBuild: CacheBuild? = null
+
+    /**
+     * The last incremental cache build, if it was deferred to be compiled with the final binary
+     * (with [NativeSecondStageCompilationConfig.mergesIcCacheBuild]): the caller must run it with [CacheBuild.compile].
+     */
+    fun takeDeferredBuild(): CacheBuild? = deferredBuild.also { deferredBuild = null }
+
+    /** The compilation of the per-file cache of [library], configured by [setupConfiguration]. */
+    inner class CacheBuild internal constructor(
+            val library: KotlinLibrary,
+            private val filesToCache: List<String>?,
+            private val previousManifest: CacheManifest?,
+            private val layout: LibraryCacheLayout,
+            private val factsDump: Path,
+            val setupConfiguration: CompilerConfiguration.() -> Unit,
+    ) {
+        val arguments: List<String> get() = config.additionalCacheFlags
+
+        fun spawn() = compile { compilationSpawner.spawn(arguments, setupConfiguration) }
+
+        /** Runs [compilation], which compiles the cache, then records its facts in the manifest; on failure, deletes the cache. */
+        @OptIn(ExperimentalPathApi::class)
+        fun compile(compilation: () -> Unit) {
             try {
-                layout.root.deleteRecursively()
-            } catch (_: Throwable) {
-                // Nothing to do.
+                val buildStart = System.nanoTime()
+                compilation()
+                reportTiming("cache-build", library, buildStart)
+
+                timed("manifest-write", library) {
+                    val [defs, uses] = DebugFactsDeserializer.deserializeFrom(factsDump)
+                    val manifest = if (filesToCache == null) {
+                        CacheManifest(defs, uses)
+                    } else {
+                        // Only the facts of the rebuilt files are up to date in the dump, the other ones are kept from the previous compilation.
+                        val rebuiltFiles = filesToCache.toSet()
+                        val previous = previousManifest?.withoutFiles(rebuiltFiles)
+                        CacheManifest(
+                                previous?.defs.orEmpty() + defs.filterKeys { it in rebuiltFiles },
+                                previous?.uses.orEmpty() + uses.filterKeys { it in rebuiltFiles },
+                        )
+                    }
+                    layout.writeManifest(manifest)
+                }
+            } catch (t: Throwable) {
+                try {
+                    layout.root.deleteRecursively()
+                } catch (_: Throwable) {
+                    // Nothing to do.
+                }
+                val message = (t as? CompilationErrorException)?.message
+                        ?: "Failed to build fact-based cache for ${library.path}\n\n${t.message}\n\n${t.stackTraceToString()}"
+                configuration.reportCompilationErrorAndThrow(message)
+            } finally {
+                factsDump.deleteIfExists()
             }
-            val message = (t as? CompilationErrorException)?.message
-                    ?: "Failed to build fact-based cache for ${library.path}\n\n${t.message}\n\n${t.stackTraceToString()}"
-            configuration.reportCompilationErrorAndThrow(message)
-        } finally {
-            factsDump.deleteIfExists()
         }
     }
 

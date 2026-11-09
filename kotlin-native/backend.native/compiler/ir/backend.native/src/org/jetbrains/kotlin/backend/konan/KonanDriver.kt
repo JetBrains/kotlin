@@ -41,6 +41,16 @@ private const val DEPRECATION_LINK = "https://kotl.in/native-targets-tiers"
 
 fun interface CompilationSpawner {
     fun spawn(arguments: List<String>, setupConfiguration: CompilerConfiguration.() -> Unit)
+
+    /**
+     * Runs [action] with the configuration that [spawn] would compile with, without compiling anything, and reports its
+     * diagnostics afterwards like [spawn] does. Returns `false` (and doesn't run [action]) if this spawner doesn't support it.
+     */
+    fun withSpawnedConfiguration(
+            arguments: List<String>,
+            setupConfiguration: CompilerConfiguration.() -> Unit,
+            action: (CompilerConfiguration) -> Unit,
+    ): Boolean = false
 }
 
 class KonanDriver(
@@ -149,6 +159,7 @@ class KonanDriver(
             factsCacheBuilder.build()
             config.reloadCacheSupport()
         }
+        val deferredCacheBuild = factsCacheBuilder.takeDeferredBuild()
 
         if (cacheBuilder.needToBuild() || factsCacheBuilder.needToBuild) {
             // Parallel cache build might have already built our asked-to-build cache. Check for that and return early if true.
@@ -156,20 +167,41 @@ class KonanDriver(
                 return
         }
 
-        if (!config.produce.isHeaderCache) {
-            config.cacheSupport.checkConsistency()
-        }
-
-        // The code that is reused from the caches is not inspected by the partial linkage engine in this compilation,
-        // so the issues detected at the moment those caches were built have to be reported once again (KT-78253).
-        // Note: A compilation that produces a cache stores the issues in that cache directory instead;
-        // they are replayed by the compilations that consume it.
-        if (!config.produce.isCache)
-            replayPartialLinkageIssuesFromCaches(config) { library, fileId ->
-                cacheBuilder.wasRebuiltInThisRun(library, fileId) || factsCacheBuilder.wasRebuiltInThisRun(library, fileId)
+        // Checks the caches the output is compiled with, so after all of them are built.
+        fun prepareCompilationWithCaches() {
+            if (!config.produce.isHeaderCache) {
+                config.cacheSupport.checkConsistency()
             }
 
-        NativeCompilerDriver(performanceManager).run(config, environment)
+            // The code that is reused from the caches is not inspected by the partial linkage engine in this compilation,
+            // so the issues detected at the moment those caches were built have to be reported once again (KT-78253).
+            // Note: A compilation that produces a cache stores the issues in that cache directory instead;
+            // they are replayed by the compilations that consume it.
+            if (!config.produce.isCache)
+                replayPartialLinkageIssuesFromCaches(config) { library, fileId ->
+                    cacheBuilder.wasRebuiltInThisRun(library, fileId) || factsCacheBuilder.wasRebuiltInThisRun(library, fileId)
+                }
+        }
+
+        if (deferredCacheBuild == null) {
+            prepareCompilationWithCaches()
+            NativeCompilerDriver(performanceManager).run(config, environment)
+        } else {
+            deferredCacheBuild.compile {
+                val isMerged = compilationSpawner.withSpawnedConfiguration(deferredCacheBuild.arguments, deferredCacheBuild.setupConfiguration) {
+                    val cacheConfig = NativeSecondStageCompilationConfig(project, it, sharesIrWith = config)
+                    NativeCompilerDriver(performanceManager).runWithCacheBuild(config, cacheConfig, environment) {
+                        prepareCompilationWithCaches()
+                    }
+                }
+                if (!isMerged) {
+                    compilationSpawner.spawn(deferredCacheBuild.arguments, deferredCacheBuild.setupConfiguration)
+                    config.reloadCacheSupport()
+                    prepareCompilationWithCaches()
+                    NativeCompilerDriver(performanceManager).run(config, environment)
+                }
+            }
+        }
     }
 
     private fun ensureModuleName(config: NativeSecondStageCompilationConfig) {

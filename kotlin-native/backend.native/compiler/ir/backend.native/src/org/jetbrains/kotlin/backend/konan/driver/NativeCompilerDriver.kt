@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.nativeBinaryOptions.CInterfaceGenerationMode
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.konan.config.konanHome
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.util.PerformanceManager
@@ -120,6 +121,54 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
             it.cAdapterExportedElements = cAdapterElements
         }
         engine.runBackend(backendContext, linkKlibsOutput.irModulesToCompile, performanceManager)
+    }
+
+    /**
+     * Produces the program of [config] together with the incremental rebuild of the dirty files of a library described
+     * by [cacheConfig], in one IR, instead of two compilations that each load and link the IR of all the libraries.
+     *
+     * The IR is linked as for the cache build (the dirty files fully, the other ones as headers), and the cache backend runs first,
+     * exactly as it would in the cache compilation. Then the backend of the program runs over the same IR, with the caches reloaded:
+     * like the program compiled separately, it only compiles the main module and finds everything else in the caches.
+     * [onCachesBuilt] runs in between, when the caches have been built and reloaded.
+     */
+    fun runWithCacheBuild(
+            config: NativeSecondStageCompilationConfig,
+            cacheConfig: NativeSecondStageCompilationConfig,
+            environment: KotlinCoreEnvironment,
+            onCachesBuilt: () -> Unit,
+    ) {
+        require(config.produce == CompilerOutputKind.PROGRAM && cacheConfig.produce == CompilerOutputKind.STATIC_CACHE)
+        usingNativeMemoryAllocator {
+            usingJvmCInteropCallbacks(config.configuration.konanHome) {
+                PhaseEngine.startTopLevel(config) { engine ->
+                    LlvmEnvironment.init(config.configuration.konanHome)
+                    val frontendOutput = performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) { engine.runK1Frontend(config, environment) }
+                            ?: return@startTopLevel
+
+                    engine.newEngine<NativeBackendPhaseContext, _>(BasicNativeBackendPhaseContext(cacheConfig)) { cacheEngine ->
+                        val linkKlibsOutput = performanceManager.tryMeasurePhaseTime(PhaseType.IrLinking) { cacheEngine.linkKlibs(frontendOutput) }
+                        val cacheBackendContext = createBackendContext(cacheConfig, frontendOutput.moduleDescriptor, linkKlibsOutput)
+                        cacheEngine.runBackend(cacheBackendContext, linkKlibsOutput.irModulesToCompile, performanceManager)
+
+                        // The caches have just been rebuilt.
+                        config.reloadCacheSupport()
+                        onCachesBuilt()
+                        val programBackendContext = NativeBackendContext(
+                                config,
+                                frontendOutput.moduleDescriptor.builtIns,
+                                linkKlibsOutput.irBuiltIns,
+                                linkKlibsOutput.allIrModules,
+                                linkKlibsOutput.irLinker,
+                                linkKlibsOutput.symbols,
+                                linkKlibsOutput.symbolTable,
+                        )
+                        val mainModule = IrModuleFragmentImpl(frontendOutput.moduleDescriptor)
+                        engine.runBackend(programBackendContext, listOf(mainModule), performanceManager, isSharedIrPrepared = true)
+                    }
+                }
+            }
+        }
     }
 
     /**
