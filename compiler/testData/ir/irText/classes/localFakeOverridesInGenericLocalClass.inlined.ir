@@ -10,19 +10,19 @@ FILE fqName:<root> fileName:/localFakeOverridesInGenericLocalClass.kt lineStartO
       VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       VALUE_PARAMETER[-2, -2] kind:Regular name:other index:1 type:kotlin.Any?
       overridden:
-        kotlin/Any.equals|equals(kotlin.Any?){}[0]
+        kotlin/Any.equals|equals(kotlin.Any?){}kotlin.Boolean[0]
     FUN[-2, -2] FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
       VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
-        kotlin/Any.hashCode|hashCode(){}[0]
+        kotlin/Any.hashCode|hashCode(){}kotlin.Int[0]
     FUN[-2, -2] FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
       VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
-        kotlin/Any.toString|toString(){}[0]
+        kotlin/Any.toString|toString(){}kotlin.String[0]
     FUN[50, 70] name:foo visibility:public modality:FINAL returnType:T of <root>.Base?
       VALUE_PARAMETER[50, 70] kind:DispatchReceiver name:<this> index:0 type:<root>.Base<T of <root>.Base>
       BLOCK_BODY[66, 70]
-        RETURN[70, 70] type=kotlin.Nothing from='/Base.foo|foo(){}[0]'
+        RETURN[70, 70] type=kotlin.Nothing from='/Base.foo|foo(){}1:0?[0]'
           CONST[66, 70] Null type=kotlin.Nothing? value=null
   FUN[335, 416] name:test visibility:public modality:FINAL returnType:kotlin.Int?
     BLOCK_BODY[352, 416]
@@ -33,26 +33,26 @@ FILE fqName:<root> fileName:/localFakeOverridesInGenericLocalClass.kt lineStartO
           BLOCK_BODY[358, 384]
             DELEGATING_CONSTRUCTOR_CALL[358, 384] '/Base.<init>|<init>(){}[0]'
               TYPE_ARG T: T of <root>.test.Local
-            INSTANCE_INITIALIZER_CALL[358, 384] classDescriptor='/test.Local|test(){}[0]' type=kotlin.Unit
+            INSTANCE_INITIALIZER_CALL[358, 384] classDescriptor='/test.Local|test(){}kotlin.Int?[0]' type=kotlin.Unit
         FUN[-2, -2] FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
           VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
           VALUE_PARAMETER[-2, -2] kind:Regular name:other index:1 type:kotlin.Any?
           overridden:
-            /Base.equals|equals(kotlin.Any?){}[0]
+            /Base.equals|equals(kotlin.Any?){}kotlin.Boolean[0]
         FUN[-2, -2] FAKE_OVERRIDE name:foo visibility:public modality:FINAL returnType:T of <root>.test.Local? [fake_override]
           VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:<root>.Base<T of <root>.test.Local>
           overridden:
-            /Base.foo|foo(){}[0]
+            /Base.foo|foo(){}1:0?[0]
         FUN[-2, -2] FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
           VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
           overridden:
-            /Base.hashCode|hashCode(){}[0]
+            /Base.hashCode|hashCode(){}kotlin.Int[0]
         FUN[-2, -2] FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
           VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
           overridden:
-            /Base.toString|toString(){}[0]
-      RETURN[389, 414] type=kotlin.Nothing from='/test|test(){}[0]'
-        CALL[409, 414] '/Base.foo|foo(){}[0]' type=kotlin.Int? origin=null
+            /Base.toString|toString(){}kotlin.String[0]
+      RETURN[389, 414] type=kotlin.Nothing from='/test|test(){}kotlin.Int?[0]'
+        CALL[409, 414] '/Base.foo|foo(){}1:0?[0]' type=kotlin.Int? origin=null
           ARG <this>: TYPE_OP[396, 408] type=<root>.Base<kotlin.Int> origin=IMPLICIT_CAST typeOperand=<root>.Base<kotlin.Int>
-            CONSTRUCTOR_CALL[396, 408] '/test.Local.<init>|test(){}<init>(){}[0]' type=<root>.test.Local<kotlin.Int> origin=null
+            CONSTRUCTOR_CALL[396, 408] '/test.Local.<init>|test(){}kotlin.Int?<init>(){}[0]' type=<root>.test.Local<kotlin.Int> origin=null
               TYPE_ARG (of class) T: kotlin.Int
