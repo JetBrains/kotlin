@@ -35,7 +35,7 @@ class Fe10HeaderGeneratorExtension : ParameterResolver, AfterEachCallback {
     override fun resolveParameter(parameterContext: ParameterContext, extensionContext: ExtensionContext): Any {
         val disposable = Disposer.newDisposable()
         extensionContext.getStore(namespace).put(disposableKey, disposable)
-        return Fe10HeaderGeneratorImpl(disposable)
+        return Fe10HeaderGeneratorImpl()
     }
 
     override fun afterEach(context: ExtensionContext) {
@@ -44,9 +44,9 @@ class Fe10HeaderGeneratorExtension : ParameterResolver, AfterEachCallback {
     }
 }
 
-class Fe10HeaderGeneratorImpl(private val disposable: Disposable) : HeaderGenerator {
+class Fe10HeaderGeneratorImpl : HeaderGenerator {
     override fun generateHeaders(root: File, configuration: HeaderGenerator.Configuration): ObjCHeader {
-        val headerGenerator = createObjCExportHeaderGenerator(disposable, root, configuration)
+        val headerGenerator = createObjCExportHeaderGenerator(root, configuration)
 
         if (configuration.withObjCBaseDeclarationStubs) {
             headerGenerator.translateBaseDeclarations()
@@ -61,7 +61,7 @@ class Fe10HeaderGeneratorImpl(private val disposable: Disposable) : HeaderGenera
     }
 
     private fun createObjCExportHeaderGenerator(
-        disposable: Disposable, root: File, configuration: HeaderGenerator.Configuration,
+        root: File, configuration: HeaderGenerator.Configuration,
     ): ObjCExportHeaderGenerator {
         val kotlinFiles = root.walkTopDown().filter { it.isFile }.filter { it.extension == "kt" }.toList()
         val dependencyKlibs = configuration.dependencies.flatMap { it.klibs }

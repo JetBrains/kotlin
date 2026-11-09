@@ -35,7 +35,6 @@ fun compileAndDeserializeSources(tempDir: File, kotlinSources: List<String>): Mo
     return compileAndDeserializeSources(testSourcesFiles)
 }
 
-@Suppress("UNUSED_PARAMETER")
 @OptIn(K1Deprecation::class)
 fun compileAndDeserializeSources(kotlinFiles: List<File>, dependencyKlibs: List<Path> = emptyList()): ModuleDescriptor {
     val moduleDescriptorFactory = K1KlibMetadataModuleDescriptorFactoryImpl()
