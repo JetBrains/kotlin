@@ -252,8 +252,8 @@ abstract class IncrementalCompilerRunner<
      *      - [ChangedFiles.DeterminableFiles.Known] to hint us that it comes from a build tool. It might be unsound,
      *          we trust it (e.g. Gradle's fingerprinting), and it might be the source of various IC bugs.
      *          If a caller crafts [ChangedFiles.DeterminableFiles.Known] manually, its soundness won't be checked at all.
- *          - [ChangedFiles.Unknown] a caller cannot decide on the state (e.g. Gradle's `isIncremental == false`), falling back to a full rebuild.
-     *            - Used when an external entity (not a compiler) tracks source-file changes, and it failed
+     *      - [ChangedFiles.Unknown] a caller cannot decide on the state (e.g. Gradle's `isIncremental == false`), falling back to a full rebuild.
+     *          - Used when an external entity (not a compiler) tracks source-file changes, and it failed
      *      - Specific compiler backend implementation still can decide to fall back to a full rebuild (e.g. because it detected some IC-incompatible change)
      *
      * - This function manages the IC state on its own:
