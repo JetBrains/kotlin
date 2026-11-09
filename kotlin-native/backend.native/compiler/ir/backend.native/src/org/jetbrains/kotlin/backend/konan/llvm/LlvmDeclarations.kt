@@ -194,7 +194,7 @@ private class DeclarationsGeneratorVisitor(
 
             // The facts this class defines are collected before lowering, see [FactsCollector].
             // The layout of a class depends on the layouts of all its superclasses, not only of the direct one.
-            if (declaration.fileOrNull != null && declaration.symbol.signature != null) {
+            if (context.factsTracker.isEnabled && declaration.fileOrNull != null && declaration.symbol.signature != null) {
                 val superClasses = generateSequence(declaration.getSuperClassNotAny()) { it.getSuperClassNotAny() }.toList()
                 superClasses
                         .filter { it.fileOrNull != null && it.fileOrNull != declaration.fileOrNull && it.symbol.signature != null }

@@ -76,9 +76,9 @@ internal class NativeEnumWhenLowering(private val generationState: NativeGenerat
         // so that incremental compilation invalidates this caller when the enum's source file changes.
         generationState.dependenciesTracker.add(entry, weak = false)
 
-        val enumClass = entry.parentAsClass
-        if (entry.fileOrNull != null && entry.file != currentFile) {
-            generationState.context.factsTracker.uses(currentFile, Fact.EnumEntries.from(enumClass))
+        val factsTracker = generationState.context.factsTracker
+        if (factsTracker.isEnabled && entry.fileOrNull != null && entry.file != currentFile) {
+            factsTracker.uses(currentFile, Fact.EnumEntries.from(entry.parentAsClass))
         }
 
         return super.mapConstEnumEntry(entry)
@@ -104,7 +104,7 @@ internal class EnumUsageLowering(generationState: NativeGenerationState) : IrTra
 
     override fun visitGetEnumValue(expression: IrGetEnumValue, data: IrBuilderWithScope?): IrExpression {
         val enumClass = expression.symbol.owner.parentAsClass
-        if (enumClass.fileOrNull != null && enumClass.fileOrNull != irFile) {
+        if (factsTracker.isEnabled && enumClass.fileOrNull != null && enumClass.fileOrNull != irFile) {
             factsTracker.uses(irFile, Fact.EnumEntries.from(enumClass))
         }
         val entry = expression.symbol.owner

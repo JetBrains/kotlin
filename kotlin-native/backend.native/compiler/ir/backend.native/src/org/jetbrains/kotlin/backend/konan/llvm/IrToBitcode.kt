@@ -220,6 +220,7 @@ internal class CodeGeneratorVisitor(
         val lifetimes: Map<IrElement, Lifetime>
 ) : IrVisitorVoid() {
     private val context = generationState.context
+    private val factsTracker = context.factsTracker
     private val llvm = generationState.llvm
     private val debugInfo: DebugInfo
         get() = generationState.debugInfo
@@ -1690,8 +1691,8 @@ internal class CodeGeneratorVisitor(
                 // the IR references the field only, and it does not change when the initializer does.
                 val constProperty = value.symbol.owner.correspondingPropertySymbol?.owner!!
                 val callSiteFile = (currentCodeContext.functionScope() as FunctionScope).declaration?.fileOrNull
-                if (callSiteFile != null && constProperty.fileOrNull != null && constProperty.fileOrNull != callSiteFile) {
-                    generationState.context.factsTracker.uses(callSiteFile, Fact.ConstInitializer.from(constProperty))
+                if (factsTracker.isEnabled && callSiteFile != null && constProperty.fileOrNull != null && constProperty.fileOrNull != callSiteFile) {
+                    factsTracker.uses(callSiteFile, Fact.ConstInitializer.from(constProperty))
                 }
                 // TODO: probably can be removed, as they are inlined.
                 return evaluateConst(value.symbol.owner.initializer?.expression as IrConst).llvm
@@ -2127,13 +2128,12 @@ internal class CodeGeneratorVisitor(
         generateDebugTrambolineIf("inline", value)
 
         // Even though the function was inlined, the edge [caller -> callee] still needs to be recorded (generally).
-        val callSiteFile = (currentCodeContext.functionScope() as FunctionScope).declaration?.fileOrNull
-
         value.inlinedFunctionSymbol?.let {
             generationState.dependenciesTracker.add(it.owner)
             // Facts are keyed by signature: an inlined function without one (e.g. local) defines no fact, see [FactsCollector].
-            if (callSiteFile != null && it.signature != null && it.owner.fileOrNull != null && it.owner.body != null) {
-                generationState.context.factsTracker.uses(callSiteFile, Fact.InlineBody.from(it.owner))
+            if (factsTracker.isEnabled && it.signature != null && it.owner.fileOrNull != null && it.owner.body != null) {
+                val callSiteFile = (currentCodeContext.functionScope() as FunctionScope).declaration?.fileOrNull
+                if (callSiteFile != null) factsTracker.uses(callSiteFile, Fact.InlineBody.from(it.owner))
             }
         }
 
@@ -2181,16 +2181,7 @@ internal class CodeGeneratorVisitor(
 
         intrinsicGenerator.tryEvaluateSpecialCall(value, resultSlot)?.let { return it }
 
-        val callSiteFile = (currentCodeContext.functionScope() as FunctionScope).declaration?.fileOrNull
-        // Fake overrides define no facts (see [FactsCollector]), so the use is recorded against the real declaration.
-        // The functions that constructors are lowered to have no signature, so the use is recorded against the original constructor.
-        val callee: IrFunction = value.symbol.owner.let {
-            it.originalConstructor ?: it.originalInlineClassConstructor ?: it.resolveFakeOverride() ?: it
-        }
-
-        if (callSiteFile != null && callee.symbol.signature != null && callee.fileOrNull != null) {
-            generationState.context.factsTracker.uses(callSiteFile, Fact.Signature.from(callee))
-        }
+        if (factsTracker.isEnabled) recordCalleeSignatureUse(value)
 
         val args = evaluateExplicitArgs(value)
 
@@ -2490,8 +2481,20 @@ internal class CodeGeneratorVisitor(
         if (superClass == null && function.isOverridable)
             return callVirtual(function, args, resultLifetime, resultSlot)
         else {
-            if (function.isFakeOverride) useFakeOverrideTargetFacts(function)
+            if (function.isFakeOverride && factsTracker.isEnabled) useFakeOverrideTargetFacts(function)
             return callDirect(function, args, resultLifetime, resultSlot)
+        }
+    }
+
+    private fun recordCalleeSignatureUse(value: IrCall) {
+        val callSiteFile = (currentCodeContext.functionScope() as FunctionScope).declaration?.fileOrNull ?: return
+        // Fake overrides define no facts (see [FactsCollector]), so the use is recorded against the real declaration.
+        // The functions that constructors are lowered to have no signature, so the use is recorded against the original constructor.
+        val callee: IrFunction = value.symbol.owner.let {
+            it.originalConstructor ?: it.originalInlineClassConstructor ?: it.resolveFakeOverride() ?: it
+        }
+        if (callee.symbol.signature != null && callee.fileOrNull != null) {
+            factsTracker.uses(callSiteFile, Fact.Signature.from(callee))
         }
     }
 
