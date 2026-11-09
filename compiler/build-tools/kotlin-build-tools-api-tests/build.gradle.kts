@@ -367,6 +367,14 @@ testing {
         }
 
         named<JvmTestSuite>("testJps") {
+            targets.all {
+                testTask.configure {
+                    systemProperty(
+                        "kotlin.buildtools.daemon.legacy.mode",
+                        "true"
+                    )
+                }
+            }
             dependencies {
                 implementation(project(":compiler:build-tools:kotlin-build-tools-api-jps"))
             }
