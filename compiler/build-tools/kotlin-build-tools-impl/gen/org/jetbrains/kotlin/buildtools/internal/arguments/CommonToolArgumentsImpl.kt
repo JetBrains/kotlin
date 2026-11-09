@@ -30,7 +30,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlinx.serialization.UseSerializers
 import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
-import org.jetbrains.kotlin.buildtools.`internal`.serializability.PathAsStringSerializer
+import org.jetbrains.kotlin.buildtools.`internal`.daemon.PathAsStringSerializer
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments as ArgumentsCommonToolArguments

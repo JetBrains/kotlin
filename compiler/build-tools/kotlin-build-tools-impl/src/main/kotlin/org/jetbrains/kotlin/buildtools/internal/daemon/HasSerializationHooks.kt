@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.internal.serializability
+package org.jetbrains.kotlin.buildtools.internal.daemon
 
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.daemon.common.CompilerServicesFacadeBase
@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.daemon.common.CompilerServicesFacadeBase
  * For example, in [beforeSerialization] any in-process callbacks can be removed and their presence recorded. Then, in the daemon process,
  * these callbacks can be reconstructed based on the recorded information, and using a mechanism for sending remote [Message]s.
  */
-public interface BtaSerializable {
+public interface HasSerializationHooks {
     public fun beforeSerialization(logger: KotlinLogger): List<MessageVisitor> {
         return emptyList()
     }

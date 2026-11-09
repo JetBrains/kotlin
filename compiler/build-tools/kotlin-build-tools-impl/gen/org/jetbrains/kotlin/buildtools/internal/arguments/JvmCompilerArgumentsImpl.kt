@@ -46,7 +46,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.LambdasMode
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.SamConversionsMode
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.StringConcatMode
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.WhenExpressionsMode
-import org.jetbrains.kotlin.buildtools.`internal`.serializability.PathAsStringSerializer
+import org.jetbrains.kotlin.buildtools.`internal`.daemon.PathAsStringSerializer
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.DelicateBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion

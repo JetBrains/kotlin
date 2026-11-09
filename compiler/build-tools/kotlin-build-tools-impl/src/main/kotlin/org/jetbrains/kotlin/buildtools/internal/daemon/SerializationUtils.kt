@@ -5,10 +5,9 @@
 @file:UseSerializers(PathAsStringSerializer::class)
 @file:OptIn(ExperimentalSerializationApi::class)
 
-package org.jetbrains.kotlin.buildtools.internal.serializability
+package org.jetbrains.kotlin.buildtools.internal.daemon
 
 import kotlinx.serialization.*
-import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
@@ -37,7 +36,7 @@ internal inline fun <T> Any?.cast(): T = this as T
 internal fun Any.throwPropertyNotFound(key: String): Nothing = error("Property with name $key not found in $this")
 
 internal object PathAsStringSerializer : KSerializer<Path> {
-    override val descriptor = PrimitiveSerialDescriptor("Path", PrimitiveKind.STRING)
+    override val descriptor = PrimitiveSerialDescriptor("Path", STRING)
 
     override fun serialize(encoder: Encoder, value: Path) = encoder.encodeString(value.toFile().path)
 
@@ -73,13 +72,13 @@ internal object CompilerMessageSourceLocationSerializer : KSerializer<CompilerMe
 
     override fun deserialize(decoder: Decoder): CompilerMessageSourceLocation {
         return when (val surrogate = decoder.decodeSerializableValue(CompilerMessageSourceLocationSurrogate.serializer())) {
-            is CompilerMessageSourceLocationSurrogate.CompilerMessageLocationSurrogate -> CompilerMessageLocation.create(
+            is CompilerMessageLocationSurrogate -> CompilerMessageLocation.create(
                 path = surrogate.path,
                 line = surrogate.line,
                 column = surrogate.column,
                 lineContent = surrogate.lineContent
             )!!
-            is CompilerMessageSourceLocationSurrogate.CompilerMessageLocationWithRangeSurrogate -> CompilerMessageLocationWithRange.create(
+            is CompilerMessageLocationWithRangeSurrogate -> CompilerMessageLocationWithRange.create(
                 path = surrogate.path,
                 lineStart = surrogate.line,
                 columnStart = surrogate.column,
@@ -310,14 +309,14 @@ internal object IcEventSerializer : KSerializer<IcEvent> {
 
     override fun deserialize(decoder: Decoder): IcEvent {
         return when (val surrogate = decoder.decodeSerializableValue(IcEventSurrogate.serializer())) {
-            is IcEventSurrogate.CompilationStartedSurrogate -> CompilationStartedEvent(
+            is CompilationStartedSurrogate -> CompilationStartedEvent(
                 isIncremental = surrogate.isIncremental,
                 reason = surrogate.reason,
                 type = surrogate.type,
                 timestamp = surrogate.timestamp,
                 iteration = surrogate.iteration,
             )
-            is IcEventSurrogate.CompileIterationSurrogate -> CompileIterationEvent(
+            is CompileIterationSurrogate -> CompileIterationEvent(
                 reasons = surrogate.reasons.mapValues { entry ->
                     entry.value.map { FileCompilationReasonBasic(it) }
                 },

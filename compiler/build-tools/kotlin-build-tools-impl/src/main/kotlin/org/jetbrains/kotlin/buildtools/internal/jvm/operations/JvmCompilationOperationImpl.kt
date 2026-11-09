@@ -46,12 +46,12 @@ import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalC
 import org.jetbrains.kotlin.buildtools.internal.jvm.KaptConfigurationImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.KaptConfigurationImpl.Companion.SOURCE_OUTPUT_DIR
 import org.jetbrains.kotlin.buildtools.internal.jvm.toOptions
-import org.jetbrains.kotlin.buildtools.internal.serializability.BtaSerializable
-import org.jetbrains.kotlin.buildtools.internal.serializability.Message
-import org.jetbrains.kotlin.buildtools.internal.serializability.MessageVisitor
-import org.jetbrains.kotlin.buildtools.internal.serializability.PathAsStringSerializer
-import org.jetbrains.kotlin.buildtools.internal.serializability.cast
-import org.jetbrains.kotlin.buildtools.internal.serializability.throwPropertyNotFound
+import org.jetbrains.kotlin.buildtools.internal.daemon.HasSerializationHooks
+import org.jetbrains.kotlin.buildtools.internal.daemon.Message
+import org.jetbrains.kotlin.buildtools.internal.daemon.MessageVisitor
+import org.jetbrains.kotlin.buildtools.internal.daemon.PathAsStringSerializer
+import org.jetbrains.kotlin.buildtools.internal.daemon.cast
+import org.jetbrains.kotlin.buildtools.internal.daemon.throwPropertyNotFound
 import org.jetbrains.kotlin.buildtools.internal.trackers.getMetricsReporter
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
@@ -113,14 +113,14 @@ internal class JvmCompilationOperationImpl : BaseCompilationOperationImpl<JvmCom
 
     override fun beforeSerialization(logger: KotlinLogger): List<MessageVisitor> = buildList {
         addAll(super.beforeSerialization(logger))
-        (incrementalCompilation as? BtaSerializable)?.let { incrementalCompilation ->
+        (incrementalCompilation as? HasSerializationHooks)?.let { incrementalCompilation ->
             addAll(incrementalCompilation.beforeSerialization(logger))
         }
     }
 
     override fun afterDeserialization(messageReporter: (Message) -> Unit, compilerFacade: CompilerServicesFacadeBase?) {
         super.afterDeserialization(messageReporter, compilerFacade)
-        (incrementalCompilation as? BtaSerializable)?.afterDeserialization(messageReporter, compilerFacade)
+        (incrementalCompilation as? HasSerializationHooks)?.afterDeserialization(messageReporter, compilerFacade)
     }
 
     override fun deepCopy(): JvmCompilationOperationImpl {

@@ -13,9 +13,9 @@ import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions
 import org.jetbrains.kotlin.buildtools.internal.*
-import org.jetbrains.kotlin.buildtools.internal.serializability.PathAsStringSerializer
-import org.jetbrains.kotlin.buildtools.internal.serializability.cast
-import org.jetbrains.kotlin.buildtools.internal.serializability.throwPropertyNotFound
+import org.jetbrains.kotlin.buildtools.internal.daemon.PathAsStringSerializer
+import org.jetbrains.kotlin.buildtools.internal.daemon.cast
+import org.jetbrains.kotlin.buildtools.internal.daemon.throwPropertyNotFound
 import java.nio.file.Path
 
 @Suppress("DEPRECATION_ERROR")

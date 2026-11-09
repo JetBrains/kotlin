@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.internal.serializability
+package org.jetbrains.kotlin.buildtools.internal.daemon
 
 import org.jetbrains.kotlin.buildtools.api.trackers.BuildMetricsCollector
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.buildtools.internal.KotlinLoggerMessageCollectorAdap
 internal class MetricsCollectorVisitor(private val metricsCollector: BuildMetricsCollector) : MessageVisitor {
 
     override fun accept(message: Message): Boolean = when (message) {
-        is Message.CollectMetricMessage -> {
+        is CollectMetricMessage -> {
             metricsCollector.collectMetric(message.name, message.type, message.value)
             true
         }
