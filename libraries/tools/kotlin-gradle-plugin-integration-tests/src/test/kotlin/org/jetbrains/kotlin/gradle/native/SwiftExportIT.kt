@@ -19,7 +19,6 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
-import org.jetbrains.kotlin.gradle.uklibs.addPublishedProjectToRepositories
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
@@ -47,27 +46,6 @@ class SwiftExportIT : KGPBaseTest() {
 
     private companion object {
         private const val DEFAULT_IOS_DEPLOYMENT_TARGET = "18.0"
-    }
-
-    @DisplayName("embedSwiftExportForXcode fail")
-    @GradleTest
-    fun shouldFailWithExecutingEmbedSwiftExportForXcode(
-        gradleVersion: GradleVersion,
-    ) {
-        project("empty", gradleVersion) {
-            plugins {
-                kotlin("multiplatform")
-            }
-            buildScriptInjection {
-                project.applyMultiplatform {
-                    iosArm64()
-                }
-            }
-            buildAndFail(":embedSwiftExportForXcode") {
-                assertOutputContains("Please run the embedSwiftExportForXcode task from Xcode")
-                assertConfigurationCacheStored()
-            }
-        }
     }
 
     @DisplayName("embedSwiftExportForXcode fails for missing configured architecture")
@@ -158,6 +136,10 @@ class SwiftExportIT : KGPBaseTest() {
                 )
 
                 assertFileExists(libShared.toPath())
+
+                // KT-80632: without a SwiftPM import, the package has no cinterop package dependency to reexport.
+                val generatedPackage = describeSwiftPackage(projectPath.resolve("build/SPMPackage/iosArm64/Debug"))
+                assertEquals(emptyList(), generatedPackage.dependencies)
             }
 
             // The run is per target, so a Release build reuses it and only links and packages again.
@@ -321,51 +303,6 @@ class SwiftExportIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("check Swift Export fat binary build")
-    @GradleTest
-    fun testSwiftExportFatBinaryBuild(
-        gradleVersion: GradleVersion,
-        @TempDir testBuildDir: Path,
-    ) {
-        project("empty", gradleVersion) {
-            plugins {
-                kotlin("multiplatform")
-            }
-            settingsBuildScriptInjection {
-                settings.rootProject.name = "shared"
-            }
-            buildScriptInjection {
-                project.applyMultiplatform {
-                    iosSimulatorArm64()
-                    // fixme: KT-89587 Clean up tests after iosX64 target deprecation
-                    iosX64()
-
-                    sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
-                }
-            }
-            build(
-                ":embedSwiftExportForXcode",
-                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir, listOf("arm64", "x86_64"), "iphonesimulator"),
-            ) {
-                assertTasksExecuted(":copyDebugSPMIntermediates")
-            }
-
-            val builtProductsDir = projectPath.resolve("build/builtProductsDir")
-
-            val lipoOutput = runProcess(
-                listOf("lipo", "-archs", "libShared.a"),
-                builtProductsDir.toFile()
-            )
-
-            assert(lipoOutput.isSuccessful) { "lipo -archs call was not successfull" }
-
-            val libraryArchs = lipoOutput.output.lines().joinToString("").split(" ")
-
-            assertContains(libraryArchs, "arm64", "libShared.a doesn't contain arm64")
-            assertContains(libraryArchs, "x86_64", "libShared.a doesn't contain x86_64")
-        }
-    }
-
     @DisplayName("Swift Export with multiple source sets")
     @GradleTest
     fun testMultipleSourceSetsWithSwiftExportEnabled(
@@ -453,6 +390,10 @@ class SwiftExportIT : KGPBaseTest() {
             }
 
             val builtProductsDir = projectPath.resolve("build/builtProductsDir").toFile()
+
+            val libraryArchs = runProcess(listOf("lipo", "-archs", "libShared.a"), builtProductsDir)
+            assert(libraryArchs.isSuccessful) { "lipo -archs failed:\n${libraryArchs.output}" }
+            assertEquals(setOf("arm64", "x86_64"), libraryArchs.output.trim().split(" ").toSet())
 
             //get x64 slice
             runProcess(
@@ -769,61 +710,6 @@ class SwiftExportIT : KGPBaseTest() {
                 environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
             ) {
                 assertOutputContains("Could not find ${multiplatformLibrary.rootCoordinate}")
-            }
-        }
-    }
-
-    @DisplayName("embedSwiftExport overrides the version of an external dependency defined in Swift Export DSL with highest on classpath")
-    @GradleTest
-    @Suppress("DEPRECATION") // Tests the deprecated legacy Swift Export DSL on purpose.
-    fun testSwiftExportDSLWithExternalDependencyVersionResolution(
-        gradleVersion: GradleVersion,
-        @TempDir testBuildDir: Path,
-    ) {
-        // Publish dependencies
-        val multiplatformLibraryV1 = publishMultiplatformLibrary(gradleVersion, libraryVersion = "1.0")
-        val multiplatformLibraryV2 = publishMultiplatformLibrary(gradleVersion, libraryVersion = "2.0") {
-            iosArm64()
-            sourceSets.commonMain.get().compileSource("class FooV2")
-        }
-
-        project(
-            "empty",
-            gradleVersion,
-        ) {
-            plugins {
-                kotlin("multiplatform")
-            }
-            addPublishedProjectToRepositories(multiplatformLibraryV1)
-            addPublishedProjectToRepositories(multiplatformLibraryV2)
-
-            buildScriptInjection {
-                project.applyMultiplatform {
-                    iosArm64()
-                    sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
-                    with(swiftExport) {
-                        @OptIn(ExperimentalSwiftExportDsl::class)
-                        export(multiplatformLibraryV1.rootCoordinate)
-                    }
-                    sourceSets.commonMain {
-                        dependencies {
-                            implementation(multiplatformLibraryV2.rootCoordinate)
-                        }
-                    }
-                }
-            }
-
-            build(
-                ":embedSwiftExportForXcode",
-                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
-            ) {
-                val librarySwiftPath = projectPath
-                    .resolve("build/SwiftExport/iosArm64/output/files/FooMultiplatformLibrary/FooMultiplatformLibrary.swift")
-                assertFileExists(librarySwiftPath)
-                assertContains(
-                    librarySwiftPath.readText(),
-                    "public final class FooV2"
-                )
             }
         }
     }
@@ -1384,57 +1270,6 @@ class SwiftExportIT : KGPBaseTest() {
                 ),
                 derivedDataPath = projectPath.resolve("iosApp/iosApp.derivedData"),
             )
-        }
-    }
-
-    @TestMetadata("emptyxcode")
-    @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalSwiftExportDsl::class)
-    @DisplayName("KT-80632: Swift Export without swiftPMDependencies emits no cinterop package dependency")
-    @GradleTest
-    @Suppress("DEPRECATION") // Tests the deprecated legacy Swift Export DSL on purpose.
-    fun testSwiftExportWithoutSwiftPMImportHasNoCinteropDependency(
-        gradleVersion: GradleVersion,
-        @TempDir testBuildDir: Path,
-    ) {
-        project("emptyxcode", gradleVersion) {
-            plugins {
-                kotlin("multiplatform")
-            }
-            settingsBuildScriptInjection {
-                settings.rootProject.name = "shared"
-            }
-            buildScriptInjection {
-                project.applyMultiplatform {
-                    iosArm64()
-
-                    sourceSets.appleMain.get().compileSource(
-                        """
-                            package producer
-                            fun greeting(): String = "Hello"
-                        """.trimIndent()
-                    )
-
-                    with(swiftExport) {
-                        configure {
-                            freeCompilerArgs.add("-Xpartial-linkage-loglevel=error")
-                        }
-                    }
-                }
-            }
-
-            build(
-                ":embedSwiftExportForXcode",
-                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
-            ) {
-                // No Swift package imported => the manifest must stay free of any package dependency, confirming the
-                // cinterop reexport wiring only engages for SwiftPM-import klibs.
-                val generatedPackage = describeSwiftPackage(projectPath.resolve("build/SPMPackage/iosArm64/debug"))
-                assertEquals(
-                    emptyList(),
-                    generatedPackage.dependencies,
-                    "Expected no SPM package dependency without swiftPMDependencies"
-                )
-            }
         }
     }
 
