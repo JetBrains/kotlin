@@ -117,6 +117,10 @@ sealed class Fact {
                 append(irSymbol.signature?.render())
                 // Not exclusive: e.g. a function is overridable and has a visibility too.
                 if (d is IrFunction) append('|').append(d.returnType.renderForFacts())
+                // The signature doesn't tell these apart, but a call site is compiled differently: a suspend function takes
+                // a continuation, an inline function is inlined into it, and an external one is bound to a runtime symbol.
+                if (d is IrSimpleFunction) append('|').append(d.isSuspend)
+                if (d is IrFunction) append('|').append(d.isInline).append('|').append(d.isExternal)
                 // A call site lowers the constructor calls of a value class (inlined) differently from the other ones.
                 if (d is IrConstructor) append('|').append(d.constructedClass.isValue)
                 // A call site calls a final function directly, and an open one through its vtable trampoline.
@@ -287,7 +291,8 @@ sealed class Fact {
  * Fake overrides are skipped: they only depend on the ancestors, which define their own facts. So the hash only needs the class
  * itself, and is the same whether the ancestors are bound (when compiling) or not (in [KlibFactsGenerator]).
  *
- * Not handled specially yet: suspend functions (their slots are the ones of their lowered versions) and Objective-C classes.
+ * The slot of a suspend function is the one of its lowered version, which takes a continuation, hence `isSuspend` in the hash.
+ * Not handled specially yet: Objective-C classes.
  */
 private fun IrClass.methodTableContributionHash(bridgesPolicy: BridgesPolicy): ULong {
     val functions = declarations.flatMap {
@@ -307,7 +312,7 @@ private fun IrClass.methodTableContributionHash(bridgesPolicy: BridgesPolicy): U
         })
         append('{').append(
                 functions.map {
-                    "${it.symbol.signature?.render() ?: it.name}:${it.returnType.renderForFacts()}:${it.modality}:${it.visibility}"
+                    "${it.symbol.signature?.render() ?: it.name}:${it.returnType.renderForFacts()}:${it.modality}:${it.visibility}:${it.isSuspend}"
                 }.sorted().joinToString(";")
         ).append('}')
     }
