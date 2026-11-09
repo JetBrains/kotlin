@@ -119,8 +119,8 @@ internal fun generateDocumentationBundleFromTestData(file: File): KdBundle {
         KdAnalyzerSourceSet(
             name = module.name,
             platform = module.platform,
-            sourceRoots = setOf(root),
-            classpath = listOf(stdlibFor(module.platform)),
+            sourceRoots = setOf(root.toPath()),
+            classpath = listOf(stdlibFor(module.platform).toPath()),
             dependsOn = module.dependsOn,
         )
     }
