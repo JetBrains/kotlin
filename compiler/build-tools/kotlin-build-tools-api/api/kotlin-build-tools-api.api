@@ -1651,7 +1651,9 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/js/operation
 	public static final field EXPORT_SUSPEND_LAMBDAS Lorg/jetbrains/kotlin/buildtools/api/js/operations/JsDtsGenerationOperation$Option;
 	public static final field GRANULARITY Lorg/jetbrains/kotlin/buildtools/api/js/operations/JsDtsGenerationOperation$Option;
 	public static final field IMPLEMENT_INTERFACES Lorg/jetbrains/kotlin/buildtools/api/js/operations/JsDtsGenerationOperation$Option;
+	public static final field MAIN_MODULE_NAME Lorg/jetbrains/kotlin/buildtools/api/js/operations/JsDtsGenerationOperation$Option;
 	public static final field MODULE_KIND Lorg/jetbrains/kotlin/buildtools/api/js/operations/JsDtsGenerationOperation$Option;
+	public static final field OUTPUT_NAME Lorg/jetbrains/kotlin/buildtools/api/js/operations/JsDtsGenerationOperation$Option;
 	public static final field TS_COMPILATION_STRATEGY Lorg/jetbrains/kotlin/buildtools/api/js/operations/JsDtsGenerationOperation$Option;
 	public static final field USE_UNKNOWN_INSTEAD_ANY Lorg/jetbrains/kotlin/buildtools/api/js/operations/JsDtsGenerationOperation$Option;
 	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/js/operations/JsDtsGenerationOperation$Option;)Ljava/lang/Object;

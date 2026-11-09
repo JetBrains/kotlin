@@ -362,6 +362,7 @@ internal constructor(
                 task.linkCompilerOptions,
             )
             task.klibs.from(linkTask.map { it.libraries })
+            task.linkFreeCompilerArgs.set(linkTask.flatMap { it.enhancedFreeCompilerArgs })
             task.entryModule.set(linkTask.flatMap { it.entryModule })
             task.granularity.set(linkTask.map { it.outputGranularity })
             task.kotlinBuildToolsApiClasspath.from(configurations.named(BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME))
