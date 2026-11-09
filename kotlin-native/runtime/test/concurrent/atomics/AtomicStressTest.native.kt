@@ -9,11 +9,7 @@ package test.concurrent.atomics
 
 import test.concurrent.ThreadPool
 import kotlin.concurrent.atomics.*
-import kotlin.native.concurrent.Future
-import kotlin.native.concurrent.TransferMode
-import kotlin.native.concurrent.Worker
 import kotlin.test.*
-
 
 class AtomicIntStressTest {
     @BeforeTest fun init() = ThreadPool.init(20)

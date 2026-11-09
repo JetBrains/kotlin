@@ -3,14 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(ExperimentalStdlibApi::class)
-
 package test.concurrent
 
 import kotlin.concurrent.*
-import kotlin.native.concurrent.Future
-import kotlin.native.concurrent.TransferMode
-import kotlin.native.concurrent.Worker
 import kotlin.test.*
 
 class AtomicIntStressTest {

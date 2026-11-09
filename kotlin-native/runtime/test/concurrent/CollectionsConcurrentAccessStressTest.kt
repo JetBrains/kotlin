@@ -5,7 +5,6 @@
 
 package test.collections
 
-import test.concurrent.ThreadPool
 import kotlin.concurrent.atomics.AtomicReference
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 import kotlin.concurrent.atomics.updateAndFetch
@@ -13,6 +12,7 @@ import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import test.concurrent.ThreadPool
 
 @OptIn(ExperimentalAtomicApi::class)
 class CollectionsConcurrentAccessStressTest {
@@ -24,7 +24,7 @@ class CollectionsConcurrentAccessStressTest {
         val originalMap = IntArray(1) { it }.associate { it to it }
         val mapRef = AtomicReference(originalMap)
 
-        val features = ThreadPool.execute {
+        val futures = ThreadPool.execute {
             repeat(100_000) {
                 val _ = mapRef.updateAndFetch {
                     buildMap {
@@ -33,7 +33,7 @@ class CollectionsConcurrentAccessStressTest {
                 }
             }
         }
-        features.forEach { val _ = it.result }
+        futures.forEach { val _ = it.result }
 
         assertEquals(originalMap, mapRef.load())
     }
