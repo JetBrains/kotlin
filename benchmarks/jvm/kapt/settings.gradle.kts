@@ -38,5 +38,4 @@ include(
     ":samples:synthetic-noop",
     ":samples:dagger-sample",
     ":samples:mapstruct-sample",
-    ":samples:compiler-corpus",
 )
