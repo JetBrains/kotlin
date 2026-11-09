@@ -268,6 +268,12 @@ public class AtomicfuJvmFirLightTreeTestGenerated extends AbstractAtomicfuJvmFir
     }
 
     @Test
+    @TestMetadata("CompanionLoopingFunctions.kt")
+    public void testCompanionLoopingFunctions() {
+      run("CompanionLoopingFunctions.kt");
+    }
+
+    @Test
     @TestMetadata("DelegatedCompanionProperties.kt")
     public void testDelegatedCompanionProperties() {
       run("DelegatedCompanionProperties.kt");
