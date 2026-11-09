@@ -46,6 +46,8 @@ tasks.withType<KotlinCompilationTask<*>>().configureEach {
 val intellijVersion = kotlinBuildProperties.versionsProperty("intellijSdk").get()
 
 dependencies {
+    api(project(":tools:kotlin-documentation-model:model"))
+
     implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.jackson.module.kotlin)
