@@ -34,6 +34,7 @@ data class KdFunction(
     val extensionReceiverParameter: KdExtensionReceiverParameter?,
     val contextParameters: List<KdContextParameter>,
 
+    /** Directly overridden declarations. Targets outside the analyzed module are stored in the fragment's embedded elements. */
     val overridens: List<KdElementId>,
 
     val visibility: KdVisibility,

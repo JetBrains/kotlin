@@ -203,8 +203,7 @@
                 "INTERFACE",
                 "OBJECT",
                 "ENUM_CLASS",
-                "ANNOTATION_CLASS",
-                "RECORD"
+                "ANNOTATION_CLASS"
             ]
         },
         "org.jetbrains.kotlin.documentation.KdTypeParameter": {
@@ -952,7 +951,14 @@
                     "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdTypeProjection"
                 },
                 "receiverType": {
-                    "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdTypeProjection"
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdTypeProjection"
+                        }
+                    ]
                 },
                 "valueParameterTypes": {
                     "type": "array",
@@ -1584,6 +1590,9 @@
                 "name": {
                     "type": "string"
                 },
+                "isLateinit": {
+                    "type": "boolean"
+                },
                 "isInline": {
                     "type": "boolean"
                 },
@@ -1667,6 +1676,22 @@
                 "modality": {
                     "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdModality"
                 },
+                "since": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "deprecated": {
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdDeprecated"
+                        }
+                    ]
+                },
                 "throws": {
                     "type": "array",
                     "items": {
@@ -1685,6 +1710,7 @@
             },
             "required": [
                 "name",
+                "isLateinit",
                 "isInline",
                 "isCompanion",
                 "isExternal",
@@ -1702,6 +1728,8 @@
                 "overridens",
                 "visibility",
                 "modality",
+                "since",
+                "deprecated",
                 "throws",
                 "annotations"
             ],
