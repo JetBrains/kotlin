@@ -1,4 +1,6 @@
 /C.foo(): String!
   ALL:
+    /J.foo(): String!
   DIRECT:
+    /J.foo(): String!
   INTERSECTION:

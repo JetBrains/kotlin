@@ -1,14 +1,20 @@
 test/C.foo(text: String): Unit
   ALL:
+    test/I.foo(text: String): Unit
   DIRECT:
+    test/I.foo(text: String): Unit
   INTERSECTION:
 
 test/C.bar: Int
   ALL:
+    test/I.bar: Int
   DIRECT:
+    test/I.bar: Int
   INTERSECTION:
 
 test/C.baz: String
   ALL:
+    test/I.baz: String
   DIRECT:
+    test/I.baz: String
   INTERSECTION:

@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.caches.FirCache
+import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.modality
@@ -36,6 +38,7 @@ class FirDelegatedMemberScope(
     private val dispatchReceiverType = containingClass.defaultType()
     private val overrideChecker = session.firOverrideChecker
     private val delegatedMembersFilter = session.delegatedMembersFilter
+    private val delegatedMembersStorage = session.delegatedMembersStorage
 
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         declaredMemberScope.processFunctionsByName(name, processor)
@@ -90,26 +93,24 @@ class FirDelegatedMemberScope(
                 return@processor
             }
 
-            val delegatedSymbol =
-                FirFakeOverrideGenerator.createCopyForFirFunction(
-                    FirNamedFunctionSymbol(CallableId(containingClass.classId, functionSymbol.name)),
-                    original,
-                    derivedClassLookupTag = dispatchReceiverType.lookupTag,
-                    session,
-                    FirDeclarationOrigin.Delegated,
-                    newDispatchReceiverType = dispatchReceiverType,
-                    newModality = Modality.OPEN,
-                    newSource = containingClass.source?.fakeElement(KtFakeSourceElementKind.MembersImplementedByDelegation),
-                    markAsOverride = true
-                ).apply {
-                    delegatedWrapperData = DelegatedWrapperData(
-                        functionSymbol.fir, containingClass.symbol.toLookupTag(), delegateField.symbol
-                    )
-                }.symbol
-
-            result += delegatedSymbol
+            result += delegatedMembersStorage.cachedFunctions.getValue(delegateField.symbol to functionSymbol, this)
         }
     }
+
+    internal fun createDelegatedFunction(delegateField: FirFieldSymbol, original: FirNamedFunctionSymbol): FirNamedFunctionSymbol =
+        FirFakeOverrideGenerator.createCopyForFirFunction(
+            FirNamedFunctionSymbol(CallableId(containingClass.classId, original.name)),
+            original.fir,
+            derivedClassLookupTag = dispatchReceiverType.lookupTag,
+            session,
+            FirDeclarationOrigin.Delegated,
+            newDispatchReceiverType = dispatchReceiverType,
+            newModality = Modality.OPEN,
+            newSource = containingClass.source?.fakeElement(KtFakeSourceElementKind.MembersImplementedByDelegation),
+            markAsOverride = true
+        ).apply {
+            delegatedWrapperData = DelegatedWrapperData(original.fir, containingClass.symbol.toLookupTag(), delegateField)
+        }.symbol
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
         declaredMemberScope.processPropertiesByName(name, processor)
@@ -171,23 +172,22 @@ class FirDelegatedMemberScope(
                 return@processor
             }
 
-            val delegatedSymbol =
-                FirFakeOverrideGenerator.createCopyForFirProperty(
-                    FirRegularPropertySymbol(CallableId(containingClass.classId, propertySymbol.name)),
-                    original,
-                    derivedClassLookupTag = dispatchReceiverType.lookupTag,
-                    session,
-                    FirDeclarationOrigin.Delegated,
-                    newModality = Modality.OPEN,
-                    newDispatchReceiverType = dispatchReceiverType,
-                ).apply {
-                    delegatedWrapperData = DelegatedWrapperData(
-                        propertySymbol.fir, containingClass.symbol.toLookupTag(), delegateField.symbol
-                    )
-                }.symbol
-            result += delegatedSymbol
+            result += delegatedMembersStorage.cachedProperties.getValue(delegateField.symbol to propertySymbol, this)
         }
     }
+
+    internal fun createDelegatedProperty(delegateField: FirFieldSymbol, original: FirPropertySymbol): FirPropertySymbol =
+        FirFakeOverrideGenerator.createCopyForFirProperty(
+            FirRegularPropertySymbol(CallableId(containingClass.classId, original.name)),
+            original.fir,
+            derivedClassLookupTag = dispatchReceiverType.lookupTag,
+            session,
+            FirDeclarationOrigin.Delegated,
+            newModality = Modality.OPEN,
+            newDispatchReceiverType = dispatchReceiverType,
+        ).apply {
+            delegatedWrapperData = DelegatedWrapperData(original.fir, containingClass.symbol.toLookupTag(), delegateField)
+        }.symbol
 
     private val callableNamesLazy: Set<Name> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         buildSet {
@@ -223,6 +223,25 @@ class FirDelegatedMemberScope(
         )
     }
 }
+
+/**
+ * A storage for the members generated by [FirDelegatedMemberScope]: all delegated member scopes of a class in the [session] share the
+ * delegated member of an original member, as they share substitution and intersection overrides.
+ *
+ * A session can have several [scope sessions][ScopeSession] with their own scopes of the class. A delegated member generated by only
+ * one of these scopes would be unknown to the others, which then, e.g., find no overridden members for it.
+ */
+class FirDelegatedMembersStorage(val session: FirSession) : FirSessionComponent {
+    private val cachesFactory = session.firCachesFactory
+
+    val cachedFunctions: FirCache<Pair<FirFieldSymbol, FirNamedFunctionSymbol>, FirNamedFunctionSymbol, FirDelegatedMemberScope> =
+        cachesFactory.createCache { [delegateField, original], scope -> scope.createDelegatedFunction(delegateField, original) }
+
+    val cachedProperties: FirCache<Pair<FirFieldSymbol, FirPropertySymbol>, FirPropertySymbol, FirDelegatedMemberScope> =
+        cachesFactory.createCache { [delegateField, original], scope -> scope.createDelegatedProperty(delegateField, original) }
+}
+
+private val FirSession.delegatedMembersStorage: FirDelegatedMembersStorage by FirSession.sessionComponentAccessor()
 
 private object MultipleDelegatesWithTheSameSignatureKey : FirDeclarationDataKey()
 

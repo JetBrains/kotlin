@@ -1,9 +1,17 @@
 test/C.foo(): Unit
   ALL:
+    test/X.foo(): Unit
+    test/Y.foo(): Unit
   DIRECT:
+    test/X.foo(): Unit
+    test/Y.foo(): Unit
   INTERSECTION:
 
 test/C.bar: Int
   ALL:
+    test/X.bar: Int
+    test/Y.bar: Int
   DIRECT:
+    test/X.bar: Int
+    test/Y.bar: Int
   INTERSECTION:

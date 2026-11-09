@@ -90,6 +90,7 @@ fun FirSession.registerCommonComponents(languageVersionSettings: LanguageVersion
     register(FirIntersectionOverrideStorage::class, FirIntersectionOverrideStorage(this))
     register(FirTypealiasConstructorStorage::class, FirTypealiasConstructorStorage(this))
     register(FirSynthesizedStorage::class, FirSynthesizedStorage(this))
+    register(FirDelegatedMembersStorage::class, FirDelegatedMembersStorage(this))
     register(FirGeneratedMemberDeclarationsStorage::class, FirGeneratedMemberDeclarationsStorage(this))
     register(FirSamConstructorStorage::class, FirSamConstructorStorage(this))
     register(FirDynamicMembersStorage::class, FirDynamicMembersStorage(this))
