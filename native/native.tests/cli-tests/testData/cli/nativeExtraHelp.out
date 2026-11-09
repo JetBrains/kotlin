@@ -25,12 +25,15 @@ where advanced options include:
   -Xdebug-prefix-map=<old1=new1,old2=new2,...>
                              Remap file source directory paths in debug info.
   -Xdump-built-caches-to=<path> Path to a file where the list of all cache archives produced by this build should be written.
+  -Xdump-facts-to=<path>     Debug-only: path to a file where the facts tracked by the compiler's `FactsTracker` are appended.
   -Xdump-tests-to=<path>     Path to a file for dumping the list of all available tests.
   -Xemit-lazy-objc-header
   -Xexport-kdoc              Export KDoc entries in the framework header.
   -Xexport-library=<path>    A library to be included in the produced framework API.
                              This library must be one of the ones passed with '-library'.
   -Xexternal-dependencies=<path> Path to the file containing external dependencies.
+  -Xfacts-cache-enabled      Build the incremental caches of user libraries using the facts tracked by the previous compilation (experimental).
+                             The stdlib and the other libraries are cached as usual. Requires incremental compilation.
   -Xfile-to-cache=<path>     Path to the file to cache.
   -Xframework-import-header=<header>
                              Add an additional header import to the framework header.
@@ -73,6 +76,7 @@ where advanced options include:
   -Xtemporary-files-dir=<path> Save temporary files to the given directory.
   -Xverify-bitcode           Verify LLVM bitcode after each method.
   -Xverify-compiler          Verify the compiler.
+  -Xverify-klib-facts        Verify that facts collected by the compiler match those generated from the klib (only for debugging purposes).
   -Xwrite-dependencies-of-produced-klib-to=<path>
                              Write file containing the paths of dependencies used during klib compilation to the provided path
   -Xwrite-dependencies-to    Path for writing backend dependencies.
