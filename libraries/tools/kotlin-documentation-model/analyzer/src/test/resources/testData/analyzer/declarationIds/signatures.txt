@@ -1,0 +1,51 @@
+sample
+function:sample#noArgs#typeParameters=[]; context=[]; receiver=none; parameters=[];
+function:sample#stringParam#typeParameters=[]; context=[]; receiver=none; parameters=[kotlin/String];
+function:sample#nullableString#typeParameters=[]; context=[]; receiver=none; parameters=[kotlin/String?];
+function:sample#stringReceiver#typeParameters=[]; context=[]; receiver=kotlin/String; parameters=[];
+function:sample#intReceiver#typeParameters=[]; context=[]; receiver=kotlin/Int; parameters=[];
+function:sample#contextReceiver#typeParameters=[]; context=[kotlin/String]; receiver=none; parameters=[];
+function:sample#suspended#typeParameters=[]; context=[]; receiver=none; parameters=[]; suspend;
+function:sample#varargParam#typeParameters=[]; context=[]; receiver=none; parameters=[vararg kotlin/String];
+function:sample#arrayOut#typeParameters=[]; context=[]; receiver=none; parameters=[kotlin/Array<out kotlin/String>];
+function:sample#generic#typeParameters=[T0_0: ]; context=[]; receiver=none; parameters=[<T0_0>];
+function:sample#bounded#typeParameters=[T0_0: kotlin/CharSequence]; context=[]; receiver=none; parameters=[<T0_0>];
+function:sample#functionType#typeParameters=[]; context=[]; receiver=none; parameters=[(kotlin/String) -> kotlin/Unit];
+function:sample#suspendFunctionType#typeParameters=[]; context=[]; receiver=none; parameters=[suspend (kotlin/String) -> kotlin/Unit];
+function:sample#extensionFunctionType#typeParameters=[]; context=[]; receiver=none; parameters=[kotlin/String.() -> kotlin/Unit];
+function:sample#complex#typeParameters=[T0_0: kotlin/CharSequence]; context=[kotlin/String]; receiver=kotlin/Int; parameters=[vararg <T0_0>]; suspend;
+function:sample#mapAndLambda#typeParameters=[]; context=[]; receiver=none; parameters=[kotlin.collections/Map<kotlin/String, kotlin.collections/List<kotlin/Int>>, (kotlin/String) -> kotlin/Unit];
+sample/Text
+function:sample#aliased#typeParameters=[]; context=[]; receiver=none; parameters=[sample/Text];
+function:sample#quoted#typeParameters=[]; context=[]; receiver=none; parameters=[];
+function:sample#with%20spaces#typeParameters=[]; context=[]; receiver=none; parameters=[];
+function:sample#say%20hello%21#typeParameters=[]; context=[]; receiver=none; parameters=[];
+function:sample#say%2Bhello%21#typeParameters=[]; context=[]; receiver=none; parameters=[];
+function:sample#say%2520hello%2521#typeParameters=[]; context=[]; receiver=none; parameters=[];
+sample/A%23B
+constructor:sample/A%23B#%3Cinit%3E#typeParameters=[]; context=[]; receiver=none; parameters=[];
+sample/A%2523B
+constructor:sample/A%2523B#%3Cinit%3E#typeParameters=[]; context=[]; receiver=none; parameters=[];
+function:sample#hashedClass#typeParameters=[]; context=[]; receiver=none; parameters=[sample/A%23B];
+function:sample#escapedHashClass#typeParameters=[]; context=[]; receiver=none; parameters=[sample/A%2523B];
+sample/Outer
+function:sample/Outer#member#typeParameters=[]; context=[]; receiver=none; parameters=[<T1_0>];
+function:sample/Outer#member#typeParameters=[]; context=[]; receiver=none; parameters=[<T1_1>];
+function:sample/Outer#member#typeParameters=[T0_0: ]; context=[]; receiver=none; parameters=[<T0_0>];
+constructor:sample/Outer#%3Cinit%3E#typeParameters=[T0_0: , T0_1: ]; context=[]; receiver=none; parameters=[];
+property:sample#computed#typeParameters=[]; context=[]; receiver=none; parameters=[];
+getter:sample#computed#typeParameters=[]; context=[]; receiver=none; parameters=[];
+property:sample#mutable#typeParameters=[]; context=[]; receiver=none; parameters=[];
+getter:sample#mutable#typeParameters=[]; context=[]; receiver=none; parameters=[];
+setter:sample#mutable#typeParameters=[]; context=[]; receiver=none; parameters=[];
+property:sample#contextual#typeParameters=[]; context=[kotlin/String]; receiver=none; parameters=[];
+getter:sample#contextual#typeParameters=[]; context=[kotlin/String]; receiver=none; parameters=[];
+setter:sample#contextual#typeParameters=[]; context=[kotlin/String]; receiver=none; parameters=[];
+property:sample#extensionValue#typeParameters=[T0_0: ]; context=[]; receiver=<T0_0>; parameters=[];
+getter:sample#extensionValue#typeParameters=[T0_0: ]; context=[]; receiver=<T0_0>; parameters=[];
+setter:sample#extensionValue#typeParameters=[T0_0: ]; context=[]; receiver=<T0_0>; parameters=[];
+sample/WithAccessors
+property:sample/WithAccessors#counter#typeParameters=[]; context=[]; receiver=none; parameters=[];
+getter:sample/WithAccessors#counter#typeParameters=[]; context=[]; receiver=none; parameters=[];
+setter:sample/WithAccessors#counter#typeParameters=[]; context=[]; receiver=none; parameters=[];
+constructor:sample/WithAccessors#%3Cinit%3E#typeParameters=[]; context=[]; receiver=none; parameters=[];
