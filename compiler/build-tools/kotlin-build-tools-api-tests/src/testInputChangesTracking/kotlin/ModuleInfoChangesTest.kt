@@ -102,7 +102,7 @@ class ModuleInfoChangesTest : BaseCompilationTest() {
         compile {
             expectFail()
             assertLogContainsLines(
-                expectedLogLevelForRebuildReason(strategyConfig),
+                this@removeRequiresAndAssertCompilationFails.expectedLogLevelForRebuildReason(strategyConfig),
                 "Non-incremental compilation will be performed: ${BuildAttribute.MODULE_INFO_CHANGED.readableString}"
             )
             assertLogContainsPatterns(LogLevel.ERROR, ".*/a.kt:5:39 Unresolved reference 'SQLException'.".toRegex())
@@ -116,7 +116,7 @@ class ModuleInfoChangesTest : BaseCompilationTest() {
         deleteFile("module-info.java")
         compile {
             assertLogContainsLines(
-                expectedLogLevelForRebuildReason(strategyConfig),
+                this@removeModuleInfoAndAssertFullRecompilation.expectedLogLevelForRebuildReason(strategyConfig),
                 "Non-incremental compilation will be performed: ${BuildAttribute.MODULE_INFO_CHANGED.readableString}"
             )
             assertCompiledSources("a.kt", "b.kt")
@@ -131,7 +131,7 @@ class ModuleInfoChangesTest : BaseCompilationTest() {
         createPredefinedFile("module-info.java", "add-module-info")
         compile {
             assertLogContainsLines(
-                expectedLogLevelForRebuildReason(strategyConfig),
+                this@addModuleInfoAndAssertFullRecompilation.expectedLogLevelForRebuildReason(strategyConfig),
                 "Non-incremental compilation will be performed: ${BuildAttribute.MODULE_INFO_CHANGED.readableString}"
             )
             assertCompiledSources("a.kt", "b.kt")
@@ -173,7 +173,7 @@ class ModuleInfoChangesTest : BaseCompilationTest() {
         compile {
             expectFail()
             assertLogContainsLines(
-                expectedLogLevelForRebuildReason(strategyConfig),
+                this@removeRequiresInJavaSourceDirectoryAndAssertCompilationFails.expectedLogLevelForRebuildReason(strategyConfig),
                 "Non-incremental compilation will be performed: ${BuildAttribute.MODULE_INFO_CHANGED.readableString}"
             )
             assertLogContainsPatterns(LogLevel.ERROR, ".*/a\\.kt:\\d+:\\d+ Unresolved reference 'SQLException'.*".toRegex())
