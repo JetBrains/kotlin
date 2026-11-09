@@ -1,5 +1,5 @@
 warning: incorrect internal argument syntax, missing modificator: -XXLanguage:SoundSmartCastAfterTry
-compiler/testData/cli/jvm/legacySmartCastsAfterTry.kt:8:10: warning: unused return value of 'length'.
+compiler/testData/cli/jvm/legacySmartCastsAfterTry.kt:8:10: warning: unused return value of 'length'. If this is intentional, use 'val _ = ' to ignore the value explicitly.
     some.length
          ^^^^^^
 OK
