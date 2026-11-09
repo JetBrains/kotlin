@@ -95,7 +95,7 @@ The script does **not** test for normality, do bootstrap CI, or handle outliers 
 
 1. Create a new module under `samples/<your-workload>/` with a `build.gradle.kts` modeled on `samples/dagger-sample/build.gradle.kts`.
 2. Add `:samples:<your-workload>` to `include(...)` in `settings.gradle.kts`.
-3. Create `scenarios/<your-workload>.scenarios` with at least one scenario block.
+3. Add it to `kapt.scenarios`.
 4. Wire your annotation processor of choice into the `dependencies { kapt(...) }` block.
 
 ### Changing class counts
@@ -138,22 +138,14 @@ gradle-profiler supports `--profile async-profiler` (CPU flame graphs) and `--pr
 
 ## Reproducing the reference numbers
 
-Run the 9-cell default suite (3 workloads × 3 sizes) and summarize (`--list` shows the opt-in cells too):
+Run the 9-cell default suite (3 workloads × 3 sizes) and summarize:
 
 ```bash
 cd kapt-benchmark
-for w in synthetic dagger mapstruct; do
-    for s in small medium large; do
-        gradle-profiler --benchmark \
-            --output-dir profile-out/${w}_${s} \
-            --scenario-file scenarios/${w}.scenarios \
-            ${w}_${s}
-    done
-done
-for d in profile-out/*; do
-    echo "=== $d ==="
-    python3 scripts/summarize_benchmark.py "$d/benchmark.csv"
-done
+gradle-profiler --benchmark \
+    --output-dir profile-out \
+    --scenario-file kapt.scenarios
+python3 scripts/summarize_benchmark.py "profile-out/benchmark.csv"
 ```
 
 Total compute: ~30 minutes wall on an M3 Max. Each scenario takes ~1–4 minutes depending on workload size and machine speed.
