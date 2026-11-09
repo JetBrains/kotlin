@@ -20,18 +20,6 @@ context(c: SessionHolder)
 fun LanguageFeature.isDisabled(): Boolean = !isEnabled()
 
 context(c: SessionHolder)
-fun enableWarningsForIdentitySensitiveOperationsOnValueClassesAndPrimitives(): Boolean =
-    LanguageFeature.DisableWarningsForIdentitySensitiveOperationsOnValueClassesAndPrimitives.isDisabled()
-
-context(c: SessionHolder)
-fun enableWarningsForValueBasedJavaClasses(): Boolean =
-    LanguageFeature.DisableWarningsForValueBasedJavaClasses.isDisabled()
-
-context(c: SessionHolder)
-fun disableWarningsForValueBasedJavaClasses(): Boolean =
-    LanguageFeature.DisableWarningsForValueBasedJavaClasses.isEnabled()
-
-context(c: SessionHolder)
 fun enableCompatibilityModeForNewInference(): Boolean =
     LanguageFeature.DisableCompatibilityModeForNewInference.isDisabled()
 
