@@ -299,9 +299,11 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
         }
 
         override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): FirRegularClass {
-            return forRegularClassBody(regularClass) {
-                transformDeclarationContent(regularClass, data)
-                regularClass
+            return context.withContainingClass(regularClass) {
+                forRegularClassBody(regularClass) {
+                    transformDeclarationContent(regularClass, data)
+                    regularClass
+                }
             }
         }
 
@@ -333,8 +335,10 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
             anonymousObject: FirAnonymousObject,
             data: ResolutionMode
         ): FirAnonymousObject {
-            context.withAnonymousObject(anonymousObject) {
-                transformDeclarationContent(anonymousObject, data)
+            context.withContainingClass(anonymousObject) {
+                context.withAnonymousObject(anonymousObject) {
+                    transformDeclarationContent(anonymousObject, data)
+                }
             }
             return anonymousObject
         }
