@@ -41,14 +41,7 @@ abstract class AbstractRendererTest : AbstractAnalysisApiBasedTest() {
                 ) { contextFile ->
                     val renderer = KaRenderer.default.copy {
                         applyDirectives(directives)
-
-                        // Reproduce the legacy member ordering (see `AbstractLegacyRenderingTest`).
-                        set(KaRenderingOption.ClassMemberOrdering) { first, second ->
-                            fun renderToString(symbol: KaSymbol): String =
-                                KaRenderingOutput.plainString().also { KaRenderer.default.render(symbol, it) }.toString()
-
-                            renderToString(first).compareTo(renderToString(second))
-                        }
+                        orderMembersByRenderedText()
                     }
 
                     renderedDeclarations(contextFile).forEach { declaration ->
@@ -107,5 +100,18 @@ abstract class AbstractRendererTest : AbstractAnalysisApiBasedTest() {
 internal fun renderedDeclarations(file: KtFile): List<KtDeclaration> {
     return file.declarations.flatMap { declaration ->
         if (declaration is KtScript) listOf(declaration) + declaration.declarations else listOf(declaration)
+    }
+}
+
+/**
+ * Orders class members by their rendered text, as [MembersByRenderedTextSorter] does for the legacy renderer, so that the outputs of both
+ * renderers can be compared.
+ */
+internal fun KaRendererBuilder.orderMembersByRenderedText() {
+    set(KaRenderingOption.ClassMemberOrdering) { first, second ->
+        fun renderToString(symbol: KaSymbol): String =
+            KaRenderingOutput.plainString().also { KaRenderer.default.render(symbol, it) }.toString()
+
+        renderToString(first).compareTo(renderToString(second))
     }
 }

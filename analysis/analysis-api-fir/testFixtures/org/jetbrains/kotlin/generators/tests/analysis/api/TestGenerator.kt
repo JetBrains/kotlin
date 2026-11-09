@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.substututorFa
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.symbolDeclarationOverridesProvider.AbstractIsSubclassOfTest
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.symbolDeclarationOverridesProvider.AbstractOverriddenDeclarationProviderTest
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.symbolDeclarationRenderer.AbstractLegacyRenderingTest
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.symbolDeclarationRenderer.AbstractRendererByReferenceTest
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.symbolDeclarationRenderer.AbstractRendererTest
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.symbolDeclarationRenderer.AbstractSymbolRenderingByReferenceTest
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.symbolInfoProvider.*
@@ -521,6 +522,10 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTestsForSourceLike
         }
 
         test<AbstractSymbolRenderingByReferenceTest>(analysisApiModeIs(AnalysisApiMode.Ide, AnalysisApiMode.Standalone)) {
+            model(it, "symbolByReference")
+        }
+
+        test<AbstractRendererByReferenceTest>(analysisApiModeIs(AnalysisApiMode.Ide, AnalysisApiMode.Standalone)) {
             model(it, "symbolByReference")
         }
     }

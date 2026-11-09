@@ -1,0 +1,7 @@
+interface I {
+  const val CONST: Int = 1
+
+  fun create(): I?
+
+  fun foo()
+}

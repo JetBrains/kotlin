@@ -1,0 +1,9 @@
+open class JavaClass {
+  open fun instanceMethod()
+
+  open fun staticMethod()
+
+  static var STATIC_FIELD: kotlin.Int
+
+  var instanceField: kotlin.Int
+}

@@ -1,0 +1,2 @@
+@org.jetbrains.annotations.NotNull
+open fun externalNotNullMethod(): kotlin.String
