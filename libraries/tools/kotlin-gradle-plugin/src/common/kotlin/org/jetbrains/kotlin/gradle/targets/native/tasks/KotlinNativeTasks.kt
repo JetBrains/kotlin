@@ -52,10 +52,10 @@ import org.jetbrains.kotlin.gradle.targets.native.UsesKonanPropertiesBuildServic
 import org.jetbrains.kotlin.gradle.targets.native.tasks.CInteropWorkAction
 import org.jetbrains.kotlin.gradle.targets.native.tasks.CompilerPluginData
 import org.jetbrains.kotlin.gradle.targets.native.tasks.SharedCompilationData
+import org.jetbrains.kotlin.gradle.targets.native.tasks.readHeaderHashes
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeProvider
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.NoopKotlinNativeProvider
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.UsesKotlinNativeBundleBuildService
-import org.jetbrains.kotlin.gradle.targets.native.tasks.readHeaderHashes
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeCompilerRunner
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeToolRunner
@@ -730,7 +730,8 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
     val konanTarget: KonanTarget = params.konanTarget
 
     @Suppress("unused")
-    @get:Input
+    @get:Internal
+    @Deprecated("Unused property. Scheduled for removal in Kotlin 2.7.0.")
     val libraryVersion = project.version.toString()
 
     @Suppress("unused")
