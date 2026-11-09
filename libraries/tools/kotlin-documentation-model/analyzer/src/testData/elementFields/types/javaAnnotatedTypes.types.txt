@@ -1,0 +1,112 @@
+fragment main
+var annotated: String [example/JavaTypes/annotated/#/PointingToDeclaration/].type:
+KdClassLikeType {
+  annotations = []
+  classLikeId = "java.lang/String///PointingToDeclaration/"
+  isEnhancedNullability = false
+  isMarkedNullable = false
+  qualifiers = [
+    KdClassTypeQualifier {
+      name = "String"
+      typeArguments = []
+    }
+  ]
+}
+
+embeddedElements: fun equals(p: Object..Object?): boolean [java.lang.annotation/Annotation/equals/#java.lang.Object/PointingToDeclaration/].valueParameters[0].type:
+KdFlexibleType {
+  lowerBound = KdClassLikeType {
+    annotations = []
+    classLikeId = "java.lang/Object///PointingToDeclaration/"
+    isEnhancedNullability = false
+    isMarkedNullable = false
+    qualifiers = [
+      KdClassTypeQualifier {
+        name = "Object"
+        typeArguments = []
+      }
+    ]
+  }
+  upperBound = KdClassLikeType {
+    annotations = []
+    classLikeId = "java.lang/Object///PointingToDeclaration/"
+    isEnhancedNullability = false
+    isMarkedNullable = true
+    qualifiers = [
+      KdClassTypeQualifier {
+        name = "Object"
+        typeArguments = []
+      }
+    ]
+  }
+}
+embeddedElements: fun equals(p: Object..Object?): boolean [java.lang.annotation/Annotation/equals/#java.lang.Object/PointingToDeclaration/].returnType:
+KdClassLikeType {
+  annotations = []
+  classLikeId = "kotlin/Boolean///PointingToDeclaration/"
+  isEnhancedNullability = false
+  isMarkedNullable = false
+  qualifiers = [
+    KdClassTypeQualifier {
+      name = "boolean"
+      typeArguments = []
+    }
+  ]
+}
+
+embeddedElements: fun hashCode(): int [java.lang.annotation/Annotation/hashCode/#/PointingToDeclaration/].returnType:
+KdClassLikeType {
+  annotations = []
+  classLikeId = "kotlin/Int///PointingToDeclaration/"
+  isEnhancedNullability = false
+  isMarkedNullable = false
+  qualifiers = [
+    KdClassTypeQualifier {
+      name = "int"
+      typeArguments = []
+    }
+  ]
+}
+
+embeddedElements: fun toString(): String [java.lang.annotation/Annotation/toString/#/PointingToDeclaration/].returnType:
+KdClassLikeType {
+  annotations = []
+  classLikeId = "java.lang/String///PointingToDeclaration/"
+  isEnhancedNullability = false
+  isMarkedNullable = false
+  qualifiers = [
+    KdClassTypeQualifier {
+      name = "String"
+      typeArguments = []
+    }
+  ]
+}
+
+embeddedElements: fun annotationType(): Class<out Annotation> [java.lang.annotation/Annotation/annotationType/#/PointingToDeclaration/].returnType:
+KdClassLikeType {
+  annotations = []
+  classLikeId = "java.lang/Class///PointingToDeclaration/"
+  isEnhancedNullability = false
+  isMarkedNullable = false
+  qualifiers = [
+    KdClassTypeQualifier {
+      name = "Class"
+      typeArguments = [
+        Out {
+          type = KdClassLikeType {
+            annotations = []
+            classLikeId = "java.lang.annotation/Annotation///PointingToDeclaration/"
+            isEnhancedNullability = false
+            isMarkedNullable = false
+            qualifiers = [
+              KdClassTypeQualifier {
+                name = "Annotation"
+                typeArguments = []
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

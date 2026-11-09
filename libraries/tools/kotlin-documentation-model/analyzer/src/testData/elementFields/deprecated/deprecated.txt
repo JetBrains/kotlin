@@ -1,0 +1,69 @@
+fragment main
+fun oldMethod(): Unit [sample/OldJava/oldMethod/#/PointingToDeclaration/].deprecated:
+KdDeprecated {
+  level = WARNING
+  replaceWith = null
+  since = null
+}
+
+class OldJava [sample/OldJava///PointingToDeclaration/].deprecated:
+KdDeprecated {
+  level = WARNING
+  replaceWith = null
+  since = null
+}
+
+constructor() [sample/OldClass/OldClass/#/PointingToDeclaration/].deprecated:
+KdDeprecated {
+  level = WARNING
+  replaceWith = null
+  since = null
+}
+
+fun oldFunction(): Unit [sample/OldClass/oldFunction/#/PointingToDeclaration/].deprecated:
+KdDeprecated {
+  level = WARNING
+  replaceWith = null
+  since = null
+}
+
+val oldProperty: String [sample/OldClass/oldProperty/#/PointingToDeclaration/].deprecated:
+KdDeprecated {
+  level = WARNING
+  replaceWith = null
+  since = null
+}
+
+fun getAccessors(): String [sample/OldClass/getAccessors/#/PointingToDeclaration/].deprecated:
+KdDeprecated {
+  level = WARNING
+  replaceWith = null
+  since = null
+}
+
+fun setAccessors(value: String): Unit [sample/OldClass/setAccessors/#kotlin.String/PointingToDeclaration/].deprecated:
+KdDeprecated {
+  level = WARNING
+  replaceWith = null
+  since = null
+}
+
+class OldClass [sample/OldClass///PointingToDeclaration/].deprecated:
+KdDeprecated {
+  level = ERROR
+  replaceWith = KdReplaceWith {
+    expression = KdExpression {
+      links = []
+      text = "NewClass"
+    }
+    imports = []
+  }
+  since = null
+}
+
+typealias OldAlias = String [sample/OldAlias///PointingToDeclaration/].deprecated:
+KdDeprecated {
+  level = WARNING
+  replaceWith = null
+  since = null
+}

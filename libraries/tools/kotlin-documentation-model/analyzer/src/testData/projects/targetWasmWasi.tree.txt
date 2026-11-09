@@ -1,0 +1,18 @@
+KdBundle
+├── fragments
+│   └── KdFragment wasmWasiMain
+│       ├── elements
+│       │   ├── KdModule targetWasmWasi [////PointingToDeclaration/]
+│       │   │   └── packages: pkg////PointingToDeclaration/
+│       │   ├── KdPackage pkg [pkg////PointingToDeclaration/]
+│       │   │   └── declarations: pkg//add/#kotlin.Int#kotlin.Int/PointingToDeclaration/, pkg//randomGet/#kotlin.Int#kotlin.Int/PointingToDeclaration/, pkg/WasiClock///PointingToDeclaration/
+│       │   ├── KdFunction add(a: Int, b: Int): Int [pkg//add/#kotlin.Int#kotlin.Int/PointingToDeclaration/]
+│       │   ├── KdFunction randomGet(address: Int, length: Int): Int [pkg//randomGet/#kotlin.Int#kotlin.Int/PointingToDeclaration/]
+│       │   ├── KdClass WasiClock (CLASS) [pkg/WasiClock///PointingToDeclaration/]
+│       │   │   └── declarations: pkg/WasiClock/WasiClock/#kotlin.Long/PointingToDeclaration/, pkg/WasiClock/_hashCode/#/PointingToDeclaration/, pkg/WasiClock/resolution/#/PointingToDeclaration/
+│       │   ├── KdConstructor(resolution: Long) [pkg/WasiClock/WasiClock/#kotlin.Long/PointingToDeclaration/]
+│       │   ├── KdInheritedMember originalId=kotlin/Any/_hashCode/#/PointingToDeclaration/ [pkg/WasiClock/_hashCode/#/PointingToDeclaration/]
+│       │   └── KdProperty resolution: Long [pkg/WasiClock/resolution/#/PointingToDeclaration/]
+│       └── embeddedElements
+│           └── KdProperty _hashCode: Int [kotlin/Any/_hashCode/#/PointingToDeclaration/]
+└── expectActualMappings

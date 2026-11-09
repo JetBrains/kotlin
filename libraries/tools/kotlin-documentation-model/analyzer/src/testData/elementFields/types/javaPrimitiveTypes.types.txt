@@ -1,0 +1,252 @@
+fragment main
+var primitive: int [example/JavaTypes/primitive/#/PointingToDeclaration/].type:
+KdClassLikeType {
+  annotations = []
+  classLikeId = "kotlin/Int///PointingToDeclaration/"
+  isEnhancedNullability = false
+  isMarkedNullable = false
+  qualifiers = [
+    KdClassTypeQualifier {
+      name = "int"
+      typeArguments = []
+    }
+  ]
+}
+
+var boxed: Integer [example/JavaTypes/boxed/#/PointingToDeclaration/].type:
+KdClassLikeType {
+  annotations = []
+  classLikeId = "java.lang/Integer///PointingToDeclaration/"
+  isEnhancedNullability = false
+  isMarkedNullable = false
+  qualifiers = [
+    KdClassTypeQualifier {
+      name = "Integer"
+      typeArguments = []
+    }
+  ]
+}
+
+var primitiveBoolean: boolean [example/JavaTypes/primitiveBoolean/#/PointingToDeclaration/].type:
+KdClassLikeType {
+  annotations = []
+  classLikeId = "kotlin/Boolean///PointingToDeclaration/"
+  isEnhancedNullability = false
+  isMarkedNullable = false
+  qualifiers = [
+    KdClassTypeQualifier {
+      name = "boolean"
+      typeArguments = []
+    }
+  ]
+}
+
+var boxedBoolean: Boolean [example/JavaTypes/boxedBoolean/#/PointingToDeclaration/].type:
+KdClassLikeType {
+  annotations = []
+  classLikeId = "java.lang/Boolean///PointingToDeclaration/"
+  isEnhancedNullability = false
+  isMarkedNullable = false
+  qualifiers = [
+    KdClassTypeQualifier {
+      name = "Boolean"
+      typeArguments = []
+    }
+  ]
+}
+
+var primitiveByte: byte [example/JavaTypes/primitiveByte/#/PointingToDeclaration/].type:
+KdClassLikeType {
+  annotations = []
+  classLikeId = "kotlin/Byte///PointingToDeclaration/"
+  isEnhancedNullability = false
+  isMarkedNullable = false
+  qualifiers = [
+    KdClassTypeQualifier {
+      name = "byte"
+      typeArguments = []
+    }
+  ]
+}
+
+var boxedByte: Byte [example/JavaTypes/boxedByte/#/PointingToDeclaration/].type:
+KdClassLikeType {
+  annotations = []
+  classLikeId = "java.lang/Byte///PointingToDeclaration/"
+  isEnhancedNullability = false
+  isMarkedNullable = false
+  qualifiers = [
+    KdClassTypeQualifier {
+      name = "Byte"
+      typeArguments = []
+    }
+  ]
+}
+
+var primitiveShort: short [example/JavaTypes/primitiveShort/#/PointingToDeclaration/].type:
+KdClassLikeType {
+  annotations = []
+  classLikeId = "kotlin/Short///PointingToDeclaration/"
+  isEnhancedNullability = false
+  isMarkedNullable = false
+  qualifiers = [
+    KdClassTypeQualifier {
+      name = "short"
+      typeArguments = []
+    }
+  ]
+}
+
+var boxedShort: Short [example/JavaTypes/boxedShort/#/PointingToDeclaration/].type:
+KdClassLikeType {
+  annotations = []
+  classLikeId = "java.lang/Short///PointingToDeclaration/"
+  isEnhancedNullability = false
+  isMarkedNullable = false
+  qualifiers = [
+    KdClassTypeQualifier {
+      name = "Short"
+      typeArguments = []
+    }
+  ]
+}
+
+var primitiveLong: long [example/JavaTypes/primitiveLong/#/PointingToDeclaration/].type:
+KdClassLikeType {
+  annotations = []
+  classLikeId = "kotlin/Long///PointingToDeclaration/"
+  isEnhancedNullability = false
+  isMarkedNullable = false
+  qualifiers = [
+    KdClassTypeQualifier {
+      name = "long"
+      typeArguments = []
+    }
+  ]
+}
+
+var boxedLong: Long [example/JavaTypes/boxedLong/#/PointingToDeclaration/].type:
+KdClassLikeType {
+  annotations = []
+  classLikeId = "java.lang/Long///PointingToDeclaration/"
+  isEnhancedNullability = false
+  isMarkedNullable = false
+  qualifiers = [
+    KdClassTypeQualifier {
+      name = "Long"
+      typeArguments = []
+    }
+  ]
+}
+
+var primitiveChar: char [example/JavaTypes/primitiveChar/#/PointingToDeclaration/].type:
+KdClassLikeType {
+  annotations = []
+  classLikeId = "kotlin/Char///PointingToDeclaration/"
+  isEnhancedNullability = false
+  isMarkedNullable = false
+  qualifiers = [
+    KdClassTypeQualifier {
+      name = "char"
+      typeArguments = []
+    }
+  ]
+}
+
+var boxedChar: Character [example/JavaTypes/boxedChar/#/PointingToDeclaration/].type:
+KdClassLikeType {
+  annotations = []
+  classLikeId = "java.lang/Character///PointingToDeclaration/"
+  isEnhancedNullability = false
+  isMarkedNullable = false
+  qualifiers = [
+    KdClassTypeQualifier {
+      name = "Character"
+      typeArguments = []
+    }
+  ]
+}
+
+var primitiveFloat: float [example/JavaTypes/primitiveFloat/#/PointingToDeclaration/].type:
+KdClassLikeType {
+  annotations = []
+  classLikeId = "kotlin/Float///PointingToDeclaration/"
+  isEnhancedNullability = false
+  isMarkedNullable = false
+  qualifiers = [
+    KdClassTypeQualifier {
+      name = "float"
+      typeArguments = []
+    }
+  ]
+}
+
+var boxedFloat: Float [example/JavaTypes/boxedFloat/#/PointingToDeclaration/].type:
+KdClassLikeType {
+  annotations = []
+  classLikeId = "java.lang/Float///PointingToDeclaration/"
+  isEnhancedNullability = false
+  isMarkedNullable = false
+  qualifiers = [
+    KdClassTypeQualifier {
+      name = "Float"
+      typeArguments = []
+    }
+  ]
+}
+
+var primitiveDouble: double [example/JavaTypes/primitiveDouble/#/PointingToDeclaration/].type:
+KdClassLikeType {
+  annotations = []
+  classLikeId = "kotlin/Double///PointingToDeclaration/"
+  isEnhancedNullability = false
+  isMarkedNullable = false
+  qualifiers = [
+    KdClassTypeQualifier {
+      name = "double"
+      typeArguments = []
+    }
+  ]
+}
+
+var boxedDouble: Double [example/JavaTypes/boxedDouble/#/PointingToDeclaration/].type:
+KdClassLikeType {
+  annotations = []
+  classLikeId = "java.lang/Double///PointingToDeclaration/"
+  isEnhancedNullability = false
+  isMarkedNullable = false
+  qualifiers = [
+    KdClassTypeQualifier {
+      name = "Double"
+      typeArguments = []
+    }
+  ]
+}
+
+var boxedVoid: Void [example/JavaTypes/boxedVoid/#/PointingToDeclaration/].type:
+KdClassLikeType {
+  annotations = []
+  classLikeId = "java.lang/Void///PointingToDeclaration/"
+  isEnhancedNullability = false
+  isMarkedNullable = false
+  qualifiers = [
+    KdClassTypeQualifier {
+      name = "Void"
+      typeArguments = []
+    }
+  ]
+}
+
+var reference: String [example/JavaTypes/reference/#/PointingToDeclaration/].type:
+KdClassLikeType {
+  annotations = []
+  classLikeId = "java.lang/String///PointingToDeclaration/"
+  isEnhancedNullability = false
+  isMarkedNullable = false
+  qualifiers = [
+    KdClassTypeQualifier {
+      name = "String"
+      typeArguments = []
+    }
+  ]
+}

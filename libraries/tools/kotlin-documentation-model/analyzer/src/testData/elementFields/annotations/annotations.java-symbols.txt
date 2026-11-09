@@ -1,0 +1,236 @@
+fragment main
+constructor() [sample/Annotated/Annotated/#/PointingToDeclaration/].annotations:
+[
+  KdAnnotation {
+    arguments = [
+      text {
+        value = Const {
+          expression = KdConstExpression {
+            expression = null
+            value = String {
+              value = "constructor"
+            }
+          }
+        }
+      }
+    ]
+    classLikeId = "sample/Label///PointingToDeclaration/"
+  }
+]
+fun annotated(): Unit [sample/Annotated/annotated/#/PointingToDeclaration/].annotations:
+[
+  KdAnnotation {
+    arguments = [
+      text {
+        value = Const {
+          expression = KdConstExpression {
+            expression = null
+            value = String {
+              value = "function"
+            }
+          }
+        }
+      }
+      number {
+        value = Const {
+          expression = KdConstExpression {
+            expression = null
+            value = Int {
+              value = 7
+            }
+          }
+        }
+      }
+    ]
+    classLikeId = "sample/Label///PointingToDeclaration/"
+  }
+]
+val property: String [sample/Annotated/property/#/PointingToDeclaration/].annotations:
+[
+  KdAnnotation {
+    arguments = [
+      text {
+        value = Const {
+          expression = KdConstExpression {
+            expression = null
+            value = String {
+              value = "property"
+            }
+          }
+        }
+      }
+    ]
+    classLikeId = "sample/Label///PointingToDeclaration/"
+  }
+]
+fun getAccessors(): String [sample/Annotated/getAccessors/#/PointingToDeclaration/].annotations:
+[
+  KdAnnotation {
+    arguments = [
+      text {
+        value = Const {
+          expression = KdConstExpression {
+            expression = null
+            value = String {
+              value = "getter"
+            }
+          }
+        }
+      }
+    ]
+    classLikeId = "sample/Label///PointingToDeclaration/"
+  }
+]
+fun setAccessors(value: String): Unit [sample/Annotated/setAccessors/#kotlin.String/PointingToDeclaration/].annotations:
+[
+  KdAnnotation {
+    arguments = [
+      text {
+        value = Const {
+          expression = KdConstExpression {
+            expression = null
+            value = String {
+              value = "setter"
+            }
+          }
+        }
+      }
+    ]
+    classLikeId = "sample/Label///PointingToDeclaration/"
+  }
+]
+class Annotated [sample/Annotated///PointingToDeclaration/].annotations:
+[
+  KdAnnotation {
+    arguments = [
+      text {
+        value = Const {
+          expression = KdConstExpression {
+            expression = null
+            value = String {
+              value = "class"
+            }
+          }
+        }
+      }
+    ]
+    classLikeId = "sample/Label///PointingToDeclaration/"
+  }
+]
+constructor(value: String) [sample/PackageLabel/PackageLabel/#kotlin.String/PointingToDeclaration/].annotations:
+[
+  KdAnnotation {
+    arguments = []
+    classLikeId = "java.lang.annotation/Documented///PointingToDeclaration/"
+  }
+  KdAnnotation {
+    arguments = [
+      value {
+        value = EnumEntry {
+          enumEntryId = "java.lang.annotation/ElementType///PointingToDeclaration/"
+        }
+      }
+    ]
+    classLikeId = "java.lang.annotation/Target///PointingToDeclaration/"
+  }
+]
+annotation class PackageLabel [sample/PackageLabel///PointingToDeclaration/].annotations:
+[
+  KdAnnotation {
+    arguments = []
+    classLikeId = "java.lang.annotation/Documented///PointingToDeclaration/"
+  }
+  KdAnnotation {
+    arguments = [
+      value {
+        value = EnumEntry {
+          enumEntryId = "java.lang.annotation/ElementType///PointingToDeclaration/"
+        }
+      }
+    ]
+    classLikeId = "java.lang.annotation/Target///PointingToDeclaration/"
+  }
+]
+constructor() [sample/AnnotatedJava/AnnotatedJava/#/PointingToDeclaration/].annotations:
+[
+  KdAnnotation {
+    arguments = []
+    classLikeId = "java.lang/Deprecated///PointingToDeclaration/"
+  }
+]
+fun annotated(): Unit [sample/AnnotatedJava/annotated/#/PointingToDeclaration/].annotations:
+[
+  KdAnnotation {
+    arguments = []
+    classLikeId = "java.lang/Deprecated///PointingToDeclaration/"
+  }
+]
+class AnnotatedJava [sample/AnnotatedJava///PointingToDeclaration/].annotations:
+[
+  KdAnnotation {
+    arguments = []
+    classLikeId = "java.lang/Deprecated///PointingToDeclaration/"
+  }
+]
+typealias AnnotatedAlias = String [sample/AnnotatedAlias///PointingToDeclaration/].annotations:
+[
+  KdAnnotation {
+    arguments = [
+      text {
+        value = Const {
+          expression = KdConstExpression {
+            expression = null
+            value = String {
+              value = "alias"
+            }
+          }
+        }
+      }
+    ]
+    classLikeId = "sample/Label///PointingToDeclaration/"
+  }
+]
+package sample [sample////PointingToDeclaration/].annotations:
+[
+  KdAnnotation {
+    arguments = []
+    classLikeId = "java.lang/Deprecated///PointingToDeclaration/"
+  }
+  KdAnnotation {
+    arguments = [
+      value {
+        value = Const {
+          expression = KdConstExpression {
+            expression = null
+            value = String {
+              value = "sample package"
+            }
+          }
+        }
+      }
+    ]
+    classLikeId = "sample/PackageLabel///PointingToDeclaration/"
+  }
+]
+package <root> [package:////PointingToDeclaration/].annotations:
+[
+  KdAnnotation {
+    arguments = []
+    classLikeId = "java.lang/Deprecated///PointingToDeclaration/"
+  }
+  KdAnnotation {
+    arguments = [
+      value {
+        value = Const {
+          expression = KdConstExpression {
+            expression = null
+            value = String {
+              value = "sample package"
+            }
+          }
+        }
+      }
+    ]
+    classLikeId = "sample/PackageLabel///PointingToDeclaration/"
+  }
+]

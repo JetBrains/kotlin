@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.documentation.analyzer
 
 abstract class AbstractProjectsGoldenTest : AbstractKdmGoldenTest() {
-    @Suppress("unused") // Called by the generated Java tests.
     fun runTest(testDataFilePath: String) {
         val file = testDataFile(testDataFilePath)
         val bundle = generateDocumentationBundleFromTestData(file)

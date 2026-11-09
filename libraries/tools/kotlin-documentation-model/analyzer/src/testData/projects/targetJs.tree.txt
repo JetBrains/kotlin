@@ -1,0 +1,25 @@
+KdBundle
+├── fragments
+│   └── KdFragment jsMain
+│       └── elements
+│           ├── KdModule targetJs [////PointingToDeclaration/]
+│           │   └── packages: pkg////PointingToDeclaration/
+│           ├── KdPackage pkg [pkg////PointingToDeclaration/]
+│           │   └── declarations: pkg//parseInt/#kotlin.String#kotlin.Int/PointingToDeclaration/, pkg//toDynamic/#kotlin.Any/PointingToDeclaration/, pkg/JsDate///PointingToDeclaration/, pkg/JsGreeter///PointingToDeclaration/, pkg/JsOptions///PointingToDeclaration/
+│           ├── KdFunction parseInt(text: String, radix: Int): Int [pkg//parseInt/#kotlin.String#kotlin.Int/PointingToDeclaration/]
+│           ├── KdFunction toDynamic(value: Any): dynamic [pkg//toDynamic/#kotlin.Any/PointingToDeclaration/]
+│           ├── KdClass JsDate (CLASS) [pkg/JsDate///PointingToDeclaration/]
+│           │   └── declarations: pkg/JsDate/JsDate/#kotlin.Number/PointingToDeclaration/, pkg/JsDate/getTime/#/PointingToDeclaration/
+│           ├── KdConstructor(milliseconds: Number) [pkg/JsDate/JsDate/#kotlin.Number/PointingToDeclaration/]
+│           ├── KdFunction getTime(): Double [pkg/JsDate/getTime/#/PointingToDeclaration/]
+│           ├── KdClass JsGreeter (CLASS) [pkg/JsGreeter///PointingToDeclaration/]
+│           │   └── declarations: pkg/JsGreeter/JsGreeter/#kotlin.String/PointingToDeclaration/, pkg/JsGreeter/greet/#kotlin.String/PointingToDeclaration/, pkg/JsGreeter/later/#/PointingToDeclaration/, pkg/JsGreeter/name/#/PointingToDeclaration/
+│           ├── KdConstructor(name: String) [pkg/JsGreeter/JsGreeter/#kotlin.String/PointingToDeclaration/]
+│           ├── KdFunction greet(prefix: String): String [pkg/JsGreeter/greet/#kotlin.String/PointingToDeclaration/]
+│           ├── KdFunction later(): Promise<String> [pkg/JsGreeter/later/#/PointingToDeclaration/]
+│           ├── KdProperty name: String [pkg/JsGreeter/name/#/PointingToDeclaration/]
+│           ├── KdClass JsOptions (INTERFACE) [pkg/JsOptions///PointingToDeclaration/]
+│           │   └── declarations: pkg/JsOptions/count/#/PointingToDeclaration/, pkg/JsOptions/title/#/PointingToDeclaration/
+│           ├── KdProperty count: Int? [pkg/JsOptions/count/#/PointingToDeclaration/]
+│           └── KdProperty title: String [pkg/JsOptions/title/#/PointingToDeclaration/]
+└── expectActualMappings

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.documentation.analyzer
 
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.documentation.KdBundle
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
@@ -49,7 +50,6 @@ private object KdmTestDirectives : SimpleDirectivesContainer() {
 }
 
 /** Adapts the shared compiler fixture format to documentation analyzer source sets. */
-@OptIn(TestInfrastructureInternals::class)
 internal fun parseTestDataModules(testDataFile: File): List<TestDataModule> {
     // parseModuleStructureWithoutService() omits KotlinTestInfo, but dependency lookup may request it
     // while computing escaped names even when escaping is disabled (e.g. intermediateSourceSet.kt).
@@ -72,6 +72,8 @@ internal fun parseTestDataModules(testDataFile: File): List<TestDataModule> {
         )
         register(DefaultRegisteredDirectivesProvider::class, DefaultRegisteredDirectivesProvider(RegisteredDirectives.Empty))
     }
+
+    @OptIn(TestInfrastructureInternals::class)
     val structure = ModuleStructureExtractorImpl(
         services,
         additionalSourceProviders = emptyList(),
@@ -99,10 +101,13 @@ internal fun parseTestDataModules(testDataFile: File): List<TestDataModule> {
     }
 }
 
-private val testDataDir = File("src/test/resources/testData/analyzer")
 
-/** The test data file `<name>` under `src/test/resources/testData/analyzer`. */
-internal fun testDataFile(name: String): File = File(testDataDir, name.substringAfter("/testData/analyzer/"))
+/**
+ * The test data file at [name] - a repo-root-relative path under this module's `src/testData` - resolved through the
+ * `kotlin.testData.roots` system property (see [ForTestCompileRuntime.transformTestDataPath]), so it works
+ * regardless of the test working directory.
+ */
+internal fun testDataFile(name: String): File = ForTestCompileRuntime.transformTestDataPath(name)
 
 /** Materializes the modules parsed from [file] on disk and runs [generateDocumentationBundle] over them. */
 internal fun generateDocumentationBundleFromTestData(file: File): KdBundle {
@@ -115,7 +120,7 @@ internal fun generateDocumentationBundleFromTestData(file: File): KdBundle {
             name = module.name,
             platform = module.platform,
             sourceRoots = setOf(root),
-            classpath = listOf(if (module.platform == KdAnalyzerPlatform.NATIVE) nativeStdlibKlib else jvmStdlibJar),
+            classpath = listOf(stdlibFor(module.platform)),
             dependsOn = module.dependsOn,
         )
     }

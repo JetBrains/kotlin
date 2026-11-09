@@ -1,0 +1,320 @@
+{
+    "schemaVersion": "2.5.255",
+    "fragments": [
+        {
+            "name": "wasmWasiMain",
+            "elements": {
+                "pkg//randomGet/#kotlin.Int#kotlin.Int/PointingToDeclaration/": {
+                    "kind": "function",
+                    "name": "randomGet",
+                    "isCompanion": false,
+                    "isExternal": true,
+                    "isSuspend": false,
+                    "isOperator": false,
+                    "isInfix": false,
+                    "isInline": false,
+                    "isTailRec": false,
+                    "mappedTo": null,
+                    "returnType": {
+                        "kind": "classLike",
+                        "qualifiers": [
+                            {
+                                "name": "Int",
+                                "typeArguments": []
+                            }
+                        ],
+                        "classLikeId": "kotlin/Int///PointingToDeclaration/",
+                        "isMarkedNullable": false,
+                        "annotations": []
+                    },
+                    "typeParameters": [],
+                    "valueParameters": [
+                        {
+                            "name": "address",
+                            "type": {
+                                "kind": "classLike",
+                                "qualifiers": [
+                                    {
+                                        "name": "Int",
+                                        "typeArguments": []
+                                    }
+                                ],
+                                "classLikeId": "kotlin/Int///PointingToDeclaration/",
+                                "isMarkedNullable": false,
+                                "annotations": []
+                            },
+                            "isNoinline": false,
+                            "isCrossinline": false,
+                            "isVararg": false,
+                            "defaultValueExpression": null,
+                            "annotations": []
+                        },
+                        {
+                            "name": "length",
+                            "type": {
+                                "kind": "classLike",
+                                "qualifiers": [
+                                    {
+                                        "name": "Int",
+                                        "typeArguments": []
+                                    }
+                                ],
+                                "classLikeId": "kotlin/Int///PointingToDeclaration/",
+                                "isMarkedNullable": false,
+                                "annotations": []
+                            },
+                            "isNoinline": false,
+                            "isCrossinline": false,
+                            "isVararg": false,
+                            "defaultValueExpression": null,
+                            "annotations": []
+                        }
+                    ],
+                    "extensionReceiverParameter": null,
+                    "contextParameters": [],
+                    "overridens": [],
+                    "visibility": "PUBLIC",
+                    "modality": "FINAL",
+                    "since": null,
+                    "deprecated": null,
+                    "throws": [],
+                    "annotations": []
+                },
+                "pkg//add/#kotlin.Int#kotlin.Int/PointingToDeclaration/": {
+                    "kind": "function",
+                    "name": "add",
+                    "isCompanion": false,
+                    "isExternal": false,
+                    "isSuspend": false,
+                    "isOperator": false,
+                    "isInfix": false,
+                    "isInline": false,
+                    "isTailRec": false,
+                    "mappedTo": null,
+                    "returnType": {
+                        "kind": "classLike",
+                        "qualifiers": [
+                            {
+                                "name": "Int",
+                                "typeArguments": []
+                            }
+                        ],
+                        "classLikeId": "kotlin/Int///PointingToDeclaration/",
+                        "isMarkedNullable": false,
+                        "annotations": []
+                    },
+                    "typeParameters": [],
+                    "valueParameters": [
+                        {
+                            "name": "a",
+                            "type": {
+                                "kind": "classLike",
+                                "qualifiers": [
+                                    {
+                                        "name": "Int",
+                                        "typeArguments": []
+                                    }
+                                ],
+                                "classLikeId": "kotlin/Int///PointingToDeclaration/",
+                                "isMarkedNullable": false,
+                                "annotations": []
+                            },
+                            "isNoinline": false,
+                            "isCrossinline": false,
+                            "isVararg": false,
+                            "defaultValueExpression": null,
+                            "annotations": []
+                        },
+                        {
+                            "name": "b",
+                            "type": {
+                                "kind": "classLike",
+                                "qualifiers": [
+                                    {
+                                        "name": "Int",
+                                        "typeArguments": []
+                                    }
+                                ],
+                                "classLikeId": "kotlin/Int///PointingToDeclaration/",
+                                "isMarkedNullable": false,
+                                "annotations": []
+                            },
+                            "isNoinline": false,
+                            "isCrossinline": false,
+                            "isVararg": false,
+                            "defaultValueExpression": null,
+                            "annotations": []
+                        }
+                    ],
+                    "extensionReceiverParameter": null,
+                    "contextParameters": [],
+                    "overridens": [],
+                    "visibility": "PUBLIC",
+                    "modality": "FINAL",
+                    "since": null,
+                    "deprecated": null,
+                    "throws": [],
+                    "annotations": []
+                },
+                "pkg/WasiClock/WasiClock/#kotlin.Long/PointingToDeclaration/": {
+                    "kind": "constructor",
+                    "isPrimary": true,
+                    "isExternal": false,
+                    "mappedTo": null,
+                    "typeParameters": [],
+                    "valueParameters": [
+                        {
+                            "name": "resolution",
+                            "type": {
+                                "kind": "classLike",
+                                "qualifiers": [
+                                    {
+                                        "name": "Long",
+                                        "typeArguments": []
+                                    }
+                                ],
+                                "classLikeId": "kotlin/Long///PointingToDeclaration/",
+                                "isMarkedNullable": false,
+                                "annotations": []
+                            },
+                            "isNoinline": false,
+                            "isCrossinline": false,
+                            "isVararg": false,
+                            "defaultValueExpression": null,
+                            "annotations": []
+                        }
+                    ],
+                    "visibility": "PUBLIC",
+                    "since": null,
+                    "deprecated": null,
+                    "throws": [],
+                    "annotations": []
+                },
+                "pkg/WasiClock/resolution/#/PointingToDeclaration/": {
+                    "kind": "property",
+                    "name": "resolution",
+                    "isLateinit": false,
+                    "isInline": false,
+                    "isCompanion": false,
+                    "isExternal": false,
+                    "isSuspend": false,
+                    "isMutable": false,
+                    "isFromPrimaryConstructor": true,
+                    "constExpression": null,
+                    "getter": null,
+                    "setter": null,
+                    "mappedTo": null,
+                    "type": {
+                        "kind": "classLike",
+                        "qualifiers": [
+                            {
+                                "name": "Long",
+                                "typeArguments": []
+                            }
+                        ],
+                        "classLikeId": "kotlin/Long///PointingToDeclaration/",
+                        "isMarkedNullable": false,
+                        "annotations": []
+                    },
+                    "typeParameters": [],
+                    "extensionReceiverParameter": null,
+                    "contextParameters": [],
+                    "overridens": [],
+                    "visibility": "PUBLIC",
+                    "modality": "FINAL",
+                    "since": null,
+                    "deprecated": null,
+                    "throws": [],
+                    "annotations": []
+                },
+                "pkg/WasiClock/_hashCode/#/PointingToDeclaration/": {
+                    "kind": "inheritedMember",
+                    "originalId": "kotlin/Any/_hashCode/#/PointingToDeclaration/"
+                },
+                "pkg/WasiClock///PointingToDeclaration/": {
+                    "kind": "class",
+                    "name": "WasiClock",
+                    "classKind": "CLASS",
+                    "isCompanion": false,
+                    "isData": false,
+                    "isValue": false,
+                    "isFun": false,
+                    "isInner": false,
+                    "isExternal": false,
+                    "isError": false,
+                    "mappedTo": null,
+                    "typeParameters": [],
+                    "superTypes": [],
+                    "declarations": [
+                        "pkg/WasiClock/WasiClock/#kotlin.Long/PointingToDeclaration/",
+                        "pkg/WasiClock/resolution/#/PointingToDeclaration/",
+                        "pkg/WasiClock/_hashCode/#/PointingToDeclaration/"
+                    ],
+                    "visibility": "PUBLIC",
+                    "modality": "FINAL",
+                    "since": null,
+                    "deprecated": null,
+                    "annotations": []
+                },
+                "pkg////PointingToDeclaration/": {
+                    "kind": "package",
+                    "name": "pkg",
+                    "declarations": [
+                        "pkg//randomGet/#kotlin.Int#kotlin.Int/PointingToDeclaration/",
+                        "pkg//add/#kotlin.Int#kotlin.Int/PointingToDeclaration/",
+                        "pkg/WasiClock///PointingToDeclaration/"
+                    ],
+                    "annotations": []
+                },
+                "////PointingToDeclaration/": {
+                    "kind": "module",
+                    "name": "targetWasmWasi",
+                    "packages": [
+                        "pkg////PointingToDeclaration/"
+                    ],
+                    "annotations": []
+                }
+            },
+            "embeddedElements": {
+                "kotlin/Any/_hashCode/#/PointingToDeclaration/": {
+                    "kind": "property",
+                    "name": "_hashCode",
+                    "isLateinit": false,
+                    "isInline": false,
+                    "isCompanion": false,
+                    "isExternal": false,
+                    "isSuspend": false,
+                    "isMutable": true,
+                    "isFromPrimaryConstructor": false,
+                    "constExpression": null,
+                    "getter": null,
+                    "setter": null,
+                    "mappedTo": null,
+                    "type": {
+                        "kind": "classLike",
+                        "qualifiers": [
+                            {
+                                "name": "Int",
+                                "typeArguments": []
+                            }
+                        ],
+                        "classLikeId": "kotlin/Int///PointingToDeclaration/",
+                        "isMarkedNullable": false,
+                        "annotations": []
+                    },
+                    "typeParameters": [],
+                    "extensionReceiverParameter": null,
+                    "contextParameters": [],
+                    "overridens": [],
+                    "visibility": "INTERNAL",
+                    "modality": "FINAL",
+                    "since": null,
+                    "deprecated": null,
+                    "throws": [],
+                    "annotations": []
+                }
+            }
+        }
+    ],
+    "expectActualMappings": []
+}

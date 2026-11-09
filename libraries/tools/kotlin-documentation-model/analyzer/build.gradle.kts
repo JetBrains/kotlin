@@ -82,6 +82,7 @@ dependencies {
     implementation(project(":wasm:wasm.config"))
 
     testFixturesImplementation(kotlinStdlib())
+    testFixturesImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     testFixturesApi(kotlinTest("junit5"))
     testFixturesImplementation(testFixtures(project(":generators:test-generator")))
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
@@ -90,6 +91,28 @@ dependencies {
     testImplementation(intellijCore())
     testImplementation(libs.junit.jupiter.params)
 }
+
+//region Kotlin/Native stdlib klib, needed by tests with `NATIVE`-platform source sets.
+// `:kotlin-native:*` projects only exist with `kotlin.native.enabled=true`; otherwise the property is absent
+// and such tests fail (see `nativeStdlibKlib` in TestSupport.kt).
+if (kotlinBuildProperties.isKotlinNativeEnabled.get()) {
+    val nativeStdlibKlib = configurations.dependencyScope("nativeStdlibKlib")
+    val nativeStdlibKlibClasspath = configurations.resolvable("nativeStdlibKlibClasspath") {
+        extendsFrom(nativeStdlibKlib.get())
+    }
+    dependencies {
+        nativeStdlibKlib(project(":kotlin-native:runtime", configuration = "nativeStdlib"))
+    }
+    tasks.withType<Test>().configureEach {
+        jvmArgumentProviders.add(
+            objects.newInstance<SystemPropertyClasspathProvider>().apply {
+                property.set("kotlin.native.stdlib.klib.path")
+                classpath.from(nativeStdlibKlibClasspath)
+            }
+        )
+    }
+}
+//endregion
 
 //region Kotlin stdlib sources, needed by tests that verify documentation generated for the standard library.
 val kotlinStdlibSourcesDir: File = file("$rootDir/libraries/stdlib")
@@ -111,8 +134,16 @@ projectTests {
     // Test code reads these resources directly by file path (not via the classpath), so they must be
     // declared explicitly or `test-inputs-check` flags them as undeclared inputs.
     testData(project.isolated, "src/test/resources")
+    testData(project.isolated, "src/testData")
 
     testGenerator("org.jetbrains.kotlin.documentation.analyzer.GenerateDocumentationAnalyzerTestsKt")
+
+    // Built stdlib artifacts per platform, exposed as `kotlin.*.stdlib.path` system properties (see `stdlibFor`).
+    // The Kotlin/Native stdlib klib is wired separately below (see `nativeStdlibKlib`).
+    withJvmStdlibAndReflect()
+    withStdlibCommon()
+    withJsRuntime()
+    withWasmRuntime()
 
     testing {
         suites {

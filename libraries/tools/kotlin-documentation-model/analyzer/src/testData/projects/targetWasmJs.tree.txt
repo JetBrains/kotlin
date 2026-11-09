@@ -1,0 +1,28 @@
+KdBundle
+├── fragments
+│   └── KdFragment wasmJsMain
+│       ├── elements
+│       │   ├── KdModule targetWasmJs [////PointingToDeclaration/]
+│       │   │   └── packages: pkg////PointingToDeclaration/
+│       │   ├── KdPackage pkg [pkg////PointingToDeclaration/]
+│       │   │   └── declarations: pkg//exportedSum/#kotlin.Int#kotlin.Int/PointingToDeclaration/, pkg//jsConsoleLog/#kotlin.js.JsString/PointingToDeclaration/, pkg//toJs/#kotlin.String/PointingToDeclaration/, pkg//toJsArray/#kotlin.collections.List[kotlin.Int]/PointingToDeclaration/, pkg/WasmJsOptions///PointingToDeclaration/
+│       │   ├── KdFunction exportedSum(a: Int, b: Int): Int [pkg//exportedSum/#kotlin.Int#kotlin.Int/PointingToDeclaration/]
+│       │   ├── KdFunction jsConsoleLog(message: JsString): Unit [pkg//jsConsoleLog/#kotlin.js.JsString/PointingToDeclaration/]
+│       │   ├── KdFunction toJs(value: String): JsString [pkg//toJs/#kotlin.String/PointingToDeclaration/]
+│       │   ├── KdFunction toJsArray(values: List<Int>): JsArray<JsNumber> [pkg//toJsArray/#kotlin.collections.List[kotlin.Int]/PointingToDeclaration/]
+│       │   ├── KdClass WasmJsOptions (INTERFACE) [pkg/WasmJsOptions///PointingToDeclaration/]
+│       │   │   └── declarations: pkg/WasmJsOptions/_hashCode/#/PointingToDeclaration/, pkg/WasmJsOptions/title/#/PointingToDeclaration/
+│       │   ├── KdInheritedMember originalId=kotlin/Any/_hashCode/#/PointingToDeclaration/ [pkg/WasmJsOptions/_hashCode/#/PointingToDeclaration/]
+│       │   └── KdProperty title: String [pkg/WasmJsOptions/title/#/PointingToDeclaration/]
+│       └── embeddedElements
+│           ├── KdClass JsAny (INTERFACE) [kotlin.js/JsAny///PointingToDeclaration/]
+│           │   └── declarations: kotlin.js/JsAny/_hashCode/#/PointingToDeclaration/, kotlin.js/JsAny/equals/#kotlin.Any?/PointingToDeclaration/, kotlin.js/JsAny/hashCode/#/PointingToDeclaration/, kotlin.js/JsAny/toString/#/PointingToDeclaration/
+│           ├── KdInheritedMember originalId=kotlin/Any/_hashCode/#/PointingToDeclaration/ [kotlin.js/JsAny/_hashCode/#/PointingToDeclaration/]
+│           ├── KdInheritedMember originalId=kotlin/Any/equals/#kotlin.Any?/PointingToDeclaration/ [kotlin.js/JsAny/equals/#kotlin.Any?/PointingToDeclaration/]
+│           ├── KdInheritedMember originalId=kotlin/Any/hashCode/#/PointingToDeclaration/ [kotlin.js/JsAny/hashCode/#/PointingToDeclaration/]
+│           ├── KdInheritedMember originalId=kotlin/Any/toString/#/PointingToDeclaration/ [kotlin.js/JsAny/toString/#/PointingToDeclaration/]
+│           ├── KdProperty _hashCode: Int [kotlin/Any/_hashCode/#/PointingToDeclaration/]
+│           ├── KdFunction equals(other: Any?): Boolean [kotlin/Any/equals/#kotlin.Any?/PointingToDeclaration/]
+│           ├── KdFunction hashCode(): Int [kotlin/Any/hashCode/#/PointingToDeclaration/]
+│           └── KdFunction toString(): String [kotlin/Any/toString/#/PointingToDeclaration/]
+└── expectActualMappings

@@ -1,0 +1,566 @@
+{
+    "schemaVersion": "2.5.255",
+    "fragments": [
+        {
+            "name": "jvmMain",
+            "elements": {
+                "pkg//javaClassName/#kotlin.Any/PointingToDeclaration/": {
+                    "kind": "function",
+                    "name": "javaClassName",
+                    "isCompanion": false,
+                    "isExternal": false,
+                    "isSuspend": false,
+                    "isOperator": false,
+                    "isInfix": false,
+                    "isInline": false,
+                    "isTailRec": false,
+                    "mappedTo": null,
+                    "returnType": {
+                        "kind": "classLike",
+                        "qualifiers": [
+                            {
+                                "name": "String",
+                                "typeArguments": []
+                            }
+                        ],
+                        "classLikeId": "kotlin/String///PointingToDeclaration/",
+                        "isMarkedNullable": false,
+                        "annotations": []
+                    },
+                    "typeParameters": [],
+                    "valueParameters": [
+                        {
+                            "name": "value",
+                            "type": {
+                                "kind": "classLike",
+                                "qualifiers": [
+                                    {
+                                        "name": "Any",
+                                        "typeArguments": []
+                                    }
+                                ],
+                                "classLikeId": "kotlin/Any///PointingToDeclaration/",
+                                "isMarkedNullable": false,
+                                "annotations": []
+                            },
+                            "isNoinline": false,
+                            "isCrossinline": false,
+                            "isVararg": false,
+                            "defaultValueExpression": null,
+                            "annotations": []
+                        }
+                    ],
+                    "extensionReceiverParameter": null,
+                    "contextParameters": [],
+                    "overridens": [],
+                    "visibility": "PUBLIC",
+                    "modality": "FINAL",
+                    "since": null,
+                    "deprecated": null,
+                    "throws": [],
+                    "annotations": []
+                },
+                "pkg/JvmService/JvmService/#kotlin.String#kotlin.Int/PointingToDeclaration/": {
+                    "kind": "constructor",
+                    "isPrimary": true,
+                    "isExternal": false,
+                    "mappedTo": null,
+                    "typeParameters": [],
+                    "valueParameters": [
+                        {
+                            "name": "name",
+                            "type": {
+                                "kind": "classLike",
+                                "qualifiers": [
+                                    {
+                                        "name": "String",
+                                        "typeArguments": []
+                                    }
+                                ],
+                                "classLikeId": "kotlin/String///PointingToDeclaration/",
+                                "isMarkedNullable": false,
+                                "annotations": []
+                            },
+                            "isNoinline": false,
+                            "isCrossinline": false,
+                            "isVararg": false,
+                            "defaultValueExpression": null,
+                            "annotations": []
+                        },
+                        {
+                            "name": "retries",
+                            "type": {
+                                "kind": "classLike",
+                                "qualifiers": [
+                                    {
+                                        "name": "Int",
+                                        "typeArguments": []
+                                    }
+                                ],
+                                "classLikeId": "kotlin/Int///PointingToDeclaration/",
+                                "isMarkedNullable": false,
+                                "annotations": []
+                            },
+                            "isNoinline": false,
+                            "isCrossinline": false,
+                            "isVararg": false,
+                            "defaultValueExpression": {
+                                "kind": "defined",
+                                "expression": {
+                                    "text": "3",
+                                    "links": []
+                                }
+                            },
+                            "annotations": []
+                        }
+                    ],
+                    "visibility": "PUBLIC",
+                    "since": null,
+                    "deprecated": null,
+                    "throws": [],
+                    "annotations": [
+                        {
+                            "classLikeId": "kotlin.jvm/JvmOverloads///PointingToDeclaration/",
+                            "arguments": {}
+                        }
+                    ]
+                },
+                "pkg/JvmService/read/#java.io.File/PointingToDeclaration/": {
+                    "kind": "function",
+                    "name": "read",
+                    "isCompanion": false,
+                    "isExternal": false,
+                    "isSuspend": false,
+                    "isOperator": false,
+                    "isInfix": false,
+                    "isInline": false,
+                    "isTailRec": false,
+                    "mappedTo": null,
+                    "returnType": {
+                        "kind": "classLike",
+                        "qualifiers": [
+                            {
+                                "name": "ByteArray",
+                                "typeArguments": []
+                            }
+                        ],
+                        "classLikeId": "kotlin/ByteArray///PointingToDeclaration/",
+                        "isMarkedNullable": false,
+                        "annotations": []
+                    },
+                    "typeParameters": [],
+                    "valueParameters": [
+                        {
+                            "name": "file",
+                            "type": {
+                                "kind": "classLike",
+                                "qualifiers": [
+                                    {
+                                        "name": "File",
+                                        "typeArguments": []
+                                    }
+                                ],
+                                "classLikeId": "java.io/File///PointingToDeclaration/",
+                                "isMarkedNullable": false,
+                                "annotations": []
+                            },
+                            "isNoinline": false,
+                            "isCrossinline": false,
+                            "isVararg": false,
+                            "defaultValueExpression": null,
+                            "annotations": []
+                        }
+                    ],
+                    "extensionReceiverParameter": null,
+                    "contextParameters": [],
+                    "overridens": [],
+                    "visibility": "PUBLIC",
+                    "modality": "FINAL",
+                    "since": null,
+                    "deprecated": null,
+                    "throws": [
+                        {
+                            "classLikeId": "java.io/IOException///PointingToDeclaration/"
+                        }
+                    ],
+                    "annotations": [
+                        {
+                            "classLikeId": "kotlin.jvm/Synchronized///PointingToDeclaration/",
+                            "arguments": {}
+                        }
+                    ]
+                },
+                "pkg/JvmService/name/#/PointingToDeclaration/": {
+                    "kind": "property",
+                    "name": "name",
+                    "isLateinit": false,
+                    "isInline": false,
+                    "isCompanion": false,
+                    "isExternal": false,
+                    "isSuspend": false,
+                    "isMutable": false,
+                    "isFromPrimaryConstructor": true,
+                    "constExpression": null,
+                    "getter": null,
+                    "setter": null,
+                    "mappedTo": null,
+                    "type": {
+                        "kind": "classLike",
+                        "qualifiers": [
+                            {
+                                "name": "String",
+                                "typeArguments": []
+                            }
+                        ],
+                        "classLikeId": "kotlin/String///PointingToDeclaration/",
+                        "isMarkedNullable": false,
+                        "annotations": []
+                    },
+                    "typeParameters": [],
+                    "extensionReceiverParameter": null,
+                    "contextParameters": [],
+                    "overridens": [],
+                    "visibility": "PUBLIC",
+                    "modality": "FINAL",
+                    "since": null,
+                    "deprecated": null,
+                    "throws": [],
+                    "annotations": []
+                },
+                "pkg/JvmService/retries/#/PointingToDeclaration/": {
+                    "kind": "property",
+                    "name": "retries",
+                    "isLateinit": false,
+                    "isInline": false,
+                    "isCompanion": false,
+                    "isExternal": false,
+                    "isSuspend": false,
+                    "isMutable": false,
+                    "isFromPrimaryConstructor": true,
+                    "constExpression": null,
+                    "getter": null,
+                    "setter": null,
+                    "mappedTo": null,
+                    "type": {
+                        "kind": "classLike",
+                        "qualifiers": [
+                            {
+                                "name": "Int",
+                                "typeArguments": []
+                            }
+                        ],
+                        "classLikeId": "kotlin/Int///PointingToDeclaration/",
+                        "isMarkedNullable": false,
+                        "annotations": []
+                    },
+                    "typeParameters": [],
+                    "extensionReceiverParameter": null,
+                    "contextParameters": [],
+                    "overridens": [],
+                    "visibility": "PUBLIC",
+                    "modality": "FINAL",
+                    "since": null,
+                    "deprecated": null,
+                    "throws": [],
+                    "annotations": []
+                },
+                "pkg/JvmService/counter/#/PointingToDeclaration/": {
+                    "kind": "property",
+                    "name": "counter",
+                    "isLateinit": false,
+                    "isInline": false,
+                    "isCompanion": false,
+                    "isExternal": false,
+                    "isSuspend": false,
+                    "isMutable": false,
+                    "isFromPrimaryConstructor": false,
+                    "constExpression": null,
+                    "getter": null,
+                    "setter": null,
+                    "mappedTo": null,
+                    "type": {
+                        "kind": "classLike",
+                        "qualifiers": [
+                            {
+                                "name": "AtomicInteger",
+                                "typeArguments": []
+                            }
+                        ],
+                        "classLikeId": "java.util.concurrent.atomic/AtomicInteger///PointingToDeclaration/",
+                        "isMarkedNullable": false,
+                        "annotations": []
+                    },
+                    "typeParameters": [],
+                    "extensionReceiverParameter": null,
+                    "contextParameters": [],
+                    "overridens": [],
+                    "visibility": "PUBLIC",
+                    "modality": "FINAL",
+                    "since": null,
+                    "deprecated": null,
+                    "throws": [],
+                    "annotations": [
+                        {
+                            "classLikeId": "kotlin.jvm/JvmField///PointingToDeclaration/",
+                            "arguments": {}
+                        }
+                    ]
+                },
+                "pkg/JvmService/state/#/PointingToDeclaration/": {
+                    "kind": "property",
+                    "name": "state",
+                    "isLateinit": false,
+                    "isInline": false,
+                    "isCompanion": false,
+                    "isExternal": false,
+                    "isSuspend": false,
+                    "isMutable": true,
+                    "isFromPrimaryConstructor": false,
+                    "constExpression": null,
+                    "getter": null,
+                    "setter": null,
+                    "mappedTo": null,
+                    "type": {
+                        "kind": "classLike",
+                        "qualifiers": [
+                            {
+                                "name": "Int",
+                                "typeArguments": []
+                            }
+                        ],
+                        "classLikeId": "kotlin/Int///PointingToDeclaration/",
+                        "isMarkedNullable": false,
+                        "annotations": []
+                    },
+                    "typeParameters": [],
+                    "extensionReceiverParameter": null,
+                    "contextParameters": [],
+                    "overridens": [],
+                    "visibility": "PUBLIC",
+                    "modality": "FINAL",
+                    "since": null,
+                    "deprecated": null,
+                    "throws": [],
+                    "annotations": [
+                        {
+                            "classLikeId": "kotlin.jvm/Volatile///PointingToDeclaration/",
+                            "arguments": {}
+                        }
+                    ]
+                },
+                "pkg/JvmService.Companion/create/#/PointingToDeclaration/": {
+                    "kind": "function",
+                    "name": "create",
+                    "isCompanion": false,
+                    "isExternal": false,
+                    "isSuspend": false,
+                    "isOperator": false,
+                    "isInfix": false,
+                    "isInline": false,
+                    "isTailRec": false,
+                    "mappedTo": null,
+                    "returnType": {
+                        "kind": "classLike",
+                        "qualifiers": [
+                            {
+                                "name": "JvmService",
+                                "typeArguments": []
+                            }
+                        ],
+                        "classLikeId": "pkg/JvmService///PointingToDeclaration/",
+                        "isMarkedNullable": false,
+                        "annotations": []
+                    },
+                    "typeParameters": [],
+                    "valueParameters": [],
+                    "extensionReceiverParameter": null,
+                    "contextParameters": [],
+                    "overridens": [],
+                    "visibility": "PUBLIC",
+                    "modality": "FINAL",
+                    "since": null,
+                    "deprecated": null,
+                    "throws": [],
+                    "annotations": [
+                        {
+                            "classLikeId": "kotlin.jvm/JvmStatic///PointingToDeclaration/",
+                            "arguments": {}
+                        }
+                    ]
+                },
+                "pkg/JvmService.Companion///PointingToDeclaration/": {
+                    "kind": "class",
+                    "name": "Companion",
+                    "classKind": "OBJECT",
+                    "isCompanion": true,
+                    "isData": false,
+                    "isValue": false,
+                    "isFun": false,
+                    "isInner": false,
+                    "isExternal": false,
+                    "isError": false,
+                    "mappedTo": null,
+                    "typeParameters": [],
+                    "superTypes": [],
+                    "declarations": [
+                        "pkg/JvmService.Companion/create/#/PointingToDeclaration/"
+                    ],
+                    "visibility": "PUBLIC",
+                    "modality": "FINAL",
+                    "since": null,
+                    "deprecated": null,
+                    "annotations": []
+                },
+                "pkg/JvmService///PointingToDeclaration/": {
+                    "kind": "class",
+                    "name": "JvmService",
+                    "classKind": "CLASS",
+                    "isCompanion": false,
+                    "isData": false,
+                    "isValue": false,
+                    "isFun": false,
+                    "isInner": false,
+                    "isExternal": false,
+                    "isError": false,
+                    "mappedTo": null,
+                    "typeParameters": [],
+                    "superTypes": [],
+                    "declarations": [
+                        "pkg/JvmService/JvmService/#kotlin.String#kotlin.Int/PointingToDeclaration/",
+                        "pkg/JvmService/read/#java.io.File/PointingToDeclaration/",
+                        "pkg/JvmService/name/#/PointingToDeclaration/",
+                        "pkg/JvmService/retries/#/PointingToDeclaration/",
+                        "pkg/JvmService/counter/#/PointingToDeclaration/",
+                        "pkg/JvmService/state/#/PointingToDeclaration/",
+                        "pkg/JvmService.Companion///PointingToDeclaration/"
+                    ],
+                    "visibility": "PUBLIC",
+                    "modality": "FINAL",
+                    "since": null,
+                    "deprecated": null,
+                    "annotations": []
+                },
+                "pkg/JvmId/JvmId/#kotlin.Long/PointingToDeclaration/": {
+                    "kind": "constructor",
+                    "isPrimary": true,
+                    "isExternal": false,
+                    "mappedTo": null,
+                    "typeParameters": [],
+                    "valueParameters": [
+                        {
+                            "name": "raw",
+                            "type": {
+                                "kind": "classLike",
+                                "qualifiers": [
+                                    {
+                                        "name": "Long",
+                                        "typeArguments": []
+                                    }
+                                ],
+                                "classLikeId": "kotlin/Long///PointingToDeclaration/",
+                                "isMarkedNullable": false,
+                                "annotations": []
+                            },
+                            "isNoinline": false,
+                            "isCrossinline": false,
+                            "isVararg": false,
+                            "defaultValueExpression": null,
+                            "annotations": []
+                        }
+                    ],
+                    "visibility": "PUBLIC",
+                    "since": null,
+                    "deprecated": null,
+                    "throws": [],
+                    "annotations": []
+                },
+                "pkg/JvmId/raw/#/PointingToDeclaration/": {
+                    "kind": "property",
+                    "name": "raw",
+                    "isLateinit": false,
+                    "isInline": false,
+                    "isCompanion": false,
+                    "isExternal": false,
+                    "isSuspend": false,
+                    "isMutable": false,
+                    "isFromPrimaryConstructor": true,
+                    "constExpression": null,
+                    "getter": null,
+                    "setter": null,
+                    "mappedTo": null,
+                    "type": {
+                        "kind": "classLike",
+                        "qualifiers": [
+                            {
+                                "name": "Long",
+                                "typeArguments": []
+                            }
+                        ],
+                        "classLikeId": "kotlin/Long///PointingToDeclaration/",
+                        "isMarkedNullable": false,
+                        "annotations": []
+                    },
+                    "typeParameters": [],
+                    "extensionReceiverParameter": null,
+                    "contextParameters": [],
+                    "overridens": [],
+                    "visibility": "PUBLIC",
+                    "modality": "FINAL",
+                    "since": null,
+                    "deprecated": null,
+                    "throws": [],
+                    "annotations": []
+                },
+                "pkg/JvmId///PointingToDeclaration/": {
+                    "kind": "class",
+                    "name": "JvmId",
+                    "classKind": "CLASS",
+                    "isCompanion": false,
+                    "isData": false,
+                    "isValue": true,
+                    "isFun": false,
+                    "isInner": false,
+                    "isExternal": false,
+                    "isError": false,
+                    "mappedTo": null,
+                    "typeParameters": [],
+                    "superTypes": [],
+                    "declarations": [
+                        "pkg/JvmId/JvmId/#kotlin.Long/PointingToDeclaration/",
+                        "pkg/JvmId/raw/#/PointingToDeclaration/"
+                    ],
+                    "visibility": "PUBLIC",
+                    "modality": "FINAL",
+                    "since": null,
+                    "deprecated": null,
+                    "annotations": [
+                        {
+                            "classLikeId": "kotlin.jvm/JvmInline///PointingToDeclaration/",
+                            "arguments": {}
+                        }
+                    ]
+                },
+                "pkg////PointingToDeclaration/": {
+                    "kind": "package",
+                    "name": "pkg",
+                    "declarations": [
+                        "pkg//javaClassName/#kotlin.Any/PointingToDeclaration/",
+                        "pkg/JvmService///PointingToDeclaration/",
+                        "pkg/JvmId///PointingToDeclaration/"
+                    ],
+                    "annotations": []
+                },
+                "////PointingToDeclaration/": {
+                    "kind": "module",
+                    "name": "targetJvm",
+                    "packages": [
+                        "pkg////PointingToDeclaration/"
+                    ],
+                    "annotations": []
+                }
+            },
+            "embeddedElements": {}
+        }
+    ],
+    "expectActualMappings": []
+}

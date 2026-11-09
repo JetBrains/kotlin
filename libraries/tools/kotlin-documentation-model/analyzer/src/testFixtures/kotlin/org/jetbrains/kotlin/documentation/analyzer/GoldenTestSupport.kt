@@ -23,7 +23,7 @@ abstract class AbstractKdmGoldenTest : ManagedTest {
 
     protected fun assertMatchesGoldenFile(bundle: KdBundle, testDataFile: File) {
         val actual = Json(from = KdJson) { prettyPrint = true }
-            .encodeToString(KdBundle.serializer(), bundle.canonicalized()) + "\n"
+            .encodeToString(KdBundle.serializer(), bundle) + "\n"
         assertMatchesGoldenTextFile(actual, testDataFile, ".kdm.json")
     }
 
@@ -82,7 +82,7 @@ internal fun KdBundle.shortTreeView(): String = buildString {
         }
     }
     val mappingIndent = appendNode("expectActualMappings", "", true)
-    val mappings = canonicalized().expectActualMappings
+    val mappings = expectActualMappings
     for (index in mappings.indices) {
         val mapping = mappings[index]
         val indent = appendNode("KdExpectActualMapping", mappingIndent, index == mappings.lastIndex)
@@ -210,7 +210,7 @@ internal fun KdElement.signatureOrNull(): String? = when (this) {
     is KdFunction -> "fun $name(${valueParameters.joinToString(", ") { it.render() }}): ${returnType.render()}"
     is KdProperty -> "${if (isMutable) "var" else "val"} $name: ${type.render()}"
     is KdTypealias -> "typealias $name = ${underlyingType.render()}"
-    else -> null
+    is KdModule, is KdPackage, is KdRefinedElement, is KdInheritedMember -> null
 }
 
 private fun KdClassKind.keyword(): String = when (this) {
@@ -250,22 +250,3 @@ private fun KdTypeProjection.render(): String = when (this) {
     is KdTypeProjection.Out -> "out ${type.render()}"
     KdTypeProjection.Star -> "*"
 }
-
-/**
- * Sorts every order-sensitive collection in [this] bundle by a stable key, so golden-file comparisons don't
- * spuriously fail due to incidental ordering (e.g. file-system traversal order within a source root) rather than
- * an actual change in the generated model.
- */
-internal fun KdBundle.canonicalized(): KdBundle = copy(
-    fragments = fragments
-        .map { fragment ->
-            fragment.copy(
-                elements = fragment.elements.toSortedMap(compareBy { it.value }),
-                embeddedElements = fragment.embeddedElements.toSortedMap(compareBy { it.value }),
-            )
-        }
-        .sortedBy { it.name },
-    expectActualMappings = expectActualMappings.sortedBy { mapping ->
-        mapping.expectIds.entries.sortedBy { it.key }.joinToString { "${it.key}=${it.value.value}" }
-    },
-)
