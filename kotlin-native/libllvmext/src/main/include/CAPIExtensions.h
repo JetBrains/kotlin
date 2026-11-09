@@ -67,6 +67,13 @@ LLVMKotlinCreateTargetMachine(const char *TargetTriple, const char *CPU,
                               LLVMKotlinInstructionSelector Selector,
                               char **ErrorMessage);
 
+/// Emit module `M` to the object file `Path` with target machine `T`, running
+/// the same code generation pipeline as clang does for `-emit-obj`.
+/// Returns a non-zero value on failure and stores the reason in
+/// `ErrorMessage`; dispose it with `LLVMDisposeMessage`.
+LLVMBool LLVMKotlinEmitObjectFile(LLVMTargetMachineRef T, LLVMModuleRef M,
+                                  const char *Path, char **ErrorMessage);
+
 LLVM_C_EXTERN_C_END
 
 #endif

@@ -9,6 +9,9 @@
 
 #include "llvm-c/Core.h"
 #include "llvm-c/TargetMachine.h"
+#include "llvm/Analysis/TargetLibraryInfo.h"
+#include "llvm/Analysis/TargetTransformInfo.h"
+#include "llvm/IR/LegacyPassManager.h"
 #include "llvm/IR/Module.h"
 #include "llvm/IR/Type.h"
 #include "llvm/MC/TargetRegistry.h"
@@ -18,6 +21,8 @@
 #include "llvm/Support/CommandLine.h"
 #include "llvm/Support/Error.h"
 #include "llvm/Support/ErrorHandling.h"
+#include "llvm/Support/FileSystem.h"
+#include "llvm/Support/raw_ostream.h"
 #include "llvm/Target/CodeGenCWrappers.h"
 #include "llvm/Target/TargetMachine.h"
 #include "llvm/Target/TargetOptions.h"
@@ -237,6 +242,46 @@ LLVMTargetMachineRef LLVMKotlinCreateTargetMachine(
   TM->setGlobalISel(UseGlobalISel);
 
   return reinterpret_cast<LLVMTargetMachineRef>(TM);
+}
+
+LLVMBool LLVMKotlinEmitObjectFile(LLVMTargetMachineRef T, LLVMModuleRef M,
+                                  const char *Path, char **ErrorMessage) {
+  llvm::TargetMachine *TM = llvm::unwrap(T);
+  llvm::Module *Mod = llvm::unwrap(M);
+
+  std::error_code EC;
+  llvm::raw_fd_ostream OS(Path, EC, llvm::sys::fs::OF_None);
+  if (EC) {
+    *ErrorMessage = LLVMCreateMessage(EC.message().c_str());
+    return 1;
+  }
+
+  Mod->setDataLayout(TM->createDataLayout());
+
+  // The code generation pipeline of clang (`RunCodegenPipeline` in
+  // `BackendUtil.cpp`): unlike `LLVMTargetMachineEmitToFile`, it knows the
+  // library functions and the cost model of the target, which changes the
+  // generated code (e.g. a `memcmp` call with a small constant size is
+  // expanded inline).
+  llvm::legacy::PassManager CodeGenPasses;
+  CodeGenPasses.add(
+      llvm::createTargetTransformInfoWrapperPass(TM->getTargetIRAnalysis()));
+  llvm::TargetLibraryInfoImpl TLII(Mod->getTargetTriple());
+  CodeGenPasses.add(new llvm::TargetLibraryInfoWrapperPass(TLII));
+  if (TM->addPassesToEmitFile(CodeGenPasses, OS, nullptr,
+                              llvm::CodeGenFileType::ObjectFile)) {
+    *ErrorMessage =
+        LLVMCreateMessage("The target machine cannot emit object files");
+    return 1;
+  }
+  CodeGenPasses.run(*Mod);
+  OS.flush();
+  if (OS.has_error()) {
+    *ErrorMessage = LLVMCreateMessage(OS.error().message().c_str());
+    OS.clear_error();
+    return 1;
+  }
+  return 0;
 }
 
 LLVMErrorRef LLVMKotlinRunPasses(LLVMModuleRef M, const char *Passes,
