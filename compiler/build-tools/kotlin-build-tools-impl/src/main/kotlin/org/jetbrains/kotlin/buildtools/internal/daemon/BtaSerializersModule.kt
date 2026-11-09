@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.internal.serializability
+package org.jetbrains.kotlin.buildtools.internal.daemon
 
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.buildtools.internal.jvm.operations.JvmCompilationOpe
 
 // currently unused, but will be useful for actually setting up a serialization method (e.g. Protobuf) in the future
 internal val btaSerializersModule: SerializersModule = SerializersModule {
-    polymorphic(BtaSerializable::class) {
+    polymorphic(HasSerializationHooks::class) {
         subclass(JvmCompilationOperationImpl::class)
     }
     polymorphic(JvmIncrementalCompilationConfiguration::class) {

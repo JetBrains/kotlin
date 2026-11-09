@@ -9,7 +9,12 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.trackers.BuildMetricsCollector
-import org.jetbrains.kotlin.buildtools.internal.serializability.*
+import org.jetbrains.kotlin.buildtools.internal.daemon.HasSerializationHooks
+import org.jetbrains.kotlin.buildtools.internal.daemon.Message
+import org.jetbrains.kotlin.buildtools.internal.daemon.MessageVisitor
+import org.jetbrains.kotlin.buildtools.internal.daemon.MetricsCollectorVisitor
+import org.jetbrains.kotlin.buildtools.internal.daemon.cast
+import org.jetbrains.kotlin.buildtools.internal.daemon.throwPropertyNotFound
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorWithDiagnosticId
@@ -19,7 +24,7 @@ import kotlin.concurrent.atomics.ExperimentalAtomicApi
 
 @OptIn(ExperimentalAtomicApi::class)
 @Serializable
-internal abstract class BuildOperationImpl<R> : BuildOperation<R>, BuildOperation.Builder, BtaSerializable {
+internal abstract class BuildOperationImpl<R> : BuildOperation<R>, BuildOperation.Builder, HasSerializationHooks {
     protected constructor() : super()
     protected constructor(other: BuildOperationImpl<R>) {
         metricsCollector = other.metricsCollector

@@ -30,7 +30,7 @@ import kotlinx.serialization.UseSerializers
 import org.jetbrains.kotlin.buildtools.`internal`.DeepCopyable
 import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.WasmTarget
-import org.jetbrains.kotlin.buildtools.`internal`.serializability.PathAsStringSerializer
+import org.jetbrains.kotlin.buildtools.`internal`.daemon.PathAsStringSerializer
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.DelicateBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion

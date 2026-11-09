@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.JsIrDiagnostic
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.JsMainCallMode
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.SourceMapEmbedSources
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.SourceMapNamesPolicy
-import org.jetbrains.kotlin.buildtools.`internal`.serializability.PathAsStringSerializer
+import org.jetbrains.kotlin.buildtools.`internal`.daemon.PathAsStringSerializer
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments
