@@ -54,6 +54,16 @@ public fun MyInterface_bazProp_set__TypesOfArgumentsE__lib_ExperimentalLibClass_
     return run<Unit> { _result }
 }
 
+@ImportedBridge("MyInterface_defaultedProp_get__reverse_swift")
+internal external fun MyInterface_defaultedProp_get__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(MyInterface::class, "<get-defaultedProp>")
+public fun MyInterface_defaultedProp_get__reverse(self: MyInterface): kotlin.String {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = MyInterface_defaultedProp_get__reverse_swift(__self)
+    return interpretObjCPointer<kotlin.String>(_result)
+}
+
 @ImportedBridge("MyInterface_foo_get__reverse_swift")
 internal external fun MyInterface_foo_get__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
 
@@ -244,6 +254,22 @@ public fun MyInterface_bazProp_set__TypesOfArgumentsE__lib_ExperimentalLibClass_
     val __value = value
     __self.run { __receiver.bazProp = __value }
     return true
+}
+
+@ExportedBridge("MyInterface_defaultedProp_get")
+@OptIn(MyOptInApi::class)
+public fun MyInterface_defaultedProp_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as MyInterface
+    val _result = __self.defaultedProp
+    return _result.objcPtr()
+}
+
+@ExportedBridge("MyInterface_defaultedProp_get_direct", nonVirtualTargetMethod = "<get-defaultedProp>")
+@OptIn(MyOptInApi::class)
+public fun MyInterface_defaultedProp_get_direct(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as MyInterface
+    val _result = __self.defaultedProp
+    return _result.objcPtr()
 }
 
 @ExportedBridge("MyInterface_foo_get")
@@ -518,3 +544,4 @@ public fun main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__
     (__pointerToBlock as Function1<InternalLibInterface, Unit>).invoke(___1)
     return true
 }
+

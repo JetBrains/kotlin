@@ -8,6 +8,11 @@ public typealias MyAliasAlias = lib.InternalLibAlias
 @_spi(InternalLibApi)
 public typealias MyInterfaceAlias = any lib.InternalLibInterface
 public protocol MyInterface: KotlinRuntime.KotlinBase, main._MyInterface {
+    @_spi(MyOptInApi)
+    var defaultedProp: Swift.String {
+        @_spi(MyOptInApi)
+        get
+    }
     var foo: Swift.String {
         get
         set
@@ -221,6 +226,13 @@ public func regularFunctionC() -> lib.RegularLibClass {
 }
 @_documentation(visibility: internal)
 extension main.MyInterface where Self : main.__MyInterface {
+    @_spi(MyOptInApi)
+    public var defaultedProp: Swift.String {
+        @_spi(MyOptInApi)
+        get {
+            return MyInterface_defaultedProp_get(self.__externalRCRef())
+        }
+    }
     public var foo: Swift.String {
         get {
             return MyInterface_foo_get(self.__externalRCRef())
@@ -278,6 +290,13 @@ extension main.MyInterface where Self : main.__MyInterface {
     }
 }
 extension main.MyInterface {
+    @_spi(MyOptInApi)
+    public var defaultedProp: Swift.String {
+        @_spi(MyOptInApi)
+        get {
+            return MyInterface_defaultedProp_get_direct(self.__externalRCRef())
+        }
+    }
     @_spi(MyOptInApi)
     public var optInProp: Swift.String {
         @_spi(MyOptInApi)
@@ -357,6 +376,13 @@ package func MyInterface_bazProp_set__TypesOfArgumentsE__lib_ExperimentalLibClas
     return { _result; return true }()
 }
 
+@_cdecl("MyInterface_defaultedProp_get__reverse_swift")
+package func MyInterface_defaultedProp_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: main.MyInterface.Type.self) as! any main.MyInterface
+    let _result: Swift.String = _self.defaultedProp
+    return _result
+}
+
 @_cdecl("MyInterface_foo_get__reverse_swift")
 package func MyInterface_foo_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: main.MyInterface.Type.self) as! any main.MyInterface
@@ -423,3 +449,4 @@ package func main_internal_functional_type_callee_mainU2EMyOptInClass__TypesOfAr
     let _result: main.MyOptInClass = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! () -> main.MyOptInClass)()
     return _result.__externalRCRef()
 }
+

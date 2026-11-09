@@ -21,6 +21,16 @@ NSString * InternalLibInterface_internalProp_get__reverse_swift(void * self);
 
 _Bool InternalLibInterface_internalProp_set__TypesOfArguments__Swift_String____reverse_swift(void * self, NSString * newValue);
 
+NSString * OverrideBase_bar__reverse_swift(void * self);
+
+NSString * OverrideBase_foo__reverse_swift(void * self);
+
+NSString * OverrideDerived_bar__reverse_swift(void * self);
+
+NSString * OverrideDerived_foo__reverse_swift(void * self);
+
+NSString * SpiAbstractClass_implementMe__reverse_swift(void * self);
+
 _Bool ExperimentalLibClass_bar(void * self);
 
 NSString * ExperimentalLibClass_foo_get(void * self);
@@ -45,19 +55,57 @@ NSString * InternalLibInterface_internalProp_get(void * self);
 
 _Bool InternalLibInterface_internalProp_set__TypesOfArguments__Swift_String__(void * self, NSString * newValue);
 
+NSString * OverrideBase_bar(void * self);
+
+NSString * OverrideBase_bar_direct(void * self);
+
+NSString * OverrideBase_foo(void * self);
+
+NSString * OverrideBase_foo_direct(void * self);
+
+NSString * OverrideDerived_bar(void * self);
+
+NSString * OverrideDerived_bar_direct(void * self);
+
+NSString * OverrideDerived_foo(void * self);
+
+NSString * OverrideDerived_foo_direct(void * self);
+
+void * RegularLibClass_MarkedNested_init_allocate();
+
+_Bool RegularLibClass_MarkedNested_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
+NSString * RegularLibClass_MarkedNested_member(void * self);
+
+NSString * SpiAbstractClass_implementMe(void * self);
+
+NSString * SpiAbstractClass_template(void * self);
+
 void * __root___ExperimentalLibClass_init_allocate();
 
 _Bool __root___ExperimentalLibClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
+_Bool __root___ExperimentalLibClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(void * __kt, int32_t x);
+
 void * __root___OpenClass_init_allocate();
 
 _Bool __root___OpenClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
+void * __root___OverrideBase_init_allocate();
+
+_Bool __root___OverrideBase_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
+void * __root___OverrideDerived_init_allocate();
+
+_Bool __root___OverrideDerived_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
 void * __root___RegularLibClass_init_allocate();
 
 _Bool __root___RegularLibClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_String__(void * __kt, NSString * a);
 
 _Bool __root___RegularLibClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
+_Bool __root___SpiAbstractClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
 _Bool __root___experimentalLibFunction();
 
@@ -95,8 +143,16 @@ NSString * __root___internalProperty_get();
 
 _Bool __root___internalProperty_set__TypesOfArguments__Swift_String__(NSString * newValue);
 
+NSDictionary<NSString *, id> * __root___mapOfSpi();
+
 _Bool __root___normalLibFunction();
 
 NSString * __root___returnAlias();
+
+NSArray<id> * __root___returnsGenericAlias();
+
+_Bool spi_first_firstGroupFunction();
+
+_Bool spi_second_secondGroupFunction();
 
 NS_ASSUME_NONNULL_END
