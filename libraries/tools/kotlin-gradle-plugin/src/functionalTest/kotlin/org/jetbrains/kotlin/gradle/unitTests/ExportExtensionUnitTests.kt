@@ -124,6 +124,61 @@ class ExportExtensionUnitTests {
         assertEquals(mapOf("key" to "value"), integration.settings.get())
     }
 
+    // KT-91395
+    @Test
+    fun `test xcode integration is configurable with a groovy closure`() {
+        val project = buildProjectWithMPP()
+        val script = project.file("export.gradle")
+        script.writeText(
+            """
+            kotlin {
+                export {
+                    swift {
+                        xcodeIntegration {
+                            settings.put("key", "value")
+                        }
+                    }
+                }
+            }
+            """.trimIndent()
+        )
+        project.apply(mapOf("from" to script))
+
+        val integration = assertNotNull(project.exportExtension.swiftExportConfiguration.activatedXcodeIntegration)
+        assertEquals(mapOf("key" to "value"), integration.settings.get())
+    }
+
+    @Test
+    fun `test swift package integration is configurable with a groovy closure`() {
+        val project = buildProjectWithMPP()
+        val script = project.file("export.gradle")
+        script.writeText(
+            """
+            kotlin {
+                export {
+                    swift {
+                        swiftPackageIntegration {
+                            configure("org.example:bar:1.0") {
+                                moduleName.set("Bar")
+                            }
+                        }
+                    }
+                }
+            }
+            """.trimIndent()
+        )
+        project.apply(mapOf("from" to script))
+
+        val integration = assertNotNull(project.exportExtension.swiftExportConfiguration.activatedSwiftPackageIntegration)
+        assertEquals(
+            mapOf<SwiftExportDependencySelector, SwiftExportDeclaredModuleOptions>(
+                SwiftExportDependencySelector.Module("org.example", "bar") to
+                        SwiftExportDeclaredModuleOptions(moduleName = "Bar", rootPackage = null)
+            ),
+            integration.dependencyOverrides.get(),
+        )
+    }
+
     @Test
     fun `test repeated xcode integration calls configure the same integration`() {
         val project = buildProjectWithMPP()

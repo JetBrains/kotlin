@@ -50,11 +50,11 @@ abstract class ExportExtension @Inject internal constructor(
     projectLayout: ProjectLayout,
     dependencySelectorFactory: SwiftExportDependencySelectorFactory,
 ) {
-    private val defaultSwiftExportConfiguration = DefaultSwiftExportConfiguration(
-        objectFactory = objectFactory,
-        providerFactory = providerFactory,
-        projectLayout = projectLayout,
-        dependencySelectorFactory = dependencySelectorFactory,
+    private val defaultSwiftExportConfiguration = objectFactory.newInstance<DefaultSwiftExportConfiguration>(
+        objectFactory,
+        providerFactory,
+        projectLayout,
+        dependencySelectorFactory,
     )
 
     internal val swiftExportConfiguration: SwiftExportConfiguration get() = defaultSwiftExportConfiguration
@@ -378,7 +378,7 @@ interface SwiftExportSwiftPackageIntegration : SwiftExportIntegration {
     val outputDirectory: DirectoryProperty
 }
 
-private class DefaultSwiftExportConfiguration(
+internal open class DefaultSwiftExportConfiguration @Inject constructor(
     private val objectFactory: ObjectFactory,
     private val providerFactory: ProviderFactory,
     private val projectLayout: ProjectLayout,
@@ -396,10 +396,10 @@ private class DefaultSwiftExportConfiguration(
 
     override fun xcodeIntegration(configure: SwiftExportXcodeIntegration.() -> Unit) {
         val integration = xcodeIntegrationConfiguration
-            ?: DefaultSwiftExportXcodeIntegration(
-                objectFactory = objectFactory,
-                providerFactory = providerFactory,
-                dependencySelectorFactory = dependencySelectorFactory,
+            ?: objectFactory.newInstance<DefaultSwiftExportXcodeIntegration>(
+                objectFactory,
+                providerFactory,
+                dependencySelectorFactory,
             ).also { xcodeIntegrationConfiguration = it }
         integration.configure()
     }
@@ -417,11 +417,11 @@ private class DefaultSwiftExportConfiguration(
 
     override fun swiftPackageIntegration(configure: SwiftExportSwiftPackageIntegration.() -> Unit) {
         val integration = swiftPackageIntegrationConfiguration
-            ?: DefaultSwiftExportSwiftPackageIntegration(
-                objectFactory = objectFactory,
-                providerFactory = providerFactory,
-                projectLayout = projectLayout,
-                dependencySelectorFactory = dependencySelectorFactory,
+            ?: objectFactory.newInstance<DefaultSwiftExportSwiftPackageIntegration>(
+                objectFactory,
+                providerFactory,
+                projectLayout,
+                dependencySelectorFactory,
             ).also { swiftPackageIntegrationConfiguration = it }
         integration.configure()
     }
@@ -434,7 +434,7 @@ private class DefaultSwiftExportConfiguration(
 /**
  * The settings and the dependency overrides, which every integration has.
  */
-private abstract class DefaultSwiftExportIntegration(
+internal abstract class DefaultSwiftExportIntegration(
     private val objectFactory: ObjectFactory,
     private val providerFactory: ProviderFactory,
     private val dependencySelectorFactory: SwiftExportDependencySelectorFactory,
@@ -490,7 +490,7 @@ private abstract class DefaultSwiftExportIntegration(
     }
 }
 
-private class DefaultSwiftExportXcodeIntegration(
+internal open class DefaultSwiftExportXcodeIntegration @Inject constructor(
     objectFactory: ObjectFactory,
     providerFactory: ProviderFactory,
     dependencySelectorFactory: SwiftExportDependencySelectorFactory,
@@ -498,7 +498,7 @@ private class DefaultSwiftExportXcodeIntegration(
     SwiftExportXcodeIntegration,
     SwiftExportXcodeIntegrationConfiguration
 
-private class DefaultSwiftExportSwiftPackageIntegration(
+internal open class DefaultSwiftExportSwiftPackageIntegration @Inject constructor(
     objectFactory: ObjectFactory,
     providerFactory: ProviderFactory,
     projectLayout: ProjectLayout,
