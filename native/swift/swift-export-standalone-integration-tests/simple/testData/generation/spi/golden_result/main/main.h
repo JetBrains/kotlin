@@ -11,6 +11,8 @@ _Bool MyInterface_bazProp_get__TypesOfArgumentsE__lib_ExperimentalLibClass____re
 
 _Bool MyInterface_bazProp_set__TypesOfArgumentsE__lib_ExperimentalLibClass_Swift_Bool____reverse_swift(void * self, void * receiver, _Bool value);
 
+NSString * MyInterface_defaultedProp_get__reverse_swift(void * self);
+
 NSString * MyInterface_foo_get__reverse_swift(void * self);
 
 _Bool MyInterface_foo_set__TypesOfArguments__Swift_String____reverse_swift(void * self, NSString * newValue);
@@ -56,6 +58,10 @@ _Bool MyInterface_bazFun__TypesOfArgumentsE__lib_ExperimentalLibClass__(void * s
 _Bool MyInterface_bazProp_get__TypesOfArgumentsE__lib_ExperimentalLibClass__(void * self, void * receiver);
 
 _Bool MyInterface_bazProp_set__TypesOfArgumentsE__lib_ExperimentalLibClass_Swift_Bool__(void * self, void * receiver, _Bool value);
+
+NSString * MyInterface_defaultedProp_get(void * self);
+
+NSString * MyInterface_defaultedProp_get_direct(void * self);
 
 NSString * MyInterface_foo_get(void * self);
 

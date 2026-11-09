@@ -1,7 +1,10 @@
+@_exported import ExportedKotlinPackages
 @_implementationOnly import KotlinBridges_lib
 import KotlinRuntime
 import KotlinRuntimeSupport
 
+@_spi(ExperimentalLibApi)
+public typealias ExperimentalClassList = [lib.ExperimentalLibClass]
 @_spi(InternalLibApi)
 public typealias InternalLibAlias = Swift.String
 @_spi(InterfaceOptInOne)
@@ -77,6 +80,14 @@ public final class ExperimentalLibClass: KotlinRuntime.KotlinBase {
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___ExperimentalLibClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
+    @_spi(ExperimentalLibApi)
+    public init(
+        x: Swift.Int32
+    ) {
+        let __kt = __root___ExperimentalLibClass_init_allocate()
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { __root___ExperimentalLibClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, x); return () }()
+    }
     package override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
@@ -108,7 +119,93 @@ open class OpenClass: KotlinRuntime.KotlinBase {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
 }
+open class OverrideBase: KotlinRuntime.KotlinBase {
+    public override init() {
+         let __kt: Swift.UnsafeMutableRawPointer!
+         if Self.self == lib.OverrideBase.self {
+             __kt = __root___OverrideBase_init_allocate()
+         } else {
+             __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+         }
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { __root___OverrideBase_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
+    }
+    package override init(
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
+        options: KotlinRuntime.KotlinBaseConstructionOptions
+    ) {
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+    }
+    open func bar() -> Swift.String {
+        if Self.self == lib.OverrideBase.self {
+            return OverrideBase_bar(self.__externalRCRef())
+        } else {
+            return OverrideBase_bar_direct(self.__externalRCRef())
+        }
+    }
+    @_spi(ExperimentalLibApi)
+    open func foo() -> Swift.String {
+        if Self.self == lib.OverrideBase.self {
+            return OverrideBase_foo(self.__externalRCRef())
+        } else {
+            return OverrideBase_foo_direct(self.__externalRCRef())
+        }
+    }
+}
+open class OverrideDerived: lib.OverrideBase {
+    public override init() {
+         let __kt: Swift.UnsafeMutableRawPointer!
+         if Self.self == lib.OverrideDerived.self {
+             __kt = __root___OverrideDerived_init_allocate()
+         } else {
+             __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+         }
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { __root___OverrideDerived_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
+    }
+    package override init(
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
+        options: KotlinRuntime.KotlinBaseConstructionOptions
+    ) {
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+    }
+    @_spi(ExperimentalLibApi)
+    open override func bar() -> Swift.String {
+        if Self.self == lib.OverrideDerived.self {
+            return OverrideDerived_bar(self.__externalRCRef())
+        } else {
+            return OverrideDerived_bar_direct(self.__externalRCRef())
+        }
+    }
+    @_spi(ExperimentalLibApi)
+    open override func foo() -> Swift.String {
+        if Self.self == lib.OverrideDerived.self {
+            return OverrideDerived_foo(self.__externalRCRef())
+        } else {
+            return OverrideDerived_foo_direct(self.__externalRCRef())
+        }
+    }
+}
 public final class RegularLibClass: KotlinRuntime.KotlinBase {
+    @_spi(ExperimentalLibApi)
+    public final class MarkedNested: KotlinRuntime.KotlinBase {
+        @_spi(ExperimentalLibApi)
+        public override init() {
+            let __kt = RegularLibClass_MarkedNested_init_allocate()
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { RegularLibClass_MarkedNested_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
+        }
+        package override init(
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
+        ) {
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+        }
+        @_spi(ExperimentalLibApi)
+        public func member() -> Swift.String {
+            return RegularLibClass_MarkedNested_member(self.__externalRCRef())
+        }
+    }
     public override init() {
         let __kt = __root___RegularLibClass_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
@@ -127,6 +224,34 @@ public final class RegularLibClass: KotlinRuntime.KotlinBase {
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+    }
+}
+@_spi(ExperimentalLibApi)
+open class SpiAbstractClass: KotlinRuntime.KotlinBase {
+    @_spi(ExperimentalLibApi)
+    public override init() {
+        precondition(Self.self != lib.SpiAbstractClass.self, "lib.SpiAbstractClass is an abstract class and cannot be instantiated directly")
+        let __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { __root___SpiAbstractClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
+    }
+    package override init(
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
+        options: KotlinRuntime.KotlinBaseConstructionOptions
+    ) {
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+    }
+    @_spi(ExperimentalLibApi)
+    open func implementMe() -> Swift.String {
+        if Self.self == lib.SpiAbstractClass.self {
+            return SpiAbstractClass_implementMe(self.__externalRCRef())
+        } else {
+            fatalError("Cannot invoke the inherited implementation of abstract member 'lib.SpiAbstractClass.implementMe': a Swift subclass must override it and must not call super.")
+        }
+    }
+    @_spi(ExperimentalLibApi)
+    public final func template() -> Swift.String {
+        return SpiAbstractClass_template(self.__externalRCRef())
     }
 }
 public var experimentalLibSetter: Swift.String {
@@ -225,12 +350,20 @@ public func getGenericProperty(
 public func internalLibFunction() -> Swift.Void {
     return { __root___internalLibFunction(); return () }()
 }
+@_spi(ExperimentalLibApi)
+public func mapOfSpi() -> [Swift.String: lib.ExperimentalLibClass] {
+    return __root___mapOfSpi() as! Swift.Dictionary<Swift.String,lib.ExperimentalLibClass>
+}
 public func normalLibFunction() -> Swift.Void {
     return { __root___normalLibFunction(); return () }()
 }
 @_spi(InternalLibApi)
 public func returnAlias() -> lib.InternalLibAlias {
     return __root___returnAlias()
+}
+@_spi(ExperimentalLibApi)
+public func returnsGenericAlias() -> lib.ExperimentalClassList {
+    return __root___returnsGenericAlias() as! Swift.Array<lib.ExperimentalLibClass>
 }
 @_documentation(visibility: internal)
 extension lib.InterfaceOne where Self : lib.__InterfaceOne {
@@ -342,6 +475,18 @@ extension KotlinRuntimeSupport._KotlinExistentialPenBox: lib._InterfaceOne {
 @_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: lib._InterfaceTwo {
 }
+extension ExportedKotlinPackages.spi.first {
+    @_spi(spi$first$OptInMarker)
+    public static func firstGroupFunction() -> Swift.Void {
+        return { spi_first_firstGroupFunction(); return () }()
+    }
+}
+extension ExportedKotlinPackages.spi.second {
+    @_spi(spi$second$OptInMarker)
+    public static func secondGroupFunction() -> Swift.Void {
+        return { spi_second_secondGroupFunction(); return () }()
+    }
+}
 @_cdecl("InternalLibInterface_bar__reverse_swift")
 package func InternalLibInterface_bar__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: lib.InternalLibInterface.Type.self) as! any lib.InternalLibInterface
@@ -404,3 +549,39 @@ package func InternalLibInterface_internalProp_set__TypesOfArguments__Swift_Stri
     let _result: Swift.Void = { _self.internalProp = newValue }()
     return { _result; return true }()
 }
+
+@_cdecl("OverrideBase_bar__reverse_swift")
+package func OverrideBase_bar__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
+    let _self = lib.OverrideBase.__createClassWrapper(externalRCRef: `self`)
+    let _result: Swift.String = _self.bar()
+    return _result
+}
+
+@_cdecl("OverrideBase_foo__reverse_swift")
+package func OverrideBase_foo__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
+    let _self = lib.OverrideBase.__createClassWrapper(externalRCRef: `self`)
+    let _result: Swift.String = _self.foo()
+    return _result
+}
+
+@_cdecl("OverrideDerived_bar__reverse_swift")
+package func OverrideDerived_bar__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
+    let _self = lib.OverrideDerived.__createClassWrapper(externalRCRef: `self`)
+    let _result: Swift.String = _self.bar()
+    return _result
+}
+
+@_cdecl("OverrideDerived_foo__reverse_swift")
+package func OverrideDerived_foo__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
+    let _self = lib.OverrideDerived.__createClassWrapper(externalRCRef: `self`)
+    let _result: Swift.String = _self.foo()
+    return _result
+}
+
+@_cdecl("SpiAbstractClass_implementMe__reverse_swift")
+package func SpiAbstractClass_implementMe__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
+    let _self = lib.SpiAbstractClass.__createClassWrapper(externalRCRef: `self`)
+    let _result: Swift.String = _self.implementMe()
+    return _result
+}
+

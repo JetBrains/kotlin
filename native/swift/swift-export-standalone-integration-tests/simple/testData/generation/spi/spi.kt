@@ -34,9 +34,10 @@ annotation class InterfaceOptInTwo
 @file:OptIn(ExperimentalLibApi::class, InternalLibApi::class)
 
 @ExperimentalLibApi
-class ExperimentalLibClass {
+class ExperimentalLibClass() {
     var foo: String = TODO()
     fun bar(): Unit = TODO()
+    constructor(x: Int) : this()
 }
 
 @InternalLibApi
@@ -105,6 +106,13 @@ fun returnAlias(): InternalLibAlias = TODO()
 
 class RegularLibClass @InternalLibApi constructor(a: String) {
     constructor() : this("")
+
+    // A marked nested class whose outer declaration carries no marker of its own; only
+    // the nested class is SPI, the outer stays public.
+    @ExperimentalLibApi
+    class MarkedNested {
+        fun member(): String = TODO()
+    }
 }
 
 val <T: InternalLibInterface> T.genericProperty: String get() = TODO()
@@ -119,6 +127,61 @@ interface InterfaceOne
 
 @InterfaceOptInTwo
 interface InterfaceTwo
+
+// FILE: spi_extra.kt
+
+@ExperimentalLibApi
+abstract class SpiAbstractClass {
+    abstract fun implementMe(): String
+    fun template(): String = TODO()
+}
+
+// foo is marked in the base and its override has no marker of its own (the SPI arrives only
+// through the overridden member), bar is plain in the base and its override is marked.
+open class OverrideBase {
+    @ExperimentalLibApi
+    open fun foo(): String = TODO()
+    open fun bar(): String = TODO()
+}
+
+@OptIn(ExperimentalLibApi::class)
+open class OverrideDerived : OverrideBase() {
+    override fun foo(): String = TODO()
+    @ExperimentalLibApi
+    override fun bar(): String = TODO()
+}
+
+// A typealias expands to the marked type and carries a type argument at once.
+typealias ExperimentalClassList = List<ExperimentalLibClass>
+
+@OptIn(ExperimentalLibApi::class)
+fun returnsGenericAlias(): ExperimentalClassList = TODO()
+
+@OptIn(ExperimentalLibApi::class)
+fun mapOfSpi(): Map<String, ExperimentalLibClass> = TODO()
+
+// FILE: first_group.kt
+
+// Two markers with the same simple name in different packages are two distinct SPI groups: the
+// derived names differ only in the package part ($-joined), so each declaration below carries
+// its own group.
+package spi.first
+
+@RequiresOptIn
+annotation class OptInMarker
+
+@OptInMarker
+fun firstGroupFunction(): Unit = TODO()
+
+// FILE: second_group.kt
+
+package spi.second
+
+@RequiresOptIn
+annotation class OptInMarker
+
+@OptInMarker
+fun secondGroupFunction(): Unit = TODO()
 
 // MODULE: main(lib)
 // EXPORT_TO_SWIFT
@@ -213,6 +276,9 @@ interface MyInterface {
 
     @MyOptInApi
     var optInProp: String
+
+    @MyOptInApi
+    val defaultedProp: String get() = TODO()
 
     fun ExperimentalLibClass.bazFun(): Boolean
 

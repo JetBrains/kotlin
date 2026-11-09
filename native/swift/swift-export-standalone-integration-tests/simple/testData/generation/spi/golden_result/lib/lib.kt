@@ -2,7 +2,11 @@
 @file:kotlin.Suppress("DEPRECATION_ERROR")
 @file:kotlin.native.internal.objc.BindClassToObjCName(ExperimentalLibClass::class, "3lib20ExperimentalLibClassC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(OpenClass::class, "3lib9OpenClassC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(OverrideBase::class, "3lib12OverrideBaseC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(OverrideDerived::class, "3lib15OverrideDerivedC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(RegularLibClass::class, "3lib15RegularLibClassC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(RegularLibClass.MarkedNested::class, "3lib15RegularLibClassC12MarkedNestedC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(SpiAbstractClass::class, "3lib16SpiAbstractClassC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(InterfaceOne::class, "_lib_InterfaceOne")
 @file:kotlin.native.internal.objc.BindClassToObjCName(InterfaceTwo::class, "_lib_InterfaceTwo")
 @file:kotlin.native.internal.objc.BindClassToObjCName(InternalLibInterface::class, "_lib_InternalLibInterface")
@@ -105,6 +109,56 @@ public fun InternalLibInterface_internalProp_set__TypesOfArguments__Swift_String
     return run<Unit> { _result }
 }
 
+@ImportedBridge("OverrideBase_bar__reverse_swift")
+internal external fun OverrideBase_bar__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(OverrideBase::class, "bar")
+public fun OverrideBase_bar__reverse(self: OverrideBase): kotlin.String {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = OverrideBase_bar__reverse_swift(__self)
+    return interpretObjCPointer<kotlin.String>(_result)
+}
+
+@ImportedBridge("OverrideBase_foo__reverse_swift")
+internal external fun OverrideBase_foo__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(OverrideBase::class, "foo")
+public fun OverrideBase_foo__reverse(self: OverrideBase): kotlin.String {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = OverrideBase_foo__reverse_swift(__self)
+    return interpretObjCPointer<kotlin.String>(_result)
+}
+
+@ImportedBridge("OverrideDerived_bar__reverse_swift")
+internal external fun OverrideDerived_bar__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(OverrideDerived::class, "bar")
+public fun OverrideDerived_bar__reverse(self: OverrideDerived): kotlin.String {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = OverrideDerived_bar__reverse_swift(__self)
+    return interpretObjCPointer<kotlin.String>(_result)
+}
+
+@ImportedBridge("OverrideDerived_foo__reverse_swift")
+internal external fun OverrideDerived_foo__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(OverrideDerived::class, "foo")
+public fun OverrideDerived_foo__reverse(self: OverrideDerived): kotlin.String {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = OverrideDerived_foo__reverse_swift(__self)
+    return interpretObjCPointer<kotlin.String>(_result)
+}
+
+@ImportedBridge("SpiAbstractClass_implementMe__reverse_swift")
+internal external fun SpiAbstractClass_implementMe__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(SpiAbstractClass::class, "implementMe")
+public fun SpiAbstractClass_implementMe__reverse(self: SpiAbstractClass): kotlin.String {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = SpiAbstractClass_implementMe__reverse_swift(__self)
+    return interpretObjCPointer<kotlin.String>(_result)
+}
+
 @ExportedBridge("ExperimentalLibClass_bar")
 @OptIn(ExperimentalLibApi::class)
 public fun ExperimentalLibClass_bar(self: kotlin.native.internal.NativePtr): Boolean {
@@ -205,6 +259,107 @@ public fun InternalLibInterface_internalProp_set__TypesOfArguments__Swift_String
     return true
 }
 
+@ExportedBridge("OverrideBase_bar")
+public fun OverrideBase_bar(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as OverrideBase
+    val _result = __self.bar()
+    return _result.objcPtr()
+}
+
+@ExportedBridge("OverrideBase_bar_direct", nonVirtualTargetMethod = "bar")
+public fun OverrideBase_bar_direct(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as OverrideBase
+    val _result = __self.bar()
+    return _result.objcPtr()
+}
+
+@ExportedBridge("OverrideBase_foo")
+@OptIn(ExperimentalLibApi::class)
+public fun OverrideBase_foo(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as OverrideBase
+    val _result = __self.foo()
+    return _result.objcPtr()
+}
+
+@ExportedBridge("OverrideBase_foo_direct", nonVirtualTargetMethod = "foo")
+@OptIn(ExperimentalLibApi::class)
+public fun OverrideBase_foo_direct(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as OverrideBase
+    val _result = __self.foo()
+    return _result.objcPtr()
+}
+
+@ExportedBridge("OverrideDerived_bar")
+@OptIn(ExperimentalLibApi::class)
+public fun OverrideDerived_bar(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as OverrideDerived
+    val _result = __self.bar()
+    return _result.objcPtr()
+}
+
+@ExportedBridge("OverrideDerived_bar_direct", nonVirtualTargetMethod = "bar")
+@OptIn(ExperimentalLibApi::class)
+public fun OverrideDerived_bar_direct(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as OverrideDerived
+    val _result = __self.bar()
+    return _result.objcPtr()
+}
+
+@ExportedBridge("OverrideDerived_foo")
+@OptIn(ExperimentalLibApi::class)
+public fun OverrideDerived_foo(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as OverrideDerived
+    val _result = __self.foo()
+    return _result.objcPtr()
+}
+
+@ExportedBridge("OverrideDerived_foo_direct", nonVirtualTargetMethod = "foo")
+@OptIn(ExperimentalLibApi::class)
+public fun OverrideDerived_foo_direct(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as OverrideDerived
+    val _result = __self.foo()
+    return _result.objcPtr()
+}
+
+@ExportedBridge("RegularLibClass_MarkedNested_init_allocate")
+@OptIn(ExperimentalLibApi::class)
+public fun RegularLibClass_MarkedNested_init_allocate(): kotlin.native.internal.NativePtr {
+    val _result = kotlin.native.internal.createUninitializedInstance<RegularLibClass.MarkedNested>()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("RegularLibClass_MarkedNested_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+@OptIn(ExperimentalLibApi::class)
+public fun RegularLibClass_MarkedNested_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    kotlin.native.internal.initInstance(____kt, RegularLibClass.MarkedNested())
+    return true
+}
+
+@ExportedBridge("RegularLibClass_MarkedNested_member")
+@OptIn(ExperimentalLibApi::class)
+public fun RegularLibClass_MarkedNested_member(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as RegularLibClass.MarkedNested
+    val _result = __self.member()
+    return _result.objcPtr()
+}
+
+@ExportedBridge("SpiAbstractClass_implementMe")
+@OptIn(ExperimentalLibApi::class)
+public fun SpiAbstractClass_implementMe(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as SpiAbstractClass
+    val _result = __self.implementMe()
+    return _result.objcPtr()
+}
+
+@ExportedBridge("SpiAbstractClass_template")
+@OptIn(ExperimentalLibApi::class)
+public fun SpiAbstractClass_template(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as SpiAbstractClass
+    val _result = __self.template()
+    return _result.objcPtr()
+}
+
 @ExportedBridge("__root___ExperimentalLibClass_init_allocate")
 @OptIn(ExperimentalLibApi::class)
 public fun __root___ExperimentalLibClass_init_allocate(): kotlin.native.internal.NativePtr {
@@ -220,6 +375,15 @@ public fun __root___ExperimentalLibClass_init_initialize__TypesOfArguments__Swif
     return true
 }
 
+@ExportedBridge("__root___ExperimentalLibClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__")
+@OptIn(ExperimentalLibApi::class)
+public fun __root___ExperimentalLibClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt: kotlin.native.internal.NativePtr, x: Int): Boolean {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    val __x = x
+    kotlin.native.internal.initInstance(____kt, ExperimentalLibClass(__x))
+    return true
+}
+
 @ExportedBridge("__root___OpenClass_init_allocate")
 @OptIn(OpenClassOptIn::class)
 public fun __root___OpenClass_init_allocate(): kotlin.native.internal.NativePtr {
@@ -232,6 +396,32 @@ public fun __root___OpenClass_init_allocate(): kotlin.native.internal.NativePtr 
 public fun __root___OpenClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     kotlin.native.internal.initInstance(____kt, OpenClass())
+    return true
+}
+
+@ExportedBridge("__root___OverrideBase_init_allocate")
+public fun __root___OverrideBase_init_allocate(): kotlin.native.internal.NativePtr {
+    val _result = kotlin.native.internal.createUninitializedInstance<OverrideBase>()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___OverrideBase_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+public fun __root___OverrideBase_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    kotlin.native.internal.initInstance(____kt, OverrideBase())
+    return true
+}
+
+@ExportedBridge("__root___OverrideDerived_init_allocate")
+public fun __root___OverrideDerived_init_allocate(): kotlin.native.internal.NativePtr {
+    val _result = kotlin.native.internal.createUninitializedInstance<OverrideDerived>()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___OverrideDerived_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+public fun __root___OverrideDerived_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    kotlin.native.internal.initInstance(____kt, OverrideDerived())
     return true
 }
 
@@ -254,6 +444,14 @@ public fun __root___RegularLibClass_init_initialize__TypesOfArguments__Swift_Uns
 public fun __root___RegularLibClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     kotlin.native.internal.initInstance(____kt, RegularLibClass())
+    return true
+}
+
+@ExportedBridge("__root___SpiAbstractClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__", nonVirtualTargetMethod = "<init>")
+@OptIn(ExperimentalLibApi::class)
+public fun __root___SpiAbstractClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    kotlin.native.internal.initInstance(____kt, SpiAbstractClass())
     return true
 }
 
@@ -390,6 +588,13 @@ public fun __root___internalProperty_set__TypesOfArguments__Swift_String__(newVa
     return true
 }
 
+@ExportedBridge("__root___mapOfSpi")
+@OptIn(ExperimentalLibApi::class)
+public fun __root___mapOfSpi(): kotlin.native.internal.NativePtr {
+    val _result = mapOfSpi()
+    return _result.objcPtr()
+}
+
 @ExportedBridge("__root___normalLibFunction")
 public fun __root___normalLibFunction(): Boolean {
     normalLibFunction()
@@ -402,3 +607,25 @@ public fun __root___returnAlias(): kotlin.native.internal.NativePtr {
     val _result = returnAlias()
     return _result.objcPtr()
 }
+
+@ExportedBridge("__root___returnsGenericAlias")
+@OptIn(ExperimentalLibApi::class)
+public fun __root___returnsGenericAlias(): kotlin.native.internal.NativePtr {
+    val _result = returnsGenericAlias()
+    return _result.objcPtr()
+}
+
+@ExportedBridge("spi_first_firstGroupFunction")
+@OptIn(spi.first.OptInMarker::class)
+public fun spi_first_firstGroupFunction(): Boolean {
+    spi.first.firstGroupFunction()
+    return true
+}
+
+@ExportedBridge("spi_second_secondGroupFunction")
+@OptIn(spi.second.OptInMarker::class)
+public fun spi_second_secondGroupFunction(): Boolean {
+    spi.second.secondGroupFunction()
+    return true
+}
+
