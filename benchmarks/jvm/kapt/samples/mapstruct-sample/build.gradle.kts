@@ -1,28 +1,39 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
+    id("common-configuration")
     kotlin("jvm")
     kotlin("kapt")
 }
 
-kotlin {
-    jvmToolchain(17)
+jvmToolchains {
+    jdkVersion = JdkMajorVersion.JDK_17_0
+    targetBytecodeVersion = JdkMajorVersion.JDK_17_0
 }
 
 // Opt-in: -PstripMetadata=true drops @kotlin.Metadata annotations from generated stubs.
 // Absent => kapt's default (false), so the other scenarios are unaffected.
-if ((findProperty("stripMetadata") as String?).toBoolean()) {
+if (providers.gradleProperty("stripMetadata").orNull.toBoolean()) {
     kapt { stripMetadata = true }
 }
 
-val mapstructVersion: String = (findProperty("mapstruct.version") ?: "1.6.3") as String
+val mapstructVersion: String = providers.gradleProperty("mapstruct.version").getOrElse("1.6.3")
+
+val generatorClasspath = configurations.create("generatorClasspath") {
+    isCanBeResolved = true
+    isCanBeConsumed = false
+}
 
 dependencies {
+    generatorClasspath(project(":benchmarks:jvm:kapt:source-generator"))
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:${project.bootstrapKotlinVersion}")
     // implementation: runtime mapper interface + helpers.
     // kapt: registers the MapStruct processor on the annotation-processor path.
     implementation("org.mapstruct:mapstruct:$mapstructVersion")
     kapt("org.mapstruct:mapstruct-processor:$mapstructVersion")
 }
 
-val sampleSize: String = (findProperty("sampleSize") ?: "small") as String
+val sampleSize: String = providers.gradleProperty("sampleSize").getOrElse("small")
 val classCount: Int = when (sampleSize) {
     "small" -> 100
     "medium" -> 500
@@ -30,31 +41,28 @@ val classCount: Int = when (sampleSize) {
     else -> error("Unknown sampleSize: $sampleSize (use small, medium, or large)")
 }
 
-val generatorSeed: String = (findProperty("generatorSeed") ?: "42") as String
+val generatorSeed: String = providers.gradleProperty("generatorSeed").getOrElse("42")
 
 val generatedSrcDir = layout.buildDirectory.dir("generated/source/research-kapt/main")
 
-val generateSources by tasks.registering(JavaExec::class) {
-    classpath = project(":source-generator").the<SourceSetContainer>()["main"].runtimeClasspath
+val generateSources = tasks.register<JavaExec>("generateSources") {
+    classpath = generatorClasspath
     mainClass.set("research.kapt.gen.MainKt")
     outputs.dir(generatedSrcDir)
     inputs.property("classCount", classCount)
     inputs.property("mode", "mapstruct")
     inputs.property("seed", generatorSeed)
-    argumentProviders.add(CommandLineArgumentProvider {
-        listOf(
-            "--count", classCount.toString(),
-            "--mode", "mapstruct",
-            "--seed", generatorSeed,
-            "--out-dir", generatedSrcDir.get().asFile.absolutePath
-        )
-    })
+    args(
+        "--count", classCount.toString(),
+        "--mode", "mapstruct",
+        "--seed", generatorSeed,
+        "--out-dir", generatedSrcDir.get().asFile.absolutePath
+    )
 }
 
-sourceSets["main"].kotlin.srcDir(generatedSrcDir)
+sourceSets["main"].kotlin.srcDir(generateSources)
 
-afterEvaluate {
-    // afterEvaluate: kaptGenerateStubsKotlin is registered lazily by the kapt plugin.
-    tasks.named("compileKotlin") { dependsOn(generateSources) }
-    tasks.named("kaptGenerateStubsKotlin") { dependsOn(generateSources) }
-}
+// The samples have no tests. kapt registers stub/AP tasks for the empty test compilation
+// anyway; the stub task lacks @SkipWhenEmpty, so it executes on every test-compiling
+// build doing no work and (being new) trips the build-cache check on CI.
+tasks.withType<KotlinCompile>().matching { it.name == "kaptGenerateStubsTestKotlin" }.configureEach { enabled = false }
