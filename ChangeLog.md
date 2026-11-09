@@ -1,3 +1,93 @@
+## 2.5.0-RC
+
+### Analysis API. Standalone
+
+- [`KT-89902`](https://youtrack.jetbrains.com/issue/KT-89902) Analysis API Standalone: JavaPsiFacade doesn't find Kotlin classes from binary libraries
+
+### Backend. Wasm
+
+- [`KT-91167`](https://youtrack.jetbrains.com/issue/KT-91167) K/Wasm: suspend lambda containing a suspend call triggers unrelated file-property initialization
+
+### Compiler
+
+- [`KT-90315`](https://youtrack.jetbrains.com/issue/KT-90315) Value classes resolved first as a supertype are treated as identity classes
+- [`KT-84904`](https://youtrack.jetbrains.com/issue/KT-84904) Alpha release of Multi-Field Value Classes
+- [`KT-90707`](https://youtrack.jetbrains.com/issue/KT-90707) Parser: "Expecting ';' after the last enum entry" when an enum entry named error has arguments or a body
+- [`KT-91112`](https://youtrack.jetbrains.com/issue/KT-91112) Type inference: reified Enum<T> inferred as Nothing for a function-reference extension call since Kotlin 2.5
+- [`KT-90589`](https://youtrack.jetbrains.com/issue/KT-90589) K/N: Debug static framework with a Kotlin subclass of NSObject does not link without -dead_strip: undefined "_kfun:platform.darwin.NSObject#objc:*-impl"
+- [`KT-90321`](https://youtrack.jetbrains.com/issue/KT-90321) K2 IDE: "Multiple plugins generated nested class with same name Companion" floods the IDE log for a class with `@Slf4j` (Lombok) and `@Serializable`
+- [`KT-89985`](https://youtrack.jetbrains.com/issue/KT-89985) InnerClasses entries lack ACC_IDENTITY with -Xjvm-enable-preview on JVM target 28
+
+### IR. Inlining
+
+- [`KT-72464`](https://youtrack.jetbrains.com/issue/KT-72464) [Native][JS][Wasm] Non-local return through suspend conversion breaks the IR inliner
+
+### JVM. Reflection
+
+- [`KT-91317`](https://youtrack.jetbrains.com/issue/KT-91317) Reflection: IAE "fromIndex(1) > toIndex(0)" on KClass.members of stdlib inline classes
+- [`KT-90525`](https://youtrack.jetbrains.com/issue/KT-90525) Reflection: "MutableCollectionKClassImpl cannot be cast to ClassBasedDeclarationContainer" from KType.classifier of annotated Java collection type
+
+### JavaScript
+
+- [`KT-91371`](https://youtrack.jetbrains.com/issue/KT-91371) K/JS: extending a JsExport-ed interface breaks property access
+- [`KT-90564`](https://youtrack.jetbrains.com/issue/KT-90564) K/JS, K/Wasm: top-level suspend function doesn't trigger file properties initialization
+- [`KT-90587`](https://youtrack.jetbrains.com/issue/KT-90587) K/JS: Exported abstract suspend functions are not callable from JS
+- [`KT-90912`](https://youtrack.jetbrains.com/issue/KT-90912) K/JS: IR-based TypeScript export loses abstract modifier on abstract suspend method with a default argument
+
+### Klibs
+
+- [`KT-91139`](https://youtrack.jetbrains.com/issue/KT-91139) [Klib] Backward compatibility break: Kotlin 2.4.20+ miscompiles suspend conversions from KLIBs built by Kotlin ≤ 2.2
+- [`KT-90675`](https://youtrack.jetbrains.com/issue/KT-90675) Native, Klibs: Value class '==' boxes because the deserializer doesn't recognize the old GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER origin
+
+### Libraries
+
+- [`KT-91066`](https://youtrack.jetbrains.com/issue/KT-91066) Kotlin/Wasm: KClass.hashCode() allocates and hashes the qualified class name string on every call
+
+### Tools. Compiler Plugins
+
+- [`KT-90516`](https://youtrack.jetbrains.com/issue/KT-90516) Lombok: Unexpected returnTypeRef during supertype generation for builder class
+- [`KT-90666`](https://youtrack.jetbrains.com/issue/KT-90666) Lombok: disable `@Builder` annotation in Kotlin code due to many issues
+- [`KT-90086`](https://youtrack.jetbrains.com/issue/KT-90086) Lombok: ClassCastException during supertype generation for EqualsAndHashCode with inheritance
+
+### Tools. Compiler plugins. Compose
+
+- [`KT-84055`](https://youtrack.jetbrains.com/issue/KT-84055) Reference to lambda in lambda in function 'TextField' can not be evaluated
+- [`KT-90466`](https://youtrack.jetbrains.com/issue/KT-90466) Compose compiler, Kotlin/Native: IrLinkageError "No function found for symbol" for lambda SAM-converted to `@Composable` fun interface from another module
+
+### Tools. Compiler plugins. Serialization
+
+- [`KT-91224`](https://youtrack.jetbrains.com/issue/KT-91224) Kx Serialization: Regression in support of Java enums with Serializable annotation
+
+### Tools. Gradle
+
+- [`KT-91331`](https://youtrack.jetbrains.com/issue/KT-91331) Deprecated Kotlin sourceSets in Android extension: block form doesn't report the error in Groovy DSL or in suppressed Kotlin DSL
+- [`KT-91330`](https://youtrack.jetbrains.com/issue/KT-91330) Groovy DSL: kotlin { sourceSets { main {} } } in Android project fails with misleading "Could not find method main()"
+- [`KT-85935`](https://youtrack.jetbrains.com/issue/KT-85935) KGP / Android: sourceSets deprecation not shown in DSL block form inside KotlinAndroidProjectExtension
+- [`KT-90672`](https://youtrack.jetbrains.com/issue/KT-90672) Gradle: "configureEach(Action) on task set cannot be executed in the current context" when KotlinCompile is created lazily with AGP built-in Kotlin
+- [`KT-90997`](https://youtrack.jetbrains.com/issue/KT-90997) Preserve behaviour of deprecated kotlin.internal.incremental.enableUnsafeOptimizationsForMultiplatform in 2.5.0
+
+### Tools. Gradle. JS
+
+- [`KT-90489`](https://youtrack.jetbrains.com/issue/KT-90489) Rich TypeScript declarations ignore Long-as-BigInt enabled by target es2020
+- [`KT-90491`](https://youtrack.jetbrains.com/issue/KT-90491) GenerateTypeScriptDefinitions task generates UMD declarations for ES module when target is es2015 or higher and module kind is not set
+- [`KT-90533`](https://youtrack.jetbrains.com/issue/KT-90533) -Xes-long-as-bigint=true is ignored by Analysis API-based TypeScript declaration generation
+- [`KT-90519`](https://youtrack.jetbrains.com/issue/KT-90519) KGP and BTA do not preserve -XXLanguage settings for Analysis API-based TypeScript declaration generation
+- [`KT-90366`](https://youtrack.jetbrains.com/issue/KT-90366) -Xdts-use-unknown-instead-any is ignored by the new GenerateTypeScriptDefinitions task
+- [`KT-89797`](https://youtrack.jetbrains.com/issue/KT-89797) KJS/KGP: Playwright tests fail to update after kotlin code changes
+- [`KT-90286`](https://youtrack.jetbrains.com/issue/KT-90286) NodeJsExec ignores a custom executable
+
+### Tools. Gradle. Multiplatform
+
+- [`KT-90544`](https://youtrack.jetbrains.com/issue/KT-90544) Gradle, Multiplatform: Publication iteration misses JS, Wasm and Native targets since 2.5.0-Beta2 (after Kotlin Archive publishing changes)
+
+### Tools. Gradle. Swift Export
+
+- [`KT-90738`](https://youtrack.jetbrains.com/issue/KT-90738) swiftPackageIntegration: Release build fails to link exported package (undefined symbol KotlinRuntimeSupport_linkAnchor)
+
+### Tools. Incremental Compile
+
+- [`KT-91153`](https://youtrack.jetbrains.com/issue/KT-91153) Incremental compilation failed: The following FqNames can't be derived from DirtyData.dirtyLookupSymbols
+
 ## 2.5.0-Beta2
 
 ### Analysis API
