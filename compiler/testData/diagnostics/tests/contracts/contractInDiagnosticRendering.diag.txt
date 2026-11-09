@@ -1,13 +1,13 @@
-/contractInDiagnosticRendering.kt:23:5: error: None of the following candidates is applicable for expression 'foo(Any()) {}':
+/contractInDiagnosticRendering.kt:23:5: error: None of the following candidates is applicable:
 In package 'root package' of module '<main>':
  --> contractInDiagnosticRendering.kt
   |
 6 | fun foo(s: String, f: () -> Unit): Unit
   |
-reason: Expression 'Any()' of type 'Any' does not conform to value parameter 's' of type 'String'.
+reason: Argument type mismatch: actual type is 'Any', but 'String' was expected.
 In package 'root package' of module '<main>':
   --> contractInDiagnosticRendering.kt
    |
 14 | fun foo(i: Int, f: () -> Unit): Unit
    |
-reason: Expression 'Any()' of type 'Any' does not conform to value parameter 'i' of type 'Int'.
+reason: Argument type mismatch: actual type is 'Any', but 'Int' was expected.

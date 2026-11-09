@@ -5,7 +5,7 @@ In package 'root package' of module '<main>':
  |     static fun createWrap(type: String!, wrapFirstElement: Boolean): Unit
  |     ...
  | }
-reason: Expression '1' of type 'Int' does not conform to value parameter 'type' of type 'String!'.
+reason: Argument type mismatch: actual type is 'Int', but 'String!' was expected.
 
 In package 'root package' of module '<main>':
  | class Wrap : Any {

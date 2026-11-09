@@ -1,46 +1,46 @@
-compiler/testData/cli/jvm/readingConfigFromEnvironment/simple.kt:2:15: error: [NONE_APPLICABLE] None of the following candidates is applicable for expression '1 + ""':
+compiler/testData/cli/jvm/readingConfigFromEnvironment/simple.kt:2:15: error: [NONE_APPLICABLE] None of the following candidates is applicable:
 In package 'kotlin' of module '<regular dependencies of main>':
  | class Int : Number, Comparable<Int>, Serializable {
  |     ...
  |     fun plus(other: Int): Int
  |     ...
  | }
-reason: Expression '""' of type 'String' does not conform to value parameter 'other' of type 'Int'.
+reason: Argument type mismatch: actual type is 'String', but 'Int' was expected.
 In package 'kotlin' of module '<regular dependencies of main>':
  | class Int : Number, Comparable<Int>, Serializable {
  |     ...
  |     fun plus(other: Byte): Int
  |     ...
  | }
-reason: Expression '""' of type 'String' does not conform to value parameter 'other' of type 'Byte'.
+reason: Argument type mismatch: actual type is 'String', but 'Byte' was expected.
 In package 'kotlin' of module '<regular dependencies of main>':
  | class Int : Number, Comparable<Int>, Serializable {
  |     ...
  |     fun plus(other: Short): Int
  |     ...
  | }
-reason: Expression '""' of type 'String' does not conform to value parameter 'other' of type 'Short'.
+reason: Argument type mismatch: actual type is 'String', but 'Short' was expected.
 In package 'kotlin' of module '<regular dependencies of main>':
  | class Int : Number, Comparable<Int>, Serializable {
  |     ...
  |     fun plus(other: Long): Long
  |     ...
  | }
-reason: Expression '""' of type 'String' does not conform to value parameter 'other' of type 'Long'.
+reason: Argument type mismatch: actual type is 'String', but 'Long' was expected.
 In package 'kotlin' of module '<regular dependencies of main>':
  | class Int : Number, Comparable<Int>, Serializable {
  |     ...
  |     fun plus(other: Float): Float
  |     ...
  | }
-reason: Expression '""' of type 'String' does not conform to value parameter 'other' of type 'Float'.
+reason: Argument type mismatch: actual type is 'String', but 'Float' was expected.
 In package 'kotlin' of module '<regular dependencies of main>':
  | class Int : Number, Comparable<Int>, Serializable {
  |     ...
  |     fun plus(other: Double): Double
  |     ...
  | }
-reason: Expression '""' of type 'String' does not conform to value parameter 'other' of type 'Double'.
+reason: Argument type mismatch: actual type is 'String', but 'Double' was expected.
 In source code:
 1 | fun main() {
 2 |     val x = 1 + ""
