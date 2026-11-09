@@ -1,0 +1,7 @@
+FILE[kind=File[packageFqName=<root>]]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  CLASS[classId=/Val, fqName=Val, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Val, superNames=[]]
+    valueClassRepresentation: full [ ]
+    MODIFIER_LIST[public expect final value]
+    CLASS_BODY
