@@ -822,5 +822,7 @@ internal fun NativeSecondStageCompilationConfig.getCurrentRelocationModeFrom(fla
 private fun RelocationModeFlags.Mode.toLLVMRelocMode() = when (this) {
     RelocationModeFlags.Mode.PIC -> LLVMRelocMode.LLVMRelocPIC
     RelocationModeFlags.Mode.STATIC -> LLVMRelocMode.LLVMRelocStatic
-    RelocationModeFlags.Mode.DEFAULT -> LLVMRelocMode.LLVMRelocDefault
+    // Object files are compiled by `clang -cc1` without `-mrelocation-model` then, which generates position-independent code.
+    // The default model of the target (e.g. static for x86_64 Linux executables) would make in-process code generation differ.
+    RelocationModeFlags.Mode.DEFAULT -> LLVMRelocMode.LLVMRelocPIC
 }
