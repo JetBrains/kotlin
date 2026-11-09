@@ -14,7 +14,7 @@ Golden tests analyze Kotlin and Java fixtures and compare the resulting model, o
 
 | Directory | Generated test class | Expected output |
 | --- | --- | --- |
-| `projects` | `ProjectsGoldenTestGenerated` | Complete bundle (`.kdm.json`), compact structure (`.tree.txt`), and declaration signatures grouped by fragment (`.signatures.txt`). |
+| `projects` | `ProjectsGoldenTestGenerated` | Complete bundle (`.kdm.json`) and declaration signatures grouped by fragment (`.signatures.txt`). |
 | `types` | `KdmTypesGoldenTestGenerated` | Every type found in the bundle, with its path and all fields (`.types.txt`). |
 | `elementFields` | `ElementFieldsGoldenTestGenerated` | One selected field from every element (`.txt`). The fixture filename selects `deprecated`, `since`, `annotations`, `throws`, or `overridens`. |
 | `roundTrip` | `KdmKotlinSourceRoundTripTestGenerated`, `KdmJavaSourceRoundTripTestGenerated` | The input source itself: canonical declarations are reconstructed from the model and compared with the fixture. |
