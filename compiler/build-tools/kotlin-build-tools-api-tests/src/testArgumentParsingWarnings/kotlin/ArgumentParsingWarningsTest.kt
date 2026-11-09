@@ -109,7 +109,7 @@ class ArgumentParsingWarningsTest : BaseCompilationTest() {
             }) {
                 // an unknown -X flag is not an error, the compilation is expected to succeed
                 assertLogContainsPatternExactlyTimes(
-                    LogLevel.WARN,
+                    LogLevel.INFO,
                     ".*Flag is not supported by this version of the compiler: '-Xnot-a-real-flag'\\..*".toRegex(RegexOption.IGNORE_CASE),
                     1,
                 )
