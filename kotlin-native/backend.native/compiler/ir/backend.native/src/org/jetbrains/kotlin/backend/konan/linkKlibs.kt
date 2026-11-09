@@ -63,6 +63,10 @@ internal class LinkKlibsOutput(
 
     override val kotlinIr: IrElement
         get() = irModulesToCompile.first()
+
+    /** The same IR, to compile [mainModule] after the libraries being cached (see [NativeCompilerDriver]). */
+    fun forMainModule(mainModule: IrModuleFragment) =
+            LinkKlibsOutput(allIrModules, irBuiltIns, symbols, symbolTable, irLinker, listOf(mainModule), allIrModules)
 }
 
 
@@ -88,7 +92,7 @@ internal fun LinkKlibsContext.linkKlibs(
 
     @OptIn(InternalSymbolFinderAPI::class)
     val irBuiltIns = IrBuiltInsForLinker(irLinker, config.configuration.languageVersionSettings)
-    // The symbols include the entry point of the program compiled in the same IR, if any (see [NativeCompilerDriver.runWithCacheBuild]).
+    // For a cache build in the same IR as a program, the symbols include the entry point of the program.
     val symbols = BackendNativeSymbols(this, irBuiltIns, (config.sharesIrWith ?: config).configuration)
 
     ExternalDependenciesGenerator(irLinker.symbolTable, listOf(irLinker)).generateUnboundSymbolsAsDependencies()

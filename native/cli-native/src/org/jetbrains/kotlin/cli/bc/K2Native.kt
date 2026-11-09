@@ -266,12 +266,15 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             configuration, EnvironmentConfigFiles.NATIVE_CONFIG_FILES
         )
 
+        setupPhaseConfigAndKlibArguments(arguments, configuration, rootDisposable)
+        return environment
+    }
+
+    private fun setupPhaseConfigAndKlibArguments(arguments: K2NativeCompilerArguments, configuration: CompilerConfiguration, rootDisposable: Disposable) {
         configuration.phaseConfig = createPhaseConfig(arguments)
 
         // Values for keys for non-nullable arguments below must be also copied during 1st stage preparation within `KonanDriver.splitOntoTwoStages()`
         configuration.setupCommonKlibArguments(arguments, canBeMetadataKlibCompilation = true, rootDisposable)
-
-        return environment
     }
 
     private fun runKonanDriver(
@@ -282,47 +285,42 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
         val perfManager = configuration.perfManager
 
         val spawner = object : CompilationSpawner {
-            override fun spawn(arguments: List<String>, setupConfiguration: CompilerConfiguration.() -> Unit) {
-                val [spawnedArguments, spawnedConfiguration] = createSpawnedConfiguration(configuration, arguments, setupConfiguration)
-                val spawnedEnvironment = prepareEnvironment(spawnedArguments, spawnedConfiguration, rootDisposable)
-                // KT-71976: Should empty `arguments` be provided, prepareEnvironment() resets the keys for 1st compilation stage
-                // In order to keep them, they should be re-initialized with the second invocation of `setupConfiguration()` lambda below.
-                // Meanwhile, the first invocation is still needed to initialize other important keys before `prepareEnvironment()`
-                // TODO KT-72014: Remove the second invocation of `setupConfiguration()`
-                spawnedConfiguration.setupConfiguration()
-
-                runSpawned(configuration, spawnedConfiguration) {
+            override fun spawn(arguments: List<String>, setupConfiguration: CompilerConfiguration.() -> Unit) =
+                withNewConfiguration(arguments, setupConfiguration) { spawnedArguments, spawnedConfiguration ->
+                    val spawnedEnvironment = prepareEnvironment(spawnedArguments, spawnedConfiguration, rootDisposable)
+                    // KT-71976: Should empty `arguments` be provided, prepareEnvironment() resets the keys for 1st compilation stage
+                    // In order to keep them, they should be re-initialized with the second invocation of `setupConfiguration()` lambda below.
+                    // Meanwhile, the first invocation is still needed to initialize other important keys before `prepareEnvironment()`
+                    // TODO KT-72014: Remove the second invocation of `setupConfiguration()`
+                    spawnedConfiguration.setupConfiguration()
                     runKonanDriver(spawnedConfiguration, spawnedEnvironment, rootDisposable)
                 }
-            }
 
             override fun withSpawnedConfiguration(
                 arguments: List<String>,
                 setupConfiguration: CompilerConfiguration.() -> Unit,
                 action: (CompilerConfiguration) -> Unit,
-            ): Boolean {
-                val [spawnedArguments, spawnedConfiguration] = createSpawnedConfiguration(configuration, arguments, setupConfiguration)
-                // The same keys as `prepareEnvironment()` sets, without creating an environment: nothing is analyzed.
-                spawnedConfiguration.phaseConfig = createPhaseConfig(spawnedArguments)
-                spawnedConfiguration.setupCommonKlibArguments(spawnedArguments, canBeMetadataKlibCompilation = true, rootDisposable)
+            ) = withNewConfiguration(arguments, setupConfiguration) { spawnedArguments, spawnedConfiguration ->
+                // Like `spawn()`, without an environment: nothing is analyzed.
+                setupPhaseConfigAndKlibArguments(spawnedArguments, spawnedConfiguration, rootDisposable)
                 spawnedConfiguration.setupConfiguration()
-
-                runSpawned(configuration, spawnedConfiguration) { action(spawnedConfiguration) }
-                return true
+                action(spawnedConfiguration)
             }
 
-            private fun createSpawnedConfiguration(
-                configuration: CompilerConfiguration,
+            /** Runs [action] with a new configuration for the spawned compilation, then reports its diagnostics. */
+            private inline fun withNewConfiguration(
                 arguments: List<String>,
                 setupConfiguration: CompilerConfiguration.() -> Unit,
-            ): Pair<K2NativeCompilerArguments, CompilerConfiguration> {
+                action: (K2NativeCompilerArguments, CompilerConfiguration) -> Unit,
+            ) {
                 val spawnedArguments = K2NativeCompilerArguments()
                 parseCommandLineArguments(arguments, spawnedArguments)
                 val spawnedConfiguration = CompilerConfiguration.create()
 
+                val spawnedPerfManager = PerformanceManagerImpl.createChildIfNeeded(perfManager, start = true)
                 @OptIn(MessageCollectorAccess::class) // write access
                 spawnedConfiguration.messageCollector = configuration.messageCollector
-                spawnedConfiguration.perfManager = PerformanceManagerImpl.createChildIfNeeded(perfManager, start = true)
+                spawnedConfiguration.perfManager = spawnedPerfManager
                 spawnedConfiguration.setupCommonArguments(spawnedArguments, this@K2Native::createMetadataVersion)
                 spawnedConfiguration.setupFromArguments(spawnedArguments, rootDisposable)
                 spawnedConfiguration.setupPartialLinkageConfig(configuration.partialLinkageConfig)
@@ -344,17 +342,14 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                     // Some errors during KotlinCoreEnvironment setup.
                     throw CompilationErrorException()
                 }
-                return spawnedArguments to spawnedConfiguration
-            }
 
-            private inline fun runSpawned(configuration: CompilerConfiguration, spawnedConfiguration: CompilerConfiguration, block: () -> Unit) {
                 try {
-                    block()
+                    action(spawnedArguments, spawnedConfiguration)
                 } finally {
                     // The spawned compilation has its own diagnostics collector, which nothing else reports.
                     // Do it here, otherwise the diagnostics of e.g. the partial linkage engine would be lost (KT-78253).
                     CheckDiagnosticCollector.reportToMessageCollector(spawnedConfiguration)
-                    configuration.perfManager?.addOtherUnitStats(spawnedConfiguration.perfManager?.unitStats)
+                    perfManager?.addOtherUnitStats(spawnedPerfManager?.unitStats)
                 }
             }
         }

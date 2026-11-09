@@ -33,15 +33,30 @@ import kotlin.io.path.Path
 import kotlin.io.path.readLines
 
 /**
- * Driver orchestrates and connects different parts of the compiler into a complete pipeline.
+ * A cache build compiled in the same IR as the output, before it: see [NativeCompilerDriver].
+ * [onCachesBuilt] runs when the caches are built, before the output is compiled with them.
  */
-internal class NativeCompilerDriver(private val performanceManager: PerformanceManager?) {
+internal class CacheBuildInSameIr(val config: NativeSecondStageCompilationConfig, val onCachesBuilt: () -> Unit)
+
+/**
+ * Driver orchestrates and connects different parts of the compiler into a complete pipeline.
+ *
+ * With a [cacheBuild], the caches it builds are compiled in the IR of the output, instead of in a separate compilation that
+ * would load and link the IR of all the libraries again. The IR is linked for the cache build (its files fully, the other ones
+ * as headers), and its backend runs first, exactly as it would in the cache compilation. Then the output is compiled with the
+ * rebuilt caches, from the same IR: like when compiled separately, only its main module, everything else coming from the caches.
+ */
+internal class NativeCompilerDriver(
+        private val performanceManager: PerformanceManager?,
+        private val cacheBuild: CacheBuildInSameIr? = null,
+) {
 
     fun run(config: NativeSecondStageCompilationConfig, environment: KotlinCoreEnvironment) {
         usingNativeMemoryAllocator {
             usingJvmCInteropCallbacks(config.configuration.konanHome) {
                 PhaseEngine.startTopLevel(config) { engine ->
                     LlvmEnvironment.init(config.configuration.konanHome)
+                    require(cacheBuild == null || config.compileFromBitcode.isNullOrEmpty()) { "Caches are built from the IR" }
                     if (!config.compileFromBitcode.isNullOrEmpty()) produceBinaryFromBitcode(engine, config, config.compileFromBitcode!!)
                     else when (config.produce) {
                         CompilerOutputKind.PROGRAM -> produceBinary(engine, config, environment)
@@ -78,10 +93,8 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
         if (config.omitFrameworkBinary) {
             return
         }
-        val [linkKlibsOutput, objCCodeSpec] = performanceManager.tryMeasurePhaseTime(PhaseType.IrLinking) {
-            engine.linkKlibs(frontendOutput) {
-                it.runPhase(CreateObjCExportCodeSpecPhase, objCExportedInterface)
-            }
+        val [linkKlibsOutput, objCCodeSpec] = engine.linkKlibsBuildingCaches(frontendOutput) {
+            it.runPhase(CreateObjCExportCodeSpecPhase, objCExportedInterface)
         }
 
         val backendContext = createBackendContext(config, frontendOutput.moduleDescriptor, linkKlibsOutput) {
@@ -98,13 +111,11 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
         // Note: `BuildCExports` is technically not a part of IR linking. Ideally, it should be attributed to `TranslationToIr`,
         // mirroring `ProduceObjCExportInterfacePhase` in `produceObjCFramework`,
         // or both should be moved to a separate dedicated phase type, e.g. `Export`.
-        val [linkKlibsOutput, k1CAdapterElements] = performanceManager.tryMeasurePhaseTime(PhaseType.IrLinking) {
-            engine.linkKlibs(frontendOutput) {
-                if (config.cInterfaceGenerationMode == CInterfaceGenerationMode.V1 && !config.cExportUseIrDiscovery) {
-                    it.runPhase(BuildCExports, frontendOutput)
-                } else {
-                    null
-                }
+        val [linkKlibsOutput, k1CAdapterElements] = engine.linkKlibsBuildingCaches(frontendOutput) {
+            if (config.cInterfaceGenerationMode == CInterfaceGenerationMode.V1 && !config.cExportUseIrDiscovery) {
+                it.runPhase(BuildCExports, frontendOutput)
+            } else {
+                null
             }
         }
 
@@ -124,61 +135,13 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
     }
 
     /**
-     * Produces the program of [config] together with the incremental rebuild of the dirty files of a library described
-     * by [cacheConfig], in one IR, instead of two compilations that each load and link the IR of all the libraries.
-     *
-     * The IR is linked as for the cache build (the dirty files fully, the other ones as headers), and the cache backend runs first,
-     * exactly as it would in the cache compilation. Then the backend of the program runs over the same IR, with the caches reloaded:
-     * like the program compiled separately, it only compiles the main module and finds everything else in the caches.
-     * [onCachesBuilt] runs in between, when the caches have been built and reloaded.
-     */
-    fun runWithCacheBuild(
-            config: NativeSecondStageCompilationConfig,
-            cacheConfig: NativeSecondStageCompilationConfig,
-            environment: KotlinCoreEnvironment,
-            onCachesBuilt: () -> Unit,
-    ) {
-        require(config.produce == CompilerOutputKind.PROGRAM && cacheConfig.produce == CompilerOutputKind.STATIC_CACHE)
-        usingNativeMemoryAllocator {
-            usingJvmCInteropCallbacks(config.configuration.konanHome) {
-                PhaseEngine.startTopLevel(config) { engine ->
-                    LlvmEnvironment.init(config.configuration.konanHome)
-                    val frontendOutput = performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) { engine.runK1Frontend(config, environment) }
-                            ?: return@startTopLevel
-
-                    engine.newEngine<NativeBackendPhaseContext, _>(BasicNativeBackendPhaseContext(cacheConfig)) { cacheEngine ->
-                        val linkKlibsOutput = performanceManager.tryMeasurePhaseTime(PhaseType.IrLinking) { cacheEngine.linkKlibs(frontendOutput) }
-                        val cacheBackendContext = createBackendContext(cacheConfig, frontendOutput.moduleDescriptor, linkKlibsOutput)
-                        cacheEngine.runBackend(cacheBackendContext, linkKlibsOutput.irModulesToCompile, performanceManager)
-
-                        // The caches have just been rebuilt.
-                        config.reloadCacheSupport()
-                        onCachesBuilt()
-                        val programBackendContext = NativeBackendContext(
-                                config,
-                                frontendOutput.moduleDescriptor.builtIns,
-                                linkKlibsOutput.irBuiltIns,
-                                linkKlibsOutput.allIrModules,
-                                linkKlibsOutput.irLinker,
-                                linkKlibsOutput.symbols,
-                                linkKlibsOutput.symbolTable,
-                        )
-                        val mainModule = IrModuleFragmentImpl(frontendOutput.moduleDescriptor)
-                        engine.runBackend(programBackendContext, listOf(mainModule), performanceManager, isSharedIrPrepared = true)
-                    }
-                }
-            }
-        }
-    }
-
-    /**
      * Produce a single binary artifact.
      */
     private fun produceBinary(engine: PhaseEngine<NativeBackendPhaseContext>, config: NativeSecondStageCompilationConfig, environment: KotlinCoreEnvironment) {
         val frontendOutput = performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) { engine.runK1Frontend(config, environment) }
                 ?: return
 
-        val linkKlibsOutput = performanceManager.tryMeasurePhaseTime(PhaseType.IrLinking) { engine.linkKlibs(frontendOutput) }
+        val linkKlibsOutput = engine.linkKlibsBuildingCaches(frontendOutput)
         val backendContext = createBackendContext(config, frontendOutput.moduleDescriptor, linkKlibsOutput)
         engine.runBackend(backendContext, linkKlibsOutput.irModulesToCompile, performanceManager)
     }
@@ -223,9 +186,35 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
         val frontendOutput = performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) { engine.runK1Frontend(config, environment) }
                 ?: return
         performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) { engine.runPhase(CreateTestBundlePhase, frontendOutput.moduleDescriptor) }
-        val linkKlibsOutput = performanceManager.tryMeasurePhaseTime(PhaseType.IrLinking) { engine.linkKlibs(frontendOutput) }
+        val linkKlibsOutput = engine.linkKlibsBuildingCaches(frontendOutput)
         val backendContext = createBackendContext(config, frontendOutput.moduleDescriptor, linkKlibsOutput)
         engine.runBackend(backendContext, linkKlibsOutput.irModulesToCompile, performanceManager)
+    }
+
+    private fun PhaseEngine<NativeBackendPhaseContext>.linkKlibsBuildingCaches(frontendOutput: K1FrontendPhaseOutput): LinkKlibsOutput =
+            linkKlibsBuildingCaches(frontendOutput) {}.first
+
+    /**
+     * Links the IR of the libraries (see [linkKlibs]). With a [cacheBuild], links it for the cache build instead, builds the caches,
+     * and returns the IR for compiling the main module of the output with them.
+     */
+    private fun <T> PhaseEngine<NativeBackendPhaseContext>.linkKlibsBuildingCaches(
+            frontendOutput: K1FrontendPhaseOutput,
+            produceAdditionalOutput: (PhaseEngine<out LinkKlibsContext>) -> T,
+    ): Pair<LinkKlibsOutput, T> {
+        val cacheBuild = cacheBuild
+        val [linkKlibsOutput, additionalOutput] = performanceManager.tryMeasurePhaseTime(PhaseType.IrLinking) {
+            linkKlibs(frontendOutput, cacheBuild?.config ?: context.config, produceAdditionalOutput)
+        }
+        if (cacheBuild == null) return linkKlibsOutput to additionalOutput
+
+        val cacheBackendContext = createBackendContext(cacheBuild.config, frontendOutput.moduleDescriptor, linkKlibsOutput)
+        newEngine<NativeBackendPhaseContext, _>(BasicNativeBackendPhaseContext(cacheBuild.config)) {
+            it.runBackend(cacheBackendContext, linkKlibsOutput.irModulesToCompile, performanceManager)
+        }
+        context.config.reloadCacheSupport()
+        cacheBuild.onCachesBuilt()
+        return linkKlibsOutput.forMainModule(IrModuleFragmentImpl(frontendOutput.moduleDescriptor)) to additionalOutput
     }
 
     private fun createBackendContext(

@@ -49,7 +49,7 @@ private const val GENERIC_TARGET_CPU: String = "generic"
 class NativeSecondStageCompilationConfig(
         val project: Project,
         override val configuration: CompilerConfiguration,
-        /** Another compilation in the same IR, whose libraries this one uses, see [NativeCompilerDriver.runWithCacheBuild]. */
+        /** Another compilation in the same IR, whose libraries this one uses, see [org.jetbrains.kotlin.backend.konan.driver.NativeCompilerDriver]. */
         internal val sharesIrWith: NativeSecondStageCompilationConfig? = null,
 ) : NativeCompilationConfig {
     /**
@@ -727,7 +727,7 @@ class NativeSecondStageCompilationConfig(
 
     /**
      * Whether the incremental rebuild of the dirty files of a library is compiled in the same IR as the final binary,
-     * instead of in a spawned compilation, see [NativeCompilerDriver.runWithCacheBuild]. A prototype, off by default.
+     * instead of in a spawned compilation, see [org.jetbrains.kotlin.backend.konan.driver.NativeCompilerDriver]. A prototype, off by default.
      */
     internal val mergesIcCacheBuild: Boolean
         get() = configuration.get(BinaryOptions.mergedIcCacheBuild) ?: false

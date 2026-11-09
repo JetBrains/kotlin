@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.reportLoadingProblemsIfAny
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile
+import org.jetbrains.kotlin.backend.konan.driver.CacheBuildInSameIr
 import org.jetbrains.kotlin.backend.konan.driver.NativeCompilerDriver
 import org.jetbrains.kotlin.backend.konan.facts.CacheBuilderFactBased
 import org.jetbrains.kotlin.cli.CliDiagnostics
@@ -39,18 +40,18 @@ private val softDeprecatedTargets = setOf(
 
 private const val DEPRECATION_LINK = "https://kotl.in/native-targets-tiers"
 
-fun interface CompilationSpawner {
+interface CompilationSpawner {
     fun spawn(arguments: List<String>, setupConfiguration: CompilerConfiguration.() -> Unit)
 
     /**
-     * Runs [action] with the configuration that [spawn] would compile with, without compiling anything, and reports its
-     * diagnostics afterwards like [spawn] does. Returns `false` (and doesn't run [action]) if this spawner doesn't support it.
+     * Runs [action] with the configuration [spawn] would compile with, instead of compiling,
+     * and reports the diagnostics of that configuration afterwards like [spawn] does.
      */
     fun withSpawnedConfiguration(
             arguments: List<String>,
             setupConfiguration: CompilerConfiguration.() -> Unit,
             action: (CompilerConfiguration) -> Unit,
-    ): Boolean = false
+    )
 }
 
 class KonanDriver(
@@ -187,18 +188,11 @@ class KonanDriver(
             prepareCompilationWithCaches()
             NativeCompilerDriver(performanceManager).run(config, environment)
         } else {
-            deferredCacheBuild.compile {
-                val isMerged = compilationSpawner.withSpawnedConfiguration(deferredCacheBuild.arguments, deferredCacheBuild.setupConfiguration) {
-                    val cacheConfig = NativeSecondStageCompilationConfig(project, it, sharesIrWith = config)
-                    NativeCompilerDriver(performanceManager).runWithCacheBuild(config, cacheConfig, environment) {
-                        prepareCompilationWithCaches()
-                    }
-                }
-                if (!isMerged) {
-                    compilationSpawner.spawn(deferredCacheBuild.arguments, deferredCacheBuild.setupConfiguration)
-                    config.reloadCacheSupport()
-                    prepareCompilationWithCaches()
-                    NativeCompilerDriver(performanceManager).run(config, environment)
+            deferredCacheBuild.compile { arguments, setupConfiguration ->
+                compilationSpawner.withSpawnedConfiguration(arguments, setupConfiguration) { cacheConfiguration ->
+                    val cacheConfig = NativeSecondStageCompilationConfig(project, cacheConfiguration, sharesIrWith = config)
+                    val cacheBuild = CacheBuildInSameIr(cacheConfig, onCachesBuilt = ::prepareCompilationWithCaches)
+                    NativeCompilerDriver(performanceManager, cacheBuild).run(config, environment)
                 }
             }
         }

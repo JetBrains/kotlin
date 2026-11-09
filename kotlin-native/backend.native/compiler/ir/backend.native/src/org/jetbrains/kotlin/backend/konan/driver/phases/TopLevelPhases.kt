@@ -77,38 +77,35 @@ internal fun PhaseEngine<NativeBackendPhaseContext>.runK1Frontend(config: Native
     return useContext(BasicNativeBackendPhaseContext(config)) { it.runPhase(K1FrontendPhase, environment) }
 }
 
-internal fun PhaseEngine<NativeBackendPhaseContext>.linkKlibs(frontendOutput: K1FrontendPhaseOutput): LinkKlibsOutput {
-    return linkKlibs(frontendOutput, {}).first
-}
-
+/**
+ * Links the IR of the libraries, for the compilation of [linkingConfig]: by default, the one of this engine,
+ * or a cache build compiled in the same IR (see [NativeCompilerDriver]). [produceAdditionalOutput] runs for this engine.
+ */
 internal fun <T> PhaseEngine<NativeBackendPhaseContext>.linkKlibs(
         frontendOutput: K1FrontendPhaseOutput,
-        produceAdditionalOutput: (PhaseEngine<out LinkKlibsContext>) -> T
+        linkingConfig: NativeSecondStageCompilationConfig = context.config,
+        produceAdditionalOutput: (PhaseEngine<out LinkKlibsContext>) -> T,
 ): Pair<LinkKlibsOutput, T> {
     val config = this.context.config
     val psiToIrContext = LinkKlibsContextImpl(config, frontendOutput.moduleDescriptor, frontendOutput.disposeCallback)
     val [linkKlibsOutput, additionalOutput] = useContext(psiToIrContext) { psiToIrEngine ->
         val additionalOutput = produceAdditionalOutput(psiToIrEngine)
-        val linkKlibsInput = LinkKlibsInput(frontendOutput.moduleDescriptor)
-        val output = psiToIrEngine.runAndMeasurePhase(LinkKlibsPhase, linkKlibsInput)
-        output.irModulesToCompile.forEach { module ->
-            psiToIrEngine.runSpecialBackendChecks(module, output.irBuiltIns, output.symbols)
+        val linkingContext = if (linkingConfig === config) psiToIrContext else {
+            LinkKlibsContextImpl(linkingConfig, frontendOutput.moduleDescriptor, disposeCallback = {}, psiToIrContext.symbolTable)
+        }
+        val output = psiToIrEngine.newEngine(linkingContext) { linkingEngine ->
+            val output = linkingEngine.runAndMeasurePhase(LinkKlibsPhase, LinkKlibsInput(frontendOutput.moduleDescriptor))
+            output.irModulesToCompile.forEach { module ->
+                linkingEngine.runSpecialBackendChecks(module, output.irBuiltIns, output.symbols)
+            }
+            output
         }
         output to additionalOutput
     }
     return linkKlibsOutput to additionalOutput
 }
 
-/**
- * [isSharedIrPrepared]: another backend has already run over the same IR (see [NativeCompilerDriver.runWithCacheBuild]),
- * so the declarations it adds to the shared built-ins are already there.
- */
-internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(
-        backendContext: NativeBackendContext,
-        irModules: List<IrModuleFragment>,
-        performanceManager: PerformanceManager?,
-        isSharedIrPrepared: Boolean = false,
-) {
+internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendContext: NativeBackendContext, irModules: List<IrModuleFragment>, performanceManager: PerformanceManager?) {
     val config = context.config
     useContext(backendContext) { backendEngine ->
 
@@ -119,9 +116,7 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(
         }
 
         // This phase adds declarations to the shared built-ins, independently of the input module.
-        if (!isSharedIrPrepared) {
-            backendEngine.runModuleWisePhase(createModulePhases(::FunctionsWithoutBoundCheckGenerator).first(), listOf(irModules.first()))
-        }
+        backendEngine.runModuleWisePhase(createModulePhases(::FunctionsWithoutBoundCheckGenerator).first(), listOf(irModules.first()))
 
         fun createGenerationState(fragment: BackendJobFragment): NativeGenerationState {
             val outputPath = config.cacheSupport.tryGetImplicitOutput(fragment.cacheInfo) ?: config.outputPath

@@ -19,9 +19,9 @@ internal class LinkKlibsContextImpl(
         config: NativeSecondStageCompilationConfig,
         private val moduleDescriptor: ModuleDescriptor,
         private val disposeCallback: () -> Unit,
+        // TODO: Invalidate properly in dispose method.
+        override val symbolTable: SymbolTable = SymbolTable(KonanIdSignaturer(KonanManglerDesc), IrFactoryImpl),
 ) : BasicNativeBackendPhaseContext(config), LinkKlibsContext {
-    // TODO: Invalidate properly in dispose method.
-    override val symbolTable = SymbolTable(KonanIdSignaturer(KonanManglerDesc), IrFactoryImpl)
 
     override fun dispose() {
         disposeCallback()

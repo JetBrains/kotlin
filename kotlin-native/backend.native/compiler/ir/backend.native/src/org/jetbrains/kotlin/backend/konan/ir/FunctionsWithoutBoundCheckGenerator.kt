@@ -64,6 +64,8 @@ internal class FunctionsWithoutBoundCheckGenerator(val context: NativeBackendCon
 
     override fun lower(irModule: IrModuleFragment) {
         context.irBuiltIns.arrays.forEach { classSymbol ->
+            // The built-ins are shared by all the backends compiling the same IR (see [NativeCompilerDriver]): add the functions once.
+            if (classSymbol.owner.functions.any { it.name == KonanNameConventions.getWithoutBoundCheck }) return@forEach
             val underlyingClass = (classSymbol.defaultType.computeBinaryType() as BinaryType.Reference)
                     .types.single().takeIf { classSymbol.owner.isInlineClass }
             val setFunction = classSymbol.owner.functions.single { it.name == OperatorNameConventions.SET }
