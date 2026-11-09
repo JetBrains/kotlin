@@ -335,6 +335,15 @@ testing {
         }
 
         named<JvmTestSuite>("testJps") {
+            targets.all {
+                testTask.configure {
+                    systemProperty(
+                        "kotlin.buildtools.daemon.legacy.mode",
+                        "true"
+                    )
+                    addClasspathProperty(unpackedResources, "kotlin.test.templates.classpath")
+                }
+            }
             dependencies {
                 implementation(project(":compiler:build-tools:kotlin-build-tools-api-jps"))
             }
