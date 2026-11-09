@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.testFederation
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
@@ -56,6 +57,17 @@ open class PlanTestFederationTask : DefaultTask() {
     val htmlPlanFile: RegularFileProperty = project.objects.fileProperty()
         .value(project.layout.projectDirectory.file(".test-federation.plan.html"))
 
+    @get:InputFile
+    internal val sourceImageFile: RegularFileProperty = project.objects.fileProperty()
+        .value(
+            project.layout.projectDirectory
+                .file("repo/gradle-build-conventions/test-federation-convention/img/test-federation-filtering.svg")
+        )
+
+    @OutputFile
+    val imagePlanFile: RegularFileProperty = project.objects.fileProperty()
+        .value(project.layout.projectDirectory.file(TEST_FEDERATION_PLAN_IMAGE_FILE))
+
     init {
         usesService(project.featureBranchDiffService)
         usesService(project.affectedDomainsService)
@@ -86,5 +98,8 @@ open class PlanTestFederationTask : DefaultTask() {
         logger.quiet(plan.renderAscii())
         propertiesPlanFile.get().asFile.writeText(plan.renderProperties())
         htmlPlanFile.get().asFile.writeText(plan.renderHtml())
+        sourceImageFile.get().asFile.copyTo(imagePlanFile.get().asFile, overwrite = true)
     }
 }
+
+internal const val TEST_FEDERATION_PLAN_IMAGE_FILE = ".test-federation.filtering.svg"

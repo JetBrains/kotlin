@@ -1,0 +1,122 @@
+<!--
+  - Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+  - Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+  -->
+
+<svg xmlns="http://www.w3.org/2000/svg" class="tf" width="1560" height="2004" viewBox="0 0 1560 2004" role="img" aria-labelledby="tf-title">
+    <title id="tf-title">How Test Federation filters tests</title>
+    <style>
+        .tf, #light:target {
+            --tf-title: #1e1e24;
+            --tf-panel: #f1f2f6;
+            --tf-panel-outline: #d8dae2;
+            --tf-orange: #e8801a;
+            --tf-purple: #8b55ff;
+            --tf-purple-text: #6a35e0;
+            --tf-filter-fill: rgba(241, 242, 246, 0.9);
+            --tf-code-bg: #ffffff;
+            --tf-code-outline: #dfe1e5;
+            --tf-code-fg: #080808;
+            --tf-code-property: #871094;
+            --tf-code-string: #067d17;
+            --tf-code-indent-guide: #e4e5e9;
+        }
+        @media (prefers-color-scheme: dark) {
+            .tf {
+                --tf-title: #ececf1;
+                --tf-panel: #2b2d40;
+                --tf-panel-outline: #474a63;
+                --tf-orange: #f08c2a;
+                --tf-purple: #9466ff;
+                --tf-purple-text: #b393ff;
+                --tf-filter-fill: rgba(43, 45, 64, 0.85);
+                --tf-code-bg: #1e1f22;
+                --tf-code-outline: #43454a;
+                --tf-code-fg: #bcbec4;
+                --tf-code-property: #c77dbb;
+                --tf-code-string: #6aab73;
+                --tf-code-indent-guide: #313438;
+            }
+        }
+        #dark:target {
+            --tf-title: #ececf1;
+            --tf-panel: #2b2d40;
+            --tf-panel-outline: #474a63;
+            --tf-orange: #f08c2a;
+            --tf-purple: #9466ff;
+            --tf-purple-text: #b393ff;
+            --tf-filter-fill: rgba(43, 45, 64, 0.85);
+            --tf-code-bg: #1e1f22;
+            --tf-code-outline: #43454a;
+            --tf-code-fg: #bcbec4;
+            --tf-code-property: #c77dbb;
+            --tf-code-string: #6aab73;
+            --tf-code-indent-guide: #313438;
+        }
+        .sans { font-family: "Inter", "JetBrains Sans", "Helvetica Neue", Arial, sans-serif; }
+        .mono { font-family: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace; }
+        .title { fill: var(--tf-title); font-size: 50px; font-weight: 800; letter-spacing: -0.5px; }
+        .panel { fill: var(--tf-panel); stroke: var(--tf-panel-outline); stroke-width: 2; }
+        .panel-framed { fill: var(--tf-panel); stroke: var(--tf-orange); stroke-width: 10; }
+        .gradle-filter { fill: none; stroke: var(--tf-orange); stroke-width: 8; }
+        .federation-filter { fill: var(--tf-filter-fill); stroke: var(--tf-purple); stroke-width: 8; }
+        .federation-label { fill: var(--tf-purple-text); font-size: 28px; font-weight: 700; letter-spacing: -0.3px; }
+        .cmd-gradle { fill: var(--tf-orange); }
+        .cmd-federation { fill: var(--tf-purple); }
+        .cmd-text { fill: #ffffff; font-size: 30px; }
+        .arrow-gradle { fill: none; stroke: var(--tf-orange); stroke-width: 2.5; }
+        .arrow-federation { fill: none; stroke: var(--tf-purple); stroke-width: 2.5; }
+        .head-gradle { fill: var(--tf-orange); }
+        .head-federation { fill: var(--tf-purple); }
+        .code { fill: var(--tf-code-bg); stroke: var(--tf-code-outline); stroke-width: 2; }
+        .code-text { fill: var(--tf-code-fg); font-size: 24px; }
+        .code-property { fill: var(--tf-code-property); }
+        .code-string { fill: var(--tf-code-string); }
+        .code-extension-call { font-style: italic; }
+        .code-indent-guide { stroke: var(--tf-code-indent-guide); stroke-width: 2; }
+    </style>
+
+    <g id="light">
+        <g id="dark">
+            <g>
+                <text class="title sans" x="930" y="62" text-anchor="middle">Level 1: no filtering</text>
+                <rect class="panel-framed" x="1001" y="135" width="550" height="460"/>
+                <rect class="cmd-gradle" x="584" y="335" width="324" height="60" rx="10"/>
+                <text class="cmd-text mono" x="620" y="376" textLength="252" lengthAdjust="spacingAndGlyphs">./gradlew test</text>
+                <line class="arrow-gradle" x1="908" y1="365" x2="984" y2="365"/>
+                <polygon class="head-gradle" points="996,365 982,358 982,372"/>
+            </g>
+
+            <g>
+                <text class="title sans" x="930" y="762" text-anchor="middle">Level 2: Gradle filtering</text>
+                <rect class="panel" x="997" y="831" width="558" height="468"/>
+                <rect class="gradle-filter" x="1056" y="861" width="405" height="328"/>
+                <rect class="cmd-gradle" x="476" y="995" width="432" height="60" rx="10"/>
+                <text class="cmd-text mono" x="512" y="1036" textLength="360" lengthAdjust="spacingAndGlyphs">./gradlew customTest</text>
+                <line class="arrow-gradle" x1="908" y1="1025" x2="1040" y2="1025"/>
+                <polygon class="head-gradle" points="1052,1025 1038,1018 1038,1032"/>
+                <rect class="code" x="1" y="1081" width="906" height="218" rx="12"/>
+                <line class="code-indent-guide" x1="35" y1="1139" x2="35" y2="1241"/>
+                <line class="code-indent-guide" x1="92.6" y1="1173" x2="92.6" y2="1207"/>
+                <text class="code-text mono" x="34" y="1129" textLength="518.4" lengthAdjust="spacingAndGlyphs"><tspan class="code-property">tasks</tspan>.<tspan class="code-extension-call">register</tspan>&lt;Test&gt;(<tspan class="code-string">"customTest"</tspan>) {</text>
+                <text class="code-text mono" x="91.6" y="1163" textLength="115.2" lengthAdjust="spacingAndGlyphs">filter {</text>
+                <text class="code-text mono" x="149.2" y="1197" textLength="446.4" lengthAdjust="spacingAndGlyphs">includeTestsMatching(<tspan class="code-string">"*Custom"</tspan>)</text>
+                <text class="code-text mono" x="91.6" y="1231">}</text>
+                <text class="code-text mono" x="34" y="1265">}</text>
+            </g>
+
+            <g>
+                <text class="title sans" x="930" y="1462" text-anchor="middle">Level 3: Test Federation filtering</text>
+                <rect class="panel" x="997" y="1531" width="558" height="468"/>
+                <rect class="gradle-filter" x="1056" y="1561" width="405" height="328"/>
+                <rect class="federation-filter" x="1068" y="1573" width="381" height="74"/>
+                <text class="federation-label sans" x="1258.5" y="1620" text-anchor="middle">ContractTestsForJvm</text>
+                <rect class="cmd-federation" x="8" y="1698" width="954" height="104" rx="10"/>
+                <text class="cmd-text mono" x="44" y="1742" textLength="396" lengthAdjust="spacingAndGlyphs">./gradlew customTest \</text>
+                <text class="cmd-text mono" x="116" y="1779" textLength="810" lengthAdjust="spacingAndGlyphs">-Ptest.federation.subsets=ContractTestsForJvm</text>
+                <path class="arrow-federation" d="M 962 1750 C 1015 1750 1000 1610 1052 1610"/>
+                <polygon class="head-federation" points="1064,1610 1050,1603 1050,1617"/>
+            </g>
+        </g>
+    </g>
+</svg>
