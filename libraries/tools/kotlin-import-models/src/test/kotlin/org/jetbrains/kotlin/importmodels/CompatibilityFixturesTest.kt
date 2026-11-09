@@ -13,7 +13,7 @@ import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 
 /**
- * Fixtures serialized by Google Protobuf 4.28.2 from an earlier schema revision, which the current classes must keep reading.
+ * Fixtures serialized by Google Protobuf 4.28.2, which the current classes must keep reading.
  * Unknown field 127 and unknown enum value 101 are deliberate.
  */
 class CompatibilityFixturesTest {

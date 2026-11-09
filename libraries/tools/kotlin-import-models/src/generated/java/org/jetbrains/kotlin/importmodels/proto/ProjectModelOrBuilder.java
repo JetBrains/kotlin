@@ -27,25 +27,25 @@ public interface ProjectModelOrBuilder extends
       getIdBytes();
 
   /**
-   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 3;</code>
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 2;</code>
    */
   java.util.List<org.jetbrains.kotlin.importmodels.proto.CompilationUnitId> 
       getCompilationUnitIdsList();
   /**
-   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 3;</code>
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 2;</code>
    */
   org.jetbrains.kotlin.importmodels.proto.CompilationUnitId getCompilationUnitIds(int index);
   /**
-   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 3;</code>
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 2;</code>
    */
   int getCompilationUnitIdsCount();
   /**
-   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 3;</code>
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 2;</code>
    */
   java.util.List<? extends org.jetbrains.kotlin.importmodels.proto.CompilationUnitIdOrBuilder> 
       getCompilationUnitIdsOrBuilderList();
   /**
-   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 3;</code>
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 2;</code>
    */
   org.jetbrains.kotlin.importmodels.proto.CompilationUnitIdOrBuilder getCompilationUnitIdsOrBuilder(
       int index);
