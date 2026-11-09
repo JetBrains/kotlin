@@ -22,6 +22,29 @@ import kotlin.io.path.absolutePathString
 import kotlin.io.path.pathString
 
 /**
+ * The flags [ClangBitcodeCompiler] runs `clang` with, followed by the bitcode file, `-o` and the object file.
+ */
+internal fun NativeBackendPhaseContext.clangBitcodeCompilerFlags(configurables: ClangFlags): List<String> =
+        config.configuration.overrideClangOptions.takeIf(List<String>::isNotEmpty)
+                ?: mutableListOf<String>().apply {
+                    fun addNonEmpty(elements: List<String>) = addAll(elements.filter { it.isNotEmpty() })
+                    addNonEmpty(configurables.clangFlags)
+                    addNonEmpty(listOf("-triple", config.llvmTargetTriple))
+                    addNonEmpty(when {
+                        shouldOptimize() -> configurables.clangOptFlags
+                        config.debug -> configurables.clangDebugFlags
+                        else -> configurables.clangNooptFlags
+                    })
+                    addNonEmpty(config.getCurrentRelocationModeFrom(configurables).translateToClangCc1Flag())
+                }
+
+private fun RelocationModeFlags.Mode.translateToClangCc1Flag() = when (this) {
+    RelocationModeFlags.Mode.PIC -> listOf("-mrelocation-model", "pic")
+    RelocationModeFlags.Mode.STATIC -> listOf("-mrelocation-model", "static")
+    RelocationModeFlags.Mode.DEFAULT -> emptyList()
+}
+
+/**
  * Compiles an LLVM module by writing it to a temporary bitcode file named after [llvmModuleName]
  * and running clang on it.
  */
@@ -33,15 +56,6 @@ internal class ClangBitcodeCompiler(
 
     private val config = context.config
     private val platform = config.platform
-    private val optimize = context.shouldOptimize()
-    private val debug = config.debug
-
-    private val overrideClangOptions =
-            config.configuration.overrideClangOptions
-
-    private fun MutableList<String>.addNonEmpty(elements: List<String>) {
-        addAll(elements.filter { it.isNotEmpty() })
-    }
 
     private fun runTool(vararg command: String) =
             Command(*command)
@@ -59,17 +73,7 @@ internal class ClangBitcodeCompiler(
     }
 
     private fun clang(configurables: ClangFlags, bitcodeFile: Path, objectFile: Path) {
-        val flags = overrideClangOptions.takeIf(List<String>::isNotEmpty)
-                ?: mutableListOf<String>().apply {
-                    addNonEmpty(configurables.clangFlags)
-                    addNonEmpty(listOf("-triple", config.llvmTargetTriple))
-                    addNonEmpty(when {
-                        optimize -> configurables.clangOptFlags
-                        debug -> configurables.clangDebugFlags
-                        else -> configurables.clangNooptFlags
-                    })
-                    addNonEmpty(context.config.getCurrentRelocationModeFrom(configurables).translateToClangCc1Flag())
-                }
+        val flags = context.clangBitcodeCompilerFlags(configurables)
         val bitcodePath = bitcodeFile.absolute().normalize().pathString
         val objectPath = objectFile.absolute().normalize().pathString
         if (configurables is AppleConfigurables && config.configuration[BinaryOptions.compileBitcodeWithXcodeLlvm] == true) {
@@ -77,12 +81,6 @@ internal class ClangBitcodeCompiler(
         } else {
             hostLlvmTool("clang++", *flags.toTypedArray(), bitcodePath, "-o", objectPath)
         }
-    }
-
-    private fun RelocationModeFlags.Mode.translateToClangCc1Flag() = when (this) {
-        RelocationModeFlags.Mode.PIC -> listOf("-mrelocation-model", "pic")
-        RelocationModeFlags.Mode.STATIC -> listOf("-mrelocation-model", "static")
-        RelocationModeFlags.Mode.DEFAULT -> emptyList()
     }
 
     override fun makeObjectFile(llvmModule: LLVMModuleRef, outputFilePath: Path) {
