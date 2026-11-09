@@ -10,6 +10,7 @@ plugins {
     kotlin("jvm")
     `java-test-fixtures`
     id("test-inputs-check")
+    id("test-data-manager")
 }
 
 kotlin {
@@ -20,6 +21,10 @@ kotlin {
             "org.jetbrains.dokka.InternalDokkaApi",
         )
     }
+}
+
+sourceSets.test {
+    java.srcDir("src/tests-gen")
 }
 
 // This module was written against a stable Kotlin release and relies on plain component1()/component2()
@@ -77,7 +82,12 @@ dependencies {
     implementation(project(":wasm:wasm.config"))
 
     testFixturesImplementation(kotlinStdlib())
-    testImplementation(kotlinTest("junit5"))
+    testFixturesApi(kotlinTest("junit5"))
+    testFixturesImplementation(testFixtures(project(":generators:test-generator")))
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
+    testFixturesImplementation(testFixtures(project(":compiler:test-infrastructure")))
+    testFixturesApi(testFixtures(project(":analysis:test-data-manager")))
+    testImplementation(intellijCore())
     testImplementation(libs.junit.jupiter.params)
 }
 
@@ -93,6 +103,8 @@ projectTests {
     // Test code reads these resources directly by file path (not via the classpath), so they must be
     // declared explicitly or `test-inputs-check` flags them as undeclared inputs.
     testData(project.isolated, "src/test/resources")
+
+    testGenerator("org.jetbrains.kotlin.documentation.analyzer.GenerateDocumentationAnalyzerTestsKt")
 
     // Single test task running tests with symbols java analysis (K2).
     testTask()
