@@ -42,8 +42,8 @@ internal val DClasslike.extra: PropertyContainer<DClasslike>
 private fun <C : DokkaAnnotationTarget> PropertyContainer<C>.annotationIn(
     packageName: String,
     className: String,
-    ss: DokkaSourceSet,
-): Annotations.Annotation? = this[Annotations]?.directAnnotations?.get(ss)?.firstOrNull {
+    sourceSet: DokkaSourceSet,
+): Annotations.Annotation? = this[Annotations]?.directAnnotations?.get(sourceSet)?.firstOrNull {
     it.dri.packageName == packageName && it.dri.classNames == className
 }
 
@@ -52,10 +52,10 @@ private fun Annotations.Annotation.stringArgument(name: String): String? =
 
 private fun <C : DokkaAnnotationTarget> PropertyContainer<C>.sinceIn(
     documentable: Documentable,
-    ss: DokkaSourceSet,
-): String? = annotationIn("kotlin", "SinceKotlin", ss)?.stringArgument("version")
-    ?: annotationIn("kotlin", "IntroducedAt", ss)?.stringArgument("version")
-    ?: documentable.documentation[ss]?.children?.filterIsInstance<Since>()?.firstOrNull()
+    sourceSet: DokkaSourceSet,
+): String? = annotationIn("kotlin", "SinceKotlin", sourceSet)?.stringArgument("version")
+    ?: annotationIn("kotlin", "IntroducedAt", sourceSet)?.stringArgument("version")
+    ?: documentable.documentation[sourceSet]?.children?.filterIsInstance<Since>()?.firstOrNull()
         ?.root?.plainText()?.trim()?.takeIf { it.isNotEmpty() }
 
 private fun DocTag.plainText(): String = when (this) {
@@ -65,11 +65,11 @@ private fun DocTag.plainText(): String = when (this) {
 
 private fun <C : DokkaAnnotationTarget> PropertyContainer<C>.deprecatedIn(
     documentable: Documentable,
-    ss: DokkaSourceSet,
+    sourceSet: DokkaSourceSet,
 ): KdDeprecated? {
-    val kotlin = annotationIn("kotlin", "Deprecated", ss)
-    val java = annotationIn("java.lang", "Deprecated", ss)
-    val tag = documentable.documentation[ss]?.children?.any { it is DeprecatedTag } == true
+    val kotlin = annotationIn("kotlin", "Deprecated", sourceSet)
+    val java = annotationIn("java.lang", "Deprecated", sourceSet)
+    val tag = documentable.documentation[sourceSet]?.children?.any { it is DeprecatedTag } == true
     if (kotlin == null && java == null && !tag) return null
 
     val level = when ((kotlin?.params?.get("level") as? EnumValue)?.enumName?.substringAfterLast('.')) {
@@ -77,7 +77,7 @@ private fun <C : DokkaAnnotationTarget> PropertyContainer<C>.deprecatedIn(
         "HIDDEN" -> error("Hidden declaration should have been filtered out: ${documentable.dri}")
         else -> KdDeprecationLevel.WARNING
     }
-    val sinceKotlin = annotationIn("kotlin", "DeprecatedSinceKotlin", ss)
+    val sinceKotlin = annotationIn("kotlin", "DeprecatedSinceKotlin", sourceSet)
     val replacement = (kotlin?.params?.get("replaceWith") as? AnnotationValue)?.annotation
     return KdDeprecated(
         since = java?.stringArgument("since")
@@ -100,23 +100,23 @@ private fun <C : DokkaAnnotationTarget> PropertyContainer<C>.deprecatedIn(
 
 internal fun <C> PropertyContainer<C>.throwsIn(
     documentable: Documentable,
-    ss: DokkaSourceSet,
+    sourceSet: DokkaSourceSet,
 ): List<KdThrows> where C : Documentable, C : DokkaAnnotationTarget {
-    val declared = this[CheckedExceptions]?.exceptions?.get(ss).orEmpty()
-    val annotation = annotationIn("kotlin", "Throws", ss) ?: annotationIn("kotlin.jvm", "Throws", ss)
+    val declared = this[CheckedExceptions]?.exceptions?.get(sourceSet).orEmpty()
+    val annotation = annotationIn("kotlin", "Throws", sourceSet) ?: annotationIn("kotlin.jvm", "Throws", sourceSet)
     val annotated = (annotation?.params?.get("exceptionClasses") as? ArrayValue)?.value.orEmpty()
         .filterIsInstance<ClassValue>().map { it.classDRI }
-    val documented = documentable.documentation[ss]?.children.orEmpty().filterIsInstance<Throws>()
+    val documented = documentable.documentation[sourceSet]?.children.orEmpty().filterIsInstance<Throws>()
         .mapNotNull { it.exceptionAddress }
     // Documentation is a placeholder until KdDocumentation can represent tag contents.
     return (declared + annotated + documented).map { it.toKdElementId() }.distinct().map { KdThrows(it) }
 }
 
-internal fun buildFunctionElement(f: DFunction, ss: DokkaConfiguration.DokkaSourceSet): KdFunction {
-    val mods = f.extra.extraModifiersIn(ss)
+internal fun buildFunctionElement(function: DFunction, sourceSet: DokkaConfiguration.DokkaSourceSet): KdFunction {
+    val mods = function.extra.extraModifiersIn(sourceSet)
     return KdFunction(
-        name = f.name,
-        isCompanion = f.extra[IsCompanion] != null,
+        name = function.name,
+        isCompanion = function.extra[IsCompanion] != null,
         isExternal = ExtraModifiers.KotlinOnlyModifiers.External in mods || ExtraModifiers.JavaOnlyModifiers.Native in mods,
         isSuspend = ExtraModifiers.KotlinOnlyModifiers.Suspend in mods,
         isOperator = ExtraModifiers.KotlinOnlyModifiers.Operator in mods,
@@ -124,59 +124,59 @@ internal fun buildFunctionElement(f: DFunction, ss: DokkaConfiguration.DokkaSour
         isInline = ExtraModifiers.KotlinOnlyModifiers.Inline in mods,
         isTailRec = ExtraModifiers.KotlinOnlyModifiers.TailRec in mods,
         mappedTo = null, // TODO KT-90419
-        returnType = f.type.toKdType(ss),
-        typeParameters = f.generics.map { it.toKdTypeParameter(ss) },
-        valueParameters = f.parameters.map { it.toKdValueParameter(ss) },
-        extensionReceiverParameter = f.receiver?.toKdExtensionReceiverParameter(ss),
-        contextParameters = f.contextParameters.map { it.toKdContextParameter(ss) },
-        overridens = f.extra[OverriddenMembers]?.members?.get(ss).orEmpty().map { it.toKdElementId() }.distinct(),
-        visibility = f.visibility[ss]?.toKdVisibility() ?: KdVisibility.PUBLIC,
-        modality = f.modifier[ss]?.toKdModality() ?: KdModality.FINAL,
-        since = f.extra.sinceIn(f, ss),
-        deprecated = f.extra.deprecatedIn(f, ss),
-        throws = f.extra.throwsIn(f, ss),
-        annotations = f.extra.annotationsIn(ss),
+        returnType = function.type.toKdType(sourceSet),
+        typeParameters = function.generics.map { it.toKdTypeParameter(sourceSet) },
+        valueParameters = function.parameters.map { it.toKdValueParameter(sourceSet) },
+        extensionReceiverParameter = function.receiver?.toKdExtensionReceiverParameter(sourceSet),
+        contextParameters = function.contextParameters.map { it.toKdContextParameter(sourceSet) },
+        overridens = function.extra[OverriddenMembers]?.members?.get(sourceSet).orEmpty().map { it.toKdElementId() }.distinct(),
+        visibility = function.visibility[sourceSet]?.toKdVisibility() ?: KdVisibility.PUBLIC,
+        modality = function.modifier[sourceSet]?.toKdModality() ?: KdModality.FINAL,
+        since = function.extra.sinceIn(function, sourceSet),
+        deprecated = function.extra.deprecatedIn(function, sourceSet),
+        throws = function.extra.throwsIn(function, sourceSet),
+        annotations = function.extra.annotationsIn(sourceSet),
         documentation = KdDocumentation.EMPTY,
     )
 }
 
-internal fun buildConstructorElement(c: DFunction, ss: DokkaConfiguration.DokkaSourceSet): KdConstructor {
-    val mods = c.extra.extraModifiersIn(ss)
+internal fun buildConstructorElement(constructor: DFunction, sourceSet: DokkaConfiguration.DokkaSourceSet): KdConstructor {
+    val mods = constructor.extra.extraModifiersIn(sourceSet)
     return KdConstructor(
-        isPrimary = c.extra[PrimaryConstructorExtra] != null,
+        isPrimary = constructor.extra[PrimaryConstructorExtra] != null,
         isExternal = ExtraModifiers.KotlinOnlyModifiers.External in mods || ExtraModifiers.JavaOnlyModifiers.Native in mods,
         mappedTo = null, // TODO KT-90419
-        typeParameters = c.generics.map { it.toKdTypeParameter(ss) },
-        valueParameters = c.parameters.map { it.toKdValueParameter(ss) },
-        visibility = c.visibility[ss]?.toKdVisibility() ?: KdVisibility.PUBLIC,
-        since = c.extra.sinceIn(c, ss),
-        deprecated = c.extra.deprecatedIn(c, ss),
-        throws = c.extra.throwsIn(c, ss),
-        annotations = c.extra.annotationsIn(ss),
+        typeParameters = constructor.generics.map { it.toKdTypeParameter(sourceSet) },
+        valueParameters = constructor.parameters.map { it.toKdValueParameter(sourceSet) },
+        visibility = constructor.visibility[sourceSet]?.toKdVisibility() ?: KdVisibility.PUBLIC,
+        since = constructor.extra.sinceIn(constructor, sourceSet),
+        deprecated = constructor.extra.deprecatedIn(constructor, sourceSet),
+        throws = constructor.extra.throwsIn(constructor, sourceSet),
+        annotations = constructor.extra.annotationsIn(sourceSet),
         documentation = KdDocumentation.EMPTY,
     )
 }
 
 internal fun buildPropertyElement(
-    p: DProperty,
-    ss: DokkaConfiguration.DokkaSourceSet,
+    property: DProperty,
+    sourceSet: DokkaConfiguration.DokkaSourceSet,
     getterId: KdElementId?,
     setterId: KdElementId?,
 ): KdProperty {
-    val mods = p.extra.extraModifiersIn(ss)
+    val mods = property.extra.extraModifiersIn(sourceSet)
     return KdProperty(
-        name = p.name,
+        name = property.name,
         isInline = ExtraModifiers.KotlinOnlyModifiers.Inline in mods ||
-                p.getter?.extra?.extraModifiersIn(ss)?.contains(ExtraModifiers.KotlinOnlyModifiers.Inline) == true &&
-                (p.setter == null || p.setter.extra.extraModifiersIn(ss).contains(ExtraModifiers.KotlinOnlyModifiers.Inline)),
-        isCompanion = p.extra[IsCompanion] != null,
+                property.getter?.extra?.extraModifiersIn(sourceSet)?.contains(ExtraModifiers.KotlinOnlyModifiers.Inline) == true &&
+                (property.setter == null || property.setter.extra.extraModifiersIn(sourceSet).contains(ExtraModifiers.KotlinOnlyModifiers.Inline)),
+        isCompanion = property.extra[IsCompanion] != null,
         isExternal = ExtraModifiers.KotlinOnlyModifiers.External in mods || ExtraModifiers.JavaOnlyModifiers.Native in mods,
         isSuspend = ExtraModifiers.KotlinOnlyModifiers.Suspend in mods, // TODO AA does not support `suspend` for properties
-        isMutable = p.extra[IsVar] != null,
-        isFromPrimaryConstructor = p.extra[IsAlsoParameter]?.inSourceSets.orEmpty().any { it.sourceSetID == ss.sourceSetID },
+        isMutable = property.extra[IsVar] != null,
+        isFromPrimaryConstructor = property.extra[IsAlsoParameter]?.inSourceSets.orEmpty().any { it.sourceSetID == sourceSet.sourceSetID },
         isLateinit = ExtraModifiers.KotlinOnlyModifiers.LateInit in mods,
         constExpression = if (ExtraModifiers.KotlinOnlyModifiers.Const in mods) {
-            p.extra[DefaultValue]?.expression?.get(ss)?.let { expression ->
+            property.extra[DefaultValue]?.expression?.get(sourceSet)?.let { expression ->
                 // TODO add new const values: [UInt], [Chat], [Byte] and so on
                 val value = when (expression) {
                     is StringConstant -> KdConstValue.String(expression.value)
@@ -198,37 +198,37 @@ internal fun buildPropertyElement(
         getter = getterId,
         setter = setterId,
         mappedTo = null, // TODO KT-90419
-        type = p.type.toKdType(ss),
-        typeParameters = p.generics.map { it.toKdTypeParameter(ss) },
-        extensionReceiverParameter = p.receiver?.toKdExtensionReceiverParameter(ss),
-        contextParameters = p.contextParameters.map { it.toKdContextParameter(ss) },
-        overridens = p.extra[OverriddenMembers]?.members?.get(ss).orEmpty().map { it.toKdElementId() }.distinct(),
-        visibility = p.visibility[ss]?.toKdVisibility() ?: KdVisibility.PUBLIC,
-        modality = p.modifier[ss]?.toKdModality() ?: KdModality.FINAL,
-        since = p.extra.sinceIn(p, ss),
-        deprecated = p.extra.deprecatedIn(p, ss),
-        throws = p.extra.throwsIn(p, ss),
-        annotations = p.extra.annotationsIn(ss),
+        type = property.type.toKdType(sourceSet),
+        typeParameters = property.generics.map { it.toKdTypeParameter(sourceSet) },
+        extensionReceiverParameter = property.receiver?.toKdExtensionReceiverParameter(sourceSet),
+        contextParameters = property.contextParameters.map { it.toKdContextParameter(sourceSet) },
+        overridens = property.extra[OverriddenMembers]?.members?.get(sourceSet).orEmpty().map { it.toKdElementId() }.distinct(),
+        visibility = property.visibility[sourceSet]?.toKdVisibility() ?: KdVisibility.PUBLIC,
+        modality = property.modifier[sourceSet]?.toKdModality() ?: KdModality.FINAL,
+        since = property.extra.sinceIn(property, sourceSet),
+        deprecated = property.extra.deprecatedIn(property, sourceSet),
+        throws = property.extra.throwsIn(property, sourceSet),
+        annotations = property.extra.annotationsIn(sourceSet),
         documentation = KdDocumentation.EMPTY,
     )
 }
 
-internal fun buildTypealiasElement(t: DTypeAlias, ss: DokkaConfiguration.DokkaSourceSet): KdTypealias =
+internal fun buildTypealiasElement(typeAlias: DTypeAlias, sourceSet: DokkaConfiguration.DokkaSourceSet): KdTypealias =
     KdTypealias(
-        name = t.name,
-        typeParameters = t.generics.map { it.toKdTypeParameter(ss) },
-        underlyingType = requireNotNull(t.underlyingType[ss]) { "Missing underlying type for ${t.dri} in $ss" }.toKdType(ss),
+        name = typeAlias.name,
+        typeParameters = typeAlias.generics.map { it.toKdTypeParameter(sourceSet) },
+        underlyingType = requireNotNull(typeAlias.underlyingType[sourceSet]) { "Missing underlying type for ${typeAlias.dri} in $sourceSet" }.toKdType(sourceSet),
         declarations = emptyList(), // TODO on Dokka's side
-        visibility = t.visibility[ss]?.toKdVisibility() ?: KdVisibility.PUBLIC,
-        since = t.extra.sinceIn(t, ss),
-        deprecated = t.extra.deprecatedIn(t, ss),
-        annotations = t.extra.annotationsIn(ss),
+        visibility = typeAlias.visibility[sourceSet]?.toKdVisibility() ?: KdVisibility.PUBLIC,
+        since = typeAlias.extra.sinceIn(typeAlias, sourceSet),
+        deprecated = typeAlias.extra.deprecatedIn(typeAlias, sourceSet),
+        annotations = typeAlias.extra.annotationsIn(sourceSet),
         documentation = KdDocumentation.EMPTY,
     )
 
-internal fun buildEnumEntryElement(e: DEnumEntry, ss: DokkaConfiguration.DokkaSourceSet): KdProperty =
+internal fun buildEnumEntryElement(enumEntry: DEnumEntry, sourceSet: DokkaConfiguration.DokkaSourceSet): KdProperty =
     KdProperty(
-        name = e.name,
+        name = enumEntry.name,
         isInline = false,
         isCompanion = false,
         isExternal = false,
@@ -241,8 +241,8 @@ internal fun buildEnumEntryElement(e: DEnumEntry, ss: DokkaConfiguration.DokkaSo
         setter = null,
         mappedTo = null, // TODO KT-90419
         type = KdClassLikeType(
-            qualifiers = listOf(KdClassTypeQualifier(e.dri.parent.classNames.orEmpty().substringAfterLast('.'), emptyList())),
-            classLikeId = e.dri.parent.toKdElementId(),
+            qualifiers = listOf(KdClassTypeQualifier(enumEntry.dri.parent.classNames.orEmpty().substringAfterLast('.'), emptyList())),
+            classLikeId = enumEntry.dri.parent.toKdElementId(),
             isMarkedNullable = false,
             annotations = emptyList(),
         ),
@@ -252,23 +252,23 @@ internal fun buildEnumEntryElement(e: DEnumEntry, ss: DokkaConfiguration.DokkaSo
         overridens = emptyList(),
         visibility = KdVisibility.PUBLIC,
         modality = KdModality.FINAL,
-        since = e.extra.sinceIn(e, ss),
-        deprecated = e.extra.deprecatedIn(e, ss),
-        throws = e.extra.throwsIn(e, ss),
-        annotations = e.extra.annotationsIn(ss),
+        since = enumEntry.extra.sinceIn(enumEntry, sourceSet),
+        deprecated = enumEntry.extra.deprecatedIn(enumEntry, sourceSet),
+        throws = enumEntry.extra.throwsIn(enumEntry, sourceSet),
+        annotations = enumEntry.extra.annotationsIn(sourceSet),
         documentation = KdDocumentation.EMPTY,
     )
 
 internal fun buildClassElement(
     node: DClasslike,
-    ss: DokkaConfiguration.DokkaSourceSet,
+    sourceSet: DokkaConfiguration.DokkaSourceSet,
     declarations: List<KdElementId>,
     isCompanion: Boolean,
 ): KdClass {
-    val mods = node.extra.extraModifiersIn(ss)
-    val annotations = node.extra.annotationsIn(ss)
-    val since = node.extra.sinceIn(node, ss)
-    val deprecated = node.extra.deprecatedIn(node, ss)
+    val mods = node.extra.extraModifiersIn(sourceSet)
+    val annotations = node.extra.annotationsIn(sourceSet)
+    val since = node.extra.sinceIn(node, sourceSet)
+    val deprecated = node.extra.deprecatedIn(node, sourceSet)
     val classKind = when (node) {
         is DClass -> KdClassKind.CLASS
         is DInterface -> KdClassKind.INTERFACE
@@ -276,9 +276,9 @@ internal fun buildClassElement(
         is DEnum -> KdClassKind.ENUM_CLASS
         is DAnnotation -> KdClassKind.ANNOTATION_CLASS
     }
-    val modality = (node as? WithAbstraction)?.modifier?.get(ss)?.toKdModality() ?: KdModality.FINAL
+    val modality = (node as? WithAbstraction)?.modifier?.get(sourceSet)?.toKdModality() ?: KdModality.FINAL
     val generics = (node as? WithGenerics)?.generics.orEmpty()
-    val superTypes = (node as? WithSupertypes)?.supertypes?.get(ss).orEmpty()
+    val superTypes = (node as? WithSupertypes)?.supertypes?.get(sourceSet).orEmpty()
     return KdClass(
         name = node.name.orEmpty(),
         classKind = classKind,
@@ -290,10 +290,10 @@ internal fun buildClassElement(
         isExternal = ExtraModifiers.KotlinOnlyModifiers.External in mods,
         isError = false,
         mappedTo = null, // TODO KT-90419
-        typeParameters = generics.map { it.toKdTypeParameter(ss) },
-        superTypes = superTypes.map { it.typeConstructor.toKdType(ss) },
+        typeParameters = generics.map { it.toKdTypeParameter(sourceSet) },
+        superTypes = superTypes.map { it.typeConstructor.toKdType(sourceSet) },
         declarations = declarations,
-        visibility = node.visibility[ss]?.toKdVisibility() ?: KdVisibility.PUBLIC,
+        visibility = node.visibility[sourceSet]?.toKdVisibility() ?: KdVisibility.PUBLIC,
         modality = modality,
         since = since,
         deprecated = deprecated,
@@ -306,7 +306,7 @@ internal fun buildClassElement(
 
 // region Parameters / type parameters
 
-private fun DTypeParameter.toKdTypeParameter(ss: DokkaConfiguration.DokkaSourceSet): KdTypeParameter {
+private fun DTypeParameter.toKdTypeParameter(sourceSet: DokkaConfiguration.DokkaSourceSet): KdTypeParameter {
     val variance = when (variantTypeParameter) {
         is Covariance -> KdTypeVariance.OUT
         is Contravariance -> KdTypeVariance.IN
@@ -314,43 +314,43 @@ private fun DTypeParameter.toKdTypeParameter(ss: DokkaConfiguration.DokkaSourceS
     }
     return KdTypeParameter(
         name = name,
-        isReified = extra.extraModifiersIn(ss).let { ExtraModifiers.KotlinOnlyModifiers.Reified in it },
-        upperBounds = bounds.map { it.toKdType(ss) },
+        isReified = extra.extraModifiersIn(sourceSet).let { ExtraModifiers.KotlinOnlyModifiers.Reified in it },
+        upperBounds = bounds.map { it.toKdType(sourceSet) },
         variance = variance,
-        annotations = extra.annotationsIn(ss),
+        annotations = extra.annotationsIn(sourceSet),
         documentation = KdDocumentation.EMPTY,
     )
 }
 
-private fun DParameter.toKdValueParameter(ss: DokkaConfiguration.DokkaSourceSet): KdValueParameter {
-    val mods = extra.extraModifiersIn(ss)
-    val defaultValueExpression = extra[DefaultValue]?.expression?.get(ss)?.let {
+private fun DParameter.toKdValueParameter(sourceSet: DokkaConfiguration.DokkaSourceSet): KdValueParameter {
+    val mods = extra.extraModifiersIn(sourceSet)
+    val defaultValueExpression = extra[DefaultValue]?.expression?.get(sourceSet)?.let {
         KdDefaultValueExpression.Defined(it.toKdExpression())
     }
     return KdValueParameter(
         name = name.orEmpty(),
-        type = type.toKdType(ss),
+        type = type.toKdType(sourceSet),
         isNoinline = ExtraModifiers.KotlinOnlyModifiers.NoInline in mods,
         isCrossinline = ExtraModifiers.KotlinOnlyModifiers.CrossInline in mods,
         isVararg = ExtraModifiers.KotlinOnlyModifiers.VarArg in mods,
         defaultValueExpression = defaultValueExpression,
-        annotations = extra.annotationsIn(ss),
+        annotations = extra.annotationsIn(sourceSet),
         documentation = KdDocumentation.EMPTY,
     )
 }
 
-private fun DParameter.toKdExtensionReceiverParameter(ss: DokkaConfiguration.DokkaSourceSet): KdExtensionReceiverParameter =
+private fun DParameter.toKdExtensionReceiverParameter(sourceSet: DokkaConfiguration.DokkaSourceSet): KdExtensionReceiverParameter =
     KdExtensionReceiverParameter(
-        type = type.toKdType(ss),
-        annotations = extra.annotationsIn(ss),
+        type = type.toKdType(sourceSet),
+        annotations = extra.annotationsIn(sourceSet),
         documentation = KdDocumentation.EMPTY,
     )
 
-private fun DParameter.toKdContextParameter(ss: DokkaConfiguration.DokkaSourceSet): KdContextParameter =
+private fun DParameter.toKdContextParameter(sourceSet: DokkaConfiguration.DokkaSourceSet): KdContextParameter =
     KdContextParameter(
         name = name,
-        type = type.toKdType(ss),
-        annotations = extra.annotationsIn(ss),
+        type = type.toKdType(sourceSet),
+        annotations = extra.annotationsIn(sourceSet),
         documentation = KdDocumentation.EMPTY,
     )
 

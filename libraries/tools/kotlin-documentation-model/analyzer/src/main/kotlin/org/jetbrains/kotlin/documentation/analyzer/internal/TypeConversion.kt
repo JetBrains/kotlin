@@ -89,7 +89,7 @@ internal fun Bound.toKdType(sourceSet: DokkaSourceSet): KdType = when (this) {
         isMarkedNullable = false,
         annotations = extra.annotationsIn(sourceSet),
     )
-    is TypeAliased -> typeAlias.toKdType(sourceSet)
+    is TypeAliased -> typeAlias.toKdType(sourceSet).withAdditionalAnnotations(extra.annotationsIn(sourceSet))
     is Dynamic -> KdDynamicType
     // Java's `void` has no direct KDM equivalent; `Unit` is the closest match for a return type.
     is Void -> KdClassLikeType(
@@ -106,7 +106,8 @@ private fun FunctionalTypeConstructor.toFunctionalType(sourceSet: DokkaSourceSet
     val receiverIndex = contextParametersCount
     val valueParametersStart = receiverIndex + if (isExtensionFunction) 1 else 0
     return KdFunctionalType(
-        returnType = arguments.last(),
+        returnType = arguments.lastOrNull()
+            ?: error("Functional type $dri has no type arguments; expected at least the return type"),
         receiverType = if (isExtensionFunction) arguments[receiverIndex] else null,
         valueParameterTypes = arguments.subList(valueParametersStart, arguments.lastIndex),
         contextParameterTypes = arguments.take(contextParametersCount),
@@ -124,7 +125,11 @@ private fun toClassLikeType(
 ): KdClassLikeType {
     val simpleName = dri.classNames?.substringAfterLast('.') ?: dri.classNames.orEmpty()
     return KdClassLikeType(
-        qualifiers = listOf(KdClassTypeQualifier(simpleName, projections.map { it.toKdTypeProjection(sourceSet) })),
+        qualifiers = listOf(
+            KdClassTypeQualifier(
+                simpleName,
+                projections.map { it.toKdTypeProjection(sourceSet) })
+        ), // TODO type qualifiers for "nested" declarations in Documentable model
         classLikeId = dri.toKdElementId(),
         isMarkedNullable = false,
         annotations = annotations,
@@ -148,6 +153,20 @@ private fun KdType.withNullable(nullable: Boolean): KdType = when (this) {
     is KdDynamicType -> this
     is KdErrorUnionType -> this
     is KdFlexibleType -> this
+}
+
+/** Appends [annotations] to the type's own annotations */
+private fun KdType.withAdditionalAnnotations(annotations: List<KdAnnotation>): KdType {
+    if (annotations.isEmpty()) return this
+    return when (this) {
+        is KdClassLikeType -> copy(annotations = (this.annotations + annotations).distinct())
+        is KdFunctionalType -> copy(annotations = (this.annotations + annotations).distinct())
+        is KdTypeParameterType -> copy(annotations = (this.annotations + annotations).distinct())
+        is KdDefinitelyNotNullType -> this
+        is KdDynamicType -> this
+        is KdErrorUnionType -> this
+        is KdFlexibleType -> this
+    }
 }
 
 private fun primitiveJavaTypeKotlinId(javaPrimitiveName: String): KdElementId {

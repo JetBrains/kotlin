@@ -10,13 +10,13 @@ Analyzes Kotlin and Java sources using some Dokka parts and produces a `KdBundle
 
 ### Golden tests
 
-Golden tests analyze Kotlin and Java fixtures and compare the resulting model, or a focused view of it, with checked-in expected output. Fixtures live under `src/test/resources/testData/analyzer`:
+Golden tests analyze Kotlin and Java fixtures and compare the resulting model, or a focused view of it, with checked-in expected output. Fixtures live under `src/testData`:
 
 | Directory | Generated test class | Expected output |
 | --- | --- | --- |
 | `projects` | `ProjectsGoldenTestGenerated` | Complete bundle (`.kdm.json`), compact structure (`.tree.txt`), and declaration signatures grouped by fragment (`.signatures.txt`). |
-| `types` | `KdmTypesGoldenTestGenerated` | Every type found in the bundle, with its path and all fields (`.types.txt`). |
-| `elementFields` | `ElementFieldsGoldenTestGenerated` | One selected field from every element (`.txt`). The fixture filename selects `deprecated`, `since`, `annotations`, `throws`, or `overridens`. |
+| `elementFields/types` | `KdmTypesGoldenTestGenerated` | Every outermost type in each element, printed as its path and a text dump of all its fields (`.types.txt`). |
+| `elementFields/<field>` | `AnnotationsGoldenTestGenerated`, `DeprecatedGoldenTestGenerated`, `SinceGoldenTestGenerated`, `ThrowsGoldenTestGenerated`, `OverridensGoldenTestGenerated` | One field (`annotations`, `deprecated`, `since`, `throws`, or `overridens`) from every element (`.txt`). |
 | `roundTrip` | `KdmKotlinSourceRoundTripTestGenerated`, `KdmJavaSourceRoundTripTestGenerated` | The input source itself: canonical declarations are reconstructed from the model and compared with the fixture. |
 
 `AbstractKdmJavaSourceRoundTripTest` is the runner behind `KdmJavaSourceRoundTripTestGenerated`. It analyzes the `.java` fixtures in `roundTrip`, renders each module's declarations back to Java, and compares the result with the input source. Its fixtures cover interfaces and abstract classes without explicit constructors, bodies, imports, or comments.
@@ -53,6 +53,6 @@ Golden suites use `analysis:test-data-manager`. Update expectations in the defau
 ./gradlew :tools:kotlin-documentation-model:analyzer:updateTestData -Pkdm.test.javaSymbols=true -q
 ```
 
-Use `checkTestData` instead of `updateTestData` to verify expectations. Both tasks accept the shared filters, for example `-Porg.jetbrains.kotlin.testDataManager.options.testClassPattern=.*ProjectsGoldenTestGenerated.*` or `-Porg.jetbrains.kotlin.testDataManager.options.testDataPath=libraries/tools/kotlin-documentation-model/analyzer/src/test/resources/testData/analyzer/types/`.
+Use `checkTestData` instead of `updateTestData` to verify expectations. Both tasks accept the shared filters, for example `-Porg.jetbrains.kotlin.testDataManager.options.testClassPattern=.*ProjectsGoldenTestGenerated.*` or `-Porg.jetbrains.kotlin.testDataManager.options.testDataPath=libraries/tools/kotlin-documentation-model/analyzer/src/testData/elementFields/types/`.
 
 Dokka selects its Java analysis mode globally, so each invocation runs one mode. The manager tasks only run golden suites; round-trip fixtures specify their own expected source and continue to use the regular test tasks above. Review expected-output changes after updating.
