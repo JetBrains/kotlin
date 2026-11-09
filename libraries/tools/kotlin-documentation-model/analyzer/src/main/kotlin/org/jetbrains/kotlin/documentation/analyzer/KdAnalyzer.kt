@@ -6,13 +6,17 @@
 package org.jetbrains.kotlin.documentation.analyzer
 
 import org.jetbrains.kotlin.documentation.KdBundle
+import org.jetbrains.kotlin.documentation.analyzer.internal.DocumentableConverter
+import org.jetbrains.kotlin.documentation.analyzer.internal.buildDokkaConfiguration
+import org.jetbrains.kotlin.documentation.analyzer.internal.runDokkaAnalysis
+import org.jetbrains.kotlin.documentation.analyzer.internal.checkElementIds
 
 /**
  * Analyzes the given Kotlin (Multiplatform) [sourceSets] and produces a [KdBundle] describing their public API
  * surface.
  *
- * The underlying analysis is an implementation detail: callers only see [sourceSets] as input and [KdBundle] as
- * output.
+ * The underlying analysis (currently backed by Dokka) is an implementation detail: callers only see [sourceSets]
+ * as input and [KdBundle] as output.
  */
 public fun generateDocumentationBundle(moduleName: String, sourceSets: List<KdAnalyzerSourceSet>): KdBundle {
     require(sourceSets.isNotEmpty()) { "At least one source set is required." }
@@ -24,6 +28,9 @@ public fun generateDocumentationBundle(moduleName: String, sourceSets: List<KdAn
         }
     }
 
-    // TODO(KT-90194): analyze the source sets and build a real bundle.
-    return KdBundle(schemaVersion = KotlinVersion.CURRENT.toString(), fragments = emptyList(), expectActualMappings = emptyList())
+    val configuration = buildDokkaConfiguration(moduleName, sourceSets)
+    return runDokkaAnalysis(configuration) { module, context ->
+        DocumentableConverter(sourceSets, module, context).convert().also { it.checkElementIds() }
+    }
+        ?: KdBundle(schemaVersion = KotlinVersion.CURRENT.toString(), fragments = emptyList(), expectActualMappings = emptyList())
 }
