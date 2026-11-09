@@ -80,7 +80,7 @@ class PackageInfoChangesTest : BaseCompilationTest() {
         replaceFileWithVersion("package-info.java", "add-annotation")
         compile {
             assertLogContainsLines(
-                expectedLogLevelForRebuildReason(strategyConfig),
+                this@modifyPackageInfoAndAssertFullRecompilation.expectedLogLevelForRebuildReason(strategyConfig),
                 "Non-incremental compilation will be performed: ${BuildAttribute.PACKAGE_INFO_CHANGED.readableString}"
             )
             // If we ever decide to handle package-info.java changes in a more granular way, we can change the assertion to:
@@ -96,7 +96,7 @@ class PackageInfoChangesTest : BaseCompilationTest() {
         deleteFile("package-info.java")
         compile {
             assertLogContainsLines(
-                expectedLogLevelForRebuildReason(strategyConfig),
+                this@removePackageInfoAndAssertFullRecompilation.expectedLogLevelForRebuildReason(strategyConfig),
                 "Non-incremental compilation will be performed: ${BuildAttribute.PACKAGE_INFO_CHANGED.readableString}"
             )
             assertCompiledSources("a.kt", "b.kt")
@@ -111,7 +111,7 @@ class PackageInfoChangesTest : BaseCompilationTest() {
         createPredefinedFile("package-info.java", "add-annotation")
         compile {
             assertLogContainsLines(
-                expectedLogLevelForRebuildReason(strategyConfig),
+                this@addPackageInfoAndAssertFullRecompilation.expectedLogLevelForRebuildReason(strategyConfig),
                 "Non-incremental compilation will be performed: ${BuildAttribute.PACKAGE_INFO_CHANGED.readableString}"
             )
             assertCompiledSources("a.kt", "b.kt")
@@ -144,7 +144,7 @@ class PackageInfoChangesTest : BaseCompilationTest() {
         replaceFileWithVersion("package-info.java", "comment-only")
         compile {
             assertLogContainsLines(
-                expectedLogLevelForRebuildReason(strategyConfig),
+                this@changeOnlyPackageInfoCommentAndAssertFullRecompilation.expectedLogLevelForRebuildReason(strategyConfig),
                 "Non-incremental compilation will be performed: ${BuildAttribute.PACKAGE_INFO_CHANGED.readableString}"
             )
             assertCompiledSources("a.kt", "b.kt")

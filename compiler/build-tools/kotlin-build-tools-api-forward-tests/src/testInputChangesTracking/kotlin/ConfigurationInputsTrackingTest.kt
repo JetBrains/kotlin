@@ -21,7 +21,9 @@ import org.jetbrains.kotlin.buildtools.forward.tests.CompilerExecutionStrategyCo
 import org.jetbrains.kotlin.buildtools.forward.tests.compilation.assertions.assertLogContainsPatterns
 import org.jetbrains.kotlin.buildtools.forward.tests.compilation.assertions.assertLogDoesNotContainPatterns
 import org.jetbrains.kotlin.buildtools.forward.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
+import org.jetbrains.kotlin.buildtools.forward.tests.compilation.model.JvmProject
 import org.jetbrains.kotlin.buildtools.forward.tests.compilation.model.LogLevel
+import org.jetbrains.kotlin.buildtools.forward.tests.compilation.model.Project
 import org.jetbrains.kotlin.buildtools.forward.tests.compilation.model.jvmProject
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
@@ -514,6 +516,6 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
         }
     }
 
-    private fun expectedLogLevel(strategyConfig: CompilerExecutionStrategyConfiguration): LogLevel =
-        if (strategyConfig.second is ExecutionPolicy.WithDaemon) LogLevel.DEBUG else LogLevel.INFO // TODO: KT-85024
+    private fun Project.expectedLogLevel(strategyConfig: CompilerExecutionStrategyConfiguration): LogLevel =
+        if (strategyConfig.second is ExecutionPolicy.WithDaemon && this !is JvmProject) LogLevel.DEBUG else LogLevel.INFO // TODO: KT-85024
 }
