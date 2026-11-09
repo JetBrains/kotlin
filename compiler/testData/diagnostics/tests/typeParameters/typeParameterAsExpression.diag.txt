@@ -1,4 +1,4 @@
-/typeParameterAsExpression.kt:6:15: error: None of the following candidates is applicable for expression 'T':
+/typeParameterAsExpression.kt:6:15: error: None of the following candidates is applicable:
 In package 'root package' of module '<main>':
  --> typeParameterAsExpression.kt
   |
@@ -26,7 +26,7 @@ In package 'root package' of module '<main>':
    | T (of 'fun <T, T> f')
    |
 
-/typeParameterAsExpression.kt:13:5: error: None of the following candidates is applicable for expression 'T':
+/typeParameterAsExpression.kt:13:5: error: None of the following candidates is applicable:
 In package 'root package' of module '<main>':
   --> typeParameterAsExpression.kt
    |
