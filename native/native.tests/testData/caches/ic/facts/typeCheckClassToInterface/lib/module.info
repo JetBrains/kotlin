@@ -1,0 +1,9 @@
+STEP 0:
+    modifications:
+        U : file1.kt -> file1.kt
+        U : file2.kt -> file2.kt
+
+// file1.kt: X open class -> interface; file2.kt checks `is X` and `as? X`, which compile differently for a class and an interface.
+STEP 1:
+    modifications:
+        U : file1.1.kt -> file1.kt
