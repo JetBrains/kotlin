@@ -239,6 +239,12 @@ internal fun getIntersectionOverriddenSymbols(symbol: KaCallableSymbol): List<Ka
         .map { analysisSession.firSymbolBuilder.callableBuilder.buildCallableSymbol(it) }
 }
 
+/**
+ * Returns the members that this intersection override stands for, or the symbol itself if it isn't an intersection override.
+ *
+ * The scope of the dispatch receiver may not have processed the member's name yet, which the lookup requires: the scope session that
+ * created the symbol may belong to another thread or may have been collected.
+ */
 @OptIn(ScopeFunctionRequiresPrewarm::class)
 context(relationProvider: KaFirSymbolRelationProvider)
 private fun FirBasedSymbol<*>.getIntersectionOverriddenSymbols(useSiteSession: FirSession): Collection<FirCallableSymbol<*>> {
@@ -248,7 +254,9 @@ private fun FirBasedSymbol<*>.getIntersectionOverriddenSymbols(useSiteSession: F
     return when (this) {
         is FirIntersectionCallableSymbol -> {
             with(SessionHolderImpl(useSiteSession, analysisSession.getScopeSessionFor(useSiteSession))) {
-                getNonSubsumedOverriddenSymbols()
+                val dispatchReceiverScope = dispatchReceiverScope()
+                dispatchReceiverScope.processCallableByName(fir)
+                MemberWithBaseScope(this@getIntersectionOverriddenSymbols, dispatchReceiverScope).getNonSubsumedOverriddenSymbols()
             }
         }
         else -> listOf(this)

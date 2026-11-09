@@ -8,4 +8,3 @@ DIRECT:
 INTERSECTION:
   /B.foo(x: Int): Unit
   /C.foo(x: Int): Unit
-INTERSECTION ON ANOTHER THREAD:
