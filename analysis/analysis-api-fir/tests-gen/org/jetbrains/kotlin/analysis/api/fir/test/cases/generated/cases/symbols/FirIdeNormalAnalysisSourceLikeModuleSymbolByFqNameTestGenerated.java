@@ -87,6 +87,18 @@ public class FirIdeNormalAnalysisSourceLikeModuleSymbolByFqNameTestGenerated ext
   }
 
   @Test
+  @TestMetadata("expectFullValueClassWithNoConstructorFromCommonBinary.kt")
+  public void testExpectFullValueClassWithNoConstructorFromCommonBinary() {
+    run("expectFullValueClassWithNoConstructorFromCommonBinary.kt");
+  }
+
+  @Test
+  @TestMetadata("expectInlineValueClassWithNoConstructorFromCommonBinary.kt")
+  public void testExpectInlineValueClassWithNoConstructorFromCommonBinary() {
+    run("expectInlineValueClassWithNoConstructorFromCommonBinary.kt");
+  }
+
+  @Test
   @TestMetadata("explicitBackingField.kt")
   public void testExplicitBackingField() {
     run("explicitBackingField.kt");

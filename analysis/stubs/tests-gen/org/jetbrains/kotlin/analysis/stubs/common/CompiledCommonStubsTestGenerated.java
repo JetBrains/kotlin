@@ -3460,6 +3460,24 @@ public class CompiledCommonStubsTestGenerated extends AbstractCompiledCommonStub
     }
 
     @Test
+    @TestMetadata("expectFullValueClassWithNoConstructor.kt")
+    public void testExpectFullValueClassWithNoConstructor() {
+      run("expectFullValueClassWithNoConstructor.kt");
+    }
+
+    @Test
+    @TestMetadata("expectInlineClassWithNoConstructor.kt")
+    public void testExpectInlineClassWithNoConstructor() {
+      run("expectInlineClassWithNoConstructor.kt");
+    }
+
+    @Test
+    @TestMetadata("expectJvmInlineValueClassWithNoConstructor.kt")
+    public void testExpectJvmInlineValueClassWithNoConstructor() {
+      run("expectJvmInlineValueClassWithNoConstructor.kt");
+    }
+
+    @Test
     @TestMetadata("inlineClassOldSyntax.kt")
     public void testInlineClassOldSyntax() {
       run("inlineClassOldSyntax.kt");
