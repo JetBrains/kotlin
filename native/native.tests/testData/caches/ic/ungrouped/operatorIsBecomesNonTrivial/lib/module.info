@@ -1,0 +1,12 @@
+STEP 0:
+    modifications:
+        U : marker.kt -> marker.kt
+        U : class.1.kt -> class.kt
+        U : check.kt -> check.kt
+    added cache: marker.kt, class.kt, check.kt
+
+STEP 1:
+    modifications:
+        U : class.2.kt -> class.kt
+    modified cache: class.kt, check.kt
+    unchanged cache: marker.kt
