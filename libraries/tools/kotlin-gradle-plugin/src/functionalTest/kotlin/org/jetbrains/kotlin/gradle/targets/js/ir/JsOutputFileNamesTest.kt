@@ -74,6 +74,34 @@ class JsOutputFileNamesTest {
         assertEsModuleOutputFileNames(project)
     }
 
+    @ParameterizedTest
+    @EnumSource(JsModuleKind::class, names = ["MODULE_ES", "MODULE_UMD"])
+    fun `KT-91228 - module name set on the link tasks is used for the binaries' main file names`(moduleKind: JsModuleKind) {
+        val expectedJsExtension = if (moduleKind == JsModuleKind.MODULE_ES) "mjs" else "js"
+        val project = buildProjectWithMPP {
+            kotlin {
+                js {
+                    nodejs()
+                    binaries.executable()
+                    compilerOptions.moduleKind.set(moduleKind)
+                }
+            }
+            tasks.withType(KotlinJsIrLink::class.java).configureEach {
+                it.compilerOptions.moduleName.set("custom-name")
+            }
+        }.evaluate()
+
+        val binaries = project.multiplatformExtension.js().compilations.getByName(MAIN_COMPILATION_NAME)
+            .binaries.withType(JsIrBinary::class.java)
+        assertTrue(binaries.isNotEmpty(), "Expected JS binaries to be configured")
+
+        assertAll(
+            binaries.map { binary ->
+                { assertEquals("custom-name.$expectedJsExtension", binary.mainFileName.orNull, "${binary.name} main file name") }
+            }
+        )
+    }
+
     companion object {
         private fun buildJsProject(
             freeCompilerArgs: List<String> = emptyList(),

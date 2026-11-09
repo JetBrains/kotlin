@@ -50,9 +50,9 @@ internal abstract class GenerateSwcConfig : DefaultTask() {
     @get:OutputFile
     abstract val configFile: RegularFileProperty
 
-    /** Only used to check the task is aligned with its compilation, see [org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.JsTaskCompilerOptionMismatchChecker] */
+    /** Only used to check the task is aligned with its link task, see [org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.JsTaskCompilerOptionMismatchChecker] */
     @get:Internal
-    internal abstract val targetAndCompilationName: Property<String>
+    internal abstract val linkTaskName: Property<String>
 
     @TaskAction
     fun writeConfig() {
@@ -81,7 +81,6 @@ internal abstract class GenerateSwcConfig : DefaultTask() {
 
             return project.registerTask(name) {
                 it.configFile.set(configFile)
-                it.targetAndCompilationName.set(compilation.target.name + " " + compilation.name)
                 it.configuration()
             }
         }

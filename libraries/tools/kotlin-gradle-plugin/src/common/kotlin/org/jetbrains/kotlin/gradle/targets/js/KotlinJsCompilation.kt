@@ -172,5 +172,12 @@ internal val KotlinJsCompilerOptions.effectiveModuleKind: Provider<JsModuleKind>
             }
         )
 
+/**
+ * The [KotlinJsCompilerOptions.freeCompilerArgs] parsed the same way the compiler does it.
+ *
+ * Only the free compiler arguments set in the build configuration are resolved, not the ones added at execution time.
+ * `@argfile`s are expanded when the value is read, relative to the working directory, and aren't tracked as inputs,
+ * see [KT-85518](https://youtrack.jetbrains.com/issue/KT-85518) and [KT-85526](https://youtrack.jetbrains.com/issue/KT-85526).
+ */
 private val KotlinJsCompilerOptions.parsedFreeCompilerArgs: Provider<K2JSCompilerArguments>
     get() = freeCompilerArgs.map { parseCommandLineArguments<K2JSCompilerArguments>(it) }

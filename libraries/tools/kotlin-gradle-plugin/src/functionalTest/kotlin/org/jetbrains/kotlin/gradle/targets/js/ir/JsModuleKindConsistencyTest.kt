@@ -30,10 +30,6 @@ import org.junit.jupiter.api.DynamicNode
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.DynamicTest.dynamicTest
 import org.junit.jupiter.api.TestFactory
-import org.junit.jupiter.api.io.TempDir
-import java.nio.file.Path
-import kotlin.io.path.createDirectories
-import kotlin.io.path.writeText
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
@@ -51,9 +47,7 @@ import kotlin.test.assertTrue
 class JsModuleKindConsistencyTest {
 
     @TestFactory
-    fun `module kind and target as seen by the compiler and the rest of the build`(
-//        @TempDir projectDir: Path,
-    ): List<DynamicNode> =
+    fun `module kind and target as seen by the compiler and the rest of the build`(): List<DynamicNode> =
         Scenario.entries.map { scenario ->
             dynamicContainer(
                 scenario.description,
@@ -63,7 +57,7 @@ class JsModuleKindConsistencyTest {
                         listOf(false, true).map { delegated ->
                             dynamicContainer(
                                 "delegated transpilation $delegated",
-                                outcomeTests(scenario, moduleKind, delegated,  )
+                                outcomeTests(scenario, moduleKind, delegated)
                             )
                         }
                     )
@@ -77,7 +71,6 @@ class JsModuleKindConsistencyTest {
         scenario: Scenario,
         moduleKind: JsModuleKind,
         delegated: Boolean,
-//        projectDir: Path,
     ): List<DynamicTest> {
         val expected = if (delegated) {
             scenario.expectedWithDelegatedTranspilation(moduleKind.kind)
@@ -363,20 +356,14 @@ class JsModuleKindConsistencyTest {
     }
 
     private fun observe(
-//        tempDir: Path,
         scenario: Scenario,
         moduleKind: JsModuleKind,
         delegatedTranspilation: Boolean,
     ): Map<BinaryId, Outcome> {
-//        val projectDir = tempDir.resolve(scenario.name).createDirectories()
-//        projectDir.resolve("gradle.properties").apply {
-//            writeText("kotlin.js.delegated.transpilation=${delegatedTranspilation}")
-//        }
         val project = buildProjectWithMPP(
             preApplyCode = {
                 propertiesExtension.set("kotlin.js.delegated.transpilation", delegatedTranspilation)
             },
-//            projectBuilder = { withProjectDir(projectDir.toFile()) },
         ) {
             kotlin {
                 js {

@@ -70,6 +70,10 @@ internal constructor(
     @get:Internal
     internal abstract val versions: Property<NpmVersions>
 
+    /** Only used to check the task is aligned with its link task, see [org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.JsTaskCompilerOptionMismatchChecker] */
+    @get:Internal
+    internal abstract val linkTaskName: Property<String>
+
     @get:Internal
     internal val rootPackageDir: Property<Directory> = project.objects.directoryProperty()
 

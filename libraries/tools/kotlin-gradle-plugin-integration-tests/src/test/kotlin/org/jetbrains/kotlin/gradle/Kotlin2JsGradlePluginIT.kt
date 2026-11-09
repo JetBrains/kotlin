@@ -221,7 +221,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     }
 
     @MustRunOnChangesInJs
-    @DisplayName("KT-91228: module kind set on the link tasks differently from their compilation is deprecated but works with webpack")
+    @DisplayName("KT-91228: module kind set on the link tasks differently from their compilation is reported but works with webpack")
     @GradleTestVersions(minVersion = TestVersions.Gradle.MAX_SUPPORTED)
     @GradleTest
     fun linkTaskModuleKindDifferentFromCompilation(gradleVersion: GradleVersion) {
@@ -235,15 +235,23 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                 }
             }
 
-            build("jsBrowserProductionWebpack") {
+            val packageDir = projectPath.resolve("build/js/packages/js-executable/")
+
+            build("assemble", "jsBrowserProductionWebpack") {
+                val packageJson = assertNotNull(fromSrcPackageJson(packageDir.resolve(NpmProject.PACKAGE_JSON).toFile()))
                 assertAll(
+                    // The binary's main file follows the link task
+                    { assertFileExists(packageDir.resolve("kotlin/js-executable.mjs")) },
                     // webpack still follows the link task
                     { assertTasksExecuted(":jsBrowserProductionWebpack") },
                     { assertFileInProjectExists("build/kotlin-webpack/js/productionExecutable/js-executable.js") },
+                    // package.json follows the compilation, so it doesn't point to the generated JS file, as the diagnostic says
+                    { assertEquals("kotlin/js-executable.js", packageJson.main, "package.json main") },
                     {
                         assertHasDiagnostic(
                             KotlinToolingDiagnostics.JsTaskCompilerOptionMismatch,
-                            withSubstring = "':compileProductionExecutableKotlinJs' uses moduleKind 'es', but its compilation uses 'umd'",
+                            withSubstring = "Compilation 'main' of target 'js' uses `moduleKind=umd`, " +
+                                    "but tasks `[:compileDevelopmentExecutableKotlinJs, :compileProductionExecutableKotlinJs]` use `moduleKind=es`.",
                         )
                     },
                 )

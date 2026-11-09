@@ -253,6 +253,8 @@ class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
             .disallowChanges()
         this.rootPackageDir.value(nodeJsRoot.rootPackageDirectory)
             .disallowChanges()
+        this.linkTaskName.value(binary.linkTaskName)
+            .disallowChanges()
 
         this.inputFilesDirectory.set(inputFilesDirectory)
 
