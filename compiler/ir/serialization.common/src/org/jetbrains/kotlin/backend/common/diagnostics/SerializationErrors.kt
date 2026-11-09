@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers
 import org.jetbrains.kotlin.diagnostics.rendering.Renderer
 import org.jetbrains.kotlin.diagnostics.strongWarningWithoutSource
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers
+import org.jetbrains.kotlin.fir.analysis.diagnostics.renderMarkersWithLocationInGroups
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBasedDeclarationDescriptor
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
@@ -26,6 +27,8 @@ import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.mpp.DeclarationSymbolMarker
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.MemberComparator
+import org.jetbrains.kotlin.utils.addToStdlib.partitionNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 object SerializationErrors : KtDiagnosticsContainer() {
     val CONFLICTING_KLIB_SIGNATURES_ERROR by error1<PsiElement, ConflictingKlibSignaturesData>()
@@ -56,10 +59,17 @@ internal object SerializationDiagnosticRenderers {
         CommonRenderers.renderConflictingSignatureData<DeclarationDescriptor, ConflictingKlibSignaturesData>(
             signatureKind = "IR",
             sortUsing = MemberComparator.INSTANCE,
-            declarationRenderer = Renderer { descriptor ->
-                getDeclarationSymbol(descriptor)?.let {
-                    FirDiagnosticRenderers.SYMBOL_WITH_LOCATION.render(it).ifEmpty { null }
-                } ?: DescriptorRenderer.WITHOUT_MODIFIERS.render(descriptor)
+            declarationRenderer = Renderer { descriptors ->
+                val [symbols, rest] = descriptors.partitionNotNull { descriptor -> getDeclarationSymbol(descriptor) }
+                val renderedAsSymbols = runIf (symbols.isNotEmpty()) {
+                    symbols.renderMarkersWithLocationInGroups(FirDiagnosticRenderers.SYMBOL::render)
+                }
+                val renderedAsDescriptors = rest.takeIf { it.isNotEmpty() }?.joinToString("\n") { descriptor ->
+                    getDeclarationSymbol(descriptor)?.let {
+                        FirDiagnosticRenderers.SYMBOL_WITH_LOCATION.render(it).ifEmpty { null }
+                    } ?: DescriptorRenderer.WITHOUT_MODIFIERS.render(descriptor)
+                }
+                listOfNotNull(renderedAsSymbols, renderedAsDescriptors).joinToString("\n")
             },
             renderSignature = { append(it.signature.render()) },
             declarations = { it.declarations.map(IrDeclaration::toIrBasedDescriptor) },

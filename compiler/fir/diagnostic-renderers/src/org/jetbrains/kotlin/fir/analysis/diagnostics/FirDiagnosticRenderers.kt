@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.diagnostics.rendering.*
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.SessionHolder
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirAdaptiveTypeRenderingKey.renderTypeParameterOrigin
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
@@ -62,9 +63,9 @@ object FirDiagnosticRenderers {
     @OptIn(SymbolInternals::class)
     private fun symbolRenderer(
         modifierRenderer: () -> FirModifierRenderer? = { FirAllModifierRenderer(DiagnosticStaticPolicy) },
-    ) = Renderer { symbol: FirBasedSymbol<*> ->
+    ) = Renderer { symbol: DeclarationSymbolMarker ->
         when (symbol) {
-            is FirClassLikeSymbol, is FirCallableSymbol -> FirRenderer(
+            is FirClassLikeSymbol<*>, is FirCallableSymbol<*> -> FirRenderer(
                 typeRenderer = ConeTypeRendererForReadability { ConeIdShortRenderer() },
                 idRenderer = ConeIdShortRenderer(),
                 classMemberRenderer = FirNoClassMemberRenderer(),

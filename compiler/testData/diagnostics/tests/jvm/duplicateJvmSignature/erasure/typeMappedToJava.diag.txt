@@ -1,23 +1,13 @@
 /typeMappedToJava.kt:5:1: error: Platform declaration clash: The following declarations have the same JVM signature (foo(Ljava/lang/String;)V):
 In package 'root package' of module '<main>':
  --> typeMappedToJava.kt
-  |
 5 | fun foo(s: String): Unit
-  |
-In package 'root package' of module '<main>':
- --> typeMappedToJava.kt
-  |
 6 | fun foo(s: String): Unit
   |
 
 /typeMappedToJava.kt:6:1: error: Platform declaration clash: The following declarations have the same JVM signature (foo(Ljava/lang/String;)V):
 In package 'root package' of module '<main>':
  --> typeMappedToJava.kt
-  |
 5 | fun foo(s: String): Unit
-  |
-In package 'root package' of module '<main>':
- --> typeMappedToJava.kt
-  |
 6 | fun foo(s: String): Unit
   |

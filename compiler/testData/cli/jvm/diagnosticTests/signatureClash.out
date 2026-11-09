@@ -1,15 +1,15 @@
 compiler/testData/cli/jvm/diagnosticTests/signatureClash.kt:6:5: error: accidental override: The following declarations have the same JVM signature (getX()I):
-In package '' of module '<main>':
---> $TESTDATA_DIR$/signatureClash.kt
- |
- |     fun `<get-x>`(): Int defined in A
- |
 In package 'root package' of module '<main>':
   --> signatureClash.kt
  5 | class A : B {
  6 |     fun getX(): Int
    |     ...
 10 | }
+In package '' of module '<main>':
+--> $TESTDATA_DIR$/signatureClash.kt
+ |
+ |     fun `<get-x>`(): Int defined in A
+ |
 In source code:
 5 | class A : B() {
 6 |     fun getX() = 1
@@ -19,15 +19,9 @@ In package 'root package' of module '<main>':
   --> signatureClash.kt
  5 | class A : B {
    |     ...
+ 8 |     fun getA(): Int
  9 |     val a: Int
    |         get(): Int
-10 | }
-In package 'root package' of module '<main>':
-  --> signatureClash.kt
- 5 | class A : B {
-   |     ...
- 8 |     fun getA(): Int
-   |     ...
 10 | }
 In source code:
 8 |     fun getA(): Int = 1
@@ -37,15 +31,9 @@ In package 'root package' of module '<main>':
   --> signatureClash.kt
  5 | class A : B {
    |     ...
+ 8 |     fun getA(): Int
  9 |     val a: Int
    |         get(): Int
-10 | }
-In package 'root package' of module '<main>':
-  --> signatureClash.kt
- 5 | class A : B {
-   |     ...
- 8 |     fun getA(): Int
-   |     ...
 10 | }
 In source code:
 9 |     val a: Int = 1
@@ -53,28 +41,18 @@ In source code:
 compiler/testData/cli/jvm/diagnosticTests/signatureClash.kt:12:1: error: platform declaration clash: The following declarations have the same JVM signature (getB()I):
 In package 'root package' of module '<main>':
   --> signatureClash.kt
+12 | fun getB(): Int
 13 | val b: Int
    |     get(): Int
-   |
-In package 'root package' of module '<main>':
-  --> signatureClash.kt
-   |
-12 | fun getB(): Int
-   |
 In source code:
 12 | fun getB(): Int = 1
    | ^^^^^^^^^^^^^^^
 compiler/testData/cli/jvm/diagnosticTests/signatureClash.kt:13:1: error: platform declaration clash: The following declarations have the same JVM signature (getB()I):
 In package 'root package' of module '<main>':
   --> signatureClash.kt
+12 | fun getB(): Int
 13 | val b: Int
    |     get(): Int
-   |
-In package 'root package' of module '<main>':
-  --> signatureClash.kt
-   |
-12 | fun getB(): Int
-   |
 In source code:
 13 | val b: Int = 1
    | ^^^^^^^^^^
@@ -95,11 +73,6 @@ In source code:
 20 |     val tr = 1
    |     ^^^^^^
 compiler/testData/cli/jvm/diagnosticTests/signatureClash.kt:24:1: error: platform declaration clash: The following declarations have the same JVM signature (access$f(LC;)V):
-In package '' of module '<main>':
---> $TESTDATA_DIR$/signatureClash.kt
- |
- |     fun `access$f`(`$this`: C): Unit defined in C
- |
 In package 'root package' of module '<main>':
   --> signatureClash.kt
 24 | class C : Any {
@@ -107,15 +80,15 @@ In package 'root package' of module '<main>':
 26 |     fun access$f(c: C): Unit
    |     ...
 34 | }
+In package '' of module '<main>':
+--> $TESTDATA_DIR$/signatureClash.kt
+ |
+ |     fun `access$f`(`$this`: C): Unit defined in C
+ |
 In source code:
 24 | class C {
    | ^
 compiler/testData/cli/jvm/diagnosticTests/signatureClash.kt:26:5: error: platform declaration clash: The following declarations have the same JVM signature (access$f(LC;)V):
-In package '' of module '<main>':
---> $TESTDATA_DIR$/signatureClash.kt
- |
- |     fun `access$f`(`$this`: C): Unit defined in C
- |
 In package 'root package' of module '<main>':
   --> signatureClash.kt
 24 | class C : Any {
@@ -123,6 +96,11 @@ In package 'root package' of module '<main>':
 26 |     fun access$f(c: C): Unit
    |     ...
 34 | }
+In package '' of module '<main>':
+--> $TESTDATA_DIR$/signatureClash.kt
+ |
+ |     fun `access$f`(`$this`: C): Unit defined in C
+ |
 In source code:
 26 |     fun `access$f`(c: C) {}
    |     ^^^^^^^^^^^^^^^^^^^^

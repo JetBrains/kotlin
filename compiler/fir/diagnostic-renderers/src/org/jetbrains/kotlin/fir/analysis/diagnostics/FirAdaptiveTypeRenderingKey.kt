@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.typeParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeErrorLookupTag
 import org.jetbrains.kotlin.fir.types.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.types.ConeIntersectionType
@@ -127,11 +128,15 @@ object FirAdaptiveTypeRenderingKey : RenderingContext.Key<Map<ConeKotlinType, St
                     ?: (this@toFinalRepresentation as? ConeTypeParameterLookupTag)?.typeParameterSymbol
 
             if (typeParameterSymbol != null) {
-                append(" (of ")
-                appendSafe(FirDiagnosticRenderers.TYPE_PARAMETER_OWNER_SYMBOL.render(typeParameterSymbol.containingDeclarationSymbol))
-                append(")")
+                this.renderTypeParameterOrigin(typeParameterSymbol)
             }
         }
+    }
+
+    fun StringBuilder.renderTypeParameterOrigin(typeParameterSymbol: FirTypeParameterSymbol) {
+        append(" (of ")
+        appendSafe(FirDiagnosticRenderers.TYPE_PARAMETER_OWNER_SYMBOL.render(typeParameterSymbol.containingDeclarationSymbol))
+        append(")")
     }
 
     private fun StringBuilder.appendClassLikeTemplate(symbol: FirClassLikeSymbol<*>) {

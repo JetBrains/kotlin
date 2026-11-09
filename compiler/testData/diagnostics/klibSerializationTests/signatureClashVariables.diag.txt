@@ -99,22 +99,13 @@ In package 'com.example.klib.serialization.diagnostics' of module '<main>':
   --> main.kt
 34 | val valueSingleFile: Int
    |     get(): Int
-   |
-In package 'com.example.klib.serialization.diagnostics' of module '<main>':
-  --> main.kt
 35 | val valueSingleFile: String
    |     get(): String
-   |
 
 /main.kt:34:1: error: Platform declaration clash: The following properties have the same IR signature (com.example.klib.serialization.diagnostics/valueSingleFile|{}valueSingleFile[0]):
 In package 'com.example.klib.serialization.diagnostics' of module '<main>':
   --> main.kt
-   |
 34 | val valueSingleFile: Int
-   |
-In package 'com.example.klib.serialization.diagnostics' of module '<main>':
-  --> main.kt
-   |
 35 | val valueSingleFile: String
    |
 
@@ -123,22 +114,13 @@ In package 'com.example.klib.serialization.diagnostics' of module '<main>':
   --> main.kt
 34 | val valueSingleFile: Int
    |     get(): Int
-   |
-In package 'com.example.klib.serialization.diagnostics' of module '<main>':
-  --> main.kt
 35 | val valueSingleFile: String
    |     get(): String
-   |
 
 /main.kt:35:1: error: Platform declaration clash: The following properties have the same IR signature (com.example.klib.serialization.diagnostics/valueSingleFile|{}valueSingleFile[0]):
 In package 'com.example.klib.serialization.diagnostics' of module '<main>':
   --> main.kt
-   |
 34 | val valueSingleFile: Int
-   |
-In package 'com.example.klib.serialization.diagnostics' of module '<main>':
-  --> main.kt
-   |
 35 | val valueSingleFile: String
    |
 
@@ -196,12 +178,6 @@ In package 'com.example.klib.serialization.diagnostics' of module '<main>':
 43 | class Container : Any {
 44 |     val valueSameClass: Int
    |         get(): Int
-   |         ...
-54 | }
-In package 'com.example.klib.serialization.diagnostics' of module '<main>':
-  --> main.kt
-43 | class Container : Any {
-   |     ...
 45 |     val valueSameClass: Int
    |         get(): Int
    |         ...
@@ -212,12 +188,6 @@ In package 'com.example.klib.serialization.diagnostics' of module '<main>':
   --> main.kt
 43 | class Container : Any {
 44 |     val valueSameClass: Int
-   |     ...
-54 | }
-In package 'com.example.klib.serialization.diagnostics' of module '<main>':
-  --> main.kt
-43 | class Container : Any {
-   |     ...
 45 |     val valueSameClass: Int
    |     ...
 54 | }
@@ -228,12 +198,6 @@ In package 'com.example.klib.serialization.diagnostics' of module '<main>':
 43 | class Container : Any {
 44 |     val valueSameClass: Int
    |         get(): Int
-   |         ...
-54 | }
-In package 'com.example.klib.serialization.diagnostics' of module '<main>':
-  --> main.kt
-43 | class Container : Any {
-   |     ...
 45 |     val valueSameClass: Int
    |         get(): Int
    |         ...
@@ -244,12 +208,6 @@ In package 'com.example.klib.serialization.diagnostics' of module '<main>':
   --> main.kt
 43 | class Container : Any {
 44 |     val valueSameClass: Int
-   |     ...
-54 | }
-In package 'com.example.klib.serialization.diagnostics' of module '<main>':
-  --> main.kt
-43 | class Container : Any {
-   |     ...
 45 |     val valueSameClass: Int
    |     ...
 54 | }
@@ -262,19 +220,16 @@ In package 'com.example.klib.serialization.diagnostics' of module '<main>':
 47 |     companion object Companion : Any {
 48 |         val valueSameClassCompanion: Int
    |             get(): Int
-   |             ...
-50 |     }
-   |     ...
-54 | }
-In package 'com.example.klib.serialization.diagnostics' of module '<main>':
-  --> main.kt
-43 | class Container : Any {
-   |     ...
-47 |     companion object Companion : Any {
-   |         ...
 49 |         val valueSameClassCompanion: Int
    |             get(): Int
-50 |     }
+   |             ...
+47 |     companion object Companion : Any {
+48 |         val valueSameClassCompanion: Int
+   |             get(): Int
+49 |         val valueSameClassCompanion: Int
+   |             get(): Int
+50 |         }
+   |     }
    |     ...
 54 | }
 
@@ -285,16 +240,11 @@ In package 'com.example.klib.serialization.diagnostics' of module '<main>':
    |     ...
 47 |     companion object Companion : Any {
 48 |         val valueSameClassCompanion: Int
-   |         ...
+49 |         val valueSameClassCompanion: Int
 50 |     }
    |     ...
-54 | }
-In package 'com.example.klib.serialization.diagnostics' of module '<main>':
-  --> main.kt
-43 | class Container : Any {
-   |     ...
 47 |     companion object Companion : Any {
-   |         ...
+48 |         val valueSameClassCompanion: Int
 49 |         val valueSameClassCompanion: Int
 50 |     }
    |     ...
@@ -308,19 +258,16 @@ In package 'com.example.klib.serialization.diagnostics' of module '<main>':
 47 |     companion object Companion : Any {
 48 |         val valueSameClassCompanion: Int
    |             get(): Int
-   |             ...
-50 |     }
-   |     ...
-54 | }
-In package 'com.example.klib.serialization.diagnostics' of module '<main>':
-  --> main.kt
-43 | class Container : Any {
-   |     ...
-47 |     companion object Companion : Any {
-   |         ...
 49 |         val valueSameClassCompanion: Int
    |             get(): Int
-50 |     }
+   |             ...
+47 |     companion object Companion : Any {
+48 |         val valueSameClassCompanion: Int
+   |             get(): Int
+49 |         val valueSameClassCompanion: Int
+   |             get(): Int
+50 |         }
+   |     }
    |     ...
 54 | }
 
@@ -331,16 +278,11 @@ In package 'com.example.klib.serialization.diagnostics' of module '<main>':
    |     ...
 47 |     companion object Companion : Any {
 48 |         val valueSameClassCompanion: Int
-   |         ...
+49 |         val valueSameClassCompanion: Int
 50 |     }
    |     ...
-54 | }
-In package 'com.example.klib.serialization.diagnostics' of module '<main>':
-  --> main.kt
-43 | class Container : Any {
-   |     ...
 47 |     companion object Companion : Any {
-   |         ...
+48 |         val valueSameClassCompanion: Int
 49 |         val valueSameClassCompanion: Int
 50 |     }
    |     ...
@@ -352,12 +294,6 @@ In package 'com.example.klib.serialization.diagnostics' of module '<main>':
 43 | class Container : Any {
    |     ...
 52 |     val String.valueSameClassExtension: String
-   |     ...
-54 | }
-In package 'com.example.klib.serialization.diagnostics' of module '<main>':
-  --> main.kt
-43 | class Container : Any {
-   |     ...
 53 |     val String.valueSameClassExtension: String
 54 | }
 
@@ -368,12 +304,6 @@ In package 'com.example.klib.serialization.diagnostics' of module '<main>':
    |     ...
 52 |     val String.valueSameClassExtension: String
    |         get(): String
-   |         ...
-54 | }
-In package 'com.example.klib.serialization.diagnostics' of module '<main>':
-  --> main.kt
-43 | class Container : Any {
-   |     ...
 53 |     val String.valueSameClassExtension: String
    |         get(): String
 54 | }
@@ -384,12 +314,6 @@ In package 'com.example.klib.serialization.diagnostics' of module '<main>':
 43 | class Container : Any {
    |     ...
 52 |     val String.valueSameClassExtension: String
-   |     ...
-54 | }
-In package 'com.example.klib.serialization.diagnostics' of module '<main>':
-  --> main.kt
-43 | class Container : Any {
-   |     ...
 53 |     val String.valueSameClassExtension: String
 54 | }
 
@@ -400,12 +324,6 @@ In package 'com.example.klib.serialization.diagnostics' of module '<main>':
    |     ...
 52 |     val String.valueSameClassExtension: String
    |         get(): String
-   |         ...
-54 | }
-In package 'com.example.klib.serialization.diagnostics' of module '<main>':
-  --> main.kt
-43 | class Container : Any {
-   |     ...
 53 |     val String.valueSameClassExtension: String
    |         get(): String
 54 | }

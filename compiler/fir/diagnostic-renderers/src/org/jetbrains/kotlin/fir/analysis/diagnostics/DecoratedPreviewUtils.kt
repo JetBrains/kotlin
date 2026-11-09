@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.mpp.DeclarationSymbolMarker
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.render
 import org.jetbrains.kotlin.toLinesMapping
@@ -52,13 +53,13 @@ fun FirBasedSymbol<*>.toPhysicalLocation(): PhysicalLocation? {
     return PhysicalLocation(filePath, line, column, endLine)
 }
 
-internal data class LogicalLocationNode(
+data class LogicalLocationNode(
     val location: LogicalLocation,
     val completeSymbols: List<FileNode>,
     val incompleteSymbols: List<SymbolNode>,
 )
 
-internal data class FileNode(
+data class FileNode(
     val filePath: String,
     val symbols: List<SymbolNode>,
 )
@@ -108,7 +109,7 @@ private fun Iterable<Pair<String, FirBasedSymbol<*>>>.groupIntoFileNodes(): List
         FileNode(it.key, it.value.groupIntoSymbolNodes())
     }
 
-internal fun Iterable<FirBasedSymbol<*>>.groupIntoLogicalLocations(): List<LogicalLocationNode> =
+fun Iterable<FirBasedSymbol<*>>.groupIntoLogicalLocations(): List<LogicalLocationNode> =
     groupBy { it.toLogicalLocation() }.map { [location, symbols] ->
         val [completeSymbols, incompleteSymbols] = symbols.partitionNotNull { it.toPhysicalLocation()?.filePath?.to(it) }
         LogicalLocationNode(location, completeSymbols.groupIntoFileNodes(), incompleteSymbols.groupIntoSymbolNodes())
@@ -166,7 +167,10 @@ inline fun SymbolNode.renderToLinesWithNumber(render: (FirBasedSymbol<*>) -> Str
     }
 }
 
-internal inline fun Iterable<FirBasedSymbol<*>>.renderWithLocationInGroups(render: (FirBasedSymbol<*>) -> String): String =
+inline fun List<DeclarationSymbolMarker>.renderMarkersWithLocationInGroups(render: (DeclarationSymbolMarker) -> String): String? =
+    filterIsInstance<FirBasedSymbol<*>>().takeIf { it.size == size }?.renderWithLocationInGroups(render)
+
+inline fun Iterable<FirBasedSymbol<*>>.renderWithLocationInGroups(render: (FirBasedSymbol<*>) -> String): String =
     groupIntoLogicalLocations()
         .flatMap { location ->
             val blocksForComplete = location.completeSymbols.map {

@@ -1,9 +1,4 @@
 compiler/testData/cli/jvm/syntheticAccessorPropertyAndFunSignatureClash.kt:3:1: error: platform declaration clash: The following declarations have the same JVM signature (access$getFoo$p(LA;)I):
-In package '' of module '<main>':
---> $TESTDATA_DIR$/syntheticAccessorPropertyAndFunSignatureClash.kt
- |
- |     fun `access$getFoo$p`(`$this`: A): Int defined in A
- |
 In package 'root package' of module '<main>':
   --> syntheticAccessorPropertyAndFunSignatureClash.kt
  3 | class A : Any {
@@ -11,15 +6,15 @@ In package 'root package' of module '<main>':
  6 |     fun access$getFoo$p(a: A): Int
    |     ...
 25 | }
+In package '' of module '<main>':
+--> $TESTDATA_DIR$/syntheticAccessorPropertyAndFunSignatureClash.kt
+ |
+ |     fun `access$getFoo$p`(`$this`: A): Int defined in A
+ |
 In source code:
 3 | class A {
   | ^
 compiler/testData/cli/jvm/syntheticAccessorPropertyAndFunSignatureClash.kt:6:5: error: platform declaration clash: The following declarations have the same JVM signature (access$getFoo$p(LA;)I):
-In package '' of module '<main>':
---> $TESTDATA_DIR$/syntheticAccessorPropertyAndFunSignatureClash.kt
- |
- |     fun `access$getFoo$p`(`$this`: A): Int defined in A
- |
 In package 'root package' of module '<main>':
   --> syntheticAccessorPropertyAndFunSignatureClash.kt
  3 | class A : Any {
@@ -27,15 +22,15 @@ In package 'root package' of module '<main>':
  6 |     fun access$getFoo$p(a: A): Int
    |     ...
 25 | }
+In package '' of module '<main>':
+--> $TESTDATA_DIR$/syntheticAccessorPropertyAndFunSignatureClash.kt
+ |
+ |     fun `access$getFoo$p`(`$this`: A): Int defined in A
+ |
 In source code:
 6 |     fun `access$getFoo$p`(a: A): Int = 1
   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 compiler/testData/cli/jvm/syntheticAccessorPropertyAndFunSignatureClash.kt:7:5: error: platform declaration clash: The following declarations have the same JVM signature (access$setFoo$p(LA;I)V):
-In package '' of module '<main>':
---> $TESTDATA_DIR$/syntheticAccessorPropertyAndFunSignatureClash.kt
- |
- |     fun `access$setFoo$p`(`$this`: A, `<set-?>`: Int): Unit defined in A
- |
 In package 'root package' of module '<main>':
   --> syntheticAccessorPropertyAndFunSignatureClash.kt
  3 | class A : Any {
@@ -43,15 +38,15 @@ In package 'root package' of module '<main>':
  7 |     fun access$setFoo$p(a: A, d: Int): Unit
    |     ...
 25 | }
+In package '' of module '<main>':
+--> $TESTDATA_DIR$/syntheticAccessorPropertyAndFunSignatureClash.kt
+ |
+ |     fun `access$setFoo$p`(`$this`: A, `<set-?>`: Int): Unit defined in A
+ |
 In source code:
 7 |     fun `access$setFoo$p`(a: A, d: Int) {}
   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 compiler/testData/cli/jvm/syntheticAccessorPropertyAndFunSignatureClash.kt:12:5: error: platform declaration clash: The following declarations have the same JVM signature (access$getFoo(LA;)I):
-In package '' of module '<main>':
---> $TESTDATA_DIR$/syntheticAccessorPropertyAndFunSignatureClash.kt
- |
- |     fun `access$getFoo`(`$this`: A): Int defined in A
- |
 In package 'root package' of module '<main>':
   --> syntheticAccessorPropertyAndFunSignatureClash.kt
  3 | class A : Any {
@@ -59,15 +54,15 @@ In package 'root package' of module '<main>':
 12 |     fun access$getFoo(a: A): Int
    |     ...
 25 | }
+In package '' of module '<main>':
+--> $TESTDATA_DIR$/syntheticAccessorPropertyAndFunSignatureClash.kt
+ |
+ |     fun `access$getFoo`(`$this`: A): Int defined in A
+ |
 In source code:
 12 |     fun `access$getFoo`(a: A): Int = 1
    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 compiler/testData/cli/jvm/syntheticAccessorPropertyAndFunSignatureClash.kt:13:5: error: platform declaration clash: The following declarations have the same JVM signature (access$setFoo(LA;I)V):
-In package '' of module '<main>':
---> $TESTDATA_DIR$/syntheticAccessorPropertyAndFunSignatureClash.kt
- |
- |     fun `access$setFoo`(`$this`: A, i: Int): Unit defined in A
- |
 In package 'root package' of module '<main>':
   --> syntheticAccessorPropertyAndFunSignatureClash.kt
  3 | class A : Any {
@@ -75,6 +70,11 @@ In package 'root package' of module '<main>':
 13 |     fun access$setFoo(a: A, d: Int): Unit
    |     ...
 25 | }
+In package '' of module '<main>':
+--> $TESTDATA_DIR$/syntheticAccessorPropertyAndFunSignatureClash.kt
+ |
+ |     fun `access$setFoo`(`$this`: A, i: Int): Unit defined in A
+ |
 In source code:
 13 |     fun `access$setFoo`(a: A, d: Int) {}
    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

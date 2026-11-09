@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers
 import org.jetbrains.kotlin.fir.analysis.diagnostics.LogicalLocation
 import org.jetbrains.kotlin.fir.analysis.diagnostics.RenderedLineWithNumber
 import org.jetbrains.kotlin.fir.analysis.diagnostics.renderLocationDecoration
-import org.jetbrains.kotlin.fir.analysis.diagnostics.renderWithLocation
+import org.jetbrains.kotlin.fir.analysis.diagnostics.renderWithLocationInGroups
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -48,6 +48,8 @@ import org.jetbrains.kotlin.ir.util.sourceElement
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMemberSignature
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.MemberComparator
+import org.jetbrains.kotlin.utils.addToStdlib.partitionNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class JvmMethodSignatureClashDetector(
     private val classCodegen: ClassCodegen
@@ -211,15 +213,24 @@ internal class JvmIrConflictingDeclarationsData(
         private val renderer = CommonRenderers.renderConflictingSignatureData(
             signatureKind = "JVM",
             sortUsing = { a, b -> MemberComparator.INSTANCE.compare(a, b) },
-            declarationRenderer = object : DiagnosticParameterRenderer<DeclarationDescriptor> {
-                override fun render(obj: DeclarationDescriptor, renderingContext: RenderingContext): String {
-                    val owner = (obj as? IrBasedDeclarationDescriptor<*>)?.owner as? IrMetadataSourceOwner
-                    val metadata = owner?.metadata as? FirMetadataSource
-                    return when (metadata) {
-                        is FirMetadataSource -> metadata.fir.symbol.renderWithLocation(FirDiagnosticRenderers.SYMBOL::render)
-                        else -> DescriptorRenderer.WITHOUT_MODIFIERS.withOptions {
+            declarationRenderer = object : DiagnosticParameterRenderer<List<DeclarationDescriptor>> {
+                override fun render(obj: List<DeclarationDescriptor>, renderingContext: RenderingContext): String {
+                    val [symbols, rest] = obj.partitionNotNull { descriptor ->
+                        val owner = (descriptor as? IrBasedDeclarationDescriptor<*>)?.owner as? IrMetadataSourceOwner
+                        when (val metadata = owner?.metadata) {
+                            is FirMetadataSource -> descriptor to metadata.fir.symbol
+                            else -> null
+                        }
+                    }
+                    val renderedAsSymbols = runIf(symbols.isNotEmpty()) {
+                        symbols.map { it.second }.renderWithLocationInGroups(FirDiagnosticRenderers.SYMBOL::render)
+                    }
+                    val renderedAsDescriptor = rest.takeIf { it.isNotEmpty() }?.joinToString("\n") { descriptor ->
+                        val owner = (descriptor as? IrBasedDeclarationDescriptor<*>)?.owner as? IrMetadataSourceOwner
+
+                        DescriptorRenderer.WITHOUT_MODIFIERS.withOptions {
                             classifierNamePolicy = renderingContext.adaptiveClassifierPolicy
-                        }.render(obj)
+                        }.render(descriptor)
                             .let {
                                 val location = owner?.getPackageFragment()
                                     ?.let { LogicalLocation(it.packageFqName.asString(), it.module.name) }
@@ -239,6 +250,7 @@ internal class JvmIrConflictingDeclarationsData(
                                 )
                             }
                     }
+                    return listOfNotNull(renderedAsSymbols, renderedAsDescriptor).joinToString("\n")
                 }
             },
             renderSignature = {

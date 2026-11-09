@@ -6,14 +6,9 @@ In package 'com.example.klib.serialization.diagnostics' of module '<main>':
    |
 In package 'com.example.klib.serialization.diagnostics' of module '<main>':
   --> main.kt
-   |
 34 | fun foo(): String
-   |
-In package 'com.example.klib.serialization.diagnostics' of module '<main>':
-  --> main.kt
-   |
+   | ...
 37 | fun foo(): Int
-   |
 
 /foo.kt:19:1: error: Platform declaration clash: The following functions have the same IR signature (com.example.klib.serialization.diagnostics/topLevelParametrized|topLevelParametrized@0:0(0:1){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]):
 In package 'com.example.klib.serialization.diagnostics' of module '<main>':
@@ -59,14 +54,9 @@ In package 'com.example.klib.serialization.diagnostics' of module '<main>':
    |
 In package 'com.example.klib.serialization.diagnostics' of module '<main>':
   --> main.kt
-   |
 34 | fun foo(): String
-   |
-In package 'com.example.klib.serialization.diagnostics' of module '<main>':
-  --> main.kt
-   |
+   | ...
 37 | fun foo(): Int
-   |
 
 /main.kt:37:1: error: Platform declaration clash: The following functions have the same IR signature (com.example.klib.serialization.diagnostics/foo|foo(){}[0]):
 In package 'com.example.klib.serialization.diagnostics' of module '<main>':
@@ -76,25 +66,15 @@ In package 'com.example.klib.serialization.diagnostics' of module '<main>':
    |
 In package 'com.example.klib.serialization.diagnostics' of module '<main>':
   --> main.kt
-   |
 34 | fun foo(): String
-   |
-In package 'com.example.klib.serialization.diagnostics' of module '<main>':
-  --> main.kt
-   |
+   | ...
 37 | fun foo(): Int
-   |
 
 /main.kt:43:5: error: Platform declaration clash: The following functions have the same IR signature (com.example.klib.serialization.diagnostics/A.parameterized|parameterized(0:0){0§<kotlin.Any?>}[0]):
 In package 'com.example.klib.serialization.diagnostics' of module '<main>':
   --> main.kt
 42 | class A : Any {
 43 |     fun <T> parameterized(a: T): T
-   |     ...
-52 | }
-In package 'com.example.klib.serialization.diagnostics' of module '<main>':
-  --> main.kt
-42 | class A : Any {
    |     ...
 46 |     fun <T> parameterized(a: T): Unit
    |     ...
@@ -105,11 +85,6 @@ In package 'com.example.klib.serialization.diagnostics' of module '<main>':
   --> main.kt
 42 | class A : Any {
 43 |     fun <T> parameterized(a: T): T
-   |     ...
-52 | }
-In package 'com.example.klib.serialization.diagnostics' of module '<main>':
-  --> main.kt
-42 | class A : Any {
    |     ...
 46 |     fun <T> parameterized(a: T): Unit
    |     ...
@@ -122,11 +97,6 @@ In package 'com.example.klib.serialization.diagnostics' of module '<main>':
    |     ...
 48 |     fun privateMethod(): Int
    |     ...
-52 | }
-In package 'com.example.klib.serialization.diagnostics' of module '<main>':
-  --> main.kt
-42 | class A : Any {
-   |     ...
 51 |     fun privateMethod(): Long
 52 | }
 
@@ -137,61 +107,36 @@ In package 'com.example.klib.serialization.diagnostics' of module '<main>':
    |     ...
 48 |     fun privateMethod(): Int
    |     ...
-52 | }
-In package 'com.example.klib.serialization.diagnostics' of module '<main>':
-  --> main.kt
-42 | class A : Any {
-   |     ...
 51 |     fun privateMethod(): Long
 52 | }
 
 /main.kt:54:1: error: Platform declaration clash: The following functions have the same IR signature ([ File '/main.kt' <- com.example.klib.serialization.diagnostics/privateTopLevelFunction|privateTopLevelFunction(){}[0] ]):
 In package 'com.example.klib.serialization.diagnostics' of module '<main>':
   --> main.kt
-   |
 54 | fun privateTopLevelFunction(): Int
-   |
-In package 'com.example.klib.serialization.diagnostics' of module '<main>':
-  --> main.kt
-   |
+   | ...
 57 | fun privateTopLevelFunction(): Long
-   |
 
 /main.kt:57:1: error: Platform declaration clash: The following functions have the same IR signature ([ File '/main.kt' <- com.example.klib.serialization.diagnostics/privateTopLevelFunction|privateTopLevelFunction(){}[0] ]):
 In package 'com.example.klib.serialization.diagnostics' of module '<main>':
   --> main.kt
-   |
 54 | fun privateTopLevelFunction(): Int
-   |
-In package 'com.example.klib.serialization.diagnostics' of module '<main>':
-  --> main.kt
-   |
+   | ...
 57 | fun privateTopLevelFunction(): Long
-   |
 
 /main.kt:67:1: error: Platform declaration clash: The following functions have the same IR signature (com.example.klib.serialization.diagnostics/bar|bar(){}[0]):
 In package 'com.example.klib.serialization.diagnostics' of module '<main>':
   --> main.kt
-   |
 67 | fun bar(): Long
-   |
-In package 'com.example.klib.serialization.diagnostics' of module '<main>':
-  --> main.kt
-   |
+   | ...
 70 | fun bar(): Long
-   |
 
 /main.kt:70:1: error: Platform declaration clash: The following functions have the same IR signature (com.example.klib.serialization.diagnostics/bar|bar(){}[0]):
 In package 'com.example.klib.serialization.diagnostics' of module '<main>':
   --> main.kt
-   |
 67 | fun bar(): Long
-   |
-In package 'com.example.klib.serialization.diagnostics' of module '<main>':
-  --> main.kt
-   |
+   | ...
 70 | fun bar(): Long
-   |
 
 /main.kt:72:1: error: Platform declaration clash: The following functions have the same IR signature (com.example.klib.serialization.diagnostics/topLevelParametrized|topLevelParametrized@0:0(0:1){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]):
 In package 'com.example.klib.serialization.diagnostics' of module '<main>':

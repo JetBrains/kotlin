@@ -5,17 +5,7 @@ In package 'root package' of module '<main>':
  2 |     val x: Int
  3 |         get(): Int
    |         ...
-10 | }
-In package 'root package' of module '<main>':
-  --> conflictingJvmDeclarations.kt
- 1 | class Foo : Any {
-   |     ...
  5 |     fun getX(): Int
-   |     ...
-10 | }
-In package 'root package' of module '<main>':
-  --> conflictingJvmDeclarations.kt
- 1 | class Foo : Any {
    |     ...
  8 |     fun getY(): Int
    |     ...
@@ -31,17 +21,7 @@ In package 'root package' of module '<main>':
  2 |     val x: Int
  3 |         get(): Int
    |         ...
-10 | }
-In package 'root package' of module '<main>':
-  --> conflictingJvmDeclarations.kt
- 1 | class Foo : Any {
-   |     ...
  5 |     fun getX(): Int
-   |     ...
-10 | }
-In package 'root package' of module '<main>':
-  --> conflictingJvmDeclarations.kt
- 1 | class Foo : Any {
    |     ...
  8 |     fun getY(): Int
    |     ...

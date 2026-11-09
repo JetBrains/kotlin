@@ -81,7 +81,7 @@ object CommonRenderers {
     fun <Declaration, Data> renderConflictingSignatureData(
         signatureKind: String,
         sortUsing: Comparator<Declaration>,
-        declarationRenderer: DiagnosticParameterRenderer<Declaration>,
+        declarationRenderer: DiagnosticParameterRenderer<List<Declaration>>,
         renderSignature: StringBuilder.(Data) -> Unit,
         declarations: (Data) -> Collection<Declaration>,
         declarationKind: (Data) -> String = { "declarations" },
@@ -96,9 +96,7 @@ object CommonRenderers {
             append(" signature (")
             renderSignature(data)
             appendLine("):")
-            sortedDeclarations.joinToWithBuffer(this, separator = "\n") { descriptor ->
-                append(declarationRenderer.render(descriptor, renderingContext))
-            }
+            append(declarationRenderer.render(sortedDeclarations, renderingContext))
         }
     }
 }
