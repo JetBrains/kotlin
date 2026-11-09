@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.load.java.structure.impl.classFiles
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
+import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -28,6 +29,9 @@ class BinaryJavaClassCache(private val index: BinaryClassFileIndex) {
     private val topLevelClassFiles: MutableMap<FqName, MutableMap<Name, Collection<BinaryClassFileHandle>>> =
         Object2ObjectOpenHashMap()
 
+    private val topLevelClassFilesByClasspath:
+        MutableMap<JvmClasspath, MutableMap<FqName, MutableMap<Name, Collection<BinaryClassFileHandle>>>> = Object2ObjectOpenHashMap()
+
     private val classFileNamesInPackage: MutableMap<FqName, Set<String>> = Object2ObjectOpenHashMap()
 
     private var cachedClasspathVersion: Int = index.classpathVersion
@@ -36,6 +40,18 @@ class BinaryJavaClassCache(private val index: BinaryClassFileIndex) {
         dropLookupsOfPreviousClasspath()
         return topLevelClassFiles.getOrPut(packageFqName) { Object2ObjectOpenHashMap() }.getOrPut(topLevelName) {
             index.findTopLevelClassFiles(ClassId(packageFqName, topLevelName))
+        }
+    }
+
+    fun findTopLevelClassFiles(
+        packageFqName: FqName,
+        topLevelName: Name,
+        classpath: JvmClasspath,
+    ): Collection<BinaryClassFileHandle> {
+        dropLookupsOfPreviousClasspath()
+        val classFilesByPackage = topLevelClassFilesByClasspath.getOrPut(classpath) { Object2ObjectOpenHashMap() }
+        return classFilesByPackage.getOrPut(packageFqName) { Object2ObjectOpenHashMap() }.getOrPut(topLevelName) {
+            index.findTopLevelClassFiles(ClassId(packageFqName, topLevelName), classpath)
         }
     }
 
@@ -51,6 +67,7 @@ class BinaryJavaClassCache(private val index: BinaryClassFileIndex) {
         if (currentVersion == cachedClasspathVersion) return
         cachedClasspathVersion = currentVersion
         topLevelClassFiles.clear()
+        topLevelClassFilesByClasspath.clear()
         classFileNamesInPackage.clear()
     }
 }
