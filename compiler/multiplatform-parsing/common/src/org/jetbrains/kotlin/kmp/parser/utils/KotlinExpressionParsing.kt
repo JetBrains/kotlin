@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.kmp.parser.KtNodeTypes
 import org.jetbrains.kotlin.kmp.parser.utils.KotlinParsing.Companion.EXPRESSION_FIRST
 import org.jetbrains.kotlin.kmp.parser.utils.KotlinParsing.Companion.EXPRESSION_FOLLOW
 import org.jetbrains.kotlin.kmp.parser.utils.KotlinParsing.MultiDeclarationMode
+import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
 
 internal open class KotlinExpressionParsing(
     builder: SemanticWhitespaceAwareSyntaxBuilder,
@@ -285,12 +286,12 @@ internal open class KotlinExpressionParsing(
             parseOperationReference()
 
             val resultType: SyntaxElementType = when (KtTokens.getElementTypeId(operation)) {
-                KtTokens.AS_KEYWORD_ID, KtTokens.AS_SAFE_ID -> {
+                KotlinSyntaxTokenIds.AS_KEYWORD, KotlinSyntaxTokenIds.AS_SAFE -> {
                     kotlinParsing.parseTypeRefWithoutIntersectionsOrUnions()
                     minPrecedence = BinaryOperationPrecedence.AS
                     KtNodeTypes.BINARY_WITH_TYPE
                 }
-                KtTokens.IS_KEYWORD_ID, KtTokens.NOT_IS_ID -> {
+                KotlinSyntaxTokenIds.IS_KEYWORD, KotlinSyntaxTokenIds.NOT_IS -> {
                     kotlinParsing.parseTypeRefWithoutIntersectionsOrUnions()
                     // The handling of `is`, it doesn't parse RHS recursively and greedily.
                     // To prevent parsing of more prioritized operations next to `is` (for instance, INFIX, RANGE, and others),
@@ -474,11 +475,11 @@ internal open class KotlinExpressionParsing(
     private fun parseCallSuffix(): Boolean {
         if (!parseCallWithClosure()) { // do nothing if parsing of call with closure is successful
             when (tokenId) {
-                KtTokens.LPAR_ID -> {
+                KotlinSyntaxTokenIds.LPAR -> {
                     parseValueArgumentList()
                     parseCallWithClosure()
                 }
-                KtTokens.LT_ID -> {
+                KotlinSyntaxTokenIds.LT -> {
                     val typeArgumentList = mark()
                     if (kotlinParsing.tryParseTypeArgumentList(TYPE_ARGUMENT_LIST_STOPPERS)) {
                         typeArgumentList.done(KtNodeTypes.TYPE_ARGUMENT_LIST)
@@ -590,22 +591,22 @@ internal open class KotlinExpressionParsing(
         var ok = true
 
         when (tokenId) {
-            KtTokens.LPAR_ID -> parseParenthesizedExpression()
-            KtTokens.LBRACKET_ID -> parseCollectionLiteralExpression()
-            KtTokens.THIS_KEYWORD_ID -> parseThisExpression()
-            KtTokens.SUPER_KEYWORD_ID -> parseSuperExpression()
-            KtTokens.OBJECT_KEYWORD_ID -> parseObjectLiteral()
-            KtTokens.THROW_KEYWORD_ID -> parseThrow()
-            KtTokens.RETURN_KEYWORD_ID -> parseReturn()
-            KtTokens.CONTINUE_KEYWORD_ID -> parseJump(KtNodeTypes.CONTINUE)
-            KtTokens.BREAK_KEYWORD_ID -> parseJump(KtNodeTypes.BREAK)
-            KtTokens.IF_KEYWORD_ID -> parseIf()
-            KtTokens.WHEN_KEYWORD_ID -> parseWhen()
-            KtTokens.TRY_KEYWORD_ID -> parseTry()
-            KtTokens.FOR_KEYWORD_ID -> parseFor()
-            KtTokens.WHILE_KEYWORD_ID -> parseWhile()
-            KtTokens.DO_KEYWORD_ID -> parseDoWhile()
-            KtTokens.IDENTIFIER_ID -> {
+            KotlinSyntaxTokenIds.LPAR -> parseParenthesizedExpression()
+            KotlinSyntaxTokenIds.LBRACKET -> parseCollectionLiteralExpression()
+            KotlinSyntaxTokenIds.THIS_KEYWORD -> parseThisExpression()
+            KotlinSyntaxTokenIds.SUPER_KEYWORD -> parseSuperExpression()
+            KotlinSyntaxTokenIds.OBJECT_KEYWORD -> parseObjectLiteral()
+            KotlinSyntaxTokenIds.THROW_KEYWORD -> parseThrow()
+            KotlinSyntaxTokenIds.RETURN_KEYWORD -> parseReturn()
+            KotlinSyntaxTokenIds.CONTINUE_KEYWORD -> parseJump(KtNodeTypes.CONTINUE)
+            KotlinSyntaxTokenIds.BREAK_KEYWORD -> parseJump(KtNodeTypes.BREAK)
+            KotlinSyntaxTokenIds.IF_KEYWORD -> parseIf()
+            KotlinSyntaxTokenIds.WHEN_KEYWORD -> parseWhen()
+            KotlinSyntaxTokenIds.TRY_KEYWORD -> parseTry()
+            KotlinSyntaxTokenIds.FOR_KEYWORD -> parseFor()
+            KotlinSyntaxTokenIds.WHILE_KEYWORD -> parseWhile()
+            KotlinSyntaxTokenIds.DO_KEYWORD -> parseDoWhile()
+            KotlinSyntaxTokenIds.IDENTIFIER -> {
                 // Try to parse an anonymous function with context parameters
                 if (atWithRemap(KtTokens.CONTEXT_KEYWORD) && lookahead(1) === KtTokens.LPAR) {
                     if (parseLocalDeclaration(rollbackIfDefinitelyNotExpression = true, isScriptTopLevel = false)) {
@@ -617,23 +618,23 @@ internal open class KotlinExpressionParsing(
 
                 parseSimpleNameExpression()
             }
-            KtTokens.LBRACE_ID -> parseFunctionLiteral()
-            KtTokens.INTERPOLATION_PREFIX_ID,
-            KtTokens.OPEN_QUOTE_ID,
+            KotlinSyntaxTokenIds.LBRACE -> parseFunctionLiteral()
+            KotlinSyntaxTokenIds.INTERPOLATION_PREFIX,
+            KotlinSyntaxTokenIds.OPEN_QUOTE,
                 -> parseStringTemplate()
-            KtTokens.TRUE_KEYWORD_ID,
-            KtTokens.FALSE_KEYWORD_ID,
+            KotlinSyntaxTokenIds.TRUE_KEYWORD,
+            KotlinSyntaxTokenIds.FALSE_KEYWORD,
                 -> parseOneTokenExpression(KtNodeTypes.BOOLEAN_CONSTANT)
-            KtTokens.INTEGER_LITERAL_ID -> parseOneTokenExpression(KtNodeTypes.INTEGER_CONSTANT)
-            KtTokens.CHARACTER_LITERAL_ID -> parseOneTokenExpression(KtNodeTypes.CHARACTER_CONSTANT)
-            KtTokens.FLOAT_LITERAL_ID -> parseOneTokenExpression(KtNodeTypes.FLOAT_CONSTANT)
-            KtTokens.NULL_KEYWORD_ID -> parseOneTokenExpression(KtNodeTypes.NULL)
-            KtTokens.CLASS_KEYWORD_ID,
-            KtTokens.INTERFACE_KEYWORD_ID,
-            KtTokens.FUN_MODIFIER_ID,
-            KtTokens.VAL_KEYWORD_ID,
-            KtTokens.VAR_KEYWORD_ID,
-            KtTokens.TYPE_ALIAS_KEYWORD_ID,
+            KotlinSyntaxTokenIds.INTEGER_LITERAL -> parseOneTokenExpression(KtNodeTypes.INTEGER_CONSTANT)
+            KotlinSyntaxTokenIds.CHARACTER_LITERAL -> parseOneTokenExpression(KtNodeTypes.CHARACTER_CONSTANT)
+            KotlinSyntaxTokenIds.FLOAT_LITERAL -> parseOneTokenExpression(KtNodeTypes.FLOAT_CONSTANT)
+            KotlinSyntaxTokenIds.NULL_KEYWORD -> parseOneTokenExpression(KtNodeTypes.NULL)
+            KotlinSyntaxTokenIds.CLASS_KEYWORD,
+            KotlinSyntaxTokenIds.INTERFACE_KEYWORD,
+            KotlinSyntaxTokenIds.FUN_MODIFIER,
+            KotlinSyntaxTokenIds.VAL_KEYWORD,
+            KotlinSyntaxTokenIds.VAR_KEYWORD,
+            KotlinSyntaxTokenIds.TYPE_ALIAS_KEYWORD,
                 -> {
                 if (!parseLocalDeclaration(
                         rollbackIfDefinitelyNotExpression = builder.newlineBeforeCurrentToken(),
@@ -702,17 +703,17 @@ internal open class KotlinExpressionParsing(
      */
     private fun parseStringTemplateElement() {
         when (tokenId) {
-            KtTokens.REGULAR_STRING_PART_ID -> {
+            KotlinSyntaxTokenIds.REGULAR_STRING_PART -> {
                 val mark = mark()
                 advance() // REGULAR_STRING_PART
                 mark.done(KtNodeTypes.LITERAL_STRING_TEMPLATE_ENTRY)
             }
-            KtTokens.ESCAPE_SEQUENCE_ID -> {
+            KotlinSyntaxTokenIds.ESCAPE_SEQUENCE -> {
                 val mark = mark()
                 advance() // ESCAPE_SEQUENCE
                 mark.done(KtNodeTypes.ESCAPE_STRING_TEMPLATE_ENTRY)
             }
-            KtTokens.SHORT_TEMPLATE_ENTRY_START_ID -> {
+            KotlinSyntaxTokenIds.SHORT_TEMPLATE_ENTRY_START -> {
                 val entry = mark()
                 advance() // SHORT_TEMPLATE_ENTRY_START
 
@@ -736,7 +737,7 @@ internal open class KotlinExpressionParsing(
 
                 entry.done(KtNodeTypes.SHORT_STRING_TEMPLATE_ENTRY)
             }
-            KtTokens.LONG_TEMPLATE_ENTRY_START_ID -> {
+            KotlinSyntaxTokenIds.LONG_TEMPLATE_ENTRY_START -> {
                 val longTemplateEntry = mark()
 
                 advance() // LONG_TEMPLATE_ENTRY_START
@@ -894,8 +895,8 @@ internal open class KotlinExpressionParsing(
         val condition = mark()
         builder.disableNewlines()
         when (tokenId) {
-            KtTokens.IN_MODIFIER_ID,
-            KtTokens.NOT_IN_ID,
+            KotlinSyntaxTokenIds.IN_MODIFIER,
+            KotlinSyntaxTokenIds.NOT_IN,
                 -> {
                 val mark = mark()
                 advance() // IN_KEYWORD or NOT_IN
@@ -908,8 +909,8 @@ internal open class KotlinExpressionParsing(
                 }
                 condition.done(KtNodeTypes.WHEN_CONDITION_IN_RANGE)
             }
-            KtTokens.IS_KEYWORD_ID,
-            KtTokens.NOT_IS_ID,
+            KotlinSyntaxTokenIds.IS_KEYWORD,
+            KotlinSyntaxTokenIds.NOT_IS,
                 -> {
                 advance() // IS_KEYWORD or NOT_IS
 
@@ -920,10 +921,10 @@ internal open class KotlinExpressionParsing(
                 }
                 condition.done(KtNodeTypes.WHEN_CONDITION_IS_PATTERN)
             }
-            KtTokens.RBRACE_ID,
-            KtTokens.ELSE_KEYWORD_ID,
-            KtTokens.ARROW_ID,
-            KtTokens.DOT_ID,
+            KotlinSyntaxTokenIds.RBRACE,
+            KotlinSyntaxTokenIds.ELSE_KEYWORD,
+            KotlinSyntaxTokenIds.ARROW,
+            KotlinSyntaxTokenIds.DOT,
                 -> {
                 error("Expecting an expression, is-condition or in-condition")
                 condition.done(KtNodeTypes.WHEN_CONDITION_EXPRESSION)
@@ -938,7 +939,7 @@ internal open class KotlinExpressionParsing(
 
     private fun parseWhenEntryGuardOrSuggest() {
         when (tokenId) {
-            KtTokens.ANDAND_ID -> {
+            KotlinSyntaxTokenIds.ANDAND -> {
                 errorUntil(
                     "Unexpected '&&', use 'if' to introduce additional conditions; see https://kotl.in/guards-in-when",
                     syntaxElementTypeSetOf(
@@ -946,7 +947,7 @@ internal open class KotlinExpressionParsing(
                     )
                 )
             }
-            KtTokens.IF_KEYWORD_ID -> {
+            KotlinSyntaxTokenIds.IF_KEYWORD -> {
                 parseWhenEntryGuard()
             }
         }
@@ -1115,13 +1116,13 @@ internal open class KotlinExpressionParsing(
         var paramsFound = false
 
         when (tokenId) {
-            KtTokens.ARROW_ID -> {
+            KotlinSyntaxTokenIds.ARROW -> {
                 //   { -> ...}
                 mark().done(KtNodeTypes.VALUE_PARAMETER_LIST)
                 advance() // ARROW
                 paramsFound = true
             }
-            KtTokens.IDENTIFIER_ID, KtTokens.COLON_ID, KtTokens.LPAR_ID, KtTokens.LBRACKET_ID -> {
+            KotlinSyntaxTokenIds.IDENTIFIER, KotlinSyntaxTokenIds.COLON, KotlinSyntaxTokenIds.LPAR, KotlinSyntaxTokenIds.LBRACKET -> {
                 // Try to parse a simple name list followed by an ARROW
                 //   {a -> ...}
                 //   {a, b -> ...}
@@ -1196,10 +1197,10 @@ internal open class KotlinExpressionParsing(
             val parameter = mark()
 
             when (tokenId) {
-                KtTokens.COLON_ID -> {
+                KotlinSyntaxTokenIds.COLON -> {
                     error("Expecting parameter name")
                 }
-                KtTokens.LPAR_ID, KtTokens.LBRACKET_ID -> {
+                KotlinSyntaxTokenIds.LPAR, KotlinSyntaxTokenIds.LBRACKET -> {
                     val destructuringDeclaration = mark()
                     kotlinParsing.parseMultiDeclarationEntry(
                         TOKEN_SET_TO_FOLLOW_AFTER_DESTRUCTURING_DECLARATION_IN_LAMBDA,
@@ -1221,10 +1222,10 @@ internal open class KotlinExpressionParsing(
             parameter.done(KtNodeTypes.VALUE_PARAMETER)
 
             when (tokenId) {
-                KtTokens.ARROW_ID -> {
+                KotlinSyntaxTokenIds.ARROW -> {
                     break
                 }
-                KtTokens.COMMA_ID -> {
+                KotlinSyntaxTokenIds.COMMA -> {
                     advance() // COMMA
                 }
                 else -> {
@@ -1256,12 +1257,12 @@ internal open class KotlinExpressionParsing(
             }
 
             when (tokenId) {
-                KtTokens.SEMICOLON_ID -> {
+                KotlinSyntaxTokenIds.SEMICOLON -> {
                     while (at(KtTokens.SEMICOLON)) {
                         advance()
                     }
                 }
-                KtTokens.RBRACE_ID -> {
+                KotlinSyntaxTokenIds.RBRACE -> {
                     break
                 }
                 else -> {

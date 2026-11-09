@@ -14,6 +14,7 @@ dependencies {
     api(project(":core:names"))
     api(project(":core:language.model"))
     implementation(project(":core:error.handling"))
+    implementation(project(":core:language.syntax"))
     api(project(":core:deserialization.common"))
 
     compileOnly(project(":kotlin-util-klib"))

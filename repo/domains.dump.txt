@@ -75,6 +75,7 @@ Frontend:
  - compiler/serialization.common
  - compiler/tests-java8
  - compiler/tests-spec
+ - core/language.syntax
 
 CommonBackend:
  - compiler/cli/cli-jklib
