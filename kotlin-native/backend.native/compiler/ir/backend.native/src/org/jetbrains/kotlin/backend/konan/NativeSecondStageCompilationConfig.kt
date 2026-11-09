@@ -711,6 +711,13 @@ class NativeSecondStageCompilationConfig(
     internal val inProcessObjEmission: Boolean
         get() = configuration.inProcessObjEmission
 
+    /**
+     * Whether the LLVM linked into the compiler may replace `clang` and `llvm-ar` where the results are the same
+     * (see `InProcessLlvmTools.kt`). Inherited by the cache compilations spawned from this one.
+     */
+    internal val inProcessLlvmTools: Boolean
+        get() = configuration.get(BinaryOptions.inProcessLlvmTools) ?: true
+
     private val implicitModuleName: String
         get() = cacheSupport.librariesToCache.values.singleOrNull()?.let {
             if (producePerFileCache)

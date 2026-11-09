@@ -61,16 +61,38 @@ internal class Linker(
             caches: ResolvedCacheBinaries,
             extraLinkerFlags: List<String> = emptyList()
     ): List<Command> {
-        val nativeDependencies = dependenciesTrackingResult.nativeDependenciesToLink
-
-        val includedBinariesLibraries = cacheInfo?.let { listOf(it.klib) }
-                ?: nativeDependencies.filterNot { config.cachedLibraries.isLibraryCached(it) }
-        val includedBinaries = includedBinariesLibraries.flatMap { library ->
-            library.nativeIncludedBinaries(config.target)?.nativeIncludedBinaryFilePaths?.map { it.pathString }.orEmpty()
-        }
-
+        val includedBinaries = includedBinaries(dependenciesTrackingResult)
         val libraryProvidedLinkerFlags = dependenciesTrackingResult.allNativeDependencies.flatMap { it.linkerOpts }
         return runLinker(outputFile, objectFiles, includedBinaries, libraryProvidedLinkerFlags, extraLinkerFlags, caches)
+    }
+
+    /**
+     * Writes a static cache made of object files only with the LLVM linked into the compiler instead of running `llvm-ar`,
+     * where the result is the same (see [inProcessArchiveTargetTriples]). Returns `false` if `llvm-ar` has to be run.
+     */
+    fun tryWriteStaticCacheInProcess(
+            outputFile: String,
+            objectFiles: List<String>,
+            dependenciesTrackingResult: DependenciesTrackingResult,
+            caches: ResolvedCacheBinaries,
+    ): Boolean {
+        if (!config.inProcessLlvmTools || config.produce != CompilerOutputKind.STATIC_CACHE || linkerOutput != LinkerOutputKind.STATIC_LIBRARY)
+            return false
+        if (config.llvmTargetTriple !in inProcessArchiveTargetTriples) return false
+        // Archives would have to be flattened into the result, like `llvm-ar` does with its `L` modifier.
+        if (linker.linkStaticLibraries(includedBinaries(dependenciesTrackingResult)).isNotEmpty() || caches.static.isNotEmpty())
+            return false
+        val executablePath = resolveExecutableTarget(outputFile).path.also { prepareFileSystem(it) }
+        writeStaticCacheArchive(executablePath, objectFiles)
+        return true
+    }
+
+    private fun includedBinaries(dependenciesTrackingResult: DependenciesTrackingResult): List<String> {
+        val includedBinariesLibraries = cacheInfo?.let { listOf(it.klib) }
+                ?: dependenciesTrackingResult.nativeDependenciesToLink.filterNot { config.cachedLibraries.isLibraryCached(it) }
+        return includedBinariesLibraries.flatMap { library ->
+            library.nativeIncludedBinaries(config.target)?.nativeIncludedBinaryFilePaths?.map { it.pathString }.orEmpty()
+        }
     }
 
     private fun resolveExecutableTarget(outputFile: String): ExecutableTarget = when (config.produce) {

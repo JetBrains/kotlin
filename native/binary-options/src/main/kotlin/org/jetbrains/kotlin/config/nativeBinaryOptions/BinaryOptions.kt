@@ -142,6 +142,12 @@ object BinaryOptions : BinaryOptionRegistry() {
     val batchedCacheBuild by booleanOption()
 
     /**
+     * When `true` (the default), the LLVM linked into the compiler writes static caches instead of `llvm-ar` processes,
+     * where the results were checked to be identical to theirs (some Linux targets).
+     */
+    val inProcessLlvmTools by booleanOption()
+
+    /**
      * When `true`, llvm postprocessing will be done in Kotlin compiler;
      * when `false`, new custom llvm C++ passes will be used.
      * This option exists as a workaround, if new passes introduce regressions.

@@ -15,6 +15,7 @@
 #include "llvm/IR/Module.h"
 #include "llvm/IR/Type.h"
 #include "llvm/MC/TargetRegistry.h"
+#include "llvm/Object/ArchiveWriter.h"
 #include "llvm/Passes/PassBuilder.h"
 #include "llvm/Passes/StandardInstrumentations.h"
 #include "llvm/Support/CodeGen.h"
@@ -22,6 +23,7 @@
 #include "llvm/Support/Error.h"
 #include "llvm/Support/ErrorHandling.h"
 #include "llvm/Support/FileSystem.h"
+#include "llvm/Support/Path.h"
 #include "llvm/Support/raw_ostream.h"
 #include "llvm/Target/CodeGenCWrappers.h"
 #include "llvm/Target/TargetMachine.h"
@@ -279,6 +281,39 @@ LLVMBool LLVMKotlinEmitObjectFile(LLVMTargetMachineRef T, LLVMModuleRef M,
   if (OS.has_error()) {
     *ErrorMessage = LLVMCreateMessage(OS.error().message().c_str());
     OS.clear_error();
+    return 1;
+  }
+  return 0;
+}
+
+LLVMBool LLVMKotlinWriteArchive(const char *ArchivePath,
+                                const char *const *MemberPaths,
+                                unsigned NumMembers, char **ErrorMessage) {
+  // Mirrors `llvm-ar qcsD ArchivePath MemberPaths...` with object files as
+  // members: a new archive, members named by their file names.
+  std::vector<llvm::NewArchiveMember> Members;
+  Members.reserve(NumMembers);
+  for (unsigned I = 0; I < NumMembers; ++I) {
+    llvm::Expected<llvm::NewArchiveMember> Member =
+        llvm::NewArchiveMember::getFile(MemberPaths[I], /*Deterministic=*/true);
+    if (!Member) {
+      *ErrorMessage =
+          LLVMCreateMessage(llvm::toString(Member.takeError()).c_str());
+      return 1;
+    }
+    // `getFile` keeps the given path as the member name; llvm-ar uses the
+    // file name only for regular (not thin) archives.
+    Member->MemberName = llvm::sys::path::filename(Member->MemberName);
+    Members.push_back(std::move(*Member));
+  }
+  // Like llvm-ar: the archive format is the one of the first member.
+  llvm::object::Archive::Kind Kind =
+      Members.empty() ? llvm::object::Archive::getDefaultKind()
+                      : Members.front().detectKindFromObject();
+  if (llvm::Error E = llvm::writeArchive(
+          ArchivePath, Members, llvm::SymtabWritingMode::NormalSymtab, Kind,
+          /*Deterministic=*/true, /*Thin=*/false)) {
+    *ErrorMessage = LLVMCreateMessage(llvm::toString(std::move(E)).c_str());
     return 1;
   }
   return 0;

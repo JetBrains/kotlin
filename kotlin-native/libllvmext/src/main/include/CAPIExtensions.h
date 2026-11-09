@@ -74,6 +74,14 @@ LLVMKotlinCreateTargetMachine(const char *TargetTriple, const char *CPU,
 LLVMBool LLVMKotlinEmitObjectFile(LLVMTargetMachineRef T, LLVMModuleRef M,
                                   const char *Path, char **ErrorMessage);
 
+/// Write a static library `ArchivePath` containing the object files
+/// `MemberPaths`, like `llvm-ar qcsD` does.
+/// Returns a non-zero value on failure and stores the reason in
+/// `ErrorMessage`; dispose it with `LLVMDisposeMessage`.
+LLVMBool LLVMKotlinWriteArchive(const char *ArchivePath,
+                                const char *const *MemberPaths,
+                                unsigned NumMembers, char **ErrorMessage);
+
 LLVM_C_EXTERN_C_END
 
 #endif
