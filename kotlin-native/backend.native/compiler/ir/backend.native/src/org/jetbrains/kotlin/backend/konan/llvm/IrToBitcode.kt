@@ -329,6 +329,10 @@ internal class CodeGeneratorVisitor(
         CAdapterCodegen(codegen, generationState).buildAllAdaptersRecursively(elements)
     }
 
+    /**
+     * Runs [f] and collects whatever startup initialization the code it generated needs into an initializer of
+     * [konanLibrary], null standing for the module this compilation produces; see [IrStaticInitializer].
+     */
     private fun runAndProcessInitializers(konanLibrary: KotlinLibrary?, f: () -> Unit) {
         val oldScopeState = llvm.initializersGenerationState.reset(ScopeInitializersGenerationState())
         f()
@@ -363,6 +367,8 @@ internal class CodeGeneratorVisitor(
             codegen.objCDataGenerator?.finishModule()
 
             overrideRuntimeGlobals()
+            // has to happen before llvm.used is appended
+            codegen.createGlobalHierarchyStructures()
             appendLlvmUsed("llvm.used", llvm.usedFunctions.map { it.toConstPointer().llvm } + llvm.usedGlobals)
             appendLlvmUsed("llvm.compiler.used", llvm.compilerUsedGlobals)
             if (context.config.produceCInterface) {
@@ -2757,8 +2763,10 @@ internal class CodeGeneratorVisitor(
     //-------------------------------------------------------------------------//
     fun appendStaticInitializers() {
         // Note: the list of libraries is topologically sorted (in order for initializers to be called correctly).
-        val dependencies = (generationState.dependenciesTracker.allBitcodeDependencies + listOf(null)/* Null for "current" non-library module */)
+        // The null entry is no library: it is the module this compilation produces, see [IrStaticInitializer].
+        val dependencies = (generationState.dependenciesTracker.allBitcodeDependencies + listOf(null))
 
+        // The initializers each constructor is to call, one list per entry of `dependencies`.
         val libraryToInitializers = dependencies.associate { it?.library to mutableListOf<RuntimeInitializer>() }
 
         llvm.irStaticInitializers.forEach {

@@ -11,9 +11,8 @@ import org.jetbrains.kotlin.backend.common.ir.KlibSharedVariablesManager
 import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLowerings
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterExportedElements
 import org.jetbrains.kotlin.backend.konan.driver.BasicNativeBackendPhaseContext
-import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
-import org.jetbrains.kotlin.backend.konan.ir.ClassLayoutBuilder
-import org.jetbrains.kotlin.backend.konan.ir.GlobalHierarchyAnalysisResult
+import org.jetbrains.kotlin.backend.konan.ir.*
+import org.jetbrains.kotlin.backend.konan.llvm.GlobalHierarchyAnalysisResult
 import org.jetbrains.kotlin.backend.konan.llvm.KonanMetadata
 import org.jetbrains.kotlin.backend.konan.lower.BridgesSupport
 import org.jetbrains.kotlin.backend.konan.lower.CachesAbiSupport
@@ -135,7 +134,7 @@ internal class NativeBackendContext(
     var objCExportedInterface: ObjCExportedInterface? = null
     var objCExportCodeSpec: ObjCExportCodeSpec? = null
 
-    fun ghaEnabled() = ::globalHierarchyAnalysisResult.isInitialized
+    fun hasGlobalHierarchyAnalysis() = ::globalHierarchyAnalysisResult.isInitialized
 
     val stdlibModule
         get() = this.irBuiltIns.anyClass.owner.moduleFragment

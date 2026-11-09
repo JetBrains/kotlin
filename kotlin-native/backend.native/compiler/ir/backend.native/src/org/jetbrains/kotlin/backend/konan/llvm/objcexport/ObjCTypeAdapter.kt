@@ -10,10 +10,14 @@ import org.jetbrains.kotlin.backend.konan.ir.ClassLayoutBuilder
 import org.jetbrains.kotlin.backend.konan.llvm.CodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.ConstPointer
 import org.jetbrains.kotlin.backend.konan.llvm.ConstValue
+import org.jetbrains.kotlin.backend.konan.llvm.KonanBinaryInterface.classHierarchyIdsSymbolName
 import org.jetbrains.kotlin.backend.konan.llvm.LlvmCallable
 import org.jetbrains.kotlin.backend.konan.llvm.RTTIGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.Struct
 import org.jetbrains.kotlin.backend.konan.llvm.constPointer
+import org.jetbrains.kotlin.backend.konan.llvm.crossModuleName
+import org.jetbrains.kotlin.backend.konan.llvm.hierarchyWillBeLaidOutByFinalLink
+import org.jetbrains.kotlin.backend.konan.llvm.importGlobal
 import org.jetbrains.kotlin.ir.declarations.IrClass
 
 internal class ObjCToKotlinMethodAdapter private constructor(type: LLVMTypeRef, vararg elements: ConstValue?) : Struct(type, *elements) {
@@ -38,15 +42,34 @@ internal class KotlinToObjCMethodAdapter private constructor(type: LLVMTypeRef, 
                 itablePlace: ClassLayoutBuilder.InterfaceTablePlace,
                 vtableIndex: Int,
                 kotlinImpl: ConstPointer,
-        ) = KotlinToObjCMethodAdapter(
-                type = llvm.runtime.kotlinToObjCMethodAdapter,
-                staticData.cStringLiteral(selector),
-                llvm.constInt32(itablePlace.interfaceId),
-                llvm.constInt32(itablePlace.itableSize),
-                llvm.constInt32(itablePlace.methodIndex),
-                llvm.constInt32(vtableIndex),
-                kotlinImpl,
-        )
+                interfaceName: String? = null,
+        ): KotlinToObjCMethodAdapter {
+            val interfaceIdPtr = if (context.hierarchyWillBeLaidOutByFinalLink) {
+                // `interfaceName` names the interface this method is dispatched through where `itablePlace` cannot:
+                // the places rebuilt from a cache carry no IR.
+                val crossModuleInterfaceName = interfaceName ?: itablePlace.irInterface?.crossModuleName()
+                if (crossModuleInterfaceName != null) {
+                    // The id itself is not known here - the final link assigns it - so the adapter carries the
+                    // address of the interface's `ClassHierarchyIds` record, which that link fills in, and the
+                    // runtime reads the id out of it. [ClassLayoutBuilder.InterfaceTablePlace.interfaceId] is no
+                    // use for this: it is the id of the compilation that computed the place, not of the program.
+                    constPointer(importGlobal(classHierarchyIdsSymbolName(crossModuleInterfaceName), runtime.classHierarchyIdsType))
+                } else llvm.nullPointer
+            } else {
+                val id = llvm.constInt32(itablePlace.interfaceId)
+                staticData.placeGlobal("", Struct(runtime.classHierarchyIdsType, id, id))
+                        .also { it.setConstant(true) }.pointer
+            }
+            return KotlinToObjCMethodAdapter(
+                    type = llvm.runtime.kotlinToObjCMethodAdapter,
+                    staticData.cStringLiteral(selector),
+                    interfaceIdPtr,
+                    llvm.constInt32(itablePlace.itableSize),
+                    llvm.constInt32(itablePlace.methodIndex),
+                    llvm.constInt32(vtableIndex),
+                    kotlinImpl,
+            )
+        }
     }
 }
 

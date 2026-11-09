@@ -19,7 +19,7 @@ struct ObjCToKotlinMethodAdapter {
 
 struct KotlinToObjCMethodAdapter {
   const char* selector;
-  ClassId interfaceId;
+  const ClassHierarchyIds* interfaceId;
   int itableSize;
   int itableIndex;
   int vtableIndex;

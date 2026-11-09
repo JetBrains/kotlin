@@ -91,6 +91,7 @@ internal fun ObjCExportCodeGeneratorBase.generateBlockToKotlinFunctionConverter(
     }
 
     val typeInfo = rttiGenerator.generateSyntheticInterfaceImpl(
+            codegen,
             irInterface,
             mapOf(invokeMethod to invokeImpl.toConstPointer()),
             objectBodyType,

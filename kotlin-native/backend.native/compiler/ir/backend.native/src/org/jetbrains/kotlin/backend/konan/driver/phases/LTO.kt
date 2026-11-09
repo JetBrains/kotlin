@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.phaser.KotlinBackendIrHolder
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultIrActions
-import org.jetbrains.kotlin.backend.konan.ir.GlobalHierarchyAnalysis
+import org.jetbrains.kotlin.backend.konan.llvm.GlobalHierarchyAnalysis
 import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
 import org.jetbrains.kotlin.backend.konan.llvm.buildClassHierarchyRecords
 import org.jetbrains.kotlin.backend.konan.optimizations.*
@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 
-internal val GHAPhase = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(
-        name = "GHAPhase",
+internal val GlobalHierarchyAnalysisPhase = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(
+        name = "GlobalHierarchyAnalysis",
         op = { generationState, irModule ->
             GlobalHierarchyAnalysis(generationState.context, irModule).run()
         }
@@ -30,7 +30,7 @@ internal val GHAPhase = createSimpleNamedCompilerPhase<NativeGenerationState, Ir
 
 /**
  * Records the piece of the class hierarchy that this cache contributes, so that the compilation that links
- * against the cache can assemble the whole hierarchy in [GHAPhase].
+ * against the cache can assemble the whole hierarchy in [GlobalHierarchyAnalysisPhase].
  *
  * Should run after the lowerings.
  */
