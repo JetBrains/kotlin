@@ -1,1 +1,1 @@
-inline class ValueClassFeatureDisabledCommon(value: kotlin.Int)
+inline value class ValueClassFeatureDisabledCommon(value: kotlin.Int)
