@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain.Companion.js
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsDtsGenerationOperation.Companion.COMPILE_LONG_AS_BIG_INT
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsDtsGenerationOperation.Companion.DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsDtsGenerationOperation.Companion.EXPORT_SUSPEND_LAMBDAS
-import org.jetbrains.kotlin.buildtools.api.js.operations.JsDtsGenerationOperation.Companion.EXPORT_UNTYPED_AS_UNKNOWN
+import org.jetbrains.kotlin.buildtools.api.js.operations.JsDtsGenerationOperation.Companion.USE_UNKNOWN_INSTEAD_ANY
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsDtsGenerationOperation.Companion.GRANULARITY
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsDtsGenerationOperation.Companion.IMPLEMENT_INTERFACES
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsDtsGenerationOperation.Companion.MODULE_KIND
@@ -122,7 +122,7 @@ internal abstract class KotlinJsDtsGenerationTask @Inject constructor(
                 this[COMPILE_LONG_AS_BIG_INT] = K2JSCompilerArguments::compileLongAsBigInt.cliArgument in compilerArguments
                 this[IMPLEMENT_INTERFACES] = K2JSCompilerArguments::allowImplementableInterfacesExporting.cliArgument in compilerArguments
                 this[EXPORT_SUSPEND_LAMBDAS] = K2JSCompilerArguments::allowExportingSuspendLambdas.cliArgument in compilerArguments
-                this[EXPORT_UNTYPED_AS_UNKNOWN] = K2JSCompilerArguments::useUnknownInsteadAny.cliArgument in compilerArguments
+                this[USE_UNKNOWN_INSTEAD_ANY] = K2JSCompilerArguments::useUnknownInsteadAny.cliArgument in compilerArguments
                 this[DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY] =
                     CommonCompilerArguments::consistentDataClassCopyVisibility.cliArgument in compilerArguments
             }
