@@ -180,21 +180,13 @@ class RealVariable(
                 return SmartcastStability.PROPERTY_WITH_GETTER
             if (
                 stability.checkModule &&
-                !(symbol.fir as FirVariable).isInCurrentOrFriendModule(session) &&
-                !isValueClassUnderlyingPropertyWithAllowedSmartcast(session)
+                !(symbol.fir as FirVariable).isInCurrentOrFriendModule(session)
             ) return SmartcastStability.ALIEN_PUBLIC_PROPERTY
             // Members of unstable values should always be unstable, as the receiver could've changed.
             dispatchReceiver?.getStability(flow, session)?.takeIf { it != SmartcastStability.STABLE_VALUE }?.let { return it }
             // No need to check extension receiver, as properties with one cannot be stable by symbol stability.
         }
         return SmartcastStability.STABLE_VALUE
-    }
-
-    private fun isValueClassUnderlyingPropertyWithAllowedSmartcast(session: FirSession): Boolean {
-        if (!session.languageVersionSettings.supportsFeature(LanguageFeature.AllowSmartCastsOnValueClassUnderlyingProperties)) return false
-        val property = symbol.fir as? FirProperty ?: return false
-        val containingClass = symbol.getContainingClassSymbol() as? FirRegularClassSymbol ?: return false
-        return containingClass.valueClassRepresentation?.containsPropertyWithName(property.name) == true
     }
 
     private fun hasFinalType(flow: Flow, session: FirSession): Boolean =
