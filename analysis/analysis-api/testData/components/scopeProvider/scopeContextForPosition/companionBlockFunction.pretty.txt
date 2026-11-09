@@ -1,0 +1,53 @@
+element: companionProperty
+implicit values:
+scopes:
+  LocalScope, index = 0
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  LocalScope, index = 1
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  StaticMemberScope, index = 2
+    packages: 0
+    classifiers: 0
+    callables: 2
+      val companionProperty: kotlin.Int
+      fun foo()
+    constructors: 0
+
+  ExplicitSimpleImportingScope, index = 3
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  PackageMemberScope, index = 4
+    packages: 6
+      META-INF
+      java
+      javax
+      kotlin
+      org
+      sun
+    classifiers: 1
+      class Owner<T>(constructorProperty: kotlin.Int)
+    callables: 0
+    constructors: 0
+
+  DefaultSimpleImportingScope, index = 5
+
+  DefaultSimpleImportingScope, index = 6
+
+  ExplicitStarImportingScope, index = 7
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  DefaultStarImportingScope, index = 8

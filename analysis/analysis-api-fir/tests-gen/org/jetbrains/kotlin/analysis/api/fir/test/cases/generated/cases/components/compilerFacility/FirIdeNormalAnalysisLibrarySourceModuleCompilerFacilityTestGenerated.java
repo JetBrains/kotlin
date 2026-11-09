@@ -93,6 +93,18 @@ public class FirIdeNormalAnalysisLibrarySourceModuleCompilerFacilityTestGenerate
   }
 
   @Test
+  @TestMetadata("companionBlocks.kt")
+  public void testCompanionBlocks() {
+    run("companionBlocks.kt");
+  }
+
+  @Test
+  @TestMetadata("companionBlocksFromLibrary.kt")
+  public void testCompanionBlocksFromLibrary() {
+    run("companionBlocksFromLibrary.kt");
+  }
+
+  @Test
   @TestMetadata("defaultImpls.kt")
   public void testDefaultImpls() {
     run("defaultImpls.kt");
@@ -499,6 +511,18 @@ public class FirIdeNormalAnalysisLibrarySourceModuleCompilerFacilityTestGenerate
     @TestMetadata("inlinedLambda.kt")
     public void testInlinedLambda() {
       run("inlinedLambda.kt");
+    }
+
+    @Test
+    @TestMetadata("insideCompanionBlockFunction.kt")
+    public void testInsideCompanionBlockFunction() {
+      run("insideCompanionBlockFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("insideCompanionExtension.kt")
+    public void testInsideCompanionExtension() {
+      run("insideCompanionExtension.kt");
     }
 
     @Test

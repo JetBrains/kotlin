@@ -1,0 +1,19 @@
+KT element: KtDotQualifiedExpression
+FIR element: FirFunctionCallImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+Q|Owner|.R|/foo|()
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] companionExtensionCall.kt
+    public final [ResolvedTo(STATUS)] class Owner : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Owner] constructor(): R|Owner| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final static [ResolvedTo(STATUS)] fun [ResolvedTo(STATUS)] R|Owner|.foo(): R|kotlin/Int| { LAZY_BLOCK }
+    public final [ResolvedTo(BODY_RESOLVE)] fun bar(): R|kotlin/Int| {
+        ^bar Q|Owner|.R|/foo|()
+    }

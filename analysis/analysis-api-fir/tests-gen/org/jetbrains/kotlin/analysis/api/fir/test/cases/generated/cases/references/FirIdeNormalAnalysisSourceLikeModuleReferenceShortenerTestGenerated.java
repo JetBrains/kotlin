@@ -741,6 +741,56 @@ public class FirIdeNormalAnalysisSourceLikeModuleReferenceShortenerTestGenerated
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/referenceShortener/shortenRange/companionBlocks")
+  @TestDataPath("$PROJECT_ROOT")
+  public class CompanionBlocks {
+    private void run(String fileName) {
+      runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/companionBlocks/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInCompanionBlocks() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange/companionBlocks"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("callFromOtherPackage.kt")
+    public void testCallFromOtherPackage() {
+      run("callFromOtherPackage.kt");
+    }
+
+    @Test
+    @TestMetadata("callInsideCompanionBlock.kt")
+    public void testCallInsideCompanionBlock() {
+      run("callInsideCompanionBlock.kt");
+    }
+
+    @Test
+    @TestMetadata("callInsideOwner.kt")
+    public void testCallInsideOwner() {
+      run("callInsideOwner.kt");
+    }
+
+    @Test
+    @TestMetadata("callInsideSubclass.kt")
+    public void testCallInsideSubclass() {
+      run("callInsideSubclass.kt");
+    }
+
+    @Test
+    @TestMetadata("companionBlockShadowedByCompanionObject.kt")
+    public void testCompanionBlockShadowedByCompanionObject() {
+      run("companionBlockShadowedByCompanionObject.kt");
+    }
+
+    @Test
+    @TestMetadata("companionExtensionFromOtherPackage.kt")
+    public void testCompanionExtensionFromOtherPackage() {
+      run("companionExtensionFromOtherPackage.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/components/referenceShortener/shortenRange/conflicts")
   @TestDataPath("$PROJECT_ROOT")
   public class Conflicts {
