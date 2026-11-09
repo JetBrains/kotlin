@@ -42,6 +42,8 @@ where advanced options include:
   -Xgc=<gc>                  GC to use – 'noop', 'stms', and 'cms' are currently supported. This works only with '-memory-model experimental'.
   -Xheader-klib-path         Save a klib that only contains the public ABI to the given path.
   -Xic-cache-dir=<path>      Path to the directory where incremental build caches should be put.
+  -Xin-process-obj-emission  Emit object files from LLVM bitcode in-process, without invoking an external clang process.
+                             This is an experimental mode and is expected to be faster than the default one.
   -Xinclude=<path>           A path to an intermediate library that should be processed in the same manner as source files.
   -Xir-property-lazy-initialization={disable|enable}
                              Initialize top level properties lazily per file.
