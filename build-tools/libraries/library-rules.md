@@ -20,11 +20,12 @@ target or stdlib setup the plugin configures. BTA is added with
 
 Applies to: `build.gradle.kts`
 
-Every dependency ships with every integration, and inside Gradle another plugin may already have loaded
-coroutines or serialization at a different version. A new dependency outside the Kotlin libraries
-(kotlinx-coroutines, kotlinx-serialization, Ktor) or BTA should be questioned. When an implementation needs
-third-party dependencies, the library should be split into an API module without them and an implementation
-module the integration can load in isolation.
+Every dependency ships with every integration, and KGP must not put third-party libraries on the
+buildscript classpath: another plugin may already have loaded coroutines or serialization at a different
+version. A new dependency beyond stdlib, BTA and other Kotlin Build Tools libraries should be questioned.
+Kotlin libraries (kotlinx-coroutines, kotlinx-serialization, Ktor) are acceptable only in an
+implementation module that has a separate API module without them, so that KGP can load the
+implementation in an isolated worker. An API module must not depend on them.
 
 # Only BTA reaches the compiler, and no integration-specific APIs
 
