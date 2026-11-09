@@ -267,7 +267,7 @@ private fun findStaticallyKnownSubtypeByTypeParameterInheritance(
     val knownArguments = context.session.staticallyKnownTypeArgumentsByTypeParameterInheritance(
         subTypeClassSymbol,
         supertype,
-        requireEqualBounds = false,
+        requireEqualBounds = true,
         requireFullInference = false
     )
 
