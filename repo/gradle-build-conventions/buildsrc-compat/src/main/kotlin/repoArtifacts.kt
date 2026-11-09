@@ -313,14 +313,6 @@ fun Project.publishJarsForIde(
         // plugin may depend on different versions of IDEA and it will lead to version conflict
         exclude(module = ideModuleName())
     }
-    dependencies {
-        projects.forEach {
-            jpsLikeJarDependency(project(it), JpsDepScope.COMPILE, { isTransitive = false }, exported = true)
-        }
-        libraryDependencies.forEach {
-            jpsLikeJarDependency(it, JpsDepScope.COMPILE, exported = true)
-        }
-    }
 }
 
 /**
@@ -346,18 +338,6 @@ fun Project.publishTestJarsForIde(
         // Don't allow `ideaIC` from compiler to leak into Kotlin plugin modules. Compiler and
         // plugin may depend on different versions of IDEA and it will lead to version conflict
         exclude(module = ideModuleName())
-    }
-    dependencies {
-        fun declareDependency(notation: Any) {
-            jpsLikeJarDependency(notation, JpsDepScope.COMPILE, exported = true)
-        }
-
-        for (projectName in projectWithFixturesNames) {
-            declareDependency(testFixtures(project(projectName)))
-        }
-        for (projectName in projectWithRenamedTestJarNames) {
-            declareDependency(project(projectName, "testsJarConfig"))
-        }
     }
 }
 
