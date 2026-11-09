@@ -1,0 +1,270 @@
+fragment main
+var primitive: int [example/JavaTypes/primitive/#/PointingToDeclaration/].type:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "int",
+      "typeArguments": []
+    }
+  ],
+  "classLikeId": "kotlin/Int///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "isEnhancedNullability": false,
+  "annotations": []
+}
+
+var boxed: Integer [example/JavaTypes/boxed/#/PointingToDeclaration/].type:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "Integer",
+      "typeArguments": []
+    }
+  ],
+  "classLikeId": "java.lang/Integer///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "isEnhancedNullability": false,
+  "annotations": []
+}
+
+var primitiveBoolean: boolean [example/JavaTypes/primitiveBoolean/#/PointingToDeclaration/].type:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "boolean",
+      "typeArguments": []
+    }
+  ],
+  "classLikeId": "kotlin/Boolean///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "isEnhancedNullability": false,
+  "annotations": []
+}
+
+var boxedBoolean: Boolean [example/JavaTypes/boxedBoolean/#/PointingToDeclaration/].type:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "Boolean",
+      "typeArguments": []
+    }
+  ],
+  "classLikeId": "java.lang/Boolean///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "isEnhancedNullability": false,
+  "annotations": []
+}
+
+var primitiveByte: byte [example/JavaTypes/primitiveByte/#/PointingToDeclaration/].type:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "byte",
+      "typeArguments": []
+    }
+  ],
+  "classLikeId": "kotlin/Byte///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "isEnhancedNullability": false,
+  "annotations": []
+}
+
+var boxedByte: Byte [example/JavaTypes/boxedByte/#/PointingToDeclaration/].type:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "Byte",
+      "typeArguments": []
+    }
+  ],
+  "classLikeId": "java.lang/Byte///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "isEnhancedNullability": false,
+  "annotations": []
+}
+
+var primitiveShort: short [example/JavaTypes/primitiveShort/#/PointingToDeclaration/].type:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "short",
+      "typeArguments": []
+    }
+  ],
+  "classLikeId": "kotlin/Short///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "isEnhancedNullability": false,
+  "annotations": []
+}
+
+var boxedShort: Short [example/JavaTypes/boxedShort/#/PointingToDeclaration/].type:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "Short",
+      "typeArguments": []
+    }
+  ],
+  "classLikeId": "java.lang/Short///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "isEnhancedNullability": false,
+  "annotations": []
+}
+
+var primitiveLong: long [example/JavaTypes/primitiveLong/#/PointingToDeclaration/].type:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "long",
+      "typeArguments": []
+    }
+  ],
+  "classLikeId": "kotlin/Long///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "isEnhancedNullability": false,
+  "annotations": []
+}
+
+var boxedLong: Long [example/JavaTypes/boxedLong/#/PointingToDeclaration/].type:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "Long",
+      "typeArguments": []
+    }
+  ],
+  "classLikeId": "java.lang/Long///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "isEnhancedNullability": false,
+  "annotations": []
+}
+
+var primitiveChar: char [example/JavaTypes/primitiveChar/#/PointingToDeclaration/].type:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "char",
+      "typeArguments": []
+    }
+  ],
+  "classLikeId": "kotlin/Char///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "isEnhancedNullability": false,
+  "annotations": []
+}
+
+var boxedChar: Character [example/JavaTypes/boxedChar/#/PointingToDeclaration/].type:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "Character",
+      "typeArguments": []
+    }
+  ],
+  "classLikeId": "java.lang/Character///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "isEnhancedNullability": false,
+  "annotations": []
+}
+
+var primitiveFloat: float [example/JavaTypes/primitiveFloat/#/PointingToDeclaration/].type:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "float",
+      "typeArguments": []
+    }
+  ],
+  "classLikeId": "kotlin/Float///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "isEnhancedNullability": false,
+  "annotations": []
+}
+
+var boxedFloat: Float [example/JavaTypes/boxedFloat/#/PointingToDeclaration/].type:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "Float",
+      "typeArguments": []
+    }
+  ],
+  "classLikeId": "java.lang/Float///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "isEnhancedNullability": false,
+  "annotations": []
+}
+
+var primitiveDouble: double [example/JavaTypes/primitiveDouble/#/PointingToDeclaration/].type:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "double",
+      "typeArguments": []
+    }
+  ],
+  "classLikeId": "kotlin/Double///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "isEnhancedNullability": false,
+  "annotations": []
+}
+
+var boxedDouble: Double [example/JavaTypes/boxedDouble/#/PointingToDeclaration/].type:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "Double",
+      "typeArguments": []
+    }
+  ],
+  "classLikeId": "java.lang/Double///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "isEnhancedNullability": false,
+  "annotations": []
+}
+
+var boxedVoid: Void [example/JavaTypes/boxedVoid/#/PointingToDeclaration/].type:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "Void",
+      "typeArguments": []
+    }
+  ],
+  "classLikeId": "java.lang/Void///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "isEnhancedNullability": false,
+  "annotations": []
+}
+
+var reference: String [example/JavaTypes/reference/#/PointingToDeclaration/].type:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "String",
+      "typeArguments": []
+    }
+  ],
+  "classLikeId": "java.lang/String///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "isEnhancedNullability": false,
+  "annotations": []
+}

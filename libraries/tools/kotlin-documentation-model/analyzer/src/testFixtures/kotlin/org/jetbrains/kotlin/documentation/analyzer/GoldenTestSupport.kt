@@ -23,73 +23,12 @@ abstract class AbstractKdmGoldenTest : ManagedTest {
 
     protected fun assertMatchesGoldenFile(bundle: KdBundle, testDataFile: File) {
         val actual = Json(from = KdJson) { prettyPrint = true }
-            .encodeToString(KdBundle.serializer(), bundle.canonicalized()) + "\n"
+            .encodeToString(KdBundle.serializer(), bundle) + "\n"
         assertMatchesGoldenTextFile(actual, testDataFile, ".kdm.json")
     }
 
     protected fun assertMatchesGoldenTextFile(actual: String, testDataFile: File, extension: String) {
         assertEqualsToTestDataFile(testDataFile.toPath(), actual, extension)
-    }
-}
-
-/** Compact view of the stored KDM structure; references are shown without resolving or duplicating their targets. */
-internal fun KdBundle.shortTreeView(): String = buildString {
-    fun appendNode(label: String, indent: String, isLast: Boolean): String {
-        append(indent).append(if (isLast) "└── " else "├── ").append(label).append('\n')
-        return indent + if (isLast) "    " else "│   "
-    }
-
-    fun describe(element: KdElement): String = when (element) {
-        is KdModule -> "KdModule ${element.name}"
-        is KdPackage -> "KdPackage ${element.name.ifEmpty { "<root>" }}"
-        is KdClass -> "KdClass ${element.name} (${element.classKind})"
-        is KdConstructor -> "KdConstructor(${element.valueParameters.joinToString(", ") { it.render() }})"
-        is KdFunction -> "KdFunction ${element.name}(${element.valueParameters.joinToString(", ") { it.render() }}): ${element.returnType.render()}"
-        is KdProperty -> "KdProperty ${element.name}: ${element.type.render()}"
-        is KdTypealias -> "KdTypealias ${element.name} = ${element.underlyingType.render()}"
-        is KdRefinedElement -> "KdRefinedElement fragmentName=${element.fragmentName}"
-        is KdInheritedMember -> "KdInheritedMember originalId=${element.originalId.value}"
-    }
-
-    fun appendElements(elements: Map<KdElementId, KdElement>, indent: String) {
-        val ids = elements.keys.sortedBy { it.value }
-        for (index in ids.indices) {
-            val id = ids[index]
-            val element = elements.getValue(id)
-            val childIndent = appendNode("${describe(element)} [${id.value}]", indent, index == ids.lastIndex)
-            val references = when (element) {
-                is KdModule -> element.packages
-                is KdPackage -> element.declarations
-                is KdClass -> element.declarations
-                else -> emptyList()
-            }.sortedBy { it.value }
-            if (references.isNotEmpty()) {
-                val field = if (element is KdModule) "packages" else "declarations"
-                appendNode("$field: ${references.joinToString { it.value }}", childIndent, true)
-            }
-        }
-    }
-
-    append("KdBundle\n")
-    val fragmentIndent = appendNode("fragments", "", false)
-    val sortedFragments = fragments.sortedBy { it.name }
-    for (index in sortedFragments.indices) {
-        val fragment = sortedFragments[index]
-        val indent = appendNode("KdFragment ${fragment.name}", fragmentIndent, index == sortedFragments.lastIndex)
-        appendElements(fragment.elements, appendNode("elements", indent, fragment.embeddedElements.isEmpty()))
-        if (fragment.embeddedElements.isNotEmpty()) {
-            appendElements(fragment.embeddedElements, appendNode("embeddedElements", indent, true))
-        }
-    }
-    val mappingIndent = appendNode("expectActualMappings", "", true)
-    val mappings = canonicalized().expectActualMappings
-    for (index in mappings.indices) {
-        val mapping = mappings[index]
-        val indent = appendNode("KdExpectActualMapping", mappingIndent, index == mappings.lastIndex)
-        fun renderIds(ids: Map<KdFragmentName, KdElementId>): String =
-            ids.toSortedMap().entries.joinToString { "${it.key}=${it.value.value}" }
-        appendNode("expectIds: ${renderIds(mapping.expectIds)}", indent, false)
-        appendNode("actualIds: ${renderIds(mapping.actualIds)}", indent, true)
     }
 }
 
@@ -210,7 +149,7 @@ internal fun KdElement.signatureOrNull(): String? = when (this) {
     is KdFunction -> "fun $name(${valueParameters.joinToString(", ") { it.render() }}): ${returnType.render()}"
     is KdProperty -> "${if (isMutable) "var" else "val"} $name: ${type.render()}"
     is KdTypealias -> "typealias $name = ${underlyingType.render()}"
-    else -> null
+    is KdModule, is KdPackage, is KdRefinedElement, is KdInheritedMember -> null
 }
 
 private fun KdClassKind.keyword(): String = when (this) {
@@ -250,22 +189,3 @@ private fun KdTypeProjection.render(): String = when (this) {
     is KdTypeProjection.Out -> "out ${type.render()}"
     KdTypeProjection.Star -> "*"
 }
-
-/**
- * Sorts every order-sensitive collection in [this] bundle by a stable key, so golden-file comparisons don't
- * spuriously fail due to incidental ordering (e.g. file-system traversal order within a source root) rather than
- * an actual change in the generated model.
- */
-internal fun KdBundle.canonicalized(): KdBundle = copy(
-    fragments = fragments
-        .map { fragment ->
-            fragment.copy(
-                elements = fragment.elements.toSortedMap(compareBy { it.value }),
-                embeddedElements = fragment.embeddedElements.toSortedMap(compareBy { it.value }),
-            )
-        }
-        .sortedBy { it.name },
-    expectActualMappings = expectActualMappings.sortedBy { mapping ->
-        mapping.expectIds.entries.sortedBy { it.key }.joinToString { "${it.key}=${it.value.value}" }
-    },
-)

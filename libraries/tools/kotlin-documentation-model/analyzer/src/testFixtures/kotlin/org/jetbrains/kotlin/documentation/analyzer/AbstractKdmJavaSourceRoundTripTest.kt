@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.documentation.analyzer
 
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.documentation.*
 import kotlin.test.assertEquals
 
@@ -14,7 +15,7 @@ import kotlin.test.assertEquals
  */
 abstract class AbstractKdmJavaSourceRoundTripTest {
     fun runTest(testDataFilePath: String) {
-        val file = testDataFile(testDataFilePath)
+        val file = ForTestCompileRuntime.transformTestDataPath(testDataFilePath)
         val modules = parseTestDataModules(file)
         val bundle = generateDocumentationBundleFromTestData(file)
         modules.forEach { module ->

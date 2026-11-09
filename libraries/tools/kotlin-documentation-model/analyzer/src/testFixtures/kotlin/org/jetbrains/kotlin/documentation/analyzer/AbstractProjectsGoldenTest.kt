@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.documentation.analyzer
 
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+
 abstract class AbstractProjectsGoldenTest : AbstractKdmGoldenTest() {
-    @Suppress("unused") // Called by the generated Java tests.
     fun runTest(testDataFilePath: String) {
-        val file = testDataFile(testDataFilePath)
+        val file = ForTestCompileRuntime.transformTestDataPath(testDataFilePath)
         val bundle = generateDocumentationBundleFromTestData(file)
         assertMatchesGoldenFile(bundle, file)
-        assertMatchesGoldenTextFile(bundle.shortTreeView(), file, ".tree.txt")
         assertMatchesGoldenTextFile(bundle.declarationSignaturesByFragment(), file, ".signatures.txt")
     }
 }

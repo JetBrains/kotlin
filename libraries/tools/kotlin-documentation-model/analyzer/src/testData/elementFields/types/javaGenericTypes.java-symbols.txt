@@ -1,0 +1,293 @@
+fragment main
+constructor() [example/JavaTypes/JavaTypes/#/PointingToDeclaration/].typeParameters[0].upperBounds[0]:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "CharSequence",
+      "typeArguments": []
+    }
+  ],
+  "classLikeId": "kotlin/CharSequence///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "isEnhancedNullability": false,
+  "annotations": []
+}
+constructor() [example/JavaTypes/JavaTypes/#/PointingToDeclaration/].typeParameters[0].upperBounds[1]:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "Comparable",
+      "typeArguments": [
+        {
+          "kind": "invariant",
+          "type": {
+            "kind": "typeParameter",
+            "name": "T",
+            "containerElementId": "example/JavaTypes///PointingToDeclaration/",
+            "isMarkedNullable": false,
+            "annotations": []
+          }
+        }
+      ]
+    }
+  ],
+  "classLikeId": "kotlin/Comparable///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "isEnhancedNullability": false,
+  "annotations": []
+}
+
+fun convert(input: R): R [example/JavaTypes/convert/#R/PointingToDeclaration/].typeParameters[0].upperBounds[0]:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "Number",
+      "typeArguments": []
+    }
+  ],
+  "classLikeId": "kotlin/Number///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "isEnhancedNullability": false,
+  "annotations": []
+}
+fun convert(input: R): R [example/JavaTypes/convert/#R/PointingToDeclaration/].typeParameters[0].upperBounds[1]:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "Comparable",
+      "typeArguments": [
+        {
+          "kind": "invariant",
+          "type": {
+            "kind": "typeParameter",
+            "name": "R",
+            "containerElementId": "example/JavaTypes/convert/#R/PointingToDeclaration/",
+            "isMarkedNullable": false,
+            "annotations": []
+          }
+        }
+      ]
+    }
+  ],
+  "classLikeId": "kotlin/Comparable///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "isEnhancedNullability": false,
+  "annotations": []
+}
+fun convert(input: R): R [example/JavaTypes/convert/#R/PointingToDeclaration/].valueParameters[0].type:
+{
+  "kind": "typeParameter",
+  "name": "R",
+  "containerElementId": "example/JavaTypes/convert/#R/PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "annotations": []
+}
+fun convert(input: R): R [example/JavaTypes/convert/#R/PointingToDeclaration/].returnType:
+{
+  "kind": "typeParameter",
+  "name": "R",
+  "containerElementId": "example/JavaTypes/convert/#R/PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "annotations": []
+}
+
+var typeParameter: T [example/JavaTypes/typeParameter/#/PointingToDeclaration/].type:
+{
+  "kind": "typeParameter",
+  "name": "T",
+  "containerElementId": "example/JavaTypes///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "annotations": []
+}
+
+var parameterized: List<String> [example/JavaTypes/parameterized/#/PointingToDeclaration/].type:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "List",
+      "typeArguments": [
+        {
+          "kind": "invariant",
+          "type": {
+            "kind": "classLike",
+            "qualifiers": [
+              {
+                "name": "String",
+                "typeArguments": []
+              }
+            ],
+            "classLikeId": "java.lang/String///PointingToDeclaration/",
+            "isMarkedNullable": false,
+            "isEnhancedNullability": false,
+            "annotations": []
+          }
+        }
+      ]
+    }
+  ],
+  "classLikeId": "java.util/List///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "isEnhancedNullability": false,
+  "annotations": []
+}
+
+var nested: Map<String, List<T>> [example/JavaTypes/nested/#/PointingToDeclaration/].type:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "Map",
+      "typeArguments": [
+        {
+          "kind": "invariant",
+          "type": {
+            "kind": "classLike",
+            "qualifiers": [
+              {
+                "name": "String",
+                "typeArguments": []
+              }
+            ],
+            "classLikeId": "java.lang/String///PointingToDeclaration/",
+            "isMarkedNullable": false,
+            "isEnhancedNullability": false,
+            "annotations": []
+          }
+        },
+        {
+          "kind": "invariant",
+          "type": {
+            "kind": "classLike",
+            "qualifiers": [
+              {
+                "name": "List",
+                "typeArguments": [
+                  {
+                    "kind": "invariant",
+                    "type": {
+                      "kind": "typeParameter",
+                      "name": "T",
+                      "containerElementId": "example/JavaTypes///PointingToDeclaration/",
+                      "isMarkedNullable": false,
+                      "annotations": []
+                    }
+                  }
+                ]
+              }
+            ],
+            "classLikeId": "java.util/List///PointingToDeclaration/",
+            "isMarkedNullable": false,
+            "isEnhancedNullability": false,
+            "annotations": []
+          }
+        }
+      ]
+    }
+  ],
+  "classLikeId": "java.util/Map///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "isEnhancedNullability": false,
+  "annotations": []
+}
+
+class JavaTypes [example/JavaTypes///PointingToDeclaration/].typeParameters[0].upperBounds[0]:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "CharSequence",
+      "typeArguments": []
+    }
+  ],
+  "classLikeId": "kotlin/CharSequence///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "isEnhancedNullability": false,
+  "annotations": []
+}
+class JavaTypes [example/JavaTypes///PointingToDeclaration/].typeParameters[0].upperBounds[1]:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "Comparable",
+      "typeArguments": [
+        {
+          "kind": "invariant",
+          "type": {
+            "kind": "typeParameter",
+            "name": "T",
+            "containerElementId": "example/JavaTypes///PointingToDeclaration/",
+            "isMarkedNullable": false,
+            "annotations": []
+          }
+        }
+      ]
+    }
+  ],
+  "classLikeId": "kotlin/Comparable///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "isEnhancedNullability": false,
+  "annotations": []
+}
+class JavaTypes [example/JavaTypes///PointingToDeclaration/].superTypes[0]:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "Base",
+      "typeArguments": [
+        {
+          "kind": "invariant",
+          "type": {
+            "kind": "classLike",
+            "qualifiers": [
+              {
+                "name": "MutableList",
+                "typeArguments": [
+                  {
+                    "kind": "invariant",
+                    "type": {
+                      "kind": "typeParameter",
+                      "name": "T",
+                      "containerElementId": "example/JavaTypes///PointingToDeclaration/",
+                      "isMarkedNullable": false,
+                      "annotations": []
+                    }
+                  }
+                ]
+              }
+            ],
+            "classLikeId": "kotlin.collections/MutableList///PointingToDeclaration/",
+            "isMarkedNullable": false,
+            "isEnhancedNullability": false,
+            "annotations": []
+          }
+        }
+      ]
+    }
+  ],
+  "classLikeId": "example/Base///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "isEnhancedNullability": false,
+  "annotations": []
+}
+
+interface Base [example/Base///PointingToDeclaration/].typeParameters[0].upperBounds[0]:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "Any",
+      "typeArguments": []
+    }
+  ],
+  "classLikeId": "kotlin/Any///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "isEnhancedNullability": false,
+  "annotations": []
+}
