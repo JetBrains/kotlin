@@ -35,7 +35,7 @@ class KonanIrLinker(
     private val librariesBeingCached: Map<KotlinLibrary, PartialCacheInfo>,
     externalOverridabilityConditions: List<IrExternalOverridabilityCondition>,
     partialLinkageIssueSink: PartialLinkageIssueSink? = null,
-) : KotlinIrLinker(configuration, symbolTable) {
+) : KotlinIrLinker(configuration, symbolTable, friendModules) {
     override fun isBuiltInModule(module: IrModuleFragment): Boolean {
         val klib = module.kotlinLibrary ?: return false
         return klib.isNativeStdlib
@@ -57,7 +57,6 @@ class KonanIrLinker(
         fileLocalSymbolProvider = fileLocalSymbolProvider,
         symbolTable = symbolTable,
         mangler = irMangler,
-        friendModules = friendModules,
         partialLinkageSupport = partialLinkageSupport,
         platformSpecificClassFilter = K1LazyFakeOverrideClassFilter,
         fakeOverrideDeclarationTable = KonanDeclarationTable(globalDeclarationTable),
