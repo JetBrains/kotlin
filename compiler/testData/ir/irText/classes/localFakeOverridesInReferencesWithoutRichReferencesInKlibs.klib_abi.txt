@@ -1,0 +1,23 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+open class /Base { // /Base|null[0]
+    final val bar // /Base.bar|{}bar[0]
+        final fun <get-bar>(): kotlin/String // /Base.bar.<get-bar>|<get-bar>(){}[0]
+    final var baz // /Base.baz|{}baz[0]
+        final fun <get-baz>(): kotlin/String // /Base.baz.<get-baz>|<get-baz>(){}[0]
+        final fun <set-baz>(kotlin/String) // /Base.baz.<set-baz>|<set-baz>(kotlin.String){}[0]
+    constructor <init>() // /Base.<init>|<init>(){}[0]
+    final fun foo(): kotlin/String // /Base.foo|foo(){}[0]
+}
+abstract interface /WithDefaults { // /WithDefaults|null[0]
+    open val quux // /WithDefaults.quux|{}quux[0]
+        open fun <get-quux>(): kotlin/String // /WithDefaults.quux.<get-quux>|<get-quux>(){}[0]
+    open fun qux(): kotlin/String // /WithDefaults.qux|qux(){}[0]
+}
+final fun /boundReferences(): kotlin/String // /boundReferences|boundReferences(){}[0]
+final fun /calls(): kotlin/String // /calls|calls(){}[0]
+final fun /unboundReferences(): kotlin/String // /unboundReferences|unboundReferences(){}[0]

@@ -1,0 +1,407 @@
+FILE fqName:<root> fileName:/localFakeOverridesInReferencesWithoutRichReferencesInKlibs.kt lineStartOffsets: [0, 15, 39, 58, 194, 317, 431, 540, 664, 780, 781, 799, 829, 863, 891, 893, 894, 919, 949, 985, 987, 988, 1020, 1067, 1095, 1123, 1158, 1195, 1233, 1344, 1346, 1347, 1381, 1420, 1421, 1451, 1481, 1520, 1602, 1604, 1605, 1657, 1679, 1726, 1790, 1792]
+  CLASS[781, 892] CLASS name:Base modality:OPEN visibility:public superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER[781, 892] INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Base
+    PROPERTY[867, 890] name:baz visibility:public modality:FINAL [var]
+      FIELD[867, 890] PROPERTY_BACKING_FIELD name:baz type:kotlin.String visibility:private
+        EXPRESSION_BODY[885, 890]
+          CONST[885, 890] String type=kotlin.String value="baz"
+      FUN[867, 882] DEFAULT_PROPERTY_ACCESSOR name:<get-baz> visibility:public modality:FINAL returnType:kotlin.String
+        VALUE_PARAMETER[867, 882] kind:DispatchReceiver name:<this> index:0 type:<root>.Base
+        correspondingProperty: PROPERTY[867, 890] name:baz visibility:public modality:FINAL [var]
+        BLOCK_BODY[867, 882]
+          RETURN[867, 882] type=kotlin.Nothing from='/Base.baz.<get-baz>|<get-baz>(){}[0]'
+            GET_FIELD[867, 882] 'FIELD PROPERTY_BACKING_FIELD name:baz type:kotlin.String visibility:private' type=kotlin.String origin=null
+              receiver: GET_VAR[867, 882] '<this>: <root>.Base declared in <root>.Base.<get-baz>' type=<root>.Base origin=null
+      FUN[867, 882] DEFAULT_PROPERTY_ACCESSOR name:<set-baz> visibility:public modality:FINAL returnType:kotlin.Unit
+        VALUE_PARAMETER[867, 882] kind:DispatchReceiver name:<this> index:0 type:<root>.Base
+        VALUE_PARAMETER[867, 882] kind:Regular name:<set-?> index:1 type:kotlin.String
+        correspondingProperty: PROPERTY[867, 890] name:baz visibility:public modality:FINAL [var]
+        BLOCK_BODY[867, 882]
+          SET_FIELD[867, 882] 'FIELD PROPERTY_BACKING_FIELD name:baz type:kotlin.String visibility:private' type=kotlin.Unit origin=null
+            receiver: GET_VAR[867, 882] '<this>: <root>.Base declared in <root>.Base.<set-baz>' type=<root>.Base origin=null
+            value: GET_VAR[867, 882] '<set-?>: kotlin.String declared in <root>.Base.<set-baz>' type=kotlin.String origin=null
+    CONSTRUCTOR[781, 892] visibility:public returnType:<root>.Base [primary]
+      BLOCK_BODY[781, 892]
+        DELEGATING_CONSTRUCTOR_CALL[781, 892] 'kotlin/Any.<init>|<init>(){}[0]'
+        INSTANCE_INITIALIZER_CALL[781, 892] classDescriptor='/Base|null[0]' type=kotlin.Unit
+    FUN[-2, -2] FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER[-2, -2] kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        kotlin/Any.equals|equals(kotlin.Any?){}[0]
+    FUN[-2, -2] FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        kotlin/Any.hashCode|hashCode(){}[0]
+    FUN[-2, -2] FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        kotlin/Any.toString|toString(){}[0]
+    FUN[803, 828] name:foo visibility:public modality:FINAL returnType:kotlin.String
+      VALUE_PARAMETER[803, 828] kind:DispatchReceiver name:<this> index:0 type:<root>.Base
+      BLOCK_BODY[823, 828]
+        RETURN[828, 828] type=kotlin.Nothing from='/Base.foo|foo(){}[0]'
+          CONST[823, 828] String type=kotlin.String value="foo"
+    PROPERTY[833, 862] name:bar visibility:public modality:FINAL [val]
+      FUN[849, 862] name:<get-bar> visibility:public modality:FINAL returnType:kotlin.String
+        VALUE_PARAMETER[849, 862] kind:DispatchReceiver name:<this> index:0 type:<root>.Base
+        correspondingProperty: PROPERTY[833, 862] name:bar visibility:public modality:FINAL [val]
+        BLOCK_BODY[857, 862]
+          RETURN[862, 862] type=kotlin.Nothing from='/Base.bar.<get-bar>|<get-bar>(){}[0]'
+            CONST[857, 862] String type=kotlin.String value="bar"
+  CLASS[894, 986] INTERFACE name:WithDefaults modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER[894, 986] INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.WithDefaults
+    FUN[-2, -2] FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER[-2, -2] kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        kotlin/Any.equals|equals(kotlin.Any?){}[0]
+    FUN[-2, -2] FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        kotlin/Any.hashCode|hashCode(){}[0]
+    FUN[-2, -2] FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        kotlin/Any.toString|toString(){}[0]
+    FUN[923, 948] name:qux visibility:public modality:OPEN returnType:kotlin.String
+      VALUE_PARAMETER[923, 948] kind:DispatchReceiver name:<this> index:0 type:<root>.WithDefaults
+      BLOCK_BODY[943, 948]
+        RETURN[948, 948] type=kotlin.Nothing from='/WithDefaults.qux|qux(){}[0]'
+          CONST[943, 948] String type=kotlin.String value="qux"
+    PROPERTY[953, 984] name:quux visibility:public modality:OPEN [val]
+      FUN[970, 984] name:<get-quux> visibility:public modality:OPEN returnType:kotlin.String
+        VALUE_PARAMETER[970, 984] kind:DispatchReceiver name:<this> index:0 type:<root>.WithDefaults
+        correspondingProperty: PROPERTY[953, 984] name:quux visibility:public modality:OPEN [val]
+        BLOCK_BODY[978, 984]
+          RETURN[984, 984] type=kotlin.Nothing from='/WithDefaults.quux.<get-quux>|<get-quux>(){}[0]'
+            CONST[978, 984] String type=kotlin.String value="quux"
+  FUN[988, 1345] name:boundReferences visibility:public modality:FINAL returnType:kotlin.String
+    BLOCK_BODY[1018, 1345]
+      VAR[1024, 1066] name:obj type:<root>.boundReferences.<no name provided> [val]
+        BLOCK[1034, 1066] type=<root>.boundReferences.<no name provided> origin=OBJECT_LITERAL
+          CLASS[1034, 1066] CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Base; <root>.WithDefaults]
+            thisReceiver: VALUE_PARAMETER[1034, 1066] INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.boundReferences.<no name provided>
+            CONSTRUCTOR[1034, 1066] visibility:public returnType:<root>.boundReferences.<no name provided> [primary]
+              BLOCK_BODY[1034, 1066]
+                DELEGATING_CONSTRUCTOR_CALL[1034, 1066] '/Base.<init>|<init>(){}[0]'
+                INSTANCE_INITIALIZER_CALL[1034, 1066] classDescriptor='/boundReferences.<no name provided>|boundReferences(){}[0]' type=kotlin.Unit
+            FUN[-2, -2] FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+              VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+              VALUE_PARAMETER[-2, -2] kind:Regular name:other index:1 type:kotlin.Any?
+              overridden:
+                /Base.equals|equals(kotlin.Any?){}[0]
+                /WithDefaults.equals|equals(kotlin.Any?){}[0]
+            FUN[-2, -2] FAKE_OVERRIDE name:foo visibility:public modality:FINAL returnType:kotlin.String [fake_override]
+              VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:<root>.Base
+              overridden:
+                /Base.foo|foo(){}[0]
+            FUN[-2, -2] FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+              VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+              overridden:
+                /Base.hashCode|hashCode(){}[0]
+                /WithDefaults.hashCode|hashCode(){}[0]
+            FUN[-2, -2] FAKE_OVERRIDE name:qux visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+              VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:<root>.WithDefaults
+              overridden:
+                /WithDefaults.qux|qux(){}[0]
+            FUN[-2, -2] FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+              VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+              overridden:
+                /Base.toString|toString(){}[0]
+                /WithDefaults.toString|toString(){}[0]
+            PROPERTY[-2, -2] FAKE_OVERRIDE name:bar visibility:public modality:FINAL [fake_override,val]
+              overridden:
+                /Base.bar|{}bar[0]
+              FUN[-2, -2] FAKE_OVERRIDE name:<get-bar> visibility:public modality:FINAL returnType:kotlin.String [fake_override]
+                VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:<root>.Base
+                correspondingProperty: PROPERTY[-2, -2] FAKE_OVERRIDE name:bar visibility:public modality:FINAL [fake_override,val]
+                overridden:
+                  /Base.bar.<get-bar>|<get-bar>(){}[0]
+            PROPERTY[-2, -2] FAKE_OVERRIDE name:baz visibility:public modality:FINAL [fake_override,var]
+              overridden:
+                /Base.baz|{}baz[0]
+              FUN[-2, -2] FAKE_OVERRIDE name:<get-baz> visibility:public modality:FINAL returnType:kotlin.String [fake_override]
+                VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:<root>.Base
+                correspondingProperty: PROPERTY[-2, -2] FAKE_OVERRIDE name:baz visibility:public modality:FINAL [fake_override,var]
+                overridden:
+                  /Base.baz.<get-baz>|<get-baz>(){}[0]
+              FUN[-2, -2] FAKE_OVERRIDE name:<set-baz> visibility:public modality:FINAL returnType:kotlin.Unit [fake_override]
+                VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:<root>.Base
+                VALUE_PARAMETER[-2, -2] kind:Regular name:<set-?> index:1 type:kotlin.String
+                correspondingProperty: PROPERTY[-2, -2] FAKE_OVERRIDE name:baz visibility:public modality:FINAL [fake_override,var]
+                overridden:
+                  /Base.baz.<set-baz>|<set-baz>(kotlin.String){}[0]
+            PROPERTY[-2, -2] FAKE_OVERRIDE name:quux visibility:public modality:OPEN [fake_override,val]
+              overridden:
+                /WithDefaults.quux|{}quux[0]
+              FUN[-2, -2] FAKE_OVERRIDE name:<get-quux> visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+                VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:<root>.WithDefaults
+                correspondingProperty: PROPERTY[-2, -2] FAKE_OVERRIDE name:quux visibility:public modality:OPEN [fake_override,val]
+                overridden:
+                  /WithDefaults.quux.<get-quux>|<get-quux>(){}[0]
+          CONSTRUCTOR_CALL[1034, 1066] '/boundReferences.<no name provided>.<init>|boundReferences(){}<init>(){}[0]' type=<root>.boundReferences.<no name provided> origin=OBJECT_LITERAL
+      VAR[1071, 1094] name:function type:kotlin.reflect.KFunction0<kotlin.String> [val]
+        RICH_FUNCTION_REFERENCE[1086, 1094] type=kotlin.reflect.KFunction0<kotlin.String> origin=null reflectionTarget='/Base.foo|foo(){}[0]'
+          overriddenFunctionSymbol: kotlin.reflect/KFunction0.invoke|invoke(){}[0]
+          bound receiver: GET_VAR[1086, 1089] 'val obj: <root>.boundReferences.<no name provided> declared in <root>.boundReferences' type=<root>.boundReferences.<no name provided> origin=null
+          invoke: FUN[1086, 1094] LOCAL_FUNCTION_FOR_LAMBDA name:foo visibility:local modality:FINAL returnType:kotlin.String
+            VALUE_PARAMETER[1086, 1094] ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.boundReferences.<no name provided>
+            BLOCK_BODY[-1, -1]
+              RETURN[-1, -1] type=kotlin.Nothing from='/boundReferences.foo|boundReferences(){}foo#static(#boundReferences.<no name provided>){}[0]'
+                CALL[1086, 1094] '/Base.foo|foo(){}[0]' type=kotlin.String origin=null
+                  ARG <this>: TYPE_OP[1086, 1094] type=<root>.Base origin=IMPLICIT_CAST typeOperand=<root>.Base
+                    GET_VAR[1086, 1094] 'receiver: <root>.boundReferences.<no name provided> declared in <root>.boundReferences.foo' type=<root>.boundReferences.<no name provided> origin=ADAPTED_FUNCTION_REFERENCE
+      VAR[1099, 1122] name:property type:kotlin.reflect.KProperty0<kotlin.String> [val]
+        RICH_PROPERTY_REFERENCE[1114, 1122] type=kotlin.reflect.KProperty0<kotlin.String> origin=null reflectionTarget='/Base.bar|{}bar[0]'
+          bound receiver: GET_VAR[1114, 1117] 'val obj: <root>.boundReferences.<no name provided> declared in <root>.boundReferences' type=<root>.boundReferences.<no name provided> origin=null
+          getter: FUN[1114, 1122] LOCAL_FUNCTION_FOR_LAMBDA name:bar visibility:local modality:FINAL returnType:kotlin.String
+            VALUE_PARAMETER[1114, 1122] ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.boundReferences.<no name provided>
+            BLOCK_BODY[-1, -1]
+              RETURN[-1, -1] type=kotlin.Nothing from='/boundReferences.bar|boundReferences(){}bar#static(#boundReferences.<no name provided>){}[0]'
+                CALL[1114, 1122] '/Base.bar.<get-bar>|<get-bar>(){}[0]' type=kotlin.String origin=null
+                  ARG <this>: TYPE_OP[1114, 1122] type=<root>.Base origin=IMPLICIT_CAST typeOperand=<root>.Base
+                    GET_VAR[1114, 1122] 'receiver: <root>.boundReferences.<no name provided> declared in <root>.boundReferences.bar' type=<root>.boundReferences.<no name provided> origin=ADAPTED_FUNCTION_REFERENCE
+      VAR[1127, 1157] name:mutableProperty type:kotlin.reflect.KMutableProperty0<kotlin.String> [val]
+        RICH_PROPERTY_REFERENCE[1149, 1157] type=kotlin.reflect.KMutableProperty0<kotlin.String> origin=null reflectionTarget='/Base.baz|{}baz[0]'
+          bound receiver: GET_VAR[1149, 1152] 'val obj: <root>.boundReferences.<no name provided> declared in <root>.boundReferences' type=<root>.boundReferences.<no name provided> origin=null
+          getter: FUN[1149, 1157] LOCAL_FUNCTION_FOR_LAMBDA name:baz visibility:local modality:FINAL returnType:kotlin.String
+            VALUE_PARAMETER[1149, 1157] ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.boundReferences.<no name provided>
+            BLOCK_BODY[-1, -1]
+              RETURN[-1, -1] type=kotlin.Nothing from='/boundReferences.baz|boundReferences(){}baz#static(#boundReferences.<no name provided>){}[0]'
+                CALL[1149, 1157] '/Base.baz.<get-baz>|<get-baz>(){}[0]' type=kotlin.String origin=null
+                  ARG <this>: TYPE_OP[1149, 1157] type=<root>.Base origin=IMPLICIT_CAST typeOperand=<root>.Base
+                    GET_VAR[1149, 1157] 'receiver: <root>.boundReferences.<no name provided> declared in <root>.boundReferences.baz' type=<root>.boundReferences.<no name provided> origin=ADAPTED_FUNCTION_REFERENCE
+          setter: FUN[1149, 1157] LOCAL_FUNCTION_FOR_LAMBDA name:baz visibility:local modality:FINAL returnType:kotlin.Unit
+            VALUE_PARAMETER[1149, 1157] ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.boundReferences.<no name provided>
+            VALUE_PARAMETER[1149, 1157] ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:1 type:kotlin.String
+            BLOCK_BODY[-1, -1]
+              RETURN[-1, -1] type=kotlin.Nothing from='/boundReferences.baz|boundReferences(){}baz#static(#boundReferences.<no name provided>;kotlin.String){}[0]'
+                CALL[1149, 1157] '/Base.baz.<set-baz>|<set-baz>(kotlin.String){}[0]' type=kotlin.Unit origin=null
+                  ARG <this>: TYPE_OP[1149, 1157] type=<root>.Base origin=IMPLICIT_CAST typeOperand=<root>.Base
+                    GET_VAR[1149, 1157] 'receiver: <root>.boundReferences.<no name provided> declared in <root>.boundReferences.baz' type=<root>.boundReferences.<no name provided> origin=ADAPTED_FUNCTION_REFERENCE
+                  ARG <set-?>: GET_VAR[1149, 1157] 'value: kotlin.String declared in <root>.boundReferences.baz' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE
+      VAR[1162, 1194] name:interfaceFunction type:kotlin.reflect.KFunction0<kotlin.String> [val]
+        RICH_FUNCTION_REFERENCE[1186, 1194] type=kotlin.reflect.KFunction0<kotlin.String> origin=null reflectionTarget='/WithDefaults.qux|qux(){}[0]'
+          overriddenFunctionSymbol: kotlin.reflect/KFunction0.invoke|invoke(){}[0]
+          bound receiver: GET_VAR[1186, 1189] 'val obj: <root>.boundReferences.<no name provided> declared in <root>.boundReferences' type=<root>.boundReferences.<no name provided> origin=null
+          invoke: FUN[1186, 1194] LOCAL_FUNCTION_FOR_LAMBDA name:qux visibility:local modality:FINAL returnType:kotlin.String
+            VALUE_PARAMETER[1186, 1194] ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.boundReferences.<no name provided>
+            BLOCK_BODY[-1, -1]
+              RETURN[-1, -1] type=kotlin.Nothing from='/boundReferences.qux|boundReferences(){}qux#static(#boundReferences.<no name provided>){}[0]'
+                CALL[1186, 1194] '/WithDefaults.qux|qux(){}[0]' type=kotlin.String origin=null
+                  ARG <this>: TYPE_OP[1186, 1194] type=<root>.WithDefaults origin=IMPLICIT_CAST typeOperand=<root>.WithDefaults
+                    GET_VAR[1186, 1194] 'receiver: <root>.boundReferences.<no name provided> declared in <root>.boundReferences.qux' type=<root>.boundReferences.<no name provided> origin=ADAPTED_FUNCTION_REFERENCE
+      VAR[1199, 1232] name:interfaceProperty type:kotlin.reflect.KProperty0<kotlin.String> [val]
+        RICH_PROPERTY_REFERENCE[1223, 1232] type=kotlin.reflect.KProperty0<kotlin.String> origin=null reflectionTarget='/WithDefaults.quux|{}quux[0]'
+          bound receiver: GET_VAR[1223, 1226] 'val obj: <root>.boundReferences.<no name provided> declared in <root>.boundReferences' type=<root>.boundReferences.<no name provided> origin=null
+          getter: FUN[1223, 1232] LOCAL_FUNCTION_FOR_LAMBDA name:quux visibility:local modality:FINAL returnType:kotlin.String
+            VALUE_PARAMETER[1223, 1232] ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.boundReferences.<no name provided>
+            BLOCK_BODY[-1, -1]
+              RETURN[-1, -1] type=kotlin.Nothing from='/boundReferences.quux|boundReferences(){}quux#static(#boundReferences.<no name provided>){}[0]'
+                CALL[1223, 1232] '/WithDefaults.quux.<get-quux>|<get-quux>(){}[0]' type=kotlin.String origin=null
+                  ARG <this>: TYPE_OP[1223, 1232] type=<root>.WithDefaults origin=IMPLICIT_CAST typeOperand=<root>.WithDefaults
+                    GET_VAR[1223, 1232] 'receiver: <root>.boundReferences.<no name provided> declared in <root>.boundReferences.quux' type=<root>.boundReferences.<no name provided> origin=ADAPTED_FUNCTION_REFERENCE
+      RETURN[1237, 1343] type=kotlin.Nothing from='/boundReferences|boundReferences(){}[0]'
+        CALL[1244, 1343] 'kotlin/String.plus|plus(kotlin.Any?){}[0]' type=kotlin.String origin=PLUS
+          ARG <this>: CALL[1244, 1317] 'kotlin/String.plus|plus(kotlin.Any?){}[0]' type=kotlin.String origin=PLUS
+            ARG <this>: CALL[1244, 1295] 'kotlin/String.plus|plus(kotlin.Any?){}[0]' type=kotlin.String origin=PLUS
+              ARG <this>: CALL[1244, 1271] 'kotlin/String.plus|plus(kotlin.Any?){}[0]' type=kotlin.String origin=PLUS
+                ARG <this>: CALL[1244, 1254] 'kotlin.reflect/KFunction0.invoke|invoke(){}[0]' type=kotlin.String origin=INVOKE
+                  ARG <this>: GET_VAR[1244, 1252] 'val function: kotlin.reflect.KFunction0<kotlin.String> declared in <root>.boundReferences' type=kotlin.reflect.KFunction0<kotlin.String> origin=VARIABLE_AS_FUNCTION
+                ARG other: CALL[1266, 1271] 'kotlin.reflect/KProperty0.get|get(){}[0]' type=kotlin.String origin=null
+                  ARG <this>: GET_VAR[1257, 1265] 'val property: kotlin.reflect.KProperty0<kotlin.String> declared in <root>.boundReferences' type=kotlin.reflect.KProperty0<kotlin.String> origin=null
+              ARG other: CALL[1290, 1295] 'kotlin.reflect/KMutableProperty0.get|get(){}[0]' type=kotlin.String origin=null
+                ARG <this>: GET_VAR[1274, 1289] 'val mutableProperty: kotlin.reflect.KMutableProperty0<kotlin.String> declared in <root>.boundReferences' type=kotlin.reflect.KMutableProperty0<kotlin.String> origin=null
+            ARG other: CALL[1298, 1317] 'kotlin.reflect/KFunction0.invoke|invoke(){}[0]' type=kotlin.String origin=INVOKE
+              ARG <this>: GET_VAR[1298, 1315] 'val interfaceFunction: kotlin.reflect.KFunction0<kotlin.String> declared in <root>.boundReferences' type=kotlin.reflect.KFunction0<kotlin.String> origin=VARIABLE_AS_FUNCTION
+          ARG other: CALL[1338, 1343] 'kotlin.reflect/KProperty0.get|get(){}[0]' type=kotlin.String origin=null
+            ARG <this>: GET_VAR[1320, 1337] 'val interfaceProperty: kotlin.reflect.KProperty0<kotlin.String> declared in <root>.boundReferences' type=kotlin.reflect.KProperty0<kotlin.String> origin=null
+  FUN[1657, 1791] name:calls visibility:public modality:FINAL returnType:kotlin.String
+    BLOCK_BODY[1677, 1791]
+      VAR[1683, 1725] name:obj type:<root>.calls.<no name provided> [val]
+        BLOCK[1693, 1725] type=<root>.calls.<no name provided> origin=OBJECT_LITERAL
+          CLASS[1693, 1725] CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Base; <root>.WithDefaults]
+            thisReceiver: VALUE_PARAMETER[1693, 1725] INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.calls.<no name provided>
+            CONSTRUCTOR[1693, 1725] visibility:public returnType:<root>.calls.<no name provided> [primary]
+              BLOCK_BODY[1693, 1725]
+                DELEGATING_CONSTRUCTOR_CALL[1693, 1725] '/Base.<init>|<init>(){}[0]'
+                INSTANCE_INITIALIZER_CALL[1693, 1725] classDescriptor='/calls.<no name provided>|calls(){}[0]' type=kotlin.Unit
+            FUN[-2, -2] FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+              VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+              VALUE_PARAMETER[-2, -2] kind:Regular name:other index:1 type:kotlin.Any?
+              overridden:
+                /Base.equals|equals(kotlin.Any?){}[0]
+                /WithDefaults.equals|equals(kotlin.Any?){}[0]
+            FUN[-2, -2] FAKE_OVERRIDE name:foo visibility:public modality:FINAL returnType:kotlin.String [fake_override]
+              VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:<root>.Base
+              overridden:
+                /Base.foo|foo(){}[0]
+            FUN[-2, -2] FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+              VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+              overridden:
+                /Base.hashCode|hashCode(){}[0]
+                /WithDefaults.hashCode|hashCode(){}[0]
+            FUN[-2, -2] FAKE_OVERRIDE name:qux visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+              VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:<root>.WithDefaults
+              overridden:
+                /WithDefaults.qux|qux(){}[0]
+            FUN[-2, -2] FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+              VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+              overridden:
+                /Base.toString|toString(){}[0]
+                /WithDefaults.toString|toString(){}[0]
+            PROPERTY[-2, -2] FAKE_OVERRIDE name:bar visibility:public modality:FINAL [fake_override,val]
+              overridden:
+                /Base.bar|{}bar[0]
+              FUN[-2, -2] FAKE_OVERRIDE name:<get-bar> visibility:public modality:FINAL returnType:kotlin.String [fake_override]
+                VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:<root>.Base
+                correspondingProperty: PROPERTY[-2, -2] FAKE_OVERRIDE name:bar visibility:public modality:FINAL [fake_override,val]
+                overridden:
+                  /Base.bar.<get-bar>|<get-bar>(){}[0]
+            PROPERTY[-2, -2] FAKE_OVERRIDE name:baz visibility:public modality:FINAL [fake_override,var]
+              overridden:
+                /Base.baz|{}baz[0]
+              FUN[-2, -2] FAKE_OVERRIDE name:<get-baz> visibility:public modality:FINAL returnType:kotlin.String [fake_override]
+                VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:<root>.Base
+                correspondingProperty: PROPERTY[-2, -2] FAKE_OVERRIDE name:baz visibility:public modality:FINAL [fake_override,var]
+                overridden:
+                  /Base.baz.<get-baz>|<get-baz>(){}[0]
+              FUN[-2, -2] FAKE_OVERRIDE name:<set-baz> visibility:public modality:FINAL returnType:kotlin.Unit [fake_override]
+                VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:<root>.Base
+                VALUE_PARAMETER[-2, -2] kind:Regular name:<set-?> index:1 type:kotlin.String
+                correspondingProperty: PROPERTY[-2, -2] FAKE_OVERRIDE name:baz visibility:public modality:FINAL [fake_override,var]
+                overridden:
+                  /Base.baz.<set-baz>|<set-baz>(kotlin.String){}[0]
+            PROPERTY[-2, -2] FAKE_OVERRIDE name:quux visibility:public modality:OPEN [fake_override,val]
+              overridden:
+                /WithDefaults.quux|{}quux[0]
+              FUN[-2, -2] FAKE_OVERRIDE name:<get-quux> visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+                VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:<root>.WithDefaults
+                correspondingProperty: PROPERTY[-2, -2] FAKE_OVERRIDE name:quux visibility:public modality:OPEN [fake_override,val]
+                overridden:
+                  /WithDefaults.quux.<get-quux>|<get-quux>(){}[0]
+          CONSTRUCTOR_CALL[1693, 1725] '/calls.<no name provided>.<init>|calls(){}<init>(){}[0]' type=<root>.calls.<no name provided> origin=OBJECT_LITERAL
+      RETURN[1730, 1789] type=kotlin.Nothing from='/calls|calls(){}[0]'
+        CALL[1737, 1789] 'kotlin/String.plus|plus(kotlin.Any?){}[0]' type=kotlin.String origin=PLUS
+          ARG <this>: CALL[1737, 1778] 'kotlin/String.plus|plus(kotlin.Any?){}[0]' type=kotlin.String origin=PLUS
+            ARG <this>: CALL[1737, 1766] 'kotlin/String.plus|plus(kotlin.Any?){}[0]' type=kotlin.String origin=PLUS
+              ARG <this>: CALL[1737, 1756] 'kotlin/String.plus|plus(kotlin.Any?){}[0]' type=kotlin.String origin=PLUS
+                ARG <this>: CALL[1741, 1746] '/Base.foo|foo(){}[0]' type=kotlin.String origin=null
+                  ARG <this>: TYPE_OP[1737, 1740] type=<root>.Base origin=IMPLICIT_CAST typeOperand=<root>.Base
+                    GET_VAR[1737, 1740] 'val obj: <root>.calls.<no name provided> declared in <root>.calls' type=<root>.calls.<no name provided> origin=null
+                ARG other: CALL[1753, 1756] '/Base.bar.<get-bar>|<get-bar>(){}[0]' type=kotlin.String origin=GET_PROPERTY
+                  ARG <this>: TYPE_OP[1749, 1752] type=<root>.Base origin=IMPLICIT_CAST typeOperand=<root>.Base
+                    GET_VAR[1749, 1752] 'val obj: <root>.calls.<no name provided> declared in <root>.calls' type=<root>.calls.<no name provided> origin=null
+              ARG other: CALL[1763, 1766] '/Base.baz.<get-baz>|<get-baz>(){}[0]' type=kotlin.String origin=GET_PROPERTY
+                ARG <this>: TYPE_OP[1759, 1762] type=<root>.Base origin=IMPLICIT_CAST typeOperand=<root>.Base
+                  GET_VAR[1759, 1762] 'val obj: <root>.calls.<no name provided> declared in <root>.calls' type=<root>.calls.<no name provided> origin=null
+            ARG other: CALL[1773, 1778] '/WithDefaults.qux|qux(){}[0]' type=kotlin.String origin=null
+              ARG <this>: TYPE_OP[1769, 1772] type=<root>.WithDefaults origin=IMPLICIT_CAST typeOperand=<root>.WithDefaults
+                GET_VAR[1769, 1772] 'val obj: <root>.calls.<no name provided> declared in <root>.calls' type=<root>.calls.<no name provided> origin=null
+          ARG other: CALL[1785, 1789] '/WithDefaults.quux.<get-quux>|<get-quux>(){}[0]' type=kotlin.String origin=GET_PROPERTY
+            ARG <this>: TYPE_OP[1781, 1784] type=<root>.WithDefaults origin=IMPLICIT_CAST typeOperand=<root>.WithDefaults
+              GET_VAR[1781, 1784] 'val obj: <root>.calls.<no name provided> declared in <root>.calls' type=<root>.calls.<no name provided> origin=null
+  FUN[1347, 1603] name:unboundReferences visibility:public modality:FINAL returnType:kotlin.String
+    BLOCK_BODY[1379, 1603]
+      CLASS[1385, 1419] CLASS name:Local modality:FINAL visibility:local superTypes:[<root>.Base; <root>.WithDefaults]
+        thisReceiver: VALUE_PARAMETER[1385, 1419] INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.unboundReferences.Local
+        CONSTRUCTOR[1385, 1419] visibility:public returnType:<root>.unboundReferences.Local [primary]
+          BLOCK_BODY[1385, 1419]
+            DELEGATING_CONSTRUCTOR_CALL[1385, 1419] '/Base.<init>|<init>(){}[0]'
+            INSTANCE_INITIALIZER_CALL[1385, 1419] classDescriptor='/unboundReferences.Local|unboundReferences(){}[0]' type=kotlin.Unit
+        FUN[-2, -2] FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+          VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+          VALUE_PARAMETER[-2, -2] kind:Regular name:other index:1 type:kotlin.Any?
+          overridden:
+            /Base.equals|equals(kotlin.Any?){}[0]
+            /WithDefaults.equals|equals(kotlin.Any?){}[0]
+        FUN[-2, -2] FAKE_OVERRIDE name:foo visibility:public modality:FINAL returnType:kotlin.String [fake_override]
+          VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:<root>.Base
+          overridden:
+            /Base.foo|foo(){}[0]
+        FUN[-2, -2] FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+          VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+          overridden:
+            /Base.hashCode|hashCode(){}[0]
+            /WithDefaults.hashCode|hashCode(){}[0]
+        FUN[-2, -2] FAKE_OVERRIDE name:qux visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+          VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:<root>.WithDefaults
+          overridden:
+            /WithDefaults.qux|qux(){}[0]
+        FUN[-2, -2] FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+          VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+          overridden:
+            /Base.toString|toString(){}[0]
+            /WithDefaults.toString|toString(){}[0]
+        PROPERTY[-2, -2] FAKE_OVERRIDE name:bar visibility:public modality:FINAL [fake_override,val]
+          overridden:
+            /Base.bar|{}bar[0]
+          FUN[-2, -2] FAKE_OVERRIDE name:<get-bar> visibility:public modality:FINAL returnType:kotlin.String [fake_override]
+            VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:<root>.Base
+            correspondingProperty: PROPERTY[-2, -2] FAKE_OVERRIDE name:bar visibility:public modality:FINAL [fake_override,val]
+            overridden:
+              /Base.bar.<get-bar>|<get-bar>(){}[0]
+        PROPERTY[-2, -2] FAKE_OVERRIDE name:baz visibility:public modality:FINAL [fake_override,var]
+          overridden:
+            /Base.baz|{}baz[0]
+          FUN[-2, -2] FAKE_OVERRIDE name:<get-baz> visibility:public modality:FINAL returnType:kotlin.String [fake_override]
+            VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:<root>.Base
+            correspondingProperty: PROPERTY[-2, -2] FAKE_OVERRIDE name:baz visibility:public modality:FINAL [fake_override,var]
+            overridden:
+              /Base.baz.<get-baz>|<get-baz>(){}[0]
+          FUN[-2, -2] FAKE_OVERRIDE name:<set-baz> visibility:public modality:FINAL returnType:kotlin.Unit [fake_override]
+            VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:<root>.Base
+            VALUE_PARAMETER[-2, -2] kind:Regular name:<set-?> index:1 type:kotlin.String
+            correspondingProperty: PROPERTY[-2, -2] FAKE_OVERRIDE name:baz visibility:public modality:FINAL [fake_override,var]
+            overridden:
+              /Base.baz.<set-baz>|<set-baz>(kotlin.String){}[0]
+        PROPERTY[-2, -2] FAKE_OVERRIDE name:quux visibility:public modality:OPEN [fake_override,val]
+          overridden:
+            /WithDefaults.quux|{}quux[0]
+          FUN[-2, -2] FAKE_OVERRIDE name:<get-quux> visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+            VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:<root>.WithDefaults
+            correspondingProperty: PROPERTY[-2, -2] FAKE_OVERRIDE name:quux visibility:public modality:OPEN [fake_override,val]
+            overridden:
+              /WithDefaults.quux.<get-quux>|<get-quux>(){}[0]
+      VAR[1425, 1450] name:function type:kotlin.reflect.KFunction1<<root>.unboundReferences.Local, kotlin.String> [val]
+        RICH_FUNCTION_REFERENCE[1440, 1450] type=kotlin.reflect.KFunction1<<root>.unboundReferences.Local, kotlin.String> origin=null reflectionTarget='/Base.foo|foo(){}[0]'
+          overriddenFunctionSymbol: kotlin.reflect/KFunction1.invoke|invoke(1:0){}[0]
+          invoke: FUN[1440, 1450] LOCAL_FUNCTION_FOR_LAMBDA name:foo visibility:local modality:FINAL returnType:kotlin.String
+            VALUE_PARAMETER[1440, 1450] ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.unboundReferences.Local
+            BLOCK_BODY[-1, -1]
+              RETURN[-1, -1] type=kotlin.Nothing from='/unboundReferences.foo|unboundReferences(){}foo#static(#unboundReferences.Local){}[0]'
+                CALL[1440, 1450] '/Base.foo|foo(){}[0]' type=kotlin.String origin=null
+                  ARG <this>: TYPE_OP[1440, 1450] type=<root>.Base origin=IMPLICIT_CAST typeOperand=<root>.Base
+                    GET_VAR[1440, 1450] 'p0: <root>.unboundReferences.Local declared in <root>.unboundReferences.foo' type=<root>.unboundReferences.Local origin=null
+      VAR[1455, 1480] name:property type:kotlin.reflect.KProperty1<<root>.unboundReferences.Local, kotlin.String> [val]
+        RICH_PROPERTY_REFERENCE[1470, 1480] type=kotlin.reflect.KProperty1<<root>.unboundReferences.Local, kotlin.String> origin=null reflectionTarget='/Base.bar|{}bar[0]'
+          getter: FUN[1470, 1480] LOCAL_FUNCTION_FOR_LAMBDA name:bar visibility:local modality:FINAL returnType:kotlin.String
+            VALUE_PARAMETER[1470, 1480] ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.unboundReferences.Local
+            BLOCK_BODY[-1, -1]
+              RETURN[-1, -1] type=kotlin.Nothing from='/unboundReferences.bar|unboundReferences(){}bar#static(#unboundReferences.Local){}[0]'
+                CALL[1470, 1480] '/Base.bar.<get-bar>|<get-bar>(){}[0]' type=kotlin.String origin=null
+                  ARG <this>: TYPE_OP[1470, 1480] type=<root>.Base origin=IMPLICIT_CAST typeOperand=<root>.Base
+                    GET_VAR[1470, 1480] 'p0: <root>.unboundReferences.Local declared in <root>.unboundReferences.bar' type=<root>.unboundReferences.Local origin=null
+      VAR[1485, 1519] name:interfaceFunction type:kotlin.reflect.KFunction1<<root>.unboundReferences.Local, kotlin.String> [val]
+        RICH_FUNCTION_REFERENCE[1509, 1519] type=kotlin.reflect.KFunction1<<root>.unboundReferences.Local, kotlin.String> origin=null reflectionTarget='/WithDefaults.qux|qux(){}[0]'
+          overriddenFunctionSymbol: kotlin.reflect/KFunction1.invoke|invoke(1:0){}[0]
+          invoke: FUN[1509, 1519] LOCAL_FUNCTION_FOR_LAMBDA name:qux visibility:local modality:FINAL returnType:kotlin.String
+            VALUE_PARAMETER[1509, 1519] ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.unboundReferences.Local
+            BLOCK_BODY[-1, -1]
+              RETURN[-1, -1] type=kotlin.Nothing from='/unboundReferences.qux|unboundReferences(){}qux#static(#unboundReferences.Local){}[0]'
+                CALL[1509, 1519] '/WithDefaults.qux|qux(){}[0]' type=kotlin.String origin=null
+                  ARG <this>: TYPE_OP[1509, 1519] type=<root>.WithDefaults origin=IMPLICIT_CAST typeOperand=<root>.WithDefaults
+                    GET_VAR[1509, 1519] 'p0: <root>.unboundReferences.Local declared in <root>.unboundReferences.qux' type=<root>.unboundReferences.Local origin=null
+      RETURN[1524, 1601] type=kotlin.Nothing from='/unboundReferences|unboundReferences(){}[0]'
+        CALL[1531, 1601] 'kotlin/String.plus|plus(kotlin.Any?){}[0]' type=kotlin.String origin=PLUS
+          ARG <this>: CALL[1531, 1572] 'kotlin/String.plus|plus(kotlin.Any?){}[0]' type=kotlin.String origin=PLUS
+            ARG <this>: CALL[1531, 1548] 'kotlin.reflect/KFunction1.invoke|invoke(1:0){}[0]' type=kotlin.String origin=INVOKE
+              ARG <this>: GET_VAR[1531, 1539] 'val function: kotlin.reflect.KFunction1<<root>.unboundReferences.Local, kotlin.String> declared in <root>.unboundReferences' type=kotlin.reflect.KFunction1<<root>.unboundReferences.Local, kotlin.String> origin=VARIABLE_AS_FUNCTION
+              ARG p1: CONSTRUCTOR_CALL[1540, 1547] '/unboundReferences.Local.<init>|unboundReferences(){}<init>(){}[0]' type=<root>.unboundReferences.Local origin=null
+            ARG other: CALL[1560, 1572] 'kotlin.reflect/KProperty1.get|get(1:0){}[0]' type=kotlin.String origin=null
+              ARG <this>: GET_VAR[1551, 1559] 'val property: kotlin.reflect.KProperty1<<root>.unboundReferences.Local, kotlin.String> declared in <root>.unboundReferences' type=kotlin.reflect.KProperty1<<root>.unboundReferences.Local, kotlin.String> origin=null
+              ARG receiver: CONSTRUCTOR_CALL[1564, 1571] '/unboundReferences.Local.<init>|unboundReferences(){}<init>(){}[0]' type=<root>.unboundReferences.Local origin=null
+          ARG other: CALL[1575, 1601] 'kotlin.reflect/KFunction1.invoke|invoke(1:0){}[0]' type=kotlin.String origin=INVOKE
+            ARG <this>: GET_VAR[1575, 1592] 'val interfaceFunction: kotlin.reflect.KFunction1<<root>.unboundReferences.Local, kotlin.String> declared in <root>.unboundReferences' type=kotlin.reflect.KFunction1<<root>.unboundReferences.Local, kotlin.String> origin=VARIABLE_AS_FUNCTION
+            ARG p1: CONSTRUCTOR_CALL[1593, 1600] '/unboundReferences.Local.<init>|unboundReferences(){}<init>(){}[0]' type=<root>.unboundReferences.Local origin=null

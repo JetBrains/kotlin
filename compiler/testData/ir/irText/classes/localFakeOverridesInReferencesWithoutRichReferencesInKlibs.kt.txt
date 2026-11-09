@@ -1,0 +1,138 @@
+open class Base {
+  var baz: String
+    field = "baz"
+    get
+    set
+
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun foo(): String {
+    return "foo"
+  }
+
+  val bar: String
+    get(): String {
+      return "bar"
+    }
+
+}
+
+interface WithDefaults {
+  fun qux(): String {
+    return "qux"
+  }
+
+  val quux: String
+    get(): String {
+      return "quux"
+    }
+
+}
+
+fun boundReferences(): String {
+  val obj: <no name provided> = { // BLOCK
+    local class <no name provided> : Base, WithDefaults {
+      constructor() /* primary */ {
+        super/*Base*/()
+        /* <init>() */
+
+      }
+
+    }
+
+    <no name provided>()
+  }
+  val function: KFunction0<String> = KFunction0<String>(
+    /* bound = */ [obj],
+    /* invoke = */    local fun(receiver: <no name provided>): String {
+      return receiver.foo()
+    }
+  )
+
+  val property: KProperty0<String> = KProperty0<String>(
+    /* bound = */ [obj],
+    /* getter = */    local fun(receiver: <no name provided>): String {
+      return receiver.<get-bar>()
+    }
+  )
+
+  val mutableProperty: KMutableProperty0<String> = KMutableProperty0<String>(
+    /* bound = */ [obj],
+    /* getter = */    local fun(receiver: <no name provided>): String {
+      return receiver.<get-baz>()
+    }
+    /* setter = */    local fun(receiver: <no name provided>, value: String) {
+      return receiver.<set-baz>(<set-?> = value)
+    }
+  )
+
+  val interfaceFunction: KFunction0<String> = KFunction0<String>(
+    /* bound = */ [obj],
+    /* invoke = */    local fun(receiver: <no name provided>): String {
+      return receiver.qux()
+    }
+  )
+
+  val interfaceProperty: KProperty0<String> = KProperty0<String>(
+    /* bound = */ [obj],
+    /* getter = */    local fun(receiver: <no name provided>): String {
+      return receiver.<get-quux>()
+    }
+  )
+
+  return function.invoke().plus(other = property.get()).plus(other = mutableProperty.get()).plus(other = interfaceFunction.invoke()).plus(other = interfaceProperty.get())
+}
+
+fun calls(): String {
+  val obj: <no name provided> = { // BLOCK
+    local class <no name provided> : Base, WithDefaults {
+      constructor() /* primary */ {
+        super/*Base*/()
+        /* <init>() */
+
+      }
+
+    }
+
+    <no name provided>()
+  }
+  return obj.foo().plus(other = obj.<get-bar>()).plus(other = obj.<get-baz>()).plus(other = obj.qux()).plus(other = obj.<get-quux>())
+}
+
+fun unboundReferences(): String {
+  local class Local : Base, WithDefaults {
+    constructor() /* primary */ {
+      super/*Base*/()
+      /* <init>() */
+
+    }
+
+  }
+
+  val function: KFunction1<Local, String> = KFunction1<Local, String>(
+    /* bound = */ [],
+    /* invoke = */    local fun(p0: Local): String {
+      return p0.foo()
+    }
+  )
+
+  val property: KProperty1<Local, String> = KProperty1<Local, String>(
+    /* bound = */ [],
+    /* getter = */    local fun(p0: Local): String {
+      return p0.<get-bar>()
+    }
+  )
+
+  val interfaceFunction: KFunction1<Local, String> = KFunction1<Local, String>(
+    /* bound = */ [],
+    /* invoke = */    local fun(p0: Local): String {
+      return p0.qux()
+    }
+  )
+
+  return function.invoke(p1 = Local()).plus(other = property.get(receiver = Local())).plus(other = interfaceFunction.invoke(p1 = Local()))
+}

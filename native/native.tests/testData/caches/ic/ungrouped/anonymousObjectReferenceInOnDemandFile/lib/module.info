@@ -1,0 +1,16 @@
+// The library is compiled with the language features of -language-version 2.2: callable references are not upgraded to rich
+// ones before KLIB serialization, and there is no IR inlining before it.
+STEP 0:
+    arguments: -XXLanguage:-IrRichCallableReferencesInKlibs -Xklib-ir-inliner=disabled
+    modifications:
+        U : file1.kt -> file1.kt
+        U : file2.kt -> file2.kt
+    added cache: file1.kt, file2.kt
+
+// file2.1.kt: only file2.kt is recompiled, file1.kt with the anonymous object is loaded on demand
+STEP 1:
+    arguments: -XXLanguage:-IrRichCallableReferencesInKlibs -Xklib-ir-inliner=disabled
+    modifications:
+        U : file2.1.kt -> file2.kt
+    modified cache: file2.kt
+    unchanged cache: file1.kt
