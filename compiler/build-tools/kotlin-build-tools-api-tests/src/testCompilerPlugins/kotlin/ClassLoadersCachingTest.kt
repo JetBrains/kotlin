@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.buildtools.tests.compilation
 
 import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation
-import org.jetbrains.kotlin.buildtools.api.BuildOperation
 import org.jetbrains.kotlin.buildtools.api.BuildOperation.Companion.ENABLE_CLASSLOADER_CACHE
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
@@ -14,12 +13,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPlugin
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogDoesNotContainPatterns
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.AbstractProject
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAndPlatformAgnosticCompilationTest
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAndPlatformAgnosticScenarioTest
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.ProjectCreator
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.ScenarioCreator
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.*
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Path
@@ -148,7 +142,9 @@ class ClassLoadersCachingTest : BaseCompilationTest() {
                             constructor.newInstance(this.kotlinToolchain, this.defaultStrategyConfig, projectDirectory, false)
                         } as AbstractProject<*, *, *>
                         projectInstance.use { concurrentProject ->
-                            val module = concurrentProject.module("sandbox-plugin", moduleCompilationConfigAction = { operation: BaseCompilationOperation.Builder ->
+                            val module = concurrentProject.module(
+                                "sandbox-plugin",
+                                moduleCompilationConfigAction = { operation: BaseCompilationOperation.Builder ->
                                     operation.compilerArguments[CommonCompilerArguments.COMPILER_PLUGINS] = listOf(plugins[index])
                                     operation[ENABLE_CLASSLOADER_CACHE] = true
                                 })
