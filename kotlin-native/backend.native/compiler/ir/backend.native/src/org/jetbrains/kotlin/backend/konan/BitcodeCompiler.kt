@@ -20,7 +20,8 @@ internal interface BitcodeCompiler {
 
 /**
  * Chooses how object files are emitted: in-process with the target machine of [llvmBackendContext]
- * if [NativeSecondStageCompilationConfig.inProcessObjEmission] is set, with clang otherwise.
+ * if [NativeSecondStageCompilationConfig.inProcessObjEmission] is set or if the result is the same as clang's
+ * (see [emitsLikeClangInProcess]), with clang otherwise.
  *
  * The result borrows [llvmBackendContext] and [tempFiles], so it must not outlive them.
  */
@@ -29,7 +30,7 @@ internal fun NativeBackendPhaseContext.createBitcodeCompiler(
         tempFiles: TempFiles,
         llvmModuleName: String,
 ): BitcodeCompiler {
-    return if (config.inProcessObjEmission) {
+    return if (config.inProcessObjEmission || emitsLikeClangInProcess()) {
         LlvmBitcodeCompiler(llvmBackendContext)
     } else {
         ClangBitcodeCompiler(this, tempFiles, llvmModuleName)

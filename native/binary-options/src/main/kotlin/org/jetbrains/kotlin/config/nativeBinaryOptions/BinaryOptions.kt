@@ -142,8 +142,10 @@ object BinaryOptions : BinaryOptionRegistry() {
     val batchedCacheBuild by booleanOption()
 
     /**
-     * When `true` (the default), the LLVM linked into the compiler writes static caches instead of `llvm-ar` processes,
-     * where the results were checked to be identical to theirs (some Linux targets).
+     * When `true` (the default), the LLVM linked into the compiler emits object files and writes static caches
+     * instead of `clang` and `llvm-ar` processes, where the results were checked to be identical to theirs
+     * (non-optimized code generation and static caches on some Linux targets).
+     * `-Xin-process-obj-emission` emits all object files in-process regardless of this option.
      */
     val inProcessLlvmTools by booleanOption()
 
