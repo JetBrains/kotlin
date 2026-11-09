@@ -11,8 +11,6 @@ scenario-groups {
     # others is misleading rather than merely slow:
     #   synthetic_incremental — the only non-clean cell; not comparable with clean-build cells and
     #                           must be reported separately.
-    #   compiler_corpus_*     — an A/B pair only meaningful against each other, and `stripped` is a
-    #                           measurement artefact rather than a workload anyone ships.
     all = ${scenario-groups.default} [
         "synthetic_wide", "synthetic_nested", "synthetic_deeppkg", "synthetic_bodies",
         ]
@@ -25,32 +23,6 @@ common {
     ]
     warm-ups = 2
     iterations = 20
-}
-
-# compiler-corpus — 114 real Kotlin compiler source files (compiler/ir/backend.common/src),
-# ~19.5k lines, 252 stubs. Unlike the generated samples this is real code with real method bodies,
-# real inference and real call graphs, which is what makes it the cell for frontend questions.
-#
-# The two arms are the same corpus with and without function bodies; the body-stripped tree is
-# produced by profile-async/strip_bodies.py and its stubs are byte-identical to the baseline's.
-# The delta is therefore pure FIR body-resolution cost. See Step 19.
-#
-# Not part of the default suite: the pair is only meaningful compared against each other, and
-# `stripped` is a measurement artefact rather than a workload anyone ships.
-
-compiler_corpus = ${common} {
-    tasks = [":samples:compiler-corpus:kaptKotlin"]
-    cleanup-tasks = [":samples:compiler-corpus:clean"]
-}
-
-compiler_corpus_baseline = ${compiler_corpus} {
-    title = "compiler-corpus baseline (114 real compiler files, real bodies)"
-    gradle-args = ${compiler_corpus.gradle-args} ["-PbodyMode=baseline"]
-}
-
-compiler_corpus_stripped = ${compiler_corpus} {
-    title = "compiler-corpus body-stripped (same corpus, bodies -> TODO())"
-    gradle-args = ${compiler_corpus.gradle-args} ["-PbodyMode=stripped"]
 }
 
 # dagger-sample benchmark scenarios — 3 sizes.
@@ -168,7 +140,6 @@ synthetic_incremental = ${synthetic} {
 # when, smart cast, generic calls). Every other synthetic shape is a signature holder with
 # essentially empty bodies, which is why the default cells measure BODY_RESOLVE at 1.1-2.5% of
 # Java-level work and cannot size it. Not part of the default suite; run explicitly.
-# The real-code equivalent, and the cell Step 19's result rests on, is compiler-corpus.
 #
 # COST: ~80 s per build on a fast workstation (10000 inference-heavy methods), so with the
 # warm-ups and iterations below this single cell is ~30 minutes. Lower `iterations` if you are
