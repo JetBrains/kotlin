@@ -8,3 +8,4 @@ DIRECT:
   kotlin/collections/MutableSet.add(element: E): Boolean
 INTERSECTION:
   java/util/LinkedHashSet.add(e: E!): Boolean
+INTERSECTION ON ANOTHER THREAD:

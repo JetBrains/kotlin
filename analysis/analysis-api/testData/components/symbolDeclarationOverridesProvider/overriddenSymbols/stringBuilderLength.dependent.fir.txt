@@ -1,0 +1,8 @@
+ALL:
+  java/lang/AbstractStringBuilder.length: Int
+  kotlin/CharSequence.length: Int
+DIRECT:
+  java/lang/AbstractStringBuilder.length: Int
+  kotlin/CharSequence.length: Int
+INTERSECTION:
+  java/lang/AbstractStringBuilder.length: Int

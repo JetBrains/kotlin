@@ -6,3 +6,4 @@ DIRECT:
   kotlin/CharSequence.length: Int
 INTERSECTION:
   java/lang/AbstractStringBuilder.length: Int
+INTERSECTION ON ANOTHER THREAD:

@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.api.renderer.render
 import org.jetbrains.kotlin.analysis.api.renderer.types.impl.KaTypeRendererForSource
+import org.jetbrains.kotlin.analysis.api.session.analyze
+import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
@@ -17,6 +19,7 @@ import org.jetbrains.kotlin.analysis.test.framework.targets.getSingleTestTargetS
 import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.analysis.test.framework.utils.resolveSymbolPreferringCall
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolution.KtResolvable
@@ -34,6 +37,7 @@ abstract class AbstractOverriddenDeclarationProviderTest : AbstractAnalysisApiBa
                 danglingFileResolutionMode = KaDanglingFileResolutionMode.PREFER_SELF,
             ) { contextFile ->
                 val symbol = getCallableSymbol(contextFile, mainModule, testServices)
+                val intersectionOverriddenSymbolsOnAnotherThread = renderIntersectionOverriddenSymbolsOnAnotherThread(symbol, contextFile)
                 val allOverriddenSymbols = symbol.allOverriddenSymbols.map { renderSignature(it) }
                 val directlyOverriddenSymbols = symbol.directlyOverriddenSymbols.map { renderSignature(it) }
 
@@ -46,11 +50,32 @@ abstract class AbstractOverriddenDeclarationProviderTest : AbstractAnalysisApiBa
                     directlyOverriddenSymbols.forEach { appendLine("  $it") }
                     appendLine("INTERSECTION:")
                     intersectionOverriddenSymbols.forEach { appendLine("  $it") }
+                    if (intersectionOverriddenSymbolsOnAnotherThread != null &&
+                        intersectionOverriddenSymbolsOnAnotherThread != intersectionOverriddenSymbols
+                    ) {
+                        appendLine("INTERSECTION ON ANOTHER THREAD:")
+                        intersectionOverriddenSymbolsOnAnotherThread.forEach { appendLine("  $it") }
+                    }
                 }
             }
         }
         testServices.assertions.assertEqualsToTestOutputFile(actual)
     }
+
+    /**
+     * Renders the intersection-overridden symbols that another thread analyzing [useSiteElement] gets for [symbol] as the first thing it
+     * requests: they must not depend on the requesting thread. A symbol reaches another thread like this when a symbol pointer returns
+     * its cached symbol there.
+     *
+     * Returns `null` if the other thread gets another session, as in dependent analysis, since [symbol] doesn't belong to that session.
+     */
+    context(session: KaSession)
+    private fun renderIntersectionOverriddenSymbolsOnAnotherThread(symbol: KaCallableSymbol, useSiteElement: KtElement): List<String>? =
+        executeOnPooledThreadInReadAction {
+            analyze(useSiteElement) {
+                if (useSiteSession === session) symbol.intersectionOverriddenSymbols.map { renderSignature(it) } else null
+            }
+        }
 
     context(_: KaSession)
     private fun getCallableSymbol(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices): KaCallableSymbol {
