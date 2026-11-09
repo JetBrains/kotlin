@@ -1,0 +1,17 @@
+commonMain:
+  class Platform (declared)
+  class Shared (declared)
+    constructor(id: Int) (declared)
+    val id: Int (declared)
+  fun platformName(): String (declared)
+  val platformVersion: Int (declared)
+
+jvmMain:
+  class Platform (declared)
+    constructor() (declared)
+  class Shared (declared)
+    constructor(id: Int) (declared)
+    val id: Int (declared)
+  fun jvmOnly(): Int (declared)
+  fun platformName(): String (declared)
+  val platformVersion: Int (declared)

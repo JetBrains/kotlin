@@ -1,0 +1,105 @@
+bundle.fragments[0].elements[KdElementId(value=example/JavaTypes///PointingToDeclaration/)].typeParameters[0].upperBounds[0]:
+KdClassLikeType {
+  annotations = []
+  classLikeId = "kotlin/Any///PointingToDeclaration/"
+  isEnhancedNullability = false
+  isMarkedNullable = false
+  qualifiers = [
+    KdClassTypeQualifier {
+      name = "Any"
+      typeArguments = []
+    }
+  ]
+}
+bundle.fragments[0].elements[KdElementId(value=example/JavaTypes/JavaTypes/#/PointingToDeclaration/)].typeParameters[0].upperBounds[0]:
+KdClassLikeType {
+  annotations = []
+  classLikeId = "kotlin/Any///PointingToDeclaration/"
+  isEnhancedNullability = false
+  isMarkedNullable = false
+  qualifiers = [
+    KdClassTypeQualifier {
+      name = "Any"
+      typeArguments = []
+    }
+  ]
+}
+bundle.fragments[0].elements[KdElementId(value=example/JavaTypes/lowerBound/#/PointingToDeclaration/)].type:
+KdClassLikeType {
+  annotations = []
+  classLikeId = "java.util/List///PointingToDeclaration/"
+  isEnhancedNullability = false
+  isMarkedNullable = false
+  qualifiers = [
+    KdClassTypeQualifier {
+      name = "List"
+      typeArguments = [
+        In {
+          type = KdClassLikeType {
+            annotations = []
+            classLikeId = "java.lang/String///PointingToDeclaration/"
+            isEnhancedNullability = false
+            isMarkedNullable = false
+            qualifiers = [
+              KdClassTypeQualifier {
+                name = "String"
+                typeArguments = []
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
+bundle.fragments[0].elements[KdElementId(value=example/JavaTypes/raw/#/PointingToDeclaration/)].type:
+KdClassLikeType {
+  annotations = []
+  classLikeId = "java.util/List///PointingToDeclaration/"
+  isEnhancedNullability = false
+  isMarkedNullable = false
+  qualifiers = [
+    KdClassTypeQualifier {
+      name = "List"
+      typeArguments = []
+    }
+  ]
+}
+bundle.fragments[0].elements[KdElementId(value=example/JavaTypes/unbounded/#/PointingToDeclaration/)].type:
+KdClassLikeType {
+  annotations = []
+  classLikeId = "java.util/List///PointingToDeclaration/"
+  isEnhancedNullability = false
+  isMarkedNullable = false
+  qualifiers = [
+    KdClassTypeQualifier {
+      name = "List"
+      typeArguments = [
+        Star {
+        }
+      ]
+    }
+  ]
+}
+bundle.fragments[0].elements[KdElementId(value=example/JavaTypes/upperBound/#/PointingToDeclaration/)].type:
+KdClassLikeType {
+  annotations = []
+  classLikeId = "java.util/List///PointingToDeclaration/"
+  isEnhancedNullability = false
+  isMarkedNullable = false
+  qualifiers = [
+    KdClassTypeQualifier {
+      name = "List"
+      typeArguments = [
+        Out {
+          type = KdTypeParameterType {
+            annotations = []
+            containerElementId = "example/JavaTypes///PointingToDeclaration/"
+            isMarkedNullable = false
+            name = "T"
+          }
+        }
+      ]
+    }
+  ]
+}
