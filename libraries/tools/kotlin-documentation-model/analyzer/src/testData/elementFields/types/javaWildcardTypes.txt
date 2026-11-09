@@ -1,0 +1,92 @@
+fragment main
+var unbounded: List<*> [example/JavaTypes/unbounded/#/PointingToDeclaration/].type:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "List",
+      "typeArguments": [
+        {
+          "kind": "star"
+        }
+      ]
+    }
+  ],
+  "classLikeId": "java.util/List///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "isEnhancedNullability": false,
+  "annotations": []
+}
+
+var upperBound: List<out T> [example/JavaTypes/upperBound/#/PointingToDeclaration/].type:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "List",
+      "typeArguments": [
+        {
+          "kind": "out",
+          "type": {
+            "kind": "typeParameter",
+            "name": "T",
+            "containerElementId": "example/JavaTypes///PointingToDeclaration/",
+            "isMarkedNullable": false,
+            "annotations": []
+          }
+        }
+      ]
+    }
+  ],
+  "classLikeId": "java.util/List///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "isEnhancedNullability": false,
+  "annotations": []
+}
+
+var lowerBound: List<in String> [example/JavaTypes/lowerBound/#/PointingToDeclaration/].type:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "List",
+      "typeArguments": [
+        {
+          "kind": "in",
+          "type": {
+            "kind": "classLike",
+            "qualifiers": [
+              {
+                "name": "String",
+                "typeArguments": []
+              }
+            ],
+            "classLikeId": "java.lang/String///PointingToDeclaration/",
+            "isMarkedNullable": false,
+            "isEnhancedNullability": false,
+            "annotations": []
+          }
+        }
+      ]
+    }
+  ],
+  "classLikeId": "java.util/List///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "isEnhancedNullability": false,
+  "annotations": []
+}
+
+var raw: List [example/JavaTypes/raw/#/PointingToDeclaration/].type:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "List",
+      "typeArguments": []
+    }
+  ],
+  "classLikeId": "java.util/List///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "isEnhancedNullability": false,
+  "annotations": []
+}

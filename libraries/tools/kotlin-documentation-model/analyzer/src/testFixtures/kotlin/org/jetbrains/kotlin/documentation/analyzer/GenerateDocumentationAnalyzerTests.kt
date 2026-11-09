@@ -11,17 +11,28 @@ fun main(args: Array<String>) {
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup(
             testsRoot = "libraries/tools/kotlin-documentation-model/analyzer/src/tests-gen",
-            testDataRoot = "libraries/tools/kotlin-documentation-model/analyzer/src/test/resources/testData/analyzer",
+            testDataRoot = "libraries/tools/kotlin-documentation-model/analyzer/src/testData",
         ) {
             testClass<AbstractProjectsGoldenTest> {
                 model("projects")
             }
             testClass<AbstractKdmTypesGoldenTest> {
-                model("types")
+                model("elementFields/types")
             }
-            // ElementFieldsGoldenTestGenerated compares one selected KdElement field per fixture.
-            testClass<AbstractElementFieldsGoldenTest> {
-                model("elementFields")
+            testClass<AbstractAnnotationsGoldenTest> {
+                model("elementFields/annotations")
+            }
+            testClass<AbstractDeprecatedGoldenTest> {
+                model("elementFields/deprecated")
+            }
+            testClass<AbstractSinceGoldenTest> {
+                model("elementFields/since")
+            }
+            testClass<AbstractThrowsGoldenTest> {
+                model("elementFields/throws")
+            }
+            testClass<AbstractOverridensGoldenTest> {
+                model("elementFields/overridens")
             }
             testClass<AbstractKdmKotlinSourceRoundTripTest> {
                 model("roundTrip")

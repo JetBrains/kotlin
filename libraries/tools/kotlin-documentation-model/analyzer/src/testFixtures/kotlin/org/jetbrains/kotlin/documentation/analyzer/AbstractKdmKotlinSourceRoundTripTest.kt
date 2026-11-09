@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.documentation.analyzer
 
 import kotlinx.serialization.json.JsonPrimitive
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.documentation.*
 import kotlin.test.assertEquals
 
@@ -15,7 +16,7 @@ import kotlin.test.assertEquals
  */
 abstract class AbstractKdmKotlinSourceRoundTripTest {
     fun runTest(testDataFilePath: String) {
-        val file = testDataFile(testDataFilePath)
+        val file = ForTestCompileRuntime.transformTestDataPath(testDataFilePath)
         val modules = parseTestDataModules(file)
         val bundle = generateDocumentationBundleFromTestData(file).withExpandedRefinedMembers()
         val fragments = bundle.fragments.associateBy { it.name }
