@@ -104,7 +104,7 @@ internal class JsDtsGenerationOperationImpl private constructor(
         check(linkingOperation is JsLinkingOperationImpl) { "Unexpected linking operation: ${linkingOperation::class}." }
 
         val target = linkingOperation.compilerArguments[JsArgumentsImpl.TARGET]
-            ?.let { from -> JsEcmaVersion.entries.first { it.name == from.name } }
+            ?.let { from -> JsEcmaVersion.values().first { it.name == from.name } }
 
         this[COMPILE_LONG_AS_BIG_INT] = linkingOperation.compilerArguments[JsArgumentsImpl.X_ES_LONG_AS_BIGINT]
             ?: (target != null && target >= JsEcmaVersion.ES2020)
