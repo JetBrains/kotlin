@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.api.renderer.render
 import org.jetbrains.kotlin.analysis.api.renderer.types.impl.KaTypeRendererForSource
+import org.jetbrains.kotlin.analysis.api.session.analyze
+import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
@@ -17,6 +19,7 @@ import org.jetbrains.kotlin.analysis.test.framework.targets.getSingleTestTargetS
 import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.analysis.test.framework.utils.resolveSymbolPreferringCall
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolution.KtResolvable
@@ -34,7 +37,7 @@ abstract class AbstractOverriddenDeclarationProviderTest : AbstractAnalysisApiBa
                 danglingFileResolutionMode = KaDanglingFileResolutionMode.PREFER_SELF,
             ) { contextFile ->
                 val symbol = getCallableSymbol(contextFile, mainModule, testServices)
-                renderOverriddenSymbols(symbol)
+                renderOverriddenSymbolsOnDifferentThreads(symbol, contextFile)
             }
         }
         testServices.assertions.assertEqualsToTestOutputFile(actual)
@@ -57,6 +60,31 @@ abstract class AbstractOverriddenDeclarationProviderTest : AbstractAnalysisApiBa
         }
 
         return getSingleTestTargetSymbolOfType<KaCallableSymbol>(testDataPath, mainFile)
+    }
+}
+
+/**
+ * Renders the overridden symbols of [symbol], followed by the ones that another thread analyzing [useSiteElement] gets for the same
+ * [symbol] if they differ: the overridden symbols must not depend on the requesting thread.
+ *
+ * A symbol reaches another thread like this when a symbol pointer returns its cached symbol there. The other thread is skipped if it gets
+ * another session, as in dependent analysis, since [symbol] doesn't belong to that session.
+ */
+context(session: KaSession)
+internal fun renderOverriddenSymbolsOnDifferentThreads(symbol: KaCallableSymbol, useSiteElement: KtElement): String {
+    val rendered = renderOverriddenSymbols(symbol)
+    val renderedOnAnotherThread = executeOnPooledThreadInReadAction {
+        analyze(useSiteElement) {
+            if (useSiteSession === session) renderOverriddenSymbols(symbol) else null
+        }
+    }
+
+    if (renderedOnAnotherThread == null || renderedOnAnotherThread == rendered) return rendered
+
+    return buildString {
+        append(rendered)
+        appendLine("ON ANOTHER THREAD:")
+        append(renderedOnAnotherThread.prependIndent("  "))
     }
 }
 

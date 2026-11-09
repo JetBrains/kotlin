@@ -3,3 +3,7 @@ ALL:
 DIRECT:
   test/Foo.call(text: String): Unit
 INTERSECTION:
+ON ANOTHER THREAD:
+  ALL:
+  DIRECT:
+  INTERSECTION:

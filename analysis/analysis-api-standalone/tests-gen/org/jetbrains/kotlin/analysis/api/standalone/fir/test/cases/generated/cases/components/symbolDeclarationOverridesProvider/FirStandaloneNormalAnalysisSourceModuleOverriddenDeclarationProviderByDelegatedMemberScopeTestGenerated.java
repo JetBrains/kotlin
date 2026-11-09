@@ -68,6 +68,18 @@ public class FirStandaloneNormalAnalysisSourceModuleOverriddenDeclarationProvide
   }
 
   @Test
+  @TestMetadata("intersectionOverrideInSupertype.kt")
+  public void testIntersectionOverrideInSupertype() {
+    run("intersectionOverrideInSupertype.kt");
+  }
+
+  @Test
+  @TestMetadata("javaSupertype.kt")
+  public void testJavaSupertype() {
+    run("javaSupertype.kt");
+  }
+
+  @Test
   @TestMetadata("overriddenInSupertype.kt")
   public void testOverriddenInSupertype() {
     run("overriddenInSupertype.kt");

@@ -1,0 +1,4 @@
+/C.foo(): String!
+  ALL:
+  DIRECT:
+  INTERSECTION:

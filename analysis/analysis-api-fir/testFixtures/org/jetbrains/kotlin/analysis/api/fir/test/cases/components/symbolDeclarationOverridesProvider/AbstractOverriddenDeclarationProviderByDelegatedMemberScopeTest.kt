@@ -33,7 +33,8 @@ abstract class AbstractOverriddenDeclarationProviderByDelegatedMemberScopeTest :
                 val classSymbol = checkNotNull(declaration.classSymbol)
 
                 classSymbol.delegatedMemberScope.callables.joinToString(separator = "\n\n") { callableSymbol ->
-                    renderSignature(callableSymbol) + "\n" + renderOverriddenSymbols(callableSymbol).trimEnd().prependIndent("  ")
+                    val overriddenSymbols = renderOverriddenSymbolsOnDifferentThreads(callableSymbol, contextFile)
+                    renderSignature(callableSymbol) + "\n" + overriddenSymbols.trimEnd().prependIndent("  ")
                 }
             }
         }

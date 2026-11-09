@@ -1,0 +1,9 @@
+test/C.foo(): Unit
+  ALL:
+  DIRECT:
+  INTERSECTION:
+
+test/C.bar: Int
+  ALL:
+  DIRECT:
+  INTERSECTION:
