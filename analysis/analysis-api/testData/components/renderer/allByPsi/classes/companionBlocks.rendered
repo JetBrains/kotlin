@@ -1,0 +1,22 @@
+class Owner {
+  fun foo(p: Int): Int
+
+  val prop: Int
+
+  const val CONST: String
+
+  var mutableProp: Int
+    get()
+    set(value: Int)
+
+  private fun privateFoo()
+
+  companion object {
+    fun bar()
+  }
+}
+
+fun Owner.ext(): Int
+
+val Owner.extProp: Int
+  get()

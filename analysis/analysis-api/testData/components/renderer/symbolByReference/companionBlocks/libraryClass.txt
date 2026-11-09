@@ -1,0 +1,7 @@
+class Owner {
+  fun companionBlockFunction()
+
+  fun instanceFunction()
+
+  val companionBlockProperty: kotlin.Int
+}
