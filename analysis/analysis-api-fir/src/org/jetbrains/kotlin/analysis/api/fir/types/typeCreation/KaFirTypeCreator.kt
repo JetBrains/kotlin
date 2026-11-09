@@ -18,11 +18,12 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.analysis.api.types.typeCreation.*
-import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.descriptors.isAnnotationClass
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.classKind
 import org.jetbrains.kotlin.fir.computeTypeAttributes
+import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyAnnotationArgumentMapping
@@ -296,8 +297,8 @@ internal class KaFirTypeCreator(
 
     override fun functionType(
         init: KaFunctionTypeBuilder.() -> Unit,
-    ): KaFunctionType = withValidityAssertion {
-        return buildFunctionType(KaFirFunctionTypeBuilder(this, analysisSession).apply(init)) as KaFunctionType
+    ): KaType = withValidityAssertion {
+        return buildFunctionType(KaFirFunctionTypeBuilder(this, analysisSession).apply(init))
     }
 
 
@@ -309,20 +310,32 @@ internal class KaFirTypeCreator(
                     (builder.contextParameters.size.takeIf { !isReflect } ?: 0) +
                     (builder.receiverType?.let { 1 } ?: 0)
 
-        val baseClassId = when {
-            isSuspend && isReflect -> StandardNames.getKSuspendFunctionClassId(numberOfParameters)
-            isSuspend -> StandardNames.getSuspendFunctionClassId(numberOfParameters)
-            isReflect -> StandardNames.getKFunctionClassId(numberOfParameters)
-            else -> StandardNames.getFunctionClassId(numberOfParameters)
+        val baseFunctionKind = when {
+            isSuspend && isReflect -> FunctionTypeKind.KSuspendFunction
+            isSuspend -> FunctionTypeKind.SuspendFunction
+            isReflect -> FunctionTypeKind.KFunction
+            else -> FunctionTypeKind.Function
         }
+        val baseClassId = baseFunctionKind.numberedClassId(numberOfParameters)
 
         val firAnnotations = builder.annotations.mapNotNull(::constructAnnotation)
-
-        val refinedClassId =
+        val attributes = firAnnotations.computeTypeAttributes(rootModuleSession, shouldExpandTypeAliases = false)
+        val refinedFunctionKind =
             analysisSession.firSession.functionTypeService.extractSingleExtensionKindForDeserializedConeType(baseClassId, firAnnotations)
-                ?.let { functionClassKind ->
-                    ClassId(functionClassKind.packageFqName, functionClassKind.numberedClassName(numberOfParameters))
-                } ?: baseClassId
+                ?: baseFunctionKind
+
+        if (numberOfParameters > refinedFunctionKind.maxArity) {
+            val diagnostic = ConeSimpleDiagnostic(
+                "Function type arity $numberOfParameters exceeds the maximum arity ${refinedFunctionKind.maxArity} of $refinedFunctionKind",
+            )
+            return ConeErrorType(
+                diagnostic = diagnostic,
+                nullable = builder.isMarkedNullable,
+                attributes = attributes
+            ).asKaType()
+        }
+
+        val refinedClassId = refinedFunctionKind.numberedClassId(numberOfParameters)
 
         val classSymbol = rootModuleSession.symbolProvider.getClassLikeSymbolByClassId(refinedClassId)
             ?: return ConeErrorType(ConeUnresolvedSymbolError(refinedClassId)).asKaType()
@@ -356,7 +369,7 @@ internal class KaFirTypeCreator(
             nullable = builder.isMarkedNullable,
             isExtensionFunction = builder.receiverType != null,
             contextParameterCount = contextParameters.size,
-            attributes = firAnnotations.computeTypeAttributes(rootModuleSession, shouldExpandTypeAliases = false).toList()
+            attributes = attributes.toList()
         ) as ConeClassLikeType
 
         return coneType.asKaType()
