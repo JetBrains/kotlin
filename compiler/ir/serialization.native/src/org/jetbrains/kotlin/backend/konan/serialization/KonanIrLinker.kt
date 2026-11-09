@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.library.metadata.isForwardDeclarationModule
 class KonanIrLinker(
     configuration: CompilerConfiguration,
     symbolTable: SymbolTable,
-    friendModules: Map<String, Collection<String>>,
+    friendModules: Map<KotlinLibrary, Collection<KotlinLibrary>>,
     private val cInteropModuleDeserializerFactory: CInteropModuleDeserializerFactory<*>,
     irDiagnosticReporter: IrDiagnosticReporter,
     private val librariesBeingCached: Map<KotlinLibrary, PartialCacheInfo>,

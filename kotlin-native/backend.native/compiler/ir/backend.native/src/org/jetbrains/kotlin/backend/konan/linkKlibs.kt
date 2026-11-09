@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.isHeader
 import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.metadata.*
-import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.resolve.CommonCompilerDeserializationConfiguration
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.utils.newHashMapWithExpectedSize
@@ -154,9 +153,7 @@ private fun LinkKlibsContext.createIrLinker(): KonanIrLinker {
             cachedLibraries = config.cachedLibraries,
     )
 
-    val friendModuleUniqueNames = config.loadedKlibs.friends.map { it.uniqueName }
-    val includedModuleUniqueNames = config.loadedKlibs.included.map { it.uniqueName }
-    val friendModulesMap: Map<String, List<String>> = includedModuleUniqueNames.associateWith { friendModuleUniqueNames }
+    val friendModulesMap = config.loadedKlibs.included.associateWith { config.loadedKlibs.friends }
 
     val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
             config.configuration.diagnosticsCollector,

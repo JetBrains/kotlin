@@ -137,7 +137,7 @@ class NativeDeserializerFacade(
 
         val mainLibrary = loadedKlibs.included.single()
 
-        val friendsMap = mapOf(mainLibrary.uniqueName to loadedKlibs.friends.map { it.uniqueName })
+        val friendsMap = mapOf(mainLibrary to loadedKlibs.friends)
 
         val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
             configuration.diagnosticsCollector,

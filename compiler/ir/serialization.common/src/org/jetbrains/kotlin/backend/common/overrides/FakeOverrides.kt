@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.PartiallyLinkedDeclar
 import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.GlobalDeclarationTable
+import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -38,6 +39,7 @@ import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -80,7 +82,7 @@ private class IrLinkerFakeOverrideBuilderStrategy(
     private val irBuiltIns: IrBuiltIns,
     private val partialLinkageSupport: PartialLinkageSupportForLinker,
     private val fakeOverrideDeclarationTable: DeclarationTable<*>,
-    private val friendModules: Map<String, Collection<String>>,
+    private val friendModules: Map<KotlinLibrary, Collection<KotlinLibrary>>,
     private val isMultipleInheritedImplementationsAllowed: (IrOverridableDeclaration<*>) -> Boolean,
 ) : FakeOverrideBuilderStrategy() {
 
@@ -295,9 +297,9 @@ private class IrLinkerFakeOverrideBuilderStrategy(
 
     // TODO(KT-62534) use ModuleDescriptor.shouldSeeInternalsOf when it's fixed and get rid of friendModules
     override fun shouldSeeInternals(thisModule: IrModuleFragment, memberModule: IrModuleFragment): Boolean {
-        val fromModuleName = thisModule.name.asStringStripSpecialMarkers()
-        val toModuleName = memberModule.name.asStringStripSpecialMarkers()
-        return fromModuleName == toModuleName || friendModules[fromModuleName]?.contains(toModuleName) == true
+        val fromModuleKlib = thisModule.kotlinLibrary
+        val toModuleKlib = memberModule.kotlinLibrary
+        return fromModuleKlib == toModuleKlib || friendModules[fromModuleKlib]?.contains(toModuleKlib) == true
     }
 }
 
@@ -305,7 +307,7 @@ class IrLinkerFakeOverrideProvider(
     private val fileLocalSymbolProvider: FileLocalSymbolProvider,
     private val symbolTable: SymbolTable,
     val mangler: KotlinMangler.IrMangler,
-    private val friendModules: Map<String, Collection<String>>,
+    private val friendModules: Map<KotlinLibrary, Collection<KotlinLibrary>>,
     private val partialLinkageSupport: PartialLinkageSupportForLinker,
     val platformSpecificClassFilter: FakeOverrideClassFilter = DefaultFakeOverrideClassFilter,
     private val fakeOverrideDeclarationTable: DeclarationTable<*> = DeclarationTable.Default(GlobalDeclarationTable(mangler)),
