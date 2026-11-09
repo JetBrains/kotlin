@@ -16,10 +16,11 @@
  *
  * The lists are generated from the warnings in
  * `build/reports/dependency-analysis/build-health-report.txt` (baseline: 2026-11-18, master; run with
- * `-Pkotlin.native.enabled=true`). The dominant families behind the entries: the abi-comparator fat jar embedding
- * kotlin-stdlib and org.jetbrains:annotations classes on test classpaths (prunes itself once that jar is slimmed),
- * IntelliJ platform jars shipping the same classes as both `intellij-core-implementation` and the standalone
- * `syntax-api` artifacts, fat published artifacts consumed in-repo, and fat compiler jars on test classpaths.
+ * `-Pkotlin.native.enabled=true`). The dominant families behind the entries: IntelliJ platform jars shipping the
+ * same classes as both `intellij-core-implementation` and the standalone `syntax-api` artifacts, fat published
+ * artifacts consumed in-repo, and fat compiler jars on test classpaths. (The abi-comparator fat jar used to
+ * embed kotlin-stdlib and org.jetbrains:annotations classes on test classpaths; that family pruned itself from
+ * the lists once the jar was slimmed.)
  *
  * The TeamCity BuildHealth build runs `:buildHealth` with `-Pkotlin.native.enabled=true`, which adds
  * Kotlin/Native-only projects to the analysis and changes some native modules' classpaths, so its report contains
@@ -46,8 +47,6 @@ object BuildHealthBaselines {
         ":analysis:stubs",
         ":analysis:symbol-light-classes",
         ":analysis:test-data-manager",
-        ":benchmarks:frontend:misc",
-        ":benchmarks:jvm:reflection",
         ":compiler",
         ":compiler:android-tests",
         ":compiler:backend",
@@ -69,9 +68,7 @@ object BuildHealthBaselines {
         ":compiler:fir:fir-serialization",
         ":compiler:fir:fir2ir:jvm-backend",
         ":compiler:fir:modularized-tests",
-        ":compiler:fir:raw-fir:light-tree2fir",
         ":compiler:fir:raw-fir:mp-parsing2fir",
-        ":compiler:fir:raw-fir:psi2fir",
         ":compiler:fir:resolve",
         ":compiler:fir:semantics.api",
         ":compiler:frontend.common-psi:feature-to-flag-map-generator",
@@ -80,21 +77,14 @@ object BuildHealthBaselines {
         ":compiler:ir.serialization.common",
         ":compiler:ir.serialization.js",
         ":compiler:ir.serialization.native",
-        ":compiler:ir.validation",
         ":compiler:java-direct",
-        ":compiler:jklib.tests",
-        ":compiler:jvm.tests",
         ":compiler:multiplatform-parsing",
         ":compiler:psi:psi-frontend-utils",
-        ":compiler:psi:psi-impl",
         ":compiler:test-infrastructure-utils",
         ":compiler:tests-common",
-        ":compiler:tests-common-new",
-        ":compiler:tests-different-jdk",
         ":compiler:tests-integration",
         ":compiler:util",
         ":compose-compiler-gradle-plugin",
-        ":core:descriptors.runtime",
         ":generators",
         ":gradle:kotlin-gradle-ecosystem-plugin",
         ":jps:jps-common",
@@ -102,7 +92,6 @@ object BuildHealthBaselines {
         ":js:js.tests",
         ":kotlin-allopen-compiler-plugin",
         ":kotlin-annotation-processing",
-        ":kotlin-annotation-processing-cli",
         ":kotlin-assignment-compiler-plugin",
         ":kotlin-atomicfu-compiler-plugin",
         ":kotlin-build-common",
@@ -144,7 +133,6 @@ object BuildHealthBaselines {
         ":native:native.tests:litmus-tests",
         ":native:native.tests:stress",
         ":native:objcexport-header-generator-k1",
-        ":native:swift:sir-printer",
         ":native:swift:swift-export-embeddable",
         ":native:swift:swift-export-ide",
         ":native:swift:swift-export-standalone-integration-tests",
@@ -157,16 +145,13 @@ object BuildHealthBaselines {
         ":plugins:jvm-abi-gen",
         ":plugins:parcelize:parcelize-compiler",
         ":plugins:plugin-sandbox",
-        ":plugins:plugin-sandbox:plugin-sandbox-ic-test",
         ":plugins:plugins-interactions-testing",
         ":plugins:scripting:scripting-tests",
-        ":repo:artifacts-tests",
         ":repo:codebase-tests",
         ":test-instrumenter",
         ":tools:kotlin-documentation-model:analyzer",
         ":tools:kotlinp-jvm",
         ":tools:kotlinp-klib",
-        ":wasm:wasm.tests",
     )
 
     // Modules that additionally have duplicate-classes warnings when Kotlin/Native is enabled — the CI BuildHealth
@@ -174,17 +159,11 @@ object BuildHealthBaselines {
     val duplicateClassesBaselineProjectsNativeEnabled: Set<String> = setOf(
         ":analysis:analysis-api-standalone:analysis-api-standalone-native",
         ":kotlin-native:Interop:StubGenerator",
-        ":kotlin-native:Interop:StubGeneratorConsistencyCheck",
         ":kotlin-native:backend.native",
-        ":kotlin-native:common:env",
-        ":kotlin-native:common:files",
         ":kotlin-native:klib",
-        ":kotlin-native:libclangInterop",
-        ":kotlin-native:llvmInterop",
         ":native:cli-native",
         ":native:native.tests:cli-tests",
         ":native:native.tests:klib-ir-inliner:withPlatformLibs",
         ":native:objcexport-header-generator",
-        ":wasm:wasm.tests:klib-compatibility",
     )
 }
