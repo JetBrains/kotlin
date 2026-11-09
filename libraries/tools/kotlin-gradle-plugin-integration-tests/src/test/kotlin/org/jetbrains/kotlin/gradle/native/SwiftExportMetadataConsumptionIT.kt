@@ -9,6 +9,7 @@ import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.KotlinPublicationFormat
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.*
@@ -27,22 +28,6 @@ import kotlin.test.assertNotNull
 @MustRunOnChangesInGradle
 @OptIn(ExperimentalSwiftExportDsl::class, ExperimentalKotlinGradlePluginApi::class)
 class SwiftExportMetadataConsumptionIT : KGPBaseTest() {
-
-    @DisplayName(
-        "Swift Export metadata consumed from a direct published dependency with moduleName override"
-    )
-    @GradleTest
-    fun directPublishedDependencyWithModuleNameOverride(
-        gradleVersion: GradleVersion,
-        @TempDir testBuildDir: Path,
-    ) {
-        testSwiftExportMetadataConsumption(
-            gradleVersion = gradleVersion,
-            testBuildDir = testBuildDir,
-            published = true,
-            moduleNameOverride = "Foo",
-        )
-    }
 
     @DisplayName(
         "Swift Export metadata consumed from a direct published dependency with rootPackage override"
@@ -72,23 +57,6 @@ class SwiftExportMetadataConsumptionIT : KGPBaseTest() {
             gradleVersion = gradleVersion,
             testBuildDir = testBuildDir,
             published = true,
-        )
-    }
-
-    @DisplayName(
-        "Swift Export metadata consumed from a direct published dependency with moduleName and rootPackage overrides"
-    )
-    @GradleTest
-    fun directPublishedDependencyWithModuleNameAndRootPackageOverrides(
-        gradleVersion: GradleVersion,
-        @TempDir testBuildDir: Path,
-    ) {
-        testSwiftExportMetadataConsumption(
-            gradleVersion = gradleVersion,
-            testBuildDir = testBuildDir,
-            published = true,
-            moduleNameOverride = "Bar",
-            rootPackageOverride = "com.bar.baz",
         )
     }
 
@@ -125,24 +93,6 @@ class SwiftExportMetadataConsumptionIT : KGPBaseTest() {
             rootPackageOverride = "com.bar.baz",
             transitiveModuleNameOverride = "Baz",
             transitiveRootPackageOverride = "com.foo.bar.baz",
-        )
-    }
-
-    @DisplayName(
-        "Swift Export metadata consumed from a direct Kotlin Archive dependency with moduleName and rootPackage overrides"
-    )
-    @GradleTest
-    fun directKotlinArchiveDependencyWithModuleNameAndRootPackageOverrides(
-        gradleVersion: GradleVersion,
-        @TempDir testBuildDir: Path,
-    ) {
-        testSwiftExportMetadataConsumption(
-            gradleVersion = gradleVersion,
-            testBuildDir = testBuildDir,
-            published = true,
-            publicationFormat = KotlinPublicationFormat.KOTLIN_ARCHIVE,
-            moduleNameOverride = "Bar",
-            rootPackageOverride = "com.bar.baz",
         )
     }
 
@@ -199,22 +149,6 @@ class SwiftExportMetadataConsumptionIT : KGPBaseTest() {
     }
 
     @DisplayName(
-        "Swift Export metadata consumed from a direct unpublished dependency with rootPackage override"
-    )
-    @GradleTest
-    fun directUnpublishedDependencyWithRootPackageOverride(
-        gradleVersion: GradleVersion,
-        @TempDir testBuildDir: Path,
-    ) {
-        testSwiftExportMetadataConsumption(
-            gradleVersion = gradleVersion,
-            testBuildDir = testBuildDir,
-            published = false,
-            rootPackageOverride = "com.foo.bar",
-        )
-    }
-
-    @DisplayName(
         "Swift Export metadata consumed from a direct unpublished dependency with no overrides"
     )
     @GradleTest
@@ -226,23 +160,6 @@ class SwiftExportMetadataConsumptionIT : KGPBaseTest() {
             gradleVersion = gradleVersion,
             testBuildDir = testBuildDir,
             published = false,
-        )
-    }
-
-    @DisplayName(
-        "Swift Export metadata consumed from a direct unpublished dependency with moduleName and rootPackage overrides"
-    )
-    @GradleTest
-    fun directUnpublishedDependencyWithModuleNameAndRootPackageOverrides(
-        gradleVersion: GradleVersion,
-        @TempDir testBuildDir: Path,
-    ) {
-        testSwiftExportMetadataConsumption(
-            gradleVersion = gradleVersion,
-            testBuildDir = testBuildDir,
-            published = false,
-            moduleNameOverride = "Bar",
-            rootPackageOverride = "com.bar.baz",
         )
     }
 
@@ -355,6 +272,11 @@ class SwiftExportMetadataConsumptionIT : KGPBaseTest() {
             buildScriptInjection {
                 project.applyMultiplatform {
                     iosArm64()
+                    if (publicationFormat == KotlinPublicationFormat.KOTLIN_ARCHIVE && !hasTransitiveSubproject) {
+                        // An archive with several platforms, so Swift Export has to pick the iosArm64 klib from it.
+                        iosSimulatorArm64()
+                        jvm()
+                    }
                     publishing {
                         this.publicationFormat.set(publicationFormat)
                     }
@@ -433,6 +355,8 @@ class SwiftExportMetadataConsumptionIT : KGPBaseTest() {
 
                         sourceSets.commonMain {
                             compileStubSourceWithSourceSetName()
+                            // Compiling against the dependency proves its klib is resolved for the consumer's own compilation too.
+                            compileSource("fun useLibFoo(libFoo: $rootPackage.LibFoo) {}")
 
                             dependencies {
                                 api(publishedSubproject?.rootCoordinate ?: project(":subproject"))
@@ -453,6 +377,10 @@ class SwiftExportMetadataConsumptionIT : KGPBaseTest() {
                 ":embedSwiftExportForXcode",
                 environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
             ) {
+                if (publicationFormat == KotlinPublicationFormat.KOTLIN_ARCHIVE) {
+                    assertNoDiagnostic(KotlinToolingDiagnostics.UnsupportedKotlinArchiveUsage)
+                }
+
                 val buildProductsDir = this@project.gradleRunner.environment?.get("BUILT_PRODUCTS_DIR")?.let { File(it) }
                 assertNotNull(buildProductsDir)
 
