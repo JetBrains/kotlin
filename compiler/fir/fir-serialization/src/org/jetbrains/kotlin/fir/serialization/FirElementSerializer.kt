@@ -172,6 +172,7 @@ class FirElementSerializer private constructor(
             regularClass?.isFun == true,
             hasEnumEntries,
             regularClass?.isRichError == true,
+            regularClass?.isFullValueClass == true,
         )
         if (flags != builder.flags) {
             builder.flags = flags
@@ -344,6 +345,7 @@ class FirElementSerializer private constructor(
             /* isFun = */ false,
             /* hasEnumEntries = */ false,
             /* isRichError = */ false,
+            /* isFullValue = */ false,
         )
         if (flags != builder.flags) {
             builder.flags = flags

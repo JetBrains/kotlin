@@ -35,6 +35,7 @@ value class ClassFlags(val flags: Long) {
     val isExternal: Boolean get() = IrFlags.IS_EXTERNAL_CLASS.get(flags.toInt())
     val isFun: Boolean get() = IrFlags.IS_FUN_INTERFACE.get(flags.toInt())
     val hasEnumEntries: Boolean get() = IrFlags.HAS_ENUM_ENTRIES.get(flags.toInt())
+    val isFullValue: Boolean get() = IrFlags.IS_FULL_VALUE_CLASS.get(flags.toInt())
 
     companion object {
         fun encode(clazz: IrClass, languageVersionSettings: LanguageVersionSettings): Long {
@@ -59,6 +60,8 @@ value class ClassFlags(val flags: Long) {
                     isFun,
                     hasEnumEntries,
                     /*isRichError =*/ false,
+                    // TODO: when KT-91360 is implemented, we can set it correctly as `valueClassKind == FULL`
+                    /*isFullValue =*/ false,
                 )
 
                 flags.toLong()

@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.ClassIdBasedLocality
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.psi.KtSuperTypeEntry
 import org.jetbrains.kotlin.psi.KtSuperTypeList
@@ -137,7 +136,7 @@ private class ClassClsStubBuilder(
                 else -> {}
             }
 
-            if (classProto.hasInlineClassUnderlyingPropertyName()) add(KtTokens.INLINE_KEYWORD)
+            if (Flags.isInlineValueClass(classProto.flags)) add(KtTokens.INLINE_KEYWORD)
         }
 
         return createModifierListStubForDeclaration(
@@ -205,18 +204,19 @@ private class ClassClsStubBuilder(
      * @see org.jetbrains.kotlin.fir.deserialization.loadValueClassRepresentation
      */
     private fun createValueClassRepresentation(): KotlinValueClassRepresentation? = when {
-        // An inline class is the only kind of value class which names its underlying property in the class itself
-        classProto.hasInlineClassUnderlyingPropertyName() -> createInlineClassRepresentation()
+        // Experimental @JvmInline multifield value classes, and full value classes compiled with 2.5.0,
+        // (experimental) inline classes compiled before 1.5.0, and expect value classes without constructor
+        // (AllowExpectValueClassesWithNoPrimaryConstructor) all go here but return null as they have no
+        // `inlineClassUnderlyingPropertyName` in the metadata.
+        Flags.isInlineValueClass(classProto.flags) -> createInlineClassRepresentation()
 
-        // A full value class is marked with the class flag only, so its underlying properties have to be looked up
-        Flags.IS_VALUE_CLASS.get(classProto.flags) && !hasJvmInlineAnnotation() -> createFullValueClassRepresentation()
+        Flags.IS_FULL_VALUE_CLASS.get(classProto.flags) -> createFullValueClassRepresentation()
 
-        // Either not a value class at all, or a multi-field '@JvmInline' value class from an experimental compiler version.
-        // The latter has no representation anymore, exactly as in the compiler's own deserialization.
         else -> null
     }
 
     private fun createInlineClassRepresentation(): KotlinInlineClassRepresentation? {
+        if (!classProto.hasInlineClassUnderlyingPropertyName()) return null
         val name = c.nameResolver.getName(classProto.inlineClassUnderlyingPropertyName)
 
         // The compiler writes the type into the class itself only when the underlying property is not a part of the ABI
@@ -251,10 +251,6 @@ private class ClassClsStubBuilder(
         }
 
         return KotlinFullValueClassRepresentation(underlyingPropertyNamesToTypes = properties)
-    }
-
-    private fun hasJvmInlineAnnotation(): Boolean = classProto.annotationList.any { annotationProto ->
-        c.nameResolver.getClassId(annotationProto.id) == StandardClassIds.Annotations.JvmInline
     }
 
     private fun createValueClassUnderlyingTypeBean(typeProto: ProtoBuf.Type): KotlinRigidTypeBean? =

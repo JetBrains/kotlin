@@ -13,7 +13,7 @@ expect value class Full
 expect value class JvmInl
 
 // MODULE: app-common()()(lib-common)
-fun fooVal(vararg vl: Val) = Unit
+fun fooVal(<!FORBIDDEN_VARARG_PARAMETER_TYPE!>vararg<!> vl: Val) = Unit
 fun fooForRef(<!FORBIDDEN_VARARG_PARAMETER_TYPE!>vararg<!> vl: ForRef) = Unit
 fun fooFull(vararg vl: Full) = Unit
-fun fooJvmInl(vararg vl: JvmInl) = Unit
+fun fooJvmInl(<!FORBIDDEN_VARARG_PARAMETER_TYPE!>vararg<!> vl: JvmInl) = Unit
