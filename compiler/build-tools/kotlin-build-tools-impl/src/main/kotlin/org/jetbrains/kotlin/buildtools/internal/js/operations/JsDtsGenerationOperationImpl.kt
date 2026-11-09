@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import java.nio.file.Path
 
+@Suppress("EnumValuesSoftDeprecate")
 internal class JsDtsGenerationOperationImpl private constructor(
     override val options: Options,
     override val klibs: List<Path>,
@@ -164,7 +165,6 @@ internal class JsDtsGenerationOperationImpl private constructor(
         val TS_COMPILATION_STRATEGY: Option<JsDtsCompilationStrategy> = Option("TS_COMPILATION_STRATEGY", JsDtsCompilationStrategy.MERGED)
         val GRANULARITY: Option<JsDtsGranularity> = Option("GRANULARITY", JsDtsGranularity.WHOLE_PROGRAM)
 
-        @Suppress("EnumValuesSoftDeprecate")
         val MODULE_KIND: Option<JsModuleKind> = Option(
             "MODULE_KIND",
             defaultArgsReference.moduleKind
