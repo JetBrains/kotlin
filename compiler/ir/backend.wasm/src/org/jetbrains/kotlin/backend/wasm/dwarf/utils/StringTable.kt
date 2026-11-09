@@ -20,3 +20,6 @@ abstract class StringTable<I, S : DebuggingSection.DebuggingStringPoolSection> :
         return offsets
     }
 }
+
+@Suppress("unused")
+private val multiDomainChangeNoOp = Unit

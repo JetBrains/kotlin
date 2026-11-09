@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.api
 
+@Suppress("unused")
+private val multiDomainChangeNoOp = Unit
+
 /**
  * Marks an API as an implementation detail of the Analysis API. Such APIs are not intended to be used outside the implementation of the
  * Analysis API and have no compatibility guarantees.

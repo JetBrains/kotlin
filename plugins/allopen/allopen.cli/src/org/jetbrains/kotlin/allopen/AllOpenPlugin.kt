@@ -15,6 +15,9 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 
+@Suppress("unused")
+private val multiDomainChangeNoOp = Unit
+
 object AllOpenConfigurationKeys {
     val ALLOPEN_ANNOTATION: CompilerConfigurationKey<List<String>> = CompilerConfigurationKey.create("ALLOPEN_ANNOTATION")
     val ALLOPEN_PRESET: CompilerConfigurationKey<List<String>> = CompilerConfigurationKey.create("ALLOPEN_PRESET")

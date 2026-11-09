@@ -8,6 +8,9 @@ package org.jetbrains.kotlin.ir
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 
+@Suppress("unused")
+private val multiDomainChangeNoOp = Unit
+
 class PsiIrFileEntry(val psiFile: PsiFile) : AbstractIrFileEntry() {
     private val psiFileName = psiFile.virtualFile?.path ?: psiFile.name
 

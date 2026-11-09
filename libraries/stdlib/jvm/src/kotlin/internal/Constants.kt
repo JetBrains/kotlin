@@ -5,6 +5,9 @@
 
 package kotlin.internal
 
+@Suppress("unused")
+private val multiDomainChangeNoOp = Unit
+
 @PublishedApi
 @SinceKotlin("2.4")
 @ExperimentalStdlibApi

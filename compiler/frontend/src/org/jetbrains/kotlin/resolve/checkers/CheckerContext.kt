@@ -22,6 +22,9 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 
+@Suppress("unused")
+private val multiDomainChangeNoOp = Unit
+
 @K1Deprecation
 interface CheckerContext {
     val trace: BindingTrace

@@ -7,6 +7,9 @@ package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 
+@Suppress("unused")
+private val multiDomainChangeNoOp = Unit
+
 /**
  * Represents a compilation error caused by mistakes in an input file, e.g. undefined reference.
  */

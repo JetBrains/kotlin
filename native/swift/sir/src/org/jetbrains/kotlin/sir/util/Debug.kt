@@ -7,6 +7,9 @@ package org.jetbrains.kotlin.sir.util
 
 import org.jetbrains.kotlin.sir.*
 
+@Suppress("unused")
+private val multiDomainChangeNoOp = Unit
+
 val SirElement.debugString: String
     get() {
         return when (this) {
