@@ -264,7 +264,6 @@ class KotlinGradleIT : KGPBaseTest() {
         project(
             "kotlinProject",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
             val buildGradleContentCopy = buildGradle.readText()
 

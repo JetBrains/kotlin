@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
@@ -36,8 +35,7 @@ class CompilationWithKlibsIT : KGPBaseTest() {
                 assertOutputDoesNotContain("w: KLIB resolver: The same 'unique_name=kt-64115:foo' found in more than one library:")
                 assertNoCompilerArgument(
                     ":foo:compileTestKotlinJs",
-                    "libs/foo-js.klib",
-                    logLevel = LogLevel.INFO
+                    "libs/foo-js.klib"
                 )
             }
         }

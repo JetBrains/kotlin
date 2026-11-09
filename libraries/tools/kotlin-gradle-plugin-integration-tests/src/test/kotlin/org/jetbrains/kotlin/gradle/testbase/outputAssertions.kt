@@ -205,7 +205,7 @@ fun findParameterInOutput(name: String, output: String): String? =
 fun BuildResult.assertCompilerArgument(
     taskPath: String,
     expectedArgument: String,
-    logLevel: LogLevel = LogLevel.DEBUG
+    logLevel: LogLevel = DEFAULT_LOG_LEVEL
 ) {
     val compilerArguments = extractTaskCompilerArguments(taskPath, logLevel)
 
@@ -238,7 +238,7 @@ fun BuildResult.assertNativeTasksClasspath(
 fun BuildResult.assertCompilerArguments(
     taskPath: String,
     vararg expectedArguments: String,
-    logLevel: LogLevel = LogLevel.DEBUG,
+    logLevel: LogLevel = DEFAULT_LOG_LEVEL,
 ) {
     val compilerArguments = extractTaskCompilerArguments(taskPath, logLevel)
 
@@ -289,7 +289,7 @@ fun BuildResult.extractNativeCompilerTaskArguments(
 fun BuildResult.assertNoCompilerArgument(
     taskPath: String,
     notExpectedArgument: String,
-    logLevel: LogLevel = LogLevel.DEBUG,
+    logLevel: LogLevel = DEFAULT_LOG_LEVEL,
 ) {
     val compilerArguments = extractTaskCompilerArguments(taskPath, logLevel)
 

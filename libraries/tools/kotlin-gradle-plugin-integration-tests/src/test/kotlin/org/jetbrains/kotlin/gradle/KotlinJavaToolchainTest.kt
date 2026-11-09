@@ -333,7 +333,6 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         project(
             projectName = "simple".fullProjectName,
             gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
             useJdkToCompile(
                 jdk11Info.jdkPath,
@@ -362,7 +361,6 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         project(
             projectName = "simple".fullProjectName,
             gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
             setJvmTarget("17")
 
@@ -385,7 +383,6 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         project(
             projectName = "simple".fullProjectName,
             gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
             useToolchainToCompile(11)
 
@@ -403,7 +400,6 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         project(
             projectName = "simple".fullProjectName,
             gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
             setJvmTarget("17")
             useToolchainToCompile(11)
@@ -472,7 +468,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
                 """.trimIndent()
             )
 
-            build("build", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG), forwardBuildOutput = true) {
+            build("build", forwardBuildOutput = true) {
                 val compilerArgs = output.lineSequence()
                     .filter { it.contains("Kotlin compiler args:") }
                     .first()
@@ -624,7 +620,6 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         project(
             projectName = "multiproject".fullProjectName,
             gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
             subProject("lib").buildScriptInjection {
                 project.tasks.named("compileJava", JavaCompile::class.java).configure { task ->
@@ -674,7 +669,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
 
             build(":compileKotlin") {
                 assertTasksExecuted(":compileKotlin")
-                assertCompilerArgument(":compileKotlin", "-jvm-target 11")
+                assertCompilerArgument(":compileKotlin", "-jvm-target 11", logLevel = LogLevel.DEBUG)
             }
         }
     }
@@ -713,7 +708,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
 
             build(":compileDebugKotlin") {
                 assertTasksExecuted(":compileDebugKotlin")
-                assertCompilerArgument(":compileDebugKotlin", "-jvm-target 11")
+                assertCompilerArgument(":compileDebugKotlin", "-jvm-target 11", logLevel = LogLevel.DEBUG)
             }
         }
     }

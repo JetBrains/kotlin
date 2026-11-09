@@ -52,7 +52,7 @@ class HierarchicalMppIT : KGPBaseTest() {
     @GradleTest
     @DisplayName("Check build with published third-party library")
     fun testPublishedModules(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
-        val buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG, suppressedGradlePluginErrors = emptySet())
+        val buildOptions = defaultBuildOptions.copy(suppressedGradlePluginErrors = emptySet())
 
         publishThirdPartyLib(gradleVersion = gradleVersion, localRepoDir = tempDir)
 
@@ -219,7 +219,7 @@ class HierarchicalMppIT : KGPBaseTest() {
                 "hierarchical-mpp-project-dependency",
                 gradleVersion,
                 localRepoDir = tempDir,
-                buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG, suppressedGradlePluginErrors = emptySet())
+                buildOptions = defaultBuildOptions.copy(suppressedGradlePluginErrors = emptySet())
             )
         ) {
             build("publish", "assemble") {
@@ -741,7 +741,6 @@ class HierarchicalMppIT : KGPBaseTest() {
             "my-lib-foo".withPrefix,
             gradleVersion = gradleVersion,
             localRepoDir = tempDir,
-            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ).run {
             val intermediateMetadataCompileTask = ":compileJvmAndJsMainKotlinMetadata"
 

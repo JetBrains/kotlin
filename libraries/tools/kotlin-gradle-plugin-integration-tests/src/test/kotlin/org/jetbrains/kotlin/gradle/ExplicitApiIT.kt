@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInFrontend
@@ -25,7 +24,6 @@ class ExplicitApiIT : KGPBaseTest() {
         project(
             "simpleProject",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
             buildGradle.appendText(
                 """
@@ -56,7 +54,6 @@ class ExplicitApiIT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
                 androidVersion = agpVersion,
-                logLevel = LogLevel.DEBUG
             ),
             buildJdk = jdkVersion.location
         ) {
@@ -97,7 +94,6 @@ class ExplicitApiIT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
                 androidVersion = agpVersion,
-                logLevel = LogLevel.DEBUG,
             ),
             buildJdk = jdkVersion.location
         ) {
@@ -135,7 +131,6 @@ class ExplicitApiIT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
                 androidVersion = agpVersion,
-                logLevel = LogLevel.DEBUG,
             ),
             buildJdk = jdkVersion.location
         ) {
