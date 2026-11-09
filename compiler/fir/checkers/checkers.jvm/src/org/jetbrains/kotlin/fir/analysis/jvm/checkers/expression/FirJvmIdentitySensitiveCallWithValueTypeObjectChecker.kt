@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
@@ -17,13 +18,13 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE
-import org.jetbrains.kotlin.fir.enableWarningsForIdentitySensitiveOperationsOnValueClassesAndPrimitives
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirVarargArgumentsExpression
 import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.expressions.resolvedArgumentMapping
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isPrimitive
@@ -105,7 +106,7 @@ object FirJvmIdentitySensitiveCallWithValueTypeObjectChecker : FirFunctionCallCh
             in operationsToCheckFirstArgCallableIds -> {
                 val argument = expression.arguments.firstOrNull() ?: return
                 val type = argument.resolvedType
-                if (type.isValueTypeAndWarningsEnabled()) {
+                if (type.isValueType()) {
                     reporter.reportOn(
                         argument.source, FirErrors.IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE, type
                     )
@@ -116,7 +117,7 @@ object FirJvmIdentitySensitiveCallWithValueTypeObjectChecker : FirFunctionCallCh
             in operationsToCheckFirstTypeArgCallableIds -> {
                 val typeArgument = expression.typeArguments.firstOrNull() as? FirTypeProjectionWithVariance ?: return
                 val type = typeArgument.typeRef.coneType.upperBoundIfFlexible()
-                if (type.isValueTypeAndWarningsEnabled()) {
+                if (type.isValueType()) {
                     reporter.reportOn(
                         typeArgument.source, FirErrors.IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE, type
                     )
@@ -130,7 +131,7 @@ object FirJvmIdentitySensitiveCallWithValueTypeObjectChecker : FirFunctionCallCh
     private fun checkComparedValue(argument: FirExpression) {
         val type = argument.resolvedType
         if (type.lowerBoundIfFlexible().isPrimitiveOrNullablePrimitive || type.isValueClass(context.session) ||
-            type.isJavaValueBasedClassAndWarningsEnabled()
+            type.isJavaValueBasedClass()
         ) {
             reporter.reportOn(argument.source, FirErrors.ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY, type)
         }
@@ -146,12 +147,17 @@ object FirJvmIdentitySensitiveCallWithValueTypeObjectChecker : FirFunctionCallCh
             val type = argument.resolvedType
             if (type.isPrimitive || type.isValueClass(context.session)) {
                 reporter.reportOn(argument.source, SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE, type)
-            } else if (type.isJavaValueBasedClassAndWarningsEnabled()) {
+            } else if (type.isJavaValueBasedClass()) {
                 reporter.reportOn(argument.source, SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS, type)
-            } else if (enableWarningsForIdentitySensitiveOperationsOnValueClassesAndPrimitives() && type.isFlexiblePrimitive()) {
+            } else if (type.isFlexiblePrimitive()) {
                 reporter.reportOn(argument.source, IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE, type)
             }
             reportIdentitySensitiveOperationIfWillBecomeValueClass(argument.source, type)
         }
+    }
+
+    context(sessionHolder: SessionHolder)
+    private fun ConeKotlinType.isValueType(): Boolean {
+        return isPrimitiveOrNullablePrimitive || isValueClass(sessionHolder.session) || isFlexiblePrimitive() || isJavaValueBasedClass()
     }
 }

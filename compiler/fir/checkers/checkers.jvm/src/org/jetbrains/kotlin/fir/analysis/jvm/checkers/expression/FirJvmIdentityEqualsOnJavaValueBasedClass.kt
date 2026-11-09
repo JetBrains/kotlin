@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirEqualityOperatorCallChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.isValueClass
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.disableWarningsForValueBasedJavaClasses
 import org.jetbrains.kotlin.fir.expressions.FirEqualityOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirOperation
 import org.jetbrains.kotlin.fir.types.isNullableNothing
@@ -22,7 +21,6 @@ internal object FirJvmIdentityEqualsOnJavaValueBasedClass : FirEqualityOperatorC
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirEqualityOperatorCall) {
         if (expression.operation != FirOperation.IDENTITY && expression.operation != FirOperation.NOT_IDENTITY) return
-        if (disableWarningsForValueBasedJavaClasses()) return
         val arguments = expression.argumentList.arguments
         require(arguments.size == 2) { "Expected arguments of size 2" }
 

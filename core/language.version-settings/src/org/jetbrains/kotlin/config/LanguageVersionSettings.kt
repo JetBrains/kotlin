@@ -690,8 +690,6 @@ enum class LanguageFeature(
     },
     ProperFieldAccessGenerationForFieldAccessShadowedByKotlinProperty(sinceVersion = null, "KT-56386", enabledInLatestLVTests = false),
     ContextSensitiveResolutionUsingExpectedType(sinceVersion = null, issue = "KT-16768", enabledInLatestLVTests = true),
-    DisableWarningsForValueBasedJavaClasses(sinceVersion = null, "KT-70722", enabledInLatestLVTests = false),
-    DisableWarningsForIdentitySensitiveOperationsOnValueClassesAndPrimitives(sinceVersion = null, "KT-70722", enabledInLatestLVTests = false),
     ExportKlibToOlderAbiVersion(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-76131", enabledInLatestLVTests = false),
     JvmLoadAnnotationsOnAnnotationProperties(sinceVersion = null, "KT-22463", enabledInLatestLVTests = false),
     RichErrors(sinceVersion = null, "KT-68296", enabledInLatestLVTests = true, forcesPreReleaseBinaries = true),
