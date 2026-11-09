@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.backend.konan.driver.utilities.createTempFiles
 import org.jetbrains.kotlin.backend.konan.facts.DebugFactsSerializer
 import org.jetbrains.kotlin.backend.konan.facts.FactVerificationResult
 import org.jetbrains.kotlin.backend.konan.facts.FactsCollector
+import org.jetbrains.kotlin.backend.konan.facts.ValueClassRepresentationUses
 import org.jetbrains.kotlin.backend.konan.facts.checkKlibFacts
 import org.jetbrains.kotlin.backend.konan.facts.serializeTo
 import org.jetbrains.kotlin.backend.konan.util.reportCompilationErrorAndThrow
@@ -624,6 +625,8 @@ private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragme
     runAndMeasurePhase(GHAPhase, module, disable = !runGlobalOptimizations || context.config.produce.isCache)
     runAndMeasurePhase(RTTIPhase, RTTIInput(module, dceResult))
     val lifetimes = runAndMeasurePhase(EscapeAnalysisPhase, EscapeAnalysisInput(module, moduleDFG), disable = !runGlobalOptimizations)
+    // After the lowerings, so that the value classes in inlined bodies are seen too.
+    ValueClassRepresentationUses.recordFrom(module, context.context.factsTracker)
     runAndMeasurePhase(CodegenPhase, CodegenInput(module, irBuiltIns, lifetimes))
 }
 

@@ -1,0 +1,12 @@
+STEP 0:
+    modifications:
+        U : file1.kt -> file1.kt
+        U : file2.kt -> file2.kt
+        U : file3.kt -> file3.kt
+        U : file4.kt -> file4.kt
+
+// file1.kt: the underlying type of V changes from Int to Long; file2.kt passes V through (unboxed) and boxes it,
+// without referencing any declaration whose signature changes; file4.kt subclasses Holder, which has a field of type V.
+STEP 1:
+    modifications:
+        U : file1.1.kt -> file1.kt

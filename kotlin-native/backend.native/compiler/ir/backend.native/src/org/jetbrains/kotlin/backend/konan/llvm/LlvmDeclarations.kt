@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.cgen.isCFunctionOrGlobalAccessor
 import org.jetbrains.kotlin.backend.konan.facts.Fact
+import org.jetbrains.kotlin.backend.konan.facts.ValueClassRepresentationUses
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.WritableTypeInfoPointer
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.generateWritableTypeInfoForClass
@@ -194,9 +195,12 @@ private class DeclarationsGeneratorVisitor(
             // The facts this class defines are collected before lowering, see [FactsCollector].
             // The layout of a class depends on the layouts of all its superclasses, not only of the direct one.
             if (declaration.fileOrNull != null && declaration.symbol.signature != null) {
-                generateSequence(declaration.getSuperClassNotAny()) { it.getSuperClassNotAny() }
+                val superClasses = generateSequence(declaration.getSuperClassNotAny()) { it.getSuperClassNotAny() }.toList()
+                superClasses
                         .filter { it.fileOrNull != null && it.fileOrNull != declaration.fileOrNull && it.symbol.signature != null }
                         .forEach { context.factsTracker.uses(declaration.file, Fact.BaseClassLayout.from(it)) }
+                // The inherited fields of a value class type are unboxed, so the layout also depends on their underlying types.
+                (superClasses + declaration).forEach { ValueClassRepresentationUses.recordFieldsOf(declaration.file, it, context.factsTracker) }
                 // The vtable and the itables of this class (in its type info, used by its trampolines) are made of
                 // the slots of all its ancestors, which only define their own contribution.
                 declaration.getAllSuperclasses()
@@ -434,4 +438,3 @@ internal sealed class KonanMetadata(override val name: Name?) : MetadataSource {
 
     class StaticField(irField: IrField, val llvm: StaticFieldLlvmDeclarations) : Declaration<IrField>(irField)
 }
-
