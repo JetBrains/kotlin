@@ -82,6 +82,11 @@ directory.)
   if the report scope ever grows beyond `org.jetbrains.kotlin`.
 - Only code running inside the test JVMs is instrumented; tests that spawn external processes
   (some `:compiler:tests-integration` scenarios) don't contribute the coverage of those processes.
+- `org.jetbrains.kotlin.fir.analysis.TraversalsKt` is excluded from the report: the class exists
+  in two different variants (`raw-fir/psi2fir` and `raw-fir/light-tree2fir`, split in
+  `dea432958ca6`), and JaCoCo refuses to report two different classes sharing one FQN. Its
+  `inline` helpers remain measured through their callers' bytecode. Remove the `exclude` in
+  `build.gradle.kts` once the compiler side fixes the name collision.
 - JaCoCo reports branch data on Kotlin bytecode constructs (inline functions, `when` mappings,
   suspend state machines) that can look noisier than Kotlin-aware engines — keep this in mind
   when reading branch counters.

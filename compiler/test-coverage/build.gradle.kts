@@ -66,7 +66,16 @@ tasks.named<JacocoReport>("firCoverageReport") {
     // to avoid a self-referencing file collection; `matching` keeps the filtering lazy and
     // configuration-cache-compatible (no Project/script references at execution time).
     val wiredClassDirs = objects.fileCollection().from(classDirectories.from.toList())
-    classDirectories.setFrom(wiredClassDirs.asFileTree.matching { include("org/jetbrains/kotlin/fir/**") })
+    classDirectories.setFrom(wiredClassDirs.asFileTree.matching {
+        include("org/jetbrains/kotlin/fir/**")
+        // `Traversals.kt` lives in both raw-fir/psi2fir and raw-fir/light-tree2fir in the same
+        // package with different bytecode (split in dea432958ca6), and JaCoCo refuses to report
+        // two different classes with one FQN. Leave the class (and any synthetic TraversalsKt$…
+        // classes, which would collide the same way) out of the report; its `inline` helpers stay
+        // measured through their call sites in PsiRawFirBuilder / TreeRawFirDeclarationBuilderProxy.
+        // Drop this exclude once the compiler side fixes the name collision.
+        exclude("org/jetbrains/kotlin/fir/analysis/TraversalsKt*.class")
+    })
 
     // Tolerate producers that didn't run (e.g. excluded with `-x`): report on the data that exists.
     val wiredExecData = objects.fileCollection().from(executionData.from.toList())
