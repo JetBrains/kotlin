@@ -24,7 +24,7 @@ import kotlin.io.path.pathString
 /**
  * The flags [ClangBitcodeCompiler] runs `clang` with, followed by the bitcode file, `-o` and the object file.
  */
-internal fun NativeBackendPhaseContext.clangBitcodeCompilerFlags(configurables: ClangFlags): List<String> =
+private fun NativeBackendPhaseContext.clangBitcodeCompilerFlags(configurables: ClangFlags): List<String> =
         config.configuration.overrideClangOptions.takeIf(List<String>::isNotEmpty)
                 ?: mutableListOf<String>().apply {
                     fun addNonEmpty(elements: List<String>) = addAll(elements.filter { it.isNotEmpty() })

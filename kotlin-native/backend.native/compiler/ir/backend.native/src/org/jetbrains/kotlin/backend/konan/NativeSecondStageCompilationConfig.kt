@@ -712,11 +712,35 @@ class NativeSecondStageCompilationConfig(
         get() = configuration.inProcessObjEmission
 
     /**
-     * Whether the LLVM linked into the compiler may replace `clang` and `llvm-ar` where the results are the same
-     * (see `InProcessLlvmTools.kt`). Inherited by the cache compilations spawned from this one.
+     * Whether the LLVM linked into the compiler replaces `clang` and `llvm-ar` where the results were checked to be
+     * byte-for-byte identical to theirs, so that it changes nothing but the build time
+     * (see [emitsObjectFilesInProcess] and [writesStaticCachesInProcess]).
+     * Inherited by the cache compilations spawned from this one.
      */
     internal val inProcessLlvmTools: Boolean
         get() = configuration.get(BinaryOptions.inProcessLlvmTools) ?: true
+
+    /**
+     * Whether object files are emitted in-process: everywhere with [inProcessObjEmission], and by default ([inProcessLlvmTools])
+     * for non-optimized code on linux_x64, where it was checked to give the same object files as `clang` with the flags
+     * of `konan.properties`.
+     *
+     * Not for optimized code: it differs from clang's, because clang reads the module back from bitcode, which doesn't preserve
+     * the order of use lists that some code generation passes depend on. Not for linux_arm64: its non-optimized clang flags
+     * don't put functions and data into separate sections, while the in-process target machine does on Linux.
+     * Not with `-Xoverride-clang-options`, which replaces the flags the result was checked against.
+     */
+    internal val emitsObjectFilesInProcess: Boolean
+        get() = inProcessObjEmission || inProcessLlvmTools && target == KonanTarget.LINUX_X64 && debug && !optimizationsEnabled
+                && configuration.overrideClangOptions.isEmpty()
+
+    /**
+     * Whether static caches are written in-process instead of by `llvm-ar`,
+     * on the targets where the result was checked to be the same (see [writeStaticCacheArchive]).
+     */
+    internal val writesStaticCachesInProcess: Boolean
+        get() = inProcessLlvmTools && produce == CompilerOutputKind.STATIC_CACHE
+                && (target == KonanTarget.LINUX_X64 || target == KonanTarget.LINUX_ARM64)
 
     private val implicitModuleName: String
         get() = cacheSupport.librariesToCache.values.singleOrNull()?.let {

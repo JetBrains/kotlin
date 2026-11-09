@@ -67,24 +67,17 @@ internal class Linker(
     }
 
     /**
-     * Writes a static cache made of object files only with the LLVM linked into the compiler instead of running `llvm-ar`,
-     * where the result is the same (see [inProcessArchiveTargetTriples]). Returns `false` if `llvm-ar` has to be run.
+     * Whether [writeStaticCacheInProcess] can replace [linkCommands]: for a static cache made of object files only
+     * (otherwise, the archives would have to be flattened into the result, like `llvm-ar` does with its `L` modifier).
      */
-    fun tryWriteStaticCacheInProcess(
-            outputFile: String,
-            objectFiles: List<String>,
-            dependenciesTrackingResult: DependenciesTrackingResult,
-            caches: ResolvedCacheBinaries,
-    ): Boolean {
-        if (!config.inProcessLlvmTools || config.produce != CompilerOutputKind.STATIC_CACHE || linkerOutput != LinkerOutputKind.STATIC_LIBRARY)
-            return false
-        if (config.llvmTargetTriple !in inProcessArchiveTargetTriples) return false
-        // Archives would have to be flattened into the result, like `llvm-ar` does with its `L` modifier.
-        if (linker.linkStaticLibraries(includedBinaries(dependenciesTrackingResult)).isNotEmpty() || caches.static.isNotEmpty())
-            return false
-        val executablePath = resolveExecutableTarget(outputFile).path.also { prepareFileSystem(it) }
-        writeStaticCacheArchive(executablePath, objectFiles)
-        return true
+    fun canWriteStaticCacheInProcess(dependenciesTrackingResult: DependenciesTrackingResult, caches: ResolvedCacheBinaries): Boolean =
+            config.writesStaticCachesInProcess && linkerOutput == LinkerOutputKind.STATIC_LIBRARY
+                    && caches.static.isEmpty() && linker.linkStaticLibraries(includedBinaries(dependenciesTrackingResult)).isEmpty()
+
+    fun writeStaticCacheInProcess(outputFile: String, objectFiles: List<String>) {
+        val archivePath = resolveExecutableTarget(outputFile).path
+        prepareFileSystem(archivePath)
+        writeStaticCacheArchive(archivePath, objectFiles)
     }
 
     private fun includedBinaries(dependenciesTrackingResult: DependenciesTrackingResult): List<String> {

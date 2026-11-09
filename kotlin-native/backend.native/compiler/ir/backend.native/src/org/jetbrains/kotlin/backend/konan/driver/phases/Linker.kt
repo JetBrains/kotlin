@@ -38,21 +38,18 @@ internal val LinkerPhase = createSimpleNamedCompilerPhase<NativeBackendPhaseCont
             tempFiles = input.tempFiles,
             cacheInfo = input.cacheInfo,
     )
-    val writtenInProcess = linker.tryWriteStaticCacheInProcess(
-            input.outputFile,
-            input.objectFiles,
-            input.dependenciesTrackingResult,
-            input.resolvedCacheBinaries,
-    )
-    if (writtenInProcess) return@createSimpleNamedCompilerPhase
-    val commands = linker.linkCommands(
-            input.outputFile,
-            input.objectFiles,
-            input.dependenciesTrackingResult,
-            input.resolvedCacheBinaries,
-            input.extraLinkerFlags
-    )
-    runLinkerCommands(context, commands, cachingInvolved = !input.resolvedCacheBinaries.isEmpty())
+    if (linker.canWriteStaticCacheInProcess(input.dependenciesTrackingResult, input.resolvedCacheBinaries)) {
+        linker.writeStaticCacheInProcess(input.outputFile, input.objectFiles)
+    } else {
+        val commands = linker.linkCommands(
+                input.outputFile,
+                input.objectFiles,
+                input.dependenciesTrackingResult,
+                input.resolvedCacheBinaries,
+                input.extraLinkerFlags
+        )
+        runLinkerCommands(context, commands, cachingInvolved = !input.resolvedCacheBinaries.isEmpty())
+    }
 }
 
 internal data class PreLinkCachesInput(
