@@ -53,6 +53,6 @@ FILE fqName:<root> fileName:/localFakeOverridesInGenericLocalClass.kt lineStartO
             /Base.toString|toString(){}[0]
       RETURN[389, 414] type=kotlin.Nothing from='/test|test(){}[0]'
         CALL[409, 414] '/Base.foo|foo(){}[0]' type=kotlin.Int? origin=null
-          ARG <this>: TYPE_OP[396, 408] type=<root>.Base<T of <root>.test.Local> origin=IMPLICIT_CAST typeOperand=<root>.Base<T of <root>.test.Local>
+          ARG <this>: TYPE_OP[396, 408] type=<root>.Base<kotlin.Int> origin=IMPLICIT_CAST typeOperand=<root>.Base<kotlin.Int>
             CONSTRUCTOR_CALL[396, 408] '/test.Local.<init>|test(){}<init>(){}[0]' type=<root>.test.Local<kotlin.Int> origin=null
               TYPE_ARG (of class) T: kotlin.Int

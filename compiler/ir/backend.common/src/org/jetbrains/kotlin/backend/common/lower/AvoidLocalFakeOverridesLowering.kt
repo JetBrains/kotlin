@@ -18,6 +18,9 @@ import org.jetbrains.kotlin.ir.expressions.implicitCastTo
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.types.AbstractIrTypeSubstitutor
+import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.getAllSubstitutedSupertypes
 import org.jetbrains.kotlin.ir.util.isLocal
 import org.jetbrains.kotlin.ir.util.parentAsClass
@@ -82,8 +85,19 @@ class AvoidLocalFakeOverridesLowering(val context: LoweringContext) : FileLoweri
                     expression.symbol = newSymbol as IrSimpleFunctionSymbol
                     newSymbol.owner.dispatchReceiverParameter?.let { dispatchParam ->
                         val superClass = newSymbol.owner.parentAsClass
-                        val newDispatcherType = getAllSubstitutedSupertypes(callee.parentAsClass).first { it.classifier == superClass.symbol }
-                        expression.arguments[dispatchParam] = expression.arguments[dispatchParam]?.implicitCastTo(newDispatcherType)
+                        // The call now targets a member of `superClass`, so the dispatch receiver (currently typed as the local class)
+                        // has to be cast to the corresponding supertype. The supertype is computed from the actual receiver type
+                        // rather than from the local class declaration, because for a generic local class the declared supertype
+                        // is expressed via the class's own type parameters (e.g. `Base<T of Local>`), and those must not leak
+                        // into the call site. Substituting through the receiver type gives the specialized one (e.g. `Base<Int>`).
+                        // If the receiver type is not a simple type, fall back to the declared (unsubstituted) supertype.
+                        val dispatchReceiver = expression.arguments[dispatchParam]
+                        val receiverType = dispatchReceiver?.type as? IrSimpleType
+                        val newDispatcherType = receiverType
+                            ?.let { AbstractIrTypeSubstitutor.forSuperClass(superClass.symbol, it) }
+                            ?.substitute(superClass.defaultType)
+                            ?: getAllSubstitutedSupertypes(callee.parentAsClass).first { it.classifier == superClass.symbol }
+                        expression.arguments[dispatchParam] = dispatchReceiver?.implicitCastTo(newDispatcherType)
                     }
                 }
 
