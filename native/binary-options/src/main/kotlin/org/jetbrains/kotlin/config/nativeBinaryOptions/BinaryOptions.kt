@@ -149,6 +149,9 @@ object BinaryOptions : BinaryOptionRegistry() {
     val runLLVMPassesInCompiler by booleanOption()
 
     val enableReleaseBinaryCache by booleanOption()
+
+    // a replacement for Apple's libtool to workaround KT-89897
+    val useLlvmLibtoolDarwin by booleanOption()
 }
 
 open class BinaryOption<T : Any>(

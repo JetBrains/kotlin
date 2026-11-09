@@ -106,6 +106,9 @@ open class KonanCacheTask @Inject constructor(
                     .let { wholeXcodeProvisioningEnabled -> target.map { wholeXcodeProvisioningEnabled && isAppleTargetName(it) } }
             )
 
+    @get:Input
+    val useLlvmLibtoolDarwin: Property<Boolean> = objectFactory.property(Boolean::class.java).convention(false)
+
     @get:InputFile
     @get:PathSensitive(PathSensitivity.NONE)
     @Suppress("unused") // used only by Gradle machinery via reflection.
@@ -155,6 +158,10 @@ open class KonanCacheTask @Inject constructor(
             }
             if (useProvisionedXcode.get()) {
                 add("-Xoverride-konan-properties=useProvisionedXcode=true")
+            }
+            if (useLlvmLibtoolDarwin.get()) {
+                add("-Xbinary=useLlvmLibtoolDarwin=true")
+                add("-Xllvm-variant=dev")
             }
         }
         val workQueue = workerExecutor.noIsolation()
