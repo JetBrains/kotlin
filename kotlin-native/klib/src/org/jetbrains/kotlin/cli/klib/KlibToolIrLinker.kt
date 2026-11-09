@@ -47,14 +47,17 @@ import org.jetbrains.kotlin.utils.addToStdlib.checkIsInstance
 internal class KlibToolIrLinker(
         output: KlibToolOutput,
         symbolTable: SymbolTable,
-) : KotlinIrLinker(symbolTable, errorCallback = output::logError) {
+) : KotlinIrLinker(
+        symbolTable,
+        errorCallback = output::logError,
+        friendModules = emptyMap(), // We cannot obtain the information about friend modules from Klib alone.
+) {
     override val irMangler: KotlinMangler.IrMangler = KonanManglerIr
 
     override val fakeOverrideBuilder = IrLinkerFakeOverrideProvider(
             fileLocalSymbolProvider = fileLocalSymbolProvider,
             symbolTable = symbolTable,
             mangler = irMangler,
-            friendModules = emptyMap(), // TODO(KT-62534) can be removed when ModuleDescriptorImpl.shouldSeeInternalsOf is fixed
             partialLinkageSupport = PartialLinkageSupportForLinker.DISABLED,
     )
 
