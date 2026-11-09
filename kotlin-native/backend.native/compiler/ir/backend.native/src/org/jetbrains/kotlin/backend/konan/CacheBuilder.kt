@@ -268,8 +268,10 @@ class CacheBuilder(
         val reversedPerFileDependencies = mutableMapOf<LibraryFile, MutableList<LibraryFile>>()
         val reversedWeakPerFileDependencies = mutableMapOf<LibraryFile, MutableList<LibraryFile>>()
         val reversedWholeLibraryDependencies = mutableMapOf<KotlinLibrary, MutableList<LibraryFile>>()
+        // The libraries from [needFullRebuild] are analyzed as well, even though all of their files are rebuilt anyway:
+        // their dependents are not necessarily rebuilt (a stale per-file cache goes to [needFullRebuild] alone), so the changed
+        // and removed files of such a library have to start the dirty-file walk below just like those of any other cached library.
         for (library in icedLibraries) {
-            if (library in needFullRebuild) continue
             val cache = caches[library] ?: continue
             if (cache !is CachedLibraries.Cache.PerFile) {
                 require(library.isCInteropLibrary())
@@ -362,6 +364,8 @@ class CacheBuilder(
             dirtyFiles.remove(it)
             Path(caches[it.library]!!.rootDirectory).resolve(it.file).deleteRecursively()
         }
+        // The dirty files of the fully rebuilt libraries only matter as the sources of the walk: the whole cache is rebuilt anyway.
+        dirtyFiles.removeAll { it.library in needFullRebuild }
 
         val groupedDirtyFiles = dirtyFiles.groupBy { it.library }
         configuration.reportLog("    DIRTY FILES:")
