@@ -9,6 +9,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Classpath
@@ -76,6 +77,13 @@ internal abstract class KotlinJsDtsGenerationTask @Inject constructor(
         objectFactory,
     )
 
+    /**
+     * The free compiler arguments the link task actually passes to the compiler
+     * (user-defined ones plus the implicit ones added by KGP, e.g. `-Xir-module-name`)
+     */
+    @get:Input
+    internal abstract val linkFreeCompilerArgs: ListProperty<String>
+
     @get:OutputDirectory
     abstract val outputDirectory: DirectoryProperty
 
@@ -131,6 +139,7 @@ internal abstract class KotlinJsDtsGenerationTask @Inject constructor(
     private fun createLinkingOperation(kotlinToolchains: KotlinToolchains): JsLinkingOperation {
         val linkArguments = K2JSCompilerArguments()
         KotlinJsCompilerOptionsHelper.fillCompilerArguments(linkCompilerOptions, linkArguments)
+        linkArguments.freeArgs = linkFreeCompilerArgs.get()
 
         return kotlinToolchains.js.jsLinkingOperationBuilder(
             klib = entryModule.get().asFile.toPath(),
