@@ -115,8 +115,8 @@ private fun initializePath() =
                 .split(File.pathSeparatorChar)
                 .map { if (it == "") "." else it }
 
-// Track the libraries that we have already loaded.
-private var loadedLibraries = mutableSetOf<String>()
+// Track the libraries that we have already loaded. Only accessed under the lock of [loadKonanLibrary].
+private val loadedLibraries = mutableSetOf<String>()
 
 private fun tryLoadKonanLibrary(dir: String, fullLibraryName: String, runFromDaemon: Boolean): Boolean {
     if (loadedLibraries.contains(fullLibraryName)) {
@@ -191,6 +191,11 @@ private fun tryLoadKonanLibrary(dir: String, fullLibraryName: String, runFromDae
     return true
 }
 
+// Synchronized: compilations running in parallel in the same class loader (e.g. Gradle workers) may load the same library at once.
+// Without the lock, each of them could load its own temporary copy of it (see [tryLoadKonanLibrary]) into that class loader,
+// and the native methods would then be bound to either copy, so that e.g. the LLVM targets get initialized in one copy and looked up
+// in the other.
+@Synchronized
 fun loadKonanLibrary(name: String, konanHome: String? = null) {
     val runFromDaemon = System.getProperty("kotlin.native.tool.runFromDaemon") == "true"
     val fullLibraryName = System.mapLibraryName(name)
