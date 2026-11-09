@@ -1,6 +1,16 @@
 Resulting Resolution Scope Structure:
 Module LIBRARY:
 UnionScope
+    FilesScope
+        files:
+            annotation.kotlin_builtins
+            atomics.kotlin_builtins
+            collections.kotlin_builtins
+            coroutines.kotlin_builtins
+            internal.kotlin_builtins
+            kotlin.kotlin_builtins
+            ranges.kotlin_builtins
+            reflect.kotlin_builtins
     IntersectionScope
         KaFirJvmLibraryRestrictionScope
         UnionScope
@@ -14,17 +24,6 @@ UnionScope
             ParentTraversalLibrarySearchScope
             ParentTraversalLibrarySearchScope
             ParentTraversalLibrarySearchScope
-    KotlinBuiltinsFileScope
-        FilesScope
-            files:
-                annotation.kotlin_builtins
-                atomics.kotlin_builtins
-                collections.kotlin_builtins
-                coroutines.kotlin_builtins
-                internal.kotlin_builtins
-                kotlin.kotlin_builtins
-                ranges.kotlin_builtins
-                reflect.kotlin_builtins
 
 Module MAIN:
 UnionScope
@@ -32,6 +31,16 @@ UnionScope
         files:
             MANIFEST.MF
             main.kt
+    FilesScope
+        files:
+            annotation.kotlin_builtins
+            atomics.kotlin_builtins
+            collections.kotlin_builtins
+            coroutines.kotlin_builtins
+            internal.kotlin_builtins
+            kotlin.kotlin_builtins
+            ranges.kotlin_builtins
+            reflect.kotlin_builtins
     IntersectionScope
         KaFirJvmLibraryRestrictionScope
         UnionScope
@@ -43,14 +52,3 @@ UnionScope
                         KaFirJvmLibraryRestrictionScope
                         ParentTraversalLibrarySearchScope
             ParentTraversalLibrarySearchScope
-    KotlinBuiltinsFileScope
-        FilesScope
-            files:
-                annotation.kotlin_builtins
-                atomics.kotlin_builtins
-                collections.kotlin_builtins
-                coroutines.kotlin_builtins
-                internal.kotlin_builtins
-                kotlin.kotlin_builtins
-                ranges.kotlin_builtins
-                reflect.kotlin_builtins

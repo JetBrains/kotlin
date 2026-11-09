@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinActualD
 import org.jetbrains.kotlin.analysis.low.level.api.fir.services.PackagePartProviderTestImpl
 import org.jetbrains.kotlin.analysis.test.framework.services.TestForeignValueProviderService
 import org.jetbrains.kotlin.analysis.test.framework.services.TestKotlinActualDeclarationProvider
+import org.jetbrains.kotlin.analysis.test.framework.services.installDetachedBuiltinsProvider
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
 import org.jetbrains.kotlin.test.services.TestServices
 
@@ -32,6 +33,12 @@ object AnalysisApiFirTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
     }
 
     override fun registerApplicationServices(application: MockApplication, disposable: Disposable, testServices: TestServices) {
+        // Must run after `FirStandaloneServiceRegistrar`, which loads the XML descriptor registering the CLI
+        // builtins provider — every test configurator keeps this registrar right after it in `serviceRegistrars`,
+        // and `ApplicationServiceRegistration` runs it once per application under its write lock, before any
+        // test creates modules, so the swap cannot race with the parallel tests sharing the application.
+        installDetachedBuiltinsProvider(application)
+
         application.apply {
             registerService(KotlinForeignValueProviderService::class.java, TestForeignValueProviderService())
         }
