@@ -2,5 +2,5 @@
 // Implementation of methods is not available
 
 @kotlin.jvm.JvmInline
-public expect final value class Val {
+public expect final inline value class Val {
 }

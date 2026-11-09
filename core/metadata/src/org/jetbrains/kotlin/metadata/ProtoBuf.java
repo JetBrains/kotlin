@@ -9398,10 +9398,11 @@ public final class ProtoBuf {
      *isData
      *isExternal
      *isExpect
-     *isInline
+     *isValue
      *isFun
      *hasEnumEntries
      *isRichError
+     *isFullValue
      * </pre>
      */
     boolean hasFlags();
@@ -9417,10 +9418,11 @@ public final class ProtoBuf {
      *isData
      *isExternal
      *isExpect
-     *isInline
+     *isValue
      *isFun
      *hasEnumEntries
      *isRichError
+     *isFullValue
      * </pre>
      */
     int getFlags();
@@ -10207,10 +10209,11 @@ public final class ProtoBuf {
      *isData
      *isExternal
      *isExpect
-     *isInline
+     *isValue
      *isFun
      *hasEnumEntries
      *isRichError
+     *isFullValue
      * </pre>
      */
     public boolean hasFlags() {
@@ -10228,10 +10231,11 @@ public final class ProtoBuf {
      *isData
      *isExternal
      *isExpect
-     *isInline
+     *isValue
      *isFun
      *hasEnumEntries
      *isRichError
+     *isFullValue
      * </pre>
      */
     public int getFlags() {
@@ -11744,10 +11748,11 @@ public final class ProtoBuf {
        *isData
        *isExternal
        *isExpect
-       *isInline
+       *isValue
        *isFun
        *hasEnumEntries
        *isRichError
+       *isFullValue
        * </pre>
        */
       public boolean hasFlags() {
@@ -11765,10 +11770,11 @@ public final class ProtoBuf {
        *isData
        *isExternal
        *isExpect
-       *isInline
+       *isValue
        *isFun
        *hasEnumEntries
        *isRichError
+       *isFullValue
        * </pre>
        */
       public int getFlags() {
@@ -11786,10 +11792,11 @@ public final class ProtoBuf {
        *isData
        *isExternal
        *isExpect
-       *isInline
+       *isValue
        *isFun
        *hasEnumEntries
        *isRichError
+       *isFullValue
        * </pre>
        */
       public Builder setFlags(int value) {
@@ -11810,10 +11817,11 @@ public final class ProtoBuf {
        *isData
        *isExternal
        *isExpect
-       *isInline
+       *isValue
        *isFun
        *hasEnumEntries
        *isRichError
+       *isFullValue
        * </pre>
        */
       public Builder clearFlags() {

@@ -81,12 +81,7 @@ fun deserializeClassToSymbol(
         isInner = Flags.IS_INNER.get(flags)
         isData = Flags.IS_DATA.get(classProto.flags)
         isValue = Flags.IS_VALUE_CLASS.get(classProto.flags)
-
-        // TODO: KT-90593. Expect inline value classes without constructors
-        //  (AllowExpectValueClassesWithNoPrimaryConstructor) are loaded as
-        //  full value classes.
-        isInline = isValue && (session.deserializationExtension?.isMaybeFullValueClass(containerSource) == false
-                || classProto.hasInlineClassUnderlyingPropertyName())
+        isInline = Flags.isInlineValueClass(classProto.flags)
         isExternal = Flags.IS_EXTERNAL_CLASS.get(classProto.flags)
         isFun = Flags.IS_FUN_INTERFACE.get(classProto.flags)
         isRichError = Flags.IS_RICH_ERROR.get(classProto.flags)
@@ -365,7 +360,7 @@ private fun ProtoBuf.Class.loadValueClassRepresentation(
     isInline: Boolean,
     context: FirDeserializationContext,
     declarations: List<FirDeclaration>,
-): ValueClassRepresentation<ConeRigidType> {
+): ValueClassRepresentation<ConeRigidType>? {
     val primaryConstructor = declarations.filterIsInstance<FirConstructor>().singleOrNull { it.isPrimary }
 
     if (!isInline) {
@@ -394,6 +389,9 @@ private fun ProtoBuf.Class.loadValueClassRepresentation(
 
         return InlineClassRepresentation(propertyName, propertyType)
     }
+
+    // Expect classes are allowed to not have constructors under `AllowExpectValueClassesWithNoPrimaryConstructor`
+    if (Flags.IS_EXPECT_CLASS.get(flags)) return null
 
     // Versions before 1.5 did not write inlineClassUnderlyingPropertyName.
     // We can legitimately throw here if inline class was declared with private constructor
